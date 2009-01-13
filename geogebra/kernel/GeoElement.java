@@ -21,7 +21,7 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.main.Application;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.MyError;
 import geogebra.util.Util;
 
@@ -338,10 +338,10 @@ public abstract class GeoElement
 	// public int geoID;    
 	//  static private int geoCounter = 0;
 	private AlgoElement algoParent = null; // Parent Algorithm
-	private ArrayList algorithmList = new ArrayList(50); 	// directly dependent algos
+	private ArrayList algorithmList; 	// directly dependent algos
 	
 	//	set of all dependent algos sorted in topological order    
-	private AlgorithmSet algoUpdateSet = new AlgorithmSet();
+	private AlgorithmSet algoUpdateSet;
 	//private TreeSet algoUpdateSet = new TreeSet();
 
 	/********************************************************/
@@ -522,14 +522,23 @@ public abstract class GeoElement
 	}
 	
 	// Michael Borcherds 2008-04-02
-	private Color getRGBFromList(int alpha)	{
-		
+	private Color getRGBFromList(int alpha)	{		
 		if (alpha > 255) alpha = 255;
-		if (alpha < 0) alpha = 0;
-
-		double redD = ((GeoNumeric)(colFunction.get(0))).getValue();
-		double greenD = ((GeoNumeric)(colFunction.get(1))).getValue();
-		double blueD = ((GeoNumeric)(colFunction.get(2))).getValue();
+		else if (alpha < 0) alpha = 0;
+	
+		// get rgb values from color list
+		double redD = 0, greenD = 0, blueD = 0;
+		for (int i=0; i < 3; i++) {
+			GeoElement geo = colFunction.get(i);
+			if (geo.isDefined()) { 
+				double val = ((NumberValue) geo).getDouble();
+				switch (i) {
+					case 0: redD = val; break;
+					case 1: greenD = val; break;
+					case 2: blueD = val; break;
+				}
+			}
+		}				
 		
 		//double epsilon = 0.000001; // 1 - floor(1) = 0 but we want 1.
 		
@@ -551,7 +560,7 @@ public abstract class GeoElement
 		
 		//Application.debug("red"+redD+"green"+greenD+"blue"+blueD);
 		
-		return new Color((int)(redD*255.0), (int)(greenD*255.0), (int)(blueD*255.0), alpha);		
+		return new Color((int)(redD*255.0), (int)(greenD*255.0), (int)(blueD*255.0), alpha);
 
 		/*
 		if (red < 0) red = 0;
@@ -909,7 +918,8 @@ public abstract class GeoElement
 		return isDrawable() && 
 				!(isTextValue() ||
 					isGeoImage() ||
-					isGeoList());
+					isGeoList() ||
+					(isGeoBoolean() && !isIndependent()));
 	}	
 	
 	/**
@@ -961,7 +971,9 @@ public abstract class GeoElement
 		return algoParent;
 	}
 	
-	public ArrayList getAlogrithmList() {
+	final public ArrayList getAlgorithmList() {
+		if (algorithmList == null)
+			algorithmList = new ArrayList();
 		return algorithmList;
 	}
 
@@ -1756,12 +1768,14 @@ public abstract class GeoElement
 		if (isIndependent()) 
 			cons.removeFromConstructionList(this);
 
-		// remove all dependent algorithms
-		AlgoElement algo;
-		Object[] algos = algorithmList.toArray();
-		for (int i = 0; i < algos.length; i++) {
-			algo = (AlgoElement) algos[i];
-			algo.remove(this);
+		// remove all dependent algorithms		
+		if (algorithmList != null) {
+			AlgoElement algo;
+			Object[] algos = algorithmList.toArray();
+			for (int i = 0; i < algos.length; i++) {
+				algo = (AlgoElement) algos[i];
+				algo.remove(this);
+			}
 		}
 
 		// remove this object from table
@@ -1827,7 +1841,7 @@ public abstract class GeoElement
 	 * add algorithm to dependency list of this GeoElement
 	 */
 	public final void addAlgorithm(AlgoElement algorithm) {	
-		if (!algorithmList.contains(algorithm))
+		if (!(getAlgorithmList().contains(algorithm)))
 			algorithmList.add(algorithm);
 		addToUpdateSets(algorithm);
 	}
@@ -1839,7 +1853,7 @@ public abstract class GeoElement
 	 * not be updated.
 	 */
 	final void addToAlgorithmListOnly(AlgoElement algorithm) {
-		if (!algorithmList.contains(algorithm))
+		if (!getAlgorithmList().contains(algorithm))
 			algorithmList.add(algorithm);		
 	}
 	
@@ -1858,9 +1872,12 @@ public abstract class GeoElement
 	final void removeAlgorithm(AlgoElement algorithm) {
 		algorithmList.remove(algorithm);
 		removeFromUpdateSets(algorithm);
-	}
+	}	
 
 	protected AlgorithmSet getAlgoUpdateSet() {
+		if (algoUpdateSet == null)
+			 algoUpdateSet = new AlgorithmSet();
+
 		return algoUpdateSet;
 	}		
 		
@@ -1868,27 +1885,30 @@ public abstract class GeoElement
 	/**
 	 * add algorithm to update sets up the construction graph
 	 */
-	private void addToUpdateSets(AlgoElement algorithm) {				
-		if (algoUpdateSet.add(algorithm)) {		
+	private void addToUpdateSets(AlgoElement algorithm) {	
+		boolean added = getAlgoUpdateSet().add(algorithm);
+
+		if (added) {	  					
 			// propagate up the graph if we didn't do this before			
 			if (algoParent != null) {
-				GeoElement [] input = algoParent.getInput();
+				GeoElement [] input = algoParent.getInputForUpdateSetPropagation();
 				for (int i = 0; i < input.length; i++) {
 					input[i].addToUpdateSets(algorithm);
 				}
 			}
-		}
+		}	
 	}
 
 	/**
 	 * remove algorithm from update sets  up the construction graph
 	 */
-	private void removeFromUpdateSets(AlgoElement algorithm) {
-		//	Application.debug(label + " remove from updateSet: " + algorithm.getCommandDescription());
-		if (algoUpdateSet.remove(algorithm)) {
+	final public void removeFromUpdateSets(AlgoElement algorithm) {
+		boolean removed = algoUpdateSet != null && algoUpdateSet.remove(algorithm);
+			
+		if (removed) {
 			//	propagate up the graph				
 			if (algoParent != null) {
-				GeoElement [] input = algoParent.getInput();
+				GeoElement [] input = algoParent.getInputForUpdateSetPropagation();
 				for (int i = 0; i < input.length; i++) {
 					input[i].removeFromUpdateSets(algorithm);
 				}
@@ -1930,7 +1950,9 @@ public abstract class GeoElement
 		update();
 
 		// update all algorithms in the algorithm set of this GeoElement        
-		algoUpdateSet.updateAll();		
+		if (algoUpdateSet != null) {
+			algoUpdateSet.updateAll();						
+		}
 	}
 	
 	
@@ -1959,7 +1981,7 @@ public abstract class GeoElement
 			GeoElement geo = (GeoElement) geos.get(i);
 			geo.update();
 			
-			if (geo.isIndependent()) {
+			if (geo.isIndependent() && geo.algoUpdateSet != null) {
 				// add all dependent algos of geo to the overall algorithm set
 				geo.algoUpdateSet.addAllToCollection(algoSetUpdateCascade);
 			}
@@ -1970,7 +1992,7 @@ public abstract class GeoElement
 			Iterator it = algoSetUpdateCascade.iterator();
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
-				algo.update();			
+				algo.update();					
 			}
 		}
 	}
@@ -2076,7 +2098,7 @@ public abstract class GeoElement
 	 * Returns whether this object is parent of other geos.
 	 */
 	public boolean hasChildren() {
-		return algoUpdateSet.getSize() > 0;
+		return algorithmList != null && algorithmList.size() > 0;
 	}
 
 	/**
@@ -2103,12 +2125,14 @@ public abstract class GeoElement
 	 */
 	public TreeSet getAllChildren() {
 		TreeSet set = new TreeSet();
-		Iterator it = algoUpdateSet.getIterator();
-		while (it.hasNext()) {
-			AlgoElement algo = (AlgoElement) it.next();
-			for (int i = 0; i < algo.output.length; i++) {
-				set.add(algo.output[i]);					
-			}			
+		if (algoUpdateSet != null) {
+			Iterator it = algoUpdateSet.getIterator();
+			while (it.hasNext()) {
+				AlgoElement algo = (AlgoElement) it.next();
+				for (int i = 0; i < algo.output.length; i++) {
+					set.add(algo.output[i]);					
+				}			
+			}
 		}
 		return set;
 	}
@@ -2301,7 +2325,7 @@ public abstract class GeoElement
 				// Guy Hed, 25.8.2008
 				// In order to present the text cottectly in Hebrew and Arabic:
 				boolean rightToLeft = app.isRightToLeftReadingOrder(); 
-				if (rightToLeft) 
+				if (rightToLeft)  
 					sbLongDescHTML.append("\u200e\u200f: \u200e"); 
 				else
 					sbLongDescHTML.append(": ");
@@ -2484,8 +2508,6 @@ public abstract class GeoElement
 	private static String subBegin = "<sub><font size=\"-1\">";
 	private static String subEnd = "</font></sub>";
 	public static String indicesToHTML(String str, boolean addHTMLtag) {
-		if (str == null) return "";
-		
 		sbIndicesToHTML.setLength(0);
 		if (addHTMLtag)
 			sbIndicesToHTML.append("<html>");
@@ -3182,10 +3204,10 @@ public abstract class GeoElement
 		// check for circular definition (not needed)
 		//if (this == col || isParentOf(col))
 		//	throw new CircularDefinitionException();	
-		
+	
 		// unregister old condition
 		if (colFunction != null) {
-			colFunction.unregisterConditionListener(this);
+			colFunction.unregisterColorFunctionListener(this);
 		}
 		
 		// set new condition
@@ -3193,7 +3215,7 @@ public abstract class GeoElement
 		
 		// register new condition
 		if (colFunction != null) {
-			colFunction.registerConditionListener(this);
+			colFunction.registerColorFunctionListener(this);
 		}		
 	}
 	
@@ -3426,7 +3448,7 @@ public abstract class GeoElement
 	 * substituteNumbers determines (for a function) whether you want
 	 * "2*x^2" or "a*x^2"
 	 * returns a string representing the formula of the GeoElement in the following formats:
-	 * getFormulaString(ExpressionNode.STRING_TYPE_YACAS) eg Sqrt(x)
+	 * getFormulaString(ExpressionNode.STRING_TYPE_MathPiper) eg Sqrt(x)
 	 * getFormulaString(ExpressionNode.STRING_TYPE_LATEX) eg \sqrt(x)
 	 * getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA) eg sqrt(x)
 	 * getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA_XML)
@@ -3438,7 +3460,7 @@ public abstract class GeoElement
 		/*
 		 * maybe use this
 		 * doesn't work on f=Factor[x^2-1] Expand[f]
-		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_YACAS
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_MathPiper
 				 || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA) {
 		
 			ExpressionValue ev;
@@ -3461,9 +3483,9 @@ public abstract class GeoElement
 
 
 		
-		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_YACAS
-		 || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
-			kernel.setTemporaryPrintDecimals(16); // Yacas doesn't like 4E-20 or x^2.0
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_MATH_PIPER)
+		 //|| ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
+			kernel.setTemporaryPrintDecimals(16); // MathPiper doesn't like 4E-20 or x^2.0
 
 		
 		String ret="";
@@ -3489,8 +3511,8 @@ public abstract class GeoElement
 			ret = toOutputValueString();
 		}
 		
-		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_YACAS
-		 || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_MATH_PIPER)
+		 // || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
 			kernel.restorePrintAccuracy();
 		
 		kernel.setCASPrintForm(tempCASPrintForm);

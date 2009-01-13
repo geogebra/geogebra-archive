@@ -391,7 +391,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         	 JCheckBoxMenuItem cbItem;
             
             // show object
-        	if (geo.getShowObjectCondition() == null) {
+        	if (geo.getShowObjectCondition() == null && (!geo.isGeoBoolean() || geo.isIndependent())) {
 	            cbItem = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
 	            cbItem.setIcon(app.getImageIcon("mode_showhideobject_16.gif"));
 	            cbItem.setSelected(geo.isSetEuclidianVisible());
@@ -525,8 +525,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				public void actionPerformed(ActionEvent e) {                    
                     AlgebraInput ai = (AlgebraInput) app.getGuiManager().getAlgebraInput();
                     if (ai != null) {
-                    	ai.clear();                  
-                    	ai.getTextField().setText(geo.toValueString());
+                    	ai.clear();   
+                    	if (geo.isDefined())
+                    		ai.getTextField().setText(geo.toValueString());
                     	ai.requestFocus();
                     }
                 }

@@ -502,6 +502,7 @@ public abstract class Drawable {
 		float x = xPos;
 		float y = yPos;
 		int startPos = 0;
+		if (str == null) return null;
 		int length = str.length();
 
 		for (int i=0; i < length; i++) {

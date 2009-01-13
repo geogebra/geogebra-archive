@@ -19,7 +19,9 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @author  Michael Borcherds
  * @version 
  */
-public class AlgoLCM extends AlgoTwoNumFunction {         
+public class AlgoLCM extends AlgoTwoNumFunction {        
+	
+	private StringBuffer sb = new StringBuffer();
         
     AlgoLCM(Construction cons, String label, NumberValue a, NumberValue b) {       
 	  super(cons, label, a, b); 
@@ -34,11 +36,16 @@ public class AlgoLCM extends AlgoTwoNumFunction {
     		if (a.getDouble()==Math.floor(a.getDouble()) && b.getDouble()==Math.floor(b.getDouble()))
     		{       // TODO what shall we do with numbers larger than 2^57?
     				// Lcm[2^58+1,2] and Lcm[2^58,2] currently give the same answer
-
-    			String aa=Double.toString(a.getDouble());
-    			String bb=Double.toString(b.getDouble());
-    			String yacasCommand="Lcm(Round("+aa+"),Round("+bb+"))";
-        		String result=kernel.evaluateYACAS(yacasCommand);
+	
+    			// build MathPiper command
+    			sb.setLength(0);
+    			sb.append("Lcm(Round(");
+    			sb.append(a.getDouble());
+    			sb.append("),Round(");
+    			sb.append(b.getDouble());
+    			sb.append("))");
+    			
+        		String result=kernel.evaluateMathPiper(sb.toString());
         		try {
             		double lcm = Double.valueOf(result).doubleValue();
             		num.setValue(lcm);

@@ -12,7 +12,7 @@ public class Parser implements ParserConstants {
     private Kernel kernel;
     private Construction cons;
     private Application app;
-    private boolean yacasParsing = false;
+    private boolean MathPiperParsing = false;
 
     public Parser(Kernel kernel, Construction cons) {
          this ( new java.io.StringReader("") ); // dummy stream for parser initing
@@ -24,7 +24,7 @@ public class Parser implements ParserConstants {
     // reset for new parsing
     public void myReInit(String parseString) {
         ReInit(new java.io.StringReader(parseString));
-        yacasParsing = false;
+        MathPiperParsing = false;
     }
 
     /**
@@ -44,13 +44,13 @@ public class Parser implements ParserConstants {
     }
 
     /**
-     * Parses a Yacas String and returns a ValidExpression Object     
+     * Parses a MathPiper String and returns a ValidExpression Object     
      */
-    public ValidExpression parseYacas(String parseString) throws ParseException {
+    public ValidExpression parseMathPiper(String parseString) throws ParseException {
         myReInit( parseString );
         // parse 3*x + 4*y == 2 as an equation 3x + 4y = 2
-        yacasParsing = true;
-        return buildYacasExpression();
+        MathPiperParsing = true;
+        return buildMathPiperExpression();
     }
 
     /**
@@ -287,15 +287,15 @@ public class Parser implements ParserConstants {
   }
 
 /**
- * convert Yacas String to GeoGebra string
+ * convert MathPiper String to GeoGebra string
  */
-  final public ValidExpression buildYacasExpression() throws ParseException {
+  final public ValidExpression buildMathPiperExpression() throws ParseException {
     ValidExpression ve;
     ExpressionNode lhs, rhs;
     Token l = new Token();
     Vector labels = new Vector();
     if (jj_2_13(2147483647)) {
-      ve = yacasSolveResult();
+      ve = MathPiperSolveResult();
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case NOT:
@@ -347,7 +347,7 @@ public class Parser implements ParserConstants {
       case TEXT:
       case 88:
       case 94:
-        // try to parse Yacas string as standard GeoGebra expression 
+        // try to parse MathPiper string as standard GeoGebra expression 
                 ve = expressionnode();
         break;
       default:
@@ -375,7 +375,7 @@ public class Parser implements ParserConstants {
 /**
  * convert Solve results like {x==5, x==7} to simple list {5, 7} 
  */
-  final public ValidExpression yacasSolveResult() throws ParseException {
+  final public ValidExpression MathPiperSolveResult() throws ParseException {
         ExpressionValue ev;
         MyList myList;
     if (jj_2_14(5)) {
@@ -1036,7 +1036,7 @@ ValidExpression  functionOrCommand():
       f = ANDterm();
                  ret = new ExpressionNode(kernel, ret, ExpressionNode.OR, f);
     }
-        if (yacasParsing)
+        if (MathPiperParsing)
                         ret.simplifyLeafs();
         {if (true) return ret;}
     throw new Error("Missing return statement in function");
@@ -1087,7 +1087,7 @@ ValidExpression  functionOrCommand():
       case EQUAL_BOOLEAN:
         jj_consume_token(EQUAL_BOOLEAN);
         f = plusminusnode();
-           if (yacasParsing)
+           if (MathPiperParsing)
                ret = new ExpressionNode(kernel, new Equation(kernel, ret, f));
            else
                         ret = new ExpressionNode(kernel, ret, ExpressionNode.EQUAL_BOOLEAN, f);

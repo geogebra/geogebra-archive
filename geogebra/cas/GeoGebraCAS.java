@@ -20,7 +20,6 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
-import jasymca.GeoGebraJasymca;
 
 import java.util.ArrayList;
 import java.util.MissingResourceException;
@@ -32,22 +31,21 @@ import org.mathpiper.interpreters.Interpreters;
 
 /**
  * This class provides an interface for GeoGebra to use the computer algebra
- * systems Jasymca and Yacas.
+ * systems Jasymca and MathPiper.
  * 
  * @author Markus Hohenwarter
  */
 public class GeoGebraCAS {
 	
-	final public String RB_GGB_TO_YACAS = "/geogebra/cas/ggb2yacas";
+	final public String RB_GGB_TO_MathPiper = "/geogebra/cas/ggb2mathpiper";
 
 	private Kernel kernel;
 	private Application app;
 	private CASparser casParser;
-	private GeoGebraJasymca ggbJasymca;
 	private Interpreter ggbMathPiper;
 	
-	private ResourceBundle ggb2Yacas;
-	private StringBuffer sbInsertSpecial, sbRemoveSpecial;
+	private ResourceBundle ggb2MathPiper;
+	private StringBuffer sbInsertSpecial, sbRemoveSpecial, sbPolyCoeffs;
 
 	public GeoGebraCAS(Kernel kernel) {
 		this.kernel = kernel;
@@ -74,20 +72,20 @@ public class GeoGebraCAS {
 		String assignmentLabel = ve.getLabel();
 		doEvaluate = doEvaluate || assignmentLabel != null; // always evaluate assignments
 		
-		// convert parsed input to Yacas string
-		String yacasString = toYacasString(ve, resolveVariables);
+		// convert parsed input to MathPiper string
+		String MathPiperString = toMathPiperString(ve, resolveVariables);
 		
-		// EVALUATE input in Yacas depending on key combination
-		String yacasResult;
+		// EVALUATE input in MathPiper depending on key combination
+		String MathPiperResult;
 		if (doEvaluate) {
-			yacasResult = evaluateMathPiper(yacasString);
+			MathPiperResult = evaluateMathPiper(MathPiperString);
 		}
 		else {
-			yacasResult = evaluateMathPiper("Hold", yacasString);
+			MathPiperResult = evaluateMathPiper("Hold", MathPiperString);
 		}
 		
-		// convert Yacas result back into GeoGebra syntax
-		ve = parseYacas(yacasResult);
+		// convert MathPiper result back into GeoGebra syntax
+		ve = parseMathPiper(MathPiperResult);
 		String ggbResult = ve.toString();
 		
 		
@@ -153,12 +151,12 @@ public class GeoGebraCAS {
 	private StringBuffer sbCASreferences = new StringBuffer();
 	
 	/**
-	 * Evaluates the given ExpressionValue and returns the result in Yacas syntax.
+	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
 	 * 
 	 * @param resolveVariables: states whether variables from the GeoGebra kernel 
 	 *    should be used. Note that this changes the given ExpressionValue. 
 	 */
-	public synchronized String toYacasString(ValidExpression ve, boolean resolveVariables) {
+	public synchronized String toMathPiperString(ValidExpression ve, boolean resolveVariables) {
 		
 		// resolve global variables
 		if (resolveVariables) {			
@@ -168,43 +166,135 @@ public class GeoGebraCAS {
 			Application.debug("  resolveVariablesForCAS: " + ve);
 		}	
 		
-		// convert to Yacas String
-		String yacasStr = casParser.toYacasString(ve, resolveVariables);
+		// convert to MathPiper String
+		String MathPiperStr = casParser.toMathPiperString(ve, resolveVariables);
 	
 		// label of an assignment, e.g. a := 5
 		String veLabel = ve.getLabel();
 		if (veLabel != null)
-			yacasStr = veLabel + " := " + yacasStr;
+			MathPiperStr = veLabel + " := " + MathPiperStr;
 		
 		// TODO: remove
-		Application.debug(" toYacasString: " + yacasStr);
-		return yacasStr;
+		Application.debug(" toMathPiperString: " + MathPiperStr);
+		return MathPiperStr;
 	}		
 	
 	
 	/**
 	 * Tries to parse a given MathPiper string and returns a ValidExpression object.
 	 */
-	public synchronized ValidExpression parseYacas(String yacasString) throws Throwable {
-		return casParser.parseYacas(yacasString);
+	public synchronized ValidExpression parseMathPiper(String MathPiperString) throws Throwable {
+		return casParser.parseMathPiper(MathPiperString);
 	}
-		
+	
 	/**
-	 * Evaluates a MathPiper expression and returns the result as a string in Yacas syntax, 
+	 * Returns the MathPiper command for the given key (from ggb2MathPiper.properties)
+	 * and the given command arguments. 
+	 * For example, getMathPiperCommand("Expand.0", {"3*(a+b)"}) returns "Expand( 3*(a+b) )"
+	 */
+	final synchronized public String getMathPiperCommand(String name, ArrayList args, boolean symbolic) {
+		StringBuffer sbMathPiperCommand = new StringBuffer(80);
+				
+		// build command key as name + "." + args.size()
+		sbMathPiperCommand.setLength(0);
+		sbMathPiperCommand.append(name);
+		sbMathPiperCommand.append('.');
+		sbMathPiperCommand.append(args.size());
+		
+		// get translation ggb -> MathPiper
+		String translation = getMathPiperCommand(sbMathPiperCommand.toString());
+		sbMathPiperCommand.setLength(0);		
+		
+		// no translation found: 
+		// use key as command name
+		if (translation == null) {			
+			sbMathPiperCommand.append(name);
+			sbMathPiperCommand.append('(');
+			for (int i=0; i < args.size(); i++) {
+				ExpressionValue ev = (ExpressionValue) args.get(i);				
+				if (symbolic)
+					sbMathPiperCommand.append(ev.toString());
+				else
+					sbMathPiperCommand.append(ev.toValueString());
+				sbMathPiperCommand.append(',');
+			}
+			sbMathPiperCommand.setCharAt(sbMathPiperCommand.length()-1, ')');
+		}
+		
+		// translation found: 
+		// replace %0, %1, etc. in translation by command arguments
+		else {
+			for (int i = 0; i < translation.length(); i++) {
+				char ch = translation.charAt(i);
+				if (ch == '%') {
+					// get number after %
+					i++;
+					int pos = translation.charAt(i) - '0';
+					if (pos >= 0 && pos < args.size()) {
+						// success: insert argument(pos)
+						ExpressionValue ev = (ExpressionValue) args.get(pos);				
+						if (symbolic)
+							sbMathPiperCommand.append(ev.toString());
+						else
+							sbMathPiperCommand.append(ev.toValueString());
+					} else {
+						// failed
+						sbMathPiperCommand.append(ch);
+					}
+				} else {
+					sbMathPiperCommand.append(ch);
+				}
+			}
+		}
+
+		return sbMathPiperCommand.toString();
+	}
+	
+	
+	/**
+	 * Returns the MathPiper command for the given key (from ggb2MathPiper.properties)
+	 */ 
+	private synchronized String getMathPiperCommand(String key) {
+		if (ggb2MathPiper == null) {
+			ggb2MathPiper = MyResourceBundle.loadSingleBundleFile(RB_GGB_TO_MathPiper);
+		}
+		
+		String ret;
+		try {
+			ret =  ggb2MathPiper.getString(key);
+		} catch (MissingResourceException e) {
+			ret = null;
+		}
+		
+		// TODO: remove
+		Application.debug("getMathPiperCommand for " + key + " gives: " + ret);
+		
+		return ret;
+	}
+	
+	/**
+	 * Evaluates a MathPiper expression and returns the result as a string in MathPiper syntax, 
 	 * e.g. evaluateMathPiper("D(x) (x^2)") returns "2*x".
 	 * 
 	 * @return result string (null possible)
 	 */
 	final synchronized public String evaluateMathPiper(String exp) {
-		String result = evaluateMathPiper(exp, true);
-		
+		String result = evaluateMathPiper(exp, true);		
 		// TODO: remove
-		Application.debug("evaluateMathPiper: " + exp + ", result: " + result);
-		
-		
+		//Application.debug("evaluateMathPiper: " + exp + ", result: " + result);				
 		return result;
 	}
 	
+	/**
+	 * Evaluates a MathPiper expression without any preprocessing and returns the
+	 * result as a string, e.g. exp = "D(x) (x^2)" returns "2*x".
+	 * 
+	 * example: getPolynomialCoeffs("3*a*x^2 + b"); returns ["b", "0", "3*a"]
+	 */
+	final public synchronized String evaluateMathPiperRaw(String exp) {
+		return evaluateMathPiper(exp, false);
+	}
+				
 	/**
 	 * Evaluates a MathPiper expression wrapped in a command and returns the result as a string, 
 	 * e.g. wrapperCommand = "Factor", exp = "3*(a+b)" evaluates "Factor(3*(a+b)" and 
@@ -219,39 +309,33 @@ public class GeoGebraCAS {
 		sb.append(exp);				
 		sb.append(')');
 		return evaluateMathPiper(sb.toString());
-	}
+	}	
 	
 	/**
-	 * Evaluates a YACAS expression without any preprocessing and returns the
-	 * result as a string, e.g. exp = "D(x) (x^2)" returns "2*x".
-	 * 
-	 * @return result string (null possible)
-	 */
-	final synchronized public String evaluateMathPiperRaw(String exp) {
-		return evaluateMathPiper(exp, false);
-	}
-	
-	/**
-	 * Returns the error message of the last Yacas evaluation.
+	 * Returns the error message of the last MathPiper evaluation.
 	 * @return null if last evaluation was successful.
 	 */
-	final synchronized public String getYACASError() {
-		return response.getExceptionMessage();
-		//return getYacas().getErrorMessage();
+	final synchronized public String getMathPiperError() {
+		if (response != null)
+			return response.getExceptionMessage();
+		else 
+			return null;
 	}
 	
 	EvaluationResponse response ;	
 	
 	private synchronized String evaluateMathPiper(String exp, boolean replaceSpecialChars) {
-		// Application.debug("exp for YACAS: " + exp);
+		// TODO: remove
+		Application.debug("exp for MathPiper: " + exp);
+		
 		try {
 			String result;
 			
-			// YACAS has problems with special characters
+			// MathPiper has problems with special characters
 			if (replaceSpecialChars)
 				exp = replaceSpecialChars(exp);
 
-			// evaluate the Yacas expression
+			// evaluate the MathPiper expression
 			Interpreter mathpiper = getMathPiper();
 
 			response = mathpiper.evaluate(exp);
@@ -267,79 +351,95 @@ public class GeoGebraCAS {
 			if (replaceSpecialChars)
 				result = insertSpecialChars(result);
 
-			// Application.debug(" result: " + result);
+			// TODO: remove
+			Application.debug(" result: " + result);
 			
 			return result;
 		} catch (Throwable th) {
-			//yacas.Evaluate("restart;");
+			//MathPiper.Evaluate("restart;");
 			th.printStackTrace();
 			return null;
 		} 
 	}
-
-
 	
-	private synchronized Interpreter getMathPiper() {
-		
-		
+	private synchronized Interpreter getMathPiper() {				
 		if (ggbMathPiper == null) {
 			// where to find MathPiper scripts
 			//eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
 			
-			String scriptBase = "jar:" + app.getCodeBase().toString() + JarManager.CAS_JAR_NAME + "!/";
+			String scriptBase = "jar:" + app.getCodeBase().toString() + JarManager.CAS_JAR_NAME + "!/";			
 			
-			Application.debug("loading MathPiper scripts from: "+scriptBase);
+			// TODO: remove
+			Application.debug("loading MathPiper scripts from: "+scriptBase);			
 			
 			ggbMathPiper = Interpreters.getSynchronousInterpreter(scriptBase);
 		}
 		
 		return ggbMathPiper;
+	}	
+	
+
+	final public String simplifyMathPiper(String exp) {
+		return evaluateMathPiper("Simplify", exp );
 	}
 	
-	private synchronized GeoGebraJasymca getJasymca() {
-		if (ggbJasymca == null)
-			ggbJasymca = new GeoGebraJasymca();
-		return ggbJasymca;
+	final public String factorMathPiper(String exp) {
+		return evaluateMathPiper("Factor", exp );
+	}
+
+	final public String expandMathPiper(String exp) {
+		return evaluateMathPiper("ExpandBrackets", exp );
 	}
 	
 	/**
-	 * Evaluates a JASYMCA expression and returns the result as a string, e.g.
-	 * exp = "diff(x^2,x)" returns "2*x".
-	 * 
-	 * @return result string, null possible
-	 */
-	final synchronized public String evaluateJASYMCA(String exp) {		
-		String result = getJasymca().evaluate(exp);
-
-		// to handle x(A) and x(B) they are converted
-		// to unicode strings in ExpressionNode,
-		// we need to convert them back here
-		result = insertSpecialChars(result);
-
-		// Application.debug("exp for JASYMCA: " + exp);
-		// Application.debug(" result: " + result);
-
-		return result;
-	}
-	
-
-	/**
-	 * Expands the given JASYMCA expression and tries to get its polynomial
+	 * Expands the given MathPiper expression and tries to get its polynomial
 	 * coefficients. The coefficients are returned in ascending order. If exp is
-	 * not a polynomial null is returned.
+	 * not a polynomial, null is returned.
 	 * 
-	 * example: getPolynomialCoeffs("3*a*x^2 + b"); returns ["0", "b", "3*a"]
+	 * example: getPolynomialCoeffs("3*a*x^2 + b"); returns ["b", "0", "3*a"]
 	 */
-	final synchronized public String[] getPolynomialCoeffs(String jasymcaExp, String variable) {		
-		return getJasymca().getPolynomialCoeffs(jasymcaExp, variable);
+	final public String[] getPolynomialCoeffs(String MathPiperExp, String variable) {
+		//return ggbJasymca.getPolynomialCoeffs(MathPiperExp, variable);
+		
+		if (sbPolyCoeffs == null)
+			sbPolyCoeffs = new StringBuffer();
+		else
+			sbPolyCoeffs.setLength(0);
+		
+		// Expand expression and get polynomial coefficients using MathPiper:
+		// Prog( Local(exp), 
+		//   	 exp := ExpandBrackets( 3*a*x^2 + b ), 
+		//		 Coef(exp, x, 0 .. Degree(exp, x)) 
+		// )		
+		sbPolyCoeffs.append("Prog( Local(exp), exp := ExpandBrackets(");
+		sbPolyCoeffs.append(MathPiperExp);
+		sbPolyCoeffs.append("), Coef(exp, x, 0 .. Degree(exp, x)))");
+			
+		try {
+			// expand expression and get coefficients of
+			// "3*a*x^2 + b" in form "{ b, 0, 3*a }" 
+			String result = evaluateMathPiper(sbPolyCoeffs.toString());
+			
+			// remove { } to get "b, 0, 3*a"
+			result = result.substring(1, result.length()-1);
+			
+			// split to get coefficients array ["b", "0", "3*a"]
+			String [] coeffs = result.split(",");				    
+            return coeffs;						
+		} 
+		catch(Exception e) {
+			Application.debug("GeoGebraCAS.getPolynomialCoeffs(): " + e.getMessage());
+			//e.printStackTrace();
+		}
+		
+		return null;
 	}
-
 
 
 	/**
 	 * Converts all special characters (like greek letters) in the given String
 	 * to "unicode" + charactercode + DELIMITER Strings. This is neede because
-	 * YACAS cannot handle all unicode characters.
+	 * MathPiper cannot handle all unicode characters.
 	 */
 	private synchronized String replaceSpecialChars(String str) {
 		int len = str.length();
@@ -389,8 +489,9 @@ public class GeoGebraCAS {
 
 	/**
 	 * Reverse operation of removeSpecialChars().
+	 * @see ExpressionNode.operationToString() for XCOORD, YCOORD
 	 */
-	private synchronized String insertSpecialChars(String str) {
+	private String insertSpecialChars(String str) {
 		int len = str.length();
 		sbInsertSpecial.setLength(0);
 
@@ -440,94 +541,7 @@ public class GeoGebraCAS {
 		}
 		return sbInsertSpecial.toString();
 	}
-
 	
-	
-	/**
-	 * Returns the Yacas command for the given key (from ggb2yacas.properties)
-	 * and the given command arguments. 
-	 * For example, getYacasCommand("Expand.0", {"3*(a+b)"}) returns "Expand( 3*(a+b) )"
-	 */
-	final synchronized public String getYacasCommand(String name, ArrayList args, boolean symbolic) {
-		StringBuffer sbYacasCommand = new StringBuffer(80);
-				
-		// build command key as name + "." + args.size()
-		sbYacasCommand.setLength(0);
-		sbYacasCommand.append(name);
-		sbYacasCommand.append('.');
-		sbYacasCommand.append(args.size());
-		
-		// get translation ggb -> yacas
-		String translation = getYacasCommand(sbYacasCommand.toString());
-		sbYacasCommand.setLength(0);		
-		
-		// no translation found: 
-		// use key as command name
-		if (translation == null) {			
-			sbYacasCommand.append(name);
-			sbYacasCommand.append('(');
-			for (int i=0; i < args.size(); i++) {
-				ExpressionValue ev = (ExpressionValue) args.get(i);				
-				if (symbolic)
-					sbYacasCommand.append(ev.toString());
-				else
-					sbYacasCommand.append(ev.toValueString());
-				sbYacasCommand.append(',');
-			}
-			sbYacasCommand.setCharAt(sbYacasCommand.length()-1, ')');
-		}
-		
-		// translation found: 
-		// replace %0, %1, etc. in translation by command arguments
-		else {
-			for (int i = 0; i < translation.length(); i++) {
-				char ch = translation.charAt(i);
-				if (ch == '%') {
-					// get number after %
-					i++;
-					int pos = translation.charAt(i) - '0';
-					if (pos >= 0 && pos < args.size()) {
-						// success: insert argument(pos)
-						ExpressionValue ev = (ExpressionValue) args.get(pos);				
-						if (symbolic)
-							sbYacasCommand.append(ev.toString());
-						else
-							sbYacasCommand.append(ev.toValueString());
-					} else {
-						// failed
-						sbYacasCommand.append(ch);
-					}
-				} else {
-					sbYacasCommand.append(ch);
-				}
-			}
-		}
-
-		return sbYacasCommand.toString();
-	}
-	
-	
-	/**
-	 * Returns the Yacas command for the given key (from ggb2yacas.properties)
-	 */ 
-	private synchronized String getYacasCommand(String key) {
-		if (ggb2Yacas == null) {
-			ggb2Yacas = MyResourceBundle.loadSingleBundleFile(RB_GGB_TO_YACAS);
-		}
-		
-		String ret;
-		try {
-			ret =  ggb2Yacas.getString(key);
-		} catch (MissingResourceException e) {
-			ret = null;
-		}
-		
-		// TODO: remove
-		Application.debug("getYacasCommand for " + key + " gives: " + ret);
-		
-		return ret;
-	}
-		
 	/*
 	 * public static void main(String [] args) {
 	 * 
@@ -535,7 +549,7 @@ public class GeoGebraCAS {
 	 * 
 	 * Application.debug("GGBCAS"); // Read/eval/print loop int i=1;
 	 * while(true){ Application.debug( "(In"+i+") "); // Prompt try{ String line =
-	 * readLine(System.in); //String result = yacas.Evaluate(line);
+	 * readLine(System.in); //String result = MathPiper.Evaluate(line);
 	 * 
 	 * String result = cas.evaluateJASYMCA(line);
 	 * 
@@ -543,97 +557,4 @@ public class GeoGebraCAS {
 	 * Application.debug("\n"+e); } } }
 	 */
 
-	// Read everything until ';' or EOF
-//	static String readLine(InputStream in) {
-//		StringBuffer s = new StringBuffer();
-//		try {
-//			int c;
-//			while ((c = in.read()) != -1 && c != ';')
-//				s.append((char) c);
-//		} catch (Exception e) {
-//		}
-//		return s.toString();
-//	}
-	
-
-	/*
-	 * Evaluates an JSCL expression and returns the result as a string. e.g. exp =
-	 * "d(x^2, x)" returns "2*x"
-	 * 
-	 * @param expression
-	 *            string
-	 * @return result string (null possible)
-	 * 
-	 * final public String evaluateJSCL(String exp) { //Application.debug("exp
-	 * for JSCL: " + exp);
-	 * 
-	 * try { String result; // JSCL has problems with special characters: // get
-	 * rid of them String myExp = removeSpecialChars(exp); Generic
-	 * in=Expression.valueOf(myExp); // Strings for expand, simplify and
-	 * factorize // we want the shortest string to be returned //String [] str =
-	 * new String[2];
-	 * 
-	 * Generic out = in.expand();
-	 * 
-	 * //Application.debug(" expand: " + out);
-	 * 
-	 * if (out.isPolynomial(xVar)) { // build polynomial UnivariatePolynomial p =
-	 * UnivariatePolynomial.valueOf(out, xVar); result = toReverseString(p); }
-	 * else { out = out.simplify(); result = out.toString(); }
-	 * 
-	 * //Application.debug(" result: " + result); //Application.debug(" result
-	 * (special chars): " + insertSpecialChars(result));
-	 * 
-	 * result = out.toString(); return insertSpecialChars(result); } catch
-	 * (Error err) { err.printStackTrace(); return null; } catch (Exception e) {
-	 * e.printStackTrace(); return null; } }
-	 */
-
-	/*
-	 * private static String toReverseString(UnivariatePolynomial p) {
-	 * sbReverse.setLength(0); if(p.signum()==0) sbReverse.append("0"); int n=0;
-	 * int d=p.degree(); for(int i=d;i>=0;i--) { Generic a=p.get(i);
-	 * if(a.signum()==0) continue; if(a instanceof Expression)
-	 * a=a.signum()>0?GenericVariable.valueOf(a).expressionValue():GenericVariable.valueOf(a.negate()).expressionValue().negate();
-	 * if(a.signum()>0 && n>0) sbReverse.append("+"); if(i==0)
-	 * sbReverse.append(a); else { if(a.compareTo(JSCLInteger.valueOf(1))==0);
-	 * else if(a.compareTo(JSCLInteger.valueOf(-1))==0) sbReverse.append("-");
-	 * else sbReverse.append(a).append("*");
-	 * 
-	 * switch (i) { case 1: sbReverse.append("x"); break; default:
-	 * sbReverse.append("x^"); sbReverse.append(i); } } n++; } return
-	 * sbReverse.toString(); }
-	 */
-
-	/*
-	 * old code for JSCL
-	 * 
-	 * final public String [] getPolynomialCoeffs(String exp) { try { // JSCL
-	 * does not recognize x^2 / 4 as a polynomial // but it does recognize x^2 *
-	 * 1/4, so we replace every "/" by "*1/" String noDivExp =
-	 * removeSpecialChars(exp.replaceAll("/", "*1/"));
-	 * 
-	 * //Application.debug("getPolynomialCoeffs for " + exp);
-	 * //Application.debug("noDivExp " + noDivExp);
-	 * 
-	 * Generic jsclExp = Expression.valueOf(noDivExp).expand();
-	 * 
-	 * //Application.debug(" expand: " + jsclExp); //Application.debug("
-	 * isPolynomial(x): " + jsclExp.isPolynomial(xVar)); // check if we have a
-	 * polynomial if (!jsclExp.isPolynomial(xVar)) { // try to simplify jsclExp =
-	 * jsclExp.simplify(); //Application.debug(" simplify: " + jsclExp); if
-	 * (!jsclExp.isPolynomial(xVar)) return null; } // build polynomial
-	 * UnivariatePolynomial p = UnivariatePolynomial.valueOf(jsclExp, xVar);
-	 * 
-	 * int deg = p.degree(); String [] coeffs = new String[deg+1]; for (int i=0;
-	 * i <= deg; i++) { Generic coeff = p.get(i); // the coefficient must not
-	 * include the variable if (coeff.isConstant(xVar)) coeffs[i] =
-	 * insertSpecialChars(coeff.toString()); else return null;
-	 * 
-	 * //Application.debug(" coeff " + i + ": " + coeffs[i]);
-	 * //Application.debug(" is constant: " + p.get(i).isConstant(xVar)); }
-	 * 
-	 * return coeffs; } catch (Error err) { err.printStackTrace(); return null; }
-	 * catch (Exception e) { e.printStackTrace(); return null; } }
-	 */
 }

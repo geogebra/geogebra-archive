@@ -26,7 +26,7 @@ final public  GeoElement[] process(Command c) throws MyError {
     	// Note: x and y coords are numbers dependent on number-var
     	case 5 :
     	    // create local variable at position 2 and resolve arguments
-    	    GeoElement[] arg = resArgsLocalNumVar(c, 2);      
+    	    GeoElement[] arg = resArgsLocalNumVar(c, 2, 3);      
 
     	    if ((ok[0] = arg[0].isNumberValue())
             	 && (ok[1] = arg[1].isNumberValue())

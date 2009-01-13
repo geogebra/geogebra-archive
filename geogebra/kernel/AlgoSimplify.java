@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
 /**
  * Try to expand the given function 
  * 
@@ -23,7 +22,9 @@ public class AlgoSimplify extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
-    private GeoFunction g; // output         
+    private GeoFunction g; // output     
+    
+    private StringBuffer sb = new StringBuffer();
    
     public AlgoSimplify(Construction cons, String label, GeoFunction f) {
     	super(cons);
@@ -58,33 +59,37 @@ public class AlgoSimplify extends AlgoElement {
         	g.setUndefined();
         	return;
         }    
-                
-        
-        // Yacas version
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_YACAS, true);
+
+        // MathPiper version       
+	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 
         /*
 		String functionIn = f.getFunction().
-		getExpression().getCASstring(ExpressionNode.STRING_TYPE_YACAS, false);*/
+		getExpression().getCASstring(ExpressionNode.STRING_TYPE_MathPiper, false);*/
 		//Application.debug(functionIn);
 
-		String functionOut = kernel.evaluateMathPiperRaw("Simplify("+functionIn+")");
+	    
+	    sb.setLength(0);
+        sb.append("Simplify(");
+        sb.append(functionIn);
+        sb.append(")");
+		String functionOut = kernel.evaluateMathPiperRaw(sb.toString());
 		
 		//Application.debug("Factorize input:"+functionIn);
 		//Application.debug("Factorize output:"+functionOut);
 		
-		boolean yacasError=false;
+		boolean MathPiperError=false;
 		
-		if (functionOut.length()==0) yacasError=true; // Yacas error
+		if (functionOut.length()==0) MathPiperError=true; // MathPiper error
 		
 		if (functionOut.length()>7)
-			if (functionOut.startsWith("Simplify(") || // Yacas error
-				functionOut.startsWith("Undefined") || // Yacas error/bug eg Simplify(0.00000000000000001)
-				functionOut.startsWith("FWatom(") )  // Yacas oddity??
-				yacasError=true;
+			if (functionOut.startsWith("Simplify(") || // MathPiper error
+				functionOut.startsWith("Undefined") || // MathPiper error/bug eg Simplify(0.00000000000000001)
+				functionOut.startsWith("FWatom(") )  // MathPiper oddity??
+				MathPiperError=true;
 			
 
-		if (yacasError) // Yacas error
+		if (MathPiperError) // MathPiper error
 		{
 			g.set(f); // set to input ie leave unchanged
 		}

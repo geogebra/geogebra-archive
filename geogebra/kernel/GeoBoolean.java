@@ -173,7 +173,7 @@ AbsoluteScreenLocateable {
 	
 	final public String toValueString() {
 		switch (kernel.getCASPrintForm()) {
-			case ExpressionNode.STRING_TYPE_YACAS:
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 				return value ? "True" : "False";							
 		
 			default:

@@ -687,7 +687,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         }
                 
         // get coefficients as strings
-        String function = node.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, symbolic);        
+        String function = node.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, symbolic);        
         String [] strCoeffs = kernel.getPolynomialCoeffs(function, "x");
         if (strCoeffs == null)
 			// this is not a valid polynomial           
@@ -752,11 +752,11 @@ implements ExpressionValue, RealRootFunction, Functional {
  
     // remember calculated derivatives and integral
     // do calculus only if expression changed
-    private ExpressionNode diffParentExp, intParentExp;
+    private ExpressionNode diffParentExp, intParentExp, expandParentExp;
     
     //  stores derivatives as (order, result function) pairs
     private FastHashMapKeyless derivativeMap = new FastHashMapKeyless(); 
-    private Function integralFun;
+    private Function integralFun, expandedFun;
     
     /**
      * Returns n-th derivative of this function wrapped
@@ -787,7 +787,9 @@ implements ExpressionValue, RealRootFunction, Functional {
         } else {
             // do we have the desired result?
             Object ob = derivativeMap.get(n);
-            if (ob != null) return (Function) ob;
+            if (ob != null) {            	
+            	return (Function) ob;
+            }
         }
 
         // ok, we really have to do it...
@@ -808,34 +810,48 @@ implements ExpressionValue, RealRootFunction, Functional {
         
         return integralFun;
      }
+     
+     /**
+      * Returns expanded version of this function.
+      * e.g. 3*(x-2) is expanded to 3*x - 6
+      */
+     final public Function getExpanded() {
+        //  do expand only if parent expression changed
+        if (expandParentExp != expression) {
+        	expandParentExp = expression;
+            expandedFun = expand();
+        }
+        
+        return expandedFun;
+     }
 
     /**
      * Calculates the derivative of this function
      * @param order of derivative
      * @return result as function
      */
-    final private Function derivative(int order) {
-        // build expression string for JSCL             
-		sb.setLength(0);
-        sb.append("d(");
-        // function expression with multiply sign "*"
-        
+    final private Function derivative(int order) {      
         // temporarily replace the variable by "x"
         String oldVar = fVar.toString();
         fVar.setVarString("x");
-        
-        // build expression string for JASYMCA             
+                
+        // build expression string for MathPiper             
 		sb.setLength(0);
-		for (int i=0; i < order; i++)
-         	sb.append("diff("); 
+		if (order == 1)
+			sb.append("D(x) ");
+		else {
+	        sb.append("D(x,");
+	        sb.append(order);
+	        sb.append(") ");
+		}
+        
         // function expression with multiply sign "*"                                  
-		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));		
-		for (int i=0; i < order; i++)
-         	sb.append(",x)"); 
+		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));		
+ 
           
         try {                   	            
-            // evaluate expression by JASYMCA          	        	        	
-            String result = kernel.evaluateJASYMCA(sb.toString());       
+            // evaluate expression by MathPiper          	        	        	
+            String result = kernel.evaluateMathPiper(sb.toString());       
             
         	sb.setLength(0);
             // it doesn't matter what label we use here as it is never used            			
@@ -857,6 +873,41 @@ implements ExpressionValue, RealRootFunction, Functional {
          finally {
         	 fVar.setVarString(oldVar);
          }
+     
+//        // build expression string for JASYMCA             
+//		sb.setLength(0);
+//		for (int i=0; i < order; i++)
+//         	sb.append("diff("); 
+//        // function expression with multiply sign "*"                                  
+//		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));		
+//		for (int i=0; i < order; i++)
+//         	sb.append(",x)"); 
+//          
+//        try {                   	            
+//            // evaluate expression by JASYMCA          	        	        	
+//            String result = kernel.evaluateJASYMCA(sb.toString());       
+//            
+//        	sb.setLength(0);
+//            // it doesn't matter what label we use here as it is never used            			
+//			sb.append("f(x) = ");			
+//            sb.append(result);
+//    
+//             // parse result
+//             Function fun = kernel.getParser().parseFunction(sb.toString());
+//             fun.initFunction();
+//             fun.getFunctionVariable().setVarString(oldVar);                       
+//             return fun;
+//         } catch (Error err) {       
+//             //err.printStackTrace();
+//        	 return null;
+//         } catch (Exception e) {
+//        	 //e.printStackTrace();
+//             return null;
+//         }     
+//         finally {
+//        	 fVar.setVarString(oldVar);
+//         }
+         
     }	    
     
     /**
@@ -942,6 +993,36 @@ implements ExpressionValue, RealRootFunction, Functional {
         String oldVar = fVar.toString();
         fVar.setVarString("x");
     	
+        // build expression string for MathPiper
+        sb.setLength(0);
+        sb.append("Integrate(x) ");
+        // function expression with multiply sign "*"
+        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));        
+
+        try {           
+            // evaluate expression by MathPiper
+            String result = kernel.evaluateMathPiper(sb.toString());                           
+            
+            sb.setLength(0);
+            // it doesn't matter what label we use here as it is never used
+            sb.append("f(x)="); 
+            sb.append(result);
+    
+             // parse result
+             Function fun =  kernel.getParser().parseFunction(sb.toString());
+             fun.initFunction();
+             return fun;
+         } catch (Error err) {   
+             return null;
+         } catch (Exception e) {
+             return null;
+         }      
+         finally {
+        	 fVar.setVarString(oldVar);
+         }
+        
+        
+        /*
         // build expression string for JASYMCA
         sb.setLength(0);
         sb.append("integrate(");
@@ -970,6 +1051,40 @@ implements ExpressionValue, RealRootFunction, Functional {
          finally {
         	 fVar.setVarString(oldVar);
          }
+         */
+    }
+    
+    /**
+     * Calculates the expanded version of this function,
+     * e.g. 3*(x-2) is expanded to 3*x - 6.     
+     * @return result as function
+     */
+    final private Function expand() {    
+        // build expression string for MathPiper
+        sb.setLength(0);
+        sb.append("ExpandBrackets(");
+        // function expression with multiply sign "*"
+        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));    
+        sb.append(")");
+
+        try {           
+            // evaluate expression by MathPiper
+            String result = kernel.evaluateMathPiper(sb.toString());                           
+            
+            sb.setLength(0);
+            // it doesn't matter what label we use here as it is never used
+            sb.append("f(x)="); 
+            sb.append(result);
+    
+             // parse result
+             Function fun =  kernel.getParser().parseFunction(sb.toString());
+             fun.initFunction();
+             return fun;
+         } catch (Error err) {   
+             return null;
+         } catch (Exception e) {
+             return null;
+         }         
     }
     
     public boolean isNumberValue() {

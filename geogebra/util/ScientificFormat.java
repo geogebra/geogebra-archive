@@ -21,7 +21,7 @@ import org.freehep.util.DoubleWithError;
  *
  * @author Paul Spence
  * @author Mark Donszelmann
- * @version $Id: ScientificFormat.java,v 1.2 2008-10-19 21:02:41 murkle Exp $
+ * @version $Id: ScientificFormat.java,v 1.3 2009-01-13 04:06:50 hohenwarter Exp $
  */
 
 public class ScientificFormat extends Format
@@ -197,10 +197,6 @@ public class ScientificFormat extends Format
    }
    private String format(double d, int sigDig)
    {
-      // Deal with a few special values first
-      if (Double.isInfinite(d)) return "\u221e"; // Michael Borcherds 2008-10-19 was maxWidth < 8 ? "INF" : "Infinite";
-      if (Double.isNaN(d)) return "\u221e"; // Michael Borcherds 2008-10-19 was "NaN";
-      
       // Delegate the hard part to decimalFormat
       if (decimalFormat == null) decimalFormat = getDecimalFormat(sigDigit);
       DecimalFormat format = (sigDig == sigDigit) ? decimalFormat : getDecimalFormat(sigDig);

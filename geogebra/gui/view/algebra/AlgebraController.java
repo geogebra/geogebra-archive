@@ -82,7 +82,8 @@ public class AlgebraController
 		
 		// we want both of these to work on Mac and Windows
 		// although only one is displayed as a shortcut in the Edit menu
-		if (ch == KeyEvent.VK_DELETE || ch == KeyEvent.VK_BACK_SPACE)
+		// NB ctrl-h generates a KeyEvent.VK_BACK_SPACE event, so check for ctrl too
+		if (ch == KeyEvent.VK_DELETE || (!event.isControlDown() && ch == KeyEvent.VK_BACK_SPACE))
 		{
 			app.deleteSelectedObjects();			
 		}

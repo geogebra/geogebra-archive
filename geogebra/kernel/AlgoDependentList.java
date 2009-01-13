@@ -106,14 +106,14 @@ public class AlgoDependentList extends AlgoElement {
     		if (algo != null && algo.hasSingleOutputType()) {
     			// all siblings have same type: add them all
     			for (int k=0; k < algo.output.length; k++) {
-    				if (algo.output[k].isDefined())
-    					geoList.add(algo.output[k]);
+    				GeoElement geo = algo.output[k];
+    				if (geo == input[i] || geo.isDefined())
+    					geoList.add(geo);
     			}    			
     		} else {
     			// independent or mixed sibling types:
-    			// add only this element
-    			if (input[i].isDefined())					
-    				geoList.add(input[i]);
+    			// add only this element    						
+    			geoList.add(input[i]);
     		}
     	}
     }   

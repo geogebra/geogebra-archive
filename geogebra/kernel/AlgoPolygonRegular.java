@@ -33,7 +33,6 @@ public class AlgoPolygonRegular extends AlgoElement {
     private GeoPoint [] points;
     private GeoPoint centerPoint;	
     private MyDouble rotAngle;
-    private boolean isIniting = true;
     
     /**
      * Creates a new regular polygon algorithm
@@ -63,8 +62,7 @@ public class AlgoPolygonRegular extends AlgoElement {
         // compute poly
         compute();      
                                                                 
-        poly.initLabels(labels);   
-        isIniting = false;
+        poly.initLabels(labels);
     }   
         
     protected String getClassName() {
@@ -230,15 +228,23 @@ public class AlgoPolygonRegular extends AlgoElement {
 		}    
     }
     
-    private void removePoint(GeoPoint oldPoint) {
+    private void removePoint(GeoPoint oldPoint) {    	
+    	// remove dependent algorithms (e.g. segments) from update sets	of
+    	// objects further up (e.g. polygon) the tree
+		ArrayList algoList = oldPoint.getAlgorithmList();
+		for (int k=0; k < algoList.size(); k++) {        			
+			AlgoElement algo = (AlgoElement) algoList.get(k);	
+			for (int j=0; j < input.length; j++)
+				input[j].removeFromUpdateSets(algo);			
+		}
+    	   
     	// remove old point                     	
 		oldPoint.setParentAlgorithm(null);
 		
 		// remove dependent segment algorithm that are part of this polygon
-		// to make sure we don't remove the polygon as well
-		ArrayList list = oldPoint.getAlogrithmList();
-		for (int k=0; k < list.size(); k++) {        			
-			AlgoElement algo = (AlgoElement) list.get(k);	
+		// to make sure we don't remove the polygon as well		
+		for (int k=0; k < algoList.size(); k++) {        			
+			AlgoElement algo = (AlgoElement) algoList.get(k);	
 			// make sure we don't remove the polygon as well
 			if (algo instanceof AlgoJoinPointsSegment &&
 				((AlgoJoinPointsSegment) algo).getPoly() == poly) 
@@ -248,7 +254,7 @@ public class AlgoPolygonRegular extends AlgoElement {
 			}
 		}
 		
-		oldPoint.getAlogrithmList().clear();
+		algoList.clear();
 		// remove point
 		oldPoint.doRemove(); 
     }

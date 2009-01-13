@@ -95,7 +95,6 @@ implements ExpressionValue {
         for (int i=0; i < args.size(); i++) {        
         	ret[i] = (ExpressionNode) args.get(i);
         }
-        
         return ret;                
     }
     
@@ -130,10 +129,10 @@ implements ExpressionValue {
     
     private String toString(boolean symbolic, boolean LaTeX) {    
     	switch (kernel.getCASPrintForm()){
-    		case ExpressionNode.STRING_TYPE_YACAS:
+    		case ExpressionNode.STRING_TYPE_MATH_PIPER:
     			// Yacas command syntax
     			return ((geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS()).
-    				getYacasCommand(name, args, symbolic);    			    	
+    				getMathPiperCommand(name, args, symbolic);    			    	
     			
     		default:
     	    	if (sbToString == null)

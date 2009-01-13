@@ -14,11 +14,12 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
+
 /**
  * Try to expand the given GeoFunction's expression
  * (e.g. function expression or dependent number's expression). 
  * 
- * @author Michael Borcherds, Markus Hohenwarter
+ * @author Markus Hohenwarter
  */
 public class AlgoExpand extends AlgoElement {
 
@@ -29,16 +30,8 @@ public class AlgoExpand extends AlgoElement {
     public AlgoExpand(Construction cons, String label, GeoFunction f) {
     	super(cons);
         this.f = f;            	
-    	
-        // create output
-        if (f.isIndependent()) {
-        	// independent object: expand will be done in compute()
-        	g = (GeoFunction) f.copyInternal(cons);
-        } else {
-        	// dependen object: expand is only done once: now
-        	g = expand(f);
-        }
         
+        g = (GeoFunction) f.copyInternal(cons);        
         setInputOutput(); // for AlgoElement        
         compute();
         g.setLabel(label);
@@ -63,70 +56,14 @@ public class AlgoExpand extends AlgoElement {
     }
 
     protected final void compute() {     	  
-
     	if (!f.isDefined()) {
     		g.setUndefined();
     		return;
     	}
     	
-
-    	g.set(expand(f));
+    	g.setExpanded(f);
     }
-    
-    /**
-     * Expands the expression of geo and returns a resulting new geo.
-     */
-    private GeoFunction expand(GeoFunction geo) {
-    	GeoFunction result = null;
-    	
-    	// JASYMCA version  
-    	 try {     		
-    		// get geo definition String
-    		 
-    	    String geoDef = geo.getFormulaString(ExpressionNode.STRING_TYPE_JASYMCA, false);
-/*
-    		 
-         	int oldCASPrintForm = kernel.getCASPrintForm();
-         	kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_JASYMCA);         	
- 			
-         	// get current definition of geo
-         	String geoDef = geo.isIndependent() ? 
- 						geo.toValueString() :
- 						geo.getFunction().toString();
- 			kernel.setCASPrintForm(oldCASPrintForm);   */
- 			 		
- 		//	Application.debug("expand: " + geoDef);
- 			
- 			// expand definition
- 			String geoDefExpanded = kernel.evaluateJASYMCA("Expand("+geoDef+")");
- 			 	         		
- 			//Application.debug("expanded: " + geoDefExpanded);
- 			
- 	        /*
- 	        // Yacas version
- 			function = kernel.evaluateYACASRaw("ExpandBrackets("+function+")");
- 			*/ 
- 			
- 			// create resulting geo from expanded definition
- 			boolean oldSuppressLabels = cons.isSuppressLabelsActive();
- 			cons.setSuppressLabelCreation(true);
- 			result = (GeoFunction) kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(geoDefExpanded, false)[0]; 			 			 			  					
- 			cons.setSuppressLabelCreation(oldSuppressLabels);
-    	 } 
-    	 catch (Error e) {
-          	Application.debug("expand error: " + e.getMessage());          	
-          }
-         catch (Exception e) {
-         	Application.debug("expand error: " + e.getMessage());         	
-         }
- 		
-         // return resulting geo
-         if (result == null) {
-        	 return (GeoFunction) geo.copyInternal(geo.cons);
-         }
-         else 
-        	 return result;
-    }
+       
     
     final public String toString() {    	    	
     	return getCommandDescription() + " : " + g.getFunction().toString();    	  	

@@ -958,6 +958,20 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		setCoordSystem(calcXzero, calcYzero, calcXscale, calcYscale);
 	}
 
+	/**
+	 * Sets real world coord system using min and max values for both axes in
+	 * real world values.
+	 */
+	final public void setAnimatedRealWorldCoordSystem(double xmin, double xmax,
+			double ymin, double ymax, int steps, boolean storeUndo) {
+		if (zoomerRW == null)
+			zoomerRW = new MyZoomerRW();
+		zoomerRW.init(xmin, xmax, ymin, ymax, steps, storeUndo);
+		zoomerRW.startAnimation();
+	}
+	
+	protected MyZoomerRW zoomerRW;
+
 	public void setCoordSystem(double xZero, double yZero, double xscale,
 			double yscale, boolean repaint) {
 		if (xscale < Kernel.MIN_PRECISION || xscale > 1E8)
@@ -3011,7 +3025,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		final double y0RW2 = y0RW-yGap;
 		final double y1RW2 = y1RW+xGap;
 		
-		//setRealWorldCoordSystem(x0RW,x1RW,y0RW,y1RW);
+		setAnimatedRealWorldCoordSystem(x0RW2, x1RW2, y0RW2, y1RW2, 10, storeUndo);
 
 		double xScale = this.width/(x1RW2-x0RW2);
 		double yScale = this.height/(y1RW2-y0RW2);
@@ -3038,7 +3052,8 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 						}
 					}
 					// set the xscale and axes origin
-					setAnimatedCoordSystem(-x0RW2*scale, y1RW2*scale, scale, 15, false);
+					setAnimatedCoordSystem(XZERO_STANDARD, YZERO_STANDARD,
+							SCALE_STANDARD, 15, false);
 				}
 			};
 			waiter.start();
@@ -3048,7 +3063,6 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		} */
 		if (storeUndo)
 			app.storeUndoInfo();
-
 	}
 	
 	public final void setStandardView(boolean storeUndo) {
@@ -3198,6 +3212,82 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 				factor = 1.0 + (counter * add) / oldScale;
 				setCoordSystem(px + dx * factor, py + dy * factor, oldScale
 						* factor, oldScale * factor * scaleRatio);
+			}
+		}
+	}	
+	
+	
+	protected class MyZoomerRW implements ActionListener {
+		static final int MAX_STEPS = 15; // frames
+
+		static final int DELAY = 10;
+
+		static final int MAX_TIME = 400; // millis
+
+		protected Timer timer; // for animation
+
+		protected int counter, steps;
+
+		protected long startTime;
+
+		protected boolean storeUndo;
+		
+		protected double x0, x1, y0, y1, xminOld, xmaxOld, yminOld, ymaxOld;
+
+		public MyZoomerRW() {
+			timer = new Timer(DELAY, this);
+		}
+
+		public void init(double x0, double x1,
+				double y0, double y1, int steps, boolean storeUndo) {
+			this.x0 = x0;
+			this.x1 = x1;
+			this.y0 = y0;
+			this.y1 = y1;
+			
+			xminOld = xmin;
+			xmaxOld = xmax;
+			yminOld = ymin;
+			ymaxOld = ymax;
+			// this.zoomFactor = zoomFactor;
+			this.storeUndo = storeUndo;
+
+			this.steps = Math.min(MAX_STEPS, steps);
+		}
+
+		public synchronized void startAnimation() {
+			if (timer == null)
+				return;
+			counter = 0;
+
+			startTime = System.currentTimeMillis();
+			timer.start();
+		}
+
+		protected synchronized void stopAnimation() {
+			timer.stop();
+			setRealWorldCoordSystem(x0, x1, y0, y1);
+			
+			//TODO: check
+//			repaintView();
+//			updateAllDrawables(true);
+					
+			if (storeUndo)
+				app.storeUndoInfo();
+		}
+
+		public synchronized void actionPerformed(ActionEvent e) {
+			counter++;
+			long time = System.currentTimeMillis() - startTime;
+			if (counter == steps || time > MAX_TIME) { // end of animation
+				stopAnimation();
+			} else {
+				double i = counter;
+				double j = steps - counter;
+				setRealWorldCoordSystem((x0 * i + xminOld * j) / steps,
+						(x1 * i + xmaxOld * j) / steps,
+						(y0 * i + yminOld * j) / steps,
+						(y1 * i + ymaxOld * j ) /steps);
 			}
 		}
 	}

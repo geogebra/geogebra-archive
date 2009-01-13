@@ -395,10 +395,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {
 			PathParameter tempPathParameter = getTempPathparameter();
 			pathParameter.set(tempPathParameter);
 		}			
-		
-		
-
-			
 	}  
 	
 	private PathParameter tempPathParameter;

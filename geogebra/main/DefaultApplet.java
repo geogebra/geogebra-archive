@@ -25,4 +25,5 @@ public class DefaultApplet extends AppletImplementation {
 	protected Application buildApplication(String[] args, boolean ua) {
 		return new DefaultApplication(args, this, ua);
 	}
+	
 }

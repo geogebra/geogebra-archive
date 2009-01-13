@@ -14,6 +14,7 @@ import geogebra.ClassPathManipulator;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -212,12 +213,19 @@ public class GgbAPI {
 	}
 
 	/**
-	 * Evaluates the given string as if it was entered into Yacas's 
+	 * Evaluates the given string as if it was entered into MathPiper's 
 	 * input text field. 	 
 	 */
-	public synchronized String evalYacas(String cmdString) {
+	public synchronized String evalMathPiper(String cmdString) {
 		return 	kernel.evaluateMathPiperRaw(cmdString);
+	}
 
+	/**
+	 * prints a string to the Java Console
+	 */
+	public synchronized void debug(String string) {
+		
+		Application.debug(string);
 	}
 
 	/**
@@ -540,21 +548,27 @@ public class GgbAPI {
 	}
 	
 	/**
-	 * Returns the double value of the object with the given name. Note: returns 0 if
-	 * the object does not have a value.
+	 * Returns the double value of the object with the given name.
+	 * For a boolean, returns 0 for false, 1 for true
+	 * Note: returns 0 if the object does not have a value.
 	 */
 	public synchronized double getValue(String objName) {
-		GeoElement geo = kernel.lookupLabel(objName);		
-		
-		if (geo != null && geo.isNumberValue())
-			return ((NumberValue) geo).getDouble();		
-		else
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null)
 			return 0;
+		
+		if (geo.isNumberValue())
+			return ((NumberValue) geo).getDouble();		
+		else if (geo.isGeoBoolean())
+			return ((GeoBoolean) geo).getBoolean() ? 1 : 0;		
+		
+		return 0;
 	}
 	
 	/**
-	 * Sets the double value of the object with the given name. Note: if the
-	 * specified object is not a number, nothing happens.
+	 * Sets the double value of the object with the given name.
+	 * For a boolean 0 -> false, any other value -> true
+	 * Note: if the specified object is not a number, nothing happens.
 	 */
 	public synchronized void setValue(String objName, double x) {
 		GeoElement geo = kernel.lookupLabel(objName);
@@ -562,6 +576,9 @@ public class GgbAPI {
 		
 		if (geo.isGeoNumeric()) {
 			((GeoNumeric) geo).setValue(x);
+			geo.updateRepaint();
+		} else if (geo.isGeoBoolean()) {
+			((GeoBoolean) geo).setValue(kernel.isZero(x) ? false : true);
 			geo.updateRepaint();
 		}
 	}

@@ -58,7 +58,7 @@ TRANSLATIONS
   * Serbian: Djordje Herceg, Dragoslav Herceg (Serbia)
   * Slovak: Peter Csiba, Iveta Kohanova (Slovakia)
   * Slovenian: Stanislav Senveter (Slovenia)
-  * Swedish: Jonas Enlund (Finland), Thomas Lingefjärd (Sweden)
+  * Swedish: Jonas Enlund (Finland), Thomas Lingefjard (Sweden)
   * Spanish: Liliana Saidon (Argentina)
   * Turkish: Erol Karakirik, Mustafa Dogan, Suleyman Cengiz (Turkey)
   * Vietnamese: Nguyen Thanh Trung, Quang Nguyen (Vietnam)
@@ -82,8 +82,7 @@ SUPPORT
      providing the multi-platform software deployment solution      
   
 SOFTWARE
-  * Jasymca, http://webuser.hs-furtwangen.de/~dersch
-  * Yacas, http://yacas.sourceforge.net
+  * MathPiper, https://mathrider.dev.java.net
   * FreeHEP Java Libraries, http://java.freehep.org
   * Java EPS Graphics2D package, http://www.jibble.org/epsgraphics
   * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html

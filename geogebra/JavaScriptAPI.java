@@ -1,5 +1,7 @@
 package geogebra;
 
+import geogebra.main.Application;
+
 
 /**
  * JavaScript interface of GeoGebra applets
@@ -56,10 +58,14 @@ public interface JavaScriptAPI {
 	public boolean evalCommand(String cmdString);
 
 	/**
-	 * Evaluates the given string as if it was entered into Yacas's 
+	 * prints a string to the Java Console
+	 */
+	public void debug(String string);
+	/**
+	 * Evaluates the given string as if it was entered into MathPiper's 
 	 * input text field. 	 
 	 */
-	public String evalYacas(String cmdString);
+	public String evalMathPiper(String cmdString);
 
 	/**
 	 * Turns showing of error dialogs on (true) or (off). 

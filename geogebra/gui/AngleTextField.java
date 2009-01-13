@@ -34,6 +34,12 @@ public class AngleTextField extends JTextField implements KeyListener {
 		
 		boolean modifierKeyPressed = Application.MAC_OS ? e.isControlDown() : e.isAltDown();
 
+		// we don't want to act when AltGr is down
+		// as it is used eg for entering {[}] is some locales
+		// NB e.isAltGraphDown() doesn't work
+		if (e.isAltDown() && e.isControlDown())
+			modifierKeyPressed = false;
+
 		//Application.debug(e+"");
 		
 		String insertString = "";

@@ -12,12 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
+import geogebra.kernel.arithmetic.NumberValue;
 
 
 /**
@@ -115,8 +110,8 @@ public class AlgoSumPoints extends AlgoElement {
     		} else if (p.isGeoVector()) {
 	        	x += ((GeoVector)p).getX();
 	        	y += ((GeoVector)p).getY();   		
-    		} else if (p.isGeoNumeric()) {
-	        	x += ((GeoNumeric)p).getDouble();
+    		} else if (p.isNumberValue()) {
+	        	x += ((NumberValue)p).getDouble();
     		} else {
 				result.setUndefined();
 				return;

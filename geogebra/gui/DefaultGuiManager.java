@@ -5,6 +5,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.menubar.Menubar;
@@ -513,6 +514,8 @@ public class DefaultGuiManager implements GuiManager {
 
 		if (algebraView != null)
 			algebraView.updateFonts();
+		if (spreadsheetView != null)
+			spreadsheetView.updateFonts();
 		if (algebraInput != null)
 			algebraInput.updateFonts();	
 
@@ -561,8 +564,10 @@ public class DefaultGuiManager implements GuiManager {
 			constProtocol.initGUI();
 		if (constProtocolNavigation != null)
 			constProtocolNavigation.setLabels();
-		
-		layout.getDockManager().setLabels();
+		if (fileChooser != null)
+			updateJavaUILanguage();		
+			
+		layout.getDockManager().setLabels();			
 	}
 
 	public void initMenubar() {
@@ -1106,13 +1111,29 @@ public class DefaultGuiManager implements GuiManager {
     	// close properties dialog if open
     	closeOpenDialogs();
     		    	
-        if (app.getCurrentFile() != null)
-			return app.saveGeoGebraFile(app.getCurrentFile());
+        if (app.getCurrentFile() != null){
+        	// Mathieu Blossier - 2008-01-04
+        	// if the file is read-only, open save as        	
+			if (!app.getCurrentFile().canWrite()){
+				return saveAs();
+			}else
+				return app.saveGeoGebraFile(app.getCurrentFile());
+        }
 		else
 			return saveAs();
     }
 	
 	public boolean saveAs() {
+		
+		// Mathieu Blossier - 2008-01-04
+		// if the file is hidden, set current file to null
+		if (app.getCurrentFile() != null){
+			if (!app.getCurrentFile().canWrite() && app.getCurrentFile().isHidden()){
+				app.setCurrentFile(null);
+				app.setCurrentPath(null);
+			}
+		}
+		
 		// Added for Intergeo File Format (Yves Kreis) -->
 		String[] fileExtensions;
 		String[] fileDescriptions;
@@ -2034,18 +2055,18 @@ public class DefaultGuiManager implements GuiManager {
 	        if (algebraView != null)
 	        	algebraView.reset();
 	        
-	        app.getEuclidianView().setMode(mode);
+	        app.getEuclidianView().setMode(mode);        
 	        
 	        
 	        if (algebraInput != null && app.showAlgebraInput()) {
 	        	if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
 	            	app.setCurrentSelectionListener(algebraInput.getTextField());            	                       	
-	            	algebraInput.getInputButton().setSelected(true);
-	            }
-	        	else {
+	            } else if (mode == EuclidianView.MODE_MOVE) {
+                    app.setCurrentSelectionListener(algebraInput.getTextField());
+                } else {
 	        		algebraInput.getInputButton().setSelected(false);
 	        	}
-	        }                
+		    }                
 	        
 	        // select toolbar button
 	        setToolbarMode(mode);
@@ -2139,8 +2160,11 @@ public class DefaultGuiManager implements GuiManager {
 				kernel.getAnimatonManager().stopAnimation();	
 				kernel.getAnimatonManager().clearAnimatedGeos();
 				
-				// ESC is also handeled by algebra input field
-				if (algebraInput != null && algebraInput.hasFocus()) {
+				// ESC is also handled by algebra input field and spreadsheet
+				if ((algebraInput != null && algebraInput.hasFocus()) ||
+						//TODO better way to check for spreadsheet
+						//***** check on MacOS if changed *****
+						(spreadsheetView != null && source instanceof AutoCompleteTextField)) {
 					consumed = false;
 				} else {						
 					setMode(EuclidianView.MODE_MOVE);
@@ -2148,6 +2172,7 @@ public class DefaultGuiManager implements GuiManager {
 				}
 				break;
 			}
+			
 			if (consumed)
 				return true;		
 

@@ -159,7 +159,7 @@ class CmdFitSin extends CmdOneListFunction{
  * FitLogistic[<List of points>]
  * 
  * @author Hans-Petter Ulven
- * @version 18.11.08
+ * @version 15.11.08
  */
 class CmdFitLogistic extends CmdOneListFunction{
 
@@ -171,7 +171,6 @@ class CmdFitLogistic extends CmdOneListFunction{
 	}
 
 }// class CmdFitLogistic
-
 /*
  * Mean[ list ]
  *  Michael Borcherds 2008-04-12

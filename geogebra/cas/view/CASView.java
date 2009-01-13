@@ -711,7 +711,7 @@ public class CASView extends JComponent implements CasManager {
 			// get YacasString
 			String yacasString = null;
 			try {
-				yacasString = cas.toYacasString(cas.parseGeoGebraCASInput(selectedStr), useGeoGebraVariableValues);
+				yacasString = cas.toMathPiperString(cas.parseGeoGebraCASInput(selectedStr), useGeoGebraVariableValues);
 			}
 			catch (Throwable th) {
 				th.printStackTrace();

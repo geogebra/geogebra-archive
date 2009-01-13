@@ -333,7 +333,10 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}
 	
 	public MyStringBuffer getText() {
-		return new MyStringBuffer(str);
+		if (str != null)
+			return new MyStringBuffer(str);
+		else
+			return new MyStringBuffer("");
 	}	
 		
 	/**

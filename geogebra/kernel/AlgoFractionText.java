@@ -19,7 +19,7 @@ public class AlgoFractionText extends AlgoElement {
 	private GeoNumeric num; //input
     private GeoText text; //output	
     
-    private  double frac[] = {0,0};
+    private double frac[] = {0,0};
  
     private StringBuffer sb = new StringBuffer();
     
@@ -59,9 +59,7 @@ public class AlgoFractionText extends AlgoElement {
     protected final void compute() {
 		if (input[0].isDefined()) {
 			frac = DecimalToFraction(num.getDouble(),Kernel.STANDARD_PRECISION);
-
 			
-
 			kernel.setTemporaryPrintDecimals(15); // make sure whole numbers are printed nicely (ie not in standard form 1.343E10)
 	    	
 			if (frac[1] == 1) { // integer

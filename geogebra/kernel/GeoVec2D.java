@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.complex.Complex;
+import geogebra.main.Application;
 
 import java.util.HashSet;
 
@@ -512,14 +513,23 @@ implements VectorValue {
 	 /** multiplies 2D vector by a 3x3 affine matrix
 	  *  a b c
 	  *  d e f
-	  *  0 0 1 (not checked)
+	  *  g h i
 	  * @param 3x3 matrix
+	  * @param GeoVec3D (as ExpressionValue) to get homogeneous coords from
 	  */
-	 public void multiplyMatrixAffine(MyList list)
+	 public void multiplyMatrixAffine(MyList list, ExpressionValue rt)
 	 {
 			if (list.getMatrixCols() != 3 || list.getMatrixRows() != 3) return;
 		 
-			double a,b,c,d,e,f,x1,y1;
+			double a,b,c,d,e,f,g,h,i,x1,y1,z1,xx = x, yy = y, zz = 1;
+			
+			// use homogeneous coordinates if available
+			if (rt instanceof GeoVec3D) {
+				GeoVec3D p = (GeoVec3D)rt;
+				xx = p.x;
+				yy = p.y;
+				zz = p.z;
+			} 
 			
 			a = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
 			b = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
@@ -527,11 +537,15 @@ implements VectorValue {
 			d = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
 			e = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
 			f = ((NumberValue)(MyList.getCell(list,2,1).evaluate())).getDouble();
+			g = ((NumberValue)(MyList.getCell(list,0,2).evaluate())).getDouble();
+			h = ((NumberValue)(MyList.getCell(list,1,2).evaluate())).getDouble();
+			i = ((NumberValue)(MyList.getCell(list,2,2).evaluate())).getDouble();
 	 
-			x1 = a*x + b*y + c;
-			y1 = d*x + e*y + f;
-			x=x1;
-			y=y1;
+			x1 = a * xx + b * yy + c * zz;
+			y1 = d * xx + e * yy + f * zz;
+			z1 = g * xx + h * yy + i * zz;
+			x=x1 / z1;
+			y=y1 / z1;
 			return;
 	 }
 		public void setZero() {

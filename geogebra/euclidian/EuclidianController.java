@@ -423,6 +423,23 @@ public class EuclidianController implements MouseListener,
 		if (Application.isRightClick(e)) return;
 		setMouseLocation(e);		
 		
+		
+		// double-click on object selects MODE_MOVE and opens redefine dialog
+		if (e.getClickCount() == 2) { 
+			if (app.isApplet())
+				return;
+			
+			app.clearSelectedGeos();
+			hits = view.getTopHits(mouseLoc);
+			if (hits != null) {
+				view.setMode(EuclidianView.MODE_MOVE);
+				GeoElement geo0 = (GeoElement)hits.get(0);
+				if (!geo0.isFixed() && !(geo0.isGeoBoolean() && geo0.isIndependent()) && !(geo0.isGeoImage() && geo0.isIndependent()))
+					app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0));
+			}
+			
+		}
+		
 		switch (mode) {
 		case EuclidianView.MODE_MOVE:								
 		case EuclidianView.MODE_ALGEBRA_INPUT:
@@ -432,7 +449,7 @@ public class EuclidianController implements MouseListener,
 				handleSelectClick(view.getTopHits(mouseLoc), 
 						Application.isControlDown(e));
 				break;
-			
+			/*
 			//	open properties dialog on double click
 			case 2:
 				if (app.isApplet())
@@ -445,7 +462,7 @@ public class EuclidianController implements MouseListener,
 					if (!geo0.isFixed() && !(geo0.isGeoImage() && geo0.isIndependent()))
 						app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0));
 				}
-				break;
+				break;*/
 			}
 			break;
 			
@@ -1018,7 +1035,7 @@ public class EuclidianController implements MouseListener,
 		if (((Application.isRightClick(e)) || allowSelectionRectangle()) && !TEMPORARY_MODE) {
 //			 Michael Borcherds 2007-10-07 
 			// set zoom rectangle's size
-			updateSelectionRectangle(Application.isRightClick(e));
+			updateSelectionRectangle(Application.isRightClick(e) && !Application.isControlDown(e));
 			view.repaint();
 			return;
 		}		
@@ -1387,6 +1404,17 @@ public class EuclidianController implements MouseListener,
 					
 					
 				default:
+					
+					// change checkbox (boolean) state on mouse up only if there's been no drag
+					hits = view.getTopHits(mouseLoc);
+					if (hits != null) {
+						GeoElement hit = (GeoElement)hits.get(0);
+						if (hit != null && hit.isGeoBoolean()) {
+							GeoBoolean bool = (GeoBoolean)(hits.get(0));
+							bool.setValue(!bool.getBoolean());
+							bool.update();
+						}
+					}
 			}
 		}
 
@@ -1477,11 +1505,19 @@ public class EuclidianController implements MouseListener,
 
 		view.resetMode();
 		// zoom zoomRectangle to EuclidianView's size
-		double factor = (double) view.width / (double) rect.width;
-		Point p = rect.getLocation();
+		//double factor = (double) view.width / (double) rect.width;
+		//Point p = rect.getLocation();
 		view.setSelectionRectangle(null);
-		view.setAnimatedCoordSystem((view.xZero - p.x) * factor,
-				(view.yZero - p.y) * factor, view.xscale * factor, 15, true);
+		//view.setAnimatedCoordSystem((view.xZero - p.x) * factor,
+		//		(view.yZero - p.y) * factor, view.xscale * factor, 15, true);
+		
+		// zoom without (necessarily) preserving the aspect ratio
+		view.setAnimatedRealWorldCoordSystem(
+				view.toRealWorldCoordX(rect.getMinX()),
+				view.toRealWorldCoordX(rect.getMaxX()),
+				view.toRealWorldCoordY(rect.getMaxY()),
+				view.toRealWorldCoordY(rect.getMinY()),
+				15 ,true);
 		return true;
 	}
 	

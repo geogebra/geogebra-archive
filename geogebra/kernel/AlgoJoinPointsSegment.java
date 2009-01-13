@@ -48,7 +48,14 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         GeoPoint Q,
         GeoPolygon poly) {
     	super(cons);
-    	
+    	    	 
+        // make sure that this helper algorithm is updated right after this polygon
+    	// by setting the creationID accordingly which will cause correct sorting in algoUpdateSet
+    	// of the input GeoElements
+    	if (poly != null) {
+    		setCreationID(poly.getCreationID()+1);
+    	}
+    		
         this.poly = poly;                
         this.P = P;
         this.Q = Q;
@@ -57,7 +64,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         setInputOutput(); // for AlgoElement
                
         // compute line through P, Q
-        compute();
+        compute();     
     }   
 
     protected String getClassName() {
@@ -121,7 +128,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
      * Only removes this segment and does not remove parent polygon (if poly != null)
      */
     void removeSegmentOnly() {
-    	super.remove();
+    	super.remove();    	
     }
 
     public int getConstructionIndex() {

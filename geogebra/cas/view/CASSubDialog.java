@@ -205,7 +205,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 			// get YacasString
 			String yacasString = null;
 			try {
-				yacasString = cas.toYacasString(cas.parseGeoGebraCASInput(preString), false);
+				yacasString = cas.toMathPiperString(cas.parseGeoGebraCASInput(preString), false);
 			}
 			catch (Throwable th) {
 				th.printStackTrace();

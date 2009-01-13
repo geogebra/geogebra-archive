@@ -136,13 +136,15 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 				this);
 
 		// initialize applet's user interface, this changes the content pane
-		applImpl.initGUI();// update applet GUI, see paint()
+		applImpl.initGUI();
+
+		// update applet GUI, see paint()
 		validate();
 
 		// remember the applet implementation
 		appletImplementation = applImpl;
 		repaint();
-		
+
 		// load all jar files in background and init dialogs
 		applImpl.getApplication().initInBackground();
 
@@ -279,8 +281,16 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		getAppletImplementation().evalXML(xmlString);
 	}
 
+	public synchronized String evalMathPiper(String cmdString) {
+		return getAppletImplementation().evalMathPiper(cmdString);
+	}
+	
 	public synchronized String evalYacas(String cmdString) {
-		return getAppletImplementation().evalYacas(cmdString);
+		return evalMathPiper(cmdString);
+	}		
+
+	public synchronized void debug(String string) {
+		getAppletImplementation().debug(string);
 	}
 
 	public synchronized boolean exists(String objName) {
@@ -401,10 +411,11 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 			String newObjName) {
 		return getAppletImplementation().renameObject(oldObjName, newObjName);
 	}
+
 	public synchronized void setAnimating(String objName, boolean animate) {
 		getAppletImplementation().setAnimating(objName, animate);
 	}
-	
+
 	public synchronized void setAnimationSpeed(String objName, double speed) {
 		getAppletImplementation().setAnimationSpeed(objName, speed);
 	}

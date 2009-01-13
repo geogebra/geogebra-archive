@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         c.addToConstructionList(this, false);                 
     }
     
-    private String getCommandString(String classname) {
+    final String getCommandString(String classname) {
         // init rbalgo2command if needed
         // for translation of Algo-classname to command name
         if (rbalgo2command == null) {
@@ -132,6 +131,30 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }              
     
     /**
+	 * Updates all AlgoElements in the given ArrayList.
+	 * Note: this method is more efficient than calling 
+	 * updateCascade() for all individual AlgoElements.
+	 */
+	public static void updateCascadeAlgos(ArrayList algos) {
+		if (algos == null) return;		
+		int size = algos.size();
+		if (size == 0) return;
+		
+		ArrayList geos = new ArrayList();
+		for (int i=0; i < size; i++) {
+			AlgoElement algo = (AlgoElement) algos.get(i);
+			algo.compute();
+			for (int j=0; j < algo.output.length; j++) {
+				algo.output[j].update();
+				geos.add(algo.output[j]);
+			}
+		}
+		
+		// update all geos
+		GeoElement.updateCascade(geos);
+	}
+    
+    /**
      * Updates all random numbers of this algorithm (if there
      * are any).
      */
@@ -147,6 +170,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         return output;
     }
     final public GeoElement[] getInput() {
+        return input;
+    }
+    
+    GeoElement[] getInputForUpdateSetPropagation() {
         return input;
     }
 
@@ -220,7 +247,6 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         }        
         
         /*
-     // TODO: remove
         if (randomInputNumbers != null) {
         	Application.printStacktrace("" + randomInputNumbers);
         	for (int i = 0; i < randomInputNumbers.length; i++) {
@@ -237,12 +263,6 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      */
     protected void setRandomInputNumbers(GeoNumeric [] randNumbers) {
     	randomInputNumbers = randNumbers;   
-    	
-    	// TODO: remove
-    	// if (randomInputNumbers != null)
-    	//	 Application.printStacktrace("" + randomInputNumbers);
-    	
-
     }
     
     /**
@@ -427,7 +447,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
          int size, index;
          int min = cons.steps();                        
          for (int k=0; k < output.length; ++k) {
-            algoList = output[k].getAlogrithmList();
+            algoList = output[k].getAlgorithmList();
             size = algoList.size();                                  
             for (int i=0; i < size; ++i) {                          
                  index = ((AlgoElement)algoList.get(i)).getConstructionIndex();
@@ -554,11 +574,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
             } 
             
             int length = input.length;
-            
-            // remove last argument from Object[]
-            if (cmdname.equals("Object") && length == 2)
-            	length = 1;
-
+                  
             sb.append("[");
             // input
             if (length>0) sb.append(input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]

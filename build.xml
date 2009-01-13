@@ -139,7 +139,6 @@ office@geogebra.org
 		<jar jarfile="${build.dir}/geogebra_cas.jar"
 			basedir="${src.dir}"
 			includes="geogebra/cas/**,
-					jasymca/**,		
 					org/mathpiper/**"
 			excludes="**/*.java" 
 		/>

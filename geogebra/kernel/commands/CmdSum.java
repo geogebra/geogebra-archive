@@ -5,6 +5,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 /*
@@ -39,10 +40,10 @@ public class CmdSum extends CommandProcessor {
 			if (!geo.isGeoFunction()) {
 				allFunctions = false;
 			}
-			if (!geo.isGeoNumeric()) {
+			if (!geo.isNumberValue()) {
 				allNumbers = false;
 			}
-			if (!geo.isGeoNumeric() && !geo.isGeoVector() && !geo.isGeoPoint()) {
+			if (!geo.isNumberValue() && !geo.isGeoVector() && !geo.isGeoPoint()) {
 				allNumbersVectorsPoints = false;
 			}
 			if (!geo.isGeoText()) {

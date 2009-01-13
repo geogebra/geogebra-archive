@@ -962,7 +962,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				ConstructionProtocolNavigation cpn =
 					(ConstructionProtocolNavigation)app.getGuiManager().getConstructionProtocolNavigation();
 				cpn.setPlayButtonVisible(!cpn.isPlayButtonVisible());
-				cpn.initGUI();
+				//cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
 				app.setUnsaved();
 			}
@@ -977,7 +977,7 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 				ConstructionProtocolNavigation cpn =
 					(ConstructionProtocolNavigation)app.getGuiManager().getConstructionProtocolNavigation();
 				cpn.setConsProtButtonVisible(!cpn.isConsProtButtonVisible());
-				cpn.initGUI();
+				//cpn.initGUI();
 				SwingUtilities.updateComponentTreeUI(cpn);
 				app.setUnsaved();
 			}
@@ -988,12 +988,13 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.deleteAllGeoElements();
+				app.clearConstruction();
 				
 				// clear input bar
-				AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
-				ai.setString(null);
-
+				if (app.hasGuiManager()) {
+					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
+					ai.setString(null);
+				}
 			}
 		};
 
@@ -1148,6 +1149,14 @@ public abstract class MenubarImpl extends JMenuBar implements Menubar {
 
 			public void actionPerformed(ActionEvent e) {
 				app.refreshViews();
+			}
+		};
+
+		recomputeAllViews = new AbstractAction(app.getMenu("RecomputeAllViews"), app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.getKernel().updateConstruction();
 			}
 		};
 

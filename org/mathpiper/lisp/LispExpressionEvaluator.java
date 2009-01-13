@@ -363,7 +363,7 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
 		for (i=from;i<upto;i++)
 		{
 			LispChar str[20];
-			#ifdef YACAS_DEBUG
+			#ifdef MathPiper_DEBUG
 			aEnvironment.write(objs[i].iFileName);
 			aEnvironment.write("(");
 			InternalIntToAscii(str,objs[i].iLine);
@@ -446,7 +446,7 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
 					UserStackInformation& st = StackInformation();
 					st.iOperator = (LispAtom::New(aEnvironment,str.c_str()));
 					st.iExpression = (aExpression);
-					#ifdef YACAS_DEBUG
+					#ifdef MathPiper_DEBUG
 					if (aExpression.iFileName)
 					{
 						st.iFileName = aExpression.iFileName;
@@ -497,7 +497,7 @@ REENTER:
 		if(aEnvironment.iDebugger.Stopped()) RaiseError("");
 	}
 
-	YacasDebuggerBase::~YacasDebuggerBase()
+	MathPiperDebuggerBase::~MathPiperDebuggerBase()
 	{
 	}
 

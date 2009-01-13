@@ -34,14 +34,15 @@ implements Comparable {
 	
 	private int constIndex = -1; // index in construction list 
 	
-	private static long ceIDcounter = Long.MIN_VALUE;
-	private long ceID; // creation ID of this ConstructionElement, used for sorting
-	
+	private static long ceIDcounter = 1;
+	private long ceID; // creation ID of this ConstructionElement, used for sorting	
+
 	public ConstructionElement(Construction c) {
 		ceID = ceIDcounter++;	
 		setConstruction(c);
 	}
 	
+
 
 	void setConstruction(Construction c) {
 		cons = c;
@@ -198,7 +199,27 @@ implements Comparable {
 	/* Comparable interface */
 	
 	/**
-	 * Compares using creation ID. Older construction elements are larger.
+	 * Returns the creation ID of this object. It is automatically set
+	 * in the constructor of every ConstructionElement using an automatically
+	 * incrementing counter but can be changed using setCreationID(). This number
+	 * is used for compareTo().
+	 */
+	public final long getCreationID() {
+		return ceID;
+	}
+
+	/**
+	 * Sets the creation ID of this object. It is automatically set
+	 * in the constructor of every ConstructionElement using an automatically
+	 * incrementing counter. This number is used for compareTo().
+	 */
+	public final void setCreationID(long ceID) {
+		this.ceID = ceID;
+	}
+	
+	/**
+	 * Compares using creation ID. Older construction elements are larger. Returns -1 when obj is older,
+	 * 0 when obj is equal, and 1 when obj is younger than this ConstructionElement.
 	 * Note: 0 is only returned for this == obj.
 	 */
     public int compareTo( Object obj) {

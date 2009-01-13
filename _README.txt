@@ -17,7 +17,7 @@ Libraries and Plug-In Licenses
    Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License 
    http://creativecommons.org/licenses/by-nc-nd/3.0/
 * Jasymca, http://webuser.hs-furtwangen.de/~dersch/,  GNU GPL v2 (or later)
-* Yacas, http://yacas.sourceforge.net, GNU GPL v2 (or later)
+* MathPiper, http://MathPiper.sourceforge.net, GNU GPL v2 (or later)
 * FreeHEP Java Libraries, http://java.freehep.org, GNU LGPL v2.1
 * Java EPS Graphics2D package, http://www.jibble.org/epsgraphics, GNU GPL v2 (or later)
 * HotEqn, http://freemind.sourceforge.net/HotEqn/, GNU GPL v3

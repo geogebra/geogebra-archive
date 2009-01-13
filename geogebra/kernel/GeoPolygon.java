@@ -190,13 +190,14 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path, R
 	        	if (i < segments.length &&
 	        		oldSegments[i].getStartPoint() == points[i] && 
 	        		oldSegments[i].getEndPoint() == points[(i+1) % points.length]) 
-	        	{
+	        	{		
         			// reuse old segment
-        			segments[i] = oldSegments[i];          		
-        		} 
+        			segments[i] = oldSegments[i];        		
+         		} 
 	        	else {
         			// remove old segment
-        			((AlgoJoinPointsSegment) oldSegments[i].getParentAlgorithm()).removeSegmentOnly();	        		
+        			((AlgoJoinPointsSegment) oldSegments[i].getParentAlgorithm()).removeSegmentOnly();
+        			
 	        	}	        	
 			}
 		}			
@@ -208,12 +209,14 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path, R
         	
         	if (segments[i] == null) {
         		AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, startPoint, endPoint, this);            
-                cons.removeFromConstructionList(algoSegment);                       
+                cons.removeFromConstructionList(algoSegment);               
+                
                 segments[i] = algoSegment.getSegment(); 
                 // refresh color to ensure segments have same color as polygon:
                 segments[i].setObjColor(getObjectColor()); 
         	}     
-        }                            
+        }         
+        
     }
 
 	/**

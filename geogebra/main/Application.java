@@ -53,6 +53,8 @@ import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -140,8 +142,7 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("ko")); // Korean
 		supportedLocales.add(new Locale("mk")); // Macedonian
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
-		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian
-		// (Nynorsk)
+		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian(Nynorsk)
 		supportedLocales.add(new Locale("fa")); // Persian
 		supportedLocales.add(new Locale("pl")); // Polish
 		supportedLocales.add(new Locale("pt", "BR")); // Portugese (Brazil)
@@ -162,18 +163,18 @@ public abstract class Application implements KeyEventDispatcher {
 	// specially
 	public static Hashtable<String, String> specialLanguageNames = new Hashtable<String, String>();
 	static {
+		specialLanguageNames.put("bs", "Bosnian");	
+		specialLanguageNames.put("zhCN", "Chinese Simplified");
+		specialLanguageNames.put("zhTW", "Chinese Traditional");
+		specialLanguageNames.put("cz", "Czech");
 		specialLanguageNames.put("en", "English (US)");
 		specialLanguageNames.put("enUK", "English (UK)");
 		specialLanguageNames.put("deAT", "German (Austria)");
 		specialLanguageNames.put("gl", "Galician");
 		specialLanguageNames.put("noNO", "Norwegian (Bokm\u00e5l)");
-		specialLanguageNames.put("noNONY", "Norwegian (Nynorsk)");
-		specialLanguageNames.put("bs", "Bosnian");
-		specialLanguageNames.put("cz", "Czech");
+		specialLanguageNames.put("noNONY", "Norwegian (Nynorsk)");				
 		specialLanguageNames.put("ptBR", "Portuguese (Brazil)");
-		specialLanguageNames.put("ptPT", "Portuguese (Portugal)");
-		specialLanguageNames.put("zhCN", "Chinese (Simplified)");
-		specialLanguageNames.put("zhTW", "Chinese (Traditional)");
+		specialLanguageNames.put("ptPT", "Portuguese (Portugal)");	
 	}
 
 	public static final Color COLOR_SELECTION = new Color(230, 230, 245);
@@ -361,8 +362,7 @@ public abstract class Application implements KeyEventDispatcher {
 	    } catch (UnknownHostException e) {
 	    	hostName = "";
 	    	IPAddress = "";
-	    }
-
+	    }    
 		
 		isApplet = appletImpl != null;
 		if (frame != null) {
@@ -777,7 +777,7 @@ public abstract class Application implements KeyEventDispatcher {
 			}
 		}
 
-		
+		setLocale(initLocale);
 	}
 
 	/**
@@ -855,7 +855,7 @@ public abstract class Application implements KeyEventDispatcher {
 		} else if (currentFile != null) {
 			getGuiManager().loadFile(currentFile, false);
 		} else
-			deleteAllGeoElements();
+			clearConstruction();
 	}
 
 	public void refreshViews() {
@@ -1177,6 +1177,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 	
 	
+
 
 
 	// Michael Borcherds 2008-02-23
@@ -1692,6 +1693,11 @@ public abstract class Application implements KeyEventDispatcher {
 	public File getCurrentPath() {
 		return currentPath;
 	}
+	
+
+	public void setCurrentPath(File file) {
+		currentPath=file;
+	}
 
 	public void setCurrentFile(File file) {
 		currentFile = file;
@@ -1971,7 +1977,7 @@ public abstract class Application implements KeyEventDispatcher {
 			// necessary to allow dynamic loading of this class
 			ActionListener al = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					casView = new geogebra.cas.view.CASView(Application.this);
+			//		casView = new geogebra.cas.view.CASView(Application.this);
 				}
 			};
 			al.actionPerformed(null);
@@ -2228,28 +2234,17 @@ public abstract class Application implements KeyEventDispatcher {
 	 * (Exception e) { showError("Update failed: "+ e.getMessage()); } }
 	 */
 
-	public void deleteAllGeoElements() {
-		// delete all
-		Object[] geos = kernel.getConstruction().getGeoSetConstructionOrder()
-				.toArray();
-		if (geos.length == 0)
-			return;
-
+	/**
+	 * Clears the current construction. Used for File-New.
+	 */
+	public void clearConstruction() {
 		if (isSaved() || saveCurrentFile()) {
-			for (int i = 0; i < geos.length; i++) {
-				GeoElement geo = (GeoElement) geos[i];
-				if (geo.isLabelSet())
-					geo.remove();
-			}
+			kernel.clearConstruction();
+			
 			kernel.initUndoInfo();
 			setCurrentFile(null);
 			setMoveMode();
 		}
-
-		/*
-		 * if (isSaved() || saveCurrentFile()) { clearAll();
-		 * setCurrentFile(null); updateMenubar(); }
-		 */
 	}
 
 	public void exit() {
@@ -2945,6 +2940,19 @@ public abstract class Application implements KeyEventDispatcher {
 			Locale.US).startsWith("mac");
 	public static boolean WINDOWS = System.getProperty("os.name").toLowerCase(
 			Locale.US).startsWith("windows"); // Michael Borcherds 2008-03-21
+	/*
+	 * check for alt pressed (but not ctrl)
+	 * (or ctrl but not alt on MacOS)
+	 */
+	public static boolean isAltDown(InputEvent e) {
+		// we don't want to act when AltGr is down
+		// as it is used eg for entering {[}] is some locales
+		// NB e.isAltGraphDown() doesn't work
+		if (e.isAltDown() && e.isControlDown())
+			return false;
+
+		return MAC_OS ? e.isControlDown() : e.isAltDown();
+	}
 
 	public static boolean isControlDown(InputEvent e) {
 
@@ -3261,6 +3269,19 @@ public abstract class Application implements KeyEventDispatcher {
 			getEuclidianView().reset();
 			consumed = true;
 			break;
+			
+		case KeyEvent.VK_F9:
+			kernel.updateConstruction();
+			break;
+			
+		case KeyEvent.VK_PLUS:
+		case KeyEvent.VK_MINUS:
+		case KeyEvent.VK_EQUALS:
+			
+			if (isControlDown(event)) {
+				getEuclidianView().getEuclidianController().zoomInOut(event);
+				consumed = true;
+			}
 
 		default:
 			// handle selected GeoElements
@@ -3337,6 +3358,7 @@ public abstract class Application implements KeyEventDispatcher {
 			
 		case KeyEvent.VK_PLUS:
 		case KeyEvent.VK_ADD:
+		case KeyEvent.VK_EQUALS:
 		case KeyEvent.VK_UP:
 		case KeyEvent.VK_RIGHT:
 			changeVal = base;

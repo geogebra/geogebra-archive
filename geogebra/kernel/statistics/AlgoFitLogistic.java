@@ -27,11 +27,21 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.statistics.RegressionMath;
 
 
-/** 
+/******************* 
+ * AlgoFitLogistic *
+ * *****************
  * @author Hans-Petter Ulven
- * @version 19.11.08	(19 nov.)
- * 
- *
+ * @version 22.11.08
+ *    	20.11: 
+ *    		got rid off undefined parts of functions
+ *			errorMsg() to call Application.debug()
+ *		22.11: Got rid of all testcode except final outcommented hook: runTest(x[],y[]
+ *		08.12: Handling negative a,b or c...(see findParameters())
+ *			   Some cleaning up editing.
+ * ToDo:
+ * 		-Better handling of negative a,b and c. (Not sure if anyone needs that, but still...)
+ * 		-factor out: error=SortPointList(GeoList,GeoList) (and other GeoList/array processing)
+ * 		-nice to have: error=sortPointList2Array(Geolist,x[],y[]);
  * 
  * Fits c/(1+aexp(-bx))  to a list of points.
  * Adapted from:
@@ -43,25 +53,23 @@ import geogebra.kernel.statistics.RegressionMath;
  * The problem is to find the best initial values for the parameters,
  * little information available on this problem...
  *  
- *		Bjørn Ove Thue, the norwegian translator and programmer of 
- *		the norwegian version of WxMaxima, was kind enough to give me
+ *		Bjørn Ove Thue, the norwegian translator and programmer of the norwegian version of WxMaxima, was kind enough to give me
  *		his idea:
- *		Make the assumption that the first and last point are
- *		close to the solution curve.
- *		Calculate c and a from those points, with b as parameter,
- *		iterate to a good value for b,
+ *		Make the assumption that the first and last point are close to the solution curve.
+ *		Calculate c and a from those points, with b as parameter, iterate to a good value for b,
  *		and do the final nonlinear regression iteration with all three parameters.
  * 
  * 	Constraints:
  * 		<List of points> should have at least 3 points.
  *		The first and last datapoint should not be too far from the solution curve.
- * 
+ * 		Negative a,b and c: Asymptotes: Quality of points get even more important,
+ * 		should not be too close to either vertical or horisontal asymptotes,
+ *      should have several "good" points on each branch of the curve.
+ *      (Positive a, b and c is quite robust though. :-) )
  * 	Problems:
- * 		Non-linear regression is difficult, and the choice
- * 		of initial values for the parameters are highly critical.
+ * 		Non-linear regression is difficult, and the choice of initial values for the parameters are highly critical.
  * 		The algorithm here might converge to a local minimum.
- * 		I am not sure if the algorithm in some cases might diverge or oscillate?
- * 		(Then it would stop after MAXITERATIONS and give a bad fit.)
+ * 		The algoritm might diverge, so after MAXITERATIONS the result will be unusable
  *  
  *  Possible future solution:
  *  	Make more commands where you give both a list and suggestions for the parameters?
@@ -73,11 +81,11 @@ public final class AlgoFitLogistic extends AlgoElement{
     //Tuning of noisefilter, Levenberg-Marquardt iteration, debug, rounding off errors
 	private final static double	LMFACTORDIV		=	3.0d;	
 	private final static double LMFACTORMULT	=	2.0d;
-	private final static int	MAXITERATIONS	=	200;
+	private final static int	MAXITERATIONS	=	200;		//100 probably enough, nothing is usable after that...
 	private final static double EPSILONFIND		=	1E-6d;
 	private final static double EPSILONREG		=	1E-14d;
 	private final static double EPSSING			=	1E-20d;
-	private final static boolean DEBUG			=	false;		//set false when finished
+//	private final static boolean DEBUG			=	false;		//set false when finished
 	
 	// Properties
 	private static geogebra.main.Application app=	null;
@@ -88,6 +96,9 @@ public final class AlgoFitLogistic extends AlgoElement{
     private static int			iterations;			//LM iterations
     private static boolean  	error           =   false;	//general error flag	
     private static RegressionMath regMath		=	null;	//pointer to det33
+    
+    //Flags:
+    private static boolean		allplus,allneg;		//flags for y-values, set by getPoints();
     
 	//GeoGebra obligatory:
     private static final long serialVersionUID  =   1L;
@@ -120,13 +131,17 @@ public final class AlgoFitLogistic extends AlgoElement{
     protected final void compute() {
         size=geolist.size();
         error=false;				//General flag
-        if(!geolist.isDefined() || (size<3) ) {	//Direction-algo needs two flanks, 3 in each.
+        if(!geolist.isDefined() || (size<3) ) {	//Need three points, at the very least...
             geofunction.setUndefined();
-            errorMsg("List not properly defined or too small (5 points needed).");
+            errorMsg("List not properly defined or too small. (3 points needed, but the more points, the better result!)");
             return;
         }else{
         	getPoints();		//sorts the points on x while getting them!
-            doReg();
+            try{
+            	doReg();
+            }catch(Exception all){
+            	error=true;
+            }//try-catch
             if(!error){
             	//a=2.0d;c=3.0d;b=0.5d;
                 MyDouble A=new MyDouble(kernel,a);
@@ -153,40 +168,53 @@ public final class AlgoFitLogistic extends AlgoElement{
     
 /// ============= IMPLEMENTATION =============================================================///
     public final static  void doReg(){
-    	regMath=k.getRegressionMath();    	
-    	//runTest();				/////////////////////////////////////Comment out when testing done /////////////////////////////		
+    	regMath=k.getRegressionMath();		
         findParameters();       //Find initial parameters a,b,c,d
         Logistic_Reg();            //Run LM nonlinear iteration
     }//doReg()
     
     public final static void findParameters() {
-        double err,err_old,diff;
-        double lambda=0.01d;
-        double k=0.0d;
-        //19.11 double beta=0.0d;
-        k=0.001;
-        
-        														//debug("findParameters():\n================");
-        
-        //Remember some values:
+        double err,err_old;
+        double lambda=0.01d;						//
+        int		sign=1;
+        double k=0.001d;							//debug("findParameters():\n================");
+        //Remember some values to speed up later calculations:
         x1=xd[0];y1=yd[0];x2=xd[size-1];y2=yd[size-1];    
         ymult=y1*y2;e1=Math.exp(x1);e2=Math.exp(x2);emult=e1*e2;ydiff=y1-y2;
+
+        //Handling negative a,b or c. (To avoid iteration across asymptotic singularity.)
+        boolean	increasing; //allplus, allneg set by getpoints()
+        if(y1<y2){increasing=true;}else{increasing=false;}
         
+        if( allplus){	//a>0 and c>0
+        	if(!increasing){sign=-1;k=-k;}			//k<0 else k>0
+        }else if( allneg  ){  //a>0 and c<0
+        	if(increasing){sign=-1;k=-k;}			//k<0 else k<0
+        }else{							//a<0: 4 cases to sort out: Last value closer to x-axis than first value=>k<0
+        	if(Math.abs(y2)<Math.abs(y1)){
+        		sign=-1;k=-k;        	
+        	}//if
+        }//if										debug("increasing: "+increasing+" allpos: "+allplus+" allneg: "+allneg);
+        
+        /// Iterate for best k: ///
         err_old=beta2(xd,yd,k);
-        k=k+lambda;
+        k=k+sign*lambda;
         err=err_old+1; //to start off the while:
         while(Math.abs(err-err_old)>EPSILONFIND){
-            err=beta2(xd,yd,k);
-            diff=err-err_old;
+            err=beta2(xd,yd,k);						
+            //negerr=beta2(xd,yd,-k);
+            //if(Math.abs(negerr)<Math.abs(err)){//change to neg k
+            	//k=-k;sign=-1*sign;err=negerr;
+            //}
             if(err<err_old){
                 lambda=lambda*5;        //going right way:-)
                 err_old=err;
                 err=err+1;          //to keep going...
             }else{
-                k=k-lambda;             //go back and try again
+                k=k-sign*lambda;             //go back and try again
                 lambda=lambda/5;
             }//if progress
-            k+=lambda;
+            k+=sign*lambda;
             											//debug("b, error-error_old: "+k+"  ,  "+diff);
         }//while reduction in error
         //Set params for final iteration:
@@ -194,7 +222,12 @@ public final class AlgoFitLogistic extends AlgoElement{
         a=a(x1,y1,x2,y2,k);
         c=c(x1,y1,x2,y2,k);
         												//debug("\nfindParameters()finished with:\n"+a+" b= "+b+" c= "+c);
-        												//debug("Sum sq. errors: "+beta2(xd,yd,a,b,c)+"\n----------------------------------------");
+        												//debug("Sum sq. errors: "+beta2(xd,yd,a,b,c)+"\n-------------");
+        if( Double.isNaN( a )||Double.isNaN( b )||Double.isNaN( c )){
+        	error=true;
+        	errorMsg("findParameters(): a,b or c undefined");
+           	return;
+        }//20.11:if one is undefined, everything is undefined
     }//findParameters()
 
     public final static void Logistic_Reg(){
@@ -203,7 +236,7 @@ public final class AlgoFitLogistic extends AlgoElement{
         double 	multfaktor		=	LMFACTORMULT;	// later?: divfaktor=LMFACTORDIV;
         double 	residual,
         	   	old_residual	=	beta2(xd,yd,a,b,c);
-        double 	diff			=	-1.0d;         	//negative to start it off
+        //double 	diff			=	-1.0d;         	//negative to start it off
         
         double 	da=EPSILONREG,db=EPSILONREG,dc=EPSILONREG;     //Something larger than eps, to get started...
         double 	b1,b2,b3;                     //At*beta
@@ -239,7 +272,7 @@ public final class AlgoFitLogistic extends AlgoElement{
         while(Math.abs(da)+Math.abs(db)+Math.abs(dc)>EPSILONREG){//or while(Math.abs(diff)>EPSILON) ?
             iterations++;                                                //debug(""+iterations+"   : \n---------------");
             if((iterations>MAXITERATIONS)||(error)){                //From experience: >200 gives nothing more...
-            	errorMsg("More than "+MAXITERATIONS+" iterations...");
+            	errorMsg("More than "+MAXITERATIONS+" iterations. Solution is probably not usable.");
             	break;
             }
             b1=b2=b3=0.0d;
@@ -283,7 +316,7 @@ public final class AlgoFitLogistic extends AlgoElement{
                         m31,m32,b3)/n;
                 newa=a+da;newb=b+db;newc=c+dc;			        //remember this and update later if ok
                 residual=beta2(xd,yd,newa,newb,newc);
-                diff=residual-old_residual;                     //debug("Residual difference: "+diff+"    lambda: "+lambda);
+                //diff=residual-old_residual;                     //debug("Residual difference: "+diff+"    lambda: "+lambda);
 
                 if(residual<old_residual) {						// (Set to true if no LM)
                     lambda=lambda/LMFACTORDIV;   //going well :-)     but don't overdo it...
@@ -296,13 +329,17 @@ public final class AlgoFitLogistic extends AlgoElement{
                 }//if going the right way
                 
             }//if(error)-else
-            
-            													//debug(""+da+"\t"+db+"\t"+dc+"\n"+a+"\t"+b+"\t"+c);
-            
+            													//debug(""+da+"\t"+db+"\t"+dc+"\n"+a+"\t"+b+"\t"+c);            
         }//while(|da|+|db|+|dc|>epsilonreg)
 
         
-        System.out.println("AlgoFitLogistic: Sum Errors Squared= "+beta2(xd,yd,a,b,c));	//Info
+        //20.11: not wanted: errorMsg("AlgoFitLogistic: Sum Errors Squared= "+beta2(xd,yd,a,b,c));	//Info
+
+        if( Double.isNaN( a )||Double.isNaN( b )||Double.isNaN( c )){
+        	error=true;
+        	errorMsg("findParameters(): a,b or c undefined");
+           	return;
+        }//20.11:if one is undefined, everything is undefined
 
     }//Logistic_Reg()
  
@@ -390,7 +427,6 @@ public final class AlgoFitLogistic extends AlgoElement{
     	double[] xlist=null,ylist=null;
         double xy[]=new double[2];
         GeoElement geoelement;
-        GeoList		newlist;
         //This is code duplication of AlgoSort, but for the time being:
         Class geoClass=geolist.get(0).getClass();
         java.util.TreeSet sortedSet;
@@ -404,12 +440,14 @@ public final class AlgoFitLogistic extends AlgoElement{
         	}//if point
         }//for all points
         java.util.Iterator iter=sortedSet.iterator();
-        int i=0;
+        int i=0;allplus=true;allneg=true;				//Need sign info in findParameters()
         xlist=new double[size];    ylist=new double[size];
         while(iter.hasNext()) {
         	geoelement=(GeoElement)iter.next();
             ((GeoPoint)geoelement).getInhomCoords(xy);        	
         	xlist[i]=xy[0];ylist[i]=xy[1];
+        	if(ylist[i]<0){allplus=false;}
+        	if(ylist[i]>0){allneg=false;}
         	i++;
         }//while iterating
         
@@ -417,11 +455,14 @@ public final class AlgoFitLogistic extends AlgoElement{
         if(error){errorMsg("getPoints(): Wrong list format...");}
     }//getPoints()    
     
+    //20.11: ->Application.debug()
     private final static void errorMsg(String s){
-    	System.err.println("\nFitLogistic:  ");		
-    	System.err.println(s);
+    	geogebra.main.Application.debug(s);
     }//errorMsg(String)        
-
+    
+    
+    
+/* //SNIP START==========================Comment out in release=======================================================
     private final static void debug(String s) {
         if(DEBUG) {
             System.out.print("\nAlgoFitLogistic:   ");
@@ -429,177 +470,26 @@ public final class AlgoFitLogistic extends AlgoElement{
         }//if()
     }//debug()
  
-/* //SNIP START==========================CUT=======================================================
 
-/// --- Test routines:  --- ///
     
-    //8.143 and 8.243 demands LM damping factor!
+    ///// ----- Test Interface ----- /////
 
-    private static String 		info=	"";
-    private static double[]		f	=	new double[3];
-
-	private static boolean rantest=false;		//only run once
-	
-    private final static void runTest(){
-      if(!rantest){
-    	rantest=true;
-        System.out.println("/// --- Testing AlgoFitLogistic ---///\n");
-        ex1();
-        ex2();
-        ex3();
-        ex4();
-        ex5();
-        ex6();
-        ex7();
-      }//if !rantest
-    }//runtest
+    //Test hook for testing of implementation from outside Ggb with datapoints in x[] and y[]
+    public static boolean runTest(double[] x,double[] y){
+    	//compute() did not run, have to make a a separate RegressionMath:
+        regMath = new RegressionMath();	//RegressionMath shold be cleaned up with only static!
+    	xd=x;yd=y;
+    	size=xd.length;				//compute() did not run, not set...
+    	findParameters();
+    	Logistic_Reg();
+    	return error;
+    }//runtTest(x,y)
     
+    public static double getA(){return a;}
+    public static double getB(){return b;}
+    public static double getC(){return c;}
+    public static int getIterations(){return iterations;}    
     
-
-    private  final static void ex1(){
-        info="Eksakt: 20/(1+10*e^(x/2))";
-        size=5;				//important!, shortcuts compute()!	
-        double[] x		=	new double[size];	
-        double[] y		=	new double[size];
-        		xd		=	new double[size];
-        		yd		=	new double[size];
-        double[] facit	=	{10,0.5,20};			
-        for(int i=0;i<size;i++){
-            x[i]=i*1.0d;
-            y[i]=20.0d/(1+10*Math.exp(-x[i]/2));
-        }//for
-        System.arraycopy(x,0,xd,0,size);
-        System.arraycopy(y,0,yd,0,size);
-        System.arraycopy(facit,0,f,0,3);
-        
-        time();report(x,y,f);
-    }//ex1()
-
-    private  final static void ex2(){
-        info="Mobiltelefoner: Ex p 324";
-        size=9;	
-        double[] x		=	{0,2,4,6,8,10,12,14,17};
-        double[] y		=	{180.6,234.4,368.5,981.3,1676.7,2663.5,3593.2,4295.0,5210.6};
-        		xd		=	new double[size];
-        		yd		=	new double[size];
-        double[] facit	=	{42.51562594,0.3593258321,5634.291187};			
-        
-        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);System.arraycopy(facit,0,f,0,3);
-        
-        time();report(x,y,f);
-    }//exX()
-
-    private  final static void ex3(){
-        info="Sinus 8.42";
-        size=6;	
-        double[] x		=	{0,4,8,12,16,18};
-        double[] y		=	{20,40,70,90,125,140};
-        		xd		=	new double[size];
-        		yd		=	new double[size];
-        double[] facit	=	{7.40511504,0.161990112,194.619089};			
-        
-        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);System.arraycopy(facit,0,f,0,3);
-        
-        time();report(x,y,f);
-    }//exX()
-
-    private  final static void ex4(){
-        info="Sinus 8.43";
-        size=6;	
-        double[] x		=	{0,5,10,15,20,25};	
-        double[] y		=	{20,21.6,23.0,24.3,25.3,26.2};
-        		xd		=	new double[size];
-        		yd		=	new double[size];
-        double[] facit	=	{0.487,0.0514,29.7};
-        
-        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);System.arraycopy(facit,0,f,0,3);
-        
-        time();report(x,y,f);
-    }//exX()
-
-
-    private  final static void ex5(){
-        info="ex 8.142";
-        size=4;	
-        double[] x		=	{0,2,3,5};	
-        double[] y		=	{10,16,19,22};
-        		xd		=	new double[size];
-        		yd		=	new double[size];
-        double[] facit	=	{1.44,0.53,24.3};
-        
-        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);System.arraycopy(facit,0,f,0,3);
-        
-        time();report(x,y,f);
-    }//exX()
-    
-    private  final static void ex6(){
-        info="Ex 8.143";
-        size=8;	
-        double[] x		=	{0,10,20,25,30,35,40,50};
-        double[] y		=	{1,7,46,100,172,236,272,296};
-        		xd		=	new double[size];
-        		yd		=	new double[size];
-        double[] facit	=	{299,0.2,300};
-        
-        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);System.arraycopy(facit,0,f,0,3);
-        
-        time();report(x,y,f);
-    }//exX()
-
-    private  final static void ex7(){
-        info="Ex 8.243";
-        size=17;	
-        double[] x		=	{0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160};
-        double[] y		=	{3929,5308,7240,9638,12866,17069,23192,31443,38558,50156,62948,75995,91072,105711,122775,131669,150697};
-        		xd		=	new double[size];
-        		yd		=	new double[size];
-        double[] facit	=	{47.9,0.03,201286};			
-        
-        System.arraycopy(x,0,xd,0,size);System.arraycopy(y,0,yd,0,size);System.arraycopy(facit,0,f,0,3);
-        
-        time();report(x,y,f);
-    }//exX()
-         
-    private final static void report(double[] x,double[] y,double[] f){
-
-        double fe,se;
-
-        System.out.println("\n"+info);
-        System.out.println("                     a                   b                   c");
-        System.out.println("Facit:          "+f[0]+"        "+f[1]+"        "+f[2]);
-        System.out.println("FitSin:         "+a+   "    "+b+   "    "+c);
-        System.out.println("---------------------------------------------------------------------------------------------");
-        System.out.println("Diff:           "+(a-f[0])+"    "+(b-f[1])+"    "+(c-f[2]));
-
-        fe=beta2(x,y,f[0],f[1],f[2]);
-        se=beta2(x,y,a,b,c);
-        System.out.println("Fasit  SumError2: "+fe);
-        System.out.println("SinReg SumError2: "+se);
-        
-        System.out.println("\nIterations: "+iterations);
-        if(se>fe*1.1){
-            System.out.println("*********************** ERROR?  IS THIS OKAY?????? ***************************************");
-        }else if(se<fe){
-            System.out.println("*** Good! ****");
-        }else{
-            System.out.println("*** Could be better? ***");
-        }//if
-            
-        System.out.println("\n");
-    }//report(....)
-    
-    private final  static void time(){
-        java.util.Date date=new java.util.Date();
-        long start,slutt;
-        start=date.getTime();
-        findParameters();       //Find initial parameters a,b,c,d
-        Logistic_Reg();            //Run LM nonlinear iteration
-        if(error) {System.out.println("*** Error in running doReg()! ***");}
-        date=new java.util.Date();slutt=date.getTime();
-        System.out.println("Time used: "+(slutt-start));
-    }//time()
-        
-
 */ //SNIP END==========================================================================================================
     
 }// class AlgoFitLogistic

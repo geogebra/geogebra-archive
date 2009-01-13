@@ -173,11 +173,21 @@ GeoDeriveable, ParametricCurve, LineProperties {
 	/**
 	 * Set this function to the integral of f
 	 * @param f
-	 * @param order
 	 */
 	public void setIntegral(GeoFunction f) {
 		if (f.isDefined()) {
 			fun = f.fun.getIntegral();	
+		} else {
+			isDefined = false;
+		}	
+	}
+	
+	/**
+	 * Set this function to the expanded version of f, e.g. 3*(x-2) is expanded to 3*x - 6.
+	 */
+	public void setExpanded(GeoFunction f) {
+		if (f.isDefined()) {
+			fun = f.fun.getExpanded();	
 		} else {
 			isDefined = false;
 		}	

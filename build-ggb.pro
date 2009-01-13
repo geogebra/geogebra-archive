@@ -32,9 +32,6 @@
     public <methods>;
 }
 
-# Jasymca uses reflection to create functions like LambaSIN
--keep class jasymca.Lambda* {}
-
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
 

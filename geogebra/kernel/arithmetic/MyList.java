@@ -96,10 +96,10 @@ public class MyList extends ValidExpression implements ListValue {
 		int size = size();
 				
 	
-		if (!right) 
-			Application.debug("apply: " + value + " < op: " + operation + " > " + this);
-		else
-			Application.debug("apply: " + this + " < op: " + operation + " > " + value);
+		//if (!right) 
+		//	Application.debug("apply: " + value + " < op: " + operation + " > " + this);
+		//else
+		//	Application.debug("apply: " + this + " < op: " + operation + " > " + value);
 		
 		
 		// expression value is list		
@@ -116,7 +116,7 @@ public class MyList extends ValidExpression implements ListValue {
 			
 			boolean isMatrix = (LHlist.isMatrix() && RHlist.isMatrix());
 			int LHcols = LHlist.getMatrixCols(), LHrows=LHlist.getMatrixRows();
-			int RHcols = RHlist.getMatrixCols();//, RHrows=RHlist.getMatrixRows();
+			int RHcols = RHlist.getMatrixCols(), RHrows=LHcols; //RHlist.getMatrixRows();
 			
 
 			
@@ -176,10 +176,10 @@ public class MyList extends ValidExpression implements ListValue {
 			if (isMatrix)
 			{
 				listElements.clear();
-				for (int col=0 ; col < RHcols ; col++)
+				for (int row=0 ; row < LHrows ; row++)
 				{
 					MyList col1 = new MyList(kernel);
-					for (int row=0 ; row < LHrows ; row++)
+					for (int col=0 ; col < RHcols ; col++)
 					{
 						ExpressionValue totalVal = new ExpressionNode(kernel, new MyDouble(kernel,0.0d));
 						for (int i=0 ; i<LHcols ; i++)
@@ -208,7 +208,7 @@ public class MyList extends ValidExpression implements ListValue {
 					
 				}
 			}			
-			Application.debug(toString());
+			//Application.debug(toString());
 			if (isMatrix){
 				matrixRows=-1; // reset
 				matrixCols=-1;
@@ -345,7 +345,7 @@ public class MyList extends ValidExpression implements ListValue {
 		}
 		else isMatrix = false;
 
-		Application.debug("isMatrix="+isMatrix);	
+		//Application.debug("isMatrix="+isMatrix);	
 		
 		if (isMatrix)
 		{

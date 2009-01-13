@@ -213,7 +213,7 @@ public class MyTable extends JTable
 				}
 			}
 		}
-		app.setSelectedGeos(list);
+		app.setSelectedGeos(list);		
 	}
 
 	protected Point getPixel(int column, int row, boolean min) {
@@ -877,6 +877,7 @@ break;
 					app.getGuiManager().undo();
 					e.consume();
 				}
+				else letterOrDigitTyped();
 				break;
 
 				// needs to be here to stop keypress starting a cell edit after the redo
@@ -886,6 +887,7 @@ break;
 					app.getGuiManager().redo();
 					e.consume();
 				}
+				else letterOrDigitTyped();
 				break;
 
 

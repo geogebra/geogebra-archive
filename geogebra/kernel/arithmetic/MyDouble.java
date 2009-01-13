@@ -55,7 +55,9 @@ implements NumberValue {
     }    
     
 	public ExpressionValue deepCopy(Kernel kernel) {
-		return new MyDouble(this);
+		 MyDouble ret = new MyDouble(this);
+		 ret.kernel = kernel;
+		 return ret;
 	}   
     
     final public void set(double x) { val = x; }

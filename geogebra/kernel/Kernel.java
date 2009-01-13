@@ -21,8 +21,6 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.MyBoolean;
-import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -43,7 +41,6 @@ import geogebra.kernel.statistics.AlgoFitLogistic;
 import geogebra.kernel.statistics.AlgoFitPoly;
 import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
-import geogebra.kernel.statistics.AlgoFitLogistic;
 import geogebra.kernel.statistics.AlgoInverseNormal;
 import geogebra.kernel.statistics.AlgoListCovariance;
 import geogebra.kernel.statistics.AlgoListMeanX;
@@ -80,6 +77,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Stack;
 
 
 public class Kernel {
@@ -121,9 +119,9 @@ public class Kernel {
 	public boolean useSignificantFigures = false;
 	
 	// used to store info when rounding is temporarily changed
-	private ArrayList useSignificantFiguresList = new ArrayList();
-	private ArrayList noOfSignificantFiguresList = new ArrayList();
-	private ArrayList noOfDecimalPlacesList = new ArrayList();
+	private Stack useSignificantFiguresList;
+	private Stack noOfSignificantFiguresList;
+	private Stack noOfDecimalPlacesList;
 	
 	/* Significant figures
 	 * 
@@ -163,7 +161,7 @@ public class Kernel {
 	// i.e. in silentMode no labels are created and no objects are added to views
 	private boolean silentMode = false;
 	
-	// resolveVariablesForCASactive
+	// setResolveUnkownVarsAsDummyGeos
 	private boolean resolveVariablesForCASactive = false;
 			
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
@@ -195,6 +193,7 @@ public class Kernel {
 	
 	public Kernel() {
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
+
 		nf.setGroupingUsed(false);
 		sf = new ScientificFormat(5, 16, false);
 		setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
@@ -293,12 +292,12 @@ public class Kernel {
     }		
 	
 	/** 
-     * Evaluates a YACAS expression and returns the result as a String.
+     * Evaluates a MathPiper expression and returns the result as a String.
      * e.g. exp = "D(x) (x^2)" returns "2*x"
      * @param expression string
      * @return result string (null possible)
      */
-	final public String evaluateYACAS(String exp) {
+	final public String evaluateMathPiper(String exp) {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
@@ -307,7 +306,7 @@ public class Kernel {
 	}
 	
 	/** 
-     * Evaluates a YACAS expression without any preprocessing and returns the result as a String.
+     * Evaluates a MathPiper expression without any preprocessing and returns the result as a String.
      * e.g. exp = "D(x) (x^2)" returns "2*x"
      * @param expression string
      * @return result string (null possible)
@@ -316,26 +315,13 @@ public class Kernel {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
-		Application.debug("evalMathPiper input " + exp);		
+		//Application.debug("evalMathPiper input " + exp);		
 		String ret = ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiperRaw(exp);
-		Application.debug("evalMathPiper output " + ret);
+		//Application.debug("evalMathPiper output " + ret);
 		
-		return ret;}
-	
-	/** 
-     * Evaluates a JASYMCA expression and returns the result as a String.
-     * e.g. exp = "diff(x^2,x)" returns "2*x"
-     * @param expression string
-     * @return result string (null possible)
-     */ 
-	final public String evaluateJASYMCA(String exp) {
-		if (ggbCAS == null) {
-			getGeoGebraCAS();		
-		}				
-		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateJASYMCA(exp);
+		return ret;
 	}
-	
+		
 	final public boolean isGeoGebraCASready() {
 		return ggbCAS != null;
 	}
@@ -348,9 +334,9 @@ public class Kernel {
 			app.loadCASJar();
 			ggbCAS = new geogebra.cas.GeoGebraCAS(this);
 			
-			// TODO: rethink CAS evaluation this
-			// init Yacas for applets (force loading of required yacas scripts)
-			evaluateMathPiperRaw("Simplify(1+2) + Lcm(1,1) + Gcd(1,1) + Factor(x+1) + TrigSimpCombine(Sin(x)*Cos(x))");			
+			// init Yacas for applets (force loading of required Yacas scripts)
+			// not needed for MathPiper
+			//evaluateMathPiperRaw("Simplify(1+2) + Lcm(1,1) + Gcd(1,1) + Factor(x+1) + TrigSimpCombine(Sin(x)*Cos(x))");			
 		}			
 		
 		return ggbCAS;
@@ -429,22 +415,52 @@ public class Kernel {
 	 * Registers an algorithm that wants to be notified when setEuclidianViewBounds() is called.	 
 	 */
 	void registerEuclidianViewAlgo(EuclidianViewAlgo algo) {
+		if (euclidianViewAlgos == null)
+			euclidianViewAlgos = new ArrayList();
+		
 		if (!euclidianViewAlgos.contains(algo))
 			euclidianViewAlgos.add(algo);
 	}
 	
 	void unregisterEuclidianViewAlgo(EuclidianViewAlgo algo) {		
+		if (euclidianViewAlgos != null)
 			euclidianViewAlgos.remove(algo);
 	}
 	private ArrayList euclidianViewAlgos = new ArrayList();
 	
 	public void notifyEuclidianViewAlgos() {
+		if (euclidianViewAlgos == null) return;
+		
 		int size = euclidianViewAlgos.size();
 		for (int i=0; i < size; i++) {
 			((EuclidianViewAlgo) euclidianViewAlgos.get(i)).euclidianViewUpdate();
 		}
 	}		
-
+	
+	
+	/**
+	 * Registers an algorithm that needs to be updated when notifyRename(),
+	 * notifyAdd(), or notifyRemove() is called.	 
+	 */
+	void registerRenameListenerAlgo(AlgoElement algo) {
+		if (renameListenerAlgos == null) {
+			renameListenerAlgos = new ArrayList();
+		}
+		
+		if (!renameListenerAlgos.contains(algo))
+			renameListenerAlgos.add(algo);
+	}
+	
+	void unregisterEuclidianViewAlgo(AlgoElement algo) {
+		if (renameListenerAlgos != null) 
+			renameListenerAlgos.remove(algo);
+	}
+	private ArrayList renameListenerAlgos;
+	
+	private void notifyRenameListenerAlgos() {
+		AlgoElement.updateCascadeAlgos(renameListenerAlgos);
+	}	
+	
 	final public void setAngleUnit(int unit) {
 		cons.angleUnit = unit;
 	}
@@ -467,10 +483,10 @@ public class Kernel {
 		casPrintForm = type;
 		
 		switch (casPrintForm) {
-			case ExpressionNode.STRING_TYPE_YACAS:
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 				casPrintFormPI = "Pi";
 				
-			case ExpressionNode.STRING_TYPE_JASYMCA:
+			//case ExpressionNode.STRING_TYPE_JASYMCA:
 			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
 				casPrintFormPI = "pi";
 		
@@ -484,7 +500,7 @@ public class Kernel {
 	}
 
 	final public void setPrintDecimals(int decimals) {
-		if (decimals >= 0) {
+		if (decimals >= 0 && nf.getMaximumFractionDigits() != decimals) {
 			useSignificantFigures = false;
 			nf.setMaximumFractionDigits(decimals);
 			PRINT_PRECISION = Math.pow(10, -decimals);
@@ -499,42 +515,33 @@ public class Kernel {
 		if (figures >= 0) {
 			useSignificantFigures = true;
 			sf.setSigDigits(figures);
+			sf.setMaxWidth(16); // for scientific notation
 		}
 	}
 	
 	final public void setTemporaryPrintFigures(int figures) {
-
-		storeTemporaryRoundingInfoInList();		
-		
+		storeTemporaryRoundingInfoInList();				
 		setPrintFigures(figures);
 	}
 	
-	final public void setTemporaryPrintDecimals(int decimals) {
-		
-		storeTemporaryRoundingInfoInList();
-		
+	final public void setTemporaryPrintDecimals(int decimals) {		
+		storeTemporaryRoundingInfoInList();		
 		setPrintDecimals(decimals);
 	}
 	
 	
+	/**
+	 * Sets number formatting to show all significant figures for
+	 * double values.
+	 */
 	final public void setTemporaryMaximumPrintAccuracy()
 	{
-		storeTemporaryRoundingInfoInList();
-		
-		useSignificantFigures = true;
-		sf.setSigDigits(16);
+		storeTemporaryRoundingInfoInList();		
+		setPrintFigures(16);
 		sf.setMaxWidth(309);
 	}
 	
-	final public void setTemporaryMaximumFractionDigits(int digits)
-	{
-		storeTemporaryRoundingInfoInList();
-		
-		nf.setMaximumFractionDigits(digits);
-		useSignificantFigures = false;
-	}
-	
-	
+
 	/*
 	 * stores information about the current no of decimal places/sig figures used
 	 * for when it is (temporarily changed)
@@ -542,27 +549,29 @@ public class Kernel {
 	 */
 	private void storeTemporaryRoundingInfoInList()
 	{
-		useSignificantFiguresList.add(new MyBoolean(useSignificantFigures));
-		noOfSignificantFiguresList.add(new MyDouble(this,(double)(sf.getSigDigits())));	
-		noOfDecimalPlacesList.add(new MyDouble(this,(double)(nf.getMaximumFractionDigits())));	
+		if (useSignificantFiguresList == null) {
+			useSignificantFiguresList = new Stack();
+			noOfSignificantFiguresList = new Stack();
+			noOfDecimalPlacesList = new Stack();
+		}
+				
+		useSignificantFiguresList.push(new Boolean(useSignificantFigures));
+		noOfSignificantFiguresList.push(new Integer(sf.getSigDigits()));	
+		noOfDecimalPlacesList.push(new Integer(nf.getMaximumFractionDigits()));	
 	}
 	
 	
 	final public void restorePrintAccuracy()
-	{
-		
-		useSignificantFigures = ((MyBoolean)(useSignificantFiguresList.get(useSignificantFiguresList.size()-1))).getBoolean();
-		useSignificantFiguresList.remove(useSignificantFiguresList.size()-1);
+	{		
+		// get previous values from stacks
+		useSignificantFigures = ((Boolean)useSignificantFiguresList.pop()).booleanValue();		
+		int sigFigures = ((Integer)(noOfSignificantFiguresList.pop())).intValue();
+		int decDigits = ((Integer)(noOfDecimalPlacesList.pop())).intValue();
 		
 		if (useSignificantFigures)
-			sf.setSigDigits((int)((MyDouble)(noOfSignificantFiguresList.get(noOfSignificantFiguresList.size()-1))).getDouble());
+			setPrintFigures(sigFigures);
 		else
-			nf.setMaximumFractionDigits((int)((MyDouble)(noOfDecimalPlacesList.get(noOfSignificantFiguresList.size()-1))).getDouble());
-		
-		noOfSignificantFiguresList.remove(noOfSignificantFiguresList.size()-1);
-		noOfDecimalPlacesList.remove(noOfDecimalPlacesList.size()-1);
-
-		sf.setMaxWidth(16);
+			setPrintDecimals(decDigits);	
 		
 		//Application.debug("list size"+noOfSignificantFiguresList.size());
 	}
@@ -1002,6 +1011,8 @@ public class Kernel {
 				views[i].add(geo);					
 			}
 		}
+		
+		notifyRenameListenerAlgos();
 	}
 
 	final void notifyRemove(GeoElement geo) {
@@ -1010,6 +1021,8 @@ public class Kernel {
 				views[i].remove(geo);
 			}
 		}
+		
+		notifyRenameListenerAlgos();
 	}
 
 	final void notifyUpdate(GeoElement geo) {
@@ -1034,6 +1047,8 @@ public class Kernel {
 				views[i].rename(geo);
 			}
 		}
+		
+		notifyRenameListenerAlgos();
 	}
 	
 	public void setNotifyViewsActive(boolean flag) {	
@@ -1573,40 +1588,7 @@ public class Kernel {
 		AlgoColumnName algo = new AlgoColumnName(cons, label, geo);
 		GeoText t = algo.getGeoText();
 		return t;
-	}
-	
-	/** 
-	 * ToYacasString[] of geo.
-	 */
-	final public GeoText ToYacasString(
-		String label,
-		GeoElement geo, GeoBoolean substituteVars) {
-		AlgoToYacasString algo = new AlgoToYacasString(cons, label, geo, substituteVars);
-		GeoText t = algo.getGeoText();
-		return t;
-	}
-	
-	/** 
-	 * EvalYacas[] of string.
-	 */
-	final public GeoText EvalYacas(
-		String label,
-		GeoText text) {
-		AlgoEvalYacas algo = new AlgoEvalYacas(cons, label, text);
-		GeoText t = algo.getResult();
-		return t;
-	}
-	
-	/** 
-	 * Eval[] of string.
-	 */
-	final public GeoElement Eval(
-		String label,
-		GeoText text) {
-		AlgoEval algo = new AlgoEval(cons, label, text);
-		GeoElement t = algo.getResult();
-		return t;
-	}
+	}		
 	
 	/** 
 	 * LaTeX of geo.
@@ -4554,15 +4536,6 @@ public class Kernel {
 	}
 	
 	/**
-	 * Factor
-	 * Michael Borcherds 2008-04-04
-	 */
-	final public GeoNumeric Factor(String label, GeoNumeric func) {		
-		AlgoFactorNumeric algo = new AlgoFactorNumeric(cons, label, func);
-		return algo.getResult();			
-	}
-	
-	/**
 	 * Taylor series of function f about point x=a of order n
 	 */
 	final public GeoFunction TaylorSeries(
@@ -5017,7 +4990,7 @@ public class Kernel {
 		// valid left hand side 
 		// leading coefficient
 		sbBuildImplicitVarPart.append(formatCoeff(temp[leadingNonZero]));
-		if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
 			sbBuildImplicitVarPart.append("*");
 		sbBuildImplicitVarPart.append(vars[leadingNonZero]);
 
@@ -5036,7 +5009,7 @@ public class Kernel {
 			if (abs >= PRINT_PRECISION || useSignificantFigures) {
 				sbBuildImplicitVarPart.append(sign);
 				sbBuildImplicitVarPart.append(formatCoeff(abs));
-				if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+				if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
 					sbBuildImplicitVarPart.append("*");
 				sbBuildImplicitVarPart.append(vars[i]);
 			}
@@ -5052,7 +5025,7 @@ public class Kernel {
 
 		sbBuildImplicitEquation.setLength(0);
 		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN));
-		if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
 			sbBuildImplicitEquation.append(" == ");
 		else
 			sbBuildImplicitEquation.append(" = ");
@@ -5168,7 +5141,7 @@ public class Kernel {
 		if (isZero(q)) {
 			sbBuildExplicitLineEquation.append("x");
 						
-			if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+			if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
 				sbBuildExplicitLineEquation.append(" == ");
 			else
 				sbBuildExplicitLineEquation.append(" = ");
@@ -5179,7 +5152,7 @@ public class Kernel {
 
 		// standard case: y-coeff not 0
 		sbBuildExplicitLineEquation.append("y");
-		if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
 			sbBuildExplicitLineEquation.append(" == ");
 		else
 			sbBuildExplicitLineEquation.append(" = ");
@@ -5190,7 +5163,7 @@ public class Kernel {
 		if (dabs >= PRINT_PRECISION || useSignificantFigures) {
 			sbBuildExplicitLineEquation.append(formatCoeff(d));
 			
-			if (casPrintForm == ExpressionNode.STRING_TYPE_YACAS) 
+			if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
 				sbBuildExplicitLineEquation.append('*');
 			
 			sbBuildExplicitLineEquation.append('x');
@@ -5217,12 +5190,12 @@ public class Kernel {
 		if (isZero(x))
 			return "0";
 		else
-			return nf.format(Math.abs(x));
+			return formatNF(Math.abs(x));
 	}*/
 
 	/** doesn't show 1 or -1 */
 	final private String formatCoeff(double x) {
-		if (isZero(Math.abs(x) - 1.0)) {
+		if (isEqual(Math.abs(x), 1.0)) {
 			if (x > 0.0)
 				return "";
 			else
@@ -5231,59 +5204,91 @@ public class Kernel {
 			return format(x);
 	}
 
+	/**
+	 * Formats the value of x using the currently set
+	 * NumberFormat or ScientificFormat. 
+	 */
 	final public String format(double x) {
 		boolean isNaN = Double.isNaN(x);
-		
+		boolean isInfinite = Double.isInfinite(x);
+  		
 		switch (casPrintForm) {
-		case ExpressionNode.STRING_TYPE_YACAS:
-		case ExpressionNode.STRING_TYPE_JASYMCA:
-			// check for integers in CAS first
-			if (isNaN)
-				return " 1/0 ";	
-			else if (isInteger(x)) {
-				return String.valueOf(Math.round(x));
-			}
-					
-		default:
-			if (isNaN)
-				return "?";	
-			else if (useSignificantFigures) 
-				return  formatSF(x);
-			// ZERO
-			else if (-MIN_PRECISION < x && x < MIN_PRECISION)
-				return "0";					
-			else
-				return nf.format(x); // 	useSignificantFigures=false	
-		}
-		
-		
-				
-	}
-	
-	/*
-	 * makes sure .123 is returned as 0.123
-	 */
-	final private String formatSF(double x) {	
-		switch (casPrintForm) {
-			case ExpressionNode.STRING_TYPE_YACAS:
-			case ExpressionNode.STRING_TYPE_JASYMCA:
-				// check for integers in CAS first
-				if (isInteger(x)) {
+			//case ExpressionNode.STRING_TYPE_JASYMCA:
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+				if (isNaN)
+					return " 1/0 ";	
+				else if (isInfinite) {
+					return (x > 0) ? "Infinity" : "-Infinity";
+ 				}
+				else if (isInteger(x)) {
 					return String.valueOf(Math.round(x));
 				}
-						
+
 			default:
-				String s = sf.format(Math.abs(x));
-				if (s.startsWith(".")) s = "0" + s;
-				if (x < 0) s = "-" + s;
-				return s;
-		}
+				if (isNaN)
+					return "?";	
+				else if (isInfinite) {
+					return (x > 0) ? "\u221e" : "-\u221e"; // infinity
+				}
+			
+				// ROUNDING
+				if (-PRINT_PRECISION < x && x < PRINT_PRECISION) {
+					x = 0;				
+				} else {
+					// NumberFormat uses ROUND_HALF_EVEN as default which is not changeable
+					// so we need to hack this to get ROUND_HALF_UP like in schools				
+					double ROUND_HALF_UP_EPSILON = 5E-16;
+					x = (x > 0) ?  x + ROUND_HALF_UP_EPSILON : 
+								   x - ROUND_HALF_UP_EPSILON;
+				}
+							
+				// take significant figures	or decimal format
+				if (useSignificantFigures) 
+					return formatSF(x);
+				else
+					return formatNF(x);
+		}								
 	}
 	
+	/**
+	 * Uses current NumberFormat nf to format a number.
+	 */
+	final private String formatNF(double x) {		
+		return nf.format(x);
+	}
+	
+	/**
+	 * Uses current ScientificFormat sf to format a number.
+	 * Makes sure ".123" is returned as "0.123".
+	 */
+	final private String formatSF(double x) {					
+		if (sbFormatSF == null)
+			sbFormatSF = new StringBuffer();
+		else
+			sbFormatSF.setLength(0);
+				
+		// get scientific format
+		String absStr;		
+		if (x >= 0) {
+			absStr = sf.format(x);
+		} else {
+			sbFormatSF.append('-');	
+			absStr = sf.format(-x);
+		}
+	
+		// make sure ".123" is returned as "0.123".
+		if (absStr.charAt(0) == '.')
+			sbFormatSF.append('0');
+		sbFormatSF.append(absStr);
+		
+		return sbFormatSF.toString();
+	}
+	private StringBuffer sbFormatSF;
+	
+	
 	final public String formatPiE(double x, NumberFormat nf) {
-		// ZERO
-		if (-MIN_PRECISION < x && x < MIN_PRECISION)
-			return "0";			
+		if (-PRINT_PRECISION < x && x < PRINT_PRECISION)
+			return "0";
 		
 		/*
 		// 	E
@@ -5293,10 +5298,10 @@ public class Kernel {
 					return EULER_STRING;
 				case ExpressionNode.STRING_TYPE_JASYMCA:
 					return "exp(1)";
-				case ExpressionNode.STRING_TYPE_YACAS:
+				case ExpressionNode.STRING_TYPE_MATH_PIPER:
 					return "Exp(1)";
 				default:
-					return nf.format(Math.E);
+					return formatNF(Math.E);
 			}
 		}	
 		*/		
@@ -5310,6 +5315,8 @@ public class Kernel {
 		// i.e. x = a * pi/2
 		double a = 2*x / Math.PI;
 		int aint = (int) Math.round(a);
+		if (sbFormat == null)
+			sbFormat = new StringBuffer();
 		sbFormat.setLength(0);
 		if (isEqual(a, aint)) {	
 			switch (aint) {					
@@ -5357,9 +5364,9 @@ public class Kernel {
 		}		
 		
 		// STANDARD CASE
-		return nf.format(x);
+		return formatNF(x);
 	}
-	private StringBuffer sbFormat = new StringBuffer();
+	private StringBuffer sbFormat;
 
 
 	final public StringBuffer formatSigned(double x) {
@@ -5371,20 +5378,15 @@ public class Kernel {
 		
 		if (x > 0.0d) {
 			sbFormatSigned.append("+ ");
-			sbFormatSigned.append( useCurrentNumberFormat(x));
+			sbFormatSigned.append( format(x));
 			return sbFormatSigned;
 		} else {
 			sbFormatSigned.append("- ");
-			sbFormatSigned.append( useCurrentNumberFormat(-x));
+			sbFormatSigned.append( format(-x));
 			return sbFormatSigned;
 		}
 	}
 	private StringBuffer sbFormatSigned = new StringBuffer(40);
-	
-	private String useCurrentNumberFormat(double x) {
-		return useSignificantFigures ? formatSF(x) : nf.format(x);
-	}
-	
 
 	final public StringBuffer formatAngle(double phi) {
 		sbFormatAngle.setLength(0);
@@ -5401,7 +5403,7 @@ public class Kernel {
 			else {
 				phi = Math.toDegrees(phi);
 				if (phi < 0) phi += 360;				
-				sbFormatAngle.append(useCurrentNumberFormat(phi));
+				sbFormatAngle.append(format(phi));
 				sbFormatAngle.append('\u00b0');
 				return sbFormatAngle;
 			}
@@ -5411,7 +5413,7 @@ public class Kernel {
 				return sbFormatAngle;
 			}
 			else {				
-				sbFormatAngle.append(useCurrentNumberFormat(phi));
+				sbFormatAngle.append(format(phi));
 				sbFormatAngle.append(" rad");
 				return sbFormatAngle;
 			}
@@ -5599,8 +5601,8 @@ public class Kernel {
 	/**
 	 * Sets whether unknown variables should be resolved as GeoDummyVariable objects. 
 	 */
-	public final void setResolveVariablesForCASactive(boolean resolveVariablesForCASactive) {
-		this.resolveVariablesForCASactive = resolveVariablesForCASactive;				
+	public final void setResolveVariablesForCASactive(boolean resolveUnkownVarsAsDummyGeos) {
+		this.resolveVariablesForCASactive = resolveUnkownVarsAsDummyGeos;				
 	}
 	
 

@@ -256,7 +256,7 @@ public class Equation extends ValidExpression {
         
         // equal sign
         switch (kernel.getCASPrintForm()){
-			case ExpressionNode.STRING_TYPE_YACAS:
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 		        sb.append(" == ");
 		        break;
 		        
@@ -281,7 +281,7 @@ public class Equation extends ValidExpression {
         
         // equal sign
         switch (kernel.getCASPrintForm()){
-			case ExpressionNode.STRING_TYPE_YACAS:
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 		        sb.append(" == ");
 		        break;
 		        

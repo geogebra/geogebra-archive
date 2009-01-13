@@ -120,7 +120,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		showToolBarHelp = showToolBar && "true".equals(applet.getParameter("showToolBarHelp"));
 		
 		// customToolBar = "0 1 2 | 3 4 5 || 7 8 12" to set the visible toolbar modes
-		customToolBar = applet.getParameter("customToolBar"); // TODO implement custom applet toolbars (F.S.)
+		customToolBar = applet.getParameter("customToolBar");
 				
 		// showMenuBar = "true" or parameter is not available
 		showMenuBar = "true".equals(applet.getParameter("showMenuBar"));
@@ -536,12 +536,26 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	}
 
 	/**
-	 * Evaluates the given string as if it was entered into Yacas's 
-	 * input text field. 	 
+	 * Evaluates the given string using the MathPiper CAS.
+	 */
+	public synchronized String evalMathPiper(String cmdString) {
+		waitForCAS();
+		return kernel.evaluateMathPiperRaw(cmdString);
+	}
+	
+	/**
+	 * Evaluates the given string using the Yacas CAS.
+	 * @deprecated: use evalMathPiper() instead
 	 */
 	public synchronized String evalYacas(String cmdString) {
-		waitForCAS();
-		return 	kernel.evaluateMathPiperRaw(cmdString);
+		return evalMathPiper(cmdString);
+	}
+	
+	/**
+	 * prints a string to the Java Console
+	 */
+	public synchronized void debug(String string) {		
+		Application.debug(string);
 	}
 	
 	/**

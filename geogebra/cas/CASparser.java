@@ -53,24 +53,24 @@ public class CASparser {
 	}
 	
 	/**
-	 * Returns the given expression as a string in Yacas syntax.
+	 * Returns the given expression as a string in MathPiper syntax.
 	 */
-	public String toYacasString(ExpressionValue ev, boolean substituteVariables) {
-		String yacasString;
+	public String toMathPiperString(ExpressionValue ev, boolean substituteVariables) {
+		String MathPiperString;
 		
 		if (!ev.isExpressionNode()) {
 			ev = new ExpressionNode(kernel, ev);			
 		}
 		
-		yacasString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_YACAS, !substituteVariables);		
-		return yacasString;
+		MathPiperString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, !substituteVariables);		
+		return MathPiperString;
 	}
 	
 	/**
-	 * Tries to convert the given Yacas string to GeoGebra syntax.
+	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
-	public ValidExpression parseYacas(String yacasString) throws Throwable {
-		return ggbParser.parseYacas(yacasString);		
+	public ValidExpression parseMathPiper(String MathPiperString) throws Throwable {
+		return ggbParser.parseMathPiper(MathPiperString);		
 	}
 
 

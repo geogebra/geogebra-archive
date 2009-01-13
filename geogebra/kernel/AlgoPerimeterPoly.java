@@ -61,6 +61,9 @@ public class AlgoPerimeterPoly extends AlgoElement {
 		double length = 0;
 		for (int i = 0; i < segment.length; i++) {
 			length = length + (segment[i].getLength());
+			
+			// TODO: remove
+			System.out.println("seg["+i+"] = " + segment[i]);			
 		}
 		circum.setValue(length);
 	}

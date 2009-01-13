@@ -42,8 +42,7 @@ implements ExpressionValue {
 	
 	public static final int STRING_TYPE_GEOGEBRA_XML = 0;
 	public static final int STRING_TYPE_GEOGEBRA = 1;
-	public static final int STRING_TYPE_JASYMCA = 2;
-	public static final int STRING_TYPE_YACAS = 3;
+	public static final int STRING_TYPE_MATH_PIPER = 3;
 	public static final int STRING_TYPE_LATEX = 100;
 	
 	public static final String UNICODE_PREFIX = "uNiCoDe";
@@ -388,7 +387,7 @@ implements ExpressionValue {
             	{
             		GeoVec2D myVec = ((VectorValue) rt).getVector();
             		// 3x3 matrix, assume it's affine
-            		myVec.multiplyMatrixAffine(myList);
+            		myVec.multiplyMatrixAffine(myList, rt);
             		return myVec;
             	}
 
@@ -1494,7 +1493,7 @@ implements ExpressionValue {
      * 
      * @param lt
      * @param rt
-     * @return null if not defined
+     * @return false if not defined
      */
     private MyBoolean evalEquals(ExpressionValue lt, ExpressionValue rt) {
     	//  nummber == number
@@ -1510,6 +1509,19 @@ implements ExpressionValue {
 					((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
 				);      
     	
+    	// needed for eg If[""=="a",0,1]
+    	// when lt and rt are MyStringBuffers
+    	else if (lt.isTextValue() && rt.isTextValue()) {
+    		
+    		String strL = ((TextValue)lt).toValueString();
+    		String strR = ((TextValue)rt).toValueString();
+    		
+    		// needed for eg Sequence[If[Element[list1,i]=="b",0,1],i,i,i]
+    		if (strL == null || strR == null)
+    			return new MyBoolean(false);
+    		
+			return new MyBoolean(strL.equals(strR));      
+    	}
     	else if (lt.isGeoElement() && rt.isGeoElement()) {
     		GeoElement geo1 = (GeoElement) lt;
     		GeoElement geo2 = (GeoElement) rt;
@@ -1536,7 +1548,7 @@ implements ExpressionValue {
     		}*/
     	}      
     	
-    	return null;
+    	return new MyBoolean(false);
     }
     
     /** 
@@ -1949,17 +1961,14 @@ implements ExpressionValue {
      */
     final public String getCASstring(int STRING_TYPE, boolean symbolic) {
         int oldPrintForm = kernel.getCASPrintForm();
-        
-        //int oldDigits = kernel.getMaximumFractionDigits();
-        //kernel.setMaximumFractionDigits(50);       
-        kernel.setTemporaryPrintDecimals(50);        
         kernel.setCASPrintForm(STRING_TYPE);
-        
+        kernel.setTemporaryMaximumPrintAccuracy();        
+                
         String ret = printCASstring(symbolic);
         
-        //kernel.setMaximumFractionDigits(oldDigits);
-        kernel.restorePrintAccuracy();        
-        kernel.setCASPrintForm(oldPrintForm);                     
+        kernel.restorePrintAccuracy();      
+        kernel.setCASPrintForm(oldPrintForm);  
+                             
         return ret;
     }
         
@@ -2060,7 +2069,7 @@ implements ExpressionValue {
         if (right != null) {
             rightStr = right.toValueString();
         }
-                    
+            
         return operationToString(leftStr, rightStr, true);
     }
     
@@ -2097,13 +2106,14 @@ implements ExpressionValue {
         
     /**
      * Returns a string representation of this node.
-     * Note: STRING_TYPE is used for LaTeX, YACAS, Jasymca conform output, valueForm is used
+     * Note: STRING_TYPE is used for LaTeX, MathPiper, Jasymca conform output, valueForm is used
      * by toValueString(), forLaTeX is used for LaTeX output
      * 
      */
     final private String operationToString(String leftStr, String rightStr, 
-    		boolean valueForm) {    	
-    	ExpressionValue leftEval;       	    	
+    		boolean valueForm) {
+
+    	ExpressionValue leftEval;   
     	StringBuffer sb = new StringBuffer();
     	
     	int STRING_TYPE = kernel.getCASPrintForm();
@@ -2115,7 +2125,7 @@ implements ExpressionValue {
 	         			sb.append("\\neg ");
 	         			break;
 	         			
-	         		case STRING_TYPE_YACAS:
+	         		case STRING_TYPE_MATH_PIPER:
 	         			sb.append("Not ");
 	         			break;
 	         			
@@ -2135,7 +2145,7 @@ implements ExpressionValue {
 	         			sb.append("\\vee");
 	         			break;
 	         			
-	         		case STRING_TYPE_YACAS:
+	         		case STRING_TYPE_MATH_PIPER:
 	         			sb.append("Or");
 	         			break;
 	         			
@@ -2162,7 +2172,7 @@ implements ExpressionValue {
 		      			sb.append("\\wedge");
 		      			break;
 		      			
-		      		case STRING_TYPE_YACAS:
+		      		case STRING_TYPE_MATH_PIPER:
 		      			sb.append("And");
 		      			break;
 		      			
@@ -2185,8 +2195,8 @@ implements ExpressionValue {
            	 	sb.append(' ');
 	           	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
-		      		case STRING_TYPE_YACAS:
-		      		case STRING_TYPE_JASYMCA:
+		      		case STRING_TYPE_MATH_PIPER:
+		      		//case STRING_TYPE_JASYMCA:
 		      			sb.append("=");
 		      			break;
 		      					      		
@@ -2205,7 +2215,7 @@ implements ExpressionValue {
 		      			sb.append("\\neq");
 		      			break;
 		      			
-		      		case STRING_TYPE_YACAS:
+		      		case STRING_TYPE_MATH_PIPER:
 		      			sb.append("!=");
 		      			break;
 		      			
@@ -2236,7 +2246,7 @@ implements ExpressionValue {
 		      			sb.append("\\leq");
 		      			break;
 		      			
-		      		case STRING_TYPE_YACAS:
+		      		case STRING_TYPE_MATH_PIPER:
 		      			sb.append("<=");
 		      			break;
 		      			
@@ -2255,7 +2265,7 @@ implements ExpressionValue {
 		      			sb.append("\\geq");
 		      			break;
 		      			
-		      		case STRING_TYPE_YACAS:
+		      		case STRING_TYPE_MATH_PIPER:
 		      			sb.append(">=");
 		      			break;
 		      			
@@ -2313,8 +2323,8 @@ implements ExpressionValue {
        
             case PLUS:          
             	switch (STRING_TYPE) {
-	        		case STRING_TYPE_JASYMCA:
-	        		case STRING_TYPE_YACAS:
+	        		//case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append('(');
 	        			sb.append(leftStr);
 	                    sb.append(") + (");
@@ -2323,6 +2333,15 @@ implements ExpressionValue {
 	                    break;
 	                    
 	                default:
+	                    // check for 0
+            			if ("0".equals(leftStr)) {
+		            		sb.append(rightStr);
+        		    		break;
+            			} else if ("0".equals(rightStr)) {
+		            		sb.append(leftStr);
+        		    		break;
+            			}
+            			
 	                	// we need parantheses around right text
 	                	// if right is not a leaf expression or
 	                	// it is a leaf GeoElement without a label (i.e. it is calculated somehow)        
@@ -2353,8 +2372,8 @@ implements ExpressionValue {
                 
             case MINUS:  
             	switch (STRING_TYPE) {
-	        		case STRING_TYPE_JASYMCA:
-	        		case STRING_TYPE_YACAS:
+	        		//case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append('(');
 	        			sb.append(leftStr);
 	                    sb.append(") - (");
@@ -2384,8 +2403,8 @@ implements ExpressionValue {
                 
             case MULTIPLY: 
             	switch (STRING_TYPE) {
-        		case STRING_TYPE_JASYMCA:
-        		case STRING_TYPE_YACAS:
+        		//case STRING_TYPE_JASYMCA:
+        		case STRING_TYPE_MATH_PIPER:
         			sb.append('(');
         			sb.append(leftStr);
                     sb.append(") * (");
@@ -2394,6 +2413,16 @@ implements ExpressionValue {
                     break;
                     
                 default:
+                    // check for 1
+            		if ("1".equals(leftStr)) {
+            			sb.append(rightStr);
+            			break;
+            		}
+            		else if ("1".equals(rightStr)) {
+            			sb.append(leftStr);
+            			break;
+            		}
+            		
 	                boolean nounary = true;
 	                
 	                // left wing                  
@@ -2457,8 +2486,8 @@ implements ExpressionValue {
                 		sb.append("}");
                 		break;
                 		
-    				case STRING_TYPE_JASYMCA:
-    				case STRING_TYPE_YACAS:
+    				//case STRING_TYPE_JASYMCA:
+    				case STRING_TYPE_MATH_PIPER:
     					 sb.append('(');
 		                 sb.append(leftStr);
 		                 sb.append(")/(");
@@ -2466,7 +2495,13 @@ implements ExpressionValue {
 		                 sb.append(')');
 		                 break;
     				
-	    			default:                        
+	    			default:
+	    				// check for 1 in denominator
+            			if ("1".equals(rightStr)) {
+            				sb.append(leftStr);
+            				break;
+            			}   
+            			                       
 		                // left wing              	
 		                if (left.isLeaf()|| opID(left) >= MULTIPLY) { // not +, -
 		                    sb.append(leftStr);                
@@ -2490,14 +2525,20 @@ implements ExpressionValue {
                 
             case POWER:
             	switch (STRING_TYPE) {			
-					case STRING_TYPE_JASYMCA:
-					case STRING_TYPE_YACAS:
+					//case STRING_TYPE_JASYMCA:
+					case STRING_TYPE_MATH_PIPER:
 						sb.append('(');
 	                    sb.append(leftStr);
 	                    sb.append(')');
 		                 break;
 		            
 					default:
+					    // check for 1 in exponent
+            			if ("1".equals(rightStr)) {
+            				sb.append(leftStr);
+            				break;
+            			}   
+            	
 		                // left wing                   	
 		                if (leftStr.charAt(0) != '-' && // no unary
 		                	(left.isLeaf() || opID(left) > POWER)) { // not +, -, *, /, ^                     
@@ -2520,8 +2561,7 @@ implements ExpressionValue {
                         break;
                         
 	        		case STRING_TYPE_GEOGEBRA_XML:
-	        		case STRING_TYPE_JASYMCA:
-					case STRING_TYPE_YACAS:
+					case STRING_TYPE_MATH_PIPER:
 	        			sb.append('^'); 
                         sb.append('(');
                         sb.append(rightStr);
@@ -2619,7 +2659,7 @@ implements ExpressionValue {
             			sb.append("\\cos(");
             			break;
             			
-            		case STRING_TYPE_YACAS:
+            		case STRING_TYPE_MATH_PIPER:
             			sb.append("Cos(");
             			break;
             			
@@ -2636,7 +2676,7 @@ implements ExpressionValue {
 	        			sb.append("\\sin(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Sin(");
 	        			break;
 	        			
@@ -2653,7 +2693,7 @@ implements ExpressionValue {
 	        			sb.append("\\tan(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Tan(");
 	        			break;
 	        			
@@ -2670,7 +2710,7 @@ implements ExpressionValue {
 	        			sb.append("\\arccos(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("ArcCos(");
 	        			break;
 	        			
@@ -2687,7 +2727,7 @@ implements ExpressionValue {
 	        			sb.append("\\arcsin(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("ArcSin(");
 	        			break;
 	        			
@@ -2704,7 +2744,7 @@ implements ExpressionValue {
 	        			sb.append("\\arctan(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("ArcTan(");
 	        			break;
 	        			
@@ -2721,7 +2761,7 @@ implements ExpressionValue {
 	        			sb.append("\\cosh(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Cosh(");
 	        			break;
 	        			
@@ -2738,7 +2778,7 @@ implements ExpressionValue {
 	        			sb.append("\\sinh(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Sinh(");
 	        			break;
 	        			
@@ -2755,7 +2795,7 @@ implements ExpressionValue {
 	        			sb.append("\\tanh(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Tanh(");
 	        			break;
 	        			
@@ -2772,7 +2812,7 @@ implements ExpressionValue {
 	        			sb.append("\\mathrm{acosh}(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("ArcCosh(");
 	        			break;
 	        			
@@ -2789,7 +2829,7 @@ implements ExpressionValue {
 	        			sb.append("\\mathrm{asinh}(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("ArcSinh(");
 	        			break;
 	        			
@@ -2806,7 +2846,7 @@ implements ExpressionValue {
 	        			sb.append("\\mathrm{atanh}(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("ArcTanh(");
 	        			break;
 	        			
@@ -2825,13 +2865,13 @@ implements ExpressionValue {
 	        			 sb.append('}');
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Exp(");
 	        			sb.append(leftStr);
 	                    sb.append(')');
 	        			break;
 	        			
-	        		case STRING_TYPE_JASYMCA:
+	        		//case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_GEOGEBRA_XML:
 	        			sb.append("exp(");
 	        			sb.append(leftStr);
@@ -2858,11 +2898,11 @@ implements ExpressionValue {
 	        			sb.append("\\log(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Ln(");
 	        			break;
 	        			
-	        		case STRING_TYPE_JASYMCA:
+	        		//case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_GEOGEBRA_XML:
 	        			sb.append("log(");	        			
 	        			break;
@@ -2883,17 +2923,17 @@ implements ExpressionValue {
 	                    sb.append(')');
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Ln(");
 	        			sb.append(leftStr);
 	        			sb.append(")/Ln(10)");
 	        			break;
 	        			
-	        		case STRING_TYPE_JASYMCA:
-	        			sb.append("log(");	
-	        			sb.append(leftStr);
-	        			sb.append(")/log(10)");
-	        			break;
+//	        		case STRING_TYPE_JASYMCA:
+//	        			sb.append("log(");	
+//	        			sb.append(leftStr);
+//	        			sb.append(")/log(10)");
+//	        			break;
 	        			
 	        		default:
 	        			sb.append("lg(");  
@@ -2911,17 +2951,17 @@ implements ExpressionValue {
 	                    sb.append(')');
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Ln(");
 	        			 sb.append(leftStr);
 	        			 sb.append(")/Ln(2)");
 	        			break;
 	        			
-	        		case STRING_TYPE_JASYMCA:
-	        			sb.append("log(");	
-	        			sb.append(leftStr);
-	        			sb.append(")/log(2)");
-	        			break;
+//	        		case STRING_TYPE_JASYMCA:
+//	        			sb.append("log(");	
+//	        			sb.append(leftStr);
+//	        			sb.append(")/log(2)");
+//	        			break;
 	        			
 	        		default:
 	        			sb.append("ld(");   
@@ -2939,7 +2979,7 @@ implements ExpressionValue {
 	        			 sb.append('}');
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Sqrt(");
 	        			sb.append(leftStr);
 	                    sb.append(')');
@@ -2960,7 +3000,7 @@ implements ExpressionValue {
 	        			 sb.append('}');
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("(");
 	        			sb.append(leftStr);
 	                    sb.append(")^(1/3)");
@@ -2981,7 +3021,7 @@ implements ExpressionValue {
 	                    sb.append("\\right|");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Abs(");
 	        			sb.append(leftStr);
 		                sb.append(')');
@@ -3000,13 +3040,13 @@ implements ExpressionValue {
 	        			sb.append("\\mathrm{sgn}(");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Sign(");
 	        			break;
 	        			
-	        		case STRING_TYPE_JASYMCA:
-	        			sb.append("sign(");
-	        			break;
+//	        		case STRING_TYPE_JASYMCA:
+//	        			sb.append("sign(");
+//	        			break;
 
 	        		default:
 	        			sb.append("sgn(");         		
@@ -3023,7 +3063,7 @@ implements ExpressionValue {
 	                     sb.append("\\rfloor");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Floor(");
 	        			sb.append(leftStr);
 		                sb.append(')');
@@ -3044,7 +3084,7 @@ implements ExpressionValue {
 	                     sb.append("\\rceil");
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Ceil(");
 	        			sb.append(leftStr);
 		                sb.append(')');
@@ -3063,7 +3103,7 @@ implements ExpressionValue {
 	        			sb.append("\\mathrm{round}(");            
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Round(");        			
 	        			break;
 	        			
@@ -3080,7 +3120,7 @@ implements ExpressionValue {
 	        			sb.append("\\Gamma(");            
 	        			break;
 	        			
-	        		case STRING_TYPE_YACAS:
+	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Gamma(");        			
 	        			break;
 	        			
@@ -3109,8 +3149,8 @@ implements ExpressionValue {
                     		sb.append(')');
             				break;
             				
-            			case STRING_TYPE_JASYMCA:
-    	        		case STRING_TYPE_YACAS:
+            			//case STRING_TYPE_JASYMCA:
+    	        		case STRING_TYPE_MATH_PIPER:
     	        			// note: see GeoGebraCAS.insertSpecialChars()
     	        			sb.append("x");		        		
     	        			sb.append(UNICODE_PREFIX);
@@ -3141,8 +3181,8 @@ implements ExpressionValue {
 	                		sb.append(')');
 	        				break;
 	        				
-	        			case STRING_TYPE_JASYMCA:
-		        		case STRING_TYPE_YACAS:
+	        			//case STRING_TYPE_JASYMCA:
+		        		case STRING_TYPE_MATH_PIPER:
 		        			// note: see GeoGebraCAS.insertSpecialChars()
 		        			sb.append("y");		        		
 		        			sb.append(UNICODE_PREFIX);

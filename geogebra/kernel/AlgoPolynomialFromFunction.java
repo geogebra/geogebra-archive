@@ -68,10 +68,10 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
         }    
                 
         // get numeric string for function
-        //String function = f.getFunction().getExpression().getJSCLString(false);        
-		String function = f.getFunction().
-			getExpression().getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, false);
-    	
+        //String function = f.getFunction().getExpression().getJSCLString(false);        		
+        String function = f.getFunction().
+			getExpression().getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, false);    		
+		
         // expand expression and get polynomial coefficients
         String [] strCoeffs = kernel.getPolynomialCoeffs(function, "x");
         if (strCoeffs == null) {
@@ -94,102 +94,16 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
 			 }
 		 }
         
-   		Function polyFun = AlgoPolynomialFromCoordinates.buildPolyFunctionExpression(kernel,coeffs);
+   		Function polyFun = AlgoPolynomialFromCoordinates.
+   			buildPolyFunctionExpression(kernel,coeffs);
 
-   		if (polyFun==null)
-   		{
+   		if (polyFun==null) {
    		    g.setUndefined();
        	    return;			   			   			
    		}
         
-        /*
-        
-        ExpressionNode poly = null; // expression for the expanded polynomial		
-		FunctionVariable fVar = new FunctionVariable(kernel);	
-		double coeff;
-  	    for (int k = strCoeffs.length-1; k >= 0 ; k--) {
-  	        coeff = evaluateToDouble(strCoeffs[k]);  	 	 
-			 if (Double.isNaN(coeff) || Double.isInfinite(coeff)) {
-					 g.setUndefined();
-					 return;
-			 }
-			 else if (kernel.isZero(coeff)) 
-			 	continue; // this part vanished
-			 				
-			boolean negativeCoeff = coeff < 0; 					
-			
-			// build the expression x^k
-			ExpressionValue powerExp; 
-			switch (k) {
-			    case 0: 
-			    	powerExp = null;
-			    	break;
-			    	
-				case 1: 
-					powerExp = fVar; 
-					break;
-					
-				default: powerExp = 				
-					 new ExpressionNode(kernel, 
-							fVar,
-							ExpressionNode.POWER, 
-							new MyDouble(kernel, k));						
-			}
-					
-			// build the expression 
-			// (coeff) * x^k
-			ExpressionValue partExp;
-			MyDouble coeffMyDouble = null;
-			if (kernel.isEqual(coeff, 1.0)) {
-				if (powerExp == null)
-					partExp = new MyDouble(kernel, 1.0);
-				else
-					partExp = powerExp;
-			} else {
-				coeffMyDouble = new MyDouble(kernel, coeff);
-				if (powerExp == null)
-					partExp = coeffMyDouble;
-				else 
-					partExp = new ExpressionNode(kernel, 
-									coeffMyDouble, 
-									ExpressionNode.MULTIPLY, 
-									powerExp);
-			}								
-	
-			 // add part to series
-			if (poly == null) {
-				poly = new ExpressionNode(kernel, partExp);
-			} else {
-				if (negativeCoeff) {
-					if (coeffMyDouble != null)
-						coeffMyDouble.set(-coeff); // change sign
-					poly = new ExpressionNode(kernel, 
-											poly, 
-											ExpressionNode.MINUS, 
-											partExp);
-				} else {
-					poly = new ExpressionNode(kernel, 
-											poly, 
-											ExpressionNode.PLUS, 
-											partExp);
-				}					
-			}		
-  	    }     
-  	    
-  	    // all coefficients were 0, we've got f(x) = 0
-  	    if (poly == null) {
-  	    	poly = new ExpressionNode(kernel, new MyDouble(kernel, 0));
-  	    }  	       
-    	
-    	//  polynomial Function
-		Function polyFun = new Function(poly, fVar);	*/
-        // Michael Borcherds 2008-23-01 END
-   		
-   		
 		g.setFunction(polyFun);			
-		g.setDefined(true);	
-		
-		
+		g.setDefined(true);		
     }
     
     private double evaluateToDouble(String str) {

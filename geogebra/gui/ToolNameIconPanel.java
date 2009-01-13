@@ -219,7 +219,7 @@ public class ToolNameIconPanel extends JPanel {
 			if (img != null)
 				labelIcon.setIcon(new ImageIcon(img));
 			else
-				labelIcon.setIcon(app.getImageIcon("mode_tool_32.png"));
+				labelIcon.setIcon(app.getToolBarImage("mode_tool_32.png", null));
 		}
 		
 		tfToolName.setEnabled(enabled);

@@ -20,10 +20,15 @@ public class CmdSequence extends CommandProcessor {
 	
 final public  GeoElement[] process(Command c) throws MyError {
     int n = c.getArgumentNumber();
+    
+    // avoid "Command Sequence not known eg Sequence[If[Element[list1,i]=="b",0,1]]
+    if (n != 4 && n != 5)
+    	throw argNumErr(app, c.getName(), n);
+
     boolean[] ok = new boolean[n];
  
     // create local variable at position 1 and resolve arguments
-    GeoElement[] arg = resArgsLocalNumVar(c, 1);      
+    GeoElement[] arg = resArgsLocalNumVar(c, 1, 2);      
     
     switch (n) {
     	case 4 :

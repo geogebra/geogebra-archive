@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
 /**
  * Try to expand the given function 
  * 
@@ -23,7 +22,9 @@ public class AlgoFactor extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
-    private GeoFunction g; // output         
+    private GeoFunction g; // output        
+    
+    private StringBuffer sb = new StringBuffer();
    
     public AlgoFactor(Construction cons, String label, GeoFunction f) {
     	super(cons);
@@ -61,14 +62,18 @@ public class AlgoFactor extends AlgoElement {
                 
         
         // Yacas version
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_YACAS, true);
+	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 
         /*
 		String functionIn = f.getFunction().
 		getExpression().getCASstring(ExpressionNode.STRING_TYPE_YACAS, false);*/
 		//Application.debug(functionIn);
 
-		String functionOut = kernel.evaluateMathPiperRaw("Factor("+functionIn+")");
+	    sb.setLength(0);
+        sb.append("Factor(");
+        sb.append(functionIn);
+        sb.append(")");
+		String functionOut = kernel.evaluateMathPiperRaw(sb.toString());
 		
 		//Application.debug("Factorize input:"+functionIn);
 		//Application.debug("Factorize output:"+functionOut);

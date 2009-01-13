@@ -31,6 +31,9 @@ public class AlgoVector extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P, Q;   // input
     private GeoVector  v;     // output 
+    
+    // temp startpoint
+    private GeoPoint startPoint;
         
     /** Creates new AlgoVector */  
     AlgoVector(Construction cons, String label, GeoPoint P, GeoPoint Q) {
@@ -40,8 +43,14 @@ public class AlgoVector extends AlgoElement {
         
         // create new vector
         v = new GeoVector(cons);   
-        try {             	
-        	v.setStartPoint(P);               	
+        try {     
+        	if (P.isLabelSet())
+        		v.setStartPoint(P);
+            else  {
+            	startPoint = new GeoPoint(P);
+            	startPoint.set(P);
+            	v.setStartPoint(startPoint);
+            }        		
         } catch (CircularDefinitionException e) {}
                  
         setInputOutput();
@@ -72,10 +81,14 @@ public class AlgoVector extends AlgoElement {
     
     // calc the vector between P and Q    
     protected final void compute() {
-        if (Q.isFinite() && P.isFinite()) {        
+        if (P.isFinite() && Q.isFinite()) {        
             v.x = Q.inhomX - P.inhomX;
             v.y = Q.inhomY - P.inhomY;             
             v.z = 0.0;
+            
+            // update position of unlabeled startpoint
+            if (startPoint == v.getStartPoint())
+        		startPoint.set(P);            
         } else {
             v.setUndefined();
         }

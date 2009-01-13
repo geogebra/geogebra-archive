@@ -56,7 +56,7 @@ public class Parser {
     private Kernel kernel;
     private Construction cons;
     private Application app;
-    private boolean yacasParsing = false;
+    private boolean MathPiperParsing = false;
     
     public Parser(Kernel kernel, Construction cons) {
     	 this ( new java.io.StringReader("") ); // dummy stream for parser initing
@@ -68,7 +68,7 @@ public class Parser {
     // reset for new parsing
     public void myReInit(String parseString) {
     	ReInit(new java.io.StringReader(parseString));    	
-    	yacasParsing = false;    	
+    	MathPiperParsing = false;    	
     }
 
     /**
@@ -88,13 +88,13 @@ public class Parser {
     }        
     
     /**
-     * Parses a Yacas String and returns a ValidExpression Object     
+     * Parses a MathPiper String and returns a ValidExpression Object     
      */
-    public ValidExpression parseYacas(String parseString) throws ParseException {           
+    public ValidExpression parseMathPiper(String parseString) throws ParseException {           
         myReInit( parseString ); 
         // parse 3*x + 4*y == 2 as an equation 3x + 4y = 2
-        yacasParsing = true;                         
-        return buildYacasExpression();     
+        MathPiperParsing = true;                         
+        return buildMathPiperExpression();     
     }
     
     /**
@@ -260,8 +260,8 @@ TOKEN : {
 
 // labels for function names
 TOKEN: {
-    < X_FUNC:  "x("  >
-|	< Y_FUNC:  "y("  > 
+    < X_FUNC:  "x(" | "xcoord(" >
+|	< Y_FUNC:  "y(" | "ycoord("  > 
 |	< COS_FUNC: ( "cos(" | "Cos(" ) > 
 |	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
 |	< TAN_FUNC: ( "tan(" | "Tan(" ) > 
@@ -421,9 +421,9 @@ ValidExpression buildCASExpression() :
 }
 
 /**
- * convert Yacas String to GeoGebra string
+ * convert MathPiper String to GeoGebra string
  */
-ValidExpression buildYacasExpression() : 
+ValidExpression buildMathPiperExpression() : 
 {
     ValidExpression ve;
     ExpressionNode lhs, rhs;
@@ -434,9 +434,9 @@ ValidExpression buildYacasExpression() :
     (
        	// convert Solve results like {x==5, x==7} to simple list {5, 7} 
        	LOOKAHEAD(2147483647)   
-       	ve = yacasSolveResult()        
+       	ve = MathPiperSolveResult()        
     |       
-		// try to parse Yacas string as standard GeoGebra expression 
+		// try to parse MathPiper string as standard GeoGebra expression 
     	ve = expressionnode()     	     	   
 	)                     
     ( <EOL> | <EOF> )     
@@ -448,7 +448,7 @@ ValidExpression buildYacasExpression() :
 /**
  * convert Solve results like {x==5, x==7} to simple list {5, 7} 
  */
-ValidExpression yacasSolveResult() : 
+ValidExpression MathPiperSolveResult() : 
 {    
 	ExpressionValue ev;
 	MyList myList;
@@ -810,7 +810,7 @@ ExpressionNode expressionnode():
         }
     )*
     { 
-    	if (yacasParsing)
+    	if (MathPiperParsing)
     			ret.simplifyLeafs();
     	return ret; 
     }
@@ -847,7 +847,7 @@ ExpressionNode COMPAREterm():
     (         
        (<EQUAL_BOOLEAN>  f = plusminusnode()
     	 {            
-    	   if (yacasParsing)
+    	   if (MathPiperParsing)
     	       ret = new ExpressionNode(kernel, new Equation(kernel, ret, f));
     	   else
            		ret = new ExpressionNode(kernel, ret, ExpressionNode.EQUAL_BOOLEAN, f);  

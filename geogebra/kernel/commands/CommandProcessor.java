@@ -99,9 +99,10 @@ public abstract class CommandProcessor  {
 
     	/**
     	 * Resolve arguments of a command that has a local numeric variable
-    	 * at the specified position.  
+    	 * at the  position varPos. Initializes the variable with the NumberValue
+    	 * at initPos.  
     	 */
-    	final GeoElement [] resArgsLocalNumVar(Command c, int varPos) {
+    	final GeoElement [] resArgsLocalNumVar(Command c, int varPos, int initPos) {
     		// check if there is a local variable in arguments    	
     		String localVarName = c.getVariableName(varPos);
     		if (localVarName == null) {        		    
@@ -112,11 +113,19 @@ public abstract class CommandProcessor  {
     		Construction cmdCons = c.getKernel().getConstruction();    		
     	    GeoNumeric num = new GeoNumeric(cmdCons);
     	    cmdCons.addLocalVariable(localVarName, num); 
+    	    
+    	    // initialize first value of local numeric variable from initPos
+    	    boolean oldval = cons.isSuppressLabelsActive();
+    	    cons.setSuppressLabelCreation(true);
+    	    NumberValue initValue = (NumberValue) resArg(c.getArgument(initPos))[0];
+    	    cons.setSuppressLabelCreation(oldval);
+    	    num.setValue(initValue.getDouble());
+    	    	    	     	    
     	    // set local variable as our varPos argument
     	    c.setArgument(varPos, new ExpressionNode(c.getKernel(), num));
-    	     
+    	    
     	    // resolve all command arguments including the local variable just created
-    	    GeoElement [] arg = resArgs(c);                                   
+    	    GeoElement [] arg = resArgs(c);    	        	  
     	    
     	    // remove local variable name from kernel again
     	    cmdCons.removeLocalVariable(localVarName);     	    
@@ -3312,7 +3321,7 @@ final public    GeoElement[] process(Command c) throws MyError {
 			throw argErr(app, c.getName(), null);
     case 6 :
         // create local variable at position 3 and resolve arguments
-        arg = resArgsLocalNumVar(c, 3);      
+        arg = resArgsLocalNumVar(c, 3, 4);      
         if ((ok[0] = (arg[0] .isNumberValue()))
             && (ok[1] = (arg[1] .isNumberValue()))
             && ((ok[2] = arg[2].isGeoElement()))
@@ -3336,7 +3345,7 @@ final public    GeoElement[] process(Command c) throws MyError {
 
     case 7 :
         // create local variable at position 3 and resolve arguments
-        arg = resArgsLocalNumVar(c, 3);      
+        arg = resArgsLocalNumVar(c, 3, 4);      
         if ((ok[0] = (arg[0] .isNumberValue()))
             && (ok[1] = (arg[1] .isNumberValue()))
             && ((ok[2] = arg[2].isGeoElement()))

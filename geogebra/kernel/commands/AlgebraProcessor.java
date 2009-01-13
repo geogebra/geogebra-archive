@@ -470,7 +470,7 @@ public class AlgebraProcessor {
 				}
 			}
 		}
-
+		
 		GeoElement[] ret;
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		if (replaceable != null)

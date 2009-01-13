@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 /**
  * Returns whether an object is defined
  * @author Michael Borcherds
@@ -54,7 +56,17 @@ public class AlgoDefined extends AlgoElement {
     }
 
     protected final void compute() {
-        outputBoolean.setValue(inputGeo.isDefined());
+
+    	if (inputGeo.isGeoPoint()) {
+    		GeoPoint p = (GeoPoint)inputGeo;
+    		outputBoolean.setValue(inputGeo.isDefined() && !p.isInfinite());
+    	}
+    	else if (inputGeo.isGeoPoint()) {
+    		GeoVector v = (GeoVector)inputGeo;
+    		outputBoolean.setValue(inputGeo.isDefined() && !v.isInfinite());
+    	}
+    	else
+    		outputBoolean.setValue(inputGeo.isDefined());
     }
   
 }

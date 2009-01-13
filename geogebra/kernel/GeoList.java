@@ -16,7 +16,6 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -48,6 +47,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	private boolean isDefined = true;
 	private boolean isDrawable = true;
 	private int elementType = ELEMENT_TYPE_MIXED;
+	
+	private ArrayList colorFunctionListener; // Michael Borcherds 2008-04-02
     
     public GeoList(Construction c) { 
     	this(c, 20);
@@ -540,7 +541,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		  
 		  return sb.toString();
 	  }
-		/**
+	  	/**
 		 * Registers geo as a listener for updates
 		 * of this boolean object. If this object is
 		 * updated it calls geo.updateConditions()
@@ -558,6 +559,18 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			}
 		}
 		
+		public void registerColorFunctionListener(GeoElement geo) {
+			if (colorFunctionListener == null)
+				colorFunctionListener = new ArrayList();
+			colorFunctionListener.add(geo);
+		}
+		
+		public void unregisterColorFunctionListener(GeoElement geo) {
+			if (colorFunctionListener != null) {
+				colorFunctionListener.remove(geo);
+			}
+		}
+		
 
 		/**
 		 * Calls super.update() and update() for all registered condition listener geos.	
@@ -566,10 +579,10 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		public void update() {  	
 			super.update();
 			// update all registered locatables (they have this point as start point)
-			if (condListenersShowObject != null) {
+			if (colorFunctionListener != null) {
 				//Application.debug("GeoList update listeners");
-				for (int i=0; i < condListenersShowObject.size(); i++) {
-					GeoElement geo = (GeoElement) condListenersShowObject.get(i);		
+				for (int i=0; i < colorFunctionListener.size(); i++) {
+					GeoElement geo = (GeoElement) colorFunctionListener.get(i);		
 					kernel.notifyUpdate(geo);
 					//geo.toGeoElement().updateCascade();
 				}		
@@ -581,10 +594,10 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		 * 	// Michael Borcherds 2008-04-02
 		 */
 		protected void doRemove() {
-			if (condListenersShowObject != null) {
+			if (colorFunctionListener != null) {
 				// copy conditionListeners into array
-				Object [] geos = condListenersShowObject.toArray();	
-				condListenersShowObject.clear();
+				Object [] geos = colorFunctionListener.toArray();	
+				colorFunctionListener.clear();
 				
 				// tell all condition listeners 
 				for (int i=0; i < geos.length; i++) {		

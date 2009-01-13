@@ -13,13 +13,18 @@ package geogebra.gui.view.consprotocol;
 
 import geogebra.main.Application;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -27,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -70,7 +76,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 		spDelay = new JSpinner(model);	
 		lbSteps = new JLabel();
 		
-		initGUI();		
+		initGUI();			
 	}
 		
 	public boolean isPlayButtonVisible() {
@@ -112,24 +118,24 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	}	
 	
 	public void initGUI() {
-		removeAll();
-		
+		removeAll();	
+					
 		btFirst = new JButton(app.getImageIcon("nav_skipback.png"));
 		btLast = new JButton(app.getImageIcon("nav_skipforward.png"));		
 		btPrev = new JButton(app.getImageIcon("nav_rewind.png"));		
 		btNext = new JButton(app.getImageIcon("nav_fastforward.png"));				
-		
-		
+				
 		btFirst.addActionListener(this);
 		btLast.addActionListener(this);		
 		btPrev.addActionListener(this); 
 		btNext.addActionListener(this); 			
 		
-		add(btFirst);
-		add(btPrev);
-		add(lbSteps);			
-		add(btNext);
-		add(btLast);
+		JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));	
+		leftPanel.add(btFirst);
+		leftPanel.add(btPrev);
+		leftPanel.add(lbSteps);			
+		leftPanel.add(btNext);
+		leftPanel.add(btLast);
 		
 		playPanel = new JPanel();
 		playPanel.setVisible(showPlayButton);
@@ -151,22 +157,23 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 		playPanel.add(btPlay);
 		playPanel.add(spDelay);	
 		playPanel.add(new JLabel("s"));		
+		
+				
+		btOpenWindow = new JButton();
+		btOpenWindow.setIcon(app.getImageIcon("table.gif"));			
+		btOpenWindow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				app.getGuiManager().showConstructionProtocol();					
+			}				
+		});			
+			
+		// add panels together to center
+		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));		
+		add(leftPanel);
 		add(playPanel);
-		
-		
-		if (showConsProtButton) {
-			btOpenWindow = new JButton();
-			btOpenWindow.setIcon(app.getImageIcon("table.gif"));			
-			btOpenWindow.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					app.getGuiManager().showConstructionProtocol();					
-				}				
-			});
-					
-			add(Box.createRigidArea(new Dimension(20,10)));
-			add(btOpenWindow);
-		}
-		
+		add(btOpenWindow);
+		add(Box.createRigidArea(new Dimension(20,10)));
+								
 		setLabels();
 		setPlayDelay(playDelay);
 		update();
@@ -295,5 +302,5 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
         		stopAnimation();
         	}
         }       
-    }
+    }	
 }

@@ -16,4 +16,5 @@ package geogebra.kernel;
 public interface GeoFunctionable {
 	
 	public GeoFunction getGeoFunction();	
+	public GeoElement toGeoElement();
 }

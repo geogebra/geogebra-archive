@@ -92,7 +92,7 @@ office@geogebra.org
 					org/freehep/**, 					  
 				    tutor/**,
 					meta-inf/**,	
-					yacas/**,
+					MathPiper/**,
 					jasymca/**,
 					
 			        **/*.java"		/>
@@ -114,7 +114,7 @@ office@geogebra.org
 	<target name="ggb-cas-jar" depends="clean" description="create unsigned geogebra_cas.jar">
 		<jar jarfile="${build.dir}/geogebra_cas.jar"
 			basedir="${src.dir}"
-			includes="yacas/**,
+			includes="MathPiper/**,
 					  jasymca/**"
 			excludes="**/*.java" 
 		/>

@@ -41,11 +41,15 @@ public class AlgorithmSet {
     }
        
     /**
-     * Inserts algo at the end of the set. Note: this leads to a topological sorting
+     * Inserts algo into set sorted by constructionIndex. Note: this leads to a topological sorting
      * of the algorithms which is important for updating.
      * @return: true = the algo was added, false = the algo was already in the set
      */
-    final public boolean add(AlgoElement algo) {            	    	
+    final public boolean add(AlgoElement algo) {   
+    	if (contains(algo))
+    		return false;
+    	    	
+    	// empty list?
         if (head == null) {
         	if (hashMap == null) {
         		hashMap = new FastHashMapKeyless();
@@ -58,16 +62,36 @@ public class AlgorithmSet {
             return true;
         }        
         
-        // add only new algo to tail
-        // the test for the tail is only for efficiency (many hits here)
-        if (tail.algo != algo && hashMap.get(algo) == null) {
-        	hashMap.put(algo, algo);
+        // check if algo is already at end of list
+        if (tail.algo == algo) 
+        	return false;
+                       
+        // check if algo needs to be inserted at end (standard case)
+        if (tail.algo.compareTo(algo) <= 0) {        	
             tail.next = new Link(algo, null);
-            tail = tail.next;
-            size++;
-            return true;
+            tail = tail.next;                        
         }       
-        return false;
+        else {        	
+	        // insert in the middle, using compareTo() for sorting        
+	        Link prev = null, cur = head;
+	        while (cur.algo.compareTo(algo) < 0) {
+	        	prev = cur;
+	        	cur = cur.next;        	
+	        }         
+	        
+	        if (prev == null) {
+	        	// insert at beginning
+	        	head = new Link(algo, head);
+	        } else {
+	        	// insert in middle
+	        	prev.next = new Link(algo, prev.next);
+	        }	       
+        }
+        
+        hashMap.put(algo, algo);
+        size++;
+        
+        return true;        
     }
     
     /**
@@ -94,9 +118,10 @@ public class AlgorithmSet {
      * Removes algo from set.    
      */
     final public boolean remove(AlgoElement algo) {
-    	if (!contains(algo)) return false;
-    	
-    	hashMap.remove(algo);
+    	Object remObj = hashMap.remove(algo);
+    	if (remObj == null) {
+    		return false;
+    	}
     	
         Link prev = null;
         Link cur = head;
@@ -117,7 +142,8 @@ public class AlgorithmSet {
                 prev = cur;
                 cur = cur.next;
             }
-        }
+        }         
+        
         return false;
     }
     
@@ -166,8 +192,10 @@ public class AlgorithmSet {
         
         Link cur = head;
         while (cur != null) {
-            sb.append("\t");
-            sb.append(cur.algo.getCommandDescription());        
+        	sb.append("\n\t");
+        	sb.append(cur.algo.getCreationID());
+        	sb.append(": ");
+            sb.append(cur.algo + ", hash: " + cur.algo.hashCode());            
             cur = cur.next;
         }
         sb.append("]");

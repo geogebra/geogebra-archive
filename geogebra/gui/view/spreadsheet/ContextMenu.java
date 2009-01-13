@@ -310,7 +310,7 @@ public class ContextMenu extends JPopupMenu
 	private class ActionListenerCreateMatrix implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			Application.debug("CreateMatrix " + column1 + " - " + column2+"   "+row1+" - "+row2);
+ 			//Application.debug("CreateMatrix " + column1 + " - " + column2+"   "+row1+" - "+row2);
  			//if (selected == null) throw new RuntimeException("error state");
  			String text="";
  			try {
@@ -334,11 +334,12 @@ public class ContextMenu extends JPopupMenu
  					
 	  	   	 		text = removeComma(text)+ "}";
  					
- 					Application.debug(text);
+ 					//Application.debug(text);
    	 				GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
    	 				// set matrix label
-	   	 		    String matrixName = geos[0].getIndexLabel("matrix");
-	   	 		    geos[0].setLabel(matrixName);
+	   	 		    // no longer needed
+   	 				//String matrixName = geos[0].getIndexLabel("matrix");
+	   	 		    //geos[0].setLabel(matrixName);
 	
 	   	 		app.storeUndoInfo();
  			} 

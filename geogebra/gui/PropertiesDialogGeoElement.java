@@ -39,6 +39,7 @@ import geogebra.kernel.Locateable;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.TextProperties;
 import geogebra.kernel.Traceable;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 import geogebra.main.View;
@@ -1422,7 +1423,7 @@ public class PropertiesDialogGeoElement
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (!geo.isEuclidianVisible() || geo.isBooleanValue()) {
+				if (!geo.isEuclidianVisible()) {
 					geosOK = false;
 					break;
 				}
@@ -4458,7 +4459,7 @@ class SliderPanel
 		// set values
 		//int oldDigits = kernel.getMaximumFractionDigits();
 		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
-        kernel.setTemporaryMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+        kernel.setTemporaryPrintDecimals(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
 		if (equalMin){
 			if (onlyAngles)
 				tfMin.setText(kernel.formatAngle(num0.getIntervalMin()).toString());
@@ -4661,7 +4662,7 @@ class AnimationStepPanel
 		// set trace visible checkbox
 		//int oldDigits = kernel.getMaximumFractionDigits();
 		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
-        kernel.setTemporaryMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+		kernel.setTemporaryPrintDecimals(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
 
         if (equalStep)
 			if (onlyAngles)
@@ -4810,7 +4811,7 @@ class AnimationSpeedPanel
 		// set trace visible checkbox
 		//int oldDigits = kernel.getMaximumFractionDigits();
 		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
-        kernel.setTemporaryMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+        kernel.setTemporaryPrintDecimals(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
 
         if (equalStep)
 			tfAnimSpeed.setText(kernel.format(geo0.getAnimationSpeed()));
@@ -5177,9 +5178,9 @@ class ColorFunctionPanel
 		boolean requestFocus = false;
 		//try {
 		if (list != null)								//
-		if (((list.get(0) instanceof GeoNumeric)) && 	// bugfix, enter "x" for a color 
-			((list.get(1) instanceof GeoNumeric)) &&	//
-			((list.get(2) instanceof GeoNumeric)) )		//
+		if (((list.get(0) instanceof NumberValue)) && 	// bugfix, enter "x" for a color 
+			((list.get(1) instanceof NumberValue)) &&	//
+			((list.get(2) instanceof NumberValue)) )		//
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				geo.setColorFunction(list);				

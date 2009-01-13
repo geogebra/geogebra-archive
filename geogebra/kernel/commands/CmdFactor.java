@@ -28,13 +28,6 @@ final public GeoElement[] process(Command c) throws MyError {
                              c.getLabel(), (GeoFunction)arg[0])};
                  return ret;                
              }                        
-             else if (ok[0] = (arg[0] .isGeoNumeric())) {
-                 GeoElement[] ret =
-                     {
-                          kernel.Factor (
-                             c.getLabel(), (GeoNumeric)arg[0])};
-                 return ret;                
-             }                        
               else
             	 throw argErr(app, c.getName(), arg[0]);         
 			 

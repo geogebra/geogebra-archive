@@ -214,7 +214,7 @@ public class CASTableCellController implements KeyListener {
 			evaluation = ggbCAS.processCASInput(inputText, e.isShiftDown(), view.isUseGeoGebraVariableValues());
 			
 			if (evaluation == null)
-				error = ggbCAS.getYACASError();
+				error = ggbCAS.getMathPiperError();
 			
 		} catch (Throwable th) {
 			error = view.getApp().getError(this.yacasErrorMsg);

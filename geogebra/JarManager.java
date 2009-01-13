@@ -443,12 +443,13 @@ public class JarManager {
 			copyURLToFile(jarFileIndex, destFile);
 			
 			// TODO: remove
-			System.out.println("downloaded " + fileName + " to directory " + localJarDir);				
-			return true;						
+			System.out.println("downloaded " + fileName + " to directory " + localJarDir);
+			return destFile.exists();						
 		} catch (Exception e) {		
 			downloadJarFile = "ERROR: " + fileName;
 			System.err.println("Download error: " + e.getMessage());
-			destFile.delete();
+			destFile.delete();					
+			
 			return false;
 		}			
 	}
@@ -484,8 +485,10 @@ public class JarManager {
 			// TODO: remove
 			long startTime = System.currentTimeMillis();
 			
-			// open input string to jar URL
+			// open input stream to jar URL
 			in = jarConnectionManager.getInputStream(jarFileIndex);
+			if (in == null)
+				throw new NullPointerException("jarFile not found: " + jarFileIndex);
 					
 			// TODO: remove
 			long endTime = System.currentTimeMillis();

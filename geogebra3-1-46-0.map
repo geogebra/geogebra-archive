@@ -396,7 +396,7 @@ geogebra.GeoGebraAppletBase -> geogebra.GeoGebraAppletBase:
     void setXML(java.lang.String) -> setXML
     void evalXML(java.lang.String) -> evalXML
     boolean evalCommand(java.lang.String) -> evalCommand
-    java.lang.String evalYacas(java.lang.String) -> evalYacas
+    java.lang.String evalMathPiper(java.lang.String) -> evalMathPiper
     void setErrorDialogsActive(boolean) -> setErrorDialogsActive
     void reset() -> reset
     void resetNoThread() -> resetNoThread
@@ -661,14 +661,14 @@ geogebra.View -> geogebra.a:
     void reset() -> b
     void clearView() -> c
 geogebra.cas.GeoGebraCAS -> geogebra.d.a:
-    yacas.YacasInterpreter yacas -> a
+    MathPiper.MathPiperInterpreter MathPiper -> a
     jasymca.GeoGebraJasymca ggbJasymca -> a
     java.lang.StringBuffer sbInsertSpecial -> a
     java.lang.StringBuffer sbRemoveSpecial -> b
     java.lang.String evaluateJASYMCA(java.lang.String) -> a
     java.lang.String[] getPolynomialCoeffs(java.lang.String,java.lang.String) -> a
-    java.lang.String evaluateYACAS(java.lang.String) -> b
-    java.lang.String evaluateYACASRaw(java.lang.String) -> c
+    java.lang.String evaluateMathPiper(java.lang.String) -> b
+    java.lang.String evaluateMathPiperRaw(java.lang.String) -> c
     java.lang.String removeSpecialChars(java.lang.String) -> d
     java.lang.String insertSpecialChars(java.lang.String) -> e
 geogebra.cas.view.CASCommandObj -> geogebra.d.a.c:
@@ -7372,7 +7372,7 @@ geogebra.kernel.AlgoToTextList -> geogebra.kernel.dA:
     void setInputOutput() -> a
     geogebra.kernel.GeoText getResult() -> a
     void compute() -> b
-geogebra.kernel.AlgoToYacasString -> geogebra.kernel.ae:
+geogebra.kernel.AlgoToMathPiperString -> geogebra.kernel.ae:
     geogebra.kernel.GeoElement geo -> a
     geogebra.kernel.GeoText text -> a
     java.lang.String getClassName() -> a
@@ -9293,8 +9293,8 @@ geogebra.kernel.Kernel -> geogebra.kernel.di:
     geogebra.kernel.optimization.ExtremumFinder getExtremumFinder() -> a
     geogebra.kernel.statistics.RegressionMath getRegressionMath() -> a
     geogebra.kernel.parser.Parser getParser() -> a
-    java.lang.String evaluateYACAS(java.lang.String) -> a
-    java.lang.String evaluateYACASRaw(java.lang.String) -> b
+    java.lang.String evaluateMathPiper(java.lang.String) -> a
+    java.lang.String evaluateMathPiperRaw(java.lang.String) -> b
     java.lang.String evaluateJASYMCA(java.lang.String) -> c
     void initCAS() -> b
     java.lang.String[] getPolynomialCoeffs(java.lang.String,java.lang.String) -> a
@@ -9406,7 +9406,7 @@ geogebra.kernel.Kernel -> geogebra.kernel.di:
     geogebra.kernel.GeoText Name(java.lang.String,geogebra.kernel.GeoElement) -> a
     geogebra.kernel.GeoElement Object(java.lang.String,geogebra.kernel.GeoText) -> a
     geogebra.kernel.GeoText ColumnName(java.lang.String,geogebra.kernel.GeoElement) -> b
-    geogebra.kernel.GeoText ToYacasString(java.lang.String,geogebra.kernel.GeoElement) -> c
+    geogebra.kernel.GeoText ToMathPiperString(java.lang.String,geogebra.kernel.GeoElement) -> c
     geogebra.kernel.GeoText toLaTeX(java.lang.String,geogebra.kernel.GeoElement) -> d
     geogebra.kernel.GeoText toString(java.lang.String,geogebra.kernel.GeoElement) -> e
     geogebra.kernel.GeoNumeric Row(java.lang.String,geogebra.kernel.GeoElement) -> a
@@ -10790,7 +10790,7 @@ geogebra.kernel.commands.CmdToNumbers -> geogebra.kernel.b.F:
     geogebra.kernel.GeoElement[] process(geogebra.kernel.arithmetic.Command) -> a
 geogebra.kernel.commands.CmdToText -> geogebra.kernel.b.v:
     geogebra.kernel.GeoElement[] process(geogebra.kernel.arithmetic.Command) -> a
-geogebra.kernel.commands.CmdToYacasString -> geogebra.kernel.b.aN:
+geogebra.kernel.commands.CmdToMathPiperString -> geogebra.kernel.b.aN:
     geogebra.kernel.GeoElement[] process(geogebra.kernel.arithmetic.Command) -> a
 geogebra.kernel.commands.CmdTranslate -> geogebra.kernel.b.m:
     geogebra.kernel.GeoElement[] process(geogebra.kernel.arithmetic.Command) -> a
@@ -11598,7 +11598,7 @@ geogebra.plugin.GgbAPI -> geogebra.plugin.GgbAPI:
     void setXML(java.lang.String) -> setXML
     void evalXML(java.lang.String) -> evalXML
     boolean evalCommand(java.lang.String) -> evalCommand
-    java.lang.String evalYacas(java.lang.String) -> evalYacas
+    java.lang.String evalMathPiper(java.lang.String) -> evalMathPiper
     void setErrorDialogsActive(boolean) -> setErrorDialogsActive
     void reset() -> reset
     void refreshViews() -> refreshViews
@@ -14466,19 +14466,19 @@ org.freehep.util.io.WriterOutputStream -> org.freehep.util.io.j:
     void flush() -> flush
 org.freehep.xml.util.XMLWriter -> org.freehep.a.a.a:
     java.lang.String normalizeText(java.lang.String) -> a
-yacas.ArrayClass -> a.ca:
-    yacas.LispPtrArray iArray -> a
+MathPiper.ArrayClass -> a.ca:
+    MathPiper.LispPtrArray iArray -> a
     java.lang.String TypeName() -> a
     int Size() -> a
-    yacas.LispObject GetElement(int) -> a
-    void SetElement(int,yacas.LispObject) -> a
-yacas.BackQuoteBehaviour -> a.ay:
-    yacas.LispEnvironment iEnvironment -> a
-    boolean Matches(yacas.LispPtr,yacas.LispPtr) -> a
-yacas.BasicEvaluator -> a.dz:
-    void Eval(yacas.LispEnvironment,yacas.LispPtr,yacas.LispPtr) -> a
-    yacas.LispUserFunction GetUserFunction(yacas.LispEnvironment,yacas.LispPtr) -> a
-yacas.BigNumber -> a.e:
+    MathPiper.LispObject GetElement(int) -> a
+    void SetElement(int,MathPiper.LispObject) -> a
+MathPiper.BackQuoteBehaviour -> a.ay:
+    MathPiper.LispEnvironment iEnvironment -> a
+    boolean Matches(MathPiper.LispPtr,MathPiper.LispPtr) -> a
+MathPiper.BasicEvaluator -> a.dz:
+    void Eval(MathPiper.LispEnvironment,MathPiper.LispPtr,MathPiper.LispPtr) -> a
+    MathPiper.LispUserFunction GetUserFunction(MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+MathPiper.BigNumber -> a.e:
     java.math.BigDecimal zero -> b
     java.math.BigDecimal one -> c
     java.math.BigDecimal two -> d
@@ -14488,7 +14488,7 @@ yacas.BigNumber -> a.e:
     java.math.BigInteger integer -> a
     java.math.BigDecimal decimal -> a
     boolean NumericSupportForMantissa() -> a
-    void SetTo(yacas.BigNumber) -> a
+    void SetTo(MathPiper.BigNumber) -> a
     boolean IsFloat(java.lang.String,int) -> a
     void SetTo(java.lang.String,int,int) -> a
     void SetTo(long) -> a
@@ -14498,222 +14498,222 @@ yacas.BigNumber -> a.e:
     double Double() -> a
     long Long() -> a
     java.lang.String NumericLibraryName() -> a
-    boolean Equals(yacas.BigNumber) -> a
+    boolean Equals(MathPiper.BigNumber) -> a
     boolean IsInt() -> b
     boolean IsSmall() -> c
     void BecomeFloat(int) -> b
-    boolean LessThan(yacas.BigNumber) -> b
-    void Multiply(yacas.BigNumber,yacas.BigNumber,int) -> a
-    void Add(yacas.BigNumber,yacas.BigNumber,int) -> b
-    void Negate(yacas.BigNumber) -> b
-    void Divide(yacas.BigNumber,yacas.BigNumber,int) -> c
-    void Mod(yacas.BigNumber,yacas.BigNumber) -> a
-    void DumpDebugInfo(yacas.LispOutput) -> a
-    void Floor(yacas.BigNumber) -> c
+    boolean LessThan(MathPiper.BigNumber) -> b
+    void Multiply(MathPiper.BigNumber,MathPiper.BigNumber,int) -> a
+    void Add(MathPiper.BigNumber,MathPiper.BigNumber,int) -> b
+    void Negate(MathPiper.BigNumber) -> b
+    void Divide(MathPiper.BigNumber,MathPiper.BigNumber,int) -> c
+    void Mod(MathPiper.BigNumber,MathPiper.BigNumber) -> a
+    void DumpDebugInfo(MathPiper.LispOutput) -> a
+    void Floor(MathPiper.BigNumber) -> c
     void Precision(int) -> c
-    void ShiftLeft(yacas.BigNumber,int) -> a
-    void ShiftRight(yacas.BigNumber,int) -> b
-    void Gcd(yacas.BigNumber,yacas.BigNumber) -> b
-    void BitAnd(yacas.BigNumber,yacas.BigNumber) -> c
-    void BitOr(yacas.BigNumber,yacas.BigNumber) -> d
-    void BitXor(yacas.BigNumber,yacas.BigNumber) -> e
+    void ShiftLeft(MathPiper.BigNumber,int) -> a
+    void ShiftRight(MathPiper.BigNumber,int) -> b
+    void Gcd(MathPiper.BigNumber,MathPiper.BigNumber) -> b
+    void BitAnd(MathPiper.BigNumber,MathPiper.BigNumber) -> c
+    void BitOr(MathPiper.BigNumber,MathPiper.BigNumber) -> d
+    void BitXor(MathPiper.BigNumber,MathPiper.BigNumber) -> e
     long BitCount() -> b
     int Sign() -> a
     int GetPrecision() -> b
-    java.math.BigDecimal GetDecimal(yacas.BigNumber) -> a
-yacas.BranchingUserFunction -> a.cd:
+    java.math.BigDecimal GetDecimal(MathPiper.BigNumber) -> a
+MathPiper.BranchingUserFunction -> a.cd:
     java.util.Vector iParameters -> a
     java.util.Vector iRules -> b
-    yacas.LispPtr iParamList -> a
-    void Evaluate(yacas.LispPtr,yacas.LispEnvironment,yacas.LispPtr) -> a
+    MathPiper.LispPtr iParamList -> a
+    void Evaluate(MathPiper.LispPtr,MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
     void HoldArgument(java.lang.String) -> a
     boolean IsArity(int) -> a
     int Arity() -> a
-    void DeclareRule(int,yacas.LispPtr,yacas.LispPtr) -> a
-    void DeclareRule(int,yacas.LispPtr) -> a
-    void DeclarePattern(int,yacas.LispPtr,yacas.LispPtr) -> b
-    void InsertRule(int,yacas.BranchingUserFunction$BranchRuleBase) -> a
-    yacas.LispPtr ArgList() -> a
-yacas.BranchingUserFunction$BranchParameter -> a.cs:
+    void DeclareRule(int,MathPiper.LispPtr,MathPiper.LispPtr) -> a
+    void DeclareRule(int,MathPiper.LispPtr) -> a
+    void DeclarePattern(int,MathPiper.LispPtr,MathPiper.LispPtr) -> b
+    void InsertRule(int,MathPiper.BranchingUserFunction$BranchRuleBase) -> a
+    MathPiper.LispPtr ArgList() -> a
+MathPiper.BranchingUserFunction$BranchParameter -> a.cs:
     java.lang.String iParameter -> a
     boolean iHold -> a
-    yacas.BranchingUserFunction this$0 -> a
-yacas.BranchingUserFunction$BranchPattern -> a.aE:
+    MathPiper.BranchingUserFunction this$0 -> a
+MathPiper.BranchingUserFunction$BranchPattern -> a.aE:
     int iPrecedence -> a
-    yacas.LispPtr iBody -> a
-    yacas.LispPtr iPredicate -> b
-    yacas.PatternClass iPatternClass -> a
-    yacas.BranchingUserFunction this$0 -> a
-    boolean Matches(yacas.LispEnvironment,yacas.LispPtr[]) -> a
+    MathPiper.LispPtr iBody -> a
+    MathPiper.LispPtr iPredicate -> b
+    MathPiper.PatternClass iPatternClass -> a
+    MathPiper.BranchingUserFunction this$0 -> a
+    boolean Matches(MathPiper.LispEnvironment,MathPiper.LispPtr[]) -> a
     int Precedence() -> a
-    yacas.LispPtr Body() -> a
-yacas.BranchingUserFunction$BranchRule -> a.B:
+    MathPiper.LispPtr Body() -> a
+MathPiper.BranchingUserFunction$BranchRule -> a.B:
     int iPrecedence -> a
-    yacas.LispPtr iBody -> a
-    yacas.LispPtr iPredicate -> b
-    yacas.BranchingUserFunction this$0 -> a
-    boolean Matches(yacas.LispEnvironment,yacas.LispPtr[]) -> a
+    MathPiper.LispPtr iBody -> a
+    MathPiper.LispPtr iPredicate -> b
+    MathPiper.BranchingUserFunction this$0 -> a
+    boolean Matches(MathPiper.LispEnvironment,MathPiper.LispPtr[]) -> a
     int Precedence() -> a
-    yacas.LispPtr Body() -> a
-yacas.BranchingUserFunction$BranchRuleBase -> a.cq:
-    yacas.BranchingUserFunction this$0 -> b
-    boolean Matches(yacas.LispEnvironment,yacas.LispPtr[]) -> a
+    MathPiper.LispPtr Body() -> a
+MathPiper.BranchingUserFunction$BranchRuleBase -> a.cq:
+    MathPiper.BranchingUserFunction this$0 -> b
+    boolean Matches(MathPiper.LispEnvironment,MathPiper.LispPtr[]) -> a
     int Precedence() -> a
-    yacas.LispPtr Body() -> a
-yacas.BranchingUserFunction$BranchRuleTruePredicate -> a.dZ:
-    yacas.BranchingUserFunction this$0 -> c
-    boolean Matches(yacas.LispEnvironment,yacas.LispPtr[]) -> a
-yacas.CVersion -> a.bT:
+    MathPiper.LispPtr Body() -> a
+MathPiper.BranchingUserFunction$BranchRuleTruePredicate -> a.dZ:
+    MathPiper.BranchingUserFunction this$0 -> c
+    boolean Matches(MathPiper.LispEnvironment,MathPiper.LispPtr[]) -> a
+MathPiper.CVersion -> a.bT:
     java.lang.String VERSION -> a
-yacas.CYacas -> a.z:
-    yacas.LispEnvironment env -> a
-    yacas.LispTokenizer tokenizer -> a
-    yacas.LispPrinter printer -> a
+MathPiper.CMathPiper -> a.z:
+    MathPiper.LispEnvironment env -> a
+    MathPiper.LispTokenizer tokenizer -> a
+    MathPiper.LispPrinter printer -> a
     java.lang.String iError -> a
     java.lang.StringBuffer inp -> a
     java.lang.StringBuffer string_out -> b
     java.lang.String Evaluate(java.lang.String) -> a
-yacas.EvalFuncBase -> a.cn:
-yacas.GenericClass -> a.dx:
+MathPiper.EvalFuncBase -> a.cn:
+MathPiper.GenericClass -> a.dx:
     java.lang.String TypeName() -> a
-yacas.InfixParser -> a.bW:
-    yacas.LispOperators iPrefixOperators -> a
-    yacas.LispOperators iInfixOperators -> b
-    yacas.LispOperators iPostfixOperators -> c
-    yacas.LispOperators iBodiedOperators -> d
-    void Parse(yacas.LispPtr) -> a
-    void ParseCont(yacas.LispPtr) -> b
-yacas.InfixPrinter -> a.cM:
+MathPiper.InfixParser -> a.bW:
+    MathPiper.LispOperators iPrefixOperators -> a
+    MathPiper.LispOperators iInfixOperators -> b
+    MathPiper.LispOperators iPostfixOperators -> c
+    MathPiper.LispOperators iBodiedOperators -> d
+    void Parse(MathPiper.LispPtr) -> a
+    void ParseCont(MathPiper.LispPtr) -> b
+MathPiper.InfixPrinter -> a.cM:
     int KMaxPrecedence -> a
-    yacas.LispOperators iPrefixOperators -> a
-    yacas.LispOperators iInfixOperators -> b
-    yacas.LispOperators iPostfixOperators -> c
-    yacas.LispOperators iBodiedOperators -> d
+    MathPiper.LispOperators iPrefixOperators -> a
+    MathPiper.LispOperators iInfixOperators -> b
+    MathPiper.LispOperators iPostfixOperators -> c
+    MathPiper.LispOperators iBodiedOperators -> d
     char iPrevLastChar -> a
-    yacas.LispEnvironment iCurrentEnvironment -> a
-    void Print(yacas.LispPtr,yacas.LispOutput,yacas.LispEnvironment) -> a
+    MathPiper.LispEnvironment iCurrentEnvironment -> a
+    void Print(MathPiper.LispPtr,MathPiper.LispOutput,MathPiper.LispEnvironment) -> a
     void RememberLastChar(char) -> a
-    void Print(yacas.LispPtr,yacas.LispOutput,int) -> a
-    void WriteToken(yacas.LispOutput,java.lang.String) -> a
-yacas.InputDirectories -> a.bQ:
-yacas.InputStatus -> a.cP:
+    void Print(MathPiper.LispPtr,MathPiper.LispOutput,int) -> a
+    void WriteToken(MathPiper.LispOutput,java.lang.String) -> a
+MathPiper.InputDirectories -> a.bQ:
+MathPiper.InputStatus -> a.cP:
     java.lang.String iFileName -> a
     int iLineNumber -> a
     void SetTo(java.lang.String) -> a
-    void RestoreFrom(yacas.InputStatus) -> a
+    void RestoreFrom(MathPiper.InputStatus) -> a
     int LineNumber() -> a
     java.lang.String FileName() -> a
     void NextLine() -> a
-yacas.LispArityUserFunction -> a.dY:
+MathPiper.LispArityUserFunction -> a.dY:
     int Arity() -> a
     boolean IsArity(int) -> a
-yacas.LispAssociatedHash -> a.aD:
+MathPiper.LispAssociatedHash -> a.aD:
     java.util.Hashtable iHashtable -> a
     java.lang.Object LookUp(java.lang.String) -> a
     void SetAssociation(java.lang.Object,java.lang.String) -> a
     void Release(java.lang.String) -> b
-yacas.LispAtom -> a.dc:
+MathPiper.LispAtom -> a.dc:
     java.lang.String iString -> a
-    yacas.LispObject New(yacas.LispEnvironment,java.lang.String) -> a
+    MathPiper.LispObject New(MathPiper.LispEnvironment,java.lang.String) -> a
     java.lang.String String() -> a
-    yacas.LispObject Copy(boolean) -> a
-    yacas.LispObject SetExtraInfo(yacas.LispPtr) -> a
-yacas.LispDefFile -> a.ei:
+    MathPiper.LispObject Copy(boolean) -> a
+    MathPiper.LispObject SetExtraInfo(MathPiper.LispPtr) -> a
+MathPiper.LispDefFile -> a.ei:
     java.lang.String iFileName -> a
     boolean iIsLoaded -> a
     void SetLoaded() -> a
     boolean IsLoaded() -> a
-yacas.LispDefFiles -> a.dw:
-    yacas.LispDefFile File(java.lang.String) -> a
-yacas.LispEnvironment -> a.cU:
+MathPiper.LispDefFiles -> a.dw:
+    MathPiper.LispDefFile File(java.lang.String) -> a
+MathPiper.LispEnvironment -> a.cU:
     int iPrecision -> d
-    yacas.LispHashTable iHashTable -> a
-    yacas.LispObject iTrue -> a
-    yacas.LispObject iFalse -> b
-    yacas.LispObject iEndOfFile -> c
-    yacas.LispObject iEndStatement -> d
-    yacas.LispObject iProgOpen -> e
-    yacas.LispObject iProgClose -> f
-    yacas.LispObject iNth -> g
-    yacas.LispObject iBracketOpen -> h
-    yacas.LispObject iBracketClose -> i
-    yacas.LispObject iListOpen -> j
-    yacas.LispObject iListClose -> k
-    yacas.LispObject iComma -> l
-    yacas.LispObject iList -> m
-    yacas.LispObject iProg -> n
-    yacas.LispOperators iPrefixOperators -> a
-    yacas.LispOperators iInfixOperators -> b
-    yacas.LispOperators iPostfixOperators -> c
-    yacas.LispOperators iBodiedOperators -> d
+    MathPiper.LispHashTable iHashTable -> a
+    MathPiper.LispObject iTrue -> a
+    MathPiper.LispObject iFalse -> b
+    MathPiper.LispObject iEndOfFile -> c
+    MathPiper.LispObject iEndStatement -> d
+    MathPiper.LispObject iProgOpen -> e
+    MathPiper.LispObject iProgClose -> f
+    MathPiper.LispObject iNth -> g
+    MathPiper.LispObject iBracketOpen -> h
+    MathPiper.LispObject iBracketClose -> i
+    MathPiper.LispObject iListOpen -> j
+    MathPiper.LispObject iListClose -> k
+    MathPiper.LispObject iComma -> l
+    MathPiper.LispObject iList -> m
+    MathPiper.LispObject iProg -> n
+    MathPiper.LispOperators iPrefixOperators -> a
+    MathPiper.LispOperators iInfixOperators -> b
+    MathPiper.LispOperators iPostfixOperators -> c
+    MathPiper.LispOperators iBodiedOperators -> d
     int iEvalDepth -> a
     int iMaxEvalDepth -> b
-    yacas.LispEnvironment$YacasArgStack iStack -> a
-    yacas.YacasCoreCommands iCoreCommands -> a
-    yacas.LispEvaluatorBase iEvaluator -> a
-    yacas.LispEnvironment$LocalVariableFrame iLocalsList -> a
-    yacas.LispGlobal iGlobals -> a
+    MathPiper.LispEnvironment$MathPiperArgStack iStack -> a
+    MathPiper.MathPiperCoreCommands iCoreCommands -> a
+    MathPiper.LispEvaluatorBase iEvaluator -> a
+    MathPiper.LispEnvironment$LocalVariableFrame iLocalsList -> a
+    MathPiper.LispGlobal iGlobals -> a
     boolean iSecure -> a
     int iLastUniqueId -> c
-    yacas.LispOutput iCurrentOutput -> a
-    yacas.LispOutput iInitialOutput -> b
-    yacas.LispPrinter iCurrentPrinter -> a
-    yacas.LispInput iCurrentInput -> a
-    yacas.InputStatus iInputStatus -> a
-    yacas.LispTokenizer iCurrentTokenizer -> a
-    yacas.LispTokenizer iDefaultTokenizer -> b
-    yacas.LispTokenizer iXmlTokenizer -> c
-    yacas.LispUserFunctions iUserFunctions -> a
+    MathPiper.LispOutput iCurrentOutput -> a
+    MathPiper.LispOutput iInitialOutput -> b
+    MathPiper.LispPrinter iCurrentPrinter -> a
+    MathPiper.LispInput iCurrentInput -> a
+    MathPiper.InputStatus iInputStatus -> a
+    MathPiper.LispTokenizer iCurrentTokenizer -> a
+    MathPiper.LispTokenizer iDefaultTokenizer -> b
+    MathPiper.LispTokenizer iXmlTokenizer -> c
+    MathPiper.LispUserFunctions iUserFunctions -> a
     java.lang.String iError -> a
-    yacas.LispDefFiles iDefFiles -> a
-    yacas.InputDirectories iInputDirectories -> a
+    MathPiper.LispDefFiles iDefFiles -> a
+    MathPiper.InputDirectories iInputDirectories -> a
     java.lang.String iPrettyReader -> b
     java.lang.String iPrettyPrinter -> c
-    yacas.LispHashTable HashTable() -> a
+    MathPiper.LispHashTable HashTable() -> a
     int Precision() -> a
     void SetPrecision(int) -> a
-    yacas.YacasCoreCommands CoreCommands() -> a
-    yacas.LispPtr FindLocal(java.lang.String) -> a
-    void SetVariable(java.lang.String,yacas.LispPtr) -> a
-    void GetVariable(java.lang.String,yacas.LispPtr) -> b
+    MathPiper.MathPiperCoreCommands CoreCommands() -> a
+    MathPiper.LispPtr FindLocal(java.lang.String) -> a
+    void SetVariable(java.lang.String,MathPiper.LispPtr) -> a
+    void GetVariable(java.lang.String,MathPiper.LispPtr) -> b
     void SetGlobalEvaluates(java.lang.String) -> a
     void UnsetVariable(java.lang.String) -> b
     void PushLocalFrame(boolean) -> a
     void PopLocalFrame() -> a
-    void NewLocal(java.lang.String,yacas.LispObject) -> a
+    void NewLocal(java.lang.String,MathPiper.LispObject) -> a
     int GetUniqueId() -> b
     void HoldArgument(java.lang.String,java.lang.String) -> a
     void Retract(java.lang.String,int) -> a
-    yacas.LispUserFunction UserFunction(yacas.LispPtr) -> a
-    yacas.LispUserFunction UserFunction(java.lang.String,int) -> a
+    MathPiper.LispUserFunction UserFunction(MathPiper.LispPtr) -> a
+    MathPiper.LispUserFunction UserFunction(java.lang.String,int) -> a
     void UnFenceRule(java.lang.String,int) -> b
-    yacas.LispMultiUserFunction MultiUserFunction(java.lang.String) -> a
-    void DeclareRuleBase(java.lang.String,yacas.LispPtr,boolean) -> a
-    void DefineRule(java.lang.String,int,int,yacas.LispPtr,yacas.LispPtr) -> a
-    void DeclareMacroRuleBase(java.lang.String,yacas.LispPtr,boolean) -> b
-    void DefineRulePattern(java.lang.String,int,int,yacas.LispPtr,yacas.LispPtr) -> b
-yacas.LispEnvironment$LispLocalVariable -> a.dg:
-    yacas.LispEnvironment$LispLocalVariable iNext -> a
+    MathPiper.LispMultiUserFunction MultiUserFunction(java.lang.String) -> a
+    void DeclareRuleBase(java.lang.String,MathPiper.LispPtr,boolean) -> a
+    void DefineRule(java.lang.String,int,int,MathPiper.LispPtr,MathPiper.LispPtr) -> a
+    void DeclareMacroRuleBase(java.lang.String,MathPiper.LispPtr,boolean) -> b
+    void DefineRulePattern(java.lang.String,int,int,MathPiper.LispPtr,MathPiper.LispPtr) -> b
+MathPiper.LispEnvironment$LispLocalVariable -> a.dg:
+    MathPiper.LispEnvironment$LispLocalVariable iNext -> a
     java.lang.String iVariable -> a
-    yacas.LispPtr iValue -> a
-    yacas.LispEnvironment this$0 -> a
-yacas.LispEnvironment$LocalVariableFrame -> a.cN:
-    yacas.LispEnvironment$LocalVariableFrame iNext -> a
-    yacas.LispEnvironment$LispLocalVariable iFirst -> a
-    yacas.LispEnvironment$LispLocalVariable iLast -> b
-    yacas.LispEnvironment this$0 -> a
-    void Add(yacas.LispEnvironment$LispLocalVariable) -> a
+    MathPiper.LispPtr iValue -> a
+    MathPiper.LispEnvironment this$0 -> a
+MathPiper.LispEnvironment$LocalVariableFrame -> a.cN:
+    MathPiper.LispEnvironment$LocalVariableFrame iNext -> a
+    MathPiper.LispEnvironment$LispLocalVariable iFirst -> a
+    MathPiper.LispEnvironment$LispLocalVariable iLast -> b
+    MathPiper.LispEnvironment this$0 -> a
+    void Add(MathPiper.LispEnvironment$LispLocalVariable) -> a
     void Delete() -> a
-yacas.LispEnvironment$YacasArgStack -> a.bm:
-    yacas.LispPtrArray iStack -> a
+MathPiper.LispEnvironment$MathPiperArgStack -> a.bm:
+    MathPiper.LispPtrArray iStack -> a
     int iStackTop -> a
-    yacas.LispEnvironment this$0 -> a
+    MathPiper.LispEnvironment this$0 -> a
     int GetStackTop() -> a
     void RaiseStackOverflowError() -> a
-    void PushArgOnStack(yacas.LispObject) -> a
-    yacas.LispPtr GetElement(int) -> a
+    void PushArgOnStack(MathPiper.LispObject) -> a
+    MathPiper.LispPtr GetElement(int) -> a
     void PopTo(int) -> a
-yacas.LispError -> a.cH:
+MathPiper.LispError -> a.cH:
     int KLispErrNone -> a
     int KLispErrInvalidArg -> b
     int KLispErrWrongNumberOfArgs -> c
@@ -14749,38 +14749,38 @@ yacas.LispError -> a.cH:
     java.lang.String ErrorString(int) -> a
     void Check(boolean,int) -> a
     void RaiseError(java.lang.String) -> a
-    void CheckNrArgs(int,yacas.LispPtr,yacas.LispEnvironment) -> a
-    void ErrorNrArgs(int,int,yacas.LispPtr,yacas.LispEnvironment) -> a
-    java.lang.String ShowFunctionError(yacas.LispPtr,yacas.LispEnvironment) -> a
-    void CHK_CORE(yacas.LispEnvironment,int,boolean,int) -> a
+    void CheckNrArgs(int,MathPiper.LispPtr,MathPiper.LispEnvironment) -> a
+    void ErrorNrArgs(int,int,MathPiper.LispPtr,MathPiper.LispEnvironment) -> a
+    java.lang.String ShowFunctionError(MathPiper.LispPtr,MathPiper.LispEnvironment) -> a
+    void CHK_CORE(MathPiper.LispEnvironment,int,boolean,int) -> a
     void LISPASSERT(boolean) -> a
-    void CHK_ARG_CORE(yacas.LispEnvironment,int,boolean,int) -> b
-    void CHK_ISLIST_CORE(yacas.LispEnvironment,int,yacas.LispPtr,int) -> a
-    void CHK_ISSTRING_CORE(yacas.LispEnvironment,int,yacas.LispPtr,int) -> b
-    void CheckArgTypeWithError(yacas.LispEnvironment,int,boolean,int,java.lang.String) -> a
-yacas.LispEvaluatorBase -> a.r:
-    yacas.UserStackInformation iBasicInfo -> a
-    void Eval(yacas.LispEnvironment,yacas.LispPtr,yacas.LispPtr) -> a
-    yacas.UserStackInformation StackInformation() -> a
-yacas.LispGenericClass -> a.du:
-    yacas.GenericClass iClass -> a
-    yacas.LispGenericClass New(yacas.GenericClass) -> a
-    yacas.GenericClass Generic() -> a
+    void CHK_ARG_CORE(MathPiper.LispEnvironment,int,boolean,int) -> b
+    void CHK_ISLIST_CORE(MathPiper.LispEnvironment,int,MathPiper.LispPtr,int) -> a
+    void CHK_ISSTRING_CORE(MathPiper.LispEnvironment,int,MathPiper.LispPtr,int) -> b
+    void CheckArgTypeWithError(MathPiper.LispEnvironment,int,boolean,int,java.lang.String) -> a
+MathPiper.LispEvaluatorBase -> a.r:
+    MathPiper.UserStackInformation iBasicInfo -> a
+    void Eval(MathPiper.LispEnvironment,MathPiper.LispPtr,MathPiper.LispPtr) -> a
+    MathPiper.UserStackInformation StackInformation() -> a
+MathPiper.LispGenericClass -> a.du:
+    MathPiper.GenericClass iClass -> a
+    MathPiper.LispGenericClass New(MathPiper.GenericClass) -> a
+    MathPiper.GenericClass Generic() -> a
     java.lang.String String() -> a
-    yacas.LispObject Copy(boolean) -> a
-    yacas.LispObject SetExtraInfo(yacas.LispPtr) -> a
-yacas.LispGlobal -> a.bG:
-yacas.LispGlobalVariable -> a.dM:
-    yacas.LispPtr iValue -> a
+    MathPiper.LispObject Copy(boolean) -> a
+    MathPiper.LispObject SetExtraInfo(MathPiper.LispPtr) -> a
+MathPiper.LispGlobal -> a.bG:
+MathPiper.LispGlobalVariable -> a.dM:
+    MathPiper.LispPtr iValue -> a
     boolean iEvalBeforeReturn -> a
     void SetEvalBeforeReturn(boolean) -> a
-yacas.LispHashTable -> a.dV:
+MathPiper.LispHashTable -> a.dV:
     java.util.Hashtable iHashtable -> a
     java.lang.String LookUp(java.lang.String) -> a
     java.lang.String LookUpStringify(java.lang.String) -> b
     java.lang.String LookUpUnStringify(java.lang.String) -> c
     void GarbageCollect() -> a
-yacas.LispInFixOperator -> a.bu:
+MathPiper.LispInFixOperator -> a.bu:
     int iPrecedence -> a
     int iLeftPrecedence -> b
     int iRightPrecedence -> c
@@ -14788,808 +14788,808 @@ yacas.LispInFixOperator -> a.bu:
     void SetRightAssociative() -> a
     void SetLeftPrecedence(int) -> a
     void SetRightPrecedence(int) -> b
-yacas.LispInput -> a.aX:
-    yacas.InputStatus iStatus -> a
+MathPiper.LispInput -> a.aX:
+    MathPiper.InputStatus iStatus -> a
     char Next() -> a
     char Peek() -> b
     boolean EndOfStream() -> a
     java.lang.StringBuffer StartPtr() -> a
     int Position() -> a
     void SetPosition(int) -> a
-yacas.LispIterator -> a.C:
-    yacas.LispPtr iPtr -> a
-    yacas.LispObject GetObject() -> a
-    yacas.LispPtr Ptr() -> a
+MathPiper.LispIterator -> a.C:
+    MathPiper.LispPtr iPtr -> a
+    MathPiper.LispObject GetObject() -> a
+    MathPiper.LispPtr Ptr() -> a
     void GoNext() -> a
     void GoSub() -> b
-yacas.LispMultiUserFunction -> a.eq:
+MathPiper.LispMultiUserFunction -> a.eq:
     java.util.ArrayList iFunctions -> a
-    yacas.LispDefFile iFileToOpen -> a
-    yacas.LispUserFunction UserFunc(int) -> a
+    MathPiper.LispDefFile iFileToOpen -> a
+    MathPiper.LispUserFunction UserFunc(int) -> a
     void HoldArgument(java.lang.String) -> a
-    void DefineRuleBase(yacas.LispArityUserFunction) -> a
+    void DefineRuleBase(MathPiper.LispArityUserFunction) -> a
     void DeleteBase(int) -> a
-yacas.LispNumber -> a.bL:
-    yacas.BigNumber iNumber -> a
+MathPiper.LispNumber -> a.bL:
+    MathPiper.BigNumber iNumber -> a
     java.lang.String iString -> a
-    yacas.LispObject Copy(boolean) -> a
+    MathPiper.LispObject Copy(boolean) -> a
     java.lang.String String() -> a
-    yacas.BigNumber Number(int) -> a
-    yacas.LispObject SetExtraInfo(yacas.LispPtr) -> a
-yacas.LispObject -> a.cQ:
-    yacas.LispPtr iNext -> b
-    yacas.LispPtr Next() -> b
+    MathPiper.BigNumber Number(int) -> a
+    MathPiper.LispObject SetExtraInfo(MathPiper.LispPtr) -> a
+MathPiper.LispObject -> a.cQ:
+    MathPiper.LispPtr iNext -> b
+    MathPiper.LispPtr Next() -> b
     java.lang.String String() -> a
-    yacas.LispPtr SubList() -> a
-    yacas.GenericClass Generic() -> a
-    yacas.BigNumber Number(int) -> a
-    yacas.LispObject Copy(boolean) -> a
-    yacas.LispPtr ExtraInfo() -> c
-    yacas.LispObject SetExtraInfo(yacas.LispPtr) -> a
-yacas.LispOperators -> a.v:
+    MathPiper.LispPtr SubList() -> a
+    MathPiper.GenericClass Generic() -> a
+    MathPiper.BigNumber Number(int) -> a
+    MathPiper.LispObject Copy(boolean) -> a
+    MathPiper.LispPtr ExtraInfo() -> c
+    MathPiper.LispObject SetExtraInfo(MathPiper.LispPtr) -> a
+MathPiper.LispOperators -> a.v:
     void SetOperator(int,java.lang.String) -> a
     void SetRightAssociative(java.lang.String) -> a
     void SetLeftPrecedence(java.lang.String,int) -> a
     void SetRightPrecedence(java.lang.String,int) -> b
-yacas.LispOutput -> a.cm:
+MathPiper.LispOutput -> a.cm:
     void PutChar(char) -> a
     void Write(java.lang.String) -> a
-yacas.LispParser -> a.cB:
-    yacas.LispTokenizer iTokenizer -> a
-    yacas.LispInput iInput -> a
-    yacas.LispEnvironment iEnvironment -> a
+MathPiper.LispParser -> a.cB:
+    MathPiper.LispTokenizer iTokenizer -> a
+    MathPiper.LispInput iInput -> a
+    MathPiper.LispEnvironment iEnvironment -> a
     boolean iListed -> a
-    void Parse(yacas.LispPtr) -> a
-    void ParseList(yacas.LispPtr) -> c
-    void ParseAtom(yacas.LispPtr,java.lang.String) -> a
-yacas.LispPrinter -> a.aY:
-    void Print(yacas.LispPtr,yacas.LispOutput,yacas.LispEnvironment) -> a
+    void Parse(MathPiper.LispPtr) -> a
+    void ParseList(MathPiper.LispPtr) -> c
+    void ParseAtom(MathPiper.LispPtr,java.lang.String) -> a
+MathPiper.LispPrinter -> a.aY:
+    void Print(MathPiper.LispPtr,MathPiper.LispOutput,MathPiper.LispEnvironment) -> a
     void RememberLastChar(char) -> a
-    void PrintExpression(yacas.LispPtr,yacas.LispOutput,yacas.LispEnvironment,int) -> a
-    void Indent(yacas.LispOutput,int) -> a
-yacas.LispPtr -> a.ea:
-    yacas.LispObject iNext -> a
-    void Set(yacas.LispObject) -> a
-    yacas.LispObject Get() -> a
+    void PrintExpression(MathPiper.LispPtr,MathPiper.LispOutput,MathPiper.LispEnvironment,int) -> a
+    void Indent(MathPiper.LispOutput,int) -> a
+MathPiper.LispPtr -> a.ea:
+    MathPiper.LispObject iNext -> a
+    void Set(MathPiper.LispObject) -> a
+    MathPiper.LispObject Get() -> a
     void GoNext() -> a
-yacas.LispPtrArray -> a.q:
+MathPiper.LispPtrArray -> a.q:
     int iSize -> a
-    yacas.LispPtr[] iArray -> a
+    MathPiper.LispPtr[] iArray -> a
     int Size() -> a
-    yacas.LispPtr GetElement(int) -> a
-    void SetElement(int,yacas.LispObject) -> a
-yacas.LispStandard -> a.dv:
+    MathPiper.LispPtr GetElement(int) -> a
+    void SetElement(int,MathPiper.LispObject) -> a
+MathPiper.LispStandard -> a.dv:
     int log2_table_size -> a
     double[] log2_table -> a
     java.lang.Class class$0 -> a
     boolean IsNumber(java.lang.String,boolean) -> a
-    int InternalListLength(yacas.LispPtr) -> a
-    void InternalReverseList(yacas.LispPtr,yacas.LispPtr) -> a
-    void ReturnUnEvaluated(yacas.LispPtr,yacas.LispPtr,yacas.LispEnvironment) -> a
-    void InternalApplyString(yacas.LispEnvironment,yacas.LispPtr,java.lang.String,yacas.LispPtr) -> a
-    void InternalApplyPure(yacas.LispPtr,yacas.LispPtr,yacas.LispPtr,yacas.LispEnvironment) -> a
-    void InternalTrue(yacas.LispEnvironment,yacas.LispPtr) -> a
-    void InternalFalse(yacas.LispEnvironment,yacas.LispPtr) -> b
-    void InternalBoolean(yacas.LispEnvironment,yacas.LispPtr,boolean) -> a
-    void InternalNth(yacas.LispPtr,yacas.LispPtr,int) -> a
-    void InternalTail(yacas.LispPtr,yacas.LispPtr) -> b
-    boolean IsTrue(yacas.LispEnvironment,yacas.LispPtr) -> a
-    boolean IsFalse(yacas.LispEnvironment,yacas.LispPtr) -> b
-    java.lang.String SymbolName(yacas.LispEnvironment,java.lang.String) -> a
-    boolean InternalIsList(yacas.LispPtr) -> a
+    int InternalListLength(MathPiper.LispPtr) -> a
+    void InternalReverseList(MathPiper.LispPtr,MathPiper.LispPtr) -> a
+    void ReturnUnEvaluated(MathPiper.LispPtr,MathPiper.LispPtr,MathPiper.LispEnvironment) -> a
+    void InternalApplyString(MathPiper.LispEnvironment,MathPiper.LispPtr,java.lang.String,MathPiper.LispPtr) -> a
+    void InternalApplyPure(MathPiper.LispPtr,MathPiper.LispPtr,MathPiper.LispPtr,MathPiper.LispEnvironment) -> a
+    void InternalTrue(MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+    void InternalFalse(MathPiper.LispEnvironment,MathPiper.LispPtr) -> b
+    void InternalBoolean(MathPiper.LispEnvironment,MathPiper.LispPtr,boolean) -> a
+    void InternalNth(MathPiper.LispPtr,MathPiper.LispPtr,int) -> a
+    void InternalTail(MathPiper.LispPtr,MathPiper.LispPtr) -> b
+    boolean IsTrue(MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+    boolean IsFalse(MathPiper.LispEnvironment,MathPiper.LispPtr) -> b
+    java.lang.String SymbolName(MathPiper.LispEnvironment,java.lang.String) -> a
+    boolean InternalIsList(MathPiper.LispPtr) -> a
     boolean InternalIsString(java.lang.String) -> a
-    void InternalNot(yacas.LispPtr,yacas.LispEnvironment,yacas.LispPtr) -> a
-    void InternalFlatCopy(yacas.LispPtr,yacas.LispPtr) -> c
-    boolean InternalEquals(yacas.LispEnvironment,yacas.LispPtr,yacas.LispPtr) -> a
-    void InternalSubstitute(yacas.LispPtr,yacas.LispPtr,yacas.SubstBehaviourBase) -> a
+    void InternalNot(MathPiper.LispPtr,MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+    void InternalFlatCopy(MathPiper.LispPtr,MathPiper.LispPtr) -> c
+    boolean InternalEquals(MathPiper.LispEnvironment,MathPiper.LispPtr,MathPiper.LispPtr) -> a
+    void InternalSubstitute(MathPiper.LispPtr,MathPiper.LispPtr,MathPiper.SubstBehaviourBase) -> a
     java.lang.String InternalUnstringify(java.lang.String) -> a
-    void DoInternalLoad(yacas.LispEnvironment,yacas.LispInput) -> a
-    void InternalLoad(yacas.LispEnvironment,java.lang.String) -> a
-    void InternalUse(yacas.LispEnvironment,java.lang.String) -> b
-    java.lang.String PrintExpression(yacas.LispPtr,yacas.LispEnvironment,int) -> a
-    yacas.LispInput OpenInputFile(java.lang.String,yacas.InputStatus) -> a
-    yacas.LispInput OpenInputFile(yacas.LispEnvironment,yacas.InputDirectories,java.lang.String,yacas.InputStatus) -> a
-    java.lang.String InternalFindFile(java.lang.String,yacas.InputDirectories) -> a
-    void DoLoadDefFile(yacas.LispEnvironment,yacas.LispInput,yacas.LispDefFile) -> a
-    void LoadDefFile(yacas.LispEnvironment,java.lang.String) -> c
+    void DoInternalLoad(MathPiper.LispEnvironment,MathPiper.LispInput) -> a
+    void InternalLoad(MathPiper.LispEnvironment,java.lang.String) -> a
+    void InternalUse(MathPiper.LispEnvironment,java.lang.String) -> b
+    java.lang.String PrintExpression(MathPiper.LispPtr,MathPiper.LispEnvironment,int) -> a
+    MathPiper.LispInput OpenInputFile(java.lang.String,MathPiper.InputStatus) -> a
+    MathPiper.LispInput OpenInputFile(MathPiper.LispEnvironment,MathPiper.InputDirectories,java.lang.String,MathPiper.InputStatus) -> a
+    java.lang.String InternalFindFile(java.lang.String,MathPiper.InputDirectories) -> a
+    void DoLoadDefFile(MathPiper.LispEnvironment,MathPiper.LispInput,MathPiper.LispDefFile) -> a
+    void LoadDefFile(MathPiper.LispEnvironment,java.lang.String) -> c
     double log2_table_lookup(int) -> a
     long digits_to_bits(long,int) -> a
     long bits_to_digits(long,int) -> b
-yacas.LispSubList -> a.bZ:
-    yacas.LispPtr iSubList -> a
-    yacas.LispSubList New(yacas.LispObject) -> a
-    yacas.LispPtr SubList() -> a
+MathPiper.LispSubList -> a.bZ:
+    MathPiper.LispPtr iSubList -> a
+    MathPiper.LispSubList New(MathPiper.LispObject) -> a
+    MathPiper.LispPtr SubList() -> a
     java.lang.String String() -> a
-    yacas.LispObject Copy(boolean) -> a
-    yacas.LispObject SetExtraInfo(yacas.LispPtr) -> a
-yacas.LispTokenizer -> a.ep:
+    MathPiper.LispObject Copy(boolean) -> a
+    MathPiper.LispObject SetExtraInfo(MathPiper.LispPtr) -> a
+MathPiper.LispTokenizer -> a.ep:
     java.lang.String symbolics -> a
-    java.lang.String NextToken(yacas.LispInput,yacas.LispHashTable) -> a
+    java.lang.String NextToken(MathPiper.LispInput,MathPiper.LispHashTable) -> a
     boolean IsDigit(char) -> a
     boolean IsAlpha(char) -> b
     boolean IsAlNum(char) -> c
     boolean IsSymbolic(char) -> d
-yacas.LispUserFunction -> a.cF:
+MathPiper.LispUserFunction -> a.cF:
     boolean iFenced -> a
     boolean iTraced -> b
-    void Evaluate(yacas.LispPtr,yacas.LispEnvironment,yacas.LispPtr) -> a
+    void Evaluate(MathPiper.LispPtr,MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
     void HoldArgument(java.lang.String) -> a
-    void DeclareRule(int,yacas.LispPtr,yacas.LispPtr) -> a
-    void DeclareRule(int,yacas.LispPtr) -> a
-    void DeclarePattern(int,yacas.LispPtr,yacas.LispPtr) -> b
-    yacas.LispPtr ArgList() -> a
+    void DeclareRule(int,MathPiper.LispPtr,MathPiper.LispPtr) -> a
+    void DeclareRule(int,MathPiper.LispPtr) -> a
+    void DeclarePattern(int,MathPiper.LispPtr,MathPiper.LispPtr) -> b
+    MathPiper.LispPtr ArgList() -> a
     void UnFence() -> a
     boolean Fenced() -> a
-yacas.LispUserFunctions -> a.ap:
-yacas.ListedBranchingUserFunction -> a.dD:
+MathPiper.LispUserFunctions -> a.ap:
+MathPiper.ListedBranchingUserFunction -> a.dD:
     boolean IsArity(int) -> a
-    void Evaluate(yacas.LispPtr,yacas.LispEnvironment,yacas.LispPtr) -> a
-yacas.ListedMacroUserFunction -> a.cD:
+    void Evaluate(MathPiper.LispPtr,MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+MathPiper.ListedMacroUserFunction -> a.cD:
     boolean IsArity(int) -> a
-    void Evaluate(yacas.LispPtr,yacas.LispEnvironment,yacas.LispPtr) -> a
-yacas.LocalSymbolBehaviour -> a.aR:
-    yacas.LispEnvironment iEnvironment -> a
+    void Evaluate(MathPiper.LispPtr,MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+MathPiper.LocalSymbolBehaviour -> a.aR:
+    MathPiper.LispEnvironment iEnvironment -> a
     java.lang.String[] iOriginalNames -> a
     java.lang.String[] iNewNames -> b
     int iNrNames -> a
-    boolean Matches(yacas.LispPtr,yacas.LispPtr) -> a
-yacas.MacroUserFunction -> a.az:
-    void Evaluate(yacas.LispPtr,yacas.LispEnvironment,yacas.LispPtr) -> a
-yacas.MatchAtom -> a.ba:
+    boolean Matches(MathPiper.LispPtr,MathPiper.LispPtr) -> a
+MathPiper.MacroUserFunction -> a.az:
+    void Evaluate(MathPiper.LispPtr,MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+MathPiper.MatchAtom -> a.ba:
     java.lang.String iString -> a
-    boolean ArgumentMatches(yacas.LispEnvironment,yacas.LispPtr,yacas.LispPtr[]) -> a
-yacas.MatchNumber -> a.bp:
-    yacas.BigNumber iNumber -> a
-    boolean ArgumentMatches(yacas.LispEnvironment,yacas.LispPtr,yacas.LispPtr[]) -> a
-yacas.MatchSubList -> a.O:
-    yacas.YacasParamMatcherBase[] iMatchers -> a
+    boolean ArgumentMatches(MathPiper.LispEnvironment,MathPiper.LispPtr,MathPiper.LispPtr[]) -> a
+MathPiper.MatchNumber -> a.bp:
+    MathPiper.BigNumber iNumber -> a
+    boolean ArgumentMatches(MathPiper.LispEnvironment,MathPiper.LispPtr,MathPiper.LispPtr[]) -> a
+MathPiper.MatchSubList -> a.O:
+    MathPiper.MathPiperParamMatcherBase[] iMatchers -> a
     int iNrMatchers -> a
-    boolean ArgumentMatches(yacas.LispEnvironment,yacas.LispPtr,yacas.LispPtr[]) -> a
-yacas.MatchVariable -> a.ce:
+    boolean ArgumentMatches(MathPiper.LispEnvironment,MathPiper.LispPtr,MathPiper.LispPtr[]) -> a
+MathPiper.MatchVariable -> a.ce:
     int iVarIndex -> a
-    boolean ArgumentMatches(yacas.LispEnvironment,yacas.LispPtr,yacas.LispPtr[]) -> a
-yacas.MathCommands -> a.y:
-    void AddCommands(yacas.LispEnvironment) -> a
-    yacas.BigNumber GetNumber(yacas.LispEnvironment,int,int) -> a
-    void MultiFix(yacas.LispEnvironment,int,yacas.LispOperators) -> a
-    void SingleFix(int,yacas.LispEnvironment,int,yacas.LispOperators) -> a
-    yacas.LispInFixOperator OperatorInfo(yacas.LispEnvironment,int,yacas.LispOperators) -> a
-    void InternalSetVar(yacas.LispEnvironment,int,boolean) -> a
-    void InternalDelete(yacas.LispEnvironment,int,boolean) -> b
-    void InternalInsert(yacas.LispEnvironment,int,boolean) -> c
-    void InternalReplace(yacas.LispEnvironment,int,boolean) -> d
-    void InternalRuleBase(yacas.LispEnvironment,int,boolean) -> e
-    void InternalNewRule(yacas.LispEnvironment,int) -> a
-    void InternalDefMacroRuleBase(yacas.LispEnvironment,int,boolean) -> f
-    void InternalNewRulePattern(yacas.LispEnvironment,int,boolean) -> g
-yacas.MathCommands$GenArrayCreate -> a.bN:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$GenArrayGet -> a.cY:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$GenArraySet -> a.ed:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$GenArraySize -> a.aa:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$GenPatternCreate -> a.bc:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$GenPatternMatches -> a.J:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LexGreaterThan -> a.cz:
-    yacas.MathCommands this$0 -> b
-    boolean lexfunc(java.lang.String,java.lang.String,yacas.LispHashTable,int) -> a
-    boolean numfunc(yacas.BigNumber,yacas.BigNumber) -> a
-yacas.MathCommands$LexLessThan -> a.bX:
-    yacas.MathCommands this$0 -> b
-    boolean lexfunc(java.lang.String,java.lang.String,yacas.LispHashTable,int) -> a
-    boolean numfunc(yacas.BigNumber,yacas.BigNumber) -> a
-yacas.MathCommands$LispAbs -> a.aA:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispAdd -> a.dd:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispApplyPure -> a.ai:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispArcCos -> a.ar:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispArcTan -> a.T:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispAtomize -> a.b:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispBackQuote -> a.aV:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispBitAnd -> a.dT:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispBitCount -> a.cC:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispBitOr -> a.E:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispBitXor -> a.cX:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispBitsToDigits -> a.L:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispBodied -> a.cW:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCTokenizer -> a.cA:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCeil -> a.au:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCharString -> a.cg:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCheck -> a.S:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispClearVar -> a.bI:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCommonLispTokenizer -> a.aH:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispConcatenate -> a.i:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispConcatenateStrings -> a.aL:
-    yacas.MathCommands this$0 -> a
-    void ConcatenateStrings(java.lang.StringBuffer,yacas.LispEnvironment,int) -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCurrentFile -> a.cG:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCurrentLine -> a.aC:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCustomEval -> a.k:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCustomEvalExpression -> a.da:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCustomEvalLocals -> a.Y:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCustomEvalResult -> a.aq:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispCustomEvalStop -> a.N:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDebugFile -> a.cv:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDebugLine -> a.dk:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDefLoad -> a.G:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDefLoadFunction -> a.ef:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDefMacroRuleBase -> a.bz:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDefMacroRuleBaseListed -> a.bK:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDefaultDirectory -> a.aB:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDefaultTokenizer -> a.de:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDelete -> a.em:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDestructiveDelete -> a.dC:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDestructiveInsert -> a.dL:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDestructiveReplace -> a.er:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDestructiveReverse -> a.cy:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDigitsToBits -> a.bo:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDiv -> a.s:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDivide -> a.df:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDllDirectory -> a.U:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDllEnumerate -> a.l:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDllLoad -> a.dI:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDllUnload -> a.dt:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispDumpBigNumberDebugInfo -> a.ec:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispEquals -> a.cc:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispEval -> a.m:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispExit -> a.t:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispExitRequested -> a.cE:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispExplodeTag -> a.dh:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFac -> a.bf:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastAbs -> a.A:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastArcCos -> a.es:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastArcSin -> a.ci:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastArcTan -> a.ao:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastAssoc -> a.dm:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastCeil -> a.dG:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastCos -> a.bt:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastExp -> a.cO:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastFloor -> a.a:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastIsPrime -> a.bb:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastLog -> a.aW:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastMod -> a.bF:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastPi -> a.bn:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastPower -> a.aO:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastSin -> a.X:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastSqrt -> a.dr:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFastTan -> a.dp:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFileSize -> a.bB:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFindFile -> a.dj:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFindFunction -> a.dN:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFlatCopy -> a.be:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFloor -> a.dE:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFromBase -> a.cR:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFromFile -> a.bC:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFromString -> a.dK:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispFullForm -> a.br:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGarbageCollect -> a.aI:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGcd -> a.aZ:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGenericTypeName -> a.bS:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetCoreError -> a.P:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetExactBits -> a.dn:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetExtraInfo -> a.at:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetLeftPrecedence -> a.dH:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetPrecedence -> a.o:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetPrecision -> a.bR:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetPrettyPrinter -> a.p:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetPrettyReader -> a.cx:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGetRightPrecedence -> a.w:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispGreaterThan -> a.dA:
-    yacas.MathCommands$LexGreaterThan compare -> a
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispHead -> a.I:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispHistorySize -> a.cJ:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispHoldArg -> a.bU:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIf -> a.co:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispInDebugMode -> a.bP:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispInFix -> a.ds:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispInsert -> a.M:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsAtom -> a.et:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsBodied -> a.c:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsBound -> a.ac:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsFunction -> a.g:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsGeneric -> a.av:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsInFix -> a.dy:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsInteger -> a.V:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsList -> a.en:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsNumber -> a.ck:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsPostFix -> a.eo:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsPreFix -> a.eb:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsPromptShown -> a.eg:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispIsString -> a.ag:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLazyAnd -> a.dW:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLazyGlobal -> a.bY:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLazyOr -> a.bg:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLeftPrecedence -> a.cI:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLength -> a.bv:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLessThan -> a.cr:
-    yacas.MathCommands$LexLessThan compare -> a
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLexCompare2 -> a.am:
-    yacas.MathCommands this$0 -> a
-    boolean lexfunc(java.lang.String,java.lang.String,yacas.LispHashTable,int) -> a
-    boolean numfunc(yacas.BigNumber,yacas.BigNumber) -> a
-    void Compare(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispList -> a.aj:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispListify -> a.ej:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLoad -> a.as:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispLocalSymbols -> a.ax:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMacroNewRule -> a.cS:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMacroNewRulePattern -> a.dP:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMacroRuleBase -> a.h:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMacroRuleBaseListed -> a.bA:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMacroSetVar -> a.bk:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMathIsSmall -> a.aK:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMathLibName -> a.cZ:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMathNegate -> a.bd:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMathSign -> a.n:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMaxEvalDepth -> a.bj:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMod -> a.ek:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispMultiply -> a.dU:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispNewLocal -> a.Q:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispNewRule -> a.cu:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispNewRulePattern -> a.bE:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispNot -> a.bq:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispNth -> a.dR:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPatchLoad -> a.ct:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPatchString -> a.cl:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPlatformOS -> a.x:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPluginsCanBeLoaded -> a.Z:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPostFix -> a.dq:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPreFix -> a.ch:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPrecision -> a.dX:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPrettyPrinter -> a.cw:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispPrettyReader -> a.dO:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispProgBody -> a.aF:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispQuote -> a.by:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispRead -> a.dF:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispReadCmdLineString -> a.db:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispReadLisp -> a.ah:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispReadLispListed -> a.bw:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispReadToken -> a.cT:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispReplace -> a.dl:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispRetract -> a.el:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispRightAssociative -> a.an:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispRightPrecedence -> a.bh:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispRuleBase -> a.aw:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispRuleBaseArgList -> a.di:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispRuleBaseDefined -> a.aU:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispRuleBaseListed -> a.D:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispSecure -> a.bM:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispSetExactBits -> a.H:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispSetExtraInfo -> a.cp:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispSetStringMid -> a.aJ:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispSetVar -> a.cK:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispShiftLeft -> a.aT:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispShiftRight -> a.d:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispStackSize -> a.af:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispStringMid -> a.ae:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispStringify -> a.aN:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispSubst -> a.ak:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispSubtract -> a.aM:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispSystemCall -> a.bs:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispTail -> a.dQ:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispTime -> a.dJ:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispToBase -> a.f:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispToFile -> a.bx:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispToStdout -> a.bl:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispToString -> a.aG:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispTraceRule -> a.bJ:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispTraceStack -> a.j:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispTrapError -> a.aS:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispType -> a.ee:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispUnFence -> a.bH:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispUnList -> a.W:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispUse -> a.K:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispVersion -> a.bV:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispWhile -> a.u:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispWrite -> a.cL:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispWriteString -> a.cV:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.MathCommands$LispXmlTokenizer -> a.cj:
-    yacas.MathCommands this$0 -> a
-    void Eval(yacas.LispEnvironment,int) -> a
-yacas.ParsedObject -> a.dS:
-    yacas.InfixParser iParser -> a
+    boolean ArgumentMatches(MathPiper.LispEnvironment,MathPiper.LispPtr,MathPiper.LispPtr[]) -> a
+MathPiper.MathCommands -> a.y:
+    void AddCommands(MathPiper.LispEnvironment) -> a
+    MathPiper.BigNumber GetNumber(MathPiper.LispEnvironment,int,int) -> a
+    void MultiFix(MathPiper.LispEnvironment,int,MathPiper.LispOperators) -> a
+    void SingleFix(int,MathPiper.LispEnvironment,int,MathPiper.LispOperators) -> a
+    MathPiper.LispInFixOperator OperatorInfo(MathPiper.LispEnvironment,int,MathPiper.LispOperators) -> a
+    void InternalSetVar(MathPiper.LispEnvironment,int,boolean) -> a
+    void InternalDelete(MathPiper.LispEnvironment,int,boolean) -> b
+    void InternalInsert(MathPiper.LispEnvironment,int,boolean) -> c
+    void InternalReplace(MathPiper.LispEnvironment,int,boolean) -> d
+    void InternalRuleBase(MathPiper.LispEnvironment,int,boolean) -> e
+    void InternalNewRule(MathPiper.LispEnvironment,int) -> a
+    void InternalDefMacroRuleBase(MathPiper.LispEnvironment,int,boolean) -> f
+    void InternalNewRulePattern(MathPiper.LispEnvironment,int,boolean) -> g
+MathPiper.MathCommands$GenArrayCreate -> a.bN:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$GenArrayGet -> a.cY:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$GenArraySet -> a.ed:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$GenArraySize -> a.aa:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$GenPatternCreate -> a.bc:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$GenPatternMatches -> a.J:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LexGreaterThan -> a.cz:
+    MathPiper.MathCommands this$0 -> b
+    boolean lexfunc(java.lang.String,java.lang.String,MathPiper.LispHashTable,int) -> a
+    boolean numfunc(MathPiper.BigNumber,MathPiper.BigNumber) -> a
+MathPiper.MathCommands$LexLessThan -> a.bX:
+    MathPiper.MathCommands this$0 -> b
+    boolean lexfunc(java.lang.String,java.lang.String,MathPiper.LispHashTable,int) -> a
+    boolean numfunc(MathPiper.BigNumber,MathPiper.BigNumber) -> a
+MathPiper.MathCommands$LispAbs -> a.aA:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispAdd -> a.dd:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispApplyPure -> a.ai:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispArcCos -> a.ar:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispArcTan -> a.T:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispAtomize -> a.b:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispBackQuote -> a.aV:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispBitAnd -> a.dT:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispBitCount -> a.cC:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispBitOr -> a.E:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispBitXor -> a.cX:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispBitsToDigits -> a.L:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispBodied -> a.cW:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCTokenizer -> a.cA:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCeil -> a.au:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCharString -> a.cg:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCheck -> a.S:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispClearVar -> a.bI:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCommonLispTokenizer -> a.aH:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispConcatenate -> a.i:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispConcatenateStrings -> a.aL:
+    MathPiper.MathCommands this$0 -> a
+    void ConcatenateStrings(java.lang.StringBuffer,MathPiper.LispEnvironment,int) -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCurrentFile -> a.cG:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCurrentLine -> a.aC:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCustomEval -> a.k:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCustomEvalExpression -> a.da:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCustomEvalLocals -> a.Y:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCustomEvalResult -> a.aq:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispCustomEvalStop -> a.N:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDebugFile -> a.cv:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDebugLine -> a.dk:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDefLoad -> a.G:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDefLoadFunction -> a.ef:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDefMacroRuleBase -> a.bz:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDefMacroRuleBaseListed -> a.bK:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDefaultDirectory -> a.aB:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDefaultTokenizer -> a.de:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDelete -> a.em:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDestructiveDelete -> a.dC:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDestructiveInsert -> a.dL:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDestructiveReplace -> a.er:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDestructiveReverse -> a.cy:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDigitsToBits -> a.bo:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDiv -> a.s:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDivide -> a.df:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDllDirectory -> a.U:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDllEnumerate -> a.l:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDllLoad -> a.dI:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDllUnload -> a.dt:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispDumpBigNumberDebugInfo -> a.ec:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispEquals -> a.cc:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispEval -> a.m:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispExit -> a.t:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispExitRequested -> a.cE:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispExplodeTag -> a.dh:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFac -> a.bf:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastAbs -> a.A:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastArcCos -> a.es:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastArcSin -> a.ci:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastArcTan -> a.ao:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastAssoc -> a.dm:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastCeil -> a.dG:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastCos -> a.bt:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastExp -> a.cO:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastFloor -> a.a:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastIsPrime -> a.bb:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastLog -> a.aW:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastMod -> a.bF:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastPi -> a.bn:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastPower -> a.aO:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastSin -> a.X:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastSqrt -> a.dr:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFastTan -> a.dp:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFileSize -> a.bB:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFindFile -> a.dj:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFindFunction -> a.dN:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFlatCopy -> a.be:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFloor -> a.dE:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFromBase -> a.cR:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFromFile -> a.bC:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFromString -> a.dK:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispFullForm -> a.br:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGarbageCollect -> a.aI:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGcd -> a.aZ:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGenericTypeName -> a.bS:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetCoreError -> a.P:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetExactBits -> a.dn:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetExtraInfo -> a.at:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetLeftPrecedence -> a.dH:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetPrecedence -> a.o:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetPrecision -> a.bR:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetPrettyPrinter -> a.p:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetPrettyReader -> a.cx:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGetRightPrecedence -> a.w:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispGreaterThan -> a.dA:
+    MathPiper.MathCommands$LexGreaterThan compare -> a
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispHead -> a.I:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispHistorySize -> a.cJ:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispHoldArg -> a.bU:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIf -> a.co:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispInDebugMode -> a.bP:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispInFix -> a.ds:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispInsert -> a.M:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsAtom -> a.et:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsBodied -> a.c:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsBound -> a.ac:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsFunction -> a.g:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsGeneric -> a.av:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsInFix -> a.dy:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsInteger -> a.V:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsList -> a.en:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsNumber -> a.ck:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsPostFix -> a.eo:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsPreFix -> a.eb:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsPromptShown -> a.eg:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispIsString -> a.ag:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLazyAnd -> a.dW:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLazyGlobal -> a.bY:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLazyOr -> a.bg:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLeftPrecedence -> a.cI:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLength -> a.bv:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLessThan -> a.cr:
+    MathPiper.MathCommands$LexLessThan compare -> a
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLexCompare2 -> a.am:
+    MathPiper.MathCommands this$0 -> a
+    boolean lexfunc(java.lang.String,java.lang.String,MathPiper.LispHashTable,int) -> a
+    boolean numfunc(MathPiper.BigNumber,MathPiper.BigNumber) -> a
+    void Compare(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispList -> a.aj:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispListify -> a.ej:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLoad -> a.as:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispLocalSymbols -> a.ax:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMacroNewRule -> a.cS:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMacroNewRulePattern -> a.dP:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMacroRuleBase -> a.h:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMacroRuleBaseListed -> a.bA:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMacroSetVar -> a.bk:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMathIsSmall -> a.aK:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMathLibName -> a.cZ:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMathNegate -> a.bd:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMathSign -> a.n:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMaxEvalDepth -> a.bj:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMod -> a.ek:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispMultiply -> a.dU:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispNewLocal -> a.Q:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispNewRule -> a.cu:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispNewRulePattern -> a.bE:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispNot -> a.bq:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispNth -> a.dR:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPatchLoad -> a.ct:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPatchString -> a.cl:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPlatformOS -> a.x:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPluginsCanBeLoaded -> a.Z:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPostFix -> a.dq:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPreFix -> a.ch:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPrecision -> a.dX:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPrettyPrinter -> a.cw:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispPrettyReader -> a.dO:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispProgBody -> a.aF:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispQuote -> a.by:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispRead -> a.dF:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispReadCmdLineString -> a.db:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispReadLisp -> a.ah:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispReadLispListed -> a.bw:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispReadToken -> a.cT:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispReplace -> a.dl:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispRetract -> a.el:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispRightAssociative -> a.an:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispRightPrecedence -> a.bh:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispRuleBase -> a.aw:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispRuleBaseArgList -> a.di:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispRuleBaseDefined -> a.aU:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispRuleBaseListed -> a.D:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispSecure -> a.bM:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispSetExactBits -> a.H:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispSetExtraInfo -> a.cp:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispSetStringMid -> a.aJ:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispSetVar -> a.cK:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispShiftLeft -> a.aT:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispShiftRight -> a.d:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispStackSize -> a.af:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispStringMid -> a.ae:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispStringify -> a.aN:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispSubst -> a.ak:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispSubtract -> a.aM:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispSystemCall -> a.bs:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispTail -> a.dQ:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispTime -> a.dJ:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispToBase -> a.f:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispToFile -> a.bx:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispToStdout -> a.bl:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispToString -> a.aG:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispTraceRule -> a.bJ:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispTraceStack -> a.j:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispTrapError -> a.aS:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispType -> a.ee:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispUnFence -> a.bH:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispUnList -> a.W:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispUse -> a.K:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispVersion -> a.bV:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispWhile -> a.u:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispWrite -> a.cL:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispWriteString -> a.cV:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.MathCommands$LispXmlTokenizer -> a.cj:
+    MathPiper.MathCommands this$0 -> a
+    void Eval(MathPiper.LispEnvironment,int) -> a
+MathPiper.ParsedObject -> a.dS:
+    MathPiper.InfixParser iParser -> a
     boolean iError -> a
     boolean iEndOfFile -> b
     java.lang.String iLookAhead -> a
-    yacas.LispPtr iResult -> a
+    MathPiper.LispPtr iResult -> a
     void Parse() -> a
     void ReadToken() -> b
     void MatchToken(java.lang.String) -> a
@@ -15599,16 +15599,16 @@ yacas.ParsedObject -> a.dS:
     void Combine(int) -> b
     void InsertAtom(java.lang.String) -> b
     void Fail() -> d
-yacas.PatternClass -> a.bi:
-    yacas.YacasPatternPredicateBase iPatternMatcher -> a
-    boolean Matches(yacas.LispEnvironment,yacas.LispPtr) -> a
-    boolean Matches(yacas.LispEnvironment,yacas.LispPtr[]) -> a
+MathPiper.PatternClass -> a.bi:
+    MathPiper.MathPiperPatternPredicateBase iPatternMatcher -> a
+    boolean Matches(MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+    boolean Matches(MathPiper.LispEnvironment,MathPiper.LispPtr[]) -> a
     java.lang.String TypeName() -> a
-yacas.StdFileInput -> a.bD:
-yacas.StdFileOutput -> a.cf:
+MathPiper.StdFileInput -> a.bD:
+MathPiper.StdFileOutput -> a.cf:
     java.io.OutputStream iFile -> a
     void PutChar(char) -> a
-yacas.StringInput -> a.do:
+MathPiper.StringInput -> a.do:
     java.lang.StringBuffer iString -> a
     int iCurrent -> a
     char Next() -> a
@@ -15617,50 +15617,50 @@ yacas.StringInput -> a.do:
     java.lang.StringBuffer StartPtr() -> a
     int Position() -> a
     void SetPosition(int) -> a
-yacas.StringOutput -> a.aQ:
+MathPiper.StringOutput -> a.aQ:
     java.lang.StringBuffer iString -> a
     void PutChar(char) -> a
-yacas.SubstBehaviour -> a.F:
-    yacas.LispEnvironment iEnvironment -> a
-    yacas.LispPtr iToMatch -> a
-    yacas.LispPtr iToReplaceWith -> b
-    boolean Matches(yacas.LispPtr,yacas.LispPtr) -> a
-yacas.SubstBehaviourBase -> a.cb:
-    boolean Matches(yacas.LispPtr,yacas.LispPtr) -> a
-yacas.UserStackInformation -> a.al:
+MathPiper.SubstBehaviour -> a.F:
+    MathPiper.LispEnvironment iEnvironment -> a
+    MathPiper.LispPtr iToMatch -> a
+    MathPiper.LispPtr iToReplaceWith -> b
+    boolean Matches(MathPiper.LispPtr,MathPiper.LispPtr) -> a
+MathPiper.SubstBehaviourBase -> a.cb:
+    boolean Matches(MathPiper.LispPtr,MathPiper.LispPtr) -> a
+MathPiper.UserStackInformation -> a.al:
     int iRulePrecedence -> a
     int iSide -> b
-yacas.XmlTokenizer -> a.eh:
-    java.lang.String NextToken(yacas.LispInput,yacas.LispHashTable) -> a
+MathPiper.XmlTokenizer -> a.eh:
+    java.lang.String NextToken(MathPiper.LispInput,MathPiper.LispHashTable) -> a
     boolean IsSpace(int) -> a
-yacas.YacasCoreCommands -> a.aP:
-yacas.YacasEvalCaller -> a.R:
-    void Eval(yacas.LispEnvironment,int) -> a
-    yacas.LispPtr RESULT(yacas.LispEnvironment,int) -> a
-    yacas.LispPtr ARGUMENT(yacas.LispEnvironment,int,int) -> a
-    yacas.LispPtr Argument(yacas.LispPtr,int) -> a
-yacas.YacasEvaluator -> a.ad:
+MathPiper.MathPiperCoreCommands -> a.aP:
+MathPiper.MathPiperEvalCaller -> a.R:
+    void Eval(MathPiper.LispEnvironment,int) -> a
+    MathPiper.LispPtr RESULT(MathPiper.LispEnvironment,int) -> a
+    MathPiper.LispPtr ARGUMENT(MathPiper.LispEnvironment,int,int) -> a
+    MathPiper.LispPtr Argument(MathPiper.LispPtr,int) -> a
+MathPiper.MathPiperEvaluator -> a.ad:
     int Function -> a
     int Macro -> b
     int Fixed -> c
     int Variable -> d
-    yacas.YacasEvalCaller iCaller -> a
+    MathPiper.MathPiperEvalCaller iCaller -> a
     int iNrArgs -> e
     int iFlags -> f
-    void Evaluate(yacas.LispPtr,yacas.LispEnvironment,yacas.LispPtr) -> a
-yacas.YacasInterpreter -> a.eu:
-    yacas.CYacas yacas -> a
+    void Evaluate(MathPiper.LispPtr,MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+MathPiper.MathPiperInterpreter -> a.eu:
+    MathPiper.CMathPiper MathPiper -> a
     java.lang.String Evaluate(java.lang.String) -> a
-yacas.YacasParamMatcherBase -> a.bO:
-    boolean ArgumentMatches(yacas.LispEnvironment,yacas.LispPtr,yacas.LispPtr[]) -> a
-yacas.YacasPatternPredicateBase -> a.ab:
+MathPiper.MathPiperParamMatcherBase -> a.bO:
+    boolean ArgumentMatches(MathPiper.LispEnvironment,MathPiper.LispPtr,MathPiper.LispPtr[]) -> a
+MathPiper.MathPiperPatternPredicateBase -> a.ab:
     java.util.ArrayList iParamMatchers -> a
     java.util.ArrayList iVariables -> b
     java.util.ArrayList iPredicates -> c
-    boolean Matches(yacas.LispEnvironment,yacas.LispPtr) -> a
-    boolean Matches(yacas.LispEnvironment,yacas.LispPtr[]) -> a
-    yacas.YacasParamMatcherBase MakeParamMatcher(yacas.LispEnvironment,yacas.LispObject) -> a
+    boolean Matches(MathPiper.LispEnvironment,MathPiper.LispPtr) -> a
+    boolean Matches(MathPiper.LispEnvironment,MathPiper.LispPtr[]) -> a
+    MathPiper.MathPiperParamMatcherBase MakeParamMatcher(MathPiper.LispEnvironment,MathPiper.LispObject) -> a
     int LookUp(java.lang.String) -> a
-    void SetPatternVariables(yacas.LispEnvironment,yacas.LispPtr[]) -> a
-    boolean CheckPredicates(yacas.LispEnvironment) -> a
-yacas.Yacasexception -> a.dB:
+    void SetPatternVariables(MathPiper.LispEnvironment,MathPiper.LispPtr[]) -> a
+    boolean CheckPredicates(MathPiper.LispEnvironment) -> a
+MathPiper.MathPiperexception -> a.dB:
