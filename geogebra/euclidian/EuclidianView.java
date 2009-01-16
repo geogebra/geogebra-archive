@@ -82,7 +82,8 @@ import javax.swing.Timer;
  * @author Markus Hohenwarter
  * @version
  */
-public class EuclidianView extends JPanel implements View, Printable, EuclidianConstants {
+public class EuclidianView extends JPanel implements View, EuclidianViewInterface, 
+						Printable, EuclidianConstants {
 
 	protected static final long serialVersionUID = 1L;
 
@@ -695,7 +696,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		return antiAliasing;
 	}
 
-	void setDragCursor() {
+	public void setDragCursor() {
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
 
@@ -703,14 +704,14 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 	}
 
-	void setHitCursor() {
+	public void setHitCursor() {
 		if (defaultCursor == null)
 			setCursor(Cursor.getDefaultCursor());
 		else
 			setCursor(defaultCursor);
 	}
 
-	void setDefaultCursor() {
+	public void setDefaultCursor() {
 		if (defaultCursor == null)
 			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		else
@@ -779,7 +780,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		setMode(mode);
 	}
 
-	void setPreview(Previewable p) {
+	public void setPreview(Previewable p) {
 		if (previewDrawable != null)
 			previewDrawable.disposePreview();
 		previewDrawable = p;
@@ -1136,6 +1137,8 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 	}
 
 	public void showAxes(boolean xAxis, boolean yAxis) {
+		
+		
 		if (xAxis == showAxes[0] && yAxis == showAxes[1])
 			return;
 
@@ -1144,7 +1147,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		updateBackgroundImage();
 	}
 	
-	final boolean isGridOrAxesShown() {
+	public final boolean isGridOrAxesShown() {
 		return showAxes[0] || showAxes[1] || showGrid;
 	}	
 
@@ -1935,7 +1938,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		g2.drawImage(img, x, y, null);
 	}
 	
-	final boolean hitAnimationButton(MouseEvent e) {
+	public final boolean hitAnimationButton(MouseEvent e) {
 		return (e.getX() <= 20) && (e.getY() >= height - 20);		
 	}
 	
@@ -1943,7 +1946,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 	 * Updates highlighting of animation buttons. 
 	 * @return whether status was changed
 	 */
-	final boolean setAnimationButtonsHighlighted(boolean flag) {
+	public final boolean setAnimationButtonsHighlighted(boolean flag) {
 		if (flag == highlightAnimationButtons) 
 			return false;
 		else {
@@ -2840,6 +2843,10 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 	final public void repaintView() {
 		repaint();
 	}
+	
+	final public void repaintEuclidianView(){
+		repaint();
+	}
 
 	/**
 	 * returns settings in XML format
@@ -3119,7 +3126,7 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 	 *            y coord of new origin
 	 * @param newscale
 	 */
-	final void setAnimatedCoordSystem(double ox, double oy, double newScale,
+	public final void setAnimatedCoordSystem(double ox, double oy, double newScale,
 			int steps, boolean storeUndo) {
 		if (!kernel.isEqual(xscale, newScale)) {
 			// different scales: zoom back to standard view
@@ -3874,5 +3881,59 @@ public class EuclidianView extends JPanel implements View, Printable, EuclidianC
 		default: return false;
 		}
 	}
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * setters and getters for EuclidianViewInterface
+	 * 
+	 */
+	
+	
+	public void setShowMouseCoords(boolean b){
+		showMouseCoords=b;
+	}
+	
+	public boolean getShowMouseCoords(){
+		return showMouseCoords;
+	}
+	
+	public void setShowAxesRatio(boolean b){
+		showAxesRatio=b;
+	}
+
+	public Previewable getPreviewDrawable(){
+		return previewDrawable;
+	}
+	
+	
+	public double getGridDistances(int i){
+		return gridDistances[i];
+	}
+	
+	
+	public double getInvXscale(){
+		return invXscale;
+	}
+	
+	public double getInvYscale(){
+		return invYscale;
+	}
+	
+	
+	public int getViewWidth(){
+		return width;
+	}
+	
+	public int getViewHeight(){
+		return height;
+	}	
+	
+	
+	
+	
 	
 }

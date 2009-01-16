@@ -50,6 +50,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
@@ -67,6 +68,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
 public class EuclidianController implements MouseListener,
@@ -113,7 +116,8 @@ public class EuclidianController implements MouseListener,
 
 	protected Kernel kernel;
 
-	protected EuclidianView view;
+	protected EuclidianViewInterface view;
+	//protected EuclidianView view;
 
 	protected Point startLoc, mouseLoc, lastMouseLoc; // current mouse location
 
@@ -241,7 +245,8 @@ public class EuclidianController implements MouseListener,
 		return kernel;
 	}
 
-	void setView(EuclidianView view) {
+	void setView(EuclidianViewInterface view) {
+	//void setView(EuclidianView view) {
 		this.view = view;
 	}
 
@@ -296,35 +301,35 @@ public class EuclidianController implements MouseListener,
 		// init preview drawables
 		switch (mode) {
 		case EuclidianView.MODE_JOIN: // line through two points
-			previewDrawable = new DrawLine(view, selectedPoints);
+			previewDrawable = new DrawLine((EuclidianView) view, selectedPoints);
 			break;
 
 		case EuclidianView.MODE_SEGMENT:
-			previewDrawable = new DrawSegment(view, selectedPoints);
+			previewDrawable = new DrawSegment((EuclidianView) view, selectedPoints);
 			break;
 
 		case EuclidianView.MODE_RAY:
-			previewDrawable = new DrawRay(view, selectedPoints);
+			previewDrawable = new DrawRay((EuclidianView) view, selectedPoints);
 			break;
 
 		case EuclidianView.MODE_VECTOR:
-			previewDrawable = new DrawVector(view, selectedPoints);
+			previewDrawable = new DrawVector((EuclidianView) view, selectedPoints);
 			break;
 
 		case EuclidianView.MODE_POLYGON:
-			previewDrawable = new DrawPolygon(view, selectedPoints);
+			previewDrawable = new DrawPolygon((EuclidianView) view, selectedPoints);
 			break;
 
 		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
 		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
 		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:		
-			previewDrawable = new DrawConic(view, mode, selectedPoints);
+			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints);
 			break;
 			
 	    // preview for compass: radius first
 		case EuclidianView.MODE_COMPASSES:
-			previewDrawable = new DrawConic(view, mode, selectedPoints, selectedSegments);
+			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints, selectedSegments);
 			break;
 			
 		// preview for arcs and sectors
@@ -333,7 +338,7 @@ public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
 		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
 		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
-			previewDrawable = new DrawConicPart(view, mode, selectedPoints);
+			previewDrawable = new DrawConicPart((EuclidianView) view, mode, selectedPoints);
 			break;										
 			
 		case EuclidianView.MODE_SHOW_HIDE_OBJECT:
@@ -388,7 +393,7 @@ public class EuclidianController implements MouseListener,
 	
 
 	protected void initShowMouseCoords() {
-		view.showMouseCoords = (mode == EuclidianView.MODE_POINT);
+		view.setShowMouseCoords(mode == EuclidianView.MODE_POINT);
 	}
 
 	void clearSelections() {
@@ -418,7 +423,7 @@ public class EuclidianController implements MouseListener,
 		altDown=e.isAltDown();
 		
 		if (mode != EuclidianView.MODE_ALGEBRA_INPUT)
-			view.requestFocusInWindow();
+			((JPanel) view).requestFocusInWindow();
 		
 		if (Application.isRightClick(e)) return;
 		setMouseLocation(e);		
@@ -639,11 +644,11 @@ public class EuclidianController implements MouseListener,
 				else
 					view.setDragCursor();
 			}
-			xZeroOld = view.xZero;
-			yZeroOld = view.yZero;		
+			xZeroOld = view.getXZero();
+			yZeroOld = view.getYZero();		
 			xTemp = xRW;
 			yTemp = yRW;
-			view.showAxesRatio = (moveMode == MOVE_X_AXIS) || (moveMode == MOVE_Y_AXIS);
+			view.setShowAxesRatio((moveMode == MOVE_X_AXIS) || (moveMode == MOVE_Y_AXIS));
 			//view.setDrawMode(EuclidianView.DRAW_MODE_DIRECT_DRAW);
 			break;								
 				
@@ -819,8 +824,8 @@ public class EuclidianController implements MouseListener,
 		else if (movedGeoElement.isGeoPoint()) {
 			moveMode = MOVE_POINT;
 			movedGeoPoint = (GeoPoint) movedGeoElement;
-			view.showMouseCoords = !app.isApplet()
-					&& !movedGeoPoint.hasPath();
+			view.setShowMouseCoords(!app.isApplet()
+					&& !movedGeoPoint.hasPath());
 			view.setDragCursor();
 		} 			
 		
@@ -828,7 +833,7 @@ public class EuclidianController implements MouseListener,
 		else if (movedGeoElement.isGeoLine()) {
 			moveMode = MOVE_LINE;
 			movedGeoLine = (GeoLine) movedGeoElement;
-			view.showMouseCoords = true;
+			view.setShowMouseCoords(true);
 			view.setDragCursor();
 		} 
 		
@@ -870,7 +875,7 @@ public class EuclidianController implements MouseListener,
 					moveMode = MOVE_VECTOR;
 				}
 
-				view.showMouseCoords = true;
+				view.setShowMouseCoords(true);
 				view.setDragCursor();
 			} 
 		
@@ -878,7 +883,7 @@ public class EuclidianController implements MouseListener,
 			else if (movedGeoElement.isGeoText()) {
 				moveMode = MOVE_TEXT;
 				movedGeoText = (GeoText) movedGeoElement;
-				view.showMouseCoords = false;
+				view.setShowMouseCoords(false);
 				view.setDragCursor();	
 				
 				if (movedGeoText.isAbsoluteScreenLocActive()) {
@@ -913,7 +918,7 @@ public class EuclidianController implements MouseListener,
 			else if (movedGeoElement.isGeoConic()) {
 				moveMode = MOVE_CONIC;
 				movedGeoConic = (GeoConic) movedGeoElement;
-				view.showMouseCoords = false;
+				view.setShowMouseCoords(false);
 				view.setDragCursor();
 
 				startPoint.setLocation(xRW, yRW);
@@ -925,7 +930,7 @@ public class EuclidianController implements MouseListener,
 			else if (movedGeoElement.isGeoFunction()) {
 				moveMode = MOVE_FUNCTION;
 				movedGeoFunction = (GeoFunction) movedGeoElement;
-				view.showMouseCoords = false;
+				view.setShowMouseCoords(false);
 				view.setDragCursor();
 
 				startPoint.setLocation(xRW, yRW);
@@ -962,7 +967,7 @@ public class EuclidianController implements MouseListener,
 					}
 				} 						
 				
-				view.showMouseCoords = false;
+				view.setShowMouseCoords(false);
 				view.setDragCursor();					
 			}  
 		
@@ -975,7 +980,7 @@ public class EuclidianController implements MouseListener,
 				oldLoc.x = movedGeoBoolean.getAbsoluteScreenLocX();
 				oldLoc.y = movedGeoBoolean.getAbsoluteScreenLocY();
 				
-				view.showMouseCoords = false;
+				view.setShowMouseCoords(false);
 				view.setDragCursor();			
 			}
 		
@@ -983,7 +988,7 @@ public class EuclidianController implements MouseListener,
 			else if (movedGeoElement.isGeoImage()) {
 				moveMode = MOVE_IMAGE;
 				movedGeoImage = (GeoImage) movedGeoElement;
-				view.showMouseCoords = false;
+				view.setShowMouseCoords(false);
 				view.setDragCursor();
 				
 				if (movedGeoImage.isAbsoluteScreenLocActive()) {
@@ -1000,7 +1005,7 @@ public class EuclidianController implements MouseListener,
 				moveMode = MOVE_NONE;
 			}
 
-			view.repaint();												
+			view.repaintEuclidianView();												
 	}
 
 	final public void mouseDragged(MouseEvent e) {
@@ -1036,13 +1041,13 @@ public class EuclidianController implements MouseListener,
 //			 Michael Borcherds 2007-10-07 
 			// set zoom rectangle's size
 			updateSelectionRectangle(Application.isRightClick(e) && !Application.isControlDown(e));
-			view.repaint();
+			view.repaintEuclidianView();
 			return;
 		}		
 
 		// update previewable
-		if (view.previewDrawable != null) {
-			view.previewDrawable.updateMousePos(mouseLoc.x, mouseLoc.y);
+		if (view.getPreviewDrawable() != null) {
+			view.getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
 		}		
 		
 		/*
@@ -1199,7 +1204,7 @@ public class EuclidianController implements MouseListener,
 				if (repaint) {
 					if (TEMPORARY_MODE) view.setMoveCursor();
 					view.setCoordSystem(xZeroOld + mouseLoc.x - startLoc.x, yZeroOld
-							+ mouseLoc.y - startLoc.y, view.xscale, view.yscale);
+							+ mouseLoc.y - startLoc.y, view.getXscale(), view.getYscale());
 				}
 				break;	
 								
@@ -1208,11 +1213,11 @@ public class EuclidianController implements MouseListener,
 					if (TEMPORARY_MODE) view.setDragCursor();
 										
 					// take care when we get close to the origin
-					if (Math.abs(mouseLoc.x - view.xZero) < 2) {
-						mouseLoc.x = (int) Math.round(mouseLoc.x > view.xZero ?  view.xZero + 2 : view.xZero - 2);						
+					if (Math.abs(mouseLoc.x - view.getXZero()) < 2) {
+						mouseLoc.x = (int) Math.round(mouseLoc.x > view.getXZero() ?  view.getXZero() + 2 : view.getXZero() - 2);						
 					}											
-					double xscale = (mouseLoc.x - view.xZero) / xTemp;					
-					view.setCoordSystem(view.xZero, view.yZero, xscale, view.yscale);
+					double xscale = (mouseLoc.x - view.getXZero()) / xTemp;					
+					view.setCoordSystem(view.getXZero(), view.getYZero(), xscale, view.getYscale());
 				}
 				break;	
 				
@@ -1220,11 +1225,11 @@ public class EuclidianController implements MouseListener,
 				if (repaint) {
 					if (TEMPORARY_MODE) view.setDragCursor();
 					// take care when we get close to the origin
-					if (Math.abs(mouseLoc.y - view.yZero) < 2) {
-						mouseLoc.y = (int) Math.round(mouseLoc.y > view.yZero ?  view.yZero + 2 : view.yZero - 2);						
+					if (Math.abs(mouseLoc.y - view.getYZero()) < 2) {
+						mouseLoc.y = (int) Math.round(mouseLoc.y > view.getYZero() ?  view.getYZero() + 2 : view.getYZero() - 2);						
 					}											
-					double yscale = (view.yZero - mouseLoc.y) / yTemp;					
-					view.setCoordSystem(view.xZero, view.yZero, view.xscale, yscale);					
+					double yscale = (view.getYZero() - mouseLoc.y) / yTemp;					
+					view.setCoordSystem(view.getXZero(), view.getYZero(), view.getXscale(), yscale);					
 				}
 				break;	
 	
@@ -1246,7 +1251,7 @@ public class EuclidianController implements MouseListener,
 		
 		// the zoom rectangle should have the same aspect ratio as the view
 		if (keepScreenRatio) {
-			double ratio = (double) view.width / (double) view.height;
+			double ratio = (double) view.getViewWidth() / (double) view.getViewHeight();
 			if (dxabs >= dyabs * ratio) {		
 				height = (int) (Math.round(dxabs / ratio));
 				if (dy < 0)
@@ -1282,6 +1287,8 @@ public class EuclidianController implements MouseListener,
 
 	final public void mouseReleased(MouseEvent e) {	
 		
+		
+		
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
 		if (movedGeoPoint != null){
 			
@@ -1301,7 +1308,7 @@ public class EuclidianController implements MouseListener,
 		movedGeoPointDragged = false;
 		movedGeoNumericDragged = false;
 		
-		view.requestFocusInWindow();
+		((JPanel) view).requestFocusInWindow();
 		setMouseLocation(e);
 		
 		altDown=e.isAltDown();
@@ -1319,7 +1326,7 @@ public class EuclidianController implements MouseListener,
 				kernel.getAnimatonManager().stopAnimation();
 			else
 				kernel.getAnimatonManager().startAnimation();			
-			view.repaint();
+			view.repaintEuclidianView();
 			app.setUnsaved();
 			return;
 		}
@@ -1342,7 +1349,7 @@ public class EuclidianController implements MouseListener,
 				}
 				else {
 					// there are no selected geos: show drawing pad popup menu
-					app.getGuiManager().showDrawingPadPopup(view, mouseLoc);
+					app.getGuiManager().showDrawingPadPopup((EuclidianView) view, mouseLoc);
 				}
 			} else {		
 				// there are hits
@@ -1354,7 +1361,7 @@ public class EuclidianController implements MouseListener,
 				else {
 					// no selected geos: choose geo and show popup menu
 					geo = chooseGeo(hits);
-					app.getGuiManager().showPopupMenu(geo, view, mouseLoc);						
+					app.getGuiManager().showPopupMenu(geo,(EuclidianView) view, mouseLoc);						
 				}																										
 			}				
 			return;
@@ -1480,13 +1487,13 @@ public class EuclidianController implements MouseListener,
 		//view.setDrawMode(EuclidianView.DRAW_MODE_BACKGROUND_IMAGE);
 		moveMode = MOVE_NONE;
 		initShowMouseCoords();	
-		view.showAxesRatio = false;
+		view.setShowAxesRatio(false);
 		kernel.notifyRepaint();					
 	}
 	
 	protected boolean hitResetIcon() {
 		return app.showResetIcon() &&
-		  (mouseLoc.y < 18 && mouseLoc.x > view.width - 18);
+		  (mouseLoc.y < 18 && mouseLoc.x > view.getViewWidth() - 18);
 	}
 
 	// return if we really did zoom
@@ -1499,7 +1506,7 @@ public class EuclidianController implements MouseListener,
 		|| !app.isShiftDragZoomEnabled() // Michael Borcherds 2007-12-11		
 		) {
 			view.setSelectionRectangle(null);
-			view.repaint();
+			view.repaintEuclidianView();
 			return false;
 		}
 
@@ -1608,7 +1615,7 @@ public class EuclidianController implements MouseListener,
 			else 
 				view.setToolTipText(app.getPlain("Pause"));		
 			view.setHitCursor();
-			view.repaint();
+			view.repaintEuclidianView();
 			return;
 		}			
 		
@@ -1659,13 +1666,13 @@ public class EuclidianController implements MouseListener,
 		}
 
 		// update previewable
-		if (view.previewDrawable != null) {
-			view.previewDrawable.updateMousePos(mouseLoc.x, mouseLoc.y);
+		if (view.getPreviewDrawable() != null) {
+			view.getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
 			repaintNeeded = true;
 		}
 
 		// show Mouse coordinates
-		if (view.showMouseCoords) {
+		if (view.getShowMouseCoords()) {
 			transformCoords();
 			repaintNeeded = true;
 		}		
@@ -1981,11 +1988,11 @@ public class EuclidianController implements MouseListener,
 		}
 
 		// update preview
-		if (view.previewDrawable != null) {
-			view.previewDrawable.updatePreview();
+		if (view.getPreviewDrawable() != null) {
+			view.getPreviewDrawable().updatePreview();
 			if (mouseLoc != null)
-				view.previewDrawable.updateMousePos(mouseLoc.x, mouseLoc.y);			
-			view.repaint();
+				view.getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);			
+			view.repaintEuclidianView();
 		}
 
 		return changedKernel;
@@ -2000,9 +2007,9 @@ public class EuclidianController implements MouseListener,
 		refreshHighlighting(null);
 		resetToolTipManager();
 		view.setAnimationButtonsHighlighted(false);
-		view.showMouseCoords = false;
+		view.setShowMouseCoords(false);
 		mouseLoc = null;		
-		view.repaint();
+		view.repaintEuclidianView();
 	}
 
 	/*
@@ -2313,7 +2320,7 @@ public class EuclidianController implements MouseListener,
 				// then compress the grid by a scale factor of root3 horizontally to make it square.
 				
 				double root3=Math.sqrt(3.0);
-				double isoGrid=view.gridDistances[0];
+				double isoGrid=view.getGridDistances(0);
 				int oddOrEvenRow = (int)Math.round(2.0*Math.abs(yRW - Kernel.roundToScale(yRW, isoGrid))/isoGrid);
 				
 				//Application.debug(oddOrEvenRow);
@@ -2336,7 +2343,7 @@ public class EuclidianController implements MouseListener,
 				else
 				{
 					// X = (x, y) ... next grid point
-					double x = Kernel.roundToScale(xRW/root3- view.gridDistances[0]/2, isoGrid);
+					double x = Kernel.roundToScale(xRW/root3- view.getGridDistances(0)/2, isoGrid);
 					double y = Kernel.roundToScale(yRW- isoGrid/2, isoGrid);
 					// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
 					double a = Math.abs(x - (xRW/root3- isoGrid/2));
@@ -2353,13 +2360,13 @@ public class EuclidianController implements MouseListener,
 				case EuclidianView.GRID_CARTESIAN:
 				
 				// X = (x, y) ... next grid point
-				double x = Kernel.roundToScale(xRW, view.gridDistances[0]);
-				double y = Kernel.roundToScale(yRW, view.gridDistances[1]);
+				double x = Kernel.roundToScale(xRW, view.getGridDistances(0));
+				double y = Kernel.roundToScale(yRW, view.getGridDistances(1));
 				// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
 				double a = Math.abs(x - xRW);
 				double b = Math.abs(y - yRW);
-				if (a < view.gridDistances[0] * pointCapturingPercentage
-					&& b < view.gridDistances[1] *  pointCapturingPercentage) {
+				if (a < view.getGridDistances(0) * pointCapturingPercentage
+					&& b < view.getGridDistances(1) *  pointCapturingPercentage) {
 					xRW = x;
 					yRW = y;
 				}
@@ -2407,8 +2414,8 @@ public class EuclidianController implements MouseListener,
 	*/
 	
 	protected void calcRWcoords() {
-		xRW = (mouseLoc.x - view.xZero) * view.invXscale;
-		yRW = (view.yZero - mouseLoc.y) * view.invYscale;
+		xRW = (mouseLoc.x - view.getXZero()) * view.getInvXscale();
+		yRW = (view.getYZero() - mouseLoc.y) * view.getInvYscale();
 	}
 
 	final protected void setMouseLocation(MouseEvent e) {
@@ -2416,12 +2423,12 @@ public class EuclidianController implements MouseListener,
 
 		if (mouseLoc.x < 0)
 			mouseLoc.x = 0;
-		else if (mouseLoc.x > view.width)
-			mouseLoc.x = view.width;
+		else if (mouseLoc.x > view.getViewWidth())
+			mouseLoc.x = view.getViewWidth();
 		if (mouseLoc.y < 0)
 			mouseLoc.y = 0;
-		else if (mouseLoc.y > view.height)
-			mouseLoc.y = view.height;
+		else if (mouseLoc.y > view.getViewHeight())
+			mouseLoc.y = view.getViewHeight();
 	}
 
 	/***************************************************************************
@@ -2477,7 +2484,7 @@ public class EuclidianController implements MouseListener,
 			transformCoords(); // use point capturing if on
 			if (path == null) {
 				point = kernel.Point(null, xRW, yRW);
-				view.showMouseCoords = true;
+				view.setShowMouseCoords(true);
 			} else {
 				point = kernel.Point(null, path, xRW, yRW);
 			}
@@ -4792,7 +4799,7 @@ public class EuclidianController implements MouseListener,
 		selectionList.clear();
 		selectedGeos.clear();
 		app.clearSelectedGeos();	
-		view.repaint();
+		view.repaintEuclidianView();
 	}
 
 	final protected int addSelectedGeo(ArrayList hits, int max,
@@ -5118,8 +5125,8 @@ public class EuclidianController implements MouseListener,
 		// popup a menu to choose from
 		ToolTipManager ttm = ToolTipManager.sharedInstance();		
 		ttm.setEnabled(false);			
-		ListDialog dialog = new ListDialog(view, geos, null);
-		ret = dialog.showDialog(view, mouseLoc);			
+		ListDialog dialog = new ListDialog((JPanel) view, geos, null);
+		ret = dialog.showDialog((JPanel) view, mouseLoc);			
 		ttm.setEnabled(true);				
 		}
 		return ret;	
@@ -5160,8 +5167,8 @@ public class EuclidianController implements MouseListener,
 			//double py = view.height / 2d;
 			double px = mouseLoc.x;
 			double py = mouseLoc.y;
-			double dx = view.xZero - px;
-			double dy = view.yZero - py;
+			double dx = view.getXZero() - px;
+			double dy = view.getYZero() - py;
 			
 	        double factor = (e.getWheelRotation() > 0) ?
 	        		EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR :
@@ -5172,7 +5179,7 @@ public class EuclidianController implements MouseListener,
 			view.setAnimatedCoordSystem(
 		                px + dx * factor,
 		                py + dy * factor,
-		                view.xscale * factor, 4, false);
+		                view.getXscale() * factor, 4, false);
 						//view.yscale * factor);
 			app.setUnsaved();
 	}
@@ -5188,8 +5195,8 @@ public class EuclidianController implements MouseListener,
 
 		double px = mouseLoc.x;
 		double py = mouseLoc.y;
-		double dx = view.xZero - px;
-		double dy = view.yZero - py;
+		double dx = view.getXZero() - px;
+		double dy = view.getYZero() - py;
 
 		double factor = event.getKeyCode() == KeyEvent.VK_MINUS ? 1d / EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR
 				: EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR;
@@ -5198,7 +5205,7 @@ public class EuclidianController implements MouseListener,
 		view.setAnimatedCoordSystem(
 				px + dx * factor,
 				py + dy * factor,
-				view.xscale * factor, 4, false);
+				view.getXscale() * factor, 4, false);
 		//view.yscale * factor);
 		app.setUnsaved();
 
