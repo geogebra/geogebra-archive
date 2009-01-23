@@ -2799,6 +2799,13 @@ public abstract class Application implements KeyEventDispatcher {
 		else
 			return null;
 	}
+	
+	public void setGlassPane(Component component) {
+		if (appletImpl != null && mainComp == appletImpl.getJApplet())
+			appletImpl.getJApplet().setGlassPane(component);
+		else if (mainComp == frame)
+			frame.setGlassPane(component);
+	}
 
 	public Container getContentPane() {
 		if (appletImpl != null && mainComp == appletImpl.getJApplet())

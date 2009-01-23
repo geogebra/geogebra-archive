@@ -146,9 +146,13 @@ public class DefaultGuiManager implements GuiManager {
 	
 	/**
 	 * Make the title bar visible if the user is using an applet.
+	 * 
+	 * Active the glass pane if the application is changing from applet to
+	 * frame mode.
 	 */
 	public void updateLayout() {
 		layout.setTitlebarVisible(!app.isApplet());
+		layout.getDockManager().updateGlassPane();
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {

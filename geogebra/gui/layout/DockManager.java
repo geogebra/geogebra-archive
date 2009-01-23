@@ -1,6 +1,8 @@
 package geogebra.gui.layout;
 
+import java.awt.AWTEvent;
 import java.awt.Component;
+import java.awt.event.ComponentEvent;
 
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
@@ -15,7 +17,9 @@ import geogebra.main.Application;
 public class DockManager {	
 	private Application app;
 	private Layout layout;
-	private DockGlassPane glassPane;
+	
+	private DockGlassPane glassPane;	
+	
 	private DockSplitPane rootPane;
 	private DockPanel[] dockPanels;
 	
@@ -28,6 +32,9 @@ public class DockManager {
 		this.app = layout.getApp();
 		
 		glassPane = new DockGlassPane(this);
+		
+		if(!app.isApplet())
+			app.setGlassPane(glassPane);
 	}
 	
 	/**
@@ -177,6 +184,15 @@ public class DockManager {
 	public void setLabels() {
 		for(int i = 0; i < dockPanels.length; ++i) {
 			dockPanels[i].updateLabels();
+		}
+	}
+	
+	/**
+	 * Update the glass pane (i.e. activate / deactive it the current application runs in frame / applet mode).
+	 */
+	public void updateGlassPane() {
+		if(!app.isApplet() && glassPane.getParent() != null) {
+			app.setGlassPane(glassPane);
 		}
 	}
 	
@@ -339,10 +355,14 @@ public class DockManager {
 		} else {
 			newSplitPane.setDividerLocation(dividerLocation);
 		}
-		
+
 		updatePanels();
 		
 		Application.debug(getDebugTree(0, rootPane));
+		
+		// Manually dispatch a resize event as the size of the 
+		// euclidian view isn't updated all the time.
+		app.getEuclidianView().dispatchEvent(new ComponentEvent(rootPane, ComponentEvent.COMPONENT_RESIZED));
 	}
 	
 	/**
