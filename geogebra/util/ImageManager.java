@@ -39,9 +39,9 @@ import javax.swing.ImageIcon;
  */
 public class ImageManager {
 		
-	private Hashtable iconTable = new Hashtable();
-	private Hashtable internalImageTable = new Hashtable();
-	private Hashtable externalImageTable = new Hashtable();
+	private Hashtable<String, ImageIcon> iconTable = new Hashtable<String, ImageIcon>();
+	private Hashtable<String, Image> internalImageTable = new Hashtable<String, Image>();
+	private Hashtable<String, Image> externalImageTable = new Hashtable<String, Image>();
 	
 	
 	private Toolkit toolKit;

@@ -69,7 +69,7 @@ public class ModeToggleMenu extends JPanel {
 		tbutton.setAlignmentY(BOTTOM_ALIGNMENT);
 		add(tbutton);
 		
-		popMenu = new JPopupMenu();		
+		popMenu = new JPopupMenu();
 		menuItemList = new ArrayList();
 		popupMenuItemListener = new MenuItemListener();
 		size = 0;
@@ -190,9 +190,17 @@ public class ModeToggleMenu extends JPanel {
 			bg.setActivePopupMenu(popMenu);	
 			if (popMenu.isShowing()) return;
 			Point locButton = tbutton.getLocationOnScreen();
-			Point locApp = app.getMainComponent().getLocationOnScreen();		
-			popMenu.show(app.getMainComponent(), locButton.x - locApp.x, 
-											locButton.y - locApp.y + tbutton.getHeight());
+			Point locApp = app.getMainComponent().getLocationOnScreen();
+			
+			// display the popup above the button if the toolbar is at the top of the window
+			if(app.showToolBarTop()) {
+				popMenu.show(app.getMainComponent(), locButton.x - locApp.x, 
+						locButton.y - locApp.y + tbutton.getHeight());
+			}
+			else {
+				popMenu.show(app.getMainComponent(), locButton.x - locApp.x, 
+						locButton.y - locApp.y - (int)popMenu.getPreferredSize().getHeight());
+			}
 		} else {
 			popMenu.setVisible(false);
 		}

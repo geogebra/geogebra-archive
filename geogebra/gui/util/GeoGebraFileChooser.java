@@ -80,7 +80,7 @@ public class GeoGebraFileChooser extends JFileChooser {
 		
 		previewPanel = new PreviewPanel(this);
 		setAccessory(previewPanel);
-		addPropertyChangeListener("SelectedFileChangedProperty", previewPanel);
+		addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, previewPanel);
 		
 		setMode(MODE_GEOGEBRA); // default mode is the mode to load geogebra files
 	}
@@ -180,7 +180,7 @@ public class GeoGebraFileChooser extends JFileChooser {
 			try {
 				File file = fileChooser.getSelectedFile();
 				
-				if (file != null) // don't update on directory change
+				if (file != null && file.exists()) // don't update on directory change
 					updateImage(file);
 			} catch (IOException ioe) {
 				ioe.printStackTrace();

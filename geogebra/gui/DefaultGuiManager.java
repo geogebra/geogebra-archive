@@ -8,7 +8,6 @@ import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
-import geogebra.gui.menubar.Menubar;
 import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.gui.util.BrowserLauncher;
@@ -105,7 +104,7 @@ public class DefaultGuiManager implements GuiManager {
     private SpreadsheetView spreadsheetView;   
 
 	private GeoGebraFileChooser fileChooser;
-	private Menubar menuBar;
+	private GeoGebraMenuBar menuBar;
 
 	private MyToolbar appToolbarPanel;	  
     private String strCustomToolbarDefinition;
@@ -602,7 +601,7 @@ public class DefaultGuiManager implements GuiManager {
 	}
 
 	public void setMenubar(JMenuBar newMenuBar) {
-		menuBar = (Menubar) newMenuBar;
+		menuBar = (GeoGebraMenuBar) newMenuBar;
 	}
 
 	public void showAboutDialog() {

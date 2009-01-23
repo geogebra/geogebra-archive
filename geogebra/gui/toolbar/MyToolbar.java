@@ -56,7 +56,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
      */
 	public MyToolbar(Application app)  {
 		this.app = app;	
-		addComponentListener(this);		
+		addComponentListener(this);
 	}
 		
 	/**
@@ -68,7 +68,9 @@ public class MyToolbar extends JPanel implements ComponentListener{
         // create toolBars                       
         removeAll();
         setLayout(new BorderLayout(5,2));   
-        setBorder(BorderFactory.createEmptyBorder(2, 2, 1, 2));
+        setBorder(BorderFactory.createCompoundBorder(
+        	BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),
+        	BorderFactory.createEmptyBorder(2, 2, 1, 2)));
         
         JToolBar tb = new JToolBar();   
         tb.setFloatable(false);  

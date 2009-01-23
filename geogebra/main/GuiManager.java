@@ -46,7 +46,7 @@ public interface GuiManager {
 	public void attachView(int viewId);
 	public void detachView(int viewId);
 	public void attachSpreadsheetView();
-	public void detachSpreadsheetView();	
+	public void detachSpreadsheetView();
 	public void attachAlgebraView();
 	public void detachAlgebraView();
 

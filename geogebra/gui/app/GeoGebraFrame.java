@@ -50,7 +50,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 
 	private static final long serialVersionUID = 1L;
 
-	private static ArrayList instances = new ArrayList();
+	private static ArrayList<GeoGebraFrame> instances = new ArrayList<GeoGebraFrame>();
 	private static GeoGebraFrame activeInstance;
 	protected Application app;
 	
@@ -290,7 +290,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		return instances.size();
 	}
 
-	public static ArrayList getInstances() {
+	public static ArrayList<GeoGebraFrame> getInstances() {
 		return instances;
 	}
 

@@ -53,8 +53,6 @@ import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -250,7 +248,6 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	/**
 	 * A temporary vector with all perspectives which were included in the last loaded document.
-	 * This vector will be passed to the   
 	 */
 	private ArrayList<Perspective> tmpPerspectives;
 	
@@ -292,6 +289,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private boolean showInputTop = false;
 	private boolean showCmdList = true;
 	protected boolean showToolBar = true;
+	private boolean showToolBarTop = true;
 	protected boolean showMenuBar = true;
 	protected boolean showConsProtNavigation = false;
 	private boolean[] showAxes = { true, true };
@@ -314,7 +312,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	protected JPanel centerPanel;
 
-	private ArrayList selectedGeos = new ArrayList();
+	private ArrayList<GeoElement> selectedGeos = new ArrayList<GeoElement>();
 
 	private JarManager jarmanager = null;
 	private GgbAPI ggbapi = null;
@@ -654,32 +652,30 @@ public abstract class Application implements KeyEventDispatcher {
 		// euclidian panel with view and status bar
 		centerPanel = new JPanel(new BorderLayout());
 		centerPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow));
+		updateCenterPanel(true);
 
-		if(showInputTop) {
-			JPanel topPanel = new JPanel(new BorderLayout());
-			
-			if (showToolBar) {
-				topPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
-			}
-			
-			if (showAlgebraInput) {
+		JPanel topPanel = new JPanel(new BorderLayout());
+		JPanel bottomPanel = new JPanel(new BorderLayout());
+
+		if(showAlgebraInput) {
+			if(showInputTop) {
 				topPanel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
-			}
-			
-			panel.add(topPanel, BorderLayout.NORTH);
-		} else {
-			if (showToolBar) {
-				panel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
-			}
-			
-			if (showAlgebraInput) {
-				panel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
+			} else {
+				bottomPanel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
 			}
 		}
-
-		// updateCenterPanel
-		updateCenterPanel(true);
+		
+		if(showToolBar) {
+			if(showToolBarTop) {
+				topPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+			} else {
+				bottomPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+			}
+		}
+		
+		panel.add(topPanel, BorderLayout.NORTH);
 		panel.add(centerPanel, BorderLayout.CENTER);
+		panel.add(bottomPanel, BorderLayout.SOUTH);
 
 		// init labels
 		setLabels();
@@ -2031,6 +2027,9 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 	
 	public void setShowInputTop(boolean flag) {
+		if(flag == showInputTop)
+			return;
+		
 		showInputTop = flag;
 		
 		if(!isIniting())
@@ -2048,6 +2047,20 @@ public abstract class Application implements KeyEventDispatcher {
 		showCmdList = flag;
 		getGuiManager().updateAlgebraInput();
 		updateMenubar();
+	}
+	
+	public boolean showToolBarTop() {
+		return showToolBarTop;
+	}
+	
+	public void setShowToolBarTop(boolean flag) {
+		if(flag == showToolBarTop)
+			return;
+		
+		showToolBarTop = flag;
+		
+		if(!isIniting())
+			updateContentPane();
 	}
 
 	/**
@@ -2080,6 +2093,15 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void setShowMenuBar(boolean flag) {
 		showMenuBar = flag;
+	}
+	
+	public void setShowToolBar(boolean toolbar) {
+		showToolBar = toolbar;
+		
+		if(!isIniting()) {
+			updateContentPane();
+			updateMenubar();
+		}
 	}
 
 	public void setShowToolBar(boolean toolbar, boolean help) {
