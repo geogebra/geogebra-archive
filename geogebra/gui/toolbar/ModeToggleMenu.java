@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
@@ -65,7 +66,7 @@ public class ModeToggleMenu extends JPanel {
 		
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 			
-		tbutton = new MyJToggleButton(this);		
+		tbutton = new MyJToggleButton(this, app);		
 		tbutton.setAlignmentY(BOTTOM_ALIGNMENT);
 		add(tbutton);
 		
@@ -224,10 +225,12 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	//private static final long serialVersionUID = 1L;
 	private static int BORDER = 6;
 	private int iconWidth, iconHeight;
-	private GeneralPath gp;
+	private GeneralPath gpDown; // the path for an arrow pointing down
+	private GeneralPath gpUp; // the path for an arrow pointing up
 	private boolean showToolTipText = true;
 	private boolean popupTriangleHighlighting = false;
-	private ModeToggleMenu menu;		
+	private ModeToggleMenu menu;
+	private Application app;
 	
 	private static final Color arrowColor = new Color(0,0,0,130);
 	//private static final Color selColor = new Color(166, 11, 30,150);
@@ -235,9 +238,10 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	private static final Color selColor = new Color(0,0,153, 200);
 	private static final BasicStroke selStroke = new BasicStroke(3f);
 			
-	MyJToggleButton(ModeToggleMenu menu) {
+	MyJToggleButton(ModeToggleMenu menu, Application app) {
 		super();
 		this.menu = menu;
+		this.app = app;
 			
 		// add own listeners
 		addMouseListener(this);
@@ -285,38 +289,48 @@ implements MouseListener, MouseMotionListener, ActionListener {
 							
 		// draw little arrow (for popup menu)
 		if (menu.size > 1) {
-			if (gp == null) initPath();							
+			if (gpDown == null) initPath();							
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 								RenderingHints.VALUE_ANTIALIAS_ON);
 			
+			GeneralPath usedPath = app.showToolBarTop() ? gpDown : gpUp;
+			
 			if (popupTriangleHighlighting || menu.isPopupShowing()) {
 				g2.setColor(Color.red);				
-				g2.fill(gp);
+				g2.fill(usedPath);
 				g2.setColor(Color.black);
-				g2.draw(gp);				
+				g2.draw(usedPath);				
 			} else {
 				g2.setColor(Color.white);
-				g2.fill(gp);
+				g2.fill(usedPath);
 				g2.setColor(arrowColor);
-				g2.draw(gp);
+				g2.draw(usedPath);
 			}
 			
 		}
 	}
 	
 	private void initPath() {
-		gp = new GeneralPath();	
+		gpDown = new GeneralPath();	
 		int x = BORDER + iconWidth + 2;
 		int y = BORDER + iconHeight + 1;
-		gp.moveTo(x-6, y-5);
-		gp.lineTo(x, y-5);
-		gp.lineTo(x-3,y);
-		gp.closePath();			
+		gpDown.moveTo(x-6, y-5);
+		gpDown.lineTo(x, y-5);
+		gpDown.lineTo(x-3,y);
+		gpDown.closePath();
+
+		gpUp = new GeneralPath();	
+		x = BORDER + iconWidth + 2;
+		y = BORDER + 2;
+		gpUp.moveTo(x-6, y);
+		gpUp.lineTo(x, y);
+		gpUp.lineTo(x-3,y-5);
+		gpUp.closePath();
 	}
 	
 	
-	private boolean popupTriangleClicked(int x, int y) {
-		return (menu.size > 1 && y > iconHeight);
+	private boolean inPopupTriangle(int x, int y) {
+		return (menu.size > 1 && (app.showToolBarTop() ? y > iconHeight : y < 12));
 	}
 
 	public void mouseClicked(MouseEvent e) {	
@@ -337,7 +351,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	}
 
 	public void mousePressed(MouseEvent e) {		
-		menu.setPopupVisible(popupTriangleClicked(e.getX(), e.getY()));
+		menu.setPopupVisible(inPopupTriangle(e.getX(), e.getY()));
 		requestFocus();
 		//doClick();	removed to stop mode being selected when triangle clicked (for MODE_FITLINE)	
 	}
@@ -346,7 +360,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	}
 
 	public void mouseDragged(MouseEvent e) {
-		if (popupTriangleClicked(e.getX(), e.getY()))
+		if (inPopupTriangle(e.getX(), e.getY()))
 			menu.setPopupVisible(true);
 	}
 	
@@ -356,9 +370,9 @@ implements MouseListener, MouseMotionListener, ActionListener {
 		
 		// highlight popup menu triangle
 		if (menu.size > 1 &&  
-				popupTriangleHighlighting != popupTriangleClicked(e.getX(), e.getY())) {
+					popupTriangleHighlighting != inPopupTriangle(e.getX(), e.getY())) {
 			popupTriangleHighlighting = !popupTriangleHighlighting;
 			repaint();
-		}			
+		}
 	}
 }
