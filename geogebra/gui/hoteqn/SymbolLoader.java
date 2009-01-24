@@ -56,12 +56,20 @@ public SymbolLoader() { }
 public Image getImage( boolean  appletB, boolean beanB, String filenameS,
                 Graphics g,      Applet   app) {
 	StringTokenizer st = new StringTokenizer(filenameS, "/");
-	String fontsize = st.nextToken();
-	fontsize = (st.nextToken()).substring(5);
+	
+	st.nextToken();
+
+	// added and changed    	
+	int fontSize = Integer.parseInt((st.nextToken()).substring(5));
+	if (fontSize == 16)
+		fontSize = 14;
+	else if (fontSize > 18)
+		fontSize = 18;           	        	 
+
 	String fn = st.nextToken();
 	int	k =	-1;
 	for	(boolean loop =	true; loop;) {
-		if (fontsizes[++k].equals(fontsize)) loop=false;
+		if (fontsizes[++k].equals(fontSize + "")) loop=false;
 		if (k==4) loop=false;
 	}
 	//Application.debug(fontsizes[k]);
@@ -70,12 +78,6 @@ public Image getImage( boolean  appletB, boolean beanB, String filenameS,
 		//imageSources[k]=getBigImage(appletB, beanB,  "Fonts"+fontsize+".gif",  app);
 		//String desname = "Des"+fontsize+".gif";
      	
-    	// added and changed    	
-    	int fontSize = Integer.parseInt(fontsize);
-    	if (fontSize == 16)
-    		fontSize = 14;
-    	else if (fontSize > 18)
-    		fontSize = 18;           	        	 
 		imageSources[k]=getBigImage(appletB, beanB,  "Fonts"+fontSize+".gif",  app);
         String desname = "Des" + fontSize + ".gif";
 
@@ -111,7 +113,7 @@ public Image getImage( boolean  appletB, boolean beanB, String filenameS,
 			int len = (int)p.readInt();
 			for (int i=0;i<len;i++) {
 				String ft = (String)p.readObject();
-				fontdesH.put(fontsize+ft,new Rectangle((Rectangle)p.readObject()));
+				fontdesH.put(fontSize+ft,new Rectangle((Rectangle)p.readObject()));
 			}
 			istream.close();
 		}	
@@ -124,7 +126,7 @@ public Image getImage( boolean  appletB, boolean beanB, String filenameS,
 	// crop and filter images
 	Image image = null;
 	if (imageSources[k]!= null) {
-		Rectangle r = (Rectangle)(fontdesH.get(fontsize+fn));
+		Rectangle r = (Rectangle)(fontdesH.get(fontSize+fn));
 		image = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(
             new FilteredImageSource(imageSources[k],
 			new CropImageFilter(r.x,r.y,r.width,r.height )), new ColorMaskFilter(g.getColor())));
