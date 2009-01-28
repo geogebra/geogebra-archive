@@ -63,6 +63,7 @@ public abstract class Drawable {
 	private Font labelCacheFont;
 	private Color labelCacheFg;
 	private Color labelCacheBg;
+	private boolean labelCacheAA;
 	private BufferedImage labelCacheImage; // a cache for the rendered label
 	
 	private String oldLabelDesc;	
@@ -146,9 +147,10 @@ public abstract class Drawable {
 		boolean isCached = (
 			labelDesc.equals(labelCacheText) && font == labelCacheFont
 				&& fgColor.equals(labelCacheFg) && bgColor.equals(labelCacheBg)
-		); 
+				&& labelCacheAA == (g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING).equals(RenderingHints.VALUE_TEXT_ANTIALIAS_ON))
+		);
 		
-		if(!isCached) {	
+		if(!isCached) {	Application.debug("Generate LaTeX image..");
 			int fontSize = font.getSize();
 			int lineSpread = (int)(fontSize * 1.0f);
 			int lineSpace = (int)(fontSize * 0.5f);
@@ -228,6 +230,8 @@ public abstract class Drawable {
 			// enable / disable anti-aliasing based on the settings of the main graphic canvas
 			cacheGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING));
+			cacheGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
 			
 			int width = 0;
 			int height = 0;
@@ -293,6 +297,7 @@ public abstract class Drawable {
 			labelCacheFont = font;
 			labelCacheFg = fgColor;
 			labelCacheBg = bgColor;
+			labelCacheAA = (g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING).equals(RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
 		}
 		
 		// update position of the rectangle 
