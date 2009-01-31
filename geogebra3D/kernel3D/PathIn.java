@@ -13,7 +13,7 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel.linalg.GgbMatrix;
 
 /**
  * @author Markus Hohenwarter + ggb3D

@@ -4,7 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.Path;
-import geogebra.kernel.linalg.GgbVector;
+import geogebra3D.kernel.linalg.GgbVector;
 
 public class GeoSegment3D extends GeoCoordSys1D {
 	

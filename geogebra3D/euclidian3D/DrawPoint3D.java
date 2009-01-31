@@ -2,7 +2,7 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel.linalg.GgbMatrix;
 import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.awt.Color;

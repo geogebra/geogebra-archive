@@ -10,7 +10,7 @@ the Free Software Foundation.
 
 */
 
-package geogebra.kernel.linalg;
+package geogebra3D.kernel.linalg;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;

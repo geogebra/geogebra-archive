@@ -1,4 +1,4 @@
-package geogebra.kernel.linalg;
+package geogebra3D.kernel.linalg;
 
 public class GgbMatrix4x4 extends GgbMatrix {
 

@@ -1,8 +1,8 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra.kernel.linalg.GgbMatrix;
-import geogebra.kernel.linalg.GgbVector;
+import geogebra3D.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel.linalg.GgbVector;
 
 public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	

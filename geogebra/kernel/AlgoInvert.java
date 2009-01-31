@@ -12,8 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.linalg.GgbMatrix;
 import geogebra.main.Application;
+import geogebra3D.kernel.linalg.GgbMatrix;
 
 /**
  * Reverse a list. Adapted from AlgoSort

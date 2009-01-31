@@ -4,10 +4,10 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
-import geogebra.kernel.linalg.GgbMatrix;
-import geogebra.kernel.linalg.GgbMatrix4x4;
-import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel.linalg.GgbMatrix4x4;
+import geogebra3D.kernel.linalg.GgbVector;
 
 public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	

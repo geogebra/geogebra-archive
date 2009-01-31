@@ -2,11 +2,11 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.kernel.linalg.GgbMatrix;
-import geogebra.kernel.linalg.GgbMatrix4x4;
-import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
+import geogebra3D.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel.linalg.GgbMatrix4x4;
+import geogebra3D.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;

@@ -2,8 +2,8 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.kernel.linalg.GgbVector;
 
 
 public class AlgoJoinPointsRay3D extends AlgoElement3D {

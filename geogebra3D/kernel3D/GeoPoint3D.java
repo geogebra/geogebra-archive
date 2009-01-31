@@ -24,8 +24,8 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoVec3D;
-import geogebra.kernel.linalg.GgbMatrix;
-import geogebra.kernel.linalg.GgbVector;
+import geogebra3D.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel.linalg.GgbVector;
 
 
 /**

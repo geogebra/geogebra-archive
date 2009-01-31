@@ -1,8 +1,8 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.kernel.linalg.GgbMatrix;
-import geogebra.kernel.linalg.GgbMatrix4x4;
 import geogebra.main.Application;
+import geogebra3D.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel.linalg.GgbMatrix4x4;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoSegment3D;
 

@@ -25,8 +25,8 @@ import java.awt.Color;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.*;
-import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.*;
 
 

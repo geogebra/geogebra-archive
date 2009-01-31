@@ -7,10 +7,10 @@ import java.util.Comparator;
 import java.util.TreeSet;
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.linalg.GgbMatrix;
-import geogebra.kernel.linalg.GgbMatrix4x4;
-import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.kernel.linalg.GgbMatrix;
+import geogebra3D.kernel.linalg.GgbMatrix4x4;
+import geogebra3D.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;

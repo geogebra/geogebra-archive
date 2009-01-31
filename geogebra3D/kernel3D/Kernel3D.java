@@ -21,9 +21,9 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.AlgebraProcessor;
-import geogebra.kernel.linalg.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
+import geogebra3D.kernel.linalg.GgbVector;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
 
