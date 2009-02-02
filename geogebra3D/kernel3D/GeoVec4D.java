@@ -23,7 +23,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
 import geogebra.main.Application;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DVector;
 
 /**
  *
@@ -81,7 +81,7 @@ public abstract class GeoVec4D extends GeoVec {
  //   	}
  //   	else 
 //   	{ // through point A
-        GgbVector B = new GgbVector( new double[]{
+        Ggb3DVector B = new Ggb3DVector( new double[]{
         		   A.getX()+v.getX(),
         		   A.getY()+v.getY(),
         		   A.getZ()+v.getZ(),

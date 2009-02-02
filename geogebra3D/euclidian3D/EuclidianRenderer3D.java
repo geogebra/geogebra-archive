@@ -1,8 +1,8 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.main.Application;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbMatrix4x4;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoSegment3D;
 
@@ -47,7 +47,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private EuclidianView3D m_view3D;
 	
 	// for drawing
-	private GgbMatrix4x4 m_drawingMatrix; //matrix for drawing
+	private Ggb3DMatrix4x4 m_drawingMatrix; //matrix for drawing
 	
 	static public double[][] DASH_NONE = null;	
 	static public double[][] DASH_SIMPLE = {{0.1,0.1}};
@@ -245,11 +245,11 @@ public class EuclidianRenderer3D implements GLEventListener {
     } 
     
     //transformation matrix
-    public void setMatrix(GgbMatrix4x4 a_matrix){
+    public void setMatrix(Ggb3DMatrix4x4 a_matrix){
     	m_drawingMatrix=a_matrix;
     }
     
-    public GgbMatrix4x4 getMatrix(){
+    public Ggb3DMatrix4x4 getMatrix(){
     	return m_drawingMatrix;
     }
     
@@ -257,7 +257,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	initMatrix(m_drawingMatrix);
     }
     
-    private void initMatrix(GgbMatrix a_drawingMatrix){
+    private void initMatrix(Ggb3DMatrix a_drawingMatrix){
     	gl.glPushMatrix();
 		gl.glMultMatrixd(a_drawingMatrix.get(),0);
     }    
@@ -287,7 +287,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     		drawSegmentDashedOrNot(a_x1, a_x2, m_dash!=null);
     	break;
     	case ARROW_TYPE_SIMPLE:
-    		double x3=a_x2-m_arrowLength/m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS);
+    		double x3=a_x2-m_arrowLength/m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS);
     		double thickness = getThickness();
     		setThickness(m_arrowWidth);
     		drawCone(x3,a_x2);
@@ -319,7 +319,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     /** draws a dashed segment from x=x1 to x=x2 according to current m_drawingMatrix*/
     private void drawSegmentDashed(double a_x1, double a_x2){
 		
-    	m_dash_factor = 1/m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS);
+    	m_dash_factor = 1/m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS);
     	for(double l1=a_x1; l1<a_x2;){
     		double l2=l1;
     		for(int i=0; (i<m_dash.length)&&(l1<a_x2); i++){
@@ -410,7 +410,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	
     	//Application.debug("n = "+nXmin+","+nXmax+","+nYmin+","+nYmax);
     	
-    	GgbMatrix4x4 matrix = new GgbMatrix4x4();
+    	Ggb3DMatrix4x4 matrix = new Ggb3DMatrix4x4();
      	
     	matrix.set(getMatrix());
     	for (int i=nYmin; i<=nYmax; i++){
@@ -420,7 +420,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	setMatrix(matrix);
     	
     	matrix.set(getMatrix());
-    	GgbMatrix4x4 matrix2 = matrix.mirrorXY();
+    	Ggb3DMatrix4x4 matrix2 = matrix.mirrorXY();
     	for (int i=nXmin; i<=nXmax; i++){
     		setMatrix(matrix2.translateY(i*a_dx));
         	drawSegment(ymin, ymax);

@@ -26,7 +26,7 @@ import java.awt.Color;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.*;
 import geogebra.main.Application;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.*;
 
 
@@ -109,17 +109,17 @@ public class Test3D{
 		
 		GeoSegment3D s=null;
 		
-		s=kernel3D.Segment3D("axeX3D",new GgbVector(new double[] {0,0,0,1}),new GgbVector(new double[]{longueur,0,0,1}));
+		s=kernel3D.Segment3D("axeX3D",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{longueur,0,0,1}));
 		s.setObjColor(new Color(1f,0f,0f));
 		s.setLineThickness(1);
 		cons.addToConstructionList(s, false);
 		
-		s=kernel3D.Segment3D("axeY3D",new GgbVector(new double[] {0,0,0,1}),new GgbVector(new double[]{0,longueur,0,1}));
+		s=kernel3D.Segment3D("axeY3D",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{0,longueur,0,1}));
 		s.setObjColor(new Color(0f,1f,0f));
 		s.setLineThickness(1);
 		cons.addToConstructionList(s, false);
 		
-		s=kernel3D.Segment3D("axeZ3D",new GgbVector(new double[] {0,0,0,1}),new GgbVector(new double[]{0,0,longueur,1}));
+		s=kernel3D.Segment3D("axeZ3D",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{0,0,longueur,1}));
 		s.setObjColor(new Color(0f,0f,1f));
 		s.setLineThickness(1);
 		cons.addToConstructionList(s, false);
@@ -127,9 +127,9 @@ public class Test3D{
 		
 		//xOy plane
 		xOyPlane=kernel3D.Plane3D("xOy",
-				new GgbVector(new double[] {0.0,0.0,0.0,1.0}),
-				new GgbVector(new double[] {1.0,0.0,0.0,0.0}),
-				new GgbVector(new double[] {0.0,1.0,0.0,0.0}));
+				new Ggb3DVector(new double[] {0.0,0.0,0.0,1.0}),
+				new Ggb3DVector(new double[] {1.0,0.0,0.0,0.0}),
+				new Ggb3DVector(new double[] {0.0,1.0,0.0,0.0}));
 		xOyPlane.setObjColor(new Color(0.75f,0.75f,0.75f));
 		xOyPlane.setAlgebraVisible(false); //TODO make it works
 		xOyPlane.setLabelVisible(false);
@@ -158,7 +158,7 @@ public class Test3D{
 	
 	private void testSegment(){
 		GeoSegment3D s=null;
-		s=kernel3D.Segment3D("segment",new GgbVector(new double[] {0,0,0,1}),new GgbVector(new double[]{1,1,1,1}));
+		s=kernel3D.Segment3D("segment",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{1,1,1,1}));
 		cons.addToConstructionList(s, false);
 		//testPoint(1,1,1,1,1,1);
 	}
@@ -168,8 +168,8 @@ public class Test3D{
 		GeoSegment3D s=null;
 		
 		s=kernel3D.Segment3D("segment",
-				new GgbVector(new double[] {x1,y1,z1,1}),
-				new GgbVector(new double[] {x2,y2,z2,1}));
+				new Ggb3DVector(new double[] {x1,y1,z1,1}),
+				new Ggb3DVector(new double[] {x2,y2,z2,1}));
 		s.setObjColor(new Color((float) (x1+x2)/2, (float) (y1+y2)/2, (float) (z1+z2)/2));
 		cons.addToConstructionList(s, false);
 
@@ -250,9 +250,9 @@ public class Test3D{
 		GeoPlane3D p=null;
 		
 		p=kernel3D.Plane3D("plane",
-				new GgbVector(new double[] {x0,y0,z0,1}),
-				new GgbVector(new double[] {x1,y1,z1,0}),
-				new GgbVector(new double[] {x2,y2,z2,0}));
+				new Ggb3DVector(new double[] {x0,y0,z0,1}),
+				new Ggb3DVector(new double[] {x1,y1,z1,0}),
+				new Ggb3DVector(new double[] {x2,y2,z2,0}));
 		p.setObjColor(new Color((float) (x0+(x1+x2)/2), (float) (y0+(y1+y2)/2), (float) (z0+(z1+z2)/2)));
 		cons.addToConstructionList(p, false);
 		
@@ -397,9 +397,9 @@ public class Test3D{
 		P.setLabel("P");
 		
 		GeoPlane3D p = kernel3D.Plane3D("plane",
-				new GgbVector(new double[] {0,0,0,1}),
-				new GgbVector(new double[] {1,0,0,0}),
-				new GgbVector(new double[] {0,1,0,0}));
+				new Ggb3DVector(new double[] {0,0,0,1}),
+				new Ggb3DVector(new double[] {1,0,0,0}),
+				new Ggb3DVector(new double[] {0,1,0,0}));
 		
 		kernel3D.From3Dto2D("truc", P, p);
 	}

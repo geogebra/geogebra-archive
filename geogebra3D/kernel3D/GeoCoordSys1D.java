@@ -5,9 +5,9 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.main.Application;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbMatrix4x4;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 
 public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
@@ -16,7 +16,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 		super(c,1);
 	}
 	
-	public GeoCoordSys1D(Construction c, GgbVector O, GgbVector V){
+	public GeoCoordSys1D(Construction c, Ggb3DVector O, Ggb3DVector V){
 		this(c);
 		setCoord(O,V);
 	}
@@ -29,7 +29,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
 	
 	/** set the matrix to [V O] */
-	public void setCoord(GgbVector a_O, GgbVector a_V){
+	public void setCoord(Ggb3DVector a_O, Ggb3DVector a_V){
 		setOrigin(a_O);
 		setVx(a_V);
 		
@@ -40,8 +40,8 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	/** set coords to origin O and vector (I-O) */
 	public void setCoord(GeoPoint3D O, GeoPoint3D I){
 		
-		GgbVector vO = O.getCoords();
-		GgbVector vI = I.getCoords();
+		Ggb3DVector vO = O.getCoords();
+		Ggb3DVector vI = I.getCoords();
 		setCoord(vO,vI.sub(vO));
 		
 	}
@@ -65,9 +65,9 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
 	//public GeoPoint3D getPoint(double lambda){
 	/** returns the point at position lambda on the coord sys */
-	public GgbVector getPoint(double lambda){
-		GgbVector v=new GgbVector(new double[] {lambda,1});
-		GgbVector r=getMatrix().mul(v);		
+	public Ggb3DVector getPoint(double lambda){
+		Ggb3DVector v=new Ggb3DVector(new double[] {lambda,1});
+		Ggb3DVector r=getMatrix().mul(v);		
 		//r.SystemPrint();
 		return r;
 		//return new GeoPoint3D(getConstruction(), "M", r);
@@ -90,9 +90,9 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
 	public void pointChanged(GeoPoint3D P){
 		//project P on line
-		GgbVector v = P.getInhomCoords();
-		GgbVector p = new GgbVector(4);
-		GgbVector[] project = v.projectLine(getMatrix().getColumn(2).subVector(1, 3), getMatrix().getColumn(1).subVector(1, 3));
+		Ggb3DVector v = P.getInhomCoords();
+		Ggb3DVector p = new Ggb3DVector(4);
+		Ggb3DVector[] project = v.projectLine(getMatrix().getColumn(2).subVector(1, 3), getMatrix().getColumn(1).subVector(1, 3));
 		
 
 		if(!P.hasGeoElement2D()){
@@ -139,13 +139,13 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
 	
 	
-	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix){
+	public Ggb3DMatrix getMovingMatrix(Ggb3DMatrix toScreenMatrix){
 		
-		GgbMatrix ret = toScreenMatrix.mul(getMatrix4x4());
+		Ggb3DMatrix ret = toScreenMatrix.mul(getMatrix4x4());
 		
-		GgbVector V = ret.getColumn(1); //gets direction vector of the path
-		GgbVector Vn1 = new GgbVector(4); 
-		GgbVector Vn2 = new GgbVector(4);
+		Ggb3DVector V = ret.getColumn(1); //gets direction vector of the path
+		Ggb3DVector Vn1 = new Ggb3DVector(4); 
+		Ggb3DVector Vn2 = new Ggb3DVector(4);
 		if (V.get(1)!=0){
 			Vn1.set(1,-V.get(2));
 			Vn1.set(2,V.get(1));

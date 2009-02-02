@@ -23,7 +23,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
 
@@ -129,7 +129,7 @@ public class Kernel3D
 	}		
 	
 	/** Segment3D label linking points v1 and v2   */
-	final public GeoSegment3D Segment3D(String label, GgbVector v1, GgbVector v2){
+	final public GeoSegment3D Segment3D(String label, Ggb3DVector v1, Ggb3DVector v2){
 		GeoSegment3D s = new GeoSegment3D(cons,v1,v2);
 		s.setLabel(label);
 		return s;
@@ -171,7 +171,7 @@ public class Kernel3D
 	
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */
-	final public GeoPlane3D Plane3D(String label, GgbVector o, GgbVector v1, GgbVector v2){
+	final public GeoPlane3D Plane3D(String label, Ggb3DVector o, Ggb3DVector v1, Ggb3DVector v2){
 		GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-2.25,2.25,-2.25,2.25);
 		p.setLabel(label);
 		return p;

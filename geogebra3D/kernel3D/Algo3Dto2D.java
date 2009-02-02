@@ -3,7 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DVector;
 
 public class Algo3Dto2D extends AlgoElement3D {
 
@@ -44,8 +44,8 @@ public class Algo3Dto2D extends AlgoElement3D {
 		
 		switch(geo3D.getGeoClassType()){
 		case GeoElement3D.GEO_CLASS_POINT3D:
-			GgbVector p = ((GeoPoint3D) geo3D).getCoords();
-			GgbVector[] project=p.projectPlane(cs.getMatrix4x4());
+			Ggb3DVector p = ((GeoPoint3D) geo3D).getCoords();
+			Ggb3DVector[] project=p.projectPlane(cs.getMatrix4x4());
 			((GeoPoint) geo).setCoords(project[0].get(1), project[0].get(2), 1);
 			break;
 		default:

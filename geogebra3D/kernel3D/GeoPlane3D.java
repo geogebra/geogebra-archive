@@ -2,9 +2,9 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbMatrix4x4;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoPlane3D extends GeoCoordSys2D {
 	
@@ -19,7 +19,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	
 	/** creates a plane with origin o, vectors v1, v2*/
 	public GeoPlane3D(Construction c, 
-			GgbVector o, GgbVector v1, GgbVector v2,
+			Ggb3DVector o, Ggb3DVector v1, Ggb3DVector v2,
 			double xmin, double xmax, double ymin, double ymax){
 		
 		
@@ -28,7 +28,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		this.ymin = ymin; this.ymax = ymax;
 
 		//grid
-		setGridOrigin(new GgbVector(new double[] {0,0,0,1}));
+		setGridOrigin(new Ggb3DVector(new double[] {0,0,0,1}));
         
 
 		
@@ -196,7 +196,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		//TODO undefined...
 		//TODO remove x/y/z if not needed
 		//TODO check this
-		GgbVector Vn = getMatrix4x4().getColumn(3);
+		Ggb3DVector Vn = getMatrix4x4().getColumn(3);
 		s+=kernel.format(Vn.get(1))+"x + "+kernel.format(Vn.get(2))+"y + "+kernel.format(Vn.get(3))+"z = "
 			+kernel.format(Vn.dotproduct(getMatrix().getColumn(3)));
 		

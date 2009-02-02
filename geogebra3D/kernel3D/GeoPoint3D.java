@@ -24,8 +24,8 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoVec3D;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DVector;
 
 
 /**
@@ -52,7 +52,7 @@ final public class GeoPoint3D extends GeoVec4D {
 	private PathParameters pps;
         
     // temp
-    public GgbVector inhom = new GgbVector(3);
+    public Ggb3DVector inhom = new Ggb3DVector(3);
     
     
     public GeoPoint3D(Construction c) { 
@@ -69,7 +69,7 @@ final public class GeoPoint3D extends GeoVec4D {
         
     }
     
-    public GeoPoint3D(Construction c, String label, GgbVector v){
+    public GeoPoint3D(Construction c, String label, Ggb3DVector v){
     	this(c,label,v.get(1),v.get(2),v.get(3),v.get(4));
     }
     
@@ -113,7 +113,7 @@ final public class GeoPoint3D extends GeoVec4D {
 	/** Sets homogenous coordinates and updates
 	 * inhomogenous coordinates
 	 */
-	final public void setCoords(GgbVector v, boolean path) {
+	final public void setCoords(Ggb3DVector v, boolean path) {
 		
 		super.setCoords(v);
 		updateCoords(); 
@@ -136,14 +136,14 @@ final public class GeoPoint3D extends GeoVec4D {
 	
 	
 	
-	final public void setCoords(GgbVector v) {
+	final public void setCoords(Ggb3DVector v) {
 		setCoords(v,true);
 	}
 	
 	
 	final public void setCoords(double x, double y, double z, double w) {
 		
-		setCoords(new GgbVector(new double[] {x,y,z,w}));
+		setCoords(new Ggb3DVector(new double[] {x,y,z,w}));
 		
 	}  	
 
@@ -205,7 +205,7 @@ final public class GeoPoint3D extends GeoVec4D {
     /** 
      * Returns (x/w, y/w, z/w) GgbVector.
      */
-    final public GgbVector getInhomCoords() {
+    final public Ggb3DVector getInhomCoords() {
     	return inhom.copyVector();
     }        	
         

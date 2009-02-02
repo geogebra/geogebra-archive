@@ -3,7 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoLine3D extends GeoCoordSys1D {
 
@@ -84,8 +84,8 @@ public class GeoLine3D extends GeoCoordSys1D {
 		
 		//TODO undefined...
 		String parameter = "\u03bb";
-		GgbVector O = getMatrix().getColumn(2);//TODO inhom coords
-		GgbVector V = getMatrix().getColumn(1);
+		Ggb3DVector O = getMatrix().getColumn(2);//TODO inhom coords
+		Ggb3DVector V = getMatrix().getColumn(1);
 		s+="X = ("+kernel.format(O.get(1))+", "+kernel.format(O.get(2))+", "+kernel.format(O.get(3))+") + "
 			+parameter+" ("+kernel.format(V.get(1))+", "+kernel.format(V.get(2))+", "+kernel.format(V.get(3))+")";
 		

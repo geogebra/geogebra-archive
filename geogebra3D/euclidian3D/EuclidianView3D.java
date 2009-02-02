@@ -4,8 +4,8 @@ package geogebra3D.euclidian3D;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.View;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -59,8 +59,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	//matrix for changing coordinate system
-	private GgbMatrix m = GgbMatrix.Identity(4); 
-	private GgbMatrix mInv = GgbMatrix.Identity(4);
+	private Ggb3DMatrix m = Ggb3DMatrix.Identity(4); 
+	private Ggb3DMatrix mInv = Ggb3DMatrix.Identity(4);
 	int a = 0;
 	int b = 0;//angles
 	
@@ -80,13 +80,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	TreeSet hitSetSet = new TreeSet(new Drawable3D.setComparator()); //set of sets
 	
 	//base vectors for moving a point
-	static public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
-	static public GgbVector vy = new GgbVector(new double[] {0.0, 1.0, 0.0,  0.0});
-	static public GgbVector vz = new GgbVector(new double[] {0.0, 0.0, 1.0,  0.0});
+	static public Ggb3DVector vx = new Ggb3DVector(new double[] {1.0, 0.0, 0.0,  0.0});
+	static public Ggb3DVector vy = new Ggb3DVector(new double[] {0.0, 1.0, 0.0,  0.0});
+	static public Ggb3DVector vz = new Ggb3DVector(new double[] {0.0, 0.0, 1.0,  0.0});
 	
 	protected GeoPlane3D movingPlane;
 	protected GeoSegment3D movingSegment;
-	protected GgbVector movingPointProjected;
+	protected Ggb3DVector movingPointProjected;
 	
 	
 	
@@ -139,7 +139,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		//init moving objects
 		movingPlane=kernel3D.Plane3D("movingPlane",
-				new GgbVector(new double[] {0.0,0.0,0.0,1.0}),
+				new Ggb3DVector(new double[] {0.0,0.0,0.0,1.0}),
 				vx,
 				vy);
 		movingPlane.setObjColor(new Color(0f,0f,1f));
@@ -148,8 +148,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 		movingSegment = kernel3D.Segment3D("movingSegment", 
-				new GgbVector(new double[] {0,0,0,1}),
-				new GgbVector(new double[] {0,0,0,1}));
+				new Ggb3DVector(new double[] {0,0,0,1}),
+				new Ggb3DVector(new double[] {0,0,0,1}));
 		movingSegment.setObjColor(new Color(0f,0f,1f));
 		movingSegment.setAlgebraVisible(false); //TODO make it works
 		movingSegment.setLabelVisible(false);
@@ -273,40 +273,40 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param inOut:
 	 *            input and output array with x, y, z, w coords (
 	 */
-	final public void toScreenCoords3D(GgbVector vInOut) {	
+	final public void toScreenCoords3D(Ggb3DVector vInOut) {	
 		changeCoords(m,vInOut);		
 	}
 	
-	final public void toScreenCoords3D(GgbMatrix mInOut) {		
+	final public void toScreenCoords3D(Ggb3DMatrix mInOut) {		
 		changeCoords(m,mInOut);			
 	}
 	
 	
-	final public void toSceneCoords3D(GgbVector vInOut) {	
+	final public void toSceneCoords3D(Ggb3DVector vInOut) {	
 		changeCoords(mInv,vInOut);		
 	}
 	
-	final public void toSceneCoords3D(GgbMatrix mInOut) {		
+	final public void toSceneCoords3D(Ggb3DMatrix mInOut) {		
 		changeCoords(mInv,mInOut);			
 	}
 	
 	
-	final private void changeCoords(GgbMatrix mat, GgbVector vInOut){
-		GgbVector v1 = vInOut.getCoordsLast1();
+	final private void changeCoords(Ggb3DMatrix mat, Ggb3DVector vInOut){
+		Ggb3DVector v1 = vInOut.getCoordsLast1();
 		vInOut.set(mat.mul(v1));		
 	}
 
-	final private void changeCoords(GgbMatrix mat, GgbMatrix mInOut){	
-		GgbMatrix m1 = mInOut.copy();
+	final private void changeCoords(Ggb3DMatrix mat, Ggb3DMatrix mInOut){	
+		Ggb3DMatrix m1 = mInOut.copy();
 		mInOut.set(mat.mul(m1));		
 	}
 	
 	
-	final public GgbMatrix getToSceneMatrix(){
+	final public Ggb3DMatrix getToSceneMatrix(){
 		return mInv.copy();
 	}
 	
-	final public GgbMatrix getToScreenMatrix(){
+	final public Ggb3DMatrix getToScreenMatrix(){
 		return m.copy();
 	}	
 	
@@ -317,15 +317,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */	
 	public void updateMatrix(){
 		//rotations
-		GgbMatrix m1 = GgbMatrix.Rotation3DMatrix(GgbMatrix.X_AXIS, this.b*EuclidianController3D.ANGLE_SCALE - Math.PI/2.0);
-		GgbMatrix m2 = GgbMatrix.Rotation3DMatrix(GgbMatrix.Z_AXIS, this.a*EuclidianController3D.ANGLE_SCALE);
-		GgbMatrix m3 = m1.mul(m2);
+		Ggb3DMatrix m1 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.X_AXIS, this.b*EuclidianController3D.ANGLE_SCALE - Math.PI/2.0);
+		Ggb3DMatrix m2 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.Z_AXIS, this.a*EuclidianController3D.ANGLE_SCALE);
+		Ggb3DMatrix m3 = m1.mul(m2);
 		
 
-		GgbMatrix m4 = GgbMatrix.ScaleMatrix(new double[] {getXscale(),getYscale(),getZscale()});		
+		Ggb3DMatrix m4 = Ggb3DMatrix.ScaleMatrix(new double[] {getXscale(),getYscale(),getZscale()});		
 		
 
-		GgbMatrix m5 = GgbMatrix.TranslationMatrix(new double[] {getXZero(),getYZero(),getZZero()});
+		Ggb3DMatrix m5 = Ggb3DMatrix.TranslationMatrix(new double[] {getXZero(),getYZero(),getZZero()});
 		
 		m = m5.mul(m3.mul(m4));	
 		
@@ -533,10 +533,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	/** sets moving plane to (origin,v1,v2,v3) and other objects regarding to point */
-	public void setMoving(GgbVector point, GgbVector origin, GgbVector v1, GgbVector v2, GgbVector v3){
+	public void setMoving(Ggb3DVector point, Ggb3DVector origin, Ggb3DVector v1, Ggb3DVector v2, Ggb3DVector v3){
 		
 		movingPlane.setCoord(origin, v1, v2);
-		GgbVector[] project = point.projectPlaneThruV(movingPlane.getMatrix4x4(), v3);
+		Ggb3DVector[] project = point.projectPlaneThruV(movingPlane.getMatrix4x4(), v3);
 		setMovingCorners(0, 0, project[1].get(1), project[1].get(2));
 		movingPointProjected = project[0];
 		setMovingPoint(point);
@@ -544,14 +544,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	/** sets the moving segment from point to its projection on movingPlane */
-	public void setMovingProjection(GgbVector point, GgbVector vn){
-		GgbVector[] project = point.projectPlaneThruV(movingPlane.getMatrix4x4(), vn);
+	public void setMovingProjection(Ggb3DVector point, Ggb3DVector vn){
+		Ggb3DVector[] project = point.projectPlaneThruV(movingPlane.getMatrix4x4(), vn);
 		movingPointProjected = project[0];
 		setMovingPoint(point);
 	}
 	
 	/** update moving point position */
-	public void setMovingPoint(GgbVector point){
+	public void setMovingPoint(Ggb3DVector point){
 		movingSegment.setCoord(movingPointProjected, point.sub(movingPointProjected));
 	}
 	
@@ -585,7 +585,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/** (x,y) 2D screen coords -> 3D physical coords */
-	public GgbVector getPickPoint(int x, int y){			
+	public Ggb3DVector getPickPoint(int x, int y){			
 		
 		
 		Dimension d = new Dimension();
@@ -596,7 +596,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			double w = (double) d.width;
 			double h = (double) d.height;
 			
-			GgbVector ret = new GgbVector(
+			Ggb3DVector ret = new Ggb3DVector(
 					new double[] {
 							(double) x,
 							(double) -y+h,
@@ -614,10 +614,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/** p scene coords, (dx,dy) 2D mouse move -> 3D physical coords */
-	public GgbVector getPickFromScenePoint(GgbVector p, int dx, int dy){
-		GgbVector point = p.copyVector();
+	public Ggb3DVector getPickFromScenePoint(Ggb3DVector p, int dx, int dy){
+		Ggb3DVector point = p.copyVector();
 		toScreenCoords3D(point);
-		GgbVector ret = new GgbVector(
+		Ggb3DVector ret = new Ggb3DVector(
 				new double[] {
 						point.get(1)+dx,
 						point.get(2)-dy,

@@ -4,7 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.Path;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoSegment3D extends GeoCoordSys1D {
 	
@@ -17,7 +17,7 @@ public class GeoSegment3D extends GeoCoordSys1D {
 	}
 	
 	/** creates a segment linking v1 to v2*/
-	public GeoSegment3D(Construction c, GgbVector v1, GgbVector v2){
+	public GeoSegment3D(Construction c, Ggb3DVector v1, Ggb3DVector v2){
 		super(c,v1,v2.sub(v1));
 	}
 	

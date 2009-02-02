@@ -8,9 +8,9 @@ import java.util.TreeSet;
 
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbMatrix4x4;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -43,7 +43,7 @@ public abstract class Drawable3D {
 	private EuclidianView3D m_view3D; 
 	
 	//matrix for openGL display
-	private GgbMatrix4x4 m_matrix = new GgbMatrix4x4();
+	private Ggb3DMatrix4x4 m_matrix = new Ggb3DMatrix4x4();
 	
 	//links to the GeoElement
 	private GeoElement m_geo; 	
@@ -117,10 +117,10 @@ public abstract class Drawable3D {
 	
 
 	
-	public void setMatrix(GgbMatrix4x4 a_matrix){
+	public void setMatrix(Ggb3DMatrix4x4 a_matrix){
 		m_matrix=a_matrix;
 	}
-	public GgbMatrix4x4 getMatrix(){
+	public Ggb3DMatrix4x4 getMatrix(){
 		return m_matrix;
 	}
 

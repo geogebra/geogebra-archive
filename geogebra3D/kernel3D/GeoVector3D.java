@@ -2,9 +2,9 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbMatrix4x4;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoVector3D extends GeoVec4D {
 
@@ -21,13 +21,13 @@ public class GeoVector3D extends GeoVec4D {
 		super.setCoords(vals);
 		
 		//sets the drawing matrix 
-		GgbMatrix matrix = new GgbMatrix(4,2);
+		Ggb3DMatrix matrix = new Ggb3DMatrix(4,2);
 		matrix.set(getCoords(), 1);
 		
 		//TODO use start point
 		matrix.set(4, 2, 1.0);
 		
-		setDrawingMatrix(new GgbMatrix4x4(matrix));
+		setDrawingMatrix(new Ggb3DMatrix4x4(matrix));
 		
 	}
 

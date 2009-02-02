@@ -13,7 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.main.Application;
-import geogebra3D.kernel.linalg.GgbMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix;
 
 /**
  * Reverse a list. Adapted from AlgoSort
@@ -57,7 +57,7 @@ public class AlgoInvert extends AlgoElement {
 
     protected final void compute() {
     	   		
-   		GgbMatrix matrix = new GgbMatrix(inputList);
+   		Ggb3DMatrix matrix = new Ggb3DMatrix(inputList);
    		
    		if (matrix.isSingular() || !matrix.isSquare()) {
   			outputList.setUndefined();
@@ -74,7 +74,7 @@ public class AlgoInvert extends AlgoElement {
    		   	}
    			
    			// invert 1x1 matrix
-   			matrix = new GgbMatrix(1,1);
+   			matrix = new Ggb3DMatrix(1,1);
    			matrix.set(1,1,1/det);
    			
    			outputList = matrix.getGeoList(outputList, cons);

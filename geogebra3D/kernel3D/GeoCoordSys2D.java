@@ -1,8 +1,8 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DVector;
 
 public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
@@ -10,15 +10,15 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	//grid
 	double x0, y0; //origin of the grid in plane coordinates
-	GgbVector gridOrigin = null;
-	GgbVector gridOriginProjected = new GgbVector(4);
+	Ggb3DVector gridOrigin = null;
+	Ggb3DVector gridOriginProjected = new Ggb3DVector(4);
 
 	
 	public GeoCoordSys2D(Construction c){
 		super(c,2);	
 	}
 	
-	public GeoCoordSys2D(Construction c, GgbVector O, GgbVector V1, GgbVector V2){
+	public GeoCoordSys2D(Construction c, Ggb3DVector O, Ggb3DVector V1, Ggb3DVector V2){
 		this(c);
 		setCoord(O,V1,V2);		
 	}
@@ -30,7 +30,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	
 	/** set the matrix to [V1 V2 O] */
-	public void setCoord(GgbVector a_O, GgbVector a_V1, GgbVector a_V2){
+	public void setCoord(Ggb3DVector a_O, Ggb3DVector a_V1, Ggb3DVector a_V2){
 		setOrigin(a_O);
 		setVx(a_V1);
 		setVy(a_V2);
@@ -45,9 +45,9 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	/** set coords to origin O and vectors (I-O) and (J-O) */
 	public void setCoord(GeoPoint3D O, GeoPoint3D I, GeoPoint3D J){
 		//Application.debug("setCoord -- Points");
-		GgbVector vO = O.getCoords();
-		GgbVector vI = I.getCoords();
-		GgbVector vJ = J.getCoords();
+		Ggb3DVector vO = O.getCoords();
+		Ggb3DVector vI = I.getCoords();
+		Ggb3DVector vJ = J.getCoords();
 		setCoord(vO,vI.sub(vO),vJ.sub(vO));
 		
 	}
@@ -64,10 +64,10 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	
 	/** returns the point at position l1, l2 on the coord sys */
-	public GgbVector getPoint(double l1, double l2){
-		GgbVector v=new GgbVector(new double[] {l1,l2,1});
+	public Ggb3DVector getPoint(double l1, double l2){
+		Ggb3DVector v=new Ggb3DVector(new double[] {l1,l2,1});
 		//Application.debug("v ="); v.SystemPrint();
-		GgbVector r=getMatrix().mul(v);	
+		Ggb3DVector r=getMatrix().mul(v);	
 		//Application.debug("M ="); M.SystemPrint();
 		//Application.debug("r ="); r.SystemPrint();
 		return r;
@@ -82,7 +82,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	////////////////////////////////////
 	// grid
-	public void setGridOrigin(GgbVector v){
+	public void setGridOrigin(Ggb3DVector v){
 		
 		gridOrigin = v.copyVector();
 		updateGridOriginProjected();
@@ -90,7 +90,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	}
 	
 	public void updateGridOriginProjected(){
-		GgbVector c = gridOrigin.projectPlane(getMatrix4x4())[1];
+		Ggb3DVector c = gridOrigin.projectPlane(getMatrix4x4())[1];
 		//c.SystemPrint();
 		x0 = c.get(1); y0 = c.get(2);
 		gridOriginProjected.set(getPoint(x0,y0));
@@ -110,8 +110,8 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	public void pointChanged(GeoPoint3D P){
 		
 		//project P on plane
-		GgbVector v = P.getCoords();
-		GgbVector[] project = v.projectPlane(getMatrix4x4());
+		Ggb3DVector v = P.getCoords();
+		Ggb3DVector[] project = v.projectPlane(getMatrix4x4());
 		
 		if (!isLimitedPath()){
 			P.setCoords(project[0],false);
@@ -158,7 +158,7 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	}
 	
 
-	public GgbMatrix getMovingMatrix(GgbMatrix toScreenMatrix){
+	public Ggb3DMatrix getMovingMatrix(Ggb3DMatrix toScreenMatrix){
 		return getMatrix4x4();
 	}
 	

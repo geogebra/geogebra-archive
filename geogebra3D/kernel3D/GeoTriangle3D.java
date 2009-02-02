@@ -3,8 +3,8 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra3D.kernel.linalg.GgbMatrix;
-import geogebra3D.kernel.linalg.GgbVector;
+import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DVector;
 
 /*
  * This class will disappear int GeoPolygon3D 
@@ -38,7 +38,7 @@ public class GeoTriangle3D extends GeoCoordSys2D {
 	
 	
 
-	public GeoTriangle3D(Construction c, GgbVector A, GgbVector B, GgbVector C) {
+	public GeoTriangle3D(Construction c, Ggb3DVector A, Ggb3DVector B, Ggb3DVector C) {
 		super(c, A, B.sub(A), C.sub(A));
 		
 	}

@@ -1,7 +1,7 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.main.Application;
-import geogebra3D.kernel.linalg.GgbMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoRay3D;
 
