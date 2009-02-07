@@ -337,6 +337,13 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	protected StringBuffer sb = new StringBuffer();
 
 	protected Cursor defaultCursor;
+	
+	
+	
+	// ggb3D 2009-02-05
+	private Hits hits;
+	
+	
 
 	/**
 	 * Creates EuclidianView
@@ -392,6 +399,9 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		initView(false);
 		
 		updateRightAngleStyle(app.getLocale());
+		
+		// ggb3D 2009-02-05
+		hits=new Hits();
 	}
 	
 	public Application getApplication() {
@@ -2078,7 +2088,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 	// for use in AlgebraController
 	final public void mouseMovedOver(GeoElement geo) {
-		ArrayList geos = null;
+		Hits geos = null;
 		if (geo != null) {
 			tempArrayList.clear();
 			tempArrayList.add(geo);
@@ -2089,7 +2099,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			kernel.notifyRepaint();
 	}
 
-	protected ArrayList tempArrayList = new ArrayList();
+	protected Hits tempArrayList = new Hits();
 
 	// for use in AlgebraController
 	final public void clickedGeo(GeoElement geo, MouseEvent e) {
@@ -2105,6 +2115,92 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		kernel.notifyRepaint();
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	// ggb3D 2009-02-05
+	
+	/**get the hits recorded */
+	public Hits getHits(){
+		return hits;
+	}
+	
+	/**
+	 * sets the hits of GeoElements whose visual representation is at screen
+	 * coords (x,y). order: points, vectors, lines, conics
+	 */
+	final public void setHits(Point p){
+		
+		hits.init();
+				
+		DrawableIterator it = allDrawableList.getIterator();
+		while (it.hasNext()) {
+			Drawable d = it.next();
+			if (d.hit(p.x, p.y) || d.hitLabel(p.x, p.y)) {
+				GeoElement geo = d.getGeoElement();
+				if (geo.isEuclidianVisible()) {
+					hits.add(geo);
+				}
+			}
+		}
+		
+		// look for axis
+		if (hits.getImageCount() == 0) {
+			if (showAxes[0] && Math.abs(yZero - p.y) < 3) {
+				hits.add(kernel.getXAxis());
+			}
+			if (showAxes[1] && Math.abs(xZero - p.x) < 3) {
+				hits.add(kernel.getYAxis());
+			}
+		}
+		
+		// remove all lists and  images if there are other objects too
+		if (hits.size() - (hits.getListCount() + hits.getImageCount()) > 0) {
+			for (int i = 0; i < hits.size(); ++i) {
+				GeoElement geo = (GeoElement) hits.get(i);
+				if (geo.isGeoList() || geo.isGeoImage())
+					hits.remove(i);
+			}
+		}
+		
+		
+	}
+	
+	
+	/**
+	 * sets array of GeoElements whose visual representation is inside of
+	 * the given screen rectangle
+	 */
+	final public void setHits(Rectangle rect) {
+		hits.init();		
+		
+		if (rect == null) return;
+		
+		DrawableIterator it = allDrawableList.getIterator();
+		while (it.hasNext()) {
+			Drawable d = it.next();
+			GeoElement geo = d.getGeoElement();
+			if (geo.isEuclidianVisible() && d.isInside(rect)) {				
+				hits.add(geo);
+			}
+		}
+	}
+	
+	// ggb3D 2009-02-05 (end)
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * returns GeoElement whose label is at screen coords (x,y).
 	 */

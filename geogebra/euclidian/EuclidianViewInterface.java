@@ -54,7 +54,7 @@ public interface EuclidianViewInterface {
 	 */
 	int getPointCapturingMode();
 
-	boolean containsGeoPoint(ArrayList hits);
+	//boolean containsGeoPoint(ArrayList hits);
 	
 	
 	
@@ -103,8 +103,20 @@ public interface EuclidianViewInterface {
 	
 	
 	
-	//hits
+	//hits	
+	/**get the hits recorded */
+	Hits getHits();
+	/** set the hits regarding to the mouse location */
+	void setHits(Point p);
+	/**
+	 * sets array of GeoElements whose visual representation is inside of
+	 * the given screen rectangle
+	 */
+	public void setHits(Rectangle rect);	
 	
+	GeoElement getLabelHit(Point mouseLoc);
+	
+	/*
 	ArrayList getHits(ArrayList hits, Class geoclass, ArrayList tempArrayList);
 	ArrayList getHits(Point mouseLoc, Class geoClass, ArrayList tempArrayList);
 	ArrayList getHits(Rectangle selectionRectangle);
@@ -124,11 +136,11 @@ public interface EuclidianViewInterface {
 	ArrayList getPointVectorNumericHits(Point mouseLoc);
 	
 	
-	GeoElement getLabelHit(Point mouseLoc);
+	
 
 	ArrayList getMoveableHits(Point mouseLoc);
 	ArrayList getMoveableHits(ArrayList hits);
-
+	*/
 	
 	
 	// axis, grid, etc.

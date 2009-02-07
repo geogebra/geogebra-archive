@@ -173,9 +173,9 @@ public class EuclidianController implements MouseListener,
 	protected ArrayList translateableGeos;
 	protected GeoVector translationVec;
 	
-	protected ArrayList tempArrayList = new ArrayList();
-	protected ArrayList tempArrayList2 = new ArrayList();
-	protected ArrayList tempArrayList3 = new ArrayList();
+	protected Hits tempArrayList = new Hits();
+	protected Hits tempArrayList2 = new Hits();
+	protected Hits tempArrayList3 = new Hits();
 	protected ArrayList selectedPoints = new ArrayList();
 	
 	protected ArrayList selectedNumbers = new ArrayList();
@@ -417,7 +417,7 @@ public class EuclidianController implements MouseListener,
 	}
 
 	final public void mouseClicked(MouseEvent e) {	
-		ArrayList hits;
+		Hits hits;
 		//GeoElement geo;
 		
 		altDown=e.isAltDown();
@@ -435,8 +435,11 @@ public class EuclidianController implements MouseListener,
 				return;
 			
 			app.clearSelectedGeos();
-			hits = view.getTopHits(mouseLoc);
-			if (hits != null) {
+			//hits = view.getTopHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits().getTopHits();
+			hits.removePolygons();
+			if (!hits.isEmpty()) {
 				view.setMode(EuclidianView.MODE_MOVE);
 				GeoElement geo0 = (GeoElement)hits.get(0);
 				if (!geo0.isFixed() && !(geo0.isGeoBoolean() && geo0.isIndependent()) && !(geo0.isGeoImage() && geo0.isIndependent()))
@@ -451,7 +454,8 @@ public class EuclidianController implements MouseListener,
 			switch (e.getClickCount()) {
 			case 1:			
 				// handle selection click	
-				handleSelectClick(view.getTopHits(mouseLoc), 
+				view.setHits(mouseLoc);
+				handleSelectClick(view.getHits().getTopHits(),//view.getTopHits(mouseLoc), 
 						Application.isControlDown(e));
 				break;
 			/*
@@ -510,7 +514,7 @@ public class EuclidianController implements MouseListener,
 
 	public void mousePressed(MouseEvent e) {
 		//GeoElement geo;
-		ArrayList hits;
+		Hits hits;
 		setMouseLocation(e);
 		transformCoords();			
 		
@@ -536,9 +540,11 @@ public class EuclidianController implements MouseListener,
 				)) 
 		{
 // Michael Borcherds 2007-12-08 BEGIN
-			// bugfix: couldn't select multiple objects with Ctrl
-			hits = view.getHits(mouseLoc);
-			if (hits != null) // bugfix 2008-02-19 removed this:&& ((GeoElement) hits.get(0)).isGeoPoint())
+			// bugfix: couldn't select multiple objects with Ctrl		
+			//hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+			if (!hits.isEmpty()) // bugfix 2008-02-19 removed this:&& ((GeoElement) hits.get(0)).isGeoPoint())
 			{
 				DONT_CLEAR_SELECTION=true;
 			}
@@ -552,7 +558,9 @@ public class EuclidianController implements MouseListener,
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
 		case EuclidianView.MODE_POINT:			
-			hits = view.getHits(mouseLoc, true);
+			view.setHits(mouseLoc);
+			//hits = view.getHits(mouseLoc, true);
+			hits = view.getHits();
 			createNewPoint(hits, true, true, true);
 			break;
 			
@@ -574,7 +582,9 @@ public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_CONIC_FIVE_POINTS:
 		case EuclidianView.MODE_POLYGON:
 		case EuclidianView.MODE_REGULAR_POLYGON:	
-			hits = view.getHits(mouseLoc);
+			//hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, true, true, true);
 			break;
 		
@@ -585,26 +595,34 @@ public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_ANGULAR_BISECTOR:
 		case EuclidianView.MODE_TANGENTS:		
 		case EuclidianView.MODE_POLAR_DIAMETER:
-			hits = view.getHits(mouseLoc);
+			//hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, false, true, true);
 			break;		
 				
 		case EuclidianView.MODE_COMPASSES:		// Michael Borcherds 2008-03-13	
-			hits = view.getHits(mouseLoc);
+			//hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, false, true, true);
 			break;		
 				
 		case EuclidianView.MODE_ANGLE:
-			hits = view.getTopHits(mouseLoc);
+			//hits = view.getTopHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits().getTopHits();
  		 	// check if we got a polygon
-			if (hits == null || !((GeoElement) hits.get(0)).isGeoPolygon()) {
+			if (hits.isEmpty() || !((GeoElement) hits.get(0)).isGeoPolygon()) {
 				createNewPoint(hits, false, false, true);			
 			}			
 			break;
 			
 		case EuclidianView.MODE_ANGLE_FIXED:
 		case EuclidianView.MODE_MIDPOINT:
-			hits = view.getHits(mouseLoc);
+			//hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, false, false, true);			
 			break;
 			
@@ -624,8 +642,10 @@ public class EuclidianController implements MouseListener,
 		// move drawing pad or axis
 		case EuclidianView.MODE_TRANSLATEVIEW:			
 			// check if axis is hit
-			hits = view.getHits(mouseLoc);
-			if (hits != null && hits.size() == 1) {
+			//hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+			if (!hits.isEmpty() && hits.size() == 1) {
 				Object hit0 = hits.get(0);
 				if (hit0 == kernel.getXAxis())
 					moveMode = MOVE_X_AXIS;
@@ -659,18 +679,21 @@ public class EuclidianController implements MouseListener,
 	
 	protected void handleMousePressedForRotateMode() {	
 		GeoElement geo;
-		ArrayList hits;
+		Hits hits;
 		
 		// we need the center of the rotation
 		if (rotationCenter == null) {
-			rotationCenter = (GeoPoint) chooseGeo(view.getHits(mouseLoc, GeoPoint.class, tempArrayList));
+			view.setHits(mouseLoc);
+			rotationCenter = (GeoPoint) chooseGeo(view.getHits().getHits(GeoPoint.class, tempArrayList));
 			app.addSelectedGeo(rotationCenter);
 			moveMode = MOVE_NONE;
 		}
 		else {	
-			hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+			//hits = view.getHits(mouseLoc);
 			// got rotation center again: deselect
-			if (hits != null && hits.contains(rotationCenter)) {
+			if (!hits.isEmpty() && hits.contains(rotationCenter)) {
 				app.removeSelectedGeo(rotationCenter);
 				rotationCenter = null;
 				moveMode = MOVE_NONE;
@@ -680,8 +703,8 @@ public class EuclidianController implements MouseListener,
 			moveModeSelectionHandled = true;
 			
 			// find and set rotGeoElement
-			hits = view.getPointRotateableHits(hits, rotationCenter);
-			if (hits != null && hits.contains(rotGeoElement))
+			hits = hits.getPointRotateableHits(rotationCenter);
+			if (!hits.isEmpty() && hits.contains(rotGeoElement))
 				geo = rotGeoElement;
 			else {
 				geo = chooseGeo(hits);				
@@ -723,13 +746,14 @@ public class EuclidianController implements MouseListener,
 		}
 
 		// find and set movedGeoElement
-		ArrayList moveableList = view.getMoveableHits(mouseLoc);
-		ArrayList hits = view.getTopHits(moveableList);	
+		view.setHits(mouseLoc);
+		Hits moveableList = view.getHits().getMoveableHits();
+		Hits hits = moveableList.getTopHits();	
 		
 		ArrayList selGeos = app.getSelectedGeos();
 		// if object was chosen before, take it now!
 		if (selGeos.size() == 1 && 
-				hits != null && hits.contains(selGeos.get(0))) 
+				!hits.isEmpty() && hits.contains(selGeos.get(0))) 
 		{
 			// object was chosen before: take it			
 			geo = (GeoElement) selGeos.get(0);			
@@ -1013,8 +1037,9 @@ public class EuclidianController implements MouseListener,
 			DRAGGING_OCCURED = true;			
 
 // Michael Borcherds 2007-10-07 allow right mouse button to drag points
-			if (Application.isRightClick(e))
-				if (view.getHits(mouseLoc, true)!=null) 
+			if (Application.isRightClick(e)){
+				view.setHits(mouseLoc);
+				if (!(view.getHits().isEmpty())) 
 				{
 					TEMPORARY_MODE = true;
 					oldMode = mode; // remember current mode			
@@ -1022,6 +1047,7 @@ public class EuclidianController implements MouseListener,
 					handleMousePressedForMoveMode(e);	
 					return;
 				}
+			}
 			if (!app.isRightClickEnabled()) return;
 //			 Michael Borcherds 2007-10-07
 			
@@ -1314,7 +1340,7 @@ public class EuclidianController implements MouseListener,
 		altDown=e.isAltDown();
 		
 		transformCoords();
-		ArrayList hits = null;
+		Hits hits = null;
 		GeoElement geo;
 
 		if (hitResetIcon()) {				
@@ -1340,8 +1366,9 @@ public class EuclidianController implements MouseListener,
 			
 			// get selected GeoElements						
 			// show popup menu after right click
-			hits = view.getTopHits(mouseLoc);
-			if (hits == null) {
+			view.setHits(mouseLoc);
+			hits = view.getHits().getTopHits();
+			if (hits.isEmpty()) {
 				// no hits
 				if (app.selectedGeosSize() > 0) {
 					// there are selected geos: show them
@@ -1402,8 +1429,10 @@ public class EuclidianController implements MouseListener,
 				case EuclidianView.MODE_MIRROR_AT_LINE:
 				case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 				case EuclidianView.MODE_ROTATE_BY_ANGLE:
-					hits = view.getHits(mouseLoc);
-					if (hits == null) { 
+					view.setHits(mouseLoc);
+					hits = view.getHits();hits.removePolygons();
+					//hits = view.getHits(mouseLoc);
+					if (hits.isEmpty()) { 
 						POINT_CREATED = createNewPoint(hits, false, false, true);					
 					}
 					changedKernel = POINT_CREATED;
@@ -1413,8 +1442,10 @@ public class EuclidianController implements MouseListener,
 				default:
 					
 					// change checkbox (boolean) state on mouse up only if there's been no drag
-					hits = view.getTopHits(mouseLoc);
-					if (hits != null) {
+					view.setHits(mouseLoc);
+				    hits = view.getHits().getTopHits();
+				    //hits = view.getTopHits(mouseLoc);
+					if (!hits.isEmpty()) {
 						GeoElement hit = (GeoElement)hits.get(0);
 						if (hit != null && hit.isGeoBoolean()) {
 							GeoBoolean bool = (GeoBoolean)(hits.get(0));
@@ -1430,12 +1461,14 @@ public class EuclidianController implements MouseListener,
 			app.storeUndoInfo();
 
 		// now handle current mode
-		hits = view.getHits(mouseLoc);
+		view.setHits(mouseLoc);
+		hits = view.getHits();hits.removePolygons();
+		//hits = view.getHits(mouseLoc);
 		
 // Michael Borcherds 2007-12-08 BEGIN moved up a few lines (bugfix: Tools eg Line Segment weren't working with grid on)
 		// grid capturing on: newly created point should be taken
-		if (hits == null && POINT_CREATED) {			
-			hits = new ArrayList();
+		if (hits.isEmpty() && POINT_CREATED) {			
+			hits = new Hits();
 			hits.add(movedGeoPoint);				
 		}
 		POINT_CREATED = false;		
@@ -1476,7 +1509,7 @@ public class EuclidianController implements MouseListener,
 //			app.storeUndoInfo();
 //		Michael Borcherds 2007-10-12
 			
-		if (hits != null)
+		if (!hits.isEmpty())
 			view.setDefaultCursor();		
 		else
 			view.setHitCursor();
@@ -1531,7 +1564,8 @@ public class EuclidianController implements MouseListener,
 	// select all geos in selection rectangle 
 	protected void processSelectionRectangle(MouseEvent e) {		
 		clearSelections();
-		ArrayList hits = view.getHits(view.getSelectionRectangle());		
+		view.setHits(view.getSelectionRectangle());
+		Hits hits = view.getHits();		
 				
 		switch (mode) {
 			case EuclidianView.MODE_ALGEBRA_INPUT:
@@ -1583,7 +1617,7 @@ public class EuclidianController implements MouseListener,
 		kernel.notifyRepaint();
 	}
 	
-	protected void processSelectionRectangleForTransformations(ArrayList hits, Class transformationInterface) {
+	protected void processSelectionRectangleForTransformations(Hits hits, Class transformationInterface) {
 		for (int i=0; i < hits.size(); i++) {
 			GeoElement geo = (GeoElement) hits.get(i);
 			if (!(transformationInterface.isInstance(geo) || geo.isGeoPolygon())) {
@@ -1620,7 +1654,7 @@ public class EuclidianController implements MouseListener,
 		}			
 		
 		// standard handling
-		ArrayList hits = null;
+		Hits hits = new Hits();
 		boolean noHighlighting = false;		
 		altDown=e.isAltDown();		
 				
@@ -1637,12 +1671,20 @@ public class EuclidianController implements MouseListener,
 		}
 		else if (mode == EuclidianView.MODE_POINT) {
 			// include polygons in hits
-			hits = view.getHits(mouseLoc, true);
+			view.setHits(mouseLoc);
+			hits = view.getHits();
+			//hits = view.getHits(mouseLoc, true);
 		}
 
-		if (hits == null)
-			hits = view.getHits(mouseLoc);
-		if (hits == null) {
+		if (hits.isEmpty()){
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+			//hits = view.getHits(mouseLoc);
+		}else if (hits.isEmpty()){
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+		}
+		if (hits.isEmpty()) {
 			view.setToolTipText(null);
 			view.setDefaultCursor();	
 		}			
@@ -1656,8 +1698,9 @@ public class EuclidianController implements MouseListener,
 		// set tool tip text
 		// the tooltips are only shown if algebra view is visible
 		if (app.isUsingLayout() && app.getGuiManager().showAlgebraView()) {
-			hits = view.getTopHits(hits);
-			if (hits != null) {
+			//hits = view.getTopHits(hits);
+			hits = hits.getTopHits();
+			if (!hits.isEmpty()) {
 				String text = GeoElement.getToolTipDescriptionHTML(hits,
 						true, true);				
 				view.setToolTipText(text);
@@ -1697,7 +1740,7 @@ public class EuclidianController implements MouseListener,
 
 	// mode specific highlighting of selectable objects
 	// returns wheter repaint is necessary
-	final boolean refreshHighlighting(ArrayList hits) {
+	final boolean refreshHighlighting(Hits hits) {
 		boolean repaintNeeded = false;
 		
 		 //	clear old highlighting
@@ -1732,13 +1775,17 @@ public class EuclidianController implements MouseListener,
 	}
 
 	// process mode and return whether kernel was changed
-	final boolean processMode(ArrayList hits, MouseEvent e) {
+	final boolean processMode(Hits hits, MouseEvent e) {
 		boolean changedKernel = false;
+		
+		if (hits==null)
+			hits = new Hits();
+		
 		switch (mode) {
 		case EuclidianView.MODE_MOVE:
 			// move() is for highlighting and selecting
-			if (selectionPreview) {			
-				move(view.getTopHits(hits));				
+			if (selectionPreview) {		
+				move(hits.getTopHits());				
 			} else {
 				if (DRAGGING_OCCURED && app.selectedGeosSize() == 1)
 					app.clearSelectedGeos();
@@ -1748,29 +1795,30 @@ public class EuclidianController implements MouseListener,
 			
 		case EuclidianView.MODE_MOVE_ROTATE:
 			// moveRotate() is a dummy function for highlighting only
-			if (selectionPreview) {
-				moveRotate(view.getTopHits(hits));
+			if (selectionPreview) {				
+				moveRotate(hits.getTopHits());
 			}
 			break;
 			
 		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
 			//if (selectionPreview) 
 			{
-				changedKernel = record(view.getTopHits(hits));
+				changedKernel = record(hits.getTopHits());
 			}
 			break;
 			
 		case EuclidianView.MODE_POINT:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
-				point(view.getHitsForNewPointMode(hits));
+				hits.keepOnlyHitsForNewPointMode();
+				point(hits);
 			}
 			break;
 
 		// copy geo to algebra input
 		case EuclidianView.MODE_ALGEBRA_INPUT:
 			boolean addToSelection = e != null && (Application.isControlDown(e));
-			geoElementSelected(view.getTopHits(hits), addToSelection);
+			geoElementSelected(hits.getTopHits(), addToSelection);
 			break;
 
 		// new line through two points
@@ -1871,42 +1919,42 @@ public class EuclidianController implements MouseListener,
 
 		// relation query
 		case EuclidianView.MODE_RELATION:
-			relation(view.getTopHits(hits));			
+			relation(hits.getTopHits());			
 			break;
 
 		// new tangents
 		case EuclidianView.MODE_TANGENTS:
-			changedKernel = tangents(view.getTopHits(hits));
+			changedKernel = tangents(hits.getTopHits());
 			break;
 			
 		case EuclidianView.MODE_POLAR_DIAMETER:
-			changedKernel = polarLine(view.getTopHits(hits));
+			changedKernel = polarLine(hits.getTopHits());
 			break;
 
 		// delete selected object
 		case EuclidianView.MODE_DELETE:
-			changedKernel = delete(view.getTopHits(hits));
+			changedKernel = delete(hits.getTopHits());
 			break;
 		
 		case EuclidianView.MODE_SHOW_HIDE_OBJECT:
-			if (showHideObject(view.getTopHits(hits)))
+			if (showHideObject(hits.getTopHits()))
 				toggleModeChangedKernel = true;
 			break;
 			
 		case EuclidianView.MODE_SHOW_HIDE_LABEL:
-			if (showHideLabel(view.getTopHits(hits)))
+			if (showHideLabel(hits.getTopHits()))
 				toggleModeChangedKernel = true;
 			break;
 			
 		case EuclidianView.MODE_COPY_VISUAL_STYLE:
-			if (copyVisualStyle(view.getTopHits(hits)))
+			if (copyVisualStyle(hits.getTopHits()))
 				toggleModeChangedKernel = true;
 			break;
 			
 		//  new text or image
 		case EuclidianView.MODE_TEXT:
 		case EuclidianView.MODE_IMAGE:
-			changedKernel = textImage(view.getOtherHits(hits, GeoImage.class, tempArrayList), mode, altDown); //e.isAltDown());
+			changedKernel = textImage(hits.getOtherHits(GeoImage.class, tempArrayList), mode, altDown); //e.isAltDown());
 			break;
 			
 		// new slider
@@ -1915,27 +1963,27 @@ public class EuclidianController implements MouseListener,
 			break;			
 			
 		case EuclidianView.MODE_MIRROR_AT_POINT:
-			changedKernel = mirrorAtPoint(view.getTopHits(hits));
+			changedKernel = mirrorAtPoint(hits.getTopHits());
 			break;
 			
 		case EuclidianView.MODE_MIRROR_AT_LINE:
-			changedKernel = mirrorAtLine(view.getTopHits(hits));
+			changedKernel = mirrorAtLine(hits.getTopHits());
 			break;
 			
 		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
-			changedKernel = mirrorAtCircle(view.getTopHits(hits));
+			changedKernel = mirrorAtCircle(hits.getTopHits());
 			break;
 			
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
-			changedKernel = translateByVector(view.getTopHits(hits));
+			changedKernel = translateByVector(hits.getTopHits());
 			break;
 						
 		case EuclidianView.MODE_ROTATE_BY_ANGLE:
-			changedKernel = rotateByAngle(view.getTopHits(hits));
+			changedKernel = rotateByAngle(hits.getTopHits());
 			break;
 			
 		case EuclidianView.MODE_DILATE_FROM_POINT:
-			changedKernel = dilateFromPoint(view.getTopHits(hits));
+			changedKernel = dilateFromPoint(hits.getTopHits());
 			break;
 			
 		case EuclidianView.MODE_FITLINE:
@@ -1947,7 +1995,7 @@ public class EuclidianController implements MouseListener,
 			break;				
 			
 		case EuclidianView.MODE_ANGLE:
-			changedKernel = angle(view.getTopHits(hits));
+			changedKernel = angle(hits.getTopHits());
 			break;
 			
 		case EuclidianView.MODE_VECTOR_FROM_POINT:
@@ -2429,6 +2477,12 @@ public class EuclidianController implements MouseListener,
 			mouseLoc.y = 0;
 		else if (mouseLoc.y > view.getViewHeight())
 			mouseLoc.y = view.getViewHeight();
+		
+		
+		
+		
+		
+		
 	}
 
 	/***************************************************************************
@@ -2442,16 +2496,18 @@ public class EuclidianController implements MouseListener,
 	// or on path
 	// or intersection point
 	// returns wether new point was created or not
-	final protected boolean createNewPoint(ArrayList hits,
+	final protected boolean createNewPoint(Hits hits,
 			boolean onPathPossible, boolean intersectPossible, boolean doSingleHighlighting) {
 		
 		// only keep polygon in hits if one side of polygon is in hits too
-		if (hits != null)
-			hits = view.getHitsForNewPointMode(hits);
+		if (!hits.isEmpty())
+			hits.keepOnlyHitsForNewPointMode();
 		
 		Path path = null;		
-		boolean createPoint = !view.containsGeoPoint(hits);
+		boolean createPoint = !hits.containsGeoPoint();//!view.containsGeoPoint(hits);
 		GeoPoint point = null;
+	
+		Application.debug("createPoint 1 = "+createPoint);
 
 		//	try to get an intersection point
 		if (createPoint && intersectPossible) {
@@ -2465,12 +2521,14 @@ public class EuclidianController implements MouseListener,
 					createPoint = false;
 			}
 		}
+		
+		Application.debug("createPoint 2 = "+createPoint);
 
 		//	check if point lies on path and if we are allowed to place a point
 		// on a path
 		if (createPoint) {
-			ArrayList pathHits = view.getHits(hits, Path.class, tempArrayList);
-			if (pathHits != null) {
+			Hits pathHits = hits.getHits(Path.class, tempArrayList);
+			if (!pathHits.isEmpty()) {
 				if (onPathPossible) {
 					path = (Path) chooseGeo(pathHits);
 					createPoint = path != null;
@@ -2479,6 +2537,8 @@ public class EuclidianController implements MouseListener,
 				}
 			}
 		}
+		
+		Application.debug("createPoint 3 = "+createPoint);
 
 		if (createPoint) {
 			transformCoords(); // use point capturing if on
@@ -2507,8 +2567,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	// get two points and create line through them
-	final protected boolean join(ArrayList hits) {
-		if (hits == null)
+	final protected boolean join(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// points needed
@@ -2524,20 +2584,22 @@ public class EuclidianController implements MouseListener,
 
 	protected void handleMousePressedForRecordToSpreadsheetMode() {	
 		GeoElement geo;
-		ArrayList hits;
+		Hits hits;
 		
-		ArrayList pointHits = view.getHits(mouseLoc, GeoPoint.class, tempArrayList);
-		ArrayList vectorHits = view.getHits(mouseLoc, GeoVector.class, tempArrayList2);
-		ArrayList numberHits = view.getHits(mouseLoc, GeoNumeric.class, tempArrayList3);
+		view.setHits(mouseLoc);
+		Hits viewHits= view.getHits();
+		Hits pointHits = viewHits.getHits(GeoPoint.class, tempArrayList);
+		Hits vectorHits = viewHits.getHits(GeoVector.class, tempArrayList2);
+		Hits numberHits = viewHits.getHits(GeoNumeric.class, tempArrayList3);
 		//Application.debug(pointHits.size()+"");
 		// we need the object to record
 		if (recordObject == null) {
-			if (pointHits != null) {
+			if (!pointHits.isEmpty()) {
 				recordObject = (GeoPoint)pointHits.get(0);
 				//app.addSelectedGeo(recordObject);
 				recordObject.setSelected(true);
 				resetSpreadsheetRecording();
-			} else if (vectorHits != null) {
+			} else if (!vectorHits.isEmpty()) {
 				recordObject = (GeoVector)vectorHits.get(0);
 				//app.addSelectedGeo(recordObject);
 				recordObject.setSelected(true);
@@ -2545,9 +2607,9 @@ public class EuclidianController implements MouseListener,
 			}
 		}
 		else {	// recordObject != null
-			hits = view.getPointVectorNumericHits(mouseLoc);
+			hits = viewHits.getPointVectorNumericHits();
 			// got recordObject again: deselect
-			if (hits != null && hits.contains(recordObject) &&
+			if (!hits.isEmpty() && hits.contains(recordObject) &&
 					// if you drag a point at the end of a vector, we don't want to deselect the vector:
 			(!recordObject.isGeoVector() || (recordObject.isGeoVector() && noPointsIn(hits)))		
 			) {
@@ -2564,23 +2626,23 @@ public class EuclidianController implements MouseListener,
 			if (movedGeoNumeric != null) movedGeoNumeric.setSelected(false);
 			
 			//hits = view.getHits(hits, GeoPoint.class, tempArrayList);
-			if (pointHits != null && pointHits.contains(movedGeoPoint))
+			if (!pointHits.isEmpty() && pointHits.contains(movedGeoPoint))
 			{
 				movedGeoPoint.setSelected(true);
 				moveMode = MOVE_POINT;
 			}
-			else if (pointHits != null) {
+			else if (!pointHits.isEmpty()) {
 				movedGeoPoint = (GeoPoint)pointHits.get(0);
 				movedGeoPoint.setSelected(true);
 				moveMode = MOVE_POINT;
 			}
-			else if (numberHits != null && numberHits.contains(movedGeoNumeric))
+			else if (!numberHits.isEmpty() && numberHits.contains(movedGeoNumeric))
 			{
 				movedGeoNumeric.setSelected(true);
 				moveMode = MOVE_NUMERIC;
 				startPoint.setLocation(movedGeoNumeric.getSliderX(), movedGeoNumeric.getSliderY());
 			}
-			else if (numberHits != null) {
+			else if (!numberHits.isEmpty()) {
 				movedGeoNumeric = (GeoNumeric)numberHits.get(0);
 				movedGeoNumeric.setSelected(true);
 				moveMode = MOVE_NUMERIC;
@@ -2593,7 +2655,7 @@ public class EuclidianController implements MouseListener,
 		}					
 	}
 	
-	private boolean noPointsIn(ArrayList hits)
+	private boolean noPointsIn(Hits hits)
 	{
 		for (int i = 0 ; i < hits.size(); i++) {
 			if ( ((GeoElement)(hits.get(i))).isGeoPoint()) return false;
@@ -2601,19 +2663,19 @@ public class EuclidianController implements MouseListener,
 		return true;
 	}
 	
-	final protected boolean record(ArrayList hits) {
-		if (hits == null)
+	final protected boolean record(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		// check how many interesting hits we have
 		if (!selectionPreview && hits.size() > 2 - selGeos()) {
-			ArrayList goodHits = new ArrayList();
+			Hits goodHits = new Hits();
 			//goodHits.add(selectedGeos);
-			view.getHits(hits, GeoPoint.class, tempArrayList);
+			hits.getHits(GeoPoint.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
-			view.getHits(hits, GeoNumeric.class, tempArrayList);
+			hits.getHits(GeoNumeric.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
-			view.getHits(hits, GeoVector.class, tempArrayList);
+			hits.getHits(GeoVector.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
 			
 			if (goodHits.size() > 2 - selGeos()) {
@@ -2705,8 +2767,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	//	get two points and create line through them
-	final protected boolean segment(ArrayList hits) {
-		if (hits == null)
+	final protected boolean segment(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// points needed
@@ -2721,8 +2783,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	// get two points and create vector between them
-	final protected boolean vector(ArrayList hits) {
-		if (hits == null)
+	final protected boolean vector(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// points needed
@@ -2737,8 +2799,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	//	get two points and create ray with them
-	final protected boolean ray(ArrayList hits) {
-		if (hits == null)
+	final protected boolean ray(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// points needed
@@ -2754,8 +2816,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	//	get at least 3 points and create polygon with them
-	final protected boolean polygon(ArrayList hits) {
-		if (hits == null)
+	final protected boolean polygon(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// if the first point is clicked again, we are finished
@@ -2776,8 +2838,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	// get two objects (lines or conics) and create intersection point
-	final protected boolean intersect(ArrayList hits) {
-		if (hits == null)
+	final protected boolean intersect(Hits hits) {
+		if (hits.isEmpty())
 			return false;		
 
 		// when two objects are selected at once then only one single
@@ -2786,13 +2848,13 @@ public class EuclidianController implements MouseListener,
 							
 		// check how many interesting hits we have
 		if (!selectionPreview && hits.size() > 2 - selGeos()) {
-			ArrayList goodHits = new ArrayList();
+			Hits goodHits = new Hits();
 			//goodHits.add(selectedGeos);
-			view.getHits(hits, GeoLine.class, tempArrayList);
+			hits.getHits(GeoLine.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
-			view.getHits(hits, GeoConic.class, tempArrayList);
+			hits.getHits(GeoConic.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
-			view.getHits(hits, GeoFunction.class, tempArrayList);
+			hits.getHits(GeoFunction.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
 			
 			if (goodHits.size() > 2 - selGeos()) {
@@ -2882,8 +2944,8 @@ public class EuclidianController implements MouseListener,
 
 	// tries to get a single intersection point for the given hits
 	// i.e. hits has to include two intersectable objects.
-	final protected GeoPoint getSingleIntersectionPoint(ArrayList hits) {
-		if (hits == null || hits.size() != 2)
+	final protected GeoPoint getSingleIntersectionPoint(Hits hits) {
+		if (hits.isEmpty() || hits.size() != 2)
 			return null;
 
 		GeoElement a = (GeoElement) hits.get(0);
@@ -2959,8 +3021,8 @@ public class EuclidianController implements MouseListener,
 
 	// get point and line or vector;
 	// create line through point parallel to line or vector
-	final protected boolean parallel(ArrayList hits) {
-		if (hits == null)
+	final protected boolean parallel(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
@@ -2996,8 +3058,8 @@ public class EuclidianController implements MouseListener,
 	// get point and line 
 	// create parabola (focus and directrix)
 	// Michael Borcherds 2008-04-08
-	final protected boolean parabola(ArrayList hits) {
-		if (hits == null)
+	final protected boolean parabola(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
@@ -3020,8 +3082,8 @@ public class EuclidianController implements MouseListener,
 
 	// get point and line or vector;
 	// create line through point orthogonal to line or vector
-	final protected boolean orthogonal(ArrayList hits) {
-		if (hits == null)
+	final protected boolean orthogonal(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
@@ -3056,8 +3118,8 @@ public class EuclidianController implements MouseListener,
 
 	// get two points, line segment or conic
 	// and create midpoint/center for them/it
-	final protected boolean midpoint(ArrayList hits) {
-		if (hits == null)
+	final protected boolean midpoint(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		boolean hitPoint = (addSelectedPoint(hits, 2, false) != 0);
@@ -3092,8 +3154,8 @@ public class EuclidianController implements MouseListener,
 
 	// get two points and create line bisector for them
 	// or get line segment and create line bisector for it
-	final protected boolean lineBisector(ArrayList hits) {
-		if (hits == null)
+	final protected boolean lineBisector(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		boolean hitPoint = false;
 
@@ -3119,8 +3181,8 @@ public class EuclidianController implements MouseListener,
 
 	// get three points and create angular bisector for them
 	// or bisector for two lines
-	final protected boolean angularBisector(ArrayList hits) {
-		if (hits == null)
+	final protected boolean angularBisector(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		boolean hitPoint = false;
 
@@ -3146,8 +3208,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	// get 3 points
-	final protected boolean threePoints(ArrayList hits, int mode) {
-		if (hits == null)
+	final protected boolean threePoints(Hits hits, int mode) {
+		if (hits.isEmpty())
 			return false;
 
 		// points needed
@@ -3193,8 +3255,8 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// get 2 lines, 2 vectors or 3 points
-	final protected boolean angle(ArrayList hits) {
-		if (hits == null)
+	final protected boolean angle(Hits hits) {
+		if (hits.isEmpty())
 			return false;				
 		
 		int count = 0;
@@ -3210,7 +3272,7 @@ public class EuclidianController implements MouseListener,
 		// try polygon too
 		boolean polyFound = false;
 		if (count == 0)	{		
-			polyFound = 1 == addSelectedGeo(view.getHits(hits, GeoPolygon.class, tempArrayList), 
+			polyFound = 1 == addSelectedGeo(hits.getHits(GeoPolygon.class, tempArrayList), 
 					1, false);
 		}
 					
@@ -3290,8 +3352,8 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// get 2 points
-	final protected boolean circle2(ArrayList hits, int mode) {
-		if (hits == null)
+	final protected boolean circle2(Hits hits, int mode) {
+		if (hits.isEmpty())
 			return false;
 
 		// points needed
@@ -3310,8 +3372,8 @@ public class EuclidianController implements MouseListener,
 	
 	// get 2 points for locus
 	// first point 
-	final protected boolean locus(ArrayList hits) {
-		if (hits == null)
+	final protected boolean locus(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// points needed
@@ -3331,8 +3393,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	// get 5 points
-	final protected boolean conic5(ArrayList hits) {
-		if (hits == null)
+	final protected boolean conic5(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// points needed
@@ -3347,8 +3409,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	// get 2 GeoElements
-	final protected boolean relation(ArrayList hits) {
-		if (hits == null)
+	final protected boolean relation(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		addSelectedGeo(hits, 2, false);
@@ -3362,8 +3424,8 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// get 2 points, 2 lines or 1 point and 1 line
-	final protected boolean distance(ArrayList hits, MouseEvent e) {
-		if (hits == null)
+	final protected boolean distance(Hits hits, MouseEvent e) {
+		if (hits.isEmpty())
 			return false;
 		
 		int count = addSelectedPoint(hits, 2, false);
@@ -3543,8 +3605,8 @@ public class EuclidianController implements MouseListener,
 		return label.replaceAll("_", "");			
 	}
 	
-	protected boolean area(ArrayList hits,  MouseEvent e) {
-		if (hits == null)
+	protected boolean area(Hits hits,  MouseEvent e) {
+		if (hits.isEmpty())
 			return false;
 		
 		int count = addSelectedPolygon(hits, 1, false);
@@ -3628,8 +3690,8 @@ public class EuclidianController implements MouseListener,
 		return descText;
 	}
 	
-	protected boolean slope(ArrayList hits) {
-		if (hits == null)
+	protected boolean slope(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		addSelectedLine(hits, 1, false);			
@@ -3658,8 +3720,8 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 	
-	protected boolean regularPolygon(ArrayList hits) {
-		if (hits == null)
+	protected boolean regularPolygon(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// need two points
@@ -3682,7 +3744,7 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 	
-	protected boolean showCheckBox(ArrayList hits) {
+	protected boolean showCheckBox(Hits hits) {
 		if (selectionPreview)
 			return false;
 		
@@ -3691,8 +3753,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	// get (point or line) and (conic or function or curve)
-	final protected boolean tangents(ArrayList hits) {
-		if (hits == null)
+	final protected boolean tangents(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		boolean found=false;
@@ -3748,8 +3810,8 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// get (point or line or vector) and conic
-	final protected boolean polarLine(ArrayList hits) {
-		if (hits == null)
+	final protected boolean polarLine(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		boolean hitConic = false;
 
@@ -3791,8 +3853,8 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 
-	final protected boolean delete(ArrayList hits) {
-		if (hits == null)
+	final protected boolean delete(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		addSelectedGeo(hits, 1, false);
@@ -3805,8 +3867,8 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 	
-	final protected boolean showHideObject(ArrayList hits) {
-		if (hits == null)
+	final protected boolean showHideObject(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		if (selectionPreview) {
@@ -3836,8 +3898,8 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 	
-	final protected boolean showHideLabel(ArrayList hits) {
-		if (hits == null)
+	final protected boolean showHideLabel(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		if (selectionPreview) {
@@ -3845,7 +3907,7 @@ public class EuclidianController implements MouseListener,
 			return false;
 		}
 				
-		GeoElement geo = chooseGeo(view.getOtherHits(hits, GeoAxis.class, tempArrayList));
+		GeoElement geo = chooseGeo(hits.getOtherHits(GeoAxis.class, tempArrayList));
 		if (geo != null) {			
 			geo.setLabelVisible(!geo.isLabelVisible());
 			geo.updateRepaint();
@@ -3854,8 +3916,8 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 	
-	final protected boolean copyVisualStyle(ArrayList hits) {
-		if (hits == null)
+	final protected boolean copyVisualStyle(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		if (selectionPreview) {
@@ -3863,7 +3925,7 @@ public class EuclidianController implements MouseListener,
 			return false;
 		}
 				
-		GeoElement geo = chooseGeo(view.getOtherHits(hits, GeoAxis.class, tempArrayList));
+		GeoElement geo = chooseGeo(hits.getOtherHits(GeoAxis.class, tempArrayList));
 		if (geo == null) return false;
 		
 		// movedGeoElement is the active geo
@@ -3890,14 +3952,14 @@ public class EuclidianController implements MouseListener,
 	
 	
 	// get mirrorables and point
-	final protected boolean mirrorAtPoint(ArrayList hits) {	
-		if (hits == null)
+	final protected boolean mirrorAtPoint(Hits hits) {	
+		if (hits.isEmpty())
 			return false;
 		
 		// try to get one mirrorable	
 		int count = 0;
 		if (selGeos() == 0) {
-			ArrayList mirAbles = view.getHits(hits, Mirrorable.class, tempArrayList);		
+			Hits mirAbles = hits.getHits(Mirrorable.class, tempArrayList);		
 			count = addSelectedGeo(mirAbles, 1, false);	
 		}
 				
@@ -3985,14 +4047,14 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// get mirrorable and line
-	final protected boolean mirrorAtLine(ArrayList hits) {
-		if (hits == null)
+	final protected boolean mirrorAtLine(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// mirrorable	
 		int count = 0;
 		if (selGeos() == 0) {
-			ArrayList mirAbles = view.getHits(hits, Mirrorable.class, tempArrayList);
+			Hits mirAbles = hits.getHits(Mirrorable.class, tempArrayList);
 			count =addSelectedGeo(mirAbles, 1, false);
 		}
 		
@@ -4035,8 +4097,8 @@ public class EuclidianController implements MouseListener,
 	
 	
 	// Michael Borcherds 2008-03-23
-	final protected boolean mirrorAtCircle(ArrayList hits) {
-		if (hits == null)
+	final protected boolean mirrorAtCircle(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		
@@ -4065,14 +4127,14 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// get translateable and vector
-	final protected boolean translateByVector(ArrayList hits) {
-		if (hits == null)
+	final protected boolean translateByVector(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// translateable
 		int count = 0;
 		if (selGeos() == 0) {
-			ArrayList transAbles = view.getHits(hits, Translateable.class, tempArrayList);
+			Hits transAbles = hits.getHits(Translateable.class, tempArrayList);
 			count = addSelectedGeo(transAbles, 1, false);
 		}
 		
@@ -4114,14 +4176,14 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	// get rotateable object, point and angle
-	final protected boolean rotateByAngle(ArrayList hits) {
-		if (hits == null)
+	final protected boolean rotateByAngle(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// translateable
 		int count = 0;
 		if (selGeos() == 0) {
-			ArrayList rotAbles = view.getHits(hits, PointRotateable.class, tempArrayList);
+			Hits rotAbles = hits.getHits(PointRotateable.class, tempArrayList);
 			count = addSelectedGeo(rotAbles, 1, false);
 		}
 		
@@ -4177,14 +4239,14 @@ public class EuclidianController implements MouseListener,
 	}		
 	
 	// get dilateable object, point and number
-	final protected boolean dilateFromPoint(ArrayList hits) {
-		if (hits == null)
+	final protected boolean dilateFromPoint(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// dilateable
 		int count = 0;
 		if (selGeos() == 0) {
-			ArrayList dilAbles = view.getHits(hits, Dilateable.class, tempArrayList);
+			Hits dilAbles = hits.getHits(Dilateable.class, tempArrayList);
 			count =	addSelectedGeo(dilAbles, 1, false);
 		}
 		
@@ -4234,8 +4296,8 @@ public class EuclidianController implements MouseListener,
 	
 
 	// get point and number
-	final protected boolean segmentFixed(ArrayList hits) {
-		if (hits == null)
+	final protected boolean segmentFixed(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		// dilation center
@@ -4261,7 +4323,7 @@ public class EuclidianController implements MouseListener,
 
 
 	
-	final protected boolean fitLine(ArrayList hits) {
+	final protected boolean fitLine(Hits hits) {
 
 		GeoList list;
 		
@@ -4298,8 +4360,8 @@ public class EuclidianController implements MouseListener,
 	
 	// Michael Borcherds 2008-03-14	
 	// Markus 2008-07-30: added support for two identical input points (center *2 and point on edge)
-	final protected boolean compasses(ArrayList hits) {
-		if (hits == null)
+	final protected boolean compasses(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 		
 		// we already have two points that define the radius
@@ -4363,8 +4425,8 @@ public class EuclidianController implements MouseListener,
 	}	
 	
 	// get two points and number
-	final protected boolean angleFixed(ArrayList hits) {
-		if (hits == null)
+	final protected boolean angleFixed(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 						
 		// dilation center
@@ -4410,8 +4472,8 @@ public class EuclidianController implements MouseListener,
 	}	
 		
 	// get center point and number
-	final protected boolean circlePointRadius(ArrayList hits) {
-		if (hits == null)
+	final protected boolean circlePointRadius(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		addSelectedPoint(hits, 1, false);		
@@ -4435,8 +4497,8 @@ public class EuclidianController implements MouseListener,
 	}	
 	
 	// get point and vector
-	final protected boolean vectorFromPoint(ArrayList hits) {
-		if (hits == null)
+	final protected boolean vectorFromPoint(Hits hits) {
+		if (hits.isEmpty())
 			return false;
 
 		// point	
@@ -4462,7 +4524,7 @@ public class EuclidianController implements MouseListener,
 	 * @param hits
 	 * @return
 	 */
-	final protected boolean macro(ArrayList hits) {		
+	final protected boolean macro(Hits hits) {		
 		// try to get next needed type of macroInput
 		int index = selGeos();
 		
@@ -4577,8 +4639,8 @@ public class EuclidianController implements MouseListener,
 		return false;
 	}
 			
-	final protected boolean geoElementSelected(ArrayList hits, boolean addToSelection) {
-		if (hits == null)
+	final protected boolean geoElementSelected(Hits hits, boolean addToSelection) {
+		if (hits.isEmpty())
 			return false;
 
 		addSelectedGeo(hits, 1, false);
@@ -4591,29 +4653,29 @@ public class EuclidianController implements MouseListener,
 
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview
-	final protected boolean move(ArrayList hits) {		
-		addSelectedGeo(view.getMoveableHits(hits), 1, false);		
+	final protected boolean move(Hits hits) {		
+		addSelectedGeo(hits.getMoveableHits(), 1, false);		
 		return false;
 	}
 	
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview
-	final protected boolean moveRotate(ArrayList hits) {				
-		addSelectedGeo(view.getPointRotateableHits(hits, rotationCenter), 1, false);
+	final protected boolean moveRotate(Hits hits) {				
+		addSelectedGeo(hits.getPointRotateableHits(rotationCenter), 1, false);
 		return false;
 	}
 	
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview
-	final protected boolean point(ArrayList hits) {
-		addSelectedGeo(view.getHits(hits, Path.class, tempArrayList), 1, false);
+	final protected boolean point(Hits hits) {
+		addSelectedGeo(hits.getHits(Path.class, tempArrayList), 1, false);
 		return false;
 	}
 
-	final protected boolean textImage(ArrayList hits, int mode, boolean altDown) {
+	final protected boolean textImage(Hits hits, int mode, boolean altDown) {
 		GeoPoint loc = null; // location
 
-		if (hits == null) {
+		if (hits.isEmpty()) {
 			if (selectionPreview)
 				return false;
 			else {
@@ -4802,65 +4864,65 @@ public class EuclidianController implements MouseListener,
 		view.repaintEuclidianView();
 	}
 
-	final protected int addSelectedGeo(ArrayList hits, int max,
+	final protected int addSelectedGeo(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedGeos, GeoElement.class);
 	}		
 	
-	protected int handleAddSelected(ArrayList hits, int max, boolean addMore, ArrayList list, Class geoClass) {		
+	protected int handleAddSelected(Hits hits, int max, boolean addMore, ArrayList list, Class geoClass) {		
 		if (selectionPreview)
-			return addToHighlightedList(list, view.getHits(hits, geoClass, handleAddSelectedArrayList) , max);
+			return addToHighlightedList(list, hits.getHits(geoClass, handleAddSelectedArrayList) , max);
 		else
-			return addToSelectionList(list, view.getHits(hits, geoClass, handleAddSelectedArrayList), max, addMore);
+			return addToSelectionList(list, hits.getHits(geoClass, handleAddSelectedArrayList), max, addMore);
 	}
-	protected ArrayList handleAddSelectedArrayList = new ArrayList();
+	protected Hits handleAddSelectedArrayList = new Hits();
 
-	final protected int addSelectedPoint(ArrayList hits, int max,
+	final protected int addSelectedPoint(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPoints, GeoPoint.class);
 	}
 
-	final protected int addSelectedNumeric(ArrayList hits, int max,
+	final protected int addSelectedNumeric(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedNumbers, GeoNumeric.class);
 	}
 
-	final protected int addSelectedLine(ArrayList hits, int max,
+	final protected int addSelectedLine(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLines, GeoLine.class);
 	}
 
-	final protected int addSelectedSegment(ArrayList hits, int max,
+	final protected int addSelectedSegment(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedSegments, GeoSegment.class);
 	}
 
-	final protected int addSelectedVector(ArrayList hits, int max,
+	final protected int addSelectedVector(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedVectors, GeoVector.class);
 	}
 
-	final protected int addSelectedConic(ArrayList hits, int max,
+	final protected int addSelectedConic(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedConics, GeoConic.class);
 	}
 
-	final protected int addSelectedFunction(ArrayList hits, int max,
+	final protected int addSelectedFunction(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedFunctions, GeoFunction.class);
 	}
 	
-	final protected int addSelectedCurve(ArrayList hits, int max,
+	final protected int addSelectedCurve(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCurves, GeoCurveCartesian.class);
 	}
 	
-	final protected int addSelectedPolygon(ArrayList hits, int max,
+	final protected int addSelectedPolygon(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPolygons, GeoPolygon.class);
 	}
 
-	final protected int addSelectedList(ArrayList hits, int max,
+	final protected int addSelectedList(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLists, GeoList.class);
 	}
@@ -4998,8 +5060,8 @@ public class EuclidianController implements MouseListener,
 	   specified class (note: subclasses are included)
 	 * 
 	 */
-	private GeoElement chooseGeo(ArrayList hits, Class geoclass) {
-		return chooseGeo(view.getHits(hits, geoclass, tempArrayList));
+	private GeoElement chooseGeo(Hits hits, Class geoclass) {
+		return chooseGeo(hits.getHits(geoclass, tempArrayList));
 	}
 
 	final protected GeoElement chooseGeo(ArrayList geos) {
