@@ -326,7 +326,7 @@ public class Hits extends ArrayList {
 	 * 
 	 * @see EuclidianController: mousePressed(), mouseMoved()
 	 */
-	final public Hits getTopHits() {
+	public Hits getTopHits() {
 		
 		if (isEmpty())
 			return this;

@@ -1,6 +1,10 @@
 package geogebra3D.euclidian3D;
 
 
+import geogebra.euclidian.Drawable;
+import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.euclidian.Hits;
+import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.View;
@@ -20,6 +24,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -32,7 +39,7 @@ import javax.media.opengl.GLCanvas;
 import javax.swing.JPanel;
 
 
-public class EuclidianView3D extends JPanel implements View, Printable, EuclidianConstants3D {
+public class EuclidianView3D extends JPanel implements View, Printable, EuclidianConstants3D, EuclidianViewInterface {
 
 	
 
@@ -73,11 +80,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 
 	//picking and hits
-	ArrayList hits = new ArrayList(); //objects picked from openGL
-	TreeSet hitsHighlighted = new TreeSet(new Drawable3D.drawableComparator()); 
-	TreeSet[] hitSet = new TreeSet[Drawable3D.DRAW_PICK_ORDER_MAX];
-	TreeSet hitsOthers = new TreeSet(new Drawable3D.drawableComparator()); //others
-	TreeSet hitSetSet = new TreeSet(new Drawable3D.setComparator()); //set of sets
+	Hits3D hits = new Hits3D(); //objects picked from openGL
 	
 	//base vectors for moving a point
 	static public Ggb3DVector vx = new Ggb3DVector(new double[] {1.0, 0.0, 0.0,  0.0});
@@ -158,9 +161,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		setMovingVisible(false);
 		
-		// initing hitSet
-		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
-			hitSet[i] = new TreeSet(new Drawable3D.drawableComparator());
+		
 		
 	}
 	
@@ -388,39 +389,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
-	//////////////////////////////////////
-	// hits from picking
-	public void processHits(){
-		
-		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
-			hitSet[i].clear();
-		hitsOthers.clear();
-		hitSetSet.clear();
-		
-		
-		for (Iterator iter = hits.iterator(); iter.hasNext();) {			
-			Drawable3D d = (Drawable3D) iter.next();	
-			if(d.getPickOrder()<Drawable3D.DRAW_PICK_ORDER_MAX)
-				hitSet[d.getPickOrder()].add(d);
-			else
-				hitsOthers.add(d);			
-		}
-		
-		
-		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
-			hitSetSet.add(hitSet[i]);
-		//hitSets.add(hitsOthers);
-		hitsHighlighted = (TreeSet) hitSetSet.first();
-		
-	}
-	
-	
-	public GeoElement3D getFirstHit(){
-		
-		return ((Drawable3D) hitsHighlighted.first()).getGeoElement3D();
-	}
-	
-	
+
 	
 	
 	//////////////////////////////////////
@@ -438,17 +407,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				
 				
 				
-				for (Iterator iter = hitsHighlighted.iterator(); iter.hasNext();) {
+				for (Iterator iter = hits.getHitsHighlighted().iterator(); iter.hasNext();) {
 					Drawable3D d = (Drawable3D) iter.next();
 					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
 					geo.setWasHighlighted();
 					geo.setWillBeHighlighted(false);			
 				}					
 				
-				processHits();
+				hits.dispatch();
 				
 
-				for (Iterator iter = hitsHighlighted.iterator(); iter.hasNext();) {
+				for (Iterator iter = hits.getHitsHighlighted().iterator(); iter.hasNext();) {
 					Drawable3D d = (Drawable3D) iter.next();
 					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
 					geo.setWasHighlighted(); //TODO setWasHighlighted() may be called twice
@@ -467,7 +436,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			//remove highlighting when an object is selected
 			if (removeHighlighting){
 				//for (Iterator iter = hits.iterator(); iter.hasNext();) {
-				for (Iterator iter = hitsHighlighted.iterator(); iter.hasNext();) {
+				for (Iterator iter = hits.getHitsHighlighted().iterator(); iter.hasNext();) {
 					Drawable3D d = (Drawable3D) iter.next();
 					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
 					geo.setWasHighlighted();
@@ -633,12 +602,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 
 	
-	public void rendererPick(int x, int y){
-		//openGL picking
-		renderer.setMouseLoc(x,y);
-	}
-	
-	
 	
 	
 	
@@ -699,6 +662,680 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public int print(Graphics arg0, PageFormat arg1, int arg2) throws PrinterException {
 		// TODO Raccord de méthode auto-généré
 		return 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	//////////////////////////////////////////////
+	// EuclidianViewInterface
+
+
+
+
+
+	public Drawable getDrawableFor(GeoElement geo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public double getGridDistances(int i) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public int getGridType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public Hits getHits() {
+		return hits;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public double getInvXscale() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public double getInvYscale() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public GeoElement getLabelHit(Point mouseLoc) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public int getPointCapturingMode() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public Previewable getPreviewDrawable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public Rectangle getSelectionRectangle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public boolean getShowMouseCoords() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public boolean getShowXaxis() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public boolean getShowYaxis() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public int getViewHeight() {
+		return getHeight();
+	}
+
+
+	public int getViewWidth() {
+		return getWidth();
+	}
+
+
+
+
+
+
+
+	
+
+
+
+	public boolean hitAnimationButton(MouseEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public boolean isGridOrAxesShown() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void repaintEuclidianView() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void resetMode() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setAnimatedCoordSystem(double ox, double oy, double newScale,
+			int steps, boolean storeUndo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setAnimatedRealWorldCoordSystem(double xmin, double xmax,
+			double ymin, double ymax, int steps, boolean storeUndo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public boolean setAnimationButtonsHighlighted(boolean hitAnimationButton) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setCoordSystem(double x, double y, double xscale, double yscale) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setDefaultCursor() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setDragCursor() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setHitCursor() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setHits(Point p) {
+		//sets the flag and mouse location for openGL picking
+		renderer.setMouseLoc(p.x,p.y);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setHits(Rectangle rect) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setMoveCursor() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setPreview(Previewable previewDrawable) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setSelectionRectangle(Rectangle selectionRectangle) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setShowAxesRatio(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setShowMouseCoords(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void showAxes(boolean b, boolean showYaxis) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public double toRealWorldCoordX(double minX) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public double toRealWorldCoordY(double maxY) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void updateSize() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void zoom(double px, double py, double zoomFactor, int steps,
+			boolean storeUndo) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

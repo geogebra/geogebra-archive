@@ -54,10 +54,6 @@ public interface EuclidianViewInterface {
 	 */
 	int getPointCapturingMode();
 
-	//boolean containsGeoPoint(ArrayList hits);
-	
-	
-	
 	
 	// selection rectangle
 	public void setSelectionRectangle(Rectangle selectionRectangle);
@@ -116,31 +112,7 @@ public interface EuclidianViewInterface {
 	
 	GeoElement getLabelHit(Point mouseLoc);
 	
-	/*
-	ArrayList getHits(ArrayList hits, Class geoclass, ArrayList tempArrayList);
-	ArrayList getHits(Point mouseLoc, Class geoClass, ArrayList tempArrayList);
-	ArrayList getHits(Rectangle selectionRectangle);
-	ArrayList getHits(Point mouseLoc);
-	ArrayList getHits(Point mouseLoc, boolean b);
-	
-	
-	ArrayList getTopHits(Point mouseLoc);
-	ArrayList getTopHits(ArrayList moveableList);
-	
-	
-	ArrayList getHitsForNewPointMode(ArrayList hits);
 
-	ArrayList getOtherHits(ArrayList hits, Class geoclass, ArrayList tempArrayList);
-
-	ArrayList getPointRotateableHits(ArrayList hits, GeoPoint rotationCenter);
-	ArrayList getPointVectorNumericHits(Point mouseLoc);
-	
-	
-	
-
-	ArrayList getMoveableHits(Point mouseLoc);
-	ArrayList getMoveableHits(ArrayList hits);
-	*/
 	
 	
 	// axis, grid, etc.

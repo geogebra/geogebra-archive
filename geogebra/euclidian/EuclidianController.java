@@ -245,7 +245,7 @@ public class EuclidianController implements MouseListener,
 		return kernel;
 	}
 
-	void setView(EuclidianViewInterface view) {
+	protected void setView(EuclidianViewInterface view) {
 	//void setView(EuclidianView view) {
 		this.view = view;
 	}
@@ -1032,7 +1032,7 @@ public class EuclidianController implements MouseListener,
 			view.repaintEuclidianView();												
 	}
 
-	final public void mouseDragged(MouseEvent e) {
+	public void mouseDragged(MouseEvent e) {
 		if (!DRAGGING_OCCURED) {
 			DRAGGING_OCCURED = true;			
 
@@ -1311,7 +1311,7 @@ public class EuclidianController implements MouseListener,
 		}
 	}
 
-	final public void mouseReleased(MouseEvent e) {	
+	public void mouseReleased(MouseEvent e) {	
 		
 		
 		
@@ -1629,7 +1629,7 @@ public class EuclidianController implements MouseListener,
 		app.setSelectedGeos(hits);
 	}
 
-	final public void mouseMoved(MouseEvent e) {		
+	public void mouseMoved(MouseEvent e) {		
 		setMouseLocation(e);
 		boolean repaintNeeded;
 		
@@ -2046,7 +2046,7 @@ public class EuclidianController implements MouseListener,
 		return changedKernel;
 	}
 
-	final public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(MouseEvent e) {
 		initToolTipManager();
 		initShowMouseCoords();
 	}
@@ -2106,7 +2106,7 @@ public class EuclidianController implements MouseListener,
 		kernel.notifyRepaint();
 	}
 
-	final protected void movePoint(boolean repaint) {
+	protected void movePoint(boolean repaint) {
 		movedGeoPoint.setCoords(xRW, yRW, 1.0);
 		movedGeoPoint.updateCascade();	
 		movedGeoPointDragged = true;
@@ -2466,7 +2466,7 @@ public class EuclidianController implements MouseListener,
 		yRW = (view.getYZero() - mouseLoc.y) * view.getInvYscale();
 	}
 
-	final protected void setMouseLocation(MouseEvent e) {
+	protected void setMouseLocation(MouseEvent e) {
 		mouseLoc = e.getPoint();
 
 		if (mouseLoc.x < 0)
