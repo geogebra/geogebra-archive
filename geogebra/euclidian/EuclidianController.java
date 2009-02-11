@@ -1060,7 +1060,8 @@ public class EuclidianController implements MouseListener,
 		lastMouseLoc = mouseLoc;
 		setMouseLocation(e);				
 		transformCoords();
-
+		
+		
 		// zoom rectangle (right drag) or selection rectangle (left drag)
 // Michael Borcherds 2007-10-07 allow dragging with right mouse button
 		if (((Application.isRightClick(e)) || allowSelectionRectangle()) && !TEMPORARY_MODE) {

@@ -92,6 +92,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	protected Ggb3DVector movingPointProjected;
 	
 	
+	//stuff TODO
+	protected Rectangle selectionRectangle = new Rectangle();
+
 	
 	
 	public EuclidianView3D(EuclidianController3D ec){
@@ -406,17 +409,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			if ((waitForPick)&&(!removeHighlighting)){
 				
 				
-				
+				/*
 				for (Iterator iter = hits.getHitsHighlighted().iterator(); iter.hasNext();) {
 					Drawable3D d = (Drawable3D) iter.next();
 					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
 					geo.setWasHighlighted();
 					geo.setWillBeHighlighted(false);			
-				}					
+				}	
+				*/				
 				
-				hits.dispatch();
+				//hits.dispatch();
 				
-
+				/*
 				for (Iterator iter = hits.getHitsHighlighted().iterator(); iter.hasNext();) {
 					Drawable3D d = (Drawable3D) iter.next();
 					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
@@ -429,10 +433,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
 					geo.updateHighlighted(true);				
 				}
+				*/
 
 				waitForPick = false;
 			}
 			
+			/*
 			//remove highlighting when an object is selected
 			if (removeHighlighting){
 				//for (Iterator iter = hits.iterator(); iter.hasNext();) {
@@ -444,7 +450,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					geo.updateHighlighted(true);
 				}
 				removeHighlighting = false;
-			}			
+			}		
+			*/	
 			
 			//other
 			drawList3D.updateAll();	//TODO waitForUpdate for each object
@@ -844,10 +851,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public Rectangle getSelectionRectangle() {
-		// TODO Auto-generated method stub
-		return null;
+		return selectionRectangle;
 	}
-
 
 
 

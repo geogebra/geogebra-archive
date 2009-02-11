@@ -11,6 +11,8 @@ public class Hits3D extends Hits {
 	TreeSet[] hitSet = new TreeSet[Drawable3D.DRAW_PICK_ORDER_MAX];
 	TreeSet hitsOthers = new TreeSet(new Drawable3D.drawableComparator()); //others
 	TreeSet hitSetSet = new TreeSet(new Drawable3D.setComparator()); //set of sets
+	
+	Hits topHits = new Hits();
 
 	
 	public Hits3D(){
@@ -22,28 +24,51 @@ public class Hits3D extends Hits {
 	}
 	
 	
-	/** dispatch all hits in different sets */
-	public void dispatch(){
-		
+	public void init(){
+		super.init();
 		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
 			hitSet[i].clear();
 		hitsOthers.clear();
 		hitSetSet.clear();
 		
+		topHits.init();
 		
-		for (Iterator iter = this.iterator(); iter.hasNext();) {			
-			Drawable3D d = (Drawable3D) iter.next();	
-			if(d.getPickOrder()<Drawable3D.DRAW_PICK_ORDER_MAX)
-				hitSet[d.getPickOrder()].add(d);
-			else
-				hitsOthers.add(d);			
-		}
 		
+	}
+	
+	
+	/** insert a drawable in the hitSet, called by EuclidianRenderer3D */
+	public void addDrawable3D(Drawable3D d){
+		
+		if(d.getPickOrder()<Drawable3D.DRAW_PICK_ORDER_MAX)
+			hitSet[d.getPickOrder()].add(d);
+		else
+			hitsOthers.add(d);	
+		
+	}
+	
+	/** sort all hits in different sets */
+	public void sort(){
+				
 		
 		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
-			hitSetSet.add(hitSet[i]);
-		//hitSets.add(hitsOthers);
+			hitSetSet.add(hitSet[i]);		
+
 		hitsHighlighted = (TreeSet) hitSetSet.first();
+		
+		for (Iterator iter = hitsHighlighted.iterator(); iter.hasNext();) {
+			Drawable3D d = (Drawable3D) iter.next();
+			topHits.add(d.getGeoElement());
+		}
+		
+		for (Iterator iterSet = hitSetSet.iterator(); iterSet.hasNext();) {
+			TreeSet set = (TreeSet) iterSet.next();
+			for (Iterator iter = set.iterator(); iter.hasNext();) {
+				Drawable3D d = (Drawable3D) iter.next();
+				this.add(d.getGeoElement());
+			}
+		}
+		
 	}
 	
 	
@@ -64,9 +89,7 @@ public class Hits3D extends Hits {
 	
 	public Hits getTopHits() {
 
-		Hits ret = new Hits();
-		ret.add(((Drawable3D) hitsHighlighted.first()).getGeoElement3D());
-		return ret;
+		return topHits;
 		
 	}
 	

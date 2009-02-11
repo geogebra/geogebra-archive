@@ -572,8 +572,8 @@ public class EuclidianRenderer3D implements GLEventListener {
 
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
-        //hits are stored in EuclidianView3D
-        m_view3D.hits.clear();
+        //hits are stored
+        m_view3D.getHits().init();
         
         int names, ptr = 0;
         float zMax, zMin;
@@ -592,12 +592,15 @@ public class EuclidianRenderer3D implements GLEventListener {
            	//view.hits.add(geos[buffer[ptr]]);
         	//geos[buffer[ptr]].zPick = z;
         	num = selectBuffer.get(ptr);
-        	m_view3D.hits.add(drawHits[num]);
+        	((Hits3D) m_view3D.getHits()).addDrawable3D(drawHits[num]);
         	drawHits[num].zPickMin = zMin;
         	drawHits[num].zPickMax = zMax;
         	ptr++;
           }          
         }
+        
+        
+        ((Hits3D) m_view3D.getHits()).sort();
         
         waitForPick = false;
         m_view3D.waitForPick = true;

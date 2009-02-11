@@ -34,13 +34,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 	
 	//TODO link it to toolbar values
-	protected static final int MOVE_NONE = 101;
-	protected static final int MOVE_POINT = 102;
 	protected static final int MOVE_POINT_WHEEL = 3102;
-	protected static final int MOVE_VIEW = 106;
 	
 	
-	protected int mode, moveMode = MOVE_NONE;
 	
 	
 	
@@ -159,6 +155,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		
 		if (Application.isRightClick(e))
 			return;
+	
+		//Application.debug("mode = "+mode);
 		
 		switch (mode) {		
 		//create a new point
@@ -175,7 +173,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 					objSelected.setSelected(false);
 				//pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
 				//view.doPick(pickPoint,true,true);
-				if (!((Hits3D) view3D.getHits()).getHitsHighlighted().isEmpty()){
+				//if (!((Hits3D) view3D.getHits()).getHitsHighlighted().isEmpty()){
+				view3D.setHits(mouseLoc);
+				if (! view3D.getHits().isEmpty()){
 					
 					objSelected = (GeoElement3D) view3D.getHits().getTopHits().get(0);		
 					objSelected.setSelected(true);
@@ -184,7 +184,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 					if (objSelected.getGeoClassType()==GeoElement3D.GEO_CLASS_POINT3D){
 
 						//removes highlighting
-						view3D.setRemoveHighlighting(true);
+						//view3D.setRemoveHighlighting(true);
 
 
 						moveMode = MOVE_POINT;
@@ -228,7 +228,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 			if(DEBUG){Application.debug("Start MOVE_VIEW : mouseLoc.x="+mouseLoc.x+"  startLoc.x="+startLoc.x);}
 		}
 		*/
-
+		//Application.debug("moveMode = "+moveMode);
 
 	
 	}	
@@ -237,6 +237,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	protected void handleMouseDragged(boolean repaint) {
 		
 		//TODO view.setMoveCursor();
+		//Application.debug("handleMouseDragged  -- "+moveMode);
 		
 		// moveMode was set in mousePressed()
 		switch (moveMode) {
@@ -425,13 +426,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 
 
-
+/*
 	public void mouseDragged(MouseEvent e) {
 		if(DEBUG){Application.debug("mouseDragged");}
 		setMouseLocation(e);
 		handleMouseDragged(true);	
 	}
-
+*/
 	
 	
 	
@@ -442,7 +443,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 	
 
 
-
+/*
 	public void mouseMoved(MouseEvent e) {
 		//Application.debug("mouseMoved");
 		setMouseLocation(e);
@@ -451,6 +452,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
 		kernel3D.notifyRepaint();
 	}
+	*/
 
 	
 	/** pick object under the mouse */
