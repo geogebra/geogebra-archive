@@ -954,6 +954,12 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			double yscale) {
 		setCoordSystem(xZero, yZero, xscale, yscale, true);
 	}
+	
+	/** Sets coord system from mouse move */
+	final public void setCoordSystemFromMouseMove(double xZero, double yZero, int dx, int dy) {		
+		setCoordSystem(xZero + dx, yZero + dy, getXscale(), getYscale());		
+	}
+	
 
 	/**
 	 * Sets real world coord system using min and max values for both axes in
@@ -968,6 +974,10 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 		setCoordSystem(calcXzero, calcYzero, calcXscale, calcYscale);
 	}
+	
+	
+		
+	
 
 	/**
 	 * Sets real world coord system using min and max values for both axes in

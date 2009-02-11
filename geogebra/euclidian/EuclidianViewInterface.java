@@ -122,6 +122,8 @@ public interface EuclidianViewInterface {
 	boolean isGridOrAxesShown();
 	int getGridType();
 	void setCoordSystem(double x, double y, double xscale, double yscale);
+	/** Sets coord system from mouse move */
+	public void setCoordSystemFromMouseMove(double xZero, double yZero, int dx, int dy);
 	void setAnimatedCoordSystem(double ox, double oy, double newScale,int steps, boolean storeUndo);
 
 

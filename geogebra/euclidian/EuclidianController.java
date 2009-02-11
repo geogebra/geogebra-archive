@@ -1230,8 +1230,11 @@ public class EuclidianController implements MouseListener,
 			case MOVE_VIEW:
 				if (repaint) {
 					if (TEMPORARY_MODE) view.setMoveCursor();
+					/*
 					view.setCoordSystem(xZeroOld + mouseLoc.x - startLoc.x, yZeroOld
 							+ mouseLoc.y - startLoc.y, view.getXscale(), view.getYscale());
+							*/
+					view.setCoordSystemFromMouseMove(xZeroOld, yZeroOld, mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y);
 				}
 				break;	
 								

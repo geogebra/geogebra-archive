@@ -136,7 +136,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		canvas.addMouseMotionListener(euclidianController3D);
 		canvas.addMouseListener(euclidianController3D);
 		canvas.addMouseWheelListener(euclidianController3D);
-		canvas.addKeyListener(euclidianController3D);
 		canvas.setFocusable(true);
 		
 		
@@ -359,6 +358,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//update();
 	}
 	
+	
+	/** Sets coord system from mouse move */
+	final public void setCoordSystemFromMouseMove(double xZero, double yZero, int dx, int dy) {		
+		setRotXY((int) xZero + dx, (int) yZero + dy, true);
+	}
+
 	public void addRotXY(int da, int db, boolean repaint){
 		
 		setRotXY(a+da,b+db,repaint);
