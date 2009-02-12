@@ -121,7 +121,8 @@ public class EuclidianController implements MouseListener,
 
 	protected Point startLoc, mouseLoc, lastMouseLoc; // current mouse location
 
-	protected double xZeroOld, yZeroOld, xTemp, yTemp;
+	//protected double xZeroOld, yZeroOld;
+	protected double xTemp, yTemp;
 
 	protected Point oldLoc = new Point();
 
@@ -664,8 +665,10 @@ public class EuclidianController implements MouseListener,
 				else
 					view.setDragCursor();
 			}
-			xZeroOld = view.getXZero();
-			yZeroOld = view.getYZero();		
+			
+			//xZeroOld = view.getXZero();
+			//yZeroOld = view.getYZero();
+			view.rememberOrigins();
 			xTemp = xRW;
 			yTemp = yRW;
 			view.setShowAxesRatio((moveMode == MOVE_X_AXIS) || (moveMode == MOVE_Y_AXIS));
@@ -1234,7 +1237,7 @@ public class EuclidianController implements MouseListener,
 					view.setCoordSystem(xZeroOld + mouseLoc.x - startLoc.x, yZeroOld
 							+ mouseLoc.y - startLoc.y, view.getXscale(), view.getYscale());
 							*/
-					view.setCoordSystemFromMouseMove(xZeroOld, yZeroOld, mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y);
+					view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y);
 				}
 				break;	
 								

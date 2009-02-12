@@ -239,6 +239,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 	double xmin, xmax, ymin, ymax, invXscale, invYscale, xZero, yZero, xscale,
 			yscale, scaleRatio = 1.0; // ratio yscale / xscale
+	double xZeroOld, yZeroOld;
 
 	protected double[] AxesTickInterval = { 1, 1 }; // for axes =
 
@@ -956,8 +957,8 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	}
 	
 	/** Sets coord system from mouse move */
-	final public void setCoordSystemFromMouseMove(double xZero, double yZero, int dx, int dy) {		
-		setCoordSystem(xZero + dx, yZero + dy, getXscale(), getYscale());		
+	final public void setCoordSystemFromMouseMove(int dx, int dy) {		
+		setCoordSystem(xZeroOld + dx, yZeroOld + dy, getXscale(), getYscale());		
 	}
 	
 
@@ -1155,6 +1156,15 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	public double getYZero() {
 		return yZero;
 	}
+	
+	/** remembers the origins values (xzero, ...) */
+	public void rememberOrigins(){
+		xZeroOld = xZero;
+		yZeroOld = yZero;
+	}
+
+	
+	
 
 	public void showAxes(boolean xAxis, boolean yAxis) {
 		

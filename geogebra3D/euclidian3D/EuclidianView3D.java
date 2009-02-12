@@ -70,6 +70,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private Ggb3DMatrix mInv = Ggb3DMatrix.Identity(4);
 	int a = 0;
 	int b = 0;//angles
+	int aOld, bOld;
 	
 	
 	//values for view frutum
@@ -360,8 +361,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/** Sets coord system from mouse move */
-	final public void setCoordSystemFromMouseMove(double xZero, double yZero, int dx, int dy) {		
-		setRotXY((int) xZero + dx, (int) yZero + dy, true);
+	final public void setCoordSystemFromMouseMove(int dx, int dy) {		
+		setRotXY(aOld + dx, bOld + dy, true);
 	}
 
 	public void addRotXY(int da, int db, boolean repaint){
@@ -392,7 +393,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public double getZscale() { return scale; }
 
 	
-	
+	/** remembers the origins values (xzero, ...) */
+	public void rememberOrigins(){
+		aOld = a;
+		bOld = b;
+	}
+
 	
 	
 	

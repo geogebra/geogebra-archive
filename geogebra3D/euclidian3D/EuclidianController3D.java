@@ -220,6 +220,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		if (moveMode==MOVE_VIEW){
 			startLoc = mouseLoc;
+			view.rememberOrigins();
 		}
 		
 		//Application.debug("moveMode = "+moveMode);

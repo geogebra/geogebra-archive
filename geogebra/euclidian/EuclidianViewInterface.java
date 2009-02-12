@@ -123,11 +123,11 @@ public interface EuclidianViewInterface {
 	int getGridType();
 	void setCoordSystem(double x, double y, double xscale, double yscale);
 	/** Sets coord system from mouse move */
-	public void setCoordSystemFromMouseMove(double xZero, double yZero, int dx, int dy);
+	public void setCoordSystemFromMouseMove(int dx, int dy);
 	void setAnimatedCoordSystem(double ox, double oy, double newScale,int steps, boolean storeUndo);
 
 
-	//setters and getters
+	//setters and getters	
 	public void setShowMouseCoords(boolean b);
 	public boolean getShowMouseCoords();
 	double getXZero();
@@ -141,6 +141,10 @@ public interface EuclidianViewInterface {
 	public int getViewWidth();
 	public int getViewHeight();
 	public double getGridDistances(int i);
+	
+	
+	/** remembers the origins values (xzero, ...) */
+	public void rememberOrigins();
 	
 	
 	
