@@ -42,7 +42,8 @@ import java.util.Iterator;
  */
 final public class GeoPoint extends GeoVec3D 
 implements VectorValue, 
-Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties {   	
+Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties,
+GeoPointInterface {   	
 	
 	private static final long serialVersionUID = 1L;
 

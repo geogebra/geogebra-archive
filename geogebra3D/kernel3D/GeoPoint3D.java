@@ -278,6 +278,11 @@ implements GeoPointInterface{
     
 
 	
+	// adding hasPath() condition to be independent
+	// because 3D points that have a Path have an algoParent
+	public boolean isIndependent() {
+		return super.isIndependent() || hasPath();
+	}
 	
 	
 	
@@ -335,11 +340,6 @@ implements GeoPointInterface{
 		return true;
 	}
 
-    /*
-    public boolean isGeoPoint3D(){
-    	return true;
-    }
-	*/
 
 	public boolean isDefined() {
 		// TODO Auto-generated method stub

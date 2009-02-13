@@ -977,7 +977,7 @@ public abstract class GeoElement
 		return algorithmList;
 	}
 
-	final public boolean isIndependent() {
+	public boolean isIndependent() {
 		return (algoParent == null);
 	}
 

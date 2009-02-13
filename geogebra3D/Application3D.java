@@ -67,6 +67,7 @@ public abstract class Application3D extends Application{
         
         
         //init toolbar
+        /*
         String myToolBar3D =  EuclidianView3D.MODE_MOVE
         						+" || "
         						//+EuclidianView3D.MODE_POINT
@@ -74,7 +75,7 @@ public abstract class Application3D extends Application{
         						+EuclidianView3D.MODE_TRANSLATEVIEW;
         getGuiManager().setToolBarDefinition( myToolBar3D );
         updateToolBar();
- 		
+ 		*/
     }      
     
     

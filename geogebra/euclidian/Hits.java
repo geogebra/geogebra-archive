@@ -1,9 +1,10 @@
 package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
+import geogebra.main.Application;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -170,12 +171,12 @@ public class Hits extends ArrayList {
 	 * returns array of changeable GeoElements out of hits that implement
 	 * PointRotateable
 	 */
-	final public Hits getPointRotateableHits(GeoPoint rotCenter) {
+	final public Hits getPointRotateableHits(GeoPointInterface rotCenter) {
 		return getMoveables(TEST_ROTATEMOVEABLE, rotCenter);
 	}
 
 
-	protected Hits getMoveables(int test, GeoPoint rotCenter) {
+	protected Hits getMoveables(int test, GeoPointInterface rotCenter) {
 
 
 		GeoElement geo;
@@ -187,10 +188,11 @@ public class Hits extends ArrayList {
 				// moveable object
 				if (geo.isMoveable()) {
 					moveableList.add(geo);
+					Application.debug("moveable GeoElement = "+geo);
 				}
 				// point with changeable parent coords
 				else if (geo.isGeoPoint()) {
-					GeoPoint point = (GeoPoint) geo;
+					GeoPointInterface point = (GeoPointInterface) geo;
 					if (point.hasChangeableCoordParentNumbers())
 						moveableList.add(point);
 				}
@@ -203,7 +205,7 @@ public class Hits extends ArrayList {
 			case TEST_ROTATEMOVEABLE:
 				// check for circular definition
 				if (geo.isRotateMoveable()) {
-					if (rotCenter == null || !geo.isParentOf(rotCenter))
+					if (rotCenter == null || !geo.isParentOf((GeoElement) rotCenter))
 						moveableList.add(geo);
 				}
 
@@ -332,9 +334,10 @@ public class Hits extends ArrayList {
 			return this;
 		
 		// point in there?
-		if (containsGeoPoint()) {
-			Hits topHitsList = new Hits();
-			getHits(GeoPoint.class, false, topHitsList);
+		Hits topHitsList = new Hits();
+		if (containsGeoPoint(topHitsList)) {
+			//Hits topHitsList = new Hits();
+			//getHits(GeoPoint.class, false, topHitsList);
 			return topHitsList;
 		} else
 			return this;
@@ -350,6 +353,19 @@ public class Hits extends ArrayList {
 		return false;
 	}
 
+	
+	final public boolean containsGeoPoint(Hits ret) {
+
+		GeoElement geo;
+		for (int i = 0; i < size(); i++) {
+			geo = (GeoElement) get(i);
+			if (geo.isGeoPoint()){
+				ret.add(geo);
+				return true;
+			}
+		}
+		return false;
+	}
 	
 
 }

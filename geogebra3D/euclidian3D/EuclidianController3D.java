@@ -4,27 +4,23 @@ package geogebra3D.euclidian3D;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.Iterator;
 
 public class EuclidianController3D extends EuclidianController
 implements MouseListener, MouseMotionListener, MouseWheelListener{
@@ -118,117 +114,25 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
-	/*
-	public void setMode(int newMode){
-		initNewMode(newMode);
-	}
+
 	
 	
-	protected void initNewMode(int mode) {
-		this.mode = mode;
-		
-		switch (mode) {	
-		//create a new point
-		case EuclidianView3D.MODE_POINT:			
-			Application.debug("mode : create new point");
-			//movedGeoPoint3D = kernel3D.Point3D("essai", 1, 1, 1);
-			break;
-		//move an object
-		case EuclidianView3D.MODE_MOVE:
-			break;
+	////////////////////////////////////////////
+	// setters movedGeoElement -> movedGeoPoint, ...
+	public void setMovedGeoPoint(GeoElement geo){
+		movedGeoPoint3D = (GeoPoint3D) movedGeoElement;
+		startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
+
+		if (!movedGeoPoint3D.hasPath()){
+			view3D.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
+			view3D.setMovingColor(movingColor);
 		}
 	}
-	*/
-	
-	
-	
+
 	
 	
 	
-	
-	public void mousePressed(MouseEvent e) {
-		
-		setMouseLocation(e);	
-		moveMode = MOVE_NONE;
-		
-		if (Application.isRightClick(e))
-			return;
-	
-		//Application.debug("mode = "+mode);
-		
-		switch (mode) {		
-		//create a new point
-		case EuclidianView3D.MODE_POINT:			
-			Application.debug("create new point");
-			break;
-			
-		//move an object
-		case EuclidianView3D.MODE_MOVE:
-			if (e.isShiftDown() || Application.isControlDown(e) ) {
-				moveMode = MOVE_VIEW;	
-			} else {
-				if (objSelected!=null)		
-					objSelected.setSelected(false);
-				//pickPoint=view.getPickPoint(mouseLoc.x,mouseLoc.y);
-				//view.doPick(pickPoint,true,true);
-				//if (!((Hits3D) view3D.getHits()).getHitsHighlighted().isEmpty()){
-				view3D.setHits(mouseLoc);
-				if (! view3D.getHits().isEmpty()){
-					
-					objSelected = (GeoElement3D) view3D.getHits().getTopHits().get(0);		
-					objSelected.setSelected(true);
-					//Application.debug("selected = "+objSelected.getLabel());
 
-					if (objSelected.getGeoClassType()==GeoElement3D.GEO_CLASS_POINT3D){
-
-						//removes highlighting
-						//view3D.setRemoveHighlighting(true);
-
-
-						moveMode = MOVE_POINT;
-						movedGeoPoint3D = (GeoPoint3D) objSelected;
-						startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
-						
-						if (!movedGeoPoint3D.hasPath()){
-							view3D.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
-							view3D.setMovingColor(movingColor);
-						}
-
-					}
-				}
-				kernel3D.notifyRepaint();
-				//view.update();
-
-			}
-			break;
-
-		// move drawing pad or axis
-		case EuclidianView3D.MODE_TRANSLATEVIEW:	
-			moveMode = MOVE_VIEW;
-			 
-			break;
-
-
-		default:
-			moveMode = MOVE_NONE;
-
-
-		}
-		
-		
-		//start moving drawing pad
-		
-		if (moveMode==MOVE_VIEW){
-			startLoc = mouseLoc;
-			view.rememberOrigins();
-		}
-		
-		//Application.debug("moveMode = "+moveMode);
-
-	
-	}	
-	
-	
 	
 	
 	

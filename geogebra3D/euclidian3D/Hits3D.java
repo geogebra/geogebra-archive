@@ -89,7 +89,10 @@ public class Hits3D extends Hits {
 	
 	public Hits getTopHits() {
 
-		return topHits;
+		if (topHits.isEmpty())
+			return this;
+		else
+			return topHits;
 		
 	}
 	

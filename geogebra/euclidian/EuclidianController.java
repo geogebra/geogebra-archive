@@ -800,6 +800,7 @@ public class EuclidianController implements MouseListener,
 		movedGeoElement = geo;
 		doSingleHighlighting(movedGeoElement);	
 		*/	
+		
 				
 		
 		// multiple geos selected
@@ -850,10 +851,13 @@ public class EuclidianController implements MouseListener,
 		// free point
 		else if (movedGeoElement.isGeoPoint()) {
 			moveMode = MOVE_POINT;
+			setMovedGeoPoint(movedGeoElement);
+			/*
 			movedGeoPoint = (GeoPoint) movedGeoElement;
 			view.setShowMouseCoords(!app.isApplet()
 					&& !movedGeoPoint.hasPath());
 			view.setDragCursor();
+			*/
 		} 			
 		
 		// free line
@@ -1034,6 +1038,20 @@ public class EuclidianController implements MouseListener,
 
 			view.repaintEuclidianView();												
 	}
+	
+	
+	
+	////////////////////////////////////////////
+	// setters movedGeoElement -> movedGeoPoint, ...
+	public void setMovedGeoPoint(GeoElement geo){
+		movedGeoPoint = (GeoPoint) movedGeoElement;
+		view.setShowMouseCoords(!app.isApplet()
+				&& !movedGeoPoint.hasPath());
+		view.setDragCursor();
+	}
+	
+	
+	
 
 	public void mouseDragged(MouseEvent e) {
 		if (!DRAGGING_OCCURED) {
