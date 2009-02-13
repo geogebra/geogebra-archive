@@ -3064,9 +3064,11 @@ public abstract class GeoElement
 		return false;
 	}
 	
+	/*
 	public boolean isGeoPoint3D() {
 		return false;
 	}
+	*/
 	
 	public boolean isGeoPolygon() {
 		return false;

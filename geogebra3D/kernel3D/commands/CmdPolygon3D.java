@@ -75,7 +75,9 @@ public class CmdPolygon3D extends CmdPolygon {
 			GeoPoint3D[] points = new GeoPoint3D[n];
 			// check arguments
 			for (int i = 0; i < n; i++) {
-				if (!(arg[i].isGeoPoint3D()))
+				if (!(arg[1].isGeoElement3D()))
+					return super.process(c);	
+				else if (!(arg[i].isGeoPoint()))
 					return super.process(c);
 				else {
 					points[i] = (GeoPoint3D) arg[i];

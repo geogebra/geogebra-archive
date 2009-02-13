@@ -23,6 +23,7 @@ package geogebra3D.kernel3D;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -33,7 +34,8 @@ import geogebra3D.Matrix.Ggb3DVector;
  * @author  Markus + ggb3D
  * @version 
  */
-final public class GeoPoint3D extends GeoVec4D {   	
+final public class GeoPoint3D extends GeoVec4D
+implements GeoPointInterface{   	
 	
 	/**
 	 * 
@@ -329,12 +331,15 @@ final public class GeoPoint3D extends GeoVec4D {
     }                 
        
 	
+	final public boolean isGeoPoint() {
+		return true;
+	}
 
-    
+    /*
     public boolean isGeoPoint3D(){
     	return true;
     }
-
+	*/
 
 	public boolean isDefined() {
 		// TODO Auto-generated method stub
@@ -384,6 +389,15 @@ final public class GeoPoint3D extends GeoVec4D {
 
 	public boolean isEqual(GeoElement Geo) {
 		// TODO Raccord de méthode auto-généré
+		return false;
+	}
+
+	
+	/**
+	 * Returns whether this point has three changeable numbers as coordinates, 
+	 * e.g. point A = (a, b, c) where a, b and c are free GeoNumeric objects.
+	 */	
+	public boolean hasChangeableCoordParentNumbers() {
 		return false;
 	};
     

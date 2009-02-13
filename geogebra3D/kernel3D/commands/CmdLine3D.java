@@ -50,8 +50,8 @@ public class CmdLine3D extends CmdLine {
 				GeoElement3D geo1 = (GeoElement3D) arg[1];
 
 				// segment between two 3D points
-				if ((ok[0] = (geo0.isGeoPoint3D()))
-						&& (ok[1] = (geo1.isGeoPoint3D()))) {
+				if ((ok[0] = (geo0.isGeoPoint()))
+						&& (ok[1] = (geo1.isGeoPoint()))) {
 					GeoElement[] ret =
 					{
 							kernel3D.Line3D(
