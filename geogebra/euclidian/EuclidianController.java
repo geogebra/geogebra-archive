@@ -1401,7 +1401,7 @@ public class EuclidianController implements MouseListener,
 				}
 				else {
 					// there are no selected geos: show drawing pad popup menu
-					app.getGuiManager().showDrawingPadPopup((EuclidianView) view, mouseLoc);
+					app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
 				}
 			} else {		
 				// there are hits
@@ -1413,7 +1413,7 @@ public class EuclidianController implements MouseListener,
 				else {
 					// no selected geos: choose geo and show popup menu
 					geo = chooseGeo(hits);
-					app.getGuiManager().showPopupMenu(geo,(EuclidianView) view, mouseLoc);						
+					app.getGuiManager().showPopupMenu(geo,(JPanel) view, mouseLoc);						
 				}																										
 			}				
 			return;
