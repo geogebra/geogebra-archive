@@ -30,7 +30,7 @@ import geogebra.kernel.GeoPoint;
  * @author  ggb3D
  * @version 
  */
-public class AlgoJoinPoints3DPolygon extends AlgoElement3D {
+public class AlgoJoinPoints3DTriangle extends AlgoElement3D {
 
 	private static final long serialVersionUID = 1L;
 	private GeoPoint3D [] points;  // input
@@ -38,12 +38,12 @@ public class AlgoJoinPoints3DPolygon extends AlgoElement3D {
 
 
     /** Creates new AlgoJoinPoints */
-    AlgoJoinPoints3DPolygon(Construction cons, String label, GeoPoint3D [] points) {
+    AlgoJoinPoints3DTriangle(Construction cons, String label, GeoPoint3D [] points) {
         this(cons, points);
         poly.setLabel(label);
     }
 
-    AlgoJoinPoints3DPolygon(Construction cons, GeoPoint3D [] points) {
+    AlgoJoinPoints3DTriangle(Construction cons, GeoPoint3D [] points) {
     	super(cons);
  
     	this.points=points;

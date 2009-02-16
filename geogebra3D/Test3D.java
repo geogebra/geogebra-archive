@@ -59,7 +59,7 @@ public class Test3D{
 		view2D.showAxes(true, true);
 		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
 		
-		testRegion();
+		//testRegion();
 		
 		
 		testRepere();
@@ -67,7 +67,7 @@ public class Test3D{
 
 		testAlgoPyramide();
 //		testPath();
-//		testPolygon();
+		testPolygon();
 
     	
 		testRay3D();
@@ -306,15 +306,15 @@ public class Test3D{
 		
 		GeoTriangle3D t;
 		Color c = new Color(0.5f,0.2f,0.1f);
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[2]});
+		t=kernel3D.Triangle3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[2]});
 		t.setObjColor(c);
 		
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[0]});
+		t=kernel3D.Triangle3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[0]});
 		t.setObjColor(c);
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P1[1],P1[2],P1[0]});
+		t=kernel3D.Triangle3D("triangle",new GeoPoint3D[] {P1[1],P1[2],P1[0]});
 		t.setObjColor(c);
 		
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[2],P1[0]});
+		t=kernel3D.Triangle3D("triangle",new GeoPoint3D[] {P2,P1[2],P1[0]});
 		t.setObjColor(c);
 		
 
@@ -393,15 +393,17 @@ public class Test3D{
 	
 	private void testPolygon(){
 
-		GeoPoint3D P = testPoint(1.5f,1.5f,1.5f);
+		GeoPoint3D P = testPoint(-0.5f,-0.5f,0f);
 		P.setLabel("P");
 		
+		/*
 		GeoPlane3D p = kernel3D.Plane3D("plane",
 				new Ggb3DVector(new double[] {0,0,0,1}),
 				new Ggb3DVector(new double[] {1,0,0,0}),
 				new Ggb3DVector(new double[] {0,1,0,0}));
+				*/
 		
-		kernel3D.From3Dto2D("truc", P, p);
+		kernel3D.From3Dto2D("truc", P, xOyPlane);
 	}
 
 	private void testRay3D(){
