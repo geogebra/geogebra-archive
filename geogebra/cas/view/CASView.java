@@ -8,7 +8,9 @@ import geogebra.main.CasManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -23,13 +25,17 @@ import java.util.LinkedList;
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
@@ -61,14 +67,12 @@ public class CASView extends JComponent implements CasManager {
 
 	private GeoGebraCAS cas;
 
-	private JButton btSub, btSim, btExp, btFactor;
-
-	private btListener btListener;
+	private JButton btSub, btEval, btExp, btFactor;
 
 	private final int numOfRows = 1;
 	
 	private static final int SUB_Flag = 0;
-	private static final int SIM_Flag = 1;
+	private static final int EVAL_Flag = 1;
 	private static final int EXP_Flag = 2;
 	private static final int FAC_Flag = 3;
 
@@ -78,9 +82,19 @@ public class CASView extends JComponent implements CasManager {
 		
 		// init cas
 		cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();			
-
-		btListener = new btListener();
-
+		
+		setLayout(new BorderLayout());
+		
+		// button panel
+		initButtons();
+		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		btPanel.add(btEval);
+		btPanel.add(btExp);
+		btPanel.add(btFactor);
+		btPanel.add(btSub);	
+		add(btPanel, BorderLayout.NORTH);
+		
+		// CAS input/output cells
 		createCASTable();
 		createRowHeader();
 
@@ -94,12 +108,11 @@ public class CASView extends JComponent implements CasManager {
 		scrollPane.setRowHeaderView(rowHeaderTable);
 		scrollPane.setViewportView(consoleTable);
 
-		// put the scrollpanel in the component
-		setLayout(new BorderLayout());
+		// put the scrollpanel in 
 		add(scrollPane, BorderLayout.CENTER);
 
 		this.setBackground(Color.WHITE);
-	}	
+	}			
 
 	private void createRowHeader() {
 
@@ -323,8 +336,9 @@ public class CASView extends JComponent implements CasManager {
 			int y = e.getY();
 
 			// rowHeaderTable.requestFocus();
-			consoleTable.requestFocus();
-
+			//
+			consoleTable.requestFocusInWindow();			
+			
 			// TODO: remove
 			// Component compFocusOwner = KeyboardFocusManager
 			// .getCurrentKeyboardFocusManager().getFocusOwner();
@@ -571,7 +585,7 @@ public class CASView extends JComponent implements CasManager {
 		
 		String result = temp.getOutput();
 		if (result == null || result.length() == 0)
-			result = temp.getCommand();
+			result = temp.getInput();
 		
 		return result;
 	}
@@ -619,7 +633,7 @@ public class CASView extends JComponent implements CasManager {
 
 	public Object setInputExpression(Object cellValue, String input) {
 		if (cellValue instanceof CASTableCellValue) {
-			((CASTableCellValue) cellValue).setCommand(input);
+			((CASTableCellValue) cellValue).setInput(input);
 		}
 		return cellValue;
 	}
@@ -637,54 +651,43 @@ public class CASView extends JComponent implements CasManager {
 		return cellValue;
 	}
 
-	public JButton createButton(JComponent casViewComp, int btType) {
+	private void initButtons() {
 		JButton ret = null;
+		
+		ButtonListener btListener = new ButtonListener();
+		
+		// evaluate
+		btEval = new JButton("=");
+		btEval.setActionCommand("Simplify");
+		btEval.addActionListener(btListener);
 
-		switch (btType) {
-		case 0: // btSub
-			btSub = new JButton(app.getPlain("Substitute"));
-			btSub.setActionCommand("Subsim");
-			btSub.addActionListener(btListener);
+		// expand
+		btExp = new JButton(app.getPlain("Expand"));
+		btExp.setActionCommand("Expand");
+		btExp.addActionListener(btListener);
 
-			ret = btSub;
-			break;
-		case 1: // btSim
-			btSim = new JButton(app.getPlain("Simplify"));
-			btSim.setActionCommand("Simplify");
-			btSim.addActionListener(btListener);
+		// factor
+		btFactor = new JButton("Factor");
+		btFactor.setActionCommand("Factor");
+		btFactor.addActionListener(btListener);
+		
+		// substitute
+		btSub = new JButton(app.getPlain("Substitute"));
+		btSub.setActionCommand("Subsim");
+		btSub.addActionListener(btListener);
 
-			ret = btSim;
-			break;
-		case 2: // btExp
-			btExp = new JButton(app.getPlain("Expand"));
-			btExp.setActionCommand("Expand");
-			btExp.addActionListener(btListener);
-
-			ret = btExp;
-			break;
-		case 3: // btFactor
-			btFactor = new JButton("Factor");
-			btFactor.setActionCommand("Factor");
-			btFactor.addActionListener(btListener);
-
-			ret = btFactor;
-			break;
-		default:
-			break;
-		}
-
-		return ret;
 	}
 
-	protected class btListener implements ActionListener {
+	protected class ButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent ae) {
+			
+			
 			Object src = ae.getSource();
-
 			if (src == btSub) {
 				apply(SUB_Flag);
-			} else if (src == btSim) {
-				apply(SIM_Flag);
+			} else if (src == btEval) {
+				apply(EVAL_Flag);
 			} else if (src == btExp) {
 				apply(EXP_Flag);
 			} else if (src == btFactor) {
@@ -693,71 +696,98 @@ public class CASView extends JComponent implements CasManager {
 
 		}
 
-		private void apply(int mod) {
-			int editRow = consoleTable.getEditingRow();
-			CASTableCellEditor cellEditor = (CASTableCellEditor) consoleTable
-					.getCellEditor(editRow, CASPara.contCol);
-			String selectedStr = cellEditor.getInputSelectedText();
-
-			if (selectedStr == null) return;
+		private void apply(int mod) {				
+			// get editor and possibly selected text
+			CASTableCellEditor cellEditor = consoleTable.getEditor();
+			String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
+			int selStart = cellEditor.getInputSelectionStart();
+			int selEnd = cellEditor.getInputSelectionEnd();
 			
-			CASTableCellValue value = (CASTableCellValue) consoleTable
-					.getModel().getValueAt(editRow, CASPara.contCol);
-
-			// Save the modified value into the table model
-			value.setCommand(cellEditor.getInput());
-			consoleTable.setValueAt(value, editRow, CASPara.contCol);
-
-			// get YacasString
-			String yacasString = null;
-			try {
-				yacasString = cas.toMathPiperString(cas.parseGeoGebraCASInput(selectedStr), useGeoGebraVariableValues);
-			}
-			catch (Throwable th) {
-				th.printStackTrace();
-				return;
-			}
+			// TODO: remove
+			System.out.println("selectedText: " + selectedText + ", selStart: " + selStart + ", selEnd: " + selEnd);					
+		
 			
+			// save the edited value into the table model
+			consoleTable.stopEditing();
+			
+			// get current row and input text		
+			int selRow = consoleTable.getSelectedRow();			
+			CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
+			String selRowInput = cellValue.getInput();
+			
+			// break text into prefix, evalText, postfix
+			String prefix, evalText, postfix;
+			CASTableCellValue outputCellValue;
+			boolean useSameCell = selectedText == null || selectedText.trim().length() == 0;
+			if (useSameCell) {
+				// no selected text: evaluate input using current cell
+				prefix = "";
+				evalText = selRowInput;
+				postfix = "";		
+				outputCellValue = cellValue;
+			}
+			else {
+				// selected text: break it up into prefix, evalText, and postfix
+				prefix = selRowInput.substring(0, selStart);
+				evalText = selectedText;
+				postfix = selRowInput.substring(selEnd);
+				// use new output cell
+				outputCellValue = new CASTableCellValue();
+			}
+						
+			
+			
+			// TODO: remove
+			System.out.println("SELECTED ROW: " + selRow + ", prefix: " + prefix + ", evalText: " + evalText + ", postfix: " + postfix);					
+	
 			switch (mod) {
-			case SUB_Flag:
-				CASTableCell edittingCell = (CASTableCell) cellEditor
-						.getTableCellEditorComponent(consoleTable, value, true,
-								editRow, CASPara.contCol);
-
-				// Create a CASSubDialog with the cell value
-				CASSubDialog d = new CASSubDialog(app, cas, edittingCell,
-						selectedStr, editRow);
-				d.setVisible(true);
-				break;
-			case SIM_Flag:
-				if (selectedStr == null) {
-					selectedStr = value.getCommand();
-				}
-				
-				value = new CASTableCellValue();
-				
-				value.setCommand(cas.evaluateMathPiper("Simplify", yacasString));
-				consoleTable.insertRow(editRow, CASPara.contCol, value);
-				break;
-			case EXP_Flag:
-				if (selectedStr == null) {
-					selectedStr = value.getCommand();
-				}
-				
-				value = new CASTableCellValue();
-				value.setCommand(cas.evaluateMathPiper("Expand", yacasString));
-				consoleTable.insertRow(editRow, CASPara.contCol, value);
-				break;
-			case FAC_Flag:
-				if (selectedStr == null) {
-					selectedStr = value.getCommand();
-				}
-				
-				value = new CASTableCellValue();
-				value.setCommand(cas.evaluateMathPiper("Factor", yacasString));
-				consoleTable.insertRow(editRow, CASPara.contCol, value);
-				break;
+				case SUB_Flag:
+					// Create a CASSubDialog with the cell value
+					CASSubDialog d = new CASSubDialog(CASView.this, cellValue, evalText, selRow);
+					d.setVisible(true);
+					break;
+					
+				case EVAL_Flag:	
+					evalText = "Simplify[" + evalText + "]";				
+					break;
+					
+				case EXP_Flag:
+					evalText = "Expand[" + evalText + "]";	
+					break;
+					
+				case FAC_Flag:
+					evalText = "Factor[" + evalText + "]";	
+					break;
 			}
+			
+			// process evalText
+			String result;
+			boolean error;
+			try {
+				evalText = cas.processCASInput(evalText, true, useGeoGebraVariableValues);
+				result = prefix + evalText + postfix;	
+				error = false;
+			} catch (Throwable e) {					
+				e.printStackTrace();	
+				result = cas.getMathPiperError();
+				error = true;
+			}
+			
+			// set new values of output cell
+			outputCellValue.setInput(selRowInput);						
+			outputCellValue.setOutput(result, error);	
+			
+	// TODO: check how to update output panel in cell 
+			
+			// update output cell
+			DefaultTableModel model = (DefaultTableModel) consoleTable.getModel();			
+			if (useSameCell) {
+				//model.fireTableCellUpdated(selRow, CASPara.contCol);
+				consoleTable.insertRow(selRow-1, CASPara.contCol, outputCellValue);
+			} else {
+				consoleTable.insertRow(selRow, CASPara.contCol, outputCellValue);				
+			}
+			//SwingUtilities.updateComponentTreeUI(consoleTable);			
 		}
 
 	}

@@ -41,23 +41,10 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 										// line panle
 
 			cellValue = (CASTableCellValue) value;
-			// Application.debug("Editor - Row: " + row);
-			// Application.debug(cellValue.getCommand());
-			// Application.debug(cellValue.getOutput());
-			String tempIn = cellValue.getCommand();
-			String tempOut = cellValue.getOutput();
-
-//			Component[] temp = this.getComponents();
-//			Application.debug("We have componets: " + temp.length);
-//			Application.debug("Output: " + tempOut.length());
-//			for (int i = 0; i < temp.length; i++) {
-//				Application.debug("componets: " + temp[i]);
-//			}
-
-			this.setInput(tempIn);
-			this.setOutput(tempOut);
-
-			if (tempOut.length() == 0) {
+			this.setInput(cellValue.getInput());
+			String output = cellValue.getOutput();			
+			this.setOutput(output, cellValue.isOutputError());
+			if (output == null || output.length() == 0) {
 				this.setOutputFieldVisiable(true);
 				this.removeOutputPanel();
 			}
@@ -71,30 +58,36 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		return cellValue;
 	}
 	
-	public String getInputSelectedText() {
+	public String getInputSelectedText() {	
 		return getInputArea().getSelectedText();
+	}
+	
+	public int getInputSelectionStart() {	
+		return getInputArea().getSelectionStart();
+	}
+	
+	public int getInputSelectionEnd() {	
+		return getInputArea().getSelectionEnd();
 	}
 
 	public void setCellEditorValue(CASTableCellValue value) {
 		this.cellValue = value;
 	}
+	
+	public void cancelCellEditing() {
+		stopCellEditing();
+	}
 
 	public boolean stopCellEditing() {
-		cellValue.setCommand(this.getInput());
+		cellValue.setInput(this.getInput());
 		cellValue.setOutput(this.getOutput());
-		
+
 		Application.debug("Cell Editor stops editting at selected " + this.getInputArea().getText());
 		return true;
 	}
 
 	public void addCellEditorListener(CellEditorListener l) {
 		// TODO Auto-generated method stub
-
-	}
-
-	public void cancelCellEditing() {
-		// TODO Auto-generated method stub
-		return;
 	}
 
 	public boolean isCellEditable(EventObject anEvent) {
@@ -104,7 +97,6 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 
 	public void removeCellEditorListener(CellEditorListener l) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public boolean shouldSelectCell(EventObject anEvent) {

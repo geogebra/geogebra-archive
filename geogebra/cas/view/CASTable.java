@@ -9,6 +9,8 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.*;
 
@@ -52,11 +54,30 @@ public class CASTable extends JTable {
 		// this.getColumn(this.getColumnName(CASPara.indexCol)).setMaxWidth(30);
 
 		// this.sizeColumnsToFit(0);
-		this.setSurrendersFocusOnKeystroke(true);
+		//this.setSurrendersFocusOnKeystroke(true);
+		
+		addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent arg0) {}
+
+			public void focusLost(FocusEvent arg0) {
+				stopEditing();
+			}			
+		});
+	
+	}
+	
+	public void stopEditing() {
+		// stop editing 
+		CASTableCellEditor editor = (CASTableCellEditor) getEditorComponent();
+		if (editor != null) editor.stopCellEditing();
+	}
+	
+	public CASTableCellEditor getEditor() {
+		return (CASTableCellEditor) getEditorComponent();		
 	}
 
-	/*
-	 * Function: Insert a row after the "selectedRow row", and set the focus at
+	/**
+	 * Inserts a row after the "selectedRow row", and set the focus at
 	 * the new row
 	 */
 	public void insertRow(int selectedRow, int selectedCol,
@@ -93,6 +114,10 @@ public class CASTable extends JTable {
 		// Enlarge the cell hight
 		if (newValue.isOutputVisible())
 			this.setRowHeight(rowNum, CASPara.inputOutputHeight);
+	}
+	
+	public CASTableCellValue getCASTableCellValue(int row) {
+		return (CASTableCellValue) tableModel.getValueAt(row, 0);
 	}
 
 	public void insertRow(int selectedRow, int selectedCol, char c) {

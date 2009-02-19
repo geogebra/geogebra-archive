@@ -23,7 +23,7 @@ public class CASTableCell extends JPanel {
 	private CASTable consoleTable;
 
 	private boolean lineVisiable;
-
+	
 	private boolean outputFieldVisiable;
 
 	protected Application app;
@@ -41,7 +41,7 @@ public class CASTableCell extends JPanel {
 		outputFieldVisiable = true;
 
 		this.setInput("");
-		this.setOutput("");
+		this.setOutput("", false);
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		this.add(inputPanel);
@@ -93,10 +93,9 @@ public class CASTableCell extends JPanel {
 		this.inputPanel.setInput(inValue);
 	}
 
-	public void setOutput(String inValue) {
-		this.outputPanel.setOutput(inValue);
-		String empty = new String("");
-		if (empty.compareTo(inValue) == 0)
+	public void setOutput(String inValue, boolean isError) {
+		this.outputPanel.setOutput(inValue, isError);
+		if (inValue == null || inValue.length() == 0)
 			this.removeOutputPanel();
 		else
 			this.addOutputPanel();

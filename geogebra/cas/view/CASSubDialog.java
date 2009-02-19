@@ -1,28 +1,22 @@
 package geogebra.cas.view;
 
+import geogebra.cas.GeoGebraCAS;
+import geogebra.main.Application;
+
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
-
-import geogebra.cas.GeoGebraCAS;
-import geogebra.main.Application;
 
 /**
  * Dialog to substitude a string in a CAS input.
@@ -45,9 +39,9 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	private JTextField valueTextField;
 	private Checkbox allReplaced;
 
-	private CASTableCell tableCell;
+	private CASTableCellValue cellValue;
+	private CASView casView;
 	private Application app;
-	private GeoGebraCAS cas;
 	private int editRow;
 	private String subStr;
 	private String inputStr;
@@ -57,15 +51,14 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	/**
 	 * Input Dialog for a GeoText object
 	 */
-	public CASSubDialog(Application app, GeoGebraCAS cas, CASTableCell inCell,
-			String subStr, int editRow) {
-		super(app.getCasFrame(), false);
-		this.app = app;
-		this.cas = cas;
-		this.tableCell = inCell;
+	public CASSubDialog(CASView casView, CASTableCellValue cellValue, String subStr, int editRow) {
+		setModal(false);
+		
+		this.casView = casView;
+		this.app = casView.getApp();
+		this.cellValue = cellValue;
 		this.subStr = subStr;
 		this.editRow = editRow;
-		this.inputStr = tableCell.getInput();
 		selectedEnabled = true;
 
 		replaceAllFlag = false;
@@ -166,11 +159,9 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	}
 
 	private void apply(int mod) {
-
 		String newExpression = valueTextField.getText();
-		CASTable table = tableCell.getConsoleTable();
-		CASTableCellValue value;
-
+		CASTable table = casView.getConsoleTable();
+	
 		if (allReplaced.getState())
 			replaceAllFlag = true;
 
@@ -181,39 +172,44 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		if (subStr.length() == 0)
 			return;
 
+		CASTableCellValue newRow;
+		
 		switch (mod) {
 		case SUB:
 			// Replace the sub in the input string
-			value = new CASTableCellValue();
+			newRow = new CASTableCellValue();
 
 			if (replaceAllFlag)
-				value.setCommand(inputStr.replaceAll(subStr, newExpression));
+				newRow.setInput(inputStr.replaceAll(subStr, newExpression));
 			else
-				value.setCommand(inputStr.replaceFirst(subStr, newExpression));
+				newRow.setInput(inputStr.replaceFirst(subStr, newExpression));
 
-			table.insertRow(editRow, CASPara.contCol, value);
+			table.insertRow(editRow, CASPara.contCol, newRow);
 			break;
+			
 		case SUBSIM:
 			// Replace the sub in the input string
 			String preString;
-			value = new CASTableCellValue();
+			newRow = new CASTableCellValue();
+			
 			if (replaceAllFlag)
 				preString = inputStr.replaceAll(subStr, newExpression);
 			else
 				preString = inputStr.replaceFirst(subStr, newExpression);
 
-			// get YacasString
-			String yacasString = null;
-			try {
-				yacasString = cas.toMathPiperString(cas.parseGeoGebraCASInput(preString), false);
-			}
-			catch (Throwable th) {
-				th.printStackTrace();
-				return;
-			}
+//			// get YacasString
+//			String yacasString = null;
+//			try {
+//				GeoGebraCAS cas = casView.getCAS();
+//				yacasString = cas.toMathPiperString(cas.parseGeoGebraCASInput(preString), false);
+//			}
+//			catch (Throwable th) {
+//				th.printStackTrace();
+//				return;
+//			}
 			
-			value.setCommand(yacasString);
-			table.insertRow(editRow, CASPara.contCol, value);
+			newRow.setInput(preString);
+			table.insertRow(editRow, CASPara.contCol, newRow);
 			break;
 		default:
 			break;

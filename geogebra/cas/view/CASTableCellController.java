@@ -227,10 +227,10 @@ public class CASTableCellController implements KeyListener {
 		
 		if (evaluation != null)	{
 			curValue.setOutput(evaluation);
-			tableCellEditor.setOutput(evaluation);
+			tableCellEditor.setOutput(evaluation, false);
 		} else {
 			curValue.setOutput(error);
-			tableCellEditor.setOutput(error);			
+			tableCellEditor.setOutput(error, true);			
 		}
 
 		// We enlarge the height of the selected row
@@ -243,7 +243,7 @@ public class CASTableCellController implements KeyListener {
 		
 		// TODO: remove
 		System.out.println(selectedRow + " Value Updated: "
-				+ newValue.getCommand() + newValue.getOutput());
+				+ newValue.getInput() + newValue.getOutput());
 
 		// update the cell appearance
 		//SwingUtilities.updateComponentTreeUI(curCell);
@@ -269,7 +269,7 @@ public class CASTableCellController implements KeyListener {
 	 */
 	public void saveInput(CASTableCellValue curValue) {
 		String inputText = tableCellEditor.getInput();
-		curValue.setCommand(inputText);
+		curValue.setInput(inputText);
 		tableCellEditor.setInput(inputText);
 	}
 

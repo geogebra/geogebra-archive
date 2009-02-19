@@ -16,6 +16,9 @@ import javax.swing.*;
  * 
  */
 public class CASOutputPanel extends JPanel {
+	
+	private static Color TEXT_COLOR = Color.gray;
+	private static Color ERROR_COLOR = Color.red;
 
 	private JLabel outputSign = new JLabel("<<");
 	// private JTextField outputArea;
@@ -43,14 +46,18 @@ public class CASOutputPanel extends JPanel {
 		gridbag.setConstraints(outputArea, c);
 		this.add(Box.createRigidArea(new Dimension(5, 2)));
 
-		outputArea.setForeground(Color.gray);
+		outputArea.setForeground(TEXT_COLOR);
 		this.add(outputArea);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBackground(Color.white);
 	}
 
-	public void setOutput(String inValue) {
+	public void setOutput(String inValue, boolean showsError) {
 		outputArea.setText(inValue);
+		if (showsError)
+			outputArea.setForeground(ERROR_COLOR);
+		else
+			outputArea.setForeground(TEXT_COLOR);			
 	}
 
 	public String getOutput() {

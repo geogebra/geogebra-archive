@@ -20,7 +20,7 @@ public class CASTableCellRender extends CASTableCell implements
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
 		if (value instanceof CASTableCellValue) {
-			setFont(app.getPlainFont());
+			
 			CASTableCellValue tempV = (CASTableCellValue) value;
 			
 			
@@ -30,11 +30,12 @@ public class CASTableCellRender extends CASTableCell implements
 			// Application.debug("OutputArea: " +
 			// tempV.getOutputAreaInclude());
 			// tempV.isBBorderVisible();
-			String tempIn = tempV.getCommand();
+			String tempIn = tempV.getInput();
 			String tempOut = tempV.getOutput();
 			
 			setInput(tempIn);
-			setOutput(tempOut);
+			setOutput(tempOut, tempV.isOutputError());	
+			setFont(app.getPlainFont());
 		}
 		return this;
 	}

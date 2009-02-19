@@ -1,30 +1,23 @@
 package geogebra.cas.view;
 
-import geogebra.util.Util;
 
 public class CASTableCellValue {
-	private String command;
+	private String input;
 	private String output;
 	private boolean isOutputVisible;
+	private boolean error = false;
 
 	// private boolean isLineBorderVisible;
 
 	public CASTableCellValue() {
-		command = new String("");
-		output = new String("");
+		input = "";
+		output = "";
 		isOutputVisible = false;
 		// isLineBorderVisible = false;
-	}
-
-	public CASTableCellValue(String inCom, String inOut) {
-		command = new String(inCom);
-		output = new String(inOut);
-		isOutputVisible = false;
-		// isLineBorderVisible = false;
-	}
+	}	
 
 	public CASTableCellValue(String inCom) {
-		command = new String(inCom);
+		input = new String(inCom);
 		output = new String("");
 		isOutputVisible = false;
 		// isLineBorderVisible = false;
@@ -35,8 +28,8 @@ public class CASTableCellValue {
 		// isLineBorderVisible = false;
 	}
 
-	public String getCommand() {
-		return command;
+	public String getInput() {
+		return input;
 	}
 
 	public String getOutput() {
@@ -51,12 +44,21 @@ public class CASTableCellValue {
 	// return isLineBorderVisible;
 	// }
 
-	public void setCommand(String inValue) {
-		command = inValue;
+	public void setInput(String inValue) {
+		input = inValue;
 	}
 
 	public void setOutput(String inValue) {
+		setOutput(inValue, false);
+	}
+	
+	public void setOutput(String inValue, boolean isError) {
 		output = inValue;
+		error = true;
+	}
+	
+	public boolean isOutputError() {
+		return error;
 	}
 
 	public void setOutputAreaInclude(boolean inV) {
@@ -74,10 +76,10 @@ public class CASTableCellValue {
 		sb.append("\t\t\t");
 		sb.append("<expression");
 		sb.append(" value=\"");
-		sb.append(this.getCommand());
+		sb.append(this.getInput());
 		sb.append("\"/>\n");
-		sb.append("\t\t\t");
-		sb.append("<color r=\"0\" g=\"1\" b=\"0\"/>\n");
+//		sb.append("\t\t\t");
+//		sb.append("<color r=\"0\" g=\"1\" b=\"0\"/>\n");
 		sb.append("\t\t");
 		sb.append("</inputCell>\n");
 
@@ -90,8 +92,8 @@ public class CASTableCellValue {
 			sb.append(" value=\"");
 			sb.append(this.getOutput());
 			sb.append("\"/>\n");
-			sb.append("\t\t\t");
-			sb.append("<color r=\"0\" g=\"1\" b=\"0\"/>\n");
+//			sb.append("\t\t\t");
+//			sb.append("<color r=\"0\" g=\"1\" b=\"0\"/>\n");
 			sb.append("\t\t");
 			sb.append("</outputCell>\n");
 		}

@@ -57,7 +57,7 @@ public class CASMouseController implements MouseListener {
 						.getComponentAt(e.getPoint());
 				
 				CASTableCellValue newValue = new CASTableCellValue();
-				newValue.setCommand(clickedCell.getOutput());
+				newValue.setInput(clickedCell.getOutput());
 				consoleTable.insertRow(rowI, CASPara.contCol, newValue);
 			}
 		}
