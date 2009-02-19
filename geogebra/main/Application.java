@@ -1987,25 +1987,8 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	private static JFrame createCasFrame(final CasManager casView) {
-		JFrame spFrame = new JFrame();
-		
-		JComponent casViewComp = casView.getCASViewComponent();
-
-		// Button
-		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		btPanel.add(casView.createButton(casViewComp, 0));
-		btPanel.add(casView.createButton(casViewComp, 1));
-		btPanel.add(casView.createButton(casViewComp, 2));
-		btPanel.add(casView.createButton(casViewComp, 3));
-
-		Container contentPane = spFrame.getContentPane();
-		contentPane.setLayout(new BorderLayout());
-		
-		// TODO: ADD BUTTON PANEL AGAIN
-		//contentPane.add(btPanel, BorderLayout.NORTH);
-		
-		
-		contentPane.add(casViewComp, BorderLayout.CENTER);
+		JFrame spFrame = new JFrame();		
+		spFrame.add(casView.getCASViewComponent());	
 		spFrame.setBackground(Color.white);
 		spFrame.setResizable(true);
 		spFrame.setTitle("GeoGebra CAS");
