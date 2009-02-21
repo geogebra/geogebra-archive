@@ -1922,9 +1922,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	}
 	
 	private String footnotesize(String s){
-		if (format==GeoGebraToPgf.FORMAT_LATEX)	return "\\footnotesize "+s;
-		else if (format==GeoGebraToPgf.FORMAT_CONTEXT) return "\\tfx "+s;  
-		else if (format==GeoGebraToPgf.FORMAT_PLAIN_TEX) return s;
+		if (format==GeoGebraToPgf.FORMAT_LATEX)	return "\\footnotesize $"+s+"$";
+		else if (format==GeoGebraToPgf.FORMAT_CONTEXT) return "\\tfx $"+s+"$";  
+		else if (format==GeoGebraToPgf.FORMAT_PLAIN_TEX) return "$"+s+"$";
 		return s;
 		
 	}
