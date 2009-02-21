@@ -168,6 +168,13 @@ public class Kernel3D
 		return t;
 	}	
 	
+	/** Polygon3D label linking points P1, P2, ...  */
+	final public GeoPolygon3D Polygon3D(String label, GeoPoint3D[] points){
+		//TODO use algo
+		GeoPolygon3D p = new GeoPolygon3D(cons, points);
+		return p;
+	}	
+	
 	
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */

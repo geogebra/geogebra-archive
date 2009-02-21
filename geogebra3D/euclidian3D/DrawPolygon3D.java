@@ -25,7 +25,8 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 	//drawing
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
-		renderer.drawTriangle();
+		//renderer.drawTriangle();
+		renderer.drawPolygon(new double[][] {{0,0,0},{1,0,0},{0,1,0}});
 	}
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
 		drawGeometry(renderer);

@@ -393,17 +393,19 @@ public class Test3D{
 	
 	private void testPolygon(){
 
-		GeoPoint3D P = testPoint(-0.5f,-0.5f,0f);
-		P.setLabel("P");
+		//GeoPoint3D P = testPoint(-0.5f,-0.5f,0f);P.setLabel("P");		
+		//kernel3D.From3Dto2D("truc", P, xOyPlane);
 		
-		/*
-		GeoPlane3D p = kernel3D.Plane3D("plane",
-				new Ggb3DVector(new double[] {0,0,0,1}),
-				new Ggb3DVector(new double[] {1,0,0,0}),
-				new Ggb3DVector(new double[] {0,1,0,0}));
-				*/
 		
-		kernel3D.From3Dto2D("truc", P, xOyPlane);
+		GeoPoint3D[] points = new GeoPoint3D[4];
+		points[0] = testPoint(-1f,0f,0f);
+		points[1] = testPoint(-1f,0.5f,0f);
+		points[2] = testPoint(-1.5f,0.5f,0f);
+		points[3] = testPoint(-1.5f,0f,0f);
+		
+		kernel3D.Polygon3D("poly", points);
+		
+		
 	}
 
 	private void testRay3D(){

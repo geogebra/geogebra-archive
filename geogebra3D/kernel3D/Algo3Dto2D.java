@@ -28,7 +28,8 @@ public class Algo3Dto2D extends AlgoElement3D {
 
 		switch(geo3D.getGeoClassType()){
 		case GeoElement3D.GEO_CLASS_POINT3D:
-			geo = new GeoPoint(c);
+			//TODO geo = new GeoPoint(c);
+			geo = new GeoPoint(c,"to2D",0,0,1);
 			break;
 		default:
 			break;
@@ -69,8 +70,7 @@ public class Algo3Dto2D extends AlgoElement3D {
 	}
 
 	protected String getClassName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "to2D";
 	}
 	
 	public GeoElement getGeo(){

@@ -27,6 +27,7 @@ public class GeoPolygon3D extends GeoCoordSys2D {
 		this.setCoord(points[0], points[1], points[2]);
 		
 		
+		points2D = new GeoPoint[points.length];
 		Algo3Dto2D algo;
 		for(int i=0;i<points.length;i++){
 			algo = new Algo3Dto2D(this.cons,points[i],this);
