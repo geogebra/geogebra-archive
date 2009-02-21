@@ -146,6 +146,10 @@ public abstract class Application3D extends Application{
  
     }  
     
+    
+    //TODO
+	public void storeUndoInfo() {}
+    
  
     	
 }

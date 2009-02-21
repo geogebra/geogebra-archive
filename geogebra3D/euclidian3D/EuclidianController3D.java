@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DMatrix;
@@ -24,6 +25,9 @@ import java.awt.event.MouseWheelListener;
 
 public class EuclidianController3D extends EuclidianController
 implements MouseListener, MouseMotionListener, MouseWheelListener{
+
+
+
 
 	static final boolean DEBUG = false; //conditionnal compilation
 	
@@ -50,8 +54,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	protected EuclidianView3D view3D; //TODO move to EuclidianViewInterface
-	protected Kernel3D kernel3D;
-	protected Application3D app3D;
+	//protected Kernel3D kernel3D;
+	//protected Application3D app3D;
 	
 	
 	
@@ -87,15 +91,18 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 
 	
-
+	/*
 	public EuclidianController3D(Kernel3D kernel3D) {
 		super(kernel3D);
 		this.kernel3D = kernel3D;
-		app3D = kernel3D.getApplication3D();
+		//app3D = kernel3D.getApplication3D();
 		
 	}
+	*/
 	
-	
+	public EuclidianController3D(Kernel kernel) {
+		super(kernel);
+	}
 	
 	
 	void setView(EuclidianView3D view) {
@@ -105,11 +112,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
-	
-	
-	public Kernel3D getKernel3D() {
-		return kernel3D;
-	}
 	
 	
 	
@@ -277,7 +279,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			view3D.setZZero(view3D.getZZero()+ r/10.0);
 			view3D.updateMatrix();
 			//view.update();
-			kernel3D.notifyRepaint();
+			((Kernel3D) getKernel()).notifyRepaint();
 			break;
 
 		case MOVE_POINT:

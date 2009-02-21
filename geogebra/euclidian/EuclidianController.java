@@ -228,8 +228,8 @@ public class EuclidianController implements MouseListener,
 
 	/** Creates new EuclidianController */
 	public EuclidianController(Kernel kernel) {
-		this.kernel = kernel;
-		app = kernel.getApplication();
+		setKernel(kernel);
+		setApplication(kernel.getApplication());
 
 		// for tooltip manager
 		DEFAULT_INITIAL_DELAY = ToolTipManager.sharedInstance()
@@ -237,12 +237,21 @@ public class EuclidianController implements MouseListener,
 		
 		tempNum = new MyDouble(kernel);
 	}
-
-	Application getApplication() {
-		return app;
+	
+	
+	public void setApplication(Application app) {
+		this.app=app;
 	}
 
-	Kernel getKernel() {
+	public Application getApplication() {
+		return app;
+	}
+	
+	public void setKernel(Kernel kernel) {
+		this.kernel=kernel;
+	}
+	
+	public Kernel getKernel() {
 		return kernel;
 	}
 
