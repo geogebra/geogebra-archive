@@ -20,6 +20,8 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
+import javax.media.opengl.glu.GLUtessellator;
+import javax.media.opengl.glu.GLUtessellatorCallback;
 
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.FPSAnimator;
@@ -209,6 +211,20 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ///////////////////////////////////////////////////
+    //
+    // pencil methods
+    //
+    /////////////////////////////////////////////////////
     
     
     //material
@@ -480,7 +496,47 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     
+    
+    // test method
+    public void drawPolygon(double[][] points){    	
+    	initMatrix();
+    	
+    	gl.glDisable(GL.GL_CULL_FACE);
+    	
+    	
+	    EuclidianRenderer3DTesselCallBack tessCallback = new EuclidianRenderer3DTesselCallBack(gl, glu);
+
+	    
+	    GLUtessellator tobj = glu.gluNewTess();
+
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
+
+	    gl.glShadeModel(GL.GL_SMOOTH);
+	    glu.gluTessBeginPolygon(tobj, null);
+	    glu.gluTessBeginContour(tobj);
+	    
+	    for (int i=0;i<points.length;i++)
+	    	glu.gluTessVertex(tobj, points[i], 0, points[i]);
+
+	    glu.gluTessEndContour(tobj);
+	    glu.gluTessEndPolygon(tobj);
+	    
+	    glu.gluDeleteTess(tobj);
+        
+	   	gl.glEnable(GL.GL_CULL_FACE);
+      
+        resetMatrix();
+    }
+    
+    
     private void drawQuad(){    	
+ 
+       	gl.glDisable(GL.GL_CULL_FACE);
+ 	
     	
         gl.glBegin(GL.GL_QUADS);	
         
@@ -489,16 +545,30 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glVertex3f(1.0f, 0.0f, 0.0f);	
         gl.glVertex3f(1.0f, 1.0f, 0.0f);	
         gl.glVertex3f(0.0f, 1.0f, 0.0f);
-                
-        gl.glNormal3f(0.0f, 0.0f, -1.0f);
-        gl.glVertex3f(0.0f, 0.0f, 0.0f);	
-        gl.glVertex3f(0.0f, 1.0f, 0.0f);
-        gl.glVertex3f(1.0f, 1.0f, 0.0f);	
-        gl.glVertex3f(1.0f, 0.0f, 0.0f);	
-        
+              
         gl.glEnd();		
         
+	   	gl.glEnable(GL.GL_CULL_FACE);
+       
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -610,7 +680,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     /** returns the depth between 0 and 2, in double format, from an integer offset 
      *  lowest is depth, nearest is the object
      * */
-    public float getDepth(int ptr){
+    private float getDepth(int ptr){
     	/*
     	long depth = (long) selectBuffer.get(ptr); // large -ve number
     	return (1.0f + ((float) depth / 0x7fffffff));
@@ -632,6 +702,12 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    
+    
+    
+    
+    
+    
     //////////////////////////////////
     // initializations
     
@@ -647,6 +723,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         //light
         float pos[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+        //float pos[] = { 0.0f, 0.0f, 1.0f, 0.0f };
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);        
         gl.glEnable(GL.GL_LIGHTING);     
         gl.glEnable(GL.GL_LIGHT0);
