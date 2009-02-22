@@ -1506,7 +1506,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		double Dx=euclidianView.getAxesNumberingDistances()[0];
 		double Dy=euclidianView.getAxesNumberingDistances()[1];
 		String[] label=euclidianView.getAxesLabels();
-		codeBeginPic.append("\\psaxes[xAxis=");
+		codeBeginPic.append("\\psaxes[labelFontSize=\\scriptstyle,xAxis=");
 		codeBeginPic.append(xAxis);
 		codeBeginPic.append(",yAxis=");
 		codeBeginPic.append(yAxis);
