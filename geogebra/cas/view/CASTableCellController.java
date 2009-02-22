@@ -136,8 +136,12 @@ public class CASTableCellController implements KeyListener {
 		String evaluation = null;
 		String error = null;
 		try {
+			// Enter: evaluate
+			// Shift + Enter: do not evaluate, only check syntax of input
+			boolean evaluate = !e.isShiftDown();
+			
 			// provess input string
-			evaluation = ggbCAS.processCASInput(inputText, e.isShiftDown(), view.isUseGeoGebraVariableValues());
+			evaluation = ggbCAS.processCASInput(inputText, evaluate, view.isUseGeoGebraVariableValues());
 			
 			if (evaluation == null)
 				error = ggbCAS.getMathPiperError();
