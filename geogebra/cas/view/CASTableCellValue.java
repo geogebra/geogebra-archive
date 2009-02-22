@@ -4,7 +4,6 @@ package geogebra.cas.view;
 public class CASTableCellValue {
 	private String input;
 	private String output;
-	private boolean isOutputVisible;
 	private boolean error = false;
 
 	// private boolean isLineBorderVisible;
@@ -12,20 +11,11 @@ public class CASTableCellValue {
 	public CASTableCellValue() {
 		input = "";
 		output = "";
-		isOutputVisible = false;
-		// isLineBorderVisible = false;
 	}	
 
 	public CASTableCellValue(String inCom) {
-		input = new String(inCom);
-		output = new String("");
-		isOutputVisible = false;
-		// isLineBorderVisible = false;
-	}
-
-	public void initialize() {
-		isOutputVisible = false;
-		// isLineBorderVisible = false;
+		input = inCom;
+		output = "";
 	}
 
 	public String getInput() {
@@ -37,12 +27,12 @@ public class CASTableCellValue {
 	}
 
 	public boolean isOutputVisible() {
-		return isOutputVisible;
+		return output == null || output.length() == 0;
 	}
-
-	// public boolean isLineBorderVisible( ){
-	// return isLineBorderVisible;
-	// }
+	
+	public boolean isEmpty() {
+		return (output == null || output.length() == 0) && (input == null || input.length() == 0);
+	}
 
 	public void setInput(String inValue) {
 		input = inValue;
@@ -54,15 +44,11 @@ public class CASTableCellValue {
 	
 	public void setOutput(String inValue, boolean isError) {
 		output = inValue;
-		error = true;
+		error = isError;
 	}
 	
 	public boolean isOutputError() {
 		return error;
-	}
-
-	public void setOutputAreaInclude(boolean inV) {
-		isOutputVisible = inV;
 	}
 
 	// generate the XML file for this CASTableCellValue
@@ -78,13 +64,11 @@ public class CASTableCellValue {
 		sb.append(" value=\"");
 		sb.append(this.getInput());
 		sb.append("\"/>\n");
-//		sb.append("\t\t\t");
-//		sb.append("<color r=\"0\" g=\"1\" b=\"0\"/>\n");
 		sb.append("\t\t");
 		sb.append("</inputCell>\n");
 
 		// outputCell
-		if (isOutputVisible) {
+		if (isOutputVisible()) {
 			sb.append("\t\t");
 			sb.append("<outputCell>\n");
 			sb.append("\t\t\t");
@@ -92,8 +76,6 @@ public class CASTableCellValue {
 			sb.append(" value=\"");
 			sb.append(this.getOutput());
 			sb.append("\"/>\n");
-//			sb.append("\t\t\t");
-//			sb.append("<color r=\"0\" g=\"1\" b=\"0\"/>\n");
 			sb.append("\t\t");
 			sb.append("</outputCell>\n");
 		}

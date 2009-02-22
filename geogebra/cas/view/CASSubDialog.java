@@ -57,14 +57,21 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		this.casView = casView;
 		this.app = casView.getApp();
 		this.cellValue = cellValue;
+		inputStr = cellValue.getInput();
 		this.subStr = subStr;
+		
+		// TODO: remove
+		System.out.println("inputStr: " + inputStr);
+		System.out.println("subStr: " + subStr);
+		
+		
 		this.editRow = editRow;
 		selectedEnabled = true;
 
 		replaceAllFlag = false;
 		createGUI(app.getMenu("SubstituteDialog"));
 		pack();
-		setLocationRelativeTo(app.getMainComponent());
+		setLocationRelativeTo(null);
 	}
 
 	protected void createGUI(String title) {
@@ -73,12 +80,11 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 
 		// create label panel
 		JPanel subTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		if (subStr != null) {
-			JLabel subLabel = new JLabel(app.getPlain("SubstituteForAinB",
-					subStr, inputStr));
+		selectedEnabled = subStr != null && subStr.trim().length() > 0;
+		if (selectedEnabled) {
+			JLabel subLabel = new JLabel(app.getPlain("SubstituteForAinB", subStr, inputStr));
 			subTitlePanel.add(subLabel);
-		} else {
-			selectedEnabled = false;
+		} else {			
 			String temp = app.getPlain("SubstituteForAinB",
 					"QuanIsGreat", inputStr);
 			String[] strLabel = temp.split("QuanIsGreat");
@@ -104,14 +110,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		captionPanel.add(subTitlePanel, BorderLayout.CENTER);
 		captionPanel.add(subPanel, BorderLayout.SOUTH);
 
-		// create checkbox panel
-		if (subStr != null)
-			allReplaced = new Checkbox(app
-					.getPlain("SubstituteforAllA", subStr));
-		else
-			allReplaced = new Checkbox(app.getPlain("SubstituteforAllA", "..."));
-		cbPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		cbPanel.add(allReplaced);
+		
 
 		// buttons
 		btSub = new JButton(app.getPlain("Substitute"));
@@ -136,9 +135,18 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 
 		// create object list
 		optionPane.add(captionPanel, BorderLayout.NORTH);
-		optionPane.add(cbPanel, BorderLayout.CENTER);
+		
 		optionPane.add(btPanel, BorderLayout.SOUTH);
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		
+		// create checkbox panel
+		if (selectedEnabled) {
+			allReplaced = new Checkbox(app
+					.getPlain("SubstituteforAllA", subStr));		
+			cbPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+			cbPanel.add(allReplaced);
+			optionPane.add(cbPanel, BorderLayout.CENTER);
+		}
 
 		// Make this dialog display it.
 		setContentPane(optionPane);
@@ -159,12 +167,11 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 	}
 
 	private void apply(int mod) {
-		String newExpression = valueTextField.getText();
+		String newExpression = " " + valueTextField.getText().trim() + " ";
 		CASTable table = casView.getConsoleTable();
 	
-		if (allReplaced.getState())
-			replaceAllFlag = true;
-
+		replaceAllFlag = allReplaced == null || allReplaced.getState();
+		
 		if (!selectedEnabled) {
 			subStr = subStrfield.getText();
 		}
@@ -184,7 +191,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 			else
 				newRow.setInput(inputStr.replaceFirst(subStr, newExpression));
 
-			table.insertRow(editRow, CASPara.contCol, newRow);
+			table.insertRowAfter(editRow, newRow);
 			break;
 			
 		case SUBSIM:
@@ -209,7 +216,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 //			}
 			
 			newRow.setInput(preString);
-			table.insertRow(editRow, CASPara.contCol, newRow);
+			table.insertRowAfter(editRow, newRow);
 			break;
 		default:
 			break;

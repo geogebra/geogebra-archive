@@ -66,34 +66,24 @@ public class CASContextMenuRow extends JPopupMenu {
 
 	private class ActionListenerInsertAbove implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			int columns = table.getModel().getColumnCount();
-			System.out.println("InsertAbove Action Performed " + (row1 - 1));
-
-			table.insertRow(row1 - 1, 0, null);
+			table.insertRowAfter(row1 - 1, null);
 		}
 	}
 
 	private class ActionListenerInsertBelow implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			int columns = table.getModel().getColumnCount();
-			System.out.println("InsertBelow Action Performed " + row1);
-			table.insertRow(row1, 0, null);
+			table.insertRowAfter(row1, null);
 		}
 	}
 
 	private class ActionListenerClear implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Clear Action Performed");
-
-			System.out.println("Selected number of rows (key) is: "
-					+ table.getSelectedRowCount());
 			int[] delRows = table.getSelectedRows();
 			int delRowsSize = delRows.length;
 			int i = 0;
 			while (i < delRowsSize) {
 				int delRow = delRows[i];
 				table.deleteRow(delRow - i);
-				System.out.println("MOuse Delete row : " + delRow);
 				i++;
 			}
 		}

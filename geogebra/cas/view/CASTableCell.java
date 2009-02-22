@@ -2,115 +2,68 @@ package geogebra.cas.view;
 
 import geogebra.main.Application;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.text.JTextComponent;
 
-public class CASTableCell extends JPanel {
-	// implements FocusListener {
+public abstract class CASTableCell extends JPanel {
 
-	// Components in a cell
 	private CASInputPanel inputPanel;
-
 	private CASOutputPanel outputPanel;
-
 	private CASLinePanel linePanel;
-
 	private CASTable consoleTable;
-
-	private boolean lineVisiable;
-	
-	private boolean outputFieldVisiable;
-
 	protected Application app;
 
-	public CASTableCell(CASView view, CASTable consoleTable, Application app) {
-
-		this.app = app;
-
+	public CASTableCell(CASView view) {
+		this.app = view.getApp();
+		this.consoleTable = view.getConsoleTable();
+		
 		inputPanel = new CASInputPanel();
 		outputPanel = new CASOutputPanel();
 		linePanel = new CASLinePanel();
+		setInput("");
+		setOutput("", false);			
 
-		this.consoleTable = consoleTable;
-		lineVisiable = false;
-		outputFieldVisiable = true;
-
-		this.setInput("");
-		this.setOutput("", false);
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-		this.add(inputPanel);
-		this.add(linePanel);
-		this.setBorder(BorderFactory.createEmptyBorder());
-		this.setBackground(Color.white);
-
-		setFont(app.getPlainFont());
+		setLayout(new BorderLayout(5, 5));
+		setBackground(Color.white);
+		add(inputPanel, BorderLayout.NORTH);
+		add(outputPanel, BorderLayout.CENTER);
+		add(linePanel, BorderLayout.SOUTH);	
 		return;
 	}
 
-	public void removeOutputPanel() {
-		if (outputFieldVisiable) {
-			this.remove(outputPanel);
-			outputFieldVisiable = false;
-			this.validate();
-		}
-	}
-
-	public void addOutputPanel() {
-		if (!outputFieldVisiable) {
-			// Application.debug("Add Output panel");
-			this.remove(linePanel);
-
-			this.add(outputPanel);
-			this.add(linePanel);
-			outputFieldVisiable = true;
-			this.validate();
-		}
-	}
-
-	public void removeLine() {
-
-		// this.validate();
-		SwingUtilities.updateComponentTreeUI(this);
-
-		linePanel.setLineVisiable(false);
-		lineVisiable = false;
-	}
-
-	public void addLine() {
-
-		linePanel.setLineVisiable(true);
-		lineVisiable = true;
-		this.validate();
-	}
-
 	public void setInput(String inValue) {
-		this.inputPanel.setInput(inValue);
+		inputPanel.setInput(inValue);
 	}
 
 	public void setOutput(String inValue, boolean isError) {
-		this.outputPanel.setOutput(inValue, isError);
-		if (inValue == null || inValue.length() == 0)
-			this.removeOutputPanel();
-		else
-			this.addOutputPanel();
+		outputPanel.setOutput(inValue, isError);
+		boolean showOutputPanel = (inValue == null || inValue.length() == 0);
+		// TODO: check
+		//outputPanel.setVisible(showOutputPanel);
+		
+		//		if (showOutputPanel)
+		//			this.removeOutputPanel();
+		//		else
+		//			this.addOutputPanel();
 	}
+	
+	void updateTableRowHeight(JTable table, int row) {
+		if (isVisible()) {
+			Dimension prefSize = getPreferredSize();
 
-	/*
-	 * Function: set the line unhighlighted, and return a proper cell height
-	 */
-	public void setLineInvisiable() {
-		lineVisiable = false;
-		this.removeLine();
-	}
-
-	public boolean isLineVisiable() {
-		return lineVisiable;
+			if (prefSize != null) {
+				setSize(prefSize);
+				if (table.getRowHeight(row) != prefSize.height)
+					table.setRowHeight(row, prefSize.height);
+			}
+		}
 	}
 
 	public String getInput() {
@@ -121,32 +74,15 @@ public class CASTableCell extends JPanel {
 		return outputPanel.getOutput();
 	}
 
-	public CASTable getConsoleTable() {
-		return consoleTable;
-	}
-
-	public boolean isOutputPanelAdded() {
-		return outputFieldVisiable;
-	}
-
 	public void setInputAreaFocused() {
 		inputPanel.setInputAreaFocused();
-		inputPanel.setInputCaretPosition(inputPanel.getInput().length());
-	}
-
-	public void setLineBorderFocus() {
-		linePanel.requestFocus();
-	}
+	}	
 
 	public CASLinePanel getLinePanel() {
 		return linePanel;
 	}
-
-	public CASInputPanel getInputPanel() {
-		return inputPanel;
-	}
-
-	public JTextField getInputArea() {
+	
+	public JTextComponent getInputArea() {
 		return inputPanel.getInputArea();
 	}
 
@@ -154,12 +90,9 @@ public class CASTableCell extends JPanel {
 		return (CASTableModel) consoleTable.getModel();
 	}
 
-	public void setOutputFieldVisiable(boolean outputFieldVisiable) {
-		this.outputFieldVisiable = outputFieldVisiable;
-	}
-
 	final public void setFont(Font ft) {
-		super.setFont(ft);
+		if (ft == null) return;
+		
 		if (inputPanel != null)
 			inputPanel.setFont(ft);
 		if (outputPanel != null)

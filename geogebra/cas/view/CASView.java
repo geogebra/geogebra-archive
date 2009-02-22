@@ -1,6 +1,9 @@
 package geogebra.cas.view;
 
 import geogebra.cas.GeoGebraCAS;
+import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.gui.view.spreadsheet.SpreadsheetView.MyListModel;
+import geogebra.gui.view.spreadsheet.SpreadsheetView.RowHeaderRenderer;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.CasManager;
@@ -8,7 +11,6 @@ import geogebra.main.CasManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -23,15 +25,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -57,9 +60,8 @@ public class CASView extends JComponent implements CasManager {
 	
 	private CASTable consoleTable;
 
-	// public JList rowHeader;
-
-	public JTable rowHeaderTable;
+	public JList rowHeader;
+	
 
 	public static final int ROW_HEADER_WIDTH = 30;
 
@@ -104,8 +106,7 @@ public class CASView extends JComponent implements CasManager {
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		// put the table and the row header list into a scroll plane
 
-		// scrollPane.setRowHeaderView(rowHeader);
-		scrollPane.setRowHeaderView(rowHeaderTable);
+		scrollPane.setRowHeaderView(rowHeader);
 		scrollPane.setViewportView(consoleTable);
 
 		// put the scrollpanel in 
@@ -115,6 +116,19 @@ public class CASView extends JComponent implements CasManager {
 	}			
 
 	private void createRowHeader() {
+		// row header list
+		MyListModel listModel = new MyListModel((DefaultTableModel) consoleTable.getModel());
+		rowHeader = new JList(listModel);
+		rowHeader.setFocusable(true);		
+		rowHeader.addMouseListener(new RowHeaderMouseListener());
+		//rowHeader.setFixedCellWidth(MyTable.TABLE_CELL_WIDTH);
+		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
+		//rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
+		RowHeaderRenderer rowHeaderRenderer = new RowHeaderRenderer(consoleTable, rowHeader);
+		rowHeader.setCellRenderer(rowHeaderRenderer);
+		// put the table and the row header list into a scroll plane				
+		
+		/*
 
 		// Option 1 ---- Implement rowheader with JTable
 
@@ -141,6 +155,7 @@ public class CASView extends JComponent implements CasManager {
 		rowHeaderTable.setPreferredScrollableViewportSize(new Dimension(
 				rowHeaderTable.getColumnModel().getColumn(0)
 						.getPreferredWidth(), 0));
+						*/
 
 		// Option 2 ---- Implement rowheader with JList
 		/*
@@ -159,25 +174,14 @@ public class CASView extends JComponent implements CasManager {
 	}
 
 	private void createCASTable() {
-		consoleTable = new CASTable(app);
-		consoleTable.initializeTable(numOfRows, app);
-
-		// Set the property of the value column;
-		consoleTable.getColumnModel().getColumn(CASPara.contCol)
-				.setCellRenderer(
-						new CASTableCellRender(this, consoleTable, app));
-		consoleTable.getColumnModel().getColumn(CASPara.contCol).setCellEditor(
-				new CASTableCellEditor(this, consoleTable, app));
-		consoleTable.getColumnModel().getColumn(CASPara.contCol)
-				.setHeaderValue("");
-
-		// CAScontroller
-		// CASKeyController casKeyCtrl = new CASKeyController(this, session,
-		// consoleTable);
-		// consoleTable.addKeyListener(casKeyCtrl);
+		consoleTable = new CASTable(this, numOfRows);
+		
+		CASTableCellController inputListener = new CASTableCellController(this);
+		consoleTable.getEditor().getInputArea().addKeyListener(inputListener);
+		consoleTable.addKeyListener(inputListener);
+			
 		consoleTable.addKeyListener(new ConsoleTableKeyListener());
-		CASMouseController casMouseCtrl = new CASMouseController(this,
-				consoleTable);
+		CASMouseController casMouseCtrl = new CASMouseController(consoleTable);
 		consoleTable.addMouseListener(casMouseCtrl);
 	}
 
@@ -345,8 +349,8 @@ public class CASView extends JComponent implements CasManager {
 			// System.out.println("focus owner: " + compFocusOwner);
 			System.out.println("consoleTable has Focus: "
 					+ consoleTable.isFocusOwner());
-			System.out.println("rowHeaderTable has Focus: "
-					+ rowHeaderTable.isFocusOwner());
+			System.out.println("rowHeader has Focus: "
+					+ rowHeader.isFocusOwner());
 
 			// TODO: remive the left click handling here and just set the
 			// selection model once when the consoleTable is created
@@ -412,112 +416,63 @@ public class CASView extends JComponent implements CasManager {
 
 	}
 
-	public class RowHeaderTableRenderer extends JLabel implements
-			TableCellRenderer, ListSelectionListener
-
-	{
-
-		JTable reftable;
-		protected JTableHeader header;
-		protected ListSelectionModel selectionModel;
-
-		public RowHeaderTableRenderer(JTable reftable)
-
-		{
-
-			this.reftable = reftable;
-			header = reftable.getTableHeader();
-
-			reftable.getSelectionModel().addListSelectionListener(this);
+	class RowHeaderRenderer extends JLabel implements ListCellRenderer, ListSelectionListener {
+		
+    	private static final long serialVersionUID = 1L;
+    	
+    	protected JTableHeader header;
+    	protected JList rowHeader;
+    	protected ListSelectionModel selectionModel;
+    	private Color defaultBackground;
+    	//private JLabel headerText;
+	
+		public RowHeaderRenderer(JTable table, JList rowHeader) {
+			super("", JLabel.CENTER);
+    		setOpaque(true);
+    		defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
+			
+			this.rowHeader = rowHeader;
+			header = table.getTableHeader() ;
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
+			table.getSelectionModel().addListSelectionListener(this);
 		}
-
-		public Component getTableCellRendererComponent(JTable table,
-				Object obj, boolean isSelected, boolean hasFocus, int row,
-				int col)
-
-		{
-
-			CASTableModel casTableModel = (CASTableModel) table.getModel();
-
-			CASTableCellValue cellValue = (CASTableCellValue) casTableModel
-					.getValueAt(row, col);
-
-			if (cellValue.isOutputVisible())
-				table.setRowHeight(row, CASPara.inputOutputHeight);
-			else
-				table.setRowHeight(row, CASPara.inputLineHeight);
-
-			JTableHeader header = reftable.getTableHeader();
-
-			this.setOpaque(true);
-
-			/* Set the border of TableHeader */
-
-			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-
-			setHorizontalAlignment(CENTER);
-
-			setBackground(header.getBackground());
-
-			Font font = header.getFont();
-
-			if (isSelect(row)) /* if seleted, set the color of row header */
-
-			{
-
-				setForeground(Color.white);
-
-				setBackground(Color.LIGHT_GRAY);
-
-				setFont(font);
-
-				setText(String.valueOf(row + 1));
-
+	
+		public Component getListCellRendererComponent(JList list, Object value,	int index, boolean  isSelected, boolean cellHasFocus) {
+			setText ((value == null) ? ""  : value.toString());
+			setFont(app.getPlainFont());
+			
+			if (minSelectionRow != -1 && maxSelectionRow != -1) {
+				if (index >= minSelectionRow && index <= maxSelectionRow &&
+						selectionModel.isSelectedIndex(index)) 
+				{
+					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
+				}
+				else {			
+					setBackground(defaultBackground);
+				}
 			}
-
-			else
-
-			{
-
-				setForeground(header.getForeground());
-
-				setFont(font);
-
-				setText(String.valueOf(row + 1));
-
+			else {
+				setBackground(defaultBackground);
+			}						 
+						
+			Dimension prefSize = getPreferredSize();
+			int height = consoleTable.getRowHeight(index);			
+			if (height != prefSize.height) {
+				prefSize.height = height;
+				setSize(prefSize);
+				setPreferredSize(prefSize);
 			}
-
 			return this;
-
 		}
-
-		private boolean isSelect(int row)
-
-		{
-
-			int[] sel = reftable.getSelectedRows();
-
-			for (int i = 0; i < sel.length; i++)
-
-			{
-
-				if (sel[i] == row)
-					return true;
-
-			}
-
-			return false;
-
-		}
-
+	
 		public void valueChanged(ListSelectionEvent e) {
-			// TODO Auto-generated method stub
-			selectionModel = (ListSelectionModel) e.getSource();
+			selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionRow = selectionModel.getMinSelectionIndex();
 			maxSelectionRow = selectionModel.getMaxSelectionIndex();
+			rowHeader.repaint();
 		}
 
-	}
+    }
 
 	public GeoGebraCAS getCAS() {
 		return cas;
@@ -554,20 +509,17 @@ public class CASView extends JComponent implements CasManager {
 	}
 
 	public String getSessionXML() {
-
-		CASTableModel tableModel = (CASTableModel) consoleTable.getModel();
-
+	
 		StringBuffer sb = new StringBuffer();
 		sb.append("<casSession>\n");
 
 		// get the number of pairs in the view
-		int numOfRows = tableModel.getRowCount();
+		int numOfRows = consoleTable.getRowCount();
 
 		// get the content of each pair in the table with a loop
 		// append the content to the string sb
 		for (int i = 0; i < numOfRows; ++i) {
-			CASTableCellValue temp = (CASTableCellValue) tableModel.getValueAt(
-					i, CASPara.contCol);
+			CASTableCellValue temp = consoleTable.getCASTableCellValue(i);
 			sb.append(temp.getXML());
 		}
 
@@ -580,8 +532,7 @@ public class CASView extends JComponent implements CasManager {
 	 * If the n-th cell has no output string, the input string of this cell is returned.
 	 */
 	public String getRowValue(int n) {
-		CASTableModel tableModel = (CASTableModel) consoleTable.getModel();
-		CASTableCellValue temp = (CASTableCellValue) tableModel.getValueAt(n, CASPara.contCol);
+		CASTableCellValue temp = consoleTable.getCASTableCellValue(n);
 		
 		String result = temp.getOutput();
 		if (result == null || result.length() == 0)
@@ -612,14 +563,14 @@ public class CASView extends JComponent implements CasManager {
 
 		if (cellPairList == null) {
 			CASTableCellValue cellPair = new CASTableCellValue();
-			consoleTable.insertRow(-1, 0, cellPair);
+			consoleTable.insertRowAfter(-1, cellPair);
 		} else {
 			Iterator it = cellPairList.iterator();
 			boolean firstElementFlag = true;
 			while (it.hasNext()) {
 				CASTableCellValue cellPair = (CASTableCellValue) it.next();
 				if (firstElementFlag) {
-					consoleTable.insertRow(-1, 0, cellPair);
+					consoleTable.insertRowAfter(-1, cellPair);
 					firstElementFlag = false;
 				} else
 					consoleTable.insertRow(cellPair);
@@ -641,7 +592,6 @@ public class CASView extends JComponent implements CasManager {
 	public Object setOutputExpression(Object cellValue, String output) {
 		if (cellValue instanceof CASTableCellValue) {
 			((CASTableCellValue) cellValue).setOutput(output);
-			((CASTableCellValue) cellValue).setOutputAreaInclude(true);
 		}
 		return cellValue;
 	}
@@ -715,37 +665,34 @@ public class CASView extends JComponent implements CasManager {
 			CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
 			String selRowInput = cellValue.getInput();
 			
+			// always use same cell for output
+			CASTableCellValue outputCellValue = cellValue;
+			
 			// break text into prefix, evalText, postfix
-			String prefix, evalText, postfix;
-			CASTableCellValue outputCellValue;
-			boolean useSameCell = selectedText == null || selectedText.trim().length() == 0;
-			if (useSameCell) {
+			String prefix, evalText, postfix;			
+			boolean hasSelectedText = selectedText == null || selectedText.trim().length() == 0;
+			if (hasSelectedText) {
 				// no selected text: evaluate input using current cell
 				prefix = "";
 				evalText = selRowInput;
 				postfix = "";		
-				outputCellValue = cellValue;
 			}
 			else {
 				// selected text: break it up into prefix, evalText, and postfix
 				prefix = selRowInput.substring(0, selStart);
 				evalText = selectedText;
 				postfix = selRowInput.substring(selEnd);
-				// use new output cell
-				outputCellValue = new CASTableCellValue();
 			}
 						
-			
-			
 			// TODO: remove
 			System.out.println("SELECTED ROW: " + selRow + ", prefix: " + prefix + ", evalText: " + evalText + ", postfix: " + postfix);					
 	
 			switch (mod) {
 				case SUB_Flag:
 					// Create a CASSubDialog with the cell value
-					CASSubDialog d = new CASSubDialog(CASView.this, cellValue, evalText, selRow);
+					CASSubDialog d = new CASSubDialog(CASView.this, cellValue, selectedText, selRow);
 					d.setVisible(true);
-					break;
+					return;
 					
 				case EVAL_Flag:	
 					evalText = "Simplify[" + evalText + "]";				
@@ -772,22 +719,26 @@ public class CASView extends JComponent implements CasManager {
 				result = cas.getMathPiperError();
 				error = true;
 			}
+									
+				
+//			if (hasSelectedText || error) {
+//				outputCellValue.setInput(selRowInput);						
+//				outputCellValue.setOutput(result, error);
+//				consoleTable.updateRow(selRow);
+//				consoleTable.startEditingRow(selRow);
+//			} else {				
+//				outputCellValue.setInput(result);										
+//				consoleTable.insertRowAfter(selRow, outputCellValue);				
+//			}		
 			
-			// set new values of output cell
+			// update output cell	
 			outputCellValue.setInput(selRowInput);						
-			outputCellValue.setOutput(result, error);	
+			outputCellValue.setOutput(result, error);
+			consoleTable.updateRow(selRow);
+			//consoleTable.startEditingRow(selRow);
 			
-	// TODO: check how to update output panel in cell 
-			
-			// update output cell
-			DefaultTableModel model = (DefaultTableModel) consoleTable.getModel();			
-			if (useSameCell) {
-				//model.fireTableCellUpdated(selRow, CASPara.contCol);
-				consoleTable.insertRow(selRow-1, CASPara.contCol, outputCellValue);
-			} else {
-				consoleTable.insertRow(selRow, CASPara.contCol, outputCellValue);				
-			}
-			//SwingUtilities.updateComponentTreeUI(consoleTable);			
+			// create new empty row
+			consoleTable.insertRowAfter(selRow, null);
 		}
 
 	}

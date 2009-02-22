@@ -3,6 +3,7 @@
  */
 package geogebra.cas.view;
 
+import geogebra.cas.view.CASView.ConsoleTableKeyListener;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -19,26 +20,26 @@ import javax.swing.*;
  * 
  */
 public class CASTable extends JTable {
+	
+	public final static int CONTENT_COLUMN = 0;
 
 	private CASTableModel tableModel;
 	protected Kernel kernel;
 	protected Application app;
+	private CASView view;
+	private boolean showCellSeparator = false;
+	
+	
+	private CASTableCellEditor editor;
+	private CASTableCellRenderer renderer;
 
 	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = new Color(185,
 			185, 210);
 
-	public CASTable(Application app) {
-		super();
-
-		this.app = app;
-		this.kernel = this.app.getKernel();
-
-	}
-
-	/*
-	 * Default Cinfiguration for Table
-	 */
-	public void initializeTable(int rows, Application app) {
+	public CASTable(CASView view, int rows) {
+		this.view = view;
+		app = view.getApp();
+		kernel = app.getKernel();					
 
 		this.setShowGrid(false);
 		// Dynamically change the height of the table
@@ -48,6 +49,13 @@ public class CASTable extends JTable {
 		tableModel = new CASTableModel(this, rows, app);
 		this.setModel(tableModel);
 		this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		
+		// init editor and renderer
+		editor = new CASTableCellEditor(view);
+		renderer = new CASTableCellRenderer(view);
+		getColumnModel().getColumn(CONTENT_COLUMN).setCellEditor(editor);
+		getColumnModel().getColumn(CONTENT_COLUMN).setCellRenderer(renderer);				
+		setTableHeader(null); 
 
 		// Set the width of the index column;
 		// this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
@@ -56,92 +64,80 @@ public class CASTable extends JTable {
 		// this.sizeColumnsToFit(0);
 		//this.setSurrendersFocusOnKeystroke(true);
 		
-		addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent arg0) {}
-
-			public void focusLost(FocusEvent arg0) {
-				stopEditing();
-			}			
-		});
+//		addFocusListener(new FocusListener() {
+//			public void focusGained(FocusEvent arg0) {
+//				// TODO: remove
+//				System.out.println("table GAINED focus");
+////				startEditingRow(getSelectedRow());
+//			}
+//
+//			public void focusLost(FocusEvent arg0) {
+//				// TODO: remove
+//				System.out.println("table LOST focus");
+//			}			
+//		});
 	
 	}
+	
+	public final boolean isShowCellSeparator() {
+		return showCellSeparator;
+	}
+
+	public final void setShowCellSeparator(boolean showCellSeparator) {
+		this.showCellSeparator = showCellSeparator;
+	}
+
 	
 	public void stopEditing() {
 		// stop editing 
-		CASTableCellEditor editor = (CASTableCellEditor) getEditorComponent();
+		CellEditor editor = (CellEditor) getEditorComponent();
 		if (editor != null) editor.stopCellEditing();
-	}
-	
+	}		
+		
 	public CASTableCellEditor getEditor() {
-		return (CASTableCellEditor) getEditorComponent();		
-	}
+		return editor;		
+	}		
 
 	/**
 	 * Inserts a row after the "selectedRow row", and set the focus at
 	 * the new row
 	 */
-	public void insertRow(int selectedRow, int selectedCol,
-			CASTableCellValue inValue) {
-		CASTableCellValue newValue;
-
-		if (this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_SELECTION) {
-			this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		}
-
-		if (inValue == null)
+	public void insertRowAfter(int selectedRow, CASTableCellValue newValue) {		
+		if (newValue == null)
 			newValue = new CASTableCellValue();
-		else
-			newValue = inValue;
-
-		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
-
-		changeSelection(selectedRow + 1, selectedCol, false, false);
-		editCellAt(selectedRow + 1, selectedCol);
-//		((Component) ((CASTableCellEditor) getCellEditor(selectedRow + 1,
-//				selectedCol)).getTableCellEditorComponent(this, newValue, true,
-//				selectedRow + 1, selectedCol)).requestFocus();
-		CASTableCellEditor tableCell = (CASTableCellEditor) getCellEditor(
-				selectedRow + 1, selectedCol);
-		tableCell.setInputAreaFocused();
-	}
+		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
+		startEditingRow(selectedRow  + 1);
+	}		
 
 	public void insertRow(CASTableCellValue newValue) {
-
-		// CASTableCellValue newValue = new CASTableCellValue();
+		if (newValue == null)
+			newValue = new CASTableCellValue();
 		int rowNum = tableModel.getRowCount();
-		// insert the row before
-		tableModel.insertRow(rowNum, new Object[] { newValue, "load" });
-		// Enlarge the cell hight
-		if (newValue.isOutputVisible())
-			this.setRowHeight(rowNum, CASPara.inputOutputHeight);
+		tableModel.insertRow(rowNum, new Object[] { newValue});
+	}
+	
+	public void updateRow(int row) {
+		//stopEditing();
+		
+		// TODO: remove
+		CASTableCellValue value = getCASTableCellValue(row);
+		System.out.println("update row: " + row + ", input: " + value.getInput() + ", output: " + value.getOutput());
+		
+		tableModel.fireTableRowsUpdated(row, row);	
 	}
 	
 	public CASTableCellValue getCASTableCellValue(int row) {
-		return (CASTableCellValue) tableModel.getValueAt(row, 0);
+		return (CASTableCellValue) tableModel.getValueAt(row, CONTENT_COLUMN);
+	}
+	
+	public boolean isRowEmpty(int row) {		
+		CASTableCellValue value = (CASTableCellValue) tableModel.getValueAt(row, 0);
+		String input = value.getInput();
+		String output = value.getOutput(); 
+		return (input == null || input.length() == 0) && (output == null || output.length() == 0);
 	}
 
-	public void insertRow(int selectedRow, int selectedCol, char c) {
-		char[] in = new char[1];
-		in[0] = c;
-		CASTableCellValue newValue = new CASTableCellValue(new String(in));
-		tableModel.insertRow(selectedRow + 1, new Object[] { newValue, "New" });
-		// ((CASTableCellRender) getCellRenderer(selectedRow + 1, selectedCol))
-		// .getTableCellRendererComponent(this, newValue, false, false,
-		// selectedRow + 1, selectedCol);
-
-		changeSelection(selectedRow + 1, selectedCol, false, false);
-		editCellAt(selectedRow + 1, selectedCol);
-//		Component editor = (Component) ((CASTableCellEditor) getCellEditor(
-//				selectedRow + 1, selectedCol)).getTableCellEditorComponent(
-//				this, newValue, true, selectedRow + 1, selectedCol);
-//		editor.requestFocus();
-
-		CASTableCellEditor tableCell = (CASTableCellEditor) getCellEditor(
-				selectedRow + 1, selectedCol);
-		tableCell.setInputAreaFocused();
-
-	}
-
+	
 	/*
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
@@ -162,45 +158,30 @@ public class CASTable extends JTable {
 	 */
 	public void deleteRow(int row) {
 		tableModel.removeRow(row);
-		this.repaint(); // Update the table
 		if (tableModel.getRowCount() == 0)
-			insertRow(-1, CASPara.contCol, null);
-		else
-			setFocusAtRow(row, CASPara.contCol);
+			insertRowAfter(-1, null);
+		else 
+			startEditingRow(Math.min(row, getRowCount()-1));
 	}
 
 	/*
 	 * Function: Set the focus on the specified row
 	 */
-	public void setFocusAtRow(int editRow, int editCol) {
-		editRow = Math.min(tableModel.getRowCount()-1, editRow);
-
-		changeSelection(editRow, editCol, false, false);
-		editCellAt(editRow, editCol);
-//		((Component) ((CASTableCellEditor) getCellEditor(editRow, editCol))
-//				.getTableCellEditorComponent(this, value, true, editRow,
-//						editCol)).requestFocus();
-		CASTableCellEditor tableCell = (CASTableCellEditor) getCellEditor(
-				editRow, editCol);
-		tableCell.setInputAreaFocused();
-	}
-
-	/*
-	 * Function: Set the focus on the linepanle of a specified row
-	 */
-	public void setFocusAtRowLinePanel(int editRow, int editCol) {
-		CASTableCellValue value = (CASTableCellValue) tableModel.getValueAt(
-				editRow, editCol);
-
-		changeSelection(editRow, editCol, false, false);
-		editCellAt(editRow, editCol);
-		CASTableCell temp = ((CASTableCell) ((CASTableCellEditor) getCellEditor(
-				editRow, editCol)).getTableCellEditorComponent(this, value,
-				true, editRow, editCol));
-		//setRowHeight(editRow, temp.addLinePanel());
-		temp.addLine();
-		temp.setLineBorderFocus();
-	}
+	public void startEditingRow(int editRow) {								
+		// TODO: reove
+		System.out.println("startEditingRow: " +editRow);
+		
+		// insert new row
+		if (editRow >= tableModel.getRowCount()) {
+			insertRow(null);
+			editRow = tableModel.getRowCount()-1;
+		}
+							
+		changeSelection(editRow, CONTENT_COLUMN, false, false);
+        scrollRectToVisible(getCellRect( editRow, CONTENT_COLUMN, false ) );	
+		editCellAt(editRow, CONTENT_COLUMN);	
+		editor.setInputAreaFocused();
+	}		
 
 	public Point getIndexFromPixel(int x, int y) {
 		if (x < 0 || y < 0)

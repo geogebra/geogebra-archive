@@ -3,60 +3,50 @@ package geogebra.cas.view;
 import geogebra.main.Application;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.ArrayList;
 import java.util.EventObject;
 
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
 
 //public class CASTableCellEditor extends DefaultCellEditor implements
 //		TableCellEditor {
 public class CASTableCellEditor extends CASTableCell implements TableCellEditor {
 
-	// CASTableCell panel;
-	private CASTable table;
-
+	private int selRow;
 	private CASTableCellValue cellValue;
+	private CASView view;
+	private boolean editing = false;
+	
+	private ArrayList listeners = new ArrayList();
 
-	public CASTableCellEditor(CASView view, CASTable consoleTable, Application app) {
-		super(view, consoleTable, app);
-
-		CASTableCellController inputListener = new CASTableCellController(this,
-				view);
-		this.getInputArea().addKeyListener(inputListener);
-		this.getLinePanel().addKeyListener(inputListener);
-		
-		EditorFocusListener l = new EditorFocusListener(this);
-		this.addFocusListener(l);
-
-		table = consoleTable;
+	public CASTableCellEditor(CASView view) {
+		super(view);
+		this.view = view;				
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
-		if (value instanceof CASTableCellValue) {
-			setFont(app.getPlainFont());
-			this.setLineInvisiable(); // Initialize the editor display without
-										// line panle
-
+		if (value instanceof CASTableCellValue) {			
+			setFont(app.getBoldFont());
+			
+			editing = true;
 			cellValue = (CASTableCellValue) value;
-			this.setInput(cellValue.getInput());
-			String output = cellValue.getOutput();			
-			this.setOutput(output, cellValue.isOutputError());
-			if (output == null || output.length() == 0) {
-				this.setOutputFieldVisiable(true);
-				this.removeOutputPanel();
-			}
-
-			SwingUtilities.updateComponentTreeUI(this);
+			setInput(cellValue.getInput());					
+			setOutput(cellValue.getOutput(), cellValue.isOutputError());	
+	
+			// update row height
+			updateTableRowHeight(table, row);
+						
+			//System.out.println("EDITOR row: " + row + ", input: " + cellValue.getInput() + ", output: " + cellValue.getOutput());	
 		}
 		return this;
-	}
-
-	public Object getCellEditorValue() {
-		return cellValue;
-	}
+	}	
 	
 	public String getInputSelectedText() {	
 		return getInputArea().getSelectedText();
@@ -68,39 +58,70 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 	
 	public int getInputSelectionEnd() {	
 		return getInputArea().getSelectionEnd();
-	}
-
-	public void setCellEditorValue(CASTableCellValue value) {
-		this.cellValue = value;
+	}	
+		
+	public boolean stopCellEditing() {	
+		// update cellValue's input using editor content
+		if (editing) {
+			cellValue.setInput(getInput());			
+		}
+		
+		fireEditingStopped();		
+		return true;
 	}
 	
 	public void cancelCellEditing() {
-		stopCellEditing();
+		// update cellValue's input using editor content
+		if (editing) {
+			cellValue.setInput(getInput());			
+		}
+		
+		fireEditingCanceled();
+	}
+	
+	public Object getCellEditorValue() {		
+		return cellValue;
 	}
 
-	public boolean stopCellEditing() {
-		cellValue.setInput(this.getInput());
-		cellValue.setOutput(this.getOutput());
 
-		Application.debug("Cell Editor stops editting at selected " + this.getInputArea().getText());
+	protected void fireEditingCanceled() {
+		editing = false;
+		
+		ChangeEvent ce = new ChangeEvent(this);
+		for (int i=0; i < listeners.size(); i++) {
+			CellEditorListener l = (CellEditorListener) listeners.get(i);
+			l.editingCanceled(ce);
+		}
+	}
+	
+	protected void fireEditingStopped() {
+		editing = false;
+		
+		ChangeEvent ce = new ChangeEvent(this);
+		for (int i=0; i < listeners.size(); i++) {
+			CellEditorListener l = (CellEditorListener) listeners.get(i);
+			l.editingStopped(ce);
+		}
+	}
+
+	public boolean isCellEditable(EventObject anEvent) {	
 		return true;
 	}
-
-	public void addCellEditorListener(CellEditorListener l) {
-		// TODO Auto-generated method stub
-	}
-
-	public boolean isCellEditable(EventObject anEvent) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+	
 
 	public void removeCellEditorListener(CellEditorListener l) {
-		// TODO Auto-generated method stub
+		listeners.remove(l);
+	}
+	
+	public void addCellEditorListener(CellEditorListener l) {
+		if (!listeners.contains(l))
+			listeners.add(l);
 	}
 
 	public boolean shouldSelectCell(EventObject anEvent) {
-		// TODO Auto-generated method stub
 		return true;
 	}
+
+	
+	
 }

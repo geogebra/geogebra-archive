@@ -4,28 +4,29 @@
 
 package geogebra.cas.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 
 public class CASInputPanel extends JPanel {
 
-	private JLabel inputSign = new JLabel(">>");
+	private JLabel inputSign;
 	private JTextField inputArea;
 
 	public CASInputPanel() {
-		inputArea = new JTextField();
-
+		inputSign = new JLabel(" >>");
+		inputArea = new JTextField(20);
 		inputArea.setBorder(BorderFactory.createEmptyBorder());
-		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		this.add(inputSign);
-		inputSign.setBackground(Color.white);
-		this.add(Box.createRigidArea(new Dimension(5, 2)));
-		this.add(inputArea);
-		this.setBorder(BorderFactory.createEmptyBorder());
-		this.setBackground(Color.white);
+
+		setLayout(new BorderLayout(5,5));
+		add(inputSign, BorderLayout.WEST);
+		add(inputArea, BorderLayout.CENTER);				
+		setBackground(Color.white);
 	}
 
 	public void setInput(String inValue) {
@@ -36,12 +37,15 @@ public class CASInputPanel extends JPanel {
 		return inputArea.getText();
 	}
 
-	public JTextField getInputArea() {
+	public JTextComponent getInputArea() {
 		return inputArea;
 	}
 
 	public void setInputAreaFocused() {
 		inputArea.requestFocus();
+		String text = inputArea.getText();
+		if (text != null)
+			inputArea.setCaretPosition(text.length());
 	}
 
 	final public void setFont(Font ft) {
@@ -52,8 +56,5 @@ public class CASInputPanel extends JPanel {
 		if (inputSign != null)
 			inputSign.setFont(ft);
 	}
-
-	public void setInputCaretPosition(int length) {
-		inputArea.setCaretPosition(length);
-	}
+	
 }

@@ -9,27 +9,27 @@ import javax.swing.JPanel;
 
 public class CASLinePanel extends JPanel {
 	Graphics2D g2;
-	boolean lineVisiable;
+	boolean drawLine;
 
 	public CASLinePanel() {
 		this.setBackground(Color.white);
-		lineVisiable = false;
+		drawLine = false;
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g2 = (Graphics2D) g;
 		
-		if(lineVisiable)
+		if(drawLine)
 			g2.drawLine(0, 0, this.getWidth(), 0);
 		
 	}
 
-	public boolean isLineVisiable() {
-		return lineVisiable;
+	public boolean showLine() {
+		return drawLine;
 	}
 
-	public void setLineVisiable(boolean lineShown) {
-		this.lineVisiable = lineShown;
+	public void setShowLine(boolean lineShown) {
+		this.drawLine = lineShown;
 	}
 }

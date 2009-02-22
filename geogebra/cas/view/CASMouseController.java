@@ -1,74 +1,41 @@
 package geogebra.cas.view;
 
-import geogebra.main.Application;
-
-import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.JTable;
-
 public class CASMouseController implements MouseListener {
-
-	private CASView view;
 
 	private CASTable consoleTable;
 
-	public CASMouseController(CASView view, CASTable table) {
-		this.view = view;
+	public CASMouseController(CASTable table) {
 		this.consoleTable = table;
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		int rowI, colI;
-		rowI = consoleTable.rowAtPoint(e.getPoint());// Get the row number
-		colI = consoleTable.columnAtPoint(e.getPoint());
-		if (rowI < 0)
-			return;
-
-		if (colI == CASPara.contCol) { // Set the focus to the input textfiled
-			if (e.getClickCount() == 1) { // One click event
-				consoleTable.changeSelection(rowI, colI, false, false);
-				consoleTable.editCellAt(rowI, colI);
-				Application.debug("single click at" + rowI + "" + colI);
-				// Component clickedCell =
-				// consoleTable.getComponentAt(e.getPoint());
-
-				CASTableCell clickedCell = (CASTableCell) consoleTable
-						.getComponentAt(e.getPoint());
-				Application.debug("clickedComponent: "
-						+ (clickedCell.getComponents()).length);
-				clickedCell.setLineInvisiable();
-				clickedCell.setInputAreaFocused();
-			}
-			if (e.getClickCount() == 2) {
-				// Get the deepest component at (X, Y)
-				Application.debug("double click at" + rowI + "" + colI);
-				Component clickedComponent = consoleTable.findComponentAt(e
-						.getPoint());
-				String className = clickedComponent.getClass().getName();
-				String JLableName = "javax.swing.JLabel";
-
-				if (className.compareTo(JLableName) != 0)
-					return;
-
-				Application.debug("Deepest clickedComponent: " + className);
-				CASTableCell clickedCell = (CASTableCell) consoleTable
-						.getComponentAt(e.getPoint());
+		int row = consoleTable.getSelectedRow();
 				
-				CASTableCellValue newValue = new CASTableCellValue();
-				newValue.setInput(clickedCell.getOutput());
-				consoleTable.insertRow(rowI, CASPara.contCol, newValue);
-			}
+		if (e.getClickCount() == 1) { 
+			// start editing
+			consoleTable.startEditingRow(row);			
 		}
-		// The index column is clicked:
-		// else {
-		// consoleTable.changeSelection(rowI, colI, false, false);
-		// Component clickedCell = consoleTable.getComponentAt(e.getPoint());
-		// Application.debug("clickedComponent: " + clickedCell);
-		// clickedCell.requestFocus();
-		// }
-
+		if (e.getClickCount() == 2) {
+			CASTableCellValue selCellValue = consoleTable.getCASTableCellValue(row);
+			
+			CASTableCellValue newValue = null;
+			if (consoleTable.getRowCount() > row + 1) {
+				newValue = consoleTable.getCASTableCellValue(row + 1);
+				if (newValue.isEmpty()) {
+					newValue.setInput(selCellValue.getOutput());
+					consoleTable.updateRow(row + 1);
+					return;
+				}
+			} 
+			
+			// create new row
+			newValue = new CASTableCellValue();			
+			newValue.setInput(selCellValue.getOutput());
+			consoleTable.insertRowAfter(row, newValue);
+		}				
 	}
 
 	public void mouseEntered(MouseEvent arg0) {

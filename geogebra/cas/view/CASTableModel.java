@@ -23,8 +23,8 @@ public class CASTableModel extends DefaultTableModel {
         
         for(int i=0; i<numRows; i++){
         	CASTableCellValue value = new CASTableCellValue();
-        	super.setValueAt(value, i, CASPara.contCol);
-        	fireTableCellUpdated(i, CASPara.contCol);
+        	super.setValueAt(value, i, CASTable.CONTENT_COLUMN);
+        	fireTableCellUpdated(i, CASTable.CONTENT_COLUMN);
         }
     }   
     
@@ -35,7 +35,7 @@ public class CASTableModel extends DefaultTableModel {
        /* load the data */
        for (int i = 0; i < data.length; i++)
        {
-             super.setValueAt(data[i], i, CASPara.contCol);
+             super.setValueAt(data[i], i, CASTable.CONTENT_COLUMN);
        }
     }
     
@@ -51,10 +51,7 @@ public class CASTableModel extends DefaultTableModel {
      * editable.
      */
     public boolean isCellEditable(int row, int col) {
-    	if(col == CASPara.indexCol)
-    		return true; //It is supposed to be false
-    	else
-    		return true;
+    	return true;
     }
 
 }

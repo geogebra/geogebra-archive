@@ -1,55 +1,29 @@
-/**
- * This panel is for the output.
- */
 package geogebra.cas.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-/**
- * @author Quan
- * 
- */
 public class CASOutputPanel extends JPanel {
 	
-	private static Color TEXT_COLOR = Color.gray;
+	private static Color TEXT_COLOR = Color.blue;
 	private static Color ERROR_COLOR = Color.red;
 
-	private JLabel outputSign = new JLabel("<<");
-	// private JTextField outputArea;
+	private JLabel outputSign;
 	private JLabel outputArea;
 
 	public CASOutputPanel() {
-		// outputArea = new JTextField();
+		outputSign = new JLabel(" <<");
 		outputArea = new JLabel();
-		outputArea.setBorder(BorderFactory.createEmptyBorder());
-		// this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-		GridBagLayout gridbag = new GridBagLayout();
-		this.setLayout(gridbag);
-		GridBagConstraints c = new GridBagConstraints();
-
-		c.gridwidth = 1;
-		c.fill = GridBagConstraints.BOTH;
-		gridbag.setConstraints(outputSign, c);
-		this.add(outputSign);
-		outputSign.setBackground(Color.white);
-
-		c.gridwidth = GridBagConstraints.REMAINDER; // end row
-		c.weightx = 1;
-		c.fill = GridBagConstraints.BOTH;
-		gridbag.setConstraints(outputArea, c);
-		this.add(Box.createRigidArea(new Dimension(5, 2)));
-
-		outputArea.setForeground(TEXT_COLOR);
-		this.add(outputArea);
-		this.setBorder(BorderFactory.createEmptyBorder());
-		this.setBackground(Color.white);
+		setLayout(new BorderLayout(5,5));
+		add(outputSign, BorderLayout.WEST);
+		add(outputArea, BorderLayout.CENTER);
+		setBackground(Color.white);
 	}
 
 	public void setOutput(String inValue, boolean showsError) {
@@ -65,6 +39,8 @@ public class CASOutputPanel extends JPanel {
 	}
 
 	final public void setFont(Font ft) {
+		super.setFont(ft);
+		
 		if (outputArea != null)
 			outputArea.setFont(ft);
 		if (outputSign != null)
