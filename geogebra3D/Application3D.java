@@ -119,7 +119,9 @@ public abstract class Application3D extends Application{
         
         //algebra internal frame
         JInternalFrame frameAlgebra = new JInternalFrame("Algebra view", true,true, true, true);
-        frameAlgebra.setContentPane(getGuiManager().getAlgebraView());
+        JScrollPane scrollPane = new JScrollPane(getGuiManager().getAlgebraView());
+        frameAlgebra.setContentPane(scrollPane);
+        //frameAlgebra.setContentPane(getGuiManager().getAlgebraView());
         frameAlgebra.setSize(200, 480);
         frameAlgebra.setLocation(0, 0);
         frameAlgebra.setVisible(true);
