@@ -37,6 +37,7 @@ import geogebra.util.Util;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1846,13 +1847,18 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codeBeginDoc.append("};\n");
 			}
 			else codeBeginDoc.append(";\n");
+			// Draw Label on X Axis
 			if (null!=label[0]){
 				codeBeginDoc.append("\\draw[color=");
 				ColorCode(color,codeBeginDoc);
 				codeBeginDoc.append("] ");
 				FontMetrics fm=euclidianView.getFontMetrics(euclidianView.getFont());
 				int width=fm.stringWidth(label[0]);
-				double x=euclidianView.toRealWorldCoordX(euclidianView.getWidth()-10-width);
+			   	Rectangle rect = euclidianView.getSelectionRectangle();
+		    	double x=euclidianView.toRealWorldCoordX(euclidianView.getWidth()-10-width);
+			   	if( rect != null){
+		        	x=euclidianView.toRealWorldCoordX(rect.getMaxX()-10-width);		        	
+			   	}
 				double y=euclidianView.toRealWorldCoordY(euclidianView.getYZero()-4);
 				writePoint(x,y,codeBeginDoc);
 				codeBeginDoc.append(" node [anchor=south west] { ");
@@ -1895,13 +1901,18 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codeBeginDoc.append("};\n");
 			}
 			else codeBeginDoc.append(";\n");
+			// Draw Label on Y Axis
 			if (null!=label[1]){
 				codeBeginDoc.append("\\draw[color=");
 				ColorCode(color,codeBeginDoc);
 				codeBeginDoc.append("] ");
 				FontMetrics fm=euclidianView.getFontMetrics(euclidianView.getFont());
+			   	Rectangle rect = euclidianView.getSelectionRectangle();
 				double x=euclidianView.toRealWorldCoordX(euclidianView.getXZero()+5);
 				double y=euclidianView.toRealWorldCoordY(5+fm.getHeight());
+			   	if( rect != null){
+		        	y=euclidianView.toRealWorldCoordY(rect.getMinY()+5+fm.getHeight());		        	
+			   	}
 				writePoint(x,y,codeBeginDoc);
 				codeBeginDoc.append(" node [anchor=west] { ");
 				codeBeginDoc.append(label[1]);
