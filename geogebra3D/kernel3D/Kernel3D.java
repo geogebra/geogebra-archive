@@ -18,6 +18,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.AlgoPointOnPath;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.AlgebraProcessor;
@@ -184,6 +185,18 @@ public class Kernel3D
 		return p;
 	}	
 
+	
+	
+	/** Sphere label linking with center o and radius r   */
+	final public GeoQuadric Sphere(String label, GeoPoint3D center, GeoNumeric radius){
+		AlgoSphere algo = new AlgoSphere(cons,label,center,radius);
+		return algo.getQuadric();
+	}	
+
+	
+	
+	
+	
 	
 	
 	

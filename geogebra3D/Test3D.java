@@ -69,6 +69,7 @@ public class Test3D{
 //		testPath();
 		testPolygon();
 
+		testQuadric();
     	
 		testRay3D();
 		testVector3D();
@@ -439,6 +440,15 @@ public class Test3D{
 	}
 
 	
+	
+	
+	private void testQuadric(){
+		
+		GeoPoint3D c = testPoint(2f,0f,0f); c.setLabel("center");
+		GeoNumeric r = new GeoNumeric(cons, "radius", 2);
+		GeoQuadric sphere = kernel3D.Sphere("sphere", c, r);
+		sphere.setObjColor(new Color(1f,0f,0f));
+	}
 	
 	
 	

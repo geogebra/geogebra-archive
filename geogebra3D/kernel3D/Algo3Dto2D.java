@@ -70,7 +70,7 @@ public class Algo3Dto2D extends AlgoElement3D {
 	}
 
 	protected String getClassName() {
-		return "to2D";
+		return "Algo3Dto2D";
 	}
 	
 	public GeoElement getGeo(){

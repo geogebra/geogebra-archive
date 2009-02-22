@@ -88,7 +88,7 @@ public class GeoPolygon3D extends GeoCoordSys2D {
 
 	public String toValueString() {
 		// TODO Auto-generated method stub
-		return null;
+		return "todo-toValueString";
 	}
 
 	protected String getClassName() {
