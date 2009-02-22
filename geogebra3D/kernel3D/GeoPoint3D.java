@@ -25,6 +25,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.PointProperties;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 
@@ -35,7 +36,7 @@ import geogebra3D.Matrix.Ggb3DVector;
  * @version 
  */
 final public class GeoPoint3D extends GeoVec4D
-implements GeoPointInterface{   	
+implements GeoPointInterface, PointProperties{   	
 	
 	/**
 	 * 
@@ -399,6 +400,37 @@ implements GeoPointInterface{
 	 */	
 	public boolean hasChangeableCoordParentNumbers() {
 		return false;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////////////////////////////////
+	// PointProperties
+	
+	
+
+	public int getPointSize() {
+		return pointSize;
+	}
+
+	public int getPointStyle() {
+		//TODO
+		return 0;
+	}
+
+	public void setPointSize(int size) {
+		pointSize = size;		
+	}
+
+	public void setPointStyle(int type) {
+		// TODO 
+		
 	};
     
     

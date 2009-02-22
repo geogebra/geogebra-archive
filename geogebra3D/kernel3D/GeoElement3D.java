@@ -59,6 +59,7 @@ public abstract class GeoElement3D
 	public static final int GEO_CLASS_TRIANGLE3D = 3210;
 	public static final int GEO_CLASS_POLYGON3D = 3211;
 	public static final int GEO_CLASS_PLANE3D = 3220;
+	public static final int GEO_CLASS_QUADRIC = 3230;
 	
 
 

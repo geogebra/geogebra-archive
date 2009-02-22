@@ -556,7 +556,7 @@ public class PropertiesDialogGeoElement
 		private TextOptionsPanel textOptionsPanel;
 		private ArcSizePanel arcSizePanel;
 		private LineStylePanel lineStylePanel;
-		// added by Loïc BEGIN
+		// added by Loï¿½c BEGIN
 		private DecoSegmentPanel decoSegmentPanel;
 		private DecoAnglePanel decoAnglePanel;
 		private RightAnglePanel rightAnglePanel;
@@ -606,7 +606,7 @@ public class PropertiesDialogGeoElement
 			arcSizePanel = new ArcSizePanel();
 			slopeTriangleSizePanel = new SlopeTriangleSizePanel();
 			lineStylePanel = new LineStylePanel();
-			// added by Loïc BEGIN
+			// added by Loï¿½c BEGIN
 			decoSegmentPanel=new DecoSegmentPanel();
 			decoAnglePanel=new DecoAnglePanel();
 			rightAnglePanel=new RightAnglePanel();
@@ -639,7 +639,7 @@ public class PropertiesDialogGeoElement
  			add(tabs, BorderLayout.CENTER); 			
 		}		
 		
-		// added by Loïc BEGIN
+		// added by Loï¿½c BEGIN
 		public void setSliderMinValue(){
 			arcSizePanel.setMinValue();
 		}
@@ -3386,7 +3386,7 @@ public class PropertiesDialogGeoElement
 			*/		
 			add(slider);			
 		}
-		//added by Loïc BEGIN
+		//added by Loï¿½c BEGIN
 		public void setMinValue(){
 			slider.setValue(20);
 		}
@@ -3434,7 +3434,7 @@ public class PropertiesDialogGeoElement
 				GeoAngle angle;
 				for (int i = 0; i < geos.length; i++) {
 					angle = (GeoAngle) geos[i];
-					// addded by Loïc BEGIN
+					// addded by Loï¿½c BEGIN
 					// check if decoration could be drawn
 					if (size<20&&(angle.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| angle.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
@@ -3717,7 +3717,7 @@ public class PropertiesDialogGeoElement
 	} 
 
 	
-	// added by Loïc
+	// added by Loï¿½c
 	private class DecoSegmentPanel extends JPanel implements ActionListener , UpdateablePanel {
 		private JComboBox decoCombo;
 		private Object[] geos;
@@ -3828,7 +3828,7 @@ public class PropertiesDialogGeoElement
 //					geo.decorationType = type;
 					geo.setDecorationType(type);
 // Michael Borcherds 2007-11-20 END
-					// addded by Loïc BEGIN
+					// addded by Loï¿½c BEGIN
 					// check if decoration could be drawn
 					if (geo.getArcSize()<20&&(geo.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| geo.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
@@ -5314,7 +5314,7 @@ class CoordinateFunctionPanel
 	private boolean checkGeos(Object[] geos) {
 		for (int i=0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];	
-			if (!geo.isGeoPoint() || !geo.isIndependent())
+			if (!geo.isGeoPoint() || !geo.isIndependent() || geo.isGeoElement3D())
 				return false;
 		}
 		

@@ -32,7 +32,7 @@ public abstract class Drawable3D {
 	
 	//constants for rendering
 	protected static final float PICKED_DILATATION = 1.3f;
-	protected static final float POINT3D_RADIUS = 0.05f;
+	protected static final float POINT3D_RADIUS = 0.017f;
 	protected static final float POINT_ON_PATH_DILATATION = 1.01f;
 	protected static final float LINE3D_THICKNESS = 0.01f;
 	protected static final float GRID3D_THICKNESS = 0.005f;
