@@ -130,7 +130,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.drawHidden(this);	
 		}
-       
+     
         
 		//drawing picked parts
 		setMaterial(new Color(0f,0f,0f),0.75f);
@@ -162,13 +162,27 @@ public class EuclidianRenderer3D implements GLEventListener {
 		//gl.glEnable(GL.GL_CULL_FACE);
 		
 		
+		//re-drawing transparents parts for better transparent effect
+		//TODO improve it !
+		gl.glDepthMask(false);
+		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+			Drawable3D d = (Drawable3D) iter.next();
+			d.drawTransp(this);	
+		}
+		gl.glDepthMask(true);
+		
+		
+		
+		
 		//drawing not hidden parts
+		//gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+		gl.glDisable(GL.GL_BLEND);
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.draw(this);	
 		}
-
-		
+		//gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+		gl.glEnable(GL.GL_BLEND);
 
 		
 		
@@ -730,11 +744,15 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         //common enabling
         gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glDepthFunc(GL.GL_LEQUAL);
+        //gl.glPolygonOffset(1.0f, 2f);
+
         gl.glEnable(GL.GL_CULL_FACE);
         
         //blending
         gl.glEnable(GL.GL_BLEND);	
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);  
         
         //using glu quadrics
