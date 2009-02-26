@@ -24,7 +24,7 @@ import geogebra.main.Application;
  * This class provides methods for basic linear algebra calculus.
  *
  * @author  ggb3D
- * @version 3.2
+ * 
  */
 public class Ggb3DVector
 	extends Ggb3DMatrix{
@@ -32,14 +32,17 @@ public class Ggb3DVector
 	///////////////////////////////////////////////////:
 	//Constructors 
 	
-	/** creates a vector of dimension rows   */
+	/** creates a vector of the dimension specified by rows.  
+	 * @param rows number of rows
+	 */
 	public Ggb3DVector(int rows){
 		
 		super(rows,1);
 		
 	}
 	
-	/** creates a vector with values vals   */
+	/** creates a vector with values vals   
+	 * @param vals values {x1, x2, ...} */
 	public Ggb3DVector(double[] vals){
 		
 		super(vals.length,1);
@@ -52,12 +55,17 @@ public class Ggb3DVector
 	
 	///////////////////////////////////////////////////:
 	//setters and getters
-	/** sets v(i) to val0 */
+	/** sets v(i) to val0 
+	 * @param i number of the row
+	 * @param val0 value 
+	 */
 	public void set(int i, double val0){
 		set(i,1,val0);
 	}
 
-	/** sets v to vals0 */
+	/** sets v to vals0 
+	 * @param vals0 values {x1, x2, ...}
+	 */
 	public void set(double[] vals0){
 		//Application.debug("-------------vals0.length = "+vals0.length);
 		for (int i=0;i<vals0.length;i++)
@@ -65,21 +73,27 @@ public class Ggb3DVector
 		
 	}
 	
-	/** returns v(i)  */
+	/** returns v(i)  
+	 * @param i number of the row
+	 * @return value*/
 	public double get(int i){
 		return get(i,1);
 		
 	}
 	
-	/** returns number of coordinates of the vector */
+	/** returns number of rows of the vector 
+	 * @return number of rows
+	 */
 	public int getLength(){
 		
 		return this.getRows();
 		
 	}
 	
-	/** returns a copy of the vector */
-	public Ggb3DVector copyVector(){ //TODO cast
+	/** returns a copy of the vector 
+	 * @return a copy of the vector
+	 */
+	public Ggb3DVector copyVector(){ 
 		
 		Ggb3DVector result = new Ggb3DVector(getRows()); 
 
@@ -91,7 +105,11 @@ public class Ggb3DVector
 				
 	}
 	
-	/** returns the start-end subvector */
+	/** returns the start-end subvector 
+	 * @param start number of starting row
+	 * @param end number of end row
+	 * @return vector with rows between start and end 
+	 */
 	public Ggb3DVector subVector(int start, int end){ 
 		
 		Ggb3DVector result = new Ggb3DVector(end-start+1); 
@@ -109,7 +127,11 @@ public class Ggb3DVector
 	///////////////////////////////////////////////////:
 	//basic operations 
 	
-	/** returns scalar product  this . v  */
+	/** returns dot product  this * v.
+	 * <p>
+	 * If this={x1,x2,...} and v={x'1,x'2,...}, the dot product is x1*x'1+x2*x'2+...
+	 * @param v vector multiplied with
+	 * @return value of the dot product*/
 	public double dotproduct(Ggb3DVector v){
 		
 		Ggb3DMatrix v1 = this.transposeCopy();
@@ -119,7 +141,13 @@ public class Ggb3DVector
 		
 	}
 	
-	/** returns cross product this ^ v */
+	/** returns cross product this * v.
+	 * Attempt that the two vectors are of dimension 3.
+	 * <p>
+	 * If this={x,y,z} and v={x',y',z'}, then cross product={yz'-y'z,zx'-z'x,xy'-yx'}
+	 * @param v vector multiplied with
+	 * @return vector resulting of the cross product
+	 */
 	public Ggb3DVector crossProduct(Ggb3DVector v){
 		
 		Ggb3DVector ret = new Ggb3DVector(3);
@@ -133,13 +161,19 @@ public class Ggb3DVector
 	
 	
 	
-	/** returns the scalar norm */
+	/** returns the scalar norm.
+	 * <p>
+	 * If this={x1,x2,...}, then norm=sqrt(x1*x1+x2*x2+...).
+	 * Same result as Math.sqrt(this.dotproduct(this))
+	 * @return the scalar norm*/
 	public double norm(){
 		
 		return Math.sqrt(this.dotproduct(this));
 	}
 	
-	/** returns this normalized */
+	/** returns this normalized 
+	 * @return this/this.norm() 
+	 */
 	public Ggb3DVector normalized(){
 		
 		Ggb3DVector ret = new Ggb3DVector(getLength());
@@ -166,45 +200,56 @@ public class Ggb3DVector
 	
 	
 	
-	/** returns the distance between this and v */
+	/** returns the distance between this and v 
+	 * @param v second vector
+	 * @return (this-v).norm()
+	 */
 	public double distance(Ggb3DVector v){
 		
 		return this.sub(v).norm();
 	}
 	
-	/** returns the distance between this and a 3D-line represented by the matrix [V O] */
+	/** returns the distance between this and a 3D-line represented by the matrix {V O} 
+	 * @param O origin of the line
+	 * @param V direction of the line
+	 * @return distance between this and the line*/
 	public double distLine(Ggb3DVector O, Ggb3DVector V){
 		
 		Ggb3DVector OM = this.sub(O);
-		//OM.SystemPrint();
 		Ggb3DVector N = V.normalized();
 		Ggb3DVector OH = N.mul(OM.dotproduct(N)).getColumn(1); //TODO optimize
-		//OH.SystemPrint();
 		Ggb3DVector HM = OM.sub(OH);
 		
 		return HM.norm();
 	}
 	
-	/** returns this projected on the plane (third vector used for direction) 
-	 *  result two GgbVectors, the point and (x,y,l,1) : (x,y) plane coordinates, l direction coordinate 
+	/** returns this projected on the plane represented by the matrix (third vector used for direction). 
+	 * <p>
+	 * Attempt this to be of dimension 4, and the matrix to be of dimension 4*4. 
+	 * @param m matrix {v1 v2 v3 o} where (o,v1,v2) is a coord sys fo the plane, and v3 the direction used for projection
+	 * @return two vectors {globalCoords,inPlaneCoords}: the point projected, and the original point in plane coords
 	 */
 	public Ggb3DVector[] projectPlane(Ggb3DMatrix m){
-		Ggb3DVector ret1, ret2;
+		Ggb3DVector inPlaneCoords, globalCoords;
 		
-		ret1 = m.solve(this);
-		ret1.set(3,-ret1.get(3));
+		//m*inPlaneCoords=this
+		inPlaneCoords = m.solve(this);
 		
-		ret2 = (Ggb3DVector) this.add(m.getColumn(3).mul(ret1.get(3)));
+		//globalCoords=this-inPlaneCoords_z*plane_vz
+		globalCoords = (Ggb3DVector) this.add(m.getColumn(3).mul(-inPlaneCoords.get(3)));
 		
-		return new Ggb3DVector[] {ret2,ret1};
+		return new Ggb3DVector[] {globalCoords,inPlaneCoords};
 		
 	}
 	
-	/** returns this projected on the plane with vector v used for direction 
-	 *  result two GgbVectors, the point and (x,y,l,1) : (x,y) plane coordinates, l direction coordinate 
+	/** returns this projected on the plane represented by the matrix, with vector v used for direction. 
+	 * <p>
+	 *  Attempt this to be of dimension 4, the matrix to be of dimension 4*4, and the vector to be of dimension 4. 
+	 * @param m matrix {v1 v2 ?? o} where (o,v1,v2) is a coord sys fo the plane, and v3
+	 * @param v the direction used for projection
+	 * @return two vectors {globalCoords,inPlaneCoords}: the point projected, and the original point in plane coords
 	 */	
 	public Ggb3DVector[] projectPlaneThruV(Ggb3DMatrix m, Ggb3DVector v){
-		//GgbVector ret;
 		
 		Ggb3DMatrix m1 = new Ggb3DMatrix(4,4);
 		m1.set(new Ggb3DVector[] {m.getColumn(1), m.getColumn(2), v, m.getColumn(4)});
@@ -213,8 +258,12 @@ public class Ggb3DVector
 		
 	}	
 	
-	/** returns this projected on the plane with vector v used for direction 
-	 *  if v is parallel to plane, then plane third vector is used instead
+	/** returns this projected on the plane represented by the matrix, with vector v used for direction.  
+	 *  <p>
+	 *  If v is parallel to plane, then plane third vector is used instead
+	 * @param m matrix {v1 v2 v3 o} where (o,v1,v2) is a coord sys fo the plane, and v3
+	 * @param v the direction used for projection (v3 is used instead if v is parallel to the plane)
+	 * @return two vectors {globalCoords,inPlaneCoords}: the point projected, and the original point in plane coords
 	 */	
 	public Ggb3DVector[] projectPlaneThruVIfPossible(Ggb3DMatrix m, Ggb3DVector v){
 		
@@ -235,8 +284,10 @@ public class Ggb3DVector
 	
 	
 	
-	/** calculates projection of this on the 3D-line represented by the matrix [V O]
-	 *  and returns {projection, {parameter, normalized parameter} } */
+	/** calculates projection of this on the 3D-line represented by the matrix {V O}.
+	 * @param O origin of the line
+	 * @param V direction of the line
+	 * @return {point projected, {parameter on the line, normalized parameter} } */
 	public Ggb3DVector[] projectLine(Ggb3DVector O, Ggb3DVector V){
 		
 		Ggb3DVector OM = this.sub(O);
@@ -251,9 +302,12 @@ public class Ggb3DVector
 	
 	
 	
-	/** calculates projection of this as far as possible to the 3D-line represented by the matrix [V O]
-	 *  regarding V2 direction
-	 *  and returns projection */
+	/** calculates projection of this as far as possible to the 3D-line represented by the matrix {V O}
+	 *  regarding V2 direction.
+	 * @param O origin of the line
+	 * @param V direction of the line
+	 * @param V2 direction of projection
+	 * @return point projected*/
 	public Ggb3DVector projectNearLine(Ggb3DVector O, Ggb3DVector V, Ggb3DVector V2){
 		
 		Ggb3DVector V3 = V.crossProduct(V2);
@@ -268,7 +322,10 @@ public class Ggb3DVector
 		
 	}	
 	
-	/** returns this-v */
+	/** returns this-v 
+	 * @param v vector subtracted
+	 * @return this-v 
+	 */
 	public Ggb3DVector sub(Ggb3DVector v){
 		int i;
 		Ggb3DVector result=new Ggb3DVector(rows);
@@ -278,15 +335,13 @@ public class Ggb3DVector
 		return result;
 	}
 	
-	/*
-	public GgbVector subInhom(GgbVector v){
-		GgbVector result=this.sub(v);
-		result.set(getLength(),get(getLength()));
-		return result;
-	}
-	*/
+
 	
-	/** returns n-1 length vector, all coordinates divided by the n-th */
+	/** returns n-1 length vector, all coordinates divided by the n-th.
+	 * <p>
+	 * If this={x1,x2,xn}, it returns {x1/xn,x2/xn,...,x(n-1)}
+	 * @return {x1/xn,x2/xn,...,x(n-1)/xn}
+	 */
 	public Ggb3DVector getInhomCoords(){
 		Ggb3DVector result=new Ggb3DVector(getLength()-1);
 		int i;
@@ -296,7 +351,10 @@ public class Ggb3DVector
 		return result;
 	}
 
-	/** returns n length vector, all coordinates divided by the n-th */
+	/** returns n length vector, all coordinates divided by the n-th.
+	 * <p>
+	 * If this={x1,x2,xn}, it returns {x1/xn,x2/xn,...,1}
+	 * @return {x1/xn,x2/xn,...,1}*/
 	public Ggb3DVector getCoordsLast1(){
 		Ggb3DVector result=new Ggb3DVector(getLength());
 		int i;

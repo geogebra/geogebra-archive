@@ -26,7 +26,7 @@ import geogebra.main.Application;
 /**
  *
  * @author  ggb3D
- * @version 3.2
+ * 
  */
 public class Ggb3DMatrix
 	{
