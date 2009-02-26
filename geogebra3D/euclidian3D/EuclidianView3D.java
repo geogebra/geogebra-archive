@@ -14,6 +14,7 @@ import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.GeoQuadric;
 import geogebra3D.kernel3D.GeoRay3D;
 import geogebra3D.kernel3D.GeoSegment3D;
@@ -199,7 +200,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	protected Drawable3D createDrawable(GeoElement geo) {
 		Drawable3D d=null;
-
 		if (geo.isGeoElement3D()){
 			if (d == null){
 	
@@ -231,10 +231,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;									
 				
 
-				case GeoElement3D.GEO_CLASS_TRIANGLE3D:
-					if(DEBUG){Application.debug("GEO_CLASS_POLYGON3D");}
-					d = new DrawPolygon3D(this, (GeoTriangle3D) geo);
-					//Application.debug("new DrawPoint3D");
+				case GeoElement3D.GEO_CLASS_POLYGON3D:
+					d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
+					Application.debug("new DrawPolygon3D");
 					break;									
 				
 

@@ -173,6 +173,7 @@ public class Kernel3D
 	final public GeoPolygon3D Polygon3D(String label, GeoPoint3D[] points){
 		//TODO use algo
 		GeoPolygon3D p = new GeoPolygon3D(cons, points);
+		p.setLabel(label);
 		return p;
 	}	
 	
