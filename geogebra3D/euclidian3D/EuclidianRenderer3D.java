@@ -1,14 +1,14 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.main.Application;
+
+
+
+
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoSegment3D;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 
@@ -17,25 +17,41 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
-import javax.media.opengl.glu.GLUtessellatorCallback;
 
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.FPSAnimator;
 
 
+
+/**
+ * 
+ * Used for openGL display.
+ * <p>
+ * It provides:
+ * <li>methods for displaying {@link Drawable3D}, with painting parameters
+ * <li>methods for picking object
+ * 
+ * 
+ * @author ggb3D
+ * @version 3.2
+ * 
+ * 
+ */
 public class EuclidianRenderer3D implements GLEventListener {
 	
 	// openGL variables
 	private GLU glu= new GLU();
+	
+	/** canvas usable for a JPanel */
 	public GLCanvas canvas;
-	//public GLJPanel canvas;
+	
+
 	private GLCapabilities caps;
 	private GL gl;
-	protected GLUquadric quadric;
+	private GLUquadric quadric;
 	private FPSAnimator animator;
 	
 	private IntBuffer selectBuffer;
@@ -51,17 +67,25 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// for drawing
 	private Ggb3DMatrix4x4 m_drawingMatrix; //matrix for drawing
 	
-	static public double[][] DASH_NONE = null;	
+	/** no dash. */
+	static public double[][] DASH_NONE = null;
+	/** simple dash: 0.1-(0.1), ... */
 	static public double[][] DASH_SIMPLE = {{0.1,0.1}};
+	/** dotted dash: 0.03-(0.1), ... */
 	static public double[][] DASH_DOTTED = {{0.03,0.1}};
+	/** dotted/dashed dash: 0.1-(0.1)-0.03-(0.1), ... */
 	static public double[][] DASH_DOTTED_DASHED = {DASH_SIMPLE[0],DASH_DOTTED[0]};
+	
 	private double[][] m_dash = DASH_NONE; // dash is composed of couples {length of line, length of hole}
 	private double m_dash_factor; // for unit factor
 	
 	
 	private double m_thickness;
 	
+	
+	/** no arrows */
 	static final public int ARROW_TYPE_NONE=0;
+	/** simple arrows */
 	static final public int ARROW_TYPE_SIMPLE=1;
 	private int m_arrowType=ARROW_TYPE_NONE;
 	
@@ -72,7 +96,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private int mouseX, mouseY;
 	private boolean waitForPick = false;
 	
-	
+	/**
+	 * creates a renderer linked to an {@link EuclidianView3D} 
+	 * @param view the {@link EuclidianView3D} linked to 
+	 */
 	public EuclidianRenderer3D(EuclidianView3D view){
 		super();
 		
@@ -100,12 +127,29 @@ public class EuclidianRenderer3D implements GLEventListener {
 	}
 	
 	
+	/**
+	 * set the list of {@link Drawable3D} to be drawn
+	 * @param dl list of {@link Drawable3D}
+	 */
 	public void setDrawList3D(DrawList3D dl){
 		drawList3D = dl;
 	}
 	
 	
-	
+	/**
+	 * 
+	 * openGL method called when the display is to be computed.
+	 * <p>
+	 * First, it calls {@link #doPick()} if a picking is to be done.
+	 * Then, for each {@link Drawable3D}, it calls:
+	 * <li> {@link Drawable3D#drawHidden(EuclidianRenderer3D)} to draw hidden parts (dashed segments, lines, ...)
+	 * <li> {@link Drawable3D#drawPicked(EuclidianRenderer3D)} to show objects that are picked (highlighted)
+	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to draw transparent objects (planes, spheres, ...)
+	 * <li> {@link Drawable3D#drawHiding(EuclidianRenderer3D)} to draw in the z-buffer objects that hides others (planes, spheres, ...)
+	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to re-draw transparent objects for a better alpha-blending
+	 * <li> {@link Drawable3D#draw(EuclidianRenderer3D)} to draw not hidden parts (dash-less segments, lines, ...)
+	 * 
+	 */
     public void display(GLAutoDrawable gLDrawable) {
     	
         gl = gLDrawable.getGL();
@@ -125,7 +169,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         //init drawing matrix to view3D toScreen matrix
         gl.glLoadMatrixd(m_view3D.getToScreenMatrix().get(),0);
 
-        //drawing hidden parts	
+        //drawing hidden part
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.drawHidden(this);	
@@ -204,7 +248,9 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
-    
+    /**
+     * openGL method called when the canvas is reshaped.
+     */
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h)
     {
       GL gl = drawable.getGL();
@@ -218,6 +264,10 @@ public class EuclidianRenderer3D implements GLEventListener {
       gl.glLoadIdentity();
     }
 
+    /**
+     * openGL method called when the display change.
+     * empty method
+     */
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
         boolean deviceChanged)
     {
@@ -241,7 +291,12 @@ public class EuclidianRenderer3D implements GLEventListener {
     /////////////////////////////////////////////////////
     
     
-    //material
+    /**
+     * sets the material used by the pencil
+     * 
+     * @param c the color of the pencil
+     * @param alpha the alpha value for blending
+     */
     public void setMaterial(Color c, float alpha){
     	//TODO use alpha value
     	float color[] = { ((float) c.getRed())/256f, ((float) c.getGreen())/256f, ((float) c.getBlue())/256f, alpha };
@@ -249,49 +304,105 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     
-    //dash
+    /**
+     * sets the dash used by the pencil.
+     * 
+     * @param a_dash description of the dash, see {@link #DASH_NONE}, {@link #DASH_SIMPLE}, ...
+     */
     public void setDash(double[][] a_dash){
     	m_dash = a_dash;
     }
     
-    //thickness
+    /**
+     * sets the thickness used by the pencil.
+     * 
+     * @param a_thickness the thickness
+     */
     public void setThickness(double a_thickness){
     	m_thickness = a_thickness;
     }
     
+    
+    /**
+     * gets the current thickness of the pencil.
+     * 
+     * @return the thickness
+     */
     public double getThickness(){
     	return m_thickness;
     }
     
     //arrows
+    
+    /**
+     * sets the type of arrow used by the pencil.
+     * 
+     * @param a_arrowType type of arrow, see {@link #ARROW_TYPE_NONE}, {@link #ARROW_TYPE_SIMPLE}, ... 
+     */
     public void setArrowType(int a_arrowType){
     	m_arrowType = a_arrowType;
-    }   
+    } 
+    
+    /**
+     * sets the width of the arrows painted by the pencil.
+     * 
+     * @param a_arrowWidth the width of the arrows
+     */
     public void setArrowWidth(double a_arrowWidth){
     	m_arrowWidth = a_arrowWidth;
     } 
+    
+    
+    /**
+     * sets the length of the arrows painted by the pencil.
+     * 
+     * @param a_arrowLength the length of the arrows
+     */
     public void setArrowLength(double a_arrowLength){
     	m_arrowLength = a_arrowLength;
     } 
     
-    //transformation matrix
+    
+    /**
+     * sets the matrix in which coord sys the pencil draws.
+     * 
+     * @param a_matrix the matrix
+     */
     public void setMatrix(Ggb3DMatrix4x4 a_matrix){
     	m_drawingMatrix=a_matrix;
     }
     
+    
+    /**
+     * gets the matrix describing the coord sys used by the pencil.
+     * 
+     * @return the matrix
+     */
     public Ggb3DMatrix4x4 getMatrix(){
     	return m_drawingMatrix;
     }
     
+    
+    /**
+     * sets the drawing matrix to openGL.
+     * same as initMatrix(m_drawingMatrix)
+     */
     private void initMatrix(){
     	initMatrix(m_drawingMatrix);
     }
     
+    /**
+     * sets a_drawingMatrix to openGL.
+     * @param a_drawingMatrix the matrix
+     */
     private void initMatrix(Ggb3DMatrix a_drawingMatrix){
     	gl.glPushMatrix();
 		gl.glMultMatrixd(a_drawingMatrix.get(),0);
     }    
     
+    /**
+     * turn off the last drawing matrix set in openGL.
+     */
     private void resetMatrix(){
     	gl.glPopMatrix();
     }
@@ -308,7 +419,13 @@ public class EuclidianRenderer3D implements GLEventListener {
     ///////////////////////////////////////////////////////////
     //drawing geometries
     
-    /** draws a segment from x=x1 to x=x2 according to current m_drawingMatrix*/
+    /**
+     * draws a segment from x=x1 to x=x2 according to drawing matrix
+     * 
+     * @param a_x1 start of the segment
+     * @param a_x2 end of the segment
+     * 
+     */
     public void drawSegment(double a_x1, double a_x2){
 
     	switch(m_arrowType){
@@ -330,6 +447,14 @@ public class EuclidianRenderer3D implements GLEventListener {
     } 
     
     
+    /**
+     * 
+     * draws a segment from x=x1 to x=x2 according to drawing matrix, dashed or not according to the a_dash value.
+     * 
+     * @param a_x1 start of the segment
+     * @param a_x2 end of the segment
+     * @param a_dash true if the segment is to be dashed
+     */
     private void drawSegmentDashedOrNot(double a_x1, double a_x2, boolean a_dash){
     	if (a_dash)
     		drawSegmentDashed(a_x1, a_x2);
@@ -338,7 +463,13 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     
-    /** draws a segment from x=x1 to x=x2 according to current m_drawingMatrix*/
+    /**
+     * 
+     * draws a not dashed segment from x=x1 to x=x2 according to drawing matrix.
+     * 
+     * @param a_x1 start of the segment
+     * @param a_x2 end of the segment
+     */
     private void drawSegmentNotDashed(double a_x1, double a_x2){
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
     	drawCylinder(m_thickness);
@@ -346,7 +477,13 @@ public class EuclidianRenderer3D implements GLEventListener {
     } 
    
     
-    /** draws a dashed segment from x=x1 to x=x2 according to current m_drawingMatrix*/
+    /**
+     * 
+     * draws a dashed segment from x=x1 to x=x2 according to drawing matrix.
+     * 
+     * @param a_x1 start of the segment
+     * @param a_x2 end of the segment
+     */
     private void drawSegmentDashed(double a_x1, double a_x2){
 		
     	m_dash_factor = 1/m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS);
@@ -363,21 +500,28 @@ public class EuclidianRenderer3D implements GLEventListener {
     } 
     
     
-    /** draws a segment from x=0 to x=1 according to current m_drawingMatrix*/
+    
+    /** 
+     * draws a segment from x=0 to x=1 according to current drawing matrix.
+     */
     public void drawSegment(){
     	drawSegment(0,1);
     }
     
     
     
-    /** draws a line according to current m_drawingMatrix*/
+    /** 
+     * draws a line according to current drawing matrix.
+     */
     public void drawLine(){
     	//TODO use frustum
     	drawSegment(-20,21);
     }  
     
     
-    /** draws a ray (half-line) according to current m_drawingMatrix*/
+    /** 
+     * draws a ray (half-line) according drawing matrix.
+     */
     public void drawRay(){
     	//TODO use frustum
     	drawSegment(0,21);
@@ -389,7 +533,10 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
-    /** draws a cone from x=x1 to x=x2 according to current m_drawingMatrix*/
+    /** draws a cone from x=x1 to x=x2 according to current drawing matrix.
+     * @param a_x1 x-coordinate of the basis
+     * @param a_x2 x-coordinate of the top
+     */
     public void drawCone(double a_x1, double a_x2){
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
     	drawCone(m_thickness);
@@ -403,14 +550,26 @@ public class EuclidianRenderer3D implements GLEventListener {
     
 
     
-    /** draws a quad  */
+    /** draws a quad according to current drawing matrix.  
+     * @param a_x1 x-coordinate of the top-left corner
+     * @param a_y1 y-coordinate of the top-left corner
+     * @param a_x2 x-coordinate of the bottom-right corner
+     * @param a_y2 y-coordinate of the bottom-right corner
+     */
     public void drawQuad(double a_x1, double a_y1, double a_x2, double a_y2){
     	initMatrix(m_drawingMatrix.quad(a_x1, a_y1, a_x2, a_y2));
     	drawQuad();
     	resetMatrix();
     }
     
-    /** draws a grid  */
+    /** draws a grid according to current drawing matrix.
+     * @param a_x1 x-coordinate of the top-left corner
+     * @param a_y1 y-coordinate of the top-left corner
+     * @param a_x2 x-coordinate of the bottom-right corner
+     * @param a_y2 y-coordinate of the bottom-right corner
+     * @param a_dx distance between two x-lines
+     * @param a_dy distance between two y-lines
+     */
     public void drawGrid(double a_x1, double a_y1, 
     		double a_x2, double a_y2, 
     		double a_dx, double a_dy){
@@ -460,20 +619,66 @@ public class EuclidianRenderer3D implements GLEventListener {
     }  
     
     
+    /**
+     * draws a sphere according to current drawing matrix.
+     * 
+     * @param radius radius of the sphere
+     */
+    public void drawSphere(float radius){
+    	initMatrix();
+    	glu.gluSphere(quadric, radius, 16, 16);
+    	resetMatrix();
+    }
     
+  
     
+    /**
+     * draws a polygon according to current drawing matrix.
+     * 
+     * @param points coordinates of the vertices
+     */
+    public void drawPolygon(double[][] points){    	
+    	initMatrix();
+    	
+    	gl.glDisable(GL.GL_CULL_FACE);
+    	
+    	
+	    EuclidianRenderer3DTesselCallBack tessCallback = new EuclidianRenderer3DTesselCallBack(gl, glu);
+
+	    
+	    GLUtessellator tobj = glu.gluNewTess();
+
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
+
+	    gl.glShadeModel(GL.GL_SMOOTH);
+	    glu.gluTessBeginPolygon(tobj, null);
+	    glu.gluTessBeginContour(tobj);
+	    
+	    for (int i=0;i<points.length;i++)
+	    	glu.gluTessVertex(tobj, points[i], 0, points[i]);
+
+	    glu.gluTessEndContour(tobj);
+	    glu.gluTessEndPolygon(tobj);
+	    
+	    glu.gluDeleteTess(tobj);
+        
+	   	gl.glEnable(GL.GL_CULL_FACE);
+      
+        resetMatrix();
+    }
     
+
     
     
     
     ///////////////////////////////////////////////////////////
     //drawing primitives TODO use glLists
     
-    public void drawSphere(float radius){
-    	initMatrix();
-    	glu.gluSphere(quadric, radius, 16, 16);
-    	resetMatrix();
-    }
+
 
     
     private void drawCylinder(double a_thickness){
@@ -510,41 +715,6 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     
-    
-    // test method
-    public void drawPolygon(double[][] points){    	
-    	initMatrix();
-    	
-    	gl.glDisable(GL.GL_CULL_FACE);
-    	
-    	
-	    EuclidianRenderer3DTesselCallBack tessCallback = new EuclidianRenderer3DTesselCallBack(gl, glu);
-
-	    
-	    GLUtessellator tobj = glu.gluNewTess();
-
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
-
-	    gl.glShadeModel(GL.GL_SMOOTH);
-	    glu.gluTessBeginPolygon(tobj, null);
-	    glu.gluTessBeginContour(tobj);
-	    
-	    for (int i=0;i<points.length;i++)
-	    	glu.gluTessVertex(tobj, points[i], 0, points[i]);
-
-	    glu.gluTessEndContour(tobj);
-	    glu.gluTessEndPolygon(tobj);
-	    
-	    glu.gluDeleteTess(tobj);
-        
-	   	gl.glEnable(GL.GL_CULL_FACE);
-      
-        resetMatrix();
-    }
     
     
     private void drawQuad(){    	
@@ -592,6 +762,12 @@ public class EuclidianRenderer3D implements GLEventListener {
     //////////////////////////////////////
     // picking
     
+    /**
+     * sets the mouse locations to (x,y) and asks for picking.
+     * 
+     * @param x x-coordinate of the mouse
+     * @param y y-coordinate of the mouse
+     */
     public void setMouseLoc(int x, int y){
     	mouseX = x;
     	mouseY = y;
@@ -599,6 +775,9 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     
+    /**
+     * does the picking to sets which objects are under the mouse coordinates.
+     */
     public void doPick(){
     	
     	
@@ -693,18 +872,11 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     /** returns the depth between 0 and 2, in double format, from an integer offset 
      *  lowest is depth, nearest is the object
+     *  
+     *  @param ptr the integer offset
      * */
     private float getDepth(int ptr){
-    	/*
-    	long depth = (long) selectBuffer.get(ptr); // large -ve number
-    	return (1.0f + ((float) depth / 0x7fffffff));
-    	*/
-    	
-    	/*
-    	long depth = (long) selectBuffer.get(ptr); 
-    	return (float) depth/0x7fffffff;
-    	*/
-    	
+     	
     	float depth = (float) selectBuffer.get(ptr)/0x7fffffff;
     	if (depth<0)
     		depth+=2;

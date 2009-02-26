@@ -19,9 +19,12 @@ import geogebra.main.Application;
 
 
 /**
+ * 
+ * A Ggb3DVector is composed of {x1,x2,...,xn} coordinates in double precision.
+ * This class provides methods for basic linear algebra calculus.
  *
  * @author  ggb3D
- * @version 
+ * @version 3.2
  */
 public class Ggb3DVector
 	extends Ggb3DMatrix{
@@ -68,7 +71,7 @@ public class Ggb3DVector
 		
 	}
 	
-	/** returns length of the vector */
+	/** returns number of coordinates of the vector */
 	public int getLength(){
 		
 		return this.getRows();
@@ -313,7 +316,7 @@ public class Ggb3DVector
 	
 	
 	///////////////////////////////////////////////////:
-	//testing the package
+	/** for testing the package */
 	public static synchronized void main(String[] args) {	
 		
 		Ggb3DVector v1 = new Ggb3DVector(2);

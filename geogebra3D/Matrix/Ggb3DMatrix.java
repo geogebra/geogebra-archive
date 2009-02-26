@@ -26,17 +26,18 @@ import geogebra.main.Application;
 /**
  *
  * @author  ggb3D
- * @version 
+ * @version 3.2
  */
 public class Ggb3DMatrix
 	{
 	
-	protected double[] val;//values of the matrix
-	/*
-	 * the matrix represented by val = {1,2,3,4} is
-	 *    | 1  3 |
-	 *    | 2  4 |
+	/** 
+	 * the 2x2 matrix represented by val = {1,2,3,4} is
+	 * <br> | 1  3 | 
+	 * <br> | 2  4 |
 	 */
+	protected double[] val;
+	
 	protected int rows, columns; // dimensions
 	protected boolean transpose=false; //transposing the matrix is logical operation
 	
