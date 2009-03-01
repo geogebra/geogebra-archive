@@ -1,5 +1,7 @@
 package geogebra.cas.view.components;
 
+import geogebra.cas.view.CASView;
+
 /**
  * ExpandCommand - Expand[...]
  * 
@@ -13,15 +15,15 @@ public class CmdExpand extends Command_ABS {
     /// --- Interface --- ///
     
     /** Singleton constructor */
-    public static CmdExpand getInstance(String s){
+    public static CmdExpand getInstance(CASView casview){
         if(singleton==null){singleton=new CmdExpand();}
-        g=s;
+        CmdExpand.casview=casview;
         return singleton;
     }//getInstance()
     
     /** Implementing Command_IF */
     public void execute(){
-        process("Expand"+g);
+        process("Expand",null);		//only prefix, no params
     }//execute()
 
 

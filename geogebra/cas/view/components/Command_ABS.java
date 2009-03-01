@@ -1,4 +1,5 @@
 package geogebra.cas.view.components;
+import geogebra.cas.view.CASView;
 
 /**
  * Command_ABS
@@ -12,7 +13,7 @@ package geogebra.cas.view.components;
  */
 public abstract class  Command_ABS{
 
-    static  String  g           =   "casview";
+    static  CASView			casview	=	null;
 
     /// --- Interface --- ///
     
@@ -20,9 +21,13 @@ public abstract class  Command_ABS{
     public abstract void execute();
     
     /** Handler for processing the button's ggbcmdprefix */
-    public void process(String ggbcmdprefix){
-        System.out.println(ggbcmdprefix);
-        //call CASView apply(String)
+    public void process(String ggbcmdprefix,String[] params){
+    	//some processing
+        if(casview!=null){
+        	casview.apply(ggbcmdprefix,params);
+        }else{
+        	geogebra.main.Application.debug("casview not initialized!");
+        }//if
     }//process(String)
     
 }//abstract class Command_ABS

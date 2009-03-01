@@ -94,7 +94,11 @@ public class CASView extends JComponent implements CasManager {
 		btPanel.add(btExp);
 		btPanel.add(btFactor);
 		btPanel.add(btSub);	
-		add(btPanel, BorderLayout.NORTH);
+		//add(btPanel, BorderLayout.NORTH);
+		
+		// Ulven 01.03.09: excange line 90-97 with:
+		// BtnPanel which sets up all the button.
+		add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
 		
 		// CAS input/output cells
 		createCASTable();
@@ -113,7 +117,8 @@ public class CASView extends JComponent implements CasManager {
 		add(scrollPane, BorderLayout.CENTER);
 
 		this.setBackground(Color.WHITE);
-	}			
+	}		
+	
 
 	private void createRowHeader() {
 		// row header list
@@ -601,6 +606,7 @@ public class CASView extends JComponent implements CasManager {
 		return cellValue;
 	}
 
+	//Ulven 01.03.09: Drop this, do it in components.BtnPanel
 	private void initButtons() {
 		JButton ret = null;
 		
@@ -628,6 +634,102 @@ public class CASView extends JComponent implements CasManager {
 
 	}
 
+	// Ulven 01.03.09:
+	//Drop the whole ButtonListener, let buttons listen to themselves
+	//Only needs an apply("Integrate",{"x","a","b"}) method
+	//The Substitute command has to be handled another way, though...todo...
+	
+	/** Called from buttons and menues with for example:
+	 *  "Integral", [par1, par2, ...]
+	 *  Copied from apply(int mod)
+	 */	
+	public void apply(String ggbcmd,String[] params){
+		System.out.println(ggbcmd);
+		// get editor and possibly selected text
+		CASTableCellEditor cellEditor = consoleTable.getEditor();
+		String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
+		int selStart = cellEditor.getInputSelectionStart();
+		int selEnd = cellEditor.getInputSelectionEnd();
+		
+		// TODO: remove
+		System.out.println("selectedText: " + selectedText + ", selStart: " + selStart + ", selEnd: " + selEnd);					
+	
+		
+		// save the edited value into the table model
+		consoleTable.stopEditing();
+		
+		// get current row and input text		
+		int selRow = consoleTable.getSelectedRow();			
+		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
+		String selRowInput = cellValue.getInput();
+		
+		// always use same cell for output
+		CASTableCellValue outputCellValue = cellValue;
+		
+		// break text into prefix, evalText, postfix
+		String prefix, evalText, postfix;			
+		boolean hasSelectedText = selectedText == null || selectedText.trim().length() == 0;
+		if (hasSelectedText) {
+			// no selected text: evaluate input using current cell
+			prefix = "";
+			evalText = selRowInput;
+			postfix = "";		
+		}
+		else {
+			// selected text: break it up into prefix, evalText, and postfix
+			prefix = selRowInput.substring(0, selStart);
+			evalText = selectedText;
+			postfix = selRowInput.substring(selEnd);
+		}
+					
+		// TODO: remove
+		System.out.println("SELECTED ROW: " + selRow + ", prefix: " + prefix + ", evalText: " + evalText + ", postfix: " + postfix);					
+
+		/* ToDo:
+		switch (mod) {
+			case SUB_Flag:
+				// Create a CASSubDialog with the cell value
+				CASSubDialog d = new CASSubDialog(CASView.this, cellValue, selectedText, selRow);
+				d.setVisible(true);
+				return;
+		 */	
+		evalText=ggbcmd+"["+evalText+"]";
+		
+		// process evalText
+		String result;
+		boolean error;
+		try {
+			evalText = cas.processCASInput(evalText, true, useGeoGebraVariableValues);
+			result = prefix + evalText + postfix;	
+			error = false;
+		} catch (Throwable e) {					
+			e.printStackTrace();	
+			result = cas.getMathPiperError();
+			error = true;
+		}
+								
+			
+//		if (hasSelectedText || error) {
+//			outputCellValue.setInput(selRowInput);						
+//			outputCellValue.setOutput(result, error);
+//			consoleTable.updateRow(selRow);
+//			consoleTable.startEditingRow(selRow);
+//		} else {				
+//			outputCellValue.setInput(result);										
+//			consoleTable.insertRowAfter(selRow, outputCellValue);				
+//		}		
+		
+		// update output cell	
+		outputCellValue.setInput(selRowInput);						
+		outputCellValue.setOutput(result, error);
+		consoleTable.updateRow(selRow);
+		//consoleTable.startEditingRow(selRow);
+		
+		// create new empty row
+		consoleTable.insertRowAfter(selRow, null);
+		
+	}//apply(String,String[]
+	
 	protected class ButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent ae) {
@@ -645,7 +747,7 @@ public class CASView extends JComponent implements CasManager {
 			}
 
 		}
-
+		
 		private void apply(int mod) {				
 			// get editor and possibly selected text
 			CASTableCellEditor cellEditor = consoleTable.getEditor();

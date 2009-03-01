@@ -1,5 +1,6 @@
 package geogebra.cas.view.components;
 
+import geogebra.cas.view.CASView;
 /**
  * EvalCommand - Simplify[...]
  * 
@@ -8,20 +9,21 @@ package geogebra.cas.view.components;
  */
 public class CmdEval extends Command_ABS {
 
-    private     static  CmdEval   singleton   =   null;
+    private     static  CmdEval		singleton   =   null;
+    private		static	CASView		casview		=	null;
     
     /// --- Interface --- ///
     
     /** Singleton constructor */
-    public static CmdEval getInstance(String x){
+    public static CmdEval getInstance(CASView casview){
         if(singleton==null){singleton=new CmdEval();}
-        g=x;
+        CmdEval.casview=casview;
         return singleton;
     }//getInstance()
     
     /** Implementing Command_IF */
     public void execute(){
-        process("Simplify"+g);
+        process("Simplify",null);	//only command, no parameters
     }//execute()
 
 
