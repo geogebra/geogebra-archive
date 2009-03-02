@@ -31,9 +31,10 @@ import com.sun.opengl.util.FPSAnimator;
  * Used for openGL display.
  * <p>
  * It provides:
- * <li>methods for displaying {@link Drawable3D}, with painting parameters
- * <li>methods for picking object
- * 
+ * <ul>
+ * <li> methods for displaying {@link Drawable3D}, with painting parameters </li>
+ * <li> methods for picking object </li>
+ * </ul>
  * 
  * @author ggb3D
  * @version 3.2
@@ -142,13 +143,14 @@ public class EuclidianRenderer3D implements GLEventListener {
 	 * <p>
 	 * First, it calls {@link #doPick()} if a picking is to be done.
 	 * Then, for each {@link Drawable3D}, it calls:
-	 * <li> {@link Drawable3D#drawHidden(EuclidianRenderer3D)} to draw hidden parts (dashed segments, lines, ...)
-	 * <li> {@link Drawable3D#drawPicked(EuclidianRenderer3D)} to show objects that are picked (highlighted)
-	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to draw transparent objects (planes, spheres, ...)
-	 * <li> {@link Drawable3D#drawHiding(EuclidianRenderer3D)} to draw in the z-buffer objects that hides others (planes, spheres, ...)
-	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to re-draw transparent objects for a better alpha-blending
-	 * <li> {@link Drawable3D#draw(EuclidianRenderer3D)} to draw not hidden parts (dash-less segments, lines, ...)
-	 * 
+	 * <ul>
+	 * <li> {@link Drawable3D#drawHidden(EuclidianRenderer3D)} to draw hidden parts (dashed segments, lines, ...) </li>
+	 * <li> {@link Drawable3D#drawPicked(EuclidianRenderer3D)} to show objects that are picked (highlighted) </li>
+	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to draw transparent objects (planes, spheres, ...) </li>
+	 * <li> {@link Drawable3D#drawHiding(EuclidianRenderer3D)} to draw in the z-buffer objects that hides others (planes, spheres, ...) </li>
+	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to re-draw transparent objects for a better alpha-blending </li>
+	 * <li> {@link Drawable3D#draw(EuclidianRenderer3D)} to draw not hidden parts (dash-less segments, lines, ...) </li>
+	 * </ul>
 	 */
     public void display(GLAutoDrawable gLDrawable) {
     	

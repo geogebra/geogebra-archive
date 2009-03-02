@@ -24,7 +24,8 @@ import geogebra.main.Application;
 
 
 /**
- *
+ * Simple matrix description with basic linear algebra methods.
+ * 
  * @author  ggb3D
  * 
  */
@@ -32,20 +33,32 @@ public class Ggb3DMatrix
 	{
 	
 	/** 
-	 * the 2x2 matrix represented by val = {1,2,3,4} is
-	 * <br> | 1  3 | 
-	 * <br> | 2  4 |
+	 * the 2x2 matrix represented by val = {1,2,3,4} is 
+	 * <br>
+	 * <code>
+	 * | 1  3 |  <br>
+	 * | 2  4 |
+	 * </code>
 	 */
 	protected double[] val;
 	
-	protected int rows, columns; // dimensions
+	
+	/**  number of rows of the matrix */
+	protected int rows; 
+	/**  number of columns of the matrix */
+	protected int columns; 
+	/**  says if the matrix is transposed or not */
 	protected boolean transpose=false; //transposing the matrix is logical operation
 	
+	/**  says if the matrix is singular or not */
 	private boolean isSingular = false;
 	
 	//for rotations
+	/**  rotation around x-axis */
 	public static final int X_AXIS = 1;
+	/**  rotation around y-axis */
 	public static final int Y_AXIS = 2;
+	/**  rotation around z-axis */
 	public static final int Z_AXIS = 3;
 	
 	
@@ -53,10 +66,12 @@ public class Ggb3DMatrix
 	///////////////////////////////////////////////////:
 	//Constructors 
 	
-	//public GgbMatrix(){}
 	
 	
-	/** creates a GgbMatrix or a GgbVector if a_columns==1 */
+	/** creates a GgbMatrix or a GgbVector if a_columns==1 
+	 * @param a_rows number of rows
+	 * @param a_columns number of columns 
+	 * @return a_rows*a_columns matrix (or vector) */
 	static final public Ggb3DMatrix GgbMatrixOrVector(int a_rows, int a_columns){
 		if (a_columns==1)
 			return new Ggb3DVector(a_rows);
@@ -67,7 +82,11 @@ public class Ggb3DMatrix
 	
 	
 	
-	/** see class description */
+	/** see class description 
+	 * @param rows number of rows
+	 * @param columns number of columns
+	 * @param val values
+	 */
 	public Ggb3DMatrix(int rows, int columns, double[] val){
 		this.rows = rows;
 		this.columns = columns;
@@ -75,13 +94,20 @@ public class Ggb3DMatrix
 	}
 	
 	
-	/** creates an empty rows * columns matrix (all values set to 0)  */
+	/** creates an empty rows * columns matrix (all values set to 0)  
+	 * @param rows number of rows
+	 * @param columns number of values 
+	 */
 	public Ggb3DMatrix(int rows, int columns){
 		
 		initialise(rows, columns);
 		
 	}
 	
+	/** init the matrix (all values to 0)
+	 * @param rows number of rows
+	 * @param columns number of columns
+	 */
 	private void initialise(int rows, int columns) {
 		setIsSingular(false);
 		
@@ -96,6 +122,10 @@ public class Ggb3DMatrix
 		
 	}
 	
+	/**
+	 * TODO doc
+	 * @param inputList
+	 */
 	public Ggb3DMatrix(GeoList inputList) {
 
     	int cols = inputList.size();
@@ -148,7 +178,9 @@ public class Ggb3DMatrix
 
 	}
 	
-	/** returns n*n identity matrix  */
+	/** returns n*n identity matrix  
+	 * @param n dimension
+	 * @return the identity matrix*/
 	public static final Ggb3DMatrix Identity(int n){
 		
 		Ggb3DMatrix m = new Ggb3DMatrix(n,n);
@@ -161,14 +193,18 @@ public class Ggb3DMatrix
 		
 	}
 
-	/** returns scale homogenic matrix, dim v.length+1  */
+	/** returns scale homogenic matrix, dim v.length+1  
+	 * @param v scaling vector
+	 * @return scale matrix*/
 	public static final Ggb3DMatrix ScaleMatrix(double[] v){
 		
 		return ScaleMatrix(new Ggb3DVector(v));
 		
 	}
 	
-	/** returns scale homogenic matrix, dim v.length+1  */
+	/** returns scale homogenic matrix, dim v.length+1  
+	 * @param v scaling vector
+	 * @return scale matrix*/
 	public static final Ggb3DMatrix ScaleMatrix(Ggb3DVector v){
 		
 		int n = v.getLength();
@@ -184,14 +220,18 @@ public class Ggb3DMatrix
 	}
 
 	
-	/** returns translation homogenic matrix, dim v.length+1  */
+	/** returns translation homogenic matrix, dim v.length+1  
+	 * @param v translation vector
+	 * @return traslation matrix*/
 	public static final Ggb3DMatrix TranslationMatrix(double[] v){
 		
 		return TranslationMatrix(new Ggb3DVector(v));
 		
 	}
 
-	/** returns translation homogenic matrix, dim v.length+1  */
+	/** returns translation homogenic matrix, dim v.length+1  
+	 * @param v translation vector
+	 * @return traslation matrix*/
 	public static final Ggb3DMatrix TranslationMatrix(Ggb3DVector v){
 		
 		int n = v.getLength();
@@ -208,7 +248,11 @@ public class Ggb3DMatrix
 	}
 
 	
-	/** returns 3d rotation homogenic matrix, dim 4x4  */
+	/** returns 3d rotation homogenic matrix, dim 4x4  
+	 * @param axe axis of rotation
+	 * @param angle angle of rotation
+	 * @return rotation matrix
+	 */
 	public static final Ggb3DMatrix Rotation3DMatrix(int axe, double angle){
 		
 		Ggb3DMatrix m = new Ggb3DMatrix(4,4);
@@ -244,13 +288,17 @@ public class Ggb3DMatrix
 	///////////////////////////////////////////////////:
 	//setters and getters
 	
-	/** returns double[] describing the matrix for openGL */
+	/** returns double[] describing the matrix for openGL 
+	 * @return the matrix as a double[]*/
 	public double[] get(){
 		
 		return val;
 	}
 	
-	/** returns m(i,j)  */
+	/** returns m(i,j)  
+	 * @param i number of row
+	 * @param j number of column
+	 * @return value*/
 	public double get(int i, int j){
 		if (transpose){
 			return val[(i-1)*rows+(j-1)];
@@ -259,7 +307,10 @@ public class Ggb3DMatrix
 		}
 	}
 	
-	/** returns this minus the row i and the column j */
+	/** returns this minus the row i and the column j 
+	 * @param i row to remove
+	 * @param j column to remove
+	 * @return sub-matrix*/
 	public Ggb3DMatrix subMatrix(int i, int j){
 		Ggb3DMatrix ret = new Ggb3DMatrix(getRows()-1, getColumns()-1);
 		
@@ -284,7 +335,9 @@ public class Ggb3DMatrix
 		return ret;
 	}
 	
-	/** returns the column number j */
+	/** returns the column number j 
+	 * @param j number of column
+	 * @return the column*/
 	public Ggb3DVector getColumn(int j){
 		
 		Ggb3DVector ret = new Ggb3DVector(getRows());
@@ -300,6 +353,9 @@ public class Ggb3DMatrix
 	
 	/**
 	 * returns GgbMatrix as a GeoList eg { {1,2}, {3,4} }
+	 * @param outputList 
+	 * @param cons 
+	 * @return eg { {1,2}, {3,4} }
 	 */
 	public GeoList getGeoList(GeoList outputList, Construction cons) {
 		
@@ -323,7 +379,9 @@ public class Ggb3DMatrix
 
 	}
 	
-	/** sets V to column j of m, rows=V.getLength() */
+	/** sets V to column j of m, rows=V.getLength() 
+	 * @param V the new column
+	 * @param j number of the column*/
 	public void set(Ggb3DVector V, int j){
 		int i;
 		for (i=1;i<=V.getLength();i++){
@@ -331,7 +389,8 @@ public class Ggb3DMatrix
 		}
 	}
 	
-	/** sets m(V[]), all V[j].getLength equal rows and V.Length=columns */
+	/** sets m(V[]), all V[j].getLength equal rows and V.Length=columns 
+	 * @param V the vectors*/
 	public void set(Ggb3DVector[] V){
 		int j;
 		for (j=0;j<V.length;j++){
@@ -339,7 +398,10 @@ public class Ggb3DMatrix
 		}
 	}
 	
-	/** sets m(i,j) to val0 */
+	/** sets m(i,j) to val0 
+	 * @param i number of row
+	 * @param j number of columns
+	 * @param val0 value*/
 	public void set(int i, int j, double val0){
 		if (transpose){
 			val[(i-1)*rows+(j-1)]=val0;
@@ -349,7 +411,8 @@ public class Ggb3DMatrix
 	}
 
 	
-	/** sets all values to val0 */
+	/** sets all values to val0 
+	 * @param val0 value*/
 	public void set(double val0){
 
 		for(int i=0;i<columns*rows;i++){
@@ -358,7 +421,8 @@ public class Ggb3DMatrix
 		
 	}
 
-	/** copies all values of m */
+	/** copies all values of m 
+	 * @param m source matrix*/
 	public void set(Ggb3DMatrix m){
 
 		for(int i=1;i<=m.getRows();i++){
@@ -370,7 +434,8 @@ public class Ggb3DMatrix
 	}
 
 	
-	/** returns number of rows */
+	/** returns number of rows 
+	 * @return number of rows*/
 	public int getRows(){
 		
 		if (!transpose)
@@ -379,7 +444,8 @@ public class Ggb3DMatrix
 			return columns;
 	}
 	
-	/** returns number of columns */
+	/** returns number of columns 
+	 * @return number of columns*/
 	public int getColumns(){
 		
 		if (!transpose)
@@ -388,14 +454,16 @@ public class Ggb3DMatrix
 			return rows;
 	}
 	
-	/** transpose the copy (logically) */
+	/** transpose the copy (logically) 
+	 * @return true if the resulting matrix is transposed*/
 	public boolean transpose(){
 		
 		transpose=!transpose;
 		return transpose;
 	}
 	
-	/** returns a copy of the matrix */
+	/** returns a copy of the matrix 
+	 * @return copy of the matrix*/
 	public Ggb3DMatrix copy(){
 		
 		Ggb3DMatrix result = new Ggb3DMatrix(getRows(),getColumns()); 
@@ -410,7 +478,8 @@ public class Ggb3DMatrix
 				
 	}
 	
-	/** returns a transposed copy of the matrix */
+	/** returns a transposed copy of the matrix 
+	 * @return transposed copy of the matrix */
 	public Ggb3DMatrix transposeCopy(){
 		
 		this.transpose();		
@@ -447,7 +516,8 @@ public class Ggb3DMatrix
 	
 	
 	
-	/** returns if one value equals NaN */
+	/** returns false if one value equals NaN 
+	 * @return false if one value equals NaN */
 	public boolean isDefined(){
 		
 		boolean result = true;
@@ -464,7 +534,9 @@ public class Ggb3DMatrix
 	//basic operations 
 	
 	//multiplication by a real
-	/** returns this * val0 */
+	/** returns this * val0 
+	 * @param val0 value
+	 * @return this*val0 */
 	public Ggb3DMatrix mul(double val0){
 		
 		Ggb3DMatrix result = GgbMatrixOrVector(getRows(),getColumns()); 
@@ -481,7 +553,9 @@ public class Ggb3DMatrix
 	
 	
 	//matrix addition
-	/** returns this + m */
+	/** returns this + m 
+	 * @param m a matrix
+	 * @return sum matrix (or vector)*/
 	public Ggb3DMatrix add(Ggb3DMatrix m){
 		
 		Ggb3DMatrix result = GgbMatrixOrVector(getRows(),getColumns());
@@ -500,7 +574,9 @@ public class Ggb3DMatrix
 	
 	
 	//vector multiplication
-	/** returns this * v */
+	/** returns this * v 
+	 * @param v vector
+	 * @return resulting vector*/
 	public Ggb3DVector mul(Ggb3DVector v){
 
 		Ggb3DVector result = new Ggb3DVector(getRows());
@@ -519,7 +595,9 @@ public class Ggb3DMatrix
 	}
 	
 	//matrix multiplication
-	/** returns this * m */
+	/** returns this * m 
+	 * @param m matrix
+	 * @return resulting matrix*/
 	public Ggb3DMatrix mul(Ggb3DMatrix m){
 		
 		Ggb3DMatrix result = new Ggb3DMatrix(getRows(),m.getColumns()); //resulting matrix has the maximal dimension
@@ -540,7 +618,8 @@ public class Ggb3DMatrix
 		
 	}
 	
-	/** returns determinant */
+	/** returns determinant 
+	 * @return determinant of the matrix*/
 	public double det(){
 		
 		double ret = 0.0;
@@ -558,14 +637,18 @@ public class Ggb3DMatrix
 		return ret;
 	}
 	
+	/**
+	 * says if the matrix is a square-matrix
+	 * @return true if the matrix is a square-matrix
+	 */
 	public boolean isSquare() {
 		if (isSingular()) return false;
 		return getRows() == getColumns();
 	}
 	
-	/** returns inverse matrix (2x2 or larger)
-	 * you must check with isSquare() before calling this
-	 * 
+	/** returns inverse matrix (2x2 or larger). 
+	 * You must check with isSquare() before calling this
+	 * @return inverse matrix
 	 * */
 	public Ggb3DMatrix inverse(){
 		
@@ -595,7 +678,9 @@ public class Ggb3DMatrix
 	
 	///////////////////////////////////////////////////:
 	//more linear operations 
-	/** returns ret that makes this * ret = v */
+	/** returns ret that makes this * ret = v 
+	 * @param v vector
+	 * @return solving vector*/
 	public Ggb3DVector solve(Ggb3DVector v){
 		//GgbVector ret;
 		Ggb3DMatrix mInv = this.inverse(); //TODO: use gauss pivot to optimize
@@ -608,10 +693,17 @@ public class Ggb3DMatrix
 	/*
 	 * returns whether the matrix is singular, eg after an inverse
 	 */
+	/**
+	 * @return true if the matrix is singular
+	 */
 	public boolean isSingular() {
 		return isSingular;
 	}
 	
+	/**
+	 * sets if the matrix is singular
+	 * @param isSingular
+	 */
 	public void setIsSingular(boolean isSingular) {
 		this.isSingular = isSingular;
 	}
@@ -620,6 +712,10 @@ public class Ggb3DMatrix
 	
 	///////////////////////////////////////////////////:
 	//testing the package
+	/**
+	 * testing the package
+	 * @param args
+	 */
 	public static synchronized void main(String[] args) {		
 		
 		Ggb3DMatrix m1 = Ggb3DMatrix.Identity(3);
