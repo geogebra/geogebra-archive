@@ -15,11 +15,8 @@ package geogebra3D.kernel3D;
 
 
 
-import geogebra.kernel.AlgoPointOnPath;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
@@ -31,9 +28,37 @@ import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
 
 /**
+ * 
+ * Class used for (3D) calculations
+ *
+ * <h3> How to add a method for creating a {@link GeoElement3D} </h3>
+ *
+   <ul>
+   <li> simply call the element's constructor
+   <p>
+   <code>
+   final public GeoNew3D New3D(String label, ???) { <br> &nbsp;&nbsp;
+       GeoNew3D ret = new GeoNew3D(cons, ???); <br> &nbsp;&nbsp;
+       // stuff <br> &nbsp;&nbsp;
+       ret.setLabel(label); <br> &nbsp;&nbsp;           
+       return ret; <br> 
+   }
+   </code>
+   </li>
+   <li> use an {@link AlgoElement3D}
+   <p>
+   <code>
+   final public GeoNew3D New3D(String label, ???) { <br> &nbsp;&nbsp;
+     AlgoNew3D algo = new AlgoNew3D(cons, label, ???); <br> &nbsp;&nbsp;
+	 return algo.getGeo(); <br> 
+   }
+   </code>
+   </li>
+   </ul>
+
  *
  * @author  ggb3D
- * @version 
+ * 
  */
 
 

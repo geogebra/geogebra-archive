@@ -7,6 +7,7 @@ import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 import java.text.DecimalFormat;
 import java.util.Comparator;
@@ -17,9 +18,93 @@ import java.util.TreeSet;
 /**
  * 3D representation of a {@link GeoElement3D}
  * 
+ * 
+ * <h3> How to create the drawable of a new element </h3>
+ * 
+ * We'll call here our new element "GeoNew3D" and create a drawable3D linked to it:
+ * <ul>
+
+    <li> It extends {@link Drawable3DSolid} (for points, lines, ...) 
+         or {@link Drawable3DTransparent} (for planes, surfaces, ...)
+         <p>
+         <code>
+         public class DrawNew3D extends ... {
+         </code> 
+	</li>
+    <li> Create new constructor
+         <p>
+         <code>
+         public DrawNew3D(EuclidianView3D a_view3d, GeoNew3D a_new3D){ <br> &nbsp;&nbsp;
+            super(a_view3d, a_new3D); <br> 
+         }
+         </code>
+	</li>
+    <li> <b> NOTE: </b>  a Drawable3D uses the {@link GeoElement3D#getDrawingMatrix()} method to know where to draw itself
+    </li>
+    <li> Eclipse will add auto-generated methods :
+         <ul>
+         <li> getPickOrder() : for picking objects order ; use {@link #DRAW_PICK_ORDER_MAX} first
+              <p>
+              <code>
+                  public int getPickOrder() { <br> &nbsp;&nbsp;
+                        return DRAW_PICK_ORDER_MAX; <br> 
+                  }
+              </code>
+         </li>
+         <li> for {@link Drawable3DSolid} :
+              <p>
+              <code>
+                public void drawGeometry(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
+            	       // call the geometry to be drawn <br>
+            	}
+            	<br>
+            	public void drawGeometryHidden(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
+            	       // for hidden part, let it empty first <br>
+            	}
+            	<br>
+            	public void drawGeometryPicked(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
+            	       // to show the object is picked, let it empty first <br>
+            	}
+              </code>
+		 </li>
+         <li> for {@link Drawable3DTransparent} :
+              <p>
+              <code>
+            public void drawGeometry(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
+                    // call the geometry to be drawn <br>
+            }
+            <br>
+	        void drawGeometryHiding(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
+	           // call the geometry that hides other objects <br>&nbsp;&nbsp;
+                   // first sets it to :  <br>&nbsp;&nbsp;
+                   drawGeometry(renderer);      <br>
+	        }
+	        <br>
+	        public void drawGeometryHidden(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
+	           // for hidden part, let it empty first   <br> 
+	        }
+	        <br>
+	        public void drawGeometryPicked(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
+                   // to show the object is picked, let it empty first <br>
+	        }
+	      </code>
+	      </li>
+	      </ul>
+	</li>
+	</ul>
+	
+	<h3> See </h3> 
+	<ul>
+	<li> {@link EuclidianView3D#createDrawable(GeoElement)} 
+	     to make the drawable be created when the GeoElement is created 
+	</li>
+	</ul>
+
+ * 
  * @author ggb3D
- * @version 3.2
+ * 
  *
+ * 
  * 
  *
  */

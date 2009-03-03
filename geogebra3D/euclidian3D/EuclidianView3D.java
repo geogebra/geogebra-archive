@@ -198,6 +198,24 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 	}
 
+	/**
+	 * Create a {@link Drawable3D} linked to the {@link GeoElement3D}
+	 * 
+	 * <h3> Exemple:</h3>
+	  
+	  For a GeoElement3D called "GeoNew3D", add in the switch the following code:
+	    <p>
+	    <code>
+	    case GeoElement3D.GEO_CLASS_NEW3D: <br> &nbsp;&nbsp;                   
+           d = new DrawNew3D(this, (GeoNew3D) geo); <br> &nbsp;&nbsp;
+           break; <br> 
+        }
+        </code>
+
+	 * 
+	 * @param geo GeoElement for which the drawable is created
+	 * @return the drawable
+	 */
 	protected Drawable3D createDrawable(GeoElement geo) {
 		Drawable3D d=null;
 		if (geo.isGeoElement3D()){

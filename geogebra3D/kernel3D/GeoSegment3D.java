@@ -2,7 +2,6 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoSegment;
 import geogebra.kernel.Path;
 import geogebra3D.Matrix.Ggb3DVector;
 
@@ -92,7 +91,7 @@ public class GeoSegment3D extends GeoCoordSys1D {
 
 	/**
 	 * TODO return if this is equal to Geo
-	 * @param GeoElement
+	 * @param Geo GeoElement
 	 * @return if this is equal to Geo
 	 */
 	public boolean isEqual(GeoElement Geo) {
@@ -101,7 +100,7 @@ public class GeoSegment3D extends GeoCoordSys1D {
 
 	/**
 	 * TODO set this to Geo
-	 * @param GeoElement
+	 * @param geo the GeoElement
 	 */
 	public void set(GeoElement geo) {
 		
