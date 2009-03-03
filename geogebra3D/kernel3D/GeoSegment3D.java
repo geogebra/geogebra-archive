@@ -9,7 +9,6 @@ import geogebra3D.Matrix.Ggb3DVector;
 public class GeoSegment3D extends GeoCoordSys1D {
 	
 	
-	private GeoSegment segment2D;
 	
 	/** creates a segment linking p1 to p2*/
 	public GeoSegment3D(Construction c, GeoPoint3D p1, GeoPoint3D p2){
@@ -106,18 +105,19 @@ public class GeoSegment3D extends GeoCoordSys1D {
 	
 	
 	
-	//Path1D interface
+	//Path3D interface
 	public Path getPath2D(){
-		return getSegment2D();
+		return (Path) getGeoElement2D();
 	}
 	
 	
-	public GeoSegment getSegment2D(){
-		if (segment2D==null){
+	public GeoElement getGeoElement2D(){ 
+		
+		if (!hasGeoElement2D()){
 			AlgoTo2D algo = new AlgoTo2D(cons, this);
-			segment2D = (GeoSegment) algo.getOut();
+			setGeoElement2D(algo.getOut());
 		}
-		return segment2D;
+		return super.getGeoElement2D();
 	}
 	
 	

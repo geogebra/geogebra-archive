@@ -322,9 +322,9 @@ public abstract class Drawable3D {
 			
 			// check if one is on a path and the other not
 			//TODO do this only for points
-			if ((this.getGeoElement3D().hasPathOn())&&(!d.getGeoElement3D().hasPathOn()))
+			if ((this.getGeoElement3D().hasPath())&&(!d.getGeoElement3D().hasPath()))
 				return -1;
-			if ((!this.getGeoElement3D().hasPathOn())&&(d.getGeoElement3D().hasPathOn()))
+			if ((!this.getGeoElement3D().hasPath())&&(d.getGeoElement3D().hasPath()))
 				return 1;
 
 

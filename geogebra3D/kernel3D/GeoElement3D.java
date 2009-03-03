@@ -22,43 +22,49 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.euclidian3D.Drawable3D;
 
 
 /**
+ * Class for describing GeoElement in 3D version.
+ * 
  *
  * @author  ggb3D
- * @version 
+ * 
  */
 public abstract class GeoElement3D
 	extends GeoElement{
 	
-	private static final boolean DEBUG = false;
 	
 	
-	private boolean wasHighlighted = false;
-	private boolean willBeHighlighted = false;
 	
-	
-	//link to drawable3D
+	/** matrix used as orientation by the {@link Drawable3D} */
 	private Ggb3DMatrix4x4 m_drawingMatrix = null;
 	
-	//link to GeoElement
-	protected GeoElement geo2D = null;
-	
+	/** for some 3D element (like conics, polygons, etc), a 2D GeoElement is linked to (for calculation) */
+	private GeoElement geo2D = null;
 	
 	
 	
 	// GeoElement3D types 
+	/** id for {@link GeoPoint3D} */
 	public static final int GEO_CLASS_POINT3D = 3010;
+	/** id for {@link GeoVector3D} */
 	public static final int GEO_CLASS_VECTOR3D = 3011;
+	/** id for {@link GeoSegment3D} */
 	public static final int GEO_CLASS_SEGMENT3D = 3110;
+	/** id for {@link GeoLine3D} */
 	public static final int GEO_CLASS_LINE3D = 3120;
+	/** id for {@link GeoRay3D} */
 	public static final int GEO_CLASS_RAY3D = 3121;
+	/** TODO remove */
 	public static final int GEO_CLASS_TRIANGLE3D = 3210;
+	/** id for {@link GeoPolygon3D} */
 	public static final int GEO_CLASS_POLYGON3D = 3211;
+	/** id for {@link GeoPlane3D} */
 	public static final int GEO_CLASS_PLANE3D = 3220;
+	/** id for {@link GeoPolygon3D} */
 	public static final int GEO_CLASS_QUADRIC = 3230;
 	
 
@@ -66,25 +72,31 @@ public abstract class GeoElement3D
 	
 	/********************************************************/
 
-	/** Creates new GeoElement for given construction */
+	/** Creates new GeoElement for given construction 
+	 * @param c construction*/
 	public GeoElement3D(Construction c) {
 		super(c);
 		
 	}
 
 	
-	
+	/**
+	 * it's a 3D GeoElement.
+	 * @return true
+	 */
 	public boolean isGeoElement3D(){
 		return true;
 	}
 
 	
-	/** returns a 4x4 matrix for drawing the drawable */
+	/** returns a 4x4 matrix for drawing the {@link Drawable3D} 
+	 * @return the drawing matrix*/
 	public Ggb3DMatrix4x4 getDrawingMatrix(){
 		return m_drawingMatrix;
 	}
 	
-	/** sets the 4x4 matrix for drawing the drawable */
+	/** sets the 4x4 matrix for drawing the {@link Drawable3D} 
+	 * @param a_drawingMatrix the drawing matrix*/
 	public void setDrawingMatrix(Ggb3DMatrix4x4 a_drawingMatrix){
 		m_drawingMatrix = a_drawingMatrix;
 	}	
@@ -95,7 +107,10 @@ public abstract class GeoElement3D
 		return false;
 	}
 	
-	public boolean hasPathOn() {
+	/**
+	 * @return false
+	 */
+	public boolean hasPath() {
 		return false;
 	}	
 	
@@ -109,50 +124,35 @@ public abstract class GeoElement3D
 		return false;
 	}
 	
-	// link to GeoElement
+	
+	
+	
+	// link to 2D GeoElement
+    /**
+     * return if liked to a 2D GeoElement
+     * @return has a 2D GeoElement
+     */
     public boolean hasGeoElement2D() {
-    	return false;
+    	return (geo2D!=null);
     }
     
 
-    public GeoElement getGeoElement2D(){ //TODO turn it to abstract
-    	return null; 
+    /**
+     * return the 2D GeoElement liked to
+     * @return 2D GeoElement
+     */
+    public GeoElement getGeoElement2D(){ 
+    	return geo2D; 
     }
     
+    
+    /**
+     * set the 2D GeoElement liked to
+     * @param geo a 2D GeoElement
+     */
     public void setGeoElement2D(GeoElement geo){ 
     	this.geo2D = geo;
     }
-	
-	/** stores the current highlighted flag to wasHighlighted */ 
-	final public void setWasHighlighted(){
-		wasHighlighted = highlighted;
-	}
-
-	/** stores the future highlighted flag to willBeHighlighted */ 
-	final public void setWillBeHighlighted(boolean flag){
-		willBeHighlighted = flag;
-	}
-	
-	/** update the highlighted flag */ 
-	final public void updateHighlighted(boolean repaint){
-		//Application.debug(getLabel()+" : "+wasHighlighted+","+willBeHighlighted);
-		if (wasHighlighted!=willBeHighlighted){
-			setHighlighted(willBeHighlighted); //GeoElement method
-			if (repaint)
-				updateRepaint();//for highlighting in algebraView
-		}
-	}
-	
-	
-	
-	/** set the highlighted flag and eventually repaint it for algebraView */ 
-	final public void setHighlighted(boolean flag, boolean repaint) {
-		boolean highlightedOld = highlighted;
-		setHighlighted(flag); //GeoElement method
-		if ((highlightedOld!=highlighted)&&repaint)
-			updateRepaint();//for highlighting in algebraView
-		
-	}	
 	
 	
 	

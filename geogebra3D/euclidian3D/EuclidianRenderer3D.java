@@ -37,7 +37,7 @@ import com.sun.opengl.util.FPSAnimator;
  * </ul>
  * 
  * @author ggb3D
- * @version 3.2
+ * 
  * 
  * 
  */

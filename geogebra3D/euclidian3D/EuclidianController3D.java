@@ -89,16 +89,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 
 	
-
-	
-	/*
-	public EuclidianController3D(Kernel3D kernel3D) {
-		super(kernel3D);
-		this.kernel3D = kernel3D;
-		//app3D = kernel3D.getApplication3D();
-		
-	}
-	*/
 	
 	public EuclidianController3D(Kernel kernel) {
 		super(kernel);
@@ -142,7 +132,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected void movePoint(boolean repaint){
 		
-		if (movedGeoPoint3D.hasPathOn()){
+		if (movedGeoPoint3D.hasPath()){
 			//getting current pick point and direction v 
 			Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 			view3D.toSceneCoords3D(o);
@@ -153,29 +143,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 			//TODO do this just one time, when mouse is pressed
 			//plane for projection
-			Ggb3DMatrix plane = movedGeoPoint3D.getPathOn().getMovingMatrix(view3D.getToScreenMatrix());			
+			Ggb3DMatrix plane = movedGeoPoint3D.getPath().getMovingMatrix(view3D.getToScreenMatrix());			
 			view3D.toSceneCoords3D(plane);
 			
 			//getting new position of the point
 			Ggb3DVector[] project = o.projectPlaneThruVIfPossible(plane, v);
 			movedGeoPoint3D.setCoords(project[0]);
-				
-		}else if (movedGeoPoint3D.hasPathIn()){
-			//getting current pick point and direction v 
-			Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
-			view3D.toSceneCoords3D(o);
 			
-			Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
-			view3D.toSceneCoords3D(v);
-			
-			//TODO do this just one time, when mouse is pressed
-			//plane for projection
-			Ggb3DMatrix plane = movedGeoPoint3D.getPathIn().getMovingMatrix(view3D.getToScreenMatrix());						
-			
-			//getting new position of the point
-			Ggb3DVector[] project = o.projectPlaneThruVIfPossible(plane, v);
-			movedGeoPoint3D.setCoords(project[0]);			
-		
 			
 		}else if (isAltDown){ //moves the point along z-axis
 			
@@ -276,9 +250,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		switch (moveMode) {
 		case MOVE_VIEW:
 		default:
-			view3D.setZZero(view3D.getZZero()+ r/10.0);
+			view3D.setScale(view3D.getXscale()+r*10);
 			view3D.updateMatrix();
-			//view.update();
 			((Kernel3D) getKernel()).notifyRepaint();
 			break;
 

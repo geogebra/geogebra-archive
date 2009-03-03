@@ -19,7 +19,7 @@ import geogebra3D.Matrix.Ggb3DMatrix;
 /**
  * @author Markus Hohenwarter + ggb3D
  */
-public interface PathOn {
+public interface Path3D {
 	
 
 	
@@ -53,7 +53,7 @@ public interface PathOn {
 	
 
 	/**
-	 * Returns the GeoElement Path linked with
+	 * Returns the 2D GeoElement Path linked with
 	 */
 	public Path getPath2D();
 

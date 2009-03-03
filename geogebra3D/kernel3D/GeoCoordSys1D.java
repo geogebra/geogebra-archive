@@ -9,7 +9,7 @@ import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 
-public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
+public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	
 
 	public GeoCoordSys1D(Construction c){
@@ -89,6 +89,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	}
 	
 	public void pointChanged(GeoPoint3D P){
+		
 		//project P on line
 		Ggb3DVector v = P.getInhomCoords();
 		Ggb3DVector p = new Ggb3DVector(4);
@@ -96,13 +97,15 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 		
 
 		if(!P.hasGeoElement2D()){
+			//the point is not linked to a 2D point
 			p.set(project[0]);
 			p.set(4, 1);
 			P.setCoords(p,false); //avoid new pointChanged computation
 			// set path parameter		
 			PathParameters pps = P.getPathParameters(1);
 			pps.setT(project[1].get(1));
-		}else{								
+		}else{		
+			//the point is linked to a 2D point, used for computation
 			GeoPoint P2D = (GeoPoint) P.getGeoElement2D();
 			P2D.setCoords(project[1].get(1), 0, 1); //use 2D algo	
 			P2D.updateRepaint();//TODO remove this (or not)
@@ -114,9 +117,11 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements PathOn {
 	
 	public void pathChanged(GeoPoint3D P){
 		if(!P.hasGeoElement2D()){
+			//the point is not linked to a 2D point
 			PathParameters pps = P.getPathParameters(1);
 			P.setCoords(getPoint(pps.getT()),false);
 		}else{
+			//the point is linked to a 2D point, used for computation
 			GeoPoint P2D = (GeoPoint) P.getGeoElement2D();
 			P.setCoords(getPoint(P2D.getPathParameter().getT()),false);
 		}

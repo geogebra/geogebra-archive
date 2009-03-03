@@ -48,10 +48,7 @@ implements GeoPointInterface, PointProperties{
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	
 	//paths
-	private PathOn pathOn;
-	//private PathOnParameter ppOn;
-	private PathIn pathIn;
-	//private PathInParameter ppIn;
+	private Path3D path;
 	private PathParameters pps;
         
     // temp
@@ -79,16 +76,17 @@ implements GeoPointInterface, PointProperties{
     
     
     
-    public GeoPoint3D(Construction c, PathOn path) {
+    public GeoPoint3D(Construction c, Path3D path) {
 		super(c,4);
-		this.pathOn = path;
+		this.path = path;
 	}
     
+    /*
     public GeoPoint3D(Construction c, PathIn path) {
 		super(c,4);
 		this.pathIn = path;
 	}    
-    
+    */
     
 
     
@@ -116,19 +114,21 @@ implements GeoPointInterface, PointProperties{
 	/** Sets homogenous coordinates and updates
 	 * inhomogenous coordinates
 	 */
-	final public void setCoords(Ggb3DVector v, boolean path) {
+	final public void setCoords(Ggb3DVector v, boolean a_path) {
 		
 		super.setCoords(v);
 		updateCoords(); 
 		
-		if (path){
-			if (hasPathOn()) {
+		if (a_path){
+			if (hasPath()) {
 				// remember path parameter for undefined case
 				//PathParameter tempPathParameter = getTempPathparameter();
 				//tempPathParameter.set(getPathParameter());
-				pathOn.pointChanged(this);
+				path.pointChanged(this);
+			/*
 			} else if (hasPathIn()) {
 				pathIn.pointChanged(this);
+				*/
 			}
 			updateCoords(); 
 		}
@@ -238,22 +238,22 @@ implements GeoPointInterface, PointProperties{
     ///////////////////////////////////////////////////////////
     // PATHS
     
-	public boolean hasPathOn() {
-		return pathOn != null;
+	public boolean hasPath() {
+		return path != null;
 	}
 	
 
     
     
-	public PathOn getPathOn() {
-		return pathOn;
+	public Path3D getPath() {
+		return path;
 	}
 	
 
 	
 
     
-    
+    /*
 	public boolean hasPathIn() {
 		return pathIn != null;
 	}
@@ -264,7 +264,7 @@ implements GeoPointInterface, PointProperties{
 	public PathIn getPathIn() {
 		return pathIn;
 	}
-	
+	*/
 	
     final public PathParameters getPathParameters(int n) {
     	if (pps == null)
@@ -272,12 +272,7 @@ implements GeoPointInterface, PointProperties{
     	return pps;
     }	
 	
-    
-	public boolean hasPath() {
-		return hasPathOn() || hasPathIn();
-	}
-    
-
+  
 	
 	// adding hasPath() condition to be independent
 	// because 3D points that have a Path have an algoParent
@@ -289,16 +284,7 @@ implements GeoPointInterface, PointProperties{
 	
 	
 	
-    ///////////////////////////////////////////////////////////
-    // LINK TO GEOELEMENT
-
-    public boolean hasGeoElement2D() {
-    	return geo2D!=null;
-    }
-    
-    public GeoElement getGeoElement2D(){ 
-    	return geo2D; 
-    }
+ 
     
 
     

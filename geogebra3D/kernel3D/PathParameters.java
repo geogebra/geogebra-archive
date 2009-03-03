@@ -4,7 +4,7 @@ import geogebra.kernel.PathParameter;
 
 
 /**
- * author ggb3D
+ * @author ggb3D
  * 
  * Extends PathParameter to allow more than one parameter
  */

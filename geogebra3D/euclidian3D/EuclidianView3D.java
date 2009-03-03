@@ -395,6 +395,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public double getXscale() { return scale; }
 	public double getYscale() { return scale; }
 	public double getZscale() { return scale; }
+	
+	public void setScale(double val){
+		scale = val;
+	}
 
 	
 	/** remembers the origins values (xzero, ...) */

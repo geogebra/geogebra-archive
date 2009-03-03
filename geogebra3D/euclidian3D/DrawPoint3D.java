@@ -32,7 +32,7 @@ public class DrawPoint3D extends Drawable3DSolid{
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		GeoPoint3D l_point = (GeoPoint3D) getGeoElement(); 
-		if (l_point.hasPathOn())
+		if (l_point.hasPath())
 			renderer.drawSphere(POINT3D_RADIUS*POINT_ON_PATH_DILATATION*l_point.getPointSize()); //points on path are more visible 
 		else
 			renderer.drawSphere(POINT3D_RADIUS*l_point.getPointSize());
