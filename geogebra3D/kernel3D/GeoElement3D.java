@@ -102,34 +102,11 @@ public abstract class GeoElement3D
 	}	
 	
 	
-	// Path1D interface
-	public boolean isPath1D(){
-		return false;
-	}
-	
-	/**
-	 * @return false
-	 */
-	public boolean hasPath() {
-		return false;
-	}	
-	
-	
-	// Path2D interface
-	public boolean isPath2D(){
-		return false;
-	}
-	
-	public boolean hasPathIn() {
-		return false;
-	}
-	
-	
 	
 	
 	// link to 2D GeoElement
     /**
-     * return if liked to a 2D GeoElement
+     * return if linked to a 2D GeoElement
      * @return has a 2D GeoElement
      */
     public boolean hasGeoElement2D() {
@@ -138,7 +115,7 @@ public abstract class GeoElement3D
     
 
     /**
-     * return the 2D GeoElement liked to
+     * return the 2D GeoElement linked to
      * @return 2D GeoElement
      */
     public GeoElement getGeoElement2D(){ 
@@ -147,19 +124,13 @@ public abstract class GeoElement3D
     
     
     /**
-     * set the 2D GeoElement liked to
+     * set the 2D GeoElement linked to
      * @param geo a 2D GeoElement
      */
     public void setGeoElement2D(GeoElement geo){ 
     	this.geo2D = geo;
     }
 	
-	
-	
-	
-
-	
-
 	
 	
 	

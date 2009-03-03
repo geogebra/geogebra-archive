@@ -52,7 +52,7 @@ public class CmdPoint3D extends CmdPoint {
 			if (arg[0].isGeoElement3D() ){
 
 				GeoElement3D geo0 = (GeoElement3D) arg[0];
-				if (ok[0] = (geo0.isPath1D())) {
+				if (ok[0] = (geo0.isPath())) {
 					GeoElement[] ret =
 					{ kernel3D.Point3D(c.getLabel(), (Path3D) geo0)};
 					return ret;

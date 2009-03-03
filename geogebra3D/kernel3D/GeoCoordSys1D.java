@@ -83,8 +83,8 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	
 	
 	
-	// Path1D interface
-	public boolean isPath1D(){
+	// Path3D interface
+	public boolean isPath(){
 		return true;
 	}
 	

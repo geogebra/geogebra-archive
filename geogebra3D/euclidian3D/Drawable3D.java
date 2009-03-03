@@ -6,6 +6,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.text.DecimalFormat;
 import java.util.Comparator;
@@ -321,11 +322,12 @@ public abstract class Drawable3D {
 			}
 			
 			// check if one is on a path and the other not
-			//TODO do this only for points
-			if ((this.getGeoElement3D().hasPath())&&(!d.getGeoElement3D().hasPath()))
-				return -1;
-			if ((!this.getGeoElement3D().hasPath())&&(d.getGeoElement3D().hasPath()))
-				return 1;
+			if (this.getGeoElement().isGeoPoint() && this.getGeoElement().isGeoPoint()){
+				if ((((GeoPoint3D) this.getGeoElement()).hasPath())&&(!((GeoPoint3D) d.getGeoElement()).hasPath()))
+					return -1;
+				if ((!((GeoPoint3D) this.getGeoElement()).hasPath())&&(((GeoPoint3D) d.getGeoElement()).hasPath()))
+					return 1;			 
+			}
 
 
 			//check if one is the child of the other
