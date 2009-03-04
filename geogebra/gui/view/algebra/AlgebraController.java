@@ -25,6 +25,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -175,8 +176,14 @@ public class AlgebraController
 			}
 														
 			// single selection: popup menu
-			if (app.selectedGeosSize() < 2) {				
-				app.getGuiManager().showPopupMenu(geo, view, e.getPoint());						
+			if (app.selectedGeosSize() < 2) {
+				// no geo selected, show general popup menu for the algebra view
+				if(geo == null) {
+					AlgebraContextMenu contextMenu = new AlgebraContextMenu(app);
+					contextMenu.show(view, e.getPoint().x, e.getPoint().y);
+				} else {
+					app.getGuiManager().showPopupMenu(geo, view, e.getPoint());
+				}
 			} 
 			// multiple selection: properties dialog
 			else {														
@@ -187,7 +194,7 @@ public class AlgebraController
 		// left click
 		else {
 			int x = e.getX();
-			int y = e.getY();	
+			int y = e.getY();
 			GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);			
 			EuclidianView ev = app.getEuclidianView();
 			if (ev.getMode() == EuclidianView.MODE_MOVE) {		

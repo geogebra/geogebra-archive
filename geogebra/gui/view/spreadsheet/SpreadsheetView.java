@@ -582,8 +582,11 @@ public void updateFonts() {
 		table.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
 		rowHeader.setFixedCellWidth((int)(ROW_HEADER_WIDTH * multiplier));
 		rowHeader.setFixedCellHeight(table.getRowHeight()); 
-		columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH * multiplier)
-					, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+		
+		if(columnHeader != null) {
+			columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH * multiplier)
+						, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+		}
 		
 		for (int i = 0; i < table.getColumnCount(); ++ i) {
 			table.getColumnModel().getColumn(i).setPreferredWidth((int)(MyTable.TABLE_CELL_WIDTH * multiplier));
@@ -591,9 +594,10 @@ public void updateFonts() {
 		
 		table.setFont(app.getPlainFont());
 		rowHeader.setFont(font);
-		columnHeader.setFont(font);
 		rowHeaderRenderer.setFont(font);
-	
+
+		if(columnHeader != null)
+			columnHeader.setFont(font);
 		
 	}
 

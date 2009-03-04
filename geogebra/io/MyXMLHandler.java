@@ -1167,8 +1167,7 @@ public class MyXMLHandler implements DocHandler {
 				tmp_showSpreadsheet = parseBoolean((String) attrs
 						.get("spreadsheetView"));
 			}
-			
-			// TODO auxiliary objects not saved per perspective? (F.S.)
+
 			String str = (String) attrs.get("auxiliaryObjects");
 			boolean auxiliaryObjects = (str != null && str.equals("true"));
 			app.setShowAuxiliaryObjects(auxiliaryObjects);
@@ -1284,7 +1283,7 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleFont(Application app, LinkedHashMap attrs) {
 		try {
 			int fontSize = Integer.parseInt((String) attrs.get("size"));
-			app.setFontSize(fontSize);
+			app.setGUIFontSize(fontSize);
 			return true;
 		} catch (Exception e) {
 			return false;

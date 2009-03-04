@@ -44,7 +44,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -180,6 +179,7 @@ public abstract class Application implements KeyEventDispatcher {
 	// Font settings
 	private static final String STANDARD_FONT_NAME_SANS_SERIF = "SansSerif";
 	private static final String STANDARD_FONT_NAME_SERIF = "Serif";
+	private static final int INIT_FONT_SIZE = 12;
 	public static final int MIN_FONT_SIZE = 10;
 	private String appFontNameSansSerif = "SansSerif";
 	private String appFontNameSerif = "Serif";
@@ -307,7 +307,9 @@ public abstract class Application implements KeyEventDispatcher {
 
 	private static LinkedList fileList = new LinkedList();
 	private boolean isSaved = true;
-	private int appFontSize;
+	private int guiFontSize;
+	private int axesFontSize;
+	private int euclidianFontSize;
 	public Font boldFont, plainFont, smallFont;
 
 	protected JPanel centerPanel;
@@ -408,8 +410,11 @@ public abstract class Application implements KeyEventDispatcher {
 		if(useLayout) {
 			getGuiManager().initialize();
 		}
-		
-		setFontSize(getInitFontSize());
+
+		// set font sizes & construct default font objects
+		axesFontSize = INIT_FONT_SIZE - 2;
+		euclidianFontSize = INIT_FONT_SIZE;
+		setGUIFontSize(INIT_FONT_SIZE);
 
 		// open file given by startup parameter
 		boolean fileLoaded = handleFileArg(args);
@@ -1731,30 +1736,65 @@ public abstract class Application implements KeyEventDispatcher {
 
 		getGuiManager().updateFrameTitle();
 	}
-
-	public void setFontSize(int points) {
-		if (points == appFontSize)
-			return;
-		appFontSize = points;
-		isSaved = false;
-
-		resetFonts();
-
-		if (!INITING) {
-			if (appletImpl != null)
-				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
-			if (frame != null)
-				SwingUtilities.updateComponentTreeUI(frame);
-		}
+	
+	public void setGUIFontSize(int points) {
+		setGUIFontSize(points, true);
 	}
 
-	private static int getInitFontSize() {
-		/*
-		 * Dimension dim = Toolkit.getDefaultToolkit().getScreenSize(); int
-		 * fontsize = (int) (dim.height 0.016); if (fontsize < 10) fontsize =
-		 * 10; else if (fontsize > 16) fontsize = 16; return fontsize;
-		 */
-		return 12;
+	public void setGUIFontSize(int points, boolean update) {
+		if (points == guiFontSize)
+			return;
+		guiFontSize = points;
+		isSaved = false;
+
+		if(update) {
+			resetFonts();
+	
+			if (!INITING) {
+				if (appletImpl != null)
+					SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
+				if (frame != null)
+					SwingUtilities.updateComponentTreeUI(frame);
+			}
+		}
+	}
+	
+	/**
+	 * Set the font size of elements in the euclidian view.
+	 * @param points
+	 * @param update Whether to update the fonts now
+	 */
+	public void setEuclidianFontSize(int points, boolean update) {
+		if(points == euclidianFontSize)
+			return;
+		
+		euclidianFontSize = points;
+		
+		if(update)
+			updateFonts();
+	}
+	
+	public int getEuclidianFontSize() {
+		return euclidianFontSize;
+	}
+	
+	/**
+	 * Set the font size of the axes in the euclidian view.
+	 * @param points
+	 * @param update Whether to update the fonts now
+	 */
+	public void setAxesFontSize(int points, boolean update) {
+		if(points == axesFontSize)
+			return;
+		
+		axesFontSize = points;
+		
+		if(update)
+			updateFonts();
+	}
+	
+	public int getAxesFontSize() {
+		return axesFontSize;
 	}
 
 	public void resetFonts() {
@@ -1784,7 +1824,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	private void setLAFFontSize() {
-		int size = appFontSize;
+		int size = guiFontSize;
 		// create similar font with the specified size
 		FontUIResource plain = new FontUIResource(appFontNameSansSerif,
 				Font.PLAIN, size);
@@ -1842,7 +1882,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public int getFontSize() {
-		return appFontSize;
+		return guiFontSize;
 	}
 
 	private void setLabels() {
@@ -2531,7 +2571,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		sb.append("\t<font ");
 		sb.append(" size=\"");
-		sb.append(appFontSize);
+		sb.append(guiFontSize);
 		sb.append("\"/>\n");
 
 		sb.append(getConsProtocolXML());

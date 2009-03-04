@@ -1,6 +1,5 @@
 package geogebra.gui.layout;
 
-import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.event.ComponentEvent;
 
@@ -252,7 +251,7 @@ public class DockManager {
 		}
 		
 		// Hide the source first
-		hide(source);
+		hide(source, false);
 		
 		source.getInfo().setVisible(true);
 		
@@ -357,12 +356,15 @@ public class DockManager {
 		}
 
 		updatePanels();
-		
-		Application.debug(getDebugTree(0, rootPane));
-		
+
 		// Manually dispatch a resize event as the size of the 
 		// euclidian view isn't updated all the time.
-		app.getEuclidianView().dispatchEvent(new ComponentEvent(rootPane, ComponentEvent.COMPONENT_RESIZED));
+		// TODO What does the resize do which will update the component ?!
+		app.getEuclidianView().dispatchEvent(
+			new ComponentEvent(rootPane, ComponentEvent.COMPONENT_RESIZED)
+		);
+		
+		Application.debug(getDebugTree(0, rootPane));
 	}
 	
 	/**

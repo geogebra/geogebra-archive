@@ -93,6 +93,8 @@ public class DefaultGuiManager implements GuiManager {
 
 	private Application app;
 	private Kernel kernel;
+	
+	private OptionsDialog optionsDialog;
 
 	protected PropertiesDialogGeoElement propDialog;
 	private ConstructionProtocol constProtocol;
@@ -513,7 +515,9 @@ public class DefaultGuiManager implements GuiManager {
 		return appToolbarPanel.getDefaultToolbarString();
 	}
 
+	// TODO really required to do all the initGUI() calls ? F.S.
 	public void updateFonts() {
+		SwingUtilities.updateComponentTreeUI(app.getMainComponent());
 
 		if (algebraView != null)
 			algebraView.updateFonts();
@@ -525,6 +529,10 @@ public class DefaultGuiManager implements GuiManager {
 		if (fileChooser != null) {
 			fileChooser.setFont(app.getPlainFont());
 			SwingUtilities.updateComponentTreeUI(fileChooser);
+		}
+		
+		if(optionsDialog != null) {
+			SwingUtilities.updateComponentTreeUI(optionsDialog);
 		}
 
 		if (appToolbarPanel != null)
@@ -568,7 +576,9 @@ public class DefaultGuiManager implements GuiManager {
 		if (constProtocolNavigation != null)
 			constProtocolNavigation.setLabels();
 		if (fileChooser != null)
-			updateJavaUILanguage();		
+			updateJavaUILanguage();
+		if (optionsDialog != null)
+			optionsDialog.setLabels();
 			
 		layout.getDockManager().setLabels();			
 	}
@@ -651,6 +661,23 @@ public class DefaultGuiManager implements GuiManager {
 		ContextMenuGeoElement popupMenu = new ContextMenuGeoElement(app, geo,
 				screenPos);
 		popupMenu.show(invoker, p.x, p.y);
+	}
+	
+	/**
+	 * Displays the options dialog.
+	 * 
+	 * @param showEuclidianTab If the tab with euclidian settings should be selected
+	 */
+	public void showOptionsDialog(boolean showEuclidianTab)	{
+		if(optionsDialog == null)
+			optionsDialog = new OptionsDialog(app);
+		else
+			optionsDialog.updateGUI();
+		
+		if(showEuclidianTab)
+			optionsDialog.showEuclidianTab();
+		
+		optionsDialog.setVisible(true);
 	}
 
 	/**

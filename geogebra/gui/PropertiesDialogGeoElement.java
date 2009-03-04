@@ -831,6 +831,7 @@ public class PropertiesDialogGeoElement
 				JPanel panel = new JPanel();
 				panel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
 				JScrollPane scrollPane = new JScrollPane(panel);
+				scrollPane.setBorder(BorderFactory.createEmptyBorder());
 				//setPreferredSize(new Dimension(450, 110));
 				add(scrollPane, BorderLayout.CENTER);
 							

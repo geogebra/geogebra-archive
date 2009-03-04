@@ -30,7 +30,8 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		ignoreDocumentPerspectiveAction,
 		showViewTitlebarAction,
 		savePreferencesAction,
-		clearPreferencesAction
+		clearPreferencesAction,
+		showOptionsAction
 	;
 	
 	private JCheckBoxMenuItem
@@ -279,6 +280,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 			// Preferences
 			addSeparator();
+			add(showOptionsAction);
 			// submenu = new JMenu(app.getMenu("Settings"));
 			add(savePreferencesAction);
 			add(clearPreferencesAction);
@@ -364,6 +366,16 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	 */
 	private void initActions()
 	{
+		// Florian Sonner 2009-02-26
+		showOptionsAction = new AbstractAction(app
+				.getMenu("Options"), app.getEmptyIcon()) {
+			public static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.getGuiManager().showOptionsDialog(false);
+			}
+		};
+		
 		// Florian Sonner 2008-10-22
 		showViewTitlebarAction = new AbstractAction(app
 				.getMenu("ShowViewTitlebar"), app.getEmptyIcon()) {
@@ -599,7 +611,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		// font size
 		else if (cmd.endsWith("pt")) {
 			try {
-				app.setFontSize(Integer.parseInt(cmd.substring(0, 2)));
+				app.setGUIFontSize(Integer.parseInt(cmd.substring(0, 2)));
 				app.setUnsaved();
 				System.gc();
 			} catch (Exception e) {

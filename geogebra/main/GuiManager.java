@@ -123,6 +123,11 @@ public interface GuiManager {
 	public JMenuBar getMenuBar() ;
 
 	public void setMenubar(JMenuBar newMenuBar);
+	
+	/**
+	 * Shows the options dialog.
+	 */
+	public void showOptionsDialog(boolean showEuclidianTab);
 
 	public void showAboutDialog();
 

@@ -683,17 +683,18 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	}
 
 	public void updateFonts() {
-		fontSize = app.getFontSize();
+		fontSize = app.getEuclidianFontSize();
 
-		fontPoint = app.getPlainFont();
+		fontPoint = app.getPlainFont().deriveFont(Font.PLAIN, fontSize);
 		fontAngle = fontPoint;
 		fontLine = fontPoint;
 		fontVector = fontPoint;
 		fontConic = fontPoint;
-		fontCoords = fontPoint.deriveFont(Font.PLAIN, fontSize - 2);
+		fontCoords = app.getPlainFont().deriveFont(Font.PLAIN, app.getAxesFontSize());
 		fontAxes = fontCoords;
 			
 		updateDrawableFontSize();
+		updateBackground();
 	}
 
 	public void setAntialiasing(boolean flag) {

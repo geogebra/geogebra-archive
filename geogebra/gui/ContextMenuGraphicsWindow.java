@@ -132,7 +132,8 @@ implements ActionListener {
     		app.setViewShowAllObjects();
     	}
     	else if (cmd.equals("properties")) {
-    		app.getGuiManager().showDrawingPadPropertiesDialog();
+    		app.getGuiManager().showOptionsDialog(true);
+    		//app.getGuiManager().showDrawingPadPropertiesDialog();
     	}
     }
     
