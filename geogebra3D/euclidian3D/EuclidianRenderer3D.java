@@ -210,13 +210,14 @@ public class EuclidianRenderer3D implements GLEventListener {
 		
 		//re-drawing transparents parts for better transparent effect
 		//TODO improve it !
+		/*
 		gl.glDepthMask(false);
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.drawTransp(this);	
 		}
 		gl.glDepthMask(true);
-		
+		*/
 		
 		
 		

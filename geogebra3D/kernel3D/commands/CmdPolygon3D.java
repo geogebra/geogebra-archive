@@ -84,7 +84,7 @@ public class CmdPolygon3D extends CmdPolygon {
 				}
 			}
 			// everything ok
-			GeoElement[] ret = {kernel3D.Triangle3D(c.getLabel(), points)};
+			GeoElement[] ret = {kernel3D.Polygon3D(c.getLabel(), points)};
 			return ret;
 		}
 

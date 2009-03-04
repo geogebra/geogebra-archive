@@ -4,51 +4,95 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoPolygon3D extends GeoCoordSys2D {
 
-	GeoPoint3D[] points;
-	GeoPoint[] points2D;
-	GeoPolygon poly2D;
+	private GeoPoint3D[] points;
+	private double[][] vertex;
+	//GeoPoint[] points2D;
+	//GeoPolygon poly2D;
+	
+	private boolean defined = false;		
+
 		
 	public GeoPolygon3D(Construction c, GeoPoint3D[] points) {
 		super(c);
 		setPoints(points);
+		//setCoordSys();
 	}
 	
 	public void setPoints(GeoPoint3D[] points) {
 		this.points=points;
-		
-		//TODO verify that points are coplanar
-		// create a 2D coord sys 
-		this.setCoord(points[0], points[1], points[2]);
-		
-		//project 3Dpoint in the 2D coord sys
-		points2D = new GeoPoint[points.length];
-		Algo3Dto2D algo;
-		for(int i=0;i<points.length;i++){
-			algo = new Algo3Dto2D(this.cons,points[i],this);
-			points2D[i]= (GeoPoint) algo.getGeo();
-		}
+		vertex = new double[points.length][3];
 
 		//create the associated GeoPolygon
-		poly2D = (GeoPolygon)this.getKernel().Polygon(null, points2D)[0];
+		//poly2D = (GeoPolygon)this.getKernel().Polygon(null, points2D)[0];
 	}
 	
 	
-	//return the point2D list
-	public double[][] getPoints2D()
-	{
-		double [][] p = new double[points2D.length][3];
-		for(int i=0;i<points2D.length;i++){
-			p[i][0]=points2D[i].inhomX;
-			p[i][1]=points2D[i].inhomY;
-			p[i][2]=0;
+	
+	/**
+	 * set the coord sys according to points.
+	 */
+	public void setCoordSys(){
+		this.resetCoordSys();
+		for(int i=0;(!this.isMadeCoordSys())&&(i<points.length);i++)
+			this.addPointToCoordSys(points[i].getCoords(),true);
+		
+		//if there's no coord sys, the polygon is undefined
+		if (!isMadeCoordSys()){
+			setUndefined();
+			return;
+		}else
+			setDefined();		
+	}
+	
+	
+	
+	/**
+	 * set the vertex #i to (x,y) coords
+	 * @param i number of the vertex
+	 * @param x first coord
+	 * @param y second coord
+	 */
+	public void setVertex(int i, double x, double y){
+		vertex[i][0]=x;
+		vertex[i][1]=y;
+		vertex[i][2]=0;
+	}
+	
+	
+	/**
+	 * update all vertices, according to points and coord sys
+	 */
+	public void updateVertices(){	
+		
+		if (!isDefined())
+			return;
+		
+		for(int i=0;i<points.length;i++){
+			//project the point on the coord sys
+			Ggb3DVector[] project=points[i].getCoords().projectPlane(this.getMatrix4x4());
+			
+			//check if the vertex lies on the coord sys
+			if (!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){
+				setUndefined();
+				return;
+			}
+			
+			//set the vertex
+			setVertex(i,project[1].get(1), project[1].get(2));
 		}
-		return p;
+	}
+	
+	/** return the vertices list 
+	 * @return the vertices list */
+	public double[][] getVertices(){
+		return vertex;
 	}
 	
 	
@@ -67,10 +111,6 @@ public class GeoPolygon3D extends GeoCoordSys2D {
 		return "Polygon3D";
 	}
 
-	public boolean isDefined() {
-		// TODO Auto-generated method stub
-		return true;
-	}
 
 	public boolean isEqual(GeoElement Geo) {
 		// TODO Auto-generated method stub
@@ -82,11 +122,22 @@ public class GeoPolygon3D extends GeoCoordSys2D {
 
 	}
 
+	
+	
 	public void setUndefined() {
-		// TODO Auto-generated method stub
-
+		defined = false;
 	}
 
+	public boolean isDefined() {
+		return defined;
+	}
+
+	public void setDefined() {
+		defined = true;
+	}
+
+
+	
 	protected boolean showInAlgebraView() {
 		// TODO Auto-generated method stub
 		return true;

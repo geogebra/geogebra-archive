@@ -180,19 +180,20 @@ public class Kernel3D
 	
 
 
-	/** Triangle3D label linking points P1 and P2 and P3  */
-	final public GeoTriangle3D Triangle3D(String label, GeoPoint3D[] points){
-		AlgoJoinPoints3DTriangle algo = new AlgoJoinPoints3DTriangle(cons, label, points);
-		GeoTriangle3D t = algo.getPoly();
-		return t;
-	}	
 	
-	/** Polygon3D label linking points P1, P2, ...  */
+	/** Polygon3D linking points P1, P2, ...  
+	 * @param label name of the polygon
+	 * @param points vertices of the polygon
+	 * @return the polygon */
 	final public GeoPolygon3D Polygon3D(String label, GeoPoint3D[] points){
 		//TODO use algo
-		GeoPolygon3D p = new GeoPolygon3D(cons, points);
-		p.setLabel(label);
+		AlgoPolygon3D algo = new AlgoPolygon3D(cons,label,points);
+		GeoPolygon3D p = algo.getPoly();
+
+		//GeoPolygon3D p = new GeoPolygon3D(cons, points);
+		//p.setLabel(label);
 		return p;
+		
 	}	
 	
 	

@@ -34,6 +34,8 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 		setOrigin(a_O);
 		setVx(a_V1);
 		setVy(a_V2);
+		setMadeCoordSys();
+		
 		
 		updateDrawingMatrix();
 		

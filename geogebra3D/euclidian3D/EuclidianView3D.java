@@ -18,7 +18,6 @@ import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.GeoQuadric;
 import geogebra3D.kernel3D.GeoRay3D;
 import geogebra3D.kernel3D.GeoSegment3D;
-import geogebra3D.kernel3D.GeoTriangle3D;
 import geogebra3D.kernel3D.GeoVector3D;
 import geogebra3D.kernel3D.Kernel3D;
 
@@ -32,10 +31,6 @@ import java.awt.event.MouseEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 import javax.media.opengl.GLCanvas;
 import javax.swing.JPanel;
