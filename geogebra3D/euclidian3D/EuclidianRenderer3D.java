@@ -210,14 +210,13 @@ public class EuclidianRenderer3D implements GLEventListener {
 		
 		//re-drawing transparents parts for better transparent effect
 		//TODO improve it !
-		/*
 		gl.glDepthMask(false);
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.drawTransp(this);	
 		}
 		gl.glDepthMask(true);
-		*/
+		
 		
 		
 		
@@ -300,9 +299,9 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param c the color of the pencil
      * @param alpha the alpha value for blending
      */
-    public void setMaterial(Color c, float alpha){
+    public void setMaterial(Color c, double alpha){
     	//TODO use alpha value
-    	float color[] = { ((float) c.getRed())/256f, ((float) c.getGreen())/256f, ((float) c.getBlue())/256f, alpha };
+    	float color[] = { ((float) c.getRed())/256f, ((float) c.getGreen())/256f, ((float) c.getBlue())/256f, (float) alpha };
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, color, 0);
     }
     

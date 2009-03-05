@@ -2,11 +2,8 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoPolygon3D extends GeoCoordSys2D {
@@ -22,6 +19,8 @@ public class GeoPolygon3D extends GeoCoordSys2D {
 	public GeoPolygon3D(Construction c, GeoPoint3D[] points) {
 		super(c);
 		setPoints(points);
+		setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
+		//Application.debug("alpha="+getAlphaValue());
 		//setCoordSys();
 	}
 	
@@ -136,6 +135,17 @@ public class GeoPolygon3D extends GeoCoordSys2D {
 		defined = true;
 	}
 
+	
+	
+	
+	
+	/** to be able to fill it with an alpha value */
+	public boolean isFillable() {
+		return true;
+	}
+
+	
+	
 
 	
 	protected boolean showInAlgebraView() {

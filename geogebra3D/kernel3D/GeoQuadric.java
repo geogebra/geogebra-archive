@@ -13,6 +13,10 @@ public class GeoQuadric extends GeoElement3D {
 
 	public GeoQuadric(Construction c) {
 		super(c);
+		
+		//TODO specific alpha
+		setAlphaValue(ConstructionDefaults3D.DEFAULT_QUADRIC_ALPHA);
+
 	}
 	
 	
@@ -117,6 +121,12 @@ public class GeoQuadric extends GeoElement3D {
 
     }
 
+
+    
+	/** to be able to fill it with an alpha value */
+	public boolean isFillable() {
+		return true;
+	}
 
 
 }

@@ -156,7 +156,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		movingSegment.setObjColor(new Color(0f,0f,1f));
 		movingSegment.setAlgebraVisible(false); //TODO make it works
 		movingSegment.setLabelVisible(false);
-		movingSegment.setAlphaValue(0.25f);
 		movingSegment.setLineThickness(1);
 		
 		setMovingVisible(false);

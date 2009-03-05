@@ -20,12 +20,14 @@ package geogebra3D.kernel3D;
 
 
 
+import java.awt.Color;
+
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 import geogebra3D.Test3D;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.euclidian3D.Drawable3D;
-import geogebra3D.euclidian3D.EuclidianView3D;
 
 
 /**
@@ -139,6 +141,7 @@ public abstract class GeoElement3D
 	
 	/** for some 3D element (like conics, polygons, etc), a 2D GeoElement is linked to (for calculation) */
 	private GeoElement geo2D = null;
+
 	
 	
 	
@@ -171,6 +174,8 @@ public abstract class GeoElement3D
 	 * @param c construction*/
 	public GeoElement3D(Construction c) {
 		super(c);
+		//TODO create 3D visual defaults
+		setUseVisualDefaults(false);
 		
 	}
 
@@ -227,8 +232,33 @@ public abstract class GeoElement3D
     }
 	
 	
+    /** set the alpha value to alpha for openGL
+     * @param alpha alpha value
+     */
+	public void setAlphaValue(float alpha) {
+
+		alphaValue = alpha;
+		
+		//Application.debug("alphaValue="+alphaValue);
+
+	}
+	
+	/*
+	public float getAlphaValue() {
+		return alphaValue;
+	}
 	
 	
+	public void setObjColor(Color color) {
+		isColorSet = true;
+		objColor = color;
+		labelColor = color;
+		fillColor = color;
+
+		//selColor = getInverseColor(objColor);
+		selColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 100);
+	}
+	*/
 	
 
 }

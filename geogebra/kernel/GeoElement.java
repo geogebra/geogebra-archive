@@ -263,10 +263,10 @@ public abstract class GeoElement
 	private boolean fixed = false;
 	private int labelMode = LABEL_NAME;
 	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar	  
-	private Color objColor = Color.black;
-	private Color selColor = objColor;
-	private Color labelColor = objColor; 
-	private Color fillColor = objColor;
+	protected Color objColor = Color.black;
+	protected Color selColor = objColor;
+	protected Color labelColor = objColor; 
+	protected Color fillColor = objColor;
 	public int layer=0; 	// Michael Borcherds 2008-02-23
 	public double animationIncrement = 0.1;
 	private double animationSpeed = 1;
@@ -294,7 +294,7 @@ public abstract class GeoElement
 	private GeoList colFunction; // { GeoNumeric red, GeoNumeric Green, GeoNumeric Blue }
 	
 	private boolean useVisualDefaults = true;
-	private boolean isColorSet = false;
+	protected boolean isColorSet = false;
 	protected boolean highlighted = false;
 	private boolean selected = false;		
 	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML,

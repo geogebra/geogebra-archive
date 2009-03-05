@@ -1,6 +1,7 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
@@ -30,6 +31,9 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		//grid
 		setGridOrigin(new Ggb3DVector(new double[] {0,0,0,1}));
         
+		
+		//alpha
+		setAlphaValue(ConstructionDefaults3D.DEFAULT_PLANE_ALPHA);
 
 		
 	}
@@ -204,6 +208,12 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	}
 
 	
+	
+	/** to be able to fill it with an alpha value */
+	public boolean isFillable() {
+		return true;
+	}
+
 	
 	
 }
