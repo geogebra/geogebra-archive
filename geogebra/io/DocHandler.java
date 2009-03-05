@@ -20,7 +20,7 @@ package geogebra.io;
 import java.util.LinkedHashMap;
 
 public interface DocHandler {
-  public void startElement(String tag,LinkedHashMap h) throws Exception;
+  public void startElement(String tag,LinkedHashMap<String, String> h) throws Exception;
   public void endElement(String tag) throws Exception;
   public void startDocument() throws Exception;
   public void endDocument() throws Exception;

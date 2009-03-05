@@ -1736,6 +1736,10 @@ public abstract class Application implements KeyEventDispatcher {
 
 		getGuiManager().updateFrameTitle();
 	}
+
+	public int getFontSize() {
+		return guiFontSize;
+	}
 	
 	public void setGUIFontSize(int points) {
 		setGUIFontSize(points, true);
@@ -1879,10 +1883,6 @@ public abstract class Application implements KeyEventDispatcher {
 		UIManager.put("PasswordField.font", plain);
 		UIManager.put("TextArea.font", plain);
 		UIManager.put("ToolTip.font", plain);
-	}
-
-	public int getFontSize() {
-		return guiFontSize;
 	}
 
 	private void setLabels() {
@@ -2569,10 +2569,17 @@ public abstract class Application implements KeyEventDispatcher {
 			sb.append("\"/>\n");
 		}
 
-		sb.append("\t<font ");
-		sb.append(" size=\"");
-		sb.append(guiFontSize);
-		sb.append("\"/>\n");
+		// just save font size as preference
+		if(asPreference) {
+			sb.append("\t<font ");
+			sb.append(" size=\"");
+			sb.append(guiFontSize);
+			sb.append("\" axesSize=\"");
+			sb.append(axesFontSize);
+			sb.append("\" euclidianSize=\"");
+			sb.append(euclidianFontSize);
+			sb.append("\"/>\n");
+		}
 
 		sb.append(getConsProtocolXML());
 

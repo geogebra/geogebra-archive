@@ -19,7 +19,7 @@ public class GeoGebra extends Object {
 	public static final String VERSION_STRING = "3.3.6.0";
 	
 	// File format versions
-	public static final String XML_FILE_FORMAT = "3.03";
+	public static final String XML_FILE_FORMAT = "3.3";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 	
 	

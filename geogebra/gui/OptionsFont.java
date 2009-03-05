@@ -1,6 +1,5 @@
 package geogebra.gui;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +13,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SpringLayout;
 
 /**
@@ -54,16 +52,19 @@ class OptionsFont extends JPanel implements ActionListener {
 		
 		// font size of GUI
 		guiSizeCb = new JComboBox(fontSizeStr);
+		guiSizeCb.setSelectedItem(Integer.toString(app.getFontSize()));
 		guiSizeCb.addActionListener(this);
 		guiSizeLabel = new JLabel();
 		
 		// font size of drawing pad
 		euclidianSizeCb = new JComboBox(fontSizeStr);
+		euclidianSizeCb.setSelectedItem(Integer.toString(app.getEuclidianFontSize()));
 		euclidianSizeCb.addActionListener(this);
 		euclidianSizeLabel = new JLabel();
 		
 		// font size of coordinate system 
 		axesSizeCb = new JComboBox(fontSizeStr);
+		axesSizeCb.setSelectedItem(Integer.toString(app.getAxesFontSize()));
 		axesSizeCb.addActionListener(this);
 		axesSizeLabel = new JLabel();
 		
@@ -76,7 +77,6 @@ class OptionsFont extends JPanel implements ActionListener {
 		fontSizePanel.add(axesSizeLabel);
 		fontSizePanel.add(axesSizeCb);
 		
-		// TODO compatible with setting jlabel texts later ? F.S.
 		SpringUtilities.makeCompactGrid(fontSizePanel,
 				3, 2,
 				3, 3, 
