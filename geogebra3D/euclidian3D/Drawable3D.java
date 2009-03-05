@@ -174,6 +174,7 @@ public abstract class Drawable3D {
 	public Drawable3D(EuclidianView3D a_view3D, GeoElement3D a_geo){
 		setView3D(a_view3D);
 		setGeoElement(a_geo);
+		a_geo.setDrawable3D(this);
 		update();
 	}
 	

@@ -143,6 +143,9 @@ public abstract class GeoElement3D
 	private GeoElement geo2D = null;
 
 	
+	/** link with drawable3D */
+	private Drawable3D drawable3D = null;
+	
 	
 	
 	// GeoElement3D types 
@@ -243,22 +246,25 @@ public abstract class GeoElement3D
 
 	}
 	
-	/*
-	public float getAlphaValue() {
-		return alphaValue;
-	}
-	
-	
-	public void setObjColor(Color color) {
-		isColorSet = true;
-		objColor = color;
-		labelColor = color;
-		fillColor = color;
 
-		//selColor = getInverseColor(objColor);
-		selColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 100);
+
+	/////////////////////////////////////////
+	// link with Drawable3D
+	
+	/**
+	 * set the 3D drawable linked to
+	 * @param d the 3D drawable 
+	 */
+	public void setDrawable3D(Drawable3D d){
+		drawable3D = d;
 	}
-	*/
+	
+	/** return the 3D drawable linked to
+	 * @return the 3D drawable linked to
+	 */
+	public Drawable3D getDrawable3D(){
+		return drawable3D;
+	}
 	
 
 }

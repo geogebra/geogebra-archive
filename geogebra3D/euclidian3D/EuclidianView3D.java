@@ -8,6 +8,7 @@ import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.View;
+import geogebra.util.FastHashMapKeyless;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoElement3D;
@@ -89,6 +90,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	protected GeoSegment3D movingSegment;
 	protected Ggb3DVector movingPointProjected;
 	
+
+
 	
 	//stuff TODO
 	protected Rectangle selectionRectangle = new Rectangle();
@@ -263,10 +266,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;									
 				}
 				
-				if (d != null) {			
-					//canvas3D.add(d.getBranchGroup());
-					//DrawableMap.put(geo, d);
-				}
 				
 			
 			}
@@ -665,10 +664,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 	}
 
+	/**
+	 * remove a GeoElement3D from this view
+	 */	
 	public void remove(GeoElement geo) {
-		// TODO Raccord de méthode auto-généré
-		
+
+		if (geo.isGeoElement3D()){
+			Drawable3D d = ((GeoElement3D) geo).getDrawable3D();
+			drawList3D.remove(d);
+		}
 	}
+
 
 	public void rename(GeoElement geo) {
 		// TODO Raccord de méthode auto-généré
