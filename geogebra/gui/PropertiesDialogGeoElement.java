@@ -3040,12 +3040,9 @@ public class PropertiesDialogGeoElement
 			cbFont = new JComboBox(fonts);
 			cbFont.addActionListener(this);	
 			
-			// font size					
-			cbSize = new JComboBox();
-			int fontSize = app.getFontSize();			
-			for (int i=fontSize - 2; i <= fontSize + 6; i = i + 2) {
-				cbSize.addItem(Integer.toString(i));
-			}
+			// font size	
+			// TODO require font phrases F.S.
+			cbSize = new JComboBox(new String[] { app.getPlain("ExtraSmall"), app.getPlain("Small"), app.getPlain("Medium"), app.getPlain("Large"), app.getPlain("ExtraLarge") });
 			cbSize.addActionListener(this);						
 			
 			// toggle buttons for bold and italic
@@ -3125,7 +3122,7 @@ public class PropertiesDialogGeoElement
 			//	set value to first text's size and style
 			TextProperties geo0 = (TextProperties) geos[0];		
 			
-			cbSize.setSelectedItem(Integer.toString(geo0.getFontSize()+app.getFontSize()));
+			cbSize.setSelectedIndex(geo0.getFontSize() / 2 + 2); // font size ranges from -4 to 4, transform this to 0,1,..,4
 			cbFont.setSelectedIndex(geo0.isSerifFont() ? 1 : 0);
 			int selItem = -1;
 			
@@ -3181,12 +3178,11 @@ public class PropertiesDialogGeoElement
 		public void actionPerformed(ActionEvent e) {
 			Object source = e.getSource();
 			
-			if (source == cbSize) {
-				int size = Integer.parseInt(cbSize.getSelectedItem().toString()) - app.getFontSize();			
+			if (source == cbSize) {			
 				TextProperties text;
 				for (int i = 0; i < geos.length; i++) {
 					text = (TextProperties) geos[i];
-					text.setFontSize(size);
+					text.setFontSize(cbSize.getSelectedIndex() * 2 - 4); // transform indices to the range -4, .. , 4
 					((GeoElement)text).updateRepaint();
 				}
 			} 
