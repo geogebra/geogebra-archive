@@ -107,73 +107,75 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int DIGIT = 52;
   /** RegularExpression Id. */
-  int SPREADSHEET_LABEL = 53;
+  int ANY_LABEL = 53;
   /** RegularExpression Id. */
-  int LABEL = 54;
+  int SPREADSHEET_LABEL = 54;
   /** RegularExpression Id. */
-  int INDEX = 55;
+  int LABEL = 55;
   /** RegularExpression Id. */
-  int LETTER = 56;
+  int INDEX = 56;
   /** RegularExpression Id. */
-  int X_FUNC = 57;
+  int LETTER = 57;
   /** RegularExpression Id. */
-  int Y_FUNC = 58;
+  int X_FUNC = 58;
   /** RegularExpression Id. */
-  int COS_FUNC = 59;
+  int Y_FUNC = 59;
   /** RegularExpression Id. */
-  int SIN_FUNC = 60;
+  int COS_FUNC = 60;
   /** RegularExpression Id. */
-  int TAN_FUNC = 61;
+  int SIN_FUNC = 61;
   /** RegularExpression Id. */
-  int ACOS_FUNC = 62;
+  int TAN_FUNC = 62;
   /** RegularExpression Id. */
-  int ASIN_FUNC = 63;
+  int ACOS_FUNC = 63;
   /** RegularExpression Id. */
-  int ATAN_FUNC = 64;
+  int ASIN_FUNC = 64;
   /** RegularExpression Id. */
-  int COSH_FUNC = 65;
+  int ATAN_FUNC = 65;
   /** RegularExpression Id. */
-  int SINH_FUNC = 66;
+  int COSH_FUNC = 66;
   /** RegularExpression Id. */
-  int TANH_FUNC = 67;
+  int SINH_FUNC = 67;
   /** RegularExpression Id. */
-  int ACOSH_FUNC = 68;
+  int TANH_FUNC = 68;
   /** RegularExpression Id. */
-  int ASINH_FUNC = 69;
+  int ACOSH_FUNC = 69;
   /** RegularExpression Id. */
-  int ATANH_FUNC = 70;
+  int ASINH_FUNC = 70;
   /** RegularExpression Id. */
-  int EXP_FUNC = 71;
+  int ATANH_FUNC = 71;
   /** RegularExpression Id. */
-  int LOG_FUNC = 72;
+  int EXP_FUNC = 72;
   /** RegularExpression Id. */
-  int LD_FUNC = 73;
+  int LOG_FUNC = 73;
   /** RegularExpression Id. */
-  int LG_FUNC = 74;
+  int LD_FUNC = 74;
   /** RegularExpression Id. */
-  int SQRT_FUNC = 75;
+  int LG_FUNC = 75;
   /** RegularExpression Id. */
-  int CBRT_FUNC = 76;
+  int SQRT_FUNC = 76;
   /** RegularExpression Id. */
-  int ABS_FUNC = 77;
+  int CBRT_FUNC = 77;
   /** RegularExpression Id. */
-  int SGN_FUNC = 78;
+  int ABS_FUNC = 78;
   /** RegularExpression Id. */
-  int FLOOR_FUNC = 79;
+  int SGN_FUNC = 79;
   /** RegularExpression Id. */
-  int CEIL_FUNC = 80;
+  int FLOOR_FUNC = 80;
   /** RegularExpression Id. */
-  int ROUND_FUNC = 81;
+  int CEIL_FUNC = 81;
   /** RegularExpression Id. */
-  int GAMMA_FUNC = 82;
+  int ROUND_FUNC = 82;
   /** RegularExpression Id. */
-  int RANDOM_FUNC = 83;
+  int GAMMA_FUNC = 83;
   /** RegularExpression Id. */
-  int FUNCTION_LABEL = 84;
+  int RANDOM_FUNC = 84;
   /** RegularExpression Id. */
-  int TEXT = 85;
+  int FUNCTION_LABEL = 85;
   /** RegularExpression Id. */
-  int CHAR = 86;
+  int TEXT = 86;
+  /** RegularExpression Id. */
+  int CHAR = 87;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -233,6 +235,7 @@ public interface ParserConstants {
     "<EFLOAT>",
     "<INTEGER>",
     "<DIGIT>",
+    "<ANY_LABEL>",
     "<SPREADSHEET_LABEL>",
     "<LABEL>",
     "<INDEX>",

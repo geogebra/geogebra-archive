@@ -224,6 +224,8 @@ TOKEN : {
 }   
 
 TOKEN : { 
+    < ANY_LABEL:    ( <SPREADSHEET_LABEL> | <LABEL> ) >
+ |
  	// labels for cells in the spreadsheet
  	<SPREADSHEET_LABEL: (["A"-"Z"]|["a"-"z"])+(["0"-"9"])+ > // e.g. B12
  |
@@ -287,14 +289,14 @@ TOKEN: {
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 
 |	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
 |	< RANDOM_FUNC:  "random()"  > 
-| 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL>) "(" >
+| 	< FUNCTION_LABEL: <ANY_LABEL> "(" >
 }
 
  TOKEN : {
  < TEXT: "\""  (<CHAR>)* "\"" > |
  < #CHAR: ["\u0000"-"\u0021", "\u0023"-"\uffff"]  >    
 }
-
+                          
 String label():
 {     
     Token t;
@@ -303,8 +305,7 @@ String label():
        ( t = <SPREADSHEET_LABEL> |  t = <LABEL> )
         {  return t.image;   }
 }
-                          
- 
+     
 
 /**
  * for GeoGebra input field
@@ -330,16 +331,16 @@ ValidExpression buildValidExpression() :
      |             
         // h: X = (3,2) + t (5,1)
       	LOOKAHEAD(2147483647) 
-      	 (l = <SPREADSHEET_LABEL> | l = <LABEL>) ":"  ve = parametric()      
+      	 (l = <ANY_LABEL>) ":"  ve = parametric()      
      |     
         // g: 3x + y = 7 
         LOOKAHEAD(2147483647)      
-        (l = <SPREADSHEET_LABEL> | l = <LABEL>)  ":"  ve = equation()        
+        (l = <ANY_LABEL>)  ":"  ve = equation()        
     |          
         // special case "A: (3,2)" should become a point  
         // CAS assignment "a := 5" shoudl be supported too                                     
 	  	LOOKAHEAD(2147483647)  
-	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = expression()   
+	    (l = <ANY_LABEL>) (":" | <ASSIGNMENT> )  ve = expression()   
 	 |     
         // distingiush <LABEL> = expressionnode()               and  
         //             expressionnode() = expressionnode()      (Equation)
@@ -397,10 +398,16 @@ ValidExpression buildCASExpression() :
 } 
 {         
     (
+       // CAS function
+        // f(x) := x^2 + 3x
+       LOOKAHEAD(2147483647)   
+       ve = casFunction()
+       //  ve = functionExpressionnode() 
+    |
        // assignment         
         // b := 27 + c
         LOOKAHEAD(2147483647)                                          
-	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) <ASSIGNMENT> ve = expressionnode()            
+	    (l = <ANY_LABEL>) <ASSIGNMENT> ve = expressionnode()            
 	|	   
        	// equation, e.g. 3x + y = 7
        	LOOKAHEAD(2147483647)   
@@ -487,7 +494,7 @@ ValidExpression MathPiperSolveResult() :
 void casLabel():
 {}
 {
-	(<VARX> | <VARY> | <LABEL> | <SPREADSHEET_LABEL>) 
+	(<VARX> | <VARY> | <ANY_LABEL>) 
 }
 
 /**
@@ -501,7 +508,7 @@ Command command():
 }
 {   
 	(
-	    (t = <SPREADSHEET_LABEL> | t = <LABEL>)
+	    (t = <ANY_LABEL>)
 	    {   c = new Command(kernel, t.image, true );    } 
 	    ("[" 
 	       ( en = cmdexpression()  { c.addArgument( en ); } )?
@@ -528,20 +535,20 @@ Vector labellist():
 }
 {
 (( 
-    "{" (t=<SPREADSHEET_LABEL> | t=<LABEL>) 
+    "{" (t=<ANY_LABEL>) 
         {   
             labels = new Vector(); labels.add(t.image);  
         }
-     ( "," (t=<SPREADSHEET_LABEL> | t=<LABEL>)  { labels.add(t.image); } )*
+     ( "," (t=<ANY_LABEL>)  { labels.add(t.image); } )*
     "}" 
 )
     |    
 ( 
-    (t=<SPREADSHEET_LABEL> | t=<LABEL>)  
+    (t=<ANY_LABEL>)  
         {   
             labels = new Vector(); labels.add(t.image);  
         }
-     ( "," (t=<SPREADSHEET_LABEL> | t=<LABEL>)  { labels.add(t.image); } )*
+     ( "," (t=<ANY_LABEL>)  { labels.add(t.image); } )*
 ))
      { return labels; }
 }
@@ -738,7 +745,36 @@ ExpressionNode functionExpressionnode():
        		rhs.setLabel(label);		
        		return rhs;
 	    }   
-)	   
+)	
+}
+
+/**
+ * CAS function = 	label(x) := expressionnode 
+ */
+Function casFunction():
+{
+    ExpressionNode rhs;
+    Token funName = null;
+    Token varName = null;
+    Token var;
+}
+{          
+(
+	   // f(a) :=  a^2 + 3	
+	   funName = <FUNCTION_LABEL> // includes "(" at end
+	   		  ( varName =  <VARX> | varName =  <VARY> | varName =  <ANY_LABEL> ) ")" 
+	   		<ASSIGNMENT> rhs = expressionnode()
+	    {	        	    	
+	   		FunctionVariable fVar = new FunctionVariable(kernel);
+	   		fVar.setVarString(varName.image);
+	   		
+	   		Function fun = new Function(rhs, fVar);
+	   		String funLabel = funName.image.substring(0,funName.image.length()-1);	
+	    	fun.setLabel(funLabel);
+	    	return fun;	       
+	    }   
+)	 
+}  
 
 /* 
 functions of other variables than x not implemented yet
@@ -753,7 +789,6 @@ functions of other variables than x not implemented yet
 	    }  	    
 )
 */	    
-}
 
 
 
@@ -1242,7 +1277,7 @@ ExpressionNode numVecVariable():
 		return new ExpressionNode(kernel, cmd);
 	}
 |
-    ( c = <SPREADSHEET_LABEL> | c = <LABEL> )
+    ( c = <ANY_LABEL> )
     {   
     	// standard case for variable
         return new ExpressionNode(kernel, new Variable(kernel, c.image));

@@ -17,6 +17,7 @@ import geogebra.cas.view.CASView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
@@ -169,10 +170,27 @@ public class GeoGebraCAS {
 		// convert to MathPiper String
 		String MathPiperStr = casParser.toMathPiperString(ve, resolveVariables);
 	
-		// label of an assignment, e.g. a := 5
+		
+		
+		
 		String veLabel = ve.getLabel();
-		if (veLabel != null)
-			MathPiperStr = veLabel + " := " + MathPiperStr;
+		if (veLabel != null) {
+			StringBuffer sb = new StringBuffer();
+			
+			if (ve instanceof Function) {
+				// function, e.g. f(x) := 2*x
+				Function fun = (Function) ve;
+				sb.append(veLabel);
+				sb.append("(" );
+				sb.append(fun.getFunctionVariable());
+				sb.append(") := ");
+				sb.append(MathPiperStr);
+				MathPiperStr = sb.toString();
+			} else {	
+				// assignment, e.g. a := 5
+				MathPiperStr = veLabel + " := " + MathPiperStr;
+			}
+		}
 		
 		// TODO: remove
 		Application.debug(" toMathPiperString: " + MathPiperStr);
