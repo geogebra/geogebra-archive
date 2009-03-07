@@ -12,7 +12,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -26,12 +25,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -113,7 +110,7 @@ public class SpreadsheetView extends JScrollPane implements View
 
 		protected void paintComponent(Graphics g) {
 	        // Fill me with dirty brown/orange.
-	        g.setColor(MyTable.BACKGROUND_COLOR_HEADER);
+	        g.setColor(Application.TABLE_HEADER_BACKGROUND_COLOR);
 	        g.fillRect(0, 0, getWidth(), getHeight());
 	    }
 	}
@@ -316,13 +313,13 @@ public class SpreadsheetView extends JScrollPane implements View
 		public RowHeaderRenderer(JTable table, JList rowHeader) {
 	 		super("", JLabel.CENTER);
     		setOpaque(true);
-    		defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
+    		defaultBackground = Application.TABLE_HEADER_BACKGROUND_COLOR;
 			
 			this.rowHeader = rowHeader;
 			header = table.getTableHeader() ;
 //			setOpaque(true);
 			//setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
-			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Application.TABLE_GRID_COLOR));
 //			setHorizontalAlignment(CENTER) ;
 //			setForeground(header.getForeground()) ;
 //			setBackground(header.getBackground());
@@ -343,7 +340,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				if (index >= minSelectionRow && index <= maxSelectionRow &&
 						selectionModel.isSelectedIndex(index)) 
 				{
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
+					setBackground(Application.TABLE_HEADER_SELECTED_BACKGROUND_COLOR);
 				}
 				else {
 					setBackground(defaultBackground);					

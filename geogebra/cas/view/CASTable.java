@@ -3,17 +3,17 @@
  */
 package geogebra.cas.view;
 
-import geogebra.cas.view.CASView.ConsoleTableKeyListener;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
-import javax.swing.*;
+import javax.swing.CellEditor;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableCellRenderer;
 
 /**
  * @author Quan
@@ -98,23 +98,77 @@ public class CASTable extends JTable {
 		return editor;		
 	}		
 
+		
 	/**
-	 * Inserts a row after the "selectedRow row", and set the focus at
-	 * the new row
+	 * Inserts a row at the end and starts editing
+	 * the new row.
+	 */
+	public void insertRow(CASTableCellValue newValue) {
+		insertRowAfter(tableModel.getRowCount()-1, newValue);		
+	}
+	
+	/**
+	 * Inserts a row after selectedRow and starts editing
+	 * the new row.
 	 */
 	public void insertRowAfter(int selectedRow, CASTableCellValue newValue) {		
+		// TODO: remove
+		System.out.println("insertRowAfter: " + selectedRow);
+							
 		if (newValue == null)
 			newValue = new CASTableCellValue();
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
+		
+		// update height of new row
 		startEditingRow(selectedRow  + 1);
-	}		
+	}	
+	
+	/**
+	 * Returns the preferred height of a row.
+	 * The result is equal to the tallest cell in the row.
+	 * 
+	 * @see http://www.exampledepot.com/egs/javax.swing.table/RowHeight.html
+	 */    
+    public int getPreferredRowHeight(int rowIndex) {
+        // Get the current default height for all rows
+        int height = getRowHeight();
+    
+        // Determine highest cell in the row
+        for (int c=0; c < getColumnCount(); c++) {
+            TableCellRenderer renderer =  getCellRenderer(rowIndex, c);
+            Component comp = prepareRenderer(renderer, rowIndex, c);
+            int h = comp.getPreferredSize().height; // + 2*margin;
+            height = Math.max(height, h);
+        }
+        return height;
+    }
 
-	public void insertRow(CASTableCellValue newValue) {
-		if (newValue == null)
-			newValue = new CASTableCellValue();
-		int rowNum = tableModel.getRowCount();
-		tableModel.insertRow(rowNum, new Object[] { newValue});
-	}
+    /** 
+     * The height of each row is set to the preferred height of the
+     * tallest cell in that row.
+     */
+    public void packRows() {
+        packRows(0, getRowCount());
+    }
+    
+    /**
+     *  For each row >= start and < end, the height of a
+     *  row is set to the preferred height of the tallest cell
+     *  in that row.
+     */
+    public void packRows(int start, int end) {
+        for (int r=start; r < end; r++) {
+            // Get the preferred height
+            int h = getPreferredRowHeight(r);
+    
+            // Now set the row height using the preferred height
+            if (getRowHeight(r) != h) {
+                setRowHeight(r, h);
+            }
+        }
+    }
+
+    
 	
 	public void updateRow(int row) {
 		//stopEditing();
@@ -157,81 +211,38 @@ public class CASTable extends JTable {
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteRow(int row) {
+		// TODO:remove
+		System.out.println("tableModel.removeRow " + row);
+
 		tableModel.removeRow(row);
-		if (tableModel.getRowCount() == 0)
+
+		int rowCount = tableModel.getRowCount();
+		if (rowCount == 0)
 			insertRowAfter(-1, null);
 		else 
-			startEditingRow(Math.min(row, getRowCount()-1));
+			startEditingRow(Math.min(row, rowCount-1));
 	}
 
 	/*
 	 * Function: Set the focus on the specified row
 	 */
 	public void startEditingRow(int editRow) {								
-		// TODO: reove
+		// TODO: remove
 		System.out.println("startEditingRow: " +editRow);
-		
-		// insert new row
+				
 		if (editRow >= tableModel.getRowCount()) {
+			// insert new row, this starts editing
 			insertRow(null);
-			editRow = tableModel.getRowCount()-1;
 		}
-							
-		changeSelection(editRow, CONTENT_COLUMN, false, false);
-        scrollRectToVisible(getCellRect( editRow, CONTENT_COLUMN, false ) );	
-		editCellAt(editRow, CONTENT_COLUMN);	
-		editor.setInputAreaFocused();
+		else {		
+			// start editing
+	        scrollRectToVisible(getCellRect( editRow, CONTENT_COLUMN, false ) );	
+			editCellAt(editRow, CONTENT_COLUMN);	
+			editor.setInputAreaFocused();
+			setRowSelectionInterval(editRow, editRow);	
+		}
 	}		
 
-	public Point getIndexFromPixel(int x, int y) {
-		if (x < 0 || y < 0)
-			return null;
-		int indexX = -1;
-		int indexY = -1;
-		for (int i = 0; i < getColumnCount(); ++i) {
-			Point point = getPixel(i, 0, false);
-			if (x < point.getX()) {
-				indexX = i;
-				break;
-			}
-		}
-		if (indexX == -1) {
-			return null;
-		}
-		for (int i = 0; i < getRowCount(); ++i) {
-			Point point = getPixel(0, i, false);
-			if (y < point.getY()) {
-				indexY = i;
-				break;
-			}
-		}
-		if (indexY == -1) {
-			return null;
-		}
-		return new Point(indexX, indexY);
-	}
 
-	protected Point getPixel(int column, int row, boolean min) {
-		if (column < 0 || row < 0) {
-			return null;
-		}
-		if (min && column == 0 && row == 0) {
-			return new Point(0, 0);
-		}
-		int x = 0;
-		int y = 0;
-		if (!min) {
-			++column;
-			++row;
-		}
-		for (int i = 0; i < column; ++i) {
-			x += getColumnModel().getColumn(i).getWidth();
-		}
-		int rowHeight;
-		for (int i = 0; i < row; ++i) {
-			rowHeight = getRowHeight(i);
-			y += rowHeight;
-		}
-		return new Point(x, y);
-	}
+
 }

@@ -161,7 +161,8 @@ public class CASTableCellController implements KeyListener {
 		
 		table.updateRow(selectedRow);
 		
-		table.startEditingRow(selectedRow + 1);
+		// start editing next row (may create a new row)
+		table.startEditingRow(selectedRow + 1);		
 	}
 	
 

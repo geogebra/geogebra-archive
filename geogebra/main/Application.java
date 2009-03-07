@@ -174,8 +174,14 @@ public abstract class Application implements KeyEventDispatcher {
 		specialLanguageNames.put("ptPT", "Portuguese (Portugal)");	
 	}
 
+	// Colors
 	public static final Color COLOR_SELECTION = new Color(230, 230, 245);
+	public static final Color TABLE_SELECTED_BACKGROUND_COLOR = new Color(214, 224, 245);
+	public static final Color TABLE_HEADER_SELECTED_BACKGROUND_COLOR = Color.lightGray;
+	public static final Color TABLE_HEADER_BACKGROUND_COLOR = new Color(232, 238, 247);
+	public static final Color TABLE_GRID_COLOR = Color.gray;
 
+	
 	// Font settings
 	private static final String STANDARD_FONT_NAME_SANS_SERIF = "SansSerif";
 	private static final String STANDARD_FONT_NAME_SERIF = "Serif";

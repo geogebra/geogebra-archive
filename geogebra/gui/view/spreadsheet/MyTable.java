@@ -4,7 +4,6 @@ import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
-import geogebra.main.View;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -26,7 +25,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -42,11 +40,7 @@ public class MyTable extends JTable
 	public static final int DOT_SIZE = 7;
 	public static final int LINE_THICKNESS1 = 3;
 	public static final int LINE_THICKNESS2 = 2;
-	public static final Color SELECTED_BACKGROUND_COLOR = new Color(214, 224, 245);
-	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = Color.lightGray;
-	public static final Color BACKGROUND_COLOR_HEADER = new Color(232, 238, 247);
-	public static final Color TABLE_GRID_COLOR = Color.gray;
-
+	
 	private static final long serialVersionUID = 1L;
 
 	protected Kernel kernel;
@@ -86,7 +80,7 @@ public class MyTable extends JTable
 		setDefaultEditor(Object.class, editor);
 	
 		// set selection colors
-		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
+		setSelectionBackground(Application.TABLE_SELECTED_BACKGROUND_COLOR);
 		setSelectionForeground(Color.BLACK);
 		// setup mouse listeners
 		MouseListener[] mouseListeners = getMouseListeners();
@@ -127,7 +121,7 @@ public class MyTable extends JTable
 
 		// visual appearance 	 
 		setShowGrid(true); 	 
-		setGridColor(TABLE_GRID_COLOR); 	 
+		setGridColor(Application.TABLE_GRID_COLOR); 	 
 
 		// editing 	 
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);	}
@@ -1072,7 +1066,7 @@ break;
 				String label = ((GeoElement)value).getLabel();
 				if (SpreadsheetView.selectedElems.contains(label) || geo.doHighlighting()) {
 					//Application.debug(label);
-					this.setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
+					this.setBackground(Application.TABLE_SELECTED_BACKGROUND_COLOR);
 				}
 				else {
 					this.setBackground(defaultBackground);
@@ -1117,8 +1111,8 @@ break;
 		public MyColumnHeaderRenderer() {    		
 			super("", JLabel.CENTER);
 			setOpaque(true);
-			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
-			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
+			defaultBackground = Application.TABLE_HEADER_BACKGROUND_COLOR;
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Application.TABLE_GRID_COLOR));
 			Font font1 = getFont(); 
 			if (font1 == null || font1.getSize() == 0) {
 				kernel.getApplication().getPlainFont();
@@ -1133,7 +1127,7 @@ break;
 			setText(value.toString());
 			if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
 				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn && selectedColumns != null && selectedColumns.length > colIndex && selectedColumns[colIndex]) {
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);					
+					setBackground(Application.TABLE_HEADER_SELECTED_BACKGROUND_COLOR);					
 				}
 				else {
 					setBackground(defaultBackground);				
