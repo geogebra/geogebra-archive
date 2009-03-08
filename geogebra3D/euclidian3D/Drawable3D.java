@@ -6,8 +6,8 @@ import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 import java.text.DecimalFormat;
 import java.util.Comparator;
@@ -171,10 +171,10 @@ public abstract class Drawable3D {
 	 * @param a_view3D the {@link EuclidianView3D} using this Drawable3D
 	 * @param a_geo the {@link GeoElement3D} linked to this GeoElement3D
 	 */
-	public Drawable3D(EuclidianView3D a_view3D, GeoElement3D a_geo){
+	public Drawable3D(EuclidianView3D a_view3D, GeoElement a_geo){
 		setView3D(a_view3D);
 		setGeoElement(a_geo);
-		a_geo.setDrawable3D(this);
+		((GeoElement3DInterface) a_geo).setDrawable3D(this);
 		update();
 	}
 	
@@ -195,9 +195,10 @@ public abstract class Drawable3D {
 		setVisible(getGeoElement().isEuclidianVisible());       				 
 		if (!isVisible()) return;
 		setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
+		
 
 		//update the matrix of the drawable for the renderer to draw it
-		setMatrix(getGeoElement3D().getDrawingMatrix());
+		setMatrix(((GeoElement3DInterface) getGeoElement()).getDrawingMatrix());
 		
 
 	}
@@ -484,29 +485,23 @@ public abstract class Drawable3D {
 	/////////////////////////////////////////////////////////////////////////////
 	// links to the GeoElement
 	
-    /**
-     * get the GeoElement linked to the Drawable3D
-     * @return the GeoElement linked to
-     */
-    public GeoElement getGeoElement() {
-        return m_geo;
-    } 
+
     
     /**
-     * get the GeoElement linked to the Drawable3D casted to a GeoElement3D
-     * @return the GeoElement3D linked to
+     * get the GeoElementInterface linked to the Drawable3D 
+     * @return the GeoElement3DInterface linked to
      */  
-    public GeoElement3D getGeoElement3D() {
-        return (GeoElement3D) m_geo;
+    public GeoElement getGeoElement() {
+        return m_geo;
     }   
     
     
     /**
      * set the GeoElement linked to the Drawable3D
-     * @param geo the GeoElement
+     * @param a_geo the GeoElement
      */
-    public void setGeoElement(GeoElement geo) {
-        this.m_geo = geo;
+    public void setGeoElement(GeoElement a_geo) {
+        this.m_geo = a_geo;
     } 
     
  	

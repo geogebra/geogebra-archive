@@ -1,10 +1,11 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 
-public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
+public class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	
 	
 	
@@ -162,6 +163,72 @@ public abstract class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 
 	public Ggb3DMatrix getMovingMatrix(Ggb3DMatrix toScreenMatrix){
 		return getMatrix4x4();
+	}
+
+	@Override
+	public GeoElement copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getGeoClassType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected String getTypeString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	public boolean isDefined() {
+		return isMadeCoordSys();
+	}
+
+	@Override
+	public boolean isEqual(GeoElement Geo) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void set(GeoElement geo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUndefined() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected boolean showInAlgebraView() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected boolean showInEuclidianView() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String toValueString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected String getClassName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

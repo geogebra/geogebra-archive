@@ -398,10 +398,10 @@ public class Test3D{
 		
 		
 		GeoPoint3D[] points = new GeoPoint3D[4];
-		points[0] = testPoint(-1f,-2f,1f);
-		points[1] = testPoint(-1f,0f,1f);
-		points[2] = testPoint(-1f,0f,-1f);
-		points[3] = testPoint(-1f,-2f,-1f);
+		points[0] = testPoint(1f,-2f,0f);
+		points[1] = testPoint(1f,0f,0f);
+		points[2] = testPoint(-1f,0f,0f);
+		points[3] = testPoint(-1f,-2f,0f);
 		
 		/*
 		points[2] = testPoint(-1.5f,0.5f,0f);

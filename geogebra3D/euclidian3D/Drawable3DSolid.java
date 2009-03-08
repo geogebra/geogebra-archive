@@ -2,8 +2,10 @@ package geogebra3D.euclidian3D;
 
 import java.awt.Color;
 
+import geogebra.kernel.GeoElement;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoSegment3D;
 
 
@@ -19,7 +21,7 @@ import geogebra3D.kernel3D.GeoSegment3D;
 
 public abstract class Drawable3DSolid extends Drawable3D {
 
-	public Drawable3DSolid(EuclidianView3D a_view3d, GeoElement3D a_geo) {
+	public Drawable3DSolid(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);
 	}
 

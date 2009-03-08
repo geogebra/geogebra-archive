@@ -26,7 +26,7 @@ import java.util.Locale;
  * 
  * @author Markus Hohenwarter
  */
-final public class GeoPolygon extends GeoElement implements NumberValue, Path, Region {
+public class GeoPolygon extends GeoElement implements NumberValue, Path, Region {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -91,7 +91,44 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path, R
 //		}  
 //        Application.debug("********************");
 //		}
-	}        
+	}    
+    
+    
+    
+    ///////////////////////////////
+    // ggb3D 2009-03-08 - start
+    
+	/** return number for points
+	 * @return number for points
+	 */
+	public int getNumPoints(){
+		return points.length;
+	}
+	
+	
+	/**
+	 * return the x-coordinate of the i-th vertex
+	 * @param i number of vertex
+	 * @return the x-coordinate 
+	 */
+	public double getPointX(int i){
+		return points[i].inhomX;
+	}
+	
+	/**
+	 * return the y-coordinate of the i-th vertex
+	 * @param i number of vertex
+	 * @return the y-coordinate 
+	 */
+	public double getPointY(int i){
+		return points[i].inhomY;
+	}
+
+	
+    // ggb3D 2009-03-08 - end
+    ///////////////////////////////
+	
+
 
     /**
      * Inits the labels of this polygon, its segments and its points.
@@ -654,7 +691,7 @@ final public class GeoPolygon extends GeoElement implements NumberValue, Path, R
 				return false;
 			else if ((x1>0) && (x2>0)) //segment totally on the right
 				return true;
-			else if (x2*y1<=x1*y2) //angle >= 0°
+			else if (x2*y1<=x1*y2) //angle >= 0ï¿½
 				return true;
 			else
 				return false;

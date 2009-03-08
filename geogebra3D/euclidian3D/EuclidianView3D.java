@@ -8,7 +8,6 @@ import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.View;
-import geogebra.util.FastHashMapKeyless;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoElement3D;

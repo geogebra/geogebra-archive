@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoPolygon3D;
 
 
@@ -23,8 +24,25 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 	//drawing
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
-		if (((GeoPolygon3D)getGeoElement3D()).isDefined())
-			renderer.drawPolygon(((GeoPolygon3D)getGeoElement3D()).getVertices());
+		
+		if (getGeoElement().isDefined()){
+			renderer.startPolygon();
+			GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
+			
+			//Application.debug("polygon points : "+polygon.getNumPoints());
+			//Application.debug("polygon points : "+polygon.getNumPoints());
+			
+			//getMatrix().SystemPrint();
+			
+			for(int i=0;i<polygon.getNumPoints();i++){
+				renderer.addToPolygon(polygon.getPointX(i), polygon.getPointY(i));
+				//Application.debug("point["+i+"]=("+polygon.getPointX(i)+","+polygon.getPointY(i)+")");
+			}
+			
+			renderer.endPolygon();
+			
+		}
+		//renderer.drawPolygon(((GeoPolygon3D)getGeoElement3D()).getVertices());
 	}
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
 		drawGeometry(renderer);

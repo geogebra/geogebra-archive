@@ -55,6 +55,9 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private GLUquadric quadric;
 	private FPSAnimator animator;
 	
+	/** for polygon tesselation */
+	private GLUtessellator tobj;
+	
 	private IntBuffer selectBuffer;
 	private static int BUFSIZE = 512;
 	private static int MOUSE_PICK_WIDTH = 3;
@@ -648,7 +651,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	    EuclidianRenderer3DTesselCallBack tessCallback = new EuclidianRenderer3DTesselCallBack(gl, glu);
 
 	    
-	    GLUtessellator tobj = glu.gluNewTess();
+	    tobj = glu.gluNewTess();
 
 	    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
 	    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
@@ -671,6 +674,58 @@ public class EuclidianRenderer3D implements GLEventListener {
 	   	gl.glEnable(GL.GL_CULL_FACE);
       
         resetMatrix();
+    }
+    
+    
+    /**
+     * set the tesselator to start drawing a new polygon
+     */
+    public void startPolygon(){
+    	initMatrix();
+    	
+    	gl.glDisable(GL.GL_CULL_FACE);
+    	
+    	
+	    EuclidianRenderer3DTesselCallBack tessCallback = new EuclidianRenderer3DTesselCallBack(gl, glu);
+
+	    
+	    tobj = glu.gluNewTess();
+
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+	    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
+
+	    gl.glShadeModel(GL.GL_SMOOTH);
+	    glu.gluTessBeginPolygon(tobj, null);
+	    glu.gluTessBeginContour(tobj);
+
+    }
+    
+    
+    /** add the (x,y) point as a new vertex for the current polygon
+     * @param x x-coordinate
+     * @param y y-coordinate
+     */
+    public void addToPolygon(double x, double y){
+    	double[] point = {x,y,0};//new double
+    	glu.gluTessVertex(tobj, point, 0, point);
+    }
+    
+    
+    /**
+     * end of the current polygon
+     */
+    public void endPolygon(){
+	    glu.gluTessEndContour(tobj);
+	    glu.gluTessEndPolygon(tobj);
+	    
+	    glu.gluDeleteTess(tobj);
+        
+	   	gl.glEnable(GL.GL_CULL_FACE);
+      
+        resetMatrix();   	
     }
     
 

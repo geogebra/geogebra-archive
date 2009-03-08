@@ -25,29 +25,40 @@ public class AlgoPolygon extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoPoint [] points;  // input
 	private GeoList geoList;  // alternative input
-    private GeoPolygon poly;     // output
+    protected GeoPolygon poly;     // output
     
-    AlgoPolygon(Construction cons, String [] labels, GeoList geoList) {
+    protected AlgoPolygon(Construction cons, String [] labels, GeoList geoList) {
     	this(cons, labels, null, geoList);
     }
     
-    AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points) {
+    protected AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points) {
     	this(cons, labels, points, null);
     }
     	
-    private AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points, GeoList geoList) {
+    protected AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points, GeoList geoList) {
         super(cons);
         this.points = points;           
         this.geoList = geoList;
           
-        poly = new GeoPolygon(cons, points);
-             
+        //poly = new GeoPolygon(cons, points);
+        createPolygon(cons,points);  
+        
         // compute polygon points
         compute();  
         
         setInputOutput(); // for AlgoElement                          
         poly.initLabels(labels);
     }   
+    
+    
+    /**
+     * create the polygon
+     * @param cons the construction
+     * @param points the 2D points
+     */
+    protected void createPolygon(Construction cons, GeoPoint [] points){
+    	poly = new GeoPolygon(cons, points);
+    }
         
     protected String getClassName() {
         return "AlgoPolygon";

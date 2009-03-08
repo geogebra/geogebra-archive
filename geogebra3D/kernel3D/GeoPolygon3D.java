@@ -2,169 +2,141 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
-import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DVector;
+import geogebra.kernel.GeoPoint;
+import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.euclidian3D.Drawable3D;
+import geogebra.kernel.GeoPolygon;
 
-public class GeoPolygon3D extends GeoCoordSys2D {
 
-	private GeoPoint3D[] points;
-	private double[][] vertex;
-	//GeoPoint[] points2D;
-	//GeoPolygon poly2D;
+/**
+ * Class extending {@link GeoPolygon} in 3D world.
+ * 
+ * @author ggb3D
+ *
+ */
+public class GeoPolygon3D 
+extends GeoPolygon implements GeoElement3DInterface {
+
 	
-	private boolean defined = false;		
-
-		
-	public GeoPolygon3D(Construction c, GeoPoint3D[] points) {
-		super(c);
-		setPoints(points);
+	private GeoCoordSys2D coordSys; 
+	
+	/** link with drawable3D */
+	private Drawable3D drawable3D = null;
+	
+	public GeoPolygon3D(Construction c, GeoPoint[] points) {
+		super(c, points);
+		setUseVisualDefaults(false);
 		setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
-		//Application.debug("alpha="+getAlphaValue());
-		//setCoordSys();
+		
 	}
-	
-	public void setPoints(GeoPoint3D[] points) {
-		this.points=points;
-		vertex = new double[points.length][3];
 
-		//create the associated GeoPolygon
-		//poly2D = (GeoPolygon)this.getKernel().Polygon(null, points2D)[0];
-	}
-	
-	
-	
-	/**
-	 * set the coord sys according to points.
-	 */
-	public void setCoordSys(){
-		this.resetCoordSys();
-		for(int i=0;(!this.isMadeCoordSys())&&(i<points.length);i++)
-			this.addPointToCoordSys(points[i].getCoords(),true);
-		
-		//if there's no coord sys, the polygon is undefined
-		if (!isMadeCoordSys()){
-			setUndefined();
-			return;
-		}else
-			setDefined();		
-	}
-	
-	
-	
-	/**
-	 * set the vertex #i to (x,y) coords
-	 * @param i number of the vertex
-	 * @param x first coord
-	 * @param y second coord
-	 */
-	public void setVertex(int i, double x, double y){
-		vertex[i][0]=x;
-		vertex[i][1]=y;
-		vertex[i][2]=0;
+
+	/////////////////////////////////////////
+	// GeoPolygon3D
+	public int getGeoClassType() {
+		return GeoElement3D.GEO_CLASS_POLYGON3D;
 	}
 	
 	
 	/**
-	 * update all vertices, according to points and coord sys
+	 * it's a 3D GeoElement.
+	 * @return true
 	 */
-	public void updateVertices(){	
-		
-		if (!isDefined())
-			return;
-		
-		for(int i=0;i<points.length;i++){
-			//project the point on the coord sys
-			Ggb3DVector[] project=points[i].getCoords().projectPlane(this.getMatrix4x4());
-			
-			//check if the vertex lies on the coord sys
-			if (!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){
-				setUndefined();
-				return;
-			}
-			
-			//set the vertex
-			setVertex(i,project[1].get(1), project[1].get(2));
-		}
+	public boolean isGeoElement3D(){
+		return true;
 	}
+
 	
-	/** return the vertices list 
-	 * @return the vertices list */
-	public double[][] getVertices(){
-		return vertex;
+	
+	
+	
+	/////////////////////////////////////////
+	// link with the 2D coord sys
+	
+	
+	/** set the 2D coordinate system
+	 * @param cs the 2D coordinate system
+	 */
+	public void setCoordSys(GeoCoordSys2D cs){
+		this.coordSys = cs;
 	}
 	
 	
 	
+	/** return the 2D coordinate system
+	 * @return the 2D coordinate system
+	 */
+	public GeoCoordSys2D getCoordSys(){
+		return coordSys;
+	}
 	
-	public GeoElement copy() {
-		// TODO Auto-generated method stub
+	
+	
+	
+	
+	
+	
+	/////////////////////////////////////////
+	// link with Drawable3D
+	
+	/**
+	 * set the 3D drawable linked to
+	 * @param d the 3D drawable 
+	 */
+	public void setDrawable3D(Drawable3D d){
+		drawable3D = d;
+	}
+	
+	/** return the 3D drawable linked to
+	 * @return the 3D drawable linked to
+	 */
+	public Drawable3D getDrawable3D(){
+		return drawable3D;
+	}
+	
+	
+	
+	
+	
+	public Ggb3DMatrix4x4 getDrawingMatrix() {
+		if (coordSys!=null)
+			return coordSys.getDrawingMatrix();
+		else
+			return null;
+	}
+
+	
+	public void setDrawingMatrix(Ggb3DMatrix4x4 matrix) {
+		coordSys.setDrawingMatrix(matrix);
+
+	}
+
+	
+	
+	
+	
+    /** set the alpha value to alpha for openGL
+     * @param alpha alpha value
+     */
+	public void setAlphaValue(float alpha) {
+
+		alphaValue = alpha;
+
+	}
+	
+	
+	
+	public GeoElement getGeoElement2D() {
 		return null;
 	}
 
-	public int getGeoClassType() {
-		return GEO_CLASS_POLYGON3D;
-	}
-
-	protected String getTypeString() {
-		return "Polygon3D";
-	}
-
-
-	public boolean isEqual(GeoElement Geo) {
-		// TODO Auto-generated method stub
+	public boolean hasGeoElement2D() {
 		return false;
 	}
 
-	public void set(GeoElement geo) {
-		// TODO Auto-generated method stub
 
-	}
+	public void setGeoElement2D(GeoElement geo) {
 
-	
-	
-	public void setUndefined() {
-		defined = false;
-	}
-
-	public boolean isDefined() {
-		return defined;
-	}
-
-	public void setDefined() {
-		defined = true;
-	}
-
-	
-	
-	
-	
-	/** to be able to fill it with an alpha value */
-	public boolean isFillable() {
-		return true;
-	}
-
-	
-	
-
-	
-	protected boolean showInAlgebraView() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	protected boolean showInEuclidianView() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	public String toValueString() {
-		// TODO Auto-generated method stub
-		return "todo-toValueString";
-	}
-
-	protected String getClassName() {
-		return "GeoPolygon3D";
 	}
 
 }
