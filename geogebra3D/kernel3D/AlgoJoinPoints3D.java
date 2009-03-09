@@ -38,7 +38,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 
 	private static final long serialVersionUID = 1L;
 	protected GeoPointInterface P, Q; // input
-	private GeoCoordSys2D cs2D;
+	private GeoPolygon3D polygon;
     protected GeoCoordSys1D cs; // output 
     protected int geoClassType;
 
@@ -60,11 +60,12 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param label name of the segment/line/...
      * @param P first point
      * @param Q second point
-     * @param cs2D 2D coord sys (when P and Q are 2D points)
+     * @param polygon polygon providing a 2D coord sys (when P and Q are 2D points)
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
-    AlgoJoinPoints3D(Construction cons, String label, GeoPointInterface P, GeoPointInterface Q, GeoCoordSys2D cs2D, int geoClassType) {
+    AlgoJoinPoints3D(Construction cons, String label, 
+    		GeoPointInterface P, GeoPointInterface Q, GeoPolygon3D polygon, int geoClassType) {
 
-    	this(cons,P,Q,cs2D,geoClassType);
+    	this(cons,P,Q,polygon,geoClassType);
     	cs.setLabel(label);
 
     }
@@ -74,38 +75,40 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param cons the construction
      * @param P first point
      * @param Q second point
-     * @param cs2D 2D coord sys (when P and Q are 2D points)
+     * @param polygon polygon providing a 2D coord sys (when P and Q are 2D points)
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
-    AlgoJoinPoints3D(Construction cons, GeoPointInterface P, GeoPointInterface Q, GeoCoordSys2D cs2D, int geoClassType) {
+    AlgoJoinPoints3D(Construction cons, 
+    		GeoPointInterface P, GeoPointInterface Q, GeoPolygon3D polygon, int geoClassType) {
     	super(cons);
 
 
     	this.P = P;
     	this.Q = Q;
-    	this.cs2D = cs2D;
+    	this.polygon = polygon;
     	this.geoClassType = geoClassType;
 
     	switch(geoClassType){
     	case GeoElement3D.GEO_CLASS_SEGMENT3D:
-    		if (cs2D==null)
+    		if (polygon==null)
     			cs = new GeoSegment3D(cons, (GeoPoint3D) P, (GeoPoint3D) Q);
     		else{ //P and Q are two GeoPoints in cs2D coord sys
     			cs = new GeoSegment3D(cons);
      		}
     		break;
     	case GeoElement3D.GEO_CLASS_LINE3D:
-    		if (cs2D==null)
+    		if (polygon==null)
     			cs = new GeoLine3D(cons, (GeoPoint3D) P, (GeoPoint3D) Q); 
     		break;
     	default:
     		cs = null;
     	}
     	
-    	if (cs2D==null)
+    	
+    	if (polygon==null)
     		setInputOutput(new GeoElement[] {(GeoElement) P,(GeoElement) Q}, new GeoElement[] {cs});
     	else
-    		setInputOutput(new GeoElement[] {(GeoElement) P,(GeoElement) Q, cs2D}, new GeoElement[] {cs});
-    		
+    		setInputOutput(new GeoElement[] {(GeoElement) P,(GeoElement) Q, polygon}, new GeoElement[] {cs});
+    	 
     		
     	/*
     	setInputOutput(); // for AlgoElement
@@ -125,20 +128,26 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     	efficientInput[1] = (GeoElement) Q;
     	
 
-    	input = new GeoElement[2];
-    	input[0] = (GeoElement) P;
-    	input[1] = (GeoElement) Q;
-
+    	if (polygon == null) {
+    		input = efficientInput;    		
+    	} else {
+    		input = new GeoElement[3];
+    		input[0] = efficientInput[0];
+            input[1] = efficientInput[1];
+            input[2] = polygon;             
+    	}   
     	            	
     	
         output = new GeoElement[1];
         output[0] = cs;
           
-        //setDependencies();
         setEfficientDependencies(input, efficientInput);
     }
     */
-
+    
+    
+    
+    
     GeoPoint3D getP() {
         return (GeoPoint3D) P;
     }
@@ -154,18 +163,28 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     // recalc the segment joining P and Q    
     protected void compute() {
     	    	   
-		if (cs2D==null)
+		if (polygon==null)
 			cs.setCoord((GeoPoint3D) P, (GeoPoint3D) Q);
 		else{ //P and Q are two GeoPoints in cs2D coord sys
-			if (cs2D.isDefined())
+			if (polygon.isDefined())
 				cs.setCoordFromPoints(
-						cs2D.getPoint(((GeoPoint) P).inhomX, ((GeoPoint) P).inhomY),
-						cs2D.getPoint(((GeoPoint) Q).inhomX, ((GeoPoint) Q).inhomY));
+						polygon.getCoordSys().getPoint(((GeoPoint) P).inhomX, ((GeoPoint) P).inhomY),
+						polygon.getCoordSys().getPoint(((GeoPoint) Q).inhomX, ((GeoPoint) Q).inhomY));
 			else
 				cs.setUndefined();
 		}
 
     }
+    
+    
+    public void remove() {
+        super.remove();
+        if (polygon != null)
+            polygon.remove();
+    }  
+    
+    
+    
 
 	protected String getClassName() {
 		String s = 	"AlgoJoinPoints3D";

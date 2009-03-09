@@ -65,7 +65,7 @@ public class Test3D{
 		testRepere();
 		
 
-		testAlgoPyramide();
+		//testAlgoPyramide();
 		testPolygon();
 
 		testQuadric();

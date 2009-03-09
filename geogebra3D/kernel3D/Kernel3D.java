@@ -192,7 +192,8 @@ public class Kernel3D
 		AlgoCoordSys2D algoCS = new AlgoCoordSys2D(cons,null,points,true);
 		
 		//creates the 3D polygon linked to the coord sys and the 2D points
-		AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,algoCS.getCoordSys(),algoCS.getPoints2D());
+		//AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,algoCS.getCoordSys(),algoCS.getPoints2D());
+		AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,algoCS);
 		
 		return (GeoPolygon3D) algo.getOutput()[0];
 		

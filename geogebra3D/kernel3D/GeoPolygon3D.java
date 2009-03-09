@@ -83,7 +83,7 @@ extends GeoPolygon implements GeoElement3DInterface {
 	 public GeoSegmentInterface createSegment(GeoPoint startPoint, GeoPoint endPoint){
 		 GeoSegmentInterface segment;
 
-		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, startPoint, endPoint, getCoordSys(),GeoElement3D.GEO_CLASS_SEGMENT3D);            
+		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, startPoint, endPoint, this,GeoElement3D.GEO_CLASS_SEGMENT3D);            
 		 cons.removeFromConstructionList(algoSegment);               
 
 		 segment = (GeoSegmentInterface) algoSegment.getCS(); 
@@ -124,7 +124,8 @@ extends GeoPolygon implements GeoElement3DInterface {
 		if (coordSys==null)
 			return false;
 		else
-			return super.isDefined() && coordSys.isDefined();
+			//TODO return super.isDefined() && coordSys.isDefined();
+			return coordSys.isDefined();
    }	
 	
 	

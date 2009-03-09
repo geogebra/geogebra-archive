@@ -65,7 +65,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 			out = new GeoElement[points.length+1];	
 			for(int i=0;i<points.length;i++){
 				points2D[i]=new GeoPoint(c);
-				//points2D[i].setLabel("essaiPoint");
+				points2D[i].setLabel("essaiPoint");
 				out[i+1]=points2D[i];
 			}
 		}else{
