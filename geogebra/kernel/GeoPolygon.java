@@ -38,13 +38,37 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	private double area;
 	private boolean defined = false;		
 	
+	/** common constructor for 2D.
+	 * @param c the construction
+	 * @param points vertices 
+	 */
 	public GeoPolygon(Construction c, GeoPoint [] points) {
+		this(c,points,null);
+	}
+	
+	/** common constructor for 3D.
+	 * @param c the construction
+	 * @param points vertices 
+	 * @param cs for 3D stuff : 2D coord sys
+	 */	
+	public GeoPolygon(Construction c, GeoPoint [] points, GeoElement cs) {
 		super(c);
+		setCoordSys(cs);
 		setPoints(points);
 		setLabelVisible(false);
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 	}
 	
+	/** for 3D stuff (unused here)
+	 * @param cs GeoCoordSys2D
+	 */
+	public void setCoordSys(GeoElement cs) {
+		
+	}
+	
+	
+	
+
 	protected String getClassName() {
 		return "GeoPolygon";
 	}

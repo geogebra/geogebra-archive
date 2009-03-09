@@ -2,6 +2,8 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Path;
 import geogebra3D.Matrix.Ggb3DVector;
 
@@ -15,9 +17,17 @@ import geogebra3D.Matrix.Ggb3DVector;
  * @author ggb3d
  *
  */
-public class GeoSegment3D extends GeoCoordSys1D {
+public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	
-	
+	/** says that this is defined */
+	private boolean defined;
+
+	/** constructor with no points
+	 * @param c the construction
+	 */
+	public GeoSegment3D(Construction c){
+		super(c);
+	}
 	
 	/** creates a segment linking p1 to p2
 	 * @param c construction
@@ -81,14 +91,9 @@ public class GeoSegment3D extends GeoCoordSys1D {
 		return null;
 	}
 
-	/**
-	 * TODO return if this is defined
-	 * @return if this is defined
-	 */
-	public boolean isDefined() {
-		return true;
-	}
 
+
+	
 	/**
 	 * TODO return if this is equal to Geo
 	 * @param Geo GeoElement
@@ -106,13 +111,6 @@ public class GeoSegment3D extends GeoCoordSys1D {
 		
 	}
 
-	/**
-	 * TODO set this to undefined
-	 * 
-	 */	
-	public void setUndefined() {
-		
-	}
 
 	
 	/**
@@ -192,6 +190,44 @@ public class GeoSegment3D extends GeoCoordSys1D {
 			setGeoElement2D(algo.getOut());
 		}
 		return super.getGeoElement2D();
+	}
+	
+	
+	
+	/////////////////////////////////////
+	// GeoSegmentInterface interface
+
+
+	public double getPointX(double parameter) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getPointY(double parameter) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public GeoElement getStartPointAsGeoElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	public GeoElement getEndPointAsGeoElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public boolean isOnPath(GeoPoint p, double eps) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void pointChanged(GeoElement p) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

@@ -283,10 +283,11 @@ public class Test3D{
 		P1[2].setLabel("Ay");
 		//P1[3] = testPoint(0f,1f,0f);
 		
-		
+		/*
 		GeoSegment3D s=null;
 		for(i=0;i<3;i++)
 			s=kernel3D.Segment3D("segment",P1[i],P1[(i+1)%3]);
+			*/
 
 		GeoPoint3D P2;				
 		P2 = testPoint(0f,0f,1f);
@@ -301,8 +302,10 @@ public class Test3D{
 		*/
 		//finRG
 
+		/*
 		for(i=0;i<3;i++)
 			kernel3D.Segment3D("segment",P1[i],P2);
+			*/
 		
 		GeoPolygon3D t;
 		Color c = new Color(0.5f,0.2f,0.1f);
@@ -318,6 +321,13 @@ public class Test3D{
 		t.setObjColor(c);
 		
 
+		GeoPoint3D A = testPoint(2f,0f,0f);
+		A.setLabel("sA");
+		GeoPoint3D B = testPoint(0f,2f,0f);
+		B.setLabel("sB");
+
+		GeoSegment3D s = kernel3D.Segment3D("segment",A,B);
+		s.setLabel("s");
 		
 		GeoPoint3D P=kernel3D.Point3D("ps", s, 0, 0, 0);
 		P.setObjColor(new Color(1f,1f,0f));

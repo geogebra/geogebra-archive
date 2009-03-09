@@ -27,12 +27,17 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 		setCoord(O,I);
 	}	
 	
+	/** set the matrix to [V O] */
+	public void setCoordFromPoints(Ggb3DVector a_O, Ggb3DVector a_I){
+		 setCoord(a_O,a_I.sub(a_O));
+	}
 	
 	/** set the matrix to [V O] */
 	public void setCoord(Ggb3DVector a_O, Ggb3DVector a_V){
 		setOrigin(a_O);
 		setVx(a_V);
 		
+		setMadeCoordSys();
 		updateDrawingMatrix();
 	}
 	

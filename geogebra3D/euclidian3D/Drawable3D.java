@@ -192,7 +192,7 @@ public abstract class Drawable3D {
 	/** update this according to the {@link GeoElement3D} */
 	public void update(){
 		//verify if object is visible for drawing
-		setVisible(getGeoElement().isEuclidianVisible());       				 
+		setVisible(getGeoElement().isEuclidianVisible() && getGeoElement().isDefined());       				 
 		if (!isVisible()) return;
 		setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
 		

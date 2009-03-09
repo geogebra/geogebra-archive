@@ -177,17 +177,14 @@ public class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 		return 0;
 	}
 
-	@Override
 	protected String getTypeString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "CoordSys2D";
 	}
 
 	
 	
-	public boolean isDefined() {
-		return isMadeCoordSys();
-	}
+
+
 
 	@Override
 	public boolean isEqual(GeoElement Geo) {
@@ -201,16 +198,9 @@ public class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 		
 	}
 
-	@Override
-	public void setUndefined() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
 	protected boolean showInAlgebraView() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -219,16 +209,13 @@ public class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 		return false;
 	}
 
-	@Override
 	public String toValueString() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+
 	protected String getClassName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "GeoCoordSys2D";
 	}
 	
 

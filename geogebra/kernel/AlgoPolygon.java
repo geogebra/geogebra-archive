@@ -23,9 +23,12 @@ package geogebra.kernel;
 public class AlgoPolygon extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private GeoPoint [] points;  // input
+	protected GeoPoint [] points;  // input
 	private GeoList geoList;  // alternative input
     protected GeoPolygon poly;     // output
+    
+    protected GeoElement cs2D; //2D coord sys used for 3D
+    
     
     protected AlgoPolygon(Construction cons, String [] labels, GeoList geoList) {
     	this(cons, labels, null, geoList);
@@ -34,14 +37,26 @@ public class AlgoPolygon extends AlgoElement {
     protected AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points) {
     	this(cons, labels, points, null);
     }
-    	
+ 
     protected AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points, GeoList geoList) {
+    	this(cons,labels,points,geoList,null);
+    }
+    
+    /**
+     * @param cons the construction
+     * @param labels names of the polygon and the segments
+     * @param points vertices of the polygon
+     * @param geoList list of vertices of the polygon (alternative to points)
+     * @param cs for 3D stuff : GeoCoordSys2D
+     */
+    protected AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points, GeoList geoList, GeoElement cs2D) {
         super(cons);
         this.points = points;           
         this.geoList = geoList;
+        this.cs2D = cs2D;
           
         //poly = new GeoPolygon(cons, points);
-        createPolygon(cons,points);  
+        createPolygon();  
         
         // compute polygon points
         compute();  
@@ -56,8 +71,8 @@ public class AlgoPolygon extends AlgoElement {
      * @param cons the construction
      * @param points the 2D points
      */
-    protected void createPolygon(Construction cons, GeoPoint [] points){
-    	poly = new GeoPolygon(cons, points);
+    protected void createPolygon(){
+    	poly = new GeoPolygon(this.cons, this.points);
     }
         
     protected String getClassName() {

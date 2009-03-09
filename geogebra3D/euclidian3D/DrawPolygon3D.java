@@ -25,7 +25,7 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		
-		if (getGeoElement().isDefined()){
+		//if (getGeoElement().isDefined()){
 			renderer.startPolygon();
 			GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
 			
@@ -41,7 +41,7 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 			
 			renderer.endPolygon();
 			
-		}
+		//}
 		//renderer.drawPolygon(((GeoPolygon3D)getGeoElement3D()).getVertices());
 	}
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){

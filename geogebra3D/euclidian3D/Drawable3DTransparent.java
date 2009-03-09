@@ -19,7 +19,7 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 
 
 	public void drawHiding(EuclidianRenderer3D renderer){
-		if(!getGeoElement().isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 
 		float alpha = getGeoElement().getAlphaValue();
@@ -37,7 +37,7 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 	//TODO improve specific geometry for picking
 	public void drawPicked(EuclidianRenderer3D renderer){
 		
-		if(!getGeoElement().isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
 		if (!getGeoElement().doHighlighting())
 			return;
@@ -51,7 +51,7 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 
 
 	public void drawTransp(EuclidianRenderer3D renderer){
-		if(!getGeoElement().isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 		
 		float alpha = getGeoElement().getAlphaValue();

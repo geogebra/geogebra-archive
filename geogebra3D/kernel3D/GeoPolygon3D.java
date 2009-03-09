@@ -1,8 +1,11 @@
 package geogebra3D.kernel3D;
 
+import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoSegment;
+import geogebra.kernel.GeoSegmentInterface;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.euclidian3D.Drawable3D;
 import geogebra.kernel.GeoPolygon;
@@ -18,13 +21,20 @@ public class GeoPolygon3D
 extends GeoPolygon implements GeoElement3DInterface {
 
 	
+	/** 2D coord sys where the polygon exists */
 	private GeoCoordSys2D coordSys; 
 	
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
 	
-	public GeoPolygon3D(Construction c, GeoPoint[] points) {
-		super(c, points);
+	/**
+	 * default constructor
+	 * @param c construction
+	 * @param points 2D points
+	 * @param cs2D 2D coord sys where the polygon is drawn
+	 */
+	public GeoPolygon3D(Construction c, GeoPoint[] points, GeoCoordSys2D cs2D) {
+		super(c, points, cs2D);
 		setUseVisualDefaults(false);
 		setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
 		
@@ -47,6 +57,44 @@ extends GeoPolygon implements GeoElement3DInterface {
 	}
 
 	
+	/////////////////////////////////////////
+	// Overwrite GeoPolygon
+	
+	
+	
+	 /**
+	  * remove an old segment
+	  * @param oldSegment the old segment 
+	  */
+	
+	 public void removeSegment(GeoSegmentInterface oldSegment){
+		 ((GeoSegment3D) oldSegment).getParentAlgorithm().remove();
+	 }
+	 
+	 
+	 
+	 /**
+	  * return a segment joining startPoint and endPoint
+	  * @param startPoint the start point
+	  * @param endPoint the end point
+	  * @return the segment
+	  */
+	
+	 public GeoSegmentInterface createSegment(GeoPoint startPoint, GeoPoint endPoint){
+		 GeoSegmentInterface segment;
+
+		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, startPoint, endPoint, getCoordSys(),GeoElement3D.GEO_CLASS_SEGMENT3D);            
+		 cons.removeFromConstructionList(algoSegment);               
+
+		 segment = (GeoSegmentInterface) algoSegment.getCS(); 
+		 // refresh color to ensure segments have same color as polygon:
+		 segment.setObjColor(getObjectColor()); 
+
+		 return segment;
+		 
+		 
+	 }
+	 
 	
 	
 	
@@ -57,8 +105,8 @@ extends GeoPolygon implements GeoElement3DInterface {
 	/** set the 2D coordinate system
 	 * @param cs the 2D coordinate system
 	 */
-	public void setCoordSys(GeoCoordSys2D cs){
-		this.coordSys = cs;
+	 public void setCoordSys(GeoElement cs){
+		 this.coordSys = (GeoCoordSys2D) cs;
 	}
 	
 	
@@ -71,8 +119,13 @@ extends GeoPolygon implements GeoElement3DInterface {
 	}
 	
 	
-	
-	
+	/** return true if there's a polygon AND a 2D coord sys */
+	public boolean isDefined() {
+		if (coordSys==null)
+			return false;
+		else
+			return super.isDefined() && coordSys.isDefined();
+   }	
 	
 	
 	

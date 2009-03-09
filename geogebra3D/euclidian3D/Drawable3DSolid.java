@@ -26,7 +26,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 	}
 
 	public void draw(EuclidianRenderer3D renderer) {
-		if(!getGeoElement().isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
 		
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
@@ -41,7 +41,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 
 	
 	public void drawPicked(EuclidianRenderer3D renderer) {
-		if(!getGeoElement().isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 		if (!getGeoElement().doHighlighting())
 			return;
@@ -57,7 +57,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 	
 	public void drawHidden(EuclidianRenderer3D renderer){
 		
-		if(!getGeoElement().isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 		
 				

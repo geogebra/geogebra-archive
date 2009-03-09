@@ -192,6 +192,14 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	
 	
 	
+	public boolean isDefined() {
+		return isMadeCoordSys();
+	}
+	
+	public void setUndefined() {
+		resetCoordSys();
+		
+	}
 	
 	
 	

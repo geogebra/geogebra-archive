@@ -11,6 +11,7 @@ import geogebra.main.View;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -669,7 +670,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void remove(GeoElement geo) {
 
 		if (geo.isGeoElement3D()){
-			Drawable3D d = ((GeoElement3D) geo).getDrawable3D();
+			Drawable3D d = ((GeoElement3DInterface) geo).getDrawable3D();
 			drawList3D.remove(d);
 		}
 	}
