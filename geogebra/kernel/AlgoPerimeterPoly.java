@@ -57,7 +57,7 @@ public class AlgoPerimeterPoly extends AlgoElement {
 	 * Compute circumference by adding up the length of it's segemnts.
 	 */
 	protected final void compute() {
-		GeoSegment[] segment = polygon.getSegments();
+		GeoSegmentInterface[] segment = polygon.getSegments();
 		double length = 0;
 		for (int i = 0; i < segment.length; i++) {
 			length = length + (segment[i].getLength());

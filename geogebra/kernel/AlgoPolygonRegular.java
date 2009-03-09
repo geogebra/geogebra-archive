@@ -92,7 +92,7 @@ public class AlgoPolygonRegular extends AlgoElement {
     	if (points == null) return;
     	
     	// size = poly + points (without A, B) + segments
-    	GeoSegment [] segments = poly.getSegments();
+    	GeoSegmentInterface [] segments = poly.getSegments();
     	GeoPoint [] points = poly.getPoints();
         int size = 1 + segments.length + points.length - 2; 
        
@@ -101,7 +101,7 @@ public class AlgoPolygonRegular extends AlgoElement {
         output[k] = poly;                                  
               
         for (int i=0; i < segments.length; i++) {
-            output[++k] = segments[i];
+            output[++k] = (GeoElement) segments[i];
         }    
         
         for (int i=2; i < points.length; i++) {
@@ -176,7 +176,7 @@ public class AlgoPolygonRegular extends AlgoElement {
     	
     	// update new points and segments 
     	if (n != oldPointNumber) {
-    		GeoSegment [] segments = poly.getSegments();
+    		GeoSegmentInterface [] segments = poly.getSegments();
     		   	   
 			for (int i=Math.max(2, oldPointNumber); i < points.length; i++) {            	
 				if (!points[i].isLabelSet())
@@ -184,9 +184,16 @@ public class AlgoPolygonRegular extends AlgoElement {
 			}
     		
             for (int i=0; i < segments.length; i++) {
+            	GeoElement seg = (GeoElement) segments[i];
+            	
+            	seg.getParentAlgorithm().update();   
+            	if (!seg.isLabelSet())
+            		seg.setLabel(null); 
+            	/*
             	segments[i].getParentAlgorithm().update();   
             	if (!segments[i].isLabelSet())
-            		segments[i].setLabel(null);            	
+            		segments[i].setLabel(null); 
+            		*/           	
             }
     	}    	    	
     }         

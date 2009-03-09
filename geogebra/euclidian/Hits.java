@@ -4,6 +4,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
+import geogebra.kernel.GeoSegmentInterface;
 import geogebra.main.Application;
 
 import java.awt.Point;
@@ -97,7 +98,7 @@ public class Hits extends ArrayList {
 			GeoElement geo = (GeoElement) it.next();
 			if (geo.isGeoPolygon()) {
 				boolean sidePresent = false;
-				GeoSegment [] sides = ((GeoPolygon) geo).getSegments();
+				GeoSegmentInterface [] sides = ((GeoPolygon) geo).getSegments();
 				for (int k=0; k < sides.length; k++) {
 					if (this.contains(sides[k])) {
 						sidePresent = true;

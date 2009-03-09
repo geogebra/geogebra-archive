@@ -33,7 +33,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	public static final int POLYGON_MAX_POINTS = 100;
 	
 	private GeoPoint [] points;
-	private GeoSegment [] segments;
+	private GeoSegmentInterface [] segments;
 	
 	private double area;
 	private boolean defined = false;		
@@ -203,7 +203,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
         }
     }
     
-    private void setLabel(GeoSegment s, GeoPoint p) {
+    private void setLabel(GeoSegmentInterface s, GeoPoint p) {
         if (!p.isLabelSet() || p.getLabel() == null) 
         	s.setLabel(null);
         else 
@@ -218,23 +218,23 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 private void updateSegments() {  	
 		 if (points == null) return;
 		 
-		GeoSegment [] oldSegments = segments;				
-		segments = new GeoSegment[points.length]; // new segments
+		GeoSegmentInterface [] oldSegments = segments;				
+		segments = new GeoSegmentInterface[points.length]; // new segments
 				
 		if (oldSegments != null) {
 			// reuse or remove old segments
 			for (int i=0; i < oldSegments.length; i++) {        	
 	        	if (i < segments.length &&
-	        		oldSegments[i].getStartPoint() == points[i] && 
-	        		oldSegments[i].getEndPoint() == points[(i+1) % points.length]) 
+	        		oldSegments[i].getStartPointAsGeoElement() == points[i] && 
+	        		oldSegments[i].getEndPointAsGeoElement() == points[(i+1) % points.length]) 
 	        	{		
         			// reuse old segment
         			segments[i] = oldSegments[i];        		
          		} 
 	        	else {
         			// remove old segment
-        			((AlgoJoinPointsSegment) oldSegments[i].getParentAlgorithm()).removeSegmentOnly();
-        			
+        			//((AlgoJoinPointsSegment) oldSegments[i].getParentAlgorithm()).removeSegmentOnly();
+        			removeSegment(oldSegments[i]);
 	        	}	        	
 			}
 		}			
@@ -245,16 +245,52 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
         	GeoPoint endPoint = points[(i+1) % points.length];
         	
         	if (segments[i] == null) {
+        		/*
         		AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, startPoint, endPoint, this);            
                 cons.removeFromConstructionList(algoSegment);               
                 
                 segments[i] = algoSegment.getSegment(); 
                 // refresh color to ensure segments have same color as polygon:
                 segments[i].setObjColor(getObjectColor()); 
+                */
+         		segments[i] = createSegment(startPoint, endPoint);
         	}     
         }         
         
     }
+	 
+	 
+
+	 /**
+	  * remove an old segment
+	  * @param oldSegment the old segment 
+	  */
+	 public void removeSegment(GeoSegmentInterface oldSegment){
+		 ((AlgoJoinPointsSegment) ((GeoSegment) oldSegment).getParentAlgorithm()).removeSegmentOnly();
+	 }
+	 
+	 
+	 
+	 /**
+	  * return a segment joining startPoint and endPoint
+	  * @param startPoint the start point
+	  * @param endPoint the end point
+	  * @return the segment
+	  */
+	 public GeoSegmentInterface createSegment(GeoPoint startPoint, GeoPoint endPoint){
+		 GeoSegmentInterface segment;
+
+		 AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, startPoint, endPoint, this);            
+		 cons.removeFromConstructionList(algoSegment);               
+
+		 segment = algoSegment.getSegment(); 
+		 // refresh color to ensure segments have same color as polygon:
+		 segment.setObjColor(getObjectColor()); 
+
+		 return segment;
+	 }
+
+	 
 
 	/**
 	 * The copy of a polygon is a number (!) with
@@ -295,7 +331,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * Returns the segments of this polygon.
 	 * Note that this array may change dynamically.
 	 */
-	public GeoSegment [] getSegments() {
+	public GeoSegmentInterface [] getSegments() {
 		return segments;
 	}
 
@@ -592,12 +628,16 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		if (pp.t < 0) 
 			pp.t += segments.length;
 		int index = (int) Math.floor(pp.t) ;		
-		GeoSegment seg = segments[index];
+		GeoSegmentInterface seg = segments[index];
 		double segParameter = pp.t - index;
 		
 		// calc point for given parameter
+		/*
 		P.x = seg.startPoint.inhomX + segParameter * seg.y;
 		P.y = seg.startPoint.inhomY - segParameter * seg.x;
+		*/
+		P.x = seg.getPointX(segParameter);
+		P.y = seg.getPointY(segParameter);
 		P.z = 1.0;	
 	}
 

@@ -35,6 +35,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
+import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -2260,7 +2261,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			GeoElement geo = (GeoElement) it.next();
 			if (geo.isGeoPolygon()) {
 				boolean sidePresent = false;
-				GeoSegment [] sides = ((GeoPolygon) geo).getSegments();
+				GeoSegmentInterface [] sides = ((GeoPolygon) geo).getSegments();
 				for (int k=0; k < sides.length; k++) {
 					if (hits.contains(sides[k])) {
 						sidePresent = true;

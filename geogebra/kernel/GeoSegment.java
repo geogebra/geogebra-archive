@@ -21,7 +21,8 @@ import java.util.HashSet;
 /**
  * @author Markus Hohenwarter
  */
-final public class GeoSegment extends GeoLine implements LimitedPath, NumberValue, LineProperties {
+final public class GeoSegment extends GeoLine implements LimitedPath, NumberValue, LineProperties,
+GeoSegmentInterface {
 
 	private static final long serialVersionUID = 1L;
 	// GeoSegment is constructed by AlgoJoinPointsSegment 
@@ -41,7 +42,7 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 	public static final int SEGMENT_DECORATION_THREE_ARROWS = 6;
 //	 Michael Borcherds 20071006 end
 	
-	// added by Loïc
+	// added by Loï¿½c
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(SEGMENT_DECORATION_NONE),
 				new Integer(SEGMENT_DECORATION_ONE_TICK),
@@ -158,6 +159,9 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
    }
    
    
+   
+   
+   
    /** 
 	* Yields true iff startpoint and endpoint of s are equal to
 	* startpoint and endpoint of this segment.
@@ -247,12 +251,37 @@ final public class GeoSegment extends GeoLine implements LimitedPath, NumberValu
 		else
 			return isOnPath(p, eps);
     }
+    
+    
+	/* 
+	 * GeoSegmentInterface interface
+	 */	 
+    public void pointChanged(GeoElement P) {
+    	pointChanged((GeoPoint) P);
+    }
+    
+    public GeoElement getStartPointAsGeoElement(){
+    	return getStartPoint();
+    }
+
+    public GeoElement getEndPointAsGeoElement(){
+    	return getEndPoint();
+    }
+
+    
+	public double getPointX(double parameter){
+		return startPoint.inhomX + parameter * y;
+	}
+	
+	public double getPointY(double parameter){
+		return startPoint.inhomY - parameter * x;
+	}
 
 	
 	/* 
 	 * Path interface
-	 */	 
-	public void pointChanged(GeoPoint P) {
+	 */	     	
+    public void pointChanged(GeoPoint P) {
 		super.pointChanged(P);
 			
 		// ensure that the point doesn't get outside the segment

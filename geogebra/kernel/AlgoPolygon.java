@@ -114,12 +114,12 @@ public class AlgoPolygon extends AlgoElement {
     }    
     
     private void setOutput() {
-    	GeoSegment [] segments = poly.getSegments();    	    	
+    	GeoSegmentInterface [] segments = poly.getSegments();    	    	
         int size = 1 + segments.length;
         output = new GeoElement[size];                       
         output[0] = poly;        
         for (int i=0; i < segments.length; i++) {
-            output[i+1] = segments[i];
+            output[i+1] = (GeoElement) segments[i];
         }
     }
     

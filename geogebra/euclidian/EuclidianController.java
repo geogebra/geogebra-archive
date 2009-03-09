@@ -37,6 +37,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
+import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
@@ -4068,7 +4069,7 @@ public class EuclidianController implements MouseListener,
 					for (int k=0; k < points.length; k++) {
 						tempArrayList.remove(points[k]);
 					}
-					GeoSegment [] segs = poly.getSegments();
+					GeoSegmentInterface [] segs = poly.getSegments();
 					for (int k=0; k < segs.length; k++) {
 						tempArrayList.remove(segs[k]);
 					}
