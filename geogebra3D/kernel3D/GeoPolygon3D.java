@@ -1,14 +1,13 @@
 package geogebra3D.kernel3D;
 
-import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoSegment;
+import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.euclidian3D.Drawable3D;
-import geogebra.kernel.GeoPolygon;
 
 
 /**
@@ -27,13 +26,16 @@ extends GeoPolygon implements GeoElement3DInterface {
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
 	
+	
+	private GeoPoint[] points2D;
+	
 	/**
 	 * default constructor
 	 * @param c construction
 	 * @param points 2D points
 	 * @param cs2D 2D coord sys where the polygon is drawn
 	 */
-	public GeoPolygon3D(Construction c, GeoPoint[] points, GeoCoordSys2D cs2D) {
+	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GeoCoordSys2D cs2D) {
 		super(c, points, cs2D);
 		setUseVisualDefaults(false);
 		setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
@@ -80,7 +82,7 @@ extends GeoPolygon implements GeoElement3DInterface {
 	  * @return the segment
 	  */
 	
-	 public GeoSegmentInterface createSegment(GeoPoint startPoint, GeoPoint endPoint){
+	 public GeoSegmentInterface createSegment(GeoPointInterface startPoint, GeoPointInterface endPoint){
 		 GeoSegmentInterface segment;
 
 		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, startPoint, endPoint, this,GeoElement3D.GEO_CLASS_SEGMENT3D);            
@@ -95,7 +97,35 @@ extends GeoPolygon implements GeoElement3DInterface {
 		 
 	 }
 	 
-	
+	 
+	 
+	 /**
+	  * Returns the i-th 2D point of this polygon.
+	  * Note that this array may change dynamically.
+	  * @param i number of point
+	  * @return the i-th point
+	  */
+	 public GeoPoint getPoint(int i) {
+		 return (GeoPoint) points2D[i];
+	 }
+	 
+
+	 /**
+	  * Returns the 2D points of this polygon.
+	  * Note that this array may change dynamically.
+	  */
+	 public GeoPoint [] getPoints() {
+		 return (GeoPoint []) points2D;
+	 }
+
+
+	 //TODO
+	 /*
+	 public void calcArea() {
+		 area = 0;
+		 setDefined();
+	 }
+	 */
 	
 	
 	/////////////////////////////////////////
@@ -106,7 +136,32 @@ extends GeoPolygon implements GeoElement3DInterface {
 	 * @param cs the 2D coordinate system
 	 */
 	 public void setCoordSys(GeoElement cs){
+		 
+		 setDefined();
+		 
 		 this.coordSys = (GeoCoordSys2D) cs;
+
+		 
+		 // turn off the kernel notifications for algos below
+		 this.getKernel().setSilentMode(true);
+		 
+		 // if there's no coord sys, create it with AlgoCoordSys2D
+		 if (this.coordSys==null){
+			 AlgoCoordSys2D algo = new AlgoCoordSys2D(this.getConstruction(),null,(GeoPoint3D[]) points,false);
+			 this.coordSys = algo.getCoordSys();
+		 }
+		 
+		 
+		 //sets the 2D points in coord sys
+		 points2D = new GeoPoint[points.length];
+		 for(int i=0; i<points.length; i++){
+			 points2D[i]=(GeoPoint) ((Kernel3D) this.getKernel()).From3Dto2D(null, (GeoPoint3D) points[i], this.coordSys);
+		 }
+		 
+		 // turn on the kernel notifications 
+		 this.getKernel().setSilentMode(false);
+		 
+			 
 	}
 	
 	
@@ -124,8 +179,8 @@ extends GeoPolygon implements GeoElement3DInterface {
 		if (coordSys==null)
 			return false;
 		else
-			//TODO return super.isDefined() && coordSys.isDefined();
-			return coordSys.isDefined();
+			return super.isDefined() && coordSys.isDefined();
+			//return coordSys.isDefined();
    }	
 	
 	

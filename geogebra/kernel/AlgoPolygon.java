@@ -23,7 +23,7 @@ package geogebra.kernel;
 public class AlgoPolygon extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	protected GeoPoint [] points;  // input
+	protected GeoPointInterface [] points;  // input
 	private GeoList geoList;  // alternative input
     protected GeoPolygon poly;     // output
     
@@ -34,11 +34,11 @@ public class AlgoPolygon extends AlgoElement {
     	this(cons, labels, null, geoList);
     }
     
-    protected AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points) {
+    protected AlgoPolygon(Construction cons, String [] labels, GeoPointInterface [] points) {
     	this(cons, labels, points, null);
     }
  
-    protected AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points, GeoList geoList) {
+    protected AlgoPolygon(Construction cons, String [] labels, GeoPointInterface [] points, GeoList geoList) {
     	this(cons,labels,points,geoList,null);
     }
     
@@ -49,7 +49,7 @@ public class AlgoPolygon extends AlgoElement {
      * @param geoList list of vertices of the polygon (alternative to points)
      * @param cs for 3D stuff : GeoCoordSys2D
      */
-    protected AlgoPolygon(Construction cons, String [] labels, GeoPoint [] points, GeoList geoList, GeoElement cs2D) {
+    protected AlgoPolygon(Construction cons, String [] labels, GeoPointInterface [] points, GeoList geoList, GeoElement cs2D) {
         super(cons);
         this.points = points;           
         this.geoList = geoList;
@@ -114,7 +114,7 @@ public class AlgoPolygon extends AlgoElement {
     		input[0] = geoList;
     	} else {    	
     		// points as input
-    		input = points;
+    		input = (GeoElement[]) points;
     	}    	
     	// set dependencies
         for (int i = 0; i < input.length; i++) {
@@ -147,7 +147,7 @@ public class AlgoPolygon extends AlgoElement {
     
     GeoPolygon getPoly() { return poly; }    
     public GeoPoint [] getPoints() {
-    	return points;
+    	return (GeoPoint[]) points;
     }
         
     protected final void compute() { 

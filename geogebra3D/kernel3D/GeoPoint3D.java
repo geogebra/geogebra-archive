@@ -417,6 +417,20 @@ implements GeoPointInterface, PointProperties{
 	public void setPointStyle(int type) {
 		// TODO 
 		
+	}
+
+	
+	
+	
+	
+	
+	//////////////////////////////////
+	// GeoPointInterface interface
+	
+	
+	public boolean isInfinite() {
+		// TODO Auto-generated method stub
+		return false;
 	};
     
     

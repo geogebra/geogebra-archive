@@ -89,15 +89,14 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 
     	switch(geoClassType){
     	case GeoElement3D.GEO_CLASS_SEGMENT3D:
-    		if (polygon==null)
+    		//if (polygon==null)
     			cs = new GeoSegment3D(cons, (GeoPoint3D) P, (GeoPoint3D) Q);
-    		else{ //P and Q are two GeoPoints in cs2D coord sys
-    			cs = new GeoSegment3D(cons);
-     		}
+    		//else{ //P and Q are two GeoPoints in cs2D coord sys
+    		//	cs = new GeoSegment3D(cons);
+     		//}
     		break;
     	case GeoElement3D.GEO_CLASS_LINE3D:
-    		if (polygon==null)
-    			cs = new GeoLine3D(cons, (GeoPoint3D) P, (GeoPoint3D) Q); 
+    		cs = new GeoLine3D(cons, (GeoPoint3D) P, (GeoPoint3D) Q); 
     		break;
     	default:
     		cs = null;
@@ -162,9 +161,19 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 
     // recalc the segment joining P and Q    
     protected void compute() {
-    	    	   
-		if (polygon==null)
+    	    
+    	
+    	// if there's a polygon which is undefined, then this is undefined
+    	if (polygon!=null)
+    		if (!polygon.isDefined()){
+    			cs.setUndefined();
+    			return;
+    		}
+    	
+    	
+		//if (polygon==null)
 			cs.setCoord((GeoPoint3D) P, (GeoPoint3D) Q);
+		/*
 		else{ //P and Q are two GeoPoints in cs2D coord sys
 			if (polygon.isDefined())
 				cs.setCoordFromPoints(
@@ -173,8 +182,10 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 			else
 				cs.setUndefined();
 		}
+		*/
 
     }
+    
     
     
     public void remove() {
@@ -182,6 +193,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
         if (polygon != null)
             polygon.remove();
     }  
+    
     
     
     

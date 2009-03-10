@@ -32,29 +32,28 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 
 	public static final int POLYGON_MAX_POINTS = 100;
 	
-	private GeoPoint [] points;
+	protected GeoPointInterface [] points;
 	private GeoSegmentInterface [] segments;
 	
-	private double area;
+	protected double area;
 	private boolean defined = false;		
 	
 	/** common constructor for 2D.
 	 * @param c the construction
-	 * @param points vertices 
+	 * @param geoPointInterfaces vertices 
 	 */
-	public GeoPolygon(Construction c, GeoPoint [] points) {
+	public GeoPolygon(Construction c, GeoPointInterface[] points) {
 		this(c,points,null);
 	}
 	
 	/** common constructor for 3D.
 	 * @param c the construction
-	 * @param points vertices 
+	 * @param geoPointInterfaces vertices 
 	 * @param cs for 3D stuff : 2D coord sys
 	 */	
-	public GeoPolygon(Construction c, GeoPoint [] points, GeoElement cs) {
+	public GeoPolygon(Construction c, GeoPointInterface[] points, GeoElement cs) {
 		super(c);
-		setCoordSys(cs);
-		setPoints(points);
+		setPoints(points, cs);
 		setLabelVisible(false);
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 	}
@@ -99,8 +98,26 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
     	return GEO_CLASS_POLYGON;
     }
 	
-    public void setPoints(GeoPoint [] points) {
+    
+    
+    
+    /**
+     * set the vertices to points
+     * @param points the vertices
+     */
+    public void setPoints(GeoPointInterface [] points) {
+    	setPoints(points,null);
+    }
+
+    	
+    /**
+     * set the vertices to points (cs is only used for 3D stuff)
+     * @param points the vertices
+     * @param cs used for 3D stuff
+     */
+    public void setPoints(GeoPointInterface [] points, GeoElement cs) {
 		this.points = points;
+		setCoordSys(cs);
 		updateSegments();
 		
 //		if (points != null) {
@@ -136,7 +153,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * @return the x-coordinate 
 	 */
 	public double getPointX(int i){
-		return points[i].inhomX;
+		return getPoint(i).inhomX;
 	}
 	
 	/**
@@ -145,7 +162,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * @return the y-coordinate 
 	 */
 	public double getPointY(int i){
-		return points[i].inhomY;
+		return getPoint(i).inhomY;
 	}
 
 	
@@ -227,11 +244,11 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
         }
     }
     
-    private void setLabel(GeoSegmentInterface s, GeoPoint p) {
-        if (!p.isLabelSet() || p.getLabel() == null) 
+    private void setLabel(GeoSegmentInterface s, GeoPointInterface geoPoint) {
+        if (!geoPoint.isLabelSet() || geoPoint.getLabel() == null) 
         	s.setLabel(null);
         else 
-        	s.setLabel(p.getLabel().toLowerCase(Locale.US));
+        	s.setLabel(geoPoint.getLabel().toLowerCase(Locale.US));
     }
 	
     /**
@@ -265,8 +282,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		
 		// create missing segments
         for (int i=0; i < segments.length; i++) {
-        	GeoPoint startPoint = points[i];
-        	GeoPoint endPoint = points[(i+1) % points.length];
+        	GeoPointInterface startPoint = points[i];
+        	GeoPointInterface endPoint = points[(i+1) % points.length];
         	
         	if (segments[i] == null) {
         		/*
@@ -301,10 +318,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	  * @param endPoint the end point
 	  * @return the segment
 	  */
-	 public GeoSegmentInterface createSegment(GeoPoint startPoint, GeoPoint endPoint){
+	 public GeoSegmentInterface createSegment(GeoPointInterface startPoint, GeoPointInterface endPoint){
 		 GeoSegmentInterface segment;
 
-		 AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, startPoint, endPoint, this);            
+		 AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, (GeoPoint) startPoint, (GeoPoint) endPoint, this);            
 		 cons.removeFromConstructionList(algoSegment);               
 
 		 segment = algoSegment.getSegment(); 
@@ -326,7 +343,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	
 	public GeoElement copyInternal(Construction cons) {						
 		GeoPolygon ret = new GeoPolygon(cons, null); 
-		ret.points = GeoElement.copyPoints(cons, points);		
+		ret.points = GeoElement.copyPoints(cons, (GeoPoint[]) points);		
 		ret.set(this);
 				
 		return ret;		
@@ -338,9 +355,20 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		defined = poly.defined;	
 		
 		for (int i=0; i < points.length; i++) {				
-			points[i].set(poly.points[i]);
+			((GeoPoint) points[i]).set((GeoPoint) poly.points[i]);
 		}	
 		updateSegments();
+	}
+	
+	
+	/**
+	 * Returns the i-th point of this polygon.
+	 * Note that this array may change dynamically.
+	 * @param i number of point
+	 * @return the i-th point
+	 */
+	public GeoPoint getPoint(int i) {
+		return (GeoPoint) points[i];
 	}
 
 	/**
@@ -348,7 +376,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * Note that this array may change dynamically.
 	 */
 	public GeoPoint [] getPoints() {
-		return points;
+		return (GeoPoint []) points;
 	}
 	
 	/**
@@ -369,7 +397,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * its parent algorithm of type AlgoPolygon
 	 */
 	public void calcArea() {
-		area = calcAreaWithSign(points);	
+		area = calcAreaWithSign(getPoints());	
 		defined = !(Double.isNaN(area) || Double.isInfinite(area));
 	}
 	
@@ -398,23 +426,23 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * changed name from calcArea as we need the sign when calculating the centroid Michael Borcherds 2008-01-26
 	 * TODO Does not work if polygon is self-entrant
 	 */	
-	final static public double calcAreaWithSign(GeoPoint [] P) {
-		if (P == null || P.length < 2)
+	final static public double calcAreaWithSign(GeoPoint[] points2) {
+		if (points2 == null || points2.length < 2)
 			return Double.NaN;
 		
 	   int i = 0;   
-	   for (; i < P.length; i++) {
-		   if (P[i].isInfinite())
+	   for (; i < points2.length; i++) {
+		   if (points2[i].isInfinite())
 			return Double.NaN;
 	   }
     
 	   // area = 1/2 | det(P[i], P[i+1]) |
-	   int last = P.length - 1;
+	   int last = points2.length - 1;
 	   double sum = 0;                     
 	   for (i=0; i < last; i++) {
-			sum += GeoPoint.det(P[i], P[i+1]);
+			sum += GeoPoint.det(points2[i], points2[i+1]);
 	   }
-	   sum += GeoPoint.det(P[last], P[0]);
+	   sum += GeoPoint.det(points2[last], points2[0]);
 	   return sum / 2.0;  // positive (anticlockwise points) or negative (clockwise)
    }   
 	
@@ -444,13 +472,15 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	private double pointsClosedX(int i)
 	{
 		// pretend array has last element==first element
-		if (i==points.length) return points[0].inhomX; else return points[i].inhomX;
+		if (i==points.length) //return points[0].inhomX; else return points[i].inhomX;
+			return getPointX(0); else return getPointX(i);
 	}
 	 	
 	private double pointsClosedY(int i)
 	{
 		// pretend array has last element==first element
-		if (i==points.length) return points[0].inhomY; else return points[i].inhomY;
+		if (i==points.length) //return points[0].inhomY; else return points[i].inhomY;
+			return getPointY(0); else return getPointY(i);
 	}
 	 	
 	public double getAreaWithSign() {
@@ -713,13 +743,17 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		
 		double x1,y1,x2,y2;
 		int numPoints = points.length;
-		x1=points[numPoints-1].getInhomX()-x0;
-		y1=points[numPoints-1].getInhomY()-y0;
+		//x1=points[numPoints-1].getInhomX()-x0;
+		//y1=points[numPoints-1].getInhomY()-y0;
+		x1=getPointX(numPoints-1)-x0;
+		y1=getPointY(numPoints-1)-y0;
 		
 		boolean ret=false;
 		for (int i=0;i<numPoints;i++){
-			x2=points[i].getInhomX()-x0;
-			y2=points[i].getInhomY()-y0;
+			//x2=points[i].getInhomX()-x0;
+			//y2=points[i].getInhomY()-y0;
+			x2=getPointX(i)-x0;
+			y2=y1=getPointY(i)-y0;
 			ret = ret ^ intersectOx(x1, y1, x2, y2);
 			x1=x2;
 			y1=y2;

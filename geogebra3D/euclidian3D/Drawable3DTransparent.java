@@ -51,10 +51,13 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 
 
 	public void drawTransp(EuclidianRenderer3D renderer){
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined()){
+			//Application.debug("not visible "+getGeoElement().isEuclidianVisible()+",");
 			return;
+		}
 		
 		float alpha = getGeoElement().getAlphaValue();
+		//Application.debug("alpha = "+alpha);
 		if (alpha<=0)
 			return;
 		

@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import java.util.Locale;
+
 
 /**
  * 
@@ -14,5 +16,13 @@ public interface GeoPointInterface {
 	
 	/** Returns whether this point has changeable numbers as coordinates */
 	public boolean hasChangeableCoordParentNumbers();
+
+	public void setLabel(String string);
+
+	public boolean isLabelSet();
+
+	public String getLabel();
+
+	public boolean isInfinite();
 
 }
