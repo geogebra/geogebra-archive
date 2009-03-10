@@ -20,8 +20,6 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 
 
 
@@ -36,10 +34,21 @@ import geogebra.kernel.GeoPointInterface;
  */
 public class AlgoJoinPoints3D extends AlgoElement3D {
 
+	/** ??? */
 	private static final long serialVersionUID = 1L;
-	protected GeoPointInterface P, Q; // input
+	
+	//inputs
+	/** first point */
+	private GeoPoint3D P;
+	/** second point */
+	private GeoPoint3D Q;
+	/** polygon (when segment is part of) */
 	private GeoPolygon3D polygon;
-    protected GeoCoordSys1D cs; // output 
+	
+	//output
+	/** 1D coord sys */
+    protected GeoCoordSys1D cs; 
+    /** the output is a segment, a line, ... */
     protected int geoClassType;
 
 
@@ -63,7 +72,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param polygon polygon providing a 2D coord sys (when P and Q are 2D points)
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
     AlgoJoinPoints3D(Construction cons, String label, 
-    		GeoPointInterface P, GeoPointInterface Q, GeoPolygon3D polygon, int geoClassType) {
+    		GeoPoint3D P, GeoPoint3D Q, GeoPolygon3D polygon, int geoClassType) {
 
     	this(cons,P,Q,polygon,geoClassType);
     	cs.setLabel(label);
@@ -75,10 +84,10 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param cons the construction
      * @param P first point
      * @param Q second point
-     * @param polygon polygon providing a 2D coord sys (when P and Q are 2D points)
+     * @param polygon polygon (when segment is part of) 
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
     AlgoJoinPoints3D(Construction cons, 
-    		GeoPointInterface P, GeoPointInterface Q, GeoPolygon3D polygon, int geoClassType) {
+    		GeoPoint3D P, GeoPoint3D Q, GeoPolygon3D polygon, int geoClassType) {
     	super(cons);
 
 
@@ -89,14 +98,10 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 
     	switch(geoClassType){
     	case GeoElement3D.GEO_CLASS_SEGMENT3D:
-    		//if (polygon==null)
-    			cs = new GeoSegment3D(cons, (GeoPoint3D) P, (GeoPoint3D) Q);
-    		//else{ //P and Q are two GeoPoints in cs2D coord sys
-    		//	cs = new GeoSegment3D(cons);
-     		//}
+    		cs = new GeoSegment3D(cons, P, Q);
     		break;
     	case GeoElement3D.GEO_CLASS_LINE3D:
-    		cs = new GeoLine3D(cons, (GeoPoint3D) P, (GeoPoint3D) Q); 
+    		cs = new GeoLine3D(cons, P, Q); 
     		break;
     	default:
     		cs = null;
@@ -147,49 +152,56 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     
     
     
+    /**
+     * return the first point
+     * @return the first point
+     */
     GeoPoint3D getP() {
-        return (GeoPoint3D) P;
-    }
-    GeoPoint3D getQ() {
-        return (GeoPoint3D) Q;
+        return P;
     }
     
+    /**
+     * return the second point
+     * @return the second point
+     */   
+    GeoPoint3D getQ() {
+        return Q;
+    }
+    
+    
+    /** return the 1D coord sys
+     * @return the 1D coord sys
+     */
     GeoCoordSys1D getCS(){
     	return cs;
     }
     
 
-    // recalc the segment joining P and Q    
     protected void compute() {
     	    
-    	
+    	/*
     	// if there's a polygon which is undefined, then this is undefined
     	if (polygon!=null)
     		if (!polygon.isDefined()){
     			cs.setUndefined();
     			return;
     		}
+    	*/
     	
-    	
-		//if (polygon==null)
-			cs.setCoord((GeoPoint3D) P, (GeoPoint3D) Q);
-		/*
-		else{ //P and Q are two GeoPoints in cs2D coord sys
-			if (polygon.isDefined())
-				cs.setCoordFromPoints(
-						polygon.getCoordSys().getPoint(((GeoPoint) P).inhomX, ((GeoPoint) P).inhomY),
-						polygon.getCoordSys().getPoint(((GeoPoint) Q).inhomX, ((GeoPoint) Q).inhomY));
-			else
-				cs.setUndefined();
-		}
-		*/
+
+    	cs.setCoord((GeoPoint3D) P, (GeoPoint3D) Q);
+
 
     }
     
     
     
+    
+    
+    
     public void remove() {
         super.remove();
+        //if segment is part of a polygon, remove it
         if (polygon != null)
             polygon.remove();
     }  
