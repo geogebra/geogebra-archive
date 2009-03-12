@@ -37,25 +37,25 @@ public class BuiltinAssoc extends BuiltinFunctionInitialize
     {
         // key to find
         ConsPointer key = new ConsPointer();
-        key.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        key.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
 
         // assoc-list to find it in
         ConsPointer list = new ConsPointer();
-        list.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        list.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
         Cons t;
 
         //check that it is a compound object
-        LispError.checkArgumentCore(aEnvironment, aStackTop, list.getCons().subList() != null, 2);
-        t = list.getCons().subList().getCons();
+        LispError.checkArgumentCore(aEnvironment, aStackTop, list.getCons().getSubList() != null, 2);
+        t = list.getCons().getSubList().getCons();
         LispError.checkArgumentCore(aEnvironment, aStackTop, t != null, 2);
         t = t.rest().getCons();
 
         while (t != null)
         {
-            if (t.subList() != null)
+            if (t.getSubList() != null)
             {
-                Cons sub = t.subList().getCons();
+                Cons sub = t.getSubList().getCons();
                 if (sub != null)
                 {
                     sub = sub.rest().getCons();
@@ -63,13 +63,13 @@ public class BuiltinAssoc extends BuiltinFunctionInitialize
                     temp.setCons(sub);
                     if (UtilityFunctions.internalEquals(aEnvironment, key, temp))
                     {
-                        result(aEnvironment, aStackTop).setCons(t);
+                        getResult(aEnvironment, aStackTop).setCons(t);
                         return;
                     }
                 }
             }
             t = t.rest().getCons();
         }
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "Empty"));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "Empty"));
     }
 }

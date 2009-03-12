@@ -19,7 +19,7 @@ package org.mathpiper.builtin.functions;
 
 import org.mathpiper.builtin.BuiltinFunctionInitialize;
 import org.mathpiper.lisp.Environment;
-import org.mathpiper.io.OutputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 
 /**
  *
@@ -30,11 +30,11 @@ public class ToStdout extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        OutputStream previous = aEnvironment.iCurrentOutput;
+        MathPiperOutputStream previous = aEnvironment.iCurrentOutput;
         aEnvironment.iCurrentOutput = aEnvironment.iInitialOutput;
         try
         {
-            aEnvironment.iEvaluator.evaluate(aEnvironment, result(aEnvironment, aStackTop), argumentPointer(aEnvironment, aStackTop, 1));
+            aEnvironment.iEvaluator.evaluate(aEnvironment, getResult(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1));
         } catch (Exception e)
         {
             throw e;

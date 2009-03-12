@@ -17,7 +17,7 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp;
 
-import org.mathpiper.io.OutputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 import org.mathpiper.io.StringOutputStream;
 import org.mathpiper.lisp.userfunctions.Evaluator;
 import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
@@ -58,7 +58,7 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
      * corresponding evaluator is called if there is a check. If
      * all fails, ReturnUnEvaluated() is called.</p>
      * <li value="3"><p>
-     * Otherwise (ie. if aExpression is a generic object), it is
+     * Otherwise (ie. if aExpression is a getGeneric object), it is
      * copied in aResult.</p>
      * </ol>
      * 
@@ -112,7 +112,7 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
             return;
         }
         {
-            ConsPointer subList = aExpression.getCons().subList();
+            ConsPointer subList = aExpression.getCons().getSubList();
 
             if (subList != null)
             {
@@ -231,7 +231,7 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
                 
 		// Print out the current expression
 		//StringOutput stream(outString);
-                OutputStream stream = new StringOutputStream(outString);
+                MathPiperOutputStream stream = new StringOutputStream(outString);
                 
                 
 		infixprinter.print(aExpression, stream,aEnvironment);
@@ -275,9 +275,9 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
 		aEnvironment.write("Enter(");
 		{
 			String function = "";
-			if (aExpression.getCons().subList() != null)
+			if (aExpression.getCons().getSubList() != null)
 			{
-				ConsPointer sub = aExpression.getCons().subList();
+				ConsPointer sub = aExpression.getCons().getSubList();
 				if (sub.getCons().string() != null)
 					function =sub.getCons().string();
 			}
@@ -363,7 +363,7 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
 		for (i=from;i<upto;i++)
 		{
 			LispChar str[20];
-			#ifdef MathPiper_DEBUG
+			#ifdef YACAS_DEBUG
 			aEnvironment.write(objs[i].iFileName);
 			aEnvironment.write("(");
 			InternalIntToAscii(str,objs[i].iLine);
@@ -408,8 +408,8 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
 				}
 				else
 				{
-					LispPtr subList = objs[i].iExpression.SubList();
-					if (!!subList && !!subList)
+					LispPtr getSubList = objs[i].iExpression.SubList();
+					if (!!getSubList && !!getSubList)
 					{
 						LispString expr;
 						LispPtr out(objs[i].iExpression);
@@ -432,11 +432,11 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
 			     KLispErrMaxRecurseDepthReached);
 		}
 
-		LispPtr subList = aExpression.SubList();
+		LispPtr getSubList = aExpression.SubList();
 		LispString * str = null;
-		if (subList)
+		if (getSubList)
 		{
-			Cons head = subList;
+			Cons head = getSubList;
 			if (head)
 			{
 				str = head.String();
@@ -446,7 +446,7 @@ public class LispExpressionEvaluator extends ExpressionEvaluator
 					UserStackInformation& st = StackInformation();
 					st.iOperator = (LispAtom::New(aEnvironment,str.c_str()));
 					st.iExpression = (aExpression);
-					#ifdef MathPiper_DEBUG
+					#ifdef YACAS_DEBUG
 					if (aExpression.iFileName)
 					{
 						st.iFileName = aExpression.iFileName;
@@ -497,7 +497,7 @@ REENTER:
 		if(aEnvironment.iDebugger.Stopped()) RaiseError("");
 	}
 
-	MathPiperDebuggerBase::~MathPiperDebuggerBase()
+	YacasDebuggerBase::~YacasDebuggerBase()
 	{
 	}
 

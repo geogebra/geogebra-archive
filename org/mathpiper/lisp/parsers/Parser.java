@@ -19,18 +19,18 @@
 package org.mathpiper.lisp.parsers;
 
 import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
-import org.mathpiper.io.InputStream;
+import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.lisp.*;
 
 
 public class Parser
 {
 	public MathPiperTokenizer iTokenizer;
-	public InputStream iInput;
+	public MathPiperInputStream iInput;
 	public Environment iEnvironment;
 	public boolean iListed;
 	
-	public Parser(MathPiperTokenizer aTokenizer, InputStream aInput,
+	public Parser(MathPiperTokenizer aTokenizer, MathPiperInputStream aInput,
 	                  Environment aEnvironment)
 	{
 		iTokenizer = aTokenizer;

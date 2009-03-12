@@ -21,7 +21,7 @@ import org.mathpiper.builtin.BuiltinFunctionInitialize;
 import org.mathpiper.io.InputStatus;
 import org.mathpiper.io.StringInputStream;
 import org.mathpiper.lisp.Environment;
-import org.mathpiper.io.InputStream;
+import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.ConsPointer;
 import org.mathpiper.lisp.UtilityFunctions;
@@ -36,7 +36,7 @@ public class FromString extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer evaluated = new ConsPointer();
-        aEnvironment.iEvaluator.evaluate(aEnvironment, evaluated, argumentPointer(aEnvironment, aStackTop, 1));
+        aEnvironment.iEvaluator.evaluate(aEnvironment, evaluated, getArgumentPointer(aEnvironment, aStackTop, 1));
 
         // Get file name
         LispError.checkArgumentCore(aEnvironment, aStackTop, evaluated.getCons() != null, 1);
@@ -48,12 +48,12 @@ public class FromString extends BuiltinFunctionInitialize
         aEnvironment.iInputStatus.setTo("String");
         StringInputStream newInput = new StringInputStream(new StringBuffer(oper), aEnvironment.iInputStatus);
 
-        InputStream previous = aEnvironment.iCurrentInput;
+        MathPiperInputStream previous = aEnvironment.iCurrentInput;
         aEnvironment.iCurrentInput = newInput;
         try
         {
             // Evaluate the body
-            aEnvironment.iEvaluator.evaluate(aEnvironment, result(aEnvironment, aStackTop), argumentPointer(aEnvironment, aStackTop, 2));
+            aEnvironment.iEvaluator.evaluate(aEnvironment, getResult(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 2));
         } catch (Exception e)
         {
             throw e;
@@ -63,6 +63,6 @@ public class FromString extends BuiltinFunctionInitialize
             aEnvironment.iInputStatus.restoreFrom(oldstatus);
         }
 
-    //Return the result
+    //Return the getResult
     }
 }

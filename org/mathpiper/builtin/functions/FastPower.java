@@ -34,9 +34,9 @@ public class FastPower extends BuiltinFunctionInitialize
         BigNumber x, y;
         x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         y = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
-        double result = Math.pow(x.Double(), y.Double());
+        double result = Math.pow(x.toDouble(), y.toDouble());
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.SetTo(result);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.setTo(result);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

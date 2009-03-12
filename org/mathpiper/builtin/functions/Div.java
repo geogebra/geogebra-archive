@@ -33,12 +33,12 @@ public class Div extends BuiltinFunctionInitialize
     {
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         BigNumber y = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
-        if (x.IsInt() && y.IsInt())
+        if (x.isInt() && y.isInt())
         {  // both integer, perform integer division
 
             BigNumber z = new BigNumber(aEnvironment.getPrecision());
-            z.Divide(x, y, aEnvironment.getPrecision());
-            result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+            z.divide(x, y, aEnvironment.getPrecision());
+            getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
             return;
         } else
         {

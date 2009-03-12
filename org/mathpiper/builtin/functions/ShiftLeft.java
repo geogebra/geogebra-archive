@@ -33,9 +33,9 @@ public class ShiftLeft extends BuiltinFunctionInitialize
     {
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         BigNumber n = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
-        long nrToShift = n.Long();
+        long nrToShift = n.toLong();
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.ShiftLeft(x, (int) nrToShift);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.shiftLeft(x, (int) nrToShift);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

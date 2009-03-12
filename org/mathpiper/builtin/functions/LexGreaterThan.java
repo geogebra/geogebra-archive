@@ -35,6 +35,6 @@ public class LexGreaterThan extends LexCompare2
 
     boolean numfunc(BigNumber n1, BigNumber n2)
     {
-        return !(n1.LessThan(n2) || n1.Equals(n2));
+        return !(n1.lessThan(n2) || n1.equals(n2));
     }
 }

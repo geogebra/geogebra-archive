@@ -34,6 +34,6 @@ public class TraceOff extends BuiltinFunctionInitialize
     {
          UserFunction.traceOff();
          aEnvironment.write("Tracing is off.\n");
-         UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+         UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

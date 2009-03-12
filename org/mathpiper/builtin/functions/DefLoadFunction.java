@@ -36,7 +36,7 @@ public class DefLoadFunction extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer name = new ConsPointer();
-        name.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        name.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         String orig = name.getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, orig != null, 1);
         String oper = UtilityFunctions.internalUnstringify(orig);
@@ -55,6 +55,6 @@ public class DefLoadFunction extends BuiltinFunctionInitialize
                 }
             }
         }
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

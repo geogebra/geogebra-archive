@@ -18,10 +18,10 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.io;
 
-import org.mathpiper.io.OutputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 
 public class StringOutputStream
-			extends OutputStream
+			extends MathPiperOutputStream
 {
 
 	StringBuffer iString;

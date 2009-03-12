@@ -32,24 +32,24 @@ public class If extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        int nrArguments = UtilityFunctions.internalListLength(argumentPointer(aEnvironment, aStackTop, 0));
+        int nrArguments = UtilityFunctions.internalListLength(getArgumentPointer(aEnvironment, aStackTop, 0));
         LispError.checkCore(aEnvironment, aStackTop, nrArguments == 3 || nrArguments == 4, LispError.KLispErrWrongNumberOfArgs);
 
         ConsPointer predicate = new ConsPointer();
-        aEnvironment.iEvaluator.evaluate(aEnvironment, predicate, argumentPointer(aEnvironment, aStackTop, 1));
+        aEnvironment.iEvaluator.evaluate(aEnvironment, predicate, getArgumentPointer(aEnvironment, aStackTop, 1));
 
         if (UtilityFunctions.isTrue(aEnvironment, predicate))
         {
-            aEnvironment.iEvaluator.evaluate(aEnvironment, result(aEnvironment, aStackTop), argumentPointer(argumentPointer(aEnvironment, aStackTop, 0), 2));
+            aEnvironment.iEvaluator.evaluate(aEnvironment, getResult(aEnvironment, aStackTop), getArgumentPointer(getArgumentPointer(aEnvironment, aStackTop, 0), 2));
         } else
         {
             LispError.checkArgumentCore(aEnvironment, aStackTop, UtilityFunctions.isFalse(aEnvironment, predicate), 1);
             if (nrArguments == 4)
             {
-                aEnvironment.iEvaluator.evaluate(aEnvironment, result(aEnvironment, aStackTop), argumentPointer(argumentPointer(aEnvironment, aStackTop, 0), 3));
+                aEnvironment.iEvaluator.evaluate(aEnvironment, getResult(aEnvironment, aStackTop), getArgumentPointer(getArgumentPointer(aEnvironment, aStackTop, 0), 3));
             } else
             {
-                UtilityFunctions.internalFalse(aEnvironment, result(aEnvironment, aStackTop));
+                UtilityFunctions.internalFalse(aEnvironment, getResult(aEnvironment, aStackTop));
             }
         }
     }

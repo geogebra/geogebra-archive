@@ -15,128 +15,134 @@
  */ //}}}
 
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
-
 package org.mathpiper.lisp;
 
 import org.mathpiper.builtin.BigNumber;
 import org.mathpiper.*;
 
-
 /**
- * 
+ * Holds a single number.
  *  
  */
-public class Number extends Cons
-{
-        /* Note: Since Number is a LispAtom, shouldn't it extend LispAtom instead of Cons? tk
-        */
+public class Number extends Cons {
+    /* Note: Since Number is a LispAtom, shouldn't it extend LispAtom instead of Cons? tk
+     */
+
+    /// number object; NULL if not yet converted from string
+    BigNumber iBigNumber;
+    /// string representation in decimal; NULL if not yet converted from BigNumber
+    String iStringNumber;
+
+    /**
+     * Construct a number from either a BigNumber or a String.
+     *
+     * @param aNumber
+     * @param aString
+     */
+    public Number(BigNumber aNumber, String aString) {
+        iStringNumber = aString;
+        iBigNumber = aNumber;
+    }
+
+    /**
+     * Construct a number from a BigNumber.
+     * @param aNumber
+     */
+    public Number(BigNumber aNumber) {
+        iStringNumber = null;
+        iBigNumber = aNumber;
+    }
+
+    /**
+     * Construct a number from a decimal string representation and the specified number of decimal digits.
+     *
+     * @param aString a number in decimal format
+     * @param aBasePrecision the number of decimal digits for the number
+     */
+    public Number(String aString, int aBasePrecision) {
+        //(also create a number object).
+        iStringNumber = aString;
+        iBigNumber = null;  // purge whatever it was.
+
+    // create a new BigNumber object out of iString, set its precision in digits
+    //TODO FIXME enable this in the end    Number(aBasePrecision);
+    }
+
+    public Cons copy(boolean aRecursed) {
+        return new Number(iBigNumber, iStringNumber);
+    }
+
+    public Object first() {
+        return iBigNumber;
+    }
+
+
+    /**
+     * Return a string representation of the number in decimal format with the maximum decimal precision allowed by the inherent accuracy of the number.
+     *
+     * @return string representation of the number
+     * @throws java.lang.Exception
+     */
+    public String string() throws Exception {
+        if (iStringNumber == null) {
+            LispError.lispAssert(iBigNumber != null);  // either the string is null or the number but not both.
+
+            iStringNumber = iBigNumber.numToString(0/*TODO FIXME*/, 10);
+        // export the current number to string and store it as Number::iString
+        }
+        return iStringNumber;
+    }
+
+    public String toString() {
+        String stringRepresentation = null;
+        try {
+            stringRepresentation = string();
+
+        } catch (Exception e) {
+            e.printStackTrace();  //Todo:fixme.
+        }
+        return stringRepresentation;
+
+    }
+
     
-	/// number object; NULL if not yet converted from string
-	BigNumber iNumber;
-	/// string representation in decimal; NULL if not yet converted from BigNumber
-	String iString;
-
-	/// constructors:
-	/// construct from another Number
-	public Number(BigNumber aNumber,String aString)
-	{
-		iString = aString;
-		iNumber = aNumber;
-	}
-
-	/// construct from a BigNumber; the string representation will be absent
-	public Number(BigNumber aNumber)
-	{
-		iString = null;
-		iNumber =aNumber;
-	}
-
-	/// construct from a decimal string representation (also create a number object) and use aBasePrecision decimal digits
-	public Number(String aString, int aBasePrecision)
-	{
-		iString = aString;
-		iNumber = null;  // purge whatever it was
-		// create a new BigNumber object out of iString, set its precision in digits
-		//TODO FIXME enable this in the end    Number(aBasePrecision);
-	}
-
-	public Cons copy(boolean aRecursed)
-	{
-		return new Number(iNumber, iString);
-	}
-        
-        public Object first()
-        {
-            return iNumber;
+    /**
+     * Returns a BigNumber which has at least the specified precision.
+     *
+     * @param aPrecision
+     * @return
+     * @throws java.lang.Exception
+     */
+    public BigNumber getNumber(int aPrecision) throws Exception {
+        /// If necessary, will create a BigNumber object out of the stored string, at given precision (in decimal?)
+        if (iBigNumber == null) {  // create and store a BigNumber out of the string representation.
+            LispError.lispAssert(iStringNumber != null);
+            String str;
+            str = iStringNumber;
+            // aBasePrecision is in digits, not in bits, ok
+            iBigNumber = new BigNumber(str, aPrecision, 10/*TODO FIXME BASE10*/);
+        } // check if the BigNumber object has enough precision, if not, extend it
+        // (applies only to floats). Note that iNumber->GetPrecision() might be < 0
+        else if (!iBigNumber.isInt() && iBigNumber.getPrecision() < aPrecision) {
+            if (iStringNumber != null) {// have string representation, can extend precision
+                iBigNumber.setTo(iStringNumber, aPrecision, 10);
+            } else {
+                // do not have string representation, cannot extend precision!
+            }
         }
 
-	/// return a string representation in decimal with maximum decimal precision allowed by the inherent accuracy of the number
-	public String string() throws Exception
-	{
-		if (iString == null)
-		{
-			LispError.lispAssert(iNumber != null);  // either the string is null or the number but not both
-			iString = iNumber.ToString(0/*TODO FIXME*/,10);
-			// export the current number to string and store it as Number::iString
-		}
-		return iString;
-	}
-        
-        public String toString() 
-        {
-            String stringRepresentation = null;
-            try
-            {
-                stringRepresentation = string();
-                
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();  //Todo:fixme.
-            }
-            return stringRepresentation;
-            
-        }
+        return iBigNumber;
+    }
 
-	/// give access to the BigNumber object; if necessary, will create a BigNumber object out of the stored string, at given precision (in decimal?)
-	public BigNumber number(int aPrecision) throws Exception
-	{
-		if (iNumber == null)
-		{  // create and store a BigNumber out of string
-			LispError.lispAssert(iString != null);
-			String str;
-			str = iString;
-			// aBasePrecision is in digits, not in bits, ok
-			iNumber = new BigNumber(str, aPrecision, 10/*TODO FIXME BASE10*/);
-		}
-
-		// check if the BigNumber object has enough precision, if not, extend it
-		// (applies only to floats). Note that iNumber->GetPrecision() might be < 0
-
-		else if (!iNumber.IsInt() && iNumber.GetPrecision() < aPrecision)
-		{
-			if (iString != null)
-			{// have string representation, can extend precision
-				iNumber.SetTo(iString,aPrecision, 10);
-			}
-			else
-			{
-				// do not have string representation, cannot extend precision!
-			}
-		}
-
-		return iNumber;
-	}
-
-	/// annotate
-	public Cons setExtraInfo(ConsPointer aData)
-	{
-		/*TODO FIXME
-		Cons* result = NEW LispAnnotatedObject<Number>(this);
-		result->SetExtraInfo(aData);
-		return result;
-		*/
-		return null;
-	}
-
+    /**
+        Used to annotate data (not implemented yet).
+    */
+    public Cons setExtraInfo(ConsPointer aData) {
+        /*TODO FIXME
+        Cons* result = NEW LispAnnotatedObject<Number>(this);
+        result->SetExtraInfo(aData);
+        return result;
+         */
+        return null;
+    }
 }

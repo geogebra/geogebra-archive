@@ -36,14 +36,14 @@ public class GenArraySet extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer evaluated = new ConsPointer();
-        evaluated.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        evaluated.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
 
-        BuiltinContainer gen = evaluated.getCons().generic();
+        BuiltinContainer gen = evaluated.getCons().getGeneric();
         LispError.checkArgumentCore(aEnvironment, aStackTop, gen != null, 1);
         LispError.checkArgumentCore(aEnvironment, aStackTop, gen.typeName().equals("\"Array\""), 1);
 
         ConsPointer sizearg = new ConsPointer();
-        sizearg.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        sizearg.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
         LispError.checkArgumentCore(aEnvironment, aStackTop, sizearg.getCons() != null, 2);
         LispError.checkArgumentCore(aEnvironment, aStackTop, sizearg.getCons().string() != null, 2);
@@ -52,8 +52,8 @@ public class GenArraySet extends BuiltinFunctionInitialize
         LispError.checkArgumentCore(aEnvironment, aStackTop, size > 0 && size <= ((Array) gen).size(), 2);
 
         ConsPointer obj = new ConsPointer();
-        obj.setCons(argumentPointer(aEnvironment, aStackTop, 3).getCons());
+        obj.setCons(getArgumentPointer(aEnvironment, aStackTop, 3).getCons());
         ((Array) gen).setElement(size, obj.getCons());
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

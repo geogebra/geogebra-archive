@@ -35,19 +35,19 @@ public class RuleBaseDefined extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer name = new ConsPointer();
-        name.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        name.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         String orig = name.getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, orig != null, 1);
         String oper = UtilityFunctions.internalUnstringify(orig);
 
         ConsPointer sizearg = new ConsPointer();
-        sizearg.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        sizearg.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
         LispError.checkArgumentCore(aEnvironment, aStackTop, sizearg.getCons() != null, 2);
         LispError.checkArgumentCore(aEnvironment, aStackTop, sizearg.getCons().string() != null, 2);
 
         int arity = Integer.parseInt(sizearg.getCons().string(), 10);
 
         UserFunction userFunc = aEnvironment.userFunction((String)aEnvironment.getTokenHash().lookUp(oper), arity);
-        UtilityFunctions.internalBoolean(aEnvironment, result(aEnvironment, aStackTop), userFunc != null);
+        UtilityFunctions.internalBoolean(aEnvironment, getResult(aEnvironment, aStackTop), userFunc != null);
     }
 }

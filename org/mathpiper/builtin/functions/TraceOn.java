@@ -34,6 +34,6 @@ public class TraceOn extends BuiltinFunctionInitialize
     {
          UserFunction.traceOn();
          aEnvironment.write("Tracing is on.\n");
-         UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+         UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

@@ -34,7 +34,7 @@ public class Multiply extends BuiltinFunctionInitialize
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         BigNumber y = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.Multiply(x, y, aEnvironment.getPrecision());
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.multiply(x, y, aEnvironment.getPrecision());
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

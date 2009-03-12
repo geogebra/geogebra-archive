@@ -35,23 +35,23 @@ public class Divide extends BuiltinFunctionInitialize
         BigNumber y = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
         // if both arguments are integers, then BigNumber::Divide would perform an integer divide, but we want a float divide here.
-        if (x.IsInt() && y.IsInt())
+        if (x.isInt() && y.isInt())
         {
             // why can't we just say BigNumber temp; ?
             BigNumber tempx = new BigNumber(aEnvironment.getPrecision());
-            tempx.SetTo(x);
-            tempx.BecomeFloat(aEnvironment.getPrecision());  // coerce x to float
+            tempx.setTo(x);
+            tempx.becomeFloat(aEnvironment.getPrecision());  // coerce x to float
 
             BigNumber tempy = new BigNumber(aEnvironment.getPrecision());
-            tempy.SetTo(y);
-            tempy.BecomeFloat(aEnvironment.getPrecision());  // coerce x to float
+            tempy.setTo(y);
+            tempy.becomeFloat(aEnvironment.getPrecision());  // coerce x to float
 
-            z.Divide(tempx, tempy, aEnvironment.getPrecision());
+            z.divide(tempx, tempy, aEnvironment.getPrecision());
         } else
         {
-            z.Divide(x, y, aEnvironment.getPrecision());
+            z.divide(x, y, aEnvironment.getPrecision());
         }
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
         return;
     }
 }

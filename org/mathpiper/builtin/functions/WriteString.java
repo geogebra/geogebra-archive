@@ -31,8 +31,8 @@ public class WriteString extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        LispError.checkArgumentCore(aEnvironment, aStackTop, argumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
-        String str = argumentPointer(aEnvironment, aStackTop, 1).getCons().string();
+        LispError.checkArgumentCore(aEnvironment, aStackTop, getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
+        String str = getArgumentPointer(aEnvironment, aStackTop, 1).getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, str != null, 1);
         LispError.checkArgumentCore(aEnvironment, aStackTop, str.charAt(0) == '\"', 1);
         LispError.checkArgumentCore(aEnvironment, aStackTop, str.charAt(str.length() - 1) == '\"', 1);
@@ -47,6 +47,6 @@ public class WriteString extends BuiltinFunctionInitialize
         // pass last printed character to the current printer
         aEnvironment.iCurrentPrinter.rememberLastChar(str.charAt(nr - 1));  // hacky hacky
 
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

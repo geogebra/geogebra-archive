@@ -227,9 +227,9 @@ public class Pattern
 	{
 		if (aPattern == null)
 			return null;
-		if (aPattern.number(aEnvironment.getPrecision()) != null)
+		if (aPattern.getNumber(aEnvironment.getPrecision()) != null)
 		{
-			return new Number(aPattern.number(aEnvironment.getPrecision()));
+			return new Number(aPattern.getNumber(aEnvironment.getPrecision()));
 		}
 		// Deal with atoms
 		if (aPattern.string() != null)
@@ -238,10 +238,10 @@ public class Pattern
 		}
 
 		// Else it must be a sublist
-		if (aPattern.subList() != null)
+		if (aPattern.getSubList() != null)
 		{
 			// See if it is a variable template:
-			ConsPointer  sublist = aPattern.subList();
+			ConsPointer  sublist = aPattern.getSubList();
 			LispError.lispAssert(sublist != null);
 
 			int num = UtilityFunctions.internalListLength(sublist);
@@ -263,9 +263,9 @@ public class Pattern
 							ConsPointer third = new ConsPointer();
 
 							Cons predicate = second.rest().getCons();
-							if (predicate.subList() != null)
+							if (predicate.getSubList() != null)
 							{
-								UtilityFunctions.internalFlatCopy(third, predicate.subList());
+								UtilityFunctions.internalFlatCopy(third, predicate.getSubList());
 							}
 							else
 							{

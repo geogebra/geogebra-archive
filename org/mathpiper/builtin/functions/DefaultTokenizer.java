@@ -31,6 +31,6 @@ public class DefaultTokenizer extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         aEnvironment.iCurrentTokenizer = aEnvironment.iDefaultTokenizer;
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

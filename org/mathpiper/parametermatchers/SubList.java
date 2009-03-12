@@ -39,7 +39,7 @@ public class SubList extends Parameter
 	                               ConsPointer  aExpression,
 	                               ConsPointer[]  arguments) throws Exception
 	{
-		if (aExpression.getCons().subList() == null)
+		if (aExpression.getCons().getSubList() == null)
 			return false;
 		int i;
 

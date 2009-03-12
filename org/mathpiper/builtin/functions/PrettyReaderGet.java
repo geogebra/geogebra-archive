@@ -33,10 +33,10 @@ public class PrettyReaderGet extends BuiltinFunctionInitialize
     {
         if (aEnvironment.iPrettyReader == null)
         {
-            result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "\"\""));
+            getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "\"\""));
         } else
         {
-            result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.iPrettyReader));
+            getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.iPrettyReader));
         }
     }
 }

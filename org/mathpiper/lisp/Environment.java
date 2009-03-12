@@ -18,8 +18,8 @@
 package org.mathpiper.lisp;
 
 import org.mathpiper.lisp.printers.Printer;
-import org.mathpiper.io.InputStream;
-import org.mathpiper.io.OutputStream;
+import org.mathpiper.io.MathPiperInputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 import org.mathpiper.builtin.BuiltinFunctionInitialize;
 import org.mathpiper.lisp.tokenizers.XmlTokenizer;
 import org.mathpiper.io.InputStatus;
@@ -74,10 +74,10 @@ public class Environment
     public LocalVariableFrame iLocalsList;
     public boolean iSecure = false;
     public int iLastUniqueId = 1;
-    public OutputStream iCurrentOutput = null;
-    public OutputStream iInitialOutput = null;
+    public MathPiperOutputStream iCurrentOutput = null;
+    public MathPiperOutputStream iInitialOutput = null;
     public Printer iCurrentPrinter = null;
-    public InputStream iCurrentInput = null;
+    public MathPiperInputStream iCurrentInput = null;
     public InputStatus iInputStatus = new InputStatus();
     public MathPiperTokenizer iCurrentTokenizer;
     public MathPiperTokenizer iDefaultTokenizer = new MathPiperTokenizer();
@@ -91,7 +91,7 @@ public class Environment
     public String iPrettyReader = null;
     public String iPrettyPrinter = null;
 
-    public Environment(OutputStream aCurrentOutput/*TODO FIXME*/) throws Exception
+    public Environment(MathPiperOutputStream aCurrentOutput/*TODO FIXME*/) throws Exception
     {
         iCurrentTokenizer = iDefaultTokenizer;
         iInitialOutput = aCurrentOutput;

@@ -33,11 +33,11 @@ public class Abs extends BuiltinFunctionInitialize
     {
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.SetTo(x);
-        if (x.Sign() < 0)
+        z.setTo(x);
+        if (x.sign() < 0)
         {
-            z.Negate(x);
+            z.negate(x);
         }
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

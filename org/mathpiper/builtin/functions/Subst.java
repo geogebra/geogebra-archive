@@ -33,10 +33,10 @@ public class Subst extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer from = new ConsPointer(), to = new ConsPointer(), body = new ConsPointer();
-        from.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
-        to.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
-        body.setCons(argumentPointer(aEnvironment, aStackTop, 3).getCons());
+        from.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
+        to.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
+        body.setCons(getArgumentPointer(aEnvironment, aStackTop, 3).getCons());
         org.mathpiper.lisp.behaviours.Subst behaviour = new org.mathpiper.lisp.behaviours.Subst(aEnvironment, from, to);
-        UtilityFunctions.internalSubstitute(result(aEnvironment, aStackTop), body, behaviour);
+        UtilityFunctions.internalSubstitute(getResult(aEnvironment, aStackTop), body, behaviour);
     }
 }

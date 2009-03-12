@@ -36,7 +36,7 @@ import org.mathpiper.lisp.SubList;
 			all.setCons(aEnvironment.iListAtom.copy(false));
 			ConsTraverser tail = new ConsTraverser(all);
 			tail.goNext();
-			ConsTraverser iter = new ConsTraverser(argumentPointer(aEnvironment, aStackTop, 1).getCons().subList());
+			ConsTraverser iter = new ConsTraverser(getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList());
 			iter.goNext();
 			while (iter.getCons() != null)
 			{
@@ -46,6 +46,6 @@ import org.mathpiper.lisp.SubList;
 				tail.goNext();
 				iter.goNext();
 			}
-			result(aEnvironment, aStackTop).setCons(SubList.getInstance(all.getCons()));
+			getResult(aEnvironment, aStackTop).setCons(SubList.getInstance(all.getCons()));
 		}
 	}

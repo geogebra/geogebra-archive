@@ -52,8 +52,8 @@ public class ConsTraverser
 	public void goSub() throws Exception
 	{
 		LispError.check(iPtr.getCons() != null,LispError.KLispErrInvalidArg);
-		LispError.check(iPtr.getCons().subList() != null,LispError.KLispErrNotList);
-		iPtr = iPtr.getCons().subList();
+		LispError.check(iPtr.getCons().getSubList() != null,LispError.KLispErrNotList);
+		iPtr = iPtr.getCons().getSubList();
 	}
 
 };

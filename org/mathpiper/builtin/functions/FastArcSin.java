@@ -33,9 +33,9 @@ public class FastArcSin extends BuiltinFunctionInitialize
     {
         BigNumber x;
         x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
-        double result = Math.asin(x.Double());
+        double result = Math.asin(x.toDouble());
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.SetTo(result);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.setTo(result);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

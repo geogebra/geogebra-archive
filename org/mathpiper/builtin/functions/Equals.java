@@ -32,11 +32,11 @@ public class Equals extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer evaluated1 = new ConsPointer();
-        evaluated1.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        evaluated1.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         ConsPointer evaluated2 = new ConsPointer();
-        evaluated2.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        evaluated2.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
-        UtilityFunctions.internalBoolean(aEnvironment, result(aEnvironment, aStackTop),
+        UtilityFunctions.internalBoolean(aEnvironment, getResult(aEnvironment, aStackTop),
                 UtilityFunctions.internalEquals(aEnvironment, evaluated1, evaluated2));
     }
 }

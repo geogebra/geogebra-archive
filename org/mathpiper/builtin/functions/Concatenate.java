@@ -40,12 +40,12 @@ public class Concatenate extends BuiltinFunctionInitialize
         tail.goNext();
         int arg = 1;
 
-        ConsTraverser iter = new ConsTraverser(argumentPointer(aEnvironment, aStackTop, 1).getCons().subList());
+        ConsTraverser iter = new ConsTraverser(getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList());
         iter.goNext();
         while (iter.getCons() != null)
         {
             LispError.checkIsListCore(aEnvironment, aStackTop, iter.ptr(), arg);
-            UtilityFunctions.internalFlatCopy(tail.ptr(), iter.ptr().getCons().subList().getCons().rest());
+            UtilityFunctions.internalFlatCopy(tail.ptr(), iter.ptr().getCons().getSubList().getCons().rest());
             while (tail.getCons() != null)
             {
                 tail.goNext();
@@ -53,6 +53,6 @@ public class Concatenate extends BuiltinFunctionInitialize
             iter.goNext();
             arg++;
         }
-        result(aEnvironment, aStackTop).setCons(SubList.getInstance(all.getCons()));
+        getResult(aEnvironment, aStackTop).setCons(SubList.getInstance(all.getCons()));
     }
 }

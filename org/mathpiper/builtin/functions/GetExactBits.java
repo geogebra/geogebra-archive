@@ -32,13 +32,13 @@ public class GetExactBits extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
-        BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.SetTo(
-                (x.IsInt())
-                ? x.BitCount() // for integers, return the bit count
-                : UtilityFunctions.digits_to_bits((long) (x.GetPrecision()), 10) // for floats, return the getPrecision
+        BigNumber numberToCheck = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
+        BigNumber numberToReturn = new BigNumber(aEnvironment.getPrecision());
+        numberToReturn.setTo(
+                (numberToCheck.isInt())
+                ? numberToCheck.bitCount() // for integers, return the bit count
+                : UtilityFunctions.digitsToBits((long) (numberToCheck.getPrecision()), 10) // for floats, return the getPrecision
                 );
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(numberToReturn));
     }
 }

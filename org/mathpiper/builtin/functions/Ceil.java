@@ -33,9 +33,9 @@ public class Ceil extends BuiltinFunctionInitialize
     {
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.Negate(x);
-        z.Floor(z);
-        z.Negate(z);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.negate(x);
+        z.floor(z);
+        z.negate(z);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

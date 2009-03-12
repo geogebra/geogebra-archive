@@ -34,8 +34,8 @@ public class SystemCall extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        LispError.checkArgumentCore(aEnvironment, aStackTop, argumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
-        String orig = argumentPointer(aEnvironment, aStackTop, 1).getCons().string();
+        LispError.checkArgumentCore(aEnvironment, aStackTop, getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
+        String orig = getArgumentPointer(aEnvironment, aStackTop, 1).getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, orig != null, 1);
         String oper = UtilityFunctions.internalUnstringify(orig);
         String ls_str;

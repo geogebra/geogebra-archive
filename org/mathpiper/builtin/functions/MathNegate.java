@@ -33,7 +33,7 @@ public class MathNegate extends BuiltinFunctionInitialize
     {
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.Negate(x);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.negate(x);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

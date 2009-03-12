@@ -35,13 +35,13 @@ public class SetExactBits extends BuiltinFunctionInitialize
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         BigNumber y = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.SetTo(x);
+        z.setTo(x);
 
         // do nothing for integers
-        if (!(z.IsInt()))
+        if (!(z.isInt()))
         {
-            z.Precision((int) (UtilityFunctions.bits_to_digits((long) (y.Double()), 10)));
+            z.precision((int) (UtilityFunctions.bitsToDigits((long) (y.toDouble()), 10)));
         }
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

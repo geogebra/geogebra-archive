@@ -23,7 +23,7 @@ import org.mathpiper.builtin.BuiltinFunctionInitialize;
 import org.mathpiper.io.InputStatus;
 import org.mathpiper.lisp.Atom;
 import org.mathpiper.lisp.Environment;
-import org.mathpiper.io.InputStream;
+import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.ConsPointer;
 import org.mathpiper.lisp.UtilityFunctions;
@@ -38,7 +38,7 @@ public class FileSize extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer fnameObject = new ConsPointer();
-        fnameObject.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        fnameObject.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         LispError.checkIsStringCore(aEnvironment, aStackTop, fnameObject, 1);
         String fname = UtilityFunctions.internalUnstringify(fnameObject.getCons().string());
         String hashedname = (String) aEnvironment.getTokenHash().lookUp(fname);
@@ -49,7 +49,7 @@ public class FileSize extends BuiltinFunctionInitialize
         try
         {
             // Open file
-            InputStream newInput = // new StdFileInput(hashedname, aEnvironment.iInputStatus);
+            MathPiperInputStream newInput = // new StdFileInput(hashedname, aEnvironment.iInputStatus);
                     UtilityFunctions.openInputFile(aEnvironment, aEnvironment.iInputDirectories, hashedname, aEnvironment.iInputStatus);
 
             LispError.check(newInput != null, LispError.KLispErrFileNotFound);
@@ -61,6 +61,6 @@ public class FileSize extends BuiltinFunctionInitialize
         {
             aEnvironment.iInputStatus.restoreFrom(oldstatus);
         }
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + fileSize));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + fileSize));
     }
 }

@@ -31,6 +31,6 @@ public class InDebugMode extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        UtilityFunctions.internalFalse(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalFalse(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

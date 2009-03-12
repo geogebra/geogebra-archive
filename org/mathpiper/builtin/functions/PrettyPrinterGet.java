@@ -33,10 +33,10 @@ public class PrettyPrinterGet extends BuiltinFunctionInitialize
     {
         if (aEnvironment.iPrettyPrinter == null)
         {
-            result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "\"\""));
+            getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "\"\""));
         } else
         {
-            result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.iPrettyPrinter));
+            getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.iPrettyPrinter));
         }
     }
 }

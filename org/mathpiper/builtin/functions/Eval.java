@@ -30,6 +30,6 @@ public class Eval extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        aEnvironment.iEvaluator.evaluate(aEnvironment, result(aEnvironment, aStackTop), argumentPointer(aEnvironment, aStackTop, 1));
+        aEnvironment.iEvaluator.evaluate(aEnvironment, getResult(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1));
     }
 }

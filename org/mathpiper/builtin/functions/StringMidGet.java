@@ -34,24 +34,24 @@ public class StringMidGet extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer evaluated = new ConsPointer();
-        evaluated.setCons(argumentPointer(aEnvironment, aStackTop, 3).getCons());
+        evaluated.setCons(getArgumentPointer(aEnvironment, aStackTop, 3).getCons());
         LispError.checkIsStringCore(aEnvironment, aStackTop, evaluated, 3);
         String orig = evaluated.getCons().string();
 
         ConsPointer index = new ConsPointer();
-        index.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        index.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         LispError.checkArgumentCore(aEnvironment, aStackTop, index.getCons() != null, 1);
         LispError.checkArgumentCore(aEnvironment, aStackTop, index.getCons().string() != null, 1);
         int from = Integer.parseInt(index.getCons().string(), 10);
         LispError.checkArgumentCore(aEnvironment, aStackTop, from > 0, 1);
 
-        index.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        index.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
         LispError.checkArgumentCore(aEnvironment, aStackTop, index.getCons() != null, 2);
         LispError.checkArgumentCore(aEnvironment, aStackTop, index.getCons().string() != null, 2);
         int count = Integer.parseInt(index.getCons().string(), 10);
 
 
         String str = "\"" + orig.substring(from, from + count) + "\"";
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, str));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, str));
     }
 }

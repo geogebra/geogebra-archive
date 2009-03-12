@@ -32,11 +32,11 @@ public class UnList extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        LispError.checkArgumentCore(aEnvironment, aStackTop, argumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
-        LispError.checkArgumentCore(aEnvironment, aStackTop, argumentPointer(aEnvironment, aStackTop, 1).getCons().subList() != null, 1);
-        Cons subList = argumentPointer(aEnvironment, aStackTop, 1).getCons().subList().getCons();
+        LispError.checkArgumentCore(aEnvironment, aStackTop, getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
+        LispError.checkArgumentCore(aEnvironment, aStackTop, getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList() != null, 1);
+        Cons subList = getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList().getCons();
         LispError.checkArgumentCore(aEnvironment, aStackTop, subList != null, 1);
         LispError.checkArgumentCore(aEnvironment, aStackTop, subList.string() == aEnvironment.iListAtom.string(), 1);
-        UtilityFunctions.internalTail(result(aEnvironment, aStackTop), argumentPointer(aEnvironment, aStackTop, 1));
+        UtilityFunctions.internalTail(getResult(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1));
     }
 }

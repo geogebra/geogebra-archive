@@ -18,12 +18,9 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.io;
 
-import org.mathpiper.io.OutputStream;
-
-
 
 public class StandardFileOutputStream
-			extends OutputStream //Note:tk: made this class public.
+			extends MathPiperOutputStream //Note:tk: made this class public.
 {
 
 	java.io.OutputStream iFile;

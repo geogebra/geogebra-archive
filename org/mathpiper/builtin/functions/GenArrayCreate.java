@@ -35,7 +35,7 @@ public class GenArrayCreate extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer sizearg = new ConsPointer();
-        sizearg.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        sizearg.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
 
         LispError.checkArgumentCore(aEnvironment, aStackTop, sizearg.getCons() != null, 1);
         LispError.checkArgumentCore(aEnvironment, aStackTop, sizearg.getCons().string() != null, 1);
@@ -43,9 +43,9 @@ public class GenArrayCreate extends BuiltinFunctionInitialize
         int size = Integer.parseInt(sizearg.getCons().string(), 10);
 
         ConsPointer initarg = new ConsPointer();
-        initarg.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        initarg.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
         Array array = new Array(size, initarg.getCons());
-        result(aEnvironment, aStackTop).setCons(BuiltinObject.getInstance(array));
+        getResult(aEnvironment, aStackTop).setCons(BuiltinObject.getInstance(array));
     }
 }

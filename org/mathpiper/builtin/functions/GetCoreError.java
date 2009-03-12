@@ -30,6 +30,6 @@ public class GetCoreError extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.getTokenHash().lookUpStringify(aEnvironment.iError)));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.getTokenHash().lookUpStringify(aEnvironment.iError)));
     }
 }

@@ -18,7 +18,7 @@
 package org.mathpiper.lisp.tokenizers;
 
 import org.mathpiper.lisp.TokenHash;
-import org.mathpiper.io.InputStream;
+import org.mathpiper.io.MathPiperInputStream;
 
 /**
  *

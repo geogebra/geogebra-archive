@@ -37,14 +37,14 @@ public class LazyAnd extends BuiltinFunctionInitialize
         int nrnogos = 0;
         ConsPointer evaluated = new ConsPointer();
 
-        ConsTraverser iter = new ConsTraverser(argumentPointer(aEnvironment, aStackTop, 1).getCons().subList());
+        ConsTraverser iter = new ConsTraverser(getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList());
         iter.goNext();
         while (iter.getCons() != null)
         {
             aEnvironment.iEvaluator.evaluate(aEnvironment, evaluated, iter.ptr());
             if (UtilityFunctions.isFalse(aEnvironment, evaluated))
             {
-                UtilityFunctions.internalFalse(aEnvironment, result(aEnvironment, aStackTop));
+                UtilityFunctions.internalFalse(aEnvironment, getResult(aEnvironment, aStackTop));
                 return;
             } else if (!UtilityFunctions.isTrue(aEnvironment, evaluated))
             {
@@ -62,7 +62,7 @@ public class LazyAnd extends BuiltinFunctionInitialize
         {
             if (nrnogos == 1)
             {
-                result(aEnvironment, aStackTop).setCons(nogos.getCons());
+                getResult(aEnvironment, aStackTop).setCons(nogos.getCons());
             } else
             {
                 ConsPointer ptr = new ConsPointer();
@@ -70,16 +70,16 @@ public class LazyAnd extends BuiltinFunctionInitialize
                 UtilityFunctions.internalReverseList(ptr, nogos);
                 nogos.setCons(ptr.getCons());
 
-                ptr.setCons(argumentPointer(aEnvironment, aStackTop, 0).getCons().copy(false));
+                ptr.setCons(getArgumentPointer(aEnvironment, aStackTop, 0).getCons().copy(false));
                 ptr.getCons().rest().setCons(nogos.getCons());
                 nogos.setCons(ptr.getCons());
-                result(aEnvironment, aStackTop).setCons(SubList.getInstance(nogos.getCons()));
+                getResult(aEnvironment, aStackTop).setCons(SubList.getInstance(nogos.getCons()));
 
-            //aEnvironment.CurrentPrinter().Print(result(aEnvironment, aStackTop), *aEnvironment.CurrentOutput());
+            //aEnvironment.CurrentPrinter().Print(getResult(aEnvironment, aStackTop), *aEnvironment.CurrentOutput());
             }
         } else
         {
-            UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+            UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
         }
     }
 }

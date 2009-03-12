@@ -39,7 +39,7 @@ public class BuiltinObject extends Cons
             return iClass;
         }
 	
-	public BuiltinContainer generic()
+	public BuiltinContainer getGeneric()
 	{
 		return iClass;
 	}

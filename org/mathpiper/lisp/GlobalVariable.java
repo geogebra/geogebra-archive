@@ -54,4 +54,14 @@ public class GlobalVariable
             return (String) iValue.getCons().toString();
         }
 
+    public boolean isIEvalBeforeReturn() {
+        return iEvalBeforeReturn;
+    }
+
+    public ConsPointer getValue() {
+        return iValue;
+    }
+
+
+
 }

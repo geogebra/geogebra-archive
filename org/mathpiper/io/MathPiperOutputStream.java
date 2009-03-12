@@ -16,24 +16,21 @@
 
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 
-package org.mathpiper.builtin.functions;
+package org.mathpiper.io;
 
-import org.mathpiper.builtin.BuiltinFunctionInitialize;
-import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.UtilityFunctions;
-
-/**
- *
- *  
+/** \class MathPiperOutputStream : interface an output object should adhere to.
  */
-public class IsGeneric extends BuiltinFunctionInitialize
+public abstract class MathPiperOutputStream //Note:tk: Made this interface public.
 {
+	/// write out one character.
+	public abstract void putChar(char aChar) throws Exception;
 
-    public void eval(Environment aEnvironment, int aStackTop) throws Exception
-    {
-        ConsPointer evaluated = new ConsPointer();
-        evaluated.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
-        UtilityFunctions.internalBoolean(aEnvironment, getResult(aEnvironment, aStackTop), evaluated.getCons().getGeneric() != null);
-    }
-}
+	public void write(String aString) throws Exception
+	{
+		int i;
+		for (i=0;i<aString.length();i++)
+		{
+			putChar(aString.charAt(i));
+		}
+	}
+};

@@ -33,16 +33,16 @@ public class Not extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer evaluated = new ConsPointer();
-        evaluated.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        evaluated.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         if (UtilityFunctions.isTrue(aEnvironment, evaluated) || UtilityFunctions.isFalse(aEnvironment, evaluated))
         {
-            UtilityFunctions.internalNot(result(aEnvironment, aStackTop), aEnvironment, evaluated);
+            UtilityFunctions.internalNot(getResult(aEnvironment, aStackTop), aEnvironment, evaluated);
         } else
         {
             ConsPointer ptr = new ConsPointer();
-            ptr.setCons(argumentPointer(aEnvironment, aStackTop, 0).getCons().copy(false));
+            ptr.setCons(getArgumentPointer(aEnvironment, aStackTop, 0).getCons().copy(false));
             ptr.getCons().rest().setCons(evaluated.getCons());
-            result(aEnvironment, aStackTop).setCons(SubList.getInstance(ptr.getCons()));
+            getResult(aEnvironment, aStackTop).setCons(SubList.getInstance(ptr.getCons()));
         }
     }
 }

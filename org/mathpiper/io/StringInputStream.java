@@ -19,10 +19,10 @@
 package org.mathpiper.io;
 
 import org.mathpiper.*;
-import org.mathpiper.io.InputStream;
+import org.mathpiper.io.MathPiperInputStream;
 
 public class StringInputStream
-			extends InputStream
+			extends MathPiperInputStream
 {
 
 	int iCurrent;

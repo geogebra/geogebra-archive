@@ -33,8 +33,8 @@ public class IsAtom extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer result = new ConsPointer();
-        result.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        result.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         String s = result.getCons().string();
-        UtilityFunctions.internalBoolean(aEnvironment, result(aEnvironment, aStackTop), s != null);
+        UtilityFunctions.internalBoolean(aEnvironment, getResult(aEnvironment, aStackTop), s != null);
     }
 }

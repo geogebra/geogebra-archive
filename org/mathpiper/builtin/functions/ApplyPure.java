@@ -34,27 +34,27 @@ public class ApplyPure extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer oper = new ConsPointer();
-        oper.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        oper.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         ConsPointer args = new ConsPointer();
-        args.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        args.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
-        LispError.checkArgumentCore(aEnvironment, aStackTop, args.getCons().subList() != null, 2);
-        LispError.checkCore(aEnvironment, aStackTop, args.getCons().subList().getCons() != null, 2);
+        LispError.checkArgumentCore(aEnvironment, aStackTop, args.getCons().getSubList() != null, 2);
+        LispError.checkCore(aEnvironment, aStackTop, args.getCons().getSubList().getCons() != null, 2);
 
         // Apply a pure string
         if (oper.getCons().string() != null)
         {
-            UtilityFunctions.internalApplyString(aEnvironment, result(aEnvironment, aStackTop),
+            UtilityFunctions.internalApplyString(aEnvironment, getResult(aEnvironment, aStackTop),
                     oper.getCons().string(),
-                    args.getCons().subList().getCons().rest());
+                    args.getCons().getSubList().getCons().rest());
         } else
         {   // Apply a pure function {args,body}.
 
             ConsPointer args2 = new ConsPointer();
-            args2.setCons(args.getCons().subList().getCons().rest().getCons());
-            LispError.checkArgumentCore(aEnvironment, aStackTop, oper.getCons().subList() != null, 1);
-            LispError.checkArgumentCore(aEnvironment, aStackTop, oper.getCons().subList().getCons() != null, 1);
-            UtilityFunctions.internalApplyPure(oper, args2, result(aEnvironment, aStackTop), aEnvironment);
+            args2.setCons(args.getCons().getSubList().getCons().rest().getCons());
+            LispError.checkArgumentCore(aEnvironment, aStackTop, oper.getCons().getSubList() != null, 1);
+            LispError.checkArgumentCore(aEnvironment, aStackTop, oper.getCons().getSubList().getCons() != null, 1);
+            UtilityFunctions.internalApplyPure(oper, args2, getResult(aEnvironment, aStackTop), aEnvironment);
         }
     }
 }

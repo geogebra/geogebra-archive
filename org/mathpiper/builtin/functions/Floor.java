@@ -19,7 +19,7 @@ import org.mathpiper.lisp.Environment;
 		{
 			BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
 			BigNumber z = new BigNumber(aEnvironment.getPrecision());
-			z.Floor(x);
-			result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+			z.floor(x);
+			getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
 		}
 	}

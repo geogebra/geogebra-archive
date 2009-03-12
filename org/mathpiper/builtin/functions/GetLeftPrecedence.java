@@ -41,6 +41,6 @@ public class GetLeftPrecedence extends BuiltinFunctionInitialize
             op = UtilityFunctions.operatorInfo(aEnvironment, aStackTop, aEnvironment.iPostfixOperators);
             LispError.checkCore(aEnvironment, aStackTop, op != null, LispError.KLispErrIsNotInFix);
         }
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + op.iLeftPrecedence));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + op.iLeftPrecedence));
     }
 }

@@ -34,11 +34,11 @@ public class StringMidSet extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer evaluated = new ConsPointer();
-        evaluated.setCons(argumentPointer(aEnvironment, aStackTop, 3).getCons());
+        evaluated.setCons(getArgumentPointer(aEnvironment, aStackTop, 3).getCons());
         LispError.checkIsStringCore(aEnvironment, aStackTop, evaluated, 3);
         String orig = evaluated.getCons().string();
         ConsPointer index = new ConsPointer();
-        index.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        index.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         LispError.checkArgumentCore(aEnvironment, aStackTop, index.getCons() != null, 1);
         LispError.checkArgumentCore(aEnvironment, aStackTop, index.getCons().string() != null, 1);
         int from = Integer.parseInt(index.getCons().string(), 10);
@@ -46,7 +46,7 @@ public class StringMidSet extends BuiltinFunctionInitialize
         LispError.checkArgumentCore(aEnvironment, aStackTop, from > 0, 1);
 
         ConsPointer ev2 = new ConsPointer();
-        ev2.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        ev2.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
         LispError.checkIsStringCore(aEnvironment, aStackTop, ev2, 2);
         String replace = ev2.getCons().string();
 
@@ -56,6 +56,6 @@ public class StringMidSet extends BuiltinFunctionInitialize
         str = str + replace.substring(1, replace.length() - 1);
         //System.out.println("from="+from+replace.length()-2);
         str = str + orig.substring(from + replace.length() - 2, orig.length());
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, str));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, str));
     }
 }

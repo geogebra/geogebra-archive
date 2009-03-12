@@ -17,7 +17,7 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp;
 
-import org.mathpiper.io.OutputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 import org.mathpiper.*;
 
 /**
@@ -42,7 +42,7 @@ public abstract class ExpressionEvaluator
         return iBasicInfo;
     }
 
-    public void showStack(Environment aEnvironment, OutputStream aOutput)
+    public void showStack(Environment aEnvironment, MathPiperOutputStream aOutput)
     {
     }
 };

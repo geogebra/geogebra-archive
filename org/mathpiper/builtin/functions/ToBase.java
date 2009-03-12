@@ -35,26 +35,26 @@ public class ToBase extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         // Get the base to convert to:
-        // Evaluate first argument, and store result in oper
+        // Evaluate first argument, and store getResult in oper
         ConsPointer oper = new ConsPointer();
-        oper.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
-        // check that result is a number, and that it is in fact an integer
-        BigNumber num = oper.getCons().number(aEnvironment.getPrecision());
+        oper.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
+        // check that getResult is a number, and that it is in fact an integer
+        BigNumber num = oper.getCons().getNumber(aEnvironment.getPrecision());
         LispError.checkArgumentCore(aEnvironment, aStackTop, num != null, 1);
         // check that the base is an integer between 2 and 32
-        LispError.checkArgumentCore(aEnvironment, aStackTop, num.IsInt(), 1);
+        LispError.checkArgumentCore(aEnvironment, aStackTop, num.isInt(), 1);
 
         // Get a short platform integer from the first argument
-        int base = (int) (num.Long());
+        int base = (int) (num.toLong());
 
         // Get the number to convert
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
 
         // convert using correct base
         String str;
-        str = x.ToString(aEnvironment.getPrecision(), base);
+        str = x.numToString(aEnvironment.getPrecision(), base);
         // Get unique string from hash table, and create an atom from it.
 
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.getTokenHash().lookUpStringify(str)));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.getTokenHash().lookUpStringify(str)));
     }
 }

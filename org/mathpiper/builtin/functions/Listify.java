@@ -32,10 +32,10 @@ public class Listify extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        LispError.checkArgumentCore(aEnvironment, aStackTop, argumentPointer(aEnvironment, aStackTop, 1).getCons().subList() != null, 1);
+        LispError.checkArgumentCore(aEnvironment, aStackTop, getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList() != null, 1);
         ConsPointer head = new ConsPointer();
         head.setCons(aEnvironment.iListAtom.copy(false));
-        head.getCons().rest().setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons().subList().getCons());
-        result(aEnvironment, aStackTop).setCons(SubList.getInstance(head.getCons()));
+        head.getCons().rest().setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList().getCons());
+        getResult(aEnvironment, aStackTop).setCons(SubList.getInstance(head.getCons()));
     }
 }

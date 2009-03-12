@@ -29,6 +29,6 @@ public class Quote extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        result(aEnvironment, aStackTop).setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons().copy(false));
+        getResult(aEnvironment, aStackTop).setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons().copy(false));
     }
 }

@@ -32,8 +32,8 @@ public class While extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        ConsPointer arg1 = argumentPointer(aEnvironment, aStackTop, 1);
-        ConsPointer arg2 = argumentPointer(aEnvironment, aStackTop, 2);
+        ConsPointer arg1 = getArgumentPointer(aEnvironment, aStackTop, 1);
+        ConsPointer arg2 = getArgumentPointer(aEnvironment, aStackTop, 2);
 
         ConsPointer predicate = new ConsPointer();
         aEnvironment.iEvaluator.evaluate(aEnvironment, predicate, arg1);
@@ -46,6 +46,6 @@ public class While extends BuiltinFunctionInitialize
 
         }
         LispError.checkArgumentCore(aEnvironment, aStackTop, UtilityFunctions.isFalse(aEnvironment, predicate), 1);
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

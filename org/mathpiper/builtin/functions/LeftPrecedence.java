@@ -34,17 +34,17 @@ public class LeftPrecedence extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         // Get operator
-        LispError.checkArgumentCore(aEnvironment, aStackTop, argumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
-        String orig = argumentPointer(aEnvironment, aStackTop, 1).getCons().string();
+        LispError.checkArgumentCore(aEnvironment, aStackTop, getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
+        String orig = getArgumentPointer(aEnvironment, aStackTop, 1).getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, orig != null, 1);
 
         ConsPointer index = new ConsPointer();
-        aEnvironment.iEvaluator.evaluate(aEnvironment, index, argumentPointer(aEnvironment, aStackTop, 2));
+        aEnvironment.iEvaluator.evaluate(aEnvironment, index, getArgumentPointer(aEnvironment, aStackTop, 2));
         LispError.checkArgumentCore(aEnvironment, aStackTop, index.getCons() != null, 2);
         LispError.checkArgumentCore(aEnvironment, aStackTop, index.getCons().string() != null, 2);
         int ind = Integer.parseInt(index.getCons().string(), 10);
 
         aEnvironment.iInfixOperators.SetLeftPrecedence(UtilityFunctions.symbolName(aEnvironment, orig), ind);
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

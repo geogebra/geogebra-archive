@@ -33,13 +33,13 @@ public class Stringify extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer evaluated = new ConsPointer();
-        evaluated.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        evaluated.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
 
         // Get operator
         LispError.checkArgumentCore(aEnvironment, aStackTop, evaluated.getCons() != null, 1);
         String orig = evaluated.getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, orig != null, 1);
 
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.getTokenHash().lookUpStringify(orig)));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, aEnvironment.getTokenHash().lookUpStringify(orig)));
     }
 }

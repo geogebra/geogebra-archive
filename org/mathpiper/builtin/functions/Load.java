@@ -35,7 +35,7 @@ public class Load extends BuiltinFunctionInitialize
         LispError.checkCore(aEnvironment, aStackTop, aEnvironment.iSecure == false, LispError.KLispErrSecurityBreach);
 
         ConsPointer evaluated = new ConsPointer();
-        evaluated.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        evaluated.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
 
         // Get file name
         LispError.checkArgumentCore(aEnvironment, aStackTop, evaluated.getCons() != null, 1);
@@ -44,7 +44,7 @@ public class Load extends BuiltinFunctionInitialize
 
         UtilityFunctions.internalLoad(aEnvironment, orig);
         
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
          
     }
 }

@@ -32,11 +32,11 @@ public class ExtraInfoSet extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer object = new ConsPointer();
-        object.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        object.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
 
         ConsPointer info = new ConsPointer();
-        info.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        info.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
-        result(aEnvironment, aStackTop).setCons(object.getCons().setExtraInfo(info));
+        getResult(aEnvironment, aStackTop).setCons(object.getCons().setExtraInfo(info));
     }
 }

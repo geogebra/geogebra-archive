@@ -33,9 +33,9 @@ public class FastLog extends BuiltinFunctionInitialize
     {
         BigNumber x;
         x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
-        double result = Math.log(x.Double());
+        double result = Math.log(x.toDouble());
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.SetTo(result);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.setTo(result);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

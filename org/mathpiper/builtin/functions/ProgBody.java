@@ -35,15 +35,15 @@ public class ProgBody extends BuiltinFunctionInitialize
         aEnvironment.pushLocalFrame(false);
         try
         {
-            UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+            UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
 
             // Evaluate args one by one.
 
-            ConsTraverser iter = new ConsTraverser(argumentPointer(aEnvironment, aStackTop, 1).getCons().subList());
+            ConsTraverser iter = new ConsTraverser(getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList());
             iter.goNext();
             while (iter.getCons() != null)
             {
-                aEnvironment.iEvaluator.evaluate(aEnvironment, result(aEnvironment, aStackTop), iter.ptr());
+                aEnvironment.iEvaluator.evaluate(aEnvironment, getResult(aEnvironment, aStackTop), iter.ptr());
                 iter.goNext();
             }
         } catch (Exception e)

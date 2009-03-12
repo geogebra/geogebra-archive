@@ -42,8 +42,8 @@ public class BackQuote implements SubstBase
 	}
 	public boolean matches(ConsPointer aResult, ConsPointer aElement) throws Exception
 	{
-		if (aElement.getCons().subList() == null) return false;
-		Cons ptr = aElement.getCons().subList().getCons();
+		if (aElement.getCons().getSubList() == null) return false;
+		Cons ptr = aElement.getCons().getSubList().getCons();
 		if (ptr == null) return false;
 		if (ptr.string() == null) return false;
 
@@ -67,7 +67,7 @@ public class BackQuote implements SubstBase
 		}
 		else
 		{
-			ptr = ptr.subList().getCons();
+			ptr = ptr.getSubList().getCons();
 			ConsPointer cur = new ConsPointer();
 			cur.setCons(ptr);
 			ConsPointer args = new ConsPointer();

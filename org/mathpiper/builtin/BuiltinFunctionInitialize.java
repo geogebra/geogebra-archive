@@ -205,17 +205,17 @@ public abstract class BuiltinFunctionInitialize
 {
 	public abstract void eval(Environment aEnvironment,int aStackTop) throws Exception;
 
-	public static ConsPointer result(Environment aEnvironment,int aStackTop) throws Exception
+	public static ConsPointer getResult(Environment aEnvironment,int aStackTop) throws Exception
 	{
 		return aEnvironment.iArgumentStack.getElement(aStackTop);
 	}
 	
-	public static ConsPointer argumentPointer(Environment aEnvironment,int aStackTop, int argumentPosition)  throws Exception
+	public static ConsPointer getArgumentPointer(Environment aEnvironment,int aStackTop, int argumentPosition)  throws Exception
 	{
 		return aEnvironment.iArgumentStack.getElement(aStackTop+argumentPosition);
 	}
 
-	public static ConsPointer argumentPointer(ConsPointer cur, int n) throws Exception
+	public static ConsPointer getArgumentPointer(ConsPointer cur, int n) throws Exception
 	{
 		LispError.lispAssert(n>=0);
 
@@ -816,15 +816,7 @@ public abstract class BuiltinFunctionInitialize
         aEnvironment.getBuiltinFunctions().setAssociation(
                 new Evaluator(new org.mathpiper.builtin.functions.TraceOff(), 0, Evaluator.Fixed | Evaluator.Function),
                 "TraceOff");
-        /*aEnvironment.getBuiltinFunctions().setAssociation(
-                new Evaluator(new org.mathpiper.builtin.functions.ViewEnvironment(), 0, Evaluator.Fixed | Evaluator.Function),
-                "ViewEnvironment");
-	aEnvironment.getBuiltinFunctions().setAssociation(
-                new Evaluator(new org.mathpiper.builtin.functions.ViewSimulator(), 0, Evaluator.Fixed | Evaluator.Function),
-                "ViewSimulator");
-        aEnvironment.getBuiltinFunctions().setAssociation(
-                new Evaluator(new org.mathpiper.builtin.functions.PlotPoint(), 2, Evaluator.Fixed | Evaluator.Function),
-                "PlotPoint");*/
+
     }
 
 

@@ -36,6 +36,6 @@ public class ReadLispListed extends BuiltinFunctionInitialize
                 aEnvironment);
         parser.iListed = true;
         // Read expression
-        parser.parse(result(aEnvironment, aStackTop));
+        parser.parse(getResult(aEnvironment, aStackTop));
     }
 }

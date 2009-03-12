@@ -19,12 +19,12 @@
 package org.mathpiper.lisp.printers;
 
 import org.mathpiper.lisp.*;
-import org.mathpiper.io.OutputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 
 
 public class Printer
 {
-	public void print(ConsPointer aExpression, OutputStream aOutput, Environment aEnvironment) throws Exception
+	public void print(ConsPointer aExpression, MathPiperOutputStream aOutput, Environment aEnvironment) throws Exception
 	{
 		printExpression(aExpression, aOutput, aEnvironment,0);
 	}
@@ -32,7 +32,7 @@ public class Printer
 	{
 	}
 
-	void printExpression(ConsPointer aExpression, OutputStream aOutput,
+	void printExpression(ConsPointer aExpression, MathPiperOutputStream aOutput,
 	                     Environment aEnvironment,int aDepth /* =0 */) throws Exception
 	{
 		ConsPointer iter = new ConsPointer();
@@ -49,14 +49,14 @@ public class Printer
 				aOutput.putChar(' ');
 			}
 			// else print "(", print sublist, and print ")"
-			else if (iter.getCons().subList() != null)
+			else if (iter.getCons().getSubList() != null)
 			{
 				if (item != 0)
 				{
 					indent(aOutput,aDepth+1);
 				}
 				aOutput.write("(");
-				printExpression((iter.getCons().subList()),aOutput, aEnvironment,aDepth+1);
+				printExpression((iter.getCons().getSubList()),aOutput, aEnvironment,aDepth+1);
 				aOutput.write(")");
 				item=0;
 			}
@@ -69,7 +69,7 @@ public class Printer
 		} // print rest element
 	}
 
-	void indent(OutputStream aOutput, int aDepth) throws Exception
+	void indent(MathPiperOutputStream aOutput, int aDepth) throws Exception
 	{
 		aOutput.write("\n");
 		int i;

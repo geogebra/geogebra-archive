@@ -33,7 +33,7 @@ public class DumpBigNumberDebugInfo extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
-        x.DumpDebugInfo(aEnvironment.iCurrentOutput);
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        x.dumpDebugInfo(aEnvironment.iCurrentOutput);
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

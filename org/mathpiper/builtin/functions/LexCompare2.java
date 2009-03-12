@@ -40,11 +40,11 @@ abstract public class LexCompare2
     {
         ConsPointer result1 = new ConsPointer();
         ConsPointer result2 = new ConsPointer();
-        result1.setCons(BuiltinFunctionInitialize.argumentPointer(aEnvironment, aStackTop, 1).getCons());
-        result2.setCons(BuiltinFunctionInitialize.argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        result1.setCons(BuiltinFunctionInitialize.getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
+        result2.setCons(BuiltinFunctionInitialize.getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
         boolean cmp;
-        BigNumber n1 = result1.getCons().number(aEnvironment.getPrecision());
-        BigNumber n2 = result2.getCons().number(aEnvironment.getPrecision());
+        BigNumber n1 = result1.getCons().getNumber(aEnvironment.getPrecision());
+        BigNumber n2 = result2.getCons().getNumber(aEnvironment.getPrecision());
         if (n1 != null && n2 != null)
         {
             cmp = numfunc(n1, n2);
@@ -62,6 +62,6 @@ abstract public class LexCompare2
                     aEnvironment.getPrecision());
         }
 
-        UtilityFunctions.internalBoolean(aEnvironment, BuiltinFunctionInitialize.result(aEnvironment, aStackTop), cmp);
+        UtilityFunctions.internalBoolean(aEnvironment, BuiltinFunctionInitialize.getResult(aEnvironment, aStackTop), cmp);
     }
 }

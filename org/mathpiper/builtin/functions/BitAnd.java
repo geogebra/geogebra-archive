@@ -33,7 +33,7 @@ public class BitAnd extends BuiltinFunctionInitialize
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
         BigNumber y = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.BitAnd(x, y);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.bitAnd(x, y);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

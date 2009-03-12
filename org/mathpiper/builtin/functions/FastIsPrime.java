@@ -33,7 +33,7 @@ public class FastIsPrime extends BuiltinFunctionInitialize
     {
         //TODO fixme this routine should actually be called SlowIsPrime ;-)
         BigNumber x = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 1);
-        long n = x.Long();
+        long n = x.toLong();
         long result = 1;
 
         // We only want people to pass in small integers
@@ -55,7 +55,7 @@ public class FastIsPrime extends BuiltinFunctionInitialize
         }
 
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.SetTo(result);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.setTo(result);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

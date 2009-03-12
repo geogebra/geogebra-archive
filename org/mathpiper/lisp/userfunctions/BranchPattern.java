@@ -32,7 +32,7 @@ class BranchPattern extends BranchRuleBase
     /// Constructor.
      * 
      * @param aPrecedence precedence of the rule
-     * @param aPredicate generic object of type PatternContainer
+     * @param aPredicate getGeneric object of type PatternContainer
      * @param aBody body of the rule
      */
     
@@ -42,7 +42,7 @@ class BranchPattern extends BranchRuleBase
         iPrecedence = aPrecedence;
         iPredicate.setCons(aPredicate.getCons());
 
-        BuiltinContainer gen = aPredicate.getCons().generic();
+        BuiltinContainer gen = aPredicate.getCons().getGeneric();
         LispError.check(gen != null, LispError.KLispErrInvalidArg);
         LispError.check(gen.typeName().equals("\"Pattern\""), LispError.KLispErrInvalidArg);
 

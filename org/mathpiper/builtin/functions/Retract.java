@@ -34,7 +34,7 @@ public class Retract extends BuiltinFunctionInitialize
     {
         // Get operator
         ConsPointer evaluated = new ConsPointer();
-        evaluated.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        evaluated.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
 
         LispError.checkArgumentCore(aEnvironment, aStackTop, evaluated.getCons() != null, 1);
         String orig = evaluated.getCons().string();
@@ -42,10 +42,10 @@ public class Retract extends BuiltinFunctionInitialize
         String oper = UtilityFunctions.symbolName(aEnvironment, orig);
 
         ConsPointer arity = new ConsPointer();
-        arity.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        arity.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
         LispError.checkArgumentCore(aEnvironment, aStackTop, arity.getCons().string() != null, 2);
         int ar = Integer.parseInt(arity.getCons().string(), 10);
         aEnvironment.retract(oper, ar);
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }

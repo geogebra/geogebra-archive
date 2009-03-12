@@ -22,7 +22,7 @@ import org.mathpiper.builtin.BuiltinFunctionInitialize;
 import org.mathpiper.io.StandardFileOutputStream;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.LispError;
-import org.mathpiper.io.OutputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 import org.mathpiper.lisp.ConsPointer;
 import org.mathpiper.lisp.UtilityFunctions;
 
@@ -38,7 +38,7 @@ public class ToFile extends BuiltinFunctionInitialize
         LispError.checkCore(aEnvironment, aStackTop, aEnvironment.iSecure == false, LispError.KLispErrSecurityBreach);
 
         ConsPointer evaluated = new ConsPointer();
-        aEnvironment.iEvaluator.evaluate(aEnvironment, evaluated, argumentPointer(aEnvironment, aStackTop, 1));
+        aEnvironment.iEvaluator.evaluate(aEnvironment, evaluated, getArgumentPointer(aEnvironment, aStackTop, 1));
 
         // Get file name
         LispError.checkArgumentCore(aEnvironment, aStackTop, evaluated.getCons() != null, 1);
@@ -51,12 +51,12 @@ public class ToFile extends BuiltinFunctionInitialize
         LispError.checkCore(aEnvironment, aStackTop, localFP != null, LispError.KLispErrFileNotFound);
         StandardFileOutputStream newOutput = new StandardFileOutputStream(localFP);
 
-        OutputStream previous = aEnvironment.iCurrentOutput;
+        MathPiperOutputStream previous = aEnvironment.iCurrentOutput;
         aEnvironment.iCurrentOutput = newOutput;
 
         try
         {
-            aEnvironment.iEvaluator.evaluate(aEnvironment, result(aEnvironment, aStackTop), argumentPointer(aEnvironment, aStackTop, 2));
+            aEnvironment.iEvaluator.evaluate(aEnvironment, getResult(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 2));
         } catch (Exception e)
         {
             throw e;

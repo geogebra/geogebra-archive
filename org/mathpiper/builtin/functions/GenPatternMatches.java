@@ -37,19 +37,19 @@ public class GenPatternMatches extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer pattern = new ConsPointer();
-        pattern.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
-        BuiltinContainer gen = pattern.getCons().generic();
+        pattern.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
+        BuiltinContainer gen = pattern.getCons().getGeneric();
         LispError.checkArgumentCore(aEnvironment, aStackTop, gen != null, 1);
         LispError.checkArgumentCore(aEnvironment, aStackTop, gen.typeName().equals("\"Pattern\""), 1);
 
         ConsPointer list = new ConsPointer();
-        list.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        list.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
         PatternContainer patclass = (PatternContainer) gen;
 
         ConsTraverser iter = new ConsTraverser(list);
         LispError.checkArgumentCore(aEnvironment, aStackTop, iter.getCons() != null, 2);
-        LispError.checkArgumentCore(aEnvironment, aStackTop, iter.getCons().subList() != null, 2);
+        LispError.checkArgumentCore(aEnvironment, aStackTop, iter.getCons().getSubList() != null, 2);
         iter.goSub();
         LispError.checkArgumentCore(aEnvironment, aStackTop, iter.getCons() != null, 2);
         iter.goNext();
@@ -57,6 +57,6 @@ public class GenPatternMatches extends BuiltinFunctionInitialize
         ConsPointer ptr = iter.ptr();
         LispError.checkArgumentCore(aEnvironment, aStackTop, ptr != null, 2);
         boolean matches = patclass.matches(aEnvironment, ptr);
-        UtilityFunctions.internalBoolean(aEnvironment, result(aEnvironment, aStackTop), matches);
+        UtilityFunctions.internalBoolean(aEnvironment, getResult(aEnvironment, aStackTop), matches);
     }
 }

@@ -34,11 +34,11 @@ public class Time extends BuiltinFunctionInitialize
     {
         long starttime = System.currentTimeMillis();
         ConsPointer res = new ConsPointer();
-        aEnvironment.iEvaluator.evaluate(aEnvironment, res, argumentPointer(aEnvironment, aStackTop, 1));
+        aEnvironment.iEvaluator.evaluate(aEnvironment, res, getArgumentPointer(aEnvironment, aStackTop, 1));
         long endtime = System.currentTimeMillis();
         double timeDiff;
         timeDiff = endtime - starttime;
         timeDiff /= 1000.0;
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + timeDiff));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + timeDiff));
     }
 }

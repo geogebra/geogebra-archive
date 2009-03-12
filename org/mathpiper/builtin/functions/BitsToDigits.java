@@ -37,17 +37,17 @@ public class BitsToDigits extends BuiltinFunctionInitialize
         BigNumber y = org.mathpiper.lisp.UtilityFunctions.getNumber(aEnvironment, aStackTop, 2);
         long result = 0;  // initialize just in case
 
-        if (x.IsInt() && x.IsSmall() && y.IsInt() && y.IsSmall())
+        if (x.isInt() && x.isSmall() && y.isInt() && y.isSmall())
         {
             // bits_to_digits uses unsigned long, see numbers.h
-            int base = (int) y.Double();
-            result = UtilityFunctions.bits_to_digits((long) (x.Double()), base);
+            int base = (int) y.toDouble();
+            result = UtilityFunctions.bitsToDigits((long) (x.toDouble()), base);
         } else
         {
-            throw new EvaluationException("BitsToDigits: error: arguments (" + x.Double() + ", " + y.Double() + ") must be small integers",-1);
+            throw new EvaluationException("BitsToDigits: error: arguments (" + x.toDouble() + ", " + y.toDouble() + ") must be small integers",-1);
         }
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
-        z.SetTo((long) result);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        z.setTo((long) result);
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

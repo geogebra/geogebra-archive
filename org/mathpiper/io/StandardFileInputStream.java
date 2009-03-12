@@ -18,7 +18,7 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.io;
 
-import org.mathpiper.*;
+import java.io.InputStreamReader;
 
 
 
@@ -37,7 +37,7 @@ public class StandardFileInputStream
 		super(new StringBuffer(), aStatus);
 
 		//System.out.println("YYYYYY " + aFileName);//Note:tk: remove.
-		java.io.FileInputStream stream = new java.io.FileInputStream(aFileName);
+		InputStreamReader stream = new InputStreamReader(new java.io.FileInputStream(aFileName));
 		int c;
 
 		while (true)
@@ -52,7 +52,7 @@ public class StandardFileInputStream
 		}
 	}
 
-	public StandardFileInputStream(java.io.InputStream aStream, InputStatus aStatus)
+	public StandardFileInputStream(java.io.InputStreamReader aStream, InputStatus aStatus)
 	throws Exception
 	{
 		super(new StringBuffer(), aStatus);

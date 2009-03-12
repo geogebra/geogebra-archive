@@ -23,13 +23,13 @@ import org.mathpiper.printers.InfixPrinter;
 import org.mathpiper.lisp.parsers.MathPiperParser;
 import org.mathpiper.io.StringOutputStream;
 import org.mathpiper.io.StringInputStream;
-import org.mathpiper.io.OutputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 import org.mathpiper.lisp.UtilityFunctions;
 import org.mathpiper.lisp.ConsPointer;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.lisp.parsers.Parser;
-import org.mathpiper.io.InputStream;
+import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.lisp.printers.Printer;
 
 import org.mathpiper.io.CachedStandardFileInputStream;
@@ -52,7 +52,7 @@ class SynchronousInterpreter implements Interpreter
     String detect = "";
     String pathParent = "";
     boolean inZipFile = false;
-    OutputStream sideEffectsStream;
+    MathPiperOutputStream sideEffectsStream;
     private static SynchronousInterpreter singletonInstance;
 
     private SynchronousInterpreter(String docBase)
@@ -93,7 +93,7 @@ class SynchronousInterpreter implements Interpreter
                     System.out.println(e.toString());
                 }
             }
-            else if (docBase.startsWith("http"))
+            if (docBase.startsWith("http"))
             {
                 //jar:http://www.xs4all.nl/~apinkus/interpreter.jar!/
                 int pos = docBase.lastIndexOf("/");
@@ -113,10 +113,6 @@ class SynchronousInterpreter implements Interpreter
             }
 
          }
-         
-         
-         
-
 
 
           /*  java.net.URL detectURL = java.lang.ClassLoader.getSystemResource("initialization.rep/mathpiperinit.mpi");
@@ -225,7 +221,7 @@ class SynchronousInterpreter implements Interpreter
                 environment.iInputStatus.setTo("String");
                 StringInputStream newInput = new StringInputStream(new StringBuffer(inputExpression), environment.iInputStatus);
 
-                InputStream previous = environment.iCurrentInput;
+                MathPiperInputStream previous = environment.iCurrentInput;
                 environment.iCurrentInput = newInput;
                 try
                 {
@@ -270,7 +266,7 @@ class SynchronousInterpreter implements Interpreter
             environment.setVariable(percent, result, true);
 
             StringBuffer string_out = new StringBuffer();
-            OutputStream output = new StringOutputStream(string_out);
+            MathPiperOutputStream output = new StringOutputStream(string_out);
 
             if (environment.iPrettyPrinter != null)
             {
@@ -312,7 +308,7 @@ class SynchronousInterpreter implements Interpreter
                 ConsPointer loadResult = new ConsPointer();
                 environment.getVariable("LoadResult", loadResult);
                 StringBuffer string_out = new StringBuffer();
-                OutputStream output = new StringOutputStream(string_out);
+                MathPiperOutputStream output = new StringOutputStream(string_out);
                 printer.rememberLastChar(' ');
                 printer.print(loadResult, output, environment);
                 String loadResultString = string_out.toString();

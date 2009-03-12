@@ -32,10 +32,10 @@ public class Nth extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         String str;
-        str = argumentPointer(aEnvironment, aStackTop, 2).getCons().string();
+        str = getArgumentPointer(aEnvironment, aStackTop, 2).getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, str != null, 2);
         LispError.checkArgumentCore(aEnvironment, aStackTop, UtilityFunctions.isNumber(str, false), 2);
         int index = Integer.parseInt(str);
-        UtilityFunctions.internalNth(result(aEnvironment, aStackTop), argumentPointer(aEnvironment, aStackTop, 1), index);
+        UtilityFunctions.internalNth(getResult(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1), index);
     }
 }

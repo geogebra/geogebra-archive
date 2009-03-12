@@ -46,6 +46,6 @@ public class GetRightPrecedence extends BuiltinFunctionInitialize
                 LispError.checkCore(aEnvironment, aStackTop, op != null, LispError.KLispErrIsNotInFix);
             }
         }
-        result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + op.iRightPrecedence));
+        getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + op.iRightPrecedence));
     }
 }

@@ -30,9 +30,9 @@ public class FullForm extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        result(aEnvironment, aStackTop).setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
+        getResult(aEnvironment, aStackTop).setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
         Printer printer = new Printer();
-        printer.print(result(aEnvironment, aStackTop), aEnvironment.iCurrentOutput, aEnvironment);
+        printer.print(getResult(aEnvironment, aStackTop), aEnvironment.iCurrentOutput, aEnvironment);
         aEnvironment.write("\n");
     }
 }

@@ -34,30 +34,30 @@ public class Length extends BuiltinFunctionInitialize
 
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
-        ConsPointer subList = argumentPointer(aEnvironment, aStackTop, 1).getCons().subList();
+        ConsPointer subList = getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getSubList();
         if (subList != null)
         {
             int num = UtilityFunctions.internalListLength(subList.getCons().rest());
-            result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + num));
+            getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + num));
             return;
         }
-        String string = argumentPointer(aEnvironment, aStackTop, 1).getCons().string();
+        String string = getArgumentPointer(aEnvironment, aStackTop, 1).getCons().string();
         if (UtilityFunctions.internalIsString(string))
         {
             int num = string.length() - 2;
-            result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + num));
+            getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + num));
             return;
         }
-        BuiltinContainer gen = argumentPointer(aEnvironment, aStackTop, 1).getCons().generic();
+        BuiltinContainer gen = getArgumentPointer(aEnvironment, aStackTop, 1).getCons().getGeneric();
         if (gen != null)
         {
             if (gen.typeName().equals("\"Array\""))
             {
                 int size = ((Array) gen).size();
-                result(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + size));
+                getResult(aEnvironment, aStackTop).setCons(Atom.getInstance(aEnvironment, "" + size));
                 return;
             }
-        //  CHK_ISLIST_CORE(aEnvironment,aStackTop,argumentPointer(aEnvironment, aStackTop, 1),1);
+        //  CHK_ISLIST_CORE(aEnvironment,aStackTop,getArgumentPointer(aEnvironment, aStackTop, 1),1);
         }
     }
 }

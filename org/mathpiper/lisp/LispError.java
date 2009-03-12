@@ -259,7 +259,7 @@ public class LispError
     {
         if (!aPredicate)
         {
-            ConsPointer arguments = BuiltinFunctionInitialize.argumentPointer(aEnvironment, aStackTop, 0);
+            ConsPointer arguments = BuiltinFunctionInitialize.getArgumentPointer(aEnvironment, aStackTop, 0);
             if (arguments.getCons() == null)
             {
                 throw new EvaluationException("Error in compiled code\n",-1);
@@ -300,7 +300,7 @@ public class LispError
     {
         if (!aPredicate)
         {
-            ConsPointer arguments = BuiltinFunctionInitialize.argumentPointer(aEnvironment, aStackTop, 0);
+            ConsPointer arguments = BuiltinFunctionInitialize.getArgumentPointer(aEnvironment, aStackTop, 0);
             if (arguments.getCons() == null)
             {
                 throw new EvaluationException("Error in compiled code\n",-1);
@@ -309,7 +309,7 @@ public class LispError
                 String error = "";
                 //TODO FIXME          ShowStack(aEnvironment);
                 error = error + showFunctionError(arguments, aEnvironment) + "\nbad argument number " + aArgNr + "(counting from 1) : \n" + aErrorDescription + "\n";
-                ConsPointer arg = BuiltinFunctionInitialize.argumentPointer(arguments, aArgNr);
+                ConsPointer arg = BuiltinFunctionInitialize.getArgumentPointer(arguments, aArgNr);
                 String strout;
 
                 error = error + "The offending argument ";

@@ -19,7 +19,7 @@
 package org.mathpiper.io;
 
 
-import org.mathpiper.*;
+import java.io.InputStreamReader;
 import org.mathpiper.io.StringInputStream;
 
 import java.net.*;
@@ -31,7 +31,7 @@ public class JarFileInputStream extends StringInputStream
 		super(new StringBuffer(),aStatus);
 		URL url = new URL(aFileName);
 		JarURLConnection con = (JarURLConnection) url.openConnection();
-		java.io.InputStream stream = con.getInputStream();
+		InputStreamReader stream = new InputStreamReader(con.getInputStream());
 		int c;
 		while (true)
 		{

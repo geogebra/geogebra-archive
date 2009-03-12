@@ -58,7 +58,7 @@ public class Evaluator extends EvalFuncBase
 
 		int stacktop = aEnvironment.iArgumentStack.getStackTopIndex();
 
-		// Push a place holder for the result: push full expression so it is available for error reporting
+		// Push a place holder for the getResult: push full expression so it is available for error reporting
 		aEnvironment.iArgumentStack.pushArgumentOnStack(aArguments.getCons());
 
 		ConsTraverser iter = new ConsTraverser(aArguments);

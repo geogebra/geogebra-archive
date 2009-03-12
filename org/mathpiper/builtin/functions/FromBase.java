@@ -35,21 +35,21 @@ public class FromBase extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         // Get the base to convert to:
-        // Evaluate first argument, and store result in oper
+        // Evaluate first argument, and store getResult in oper
         ConsPointer oper = new ConsPointer();
-        oper.setCons(argumentPointer(aEnvironment, aStackTop, 1).getCons());
-        // check that result is a number, and that it is in fact an integer
-        BigNumber num = oper.getCons().number(aEnvironment.getPrecision());
+        oper.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
+        // check that getResult is a number, and that it is in fact an integer
+        BigNumber num = oper.getCons().getNumber(aEnvironment.getPrecision());
         LispError.checkArgumentCore(aEnvironment, aStackTop, num != null, 1);
         // check that the base is an integer between 2 and 32
-        LispError.checkArgumentCore(aEnvironment, aStackTop, num.IsInt(), 1);
+        LispError.checkArgumentCore(aEnvironment, aStackTop, num.isInt(), 1);
 
         // Get a short platform integer from the first argument
-        int base = (int) (num.Double());
+        int base = (int) (num.toDouble());
 
         // Get the number to convert
         ConsPointer fromNum = new ConsPointer();
-        fromNum.setCons(argumentPointer(aEnvironment, aStackTop, 2).getCons());
+        fromNum.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
         String str2;
         str2 = fromNum.getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, str2 != null, 2);
@@ -60,6 +60,6 @@ public class FromBase extends BuiltinFunctionInitialize
 
         // convert using correct base
         BigNumber z = new BigNumber(str2, aEnvironment.getPrecision(), base);
-        result(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
+        getResult(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.Number(z));
     }
 }

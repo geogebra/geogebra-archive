@@ -34,7 +34,7 @@ public class Secure extends BuiltinFunctionInitialize
         aEnvironment.iSecure = true;
         try
         {
-            aEnvironment.iEvaluator.evaluate(aEnvironment, result(aEnvironment, aStackTop), argumentPointer(aEnvironment, aStackTop, 1));
+            aEnvironment.iEvaluator.evaluate(aEnvironment, getResult(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1));
         } catch (Exception e)
         {
             throw e;

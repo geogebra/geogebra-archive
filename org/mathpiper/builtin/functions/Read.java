@@ -38,6 +38,6 @@ public class Read extends BuiltinFunctionInitialize
                 aEnvironment.iPostfixOperators,
                 aEnvironment.iBodiedOperators);
         // Read expression
-        parser.parse(result(aEnvironment, aStackTop));
+        parser.parse(getResult(aEnvironment, aStackTop));
     }
 }

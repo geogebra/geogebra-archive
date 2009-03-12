@@ -32,15 +32,15 @@ public class HoldArg extends BuiltinFunctionInitialize
     public void eval(Environment aEnvironment, int aStackTop) throws Exception
     {
         // Get operator
-        LispError.checkArgumentCore(aEnvironment, aStackTop, argumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
-        String orig = argumentPointer(aEnvironment, aStackTop, 1).getCons().string();
+        LispError.checkArgumentCore(aEnvironment, aStackTop, getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
+        String orig = getArgumentPointer(aEnvironment, aStackTop, 1).getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, orig != null, 1);
 
         // The arguments
-        String tohold = argumentPointer(aEnvironment, aStackTop, 2).getCons().string();
+        String tohold = getArgumentPointer(aEnvironment, aStackTop, 2).getCons().string();
         LispError.checkArgumentCore(aEnvironment, aStackTop, tohold != null, 2);
         aEnvironment.holdArgument(UtilityFunctions.symbolName(aEnvironment, orig), tohold);
         // Return true
-        UtilityFunctions.internalTrue(aEnvironment, result(aEnvironment, aStackTop));
+        UtilityFunctions.internalTrue(aEnvironment, getResult(aEnvironment, aStackTop));
     }
 }
