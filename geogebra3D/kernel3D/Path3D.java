@@ -16,6 +16,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Path;
 import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix4x4;
 
 /**
  * @author Markus Hohenwarter + ggb3D
@@ -23,34 +24,6 @@ import geogebra3D.Matrix.Ggb3DMatrix;
 public interface Path3D extends Path {
 	
 
-	
-	/**
-	 * Sets coords of P and its path parameter when
-	 * the coords of P have changed.
-	 * Afterwards P lies on this path.
-	 * 
-	 * Note: P.setCoords() is not called!
-	 */
-	public void pointChanged(GeoPointInterface PI);
-	
-	/**
-	 * Sets coords of P and its path parameter
-	 * when this path has changed.
-	 * Afterwards P lies on this path.
-	 * 
-	 * Note: P.setCoords() is not called!
-	 */
-	public void pathChanged(GeoPointInterface PI);
-	
-	/**
-	 * Returns true if the given point lies on this path.
-	 */	
-	public boolean isOnPath(GeoPointInterface PI, double eps);
-	
-	/**
-	 * Returns this path as an object of type GeoElement.
-	 */
-	public GeoElement toGeoElement();
 	
 
 	/**
@@ -66,7 +39,10 @@ public interface Path3D extends Path {
 	
 	
 	
-	/** returns matrix for moving the point in the screen view */
-	public Ggb3DMatrix getMovingMatrix(Ggb3DMatrix toScreenMatrix);
+	/** returns matrix describing a plane in the real world, 
+	 * for moving the point, according to the screen view 
+	 * (for using mouse moving)
+	 * */
+	public Ggb3DMatrix4x4 getMovingMatrix(Ggb3DMatrix4x4 toScreenMatrix);
 	
 }

@@ -155,9 +155,9 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	
 	
 	
-	public Ggb3DMatrix getMovingMatrix(Ggb3DMatrix toScreenMatrix){
+	public Ggb3DMatrix4x4 getMovingMatrix(Ggb3DMatrix4x4 toScreenMatrix){
 		
-		Ggb3DMatrix ret = toScreenMatrix.mul(getMatrix4x4());
+		Ggb3DMatrix4x4 ret = toScreenMatrix.mul(getMatrix4x4());
 		
 		Ggb3DVector V = ret.getColumn(1); //gets direction vector of the path
 		Ggb3DVector Vn1 = new Ggb3DVector(4); 

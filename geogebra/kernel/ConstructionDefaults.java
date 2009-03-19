@@ -50,9 +50,9 @@ public class ConstructionDefaults {
 		
 	// DEFAULT COLORs
 	// points
-	private static final Color colPoint = Color.blue;
-	private static final Color colDepPoint = Color.darkGray;
-	private static final Color colPathPoint = new Color(125, 125, 255);
+	public static final Color colPoint = Color.blue;
+	public static final Color colDepPoint = Color.darkGray;
+	public static final Color colPathPoint = new Color(125, 125, 255);
 
 	// lines
 	private static final Color colLine = Color.black;

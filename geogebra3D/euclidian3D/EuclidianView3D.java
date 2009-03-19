@@ -9,6 +9,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.View;
 import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -64,8 +65,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	//matrix for changing coordinate system
-	private Ggb3DMatrix m = Ggb3DMatrix.Identity(4); 
-	private Ggb3DMatrix mInv = Ggb3DMatrix.Identity(4);
+	private Ggb3DMatrix4x4 m = Ggb3DMatrix4x4.Identity(); 
+	private Ggb3DMatrix4x4 mInv = Ggb3DMatrix4x4.Identity();
 	int a = 0;
 	int b = 0;//angles
 	int aOld, bOld;
@@ -321,12 +322,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	final public Ggb3DMatrix getToSceneMatrix(){
-		return mInv.copy();
+	final public Ggb3DMatrix4x4 getToSceneMatrix(){
+		//return mInv.copy();
+		return mInv;
 	}
 	
-	final public Ggb3DMatrix getToScreenMatrix(){
-		return m.copy();
+	final public Ggb3DMatrix4x4 getToScreenMatrix(){
+		//return m.copy();
+		return m;
 	}	
 	
 	
@@ -335,6 +338,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * set Matrix for view3D
 	 */	
 	public void updateMatrix(){
+		
+		//TODO use Ggb3DMatrix4x4
+		
 		//rotations
 		Ggb3DMatrix m1 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.X_AXIS, this.b*EuclidianController3D.ANGLE_SCALE - Math.PI/2.0);
 		Ggb3DMatrix m2 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.Z_AXIS, this.a*EuclidianController3D.ANGLE_SCALE);
@@ -346,9 +352,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		Ggb3DMatrix m5 = Ggb3DMatrix.TranslationMatrix(new double[] {getXZero(),getYZero(),getZZero()});
 		
-		m = m5.mul(m3.mul(m4));	
+		m.set(m5.mul(m3.mul(m4)));	
 		
-		mInv = m.inverse();
+		mInv.set(m.inverse());
 		
 		//Application.debug("m = "); m.SystemPrint();
 		

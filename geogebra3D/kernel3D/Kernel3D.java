@@ -15,6 +15,7 @@ package geogebra3D.kernel3D;
 
 
 
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
@@ -103,7 +104,8 @@ public class Kernel3D
 	final public GeoPoint3D Point3D(String label, double x, double y, double z) {
 		GeoPoint3D p = new GeoPoint3D(cons);
 		p.setCoords(x, y, z, 1.0);
-		p.setLabel(label); // invokes add()                
+		p.setLabel(label); // invokes add()        
+		p.setObjColor(ConstructionDefaults.colPoint);
 		return p;
 	}
 	
@@ -119,16 +121,18 @@ public class Kernel3D
 	final public GeoPoint3D Point3D(String label, Path3D path, double x, double y, double z) {
 		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, x, y, z);
 		GeoPoint3D p = algo.getP();		
-		p.setLabel(label);               
+		p.setLabel(label);
+		p.setObjColor(ConstructionDefaults.colPathPoint);
 		return p;
 	}	
 	
 	/** Point3D on a 1D path without cartesian coordinates   */
 	final public GeoPoint3D Point3D(String label, Path3D path) {
 		// try (0,0,0)
-		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, 0, 0, 0);
-		GeoPoint3D p = algo.getP(); 
-		
+		//AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, 0, 0, 0);
+		//GeoPoint3D p = algo.getP(); 
+		GeoPoint3D p = Point3D(label,path,0,0,0);
+			
 		/* TODO below
 		// try (1,0,0) 
 		if (!p.isDefined()) {
@@ -142,7 +146,8 @@ public class Kernel3D
 			algo.update();
 		}
 		*/
-		
+
+
 		return p;
 	}	
 	

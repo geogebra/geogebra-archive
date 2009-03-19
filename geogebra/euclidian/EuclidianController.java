@@ -2580,7 +2580,8 @@ public class EuclidianController implements MouseListener,
 				point = createNewPoint();
 				view.setShowMouseCoords(true);
 			} else {
-				point = kernel.Point(null, path, xRW, yRW);
+				//point = kernel.Point(null, path, xRW, yRW);
+				point = createNewPoint(path);
 			}
 		}
 
@@ -2605,6 +2606,10 @@ public class EuclidianController implements MouseListener,
 	
 	protected GeoPointInterface createNewPoint(){
 		return kernel.Point(null, xRW, yRW);
+	}
+	
+	protected GeoPointInterface createNewPoint(Path path){
+		return kernel.Point(null, path, xRW, yRW);
 	}
 	
 	
