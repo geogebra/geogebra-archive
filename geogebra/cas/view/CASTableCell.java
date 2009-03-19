@@ -19,8 +19,10 @@ public abstract class CASTableCell extends JPanel {
 	private CASLinePanel linePanel;
 	private CASTable consoleTable;
 	protected Application app;
+	protected CASView view;
 
 	public CASTableCell(CASView view) {
+		this.view = view;
 		this.app = view.getApp();
 		this.consoleTable = view.getConsoleTable();
 		

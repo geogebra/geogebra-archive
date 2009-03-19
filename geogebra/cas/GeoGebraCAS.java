@@ -62,7 +62,7 @@ public class GeoGebraCAS {
 	 * @boolean doEvaluate: whether inputExp should be evaluated (i.e. simplified).
 	 * @return null if something went wrong.
 	 */
-	public synchronized String processCASInput(String inputExp, boolean doEvaluate, boolean resolveVariables) throws Throwable {
+	public synchronized String processCASInput(String inputExp, boolean resolveVariables) throws Throwable {
 		// replace #1, #2 references by row input
 		inputExp = resolveCASrowReferences(inputExp);
 		
@@ -71,24 +71,16 @@ public class GeoGebraCAS {
 		
 		// check for assignment, e.g. a := 5
 		String assignmentLabel = ve.getLabel();
-		doEvaluate = doEvaluate || assignmentLabel != null; // always evaluate assignments
 		
 		// convert parsed input to MathPiper string
 		String MathPiperString = toMathPiperString(ve, resolveVariables);
 		
-		// EVALUATE input in MathPiper depending on key combination
-		String MathPiperResult;
-		if (doEvaluate) {
-			MathPiperResult = evaluateMathPiper(MathPiperString);
-		}
-		else {
-			MathPiperResult = evaluateMathPiper("Hold", MathPiperString);
-		}
-		
+		// EVALUATE input in MathPiper 
+		String MathPiperResult = evaluateMathPiper(MathPiperString);
+				
 		// convert MathPiper result back into GeoGebra syntax
 		ve = parseMathPiper(MathPiperResult);
-		String ggbResult = ve.toString();
-		
+		String ggbResult = ve.toString();		
 		
 		// if we evaluated an assignment, we may need to update a global variable 
 		if (assignmentLabel != null) {
@@ -160,7 +152,7 @@ public class GeoGebraCAS {
 	public synchronized String toMathPiperString(ValidExpression ve, boolean resolveVariables) {
 		
 		// resolve global variables
-		if (resolveVariables) {			
+		if (resolveVariables) {				
 			casParser.resolveVariablesForCAS(ve);
 			
 			// TODO: remove

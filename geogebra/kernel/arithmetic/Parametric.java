@@ -32,9 +32,17 @@ public class Parametric extends ValidExpression {
      * Creates new Parametric P + parameter * v.
      * (X = P + parameter * v)
      */
-    public Parametric(Kernel kernel, ExpressionNode P, ExpressionNode v, String parameter) {
-        this.P = P;
-        this.v = v;        
+    public Parametric(Kernel kernel, ExpressionValue P, ExpressionValue v, String parameter) {
+    	if (P.isExpressionNode())
+    		this.P = (ExpressionNode) P;
+    	else
+    		this.P = new ExpressionNode(kernel, P);
+    	
+    	if (v.isExpressionNode())
+    		this.v = (ExpressionNode) v;
+    	else
+    		this.v = new ExpressionNode(kernel, v);
+        
         this.parameter = parameter;  
         this.kernel = kernel;
     }

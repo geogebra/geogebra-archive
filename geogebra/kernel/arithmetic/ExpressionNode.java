@@ -349,7 +349,44 @@ implements ExpressionValue {
                 node.simplifyConstants();
         }             
     }
-       
+    
+    /**
+     *  Expands equation expressions like (3*x + 2 = 5) / 2 to (3*x + 2)/2 = 5/2.
+     */         
+    final public ExpressionValue expandEquationExpressions() {    
+    	if (leaf) return this;
+    	
+    	if (left.isExpressionNode()) {
+    		left = ((ExpressionNode) left).expandEquationExpressions();
+        }
+    	if (right.isExpressionNode()) {
+    		right = ((ExpressionNode) right).expandEquationExpressions();
+        }
+    	    	
+    	switch (operation) {
+	    	case PLUS:	  
+	    	case MINUS:
+	    	case MULTIPLY:
+	    	case DIVIDE:
+	    		// equ <operation> val 
+	    		if (left instanceof Equation) {	    			
+	    			((Equation) left).applyOperation(operation, right, false);
+	    			leaf = true;
+	    			right = null;
+	        	}
+	    		// val <operation> equ  
+	    		else if (right instanceof Equation) {
+	    			((Equation) right).applyOperation(operation, left, true);
+	    			left = right;
+	    			right = null;
+	    			leaf = true;
+	    		}
+	    		break;	    		
+    	}
+    	
+    	return this;
+    }
+    
      /**
      * interface ExpressionValue implementation
      */         

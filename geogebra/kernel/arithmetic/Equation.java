@@ -36,9 +36,17 @@ public class Equation extends ValidExpression {
     /** check whether ExpressionNodes are evaluable to instances of Polynomial
      * or NumberValue and build an Equation out of them
      */
-    public Equation(Kernel kernel, ExpressionNode lhs, ExpressionNode rhs) {
-    	this.lhs = lhs;
-    	this.rhs = rhs;
+    public Equation(Kernel kernel, ExpressionValue lhs, ExpressionValue rhs) {
+    	if (lhs.isExpressionNode())
+    		this.lhs = (ExpressionNode) lhs;
+    	else
+    		this.lhs = new ExpressionNode(kernel, lhs);
+    	
+    	if (rhs.isExpressionNode())
+    		this.rhs = (ExpressionNode) rhs;
+    	else
+    		this.rhs = new ExpressionNode(kernel, rhs);
+    
     	this.kernel = kernel;    	    	
     }  
     
@@ -48,6 +56,34 @@ public class Equation extends ValidExpression {
     
     public ExpressionNode getLHS() {
     	return lhs;
+    }
+    
+    /**
+     * Adds/subtracts/muliplies/divides ev to this equation to get lhs + ev = rhs = ev
+     */
+    public void applyOperation(int operation, ExpressionValue ev, boolean switchOrder) {
+    	ExpressionValue left, right;
+    	
+    	if (ev instanceof Equation) {
+    		Equation equ = (Equation) ev;
+    		left = equ.lhs;
+        	right = equ.rhs; 
+    	} else {
+    		left = ev;
+        	right = ev;     		
+    	}
+    	
+    	if (switchOrder) {
+    		// ev <operation> equ
+    		lhs = new ExpressionNode(kernel, left, operation, lhs);
+    		rhs = new ExpressionNode(kernel, right, operation, rhs);
+    	} 
+    	else {
+    		// equ <operation> ev
+    		lhs = new ExpressionNode(kernel, lhs, operation, left);
+    		rhs = new ExpressionNode(kernel, rhs, operation, right);
+    	}
+    	
     }
     
     /**

@@ -1,6 +1,8 @@
 package geogebra.cas.view;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.EventObject;
 
@@ -8,21 +10,23 @@ import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
+import javax.swing.text.JTextComponent;
 
 //public class CASTableCellEditor extends DefaultCellEditor implements
 //		TableCellEditor {
-public class CASTableCellEditor extends CASTableCell implements TableCellEditor {
+public class CASTableCellEditor extends CASTableCell implements TableCellEditor, KeyListener {
 	
 	private JTable table;
 	
 	private CASTableCellValue cellValue;
 	private boolean editing = false;
 	private int editingRow;
-	
+		
 	private ArrayList listeners = new ArrayList();
 
 	public CASTableCellEditor(CASView view) {
 		super(view);
+		getInputArea().addKeyListener(this);
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
@@ -43,6 +47,10 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 		return this;
 	}	
 	
+	public String getInputText() {	
+		return getInputArea().getText();
+	}
+	
 	public String getInputSelectedText() {	
 		return getInputArea().getSelectedText();
 	}
@@ -54,6 +62,11 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 	public int getInputSelectionEnd() {	
 		return getInputArea().getSelectionEnd();
 	}	
+	
+	public void insertText(String text) {
+		getInputArea().replaceSelection(text);
+		getInputArea().requestFocusInWindow();
+	}
 		
 	public boolean stopCellEditing() {	
 		// update cellValue's input using editor content
@@ -119,6 +132,38 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor 
 
 	public boolean shouldSelectCell(EventObject anEvent) {
 		return true;
+	}
+
+	
+	public void keyPressed(KeyEvent arg0) {
+		
+	}
+
+	public void keyReleased(KeyEvent arg0) {
+
+	}
+
+	public void keyTyped(KeyEvent e) {
+		char ch = e.getKeyChar();
+		JTextComponent inputArea = getInputArea();
+		String text = inputArea.getText();
+		
+		// space typed: get output of previous row
+		if (editingRow > 0 && ch == ' ' && text.length() == 0) {
+			CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+			inputArea.setText(selCellValue.getOutput());
+		}
+		
+		// if closing paranthesis is typed and there is no opening parenthesis for it
+		// add one in the beginning
+		switch (ch){
+			// closing parentheses: insert opening parenthesis automatically
+			case ')': 								
+				if (text.indexOf('(') < 0)
+					inputArea.setText('(' + text);
+				break;
+							
+		}
 	}
 
 	

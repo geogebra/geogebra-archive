@@ -17,8 +17,6 @@ public class CASTableCellController implements KeyListener {
 	private CASTable table;
 	private CASTableCellEditor tableCellEditor;
 	private Thread evalThread;
-	
-	public final String yacasErrorMsg = "CAS.GeneralErrorMessage";
 
 	public CASTableCellController(CASView view) {		
 		this.view = view;
@@ -123,46 +121,13 @@ public class CASTableCellController implements KeyListener {
 	 * Enter checks the syntax of the input only. Shift+Enter evaluates the input 
 	 */
 	private synchronized void handleEnterKey(KeyEvent e) {
-		table.stopEditing();
-		String inputText = table.getCASTableCellValue(table.getSelectedRow()).getInput();
-		if (inputText == null || inputText.length() == 0) return;				
-				
-		// Get the input from the user interface
-		int selectedRow = table.getSelectedRow();					
-		CASTableCellValue curValue = table.getCASTableCellValue(selectedRow);				
-		GeoGebraCAS ggbCAS = view.getCAS();
-		
-		// process input
-		String evaluation = null;
-		String error = null;
-		try {
-			// Enter: evaluate
-			// Shift + Enter: do not evaluate, only check syntax of input
-			boolean evaluate = !e.isShiftDown();
-			
-			// provess input string
-			evaluation = ggbCAS.processCASInput(inputText, evaluate, view.isUseGeoGebraVariableValues());
-			
-			if (evaluation == null)
-				error = ggbCAS.getMathPiperError();
-			
-		} catch (Throwable th) {
-			error = view.getApp().getError(yacasErrorMsg);
-			th.printStackTrace();
-		}
-		
-
-		// Set the value into the table		
-		if (evaluation != null)	{
-			curValue.setOutput(evaluation);
+		if (e.isShiftDown()) {
+			// Hold
+			view.apply("Hold", null);	
 		} else {
-			curValue.setOutput(error, true);			
-		}
-		
-		table.updateRow(selectedRow);
-		
-		// start editing next row (may create a new row)
-		table.startEditingRow(selectedRow + 1);		
+			// Eval
+			view.apply("Eval", null);
+		}		
 	}
 	
 

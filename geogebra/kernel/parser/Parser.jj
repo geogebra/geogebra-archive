@@ -560,7 +560,7 @@ Vector labellist():
  */
 Parametric parametric():
 {         
-    ExpressionNode P, v;
+    ExpressionValue P, v;
     ExpressionValue temp;
     Token s, par;    
 }
@@ -834,7 +834,7 @@ ValidExpression  functionOrCommand():
  */
 ExpressionNode expressionnode():
 {
-    ExpressionNode ret, f;
+    ExpressionValue ret, f;
     Token x;
 }
 {
@@ -845,18 +845,25 @@ ExpressionNode expressionnode():
         }
     )*
     { 
+    	ExpressionNode en;
+    	if (ret.isExpressionNode())
+    		en = (ExpressionNode) ret;
+    	else
+    		en = new ExpressionNode(kernel, ret);
+    	
+    	en.expandEquationExpressions();
     	if (MathPiperParsing)
-    			ret.simplifyLeafs();
-    	return ret; 
+    			en.simplifyLeafs();
+    	return en; 
     }
 }
 
 /**
  * ANDterm =   COMPAREterm <AND> COMPAREterm 
  */
-ExpressionNode ANDterm():
+ExpressionValue ANDterm():
 {
-    ExpressionNode ret, f;
+    ExpressionValue ret, f;
     Token x;    
 }
 {
@@ -872,9 +879,9 @@ ExpressionNode ANDterm():
 /**
  * COMPAREterm =   plusminusnode ("==" | "<" | "<=" | ">" | ">=") plusminusnode 
  */
-ExpressionNode COMPAREterm():
+ExpressionValue COMPAREterm():
 {
-    ExpressionNode ret, f;
+    ExpressionValue ret, f;
     Token x;    
 }
 {
@@ -938,9 +945,9 @@ ExpressionNode COMPAREterm():
  *  expression =    term + term |
  *                  term - term
  */
-ExpressionNode plusminusnode():
+ExpressionValue plusminusnode():
 {
-    ExpressionNode ret, f;
+    ExpressionValue ret, f;
     Token x;
 }
 {
@@ -963,9 +970,9 @@ ExpressionNode plusminusnode():
  * term =   unary * unary  |
  *          unary / unary
  */
-ExpressionNode enterm():
+ExpressionValue enterm():
 {
-    ExpressionNode ret, f;
+    ExpressionValue ret, f;
     Token x;    
 }
 {
@@ -995,9 +1002,9 @@ ExpressionNode enterm():
  * 	        +power    | 	
  *          power
  */
-ExpressionNode enunary():        
+ExpressionValue enunary():        
 {
-    ExpressionNode e;
+    ExpressionValue e;
 }
 {
     <MINUS> e = enpower()
@@ -1020,9 +1027,9 @@ ExpressionNode enunary():
  * power =    element                 |
  *          element ^ power           
  */
-ExpressionNode enpower():
+ExpressionValue enpower():
 {
-    ExpressionNode ret, f;    
+    ExpressionValue ret, f;    
 }
 {	
     ret = enfactorial()         
@@ -1090,12 +1097,15 @@ ExpressionNode enpower():
     	(LOOKAHEAD(<POWER>) <POWER> f = enunary()
         {            
         	// check if we have e^
-        	if (ret.isLeaf() &&  ret.getLeft() instanceof MyDouble) {
-        		MyDouble num = (MyDouble) ret.getLeft();
-        		if (num.getDouble() == Math.E) {      	
-        	    	return new ExpressionNode(kernel, f, ExpressionNode.EXP, null);        		
-        		} 
-        	}       
+        	if (ret.isExpressionNode()) {
+        		ExpressionNode en = (ExpressionNode) ret;
+	        	if (en.isLeaf() &&  en.getLeft() instanceof MyDouble) {
+	        		MyDouble num = (MyDouble) en.getLeft();
+	        		if (num.getDouble() == Math.E) {      	
+	        	    	return new ExpressionNode(kernel, f, ExpressionNode.EXP, null);        		
+	        		} 
+	        	}       
+        	}
         	
         	// standard case ret^f
             return new ExpressionNode(kernel, ret, ExpressionNode.POWER, f);                              
@@ -1109,9 +1119,9 @@ ExpressionNode enpower():
  * factorial =  <NOTterm> |
  *              <NOTterm> !
  */
-ExpressionNode enfactorial():
+ExpressionValue enfactorial():
 {   
-    ExpressionNode en;   
+    ExpressionValue en;   
 }
 {     
 	    en = NOTterm() 
@@ -1127,9 +1137,9 @@ ExpressionNode enfactorial():
  * NOTterm =  <NOT> <enelement> |
  *               	<enelement>
  */
-ExpressionNode NOTterm():
+ExpressionValue NOTterm():
 {   
-    ExpressionNode en;   
+    ExpressionValue en;   
 }
 {     
 	(
@@ -1150,9 +1160,8 @@ ExpressionNode NOTterm():
  *              <float>         |
  *              ( expression )
  */
-ExpressionNode enelement():
+ExpressionValue enelement():
 {    
-    ExpressionNode en;
     ExpressionValue ev;
     double num;
     MyDouble myDouble;
@@ -1161,56 +1170,61 @@ ExpressionNode enelement():
 {   
 // boolean
 	<TRUE>
-	 { return new ExpressionNode(kernel, new MyBoolean(true)); }     
+	 { return  new MyBoolean(true); }     
 |
 	<FALSE>
-	  { return new ExpressionNode(kernel, new MyBoolean(false)); }     
+	  { return new MyBoolean(false); }     
 |	 	 
  // number
     myDouble = myDouble()
-        { return new ExpressionNode(kernel, myDouble); }      
+        { return myDouble; }      
 |
     // cos, sin, tan, ...
     LOOKAHEAD(2147483647)
-    en = numberFunction()
-         { return en; }
+    ev = numberFunction()
+         { return ev; }
 |
 	// command
 	LOOKAHEAD(2147483647)
     ev = command()
-        { return new ExpressionNode(kernel, ev); } 
+        { return ev; } 
 |
     // number or vector variable
      LOOKAHEAD(2147483647)
-    en = numVecVariable()
-        { return en; }
+    ev = numVecVariable()
+        { return ev; }
 |        
     //list
     LOOKAHEAD(2147483647)
 	ev = list()
-	    { return new ExpressionNode(kernel, ev); }      
+	    { return ev; }      
+| 
+ // equation
+    LOOKAHEAD(2147483647)
+    "("  ev = equation()  ")" 
+        { return ev; }       
 |
     // parenthesis
     LOOKAHEAD(2147483647)
-    "("  en = expressionnode()  ")" 
-        { return  en; }       	           
+    "("  ev = expressionnode()  ")" 
+        { return  ev; }       	           
 |
     // cartesian vector  (x, y) or (x|y)
     LOOKAHEAD(2147483647)
     ev = cartesianvector()
-        { return new ExpressionNode(kernel, ev); } 
+        { return ev; } 
 |    
     // polar vector   
     LOOKAHEAD(2147483647)
     ev = polarvector()
-        { return new ExpressionNode(kernel, ev); } 
+        { return ev; } 
  |
 	// text (between " ... ")
 	c = <TEXT>
     { 
     	// remove " (first and last character)
     	String text = c.image.substring(1, c.image.length()-1);
-    	return new ExpressionNode(kernel, new MyStringBuffer(text));
+    	return  new MyStringBuffer(text);
      }  
 }
 
@@ -1248,7 +1262,7 @@ ExpressionValue list():
     
 }
 
-ExpressionNode numVecVariable():
+ExpressionValue numVecVariable():
 {
     GeoElement geo;
     Token c, c2;
@@ -1256,12 +1270,12 @@ ExpressionNode numVecVariable():
 {
     c = <VARX>  
     {
-        return new ExpressionNode(kernel, new Polynomial(kernel, c.image));
+        return new Polynomial(kernel, c.image);
     }
 |
     c = <VARY>  
     {
-        return new ExpressionNode(kernel, new Polynomial(kernel, c.image));
+        return new Polynomial(kernel, c.image);
     }
 |
 	// spreadsheet range like A1:B2
@@ -1274,13 +1288,13 @@ ExpressionNode numVecVariable():
 		Command cmd = new Command(kernel, "CellRange", false ); // don't translate name
 		cmd.addArgument(startCell);
 		cmd.addArgument(endCell);
-		return new ExpressionNode(kernel, cmd);
+		return cmd;
 	}
 |
     ( c = <ANY_LABEL> )
     {   
     	// standard case for variable
-        return new ExpressionNode(kernel, new Variable(kernel, c.image));
+        return new Variable(kernel, c.image);
     }
 }
 

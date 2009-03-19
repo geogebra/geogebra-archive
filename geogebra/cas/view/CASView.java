@@ -8,13 +8,10 @@ import geogebra.main.CasManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -24,12 +21,8 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 /**
  * A class which will give the view of the CAS
@@ -55,36 +48,31 @@ public class CASView extends JComponent implements CasManager {
 
 	private GeoGebraCAS cas;
 
-	private JButton btSub, btEval, btExp, btFactor;
-
 	private final int numOfRows = 1;
-	
-	private static final int SUB_Flag = 0;
-	private static final int EVAL_Flag = 1;
-	private static final int EXP_Flag = 2;
-	private static final int FAC_Flag = 3;
+
 
 	public CASView(Application app) {
 		kernel = app.getKernel();
 		this.app = app;
 		
 		// init cas
-		cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();			
+		cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();	
+		Thread casInit = new Thread() {
+			public void run() {
+				cas.evaluateMathPiper("Simplify(1+1)");
+			}
+		};
+		casInit.start();
 		
 		setLayout(new BorderLayout());
 		
 		// button panel
-		initButtons();
-		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		btPanel.add(btEval);
-		btPanel.add(btExp);
-		btPanel.add(btFactor);
-		btPanel.add(btSub);	
-		//add(btPanel, BorderLayout.NORTH);
+		JPanel btPanel = initButtons();		
+		add(btPanel, BorderLayout.NORTH);
 		
 		// Ulven 01.03.09: excange line 90-97 with:
 		// BtnPanel which sets up all the button.
-		add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
+		//add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
 		
 		// CAS input/output cells
 		createCASTable();
@@ -325,31 +313,53 @@ public class CASView extends JComponent implements CasManager {
 	}
 
 	//Ulven 01.03.09: Drop this, do it in components.BtnPanel
-	private void initButtons() {
-		JButton ret = null;
+	private JPanel initButtons() {	
+		ActionListener ac = new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {					
+				apply(ae.getActionCommand(), null);
+			}	
+		};
 		
-		ButtonListener btListener = new ButtonListener();
+		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));	
 		
 		// evaluate
-		btEval = new JButton("=");
-		btEval.setActionCommand("Simplify");
-		btEval.addActionListener(btListener);
+		JButton btEval = new JButton("=");
+		btEval.setActionCommand("Eval");
+		btEval.addActionListener(ac);
+		btPanel.add(btEval);
+		
+		// hold
+		JButton btHold = new JButton("\u2713");
+		btHold.setActionCommand("Hold");
+		btHold.addActionListener(ac);
+		btPanel.add(btHold);
+		
+		// group terms
+		JButton btGroup = new JButton(app.getPlain("GroupTerms"));
+		btGroup.setActionCommand("Simplify");
+		btGroup.addActionListener(ac);
+		btPanel.add(btGroup);
 
 		// expand
-		btExp = new JButton(app.getPlain("Expand"));
+		JButton btExp = new JButton(app.getPlain("Expand"));
 		btExp.setActionCommand("Expand");
-		btExp.addActionListener(btListener);
+		btExp.addActionListener(ac);
+		btPanel.add(btExp);
 
 		// factor
-		btFactor = new JButton("Factor");
+		JButton btFactor = new JButton(app.getPlain("Factor"));
 		btFactor.setActionCommand("Factor");
-		btFactor.addActionListener(btListener);
+		btFactor.addActionListener(ac);
+		btPanel.add(btFactor);	
 		
 		// substitute
-		btSub = new JButton(app.getPlain("Substitute"));
-		btSub.setActionCommand("Subsim");
-		btSub.addActionListener(btListener);
-
+		JButton btSub = new JButton(app.getPlain("Substitute"));
+		btSub.setActionCommand("Substitute");
+		btSub.addActionListener(ac);
+		btPanel.add(btSub);
+	
+						
+		return btPanel;	
 	}
 
 	// Ulven 01.03.09:
@@ -362,7 +372,9 @@ public class CASView extends JComponent implements CasManager {
 	 *  Copied from apply(int mod)
 	 */	
 	public void apply(String ggbcmd,String[] params){
+		// TODO: remove
 		System.out.println(ggbcmd);
+		
 		// get editor and possibly selected text
 		CASTableCellEditor cellEditor = consoleTable.getEditor();
 		String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
@@ -379,10 +391,7 @@ public class CASView extends JComponent implements CasManager {
 		// get current row and input text		
 		int selRow = consoleTable.getSelectedRow();			
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
-		String selRowInput = cellValue.getInput();
-		
-		// always use same cell for output
-		CASTableCellValue outputCellValue = cellValue;
+		String selRowInput = cellValue.getInput();		
 		
 		// break text into prefix, evalText, postfix
 		String prefix, evalText, postfix;			
@@ -403,169 +412,49 @@ public class CASView extends JComponent implements CasManager {
 		// TODO: remove
 		System.out.println("SELECTED ROW: " + selRow + ", prefix: " + prefix + ", evalText: " + evalText + ", postfix: " + postfix);					
 
-		/* ToDo:
-		switch (mod) {
-			case SUB_Flag:
-				// Create a CASSubDialog with the cell value
-				CASSubDialog d = new CASSubDialog(CASView.this, cellValue, selectedText, selRow);
-				d.setVisible(true);
-				return;
-		 */	
-		evalText=ggbcmd+"["+evalText+"]";
-		
-		// process evalText
-		String result;
-		boolean error;
-		try {
-			evalText = cas.processCASInput(evalText, true, useGeoGebraVariableValues);
-			result = prefix + evalText + postfix;	
-			error = false;
-		} catch (Throwable e) {					
-			e.printStackTrace();	
-			result = cas.getMathPiperError();
-			error = true;
+		// handle action command string
+		if (ggbcmd.equals("Substitute")) {
+			// Create a CASSubDialog with the cell value
+			CASSubDialog d = new CASSubDialog(CASView.this, cellValue, selectedText, selRow);
+			d.setVisible(true);
+			return;
 		}
-								
+		else {
+			// use action command as command for mathpiper
+			evalText=ggbcmd+"["+evalText+"]";
+		}
+									
+		// process evalText
+		String evaluation = null;
+		String error = null;
+		try {
+			// evaluate
+			evaluation = cas.processCASInput(evalText, useGeoGebraVariableValues);
 			
-//		if (hasSelectedText || error) {
-//			outputCellValue.setInput(selRowInput);						
-//			outputCellValue.setOutput(result, error);
-//			consoleTable.updateRow(selRow);
-//			consoleTable.startEditingRow(selRow);
-//		} else {				
-//			outputCellValue.setInput(result);										
-//			consoleTable.insertRowAfter(selRow, outputCellValue);				
-//		}		
+			if (evaluation == null)
+				error = cas.getMathPiperError();			
+		} catch (Throwable th) {
+			error = app.getError("CAS.GeneralErrorMessage");
+			th.printStackTrace();
+		}
 		
-		// update output cell	
-		outputCellValue.setInput(selRowInput);						
-		outputCellValue.setOutput(result, error);
+		// Set the value into the table		
+		if (evaluation != null)	{
+			cellValue.setOutput(prefix + evaluation + postfix);
+		} else {
+			cellValue.setOutput(error, true);			
+		}
+		
 		consoleTable.updateRow(selRow);
-		//consoleTable.startEditingRow(selRow);
 		
-		// create new empty row
-		consoleTable.insertRowAfter(selRow, null);
+		if (evaluation != null)	
+			// start editing next row (may create a new row)
+			consoleTable.startEditingRow(selRow + 1);
+		else
+			consoleTable.startEditingRow(selRow);
 		
 	}//apply(String,String[]
-	
-	protected class ButtonListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent ae) {
-			
-			
-			Object src = ae.getSource();
-			if (src == btSub) {
-				apply(SUB_Flag);
-			} else if (src == btEval) {
-				apply(EVAL_Flag);
-			} else if (src == btExp) {
-				apply(EXP_Flag);
-			} else if (src == btFactor) {
-				apply(FAC_Flag);
-			}
-
-		}
 		
-		private void apply(int mod) {				
-			// get editor and possibly selected text
-			CASTableCellEditor cellEditor = consoleTable.getEditor();
-			String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
-			int selStart = cellEditor.getInputSelectionStart();
-			int selEnd = cellEditor.getInputSelectionEnd();
-			
-			// TODO: remove
-			System.out.println("selectedText: " + selectedText + ", selStart: " + selStart + ", selEnd: " + selEnd);					
-		
-			
-			// save the edited value into the table model
-			consoleTable.stopEditing();
-			
-			// get current row and input text		
-			int selRow = consoleTable.getSelectedRow();			
-			CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
-			String selRowInput = cellValue.getInput();
-			
-			// always use same cell for output
-			CASTableCellValue outputCellValue = cellValue;
-			
-			// break text into prefix, evalText, postfix
-			String prefix, evalText, postfix;			
-			boolean hasSelectedText = selectedText == null || selectedText.trim().length() == 0;
-			if (hasSelectedText) {
-				// no selected text: evaluate input using current cell
-				prefix = "";
-				evalText = selRowInput;
-				postfix = "";		
-			}
-			else {
-				// selected text: break it up into prefix, evalText, and postfix
-				prefix = selRowInput.substring(0, selStart);
-				evalText = selectedText;
-				postfix = selRowInput.substring(selEnd);
-			}
-						
-			// TODO: remove
-			System.out.println("SELECTED ROW: " + selRow + ", prefix: " + prefix + ", evalText: " + evalText + ", postfix: " + postfix);					
-	
-			switch (mod) {
-				case SUB_Flag:
-					// Create a CASSubDialog with the cell value
-					CASSubDialog d = new CASSubDialog(CASView.this, cellValue, selectedText, selRow);
-					d.setVisible(true);
-					return;
-					
-				case EVAL_Flag:	
-					evalText = "Simplify[" + evalText + "]";				
-					break;
-					
-				case EXP_Flag:
-					evalText = "Expand[" + evalText + "]";	
-					break;
-					
-				case FAC_Flag:
-					evalText = "Factor[" + evalText + "]";	
-					break;
-			}
-			
-			// process evalText
-			String result;
-			boolean error;
-			try {
-				evalText = cas.processCASInput(evalText, true, useGeoGebraVariableValues);
-				result = prefix + evalText + postfix;	
-				error = false;
-			} catch (Throwable e) {					
-				e.printStackTrace();	
-				result = cas.getMathPiperError();
-				error = true;
-			}
-									
-				
-//			if (hasSelectedText || error) {
-//				outputCellValue.setInput(selRowInput);						
-//				outputCellValue.setOutput(result, error);
-//				consoleTable.updateRow(selRow);
-//				consoleTable.startEditingRow(selRow);
-//			} else {				
-//				outputCellValue.setInput(result);										
-//				consoleTable.insertRowAfter(selRow, outputCellValue);				
-//			}		
-			
-			// update output cell	
-			outputCellValue.setInput(selRowInput);						
-			outputCellValue.setOutput(result, error);
-			consoleTable.updateRow(selRow);
-			//consoleTable.startEditingRow(selRow);
-			
-			// create new empty row
-			consoleTable.insertRowAfter(selRow, null);
-		}
-
-	}
-
-	public JButton getBtSub() {
-		return btSub;
-	}
 
 	public Application getApp() {
 		return app;
