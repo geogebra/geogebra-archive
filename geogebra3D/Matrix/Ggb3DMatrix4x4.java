@@ -86,6 +86,21 @@ public class Ggb3DMatrix4x4 extends Ggb3DMatrix {
 	}
 	
 	
+	///////////////////////////////////////////////////
+	// OVERWRITE Ggb3DMatrix
+	
+	//matrix multiplication
+	/** returns this * m 
+	 * @param m matrix
+	 * @return resulting matrix*/
+	public Ggb3DMatrix4x4 mul(Ggb3DMatrix4x4 m){
+		
+		Ggb3DMatrix4x4 result = new Ggb3DMatrix4x4(); 
+		this.mul(m,result);
+		
+		return result;
+		
+	}
 	
 	
 	///////////////////////////////////////////////////

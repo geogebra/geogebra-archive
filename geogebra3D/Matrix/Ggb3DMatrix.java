@@ -600,7 +600,34 @@ public class Ggb3DMatrix
 	 * @return resulting matrix*/
 	public Ggb3DMatrix mul(Ggb3DMatrix m){
 		
-		Ggb3DMatrix result = new Ggb3DMatrix(getRows(),m.getColumns()); //resulting matrix has the maximal dimension
+		Ggb3DMatrix result = new Ggb3DMatrix(getRows(),m.getColumns()); 
+		
+		/*
+		for(int i=1;i<=result.getRows();i++){
+			for(int j=1;j<=result.getColumns();j++){
+				
+				double r = 0;
+				for (int n=1; n<=getColumns(); n++)
+					r+=get(i,n)*m.get(n,j);
+				
+				result.set(i,j,r);
+			}
+		}
+		*/
+		
+		this.mul(m,result);
+		
+		
+		return result;
+		
+	}
+	
+	
+	/** this * m -> result
+	 * @param m matrix
+	 * @param result resulting matrix
+	 */
+	protected void mul(Ggb3DMatrix m, Ggb3DMatrix result){
 		
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){
@@ -612,11 +639,8 @@ public class Ggb3DMatrix
 				result.set(i,j,r);
 			}
 		}
-		
-		
-		return result;
-		
 	}
+	
 	
 	/** returns determinant 
 	 * @return determinant of the matrix*/
