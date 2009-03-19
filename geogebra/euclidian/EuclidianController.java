@@ -35,6 +35,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoSegmentInterface;
@@ -1714,11 +1715,8 @@ public class EuclidianController implements MouseListener,
 		if (hits.isEmpty()){
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
-			//hits = view.getHits(mouseLoc);
-		}else if (hits.isEmpty()){
-			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
 		}
+		
 		if (hits.isEmpty()) {
 			view.setToolTipText(null);
 			view.setDefaultCursor();	
@@ -2540,7 +2538,7 @@ public class EuclidianController implements MouseListener,
 		
 		Path path = null;		
 		boolean createPoint = !hits.containsGeoPoint();//!view.containsGeoPoint(hits);
-		GeoPoint point = null;
+		GeoPointInterface point = null;
 	
 		Application.debug("createPoint 1 = "+createPoint);
 
@@ -2578,7 +2576,8 @@ public class EuclidianController implements MouseListener,
 		if (createPoint) {
 			transformCoords(); // use point capturing if on
 			if (path == null) {
-				point = kernel.Point(null, xRW, yRW);
+				//point = kernel.Point(null, xRW, yRW);
+				point = createNewPoint();
 				view.setShowMouseCoords(true);
 			} else {
 				point = kernel.Point(null, path, xRW, yRW);
@@ -2586,7 +2585,9 @@ public class EuclidianController implements MouseListener,
 		}
 
 		if (point != null) {
-			movedGeoPoint = point;
+			//movedGeoPoint = point;
+			updateMovedGeoPoint(point);
+			
 			movedGeoElement = movedGeoPoint;
 			moveMode = MOVE_POINT;
 			view.setDragCursor();
@@ -2600,6 +2601,22 @@ public class EuclidianController implements MouseListener,
 			return false;
 		}
 	}
+	
+	
+	protected GeoPointInterface createNewPoint(){
+		return kernel.Point(null, xRW, yRW);
+	}
+	
+	
+	protected void updateMovedGeoPoint(GeoPointInterface point){
+		movedGeoPoint = (GeoPoint) point;
+	}
+	
+	
+	
+	
+	
+	
 
 	// get two points and create line through them
 	final protected boolean join(Hits hits) {

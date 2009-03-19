@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
@@ -223,6 +224,41 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 
+	
+	
+	
+	
+	//////////////////////////////////////////////
+	// creating a new point
+	
+	
+	protected GeoPointInterface createNewPoint(){
+		
+		//getting current pick point and direction v 
+		Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+		view3D.toSceneCoords3D(o);
+		
+		
+		Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
+		view3D.toSceneCoords3D(v);
+		
+		//plane for projection
+		Ggb3DMatrix4x4 plane = Ggb3DMatrix4x4.Identity();
+		
+		//getting new position of the point
+		Ggb3DVector[] project = o.projectPlaneThruVIfPossible(plane, v);
+		
+		
+		return ((Kernel3D) getKernel()).Point3D(null, project[0].get(1),  project[0].get(2), 0);
+	}
+	
+	protected void updateMovedGeoPoint(GeoPointInterface point){
+		movedGeoPoint3D = (GeoPoint3D) point;
+	}
+	
+	
+	
+	
 	
 	
 	
