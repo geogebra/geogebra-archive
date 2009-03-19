@@ -224,13 +224,11 @@ public class EuclidianRenderer3D implements GLEventListener {
 		
 		
 		//drawing not hidden parts
-		//gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 		gl.glDisable(GL.GL_BLEND);
 		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			d.draw(this);	
 		}
-		//gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 		gl.glEnable(GL.GL_BLEND);
 
 		
@@ -367,6 +365,27 @@ public class EuclidianRenderer3D implements GLEventListener {
     	m_arrowLength = a_arrowLength;
     } 
     
+    
+    
+    
+    //layer
+    /**
+     * sets the layer to l. Use gl.glPolygonOffset( ).
+     * @param l the layer
+     */
+    public void setLayer(float l){
+    	
+    	// 0<=l<10
+    	// l2-l1>=1 to see something
+    	gl.glPolygonOffset(-l*0.05f, -l*10);
+    }
+    
+    
+    
+    
+    
+    
+    //drawing matrix
     
     /**
      * sets the matrix in which coord sys the pencil draws.
@@ -685,6 +704,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	
     	gl.glDisable(GL.GL_CULL_FACE);
     	
+
     	
 	    EuclidianRenderer3DTesselCallBack tessCallback = new EuclidianRenderer3DTesselCallBack(gl, glu);
 
@@ -725,7 +745,10 @@ public class EuclidianRenderer3D implements GLEventListener {
         
 	   	gl.glEnable(GL.GL_CULL_FACE);
       
-        resetMatrix();   	
+        resetMatrix();   
+        
+
+
     }
     
 
@@ -974,6 +997,8 @@ public class EuclidianRenderer3D implements GLEventListener {
         //common enabling
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glDepthFunc(GL.GL_LEQUAL);
+		gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+
         //gl.glPolygonOffset(1.0f, 2f);
 
         gl.glEnable(GL.GL_CULL_FACE);
