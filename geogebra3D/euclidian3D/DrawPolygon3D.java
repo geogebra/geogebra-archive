@@ -24,25 +24,23 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 	//drawing
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
+
+		renderer.setLayer(getGeoElement().getLayer());
+
+		renderer.startPolygon();
+		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
+
+
+
+		for(int i=0;i<polygon.getNumPoints();i++){
+			renderer.addToPolygon(polygon.getPointX(i), polygon.getPointY(i));
+		}
+
+		renderer.endPolygon();
 		
-		//if (getGeoElement().isDefined()){
-			renderer.startPolygon();
-			GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
+		renderer.setLayer(0);
 			
-			//Application.debug("polygon points : "+polygon.getNumPoints());
-			//Application.debug("polygon points : "+polygon.getNumPoints());
-			
-			//getMatrix().SystemPrint();
-			
-			for(int i=0;i<polygon.getNumPoints();i++){
-				renderer.addToPolygon(polygon.getPointX(i), polygon.getPointY(i));
-				//Application.debug("point["+i+"]=("+polygon.getPointX(i)+","+polygon.getPointY(i)+")");
-			}
-			
-			renderer.endPolygon();
-			
-		//}
-		//renderer.drawPolygon(((GeoPolygon3D)getGeoElement3D()).getVertices());
+
 	}
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
 		drawGeometry(renderer);
