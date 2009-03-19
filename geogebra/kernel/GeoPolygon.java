@@ -661,7 +661,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		return true;
 	}
 
-	public boolean isOnPath(GeoPoint P, double eps) {
+	public boolean isOnPath(GeoPointInterface PI, double eps) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		if (P.getPath() == this)
 			return true;
 		
@@ -673,7 +676,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		return false;
 	}
 
-	public void pathChanged(GeoPoint P) {		
+	public void pathChanged(GeoPointInterface PI) {		
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		// parameter is between 0 and segment.length,
 		// i.e. floor(parameter) gives the segment index
 		
@@ -695,7 +701,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		P.z = 1.0;	
 	}
 
-	public void pointChanged(GeoPoint P) {
+	public void pointChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		double qx = P.x/P.z;
 		double qy = P.y/P.z;
 		double minDist = Double.POSITIVE_INFINITY;

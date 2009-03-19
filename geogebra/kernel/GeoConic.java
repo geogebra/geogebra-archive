@@ -2056,7 +2056,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 * Path interface
 	 */
 	 
-	public void pointChanged(GeoPoint P) {
+	public void pointChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		double px, py;		
 		PathParameter pp = P.getPathParameter();
 		pp.pathType = type;
@@ -2154,7 +2157,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		}		
 	}
 	
-	public void pathChanged(GeoPoint P) {
+	public void pathChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		// if type of path changed (other conic) then we
 		// have to recalc the parameter with pointChanged()
 		PathParameter pp = P.getPathParameter();
@@ -2228,7 +2234,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			
 	}
 	
-	public boolean isOnPath(GeoPoint P, double eps) {
+	public boolean isOnPath(GeoPointInterface PI, double eps) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		if (P.getPath() == this)
 			return true;
 		

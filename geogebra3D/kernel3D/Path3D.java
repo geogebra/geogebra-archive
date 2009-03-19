@@ -13,13 +13,14 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Path;
 import geogebra3D.Matrix.Ggb3DMatrix;
 
 /**
  * @author Markus Hohenwarter + ggb3D
  */
-public interface Path3D {
+public interface Path3D extends Path {
 	
 
 	
@@ -30,7 +31,7 @@ public interface Path3D {
 	 * 
 	 * Note: P.setCoords() is not called!
 	 */
-	public void pointChanged(GeoPoint3D P);
+	public void pointChanged(GeoPointInterface PI);
 	
 	/**
 	 * Sets coords of P and its path parameter
@@ -39,12 +40,12 @@ public interface Path3D {
 	 * 
 	 * Note: P.setCoords() is not called!
 	 */
-	public void pathChanged(GeoPoint3D P);
+	public void pathChanged(GeoPointInterface PI);
 	
 	/**
 	 * Returns true if the given point lies on this path.
 	 */	
-	public boolean isOnPath(GeoPoint3D P, double eps);
+	public boolean isOnPath(GeoPointInterface PI, double eps);
 	
 	/**
 	 * Returns this path as an object of type GeoElement.

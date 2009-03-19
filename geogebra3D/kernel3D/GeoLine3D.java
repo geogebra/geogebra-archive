@@ -3,6 +3,8 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.PathMover;
 import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoLine3D extends GeoCoordSys1D {
@@ -98,6 +100,46 @@ public class GeoLine3D extends GeoCoordSys1D {
 	protected String getClassName() {
 		// TODO Raccord de méthode auto-généré
 		return "GeoLine3D";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//Path3D interface
+	
+	
+	public boolean isOnPath(GeoPointInterface p, double eps) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	public PathMover createPathMover() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public double getMaxParameter() {
+		return Double.POSITIVE_INFINITY;
+	}
+
+	public double getMinParameter() {
+		return Double.NEGATIVE_INFINITY;
+	}
+
+	public boolean isClosedPath() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

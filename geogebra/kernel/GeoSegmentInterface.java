@@ -10,7 +10,6 @@ import java.awt.Color;
  */
 public interface GeoSegmentInterface {
 
-	boolean isOnPath(GeoPoint p, double eps);
 
 	void setLabel(String string);
 
@@ -25,14 +24,21 @@ public interface GeoSegmentInterface {
 
 	void setLineThickness(int th);
 
-	void pointChanged(GeoElement p);
 	
 	double getLength();
 	
 	public GeoElement getStartPointAsGeoElement();
 
 	public GeoElement getEndPointAsGeoElement();
+
 	
+	////////////////////////////////////////////////
+	// Path Interface
+	
+	boolean isOnPath(GeoPointInterface p, double eps);
+	
+	void pointChanged(GeoPointInterface p);
+
 	
 	/**
 	 * return the x-coordinate of the point on the segment according to the parameter value
@@ -47,6 +53,10 @@ public interface GeoSegmentInterface {
 	 * @return the y-coordinate of the point
 	 */
 	public double getPointY(double parameter);
+
+
+
+
 
 	
 

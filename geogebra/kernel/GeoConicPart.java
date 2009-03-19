@@ -295,7 +295,10 @@ implements LimitedPath, NumberValue, LineProperties {
 	/** 
 	 * states wheter P lies on this conic part or not 
 	 */
-	public boolean isOnPath(GeoPoint P, double eps) {
+	public boolean isOnPath(GeoPointInterface PI, double eps) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		if (P.getPath() == this)
 			return true;
 		
@@ -359,7 +362,10 @@ implements LimitedPath, NumberValue, LineProperties {
 		return false;
 	}
 	
-	public void pointChanged(GeoPoint P) {
+	public void pointChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		PathParameter pp = P.getPathParameter(); 
 		pp.pathType = type;
 		
@@ -442,7 +448,10 @@ implements LimitedPath, NumberValue, LineProperties {
 		}	
 	}
 	
-	public void pathChanged(GeoPoint P) {	
+	public void pathChanged(GeoPointInterface PI) {	
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		PathParameter pp = P.getPathParameter();
 		if (pp.t < 0.0) {
 			pp.t = 0;

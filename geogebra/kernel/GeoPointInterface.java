@@ -25,4 +25,10 @@ public interface GeoPointInterface {
 
 	public boolean isInfinite();
 
+	public boolean showInEuclidianView();
+
+	public void remove();
+
+	
+
 }

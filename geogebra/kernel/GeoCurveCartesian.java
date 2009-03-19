@@ -282,7 +282,10 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPoint P) {								
+	public void pointChanged(GeoPointInterface PI) {	
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		// get closest parameter position on curve
 		PathParameter pp = P.getPathParameter();
 		double t = getClosestParameter(P, pp.t);
@@ -290,7 +293,10 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		pathChanged(P);	
 	}
 	
-	public boolean isOnPath(GeoPoint P, double eps) {						
+	public boolean isOnPath(GeoPointInterface PI, double eps) {		
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		if (P.getPath() == this)
 			return true;
 			
@@ -303,7 +309,10 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		return onPath;
 	}
 
-	public void pathChanged(GeoPoint P) {
+	public void pathChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		PathParameter pp = P.getPathParameter();
 		if (pp.t < startParam)
 			pp.t = startParam;

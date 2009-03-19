@@ -256,10 +256,7 @@ GeoSegmentInterface {
 	/* 
 	 * GeoSegmentInterface interface
 	 */	 
-    public void pointChanged(GeoElement P) {
-    	pointChanged((GeoPoint) P);
-    }
-    
+     
     public GeoElement getStartPointAsGeoElement(){
     	return getStartPoint();
     }
@@ -281,8 +278,10 @@ GeoSegmentInterface {
 	/* 
 	 * Path interface
 	 */	     	
-    public void pointChanged(GeoPoint P) {
-		super.pointChanged(P);
+    public void pointChanged(GeoPointInterface PI) {
+		super.pointChanged(PI);
+		
+		GeoPoint P = (GeoPoint) PI;
 			
 		// ensure that the point doesn't get outside the segment
 		// i.e. ensure 0 <= t <= 1 
@@ -300,7 +299,10 @@ GeoSegmentInterface {
 		}
 	}
 
-	public void pathChanged(GeoPoint P) {
+	public void pathChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		PathParameter pp = P.getPathParameter();
 		if (pp.t < 0.0) {
 			pp.t = 0;

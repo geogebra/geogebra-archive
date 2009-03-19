@@ -161,7 +161,10 @@ public class GeoLocus extends GeoElement implements Path {
 			return false;
 	}
 
-	public boolean isOnPath(GeoPoint P, double eps) {
+	public boolean isOnPath(GeoPointInterface PI, double eps) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		MyPoint closestPoint = getClosestPoint(P);
 		if (closestPoint != null) {
 			return Math.sqrt(closestPointDist) < eps;
@@ -201,12 +204,15 @@ public class GeoLocus extends GeoElement implements Path {
 	private double closestPointDist;
 	private int closestPointIndex;
 
-	public void pathChanged(GeoPoint P) {
+	public void pathChanged(GeoPointInterface P) {
 		// find closest point on changed path to P
 		pointChanged(P);					
 	}
 
-	public void pointChanged(GeoPoint P) {
+	public void pointChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		// find closest point on path
 		MyPoint closestPoint = getClosestPoint(P);
 		

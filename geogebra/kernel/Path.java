@@ -35,7 +35,7 @@ public interface Path {
 	 * 
 	 * Note: P.setCoords() is not called!
 	 */
-	public void pointChanged(GeoPoint P);
+	public void pointChanged(GeoPointInterface PI);
 	
 	/**
 	 * Sets coords of P and its path parameter
@@ -44,12 +44,12 @@ public interface Path {
 	 * 
 	 * Note: P.setCoords() is not called!
 	 */
-	public void pathChanged(GeoPoint P);
+	public void pathChanged(GeoPointInterface PI);
 	
 	/**
 	 * Returns true iff the given point lies on this path.
 	 */	
-	public boolean isOnPath(GeoPoint P, double eps);
+	public boolean isOnPath(GeoPointInterface PI, double eps);
 	
 	/**
 	 * Returns this path as an object of type GeoElement.

@@ -84,8 +84,10 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPoint P) {
-		super.pointChanged(P);
+	public void pointChanged(GeoPointInterface PI) {
+		super.pointChanged(PI);
+		
+		GeoPoint P = (GeoPoint) PI;
 		
 		// ensure that the point doesn't get outside the ray
 		// i.e. ensure 0 <= t <= 1 
@@ -98,7 +100,10 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		} 
 	}
 
-	public void pathChanged(GeoPoint P) {
+	public void pathChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		PathParameter pp = P.getPathParameter();
 		if (pp.t < 0.0) {
 			pp.t = 0;

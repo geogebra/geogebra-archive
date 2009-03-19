@@ -2,9 +2,10 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Path;
+import geogebra.kernel.PathMover;
 import geogebra3D.Matrix.Ggb3DVector;
 
 /**
@@ -193,6 +194,33 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	}
 	
 	
+	public boolean isOnPath(GeoPointInterface p, double eps) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	public PathMover createPathMover() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public double getMaxParameter() {
+		return 1;
+	}
+
+	public double getMinParameter() {
+		return 0;
+	}
+
+	public boolean isClosedPath() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	
+	
 	
 	/////////////////////////////////////
 	// GeoSegmentInterface interface
@@ -220,15 +248,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	}
 
 
-	public boolean isOnPath(GeoPoint p, double eps) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
-	public void pointChanged(GeoElement p) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	
 	

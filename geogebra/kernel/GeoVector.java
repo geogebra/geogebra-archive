@@ -428,7 +428,7 @@ implements Path, VectorValue, Locateable, Rotateable {
 		return false;
 	}
 	
-	public void pointChanged(GeoPoint P) {
+	public void pointChanged(GeoPointInterface P) {
 		if (waitingForStartPoint) {
 			// remember waiting points
 			if (waitingPointSet == null) waitingPointSet = new HashSet();
@@ -440,12 +440,12 @@ implements Path, VectorValue, Locateable, Rotateable {
 		pathSegment.pointChanged(P);
 	}
 
-	public void pathChanged(GeoPoint P) {		
+	public void pathChanged(GeoPointInterface P) {		
 		updatePathSegment();
 		pathSegment.pathChanged(P);
 	}
 	
-	public boolean isOnPath(GeoPoint P, double eps) {
+	public boolean isOnPath(GeoPointInterface P, double eps) {
 		updatePathSegment(); // Michael Borcherds 2008-06-10 bugfix
 		return pathSegment.isOnPath(P, eps);
 	}

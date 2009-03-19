@@ -291,7 +291,10 @@ public class GeoFunctionConditional extends GeoFunction {
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPoint P) {				
+	public void pointChanged(GeoPointInterface PI) {		
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		if (P.z == 1.0) {
 			P.x = P.x;			
 		} else {
@@ -307,7 +310,10 @@ public class GeoFunctionConditional extends GeoFunction {
 		pp.t = P.x;
 	}
 	
-	public boolean isOnPath(GeoPoint P, double eps) {
+	public boolean isOnPath(GeoPointInterface PI, double eps) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		if (P.getPath() == this)
 			return true;
 		

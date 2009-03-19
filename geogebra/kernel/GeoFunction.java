@@ -413,7 +413,10 @@ GeoDeriveable, ParametricCurve, LineProperties {
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPoint P) {				
+	public void pointChanged(GeoPointInterface PI) {			
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		if (P.z == 1.0) {
 			P.x = P.x;			
 		} else {
@@ -439,7 +442,10 @@ GeoDeriveable, ParametricCurve, LineProperties {
 		pp.t = P.x;
 	}
 	
-	public boolean isOnPath(GeoPoint P, double eps) {
+	public boolean isOnPath(GeoPointInterface PI, double eps) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		if (P.getPath() == this)
 			return true;
 		
@@ -447,7 +453,10 @@ GeoDeriveable, ParametricCurve, LineProperties {
 			Math.abs(fun.evaluate(P.inhomX) - P.inhomY) <= eps;
 	}
 
-	public void pathChanged(GeoPoint P) {
+	public void pathChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		PathParameter pp = P.getPathParameter();
 		P.x = pp.t;
 		pointChanged(P);

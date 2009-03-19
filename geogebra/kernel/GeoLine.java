@@ -106,12 +106,15 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
     /**
      * Returns whether this point lies on this line, segment or ray.     
      */
-    final public boolean isOnPath(GeoPoint P, double eps) {  
+    final public boolean isOnPath(GeoPointInterface PI, double eps) {  
+    	
+    	GeoPoint P = (GeoPoint) PI;
+    	
     	if (P.getPath() == this)
 			return true;
     	
     	// check if P lies on line first
-    	if (!isOnFullLine(P, eps))
+    	if (!isOnFullLine((GeoPoint) P, eps))
     		return false;    	
     	
     	// for a line we are done here: the point is on the line
@@ -614,8 +617,8 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 		return false;
 	}
 	 
-	public void pointChanged(GeoPoint P) {
-		doPointChanged(P);
+	public void pointChanged(GeoPointInterface P) {
+		doPointChanged((GeoPoint) P);
 	}
 		
 	private void doPointChanged(GeoPoint P) {
@@ -641,7 +644,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 		}		
 	}				
 
-	public void pathChanged(GeoPoint P) {
+	public void pathChanged(GeoPointInterface PI) {
+		
+		GeoPoint P = (GeoPoint) PI;
+		
 		// calc point for given parameter
 		if (startPoint != null) {
 			PathParameter pp = P.getPathParameter();

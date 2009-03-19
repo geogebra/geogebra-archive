@@ -344,7 +344,7 @@ implements GeoPointInterface, PointProperties{
 		// TODO Auto-generated method stub
 		return true;
 	}
-	protected boolean showInEuclidianView() {
+	public boolean showInEuclidianView() {
 		// TODO Auto-generated method stub
 		return true;
 	}

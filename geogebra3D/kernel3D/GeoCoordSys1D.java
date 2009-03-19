@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.main.Application;
@@ -93,7 +94,9 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 		return true;
 	}
 	
-	public void pointChanged(GeoPoint3D P){
+	public void pointChanged(GeoPointInterface PI){
+		
+		GeoPoint3D P = (GeoPoint3D) PI;
 		
 		//project P on line
 		Ggb3DVector v = P.getInhomCoords();
@@ -120,7 +123,10 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	}
 	
 	
-	public void pathChanged(GeoPoint3D P){
+	public void pathChanged(GeoPointInterface PI){
+		
+		GeoPoint3D P = (GeoPoint3D) PI;
+		
 		if(!P.hasGeoElement2D()){
 			//the point is not linked to a 2D point
 			PathParameters pps = P.getPathParameters(1);
@@ -133,7 +139,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	}
 	
 	
-	public boolean isOnPath(GeoPoint3D P, double eps){
+	public boolean isOnPath(GeoPointInterface PI, double eps){
 		return false; //TODO
 	}
 
