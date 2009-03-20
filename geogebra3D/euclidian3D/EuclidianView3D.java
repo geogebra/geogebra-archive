@@ -87,10 +87,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	static public Ggb3DVector vy = new Ggb3DVector(new double[] {0.0, 1.0, 0.0,  0.0});
 	static public Ggb3DVector vz = new Ggb3DVector(new double[] {0.0, 0.0, 1.0,  0.0});
 	
+	/*
 	protected GeoPlane3D movingPlane;
 	protected GeoSegment3D movingSegment;
 	protected Ggb3DVector movingPointProjected;
-	
+	*/
 
 
 	
@@ -141,28 +142,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		canvas.setFocusable(true);
 		
 		
-		//init orientation
-		//setRotXY(Math.PI/6f,0.0,true);
-		
-		//init moving objects
-		movingPlane=kernel3D.Plane3D("movingPlane",
-				new Ggb3DVector(new double[] {0.0,0.0,0.0,1.0}),
-				vx,
-				vy);
-		movingPlane.setObjColor(new Color(0f,0f,1f));
-		movingPlane.setAlgebraVisible(false); //TODO make it works
-		movingPlane.setLabelVisible(false);
-
-
-		movingSegment = kernel3D.Segment3D("movingSegment", 
-				new Ggb3DVector(new double[] {0,0,0,1}),
-				new Ggb3DVector(new double[] {0,0,0,1}));
-		movingSegment.setObjColor(new Color(0f,0f,1f));
-		movingSegment.setAlgebraVisible(false); //TODO make it works
-		movingSegment.setLabelVisible(false);
-		movingSegment.setLineThickness(1);
-		
-		setMovingVisible(false);
 		
 		
 		
@@ -532,64 +511,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
-	//////////////////////////////////////
-	// moving objects
-	
-	/** set colors of moving objects */
-	public void setMovingColor(Color c){
-
-		movingPlane.setObjColor(c);
-		movingSegment.setObjColor(c);
-		setMovingVisible(true);
-		
-	}
-	
-	/** sets moving plane to (origin,v1,v2,v3) and other objects regarding to point */
-	public void setMoving(Ggb3DVector point, Ggb3DVector origin, Ggb3DVector v1, Ggb3DVector v2, Ggb3DVector v3){
-		
-		movingPlane.setCoord(origin, v1, v2);
-		Ggb3DVector[] project = point.projectPlaneThruV(movingPlane.getMatrix4x4(), v3);
-		setMovingCorners(0, 0, project[1].get(1), project[1].get(2));
-		movingPointProjected = project[0];
-		setMovingPoint(point);
-		
-	}
-	
-	/** sets the moving segment from point to its projection on movingPlane */
-	public void setMovingProjection(Ggb3DVector point, Ggb3DVector vn){
-		Ggb3DVector[] project = point.projectPlaneThruV(movingPlane.getMatrix4x4(), vn);
-		movingPointProjected = project[0];
-		setMovingPoint(point);
-	}
-	
-	/** update moving point position */
-	public void setMovingPoint(Ggb3DVector point){
-		movingSegment.setCoord(movingPointProjected, point.sub(movingPointProjected));
-	}
-	
-	
-	/** update visibility of moving objects */
-	public void setMovingVisible(boolean val){
-		movingPlane.setEuclidianVisible(val);
-		movingSegment.setEuclidianVisible(val);
-		
-	}
-	
-	/** sets the corner of the movingPlane */
-	public void setMovingCorners(double x1, double  y1, double  x2, double  y2){
-		
-		movingPlane.setGridCorners(x1,y1,x2,y2);
-		
-	}
-	
-	
 	
 
-	
-	//////////////////////////////////////
-	// dimensions
-	
-	
 	
 	
 	//////////////////////////////////////
