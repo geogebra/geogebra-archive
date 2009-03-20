@@ -6,6 +6,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -83,6 +84,9 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private double[][] m_dash = DASH_NONE; // dash is composed of couples {length of line, length of hole}
 	private double m_dash_factor; // for unit factor
 	
+	/** current drawing color {r,g,b,a} */
+	private Color color; 
+	private double alpha;
 	
 	private double m_thickness;
 	
@@ -301,9 +305,31 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param alpha the alpha value for blending
      */
     public void setMaterial(Color c, double alpha){
-    	//TODO use alpha value
-    	float color[] = { ((float) c.getRed())/256f, ((float) c.getGreen())/256f, ((float) c.getBlue())/256f, (float) alpha };
-        gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, color, 0);
+
+    	color = c;
+    	this.alpha = alpha;
+ 
+    	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, 
+    			new float[] {((float) c.getRed())/256f,
+    							((float) c.getGreen())/256f,
+    							((float) c.getBlue())/256f,
+    							(float) alpha},
+    			0);
+    }
+    
+    
+    /** return (r,g,b) current color
+     * @return (r,g,b) current color
+     */
+    public Color getColor(){
+    	return color;
+    }
+    
+    /** return current alpha
+     * @return current alpha
+     */
+    public double getAlpha(){
+    	return alpha;
     }
     
     
@@ -541,6 +567,94 @@ public class EuclidianRenderer3D implements GLEventListener {
     	//TODO use frustum
     	drawSegment(-20,21);
     }  
+    
+    
+    
+    /**
+     * draws "coordinates segments" from the point origin of the drawing matrix to the axes
+     * @param axisX color of the x axis
+     * @param axisY color of the y axis
+     * @param axisZ color of the z axis
+     */
+    public void drawCoordSegments(Color axisX, Color axisY, Color axisZ){
+    	
+    	Ggb3DMatrix4x4 drawingMatrixOld = m_drawingMatrix;
+    	Color colorOld = getColor();
+    	double alphaOld = getAlpha();
+ 
+
+    	Ggb3DMatrix4x4 matrix = new Ggb3DMatrix4x4();
+    	matrix.setOrigin(m_drawingMatrix.getOrigin());
+    	matrix.set(3,4,0); //sets the origin's altitude to 0
+    	
+    	// z-segment
+    	double altitude = m_drawingMatrix.getOrigin().get(3);//altitude du point
+ 
+    	matrix.setVx((Ggb3DVector) EuclidianView3D.vz.mul(altitude));
+    	
+    	if(altitude>0){
+    		matrix.setVy(EuclidianView3D.vx);
+    		matrix.setVz(EuclidianView3D.vy);
+    	}else{
+    		matrix.setVy(EuclidianView3D.vy);
+    		matrix.setVz(EuclidianView3D.vx);
+    	}
+    	
+    	setMaterial(axisZ, 1);
+    	setMatrix(matrix);
+    	drawSegment();
+    	resetMatrix();
+    	
+    	
+    	
+    	
+    	// x-segment  	
+    	double x = m_drawingMatrix.getOrigin().get(1);//x-coord of the point
+    	
+    	matrix.setVx((Ggb3DVector) EuclidianView3D.vx.mul(-x));
+    	
+    	if(x>0){
+    		matrix.setVy(EuclidianView3D.vz);
+    		matrix.setVz(EuclidianView3D.vy);
+    	}else{
+    		matrix.setVy(EuclidianView3D.vy);
+    		matrix.setVz(EuclidianView3D.vz);
+    	}
+    	
+    	setMaterial(axisX, 1);
+    	setMatrix(matrix);
+    	drawSegment();
+    	resetMatrix();
+    	
+    	
+    	// y-segment  	
+    	double y = m_drawingMatrix.getOrigin().get(2);//y-coord of the point
+    	
+    	matrix.setVx((Ggb3DVector) EuclidianView3D.vy.mul(-y));
+    	
+    	if(y>0){
+    		matrix.setVy(EuclidianView3D.vx);
+    		matrix.setVz(EuclidianView3D.vz);
+    	}else{
+    		matrix.setVy(EuclidianView3D.vz);
+    		matrix.setVz(EuclidianView3D.vx);
+    	}
+    	
+    	setMaterial(axisY, 1);
+    	setMatrix(matrix);
+    	drawSegment();
+    	resetMatrix();
+    	
+    	
+    	
+    	
+    	// reset the drawing matrix and color
+    	setMatrix(drawingMatrixOld);
+    	setMaterial(colorOld, alphaOld);
+    	
+    }
+    
+    
     
     
     /** 

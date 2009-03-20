@@ -31,6 +31,17 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	/** default alpha for planes*/
 	public static final float DEFAULT_QUADRIC_ALPHA = 0.5f;
 	
+	
+	// axes TODO use gui
+	public static final Color colXAXIS = Color.red;
+	public static final Color colYAXIS = Color.green;
+	public static final Color colZAXIS = Color.blue;
+
+	
+	
+	
+	
+	
 	/**
 	 * default constructor
 	 * @param cons construction

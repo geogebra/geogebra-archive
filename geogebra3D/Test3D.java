@@ -66,7 +66,7 @@ public class Test3D{
 		
 
 		testAlgoPyramide();
-		testPolygon();
+		//testPolygon();
 
 		testQuadric();
     	
@@ -109,12 +109,12 @@ public class Test3D{
 		
 		GeoSegment3D s=null;
 		
-		s=kernel3D.Segment3D("axeX3D",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{longueur,0,0,1}));
+		s=kernel3D.Segment3D("axeX3D",new Ggb3DVector(new double[] {-longueur,0,0,1}),new Ggb3DVector(new double[]{longueur,0,0,1}));
 		s.setObjColor(new Color(1f,0f,0f));
 		s.setLineThickness(1);
 		cons.addToConstructionList(s, false);
 		
-		s=kernel3D.Segment3D("axeY3D",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{0,longueur,0,1}));
+		s=kernel3D.Segment3D("axeY3D",new Ggb3DVector(new double[] {0,-longueur,0,1}),new Ggb3DVector(new double[]{0,longueur,0,1}));
 		s.setObjColor(new Color(0f,1f,0f));
 		s.setLineThickness(1);
 		cons.addToConstructionList(s, false);

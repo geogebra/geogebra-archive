@@ -110,7 +110,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
 
 		if (movedGeoPoint3D.hasPath()){
-			
 			setCurrentPlane(movedGeoPoint3D.getPath());
 		}else{
 			Ggb3DMatrix4x4 plane = Ggb3DMatrix4x4.Identity(); 
@@ -118,9 +117,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			//update the moving plane altitude
 			getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
 			
-			//TODO remove moving plane, add coord segments in GeoPoint3D/DrawPoint3D
-			//view3D.setMoving(movedGeoPoint3D.getCoords(),origin,v1,v2,vn);
-			//view3D.setMovingColor(movingColor);
+			movedGeoPoint3D.setCoordDecoration(true);
+
 		}
 	}
 
@@ -240,6 +238,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	public void mouseReleased(MouseEvent e) {
 		
+		if (movedGeoPoint3D!=null)
+			movedGeoPoint3D.setCoordDecoration(false);
+		
 		super.mouseReleased(e);
 
 	}
@@ -257,7 +258,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
 		setCurrentPlane(Ggb3DMatrix4x4.Identity());
-		movePointOnCurrentPlane(point, false);		
+		movePointOnCurrentPlane(point, false);	
+		point.setCoordDecoration(true);
 		return point;
 	}
 	

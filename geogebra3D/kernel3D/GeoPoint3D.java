@@ -53,6 +53,10 @@ implements GeoPointInterface, PointProperties{
         
     // temp
     public Ggb3DVector inhom = new Ggb3DVector(3);
+
+
+    /** says if decoration have to be drawn for coordinates */
+	private boolean coordDecoration = false;
     
     
     public GeoPoint3D(Construction c) { 
@@ -197,7 +201,7 @@ implements GeoPointInterface, PointProperties{
 		}
 		
 		//sets the drawing matrix to coords
-		getDrawingMatrix().set(getCoords(), 4);
+		getDrawingMatrix().setOrigin(getCoords());
 
 	}
 	 
@@ -286,9 +290,16 @@ implements GeoPointInterface, PointProperties{
 	
  
     
+    ///////////////////////////////////////////////////////////
+    // DRAWING
 
+	public void setCoordDecoration(boolean val){
+		coordDecoration = val;
+	}
     
-    
+    public boolean hasCoordDecoration(){
+    	return coordDecoration;
+    }
     
     
     
