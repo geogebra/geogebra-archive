@@ -567,7 +567,7 @@ public abstract class GeoGebraExport implements ActionListener{
 // Michael Borcherds 20071006 start
 		case GeoElement.DECORATION_SEGMENT_ONE_ARROW:
 	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / (2 * nLength);		
+	 		factor = tickSpacing / (nLength);		
 	 		vx = -ny * factor;
 	 		vy =  nx * factor;	
 	 		// use perpendicular vector to set ticks			 		
@@ -587,7 +587,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	 	break;
 	 	case GeoElement.DECORATION_SEGMENT_TWO_ARROWS:
 	 		// vector (vx, vy) to get 2 points around midpoint		
-	 		factor = tickSpacing / (2 * nLength);		
+	 		factor = tickSpacing / (nLength);		
 	 		vx = -ny * factor;
 	 		vy =  nx * factor;	
 	 		// use perpendicular vector to set ticks			 		
