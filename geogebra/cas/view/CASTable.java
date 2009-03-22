@@ -240,10 +240,10 @@ public class CASTable extends JTable {
 		}
 		else {		
 			// start editing
+			setRowSelectionInterval(editRow, editRow);	
 	        scrollRectToVisible(getCellRect( editRow, CONTENT_COLUMN, false ) );	
 			editCellAt(editRow, CONTENT_COLUMN);	
-			editor.setInputAreaFocused();
-			setRowSelectionInterval(editRow, editRow);	
+			editor.setInputAreaFocused();			
 		}
 	}		
 

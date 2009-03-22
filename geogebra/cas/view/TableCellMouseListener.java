@@ -42,7 +42,10 @@ public class TableCellMouseListener extends MouseAdapter {
 		// CLICKED ON OUTPUT PANEL IN TABLE CELL				
 		CASTableCellValue clickedCellValue = table.getCASTableCellValue(clickedRow);
 		String outputStr = clickedCellValue.getOutput();
-		if (outputStr == null || outputStr.length() == 0) return;
+		if (outputStr == null || outputStr.length() == 0) {
+			table.startEditingRow(clickedRow);
+			return;
+		}
 		
 		// EDITOR ACTIVE: insert into editor
 		if (table.isEditing()) {

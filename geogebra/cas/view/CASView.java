@@ -103,6 +103,11 @@ public class CASView extends JComponent implements CasManager {
 							rowHeader.setSelectedIndices(selRows);
 					}					
 				});
+		
+		// start editing last row
+		int lastRow = consoleTable.getRowCount() - 1;
+		if (lastRow >= 0)
+			consoleTable.startEditingRow(lastRow);
 	}				
 	
 	private void createCASTable() {
@@ -332,6 +337,12 @@ public class CASView extends JComponent implements CasManager {
 		btHold.addActionListener(ac);
 		btPanel.add(btHold);
 		
+		// numeric
+		JButton btNumeric = new JButton("\u2248");
+		btNumeric.setActionCommand("Numeric");
+		btNumeric.addActionListener(ac);
+		btPanel.add(btNumeric);		
+		
 		// group terms
 		JButton btGroup = new JButton(app.getPlain("GroupTerms"));
 		btGroup.setActionCommand("Simplify");
@@ -413,7 +424,7 @@ public class CASView extends JComponent implements CasManager {
 		// handle action command string
 		if (ggbcmd.equals("Substitute")) {
 			// Create a CASSubDialog with the cell value
-			CASSubDialog d = new CASSubDialog(CASView.this, cellValue, selectedText, selRow);
+			CASSubDialog d = new CASSubDialog(CASView.this, prefix, evalText, postfix, selRow);
 			d.setVisible(true);
 			return;
 		}
@@ -424,15 +435,10 @@ public class CASView extends JComponent implements CasManager {
 									
 		// process evalText
 		String evaluation = null;
-		String error = null;
 		try {
 			// evaluate
-			evaluation = cas.processCASInput(evalText, useGeoGebraVariableValues);
-			
-			if (evaluation == null)
-				error = cas.getMathPiperError();			
+			evaluation = cas.processCASInput(evalText, useGeoGebraVariableValues);			
 		} catch (Throwable th) {
-			error = app.getError("CAS.GeneralErrorMessage");
 			th.printStackTrace();
 		}
 		
@@ -440,7 +446,8 @@ public class CASView extends JComponent implements CasManager {
 		if (evaluation != null)	{
 			cellValue.setOutput(prefix + evaluation + postfix);
 		} else {
-			cellValue.setOutput(error, true);			
+			// 	error = app.getError("CAS.GeneralErrorMessage");
+			cellValue.setOutput(cas.getMathPiperError(), true);			
 		}
 		
 		consoleTable.updateRow(selRow);

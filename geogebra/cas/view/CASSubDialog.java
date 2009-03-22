@@ -24,77 +24,55 @@ import javax.swing.JTextField;
  * Quan Yuan
  */
 
-public class CASSubDialog extends JDialog implements WindowFocusListener,
-		ActionListener {
+public class CASSubDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final int SUB = 0;
-	private static final int SUBSIM = 1;
-
-	private boolean replaceAllFlag;
-
-	private JButton btSub, btSubSim, btCancel;
+	private JButton btSub, btEval, btCancel;
 	private JPanel optionPane, btPanel, cbPanel, captionPanel;
 	private JTextField valueTextField;
-	private Checkbox allReplaced;
 
-	private CASTableCellValue cellValue;
 	private CASView casView;
 	private Application app;
 	private int editRow;
-	private String subStr;
-	private String inputStr;
-	private boolean selectedEnabled;
+	private String prefix, evalText, postifx;
 	private JTextField subStrfield;
 
 	/**
-	 * Input Dialog for a GeoText object
+	 * Substitute dialog for CAS.
 	 */
-	public CASSubDialog(CASView casView, CASTableCellValue cellValue, String subStr, int editRow) {
+	public CASSubDialog(CASView casView, String prefix, String evalText, String postfix, int editRow) {
 		setModal(false);
 		
 		this.casView = casView;
 		this.app = casView.getApp();
-		this.cellValue = cellValue;
-		inputStr = cellValue.getInput();
-		this.subStr = subStr;
-		
-		// TODO: remove
-		System.out.println("inputStr: " + inputStr);
-		System.out.println("subStr: " + subStr);
-		
+		this.prefix = prefix;
+		this.evalText = evalText;
+		this.postifx = postfix;
 		
 		this.editRow = editRow;
-		selectedEnabled = true;
-
-		replaceAllFlag = false;
-		createGUI(app.getMenu("SubstituteDialog"));
+	
+		createGUI();
 		pack();
 		setLocationRelativeTo(null);
 	}
 
-	protected void createGUI(String title) {
-		setTitle(title);
+	protected void createGUI() {
+		setTitle(app.getPlain("Substitute"));
 		setResizable(false);
 
 		// create label panel
 		JPanel subTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		selectedEnabled = subStr != null && subStr.trim().length() > 0;
-		if (selectedEnabled) {
-			JLabel subLabel = new JLabel(app.getPlain("SubstituteForAinB", subStr, inputStr));
-			subTitlePanel.add(subLabel);
-		} else {			
-			String temp = app.getPlain("SubstituteForAinB",
-					"QuanIsGreat", inputStr);
-			String[] strLabel = temp.split("QuanIsGreat");
-			JLabel subLabel = new JLabel(strLabel[0]);
-			subStrfield = new JTextField(4);
-			JLabel subLabel2 = new JLabel(strLabel[1]);
-			subTitlePanel.add(subLabel);
-			subTitlePanel.add(subStrfield);
-			subTitlePanel.add(subLabel2);
-		}
+		
+		String temp = app.getPlain("SubstituteForAinB",
+				"ThisIsJustTheSplitString", evalText);
+		String[] strLabel = temp.split("ThisIsJustTheSplitString");
+		JLabel subLabel = new JLabel(strLabel[0]);
+		subStrfield = new JTextField(4);
+		JLabel subLabel2 = new JLabel(strLabel[1]);
+		subTitlePanel.add(subLabel);
+		subTitlePanel.add(subStrfield);
+		subTitlePanel.add(subLabel2);		
 
 		// create caption panel
 		JLabel captionLabel = new JLabel(app.getPlain("NewExpression") + ":");
@@ -117,9 +95,9 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		btSub.setActionCommand("Substitute");
 		btSub.addActionListener(this);
 
-		btSubSim = new JButton(app.getPlain("SubstituteSimplify"));
-		btSubSim.setActionCommand("Subsim");
-		btSubSim.addActionListener(this);
+		btEval = new JButton("=");
+		btEval.setActionCommand("Eval");
+		btEval.addActionListener(this);
 
 		btCancel = new JButton(app.getPlain("Cancel"));
 		btCancel.setActionCommand("Cancel");
@@ -127,7 +105,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
 		btPanel.add(btSub);
-		btPanel.add(btSubSim);
+		btPanel.add(btEval);
 		btPanel.add(btCancel);
 
 		// Create the JOptionPane.
@@ -139,15 +117,6 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		optionPane.add(btPanel, BorderLayout.SOUTH);
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
-		// create checkbox panel
-		if (selectedEnabled) {
-			allReplaced = new Checkbox(app
-					.getPlain("SubstituteforAllA", subStr));		
-			cbPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-			cbPanel.add(allReplaced);
-			optionPane.add(cbPanel, BorderLayout.CENTER);
-		}
-
 		// Make this dialog display it.
 		setContentPane(optionPane);
 	}
@@ -157,88 +126,40 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 
 		if (src == btCancel) {
 			setVisible(false);
-		} else if (src == btSubSim) {
-			apply(SUBSIM);
-			setVisible(false);
+		} else if (src == btEval) {
+			if (apply(btEval.getActionCommand()))
+				setVisible(false);
 		} else if (src == btSub) {
-			apply(SUB);
-			setVisible(false);
+			if (apply(btSub.getActionCommand()))
+				setVisible(false);
 		}
 	}
 
-	private void apply(int mod) {
-		String newExpression = " " + valueTextField.getText().trim() + " ";
+	private boolean apply(String actionCommand) {
+		
 		CASTable table = casView.getConsoleTable();
-	
-		replaceAllFlag = allReplaced == null || allReplaced.getState();
+			
+		// substitute from
+		String	fromExp = subStrfield.getText();
+		String toExp = valueTextField.getText();
+		if (fromExp.length() == 0 || toExp.length() == 0) return false;				
 		
-		if (!selectedEnabled) {
-			subStr = subStrfield.getText();
+		// substitute command
+		String subCmd = "Substitute[" + evalText + "," + fromExp + ", " +  toExp + "]"; 
+		if (actionCommand.equals("Eval")) {
+			subCmd = "Eval[" + subCmd + "]"; 
 		}
-
-		if (subStr.length() == 0)
-			return;
-
-		CASTableCellValue newRow;
+			
+		try {
+			CASTableCellValue currCell = table.getCASTableCellValue(editRow);
+			String result = casView.getCAS().processCASInput(subCmd, casView.isUseGeoGebraVariableValues());
+			currCell.setOutput(result);
+			table.startEditingRow(editRow + 1);
+			return true;
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 		
-		switch (mod) {
-		case SUB:
-			// Replace the sub in the input string
-			newRow = new CASTableCellValue(casView);
-
-			if (replaceAllFlag)
-				newRow.setInput(inputStr.replaceAll(subStr, newExpression));
-			else
-				newRow.setInput(inputStr.replaceFirst(subStr, newExpression));
-
-			table.insertRowAfter(editRow, newRow);
-			break;
-			
-		case SUBSIM:
-			// Replace the sub in the input string
-			String preString;
-			newRow = new CASTableCellValue(casView);
-			
-			if (replaceAllFlag)
-				preString = inputStr.replaceAll(subStr, newExpression);
-			else
-				preString = inputStr.replaceFirst(subStr, newExpression);
-
-//			// get YacasString
-//			String yacasString = null;
-//			try {
-//				GeoGebraCAS cas = casView.getCAS();
-//				yacasString = cas.toMathPiperString(cas.parseGeoGebraCASInput(preString), false);
-//			}
-//			catch (Throwable th) {
-//				th.printStackTrace();
-//				return;
-//			}
-			
-			newRow.setInput(preString);
-			table.insertRowAfter(editRow, newRow);
-			break;
-		default:
-			break;
-		}
-	}
-
-	public void windowGainedFocus(WindowEvent arg0) {
-		// TODO
-	}
-
-	public void windowLostFocus(WindowEvent arg0) {
-	}
-
-	public void setVisible(boolean flag) {
-		if (!isModal()) {
-			if (flag) { // set old mode again
-				addWindowFocusListener(this);
-			} else {
-				removeWindowFocusListener(this);
-				app.setSelectionListenerMode(null);
-			}
-		}
-		super.setVisible(flag);
-	}
 }

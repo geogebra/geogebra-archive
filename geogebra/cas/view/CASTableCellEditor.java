@@ -138,8 +138,16 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		return editingRow;
 	}
 	
-	public void keyPressed(KeyEvent arg0) {
-		
+	public void keyPressed(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+
+		switch (keyCode) {
+			case KeyEvent.VK_ESCAPE:
+				getInputArea().setText("");
+				e.consume();
+				break;
+				
+		}
 	}
 
 	public void keyReleased(KeyEvent arg0) {
