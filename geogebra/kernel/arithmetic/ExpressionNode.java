@@ -2897,9 +2897,12 @@ implements ExpressionValue {
             case EXP:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("e^{");
-	        			 sb.append(leftStr);
-	        			 sb.append('}');
+	        			 sb.append(Kernel.EULER_STRING);
+	        			 if (!"1".equals(leftStr)) {
+		        			 sb.append("^{");
+		        			 sb.append(leftStr);
+		        			 sb.append('}');
+	        			 }
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2915,16 +2918,23 @@ implements ExpressionValue {
 	                    sb.append(')');
 	        			break;
 	        			
-	        		default:
-	        			sb.append(Kernel.EULER_STRING);
-	        			if (left.isLeaf()) {
-	        				sb.append("^");  
-	        				sb.append(leftStr);
-	        			} else {
-		        			sb.append("^(");     
-			        		sb.append(leftStr);
+	        		default:	      
+		       			 if ("1".equals(leftStr)) {
+		       				sb.append(Kernel.EULER_STRING);
+		       			 } else {
+			        		sb.append("exp(");
+		        			sb.append(leftStr);
 		                    sb.append(')');
-	        			}
+		       			 }
+//	                    sb.append(Kernel.EULER_STRING);
+//	        			if (left.isLeaf()) {
+//	        				sb.append("^");  
+//	        				sb.append(leftStr);
+//	        			} else {
+//		        			sb.append("^(");     
+//			        		sb.append(leftStr);
+//		                    sb.append(')');
+//	        			}
 	        			break;
 	        	}           	
                 break;
@@ -2932,17 +2942,21 @@ implements ExpressionValue {
             case LOG:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log(");
+	        			sb.append("\\ln(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Ln(");
 	        			break;
 	        			
-	        		//case STRING_TYPE_JASYMCA:
+	        		
 	        		case STRING_TYPE_GEOGEBRA_XML:
-	        			sb.append("log(");	        			
+	        			sb.append("ln(");	        			
 	        			break;
+	        			
+	        		//case STRING_TYPE_JASYMCA:
+//	        			sb.append("log(");	        			
+//	        			break;
 	        			
 	        		default:
 	        			sb.append("ln("); 

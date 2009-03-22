@@ -65,10 +65,10 @@ public class Variable extends ValidExpression implements ExpressionValue {
      * according GeoElement object.
      */
     private GeoElement resolve() {
-    	return resolve(true);
+    	return resolve(!kernel.isResolveVariablesForCASactive());
     }
     	
-	 /**
+	/**
      * Looks up the name of this variable in the kernel and returns the 
      * according GeoElement object.
      */

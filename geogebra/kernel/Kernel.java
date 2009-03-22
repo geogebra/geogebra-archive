@@ -5222,7 +5222,7 @@ public class Kernel {
  				}
 				else if (isInteger(x)) {
 					return String.valueOf(Math.round(x));
-				}
+				}							
 
 			default:
 				if (isNaN)

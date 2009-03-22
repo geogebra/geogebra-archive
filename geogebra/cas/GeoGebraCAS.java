@@ -120,16 +120,21 @@ public class GeoGebraCAS {
 			// parse input
 			ValidExpression ve = casParser.parseGeoGebraCASInput(ggbExp);
 			String latex = ve.toLaTeXString(true);
-					
-			if (latex.indexOf('\\') < 0) {
-				return null;
-			} else {
-				return latex;
+						
+			for (int i=0; i < latex.length(); i++) {
+				char ch = latex.charAt(i);
+				switch (ch) {
+					case '\\':
+					case '^':
+						return latex;
+				}
 			}
 		} catch (Throwable e) {
-			e.printStackTrace();
-			return null;
-		}				
+			e.printStackTrace();			
+		}		
+		
+		// no real latex string: return null
+		return null;
 	}
 	
 	/**

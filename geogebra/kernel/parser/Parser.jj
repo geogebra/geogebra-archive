@@ -68,7 +68,7 @@ public class Parser {
     // reset for new parsing
     public void myReInit(String parseString) {
     	ReInit(new java.io.StringReader(parseString));    	
-    	MathPiperParsing = false;    	
+    	MathPiperParsing = false;   
     }
 
     /**
@@ -83,7 +83,7 @@ public class Parser {
      * Parses a String and returns a ValidExpression Object     
      */
     public ValidExpression parseGeoGebraCAS(String parseString) throws ParseException {           
-        myReInit( parseString );                          
+        myReInit( parseString );                        
         return buildCASExpression();     
     }        
     
@@ -1164,7 +1164,6 @@ ExpressionValue enelement():
 {    
     ExpressionValue ev;
     double num;
-    MyDouble myDouble;
     Token c;    
 }
 {   
@@ -1176,8 +1175,8 @@ ExpressionValue enelement():
 	  { return new MyBoolean(false); }     
 |	 	 
  // number
-    myDouble = myDouble()
-        { return myDouble; }      
+    ev = myDouble()
+        { return ev; }      
 |
     // cos, sin, tan, ...
     LOOKAHEAD(2147483647)
@@ -1301,7 +1300,7 @@ ExpressionValue numVecVariable():
 /**
  * floating point number: angle or numeric are distinguished
  */
-MyDouble myDouble():
+ExpressionValue myDouble():
 {
     Token c;
     MyDouble d;
@@ -1309,9 +1308,16 @@ MyDouble myDouble():
 {       
    (c = <FLOAT> | c = <EFLOAT>)
     {
-        return new MyDouble(kernel, 
-                	Double.parseDouble( c.image )
-                );                               
+    	double val =  Double.parseDouble( c.image );
+    	
+    	if (MathPiperParsing) {
+    		// preserve string from MathPiper: it may have higher
+    		// precision than double
+    	   return new MySpecialDouble(kernel, val, c.image);  
+    	}
+    	else {
+      	  return new MyDouble(kernel, val);
+    	}                               
     }
 |
     <DEGREE>
@@ -1330,12 +1336,12 @@ MyDouble myDouble():
 |
     <PI>
     {
-        return new MyDouble(kernel, Math.PI);
+       	return new MySpecialDouble(kernel, Math.PI, Kernel.PI_STRING);
     }
 |
     <E>
     {
-        return new MyDouble(kernel, Math.E);
+    	return new MySpecialDouble(kernel, Math.E, Kernel.EULER_STRING);
     }
  |
     <INFINITY>

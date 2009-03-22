@@ -787,6 +787,10 @@ public class Construction {
 		else if (label.equals("e")) {
 			GeoNumeric number = new GeoNumeric(this, "e", Math.E);
 			number.setFixed(true);
+			
+			// TODO: remove
+			Application.printStacktrace("e created");
+			
 			return number;
 		}
 
