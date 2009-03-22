@@ -230,7 +230,7 @@ public class MyList extends ValidExpression implements ListValue {
 		}
 		
 		// temp ExpressionNode to do evaluation of single elements
-		ExpressionNode tempNode = new ExpressionNode(kernel, (ExpressionNode) listElements.get(0));
+		ExpressionNode tempNode = new ExpressionNode(kernel, (ExpressionValue) listElements.get(0));
 		tempNode.setOperation(operation);
 		
 		
@@ -242,12 +242,12 @@ public class MyList extends ValidExpression implements ListValue {
 				// apply operation using singleValue
 				if (right) {
 					// this operation value
-					tempNode.setLeft((ExpressionNode) listElements.get(i));
+					tempNode.setLeft((ExpressionValue) listElements.get(i));
 					tempNode.setRight(singleValue);
 				} else {
 					// value operation this					
 					tempNode.setLeft(singleValue);
-					tempNode.setRight((ExpressionNode) listElements.get(i));
+					tempNode.setRight((ExpressionValue) listElements.get(i));
 				}
 				
 				// evaluate operation
@@ -261,7 +261,7 @@ public class MyList extends ValidExpression implements ListValue {
 				if (!operationResult.isExpressionNode()) {
 					operationResult = new ExpressionNode(kernel, operationResult); 
 				}
-				listElements.set(i, (ExpressionNode) operationResult);
+				listElements.set(i, (ExpressionValue) operationResult);
 			} 
 			catch (MyError err) {
 				// TODO: remove
@@ -390,7 +390,36 @@ public class MyList extends ValidExpression implements ListValue {
 			return null;
 		}*/
 
+	public String toValueString() {
+		return toString(); // Michael Borcherds 2008-06-05
+		/*
+		 * int size = listElements.size(); for (int i=0; i < size; i++) {
+		 * ((ExpressionValue) listElements.get(i)).evaluate(); }
+		 */
+	}
 
+	public String toLaTeXString(boolean symbolic) {
+		StringBuffer toLaTeXString = new StringBuffer();
+		toLaTeXString.append("{");
+
+		// first (n-1) elements
+		int lastIndex = listElements.size() - 1;
+		if (lastIndex > -1) {
+			for (int i = 0; i < lastIndex; i++) {
+				ExpressionValue exp = (ExpressionValue) listElements.get(i);
+				toLaTeXString.append(exp.toLaTeXString(symbolic)); 
+				toLaTeXString.append(", ");
+			}
+
+			// last element
+			ExpressionValue exp = (ExpressionValue) listElements.get(lastIndex);
+			toLaTeXString.append(exp.toLaTeXString(symbolic));
+		}
+
+		toLaTeXString.append("}");
+		return toLaTeXString.toString();
+	}
+	
 	// Michael Borcherds 2008-02-04
 	// adapted from GeoList
 	public String toString() {
@@ -401,13 +430,13 @@ public class MyList extends ValidExpression implements ListValue {
 		int lastIndex = listElements.size() - 1;
 		if (lastIndex > -1) {
 			for (int i = 0; i < lastIndex; i++) {
-				ExpressionNode exp = (ExpressionNode) listElements.get(i);
+				ExpressionValue exp = (ExpressionValue) listElements.get(i);
 				sbBuildValueString.append(exp.toString()); // .toOutputValueString());
 				sbBuildValueString.append(", ");
 			}
 
 			// last element
-			ExpressionNode exp = (ExpressionNode) listElements.get(lastIndex);
+			ExpressionValue exp = (ExpressionValue) listElements.get(lastIndex);
 			sbBuildValueString.append(exp.toString());
 		}
 
@@ -474,8 +503,8 @@ public class MyList extends ValidExpression implements ListValue {
 		MyList c = new MyList(kernel, size());
 
 		for (int i = 0; i < size; i++) {
-			c.addListElement(((ExpressionNode) listElements.get(i))
-					.getCopy(kernel));
+			c.addListElement(((ExpressionValue) listElements.get(i))
+					.deepCopy(kernel));
 		}
 		return c;
 	}
@@ -484,7 +513,7 @@ public class MyList extends ValidExpression implements ListValue {
 		HashSet varSet = new HashSet();
 		int size = listElements.size();
 		for (int i = 0; i < size; i++) {
-			HashSet s = ((ExpressionNode) listElements.get(i)).getVariables();
+			HashSet s = ((ExpressionValue) listElements.get(i)).getVariables();
 			if (s != null)
 				varSet.addAll(s);
 		}
@@ -492,18 +521,7 @@ public class MyList extends ValidExpression implements ListValue {
 		return varSet;
 	}
 
-	public String toValueString() {
-		return toString(); // Michael Borcherds 2008-06-05
-		/*
-		 * int size = listElements.size(); for (int i=0; i < size; i++) {
-		 * ((ExpressionNode) listElements.get(i)).evaluate(); }
-		 */
-	}
-
-	public String toLaTeXString(boolean symbolic) {
-		// return evaluate().toLaTeXString(symbolic);
-		return "MyList.toLaTeXString()";
-	}
+	
 
 	final public boolean isExpressionNode() {
 		return false;

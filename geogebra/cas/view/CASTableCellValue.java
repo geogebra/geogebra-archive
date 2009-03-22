@@ -2,13 +2,15 @@ package geogebra.cas.view;
 
 
 public class CASTableCellValue {
-	private String input;
-	private String output;
+	private String input, output, latex;
 	private boolean error = false;
+		
 
-	// private boolean isLineBorderVisible;
+	private CASView view;
 
-	public CASTableCellValue() {
+	public CASTableCellValue(CASView view) {
+		this.view = view;
+		
 		input = "";
 		output = "";
 	}	
@@ -25,13 +27,25 @@ public class CASTableCellValue {
 	public String getOutput() {
 		return output;
 	}
+	
+	public String getLaTeXOutput() {
+		return latex;
+	}
 
 	public boolean isOutputVisible() {
 		return output == null || output.length() == 0;
 	}
 	
 	public boolean isEmpty() {
-		return (output == null || output.length() == 0) && (input == null || input.length() == 0);
+		return isInputEmpty() && isOutputEmpty();
+	}
+	
+	public boolean isInputEmpty() {
+		return (input == null || input.length() == 0);
+	}
+	
+	public boolean isOutputEmpty() {
+		return (output == null || output.length() == 0);
 	}
 
 	public void setInput(String inValue) {
@@ -42,9 +56,10 @@ public class CASTableCellValue {
 		setOutput(inValue, false);
 	}
 	
-	public void setOutput(String inValue, boolean isError) {
-		output = inValue;
+	public void setOutput(String output, boolean isError) {
+		this.output = output;
 		error = isError;
+		latex = isError ? null : view.getCAS().convertGeoGebraToLaTeXString(output);
 	}
 	
 	public boolean isOutputError() {

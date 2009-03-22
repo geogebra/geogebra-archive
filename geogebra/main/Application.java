@@ -2011,7 +2011,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	private JFrame casFrame;
 
-	public CasManager getCasView() {
+	public synchronized CasManager getCasView() {
 		if (casView == null) {
 			loadCASJar();
 

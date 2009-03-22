@@ -427,8 +427,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
      */
     final public GeoElement getCached(int index) {
     	return (GeoElement) cacheList.get(index);
-    } 
-    
+    }       
             
     public String toString() {       
     	sbToString.setLength(0);

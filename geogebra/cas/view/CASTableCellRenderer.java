@@ -2,6 +2,7 @@ package geogebra.cas.view;
 
 import geogebra.main.Application;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 
@@ -19,15 +20,11 @@ public class CASTableCellRenderer extends CASTableCell implements
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
 		if (value instanceof CASTableCellValue) {
-			setFont(app.getPlainFont());
-			
 			CASTableCellValue tempV = (CASTableCellValue) value;				
-			setInput(tempV.getInput());
-			setOutput(tempV.getOutput(), tempV.isOutputError());
-			
+			setValue(tempV);
+							
 			// update row height
 			updateTableRowHeight(table, row);
-
 		//	System.out.println("RENDER row: " + row + ", input: " + tempV.getInput() + ", output: " + tempV.getOutput());
 		}
 		return this;

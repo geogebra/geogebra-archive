@@ -15,18 +15,16 @@ import javax.swing.text.JTextComponent;
 
 public class CASInputPanel extends JPanel {
 
-	private JLabel inputSign;
+
 	private JTextField inputArea;
 
 	public CASInputPanel() {
-		inputSign = new JLabel(" >>");
-		inputArea = new JTextField(20);
-		inputArea.setBorder(BorderFactory.createEmptyBorder());
-
-		setLayout(new BorderLayout(5,5));
-		add(inputSign, BorderLayout.WEST);
-		add(inputArea, BorderLayout.CENTER);				
-		setBackground(Color.white);
+		setBackground(Color.white);		
+		setLayout(new BorderLayout(0,0));
+		
+		inputArea = new JTextField(20);	
+		inputArea.setBorder(BorderFactory.createEmptyBorder());						
+		add(inputArea, BorderLayout.CENTER);
 	}
 
 	public void setInput(String inValue) {
@@ -53,8 +51,6 @@ public class CASInputPanel extends JPanel {
 
 		if (inputArea != null)
 			inputArea.setFont(ft);
-		if (inputSign != null)
-			inputSign.setFont(ft);
 	}
 	
 }

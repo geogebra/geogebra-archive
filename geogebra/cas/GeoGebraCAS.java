@@ -60,7 +60,7 @@ public class GeoGebraCAS {
 	/**
 	 * Processes the CAS input string and returns an evaluation result.
 	 * @boolean doEvaluate: whether inputExp should be evaluated (i.e. simplified).
-	 * @return null if something went wrong.
+	 * @return result as String in GeoGebra syntax
 	 */
 	public synchronized String processCASInput(String inputExp, boolean resolveVariables) throws Throwable {
 		// replace #1, #2 references by row input
@@ -79,8 +79,7 @@ public class GeoGebraCAS {
 		String MathPiperResult = evaluateMathPiper(MathPiperString);
 				
 		// convert MathPiper result back into GeoGebra syntax
-		ve = parseMathPiper(MathPiperResult);
-		String ggbResult = ve.toString();		
+		ve = parseMathPiper(MathPiperResult);				
 		
 		// if we evaluated an assignment, we may need to update a global variable 
 		if (assignmentLabel != null) {
@@ -92,7 +91,8 @@ public class GeoGebraCAS {
 			}			
 		}
 		
-		return ggbResult;
+		// return GeoGebra String
+		return  ve.toString();
 	}
 	
 	
@@ -107,6 +107,29 @@ public class GeoGebraCAS {
 		Application.debug("  checkCASinput: " + ve);
 		
 		return ve;		
+	}
+	
+	/**
+	 * Tries to convert an expression in GeoGebra syntax into a LaTeX string.
+	 * 
+	 * @return null if something went wrong or the resulting String doesn't contain
+	 * any LaTeX commands (i.e. no \).
+	 */
+	public synchronized String convertGeoGebraToLaTeXString(String ggbExp) {
+		try {
+			// parse input
+			ValidExpression ve = casParser.parseGeoGebraCASInput(ggbExp);
+			String latex = ve.toLaTeXString(true);
+					
+			if (latex.indexOf('\\') < 0) {
+				return null;
+			} else {
+				return latex;
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return null;
+		}				
 	}
 	
 	/**
@@ -290,8 +313,6 @@ public class GeoGebraCAS {
 	 */
 	final synchronized public String evaluateMathPiper(String exp) {
 		String result = evaluateMathPiper(exp, true);		
-		// TODO: remove
-		//Application.debug("evaluateMathPiper: " + exp + ", result: " + result);				
 		return result;
 	}
 	

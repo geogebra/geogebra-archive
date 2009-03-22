@@ -2321,13 +2321,10 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleOutExpression(LinkedHashMap<String, String> attrs) {
 		try {
-//			app.loadCASJar();
-//			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
-//					.setOutput((String) attrs.get("value"));
-//			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
-//					.setOutputAreaInclude(true);
+			String ggbString = (String) attrs.get("value");
+			String latexString = (String) attrs.get("latex");
 			casTableCellValueElement = app.getCasView().setOutputExpression(casTableCellValueElement,
-					(String) attrs.get("value"));
+					ggbString);
 			return true;
 		} catch (Exception e) {
 			return false;

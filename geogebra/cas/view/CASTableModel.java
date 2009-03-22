@@ -11,24 +11,20 @@ public class CASTableModel extends DefaultTableModel {
     private Application app = null;
     GeoElement copyGeo= null;
 	
-    public CASTableModel(JTable table)
-    {
-    	super();	   	
-    }
 
-    public CASTableModel(JTable table, int numRows, Application app)
+    public CASTableModel(CASTable table, int numRows, Application app)
     {
         super(numRows, CASPara.numOfCol);
         this.app = app;
         
         for(int i=0; i<numRows; i++){
-        	CASTableCellValue value = new CASTableCellValue();
+        	CASTableCellValue value = new CASTableCellValue(table.getCASView());
         	super.setValueAt(value, i, CASTable.CONTENT_COLUMN);
         	fireTableCellUpdated(i, CASTable.CONTENT_COLUMN);
         }
     }   
     
-    public CASTableModel(JTable table, Object[] data, Application app)
+    public CASTableModel(CASTable table, Object[] data, Application app)
     {
        this(table, data.length, app);
 

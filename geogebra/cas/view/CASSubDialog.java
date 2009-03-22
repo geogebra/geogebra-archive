@@ -184,7 +184,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		switch (mod) {
 		case SUB:
 			// Replace the sub in the input string
-			newRow = new CASTableCellValue();
+			newRow = new CASTableCellValue(casView);
 
 			if (replaceAllFlag)
 				newRow.setInput(inputStr.replaceAll(subStr, newExpression));
@@ -197,7 +197,7 @@ public class CASSubDialog extends JDialog implements WindowFocusListener,
 		case SUBSIM:
 			// Replace the sub in the input string
 			String preString;
-			newRow = new CASTableCellValue();
+			newRow = new CASTableCellValue(casView);
 			
 			if (replaceAllFlag)
 				preString = inputStr.replaceAll(subStr, newExpression);

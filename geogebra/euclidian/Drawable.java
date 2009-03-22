@@ -175,7 +175,7 @@ public abstract class Drawable {
 			for(int i = 0, currentLine = 0, currentElement = 0, xOffset = 0; i < elements.length; ++i) {
 				if(isLaTeX) {
 					// save the height of this element by drawing it to a temporary buffer
-					Dimension dim = drawEquation(view.getTempGraphics2D(), 0, 0, elements[i], font, fgColor, bgColor);
+					Dimension dim = drawEquation(view.app, view.getTempGraphics2D(), 0, 0, elements[i], font, fgColor, bgColor);
 					int height = dim.height;
 					elementHeights.add(new Integer(height));
 					
@@ -249,7 +249,7 @@ public abstract class Drawable {
 					yOffset = (lineHeights.get(currentLine).intValue() - elementHeights.get(currentElement).intValue()) / 2;
 					
 					// draw the equation and save the x offset
-					xOffset += drawEquation(cacheGraphics, xOffset, height + yOffset, elements[i], font, fgColor, bgColor).width;
+					xOffset += drawEquation(view.app, cacheGraphics, xOffset, height + yOffset, elements[i], font, fgColor, bgColor).width;
 					
 					++currentElement;
 				} else {
@@ -308,13 +308,13 @@ public abstract class Drawable {
 	}
 
 	
-	private geogebra.gui.hoteqn.sHotEqn eqn;
+	private static geogebra.gui.hoteqn.sHotEqn eqn;
 	
-	final public Dimension drawEquation(Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
+	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
 		Dimension dim;
 		if (eqn == null) {
-			if (!view.app.loadLaTeXJar()) {
+			if (!app.loadLaTeXJar()) {
 				//Application.debug("Could not initialize LaTeX renderer");
 				return new Dimension(0,0);    		
 	    	}	

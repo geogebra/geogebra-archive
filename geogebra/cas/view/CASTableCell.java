@@ -7,16 +7,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
 
-public abstract class CASTableCell extends JPanel {
+public abstract class CASTableCell extends JPanel{
 
-	private CASInputPanel inputPanel;
-	private CASOutputPanel outputPanel;
-	private CASLinePanel linePanel;
+	protected CASInputPanel inputPanel;
+	protected CASOutputPanel outputPanel;
 	private CASTable consoleTable;
 	protected Application app;
 	protected CASView view;
@@ -25,36 +24,39 @@ public abstract class CASTableCell extends JPanel {
 		this.view = view;
 		this.app = view.getApp();
 		this.consoleTable = view.getConsoleTable();
+			
+		setLayout(new BorderLayout(5, 5));
+		setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));		
+		setBackground(Color.white);
 		
 		inputPanel = new CASInputPanel();
-		outputPanel = new CASOutputPanel();
-		linePanel = new CASLinePanel();
-		setInput("");
-		setOutput("", false);			
-
-		setLayout(new BorderLayout(5, 5));
-		setBackground(Color.white);
+		outputPanel = new CASOutputPanel(view.getApp());		
 		add(inputPanel, BorderLayout.NORTH);
 		add(outputPanel, BorderLayout.CENTER);
-		add(linePanel, BorderLayout.SOUTH);	
 		return;
 	}
 
-	public void setInput(String inValue) {
-		inputPanel.setInput(inValue);
+	public int getInputPanelHeight() {
+		return inputPanel.getHeight();
+	}
+	
+	public int getOutputPanelHeight() {
+		return outputPanel.getHeight();
+	}
+	
+	public void setValue(CASTableCellValue cellValue) {
+		inputPanel.setInput(cellValue.getInput());
+		
+		// output panel
+		if (cellValue.isOutputEmpty()) {
+			outputPanel.setVisible(false);
+		}
+		else {
+			outputPanel.setVisible(true);
+			outputPanel.setOutput(cellValue.getOutput(), cellValue.getLaTeXOutput(), cellValue.isOutputError());	
+		}	
 	}
 
-	public void setOutput(String inValue, boolean isError) {
-		outputPanel.setOutput(inValue, isError);
-		boolean showOutputPanel = (inValue == null || inValue.length() == 0);
-		// TODO: check
-		//outputPanel.setVisible(showOutputPanel);
-		
-		//		if (showOutputPanel)
-		//			this.removeOutputPanel();
-		//		else
-		//			this.addOutputPanel();
-	}
 	
 	void updateTableRowHeight(JTable table, int row) {
 		if (isVisible()) {
@@ -79,26 +81,10 @@ public abstract class CASTableCell extends JPanel {
 	public void setInputAreaFocused() {
 		inputPanel.setInputAreaFocused();
 	}	
-
-	public CASLinePanel getLinePanel() {
-		return linePanel;
-	}
 	
 	public JTextComponent getInputArea() {
 		return inputPanel.getInputArea();
 	}
 
-	public CASTableModel getTableModel() {
-		return (CASTableModel) consoleTable.getModel();
-	}
-
-	final public void setFont(Font ft) {
-		if (ft == null) return;
-		
-		if (inputPanel != null)
-			inputPanel.setFont(ft);
-		if (outputPanel != null)
-			outputPanel.setFont(ft);
-	}
 
 }

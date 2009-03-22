@@ -113,11 +113,9 @@ public class CASView extends JComponent implements CasManager {
 		consoleTable.addKeyListener(inputListener);
 			
 		consoleTable.addKeyListener(new ConsoleTableKeyListener());
-		CASMouseController casMouseCtrl = new CASMouseController(consoleTable);
-		consoleTable.addMouseListener(casMouseCtrl);
 		
-
-		
+		TableCellMouseListener tableCellMouseListener = new TableCellMouseListener(consoleTable);
+		consoleTable.addMouseListener(tableCellMouseListener);		
 	}
 
 	public static class CASListModel extends AbstractListModel {
@@ -273,7 +271,7 @@ public class CASView extends JComponent implements CasManager {
 		consoleTable.deleteAllRow();
 
 		if (cellPairList == null) {
-			CASTableCellValue cellPair = new CASTableCellValue();
+			CASTableCellValue cellPair = new CASTableCellValue(this);
 			consoleTable.insertRowAfter(-1, cellPair);
 		} else {
 			Iterator it = cellPairList.iterator();
@@ -308,7 +306,7 @@ public class CASView extends JComponent implements CasManager {
 	}
 
 	public Object createCellValue() {
-		CASTableCellValue cellValue = new CASTableCellValue();
+		CASTableCellValue cellValue = new CASTableCellValue(this);
 		return cellValue;
 	}
 

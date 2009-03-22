@@ -79,6 +79,10 @@ public class CASTable extends JTable {
 	
 	}
 	
+	public CASView getCASView() {
+		return view;
+	}
+	
 	public final boolean isShowCellSeparator() {
 		return showCellSeparator;
 	}
@@ -116,7 +120,7 @@ public class CASTable extends JTable {
 		System.out.println("insertRowAfter: " + selectedRow);
 							
 		if (newValue == null)
-			newValue = new CASTableCellValue();
+			newValue = new CASTableCellValue(view);
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
 		
 		// update height of new row

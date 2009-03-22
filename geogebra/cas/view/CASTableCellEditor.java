@@ -31,16 +31,16 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		if (value instanceof CASTableCellValue) {			
-			setFont(app.getBoldFont());
+			inputPanel.setFont(app.getBoldFont());
 			
 			editing = true;
 			editingRow = row;
 			cellValue = (CASTableCellValue) value;
 			this.table = table;
 			
-			setInput(cellValue.getInput());					
-			setOutput(cellValue.getOutput(), cellValue.isOutputError());	
-	
+			// fill input and output panel
+			setValue(cellValue);					
+		
 			// update row height
 			updateTableRowHeight(table, row);
 		}
@@ -133,7 +133,10 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	public boolean shouldSelectCell(EventObject anEvent) {
 		return true;
 	}
-
+	
+	public final int getEditingRow() {
+		return editingRow;
+	}
 	
 	public void keyPressed(KeyEvent arg0) {
 		
@@ -148,21 +151,40 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		JTextComponent inputArea = getInputArea();
 		String text = inputArea.getText();
 		
-		// space typed: get output of previous row
-		if (editingRow > 0 && ch == ' ' && text.length() == 0) {
-			CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
-			inputArea.setText(selCellValue.getOutput());
-		}
-		
 		// if closing paranthesis is typed and there is no opening parenthesis for it
 		// add one in the beginning
 		switch (ch){
 			// closing parentheses: insert opening parenthesis automatically
-			case ')': 								
+			case ')':				
 				if (text.indexOf('(') < 0)
 					inputArea.setText('(' + text);
 				break;
-							
+				
+			// space, equals: get output of previous row (not in parentheses)
+			case ' ':
+			case '=':
+				if (editingRow > 0 && text.length() == 0) {
+					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+					inputArea.setText(selCellValue.getOutput());
+				}
+				break;	
+				
+			// get output of previous row (possibly in parentheses)
+			case '+': 
+			case '-': 
+			case '/':
+			case '*':
+			case '^':				
+				if (editingRow > 0 && text.length() == 0) {
+					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+					String prevOutput = selCellValue.getOutput();
+					if (prevOutput.indexOf(' ') < 0) {
+						inputArea.setText(prevOutput + " ");
+					} else {
+						inputArea.setText("(" +  prevOutput + ") ");
+					}
+				}
+				break;							
 		}
 	}
 
