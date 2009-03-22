@@ -11,7 +11,7 @@
 
 -outjars ../build/temp
 
--libraryjars ../java142-rt.jar
+-libraryjars ../java150-rt.jar
 -libraryjars netscape_javascript.jar
 -libraryjars AppleJavaExtensions.jar
 

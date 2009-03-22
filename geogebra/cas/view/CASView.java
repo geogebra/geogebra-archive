@@ -428,7 +428,7 @@ public class CASView extends JComponent implements CasManager {
 			d.setVisible(true);
 			return;
 		}
-		else {
+		else if (!ggbcmd.equals("Eval")){
 			// use action command as command for mathpiper
 			evalText=ggbcmd+"["+evalText+"]";
 		}
