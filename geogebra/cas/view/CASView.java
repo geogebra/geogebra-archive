@@ -349,31 +349,38 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 
 		final String [][][] menuStrings = {
 			{  
-				{"Eval", "= " + app.getPlain("Evaluate")}, 
-				{"Numeric", "\u2248 " + app.getPlain("Approximate")}, 
-				{"Hold", "\u2713 "  + app.getPlain("CheckInput")}
+				// command for apply, visible text, tooltip text
+				{"Eval", 		"=", 		app.getPlain("Evaluate") }, 
+				{"Numeric", 	"\u2248", 	app.getPlain("Approximate")}, 
+				{"Hold", 		"\u2713", 	app.getPlain("CheckInput")}
 			},		
 			{  
-				{"Simplify", app.getCommand("Simplify")},
-				{"Expand", app.getCommand("Expand")}, 
-				{"Factor", app.getCommand("Factor")}, 	
-				{"Substitute", app.getPlain("Substitute")}
+				{"Simplify", 	app.getCommand("Simplify")},
+				{"Expand", 		app.getCommand("Expand")}, 
+				{"Factor", 		app.getCommand("Factor")}				
 			}, 
 			{  
-				{"Solve", app.getPlain("Solve")},
-				{"Derivative", app.getCommand("Derivative")}, 
-				{"Integral", app.getCommand("Integral")}, 				
+				{"Substitute", 	app.getPlain("Substitute")},
+				{"Solve", 		app.getPlain("Solve")}						
+			},
+			{  
+				{"Derivative", 	"d/dx", 	app.getCommand("Derivative")}, 
+				{"Integral", 	"\u222b", 	app.getCommand("Integral")}				
 			}
 		};
 		
 		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		final JComboBox [] menus = new JComboBox[3];
+		final JComboBox [] menus = new JComboBox[menuStrings.length];
 				
 		MyComboBoxListener ml = new MyComboBoxListener() {
 			public void doActionPerformed(Object source) {	
 				for (int i=0; i < menus.length; i++) {
 					if (source == menus[i]) {
-						apply(menuStrings[i][menus[i].getSelectedIndex()][0], null);
+						int pos = menus[i].getSelectedIndex();
+						apply(menuStrings[i][pos][0], null);
+						// update tooltip
+						if (menuStrings[i][pos].length >= 3)
+							menus[i].setToolTipText(menuStrings[i][pos][2]);
 					}
 				}
 			}
@@ -382,8 +389,12 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 		for (int i=0; i < menus.length; i++) {
 			menus[i] = new JComboBox();			
 			for (int k=0; k < menuStrings[i].length; k++ ) {
-				menus[i].addItem(menuStrings[i][k][1]);
+				// visible text
+				menus[i].addItem("  " + menuStrings[i][k][1]);
 			}
+			// tooltip
+			if (menuStrings[i][0].length >= 3)
+				menus[i].setToolTipText(menuStrings[i][0][2]);
 			menus[i].setFocusable(false);
 			menus[i].addMouseListener(ml);
 			menus[i].addActionListener(ml);
@@ -416,9 +427,10 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 		consoleTable.stopEditing();
 		
 		// get current row and input text		
-		int selRow = consoleTable.getSelectedRow();			
+		int selRow = consoleTable.getSelectedRow();	
+		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
-		String selRowInput = cellValue.getInput();		
+		String selRowInput = cellValue.getInput();	
 		if (selRowInput == null || selRowInput.length() == 0) {
 			consoleTable.startEditingRow(selRow);
 			return;
