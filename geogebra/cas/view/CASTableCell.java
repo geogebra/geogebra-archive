@@ -84,6 +84,14 @@ public abstract class CASTableCell extends JPanel{
 	
 	public JTextComponent getInputArea() {
 		return inputPanel.getInputArea();
+	}	
+	
+	public void setFont(Font ft) {
+		super.setFont(ft);
+		if (inputPanel != null)
+			inputPanel.setFont(ft);
+		if (outputPanel != null)
+			outputPanel.setFont(ft);
 	}
 
 

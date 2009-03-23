@@ -91,8 +91,8 @@ public class CASTableCellController implements KeyListener {
 
 		case KeyEvent.VK_UP:
 			if (selectedRow >= 1) {
-				table.changeSelection(selectedRow - 1, CASTable.CONTENT_COLUMN, false, false);		
-				table.scrollRectToVisible(table.getCellRect(selectedRow - 1, CASTable.CONTENT_COLUMN, true ) );
+				table.changeSelection(selectedRow - 1, CASTable.COL_CAS_CELLS, false, false);		
+				table.scrollRectToVisible(table.getCellRect(selectedRow - 1, CASTable.COL_CAS_CELLS, true ) );
 			} else if (table.isRowEmpty(0)) {
 				// insert empty row at beginning
 				table.insertRowAfter(-1, null);

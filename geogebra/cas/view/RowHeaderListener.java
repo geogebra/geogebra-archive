@@ -68,12 +68,11 @@ public class RowHeaderListener extends MouseAdapter implements MouseMotionListen
 		if (rightClick) {
 			RowHeaderPopupMenu popupMenu = new RowHeaderPopupMenu(rowHeader, table);	
 			popupMenu.show(e.getComponent(), e.getX(), e.getY());				
-		}
+		} 
 	}
 	
 	public void mouseClicked(MouseEvent e) {
-		// TODO: remove
-		System.out.println("mouseClicked " + rowHeader.locationToIndex(e.getPoint()));
+
 	}
 	
 	public void mouseMoved(MouseEvent e) {

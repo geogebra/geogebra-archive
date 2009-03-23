@@ -8,7 +8,9 @@ import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.MouseListener;
 
 import javax.swing.CellEditor;
 import javax.swing.JTable;
@@ -21,7 +23,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public class CASTable extends JTable {
 	
-	public final static int CONTENT_COLUMN = 0;
+	public final static int COL_CAS_CELLS = 0;
 
 	private CASTableModel tableModel;
 	protected Kernel kernel;
@@ -36,26 +38,33 @@ public class CASTable extends JTable {
 	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = new Color(185,
 			185, 210);
 
-	public CASTable(CASView view, int rows) {
+	public CASTable(CASView view) {
 		this.view = view;
 		app = view.getApp();
 		kernel = app.getKernel();					
 
-		this.setShowGrid(false);
-		// Dynamically change the height of the table
-		this.setRowHeight(CASPara.inputLineHeight);
-		this.setBackground(Color.white);
+		setShowGrid(true);
+		setGridColor(Application.TABLE_GRID_COLOR);
+		setBackground(Color.white);
 
-		tableModel = new CASTableModel(this, rows, app);
+		tableModel = new CASTableModel(this, app);
 		this.setModel(tableModel);
 		this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		
 		// init editor and renderer
 		editor = new CASTableCellEditor(view);
 		renderer = new CASTableCellRenderer(view);
-		getColumnModel().getColumn(CONTENT_COLUMN).setCellEditor(editor);
-		getColumnModel().getColumn(CONTENT_COLUMN).setCellRenderer(renderer);				
+		getColumnModel().getColumn(COL_CAS_CELLS).setCellEditor(editor);
+		getColumnModel().getColumn(COL_CAS_CELLS).setCellRenderer(renderer);				
 		setTableHeader(null); 
+		
+		// remove all default mouse listeners
+		MouseListener [] ml = getMouseListeners();
+		if (ml != null) {
+			for (int i=0; i < ml.length; i++) {
+				removeMouseListener(ml[i]);
+			}
+		}			
 
 		// Set the width of the index column;
 		// this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
@@ -185,7 +194,7 @@ public class CASTable extends JTable {
 	}
 	
 	public CASTableCellValue getCASTableCellValue(int row) {
-		return (CASTableCellValue) tableModel.getValueAt(row, CONTENT_COLUMN);
+		return (CASTableCellValue) tableModel.getValueAt(row, COL_CAS_CELLS);
 	}
 	
 	public boolean isRowEmpty(int row) {		
@@ -241,12 +250,25 @@ public class CASTable extends JTable {
 		else {		
 			// start editing
 			setRowSelectionInterval(editRow, editRow);	
-	        scrollRectToVisible(getCellRect( editRow, CONTENT_COLUMN, false ) );	
-			editCellAt(editRow, CONTENT_COLUMN);	
-			editor.setInputAreaFocused();			
+	        scrollRectToVisible(getCellRect( editRow, COL_CAS_CELLS, false ) );	
+			editCellAt(editRow, COL_CAS_CELLS);			
 		}
 	}		
+	
+	public boolean editCellAt(int editRow, int editCol) {
+		boolean success = super.editCellAt(editRow, editCol);
+		if (success && editCol == COL_CAS_CELLS)
+			editor.setInputAreaFocused();
+		return success;
+	}
 
+	public void setFont(Font ft) {
+		super.setFont(ft);
+		if (editor != null)
+			editor.setFont(getFont());
+		if (renderer != null)
+			renderer.setFont(getFont());
+	}
 
 
 }

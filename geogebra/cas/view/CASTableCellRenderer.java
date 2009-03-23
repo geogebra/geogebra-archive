@@ -20,12 +20,13 @@ public class CASTableCellRenderer extends CASTableCell implements
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
 		if (value instanceof CASTableCellValue) {
+			inputPanel.setFont(view.getFont());
+			
 			CASTableCellValue tempV = (CASTableCellValue) value;				
 			setValue(tempV);
 							
 			// update row height
-			updateTableRowHeight(table, row);
-		//	System.out.println("RENDER row: " + row + ", input: " + tempV.getInput() + ", output: " + tempV.getOutput());
+			updateTableRowHeight(table, row);		
 		}
 		return this;
 	}

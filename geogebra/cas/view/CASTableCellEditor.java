@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -30,9 +31,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		if (value instanceof CASTableCellValue) {			
-			inputPanel.setFont(app.getBoldFont());
-			
+		if (value instanceof CASTableCellValue) {						
 			editing = true;
 			editingRow = row;
 			cellValue = (CASTableCellValue) value;
@@ -46,6 +45,12 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		}
 		return this;
 	}	
+	
+	public void setFont(Font ft) {
+		super.setFont(ft);
+		if (inputPanel != null)
+			inputPanel.setFont(ft.deriveFont(Font.BOLD));		
+	}
 	
 	public String getInputText() {	
 		return getInputArea().getText();

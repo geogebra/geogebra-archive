@@ -17,31 +17,46 @@ public class TableCellMouseListener extends MouseAdapter {
 		this.table = table;
 	}		
 	
+	public void mouseReleased(MouseEvent e) {
+		e.consume();
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		e.consume();
+	}
+	
 	/**
 	 * Handles clicks on the output panel of a table cell and inserts
 	 * the clicked output string into the currently active editor.
 	 */
-	public void mousePressed(MouseEvent e) {		
+	public void mousePressed(MouseEvent e) {
 		// clicked row in table
 		Point p = e.getPoint();
 		int clickedRow = table.rowAtPoint(p);
-		
-		// get renderer for this row
-		TableCellRenderer  renderer =  table.getCellRenderer(clickedRow, CASTable.CONTENT_COLUMN);
-		CASTableCell tableCell = (CASTableCell) table.prepareRenderer(renderer, clickedRow, CASTable.CONTENT_COLUMN);
-		
-		 // Convert the event to the renderer's coordinate system
-		 Rectangle cellRect = table.getCellRect(clickedRow, CASTable.CONTENT_COLUMN, false);
-		 p.translate(-cellRect.x, -cellRect.y);
-
-		// check if we clicked on input panel within tableCell
-		if (p.y <= tableCell.getInputPanelHeight() + 10) {
+		if (clickedRow < 0) {
+			// start editing last row
+			table.startEditingRow(table.getRowCount()-1);
 			return;
 		}
 		
+		// get renderer for this row
+		TableCellRenderer  renderer =  table.getCellRenderer(clickedRow, CASTable.COL_CAS_CELLS);
+		CASTableCell tableCell = (CASTableCell) table.prepareRenderer(renderer, clickedRow, CASTable.COL_CAS_CELLS);
+		
+		 // Convert the event to the renderer's coordinate system
+		 Rectangle cellRect = table.getCellRect(clickedRow, CASTable.COL_CAS_CELLS, false);
+		 p.translate(-cellRect.x, -cellRect.y);
+		 		
+		// check if we clicked on input panel within tableCell
+		if (p.y <= tableCell.getInputPanelHeight() + 10) {
+			table.startEditingRow(clickedRow);
+			return;
+		}
+			
+		
 		// CLICKED ON OUTPUT PANEL IN TABLE CELL				
 		CASTableCellValue clickedCellValue = table.getCASTableCellValue(clickedRow);
-		String outputStr = clickedCellValue.getOutput();
+		String outputStr = clickedCellValue.getOutput();			
 		if (outputStr == null || outputStr.length() == 0) {
 			table.startEditingRow(clickedRow);
 			return;
@@ -66,7 +81,7 @@ public class TableCellMouseListener extends MouseAdapter {
 			CASTableCellValue newValue = null;
 			if (table.getRowCount() > clickedRow + 1) {
 				newValue = table.getCASTableCellValue(clickedRow + 1);
-				if (newValue.isEmpty()) {
+				if (newValue.isInputEmpty()) {
 					newValue.setInput(outputStr);
 					table.updateRow(clickedRow + 1);					
 				}

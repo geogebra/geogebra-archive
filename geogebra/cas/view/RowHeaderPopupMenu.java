@@ -35,13 +35,13 @@ public class RowHeaderPopupMenu extends JPopupMenu implements ActionListener {
 		// insert below
 		JMenuItem item6 = new JMenuItem(app.getMenu("InsertBelow"));
 		item6.setIcon(app.getEmptyIcon());
-		item5.setActionCommand("insertBelow");
+		item6.setActionCommand("insertBelow");
 		item6.addActionListener(this);
 		add(item6);
 		addSeparator();
 		
 		// delete rows item
-		int [] selRows = table.getSelectedRows();		
+		int [] selRows = rowHeader.getSelectedIndices();	
 		String strRows;
 		if (selRows.length == 1) {
 			strRows = app.getPlain("DeleteRowA", Integer.toString(selRows[0]+1));			

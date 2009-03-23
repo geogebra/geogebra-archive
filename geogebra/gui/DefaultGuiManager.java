@@ -544,6 +544,9 @@ public class DefaultGuiManager implements GuiManager {
 			constProtocol.initGUI();
 		if (constProtocolNavigation != null)
 			constProtocolNavigation.initGUI();
+		
+		if (app.hasCasView())
+			app.getCasView().updateFonts();
 	}
 
 	public void setLabels() {

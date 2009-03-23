@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import geogebra.cas.GeoGebraCAS;
+import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.CasManager;
@@ -8,21 +9,32 @@ import geogebra.main.CasManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 /**
  * A class which will give the view of the CAS
@@ -32,7 +44,7 @@ import javax.swing.event.ListSelectionListener;
  * @author Quan Yuan
  * 
  */
-public class CASView extends JComponent implements CasManager {
+public class CASView extends JComponent implements CasManager, FocusListener {
 	
 	private Kernel kernel;
 	
@@ -48,7 +60,7 @@ public class CASView extends JComponent implements CasManager {
 
 	private GeoGebraCAS cas;
 
-	private final int numOfRows = 1;
+	private JPanel btPanel;
 
 
 	public CASView(Application app) {
@@ -62,35 +74,27 @@ public class CASView extends JComponent implements CasManager {
 				cas.evaluateMathPiper("Simplify(1+1)");
 			}
 		};
-		casInit.start();
-		
-		setLayout(new BorderLayout());
-		
-		// button panel
-		JPanel btPanel = initButtons();		
-		add(btPanel, BorderLayout.NORTH);
-		
-		// Ulven 01.03.09: excange line 90-97 with:
-		// BtnPanel which sets up all the button.
-		//add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
-		
+		casInit.start();		
+	
 		// CAS input/output cells
-		createCASTable();
+		createCASTable();	
 		
 		// row header
 		final JList rowHeader = new RowHeader(consoleTable);		
 
 		// init the scroll panel
 		JScrollPane scrollPane = new JScrollPane(
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setRowHeaderView(rowHeader);
 		scrollPane.setViewportView(consoleTable);
-
+		scrollPane.setBackground(Color.white);
+						
 		// put the scrollpanel in 
+		setLayout(new BorderLayout());	
 		add(scrollPane, BorderLayout.CENTER);
-		this.setBackground(Color.WHITE);
-		
+		this.setBackground(Color.white);
+						
 		// tell rowheader about selection updates in table
 		consoleTable.getSelectionModel().addListSelectionListener(
 				new ListSelectionListener() {
@@ -104,20 +108,43 @@ public class CASView extends JComponent implements CasManager {
 					}					
 				});
 		
-		// start editing last row
-		int lastRow = consoleTable.getRowCount() - 1;
-		if (lastRow >= 0)
-			consoleTable.startEditingRow(lastRow);
-	}				
+		// Ulven 01.03.09: excange line 90-97 with:
+		// BtnPanel which sets up all the button.
+		//add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
+		createButtonPanel();
+	
+		
+		addFocusListener(this);		
+	}		
+	
+	private void createButtonPanel() {
+		if (btPanel != null)
+			remove(btPanel);
+		btPanel = initButtons();		
+		add(btPanel, BorderLayout.NORTH);	
+	}
+	
+	public void updateFonts() {
+		if (app.getFontSize() == getFont().getSize()) return;
+		
+		setFont(app.getPlainFont());		
+		createButtonPanel();		
+		consoleTable.setFont(getFont());
+		validate();
+	}
+	
+	public Font getBoldFont() {
+		return app.getBoldFont();
+	}
 	
 	private void createCASTable() {
-		consoleTable = new CASTable(this, numOfRows);
+		consoleTable = new CASTable(this);
 		
 		CASTableCellController inputListener = new CASTableCellController(this);
 		consoleTable.getEditor().getInputArea().addKeyListener(inputListener);
-		consoleTable.addKeyListener(inputListener);
+		//consoleTable.addKeyListener(inputListener);
 			
-		consoleTable.addKeyListener(new ConsoleTableKeyListener());
+		//consoleTable.addKeyListener(new ConsoleTableKeyListener());
 		
 		TableCellMouseListener tableCellMouseListener = new TableCellMouseListener(consoleTable);
 		consoleTable.addMouseListener(tableCellMouseListener);		
@@ -314,60 +341,55 @@ public class CASView extends JComponent implements CasManager {
 		CASTableCellValue cellValue = new CASTableCellValue(this);
 		return cellValue;
 	}
+	
+	
 
 	//Ulven 01.03.09: Drop this, do it in components.BtnPanel
 	private JPanel initButtons() {	
-		ActionListener ac = new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {					
-				apply(ae.getActionCommand(), null);
-			}	
+
+		final String [][][] menuStrings = {
+			{  
+				{"Eval", "= " + app.getPlain("Evaluate")}, 
+				{"Numeric", "\u2248 " + app.getPlain("Approximate")}, 
+				{"Hold", "\u2713 "  + app.getPlain("CheckInput")}
+			},		
+			{  
+				{"Simplify", app.getCommand("Simplify")},
+				{"Expand", app.getCommand("Expand")}, 
+				{"Factor", app.getCommand("Factor")}, 	
+				{"Substitute", app.getPlain("Substitute")}
+			}, 
+			{  
+				{"Solve", app.getPlain("Solve")},
+				{"Derivative", app.getCommand("Derivative")}, 
+				{"Integral", app.getCommand("Integral")}, 				
+			}
 		};
 		
-		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));	
+		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		final JComboBox [] menus = new JComboBox[3];
+				
+		MyComboBoxListener ml = new MyComboBoxListener() {
+			public void doActionPerformed(Object source) {	
+				for (int i=0; i < menus.length; i++) {
+					if (source == menus[i]) {
+						apply(menuStrings[i][menus[i].getSelectedIndex()][0], null);
+					}
+				}
+			}
+		};
 		
-		// evaluate
-		JButton btEval = new JButton("=");
-		btEval.setActionCommand("Eval");
-		btEval.addActionListener(ac);
-		btPanel.add(btEval);
-		
-		// hold
-		JButton btHold = new JButton("\u2713");
-		btHold.setActionCommand("Hold");
-		btHold.addActionListener(ac);
-		btPanel.add(btHold);
-		
-		// numeric
-		JButton btNumeric = new JButton("\u2248");
-		btNumeric.setActionCommand("Numeric");
-		btNumeric.addActionListener(ac);
-		btPanel.add(btNumeric);		
-		
-		// group terms
-		JButton btGroup = new JButton(app.getPlain("GroupTerms"));
-		btGroup.setActionCommand("Simplify");
-		btGroup.addActionListener(ac);
-		btPanel.add(btGroup);
-
-		// expand
-		JButton btExp = new JButton(app.getPlain("Expand"));
-		btExp.setActionCommand("Expand");
-		btExp.addActionListener(ac);
-		btPanel.add(btExp);
-
-		// factor
-		JButton btFactor = new JButton(app.getPlain("Factor"));
-		btFactor.setActionCommand("Factor");
-		btFactor.addActionListener(ac);
-		btPanel.add(btFactor);	
-		
-		// substitute
-		JButton btSub = new JButton(app.getPlain("Substitute"));
-		btSub.setActionCommand("Substitute");
-		btSub.addActionListener(ac);
-		btPanel.add(btSub);
-	
-						
+		for (int i=0; i < menus.length; i++) {
+			menus[i] = new JComboBox();			
+			for (int k=0; k < menuStrings[i].length; k++ ) {
+				menus[i].addItem(menuStrings[i][k][1]);
+			}
+			menus[i].setFocusable(false);
+			menus[i].addMouseListener(ml);
+			menus[i].addActionListener(ml);
+			btPanel.add(menus[i]);
+		}
+							
 		return btPanel;	
 	}
 
@@ -385,15 +407,11 @@ public class CASView extends JComponent implements CasManager {
 		System.out.println(ggbcmd);
 		
 		// get editor and possibly selected text
-		CASTableCellEditor cellEditor = consoleTable.getEditor();
+		CASTableCellEditor cellEditor = consoleTable.getEditor();		
 		String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
 		int selStart = cellEditor.getInputSelectionStart();
 		int selEnd = cellEditor.getInputSelectionEnd();
-		
-		// TODO: remove
-		System.out.println("selectedText: " + selectedText + ", selStart: " + selStart + ", selEnd: " + selEnd);					
-	
-		
+				
 		// save the edited value into the table model
 		consoleTable.stopEditing();
 		
@@ -401,6 +419,10 @@ public class CASView extends JComponent implements CasManager {
 		int selRow = consoleTable.getSelectedRow();			
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
 		String selRowInput = cellValue.getInput();		
+		if (selRowInput == null || selRowInput.length() == 0) {
+			consoleTable.startEditingRow(selRow);
+			return;
+		}
 		
 		// break text into prefix, evalText, postfix
 		String prefix, evalText, postfix;			
@@ -471,6 +493,17 @@ public class CASView extends JComponent implements CasManager {
 
 	public final void setUseGeoGebraVariableValues(boolean useGeoGebraVariableValues) {
 		this.useGeoGebraVariableValues = useGeoGebraVariableValues;
+	}
+
+	public void focusGained(FocusEvent arg0) {
+		// start editing last row
+		int lastRow = consoleTable.getRowCount() - 1;
+		if (lastRow >= 0)
+			consoleTable.startEditingRow(lastRow);
+	}
+
+	public void focusLost(FocusEvent arg0) {
+		
 	}
 
 

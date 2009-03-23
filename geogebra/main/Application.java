@@ -646,10 +646,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (frame == null)
 			SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 		else
-			SwingUtilities.updateComponentTreeUI(frame);	
-		
-		if (casView != null)
-			SwingUtilities.updateComponentTreeUI(casView.getCASViewComponent());		
+			SwingUtilities.updateComponentTreeUI(frame);				
 	}
 
 	/**

@@ -9,30 +9,16 @@ import javax.swing.table.DefaultTableModel;
 public class CASTableModel extends DefaultTableModel {
    
     private Application app = null;
-    GeoElement copyGeo= null;
-	
+    GeoElement copyGeo = null;	
 
-    public CASTableModel(CASTable table, int numRows, Application app)
-    {
-        super(numRows, CASPara.numOfCol);
+    public CASTableModel(CASTable table, Application app) {
+        super(1, 1);
         this.app = app;
         
-        for(int i=0; i<numRows; i++){
-        	CASTableCellValue value = new CASTableCellValue(table.getCASView());
-        	super.setValueAt(value, i, CASTable.CONTENT_COLUMN);
-        	fireTableCellUpdated(i, CASTable.CONTENT_COLUMN);
-        }
-    }   
-    
-    public CASTableModel(CASTable table, Object[] data, Application app)
-    {
-       this(table, data.length, app);
-
-       /* load the data */
-       for (int i = 0; i < data.length; i++)
-       {
-             super.setValueAt(data[i], i, CASTable.CONTENT_COLUMN);
-       }
+        // create first row
+    	CASTableCellValue value = new CASTableCellValue(table.getCASView());
+    	setValueAt(value, 0, CASTable.COL_CAS_CELLS);
+    	fireTableCellUpdated(0, CASTable.COL_CAS_CELLS);        
     }
     
     public String getRowLabel (int row)
