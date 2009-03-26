@@ -20,6 +20,8 @@ import java.util.Iterator;
  * @version
  */
 
+//TODO change ArrayList to TreeSet 
+
 public class Hits extends ArrayList {
 	
 	

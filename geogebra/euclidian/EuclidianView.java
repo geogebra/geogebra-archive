@@ -4054,4 +4054,19 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	
 	
 	
+	
+	
+	
+	
+	/////////////////////////////////////////
+	// previewables
+	
+	public Previewable createPreviewLine(ArrayList selectedPoints){
+		return new DrawLine(this, selectedPoints);
+	}
+	
+	
+	
+	
+	
 }

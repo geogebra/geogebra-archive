@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
@@ -26,7 +27,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-public class EuclidianController3D extends EuclidianController
+public class EuclidianController3D extends EuclidianController 
 implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 
@@ -308,16 +309,37 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
+	///////////////////////////////////////
+	// creating new objects
+	
+	
+	/** return selected points as 3D points
+	 * @return selected points
+	 */
+	final protected GeoPoint3D[] getSelectedPoints3D() {		
+
+		GeoPoint3D[] ret = new GeoPoint3D[selectedPoints.size()];
+		getSelectedPointsInterface(ret);
+		
+		return ret;	
+	}
+		
+	// fetch the two selected points
+	protected void join(){
+		GeoPoint3D[] points = getSelectedPoints3D();
+		((Kernel3D) getKernel()).Line3D(null,points[0], points[1]);
+	}
 	
 	
 	
 	
 	
+	///////////////////////////////////////////
+	// moved GeoElements
 	
-	
-	
-	
-	
+	public GeoElement getMovedGeoPoint(){
+		return movedGeoPoint3D;
+	}
 	
 	
 	

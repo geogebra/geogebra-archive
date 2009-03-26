@@ -165,14 +165,23 @@ public abstract class Drawable3D {
 	
 	///////////////////////////////////////////////////////////////////////////////
 	// constructors
+	
+	/**
+	 * construct the Drawable3D with a link to a_view3D
+	 * @param a_view3D the view linked to this
+	 */
+	public Drawable3D(EuclidianView3D a_view3D){
+		setView3D(a_view3D);
+	}
+	
 		
-	/** default constructor.
+	/** 
 	 * Call the {@link #update()} method.
 	 * @param a_view3D the {@link EuclidianView3D} using this Drawable3D
 	 * @param a_geo the {@link GeoElement3D} linked to this GeoElement3D
 	 */
 	public Drawable3D(EuclidianView3D a_view3D, GeoElement a_geo){
-		setView3D(a_view3D);
+		this(a_view3D);
 		setGeoElement(a_geo);
 		((GeoElement3DInterface) a_geo).setDrawable3D(this);
 		update();

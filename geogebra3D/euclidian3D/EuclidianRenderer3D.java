@@ -965,6 +965,8 @@ public class EuclidianRenderer3D implements GLEventListener {
     public void setMouseLoc(int x, int y){
     	mouseX = x;
     	mouseY = y;
+    	
+    	// on next rending, a picking will be done : see doPick()
     	waitForPick = true;
     }
     
@@ -1057,6 +1059,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         }
         
         
+        // sets the GeoElements in m_view3D.getHits()
         ((Hits3D) m_view3D.getHits()).sort();
         
         waitForPick = false;

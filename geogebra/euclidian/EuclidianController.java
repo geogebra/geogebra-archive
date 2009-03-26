@@ -313,7 +313,8 @@ public class EuclidianController implements MouseListener,
 		// init preview drawables
 		switch (mode) {
 		case EuclidianView.MODE_JOIN: // line through two points
-			previewDrawable = new DrawLine((EuclidianView) view, selectedPoints);
+			previewDrawable = view.createPreviewLine(selectedPoints);
+			//previewDrawable = new DrawLine((EuclidianView) view, selectedPoints);
 			break;
 
 		case EuclidianView.MODE_SEGMENT:
@@ -1352,12 +1353,12 @@ public class EuclidianController implements MouseListener,
 		
 		
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
-		if (movedGeoPoint != null){
+		if (getMovedGeoPoint() != null){
 			
 			// deselect point after drag, but not on click
-			if (movedGeoPointDragged) movedGeoPoint.setSelected(false);
+			if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
 			
-			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) movedGeoPoint.resetTraceColumns();
+			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
 		}
 		if (movedGeoNumeric != null) {
 			
@@ -1505,7 +1506,7 @@ public class EuclidianController implements MouseListener,
 		// grid capturing on: newly created point should be taken
 		if (hits.isEmpty() && POINT_CREATED) {			
 			hits = new Hits();
-			hits.add(movedGeoPoint);				
+			hits.add(getMovedGeoPoint());//hits.add(movedGeoPoint);				
 		}
 		POINT_CREATED = false;		
 //		 Michael Borcherds 2007-12-08 END	
@@ -2589,11 +2590,11 @@ public class EuclidianController implements MouseListener,
 			//movedGeoPoint = point;
 			updateMovedGeoPoint(point);
 			
-			movedGeoElement = movedGeoPoint;
+			movedGeoElement = getMovedGeoPoint();
 			moveMode = MOVE_POINT;
 			view.setDragCursor();
 			if (doSingleHighlighting)
-				doSingleHighlighting(movedGeoPoint);
+				doSingleHighlighting(getMovedGeoPoint());
 			POINT_CREATED = true;
 			return true;
 		} else {
@@ -2631,13 +2632,22 @@ public class EuclidianController implements MouseListener,
 		// points needed
 		addSelectedPoint(hits, 2, false);
 		if (selPoints() == 2) {
+			
 			// fetch the two selected points
-			GeoPoint[] points = getSelectedPoints();
-			kernel.Line(null, points[0], points[1]);
+			join();
+
 			return true;
 		}
 		return false;
 	}
+	
+	// fetch the two selected points
+	protected void join(){
+		GeoPoint[] points = getSelectedPoints();
+		kernel.Line(null, points[0], points[1]);
+	}
+	
+	
 
 	protected void handleMousePressedForRecordToSpreadsheetMode() {	
 		GeoElement geo;
@@ -2679,13 +2689,13 @@ public class EuclidianController implements MouseListener,
 							
 			//moveModeSelectionHandled = true;
 			
-			if (movedGeoPoint != null) movedGeoPoint.setSelected(false);
+			if (getMovedGeoPoint() != null) getMovedGeoPoint().setSelected(false);
 			if (movedGeoNumeric != null) movedGeoNumeric.setSelected(false);
 			
 			//hits = view.getHits(hits, GeoPoint.class, tempArrayList);
-			if (!pointHits.isEmpty() && pointHits.contains(movedGeoPoint))
+			if (!pointHits.isEmpty() && pointHits.contains(getMovedGeoPoint()))
 			{
-				movedGeoPoint.setSelected(true);
+				getMovedGeoPoint().setSelected(true);
 				moveMode = MOVE_POINT;
 			}
 			else if (!pointHits.isEmpty()) {
@@ -4640,8 +4650,8 @@ public class EuclidianController implements MouseListener,
 		if (!objectFound && macroInput[index] == GeoPoint.class) {
 			if (createNewPoint(hits, true, true, false)) {				
 				// take movedGeoPoint which is the newly created point								
-				selectedGeos.add(movedGeoPoint);
-				app.addSelectedGeo(movedGeoPoint);
+				selectedGeos.add(getMovedGeoPoint());
+				app.addSelectedGeo(getMovedGeoPoint());
 				objectFound = true;
 				POINT_CREATED = false;
 			}
@@ -4804,13 +4814,32 @@ public class EuclidianController implements MouseListener,
 		return ret;
 	}	
 
-	final protected GeoPoint[] getSelectedPoints() {				
+	final protected void getSelectedPointsInterface(GeoPointInterface[] result) {	
+		
+		for (int i = 0; i < selectedPoints.size(); i++) {		
+			result[i] = (GeoPointInterface) selectedPoints.get(i);
+		}
+		clearSelection(selectedPoints);
+
+	}
+		
+		
+	final protected GeoPoint[] getSelectedPoints() {		
+		
+		/*
 		GeoPoint[] ret = new GeoPoint[selectedPoints.size()];
 		for (int i = 0; i < selectedPoints.size(); i++) {		
 			ret[i] = (GeoPoint) selectedPoints.get(i);
 		}
 		clearSelection(selectedPoints);
 		return ret;
+		*/
+		
+		GeoPoint[] ret = new GeoPoint[selectedPoints.size()];
+		getSelectedPointsInterface(ret);
+		
+		return ret;
+
 	}
 	
 	final protected GeoNumeric[] getSelectedNumbers() {				
@@ -4936,7 +4965,8 @@ public class EuclidianController implements MouseListener,
 
 	final protected int addSelectedPoint(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPoints, GeoPoint.class);
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPoints, GeoPointInterface.class);
+		//ggb3D 2009-06-26 //return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPoints, GeoPoint.class);
 	}
 
 	final protected int addSelectedNumeric(Hits hits, int max,
@@ -5329,6 +5359,26 @@ public class EuclidianController implements MouseListener,
 		app.setUnsaved();
 
 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////////////////////////////////////
+	// moved GeoElements
+	
+	
+	
+	/** return the current movedGeoPoint */
+	public GeoElement getMovedGeoPoint(){
+		return movedGeoPoint;
 	}
 
 }

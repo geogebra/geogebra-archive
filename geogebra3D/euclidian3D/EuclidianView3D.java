@@ -33,6 +33,7 @@ import java.awt.event.MouseEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.ArrayList;
 
 import javax.media.opengl.GLCanvas;
 import javax.swing.JPanel;
@@ -1308,5 +1309,35 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/////////////////////////////////////////
+	// previewables
+	
+	public Previewable createPreviewLine(ArrayList selectedPoints){
+		return null; //new DrawLine3D(this, selectedPoints);
+	}
+
 
 }

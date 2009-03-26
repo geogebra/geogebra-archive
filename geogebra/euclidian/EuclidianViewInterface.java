@@ -149,8 +149,15 @@ public interface EuclidianViewInterface {
 	
 	
 
+	/////////////////////////////////////////
+	// previewables
 
-
+	/**
+	 * create a previewable for line construction
+	 * @param selectedPoints points
+	 * @return the line previewable
+	 */
+	public Previewable createPreviewLine(ArrayList selectedPoints);
 
 
 

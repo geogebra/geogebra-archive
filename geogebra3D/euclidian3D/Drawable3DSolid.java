@@ -21,6 +21,11 @@ import geogebra3D.kernel3D.GeoSegment3D;
 
 public abstract class Drawable3DSolid extends Drawable3D {
 
+	public Drawable3DSolid(EuclidianView3D a_view3d) {
+		super(a_view3d);
+	}
+	
+	
 	public Drawable3DSolid(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);
 	}

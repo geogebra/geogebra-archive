@@ -4,7 +4,6 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoSegmentInterface;
-import geogebra.kernel.Path;
 import geogebra.kernel.PathMover;
 import geogebra3D.Matrix.Ggb3DVector;
 
@@ -20,8 +19,9 @@ import geogebra3D.Matrix.Ggb3DVector;
  */
 public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	
-	/** says that this is defined */
-	private boolean defined;
+
+	/** if is a segment from a GeoPolygon3D or GeoPolyhedron */
+	private GeoElement geoParent = null;
 
 	/** constructor with no points
 	 * @param c the construction
@@ -166,6 +166,10 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	
 	
 	
+	public boolean isGeoSegment(){
+		return true;
+	}
+	
 	
 	
 	
@@ -220,6 +224,26 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 		return false;
 	}
 	
+	
+	
+	
+	/////////////////////////////////////
+	// if this if from a GeoPolygon3D or a GeoPolyhedron
+	
+	/** sets a GeoElement as parent (GeoPolygon3D or a GeoPolyhedron)
+	 * @param geo the parent
+	 */
+	public void setGeoParent(GeoElement geo){
+		this.geoParent = geo;
+	}
+	
+	
+	/** return the parent GeoElement (GeoPolygon3D or a GeoPolyhedron)
+	 * @return the parent GeoElement (GeoPolygon3D or a GeoPolyhedron)
+	 */
+	public GeoElement getGeoParent(){
+		return this.geoParent;
+	}
 	
 	
 	
