@@ -35,16 +35,8 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
         this.path = path;
         P = new GeoPoint3D(cons, path);
         
-        // 3D Path -> 2D Path -> GeoPoint on Path -> GeoPoint3D on Path
-    	Path path2D = path.getPath2D();
-    	GeoPoint P2D = null;
-    	if (path2D!=null) {    		
-    		kernel.setSilentMode(true);
-    		P2D = kernel.Point(null, path2D);
-    		kernel.setSilentMode(false);    		
-    	}
-    	P.setGeoElement2D(P2D);
-    	
+
+        
         P.setCoords(x, y, z, 1.0);
 
         setInputOutput(); // for AlgoElement
@@ -64,12 +56,16 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
     // for AlgoElement
     protected void setInputOutput() {
     	
+    	input = new GeoElement[1];
+    	
+    	/*
     	if (P.getGeoElement2D()==null)
     		input = new GeoElement[1];
     	else{
     		input = new GeoElement[2];
     		input[1] = P.getGeoElement2D();
     	}
+    	*/
         input[0] = path.toGeoElement();
 
         output = new GeoElement[1];

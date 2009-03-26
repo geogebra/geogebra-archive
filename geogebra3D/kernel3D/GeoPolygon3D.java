@@ -6,7 +6,9 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
+import geogebra.kernel.PathParameter;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -17,7 +19,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoPolygon3D 
-extends GeoPolygon implements GeoElement3DInterface {
+extends GeoPolygon implements GeoElement3DInterface, Path3D {
 
 	
 	/** 2D coord sys where the polygon exists */
@@ -27,6 +29,7 @@ extends GeoPolygon implements GeoElement3DInterface {
 	private Drawable3D drawable3D = null;
 	
 	
+	/** image of the 3D points in the coord sys*/
 	private GeoPoint[] points2D;
 	
 	/**
@@ -120,13 +123,6 @@ extends GeoPolygon implements GeoElement3DInterface {
 	 }
 
 
-	 //TODO
-	 /*
-	 public void calcArea() {
-		 area = 0;
-		 setDefined();
-	 }
-	 */
 	
 	
 	/////////////////////////////////////////
@@ -248,5 +244,89 @@ extends GeoPolygon implements GeoElement3DInterface {
 	public void setGeoElement2D(GeoElement geo) {
 
 	}
+
+	
+	
+	
+	///////////////////////////////////
+	// Path3D interface
+	
+	
+	
+	
+	
+	//TODO merge with GeoPolygon
+	public void pathChanged(GeoPointInterface PI) {		
+		
+		GeoPoint3D P = (GeoPoint3D) PI;
+		
+		PathParameter pp = P.getPathParameter();
+		
+		//remember old parameter
+		double oldT = pp.getT();
+		
+		//find the segment where the point lies
+		int index = (int) pp.getT();
+		GeoSegmentInterface seg = segments[index];
+		
+		//sets the path parameter for the segment, calc the new position of the point
+		pp.setT(pp.getT() - index);		
+		seg.pathChanged(P);
+		
+		//recall the old parameter
+		pp.setT(oldT);
+	}
+	
+	
+	//TODO merge with GeoPolygon
+	public void pointChanged(GeoPointInterface PI) {
+		
+		GeoPoint3D P = (GeoPoint3D) PI;
+		
+		//Ggb3DVector coordOld = P.getInhomCoords();
+		
+		double minDist = Double.POSITIVE_INFINITY;
+		Ggb3DVector res = null;
+		double param=0;
+		
+		// find closest point on each segment
+		PathParameter pp = P.getPathParameter();
+		for (int i=0; i < segments.length; i++) {
+			//P.setCoords(coordOld,false); //prevent circular path.pointChanged
+			segments[i].pointChanged(P);			
+
+			//double dist = P.getInhomCoords().sub(coordOld).squareNorm();			
+			double dist = 0;
+			if (P.getMouseLoc()!=null && P.getMouseDirection()!=null)
+				dist=P.getInhomCoords().distLine(P.getMouseLoc(), P.getMouseDirection());
+
+			//Application.debug("distance au segment "+i+" : "+dist);
+			if (dist < minDist) {
+				minDist = dist;
+				// remember closest point
+				res = P.getInhomCoords();
+				param = i + pp.getT();
+			}
+		}				
+			
+		P.setCoords(res,false);
+		pp.setT(param);	
+	}	
+	
+	
+	
+	
+	
+
+	/*
+	public Ggb3DMatrix4x4 getMovingMatrix(Ggb3DMatrix4x4 toScreenMatrix) {
+		return coordSys.getDrawingMatrix();
+	}
+
+
+	public Path getPath2D() {
+		return null;
+	}
+	*/
 
 }

@@ -9,6 +9,7 @@ import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.EuclidianView3D;
 
 public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	
@@ -97,28 +98,40 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	public void pointChanged(GeoPointInterface PI){
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
+
+		
 		
 		//project P on line
-		Ggb3DVector v = P.getInhomCoords();
-		Ggb3DVector p = new Ggb3DVector(4);
-		Ggb3DVector[] project = v.projectLine(getMatrix().getColumn(2).subVector(1, 3), getMatrix().getColumn(1).subVector(1, 3));
-		
 
-		if(!P.hasGeoElement2D()){
-			//the point is not linked to a 2D point
-			p.set(project[0]);
-			p.set(4, 1);
-			P.setCoords(p,false); //avoid new pointChanged computation
-			// set path parameter		
-			PathParameters pps = P.getPathParameters(1);
-			pps.setT(project[1].get(1));
-		}else{		
-			//the point is linked to a 2D point, used for computation
-			GeoPoint P2D = (GeoPoint) P.getGeoElement2D();
-			P2D.setCoords(project[1].get(1), 0, 1); //use 2D algo	
-			P2D.updateRepaint();//TODO remove this (or not)
-			P.setCoords(getPoint(P2D.getPathParameter().getT()),false); //avoid new pointChanged computation
+
+		double t = 0;
+		if (P.getMouseLoc()!=null && P.getMouseDirection()!=null){
+			Ggb3DVector[] project = P.getMouseLoc().projectOnLineWithDirection(
+					getOrigin(),
+					getVx(),
+					P.getMouseDirection());
+			
+			t = project[1].get(1);
+
+			if (t<getMinParameter())
+				t=getMinParameter();
+			else if (t>getMaxParameter())
+				t=getMaxParameter();
+
 		}
+		
+		
+		
+		// set path parameter		
+		PathParameter pp = P.getPathParameter();
+		
+		
+		pp.setT(t);
+		
+		//udpate point using pathChanged
+		pathChanged(P);
+		
+		
 
 	}
 	
@@ -127,15 +140,10 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 		
-		if(!P.hasGeoElement2D()){
-			//the point is not linked to a 2D point
-			PathParameters pps = P.getPathParameters(1);
-			P.setCoords(getPoint(pps.getT()),false);
-		}else{
-			//the point is linked to a 2D point, used for computation
-			GeoPoint P2D = (GeoPoint) P.getGeoElement2D();
-			P.setCoords(getPoint(P2D.getPathParameter().getT()),false);
-		}
+		
+		PathParameter pp = P.getPathParameter();
+		P.setCoords(getPoint(pp.getT()),false);
+
 	}
 	
 	
@@ -145,16 +153,11 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 
 	
 	
-	public Path getPath2D(){
-		return null;
-	}
-	
-	
 
 	
 	
 	
-	
+	/*
 	public Ggb3DMatrix4x4 getMovingMatrix(Ggb3DMatrix4x4 toScreenMatrix){
 		
 		Ggb3DMatrix4x4 ret = toScreenMatrix.mul(getMatrix4x4());
@@ -176,6 +179,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 		
 		return ret;
 	}
+	*/
 	
 	
 	

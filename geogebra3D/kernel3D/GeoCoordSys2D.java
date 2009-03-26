@@ -5,7 +5,7 @@ import geogebra.kernel.GeoElement;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 
-public class GeoCoordSys2D extends GeoCoordSys implements PathIn {
+public class GeoCoordSys2D extends GeoCoordSys {
 	
 	
 	
@@ -106,6 +106,7 @@ public class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 	/////////////////////////////////////////
 	// Path2D interface
 	
+	/*
 	public boolean isPath2D(){
 		return true;
 	}
@@ -165,6 +166,9 @@ public class GeoCoordSys2D extends GeoCoordSys implements PathIn {
 		return getMatrix4x4();
 	}
 
+	 */
+	
+	
 	@Override
 	public GeoElement copy() {
 		// TODO Auto-generated method stub

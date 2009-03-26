@@ -65,10 +65,10 @@ public class Test3D{
 		testRepere();
 		
 
-		testAlgoPyramide();
-		//testPolygon();
+		//testAlgoPyramide();
+		testPolygon();
 
-		testQuadric();
+		//testQuadric();
     	
 		//testRay3D();
 		//testVector3D();

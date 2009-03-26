@@ -110,7 +110,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
 
 		if (movedGeoPoint3D.hasPath()){
-			setCurrentPlane(movedGeoPoint3D.getPath());
+			
+			//TODO set moving direction to the point
+			//setCurrentPlane(movedGeoPoint3D.getPath());
 		}else{
 			Ggb3DMatrix4x4 plane = Ggb3DMatrix4x4.Identity(); 
 			setCurrentPlane(plane);
@@ -151,11 +153,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** set the current plane to the path's moving plane
 	 * @param path a path
 	 */
+	/*
 	private void setCurrentPlane(Path3D path){
 		Ggb3DMatrix4x4 plane = path.getMovingMatrix(view3D.getToScreenMatrix());			
 		view3D.toSceneCoords3D(plane);
 		setCurrentPlane(plane);
 	}
+	*/
 
 	
 	/**
@@ -186,11 +190,31 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	/**
+	 * set the mouse information (location and viewing direction in real world coordinates) to the point
+	 * @param point a point
+	 */
+	protected void setMouseInformation(GeoPoint3D point){
+		Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+		view3D.toSceneCoords3D(o);
+		point.setMouseLoc(o);
+		
+		//TODO do this once
+		Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
+		view3D.toSceneCoords3D(v);			
+		point.setMouseDirection(v);
+	}
+	
 	protected void movePoint(boolean repaint){
 		
 		if (movedGeoPoint3D.hasPath()){
 			
-			movePointOnCurrentPlane(movedGeoPoint3D, false);
+
+			setMouseInformation(movedGeoPoint3D);
+			
+			movedGeoPoint3D.doPath();
+			
+			//movePointOnCurrentPlane(movedGeoPoint3D, false);
 			
 		}else if (isAltDown){ //moves the point along z-axis
 			
@@ -267,9 +291,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected GeoPointInterface createNewPoint(Path path){
 			
-		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null,(Path3D) path, 0,0,0);		
-		setCurrentPlane((Path3D) path);
-		movePointOnCurrentPlane(point, false);		
+		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null,(Path3D) path, 0,0,0);	
+		
+		
+		setMouseInformation(point);
+		point.doPath();
+		
+		
 		return point;
 		
 	}

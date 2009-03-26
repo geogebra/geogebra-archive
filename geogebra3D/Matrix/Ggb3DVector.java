@@ -122,7 +122,25 @@ public class Ggb3DVector
 				
 	}
 	
-	
+	/** returns the subvector composed of this without the row number row 
+	 * @param row number of the row to remove
+	 * @return vector composed of this without the row number row  
+	 */
+	public Ggb3DVector subVector(int row){ 
+		
+		Ggb3DVector result = new Ggb3DVector(this.getRows()-1); 
+
+		int shift = 0;
+		for(int i=1;i<=getRows();i++){
+			if (i==row)
+				shift = 1;
+			else
+				result.set(i,get(i+shift));
+		}
+		
+		return result;
+				
+	}
 	
 	///////////////////////////////////////////////////:
 	//basic operations 
@@ -171,6 +189,16 @@ public class Ggb3DVector
 		return Math.sqrt(this.dotproduct(this));
 	}
 	
+	/** returns the square of the scalar norm.
+	 * <p>
+	 * If this={x1,x2,...}, then norm=x1*x1+x2*x2+...
+	 * Same result as this.dotproduct(this)
+	 * @return the scalar norm*/
+	public double squareNorm(){
+		
+		return this.dotproduct(this);
+	}
+	
 	/** returns this normalized 
 	 * @return this/this.norm() 
 	 */
@@ -217,7 +245,7 @@ public class Ggb3DVector
 		
 		Ggb3DVector OM = this.sub(O);
 		Ggb3DVector N = V.normalized();
-		Ggb3DVector OH = N.mul(OM.dotproduct(N)).getColumn(1); //TODO optimize
+		Ggb3DVector OH = (Ggb3DVector) N.mul(OM.dotproduct(N)); //TODO optimize
 		Ggb3DVector HM = OM.sub(OH);
 		
 		return HM.norm();
@@ -318,6 +346,33 @@ public class Ggb3DVector
 			Ggb3DMatrix m = new Ggb3DMatrix(4,4);
 			m.set(new Ggb3DVector[] {V, V3, V2, O});
 			return this.projectPlane(m)[0];
+		}
+		
+	}	
+	
+	
+	
+	/**
+	 * project this on the line (O,V) in the direction V2.<p>
+	 * returns the point of (O,V) that is the nearest to line (this,V2).<p>
+	 * if V and V2 are parallel, return O.
+	 * @param O origin of the line where this is projected
+	 * @param V direction of the line where this is projected
+	 * @param V2 direction of projection
+	 * @return {point projected, {coord of the proj. point on the line, distance between this and the proj. point}}
+	 */
+	public Ggb3DVector[] projectOnLineWithDirection(Ggb3DVector O, Ggb3DVector V, Ggb3DVector V2){
+		
+		Ggb3DVector V3 = V.crossProduct(V2);
+		
+		if (Kernel.isEqual(V3.norm(), 0.0, Kernel.STANDARD_PRECISION)){
+			return new Ggb3DVector[] {O, new Ggb3DVector(new double[] {0,this.sub(O).norm()})};
+		}else{
+			Ggb3DMatrix m = new Ggb3DMatrix(4,4);
+			m.set(new Ggb3DVector[] {V2, V3, V, this});
+			Ggb3DVector[] result = O.projectPlane(m);
+			return new Ggb3DVector[] {result[0], 
+					new Ggb3DVector(new double[] {-result[1].get(3),this.sub(result[0]).norm()})};
 		}
 		
 	}	

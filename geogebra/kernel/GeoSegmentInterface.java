@@ -38,6 +38,8 @@ public interface GeoSegmentInterface {
 	boolean isOnPath(GeoPointInterface p, double eps);
 	
 	void pointChanged(GeoPointInterface p);
+	
+	public void pathChanged(GeoPointInterface PI);
 
 	
 	/**

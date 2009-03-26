@@ -176,10 +176,11 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	 * return the 2D segment path linked to
 	 * @return the 2D segment path linked to
 	 */
+	/*
 	public Path getPath2D(){
 		return (Path) getGeoElement2D();
 	}
-	
+	*/
 
 	/**
 	 * {@inheritDoc}

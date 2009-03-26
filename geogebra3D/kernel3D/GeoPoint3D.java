@@ -25,6 +25,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.PathParameter;
 import geogebra.kernel.PointProperties;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -47,9 +48,14 @@ implements GeoPointInterface, PointProperties{
 	private boolean isInfinite,isDefined;
 	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	
+	
+	//mouse moving
+	private Ggb3DVector mouseLoc = null; //= new Ggb3DVector( new double[] {0,0,0,1.0});
+	private Ggb3DVector mouseDirection = null; //new Ggb3DVector( new double[] {0,0,1,0.0});
+	
 	//paths
 	private Path3D path;
-	private PathParameters pps;
+	private PathParameter pp;
         
     // temp
     public Ggb3DVector inhom = new Ggb3DVector(3);
@@ -137,9 +143,13 @@ implements GeoPointInterface, PointProperties{
 			updateCoords(); 
 		}
 		
-		 
-		
 	}  
+	
+	
+	final public void doPath(){
+		path.pointChanged(this);
+		updateCoords(); 
+	}
 	
 	
 	
@@ -254,26 +264,13 @@ implements GeoPointInterface, PointProperties{
 	}
 	
 
-	
 
-    
-    /*
-	public boolean hasPathIn() {
-		return pathIn != null;
-	}
 	
-
-    
-    
-	public PathIn getPathIn() {
-		return pathIn;
-	}
-	*/
 	
-    final public PathParameters getPathParameters(int n) {
-    	if (pps == null)
-    		pps = new PathParameters(n);
-    	return pps;
+    final public PathParameter getPathParameter() {
+    	if (pp == null)
+    		pp = new PathParameter();
+    	return pp;
     }	
 	
   
@@ -286,7 +283,23 @@ implements GeoPointInterface, PointProperties{
 	
 	
 	
+    ///////////////////////////////////////////////////////////
+    // MOUSE
+	public void setMouseLoc(Ggb3DVector mouseLoc){
+		this.mouseLoc = mouseLoc;
+	}
 	
+	public void setMouseDirection(Ggb3DVector mouseDirection){
+		this.mouseDirection = mouseDirection;
+	}
+	
+	public Ggb3DVector getMouseLoc(){
+		return mouseLoc;
+	}
+	
+	public Ggb3DVector getMouseDirection(){
+		return mouseDirection;
+	}
 	
  
     

@@ -33,7 +33,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	public static final int POLYGON_MAX_POINTS = 100;
 	
 	protected GeoPointInterface [] points;
-	private GeoSegmentInterface [] segments;
+	protected GeoSegmentInterface [] segments;
 	
 	protected double area;
 	private boolean defined = false;		
