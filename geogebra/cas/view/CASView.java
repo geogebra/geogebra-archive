@@ -23,6 +23,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
@@ -55,14 +57,16 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 	private CASTable consoleTable;
 
 
-
 	private Application app;
-
 	private GeoGebraCAS cas;
-
 	private JPanel btPanel;
-
-
+	
+	// equation patterns
+	// 5 * (3x + 4 = 7) - 4
+	private static Pattern equationPatternParentheses = Pattern.compile("(.*)\\((.+)=(.+)\\)(.*)");
+	// 3x + 4 = 7
+	private static Pattern equationPatternSimple = Pattern.compile("(.+)=(.+)");
+	
 	public CASView(Application app) {
 		kernel = app.getKernel();
 		this.app = app;
@@ -455,13 +459,68 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 		// TODO: remove
 		System.out.println("SELECTED ROW: " + selRow + ", prefix: " + prefix + ", evalText: " + evalText + ", postfix: " + postfix);					
 
-		// handle action command string
 		if (ggbcmd.equals("Substitute")) {
 			// Create a CASSubDialog with the cell value
 			CASSubDialog d = new CASSubDialog(CASView.this, prefix, evalText, postfix, selRow);
 			d.setVisible(true);
 			return;
 		}
+		
+		// handle equations specially for simplify, expand, and factor
+		// simplify of equations should simplify lhs and rhs individually
+		else if (ggbcmd.equals("Simplify") ||
+				ggbcmd.equals("Expand") || 
+				ggbcmd.equals("Expand")) 
+		{
+			 // equation in parentheses: 5 * (3x + 4 = 7) - 4		
+			 Matcher m = equationPatternParentheses.matcher(evalText);
+			 boolean isEquation = m.matches();							 
+			 if (isEquation) {
+				 // Simplify[5 * (3x + 4 = 7) - 4] gets 
+				 // Simplify[5 * (3x + 4) - 4] = Simplify[5 * (7) - 4]
+				 String pre = m.group(1);
+				 String lhs = m.group(2);
+				 String rhs = m.group(3);
+				 String post = m.group(4);
+				 StringBuffer sb = new StringBuffer();
+				 sb.append(ggbcmd);
+				 sb.append("[");
+				 sb.append(pre);
+				 sb.append("(");
+				 sb.append(lhs);
+				 sb.append(")");
+				 sb.append(post);
+				 sb.append("]");
+				 sb.append("=");
+				 sb.append(ggbcmd);
+				 sb.append("[");
+				 sb.append(pre);
+				 sb.append("(");
+				 sb.append(rhs);
+				 sb.append(")");
+				 sb.append(post);
+				 sb.append("]");				 
+				 evalText = sb.toString();
+			 }
+			 else {
+				 // simple equation: 3x + 4 = 7
+				 m = equationPatternSimple.matcher(evalText);
+				 isEquation = m.matches();				 
+				 if (isEquation) {
+					 // Simplify[3x + 4 = 7] gets 
+					 // Simplify[3x + 4] = Simplify[7]				
+					 String lhs = m.group(1);
+					 String rhs = m.group(2);
+					 evalText=ggbcmd+"[" + lhs + "] = " + ggbcmd + "[" + rhs + "]";
+				 }
+				 else { 		
+					 // standard case: no equation
+					 evalText=ggbcmd+"["+ evalText + "]";
+				 }
+			 }						
+		}
+		
+		// standard case
 		else if (!ggbcmd.equals("Eval")){
 			// use action command as command for mathpiper
 			evalText=ggbcmd+"["+evalText+"]";
@@ -517,6 +576,5 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 	public void focusLost(FocusEvent arg0) {
 		
 	}
-
 
 }
