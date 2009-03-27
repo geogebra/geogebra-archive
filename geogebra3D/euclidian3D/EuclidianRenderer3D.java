@@ -768,7 +768,18 @@ public class EuclidianRenderer3D implements GLEventListener {
     	resetMatrix();
     }
     
-  
+    /**
+     * draws a sphere according to current drawing matrix.
+     * 
+     * @param radius radius of the sphere
+     * @param numTriangles number of triangles
+     */
+    public void drawSphere(float radius, int numTriangles){
+    	initMatrix();
+    	glu.gluSphere(quadric, radius, numTriangles, numTriangles);
+     	resetMatrix();
+    }
+ 
     
     /**
      * draws a polygon according to current drawing matrix.

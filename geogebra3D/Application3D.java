@@ -57,14 +57,13 @@ public abstract class Application3D extends Application{
         euclidianView3D = new EuclidianView3D(euclidianController3D);  
         
 	    //TODO remove 3D test : just comment following line        
-        new Test3D(kernel3D,euclidianView);
+        new Test3D(kernel3D,euclidianView,euclidianView3D);
         
         //init 3D view
+        /*
         euclidianView3D.setZZero(-7.0);
-        //euclidianView3D.setRotXY(-4*Math.PI/6,Math.PI/6,true);
         euclidianView3D.setRotXY(-Math.PI/6,Math.PI/6,true);
-        //euclidianView3D.setRotXY(0,0,true);
-        
+         */
         
         //init toolbar
         /*
@@ -129,18 +128,21 @@ public abstract class Application3D extends Application{
         
         
         //2D internal frame
+        /*
         JInternalFrame frame2D = new JInternalFrame("2D view", true,true, true, true);
         frame2D.setContentPane(euclidianView);
         frame2D.setSize(200, 480);
         frame2D.setLocation(200, 0);
         frame2D.setVisible(true);
         dtp.add(frame2D);
+        */
         
         //3D internal frame
         JInternalFrame frame3D = new JInternalFrame("3D view - very early version", true,true, true, true);
         frame3D.setContentPane(euclidianView3D);
         frame3D.setSize(640, 480);
-        frame3D.setLocation(400, 0);        
+        //frame3D.setLocation(400, 0);        
+        frame3D.setLocation(200, 0);        
         frame3D.setVisible(true);        
         dtp.add(frame3D);
         frame3D.moveToFront();

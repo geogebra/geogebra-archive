@@ -27,6 +27,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.*;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.*;
 
 
@@ -49,7 +50,7 @@ public class Test3D{
 	GeoPlane3D xOyPlane;
 
 
-	public Test3D(Kernel3D kernel3D, EuclidianView view2D){
+	public Test3D(Kernel3D kernel3D, EuclidianView view2D, EuclidianView3D view3D){
 		
 		this.kernel3D=kernel3D;
 		cons=kernel3D.getConstruction();
@@ -59,16 +60,25 @@ public class Test3D{
 		view2D.showAxes(true, true);
 		view2D.setCoordSystem(100,view2D.getYZero(),view2D.getXscale(),view2D.getYscale());
 		
+		
+        //init 3D view
+        view3D.setZZero(-7.0);
+        //view3D.setRotXY(-Math.PI/6,Math.PI/6,true);
+        view3D.setRotXY(-Math.PI/6,Math.PI/12,true);
+		
+		
+		
+		
 		//testRegion();
 		
 		
 		testRepere();
 		
 
-		//testAlgoPyramide();
-		testPolygon();
+		testAlgoPyramide();
+		//testPolygon();
 
-		//testQuadric();
+		testQuadric();
     	
 		//testRay3D();
 		//testVector3D();
@@ -275,12 +285,12 @@ public class Test3D{
 		int i;
 		
 		GeoPoint3D[] P1 = new GeoPoint3D[3];				
-		P1[0] = testPoint(1f,0f,0f);
-		P1[0].setLabel("Ax");
+		P1[0] = testPoint(1f,0.6f,0f);
+		//P1[0].setLabel("Ax");
 		P1[1] = testPoint(0f,0f,0f);
-		P1[1].setLabel("A");
-		P1[2] = testPoint(0f,1f,0f);
-		P1[2].setLabel("Ay");
+		//P1[1].setLabel("A");
+		P1[2] = testPoint(0.3f,1f,0.5f);
+		//P1[2].setLabel("Ay");
 		//P1[3] = testPoint(0f,1f,0f);
 		
 		/*
@@ -290,8 +300,8 @@ public class Test3D{
 			*/
 
 		GeoPoint3D P2;				
-		P2 = testPoint(0f,0f,1f);
-		P2.setLabel("Az");
+		P2 = testPoint(0.1f,0.1f,1f);
+		//P2.setLabel("Az");
 
 		//RG
 		/*
@@ -323,13 +333,13 @@ public class Test3D{
 
 		GeoPoint3D A = testPoint(2f,0f,0f);
 		A.setLabel("sA");
-		GeoPoint3D B = testPoint(0f,2f,0f);
+		GeoPoint3D B = testPoint(0.7f,-1.3f,0f);
 		B.setLabel("sB");
 
 		GeoSegment3D s = kernel3D.Segment3D("segment",A,B);
 		s.setLabel("s");
 		
-		GeoPoint3D P=kernel3D.Point3D("ps", s, 0, 0, 0);
+		GeoPoint3D P=kernel3D.Point3D("ps", s, 0.3, 0, 0);
 		P.setObjColor(new Color(1f,1f,0f));
 		
 		
@@ -337,7 +347,7 @@ public class Test3D{
 		l.setObjColor(new Color(1f,0.5f,0f));
 		l.setLineThickness(1);
 		
-		P=kernel3D.Point3D("pl", l, 1, 1, 0);
+		P=kernel3D.Point3D("pl", l, 2.7, -2, 0);
 		P.setObjColor(new Color(1f,0.75f,0f));
 		
 		
@@ -458,7 +468,7 @@ public class Test3D{
 	
 	private void testQuadric(){
 		
-		GeoPoint3D c = testPoint(2f,-1f,0f); c.setLabel("center");
+		GeoPoint3D c = testPoint(-1.1f,-0.8f,0f); c.setLabel("center");
 		GeoNumeric r = new GeoNumeric(cons, "radius", 1);
 		GeoQuadric sphere = kernel3D.Sphere("sphere", c, r);
 		sphere.setObjColor(new Color(1f,0f,0f));
