@@ -542,6 +542,8 @@ public class EuclidianController implements MouseListener,
 		}
 
 		if (Application.isRightClick(e)) {			
+			//ggb3D - for 3D rotation
+			processRightPressFor3D();
 			return;
 		} 
 		else if (
@@ -1095,6 +1097,15 @@ public class EuclidianController implements MouseListener,
 		transformCoords();
 		
 		
+		//ggb3D - only for 3D view
+		if (Application.isRightClick(e) && !TEMPORARY_MODE ){
+			if (processRightDragFor3D()) //in 2D view, return false
+				return;
+		}
+		
+		
+		
+		
 		// zoom rectangle (right drag) or selection rectangle (left drag)
 // Michael Borcherds 2007-10-07 allow dragging with right mouse button
 		if (((Application.isRightClick(e)) || allowSelectionRectangle()) && !TEMPORARY_MODE) {
@@ -1150,6 +1161,12 @@ public class EuclidianController implements MouseListener,
 		
 		handleMouseDragged(true);								
 	}	
+	
+	
+	
+	
+	
+	
 	
 	protected boolean allowSelectionRectangle() {
 		switch (mode) {
@@ -1396,7 +1413,8 @@ public class EuclidianController implements MouseListener,
 				
 // Michael Borcherds 2007-10-08 allow drag with right mouse button
 		if (Application.isRightClick(e) && !TEMPORARY_MODE)
-		{						
+		{		
+			if (processRightReleaseFor3D()) return;
 			if (processZoomRectangle()) return;
 			if (!app.isRightClickEnabled()) return;
 //			 Michael Borcherds 2007-10-08
@@ -5380,5 +5398,37 @@ public class EuclidianController implements MouseListener,
 	public GeoElement getMovedGeoPoint(){
 		return movedGeoPoint;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 
+	///////////////////////////////////////////
+	// EMPTY METHODS USED FOR EuclidianView3D
+	
+	
+	/** right-press the mouse makes start 3D rotation */
+	protected void processRightPressFor3D(){
+		
+	}
+
+	
+	/** right-drag the mouse makes 3D rotation 
+	 * @return false */
+	protected boolean processRightDragFor3D(){
+		return false;
+	}
+	
+
+	
+	/** right-release the mouse makes stop 3D rotation 
+	 * @return false */
+	protected boolean processRightReleaseFor3D(){
+		return false;
+	}
+	
 }

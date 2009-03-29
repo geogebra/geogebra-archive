@@ -75,7 +75,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected Ggb3DVector pickPoint;
 	
 
-	
+	/** says if a rotation of the view occurred (with right-button) */
+	private boolean viewRotationOccured = false;
 	
 	
 	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
@@ -348,8 +349,55 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+
+	///////////////////////////////////////////
+	// EMPTY METHODS IN EuclidianController USED FOR EuclidianView3D	
+	
+	/** right-press the mouse makes start 3D rotation */
+	protected void processRightPressFor3D(){
+		//remembers mouse location
+		startLoc = mouseLoc;
+		view.rememberOrigins();
+	}
+	
+	/** right-drag the mouse makes 3D rotation 
+	 * @return true*/
+	protected boolean processRightDragFor3D(){
+		view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y);
+		viewRotationOccured = true;
+		return true;
+	}
 	
 	
+	/** right-release the mouse makes stop 3D rotation 
+	 * @return true if a rotation occured */
+	protected boolean processRightReleaseFor3D(){
+		if (viewRotationOccured){
+			viewRotationOccured = false;
+			return true;
+		}else
+			return false;
+	}
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////////////////////////////////////
+	//
 	
 
 	public void mouseWheelMoved(MouseWheelEvent e) {

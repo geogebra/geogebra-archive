@@ -128,14 +128,14 @@ public abstract class Application3D extends Application{
         
         
         //2D internal frame
-        /*
+        
         JInternalFrame frame2D = new JInternalFrame("2D view", true,true, true, true);
         frame2D.setContentPane(euclidianView);
         frame2D.setSize(200, 480);
-        frame2D.setLocation(200, 0);
+        frame2D.setLocation(840, 0);
         frame2D.setVisible(true);
         dtp.add(frame2D);
-        */
+        
         
         //3D internal frame
         JInternalFrame frame3D = new JInternalFrame("3D view - very early version", true,true, true, true);
