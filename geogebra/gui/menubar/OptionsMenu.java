@@ -280,7 +280,11 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 			// Preferences
 			addSeparator();
-			add(showOptionsAction);
+		}
+		
+		add(showOptionsAction);
+		
+		if(!app.isApplet()) {
 			// submenu = new JMenu(app.getMenu("Settings"));
 			add(savePreferencesAction);
 			add(clearPreferencesAction);
@@ -402,7 +406,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().showDrawingPadPropertiesDialog();
+				app.getGuiManager().showOptionsDialog(true);
 			}
 		};
 

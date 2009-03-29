@@ -28,8 +28,9 @@ class ViewMenu extends BaseMenu {
 	
 	private AbstractAction 
 		showAlgebraViewAction,
-		showEuclidianViewAction,
 		showSpreadsheetAction,
+		showEuclidianViewAction,
+		showCASViewAction,
 		showAuxiliaryObjectsAction,
 		showAlgebraInputAction,
 		showCmdListAction,
@@ -53,6 +54,7 @@ class ViewMenu extends BaseMenu {
 		cbShowAlgebraView,
 		cbShowSpreadsheetView, 				// Michael Borcherds 2008-01-14
 		cbShowEuclidianView, 				// Florian Sonner 2008-08-29
+		cbShowCASView,
 		cbShowInputTop, 					// Florian Sonner 2008-09-12
 		cbShowToolBar, 						// Florian Sonner 2009-01-10
 		cbShowToolBarTop, 					// Florian Sonner 2009-01-10
@@ -139,6 +141,12 @@ class ViewMenu extends BaseMenu {
 				.showSpreadsheetView());
 		setMenuShortCutShiftAccelerator(cbShowSpreadsheetView, 'S');
 		add(cbShowSpreadsheetView);
+		
+		// Florian Sonner 2009-03-29
+		cbShowCASView = new JCheckBoxMenuItem(showCASViewAction);
+		cbShowCASView.setIcon(app.getEmptyIcon());
+		cbShowCASView.setSelected(app.getGuiManager().showCASView());
+		add(cbShowCASView);
 
 		addSeparator();
 
@@ -236,6 +244,16 @@ class ViewMenu extends BaseMenu {
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().setShowSpreadsheetView(
 						!app.getGuiManager().showSpreadsheetView());
+			}
+		};
+		
+		// Florian Sonner 2009-03-29
+		showCASViewAction= new AbstractAction(app.getPlain("CAS")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.getGuiManager().setShowCASView(
+						!app.getGuiManager().showCASView());
 			}
 		};
 
@@ -448,6 +466,7 @@ class ViewMenu extends BaseMenu {
 		cbShowAlgebraView.setSelected(app.getGuiManager().showAlgebraView());
 		cbShowSpreadsheetView.setSelected(app.getGuiManager()
 				.showSpreadsheetView());
+		cbShowCASView.setSelected(app.getGuiManager().showCASView());
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		

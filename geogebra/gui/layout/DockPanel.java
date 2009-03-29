@@ -98,6 +98,8 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * 
 	 * @param dockManager
 	 * @param info			A container which stores all information about this view.
+	 * 
+	 * TODO: Just load views which are going to be displayed and load other views later
 	 */
 	public DockPanel(DockManager dockManager, DockPanelXml info) {
 		this.dockManager = dockManager;
@@ -122,13 +124,17 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 				viewTitle = "Spreadsheet";
 				view = app.getGuiManager().getSpreadsheetView();
 				break;
+			case Application.VIEW_CAS:
+				viewTitle = "CAS";
+				view = app.getCasView().getCASViewComponent();
+				break;
 			default:
 				throw new IllegalArgumentException("view ID can not be identified (#"+info.getViewId()+")");
 		}
 		
 		add(view, BorderLayout.CENTER);
 		
-		// Construct title bar and all elements but don't any elements to the panels
+		// Construct title bar and all elements
 		titlePanel = new JPanel();
 		titlePanel.setBorder(
 			BorderFactory.createCompoundBorder(
@@ -205,7 +211,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
             
             public void componentMoved(ComponentEvent event) {
             	info.setWindowRect(event.getComponent().getBounds());
-            	app.setUnsaved();
+            	app.setUnsaved(); // TODO: Really what we want?
             }
         });
 	   	frame.getContentPane().add(this);
@@ -225,7 +231,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	   	// center window if necessary
 	   	if(windowRect.x + windowRect.width > screenSize.width ||
 	   		windowRect.y + windowRect.height > screenSize.height) {
-	   		frame.setLocation((screenSize.width - windowRect.width) / 2, (screenSize.height - windowRect.height) / 2);
+	   		frame.setLocationRelativeTo(null);
 	   	} else {
 	   		frame.setLocation(windowRect.getLocation());
 	   	}

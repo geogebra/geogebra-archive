@@ -401,6 +401,10 @@ public class DefaultGuiManager implements GuiManager {
 		setShowView(flag, Application.VIEW_SPREADSHEET);
 	}
 	
+	public void setShowCASView(boolean flag) {
+		setShowView(flag, Application.VIEW_CAS);
+	}
+	
 	private boolean showView(int viewId) {
 		return layout.getDockManager().getPanel(viewId).getInfo().isVisible();
 	}
@@ -415,6 +419,10 @@ public class DefaultGuiManager implements GuiManager {
 	
 	public boolean showEuclidianView() {
 		return showView(Application.VIEW_EUCLIDIAN);
+	}
+	
+	public boolean showCASView() {
+		return showView(Application.VIEW_CAS);
 	}
 	
 	public void setShowToolBarHelp(boolean flag) {
@@ -712,18 +720,6 @@ public class DefaultGuiManager implements GuiManager {
 
 	public void showPropertiesDialog() {
 		showPropertiesDialog(null);
-	}
-
-	/**
-	 * Displays the porperties dialog for the drawing pad
-	 */
-	public void showDrawingPadPropertiesDialog() {
-		if (!app.letShowPropertiesDialog())
-			return;
-		app.getEuclidianView().resetMode();
-		PropertiesDialogGraphicsWindow euclidianViewDialog = new PropertiesDialogGraphicsWindow(
-				app, app.getEuclidianView());
-		euclidianViewDialog.setVisible(true);
 	}
 
 	/**

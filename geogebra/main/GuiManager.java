@@ -53,10 +53,12 @@ public interface GuiManager {
 	public void setShowEuclidianView(boolean flag);
 	public void setShowAlgebraView(boolean flag);
 	public void setShowSpreadsheetView(boolean flag);
+	public void setShowCASView(boolean flag);
 
 	public boolean showEuclidianView();
 	public boolean showAlgebraView();
 	public boolean showSpreadsheetView();
+	public boolean showCASView();
 	
 	public void setPerspectives(ArrayList<Perspective> perspectives);
 	public void updateLayout();
@@ -149,10 +151,6 @@ public interface GuiManager {
 
 	public void showPropertiesDialog();
 
-	/**
-	 * Displays the porperties dialog for the drawing pad
-	 */
-	public void showDrawingPadPropertiesDialog();
 	/**
 	 * Displays the configuration dialog for the toolbar
 	 */

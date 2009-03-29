@@ -1,6 +1,7 @@
 package geogebra.gui.layout;
 
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 
 import geogebra.io.layout.DockPanelXml;
@@ -643,6 +644,25 @@ public class DockManager {
 		for(int i = 0; i < dockPanels.length; ++i) {
 			if(dockPanels[i].getViewId() == viewId)
 				return dockPanels[i];
+		}
+		
+		// This view may have not been included in previous versions
+		if(viewId == Application.VIEW_CAS) {
+			// Expand the dock panels array and add the CAS view to the end
+			DockPanel[] dockPanelsTmp = new DockPanel[dockPanels.length + 1];
+			
+			// Copy old values
+			for(int i = 0; i < dockPanels.length; ++i) {
+				dockPanelsTmp[i] = dockPanels[i];
+			}
+			
+			// Add the CAS view
+			dockPanelsTmp[dockPanels.length] = new DockPanel(this, new DockPanelXml(Application.VIEW_CAS, false, false, new Rectangle(400, 400), "1", 300));
+			
+			dockPanels = dockPanelsTmp;
+			
+			// Return the CAS view
+			return dockPanelsTmp[dockPanelsTmp.length - 1];
 		}
 
 		throw new IllegalArgumentException("viewId not found");

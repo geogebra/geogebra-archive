@@ -1,5 +1,7 @@
 package geogebra.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +23,7 @@ import javax.swing.SpringLayout;
  * @author Florian Sonner
  */
 class OptionsFont extends JPanel implements ActionListener {
+	/** */
 	private static final long serialVersionUID = 1L;
 	
 	private Application app;
@@ -35,6 +38,10 @@ class OptionsFont extends JPanel implements ActionListener {
 	private JComboBox languageCb;
 	private boolean updateLanguage;
 	
+	/**
+	 * Create a new JPanel for all options for fonts & language.
+	 * @param app
+	 */
 	public OptionsFont(Application app) {
 		this.app = app;
 		
@@ -46,24 +53,27 @@ class OptionsFont extends JPanel implements ActionListener {
 	 * Initialize the GUI.
 	 */
 	private void initGUI() {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new BorderLayout());
 		
-		String[] fontSizeStr = new String[] { "10", "12", "14", "16", "18", "20", "24", "28", "32" };
+		String[] fontSizeStr = new String[] { "10", "12", "14", "16", "18", "20", "24" }; 
 		
 		// font size of GUI
 		guiSizeCb = new JComboBox(fontSizeStr);
+		guiSizeCb.setMaximumSize(new Dimension(80, 0));
 		guiSizeCb.setSelectedItem(Integer.toString(app.getFontSize()));
 		guiSizeCb.addActionListener(this);
 		guiSizeLabel = new JLabel();
 		
 		// font size of drawing pad
 		euclidianSizeCb = new JComboBox(fontSizeStr);
+		euclidianSizeCb.setMaximumSize(new Dimension(80, 0));
 		euclidianSizeCb.setSelectedItem(Integer.toString(app.getEuclidianFontSize()));
 		euclidianSizeCb.addActionListener(this);
 		euclidianSizeLabel = new JLabel();
 		
 		// font size of coordinate system 
 		axesSizeCb = new JComboBox(fontSizeStr);
+		axesSizeCb.setMaximumSize(new Dimension(80, 0));
 		axesSizeCb.setSelectedItem(Integer.toString(app.getAxesFontSize()));
 		axesSizeCb.addActionListener(this);
 		axesSizeLabel = new JLabel();
@@ -82,13 +92,11 @@ class OptionsFont extends JPanel implements ActionListener {
 				3, 3, 
 				15, 5);
 		
-		add(fontSizePanel);
+		add(fontSizePanel, BorderLayout.CENTER);
 		
 		// language panel
 		String[] languages = new String[Application.supportedLocales.size()];
 		String ggbLangCode;
-		
-		int selectedLanguage = 0;
 		
 		for (int i = 0; i < Application.supportedLocales.size(); i++) {
 			Locale loc = (Locale) Application.supportedLocales.get(i);
@@ -100,19 +108,15 @@ class OptionsFont extends JPanel implements ActionListener {
 			languages[i] = (String) Application.specialLanguageNames.get(ggbLangCode);
 			if (languages[i] == null)
 				languages[i] = loc.getDisplayLanguage(Locale.ENGLISH);
-			
-			if(loc == app.getLocale())
-				selectedLanguage = i;
 		}
 		
 		languageCb = new JComboBox(languages);
-		languageCb.setSelectedIndex(selectedLanguage);
 		languageCb.addActionListener(this);
 		
 		languagePanel = new JPanel(new FlowLayout());
 		languagePanel.add(languageCb);
 		
-		add(languagePanel);
+		add(languagePanel, BorderLayout.SOUTH);
 		
 		setLabels();
 	}

@@ -86,10 +86,11 @@ public class Layout {
 		defaultPerspectives = new Perspective[4];
 		
 		// algebra & graphics - default of GeoGebra < 3.2
-		DockPanelXml[] dpInfo = new DockPanelXml[3];
+		DockPanelXml[] dpInfo = new DockPanelXml[4];
 		dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, new Rectangle(100, 100, 600, 400), "1", 500);
 		dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, true, false, new Rectangle(100, 100, 250, 400), "3", 200);
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
+		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
 		
 		DockSplitPaneXml[] spInfo = new DockSplitPaneXml[1];
 		spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
@@ -98,10 +99,11 @@ public class Layout {
 		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, false, true, true, true, false);
 		
 		// basic geometry - just the euclidian view
-		dpInfo = new DockPanelXml[3];
+		dpInfo = new DockPanelXml[4];
 		dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, new Rectangle(100, 100, 600, 400), "1", 500);
 		dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
+		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
 		
 		defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", false, false, false, true, false);
 		
@@ -112,10 +114,11 @@ public class Layout {
 		spInfo = new DockSplitPaneXml[1];
 		spInfo[0] = new DockSplitPaneXml("", 0.45, DockSplitPane.HORIZONTAL_SPLIT);
 		
-		dpInfo = new DockPanelXml[3];
+		dpInfo = new DockPanelXml[4];
 		dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, new Rectangle(100, 100, 600, 400), "1", 500);
 		dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, false, false, new Rectangle(100, 100, 250, 400), "3,3", 200);
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, true, false, new Rectangle(100, 100, 600, 400), "3", 300);
+		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, false, false, new Rectangle(100, 100, 600, 400), "3,1", 300);
 		
 		defaultPerspectives[3] = new Perspective("TableAndGraphics", spInfo, dpInfo, "0 | 40 | 1", false, false, false, true, false);
 	}

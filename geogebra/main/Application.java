@@ -229,6 +229,7 @@ public abstract class Application implements KeyEventDispatcher {
 	public static final int VIEW_EUCLIDIAN = 1;
 	public static final int VIEW_ALGEBRA = 2;
 	public static final int VIEW_SPREADSHEET = 4;
+	public static final int VIEW_CAS = 8;
 	
 	/**
 	 * In case the application is using the layout class, the whole GUI stuff has to be loaded
@@ -768,7 +769,7 @@ public abstract class Application implements KeyEventDispatcher {
 					} else if (optionName.equals("showSpreadsheet")) {
 						getGuiManager().setShowAlgebraView(!optionValue.equals("false"));
 					} else if (optionName.equals("showCAS")) {
-						setShowCasView(!optionValue.equals("false"));
+						showCAS = (!optionValue.equals("false"));
 					} else if (optionName.equals("showAxes")) {
 						showAxes[0] = !optionValue.equals("false");
 						showAxes[1] = showAxes[0];
@@ -1981,32 +1982,6 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 		return icon;
 	}
-
-	public boolean showCasView() {
-		return showCAS;
-	}
-
-	public void setShowCasView(boolean flag) {
-		if (showCAS == flag)
-			return;
-		showCAS = flag;
-
-		if (casView == null) {
-
-			getCasView();
-
-			// create JFrame for CAS view
-			casFrame = createCasFrame(casView);
-		}
-
-		// show or hide CAS window		
-		casFrame.setVisible(showCAS);
-		
-		updateMenubar();
-		isSaved = false;
-	}
-
-	private JFrame casFrame;
 
 	public synchronized CasManager getCasView() {
 		if (casView == null) {
@@ -3534,10 +3509,6 @@ public abstract class Application implements KeyEventDispatcher {
 			kernel.notifyRepaint();
 
 		return moved;
-	}
-
-	public JFrame getCasFrame() {
-		return casFrame;
 	}
 	
 	final static int MEMORY_CRITICAL = 100*1024;

@@ -1,6 +1,7 @@
 package geogebra.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -35,18 +36,45 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
  * @author Florian Sonner
  */
 public class OptionsDialog extends JDialog implements WindowListener {
+	/** */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * An instance of the Application object of this window.
+	 */
 	private Application app;
 
+	/**
+	 * The tabbed pane which is used to switch between the different pages
+	 * of the options menu.
+	 */
 	private JTabbedPane tabbedPane;
 
+	/**
+	 * The panel where the user can select the default values of certain object
+	 * types.
+	 */
 	private JPanel defaultsPanel;
 
+	/**
+	 * The panel with all settings regarding font sizes & the current language.
+	 */
 	private OptionsFont fontPanel;
+	
+	/**
+	 * The panel with all settings for the euclidian view. The "Drawing Pad Properties" dialog
+	 * is not longer used, all settings are stored here for now.
+	 */
 	private OptionsEuclidian euclidianPanel;
 
+	/**
+	 * The button to apply settings without closing the window.
+	 */
 	private JButton applyButton;
+	
+	/**
+	 * The button which closes the window and stores all changes. 
+	 */
 	private JButton closeButton;
 
 	/**
@@ -104,13 +132,21 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		// init tabbing pane
 		tabbedPane = new OptionsTabbedPane();
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				SystemColor.RED), new JPanel());
+				SystemColor.RED), new JPanel());							// general
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				SystemColor.RED), defaultsPanelScroll);
+				SystemColor.RED), defaultsPanelScroll);						// defaults
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				SystemColor.RED), fontsAndLangPanelScroll);
+				SystemColor.RED), fontsAndLangPanelScroll);					// fonts & language
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				SystemColor.RED), euclidianPanelScroll);
+				SystemColor.RED), euclidianPanelScroll);					// euclidian properties
+		
+		// disable some tabs for applets
+		if(app.isApplet()) {
+			tabbedPane.setEnabledAt(1, false); // general
+			tabbedPane.setEnabledAt(2, false); // default values
+			
+			// TODO: hide euclidian options in applets in certain cases
+		}
 
 		add(tabbedPane, BorderLayout.CENTER);
 
@@ -217,8 +253,12 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * @author Florian Sonner
 	 */
 	class OptionsTabbedPane extends JTabbedPane {
+		/** */
 		private static final long serialVersionUID = 1L;
 		
+		/**
+		 * Set the UI of this component to the OptionsTabbedPaneUI.
+		 */
 		public OptionsTabbedPane() {
 			setUI(new OptionsTabbedPaneUI());
 		}
@@ -249,9 +289,60 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * Custom UI for the tabs in the options dialog.
 	 * 
 	 * @author Florian Sonner
-	 * @see http://blog.elevenworks.com/?p=4 How to customize JTabbedPanes with custom UIs.
 	 */
 	class OptionsTabbedPaneUI extends BasicTabbedPaneUI {
+		/**
+		 * The background color for tabs which are neither active not hovered.
+		 */
+		private Color bgColor;
+		
+		/**
+		 * The background color of active tabs (i.e. the content of this tab is currently
+		 * displayed).
+		 */
+		private Color bgActiveColor;
+		
+		/**
+		 * The background color of tabs the mouse is over at the moment. Will not apply
+		 * to active tabs.
+		 */
+		private Color bgHoverColor;
+
+		/**
+		 * Initialization of default values.
+		 */
+		protected void installDefaults() {
+			super.installDefaults();
+			tabAreaInsets = new Insets(0, 15, 0, 15);
+			contentBorderInsets = new Insets(3, 3, 3, 3);
+			tabInsets = new Insets(10, 10, 10, 10);
+			selectedTabPadInsets = new Insets(0, 0, 0, 0);
+			
+			bgColor = Color.white;
+			bgActiveColor = new Color(193, 210, 238);
+			bgHoverColor = new Color(224, 232, 246);
+		}
+		
+		/**
+		 * Uninstall our custom defaults.
+		 */
+		protected void uninstallDefaults() {
+			super.uninstallDefaults();
+			
+			bgColor = null;
+			bgActiveColor = null;
+			bgHoverColor = null;
+		}
+		
+		/**
+		 * Update the font.
+		 */
+		public void updateFont() {
+			LookAndFeel.installColorsAndFont(tabPane, "TabbedPane.background",
+                    "TabbedPane.foreground",
+                    "TabbedPane.font");
+		}
+		
 		/**
 		 * Paint the tab border.
 		 */
@@ -267,9 +358,18 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		 */
 		protected void paintTabBackground(Graphics g, int tabPlacement,
 				int tabIndex, int x, int y, int w, int h, boolean isSelected) {
-			g.setColor((isSelected ? SystemColor.controlHighlight
-					: SystemColor.text));
+			g.setColor(isSelected ? bgActiveColor : (tabIndex == getRolloverTab() ? bgHoverColor : bgColor));
 			g.fillRect(x, y, w, h);
+		}
+		
+		/**
+		 * Repaint the tabbed pane if the mouse is hovering a new tab.
+		 */
+		protected void setRolloverTab(int index) {
+			if(getRolloverTab() != index) {
+				super.setRolloverTab(index);
+				repaint();
+			}
 		}
 
 		/**
@@ -277,10 +377,12 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		 */
 		protected void paintTabArea(Graphics g, int tabPlacement,
 				int selectedIndex) {
-			int tw = tabPane.getBounds().width;
-
-			g.setColor(SystemColor.text);
-			g.fillRect(0, 0, tw, rects[0].height);
+			g.setColor(Color.white);
+			
+			g.fillRect(0, 0,
+				tabPane.getBounds().width,
+				calculateTabAreaHeight(tabPlacement, runCount, maxTabHeight)
+			);
 
 			super.paintTabArea(g, tabPlacement, selectedIndex);
 		}
@@ -323,6 +425,9 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		 * label.
 		 */
 		protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+			if(!tabbedPane.isEnabledAt(tabIndex))
+				return 0;
+			
 			return fontHeight + 45;
 		}
 
@@ -331,6 +436,9 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		 * the text.
 		 */
 		protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
+			if(!tabbedPane.isEnabledAt(tabIndex))
+				return 0;
+			
 			return super.calculateTabWidth(tabPlacement, tabIndex, metrics) - 32;
 		}
 
@@ -349,32 +457,6 @@ public class OptionsDialog extends JDialog implements WindowListener {
 			g.drawLine(x, y, x + w, y);
 			g.setColor(SystemColor.controlLtHighlight);
 			g.drawLine(x, y + 1, x + w, y + 1);
-		}
-
-		/**
-		 * A small inset for the content area.
-		 */
-		protected Insets getContentBorderInsets(int tabPlacement) {
-			return new Insets(3, 3, 3, 3);
-		}
-
-		/**
-		 * Initialization of default values.
-		 */
-		protected void installDefaults() {
-			super.installDefaults();
-			tabAreaInsets.set(0, 4, 0, 4);
-			selectedTabPadInsets.set(0, 0, 0, 0);
-			tabInsets.set(5, 5, 5, 5);
-		}
-		
-		/**
-		 * Update the font.
-		 */
-		public void updateFont() {
-			LookAndFeel.installColorsAndFont(tabPane, "TabbedPane.background",
-                    "TabbedPane.foreground",
-                    "TabbedPane.font");
 		}
 
 		protected void paintFocusIndicator(Graphics g, int tabPlacement,
