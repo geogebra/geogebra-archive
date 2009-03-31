@@ -105,6 +105,9 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     	case GeoElement3D.GEO_CLASS_LINE3D:
     		cs = new GeoLine3D(cons, P, Q); 
     		break;
+    	case GeoElement3D.GEO_CLASS_RAY3D:
+    		cs = new GeoRay3D(cons, P);
+    		break;
     	default:
     		cs = null;
     	}
