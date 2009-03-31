@@ -4066,6 +4066,19 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	}
 	
 	
+	public Previewable createPreviewSegment(ArrayList selectedPoints){
+		return new DrawSegment(this, selectedPoints);
+	}	
+	
+	
+	public Previewable createPreviewRay(ArrayList selectedPoints){
+		return new DrawRay(this, selectedPoints);
+	}	
+	
+	public Previewable createPreviewPolygon(ArrayList selectedPoints){
+		return new DrawPolygon(this, selectedPoints);
+	}	
+	
 	
 	
 	

@@ -1338,6 +1338,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 		return null; //new DrawLine3D(this, selectedPoints);
 	}
+	
+	public Previewable createPreviewSegment(ArrayList selectedPoints){
+		return null;
+	}	
+	
+	public Previewable createPreviewRay(ArrayList selectedPoints){
+		return null;
+	}	
+	
+	public Previewable createPreviewPolygon(ArrayList selectedPoints){
+		return null;
+	}	
 
 
 }

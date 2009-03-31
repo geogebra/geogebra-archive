@@ -325,14 +325,29 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return ret;	
 	}
 		
-	// fetch the two selected points
+	// fetch the two selected points for line
 	protected void join(){
 		GeoPoint3D[] points = getSelectedPoints3D();
 		((Kernel3D) getKernel()).Line3D(null,points[0], points[1]);
 	}
 	
+	// fetch the two selected points for segment
+	protected void segment(){
+		GeoPoint3D[] points = getSelectedPoints3D();
+		((Kernel3D) getKernel()).Segment3D(null,points[0], points[1]);
+	}
+	
+	// fetch the two selected points for segment
+	protected void ray(){
+		GeoPoint3D[] points = getSelectedPoints3D();
+		((Kernel3D) getKernel()).Ray3D(null,points[0], points[1]);
+	}
 	
 	
+	// build polygon	
+	protected void polygon(){
+		((Kernel3D) getKernel()).Polygon3D(null, getSelectedPoints3D());
+	}
 	
 	
 	///////////////////////////////////////////

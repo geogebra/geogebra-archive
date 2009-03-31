@@ -25,5 +25,15 @@ public class GeoRay3D extends GeoLine3D {
 	public boolean isDefined(){
 		return true;
 	}
+	
+	
+	
+	//Path3D interface
+	public double getMinParameter() {
+		return 0;
+	}
+	
+	
+	
 
 }

@@ -158,6 +158,28 @@ public interface EuclidianViewInterface {
 	 * @return the line previewable
 	 */
 	public Previewable createPreviewLine(ArrayList selectedPoints);
+	
+	/**
+	 * create a previewable for segment construction
+	 * @param selectedPoints points
+	 * @return the segment previewable
+	 */	
+	public Previewable createPreviewSegment(ArrayList selectedPoints);
+	
+	
+	/**
+	 * create a previewable for ray construction
+	 * @param selectedPoints points
+	 * @return the ray previewable
+	 */	
+	public Previewable createPreviewRay(ArrayList selectedPoints);
+	
+	/**
+	 * create a previewable for polygon construction
+	 * @param selectedPoints points
+	 * @return the polygon previewable
+	 */		
+	public Previewable createPreviewPolygon(ArrayList selectedPoints);
 
 
 

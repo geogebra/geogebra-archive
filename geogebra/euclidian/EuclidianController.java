@@ -318,11 +318,13 @@ public class EuclidianController implements MouseListener,
 			break;
 
 		case EuclidianView.MODE_SEGMENT:
-			previewDrawable = new DrawSegment((EuclidianView) view, selectedPoints);
+			//previewDrawable = new DrawSegment((EuclidianView) view, selectedPoints);
+			previewDrawable = view.createPreviewSegment(selectedPoints);
 			break;
 
 		case EuclidianView.MODE_RAY:
-			previewDrawable = new DrawRay((EuclidianView) view, selectedPoints);
+			//previewDrawable = new DrawRay((EuclidianView) view, selectedPoints);
+			previewDrawable = view.createPreviewRay(selectedPoints);
 			break;
 
 		case EuclidianView.MODE_VECTOR:
@@ -330,7 +332,8 @@ public class EuclidianController implements MouseListener,
 			break;
 
 		case EuclidianView.MODE_POLYGON:
-			previewDrawable = new DrawPolygon((EuclidianView) view, selectedPoints);
+			previewDrawable = view.createPreviewPolygon(selectedPoints);
+			//previewDrawable = new DrawPolygon((EuclidianView) view, selectedPoints);
 			break;
 
 		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
@@ -2860,11 +2863,21 @@ public class EuclidianController implements MouseListener,
 		addSelectedPoint(hits, 2, false);
 		if (selPoints() == 2) {
 			// fetch the two selected points
+			segment();
+			/*
 			GeoPoint[] points = getSelectedPoints();
 			kernel.Segment(null, points[0], points[1]);
+			*/
 			return true;
 		}
 		return false;
+	}
+	
+	
+	// fetch the two selected points for segment
+	protected void segment(){
+		GeoPoint[] points = getSelectedPoints();
+		kernel.Segment(null, points[0], points[1]);
 	}
 
 	// get two points and create vector between them
@@ -2892,13 +2905,24 @@ public class EuclidianController implements MouseListener,
 		addSelectedPoint(hits, 2, false);
 		if (selPoints() == 2) {
 			// fetch the two selected points
+			/*
 			GeoPoint[] points = getSelectedPoints();
 			kernel.Ray(null, points[0], points[1]);
+			*/
+			ray();
 			return true;
 		}
 
 		return false;
 	}
+	
+	
+	// fetch the two selected points for ray
+	protected void ray(){
+		GeoPoint[] points = getSelectedPoints();
+		kernel.Ray(null, points[0], points[1]);
+	}
+
 
 	//	get at least 3 points and create polygon with them
 	final protected boolean polygon(Hits hits) {
@@ -2912,7 +2936,8 @@ public class EuclidianController implements MouseListener,
 					&& hits.contains(selectedPoints.get(0));
 			if (finished) {
 				// build polygon
-				kernel.Polygon(null, getSelectedPoints());
+				polygon();
+				//kernel.Polygon(null, getSelectedPoints());
 				return true;
 			}
 		}
@@ -2921,6 +2946,13 @@ public class EuclidianController implements MouseListener,
 		addSelectedPoint(hits, GeoPolygon.POLYGON_MAX_POINTS, false);
 		return false;
 	}
+	
+
+	// build polygon	
+	protected void polygon(){
+		kernel.Polygon(null, getSelectedPoints());
+	}
+	
 
 	// get two objects (lines or conics) and create intersection point
 	final protected boolean intersect(Hits hits) {
