@@ -15,8 +15,8 @@ package geogebra;
 public class GeoGebra extends Object {
 	
 	// GeoGebra version
-	public static final String BUILD_DATE = "March 29, 2009";
-	public static final String VERSION_STRING = "3.3.10.0";
+	public static final String BUILD_DATE = "April 2, 2009";
+	public static final String VERSION_STRING = "3.3.11.0";
 	
 	// File format versions
 	public static final String XML_FILE_FORMAT = "3.3";
