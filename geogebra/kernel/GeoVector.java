@@ -253,7 +253,7 @@ implements Path, VectorValue, Locateable, Rotateable {
         return isDefined() && !isInfinite();
     }    
     
-    final protected boolean showInAlgebraView() {
+    public final boolean showInAlgebraView() {
         // independent or defined
        // return isIndependent() || isDefined();
     	return true;

@@ -329,7 +329,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     	return isDrawable;
     }
     
-    protected boolean showInAlgebraView() {       
+    public boolean showInAlgebraView() {       
         return true;        
     }                
     

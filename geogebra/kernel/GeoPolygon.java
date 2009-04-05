@@ -506,7 +506,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		   defined = false;
 	}
         
-   final protected boolean showInAlgebraView() {	   
+   public final boolean showInAlgebraView() {	   
 	   //return defined;
 	   return true;
    }

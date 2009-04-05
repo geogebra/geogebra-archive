@@ -60,7 +60,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 
 	}
 
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		// TODO Raccord de méthode auto-généré
 		return true;
 	}

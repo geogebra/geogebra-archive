@@ -204,7 +204,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		isDefined = false;
 	}
 
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		return true;
 	}
 

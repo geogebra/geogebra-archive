@@ -364,7 +364,7 @@ implements GeoPointInterface, PointProperties{
 		// TODO Auto-generated method stub
 		
 	}
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		// TODO Auto-generated method stub
 		return true;
 	}

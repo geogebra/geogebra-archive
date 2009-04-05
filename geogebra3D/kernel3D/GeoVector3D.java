@@ -73,7 +73,7 @@ public class GeoVector3D extends GeoVec4D {
 	}
 
 
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		// TODO Auto-generated method stub
 		return true;
 	}

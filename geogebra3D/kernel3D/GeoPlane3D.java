@@ -173,7 +173,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	}
 
 
-	protected boolean showInAlgebraView() {		
+	public boolean showInAlgebraView() {		
 		return true;
 	}
 

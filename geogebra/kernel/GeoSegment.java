@@ -149,7 +149,7 @@ GeoSegmentInterface {
 		defined = false;
 	}
         
-   final protected boolean showInAlgebraView() {	   
+   public final boolean showInAlgebraView() {	   
 	  // return defined;
 	   return true;
    }

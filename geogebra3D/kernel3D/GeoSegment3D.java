@@ -119,7 +119,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	 * @return if this is to be shown in algebra view
 	 * 
 	 */	
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		
 		return true;
 	}

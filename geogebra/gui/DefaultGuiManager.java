@@ -22,6 +22,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoJavaScriptButton;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
@@ -838,6 +839,24 @@ public class DefaultGuiManager implements GuiManager {
 			num.update();
 		}
 		return num != null;
+	}
+
+	/**
+	 * Creates a new JavaScript button at given location (screen coords).
+	 * 
+	 * @return whether a new slider (number) was create or not
+	 */
+	public boolean showJavaScriptButtonCreationDialog(int x, int y) {
+		JavaScriptDialog dialog = new JavaScriptDialog(app, x, y);
+		dialog.setVisible(true);
+		GeoJavaScriptButton button = (GeoJavaScriptButton) dialog.getResult();
+		if (button != null) {
+			// make sure that we show name and value of slider
+			button.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			button.setLabelVisible(true);
+			button.update();
+		}
+		return button != null;
 	}
 
 	/**

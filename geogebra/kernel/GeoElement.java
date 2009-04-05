@@ -227,6 +227,7 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_ANGLE = 10;
 	public static final int GEO_CLASS_AXIS = 20;
 	public static final int GEO_CLASS_BOOLEAN = 30;
+	public static final int GEO_CLASS_JAVASCRIPT_BUTTON = 31;
 	public static final int GEO_CLASS_CONIC = 40;
 	public static final int GEO_CLASS_CONICPART = 50;
 	public static final int GEO_CLASS_FUNCTION = 60;
@@ -950,14 +951,14 @@ public abstract class GeoElement
 		return algebraVisible;
 	}
 
-	protected abstract boolean showInAlgebraView();
+	public abstract boolean showInAlgebraView();
 	protected abstract boolean showInEuclidianView();
 	
 	final public boolean isEuclidianShowable() {
 		return showInEuclidianView();
 	}
 	
-	final public boolean isAlgebraShowable() {
+	public boolean isAlgebraShowable() {
 		return showInAlgebraView();
 	}
 
@@ -1667,6 +1668,14 @@ public abstract class GeoElement
 			do {
 				counter++;
 				str = app.getPlain("Name.locus") + counter;
+			} while (!cons.isFreeLabel(str));
+			return str;
+		} else if (isGeoJavaScriptButton()) {
+			int counter = 0;			
+			String str;
+			do {
+				counter++;
+				str = app.getPlain("Name.button") + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoList()) {
@@ -3150,6 +3159,10 @@ public abstract class GeoElement
 	}
 	
 	public boolean isListValue() {
+		return false;
+	}
+
+	public boolean isGeoJavaScriptButton() {
 		return false;
 	}
 

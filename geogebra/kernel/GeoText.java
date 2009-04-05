@@ -257,7 +257,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}
 	private StringBuffer sbToString = new StringBuffer(80);
 
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		return false;
 	}
 

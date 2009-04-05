@@ -30,6 +30,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoJavaScriptButton;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -52,7 +53,6 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
@@ -70,7 +70,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
@@ -113,6 +112,7 @@ public class EuclidianController implements MouseListener,
 	protected static final int MOVE_Y_AXIS = 117;
 	
 	protected static final int MOVE_BOOLEAN = 118; // for checkbox moving
+	protected static final int MOVE_BUTTON = 119; // for checkbox moving
 
 	protected Application app;
 
@@ -163,6 +163,8 @@ public class EuclidianController implements MouseListener,
 	protected boolean movedGeoNumericDragged = false;
 	
 	protected GeoBoolean movedGeoBoolean;
+	
+	protected GeoJavaScriptButton movedGeoJavaScriptButton;
 
 	protected GeoElement movedLabelGeoElement;
 
@@ -458,7 +460,9 @@ public class EuclidianController implements MouseListener,
 			if (!hits.isEmpty()) {
 				view.setMode(EuclidianView.MODE_MOVE);
 				GeoElement geo0 = (GeoElement)hits.get(0);
-				if (!geo0.isFixed() && !(geo0.isGeoBoolean() && geo0.isIndependent()) && !(geo0.isGeoImage() && geo0.isIndependent()))
+				if (!geo0.isFixed() && !(geo0.isGeoBoolean() && geo0.isIndependent()) &&
+						!(geo0.isGeoImage() && geo0.isIndependent())
+						&& !geo0.isGeoJavaScriptButton())
 					app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0));
 			}
 			
@@ -1032,6 +1036,19 @@ public class EuclidianController implements MouseListener,
 				view.setDragCursor();			
 			}
 		
+		//  checkbox
+			else if (movedGeoElement.isGeoJavaScriptButton()) {
+				movedGeoJavaScriptButton = (GeoJavaScriptButton) movedGeoElement;
+				// move checkbox
+				moveMode = MOVE_BUTTON;					
+				startLoc = mouseLoc;
+				oldLoc.x = movedGeoJavaScriptButton.getAbsoluteScreenLocX();
+				oldLoc.y = movedGeoJavaScriptButton.getAbsoluteScreenLocY();
+				
+				view.setShowMouseCoords(false);
+				view.setDragCursor();			
+			}
+		
 		// image
 			else if (movedGeoElement.isGeoImage()) {
 				moveMode = MOVE_IMAGE;
@@ -1195,8 +1212,9 @@ public class EuclidianController implements MouseListener,
 			case EuclidianView.MODE_FITLINE:
 				return true;
 				
-			// checkbox
+			// checkbox, button
 			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:			
+			case EuclidianView.MODE_JAVASCRIPT_ACTION:
 				return true;
 				
 			default:
@@ -1270,6 +1288,10 @@ public class EuclidianController implements MouseListener,
 				
 			case MOVE_BOOLEAN:
 				moveBoolean(repaint);
+				break;
+				
+			case MOVE_BUTTON:
+				moveButton(repaint);
 				break;
 				
 			case MOVE_DEPENDENT:
@@ -1509,6 +1531,9 @@ public class EuclidianController implements MouseListener,
 							GeoBoolean bool = (GeoBoolean)(hits.get(0));
 							bool.setValue(!bool.getBoolean());
 							bool.update();
+						} else if (hit != null && hit.isGeoJavaScriptButton()) {
+							GeoJavaScriptButton button = (GeoJavaScriptButton)(hits.get(0));
+							button.runScript();						
 						}
 					}
 			}
@@ -2081,6 +2106,10 @@ public class EuclidianController implements MouseListener,
 			changedKernel = showCheckBox(hits);
 			break;
 
+		case EuclidianView.MODE_JAVASCRIPT_ACTION:
+			changedKernel = javaScriptButton();
+			break;
+
 			// Michael Borcherds 2008-03-13	
 		case EuclidianView.MODE_COMPASSES:
 			changedKernel = compasses(hits);
@@ -2284,6 +2313,16 @@ public class EuclidianController implements MouseListener,
 			movedGeoBoolean.updateRepaint();
 		else
 			movedGeoBoolean.updateCascade();
+	}
+	
+	final protected void moveButton(boolean repaint) {
+		movedGeoJavaScriptButton.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
+				oldLoc.y + mouseLoc.y-startLoc.y);
+			
+		if (repaint)
+			movedGeoJavaScriptButton.updateRepaint();
+		else
+			movedGeoJavaScriptButton.updateCascade();
 	}
 	
 	final protected void moveNumeric(boolean repaint) {
@@ -4831,6 +4870,11 @@ public class EuclidianController implements MouseListener,
 	// new slider
 	final protected boolean slider() {		
 		return !selectionPreview && mouseLoc != null && app.getGuiManager().showSliderCreationDialog(mouseLoc.x, mouseLoc.y);
+	}		
+
+	// new JavaScript button
+	final protected boolean javaScriptButton() {		
+		return !selectionPreview && mouseLoc != null && app.getGuiManager().showJavaScriptButtonCreationDialog(mouseLoc.x, mouseLoc.y);
 	}		
 
 	/***************************************************************************

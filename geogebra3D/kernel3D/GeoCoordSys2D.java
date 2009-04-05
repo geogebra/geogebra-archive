@@ -203,7 +203,7 @@ public class GeoCoordSys2D extends GeoCoordSys {
 	}
 
 
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		return true;
 	}
 

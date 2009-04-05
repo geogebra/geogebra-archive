@@ -97,7 +97,7 @@ public class GeoQuadric extends GeoElement3D {
 
     }
 
-    protected boolean showInAlgebraView() {
+    public boolean showInAlgebraView() {
 
         return true;
 

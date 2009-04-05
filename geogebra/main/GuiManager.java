@@ -189,6 +189,13 @@ public interface GuiManager {
 	public boolean showSliderCreationDialog(int x, int y) ;
 
 	/**
+	 * Creates a new slider at given location (screen coords).
+	 * 
+	 * @return whether a new slider (number) was create or not
+	 */
+	public boolean showJavaScriptButtonCreationDialog(int x, int y) ;
+
+	/**
 	 * Creates a new image at the given location (real world coords).
 	 * 
 	 * @return whether a new image was create or not

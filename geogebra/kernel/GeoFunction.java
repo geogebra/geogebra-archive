@@ -301,7 +301,7 @@ GeoDeriveable, ParametricCurve, LineProperties {
 		isDefined = false;
 	}
 
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		return true;
 	}
 

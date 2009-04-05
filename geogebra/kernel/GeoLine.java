@@ -298,7 +298,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
         return isDefined();
     }
     
-    protected boolean showInAlgebraView() {
+    public boolean showInAlgebraView() {
         // independent or defined
         //return isIndependent() || isDefined();
     	return isLabelSet();

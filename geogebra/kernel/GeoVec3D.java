@@ -60,7 +60,7 @@ implements Traceable {
         return isDefined();
     }
     
-    protected boolean showInAlgebraView() {
+    public boolean showInAlgebraView() {
        // return true;
 	   //return isDefined();
     	return true;

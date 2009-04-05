@@ -121,6 +121,8 @@ public interface EuclidianConstants {
 	public static final int MODE_FITLINE = 58;
 
 	public static final int MODE_RECORD_TO_SPREADSHEET = 59;
+	// GeoGebra 3.4 start
+	public static final int MODE_JAVASCRIPT_ACTION = 60;
 
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 

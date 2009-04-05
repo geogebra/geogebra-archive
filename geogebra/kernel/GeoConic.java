@@ -379,7 +379,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		return defined && (type != CONIC_EMPTY);
 	}
 
-	final protected boolean showInAlgebraView() {
+	public final boolean showInAlgebraView() {
 		//return defined;
 		return true;
 	}

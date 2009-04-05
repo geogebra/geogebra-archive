@@ -78,7 +78,7 @@ public class GeoLocus extends GeoElement implements Path {
 		return getLabel();
 	}	
 
-	protected boolean showInAlgebraView() {
+	public boolean showInAlgebraView() {
 		return false;
 	}
 

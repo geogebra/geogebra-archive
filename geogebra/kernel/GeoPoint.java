@@ -349,7 +349,7 @@ GeoPointInterface {
     	return isDefined && !isInfinite;
     }    
     
-    final protected boolean showInAlgebraView() {
+    public final boolean showInAlgebraView() {
         // intersection points
         return isDefined || showUndefinedInAlgebraView;
     }   

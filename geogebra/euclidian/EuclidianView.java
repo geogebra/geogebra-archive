@@ -27,6 +27,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoJavaScriptButton;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -74,7 +75,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -2613,6 +2613,10 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			d = new DrawBoolean(this, (GeoBoolean) geo);			
 			break;
 		
+		case GeoElement.GEO_CLASS_JAVASCRIPT_BUTTON:
+			d = new DrawJavaScriptButton(this, (GeoJavaScriptButton) geo);			
+			break;
+		
 		case GeoElement.GEO_CLASS_POINT:
 			d = new DrawPoint(this, (GeoPoint) geo);
 			break;					
@@ -2740,6 +2744,10 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 		switch (geo.getGeoClassType()) {
 		case GeoElement.GEO_CLASS_BOOLEAN:			
+			drawLayers[layer].add(d);
+			break;
+		
+		case GeoElement.GEO_CLASS_JAVASCRIPT_BUTTON:			
 			drawLayers[layer].add(d);
 			break;
 		
@@ -3903,6 +3911,9 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			
 		case MODE_SHOW_HIDE_CHECKBOX:
 			return "ShowCheckBox";
+			
+		case MODE_JAVASCRIPT_ACTION:
+			return "JavaScriptAction";
 			
 		case MODE_FITLINE:
 			return "FitLine";

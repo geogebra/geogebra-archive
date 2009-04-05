@@ -136,7 +136,7 @@ AbsoluteScreenLocateable {
 		return isIndependent();
 	}
 
-	final protected boolean showInAlgebraView() {		
+	public final boolean showInAlgebraView() {		
 		return true;
 	}
 	

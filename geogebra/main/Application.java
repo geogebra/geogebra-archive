@@ -93,6 +93,10 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
+
 public abstract class Application implements KeyEventDispatcher {
 	// disabled parts
 	public static final boolean DISABLE_I2G = true;
@@ -346,6 +350,9 @@ public abstract class Application implements KeyEventDispatcher {
 		 * args[i], "Arguments", JOptionPane.DEFAULT_OPTION,
 		 * JOptionPane.PLAIN_MESSAGE); } }
 		 */
+		
+		
+
 
 		// Michael Borcherds 2008-05-05
 		// added to help debug applets
@@ -452,6 +459,34 @@ public abstract class Application implements KeyEventDispatcher {
 		// init plugin manager for applications
 		if (!isApplet)
 			pluginmanager = getPluginManager();
+		
+		/*
+        Context cx = Context.enter();
+        try {
+            // Initialize the standard objects (Object, Function, etc.)
+            // This must be done before scripts can be executed. Returns
+            // a scope object that we use in later calls.
+            Scriptable scope = cx.initStandardObjects();
+
+            // initialise the JavaScript variable applet so that we can call
+            // GgbApi functions, eg ggbApplet.evalCommand()
+            Object wrappedOut = Context.javaToJS(getGgbApi(), scope);
+            ScriptableObject.putProperty(scope, "applet", wrappedOut);
+
+            // JavaScript to execute
+            String s = "ggbApplet.evalCommand('F=(2,3)')";
+            
+            // Now evaluate the string we've colected.
+            Object result = cx.evaluateString(scope, s, "<cmd>", 1, null);
+
+            // Convert the result to a string and print it.
+            System.err.println(Context.toString(result));
+
+        } finally {
+            // Exit from the context.
+            Context.exit();
+        }*/
+
 	}
 	
 	public void initKernel(){
