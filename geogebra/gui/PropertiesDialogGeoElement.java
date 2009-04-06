@@ -25,6 +25,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoJavaScriptButton;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
@@ -577,6 +578,7 @@ public class PropertiesDialogGeoElement
 		private StartPointPanel startPointPanel;
 		private CornerPointsPanel cornerPointsPanel;
 		private TextEditPanel textEditPanel;
+		private ScriptEditPanel scriptEditPanel;
 		private BackgroundImagePanel bgImagePanel;
 		private AbsoluteScreenLocationPanel absScreenLocPanel;	
 		private ShowConditionPanel showConditionPanel;
@@ -624,6 +626,7 @@ public class PropertiesDialogGeoElement
 			startPointPanel = new StartPointPanel();
 			cornerPointsPanel = new CornerPointsPanel();
 			textEditPanel = new TextEditPanel();
+			scriptEditPanel = new ScriptEditPanel();
 			bgImagePanel = new BackgroundImagePanel();
 			allowReflexAnglePanel = new AllowReflexAnglePanel();
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
@@ -699,6 +702,13 @@ public class PropertiesDialogGeoElement
 			textTabList.add(textEditPanel);			
 			TabPanel textTab = new TabPanel(app.getPlain("Text"), textTabList);
 			textTab.addToTabbedPane(tabs);	
+			
+			// script tab
+			ArrayList scriptTabList = new ArrayList();			
+			//scriptTabList.add(scriptOptionsPanel);	
+			scriptTabList.add(scriptEditPanel);			
+			TabPanel scriptTab = new TabPanel(app.getPlain("Scriptxx"), scriptTabList);
+			scriptTab.addToTabbedPane(tabs);	
 			
 			// slider tab
 			ArrayList sliderTabList = new ArrayList();	
@@ -1745,7 +1755,7 @@ public class PropertiesDialogGeoElement
 				GeoElement geo = (GeoElement) geos[i];
 				if (geo instanceof AbsoluteScreenLocateable) {
 					AbsoluteScreenLocateable absLoc = (AbsoluteScreenLocateable) geo;
-					if (!absLoc.isAbsoluteScreenLocateable() || geo.isGeoBoolean())
+					if (!absLoc.isAbsoluteScreenLocateable() || geo.isGeoBoolean() || geo.isGeoJavaScriptButton())
 						return false;
 				}					
 				else
@@ -2467,6 +2477,52 @@ public class PropertiesDialogGeoElement
 			//	app.showTextDialog((GeoText) geos[0]);
 		}
 	}
+
+	/**
+	 * panel for text editing
+	 */
+	private class ScriptEditPanel
+		extends JPanel
+		implements ActionListener, UpdateablePanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;	
+		private ScriptInputDialog td;
+		
+		public ScriptEditPanel() {	
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("Editxx")));
+			td = new ScriptInputDialog(app, app.getPlain("Textxx"), null,
+										40, 10);
+			setLayout(new BorderLayout());
+			add(td.getInputPanel(), BorderLayout.CENTER);
+			JPanel btPanel = new JPanel(new BorderLayout(0,0));
+			btPanel.add(td.getButtonPanel(), BorderLayout.EAST);
+			add(btPanel, BorderLayout.SOUTH);
+		}
+
+		public JPanel update(Object[] geos) {			
+			if (geos.length != 1 || !checkGeos(geos))
+				return null;			
+			
+			GeoJavaScriptButton button = (GeoJavaScriptButton) geos[0];			
+			td.setGeo(button);					
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
+			return geos.length == 1 && geos[0] instanceof GeoJavaScriptButton;			
+		}
+
+		/**
+		 * handle textfield changes
+		 */
+		public void actionPerformed(ActionEvent e) {
+			//if (e.getSource() == btEdit)
+			//	app.showTextDialog((GeoText) geos[0]);
+		}
+	}
+
 
 	/**
 	 * panel to select the kind of coordinates (cartesian or polar)
@@ -4686,6 +4742,7 @@ class AnimationStepPanel
 					|| geo.isGeoImage()
 					|| geo.isGeoList()
 					|| geo.isGeoBoolean()
+					|| geo.isGeoJavaScriptButton()
 					|| !partOfSliderPanel && geo.isGeoNumeric() && geo.isIndependent() // slider						
 			)  
 			{				
@@ -5485,7 +5542,7 @@ class NamePanel
 		// DEFINITION
 		//boolean showDefinition = !(currentGeo.isGeoText() || currentGeo.isGeoImage());
 		boolean showDefinition = currentGeo.isGeoText() ? ((GeoText)currentGeo).isTextCommand() :
-			! (currentGeo.isGeoImage() && currentGeo.isIndependent());
+			! ((currentGeo.isGeoImage() && currentGeo.isIndependent()) || currentGeo.isGeoJavaScriptButton());
 		if (showDefinition) {			
 			tfDefinition.removeActionListener(this);
 			defInputHandler.setGeoElement(currentGeo);
