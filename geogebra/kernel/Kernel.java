@@ -647,6 +647,9 @@ public class Kernel {
     			else if (type.equals("intersectinglines")) //  bug in GeoGebra 2.6c
     				return new GeoConic(cons);
     		
+    		case 'j': // javascriptbutton
+    			return new GeoJavaScriptButton(cons);
+    		
     		case 'l': // line, list, locus
     			if (type.equals("line"))
     				return new GeoLine(cons);

@@ -13,7 +13,7 @@
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
+import geogebra.util.Util;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -121,7 +121,7 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("\t<value val=\"");
-		sb.append(script);
+		sb.append(getXMLScript());
 		sb.append("\"/>\n");				
 				
 		sb.append(getXMLvisualTags(isIndependent()));
@@ -207,6 +207,10 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 	
 	public String getScript() {
 		return script;
+	}
+	
+	public String getXMLScript() {
+		return Util.encodeXML(script);
 	}
 	
 	public boolean runScript() {

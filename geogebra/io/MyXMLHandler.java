@@ -30,6 +30,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoJavaScriptButton;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -2239,8 +2240,9 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleValue(LinkedHashMap<String, String> attrs) {
 		boolean isBoolean = geo.isGeoBoolean();
 		boolean isNumber = geo.isGeoNumeric();
+		boolean isButton = geo.isGeoJavaScriptButton();
 
-		if (!(isNumber || isBoolean)) {
+		if (!(isNumber || isBoolean || isButton)) {
 			Application.debug("wrong element type for <value>: "
 					+ geo.getClass());
 			return false;
@@ -2254,6 +2256,9 @@ public class MyXMLHandler implements DocHandler {
 			} else if (isBoolean) {
 				GeoBoolean bool = (GeoBoolean) geo;
 				bool.setValue(parseBoolean(strVal));
+			} else if (isButton) {
+				GeoJavaScriptButton button = (GeoJavaScriptButton)geo;
+				button.setScript(strVal);
 			}
 			return true;
 		} catch (Exception e) {
