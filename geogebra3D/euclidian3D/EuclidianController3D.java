@@ -9,6 +9,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
+import geogebra.kernel.Region;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DMatrix;
@@ -302,6 +303,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		return point;
 		
+	}
+	
+	
+	protected GeoPointInterface createNewPoint(Region region){
+		return null;
 	}
 	
 	

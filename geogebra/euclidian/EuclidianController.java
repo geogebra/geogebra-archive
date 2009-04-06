@@ -48,6 +48,7 @@ import geogebra.kernel.Macro;
 import geogebra.kernel.Mirrorable;
 import geogebra.kernel.Path;
 import geogebra.kernel.PointRotateable;
+import geogebra.kernel.Region;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -583,7 +584,7 @@ public class EuclidianController implements MouseListener,
 			view.setHits(mouseLoc);
 			//hits = view.getHits(mouseLoc, true);
 			hits = view.getHits();
-			createNewPoint(hits, true, true, true);
+			createNewPoint(hits, true, true, true, true); // point can be in a region
 			break;
 			
 		case EuclidianView.MODE_SEGMENT:
@@ -607,7 +608,7 @@ public class EuclidianController implements MouseListener,
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, true, true, true);
+			createNewPoint(hits, true, true, true); 
 			break;
 		
 		case EuclidianView.MODE_PARALLEL:
@@ -2586,22 +2587,33 @@ public class EuclidianController implements MouseListener,
 	 * called
 	 **************************************************************************/
 
+	final protected boolean createNewPoint(Hits hits,
+			boolean onPathPossible, boolean intersectPossible, boolean doSingleHighlighting) {
+		
+		return createNewPoint(hits,onPathPossible, false, intersectPossible,  doSingleHighlighting);		
+	}
+	
 	// create new point at current position if hits is null
 	// or on path
 	// or intersection point
 	// returns wether new point was created or not
 	final protected boolean createNewPoint(Hits hits,
-			boolean onPathPossible, boolean intersectPossible, boolean doSingleHighlighting) {
+			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, boolean doSingleHighlighting) {
+		
+		
+		// create hits for region
+		Hits regionHits = hits.getHits(Region.class, tempArrayList);
 		
 		// only keep polygon in hits if one side of polygon is in hits too
 		if (!hits.isEmpty())
 			hits.keepOnlyHitsForNewPointMode();
 		
-		Path path = null;		
+		Path path = null;	
+		Region region = null;
 		boolean createPoint = !hits.containsGeoPoint();//!view.containsGeoPoint(hits);
 		GeoPointInterface point = null;
 	
-		Application.debug("createPoint 1 = "+createPoint);
+		//Application.debug("createPoint 1 = "+createPoint);
 
 		//	try to get an intersection point
 		if (createPoint && intersectPossible) {
@@ -2616,11 +2628,27 @@ public class EuclidianController implements MouseListener,
 			}
 		}
 		
-		Application.debug("createPoint 2 = "+createPoint);
+		//Application.debug("createPoint 2 = "+createPoint);
 
-		//	check if point lies on path and if we are allowed to place a point
-		// on a path
+
+		// check for paths and regions
 		if (createPoint) {
+
+			// check if point lies in a region and if we are allowed to place a point
+			// in a region
+			if (!regionHits.isEmpty()) {
+				if (inRegionPossible) {
+					region = (Region) chooseGeo(regionHits);
+					createPoint = region != null;
+				} else {
+					createPoint = false;
+				}
+				
+			}
+			
+			
+			//check if point lies on path and if we are allowed to place a point
+			// on a path			
 			Hits pathHits = hits.getHits(Path.class, tempArrayList);
 			if (!pathHits.isEmpty()) {
 				if (onPathPossible) {
@@ -2630,16 +2658,25 @@ public class EuclidianController implements MouseListener,
 					createPoint = false;
 				}
 			}
+			
 		}
 		
-		Application.debug("createPoint 3 = "+createPoint);
+
+		
+		//Application.debug("createPoint 3 = "+createPoint);
 
 		if (createPoint) {
 			transformCoords(); // use point capturing if on
 			if (path == null) {
-				//point = kernel.Point(null, xRW, yRW);
-				point = createNewPoint();
-				view.setShowMouseCoords(true);
+				
+				if (region == null){
+					//point = kernel.Point(null, xRW, yRW);
+					point = createNewPoint();
+					view.setShowMouseCoords(true);
+				} else {
+					Application.debug("in Region : "+region);
+					point = createNewPoint(region);
+				}
 			} else {
 				//point = kernel.Point(null, path, xRW, yRW);
 				point = createNewPoint(path);
@@ -2671,6 +2708,10 @@ public class EuclidianController implements MouseListener,
 	
 	protected GeoPointInterface createNewPoint(Path path){
 		return kernel.Point(null, path, xRW, yRW);
+	}
+	
+	protected GeoPointInterface createNewPoint(Region region){
+		return kernel.Point(null,region,xRW, yRW);
 	}
 	
 	

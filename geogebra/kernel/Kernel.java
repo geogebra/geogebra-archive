@@ -1805,9 +1805,9 @@ public class Kernel {
 	
 	
 	/** Point in region with cartesian coordinates (x,y)   */
-	final public GeoPoint PointInRegion(String label, Region region, double x, double y) {
+	final public GeoPoint Point(String label, Region region, double x, double y) {
 		AlgoPointInRegion algo = new AlgoPointInRegion(cons, label, region, x, y);
-		GeoPoint p = algo.getP();        
+		GeoPoint p = algo.getP();    
 		return p;
 	}
 	

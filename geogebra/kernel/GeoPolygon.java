@@ -762,7 +762,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 			//x2=points[i].getInhomX()-x0;
 			//y2=points[i].getInhomY()-y0;
 			x2=getPointX(i)-x0;
-			y2=y1=getPointY(i)-y0;
+			y2=getPointY(i)-y0;
 			ret = ret ^ intersectOx(x1, y1, x2, y2);
 			x1=x2;
 			y1=y2;
