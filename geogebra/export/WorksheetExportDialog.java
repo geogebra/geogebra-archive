@@ -16,6 +16,8 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoJavaScriptButton;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
@@ -30,6 +32,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -427,6 +431,37 @@ public class WorksheetExportDialog extends JDialog {
 		return tab;
 	}
 	
+	private void appendJavaScript(StringBuffer sb) {
+		// framePossible (double click opens GeoGebra window)
+		sb.append("<script type=\"text/javascript\">\n");
+		
+		sb.append(kernel.getLibraryJavaScript());
+
+		Construction cons = kernel.getConstruction();
+		TreeSet geoSet =  cons.getGeoSetConstructionOrder();
+				
+		Iterator it = geoSet.iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();
+			if (geo.isGeoJavaScriptButton()) {
+				// for each GeoJavaScriptButton, create a function call
+				// with the same name as the geo's label (prefixed by ggb)
+				sb.append("\nfunction ggb");
+				sb.append(geo.getLabel());
+				sb.append("() {\n");
+				sb.append("var ggbApplet = document.ggbApplet;");
+				sb.append(((GeoJavaScriptButton)geo).getScript());
+				sb.append("\n}\n");
+				
+			}
+		}
+
+
+		
+		
+		sb.append("\n</script>\n");
+	}
+	
 	/**
 	 * Appends all selected applet parameters
 	 */
@@ -596,6 +631,7 @@ public class WorksheetExportDialog extends JDialog {
 		// charset
 		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n");
 		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>\n");
+		sb.append("<meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\"/>\n");
 		
 		sb.append("<meta name=\"generator\" content=\"GeoGebra\"/>\n");
 		String css = app.getSetting("cssDynamicWorksheet");
@@ -659,6 +695,9 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("Java 1.4.2 (or later) is installed and active in your browser ");
 		sb.append("(<a href=\"http://java.sun.com/getjava\">Click here to install Java now</a>)\n");
 		sb.append("</applet>\n\n");
+		
+		// JavaScript from GeoJavaScriptButtons and kernel.libraryJavaScript
+		appendJavaScript(sb);
 
 		// text after applet
 		text = textBelow.getText();

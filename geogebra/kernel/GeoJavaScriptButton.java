@@ -213,7 +213,12 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 		return Util.encodeXML(script);
 	}
 	
-	public boolean runScript() {
-		return app.getScriptManager().evalScript(script);
+	public void runScript() {
+		if (app.isApplet()) {
+			Object [] args = { };
+			app.getApplet().callJavaScript("ggb"+getLabel(), args);
+		} else {
+			app.getScriptManager().evalScript(script);
+		}
 	}
 }
