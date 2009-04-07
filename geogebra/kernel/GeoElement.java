@@ -2821,7 +2821,7 @@ public abstract class GeoElement
 		}
 		sb.append("/>\n");
 
-		
+		/*
 		if (this.isGeoPoint())
 			{
 			GeoPoint p = (GeoPoint)(this);
@@ -2837,7 +2837,7 @@ public abstract class GeoElement
 				sb.append("/>\n");
 
 			}
-		}
+		}*/
 		
 		
 		// layer

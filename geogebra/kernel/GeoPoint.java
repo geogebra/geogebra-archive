@@ -967,8 +967,8 @@ GeoPointInterface {
 		}
 	  private static Comparator comparatorX;
 
-		private GeoList coordinateFunction; // { GeoNumeric x, GeoNumeric y }
-
+		//private GeoList coordinateFunction; // { GeoNumeric x, GeoNumeric y }
+/*
 		public final GeoList getCoordinateFunction() {		
 			return coordinateFunction;
 		}
@@ -1015,9 +1015,15 @@ GeoPointInterface {
 	       	double ret = ((GeoNumeric)(coordinateFunctionTemp.get(1))).getValue();
 	       	//coordinateFunction = coordinateFunctionTemp;
 	       	return ret;
-	    }        	
+	    }        	*/
 	        
-	    
+	    final public double getInhomX() {
+	       		return inhomX;   
+	    }
+	        
+	    final public double getInhomY() {
+	       		return inhomY;    	
+	    }
 	    
 	    
 	    

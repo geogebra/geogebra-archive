@@ -145,7 +145,7 @@ public class MyXMLHandler implements DocHandler {
 	// (needed for GeoText and GeoVector)
 	private LinkedList showObjectConditionList = new LinkedList();
 	private LinkedList dynamicColorList = new LinkedList();
-	private LinkedList dynamicCoordinatesList = new LinkedList();
+	//private LinkedList dynamicCoordinatesList = new LinkedList();
 
 	private class GeoExpPair {
 		GeoElement geo;
@@ -211,7 +211,7 @@ public class MyXMLHandler implements DocHandler {
 		startPointList.clear();
 		showObjectConditionList.clear();
 		dynamicColorList.clear();
-		dynamicCoordinatesList.clear();
+		//dynamicCoordinatesList.clear();
 		
 		consStep = -2;
 
@@ -1745,7 +1745,7 @@ public class MyXMLHandler implements DocHandler {
 				processStartPointList();
 				processShowObjectConditionList();
 				processDynamicColorList();
-				processDynamicCoordinatesList();
+				//processDynamicCoordinatesList();
 
 				if (kernel == origKernel) {
 					mode = MODE_GEOGEBRA;
@@ -1945,10 +1945,10 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("outlyingIntersections")) {
 				ok = handleOutlyingIntersections(attrs);
 				break;
-			} else if (eName.equals("objCoords")) {
+			} /*else if (eName.equals("objCoords")) {
 				ok = handleObjCoords(attrs);
 				break;
-			}
+			}*/
 
 		case 'p':
 			if (eName.equals("pointSize")) {
@@ -2058,6 +2058,8 @@ public class MyXMLHandler implements DocHandler {
 			geo.setAlphaValue(Float.parseFloat(alpha));
 		return true;
 	}
+	
+	/*
 	private boolean handleObjCoords(LinkedHashMap<String, String> attrs) {
 
 		// Dynamic coordinates
@@ -2088,7 +2090,7 @@ public class MyXMLHandler implements DocHandler {
 			}
 
 			return true;
-	}
+	}*/
 
 	/*
 	 * expects r, g, b attributes to build a colo
@@ -2829,6 +2831,7 @@ public class MyXMLHandler implements DocHandler {
 		dynamicColorList.clear();
 	}
 
+	/*
 	private void processDynamicCoordinatesList() {
 		try {
 
@@ -2845,7 +2848,7 @@ public class MyXMLHandler implements DocHandler {
 			throw new MyError(app, "dynamicCoordinatesList: " + e.toString());
 		}
 		dynamicCoordinatesList.clear();
-	}
+	}*/
 
 	private boolean handleEigenvectors(LinkedHashMap<String, String> attrs) {
 		if (!(geo.isGeoConic())) {

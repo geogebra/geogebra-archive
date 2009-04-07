@@ -583,7 +583,7 @@ public class PropertiesDialogGeoElement
 		private AbsoluteScreenLocationPanel absScreenLocPanel;	
 		private ShowConditionPanel showConditionPanel;
 		private ColorFunctionPanel colorFunctionPanel;
-		private CoordinateFunctionPanel coordinateFunctionPanel;
+		//private CoordinateFunctionPanel coordinateFunctionPanel;
 		
 		private JTabbedPane tabs;
 
@@ -632,7 +632,7 @@ public class PropertiesDialogGeoElement
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
 			showConditionPanel = new ShowConditionPanel(app, this); 
 			colorFunctionPanel = new ColorFunctionPanel(app, this);
-			coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
+			//coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
 			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
@@ -767,7 +767,7 @@ public class PropertiesDialogGeoElement
 			ArrayList advancedTabList = new ArrayList();
 			advancedTabList.add(showConditionPanel);	
 			advancedTabList.add(colorFunctionPanel);	
-			advancedTabList.add(coordinateFunctionPanel);	
+			//advancedTabList.add(coordinateFunctionPanel);	
 			advancedTabList.add(layerPanel); // Michael Borcherds 2008-02-26
 			TabPanel advancedTab = new TabPanel(app.getMenu("Advanced"), advancedTabList);
 			advancedTab.addToTabbedPane(tabs);			
@@ -5263,7 +5263,7 @@ class ColorFunctionPanel
 /**
  * panel for condition to show object
  * @author Michael Borcherds 2008-04-01
- */
+ *
 class CoordinateFunctionPanel
 	extends JPanel
 	implements ActionListener, FocusListener, UpdateablePanel {
@@ -5377,7 +5377,7 @@ class CoordinateFunctionPanel
 
 	/**
 	 * handle textfield changes
-	 */
+	 *
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == tfX || e.getSource() == tfY)
 			doActionPerformed();
@@ -5427,7 +5427,7 @@ class CoordinateFunctionPanel
 	public void focusLost(FocusEvent e) {
 		doActionPerformed();
 	}
-}
+}*/
 
 
 /**
