@@ -72,6 +72,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.main.View;
 import geogebra.util.ScientificFormat;
+import geogebra.util.Util;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -5615,5 +5616,22 @@ public class Kernel {
 	 */
 	public final boolean isResolveVariablesForCASactive() {
 		return resolveVariablesForCASactive;
+	}
+	
+	String libraryJavaScript = "function ggbOnInit() {}";
+	
+	public void setLibraryJavaScript(String str) {
+		Application.debug(str);
+		libraryJavaScript = str;
+		
+		//libraryJavaScript = "function ggbOnInit() {ggbApplet.evalCommand('A=(1,2)');ggbApplet.registerObjectUpdateListener('A','listener');}function listener() {//java.lang.System.out.println('add listener called'); var x = ggbApplet.getXcoord('A');var y = ggbApplet.getYcoord('A');var len = Math.sqrt(x*x + y*y);if (len > 5) { x=x*5/len; y=y*5/len; }ggbApplet.unregisterObjectUpdateListener('A');ggbApplet.setCoords('A',x,y);ggbApplet.registerObjectUpdateListener('A','listener');}";
+		//libraryJavaScript = "function ggbOnInit() {ggbApplet.evalCommand('A=(1,2)');}";
+	}
+	
+	public String getLibraryJavaScriptXML() {
+		return Util.encodeXML(libraryJavaScript);
+	}
+	public String getLibraryJavaScript() {
+		return libraryJavaScript;
 	}
 }

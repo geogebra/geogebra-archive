@@ -1533,6 +1533,10 @@ public class DefaultGuiManager implements GuiManager {
 		if(success && !isMacroFile && !app.isIgnoringDocumentPerspective()) {
 			setPerspectives(app.getTmpPerspectives());
 		}
+		
+		// force JavaScript ggbOnInit(); to be called
+		app.getScriptManager().evalScript("ggbOnInit();");
+
 
 		if (isMacroFile) {
 			app.updateToolBar();

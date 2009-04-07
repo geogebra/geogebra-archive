@@ -454,10 +454,6 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// Mathieu Blossier - place for code to test 3D packages
 
-		// TODO move this to after file loading
-		if (!isApplet)
-			getScriptManager().evalScript("ggbOnInit();");
-		
 		// init plugin manager for applications
 		if (!isApplet)
 			pluginmanager = getPluginManager();
@@ -1726,6 +1722,7 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 		updateTitle();
 		updateMenubar();
+		
 	}
 
 	public static void addToFileList(File file) {

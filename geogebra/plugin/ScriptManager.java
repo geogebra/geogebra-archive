@@ -3,6 +3,7 @@ package geogebra.plugin;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.View;
+import geogebra.util.Util;
 
 
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ public class ScriptManager {
 	
 	// library of functions that is available to all JavaScript calls
 	// init() is called when GeoGebra starts up (eg to start listeners)
-	private String libraryScript ="function ggbOnInit() {}";
-	private String libraryScriptTest ="function ggbOnInit() {"+
+	private String libraryScriptxxx ="function ggbOnInit() {}";
+	private String libraryScriptxx ="function ggbOnInit() {"+
 		"ggbApplet.evalCommand('A=(1,2)');" +
 	//"ggbApplet.registerAddListener('listener');" +
 	"ggbApplet.registerObjectUpdateListener('A','listener');" +
@@ -43,14 +44,6 @@ public class ScriptManager {
 		//evalScript("ggbOnInit();");
 	}
 	
-	public String getLibraryScript() {
-		return libraryScript;
-	}
-	
-	public void setLibraryScript(String libraryScript) {
-		libraryScript = this.libraryScript;
-	}
-	
 	public boolean evalScript(String script) {
 		boolean success = true;
 		
@@ -70,7 +63,7 @@ public class ScriptManager {
             //String s = "ggbApplet.evalCommand('F=(2,3)')";
             
             // Now evaluate the string we've colected.
-            Object result = cx.evaluateString(scope, script + libraryScript, "<cmd>", 1, null);
+            Object result = cx.evaluateString(scope, script + app.getKernel().getLibraryJavaScript(), "<cmd>", 1, null);
 
             // Convert the result to a string and print it.
             //Application.debug("script result: "+(Context.toString(result)));
