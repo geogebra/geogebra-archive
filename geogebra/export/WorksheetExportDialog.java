@@ -435,6 +435,7 @@ public class WorksheetExportDialog extends JDialog {
 		// framePossible (double click opens GeoGebra window)
 		sb.append("<script type=\"text/javascript\">\n");
 		
+		sb.append("var ggbApplet = document.ggbApplet;\n");
 		sb.append(kernel.getLibraryJavaScript());
 
 		Construction cons = kernel.getConstruction();
@@ -449,7 +450,7 @@ public class WorksheetExportDialog extends JDialog {
 				sb.append("\nfunction ggb");
 				sb.append(geo.getLabel());
 				sb.append("() {\n");
-				sb.append("var ggbApplet = document.ggbApplet;");
+				sb.append("var ggbApplet = document.ggbApplet;\n");
 				sb.append(((GeoJavaScriptButton)geo).getScript());
 				sb.append("\n}\n");
 				

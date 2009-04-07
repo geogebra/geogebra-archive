@@ -1535,7 +1535,8 @@ public class DefaultGuiManager implements GuiManager {
 		}
 		
 		// force JavaScript ggbOnInit(); to be called
-		app.getScriptManager().evalScript("ggbOnInit();");
+		if (!app.isApplet())
+			app.getScriptManager().evalScript("ggbOnInit();");
 
 
 		if (isMacroFile) {

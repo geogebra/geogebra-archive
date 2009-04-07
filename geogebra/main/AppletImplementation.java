@@ -467,6 +467,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Calls a JavaScript function when the applet is initialized.
 	 */
 	public synchronized void notifyAppletInitialized() {
+		Application.debug("notifyAppletInitialized");
 		initJavaScript();
 		Object [] args = { };
 		callJavaScript("ggbOnInit", args );
