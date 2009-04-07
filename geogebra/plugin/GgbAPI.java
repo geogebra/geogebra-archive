@@ -695,7 +695,57 @@ public class GgbAPI {
 	}	
 	
 	
+	
+	public synchronized void registerAddListener(String JSFunctionName) {
+		app.getScriptManager().registerAddListener(JSFunctionName);
+	}
 
+	public synchronized void unregisterAddListener(String JSFunctionName) {
+		app.getScriptManager().registerAddListener(JSFunctionName);
+	}
+	
+	public synchronized void registerRemoveListener(String JSFunctionName) {
+		app.getScriptManager().registerRemoveListener(JSFunctionName);
+	}
+	
+	public synchronized void unregisterRemoveListener(String JSFunctionName) {
+		app.getScriptManager().unregisterRemoveListener(JSFunctionName);
+	}
+	
+	public synchronized void registerClearListener(String JSFunctionName) {
+		app.getScriptManager().registerClearListener(JSFunctionName);
+	}
+
+	public synchronized void unregisterClearListener(String JSFunctionName) {
+		app.getScriptManager().unregisterClearListener(JSFunctionName);
+	}
+
+	public synchronized void registerRenameListener(String JSFunctionName) {
+		app.getScriptManager().registerRenameListener(JSFunctionName);
+	}
+	
+	public synchronized void unregisterRenameListener(String JSFunctionName) {
+		app.getScriptManager().unregisterRenameListener(JSFunctionName);
+	}
+	
+	public synchronized void registerUpdateListener(String JSFunctionName) {
+		app.getScriptManager().registerUpdateListener(JSFunctionName);
+	}
+	
+	public synchronized void unregisterUpdateListener(String JSFunctionName) {
+		app.getScriptManager().unregisterUpdateListener(JSFunctionName);
+	}
+
+	public synchronized void registerObjectUpdateListener(String objName, String JSFunctionName) {
+		app.getScriptManager().registerObjectUpdateListener(objName, JSFunctionName);
+	}
+	
+	public synchronized void unregisterObjectUpdateListener(String objName) {
+		app.getScriptManager().unregisterObjectUpdateListener(objName);
+	}
+
+
+		
 	
           
 }// class GgbAPI

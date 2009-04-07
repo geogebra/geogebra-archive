@@ -88,6 +88,10 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	public JApplet getJApplet() {
 		return applet;
 	}
+	
+	public JSObject getBrowserWindow() {
+		return browserWindow;
+	}
 
 	private void init() {
 		
@@ -947,7 +951,9 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	/*
 	 * Change listener implementation
 	 * Java to JavaScript
-	 */
+	 *
+	 *
+	 *moved to ScriptManager
 	
 	// maps between GeoElement and JavaScript function names
 	private HashMap updateListenerMap;
@@ -958,7 +964,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Registers a JavaScript function as an add listener for the applet's construction.
 	 *  Whenever a new object is created in the GeoGebraApplet's construction, the JavaScript 
 	 *  function JSFunctionName is called using the name of the newly created object as a single argument. 
-	 */
+	 *
 	public synchronized void registerAddListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
@@ -977,7 +983,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	/**
 	 * Removes a previously registered add listener 
 	 * @see registerAddListener() 
-	 */
+	 *
 	public synchronized void unregisterAddListener(String JSFunctionName) {
 		if (addListeners != null) {
 			addListeners.remove(JSFunctionName);
@@ -989,7 +995,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Registers a JavaScript function as a remove listener for the applet's construction.
 	 * Whenever an object is deleted in the GeoGebraApplet's construction, the JavaScript 
 	 * function JSFunctionName is called using the name of the deleted object as a single argument. 	
-	 */
+	 *
 	public synchronized void registerRemoveListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
@@ -1008,7 +1014,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	/**
 	 * Removes a previously registered remove listener 
 	 * @see registerRemoveListener() 
-	 */
+	 *
 	public synchronized void unregisterRemoveListener(String JSFunctionName) {
 		if (removeListeners != null) {
 			removeListeners.remove(JSFunctionName);
@@ -1020,7 +1026,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Registers a JavaScript function as a clear listener for the applet's construction.
 	 * Whenever the construction in the GeoGebraApplet's is cleared (i.e. all objects are removed), the JavaScript 
 	 * function JSFunctionName is called using no arguments. 	
-	 */
+	 *
 	public synchronized void registerClearListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
@@ -1039,7 +1045,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	/**
 	 * Removes a previously registered clear listener 
 	 * @see registerClearListener() 
-	 */
+	 *
 	public synchronized void unregisterClearListener(String JSFunctionName) {
 		if (clearListeners != null) {
 			clearListeners.remove(JSFunctionName);
@@ -1051,7 +1057,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Registers a JavaScript function as a rename listener for the applet's construction.
 	 * Whenever an object is renamed in the GeoGebraApplet's construction, the JavaScript 
 	 * function JSFunctionName is called using the name of the deleted object as a single argument. 	
-	 */
+	 *
 	public synchronized void registerRenameListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
@@ -1070,7 +1076,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	/**
 	 * Removes a previously registered rename listener.
 	 * @see registerRenameListener() 
-	 */
+	 *
 	public synchronized void unregisterRenameListener(String JSFunctionName) {
 		if (renameListeners != null) {
 			renameListeners.remove(JSFunctionName);
@@ -1082,7 +1088,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Registers a JavaScript function as an update listener for the applet's construction.
 	 * Whenever any object is updated in the GeoGebraApplet's construction, the JavaScript 
 	 * function JSFunctionName is called using the name of the updated object as a single argument. 	
-	 */
+	 *
 	public synchronized void registerUpdateListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
@@ -1101,7 +1107,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	/**
 	 * Removes a previously registered update listener.
 	 * @see registerRemoveListener() 
-	 */
+	 *
 	public synchronized void unregisterUpdateListener(String JSFunctionName) {
 		if (updateListeners != null) {
 			updateListeners.remove(JSFunctionName);
@@ -1121,7 +1127,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Then the GeoGebra Applet will call the Javascript function
 	 * myJavaScriptFunction("A");
 	 * whenever object A changes.	
-	 */
+	 *
 	public synchronized void registerObjectUpdateListener(String objName, String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;		
@@ -1144,7 +1150,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	/**
 	 * Removes a previously set change listener for the given object.
 	 * @see setChangeListener
-	 */
+	 *
 	public synchronized void unregisterObjectUpdateListener(String objName) {
 		if (updateListenerMap != null) {
 			GeoElement geo = kernel.lookupLabel(objName);
@@ -1159,13 +1165,13 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 	 * Implements the View interface for
 	 * Java to JavaScript communication, see
 	 * addChangeListener() and removeChangeListener()
-	 */	
+	 *
 	private class JavaToJavaScriptView implements View {
 		
 		/**
 		 * Calls all registered add listeners.
 		 * @see registerAddListener()
-		 */
+		 *
 		public void add(GeoElement geo) {
 			if (addListeners != null && geo.isLabelSet()) { 	
 				Object [] args = { geo.getLabel() };
@@ -1176,7 +1182,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		/**
 		 * Calls all registered remove listeners.
 		 * @see registerRemoveListener()
-		 */
+		 *
 		public void remove(GeoElement geo) {
 			if (removeListeners != null && geo.isLabelSet()) {  
 				Object [] args = { geo.getLabel() };
@@ -1187,7 +1193,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		/**
 		 * Calls all registered clear listeners.
 		 * @see registerClearListener()
-		 */
+		 *
 		public void clearView() {
 			/* 
 			 * This code would make sense for a "reload" 
@@ -1212,7 +1218,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 				updateListenerMap.clear();
 				updateListenerMap = newGeoJSfunMap;			
 			}
-			*/
+			*
 			
 			ggbApi.lastGeoElementsIteratorSize = 0;	//ulven 29.08.05: should have been a method...
 			updateListenerMap = null;			
@@ -1224,7 +1230,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		/**
 		 * Calls all registered rename listeners.
 		 * @see registerRenameListener()
-		 */
+		 *
 		public void rename(GeoElement geo) {						
 			if (renameListeners != null && geo.isLabelSet()) {
 				Object [] args = { geo.getOldLabel(), geo.getLabel() };
@@ -1235,7 +1241,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		/**
 		 * Calls all JavaScript functions (listeners) using 
 		 * the specified arguments.
-		 */
+		 *
 		private synchronized void notifyListeners(ArrayList listeners, Object [] args) {										
 			int size = listeners.size();
 			for (int i=0; i < size; i++) {
@@ -1247,7 +1253,7 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		/**
 		 * Calls all registered update and updateObject listeners.
 		 * @see registerUpdateListener()
-		 */
+		 *
 		public synchronized void update(GeoElement geo) {						
 			// update listeners
 			if (updateListeners != null && geo.isLabelSet()) {
@@ -1276,17 +1282,18 @@ public abstract class AppletImplementation implements JavaScriptAPI {
     		// no repaint should occur here: views that are
     		// part of the applet do this on their own    		
     	}    	    	
-	}
+	} */
 		
+	/*
 	private synchronized void initJavaScriptView() {
 		if (javaToJavaScriptView == null) {
 			javaToJavaScriptView = new JavaToJavaScriptView();
 			kernel.attach(javaToJavaScriptView); // register view
 			initJavaScript();
 		}
-	}
+	}*/
 	
-	private synchronized void initJavaScript() {
+	public synchronized void initJavaScript() {
 		if (browserWindow == null) {
 			try {							
 				browserWindow = JSObject.getWindow(applet);
@@ -1296,7 +1303,8 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		}
 	}
 	
-	private void callJavaScript(String jsFunction, Object [] args) {		
+	
+	public void callJavaScript(String jsFunction, Object [] args) {		
 		//Application.debug("callJavaScript: " + jsFunction);		
 		
 		try {			
@@ -1305,6 +1313,54 @@ public abstract class AppletImplementation implements JavaScriptAPI {
 		} catch (Exception e) {						
 			e.printStackTrace();
 		}    
+	} 
+
+	public synchronized void registerAddListener(String JSFunctionName) {
+		app.getScriptManager().registerAddListener(JSFunctionName);
+	}
+
+	public synchronized void unregisterAddListener(String JSFunctionName) {
+		app.getScriptManager().registerAddListener(JSFunctionName);
+	}
+	
+	public synchronized void registerRemoveListener(String JSFunctionName) {
+		app.getScriptManager().registerRemoveListener(JSFunctionName);
+	}
+	
+	public synchronized void unregisterRemoveListener(String JSFunctionName) {
+		app.getScriptManager().unregisterRemoveListener(JSFunctionName);
+	}
+	
+	public synchronized void registerClearListener(String JSFunctionName) {
+		app.getScriptManager().registerClearListener(JSFunctionName);
+	}
+
+	public synchronized void unregisterClearListener(String JSFunctionName) {
+		app.getScriptManager().unregisterClearListener(JSFunctionName);
+	}
+
+	public synchronized void registerRenameListener(String JSFunctionName) {
+		app.getScriptManager().registerRenameListener(JSFunctionName);
+	}
+	
+	public synchronized void unregisterRenameListener(String JSFunctionName) {
+		app.getScriptManager().unregisterRenameListener(JSFunctionName);
+	}
+	
+	public synchronized void registerUpdateListener(String JSFunctionName) {
+		app.getScriptManager().registerUpdateListener(JSFunctionName);
+	}
+	
+	public synchronized void unregisterUpdateListener(String JSFunctionName) {
+		app.getScriptManager().unregisterUpdateListener(JSFunctionName);
+	}
+
+	public synchronized void registerObjectUpdateListener(String objName, String JSFunctionName) {
+		app.getScriptManager().registerObjectUpdateListener(objName, JSFunctionName);
+	}
+	
+	public synchronized void unregisterObjectUpdateListener(String objName) {
+		app.getScriptManager().unregisterObjectUpdateListener(objName);
 	}
 
 	

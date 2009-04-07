@@ -214,39 +214,6 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 	}
 	
 	public boolean runScript() {
-		
-		boolean success = true;
-		
-        Context cx = Context.enter();
-        try {
-            // Initialize the standard objects (Object, Function, etc.)
-            // This must be done before scripts can be executed. Returns
-            // a scope object that we use in later calls.
-            Scriptable scope = cx.initStandardObjects();
-
-            // initialise the JavaScript variable applet so that we can call
-            // GgbApi functions, eg ggbApplet.evalCommand()
-            Object wrappedOut = Context.javaToJS(app.getGgbApi(), scope);
-            ScriptableObject.putProperty(scope, "ggbApplet", wrappedOut);
-
-            // JavaScript to execute
-            //String s = "ggbApplet.evalCommand('F=(2,3)')";
-            
-            // Now evaluate the string we've colected.
-            Object result = cx.evaluateString(scope, script, "<cmd>", 1, null);
-
-            // Convert the result to a string and print it.
-            //Application.debug("script result: "+(Context.toString(result)));
-        } catch (Exception e) {
-        	success = false;
-        	e.printStackTrace();
-        } finally {
-            // Exit from the context.
-            Context.exit();
-        }
-        
-        return success;
+		return app.getScriptManager().evalScript(script);
 	}
-
-	
 }

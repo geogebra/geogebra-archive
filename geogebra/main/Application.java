@@ -34,6 +34,7 @@ import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
+import geogebra.plugin.ScriptManager;
 import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
 import geogebra.util.Util;
@@ -92,10 +93,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 
 public abstract class Application implements KeyEventDispatcher {
 	// disabled parts
@@ -330,6 +327,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private JarManager jarmanager = null;
 	private GgbAPI ggbapi = null;
 	private PluginManager pluginmanager = null;
+	private ScriptManager scriptManager = null;
 	
 	public String IPAddress = "", hostName = "";
 
@@ -456,37 +454,14 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// Mathieu Blossier - place for code to test 3D packages
 
+		// TODO move this to after file loading
+		if (!isApplet)
+			getScriptManager().evalScript("ggbOnInit();");
+		
 		// init plugin manager for applications
 		if (!isApplet)
 			pluginmanager = getPluginManager();
 		
-		/*
-        Context cx = Context.enter();
-        try {
-            // Initialize the standard objects (Object, Function, etc.)
-            // This must be done before scripts can be executed. Returns
-            // a scope object that we use in later calls.
-            Scriptable scope = cx.initStandardObjects();
-
-            // initialise the JavaScript variable applet so that we can call
-            // GgbApi functions, eg ggbApplet.evalCommand()
-            Object wrappedOut = Context.javaToJS(getGgbApi(), scope);
-            ScriptableObject.putProperty(scope, "applet", wrappedOut);
-
-            // JavaScript to execute
-            String s = "ggbApplet.evalCommand('F=(2,3)')";
-            
-            // Now evaluate the string we've colected.
-            Object result = cx.evaluateString(scope, s, "<cmd>", 1, null);
-
-            // Convert the result to a string and print it.
-            System.err.println(Context.toString(result));
-
-        } finally {
-            // Exit from the context.
-            Context.exit();
-        }*/
-
 	}
 	
 	public void initKernel(){
@@ -876,6 +851,10 @@ public abstract class Application implements KeyEventDispatcher {
 		isApplet = true;
 		this.appletImpl = appletImpl;
 		mainComp = appletImpl.getJApplet();
+	}
+	
+	public AppletImplementation getApplet() {
+		return appletImpl;
 	}
 
 	public void setShowResetIcon(boolean flag) {
@@ -2940,6 +2919,13 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 
 		return ggbapi;
+	}
+	
+	public ScriptManager getScriptManager() {
+		if (scriptManager == null)
+			scriptManager = new ScriptManager(this);
+		
+		return scriptManager;
 	}
 
 	/*
