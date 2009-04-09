@@ -19,6 +19,7 @@ import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Kernel3DInterface;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
@@ -66,7 +67,8 @@ import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
 
 public class Kernel3D
-	extends Kernel{
+	extends Kernel
+	implements Kernel3DInterface {
 	
 	protected Application3D app3D;
 	
