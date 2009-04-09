@@ -93,6 +93,11 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	private String viewTitle;
 	
 	/**
+	 * The component used for this view.
+	 */
+	private Component view;
+	
+	/**
 	 * Construct this dock manager. Add the title bar if we're not in the
 	 * "layout fixed" mode and if the user does not use an applet.
 	 * 
@@ -108,31 +113,28 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 		
 		setLayout(new BorderLayout());
 		
-		Component view = null;
-		
 		// Insert new view types here..
 		switch(info.getViewId()) {
 			case Application.VIEW_EUCLIDIAN:
 				viewTitle = "DrawingPad";
-				view = app.getEuclidianView();
 				break;
 			case Application.VIEW_ALGEBRA:
 				viewTitle = "AlgebraWindow";
-				view = app.getGuiManager().getAlgebraView();
 				break;
 			case Application.VIEW_SPREADSHEET:
 				viewTitle = "Spreadsheet";
-				view = app.getGuiManager().getSpreadsheetView();
 				break;
 			case Application.VIEW_CAS:
 				viewTitle = "CAS";
-				view = app.getCasView().getCASViewComponent();
 				break;
 			default:
 				throw new IllegalArgumentException("view ID can not be identified (#"+info.getViewId()+")");
 		}
 		
-		add(view, BorderLayout.CENTER);
+		if(info.isVisible()) {
+			loadView();
+			add(view, BorderLayout.CENTER);
+		}
 		
 		// Construct title bar and all elements
 		titlePanel = new JPanel();
@@ -288,6 +290,12 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * Update the panel.
 	 */
 	public void updatePanel() {
+		// load content if panel was hidden till yet
+		if(view == null && info.isVisible()) {
+			loadView();
+			add(view, BorderLayout.CENTER);
+		}
+		
 		titlePanel.setVisible(dockManager.getLayout().isTitleBarVisible());
 		
 		// update the title bar if necessary
@@ -335,6 +343,26 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	        }
 			
 			frame.setTitle(windowTitle.toString());
+		}
+	}
+	
+	private void loadView()
+	{
+		switch(info.getViewId()) {
+			case Application.VIEW_EUCLIDIAN:
+				view = app.getEuclidianView();
+				break;
+			case Application.VIEW_ALGEBRA:
+				view = app.getGuiManager().getAlgebraView();
+				break;
+			case Application.VIEW_SPREADSHEET:
+				view = app.getGuiManager().getSpreadsheetView();
+				break;
+			case Application.VIEW_CAS:
+				view = app.getCasView().getCASViewComponent();
+				break;
+			default:
+				throw new IllegalArgumentException("view ID can not be identified (#"+info.getViewId()+")");
 		}
 	}
 	
