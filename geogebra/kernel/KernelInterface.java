@@ -7,7 +7,7 @@ package geogebra.kernel;
  * simple interface for Kernel3D : GeoGebra can use it to "pre-load" Kernel3D methods without loading Kernel3D package
  *
  */
-public interface Kernel3DInterface {
+public interface KernelInterface {
 	
 	
 	/** Point3D label with cartesian coordinates (x,y,z)   
