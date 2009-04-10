@@ -763,4 +763,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return isGeoAngle() ? DEFAULT_SLIDER_MAX_ANGLE : DEFAULT_SLIDER_MAX;
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

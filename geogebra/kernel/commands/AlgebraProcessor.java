@@ -37,6 +37,9 @@ import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoVec4D;
+import geogebra3D.kernel3D.arithmetic.Vector3DValue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -547,6 +550,8 @@ public class AlgebraProcessor {
 	private GeoElement [] doProcessValidExpression(ValidExpression ve) throws MyError, Exception {
 		GeoElement [] ret = null;
 		
+		Application.debug(ve.getClass()+"");
+		
 		if (ve instanceof ExpressionNode) {
 			ret = processExpressionNode((ExpressionNode) ve);
 		}
@@ -804,6 +809,8 @@ public class AlgebraProcessor {
 			return processNumber(n, eval);
 		else if (eval.isVectorValue())
 			return processPointVector(n, eval);	
+		else if (eval.isVector3DValue())
+			return processPointVector3D(n, eval);	
 		else if (eval.isListValue()) {
 			MyList myList = ((ListValue) eval).getMyList();
 			myList.setLabel(n.getLabel());
@@ -926,49 +933,72 @@ public class AlgebraProcessor {
 	}
 
 	private GeoElement[] processPointVector(
-		ExpressionNode n,
-		ExpressionValue evaluate) {
-		String label = n.getLabel();				        
-		
-		GeoVec2D p = ((VectorValue) evaluate).getVector();
-						
-		boolean polar = p.getMode() == Kernel.COORD_POLAR;		
-		GeoVec3D[] ret = new GeoVec3D[1];
-		boolean isIndependent = n.isConstant();
+			ExpressionNode n,
+			ExpressionValue evaluate) {
+			String label = n.getLabel();				        
+			
+			GeoVec2D p = ((VectorValue) evaluate).getVector();
+							
+			boolean polar = p.getMode() == Kernel.COORD_POLAR;		
+			GeoVec3D[] ret = new GeoVec3D[1];
+			boolean isIndependent = n.isConstant();
 
-		// make vector, if label begins with lowercase character
-		if (label != null) {
-			if (!(n.forcePoint
-				|| n.forceVector)) { // may be set by MyXMLHandler
-				if (Character.isLowerCase(label.charAt(0)))
-					n.forceVector();
-				else
-					n.forcePoint();
+			// make vector, if label begins with lowercase character
+			if (label != null) {
+				if (!(n.forcePoint
+					|| n.forceVector)) { // may be set by MyXMLHandler
+					if (Character.isLowerCase(label.charAt(0)))
+						n.forceVector();
+					else
+						n.forcePoint();
+				}
 			}
-		}
-		boolean isVector = n.isVectorValue();
+			boolean isVector = n.isVectorValue();
 
-		if (isIndependent) {
-			// get coords
-			double x = p.getX();
-			double y = p.getY();
-			if (isVector)
-				ret[0] = kernel.Vector(label, x, y);
-			else
-				ret[0] = kernel.Point(label, x, y);			
-		} else {
-			if (isVector)
-				ret[0] = kernel.DependentVector(label, n);
-			else
-				ret[0] = kernel.DependentPoint(label, n);
+			if (isIndependent) {
+				// get coords
+				double x = p.getX();
+				double y = p.getY();
+				if (isVector)
+					ret[0] = kernel.Vector(label, x, y);
+				else
+					ret[0] = kernel.Point(label, x, y);			
+			} else {
+				if (isVector)
+					ret[0] = kernel.DependentVector(label, n);
+				else
+					ret[0] = kernel.DependentPoint(label, n);
+			}
+			if (polar) {
+				ret[0].setMode(Kernel.COORD_POLAR);
+				ret[0].updateRepaint();
+			} 
+			return ret;
 		}
-		if (polar) {
-			ret[0].setMode(Kernel.COORD_POLAR);
-			ret[0].updateRepaint();
-		} 
-		return ret;
-	}
-	
+		
+	private GeoElement[] processPointVector3D(
+			ExpressionNode n,
+			ExpressionValue evaluate) {
+			String label = n.getLabel();				        
+			
+			GeoPoint3D p = ((Vector3DValue) evaluate).getPoint();
+							
+			GeoElement[] ret = new GeoElement[1];
+			boolean isIndependent = n.isConstant();
+
+			if (isIndependent) {
+				// get coords
+				double x = p.getX();
+				double y = p.getY();
+				double z = p.getZ();
+					ret[0] = kernel.Point3D(label, x, y, z);			
+			} else {
+					ret[0] = kernel.DependentPoint3D(label, n);
+			}
+			
+			return ret;
+		}
+		
 	/** 
 	 * Creates a dependent copy of origGeo with label
 	 */

@@ -1213,6 +1213,11 @@ ExpressionValue enelement():
     ev = cartesianvector()
         { return ev; } 
 |    
+    // cartesian vector  (x, y, z) or (x|y|z)
+    LOOKAHEAD(2147483647)
+    ev = cartesianvector3D()
+        { return ev; } 
+|    
     // polar vector   
     LOOKAHEAD(2147483647)
     ev = polarvector()
@@ -1518,6 +1523,24 @@ VectorValue cartesianvector():
     (  "(" x = expression() <CARTESIAN_SPECIAL_SEPERATOR> y = expression() ")" )
     )
         {  return new MyVecNode(kernel, x, y); }           
+}
+
+/**
+ * cartesianvector3D =  ( expression, expression ) 
+ */
+Vector3DValue cartesianvector3D():
+{     
+    ExpressionValue x, y, z;                
+}
+{   
+    // cartesian coordinates
+  
+    (  LOOKAHEAD(2147483647)
+   ( "(" x = expression() "," y = expression() "," z = expression() ")"  ) 	
+    | 
+    (  "(" x = expression() <CARTESIAN_SPECIAL_SEPERATOR> y = expression() <CARTESIAN_SPECIAL_SEPERATOR> z = expression() ")" )
+    )
+        {  return new MyVec3DNode(kernel, x, y, z); }           
 }
 
 /**

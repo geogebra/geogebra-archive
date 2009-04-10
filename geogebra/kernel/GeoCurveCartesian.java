@@ -523,4 +523,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		//if (geo.isGeoCurveCartesian()) return xxx; else return false;
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

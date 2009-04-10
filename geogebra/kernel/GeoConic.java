@@ -2331,4 +2331,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		setCoeffs(1,0,1,0,0,0);
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

@@ -221,4 +221,9 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 			app.getScriptManager().evalScript(script);
 		}
 	}
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

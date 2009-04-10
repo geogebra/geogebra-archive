@@ -95,4 +95,9 @@ public class GeoVector3D extends GeoVec4D {
 		return "GeoVector3D";
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

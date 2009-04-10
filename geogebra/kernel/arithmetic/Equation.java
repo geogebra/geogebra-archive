@@ -333,5 +333,10 @@ public class Equation extends ValidExpression {
         
         return sb.toString();
     }
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
  
 } // end of class Equation

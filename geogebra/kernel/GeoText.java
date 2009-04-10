@@ -700,5 +700,10 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}
 	private static Comparator comparator;
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 }

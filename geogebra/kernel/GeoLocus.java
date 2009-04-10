@@ -240,4 +240,9 @@ public class GeoLocus extends GeoElement implements Path {
 		//if (geo.isGeoLocus()) return xxx else return false;
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

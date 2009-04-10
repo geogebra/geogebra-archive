@@ -272,6 +272,11 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 		return null;
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 
 	

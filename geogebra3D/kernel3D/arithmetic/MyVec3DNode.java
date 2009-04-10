@@ -207,4 +207,8 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue {
     final public boolean contains(ExpressionValue ev) {
         return ev == this;
     }       
+    
+    final public boolean isVector3DValue() {
+    	return true;
+    }
 }

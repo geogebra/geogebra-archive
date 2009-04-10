@@ -32,6 +32,7 @@ public interface ExpressionValue {
     public boolean isLeaf();
     public boolean isNumberValue();
 	public boolean isVectorValue();	
+	public boolean isVector3DValue();	
 	public boolean isListValue();
 	public boolean isBooleanValue();
 	public boolean isPolynomialInstance();

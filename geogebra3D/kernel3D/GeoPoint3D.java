@@ -455,6 +455,11 @@ implements GeoPointInterface, PointProperties{
 	public boolean isInfinite() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
 	};
     
     

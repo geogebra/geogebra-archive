@@ -5647,6 +5647,10 @@ public class Kernel implements KernelInterface {
 		return null;
 	}
 	
+	public GeoElement DependentPoint3D(String label, ExpressionNode n){
+		return null;
+	}
+	
 	
 	
 	

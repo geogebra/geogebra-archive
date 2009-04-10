@@ -747,4 +747,10 @@ implements Locateable, AbsoluteScreenLocateable,
 		return false;
 	}
 
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

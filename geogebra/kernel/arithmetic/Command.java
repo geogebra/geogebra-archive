@@ -298,4 +298,9 @@ implements ExpressionValue {
 	public final void setMacro(Macro macro) {
 		this.macro = macro;
 	}    
+	
+    final public boolean isVector3DValue() {
+    	return false;
+    }
+
 }

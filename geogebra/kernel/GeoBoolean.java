@@ -315,5 +315,10 @@ AbsoluteScreenLocateable {
 		if (geo.isGeoBoolean()) return equals((GeoBoolean)geo); else return false;
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 }

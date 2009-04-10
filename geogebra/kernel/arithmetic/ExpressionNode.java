@@ -393,6 +393,8 @@ implements ExpressionValue {
     final public ExpressionValue evaluate() {    	  
         if (leaf) return left.evaluate(); // for wrapping ExpressionValues as ValidExpression
                
+        Application.debug(operation+"");
+        
         ExpressionValue lt, rt;
         MyDouble num;
         MyBoolean bool;
@@ -3384,6 +3386,11 @@ implements ExpressionValue {
     final public boolean isExpressionNode() {
         return true;
     }
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	
 }

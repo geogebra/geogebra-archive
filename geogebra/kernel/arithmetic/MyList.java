@@ -544,4 +544,9 @@ public class MyList extends ValidExpression implements ListValue {
 			return this;
 		}		
 	}
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

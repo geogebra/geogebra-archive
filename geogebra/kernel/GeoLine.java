@@ -747,6 +747,11 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
     public void setZero() {
     	setCoords(0, 1, 0);
     }
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
     
 
 }

@@ -552,4 +552,9 @@ implements VectorValue {
 			x=0;
 			y=0;
 		}
+
+		public boolean isVector3DValue() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 }

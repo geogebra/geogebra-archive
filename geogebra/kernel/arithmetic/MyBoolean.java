@@ -108,4 +108,9 @@ public class MyBoolean extends ValidExpression implements BooleanValue {
 	final public boolean getBoolean() {		
 		return value;
 	}
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

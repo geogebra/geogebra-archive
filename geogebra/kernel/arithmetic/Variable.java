@@ -172,6 +172,11 @@ public class Variable extends ValidExpression implements ExpressionValue {
 	
 	final public boolean contains(ExpressionValue ev) {
 		return ev == this;
+	}
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
 	}    
     
 }

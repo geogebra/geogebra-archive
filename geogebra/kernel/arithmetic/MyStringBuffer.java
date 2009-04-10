@@ -113,4 +113,9 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
     final public boolean contains(ExpressionValue ev) {
         return ev == this;
     }
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

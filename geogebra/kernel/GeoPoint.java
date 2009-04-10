@@ -1048,6 +1048,11 @@ GeoPointInterface {
 	    public void setRegion(Region a_region){
 	    	region=a_region;
 	    }
+
+		public boolean isVector3DValue() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 	    
 	    
 

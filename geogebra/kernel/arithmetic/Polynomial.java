@@ -467,6 +467,11 @@ public class Polynomial extends ValidExpression implements Serializable, Express
     
     final public boolean contains(ExpressionValue ev) {
         return ev == this;
-    }    
+    }
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}    
     
 } // end of class Polynomial

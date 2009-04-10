@@ -129,4 +129,13 @@ public class GeoQuadric extends GeoElement3D {
 	}
 
 
+
+
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 }

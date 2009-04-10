@@ -221,6 +221,11 @@ public class GeoCoordSys2D extends GeoCoordSys {
 	protected String getClassName() {
 		return "GeoCoordSys2D";
 	}
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 
 	

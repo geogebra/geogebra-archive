@@ -1174,4 +1174,9 @@ implements ExpressionValue, RealRootFunction, Functional {
 		else
 			return expression.includesDivisionBy(fVar);
 	}
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

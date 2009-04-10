@@ -509,5 +509,10 @@ implements Path, VectorValue, Locateable, Rotateable {
 
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 }

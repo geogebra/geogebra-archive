@@ -142,4 +142,9 @@ public class GeoLine3D extends GeoCoordSys1D {
 		return false;
 	}
 
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

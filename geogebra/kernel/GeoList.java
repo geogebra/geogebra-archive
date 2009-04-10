@@ -906,5 +906,10 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 					((TextProperties)geo).setSerifFont(serifFont);
 			}
 		}
+
+		public boolean isVector3DValue() {
+			// TODO Auto-generated method stub
+			return false;
+		}
   		
 }

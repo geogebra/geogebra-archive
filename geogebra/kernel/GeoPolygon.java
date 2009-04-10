@@ -804,6 +804,11 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 				return false;
 		}
 	}
+
+	public boolean isVector3DValue() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	
 	
