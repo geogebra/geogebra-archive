@@ -167,7 +167,7 @@ TOKEN :  {
   | < PLUS:     "+" >
   | < MINUS:    ("-"  | "\u2013" | "\u2212") >
   | < MULTIPLY: ("*" | "\u22c5") >
-  | < COMPLEXMULTIPLY: "\u2297" >
+  | < VECTORPRODUCT: "\u2297" >
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
@@ -264,6 +264,7 @@ TOKEN : {
 TOKEN: {
     < X_FUNC:  "x(" | "xcoord(" >
 |	< Y_FUNC:  "y(" | "ycoord("  > 
+|	< Z_FUNC:  "z(" | "zcoord("  > 
 |	< COS_FUNC: ( "cos(" | "Cos(" ) > 
 |	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
 |	< TAN_FUNC: ( "tan(" | "Tan(" ) > 
@@ -978,14 +979,14 @@ ExpressionValue enterm():
 {
     ret = enunary()           
     (                 
-     ( x = <MULTIPLY> | x = <DIVIDE> | x = <COMPLEXMULTIPLY> ) f = enunary() 
+     ( x = <MULTIPLY> | x = <DIVIDE> | x = <VECTORPRODUCT> ) f = enunary() 
         {
             if (x.kind == MULTIPLY) {
                 ret = new ExpressionNode(kernel, ret, ExpressionNode.MULTIPLY, f);  
             } else if (x.kind == DIVIDE){
                 ret = new ExpressionNode(kernel, ret, ExpressionNode.DIVIDE, f);  
             } else {
-                ret = new ExpressionNode(kernel, ret, ExpressionNode.COMPLEXMULTIPLY, f);  
+                ret = new ExpressionNode(kernel, ret, ExpressionNode.VECTORPRODUCT, f);  
             }
         }
      |
@@ -1375,6 +1376,9 @@ ExpressionNode numberFunction():
 |
      <Y_FUNC> en = expressionnode() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.YCOORD, null); }  
+|
+     <Z_FUNC> en = expressionnode() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.ZCOORD, null); }  
 |
      <COS_FUNC> en = expressionnode() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COS, null); }   

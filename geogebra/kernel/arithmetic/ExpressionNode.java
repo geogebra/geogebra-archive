@@ -27,6 +27,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.arithmetic.Vector3DValue;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -70,7 +71,7 @@ implements ExpressionValue {
     public static final String strNOT_EQUAL = "\u2260";
     public static final String strPARALLEL = "\u2225";
     public static final String strPERPENDICULAR = "\u22a5";
-    public static final String strCOMPLEXMULTIPLY = "\u2297";
+    public static final String strVECTORPRODUCT = "\u2297";
         
     // arithmetic
     public static final int PLUS = 0;
@@ -91,22 +92,23 @@ implements ExpressionValue {
     public static final int SGN = 15;   
     public static final int XCOORD = 16; 
     public static final int YCOORD = 17;  
-    public static final int COSH = 18;
-    public static final int SINH = 19;
-    public static final int TANH = 20;
-    public static final int ACOSH = 21;
-    public static final int ASINH = 22;
-    public static final int ATANH = 23;
-    public static final int FLOOR = 24;
-    public static final int CEIL = 25;  
-    public static final int FACTORIAL = 26;
-    public static final int ROUND = 27;  
-    public static final int GAMMA = 28;    
-    public static final int LOG10 = 29;  
-    public static final int LOG2 = 30; 
-    public static final int CBRT = 31;   
-    public static final int RANDOM = 32;
-    public static final int COMPLEXMULTIPLY = 33;
+    public static final int ZCOORD = 18;  
+    public static final int COSH = 19;
+    public static final int SINH = 20;
+    public static final int TANH = 21;
+    public static final int ACOSH = 22;
+    public static final int ASINH = 23;
+    public static final int ATANH = 24;
+    public static final int FLOOR = 25;
+    public static final int CEIL = 26;  
+    public static final int FACTORIAL = 27;
+    public static final int ROUND = 28;  
+    public static final int GAMMA = 29;    
+    public static final int LOG10 = 30;  
+    public static final int LOG2 = 31; 
+    public static final int CBRT = 32;   
+    public static final int RANDOM = 33;
+    public static final int VECTORPRODUCT = 34;
      
     public static final int FUNCTION = 100;
     public static final int VEC_FUNCTION = 101;
@@ -814,29 +816,10 @@ implements ExpressionValue {
                 String [] str = { "IllegalDivision", lt.toString(), "/", rt.toString() };
                 throw new MyError(app, str);
             }
-        case COMPLEXMULTIPLY:
-            if (lt.isVectorValue() && rt.isVectorValue()) { 
-                vec = ((VectorValue)lt).getVector();
-                GeoVec2D.complexMultiply(vec, ((VectorValue)rt).getVector(), vec);                                         
-                return vec;
-                
-            }                
-            else if (lt.isNumberValue() && rt.isVectorValue()) { 
-                vec = ((VectorValue)rt).getVector();
-                GeoVec2D.complexMultiply(vec, (NumberValue)lt, vec);                                         
-                return vec;
-                
-            }                
-            else if (rt.isNumberValue() && lt.isVectorValue()) { 
-                vec = ((VectorValue)lt).getVector();
-                GeoVec2D.complexMultiply(vec, (NumberValue)rt, vec);                                         
-                return vec;
-                
-            }                
-            else { 
-                String [] str = { "IllegalComplexMultiplication", lt.toString(), strCOMPLEXMULTIPLY, rt.toString() };
-                throw new MyError(app, str);
-            }
+        case VECTORPRODUCT:
+               String [] str3 = { "IllegalMultiplication", lt.toString(), strVECTORPRODUCT, rt.toString() };
+                throw new MyError(app, str3);
+            
                                                
         case POWER:
             // number ^ number
@@ -1452,6 +1435,16 @@ implements ExpressionValue {
                  String [] str = { "IllegalArgument", "y(", lt.toString(), ")" };
                 throw new MyError(app, str);
             }                
+       
+        case ZCOORD:
+            // z(vector)
+            if (lt.isVectorValue())
+				return new MyDouble(kernel, 0);
+            else {
+	            String [] str2 = { "IllegalArgument", "z(", lt.toString(), ")" };
+	            throw new MyError(app, str2);
+            }
+                            
        
         case FUNCTION:      
             // function(number)
@@ -2345,7 +2338,7 @@ implements ExpressionValue {
                sb.append(rightStr);
                break;
        
-           case COMPLEXMULTIPLY:
+           case VECTORPRODUCT:
        	 	sb.append(leftStr);
        	 	sb.append(' ');
        	 	switch (STRING_TYPE) {
@@ -2354,7 +2347,7 @@ implements ExpressionValue {
 		      			break;
 		      		
 		      		default:
-		      			sb.append(strCOMPLEXMULTIPLY);        		
+		      			sb.append(strVECTORPRODUCT);        		
 		      	}   
        	 	sb.append(' ');
                sb.append(rightStr);
@@ -3255,6 +3248,38 @@ implements ExpressionValue {
             	} 
                 break;
                 
+            case ZCOORD:            	
+            	if (valueForm && (leftEval = left.evaluate()).isVector3DValue()) {            												
+            		sb.append(kernel.format(((Vector3DValue)leftEval).getPoint().getZ()));            		
+            	} else {
+            		switch (STRING_TYPE) {
+	        			case STRING_TYPE_LATEX:            		
+	        				sb.append("\\mathrm{z}(");
+	        				sb.append(leftStr);
+	                		sb.append(')');
+	        				break;
+	        				
+	        			//case STRING_TYPE_JASYMCA:
+		        		case STRING_TYPE_MATH_PIPER:
+		        			// note: see GeoGebraCAS.insertSpecialChars()
+		        			sb.append("z");		        		
+		        			sb.append(UNICODE_PREFIX);
+		        			sb.append("40"); // decimal unicode for (
+		        			sb.append(UNICODE_DELIMITER);
+		        			sb.append(leftStr);
+		        			sb.append(UNICODE_PREFIX);
+		        			sb.append("41"); // decimal unicode for )
+		        			sb.append(UNICODE_DELIMITER);
+		        			break;
+	        		
+		        		default:
+		        			sb.append("z(");
+		        			sb.append(leftStr);
+		        			sb.append(')');
+	        		}       
+            	} 
+                break;
+                
             case FUNCTION:
             	// GeoFunction and GeoFunctionConditional should not be expanded
             	if (left.isGeoElement() &&
@@ -3343,6 +3368,7 @@ implements ExpressionValue {
                 
             default:
                 sb.append("unhandled operation " + operation);
+            	Application.debug("unhandled operation " + operation);
         }                
         return sb.toString();
     }

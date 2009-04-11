@@ -22,7 +22,7 @@ public interface ParserConstants {
   int PLUS = 20;
   int MINUS = 21;
   int MULTIPLY = 22;
-  int COMPLEXMULTIPLY = 23;
+  int VECTORPRODUCT = 23;
   int DIVIDE = 24;
   int POWER = 25;
   int FACTORIAL = 26;
@@ -59,34 +59,35 @@ public interface ParserConstants {
   int LETTER = 57;
   int X_FUNC = 58;
   int Y_FUNC = 59;
-  int COS_FUNC = 60;
-  int SIN_FUNC = 61;
-  int TAN_FUNC = 62;
-  int ACOS_FUNC = 63;
-  int ASIN_FUNC = 64;
-  int ATAN_FUNC = 65;
-  int COSH_FUNC = 66;
-  int SINH_FUNC = 67;
-  int TANH_FUNC = 68;
-  int ACOSH_FUNC = 69;
-  int ASINH_FUNC = 70;
-  int ATANH_FUNC = 71;
-  int EXP_FUNC = 72;
-  int LOG_FUNC = 73;
-  int LD_FUNC = 74;
-  int LG_FUNC = 75;
-  int SQRT_FUNC = 76;
-  int CBRT_FUNC = 77;
-  int ABS_FUNC = 78;
-  int SGN_FUNC = 79;
-  int FLOOR_FUNC = 80;
-  int CEIL_FUNC = 81;
-  int ROUND_FUNC = 82;
-  int GAMMA_FUNC = 83;
-  int RANDOM_FUNC = 84;
-  int FUNCTION_LABEL = 85;
-  int TEXT = 86;
-  int CHAR = 87;
+  int Z_FUNC = 60;
+  int COS_FUNC = 61;
+  int SIN_FUNC = 62;
+  int TAN_FUNC = 63;
+  int ACOS_FUNC = 64;
+  int ASIN_FUNC = 65;
+  int ATAN_FUNC = 66;
+  int COSH_FUNC = 67;
+  int SINH_FUNC = 68;
+  int TANH_FUNC = 69;
+  int ACOSH_FUNC = 70;
+  int ASINH_FUNC = 71;
+  int ATANH_FUNC = 72;
+  int EXP_FUNC = 73;
+  int LOG_FUNC = 74;
+  int LD_FUNC = 75;
+  int LG_FUNC = 76;
+  int SQRT_FUNC = 77;
+  int CBRT_FUNC = 78;
+  int ABS_FUNC = 79;
+  int SGN_FUNC = 80;
+  int FLOOR_FUNC = 81;
+  int CEIL_FUNC = 82;
+  int ROUND_FUNC = 83;
+  int GAMMA_FUNC = 84;
+  int RANDOM_FUNC = 85;
+  int FUNCTION_LABEL = 86;
+  int TEXT = 87;
+  int CHAR = 88;
 
   int DEFAULT = 0;
 
@@ -151,6 +152,7 @@ public interface ParserConstants {
     "<LETTER>",
     "<X_FUNC>",
     "<Y_FUNC>",
+    "<Z_FUNC>",
     "<COS_FUNC>",
     "<SIN_FUNC>",
     "<TAN_FUNC>",

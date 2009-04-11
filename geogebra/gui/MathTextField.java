@@ -104,7 +104,7 @@ public class MathTextField extends JTextField implements KeyListener {
 				switch (keyString.charAt(0)) {
 
 				case '*' :
-					insertStr = ExpressionNode.strCOMPLEXMULTIPLY; //  alt-m -> complex multiply "\u2297"
+					insertStr = ExpressionNode.strVECTORPRODUCT; //  alt-* -> vector product "\u2297"
 					break;
 				case '=' :
 					insertStr = "\u2260"; // alt-= -> notEqualTo
