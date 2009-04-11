@@ -10,6 +10,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Label;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -20,6 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * An enhanced file chooser for GeoGebra which can be used
@@ -28,8 +31,13 @@ import javax.swing.JPanel;
  * @author Florian Sonner
  * @version 1.0
  */
-public class GeoGebraFileChooser extends JFileChooser {
+public class GeoGebraFileChooser extends JFileChooser implements ComponentListener {
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * The with at which the accessory is displayed.
+	 */
+	private static final int ACCESSORY_WIDTH = 600;
 	
 	/**
 	 * The file chooser is used to load images at the moment.
@@ -50,6 +58,12 @@ public class GeoGebraFileChooser extends JFileChooser {
 	 * The accessory panel which displays the preview of the selected file.
 	 */
 	private PreviewPanel previewPanel;
+	
+	/**
+	 * Whether to show the accessory or not. The accessory is not displayed in case
+	 * the dialog is too small.
+	 */
+	private boolean showAccessory = true;
 
 	/**
 	 * Construct a file chooser without a restricted file system view.
@@ -81,6 +95,8 @@ public class GeoGebraFileChooser extends JFileChooser {
 		previewPanel = new PreviewPanel(this);
 		setAccessory(previewPanel);
 		addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, previewPanel);
+		
+		addComponentListener(this);
 		
 		setMode(MODE_GEOGEBRA); // default mode is the mode to load geogebra files
 	}
@@ -124,6 +140,37 @@ public class GeoGebraFileChooser extends JFileChooser {
 		this.currentMode = mode;
 	}
 
+	/**
+	 * Check if we have to show / hide the accessory
+	 */
+	public void componentResized(ComponentEvent e) {
+		if(getSize().width < ACCESSORY_WIDTH && showAccessory) {
+			setAccessory(null);
+			removePropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, previewPanel);
+			
+			showAccessory = false;
+			validate();
+		} else if(getSize().width > ACCESSORY_WIDTH && !showAccessory) {
+			setAccessory(previewPanel);
+			addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, previewPanel);
+			
+			// fire an event that the selected file has changed to update the preview image
+			previewPanel.propertyChange(null);
+			
+			showAccessory = true;
+			validate();
+		}
+	}
+
+	public void componentShown(ComponentEvent e) {
+	}
+	
+	public void componentHidden(ComponentEvent e) {
+	}
+
+	public void componentMoved(ComponentEvent e) {
+	}
+
 	
 	/**
 	 * Component to preview image files in a file chooser.
@@ -142,6 +189,11 @@ public class GeoGebraFileChooser extends JFileChooser {
 
 	private class PreviewPanel extends JPanel implements PropertyChangeListener {
 		private static final long serialVersionUID = 1L;
+		
+		/**
+		 * The maximum file size of images in kb.
+		 */
+		private static final int maxImageSize = 300;
 
 		private GeoGebraFileChooser fileChooser;
 
@@ -197,12 +249,14 @@ public class GeoGebraFileChooser extends JFileChooser {
 			fileLabel.setText("");
 			
 			try {
+				BufferedImage tmpImage = null;
+				
 				// Update preview for ggb files
 				if (fileChooser.getMode() == GeoGebraFileChooser.MODE_GEOGEBRA) {
 					String fileName = file.getName();
 					
 					if(fileName.endsWith(".ggb")) {
-						img = MyXMLio.getPreviewImage(file); // load preview from zip
+						tmpImage = MyXMLio.getPreviewImage(file); // load preview from zip
 						
 						StringBuffer fileInfo = new StringBuffer();
 						
@@ -217,17 +271,14 @@ public class GeoGebraFileChooser extends JFileChooser {
 						fileInfo.append(file.length() / 1024);
 						fileInfo.append(" kB");
 						fileLabel.setText(fileInfo.toString());
-					}
-					else
-						img = null;		
+					}	
 				}
 				
 				// Update preview for images
 				else {
-					// fails for a few JPEGs (Java bug? -> OutOfMemory)
-					// so turn off preview for large files
-					if (file.length() < 512 * 1024) {
-						img = ImageIO.read(file); // returns null if file isn't an image
+					// fails for a few JPEGs so turn off preview for large files
+					if (file.length() < 1024 * maxImageSize) {
+						tmpImage = ImageIO.read(file); // returns null if file isn't an image
 						
 						StringBuffer imgInfo = new StringBuffer();
 						
@@ -241,17 +292,58 @@ public class GeoGebraFileChooser extends JFileChooser {
 						}
 
 						imgInfo.append(" : ");
-						imgInfo.append(img.getWidth());
+						imgInfo.append(tmpImage.getWidth());
 						imgInfo.append(" x ");
-						imgInfo.append(img.getHeight());
+						imgInfo.append(tmpImage.getHeight());
 						fileLabel.setText(imgInfo.toString());
 					}
-					else
-						img = null;
 				}
+				
+				// resize tmp image if necessary
+				if(tmpImage != null) {
+					int oldWidth = tmpImage.getWidth();
+					int oldHeight = tmpImage.getHeight();
+					
+					int newWidth;
+					int newHeight;
+					
+					if(oldWidth > ImagePanel.SIZE || oldHeight > ImagePanel.SIZE) {
+				        if (oldWidth > oldHeight) {
+				            newWidth = ImagePanel.SIZE;
+				            newHeight = (ImagePanel.SIZE * oldHeight) / oldWidth;
+				        } else {
+				            newWidth = (ImagePanel.SIZE * oldWidth) / oldHeight;
+				            newHeight = ImagePanel.SIZE;
+				        }
+				        
+				        img = null;
+				        
+					    // Create a new image for the scaled preview image 
+						img = new BufferedImage(newWidth, newHeight,
+								BufferedImage.TYPE_INT_RGB);
+						
+						Graphics2D graphics2D = img.createGraphics();
+						
+						graphics2D.drawImage(tmpImage, 0, 0, newWidth, newHeight, null);			          
+				        
+						graphics2D.dispose(); 
+						
+					} else {
+						newWidth = oldWidth;
+						newHeight = oldHeight;
+						
+						img = tmpImage;
+					}
+					
+					tmpImage = null;
+				} else {
+					img = null;
+				}
+				
 				repaint();
 			} catch (IllegalArgumentException iae) {
 				// This is thrown if you select .ico files
+				img = null;
 			} catch (Throwable t) {
 				Application.debug(t.getClass() + "");
 				img = null;
@@ -270,7 +362,7 @@ public class GeoGebraFileChooser extends JFileChooser {
 			/**
 			 * The size of the image panel.
 			 */
-			private final static int SIZE = 200;
+			public final static int SIZE = 200;
 			
 			public ImagePanel()
 			{
@@ -286,30 +378,19 @@ public class GeoGebraFileChooser extends JFileChooser {
 				// fill background
 				g2.setColor(Color.white);
 				g2.fillRect(0, 0, getWidth(), getHeight());
-
+				
 				g2.setRenderingHint(RenderingHints.KEY_RENDERING,
 						RenderingHints.VALUE_RENDER_QUALITY);
 
-				// if the selected file is an image go on
+				// if the selected file has a preview go on
 				if (img != null) {
 					// calculate the scaling factor
 					int width = img.getWidth();
 					int height = img.getHeight();
-
-					// set drawing location to upper left corner
-					int x = 0, y = 0;
-
-					int largerSide = Math.max(width, height);
-					if (largerSide > SIZE) { // only resize large images
-						double scale = (double) SIZE / (double) largerSide;
-
-						width = (int) (scale * (double) width);
-						height = (int) (scale * (double) height);
-					}
 					
-					// centre images
-					x = (int) ((getWidth() - width) / 2);
-					y = (int) ((getHeight() - height) / 2);
+					// center image
+					int x = (int) ((getWidth() - width) / 2);
+					int y = (int) ((getHeight() - height) / 2);
 
 					// draw the image
 					g2.drawImage(img, x, y, width, height, null);
