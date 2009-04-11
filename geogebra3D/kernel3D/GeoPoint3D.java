@@ -27,8 +27,8 @@ import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.PointProperties;
-import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.kernel3D.arithmetic.Vector3DValue;
 
 
 /**
@@ -37,7 +37,7 @@ import geogebra3D.Matrix.Ggb3DVector;
  * @version 
  */
 final public class GeoPoint3D extends GeoVec4D
-implements GeoPointInterface, PointProperties{   	
+implements GeoPointInterface, PointProperties, Vector3DValue{   	
 	
 	/**
 	 * 
@@ -459,7 +459,12 @@ implements GeoPointInterface, PointProperties{
 
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
+	}
+
+	public GeoPoint3D getPoint() {
+		// TODO Auto-generated method stub
+		return this;
 	};
     
     

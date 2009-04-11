@@ -1413,6 +1413,9 @@ implements ExpressionValue {
                               )
                          );                   
               }                                              
+            else if (lt.isVector3DValue()) {
+            	return new MyDouble(kernel, ((Vector3DValue)lt).getPoint().getX());
+            }
             else { 
                  String [] str = { "IllegalArgument", "x(", lt.toString(), ")" };
                 throw new MyError(app, str);
@@ -1431,6 +1434,9 @@ implements ExpressionValue {
                               )
                          );                   
               }                                            
+            else if (lt.isVector3DValue()) {
+            	return new MyDouble(kernel, ((Vector3DValue)lt).getPoint().getY());
+            }
             else { 
                  String [] str = { "IllegalArgument", "y(", lt.toString(), ")" };
                 throw new MyError(app, str);
@@ -1440,6 +1446,9 @@ implements ExpressionValue {
             // z(vector)
             if (lt.isVectorValue())
 				return new MyDouble(kernel, 0);
+            else if (lt.isVector3DValue()) {
+            	return new MyDouble(kernel, ((Vector3DValue)lt).getPoint().getZ());
+            }
             else {
 	            String [] str2 = { "IllegalArgument", "z(", lt.toString(), ")" };
 	            throw new MyError(app, str2);
