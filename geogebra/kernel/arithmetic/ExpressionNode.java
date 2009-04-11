@@ -3196,6 +3196,8 @@ implements ExpressionValue {
             case XCOORD:
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												
             		sb.append(kernel.format(((VectorValue)leftEval).getVector().getX()));
+            	} else if (valueForm && (leftEval = left.evaluate()).isVector3DValue()) {            												
+            		sb.append(kernel.format(((Vector3DValue)leftEval).getPoint().getX()));            		
             	} else {
             		switch (STRING_TYPE) {
             			case STRING_TYPE_LATEX:            		
@@ -3228,6 +3230,8 @@ implements ExpressionValue {
             case YCOORD:            	
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												
             		sb.append(kernel.format(((VectorValue)leftEval).getVector().getY()));            		
+            	} else if (valueForm && (leftEval = left.evaluate()).isVector3DValue()) {            												
+                		sb.append(kernel.format(((Vector3DValue)leftEval).getPoint().getY()));            		
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
