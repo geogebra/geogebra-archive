@@ -3,15 +3,19 @@ package geogebra.gui.util;
 import geogebra.io.MyXMLio;
 import geogebra.main.Application;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Label;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,6 +27,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import sun.java2d.pipe.SolidTextRenderer;
 
 /**
  * An enhanced file chooser for GeoGebra which can be used
@@ -48,6 +54,11 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 	 * The file chooser is used to load / save ggb files at the moment.
 	 */
 	public static final int MODE_GEOGEBRA = 1;
+
+	/**
+	 * An instance of the GeoGebra application.
+	 */
+	private Application app;
 	
 	/**
 	 * The current mode of the file chooser.
@@ -76,9 +87,9 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 	 * 
 	 * @param currentDirectory
 	 */
-	public GeoGebraFileChooser(File currentDirectory)
+	public GeoGebraFileChooser(Application app, File currentDirectory)
 	{
-		this(currentDirectory, false);
+		this(app, currentDirectory, false);
 	}
 	
 	/**
@@ -88,9 +99,11 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 	 * @param currentDirectory
 	 * @param restricted
 	 */
-	public GeoGebraFileChooser(File currentDirectory, boolean restricted)
+	public GeoGebraFileChooser(Application app,File currentDirectory, boolean restricted)
 	{
 		super(currentDirectory, (restricted ? new RestrictedFileSystemView() : null));
+		
+		this.app = app;
 		
 		previewPanel = new PreviewPanel(this);
 		setAccessory(previewPanel);
@@ -375,14 +388,21 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 			 */
 			public void paintComponent(Graphics g) {
 				Graphics2D g2 = (Graphics2D) g;
+				
 				// fill background
 				g2.setColor(Color.white);
 				g2.fillRect(0, 0, getWidth(), getHeight());
 				
 				g2.setRenderingHint(RenderingHints.KEY_RENDERING,
 						RenderingHints.VALUE_RENDER_QUALITY);
+				
+				// activate antialiasing if possible
+				if(app.isAntialiasing()) {
+					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+							RenderingHints.VALUE_ANTIALIAS_ON);
+				}
 
-				// if the selected file has a preview go on
+				// draw preview image if possible
 				if (img != null) {
 					// calculate the scaling factor
 					int width = img.getWidth();
@@ -394,6 +414,17 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 
 					// draw the image
 					g2.drawImage(img, x, y, width, height, null);
+				}
+				
+				// draw "no preview" message
+				else {
+					String message = app.getPlain("PreviewUnavailable");
+					
+					FontMetrics fm = g2.getFontMetrics();
+					Rectangle2D bounds = fm.getStringBounds(message, g2);
+					
+					g2.setColor(Color.darkGray);
+					g2.drawString(message, (float)(getWidth() - bounds.getWidth()) / 2, (float)(getHeight() - bounds.getHeight()) / 2);
 				}
 			}
 		}

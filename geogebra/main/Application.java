@@ -1996,7 +1996,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public synchronized CasManager getCasView() {
-		if (casView == null) {
+		if (casView == null) {			
 			loadCASJar();
 
 			// this code wraps the creation of the cas view and is
@@ -2875,6 +2875,10 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public void setPrintScaleString(boolean printScaleString) {
 		this.printScaleString = printScaleString;
+	}
+	
+	public boolean isAntialiasing() {
+		return antialiasing;
 	}
 
 	public File getCurrentImagePath() {
