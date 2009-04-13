@@ -462,9 +462,11 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		return true;
 	}
 
-	public GeoPoint3D getPoint() {
+
+
+	public double[] getPointAsDouble() {
 		// TODO Auto-generated method stub
-		return this;
+		return null;
 	};
     
     

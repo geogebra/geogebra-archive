@@ -134,10 +134,9 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue {
     /**
      * interface Point3DValue implementation
      */           
-    public GeoPoint3D getPoint() {
-    	GeoPoint3D ret = null;//new GeoPoint3D(kernel, getCoords());
-        //ret.setMode(mode);
-        return ret;
+    public double[] getPointAsDouble() {
+    	
+        return getCoords();
     }        
         
     public boolean isConstant() {

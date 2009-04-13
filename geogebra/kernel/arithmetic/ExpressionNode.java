@@ -1414,7 +1414,7 @@ implements ExpressionValue {
                          );                   
               }                                              
             else if (lt.isVector3DValue()) {
-            	return new MyDouble(kernel, ((Vector3DValue)lt).getPoint().getX());
+            	return new MyDouble(kernel, ((Vector3DValue)lt).getPointAsDouble()[0]);
             }
             else { 
                  String [] str = { "IllegalArgument", "x(", lt.toString(), ")" };
@@ -1435,7 +1435,7 @@ implements ExpressionValue {
                          );                   
               }                                            
             else if (lt.isVector3DValue()) {
-            	return new MyDouble(kernel, ((Vector3DValue)lt).getPoint().getY());
+            	return new MyDouble(kernel, ((Vector3DValue)lt).getPointAsDouble()[1]);
             }
             else { 
                  String [] str = { "IllegalArgument", "y(", lt.toString(), ")" };
@@ -1447,7 +1447,7 @@ implements ExpressionValue {
             if (lt.isVectorValue())
 				return new MyDouble(kernel, 0);
             else if (lt.isVector3DValue()) {
-            	return new MyDouble(kernel, ((Vector3DValue)lt).getPoint().getZ());
+            	return new MyDouble(kernel, ((Vector3DValue)lt).getPointAsDouble()[2]);
             }
             else {
 	            String [] str2 = { "IllegalArgument", "z(", lt.toString(), ")" };
@@ -3197,7 +3197,7 @@ implements ExpressionValue {
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												
             		sb.append(kernel.format(((VectorValue)leftEval).getVector().getX()));
             	} else if (valueForm && (leftEval = left.evaluate()).isVector3DValue()) {            												
-            		sb.append(kernel.format(((Vector3DValue)leftEval).getPoint().getX()));            		
+            		sb.append(kernel.format(((Vector3DValue)leftEval).getPointAsDouble()[0]));            		
             	} else {
             		switch (STRING_TYPE) {
             			case STRING_TYPE_LATEX:            		
@@ -3231,7 +3231,7 @@ implements ExpressionValue {
             	if (valueForm && (leftEval = left.evaluate()).isVectorValue()) {            												
             		sb.append(kernel.format(((VectorValue)leftEval).getVector().getY()));            		
             	} else if (valueForm && (leftEval = left.evaluate()).isVector3DValue()) {            												
-                		sb.append(kernel.format(((Vector3DValue)leftEval).getPoint().getY()));            		
+                		sb.append(kernel.format(((Vector3DValue)leftEval).getPointAsDouble()[1]));            		
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
@@ -3263,7 +3263,7 @@ implements ExpressionValue {
                 
             case ZCOORD:            	
             	if (valueForm && (leftEval = left.evaluate()).isVector3DValue()) {            												
-            		sb.append(kernel.format(((Vector3DValue)leftEval).getPoint().getZ()));            		
+            		sb.append(kernel.format(((Vector3DValue)leftEval).getPointAsDouble()[2]));            		
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		

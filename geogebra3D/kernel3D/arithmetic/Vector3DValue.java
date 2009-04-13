@@ -28,7 +28,7 @@ import geogebra3D.kernel3D.GeoPoint3D;
  * @version 
  */
 public interface Vector3DValue extends ExpressionValue { 
-    public GeoPoint3D getPoint();    
+    public double[] getPointAsDouble();    
     //public int getMode(); // POLAR or CARTESIAN
     //public void setMode(int mode);       
 }
