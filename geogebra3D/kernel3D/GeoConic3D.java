@@ -122,7 +122,25 @@ extends GeoConic implements GeoElement3DInterface{
 	  */
 	 public boolean isGeoElement3D(){
 		 return true;
-	 }
+	 } 
+	 
+	 
+		public String toString() {	
+			StringBuffer sbToString = getSbToString();
+			sbToString.setLength(0);
+			sbToString.append(label);
+			
+
+			//says in which 2D coord sys the equation is calculated
+			sbToString.append(" (");
+			sbToString.append(coordSys.getLabel());
+			sbToString.append(")");
+
+			
+			sbToString.append(": ");
+			sbToString.append(buildValueString()); 
+			return sbToString.toString();
+		}
 
 	 
 	 

@@ -34,6 +34,7 @@ public class DrawSegment3D extends Drawable3DSolid {
 	
 	public void drawGeometryHidden(EuclidianRenderer3D renderer){
 		
+		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
 		drawGeometry(renderer);
 	} 
 	

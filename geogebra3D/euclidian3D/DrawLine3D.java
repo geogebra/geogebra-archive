@@ -12,8 +12,6 @@ import java.util.ArrayList;
 public class DrawLine3D extends Drawable3DSolid implements Previewable {
 
 	
-	double dashLength;
-	
 	
 	public DrawLine3D(EuclidianView3D a_view3D, GeoLine3D a_line3D){
 		
@@ -47,9 +45,7 @@ public class DrawLine3D extends Drawable3DSolid implements Previewable {
 	
 	public void drawGeometryHidden(EuclidianRenderer3D renderer){
 	
-		GeoLine3D l_line3D = (GeoLine3D) getGeoElement();
-		dashLength = 0.12f/((float) l_line3D.getUnit()); //TODO use object property
-		//renderer.drawLineDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
+		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
 		drawGeometry(renderer);
 	};
 	

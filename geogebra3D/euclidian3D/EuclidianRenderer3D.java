@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -880,44 +881,101 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     /**
-     * draw a cicle with center (x,y) and radius R
+     * draw a circle with center (x,y) and radius R
      * @param x x coord of the center
      * @param y y coord of the center
      * @param R radius
      */
     public void drawCircle(double x, double y, double R){
+
+    	drawCircleArcDashedOrNot((float) x, (float) y, (float) R, 0, 2f * (float) Math.PI, m_dash!=null);
     	
-    	drawTorus((float) x,(float) y, (float) R);
-    }
-    
-    
-    
-    
-    /**
-     * @param x
-     * @param y
-     * @param R
-     */
-    private void drawTorus(float x, float y, float R) {
-    	drawTorus(x, y, R, 16,64);
     }
     
     
     
     /**
-     * @param x 
-     * @param y 
-     * @param R
-     * @param nsides
-     * @param rings
+     * draw a circle with center (x,y) and radius R
+     * @param x x coord of the center
+     * @param y y coord of the center
+     * @param R radius
+     * @param startAngle starting angle for the arc
+     * @param endAngle ending angle for the arc
+     * @param dash says if the circle is dashed
      */
-    private void drawTorus(float x, float y, float R, int nsides, int rings) {
+    private void drawCircleArcDashedOrNot(float x, float y, float R, float startAngle, float endAngle, boolean dash){
+    	
+    	if (!dash)
+    		drawCircleArcNotDashed(x, y, R, startAngle, endAngle);
+    	else
+    		drawCircleArcDashed(x,y,R, startAngle, endAngle);
+    }
+    
+    /**
+     * draw a dashed circle with center (x,y) and radius R
+     * @param x x coord of the center
+     * @param y y coord of the center
+     * @param R radius
+     * @param startAngle starting angle for the arc
+     * @param endAngle ending angle for the arc
+     */
+    private void drawCircleArcDashed(float x, float y, float R, float startAngle, float endAngle){
+    	
+    	m_dash_factor = 1/(R*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS));
+    	for(double l1=startAngle; l1<endAngle;){
+    		double l2=l1;
+    		for(int i=0; (i<m_dash.length)&&(l1<endAngle); i++){
+    			l2=l1+m_dash_factor*m_dash[i][0];
+    			if (l2>endAngle) l2=endAngle;
+    			//Application.debug("l1,l2="+l1+","+l2);
+    			drawCircleArcNotDashed(x,y,R,(float) l1, (float) l2);
+    			l1=l2+m_dash_factor*m_dash[i][1];
+    		}	
+    	} 	
+    }   
+    
+    /**
+     * draw a dashed circle with center (x,y) and radius R
+     * @param x x coord of the center
+     * @param y y coord of the center
+     * @param R radius
+     * @param startAngle starting angle for the arc
+     * @param endAngle ending angle for the arc
+     */
+    private void drawCircleArcNotDashed(float x, float y, float R, float startAngle, float endAngle){
+    	int nsides = 16; //TODO use thickness
+    	int rings = (int) (4*R*(endAngle-startAngle)) +2;
+    	drawTorusArc(x, y, R, startAngle, endAngle, nsides, rings);
+    }
+
+    
+    
+    
+    
+    
+    
+
+    
+    
+    /**
+     * draw a torus arc (using getThickness() for thickness)
+     * @param x x coord of the center of the torus
+     * @param y y coord of the center of the torus
+     * @param R radius of the torus
+     * @param startAngle starting angle for the arc
+     * @param endAngle ending angle for the arc
+     * @param nsides number of sides in a ring
+     * @param rings number of rings
+     */
+    private void drawTorusArc(float x, float y, float R, float startAngle, float endAngle, int nsides, int rings) {
     	
     	float r = (float) getThickness();
     	
-        float ringDelta = 2.0f * (float) Math.PI / rings;
+        float ringDelta = (endAngle-startAngle) / rings;
         float sideDelta = 2.0f * (float) Math.PI / nsides;
-        float theta = 0.0f, cosTheta = 1.0f, sinTheta = 0.0f;
+        float theta = startAngle; 
+        float cosTheta = (float) Math.cos(theta); 
+        float sinTheta = (float) Math.sin(theta);
         for (int i = rings - 1; i >= 0; i--) {
           float theta1 = theta + ringDelta;
           float cosTheta1 = (float) Math.cos(theta1);
@@ -929,10 +987,10 @@ public class EuclidianRenderer3D implements GLEventListener {
             float cosPhi = (float) Math.cos(phi);
             float sinPhi = (float) Math.sin(phi);
             float dist = R + r * cosPhi;
-            gl.glNormal3f(cosTheta1 * cosPhi, -sinTheta1 * cosPhi, sinPhi);
-            gl.glVertex3f(x+cosTheta1 * dist, y-sinTheta1 * dist, r * sinPhi);
-            gl.glNormal3f(cosTheta * cosPhi, -sinTheta * cosPhi, sinPhi);
-            gl.glVertex3f(x+cosTheta * dist, y-sinTheta * dist, r * sinPhi);
+            gl.glNormal3f(cosTheta1 * cosPhi, sinTheta1 * cosPhi, -sinPhi);
+            gl.glVertex3f(x+cosTheta1 * dist, y+sinTheta1 * dist, r * -sinPhi);
+            gl.glNormal3f(cosTheta * cosPhi, sinTheta * cosPhi, -sinPhi);
+            gl.glVertex3f(x+cosTheta * dist, y+sinTheta * dist, r * -sinPhi);
           }
           gl.glEnd();
           theta = theta1;
@@ -941,9 +999,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         }
       }
 
-    
-    
-    
+   
     ///////////////////////////////////////////////////////////
     //drawing primitives TODO use glLists
     

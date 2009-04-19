@@ -37,10 +37,8 @@ public class DrawConic3D extends Drawable3DSolid {
 	}
 
 	
-
-	public void drawGeometry(EuclidianRenderer3D renderer) {
-		
-		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+	
+	private void drawGeometryForAll(EuclidianRenderer3D renderer) {
 		
 		GeoConic3D conic = (GeoConic3D) getGeoElement();
 		
@@ -52,21 +50,29 @@ public class DrawConic3D extends Drawable3DSolid {
 			break;
 		
 		}
-		
-		
+	}
+	
+	
 
+	public void drawGeometry(EuclidianRenderer3D renderer) {
+		
+		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());		
+		drawGeometryForAll(renderer);
 
 	}
 
 
 	public void drawGeometryHidden(EuclidianRenderer3D renderer) {
-		// TODO Auto-generated method stub
+		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());		
+		drawGeometryForAll(renderer);
 
 	}
 
 
 	public void drawGeometryPicked(EuclidianRenderer3D renderer) {
-		// TODO Auto-generated method stub
+		
+		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		drawGeometryForAll(renderer);
 
 	}
 

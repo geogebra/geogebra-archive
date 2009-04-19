@@ -105,15 +105,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 
 	/** Creates new GeoConic */
 	public GeoConic(Construction c, String label, double[] coeffs) {
-		this(c);
-		setCoeffs(coeffs);
-		setLabel(label);
+		this(c,label,coeffs,null);
 	}
 	
 	/** Creates new GeoConic with Coordinate System for 3D */
 	public GeoConic(Construction c, String label, double[] coeffs, GeoElement cs) {
-		this(c,label,coeffs);
+		this(c);
 		setCoordSys(cs);
+		setCoeffs(coeffs);
+		setLabel(label);		
 	}	
 	
 	
@@ -513,7 +513,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	}
 		
 	private StringBuffer sbToString;
-	private StringBuffer getSbToString() {
+	protected StringBuffer getSbToString() {
 		if (sbToString == null)
 			sbToString = new StringBuffer(80);
 		return sbToString;
@@ -523,7 +523,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		return buildValueString().toString();	
 	}			
 	
-	private StringBuffer buildValueString() {
+	protected StringBuffer buildValueString() {
 		coeffs[0] = matrix[0]; // x\u00b2
 		coeffs[2] = matrix[1]; // y\u00b2
 		coeffs[5] = matrix[2]; // constant
