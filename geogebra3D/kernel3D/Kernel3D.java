@@ -244,4 +244,28 @@ public class Kernel3D
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	/** Conic label with equation ax� + bxy + cy� + dx + ey + f = 0  */
+	final public GeoConic3D Conic3D(
+		String label,
+		double a,
+		double b,
+		double c,
+		double d,
+		double e,
+		double f,
+		GeoCoordSys2D cs) {
+		double[] coeffs = { a, b, c, d, e, f };
+		GeoConic3D conic = new GeoConic3D(cons, label, coeffs, cs);
+		return conic;
+	}
+	
+	
 }

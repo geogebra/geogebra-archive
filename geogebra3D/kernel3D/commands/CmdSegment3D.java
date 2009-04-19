@@ -28,7 +28,7 @@ public class CmdSegment3D extends CmdSegment {
 	public CmdSegment3D(Kernel3D kernel3D) {
 		this( (Kernel) kernel3D);
 		this.kernel3D = kernel3D;
-		Application.debug("CmdSegment3D");
+		//Application.debug("CmdSegment3D");
 		
 	}	
 	

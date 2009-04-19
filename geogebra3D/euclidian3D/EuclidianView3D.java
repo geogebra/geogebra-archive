@@ -11,6 +11,7 @@ import geogebra.main.View;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoLine3D;
@@ -202,34 +203,25 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				switch (geo.getGeoClassType()) {
 				
 				case GeoElement3D.GEO_CLASS_POINT3D:
-					if(DEBUG){Application.debug("GEO_CLASS_POINT3D");}
 					d = new DrawPoint3D(this, (GeoPoint3D) geo);
-					if(DEBUG){Application.debug("new DrawPoint3D");}
 					break;									
 								
 				case GeoElement3D.GEO_CLASS_VECTOR3D:
-					if(DEBUG){Application.debug("GEO_CLASS_VECTOR3D");}
 					d = new DrawVector3D(this, (GeoVector3D) geo);
-					if(DEBUG){Application.debug("new GeoVector3D");}
 					break;									
 								
 				case GeoElement3D.GEO_CLASS_SEGMENT3D:
-					if(DEBUG){Application.debug("GEO_CLASS_SEGMENT3D");}
 					d = new DrawSegment3D(this, (GeoSegment3D) geo);
-					//Application.debug("new DrawPoint3D");
 					break;									
 				
 
 				case GeoElement3D.GEO_CLASS_PLANE3D:
-					if(DEBUG){Application.debug("GEO_CLASS_PLANE3D");}
 					d = new DrawPlane3D(this, (GeoPlane3D) geo);
-					//Application.debug("new DrawPoint3D");
 					break;									
 				
 
 				case GeoElement3D.GEO_CLASS_POLYGON3D:
 					d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
-					Application.debug("new DrawPolygon3D");
 					break;									
 				
 
@@ -239,7 +231,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 				case GeoElement3D.GEO_CLASS_RAY3D:					
 					d = new DrawRay3D(this, (GeoRay3D) geo);					
-					break;									
+					break;	
+					
+				case GeoElement3D.GEO_CLASS_CONIC3D:					
+					d = new DrawConic3D(this, (GeoConic3D) geo);
+					break;	
+					
 
 
 				case GeoElement3D.GEO_CLASS_QUADRIC:					

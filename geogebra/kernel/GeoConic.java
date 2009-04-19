@@ -109,6 +109,21 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		setCoeffs(coeffs);
 		setLabel(label);
 	}
+	
+	/** Creates new GeoConic with Coordinate System for 3D */
+	public GeoConic(Construction c, String label, double[] coeffs, GeoElement cs) {
+		this(c,label,coeffs);
+		setCoordSys(cs);
+	}	
+	
+	
+	/** for 3D stuff (unused here)
+	 * @param cs GeoCoordSys2D
+	 */
+	public void setCoordSys(GeoElement cs) {
+		
+	}
+	
 
 	public GeoConic(GeoConic conic) {
 		this(conic.cons);
@@ -748,6 +763,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 
 	final public GeoVec2D getTranslationVector() {
 		return b;
+	}
+	
+	/**
+	 * return the radius of the circle (if the conic is a circle)
+	 * @return the radius of the circle
+	 */
+	final public double getCircleRadius(){
+		return halfAxes[0];
 	}
 	
 	/**

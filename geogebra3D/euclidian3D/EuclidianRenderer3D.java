@@ -876,6 +876,70 @@ public class EuclidianRenderer3D implements GLEventListener {
 
     }
     
+    
+    
+    
+    /**
+     * draw a cicle with center (x,y) and radius R
+     * @param x x coord of the center
+     * @param y y coord of the center
+     * @param R radius
+     */
+    public void drawCircle(double x, double y, double R){
+    	
+    	drawTorus((float) x,(float) y, (float) R);
+    }
+    
+    
+    
+    
+    /**
+     * @param x
+     * @param y
+     * @param R
+     */
+    private void drawTorus(float x, float y, float R) {
+    	drawTorus(x, y, R, 16,64);
+    }
+    
+    
+    
+    /**
+     * @param x 
+     * @param y 
+     * @param R
+     * @param nsides
+     * @param rings
+     */
+    private void drawTorus(float x, float y, float R, int nsides, int rings) {
+    	
+    	float r = (float) getThickness();
+    	
+        float ringDelta = 2.0f * (float) Math.PI / rings;
+        float sideDelta = 2.0f * (float) Math.PI / nsides;
+        float theta = 0.0f, cosTheta = 1.0f, sinTheta = 0.0f;
+        for (int i = rings - 1; i >= 0; i--) {
+          float theta1 = theta + ringDelta;
+          float cosTheta1 = (float) Math.cos(theta1);
+          float sinTheta1 = (float) Math.sin(theta1);
+          gl.glBegin(GL.GL_QUAD_STRIP);
+          float phi = 0.0f;
+          for (int j = nsides; j >= 0; j--) {
+            phi += sideDelta;
+            float cosPhi = (float) Math.cos(phi);
+            float sinPhi = (float) Math.sin(phi);
+            float dist = R + r * cosPhi;
+            gl.glNormal3f(cosTheta1 * cosPhi, -sinTheta1 * cosPhi, sinPhi);
+            gl.glVertex3f(x+cosTheta1 * dist, y-sinTheta1 * dist, r * sinPhi);
+            gl.glNormal3f(cosTheta * cosPhi, -sinTheta * cosPhi, sinPhi);
+            gl.glVertex3f(x+cosTheta * dist, y-sinTheta * dist, r * sinPhi);
+          }
+          gl.glEnd();
+          theta = theta1;
+          cosTheta = cosTheta1;
+          sinTheta = sinTheta1;
+        }
+      }
 
     
     

@@ -69,11 +69,12 @@ public class Test3D{
 		
 		
 		
-		testRegion();
+		//testRegion();
 		
 		
 		testRepere();
 		
+		testConic3D();
 
 		testAlgoPyramide();
 		//testPolygon();
@@ -475,6 +476,16 @@ public class Test3D{
 	}
 	
 	
+	
+	private void testConic3D(){
+		
+		GeoConic3D conic = kernel3D.Conic3D("conic", 1, 0, 1, -2, -2, -2, xOyPlane);
+		
+		conic.setObjColor(new Color(1f,0f,0f));
+		
+		Application.debug("conic is a circle : "+(conic.getType()==GeoConic.CONIC_CIRCLE));
+		
+	}
 	
 	
 	

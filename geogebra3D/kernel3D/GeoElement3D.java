@@ -159,6 +159,8 @@ public abstract class GeoElement3D
 	public static final int GEO_CLASS_LINE3D = 3120;
 	/** id for {@link GeoRay3D} */
 	public static final int GEO_CLASS_RAY3D = 3121;
+	/** id for {@link GeoConic3D} */
+	public static final int GEO_CLASS_CONIC3D = 3122;
 	/** TODO remove */
 	public static final int GEO_CLASS_TRIANGLE3D = 3210;
 	/** id for {@link GeoPolygon3Dold} */
