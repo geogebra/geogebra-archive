@@ -414,70 +414,29 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	/** update the drawables for 3D view, called by EuclidianRenderer3D */
 	public void update(){
-				
-		
+
+
 		if (waitForUpdate){
-			
+
 			//picking
 			if ((waitForPick)&&(!removeHighlighting)){
-				
-				
-				/*
-				for (Iterator iter = hits.getHitsHighlighted().iterator(); iter.hasNext();) {
-					Drawable3D d = (Drawable3D) iter.next();
-					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
-					geo.setWasHighlighted();
-					geo.setWillBeHighlighted(false);			
-				}	
-				*/				
-				
-				//hits.dispatch();
-				
-				/*
-				for (Iterator iter = hits.getHitsHighlighted().iterator(); iter.hasNext();) {
-					Drawable3D d = (Drawable3D) iter.next();
-					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
-					geo.setWasHighlighted(); //TODO setWasHighlighted() may be called twice
-					geo.setWillBeHighlighted(true);				
-				}			
-
-				for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-					Drawable3D d = (Drawable3D) iter.next();
-					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
-					geo.updateHighlighted(true);				
-				}
-				*/
 
 				waitForPick = false;
 			}
-			
-			/*
-			//remove highlighting when an object is selected
-			if (removeHighlighting){
-				//for (Iterator iter = hits.iterator(); iter.hasNext();) {
-				for (Iterator iter = hits.getHitsHighlighted().iterator(); iter.hasNext();) {
-					Drawable3D d = (Drawable3D) iter.next();
-					GeoElement3D geo = (GeoElement3D) d.getGeoElement();
-					geo.setWasHighlighted();
-					geo.setWillBeHighlighted(false);
-					geo.updateHighlighted(true);
-				}
-				removeHighlighting = false;
-			}		
-			*/	
-			
+
 			//other
 			drawList3D.updateAll();	//TODO waitForUpdate for each object
 			
-			
 			waitForUpdate = false;
+
 		}
-		
-		
-		
+
+
+
+
 	}
-	
-	
+
+
 	
 	
 	private void setWaitForUpdate(boolean v){
@@ -621,8 +580,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public void update(GeoElement geo) {
-		// TODO Raccord de méthode auto-généré
-		
+		//Application.debug("update(GeoElement geo)");
+		repaintView();
 	}
 
 	public void updateAuxiliaryObject(GeoElement geo) {
@@ -940,7 +899,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public void repaintEuclidianView() {
-		// TODO Auto-generated method stub
+		Application.debug("repaintEuclidianView");
 		
 	}
 

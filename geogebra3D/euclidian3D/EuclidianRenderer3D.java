@@ -180,67 +180,67 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glLoadMatrixd(m_view3D.getToScreenMatrix().get(),0);
 
         //drawing hidden part
-		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-			Drawable3D d = (Drawable3D) iter.next();
-			d.drawHidden(this);	
-		}
-     
-        
-		//drawing picked parts
-		setMaterial(new Color(0f,0f,0f),0.75f);
-		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-			Drawable3D d = (Drawable3D) iter.next();
-			d.drawPicked(this);	
-		}
-       
-        
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawHidden(this);	
+        }
 
-		//drawing transparents parts
-		//gl.glDisable(GL.GL_CULL_FACE);
-		gl.glDepthMask(false);
-		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-			Drawable3D d = (Drawable3D) iter.next();
-			d.drawTransp(this);	
-		}
-		gl.glDepthMask(true);
-		
-		
-		//drawing hiding parts
-		gl.glClear(GL.GL_DEPTH_BUFFER_BIT); //clear depth buffer
+
+        //drawing picked parts
+        setMaterial(new Color(0f,0f,0f),0.75f);
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawPicked(this);	
+        }
+
+
+
+        //drawing transparents parts
+        //gl.glDisable(GL.GL_CULL_FACE);
+        gl.glDepthMask(false);
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawTransp(this);	
+        }
+        gl.glDepthMask(true);
+
+
+        //drawing hiding parts
+        gl.glClear(GL.GL_DEPTH_BUFFER_BIT); //clear depth buffer
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
-		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-			Drawable3D d = (Drawable3D) iter.next();
-			d.drawHiding(this);	
-		}
-		gl.glColorMask(true,true,true,true);
-		//gl.glEnable(GL.GL_CULL_FACE);
-		
-		
-		//re-drawing transparents parts for better transparent effect
-		//TODO improve it !
-		gl.glDepthMask(false);
-		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-			Drawable3D d = (Drawable3D) iter.next();
-			d.drawTransp(this);	
-		}
-		gl.glDepthMask(true);
-		
-		
-		
-		
-		//drawing not hidden parts
-		gl.glDisable(GL.GL_BLEND);
-		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-			Drawable3D d = (Drawable3D) iter.next();
-			d.draw(this);	
-		}
-		gl.glEnable(GL.GL_BLEND);
-
-		
-		
-		gLDrawable.swapBuffers(); //TODO
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawHiding(this);	
+        }
+        gl.glColorMask(true,true,true,true);
+        //gl.glEnable(GL.GL_CULL_FACE);
 
 
+        //re-drawing transparents parts for better transparent effect
+        //TODO improve it !
+        gl.glDepthMask(false);
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawTransp(this);	
+        }
+        gl.glDepthMask(true);
+
+
+
+
+        //drawing not hidden parts
+        gl.glDisable(GL.GL_BLEND);
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.draw(this);	
+        }
+        gl.glEnable(GL.GL_BLEND);
+
+
+
+        gLDrawable.swapBuffers(); //TODO
+
+        
 
     }    
     
@@ -945,7 +945,10 @@ public class EuclidianRenderer3D implements GLEventListener {
      */
     private void drawCircleArcNotDashed(float x, float y, float R, float startAngle, float endAngle){
     	int nsides = 16; //TODO use thickness
-    	int rings = (int) (4*R*(endAngle-startAngle)) +2;
+    	float r=R;
+    	if (r<1)
+    		r=1f;
+    	int rings = (int) (4*r*(endAngle-startAngle)) +2;
     	drawTorusArc(x, y, R, startAngle, endAngle, nsides, rings);
     }
 
