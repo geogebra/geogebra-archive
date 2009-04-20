@@ -1029,7 +1029,7 @@ public class Kernel implements KernelInterface {
 		notifyRenameListenerAlgos();
 	}
 
-	final void notifyUpdate(GeoElement geo) {
+	protected final void notifyUpdate(GeoElement geo) {
 		if (notifyViewsActive) {
 			for (int i = 0; i < viewCnt; ++i) {
 				views[i].update(geo);

@@ -15,9 +15,12 @@ package geogebra3D.kernel3D;
 
 
 
+import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.KernelInterface;
 import geogebra.kernel.commands.AlgebraProcessor;
@@ -252,7 +255,7 @@ public class Kernel3D
 	
 	
 	
-	/** Conic label with equation ax� + bxy + cy� + dx + ey + f = 0  */
+	/** Conic label with equation ax² + bxy + cy² + dx + ey + f = 0  */
 	final public GeoConic3D Conic3D(
 		String label,
 		double a,
@@ -265,6 +268,24 @@ public class Kernel3D
 		double[] coeffs = { a, b, c, d, e, f };
 		GeoConic3D conic = new GeoConic3D(cons, label, coeffs, cs);
 		return conic;
+	}
+	
+	
+	
+	/** 
+	 * circle with through points A, B, C
+	 */
+	final public GeoConic3D Circle3D(
+		String label,
+		GeoPoint3D A,
+		GeoPoint3D B,
+		GeoPoint3D C) {
+		AlgoCircleThreePoints algo = new AlgoCircle3DThreePoints(cons, label, A, B, C);
+		GeoConic3D circle = (GeoConic3D) algo.getCircle();
+		circle.setToSpecific();
+		circle.update();
+		notifyUpdate(circle);
+		return circle;
 	}
 	
 	

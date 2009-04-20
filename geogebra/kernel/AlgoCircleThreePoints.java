@@ -30,8 +30,8 @@ public class AlgoCircleThreePoints extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoPoint A, B, C; // input    
-    private GeoConic circle; // output     
+	private GeoPointInterface A, B, C; // input    
+    protected GeoConic circle; // output     
 
     // line bisectors
     private GeoLine s0, s1;
@@ -52,30 +52,30 @@ public class AlgoCircleThreePoints extends AlgoElement {
         maxDet;
     transient private int casenr;
 
-    AlgoCircleThreePoints(
+    protected AlgoCircleThreePoints(
         Construction cons,
         String label,
-        GeoPoint A,
-        GeoPoint B,
-        GeoPoint C) {
+        GeoPointInterface A,
+        GeoPointInterface B,
+        GeoPointInterface C) {
         this(cons, A, B, C);
         circle.setLabel(label);
     }
     
     public AlgoCircleThreePoints(
             Construction cons,           
-            GeoPoint A,
-            GeoPoint B,
-            GeoPoint C) {
+            GeoPointInterface A,
+            GeoPointInterface B,
+            GeoPointInterface C) {
     	
             super(cons);
-            this.A = A;
-            this.B = B;
-            this.C = C;
-            circle = new GeoConic(cons);
-            circle.addPointOnConic(A);
-            circle.addPointOnConic(B);
-            circle.addPointOnConic(C);
+            
+            setPoints(A,B,C);
+ 
+            createCircle();
+            circle.addPointOnConic(getA());
+            circle.addPointOnConic(getB());
+            circle.addPointOnConic(getC());
             
             // temp: line bisectors
             s0 = new GeoLine(cons);
@@ -86,8 +86,34 @@ public class AlgoCircleThreePoints extends AlgoElement {
             setInputOutput(); // for AlgoElement
 
             compute();            
-        }
+    }
+    
+    
+    /** set the three points of the circle to A, B, C
+	 * @param A first point
+	 * @param B second point
+	 * @param C third point
+     */
+    protected void setPoints(GeoPointInterface A, GeoPointInterface B, GeoPointInterface C){
+    	
+        this.A = A;
+        this.B = B;
+        this.C = C;	
+    }
 
+    
+    
+    /**
+     * create the object circle
+     */
+    protected void createCircle(){
+    	
+        circle = new GeoConic(cons);
+    }
+    
+    
+    
+    
     protected String getClassName() {
         return "AlgoCircleThreePoints";
     }
@@ -95,9 +121,9 @@ public class AlgoCircleThreePoints extends AlgoElement {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[3];
-        input[0] = A;
-        input[1] = B;
-        input[2] = C;
+        input[0] = (GeoElement) A;
+        input[1] = (GeoElement) B;
+        input[2] = (GeoElement) C;
 
         output = new GeoElement[1];
         output[0] = circle;
@@ -107,38 +133,38 @@ public class AlgoCircleThreePoints extends AlgoElement {
     public GeoConic getCircle() {
         return circle;
     }
-    GeoPoint getA() {
-        return A;
+    public GeoPoint getA() {
+        return (GeoPoint) A;
     }
-    GeoPoint getB() {
-        return B;
+    public GeoPoint getB() {
+        return (GeoPoint) B;
     }
-    GeoPoint getC() {
-        return C;
+    public GeoPoint getC() {
+        return (GeoPoint) C;
     }
 
     // compute circle through A, B, C
-    protected final void compute() {
+    protected void compute() {
         // A, B or C undefined
-        if (!A.isFinite() || !B.isFinite() || !C.isFinite()) {
+        if (!getA().isFinite() || !getB().isFinite() || !getC().isFinite()) {
             circle.setUndefined();
             return;
         }
 
         // get inhomogenous coords of points
-        ax = A.inhomX;
-        ay = A.inhomY;
-        bx = B.inhomX;
-        by = B.inhomY;
-        cx = C.inhomX;
-        cy = C.inhomY;
+        ax = getA().inhomX;
+        ay = getA().inhomY;
+        bx = getB().inhomX;
+        by = getB().inhomY;
+        cx = getC().inhomX;
+        cy = getC().inhomY;
 
         // A = B = C
         if (kernel.isEqual(ax, bx)
             && kernel.isEqual(ax, cx)
             && kernel.isEqual(ay, by)
             && kernel.isEqual(ay, cy)) {
-            circle.setCircle(A, 0.0); // single point
+            circle.setCircle(getA(), 0.0); // single point
             return;
         }
 
@@ -180,7 +206,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
         // in perpendicular direction of AB
         if (kernel.isZero(maxDet)) {
             center.setCoords(-ABy, ABx, 0.0d);
-            circle.setCircle(center, A);
+            circle.setCircle(center, getA());
         }
         // standard case
         else {
@@ -219,7 +245,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
 
             // intersect line bisectors to get midpoint
             GeoVec3D.cross(s0, s1, center);
-            circle.setCircle(center, center.distance(A));
+            circle.setCircle(center, center.distance(getA()));
         }
     }
 

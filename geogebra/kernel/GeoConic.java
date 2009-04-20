@@ -97,8 +97,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	private double[] mu = new double[2];
 	private GeoVec2D c = new GeoVec2D(kernel);		
 
-	public GeoConic(Construction c) {
+	
+	public GeoConic(Construction c){
+		this(c,null);
+	}
+	
+	protected GeoConic(Construction c, GeoElement cs) {
 		super(c);
+		setCoordSys(cs);
 		eqnSolver = c.getEquationSolver();
 		toStringMode = EQUATION_IMPLICIT;
 	}		
@@ -109,9 +115,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	}
 	
 	/** Creates new GeoConic with Coordinate System for 3D */
-	public GeoConic(Construction c, String label, double[] coeffs, GeoElement cs) {
-		this(c);
-		setCoordSys(cs);
+	protected GeoConic(Construction c, String label, double[] coeffs, GeoElement cs) {
+		this(c,cs);
 		setCoeffs(coeffs);
 		setLabel(label);		
 	}	

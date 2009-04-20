@@ -83,6 +83,9 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	
 	protected void compute() {
 		
+		
+		//Application.debug("compute coord sys");
+		
 		//recompute the coord sys
 		cs.resetCoordSys();
 		for(int i=0;(!cs.isMadeCoordSys())&&(i<points.length);i++)

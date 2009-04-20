@@ -76,10 +76,10 @@ public class Test3D{
 		
 		testConic3D();
 
-		testAlgoPyramide();
+		//testAlgoPyramide();
 		//testPolygon();
 
-		testQuadric();
+		//testQuadric();
     	
 		//testRay3D();
 		//testVector3D();
@@ -479,11 +479,18 @@ public class Test3D{
 	
 	private void testConic3D(){
 		
-		GeoConic3D conic = kernel3D.Conic3D("conic", 1, 0, 1, -2, -2, -2, xOyPlane);
+		//GeoConic3D conic = kernel3D.Conic3D("conic", 1, 0, 1, -2, -2, -2, xOyPlane);		
+		//conic.setObjColor(new Color(1f,0f,0f));
 		
-		conic.setObjColor(new Color(1f,0f,0f));
 		
-		Application.debug("conic is a circle : "+(conic.getType()==GeoConic.CONIC_CIRCLE));
+		GeoPoint3D[] points = new GeoPoint3D[3];
+		points[0] = testPoint(1f,-2f,0f);
+		points[1] = testPoint(1f,0f,0f);
+		points[2] = testPoint(-1f,0f,0f);
+		
+		GeoConic3D conic2 = kernel3D.Circle3D("circle3points", points[0], points[1], points[2]);		
+		conic2.setObjColor(new Color(1f,0.5f,0f));
+		
 		
 	}
 	

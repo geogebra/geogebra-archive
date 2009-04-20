@@ -184,8 +184,10 @@ public abstract class GeoCoordSys extends GeoElement3D{
 		}
 
 		//if the coord sys is made, the drawing matrix is updated
-		if (isMadeCoordSys())
+		if (isMadeCoordSys()){
 			updateDrawingMatrix();
+			//getDrawingMatrix().SystemPrint();
+		}
 		
 	}
 	

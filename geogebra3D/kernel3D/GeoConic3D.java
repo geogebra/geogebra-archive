@@ -22,7 +22,9 @@ extends GeoConic implements GeoElement3DInterface{
 	
 	
 	
-	
+	public GeoConic3D(Construction c, GeoElement cs) {
+		super(c,cs);
+	}	
 	
 	
 	
@@ -30,6 +32,8 @@ extends GeoConic implements GeoElement3DInterface{
 	public GeoConic3D(Construction c, String label, double[] coeffs, GeoElement cs) {
 		super(c,label,coeffs,cs);
 	}	
+	
+	
 	
 	
 	

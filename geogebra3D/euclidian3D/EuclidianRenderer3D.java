@@ -888,8 +888,9 @@ public class EuclidianRenderer3D implements GLEventListener {
      */
     public void drawCircle(double x, double y, double R){
 
+    	initMatrix();
     	drawCircleArcDashedOrNot((float) x, (float) y, (float) R, 0, 2f * (float) Math.PI, m_dash!=null);
-    	
+    	resetMatrix();
     }
     
     
