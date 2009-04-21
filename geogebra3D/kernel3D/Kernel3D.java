@@ -273,7 +273,7 @@ public class Kernel3D
 	
 	
 	/** 
-	 * circle with through points A, B, C
+	 * circle through points A, B, C
 	 */
 	final public GeoConic3D Circle3D(
 		String label,
@@ -288,5 +288,19 @@ public class Kernel3D
 		return circle;
 	}
 	
+	
+	
+	/** 
+	 * plane through points A, B, C
+	 */
+	final public GeoPlane3D Plane3D(
+		String label,
+		GeoPoint3D A,
+		GeoPoint3D B,
+		GeoPoint3D C) {
+		AlgoPlane algo = new AlgoPlane(cons, label, A,B,C);
+		GeoPlane3D plane = (GeoPlane3D) algo.getCoordSys();
+		return plane;
+	}
 	
 }

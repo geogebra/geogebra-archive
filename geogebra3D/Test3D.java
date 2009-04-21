@@ -491,6 +491,7 @@ public class Test3D{
 		GeoConic3D conic2 = kernel3D.Circle3D("circle3points", points[0], points[1], points[2]);		
 		conic2.setObjColor(new Color(1f,0.5f,0f));
 		
+		kernel3D.Plane3D("plane3points", points[0], points[1], points[2]);
 		
 	}
 	

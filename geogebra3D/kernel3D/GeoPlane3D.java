@@ -17,6 +17,24 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	double dy = 1.0; 
 	
 
+	/**
+	 * creates an empty plane
+	 * @param c construction
+	 */
+	public GeoPlane3D(Construction c){
+		super(c);
+		this.xmin = -3; this.xmax = 3;
+		this.ymin = -3; this.ymax = 3;	
+		
+		//grid
+		setGridOrigin(new Ggb3DVector(new double[] {0,0,0,1}));
+		setGrid(false);
+        
+		
+		//alpha
+		setAlphaValue(ConstructionDefaults3D.DEFAULT_PLANE_ALPHA);
+		
+	}
 	
 	/** creates a plane with origin o, vectors v1, v2*/
 	public GeoPlane3D(Construction c, 

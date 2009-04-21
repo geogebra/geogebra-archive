@@ -44,7 +44,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 
     	this.getKernel().setSilentMode(true);
     	algo = new AlgoCoordSys2D(this.getConstruction(),
-    			new GeoPoint3D[] {(GeoPoint3D) A, (GeoPoint3D) B, (GeoPoint3D) C},true,false);    	
+    			new GeoPoint3D[] {(GeoPoint3D) A, (GeoPoint3D) B, (GeoPoint3D) C},true,false,false);    	
     	coordSys = algo.getCoordSys();
     	points2D = algo.getPoints2D();
     	this.getKernel().setSilentMode(false);

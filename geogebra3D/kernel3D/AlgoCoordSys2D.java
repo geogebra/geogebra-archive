@@ -18,7 +18,7 @@ import geogebra3D.Matrix.Ggb3DVector;
 public class AlgoCoordSys2D extends AlgoElement3D {
 
 	/** the 2D coord sys created */
-	private GeoCoordSys2D cs;
+	protected GeoCoordSys2D cs;
 	
 	
 	/** 3D points */
@@ -28,9 +28,11 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	/** says if 2D points are created */
 	boolean createPoints2D;
 	
-	/** 3D points */
+	/** 2D points */
 	private GeoPoint[] points2D;
 	
+	/** says if the vector Vx has to be parallel to xOy plane */
+	private boolean vxParallelToXoy;
 	
 	/**
 	 * create a 2D coord sys joining points, with label.
@@ -51,7 +53,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 */
 	public AlgoCoordSys2D(Construction c, GeoPoint3D[] points, 
 			boolean createPoints2D) {		
-		this(c,points,createPoints2D,true);
+		this(c,points,createPoints2D,false,true);
 	}
 	
 	/**
@@ -59,15 +61,17 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 * @param c construction
 	 * @param points the vertices of the polygon
 	 * @param createPoints2D says if 2D points have to be created
+	 * @param vxParallelToXoy says if the vector Vx has to be parallel to xOy plane
 	 * @param setDependencies says if the dependencies have to be set
 	 */
 	public AlgoCoordSys2D(Construction c, GeoPoint3D[] points, 
-			boolean createPoints2D, boolean setDependencies) {
+			boolean createPoints2D, boolean vxParallelToXoy, boolean setDependencies) {
 		super(c);
 		
-		cs = new GeoCoordSys2D(c);
+		createCoordSys(c);
 		this.points = points;
 		this.createPoints2D = createPoints2D;
+		this.vxParallelToXoy = vxParallelToXoy;
 
 		
 		GeoElement[] out;
@@ -93,12 +97,21 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 		
 	}
 	
+	
+	/**
+	 * create the coord sys
+	 * @param c construction
+	 */
+	protected void createCoordSys(Construction c){
+		cs = new GeoCoordSys2D(c);
+	}
+	
 	protected void compute() {
 				
 		//recompute the coord sys
 		cs.resetCoordSys();
 		for(int i=0;(!cs.isMadeCoordSys())&&(i<points.length);i++)
-			cs.addPointToCoordSys(points[i].getCoords(),true);
+			cs.addPointToCoordSys(points[i].getCoords(),true,vxParallelToXoy);
 		
 		//if there's no coord sys, the coord sys is undefined
 		//TODO add case where the coord sys is made of colinear points
