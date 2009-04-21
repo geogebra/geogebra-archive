@@ -4,11 +4,13 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 /**
  * Algo creating a 2D coord sys linked to 3D points.
+ * <p>
+ * The dependencies can be set or not (for helper algo).
+ * 
  * 
  * @author ggb3D
  *
@@ -41,16 +43,26 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 		this(c,points,createPoints2D);
 		cs.setLabel(label);
 	}
+	/**
+	 * create a 2D coord sys joining points.
+	 * @param c construction
+	 * @param points the vertices of the polygon
+	 * @param createPoints2D says if 2D points have to be created
+	 */
+	public AlgoCoordSys2D(Construction c, GeoPoint3D[] points, 
+			boolean createPoints2D) {		
+		this(c,points,createPoints2D,true);
+	}
 	
 	/**
 	 * create a 2D coord sys joining points.
 	 * @param c construction
-	 * @param point 
-	 * @param createPoints2Ds 
 	 * @param points the vertices of the polygon
 	 * @param createPoints2D says if 2D points have to be created
+	 * @param setDependencies says if the dependencies have to be set
 	 */
-	public AlgoCoordSys2D(Construction c, GeoPoint3D[] points, boolean createPoints2D) {
+	public AlgoCoordSys2D(Construction c, GeoPoint3D[] points, 
+			boolean createPoints2D, boolean setDependencies) {
 		super(c);
 		
 		cs = new GeoCoordSys2D(c);
@@ -65,7 +77,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 			out = new GeoElement[points.length+1];	
 			for(int i=0;i<points.length;i++){
 				points2D[i]=new GeoPoint(c);
-				points2D[i].setLabel("essaiPoint");
+				//points2D[i].setLabel("essaiPoint");
 				out[i+1]=points2D[i];
 			}
 		}else{
@@ -76,16 +88,13 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 		
 		
 		//set input and output		
-		setInputOutput(points, out);
+		setInputOutput(points, out, setDependencies);
 		
 		
 	}
 	
 	protected void compute() {
-		
-		
-		//Application.debug("compute coord sys");
-		
+				
 		//recompute the coord sys
 		cs.resetCoordSys();
 		for(int i=0;(!cs.isMadeCoordSys())&&(i<points.length);i++)

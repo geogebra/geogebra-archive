@@ -19,7 +19,8 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 	/** 2D projection of the 3D points in the coord sys */
 	private GeoPoint[] points2D;
 	
-	AlgoCoordSys2D algo;
+	/** helper algo for 2D coord sys */
+	private AlgoCoordSys2D algo;
 	
 	/**
 	 * Basic constructor
@@ -42,12 +43,11 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     	super.setPoints(A, B, C);
 
     	this.getKernel().setSilentMode(true);
-    	algo = new AlgoCoordSys2D(this.getConstruction(),null,
-    			new GeoPoint3D[] {(GeoPoint3D) A, (GeoPoint3D) B, (GeoPoint3D) C},true);
+    	algo = new AlgoCoordSys2D(this.getConstruction(),
+    			new GeoPoint3D[] {(GeoPoint3D) A, (GeoPoint3D) B, (GeoPoint3D) C},true,false);    	
     	coordSys = algo.getCoordSys();
     	points2D = algo.getPoints2D();
     	this.getKernel().setSilentMode(false);
-    	
     }
 
     
@@ -71,7 +71,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     
   
     public void compute(){
-    	//TODO do this in another way
+    	
     	algo.compute();
     	super.compute();
     }

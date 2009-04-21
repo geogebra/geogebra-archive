@@ -88,7 +88,6 @@ abstract public class AlgoElement3D extends AlgoElement{
 	}
 	
 	
-	
 	/**
 	 * set the {@link GeoElement} in input and in output.
 	 * call finally {@link #setInputOutput()}
@@ -96,19 +95,39 @@ abstract public class AlgoElement3D extends AlgoElement{
 	 * @param a_output elements in output
 	 */
 	protected void setInputOutput(GeoElement[] a_input, GeoElement[] a_output) {
+		setInputOutput(a_input,a_output,true);
+	}
+	
+	/**
+	 * set the {@link GeoElement} in input and in output.
+	 * call finally {@link #setInputOutput()}
+	 * @param a_input elements in input
+	 * @param a_output elements in output
+	 * @param setDependencies says if the dependencies have to be set
+	 */
+	protected void setInputOutput(GeoElement[] a_input, GeoElement[] a_output, boolean setDependencies) {
 		
 		input = a_input;
 		output = a_output;
-		setInputOutput();
+		setInputOutput(setDependencies);
 	
 	}
-	
 	/**
 	 * calls {@link AlgoElement#setDependencies()} and {@link AlgoElement#compute()}
 	 */
 	protected void setInputOutput() {
-		         
-        setDependencies();
+		
+		setInputOutput(true);
+       
+	}	
+	/**
+	 * calls {@link AlgoElement#setDependencies()} and {@link AlgoElement#compute()}
+	 * @param setDependencies says if the dependencies have to be set
+	 */
+	protected void setInputOutput(boolean setDependencies) {
+		    
+		if (setDependencies)
+			setDependencies();
         compute();
        
 	}

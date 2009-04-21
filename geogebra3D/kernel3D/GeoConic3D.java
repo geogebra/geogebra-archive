@@ -22,13 +22,23 @@ extends GeoConic implements GeoElement3DInterface{
 	
 	
 	
+	/**
+	 * Creates an empty 3D conic with 2D coord sys
+	 * @param c construction
+	 * @param cs 2D coord sys
+	 */
 	public GeoConic3D(Construction c, GeoElement cs) {
 		super(c,cs);
 	}	
 	
 	
 	
-	/** Creates new GeoConic with Coordinate System for 3D */
+	/** Creates new GeoConic with Coordinate System for 3D 
+	 * @param c construction
+	 * @param label name
+	 * @param coeffs coeffs of the implicit equation
+	 * @param cs 2D coord sys
+	 * */
 	public GeoConic3D(Construction c, String label, double[] coeffs, GeoElement cs) {
 		super(c,label,coeffs,cs);
 	}	
@@ -135,10 +145,11 @@ extends GeoConic implements GeoElement3DInterface{
 			sbToString.append(label);
 			
 
-			//says in which 2D coord sys the equation is calculated
-			sbToString.append(" (");
-			sbToString.append(coordSys.getLabel());
-			sbToString.append(")");
+			//TODO says in which 2D coord sys the equation is calculated
+			if (coordSys.getLabel()!=null){
+				sbToString.append("\\");
+				sbToString.append(coordSys.getLabel());
+			}
 
 			
 			sbToString.append(": ");
