@@ -123,6 +123,11 @@ public interface EuclidianConstants {
 	public static final int MODE_RECORD_TO_SPREADSHEET = 59;
 	// GeoGebra 3.4 start
 	public static final int MODE_JAVASCRIPT_ACTION = 60;
+	
+	// ggb3D start
+	/** special mode that allows to create point inside a region (polygon, etc.) */
+	public static final int MODE_POINT_INSIDE = 101;
+
 
 	public static final int MACRO_MODE_ID_OFFSET = 1001;
 

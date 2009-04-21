@@ -580,11 +580,12 @@ public class EuclidianController implements MouseListener,
 		switch (mode) {
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
-		case EuclidianView.MODE_POINT:			
+		case EuclidianView.MODE_POINT:case EuclidianView.MODE_POINT_INSIDE:				
 			view.setHits(mouseLoc);
 			//hits = view.getHits(mouseLoc, true);
 			hits = view.getHits();
-			createNewPoint(hits, true, true, true, true); // point can be in a region
+			// if mode==EuclidianView.MODE_POINT_INSIDE, point can be in a region
+			createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_INSIDE, true, true); 
 			break;
 			
 		case EuclidianView.MODE_SEGMENT:
@@ -1753,7 +1754,7 @@ public class EuclidianController implements MouseListener,
 				hits = tempArrayList;				
 			}
 		}
-		else if (mode == EuclidianView.MODE_POINT) {
+		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_INSIDE) {
 			// include polygons in hits
 			view.setHits(mouseLoc);
 			hits = view.getHits();
@@ -1888,7 +1889,7 @@ public class EuclidianController implements MouseListener,
 			}
 			break;
 			
-		case EuclidianView.MODE_POINT:
+		case EuclidianView.MODE_POINT:case EuclidianView.MODE_POINT_INSIDE:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
 				hits.keepOnlyHitsForNewPointMode();
@@ -2641,7 +2642,8 @@ public class EuclidianController implements MouseListener,
 					region = (Region) chooseGeo(regionHits);
 					createPoint = region != null;
 				} else {
-					createPoint = false;
+					createPoint = true;
+					// if inRegionPossible is false, the point is created as a free point
 				}
 				
 			}
@@ -2668,7 +2670,6 @@ public class EuclidianController implements MouseListener,
 		if (createPoint) {
 			transformCoords(); // use point capturing if on
 			if (path == null) {
-				
 				if (region == null){
 					//point = kernel.Point(null, xRW, yRW);
 					point = createNewPoint();
