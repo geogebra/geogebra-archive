@@ -945,10 +945,8 @@ public class EuclidianRenderer3D implements GLEventListener {
      */
     private void drawCircleArcNotDashed(float x, float y, float R, float startAngle, float endAngle){
     	int nsides = 16; //TODO use thickness
-    	float r=R;
-    	if (r<1)
-    		r=1f;
-    	int rings = (int) (4*r*(endAngle-startAngle)) +2;
+
+    	int rings = (int) (60*(endAngle-startAngle)) +2;
     	drawTorusArc(x, y, R, startAngle, endAngle, nsides, rings);
     }
 

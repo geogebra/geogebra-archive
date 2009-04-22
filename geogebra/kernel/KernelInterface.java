@@ -16,6 +16,6 @@ public interface KernelInterface {
 	 * @param y y-coord
 	 * @param z z-coord
 	 * @return a 3D point (using GeoPoint3D class in Kernel3D)*/
-	public GeoElement Point3D(String label, double x, double y, double z);
+	//public GeoElement Point3D(String label, double x, double y, double z);
 
 }

@@ -38,7 +38,6 @@ import geogebra.plugin.ScriptManager;
 import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
 import geogebra.util.Util;
-import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

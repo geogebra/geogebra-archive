@@ -22,11 +22,11 @@ import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.Variable;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.kernel.arithmetic3D.MyVec3DNode;
+import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.main.MyParseError;
-import geogebra3D.kernel3D.arithmetic.MyVec3DNode;
-import geogebra3D.kernel3D.arithmetic.Vector3DValue;
 
 import java.util.Vector;
 

@@ -25,9 +25,9 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
+import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.arithmetic.Vector3DValue;
 
 import java.util.HashSet;
 import java.util.Iterator;

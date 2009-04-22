@@ -37,7 +37,6 @@ import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.arithmetic.Vector3DValue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -974,28 +973,17 @@ public class AlgebraProcessor {
 			return ret;
 		}
 		
-	private GeoElement[] processPointVector3D(
+	/** empty method in 2D : see AlgebraProcessor3D to see implementation in 3D
+	 * @param n
+	 * @param evaluate
+	 * @return null
+	 */
+	protected GeoElement[] processPointVector3D(
 			ExpressionNode n,
 			ExpressionValue evaluate) {
-			String label = n.getLabel();				        
-			
-			double[] p = ((Vector3DValue) evaluate).getPointAsDouble();
-							
-			GeoElement[] ret = new GeoElement[1];
-			boolean isIndependent = n.isConstant();
 
-			if (isIndependent) {
-				// get coords
-				double x = p[0];
-				double y = p[1];
-				double z = p[2];
-					ret[0] = kernel.Point3D(label, x, y, z);			
-			} else {
-					ret[0] = kernel.DependentPoint3D(label, n);
-			}
-			
-			return ret;
-		}
+		return null;
+	}
 		
 	/** 
 	 * Creates a dependent copy of origGeo with label

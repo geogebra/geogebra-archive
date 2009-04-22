@@ -16,7 +16,7 @@ the Free Software Foundation.
  * Created on 31. August 2001, 11:34
  */
 
-package geogebra3D.kernel3D.arithmetic;
+package geogebra.kernel.arithmetic3D;
 
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;

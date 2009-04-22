@@ -5643,6 +5643,7 @@ public class Kernel implements KernelInterface {
 	/////////////////////////////////////////////
 	// empty methods, used by Kernel3D
 	
+	/*
 	public GeoElement Point3D(String label, double x, double y, double z){
 		return null;
 	}
@@ -5650,7 +5651,7 @@ public class Kernel implements KernelInterface {
 	public GeoElement DependentPoint3D(String label, ExpressionNode n){
 		return null;
 	}
-	
+	*/
 	
 	
 	

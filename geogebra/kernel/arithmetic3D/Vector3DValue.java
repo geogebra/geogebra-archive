@@ -16,7 +16,7 @@ the Free Software Foundation.
  * Created on 03. Oktober 2001, 10:09
  */
 
-package geogebra3D.kernel3D.arithmetic;
+package geogebra.kernel.arithmetic3D;
 
 
 import geogebra.kernel.arithmetic.ExpressionValue;

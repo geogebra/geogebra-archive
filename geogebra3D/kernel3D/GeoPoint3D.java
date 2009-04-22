@@ -27,8 +27,8 @@ import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.PointProperties;
+import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.kernel3D.arithmetic.Vector3DValue;
 
 
 /**
