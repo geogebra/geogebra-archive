@@ -21,6 +21,8 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		cmdTable.put("Line", new CmdLine3D(kernel3D));
 		cmdTable.put("Polygon", new CmdPolygon3D(kernel3D));
 		cmdTable.put("Point", new CmdPoint3D(kernel3D));
+		cmdTable.put("Circle", new CmdCircle3D(kernel3D));
+		cmdTable.put("Plane", new CmdPlane(kernel3D));
 	}
 	
 	

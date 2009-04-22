@@ -47,7 +47,7 @@ import java.util.ArrayList;
 
 public abstract class CommandProcessor  {
 	    
-    Application app;
+    protected Application app;
     Kernel kernel;
     Construction cons;
 	private AlgebraProcessor algProcessor;
@@ -145,7 +145,7 @@ public abstract class CommandProcessor  {
            return new MyError(app, sb.toString());
        }
 
-        final MyError argNumErr(
+        protected final MyError argNumErr(
            Application app,
            String cmd,
            int argNumber) {
@@ -1251,10 +1251,13 @@ class CmdCorner extends CmdVertex {
 
 }
 
+// ggb3D : moved to CmdCircle.java
+
 /*
  * Circle[ <GeoPoint>, <GeoNumeric> ] Circle[ <GeoPoint>, <GeoPoint> ] Circle[
  * <GeoPoint>, <GeoPoint>, <GeoPoint> ]
  */
+/*
 class CmdCircle extends CommandProcessor {
 	
 	public CmdCircle(Kernel kernel) {
@@ -1322,6 +1325,8 @@ final public GeoElement[] process(Command c) throws MyError {
     }
 }
 }
+*/
+
 
 /*
  * Semicircle[ <GeoPoint>, <GeoPoint> ]

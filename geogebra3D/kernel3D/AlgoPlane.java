@@ -35,5 +35,11 @@ public class AlgoPlane extends AlgoCoordSys2D {
 	protected void createCoordSys(Construction c){
 		cs = new GeoPlane3D(c);
 	}
+	
+	
+	
+	protected String getClassName() {
+		return "AlgoPlane";
+	}
 
 }
