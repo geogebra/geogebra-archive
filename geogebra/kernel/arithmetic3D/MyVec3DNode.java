@@ -23,6 +23,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.main.Application;
 import geogebra.main.MyParseError;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -135,7 +136,7 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue {
      * interface Point3DValue implementation
      */           
     public double[] getPointAsDouble() {
-    	
+    	//Application.debug("myvec");
         return getCoords();
     }        
         

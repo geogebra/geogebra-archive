@@ -28,6 +28,7 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 
@@ -465,8 +466,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 
 
 	public double[] getPointAsDouble() {
-		// TODO Auto-generated method stub
-		return null;
+		return getInhomCoords().get();
 	};
     
     
