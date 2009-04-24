@@ -81,7 +81,7 @@ import java.util.Locale;
 import java.util.Stack;
 
 
-public class Kernel implements KernelInterface {
+public class Kernel {
 
 	// standard precision 
 	public final static double STANDARD_PRECISION = 1E-8;
@@ -5639,19 +5639,6 @@ public class Kernel implements KernelInterface {
 	
 	
 	
-	
-	/////////////////////////////////////////////
-	// empty methods, used by Kernel3D
-	
-	/*
-	public GeoElement Point3D(String label, double x, double y, double z){
-		return null;
-	}
-	
-	public GeoElement DependentPoint3D(String label, ExpressionNode n){
-		return null;
-	}
-	*/
 	
 	
 	
