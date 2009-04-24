@@ -60,8 +60,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	//list of 3D objects
-	private boolean waitForUpdate = true; //says if it waits for update...
-	public boolean waitForPick = false; //says if it waits for update...
+	//private boolean waitForUpdate = true; //says if it waits for update...
+	//public boolean waitForPick = false; //says if it waits for update...
 	private boolean removeHighlighting = false; //for removing highlighting when mouse is clicked
 	DrawList3D drawList3D = new DrawList3D();
 	
@@ -353,8 +353,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		updateMatrix();
-		setWaitForUpdate(repaint);
-		//update();
+		//setWaitForUpdate(repaint);
+		if (repaint)
+			update();
 	}
 	
 	
@@ -416,6 +417,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void update(){
 
 
+		/*
 		if (waitForUpdate){
 
 			//picking
@@ -423,6 +425,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 				waitForPick = false;
 			}
+			
 
 			//other
 			drawList3D.updateAll();	//TODO waitForUpdate for each object
@@ -430,7 +433,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			waitForUpdate = false;
 
 		}
-
+		
+		*/
+		
+		
+		drawList3D.updateAll();	//TODO waitForUpdate for each object
 
 
 
@@ -438,11 +445,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	
-	
+	/*
 	private void setWaitForUpdate(boolean v){
 		waitForUpdate = v;
 	}
-	
+	*/
 	
 	
 	public void setRemoveHighlighting(boolean flag){
@@ -451,7 +458,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	public void paint(Graphics g){
-		setWaitForUpdate(true);
+		update();
+		//setWaitForUpdate(true);
 	}
 	
 	
@@ -568,7 +576,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public void repaintView() {
-		setWaitForUpdate(true);
+		//setWaitForUpdate(true);
+		
+		update();
 		
 		//Application.debug("repaint View3D");
 		

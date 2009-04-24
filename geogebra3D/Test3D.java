@@ -76,7 +76,7 @@ public class Test3D{
 		
 		testConic3D();
 
-		//testAlgoPyramide();
+		testAlgoPyramide();
 		//testPolygon();
 
 		//testQuadric();

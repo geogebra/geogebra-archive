@@ -1110,6 +1110,8 @@ public class EuclidianRenderer3D implements GLEventListener {
     public void doPick(){
     	
     	
+    	
+    	
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
@@ -1166,6 +1168,7 @@ public class EuclidianRenderer3D implements GLEventListener {
              
         //hits are stored
         m_view3D.getHits().init();
+        String s="doPick:";
         
         int names, ptr = 0;
         float zMax, zMin;
@@ -1185,18 +1188,22 @@ public class EuclidianRenderer3D implements GLEventListener {
         	//geos[buffer[ptr]].zPick = z;
         	num = selectBuffer.get(ptr);
         	((Hits3D) m_view3D.getHits()).addDrawable3D(drawHits[num]);
+        	s+="\n"+drawHits[num].getGeoElement().getLabel();
         	drawHits[num].zPickMin = zMin;
         	drawHits[num].zPickMax = zMax;
         	ptr++;
-          }          
+          }
+          
+          
         }
         
+        Application.debug(s);
         
         // sets the GeoElements in m_view3D.getHits()
         ((Hits3D) m_view3D.getHits()).sort();
         
         waitForPick = false;
-        m_view3D.waitForPick = true;
+        //m_view3D.waitForPick = true;
     }
     
     

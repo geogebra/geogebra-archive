@@ -152,10 +152,12 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	 * Try to add the point described by v to complete the coord sys.
 	 * @param v a point (x,y,z,1)
 	 * @param orthonormal say if the coord sys has to be orthonormal
-	 * @param vxParallelToXoy says if the vector Vx has to be parallel to xOy plane
+	 * @param standardCS says if the coord sys has to be "standard": 
+	 * (0,0,0) projected for origin,
+	 * and vector Vx parallel to xOy plane
 	 * 
 	 */
-	public void addPointToCoordSys(Ggb3DVector v, boolean orthonormal, boolean vxParallelToXoy){
+	public void addPointToCoordSys(Ggb3DVector v, boolean orthonormal, boolean standardCS){
 		
 		if (isMadeCoordSys())
 			return;
@@ -197,7 +199,15 @@ public abstract class GeoCoordSys extends GeoElement3D{
 
 		//if the coord sys is made, the drawing matrix is updated
 		if (isMadeCoordSys()){
-			if (vxParallelToXoy && m_dimension==2){
+			if (standardCS && m_dimension==2){
+				
+				updateDrawingMatrix();
+				
+				// (0,0,0) projected for origin
+				Ggb3DVector o = new Ggb3DVector(new double[] {0,0,0,1});
+				setOrigin(o.projectPlane(getMatrix4x4())[0]);
+				
+				// vector Vx parallel to xOy plane
 				Ggb3DVector vn = getVx().crossProduct(getVy());
 				Ggb3DVector vz = new Ggb3DVector(new double[] {0,0,1,0});
 				Ggb3DVector vx = vn.crossProduct(vz);
@@ -207,10 +217,15 @@ public abstract class GeoCoordSys extends GeoElement3D{
 					Ggb3DVector vy = vn.crossProduct(vx);
 					vy.normalize();
 					setVy(vy);
+				} else {
+					setVx(new Ggb3DVector(new double[] {1,0,0,0}));
+					setVy(new Ggb3DVector(new double[] {0,1,0,0}));
 				}
+				
+
 			}
+			
 			updateDrawingMatrix();
-			//getDrawingMatrix().SystemPrint();
 		}
 		
 	}

@@ -91,6 +91,16 @@ public class Hits3D extends Hits {
 					this.add(seg.getGeoParent());				
 		}
 		
+		
+		//debug
+		String s = "hits:";
+		for (Iterator iter = this.iterator(); iter.hasNext();) {
+			GeoElement geo = (GeoElement) iter.next();
+			s+="\n"+geo.getLabel();
+		}
+		Application.debug(s);
+		
+		
 	}
 	
 	
