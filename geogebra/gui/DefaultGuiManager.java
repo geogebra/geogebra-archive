@@ -993,7 +993,7 @@ public class DefaultGuiManager implements GuiManager {
 	public synchronized void initFileChooser() {
 		if (fileChooser == null) {
 			try {
-				fileChooser = new GeoGebraFileChooser(app.getCurrentImagePath()); // non-restricted
+				fileChooser = new GeoGebraFileChooser(app, app.getCurrentImagePath()); // non-restricted
 				// Added for Intergeo File Format (Yves Kreis) -->
 				fileChooser.addPropertyChangeListener(
 						JFileChooser.FILE_FILTER_CHANGED_PROPERTY,
@@ -1003,7 +1003,7 @@ public class DefaultGuiManager implements GuiManager {
 				// fix for  java.io.IOException: Could not get shell folder ID list
 				// Java bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857
 				Application.debug("Error creating GeoGebraFileChooser - using fallback option");
-				fileChooser = new GeoGebraFileChooser(app.getCurrentImagePath(), true); // restricted version		
+				fileChooser = new GeoGebraFileChooser(app, app.getCurrentImagePath(), true); // restricted version		
 			} 
 					
 			updateJavaUILanguage();
