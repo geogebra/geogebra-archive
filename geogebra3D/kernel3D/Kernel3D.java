@@ -197,7 +197,7 @@ public class Kernel3D
     final public GeoPolygon3D Polygon3D(String label, GeoPoint3D[] points){
 		
     	
-    	AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,points);
+    	AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,points,null);
     	
     	return (GeoPolygon3D) algo.getOutput()[0];
 		

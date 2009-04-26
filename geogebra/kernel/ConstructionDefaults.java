@@ -29,6 +29,7 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POINT_FREE = 10;
 	public static final int DEFAULT_POINT_DEPENDENT = 11;
 	public static final int DEFAULT_POINT_ON_PATH = 12;
+	public static final int DEFAULT_POINT_IN_REGION = 13;
 	
 	public static final int DEFAULT_LINE = 20;			
 	public static final int DEFAULT_VECTOR = 30;	
@@ -53,6 +54,7 @@ public class ConstructionDefaults {
 	public static final Color colPoint = Color.blue;
 	public static final Color colDepPoint = Color.darkGray;
 	public static final Color colPathPoint = new Color(125, 125, 255);
+	public static final Color colRegionPoint = colPathPoint;
 
 	// lines
 	private static final Color colLine = Color.black;
@@ -150,6 +152,13 @@ public class ConstructionDefaults {
 		pathPoint.setLocalVariableLabel("PointOn");
 		pathPoint.setObjColor(colPathPoint);
 		defaultGeoElements.put(DEFAULT_POINT_ON_PATH, pathPoint);
+		
+		// point in region
+		GeoPoint regionPoint = new GeoPoint(cons);	
+//		pathPoint.setLocalVariableLabel(app.getPlain("PointOn"));
+		regionPoint.setLocalVariableLabel("PointInRegion");
+		regionPoint.setObjColor(colRegionPoint);
+		defaultGeoElements.put(DEFAULT_POINT_IN_REGION, regionPoint);
 				
 		// line
 		GeoLine line = new GeoLine(cons);	
@@ -269,6 +278,8 @@ public class ConstructionDefaults {
 					GeoPoint p = (GeoPoint) geo;
 					if (p.hasPath())
 						type = DEFAULT_POINT_ON_PATH;	
+					else if (p.hasRegion())
+						type = DEFAULT_POINT_IN_REGION;						
 					else
 						type = DEFAULT_POINT_DEPENDENT;
 				}
@@ -316,7 +327,7 @@ public class ConstructionDefaults {
 				type = DEFAULT_NUMBER;
 				break;
 		
-			case GeoElement.GEO_CLASS_POLYGON:
+			case GeoElement.GEO_CLASS_POLYGON: 
 				type = DEFAULT_POLYGON;
 				break;
 	
@@ -333,6 +344,7 @@ public class ConstructionDefaults {
 		
 		// default
 		GeoElement defaultGeo = getDefaultGeo(type);
+		//Application.debug("defaultGeo = "+defaultGeo);
 		if (defaultGeo != null) {
 			geo.setAllVisualProperties(defaultGeo);		
 			

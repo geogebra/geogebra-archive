@@ -72,17 +72,33 @@ public class GeoPolyhedron extends GeoElement3D {
 		
 		
 		
-		//TODO remove old faces
+		//TODO remove old faces and edges
 		
 		polygons = new GeoPolygon3D[faces.length];
+		segments = new GeoSegment3D[points.length*points.length]; //TODO create smaller collection
 		
 		// create missing faces
-        for (int i=0; i < faces.length; i++) {
-        	GeoPoint3D[] p = new GeoPoint3D[faces[i].length];
-        	for (int j=0; j < faces[i].length; j++) {
-        		p[j]=points[faces[i][j]];
-       	}
-        	polygons[i] = createPolygon(p);
+		for (int i=0; i < faces.length; i++) {
+			//vertices of the face
+			GeoPoint3D[] p = new GeoPoint3D[faces[i].length];
+			//edges linked to the face
+			GeoSegmentInterface[] s = new GeoSegmentInterface[faces[i].length];
+			for (int j=0; j < faces[i].length; j++) {
+				p[j]=points[faces[i][j]];
+
+				// creates edges
+				int startPoint = faces[i][j];
+				int endPoint = faces[i][(j+1) % faces[i].length];
+
+				if (segments[startPoint+endPoint*points.length]==null){
+					segments[startPoint+endPoint*points.length]=
+						segments[endPoint+startPoint*points.length]=
+							createSegment(startPoint, endPoint);
+				}
+				s[j] = segments[startPoint+endPoint*points.length];
+			}
+			polygons[i] = createPolygon(p);
+			polygons[i].setSegments(s);
         }  
 	}
 	
@@ -96,17 +112,50 @@ public class GeoPolyhedron extends GeoElement3D {
 	public GeoPolygon3D createPolygon(GeoPoint3D[] points){
 		 GeoPolygon3D polygon;
 
-		 AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,points,false);            
+		 AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,points,false,this);            
 		 cons.removeFromConstructionList(algo);               
 
 		 polygon = (GeoPolygon3D) algo.getPoly();
 		 // refresh color to ensure segments have same color as polygon:
 		 polygon.setObjColor(getObjectColor()); 
+		 
+		 //TODO translation for face
+		 String s="face";
+		 for(int i=0;i<points.length;i++)
+			 s+=points[i].getLabel();
+		 polygon.setLabel(s);
+		 
 
 		 return polygon;
 	 }
 	
 	
+	
+	 /**
+	  * return a segment joining startPoint and endPoint
+	  * @param startPoint the start point
+	  * @param endPoint the end point
+	  * @return the segment
+	  */
+	
+	 public GeoSegment3D createSegment(int startPoint, int endPoint){
+		 GeoSegment3D segment;
+
+		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, 
+				 points[startPoint], points[endPoint], this, GeoElement3D.GEO_CLASS_SEGMENT3D);            
+		 cons.removeFromConstructionList(algoSegment);               
+
+		 segment = (GeoSegment3D) algoSegment.getCS(); 
+		 // refresh color to ensure segments have same color as polygon:
+		 segment.setObjColor(getObjectColor()); 
+		 
+		 //TODO translation for edge
+		 segment.setLabel("edge"+points[startPoint].getLabel()+points[endPoint].getLabel());
+
+		 return segment;
+		 
+		 
+	 }
 	
 	
 	
@@ -117,22 +166,20 @@ public class GeoPolyhedron extends GeoElement3D {
 		return null;
 	}
 
-	@Override
+
 	public int getGeoClassType() {
-		// TODO Auto-generated method stub
-		return 0;
+		return GEO_CLASS_POLYHEDRON;
 	}
 
-	@Override
+
 	protected String getTypeString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Polyhedron";
 	}
 
 	@Override
 	public boolean isDefined() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -156,25 +203,34 @@ public class GeoPolyhedron extends GeoElement3D {
 	@Override
 	public boolean showInAlgebraView() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	protected boolean showInEuclidianView() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public String toValueString() {
 		// TODO Auto-generated method stub
-		return null;
+		return "todo-GeoPolyhedron";
 	}
 
-	@Override
+
+	
 	protected String getClassName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "GeoPolyhedron";
 	}
+	
+	
+	
+	
+	
+	
+
+	
+	
 
 }

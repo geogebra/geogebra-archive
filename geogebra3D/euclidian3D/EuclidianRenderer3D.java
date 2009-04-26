@@ -1168,7 +1168,8 @@ public class EuclidianRenderer3D implements GLEventListener {
              
         //hits are stored
         m_view3D.getHits().init();
-        String s="doPick:";
+        
+        //String s="doPick:";
         
         int names, ptr = 0;
         float zMax, zMin;
@@ -1188,7 +1189,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         	//geos[buffer[ptr]].zPick = z;
         	num = selectBuffer.get(ptr);
         	((Hits3D) m_view3D.getHits()).addDrawable3D(drawHits[num]);
-        	s+="\n"+drawHits[num].getGeoElement().getLabel();
+        	//s+="\n"+drawHits[num].getGeoElement().getLabel();
         	drawHits[num].zPickMin = zMin;
         	drawHits[num].zPickMax = zMax;
         	ptr++;
@@ -1197,7 +1198,7 @@ public class EuclidianRenderer3D implements GLEventListener {
           
         }
         
-        Application.debug(s);
+        //Application.debug(s);
         
         // sets the GeoElements in m_view3D.getHits()
         ((Hits3D) m_view3D.getHits()).sort();

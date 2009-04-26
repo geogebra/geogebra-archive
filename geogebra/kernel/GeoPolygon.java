@@ -382,6 +382,13 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	public GeoSegmentInterface [] getSegments() {
 		return segments;
 	}
+	
+	/** sets the segments (used by GeoPolyhedron)
+	 * @param segments the segments
+	 */
+	public void setSegments(GeoSegmentInterface [] segments){
+		this.segments = segments;
+	}
 
 	public boolean isFillable() {
 		return true;

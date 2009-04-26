@@ -86,7 +86,6 @@ extends GeoPolygon implements GeoElement3DInterface, Path3D {
 	  * @param endPoint the end point
 	  * @return the segment
 	  */
-	
 	 public GeoSegmentInterface createSegment(GeoPointInterface startPoint, GeoPointInterface endPoint){
 		 GeoSegmentInterface segment;
 

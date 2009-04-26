@@ -514,7 +514,8 @@ public class Test3D{
 		points[4] = testPoint(0f,0f,2f);
 		
 		
-		GeoPolyhedron p=kernel3D.Polyhedron("poly", points, new int[][] {{0,1,2,3},{0,1,4}});
+		GeoPolyhedron p=kernel3D.Polyhedron("poly", points, 
+				new int[][] {{0,1,2,3},{0,1,4},{1,2,4},{2,3,4},{3,0,4}});
 		p.setObjColor(new Color(0f,0f,1f));
 		//p.setAlphaValue(0.5f);
 	}

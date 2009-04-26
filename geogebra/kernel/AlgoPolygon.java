@@ -29,7 +29,11 @@ public class AlgoPolygon extends AlgoElement {
 	private GeoList geoList;  // alternative input
     protected GeoPolygon poly;     // output
     
-    protected GeoElement cs2D; //2D coord sys used for 3D
+    /** /2D coord sys used for 3D */
+    protected GeoElement cs2D; 
+    
+    /** polyhedron (when segment is part of), used for 3D */
+    protected GeoElement polyhedron; 
     
     
     protected AlgoPolygon(Construction cons, String [] labels, GeoList geoList) {
@@ -41,7 +45,7 @@ public class AlgoPolygon extends AlgoElement {
     }
  
     protected AlgoPolygon(Construction cons, String [] labels, GeoPointInterface [] points, GeoList geoList) {
-    	this(cons,labels,points,geoList,null,true);
+    	this(cons,labels,points,geoList,null,true,null);
     }
     
     /**
@@ -51,13 +55,16 @@ public class AlgoPolygon extends AlgoElement {
      * @param geoList list of vertices of the polygon (alternative to points)
      * @param cs2D for 3D stuff : GeoCoordSys2D
      * @param createSegments  says if the polygon has to creates its edges (3D only) 
+     * @param polyhedron polyhedron (when segment is part of), used for 3D
      */
     protected AlgoPolygon(Construction cons, String [] labels, 
-    		GeoPointInterface [] points, GeoList geoList, GeoElement cs2D, boolean createSegments) {
+    		GeoPointInterface [] points, GeoList geoList, GeoElement cs2D, 
+    		boolean createSegments, GeoElement polyhedron) {
         super(cons);
         this.points = points;           
         this.geoList = geoList;
         this.cs2D = cs2D;
+        this.polyhedron = polyhedron;
           
         //poly = new GeoPolygon(cons, points);
         createPolygon(createSegments);  
@@ -113,11 +120,24 @@ public class AlgoPolygon extends AlgoElement {
     protected void setInputOutput() {
     	if (geoList != null) {
     		// list as input
-    		input = new GeoElement[1];
-    		input[0] = geoList;
+    		if (polyhedron==null){
+    			input = new GeoElement[1];
+    			input[0] = geoList;
+    		}else{
+    			input = new GeoElement[2];
+    			input[0] = geoList;
+    			input[1] = polyhedron;
+    		}
     	} else {    	
     		// points as input
-    		input = (GeoElement[]) points;
+    		if (polyhedron==null)
+    			input = (GeoElement[]) points;
+    		else{
+    			input = new GeoElement[points.length+1];
+    			for(int i = 0; i < points.length; i++)
+    				input[i]=(GeoElement) points[i];
+    			input[points.length] = polyhedron;
+    		}
     	}    	
     	// set dependencies
         for (int i = 0; i < input.length; i++) {
@@ -154,6 +174,16 @@ public class AlgoPolygon extends AlgoElement {
     public GeoPoint [] getPoints() {
     	return (GeoPoint[]) points;
     }
+    
+    
+    
+    public void remove() {
+        super.remove();
+        //if polygon is part of a polyhedron, remove it
+        if (polyhedron != null)
+            polyhedron.remove();
+    }  
+    
         
     protected final void compute() { 
     	if (geoList != null) {

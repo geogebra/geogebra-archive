@@ -48,10 +48,11 @@ public class AlgoPolyhedron extends AlgoElement3D {
 
 	}
 
-	@Override
+
+
 	protected String getClassName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "AlgoPolyhedron";
 	}
+	
 
 }

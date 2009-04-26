@@ -42,8 +42,8 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 	private GeoPoint3D P;
 	/** second point */
 	private GeoPoint3D Q;
-	/** polygon (when segment is part of) */
-	private GeoPolygon3D polygon;
+	/** polygon or polyhedron (when segment is part of) */
+	private GeoElement poly;
 	
 	//output
 	/** 1D coord sys */
@@ -69,12 +69,12 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param label name of the segment/line/...
      * @param P first point
      * @param Q second point
-     * @param polygon polygon providing a 2D coord sys (when P and Q are 2D points)
+     * @param poly poly polygon or polyhedron (when segment is part of) 
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
     AlgoJoinPoints3D(Construction cons, String label, 
-    		GeoPoint3D P, GeoPoint3D Q, GeoPolygon3D polygon, int geoClassType) {
+    		GeoPoint3D P, GeoPoint3D Q, GeoElement poly, int geoClassType) {
 
-    	this(cons,P,Q,polygon,geoClassType);
+    	this(cons,P,Q,poly,geoClassType);
     	cs.setLabel(label);
 
     }
@@ -84,23 +84,23 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param cons the construction
      * @param P first point
      * @param Q second point
-     * @param polygon polygon (when segment is part of) 
+     * @param poly polygon or polyhedron (when segment is part of) 
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
     AlgoJoinPoints3D(Construction cons, 
-    		GeoPoint3D P, GeoPoint3D Q, GeoPolygon3D polygon, int geoClassType) {
+    		GeoPoint3D P, GeoPoint3D Q, GeoElement poly, int geoClassType) {
     	super(cons);
 
 
     	this.P = P;
     	this.Q = Q;
-    	this.polygon = polygon;
+    	this.poly = poly;
     	this.geoClassType = geoClassType;
 
     	switch(geoClassType){
     	case GeoElement3D.GEO_CLASS_SEGMENT3D:
     		cs = new GeoSegment3D(cons, P, Q);
-    		if (polygon!=null)
-    			((GeoSegment3D) cs).setGeoParent(polygon);
+    		if (poly!=null)
+    			((GeoSegment3D) cs).setGeoParent(poly);
     		break;
     	case GeoElement3D.GEO_CLASS_LINE3D:
     		cs = new GeoLine3D(cons, P, Q); 
@@ -113,47 +113,18 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     	}
     	
     	
-    	if (polygon==null)
+    	if (poly==null)
     		setInputOutput(new GeoElement[] {(GeoElement) P,(GeoElement) Q}, new GeoElement[] {cs});
     	else
-    		setInputOutput(new GeoElement[] {(GeoElement) P,(GeoElement) Q, polygon}, new GeoElement[] {cs});
+    		setInputOutput(new GeoElement[] {(GeoElement) P,(GeoElement) Q, poly}, new GeoElement[] {cs});
     	
     	 
     		
-    	/*
-    	setInputOutput(); // for AlgoElement
 
-    	// compute line through P, Q
-    	compute();
-    	*/
     }       
 
 
 
-    // for AlgoElement
-    /*
-    protected void setInputOutput() {
-    	GeoElement [] efficientInput = new GeoElement[2];
-    	efficientInput[0] = (GeoElement) P;
-    	efficientInput[1] = (GeoElement) Q;
-    	
-
-    	if (polygon == null) {
-    		input = efficientInput;    		
-    	} else {
-    		input = new GeoElement[3];
-    		input[0] = efficientInput[0];
-            input[1] = efficientInput[1];
-            input[2] = polygon;             
-    	}   
-    	            	
-    	
-        output = new GeoElement[1];
-        output[0] = cs;
-          
-        setEfficientDependencies(input, efficientInput);
-    }
-    */
     
     
     
@@ -208,8 +179,8 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     public void remove() {
         super.remove();
         //if segment is part of a polygon, remove it
-        if (polygon != null)
-            polygon.remove();
+        if (poly != null)
+            poly.remove();
     }  
     
     

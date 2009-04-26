@@ -161,15 +161,16 @@ public abstract class GeoElement3D
 	public static final int GEO_CLASS_RAY3D = 3121;
 	/** id for {@link GeoConic3D} */
 	public static final int GEO_CLASS_CONIC3D = 3122;
-	/** TODO remove */
-	public static final int GEO_CLASS_TRIANGLE3D = 3210;
-	/** id for {@link GeoPolygon3Dold} */
+
+	/** id for {@link GeoPolygon3D} */
 	public static final int GEO_CLASS_POLYGON3D = 3211;
 	/** id for {@link GeoPlane3D} */
 	public static final int GEO_CLASS_PLANE3D = 3220;
-	/** id for {@link GeoPolygon3Dold} */
+	/** id for {@link GeoQuadric} */
 	public static final int GEO_CLASS_QUADRIC = 3230;
 	
+	/** id for {@link GeoPolyhedron} */
+	public static final int GEO_CLASS_POLYHEDRON = 3310;
 
 
 	
