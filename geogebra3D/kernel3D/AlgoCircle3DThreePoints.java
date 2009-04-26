@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 
@@ -42,7 +43,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     	
     	super.setPoints(A, B, C);
 
-    	this.getKernel().setSilentMode(true);
+    	//this.getKernel().setSilentMode(true);
     	algo = new AlgoCoordSys2D(this.getConstruction(),
     			new GeoPoint3D[] {(GeoPoint3D) A, (GeoPoint3D) B, (GeoPoint3D) C},true,false,false);    	
     	coordSys = algo.getCoordSys();
@@ -56,6 +57,16 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
         circle = new GeoConic3D(cons,coordSys);
     }
     
+    
+    protected void setOutput() {
+
+    	output = new GeoElement[2+points2D.length];
+    	output[0] = circle;
+    	output[1] = coordSys;   	
+    	for(int i=0;i<points2D.length;i++)
+    		output[i+2]=points2D[i];
+
+    }
     
     
     
@@ -76,4 +87,15 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     	super.compute();
     }
     
+    
+    /*
+    public void remove() {      
+
+    	algo.remove();
+    	coordSys.doRemove();
+    	for(int i=0;i<points2D.length;i++)
+    		points2D[i].remove();
+    	
+    }
+    */
 }

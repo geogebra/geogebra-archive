@@ -196,15 +196,6 @@ public class Kernel3D
 	//TODO final public GeoPolygon3D Polygon3D(String[] label, GeoPoint3D[] points){
     final public GeoPolygon3D Polygon3D(String label, GeoPoint3D[] points){
 		
-    	/*
-		//creates the 2D coord sys to have 2D points
-		AlgoCoordSys2D algoCS = new AlgoCoordSys2D(cons,null,points,true);
-		
-		//creates the 3D polygon linked to the coord sys and the 2D points
-		AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,algoCS);
-		
-		return (GeoPolygon3D) algo.getOutput()[0];
-		*/
     	
     	AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,points);
     	
@@ -212,7 +203,20 @@ public class Kernel3D
 		
 	}	
 	
-	
+    /** Polyhedron with vertices and faces description
+     * @param label name
+     * @param points vertices
+     * @param faces faces description
+     * @return the polyhedron
+     */
+    final public GeoPolyhedron Polyhedron(String label, GeoPoint3D[] points, int[][] faces){
+		
+    	
+    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points,faces);
+    	
+    	return (GeoPolyhedron) algo.getOutput()[0];
+		
+	}	
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */
 	final public GeoPlane3D Plane3D(String label, Ggb3DVector o, Ggb3DVector v1, Ggb3DVector v2){

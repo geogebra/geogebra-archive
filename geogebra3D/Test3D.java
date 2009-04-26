@@ -74,15 +74,17 @@ public class Test3D{
 		
 		testRepere();
 		
-		testConic3D();
+		//testConic3D();
 
-		testAlgoPyramide();
+		//testAlgoPyramide();
 		//testPolygon();
 
 		//testQuadric();
     	
 		//testRay3D();
 		//testVector3D();
+		
+		testPolyhedron();
 		
 	}
 
@@ -498,7 +500,25 @@ public class Test3D{
 	
 	
 	
+
 	
+	private void testPolyhedron(){
+
+		
+		
+		GeoPoint3D[] points = new GeoPoint3D[5];
+		points[0] = testPoint(1f,-2f,0f);
+		points[1] = testPoint(1f,0f,0f);
+		points[2] = testPoint(-1f,0f,0f);
+		points[3] = testPoint(-1f,-2f,0f);
+		points[4] = testPoint(0f,0f,2f);
+		
+		
+		GeoPolyhedron p=kernel3D.Polyhedron("poly", points, new int[][] {{0,1,2,3},{0,1,4}});
+		p.setObjColor(new Color(0f,0f,1f));
+		//p.setAlphaValue(0.5f);
+	}
+
 	
 	
 }

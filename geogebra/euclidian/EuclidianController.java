@@ -580,12 +580,12 @@ public class EuclidianController implements MouseListener,
 		switch (mode) {
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
-		case EuclidianView.MODE_POINT:case EuclidianView.MODE_POINT_INSIDE:				
+		case EuclidianView.MODE_POINT:case EuclidianView.MODE_POINT_IN_REGION:				
 			view.setHits(mouseLoc);
 			//hits = view.getHits(mouseLoc, true);
 			hits = view.getHits();
 			// if mode==EuclidianView.MODE_POINT_INSIDE, point can be in a region
-			createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_INSIDE, true, true); 
+			createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_IN_REGION, true, true); 
 			break;
 			
 		case EuclidianView.MODE_SEGMENT:
@@ -1754,7 +1754,7 @@ public class EuclidianController implements MouseListener,
 				hits = tempArrayList;				
 			}
 		}
-		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_INSIDE) {
+		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_IN_REGION) {
 			// include polygons in hits
 			view.setHits(mouseLoc);
 			hits = view.getHits();
@@ -1889,7 +1889,7 @@ public class EuclidianController implements MouseListener,
 			}
 			break;
 			
-		case EuclidianView.MODE_POINT:case EuclidianView.MODE_POINT_INSIDE:
+		case EuclidianView.MODE_POINT:case EuclidianView.MODE_POINT_IN_REGION:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
 				hits.keepOnlyHitsForNewPointMode();

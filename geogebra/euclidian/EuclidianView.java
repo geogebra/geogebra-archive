@@ -3749,8 +3749,8 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		case EuclidianView.MODE_POINT:
 			return "Point";
 			
-		case EuclidianView.MODE_POINT_INSIDE:
-			return "PointInside";
+		case EuclidianView.MODE_POINT_IN_REGION:
+			return "PointInRegion";
 			
 		case EuclidianView.MODE_JOIN:
 			return "Join";

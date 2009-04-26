@@ -467,7 +467,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(" || ");
         sb.append(EuclidianView.MODE_POINT);
         sb.append(" ");        
-        sb.append(EuclidianView.MODE_POINT_INSIDE);
+        sb.append(EuclidianView.MODE_POINT_IN_REGION);
         sb.append(" ");
         sb.append(EuclidianView.MODE_INTERSECT);
         sb.append(" ");

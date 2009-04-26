@@ -45,6 +45,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 		this(c,points,createPoints2D);
 		cs.setLabel(label);
 	}
+	
 	/**
 	 * create a 2D coord sys joining points.
 	 * @param c construction

@@ -268,7 +268,12 @@ public abstract class GeoElement3D
 	
 	
 	
+	/////////////////////////////////////////
+	// ExpressionValue implementation
 	
+	public boolean isVector3DValue() {
+		return false;
+	}
 	
 	
 	

@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 
 
 /**
@@ -39,7 +41,7 @@ public class AlgoPolygon extends AlgoElement {
     }
  
     protected AlgoPolygon(Construction cons, String [] labels, GeoPointInterface [] points, GeoList geoList) {
-    	this(cons,labels,points,geoList,null);
+    	this(cons,labels,points,geoList,null,true);
     }
     
     /**
@@ -47,16 +49,18 @@ public class AlgoPolygon extends AlgoElement {
      * @param labels names of the polygon and the segments
      * @param points vertices of the polygon
      * @param geoList list of vertices of the polygon (alternative to points)
-     * @param cs for 3D stuff : GeoCoordSys2D
+     * @param cs2D for 3D stuff : GeoCoordSys2D
+     * @param createSegments  says if the polygon has to creates its edges (3D only) 
      */
-    protected AlgoPolygon(Construction cons, String [] labels, GeoPointInterface [] points, GeoList geoList, GeoElement cs2D) {
+    protected AlgoPolygon(Construction cons, String [] labels, 
+    		GeoPointInterface [] points, GeoList geoList, GeoElement cs2D, boolean createSegments) {
         super(cons);
         this.points = points;           
         this.geoList = geoList;
         this.cs2D = cs2D;
           
         //poly = new GeoPolygon(cons, points);
-        createPolygon();  
+        createPolygon(createSegments);  
         
         // compute polygon points
         compute();  
@@ -68,10 +72,9 @@ public class AlgoPolygon extends AlgoElement {
     
     /**
      * create the polygon
-     * @param cons the construction
-     * @param points the 2D points
+     * @param createSegments says if the polygon has to creates its edges (3D only)
      */
-    protected void createPolygon(){
+    protected void createPolygon(boolean createSegments){
     	poly = new GeoPolygon(this.cons, this.points);
     }
         
@@ -129,11 +132,13 @@ public class AlgoPolygon extends AlgoElement {
     }    
     
     private void setOutput() {
-    	GeoSegmentInterface [] segments = poly.getSegments();    	    	
-        int size = 1 + segments.length;
+    	GeoSegmentInterface [] segments = poly.getSegments();
+    	int size = 1;
+    	if (segments!=null)
+    		size+=segments.length;
         output = new GeoElement[size];                       
         output[0] = poly;        
-        for (int i=0; i < segments.length; i++) {
+        for (int i=0; i < size-1; i++) {
             output[i+1] = (GeoElement) segments[i];
         }
     }
@@ -145,7 +150,7 @@ public class AlgoPolygon extends AlgoElement {
     }
     
     
-    GeoPolygon getPoly() { return poly; }    
+    public GeoPolygon getPoly() { return poly; }    
     public GeoPoint [] getPoints() {
     	return (GeoPoint[]) points;
     }

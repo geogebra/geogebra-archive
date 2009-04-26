@@ -40,20 +40,21 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	
 	/** common constructor for 2D.
 	 * @param c the construction
-	 * @param geoPointInterfaces vertices 
+	 * @param points vertices 
 	 */
 	public GeoPolygon(Construction c, GeoPointInterface[] points) {
-		this(c,points,null);
+		this(c,points,null,true);
 	}
 	
 	/** common constructor for 3D.
 	 * @param c the construction
-	 * @param geoPointInterfaces vertices 
+	 * @param points vertices 
 	 * @param cs for 3D stuff : 2D coord sys
+	 * @param createSegments says if the polygon has to creates its edges
 	 */	
-	public GeoPolygon(Construction c, GeoPointInterface[] points, GeoElement cs) {
+	public GeoPolygon(Construction c, GeoPointInterface[] points, GeoElement cs, boolean createSegments) {
 		super(c);
-		setPoints(points, cs);
+		setPoints(points, cs, createSegments);
 		setLabelVisible(false);
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 	}
@@ -106,7 +107,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
      * @param points the vertices
      */
     public void setPoints(GeoPointInterface [] points) {
-    	setPoints(points,null);
+    	setPoints(points,null,true);
     }
 
     	
@@ -114,11 +115,14 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
      * set the vertices to points (cs is only used for 3D stuff)
      * @param points the vertices
      * @param cs used for 3D stuff
+     * @param createSegments says if the polygon has to creates its edges
      */
-    public void setPoints(GeoPointInterface [] points, GeoElement cs) {
+    public void setPoints(GeoPointInterface [] points, GeoElement cs, boolean createSegments) {
 		this.points = points;
 		setCoordSys(cs);
-		updateSegments();
+		
+		if (createSegments)
+			updateSegments();
 		
 //		if (points != null) {
 //		Application.debug("*** " + this + " *****************");
@@ -286,14 +290,6 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
         	GeoPointInterface endPoint = points[(i+1) % points.length];
         	
         	if (segments[i] == null) {
-        		/*
-        		AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, startPoint, endPoint, this);            
-                cons.removeFromConstructionList(algoSegment);               
-                
-                segments[i] = algoSegment.getSegment(); 
-                // refresh color to ensure segments have same color as polygon:
-                segments[i].setObjColor(getObjectColor()); 
-                */
          		segments[i] = createSegment(startPoint, endPoint);
         	}     
         }         

@@ -7,6 +7,7 @@ import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.PathParameter;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
@@ -37,9 +38,10 @@ extends GeoPolygon implements GeoElement3DInterface, Path3D {
 	 * @param c construction
 	 * @param points 2D points
 	 * @param cs2D 2D coord sys where the polygon is drawn
+	 * @param createSegments says if the polygon has to creates its edges
 	 */
-	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GeoCoordSys2D cs2D) {
-		super(c, points, cs2D);
+	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GeoCoordSys2D cs2D, boolean createSegments) {
+		super(c, points, cs2D, createSegments);
 		setUseVisualDefaults(false);
 		setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
 		

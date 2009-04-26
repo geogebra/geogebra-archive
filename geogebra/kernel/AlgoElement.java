@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;

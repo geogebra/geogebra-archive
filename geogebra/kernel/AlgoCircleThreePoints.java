@@ -122,16 +122,27 @@ public class AlgoCircleThreePoints extends AlgoElement {
 
     // for AlgoElement
     protected void setInputOutput() {
+    	setInput();
+    	setOutput();
+        setDependencies(); // done by AlgoElement
+   	
+    }
+    
+    protected void setInput() {
         input = new GeoElement[3];
         input[0] = (GeoElement) A;
         input[1] = (GeoElement) B;
         input[2] = (GeoElement) C;
 
+    }
+    
+    protected void setOutput() {
+
         output = new GeoElement[1];
         output[0] = circle;
-        setDependencies(); // done by AlgoElement
-    }
+     }
 
+    
     public GeoConic getCircle() {
         return circle;
     }
