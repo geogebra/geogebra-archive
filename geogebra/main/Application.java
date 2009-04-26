@@ -1181,7 +1181,8 @@ public abstract class Application implements KeyEventDispatcher {
 		reverseNameDescription = "eu".equals(lang);
 
 		// Guy Hed, 25.8.2008
-		rightToLeftReadingOrder = ("iw".equals(lang) || "ar".equals(lang));
+		// Guy Hed, 26.4.2009 - added Yiddish and Persian as RTL languages
+		rightToLeftReadingOrder = ("iw".equals(lang) || "ar".equals(lang) || "fa".equals(lang) || "ji".equals(lang));
 		// Another option:
 		// rightToLeftReadingOrder =
 		// (Character.getDirectionality(getPlain("Algebra").charAt(1)) ==
@@ -1229,7 +1230,8 @@ public abstract class Application implements KeyEventDispatcher {
 			fontNameSerif = getFontCanDisplay("Sylfaen", testCharacater);
 		}
 		// HEBREW
-		else if ("iw".equals(lang)) {
+		// Guy Hed, 26.4.2009 - added Yiddish, which also use Hebrew letters.
+		else if ("iw".equals(lang) || "ji".equals(lang)) {
 			// Hebrew letter "tav"
 			char testCharacater = '\u05ea';
 			fontNameSansSerif = getFontCanDisplay("Arial", testCharacater);
