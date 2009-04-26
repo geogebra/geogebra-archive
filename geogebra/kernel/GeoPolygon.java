@@ -38,6 +38,9 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	protected double area;
 	private boolean defined = false;		
 	
+	/** says if the polygon had created its segments itself (used for 3D) */
+	private boolean createSegments = true;
+	
 	/** common constructor for 2D.
 	 * @param c the construction
 	 * @param points vertices 
@@ -54,6 +57,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 */	
 	public GeoPolygon(Construction c, GeoPointInterface[] points, GeoElement cs, boolean createSegments) {
 		super(c);
+		this.createSegments=createSegments;
 		setPoints(points, cs, createSegments);
 		setLabelVisible(false);
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
@@ -538,7 +542,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 
    public void setObjColor(Color color) {
    		super.setObjColor(color);
-   		if (segments != null) {
+   		if (segments != null && createSegments) {
    			for (int i=0; i < segments.length; i++) {
    				segments[i].setObjColor(color);
    				segments[i].update();

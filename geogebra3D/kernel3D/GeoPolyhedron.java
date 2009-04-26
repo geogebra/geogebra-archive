@@ -1,5 +1,10 @@
 package geogebra3D.kernel3D;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+
 import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -20,7 +25,7 @@ public class GeoPolyhedron extends GeoElement3D {
 	protected GeoPoint3D[] points;
 	
 	/** edges */
-	protected GeoSegment3D[] segments;
+	protected Hashtable<Integer, GeoSegment3D> segments;
 	
 	/** faces */
 	protected GeoPolygon3D[] polygons;
@@ -75,7 +80,8 @@ public class GeoPolyhedron extends GeoElement3D {
 		//TODO remove old faces and edges
 		
 		polygons = new GeoPolygon3D[faces.length];
-		segments = new GeoSegment3D[points.length*points.length]; //TODO create smaller collection
+		segments = new Hashtable<Integer, GeoSegment3D>();
+		
 		
 		// create missing faces
 		for (int i=0; i < faces.length; i++) {
@@ -89,13 +95,18 @@ public class GeoPolyhedron extends GeoElement3D {
 				// creates edges
 				int startPoint = faces[i][j];
 				int endPoint = faces[i][(j+1) % faces[i].length];
-
-				if (segments[startPoint+endPoint*points.length]==null){
-					segments[startPoint+endPoint*points.length]=
-						segments[endPoint+startPoint*points.length]=
-							createSegment(startPoint, endPoint);
+				if(startPoint>endPoint){
+					int temp = startPoint;
+					startPoint = endPoint;
+					endPoint = temp;
 				}
-				s[j] = segments[startPoint+endPoint*points.length];
+				
+				int index = startPoint+endPoint*points.length;
+
+				if (!segments.containsKey(index))
+					segments.put(index, createSegment(startPoint, endPoint));
+				
+				s[j] = segments.get(index);
 			}
 			polygons[i] = createPolygon(p);
 			polygons[i].setSegments(s);
@@ -158,6 +169,33 @@ public class GeoPolyhedron extends GeoElement3D {
 	 }
 	
 	
+	 
+	 
+	 
+	   public void setObjColor(Color color) {
+	   		super.setObjColor(color);
+	   		if (polygons != null) {
+	   			for (int i=0; i < polygons.length; i++) {
+	   				polygons[i].setObjColor(color);
+	   				polygons[i].update();
+	   			}
+	   		}
+	   		
+	   		for (GeoSegment3D segment : segments.values()){
+	   			segment.setObjColor(color);
+	   			segment.update();
+	   		}
+	   }
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 	
 
 	@Override
