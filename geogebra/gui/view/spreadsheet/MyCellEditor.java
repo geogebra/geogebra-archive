@@ -308,7 +308,7 @@ public class MyCellEditor extends DefaultCellEditor {
 					.changeGeoElementNoExceptionHandling(oldValue, text, true,
 							false);
 			// newValue.setConstructionDefaults();
-			newValue.setAllVisualProperties(oldValue);
+			newValue.setAllVisualProperties(oldValue, false);
 			if (oldValue.isAuxiliaryObject())
 				newValue.setAuxiliaryObject(true);
 

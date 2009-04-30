@@ -137,6 +137,8 @@ public class AlgebraView extends JTree implements View {
 		setScrollsOnExpand(true);	
 		setRowHeight(-1); // to enable flexible height of cells
 		
+		setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		
 		tpInd = new TreePath(indNode.getPath());
 		tpDep = new TreePath(depNode.getPath());
 		tpAux =new TreePath(auxiliaryNode.getPath()); 		

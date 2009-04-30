@@ -1545,17 +1545,8 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			double dotsize=gp.getPointSize();
 			int dotstyle=gp.getPointStyle();
 			startBeamer(codePoint);
-			if (dotstyle==-1) dotstyle=euclidianView.getPointStyle();
-			if (dotstyle==EuclidianView.POINT_STYLE_DOT){
-				codePoint.append("\\fill [color=");
-				ColorCode(dotcolor,codePoint);
-				codePoint.append("] ");
-				writePoint(x,y,codePoint);
-				codePoint.append(" circle (");
-				codePoint.append(dotsize/2);
-				codePoint.append("pt);\n");				
-			}
-			else if (dotstyle==EuclidianView.POINT_STYLE_CIRCLE){
+			
+			if (dotstyle==EuclidianView.POINT_STYLE_CIRCLE){
 				codePoint.append("\\draw [color=");
 				ColorCode(dotcolor,codePoint);
 				codePoint.append("] ");
@@ -1583,6 +1574,17 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codePoint.append(dotsize);
 				codePoint.append("pt,-");
 				codePoint.append(dotsize);
+				codePoint.append("pt);\n");
+			}
+			
+			// default is the circle point style
+			else {
+				codePoint.append("\\fill [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append("] ");
+				writePoint(x,y,codePoint);
+				codePoint.append(" circle (");
+				codePoint.append(dotsize/2);
 				codePoint.append("pt);\n");
 			}
 			endBeamer(codePoint);

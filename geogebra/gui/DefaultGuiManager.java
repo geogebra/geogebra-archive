@@ -97,7 +97,7 @@ public class DefaultGuiManager implements GuiManager {
 	
 	private OptionsDialog optionsDialog;
 
-	protected PropertiesDialogGeoElement propDialog;
+	protected PropertiesDialog propDialog;
 	private ConstructionProtocol constProtocol;
 	protected ConstructionProtocolNavigation constProtocolNavigation;
 
@@ -348,7 +348,7 @@ public class DefaultGuiManager implements GuiManager {
 
 	public synchronized void initPropertiesDialog() {
 		if (propDialog == null) {
-			propDialog = new PropertiesDialogGeoElement(app);
+			propDialog = new PropertiesDialog(app);
 		}
 	}
 
@@ -547,8 +547,10 @@ public class DefaultGuiManager implements GuiManager {
 		if (appToolbarPanel != null)
 			appToolbarPanel.initToolbar();
 
-		if (propDialog != null)
-			propDialog.initGUI();
+		if (propDialog != null) {
+			//propDialog.initGUI();
+			SwingUtilities.updateComponentTreeUI(propDialog);
+		}
 		if (constProtocol != null)
 			constProtocol.initGUI();
 		if (constProtocolNavigation != null)
@@ -579,10 +581,11 @@ public class DefaultGuiManager implements GuiManager {
 		if (algebraInput != null)
 			algebraInput.setLabels();
 
+		// TODO don't reinit GUIs anymore! (performance!) (F.S.)
 		if (appToolbarPanel != null)
 			appToolbarPanel.initToolbar();
 		if (propDialog != null)
-			propDialog.initGUI();
+			propDialog.setLabels();
 		if (constProtocol != null)
 			constProtocol.initGUI();
 		if (constProtocolNavigation != null)

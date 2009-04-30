@@ -120,6 +120,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 		addSeparator();
 
+		/*
 		// point style
 		menuPointStyle = new JMenu(app.getMenu("PointStyle"));
 		menuPointStyle.setIcon(app.getImageIcon("mode_point_16.gif"));
@@ -136,6 +137,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 				strPointStyleAC, 0);
 		add(menuPointStyle);
 		updateMenuPointStyle();
+		*/
 
 		// checkboxsize
 		// Michael Borcherds 2008-05-12
@@ -440,7 +442,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		updateMenuCoordStyle();
 		updateMenuDecimalPlaces();
 		updateMenuPointCapturing();
-		updateMenuPointStyle();
+		//updateMenuPointStyle();
 		updateMenuRightAngleStyle();
 	}
 	
@@ -457,22 +459,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			((JRadioButtonMenuItem) menuAngleUnit.getMenuComponent(pos))
 					.setSelected(true);
 		}
-	}
-	
-	/**
-	 * Update the default point style.
-	 */
-	private void updateMenuPointStyle() {
-		if (menuPointStyle == null)
-			return;
-
-		int pos = app.getEuclidianView().getPointStyle();
-		if (pos == 1)
-			pos = 2;
-		else if (pos == 2)
-			pos = 1; // bugfix swap 2 and 1 Michael Borcherds 2008-03-13
-		((JRadioButtonMenuItem) menuPointStyle.getMenuComponent(pos))
-				.setSelected(true);
 	}
 	
 	/**

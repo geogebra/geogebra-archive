@@ -1381,19 +1381,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		codeBeginPic.append(sci2dec(xunit));
 		codeBeginPic.append("cm,yunit=");
 		codeBeginPic.append(sci2dec(yunit));
-		codeBeginPic.append("cm,algebraic=true,dotstyle=");
-		switch(euclidianView.getPointStyle()){
-			case EuclidianView.POINT_STYLE_CIRCLE:
-				codeBeginPic.append("o");
-			break;
-			case EuclidianView.POINT_STYLE_CROSS:
-				codeBeginPic.append("x");
-			break;
-			case EuclidianView.POINT_STYLE_DOT:
-				codeBeginPic.append("*");
-			break;
-		}
-		codeBeginPic.append(",dotsize=");
+		codeBeginPic.append("cm,algebraic=true,dotstyle=o,dotsize=");
 		codeBeginPic.append(EuclidianView.DEFAULT_POINT_SIZE);
 		codeBeginPic.append("pt 0");
 		codeBeginPic.append(",linewidth=");
@@ -1557,6 +1545,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			codePoint.append(dotsize);
 			codePoint.append("pt 0");
 		}
+		
+		// TODO problems with defaults (F.S.)
 		if(dotstyle != -1) { // Florian Sonner 2008-08-31
 			if (coma) codePoint.append(",");
 			if (!bracket) codePoint.append("[");

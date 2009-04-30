@@ -50,11 +50,12 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 */
 	private JTabbedPane tabbedPane;
 
+
 	/**
-	 * The panel where the user can select the default values of certain object
-	 * types.
+	 * The panel where the user can select new default values for
+	 * certain objects.
 	 */
-	private JPanel defaultsPanel;
+	private OptionsDefaults defaultsPanel;
 
 	/**
 	 * The panel with all settings regarding font sizes & the current language.
@@ -93,6 +94,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		addWindowListener(this);
 
 		initGUI();
+		updateGUI();
 	}
 
 	/**
@@ -101,6 +103,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	public void updateGUI() {
 		fontPanel.updateGUI();
 		euclidianPanel.updateGUI();
+		defaultsPanel.updateGUI();
 	}
 
 	/**
@@ -117,7 +120,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		setLayout(new BorderLayout());
 
 		// init tabs
-		defaultsPanel = new JPanel();
+		defaultsPanel = new OptionsDefaults(app);
 		fontPanel = new OptionsFont(app);
 		euclidianPanel = new OptionsEuclidian(app, app.getEuclidianView());
 
@@ -152,6 +155,9 @@ public class OptionsDialog extends JDialog implements WindowListener {
 
 		// init close button
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlDkShadow));
+		buttonPanel.setBackground(SystemColor.white);
+		
 		applyButton = new JButton();
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -192,9 +198,10 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		tabbedPane.setTitleAt(1, app.getPlain("Defaults"));
 		tabbedPane.setTitleAt(2, app.getPlain("FontsAndLanguage"));
 		tabbedPane.setTitleAt(3, app.getPlain("DrawingPad"));
-
+		
 		euclidianPanel.setLabels();
 		fontPanel.setLabels();
+		defaultsPanel.setLabels();
 	}
 
 	/**
@@ -204,6 +211,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 */
 	private void apply() {
 		fontPanel.apply();
+		defaultsPanel.apply();
 	}
 
 	/**

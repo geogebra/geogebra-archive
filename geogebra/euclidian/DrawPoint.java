@@ -90,9 +90,6 @@ public final class DrawPoint extends Drawable {
     	// Florian Sonner 2008-07-17
     	int pointStyle = P.getPointStyle();
     	
-    	if(pointStyle == -1)
-    		pointStyle = view.pointStyle;
-    	
         switch (pointStyle) {	       		        
         	case EuclidianView.POINT_STYLE_CROSS:        		
         	    double xR = coords[0] + pointSize;        		
@@ -168,9 +165,6 @@ public final class DrawPoint extends Drawable {
         	// Florian Sonner 2008-07-17
         	int pointStyle = P.getPointStyle();
         	
-        	if(pointStyle == -1)
-        		pointStyle = view.pointStyle;
-        	
             switch (pointStyle) {
             	case EuclidianView.POINT_STYLE_CROSS:            		                     
              		// draw cross like: X     
@@ -215,9 +209,6 @@ public final class DrawPoint extends Drawable {
     	
     	// Florian Sonner 2008-07-17
     	int pointStyle = P.getPointStyle();
-    	
-    	if(pointStyle == -1)
-    		pointStyle = view.pointStyle;
     	
 		switch (pointStyle) {
 	     	case EuclidianView.POINT_STYLE_CIRCLE:

@@ -135,6 +135,8 @@ public class ConstructionDefaults {
 		// free point
 		GeoPoint freePoint = new GeoPoint(cons);	
 //		freePoint.setLocalVariableLabel(app.getPlain("Point") + strFree);
+		freePoint.setPointSize(EuclidianView.DEFAULT_POINT_SIZE);
+		freePoint.setPointStyle(EuclidianView.POINT_STYLE_DOT);
 		freePoint.setLocalVariableLabel("Point" + strFree);
 		freePoint.setObjColor(colPoint);
 		defaultGeoElements.put(DEFAULT_POINT_FREE, freePoint);
@@ -142,6 +144,8 @@ public class ConstructionDefaults {
 		// dependent point
 		GeoPoint depPoint = new GeoPoint(cons);	
 //		depPoint.setLocalVariableLabel(app.getPlain("Point") + strDependent);
+		depPoint.setPointSize(EuclidianView.DEFAULT_POINT_SIZE);
+		depPoint.setPointStyle(EuclidianView.POINT_STYLE_DOT);
 		depPoint.setLocalVariableLabel("Point" + strDependent);
 		depPoint.setObjColor(colDepPoint);
 		defaultGeoElements.put(DEFAULT_POINT_DEPENDENT, depPoint);
@@ -149,6 +153,8 @@ public class ConstructionDefaults {
 		// point on path
 		GeoPoint pathPoint = new GeoPoint(cons);	
 //		pathPoint.setLocalVariableLabel(app.getPlain("PointOn"));
+		pathPoint.setPointSize(EuclidianView.DEFAULT_POINT_SIZE);
+		pathPoint.setPointStyle(EuclidianView.POINT_STYLE_DOT);
 		pathPoint.setLocalVariableLabel("PointOn");
 		pathPoint.setObjColor(colPathPoint);
 		defaultGeoElements.put(DEFAULT_POINT_ON_PATH, pathPoint);
@@ -166,6 +172,12 @@ public class ConstructionDefaults {
 		line.setLocalVariableLabel("Line");
 		line.setObjColor(colLine);
 		defaultGeoElements.put(DEFAULT_LINE, line);
+		
+		// vector
+		GeoVector vector = new GeoVector(cons);
+		vector.setLocalVariableLabel("Vector");
+		vector.setObjColor(colLine);
+		defaultGeoElements.put(DEFAULT_VECTOR, vector);
 		
 		// polygon
 		GeoPolygon polygon = new GeoPolygon(cons, null);	
@@ -264,8 +276,11 @@ public class ConstructionDefaults {
 	/**
 	 * Sets default color for given geo. 
 	 * Note: this is mostly kept for downward compatibility.
+	 * 
+	 * @param geo The element which needs new default visual styles
+	 * @param isReset If the visual styles should be reset
 	 */
-	final public void setDefaultVisualStyles(GeoElement geo) {
+	final public void setDefaultVisualStyles(GeoElement geo, boolean isReset) {
 		// all object types that are not specifically supported
 		// should get the default values of a line
 		int type = DEFAULT_LINE;
@@ -346,12 +361,14 @@ public class ConstructionDefaults {
 		GeoElement defaultGeo = getDefaultGeo(type);
 		//Application.debug("defaultGeo = "+defaultGeo);
 		if (defaultGeo != null) {
-			geo.setAllVisualProperties(defaultGeo);		
+			geo.setAllVisualProperties(defaultGeo, isReset);		
 			
-			// set to highest used layer
-			EuclidianView ev = cons.getApplication().getEuclidianView();
-			if (ev != null)
-			geo.setLayer(ev.getMaxLayerUsed());
+			if(!isReset) {
+				// set to highest used layer
+				EuclidianView ev = cons.getApplication().getEuclidianView();
+				if (ev != null)
+					geo.setLayer(ev.getMaxLayerUsed());
+			}
 		}
 
         // label visibility

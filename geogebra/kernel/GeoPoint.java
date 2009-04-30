@@ -47,13 +47,8 @@ GeoPointInterface {
 	
 	private static final long serialVersionUID = 1L;
 
-	public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
-	
-	/**
-	 * The individual style of this point. If the value is -1, the
-	 * global point style is used.
-	 */
-	private int pointStyle = -1; // Florian Sonner 2008-07-17
+	public int pointSize;
+	private int pointStyle;
 	
 	private Path path;
 	private PathParameter pathParameter;
@@ -69,7 +64,7 @@ GeoPointInterface {
     // if this point is removed, the Locateables have to be notified
     private ArrayList locateableList;         
     
-    public GeoPoint(Construction c) { 
+    public GeoPoint(Construction c) {     	 
     	super(c);     	
     	setUndefined(); 
     }
@@ -181,6 +176,8 @@ GeoPointInterface {
 			pointStyle = style;
 			break;
 	
+			
+		// TODO remove due to defaults (F.S.)
 		default:
 			pointStyle = -1;
 		}
@@ -918,6 +915,7 @@ GeoPointInterface {
 		
 		if (geo.isGeoPoint()) {
 			pointSize = ((GeoPoint) geo).pointSize;
+			pointStyle = ((GeoPoint)geo).pointStyle;
 		}
 	}
 	

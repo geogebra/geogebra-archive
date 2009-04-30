@@ -103,8 +103,6 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * 
 	 * @param dockManager
 	 * @param info			A container which stores all information about this view.
-	 * 
-	 * TODO: Just load views which are going to be displayed and load other views later
 	 */
 	public DockPanel(DockManager dockManager, DockPanelXml info) {
 		this.dockManager = dockManager;
@@ -204,16 +202,13 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	   	frame.setIconImage(app.getInternalImage("geogebra.gif"));
 	   	frame.addWindowListener(this);
 	   	
-	   	// TODO: Component moved may reduce performance?
 	   	frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
             	info.setWindowRect(event.getComponent().getBounds());
-            	app.setUnsaved();
             }
             
             public void componentMoved(ComponentEvent event) {
             	info.setWindowRect(event.getComponent().getBounds());
-            	app.setUnsaved(); // TODO: Really what we want?
             }
         });
 	   	frame.getContentPane().add(this);

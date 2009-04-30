@@ -425,7 +425,6 @@ public class DockManager {
 			String[] def = panel.getInfo().getEmbeddedDef().split(",");
 			int[] locations = new int[def.length];
 			
-			// TODO: Handle exceptions
 			for(int i = 0; i < def.length; ++i) {
 				if(def[i].length() == 0) {
 					def[i] = "1";

@@ -317,8 +317,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return this;
 	}
 
-	public void setAllVisualProperties(GeoElement geo) {
-		super.setAllVisualProperties(geo);
+	public void setAllVisualProperties(GeoElement geo, boolean keepAdvanced) {
+		super.setAllVisualProperties(geo, keepAdvanced);
 		
 		/*
 		if (geo.isGeoNumeric()) {

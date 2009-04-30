@@ -109,10 +109,16 @@ public class MyXMLHandler implements DocHandler {
 	private GeoElement geo;
 	private Command cmd;
 	private Macro macro;
+	private Application app;
+	
 	private String[] macroInputLabels, macroOutputLabels;
 	private GeoElement[] cmdOutput;
-	private Application app;
 	private boolean startAnimation;
+	
+	/**
+	 * The point style of the document, for versions < 3.3
+	 */
+	private int docPointStyle; 
 
 	// for macros we need to change the kernel, so remember the original kernel
 	// too
@@ -690,10 +696,20 @@ public class MyXMLHandler implements DocHandler {
 					pointCapturingMode = Integer.parseInt(str);
 				ev.setPointCapturing(pointCapturingMode);
 			}
-
-			String strPointStyle = (String) attrs.get("pointStyle");
-			if (strPointStyle != null)
-				ev.setPointStyle(Integer.parseInt(strPointStyle));
+			
+			// if there is a point style given save it
+			if(ggbFileFormat < 3.3) {
+				String strPointStyle = (String) attrs.get("pointStyle");
+				if (strPointStyle != null) {
+					docPointStyle = Integer.parseInt(strPointStyle);
+				} else {
+					docPointStyle = EuclidianView.POINT_STYLE_DOT;
+				}
+				
+				// TODO save as default construction (F.S.)
+			} else {
+				docPointStyle = -1;
+			}
 
 			// Michael Borcherds 2008-05-12
 			// size of checkbox
@@ -1800,6 +1816,11 @@ public class MyXMLHandler implements DocHandler {
 			// e.g. GeoNumeric)
 			geo.setEuclidianVisible(false);
 		}
+		
+		// use default point style on points
+		if(geo.getGeoClassType() == GeoElement.GEO_CLASS_POINT && ggbFileFormat < 3.3) {
+			((PointProperties)geo).setPointStyle(docPointStyle);
+		}
 
 		// for downward compatibility
 		if (geo.isLimitedPath()) {
@@ -2306,7 +2327,13 @@ public class MyXMLHandler implements DocHandler {
 
 		try {
 			PointProperties p = (PointProperties) geo;
-			p.setPointStyle(Integer.parseInt((String) attrs.get("val")));
+			
+			int style = Integer.parseInt((String) attrs.get("val"));
+			
+			if(style == -1) {
+				style = docPointStyle;
+			}
+			p.setPointStyle(style);
 			return true;
 		} catch (Exception e) {
 			return false;

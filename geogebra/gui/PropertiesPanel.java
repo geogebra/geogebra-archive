@@ -15,7 +15,6 @@ package geogebra.gui;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.util.SpringUtilities;
-import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoSlope;
@@ -42,40 +41,25 @@ import geogebra.kernel.TextProperties;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
-import geogebra.main.GeoElementSelectionListener;
-import geogebra.main.View;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -88,7 +72,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -99,7 +82,6 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
@@ -107,442 +89,23 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
-
-/**
- * @author Markus Hohenwarter
- */
-public class PropertiesDialogGeoElement
-	extends JDialog
-	implements
-		WindowListener,
-		WindowFocusListener,
-		TreeSelectionListener,
-		KeyListener,
-		GeoElementSelectionListener {
-			
-	private static final int MAX_GEOS_FOR_EXPAND_ALL = 15;
-	private static final int MAX_COMBOBOX_ENTRIES = 200;	
-	
-	private static final long serialVersionUID = 1L;
-	private Application app;
-	private Kernel kernel;
-	private JTreeGeoElements geoTree;
-	private JButton closeButton;
-	private PropertiesPanel propPanel;
-	private JColorChooser colChooser;
-
-	final static int TEXT_FIELD_FRACTION_DIGITS = 3;
-	final static int SLIDER_MAX_WIDTH = 170;
-	
-	final private static int MIN_WIDTH = 500;
-	final private static int MIN_HEIGHT = 300;
-
-	
-	/**
-	 * Creates new PropertiesDialog.
-	 * @param app: parent frame
-	 */
-	public PropertiesDialogGeoElement(Application app) {
-		super(app.getFrame(), false);
-		this.app = app;
-		kernel = app.getKernel();	
-
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setResizable(true);
-
-		addWindowListener(this);		
-		geoTree = new JTreeGeoElements();	
-		geoTree.addMouseListener(new MouseAdapter() {
-			public void mouseEntered(MouseEvent e) {
-				// some textfields are updated when they lose focus
-				// give them a chance to do that before we change the selection
-				requestFocusInWindow();
-			}
-		});
-		geoTree.addTreeSelectionListener(this);
-		geoTree.addKeyListener(this);
-				
-		// build GUI
-		initGUI();		
-	}
+import com.sun.swing.internal.plaf.basic.resources.basic;
 
 	/**
-	 * inits GUI with labels of current language	 
-	 */
-	public void initGUI() {
-		setTitle(app.getPlain("Properties"));
-		geoTree.root.setUserObject(app.getPlain("Objects"));
-		geoTree.setFont(app.plainFont);			
-		
-		boolean wasShowing = isShowing();
-		if (wasShowing) {
-			setVisible(false);
-		}
-		
-		
-		//	LIST PANEL
-		JPanel listPanel = new JPanel();
-		//listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-		listPanel.setLayout(new BorderLayout(5, 2));
-		// JList with GeoElements		
-		
-		JScrollPane listScroller = new JScrollPane(geoTree);
-		//geoTree.setMinimumSize(new Dimension(150, 200));		
-		listPanel.add(listScroller, BorderLayout.CENTER);
-
-		// rename, redefine and delete button
-		//int pixelX = 20;
-		//int pixelY = 10;
-		/*
-		MySmallJButton renameButton = new MySmallJButton(app.getImageIcon("rename.png"), pixelX, pixelY);
-		renameButton.setToolTipText(app.getPlain("Rename"));
-		renameButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				rename();
-			}
-		});
-		*/
-		
-		/*
-		MySmallJButton  redefineButton = new MySmallJButton (app.getImageIcon("redefine.gif"), pixelX, pixelY);
-		redefineButton.setToolTipText(app.getPlain("Redefine"));
-		redefineButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				redefine();
-			}
-		});
-		*/ 
-		
-		JButton delButton = new JButton(app.getImageIcon("delete_small.gif"));
-		delButton.setText(app.getPlain("Delete"));
-		delButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				deleteSelectedGeos();
-			}
-		});
-
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));			
-		//if (app.letRedefine())
-		//	buttonPanel.add(redefineButton);
-		if (app.letDelete())
-			buttonPanel.add(delButton);
-		//if (app.letRename())
-		//	buttonPanel.add(renameButton);
-
-		listPanel.add(buttonPanel, BorderLayout.SOUTH);
-//		Border compound =		
-//			BorderFactory.createCompoundBorder(
-//				//	BorderFactory.createTitledBorder(app.getPlain("Objects")),
-//				BorderFactory.createEtchedBorder(),
-//				BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		listPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));		
-
-			
-		// PROPERTIES PANEL
-		if (colChooser == null) {
-			// init color chooser
-			colChooser = new JColorChooser();
-			colChooser.setColor(new Color(1, 1,1, 100));
-		}
-			
-		propPanel = new PropertiesPanel(colChooser);
-		propPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
-		selectionChanged(); // init propPanel		
-
-		closeButton = new JButton(app.getMenu("Close"));
-		closeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				closeDialog();			
-			}
-		});
-
-		// put it all together				 		 		 
-		Container contentPane = getContentPane();
-		contentPane.removeAll();
-		//contentPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));		
-		contentPane.setLayout(new BorderLayout());
-				
-		buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(closeButton);
-		//buttonPanel.add(cancelButton);
-		JPanel rightPanel = new JPanel(new BorderLayout());
-		rightPanel.add(propPanel, BorderLayout.CENTER);
-		rightPanel.add(buttonPanel, BorderLayout.SOUTH);
-		JPanel dialogPanel = new JPanel(new BorderLayout());
-		dialogPanel.add(listPanel, BorderLayout.WEST);
-		dialogPanel.add(rightPanel, BorderLayout.CENTER);
-
-		contentPane.add(dialogPanel);						
-							
-		if (wasShowing) {
-			setVisible(true);
-		}		
-	}
-	
-	/*
-	public void cancel() {
-		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		kernel.detach(geoTree);
-				
-		// remember current construction step
-		int consStep = kernel.getConstructionStep();
-		
-		// restore old construction state
-		app.restoreCurrentUndoInfo();
-		
-		// go to current construction step
-		ConstructionProtocol cp = app.getConstructionProtocol();
-		if (cp != null) {
-			cp.setConstructionStep(consStep);     			 
-		}
-		
-		setCursor(Cursor.getDefaultCursor());
-		setVisible(false);
-	}
-	
-	public void apply() {
-		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));				
-		app.storeUndoInfo();
-		setCursor(Cursor.getDefaultCursor());
-		setVisible(false);	
-	}
-	*/
-	
-	public void cancel() {
-		setVisible(false);
-	}
-	
-	public void closeDialog() {
-		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));				
-		app.storeUndoInfo();
-		setCursor(Cursor.getDefaultCursor());
-		setVisible(false);	
-	}
-		
-	/**
-	 * shows this dialog and select GeoElement geo at screen position location
-	 */
-	public void setVisibleWithGeos(ArrayList geos) {		
-		setViewActive(true);					
-	
-		if (kernel.getConstruction().getGeoSetConstructionOrder().size() < 
-				MAX_GEOS_FOR_EXPAND_ALL)		
-			geoTree.expandAll();
-		else 
-			geoTree.collapseAll();			
-		
-		geoTree.setSelected(geos, false);
-		if (!isShowing()) {		
-			// pack and center on first showing
-			if (firstTime) {
-				pack();		
-				setLocationRelativeTo(app.getMainComponent());	
-				firstTime = false;
-			}
-			
-			// ensure min size
-			Dimension dim = getSize();
-			if (dim.width < MIN_WIDTH) {
-				dim.width = MIN_WIDTH;
-				setSize(dim);
-			}
-			if (dim.height < MIN_HEIGHT) {
-				dim.height = MIN_HEIGHT;
-				setSize(dim);
-			}			
-			
-			super.setVisible(true);	
-		}					
-	}
-	private boolean firstTime = true;
-
-	public void setVisible(boolean visible) {
-		if (visible) {			
-			setVisibleWithGeos(null);			
-		} else {
-			super.setVisible(false);
-			setViewActive(false);
-		}
-	}
-	
-	private void setViewActive(boolean flag) {
-		if (flag == viewActive) return; 
-		viewActive = flag;
-		
-		if (flag) {			
-			geoTree.clear();	
-			kernel.attach(geoTree);
-			kernel.notifyAddAll(geoTree);					
-			
-			app.setSelectionListenerMode(this);
-			addWindowFocusListener(this);			
-		} else {
-			kernel.detach(geoTree);					
-			
-			removeWindowFocusListener(this);						
-			app.setSelectionListenerMode(null);
-		}		
-	}
-	private boolean viewActive = false;
-
-	/**
-	 * handles selection change	 
-	 */
-	private void selectionChanged() {	
-		updateSelectedGeos(geoTree.getSelectionPaths());
-				
-		Object [] geos = selectionList.toArray();										
-		propPanel.updateSelection(geos);
-		//Util.addKeyListenerToAll(propPanel, this);
-		
-		// update selection of application too
-		if (app.getMode() == EuclidianView.MODE_ALGEBRA_INPUT)
-			app.setSelectedGeos(selectionList);		
-	}
-	
-	
-	private ArrayList updateSelectedGeos(TreePath [] selPath ) {
-		selectionList.clear();	
-		
-		if (selPath != null) {				
-			// add all selected paths
-			for (int i=0; i < selPath.length; i++) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath[i].getLastPathComponent();						
-				
-				if (node == node.getRoot()) {	
-					// root: add all objects
-					selectionList.clear();
-					selectionList.addAll(app.getKernel().getConstruction().getGeoSetLabelOrder());										
-					i = selPath.length;		
-				}				
-				else if (node.getParent() == node.getRoot()) {
-					// type node: select all children	
-					for (int k=0; k < node.getChildCount(); k++) {
-						DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(k);											
-						selectionList.add(child.getUserObject());
-					}
-				} else {
-					// GeoElement					
-					selectionList.add(node.getUserObject());					
-				}										
-			}				
-		}	
-			
-		return selectionList;
-	}
-	private ArrayList selectionList = new ArrayList();
-	
-	public void geoElementSelected(GeoElement geo, boolean addToSelection) {
-		if (geo == null) return;
-		tempArrayList.clear();
-		tempArrayList.add(geo);
-		geoTree.setSelected(tempArrayList, addToSelection);
-		//requestFocus();
-	}	
-	private ArrayList tempArrayList = new ArrayList();
-
-	/**
-	 * deletes all selected GeoElements from Kernel	 
-	 */
-	private void deleteSelectedGeos() {
-		ArrayList selGeos = selectionList;
-		
-		if (selGeos.size() > 0) {	
-			Object [] geos = selGeos.toArray();			
-			for (int i = 0; i < geos.length - 1; i++) {
-				((GeoElement) geos[i]).remove();
-			}
-			
-			// select element above last to delete
-			GeoElement geo = (GeoElement) geos[geos.length - 1];
-			TreePath tp = geoTree.getTreePath(geo);			
-			if (tp != null) {
-				int row = geoTree.getRowForPath(tp);
-				tp = geoTree.getPathForRow(row - 1);
-				geo.remove();								
-				if (tp != null) geoTree.setSelectionPath(tp);
-			}
-		}
-	}
-
-	/**
-	 * renames first selected GeoElement
-	 *
-	private void rename() {
-		ArrayList selGeos = selectionList;	
-		if (selGeos.size() > 0)	{
-			GeoElement geo = (GeoElement) selGeos.get(0);
-			app.showRenameDialog(geo, false, null);
-			
-			selectionList.clear();
-			selectionList.add(geo);
-			geoTree.setSelected(selectionList, false);	
-		}								
-	}*/
-	
-	/**
-	 * redefines first selected GeoElement
-	 *
-	private void redefine() {
-		ArrayList selGeos = selectionList;
-		geoTree.clearSelection();
-		if (selGeos.size() > 0)						
-			app.showRedefineDialog((GeoElement) selGeos.get(0));		
-	}*/
-
-	
-
-	/*
-	 * Window Listener
-	 */
-	public void windowActivated(WindowEvent e) {
-		/*
-		if (!isModal()) {
-			geoTree.setSelected(null, false);
-			//selectionChanged();						
-		}
-		repaint();
-		*/
-	}
-
-	public void windowDeactivated(WindowEvent e) {
-	}
-
-	public void windowClosing(WindowEvent e) {
-		//cancel();
-		closeDialog();
-	}
-
-	public void windowClosed(WindowEvent e) {
-	}
-
-	public void windowDeiconified(WindowEvent e) {
-	}
-	public void windowIconified(WindowEvent e) {
-	}
-	public void windowOpened(WindowEvent e) {
-	}
-	
-
-
-	/**
-	 * INNER CLASS
 	 * PropertiesPanel for displaying all gui elements for changing properties
 	 * of currently selected GeoElements. 
-	 * @see update() in PropertiesPanel
+	 * @see update() in 
+	 * PropertiesPanel
 	 * @author Markus Hohenwarter
 	 */
-	class PropertiesPanel extends JPanel {
-		/**
-		 * 
-		 */
+public	class PropertiesPanel extends JPanel {
+		private static final int MAX_COMBOBOX_ENTRIES = 200;
+		
+		private Application app;
+		private Kernel kernel;
+		private JColorChooser colChooser;
+	
 		private static final long serialVersionUID = 1L;
 		private NamePanel namePanel;
 		private ShowObjectPanel showObjectPanel;		
@@ -585,20 +148,51 @@ public class PropertiesDialogGeoElement
 		private ColorFunctionPanel colorFunctionPanel;
 		//private CoordinateFunctionPanel coordinateFunctionPanel;
 		
+		private TabPanel basicTab;
+		private TabPanel colorTab;
+		private TabPanel styleTab;
+		private TabPanel lineStyleTab;
+		private TabPanel sliderTab;
+		private TabPanel textTab;
+		private TabPanel positionTab;
+		private TabPanel algebraTab;
+		private TabPanel scriptTab;
+		private TabPanel advancedTab;
+		
+		/**
+		 * If just panels should be displayed which are used if the user
+		 * modifies the default properties of an object type. 
+		 */
+		private boolean isDefaults;
+		
 		private JTabbedPane tabs;
 
-		public PropertiesPanel(JColorChooser colChooser) {			
-			//setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));	
-			//setLayout(new FlowLayout());
+		public PropertiesPanel(Application app, JColorChooser colChooser, boolean isDefaults) {			
+			this.isDefaults = isDefaults;
 			
-			//setBorder(
-					//BorderFactory.createTitledBorder(app.getPlain("Properties")));
-
-			namePanel = new NamePanel(app);		
+			this.app = app;
+			this.kernel = app.getKernel();
+			this.colChooser = colChooser;
+			
+			// load panels which are hidden for the defaults dialog
+			if(!isDefaults) {
+				namePanel = new NamePanel(app);		
+				labelPanel = new LabelPanel();
+				layerPanel = new LayerPanel(); // Michael Borcherds 2008-02-26
+				animatingPanel = new AnimatingPanel();
+				scriptEditPanel = new ScriptEditPanel();
+				textEditPanel = new TextEditPanel();
+				startPointPanel = new StartPointPanel();
+				cornerPointsPanel = new CornerPointsPanel();
+				bgImagePanel = new BackgroundImagePanel();
+				showConditionPanel = new ShowConditionPanel(app, this); 
+				colorFunctionPanel = new ColorFunctionPanel(app, this);
+				//coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
+				sliderPanel = new SliderPanel(app, this);
+			}
+			
 			showObjectPanel = new ShowObjectPanel();
 			colorPanel = new ColorPanel(colChooser);
-			labelPanel = new LabelPanel();
-			layerPanel = new LayerPanel(); // Michael Borcherds 2008-02-26
 			coordPanel = new CoordPanel();
 			lineEqnPanel = new LineEqnPanel();
 			conicEqnPanel = new ConicEqnPanel();
@@ -615,24 +209,15 @@ public class PropertiesDialogGeoElement
 			//END
 			fillingPanel = new FillingPanel();
 			tracePanel = new TracePanel();
-			animatingPanel = new AnimatingPanel();
 			fixPanel = new FixPanel();
 			checkBoxFixPanel = new CheckBoxFixPanel();
 			absScreenLocPanel = new AbsoluteScreenLocationPanel();
 			auxPanel = new AuxiliaryObjectPanel();
-			animStepPanel = new AnimationStepPanel(app);
-			animSpeedPanel = new AnimationSpeedPanel(app);
-			sliderPanel = new SliderPanel(app, this);
-			startPointPanel = new StartPointPanel();
-			cornerPointsPanel = new CornerPointsPanel();
-			textEditPanel = new TextEditPanel();
-			scriptEditPanel = new ScriptEditPanel();
-			bgImagePanel = new BackgroundImagePanel();
 			allowReflexAnglePanel = new AllowReflexAnglePanel();
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
-			showConditionPanel = new ShowConditionPanel(app, this); 
-			colorFunctionPanel = new ColorFunctionPanel(app, this);
-			//coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
+			
+			animStepPanel = new AnimationStepPanel(app);
+			animSpeedPanel = new AnimationSpeedPanel(app);
 			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
@@ -647,144 +232,235 @@ public class PropertiesDialogGeoElement
 			arcSizePanel.setMinValue();
 		}
 		//END		
+
+		/**
+		 * A list of the tab panels
+		 */
+		private ArrayList<TabPanel> tabPanelList;
 		
-		// lists of TabPanel objects
-		private ArrayList tabPanelList;
-				
-		private void initTabs() {				
+		/**
+		 * Initialize the tabs
+		 */
+		private void initTabs() {
+			tabPanelList = new ArrayList<TabPanel>();
+			
 			// basic tab
-			ArrayList basicTabList = new ArrayList();
-			basicTabList.add(namePanel);			
-			basicTabList.add(showObjectPanel);														
-			basicTabList.add(labelPanel);		
-			basicTabList.add(tracePanel);			
-			basicTabList.add(animatingPanel);			
+			ArrayList<JPanel> basicTabList = new ArrayList<JPanel>();
+			
+			if(!isDefaults)
+				basicTabList.add(namePanel);
+			
+			basicTabList.add(showObjectPanel);	
+			
+			if(!isDefaults)
+				basicTabList.add(labelPanel);
+			
+			basicTabList.add(tracePanel);
+			
+			if(!isDefaults)
+				basicTabList.add(animatingPanel);
+			
 			basicTabList.add(fixPanel);	
 			basicTabList.add(auxPanel);
 			basicTabList.add(checkBoxFixPanel);
-			basicTabList.add(bgImagePanel);	
+			
+			if(!isDefaults)
+				basicTabList.add(bgImagePanel);
+			
 			basicTabList.add(absScreenLocPanel);
 			basicTabList.add(allowReflexAnglePanel);	
 			basicTabList.add(rightAnglePanel);
 			basicTabList.add(allowOutlyingIntersectionsPanel);
-			TabPanel basicTab = new TabPanel(app.getMenu("Properties.Basic"), basicTabList);
-			basicTab.addToTabbedPane(tabs);	
-			
-			// name tab
-//			ArrayList nameTabList = new ArrayList();
-//			nameTabList.add(namePanel);
-//			TabPanel nameTab = new TabPanel(app.getPlain("Name"), nameTabList);
-//			nameTab.addToTabbedPane(tabs);	
-				
-			/*
-			// change basic tab layout: create grid with two columns
-			basicTab.removeAll();
-			basicTab.setLayout(new GridBagLayout());
-			GridBagConstraints c = new GridBagConstraints();
-			c.fill = GridBagConstraints.NONE;
-			c.anchor = GridBagConstraints.NORTHWEST;
-			c.weightx = 0.1;
-			c.weighty = 0.1;				
-			c.gridwidth = 2;
-			basicTab.add(namePanel, c);
-			c.gridwidth = 1;
-			for (int i = 1; i < basicTabList.size(); i++) {
-				JPanel p = (JPanel) basicTabList.get(i);
-				c.gridx = (i-1) % 2;
-				c.gridy = (i-1) / 2 + 1;													
-				basicTab.add(p, c);
-			}	
-			*/
+			basicTab = new TabPanel(basicTabList);
+			tabPanelList.add(basicTab);
 			
 			// text tab
-			ArrayList textTabList = new ArrayList();			
+			ArrayList<JPanel> textTabList = new ArrayList<JPanel>();			
 			textTabList.add(textOptionsPanel);	
-			textTabList.add(textEditPanel);			
-			TabPanel textTab = new TabPanel(app.getPlain("Text"), textTabList);
-			textTab.addToTabbedPane(tabs);	
+			
+			if(!isDefaults)
+				textTabList.add(textEditPanel);
+			
+			textTab = new TabPanel(textTabList);
+			tabPanelList.add(textTab);
 			
 			// script tab
-			ArrayList scriptTabList = new ArrayList();			
-			//scriptTabList.add(scriptOptionsPanel);	
-			scriptTabList.add(scriptEditPanel);			
-			TabPanel scriptTab = new TabPanel(app.getPlain("Scriptxx"), scriptTabList);
-			scriptTab.addToTabbedPane(tabs);	
+			if(!isDefaults) {
+				ArrayList<JPanel> scriptTabList = new ArrayList<JPanel>();			
+				//scriptTabList.add(scriptOptionsPanel);
+				
+				scriptTabList.add(scriptEditPanel);
+				
+				scriptTab = new TabPanel(scriptTabList);
+				tabPanelList.add(scriptTab);
+			}
 			
 			// slider tab
-			ArrayList sliderTabList = new ArrayList();	
-			sliderTabList.add(sliderPanel);	
-			TabPanel sliderTab = new TabPanel(app.getPlain("Slider"), sliderTabList);
-			sliderTab.addToTabbedPane(tabs);	
+			if(!isDefaults) {
+				ArrayList<JPanel> sliderTabList = new ArrayList<JPanel>();	
+				sliderTabList.add(sliderPanel);	
+				sliderTab = new TabPanel(sliderTabList);
+				tabPanelList.add(sliderTab);
+			}
 	        
 			// color tab
-			ArrayList colorTabList = new ArrayList();
+			ArrayList<JPanel> colorTabList = new ArrayList<JPanel>();
 			colorTabList.add(colorPanel);		
-			TabPanel colorTab = new TabPanel(app.getPlain("Color"), colorTabList);
-			colorTab.addToTabbedPane(tabs);			
+			colorTab = new TabPanel(colorTabList);
+			tabPanelList.add(colorTab);
 					
 
 			// style tab
-			ArrayList styleTabList = new ArrayList();
+			ArrayList<JPanel> styleTabList = new ArrayList<JPanel>();
 			styleTabList.add(slopeTriangleSizePanel);
 			styleTabList.add(pointSizePanel);
 			styleTabList.add(pointStylePanel); // Florian Sonner 2008-07-17
 			styleTabList.add(lineStylePanel);	
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);
-			TabPanel styleTab = new TabPanel(app.getMenu("Properties.Style"), styleTabList);
-			styleTab.addToTabbedPane(tabs);	
+			styleTab = new TabPanel(styleTabList);
+			tabPanelList.add(styleTab);
 				
 			// decoration
-			ArrayList decorationTabList = new ArrayList();	
+			ArrayList<JPanel> decorationTabList = new ArrayList<JPanel>();	
 			decorationTabList.add(decoAnglePanel);
 			decorationTabList.add(decoSegmentPanel);
-			TabPanel lineStyleTab = new TabPanel(app.getPlain("Decoration"), decorationTabList);
-			lineStyleTab.addToTabbedPane(tabs);	
+			lineStyleTab = new TabPanel(decorationTabList);
+			tabPanelList.add(lineStyleTab);
 			
 			// filling style
-//			ArrayList fillingTabList = new ArrayList();	
-//			fillingTabList.add(fillingPanel);			
-//			TabPanel fillingTab = new TabPanel(app.getPlain("Filling"), fillingTabList);
-//			fillingTab.addToTabbedPane(tabs);										
+			// ArrayList fillingTabList = new ArrayList();	
+			// fillingTabList.add(fillingPanel);			
+			// TabPanel fillingTab = new TabPanel(app.getPlain("Filling"), fillingTabList);
+			// fillingTab.addToTabbedPane(tabs);										
 			
-			// position			
-			ArrayList positionTabList = new ArrayList();	
-			positionTabList.add(startPointPanel);	
-			positionTabList.add(cornerPointsPanel);
-			TabPanel positionTab = new TabPanel(app.getMenu("Properties.Position"), positionTabList);
-			positionTab.addToTabbedPane(tabs);	
+			// position	
+			if(!isDefaults) {
+				ArrayList<JPanel> positionTabList = new ArrayList<JPanel>();
+				
+				positionTabList.add(startPointPanel);	
+				positionTabList.add(cornerPointsPanel);
+				
+				positionTab = new TabPanel(positionTabList);
+				tabPanelList.add(positionTab);
+			}
 			
 			// algebra tab
-			ArrayList algebraTabList = new ArrayList();
+			ArrayList<JPanel> algebraTabList = new ArrayList<JPanel>();
 			algebraTabList.add(coordPanel);
 			algebraTabList.add(lineEqnPanel);
-			algebraTabList.add(conicEqnPanel);	
+			algebraTabList.add(conicEqnPanel);
 			algebraTabList.add(animStepPanel);	
-			TabPanel algebraTab = new TabPanel(app.getMenu("Properties.Algebra"), algebraTabList);
-			algebraTab.addToTabbedPane(tabs);
+			algebraTab = new TabPanel(algebraTabList);
+			tabPanelList.add(algebraTab);
 			
 			// advanced tab
-			ArrayList advancedTabList = new ArrayList();
-			advancedTabList.add(showConditionPanel);	
-			advancedTabList.add(colorFunctionPanel);	
-			//advancedTabList.add(coordinateFunctionPanel);	
-			advancedTabList.add(layerPanel); // Michael Borcherds 2008-02-26
-			TabPanel advancedTab = new TabPanel(app.getMenu("Advanced"), advancedTabList);
-			advancedTab.addToTabbedPane(tabs);			
-					
-			// fill tabPanelList
-			tabPanelList = new ArrayList();
-			for (int i=0; i < tabs.getTabCount(); i++) {
-				tabPanelList.add( (TabPanel) tabs.getComponentAt(i));
+			if(!isDefaults) {
+				ArrayList<JPanel> advancedTabList = new ArrayList<JPanel>();
+				
+				advancedTabList.add(showConditionPanel);	
+				advancedTabList.add(colorFunctionPanel);	
+				//advancedTabList.add(coordinateFunctionPanel);	
+				advancedTabList.add(layerPanel); // Michael Borcherds 2008-02-26
+				
+				advancedTab = new TabPanel(advancedTabList);
+				tabPanelList.add(advancedTab);
+			}
+			
+			setLabels();
+		}
+		
+		/**
+		 * Update the labels of this panel in case the user language
+		 * was changed.
+		 */
+		public void setLabels() {
+			// update labels of tabs
+			// TODO change label for script tab
+			basicTab.setTitle(app.getMenu("Properties.Basic"));
+			colorTab.setTitle(app.getPlain("Color"));
+			styleTab.setTitle(app.getMenu("Properties.Style"));
+			lineStyleTab.setTitle(app.getPlain("Decoration"));
+			textTab.setTitle(app.getPlain("Text"));
+			algebraTab.setTitle(app.getMenu("Properties.Algebra"));
+			
+			if(!isDefaults) {
+				positionTab.setTitle(app.getMenu("Properties.Position"));
+				sliderTab.setTitle(app.getPlain("Slider")); 
+				scriptTab.setTitle(app.getPlain("Scriptxx")); 
+				advancedTab.setTitle(app.getMenu("Advanced"));
+			}
+			
+			// update the labels of the panels
+			showObjectPanel.setLabels();		
+			colorPanel.setLabels();
+			coordPanel.setLabels();
+			lineEqnPanel.setLabels();
+			conicEqnPanel.setLabels();
+			pointSizePanel.setLabels();
+			pointStylePanel.setLabels();
+			textOptionsPanel.setLabels();
+			arcSizePanel.setLabels();
+			lineStylePanel.setLabels();
+			decoSegmentPanel.setLabels();
+			decoAnglePanel.setLabels();
+			rightAnglePanel.setLabels();
+			fillingPanel.setLabels();
+			tracePanel.setLabels();
+			fixPanel.setLabels();
+			checkBoxFixPanel.setLabels();
+	 		allowReflexAnglePanel.setLabels();
+	 		allowOutlyingIntersectionsPanel.setLabels();
+			auxPanel.setLabels();
+			animStepPanel.setLabels();
+			animSpeedPanel.setLabels();
+			slopeTriangleSizePanel.setLabels();
+			absScreenLocPanel.setLabels();
+
+			if(!isDefaults) {
+				namePanel.setLabels();
+				labelPanel.setLabels();
+				layerPanel.setLabels();
+				animatingPanel.setLabels();
+				scriptEditPanel.setLabels();
+				textEditPanel.setLabels();
+				startPointPanel.setLabels();
+				cornerPointsPanel.setLabels();
+				bgImagePanel.setLabels();	
+				showConditionPanel.setLabels();
+				colorFunctionPanel.setLabels();
+				sliderPanel.setLabels();
+			}
+			
+			// remember selected tab
+			Component selectedTab = tabs.getSelectedComponent();
+			
+			// update tab labels
+			tabs.removeAll();				
+			for (int i=0; i < tabPanelList.size(); i++) {
+				TabPanel tp = (TabPanel) tabPanelList.get(i);
+				tp.addToTabbedPane(tabs);
+			}
+														
+			// switch back to previously selected tab
+			if (tabs.getTabCount() > 0) {				
+				int index = tabs.indexOfComponent(selectedTab);
+				tabs.setSelectedIndex(Math.max(0, index));
+				tabs.setVisible(true);
+			} else {
+				tabs.setVisible(false);
 			}
 		}
 		
+		/**
+		 * Update all tabs after new GeoElements were selected.
+		 * @param geos
+		 */
 		private void updateTabs(Object [] geos) {			
 			if (geos.length == 0) {
 				tabs.setVisible(false);
 				return;
 			}
-			
 			
 			// remember selected tab
 			Component selectedTab = tabs.getSelectedComponent();
@@ -824,58 +500,59 @@ public class PropertiesDialogGeoElement
 			//oldSelGeos = geos;										
 						
 			updateTabs(geos);
-		}				
+		}			
 						
 		
 		private class TabPanel extends JPanel {
 		
-			private String title;
-			private ArrayList panelList;
-			private boolean makeVisible = true;			
+		private String title;
+		private ArrayList panelList;
+		private boolean makeVisible = true;			
+		
+		public TabPanel(ArrayList pVec) {
+			panelList = pVec;
 			
-			public TabPanel(String title, ArrayList pVec) {
-				this.title = title;
-				panelList = pVec;
-				
-				setLayout(new BorderLayout());
-				JPanel panel = new JPanel();
-				panel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
-				JScrollPane scrollPane = new JScrollPane(panel);
-				scrollPane.setBorder(BorderFactory.createEmptyBorder());
-				//setPreferredSize(new Dimension(450, 110));
-				add(scrollPane, BorderLayout.CENTER);
-							
-				// create grid with one column
-				panel.setLayout(new GridBagLayout());
-				GridBagConstraints c = new GridBagConstraints();
-				c.fill = GridBagConstraints.NONE;
-				c.anchor = GridBagConstraints.NORTHWEST;
-				c.weightx = 1.0;
-				c.weighty = 1E-12;
-				
-				for (int i = 0; i < pVec.size(); i++) {
-					JPanel p = (JPanel) pVec.get(i);
-					c.gridx = 0;
-					c.gridy = i;
-										
-					panel.add(p, c);
-				}			
-				c.weighty = 1.0;
-				panel.add(Box.createVerticalGlue(), c);
-			}
+			setLayout(new BorderLayout());
+			JPanel panel = new JPanel();
+			panel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
+			JScrollPane scrollPane = new JScrollPane(panel);
+			scrollPane.setBorder(BorderFactory.createEmptyBorder());
+			//setPreferredSize(new Dimension(450, 110));
+			add(scrollPane, BorderLayout.CENTER);
+						
+			// create grid with one column
+			panel.setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.fill = GridBagConstraints.NONE;
+			c.anchor = GridBagConstraints.NORTHWEST;
+			c.weightx = 1.0;
+			c.weighty = 1E-12;
 			
-			public void update(Object [] geos) {
-				makeVisible = updateTabPanel(this, panelList, geos);
-			}
-			
-			public void addToTabbedPane(JTabbedPane tabs) {
-				if (makeVisible) {
-					tabs.addTab(title, this);
-				}
-			}										
+			for (int i = 0; i < pVec.size(); i++) {
+				JPanel p = (JPanel) pVec.get(i);
+				c.gridx = 0;
+				c.gridy = i;
+									
+				panel.add(p, c);
+			}			
+			c.weighty = 1.0;
+			panel.add(Box.createVerticalGlue(), c);
 		}
-
-	} // PropertiesPanel
+		
+		public void setTitle(String title) {
+			this.title = title;
+		}
+		
+		public void update(Object [] geos) {
+			makeVisible = updateTabPanel(this, panelList, geos);
+		}
+		
+		public void addToTabbedPane(JTabbedPane tabs) {
+			if (makeVisible) {
+				tabs.addTab(title, this);
+			}
+		}										
+	}
 		
 	
 	/**
@@ -889,9 +566,13 @@ public class PropertiesDialogGeoElement
 
 		public ShowObjectPanel() {
 			// check box for show object
-			showObjectCB = new JCheckBox(app.getPlain("ShowObject"));
+			showObjectCB = new JCheckBox();
 			showObjectCB.addItemListener(this);			
 			add(showObjectCB);			
+		}
+		
+		public void setLabels() {
+			showObjectCB.setText(app.getPlain("ShowObject"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -960,7 +641,7 @@ public class PropertiesDialogGeoElement
 					geo.updateRepaint();
 				}
 			}
-			propPanel.updateSelection(geos);
+			updateSelection(geos);
 		}
 
 	} // ShowObjectPanel
@@ -975,9 +656,13 @@ public class PropertiesDialogGeoElement
 		private JCheckBox checkboxFixCB;
 
 		public CheckBoxFixPanel() {
-			checkboxFixCB = new JCheckBox(app.getPlain("FixCheckbox"));
+			checkboxFixCB = new JCheckBox();
 			checkboxFixCB.addItemListener(this);			
 			add(checkboxFixCB);			
+		}
+		
+		public void setLabels() {
+			checkboxFixCB.setText(app.getPlain("FixCheckbox"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1038,7 +723,7 @@ public class PropertiesDialogGeoElement
 					bool.updateRepaint();
 				}
 			}
-			propPanel.updateSelection(geos);
+			updateSelection(geos);
 		}
 
 	} // CheckBoxFixPanel
@@ -1050,13 +735,13 @@ public class PropertiesDialogGeoElement
 
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
-		private JLabel previewLabel;
+		private JLabel previewLabel, currentColorLabel;
 		private JPanel previewPanel;
 
 		public ColorPanel(JColorChooser colChooser) {
 			colChooser.setLocale(app.getLocale());
 			previewPanel = new PreviewPanel();
-			previewLabel = new JLabel();
+			currentColorLabel = new JLabel();
 			AbstractColorChooserPanel [] tabs = colChooser.getChooserPanels();
 			
 			setLayout(new BorderLayout());		
@@ -1104,10 +789,12 @@ public class PropertiesDialogGeoElement
 			setLayout(new BorderLayout());			
 			add(tabs[0], BorderLayout.NORTH);		
 			
+			previewLabel = new JLabel();
+			
 			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			p.add(new JLabel(app.getMenu("Preview") + ": "));
-			p.add(previewPanel);
 			p.add(previewLabel);
+			p.add(previewPanel);
+			p.add(currentColorLabel);
 			add(p, BorderLayout.CENTER);
 			
 			// in order to get state changes we need to set color chooser to
@@ -1127,8 +814,6 @@ public class PropertiesDialogGeoElement
 			colChooser.getSelectionModel().addChangeListener(this);	
 		}
 		
-
-		
 		private class PreviewPanel extends JPanel {
 		    public PreviewPanel() {
 		        setPreferredSize(new Dimension(100,app.getFontSize() + 8));
@@ -1141,6 +826,10 @@ public class PropertiesDialogGeoElement
 		        g.fillRect(0,0,size.width,size.height);
 		      }
 	    }
+		
+		public void setLabels() {
+			previewLabel.setText(app.getMenu("Preview") + ": ");
+		}
 
 		public JPanel update(Object[] geos) {
 			this.geos = geos;
@@ -1165,11 +854,11 @@ public class PropertiesDialogGeoElement
 			if (equalObjColor) {
 				col = geo0.getObjectColor();
 				previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());
-				previewLabel.setText("("+previewPanel.getToolTipText()+")");		
+				currentColorLabel.setText("("+previewPanel.getToolTipText()+")");		
 			} else {
 				col = null;
 				previewPanel.setToolTipText("");
-				previewLabel.setText("");
+				currentColorLabel.setText("");
 			}
 			
 			previewPanel.setForeground(col);
@@ -1186,7 +875,7 @@ public class PropertiesDialogGeoElement
 			// update preview panel
 			previewPanel.setForeground(col);
 			previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());
-			previewLabel.setText("("+previewPanel.getToolTipText()+")");
+			currentColorLabel.setText("("+previewPanel.getToolTipText()+")");
 			
 			GeoElement geo;
 			for (int i = 0; i < geos.length; i++) {
@@ -1197,9 +886,9 @@ public class PropertiesDialogGeoElement
 			
 			// in order to get state changes we need to set color chooser to
 			// a color that is different to the current one
-			colChooser.getSelectionModel().removeChangeListener(this);		
-			Color differentColor = new Color(col.getRed(), col.getGreen(), (col.getBlue() + 1) % 256);
-			colChooser.setColor(differentColor);
+			colChooser.getSelectionModel().removeChangeListener(this);
+			colChooser.setColor(new Color(0, 0, 1));
+            
 			colChooser.getSelectionModel().addChangeListener(this);	
 		}
 
@@ -1245,23 +934,41 @@ public class PropertiesDialogGeoElement
 
 		public LabelPanel() {
 			// check boxes for show object, show label
-			showLabelCB = new JCheckBox(app.getPlain("ShowLabel") + ":");
+			showLabelCB = new JCheckBox();
 			showLabelCB.addItemListener(this);
 
 			// combo box for label mode: name or algebra
 			labelModeCB = new JComboBox();
-			labelModeCB.addItem(app.getPlain("Name")); // index 0
-			labelModeCB.addItem(
-				app.getPlain("NameAndValue"));
-			// index 1
-			labelModeCB.addItem(app.getPlain("Value")); // index 2
-			labelModeCB.addItem(app.getPlain("Caption")); // index 3 Michael Borcherds
 			labelModeCB.addActionListener(this);
 
 			// labelPanel with show checkbox
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(showLabelCB);
 			add(labelModeCB);			
+		}
+		
+		public void setLabels() {
+			showLabelCB.setText(app.getPlain("ShowLabel") + ":");
+
+			int selectedIndex = labelModeCB.getSelectedIndex();
+			labelModeCB.removeActionListener(this);
+			
+			labelModeCB.removeAllItems();
+			labelModeCB.addItem(app.getPlain("Name")); // index 0
+			labelModeCB.addItem(app.getPlain("NameAndValue")); // index 1
+			labelModeCB.addItem(app.getPlain("Value")); // index 2
+			labelModeCB.addItem(app.getPlain("Caption")); // index 3 Michael Borcherds
+			
+			labelModeCB.setSelectedIndex(selectedIndex);
+			labelModeCB.removeActionListener(this);
+			
+			// change "Show Label:" to "Show Label" if there's no menu
+			// Michael Borcherds 2008-02-18
+			if (!showNameValueComboBox) {
+				showLabelCB.setText(app.getPlain("ShowLabel"));
+			} else {
+				showLabelCB.setText(app.getPlain("ShowLabel") + ":");
+			}
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1293,7 +1000,10 @@ public class PropertiesDialogGeoElement
 			
 			// change "Show Label:" to "Show Label" if there's no menu
 			// Michael Borcherds 2008-02-18
-			if (!showNameValueComboBox) showLabelCB.setText(app.getPlain("ShowLabel")); else showLabelCB.setText(app.getPlain("ShowLabel") + ":");
+			if (!showNameValueComboBox)
+				showLabelCB.setText(app.getPlain("ShowLabel"));
+			else
+				showLabelCB.setText(app.getPlain("ShowLabel") + ":");
 
 
 			//	set label visible checkbox
@@ -1384,13 +1094,15 @@ public class PropertiesDialogGeoElement
 		private JLabel layerLabel;
 
 		public LayerPanel() {
-			layerLabel = new JLabel(app.getPlain("Layer") + ":");	
+			layerLabel = new JLabel();	
 			layerLabel.setLabelFor(layerModeCB);
 
 			// combo box for label mode: name or algebra
 			layerModeCB = new JComboBox();
 			
-			for (int layer=0 ; layer<=EuclidianView.MAX_LAYERS ; layer++) layerModeCB.addItem(" "+layer); 
+			for (int layer = 0; layer <= EuclidianView.MAX_LAYERS; ++layer) {
+				layerModeCB.addItem(" "+layer); 
+			}
 			
 			layerModeCB.addActionListener(this);
 
@@ -1398,6 +1110,10 @@ public class PropertiesDialogGeoElement
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(layerLabel);
 			add(layerModeCB);			
+		}
+		
+		public void setLabels() {
+			layerLabel.setText(app.getPlain("Layer") + ":");
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1480,9 +1196,13 @@ public class PropertiesDialogGeoElement
 
 		public TracePanel() {
 			// check boxes for show trace
-			showTraceCB = new JCheckBox(app.getPlain("ShowTrace"));
+			showTraceCB = new JCheckBox();
 			showTraceCB.addItemListener(this);
 			add(showTraceCB);
+		}
+		
+		public void setLabels() {
+			showTraceCB.setText(app.getPlain("ShowTrace"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1555,9 +1275,13 @@ public class PropertiesDialogGeoElement
 
 		public AnimatingPanel() {
 			// check boxes for animating
-			showAnimatingCB = new JCheckBox(app.getPlain("Animating"));
+			showAnimatingCB = new JCheckBox();
 			showAnimatingCB.addItemListener(this);
 			add(showAnimatingCB);
+		}
+		
+		public void setLabels() {
+			showAnimatingCB.setText(app.getPlain("Animating"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1636,9 +1360,13 @@ public class PropertiesDialogGeoElement
 
 		public FixPanel() {
 			// check boxes for show trace
-			showFixCB = new JCheckBox(app.getPlain("FixObject"));
+			showFixCB = new JCheckBox();
 			showFixCB.addItemListener(this);
 			add(showFixCB);
+		}
+		
+		public void setLabels() {
+			showFixCB.setText(app.getPlain("FixObject"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1692,11 +1420,9 @@ public class PropertiesDialogGeoElement
 					geo.setFixed(showFixCB.isSelected());
 					geo.updateRepaint();
 				}
-			}		
-			if (propPanel != null)		
-				propPanel.updateSelection(geos);
-			else
-				update(geos);
+			}
+			
+			updateSelection(geos);
 		}
 	}
 
@@ -1715,11 +1441,15 @@ public class PropertiesDialogGeoElement
 		public AbsoluteScreenLocationPanel() {
 			// check boxes for show trace
 			setLayout(new FlowLayout(FlowLayout.LEFT));
-			cbAbsScreenLoc = new JCheckBox(app.getPlain("AbsoluteScreenLocation"));
+			cbAbsScreenLoc = new JCheckBox();
 			cbAbsScreenLoc.addItemListener(this);
 
 			// put it all together		
 			add(cbAbsScreenLoc);						
+		}
+		
+		public void setLabels() {
+			cbAbsScreenLoc.setText(app.getPlain("AbsoluteScreenLocation"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1792,10 +1522,7 @@ public class PropertiesDialogGeoElement
 					geo.toGeoElement().updateRepaint();
 				}
 				
-				if (propPanel != null)		
-					propPanel.updateSelection(geos);
-				else
-					update(geos);
+				updateSelection(geos);
 			}
 		}
 	}	
@@ -1811,21 +1538,25 @@ public class PropertiesDialogGeoElement
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
 		private JCheckBox reflexAngleCB;
-		private JCheckBox forcereflexAngleCB;
+		private JCheckBox forceReflexAngleCB;
 
 		public AllowReflexAnglePanel() {
 //			 Michael Borcherds 2007-11-19
-			reflexAngleCB = new JCheckBox(app.getPlain("allowReflexAngle"));
+			reflexAngleCB = new JCheckBox();
 			reflexAngleCB.addItemListener(this);
-			forcereflexAngleCB = new JCheckBox(app.getPlain("forceReflexAngle"));
-			forcereflexAngleCB.addItemListener(this);
+			forceReflexAngleCB = new JCheckBox();
+			forceReflexAngleCB.addItemListener(this);
 			add(reflexAngleCB);	
 
 			// TODO make sure this line is commented out for 3.0 release, then reinstated
-			add(forcereflexAngleCB);			
+			add(forceReflexAngleCB);			
 
 			setLayout(new FlowLayout(FlowLayout.LEFT));
-			
+		}
+		
+		public void setLabels() {
+			reflexAngleCB.setText(app.getPlain("allowReflexAngle"));
+			forceReflexAngleCB.setText(app.getPlain("forceReflexAngle"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1835,7 +1566,7 @@ public class PropertiesDialogGeoElement
 
 //			 Michael Borcherds 2007-11-19
 			reflexAngleCB.removeItemListener(this);
-			forcereflexAngleCB.removeItemListener(this);
+			forceReflexAngleCB.removeItemListener(this);
 
 			// check if properties have same values
 			GeoAngle temp, geo0 = (GeoAngle) geos[0];
@@ -1858,15 +1589,15 @@ public class PropertiesDialogGeoElement
 				switch (geo0.getAngleStyle()) {
 				case 2: // acute/obtuse
 					reflexAngleCB.setSelected(false);
-					forcereflexAngleCB.setSelected(false);
+					forceReflexAngleCB.setSelected(false);
 					break;
 				case 3: // force reflex
 					reflexAngleCB.setSelected(true);
-					forcereflexAngleCB.setSelected(true);
+					forceReflexAngleCB.setSelected(true);
 					break;
 				default: // should be 0: anticlockwise
 					reflexAngleCB.setSelected(true);
-					forcereflexAngleCB.setSelected(false);
+					forceReflexAngleCB.setSelected(false);
 					break;
 					
 				}
@@ -1874,11 +1605,11 @@ public class PropertiesDialogGeoElement
 			else
 			{
 				reflexAngleCB.setSelected(false);
-				forcereflexAngleCB.setSelected(false);
+				forceReflexAngleCB.setSelected(false);
 			}
 
 			reflexAngleCB.addItemListener(this);
-			forcereflexAngleCB.addItemListener(this);
+			forceReflexAngleCB.addItemListener(this);
 			return this;
 		}
 
@@ -1898,11 +1629,11 @@ public class PropertiesDialogGeoElement
 			GeoAngle geo;
 			Object source = e.getItemSelectable();
 
-//Michael Borcherds 2007-11-19
-			if (source == reflexAngleCB || source==forcereflexAngleCB) {
+			//Michael Borcherds 2007-11-19
+			if (source == reflexAngleCB || source==forceReflexAngleCB) {
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
-					if (forcereflexAngleCB.isSelected()) {
+					if (forceReflexAngleCB.isSelected()) {
 						geo.setAngleStyle(3);
 						reflexAngleCB.setEnabled(false);
 					}
@@ -1914,7 +1645,7 @@ public class PropertiesDialogGeoElement
 						else
 							geo.setAngleStyle(2);							
 					}
-//					Michael Borcherds 2007-11-19
+					// Michael Borcherds 2007-11-19
 					geo.updateRepaint();
 				}
 			}
@@ -1935,11 +1666,15 @@ public class PropertiesDialogGeoElement
 
 		public AllowOutlyingIntersectionsPanel() {
 			// check boxes for show trace			
-			outlyingIntersectionsCB = new JCheckBox(app.getPlain("allowOutlyingIntersections"));
+			outlyingIntersectionsCB = new JCheckBox();
 			outlyingIntersectionsCB.addItemListener(this);
 			
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(outlyingIntersectionsCB);			
+		}
+		
+		public void setLabels() {
+			outlyingIntersectionsCB.setText(app.getPlain("allowOutlyingIntersections"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -2012,10 +1747,14 @@ public class PropertiesDialogGeoElement
 
 		public BackgroundImagePanel() {
 			// check boxes for show trace
-			isBGimage = new JCheckBox(app.getPlain("BackgroundImage"));
+			isBGimage = new JCheckBox();
 			isBGimage.addItemListener(this);
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(isBGimage);
+		}
+		
+		public void setLabels() {
+			isBGimage.setText(app.getPlain("BackgroundImage"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -2087,9 +1826,13 @@ public class PropertiesDialogGeoElement
 		public AuxiliaryObjectPanel() {
 			// check boxes for show trace
 			setLayout(new FlowLayout(FlowLayout.LEFT));
-			auxCB = new JCheckBox(app.getPlain("AuxiliaryObject"));
+			auxCB = new JCheckBox();
 			auxCB.addItemListener(this);
 			add(auxCB);			
+		}
+		
+		public void setLabels() {
+			auxCB.setText(app.getPlain("AuxiliaryObject"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -2158,12 +1901,13 @@ public class PropertiesDialogGeoElement
 		 */
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
+		private JLabel label;
 		private JComboBox cbLocation;
 		private DefaultComboBoxModel cbModel;
 
 		public StartPointPanel() {
 			// textfield for animation step
-			JLabel label = new JLabel(app.getPlain("StartingPoint") + ": ");
+			label = new JLabel();
 			cbLocation = new JComboBox();
 			cbLocation.setEditable(true);
 			cbModel = new DefaultComboBoxModel();
@@ -2176,6 +1920,10 @@ public class PropertiesDialogGeoElement
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(label);
 			add(cbLocation);			
+		}
+		
+		public void setLabels() {
+			label.setText(app.getPlain("StartingPoint") + ": ");
 		}
 
 		public JPanel update(Object[] geos) {
@@ -2266,7 +2014,7 @@ public class PropertiesDialogGeoElement
 				}
 			}
 
-			propPanel.updateSelection(geos);
+			updateSelection(geos);
 		}
 
 		public void focusGained(FocusEvent arg0) {
@@ -2288,10 +2036,12 @@ public class PropertiesDialogGeoElement
 		 */
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
+		private JLabel [] labelLocation;
 		private JComboBox [] cbLocation;
 		private DefaultComboBoxModel [] cbModel;
 
 		public CornerPointsPanel() {
+			labelLocation = new JLabel[3];
 			cbLocation = new JComboBox[3];
 			cbModel = new DefaultComboBoxModel[3];
 			
@@ -2299,25 +2049,29 @@ public class PropertiesDialogGeoElement
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			
 			// textfield for animation step
-			String strLabelStart = app.getPlain("CornerPoint");
-			String strLabel;
 			for (int i = 0; i < 3; i++) {
-				int pointNumber = i < 2 ? (i+1) : (i+2);
-				strLabel = strLabelStart + " " + pointNumber + ":";
-	
-				JLabel label = new JLabel(strLabel);
+				labelLocation[i] = new JLabel();
 				cbLocation[i] = new JComboBox();
 				cbLocation[i].setEditable(true);
 				cbModel[i] = new DefaultComboBoxModel();
 				cbLocation[i].setModel(cbModel[i]);
-				label.setLabelFor(cbLocation[i]);
+				labelLocation[i].setLabelFor(cbLocation[i]);
 				cbLocation[i].addActionListener(this);
 				cbLocation[i].addFocusListener(this);
 				
 				JPanel locPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-				locPanel.add(label);
+				locPanel.add(labelLocation[i]);
 				locPanel.add(cbLocation[i]);
 				add(locPanel);
+			}
+		}
+		
+		public void setLabels() {
+			String strLabelStart = app.getPlain("CornerPoint");
+			
+			for (int i = 0; i < 3; i++) {
+				int pointNumber = i < 2 ? (i+1) : (i+2);
+				labelLocation[i].setText(strLabelStart + " " + pointNumber + ":");
 			}
 		}
 
@@ -2420,7 +2174,7 @@ public class PropertiesDialogGeoElement
 				im.updateRepaint();				
 			}
 
-			propPanel.updateSelection(geos);
+			updateSelection(geos);
 		}
 
 		public void focusGained(FocusEvent arg0) {
@@ -2443,8 +2197,7 @@ public class PropertiesDialogGeoElement
 		private static final long serialVersionUID = 1L;	
 		private TextInputDialog td;
 		
-		public TextEditPanel() {	
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
+		public TextEditPanel() {
 			td = new TextInputDialog(app, app.getPlain("Text"), null, null,
 										30, 5);
 			setLayout(new BorderLayout());
@@ -2453,6 +2206,13 @@ public class PropertiesDialogGeoElement
 			btPanel.add(td.getLaTeXPanel(), BorderLayout.WEST);
 			btPanel.add(td.getButtonPanel(), BorderLayout.EAST);
 			add(btPanel, BorderLayout.SOUTH);
+		}
+		
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
+			//td.setLabels(app.getPlain("Text"));
+
+			// TODO: Update text dialog (F.S.)
 		}
 
 		public JPanel update(Object[] geos) {			
@@ -2491,7 +2251,6 @@ public class PropertiesDialogGeoElement
 		private ScriptInputDialog td;
 		
 		public ScriptEditPanel() {	
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Editxx")));
 			td = new ScriptInputDialog(app, app.getPlain("Textxx"), null,
 										40, 10);
 			setLayout(new BorderLayout());
@@ -2499,6 +2258,13 @@ public class PropertiesDialogGeoElement
 			JPanel btPanel = new JPanel(new BorderLayout(0,0));
 			btPanel.add(td.getButtonPanel(), BorderLayout.EAST);
 			add(btPanel, BorderLayout.SOUTH);
+		}
+		
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("Editxx")));
+			//td.setLabels(app.getPlain("Textxx"));
+			
+			// TODO: Update text dialog (F.S.)
 		}
 
 		public JPanel update(Object[] geos) {			
@@ -2535,19 +2301,31 @@ public class PropertiesDialogGeoElement
 		 */
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
+		private JLabel coordLabel;
 		private JComboBox coordCB;		
 
 		public CoordPanel() {
-			JLabel coordLabel = new JLabel(app.getPlain("Coordinates")+":");
+			coordLabel = new JLabel();
 			coordCB = new JComboBox();
-			coordCB.addItem(app.getPlain("CartesianCoords")); // index 0
-			coordCB.addItem(app.getPlain("PolarCoords")); // index 1
-			coordCB.addItem(app.getPlain("ComplexNumber")); // index 2
-			coordCB.addActionListener(this);
-
+			
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(coordLabel);
 			add(coordCB);
+		}
+		
+		public void setLabels() {
+			coordLabel.setText(app.getPlain("Coordinates")+":");
+			
+			int selectedIndex = coordCB.getSelectedIndex();
+			coordCB.removeActionListener(this);
+			
+			coordCB.removeAllItems();
+			coordCB.addItem(app.getPlain("CartesianCoords")); // index 0
+			coordCB.addItem(app.getPlain("PolarCoords")); // index 1
+			coordCB.addItem(app.getPlain("ComplexNumber")); // index 2
+			
+			coordCB.setSelectedIndex(selectedIndex);
+			coordCB.addActionListener(this);
 		}
 
 		public JPanel update(Object[] geos) {
@@ -2648,25 +2426,34 @@ public class PropertiesDialogGeoElement
 		 */
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
-		private DefaultComboBoxModel eqnCBmodel;
 		private JComboBox eqnCB;
 		private JLabel eqnLabel;
 
 		public LineEqnPanel() {
-			eqnLabel = new JLabel(app.getPlain("Equation") + ":");
+			eqnLabel = new JLabel();
 			eqnCB = new JComboBox();
-			eqnCBmodel = new DefaultComboBoxModel();
-			eqnCB.setModel(eqnCBmodel);
-			eqnCBmodel.addElement(app.getPlain("ImplicitLineEquation"));
-			// index 0
-			eqnCBmodel.addElement(app.getPlain("ExplicitLineEquation"));
-			// index 1		
-			eqnCBmodel.addElement(app.getPlain("ParametricForm")); // index 2
 			eqnCB.addActionListener(this);
 
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(eqnLabel);
 			add(eqnCB);
+		}
+		
+		public void setLabels() {
+			eqnLabel.setText(app.getPlain("Equation") + ":");
+			
+			int selectedIndex = eqnCB.getSelectedIndex();
+			eqnCB.removeActionListener(this);
+			
+			eqnCB.removeAllItems();
+			eqnCB.addItem(app.getPlain("ImplicitLineEquation"));
+			// index 0
+			eqnCB.addItem(app.getPlain("ExplicitLineEquation"));
+			// index 1		
+			eqnCB.addItem(app.getPlain("ParametricForm")); // index 2
+			
+			eqnCB.setSelectedIndex(selectedIndex);
+			eqnCB.addActionListener(this);
 		}
 
 		public JPanel update(Object[] geos) {
@@ -2775,7 +2562,7 @@ public class PropertiesDialogGeoElement
 		int implicitIndex, explicitIndex, specificIndex;
 
 		public ConicEqnPanel() {
-			eqnLabel = new JLabel(app.getPlain("Equation") + ":");
+			eqnLabel = new JLabel();
 			eqnCB = new JComboBox();
 			eqnCBmodel = new DefaultComboBoxModel();
 			eqnCB.setModel(eqnCBmodel);
@@ -2784,6 +2571,15 @@ public class PropertiesDialogGeoElement
 			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(eqnLabel);
 			add(eqnCB);
+		}
+		
+		public void setLabels() {
+			eqnLabel.setText(app.getPlain("Equation") + ":");
+			
+			if(geos != null)
+				update(geos);
+			
+			// TODO: Anything else required? (F.S.)
 		}
 
 		public JPanel update(Object[] geos) {
@@ -2950,8 +2746,11 @@ public class PropertiesDialogGeoElement
 			slider.setFont(app.getSmallFont());	
 			slider.addChangeListener(this);			
 			
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("PointSize") ));		
 			add(slider);			
+		}
+		
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("PointSize")));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -3010,23 +2809,23 @@ public class PropertiesDialogGeoElement
 		public PointStylePanel() {
 			ButtonGroup buttonGroup = new ButtonGroup();
 			
-			String[] strPointStyle = { app.getPlain("Default"), "\u25cf", "\u25cb", "\u2716" };
-			String[] strPointStyleAC = { "-1", "0", "2", "1" };
+			String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716" };
+			String[] strPointStyleAC = { "0", "2", "1" };
 			buttons = new JRadioButton[strPointStyle.length];
 			
 			for(int i = 0; i < strPointStyle.length; ++i) {
 				buttons[i] = new JRadioButton(strPointStyle[i]);
 				buttons[i].setActionCommand(strPointStyleAC[i]);
 				buttons[i].addActionListener(this);
-				
-				if(!strPointStyleAC[i].equals("-1"))
-					buttons[i].setFont(app.getSmallFont());
+				buttons[i].setFont(app.getSmallFont());
 				
 				buttonGroup.add(buttons[i]);
 				add(buttons[i]);
-			}		
-			
-			setBorder(BorderFactory.createTitledBorder(app.getMenu("PointStyle") ));					
+			}						
+		}
+
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getMenu("PointStyle") ));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -3077,12 +2876,10 @@ public class PropertiesDialogGeoElement
 	 * @author Markus Hohenwarter
 	 */
 	private class TextOptionsPanel extends JPanel implements ActionListener, UpdateablePanel {
-
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
+		
+		private JLabel decimalLabel;
 		private JComboBox cbFont, cbSize, cbDecimalPlaces;		
 		private JToggleButton btBold, btItalic;
 		
@@ -3102,10 +2899,10 @@ public class PropertiesDialogGeoElement
 			cbSize.addActionListener(this);						
 			
 			// toggle buttons for bold and italic
-			btBold = new JToggleButton(app.getPlain("Bold").substring(0,1));
+			btBold = new JToggleButton();
 			btBold.setFont(app.getBoldFont());
 			btBold.addActionListener(this);			
-			btItalic = new JToggleButton(app.getPlain("Italic").substring(0,1));
+			btItalic = new JToggleButton();
 			btItalic.setFont(app.getPlainFont().deriveFont(Font.ITALIC));
 			btItalic.addActionListener(this);		
 			
@@ -3126,7 +2923,7 @@ public class PropertiesDialogGeoElement
 			// bold, italic
 			secondLine = new JPanel();
 			secondLine.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));		
-			JLabel decimalLabel  = new JLabel(app.getMenu("Rounding") + ":");					
+			decimalLabel  = new JLabel();					
 			secondLine.add(decimalLabel);
 			secondLine.add(cbDecimalPlaces);									
 			
@@ -3134,6 +2931,26 @@ public class PropertiesDialogGeoElement
 			add(firstLine, BorderLayout.NORTH);
 			add(secondLine, BorderLayout.SOUTH);	
 			secondLineVisible = true;
+		}
+		
+		public void setLabels() {
+			String[] fontSizes = new String[] { app.getPlain("ExtraSmall"), app.getPlain("Small"), app.getPlain("Medium"), app.getPlain("Large"), app.getPlain("ExtraLarge") };
+			
+			int selectedIndex = cbSize.getSelectedIndex();
+			cbSize.removeActionListener(this);
+			cbSize.removeAllItems();
+			
+			for(int i = 0; i < fontSizes.length; ++i) {
+				cbSize.addItem(fontSizes[i]);
+			}
+			
+			cbSize.setSelectedIndex(selectedIndex);
+			cbSize.addActionListener(this);
+			
+			btItalic.setText(app.getPlain("Italic").substring(0,1));
+			btBold.setText(app.getPlain("Bold").substring(0,1));
+			
+			decimalLabel.setText(app.getMenu("Rounding") + ":");
 		}
 
 		class ComboBoxRenderer extends JLabel implements ListCellRenderer {
@@ -3302,7 +3119,6 @@ public class PropertiesDialogGeoElement
 		private JSlider slider;
 
 		public SlopeTriangleSizePanel() {
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Size")));
 			//JLabel sizeLabel = new JLabel(app.getPlain("Size") + ":");		
 			slider = new JSlider(1, 10);
 			slider.setMajorTickSpacing(2);
@@ -3340,6 +3156,10 @@ public class PropertiesDialogGeoElement
 			add(sizeLabel);
 			*/		
 			add(slider);			
+		}
+		
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("Size")));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -3401,7 +3221,6 @@ public class PropertiesDialogGeoElement
 		private JSlider slider;
 
 		public ArcSizePanel() {
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Size")));
 			//JLabel sizeLabel = new JLabel(app.getPlain("Size") + ":");		
 			slider = new JSlider(10, 100);
 			slider.setMajorTickSpacing(10);
@@ -3439,6 +3258,11 @@ public class PropertiesDialogGeoElement
 			*/		
 			add(slider);			
 		}
+		
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("Size")));
+		}
+		
 		//added by Lo�c BEGIN
 		public void setMinValue(){
 			slider.setValue(20);
@@ -3520,7 +3344,6 @@ public class PropertiesDialogGeoElement
 		private JSlider slider;
 
 		public FillingPanel() {
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Filling")));
 			//JLabel sizeLabel = new JLabel(app.getPlain("Filling") + ":");		
 			slider = new JSlider(0, 100);
 			slider.setMajorTickSpacing(25);
@@ -3557,6 +3380,10 @@ public class PropertiesDialogGeoElement
 			add(sizeLabel);			
 			*/
 			add(slider);			
+		}
+		
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("Filling")));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -3616,6 +3443,8 @@ public class PropertiesDialogGeoElement
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
 		private JSlider slider;
+		private JPanel thicknessPanel;
+		private JLabel dashLabel;
 		private JComboBox dashCB;
 
 		public LineStylePanel() {
@@ -3655,14 +3484,12 @@ public class PropertiesDialogGeoElement
 
 			// line style panel
 			JPanel dashPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			JLabel dashLabel = new JLabel(app.getPlain("LineStyle") + ":");
+			dashLabel = new JLabel();
 			dashPanel.add(dashLabel);
 			dashPanel.add(dashCB);
 
 			// thickness panel
-			JPanel thicknessPanel = new JPanel();
-			thicknessPanel.setBorder(
-				BorderFactory.createTitledBorder(app.getPlain("Thickness")));
+			thicknessPanel = new JPanel();
 			/*
 			JLabel thicknessLabel = new JLabel(app.getPlain("Thickness") + ":");
 			thicknessPanel.setLayout(new BoxLayout(thicknessPanel, BoxLayout.X_AXIS));	
@@ -3680,6 +3507,13 @@ public class PropertiesDialogGeoElement
 			dashPanel.setAlignmentX(Component.LEFT_ALIGNMENT);	
 			add(thicknessPanel);
 			add(dashPanel);			
+		}
+		
+		public void setLabels() {
+			thicknessPanel.setBorder(
+					BorderFactory.createTitledBorder(app.getPlain("Thickness")));
+			
+			dashLabel.setText(app.getPlain("LineStyle") + ":");
 		}
 
 		public JPanel update(Object[] geos) {
@@ -3773,7 +3607,10 @@ public class PropertiesDialogGeoElement
 	// added by Lo�c
 	private class DecoSegmentPanel extends JPanel implements ActionListener , UpdateablePanel {
 		private JComboBox decoCombo;
+		private JLabel decoLabel;
 		private Object[] geos;
+		
+		
 		DecoSegmentPanel(){
 			super(new FlowLayout(FlowLayout.LEFT));
 			// deco combobox 		
@@ -3783,10 +3620,15 @@ public class PropertiesDialogGeoElement
 			decoCombo.setRenderer(renderer);
 			decoCombo.addActionListener(this);
 
-			JLabel decoLabel = new JLabel(app.getPlain("Decoration") + ":");
+			decoLabel = new JLabel();
 			add(decoLabel);
 			add(decoCombo);
 		}
+		
+		public void setLabels() {
+			decoLabel.setText(app.getPlain("Decoration") + ":");
+		}
+		
 		public JPanel update(Object[] geos) {
 			// check geos
 			if (!checkGeos(geos))
@@ -3832,7 +3674,9 @@ public class PropertiesDialogGeoElement
 	
 	private class DecoAnglePanel extends JPanel implements ActionListener , UpdateablePanel{
 		private JComboBox decoCombo;
+		private JLabel decoLabel;
 		private Object[] geos;
+		
 		DecoAnglePanel(){
 			super(new FlowLayout(FlowLayout.LEFT));
 			// deco combobox 		
@@ -3841,10 +3685,15 @@ public class PropertiesDialogGeoElement
 			decoCombo = new JComboBox(GeoAngle.getDecoTypes());
 			decoCombo.setRenderer(renderer);
 			decoCombo.addActionListener(this);
-			JLabel decoLabel = new JLabel(app.getPlain("Decoration") + ":");
+			decoLabel = new JLabel();
 			add(decoLabel);
 			add(decoCombo);		
 		}
+		
+		public void setLabels() {
+			decoLabel.setText(app.getPlain("Decoration") + ":");
+		}
+		
 		public JPanel update(Object[] geos) {
 			// check geos
 			if (!checkGeos(geos))
@@ -3877,16 +3726,13 @@ public class PropertiesDialogGeoElement
 				int type = ((Integer) decoCombo.getSelectedItem()).intValue();
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
-// Michael Borcherds 2007-11-20 BEGIN
-//					geo.decorationType = type;
 					geo.setDecorationType(type);
-// Michael Borcherds 2007-11-20 END
 					// addded by Lo�c BEGIN
 					// check if decoration could be drawn
 					if (geo.getArcSize()<20&&(geo.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| geo.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
 						geo.setArcSize(20);
-						propPanel.setSliderMinValue();
+						setSliderMinValue();
 						}
 					//END
 					geo.updateRepaint();
@@ -3901,10 +3747,15 @@ public class PropertiesDialogGeoElement
 		private Object[] geos;
 		RightAnglePanel(){
 			super(new FlowLayout(FlowLayout.LEFT));
-			emphasizeRightAngle=new JCheckBox(app.getPlain("EmphasizeRightAngle"));
+			emphasizeRightAngle=new JCheckBox();
 			emphasizeRightAngle.addActionListener(this);
 			add(emphasizeRightAngle);
 		}
+		
+		public void setLabels() {
+			emphasizeRightAngle.setText(app.getPlain("EmphasizeRightAngle"));
+		}
+		
 		public JPanel update(Object[] geos) {
 			// check geos
 			if (!checkGeos(geos))
@@ -3951,433 +3802,12 @@ public class PropertiesDialogGeoElement
 		
 	}
 	// END 
+} // PropertiesPanel
 
 	
 	
 	
 	/**
-	 * INNER CLASS
-	 * JList for displaying GeoElements
-	 * @see GeoTreeCellRenderer
-	 * @author Markus Hohenwarter
-	 */
-	private class JTreeGeoElements extends JTree implements View, MouseMotionListener, MouseListener {
-	
-		private static final long serialVersionUID = 1L;
-		private DefaultTreeModel treeModel;
-		private DefaultMutableTreeNode root;
-		private HashMap typeNodesMap;		
-
-		/*
-		 * has to be registered as view for GeoElement 
-		 */
-		public JTreeGeoElements() {
-			// build default tree structure
-			root = new DefaultMutableTreeNode(app.getPlain("Objects"));					
-
-			// create model from root node
-			treeModel = new DefaultTreeModel(root);				
-			setModel(treeModel);
-			setLargeModel(true);
-			typeNodesMap = new HashMap();
-			
-			getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);		
-			GeoTreeCellRenderer renderer = new GeoTreeCellRenderer(app);			
-			setCellRenderer(renderer);
-			setRowHeight(-1); // to enable flexible height of cells
-
-			// 	tree's options             
-			setRootVisible(true);
-			// show lines from parent to children
-			//putClientProperty("JTree.lineStyle", "None");
-			setInvokesStopCellEditing(true);
-			setScrollsOnExpand(true);	
-			
-			addMouseMotionListener(this);
-			addMouseListener(this);
-		}				
-		
-		protected void setExpandedState(TreePath path, boolean state) {
-            // Ignore all collapse requests of root        	
-            if (path != getPathForRow(0)) {
-                super.setExpandedState(path, state);
-            }
-        }
-		
-		public void expandAll() {
-		    int row = 0;
-		    while (row < getRowCount()) {
-		      expandRow(row);
-		      row++;
-	       }
-	    }
-		
-		public void collapseAll() {
-		    int row = 1;
-		    while (row < getRowCount()) {
-		      collapseRow(row);
-		      row++;
-	       }
-	    }
-		
-		
-		
-
-		/**
-		 * selects object geo in the list of GeoElements	 
-		 * @param addToSelection: false => clear old selection 
-		 */
-		public void setSelected(ArrayList geos, boolean addToSelection) {
-			TreePath tp = null;					
-			
-			TreeSelectionModel lsm = getSelectionModel();					
-			if (geos == null || geos.size() == 0) {
-				lsm.clearSelection();
-				selectFirstElement();
-			}			
-			else {
-				if (!addToSelection) 
-					lsm.clearSelection();		
-							
-				// get paths for all geos
-				ArrayList paths = new ArrayList();
-				for (int i=0; i<geos.size(); i++) {
-					TreePath result = getGeoPath((GeoElement) geos.get(i));
-					if (result != null) {	
-						tp = result;
-						expandPath(result);
-						paths.add(result);
-					}
-				}				
-							
-				// select geo paths
-				TreePath [] selPaths = new TreePath[paths.size()];
-				for (int i=0; i < selPaths.length; i++) {
-					selPaths[i] = (TreePath) paths.get(i);
-				}
-				lsm.addSelectionPaths(selPaths);
-				
-				if (tp != null && geos.size() == 1) {
-					scrollPathToVisible(tp);
-				}				
-			}		
-		}	
-		
-		private void selectFirstElement() {
-			//  select all  if list is not empty
-			if (root.getChildCount() > 0) {						
-				DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) root.getFirstChild();
-				TreePath tp = new TreePath(((DefaultMutableTreeNode)typeNode.getFirstChild()).getPath());																
-				setSelectionPath(tp); // select																													
-			}
-		}
-		
-		/**		 
-		 * returns geo's TreePath 
-		 */
-		private TreePath getGeoPath(GeoElement geo) {
-			String typeString = geo.getObjectType();
-			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(typeString);
-			if (typeNode == null)
-				return null;
-			
-			int pos = AlgebraView.binarySearchGeo(typeNode, geo.getLabel());
-			if (pos == -1)
-				return null;
-			else {
-				// add to selection
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) typeNode.getChildAt(pos);
-				
-				//	expand typenode 
-				TreePath tp = new TreePath(node.getPath());						
-
-				return tp;
-			}
-		}
-					
-		public void clearSelection() {
-			getSelectionModel().clearSelection();
-		}
-
-		/**
-		 * Clears the list.
-		 */
-		private void clear() {			
-			root.removeAllChildren();			
-			treeModel.reload();
-			typeNodesMap.clear();
-		}
-
-		/* **********************/
-		/* VIEW IMPLEMENTATION */
-		/* **********************/						
-		
-		/**
-		   * adds a new element to the list
-		   */
-		final public void add(GeoElement geo) {	
-			if (!geo.isLabelSet() || !geo.hasProperties()) 
-				return;	
-				
-			// get type node
-			String typeString = geo.getObjectType();
-			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(typeString);
-			
-			// init type node
-			boolean initing = typeNode == null;
-			if (initing) {
-				String transTypeString = geo.translatedTypeString();
-				typeNode = new DefaultMutableTreeNode(transTypeString);									
-				typeNodesMap.put(typeString, typeNode);
-				
-				// find insert pos
-				int pos = root.getChildCount();
-				for (int i=0; i < pos; i++) {
-					DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
-					if (transTypeString.compareTo(child.toString()) < 0) {
-						pos = i;
-						break;
-					}
-				}
-				
-				treeModel.insertNodeInto(typeNode, root, pos);				
-			}			
-			
-			// check if already present in type node
-			int pos = AlgebraView.binarySearchGeo(typeNode, geo.getLabel());
-			if (pos >= 0) return;
-			
-			// add geo to type node   
-			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(geo);
-			pos = AlgebraView.getInsertPosition(typeNode, geo);
-			treeModel.insertNodeInto(newNode, typeNode, pos);
-			
-			// make sure something is selected
-			if (getSelectionModel().isSelectionEmpty()) {
-				selectFirstElement();					
-			}
-		
-			/*
-			if (isShowing()) {
-				TreePath geoPath = new TreePath(newNode.getPath());
-				//addSelectionPath(geoPath);
-				makeVisible(geoPath);
-			} */		
-		}		
-		
-
-		/**
-		 * removes an element from the list
-		 */
-		public void remove(GeoElement geo) {		
-			remove(geo, true);
-			
-			// close dialog if no elements left
-			if (root.getChildCount() == 0) {	
-				closeDialog();
-				return;
-			}
-			
-			// make sure something is selected
-			if (getSelectionModel().isSelectionEmpty()) {
-				selectFirstElement();					
-			}						
-		}
-		
-		/**
-		 * 
-		 * @param geo
-		 * @param binarySearch: true for binary, false for linear search
-		 */
-		public void remove(GeoElement geo, boolean binarySearch) {
-			// get type node
-			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(geo.getObjectType());
-			if (typeNode == null) return;
-									
-			int pos = binarySearch ?
-					AlgebraView.binarySearchGeo(typeNode, geo.getLabel()) :					
-					AlgebraView.linearSearchGeo(typeNode, geo.getLabel());
-			if (pos > -1) {				
-				DefaultMutableTreeNode child = (DefaultMutableTreeNode) typeNode.getChildAt(pos);					
-				treeModel.removeNodeFromParent(child);
-				
-				if (typeNode.getChildCount() == 0) {
-					// last child					
-					typeNodesMap.remove(geo.getObjectType());	
-					treeModel.removeNodeFromParent(typeNode);									
-				} 						
-			}
-		}
-		
-		
-		
-		/**
-		 * Returns the tree path of geo	
-		 * @return returns null if geo is not in tree
-		 */
-		private TreePath getTreePath(GeoElement geo) {
-			DefaultMutableTreeNode typeNode = (DefaultMutableTreeNode) typeNodesMap.get(geo.getObjectType());
-			if (typeNode == null) return null;
-			
-			// find pos of geo 
-			int pos = AlgebraView.binarySearchGeo(typeNode, geo.getLabel());					
-			if (pos == -1) return null;
-					
-			return new TreePath(((DefaultMutableTreeNode)typeNode.getChildAt(pos)).getPath());			
-		}
-
-		/**
-		 * renames an element and sorts list 
-		 */
-		public void rename(GeoElement geo) {		
-			// the rename destroyed the alphabetical order,
-			// so we have to use linear instead of binary search
-			remove(geo, false);			
-			add(geo);
-			geoElementSelected(geo, false);
-		}
-
-		/**
-		 * updates a list of elements
-		 */
-		public void update(GeoElement geo) {
-			repaint();
-		}
-
-		public void updateAuxiliaryObject(GeoElement geo) {
-			repaint();
-		}
-
-		public void reset() {
-			repaint();
-		}
-
-		public void clearView() {
-			clear();
-		}
-		
-    	final public void repaintView() {
-    		repaint();
-    	}
-
-		public void mouseDragged(MouseEvent arg0) {			
-		}
-
-		public void mouseMoved(MouseEvent e) {
-			Point loc = e.getPoint();
-			GeoElement geo = AlgebraView.getGeoElementForLocation(this, loc.x, loc.y);
-			EuclidianView ev = app.getEuclidianView();
-
-			// tell EuclidianView to handle mouse over
-			ev.mouseMovedOver(geo);								
-			if (geo != null)
-				setToolTipText(geo.getLongDescriptionHTML(true, true));
-			else
-				setToolTipText(null);
-		}
-
-		public void mouseClicked(MouseEvent e) {
-			/*
-			Point loc = e.getPoint();
-			int clicks = e.getClickCount();
-			
-			
-			if (clicks == 1) {
-				int row = getRowForLocation(loc.x, loc.y);				
-				addSelectionRow(row);
-			}
-			
-			else if (clicks == 2) {
-				GeoElement geo = AlgebraView.getGeoElementForLocation(this, loc.x, loc.y);						
-				if (geo != null) {
-					app.showRenameDialog(geo, false, null);
-				}
-			}*/
-		}
-
-		public void mouseEntered(MouseEvent arg0) {
-		
-		}
-
-		public void mouseExited(MouseEvent arg0) {
-		}
-
-		public void mousePressed(MouseEvent arg0) {
-		}
-
-		public void mouseReleased(MouseEvent arg0) {
-		}
-
-	} // JTreeGeoElements
-
-
-	
-	/*
-	 * Keylistener implementation of PropertiesDialog
-	 *
-
-	public void keyPressed(KeyEvent e) {
-		int code = e.getKeyCode();
-		switch (code) {
-			case KeyEvent.VK_ESCAPE :
-				//cancel();
-				closeDialog();
-				break;
-
-			case KeyEvent.VK_ENTER :
-				// needed for input fields
-				//applyButton.doClick();				
-				break;
-		}
-	}
-
-	public void keyReleased(KeyEvent e) {
-	}
-
-	public void keyTyped(KeyEvent e) {
-	} */
-
-	public void windowGainedFocus(WindowEvent arg0) {
-		// make sure this dialog is the current selection listener
-		if (app.getMode() != EuclidianView.MODE_ALGEBRA_INPUT ||
-			app.getCurrentSelectionListener() != this) 
-		{
-			app.setSelectionListenerMode(this);
-			selectionChanged();
-		}		
-	}
-		
-
-	public void windowLostFocus(WindowEvent arg0) {		
-	}
-
-	// Tree selection listener
-	public void valueChanged(TreeSelectionEvent e) {			
-		selectionChanged();		
-	}
-
-	/*
-	 * KeyListener
-	 */
-	public void keyPressed(KeyEvent e) {
-		Object src = e.getSource();
-		
-		if (src instanceof JTreeGeoElements) {
-			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-				deleteSelectedGeos();
-			}			
-		}		
-	}
-
-	public void keyReleased(KeyEvent e) {	
-	}
-
-	public void keyTyped(KeyEvent e) {	
-	}
-
-} // PropertiesDialog
-
-/**
  * panel for numeric slider
  * @author Markus Hohenwarter
  */
@@ -4392,16 +3822,17 @@ class SliderPanel
 	private AngleTextField tfMin, tfMax;
 	private JTextField tfWidth;
 	private JTextField [] tfields;
+	private JLabel [] tLabels;
 	private JCheckBox cbSliderFixed;
 	private JComboBox coSliderHorizontal;
 	
 	private Application app;
-	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
 	private AnimationStepPanel stepPanel;
 	private AnimationSpeedPanel speedPanel;
 	private Kernel kernel;
+	private PropertiesPanel propPanel;
 
-	public SliderPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
+	public SliderPanel(Application app, PropertiesPanel propPanel) {
 		this.app = app;
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
@@ -4412,12 +3843,12 @@ class SliderPanel
 		intervalPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Interval")));			
 		
 		JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
-		sliderPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain(app.getPlain("Slider"))));		
+		sliderPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Slider")));		
 
 		JPanel animationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
-		animationPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain(app.getPlain("Animation"))));		
+		animationPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Animation")));		
 
-		cbSliderFixed = new JCheckBox(app.getPlain("fixed"));
+		cbSliderFixed = new JCheckBox();
 		cbSliderFixed.addActionListener(this);
 		sliderPanel.add(cbSliderFixed);		
 		
@@ -4426,24 +3857,23 @@ class SliderPanel
 		coSliderHorizontal.addActionListener(this);
 		sliderPanel.add(coSliderHorizontal);				
 					
-		String[] labels = { app.getPlain("min")+":",
-							app.getPlain("max")+":", app.getPlain("Width")+":"};
 		tfMin = new AngleTextField(5);
 		tfMax = new AngleTextField(5);
 		tfWidth = new JTextField(4);
 		tfields = new JTextField[3];
+		tLabels = new JLabel[3];
 		tfields[0] = tfMin;
 		tfields[1] = tfMax;
 		tfields[2] = tfWidth;
-		int numPairs = labels.length;
+		int numPairs = tLabels.length;
 
 		//	add textfields
 		for (int i = 0; i < numPairs; i++) {
 			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		    JLabel l = new JLabel(labels[i], SwingConstants.LEADING);
-		    p.add(l);
+		    tLabels[i] = new JLabel("", SwingConstants.LEADING);
+		    p.add(tLabels[i]);
 		    JTextField textField = tfields[i];
-		    l.setLabelFor(textField);
+		    tLabels[i].setLabelFor(textField);
 		    textField.addActionListener(this);
 		    textField.addFocusListener(this);
 		    p.add(textField);
@@ -4469,6 +3899,30 @@ class SliderPanel
 		add(sliderPanel);					
 		add(Box.createVerticalStrut(5));
 		add(animationPanel);					
+	}
+	
+	public void setLabels() {
+		cbSliderFixed.setText(app.getPlain("fixed"));
+		
+		String [] comboStr = {app.getPlain("horizontal"), app.getPlain("vertical")};
+		
+		int selectedIndex = coSliderHorizontal.getSelectedIndex();
+		coSliderHorizontal.removeActionListener(this);
+		coSliderHorizontal.removeAllItems();
+		
+		for(int i = 0; i < comboStr.length; ++i) {
+			coSliderHorizontal.addItem(comboStr[i]);
+		}
+		
+		coSliderHorizontal.setSelectedIndex(selectedIndex);
+		coSliderHorizontal.addActionListener(this);
+
+		String[] labels = { app.getPlain("min")+":",
+							app.getPlain("max")+":", app.getPlain("Width")+":"};
+		
+		for(int i = 0; i < tLabels.length; ++i) {
+			tLabels[i].setText(labels[i]);
+		}
 	}
 
 	public JPanel update(Object[] geos) {
@@ -4512,7 +3966,7 @@ class SliderPanel
 		// set values
 		//int oldDigits = kernel.getMaximumFractionDigits();
 		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
-        kernel.setTemporaryPrintDecimals(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+        kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 		if (equalMin){
 			if (onlyAngles)
 				tfMin.setText(kernel.formatAngle(num0.getIntervalMin()).toString());
@@ -4662,6 +4116,7 @@ class AnimationStepPanel
 	private static final long serialVersionUID = 1L;
 	
 	private Object[] geos; // currently selected geos
+	private JLabel label;
 	private AngleTextField tfAnimStep;
 	private boolean partOfSliderPanel = false;
 	
@@ -4671,7 +4126,7 @@ class AnimationStepPanel
 		kernel = app.getKernel();
 		
 		// text field for animation step
-		JLabel label = new JLabel(app.getPlain("AnimationStep") + ": ");
+		label = new JLabel();
 		tfAnimStep = new AngleTextField(5);
 		label.setLabelFor(tfAnimStep);
 		tfAnimStep.addActionListener(this);
@@ -4685,6 +4140,12 @@ class AnimationStepPanel
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(animPanel);
+	}
+	
+	public void setLabels() {
+		label.setText(kernel.getApplication().getPlain("AnimationStep") + ": ");
+		
+		// TODO: Update text field? (F.S.)
 	}
 	
 	public void setPartOfSliderPanel() {
@@ -4715,7 +4176,7 @@ class AnimationStepPanel
 		// set trace visible checkbox
 		//int oldDigits = kernel.getMaximumFractionDigits();
 		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
-		kernel.setTemporaryPrintDecimals(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+		kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 
         if (equalStep)
 			if (onlyAngles)
@@ -4799,14 +4260,17 @@ class AnimationSpeedPanel
 	private JTextField tfAnimSpeed;
 	private boolean partOfSliderPanel = false;
 	private JComboBox animationModeCB;	
+	private JLabel modeLabel, speedLabel;
+	private Application app;
 	private Kernel kernel;
 
 	public AnimationSpeedPanel(Application app) {
-
-		kernel = app.getKernel();
+		this.app = app;
+		this.kernel = app.getKernel();
+		
 			// combo box for 
 		animationModeCB = new JComboBox();
-		JLabel label2 = new JLabel(app.getPlain("Repeat") + ": ");
+		modeLabel = new JLabel();
 		animationModeCB.addItem("\u21d4 "+app.getPlain("Oscillating")); // index 0
 		animationModeCB.addItem("\u21d2 "+app.getPlain("Increasing")); // index 1
 		animationModeCB.addItem("\u21d0 "+app.getPlain("Decreasing")); // index 2
@@ -4814,22 +4278,38 @@ class AnimationSpeedPanel
 		animationModeCB.setSelectedIndex(GeoElement.ANIMATION_OSCILLATING);
 		
 		// text field for animation step
-		JLabel label = new JLabel(app.getPlain("AnimationSpeed") + ": ");
+		speedLabel = new JLabel();
 		tfAnimSpeed = new JTextField(5);
-		label.setLabelFor(tfAnimSpeed);
+		speedLabel.setLabelFor(tfAnimSpeed);
 		tfAnimSpeed.addActionListener(this);
 		tfAnimSpeed.addFocusListener(this);
 
 		// put it all together
 		JPanel animPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		animPanel.add(label);
+		animPanel.add(speedLabel);
 		animPanel.add(tfAnimSpeed);
-		animPanel.add(label2);
+		animPanel.add(modeLabel);
 		animPanel.add(animationModeCB);
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(animPanel);
+	}
+	
+	public void setLabels() {
+		modeLabel.setText(app.getPlain("Repeat") + ": ");
+		speedLabel.setText(app.getPlain("AnimationSpeed") + ": ");
+		
+		int selectedIndex = animationModeCB.getSelectedIndex();
+		animationModeCB.removeActionListener(this);
+		
+		animationModeCB.removeAllItems();
+		animationModeCB.addItem("\u21d4 "+app.getPlain("Oscillating")); // index 0
+		animationModeCB.addItem("\u21d2 "+app.getPlain("Increasing")); // index 1
+		animationModeCB.addItem("\u21d0 "+app.getPlain("Decreasing")); // index 2
+		
+		animationModeCB.setSelectedIndex(selectedIndex);
+		animationModeCB.addActionListener(this);
 	}
 	
 	public void setPartOfSliderPanel() {
@@ -4865,7 +4345,7 @@ class AnimationSpeedPanel
 		// set trace visible checkbox
 		//int oldDigits = kernel.getMaximumFractionDigits();
 		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
-        kernel.setTemporaryPrintDecimals(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+        kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 
         if (equalStep)
 			tfAnimSpeed.setText(kernel.format(geo0.getAnimationSpeed()));
@@ -4959,16 +4439,11 @@ class ShowConditionPanel
 	private JTextField tfCondition;
 	
 	private Kernel kernel;
-	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
+	private PropertiesPanel propPanel;
 
-	public ShowConditionPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
+	public ShowConditionPanel(Application app, PropertiesPanel propPanel) {
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
-		
-		// textfield for animation step
-		setBorder(
-				BorderFactory.createTitledBorder(app.getMenu("Condition.ShowObject"))
-				);
 		
 		// non auto complete input panel
 		InputPanel inputPanel = new InputPanel(null, app, 20, false);
@@ -4980,6 +4455,14 @@ class ShowConditionPanel
 		// put it all together
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		add(inputPanel);
+	}
+	
+	public void setLabels() {
+		setBorder(
+			BorderFactory.createTitledBorder(
+				kernel.getApplication().getMenu("Condition.ShowObject")
+			)
+		);
 	}
 
 	public JPanel update(Object[] geos) {
@@ -5073,7 +4556,8 @@ class ShowConditionPanel
 }
 
 /**
- * panel for condition to show object
+ * Panel where the user can enter a dynamic color by using variables. 
+ * 
  * @author Michael Borcherds 2008-04-01
  */
 class ColorFunctionPanel
@@ -5088,16 +4572,11 @@ class ColorFunctionPanel
 	private JLabel nameLabelR,nameLabelG,nameLabelB;
 	
 	private Kernel kernel;
-	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
+	private PropertiesPanel propPanel;
 
-	public ColorFunctionPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
+	public ColorFunctionPanel(Application app, PropertiesPanel propPanel) {
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
-		
-		// textfield for animation step
-		setBorder(
-				BorderFactory.createTitledBorder(app.getMenu("DynamicColors"))
-				);
 		
 		// non auto complete input panel
 		InputPanel inputPanelR = new InputPanel(null, app, 1, 7, false, false, false);
@@ -5114,15 +4593,14 @@ class ColorFunctionPanel
 		tfBlue.addActionListener(this);
 		tfBlue.addFocusListener(this);
 		
-		nameLabelR = new JLabel(app.getMenu("Red") + ":");	
+		nameLabelR = new JLabel();	
 		nameLabelR.setLabelFor(inputPanelR);
-		nameLabelG = new JLabel(app.getMenu("Green") + ":");	
+		nameLabelG = new JLabel();	
 		nameLabelG.setLabelFor(inputPanelR);
-		nameLabelB = new JLabel(app.getMenu("Blue") + ":");	
+		nameLabelB = new JLabel();	
 		nameLabelB.setLabelFor(inputPanelR);
 		
 		btRemove = new JButton("\u2718");
-		btRemove.setToolTipText(app.getPlain("Remove"));
 		btRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				for (int i=0; i < geos.length; i++) {
@@ -5145,6 +4623,22 @@ class ColorFunctionPanel
 		add(nameLabelB);		
 		add(inputPanelB);
 		add(btRemove);
+	}
+	
+	public void setLabels() {
+		Application app = kernel.getApplication();
+		
+		setBorder(
+			BorderFactory.createTitledBorder(
+				app.getMenu("DynamicColors")
+			)
+		);
+		
+		nameLabelR.setText(app.getMenu("Red") + ":");
+		nameLabelG.setText(app.getMenu("Green") + ":");
+		nameLabelB.setText(app.getMenu("Blue") + ":");
+		
+		btRemove.setToolTipText(app.getPlain("Remove"));
 	}
 
 	public JPanel update(Object[] geos) {
@@ -5480,20 +4974,26 @@ class NamePanel
 		tfCaption.addFocusListener(this);
 		
 		// name panel			
-		nameLabel = new JLabel(app.getPlain("Name") + ":");	
+		nameLabel = new JLabel();	
 		nameLabel.setLabelFor(inputPanelName);
 	
-		
 		// definition panel
-		defLabel = new JLabel(app.getPlain("Definition") + ":");		
+		defLabel = new JLabel();		
 		defLabel.setLabelFor(inputPanelDef);
-	
 		
 		// caption panel
-		captionLabel = new JLabel(app.getMenu("Button.Caption") + ":");		
+		captionLabel = new JLabel();		
 		captionLabel.setLabelFor(inputPanelCap);
 
 		updateGUI(true, true);
+	}
+	
+	public void setLabels() {
+		nameLabel.setText(app.getPlain("Name") + ":");
+		defLabel.setText(app.getPlain("Definition") + ":");
+		captionLabel.setText(app.getMenu("Button.Caption") + ":");
+		
+		// TODO: Update text field? (F.S.)
 	}
 	
 	private void updateGUI(boolean showDefinition, boolean showCaption) {

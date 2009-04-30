@@ -953,7 +953,7 @@ public class Construction {
 			// newGeo doesn't exist in construction, so we take oldGeo's label
 			newGeo.label = oldGeo.label;
 			newGeo.labelSet = true; // to get right XML output
-			newGeo.setAllVisualProperties(oldGeo);
+			newGeo.setAllVisualProperties(oldGeo, false);
 
 			// NEAR-TO-RELATION for dependent new geo:
 			// copy oldGeo's values to newGeo so that the

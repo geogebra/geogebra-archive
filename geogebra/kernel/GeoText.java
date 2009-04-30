@@ -445,8 +445,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
    		return sb.toString();
    	}
 
-	public void setAllVisualProperties(GeoElement geo) {
-		super.setAllVisualProperties(geo);
+	public void setAllVisualProperties(GeoElement geo, boolean keepAdvanced) {
+		super.setAllVisualProperties(geo, keepAdvanced);
 		
 		// start point of text
 		if (geo instanceof GeoText) {

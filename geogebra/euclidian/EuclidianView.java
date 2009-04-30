@@ -262,8 +262,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 
 	// END
-
-	int pointStyle = POINT_STYLE_DOT;
 	
 	int booleanSize=13;
 
@@ -436,7 +434,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		// showAxes = true;
 		// showGrid = false;
 		pointCapturingMode = POINT_CAPTURING_AUTOMATIC;
-		pointStyle = POINT_STYLE_DOT;
 		
 		booleanSize=13; // Michael Borcherds 2008-05-12
 
@@ -575,26 +572,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 	final public int getBooleanSize() {
 		return booleanSize;
-	}
-
-	/**
-	 * Sets the global style for point drawing.
-	 */
-	public void setPointStyle(int style) {
-		switch (style) {
-		case 1:
-		case 2:
-			pointStyle = style;
-			break;
-
-		default:
-			pointStyle = POINT_STYLE_DOT;
-		}
-		updateAllDrawables(true);
-	}
-
-	final public int getPointStyle() {
-		return pointStyle;
 	}
 
 	// added by Lo�c BEGIN
@@ -3018,8 +2995,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		sb.append(gridIsBold);			// Michael Borcherds 2008-04-11
 		sb.append("\" pointCapturing=\"");
 		sb.append(pointCapturingMode);
-		sb.append("\" pointStyle=\"");
-		sb.append(pointStyle);
 		sb.append("\" rightAngleStyle=\"");
 		sb.append(rightAngleStyle);
 		

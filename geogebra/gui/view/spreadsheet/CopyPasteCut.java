@@ -194,7 +194,7 @@ public class CopyPasteCut {
 						//Application.debug(ix+" "+iy);
 						values2[ix][iy] = RelativeCopy.doCopyNoStoringUndoInfo0(kernel, table, values1[ix][iy], values2[ix][iy], x3 - x1, y3 - y1);
 						if (values1[ix][iy] != null && values2[ix][iy] != null)
-						  values2[ix][iy].setAllVisualProperties(values1[ix][iy]);
+						  values2[ix][iy].setAllVisualProperties(values1[ix][iy], false);
 					}
 				}
 			}

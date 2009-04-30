@@ -79,13 +79,6 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		// build GUI
 		initGUI();		
 	}
-	
-	public void setVisible(boolean flag) {
-		if (flag) {
-			updateGUI();
-		}
-		super.setVisible(flag);
-	}
 
 	/**
 	 * inits GUI with labels of current language	 

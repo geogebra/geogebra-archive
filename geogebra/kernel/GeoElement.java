@@ -491,7 +491,7 @@ public abstract class GeoElement
 		if (useVisualDefaults) {
 			ConstructionDefaults consDef = cons.getConstructionDefaults();
 			if (consDef != null) 
-				consDef.setDefaultVisualStyles(this);
+				consDef.setDefaultVisualStyles(this, false);
 		}
 	}
 
@@ -708,15 +708,18 @@ public abstract class GeoElement
 	
 	public boolean isGeoList() {
 		return false;
-	}		
+	}
 
 	/**
 	 * Sets all visual values from given GeoElement. 
 	 * This will also affect tracing, label location
 	 * and the location of texts for example.
 	 */
-	public void setAllVisualProperties(GeoElement geo) {
-		setVisualStyle(geo);
+	public void setAllVisualProperties(GeoElement geo, boolean keepAdvanced) {
+		if(keepAdvanced)
+			setVisualStyle(geo);
+		else
+			setAdvancedVisualStyle(geo);
 		
 		euclidianVisible = geo.euclidianVisible;
 		algebraVisible = geo.algebraVisible;	
@@ -733,6 +736,13 @@ public abstract class GeoElement
 		}
 	}
 	
+	/**
+	 * Just changes the basic visual styles. If the style of a geo
+	 * is reset this is required as we don't want to overwrite advanced
+	 * settings in that case.
+	 * 
+	 * @param geo
+	 */
 	public void setVisualStyle(GeoElement geo) {
 		// label style
 		labelVisible = geo.labelVisible;
@@ -754,6 +764,15 @@ public abstract class GeoElement
 		lineThickness = geo.lineThickness;
 		lineType = geo.lineType;	
 		decorationType = geo.decorationType;
+	}
+	
+	/**
+	 * Also copy advanced settings of this object.
+	 * 
+	 * @param geo
+	 */
+	public void setAdvancedVisualStyle(GeoElement geo) {
+		setVisualStyle(geo);
 
 		// set layer
 		setLayer(geo.getLayer());
@@ -764,7 +783,7 @@ public abstract class GeoElement
 		// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
 		try { setShowObjectCondition(geo.getShowObjectCondition());}
 		catch (Exception e) {}
-}
+	}
 
 	/**
 		 * @return

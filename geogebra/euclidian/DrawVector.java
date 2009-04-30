@@ -158,17 +158,17 @@ public class DrawVector extends Drawable implements Previewable {
     
     public void draw(Graphics2D g2) {
         if (isVisible) {
-        	if (traceDrawingNeeded) {
-        		traceDrawingNeeded = false;
-        		Graphics2D g2d = view.getBackgroundGraphics();
-    			if (g2d != null) drawTrace(g2d);    			
-        	}
-        	
             if (geo.doHighlighting()) {
                 g2.setPaint(v.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(line);       
             }
+            
+        	if (traceDrawingNeeded) {
+        		traceDrawingNeeded = false;
+        		Graphics2D g2d = view.getBackgroundGraphics();
+    			if (g2d != null) drawTrace(g2d);    			
+        	}
             
             g2.setPaint(v.getObjectColor());
 			g2.setStroke(objStroke);  

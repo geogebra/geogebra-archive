@@ -1,8 +1,12 @@
 package geogebra.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
@@ -11,10 +15,12 @@ import geogebra.gui.util.SpringUtilities;
 import geogebra.main.Application;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.SpringLayout;
 
 /**
@@ -27,14 +33,12 @@ class OptionsFont extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private Application app;
-	
-	private JPanel fontSizePanel;
-	
-	private JLabel guiSizeLabel, axesSizeLabel, euclidianSizeLabel;
+
+	private TitleLabel fontTitleLabel, languageTitleLabel;
+	private JLabel guiSizeLabel, axesSizeLabel, euclidianSizeLabel, languageLabel;
 	private JComboBox guiSizeCb, axesSizeCb, euclidianSizeCb;
 	private boolean updateFonts = false;
 	
-	private JPanel languagePanel;
 	private JComboBox languageCb;
 	private boolean updateLanguage;
 	
@@ -53,9 +57,9 @@ class OptionsFont extends JPanel implements ActionListener {
 	 * Initialize the GUI.
 	 */
 	private void initGUI() {
-		setLayout(new BorderLayout());
-		
 		String[] fontSizeStr = new String[] { "10", "12", "14", "16", "18", "20", "24" }; 
+		
+		JPanel panel = new JPanel();
 		
 		// font size of GUI
 		guiSizeCb = new JComboBox(fontSizeStr);
@@ -79,20 +83,16 @@ class OptionsFont extends JPanel implements ActionListener {
 		axesSizeLabel = new JLabel();
 		
 		// construct the font size panel
-		fontSizePanel = new JPanel(new SpringLayout());
-		fontSizePanel.add(guiSizeLabel);
-		fontSizePanel.add(guiSizeCb);
-		fontSizePanel.add(euclidianSizeLabel);
-		fontSizePanel.add(euclidianSizeCb);
-		fontSizePanel.add(axesSizeLabel);
-		fontSizePanel.add(axesSizeCb);
+		fontTitleLabel = new TitleLabel();
+		panel.add(fontTitleLabel);
+		panel.add(Box.createHorizontalGlue());
 		
-		SpringUtilities.makeCompactGrid(fontSizePanel,
-				3, 2,
-				3, 3, 
-				15, 5);
-		
-		add(fontSizePanel, BorderLayout.CENTER);
+		panel.add(guiSizeLabel);
+		panel.add(guiSizeCb);
+		panel.add(euclidianSizeLabel);
+		panel.add(euclidianSizeCb);
+		panel.add(axesSizeLabel);
+		panel.add(axesSizeCb);
 		
 		// language panel
 		String[] languages = new String[Application.supportedLocales.size()];
@@ -109,14 +109,41 @@ class OptionsFont extends JPanel implements ActionListener {
 			if (languages[i] == null)
 				languages[i] = loc.getDisplayLanguage(Locale.ENGLISH);
 		}
-		
+				
 		languageCb = new JComboBox(languages);
 		languageCb.addActionListener(this);
+		languageLabel = new JLabel();
 		
-		languagePanel = new JPanel(new FlowLayout());
-		languagePanel.add(languageCb);
+		panel.add(Box.createHorizontalGlue());
+		panel.add(new JSeparator());
+
+		languageTitleLabel = new TitleLabel();
+		panel.add(languageTitleLabel);
+		panel.add(Box.createHorizontalGlue());
 		
-		add(languagePanel, BorderLayout.SOUTH);
+		panel.add(languageLabel);
+		panel.add(languageCb);
+		
+		panel.setLayout(new SpringLayout());
+		SpringUtilities.makeCompactGridColspan(panel,
+				7, 2, // rows, columns
+				3, 3, 
+				15, 15);
+		
+		// use a GridBagLayout in the main panel
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.CENTER;
+		c.weightx = 1.0;
+		c.weighty = 1E-12;
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weighty = 1.0;
+		
+		add(panel, c);
+		add(Box.createVerticalGlue(), c);
 		
 		setLabels();
 	}
@@ -125,13 +152,13 @@ class OptionsFont extends JPanel implements ActionListener {
 	 * Update all labels.
 	 */
 	public void setLabels() {
-		fontSizePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("FontSize")));
-		
+		fontTitleLabel.setText(app.getMenu("FontSize"));
 		guiSizeLabel.setText(app.getPlain("FontSizeGUI"));
 		euclidianSizeLabel.setText(app.getPlain("FontSizeEuclidian"));
 		axesSizeLabel.setText(app.getPlain("FontSizeAxes"));
-		
-		languagePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Language")));
+
+		languageTitleLabel.setText(app.getMenu("Language"));
+		languageLabel.setText(app.getMenu("Language"));
 	}
 	
 	/**
