@@ -16,6 +16,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Path;
+import geogebra.main.Application;
 
 
 public class AlgoPoint3DOnPath extends AlgoElement3D {
@@ -56,26 +57,19 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
     // for AlgoElement
     protected void setInputOutput() {
     	
-    	input = new GeoElement[1];
-    	
-    	/*
-    	if (P.getGeoElement2D()==null)
-    		input = new GeoElement[1];
-    	else{
-    		input = new GeoElement[2];
-    		input[1] = P.getGeoElement2D();
-    	}
-    	*/
+    	input = new GeoElement[1];  	
         input[0] = path.toGeoElement();
 
         output = new GeoElement[1];
         output[0] = P;
         setDependencies(); // done by AlgoElement
-    }
+        
+     }
 
     GeoPoint3D getP() {
         return P;
     }
+    
     Path3D getPath() {
         return path;
     }

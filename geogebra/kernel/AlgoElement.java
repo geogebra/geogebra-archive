@@ -286,6 +286,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }
     
     private void setOutputDependencies() {
+    	
    	 // parent algorithm of output
        for (int i = 0; i < output.length; i++) {
            output[i].setParentAlgorithm(this);

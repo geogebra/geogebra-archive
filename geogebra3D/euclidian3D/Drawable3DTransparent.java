@@ -46,6 +46,7 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 		renderer.setMatrix(getMatrix());
 		drawGeometryPicked(renderer);
 		
+		
 	};	
 	
 

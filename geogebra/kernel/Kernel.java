@@ -189,7 +189,15 @@ public class Kernel {
 	public Kernel(Application app) {
 		this();
 		this.app = app;
-		cons = new Construction(this);			
+		//cons = new Construction(this);
+		newConstruction();
+	}
+	
+	/**
+	 * creates the construction cons
+	 */
+	protected void newConstruction(){
+		cons = new Construction(this);	
 	}
 	
 	public Kernel() {

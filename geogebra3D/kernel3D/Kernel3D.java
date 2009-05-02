@@ -16,6 +16,7 @@ package geogebra3D.kernel3D;
 
 
 import geogebra.kernel.AlgoCircleThreePoints;
+import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
@@ -78,6 +79,14 @@ public class Kernel3D
 		
 	}
 	
+	/**
+	 * creates the 3D construction cons
+	 */
+	protected void newConstruction(){
+		cons = new Construction3D(this);	
+	}	
+	
+	
 	public Application3D getApplication3D(){
 		return app3D;
 	}
@@ -106,7 +115,7 @@ public class Kernel3D
 		GeoPoint3D p = new GeoPoint3D(cons);
 		p.setCoords(x, y, z, 1.0);
 		p.setLabel(label); // invokes add()        
-		p.setObjColor(ConstructionDefaults.colPoint);
+		//p.setObjColor(ConstructionDefaults.colPoint);
 		return p;
 	}
 	
@@ -123,7 +132,7 @@ public class Kernel3D
 		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, x, y, z);
 		GeoPoint3D p = algo.getP();		
 		p.setLabel(label);
-		p.setObjColor(ConstructionDefaults.colPathPoint);
+		//p.setObjColor(ConstructionDefaults.colPathPoint);
 		return p;
 	}	
 	

@@ -42,8 +42,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path3D {
 	 */
 	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GeoCoordSys2D cs2D, boolean createSegments) {
 		super(c, points, cs2D, createSegments);
-		setUseVisualDefaults(false);
-		setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
+		//setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
 		
 	}
 
@@ -134,6 +133,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path3D {
 	 * @param cs the 2D coordinate system
 	 */
 	 public void setCoordSys(GeoElement cs){
+		 
+		 if (points==null)
+			 return;
 		 
 		 setDefined();
 		 

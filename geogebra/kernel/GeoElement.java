@@ -731,7 +731,8 @@ public abstract class GeoElement
 			((Traceable) this).setTrace(((Traceable) geo).getTrace());
 		}
 		
-		if (isGeoPoint() && geo.isGeoPoint()) {
+		//if (isGeoPoint() && geo.isGeoPoint()) {
+		if (getGeoClassType()==GeoElement.GEO_CLASS_POINT && geo.getGeoClassType()==GeoElement.GEO_CLASS_POINT) {
 			((GeoPoint) this).setSpreadsheetTrace(((GeoPoint) geo).getSpreadsheetTrace());
 		}
 	}

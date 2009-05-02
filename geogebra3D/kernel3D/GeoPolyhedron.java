@@ -35,13 +35,7 @@ public class GeoPolyhedron extends GeoElement3D {
 	
 
 	
-	/** Default constructor
-	 * @param c construction
-	 */
-	public GeoPolyhedron(Construction c) {
-		super(c);
-		
-	}
+
 	
 	
 	/** constructor that sets the vertices and the faces description
@@ -75,7 +69,7 @@ public class GeoPolyhedron extends GeoElement3D {
 	 */
 	public void updateFaces(){
 		
-		
+		if (faces == null) return;
 		
 		//TODO remove old faces and edges
 		
@@ -173,18 +167,41 @@ public class GeoPolyhedron extends GeoElement3D {
 	 
 	 
 	   public void setObjColor(Color color) {
+		   
 	   		super.setObjColor(color);
+	   		
+	   		
 	   		if (polygons != null) {
 	   			for (int i=0; i < polygons.length; i++) {
 	   				polygons[i].setObjColor(color);
 	   				polygons[i].update();
 	   			}
+	   			
+	   	   		for (GeoSegment3D segment : segments.values()){
+		   			segment.setObjColor(color);
+		   			segment.update();
+		   		}
 	   		}
 	   		
-	   		for (GeoSegment3D segment : segments.values()){
-	   			segment.setObjColor(color);
-	   			segment.update();
+	   		
+	
+	   }
+	   
+	 
+		public void setAlphaValue(float alpha) {
+		   
+	   		super.setAlphaValue(alpha);
+	   		
+	   		
+	   		if (polygons != null) {
+	   			for (int i=0; i < polygons.length; i++) {
+	   				polygons[i].setAlphaValue(alpha);
+	   				polygons[i].update();
+	   			}
 	   		}
+	   		
+	   		
+	
 	   }
 	 
 	 

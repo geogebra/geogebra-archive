@@ -26,6 +26,7 @@ import java.util.Set;
 public class ConstructionDefaults {
 	
 	// DEFAULT GeoElement types
+	// PLEASE DON'T USE RANGE 3000-3999 (used by GeoGebra3D)
 	public static final int DEFAULT_POINT_FREE = 10;
 	public static final int DEFAULT_POINT_DEPENDENT = 11;
 	public static final int DEFAULT_POINT_ON_PATH = 12;
@@ -63,7 +64,7 @@ public class ConstructionDefaults {
 	private static final Color colConic = Color.black;
 
 	// polygons
-	private static final Color colPolygon = new Color(153, 51, 0);	
+	protected static final Color colPolygon = new Color(153, 51, 0);	
 	public static final float DEFAULT_POLYGON_ALPHA = 0.1f;
 
 	// angles
@@ -99,10 +100,10 @@ public class ConstructionDefaults {
 	public static final int LABEL_VISIBLE_USE_DEFAULTS = 4;
 		
 	// construction
-	private Construction cons;
+	protected Construction cons;
 	
 	// defaultGeoElement list
-	private FastHashMapKeyless defaultGeoElements;		
+	protected FastHashMapKeyless defaultGeoElements;		
 	
 	/**
 	 * Creates a new ConstructionDefaults object to manage the
@@ -122,15 +123,17 @@ public class ConstructionDefaults {
 		return defaultGeoElements.entrySet();
 	}
 	
+	protected String strFree = " (free)";
+	protected String strDependent = " (dependent)";
 	
-	private void createDefaultGeoElements() {
+	protected void createDefaultGeoElements() {
 		defaultGeoElements = new FastHashMapKeyless();		
 		
 		Application app = cons.getApplication();		
 //		String strFree = " (" + app.getPlain("free") + ")";
 //		String strDependent = " (" + app.getPlain("dependent") + ")";
-		String strFree = " (free)";
-		String strDependent = " (dependent)";
+		//String strFree = " (free)";
+		//String strDependent = " (dependent)";
 						
 		// free point
 		GeoPoint freePoint = new GeoPoint(cons);	
@@ -161,7 +164,9 @@ public class ConstructionDefaults {
 		
 		// point in region
 		GeoPoint regionPoint = new GeoPoint(cons);	
-//		pathPoint.setLocalVariableLabel(app.getPlain("PointOn"));
+//		regionPoint.setLocalVariableLabel(app.getPlain("PointOn"));
+		regionPoint.setPointSize(EuclidianView.DEFAULT_POINT_SIZE);
+		regionPoint.setPointStyle(EuclidianView.POINT_STYLE_DOT);
 		regionPoint.setLocalVariableLabel("PointInRegion");
 		regionPoint.setObjColor(colRegionPoint);
 		defaultGeoElements.put(DEFAULT_POINT_IN_REGION, regionPoint);
@@ -273,6 +278,96 @@ public class ConstructionDefaults {
 	
 	
 	
+	
+	/**
+	 * return the default type of the GeoElement
+	 * @param geo a GeoElement
+	 * @return the default type
+	 */
+	public int getDefaultType(GeoElement geo){
+
+		// all object types that are not specifically supported
+		// should get the default values of a line
+		int type = DEFAULT_LINE;
+
+		switch (geo.getGeoClassType()) {
+		case GeoElement.GEO_CLASS_POINT:
+			if (geo.isIndependent()) {
+				type = DEFAULT_POINT_FREE;
+			} else {
+				GeoPoint p = (GeoPoint) geo;
+				if (p.hasPath())
+					type = DEFAULT_POINT_ON_PATH;	
+				else if (p.hasRegion())
+					type = DEFAULT_POINT_IN_REGION;					
+				else
+					type = DEFAULT_POINT_DEPENDENT;
+			}
+			break;
+
+		case GeoElement.GEO_CLASS_ANGLE:
+			type = DEFAULT_ANGLE;	
+			break;
+
+		case GeoElement.GEO_CLASS_BOOLEAN:
+			type = DEFAULT_BOOLEAN;
+			break;	
+
+		case GeoElement.GEO_CLASS_CONIC:			
+			type = DEFAULT_CONIC;
+			break;
+
+		case GeoElement.GEO_CLASS_CONICPART:
+			GeoConicPart conicPart = (GeoConicPart) geo;
+			if (conicPart.getConicPartType() == GeoConicPart.CONIC_PART_SECTOR) {
+				type = DEFAULT_CONIC_SECTOR;
+			} else {
+				type = DEFAULT_CONIC;
+			}
+			break;
+
+		case GeoElement.GEO_CLASS_FUNCTION:
+		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
+			type = DEFAULT_FUNCTION;
+			break;
+
+		case GeoElement.GEO_CLASS_IMAGE:
+			type = DEFAULT_IMAGE;
+			break;
+
+		case GeoElement.GEO_CLASS_LIST:
+			type = DEFAULT_LIST;
+			break;	
+
+		case GeoElement.GEO_CLASS_LOCUS:
+			type = DEFAULT_LOCUS;
+			break;
+
+		case GeoElement.GEO_CLASS_NUMERIC:
+			type = DEFAULT_NUMBER;
+			break;
+
+		case GeoElement.GEO_CLASS_POLYGON: 
+			type = DEFAULT_POLYGON;
+			break;
+
+		case GeoElement.GEO_CLASS_TEXT:
+			type = DEFAULT_TEXT;
+			break;
+
+		case GeoElement.GEO_CLASS_VECTOR:
+			type = DEFAULT_VECTOR;
+			break;	
+
+
+		}		
+		
+		return type;
+
+	}
+	
+	
+	
 	/**
 	 * Sets default color for given geo. 
 	 * Note: this is mostly kept for downward compatibility.
@@ -283,79 +378,9 @@ public class ConstructionDefaults {
 	final public void setDefaultVisualStyles(GeoElement geo, boolean isReset) {
 		// all object types that are not specifically supported
 		// should get the default values of a line
-		int type = DEFAULT_LINE;
-				
-		switch (geo.getGeoClassType()) {
-			case GeoElement.GEO_CLASS_POINT:
-				if (geo.isIndependent()) {
-					type = DEFAULT_POINT_FREE;
-				} else {
-					GeoPoint p = (GeoPoint) geo;
-					if (p.hasPath())
-						type = DEFAULT_POINT_ON_PATH;	
-					else if (p.hasRegion())
-						type = DEFAULT_POINT_IN_REGION;						
-					else
-						type = DEFAULT_POINT_DEPENDENT;
-				}
-				break;
-		
-			case GeoElement.GEO_CLASS_ANGLE:
-				type = DEFAULT_ANGLE;	
-				break;
-				
-			case GeoElement.GEO_CLASS_BOOLEAN:
-				type = DEFAULT_BOOLEAN;
-				break;	
-				
-			case GeoElement.GEO_CLASS_CONIC:			
-				type = DEFAULT_CONIC;
-				break;
-				
-			case GeoElement.GEO_CLASS_CONICPART:
-				GeoConicPart conicPart = (GeoConicPart) geo;
-				if (conicPart.getConicPartType() == GeoConicPart.CONIC_PART_SECTOR) {
-					type = DEFAULT_CONIC_SECTOR;
-				} else {
-					type = DEFAULT_CONIC;
-				}
-				break;
-				
-			case GeoElement.GEO_CLASS_FUNCTION:
-			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
-				type = DEFAULT_FUNCTION;
-				break;
-				
-			case GeoElement.GEO_CLASS_IMAGE:
-				type = DEFAULT_IMAGE;
-				break;
-				
-			case GeoElement.GEO_CLASS_LIST:
-				type = DEFAULT_LIST;
-				break;	
-				
-			case GeoElement.GEO_CLASS_LOCUS:
-				type = DEFAULT_LOCUS;
-				break;
-									
-			case GeoElement.GEO_CLASS_NUMERIC:
-				type = DEFAULT_NUMBER;
-				break;
-		
-			case GeoElement.GEO_CLASS_POLYGON: 
-				type = DEFAULT_POLYGON;
-				break;
-	
-			case GeoElement.GEO_CLASS_TEXT:
-				type = DEFAULT_TEXT;
-				break;
-				
-			case GeoElement.GEO_CLASS_VECTOR:
-				type = DEFAULT_VECTOR;
-				break;	
-				
+		//int type = DEFAULT_LINE;
+		int type = getDefaultType(geo);
 			
-		}			
 		
 		// default
 		GeoElement defaultGeo = getDefaultGeo(type);

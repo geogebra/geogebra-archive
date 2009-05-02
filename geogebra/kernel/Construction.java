@@ -98,7 +98,7 @@ public class Construction {
 	private String xAxisLocalName, yAxisLocalName;
 
 	// default elements
-	private ConstructionDefaults consDefaults;
+	protected ConstructionDefaults consDefaults;
 
 	/**
 	 * Creates a new Construction.
@@ -121,7 +121,8 @@ public class Construction {
 		if (parentConstruction != null)
 			consDefaults = parentConstruction.getConstructionDefaults();
 		else
-			consDefaults = new ConstructionDefaults(this);
+			newConstructionDefaults();
+			//consDefaults = new ConstructionDefaults(this);
 
 		xAxis = new GeoAxis(this, GeoAxis.X_AXIS);
 		yAxis = new GeoAxis(this, GeoAxis.Y_AXIS);
@@ -130,6 +131,16 @@ public class Construction {
 		localVariableTable = new HashMap();
 		initGeoTable();
 	}
+	
+	
+	
+	/**
+	 * creates the ConstructionDefaults consDefaults
+	 */
+	protected void newConstructionDefaults(){
+		consDefaults = new ConstructionDefaults(this);
+	}
+	
 
 	/**
 	 * Returns the last GeoElement object in the construction list;

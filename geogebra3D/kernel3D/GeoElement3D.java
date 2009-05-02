@@ -180,8 +180,6 @@ public abstract class GeoElement3D
 	 * @param c construction*/
 	public GeoElement3D(Construction c) {
 		super(c);
-		//TODO create 3D visual defaults
-		setUseVisualDefaults(false);
 		
 	}
 

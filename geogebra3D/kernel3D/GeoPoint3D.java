@@ -89,6 +89,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     public GeoPoint3D(Construction c, Path3D path) {
 		super(c,4);
+		Application.debug("GeoPoint3D");
 		this.path = path;
 	}
     
@@ -257,7 +258,9 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		return path != null;
 	}
 	
-
+	final public boolean isPointOnPath() {
+		return path != null;
+	}
     
     
 	public Path3D getPath() {
@@ -278,14 +281,32 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	// adding hasPath() condition to be independent
 	// because 3D points that have a Path have an algoParent
+    /*
 	public boolean isIndependent() {
 		return super.isIndependent() || hasPath();
+	}
+	*/
+    
+    //copied on GeoPoint
+	public boolean isChangeable() {
+		return !isFixed() && (isIndependent() || isPointOnPath());// || isPointInRegion()); 
+	}	
+	
+    ///////////////////////////////////////////////////////////
+    // TODO REGION
+ 	
+	/** says if the point is in a Region
+	 * @return true if the point is in a Region
+	 */
+	public boolean hasRegion() {
+		return false;
 	}
 	
 	
 	
     ///////////////////////////////////////////////////////////
     // MOUSE
+	
 	public void setMouseLoc(Ggb3DVector mouseLoc){
 		this.mouseLoc = mouseLoc;
 	}
@@ -381,19 +402,16 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		
 		s+=" = "; //TODO use kernel property
 		
-		
-		
-		//TODO point undefined...
-		//TODO use point property
-		s+="("+kernel.format(inhom.get(1))+", "+kernel.format(inhom.get(2))+", "+kernel.format(inhom.get(3))+")";
+		s+=toValueString();
 		
 		return s;
 	}
 	
 	
 	public String toValueString() {
-		// TODO Auto-generated method stub
-		return "todo";
+		//TODO point undefined...
+		//TODO use point property
+		return "("+kernel.format(inhom.get(1))+", "+kernel.format(inhom.get(2))+", "+kernel.format(inhom.get(3))+")";
 	}
 
 
