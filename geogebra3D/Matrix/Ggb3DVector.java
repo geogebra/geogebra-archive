@@ -428,6 +428,40 @@ public class Ggb3DVector
 	
 	
 	
+	/**
+	 * Return true if this==v for the precision given (ie each coordinates are not different more than precision).
+	 * @param v vector compared with
+	 * @param precision 
+	 * @return true if the vectors are equal
+	 */
+	public boolean equalsForKernel(Ggb3DVector v, double precision){
+		
+		for(int i=1;i<=getLength();i++)
+			if (!Kernel.isEqual(this.get(i), v.get(i), precision))
+				return false;
+		
+		return true;
+		
+	}
+	
+	/**
+	 * Return true if all coordinates are not different from val more than precision.
+	 * @param val value compared with
+	 * @param precision 
+	 * @return true if all coordinates are not different from val more than precision.
+	 */
+	public boolean equalsForKernel(double val, double precision){
+		
+		for(int i=1;i<=getLength();i++)
+			if (!Kernel.isEqual(this.get(i), val, precision))
+				return false;
+		
+		return true;
+		
+	}
+
+	
+	
 	///////////////////////////////////////////////////:
 	/** for testing the package */
 	public static synchronized void main(String[] args) {	

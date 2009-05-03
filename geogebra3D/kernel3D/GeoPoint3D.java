@@ -375,17 +375,19 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 
 
 	public boolean isDefined() {
-		// TODO Auto-generated method stub
-		return true;
+
+		return isDefined;
 	}
+	
 	public void set(GeoElement geo) {
 		// TODO Auto-generated method stub
 		
 	}
 	public void setUndefined() {
-		// TODO Auto-generated method stub
+		isDefined = false;
 		
 	}
+	
 	public boolean showInAlgebraView() {
 		// TODO Auto-generated method stub
 		return true;

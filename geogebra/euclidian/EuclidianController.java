@@ -1764,6 +1764,7 @@ public class EuclidianController implements MouseListener,
 		if (hits.isEmpty()){
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
+			//Application.debug(hits.toString());
 		}
 		
 		if (hits.isEmpty()) {

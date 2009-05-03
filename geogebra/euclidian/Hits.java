@@ -370,5 +370,17 @@ public class Hits extends ArrayList {
 		return false;
 	}
 	
+	
+	
+	public String toString(){
+		String s = "hits: "+size();
+		GeoElement geo;
+		for (int i = 0; i < size(); i++) {
+			geo = (GeoElement) get(i);
+			s+="\n hits("+i+") = "+geo.getLabel();
+		}
+		return s;
+	}
+	
 
 }

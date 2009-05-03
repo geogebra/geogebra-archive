@@ -4,7 +4,6 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -316,6 +315,15 @@ public class EuclidianRenderer3D implements GLEventListener {
     							((float) c.getBlue())/256f,
     							(float) alpha},
     			0);
+    	
+    	/*
+    	gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, 
+    			new float[] {1f,
+    							1f,
+    							1f,
+    							1f},
+    			0);
+    			*/
     }
     
     
@@ -1246,10 +1254,27 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         
         //light
+        /*
         float pos[] = { 1.0f, 1.0f, 1.0f, 0.0f };
         //float pos[] = { 0.0f, 0.0f, 1.0f, 0.0f };
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);        
         gl.glEnable(GL.GL_LIGHTING);     
+        gl.glEnable(GL.GL_LIGHT0);
+        */
+        
+        
+        float[] lightAmbient = {0.1f, 0.1f, 0.1f, 1.0f};
+        float[] lightDiffuse = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] lightPosition = {1.0f, 1.0f, 1.0f, 0.0f};
+        //float[] lightSpecular = {0.3f, 0.3f, 0.3f, 1f};
+        float[] lightSpecular = {0f, 0f, 0f, 1f};
+       
+        
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightSpecular, 0);
+        gl.glEnable(GL.GL_LIGHTING);
         gl.glEnable(GL.GL_LIGHT0);
         
         //common enabling

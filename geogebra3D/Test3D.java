@@ -84,8 +84,10 @@ public class Test3D{
 		//testRay3D();
 		//testVector3D();
 		
-		testPolyhedron();
+		//testPolyhedron();
 		
+		//testIntersectLinePlane();
+		testIntersectLineLine();
 	}
 
 	
@@ -518,6 +520,33 @@ public class Test3D{
 				new int[][] {{0,1,2,3},{0,1,4},{1,2,4},{2,3,4},{3,0,4}});
 	}
 
+	
+	private void testIntersectLinePlane(){
+		GeoPoint3D[] points = new GeoPoint3D[2];
+		points[0] = testPoint(1f,1f,1f);
+		points[1] = testPoint(1f,1f,2f);
+		
+		GeoLine3D line = kernel3D.Line3D("line", points[0], points[1]);
+		
+		GeoPoint3D p = kernel3D.Intersect("intersection", line, xOyPlane);
+		
+	}
+	
+	
+	private void testIntersectLineLine(){
+		GeoPoint3D[] points = new GeoPoint3D[4];
+		points[0] = testPoint(1f,1f,0f);
+		points[1] = testPoint(1f,0f,0f);
+		
+		points[2] = testPoint(-1f,2f,0f);
+		points[3] = testPoint(0f,2f,0f);
+		
+		GeoLine3D line1 = kernel3D.Line3D("line1", points[0], points[1]);
+		GeoLine3D line2 = kernel3D.Line3D("line2", points[2], points[3]);
+		
+		GeoPoint3D p = kernel3D.Intersect("intersection", line1, line2);
+		
+	}
 	
 	
 }

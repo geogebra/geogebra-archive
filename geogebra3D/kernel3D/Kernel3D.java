@@ -313,4 +313,38 @@ public class Kernel3D
 		return plane;
 	}
 	
+	
+	
+	
+	////////////////////////////////////////////////
+	// INTERSECTION (POINTS)
+	
+	
+	/** Calculate the intersection of two coord sys (eg line and plane).
+	 * @param label name of the point
+	 * @param cs1 first coord sys
+	 * @param cs2 second coord sys
+	 * @return point intersection
+	 */
+	final public GeoPoint3D Intersect(
+			String label,
+			GeoCoordSys cs1,
+			GeoCoordSys cs2) {
+		
+		AlgoIntersectCoordSys algo = new AlgoIntersectCoordSys(cons,label,cs1,cs2);
+		GeoPoint3D p = algo.getPoint();
+		return p;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
