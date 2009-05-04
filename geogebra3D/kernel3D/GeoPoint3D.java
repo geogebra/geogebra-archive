@@ -89,7 +89,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     public GeoPoint3D(Construction c, Path3D path) {
 		super(c,4);
-		Application.debug("GeoPoint3D");
+		//Application.debug("GeoPoint3D");
 		this.path = path;
 	}
     

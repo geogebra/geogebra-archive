@@ -63,8 +63,9 @@ public class Test3D{
 		
         //init 3D view
         view3D.setZZero(-7.0);
-        //view3D.setRotXY(-Math.PI/6,Math.PI/6,true);
-        view3D.setRotXY(-Math.PI/6,Math.PI/12,true);
+        view3D.setRotXY(-Math.PI/6,Math.PI/6,true);
+        view3D.setRotXY(-Math.PI/6,Math.PI/8,true);
+        //view3D.setRotXY(-Math.PI/6,Math.PI/12,true);
 		
 		
 		
@@ -85,9 +86,10 @@ public class Test3D{
 		//testVector3D();
 		
 		//testPolyhedron();
+		testTetrahedron();
 		
 		//testIntersectLinePlane();
-		testIntersectLineLine();
+		//testIntersectLineLine();
 	}
 
 	
@@ -518,6 +520,21 @@ public class Test3D{
 		
 		GeoPolyhedron p=kernel3D.Polyhedron("poly", points, 
 				new int[][] {{0,1,2,3},{0,1,4},{1,2,4},{2,3,4},{3,0,4}});
+	}
+	
+	private void testTetrahedron(){
+
+		
+		
+		GeoPoint3D[] points = new GeoPoint3D[4];
+		points[0] = testPoint(0f,-1f,0f);
+		points[1] = testPoint(1f,1f,0f);
+		points[2] = testPoint(-1f,1f,0f);
+		points[3] = testPoint(0f,0f,2f);
+		
+		
+		GeoPolyhedron p=kernel3D.Polyhedron("tetrahedron", points, 
+				new int[][] {{0,1,2},{0,1,3},{1,2,3},{2,0,3}});
 	}
 
 	

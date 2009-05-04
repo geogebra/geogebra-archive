@@ -4,7 +4,11 @@ package geogebra3D.euclidian3D;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.euclidian.Hits;
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
@@ -16,6 +20,7 @@ import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 import geogebra3D.kernel3D.Path3D;
@@ -27,6 +32,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class EuclidianController3D extends EuclidianController 
 implements MouseListener, MouseMotionListener, MouseWheelListener{
@@ -402,6 +409,67 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	///////////////////////////////////////////
+	// INTERSECTIONS
+	
+	/** get two objects (lines or conics) and create intersection point */
+	protected boolean intersect(Hits hits) {
+		if (hits.isEmpty())
+			return false;		
+
+		// when two objects are selected at once then only one single
+		// intersection point should be created
+		boolean singlePointWanted = selGeos() == 0;
+							
+		// check how many interesting hits we have
+		//Application.debug("selectionPreview = "+selectionPreview);
+		if (!selectionPreview && hits.size() > 2 - selGeos()) {
+			Hits goodHits = new Hits();
+			//goodHits.add(selectedGeos);
+			hits.getHits(GeoLine3D.class, tempArrayList);
+			goodHits.addAll(tempArrayList);
+			//Application.debug(goodHits.toString());
+			
+			if (goodHits.size() > 2 - selGeos()) {
+				//  choose one geo, and select only this one
+				GeoElement geo = chooseGeo(goodHits);
+				hits.clear();
+				hits.add(geo);				
+			} else {
+				hits = goodHits;
+			}
+		}			
+		
+		// get lines, conics and functions
+		addSelectedLine3D(hits, 2, true);
+		
+		singlePointWanted = singlePointWanted && selGeos() == 2;
+		
+		if (selGeos() > 2)
+			return false;
+
+		// two 3D lines		
+		if (selLines3D() == 2) {
+						
+			GeoLine3D[] lines = getSelectedLines3D();
+			((Kernel3D) kernel).Intersect(null, lines[0], lines[1]);
+			return true;
+			
+		}
+		
+		
+		return false;
+	}
 
 	
 	
@@ -411,9 +479,48 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	///////////////////////////////////////////
+	// SELECTIONS
+	
+	/** selected 3D lines */
+	protected ArrayList selectedLines3D = new ArrayList();
+	
+	/** add hits to selectedLines3D
+	 * @param hits hits
+	 * @param max max number of hits to add
+	 * @param addMoreThanOneAllowed if adding more than one is allowed
+	 * @return TODO
+	 */
+	final protected int addSelectedLine3D(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		//Application.debug(hits.toString());
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLines3D, GeoLine3D.class);
+	}
 	
 	
+	/**
+	 * return number of selected 3D lines
+	 * @return number of selected 3D lines
+	 */
+	final int selLines3D() {
+		return selectedLines3D.size();
+	}	
 	
+	
+	/** return selected 3D lines
+	 * @return selected 3D lines
+	 */
+	final protected GeoLine3D[] getSelectedLines3D() {
+		GeoLine3D[] lines = new GeoLine3D[selectedLines3D.size()];
+		int i = 0;
+		Iterator it = selectedLines3D.iterator();
+		while (it.hasNext()) {
+			lines[i] = (GeoLine3D) it.next();
+			i++;
+		}
+		clearSelection(selectedLines3D);
+		return lines;
+	}	
 	
 	
 	

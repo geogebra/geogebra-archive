@@ -1775,6 +1775,7 @@ public class EuclidianController implements MouseListener,
 			view.setHitCursor();
 
 		//	manage highlighting
+		//Application.debug("noHighlighting = "+noHighlighting);
 		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
 						|| repaintNeeded;
 
@@ -3037,7 +3038,7 @@ public class EuclidianController implements MouseListener,
 	
 
 	// get two objects (lines or conics) and create intersection point
-	final protected boolean intersect(Hits hits) {
+	protected boolean intersect(Hits hits) {
 		if (hits.isEmpty())
 			return false;		
 
@@ -5151,7 +5152,7 @@ public class EuclidianController implements MouseListener,
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLists, GeoList.class);
 	}
 
-	final int selGeos() {
+	protected final int selGeos() {
 		return selectedGeos.size();
 	}
 
@@ -5272,6 +5273,7 @@ public class EuclidianController implements MouseListener,
 			} else {
 				if (selectionList.size() < max) {
 					highlightedGeos.add(geo); // add hit
+					//Application.debug("highlightedGeos.add( "+((GeoElement) geo).getLabel()+" )");
 					ret = 1;
 				}
 			}
