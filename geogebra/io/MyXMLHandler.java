@@ -928,8 +928,6 @@ public class MyXMLHandler implements DocHandler {
 			handleKernelFigures(attrs);
 		} else if (eName.equals("startAnimation")) {
 			handleKernelStartAnimation(attrs);
-		} else if (eName.equals("JavaScript")) {
-			handleKernelJavaScript(attrs);
 		} else
 			Application.debug("unknown tag in <kernel>: " + eName);
 	}
@@ -973,16 +971,6 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleKernelStartAnimation(LinkedHashMap<String, String> attrs) {
 		try {
 			startAnimation = parseBoolean((String) attrs.get("val"));
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private boolean handleKernelJavaScript(LinkedHashMap<String, String> attrs) {
-		try {
-			//kernel.getApplication().getScriptManager().setLibraryScript((String) attrs.get("val"));
-			kernel.setLibraryJavaScript((String) attrs.get("val"));
 			return true;
 		} catch (Exception e) {
 			return false;

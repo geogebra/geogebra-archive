@@ -24,10 +24,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -298,6 +300,25 @@ public class Util extends Object {
 	copyStream(is, bos);
 	bos.close();
 	return bos.toByteArray();
+    }
+
+    /**
+     *  Writes all contents of the given InputStream to a String
+     */
+    public static String loadIntoString(InputStream is) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+ 
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } 
+ 
+        return sb.toString();
     }
 
     public static void copyStream(InputStream in, OutputStream out)

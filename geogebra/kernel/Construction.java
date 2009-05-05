@@ -1126,11 +1126,6 @@ public class Construction {
 		sb.append(kernel.getCoordStyle());
 		sb.append("\"/>\n");
 		
-		// JavaScript library functions
-		sb.append("\t<JavaScript val=\"");
-		sb.append(kernel.getLibraryJavaScriptXML());
-		sb.append("\"/>\n");
-		
 		// animation
 		if (kernel.isAnimationRunning()) {
 			sb.append("\t<startAnimation val=\"");

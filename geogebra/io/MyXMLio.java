@@ -69,6 +69,9 @@ public class MyXMLio {
 	// an entry named XML_FILE_MACRO for the macros
 	final private static String XML_FILE_MACRO = "geogebra_macro.xml";
 
+	// library javascript available to GeoJavaScriptButton objects
+	final private static String JAVASCRIPT_FILE = "geogebra_javascript.js";
+
 	// All xml output is zipped. The created zip archive *may* contain
 	// an entry named XML_FILE_THUMBNAIL for the construction
 	final private static String XML_FILE_THUMBNAIL = "geogebra_thumbnail.png";
@@ -151,6 +154,9 @@ public class MyXMLio {
 				// load macro xml file into memory first
 				macroXmlFileBuffer = Util.loadIntoMemory(zip);
 				macroXMLfound = true;
+			} else if (name.equals(JAVASCRIPT_FILE)) {
+				// load JavaScript
+				kernel.setLibraryJavaScript(Util.loadIntoString(zip));
 			} else {
 				// try to load image
 				try {
@@ -369,6 +375,12 @@ public class MyXMLio {
 			osw.flush();
 			zip.closeEntry();
 		}
+
+		// write library JavaScript to one special file in zip
+		zip.putNextEntry(new ZipEntry(JAVASCRIPT_FILE));
+		osw.write(kernel.getLibraryJavaScript());
+		osw.flush();
+		zip.closeEntry();
 
 		// write XML file for construction
 		zip.putNextEntry(new ZipEntry(XML_FILE));

@@ -5636,9 +5636,10 @@ public class Kernel {
 		//libraryJavaScript = "function ggbOnInit() {ggbApplet.evalCommand('A=(1,2)');}";
 	}
 	
-	public String getLibraryJavaScriptXML() {
-		return Util.encodeXML(libraryJavaScript);
-	}
+	//public String getLibraryJavaScriptXML() {
+	//	return Util.encodeXML(libraryJavaScript);
+	//}
+	
 	public String getLibraryJavaScript() {
 		return libraryJavaScript;
 	}
