@@ -76,9 +76,10 @@ public class Test3D{
 		testRepere();
 		
 		//testConic3D();
+		//testPolygon();
+		//testPlane();
 
 		//testAlgoPyramide();
-		//testPolygon();
 
 		//testQuadric();
     	
@@ -90,6 +91,7 @@ public class Test3D{
 		
 		//testIntersectLinePlane();
 		//testIntersectLineLine();
+		//testIntersectParallelLines();
 	}
 
 	
@@ -527,11 +529,16 @@ public class Test3D{
 		
 		
 		GeoPoint3D[] points = new GeoPoint3D[4];
-		points[0] = testPoint(0f,-1f,0f);
-		points[1] = testPoint(1f,1f,0f);
-		points[2] = testPoint(-1f,1f,0f);
-		points[3] = testPoint(0f,0f,2f);
-		
+		/*
+		points[0] = testPoint((float) Math.sqrt(3)-1,-1f,0f);
+		points[1] = testPoint((float) Math.sqrt(3)-1,1f,0f);
+		points[2] = testPoint(-1f,0f,0f);
+		points[3] = testPoint(0f,0f,(float) Math.sqrt(3));
+		*/
+		points[0] = testPoint(1f,-1f,0f);
+		points[1] = testPoint(0.5f,1f,0f);
+		points[2] = testPoint(-1f,0f,0f);
+		points[3] = testPoint(0f,0f,2f);		
 		
 		GeoPolyhedron p=kernel3D.Polyhedron("tetrahedron", points, 
 				new int[][] {{0,1,2},{0,1,3},{1,2,3},{2,0,3}});
@@ -565,5 +572,23 @@ public class Test3D{
 		
 	}
 	
-	
+	private void testIntersectParallelLines(){
+		GeoPoint3D[] points = new GeoPoint3D[5];
+		points[0] = testPoint(1f,1f,0f);
+		points[1] = testPoint(2f,1f,0f);
+		
+		points[2] = testPoint(1f,2f,0f);
+		points[3] = testPoint(2f,2f,0f);
+		
+		points[4] = testPoint(0f,0f,0f);
+		
+		GeoLine3D line1 = kernel3D.Line3D("line1", points[0], points[1]);
+		GeoLine3D line2 = kernel3D.Line3D("line2", points[2], points[3]);
+		
+		GeoPoint3D p = kernel3D.Intersect("intersection", line1, line2);
+		
+		GeoLine3D line3 = kernel3D.Line3D("line2", p, points[4]);
+		
+		
+	}
 }

@@ -141,10 +141,19 @@ public class GeoLine3D extends GeoCoordSys1D {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
-		return false;
+	
+	
+	
+	
+	
+	public boolean isValidCoord(double x){
+		return true;
 	}
-
+	
+	
+	
+	
+	
+	
+	
 }

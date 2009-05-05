@@ -19,6 +19,7 @@ import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -436,7 +437,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (!selectionPreview && hits.size() > 2 - selGeos()) {
 			Hits goodHits = new Hits();
 			//goodHits.add(selectedGeos);
-			hits.getHits(GeoLine3D.class, tempArrayList);
+			hits.getHits(GeoCoordSys1D.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
 			//Application.debug(goodHits.toString());
 			
@@ -450,8 +451,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			}
 		}			
 		
-		// get lines, conics and functions
-		addSelectedLine3D(hits, 2, true);
+		// get lines, segments, etc.
+		addSelectedCS1D(hits, 2, true);
 		
 		singlePointWanted = singlePointWanted && selGeos() == 2;
 		
@@ -459,9 +460,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			return false;
 
 		// two 3D lines		
-		if (selLines3D() == 2) {
+		if (selCS1D() == 2) {
 						
-			GeoLine3D[] lines = getSelectedLines3D();
+			GeoCoordSys1D[] lines = getSelectedCS1D();
 			((Kernel3D) kernel).Intersect(null, lines[0], lines[1]);
 			return true;
 			
@@ -482,43 +483,43 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	///////////////////////////////////////////
 	// SELECTIONS
 	
-	/** selected 3D lines */
-	protected ArrayList selectedLines3D = new ArrayList();
+	/** selected 1D coord sys */
+	protected ArrayList selectedCS1D = new ArrayList();
 	
-	/** add hits to selectedLines3D
+	/** add hits to selectedCS1D
 	 * @param hits hits
 	 * @param max max number of hits to add
 	 * @param addMoreThanOneAllowed if adding more than one is allowed
 	 * @return TODO
 	 */
-	final protected int addSelectedLine3D(Hits hits, int max,
+	final protected int addSelectedCS1D(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		//Application.debug(hits.toString());
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLines3D, GeoLine3D.class);
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCS1D, GeoCoordSys1D.class);
 	}
 	
 	
 	/**
-	 * return number of selected 3D lines
-	 * @return number of selected 3D lines
+	 * return number of selected 1D coord sys
+	 * @return number of selected 1D coord sys
 	 */
-	final int selLines3D() {
-		return selectedLines3D.size();
+	final int selCS1D() {
+		return selectedCS1D.size();
 	}	
 	
 	
-	/** return selected 3D lines
-	 * @return selected 3D lines
+	/** return selected 1D coord sys
+	 * @return selected 1D coord sys
 	 */
-	final protected GeoLine3D[] getSelectedLines3D() {
-		GeoLine3D[] lines = new GeoLine3D[selectedLines3D.size()];
+	final protected GeoCoordSys1D[] getSelectedCS1D() {
+		GeoCoordSys1D[] lines = new GeoCoordSys1D[selectedCS1D.size()];
 		int i = 0;
-		Iterator it = selectedLines3D.iterator();
+		Iterator it = selectedCS1D.iterator();
 		while (it.hasNext()) {
-			lines[i] = (GeoLine3D) it.next();
+			lines[i] = (GeoCoordSys1D) it.next();
 			i++;
 		}
-		clearSelection(selectedLines3D);
+		clearSelection(selectedCS1D);
 		return lines;
 	}	
 	

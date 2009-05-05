@@ -177,6 +177,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	final public void updateCoords() {
 		// infinite point
 		if (kernel.isZero(v.get(4))) {
+			//Application.debug("infinite");
 			isInfinite = true;
 			isDefined = !(Double.isNaN(v.get(1)) || Double.isNaN(v.get(2)) || Double.isNaN(v.get(3)));
 			inhom.set(Double.NaN);
@@ -379,6 +380,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		return isDefined;
 	}
 	
+	
 	public void set(GeoElement geo) {
 		// TODO Auto-generated method stub
 		
@@ -411,7 +413,10 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	
 	public String toValueString() {
-		//TODO point undefined...
+    	if (isInfinite()) 
+			return app.getPlain("undefined");
+    	
+    	
 		//TODO use point property
 		return "("+kernel.format(inhom.get(1))+", "+kernel.format(inhom.get(2))+", "+kernel.format(inhom.get(3))+")";
 	}
@@ -474,8 +479,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	
 	public boolean isInfinite() {
-		// TODO Auto-generated method stub
-		return false;
+		return isInfinite;
 	}
 
 	public boolean isVector3DValue() {

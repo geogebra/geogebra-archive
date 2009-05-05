@@ -44,12 +44,22 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	}
 	
 	
-	/** set coords to origin O and vector (I-O) */
+	/** set coords to origin O and vector (I-O).
+	 * If I (or O) is infinite, I is used as direction vector.
+	 * @param O origin point
+	 * @param I unit point*/
 	public void setCoord(GeoPoint3D O, GeoPoint3D I){
 		
-		Ggb3DVector vO = O.getCoords();
-		Ggb3DVector vI = I.getCoords();
-		setCoord(vO,vI.sub(vO));
+		if (I.isInfinite())
+			if (O.isInfinite())
+				setUndefined(); //TODO infinite line
+			else
+				setCoord(O.getCoords(),I.getCoords());
+		else
+			if (O.isInfinite())
+				setCoord(I.getCoords(),O.getCoords());
+			else
+				setCoord(O.getCoords(),I.getCoords().sub(O.getCoords()));
 		
 	}
 	
@@ -163,32 +173,17 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
 	
 	
 
+	////////////////////////////////////
+	//
+	
+	/** return true if x is a valid coordinate (eg 0<=x<=1 for a segment)
+	 * @param x coordinate
+	 * @return true if x is a valid coordinate (eg 0<=x<=1 for a segment)
+	 */
+	abstract public boolean isValidCoord(double x);
 	
 	
 	
-	/*
-	public Ggb3DMatrix4x4 getMovingMatrix(Ggb3DMatrix4x4 toScreenMatrix){
-		
-		Ggb3DMatrix4x4 ret = toScreenMatrix.mul(getMatrix4x4());
-		
-		Ggb3DVector V = ret.getColumn(1); //gets direction vector of the path
-		Ggb3DVector Vn1 = new Ggb3DVector(4); 
-		Ggb3DVector Vn2 = new Ggb3DVector(4);
-		if (V.get(1)!=0){
-			Vn1.set(1,-V.get(2));
-			Vn1.set(2,V.get(1));
-			Vn1.normalize();
-		}else{
-			Vn1.set(1, 1.0);
-		}
-		Vn2 = V.crossProduct(Vn1);
-		Vn2.normalize();	
-		
-		ret.set(Vn1, 2);ret.set(Vn2, 3);
-		
-		return ret;
-	}
-	*/
 	
 	
 	

@@ -115,31 +115,24 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
     }
    
     
+    
+    
+    ///////////////////////////////////////////////
+    // COMPUTE
 
     protected void compute() {
     	    
 
-    	switch (cs1.getGeoClassType()){
-    	case GeoElement3D.GEO_CLASS_LINE3D:
-    		switch (cs2.getGeoClassType()){
-    		case GeoElement3D.GEO_CLASS_PLANE3D:
+    	if (cs1 instanceof GeoCoordSys1D){
+    		if (cs2 instanceof GeoCoordSys1D)
+    			compute1D1D((GeoCoordSys1D) cs1,(GeoCoordSys1D) cs2);
+    		else if (cs2 instanceof GeoPlane3D)
     			computeLinePlane(cs1,cs2);
-    			break;
-    		case GeoElement3D.GEO_CLASS_LINE3D:
-    			computeLineLine(cs1,cs2);
-    			break;
-    		}
-    		break;
-		case GeoElement3D.GEO_CLASS_PLANE3D:
-    		switch (cs2.getGeoClassType()){
-    		case GeoElement3D.GEO_CLASS_LINE3D:
+    	}else if (cs1 instanceof GeoPlane3D){
+    		if (cs2 instanceof GeoCoordSys1D)
     			computeLinePlane(cs2,cs1);
-    			break;
-    		}
-    		break;
-   	
-    	
     	}
+     	
 
 
     }
@@ -164,17 +157,30 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param line1 first line
      * @param line2 second line
      */
-    private void computeLineLine(GeoCoordSys line1, GeoCoordSys line2){
+    private void compute1D1D(GeoCoordSys1D line1, GeoCoordSys1D line2){
     	
     	Ggb3DVector[] project = Ggb3DMatrixUtil.nearestPointsFromTwoLines(line1.getMatrix(), line2.getMatrix());
     	
     	if (project==null)
     		p.setUndefined(); //TODO infinite point
-    	else if (project[0].equalsForKernel(project[1], Kernel.STANDARD_PRECISION))
-    		p.setCoords(project[0]);
+    	else if (project[0].equalsForKernel(project[1], Kernel.STANDARD_PRECISION)){
+    		if (line1.isValidCoord(project[2].get(1)) && line2.isValidCoord(project[2].get(2)))
+    			p.setCoords(project[0]);
+    		else
+    			p.setUndefined();
+    	}
     	else
     		p.setUndefined();
     	
+    }
+    
+    
+    /** set the coords of p regarding project coords.
+     * (see {@link AlgoIntersectCoordSys#compute1D1D(GeoCoordSys, GeoCoordSys)})
+     * @param project coordinates of p
+     */
+    private void setCoordsLineLine(Ggb3DVector[] project){
+    	p.setCoords(project[0]);
     }
     
     

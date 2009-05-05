@@ -33,6 +33,9 @@ public class GeoRay3D extends GeoLine3D {
 	}
 	
 	
+	public boolean isValidCoord(double x){
+		return (x>=0);
+	}
 	
 
 }

@@ -495,6 +495,11 @@ public class Ggb3DMatrix
 	/** prints the matrix to the screen */
 	public void SystemPrint(){
 		
+		Application.debug(toString());
+	}
+	
+	
+	public String toString(){
 		String s="";
 		
 		for(int i=1;i<=getRows();i++){
@@ -505,7 +510,7 @@ public class Ggb3DMatrix
 			s+="\n";
 		}
 		
-		Application.debug(s);
+		return s;
 	}
 	
 	
