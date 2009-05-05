@@ -15,7 +15,7 @@ public class GeoQuadric extends GeoElement3D {
 		super(c);
 		
 		//TODO specific alpha
-		setAlphaValue(ConstructionDefaults3D.DEFAULT_QUADRIC_ALPHA);
+		//setAlphaValue(ConstructionDefaults3D.DEFAULT_QUADRIC_ALPHA);
 
 	}
 	

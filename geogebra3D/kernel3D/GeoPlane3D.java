@@ -32,7 +32,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
         
 		
 		//alpha
-		setAlphaValue(ConstructionDefaults3D.DEFAULT_PLANE_ALPHA);
+		//setAlphaValue(ConstructionDefaults3D.DEFAULT_PLANE_ALPHA);
 		
 	}
 	
@@ -51,7 +51,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
         
 		
 		//alpha
-		setAlphaValue(ConstructionDefaults3D.DEFAULT_PLANE_ALPHA);
+		//setAlphaValue(ConstructionDefaults3D.DEFAULT_PLANE_ALPHA);
 
 		
 	}

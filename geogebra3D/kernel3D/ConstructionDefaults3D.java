@@ -31,10 +31,16 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_POINT3D_IN_REGION = 3013;
 
 	
+	/** default plane 3D type */	
+	public static final int DEFAULT_PLANE3D = 3100;
 	/** default polygon 3D type */	
-	public static final int DEFAULT_POLYGON3D = 3100;
+	public static final int DEFAULT_POLYGON3D = 3101;
+	
+	
 	/** default polyhedron type */
 	public static final int DEFAULT_POLYHEDRON = 3200;
+	/** default quadric type */
+	public static final int DEFAULT_QUADRIC = 3201;
 
 	
 	
@@ -45,18 +51,26 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	// DEFAULT COLORs
 	// polygon 3D
 	//private static final Color colPolygon3D = ConstructionDefaults.colPolygon;	
+	/** default color for 3D polygons */
+	private static final Color colPolygon3D = colPolygon;
 	/** default alpha for 3D polygons*/
 	public static final float DEFAULT_POLYGON3D_ALPHA = 0.5f;
 
 	// plane 
-	//private static final Color colPolygon3D = ConstructionDefaults.colPolygon;	
-	/** default alpha for planes*/
-	public static final float DEFAULT_PLANE_ALPHA = 0.5f;
+	/** default color for 3D planes */
+	private static final Color colPlane3D = new Color(0, 255, 128);
+	/** default alpha for 3D planes*/
+	public static final float DEFAULT_PLANE3D_ALPHA = 0.5f;
 	
+	// polyhedrons	
+	/** default color for polyhedrons */
+	private static final Color colPolyhedron = colPolygon;//new Color(153, 51, 0);
+
 	// quadrics 
-	//private static final Color colPolygon3D = ConstructionDefaults.colPolygon;	
-	/** default alpha for planes*/
-	public static final float DEFAULT_QUADRIC_ALPHA = 0.5f;
+	/** default alpha for quadrics*/
+	public static final float DEFAULT_QUADRIC_ALPHA = 0.75f;
+	/** default color for quadrics */
+	private static final Color colQuadric = new Color(255, 0, 128);
 	
 	
 	// axes TODO use gui
@@ -65,12 +79,6 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final Color colZAXIS = Color.blue;
 	
 	
-	// polyhedrons
-	/** default color for 3D polygons */
-	private static final Color colPolygon3D = colPolygon;
-	
-	/** default color for polyhedrons */
-	private static final Color colPolyhedron = new Color(153, 51, 0);
 
 	
 	
@@ -128,6 +136,12 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		defaultGeoElements.put(DEFAULT_POINT3D_IN_REGION, regionPoint);
 
 		
+		// plane
+		GeoPlane3D plane = new GeoPlane3D(cons);	
+		plane.setLocalVariableLabel("Plane3D");
+		plane.setObjColor(colPlane3D);
+		plane.setAlphaValue(DEFAULT_PLANE3D_ALPHA);
+		defaultGeoElements.put(DEFAULT_PLANE3D, plane);
 		
 		// polygon
 		GeoPolygon3D polygon = new GeoPolygon3D(cons, null, null, false);	
@@ -135,6 +149,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		polygon.setLocalVariableLabel("Polygon3D");
 		polygon.setObjColor(colPolygon3D);
 		polygon.setAlphaValue(DEFAULT_POLYGON3D_ALPHA);
+		polygon.setLayer(2);
 		defaultGeoElements.put(DEFAULT_POLYGON3D, polygon);
 
 		
@@ -146,7 +161,13 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		polyhedron.setAlphaValue(DEFAULT_POLYGON3D_ALPHA);
 		defaultGeoElements.put(DEFAULT_POLYHEDRON, polyhedron);
 		
-		
+		// quadric
+		GeoQuadric quadric = new GeoQuadric(cons);	
+		quadric.setLocalVariableLabel("Quadric");
+		quadric.setObjColor(colQuadric);
+		quadric.setAlphaValue(DEFAULT_QUADRIC_ALPHA);
+		defaultGeoElements.put(DEFAULT_QUADRIC, quadric);
+	
 
 
 	}
@@ -169,11 +190,17 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 					return DEFAULT_POINT3D_DEPENDENT;
 			}
 		
-		case GeoElement3D.GEO_CLASS_POLYHEDRON:
-			return DEFAULT_POLYHEDRON;
-			
+		case GeoElement3D.GEO_CLASS_PLANE3D: 
+			return DEFAULT_PLANE3D;
 		case GeoElement3D.GEO_CLASS_POLYGON3D: 
 			return DEFAULT_POLYGON3D;
+			
+			
+		case GeoElement3D.GEO_CLASS_POLYHEDRON:
+			return DEFAULT_POLYHEDRON;
+		case GeoElement3D.GEO_CLASS_QUADRIC:
+			return DEFAULT_QUADRIC;
+			
 		default:
 			return super.getDefaultType(geo);
 		}

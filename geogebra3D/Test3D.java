@@ -79,12 +79,12 @@ public class Test3D{
 		//testPolygon();
 		//testPlane();
 
-		//testAlgoPyramide();
 
 		//testQuadric();
     	
 		//testRay3D();
 		//testVector3D();
+		//testAlgoPyramide();
 		
 		//testPolyhedron();
 		testTetrahedron();
