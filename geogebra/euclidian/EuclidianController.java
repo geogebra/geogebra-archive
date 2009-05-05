@@ -532,6 +532,52 @@ public class EuclidianController implements MouseListener,
 			}			
 		}
 	}
+	
+	
+	
+	
+	
+	
+	protected void mousePressedTranslatedView(MouseEvent e){
+		
+		Hits hits;
+		
+		// check if axis is hit
+		//hits = view.getHits(mouseLoc);
+		view.setHits(mouseLoc);
+		hits = view.getHits();hits.removePolygons();
+		Application.debug("MODE_TRANSLATEVIEW - "+hits.toString());
+		
+		if (!hits.isEmpty() && hits.size() == 1) {
+			Object hit0 = hits.get(0);
+			if (hit0 == kernel.getXAxis())
+				moveMode = MOVE_X_AXIS;
+			else if (hit0 == kernel.getYAxis())
+				moveMode = MOVE_Y_AXIS;
+			else
+				moveMode = MOVE_VIEW;
+		} else {						
+			moveMode = MOVE_VIEW;
+		}						
+		
+		startLoc = mouseLoc; 
+		if (!TEMPORARY_MODE) {
+			if (moveMode == MOVE_VIEW)
+				view.setMoveCursor();
+			else
+				view.setDragCursor();
+		}
+		
+		//xZeroOld = view.getXZero();
+		//yZeroOld = view.getYZero();
+		view.rememberOrigins();
+		xTemp = xRW;
+		yTemp = yRW;
+		view.setShowAxesRatio((moveMode == MOVE_X_AXIS) || (moveMode == MOVE_Y_AXIS));
+		//view.setDrawMode(EuclidianView.DRAW_MODE_DIRECT_DRAW);
+
+	}
+	
 
 	public void mousePressed(MouseEvent e) {
 		//GeoElement geo;
@@ -564,7 +610,8 @@ public class EuclidianController implements MouseListener,
 		{
 // Michael Borcherds 2007-12-08 BEGIN
 			// bugfix: couldn't select multiple objects with Ctrl		
-			//hits = view.getHits(mouseLoc);
+
+
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
 			if (!hits.isEmpty()) // bugfix 2008-02-19 removed this:&& ((GeoElement) hits.get(0)).isGeoPoint())
@@ -664,38 +711,10 @@ public class EuclidianController implements MouseListener,
 			break;
 
 		// move drawing pad or axis
-		case EuclidianView.MODE_TRANSLATEVIEW:			
-			// check if axis is hit
-			//hits = view.getHits(mouseLoc);
-			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
-			if (!hits.isEmpty() && hits.size() == 1) {
-				Object hit0 = hits.get(0);
-				if (hit0 == kernel.getXAxis())
-					moveMode = MOVE_X_AXIS;
-				else if (hit0 == kernel.getYAxis())
-					moveMode = MOVE_Y_AXIS;
-				else
-					moveMode = MOVE_VIEW;
-			} else {						
-				moveMode = MOVE_VIEW;
-			}						
+		case EuclidianView.MODE_TRANSLATEVIEW:		
 			
-			startLoc = mouseLoc; 
-			if (!TEMPORARY_MODE) {
-				if (moveMode == MOVE_VIEW)
-					view.setMoveCursor();
-				else
-					view.setDragCursor();
-			}
+			mousePressedTranslatedView(e);
 			
-			//xZeroOld = view.getXZero();
-			//yZeroOld = view.getYZero();
-			view.rememberOrigins();
-			xTemp = xRW;
-			yTemp = yRW;
-			view.setShowAxesRatio((moveMode == MOVE_X_AXIS) || (moveMode == MOVE_Y_AXIS));
-			//view.setDrawMode(EuclidianView.DRAW_MODE_DIRECT_DRAW);
 			break;								
 				
 		default:

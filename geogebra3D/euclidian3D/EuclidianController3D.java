@@ -54,7 +54,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	//protected boolean isCtrlDown = false;
-	protected boolean isAltDown = false;
+	protected boolean isShiftDown = false;
 	
 	
 	
@@ -227,7 +227,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 			//movePointOnCurrentPlane(movedGeoPoint3D, false);
 			
-		}else if (isAltDown){ //moves the point along z-axis
+		}else if (isShiftDown){ //moves the point along z-axis
 			
 			//getting current pick point and direction v 
 			Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
@@ -577,7 +577,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			mouseLocOld = (Point) mouseLoc.clone();
 		
 
-		isAltDown=Application.isAltDown(e);
+		isShiftDown= e.isShiftDown();//Application.isAltDown(e);
 		
 		//mouseLoc = e.getPoint();
 		super.setMouseLocation(e);
@@ -586,6 +586,26 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 
+	
+	protected void mousePressedTranslatedView(MouseEvent e){
+		
+		Hits hits;
+		
+		// check if axis is hit
+		//hits = view.getHits(mouseLoc);
+		view.setHits(mouseLoc);
+		hits = view.getHits();hits.removePolygons();
+		Application.debug("MODE_TRANSLATEVIEW - "+hits.toString());
+		
+		if (!hits.isEmpty()) {
+			handleMousePressedForMoveMode(e);
+		}else{
+			super.mousePressedTranslatedView(e);
+		}
+		
+
+
+	}
 
 	
 	
