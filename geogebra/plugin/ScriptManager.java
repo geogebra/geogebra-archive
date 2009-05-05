@@ -46,6 +46,8 @@ public class ScriptManager {
 	
 	public boolean evalScript(String script) {
 		boolean success = true;
+
+		app.loadJavaScriptJar();
 		
         Context cx = Context.enter();
         try {
@@ -437,6 +439,8 @@ public class ScriptManager {
 		if (app.isApplet()) {
 			app.getApplet().callJavaScript(jsFunction, args);
 		} else {
+
+			
 			StringBuffer sb = new StringBuffer();
 			sb.append(jsFunction);
 			sb.append("(");

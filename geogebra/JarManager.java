@@ -43,7 +43,8 @@ public class JarManager {
 	public static final int JAR_FILE_GEOGEBRA_CAS = 3;
 	public static final int JAR_FILE_GEOGEBRA_EXPORT = 4;
 	public static final int JAR_FILE_GEOGEBRA_PROPERTIES = 5;
-	//public static final int JAR_FILE_GEOGEBRA_3D = 6;
+	public static final int JAR_FILE_GEOGEBRA_JAVASCRIPT = 6;
+	//public static final int JAR_FILE_GEOGEBRA_3D = 7;
 	
 	public final static String CAS_JAR_NAME = "geogebra_cas.jar";
 	
@@ -53,7 +54,8 @@ public class JarManager {
 			"geogebra_gui.jar", 
 			CAS_JAR_NAME, 
 			"geogebra_export.jar",
-			"geogebra_properties.jar" };
+			"geogebra_properties.jar",
+			"geogebra_javascript.jar" };
 	
 	// types of application
 	private static final int TYPE_APPLET = 1; // Java applet

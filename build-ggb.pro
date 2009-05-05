@@ -14,6 +14,8 @@
 -libraryjars ../java150-rt.jar
 -libraryjars netscape_javascript.jar
 -libraryjars AppleJavaExtensions.jar
+## Rhino javascript library uses reflection, so can't process with ProGuard
+-libraryjars ../build/geogebra_javascript.jar
 
 -dontoptimize
 -allowaccessmodification

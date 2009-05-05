@@ -1439,6 +1439,10 @@ public abstract class Application implements KeyEventDispatcher {
 		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_EXPORT);
 	}
 
+	final synchronized public boolean loadJavaScriptJar() {
+		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_JAVASCRIPT);
+	}
+
 	final synchronized public boolean loadCASJar() {
 		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_CAS);
 	}
@@ -2925,9 +2929,11 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 	
 	public ScriptManager getScriptManager() {
-		if (scriptManager == null)
+		if (scriptManager == null) {
+			
+			loadJavaScriptJar();
 			scriptManager = new ScriptManager(this);
-		
+		}
 		return scriptManager;
 	}
 

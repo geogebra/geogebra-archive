@@ -59,7 +59,7 @@ implements ActionListener, MouseListener, KeyListener
 	public AlgebraInput(Application app) {		
 		this.app = app;		
 		 		
-		initGUI();
+		//initGUI();
 	}
 	
 	public void initGUI() {
@@ -128,13 +128,15 @@ implements ActionListener, MouseListener, KeyListener
 	}
 	
 	/**
-	 * updates labesl according to current locale
+	 * updates labels according to current locale
 	 */
 	public void setLabels() {
-		inputButton.setText( app.getPlain("InputLabel") + ":");
+		if (inputButton != null)
+			inputButton.setText( app.getPlain("InputLabel") + ":");
 		//inputButton.setToolTipText(app.getMenu("Mode") + " " + app.getMenu("InputField"));   
-		helpButton.setToolTipText(app.getMenu("FastHelp"));		
-		setCommandNames();				
+		if (helpButton != null)
+			helpButton.setToolTipText(app.getMenu("FastHelp"));		
+		//setCommandNames();				
 	}	
 	
 	public void updateFonts() {
@@ -211,7 +213,7 @@ implements ActionListener, MouseListener, KeyListener
 		cmdCB.addItem(app.getCommand("Command") + " ...");		
 		
 		
-		Iterator it = dict.getLowerCaseIterator();
+		Iterator<?> it = dict.getLowerCaseIterator();
 		while (it.hasNext()) {
 			// combobox
 			String cmdName = (String) dict.get(it.next());

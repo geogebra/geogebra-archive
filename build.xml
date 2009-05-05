@@ -34,7 +34,7 @@ office@geogebra.org
    @author Markus Hohenwarter
    @date Oct 23, 2008
 -->
-<project default="geogebra">
+<project default="geogebra-test">
 	
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>
@@ -70,7 +70,7 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar">		
+			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar">		
 	</target>
 	
 	<manifest file="../manifest.mf">	    
@@ -114,7 +114,8 @@ office@geogebra.org
 					geogebra/export/**, 
 					geogebra/cas/**,
 					jasymca/**,		
-					org/mathpiper/**,		  
+					org/mathpiper/**,
+					org/mozilla/**,
 					geogebra/euclidian3D/**,
 					geogebra/kernel3D/**,
 					geogebra3D/**,					
@@ -131,6 +132,14 @@ office@geogebra.org
 			includes="geogebra/export/**, 
 					org/freehep/**, 
 					meta-inf/services/**"
+			excludes="**/*.java" 
+		/>
+	</target>
+	
+	<target name="ggb-javascript-jar" depends="clean" description="create unsigned geogebra_javascript.jar">
+		<jar jarfile="${build.dir}/geogebra_javascript.jar"
+			basedir="${src.dir}"
+			includes="org/mozilla/**"
 			excludes="**/*.java" 
 		/>
 	</target>
