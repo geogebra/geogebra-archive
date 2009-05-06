@@ -184,6 +184,11 @@ GeoPointInterface {
 	}
 	
 	public boolean isChangeable() {
+		
+		// if we drag a AlgoDynamicCoordinates, we want its point to be dragged
+		AlgoElement algo = getParentAlgorithm();
+		if (algo != null && algo instanceof AlgoDynamicCoordinates) return true;
+
 		return !isFixed() && (isIndependent() || isPointOnPath() || isPointInRegion()); 
 	}	 
 	

@@ -4538,6 +4538,12 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
+	final public GeoElement DynamicCoordinates(String label, GeoPoint geoPoint,
+			NumberValue num1, NumberValue num2) {
+		AlgoDynamicCoordinates algo = new AlgoDynamicCoordinates(cons, label, geoPoint, num1, num2);
+		return algo.getPoint();
+	}
+
 	/**
 	 * Factor
 	 * Michael Borcherds 2008-04-04
@@ -5643,6 +5649,7 @@ public class Kernel {
 	public String getLibraryJavaScript() {
 		return libraryJavaScript;
 	}
+
 	
 	
 	

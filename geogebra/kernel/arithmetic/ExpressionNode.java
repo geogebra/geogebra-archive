@@ -395,7 +395,7 @@ implements ExpressionValue {
     final public ExpressionValue evaluate() {    	  
         if (leaf) return left.evaluate(); // for wrapping ExpressionValues as ValidExpression
                
-        Application.debug(operation+"");
+        //Application.debug(operation+"");
         
         ExpressionValue lt, rt;
         MyDouble num;

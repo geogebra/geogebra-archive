@@ -303,7 +303,9 @@ public class CommandDispatcher {
     	cmdTable.put("Simplify", new CmdSimplify(kernel));   
     	
     	cmdTable.put("FitSin", new CmdFitSin(kernel));   
-    	cmdTable.put("FitLogistic", new CmdFitLogistic(kernel));   
+    	cmdTable.put("FitLogistic", new CmdFitLogistic(kernel));  
+    	
+    	cmdTable.put("DynamicCoordinates", new CmdDynamicCoordinates(kernel));   
     	
     }
 

@@ -18,6 +18,8 @@
 
 package geogebra.euclidian;
 
+import geogebra.kernel.AlgoDynamicCoordinates;
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
@@ -1100,6 +1102,12 @@ public class EuclidianController implements MouseListener,
 	// setters movedGeoElement -> movedGeoPoint, ...
 	public void setMovedGeoPoint(GeoElement geo){
 		movedGeoPoint = (GeoPoint) movedGeoElement;
+		
+		AlgoElement algo = movedGeoPoint.getParentAlgorithm();
+		if (algo != null && algo instanceof AlgoDynamicCoordinates) {
+			movedGeoPoint = ((AlgoDynamicCoordinates)algo).getParentPoint();
+		}
+		
 		view.setShowMouseCoords(!app.isApplet()
 				&& !movedGeoPoint.hasPath());
 		view.setDragCursor();
