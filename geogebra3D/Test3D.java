@@ -106,7 +106,7 @@ public class Test3D{
 		//s="M3d"+i+""+j+""+k;
 		P=kernel3D.Point3D("A",x,y,z);
 		P.setObjColor(new Color(x,y,z));
-		P.setLabelVisible(false);
+		//P.setLabelVisible(false);
 		//cons.addToConstructionList(P,false);	
 		return P;
 	}
@@ -117,7 +117,7 @@ public class Test3D{
 		//s="M3d";
 		P=kernel3D.Point3D("A",x,y,z);
 		P.setObjColor(new Color(0f,0f,1f));
-		P.setLabelVisible(false);		
+		//P.setLabelVisible(false);		
 		return P;
 	}	
 	

@@ -513,6 +513,30 @@ public abstract class Drawable3D {
         this.m_geo = a_geo;
     } 
     
+    
+    
+    
+    
+    
+    
+    
+    ////////////////////////////////////////////////////////////////
+    // LABEL
+    
+    /** draws the label (if any)
+     * @param renderer 3D renderer
+     */
+    public void drawLabel(EuclidianRenderer3D renderer){
+    	
+    	
+    	if (!m_geo.isLabelVisible())
+    		return;
+    	
+    	
+		renderer.setTextColor(getGeoElement().getObjectColor());
+		renderer.setMatrix(getMatrix());
+		renderer.drawText(0f,0f,m_geo.getLabel()); //TODO label position
+    }
  	
 
 }

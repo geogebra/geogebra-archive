@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -24,6 +25,7 @@ import javax.media.opengl.glu.GLUtessellator;
 
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.FPSAnimator;
+import com.sun.opengl.util.GLUT;
 
 
 
@@ -46,6 +48,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	
 	// openGL variables
 	private GLU glu= new GLU();
+	private GLUT glut = new GLUT();
 	
 	/** canvas usable for a JPanel */
 	public GLCanvas canvas;
@@ -177,7 +180,12 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         //init drawing matrix to view3D toScreen matrix
         gl.glLoadMatrixd(m_view3D.getToScreenMatrix().get(),0);
+        
+        
+ 
 
+
+        
         //drawing hidden part
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
@@ -224,7 +232,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         }
         gl.glDepthMask(true);
 
-
+         
 
 
         //drawing not hidden parts
@@ -234,7 +242,20 @@ public class EuclidianRenderer3D implements GLEventListener {
         	d.draw(this);	
         }
         gl.glEnable(GL.GL_BLEND);
+        
+        
+        
+     
+         
+        //drawing labels
+        gl.glDisable(GL.GL_LIGHTING);
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawLabel(this);	
+        }
+        gl.glEnable(GL.GL_LIGHTING);
 
+         
 
 
         gLDrawable.swapBuffers(); //TODO
@@ -298,6 +319,28 @@ public class EuclidianRenderer3D implements GLEventListener {
     /////////////////////////////////////////////////////
     
     
+    
+    /** sets the color of the text
+     * @param c color of the text
+     */
+    public void setTextColor(Color c){
+    	
+    	gl.glColor3f(((float) c.getRed())/256f,
+				((float) c.getGreen())/256f,
+				((float) c.getBlue())/256f );
+			
+    	/*
+    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, 
+    			new float[] {((float) c.getRed())/256f,
+    							((float) c.getGreen())/256f,
+    							((float) c.getBlue())/256f,
+    							1f},
+    			0);
+    			*/
+    	
+    }
+    
+    
     /**
      * sets the material used by the pencil
      * 
@@ -309,7 +352,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	color = c;
     	this.alpha = alpha;
  
-    	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, 
+    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, 
     			new float[] {((float) c.getRed())/256f,
     							((float) c.getGreen())/256f,
     							((float) c.getBlue())/256f,
@@ -1073,6 +1116,15 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    
+    
+    public void drawText(float x, float y, String s){
+    	initMatrix();
+    	//Application.debug(s);
+    	gl.glRasterPos3f(x, y, 0 );
+    	glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, s); //BITMAP_HELVETICA_18
+    	resetMatrix();
+    }
     
     
     
