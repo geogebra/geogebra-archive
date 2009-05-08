@@ -69,6 +69,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//matrix for changing coordinate system
 	private Ggb3DMatrix4x4 m = Ggb3DMatrix4x4.Identity(); 
 	private Ggb3DMatrix4x4 mInv = Ggb3DMatrix4x4.Identity();
+	private Ggb3DMatrix4x4 undoRotationMatrix = Ggb3DMatrix4x4.Identity();
 	int a = 0;
 	int b = 0;//angles
 	int aOld, bOld;
@@ -299,17 +300,29 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	/** return the matrix : screen coords -> scene coords.
+	 * @return the matrix : screen coords -> scene coords.
+	 */
 	final public Ggb3DMatrix4x4 getToSceneMatrix(){
-		//return mInv.copy();
+		
 		return mInv;
 	}
 	
+	/** return the matrix : scene coords -> screen coords.
+	 * @return the matrix : scene coords -> screen coords.
+	 */
 	final public Ggb3DMatrix4x4 getToScreenMatrix(){
-		//return m.copy();
+		
 		return m;
 	}	
 	
-	
+	/** return the matrix undoing the rotation : scene coords -> screen coords.
+	 * @return the matrix undoing the rotation : scene coords -> screen coords.
+	 */
+	final public Ggb3DMatrix4x4 getUndoRotationMatrix(){
+		
+		return undoRotationMatrix;
+	}	
 	
 	/**
 	 * set Matrix for view3D
@@ -322,11 +335,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		Ggb3DMatrix m1 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.X_AXIS, this.b*EuclidianController3D.ANGLE_SCALE - Math.PI/2.0);
 		Ggb3DMatrix m2 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.Z_AXIS, this.a*EuclidianController3D.ANGLE_SCALE);
 		Ggb3DMatrix m3 = m1.mul(m2);
-		
 
+		undoRotationMatrix.set(m3.inverse());
+
+		//scaling
 		Ggb3DMatrix m4 = Ggb3DMatrix.ScaleMatrix(new double[] {getXscale(),getYscale(),getZscale()});		
 		
 
+		//translation
 		Ggb3DMatrix m5 = Ggb3DMatrix.TranslationMatrix(new double[] {getXZero(),getYZero(),getZZero()});
 		
 		m.set(m5.mul(m3.mul(m4)));	

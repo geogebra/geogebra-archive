@@ -11,6 +11,8 @@ import geogebra3D.Matrix.Ggb3DVector;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.geom.Rectangle2D;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 
@@ -26,6 +28,7 @@ import javax.media.opengl.glu.GLUtessellator;
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.FPSAnimator;
 import com.sun.opengl.util.GLUT;
+import com.sun.opengl.util.j2d.TextRenderer;
 
 
 
@@ -48,7 +51,11 @@ public class EuclidianRenderer3D implements GLEventListener {
 	
 	// openGL variables
 	private GLU glu= new GLU();
-	private GLUT glut = new GLUT();
+	//private GLUT glut = new GLUT();
+	private TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 18));
+
+	/** matrix changing Y-direction to Z-direction */
+	//private double[] matrixYtoZ = {1,0,0,0, 0,0,1,0, 0,1,0,0, 0,0,0,1}; 
 	
 	/** canvas usable for a JPanel */
 	public GLCanvas canvas;
@@ -87,9 +94,12 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private double[][] m_dash = DASH_NONE; // dash is composed of couples {length of line, length of hole}
 	private double m_dash_factor; // for unit factor
 	
-	/** current drawing color {r,g,b,a} */
+	/** current drawing color {r,g,b} */
 	private Color color; 
+	/** current alpha blending */
 	private double alpha;
+	/** current text color {r,g,b} */
+	private Color textColor; 
 	
 	private double m_thickness;
 	
@@ -186,6 +196,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 
 
         
+        
         //drawing hidden part
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
@@ -210,6 +221,22 @@ public class EuclidianRenderer3D implements GLEventListener {
         	d.drawTransp(this);	
         }
         gl.glDepthMask(true);
+        
+        
+        
+        
+        //drawing labels
+        gl.glDisable(GL.GL_LIGHTING);
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawLabel(this,true);	
+        }
+        gl.glEnable(GL.GL_LIGHTING);
+        
+        
+        
+        
+        
 
 
         //drawing hiding parts
@@ -220,8 +247,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         	d.drawHiding(this);	
         }
         gl.glColorMask(true,true,true,true);
-        //gl.glEnable(GL.GL_CULL_FACE);
-
+ 
 
         //re-drawing transparents parts for better transparent effect
         //TODO improve it !
@@ -232,9 +258,21 @@ public class EuclidianRenderer3D implements GLEventListener {
         }
         gl.glDepthMask(true);
 
-         
 
+        
+        
+        //drawing labels for hiding
+        /*
+        gl.glColorMask(false,false,false,false); //no writing in color buffer		
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawLabel(this,false);	
+        }
+        gl.glColorMask(true,true,true,true);
+        */
+        
 
+        
         //drawing not hidden parts
         gl.glDisable(GL.GL_BLEND);
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
@@ -246,14 +284,16 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         
      
+     
          
         //drawing labels
         gl.glDisable(GL.GL_LIGHTING);
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawLabel(this);	
+        	d.drawLabel(this,true);	
         }
         gl.glEnable(GL.GL_LIGHTING);
+        
 
          
 
@@ -325,19 +365,9 @@ public class EuclidianRenderer3D implements GLEventListener {
      */
     public void setTextColor(Color c){
     	
-    	gl.glColor3f(((float) c.getRed())/256f,
-				((float) c.getGreen())/256f,
-				((float) c.getBlue())/256f );
-			
-    	/*
-    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, 
-    			new float[] {((float) c.getRed())/256f,
-    							((float) c.getGreen())/256f,
-    							((float) c.getBlue())/256f,
-    							1f},
-    			0);
-    			*/
+    	textColor = c;
     	
+	
     }
     
     
@@ -498,9 +528,27 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param a_drawingMatrix the matrix
      */
     private void initMatrix(Ggb3DMatrix a_drawingMatrix){
+    	initMatrix(a_drawingMatrix.get());
+    }   
+    
+    
+    /**
+     * sets a_drawingMatrix to openGL.
+     * @param a_drawingMatrix the matrix
+     */
+    private void initMatrix(double[] a_drawingMatrix){
     	gl.glPushMatrix();
-		gl.glMultMatrixd(a_drawingMatrix.get(),0);
-    }    
+		gl.glMultMatrixd(a_drawingMatrix,0);
+    }     
+    
+    /**
+     * switch the Y-direction to Z-direction
+     */ 
+    /*
+    private void switchYtoZ(){
+    	initMatrix(matrixYtoZ);
+    }
+    */
     
     /**
      * turn off the last drawing matrix set in openGL.
@@ -1118,12 +1166,42 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
-    public void drawText(float x, float y, String s){
+    /** draws the text s
+     * @param x x-coord
+     * @param y y-coord
+     * @param s text
+     * @param colored says if the text has to be colored
+     */
+    public void drawText(float x, float y, String s, boolean colored){
     	initMatrix();
-    	//Application.debug(s);
-    	gl.glRasterPos3f(x, y, 0 );
-    	glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, s); //BITMAP_HELVETICA_18
-    	resetMatrix();
+    	initMatrix(m_view3D.getUndoRotationMatrix());
+    	
+
+    	textRenderer.begin3DRendering();
+
+    	if (colored)
+    		textRenderer.setColor(textColor);
+    	
+        /*
+    	Rectangle2D bounds = textRenderer.getBounds(s);
+        float w = (float) bounds.getWidth();
+        float h = (float) bounds.getHeight();
+        */
+        float textScaleFactor = 0.01f;// / (w * 1.1f);
+    	
+    	
+    	textRenderer.draw3D(s,
+                x*textScaleFactor,//w / -2.0f * textScaleFactor,
+                y*textScaleFactor,//h / -2.0f * textScaleFactor,
+                0,
+                textScaleFactor);
+    	
+        textRenderer.end3DRendering();
+     
+ 
+    	
+        resetMatrix(); //initMatrix(m_view3D.getUndoRotationMatrix());
+    	resetMatrix(); //initMatrix();
     }
     
     
