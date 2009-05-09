@@ -10,11 +10,15 @@ import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoSegment3D;
 
 public class Hits3D extends Hits {
-
-	TreeSet hitsHighlighted = new TreeSet(new Drawable3D.drawableComparator()); 
-	TreeSet[] hitSet = new TreeSet[Drawable3D.DRAW_PICK_ORDER_MAX];
-	TreeSet hitsOthers = new TreeSet(new Drawable3D.drawableComparator()); //others
-	TreeSet hitSetSet = new TreeSet(new Drawable3D.setComparator()); //set of sets
+	
+	/** set of hits by picking order */
+	private TreeSet[] hitSet = new TreeSet[Drawable3D.DRAW_PICK_ORDER_MAX];
+	/** other hits */
+	private TreeSet hitsOthers = new TreeSet(new Drawable3D.drawableComparator()); 
+	/** label hits */
+	private TreeSet hitsLabels = new TreeSet(new Drawable3D.drawableComparator()); 
+	/** set of all the sets */
+	private TreeSet hitSetSet = new TreeSet(new Drawable3D.setComparator()); 
 	
 	Hits topHits = new Hits();
 
@@ -33,6 +37,7 @@ public class Hits3D extends Hits {
 		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
 			hitSet[i].clear();
 		hitsOthers.clear();
+		hitsLabels.clear();
 		hitSetSet.clear();
 		
 		topHits.init();
@@ -41,8 +46,15 @@ public class Hits3D extends Hits {
 	}
 	
 	
-	/** insert a drawable in the hitSet, called by EuclidianRenderer3D */
-	public void addDrawable3D(Drawable3D d){
+	/** insert a drawable in the hitSet, called by EuclidianRenderer3D 
+	 * @param d the drawable
+	 * @param isLabel says if it's the label that is picked*/
+	public void addDrawable3D(Drawable3D d, boolean isLabel){
+		
+		//Application.debug("isLabel = "+isLabel);
+		
+		if (isLabel)
+			hitsLabels.add(d);
 		
 		if(d.getPickOrder()<Drawable3D.DRAW_PICK_ORDER_MAX)
 			hitSet[d.getPickOrder()].add(d);
@@ -58,9 +70,8 @@ public class Hits3D extends Hits {
 		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
 			hitSetSet.add(hitSet[i]);		
 
-		hitsHighlighted = (TreeSet) hitSetSet.first();
 		
-		for (Iterator iter = hitsHighlighted.iterator(); iter.hasNext();) {
+		for (Iterator iter = ((TreeSet) hitSetSet.first()).iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			topHits.add(d.getGeoElement());
 		}
@@ -94,25 +105,24 @@ public class Hits3D extends Hits {
 		
 		//debug
 		/*
-		String s = "hits:";
-		for (Iterator iter = this.iterator(); iter.hasNext();) {
-			GeoElement geo = (GeoElement) iter.next();
-			s+="\n"+geo.getLabel();
-		}
-		Application.debug(s);
-		*/
+		if (getLabelHit()==null)
+			Application.debug(toString());
+		else
+			Application.debug(toString()+"\n first label : "+getLabelHit().getLabel());
+			*/
 		
 	}
 	
 	
 	
 	/** update highlights */
+	/*
 	public TreeSet getHitsHighlighted(){
 		
 		return hitsHighlighted;
 
 	}
-	
+	*/
 	
 	
 	
@@ -127,6 +137,29 @@ public class Hits3D extends Hits {
 		else
 			return topHits;
 		
+	}
+	
+	
+	/** return the first label hit, if one
+	 * @return the first label hit
+	 */
+	public GeoElement getLabelHit(){
+		
+		if (hitsLabels.isEmpty())
+			return null;
+		else{
+			GeoElement labelGeo = ((Drawable3D) hitsLabels.first()).getGeoElement();
+			
+			return labelGeo;
+			
+			/*
+			// check if the label is the first hit
+			if (labelGeo==getTopHits().get(0))
+				return labelGeo;
+			else
+				return null;
+				*/
+		}
 	}
 	
 	

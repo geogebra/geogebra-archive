@@ -745,9 +745,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
-	public GeoElement getLabelHit(Point mouseLoc) {
-		// TODO Auto-generated method stub
-		return null;
+	public GeoElement getLabelHit(Point p) {
+		
+		//Application.debug("getLabelHit");
+
+		//sets the flag and mouse location for openGL picking
+		renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_LABELS);
+
+		//calc immediately the hits
+		renderer.display();
+		
+		
+		//Application.debug("end-getLabelHit");			
+
+		//return null;
+		return hits.getLabelHit();
 	}
 
 
@@ -1089,12 +1101,25 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public void setHits(Point p) {
+		
+		//Application.debug("setHits");
+
 		//sets the flag and mouse location for openGL picking
-		renderer.setMouseLoc(p.x,p.y);
+		renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_OBJECTS);
+
+		//calc immediately the hits
+		renderer.display();
+		
+		
+		//Application.debug("end-setHits");		
+
 	}
 
 
-
+	public void setHits(Point p, boolean condition){
+		if (condition)
+			setHits(p);
+	}
 
 
 

@@ -631,7 +631,6 @@ public class EuclidianController implements MouseListener,
 		// this point can be dragged: see mouseDragged() and mouseReleased()
 		case EuclidianView.MODE_POINT:case EuclidianView.MODE_POINT_IN_REGION:				
 			view.setHits(mouseLoc);
-			//hits = view.getHits(mouseLoc, true);
 			hits = view.getHits();
 			// if mode==EuclidianView.MODE_POINT_INSIDE, point can be in a region
 			createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_IN_REGION, true, true); 
@@ -708,7 +707,7 @@ public class EuclidianController implements MouseListener,
 			break;
 
 		// move an object
-		case EuclidianView.MODE_MOVE:		
+		case EuclidianView.MODE_MOVE:	
 			handleMousePressedForMoveMode(e);			
 			break;
 
@@ -776,6 +775,13 @@ public class EuclidianController implements MouseListener,
 	
 	protected void handleMousePressedForMoveMode(MouseEvent e) {
 		
+		//long t0 = System.currentTimeMillis();
+
+		
+		//Application.debug("start");
+		
+
+		
 		//view.resetTraceRow(); // for trace/spreadsheet
 		
 		// fix for meta-click to work on Mac
@@ -783,6 +789,7 @@ public class EuclidianController implements MouseListener,
 
 		// move label?
 		GeoElement geo = view.getLabelHit(mouseLoc);
+		//Application.debug("label("+(System.currentTimeMillis()-t0)+")");
 		if (geo != null) {
 			moveMode = MOVE_LABEL;
 			movedLabelGeoElement = geo;
@@ -792,10 +799,16 @@ public class EuclidianController implements MouseListener,
 			return;
 		}
 
+
+		//Application.debug("laps("+(System.currentTimeMillis()-t0)+")");
+		
 		// find and set movedGeoElement
-		view.setHits(mouseLoc);
+		view.setHits(mouseLoc,false);
 		Hits moveableList = view.getHits().getMoveableHits();
-		Hits hits = moveableList.getTopHits();	
+		Hits hits = moveableList.getTopHits();
+		
+
+		//Application.debug("end("+(System.currentTimeMillis()-t0)+")");
 		
 		ArrayList selGeos = app.getSelectedGeos();
 		// if object was chosen before, take it now!
@@ -823,6 +836,9 @@ public class EuclidianController implements MouseListener,
 		}				
 				
 		movedGeoElement = geo;
+		
+		
+		
 		//doSingleHighlighting(movedGeoElement);				
 				
 		/*
@@ -1774,7 +1790,7 @@ public class EuclidianController implements MouseListener,
 		if (mode == EuclidianView.MODE_MOVE) {
 			GeoElement geo = view.getLabelHit(mouseLoc);
 			if (geo != null) {				
-				
+				//Application.debug("hop");
 				noHighlighting = true;
 				tempArrayList.clear();
 				tempArrayList.add(geo);
@@ -1785,13 +1801,13 @@ public class EuclidianController implements MouseListener,
 			// include polygons in hits
 			view.setHits(mouseLoc);
 			hits = view.getHits();
-			//hits = view.getHits(mouseLoc, true);
 		}
 
 		if (hits.isEmpty()){
+			//Application.debug("hip");
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
-			//Application.debug(hits.toString());
+			
 		}
 		
 		if (hits.isEmpty()) {

@@ -2129,6 +2129,11 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		return hits;
 	}
 	
+	
+	public void setHits(Point p, boolean condition){
+			setHits(p);
+	}
+	
 	/**
 	 * sets the hits of GeoElements whose visual representation is at screen
 	 * coords (x,y). order: points, vectors, lines, conics

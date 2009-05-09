@@ -116,6 +116,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// for picking
 	private int mouseX, mouseY;
 	private boolean waitForPick = false;
+	private boolean doPick = false;
+	public static final int PICKING_MODE_OBJECTS = 0;
+	public static final int PICKING_MODE_LABELS = 1;
+	private int pickingMode = PICKING_MODE_OBJECTS;
 	
 	/**
 	 * creates a renderer linked to an {@link EuclidianView3D} 
@@ -157,6 +161,16 @@ public class EuclidianRenderer3D implements GLEventListener {
 	}
 	
 	
+	
+	/**
+	 * re-calc the display immediately
+	 */
+	public void display(){
+	
+		canvas.display();
+	}
+	
+	
 	/**
 	 * 
 	 * openGL method called when the display is to be computed.
@@ -174,14 +188,29 @@ public class EuclidianRenderer3D implements GLEventListener {
 	 */
     public void display(GLAutoDrawable gLDrawable) {
     	
+    	//Application.debug("display");
+    	
+
+        
         gl = gLDrawable.getGL();
         
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         
         
-        //picking
-        if(waitForPick)
+        //picking        
+        if(waitForPick){
         	doPick();
+        	//Application.debug("doPick");
+        }
+        
+        
+
+        
+        
+
+  
+
+        
         
         //start drawing
         viewOrtho();
@@ -299,7 +328,6 @@ public class EuclidianRenderer3D implements GLEventListener {
 
 
         gLDrawable.swapBuffers(); //TODO
-
         
 
     }    
@@ -1233,14 +1261,25 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param x x-coordinate of the mouse
      * @param y y-coordinate of the mouse
      */
-    public void setMouseLoc(int x, int y){
+    public void setMouseLoc(int x, int y, int pickingMode){
     	mouseX = x;
     	mouseY = y;
     	
+    	this.pickingMode = pickingMode;
+    	
     	// on next rending, a picking will be done : see doPick()
     	waitForPick = true;
+    	
+    	//thread = new Thread(picking);
+       
+    	//thread.setPriority(Thread.MIN_PRIORITY);
+    	
+    	//thread.start();
+        //return thread;
+    	
     }
     
+
     
     /**
      * does the picking to sets which objects are under the mouse coordinates.
@@ -1248,7 +1287,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     public void doPick(){
     	
     	
-    	
+
     	
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
@@ -1288,20 +1327,49 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glOrtho(m_view3D.left,m_view3D.right,m_view3D.bottom,m_view3D.top,m_view3D.front,m_view3D.back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
         
-		//drawing not hidden parts
+    	
+
+    	
+    	
     	Drawable3D[] drawHits = new Drawable3D[BUFSIZE];
-    	//GeoElement3D[] geos = new GeoElement3D[BUFSIZE];
         int loop = 0;
-		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-			Drawable3D d = (Drawable3D) iter.next();
-			loop++;
-			gl.glLoadName(loop);
-			d.drawForPicking(this);	
-			//geos[loop] = (GeoElement3D) d.getGeoElement();
-			drawHits[loop] = d;
+        
+        //switch(pickingMode){
+        //case PICKING_MODE_OBJECTS:
+        //if (pickingMode == PICKING_MODE_OBJECTS){
+            // picking objects
+    		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+    			Drawable3D d = (Drawable3D) iter.next();
+    			loop++;
+    			gl.glLoadName(loop);
+    			d.drawForPicking(this);	
+    			drawHits[loop] = d;
+    		}
+        //}
+        	//break;
+        	
+        	
+        	
+        //case PICKING_MODE_LABELS:
+    		int labelLoop = loop;
+    		if (pickingMode == PICKING_MODE_LABELS){
+    			
+    			//Application.debug("PICKING_MODE_LABELS");
+    			
+        	// picking labels
+        	for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        		Drawable3D d = (Drawable3D) iter.next();
+        		loop++;
+        		gl.glLoadName(loop);
+        		d.drawLabel(this,false);
+        		drawHits[loop] = d;
+        	}
+    		}
+        	//break;
+        //}
 
-		}
 
+        
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
         //hits are stored
@@ -1323,10 +1391,8 @@ public class EuclidianRenderer3D implements GLEventListener {
           ptr++;
           
           for (int j = 0; j < names; j++){ 
-           	//view.hits.add(geos[buffer[ptr]]);
-        	//geos[buffer[ptr]].zPick = z;
         	num = selectBuffer.get(ptr);
-        	((Hits3D) m_view3D.getHits()).addDrawable3D(drawHits[num]);
+        	((Hits3D) m_view3D.getHits()).addDrawable3D(drawHits[num],num>labelLoop);//,pickingMode==PICKING_MODE_LABELS);
         	//s+="\n"+drawHits[num].getGeoElement().getLabel();
         	drawHits[num].zPickMin = zMin;
         	drawHits[num].zPickMax = zMax;
@@ -1342,7 +1408,6 @@ public class EuclidianRenderer3D implements GLEventListener {
         ((Hits3D) m_view3D.getHits()).sort();
         
         waitForPick = false;
-        //m_view3D.waitForPick = true;
     }
     
     
@@ -1466,5 +1531,22 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+
 
 }

@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
+import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -128,11 +129,14 @@ public abstract class Drawable3D {
 		
 	
 	
-	//view3D
+	/** view3D */
 	private EuclidianView3D m_view3D; 
 	
-	//matrix for openGL display
+	/** matrix for openGL display */
 	private Ggb3DMatrix4x4 m_matrix = new Ggb3DMatrix4x4();
+	
+	/** label matrix for openGL display */
+	private Ggb3DMatrix4x4 labelMatrix = Ggb3DMatrix4x4.Identity();;
 	
 	//links to the GeoElement
 	private GeoElement m_geo; 	
@@ -209,6 +213,8 @@ public abstract class Drawable3D {
 		//update the matrix of the drawable for the renderer to draw it
 		setMatrix(((GeoElement3DInterface) getGeoElement()).getDrawingMatrix());
 		
+		//update the label drawing matrix - TODO create a labelMatrix for GeoElement3D
+		labelMatrix.set(getMatrix().getColumn(4),4);
 
 	}
 	
@@ -243,7 +249,16 @@ public abstract class Drawable3D {
 	public Ggb3DMatrix4x4 getMatrix(){
 		return m_matrix;
 	}
-
+	
+	/**
+	 * get the label drawing matrix
+	 * 
+	 * @return the label drawing matrix
+	 */
+	public Ggb3DMatrix4x4 getLabelMatrix(){
+		return labelMatrix;
+	}
+	
 	/**
 	 * get the 3D view
 	 * 
@@ -368,6 +383,26 @@ public abstract class Drawable3D {
 
 	
 	
+    
+    /** draws the label (if any)
+     * @param renderer 3D renderer
+     * @param colored says if the text has to be colored
+     */
+    public void drawLabel(EuclidianRenderer3D renderer, boolean colored){
+    	
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
+			return;
+		
+    	if (!getGeoElement().isLabelVisible())
+    		return;
+    	
+    	if (colored)
+    		renderer.setTextColor(getGeoElement().getObjectColor());
+    	
+		renderer.setMatrix(labelMatrix);
+		renderer.drawText(getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY,
+				getGeoElement().getLabel(),colored); //TODO label position
+    }
 	
 	
 	
@@ -520,24 +555,7 @@ public abstract class Drawable3D {
     
     
     
-    ////////////////////////////////////////////////////////////////
-    // LABEL
-    
-    /** draws the label (if any)
-     * @param renderer 3D renderer
-     * @param colored says if the text has to be colored
-     */
-    public void drawLabel(EuclidianRenderer3D renderer, boolean colored){
-    	
-    	
-    	if (!m_geo.isLabelVisible())
-    		return;
-    	
-    	if (colored)
-    		renderer.setTextColor(getGeoElement().getObjectColor());
-		renderer.setMatrix(getMatrix());
-		renderer.drawText(5f,5f,m_geo.getLabel(),colored); //TODO label position
-    }
+
     
  	
 

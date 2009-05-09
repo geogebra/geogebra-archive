@@ -112,13 +112,8 @@ public class Test3D{
 	}
 	
 	private GeoPoint3D testPoint(float x, float y, float z){
-		//String s="";
-		GeoPoint3D P=null;
-		//s="M3d";
-		P=kernel3D.Point3D("A",x,y,z);
-		P.setObjColor(new Color(0f,0f,1f));
-		//P.setLabelVisible(false);		
-		return P;
+ 	
+		return kernel3D.Point3D(null,x,y,z);
 	}	
 	
 	private void testRepere(){
