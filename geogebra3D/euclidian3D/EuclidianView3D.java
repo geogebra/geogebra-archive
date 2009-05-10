@@ -37,6 +37,8 @@ import java.awt.print.PrinterException;
 import java.util.ArrayList;
 
 import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLJPanel;
 import javax.swing.JPanel;
 
 
@@ -101,9 +103,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//stuff TODO
 	protected Rectangle selectionRectangle = new Rectangle();
 
-	
+
 	
 	public EuclidianView3D(EuclidianController3D ec){
+
 		
 		/*
 		setSize(new Dimension(EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT));
@@ -128,24 +131,26 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
  
         GLCanvas canvas = renderer.canvas;
+		
 
         
+
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, canvas);
+
+
 
 		
 		attachView();
 		
-		
-		// register Listener		
-		
+		// register Listener
 		canvas.addMouseMotionListener(euclidianController3D);
 		canvas.addMouseListener(euclidianController3D);
 		canvas.addMouseWheelListener(euclidianController3D);
 		canvas.setFocusable(true);
 		
 		
-		
+
 		
 		
 	}
@@ -750,10 +755,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//Application.debug("getLabelHit");
 
 		//sets the flag and mouse location for openGL picking
-		renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_LABELS);
+		//renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_LABELS);
 
 		//calc immediately the hits
-		renderer.display();
+		//renderer.display();
 		
 		
 		//Application.debug("end-getLabelHit");			
@@ -1105,7 +1110,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//Application.debug("setHits");
 
 		//sets the flag and mouse location for openGL picking
-		renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_OBJECTS);
+		//renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_OBJECTS);
+		renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_LABELS);
 
 		//calc immediately the hits
 		renderer.display();

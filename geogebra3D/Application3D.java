@@ -108,10 +108,12 @@ public abstract class Application3D extends Application{
     
     
     
-    
+    /*
 
     public void updateCenterPanel(boolean updateUI) {
     	centerPanel.removeAll();
+    	
+    	
         JDesktopPane dtp = new JDesktopPane();
         dtp.setPreferredSize(new Dimension(800,500));
         centerPanel.add(dtp);
@@ -147,8 +149,61 @@ public abstract class Application3D extends Application{
         dtp.add(frame3D);
         frame3D.moveToFront();
 
+
+    	centerPanel.add(euclidianView3D);
  
-    }  
+    } 
+    
+    */
+    
+	
+	/*
+    public void updateCenterPanel(boolean updateUI) {
+    	centerPanel.removeAll();
+    	centerPanel.add(euclidianView3D);
+    	
+    	
+    }
+    */
+    
+    
+    public void updateCenterPanel(boolean updateUI) {
+		centerPanel.removeAll();
+
+		JPanel euclidianPanel = new JPanel(new BorderLayout());
+		euclidianPanel.setBackground(Color.white);
+		euclidianPanel.add(euclidianView3D, BorderLayout.CENTER);
+	
+		if (showConsProtNavigation) {
+			JComponent consProtNav = getGuiManager()
+					.getConstructionProtocolNavigation();
+			euclidianPanel.add(consProtNav, BorderLayout.SOUTH);
+			consProtNav.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,
+					Color.gray));			
+		}
+
+		JComponent cp2 = null;
+
+		JSplitPane sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				new JScrollPane(getGuiManager().getAlgebraView()), euclidianPanel);
+		sp2.setDividerLocation(250);
+
+
+		cp2 = sp2;
+
+		JComponent cp1 = null;
+
+		cp1 = cp2;
+		centerPanel.add(cp1, BorderLayout.CENTER);
+
+		// border of euclidianPanel
+
+
+		if (updateUI) {
+			centerPanel.updateUI(); // needed for applets
+			updateComponentTreeUI();
+		}
+	}
     
     
     //TODO

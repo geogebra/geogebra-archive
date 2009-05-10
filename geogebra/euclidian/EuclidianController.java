@@ -581,11 +581,13 @@ public class EuclidianController implements MouseListener,
 	}
 	
 
+	
+
 	public void mousePressed(MouseEvent e) {
 		//GeoElement geo;
 		Hits hits;
 		setMouseLocation(e);
-		transformCoords();			
+		transformCoords();	
 		
 		moveModeSelectionHandled = false;
 		DRAGGING_OCCURED = false;			
@@ -599,6 +601,7 @@ public class EuclidianController implements MouseListener,
 
 		if (Application.isRightClick(e)) {			
 			//ggb3D - for 3D rotation
+			Application.debug("ppp");
 			processRightPressFor3D();
 			return;
 		} 
@@ -803,7 +806,7 @@ public class EuclidianController implements MouseListener,
 		//Application.debug("laps("+(System.currentTimeMillis()-t0)+")");
 		
 		// find and set movedGeoElement
-		view.setHits(mouseLoc,false);
+		view.setHits(mouseLoc,false); //false : for 3D, assume that the hits are already down by mouseMoved
 		Hits moveableList = view.getHits().getMoveableHits();
 		Hits hits = moveableList.getTopHits();
 		
@@ -1138,7 +1141,7 @@ public class EuclidianController implements MouseListener,
 
 // Michael Borcherds 2007-10-07 allow right mouse button to drag points
 			if (Application.isRightClick(e)){
-				view.setHits(mouseLoc);
+				view.setHits(mouseLoc,false);
 				if (!(view.getHits().isEmpty())) 
 				{
 					TEMPORARY_MODE = true;
@@ -1756,9 +1759,21 @@ public class EuclidianController implements MouseListener,
 		selectedGeos.addAll(hits);
 		app.setSelectedGeos(hits);
 	}
+	
+	
+	
+	
+	/** only used for 3D mode */
+	protected void mouseMoved3D(){
+		
+	}
+	
 
 	public void mouseMoved(MouseEvent e) {		
 		setMouseLocation(e);
+		
+		mouseMoved3D();
+		
 		boolean repaintNeeded;
 		
 		// reset icon
@@ -1790,7 +1805,7 @@ public class EuclidianController implements MouseListener,
 		if (mode == EuclidianView.MODE_MOVE) {
 			GeoElement geo = view.getLabelHit(mouseLoc);
 			if (geo != null) {				
-				//Application.debug("hop");
+				Application.debug("hop");
 				noHighlighting = true;
 				tempArrayList.clear();
 				tempArrayList.add(geo);
@@ -1799,13 +1814,13 @@ public class EuclidianController implements MouseListener,
 		}
 		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_IN_REGION) {
 			// include polygons in hits
-			view.setHits(mouseLoc);
+			view.setHits(mouseLoc,false);
 			hits = view.getHits();
 		}
 
 		if (hits.isEmpty()){
 			//Application.debug("hip");
-			view.setHits(mouseLoc);
+			view.setHits(mouseLoc,false);
 			hits = view.getHits();hits.removePolygons();
 			
 		}

@@ -55,11 +55,16 @@ public class Hits3D extends Hits {
 		
 		if (isLabel)
 			hitsLabels.add(d);
+		//else{
 		
 		if(d.getPickOrder()<Drawable3D.DRAW_PICK_ORDER_MAX)
 			hitSet[d.getPickOrder()].add(d);
 		else
 			hitsOthers.add(d);	
+		
+		
+		//}
+		
 		
 	}
 	
@@ -109,7 +114,7 @@ public class Hits3D extends Hits {
 			Application.debug(toString());
 		else
 			Application.debug(toString()+"\n first label : "+getLabelHit().getLabel());
-			*/
+		*/
 		
 	}
 	

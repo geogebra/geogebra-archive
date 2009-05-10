@@ -280,6 +280,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	}
 
+	
 
 	
 	
@@ -382,6 +383,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	///////////////////////////////////////////
 	// EMPTY METHODS IN EuclidianController USED FOR EuclidianView3D	
 	
+	
+	/** set the hits in top of mouseMoved() */
+	protected void mouseMoved3D(){
+		view.setHits(mouseLoc);
+	}
+
+
 	/** right-press the mouse makes start 3D rotation */
 	protected void processRightPressFor3D(){
 		//remembers mouse location
@@ -581,6 +589,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		//mouseLoc = e.getPoint();
 		super.setMouseLocation(e);
+		
+		
 		
 
 	}

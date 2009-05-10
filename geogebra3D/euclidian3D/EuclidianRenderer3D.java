@@ -21,10 +21,12 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
 
+import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.FPSAnimator;
 import com.sun.opengl.util.GLUT;
@@ -59,7 +61,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	
 	/** canvas usable for a JPanel */
 	public GLCanvas canvas;
-	
+	//public GLJPanel canvas;
 
 	private GLCapabilities caps;
 	private GL gl;
@@ -140,14 +142,20 @@ public class EuclidianRenderer3D implements GLEventListener {
     	//canvas
 	    canvas = new GLCanvas(caps);
 	    //canvas = new GLJPanel(caps);
-        //canvas.setOpaque(false);
+
+	    
+        
+        
 	    canvas.addGLEventListener(this);
 	    
 	    //animator : 60 frames per second
+	    
 	    animator = new FPSAnimator( canvas, 60 );
         animator.setRunAsFastAsPossible(true);	  
         animator.start();
-		
+        
+
+        
 		this.m_view3D=view;
 	}
 	
