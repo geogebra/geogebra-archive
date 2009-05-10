@@ -55,6 +55,8 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private GLU glu= new GLU();
 	//private GLUT glut = new GLUT();
 	private TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 18));
+	/** default text scale factor */
+	private static final float DEFAULT_TEXT_SCALE_FACTOR = 0.008f;
 
 	/** matrix changing Y-direction to Z-direction */
 	//private double[] matrixYtoZ = {1,0,0,0, 0,0,1,0, 0,1,0,0, 0,0,0,1}; 
@@ -1223,7 +1225,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         float w = (float) bounds.getWidth();
         float h = (float) bounds.getHeight();
         */
-        float textScaleFactor = 0.01f;// / (w * 1.1f);
+        float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR;//0.01f;// / (w * 1.1f);
     	
     	
     	textRenderer.draw3D(s,

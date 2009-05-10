@@ -601,7 +601,6 @@ public class EuclidianController implements MouseListener,
 
 		if (Application.isRightClick(e)) {			
 			//ggb3D - for 3D rotation
-			Application.debug("ppp");
 			processRightPressFor3D();
 			return;
 		} 
@@ -1805,7 +1804,7 @@ public class EuclidianController implements MouseListener,
 		if (mode == EuclidianView.MODE_MOVE) {
 			GeoElement geo = view.getLabelHit(mouseLoc);
 			if (geo != null) {				
-				Application.debug("hop");
+				//Application.debug("hop");
 				noHighlighting = true;
 				tempArrayList.clear();
 				tempArrayList.add(geo);
