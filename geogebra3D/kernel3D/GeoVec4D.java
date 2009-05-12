@@ -90,6 +90,31 @@ public abstract class GeoVec4D extends GeoVec {
 		    g.setCoord(A.getCoords(), B);
 // 	}        
     }      
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * returns all class-specific xml tags for saveXML
+     * Geogebra File Format
+     */
+    protected String getXMLtags() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(super.getXMLtags());
+        
+        sb.append("\t<coords");
+                sb.append(" x=\"" + getX() + "\"");
+                sb.append(" y=\"" + getY() + "\"");
+                sb.append(" z=\"" + getZ() + "\"");
+                sb.append(" w=\"" + getW() + "\"");
+        sb.append("/>\n");
+        
+        return sb.toString();
+    }
 }
 
 

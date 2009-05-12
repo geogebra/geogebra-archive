@@ -78,10 +78,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	//values for view frutum
+	/*
 	double left = 0; double right = 640;
 	double bottom = 0; double top = 480;
 	double front = -1000; double back = 1000;
-	
+	*/
 	
 
 	//picking and hits

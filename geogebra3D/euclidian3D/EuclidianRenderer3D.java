@@ -1339,7 +1339,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         //mouseY+=30; //TODO understand this offset
         //glu.gluPickMatrix((double) mouseX, (double) (viewport[3] - mouseY), 5.0, 5.0, viewport, 0);
         glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
-        gl.glOrtho(m_view3D.left,m_view3D.right,m_view3D.bottom,m_view3D.top,m_view3D.front,m_view3D.back);
+        gl.glOrtho(left,right,bottom,top,front,back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
         
     	

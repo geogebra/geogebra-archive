@@ -68,7 +68,7 @@ public class Test3D{
         //view3D.setRotXY(-Math.PI/6,Math.PI/12,true);
 		
 		
-		
+        //testSave();
 		
 		//testRegion();
 		
@@ -586,4 +586,22 @@ public class Test3D{
 		
 		
 	}
+	
+	
+	
+	private void testSave(){
+
+		
+		
+		GeoPoint3D[] points = new GeoPoint3D[4];
+		points[0] = testPoint(1f,-1f,0f);
+		
+		/*
+		points[1] = testPoint(0.5f,1f,0f);
+		points[2] = testPoint(-1f,0f,0f);
+		points[3] = testPoint(0f,0f,2f);	
+		*/	
+		
+	}
+
 }

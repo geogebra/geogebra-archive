@@ -2898,7 +2898,7 @@ public abstract class GeoElement
 		
 		// trace to spreadsheet on or off
 		if (isGeoPoint()) {
-			GeoPoint p = (GeoPoint) this;
+			GeoPointInterface p = (GeoPointInterface) this;
 			if (p.getSpreadsheetTrace()) {
 				sb.append("\t<spreadsheetTrace val=\"true\"/>\n");
 			}

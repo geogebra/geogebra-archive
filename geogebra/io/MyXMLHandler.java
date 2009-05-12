@@ -2183,6 +2183,8 @@ public class MyXMLHandler implements DocHandler {
 			return false;
 		}
 		GeoVec3D v = (GeoVec3D) geo;
+		
+
 
 		try {
 			double x = Double.parseDouble((String) attrs.get("x"));

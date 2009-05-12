@@ -494,6 +494,10 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	};
     
     
+	
+	public boolean getSpreadsheetTrace() {
+		return false;
+	}
     
     
    

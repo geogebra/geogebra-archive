@@ -28,6 +28,8 @@ public interface GeoPointInterface {
 	public boolean showInEuclidianView();
 
 	public void remove();
+	
+	public boolean getSpreadsheetTrace();
 
 	
 
