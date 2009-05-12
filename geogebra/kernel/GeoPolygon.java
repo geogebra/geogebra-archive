@@ -752,6 +752,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * Region interface implementation
 	 */
 	
+	public boolean isRegion() {
+		return true;
+	}
+	
 	public boolean isInRegion(GeoPoint P){
 		
 		double x0 = P.x/P.z;

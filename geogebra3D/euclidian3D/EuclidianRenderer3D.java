@@ -361,13 +361,18 @@ public class EuclidianRenderer3D implements GLEventListener {
     {
       GL gl = drawable.getGL();
       
+      Application.debug("reshape\n x = "+x+"\n y = "+y+"\n w = "+w+"\n h = "+h);
+      
       //TODO change this
+      viewOrtho(x,y,w,h);
+      /*
       gl.glViewport(0, 0, w, h);
       gl.glMatrixMode(GL.GL_PROJECTION);
       gl.glLoadIdentity();
       gl.glOrtho(0.0, 8.0, 0.0, 8.0, -0.5, 2.5);
       gl.glMatrixMode(GL.GL_MODELVIEW);
       gl.glLoadIdentity();
+      */
     }
 
     /**
@@ -1516,20 +1521,51 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     //projection mode
-    private void viewOrtho()                                        // Set Up An Ortho View
+    
+	int left = 0; int right = 640;
+	int bottom = 0; int top = 480;
+	int front = -1000; int back = 1000;
+    
+	
+    /**
+     * Set Up An Ortho View regarding left, right, bottom, front values
+     * 
+     */
+    private void viewOrtho()                                      
     {
-    	//TODO change viewport when resized
-    	//gl.glViewport(0,0,EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT);
-    	gl.glViewport(0,0,(int) (m_view3D.right-m_view3D.left),(int) (m_view3D.top-m_view3D.bottom));
+
+    	gl.glViewport(0,0,right-left,top-bottom);
     	
     	gl.glMatrixMode(GL.GL_PROJECTION);
     	gl.glLoadIdentity();
 
-    	gl.glOrtho(m_view3D.left,m_view3D.right,m_view3D.bottom,m_view3D.top,m_view3D.front,m_view3D.back);
+    	gl.glOrtho(left,right,bottom,top,front,back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
     	
     	
     }
+    
+    
+	
+    /**
+     * Set Up An Ortho View after setting left, right, bottom, front values
+     * @param x left
+     * @param y bottom
+     * @param w width
+     * @param h height
+     * 
+     */
+    private void viewOrtho(int x, int y, int w, int h){
+    	left=x;
+    	bottom=y;
+    	right=left+w;
+    	top = bottom+h;
+    	
+    	viewOrtho();
+    }
+   
+
+
 
     private void viewPerspective(GL gl)                                  // Set Up A Perspective View
     {

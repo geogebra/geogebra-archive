@@ -305,7 +305,11 @@ public class CommandDispatcher {
     	cmdTable.put("FitSin", new CmdFitSin(kernel));   
     	cmdTable.put("FitLogistic", new CmdFitLogistic(kernel));  
     	
-    	cmdTable.put("DynamicCoordinates", new CmdDynamicCoordinates(kernel));   
+    	cmdTable.put("DynamicCoordinates", new CmdDynamicCoordinates(kernel));  
+    	
+    	
+    	//Mathieu Blossier
+    	cmdTable.put("PointIn", new CmdPointIn(kernel));   
     	
     }
 

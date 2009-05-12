@@ -706,6 +706,10 @@ public abstract class GeoElement
 		return false;
 	}
 	
+	public boolean isRegion() {
+		return false;
+	}
+	
 	public boolean isGeoList() {
 		return false;
 	}

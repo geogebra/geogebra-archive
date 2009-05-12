@@ -2771,7 +2771,7 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	protected GeoPointInterface createNewPoint(Region region){
-		return kernel.Point(null,region,xRW, yRW);
+		return kernel.PointIn(null,region,xRW, yRW);
 	}
 	
 	
