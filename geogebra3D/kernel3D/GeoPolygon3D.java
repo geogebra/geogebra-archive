@@ -6,6 +6,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
+import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
@@ -20,7 +21,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoPolygon3D 
-extends GeoPolygon implements GeoElement3DInterface, Path3D {
+extends GeoPolygon implements GeoElement3DInterface, Path {
 
 	
 	/** 2D coord sys where the polygon exists */

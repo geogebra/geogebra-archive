@@ -12,7 +12,6 @@ import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
-import geogebra3D.kernel3D.Path3D;
 
 
 
@@ -54,7 +53,7 @@ public class CmdPoint3D extends CmdPoint {
 				GeoElement3D geo0 = (GeoElement3D) arg[0];
 				if (ok[0] = (geo0.isPath())) {
 					GeoElement[] ret =
-					{ kernel3D.Point3D(c.getLabel(), (Path3D) geo0)};
+					{ kernel3D.Point3D(c.getLabel(), (Path) geo0)};
 					return ret;
 				}
 			}

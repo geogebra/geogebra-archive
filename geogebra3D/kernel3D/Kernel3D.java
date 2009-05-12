@@ -21,6 +21,7 @@ import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Path;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
@@ -128,7 +129,7 @@ public class Kernel3D
 	
 	
 	/** Point3D on a 1D path with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3D(String label, Path3D path, double x, double y, double z) {
+	final public GeoPoint3D Point3D(String label, Path path, double x, double y, double z) {
 		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, x, y, z);
 		GeoPoint3D p = algo.getP();		
 		p.setLabel(label);
@@ -137,7 +138,7 @@ public class Kernel3D
 	}	
 	
 	/** Point3D on a 1D path without cartesian coordinates   */
-	final public GeoPoint3D Point3D(String label, Path3D path) {
+	final public GeoPoint3D Point3D(String label, Path path) {
 		// try (0,0,0)
 		//AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, 0, 0, 0);
 		//GeoPoint3D p = algo.getP(); 

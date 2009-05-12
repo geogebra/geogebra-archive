@@ -22,13 +22,13 @@ import geogebra.main.Application;
 public class AlgoPoint3DOnPath extends AlgoElement3D {
 
 	
-	private Path3D path; // input
+	private Path path; // input
     private GeoPoint3D P; // output       
 
     AlgoPoint3DOnPath(
         Construction cons,
         String label,
-        Path3D path,
+        Path path,
         double x,
         double y,
         double z) {
@@ -70,7 +70,7 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
         return P;
     }
     
-    Path3D getPath() {
+    Path getPath() {
         return path;
     }
 

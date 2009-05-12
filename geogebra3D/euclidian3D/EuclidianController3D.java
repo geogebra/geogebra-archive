@@ -24,7 +24,6 @@ import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
-import geogebra3D.kernel3D.Path3D;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -303,7 +302,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected GeoPointInterface createNewPoint(Path path){
 			
-		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null,(Path3D) path, 0,0,0);	
+		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null,(Path) path, 0,0,0);	
 		
 		
 		setMouseInformation(point);

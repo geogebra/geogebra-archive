@@ -25,6 +25,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
@@ -55,7 +56,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	private Ggb3DVector mouseDirection = null; //new Ggb3DVector( new double[] {0,0,1,0.0});
 	
 	//paths
-	private Path3D path;
+	private Path path;
 	private PathParameter pp;
         
     // temp
@@ -87,7 +88,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     
     
-    public GeoPoint3D(Construction c, Path3D path) {
+    public GeoPoint3D(Construction c, Path path) {
 		super(c,4);
 		//Application.debug("GeoPoint3D");
 		this.path = path;
@@ -264,7 +265,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	}
     
     
-	public Path3D getPath() {
+	public Path getPath() {
 		return path;
 	}
 	

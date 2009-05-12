@@ -11,7 +11,7 @@ import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
-public abstract class GeoCoordSys1D extends GeoCoordSys implements Path3D {
+public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 	
 
 	public GeoCoordSys1D(Construction c){
