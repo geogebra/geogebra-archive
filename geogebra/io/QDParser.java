@@ -404,6 +404,8 @@ public class QDParser {
 			doc.endDocument();
 		else
 			exc("missing end tag", line, col);
+		
+		
 	}
 
 	private void exc(String s, int line, int col) throws Exception {

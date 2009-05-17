@@ -1711,6 +1711,9 @@ public class MyXMLHandler implements DocHandler {
 
 	private void startConstructionElement(String eName, LinkedHashMap<String, String> attrs) {
 		// handle construction mode
+		
+		//Application.debug("constMode = "+constMode+", eName = "+eName);
+		
 		switch (constMode) {
 		case MODE_CONSTRUCTION:
 			if (eName.equals("element")) {
@@ -1795,7 +1798,7 @@ public class MyXMLHandler implements DocHandler {
 		geo = kernel.lookupLabel(label);
 
 		if (geo == null) {
-			geo = Kernel.createGeoElement(cons, type);
+			geo = kernel.createGeoElement(cons, type);
 			geo.setLoadedLabel(label);
 
 			// independent GeoElements should be hidden by default
@@ -2177,6 +2180,10 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private boolean handleCoords(LinkedHashMap<String, String> attrs) {
+		
+		return kernel.handleCoords(geo, attrs);
+		
+		/*
 		if (!(geo instanceof GeoVec3D)) {
 			Application.debug("wrong element type for <coords>: "
 					+ geo.getClass());
@@ -2195,6 +2202,7 @@ public class MyXMLHandler implements DocHandler {
 		} catch (Exception e) {
 			return false;
 		}
+		*/
 	}
 
 	// for point or vector
@@ -2943,6 +2951,7 @@ public class MyXMLHandler implements DocHandler {
 		Command cmd = null;
 		String name = (String) attrs.get("name");
 
+		Application.debug(name);
 		if (name != null)
 			cmd = new Command(kernel, name, false); // do not translate name
 		else
@@ -2981,6 +2990,8 @@ public class MyXMLHandler implements DocHandler {
 				// as this could be some weird name that can't be parsed
 				// e.g. "1/2_{a,b}" could be a label name
 				geo = kernel.lookupLabel(arg);
+				
+				Application.debug("input : "+geo.getLabel());
 
 				// arg is a label and does not conatin $ signs (e.g. $A1 in
 				// spreadsheet)
@@ -3032,7 +3043,16 @@ public class MyXMLHandler implements DocHandler {
 				return true;
 
 			// process the command
+			String s ="";
+			ExpressionNode[] en = cmd.getArguments();
+			for(int i=0;i<en.length;i++)
+				s+=en[i].toString()+",";
+			Application.debug("process the command : "+cmd.getLabel()+" = "+cmd.getName()+"["+s+"]");
+			
 			cmdOutput = kernel.getAlgebraProcessor().processCommand(cmd, true);
+			
+			Application.debug(cmdOutput[0].getLabel());
+			
 			String cmdName = cmd.getName();
 			if (cmdOutput == null)
 				throw new MyError(app, "processing of command " + cmdName

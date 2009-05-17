@@ -57,7 +57,7 @@ public abstract class Application3D extends Application{
         euclidianView3D = new EuclidianView3D(euclidianController3D);  
         
 	    //TODO remove 3D test : just comment following line        
-        new Test3D(kernel3D,euclidianView,euclidianView3D);
+        new Test3D(kernel3D,euclidianView,euclidianView3D,this);
         
         //init 3D view
         /*
@@ -209,6 +209,9 @@ public abstract class Application3D extends Application{
     //TODO
 	public void storeUndoInfo() {}
     
+	//public void updateContentPane(){}
+	
+	//public void updateContentPaneAndSize() {}
  
     	
 }

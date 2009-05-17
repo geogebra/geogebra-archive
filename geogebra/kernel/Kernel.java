@@ -77,6 +77,7 @@ import geogebra.util.Util;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Stack;
 
@@ -617,7 +618,7 @@ public class Kernel {
      * Creates a new GeoElement object for the given type string.
      * @param type: String as produced by GeoElement.getXMLtypeString()
      */
-    final public static GeoElement createGeoElement(Construction cons, String type) throws MyError {    	
+    public GeoElement createGeoElement(Construction cons, String type) throws MyError {    	
     	// the type strings are the classnames in lowercase without the beginning "geo"
     	// due to a bug in GeoGebra 2.6c the type strings for conics
         // in XML may be "ellipse", "hyperbola", ...  
@@ -694,8 +695,37 @@ public class Kernel {
     			throw new MyError(cons.getApplication(), "Kernel: GeoElement of type "
     		            + type + " could not be created.");		    		
     	}    		    
-    }     
+    }  
+    
+    
+    
+	/* *******************************************
+	 *  Methods for MyXMLHandler
+	 * ********************************************/
+	public boolean handleCoords(GeoElement geo, LinkedHashMap<String, String> attrs) {
+		
+		if (!(geo instanceof GeoVec3D)) {
+			Application.debug("wrong element type for <coords>: "
+					+ geo.getClass());
+			return false;
+		}
+		GeoVec3D v = (GeoVec3D) geo;
+		
 
+
+		try {
+			double x = Double.parseDouble((String) attrs.get("x"));
+			double y = Double.parseDouble((String) attrs.get("y"));
+			double z = Double.parseDouble((String) attrs.get("z"));
+			v.setCoords(x, y, z);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+    
+    
+    
 	/* *******************************************
 	 *  Construction specific methods
 	 * ********************************************/

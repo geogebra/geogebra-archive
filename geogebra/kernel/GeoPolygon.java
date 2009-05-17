@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -34,6 +35,14 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	
 	protected GeoPointInterface [] points;
 	protected GeoSegmentInterface [] segments;
+	
+
+	/** first point for region coord sys */
+	protected GeoPoint p0;
+	/** second point for region coord sys */
+	protected GeoPoint p1;
+	/** third point for region coord sys */
+	protected GeoPoint p2;
 	
 	protected double area;
 	private boolean defined = false;		
@@ -794,6 +803,47 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	}
 	
 	
+	/**
+	 * update the coord sys used for region parameters
+	 */
+	public void updateRegionCS() {
+		// TODO add condition to calculate it
+		
+		/*
+		p0 = getPoint(0);		
+		Application.debug(" p0 = "+p0.inhomX+","+p0.inhomY);
+		
+		int secondPoint = -1;
+		boolean secondPointFound = false;
+		for (secondPoint=1; secondPoint<getPoints().length && !secondPointFound; secondPoint++){
+			p1=getPoint(secondPoint);
+			Application.debug(" p1 ("+secondPoint+") = "+p1.inhomX+","+p1.inhomY);
+			if (!Kernel.isEqual(p0.inhomX, p1.inhomX, Kernel.STANDARD_PRECISION))
+				secondPointFound = true;
+			else if (!Kernel.isEqual(p0.inhomY, p1.inhomY, Kernel.STANDARD_PRECISION))
+					secondPointFound = true;
+			Application.debug(" secondPointFound = "+secondPointFound);
+		}
+		
+		int thirdPoint = -1;
+		if (secondPointFound){
+			secondPoint--;
+			boolean thirdPointFound = false;
+			for (thirdPoint=getPoints().length-1; thirdPoint>secondPoint && !thirdPointFound; thirdPoint--){
+				p2=getPoint(thirdPoint);
+				if (!GeoPoint.collinear(p0, p1, p2))
+					thirdPointFound = true;
+			}			
+		}
+		
+		thirdPoint++;
+		Application.debug(" secondPoint = "+secondPoint+"\n thirdPoint = "+thirdPoint);
+		Application.debug(" p0 = "+p0.getLabel()+"\n p1 = "+p1.getLabel()+"\n p2 = "+p2.getLabel());
+			
+			
+			*/
+	}
+	
 	/** returns true if the segment ((x1,y1),(x2,y2)) intersects [Ox) */
 	private boolean intersectOx(double x1, double y1, double x2, double y2){
 		if (y1*y2>0) //segment totally above or under
@@ -815,11 +865,21 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 				return false;
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+
 	
 	
 	

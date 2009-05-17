@@ -278,7 +278,7 @@ debug("startElements", eName);
     	        	break;
     	        }
 
-	        	geo = Kernel.createGeoElement(cons, eName);        	
+	        	geo = kernel.createGeoElement(cons, eName);        	
 	        	geo.setLoadedLabel(label);	 
     	        subMode = MODE_ELEMENTS;
     	        cmdName = eName;

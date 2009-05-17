@@ -14,8 +14,7 @@ import geogebra3D.kernel3D.Kernel3D;
 
 
 /*
- * Polygon[ <GeoPoint3D>, <GeoPoint3D>, <GeoPoint3D> ] or CmdPolygon
- * TODO change command for a n-polygon
+ * Polygon[ <GeoPoint3D>, <GeoPoint3D>, ... ] or CmdPolygon
  */
 public class CmdPolygon3D extends CmdPolygon {
 	
@@ -36,58 +35,37 @@ public class CmdPolygon3D extends CmdPolygon {
 	
 	
 	public GeoElement[] process(Command c) throws MyError {	
-
-
-		int n = c.getArgumentNumber();
-		boolean[] ok = new boolean[n];
-		GeoElement[] arg;
-
-
 		
-		/*
-		if (n==3) {
-			arg = resArgs(c);
-			if (arg[0].isGeoElement3D() && arg[1].isGeoElement3D() && arg[2].isGeoElement3D()){
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+		arg = resArgs(c);
+		
+		//check if each arguments are 3D args
+		boolean ok3D = true;
+		for(int i=0;i<n;i++)
+			ok3D = ok3D && (arg[i].isGeoElement3D());
+		
+		Application.debug("CmdPolygon3D - "+ok3D);
 
-				GeoElement3D geo0 = (GeoElement3D) arg[0];
-				GeoElement3D geo1 = (GeoElement3D) arg[1];
-				GeoElement3D geo2 = (GeoElement3D) arg[2];
-
-				// segment between two 3D points
-				if ((ok[0] = (geo0.isGeoPoint3D()))
-						&& (ok[1] = (geo1.isGeoPoint3D()))
-						&& (ok[2] = (geo2.isGeoPoint3D()))) {
-					GeoElement[] ret =
-					{
-							kernel3D.Triangle3D(
-									c.getLabel(),
-									(GeoPoint3D) geo0,
-									(GeoPoint3D) geo1,
-									(GeoPoint3D) geo2)};
-					return ret;
-				}
-			}
-		}
-		*/
-		if (n==3) { //TODO process for more than 3 points
-			arg = resArgs(c);
+		if (ok3D){
 			// polygon for given points
 			GeoPoint3D[] points = new GeoPoint3D[n];
 			// check arguments
 			for (int i = 0; i < n; i++) {
-				if (!(arg[1].isGeoElement3D()))
-					return super.process(c);	
-				else if (!(arg[i].isGeoPoint()))
-					return super.process(c);
+				if (!(arg[i].isGeoPoint()))
+					throw argErr(app, c.getName(), arg[i]);
 				else {
 					points[i] = (GeoPoint3D) arg[i];
 				}
 			}
 			// everything ok
-			GeoElement[] ret = {kernel3D.Polygon3D(c.getLabel(), points)};
-			return ret;
+			String s="";
+			for (int i=0;i<c.getLabels().length;i++)
+				s+=c.getLabels()[i]+", ";
+			Application.debug("labels = "+s);
+			return kernel3D.Polygon3D(c.getLabels(), points);
 		}
-
+ 
 		return super.process(c);
 	}
 

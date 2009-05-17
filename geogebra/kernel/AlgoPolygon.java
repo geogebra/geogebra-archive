@@ -161,6 +161,13 @@ public class AlgoPolygon extends AlgoElement {
         for (int i=0; i < size-1; i++) {
             output[i+1] = (GeoElement) segments[i];
         }
+        
+        String s="output = ";
+        for (int i=0; i < size-1; i++) {
+            s+=output[i].getLabel()+", ";
+        } 
+        Application.debug(s);
+        
     }
     
     void update() {
@@ -191,7 +198,10 @@ public class AlgoPolygon extends AlgoElement {
     	}
     	
         // compute area
-        poly.calcArea();                                 
+        poly.calcArea(); 
+        
+        // update region coord sys
+        poly.updateRegionCS();
     }   
     
     final public String toString() {

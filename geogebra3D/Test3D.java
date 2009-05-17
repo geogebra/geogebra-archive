@@ -22,6 +22,8 @@ package geogebra3D;
 //import geogebra.Application;
 //import geogebra.kernel.Construction;
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.*;
@@ -45,16 +47,18 @@ public class Test3D{
 	Construction cons;
 	Kernel3D kernel3D;
 	EuclidianView view2D;
+	Application3D app;
 	
 	
 	GeoPlane3D xOyPlane;
 
 
-	public Test3D(Kernel3D kernel3D, EuclidianView view2D, EuclidianView3D view3D){
+	public Test3D(Kernel3D kernel3D, EuclidianView view2D, EuclidianView3D view3D, Application3D app){
 		
 		this.kernel3D=kernel3D;
 		cons=kernel3D.getConstruction();
 		this.view2D = view2D;
+		this.app = app;
 
 		//view2D.setAxesLineStyle(EuclidianView.AXES_LINE_TYPE_ARROW);
 		view2D.showAxes(true, true);
@@ -66,14 +70,20 @@ public class Test3D{
         view3D.setRotXY(-Math.PI/6,Math.PI/6,true);
         view3D.setRotXY(-Math.PI/6,Math.PI/8,true);
         //view3D.setRotXY(-Math.PI/6,Math.PI/12,true);
+        
+		testRepere();
 		
 		
-        //testSave();
-		
+		//testTetrahedron();
+        //testPoint(1,1,1);
+        //testSegment3();
+        //testPolygon();
+        //testSave();	
+        //testLoad();
+        	
 		//testRegion();
 		
 		
-		testRepere();
 		
 		//testConic3D();
 		//testPolygon();
@@ -208,6 +218,22 @@ public class Test3D{
 		
 	}	
 	
+	
+	private void testSegment3(){
+
+		
+		
+		GeoPoint3D[] points = new GeoPoint3D[2];
+		points[0] = testPoint(1f,-1f,0f);
+		points[1] = testPoint(0.5f,1f,0f);	
+
+		
+		kernel3D.Segment3D("segment", points[0], points[1]);
+		
+		
+	}
+	
+	
 	/** number of points = n+1 */
 	private void test1(int n){
 		/*
@@ -320,7 +346,7 @@ public class Test3D{
 		for(i=0;i<3;i++)
 			kernel3D.Segment3D("segment",P1[i],P2);
 			*/
-		
+		/*
 		GeoPolygon3D t;
 		Color c = new Color(0.5f,0.2f,0.1f);
 		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[2]});
@@ -359,7 +385,7 @@ public class Test3D{
 		//P.setObjColor(new Color(1f,0.25f,0f));
 		
 		//new AlgoTo2D(cons, "essai", s);
-		
+		*/
 	}
 	
 
@@ -427,14 +453,10 @@ public class Test3D{
 		points[2] = testPoint(-1f,0f,0f);
 		points[3] = testPoint(-1f,-2f,0f);
 		
-		/*
-		points[2] = testPoint(-1.5f,0.5f,0f);
-		points[3] = testPoint(-1.5f,0f,0f);
-		*/
-		
-		GeoPolygon3D p=kernel3D.Polygon3D("poly", points);
-		p.setObjColor(new Color(0f,0f,1f));
-		//p.setAlphaValue(0.5f);
+
+		kernel3D.Polygon3D(new String[] {"poly","a1","b2","c3","d4"}, points);
+		//kernel3D.Polygon3D(null, points);
+
 	}
 
 	private void testRay3D(){
@@ -535,9 +557,16 @@ public class Test3D{
 		points[2] = testPoint(-1f,0f,0f);
 		points[3] = testPoint(0f,0f,2f);		
 		
+		/*
 		GeoPolyhedron p=kernel3D.Polyhedron("tetrahedron", points, 
 				new int[][] {{0,1,2},{0,1,3},{1,2,3},{2,0,3}});
+				*/
+		
+		GeoPolyhedron p=kernel3D.Pyramid("tetrahedron", points);
+		
+		
 	}
+	
 
 	
 	private void testIntersectLinePlane(){
@@ -591,16 +620,24 @@ public class Test3D{
 	
 	private void testSave(){
 
+		//testPoint(1f,-1f,0f);
+		//testPoint(1f,1f,0f);
 		
+		File f = new File("test3d.ggb");
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		app.saveGeoGebraFile(f);
 		
-		GeoPoint3D[] points = new GeoPoint3D[4];
-		points[0] = testPoint(1f,-1f,0f);
-		
-		/*
-		points[1] = testPoint(0.5f,1f,0f);
-		points[2] = testPoint(-1f,0f,0f);
-		points[3] = testPoint(0f,0f,2f);	
-		*/	
+	}
+	
+	
+	private void testLoad(){
+
+        app.loadXML(new File("test3d.ggb"), false);
+
 		
 	}
 

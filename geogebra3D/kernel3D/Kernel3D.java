@@ -15,15 +15,21 @@ package geogebra3D.kernel3D;
 
 
 
+import java.util.LinkedHashMap;
+
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
@@ -101,6 +107,62 @@ public class Kernel3D
     		algProcessor = new AlgebraProcessor3D(this);
     	return algProcessor;
     }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+     * Creates a new GeoElement object for the given type string.
+     * @param type: String as produced by GeoElement.getXMLtypeString()
+     */
+    public GeoElement createGeoElement(Construction cons, String type) throws MyError {    
+    	
+    	Application.debug(type);
+    	
+    	switch (type.charAt(0)) {
+   		case 'p': // point, polygon
+			if (type.equals("point3d")){ 
+				return new GeoPoint3D(cons);
+			}
+			
+    	}
+    	
+    	return super.createGeoElement(cons,type);
+
+    }
+
+	
+	/* *******************************************
+	 *  Methods for MyXMLHandler
+	 * ********************************************/
+	public boolean handleCoords(GeoElement geo, LinkedHashMap<String, String> attrs) {
+		
+		if (!(geo instanceof GeoVec4D)) {
+			return super.handleCoords(geo, attrs);
+		}
+		
+		Application.debug("GeoVec4D : "+geo.getLabel());
+		
+		GeoVec4D v = (GeoVec4D) geo;
+
+		try {
+			double x = Double.parseDouble((String) attrs.get("x"));
+			double y = Double.parseDouble((String) attrs.get("y"));
+			double z = Double.parseDouble((String) attrs.get("z"));
+			double w = Double.parseDouble((String) attrs.get("w"));
+			v.setCoords(x, y, z, w);
+			Application.debug("x="+x+", y="+y+", z="+z+", w="+w);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}	
+	
 	
 	
 
@@ -204,12 +266,12 @@ public class Kernel3D
 	 * @param points vertices of the polygon
 	 * @return the polygon */
 	//TODO final public GeoPolygon3D Polygon3D(String[] label, GeoPoint3D[] points){
-    final public GeoPolygon3D Polygon3D(String label, GeoPoint3D[] points){
+    final public GeoElement [] Polygon3D(String[] label, GeoPoint3D[] points){
 		
     	
-    	AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,points,null);
+    	AlgoPolygon3D algo = new AlgoPolygon3D(cons,label,points,null);
     	
-    	return (GeoPolygon3D) algo.getOutput()[0];
+    	return algo.getOutput();
 		
 	}	
 	
@@ -227,6 +289,21 @@ public class Kernel3D
     	return (GeoPolyhedron) algo.getOutput()[0];
 		
 	}	
+    
+    
+    /** Polyhedron with vertices (last one as apex)
+     * @param label name
+     * @param points vertices
+     * @return the polyhedron
+     */
+    final public GeoPolyhedron Pyramid(String label, GeoPoint3D[] points){
+		
+    	
+    	AlgoPyramid algo = new AlgoPyramid(cons,null,points);
+    	
+    	return (GeoPolyhedron) algo.getOutput()[0];
+		
+	}
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */
 	final public GeoPlane3D Plane3D(String label, Ggb3DVector o, Ggb3DVector v1, Ggb3DVector v2){
