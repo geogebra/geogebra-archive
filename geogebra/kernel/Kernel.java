@@ -1849,6 +1849,7 @@ public class Kernel {
 	/** Point in region with cartesian coordinates (x,y)   */
 	final public GeoPoint PointIn(String label, Region region, double x, double y) {
 		AlgoPointInRegion algo = new AlgoPointInRegion(cons, label, region, x, y);
+		Application.debug("PointIn - \n x="+x+"\n y="+y);
 		GeoPoint p = algo.getP();    
 		return p;
 	}

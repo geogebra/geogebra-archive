@@ -17,7 +17,10 @@ package geogebra.kernel;
  */
 public class RegionParameters {
 	
-	double t1, t2;
+	private double t1, t2;
+	
+	/** says if the point is on the path defined by the frontier of the region */
+	private boolean isOnPath = false;
 	
 	public RegionParameters() {
 		this(Double.NaN,Double.NaN);
@@ -66,5 +69,23 @@ public class RegionParameters {
 
 	public final void setT2(double t2) {
 		this.t2 = t2;
+	}
+	
+	
+	////////////////////////////////////
+	// POINT ON PATH
+	
+	/** set if the point in on the path defined by the frontier of the region
+	 * @param isOnPath
+	 */
+	public final void setIsOnPath(boolean isOnPath){
+		this.isOnPath = isOnPath;
+	}	
+	
+	/** says if the point in on the path defined by the frontier of the region
+	 * @return true if the point in on the path defined by the frontier of the region
+	 */
+	public final boolean isOnPath(){
+		return isOnPath;
 	}
 }

@@ -43,6 +43,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	protected GeoPoint p1;
 	/** third point for region coord sys */
 	protected GeoPoint p2;
+	/** number of points in coord sys */
+	protected int numCS = 0;
 	
 	protected double area;
 	private boolean defined = false;		
@@ -793,13 +795,54 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	
 	
 	public void regionChanged(GeoPoint P){
-		pointChangedForRegion(P);
+		
+		RegionParameters rp = P.getRegionParameters();
+		
+		if (rp.isOnPath())
+			pathChanged(P);
+		else{
+			//pointChangedForRegion(P);
+			double xu = p1.inhomX - p0.inhomX;
+			double yu = p1.inhomY - p0.inhomY;				
+			double xv = p2.inhomX - p0.inhomX;
+			double yv = p2.inhomY - p0.inhomY;
+			P.x = p0.inhomX + rp.getT1()*xu + rp.getT2()*xv;
+			P.y = p0.inhomY + rp.getT1()*yu + rp.getT2()*yv;
+			P.z = 1;
+			
+			
+			if (!isInRegion(P)){
+				pointChanged(P);
+				rp.setIsOnPath(true);
+			}	
+			
+		}
 	}
 	
 	
 	public void pointChangedForRegion(GeoPoint P){
-		if (!isInRegion(P))
+		
+		RegionParameters rp = P.getRegionParameters();
+		
+		if (!isInRegion(P)){
 			pointChanged(P);
+			rp.setIsOnPath(true);
+		}else{
+			if(numCS!=3){ //if the coord sys is not defined by 3 independent points, then the point lies on the path
+				pointChanged(P);
+				rp.setIsOnPath(true);
+			}else{
+				rp.setIsOnPath(false);
+				double xu = p1.inhomX - p0.inhomX;
+				double yu = p1.inhomY - p0.inhomY;				
+				double xv = p2.inhomX - p0.inhomX;
+				double yv = p2.inhomY - p0.inhomY;
+				double x = P.x/P.z - p0.inhomX;
+				double y = P.y/P.z - p0.inhomY;
+				rp.setT1((xv*y-x*yv)/(xv*yu-xu*yv));
+				rp.setT2((x*yu-xu*y)/(xv*yu-xu*yv));
+			}
+		}
 	}
 	
 	
@@ -807,41 +850,44 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * update the coord sys used for region parameters
 	 */
 	public void updateRegionCS() {
-		// TODO add condition to calculate it
-		
-		/*
-		p0 = getPoint(0);		
-		Application.debug(" p0 = "+p0.inhomX+","+p0.inhomY);
-		
-		int secondPoint = -1;
-		boolean secondPointFound = false;
-		for (secondPoint=1; secondPoint<getPoints().length && !secondPointFound; secondPoint++){
-			p1=getPoint(secondPoint);
-			Application.debug(" p1 ("+secondPoint+") = "+p1.inhomX+","+p1.inhomY);
-			if (!Kernel.isEqual(p0.inhomX, p1.inhomX, Kernel.STANDARD_PRECISION))
-				secondPointFound = true;
-			else if (!Kernel.isEqual(p0.inhomY, p1.inhomY, Kernel.STANDARD_PRECISION))
+		// TODO add condition to calculate it		
+		if(p2==null || GeoPoint.collinear(p0, p1, p2)){
+			p0 = getPoint(0);	
+			numCS = 1;
+			//Application.debug(" p0 = "+p0.inhomX+","+p0.inhomY);
+
+			int secondPoint = -1;
+			boolean secondPointFound = false;
+			for (secondPoint=1; secondPoint<getPoints().length && !secondPointFound; secondPoint++){
+				p1=getPoint(secondPoint);
+				//Application.debug(" p1 ("+secondPoint+") = "+p1.inhomX+","+p1.inhomY);
+				if (!Kernel.isEqual(p0.inhomX, p1.inhomX, Kernel.STANDARD_PRECISION))
 					secondPointFound = true;
-			Application.debug(" secondPointFound = "+secondPointFound);
+				else if (!Kernel.isEqual(p0.inhomY, p1.inhomY, Kernel.STANDARD_PRECISION))
+					secondPointFound = true;
+				//Application.debug(" secondPointFound = "+secondPointFound);
+			}
+
+			int thirdPoint = -1;
+			if (secondPointFound){
+				numCS++;
+				secondPoint--;
+				boolean thirdPointFound = false;
+				for (thirdPoint=getPoints().length-1; thirdPoint>secondPoint && !thirdPointFound; thirdPoint--){
+					p2=getPoint(thirdPoint);
+					if (!GeoPoint.collinear(p0, p1, p2)){
+						thirdPointFound = true;
+						numCS++;
+					}
+				}			
+			}
+
+			//thirdPoint++;
+			//Application.debug(" secondPoint = "+secondPoint+"\n thirdPoint = "+thirdPoint);
+			//Application.debug(" p0 = "+p0.getLabel()+"\n p1 = "+p1.getLabel()+"\n p2 = "+p2.getLabel());
 		}
-		
-		int thirdPoint = -1;
-		if (secondPointFound){
-			secondPoint--;
-			boolean thirdPointFound = false;
-			for (thirdPoint=getPoints().length-1; thirdPoint>secondPoint && !thirdPointFound; thirdPoint--){
-				p2=getPoint(thirdPoint);
-				if (!GeoPoint.collinear(p0, p1, p2))
-					thirdPointFound = true;
-			}			
-		}
-		
-		thirdPoint++;
-		Application.debug(" secondPoint = "+secondPoint+"\n thirdPoint = "+thirdPoint);
-		Application.debug(" p0 = "+p0.getLabel()+"\n p1 = "+p1.getLabel()+"\n p2 = "+p2.getLabel());
 			
 			
-			*/
 	}
 	
 	/** returns true if the segment ((x1,y1),(x2,y2)) intersects [Ox) */

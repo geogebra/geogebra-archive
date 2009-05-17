@@ -54,6 +54,7 @@ GeoPointInterface {
 	private PathParameter pathParameter;
 	
 	private Region region;
+	private RegionParameters regionParameters;
         
     // temp
     public double inhomX, inhomY;
@@ -95,6 +96,13 @@ GeoPointInterface {
     	if (pathParameter == null)
     		pathParameter = new PathParameter();
     	return pathParameter;
+    }
+    
+    
+    final public RegionParameters getRegionParameters() {
+    	if (regionParameters == null)
+    		regionParameters = new RegionParameters();
+    	return regionParameters;
     }
     
 	protected String getClassName() {
