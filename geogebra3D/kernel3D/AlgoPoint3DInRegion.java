@@ -16,31 +16,37 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Path;
+import geogebra.kernel.Region;
 import geogebra.main.Application;
 
 
-public class AlgoPoint3DOnPath extends AlgoElement3D {
+public class AlgoPoint3DInRegion extends AlgoElement3D {
 
 	
-	private Path path; // input
+	private Region region; // input
     private GeoPoint3D P; // output       
 
-    AlgoPoint3DOnPath(
+    AlgoPoint3DInRegion(
         Construction cons,
         String label,
-        Path path,
+        Region region,
         double x,
         double y,
         double z) {
         super(cons);
-        this.path = path;
-        P = new GeoPoint3D(cons, path);
+        this.region = region;
+        P = new GeoPoint3D(cons, region);
         
-
+        P.setWillingCoords(x, y, z, 1.0);
         
-        //P.setCoords(x, y, z, 1.0);
-        P.setWillingCoords(x, y, z, 1);
-        path.pointChanged(P);
+        switch(region.toGeoElement().getGeoClassType()){
+        case GeoElement3D.GEO_CLASS_POLYGON3D:
+        	P.setCoordSys2D(((GeoPolygon3D) region.toGeoElement()).getCoordSys());
+        	break;
+       
+        }       
+        region.pointChangedForRegion(P);
+        
 
         setInputOutput(); // for AlgoElement
 
@@ -53,14 +59,14 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
     
 
     protected String getClassName() {
-        return "AlgoPoint3DOnPath";
+        return "AlgoPoint3DInRegion";
     }
 
     // for AlgoElement
     protected void setInputOutput() {
     	
     	input = new GeoElement[1];  	
-        input[0] = path.toGeoElement();
+        input[0] = region.toGeoElement();
 
         output = new GeoElement[1];
         output[0] = P;
@@ -72,15 +78,15 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
         return P;
     }
     
-    Path getPath() {
-        return path;
+    Region getRegion() {
+        return region;
     }
 
     protected final void compute() {
     	
     	
     	if (input[0].isDefined()) {	    	
-	        path.pathChanged(P);
+	        region.regionChanged(P);
 	        P.updateCoords();
     	} else {
     		P.setUndefined();
@@ -92,7 +98,7 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
         StringBuffer sb = new StringBuffer();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("PointOnA",input[0].getLabel()));
+        sb.append(app.getPlain("PointInA",input[0].getLabel()));
         
         return sb.toString();
     }

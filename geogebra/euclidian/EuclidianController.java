@@ -5416,7 +5416,7 @@ public class EuclidianController implements MouseListener,
 				}
 				
 				// find point-on-path with the highest construction index
-				if (((GeoPoint)geo).isPointOnPath()) {
+				if (((GeoPointInterface)geo).isPointOnPath()) {
 					pointOnPathCount ++;
 					if (retPath == null) {
 						retPath = geo;

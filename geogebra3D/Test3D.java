@@ -74,7 +74,7 @@ public class Test3D{
 		testRepere();
 		
 		
-		//testTetrahedron();
+		testTetrahedron();
         //testPoint(1,1,1);
         //testSegment3();
         //testPolygon();
@@ -97,7 +97,7 @@ public class Test3D{
 		//testAlgoPyramide();
 		
 		//testPolyhedron();
-		testTetrahedron();
+		//testTetrahedron();
 		
 		//testIntersectLinePlane();
 		//testIntersectLineLine();
@@ -228,7 +228,8 @@ public class Test3D{
 		points[1] = testPoint(0.5f,1f,0f);	
 
 		
-		kernel3D.Segment3D("segment", points[0], points[1]);
+		GeoSegment3D s = kernel3D.Segment3D("segment", points[0], points[1]);
+		kernel3D.Point3D("p", s, 0, 0, 0);
 		
 		
 	}
@@ -447,15 +448,15 @@ public class Test3D{
 		//kernel3D.From3Dto2D("truc", P, xOyPlane);
 		
 		
-		GeoPoint3D[] points = new GeoPoint3D[4];
-		points[0] = testPoint(1f,-2f,0f);
-		points[1] = testPoint(1f,0f,0f);
-		points[2] = testPoint(-1f,0f,0f);
-		points[3] = testPoint(-1f,-2f,0f);
+		GeoPoint3D[] points = new GeoPoint3D[3];
+		points[0] = testPoint(0f,-1f,0f);
+		points[1] = testPoint(1f,1f,0f);
+		points[2] = testPoint(-1f,1f,0f);
+		//points[3] = testPoint(-1f,-1f,0f);
 		
 
-		kernel3D.Polygon3D(new String[] {"poly","a1","b2","c3","d4"}, points);
-		//kernel3D.Polygon3D(null, points);
+		//kernel3D.Polygon3D(new String[] {"poly","a1","b2","c3","d4"}, points);
+		kernel3D.Polygon3D(null, points);
 
 	}
 

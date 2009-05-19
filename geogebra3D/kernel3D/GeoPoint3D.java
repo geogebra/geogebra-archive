@@ -28,6 +28,8 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.PointProperties;
+import geogebra.kernel.Region;
+import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -52,12 +54,22 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	
 	//mouse moving
-	private Ggb3DVector mouseLoc = null; //= new Ggb3DVector( new double[] {0,0,0,1.0});
-	private Ggb3DVector mouseDirection = null; //new Ggb3DVector( new double[] {0,0,1,0.0});
+	private Ggb3DVector willingCoords = null; //= new Ggb3DVector( new double[] {0,0,0,1.0});
+	private Ggb3DVector willingDirection = null; //new Ggb3DVector( new double[] {0,0,1,0.0});
 	
 	//paths
 	private Path path;
 	private PathParameter pp;
+	
+	//region
+	private Region region;
+	private RegionParameters regionParameters;
+	/** 2D coord sys when point is on a region */
+	private GeoCoordSys2D coordSys2D = null;
+	/** 2D x-coord when point is on a region */
+	private double x2D = 0;
+	/** 2D y-coord when point is on a region */
+	private double y2D = 0;
         
     // temp
     public Ggb3DVector inhom = new Ggb3DVector(3);
@@ -90,16 +102,14 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     public GeoPoint3D(Construction c, Path path) {
 		super(c,4);
-		//Application.debug("GeoPoint3D");
 		this.path = path;
 	}
     
-    /*
-    public GeoPoint3D(Construction c, PathIn path) {
+    
+    public GeoPoint3D(Construction c, Region region) {
 		super(c,4);
-		this.pathIn = path;
-	}    
-    */
+		this.region = region;
+	}
     
 
     
@@ -126,33 +136,39 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
 	/** Sets homogenous coordinates and updates
 	 * inhomogenous coordinates
-	 */
-	final public void setCoords(Ggb3DVector v, boolean a_path) {
+	 * @param v coords
+	 * @param doPathOrRegion says if path (or region) calculations have to be done
+	 */    
+	final public void setCoords(Ggb3DVector v, boolean doPathOrRegion) {
 		
 		super.setCoords(v);
+		
 		updateCoords(); 
 		
-		if (a_path){
+		//TODO understand a_path
+		if (doPathOrRegion){
+			
+			// region
+			if (hasRegion()){
+				region.pointChangedForRegion(this);
+			}
+			
+			// path
 			if (hasPath()) {
 				// remember path parameter for undefined case
 				//PathParameter tempPathParameter = getTempPathparameter();
 				//tempPathParameter.set(getPathParameter());
 				path.pointChanged(this);
-			/*
-			} else if (hasPathIn()) {
-				pathIn.pointChanged(this);
-				*/
+
 			}
 			updateCoords(); 
 		}
 		
 	}  
 	
+
 	
-	final public void doPath(){
-		path.pointChanged(this);
-		updateCoords(); 
-	}
+	
 	
 	
 	
@@ -176,6 +192,8 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	
 	final public void updateCoords() {
+		
+		
 		// infinite point
 		if (kernel.isZero(v.get(4))) {
 			//Application.debug("infinite");
@@ -270,7 +288,6 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	}
 	
 
-
 	
 	
     final public PathParameter getPathParameter() {
@@ -280,49 +297,130 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     }	
 	
   
-	
-	// adding hasPath() condition to be independent
-	// because 3D points that have a Path have an algoParent
-    /*
-	public boolean isIndependent() {
-		return super.isIndependent() || hasPath();
+	final public void doPath(){
+		path.pointChanged(this);
+		updateCoords(); 
 	}
-	*/
+	
+
     
     //copied on GeoPoint
 	public boolean isChangeable() {
-		return !isFixed() && (isIndependent() || isPointOnPath());// || isPointInRegion()); 
+		return !isFixed() && (isIndependent() || isPointOnPath() || hasRegion()); 
 	}	
 	
     ///////////////////////////////////////////////////////////
-    // TODO REGION
+    // REGION
  	
 	/** says if the point is in a Region
 	 * @return true if the point is in a Region
 	 */
-	public boolean hasRegion() {
-		return false;
+	final public boolean hasRegion() {
+		return region != null;
+	}	
+	
+
+	final public void doRegion(){
+		region.pointChangedForRegion(this);
+		
+		updateCoords(); 
 	}
 	
+    final public RegionParameters getRegionParameters() {
+    	if (regionParameters == null)
+    		regionParameters = new RegionParameters();
+    	return regionParameters;
+    }
+	
+    
+    /** set the 2D coord sys where the region lies
+     * @param cs 2D coord sys
+     */
+    public void setCoordSys2D(GeoCoordSys2D cs){
+    	this.coordSys2D = cs;
+    }
+    
+    
+    /**
+     * update the 2D coords on the region (regarding willing coords and direction)
+     */
+    public void updateCoords2D(){
+    	if (coordSys2D!=null){ //use region 2D coord sys
+    		Ggb3DVector coords;
+    		Ggb3DVector[] project;
+    		
+    		if (getWillingCoords()!=null) //use willing coords
+    			coords = getWillingCoords();
+    		else //use real coords
+    			coords = getCoords();
+
+    		if (getWillingDirection()==null){ //use normal direction for projection
+    			project = coords.projectPlane(coordSys2D.getMatrix4x4());
+    		}else{ //use willing direction for projection
+    			project = coords.projectPlaneThruV(coordSys2D.getMatrix4x4(),getWillingDirection());
+    		}
+    			
+    		x2D = project[1].get(1);
+    		y2D = project[1].get(2);
+    		
+    	}else{//project on xOy plane
+    		x2D = getX();
+    		y2D = getY();
+    	}
+    	
+    	//Application.debug("x2D = "+x2D+", y2D = "+y2D);
+    			
+    }
+    
+    
+    /** set 2D coords
+     * @param x x-coord
+     * @param y y-coord
+     */
+    public void setCoords2D(double x, double y){
+    	x2D = x;
+    	y2D = y;
+    }
+    
+	public double getX2D(){
+		return x2D;
+	}
+	
+	public double getY2D(){
+		return y2D;
+	}
+	
+	
+	/**
+	 * update 3D coords regarding 2D coords on region coord sys
+	 * @param doPathOrRegion says if the path or the region calculations have to be done
+	 */
+	public void updateCoordsFrom2D(boolean doPathOrRegion){
+		setCoords(coordSys2D.getPoint(getX2D(), getY2D()), doPathOrRegion);
+	}
 	
 	
     ///////////////////////////////////////////////////////////
-    // MOUSE
+    // WILLING COORDS
 	
-	public void setMouseLoc(Ggb3DVector mouseLoc){
-		this.mouseLoc = mouseLoc;
+	public void setWillingCoords(Ggb3DVector willingCoords){
+		this.willingCoords = willingCoords;
 	}
 	
-	public void setMouseDirection(Ggb3DVector mouseDirection){
-		this.mouseDirection = mouseDirection;
+	public void setWillingCoords(double x, double y, double z, double w){
+		setWillingCoords(new Ggb3DVector(new double[] {x,y,z,w}));
+	}	
+	
+	public void setWillingDirection(Ggb3DVector willingDirection){
+		this.willingDirection = willingDirection;
 	}
 	
-	public Ggb3DVector getMouseLoc(){
-		return mouseLoc;
+	public Ggb3DVector getWillingCoords(){
+		return willingCoords;
 	}
 	
-	public Ggb3DVector getMouseDirection(){
-		return mouseDirection;
+	public Ggb3DVector getWillingDirection(){
+		return willingDirection;
 	}
 	
  

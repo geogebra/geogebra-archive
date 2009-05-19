@@ -119,11 +119,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		movedGeoPoint3D = (GeoPoint3D) movedGeoElement;
 		startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
 
-		if (movedGeoPoint3D.hasPath()){
+		if (!movedGeoPoint3D.hasPath() && !movedGeoPoint3D.hasRegion() ){
 			
-			//TODO set moving direction to the point
-			//setCurrentPlane(movedGeoPoint3D.getPath());
-		}else{
 			Ggb3DMatrix4x4 plane = Ggb3DMatrix4x4.Identity(); 
 			setCurrentPlane(plane);
 			//update the moving plane altitude
@@ -207,25 +204,27 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected void setMouseInformation(GeoPoint3D point){
 		Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 		view3D.toSceneCoords3D(o);
-		point.setMouseLoc(o);
+		point.setWillingCoords(o);
 		
 		//TODO do this once
 		Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
 		view3D.toSceneCoords3D(v);			
-		point.setMouseDirection(v);
+		point.setWillingDirection(v);
 	}
 	
 	protected void movePoint(boolean repaint){
 		
+		
 		if (movedGeoPoint3D.hasPath()){
 			
-
-			setMouseInformation(movedGeoPoint3D);
-			
+			setMouseInformation(movedGeoPoint3D);		
 			movedGeoPoint3D.doPath();
+						
+		}else if (movedGeoPoint3D.hasRegion()){
 			
-			//movePointOnCurrentPlane(movedGeoPoint3D, false);
-			
+			setMouseInformation(movedGeoPoint3D);			
+			movedGeoPoint3D.doRegion();
+					
 		}else if (isShiftDown){ //moves the point along z-axis
 			
 			//getting current pick point and direction v 
@@ -302,7 +301,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected GeoPointInterface createNewPoint(Path path){
 			
-		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null,(Path) path, 0,0,0);	
+		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null,path);	
 		
 		
 		setMouseInformation(point);
@@ -315,7 +314,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	protected GeoPointInterface createNewPoint(Region region){
-		return null;
+		
+		GeoPoint3D point = ((Kernel3D) getKernel()).Point3DIn(null,region);	
+		
+		setMouseInformation(point);
+		point.doRegion();
+		
+		return point;
 	}
 	
 	

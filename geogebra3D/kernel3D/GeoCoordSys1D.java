@@ -113,23 +113,32 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 		
 		//project P on line
 		double t = 0;
-		if (P.getMouseLoc()!=null && P.getMouseDirection()!=null){
-			//project mouse location
-			Ggb3DVector[] project = P.getMouseLoc().projectOnLineWithDirection(
-					getOrigin(),
-					getVx(),
-					P.getMouseDirection());
-			
-			t = project[1].get(1);
+		if (P.getWillingCoords()!=null){
+			if(P.getWillingDirection()!=null){
+				//project willing location using willing direction
+				Ggb3DVector[] project = P.getWillingCoords().projectOnLineWithDirection(
+						getOrigin(),
+						getVx(),
+						P.getWillingDirection());
+
+				t = project[1].get(1);
+			}else{
+				//project current point coordinates
+				Ggb3DVector[] project = P.getWillingCoords().projectOnLineWithDirection(
+						getOrigin(),
+						getVx(),
+						P.getWillingCoords().sub(getOrigin()).crossProduct(getVx()).crossProduct(getVx()));			
+				t = project[1].get(1);	
+			}
 		}else{
 			//project current point coordinates
+			Application.debug("project current point coordinates");
 			Ggb3DVector[] project = P.getCoords().projectOnLineWithDirection(
 					getOrigin(),
 					getVx(),
 					P.getCoords().sub(getOrigin()).crossProduct(getVx()).crossProduct(getVx()));			
 			t = project[1].get(1);	
 		}
-		
 		
 
 		if (t<getMinParameter())

@@ -253,7 +253,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path {
 	
 	
 	///////////////////////////////////
-	// Path3D interface
+	// Path interface
 	
 	
 	
@@ -301,8 +301,8 @@ extends GeoPolygon implements GeoElement3DInterface, Path {
 
 			//double dist = P.getInhomCoords().sub(coordOld).squareNorm();			
 			double dist = 0;
-			if (P.getMouseLoc()!=null && P.getMouseDirection()!=null)
-				dist=P.getInhomCoords().distLine(P.getMouseLoc(), P.getMouseDirection());
+			if (P.getWillingCoords()!=null && P.getWillingDirection()!=null)
+				dist=P.getInhomCoords().distLine(P.getWillingCoords(), P.getWillingDirection());
 
 			//Application.debug("distance au segment "+i+" : "+dist);
 			if (dist < minDist) {
@@ -320,17 +320,35 @@ extends GeoPolygon implements GeoElement3DInterface, Path {
 	
 	
 	
+
+	
+	
+	
+	
+	///////////////////////////////////
+	// REGION INTERFACE
+	
+	public void setRegionChanged(GeoPointInterface PI, double x, double y){
+		
+		Application.debug("x = "+x+", y = "+y);
+		//Application.debug("coordSys.getMatrix() = "+coordSys.getMatrix().toString());
+		//Application.debug("coordSys.getPoint = "+coordSys.getPoint(x, y).toString());
+		
+		//((GeoPoint3D) PI).setCoords(coordSys.getPoint(x, y));
+		((GeoPoint3D) PI).setCoords2D(x, y);
+		((GeoPoint3D) PI).updateCoordsFrom2D(false);
+	}
+	
+	public boolean isInRegion(GeoPointInterface PI){
+		
+		return isInRegion(PI.getX2D(), PI.getY2D());
+		
+	}
+
 	
 
-	/*
-	public Ggb3DMatrix4x4 getMovingMatrix(Ggb3DMatrix4x4 toScreenMatrix) {
-		return coordSys.getDrawingMatrix();
-	}
 
-
-	public Path getPath2D() {
-		return null;
-	}
-	*/
+	
+	
 
 }

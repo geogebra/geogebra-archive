@@ -55,6 +55,10 @@ GeoPointInterface {
 	
 	private Region region;
 	private RegionParameters regionParameters;
+	/** equals x/z when updated*/
+	private double x2D = 0;
+	/** equals y/z when updated*/
+	private double y2D = 0;
         
     // temp
     public double inhomX, inhomY;
@@ -1065,6 +1069,24 @@ GeoPointInterface {
 			return false;
 		}
 	    
+		
+		public void updateCoords2D(){
+			x2D = x/z;
+			y2D = y/z;
+		}
+		
+		public double getX2D(){
+			return x2D;
+		}
+		
+		public double getY2D(){
+			return y2D;
+		}
+		
+		//only used for 3D stuff
+		public void updateCoordsFrom2D(boolean doPathOrRegion){
+			
+		}
 	    
 
 }

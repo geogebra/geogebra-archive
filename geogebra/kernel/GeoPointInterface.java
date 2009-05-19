@@ -31,6 +31,17 @@ public interface GeoPointInterface {
 	
 	public boolean getSpreadsheetTrace();
 
+	public RegionParameters getRegionParameters();
+
+	public void updateCoords2D();
+
+	public double getX2D();
+	
+	public double getY2D();
+
+	public void updateCoordsFrom2D(boolean b);
+
+	public boolean isPointOnPath();
 	
 
 }

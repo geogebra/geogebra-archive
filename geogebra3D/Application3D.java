@@ -196,13 +196,19 @@ public abstract class Application3D extends Application{
 		cp1 = cp2;
 		centerPanel.add(cp1, BorderLayout.CENTER);
 
-		// border of euclidianPanel
-
-
+		
+		JFrame f = new JFrame("2d view");
+		f.getContentPane().add(euclidianView);
+		f.setPreferredSize(new Dimension(400,400));
+		f.setSize(new Dimension(400,400));
+		f.setVisible(true);
+		
+		/*
 		if (updateUI) {
 			centerPanel.updateUI(); // needed for applets
 			updateComponentTreeUI();
 		}
+		*/
 	}
     
     

@@ -18,6 +18,7 @@ package geogebra3D.kernel3D;
 import java.util.LinkedHashMap;
 
 import geogebra.kernel.AlgoCircleThreePoints;
+import geogebra.kernel.AlgoPointInRegion;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoConic;
@@ -27,6 +28,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
+import geogebra.kernel.Region;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -187,6 +189,21 @@ public class Kernel3D
 		v.setLabel(label); // invokes add()                
 		return v;
 	}
+	
+	
+	/** Point in region with cartesian coordinates (x,y,z)   */
+	final public GeoPoint3D Point3DIn(String label, Region region, double x, double y, double z) {
+		Application.debug("Point3DIn - \n x="+x+"\n y="+y+"\n z="+z);
+		AlgoPoint3DInRegion algo = new AlgoPoint3DInRegion(cons, label, region, x, y, z);
+		GeoPoint3D p = algo.getP();    
+		return p;
+	}
+	
+	/** Point in region */
+	final public GeoPoint3D Point3DIn(String label, Region region) {  
+		return Point3DIn(label,region,0,0,0); //TODO do as for paths
+	}	
+	
 	
 	
 	

@@ -46,6 +46,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	/** number of points in coord sys */
 	protected int numCS = 0;
 	
+
+	
 	protected double area;
 	private boolean defined = false;		
 	
@@ -767,22 +769,30 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		return true;
 	}
 	
-	public boolean isInRegion(GeoPoint P){
+	public boolean isInRegion(GeoPointInterface PI){
 		
+		GeoPoint P = (GeoPoint) PI;
 		double x0 = P.x/P.z;
 		double y0 = P.y/P.z;
+				
+		return isInRegion(x0,y0);
+
+	}
+	
+	/** says if the point (x0,y0) is in the region
+	 * @param x0 x-coord of the point
+	 * @param y0 y-coord of the point
+	 * @return true if the point (x0,y0) is in the region
+	 */
+	public boolean isInRegion(double x0, double y0){
 		
 		double x1,y1,x2,y2;
 		int numPoints = points.length;
-		//x1=points[numPoints-1].getInhomX()-x0;
-		//y1=points[numPoints-1].getInhomY()-y0;
 		x1=getPointX(numPoints-1)-x0;
 		y1=getPointY(numPoints-1)-y0;
 		
 		boolean ret=false;
 		for (int i=0;i<numPoints;i++){
-			//x2=points[i].getInhomX()-x0;
-			//y2=points[i].getInhomY()-y0;
 			x2=getPointX(i)-x0;
 			y2=getPointY(i)-y0;
 			ret = ret ^ intersectOx(x1, y1, x2, y2);
@@ -793,9 +803,9 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		return ret;
 	}
 	
-	
-	public void regionChanged(GeoPoint P){
+	public void regionChanged(GeoPointInterface P){
 		
+		//GeoPoint P = (GeoPoint) PI;
 		RegionParameters rp = P.getRegionParameters();
 		
 		if (rp.isOnPath())
@@ -806,10 +816,15 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 			double yu = p1.inhomY - p0.inhomY;				
 			double xv = p2.inhomX - p0.inhomX;
 			double yv = p2.inhomY - p0.inhomY;
+			/*
 			P.x = p0.inhomX + rp.getT1()*xu + rp.getT2()*xv;
 			P.y = p0.inhomY + rp.getT1()*yu + rp.getT2()*yv;
 			P.z = 1;
-			
+			*/
+			Application.debug("xu="+xu+", rp.getT1()="+ rp.getT1());
+			setRegionChanged(P,
+					p0.inhomX + rp.getT1()*xu + rp.getT2()*xv,
+					p0.inhomY + rp.getT1()*yu + rp.getT2()*yv);
 			
 			if (!isInRegion(P)){
 				pointChanged(P);
@@ -820,9 +835,27 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	}
 	
 	
-	public void pointChangedForRegion(GeoPoint P){
+	/** set region coords (x,y) to point PI
+	 * @param PI point
+	 * @param x x-coord
+	 * @param y y-coord
+	 */
+	public void setRegionChanged(GeoPointInterface PI, double x, double y){
+		GeoPoint P = (GeoPoint) PI;
+		P.x = x;
+		P.y = y;
+		P.z = 1;
+				
+	}
+	
+	
+	public void pointChangedForRegion(GeoPointInterface P){
+		
+		P.updateCoords2D();
 		
 		RegionParameters rp = P.getRegionParameters();
+		
+		//Application.debug("isInRegion : "+isInRegion(P));
 		
 		if (!isInRegion(P)){
 			pointChanged(P);
@@ -836,14 +869,20 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 				double xu = p1.inhomX - p0.inhomX;
 				double yu = p1.inhomY - p0.inhomY;				
 				double xv = p2.inhomX - p0.inhomX;
-				double yv = p2.inhomY - p0.inhomY;
-				double x = P.x/P.z - p0.inhomX;
-				double y = P.y/P.z - p0.inhomY;
+				double yv = p2.inhomY - p0.inhomY;				
+				double x = P.getX2D() - p0.inhomX;
+				double y = P.getY2D() - p0.inhomY;
 				rp.setT1((xv*y-x*yv)/(xv*yu-xu*yv));
 				rp.setT2((x*yu-xu*y)/(xv*yu-xu*yv));
+				
+				P.updateCoordsFrom2D(false);
 			}
 		}
 	}
+	
+
+	
+
 	
 	
 	/**

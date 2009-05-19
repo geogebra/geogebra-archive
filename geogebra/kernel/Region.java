@@ -20,7 +20,7 @@ public interface Region {
 	 * 
 	 * 
 	 */
-	public void pointChangedForRegion(GeoPoint P);
+	public void pointChangedForRegion(GeoPointInterface P);
 	
 	
 	/**
@@ -30,14 +30,14 @@ public interface Region {
 	 * 
 	 *
 	 */
-	public void regionChanged(GeoPoint P);
+	public void regionChanged(GeoPointInterface P);
 	
 	
 	
 	/**
 	 * Returns true if the given point lies inside this Region.
 	 */	
-	public boolean isInRegion(GeoPoint P);
+	public boolean isInRegion(GeoPointInterface P);
 	
 	
 	

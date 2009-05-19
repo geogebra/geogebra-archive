@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 /**
@@ -74,10 +75,10 @@ public class GeoCoordSys2D extends GeoCoordSys {
 	/** returns the point at position l1, l2 on the coord sys */
 	public Ggb3DVector getPoint(double l1, double l2){
 		Ggb3DVector v=new Ggb3DVector(new double[] {l1,l2,1});
-		//Application.debug("v ="); v.SystemPrint();
+		//Application.debug("v ="+v.toString());
 		Ggb3DVector r=getMatrix().mul(v);	
-		//Application.debug("M ="); M.SystemPrint();
-		//Application.debug("r ="); r.SystemPrint();
+		//Application.debug("getMatrix() ="+getMatrix().toString());
+		//Application.debug("r ="+ r.toString());
 		return r;
 	}	
 	
