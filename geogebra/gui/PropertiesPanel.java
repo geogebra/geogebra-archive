@@ -2210,9 +2210,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		public void setLabels() {
 			setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
-			//td.setLabels(app.getPlain("Text"));
-
-			// TODO: Update text dialog (F.S.)
+			td.setLabels(app.getPlain("Text"));
 		}
 
 		public JPanel update(Object[] geos) {			
@@ -2262,9 +2260,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		public void setLabels() {
 			setBorder(BorderFactory.createTitledBorder(app.getPlain("Editxx")));
-			//td.setLabels(app.getPlain("Textxx"));
-			
-			// TODO: Update text dialog (F.S.)
+			td.setLabels(app.getPlain("Textxx"));
 		}
 
 		public JPanel update(Object[] geos) {			

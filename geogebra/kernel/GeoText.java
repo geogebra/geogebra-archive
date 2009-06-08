@@ -22,9 +22,9 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	private boolean needsUpdatedBoundingBox = false;
 	
 	// font options
-	private boolean serifFont = false;
-	private int fontStyle = Font.PLAIN;
-	private int fontSize = 0; // size relative to default font size
+	private boolean serifFont;
+	private int fontStyle;
+	private int fontSize; // size relative to default font size
 	private int printDecimals = -1;
 	private int printFigures = -1;
 	public boolean useSignificantFigures = false;

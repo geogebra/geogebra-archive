@@ -50,7 +50,11 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 */
 	private JTabbedPane tabbedPane;
 
-
+	/**
+	 * The panel with general options.
+	 */
+	private OptionsGeneral generalPanel;
+	
 	/**
 	 * The panel where the user can select new default values for
 	 * certain objects.
@@ -101,9 +105,10 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * Update the GUI.
 	 */
 	public void updateGUI() {
+		generalPanel.updateGUI();
+		defaultsPanel.updateGUI();
 		fontPanel.updateGUI();
 		euclidianPanel.updateGUI();
-		defaultsPanel.updateGUI();
 	}
 
 	/**
@@ -120,11 +125,14 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		setLayout(new BorderLayout());
 
 		// init tabs
+		generalPanel = new OptionsGeneral(app);
 		defaultsPanel = new OptionsDefaults(app);
 		fontPanel = new OptionsFont(app);
 		euclidianPanel = new OptionsEuclidian(app, app.getEuclidianView());
 
 		// init scroll panes for tabs (show no extra borders)
+		JScrollPane generalPanelScroll = new JScrollPane(generalPanel);
+		generalPanelScroll.setBorder(BorderFactory.createEmptyBorder());
 		JScrollPane defaultsPanelScroll = new JScrollPane(defaultsPanel);
 		defaultsPanelScroll.setBorder(BorderFactory.createEmptyBorder());
 		JScrollPane fontsAndLangPanelScroll = new JScrollPane(fontPanel);
@@ -134,14 +142,22 @@ public class OptionsDialog extends JDialog implements WindowListener {
 
 		// init tabbing pane
 		tabbedPane = new OptionsTabbedPane();
+		
+		// general
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				SystemColor.RED), new JPanel());							// general
+				Color.RED), generalPanelScroll);
+		
+		// defaults
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				SystemColor.RED), defaultsPanelScroll);						// defaults
+				Color.RED), defaultsPanelScroll);
+		
+		// fonts & language
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				SystemColor.RED), fontsAndLangPanelScroll);					// fonts & language
+				Color.RED), fontsAndLangPanelScroll);
+		
+		// euclidian properties
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				SystemColor.RED), euclidianPanelScroll);					// euclidian properties
+				Color.RED), euclidianPanelScroll);
 		
 		// disable some tabs for applets
 		if(app.isApplet()) {
@@ -156,7 +172,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		// init close button
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlDkShadow));
-		buttonPanel.setBackground(SystemColor.white);
+		buttonPanel.setBackground(Color.white);
 		
 		applyButton = new JButton();
 		applyButton.addActionListener(new ActionListener() {
@@ -194,11 +210,12 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		closeButton.setText(app.getMenu("Close"));
 		applyButton.setText(app.getPlain("Apply"));
 
-		tabbedPane.setTitleAt(0, app.getPlain("General"));
+		tabbedPane.setTitleAt(0, app.getMenu("General"));
 		tabbedPane.setTitleAt(1, app.getPlain("Defaults"));
 		tabbedPane.setTitleAt(2, app.getPlain("FontsAndLanguage"));
 		tabbedPane.setTitleAt(3, app.getPlain("DrawingPad"));
 		
+		generalPanel.setLabels();
 		euclidianPanel.setLabels();
 		fontPanel.setLabels();
 		defaultsPanel.setLabels();
@@ -210,6 +227,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * TODO Save permanent settings
 	 */
 	private void apply() {
+		generalPanel.apply();
 		fontPanel.apply();
 		defaultsPanel.apply();
 	}

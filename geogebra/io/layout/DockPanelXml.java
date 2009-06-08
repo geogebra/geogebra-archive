@@ -97,7 +97,7 @@ public class DockPanelXml {
 	 * @return If the DockPanel was shown in a frame the last time it 
 	 * 		was visible.
 	 */
-	public boolean getOpenInFrame() {
+	public boolean isOpenInFrame() {
 		return openInFrame;
 	}
 
@@ -154,7 +154,7 @@ public class DockPanelXml {
 		sb.append("\" visible=\"");
 		sb.append(isVisible());
 		sb.append("\" inframe=\"");
-		sb.append(getOpenInFrame());
+		sb.append(isOpenInFrame());
 		sb.append("\" location=\"");
 		sb.append(getEmbeddedDef());
 		sb.append("\" size=\"");

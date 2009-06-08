@@ -95,7 +95,6 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected void createGUI(String title, String message, boolean autoComplete, int columns, int rows,
 			boolean specialChars, boolean greekLetters, boolean selectInitText, boolean showDisplayChars,
 			boolean showProperties, boolean showApply) {
-		setTitle(title);
 		setResizable(false);		
 		
 		//Create components to be displayed
@@ -118,16 +117,16 @@ public class InputDialog extends JDialog implements ActionListener,
 		// buttons
 		btPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		btPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		btProperties = new JButton(app.getPlain("Properties")+"...");
+		btProperties = new JButton();
 		btProperties.setActionCommand("OpenProperties");
 		btProperties.addActionListener(this);
-		btOK = new JButton(app.getPlain("OK"));
+		btOK = new JButton();
 		btOK.setActionCommand("OK");
 		btOK.addActionListener(this);
-		btCancel = new JButton(app.getPlain("Cancel"));
+		btCancel = new JButton();
 		btCancel.setActionCommand("Cancel");
 		btCancel.addActionListener(this);
-		btApply = new JButton(app.getPlain("Apply"));
+		btApply = new JButton();
 		btApply.setActionCommand("Apply");
 		btApply.addActionListener(this);
 		
@@ -155,7 +154,24 @@ public class InputDialog extends JDialog implements ActionListener,
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
 		//Make this dialog display it.
-		setContentPane(optionPane);				
+		setContentPane(optionPane);
+		
+		setLabels(title);
+	}
+	
+	/**
+	 * Update the labels of this component (applied if the language was changed).
+	 * 
+	 * @param The title of the dialog which is customized for every dialog
+	 */
+	public void setLabels(String title) {
+		setTitle(title);
+		
+		btOK.setText(app.getPlain("OK"));
+		btCancel.setText(app.getPlain("Cancel"));
+		btApply.setText(app.getPlain("Apply"));
+		
+		btProperties.setText(app.getPlain("Properties")+"...");
 	}
 	
 	public void showSpecialCharacters(boolean flag) {

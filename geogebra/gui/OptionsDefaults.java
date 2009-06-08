@@ -12,6 +12,7 @@ import geogebra.main.Application;
 import javax.swing.BorderFactory;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -220,27 +221,27 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 	 * Update the labels of the current panel. Should be applied if the
 	 * language was changed.
 	 * 
-	 * TODO use phrases (F.S.)
+	 * TODO use phrase for conic sector (F.S.)
 	 */
 	public void setLabels() {
 		// update tree labels
-		pointsNode.setUserObject("Points");
-		pointsFreeNode.setUserObject("Free");
-		pointsDepNode.setUserObject("Dependend");
-		pointsPathNode.setUserObject("On Path");
-		lineNode.setUserObject("Lines");
-		vectorNode.setUserObject("Vector");
-		conicNode.setUserObject("Conic");
+		pointsNode.setUserObject(app.getPlain("Point"));
+		pointsFreeNode.setUserObject(app.getPlain("PointFree"));
+		pointsDepNode.setUserObject(app.getPlain("PointDep"));
+		pointsPathNode.setUserObject(app.getPlain("PointOnPath"));
+		lineNode.setUserObject(app.getPlain("Line"));
+		vectorNode.setUserObject(app.getPlain("Vector"));
+		conicNode.setUserObject(app.getPlain("Conic"));
 		conicSectorNode.setUserObject("Conic Sector");
-		functionNode.setUserObject("Function");
-		polygonNode.setUserObject("Polygon");
-		locusNode.setUserObject("Locus");
-		textNode.setUserObject("Text");
-		imageNode.setUserObject("Image");
-		numberNode.setUserObject("Number");
-		angleNode.setUserObject("Angle");
-		booleanNode.setUserObject("Boolean");
-		listNode.setUserObject("List");
+		functionNode.setUserObject(app.getPlain("Function"));
+		polygonNode.setUserObject(app.getPlain("Polygon"));
+		locusNode.setUserObject(app.getPlain("Locus"));
+		textNode.setUserObject(app.getPlain("Text"));
+		imageNode.setUserObject(app.getPlain("Image"));
+		numberNode.setUserObject(app.getPlain("Numeric"));
+		angleNode.setUserObject(app.getPlain("Angle"));
+		booleanNode.setUserObject(app.getPlain("Boolean"));
+		listNode.setUserObject(app.getPlain("List"));
 		
 		propPanel.setLabels();
 	}

@@ -42,6 +42,7 @@ public class TextInputDialog extends InputDialog {
 
 	protected JCheckBox cbLaTeX;
 	private JComboBox cbLaTeXshortcuts;
+	private ComboBoxListener cbl;
 	private JPanel latexPanel;
 	private GeoText text;
 	private boolean isLaTeX;
@@ -58,25 +59,17 @@ public class TextInputDialog extends InputDialog {
 		inputHandler = new TextInputHandler();
 				
 		// create LaTeX checkbox
-		cbLaTeX = new JCheckBox(app.getPlain("LaTeXFormula"));
+		cbLaTeX = new JCheckBox();
 		cbLaTeX.setSelected(isLaTeX);
 		cbLaTeX.addActionListener(this);
 		
 		// add LaTeX shortcuts
-		cbLaTeXshortcuts = new JComboBox();								
-		cbLaTeXshortcuts.addItem("\u221a"); 											// 0 square root
-		cbLaTeXshortcuts.addItem("\u221b"); 											// 1 cubic root
-		cbLaTeXshortcuts.addItem("a / b");  											// 2 fraction
-		cbLaTeXshortcuts.addItem(app.getPlain("Vector")); 								// 3 vector
-		cbLaTeXshortcuts.addItem(app.getPlain("Segment") + " AB"); 						// 4 overline			
-		cbLaTeXshortcuts.addItem("\u2211"); 											// 5 sum		
-		cbLaTeXshortcuts.addItem("\u222b"); 											// 6 int
-		cbLaTeXshortcuts.addItem(" "); 													// 7 space
-		cbLaTeXshortcuts.addItem(app.getPlain("2x2Matrix")); 							// 8 2x2 matrix
-		cbLaTeXshortcuts.addItem(app.getPlain("3x3Matrix")); 							// 9 3x3 matrix
+		cbLaTeXshortcuts = new JComboBox();
 		cbLaTeXshortcuts.setFocusable(false);		
-		cbLaTeXshortcuts.setEnabled(isLaTeX);	
-		ComboBoxListener cbl = new ComboBoxListener();
+		cbLaTeXshortcuts.setEnabled(isLaTeX);
+		
+		cbl = new ComboBoxListener();
+		// items are added by setLabels() as they contain language strings
 		cbLaTeXshortcuts.addActionListener(cbl);
 		cbLaTeXshortcuts.addMouseListener(cbl);
 				
@@ -93,7 +86,32 @@ public class TextInputDialog extends InputDialog {
 		centerPanel.add(inputPanel, BorderLayout.CENTER);		
 		centerPanel.add(latexPanel, BorderLayout.SOUTH);	
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
-		centerOnScreen();		
+		centerOnScreen();
+		
+		setLabels(title);
+	}
+	
+	public void setLabels(String title) {
+		super.setLabels(title);
+		
+		cbLaTeX.setText(app.getPlain("LaTeXFormula"));
+		
+		
+		cbLaTeXshortcuts.removeActionListener(cbl);
+		
+		cbLaTeXshortcuts.removeAllItems();
+		cbLaTeXshortcuts.addItem("\u221a"); 											// 0 square root
+		cbLaTeXshortcuts.addItem("\u221b"); 											// 1 cubic root
+		cbLaTeXshortcuts.addItem("a / b");  											// 2 fraction
+		cbLaTeXshortcuts.addItem(app.getPlain("Vector")); 								// 3 vector
+		cbLaTeXshortcuts.addItem(app.getPlain("Segment") + " AB"); 						// 4 overline			
+		cbLaTeXshortcuts.addItem("\u2211"); 											// 5 sum		
+		cbLaTeXshortcuts.addItem("\u222b"); 											// 6 int
+		cbLaTeXshortcuts.addItem(" "); 													// 7 space
+		cbLaTeXshortcuts.addItem(app.getPlain("2x2Matrix")); 							// 8 2x2 matrix
+		cbLaTeXshortcuts.addItem(app.getPlain("3x3Matrix")); 							// 9 3x3 matrix
+		
+		cbLaTeXshortcuts.addActionListener(cbl);
 	}
 	
 	private class ComboBoxListener extends MyComboBoxListener {

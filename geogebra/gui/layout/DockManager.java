@@ -49,7 +49,7 @@ public class DockManager {
 		if(dockPanels != null) {
 			// hide existing external windows
 			for(int i = 0; i < dockPanels.length; ++i) {
-				if(dockPanels[i].isInFrame() && dockPanels[i].getInfo().isVisible()) {
+				if(dockPanels[i].getInfo().isOpenInFrame() && dockPanels[i].getInfo().isVisible()) {
 					hide(dockPanels[i]);
 				}
 			}
@@ -60,7 +60,7 @@ public class DockManager {
 				panelInfo.setWindowRect(dpInfo[i].getWindowRect());
 				panelInfo.setEmbeddedDef(dpInfo[i].getEmbeddedDef());
 				panelInfo.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
-				panelInfo.setOpenInFrame(dpInfo[i].getOpenInFrame());
+				panelInfo.setOpenInFrame(dpInfo[i].isOpenInFrame());
 				panelInfo.setVisible(dpInfo[i].isVisible());
 			}
 			
@@ -114,8 +114,13 @@ public class DockManager {
 			// now insert the dock panels
 			for(int i = 0; i < dpInfo.length; ++i) {
 				// skip panels which will not be drawn in the main window
-				if(!dpInfo[i].isVisible() || dpInfo[i].getOpenInFrame())
+				if(!dpInfo[i].isVisible())
 					continue;
+				
+				if(dpInfo[i].isOpenInFrame()) {
+					show(dockPanels[i]);
+					continue;
+				}
 				
 				DockSplitPane currentParent = rootPane;
 				String[] directions = dpInfo[i].getEmbeddedDef().split(",");
@@ -418,7 +423,7 @@ public class DockManager {
 		// TODO causes any problems?
 		app.getGuiManager().attachView(panel.getViewId());
 		
-		if(panel.getInfo().getOpenInFrame()) {
+		if(panel.getInfo().isOpenInFrame()) {
 			panel.createFrame();
 		} else {
 			// Transform the definition into an array of integers
@@ -545,7 +550,7 @@ public class DockManager {
 	 * @param viewId
 	 */
 	public void hide(int viewId) {
-		hide(getPanel(viewId));
+		hide(getPanel(viewId), true);
 	}
 	
 	/**
@@ -573,7 +578,7 @@ public class DockManager {
 			app.getGuiManager().detachView(panel.getViewId());
 		}
 		
-		if(panel.isInFrame()) {
+		if(panel.getInfo().isOpenInFrame()) {
 			panel.removeFrame();
 			panel.getInfo().setOpenInFrame(true); // open in frame the next time
 		} else {

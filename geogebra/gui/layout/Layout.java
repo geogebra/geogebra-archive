@@ -207,7 +207,7 @@ public class Layout {
 		for (int i = 0; i < panels.length; ++i) {
 			// just the width of the panels isn't updated every time the panel
 			// is updated, so we have to take care of this by ourself
-			if (!panels[i].getInfo().getOpenInFrame() && panels[i].getInfo().isVisible()) {
+			if (!panels[i].getInfo().isOpenInFrame() && panels[i].getInfo().isVisible()) {
 				DockSplitPane parent = panels[i].getParentSplitPane();
 				if (parent.getOrientation() == DockSplitPane.HORIZONTAL_SPLIT) {
 					panels[i].getInfo().setEmbeddedSize(panels[i].getWidth());

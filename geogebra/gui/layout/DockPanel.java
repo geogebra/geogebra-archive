@@ -213,6 +213,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
         });
 	   	frame.getContentPane().add(this);
 	   	
+	   	
 	   	// TODO multimonitor supported?
 	   	Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 	   	
@@ -232,6 +233,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	   	} else {
 	   		frame.setLocation(windowRect.getLocation());
 	   	}
+	   	info.setOpenInFrame(true);
 	   	
 	   	frame.setSize(windowRect.getSize());
 	   	frame.setVisible(true);
@@ -321,7 +323,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * under a different name).
 	 */
 	public void updateTitle() {		
-		if(isInFrame()) {
+		if(info.isOpenInFrame()) {
 			StringBuffer windowTitle = new StringBuffer();
 			windowTitle.append(app.getPlain(viewTitle));
 			
@@ -425,7 +427,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * @return The parent DockSplitPane or null.
 	 */
 	public DockSplitPane getParentSplitPane() {
-		if(isInFrame())
+		if(info.isOpenInFrame())
 			return null;
 		
 		Container parent = getParent();
@@ -501,7 +503,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 		sb.append(",visible=");
 		sb.append(info.isVisible());
 		sb.append(",inframe=");
-		sb.append(isInFrame());
+		sb.append(info.isOpenInFrame());
 		sb.append("]");
 		return sb.toString();
 	}
