@@ -132,7 +132,7 @@ public abstract class CommandProcessor  {
     	    return arg;
     	}
 
-        final MyError argErr(Application app, String cmd, Object arg) {
+        protected final MyError argErr(Application app, String cmd, Object arg) {
            String localName = app.getCommand(cmd);
            StringBuffer sb = new StringBuffer();
            sb.append(app.getCommand("Command") + " " + localName + ":\n");
