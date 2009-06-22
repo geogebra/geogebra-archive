@@ -310,6 +310,8 @@ public class RelativeCopy {
 			colorText = updateCellReferences(dynamicColorList, oldColorText, dx, dy);
 		}
 			
+		// allow pasting blank strings
+		if (text.equals("")) text = "\"\"";
 
 		//Application.debug("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
 		//int column3 = table.convertColumnIndexToView(column) + dx;

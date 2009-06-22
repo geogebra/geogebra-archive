@@ -1416,7 +1416,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			if (browserWindow != null)
 				browserWindow.call(jsFunction, args);
 		} catch (Exception e) {						
-			e.printStackTrace();
+			Application.debug("JavaScript function "+jsFunction+" not found");
 		}    
 	} 
 

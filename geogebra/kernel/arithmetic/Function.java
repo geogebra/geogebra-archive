@@ -1067,10 +1067,10 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Calculates the integral of this function
      * @return result as function
      */
-    final private Function integralMathPiper() {    	
-    
-	    // Application.debug("Trying MathPiper");
-    
+    final private Function integralMathPiper() {
+    	
+    	//Application.debug("Trying MathPiper");
+    	
     	// temporarily replace the variable by "x"
         String oldVar = fVar.toString();
         fVar.setVarString("x");
