@@ -213,7 +213,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private static final String RB_COMMAND = "/geogebra/properties/command";
 	private static final String RB_ERROR = "/geogebra/properties/error";
 	private static final String RB_PLAIN = "/geogebra/properties/plain";
-	public static final String RB_JAVA_UI = "/geogebra/properties/java-ui";
+	public static final String RB_JAVA_UI = "/geogebra/properties/javaui";
 
 	private static final String RB_SETTINGS = "/geogebra/export/settings";
 	private static final String RB_ALGO2COMMAND = "/geogebra/kernel/algo2command";
