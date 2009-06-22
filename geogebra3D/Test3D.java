@@ -21,16 +21,26 @@ package geogebra3D;
 
 //import geogebra.Application;
 //import geogebra.kernel.Construction;
+import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.Region;
+import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.kernel3D.GeoConic3D;
+import geogebra3D.kernel3D.GeoLine3D;
+import geogebra3D.kernel3D.GeoPlane3D;
+import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoPolyhedron;
+import geogebra3D.kernel3D.GeoQuadric;
+import geogebra3D.kernel3D.GeoSegment3D;
+import geogebra3D.kernel3D.Kernel3D;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-
-import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.*;
-import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.euclidian3D.EuclidianView3D;
-import geogebra3D.kernel3D.*;
 
 
 

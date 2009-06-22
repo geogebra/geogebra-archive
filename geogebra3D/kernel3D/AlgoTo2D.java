@@ -18,12 +18,9 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoSegment;
-import geogebra.kernel.Kernel;
 
 
 

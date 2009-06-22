@@ -84,11 +84,11 @@ public class Polyline {
     }     
     
     final public void draw(Graphics2D g2) {            	
-     	Drawable.drawGeneralPath(gp, g2);
+     	Drawable.drawWithValueStrokePure(gp, g2);
     }
     
     final public void fill(Graphics2D g2) {
-    	Drawable.fillGeneralPath(gp, g2);
+    	Drawable.fillWithValueStrokePure(gp, g2);
     }
     
     final public boolean intersects(double x, double y, double w, double h) {

@@ -1,15 +1,11 @@
 package geogebra.cas.view;
 
-import geogebra.cas.GeoGebraCAS;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;

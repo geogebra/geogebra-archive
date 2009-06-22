@@ -45,12 +45,15 @@ import javax.swing.JMenuItem;
  * &lt;/ul&gt;
  * </pre>
  * 
+ * Log:
+ * 14.02.09: Updated for the new module loading fascility. (JarManager)
+ * 
  * @author H-P Ulven
- * @version 08.07.08
+ * @version 23.02.09
  */
 public class PluginManager implements ActionListener { // Listens on PluginMenu
 
-	private final static boolean DEBUG = true;
+	private final static boolean DEBUG = false;
 	private final static String PLUGINFILE = "plugin.properties";
 	// private final static String nl= System.getProperty("line.separator");
 
@@ -72,8 +75,12 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 	public PluginManager(Application app) {
 		this.app = app; // ref to Ggb application
 
-		ClassPathManipulator.addURL(addPathToJar("."), null);
-
+		//ClassPathManipulator.addURL(addPathToJar("."), null);
+		geogebra.JarManager jm=geogebra.JarManager.getSingleton(false);	//14.02.09
+		String cb=jm.getCodeBase().toString();
+		if(!cb.startsWith("http://")){								//16.02.09: Don't use plugins with webstart
+			ClassPathManipulator.addURL(jm.getCodeBase(), null);            //14.02.09
+		}//if webstart
 		loadProperties();
 
 	}// PluginManager()
@@ -99,10 +106,10 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 			ClassPathManipulator.addURL(url, null);
 		} catch (MalformedURLException e) {
 			Application
-					.debug("PluginManager.addPath: MalformedURLExcepton for "
+					.debug("addPath: MalformedURLExcepton for "
 							+ path);
 		} catch (Throwable e) {
-			Application.debug("PluginManager.addPath: " + e.getMessage()
+			Application.debug("addPath: " + e.getMessage()
 					+ " for " + path);
 		}// try-catch
 	}// addURL(String)
@@ -115,25 +122,25 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 
 		PlugLetIF plugin = null;
 		JMenuItem menuitem = null;
-		// String menutext=null;
+		String menutext=null;
 
-		// Reflect out class and install:
-		debug("addPlugin: " + cname + "," + args);
+		// Reflect out class and install:		debug("addPlugin: " + cname + "," + args);
 		plugin = getPluginInstance(cname); // reflect out an instance of plugin
 		if (plugin != null) {
 			debug("plugin.getMenuText(): " + plugin.getMenuText());
 			try {
 				plugin.init(app.getGgbApi(), args); // new syntax
-				plugintable.put(cname, plugin); // put in hashtable
-				menuitem = new JMenuItem(plugin.getMenuText()); // make menuitem
-				menuitem.setName(cname);
+				menutext=plugin.getMenuText();		//23.02.09 Use menutext instead of cname! More flexible!
+				plugintable.put(menutext,plugin); //23.02.09  cname, plugin); // put in hashtable
+				menuitem = new JMenuItem(menutext);//23.02.09 plugin.getMenuText()); // make menuitem
+				menuitem.setName(menutext);//23.02.09 cname);
 				menuitem.addActionListener(this);
 				if (pluginmenu == null) {
 					pluginmenu = new JMenu("Plugins");
 				}
 				pluginmenu.add(menuitem); // add to menu
 			} catch (Throwable t) {
-				Application.debug("PluginManager.addPlugin: " + t.toString());
+				Application.debug("addPlugin: " + t.toString());
 			}// try-catch
 		} else {
 			Application.debug("PluginManager could not reflect out plugin "
@@ -163,6 +170,7 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 		for (int i = 0; i < lines.size(); i++) { // for all lines in
 													// plugin.properties
 			paths.clear();
+			args="";					//23.02.09
 			line = (String) lines.get(i);
 			line = line.trim();
 			if (line.startsWith("#") || // comment or
@@ -246,16 +254,16 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 			Object o = get.invoke(c, emptyobj);
 			pluglet = (PlugLetIF) o;
 		} catch (NoSuchMethodException t) {
-			Application.debug("PluginManager: " + method
+			Application.debug(method
 					+ " gives NoSuchMethodExcepton.");
 		} catch (IllegalAccessException e) {
-			Application.debug("PluginManager: " + method
+			Application.debug(method
 					+ " gives IllegalAccesException.");
 		} catch (InvocationTargetException e) {
-			Application.debug("PluginManager: " + method
+			Application.debug(method
 					+ " gives InvocationTargetException");
 		} catch (Throwable t) {
-			Application.debug("PluginManager: " + method + " gives "
+			Application.debug(method + " gives "
 					+ t.toString());
 		}// end try catch
 		return pluglet;
@@ -265,11 +273,11 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 	private void loadProperties() {
 		ClassLoader loader = app.getClass().getClassLoader();
 
-		Application.debug("PluginManager.loadProperties " + PLUGINFILE);
+		//Application.debug("PluginManager.loadProperties " + PLUGINFILE);
 
 		InputStream is = loader.getResourceAsStream(PLUGINFILE);
 		if (is == null) {
-			Application.debug("PluginManager cannot find " + PLUGINFILE);
+			//Application.debug("Cannot find " + PLUGINFILE);
 		} else {
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			String line;
@@ -281,10 +289,10 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 						lines.add(line); // debug(line);
 					}// while lines
 				} else {
-					Application.debug("Not a valid properties file");
+					Application.debug("Not a valid plugin.properties file");
 				}// if br
 			} catch (IOException ioe) {
-				Application.debug("PluginManager: IOException reading "
+				Application.debug("IOException reading "
 						+ PLUGINFILE);
 			}// try-catch
 		}// if is
@@ -293,7 +301,6 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 	// /// ----- Debug ----- /////
 	private final static void debug(String s) {
 		if (DEBUG) {
-			System.out.print("\nPluginManager:   ");
 			Application.debug(s);
 		}// if()
 	}// debug()
@@ -329,14 +336,14 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 	                }
 	        	}
 	        	
-	        	Application.debug("addPath "+url.toString());
+	        	debug("addPath "+url.toString());
 	        	
 	        	return url;
 	        }catch(MalformedURLException e) {
-	            Application.debug("PluginManager.addPath: MalformedURLExcepton for "+path);
+	            Application.debug("addPath: MalformedURLExcepton for "+path);
 	            return null;
 	        }catch(Throwable e){
-	            Application.debug("PluginManager.addPath: "+e.getMessage()+" for "+path);
+	            Application.debug("addPath: "+e.getMessage()+" for "+path);
 	            return null;
 	        }//try-catch        
 	    }//addPath(String)

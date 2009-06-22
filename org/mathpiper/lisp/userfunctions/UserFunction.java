@@ -18,7 +18,8 @@
 
 package org.mathpiper.lisp.userfunctions;
 
-import org.mathpiper.lisp.*;
+import org.mathpiper.lisp.ConsPointer;
+import org.mathpiper.lisp.Environment;
 
 
 

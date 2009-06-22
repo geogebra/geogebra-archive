@@ -4,17 +4,17 @@ package org.freehep.graphicsio.emf.gdi;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 
 import org.freehep.graphicsio.ImageGraphics2D;
 import org.freehep.graphicsio.emf.EMFConstants;
+import org.freehep.graphicsio.emf.EMFImageLoader;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFTag;
-import org.freehep.graphicsio.emf.EMFImageLoader;
 import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 import org.freehep.graphicsio.raw.RawImageWriteParam;
 import org.freehep.util.UserProperties;
 import org.freehep.util.io.NoCloseOutputStream;
@@ -25,7 +25,7 @@ import org.freehep.util.io.NoCloseOutputStream;
  * of visual C++.
  * 
  * @author Mark Donszelmann
- * @version $Id: BitBlt.java,v 1.3 2008-05-04 12:19:19 murkle Exp $
+ * @version $Id: BitBlt.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public class BitBlt extends EMFTag implements EMFConstants {
 

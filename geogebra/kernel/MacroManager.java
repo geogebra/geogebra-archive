@@ -98,26 +98,9 @@ public class MacroManager {
 	final void notifyEuclidianViewAlgos() {		
 		// save selected macros
 		for (int i=0; i < macroList.size(); i++) {			
-			Macro macro = (Macro) macroList.get(i);
-			if (macro.wantsEuclidianViewUpdate()) {
-				// Application.debug("update macro: " + macro);				
-				macro.getMacroConstruction().updateAllEuclidianViewAlgorithms();				
-			}
-		}	
-	}
-	
-	/**
-	 * Returns whether there are macros that want to be updated
-	 * when the Euclidian view is changed.
-	 */
-	final boolean wantsEuclidianViewUpdate() {				
-		for (int i=0; i < macroList.size(); i++) {			
-			Macro macro = (Macro) macroList.get(i);
-			if (macro.wantsEuclidianViewUpdate()) {
-				return true;				
-			}
-		}	
-		return false;
+			Macro macro = (Macro) macroList.get(i);			
+			macro.getMacroConstruction().notifyEuclidianViewAlgos();			
+		}		
 	}
 	
 	/**

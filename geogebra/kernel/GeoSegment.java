@@ -42,7 +42,7 @@ GeoSegmentInterface {
 	public static final int SEGMENT_DECORATION_THREE_ARROWS = 6;
 //	 Michael Borcherds 20071006 end
 	
-	// added by Loï¿½c
+	// added by Loïc
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(SEGMENT_DECORATION_NONE),
 				new Integer(SEGMENT_DECORATION_ONE_TICK),
@@ -155,11 +155,9 @@ GeoSegmentInterface {
    }
    
    protected boolean showInEuclidianView() {
-	   return defined;
+	   // segments of polygons can have thickness 0
+	   return defined && lineThickness != 0;
    }
-   
-   
-   
    
    
    /** 
@@ -319,7 +317,7 @@ GeoSegmentInterface {
 	
 	/**
 	 * Returns the smallest possible parameter value for this
-	 * path (may be Double.NEGATIVE_INFINITY)
+	 * path.
 	 * @return
 	 */
 	public double getMinParameter() {
@@ -328,7 +326,7 @@ GeoSegmentInterface {
 	
 	/**
 	 * Returns the largest possible parameter value for this
-	 * path (may be Double.POSITIVE_INFINITY)
+	 * path.
 	 * @return
 	 */
 	public double getMaxParameter() {

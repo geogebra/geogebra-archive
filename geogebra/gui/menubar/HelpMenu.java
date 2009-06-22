@@ -1,12 +1,13 @@
 package geogebra.gui.menubar;
 
+import geogebra.GeoGebra;
+import geogebra.gui.util.BrowserLauncher;
+import geogebra.main.Application;
+
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-
-import geogebra.gui.util.BrowserLauncher;
-import geogebra.main.Application;
 
 /**
  * The "Help" menu.
@@ -73,7 +74,7 @@ class HelpMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().showURLinBrowser(
-						Application.GEOGEBRA_WEBSITE);
+						GeoGebra.GEOGEBRA_WEBSITE);
 			}
 		};
 
@@ -83,7 +84,7 @@ class HelpMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				BrowserLauncher
-						.openURL(Application.GEOGEBRA_WEBSITE + "forum/");
+						.openURL(GeoGebra.GEOGEBRA_WEBSITE + "forum/");
 			}
 		};
 
@@ -92,7 +93,7 @@ class HelpMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				String url = Application.GEOGEBRA_WEBSITE;
+				String url = GeoGebra.GEOGEBRA_WEBSITE;
 				if (app.getLocale().getLanguage().equals("de"))
 					url += "de/wiki/";
 				else

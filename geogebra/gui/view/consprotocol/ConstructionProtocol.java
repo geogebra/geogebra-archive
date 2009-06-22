@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui.view.consprotocol;
 
 import geogebra.euclidian.Drawable;
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -44,7 +45,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -778,9 +778,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
             //setBorder(UIManager.getBorder("TableHeader.cellBorder"));
             // better for Macs?
             setForeground(Color.black);
-            setBackground(new Color(212,208,200));
-            setBorder(BorderFactory.createBevelBorder(0));
-          		    
+            setBackground(MyTable.BACKGROUND_COLOR_HEADER);
+            //setBorder(BorderFactory.createBevelBorder(0));
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
+		
         }
 
         public Component getTableCellRendererComponent(
@@ -791,7 +792,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
             int row,
             int column) {
             setFont(table.getFont());
-            setText((value == null) ? "" : value.toString());
+            setText((value == null) ? "" : " " + value.toString());
             return this;
         }
     }

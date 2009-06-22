@@ -66,6 +66,8 @@ public class Relation extends java.lang.Object {
 			return relation((GeoConicPart) a, (GeoConicPart) b);
 		else if (a instanceof GeoConic && b instanceof GeoConic)
 			return relation((GeoConic) a, (GeoConic) b);
+		else if (a instanceof GeoFunction && b instanceof GeoFunction)
+			return relation((GeoFunction) a, (GeoFunction) b);
         
 		else if (a instanceof GeoPoint && b instanceof GeoPolygon)
 			return relation((GeoPoint) a, (GeoPolygon) b);
@@ -313,6 +315,13 @@ public class Relation extends java.lang.Object {
             points[0].remove();
         }
         return str;
+    }
+    /**
+     * description of the relation between functions
+     */
+    final private String relation(GeoFunction a, GeoFunction b) {
+
+        return equalityString(a, b, a.isEqual(b));
     }
 
     /***************************

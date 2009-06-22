@@ -52,7 +52,7 @@ public class AlgoConicPartCircle extends AlgoConicPart {
         AlgoCircleTwoPoints algo = new AlgoCircleTwoPoints(cons, center, startPoint);
         cons.removeFromConstructionList(algo);
         conic = algo.getCircle();
-        
+
         // temp Points
         P = new GeoPoint(cons);
         Q = new GeoPoint(cons);

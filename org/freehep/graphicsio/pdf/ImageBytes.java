@@ -1,12 +1,12 @@
 // Copyright 2000-2007 FreeHEP
 package org.freehep.graphicsio.pdf;
 
+import java.awt.Color;
+import java.awt.image.RenderedImage;
+import java.io.IOException;
+
 import org.freehep.graphicsio.ImageConstants;
 import org.freehep.graphicsio.ImageGraphics2D;
-
-import java.awt.image.RenderedImage;
-import java.awt.Color;
-import java.io.IOException;
 
 /**
  * PDF writes images as ZLIB or JPEG. This class converts an image to a
@@ -16,7 +16,7 @@ import java.io.IOException;
  * used format.
  *
  * @author Steffen Greiffenberg
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 class ImageBytes {
 
@@ -115,6 +115,9 @@ class ImageBytes {
 }
 /**
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2008/05/04 12:31:28  murkle
+ * added FreeHEP back in to CVS
+ *
  * Revision 1.1  2008/02/25 21:17:17  murkle
  * added FreeHEP 2.1 source
  *

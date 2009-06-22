@@ -69,7 +69,13 @@ public class AlgoAreaConic extends AlgoElement {
     	// area of sector
     	if (conic.isGeoConicPart()) {
     		GeoConicPart conicPart = (GeoConicPart) conic;
-    		int partType = conicPart.getConicPartType();
+    		
+    		
+    		// added area for arcs, so just call getArea
+    		area.setValue(conicPart.getArea());
+    		/*
+    		 * int partType = conicPart.getConicPartType();
+    		
 			if (partType == GeoConicPart.CONIC_PART_SECTOR) {				
 				// circumference of sector
 				area.setValue(conicPart.getValue());					
@@ -77,7 +83,8 @@ public class AlgoAreaConic extends AlgoElement {
 			else {
 				// area of arc is undefined	    	
 				area.setUndefined();
-			}			
+			}			*/
+    		
 			return;
     	}
     	

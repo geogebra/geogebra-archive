@@ -19,7 +19,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
 
 
 /**
@@ -111,17 +110,13 @@ public class AlgoText extends AlgoElement {
 			return;
 		}
 		
-		if (text.useSignificantFigures()) {
-			kernel.setTemporaryPrintFigures(text.getPrintFigures());
-		} else {
-			kernel.setTemporaryPrintDecimals(text.getPrintDecimals());
-		}
-					
+		text.setTemporaryPrintAccuracy();
+		
 		// standard case: set text
 		boolean bool = substituteVars == null ? true : substituteVars.getBoolean();
 		text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, bool));	
 		
-		kernel.restorePrintAccuracy();
+		text.restorePrintAccuracy();
 		
 		// update startpoint position of text
 		if (startPointCopy != null) {

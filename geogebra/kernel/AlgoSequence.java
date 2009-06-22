@@ -21,6 +21,8 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
+import java.util.ArrayList;
+
 
 /**
  * Algorithm for the Sequence[ expression of var, var, from-value, to-value, step ] command.
@@ -36,8 +38,9 @@ public class AlgoSequence extends AlgoElement {
     private GeoList list; // output
         
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
-    private boolean expIsFunctionOrCurve, isEmpty;
+    private boolean expIsFunctionOrCurve, expIsRandom, isEmpty;
     private AlgoElement expressionParentAlgo;
+    private ArrayList randomNumberPredecessors;
    
    
     /**
@@ -82,7 +85,12 @@ public class AlgoSequence extends AlgoElement {
         	
     	expressionParentAlgo = expression.getParentAlgorithm();
     	expIsFunctionOrCurve = expression.isGeoFunction() || expression.isGeoCurveCartesian();    	      
-    	       
+    	
+    	// random number predecessors of expression
+    	randomNumberPredecessors = expression.getRandomNumberPredecessorsWithoutLabels();    
+    	expIsRandom = randomNumberPredecessors != null ||
+    					expression.isGeoNumeric() && ((GeoNumeric) expression).isRandomNumber();    	
+    	
 //    	Application.debug("expression: " + expression);
 //   	Application.debug("  parent algo: " + expression.getParentAlgorithm());
 //    //	Application.debug("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
@@ -242,8 +250,7 @@ public class AlgoSequence extends AlgoElement {
 		listElement.setParentAlgorithm(this);
 		listElement.setConstructionDefaults();		
 		listElement.setUseVisualDefaults(false);
-		
-		
+				
 		// functions and curves use the local variable var
 		// so we have to replace var and all dependent objects of var
 		// by their current values
@@ -305,23 +312,26 @@ public class AlgoSequence extends AlgoElement {
     private void updateLocalVar(double varVal) {
     	// set local variable to given value
     	var.setValue(varVal);
+    	
+    	// update all random numbers without labels
+    	if (randomNumberPredecessors != null) {
+    		for (int i=0; i < randomNumberPredecessors.size(); i++) {
+    			GeoNumeric randNum = (GeoNumeric) randomNumberPredecessors.get(i);   				
+    			randNum.updateRandomNumber();    				    				
+    		}
+    	}
     		    	   
     	// update var's algorithms until we reach expression 
-    	if (expressionParentAlgo != null) {
-    		int depAlgosSize = var.getAlgoUpdateSet().getSize();
-    		
-    		// update all dependent algorithms of the local variable var
-    		if (depAlgosSize > 1) {
-	    		this.setStopUpdateCascade(true);
-	    		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
-	    		this.setStopUpdateCascade(false);
-    		}
-    		// no dependent algorithms: make sure that random numbers are updated (e.g. random())
-    		// so we update the expression in any case
-    		else {
-    			expressionParentAlgo.update();    			
-    		}
+    	if (expressionParentAlgo != null) {    	    		
+    		// update all dependent algorithms of the local variable var    		
+    		this.setStopUpdateCascade(true);
+    		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
+    		this.setStopUpdateCascade(false);    		
 		}
+    	
+    	if (expIsRandom) {
+    		expressionParentAlgo.update();
+    	}
     }
     
 

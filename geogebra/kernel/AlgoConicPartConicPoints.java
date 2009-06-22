@@ -43,8 +43,10 @@ public class AlgoConicPartConicPoints extends AlgoConicPart {
         this.endPoint = endPoint;                          
         
         // temp points
-        P = new GeoPoint(cons, conic);
-        Q = new GeoPoint(cons, conic);
+        P = new GeoPoint(cons);        
+        Q = new GeoPoint(cons);
+        P.setPath(conic);
+        Q.setPath(conic);
         
         conicPart = new GeoConicPart(cons, type);
 
@@ -89,6 +91,7 @@ public class AlgoConicPartConicPoints extends AlgoConicPart {
     	
     	// now take the parameters from the temp points
     	conicPart.set(conic);
+    	    	   	    
     	conicPart.setParameters(P.getPathParameter().t, Q.getPathParameter().t, 
     			true);
     }

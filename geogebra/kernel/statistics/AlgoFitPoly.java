@@ -13,12 +13,13 @@ the Free Software Foundation.
 */
 
 
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.AlgoElement;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoList;
+import geogebra.kernel.arithmetic.NumberValue;
+
 
 
 /** 
@@ -27,6 +28,9 @@ import geogebra.kernel.Construction;
  * (Borcherds)
  * @author Hans-Petter Ulven
  * @version 24.04.08
+ * 
+ * 27.01.09:	Extended FitPoly to more than 4th degree
+ * ToDo:        Put in a max degree limit, after some testing...
  */
 public class AlgoFitPoly extends AlgoElement{
 
@@ -64,7 +68,7 @@ public class AlgoFitPoly extends AlgoElement{
         int size=geolist.size();
         int par;
         boolean regok=true;
-        double[] cof=null;
+        double[] cof=null;				//long ms=System.currentTimeMillis();
         par=(int)Math.round(degree.getDouble());
         if(!geolist.isDefined() || (size<2) || (par>=size) ) {   //24.04.08: size<2 or par>=size
             geofunction.setUndefined();
@@ -110,8 +114,18 @@ public class AlgoFitPoly extends AlgoElement{
                         cof[4]=regMath.getP5();
                     }//else: ->
                     break;
-                default:regok=false;   //24.04.08:  Only 1<=degree<=4
+                default:
+                	if((par>4)&&(par<300)){			//ToDo: test speed for max limit!
+                		regok=regMath.doPolyN(geolist,par);
+                		if(regok){
+                			cof=new double[par+1];
+                			cof=regMath.getPar();
+                		}//else: ->
+                	}else{
+                		regok=false;   //24.04.08:  Only 1<=degree
+                	}//if 
             }//switch
+            //System.out.println("Used: "+(System.currentTimeMillis()-ms));
             if(!regok){
                 geofunction.setUndefined();
                 return;  

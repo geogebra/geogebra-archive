@@ -5,13 +5,14 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.inputbar.AlgebraInput;
-import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.GeoGebraFileChooser;
+import geogebra.gui.util.foxtrot.Job;
+import geogebra.gui.util.foxtrot.Worker;
 import geogebra.gui.view.algebra.AlgebraController;
 import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
@@ -37,7 +38,6 @@ import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -47,7 +47,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -76,6 +75,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicFileChooserUI;
+import javax.swing.text.JTextComponent;
 
 
 /**
@@ -89,7 +89,6 @@ public class DefaultGuiManager implements GuiManager {
 	private static final int SPREADSHEET_INI_ROWS = 100;
 	
 	// Java user interface properties, for translation of JFileChooser
-	private static final String RB_JAVA_UI = "/geogebra/properties/javaui";
 	private ResourceBundle rbJavaUI;
 
 	private Application app;
@@ -162,6 +161,10 @@ public class DefaultGuiManager implements GuiManager {
 		return app.getCurrentSelectionListener() == propDialog;
 	}
 	
+	public boolean isInputFieldSelectionListener() {
+		return app.getCurrentSelectionListener() == algebraInput.getTextField();
+	}
+	
 	  public void clearPreferences() {
 	    	if (app.isSaved() || app.saveCurrentFile()) {
 	    		app.setWaitCursor();
@@ -174,6 +177,7 @@ public class DefaultGuiManager implements GuiManager {
 				app.setLanguage(app.getMainComponent().getLocale());
 				app.updateContentPaneAndSize();
 				app.setDefaultCursor();
+				app.setUndoActive(true);
 			}
 	    }
 
@@ -200,6 +204,15 @@ public class DefaultGuiManager implements GuiManager {
     		spreadsheetView.setScrollToShow(scrollToShow);
 	}
 	
+	public void resetSpreadsheet() {
+    	if (spreadsheetView != null) 
+    		spreadsheetView.restart();
+	}
+	
+	public boolean hasSpreadsheetView() {
+		return spreadsheetView != null;
+	}
+	
 	public JComponent getSpreadsheetView() {
 		// init spreadsheet view
     	if (spreadsheetView == null) { 
@@ -208,6 +221,12 @@ public class DefaultGuiManager implements GuiManager {
     	
     	return spreadsheetView; 
 	}	
+	
+	public void updateSpreadsheetColumnWidths() {
+		if (spreadsheetView != null) { 
+			spreadsheetView.updateColumnWidths();
+		}
+	}
 	
 	public int getHighestUsedSpreadsheetColumn() {
 		if (spreadsheetView != null) { 
@@ -221,6 +240,21 @@ public class DefaultGuiManager implements GuiManager {
 			return spreadsheetView.getTraceRow(column);
 		}
 		return -1;
+	}
+	
+	public void startCollectingSpreadsheetTraces() {
+		if (spreadsheetView != null) 
+			spreadsheetView.startCollectingSpreadsheetTraces();
+	}
+
+	public void stopCollectingSpreadsheetTraces() {
+		if (spreadsheetView != null) 
+			spreadsheetView.stopCollectingSpreadsheetTraces();
+	}
+	
+	public void traceToSpreadsheet(GeoElement geo) {
+		if (spreadsheetView != null) 
+			spreadsheetView.traceToSpreadsheet(geo);		
 	}
 	
 	public String getSpreadsheetViewXML() {
@@ -326,11 +360,7 @@ public class DefaultGuiManager implements GuiManager {
 	
 	private void initAlgebraController() {
 		if (algebraController == null) {
-			algebraController = new AlgebraController(app.getKernel());
-			
-			// add controller as keylistener to EuclidianView
-			if (!app.isApplet())
-				app.getEuclidianView().addKeyListener(algebraController);
+			algebraController = new AlgebraController(app.getKernel());			
 		}
 	}
 
@@ -339,6 +369,11 @@ public class DefaultGuiManager implements GuiManager {
 			algebraInput = new AlgebraInput(app);
 
 		return algebraInput;
+	}
+	
+	public JTextComponent getAlgebraInputTextField() {
+		getAlgebraInput();
+		return algebraInput.getTextField();
 	}
 	
 	public void updateAlgebraInput() {
@@ -350,6 +385,13 @@ public class DefaultGuiManager implements GuiManager {
 		if (propDialog == null) {
 			propDialog = new PropertiesDialog(app);
 		}
+	}
+	
+	public synchronized void reinitPropertiesDialog() {
+		propDialog = null;
+		System.gc();
+		propDialog = new PropertiesDialog(app);
+		
 	}
 
 	public void doAfterRedefine(GeoElement geo) {
@@ -427,8 +469,10 @@ public class DefaultGuiManager implements GuiManager {
 	}
 	
 	public void setShowToolBarHelp(boolean flag) {
-		if (appToolbarPanel != null)
+		if (appToolbarPanel != null || flag == false) {
+			getToolbarPanel();
 			appToolbarPanel.setShowToolBarHelp(flag);
+		}
 	}
 
 	public JComponent getConstructionProtocolNavigation() {
@@ -524,10 +568,7 @@ public class DefaultGuiManager implements GuiManager {
 		return appToolbarPanel.getDefaultToolbarString();
 	}
 
-	// TODO really required to do all the initGUI() calls ? F.S.
 	public void updateFonts() {
-		SwingUtilities.updateComponentTreeUI(app.getMainComponent());
-
 		if (algebraView != null)
 			algebraView.updateFonts();
 		if (spreadsheetView != null)
@@ -544,12 +585,12 @@ public class DefaultGuiManager implements GuiManager {
 			SwingUtilities.updateComponentTreeUI(optionsDialog);
 		}
 
-		if (appToolbarPanel != null)
+		if (appToolbarPanel != null) {
 			appToolbarPanel.initToolbar();
+		}
 
 		if (propDialog != null) {
-			//propDialog.initGUI();
-			SwingUtilities.updateComponentTreeUI(propDialog);
+			propDialog.initGUI();			
 		}
 		if (constProtocol != null)
 			constProtocol.initGUI();
@@ -558,6 +599,8 @@ public class DefaultGuiManager implements GuiManager {
 		
 		if (app.hasCasView())
 			app.getCasView().updateFonts();
+			
+		SwingUtilities.updateComponentTreeUI(app.getMainComponent());			
 	}
 
 	public void setLabels() {
@@ -584,8 +627,11 @@ public class DefaultGuiManager implements GuiManager {
 		// TODO don't reinit GUIs anymore! (performance!) (F.S.)
 		if (appToolbarPanel != null)
 			appToolbarPanel.initToolbar();
+		
 		if (propDialog != null)
-			propDialog.setLabels();
+			// changed to force all language strings to be updated
+			reinitPropertiesDialog();  //was propDialog.initGUI();
+			
 		if (constProtocol != null)
 			constProtocol.initGUI();
 		if (constProtocolNavigation != null)
@@ -646,7 +692,7 @@ public class DefaultGuiManager implements GuiManager {
 	 * euclidianView
 	 */
 	public void showDrawingPadPopup(Component invoker, Point p) {
-		// clear highlighting and selections in views
+		// clear highlighting and selections in views		
 		app.getEuclidianView().resetMode();
 
 		// menu for drawing pane context menu
@@ -662,20 +708,20 @@ public class DefaultGuiManager implements GuiManager {
 	public void showPopupMenu(GeoElement geo, Component invoker, Point p) {
 		if (geo == null || !app.letShowPopupMenu())
 			return;
-
+		
 		if (app.getKernel().isAxis(geo)) {
 			showDrawingPadPopup(invoker, p);
-			return;
+		} else {
+			// clear highlighting and selections in views
+			app.getEuclidianView().resetMode();
+			Point screenPos = invoker.getLocationOnScreen();
+			screenPos.translate(p.x, p.y);
+	
+			ContextMenuGeoElement popupMenu = new ContextMenuGeoElement(app, geo,
+					screenPos);
+			popupMenu.show(invoker, p.x, p.y);
 		}
-
-		// clear highlighting and selections in views
-		app.getEuclidianView().resetMode();
-		Point screenPos = invoker.getLocationOnScreen();
-		screenPos.translate(p.x, p.y);
-
-		ContextMenuGeoElement popupMenu = new ContextMenuGeoElement(app, geo,
-				screenPos);
-		popupMenu.show(invoker, p.x, p.y);
+	
 	}
 	
 	/**
@@ -701,7 +747,8 @@ public class DefaultGuiManager implements GuiManager {
 	public void showPropertiesDialog(ArrayList geos) {
 		if (!app.letShowPropertiesDialog())
 			return;
-
+		
+	
 		// save the geos list: it will be cleared by setMoveMode()
 		ArrayList selGeos = null;
 		if (geos == null)
@@ -714,16 +761,34 @@ public class DefaultGuiManager implements GuiManager {
 		}
 
 		app.setMoveMode();
+		app.setWaitCursor();
 
 		// open properties dialog
 		initPropertiesDialog();
 		propDialog.setVisibleWithGeos(selGeos);
+		
+		app.setDefaultCursor();
 	}
 
 	private ArrayList tempGeos = new ArrayList();
 
 	public void showPropertiesDialog() {
 		showPropertiesDialog(null);
+	}
+
+	/**
+
+	 * Displays the porperties dialog for the drawing pad
+	 */
+	public void showDrawingPadPropertiesDialog() {
+		if (!app.letShowPropertiesDialog())
+			return;
+		app.setWaitCursor();
+		app.getEuclidianView().resetMode();
+		PropertiesDialogGraphicsWindow euclidianViewDialog = new PropertiesDialogGraphicsWindow(
+				app, app.getEuclidianView());
+		euclidianViewDialog.setVisible(true);
+		app.setDefaultCursor();
 	}
 
 	/**
@@ -781,8 +846,10 @@ public class DefaultGuiManager implements GuiManager {
 	}
 
 	private void showTextDialog(GeoText text, GeoPoint startPoint) {
+		app.setWaitCursor();
 		JDialog dialog = createTextDialog(text, startPoint);
 		dialog.setVisible(true);
+		app.setDefaultCursor();
 	}
 
 	public JDialog createTextDialog(GeoText text, GeoPoint startPoint) {
@@ -793,19 +860,24 @@ public class DefaultGuiManager implements GuiManager {
 
 	/**
 	 * Displays the redefine dialog for geo
+	 * 
+	 * @param allowTextDialog: whether text dialog should be used for texts
 	 */
-	public void showRedefineDialog(GeoElement geo) {
+	public void showRedefineDialog(GeoElement geo, boolean allowTextDialog) {
 		// doBeforeRedefine();
 
-		if (geo.isGeoText() && !geo.isTextCommand()) {
+		if (allowTextDialog && geo.isGeoText() && !geo.isTextCommand()) {
 			showTextDialog((GeoText) geo);
 			return;
 		}
 
 		// Michael Borcherds 2007-12-31 BEGIN
 		// InputHandler handler = new RedefineInputHandler(this, geo);
-		String str = geo.isIndependent() ? geo.toValueString() : geo
-				.getCommandDescription();
+		//String str = geo.isIndependent() ? geo.toValueString() : geo
+		//		.getCommandDescription();
+		
+		String str = geo.getRedefineString(false, true);
+		
 		InputHandler handler = new RedefineInputHandler(app, geo, str);
 		// Michael Borcherds 2007-12-31 END
 		/*
@@ -823,7 +895,7 @@ public class DefaultGuiManager implements GuiManager {
 		InputDialog id = new InputDialog(app, geo.getNameDescription(), app.getPlain("Redefine"), str, true, handler, geo);
 		id.showSpecialCharacters(true);
 		id.setVisible(true);
-		id.selectText();
+		//id.selectText();
 	}
 
 	/**
@@ -832,6 +904,8 @@ public class DefaultGuiManager implements GuiManager {
 	 * @return whether a new slider (number) was create or not
 	 */
 	public boolean showSliderCreationDialog(int x, int y) {
+		app.setWaitCursor();
+		
 		SliderDialog dialog = new SliderDialog(app, x, y);
 		dialog.setVisible(true);
 		GeoNumeric num = (GeoNumeric) dialog.getResult();
@@ -841,6 +915,9 @@ public class DefaultGuiManager implements GuiManager {
 			num.setLabelVisible(true);
 			num.update();
 		}
+		
+		app.setDefaultCursor();
+		
 		return num != null;
 	}
 
@@ -868,23 +945,31 @@ public class DefaultGuiManager implements GuiManager {
 	 * @return whether a new image was create or not
 	 */
 	public boolean loadImage(GeoPoint loc, boolean fromClipboard) {
+		app.setWaitCursor();
+		
 		String fileName;
 		if (fromClipboard)
 			fileName = getImageFromClipboard();
 		else
 			fileName = getImageFromFile();
 
-		if (fileName == null)
-			return false;
-
-		// create GeoImage object for this fileName
-		GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
-		geoImage.setFileName(fileName);
-		geoImage.setCorner(loc, 0);
-		geoImage.setLabel(null);
-
-		GeoImage.updateInstances();
-		return true;
+		boolean ret;
+		if (fileName == null) {
+			ret = false;
+		}
+		else {
+			// create GeoImage object for this fileName
+			GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
+			geoImage.setFileName(fileName);
+			geoImage.setCorner(loc, 0);
+			geoImage.setLabel(null);
+	
+			GeoImage.updateInstances();
+			ret = true;
+		}
+		
+		app.setDefaultCursor();
+		return ret;
 	}
 
 	public Color showColorChooser(Color currentColor) {
@@ -1027,11 +1112,11 @@ public class DefaultGuiManager implements GuiManager {
 		currentLocale = app.getLocale();			
 		
 		// load javaui properties file for specific locale
-		rbJavaUI = MyResourceBundle.loadSingleBundleFile(RB_JAVA_UI + "_" + currentLocale);		
+		rbJavaUI = MyResourceBundle.loadSingleBundleFile(Application.RB_JAVA_UI + "_" + currentLocale);		
 		boolean foundLocaleFile = rbJavaUI != null;
 		if (!foundLocaleFile) 
 			// fall back on English
-			rbJavaUI = MyResourceBundle.loadSingleBundleFile(RB_JAVA_UI);
+			rbJavaUI = MyResourceBundle.loadSingleBundleFile(Application.RB_JAVA_UI);
 		
 		// set or delete all keys in UIManager
 		Enumeration keys = rbJavaUI.getKeys();
@@ -1072,6 +1157,7 @@ public class DefaultGuiManager implements GuiManager {
 				
 				MyFileFilter fileFilter = new MyFileFilter();
 				fileFilter.addExtension("jpg");
+				fileFilter.addExtension("jpeg");
 				fileFilter.addExtension("png");
 				fileFilter.addExtension("gif");
 				fileFilter.addExtension("tif");
@@ -1159,19 +1245,27 @@ public class DefaultGuiManager implements GuiManager {
     
 
     public boolean save() {
+    	app.setWaitCursor();
+    	
     	// close properties dialog if open
     	closeOpenDialogs();
     		    	
+    	boolean success = false;
         if (app.getCurrentFile() != null){
         	// Mathieu Blossier - 2008-01-04
         	// if the file is read-only, open save as        	
 			if (!app.getCurrentFile().canWrite()){
-				return saveAs();
-			}else
-				return app.saveGeoGebraFile(app.getCurrentFile());
+				success = saveAs();
+			} else {
+				success = app.saveGeoGebraFile(app.getCurrentFile());
+			}
         }
-		else
-			return saveAs();
+		else {
+			success = saveAs();
+		}
+        
+        app.setDefaultCursor();
+        return success;
     }
 	
 	public boolean saveAs() {
@@ -1326,10 +1420,10 @@ public class DefaultGuiManager implements GuiManager {
 
 					// Michael Borcherds 2008-05-04
 					Object[] options = {
-							app.getMenu("Overwrite") + " " + file.getName(),
+							app.getMenu("Overwrite"), 
 							app.getMenu("DontOverwrite") };
 					int n = JOptionPane.showOptionDialog(app.getMainComponent(),
-							app.getPlain("OverwriteFile"), app.getPlain("Question"),
+							app.getPlain("OverwriteFile") + "\n" + file.getName() , app.getPlain("Question"),
 							JOptionPane.DEFAULT_OPTION,
 							JOptionPane.WARNING_MESSAGE, null, options,
 							options[1]);
@@ -1385,17 +1479,20 @@ public class DefaultGuiManager implements GuiManager {
 	
 
 	public void openFile() {
+		
 		if (propDialog != null && propDialog.isShowing())
 			propDialog.cancel();
 
 		if (app.isSaved() || saveCurrentFile()) {
+			app.setWaitCursor();
 			File oldCurrentFile = app.getCurrentFile();
 			app.setCurrentFile(null);
 
 			initFileChooser();
 			fileChooser.setMode(GeoGebraFileChooser.MODE_GEOGEBRA);
 			fileChooser.setCurrentDirectory(app.getCurrentPath());
-			
+			fileChooser.setMultiSelectionEnabled(true);
+				
 			// GeoGebra File Filter
 			MyFileFilter fileFilter = new MyFileFilter();
 			fileFilter.addExtension(Application.FILE_EXT_GEOGEBRA);
@@ -1427,6 +1524,7 @@ public class DefaultGuiManager implements GuiManager {
 			// <-- Modified for Intergeo File Format (Yves Kreis & Ingo
 			// Schandeler)
 
+			app.setDefaultCursor();
 			int returnVal = fileChooser.showOpenDialog(app.getMainComponent());
 
 			File[] files = null;
@@ -1446,6 +1544,7 @@ public class DefaultGuiManager implements GuiManager {
 			if (app.getCurrentFile() == null) {
 				app.setCurrentFile(oldCurrentFile);
 			}
+			fileChooser.setMultiSelectionEnabled(false);
 		}
 	}
 
@@ -1460,7 +1559,6 @@ public class DefaultGuiManager implements GuiManager {
 			boolean allowOpeningInThisInstance, String extension) {
 		// <-- Added for Intergeo File Format (Yves Kreis)
 		// there are selected files
-		app.setWaitCursor();
 		if (files != null) {
 			File file;
 			int counter = 0;
@@ -1513,10 +1611,29 @@ public class DefaultGuiManager implements GuiManager {
 				}
 			}
 		}
-		app.setDefaultCursor();
+		
+	}
+	
+	public void allowGUIToRefresh() {
+		if (!SwingUtilities.isEventDispatchThread())
+			return;
+		
+		 // use Foxtrot to wait a bit until screen has refreshed
+        Worker.post(new Job()
+        {
+           public Object run()
+           {  
+              try {
+            	  Thread.sleep(10);
+              } catch (InterruptedException e) {
+            	  e.printStackTrace();
+              }   
+              return null;
+           }
+        });
 	}
 
-	public boolean loadFile(final File file, boolean isMacroFile) {
+	public boolean loadFile(final File file, final boolean isMacroFile) {
 		if (!file.exists()) {
 			// show file not found message
 			JOptionPane.showConfirmDialog(app.getMainComponent(),
@@ -1524,15 +1641,22 @@ public class DefaultGuiManager implements GuiManager {
 					app.getError("Error"), JOptionPane.DEFAULT_OPTION,
 					JOptionPane.WARNING_MESSAGE);
 			return false;
-		}
-
-		if (!isMacroFile) {
+		}										     
+        
+ 	   app.setWaitCursor();  
+	   if (!isMacroFile) {
 			// hide navigation bar for construction steps if visible
 			app.setShowConstructionProtocolNavigation(false);
 		}
 
 		boolean success = app.loadXML(file, isMacroFile);
+        updateGUIafterLoadFile(success, isMacroFile);
+        app.setDefaultCursor();
+        return success;
+        
+    }
 		
+	private void updateGUIafterLoadFile(boolean success, boolean isMacroFile) {
 		if(success && !isMacroFile && !app.isIgnoringDocumentPerspective()) {
 			setPerspectives(app.getTmpPerspectives());
 		}
@@ -1577,10 +1701,12 @@ public class DefaultGuiManager implements GuiManager {
 				int furnitureWidth = app.getPreferredSize().width;
 				int furnitureHeight = app.getPreferredSize().height - titlebarHeight;
 
-				GraphicsEnvironment env = GraphicsEnvironment
-						.getLocalGraphicsEnvironment();
+				//GraphicsEnvironment env = GraphicsEnvironment
+				//		.getLocalGraphicsEnvironment();
 
-				Rectangle screenSize = env.getMaximumWindowBounds(); // takes
+				//Rectangle screenSize = env.getMaximumWindowBounds(); 
+				Rectangle screenSize = app.getScreenSize();
+				// takes
 				// Windows
 				// toolbar
 				// (etc)
@@ -1619,6 +1745,7 @@ public class DefaultGuiManager implements GuiManager {
 					double scale_down = Math.max(width
 							/ (screenSize.width - furnitureWidth), height
 							/ (screenSize.height - furnitureHeight));
+					Application.debug(scale_down+"");
 					app.getEuclidianView().setCoordSystem(xZero / scale_down, yZero
 							/ scale_down, xscale / scale_down, yscale
 							/ scale_down, false);
@@ -1699,8 +1826,6 @@ public class DefaultGuiManager implements GuiManager {
 				app.updateContentPane();
 			}
 		}
-
-		return success;
 	}
 
 	// Added for Intergeo File Format (Yves Kreis) -->
@@ -1824,7 +1949,7 @@ public class DefaultGuiManager implements GuiManager {
 		if (app.isUndoActive() && undoAction != null) {
 			undoAction.setEnabled(kernel.undoPossible());
 			redoAction.setEnabled(kernel.redoPossible());
-		}				
+		}
 	}
 	
 	public void redo() {
@@ -2064,7 +2189,7 @@ public class DefaultGuiManager implements GuiManager {
 	    		// URL like http://www.geogebra.org/help/docuen/topics/UpperSum.html
 	    		strFile = "docu" + languageISOcode + "/topics/" + command + ".html";
 	    	}
-			String strURL = Application.GEOGEBRA_WEBSITE + "help/" + strFile;  
+			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "help/" + strFile;  
 			
 			if (Application.MAC_OS) {
 				String path = app.getCodeBase().getPath();
@@ -2096,7 +2221,7 @@ public class DefaultGuiManager implements GuiManager {
 	        sb.append(Util.toHTMLString(app.getPlain("CreatedWith"))); // MRB 2008-06-14 added Util.toHTMLString
 	        sb.append(" ");
 	        sb.append("<a href=\"");
-	        sb.append(Application.GEOGEBRA_WEBSITE);
+	        sb.append(GeoGebra.GEOGEBRA_WEBSITE);
 	        sb.append("\" target=\"_blank\" >");
 	        sb.append("GeoGebra");
 	        sb.append("</a>");
@@ -2104,28 +2229,24 @@ public class DefaultGuiManager implements GuiManager {
 	    }
 	    
 	    public void setMode(int mode) {  
-	    	// if the properties dialog is showing, close it
-	     	if (propDialog != null && propDialog.isShowing()) {    		
+	    	// close properties dialog 
+	    	// if it is not the current selection listener
+	     	if (propDialog != null && 
+	     			propDialog.isShowing() &&
+	     			propDialog != app.getCurrentSelectionListener()) 
+	     	{    		
 	     		propDialog.setVisible(false);	
 	     	}
+	     	
+	     	// reset algebra view
 	        if (algebraView != null)
 	        	algebraView.reset();
 	        
+	        // tell EuclidianView
 	        app.getEuclidianView().setMode(mode);        
-	        
-	        
-	        if (algebraInput != null && app.showAlgebraInput()) {
-	        	if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
-	            	app.setCurrentSelectionListener(algebraInput.getTextField());            	                       	
-	            } else if (mode == EuclidianView.MODE_MOVE) {
-                    app.setCurrentSelectionListener(algebraInput.getTextField());
-                } else {
-	        		algebraInput.getInputButton().setSelected(false);
-	        	}
-		    }                
-	        
+	      
 	        // select toolbar button
-	        setToolbarMode(mode);
+	        setToolbarMode(mode);	         
 	    }
 	    
 	    public void setToolbarMode(int mode) {
@@ -2179,64 +2300,12 @@ public class DefaultGuiManager implements GuiManager {
 			initActions();
 			return undoAction;
 		}
-	    	 
-		/*
-		 * KeyEventDispatcher implementation to handle key events globally for the
-		 * application
-		 */
-		public boolean dispatchKeyEvent(KeyEvent e) {		
-
-			boolean consumed = false;
-			Object source = e.getSource();		
-
-			// catch all key events from algebra view and give
-			// them to the algebra controller
-			if (source == algebraView) {
-				switch (e.getID()) {
-				case KeyEvent.KEY_PRESSED:
-					consumed = app.keyPressedConsumed(e);
-					break;
-				}
-			}
-			if (consumed)
-				return true;
-
-			switch (e.getKeyCode()) {
-			case KeyEvent.VK_F3:
-				// F3 key: set focus to input field				
-				if (algebraInput != null) {
-					algebraInput.requestFocus();
-					consumed = true;
-				}
-				break;
-
-			// ESC changes to move mode
-			case KeyEvent.VK_ESCAPE:
-				// stop automatic animation if its running
-				kernel.getAnimatonManager().stopAnimation();	
-				kernel.getAnimatonManager().clearAnimatedGeos();
-				
-				// ESC is also handled by algebra input field and spreadsheet
-				if ((algebraInput != null && algebraInput.hasFocus()) ||
-						//TODO better way to check for spreadsheet
-						//***** check on MacOS if changed *****
-						(spreadsheetView != null && source instanceof AutoCompleteTextField)) {
-					consumed = false;
-				} else {						
-					setMode(EuclidianView.MODE_MOVE);
-					consumed = true;
-				}
-				break;
-			}
-			
-			if (consumed)
-				return true;		
-
-			return consumed;
-		}
-
+	    	 	
 		public void updateFrameSize() {
-			((GeoGebraFrame) app.getFrame()).updateSize();
+			JFrame fr = app.getFrame();
+			if (fr != null) {
+				((GeoGebraFrame) fr).updateSize();
+			}
 		}
 		
 		public void updateFrameTitle() {
@@ -2262,6 +2331,7 @@ public class DefaultGuiManager implements GuiManager {
 			GeoGebraFrame wnd = new GeoGebraFrame();
 			wnd.setGlassPane(layout.getDockManager().getGlassPane());
 			wnd.setApplication(app);
+			
 			return wnd;
 		}
 		

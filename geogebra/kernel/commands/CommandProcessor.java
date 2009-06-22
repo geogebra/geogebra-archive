@@ -192,6 +192,10 @@ public abstract class CommandProcessor  {
 				cons.setSuppressLabelCreation(oldMacroMode);		   		
 		   	 }
 		   	 
+		   	 // list of zero size is not wanted
+		   	 if (list != null && list.size() == 0)
+		   		 list = null;
+		   	 
 		   	 return list;
         }            	
 }
@@ -1958,6 +1962,15 @@ final public  GeoElement[] process(Command c) throws MyError {
                     c.getLabels(),
                     ((GeoFunctionable) arg[1]).getGeoFunction(),
                     (GeoLine) arg[0]);
+			
+			// intersection of two lists
+			else if (arg[0].isGeoList() && arg[1].isGeoList() ) {
+				GeoElement[] ret = { 
+						kernel.Intersection(c.getLabel(),
+						(GeoList) arg[0], (GeoList)arg[1] ) };
+				return ret;
+			} 
+            
 			else {
                 if (!ok[0])
                     throw argErr(app, "Intersect", arg[0]);
@@ -3064,7 +3077,7 @@ final public  GeoElement[] process(Command c) throws MyError {
                 GeoElement geo = (GeoElement) arg[0];
                 GeoElement[] ret = { geo };
                 // delete object
-                geo.remove();
+                geo.removeOrSetUndefinedIfHasFixedDescendent();
                 return ret;
             } else
 				throw argErr(app, "Delete", arg[0]);
@@ -4464,32 +4477,10 @@ class CmdUnion extends CommandProcessor {
 
 }
 
-class CmdIntersection extends CommandProcessor {
+class CmdIntersection extends CmdIntersect {
 
 	public CmdIntersection(Kernel kernel) {
 		super(kernel);
-	}
-
-	public GeoElement[] process(Command c) throws MyError {
-		int n = c.getArgumentNumber();
-		GeoElement[] arg;
-		arg = resArgs(c);
-		
-		switch (n) {
-		case 2:
-
-			if (arg[0].isGeoList() && arg[1].isGeoList() ) {
-				GeoElement[] ret = { 
-						kernel.Intersection(c.getLabel(),
-						(GeoList) arg[0], (GeoList)arg[1] ) };
-				return ret;
-			} else
-
-				throw argErr(app, c.getName(), arg[0]);
-		
-		default:
-			throw argNumErr(app, c.getName(), n);
-		}
 	}
 
 }

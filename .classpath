@@ -6,6 +6,9 @@
 	<classpathentry kind="lib" path="laf.jar"/>
 	<classpathentry kind="lib" path="3D/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="3D/jogl.jar"/>
+	<classpathentry kind="lib" path="p200ant_java5only.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.5.0"/>
+	<classpathentry kind="lib" path="3D/vecmath.jar"/>
+	<classpathentry kind="lib" path="3D/j3dcore.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

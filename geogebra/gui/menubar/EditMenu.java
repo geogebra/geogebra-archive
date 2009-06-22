@@ -1,5 +1,10 @@
 package geogebra.gui.menubar;
 
+import geogebra.gui.util.ImageSelection;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
+import geogebra.main.Application;
+
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -8,11 +13,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-
-import geogebra.gui.util.ImageSelection;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 /**
  * The "Edit" menu.

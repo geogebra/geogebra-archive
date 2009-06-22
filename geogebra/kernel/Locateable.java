@@ -21,6 +21,8 @@ public interface Locateable {
 	
 	public boolean hasAbsoluteLocation();
 	
+	public boolean isAlwaysFixed();
+	
 	/**
 	 * Use this method to tell the locateable that its
 	 * startpoint will be set soon. (This is needed

@@ -6,14 +6,14 @@ import java.io.IOException;
 import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFTag;
 import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * SetBkMode TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: SetBkMode.java,v 1.3 2008-05-04 12:18:26 murkle Exp $
+ * @version $Id: SetBkMode.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public class SetBkMode extends EMFTag implements EMFConstants {
 

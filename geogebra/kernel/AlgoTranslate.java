@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
 
 
 
@@ -54,7 +53,7 @@ public class AlgoTranslate extends AlgoTransformation {
         out = (Translateable) outGeo;
         setInputOutput();
         
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
                 
         compute();               
     }           

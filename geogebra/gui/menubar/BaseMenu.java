@@ -1,9 +1,9 @@
 package geogebra.gui.menubar;
 
+import geogebra.main.Application;
+
 import java.awt.Event;
 import java.awt.Toolkit;
-
-import geogebra.main.Application;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;

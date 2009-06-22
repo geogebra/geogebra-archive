@@ -34,7 +34,7 @@ public abstract class AlgoConicPart extends AlgoElement {
      */
     AlgoConicPart(Construction cons, int type) {
         super(cons);        
-        this.type = type;        
+        this.type = type;     
     }
     
 	protected String getClassName() {

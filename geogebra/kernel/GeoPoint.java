@@ -20,20 +20,18 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * 2D Point
@@ -47,8 +45,16 @@ GeoPointInterface {
 	
 	private static final long serialVersionUID = 1L;
 
+	// don't set point size here as this would overwrite setConstructionDefaults() 
+	// in GeoElement constructor
+	//public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	public int pointSize;
-	private int pointStyle;
+	
+	/**
+	 * The individual style of this point. If the value is -1, the
+	 * global point style is used.
+	 */
+	private int pointStyle = -1; // Florian Sonner 2008-07-17
 	
 	private Path path;
 	private PathParameter pathParameter;
@@ -71,7 +77,7 @@ GeoPointInterface {
     
     public GeoPoint(Construction c) {     	 
     	super(c);     	
-    	setUndefined(); 
+    	setUndefined();    	
     }
   
     /**
@@ -96,6 +102,10 @@ GeoPointInterface {
     	setCoords(0,0,1);
     }
     
+    final public void clearPathParameter() {
+    	pathParameter = null;
+    }
+    
     final public PathParameter getPathParameter() {
     	if (pathParameter == null)
     		pathParameter = new PathParameter();
@@ -114,7 +124,10 @@ GeoPointInterface {
 	}        
 	
     protected String getTypeString() {
-		return "Point";
+    	if (toStringMode == Kernel.COORD_COMPLEX)
+    		return "ComplexNumber";
+    	else
+    		return "Point";
 	}
     
     public int getGeoClassType() {
@@ -135,11 +148,15 @@ GeoPointInterface {
 		    	pathParameter.set(p.pathParameter);
 	    	}
 	    	setCoords(p.x, p.y, p.z);     
+	    	setMode(p.toStringMode); // complex etc
     	}
     	else if (geo.isGeoVector()) {
     		GeoVector v = (GeoVector) geo; 
     		setCoords(v.x, v.y, 1d);   
+	    	setMode(v.toStringMode); // complex etc
     	}
+    	
+
     } 
     
     
@@ -155,7 +172,7 @@ GeoPointInterface {
 	/**
 	 * @param i
 	 */
-	public void setPointSize(int i) {
+	public void setPointSize(int i) {		
 		pointSize = i;
 	}
 
@@ -187,9 +204,7 @@ GeoPointInterface {
 		case 2:
 			pointStyle = style;
 			break;
-	
 			
-		// TODO remove due to defaults (F.S.)
 		default:
 			pointStyle = -1;
 		}
@@ -209,6 +224,10 @@ GeoPointInterface {
 	 * e.g. point A = (a, b) where a and b are free GeoNumeric objects.
 	 */
 	final public boolean hasChangeableCoordParentNumbers() {
+		
+		if (isFixed())
+			return false;
+		
 		ArrayList coords = getCoordParentNumbers();		
 		if (coords.size() == 0) return false;
 		
@@ -303,9 +322,6 @@ GeoPointInterface {
 			// e.g. a + x(D)
 			coordNumeric = (GeoNumeric) en.getLeft();
 			
-			// TODO: remove
-			System.out.println("coordNumeric: " + coordNumeric);
-			
 			// check that variables in right branch are all independent to avoid circular definitions
 			HashSet rightVars = en.getRight().getVariables();			
 			if (rightVars != null) {
@@ -329,8 +345,19 @@ GeoPointInterface {
 		return path != null;
 	}
 	
-	public Path getPath() {
+	final public Path getPath() {
 		return path;
+	}
+	
+	void setPath(Path p) {
+		path = p;
+		
+		// tell conic that this point is on it, that's needed to handle reflections
+        // of concis correctly for path parameter calculation of point P
+        GeoElement geo = path.toGeoElement();
+        if (geo.isGeoConic()) {
+        	((GeoConic) geo).addPointOnConic(this);
+        }   
 	}
 	
 	public void addToPathParameter(double a) {
@@ -384,8 +411,8 @@ GeoPointInterface {
 		// set coordinates
 		this.x = x;
 		this.y = y;
-		this.z = z;					
-		
+		this.z = z;		
+				
 		// update point on path: this may change coords
 		// so updateCoords() is called afterwards
 		if (path != null) {
@@ -400,7 +427,7 @@ GeoPointInterface {
 			region.pointChangedForRegion(this);
 		}
 			
-		// this avoids multiple computation of inhomogeneous coords;
+		// this avoids multiple computations of inhomogeneous coords;
 		// see for example distance()
 		updateCoords();
 				
@@ -421,12 +448,6 @@ GeoPointInterface {
 	}
 	
 	final public void updateCoords() {
-		
-		//if (coordinateFunction != null) {
-		//	inhomX = ((GeoNumeric)(coordinateFunction.get(0))).getValue(); 
-		//	inhomY = ((GeoNumeric)(coordinateFunction.get(1))).getValue(); 
-		//	return;
-		//}
 		// infinite point
 		if (kernel.isZero(z)) {
 			isInfinite = true;
@@ -505,9 +526,22 @@ GeoPointInterface {
      * Writes (x/z, y/z) to res.
      */
     final public void getInhomCoords(double [] res) {
-       	res[0] = getInhomX();
-       	res[1] = getInhomY();
+       	res[0] = inhomX;
+       	res[1] = inhomY;
     }        	
+    
+    final public void getPolarCoords(double [] res) {
+       	res[0] = GeoVec2D.length(inhomX, inhomY);
+       	res[1] = Math.atan2(inhomY, inhomX);
+    }
+        
+    final public double getInhomX() {
+       	return inhomX;
+    }        	
+        
+    final public double getInhomY() {
+       	return inhomY;
+    }     	
         
     // euclidian distance between this GeoPoint and P
     final public double distance(GeoPoint P) {       
@@ -807,7 +841,8 @@ GeoPointInterface {
             break;
 
             default:
-                sb.append("\t<coordStyle style=\"cartesian\"/>\n");
+            	// don't save default
+               // sb.append("\t<coordStyle style=\"cartesian\"/>\n");
         }
         
 		// point size
@@ -817,9 +852,11 @@ GeoPointInterface {
 		
     
 		// point style, Florian Sonner 2008-07-17
-		sb.append("\t<pointStyle val=\"");
-			sb.append(pointStyle);
-		sb.append("\"/>\n");
+		if (pointStyle >= 0) {
+			sb.append("\t<pointStyle val=\"");
+				sb.append(pointStyle);
+			sb.append("\"/>\n");
+		}
             
         return sb.toString();   
     }
@@ -873,8 +910,16 @@ GeoPointInterface {
 						
 		// update all registered locatables (they have this point as start point)
 		if (locateableList != null) {			
-			GeoElement.updateCascade(locateableList);
-		}		
+			GeoElement.updateCascade(locateableList, getTempSet());
+		}			
+	}
+	
+	private static TreeSet tempSet;	
+	private static TreeSet getTempSet() {
+		if (tempSet == null) {
+			tempSet = new TreeSet();
+		}
+		return tempSet;
 	}
 	
 	
@@ -924,6 +969,13 @@ GeoPointInterface {
 			}			
 		}
 		
+		if (path != null) {
+			GeoElement geo = path.toGeoElement();
+			if (geo.isGeoConic()) {
+				((GeoConic) geo).removePointOnConic(this);
+			}
+		}
+		
 		super.doRemove();
 	}
 	
@@ -932,7 +984,11 @@ GeoPointInterface {
 		
 		if (geo.isGeoPoint()) {
 			pointSize = ((GeoPoint) geo).pointSize;
-			pointStyle = ((GeoPoint)geo).pointStyle;
+			pointStyle = ((GeoPoint) geo).pointStyle;
+		}		
+		else if (geo instanceof PointProperties) {
+			setPointSize(((PointProperties)geo).getPointSize());
+			setPointStyle(((PointProperties)geo).getPointStyle());
 		}
 	}
 	
@@ -981,68 +1037,7 @@ GeoPointInterface {
 			return comparatorX;
 		}
 	  private static Comparator comparatorX;
-
-		//private GeoList coordinateFunction; // { GeoNumeric x, GeoNumeric y }
-/*
-		public final GeoList getCoordinateFunction() {		
-			return coordinateFunction;
-		}
-
-		public void setCoordinateFunction(GeoList fun) 
-		{
-			if (coordinateFunction != null) {
-				coordinateFunction.unregisterConditionListener(this);
-			}
-			
-			// set new condition
-			coordinateFunction = fun;
-			
-			// register new condition
-			if (coordinateFunction != null) {
-				coordinateFunction.registerConditionListener(this);
-			}		
-		}
-		
-		public final void removeCoordinateFunction() {
-			if (coordinateFunction != null) {
-				coordinateFunction.unregisterConditionListener(this);
-			}
-			coordinateFunction = null;
-		}
-		
-	    final public double getInhomX() {
-	       	if (coordinateFunction == null)
-	       		return inhomX;    	
-	       	
-	       	GeoList coordinateFunctionTemp = coordinateFunction;
-	       	//coordinateFunction = null;
-	       	double ret = ((GeoNumeric)(coordinateFunctionTemp.get(0))).getValue();
-	       	//coordinateFunction = coordinateFunctionTemp;
-	       	return ret;
-	    }        	
-	        
-	    final public double getInhomY() {
-	       	if (coordinateFunction == null)
-	       		return inhomY;    	
-	       	
-	       	GeoList coordinateFunctionTemp = coordinateFunction;
-	       	//coordinateFunction = null;
-	       	double ret = ((GeoNumeric)(coordinateFunctionTemp.get(1))).getValue();
-	       	//coordinateFunction = coordinateFunctionTemp;
-	       	return ret;
-	    }        	*/
-	        
-	    final public double getInhomX() {
-	       		return inhomX;   
-	    }
-	        
-	    final public double getInhomY() {
-	       		return inhomY;    	
-	    }
-	    
-	    
-	    
-	    
+    
 	    
 	    /////////////////////////////////////////////
 	    // REGION
@@ -1065,7 +1060,6 @@ GeoPointInterface {
 	    }
 
 		public boolean isVector3DValue() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 	    

@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra.kernel.jama.GgbMat;
 
 /**
  * Reverse a list. Adapted from AlgoSort
@@ -56,9 +56,9 @@ public class AlgoDeterminant extends AlgoElement {
 
     protected final void compute() {
     	   		
-   		Ggb3DMatrix matrix = new Ggb3DMatrix(inputList);
+   		GgbMat matrix = new GgbMat(inputList);
    		
-   		if (matrix.isSingular() || !matrix.isSquare()) {
+   		if (matrix.isUndefined() || !matrix.isSquare()) {
   			num.setUndefined();
 	   		return;   		
 	   	}

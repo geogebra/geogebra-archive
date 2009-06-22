@@ -20,7 +20,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.MyDouble;
 
 /**
@@ -32,7 +31,8 @@ public final class GeoAngle extends GeoNumeric {
 
 	private static final long serialVersionUID = 1L;
 
-	public int arcSize = EuclidianView.DEFAULT_ANGLE_SIZE;
+	//public int arcSize = EuclidianView.DEFAULT_ANGLE_SIZE;
+	public int arcSize;
 
 	// allow angle > pi
 	// private boolean allowReflexAngle = true;
@@ -122,6 +122,10 @@ public final class GeoAngle extends GeoNumeric {
 	final public boolean isGeoAngle() {
 		return true;
 	}
+	
+	final public boolean isAngle() {
+		return true;
+	}
 
 	public void set(GeoElement geo) {
 		GeoNumeric num = (GeoNumeric) geo;
@@ -148,6 +152,14 @@ public final class GeoAngle extends GeoNumeric {
 	 * @see setAngleStyle()
 	 */
 	public void setValue(double val) {
+		double angVal = calcAngleValue(val);
+		super.setValue(angVal);
+	}
+	
+	/**
+	 * Converts the val to a value between 0 and 2pi.
+	 */
+	private double calcAngleValue(double val) {
 		// limit to [0, 2pi]
 		double angVal = kernel.convertToAngleValue(val);
 
@@ -168,20 +180,9 @@ public final class GeoAngle extends GeoNumeric {
 			if (angVal < Math.PI)
 				angVal = 2.0 * Math.PI - angVal;
 			break;
-		}
-
-		// if (raw_value!=angVal) changedReflexAngle=true; else
-		// changedReflexAngle=false;
-
-		// changedReflexAngle = !allowReflexAngle && angVal > Math.PI;
-		// changedReflexAngle = ((angleStyle==ANGLE_ISNOTREFLEX && angVal >
-		// Math.PI) ||
-		// (angleStyle==ANGLE_ISREFLEX && angVal < Math.PI));
-		// if (changedReflexAngle) {
-		// angVal = Kernel.PI_2 - angVal;
-		// }			
-
-		super.setValue(angVal);
+		}		
+		
+		return angVal;
 	}
 
 	// Michael Borcherds 2007-10-21 END
@@ -318,11 +319,7 @@ public final class GeoAngle extends GeoNumeric {
 		return angleStyle;
 	}
 
-	// Michael Borcherds 2007-10-21 END
-
-	public boolean isAngle() {
-		return true;
-	}
+	// Michael Borcherds 2007-10-21 END	
 
 	final public String toValueString() {
 		return kernel.formatAngle(value).toString();
@@ -368,6 +365,7 @@ public final class GeoAngle extends GeoNumeric {
 			sb.append("\"/>\n");
 		}
 		sb.append(getXMLAllowReflexAngleTag());
+		sb.append(getXMLEmphasizeRightAngleTag());		
 		sb.append(getXMLanimationTags());
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
@@ -382,9 +380,9 @@ public final class GeoAngle extends GeoNumeric {
 		StringBuffer sb = new StringBuffer();
 		// Michael Borcherds 2007-10-21
 		sb.append("\t<allowReflexAngle val=\"");
-		sb.append(angleStyle != 2);
+		sb.append(angleStyle != ANGLE_ISNOTREFLEX);
 		sb.append("\"/>\n");
-		if (angleStyle == 3) {
+		if (angleStyle == ANGLE_ISREFLEX) {
 			sb.append("\t<forceReflexAngle val=\"");
 			sb.append(true);
 			sb.append("\"/>\n");
@@ -394,6 +392,18 @@ public final class GeoAngle extends GeoNumeric {
 		// sb.append(angleStyle);
 		// sb.append("\"/>\n");
 		// Michael Borcherds 2007-10-21
+		return sb.toString();
+	}
+	
+	private String getXMLEmphasizeRightAngleTag() {
+		if (emphasizeRightAngle) 
+			return "";
+		
+		// only store emphasizeRightAngle if "false"
+		StringBuffer sb = new StringBuffer();		
+		sb.append("\t<emphasizeRightAngle val=\"");
+		sb.append(emphasizeRightAngle);
+		sb.append("\"/>\n");		
 		return sb.toString();
 	}
 

@@ -18,7 +18,6 @@
 package org.mathpiper.lisp;
 
 import org.mathpiper.builtin.BigNumber;
-import org.mathpiper.*;
 
 /**
  * Holds a single number.

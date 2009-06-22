@@ -89,6 +89,7 @@ public class AlgoRootInterval extends AlgoElement {
         try {
         	// Brent's method
             root = rootFinder.brent(fun, a.getDouble(), b.getDouble());            
+            //root = rootFinder.falsePosition(fun, a.getDouble(), b.getDouble());            
         } catch (IllegalArgumentException e) {        	
             try {                               	        	
             	// Brent's failed because we left our function's domain
@@ -102,8 +103,18 @@ public class AlgoRootInterval extends AlgoElement {
         
         if (Math.abs(fun.evaluate(root)) < Kernel.MIN_PRECISION)
             return root;
-        else
-        	return Double.NaN;
+        
+        // Brent's failed, try false position (regula falsi) method
+        double aVal = fun.evaluate(a.getDouble());
+        double bVal = fun.evaluate(b.getDouble());
+        // regula falsi guarantees an answer if there's a sign change
+        if (aVal * bVal < 0) {
+	        root = rootFinder.falsePosition(fun, a.getDouble(), b.getDouble());            
+	        if (Math.abs(fun.evaluate(root)) < Kernel.MIN_PRECISION)
+	            return root;
+        }
+
+        return Double.NaN;
     }
 
     final public String toString() {

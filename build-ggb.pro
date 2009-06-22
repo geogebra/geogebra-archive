@@ -21,8 +21,8 @@
 -allowaccessmodification
 -overloadaggressively
 
-#-printmapping geogebra3-1-46-0.map 	 
-#-applymapping geogebra3-1-46-0.map 	 
+#-printmapping geogebra3-2-0-0.map 	 
+-applymapping geogebra3-2-0-0.map	 
 
 # Keep GeoGebra application
 -keep class geogebra.GeoGebra {
@@ -40,6 +40,12 @@
 # needed so that hoten can find Des12.gif, etc.
 -keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
 
+# Jasymca uses reflection to create functions like LambaSIN
+-keep class jasymca.Lambda* {}
+
+# supress foxtrot error messages
+-keep class java.util.LinkedList { java.lang.Object getFirst(); }
+-keep class java.lang.Object { java.lang.Object list; }
 
 #####
 # Plugin part
@@ -52,7 +58,7 @@
 # }
 
 #-keep class geogebra.gui.util.BrowserLauncher { <methods>; }
-#-keep class geogebra.plugin.PlugLetIF { <methods>; }
+-keep class geogebra.plugin.PlugLetIF { <methods>; }
 #-keep class geogebra.MyFileFilter { <methods>; }
 
 #-keep class geogebra.Application { <methods>; }

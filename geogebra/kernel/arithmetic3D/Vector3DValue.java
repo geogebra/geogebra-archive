@@ -20,7 +20,6 @@ package geogebra.kernel.arithmetic3D;
 
 
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra3D.kernel3D.GeoPoint3D;
 
 /**
  *

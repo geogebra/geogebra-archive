@@ -37,7 +37,6 @@ public final class DrawList extends Drawable {
 	private ArrayList drawables = new ArrayList();
 	private boolean isVisible;
 	
-	
     public DrawList(EuclidianView view, GeoList geoList) {      
     	this.view = view;          
         this.geoList = geoList;
@@ -60,36 +59,54 @@ public final class DrawList extends Drawable {
     		GeoElement listElement = geoList.get(i);
     		if (!listElement.isDrawable()) 
     			continue;
-
-    		Drawable d = null;
-    		boolean inOldDrawableRange = drawablePos < oldDrawableSize;
-    		if (inOldDrawableRange) {
-    			// try to reuse old drawable
-	    		Drawable oldDrawable = (Drawable) drawables.get(drawablePos);
-	    		if (oldDrawable.geo == listElement) {	
-	    			d = oldDrawable;
-	    		} else {
-	    			d = getDrawable(listElement);  			
-	    		}	    		    		    	
-    		} else {
-    			d = getDrawable(listElement); 
-    		}
     		
-    		if (d != null) {
-    			d.update();
-    			if (inOldDrawableRange) {    				
-    				drawables.set(drawablePos, d);
-    			} else {
-    				drawables.add(drawablePos, d);
-    			}
-    			++drawablePos;
-    		}
+    		// add drawable for listElement
+    		if (addToDrawableList(listElement, drawablePos, oldDrawableSize))
+    			drawablePos++;
+    		
+//    		// for polygons, we also need to add drawables for the segments
+//    		if (listElement.isGeoPolygon()) {
+//    			GeoSegment [] segments = ((GeoPolygon) listElement).getSegments();
+//    			for (int k=0; k < segments.length; k++) {
+//    				// add drawable for segment
+//    	    		if (addToDrawableList(segments[k], drawablePos, oldDrawableSize))
+//    	    			drawablePos++;
+//    			}        		    	
+//    		}    		
     	}    
     	
     	// remove end of list
     	for (int i=drawables.size()-1; i >= drawablePos; i--) {      		 
     		drawables.remove(i);
     	}
+    }
+    
+    private boolean addToDrawableList(GeoElement listElement, int drawablePos, int oldDrawableSize) {
+    	Drawable d = null;
+		boolean inOldDrawableRange = drawablePos < oldDrawableSize;
+		if (inOldDrawableRange) {
+			// try to reuse old drawable
+    		Drawable oldDrawable = (Drawable) drawables.get(drawablePos);
+    		if (oldDrawable.geo == listElement) {	
+    			d = oldDrawable;
+    		} else {
+    			d = getDrawable(listElement);  			
+    		}	    		    		    	
+		} else {
+			d = getDrawable(listElement); 
+		}
+		
+		if (d != null) {
+			d.update();
+			if (inOldDrawableRange) {    				
+				drawables.set(drawablePos, d);
+			} else {
+				drawables.add(drawablePos, d);
+			}
+			return true;
+		}
+		
+		return false;
     }
     
     private Drawable getDrawable(GeoElement listElement) {
@@ -104,15 +121,15 @@ public final class DrawList extends Drawable {
 
     final public void draw(Graphics2D g2) {   
     	if (isVisible) {
-    		boolean doHighlight = geoList.doHighlighting();
+    		boolean doHighlight = geoList.doHighlighting();    	
     		
-    		int size = drawables.size();
+    		int size = drawables.size();    		
     		for (int i=0; i < size; i++) {     			     			
     			Drawable d = (Drawable) drawables.get(i);
     			// draw only those drawables that have been created by this list;
     			// if d belongs to another object, we don't want to mess with it here
     			if (createdByDrawList || !d.geo.isLabelSet()) {
-    				d.geo.setHighlighted(doHighlight);
+    				d.geo.setHighlighted(doHighlight);    				
     				d.draw(g2);
     			}
     		}
@@ -157,7 +174,7 @@ public final class DrawList extends Drawable {
 			Rectangle bb = d.getBounds();
 			if (bb != null) {
 				if (result == null) 
-					result = new Rectangle();
+					result = new Rectangle(bb); // changed () to (bb) bugfix, otherwise top-left of screen is always included
 				// add bounding box of list element
 				result.add(bb);
 			}			   		

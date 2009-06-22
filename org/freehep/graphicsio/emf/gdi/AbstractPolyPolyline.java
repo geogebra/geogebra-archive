@@ -1,17 +1,17 @@
 // Copyright 2007, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
-import org.freehep.graphicsio.emf.EMFRenderer;
-
 import java.awt.Point;
 import java.awt.Rectangle;
+
+import org.freehep.graphicsio.emf.EMFRenderer;
 
 /**
  * Parent class for a group of PolyLines. Childs are
  * rendered as not closed polygons.
  *
  * @author Steffen Greiffenberg
- * @version $Id: AbstractPolyPolyline.java,v 1.3 2008-05-04 12:17:34 murkle Exp $§
+ * @version $Id: AbstractPolyPolyline.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $§
  */
 public abstract class AbstractPolyPolyline extends AbstractPolyPolygon {
 

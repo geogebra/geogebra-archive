@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import java.util.Locale;
 
 
 /**

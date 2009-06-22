@@ -28,7 +28,8 @@ import java.util.ResourceBundle;
 import java.util.TreeSet;
 
 /**
- *
+ * AlgoElement is the superclass of all algorithms.
+ * 
  * @author  Markus
  * @version 
  */
@@ -41,17 +42,31 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     
     protected GeoElement[] input, output;
     private GeoElement [] efficientInput;
-    
-    // numbers among input objects of algorithm that are used within random()
-    private GeoNumeric [] randomInputNumbers;
-    
+     
     private boolean isPrintedInXML = true;
     private boolean stopUpdateCascade = false;
-    private boolean wantsEuclidianUpdate = false;
     
     public AlgoElement(Construction c) {
-        super(c);                       
-        c.addToConstructionList(this, false);                 
+        this(c, true);               
+    }
+    
+    AlgoElement(Construction c, boolean addToConstructionList) {
+        super(c);     
+        
+        if (addToConstructionList)
+        	c.addToConstructionList(this, false);                 
+    }
+    
+    /*
+     * needed so that JavaScript commands work:
+     * ggbApplet.getCommandString(objName);
+	 * ggbApplet.getValueString(objName);
+     */
+    final public static void initAlgo2CommandBundle(Application app) {
+        if (rbalgo2command == null) {
+        	rbalgo2command = app.initAlgo2CommandBundle();
+        }
+    	
     }
     
     final String getCommandString(String classname) {
@@ -105,22 +120,19 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 //    public static double counter;
     
     void update() {
-    	if (stopUpdateCascade) return;
+    	 if (stopUpdateCascade) return;
     	
 //    	counter++;
 //    	startTime = System.currentTimeMillis(); 
-    		
-    	// update possible random values used by this algorithm
-    	if (randomInputNumbers != null) {
-    		updateRandomInputNumbers();
-    	}
-    	
+
         // compute output from input
         compute();
         
 //        endTime = System.currentTimeMillis(); 
 //        computeTime += (endTime - startTime);
     	//startTime = System.currentTimeMillis(); 
+        
+      
     	
         // update dependent objects 
         for (int i = 0; i < output.length; i++) {           
@@ -152,19 +164,16 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		}
 		
 		// update all geos
-		GeoElement.updateCascade(geos);
+		GeoElement.updateCascade(geos, getTempSet());
 	}
-    
-    /**
-     * Updates all random numbers of this algorithm (if there
-     * are any).
-     */
-    public boolean updateRandomAlgorithm() {
-    	boolean doUpdate = randomInputNumbers != null;
-    	if (doUpdate) 
-    		update();
-    	return doUpdate;
-    }
+	
+	private static TreeSet tempSet;	
+	private static TreeSet getTempSet() {
+		if (tempSet == null) {
+			tempSet = new TreeSet();
+		}
+		return tempSet;
+	}   
 
     // public part    
     final public GeoElement[] getOutput() {
@@ -188,17 +197,19 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      *  the using algo does).
      * @see setInputOutput()
      */
-    final protected void setDependencies() {       	      	      	
+    final protected void setDependencies() {  
         // dependents on input
         for (int i = 0; i < input.length; i++) {
             input[i].addAlgorithm(this);            
         }    
         
-        initRandomInputNumbers();
-        setOutputDependencies();                
-        cons.addToAlgorithmList(this); 
+        doSetDependencies();   
     }
     
+    private void doSetDependencies() {
+        setOutputDependencies();           
+        cons.addToAlgorithmList(this);  
+    }
    
     
     protected final void setEfficientDependencies(GeoElement [] standardInput, GeoElement [] efficientInput) {   	
@@ -216,77 +227,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         input = standardInput;
         this.efficientInput = efficientInput;
         
-        initRandomInputNumbers();
-        setOutputDependencies();
-        cons.addToAlgorithmList(this); 
-    }
-    
-    /**
-     * Creates a list of all GeoNumeric objects that
-     * are used as values for random() 
-     */
-    private void initRandomInputNumbers() {
-    	// look for random numbers
- 		ArrayList randNumList = null;    	
-        for (int i = 0; i < input.length; i++) {
-            if (input[i].isGeoNumeric()) {
-            	GeoNumeric num = (GeoNumeric) input[i];
-            	if (num.isUsedForRandom()) {            		
-            		if (randNumList == null)
-            			randNumList = new ArrayList();
-            		randNumList.add(num);            		
-            	}
-            }
-        }    
-        
-        // init randomGeoNumerics array
-        if (randNumList != null) {
-        	randomInputNumbers = new GeoNumeric[randNumList.size()];
-        	for (int i = 0; i < randomInputNumbers.length; i++) {
-        		randomInputNumbers[i] = (GeoNumeric) randNumList.get(i);
-        	}
-        }        
-        
-        /*
-        if (randomInputNumbers != null) {
-        	Application.printStacktrace("" + randomInputNumbers);
-        	for (int i = 0; i < randomInputNumbers.length; i++) {
-        		System.out.println(randomInputNumbers[i]);
-        	}
-        }
-        */
-    }
-    
-    /**
-     * Sets the array of all GeoNumeric objects that
-     * are need to be randomized. This is needed when there an
-     * algorithm needs a random number that is not one of it's input objects.
-     */
-    protected void setRandomInputNumbers(GeoNumeric [] randNumbers) {
-    	randomInputNumbers = randNumbers;   
-    }
-    
-    /**
-     * Sets the array of random input numbers (GeoNumeric objects with
-     * isUsedForRandom() returns true). Those numbers will be set using
-     * Math.random() every time before the algorithm is updated. 
-     * Usually this method does not need
-     * to be called (see initRandomInputNumbers(). Use this method only
-     * when you need to use random numbers as helper objects in your 
-     * algorithm. 
-     *
-    void setRandomInputNumbers(GeoNumeric [] randNums) {
-    	randomInputNumbers = randNums;
-    }*/
-    
-    private void updateRandomInputNumbers() {
-    	for (int i = 0; i < randomInputNumbers.length; i++) {
-    		randomInputNumbers[i].setValue(Math.random());
-    	}
-    }
+        doSetDependencies(); 
+    }  
     
     private void setOutputDependencies() {
-    	
    	 // parent algorithm of output
        for (int i = 0; i < output.length; i++) {
            output[i].setParentAlgorithm(this);
@@ -294,7 +238,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
            // every algorithm with an image as output
            // should be notified about view changes
            if (output[i].isGeoImage())
-        	   wantsEuclidianUpdate = true;
+           		cons.registerEuclidianViewAlgo(this);
            
            //  make sure that every output has same construction as this algorithm
            // this is important for macro constructions that have input geos from
@@ -307,13 +251,11 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     public void euclidianViewUpdate() {
     	update();
     }
-    
-    public boolean wantsEuclidianViewUpdate() {
-    	return wantsEuclidianUpdate;
-    }
        
     public void remove() {      
         cons.removeFromConstructionList(this);        
+        
+        cons.removeFromAlgorithmList(this);
                         
         // delete dependent objects        
         for (int i = 0; i < output.length; i++) {
@@ -408,6 +350,21 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		}
 		return false;
 	}
+	
+	/**
+	 * Compares using getConstructionIndex() to order algos in update order.
+	 * Note: 0 is only returned for this == obj.
+	 * @overwrite ConstructionElement.compareTo()
+	 */
+    public int compareTo( Object obj) {
+    	if (this == obj) return 0;
+    	
+    	ConstructionElement ce = (ConstructionElement) obj;   
+    	if (getConstructionIndex() < ce.getConstructionIndex())
+    		return -1;
+    	else
+    		return 1;
+    }
     
     /**
      * Returns construction index in current construction.
@@ -477,16 +434,12 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         for (int i = 0; i < input.length; i++) {
             GeoElement parent = input[i];
 
-            if (!onlyIndependent) {
-            	// OLD: list implementation
-	                //  move or insert parent at the beginning of the list
-	                 // this ensures the topological sorting
-	                 //list.remove(parent);
-	                 //list.addFirst(parent);       
-                 
-                 set.add(parent);
-            }
-            parent.addPredecessorsToSet(set, onlyIndependent);
+    		if (!set.contains(parent)) {  		
+				if (!onlyIndependent) {
+					set.add(parent);
+				}
+	            parent.addPredecessorsToSet(set, onlyIndependent);
+    		}
         }
     }
     
@@ -647,12 +600,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
-        kernel.setTranslateCommandName(false);             
-        
-        //int oldDigits = kernel.getMaximumFractionDigits();
-        //kernel.setMaximumFractionDigits(50);
-        kernel.setTemporaryMaximumPrintAccuracy();
-        
+        kernel.setTranslateCommandName(false);                           
         StringBuffer sb = new StringBuffer();
         
         try {
@@ -678,11 +626,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	e.printStackTrace();
         }
         
-        //kernel.setMaximumFractionDigits(oldDigits);
-        kernel.restorePrintAccuracy();
-        
-        kernel.setTranslateCommandName(oldValue);
-        
+        kernel.setTranslateCommandName(oldValue);        
         return sb.toString();
     }
 
@@ -698,11 +642,6 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);             
-        
-        //int oldDigits = kernel.getMaximumFractionDigits();       
-        //kernel.setMaximumFractionDigits(50);
-        kernel.setTemporaryMaximumPrintAccuracy();
-        
         StringBuffer sb = new StringBuffer();
         
         try {
@@ -726,11 +665,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	e.printStackTrace();
         }
         
-        //kernel.setMaximumFractionDigits(oldDigits);
-        kernel.restorePrintAccuracy();
-        
-        kernel.setTranslateCommandName(oldValue);
-        
+        kernel.setTranslateCommandName(oldValue);        
         return sb.toString();
     }
 
@@ -740,18 +675,21 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         StringBuffer sb = new StringBuffer();        
         sb.append("<expression");
         // add label
+        String labelStr = "";
         if (output != null && output.length == 1) {
             if (output[0].isLabelSet()) {
                 sb.append(" label=\"");
-                sb.append(Util.encodeXML(output[0].getLabel()));
+                labelStr = Util.encodeXML(output[0].getLabel());
+                sb.append(labelStr);
                 sb.append("\"");
             }
         } 
-        // add expression        
-        sb.append(" exp=\"");       
-        sb.append(Util.encodeXML(toString()));
+        // add expression       
+        String expStr = Util.encodeXML(toString());
+        sb.append(" exp=\"");                    
+        sb.append(expStr);
         sb.append("\"");
-        
+
         // make sure that a vector remains a vector and a point remains a point
         if (output != null)
         {
@@ -809,10 +747,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
                 sb.append(" a");
                 sb.append(i);
                 // attribute name is output No. 
-                sb.append("=\"");
-                if (output[i].isLabelSet())
-                    sb.append(Util.encodeXML(output[i].getLabel()));
-                sb.append("\"");
+                sb.append("=\"");     
+                if (output[i].isLabelSet()) 
+                	sb.append(Util.encodeXML(output[i].getLabel()));
+               	sb.append("\"");            
             }
             
             sb.append("/>\n");
@@ -891,5 +829,24 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	return false;
     }
     
-
+    
+	/**
+	 * Makes sure that this algorithm will be updated after the given parentAlgorithm. 
+	 * @see getUpdateAfterAlgo()
+	 */
+	final public void setUpdateAfterAlgo(AlgoElement updateAfterAlgo) {
+		this.updateAfterAlgo  = updateAfterAlgo;
+	}
+	private AlgoElement updateAfterAlgo;
+	
+	/**
+	 * Returns the algorithm the should be updated right before this algorithm.
+	 * This is being used in AlgorithmSet to sort algorithms by updating order.
+	 * @return null when there is no special algorithm that needs to be updated first 
+	 * @see getUpdateAfterAlgo()
+	 */
+	final public AlgoElement getUpdateAfterAlgo() {
+		return updateAfterAlgo;
+	}	
+	
 }

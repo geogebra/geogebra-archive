@@ -19,7 +19,6 @@ import geogebra.kernel.roots.RealRootFunction;
 import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
-import geogebra.main.Application;
 
 
 /**
@@ -96,6 +95,7 @@ implements EuclidianViewAlgo {
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
+		sum.setDrawable(true);
 	}
 	
 	// BARCHART
@@ -116,6 +116,7 @@ implements EuclidianViewAlgo {
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
+		sum.setDrawable(true);
 	}
 	// BarChart [<list of data without repetition>, <frequency of each of these data>]
 	public AlgoFunctionAreaSums(Construction cons, String label,  
@@ -132,6 +133,7 @@ implements EuclidianViewAlgo {
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
+		sum.setDrawable(true);
 	}
 	
 	// BarChart [<list of data without repetition>, <frequency of each of these data>, <width>]
@@ -152,6 +154,7 @@ implements EuclidianViewAlgo {
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
+		sum.setDrawable(true);
 	}
 	
 	// BarChart [<list of data>, <width>]
@@ -171,6 +174,7 @@ implements EuclidianViewAlgo {
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
+		sum.setDrawable(true);
 	}
 		
 			// HISTOGRAM
@@ -188,6 +192,7 @@ implements EuclidianViewAlgo {
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
+		sum.setDrawable(true);
 		}
 			
 			
@@ -216,6 +221,7 @@ implements EuclidianViewAlgo {
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
+		sum.setDrawable(true);
 		}
 
 			// BOXPLOT (raw data)
@@ -238,6 +244,7 @@ implements EuclidianViewAlgo {
 		setInputOutput(); // for AlgoElement	
 		compute();
 		sum.setLabel(label);
+		sum.setDrawable(true);
 		}
 
 	final public void euclidianViewUpdate() {
@@ -553,7 +560,7 @@ implements EuclidianViewAlgo {
 			double maxi = Double.MIN_VALUE;
 			int minIndex=-1, maxIndex=-1;
 			
-			double step = (int)n.getDouble();
+			double step = n.getDouble();
 			
 			int rawDataSize = list1.size();
 			
@@ -594,13 +601,14 @@ implements EuclidianViewAlgo {
 			
 			double gap = 0;
 			
+			/*
 			if (kernel.isInteger(noOfBars))
 			{
 				N = (int)noOfBars + 1;
 				a = (NumberValue)list1.get(minIndex);
 				b = (NumberValue)list1.get(maxIndex);
 			}
-			else
+			else */
 			{
 				N = (int)noOfBars + 2;
 				gap = ((N-1) * step - totalWidth) / 2.0;
@@ -641,16 +649,24 @@ implements EuclidianViewAlgo {
 				// if datum is outside the range, set undefined
 				//if (datum < leftBorder[0] || datum > leftBorder[N-1] ) { sum.setUndefined(); return; }
 				
+				// fudge to make the last boundary eg 10 <= x <= 20
+				// all others are 10 <= x < 20
+				double oldMaxBorder = leftBorder[N-1];
+				leftBorder[N-1] += Math.abs(leftBorder[N-1] / 100000000);
+
 				// check which class this datum is in
 				for (int j=1; j < N; j++) {
 					//System.out.println("checking "+leftBorder[j]);
-					if (datum <= leftBorder[j]) 
+					if (datum < leftBorder[j]) 
 					{
 						//System.out.println(datum+" "+j);
 						yval[j-1]++;
 						break;
 					}
 				}
+				
+				leftBorder[N-1] = oldMaxBorder;
+
 				
 				// area of rectangles 
 				sum.setValue(list1.size() * step);	
@@ -669,6 +685,29 @@ implements EuclidianViewAlgo {
 
 			N = list1.size() + 1;
 			
+			if (yval == null || yval.length < N) {
+				yval = new double[N];
+				leftBorder = new double[N];
+			}				
+			
+			if (N == 2) {
+				// special case, 1 bar
+				yval = new double[2];
+				leftBorder = new double[2];
+				yval[0] = ((GeoNumeric)(list2.get(0))).getDouble(); 	
+				
+				leftBorder[0] = ((GeoNumeric)(list1.get(0))).getDouble() - 0.5;
+				leftBorder[1] = leftBorder[0] + 1;
+				ageo = new GeoNumeric(cons,leftBorder[0]);
+				bgeo = new GeoNumeric(cons,leftBorder[1]);
+				a = (NumberValue)ageo;
+				b = (NumberValue)bgeo;
+				
+				sum.setValue(yval[0]);
+
+				return;
+			} 
+			
 			if (list2.size() + 1 != N || N < 3) {
 				sum.setUndefined();
 				return;
@@ -677,6 +716,8 @@ implements EuclidianViewAlgo {
 			double start = ((GeoNumeric)(list1.get(0))).getDouble();
 			double end = ((GeoNumeric)(list1.get(N-2))).getDouble();
 			step = ((GeoNumeric)(list1.get(1))).getDouble() - start;
+			
+			
 			
 			//Application.debug("N = "+N+" start = "+start+" end = "+end+" width = "+width);
 
@@ -694,10 +735,6 @@ implements EuclidianViewAlgo {
 							
 				
 				
-			if (yval == null || yval.length < N) {
-				yval = new double[N];
-				leftBorder = new double[N];
-			}				
 			
 			// fill in class boundaries
 
@@ -860,16 +897,23 @@ implements EuclidianViewAlgo {
 					// if datum is outside the range, set undefined
 					if (datum < leftBorder[0] || datum > leftBorder[N-1] ) { sum.setUndefined(); return; }
 					
+					// fudge to make the last boundary eg 10 <= x <= 20
+					// all others are 10 <= x < 20
+					double oldMaxBorder = leftBorder[N-1];
+					leftBorder[N-1] += Math.abs(leftBorder[N-1] / 100000000);
+					
 					// check which class this datum is in
 					for (int j=1; j < N; j++) {
 						//System.out.println("checking "+leftBorder[j]);
-						if (datum <= leftBorder[j]) 
+						if (datum < leftBorder[j]) 
 						{
 							//System.out.println(datum+" "+j);
 							yval[j-1]++;
 							break;
 						}
 					}
+					
+					leftBorder[N-1] = oldMaxBorder;
 					
 				}
 				
@@ -1012,6 +1056,10 @@ implements EuclidianViewAlgo {
 			return false;
 		}
 	}
+	public int getType() {
+		return type;
+	}
+	
 	public boolean isBoxPlot() {
 		switch (type)
 		{

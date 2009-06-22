@@ -14,7 +14,6 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -70,8 +69,7 @@ public final class DrawBoolean extends Drawable {
 	final public void update() {
 		isVisible = geo.isEuclidianVisible();
 		//checkBox.setVisible(isVisible);
-		if (!isVisible)
-			return;		
+    	// don't return here to make sure that getBounds() works for offscreen points too
 		
 		updateStrokes(geoBool);
 
@@ -86,6 +84,8 @@ public final class DrawBoolean extends Drawable {
 			//checkBox.setText(labelDesc);
 		} else {
 			// don't show label
+			oldCaption = "";
+			labelDesc = "";
 // Michael Borcherds 2007-10-18 BEGIN changed so that vertical position of checkbox doesn't change when label is shown/hidden
 //			checkBox.setText("");
 			//checkBox.setText(" ");
@@ -129,7 +129,7 @@ public final class DrawBoolean extends Drawable {
 			int size = view.getBooleanSize();
 
 			g2.setFont(view.fontPoint);
-			g2.setStroke(objStroke); 
+			g2.setStroke(EuclidianView.getDefaultStroke()); 
 			
 			checkBoxIcon.paintIcon(geoBool.getBoolean(), geoBool.doHighlighting(), g2, geoBool.labelOffsetX + 5, geoBool.labelOffsetY + 5);
 			
@@ -138,7 +138,7 @@ public final class DrawBoolean extends Drawable {
 			
 			updateLabel();
 		}
-		
+			
 		/*
 		if (isVisible) {		
 			// the button is drawn as a swing component by the view
@@ -228,6 +228,8 @@ public final class DrawBoolean extends Drawable {
 		
 		EuclidianView ev;
 		
+		public static Color highlightBackground = new Color(230, 230, 230);
+		
 		public CheckBoxIcon(EuclidianView ev)
 		{
 			this.ev=ev;
@@ -249,7 +251,7 @@ public final class DrawBoolean extends Drawable {
 
                     // Outer bottom/right
                     //g.setColor(UIManager.getColor("CheckBox.highlight"));
-                    g.setColor(new Color(255,255,255));
+                    g.setColor(Color.white);
                     g.drawLine(x + (csize-1), y, x + (csize-1), y + (csize-1));
                     g.drawLine(x, y + (csize-1), x + (csize-2), y + (csize-1));
 
@@ -268,10 +270,10 @@ public final class DrawBoolean extends Drawable {
                     // inside box 
                     if (highlighted) {
                         //g.setColor(UIManager.getColor("CheckBox.background"));
-                        g.setColor(new Color(212,208,200));
+                        g.setColor(highlightBackground);
                     } else {
                         //g.setColor(UIManager.getColor("CheckBox.interiorBackground"));
-                        g.setColor(new Color(255,255,255));
+                        g.setColor(Color.white);
                     }
                     g.fillRect(x + 2, y + 2, csize - 4, csize - 4);
                 } else {
@@ -281,10 +283,10 @@ public final class DrawBoolean extends Drawable {
 
                     if (true) {
                         //g.setColor(UIManager.getColor("CheckBox.background"));
-                        g.setColor(new Color(212,208,200));
+                        g.setColor(highlightBackground);
                     } else {
                         //g.setColor(UIManager.getColor("CheckBox.interiorBackground"));
-                        g.setColor(new Color(255,255,255));
+                        g.setColor(Color.white);
                     }
                     g.fillRect(x + 2, y + 2, csize - 4, csize - 4);
                 }

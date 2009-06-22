@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
 
 
 /**
@@ -37,7 +36,7 @@ public class AlgoAxisStepX extends AlgoElement {
         num.setLabel(label);
         
         // ensure we get updates
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
    }   
     
 	protected String getClassName() {

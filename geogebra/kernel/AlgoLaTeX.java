@@ -19,7 +19,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
 
 
 /**
@@ -92,8 +91,13 @@ public class AlgoLaTeX extends AlgoElement {
 		} else {
     		boolean bool = substituteVars == null ? true : substituteVars.getBoolean();
 
+    		text.setTemporaryPrintAccuracy();
+    		
     		text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, bool ));    		
-}
+
+    		text.restorePrintAccuracy();
+		}
+		
     	
     	text.setLaTeX(true, false);
     	

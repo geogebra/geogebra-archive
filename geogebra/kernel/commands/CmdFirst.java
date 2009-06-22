@@ -5,7 +5,6 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 
 /*

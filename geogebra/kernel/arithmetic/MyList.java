@@ -84,6 +84,52 @@ public class MyList extends ValidExpression implements ListValue {
 		apply(operation, value, false);
 	}		
 	
+	final private void matrixMultiply(MyList LHlist, MyList RHlist) {
+		int LHcols = LHlist.getMatrixCols(), LHrows=LHlist.getMatrixRows();
+		int RHcols = RHlist.getMatrixCols(), RHrows=LHcols; //RHlist.getMatrixRows();
+		
+
+		
+	
+		ExpressionNode totalNode;
+		ExpressionNode tempNode; 
+		listElements.clear();
+		for (int row=0 ; row < LHrows ; row++)
+		{
+			MyList col1 = new MyList(kernel);
+			for (int col=0 ; col < RHcols ; col++)
+			{
+				ExpressionValue totalVal = new ExpressionNode(kernel, new MyDouble(kernel,0.0d));
+				for (int i=0 ; i<LHcols ; i++)
+				{
+					ExpressionValue leftV=getCell(LHlist,i,row);
+					ExpressionValue rightV=getCell(RHlist,col,i);							
+					tempNode = new ExpressionNode(kernel,leftV,ExpressionNode.MULTIPLY,rightV);
+							
+					// multiply two cells...
+					ExpressionValue operationResult = tempNode.evaluate(); 	
+
+					totalNode = new ExpressionNode(kernel,totalVal,ExpressionNode.PLUS,operationResult);
+					//totalNode.setLeft(operationResult);
+					//totalNode.setRight(totalVal);
+					//totalNode.setOperation(ExpressionNode.PLUS);
+					
+					// ...then add the result to a running total
+					totalVal = totalNode.evaluate();	
+				
+				}
+				tempNode = new ExpressionNode(kernel, totalVal); 			
+				col1.addListElement(tempNode);
+			}
+			ExpressionNode col1a = new ExpressionNode(kernel, col1); 
+			listElements.add(col1a);
+			
+		}
+		matrixRows=-1; // reset
+		matrixCols=-1;
+		
+	}
+	
 	/**
 	 * Applies an operation to this list using the given value.
 	 * 
@@ -101,6 +147,41 @@ public class MyList extends ValidExpression implements ListValue {
 		//else
 		//	Application.debug("apply: " + this + " < op: " + operation + " > " + value);
 		
+		// matrix ^ integer
+		if (right && operation == ExpressionNode.POWER && value.isNumberValue() && isMatrix()) {
+			
+
+			double power = ((NumberValue)value).getDouble();
+			//Application.debug("matrix ^ "+power);
+			
+			if (power < -0.5 || !kernel.isInteger(power)) {
+				listElements.clear();
+				return;
+			}
+			
+			power = Math.round(power);
+			
+			if (power == 0) {
+				listElements.clear();
+				return;
+			}
+			
+			if (power != 1) {
+			
+				MyList LHlist,RHlist;
+				
+				RHlist=(MyList)this.deepCopy(kernel);
+				while (power > 1.0) {
+					LHlist=(MyList)this.deepCopy(kernel);
+					
+					matrixMultiply(LHlist, RHlist);
+					power --;
+				}
+				return; // finished matrix multiplication successfully
+			}
+			// else power = 1, so drop through to standard list code below
+
+		}
 		
 		// expression value is list		
 		MyList valueList = value.isListValue() ? ((ListValue) value).getMyList() : null;		
@@ -115,103 +196,10 @@ public class MyList extends ValidExpression implements ListValue {
 			if (!right) {LHlist=valueList; RHlist=(MyList)this.deepCopy(kernel);} else {RHlist=valueList; LHlist=(MyList)this.deepCopy(kernel);}
 			
 			boolean isMatrix = (LHlist.isMatrix() && RHlist.isMatrix());
-			int LHcols = LHlist.getMatrixCols(), LHrows=LHlist.getMatrixRows();
-			int RHcols = RHlist.getMatrixCols(), RHrows=LHcols; //RHlist.getMatrixRows();
-			
-
-			
-			/*
-			int LHcols = LHlist.size(), LHrows=0;
-			int RHcols = RHlist.size(), RHrows=0;
-			//Application.debug("LHcols"+LHcols);
-			//Application.debug("RHcols"+RHcols);
-			
-			boolean isMatrix=true;
-			
-			//Application.debug("MULT LISTS"+size);
-			
-			// check LHlist is a matrix
-			ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
-			if ( singleValue.isListValue() ){
-				LHrows=((ListValue)singleValue).getMyList().size();
-				//Application.debug("LHrows"+LHrows);
-				if (LHcols>1) for (int i=1 ; i<LHcols ; i++) // check all vectors same length
-				{
-					//Application.debug(i);
-					singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
-					//Application.debug("size"+((ListValue)singleValue).getMyList().size());
-					if ( singleValue.isListValue() ){
-						if (((ListValue)singleValue).getMyList().size()!=LHrows) isMatrix=false;				
-					}
-					else isMatrix=false;
-				}
-			}
-			else isMatrix = false;
-
-			// check RHlist is a matrix
-			singleValue=((ExpressionValue)RHlist.getListElement(0)).evaluate();
-			if ( singleValue.isListValue() ){
-				RHrows=((ListValue)singleValue).getMyList().size();
-				//Application.debug("RHrows"+RHrows);
-				if (RHcols>1) for (int i=1 ; i<RHcols ; i++) // check all vectors same length
-				{
-					//Application.debug(i);
-					singleValue=((ExpressionValue)RHlist.getListElement(i)).evaluate();
-					//Application.debug("size"+((ListValue)singleValue).getMyList().size());
-					if ( singleValue.isListValue() ){
-						if (((ListValue)singleValue).getMyList().size()!=RHrows) isMatrix=false;				
-					}
-					else isMatrix=false;
-				}
-			}
-			else isMatrix = false;
-			
-			if (LHcols != RHrows) isMatrix=false; // incompatible matrices
-			
-			Application.debug("isMatrix="+isMatrix);		
-*/
-			ExpressionNode totalNode;
-			ExpressionNode tempNode; 
 			
 			if (isMatrix)
 			{
-				listElements.clear();
-				for (int row=0 ; row < LHrows ; row++)
-				{
-					MyList col1 = new MyList(kernel);
-					for (int col=0 ; col < RHcols ; col++)
-					{
-						ExpressionValue totalVal = new ExpressionNode(kernel, new MyDouble(kernel,0.0d));
-						for (int i=0 ; i<LHcols ; i++)
-						{
-							ExpressionValue leftV=getCell(LHlist,i,row);
-							ExpressionValue rightV=getCell(RHlist,col,i);							
-							tempNode = new ExpressionNode(kernel,leftV,ExpressionNode.MULTIPLY,rightV);
-									
-							// multiply two cells...
-							ExpressionValue operationResult = tempNode.evaluate(); 	
-		
-							totalNode = new ExpressionNode(kernel,totalVal,ExpressionNode.PLUS,operationResult);
-							//totalNode.setLeft(operationResult);
-							//totalNode.setRight(totalVal);
-							//totalNode.setOperation(ExpressionNode.PLUS);
-							
-							// ...then add the result to a running total
-							totalVal = totalNode.evaluate();	
-						
-						}
-						tempNode = new ExpressionNode(kernel, totalVal); 			
-						col1.addListElement(tempNode);
-					}
-					ExpressionNode col1a = new ExpressionNode(kernel, col1); 
-					listElements.add(col1a);
-					
-				}
-			}			
-			//Application.debug(toString());
-			if (isMatrix){
-				matrixRows=-1; // reset
-				matrixCols=-1;
+				matrixMultiply(LHlist, RHlist);
 				return; // finished matrix multiplication successfully
 			}
 		}
@@ -390,6 +378,7 @@ public class MyList extends ValidExpression implements ListValue {
 			return null;
 		}*/
 
+
 	public String toValueString() {
 		return toString(); // Michael Borcherds 2008-06-05
 		/*
@@ -521,7 +510,7 @@ public class MyList extends ValidExpression implements ListValue {
 		return varSet;
 	}
 
-	
+
 
 	final public boolean isExpressionNode() {
 		return false;
@@ -546,7 +535,6 @@ public class MyList extends ValidExpression implements ListValue {
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

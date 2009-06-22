@@ -1,17 +1,11 @@
 package geogebra3D.kernel3D;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-
-import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoSegmentInterface;
-import geogebra.main.Application;
+
+import java.awt.Color;
+import java.util.Hashtable;
 
 /**
  * @author ggb3D

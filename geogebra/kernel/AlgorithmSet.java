@@ -65,27 +65,35 @@ public class AlgorithmSet {
         // check if algo is already at end of list
         if (tail.algo == algo) 
         	return false;
+        
+        /*
+         * Usually we can just add an algorithm at the end of the list
+         * to have it at the right place for updating.
+         * However, in certain cases an algorithm needs to be inserted at
+         * an earlier place right after a certain parentAlgo. For example,
+         * in a regular polygon, new segments can be created later that
+         * need to be inserted directly after the parent polygon. 
+         */
                        
-        // check if algo needs to be inserted at end (standard case)
-        if (tail.algo.compareTo(algo) <= 0) {        	
+        // check if algo needs to be inserted right after a certain parentAlgo
+        AlgoElement parentAlgo = algo.getUpdateAfterAlgo();
+        
+        // Standard case: insert at end of list
+        if (parentAlgo == null || parentAlgo == tail.algo || !contains(parentAlgo)) {  
             tail.next = new Link(algo, null);
             tail = tail.next;                        
-        }       
-        else {        	
-	        // insert in the middle, using compareTo() for sorting        
-	        Link prev = null, cur = head;
-	        while (cur.algo.compareTo(algo) < 0) {
-	        	prev = cur;
-	        	cur = cur.next;        	
+        }   
+        
+        // Special case: insert in the middle, right after parentAlgo   
+        else {        	     
+        	// search for parentAlgo
+	        Link cur = head;
+	        while (cur.algo != parentAlgo) {
+	        	cur = cur.next; 	        	
 	        }         
 	        
-	        if (prev == null) {
-	        	// insert at beginning
-	        	head = new Link(algo, head);
-	        } else {
-	        	// insert in middle
-	        	prev.next = new Link(algo, prev.next);
-	        }	       
+	        // now cur.algo == parentAlgo, insert right afterwards
+	        cur.next = new Link(algo, cur.next);
         }
         
         hashMap.put(algo, algo);
@@ -193,9 +201,7 @@ public class AlgorithmSet {
         Link cur = head;
         while (cur != null) {
         	sb.append("\n\t");
-        	sb.append(cur.algo.getCreationID());
-        	sb.append(": ");
-            sb.append(cur.algo + ", hash: " + cur.algo.hashCode());            
+            sb.append(cur.algo + ", constIndex: " + cur.algo.getConstructionIndex());            
             cur = cur.next;
         }
         sb.append("]");

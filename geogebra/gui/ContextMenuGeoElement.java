@@ -14,7 +14,6 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.gui.inputbar.AlgebraInput;
-import geogebra.kernel.AlgoText;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -77,7 +76,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         String title = geo.getLongDescriptionHTML(false, true);
         if (title.length() > 80)
         	title = geo.getNameDescriptionHTML(false, true);
-        setTitle(title);
+        setTitle(title);        
         
         if (app.getGuiManager().showAlgebraView()) {
 	        addPointItems();
@@ -99,7 +98,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         int mode = point.getMode();
         AbstractAction action;
 
-        if (mode != Kernel.COORD_CARTESIAN) {
+        if (mode != Kernel.COORD_CARTESIAN && !geo.isFixed() && point.getMode() != Kernel.COORD_COMPLEX) {
             action = new AbstractAction(app.getPlain("CartesianCoords")) {
                 /**
 				 * 
@@ -115,7 +114,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
             addAction(action);
         }
 
-        if (mode != Kernel.COORD_POLAR) {
+        if (mode != Kernel.COORD_POLAR && !geo.isFixed() && point.getMode() != Kernel.COORD_COMPLEX) {
             action = new AbstractAction(app.getPlain("PolarCoords")) {
                 /**
 				 * 
@@ -131,11 +130,12 @@ public class ContextMenuGeoElement extends JPopupMenu {
             addAction(action);
         }
         
-        if (mode != Kernel.COORD_COMPLEX) {
+        /*
+        if (mode != Kernel.COORD_COMPLEX && !geo.isFixed()) {
             action = new AbstractAction(app.getPlain("ComplexNumber")) {
                 /**
 				 * 
-				 */
+				 *
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
@@ -145,7 +145,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
                 }
             };
             addAction(action);
-        }
+        } */
     }
 
     private void addLineItems() {
@@ -255,11 +255,10 @@ public class ContextMenuGeoElement extends JPopupMenu {
             };
             addAction(action);
         }
+        /*
         if (mode != Kernel.COORD_COMPLEX) {
             action = new AbstractAction(app.getPlain("ComplexNumber")) {
-                /**
-				 * 
-				 */
+
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
@@ -269,7 +268,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
                 }
             };
             addAction(action);
-        }
+        }*/
     }
 
     private void addConicItems() {
@@ -513,9 +512,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
         }
         
       
-        
+              
         // EDIT: copy to input bar       
-        if (app.showAlgebraInput() && !geo.isGeoImage()) {
+        if (app.showAlgebraInput() && !geo.isGeoImage() && geo.isDefined()) {
             addAction(new AbstractAction(
                 app.getMenu("CopyToInputBar"),
                 app.getImageIcon("edit.png")) {
@@ -524,10 +523,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 				public void actionPerformed(ActionEvent e) {                    
                     AlgebraInput ai = (AlgebraInput) app.getGuiManager().getAlgebraInput();
-                    if (ai != null) {
-                    	ai.clear();   
-                    	if (geo.isDefined())
-                    		ai.getTextField().setText(geo.toValueString());
+                    if (ai != null) {    
+                    	// copy into text field
+                    	ai.getTextField().setText(geo.getValueForInputBar());
                     	ai.requestFocus();
                     }
                 }
@@ -601,7 +599,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
         
         
         // DELETE    
-        if (app.letDelete()) {  
+        if (app.letDelete() && !geo.isFixed()) {  
             addAction(new AbstractAction(
                 app.getPlain("Delete"),
                 app.getImageIcon("delete_small.gif")) {
@@ -611,8 +609,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-                    geo.remove();
-                    app.storeUndoInfo();
+                    //geo.remove();
+                    geo.removeOrSetUndefinedIfHasFixedDescendent();
+					app.storeUndoInfo();
                 }
             });       
         }

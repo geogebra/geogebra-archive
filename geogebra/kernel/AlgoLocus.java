@@ -15,6 +15,7 @@ package geogebra.kernel;
 
 import geogebra.main.Application;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,15 +33,13 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 		
 	
 	// maximum time for the computation of one locus point in millis
-	public static int MAX_TIME_FOR_ONE_STEP = 200;
-	
-	private static int MAX_STEPS_TO_FIND_DEFINED_STARTPOINT = 50;
+	public static int MAX_TIME_FOR_ONE_STEP = 500;
 	
 	private static final long serialVersionUID = 1L;
 	private static int MAX_X_PIXEL_DIST = 5;
 	private static int MAX_Y_PIXEL_DIST = 5;
 
-    private GeoPoint P, Q; 	// input       
+    private GeoPoint movingPoint, locusPoint; 	// input       
     private GeoLocus locus; 	// output   
     
     // for efficient dependency handling
@@ -56,20 +55,26 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 		maxYdist, xmin, xmax, ymin, ymax,
 		farXmin, farXmax, farYmin, farYmax;
     //private Line2D.Double tempLine = new Line2D.Double();
-    private Rectangle2D.Double nearToScreenRect = new Rectangle2D.Double();
+    private Rectangle2D.Double nearToScreenRect = new Rectangle2D.Double();   
+    private boolean continuous;
     private boolean lastFarAway;
+    private boolean foundDefined;
+    private boolean maxTimeExceeded;
     private Construction macroCons;
     private MacroKernel macroKernel;
     //private AlgorithmSet macroConsAlgoSet;
 	// list with all original elements used for the macro construction
     private TreeSet locusConsOrigElements, Qin; 
     
+    private long countUpdates =0;
+    
    // private Updater updater;
 
     AlgoLocus(Construction cons,  String label, GeoPoint Q, GeoPoint P) {
         super(cons);
-        this.P = P;
-        this.Q = Q;
+        this.movingPoint = P;
+        this.locusPoint = Q;    	
+    	//cache = new HashMap();
                 
         path = P.getPath();
         pathMover = path.createPathMover();
@@ -81,6 +86,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         updateScreenBorders();
         locus = new GeoLocus(cons);                      
         setInputOutput(); // for AlgoElement       
+        cons.registerEuclidianViewAlgo(this);
         
         compute();
         locus.setLabel(label);
@@ -95,48 +101,50 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     }
     
     public GeoPoint getQ() {
-    	return Q;
+    	return locusPoint;
     }
     
     private void init() {        
     	// copy the construction    	
-    	Qin = Q.getAllPredecessors(); // all parents of Q
+    	Qin = locusPoint.getAllPredecessors(); // all parents of Q
     	
     	// get intersection of all children of P and all parents of Q    	       	
     	locusConsOrigElements = new TreeSet(); 
     	Iterator it = Qin.iterator();
     	while (it.hasNext()) {
     		GeoElement parent = (GeoElement) it.next();
-    		if (parent.isLabelSet() && parent.isChildOf(P))    
+    		    	        		
+    		if (parent.isLabelSet() && parent.isChildOf(movingPoint)) {
     			// note: locusConsOrigElements will contain AlgoElement and GeoElement objects
     			Macro.addDependentElement(parent, locusConsOrigElements);   
+    		}
     	}    
     	
     	// ensure that P and Q have labels set
     	// Note: we have to undo this at the end of this method !!!
-    	boolean isLabeledP = P.isLabelSet();    	
+    	boolean isLabeledP = movingPoint.isLabelSet();    	
     	if (!isLabeledP) {
-    		P.label = P.getDefaultLabel();
-    		P.labelSet = true;
+    		movingPoint.label = movingPoint.getDefaultLabel();
+    		movingPoint.labelSet = true;
     	}
-    	boolean isLabeledQ = Q.isLabelSet();    	
+    	boolean isLabeledQ = locusPoint.isLabelSet();    	
     	if (!isLabeledQ) {
-    		Q.label = Q.getDefaultLabel();
-    		Q.labelSet = true;
+    		locusPoint.label = locusPoint.getDefaultLabel();
+    		locusPoint.labelSet = true;
     	}
     	    	
     	// add moving point on line
-    	locusConsOrigElements.add(P);
+    	locusConsOrigElements.add(movingPoint);
 
     	// add locus creating point and its algorithm to locusConsOrigElements 
-		Macro.addDependentElement(Q, locusConsOrigElements); 	   	
+		Macro.addDependentElement(locusPoint, locusConsOrigElements); 	   	
     	    	      
     	// create macro construction
-    	buildLocusMacroConstruction(locusConsOrigElements);    
+    	buildLocusMacroConstruction(locusConsOrigElements);
     	
     	// if we used temp labels remove them again
-    	if (!isLabeledP) P.labelSet = false;    
-    	if (!isLabeledQ) Q.labelSet = false;
+    	if (!isLabeledP) movingPoint.labelSet = false;    
+    	if (!isLabeledQ) locusPoint.labelSet = false;
     }
 
     // for AlgoElement
@@ -157,7 +165,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		}
     	}    	 
     	// remove P from input set!
-    	inSet.remove(P);    
+    	inSet.remove(movingPoint);    
     	
     	efficientInput = new GeoElement[inSet.size()];
     	it = inSet.iterator();
@@ -170,8 +178,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// the standardInput array should be used for
     	// the dependency graph
     	standardInput = new GeoElement[2];
-    	standardInput[0] = Q;
-    	standardInput[1] = P;    	
+    	standardInput[0] = locusPoint;
+    	standardInput[1] = movingPoint;    	
     	
         output = new GeoElement[1];
         output[0] = locus;
@@ -210,15 +218,16 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     		// get XML for macro construction of P -> Q        	
         	String locusConsXML = Macro.buildMacroXML(kernel, locusConsElements);  
         	
-        	//Application.debug(locusConsXML);        
     		macroKernel.loadXML(locusConsXML);
     	
 	    	// get the copies of P and Q from the macro kernel
-	    	Pcopy = (GeoPoint) macroKernel.lookupLabel(P.label);
+	    	Pcopy = (GeoPoint) macroKernel.lookupLabel(movingPoint.label);
 	    	Pcopy.setFixed(false);
-	    	Qcopy = (GeoPoint) macroKernel.lookupLabel(Q.label);
-	    	macroCons = macroKernel.getConstruction();
+	    	Pcopy.setPath(movingPoint.getPath());
 	    	
+	    	Qcopy = (GeoPoint) macroKernel.lookupLabel(locusPoint.label);
+	    	macroCons = macroKernel.getConstruction();
+
 	    	/*
 	    	// make sure that the references to e.g. start/end point of a segment are not
 	    	// changed later on. This is achieved by setting isMacroOutput to true	    	
@@ -243,238 +252,185 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 //    	//Application.debug("Q == Qcopy: " + (Q == Qcopy));
     }
     
-    private void resetMacroConstruction() {
-        // set all ellements in locusConsElements 
-        // to the current values of the main construction    
+    /**
+     *  Set all ellements in locusConsElements 
+     *  to the current values of the main construction    
+     */
+    private void resetMacroConstruction() {       
       	Iterator it = locusConsOrigElements.iterator();
       	while (it.hasNext()) {
       		ConstructionElement ce = (ConstructionElement) it.next();
       		if (ce.isGeoElement()) {
-	      		GeoElement geoOrig = (GeoElement) ce;  		
-	      		GeoElement geoCopy = macroCons.lookupLabel(geoOrig.label);   
-	      		if (geoCopy != null) {
-		  			try {	    				
-		  				geoCopy.set(geoOrig);	  				
-		  				geoCopy.update();      	      			 
-		  			} catch (Exception e) {
-		  				Application.debug("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
-		  			}
+	      		GeoElement geoOrig = (GeoElement) ce;  
+	      		// do not copy functions, their expressions already
+	      		// include references to the correct other geos 
+	      		if (!geoOrig.isGeoFunction()) {
+		      		GeoElement geoCopy = macroCons.lookupLabel(geoOrig.label);   
+		      		if (geoCopy != null) {
+			  			try {	    				
+			  				geoCopy.set(geoOrig);	  				
+			  				geoCopy.update();      	      			 
+			  			} catch (Exception e) {
+			  				Application.debug("AlgoLocus: error in resetMacroConstruction(): " + e.getMessage());
+			  			}
+		      		}
 	      		}
       		}
       	}               	      
       }             
 
     // compute locus line
-    final protected void compute() {    	    	
-    	if (!P.isDefined() || macroCons == null) {    		
+    final protected void compute() {    	
+    	if (!movingPoint.isDefined() || macroCons == null) {    		
     		locus.setUndefined();
     		return;
     	}
-    	    
-    	// continuous kernel?
-    	boolean continuous = kernel.isContinuous();
-    	macroKernel.setContinuous(continuous);    
-    	    	    	
-    	// set all elements in the macro construction
-    	// to the current values in the main construction
-    	int max_runs = GeoLocus.MAX_PATH_RUNS;    		
-    	if (continuous) {
-    		resetMacroConstruction();        		
-    	} else {    	
-    		Pcopy.set(P);   
-    		max_runs = 1; // we only go through the path once for non-continous constructions    		        	
-    	} 
     	
-    	// init path mover to the current position of Pcopy  
-    	pathMover.init(Pcopy);
-      	macroCons.updateConstruction(); // update all algorithms of the macro construction	         	
-    	Pcopy.updateCascade();   
-    	        	
-//    	Application.debug("*** compute ***");
-//    	Application.debug("init P: " + Pcopy);
-//    	Application.debug("init Q: " + Qcopy); 
-    		
-    	// remember the start positions of Pcopy and Qcopy
-    	PstartPos.set(Pcopy);
-    	QstartPos.set(Qcopy);
-    	
-    	// TODO: check
-    	if (!Qcopy.isDefined()) {  
-    		// try to find a position of P where Q is defined
-    		boolean foundDefined = false;
-    		int tries = 0;
-    		while (pathMover.hasNext() && tries++ < MAX_STEPS_TO_FIND_DEFINED_STARTPOINT) {    			
-    			pathMover.getNext(Pcopy);
-    			Pcopy.updateCascade();    			
-    			if (Qcopy.isDefined()) {
-    				foundDefined = true;
-    				break;
-    			}
-    			
-    			pathMover.biggerStep();    			
-    		}
-    		
-    		if (foundDefined) {    		
-    			pathMover.init(Pcopy);
-    			PstartPos.set(Pcopy);
-    	    	QstartPos.set(Qcopy);
-    		} else {    		
-    			locus.setUndefined();
-        		return;
-    		}
-    	}
-    	
-    	//  init locus with this first point    	
-    	locus.setDefined(true);
     	locus.clearPoints();    
-    	pointCount = 0;
-   		insertPoint(Qcopy.inhomX, Qcopy.inhomY, false);   		
+    	clearCache();
+    	pointCount = 0;	 	     	
+    	useCache = 0;
+    	countUpdates = 0;
+    	maxTimeExceeded = false;
+    	foundDefined = false;
+    	boolean prevQcopyDefined = false;
+    	int max_runs;      	    
+		
+		// continuous kernel?
+    	continuous = kernel.isContinuous();
+    	macroKernel.setContinuous(continuous);  
+    	
+    	// update macro construction with current values of global vars 
+    	resetMacroConstruction();
+    	macroCons.updateConstruction();
+		
+    	// use current position of movingPoint to start Pcopy
+    	pathMover.init(Pcopy);	
+    	
+    	if (continuous) {      		       	    		
+    		// continous constructions may need several parameter run throughs
+          	// to draw all parts of the locus
+    		max_runs = GeoLocus.MAX_PATH_RUNS; 
+    	} 
+    	else {
+    		max_runs = 1; 
+    	}     	 
+    	    	    
+    	// update Pcopy to compute Qcopy      	
+    	pcopyUpdateCascade();    	    	    
+   		prevQcopyDefined = Qcopy.isDefined();      	   		    	    	      		    
     	
     	// move Pcopy along the path
     	// do this until Qcopy comes back to its start position
-    	// for continouse constructions 
+    	// for continuous constructions 
    		//this may require several runs of Pcopy along the whole path
    		
     	int runs = 1;   
     	int MAX_LOOPS = 2*PathMover.MAX_POINTS;
-    	int whileLoops = 0;
-    	boolean maxTimeExceeded = false;
-    	
-    	// thread to perform update of P
-    	/*
-    	updater = new Updater();
-    	updater.setGeoElement(Pcopy);
-    	*/
-    	
+    	int whileLoops = 0;    	 
+    	    
     	do {    		    		
-    		boolean finishedRun = false;    		    		
-    		
-        //	Application.debug("RUN " + runs);
-    		
-	        while ( !finishedRun && 
+    		boolean finishedRun = false;    	
+	        while ( !finishedRun && !maxTimeExceeded &&
 	        		 pointCount <= PathMover.MAX_POINTS && 
 	        		 whileLoops <= MAX_LOOPS) 
-	        {		    
-	        		        	
+	        {		    	        		        	
 	        	whileLoops++;	      
 	        		        	
 	        	// lineTo may be false due to a parameter jump
 	        	// i.e. param in [0,1] gets bigger than 1 and thus jumps to 0   
-	        	boolean lineTo = pathMover.getNext(Pcopy);		       			
-	        	
-	        	// TODO: remove    		
-	        	//Application.debug("   while " + whileLoops + ", Pcopy: " + Pcopy);
-	        	
-	        	
-	        	// TODO: check
-	        	//safeUpdateCascade();
-	        	
-	        	// measure time needed for update of construction
-	        	long startTime = System.currentTimeMillis();	        
-	       		Pcopy.updateCascade();
-	       		long updateTime = System.currentTimeMillis() - startTime;	   
-	       			       	
-	       		      	        
-	       	 // PRINT MACRO CONSTRUCTION STATE   
-//	          	Iterator it = macroCons.getGeoElementsIterator();
-//	          	Application.debug("*** locus macro construction state ***");
-//	          	while (it.hasNext()) {	          	
-//	    	      		Application.debug(it.next());			    	      		
-//	          	}
+	        	boolean parameterJump = !pathMover.getNext(Pcopy);		       			
+	        	boolean stepChanged = false;
 	        
-	          	
-//	        	GeoSegment a = (GeoSegment) macroKernel.lookupLabel("a");
-//	        	Application.debug("a: from " + a.getStartPoint() + "(" + a.getStartPoint().getConstruction() + ") to "
-//	        			+ a.getEndPoint() + "(" + a.getEndPoint().getConstruction() + ")");
-	       
-	       		
-	        	// TODO: check
-	       		// if it takes too much time to calculate a single step, we stop
-	       		if (updateTime > MAX_TIME_FOR_ONE_STEP) {
-	       			Application.debug("AlgoLocus: max time exceeded " + updateTime);	       			
-	       			maxTimeExceeded = true;	 
-	       			return;
-	       		}
-	
-	       		// add position of Qcopy to locus line
-	       		if (Qcopy.isDefined()) {	
+	        	// update construction        
+	        	pcopyUpdateCascade();
+	        	
+	       		// Qcopy DEFINED
+	       		if (Qcopy.isDefined()) {		       				       			
 	       			// STANDARD CASE: no parameter jump
-	       			if (lineTo) {
-	       				boolean stepChanged = false;
-	   				       			      			
-	   					// make steps smaller until distance ok:
-	       				// while locus point defined and (parameter jump or distance too big)
-	       				while (Qcopy.isDefined() && !distanceOK(Qcopy))
+	       			if (!parameterJump) {	       					   				       			      		
+	   					// make steps smaller until distance ok to connect with last point
+	       				while (Qcopy.isDefined() && !distanceOK(Qcopy) && !maxTimeExceeded)
 	       				{			
 	       					//go back and try smaller step	  
-	       		        	boolean smallerStep = pathMover.smallerStep();
-	       					if (!smallerStep) {	       						
-	       						break;
-	       					}
+	       		        	boolean smallerStep = pathMover.smallerStep();	   
+	       					if (!smallerStep) break;
+	       					
 	       					stepChanged = true;	       					
 	       					pathMover.stepBack(); 
 	       					pathMover.getNext(Pcopy);       					
-	       					
-	       					// TODO: check
-	       					// safeUpdateCascade();
-	       					// measure time needed for update of construction
-	       		        	long st = System.currentTimeMillis();	        
-	       		       		Pcopy.updateCascade();
-	       		       		long ut = System.currentTimeMillis() - st;	
-	       					
-	       					if (ut > MAX_TIME_FOR_ONE_STEP) {
-	       		       			Application.debug("AlgoLocus: max time exceeded  " + updateTime);	       		       				       		       			 
-	       		       			maxTimeExceeded = true;
-	       		       			return;
-	       		       		}	       
-	       						       				
-	       					//if (!lineTo) break;	       		
+
+	       					// update construction        
+	       		        	pcopyUpdateCascade();	               		
 	       				}	       					       					       			
 	       				
 	       				if (Qcopy.isDefined()) {
-	       					insertPoint(Qcopy.inhomX, Qcopy.inhomY, 
-	       							distanceSmall(Qcopy));	       				
-	       				}
-	       				
-	       				// if we didn't decrease the step width 
-	       				// increase it
-	       				if (!stepChanged) 
-	       					pathMover.biggerStep();	       											       			
+	       					// draw point
+	       					insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceSmall(Qcopy));	
+	       					prevQcopyDefined = true;
+	       				}	       					       				
 		       		}
+	       			
 	       			// PARAMETER jump: !lineTo
-	       			else {	       			
-	       			//	Application.debug("parameter jump: " + pathMover.getCurrentParameter());
+	       			else {	   
+	       				// draw point
 	       				insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceSmall(Qcopy));	
-	       			}
+	       				prevQcopyDefined = true;
+	       			}	       				       			
 	       		}
+	       		
+	       		// Qcopy NOT DEFINED
        			else {    
-       				// TODO: add undefined Qcopy case	 	
+       				// check if we moved from defined to undefined case:
+       				// step back and try with smaller step
+       				if (prevQcopyDefined && !parameterJump) {
+       					pathMover.stepBack(); 
+       					// set smallest step
+       					if (!pathMover.smallerStep()) {     					
+       						prevQcopyDefined = false;  
+       					} else
+       						stepChanged = true;
+       				}       				       			       				
+       				       				
+       				// add better undefined case support for continuous curves
+       				// maybe change orientation of path mover
        			}
+	       		
+	       		// if we didn't decrease the step width increase it
+   				if (!stepChanged) {
+   					pathMover.biggerStep();
+   				}
 	       		       			       			      
-	       		// end of run
-	       		if (!pathMover.hasNext()) {		       		       		 			
-	       			// draw last point
-	       			if (distanceSmall(Qcopy))
-	       				insertPoint(Qcopy.inhomX, Qcopy.inhomY, true);	 
-	       				
-	       			finishedRun = true;	        				       	
+	       		// end of run: the next step would pass the start position	       			       		
+	       		if (!pathMover.hasNext()) {	 
+	       			if (distanceSmall(QstartPos)) {
+	       				// draw line back to first point when it's close enough
+	       				insertPoint(QstartPos.inhomX, QstartPos.inhomY, true);	
+	       				finishedRun = true;
+	       			} 
+	       			else {		       			
+		       			// decrease step until another step is possible
+		       			while (!pathMover.hasNext() && pathMover.smallerStep());
+		       			
+		       			// no smaller step possible: run finished
+		       			if (!pathMover.hasNext())		
+		       				finishedRun = true;     
+	       			}
 	       		}
 	        }		        
 	        
 	        // calculating the steps took too long, so we stopped somewhere
-	        // change orientation of pathMove to get other side of start position too
 	        if (maxTimeExceeded) {
-	        	// TODO: remove
-	        	Application.debug("AlgoLocus: max time exceeded");
-	        	
+	        	System.err.println("AlgoLocus: max time exceeded");	        	
 	        	return;	        
 	        } 
 	        else {	        
 		        // make sure that Pcopy is back at startPos now
 		        // look at Qcopy at startPos	    	         
 				Pcopy.set(PstartPos);
-				Pcopy.updateCascade();	               	    	       		       	   		   		       	       							
-				insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceSmall(Qcopy));							
+				pcopyUpdateCascade();
+				if (Qcopy.inhomX != lastX || Qcopy.inhomY != lastY)
+					insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceSmall(Qcopy));				
 		    				
 //	    		 Application.debug("run: " + runs);
 //	    		 Application.debug("pointCount: " + pointCount);
@@ -485,32 +441,142 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	    		// if we got back to the start position of Qcopy
 	    		// AND if the direction of moving along the path
 	    		// is positive like in the beginning
-		        if (pathMover.hasPositiveOrientation() && 
-		        	QstartPos.equals(Qcopy))
-		        	break;
+		        if (pathMover.hasPositiveOrientation()) {
+		        	kernel.setMinPrecision();
+		        	boolean equal = QstartPos.isEqual(Qcopy);
+		        	kernel.resetPrecision();
+		        	if (equal)
+		        		break;
+		        }
+		        	
 	        }
 	        
 	        pathMover.resetStartParameter();	       
 	        runs++;	        	 
         } while (runs < max_runs);
     	
-//    	Application.debug("points in list: " + locus.getPointLength() +  ", runs: " + (runs-1));
-//    	Application.debug("   while " + whileLoops + " MAX_LOOPS: " + MAX_LOOPS);
+    	// set defined/undefined
+    	locus.setDefined(foundDefined); 
+
+//    	System.out.println("  first point: " + locus.getMyPointList().get(0));
+//    	ArrayList list = locus.getMyPointList();
+//    	for (int i=list.size()-10; i < list.size()-1; i++) {
+//    		System.out.println("      point: " + list.get(i));
+//    	}
+//    	System.out.println("  last  point: " + locus.getMyPointList().get(pointCount-1));  
     	
+    	//Application.debug("LOCUS COMPUTE updateCascades: " + countUpdates + ", cache used: " + useCache);
     }
     
-  
+    /**
+     * Calls Pcopy.updateCascade() to compute Qcopy. For non-continous constructions
+     * caching of previous paramater positions is used. 
+     */
+    private void pcopyUpdateCascade() {
+    	countUpdates++;  
+    	    	
+    	if (continuous) {
+    		// CONTINOUS construction   
+    		// don't use caching for continuous constructions:
+        	// the same position of Pcopy can have different results for Qcopy 
+    		Pcopy.updateCascade();    		
+    	} 
+    	else {    	    
+	    	// NON-CONTINOUS construction    	
+	    	// check if the path parameter's resulting Qcopy is already in cache
+	    	double param = Pcopy.getPathParameter().t;
+	    	Point2D.Double cachedPoint = getCachedPoint(param);        
+	    	    	    	    	
+	    	if (cachedPoint == null) {    		
+	    		// measure time needed for update of construction
+	        	long startTime = System.currentTimeMillis();	        
+	        	
+	        	// result not in cache: update Pcopy to compute Qcopy
+	    		Pcopy.updateCascade();
+	 
+	       		long updateTime = System.currentTimeMillis() - startTime;	   
+	       			       	
+	       		// if it takes too much time to calculate a single step, we stop
+	       		if (updateTime > MAX_TIME_FOR_ONE_STEP) {
+	       			Application.debug("AlgoLocus: max time exceeded " + updateTime);	       			
+	       			maxTimeExceeded = true;
+	       		}
+	    		
+	    		// cache value of Qcopy    		
+	    		putCachedPoint(param, Qcopy);   		
+	    	} else {    		
+	    		// use cached result to set Qcopy
+	    		Qcopy.setCoords(cachedPoint.x, cachedPoint.y, 1.0);
+	    		useCache++;
+	    	}    	   
+    	}	
+    	
+    
+
+//    	if (Qcopy.isDefined()) {
+//    		if (!foundDefined)
+//    			System.out.print(locus.label + " FIRST DEFINED param: " + Pcopy.getPathParameter().t);
+//    		else
+//    			System.out.print(locus.label + " param: " + Pcopy.getPathParameter().t);
+//        	System.out.println(", Qcopy: " + Qcopy);  
+//    	} else {
+//    		System.out.print(locus.label + " param: " + Pcopy.getPathParameter().t);
+//        	System.out.println(", Qcopy: NOT DEFINED");  
+//    	}
+      	
+    	// check found defined
+    	if (!foundDefined && Qcopy.isDefined()) {
+    		pathMover.init(Pcopy);
+    		PstartPos.set(Pcopy);
+        	QstartPos.set(Qcopy);
+        	foundDefined = true;
+        	
+        	// insert first point
+        	insertPoint(Qcopy.inhomX, Qcopy.inhomY, false);    
+    	}
+    }
+    
+    private void clearCache() {
+    	for (int i=0; i < paramCache.length; i++) {
+    		paramCache[i] = Double.NaN;
+    		if (qcopyCache[i] == null)
+    			qcopyCache[i] = new Point2D.Double();
+    	}
+    }
+    
+    private Point2D.Double getCachedPoint(double param) {
+    	// search for cached parameter
+    	for (int i=0; i < paramCache.length; i++) {
+    		if (param == paramCache[i])
+    			return qcopyCache[i];    		
+    	}
+    	
+    	return null;
+    }
+    
+    private void putCachedPoint(double param, GeoPoint Qcopy) {
+    	cacheIndex++;
+    	if (cacheIndex >= paramCache.length) cacheIndex = 0;
+    	
+    	paramCache[cacheIndex] = param;
+    	qcopyCache[cacheIndex].x = Qcopy.inhomX;
+    	qcopyCache[cacheIndex].y = Qcopy.inhomY;
+    }
+    
+    // small cache of 3 last parameters and Qcopy positions 
+    private double [] paramCache = new double[3];
+    private Point2D.Double [] qcopyCache = new Point2D.Double[paramCache.length];
+    private int cacheIndex = 0;   
+    private long useCache = 0;
             
-    private void insertPoint(double x, double y, boolean lineTo) {
+    private void insertPoint(double x, double y, boolean lineTo) {  
     	pointCount++;
-    	
-    	
-    //	Application.debug("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);
-    	
+    	    	
+    	//	Application.debug("insertPoint: " + x + ", " + y + ", lineto: " + lineTo);    	
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;
     	lastY = y;
-    	lastFarAway = isFarAway(lastX, lastY);        	    	
+    	lastFarAway = isFarAway(lastX, lastY);      	    	
     }
     
     private boolean isFarAway(double x, double y) {
@@ -532,8 +598,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	}
 
     	return distanceOK;
-    }              
-        
+    }        
     
     private boolean distanceSmall(GeoPoint Q) {
     	boolean distSmall = Math.abs(Q.inhomX - lastX) < maxXdist &&
@@ -565,73 +630,15 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// near to screen rectangle
     	nearToScreenRect.setFrame(farXmin, farYmin, 
     			  farXmax - farXmin, 
-				  farYmax - farYmin);        	    	
+				  farYmax - farYmin);      	
     }
     
     public void euclidianViewUpdate() {
+    	// TODO: remove
+    	//System.out.println("AlgoLocus.euclidianViewUpdate, kernel: " + kernel);
+    	
       	updateScreenBorders();
-  		update();
+  		update();    	
    	}
-    
-    final public boolean wantsEuclidianViewUpdate() {
-    	return true;
-    }
-    
-    // TODO: check updater, what does suspend(), resume(), interrupt() do exactly?
-    /*
-    private class Updater extends Thread {
-    	GeoElement geo;
-    	Thread sleeper;
-    	
-    	public Updater() {
-    		sleeper = new Thread() {
-        		public void run() {
-        			// TODO: remove
-            		Application.debug("sleeper: start");
-        			try {
-        				sleep(MAX_TIME_FOR_ONE_STEP);
-        			} catch (Exception e) {    				
-        			}
-        			
-        			if (Updater.this.isAlive()) {
-        				// TODO: remove
-        				Application.debug("updater: suspend (TOOK TOO LONG)");
-        				Updater.this.interrupt();
-        			}
-        		}
-        	};       
-    	}
-    	
-    	public void setGeoElement(GeoElement geo) {
-    		this.geo = geo;
-    	}
-    	
-    	public void run() {    		
-    		sleeper.start();
-    		
-    		// TODO: remove
-    		Application.debug("updater: start");
-    		geo.updateCascade();    		
-    		
-    		Application.debug("updater: finished");
-    		Application.debug("sleeper: suspend");
-    		sleeper.suspend();    		
-    	}    
-    	    	
-    }
-*/
-    
-    
-    /*
-     * Calls geo.updateCascade(). This method will terminate after
-     * MAX_MILLIS.
-     * @return
-     *
-    private void safeUpdateCascade() {
-    	// measure time needed for update of construction
-    
-    	updater.start();    	
-    }
-    */ 
-	
+ 	
 }

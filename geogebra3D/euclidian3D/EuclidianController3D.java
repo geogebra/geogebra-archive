@@ -3,29 +3,20 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.euclidian.EuclidianController;
-import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.main.Application;
-import geogebra3D.Application3D;
-import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -455,7 +446,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 			if (goodHits.size() > 2 - selGeos()) {
 				//  choose one geo, and select only this one
-				GeoElement geo = chooseGeo(goodHits);
+				GeoElement geo = chooseGeo(goodHits, true);
 				hits.clear();
 				hits.add(geo);				
 			} else {
@@ -612,7 +603,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		Application.debug("MODE_TRANSLATEVIEW - "+hits.toString());
 		
 		if (!hits.isEmpty()) {
-			handleMousePressedForMoveMode(e);
+			handleMousePressedForMoveMode(e, false);
 		}else{
 			super.mousePressedTranslatedView(e);
 		}

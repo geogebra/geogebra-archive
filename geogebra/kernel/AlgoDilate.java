@@ -58,7 +58,7 @@ public class AlgoDilate extends AlgoTransformation {
         
         setInputOutput();
         
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
         
         compute();
         

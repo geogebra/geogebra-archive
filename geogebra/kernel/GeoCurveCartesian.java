@@ -135,11 +135,17 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		// macro OUTPUT
 		if (geo.cons != cons && isAlgoMacroOutput()) {	
 			if (!geo.isIndependent()) {
+//				// TODO: remove
+//				System.out.println("set " + this.label);
+//				System.out.println("   funX before: " + funX.toLaTeXString(true));
+				
 				// this object is an output object of AlgoMacro
 				// we need to check the references to all geos in its function's expression
 				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
 				algoMacro.initFunction(funX);
 				algoMacro.initFunction(funY);
+//				// TODO: remove
+//				System.out.println("   funX after: " + funX.toLaTeXString(true));
 			}
 		}
 	}		
@@ -214,6 +220,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	
 	
 	public String toString() {
+		if (sbToString == null) {
+			sbToString = new StringBuffer(80);
+		}
 		sbToString.setLength(0);
 		if (isLabelSet()) {
 			sbToString.append(label);
@@ -224,11 +233,14 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
-	private StringBuffer sbToString = new StringBuffer(80);
-	private StringBuffer sbTemp = new StringBuffer(80);
+	private StringBuffer sbToString;
+	private StringBuffer sbTemp;
 	
 	public String toValueString() {		
 		if (isDefined) {
+			if (sbTemp == null) {
+				sbTemp = new StringBuffer(80);
+			}
 			sbTemp.setLength(0);
 			sbTemp.append('(');
 			sbTemp.append(funX.toValueString());
@@ -242,6 +254,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	
 	public String toSymbolicString() {	
 		if (isDefined) {
+			if (sbTemp == null) {
+				sbTemp = new StringBuffer(80);
+			}
 			sbTemp.setLength(0);
 			sbTemp.append('(');
 			sbTemp.append(funX.toString());
@@ -255,6 +270,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	
 	public String toLaTeXString(boolean symbolic) {
 		if (isDefined) {
+			if (sbTemp == null) {
+				sbTemp = new StringBuffer(80);
+			}
 			sbTemp.setLength(0);
 			sbTemp.append("\\left(\\begin{array}{c}");
 			sbTemp.append(funX.toLaTeXString(symbolic));

@@ -128,7 +128,7 @@ implements Previewable {
 	    	// shape on screen?		
 			if (shape != null && !shape.intersects(0,0, view.width, view.height)) {				
 				isVisible = false;
-				return;
+	        	// don't return here to make sure that getBounds() works for offscreen points too
 			}
 			
 			// draw trace
@@ -177,7 +177,11 @@ implements Previewable {
 	}
 	
 	private void updateParallelLines() {
-		if (drawSegment == null) { // init
+		if (drawSegment == null
+				// also needs re-initing when changing Rays <-> Segment
+				|| (conicPart.positiveOrientation() && draw_type != DRAW_TYPE_SEGMENT)
+				|| (!conicPart.positiveOrientation() && draw_type != DRAW_TYPE_RAYS) ) 
+		{ // init
 			GeoLine [] lines = conicPart.getLines();
 			drawSegment = new DrawSegment(view, lines[0]);
 			drawRay1 = new DrawRay(view, lines[0]);
@@ -223,11 +227,13 @@ implements Previewable {
 		            }		
 		            break;
         	
-        		case DRAW_TYPE_SEGMENT:
+        		case DRAW_TYPE_SEGMENT:        
         			drawSegment.draw(g2);
         			break;
         		
-        		case DRAW_TYPE_RAYS:
+        		case DRAW_TYPE_RAYS:  
+        			drawRay1.setStroke(objStroke);
+        			drawRay2.setStroke(objStroke);
         			drawRay1.draw(g2);
         			drawRay2.draw(g2);
         			break;
@@ -267,6 +273,8 @@ implements Previewable {
     			break;
     			
 			case DRAW_TYPE_RAYS:
+    			drawRay1.setStroke(objStroke);
+    			drawRay2.setStroke(objStroke);
     			drawRay1.drawTrace(g2);
     			drawRay2.drawTrace(g2);
     			break;

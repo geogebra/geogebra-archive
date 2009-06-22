@@ -60,8 +60,6 @@ public class AlgoFractionText extends AlgoElement {
 		if (input[0].isDefined()) {
 			frac = DecimalToFraction(num.getDouble(),Kernel.STANDARD_PRECISION);
 			
-			kernel.setTemporaryPrintDecimals(15); // make sure whole numbers are printed nicely (ie not in standard form 1.343E10)
-	    	
 			if (frac[1] == 1) { // integer
 		    	text.setTextString(kernel.format(frac[0]));				
 			} else {
@@ -75,9 +73,7 @@ public class AlgoFractionText extends AlgoElement {
 		    	text.setTextString(sb.toString());
 			}
 	    	text.setLaTeX(true,false);
-	    	
-	    	kernel.restorePrintAccuracy();
-		
+
 		} else
 			text.setUndefined();
 	}

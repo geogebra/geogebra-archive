@@ -13,9 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel.statistics;
 
 import geogebra.kernel.AlgoTwoNumFunction;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Construction;
-
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
@@ -30,14 +28,8 @@ public class AlgoRandomNormal extends AlgoTwoNumFunction {
 			NumberValue b) {
 		super(cons, label, a, b);
 
-		// create dummy random number in (0,1)
-		// and call setRandomInputNumber() in order to
-		// make sure that this algorithm is updated when
-		// arrow keys are pressed
-		GeoNumeric randNum = new GeoNumeric(cons);
-		randNum.setUsedForRandom(true);
-		GeoNumeric[] randNums = { randNum };
-		setRandomInputNumbers(randNums);
+		// output is random number
+		cons.addRandomNumber(num);
 	}
 
 	protected String getClassName() {

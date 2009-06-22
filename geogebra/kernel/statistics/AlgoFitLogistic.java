@@ -13,18 +13,17 @@ the Free Software Foundation.
 */
 
 
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.statistics.RegressionMath;
 
 
 /******************* 

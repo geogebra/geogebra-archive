@@ -1,20 +1,20 @@
 // Copyright 2007, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
-import org.freehep.graphicsio.emf.EMFTag;
-import org.freehep.graphicsio.emf.EMFRenderer;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Arc2D;
+import java.io.IOException;
+
 import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-
-import java.awt.geom.Arc2D;
-import java.awt.Rectangle;
-import java.awt.Point;
-import java.awt.Shape;
-import java.io.IOException;
+import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * @author Steffen Greiffenberg
- * @version $Id: AbstractArc.java,v 1.3 2008-05-04 12:19:36 murkle Exp $
+ * @version $Id: AbstractArc.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public abstract class AbstractArc extends EMFTag {
 

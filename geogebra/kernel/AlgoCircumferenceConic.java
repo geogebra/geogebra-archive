@@ -81,7 +81,7 @@ public class AlgoCircumferenceConic extends AlgoElement {
     	if (conic.isGeoConicPart()) {
     		GeoConicPart conicPart = (GeoConicPart) conic;
     		int partType = conicPart.getConicPartType();
-			if (type == GeoConic.CONIC_CIRCLE && partType == GeoConicPart.CONIC_PART_SECTOR) {				
+    		if (type == GeoConic.CONIC_CIRCLE && partType == GeoConicPart.CONIC_PART_SECTOR) {				
 				/* value of sector is area:
 					area = r*r * paramExtent / 2;
 					arclength = r * paramExtent;
@@ -94,8 +94,18 @@ public class AlgoCircumferenceConic extends AlgoElement {
 				// circumference of sector
 				circum.setValue(arclength + 2 * r);					
 			}
-			else 
-				// circumference of arc or ellipse sector is undefined
+			else if (type == GeoConic.CONIC_CIRCLE && partType == GeoConicPart.CONIC_PART_ARC) {				
+				// value of arc is curved length
+			double arclength = conicPart.getValue();
+			double r = conic.halfAxes[0]; 
+			double angle = conicPart.getParameterExtent();
+			
+			// return circumference of **segment**
+			// ie curved + straight
+			circum.setValue(arclength + 2.0 * r * Math.sin(angle/2));					
+		}
+		else 
+				// circumference of ellipse sector is undefined
 	    		// note: circumference of ellipse sector is simply not implemented yet
 				circum.setUndefined();
 			

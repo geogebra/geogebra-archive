@@ -42,6 +42,7 @@ public class AlgoSlope extends AlgoElement {
 
         compute();
         slope.setLabel(label);
+        slope.setDrawable(true);
     }
 
     protected String getClassName() {

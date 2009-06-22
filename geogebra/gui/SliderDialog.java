@@ -126,7 +126,7 @@ public class SliderDialog extends JDialog
 		topPanel.add(radioPanel, BorderLayout.WEST);
 
 		// slider panels		
-		sliderPanel = new SliderPanel(app, null);			
+		sliderPanel = new SliderPanel(app, null, true);			
 		JPanel slPanel = new JPanel(new BorderLayout(0,0));		
 		GeoElement [] geos = { number };
 		slPanel.add(sliderPanel.update(geos), BorderLayout.CENTER);		

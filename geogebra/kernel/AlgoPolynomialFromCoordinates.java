@@ -12,13 +12,13 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.math.BigDecimal;
-
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
+
+import java.math.BigDecimal;
 
 /**
  * Fit a Polynomial exactly to a set of coordinates. Unstable above about 12 coords

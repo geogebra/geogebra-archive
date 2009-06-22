@@ -15,10 +15,6 @@ package geogebra.kernel;
 
 import geogebra.util.Util;
 
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-
 /**
  * 
  * @author Michael

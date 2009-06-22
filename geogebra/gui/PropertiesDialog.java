@@ -28,6 +28,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -69,7 +70,9 @@ public class PropertiesDialog
 		KeyListener,
 		GeoElementSelectionListener {
 			
-	private static final int MAX_GEOS_FOR_EXPAND_ALL = 15;	
+	//private static final int MAX_OBJECTS_IN_TREE = 500;
+	private static final int MAX_GEOS_FOR_EXPAND_ALL = 15;
+	private static final int MAX_COMBOBOX_ENTRIES = 200;	
 	
 	private static final long serialVersionUID = 1L;
 	private Application app;
@@ -115,9 +118,9 @@ public class PropertiesDialog
 	}
 
 	/**
-	 * Initialize the GUI of the dialog.
+	 * inits GUI with labels of current language	 
 	 */
-	private void initGUI() {
+	public void initGUI() {
 		geoTree.setFont(app.plainFont);			
 		
 		boolean wasShowing = isShowing();
@@ -144,13 +147,13 @@ public class PropertiesDialog
 			}
 		});
 
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));	
-		
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));			
+
 		if (app.letDelete())
 			buttonPanel.add(delButton);
 
 		listPanel.add(buttonPanel, BorderLayout.SOUTH);
-		listPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));		
+		listPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));	
 
 			
 		// PROPERTIES PANEL
@@ -160,8 +163,12 @@ public class PropertiesDialog
 			colChooser.setColor(new Color(1, 1,1, 100));
 		}
 			
-		propPanel = new PropertiesPanel(app, colChooser, false);
-		propPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
+		// check for null added otherwise you get two listeners for the colChooser
+		// when a file is loaded
+		if (propPanel == null) {
+			propPanel = new PropertiesPanel(app, colChooser, false);
+			propPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
+		}
 		selectionChanged(); // init propPanel		
 
 		closeButton = new JButton();
@@ -169,19 +176,21 @@ public class PropertiesDialog
 			public void actionPerformed(ActionEvent e) {
 				closeDialog();			
 			}
-		});
+		});		
 		
 		defaultsButton = new JButton();
 		defaultsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				applyDefaults();
 			}
-		});
+		});		
 
 		// put it all together				 		 		 
 		Container contentPane = getContentPane();
+		contentPane.removeAll();
+		//contentPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));		
 		contentPane.setLayout(new BorderLayout());
-		
+				
 		buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.add(defaultsButton);
 		buttonPanel.add(closeButton);
@@ -199,11 +208,11 @@ public class PropertiesDialog
 							
 		if (wasShowing) {
 			setVisible(true);
-		}
+		}		
 		
 		setLabels();
 	}
-	
+
 	/**
 	 * Update the labels of this dialog.
 	 * 
@@ -220,7 +229,7 @@ public class PropertiesDialog
 		geoTree.setLabels();
 		propPanel.setLabels();
 	}
-	
+		
 	/*
 	public void cancel() {
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -278,18 +287,18 @@ public class PropertiesDialog
 		
 		propPanel.updateSelection(selectionList.toArray());
 	}
-		
+			
 	/**
 	 * shows this dialog and select GeoElement geo at screen position location
 	 */
-	public void setVisibleWithGeos(ArrayList geos) {		
+	public void setVisibleWithGeos(ArrayList geos) {
 		setViewActive(true);					
 	
 		if (kernel.getConstruction().getGeoSetConstructionOrder().size() < 
 				MAX_GEOS_FOR_EXPAND_ALL)		
 			geoTree.expandAll();
 		else 
-			geoTree.collapseAll();			
+			geoTree.collapseAll();
 		
 		geoTree.setSelected(geos, false);
 		if (!isShowing()) {		
@@ -332,7 +341,11 @@ public class PropertiesDialog
 		if (flag) {			
 			geoTree.clear();	
 			kernel.attach(geoTree);
-			kernel.notifyAddAll(geoTree);					
+			
+//			// only add objects if there are less than 200
+//			int geoSize = kernel.getConstruction().getGeoSetConstructionOrder().size();
+//			if (geoSize < MAX_OBJECTS_IN_TREE)
+				kernel.notifyAddAll(geoTree);					
 			
 			app.setSelectionListenerMode(this);
 			addWindowFocusListener(this);			
@@ -356,7 +369,7 @@ public class PropertiesDialog
 		//Util.addKeyListenerToAll(propPanel, this);
 		
 		// update selection of application too
-		if (app.getMode() == EuclidianView.MODE_ALGEBRA_INPUT)
+		if (app.getMode() == EuclidianView.MODE_SELECTION_LISTENER)
 			app.setSelectedGeos(selectionList);		
 	}
 	
@@ -410,7 +423,7 @@ public class PropertiesDialog
 		if (selGeos.size() > 0) {	
 			Object [] geos = selGeos.toArray();			
 			for (int i = 0; i < geos.length - 1; i++) {
-				((GeoElement) geos[i]).remove();
+				((GeoElement) geos[i]).removeOrSetUndefinedIfHasFixedDescendent();
 			}
 			
 			// select element above last to delete
@@ -419,7 +432,7 @@ public class PropertiesDialog
 			if (tp != null) {
 				int row = geoTree.getRowForPath(tp);
 				tp = geoTree.getPathForRow(row - 1);
-				geo.remove();								
+				geo.removeOrSetUndefinedIfHasFixedDescendent();								
 				if (tp != null) geoTree.setSelectionPath(tp);
 			}
 		}
@@ -482,9 +495,9 @@ public class PropertiesDialog
 	}
 	public void windowOpened(WindowEvent e) {
 	}
+
 	
-
-
+	
 	/**
 	 * INNER CLASS
 	 * JList for displaying GeoElements
@@ -525,8 +538,8 @@ public class PropertiesDialog
 			
 			addMouseMotionListener(this);
 			addMouseListener(this);
-		}
-		
+		}				
+
 		public void setLabels() {
 			root.setUserObject(app.getPlain("Objects"));
 			
@@ -535,7 +548,7 @@ public class PropertiesDialog
 				typeNodesMap.get(key).setUserObject(app.getPlain(key));
 			}
 		}
-		
+				
 		protected void setExpandedState(TreePath path, boolean state) {
             // Ignore all collapse requests of root        	
             if (path != getPathForRow(0)) {
@@ -567,14 +580,21 @@ public class PropertiesDialog
 		 * @param addToSelection: false => clear old selection 
 		 */
 		public void setSelected(ArrayList geos, boolean addToSelection) {
-			TreePath tp = null;					
-			
+			TreePath tp = null;	
+					
 			TreeSelectionModel lsm = getSelectionModel();					
 			if (geos == null || geos.size() == 0) {
 				lsm.clearSelection();
 				selectFirstElement();
 			}			
 			else {
+				// make sure geos are in list, this is needed when MAX_OBJECTS_IN_TREE was 
+				// exceeded in setViewActive(true)
+//				for (int i=0; i < geos.size(); i++) {
+//					GeoElement geo = (GeoElement) geos.get(i);
+//					add(geo);
+//				}								
+				
 				if (!addToSelection) 
 					lsm.clearSelection();		
 							
@@ -815,23 +835,28 @@ public class PropertiesDialog
 				setToolTipText(null);
 		}
 
-		public void mouseClicked(MouseEvent e) {
-			/*
-			Point loc = e.getPoint();
-			int clicks = e.getClickCount();
+		/**
+		 * Handles clicks on the show/hide icon to toggle the show-object status.
+		 */
+		public void mouseClicked(MouseEvent e) {			
+			if (Application.isControlDown(e) || e.isShiftDown()) return;
 			
-			
-			if (clicks == 1) {
-				int row = getRowForLocation(loc.x, loc.y);				
-				addSelectionRow(row);
-			}
-			
-			else if (clicks == 2) {
-				GeoElement geo = AlgebraView.getGeoElementForLocation(this, loc.x, loc.y);						
-				if (geo != null) {
-					app.showRenameDialog(geo, false, null);
-				}
-			}*/
+			// get GeoElement at mouse location		
+			TreePath tp = getPathForLocation(e.getX(), e.getY());
+			GeoElement geo = AlgebraView.getGeoElementForPath(tp);
+
+			// check if we clicked on the 16x16 show/hide icon
+			Rectangle rect = getPathBounds(tp);
+			boolean iconClicked = rect != null && e.getX() - rect.x < 13; // distance from left border				
+			if (iconClicked) {
+				// icon clicked: toggle show/hide
+				geo.setEuclidianVisible(!geo.isSetEuclidianVisible());
+				geo.update();
+				kernel.notifyRepaint();
+				
+				// update properties dialog by selecting this geo again
+				geoElementSelected(geo, false);
+			}			
 		}
 
 		public void mouseEntered(MouseEvent arg0) {
@@ -878,7 +903,7 @@ public class PropertiesDialog
 
 	public void windowGainedFocus(WindowEvent arg0) {
 		// make sure this dialog is the current selection listener
-		if (app.getMode() != EuclidianView.MODE_ALGEBRA_INPUT ||
+		if (app.getMode() != EuclidianView.MODE_SELECTION_LISTENER ||
 			app.getCurrentSelectionListener() != this) 
 		{
 			app.setSelectionListenerMode(this);

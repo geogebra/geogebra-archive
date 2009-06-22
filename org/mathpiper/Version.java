@@ -19,7 +19,7 @@ package org.mathpiper;
 
 public class Version
 {
-//"$Id: Version.java,v 1.3 2009-03-12 22:55:36 hohenwarter Exp $"
+//"$Id: Version.java,v 1.4 2009-06-22 02:18:22 hohenwarter Exp $"
    public  static final String version = ".71";
     
 }//end class.

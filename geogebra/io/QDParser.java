@@ -41,6 +41,14 @@ public class QDParser {
 		etag = new StringBuffer();
 	}
 	
+	public void reset() {
+		attrs.clear();
+		stack.clear();
+		sb = new StringBuffer();
+		etag = new StringBuffer();
+		System.gc();
+	}
+	
 	private int popMode(Stack st) {
 		if (!st.empty())
 			return ((Integer) st.pop()).intValue();

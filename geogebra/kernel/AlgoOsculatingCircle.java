@@ -1,6 +1,7 @@
 package geogebra.kernel;
 
 
+
 /**
  * @author  Victor Franco Espino
  * @version 11-02-2007
@@ -23,7 +24,7 @@ public class AlgoOsculatingCircle extends AlgoElement {
         super(cons);
         this.A = A;
         this.f = f;
-        
+                
         R = new GeoPoint(cons);//R is the center of the circle
         circle = new GeoConic(cons);        
         
@@ -60,7 +61,14 @@ public class AlgoOsculatingCircle extends AlgoElement {
     	return circle;
     }
 
-    protected final void compute() {
+    protected final void compute() {    	    
+    	// bugfix Michael Borcherds
+    	// undefined unless A is a point on f
+        if (!f.isOnPath(A, Kernel.MIN_PRECISION)) {
+        	circle.setUndefined();
+        	return;
+        }        
+
     	double radius = 1/Math.abs(curv.getValue());
     	double r2 = radius*radius;
     	double x = r2 * v.x;

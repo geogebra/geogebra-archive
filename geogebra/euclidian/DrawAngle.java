@@ -149,7 +149,7 @@ public class DrawAngle extends Drawable {
 		isVisible = geo.isEuclidianVisible();
 		if (!isVisible) {
 			shape = null;
-			return;
+        	// don't return here to make sure that getBounds() works for offscreen points too
 		}
 		labelVisible = geo.isLabelVisible();
 		updateStrokes(angle);

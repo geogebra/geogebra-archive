@@ -19,7 +19,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.MyError;
@@ -32,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,12 +45,18 @@ import java.util.regex.Pattern;
 public abstract class GeoElement
 	extends ConstructionElement
 	implements ExpressionValue {
-
+	
+	// min decimals or significant figures to use in editing string
+	public static final int MIN_EDITING_PRINT_PRECISION = 5;
+	
 	// maximum label offset distance
 	private static final int MAX_LABEL_OFFSET = 80;
 
 	// private static int geoElementID = Integer.MIN_VALUE;
-	
+
+	private static final char[] complexLabels =
+	{ 'z' };
+		
 	private static final char[] pointLabels =
 		{
 			'A',
@@ -270,9 +276,10 @@ public abstract class GeoElement
 	protected Color fillColor = objColor;
 	public int layer=0; 	// Michael Borcherds 2008-02-23
 	public double animationIncrement = 0.1;
-	private double animationSpeed = 1;
+	private NumberValue animationSpeedObj;
 	private boolean animating = false;
-	
+
+	public final static double MAX_ANIMATION_SPEED = 100;	
 	public final static int ANIMATION_OSCILLATING = 0;
 	public final static int ANIMATION_INCREASING = 1;
 	public final static int ANIMATION_DECREASING = 2;
@@ -343,7 +350,6 @@ public abstract class GeoElement
 	
 	//	set of all dependent algos sorted in topological order    
 	private AlgorithmSet algoUpdateSet;
-	//private TreeSet algoUpdateSet = new TreeSet();
 
 	/********************************************************/
 
@@ -472,6 +478,69 @@ public abstract class GeoElement
 	public abstract String toValueString();	
 	
 	/**
+	 * Returns definition or value string of this object.
+	 * Automatically increases decimals to at least 5, e.g.
+	 *  FractionText[4/3] -> FractionText[1.333333333333333] 
+	 */
+	public String getRedefineString(boolean useChangeable, boolean useOutputValueString) {
+		boolean increasePrecision = kernel.ensureTemporaryPrintAccuracy(MIN_EDITING_PRINT_PRECISION);
+		
+		String ret = null;
+		boolean isIndependent = useChangeable ? isChangeable() : isIndependent();		
+		if (isIndependent) {
+			ret = useOutputValueString ? toOutputValueString() : toValueString(); 
+		} else {
+			ret = getCommandDescription();
+		}
+		
+		if (increasePrecision)
+			kernel.restorePrintAccuracy();		
+		return ret;
+	}
+	
+	/**
+	 * Returns the definition of this GeoElement for the
+	 * input field, e.g. A1 = 5, B1 = A1 + 2
+	 */
+	public String getDefinitionForInputBar() {
+    	// for expressions like "3 = 2 A2 - A1"
+    	// getAlgebraDescription() returns "3 = 5"
+    	// so we need to use getCommandDescription() in those cases
+		boolean increasePrecision = kernel.ensureTemporaryPrintAccuracy(MIN_EDITING_PRINT_PRECISION);
+		
+    	String inputBarStr = getCommandDescription();
+    	if (!inputBarStr.equals("")) {
+    		
+    		// check needed for eg f(x) = g(x) + h(x), f(x) = sin(x)
+    		if (inputBarStr.indexOf('=') < 0)
+    			inputBarStr = getLabel() + " = " + inputBarStr;
+    	} else {
+    		inputBarStr = getAlgebraDescription();
+    	}
+		
+    	if (increasePrecision)
+			kernel.restorePrintAccuracy();
+    	
+		return inputBarStr;
+	}
+	
+	/**
+	 * Returns the value of this GeoElement for the
+	 * input field, e.g. A1 = 5, B1 = A1 + 2
+	 */
+	public String getValueForInputBar() {
+		boolean increasePrecision = kernel.ensureTemporaryPrintAccuracy(MIN_EDITING_PRINT_PRECISION);
+		
+		// copy into text field
+		String ret = toOutputValueString();
+		
+		if (increasePrecision)
+			kernel.restorePrintAccuracy();
+		
+		return ret;
+	}
+	
+	/**
 	 * Sets this object to zero (number = 0, points = (0,0), etc.)
 	 */
 	public void setZero() {
@@ -490,8 +559,9 @@ public abstract class GeoElement
 	public void setConstructionDefaults() {	
 		if (useVisualDefaults) {
 			ConstructionDefaults consDef = cons.getConstructionDefaults();
-			if (consDef != null) 
-				consDef.setDefaultVisualStyles(this, false);
+			if (consDef != null) {
+				consDef.setDefaultVisualStyles(this, false);			
+			}
 		}
 	}
 
@@ -612,15 +682,26 @@ public abstract class GeoElement
 		
 	// Michael Borcherds 2008-04-02
 	public Color getObjectColor() {
-		if (colFunction == null) return objColor;
-		//else return RGBtoColor((int)colFunction.getValue(),255);
-		else return getRGBFromList(255);
+		Color col = objColor;
+		
+		try {
+			if (colFunction != null)
+				col = getRGBFromList(255);
+		}
+		catch (Exception e) {
+			removeColorFunction();			
+		}
+
+		return col;
 	}
 
 	// Michael Borcherds 2008-03-01
 	public void setLayer(int layer){
-		if (layer == this.layer) return;
+		if (layer == this.layer
+		// layer valid only for Drawable objects		
+			|| !isDrawable()) return;
 		if (layer > EuclidianView.MAX_LAYERS) layer = EuclidianView.MAX_LAYERS;
+		else if (layer < 0) layer = 0;
 		EuclidianView ev =app.getEuclidianView();
 		if (ev != null) 
 			ev.changeLayer(this,this.layer,layer);
@@ -739,6 +820,17 @@ public abstract class GeoElement
 		if (getGeoClassType()==GeoElement.GEO_CLASS_POINT && geo.getGeoClassType()==GeoElement.GEO_CLASS_POINT) {
 			((GeoPoint) this).setSpreadsheetTrace(((GeoPoint) geo).getSpreadsheetTrace());
 		}
+				
+		// copy color function
+		if (geo.colFunction != null) {
+			setColorFunction(geo.colFunction);
+		}
+		
+		// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
+		if (geo.condShowObject != null) {
+			try { setShowObjectCondition(geo.getShowObjectCondition());}
+			catch (Exception e) {}
+		}
 	}
 	
 	/**
@@ -769,6 +861,15 @@ public abstract class GeoElement
 		lineThickness = geo.lineThickness;
 		lineType = geo.lineType;	
 		decorationType = geo.decorationType;
+				
+		// set whether it's an auxilliary object
+		setAuxiliaryObject(geo.isAuxiliaryObject());
+
+		// if layer is not zero (eg a new object has layer set to ev.getMaxLayerUsed())
+		// we don't want to set it
+		if (layer == 0)
+			setLayer(geo.getLayer());
+	
 	}
 	
 	/**
@@ -902,7 +1003,38 @@ public abstract class GeoElement
 	}
 
 	public boolean isFixable() {
-		return isIndependent();
+		return true; // deleting objects with fixed descendents makes them undefined
+		//return isIndependent();
+	}
+	
+	/*
+	 * if an object has a fixed descendent, we want to set it undefined
+	 */
+	final public void removeOrSetUndefinedIfHasFixedDescendent() {
+		
+		// can't delete a fixed object at all
+		if (isFixed()) 
+			return;
+		
+		boolean hasFixedDescendent = false;
+		
+		Set tree = getAllChildren();
+		Iterator it = tree.iterator();
+		while (it.hasNext() && hasFixedDescendent == false)
+			if (((GeoElement) it.next()).isFixed())
+				hasFixedDescendent = true;
+		
+		if (hasFixedDescendent) {
+			//Application.debug("hasFixedDescendent, not deleting");
+			setUndefined();
+			updateRepaint();
+		}
+		else
+		{
+			remove();
+		}
+
+		
 	}
 	
 	final public boolean isAuxiliaryObject() {
@@ -914,8 +1046,11 @@ public abstract class GeoElement
 	}
 	
 	public void setAuxiliaryObject(boolean flag) {
-		auxiliaryObject = flag;
-		notifyUpdateAuxiliaryObject();
+		if (auxiliaryObject != flag) {			
+			auxiliaryObject = flag;
+			if (labelSet)
+				notifyUpdateAuxiliaryObject();
+		}
 	}
 
 	/**
@@ -1056,12 +1191,24 @@ public abstract class GeoElement
 			case GEO_CLASS_RAY:
 			case GEO_CLASS_SEGMENT:
 			case GEO_CLASS_TEXT:
-				return hasOnlyFreeInputPoints() && containsOnlyMoveableGeos(getFreeInputPoints());
+				return hasOnlyFreeInputPoints() && containsOnlyMoveableGeos(getFreeInputPoints());								
 				
 			case GEO_CLASS_POLYGON:
 				return containsOnlyMoveableGeos(getFreeInputPoints());
-							
-		}		
+				
+			case GEO_CLASS_VECTOR:
+				if (hasOnlyFreeInputPoints() && containsOnlyMoveableGeos(getFreeInputPoints())) {
+					// check if first free input point is start point of vector
+					ArrayList freeInputPoints = getFreeInputPoints();
+					if (freeInputPoints.size() > 0) {
+						GeoPoint firstInputPoint = (GeoPoint) freeInputPoints.get(0);
+						GeoPoint startPoint = ((GeoVector) this).getStartPoint();
+						return (firstInputPoint == startPoint);
+					}
+				}
+				break;				
+		}
+		
 		return false;
 	}
 	
@@ -1128,16 +1275,58 @@ public abstract class GeoElement
 		return animationIncrement;
 	}
 	
-	final public double getAnimationSpeed() {
-		return animationSpeed;
+	public GeoElement getAnimationSpeedObject() {
+		if (animationSpeedObj == null)
+			return null;
+		else		
+			return animationSpeedObj.toGeoElement();
 	}
 	
-	public void setAnimationSpeed(double s) {
-		double abs = Math.abs(s);
-		if (0.001 <= abs && abs < 10)
-			animationSpeed = s;
+	/**
+	 * Returns the current animation speed of this slider. Note that
+	 * the speed can be negative which will change the direction of the animation.
+	 */
+	final public double getAnimationSpeed() {
+		if (animationSpeedObj == null) {
+			initAnimationSpeedObject();
+		}
+		
+		// get speed
+		double speed = animationSpeedObj.getDouble();
+		if (Double.isNaN(speed)) {
+			speed = 0;
+		}
+		else if (speed > MAX_ANIMATION_SPEED) {
+			speed = MAX_ANIMATION_SPEED;
+		}
+		else if (speed < -MAX_ANIMATION_SPEED) {
+			speed = -MAX_ANIMATION_SPEED;
+		}
+				
+		return speed;
 	}
-
+	
+	public void setAnimationSpeedObject(NumberValue speed) {		
+		animationSpeedObj = speed;		
+	}
+	
+	public void setAnimationSpeed(double speed) {
+		initAnimationSpeedObject();
+			
+		GeoElement speedObj = animationSpeedObj.toGeoElement();
+		if (speedObj.isGeoNumeric() && speedObj.isIndependent()) {
+			((GeoNumeric)speedObj).setValue(speed);
+		}
+	}
+	
+	private void initAnimationSpeedObject() {
+		if (animationSpeedObj == null) {
+			GeoNumeric num = new GeoNumeric(cons);
+			num.setValue(1);
+			animationSpeedObj = num;
+		}
+	}
+	
 	final public int getAnimationType() {
 		return animationType;
 	}
@@ -1269,14 +1458,20 @@ public abstract class GeoElement
 		if (cons.isSuppressLabelsActive())
 			return;
 		
-		
 		labelWanted = true;
 
 		// had no label: try to set it
 		if (!labelSet) {
 			// to avoid wasting of labels, new elements must wait
 			// until they are shown in one of the views to get a label            
-			if (isVisible()) {
+			if (isVisible()) {				
+				// newLabel is used already: rename the using geo				
+				GeoElement geo = kernel.lookupLabel(newLabel);
+				if (geo != null) {    					
+					geo.doRenameLabel(getFreeLabel(newLabel));
+				}							
+				
+				// set newLabel for this geo
 				doSetLabel(getFreeLabel(newLabel));
 			} else {
 				// remember desired label
@@ -1284,12 +1479,13 @@ public abstract class GeoElement
 			}
 		}
 		// try to rename
-		else {
+		else if (isRenameable()) {
 			if (cons.isFreeLabel(newLabel)) { // rename    
 				doRenameLabel(newLabel);
+			} else {
+				System.out.println("setLabel DID NOT RENAME: " + this.label + " to " + newLabel + ", new label is not free: " + cons.lookupLabel(newLabel).getLongDescription());
 			}
-		}
-		
+		}	
 	}
 
 //	private StringBuffer sb;
@@ -1316,8 +1512,8 @@ public abstract class GeoElement
 	public void setLoadedLabel(String label) {
 		if (labelSet) { // label was set before -> rename
 			doRenameLabel(label);
-		} else { // no label set so far -> set new label			 
-			doSetLabel(getFreeLabel(label));
+		} else { // no label set so far -> set new label	
+			doSetLabel(getFreeLabel(label));			
 		}
 	}
 	
@@ -1339,7 +1535,44 @@ public abstract class GeoElement
 		return true;
 	}		
 
+	StringBuffer captionSB = null;
+	
 	public String getCaption() {
+		if (caption == null)
+			return getLabel();
+		
+		// for speed, check first for a %
+		if (caption.indexOf("%") < 0) return caption;
+	
+		if (captionSB == null)
+			captionSB = new StringBuffer();
+		
+		captionSB.setLength(0);
+		
+		
+		// replace %v with value and %n with name
+		for (int i = 0; i < caption.length(); i++) {
+			char ch = caption.charAt(i);
+			if (ch == '%' && i < caption.length() - 1) {
+				// get number after %
+				i++;
+				ch = caption.charAt(i);
+				switch (ch) {
+				case 'v': captionSB.append(toValueString());
+				break;
+				case 'n' : captionSB.append(getLabel());
+				break;
+				default : captionSB.append(ch);
+				}
+			} else {
+				captionSB.append(ch);
+			}
+		}
+
+		return captionSB.toString();
+	}
+	
+	public String getRawCaption() {
 		if (caption == null)
 			return getLabel();
 		else
@@ -1544,7 +1777,7 @@ public abstract class GeoElement
 				
 		kernel.notifyRename(this); // tell views   		
 		updateCascade();
-		}
+	}
 	
 	/**
 	 * Returns the label of this object before rename()
@@ -1647,9 +1880,15 @@ public abstract class GeoElement
 		if (isGeoPoint()) {
 			// Michael Borcherds 2008-02-23
 			// use Greek upper case for labeling points if lenguage is Greek (el)
-			// TODO decide if we want this as an option, or just uncomment the next line
-			// if (app.languageIs(app.getLocale(), "el")) chars=greekUpperCase; else 
-				chars = pointLabels;
+			// TODO decide if we want this as an option, or:
+			// if (app.languageIs(app.getLocale(), "el")) chars=greekUpperCase; else
+		    //if (app.languageIs(app.getLocale(), "ar")) chars=arabic; else
+			chars = pointLabels;
+		
+			GeoPoint point = (GeoPoint)this;
+			if (point.getMode() == Kernel.COORD_COMPLEX)
+				chars = complexLabels;
+				
 		} else if (isGeoFunction()) {
 			chars = functionLabels;
 		} else if (isGeoLine()) {
@@ -1722,8 +1961,15 @@ public abstract class GeoElement
 		while (!cons.isFreeLabel(sbDefaultLabel.toString())) {
 			sbDefaultLabel.setLength(0);
 			q = counter / chars.length; // quotient
-			r = counter % chars.length; // remainder                    
-			sbDefaultLabel.append(chars[r]);						
+			r = counter % chars.length; // remainder 
+			
+			char ch = chars[r];
+			sbDefaultLabel.append(ch);	
+			
+			// arabic letter is two unicode chars
+			if (ch == '\u0647') {
+				sbDefaultLabel.append('\u0640');	
+			}					
 						
 			if (q > 0) {
 				// don't use indices
@@ -1817,7 +2063,7 @@ public abstract class GeoElement
 		}
 
 		// remove from selection
-		app.removeSelectedGeo(this, false);	
+		app.removeSelectedGeo(this, false);					
 				
 		// notify views before we change labelSet
 		notifyRemove();
@@ -1987,14 +2233,15 @@ public abstract class GeoElement
 			algoUpdateSet.updateAll();						
 		}
 	}
-	
-	
+
 	/**
 	 * Updates all GeoElements in the given ArrayList and all algorithms that depend on free GeoElements in that list.
 	 * Note: this method is more efficient than calling updateCascade() for all individual
 	 * GeoElements. 
+	 * 
+	 * @param tempSet: a temporary set that is used to collect all algorithms that need to be updated
 	 */
-	final static public synchronized void updateCascade(ArrayList geos) {
+	final static public synchronized void updateCascade(ArrayList geos, TreeSet tempSet) {
 		// only one geo: call updateCascade()
 		if (geos.size() == 1) {
 			GeoElement geo = (GeoElement) geos.get(0);
@@ -2002,12 +2249,9 @@ public abstract class GeoElement
 			return;
 		}
 		
-		
 		// build update set of all algorithms in construction element order						
-		if (algoSetUpdateCascade == null) 
-			algoSetUpdateCascade = new TreeSet();
-		else
-			algoSetUpdateCascade.clear();
+		// clear temp set
+		tempSet.clear();
 		
 		int size = geos.size();
 		for (int i=0; i < size; i++) {
@@ -2016,20 +2260,19 @@ public abstract class GeoElement
 			
 			if (geo.isIndependent() && geo.algoUpdateSet != null) {
 				// add all dependent algos of geo to the overall algorithm set
-				geo.algoUpdateSet.addAllToCollection(algoSetUpdateCascade);
+				geo.algoUpdateSet.addAllToCollection(tempSet);
 			}
 		}
 		
 		// now we have one nice algorithm set that we can update
-		if (algoSetUpdateCascade.size() > 0) {
-			Iterator it = algoSetUpdateCascade.iterator();
+		if (tempSet.size() > 0) {		
+			Iterator it = tempSet.iterator();
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
 				algo.update();					
-			}
+			} 
 		}
-	}
-	private static TreeSet algoSetUpdateCascade;
+	}	
 
 	/**
 	 * Updates this object and all dependent ones. 
@@ -2073,8 +2316,35 @@ public abstract class GeoElement
 		ret.add(this);
 		return ret;
 	}
-	
-	
+
+	/** 
+	 * Returns all predecessors of this GeoElement that are random numbers
+	 * and don't have labels.
+	 */
+	public ArrayList getRandomNumberPredecessorsWithoutLabels() {		
+		if (isIndependent()) 
+			return null;
+		else {
+			ArrayList randNumbers = null;
+			
+			TreeSet pred = getAllPredecessors();
+			Iterator it = pred.iterator();
+			while (it.hasNext()) {
+				GeoElement geo = (GeoElement) it.next();
+				if (geo.isGeoNumeric()) {
+					GeoNumeric num = (GeoNumeric) geo;
+					if (num.isRandomNumber() && !num.isLabelSet()) {
+						if (randNumbers == null)
+							randNumbers = new ArrayList();
+						randNumbers.add(num);					
+					}
+				}
+			}
+			
+			return randNumbers;
+		}
+	}	
+		
 	/**
 	 * Returns all predecessors (of type GeoElement) that this object depends on.
 	 * The predecessors are sorted topologically.
@@ -2082,6 +2352,7 @@ public abstract class GeoElement
 	public TreeSet getAllPredecessors() {
 		TreeSet set = new TreeSet();
 		addPredecessorsToSet(set, false);
+		set.remove(this);
 		return set;
 	}		
 	
@@ -2100,30 +2371,30 @@ public abstract class GeoElement
 	// the set is topologically sorted 
 	// @param onlyIndependent: whether only indpendent geos should be added
 	final public void addPredecessorsToSet(TreeSet set, boolean onlyIndependent) {
-		if (algoParent == null) { // independent geo
-			if (onlyIndependent) {
-				// OLD: LinkeList implementation
-					// remove this geo and  insert it again at the beginning of the list
-					// this ensures the topological sorting
-					// and it also ensures that each element is only once in the list
-					// list.remove(this);
-					// list.addFirst(this);				
-				
-				set.add(this);
-			}
-		} else { // parent algo
+		if (algoParent == null) {
+			set.add(this);
+		} 
+		else { // parent algo
 			algoParent.addPredecessorsToSet(set, onlyIndependent);          
-		}	
+		}		
 	}
 	
 	/**
 	 * Returns whether geo depends on this object.
 	 */
 	public boolean isParentOf(GeoElement geo) {
-		if (geo == null)
-			return false;
-		else
-			return geo.isChildOf(this);
+		if (algoUpdateSet != null) {
+			Iterator it = algoUpdateSet.getIterator();
+			while (it.hasNext()) {
+				AlgoElement algo = (AlgoElement) it.next();
+				for (int i = 0; i < algo.output.length; i++) {
+					if (geo == algo.output[i]) // child found
+						return true;
+				}			
+			}
+		}
+		
+		return false;
 	}
 
 	
@@ -2138,19 +2409,19 @@ public abstract class GeoElement
 	 * Returns whether this object is dependent on geo.
 	 */
 	public boolean isChildOf(GeoElement geo) {				
-		if (geo == null || algoParent == null)
+		if (geo == null || isIndependent())
 			return false;
+		else
+			return geo.isParentOf(this);
 			
-		GeoElement [] input = algoParent.getInput();
-		for (int i = 0; i < input.length; i++) {
-			if (geo == input[i])
-				return true;
-			if (input[i].isChildOf(geo))
-				return true;
-			
-			//Application.debug(input[i].getLabel() + " isChildOf: " + geo.getLabel());
-		}
-		return false;
+//		GeoElement [] input = algoParent.getInput();
+//		for (int i = 0; i < input.length; i++) {
+//			if (geo == input[i])
+//				return true;
+//			if (input[i].isChildOf(geo))
+//				return true;
+//		}
+//		return false;				
 	}
 	
 	/**
@@ -2220,7 +2491,7 @@ public abstract class GeoElement
 			// independent object:
 			// index must be less than every dependent algorithm's index
 			int min = cons.steps();
-			int size = algorithmList.size();
+			int size = algorithmList == null ? 0 : algorithmList.size();
 			for (int i = 0; i < size; ++i) {
 				int index =
 					((AlgoElement) algorithmList.get(i)).getConstructionIndex();
@@ -2238,12 +2509,12 @@ public abstract class GeoElement
 	 * for a dependent geo.
 	 * @return
 	 */	
-	public String getLabelOrCommandDescription() {
-		if (algoParent == null)
-			return getLabel();
-		else
-			return algoParent.getCommandDescription();	
-    }
+//	public String getLabelOrCommandDescription() {
+//		if (algoParent == null)
+//			return getLabel();
+//		else
+//			return algoParent.getCommandDescription();	
+//    }
 
 	public String getDefinitionDescription() {
 		if (algoParent == null)
@@ -2705,6 +2976,9 @@ public abstract class GeoElement
 	 * GeoGebra File Format
 	 */
 	public String getXML() {
+		boolean oldValue = kernel.isTranslateCommandName();
+		kernel.setTranslateCommandName(false);
+		
 		String type = getXMLtypeString();
 		
 		StringBuffer sb = new StringBuffer();
@@ -2715,16 +2989,22 @@ public abstract class GeoElement
 		sb.append(Util.encodeXML(label));		
 		sb.append("\">\n");
 		sb.append(getXMLtags());
+		sb.append(getCaptionXML());
+				
+		sb.append("</element>\n");
 		
+		kernel.setTranslateCommandName(oldValue);
+		return sb.toString();
+	}
+	
+	public String getCaptionXML() {
+		StringBuffer sb = new StringBuffer();
 		// caption text
 		if (caption != null && caption.length() > 0 && !caption.equals(label)) {
 			sb.append("\t<caption val=\"");
 			sb.append(Util.encodeXML(caption));
 			sb.append("\"/>\n");
 		}
-		
-		sb.append("</element>\n");
-				
 		return sb.toString();
 	}
 	
@@ -2802,73 +3082,66 @@ public abstract class GeoElement
 	}
 		
 	String getXMLvisualTags(boolean withLabelOffset) {
-		StringBuffer sb = new StringBuffer();		
+		StringBuffer sb = new StringBuffer();
+		boolean isDrawable = isDrawable();
 		
-		// show object and label  
-		sb.append("\t<show");
-		sb.append(" object=\"");
-		sb.append(euclidianVisible);
-		sb.append("\"");
-		sb.append(" label=\"");
-		sb.append(labelVisible);
-		sb.append("\"");
-		sb.append("/>\n");
+		// show object and/or label in EuclidianView
+		// don't save this for simple dependent numbers (e.g. in spreadsheet)
+		if (isDrawable) {			
+			sb.append("\t<show");
+			sb.append(" object=\"");
+			sb.append(euclidianVisible);
+			sb.append("\"");
+			sb.append(" label=\"");
+			sb.append(labelVisible);
+			sb.append("\"");
+			sb.append("/>\n");
+		}
 		
+		// conditional visibility
 		sb.append(getShowObjectConditionXML());
 		
-		sb.append("\t<objColor");
-		sb.append(" r=\"");
-		sb.append(objColor.getRed());
-		sb.append("\"");
-		sb.append(" g=\"");
-		sb.append(objColor.getGreen());
-		sb.append("\"");
-		sb.append(" b=\"");
-		sb.append(objColor.getBlue());
-		sb.append("\"");
-		sb.append(" alpha=\"");
-		sb.append(alphaValue);
-		sb.append("\"");
-		
-		if (colFunction!=null)
-		{
-			sb.append(" dynamicr=\"");
-			sb.append(colFunction.get(0).getLabelOrCommandDescription());
+//		if (isDrawable) removed - want to be able to color objects in AlgebraView
+		{		
+			sb.append("\t<objColor");
+			sb.append(" r=\"");
+			sb.append(objColor.getRed());
 			sb.append("\"");
-			sb.append(" dynamicg=\"");
-			sb.append(colFunction.get(1).getLabelOrCommandDescription());
+			sb.append(" g=\"");
+			sb.append(objColor.getGreen());
 			sb.append("\"");
-			sb.append(" dynamicb=\"");
-			sb.append(colFunction.get(2).getLabelOrCommandDescription());
+			sb.append(" b=\"");
+			sb.append(objColor.getBlue());
+			sb.append("\"");
+			sb.append(" alpha=\"");
+			sb.append(alphaValue);
 			sb.append("\"");
 			
-		}
-		sb.append("/>\n");
-
-		/*
-		if (this.isGeoPoint())
+			if (colFunction!=null)
 			{
-			GeoPoint p = (GeoPoint)(this);
-			GeoList coordinateFunction = p.getCoordinateFunction();
-			if (coordinateFunction != null) {
-				sb.append("\t<objCoords");
-				sb.append(" dynamicx=\"");
-				sb.append(coordinateFunction.get(0).getLabelOrCommandDescription());
+				sb.append(" dynamicr=\"");
+				sb.append(Util.encodeXML(colFunction.get(0).getLabel()));
 				sb.append("\"");
-				sb.append(" dynamicy=\"");
-				sb.append(coordinateFunction.get(1).getLabelOrCommandDescription());
+				sb.append(" dynamicg=\"");
+				sb.append(Util.encodeXML(colFunction.get(1).getLabel()));
 				sb.append("\"");
-				sb.append("/>\n");
+				sb.append(" dynamicb=\"");
+				sb.append(Util.encodeXML(colFunction.get(2).getLabel()));
+				sb.append("\"");
+				
+			}	
+			sb.append("/>\n");
+		}
+		
 
-			}
-		}*/
+		// don't remove layer 0 information
+		// we always need it in case an earlier element has higher layer eg 1 
+		if (isDrawable) {
+			sb.append("\t<layer ");
+			sb.append("val=\""+layer+"\"");
+			sb.append("/>\n");
+		}
 		
-		
-		// layer
-		// Michael Borcherds 2008-02-26
-		sb.append("\t<layer ");
-		sb.append("val=\""+layer+"\"");
-		sb.append("/>\n");
 		
 		if (withLabelOffset &&
 			(labelOffsetX != 0 || labelOffsetY != 0)) {
@@ -2882,11 +3155,13 @@ public abstract class GeoElement
 			sb.append("/>\n");
 		}
 		
-		sb.append("\t<labelMode");
-		sb.append(" val=\"");
-		sb.append(labelMode);
-		sb.append("\"");
-		sb.append("/>\n");
+		if (isDrawable()) {
+			sb.append("\t<labelMode");
+			sb.append(" val=\"");
+			sb.append(labelMode);
+			sb.append("\"");
+			sb.append("/>\n");
+		}
 
 		// trace on or off
 		if (isTraceable()) {
@@ -2921,7 +3196,8 @@ public abstract class GeoElement
 			StringBuffer sb = new StringBuffer();
 			sb.append("\t<animation");
 			sb.append(" step=\""+animationIncrement+"\"");
-			sb.append(" speed=\""+animationSpeed+"\"");
+			String animSpeed = animationSpeedObj == null ? "1" : animationSpeedObj.toGeoElement().getLabel();
+			sb.append(" speed=\""+Util.encodeXML(animSpeed)+"\"");
 			sb.append(" type=\""+animationType+"\"");
 			sb.append(" playing=\"");
 			sb.append((isAnimating() ? "true" : "false"));
@@ -2934,7 +3210,7 @@ public abstract class GeoElement
 
 	String getXMLfixedTag() {
 		//		is object fixed
-		if (isFixable()) {
+		if (fixed && isFixable()) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("\t<fixed val=\"");
 			sb.append(fixed);
@@ -2972,6 +3248,8 @@ public abstract class GeoElement
 	 * @see getXMLtags() of GeoConic, GeoLine and GeoVector      
 	 */
 	String getLineStyleXML() {
+		if (isGeoPoint()) return "";
+		
 		StringBuffer sb = new StringBuffer();
 		sb.append("\t<lineStyle");
 		sb.append(" thickness=\"");
@@ -2989,18 +3267,21 @@ public abstract class GeoElement
 	 * @see getXMLtags() of GeoConic, GeoLine and GeoVector      
 	 */
 	String getBreakpointXML() {		
-		StringBuffer sb = new StringBuffer();		
-		sb.append("\t<breakpoint val=\"");		
-		sb.append(isConsProtBreakpoint);
-		sb.append("\"/>\n");
-		return sb.toString();				
+		if (isConsProtBreakpoint) {
+			StringBuffer sb = new StringBuffer();		
+			sb.append("\t<breakpoint val=\"");		
+			sb.append(isConsProtBreakpoint);
+			sb.append("\"/>\n");
+			return sb.toString();		
+		} else
+			return "";			
 	}
 	
 	private String getShowObjectConditionXML() {
 		if (condShowObject != null) {
 			StringBuffer sb = new StringBuffer();		
 			sb.append("\t<condition showObject=\"");		
-			sb.append(Util.encodeXML(condShowObject.getLabelOrCommandDescription()));
+			sb.append(Util.encodeXML(condShowObject.getLabel()));
 			sb.append("\"/>\n");
 			return sb.toString();
 		}
@@ -3165,7 +3446,11 @@ public abstract class GeoElement
 	public boolean isNumberValue() {
 		return false;
 	}
-
+	
+	public boolean isAngle() {
+		return false;
+	}
+	
 	public boolean isVectorValue() {
 		return false;
 	}
@@ -3208,8 +3493,10 @@ public abstract class GeoElement
 
 	public void setShowObjectCondition(GeoBoolean cond) 
 	throws CircularDefinitionException {
-		// check for circular definition
-		if (this == cond || isParentOf(cond))
+		// check for circular definition		
+		//		if (this == cond || isParentOf(cond))
+		// 		I relaxed this to allow (a parallel b) for a and b
+		if (this == cond)
 			throw new CircularDefinitionException();	
 		
 		// unregister old condition
@@ -3259,6 +3546,10 @@ public abstract class GeoElement
 	}
 	
 	public final void removeColorFunction() {
+		// unregister old condition
+		if (colFunction != null) {
+			colFunction.unregisterColorFunctionListener(this);
+		}
 		//Application.debug("removeColorFunction");
 		//if (colFunction == col)
 			colFunction = null;
@@ -3287,16 +3578,24 @@ public abstract class GeoElement
 			
 			moved = geo.moveObject(rwTransVec, position, moveObjectsUpdateList) || moved;		
 		}					
-				
+							
 		// take all independent input objects and build a common updateSet
 		// then update all their algos.
 		// (don't do updateCascade() on them individually as this could cause 
 		//  multiple updates of the same algorithm)
-		updateCascade(moveObjectsUpdateList);
+		updateCascade(moveObjectsUpdateList, getTempSet());
 		
 		return moved;
 	}
-	private static ArrayList moveObjectsUpdateList;
+	private static ArrayList moveObjectsUpdateList;	
+	private static TreeSet tempSet;
+	
+	private static TreeSet getTempSet() {
+		if (tempSet == null) {
+			tempSet = new TreeSet();
+		}
+		return tempSet;
+	}
 	
 //	/**
 //	 * Moves geo by a vector in real world coordinates.
@@ -3431,7 +3730,7 @@ public abstract class GeoElement
 		    				tempMoveObjectList = new ArrayList();
 		    			tempMoveObjectList.add(xvar);
 		    			tempMoveObjectList.add(yvar);
-		    			updateCascade(tempMoveObjectList);
+		    			updateCascade(tempMoveObjectList, getTempSet() );
 		    		}
 		    				    				    	
 		    		movedGeo = true;
@@ -3474,7 +3773,7 @@ public abstract class GeoElement
 		return isAlgoMacroOutput;
 	}
 
-	final void setAlgoMacroOutput(boolean isAlgoMacroOutput) {
+	void setAlgoMacroOutput(boolean isAlgoMacroOutput) {
 		this.isAlgoMacroOutput = isAlgoMacroOutput;
 	}
 
@@ -3520,13 +3819,6 @@ public abstract class GeoElement
 		int tempCASPrintForm = kernel.getCASPrintForm();
 		kernel.setCASPrintForm(ExpressionNodeType);
 
-
-		
-		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_MATH_PIPER)
-		 //|| ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
-			kernel.setTemporaryPrintDecimals(16); // MathPiper doesn't like 4E-20 or x^2.0
-
-		
 		String ret="";
 		if (this.isGeoFunction()) {
 			GeoFunction geoFun = (GeoFunction)this;
@@ -3545,14 +3837,10 @@ public abstract class GeoElement
 					: this.getCommandDescription();
 		}
 		
-		if (ret.equals("")) {
+		if (ret.equals("") && !this.isGeoText()) {
 			// eg Text[ (1,2), false]
 			ret = toOutputValueString();
 		}
-		
-		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_MATH_PIPER)
-		 // || ExpressionNodeType == ExpressionNode.STRING_TYPE_JASYMCA)
-			kernel.restorePrintAccuracy();
 		
 		kernel.setCASPrintForm(tempCASPrintForm);
 		return ret;

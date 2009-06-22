@@ -34,11 +34,12 @@ public class MyCellEditor extends DefaultCellEditor {
             Object ob = node.getUserObject();
             if (ob instanceof GeoElement) {
                 GeoElement geo = (GeoElement) ob;
+                
                 if (geo.isChangeable()) {
                     str = geo.toString();
                 } else {
                     str = geo.getCommandDescription();
-                }
+                } 
             }
         }
     

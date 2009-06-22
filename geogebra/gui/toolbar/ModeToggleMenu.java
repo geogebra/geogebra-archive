@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.gui.toolbar;
 
 import geogebra.main.Application;
-import geogebra.euclidian.EuclidianView;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -28,13 +27,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -45,11 +42,6 @@ import javax.swing.JToggleButton;
  */
 public class ModeToggleMenu extends JPanel {
 	
-	//private static final Color bgSelColor = new Color(164, 174, 188);
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	ModeToggleButtonGroup bg;
 	private MyJToggleButton tbutton;
@@ -114,28 +106,25 @@ public class ModeToggleMenu extends JPanel {
 		}
 		
 		tbutton.setIcon(mi.getIcon());
-		tbutton.setToolTipText(mi.getText());			
+		tbutton.setToolTipText(app.getToolTooltipHTML(Integer.parseInt(mi.getActionCommand())));		
 		tbutton.setActionCommand(mi.getActionCommand());
 		tbutton.setSelected(true);				
-		tbutton.requestFocus();		
+		//tbutton.requestFocus();		
 	}
 	
 	public void addMode(int mode) {
-		String modeText = app.getModeText(mode);	
-		ImageIcon icon = app.getModeIcon(mode);
-		
 		// add menu item to popu menu
-		String actionText = mode + "";
-		JMenuItem mi = new JMenuItem();
+		JMenuItem mi = new JMenuItem();		
 		mi.setFont(app.getPlainFont());
-		if (mode < EuclidianView.MACRO_MODE_ID_OFFSET)
-			mi.setText(app.getMenu(modeText));
-		else 
-			mi.setText(modeText); // no translation for macro mode text
-	    
-		mi.setIcon(icon);
-		mi.addActionListener(popupMenuItemListener);
+		
+		// tool name as text
+		mi.setText(app.getToolName(mode));				
+		
+		Icon icon = app.getModeIcon(mode);
+		String actionText = Integer.toString(mode);
+		mi.setIcon(icon);		
 		mi.setActionCommand(actionText);
+		mi.addActionListener(popupMenuItemListener);
 		
 		popMenu.add(mi);	
 		menuItemList.add(mi);
@@ -145,11 +134,14 @@ public class ModeToggleMenu extends JPanel {
 			// init tbutton
 			tbutton.setIcon(icon);
 			tbutton.setActionCommand(actionText);
-			tbutton.setToolTipText(mi.getText());
+			
+			// tooltip: tool name and tool help
+			tbutton.setToolTipText(app.getToolTooltipHTML(mode));
+			
 			// add button to button group
 			bg.add(tbutton);
 		}
-	}			
+	}		
 	
 	/**
 	 * Removes all modes from the toggle menu. Used for the temporary perspective.
@@ -186,7 +178,7 @@ public class ModeToggleMenu extends JPanel {
 	}
 	
 	//	shows popup menu 
-	public void setPopupVisible(boolean flag) {		
+	public void setPopupVisible(boolean flag) {	
 		if (flag) {
 			bg.setActivePopupMenu(popMenu);	
 			if (popMenu.isShowing()) return;
@@ -203,8 +195,10 @@ public class ModeToggleMenu extends JPanel {
 						locButton.y - locApp.y - (int)popMenu.getPreferredSize().getHeight());
 			}
 		} else {
-			popMenu.setVisible(false);
+			popMenu.setVisible(false);			
 		}
+		
+		tbutton.repaint();
 	}		
 	
 	public boolean isPopupShowing() {
@@ -330,14 +324,11 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	
 	
 	private boolean inPopupTriangle(int x, int y) {
-		return (menu.size > 1 && (app.showToolBarTop() ? y > iconHeight : y < 12));
+		return (menu.size > 1 && (app.showToolBarTop() ? y > iconHeight-2 : y < 12));
 	}
 
 	public void mouseClicked(MouseEvent e) {	
-		if (e.getClickCount() == 2) {
-			menu.setPopupVisible(true);
-			requestFocus();
-		}		
+
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
@@ -356,7 +347,14 @@ implements MouseListener, MouseMotionListener, ActionListener {
 		//doClick();	removed to stop mode being selected when triangle clicked (for MODE_FITLINE)	
 	}
 
-	public void mouseReleased(MouseEvent arg0) {			
+	public void mouseReleased(MouseEvent e) {	
+		doClick();		
+	}
+	
+	public void doClick() {
+		super.doClick();
+		if (!hasFocus())
+			requestFocusInWindow();
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -375,4 +373,6 @@ implements MouseListener, MouseMotionListener, ActionListener {
 			repaint();
 		}
 	}
+	
+	
 }

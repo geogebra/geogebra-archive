@@ -1,5 +1,12 @@
 package geogebra.gui.menubar;
 
+import geogebra.euclidian.EuclidianView;
+import geogebra.gui.DefaultGuiManager;
+import geogebra.gui.layout.Layout;
+import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
+import geogebra.io.layout.Perspective;
+import geogebra.main.Application;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -10,13 +17,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
-import geogebra.euclidian.EuclidianView;
-import geogebra.gui.DefaultGuiManager;
-import geogebra.gui.layout.Layout;
-import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
-import geogebra.io.layout.Perspective;
-import geogebra.main.Application;
 
 /**
  * The "View" menu. 

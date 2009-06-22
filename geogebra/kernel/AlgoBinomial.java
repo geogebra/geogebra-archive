@@ -14,8 +14,9 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.MyMath;
-import java.math.BigInteger;
+
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 //from http://www.javajungle.de/math/primes/PrimeNumberSieve.html
 //import de.luschny.math.primes.PrimeSieve;

@@ -26,7 +26,6 @@ import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -34,9 +33,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextLayout;
 import java.util.EventObject;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
-import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -50,7 +47,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 /**
- *
+ * AlgebraView with tree for free and dependent objects.
+ * 
  * @author  Markus
  * @version 
  */
@@ -58,7 +56,7 @@ public class AlgebraView extends JTree implements View {
 		
 	private static final long serialVersionUID = 1L;
 	
-	private ImageIcon iconShown, iconHidden;
+
 
 	private Application app; // parent appame
 	private Kernel kernel;
@@ -77,15 +75,18 @@ public class AlgebraView extends JTree implements View {
 
 	private GeoElement selectedGeoElement;
 	private DefaultMutableTreeNode selectedNode;
+	
+	//	closing cross
+	private static BasicStroke crossStroke = new BasicStroke(1.5f); 
+	private static int crossBorder = 4;
+	private static int crossOffset = crossBorder + 6;
+	private boolean highlightCross;
 
 	/** Creates new AlgebraView */
 	public AlgebraView(AlgebraController algCtrl) {		
 		app = algCtrl.getApplication();
 		kernel = algCtrl.getKernel();
-		algCtrl.setView(this);
-		
-		iconShown = app.getImageIcon("shown.gif");
-		iconHidden = app.getImageIcon("hidden.gif");		
+		algCtrl.setView(this);					
 
 		// tree's selection model	
 		/*
@@ -106,7 +107,6 @@ public class AlgebraView extends JTree implements View {
 		initTreeCellRendererEditor();
 
 		// add listener
-		addKeyListener(algCtrl);
 		addMouseListener(algCtrl);
 		addMouseMotionListener(algCtrl);		
 
@@ -137,24 +137,29 @@ public class AlgebraView extends JTree implements View {
 		setScrollsOnExpand(true);	
 		setRowHeight(-1); // to enable flexible height of cells
 		
-		setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		
 		tpInd = new TreePath(indNode.getPath());
 		tpDep = new TreePath(depNode.getPath());
-		tpAux =new TreePath(auxiliaryNode.getPath()); 		
+		tpAux =new TreePath(auxiliaryNode.getPath()); 	
+		
+		// needed in applets
+		model.removeNodeFromParent(auxiliaryNode);
 		
 		attachView();						
 	}
+	
+	boolean attached = false;
 
 	public void attachView() {
 		clearView();
 		kernel.notifyAddAll(this);
-		kernel.attach(this);		
+		kernel.attach(this);	
+		attached = true;
 	}
 
 	public void detachView() {
 		kernel.detach(this);
 		clearView();
+		attached = false;
 		//kernel.notifyRemoveAll(this);		
 	}
 	
@@ -166,7 +171,7 @@ public class AlgebraView extends JTree implements View {
 	}    
 
 	private void initTreeCellRendererEditor() {
-		renderer = new MyRenderer();		
+		renderer = new MyRenderer(app);		
 		editTF = new JTextField();
 		editor = new MyDefaultTreeCellEditor(this, renderer, 
 									new MyCellEditor(editTF));
@@ -208,6 +213,51 @@ public class AlgebraView extends JTree implements View {
 			return;
 				
 		super.paint(g);
+				
+		// draw a cross in the upper right corner 
+		// to close the algebra view
+		if (!app.isApplet())
+			drawClosingCross((Graphics2D) g);
+	}		
+	
+	private void drawClosingCross(Graphics2D g2) {
+		int width = getWidth();			
+		g2.setStroke(crossStroke);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		if (highlightCross) {
+			g2.setColor(Color.red);
+		} else {
+			g2.setColor(Color.gray);
+		}
+		g2.drawLine(width-crossOffset, crossBorder, width-crossBorder, crossOffset);
+		g2.drawLine(width-crossOffset, crossOffset, width-crossBorder, crossBorder);
+		
+		if (highlightCross) {
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+								RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+			// "close" 
+			String strClose = app.getMenu("Close");
+			TextLayout layout = new TextLayout(strClose, app.smallFont, g2.getFontRenderContext());
+			g2.setColor(Color.gray);
+			
+			int stringX = (int) (width - crossOffset - crossOffset - layout.getAdvance());
+			
+			g2.drawString(strClose, stringX, layout.getAscent()+2);
+		}
+	}
+	
+	boolean hitClosingCross(int x, int y) {
+		return !app.isApplet() && 
+				(y <= crossOffset) && 
+		  		(x >= getWidth() - crossOffset);		
+	}
+	
+	void setClosingCrossHighlighted(boolean flag) {
+		if (flag == highlightCross) return;		
+		highlightCross = flag;		
+		repaint();
 	}
 	
 	/* *
@@ -253,6 +303,10 @@ public class AlgebraView extends JTree implements View {
 
 	public static GeoElement getGeoElementForLocation(JTree tree, int x, int y) {
 		TreePath tp = tree.getPathForLocation(x, y);
+		return getGeoElementForPath(tp);
+	}
+		
+	public static GeoElement getGeoElementForPath(TreePath tp) {
 		if (tp == null)
 			return null;
 
@@ -275,10 +329,12 @@ public class AlgebraView extends JTree implements View {
 	 */
 	public void startEditing(GeoElement geo) {
 		if (geo == null) return;
-		
-		if (!geo.isIndependent()) {
+
+		if (!geo.isIndependent()
+		|| !attached )		// needed for F2 when Algebra View closed
+		 {
 			if (geo.isRedefineable()) { 
-				app.getGuiManager().showRedefineDialog(geo);
+				app.getGuiManager().showRedefineDialog(geo, true);
 			}
 			return;
 		}
@@ -288,7 +344,7 @@ public class AlgebraView extends JTree implements View {
 				//app.showMessage(app.getError("AssignmentToFixed"));
 			} 
 			else if (geo.isRedefineable()) { 
-				app.getGuiManager().showRedefineDialog(geo);
+				app.getGuiManager().showRedefineDialog(geo, true);
 			}
 			return;
 		}
@@ -337,26 +393,24 @@ public class AlgebraView extends JTree implements View {
 	 * adds a new node to the tree
 	 */
 	public void add(GeoElement geo) {	
-		cancelEditing();		
-		
-		if (!geo.showInAlgebraView())
-			return;
-
-		if (geo.isLabelSet() && geo.isSetAlgebraVisible()) {
+		cancelEditing();	
+				
+		if (geo.isLabelSet() && geo.isSetAlgebraVisible()) {			
 			DefaultMutableTreeNode parent, node;
 			node = new DefaultMutableTreeNode(geo);
 			if (geo.isAuxiliaryObject()) {
 				parent = auxiliaryNode;
 			}				
-			else if (geo.isIndependent() || geo.isPointOnPath()) {			
+			else if (geo.isIndependent()) {			
 				parent = indNode;				
 			} 
 			else {				
 				parent = depNode;
 			}
 
-			// add node to model (alphabetically ordered)                                    
-			model.insertNodeInto(node, parent, getInsertPosition(parent, geo));			
+			// add node to model (alphabetically ordered)
+			int pos = getInsertPosition(parent, geo);			
+			model.insertNodeInto(node, parent, pos);				
 			nodeTable.put(geo, node);
 			
 			// show new node			
@@ -366,7 +420,7 @@ public class AlgebraView extends JTree implements View {
 				expandPath(tpDep);
 			else
 				expandPath(tpAux);
-						
+								
 			//TreePath tp = new TreePath(node.getPath());			
 			//this.scrollPathToVisible(tp);											
 		}
@@ -513,94 +567,7 @@ public class AlgebraView extends JTree implements View {
 		add(geo);
 	}		
 
-	/**
-	 * inner class MyRenderer for GeoElements 
-	 */
-	private class MyRenderer extends DefaultTreeCellRenderer {
-		
-		private static final long serialVersionUID = 1L;				
-			
-		public MyRenderer() {
-			setOpaque(true);
-		}
-		
-		public Component getTreeCellRendererComponent(
-			JTree tree,
-			Object value,
-			boolean selected,
-			boolean expanded,
-			boolean leaf,
-			int row,
-			boolean hasFocus) {	
-						
-			//Application.debug("getTreeCellRendererComponent: " + value);
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;			
-			Object ob = node.getUserObject();
-						
-			if (ob instanceof GeoElement) {	
-				GeoElement geo = (GeoElement) ob;										
-				
-				setFont(app.boldFont);
-				setForeground(geo.getAlgebraColor());
-				String str = geo.getAlgebraDescriptionTextOrHTML();
-				//String str = geo.getAlgebraDescription();
-				setText(str);								
-				
-				if (geo.doHighlighting())				   
-					setBackground(Application.COLOR_SELECTION);
-				else 
-					setBackground(getBackgroundNonSelectionColor());
-								
-				// ICONS               
-				if (geo.isEuclidianVisible()) {
-					setIcon(iconShown);
-				} else {
-					setIcon(iconHidden);
-				}
-				
-//				 TODO: LaTeX in AlgebraView
-				//if (geo.isGeoFunction()) {
-					
-			//	}
-				
-				
-				/*// HIGHLIGHTING
-				if (geo.highlight) {
-					//setBorder(BorderFactory.createLineBorder(geo.selColor));
-					setBackground(geo.selColor);
-				} else {
-					//setBorder(null);
-				}*/
-			}								
-			//	no leaf (no GeoElement)
-			else { 
-				if (expanded) {
-					setIcon(getOpenIcon());
-				} else {
-					setIcon(getClosedIcon());
-				}
-				setForeground(Color.black);
-				setBackground(getBackgroundNonSelectionColor());
-				setFont(app.plainFont);
-				selected = false;				
-				setBorder(null);
-				setText(value.toString());
-			}		
-			
-			return this;
-		}							
-		
-		/*
-		final public void paint(Graphics g) {
-			Graphics2D g2 = (Graphics2D) g;
-			 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);                                        
-			 g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);    
-			 super.paint(g);
-		}
-		*/
-	} // MyRenderer
+
 
 	/**
 	 * inner class MyEditor handles editing of tree nodes
@@ -632,8 +599,13 @@ public class AlgebraView extends JTree implements View {
 			// only nodes with a GeoElement as userObject can be edited!		
 			selectedNode.setUserObject(selectedGeoElement);
 			
-			// change this GeoElement in the Kernel                  
-			GeoElement geo = kernel.getAlgebraProcessor().changeGeoElement(selectedGeoElement, newValue, true);			
+			// change this GeoElement in the Kernel   
+			
+			// allow shift-double-click on a PointonPath in Algebra View to 
+			// change without redefine
+			boolean redefine = !selectedGeoElement.isPointOnPath();
+			
+			GeoElement geo = kernel.getAlgebraProcessor().changeGeoElement(selectedGeoElement, newValue, redefine);			
 			if (geo != null) {				
 				selectedGeoElement = geo;
 				selectedNode.setUserObject(selectedGeoElement);
@@ -648,7 +620,6 @@ public class AlgebraView extends JTree implements View {
 		public boolean isCellEditable(EventObject event) {
 			boolean retValue = false;
 			boolean editable = false;
-
 			if (event != null) {
 				if (event.getSource() instanceof JTree) {
 					setTree((JTree) event.getSource());
@@ -661,12 +632,14 @@ public class AlgebraView extends JTree implements View {
 							(lastPath != null
 								&& path != null
 								&& lastPath.equals(path));
+						
+						if (editable) lastPath = path;
 					}
 				}
 			}
 			if (!realEditor.isCellEditable(event))
 				return false;
-			if (canEditImmediately(event))
+			if (canEditImmediately(event) || ((MouseEvent) event).getClickCount() > 1)
 				retValue = true;
 			else if (editable && shouldStartEditingTimer(event)) {
 				startEditingTimer();
@@ -679,9 +652,27 @@ public class AlgebraView extends JTree implements View {
 				Object ob = lastPath == null ? null :
 					((DefaultMutableTreeNode) lastPath.getLastPathComponent())
 						.getUserObject();
+				
+				if (ob == null && event instanceof MouseEvent) {
+					TreePath path =
+						tree.getPathForLocation(
+							((MouseEvent) event).getX(),
+							((MouseEvent) event).getY());				
+					ob = path == null ? null :
+						((DefaultMutableTreeNode) path.getLastPathComponent())
+							.getUserObject();
+				}
+				
 				if (ob instanceof GeoElement) {
-					GeoElement geo = (GeoElement) ob;					
-					retValue = geo.isChangeable() || geo.isRedefineable();					
+					GeoElement geo = (GeoElement) ob;		
+					
+					// allow shift-double-click on a PointonPath in Algebra View to 
+					// change without redefine
+					boolean shiftDown = false;
+					if (event instanceof MouseEvent)
+						shiftDown = ((MouseEvent) event).isShiftDown();
+					
+					retValue = geo.isIndependent() || (shiftDown && geo.isPointOnPath()); // geo.isChangeable() || geo.isRedefineable();					
 				} else
 					retValue = false;
 			}

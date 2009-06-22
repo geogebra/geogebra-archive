@@ -30,10 +30,10 @@ import geogebra.util.Util;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,9 +78,9 @@ public class MyXMLio {
 	// Added for Intergeo File Format (Yves Kreis) -->
 	final private static String I2G_FILE_THUMBNAIL = "construction/preview.png";
 	// <-- Added for Intergeo File Format (Yves Kreis)
-	final private static double THUMBNAIL_PIXELS_X = 160.0; // max no of
+	final private static double THUMBNAIL_PIXELS_X = 200.0; // max no of
 															// horizontal pixels
-	final private static double THUMBNAIL_PIXELS_Y = 120.0; // max no of
+	final private static double THUMBNAIL_PIXELS_Y = 200.0; // max no of
 															// vertical pixels
 
 	// Added for Intergeo File Format (Yves Kreis) -->
@@ -95,7 +95,7 @@ public class MyXMLio {
 	private Kernel kernel;
 	// Modified for Intergeo File Format (Yves Kreis) -->
 	// private MyXMLHandler handler;
-	private DocHandler handler;
+	private DocHandler handler, ggbDocHandler, i2gDocHandler;
 	// <-- Modified for Intergeo File Format (Yves Kreis)
 	private QDParser xmlParser;
 	// Added for Intergeo File Format (Yves Kreis) -->
@@ -105,15 +105,25 @@ public class MyXMLio {
 
 	public MyXMLio(Kernel kernel, Construction cons) {
 		this.kernel = kernel;
+		this.cons = cons;	
 		app = kernel.getApplication();
 
-		// similar to SAX event handler
-		handler = new MyXMLHandler(kernel, cons);
 		xmlParser = new QDParser();
-		// Added for Intergeo File Format (Yves Kreis) -->
-		this.cons = cons;
-		// <-- Added for Intergeo File Format (Yves Kreis)
+		handler = getGGBHandler();
 	}
+	
+	private DocHandler getGGBHandler() {
+		if (ggbDocHandler == null)
+			ggbDocHandler = new MyXMLHandler(kernel, cons);		
+		return ggbDocHandler;
+	}
+	
+	private DocHandler getI2GHandler() {
+		if (i2gDocHandler == null)
+			i2gDocHandler = new MyI2GHandler(kernel, cons);		
+		return i2gDocHandler;
+	}
+
 
 	/**
 	 * Reads zipped file from input stream that includes the construction saved
@@ -143,12 +153,12 @@ public class MyXMLio {
 				xmlFileBuffer = Util.loadIntoMemory(zip);
 				xmlFound = true;
 				// Added for Intergeo File Format (Yves Kreis) -->
-				handler = new MyXMLHandler(kernel, cons);
+				handler = getGGBHandler();
 			} else if (name.equals(I2G_FILE)) {
 				// load i2g file into memory first
 				xmlFileBuffer = Util.loadIntoMemory(zip);
 				xmlFound = true;
-				handler = new MyI2GHandler(kernel, cons);
+				handler = getI2GHandler();
 				// <-- Added for Intergeo File Format (Yves Kreis)
 			} else if (name.equals(XML_FILE_MACRO)) {
 				// load macro xml file into memory first
@@ -194,7 +204,7 @@ public class MyXMLio {
 		if (!(macroXMLfound || xmlFound))
 			throw new Exception("No XML data found in file.");
 	}
-	
+
 	/**
 	 * Get the preview image of a ggb file.
 	 * 
@@ -272,6 +282,7 @@ public class MyXMLio {
 
 		try {
 			xmlParser.parse(handler, ir);
+			xmlParser.reset();
 		} catch (Error e) {
 			// e.printStackTrace();
 			throw e;
@@ -280,7 +291,7 @@ public class MyXMLio {
 		} finally {
 			if (!isGGTFile) {
 				kernel.updateConstruction();
-				kernel.setNotifyViewsActive(oldVal);
+				kernel.setNotifyViewsActive(oldVal);				
 			}
 		}
 
@@ -311,6 +322,8 @@ public class MyXMLio {
 			zip.close();
 			throw new Exception(XML_FILE + " not found");
 		}
+		
+		System.gc();
 	}
 
 	public void processXMLString(String str, boolean clearAll, boolean isGGTfile)
@@ -612,13 +625,14 @@ public class MyXMLio {
 	/**
 	 * Compresses xml String and writes result to os.
 	 */
-	public static void writeZipped(OutputStream os, String xmlString)
-			throws IOException {
+	public static void writeZipped(OutputStream os, StringBuffer xmlString) throws IOException {
 		ZipOutputStream z = new ZipOutputStream(os);
 		z.putNextEntry(new ZipEntry(XML_FILE));
-		OutputStreamWriter osw = new OutputStreamWriter(z, "UTF8");
-		osw.write(xmlString);
-		osw.close();
+		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(z, "UTF8"));
+		for (int i=0; i < xmlString.length(); i++) {
+			w.write(xmlString.charAt(i));
+		}		
+		w.close();
 		z.close();
 	}
 
@@ -629,8 +643,7 @@ public class MyXMLio {
 	public String getFullXML() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
-						+ "\">\n");
+		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 
 		// save gui settings
 		sb.append(app.getCompleteUserInterfaceXML(false));		
@@ -697,8 +710,7 @@ public class MyXMLio {
 	public String getFullMacroXML(ArrayList macros) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb
-				.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
+		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 						+ "\">\n");
 
 		// save construction
@@ -712,25 +724,31 @@ public class MyXMLio {
 	 * Returns XML representation of all settings and construction needed for
 	 * undo.
 	 */
-	public static String getUndoXML(Construction c) {
+	public static synchronized StringBuffer getUndoXML(Construction c) {
 		Application app = c.getApplication();
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb
-				.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
-						+ "\">\n");
+		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 
 		// save euclidianView settings
-		sb.append(app.getEuclidianView().getXML());
+		String addStr = app.getEuclidianView().getXML();
+		sb.ensureCapacity(sb.length() + addStr.length());
+		sb.append(addStr);
 
 		// save construction
-		sb.append(c.getXML());
+		addStr = c.getXML();
+		sb.ensureCapacity(sb.length() + addStr.length());
+		sb.append(addStr);
 
 		// save cas session
-		if (app.hasCasView())
-			sb.append(app.getCasView().getSessionXML());
-
+		if (app.hasCasView()) {
+			addStr = app.getCasView().getSessionXML();
+			sb.ensureCapacity(sb.length() + addStr.length());
+			sb.append(addStr);
+		}
+			
+		sb.ensureCapacity(sb.length() + 20);
 		sb.append("</geogebra>");
 
 		/*
@@ -739,7 +757,7 @@ public class MyXMLio {
 		 * Application.debug("*******************");
 		 */
 
-		return sb.toString();
+		return sb;
 	}
 
 	/*

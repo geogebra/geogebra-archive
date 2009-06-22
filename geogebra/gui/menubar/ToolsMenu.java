@@ -1,5 +1,10 @@
 package geogebra.gui.menubar;
 
+import geogebra.gui.ToolCreationDialog;
+import geogebra.gui.ToolManagerDialog;
+import geogebra.gui.toolbar.MyToolbar;
+import geogebra.main.Application;
+
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.Vector;
@@ -7,11 +12,6 @@ import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-
-import geogebra.gui.ToolCreationDialog;
-import geogebra.gui.ToolManagerDialog;
-import geogebra.gui.toolbar.MyToolbar;
-import geogebra.main.Application;
 
 /**
  * The "Tools" menu.
@@ -85,11 +85,11 @@ class ToolsMenu extends BaseMenu {
 							modeMenus[menuIndex].addSeparator();
 						else {
 							JMenuItem item = new JMenuItem(app
-									.getModeText(mode));// ,
+									.getToolName(mode));// ,
 														// app.getModeIcon(mode));
 							item.setActionCommand(Integer.toString(mode));
 							item.addActionListener(modeChangeAction);
-							item.setToolTipText(app.getModeHelp(mode));
+							item.setToolTipText(app.getToolHelp(mode));
 							modeMenus[menuIndex].add(item);
 						}
 					} else {

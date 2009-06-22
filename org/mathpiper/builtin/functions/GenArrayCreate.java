@@ -21,9 +21,9 @@ package org.mathpiper.builtin.functions;
 import org.mathpiper.builtin.Array;
 import org.mathpiper.builtin.BuiltinFunctionInitialize;
 import org.mathpiper.lisp.BuiltinObject;
+import org.mathpiper.lisp.ConsPointer;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.ConsPointer;
 
 /**
  *

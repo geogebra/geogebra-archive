@@ -72,18 +72,7 @@ public class MacroKernel extends Kernel  {
 	}
 	final double getYscale() {
 		return parentKernel.getYscale();
-	}	
-	
-//	/**
-//	 * Registers an algorithm that wants to be notified when setEuclidianViewBounds() is called.	 
-//	 */
-//	final void registerEuclidianViewAlgo(EuclidianViewAlgo algo) {
-//		parentKernel.registerEuclidianViewAlgo(algo);
-//	}
-//	
-//	final void unregisterEuclidianViewAlgo(EuclidianViewAlgo algo) {		
-//		parentKernel.unregisterEuclidianViewAlgo(algo);
-//	}
+	}
 	
 	/**
 	 * Adds a new macro to the parent kernel.

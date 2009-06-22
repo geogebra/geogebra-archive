@@ -14,21 +14,11 @@ public class JarConnectionManager {
 	
 	private URLConnection [] connections;
 	private BufferedInputStream [] inputStreams;
-
-	private static JarConnectionManager singleton;
 	
 	/**
 	 * Returns the singleton instance of JARConnectionManager
-	 */
-	public synchronized static JarConnectionManager getSingleton() {
-		if (singleton == null) {
-			singleton = new JarConnectionManager();
-		}		
-		return singleton;
-	}
-	
-	
-	private JarConnectionManager() {		
+	 */	
+	public JarConnectionManager() {		
 		// init code base for connections
 		initCodeBase();		
 		

@@ -213,7 +213,8 @@ final public class DrawConic extends Drawable implements Previewable {
 	        case GeoConic.CONIC_ELLIPSE:   
 	        case GeoConic.CONIC_PARABOLA:	           
 	        	// shape on screen?
-	        	if (!shape.intersects(0,0, view.width, view.height)) {				
+	        	// Michael Borcherds: bugfix getBounds2D() added otherwise rotated parabolas not displayed sometimes
+	        	if (!shape.getBounds2D().intersects(0,0, view.width, view.height)) {				
 	    			isVisible = false;
 	    			return;
 	    		}
@@ -669,7 +670,7 @@ final public class DrawConic extends Drawable implements Previewable {
 					g2.setColor(conic.getFillColor());
 					g2.fill(shape);
 					if (arcFiller != null) 
-						Drawable.fillGeneralPath(arcFiller, g2);
+						Drawable.fillWithValueStrokePure(arcFiller, g2);
 				}			                                               
                 if (geo.doHighlighting()) {
                     g2.setStroke(selStroke);

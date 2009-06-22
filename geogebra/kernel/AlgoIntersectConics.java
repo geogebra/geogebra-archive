@@ -158,8 +158,8 @@ public class AlgoIntersectConics extends AlgoIntersect {
         	computeNonContinous();
         }        	
         
-        
-    }     
+        avoidDoubleTangentPoint();
+    }	   
     
     /**
      * There is an important special case we handle separately:
@@ -194,7 +194,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
         int secondIndex = (firstIndex + 1) % 2;
                 
         if (firstIntersection && didSetIntersectionPoint(firstIndex)) {           
-        	if (!P[firstIndex].equals(pointOnConic)) {
+        	if (!P[firstIndex].isEqual(pointOnConic)) {
             	// pointOnConic is NOT equal to the loaded intersection point:
         		// we need to swap the indices
         		int temp = firstIndex;
@@ -206,20 +206,20 @@ public class AlgoIntersectConics extends AlgoIntersect {
         	firstIntersection = false;
         } 
         
-        // pointOnConic should be first intersection point
-        P[firstIndex].setCoords(pointOnConic);        
-        
+        P[firstIndex].setCoords(pointOnConic);         
+
         // the other intersection point should be the second one
         boolean didSetP1 = false;
         for (int i=0; i < 2; i++) {  
-	   		if (!Q[i].equals(P[firstIndex])) {
+	   		if (!Q[i].isEqual(P[firstIndex])) {
 	   			P[secondIndex].setCoords(Q[i]);
 	   			didSetP1 = true;
 	   			break;
 	   		}
 	    }   
-        if (!didSetP1) // this happens when both intersection points are equal
-        	P[secondIndex].setCoords(pointOnConic); 
+        if (!didSetP1) { // this happens when both intersection points are equal 
+        	P[secondIndex].setCoords(pointOnConic);          	
+        }
 	   	 
 	   	if (isLimitedPathSituation) {
 	   		// make sure the points are on a limited path
@@ -411,7 +411,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	
     	// we have a singularity if there are two defined points
     	// that are equal
-    	boolean ret = (count == 2 && P[index[0]].equals(P[index[1]]));
+    	boolean ret = (count == 2 && P[index[0]].isEqual(P[index[1]]));
     	
     	//if (ret)
     	//	Application.debug("Singularity at " + P[index[0]]);    	

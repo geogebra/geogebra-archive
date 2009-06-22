@@ -1,19 +1,19 @@
 // Copyright 2002, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
-import java.io.IOException;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
-import org.freehep.graphicsio.emf.EMFTag;
 import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * BeginPath TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: BeginPath.java,v 1.3 2008-05-04 12:19:02 murkle Exp $
+ * @version $Id: BeginPath.java,v 1.4 2009-06-22 02:18:18 hohenwarter Exp $
  */
 public class BeginPath extends EMFTag {
 

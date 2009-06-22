@@ -18,8 +18,9 @@
 
 package org.mathpiper.lisp.printers;
 
-import org.mathpiper.lisp.*;
 import org.mathpiper.io.MathPiperOutputStream;
+import org.mathpiper.lisp.ConsPointer;
+import org.mathpiper.lisp.Environment;
 
 
 public class Printer

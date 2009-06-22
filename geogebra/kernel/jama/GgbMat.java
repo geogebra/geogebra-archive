@@ -4,7 +4,6 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
-import geogebra.main.Application;
 
 
 public class GgbMat extends Matrix{

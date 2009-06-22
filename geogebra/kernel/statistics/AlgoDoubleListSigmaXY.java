@@ -12,8 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import geogebra.kernel.GeoList;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoList;
 
 /**
  * Sigma(xy) of 2 lists

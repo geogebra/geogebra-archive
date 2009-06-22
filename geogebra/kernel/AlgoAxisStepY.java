@@ -35,7 +35,7 @@ public class AlgoAxisStepY extends AlgoElement {
         num.setLabel(label);
         
         // ensure we get updates
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
    }   
     
 	protected String getClassName() {

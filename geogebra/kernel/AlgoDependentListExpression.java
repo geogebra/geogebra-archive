@@ -78,7 +78,7 @@ public class AlgoDependentListExpression extends AlgoElement {
 		list.clear();
 		for (int i=0; i < evalListSize; i++) {
 			ExpressionValue element = myList.getListElement(i).evaluate();    			    			
-			GeoElement geo = null;
+			GeoElement geo = null;	
 
 			// number result
 			if (element.isNumberValue()) {	
@@ -128,16 +128,34 @@ public class AlgoDependentListExpression extends AlgoElement {
 				
 				// add point to list
 				list.add(geo);	
-			}
+			}				
+			
 			// needed for matrix multiplication 
 			// eg {{1,3,5},{2,4,6}}*{{11,14},{12,15},{13,a}}
 			else if (element instanceof MyList) {
 				MyList myList2 = (MyList)element;
 				GeoList list2 = new GeoList(cons);
 				list2.clear();
-				for (int j=0 ; j < myList2.size() ; j++)
-				{
 				
+				/* removed Michael Borcherds 20080602
+				 * bug: 9PointCubic.ggb (matrix multiplication)
+				// try to use cached element of  type GeoList
+				GeoList list2 = null;
+				if (i < cachedListSize) {
+					GeoElement cachedGeo = list.getCached(i);
+					
+					// the cached element is a number: set value
+					if (cachedGeo.isGeoList()) {
+						list2 = (GeoList) cachedGeo;						
+					}     			
+				}				
+				
+				if (list2 == null) {
+					list2 = new GeoList(cons);
+				} */
+				
+				for (int j=0 ; j < myList2.size() ; j++)
+				{		
 					ExpressionValue en = myList2.getListElement(j);
 					ExpressionValue ev = en.evaluate();
 					
@@ -145,8 +163,7 @@ public class AlgoDependentListExpression extends AlgoElement {
 						GeoNumeric geo2 = new GeoNumeric(cons);
 						geo2.setValue(((NumberValue)ev).getDouble());
 						list2.add(geo2);
-					}
-					
+					} 					
 				}
 				
 				list.add(list2);

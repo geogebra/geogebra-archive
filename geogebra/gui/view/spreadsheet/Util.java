@@ -2,9 +2,10 @@
 package geogebra.gui.view.spreadsheet;
 
 import java.awt.Component;
-import javax.swing.JOptionPane;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
+import javax.swing.JOptionPane;
 
 public class Util {
 	

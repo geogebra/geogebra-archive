@@ -27,6 +27,7 @@ import geogebra.kernel.GeoVec2D;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 /**
@@ -73,12 +74,12 @@ implements Previewable {
         isVisible = geo.isEuclidianVisible();
         if (!isVisible) return; 
 		labelVisible = geo.isLabelVisible();       
-		updateStrokes(s);
+		updateStrokes(geo);
 		
 		A = s.getStartPoint();
-        B = s.getEndPoint();
-		
-        A.getInhomCoords(coordsA);
+        B = s.getEndPoint();       
+        
+		A.getInhomCoords(coordsA);
         B.getInhomCoords(coordsB);
 		view.toScreenCoords(coordsA);
 		view.toScreenCoords(coordsB);					
@@ -252,14 +253,19 @@ implements Previewable {
 	
    
 	final public void draw(Graphics2D g2) {
+		
+		// segments of polygons can have zero thickness
+		if (geo.lineThickness == 0)
+			return;
+		
         if (isVisible) {		        	
             if (geo.doHighlighting()) {
-                g2.setPaint(s.getSelColor());
+                g2.setPaint(geo.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(line);       
             }
             
-            g2.setPaint(s.getObjectColor());             
+            g2.setPaint(geo.getObjectColor());             
             g2.setStroke(objStroke);            
 			g2.draw(line);
 
@@ -309,7 +315,7 @@ implements Previewable {
 			//END
 
 			if (labelVisible) {
-				g2.setPaint(s.getLabelColor());
+				g2.setPaint(geo.getLabelColor());
 				g2.setFont(view.fontLine);
 				drawLabel(g2);
             }
@@ -325,6 +331,7 @@ implements Previewable {
 	final public void updatePreview() {		
 		isVisible = points.size() == 1;
 		if (isVisible) { 
+
 			//	start point
 			A = (GeoPoint) points.get(0);						   			
 			A.getInhomCoords(coordsA);			                        
@@ -333,9 +340,37 @@ implements Previewable {
 		}
 	}
 	
-	final public void updateMousePos(int x, int y) {		
+	Point2D.Double endPoint = new Point2D.Double();
+	
+	final public void updateMousePos(int mx, int my) {		
 		if (isVisible) { 											
-			line.setLine(coordsA[0], coordsA[1], x, y);                                   			                                            
+			double xRW = view.toRealWorldCoordX(mx);
+			double yRW = view.toRealWorldCoordY(my);
+			
+			// round angle to nearest 15 degrees if alt pressed
+			if (points.size() == 1 && view.getEuclidianController().altDown) {
+				GeoPoint p = (GeoPoint)points.get(0);
+				double px = p.inhomX;
+				double py = p.inhomY;
+				double angle = Math.atan2(yRW - py, xRW - px) * 180 / Math.PI;
+				double radius = Math.sqrt((py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
+				
+				// round angle to nearest 15 degrees
+				angle = Math.round(angle / 15) * 15; 
+				
+				xRW = px + radius * Math.cos(angle * Math.PI / 180);
+				yRW = py + radius * Math.sin(angle * Math.PI / 180);
+				
+				mx = view.toScreenCoordX(xRW);
+				my = view.toScreenCoordY(yRW);
+				
+				endPoint.x = xRW;
+				endPoint.y = yRW;
+				view.getEuclidianController().setLineEndPoint(endPoint);
+			}
+			else
+				view.getEuclidianController().setLineEndPoint(null);
+			line.setLine(coordsA[0], coordsA[1], mx, my);                                   			                                            
 		}
 	}
     

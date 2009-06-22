@@ -21,6 +21,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.Kernel;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -28,6 +29,7 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -49,6 +51,7 @@ public final class DrawImage extends Drawable {
     private float alpha = -1; 
     private boolean isInBackground = false;    
     private AffineTransform at, atInverse, tempAT;
+    private boolean needsInterpolationRenderingHint;
     private int screenX, screenY;
     private Rectangle boundingBox;
         
@@ -185,7 +188,14 @@ public final class DrawImage extends Drawable {
 		    } catch (NoninvertibleTransformException e) {
 		    	isVisible = false;
 		    	return;
-		    }	    
+		    }	  
+		    
+		    // improve rendering for sheared and scaled images (translations don't need this)		    
+		    needsInterpolationRenderingHint = 
+		    		!(	Kernel.isEqual(at.getScaleX(), 1.0, Kernel.MAX_PRECISION) && 
+		    			Kernel.isEqual(at.getScaleY(), 1.0, Kernel.MAX_PRECISION) &&
+		    			Kernel.isEqual(at.getShearX(), 0.0, Kernel.MAX_PRECISION) &&
+		    			Kernel.isEqual(at.getShearY(), 0.0, Kernel.MAX_PRECISION));
         }
 	    	    
 	    if (isInBackground != geoImage.isInBackground()) {	
@@ -205,7 +215,9 @@ public final class DrawImage extends Drawable {
     final public void draw(Graphics2D g2) {   	   
         if (isVisible) {  
         	Composite oldComp = g2.getComposite();
-        	if (alpha != 1f) {
+        	if (alpha >= 0f && alpha < 1f) {
+        		if (alphaComp == null)
+        			alphaComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
         		g2.setComposite(alphaComp);                
         	}
         	
@@ -218,8 +230,17 @@ public final class DrawImage extends Drawable {
     				g2.draw(labelRectangle);         
     			}     		
         	} else {
-        		AffineTransform oldAT = g2.getTransform();         
-            	g2.transform(at);       			
+        		AffineTransform oldAT = g2.getTransform();        		            
+    			g2.transform(at);  
+
+    			// improve rendering quality for transformed images
+    			Object oldInterpolationHint = g2.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
+        		if (needsInterpolationRenderingHint) {
+        			// improve rendering quality for transformed images
+        			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+							RenderingHints.VALUE_INTERPOLATION_BILINEAR);    	        			
+        		}        		
+            	
             	g2.drawImage(image, 0, 0, null); 
      			if (!isInBackground && geo.doHighlighting()) {
     				// draw rectangle around image
@@ -227,7 +248,10 @@ public final class DrawImage extends Drawable {
     				g2.setPaint(Color.lightGray);		
     				g2.draw(labelRectangle);        
     			} 
-            	g2.setTransform(oldAT);            	
+     			     			
+     			// reset previous values
+     			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, oldInterpolationHint);
+     			g2.setTransform(oldAT);
         	}  
         	
         	g2.setComposite(oldComp);

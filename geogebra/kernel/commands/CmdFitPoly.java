@@ -29,9 +29,9 @@ public class CmdFitPoly extends CommandProcessor{
     
     public GeoElement[] process(Command c) throws MyError {
         int n=c.getArgumentNumber();
-        GeoElement[] arg;
+        GeoElement[] arg=resArgs(c);;
         switch(n) {
-            case 2: arg=resArgs(c);
+            case 2:
             if(arg[1].isNumberValue())
                     if(  (arg[0].isGeoList() )&& (arg[1].isNumberValue())  ){ 
                         GeoElement[] ret={kernel.FitPoly(c.getLabel(),(GeoList)arg[0],(NumberValue) arg[1]) };
@@ -40,7 +40,14 @@ public class CmdFitPoly extends CommandProcessor{
                         throw argErr(app,c.getName(),arg[0]);
                     }//if arg[0] is GeoList 
 
-           default: throw argNumErr(app,c.getName(),n);
+            default :
+                // try to create list of points
+           	 GeoList list = wrapInList(kernel, arg, arg.length - 1, GeoElement.GEO_CLASS_POINT);
+                if (list != null) {
+               	 GeoElement[] ret = { kernel.FitPoly(c.getLabel(), list, (NumberValue) arg[arg.length - 1])};
+                    return ret;             	     	 
+                } 
+    			throw argNumErr(app, c.getName(), n);
         }//switch(number of arguments)
     }//process(Command) 
 }// class CmdFitPoly

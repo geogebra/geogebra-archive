@@ -6,14 +6,14 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFTag;
 import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * Rectangle TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: EMFRectangle.java,v 1.3 2008-05-04 12:17:56 murkle Exp $
+ * @version $Id: EMFRectangle.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public class EMFRectangle extends EMFTag {
 

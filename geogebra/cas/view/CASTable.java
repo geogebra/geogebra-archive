@@ -3,13 +3,13 @@
  */
 package geogebra.cas.view;
 
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.event.MouseListener;
 
 import javax.swing.CellEditor;
@@ -44,7 +44,7 @@ public class CASTable extends JTable {
 		kernel = app.getKernel();					
 
 		setShowGrid(true);
-		setGridColor(Application.TABLE_GRID_COLOR);
+		setGridColor(MyTable.TABLE_GRID_COLOR);
 		setBackground(Color.white);
 
 		tableModel = new CASTableModel(this, app);

@@ -4,16 +4,16 @@ package org.freehep.graphicsio.emf;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.freehep.graphicsio.emf.gdi.GDIObject;
 import org.freehep.util.io.Tag;
 import org.freehep.util.io.TaggedInputStream;
 import org.freehep.util.io.TaggedOutputStream;
-import org.freehep.graphicsio.emf.gdi.GDIObject;
 
 /**
  * EMF specific tag, from which all other EMF Tags inherit.
  * 
  * @author Mark Donszelmann
- * @version $Id: EMFTag.java,v 1.3 2008-05-04 12:16:57 murkle Exp $
+ * @version $Id: EMFTag.java,v 1.4 2009-06-22 02:18:22 hohenwarter Exp $
  */
 public abstract class EMFTag extends Tag implements GDIObject {
 

@@ -50,6 +50,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	
 	protected double area;
 	private boolean defined = false;		
+	private boolean initLabelsCalled = false;
 	
 	/** says if the polygon had created its segments itself (used for 3D) */
 	private boolean createSegments = true;
@@ -104,7 +105,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
     		case 5:
     			return "Pentagon";
     		
-    		case 6:
+    		case 6:    			
     			return "Hexagon";
     		
     		default:
@@ -198,7 +199,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
      * labels[n+1..2n-2] for points (only used for regular polygon)
      * @param labels
      */
-    public void initLabels(String [] labels) {     	
+    void initLabels(String [] labels) {       	 
+    	initLabelsCalled = true;
     	// Application.debug("INIT LABELS");
     	
     	// label polygon
@@ -210,12 +212,12 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
             	 defaultSegmentLabels();
              }
              return;
-    	}
+    	}    	    	
     	
     	// label polygon              
         // first label for polygon itself
-        setLabel(labels[0]);        
-    	
+        setLabel(labels[0]);    
+
     	// label segments and points
     	if (points != null && segments != null) {
     		
@@ -226,9 +228,9 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
     			
 	            int i=1;
     			for (int k=0; k < segments.length; k++, i++) {
-	                segments[k].setLabel(labels[i]);
-	            }		            
-    			for (int k=2; k < points.length; k++, i++) {
+	               segments[k].setLabel(labels[i]);    				
+	             }		            
+    			for (int k=2; k < points.length; k++, i++) {    				
 	                points[k].setLabel(labels[i]);
 	            }
 	        } 
@@ -248,7 +250,17 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	        	//Application.debug("label for polygon (autoset segment labels)");     	
 	        	defaultSegmentLabels();
 	        }
-    	}    	        
+    	}    	
+    	
+
+    }
+    
+    /**
+     * Returns whether the method initLabels() was called for this polygon.
+     * This is important to know whether the segments have gotten labels.
+     */
+    final public boolean wasInitLabelsCalled() {
+    	return initLabelsCalled;
     }
     
     private void defaultSegmentLabels() {
@@ -262,7 +274,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
            for (int i=0; i < points.length; i++) {
                setLabel(segments[i], points[i]);
            }
-        }
+        }       
     }
     
     private void setLabel(GeoSegmentInterface s, GeoPointInterface geoPoint) {
@@ -340,6 +352,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		 segment = algoSegment.getSegment(); 
 		 // refresh color to ensure segments have same color as polygon:
 		 segment.setObjColor(getObjectColor()); 
+         segment.setLineThickness(getLineThickness()); 
+         //segment.setAuxiliaryObject(true);
 
 		 return segment;
 	 }
@@ -366,6 +380,15 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		GeoPolygon poly = (GeoPolygon) geo;		
 		area = poly.area;
 		defined = poly.defined;	
+		
+		// make sure both arrays have same size
+		if (points.length != poly.points.length) {
+			GeoPointInterface [] tempPoints = new GeoPointInterface[poly.points.length];
+			for (int i=0; i < tempPoints.length; i++) {
+				tempPoints[i] = i < points.length ? points[i] : new GeoPoint(cons);
+			}
+			points = tempPoints;
+		}
 		
 		for (int i=0; i < points.length; i++) {				
 			((GeoPoint) points[i]).set((GeoPoint) poly.points[i]);

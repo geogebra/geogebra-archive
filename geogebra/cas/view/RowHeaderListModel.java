@@ -1,9 +1,6 @@
 package geogebra.cas.view;
 
-import geogebra.main.Application;
-
 import javax.swing.AbstractListModel;
-import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;

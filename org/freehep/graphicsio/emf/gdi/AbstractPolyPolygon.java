@@ -1,18 +1,18 @@
 // Copyright 2007, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
-import org.freehep.graphicsio.emf.EMFTag;
-import org.freehep.graphicsio.emf.EMFRenderer;
-
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
+
+import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * abstract parent for PolyPolygon drawing
  *
  * @author Steffen Greiffenberg
- * @version $Id: AbstractPolyPolygon.java,v 1.3 2008-05-04 12:19:44 murkle Exp $
+ * @version $Id: AbstractPolyPolygon.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public abstract class AbstractPolyPolygon extends EMFTag {
 

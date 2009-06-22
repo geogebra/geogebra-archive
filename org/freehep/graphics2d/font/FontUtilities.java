@@ -6,14 +6,14 @@ import java.awt.GraphicsEnvironment;
 import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.Hashtable;
 
 /**
  * 
  * @author Mark Donszelmann
- * @version $Id: FontUtilities.java,v 1.3 2008-05-04 12:15:10 murkle Exp $
+ * @version $Id: FontUtilities.java,v 1.4 2009-06-22 02:18:16 hohenwarter Exp $
  */
 public class FontUtilities {
 

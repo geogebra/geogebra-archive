@@ -7,9 +7,9 @@
 package org.freehep.util;
 
 import java.lang.reflect.Constructor;
-import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * A class that can represent any Java object or primitive. Unlike the
@@ -22,7 +22,7 @@ import java.text.ParseException;
  * avoided in multi-threaded environments.
  *
  * @author  tonyj
- * @version $Id: Value.java,v 1.3 2008-05-04 12:22:40 murkle Exp $
+ * @version $Id: Value.java,v 1.4 2009-06-22 02:18:20 hohenwarter Exp $
  */
 public class Value {
 

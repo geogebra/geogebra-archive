@@ -12,16 +12,14 @@ the Free Software Foundation.
 
 package geogebra.gui.toolbar;
 
-import geogebra.main.Application;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.MySmallJButton;
-import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.SystemColor;
 import java.awt.event.ComponentEvent;
@@ -31,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -77,43 +77,69 @@ public class MyToolbar extends JPanel implements ComponentListener{
         tb.setBackground(getBackground());
         ModeToggleButtonGroup bg = new ModeToggleButtonGroup();     
         modeToggleMenus = new ArrayList();
+
+        // wrap toolbar to be vertically centered
+        JPanel toolbarPanel = new JPanel();
+        toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.Y_AXIS));
+        toolbarPanel.add(Box.createVerticalGlue());
+        tb.setAlignmentX(LEFT_ALIGNMENT);
+       	toolbarPanel.add(tb);
+       	toolbarPanel.add(Box.createVerticalGlue());
         
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));    
-        leftPanel.add(tb);      
-        add(leftPanel, BorderLayout.WEST); 
-                  
-        if (app.showAlgebraInput() )        	
-        	bg.add(((AlgebraInput) app.getGuiManager().getAlgebraInput()).getInputButton());                                 
-       
        	if (showToolBarHelp) {       
        		// mode label       		
            	modeNameLabel = new JLabel();             	
 
-           	toolbarHelpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 
-           			Math.max(0, 5 + 12 -app.getFontSize()))); // vertical gap
-           	//leftPanel.add(Box.createRigidArea(new Dimension(5,5)));
+           	// put into panel to 
+           	toolbarHelpPanel = new JPanel();
+           	toolbarHelpPanel.setLayout(new BoxLayout(toolbarHelpPanel, BoxLayout.Y_AXIS));
+           	toolbarHelpPanel.add(Box.createVerticalGlue());
+           	modeNameLabel.setAlignmentX(LEFT_ALIGNMENT);
            	toolbarHelpPanel.add(modeNameLabel);
+           	toolbarHelpPanel.add(Box.createVerticalGlue());
+           	
            	add(toolbarHelpPanel, BorderLayout.CENTER);
        	}   
        	       	
         // UNDO Toolbar     
+       	JPanel undoPanel = null;
         if (app.isUndoActive()) {
 	        // undo part                  	   
-	        JPanel undoPanel = new JPanel(new BorderLayout(0,0)); 
+	        undoPanel = new JPanel();
+	        undoPanel.setLayout(new BoxLayout(undoPanel, BoxLayout.Y_AXIS));
+	        undoPanel.add(Box.createVerticalGlue());
+	        
+	        // undo button
 	        MySmallJButton button = new MySmallJButton(app.getGuiManager().getUndoAction(), 7); 	
 	        String text = app.getMenu("Undo");
 	        button.setText(null);
-	        button.setToolTipText(text);                     
-	        undoPanel.add(button, BorderLayout.NORTH);
-	        
+	        button.setToolTipText(text);  
+	        button.setAlignmentX(RIGHT_ALIGNMENT);
+	        undoPanel.add(button);
+
+	        // redo button
 	        button = new MySmallJButton(app.getGuiManager().getRedoAction(), 7);         	        
 	        text = app.getMenu("Redo");
 	        button.setText(null);
 	        button.setToolTipText(text);        
-	        undoPanel.add(button, BorderLayout.SOUTH);   
+	        button.setAlignmentX(RIGHT_ALIGNMENT);
+	        undoPanel.add(button); 
 	       
-	        add(undoPanel, BorderLayout.EAST);		        
-        }         
+	        undoPanel.add(Box.createVerticalGlue());	               
+        }       
+                
+        // put together panel
+        removeAll();
+        setBorder(BorderFactory.createEmptyBorder(2, 2, 1, 2));
+        setLayout(new BorderLayout(10,0));    
+        add(toolbarPanel, BorderLayout.WEST); 
+        
+        if (toolbarHelpPanel != null)
+        	add(toolbarHelpPanel, BorderLayout.CENTER);
+
+        if (undoPanel != null) {
+        	add(undoPanel, BorderLayout.EAST);
+        }
         
         // add menus with modes to toolbar
        	addCustomModesToToolbar(tb, bg);
@@ -125,7 +151,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
         tb.add(temporaryModes);
        	
         setSelectedMode(app.getMode());
-        updateModeLabel();
+        updateToolbarHelpText();
     }
     
     /**
@@ -135,8 +161,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
     public boolean setSelectedMode(int mode) {       
     	boolean success = false;
     	
-    	// there is no special icon/button for the algebra input mode, use the move mode button instead
-    	if(mode == EuclidianView.MODE_ALGEBRA_INPUT) {
+    	// there is no special icon/button for the selection listener mode, use the move mode button instead
+    	if(mode == EuclidianView.MODE_SELECTION_LISTENER) {
     		mode = EuclidianView.MODE_MOVE;
     	}
     	
@@ -169,7 +195,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
          	}
         }              
                 
-        updateModeLabel();
+        updateToolbarHelpText();
         return success;
     }     
     
@@ -185,53 +211,47 @@ public class MyToolbar extends JPanel implements ComponentListener{
     		return mtm.getFirstMode();
     	}
     }
-
-    public void updateModeLabel() {    	
+    
+    private void updateToolbarHelpText() {
     	if (modeNameLabel == null) return;
-     	        	
-    	String modeText, helpText;   
+    	
     	int mode = app.getMode();
-    	if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
-    		// macro    
-    		Macro macro = app.getKernel().getMacro(mode - EuclidianView.MACRO_MODE_ID_OFFSET);    	
-    		modeText = macro.getToolName();    	
-    		if (modeText.length() == 0)		
-    			modeText = macro.getCommandName();    		
-    		helpText = macro.getToolHelp();
-    		if (helpText.length() == 0)
-    			helpText = macro.getNeededTypesString();	    	
-    	} else {
-        	// standard case    		
-	    	modeText = EuclidianView.getModeText(mode);
-	    	helpText = app.getMenu(modeText + ".Help");        
-	    	modeText = app.getMenu(modeText);
-    	}
-    	    
-    	// update wrapped toolbar help text
-        String wrappedText = wrappedModeText(modeText, helpText, toolbarHelpPanel);
-        modeNameLabel.setText(wrappedText);
+    	
+    	String toolName = app.getToolName(mode);
+    	String helpText = app.getToolHelp(mode);
+    	
+    	// get wrapped toolbar help text
+        String wrappedText = wrappedModeText(toolName, helpText, toolbarHelpPanel);    	
+    	modeNameLabel.setText(wrappedText);
+    	
+    	// tooltip
+    	modeNameLabel.setToolTipText(app.getToolTooltipHTML(mode));
     }
     
     /** 
      * Returns mode text and toolbar help as html text with line breaks
-     * to fit in the given panel.
-     * 
+     * to fit in the given panel.     
      */
     private String wrappedModeText(String modeName, String helpText, JPanel panel) {
     	FontMetrics fm = getFontMetrics(app.getBoldFont());    	
-    	int maxLines = Math.max(2, panel.getHeight() / fm.getHeight());
-	
-    	int panelWidth;
-    	if (panel.getWidth() == 0) {
-    		panelWidth = oldToolbarHelpWidth;
-    	} else {
-    		// remember panel width to use during update of fonts or language
-    		panelWidth = panel.getWidth() - fm.stringWidth("W");
-    		oldToolbarHelpWidth = panelWidth;
-    	}
+   
+    	// check width of panel
+    	int panelWidth = panel.getWidth();
+    	int charWidth = fm.stringWidth("W");    	
+    	panelWidth = panelWidth - charWidth; // needed for correct line breaks
     	
-    	StringBuffer sb = new StringBuffer();    
-    	sb.append("<html><b>");
+    	if (panelWidth <= 0) {    	
+    		return "";
+    	} 
+    	
+    	// show no more than 2 lines
+     	int maxLines = Math.min(2, Math.round(panel.getHeight() / (float) fm.getHeight()));    	
+    	StringBuffer sbToolName = new StringBuffer();    
+    	sbToolName.append("<html><b>");
+    	
+    	// check if mode name itself fits
+    	if (fm.stringWidth(modeName) >  panelWidth)
+    		return "";
     	
     	// mode name
     	BreakIterator iterator = BreakIterator.getWordInstance(app.getLocale());
@@ -247,11 +267,14 @@ public class MyToolbar extends JPanel implements ComponentListener{
 			if( len + fm.stringWidth(word) > panelWidth )
 			{
 				if (++line > maxLines) {
-					sb.append("...");
-					sb.append("</b></html>");
-					return sb.toString();
+					// if the tool name doesn't fit: return an empty string
+					return "";
+					
+					//sbToolName.append("...");
+					//sbToolName.append("</b></html>");
+					//return sbToolName.toString();
 				}
-				sb.append("<br>");
+				sbToolName.append("<br>");
 				len = fm.stringWidth(word);	
 			}
 			else
@@ -259,23 +282,25 @@ public class MyToolbar extends JPanel implements ComponentListener{
 				len += fm.stringWidth(word);
 			}
  
-			sb.append(Util.toHTMLString(word));
+			sbToolName.append(Util.toHTMLString(word));
 			start = end;
 			end = iterator.next();
 		}		
-		sb.append("</b>");
+		sbToolName.append("</b>");
     	
 		
 		// mode help text
+		StringBuffer sbToolHelp = new StringBuffer();   
 		fm = getFontMetrics(app.getPlainFont());
 		
 		// try to put help text into single line
 		if (line < maxLines && fm.stringWidth(helpText) < panelWidth) {
-			sb.append("<br>");
-			sb.append(Util.toHTMLString(helpText));
+			++line;
+			sbToolHelp.append("<br>");
+			sbToolHelp.append(Util.toHTMLString(helpText));
 		}
 		else {			
-			sb.append(": ");
+			sbToolHelp.append(": ");
 			iterator.setText(helpText);
 			start = iterator.first();
 			end = iterator.next();
@@ -284,11 +309,13 @@ public class MyToolbar extends JPanel implements ComponentListener{
 				String word = helpText.substring(start,end);
 				if( len + fm.stringWidth(word) >  panelWidth)
 				{
-					if (++line > maxLines) {
-						sb.append("...");
+					if (++line > maxLines) {						
+						// show tool help only when it can be completely shown
+						sbToolHelp.setLength(0);
+						//sbToolHelp.append("...");
 						break;
 					}
-					sb.append("<br>");
+					sbToolHelp.append("<br>");
 					len = fm.stringWidth(word);								
 				}
 				else
@@ -296,16 +323,18 @@ public class MyToolbar extends JPanel implements ComponentListener{
 					len += fm.stringWidth(word);
 				}
 	 
-				sb.append(Util.toHTMLString(word));
+				sbToolHelp.append(Util.toHTMLString(word));
 				start = end;
 				end = iterator.next();
 			}
 		}
 		
-		sb.append("</html>"); 
-		return sb.toString();
+		// show tool help only when it can be completely shown		
+		sbToolName.append(sbToolHelp);
+		sbToolName.append("</html>");
+		return sbToolName.toString();
 	}
-    int oldToolbarHelpWidth;
+
     
     /**
      * Adds the given modes to a two-dimensional toolbar. 
@@ -352,7 +381,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	        	else { // standard case: add mode
 	        		
 	        		// check mode
-	       			if (!"".equals(app.getModeText(mode))) {
+	       			if (!"".equals(app.getToolName(mode))) {
 		        		 tm.addMode(mode);
 		        		 if (firstButton) {
 		                 	tm.getJToggleButton().setSelected(true);
@@ -615,9 +644,15 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	}
 
 	public void componentResized(ComponentEvent e) {
-		updateModeLabel();
-	}		
+		if (getWidth() != oldWidth) {
+			oldWidth = getWidth();
+			updateToolbarHelpText();
+		}		
+	}	
+	private int oldWidth;
 
-	public void componentShown(ComponentEvent e) {		
+	public void componentShown(ComponentEvent e) {
 	}
+	
+	
 }

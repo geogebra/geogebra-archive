@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+
 public class PathMoverGeneric implements PathMover {		
 	
 	private static final int BOUNDS_FIXED = 1;
@@ -23,7 +24,7 @@ public class PathMoverGeneric implements PathMover {
 	private Path path;
 	protected double start_param, start_paramUP;
 	protected double curr_param, last_param, param_extent, min_param, max_param,
-					max_step_width, init_step_width, step_width, offset;
+					max_step_width, step_width, offset;
 	protected int  mode;	
 	protected boolean posOrientation;
 	private boolean maxBorderSet, minBorderSet;
@@ -37,17 +38,18 @@ public class PathMoverGeneric implements PathMover {
 		init(pp.t); 	
 	}
 	
-	public void init(double param) {
-		start_param = param; 	
-											
+	private void init(double param) {
+		start_param = param; 
+
 		min_param = path.getMinParameter();
 		max_param = path.getMaxParameter();		
 		
 		// make sure start_param is between min and max
 		if (start_param < min_param || start_param > max_param) {
-			start_param = (start_param - min_param) % (max_param - min_param);
+			param_extent = max_param - min_param;	
+			start_param = (start_param - min_param) % param_extent;
 			if (start_param < min_param)
-				start_param += (max_param - min_param);		
+				start_param += param_extent;		
 		}				
 		
 		if (min_param == Double.NEGATIVE_INFINITY) { 
@@ -57,10 +59,10 @@ public class PathMoverGeneric implements PathMover {
 				
 				// infFunction(-1, 1)
 				min_param  = -1 + OPEN_BORDER_OFFSET;
-				max_param  =  1 - OPEN_BORDER_OFFSET;	
+				max_param  =  1 - OPEN_BORDER_OFFSET;
 				
 				// transform start parameter to be in (-1, 1)
-				start_param = inverseInfFunction(start_param);				
+				start_param = inverseInfFunction(start_param);										
 			}
 			else { 
 				// (-infinite, max_param]
@@ -93,23 +95,21 @@ public class PathMoverGeneric implements PathMover {
 		param_extent = max_param - min_param;		
 		start_paramUP = start_param + param_extent;
 
-		init_step_width = INIT_STEP_WIDTH;
 		max_step_width = param_extent / MIN_STEPS;		
 		posOrientation = true; 						
 		resetStartParameter();
 		
-
-//		Application.debug("init Path mover");
-//		Application.debug("  min_param : " + min_param);
-//		Application.debug("  max_param : " + max_param);
-//		Application.debug("  start_param : " + start_param);
-	
+//		System.out.println("init Path mover");
+//		System.out.println("  min_param : " + min_param);
+//		System.out.println("  max_param : " + max_param);
+//		System.out.println("  start_param : " + start_param);
+//		System.out.println("  max_step_width : " + max_step_width);	
 	}		
 	
 	public void resetStartParameter() {		
 		curr_param = start_param;	
 		last_param = start_param;
-		step_width = init_step_width;		
+		step_width = max_step_width;		
 	}
 	
 	public void getCurrentPosition(GeoPoint p) {
@@ -171,7 +171,7 @@ public class PathMoverGeneric implements PathMover {
 		}					
 		
 		// calculate point for current parameter
-		calcPoint(p);		
+		calcPoint(p);
 		
 		return lineTo;
 	}
@@ -199,7 +199,7 @@ public class PathMoverGeneric implements PathMover {
 		PathParameter pp = p.getPathParameter();
 		pp.t = param;
 		path.pathChanged(p);
-		p.updateCoords();
+		p.updateCoords();			
 	}
 	
 	public boolean hasNext() {		
@@ -207,22 +207,15 @@ public class PathMoverGeneric implements PathMover {
 		// from last_param to the next parameter curr_param										
 		boolean hasNext;
 		
-		// slow down by making smaller steps
-		do {
-			double next_param = curr_param + step_width;	
-			if (posOrientation) {
-				hasNext = !(curr_param < start_param && next_param >= start_param
-					|| curr_param < start_paramUP && next_param >= start_paramUP);
-			} else {
-				hasNext = !(curr_param > start_param && next_param <= start_param
-					|| curr_param > start_paramUP && next_param <= start_paramUP);
-			}
+		double next_param = curr_param + step_width;	
+		if (posOrientation) {
+			hasNext = !(curr_param < start_param && next_param >= start_param
+				|| curr_param < start_paramUP && next_param >= start_paramUP);
+		} else {
+			hasNext = !(curr_param > start_param && next_param <= start_param
+				|| curr_param > start_paramUP && next_param <= start_paramUP);
+		}
 							
-//			if (!hasNext) {				 	
-//				 Application.debug("hasNext(): slow down: " + step_width);
-//			} 
-		} while (!hasNext && smallerStep());
-					
 		return hasNext;
 	}
 	
@@ -251,10 +244,10 @@ public class PathMoverGeneric implements PathMover {
 	final public boolean setStep(double step) {
 		return changeStep(step);
 	}
-	
+
 	final public double getStep() {
 		return step_width;
-	}
+	}	
 	
 	private boolean changeStep(double new_step) {
 		double abs_new_step = Math.abs(new_step);		
@@ -291,7 +284,7 @@ public class PathMoverGeneric implements PathMover {
 	 * @param t
 	 * @return
 	 */
-	private static double inverseInfFunction(double z) {
+	public static double inverseInfFunction(double z) {
 		if (z >= 0) {
 			return z / (1 + z);
 		} else {

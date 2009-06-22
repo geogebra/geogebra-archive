@@ -72,7 +72,7 @@ public class AlgoMirror extends AlgoTransformation {
         geoOut = out.toGeoElement();                       
         setInputOutput();
               
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
         
         compute();                                     
     }           

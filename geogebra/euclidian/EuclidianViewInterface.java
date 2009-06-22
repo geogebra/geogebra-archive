@@ -1,14 +1,9 @@
 package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoImage;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.Path;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 

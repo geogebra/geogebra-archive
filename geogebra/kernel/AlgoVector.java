@@ -30,10 +30,7 @@ public class AlgoVector extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P, Q;   // input
-    private GeoVector  v;     // output 
-    
-    // temp startpoint
-    private GeoPoint startPoint;
+    private GeoVector  v;     // output     
         
     /** Creates new AlgoVector */  
     AlgoVector(Construction cons, String label, GeoPoint P, GeoPoint Q) {
@@ -46,8 +43,8 @@ public class AlgoVector extends AlgoElement {
         try {     
         	if (P.isLabelSet())
         		v.setStartPoint(P);
-            else  {
-            	startPoint = new GeoPoint(P);
+            else {
+            	GeoPoint startPoint = new GeoPoint(P);
             	startPoint.set(P);
             	v.setStartPoint(startPoint);
             }        		
@@ -87,7 +84,8 @@ public class AlgoVector extends AlgoElement {
             v.z = 0.0;
             
             // update position of unlabeled startpoint
-            if (startPoint == v.getStartPoint())
+            GeoPoint startPoint = v.getStartPoint();
+            if (!startPoint.isLabelSet())
         		startPoint.set(P);            
         } else {
             v.setUndefined();

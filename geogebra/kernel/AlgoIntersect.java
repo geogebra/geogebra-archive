@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+
 public abstract class AlgoIntersect extends AlgoElement {
 
     // gives the number of intersection algorithms
@@ -25,6 +26,17 @@ public abstract class AlgoIntersect extends AlgoElement {
     public AlgoIntersect(Construction c) {
         super(c);
     }
+    
+	/**
+	 * Avoids two intersection points at same position. 
+	 * This is only done as long as the second intersection point doesn't have a label yet.
+	 */
+	void avoidDoubleTangentPoint() {
+		GeoPoint [] points = getIntersectionPoints();
+	    if (!points[1].isLabelSet() && points[0].isEqual(points[1])) {
+	    	points[1].setUndefined();	        
+	    }
+	}
     
     boolean showUndefinedPointsInAlgebraView() {
     	return false;
@@ -82,15 +94,27 @@ public abstract class AlgoIntersect extends AlgoElement {
      * loading constructions from a file to make sure the intersection points
      * remain at their saved positions.
      */
-    final void setIntersectionPoint(int index, GeoPoint p) {
-    	// don't init intersection point if p is undefined
-    	if (!p.isDefined()) return;
-    	
+    final void setIntersectionPoint(int index, GeoPoint p) {  
     	GeoPoint [] points = getIntersectionPoints();
     	GeoPoint [] defpoints = getLastDefinedIntersectionPoints();
     	
+    	if (!p.isDefined() || index >= points.length) {
+    		return;
+    	}
+
+    	// init didSetIntersectionPoint array
     	if (didSetIntersectionPoint == null) {
     		didSetIntersectionPoint = new boolean[points.length];
+    	} 
+    	else if (didSetIntersectionPoint.length < points.length) {
+    		boolean [] temp = new boolean[points.length];
+    		for (int i=0; i < points.length; i++) {
+    			if (i < didSetIntersectionPoint.length)
+    				temp[i] = didSetIntersectionPoint[i];
+    			else
+    				temp[i] = false;
+    		}
+    		didSetIntersectionPoint = temp;
     	}
     	
     	// set coords of intersection point to those of p
@@ -106,7 +130,7 @@ public abstract class AlgoIntersect extends AlgoElement {
 				points[i].setUndefined();
 				if (defpoints != null) defpoints[i].setUndefined();
 			}
-		}
+		}	
 		
 //		Application.debug("SET INTERSECTION POINT");	
 //		for (int i=0; i < points.length; i++) {
@@ -121,13 +145,10 @@ public abstract class AlgoIntersect extends AlgoElement {
     	return didSetIntersectionPoint != null && didSetIntersectionPoint[index];
     }
 
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
+    public String toString() {      
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("IntersectionPointOfAB",input[0].getLabel(),input[1].getLabel()));
-        
-        return sb.toString();
+        return app.getPlain("IntersectionPointOfAB",input[0].getLabel(),input[1].getLabel());
     }
 
     public void remove() {

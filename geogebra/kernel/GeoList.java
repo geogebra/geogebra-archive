@@ -34,9 +34,6 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	private static String STR_OPEN = "{";
 	private static String STR_CLOSE = "}";
 	
-	private ArrayList condListenersShowObject; // Michael Borcherds 2008-04-02
-
-	
 	// GeoElement list members
 	private ArrayList geoList;	  
 	
@@ -163,6 +160,11 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		if (!geo.isLabelSet()) {
 			geo.setObjColor(this.getObjectColor());	
 			
+			// copy color function
+			if (this.getColorFunction() != null) {
+				geo.setColorFunction(this.getColorFunction());
+			}
+			
 			geo.setLineThickness(this.getLineThickness());
 			geo.setLineType(this.getLineType());
 			
@@ -208,6 +210,11 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			
 	}
 	
+	
+	/*
+	 * we DON'T want to do this, as objects without label set
+	 * eg the point in this {(1,1)}
+	 * are drawn by the list
 	public final void setLayer(int layer) {
 		super.setLayer(layer);
 		
@@ -220,7 +227,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
         		geo.setLayer(layer);
         }
 			
-	}
+	} */
 	
 	public final void setShowObjectCondition(GeoBoolean bool) 
 	throws CircularDefinitionException {
@@ -240,9 +247,15 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     
     public void setVisualStyle(GeoElement style) {
     	super.setVisualStyle(style);
+    	    	    
+    	// set point style
+    	if (style instanceof PointProperties) {
+			setPointSize(((PointProperties)style).getPointSize());
+			setPointStyle(((PointProperties)style).getPointStyle());
+		}
     	
-    	if (geoList == null || geoList.size() == 0) return;    	
-    	
+    	// set visual style
+    	if (geoList == null || geoList.size() == 0) return;    	    	
     	int size = geoList.size();	        
         for (int i=0; i < size; i++) {
 			GeoElement geo = (GeoElement)geoList.get(i);
@@ -284,7 +297,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     /**
      * Returns this GeoList as a MyList object.
      */
-    public MyList getMyList() {        	
+    public MyList getMyList() {
     	int size = geoList.size();    	
     	MyList myList = new MyList(kernel, size);
     	
@@ -293,21 +306,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     	}
     	
     	return myList;
-    }     
-    
-    /**
-     * Returns all list items of this GeoList in an array.
-     */
-    public GeoElement [] toArray() {        	
-    	int size = geoList.size();    	
-    	GeoElement [] geos = new GeoElement[size];
-    	
-    	for (int i=0; i < size; i++) {
-    		geos[i] = (GeoElement) geoList.get(i);	
-    	}
-    	
-    	return geos;
-    }          
+    }        
         
     final public boolean isDefined() {    	
         return isDefined;  
@@ -315,6 +314,13 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     
     public void setDefined(boolean flag) {
     	isDefined = flag;
+    	
+    	if (!isDefined) {
+	    	int size = geoList.size();    	
+	    	for (int i=0; i < size; i++) {
+	    		((GeoElement) geoList.get(i)).setUndefined();	
+	    	}
+    	}
     }
     
     public void setUndefined() {
@@ -357,7 +363,18 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     	// add geo to end of list 
     	geoList.add(geo);    	     	
     	
-    	// add to cache
+    	
+    	/*
+    	// needed for Corner[Element[text
+    	// together with swapping these lines over in MyXMLio:
+		//kernel.updateConstruction();
+		//kernel.setNotifyViewsActive(oldVal);
+
+		if (geo.isGeoText()) {
+			((GeoText)geo).setNeedsUpdatedBoundingBox(true);
+		}*/
+
+		// add to cache
     	int pos = geoList.size()-1;
     	if (pos < cacheList.size()) {
     		cacheList.set(pos, geo);  
@@ -380,6 +397,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		applyVisualStyle(geo);			
     	//if (!geo.isLabelSet())
 		//  geo.setVisualStyle(this);
+		
     	
     	
     }      
@@ -427,8 +445,9 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
      */
     final public GeoElement getCached(int index) {
     	return (GeoElement) cacheList.get(index);
-    }       
-            
+    } 
+    
+           
     public String toString() {       
     	sbToString.setLength(0);
 		sbToString.append(label);
@@ -442,8 +461,13 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		return buildValueString().toString();
 	}
     
-    private StringBuffer buildValueString() {		                               		 
+    private StringBuffer buildValueString() {          	
        sbBuildValueString.setLength(0);
+       if (!isDefined) {
+    	   sbBuildValueString.append("?");
+    	   return sbBuildValueString;
+       }
+       
        sbBuildValueString.append(STR_OPEN);
        
        // first (n-1) elements
@@ -540,24 +564,13 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		  
 		  return sb.toString();
 	  }
+	  
 	  	/**
 		 * Registers geo as a listener for updates
 		 * of this boolean object. If this object is
 		 * updated it calls geo.updateConditions()
 		 * @param geo
 		 */
-		public void registerConditionListener(GeoElement geo) {
-			if (condListenersShowObject == null)
-				condListenersShowObject = new ArrayList();
-			condListenersShowObject.add(geo);
-		}
-		
-		public void unregisterConditionListener(GeoElement geo) {
-			if (condListenersShowObject != null) {
-				condListenersShowObject.remove(geo);
-			}
-		}
-		
 		public void registerColorFunctionListener(GeoElement geo) {
 			if (colorFunctionListener == null)
 				colorFunctionListener = new ArrayList();
@@ -723,33 +736,70 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 
 			for (int i=0 ; i < geoList.size() ; i++) {
 				GeoElement geo = (GeoElement)geoList.get(i);
-				if (geo instanceof PointProperties && !geo.isLabelSet())
+				if (!geo.isLabelSet() && geo instanceof PointProperties)
 					((PointProperties)geo).setPointSize(size);
-			}
-
-			
+			}			
 		}
 		
 		public int getPointSize() {
 			return pointSize;			
 		}
 		
-		public void setPointStyle(int style) {
-			
+		public void setPointStyle(int style) {			
 			pointStyle = style;
 			
 			if (geoList == null || geoList.size() == 0) return;
 
 			for (int i=0 ; i < geoList.size() ; i++) {
 				GeoElement geo = (GeoElement)geoList.get(i);
-		    	if (geo instanceof PointProperties && !geo.isLabelSet())
+		    	if (!geo.isLabelSet() && geo instanceof PointProperties)
 					((PointProperties)geo).setPointStyle(style);
-			}
-
-			
+			}			
 		}
 
+		public float getAlphaValue() {
+			
+			if (alphaValue == -1) {
+				// no alphaValue set
+				// so we need to set it to that of the first element, if there is one
+				if (geoList != null && geoList.size() > 0) {
+					
+					// get alpha value of first element
+					float alpha = ((GeoElement)geoList.get(0)).getAlphaValue();
+					
+					//Application.debug("setting list alpha to "+alpha);
+					
+					super.setAlphaValue(alpha);
+					
+					// set all the other elements in the list
+					// if appropriate
+					if (geoList.size() > 1) {
+						for (int i=1 ; i < geoList.size() ; i++) {
+							GeoElement geo = (GeoElement)geoList.get(i);
+							 if (!geo.isLabelSet())
+								geo.setAlphaValue(alpha);
+						}
+
+					}
+				}
+				else
+				{
+					return 0.2f;
+				}
+			}
+			
+			return alphaValue;
+		}
+		
 		public void setAlphaValue(float alpha) {
+			
+			if (alpha == -1) {
+				// wait until we have a GeoElement in the list to use
+				// see getAlphaValue()
+				alphaValue = -1;
+				return;
+			}
+			
 			super.setAlphaValue(alpha);
 			
 			if (geoList == null || geoList.size() == 0) return;
@@ -906,9 +956,41 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 					((TextProperties)geo).setSerifFont(serifFont);
 			}
 		}
+		
+	
+		/*
+		 * for a list like this:
+		 * {Circle[B, A], (x(A), y(A)), "text"}
+		 * we want to be able to set the line properties
+		 */
+		public boolean showLineProperties() {		
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (geo instanceof LineProperties && !geo.isLabelSet())
+					return true;
+			}
+			
+			return false;
+	}
+	
+		/*
+		 * for a list like this:
+		 * {Circle[B, A], (x(A), y(A)), "text"}
+		 * we want to be able to set the point properties
+		 */
+		public boolean showPointProperties() {		
+
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (geo instanceof PointProperties && !geo.isLabelSet())
+					return true;
+			}
+			
+			return false;
+	}		
 
 		public boolean isVector3DValue() {
-			// TODO Auto-generated method stub
 			return false;
 		}
   		

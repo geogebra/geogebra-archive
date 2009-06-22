@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
-
 import java.util.Iterator;
 
 
@@ -36,6 +34,11 @@ public class AlgoObject extends AlgoElement {
     public AlgoObject(Construction cons, String label, GeoText text) {
     	super(cons);
         this.text = text;               	
+        
+        // Object["A" + d] might gives "A2.00" if significant figures used globally
+        // want it to give "A2"
+        if (!text.isLabelSet())
+        	text.setPrintDecimals(0, true);
              
         setInputOutput(); // for AlgoElement
         
@@ -139,4 +142,5 @@ public class AlgoObject extends AlgoElement {
     	else
     		return inputForUpdateSetPropagation;
     }
+
 }

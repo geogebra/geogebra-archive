@@ -13,13 +13,13 @@ the Free Software Foundation.
 package geogebra.kernel.statistics;
 
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Construction;
-
 import geogebra.kernel.arithmetic.NumberValue;
-import java.util.*;
+
+import java.util.Arrays;
 
 
 /**

@@ -1,10 +1,7 @@
 package geogebra.gui.inputbar;
-import geogebra.euclidian.EuclidianView;
 import geogebra.gui.MathTextField;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.AutoCompleteDictionary;
@@ -13,7 +10,6 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
@@ -84,6 +80,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 */
 	public void setAutoComplete(boolean val) {
 		autoComplete = val && app.isAutoCompletePossible();
+		
+		if (autoComplete) app.initTranslatedCommands();
+
 	}
 
 	/**
@@ -101,21 +100,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}  
 
 	public void geoElementSelected(GeoElement geo, boolean add) {
-
-		switch (app.getMode()) {
-
-		case EuclidianView.MODE_ALGEBRA_INPUT:   	
-			replaceSelection(geo.getLabel());   
-			requestFocus();
-			break;
-
-		default:
-			if (geo == null) {
-				setText("");
-				return;
-			}
-		// copy definition into input bar
-		//((AlgebraInput)(app.getGuiManager().getAlgebraInput())).setString(geo);		
+		if (geo != null) {				
+			replaceSelection(" " + geo.getLabel() + " ");
+			requestFocusInWindow();	
 		}
 	}
 
@@ -173,12 +160,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				return;
 			}            	            	
 
-			if ("".equals(getText())) {
-				app.setMoveMode();
-				requestFocus();
-			} else {
-				setText(null);
-			}
+			setText(null);
 			break;
 
 		case KeyEvent.VK_LEFT_PARENTHESIS:
@@ -199,6 +181,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			}
 			setText(getNextInput());
 			break; 
+
+		case KeyEvent.VK_F9: 
+			// needed for applets
+			app.getKernel().updateConstruction();
+			e.consume();
+			break;
 
 		case KeyEvent.VK_F1:            	
 			updateCurrentWord();
@@ -291,14 +279,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// search to the left
 		curWordStart = caretPos - 1;
 		while (  curWordStart >= 0 &&
-				Character.isLetter( text.charAt(curWordStart))) --curWordStart;     
+				Character.isLetterOrDigit( text.charAt(curWordStart))) --curWordStart;     
 		curWordStart++;
 
 		// search to the right
 		int curWordEnd = caretPos;
 		int length = text.length();
 		while ( curWordEnd <  length &&
-				Character.isLetter( text.charAt(curWordEnd) )) ++curWordEnd;        
+				Character.isLetterOrDigit( text.charAt(curWordEnd) )) ++curWordEnd;        
 
 		curWord.setLength(0);
 		curWord.append(text.substring(curWordStart, curWordEnd));
@@ -363,7 +351,11 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		sb.append(text.substring(0, caretPos));
 		String cmdTail = cmd.substring(caretPos - curWordStart);
 		sb.append(cmdTail);
-		sb.append(text.substring(caretPos));
+		String afterCaret = text.substring(caretPos);
+		if (afterCaret.startsWith("[]"))
+			sb.append(afterCaret.substring(2));
+		else
+			sb.append(afterCaret);
 
 		setText(sb.toString());
 

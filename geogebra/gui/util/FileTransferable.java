@@ -11,9 +11,13 @@ the Free Software Foundation.
 */
 
 package geogebra.gui.util;
-import java.awt.datatransfer.*;
-import java.io.*;
-import java.util.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class FileTransferable implements Transferable {
     DataFlavor[] dataFlavors = { DataFlavor.javaFileListFlavor};

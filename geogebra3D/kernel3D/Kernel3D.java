@@ -15,17 +15,10 @@ package geogebra3D.kernel3D;
 
 
 
-import java.util.LinkedHashMap;
-
 import geogebra.kernel.AlgoCircleThreePoints;
-import geogebra.kernel.AlgoPointInRegion;
 import geogebra.kernel.Construction;
-import geogebra.kernel.ConstructionDefaults;
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -35,6 +28,8 @@ import geogebra.main.MyError;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
+
+import java.util.LinkedHashMap;
 
 
 

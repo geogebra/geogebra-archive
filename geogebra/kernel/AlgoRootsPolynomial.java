@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
+ * Finds all real roots of a polynomial.
  * TODO: extend for rational functions
- * Finds all real roots of a polynomial
  * 
  * @author Markus Hohenwarter
  */
@@ -226,7 +226,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
             // check if the intersection points are really on the functions
             // due to interval restrictions this might not be the case            
             for (int i = 0; i < curRealRoots; i++) {
-            	if ( !(Math.abs( f.evaluate(curRoots[i]) - g.evaluate(curRoots[i]) ) < Kernel.MIN_PRECISION) ) {
+            	if ( !Kernel.isEqual(f.evaluate(curRoots[i]),g.evaluate(curRoots[i]), Kernel.MIN_PRECISION)) {
             		removeRoot(i);
             		i--;
             	} 
@@ -252,7 +252,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
             // standard case
             else {
                 //  get difference f - line
-                Function.difference(f.getFunction(), line, diffFunction);
+                Function.difference(f.getFunction(), line, diffFunction);               
                 calcRoots(diffFunction, 0);
                 
                 // check if the intersection points really are on the line
@@ -263,8 +263,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
                 		removeRoot(i);
                 		i--;
                 	}                	
-                }
-                
+                }             
             }
         } else {
             curRealRoots = 0;
@@ -435,9 +434,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
                     yValFunction.evaluate(roots[i]),
                     1.0);
                 
-             // TODO: remove
-              //  Application.debug("   " + rootPoints[i]);
-                
+              //  Application.debug("   " + rootPoints[i]); 
             }
         }
 
@@ -458,17 +455,10 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
     	} else {	    
 	        for (int i = 0; i < number; i++) {
 	            //  check labeling      
-	            if (!rootPoints[i].labelSet && rootPoints[i].labelWanted) {
-	                if (labels == null || labels.length <= i) {
-	                	String label = rootPoints[i].getIndexLabel(rootPoints[0].label);                    	
-						rootPoints[i].setLabel(label);
-	                }                        
-	                else {
-	                	String label = labels[i];                    	
-	                    //if (label == null)
-	                    //	label = rootPoints[i].getIndexLabel(null);
-	                    rootPoints[i].setLabel(label);
-	                }
+	            if (!rootPoints[i].isLabelSet()) {
+	            	// use user specified label if we have one
+	            	String newLabel = (labels != null && i < labels.length) ? labels[i] : null;	            	
+	                rootPoints[i].setLabel(newLabel);	                
 	            }
 	        }
     	}

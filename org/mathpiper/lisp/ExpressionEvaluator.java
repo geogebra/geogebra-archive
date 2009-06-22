@@ -18,7 +18,6 @@
 package org.mathpiper.lisp;
 
 import org.mathpiper.io.MathPiperOutputStream;
-import org.mathpiper.*;
 
 /**
  * Abstract evaluator for Lisp expressions.

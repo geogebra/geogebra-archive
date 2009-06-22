@@ -7,6 +7,7 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.JMenuItem;
@@ -57,10 +58,26 @@ public class ContextMenu extends JPopupMenu
    	 	item3.setIcon(app.getImageIcon("edit-cut.png"));
    	 	item3.addActionListener(new ActionListenerCut());   	 	
    	 	add(item3);
-   	 	JMenuItem item4 = new JMenuItem(app.getMenu("Delete"));
-   	 	item4.setIcon(app.getImageIcon("delete_small.gif"));
-   	 	item4.addActionListener(new ActionListenerClear());
-   	 	add(item4);
+   	 	
+   	 	
+   	 	// don't show "Delete" if all selected objects fixed
+   	 	ArrayList geos = app.getSelectedGeos();
+   	 	
+   	 	boolean allFixed = true;
+   	 	
+   	 	if (geos != null && geos.size() >0) {
+   	 		for (int i = 0 ; (i < geos.size() && allFixed) ; i++) {
+   	 			GeoElement geo = (GeoElement)geos.get(i);
+   	 			if (!geo.isFixed()) allFixed = false;
+   	 		}
+   	 	}
+   	 	
+   	 	if (!allFixed) {	 	
+	   	 	JMenuItem item4 = new JMenuItem(app.getMenu("Delete"));
+	   	 	item4.setIcon(app.getImageIcon("delete_small.gif"));
+	   	 	item4.addActionListener(new ActionListenerClear());
+	   	 	add(item4);
+   	 	}
 
 	 	addSeparator();
 
@@ -134,7 +151,7 @@ public class ContextMenu extends JPopupMenu
 	private class ActionListenerCreatePoints implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			Application.debug("CreatePoints " + column1 + " - " + column2+"   "+row1+" - "+row2);
+ 			//Application.debug("CreatePoints " + column1 + " - " + column2+"   "+row1+" - "+row2);
  			//if (selected == null) throw new RuntimeException("error state");
  			StringBuffer text = new StringBuffer();
  			LinkedList list = new LinkedList();
@@ -144,6 +161,8 @@ public class ContextMenu extends JPopupMenu
 			//	for (int i=0 ; i<selectedColumns.length ; i++)
 			//		if (selectedColumns[i]) s=s+"1"; else s=s+"0";
 			//	Application.debug(s);
+ 			
+ 			boolean error = false;
 				
  			try {
  				
@@ -172,7 +191,9 @@ public class ContextMenu extends JPopupMenu
 	  	   	 		for (int i = r1; i <= r2; ++ i) {
 	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, c1, i);
 	 	   	 			GeoElement v2 = RelativeCopy.getValue(table, c2, i);
-	 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	 
+	 	   	 			if (v1 != null && v2 != null && (!v1.isGeoNumeric() || !v2.isGeoNumeric())) 
+	 	   	 				error = true;
+		 	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	 
 	 	   	 				
 	 	   	 				text.setLength(0);
 	 	   	 				text.append("(");
@@ -204,6 +225,8 @@ public class ContextMenu extends JPopupMenu
 	  	   	 		for (int i = r1; i <= r2; ++ i) {
 	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, c1, i);
 	 	   	 			GeoElement v2 = RelativeCopy.getValue(table, c2, i);
+	 	   	 			if (v1 != null && v2 != null && (!v1.isGeoNumeric() || !v2.isGeoNumeric())) 
+	 	   	 				error = true;
 	 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	 
 	 	   	 				
 	 	   	 				text.setLength(0);
@@ -234,6 +257,8 @@ public class ContextMenu extends JPopupMenu
 	  	   	 		for (int i = c1; i <= c2; ++ i) {
 	 	   	 			GeoElement v1 = RelativeCopy.getValue(table, i, r1);
 	 	   	 			GeoElement v2 = RelativeCopy.getValue(table, i, r2);
+	 	   	 			if (v1 != null && v2 != null && (!v1.isGeoNumeric() || !v2.isGeoNumeric())) 
+	 	   	 				error = true;
 	 	   	 			if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	 
 	 	   	 				
 	 	   	 				text.setLength(0);
@@ -289,10 +314,11 @@ public class ContextMenu extends JPopupMenu
 	 				}
 	 				text.append("}");
 	 				Application.debug(text.toString());
-	 				GeoElement[] values = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
+	 				//GeoElement[] values = 
+	 				table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
 	 				// set list label 
-		   	 		String listName = values[0].getIndexLabel("L");
-		   	 		values[0].setLabel(listName);
+		   	 		//String listName = values[0].getIndexLabel(app.getPlain("Name.list"));
+		   	 		//values[0].setLabel(listName);
 	 				
 		   	 		// DON'T want the list to be auxiliary
 	 				//for (int i = 0; i < values.length; ++ i) {
@@ -300,9 +326,14 @@ public class ContextMenu extends JPopupMenu
 	 				//}
 	 			}
 	 			
+	 			if (error)
+	 				app.showError("NumberExpected");
+	 			
 	 			app.storeUndoInfo();
  			} catch (Exception ex) {
  				// Just abort the process
+	 			if (error)
+	 				app.showError("NumberExpected");
  			} 
 		}
 	}

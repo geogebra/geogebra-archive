@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.export;
 
+import geogebra.JarManager;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.epsgraphics.EpsGraphics2D;
 import geogebra.gui.util.FileTransferable;
@@ -50,7 +51,6 @@ import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.UserProperties;
-//import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 
 /**
@@ -200,6 +200,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 						cbDPI.setEnabled(true);	
 						break;
 				}
+				updateSizeLabel();
 				SwingUtilities.updateComponentTreeUI(p);
 			}			
 		});
@@ -306,6 +307,13 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		return Integer.parseInt((String)cbDPI.getSelectedItem());
 	}
 	
+	/* dpi must be one of 72,96,150,300,600
+	 * 
+	 */
+	public void setDPI(String dpi) {
+		cbDPI.setSelectedItem(dpi);
+	}
+	
 	private void loadPreferences() {
 		try {
 			// format
@@ -373,7 +381,10 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		sb.append(" x ");
 		sb.append(sizeLabelFormat.format(cmHeight));
 		sb.append(" cm");			
-		
+
+
+		int index = cbFormat.getSelectedIndex();
+		if (index == FORMAT_PNG) {
 		// pixel size
 		pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
 		pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);	
@@ -381,7 +392,9 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		sb.append(pixelWidth);
 		sb.append(" x ");
 		sb.append(pixelHeight);
-		sb.append(" pixel");							
+		sb.append(" pixel");			
+		}
+		
 		sizeLabel.setText(sb.toString());	
 	}		
 
@@ -395,9 +408,19 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	 *  Shows save dialog and exports drawing as eps. 
 	 */
 	final private boolean exportEPS(boolean exportToClipboard) {
+		
+		EuclidianView ev = app.getEuclidianView();
+		double printingScale = ev.getPrintingScale();
+		
+		// set dpi to 72
+		exportScale = printingScale * 72 / 2.54 / ev.getXscale();
+		// ... and update bounding box accordingly
+		pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
+		pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);	
+		
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = System.getProperty("java.io.tmpdir");
+		String tempDir = JarManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file= new File(tempDir+"geogebra.eps");
@@ -411,7 +434,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		if (file == null)
 			return false;
 		try {		
-			EuclidianView ev = app.getEuclidianView();						
+			
 			EpsGraphics2D g =
 				new EpsGraphics2D(
 					app.getPlain("ApplicationName") + ", " + app.getPlain("ApplicationURL"),
@@ -438,7 +461,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = System.getProperty("java.io.tmpdir");
+		String tempDir = JarManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file= new File(tempDir+"geogebra.emf");
@@ -480,7 +503,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportPDF(boolean exportToClipboard) {
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = System.getProperty("java.io.tmpdir");
+		String tempDir = JarManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file= new File(tempDir+"geogebra.pdf");
@@ -531,7 +554,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportSVG(boolean exportToClipboard) {
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = System.getProperty("java.io.tmpdir");
+		String tempDir = JarManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file= new File(tempDir+"geogebra.svg");
@@ -573,9 +596,9 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			
 			for (int layer=0 ; layer<=ev.getMaxLayerUsed() ; layer++) //  draw only layers we need
 			{
-				g.startGroup("layer "+layer);
+				g.startGroup("layer"+layer);
 				ev.drawLayers[layer].drawAll(g);
-				g.endGroup("layer "+layer);
+				g.endGroup("layer"+layer);
 			}
 			
 			g.endExport();	
@@ -597,32 +620,33 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	/**
 	  *  Exports drawing as png with given resolution in dpi
 	  */
-	final private boolean exportPNG(boolean exportToClipboard) {
+	final public boolean exportPNG(boolean exportToClipboard) {
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
+		String tempDir = JarManager.getTempDir();
 		if (exportToClipboard)
 		{
-			file = null;
+			file = new File(tempDir+"geogebra.png");
 		}
 		else
-		file =
-			app.getGuiManager().showSaveDialog(
-				Application.FILE_EXT_PNG, null,
-				app.getPlain("png") + " " + app.getMenu("Files"));
+		{
+			file =
+				app.getGuiManager().showSaveDialog(
+					Application.FILE_EXT_PNG, null,
+					app.getPlain("png") + " " + app.getMenu("Files"));
+		}
+
+		if (file == null) return false;
+
 		try {
 			
-			if (exportToClipboard)
-			{
-				sendToClipboard(app.getEuclidianView().getExportImage(exportScale));
+			BufferedImage img =
+			app.getEuclidianView().getExportImage(exportScale);			
+			MyImageIO.write(img, "png", getDPI(),  file);	
+			
+			if (exportToClipboard) {
+				sendToClipboard(file);
 			}
-			else
-			{
-				if (file == null) return false;
-				BufferedImage img =
-				app.getEuclidianView().getExportImage(exportScale);			
-				MyImageIO.write(img, "png", getDPI(),  file);	
-			}
-			//  Michael Borcherds 2008-03-02 END
 			
 			return true;
 		} catch (Exception ex) {

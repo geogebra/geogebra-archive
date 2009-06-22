@@ -6,14 +6,14 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFTag;
 import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * LineTo TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: LineTo.java,v 1.3 2008-05-04 12:17:48 murkle Exp $
+ * @version $Id: LineTo.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public class LineTo extends EMFTag {
 

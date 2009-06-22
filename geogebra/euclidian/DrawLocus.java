@@ -49,7 +49,7 @@ public final class DrawLocus extends Drawable {
 		 // line on screen?		
 		if (!gp.intersects(0, 0, view.width, view.height)) {				
 			isVisible = false;
-			return;
+        	// don't return here to make sure that getBounds() works for offscreen points too
 		}		
 		updateStrokes(geo);
 				
@@ -93,13 +93,13 @@ public final class DrawLocus extends Drawable {
                 // draw locus              
                 g2.setPaint(geo.getSelColor());
                 g2.setStroke(selStroke);
-                Drawable.drawGeneralPath(gp, g2);
+                Drawable.drawWithValueStrokePure(gp, g2);
             }      
         	
             // draw locus         
             g2.setPaint(geo.getObjectColor());
             g2.setStroke(objStroke);
-            Drawable.drawGeneralPath(gp, g2);
+            Drawable.drawWithValueStrokePure(gp, g2);
                         
             // label
             if (labelVisible) {

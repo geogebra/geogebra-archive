@@ -56,4 +56,5 @@ public interface LimitedPath extends Path {
 	 * @param type: one of Kernel.TRANSFORM_...
 	 */
 	public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, GeoLine l, GeoVector v, NumberValue n);
+	
 }

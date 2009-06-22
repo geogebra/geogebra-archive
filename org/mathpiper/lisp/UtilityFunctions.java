@@ -18,20 +18,21 @@
 package org.mathpiper.lisp;
 
 import java.io.InputStreamReader;
-import org.mathpiper.io.MathPiperInputStream;
-import org.mathpiper.exceptions.EvaluationException;
-import org.mathpiper.io.InputStatus;
+
 import org.mathpiper.builtin.BigNumber;
 import org.mathpiper.builtin.BuiltinFunctionInitialize;
+import org.mathpiper.exceptions.EvaluationException;
 import org.mathpiper.io.InputDirectories;
+import org.mathpiper.io.InputStatus;
+import org.mathpiper.io.JarFileInputStream;
+import org.mathpiper.io.MathPiperInputStream;
+import org.mathpiper.io.StandardFileInputStream;
+import org.mathpiper.io.StringOutputStream;
 import org.mathpiper.lisp.behaviours.SubstBase;
+import org.mathpiper.lisp.parsers.MathPiperParser;
 import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
 import org.mathpiper.printers.InfixPrinter;
-import org.mathpiper.lisp.parsers.MathPiperParser;
-import org.mathpiper.io.JarFileInputStream;
-import org.mathpiper.io.StandardFileInputStream;
-import org.mathpiper.io.StringOutputStream;
 
 public class UtilityFunctions {
 

@@ -12,29 +12,25 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
 /**
- * Area between two functions (GeoFunction) over an interval [a, b].
+ * Area between two functions (GeoFunction) f(x) and g(x) over an interval [a, b].
+ * The value equals Integral[f(x) - g(x), a, b] = Integral[f(x), a, b] - Integral[g(x), a, b]
  * 
  * @author Markus Hohenwarter
  */
 public class AlgoIntegralFunctions extends AlgoElement {
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f, g; // input
 	private NumberValue a, b; //input
 	private GeoElement ageo, bgeo;
 	private GeoNumeric n; // output n = integral(f(x) - g(x), x, a, b)   
 
-	private Function diffFunction;	
-	private GeoFunction diffGeoFunction;			
-	private AlgoIntegralDefinite algoInt;						
+	private GeoNumeric intF, intG;						
 
 	public AlgoIntegralFunctions(Construction cons, String label, 
 							GeoFunction f, GeoFunction g,
@@ -47,13 +43,16 @@ public class AlgoIntegralFunctions extends AlgoElement {
 		ageo = a.toGeoElement();		
 		bgeo = b.toGeoElement();
 		
-		// use integral of differnce f - g
-		diffFunction = new Function(kernel);
-		diffGeoFunction = new GeoFunction(cons);
-		algoInt = new AlgoIntegralDefinite(cons, diffGeoFunction, a, b);
+		// helper algorithms for integral f and g		
+		AlgoIntegralDefinite algoInt = new AlgoIntegralDefinite(cons, f, a, b);
 		cons.removeFromConstructionList(algoInt);
+		intF = algoInt.getIntegral();
 		
-		//		output
+		algoInt = new AlgoIntegralDefinite(cons, g, a, b);
+		cons.removeFromConstructionList(algoInt);
+		intG = algoInt.getIntegral();
+		
+		// output: intF - intG
 		n = new GeoNumeric(cons);				
 				
 		setInputOutput(); // for AlgoElement		
@@ -104,12 +103,8 @@ public class AlgoIntegralFunctions extends AlgoElement {
 			return;
 		}
 		
-		// build difference function
-		Function.difference(f.getFunction(), g.getFunction(), diffFunction);
-		diffGeoFunction.setFunction(diffFunction);
-		// calculate the integral of the difference function
-		algoInt.compute();
-		n.setValue(algoInt.getIntegralValue());		
+		// Integral[f(x) - g(x), a, b] = Integral[f(x), a, b] - Integral[g(x), a, b]
+		n.setValue(intF.getValue() - intG.getValue());		
 	}
 
 

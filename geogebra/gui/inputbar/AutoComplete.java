@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// Copyright (c) 1999-2001 Matt Welsh.  All Rights Reserved.
+// Copyright (c) 1999-2001 Matt Welsh. 
 //------------------------------------------------------------------------------
 package geogebra.gui.inputbar;
 
@@ -7,7 +7,6 @@ import geogebra.util.AutoCompleteDictionary;
 
 /**
  * Defines the API that autocomplete components must implement
- * @author Matt Welsh (matt@matt-welsh.com)
  */
 public interface AutoComplete {
   /**

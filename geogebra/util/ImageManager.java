@@ -54,6 +54,13 @@ public class ImageManager {
  		toolKit = Toolkit.getDefaultToolkit();
  		tracker = new MediaTracker(comp);
  	}
+ 	
+ 	public void clearAllImages() {
+ 		iconTable.clear();
+ 		internalImageTable.clear();
+ 		externalImageTable.clear();
+	}	
+	
   
   	/**
   	 * Gets the icon specified by fileName.
@@ -120,11 +127,7 @@ public class ImageManager {
 			externalImageTable.put(fileName, img);
 		}			
 	}	
-	
-	public void clearAllImages(String fileName, BufferedImage img) {
 		
-	}	
-	
 	public BufferedImage getExternalImage(String fileName) {		
 		return (BufferedImage) externalImageTable.get(fileName);
 	}

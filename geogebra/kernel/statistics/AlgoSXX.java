@@ -12,24 +12,24 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import geogebra.kernel.GeoList;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoList;
 
 /**
- * Syy of a list
+ * Sxx of a list
  * @author Michael Borcherds
- * @version 2008-02-23
+ * @version 2008-02-18
  */
 
-public class AlgoDoubleListSYY extends AlgoStats2D {
+public class AlgoSXX extends AlgoStats1D {
 
 	private static final long serialVersionUID = 1L;
 
-	public AlgoDoubleListSYY(Construction cons, String label, GeoList geoListx, GeoList geoListy) {
-        super(cons,label,geoListx,geoListy,AlgoStats2D.STATS_SYY);
+	public AlgoSXX(Construction cons, String label, GeoList geoList) {
+        super(cons,label,geoList,AlgoStats1D.STATS_SXX);
     }
 
     protected String getClassName() {
-        return "AlgoDoubleListSYY";
+        return "AlgoSXX";
     }
 }

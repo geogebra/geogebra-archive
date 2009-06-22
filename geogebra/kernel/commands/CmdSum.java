@@ -5,7 +5,6 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 
 /*
@@ -23,34 +22,46 @@ public class CmdSum extends CommandProcessor {
 		GeoElement[] arg;
 		arg = resArgs(c);
 		
-		if (!arg[0].isGeoList()) throw argErr(app, c.getName(), arg[0]);
-		GeoList list = (GeoList)arg[0];
-		int size = list.size();
+		// needed for Sum[]
+		if (arg.length == 0) {
+			throw argNumErr(app, c.getName(), n);
+		}
+		
+		// set all to either true or false
+		boolean allNumbers = arg[0].isGeoList();
+		boolean allFunctions = allNumbers;
+		boolean allNumbersVectorsPoints = allNumbers;
+		boolean allText = allNumbers;
+
+		GeoList list = null;
+		int size = -1;		
+		
+		if (arg[0].isGeoList()) 
+		{
+			list = (GeoList)arg[0];
+			size = list.size();
+			
+			for (int i = 0 ; i < size ; i++) {
+				GeoElement geo = list.get(i);
+				if (!geo.isGeoFunction()) {
+					allFunctions = false;
+				}
+				if (!geo.isNumberValue()) {
+					allNumbers = false;
+				}
+				if (!geo.isNumberValue() && !geo.isGeoVector() && !geo.isGeoPoint()) {
+					allNumbersVectorsPoints = false;
+				}
+				if (!geo.isGeoText()) {
+					allText = false;
+				}
+			}
+		}
+		
 		
 		// this is bad - list can be saved later with size 0
 		//if (size == 0) throw argErr(app, c.getName(), arg[0]);
 		
-		boolean allNumbers = true;
-		boolean allFunctions = true;
-		boolean allNumbersVectorsPoints = true;
-		boolean allText = true;
-		
-		for (int i =0 ; i< size ; i++) {
-			GeoElement geo = list.get(i);
-			if (!geo.isGeoFunction()) {
-				allFunctions = false;
-			}
-			if (!geo.isNumberValue()) {
-				allNumbers = false;
-			}
-			if (!geo.isNumberValue() && !geo.isGeoVector() && !geo.isGeoPoint()) {
-				allNumbersVectorsPoints = false;
-			}
-			if (!geo.isGeoText()) {
-				allText = false;
-			}
-		}
-
 		switch (n) {
 		case 1:
 				if (allNumbers) 
@@ -111,11 +122,27 @@ public class CmdSum extends CommandProcessor {
 		
 		default:
             // try to create list of numbers
+			if (arg[0].isNumberValue()) {
 	       	 GeoList wrapList = wrapInList(kernel, arg, arg.length, GeoElement.GEO_CLASS_NUMERIC);
 	            if (wrapList != null) {
 	           	 GeoElement[] ret = { kernel.Sum(c.getLabel(), wrapList)};
 	                return ret;             	     	 
 	            } 
+			} else if (arg[0].isVectorValue()) {
+	            // try to create list of points
+		       	 GeoList wrapList = wrapInList(kernel, arg, arg.length, GeoElement.GEO_CLASS_POINT);
+		            if (wrapList != null) {
+		           	 GeoElement[] ret = { kernel.SumPoints(c.getLabel(), wrapList)};
+		                return ret;             	     	 
+		            } 				
+			} else if (arg[0].isGeoFunction()) {
+	            // try to create list of functions
+	       	 GeoList wrapList = wrapInList(kernel, arg, arg.length, GeoElement.GEO_CLASS_FUNCTION);
+	            if (wrapList != null) {
+	           	 GeoElement[] ret = { kernel.SumFunctions(c.getLabel(), wrapList)};
+	                return ret;             	     	 
+	            } 				
+		}
 			throw argNumErr(app, c.getName(), n);
 		}
 	}

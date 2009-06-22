@@ -19,9 +19,9 @@ package org.mathpiper.ui.text.consoles;
 
 //import org.mathpiper.lisp.UtilityFunctions;
 
-import org.mathpiper.*;
-import org.mathpiper.exceptions.EvaluationException;
-import java.io.*;
+import java.io.InputStream;
+
+import org.mathpiper.Version;
 import org.mathpiper.interpreters.EvaluationResponse;
 import org.mathpiper.interpreters.Interpreter;
 import org.mathpiper.interpreters.Interpreters;

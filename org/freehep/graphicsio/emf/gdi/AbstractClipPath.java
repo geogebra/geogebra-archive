@@ -1,21 +1,21 @@
 // Copyright 2007, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
-import org.freehep.graphicsio.emf.EMFTag;
-import org.freehep.graphicsio.emf.EMFRenderer;
-import org.freehep.graphicsio.emf.EMFConstants;
-
-import java.awt.geom.GeneralPath;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.Shape;
+import java.awt.geom.GeneralPath;
+
+import org.freehep.graphicsio.emf.EMFConstants;
+import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * base class for all tags that change the
  * clipping area of the {@link org.freehep.graphicsio.emf.EMFRenderer}
  *
  * @author Steffen Greiffenberg
- * @version $Id: AbstractClipPath.java,v 1.3 2008-05-04 12:18:07 murkle Exp $
+ * @version $Id: AbstractClipPath.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public abstract class AbstractClipPath extends EMFTag {
 

@@ -1,11 +1,11 @@
 package geogebra.gui.view.algebra;
 
+import geogebra.main.Application;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import geogebra.main.Application;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;

@@ -316,17 +316,16 @@ public class GeoGebraPreferences {
         	app.loadMacroFileFromByteArray(ggtFile, true);
         	    		
     		// load preferences xml
-        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, "");
-        	
-        	if(xml.equals("")) {
-        		initDefaultXML(app);
-        		xml = XML_GGB_FACTORY_DEFAULT;
-        	}
-        	
-    		app.setXML(xml, true);	
+        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);        
+    		app.setXML(xml, true);	   
     		
-    		app.setUndoActive(app.isUndoActive());      		
-    		
+        	//String xml = ggbPrefs.get(XML_USER_PREFERENCES, "");        	
+        	//if(xml.equals("")) {
+        	//	initDefaultXML(app);
+        	//	xml = XML_GGB_FACTORY_DEFAULT;
+        	//}        	
+    		//app.setXML(xml, true);	    		
+    		//app.setUndoActive(app.isUndoActive());      		    		
     	} catch (Exception e) {	    		
     		e.printStackTrace();
     	}    	

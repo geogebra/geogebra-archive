@@ -90,8 +90,6 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.sun.swing.internal.plaf.basic.resources.basic;
-
 	/**
 	 * PropertiesPanel for displaying all gui elements for changing properties
 	 * of currently selected GeoElements. 
@@ -120,7 +118,7 @@ public	class PropertiesPanel extends JPanel {
 		private TextOptionsPanel textOptionsPanel;
 		private ArcSizePanel arcSizePanel;
 		private LineStylePanel lineStylePanel;
-		// added by Loï¿½c BEGIN
+		// added by Loïc BEGIN
 		private DecoSegmentPanel decoSegmentPanel;
 		private DecoAnglePanel decoAnglePanel;
 		private RightAnglePanel rightAnglePanel;
@@ -164,10 +162,10 @@ public	class PropertiesPanel extends JPanel {
 		 * modifies the default properties of an object type. 
 		 */
 		private boolean isDefaults;
-		
+				
 		private JTabbedPane tabs;
 
-		public PropertiesPanel(Application app, JColorChooser colChooser, boolean isDefaults) {			
+		public PropertiesPanel(Application app, JColorChooser colChooser, boolean isDefaults) {					
 			this.isDefaults = isDefaults;
 			
 			this.app = app;
@@ -188,7 +186,7 @@ public	class PropertiesPanel extends JPanel {
 				showConditionPanel = new ShowConditionPanel(app, this); 
 				colorFunctionPanel = new ColorFunctionPanel(app, this);
 				//coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
-				sliderPanel = new SliderPanel(app, this);
+				sliderPanel = new SliderPanel(app, this, false);
 			}
 			
 			showObjectPanel = new ShowObjectPanel();
@@ -202,22 +200,29 @@ public	class PropertiesPanel extends JPanel {
 			arcSizePanel = new ArcSizePanel();
 			slopeTriangleSizePanel = new SlopeTriangleSizePanel();
 			lineStylePanel = new LineStylePanel();
-			// added by Loï¿½c BEGIN
+			// added by Loïc BEGIN
 			decoSegmentPanel=new DecoSegmentPanel();
 			decoAnglePanel=new DecoAnglePanel();
 			rightAnglePanel=new RightAnglePanel();
 			//END
 			fillingPanel = new FillingPanel();
 			tracePanel = new TracePanel();
+			animatingPanel = new AnimatingPanel();
 			fixPanel = new FixPanel();
 			checkBoxFixPanel = new CheckBoxFixPanel();
 			absScreenLocPanel = new AbsoluteScreenLocationPanel();
 			auxPanel = new AuxiliaryObjectPanel();
-			allowReflexAnglePanel = new AllowReflexAnglePanel();
-			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
-			
 			animStepPanel = new AnimationStepPanel(app);
 			animSpeedPanel = new AnimationSpeedPanel(app);
+			sliderPanel = new SliderPanel(app, this, false);
+			startPointPanel = new StartPointPanel();
+			cornerPointsPanel = new CornerPointsPanel();
+			textEditPanel = new TextEditPanel();
+			bgImagePanel = new BackgroundImagePanel();
+			allowReflexAnglePanel = new AllowReflexAnglePanel();
+			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
+			showConditionPanel = new ShowConditionPanel(app, this); 
+			colorFunctionPanel = new ColorFunctionPanel(app, this);
 			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
@@ -227,17 +232,17 @@ public	class PropertiesPanel extends JPanel {
  			add(tabs, BorderLayout.CENTER); 			
 		}		
 		
-		// added by Loï¿½c BEGIN
+		// added by Loïc BEGIN
 		public void setSliderMinValue(){
 			arcSizePanel.setMinValue();
 		}
 		//END		
-
+		
 		/**
 		 * A list of the tab panels
 		 */
 		private ArrayList<TabPanel> tabPanelList;
-		
+
 		/**
 		 * Initialize the tabs
 		 */
@@ -246,7 +251,7 @@ public	class PropertiesPanel extends JPanel {
 			
 			// basic tab
 			ArrayList<JPanel> basicTabList = new ArrayList<JPanel>();
-			
+						
 			if(!isDefaults)
 				basicTabList.add(namePanel);
 			
@@ -259,7 +264,7 @@ public	class PropertiesPanel extends JPanel {
 			
 			if(!isDefaults)
 				basicTabList.add(animatingPanel);
-			
+				
 			basicTabList.add(fixPanel);	
 			basicTabList.add(auxPanel);
 			basicTabList.add(checkBoxFixPanel);
@@ -329,12 +334,12 @@ public	class PropertiesPanel extends JPanel {
 			tabPanelList.add(lineStyleTab);
 			
 			// filling style
-			// ArrayList fillingTabList = new ArrayList();	
-			// fillingTabList.add(fillingPanel);			
-			// TabPanel fillingTab = new TabPanel(app.getPlain("Filling"), fillingTabList);
-			// fillingTab.addToTabbedPane(tabs);										
+//			ArrayList fillingTabList = new ArrayList();	
+//			fillingTabList.add(fillingPanel);			
+//			TabPanel fillingTab = new TabPanel(app.getPlain("Filling"), fillingTabList);
+//			fillingTab.addToTabbedPane(tabs);										
 			
-			// position	
+			// position			
 			if(!isDefaults) {
 				ArrayList<JPanel> positionTabList = new ArrayList<JPanel>();
 				
@@ -431,7 +436,7 @@ public	class PropertiesPanel extends JPanel {
 				colorFunctionPanel.setLabels();
 				sliderPanel.setLabels();
 			}
-			
+									
 			// remember selected tab
 			Component selectedTab = tabs.getSelectedComponent();
 			
@@ -461,6 +466,7 @@ public	class PropertiesPanel extends JPanel {
 				tabs.setVisible(false);
 				return;
 			}
+			
 			
 			// remember selected tab
 			Component selectedTab = tabs.getSelectedComponent();
@@ -500,18 +506,18 @@ public	class PropertiesPanel extends JPanel {
 			//oldSelGeos = geos;										
 						
 			updateTabs(geos);
-		}			
+		}				
 						
 		
 		private class TabPanel extends JPanel {
 		
-		private String title;
-		private ArrayList panelList;
-		private boolean makeVisible = true;			
-		
+			private String title;
+			private ArrayList panelList;
+			private boolean makeVisible = true;			
+			
 		public TabPanel(ArrayList pVec) {
 			panelList = pVec;
-			
+				
 			setLayout(new BorderLayout());
 			JPanel panel = new JPanel();
 			panel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
@@ -539,20 +545,20 @@ public	class PropertiesPanel extends JPanel {
 			panel.add(Box.createVerticalGlue(), c);
 		}
 		
-		public void setTitle(String title) {
-			this.title = title;
-		}
-		
-		public void update(Object [] geos) {
-			makeVisible = updateTabPanel(this, panelList, geos);
-		}
-		
-		public void addToTabbedPane(JTabbedPane tabs) {
-			if (makeVisible) {
-				tabs.addTab(title, this);
+			public void setTitle(String title) {
+				this.title = title;
 			}
-		}										
-	}
+			
+			public void update(Object [] geos) {
+				makeVisible = updateTabPanel(this, panelList, geos);
+			}
+			
+			public void addToTabbedPane(JTabbedPane tabs) {
+				if (makeVisible) {
+					tabs.addTab(title, this);
+				}
+			}										
+		}
 		
 	
 	/**
@@ -573,7 +579,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		public void setLabels() {
 			showObjectCB.setText(app.getPlain("ShowObject"));
-		}
+		}			
 
 		public JPanel update(Object[] geos) {
 			this.geos = geos;
@@ -618,7 +624,9 @@ public	class PropertiesPanel extends JPanel {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (!geo.isDrawable()) {
+				if (!geo.isDrawable()
+						// can't allow a free fixed number to become visible (as a slider)
+						|| (geo.isGeoNumeric() && geo.isFixed())) {
 					geosOK = false;
 					break;
 				}
@@ -734,13 +742,14 @@ public	class PropertiesPanel extends JPanel {
 	private class ColorPanel extends JPanel implements UpdateablePanel, ChangeListener {
 
 		private static final long serialVersionUID = 1L;
-		private Object[] geos; // currently selected geos
+		private Object[] geos; // currently selected geos		
 		private JLabel previewLabel, currentColorLabel;
 		private JPanel previewPanel;
 
 		public ColorPanel(JColorChooser colChooser) {
 			colChooser.setLocale(app.getLocale());
-			previewPanel = new PreviewPanel();
+			previewPanel = new PreviewPanel();			
+			previewLabel = new JLabel();
 			currentColorLabel = new JLabel();
 			AbstractColorChooserPanel [] tabs = colChooser.getChooserPanels();
 			
@@ -789,8 +798,6 @@ public	class PropertiesPanel extends JPanel {
 			setLayout(new BorderLayout());			
 			add(tabs[0], BorderLayout.NORTH);		
 			
-			previewLabel = new JLabel();
-			
 			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			p.add(previewLabel);
 			p.add(previewPanel);
@@ -814,6 +821,8 @@ public	class PropertiesPanel extends JPanel {
 			colChooser.getSelectionModel().addChangeListener(this);	
 		}
 		
+
+		
 		private class PreviewPanel extends JPanel {
 		    public PreviewPanel() {
 		        setPreferredSize(new Dimension(100,app.getFontSize() + 8));
@@ -826,8 +835,8 @@ public	class PropertiesPanel extends JPanel {
 		        g.fillRect(0,0,size.width,size.height);
 		      }
 	    }
-		
-		public void setLabels() {
+	    
+	    public void setLabels() {
 			previewLabel.setText(app.getMenu("Preview") + ": ");
 		}
 
@@ -876,7 +885,7 @@ public	class PropertiesPanel extends JPanel {
 			previewPanel.setForeground(col);
 			previewPanel.setToolTipText(col.getRed() + ", " + col.getGreen() + ", " + col.getBlue());
 			currentColorLabel.setText("("+previewPanel.getToolTipText()+")");
-			
+
 			GeoElement geo;
 			for (int i = 0; i < geos.length; i++) {
 				geo = (GeoElement) geos[i];
@@ -884,11 +893,13 @@ public	class PropertiesPanel extends JPanel {
 				geo.updateRepaint();
 			}					
 			
+			Application.debug("Setting color RGB = "+col.getRed()+" "+col.getGreen()+" "+col.getBlue());
+			
 			// in order to get state changes we need to set color chooser to
-			// a color that is different to the current one
-			colChooser.getSelectionModel().removeChangeListener(this);
+			// a color that is not an available color
+			colChooser.getSelectionModel().removeChangeListener(this);		
 			colChooser.setColor(new Color(0, 0, 1));
-            
+			
 			colChooser.getSelectionModel().addChangeListener(this);	
 		}
 
@@ -1004,7 +1015,6 @@ public	class PropertiesPanel extends JPanel {
 				showLabelCB.setText(app.getPlain("ShowLabel"));
 			else
 				showLabelCB.setText(app.getPlain("ShowLabel") + ":");
-
 
 			//	set label visible checkbox
 			if (equalLabelVal) {
@@ -1145,12 +1155,13 @@ public	class PropertiesPanel extends JPanel {
 			return this;
 		}
 
-		// show everything but numbers (note: drawable angles are shown)
+		// show everything that's drawable
+		// don't want layers for dependent numbers as we want to 
+		// minimise the XML for such objects to keep the spreadsheet fast
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				GeoElement geo = (GeoElement) geos[i];
-				if (!geo.isEuclidianVisible()) {
+				if (!((GeoElement)geos[i]).isDrawable()) {
 					geosOK = false;
 					break;
 				}
@@ -1420,7 +1431,7 @@ public	class PropertiesPanel extends JPanel {
 					geo.setFixed(showFixCB.isSelected());
 					geo.updateRepaint();
 				}
-			}
+			}		
 			
 			updateSelection(geos);
 		}
@@ -1511,12 +1522,14 @@ public	class PropertiesPanel extends JPanel {
 						// convert real world to screen coords
 						int x = ev.toScreenCoordX(geo.getRealWorldLocX());
 						int y = ev.toScreenCoordY(geo.getRealWorldLocY());
-						geo.setAbsoluteScreenLoc(x, y);							
+						if (!geo.isAbsoluteScreenLocActive())
+							geo.setAbsoluteScreenLoc(x, y);							
 					} else {
 						// convert screen coords to real world 
 						double x = ev.toRealWorldCoordX(geo.getAbsoluteScreenLocX());
 						double y = ev.toRealWorldCoordY(geo.getAbsoluteScreenLocY());
-						geo.setRealWorldLoc(x, y);
+						if (geo.isAbsoluteScreenLocActive())
+							geo.setRealWorldLoc(x, y);
 					}
 					geo.setAbsoluteScreenLocActive(flag);															
 					geo.toGeoElement().updateRepaint();
@@ -1629,7 +1642,7 @@ public	class PropertiesPanel extends JPanel {
 			GeoAngle geo;
 			Object source = e.getItemSelectable();
 
-			//Michael Borcherds 2007-11-19
+//Michael Borcherds 2007-11-19
 			if (source == reflexAngleCB || source==forceReflexAngleCB) {
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
@@ -1645,7 +1658,7 @@ public	class PropertiesPanel extends JPanel {
 						else
 							geo.setAngleStyle(2);							
 					}
-					// Michael Borcherds 2007-11-19
+//					Michael Borcherds 2007-11-19
 					geo.updateRepaint();
 				}
 			}
@@ -1976,7 +1989,7 @@ public	class PropertiesPanel extends JPanel {
 			boolean geosOK = true; 
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (!(geo instanceof Locateable) 
+				if (!(geo instanceof Locateable && !((Locateable)geo).isAlwaysFixed()) 
 						||	geo.isGeoImage())					  
 				{
 					geosOK = false;
@@ -2284,8 +2297,7 @@ public	class PropertiesPanel extends JPanel {
 			//	app.showTextDialog((GeoText) geos[0]);
 		}
 	}
-
-
+	
 	/**
 	 * panel to select the kind of coordinates (cartesian or polar)
 	 *  for GeoPoint and GeoVector
@@ -2361,13 +2373,17 @@ public	class PropertiesPanel extends JPanel {
 
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
-			boolean allPoints = true;
+			//boolean allPoints = true;
 			for (int i = 0; i < geos.length; i++) {
 				if (!(geos[i] instanceof GeoPoint
 					|| geos[i] instanceof GeoVector)) {
 					geosOK = false;
 				}
-				if (!(geos[i] instanceof GeoPoint)) allPoints = false;
+				
+				// check if fixed
+				if (((GeoElement)geos[i]).isFixed()) geosOK = false;
+				
+				//if (!(geos[i] instanceof GeoPoint)) allPoints = false;
 			}
 			
 			// remove ComplexNumber option if any vectors are in list
@@ -2768,7 +2784,9 @@ public	class PropertiesPanel extends JPanel {
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoPoint())) {
+				GeoElement geo = (GeoElement)geos[i];
+				if (!(geo.getGeoElementForPropertiesDialog().isGeoPoint())
+						&& (!(geo.isGeoList() && ((GeoList)geo).showPointProperties()))) {
 					geosOK = false;
 					break;
 				}
@@ -2805,8 +2823,8 @@ public	class PropertiesPanel extends JPanel {
 		public PointStylePanel() {
 			ButtonGroup buttonGroup = new ButtonGroup();
 			
-			String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716" };
-			String[] strPointStyleAC = { "0", "2", "1" };
+			String[] strPointStyle = { app.getPlain("Default"), "\u25cf", "\u25cb", "\u2716" };
+			String[] strPointStyleAC = { "-1", "0", "2", "1" };
 			buttons = new JRadioButton[strPointStyle.length];
 			
 			for(int i = 0; i < strPointStyle.length; ++i) {
@@ -2815,9 +2833,12 @@ public	class PropertiesPanel extends JPanel {
 				buttons[i].addActionListener(this);
 				buttons[i].setFont(app.getSmallFont());
 				
+				if(!strPointStyleAC[i].equals("-1"))
+					buttons[i].setFont(app.getSmallFont());
+				
 				buttonGroup.add(buttons[i]);
 				add(buttons[i]);
-			}						
+			}		
 		}
 
 		public void setLabels() {
@@ -2847,7 +2868,9 @@ public	class PropertiesPanel extends JPanel {
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (!((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoPoint()) {
+				GeoElement geo = (GeoElement)geos[i];
+				if (!geo.getGeoElementForPropertiesDialog().isGeoPoint()
+						&& (!(geo.isGeoList() && ((GeoList)geo).showPointProperties()))) {
 					geosOK = false;
 					break;
 				}
@@ -3254,12 +3277,12 @@ public	class PropertiesPanel extends JPanel {
 			*/		
 			add(slider);			
 		}
-		
+						
 		public void setLabels() {
 			setBorder(BorderFactory.createTitledBorder(app.getPlain("Size")));
 		}
 		
-		//added by Loï¿½c BEGIN
+		//added by Loïc BEGIN
 		public void setMinValue(){
 			slider.setValue(20);
 		}
@@ -3307,7 +3330,7 @@ public	class PropertiesPanel extends JPanel {
 				GeoAngle angle;
 				for (int i = 0; i < geos.length; i++) {
 					angle = (GeoAngle) geos[i];
-					// addded by Loï¿½c BEGIN
+					// addded by Loïc BEGIN
 					// check if decoration could be drawn
 					if (size<20&&(angle.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| angle.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
@@ -3381,7 +3404,7 @@ public	class PropertiesPanel extends JPanel {
 		public void setLabels() {
 			setBorder(BorderFactory.createTitledBorder(app.getPlain("Filling")));
 		}
-
+		
 		public JPanel update(Object[] geos) {
 			// check geos
 			if (!checkGeos(geos))
@@ -3511,6 +3534,19 @@ public	class PropertiesPanel extends JPanel {
 			
 			dashLabel.setText(app.getPlain("LineStyle") + ":");
 		}
+		
+		private boolean allPolygons(Object[] geos) {
+			
+			if (geos == null || geos.length == 0) return false;
+			
+			for (int i = 0  ; i < geos.length ; i++) {
+				if (!((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoPolygon() )
+					return false;
+			}
+			
+			return true;
+			
+		}
 
 		public JPanel update(Object[] geos) {
 			// check geos
@@ -3524,6 +3560,9 @@ public	class PropertiesPanel extends JPanel {
 			//	set slider value to first geo's thickness 
 			GeoElement temp, geo0 = (GeoElement) geos[0];
 			slider.setValue(geo0.getLineThickness());
+			
+			// allow polygons to have thickness 0
+			slider.setMinimum(allPolygons(geos) ? 0 : 1);
 
 			//	check if geos have same line style
 			boolean equalStyle = true;
@@ -3557,7 +3596,8 @@ public	class PropertiesPanel extends JPanel {
 				GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
 				if (!(geo.isPath()
 					|| geo.isGeoPolygon()
-					|| geo.isGeoLocus()
+					|| (geo.isGeoLocus() && ((GeoList)geo).showLineProperties() )
+					|| geo.isGeoList()
 					|| (geo.isGeoNumeric()
 						&& ((GeoNumeric) geo).isDrawable()))) {
 					geosOK = false;
@@ -3600,12 +3640,11 @@ public	class PropertiesPanel extends JPanel {
 	} 
 
 	
-	// added by Loï¿½c
+	// added by Loïc
 	private class DecoSegmentPanel extends JPanel implements ActionListener , UpdateablePanel {
 		private JComboBox decoCombo;
 		private JLabel decoLabel;
 		private Object[] geos;
-		
 		
 		DecoSegmentPanel(){
 			super(new FlowLayout(FlowLayout.LEFT));
@@ -3723,7 +3762,7 @@ public	class PropertiesPanel extends JPanel {
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
 					geo.setDecorationType(type);
-					// addded by Loï¿½c BEGIN
+					// addded by Loïc BEGIN
 					// check if decoration could be drawn
 					if (geo.getArcSize()<20&&(geo.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| geo.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
@@ -3797,13 +3836,11 @@ public	class PropertiesPanel extends JPanel {
 		}
 		
 	}
-	// END 
-} // PropertiesPanel
 
+} // PropertiesPanel
 	
 	
-	
-	/**
+/**
  * panel for numeric slider
  * @author Markus Hohenwarter
  */
@@ -3827,29 +3864,24 @@ class SliderPanel
 	private AnimationSpeedPanel speedPanel;
 	private Kernel kernel;
 	private PropertiesPanel propPanel;
+	private JPanel intervalPanel, sliderPanel, animationPanel;
+	private boolean useTabbedPane;
 
-	public SliderPanel(Application app, PropertiesPanel propPanel) {
+	public SliderPanel(Application app, PropertiesPanel propPanel, boolean useTabbedPane) {
 		this.app = app;
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
+		this.useTabbedPane = useTabbedPane;
+					
+		intervalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));	
+		sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));		
+		animationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
 		
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-				
-		JPanel intervalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));
-		intervalPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Interval")));			
-		
-		JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
-		sliderPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Slider")));		
-
-		JPanel animationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
-		animationPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Animation")));		
-
 		cbSliderFixed = new JCheckBox();
 		cbSliderFixed.addActionListener(this);
 		sliderPanel.add(cbSliderFixed);		
 		
-		String [] comboStr = {app.getPlain("horizontal"), app.getPlain("vertical")};
-		coSliderHorizontal = new JComboBox(comboStr);
+		coSliderHorizontal = new JComboBox();
 		coSliderHorizontal.addActionListener(this);
 		sliderPanel.add(coSliderHorizontal);				
 					
@@ -3889,15 +3921,39 @@ class SliderPanel
 		speedPanel = new AnimationSpeedPanel(app);
 		speedPanel.setPartOfSliderPanel();
 		animationPanel.add(speedPanel);		
+			
+		initPanels();
+	}
+	
+	private void initPanels() {
+		removeAll();
 		
-		add(intervalPanel);	
-		add(Box.createVerticalStrut(5));
-		add(sliderPanel);					
-		add(Box.createVerticalStrut(5));
-		add(animationPanel);					
+		// put together interval, slider options, animation panels
+		if (useTabbedPane) {
+			setLayout(new FlowLayout());
+			JTabbedPane tabbedPane = new JTabbedPane();
+			tabbedPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			tabbedPane.addTab(app.getPlain("Interval"), intervalPanel);
+			tabbedPane.addTab(app.getMenu("Slider"), sliderPanel);
+			tabbedPane.addTab(app.getPlain("Animation"), animationPanel);
+			add(tabbedPane);
+		}
+		else { // no tabs 
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));	
+			intervalPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Interval")));					
+			sliderPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Slider")));		
+			animationPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Animation")));
+			add(intervalPanel);	
+			add(Box.createVerticalStrut(5));
+			add(sliderPanel);					
+			add(Box.createVerticalStrut(5));
+			add(animationPanel);
+		}
 	}
 	
 	public void setLabels() {
+		initPanels();
+		
 		cbSliderFixed.setText(app.getPlain("fixed"));
 		
 		String [] comboStr = {app.getPlain("horizontal"), app.getPlain("vertical")};
@@ -3931,6 +3987,8 @@ class SliderPanel
 		
 		for (int i=0; i<tfields.length; i++) 
 			tfields[i].removeActionListener(this);
+		coSliderHorizontal.removeActionListener(this);
+		cbSliderFixed.removeActionListener(this);
 
 		// check if properties have same values
 		GeoNumeric temp, num0 = (GeoNumeric) geos[0];
@@ -4000,6 +4058,8 @@ class SliderPanel
 
 		for (int i=0; i<tfields.length; i++) 
 			tfields[i].addActionListener(this);
+		coSliderHorizontal.addActionListener(this);
+		cbSliderFixed.addActionListener(this);
 	
 		return this;
 	}
@@ -4112,7 +4172,7 @@ class AnimationStepPanel
 	private static final long serialVersionUID = 1L;
 	
 	private Object[] geos; // currently selected geos
-	private JLabel label;
+	private JLabel label;	
 	private AngleTextField tfAnimStep;
 	private boolean partOfSliderPanel = false;
 	
@@ -4140,9 +4200,7 @@ class AnimationStepPanel
 	
 	public void setLabels() {
 		label.setText(kernel.getApplication().getPlain("AnimationStep") + ": ");
-		
-		// TODO: Update text field? (F.S.)
-	}
+	}	
 	
 	public void setPartOfSliderPanel() {
 		partOfSliderPanel = true;
@@ -4171,7 +4229,7 @@ class AnimationStepPanel
 
 		// set trace visible checkbox
 		//int oldDigits = kernel.getMaximumFractionDigits();
-		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+		//kernel.setMaximumFractionDigits(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 		kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 
         if (equalStep)
@@ -4257,7 +4315,7 @@ class AnimationSpeedPanel
 	private boolean partOfSliderPanel = false;
 	private JComboBox animationModeCB;	
 	private JLabel modeLabel, speedLabel;
-	private Application app;
+	private Application app;	
 	private Kernel kernel;
 
 	public AnimationSpeedPanel(Application app) {
@@ -4318,6 +4376,7 @@ class AnimationSpeedPanel
 			return null;
 
 		tfAnimSpeed.removeActionListener(this);
+		animationModeCB.removeActionListener(this);
 
 		// check if properties have same values
 		GeoElement temp, geo0 = (GeoElement) geos[0];
@@ -4327,7 +4386,7 @@ class AnimationSpeedPanel
 		for (int i = 0; i < geos.length; i++) {
 			temp = (GeoElement) geos[i];
 			// same object visible value
-			if (geo0.getAnimationSpeed() != temp.getAnimationSpeed())
+			if (geo0.getAnimationSpeedObject() != temp.getAnimationSpeedObject())
 				equalStep = false;
 			if (geo0.getAnimationType() != temp.getAnimationType())
 				equalAnimationType = false;
@@ -4340,18 +4399,20 @@ class AnimationSpeedPanel
 
 		// set trace visible checkbox
 		//int oldDigits = kernel.getMaximumFractionDigits();
-		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+		//kernel.setMaximumFractionDigits(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
         kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
-
-        if (equalStep)
-			tfAnimSpeed.setText(kernel.format(geo0.getAnimationSpeed()));
-		else
+        
+        if (equalStep) {
+        	GeoElement speedObj = geo0.getAnimationSpeedObject();
+			tfAnimSpeed.setText(speedObj == null ? "1" : speedObj.getLabel());
+        } else
 			tfAnimSpeed.setText("");
         
 		//kernel.setMaximumFractionDigits(oldDigits);
         kernel.restorePrintAccuracy();
 
 		tfAnimSpeed.addActionListener(this);
+		animationModeCB.addActionListener(this);
 		return this;
 	}
 
@@ -4386,15 +4447,16 @@ class AnimationSpeedPanel
 	}
 
 	private void doActionPerformed() {
-		double newVal =
-			kernel.getAlgebraProcessor().evaluateToDouble(
-				tfAnimSpeed.getText());
-		if (!Double.isNaN(newVal)) {
+		NumberValue animSpeed = 
+			kernel.getAlgebraProcessor().evaluateToNumeric(tfAnimSpeed.getText());
+		if (animSpeed != null) {
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				geo.setAnimationSpeed(newVal);
-				geo.updateRepaint();
+				geo.setAnimationSpeedObject(animSpeed);
+				geo.updateCascade();
 			}
+			kernel.udpateNeedToShowAnimationButton();
+			kernel.notifyRepaint();
 		}
 		update(geos);
 	}
@@ -4473,14 +4535,14 @@ class ShowConditionPanel
 		GeoElement geo0 = (GeoElement) geos[0];	
 		GeoBoolean cond = geo0.getShowObjectCondition();
 		if (cond != null) {
-			strCond = cond.getLabelOrCommandDescription();
+			strCond = cond.getLabel();
 		}	
 		
 		for (int i=0; i < geos.length; i++) {
 			GeoElement geo = (GeoElement) geos[i];	
 			cond = geo.getShowObjectCondition();
 			if (cond != null) {
-				String strCondGeo = cond.getLabelOrCommandDescription();
+				String strCondGeo = cond.getLabel();
 				if (!strCond.equals(strCondGeo))
 					strCond = "";
 			}	
@@ -4510,6 +4572,7 @@ class ShowConditionPanel
 	}
 
 	private void doActionPerformed() {
+		processed = true;
 		GeoBoolean cond;
 		String strCond = tfCondition.getText();
 		if (strCond == null || strCond.trim().length() == 0) {
@@ -4518,42 +4581,45 @@ class ShowConditionPanel
 			cond = kernel.getAlgebraProcessor().evaluateToBoolean(strCond);
 		}
 				
-		// set condition
-		boolean requestFocus = false;
-		try {
-			for (int i = 0; i < geos.length; i++) {
-				GeoElement geo = (GeoElement) geos[i];
-				geo.setShowObjectCondition(cond);				
+		if (cond != null || strCond.trim().length() == 0) {
+			// set condition
+			try {
+				for (int i = 0; i < geos.length; i++) {
+					GeoElement geo = (GeoElement) geos[i];
+					geo.setShowObjectCondition(cond);				
+				}	
+				
+			} catch (CircularDefinitionException e) {
+				tfCondition.setText("");
+				kernel.getApplication().showError("CircularDefinition");
 			}	
 			
-		} catch (CircularDefinitionException e) {
-			tfCondition.setText("");
-			kernel.getApplication().showError("CircularDefinition");
-			requestFocus = true;			
-		}	
+			if (cond != null)
+				cond.updateRepaint();		
+			
+			// to update "showObject" as well
+			propPanel.updateSelection(geos);
+		} else {
+			// put back faulty condition (for editing)
+			tfCondition.setText(strCond);
+		}
 		
-		if (cond != null)
-			cond.updateRepaint();		
-		
-		// to update "showObject" as well
-		propPanel.updateSelection(geos);
-		
-		// request focus
-		if (requestFocus)
-			tfCondition.requestFocus();
 	}
 
 	public void focusGained(FocusEvent arg0) {
+		processed = false;
 	}
+	
+	boolean processed = false;
 
 	public void focusLost(FocusEvent e) {
+		if (!processed)
 		doActionPerformed();
 	}
 }
 
 /**
- * Panel where the user can enter a dynamic color by using variables. 
- * 
+ * panel for condition to show object
  * @author Michael Borcherds 2008-04-01
  */
 class ColorFunctionPanel
@@ -4681,13 +4747,8 @@ class ColorFunctionPanel
 		return this;
 	}
 
+	// return true: want to be able to color all spreadsheet objects
 	private boolean checkGeos(Object[] geos) {
-		for (int i=0; i < geos.length; i++) {
-			GeoElement geo = (GeoElement) geos[i];	
-			if (!geo.isEuclidianShowable())
-				return false;
-		}
-		
 		return true;
 	}
 
@@ -4700,6 +4761,8 @@ class ColorFunctionPanel
 	}
 
 	private void doActionPerformed() {
+		processed = true;
+		
 		GeoList list = null;
 		String strRed = tfRed.getText();
 		String strGreen = tfGreen.getText();
@@ -4719,9 +4782,8 @@ class ColorFunctionPanel
 		
 				
 		// set condition
-		boolean requestFocus = false;
 		//try {
-		if (list != null)								//
+		if (list != null) {							//
 		if (((list.get(0) instanceof NumberValue)) && 	// bugfix, enter "x" for a color 
 			((list.get(1) instanceof NumberValue)) &&	//
 			((list.get(2) instanceof NumberValue)) )		//
@@ -4731,193 +4793,30 @@ class ColorFunctionPanel
 			}	
 			
 	
-		if (list != null)
-			list.updateRepaint();		
+		list.updateRepaint();		
 		
 		// to update "showObject" as well
 		propPanel.updateSelection(geos);
-		
-		// request focus
-		if (requestFocus)
-			tfRed.requestFocus();
+		} else {
+			// put back faulty text (for editing)
+			tfRed.setText(strRed);
+			tfGreen.setText(strGreen);
+			tfBlue.setText(strBlue);
+		}
+
 	}
 
 	public void focusGained(FocusEvent arg0) {
+		processed = false;
 	}
+	
+	boolean processed = false;
 
 	public void focusLost(FocusEvent e) {
-		doActionPerformed();
-	}
-}
-
-/**
- * panel for condition to show object
- * @author Michael Borcherds 2008-04-01
- *
-class CoordinateFunctionPanel
-	extends JPanel
-	implements ActionListener, FocusListener, UpdateablePanel {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private Object[] geos; // currently selected geos
-	private JTextField tfX, tfY;
-	private JButton btRemove;
-	private JLabel nameLabelX,nameLabelY;
-	
-	private Kernel kernel;
-	private PropertiesDialogGeoElement.PropertiesPanel propPanel;
-
-	public CoordinateFunctionPanel(Application app, PropertiesDialogGeoElement.PropertiesPanel propPanel) {
-		kernel = app.getKernel();
-		this.propPanel = propPanel;
-		
-		// textfield for animation step
-		setBorder(
-				BorderFactory.createTitledBorder(app.getMenu("DynamicCoordinates"))
-				);
-		
-		// non auto complete input panel
-		InputPanel inputPanelX = new InputPanel(null, app, 1, 7, false, false, false);
-		InputPanel inputPanelY = new InputPanel(null, app, 1, 7, false, false, false);
-		tfX = (AutoCompleteTextField) inputPanelX.getTextComponent();				
-		tfY = (AutoCompleteTextField) inputPanelY.getTextComponent();				
-		
-		
-		tfX.addActionListener(this);
-		tfX.addFocusListener(this);
-		tfY.addActionListener(this);
-		tfY.addFocusListener(this);
-		
-		nameLabelX = new JLabel(app.getMenu("XCoord") + ":");	
-		nameLabelX.setLabelFor(inputPanelX);
-		nameLabelY = new JLabel(app.getMenu("YCoord") + ":");	
-		nameLabelY.setLabelFor(inputPanelY);
-
-		
-		btRemove = new JButton("\u2718");
-		btRemove.setToolTipText(app.getPlain("Remove"));
-		btRemove.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (int i=0; i < geos.length; i++) {
-					GeoPoint geo = (GeoPoint) geos[i];	
-					geo.removeCoordinateFunction();
-					geo.updateRepaint();
-				}
-				tfX.setText("");
-				tfY.setText("");
-			}
-		});
-
-		// put it all together
-		setLayout(new FlowLayout(FlowLayout.LEFT));
-		add(nameLabelX);		
-		add(inputPanelX);
-		add(nameLabelY);		
-		add(inputPanelY);
-		add(btRemove);
-	}
-
-	public JPanel update(Object[] geos) {
-		this.geos = geos;
-		if (!checkGeos(geos))
-			return null;
-
-		tfX.removeActionListener(this);
-		tfY.removeActionListener(this);
-		btRemove.removeActionListener(this);
-
-		// take condition of first geo
-		String strX = "";
-		String strY = "";
-		GeoPoint geo0 = (GeoPoint) geos[0];	
-		GeoList coordsList = geo0.getCoordinateFunction();
-		if (coordsList != null) {
-			strX = coordsList.get(0).getLabel();
-			strY = coordsList.get(1).getLabel();
-		}	
-		
-		for (int i=0; i < geos.length; i++) {
-			GeoPoint geo = (GeoPoint) geos[i];	
-			GeoList coordsListTemp = geo.getCoordinateFunction();
-			if (coordsListTemp != null) {
-				String strXTemp = coordsListTemp.get(0).getLabel();
-				String strYTemp = coordsListTemp.get(1).getLabel();
-				if (!strX.equals(strXTemp)) strX = "x("+geo.getLabel()+")";
-				if (!strY.equals(strYTemp)) strY = "y("+geo.getLabel()+")";
-			}	
-		}		
-
-		tfX.setText(strX);
-		tfX.addActionListener(this);
-		tfY.setText(strY);
-		tfY.addActionListener(this);
-		return this;
-	}
-
-	private boolean checkGeos(Object[] geos) {
-		for (int i=0; i < geos.length; i++) {
-			GeoElement geo = (GeoElement) geos[i];	
-			if (!geo.isGeoPoint() || !geo.isIndependent() || geo.isGeoElement3D())
-				return false;
-		}
-		
-		return true;
-	}
-
-	/**
-	 * handle textfield changes
-	 *
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == tfX || e.getSource() == tfY)
+		if (!processed)
 			doActionPerformed();
 	}
-
-	private void doActionPerformed() {
-		GeoList list = null;
-		String strX = tfX.getText();
-		String strY = tfY.getText();
-		if ((strX == null || strX.trim().length() == 0) &&
-			(strY == null || strY.trim().length() == 0) ) {
-			list=null;
-		} else {
-			if (strX == null || strX.trim().length() == 0) strX="0";
-			if (strY == null || strY.trim().length() == 0) strY="0";
-	
-			list = kernel.getAlgebraProcessor().evaluateToList("{"+strX + ","+strY+"}");
-		}
-		
-				
-		// set condition
-		boolean requestFocus = false;
-		//try {
-		if (list != null)								//
-		if (((list.get(0) instanceof GeoNumeric)) && 	// bugfix, enter "x" for a color 
-			((list.get(1) instanceof GeoNumeric)) )		//
-			for (int i = 0; i < geos.length; i++) {
-				GeoPoint geo = (GeoPoint) geos[i];
-				geo.setCoordinateFunction(list);				
-			}	
-			
-	
-		if (list != null)
-			list.updateRepaint();		
-		
-		// to update "showObject" as well
-		propPanel.updateSelection(geos);
-		
-		// request focus
-		if (requestFocus)
-			tfX.requestFocus();
-	}
-
-	public void focusGained(FocusEvent arg0) {
-	}
-
-	public void focusLost(FocusEvent e) {
-		doActionPerformed();
-	}
-}*/
+}
 
 
 /**
@@ -4983,14 +4882,12 @@ class NamePanel
 
 		updateGUI(true, true);
 	}
-	
+
 	public void setLabels() {
 		nameLabel.setText(app.getPlain("Name") + ":");
 		defLabel.setText(app.getPlain("Definition") + ":");
 		captionLabel.setText(app.getMenu("Button.Caption") + ":");
-		
-		// TODO: Update text field? (F.S.)
-	}
+	}	
 	
 	private void updateGUI(boolean showDefinition, boolean showCaption) {
 		int rows = 1;
@@ -5055,7 +4952,7 @@ class NamePanel
 //		inputPanelDef.setVisible(showDefinition);
 		
 		// CAPTION
-		boolean showCaption = true; // borcherds was currentGeo.isGeoBoolean();
+		boolean showCaption = !currentGeo.isTextValue(); // borcherds was currentGeo.isGeoBoolean();
 		if (showCaption) {			
 			tfCaption.removeActionListener(this);
 			tfCaption.setText(getCaptionText(currentGeo));
@@ -5133,13 +5030,15 @@ class NamePanel
 	}
 	
 	private String getDefText(GeoElement geo) {
+		/*
 		return geo.isIndependent() ?
 				geo.toOutputValueString() :
-				geo.getCommandDescription();		
+				geo.getCommandDescription();	*/
+		return geo.getRedefineString(false, true);
 	}
 	
 	private String getCaptionText(GeoElement geo) {
-		String strCap = currentGeo.getCaption();
+		String strCap = currentGeo.getRawCaption();
 		if (strCap.equals(currentGeo.getLabel()))
 			return "";
 		else

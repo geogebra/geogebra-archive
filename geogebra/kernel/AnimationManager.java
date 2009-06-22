@@ -3,6 +3,7 @@ package geogebra.kernel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import javax.swing.Timer;
 
@@ -16,6 +17,7 @@ public class AnimationManager implements ActionListener {
 	private ArrayList animatedGeos, changedGeos;
 	private Timer timer;
 	private double frameRate = MAX_ANIMATION_FRAME_RATE;
+	private boolean needToShowAnimationButton;
 	
 	public AnimationManager(Kernel kernel) {	
 		this.kernel = kernel;
@@ -26,13 +28,16 @@ public class AnimationManager implements ActionListener {
 	}
 		
 	public synchronized void startAnimation() {
-		if (!timer.isRunning() && animatedGeos.size() > 0) 
-			timer.start();		
+		if (!timer.isRunning() && animatedGeos.size() > 0) {
+			udpateNeedToShowAnimationButton();
+			timer.start();			
+		}
 	}
 	
 	public synchronized void stopAnimation() {
-		if (timer.isRunning()) {
-			timer.stop();						
+		if (timer.isRunning()) {			
+			timer.stop();
+			udpateNeedToShowAnimationButton();
 		}
 	}
 	
@@ -41,6 +46,9 @@ public class AnimationManager implements ActionListener {
 			GeoElement geo = (GeoElement) animatedGeos.get(i);
 			geo.setAnimating(false);
 		}
+		
+		animatedGeos.clear();		
+		udpateNeedToShowAnimationButton();
 	}
 	
 	/**
@@ -60,11 +68,76 @@ public class AnimationManager implements ActionListener {
 	}
 	
 	/**
+	 * Returns whether the animation button needs to be drawn in the graphics view.
+	 * This is only needed when there are animated geos with non-dynamic speed. 
+	 */
+	final public boolean needToShowAnimationButton() {
+		return needToShowAnimationButton;		
+	}
+	
+	/**
+	 * Updates the needToShowAnimationButton value.
+	 */
+	public void udpateNeedToShowAnimationButton() {
+		int size = animatedGeos.size();
+		if (size == 0) {
+			needToShowAnimationButton = false;
+			return;
+		}
+		
+		// if one animated geo has a static speed, we need to get out of here
+		for (int i=0; i < size; i++) {
+			GeoElement geo = (GeoElement) animatedGeos.get(i);
+			GeoElement animObj = geo.getAnimationSpeedObject();
+			if (animObj == null || !animObj.isLabelSet() && animObj.isIndependent()) {
+				needToShowAnimationButton = true;
+				return;
+			}
+			
+			
+			// TODO: check with anim_autocomplete.ggb
+//			else if (animObj.isIndependent()) {
+//				if (!animObj.isLabelSet() || !animObj.isVisible()) { 
+//					// unlabeled or invisible speed object
+//					needToShowAnimationButton = true;
+//					return;
+//				}
+//			}
+//			else {
+//				// check if at least one free parent of animObj is visible
+//				TreeSet ind = animObj.getAllIndependentPredecessors();
+//				Iterator it = ind.iterator();
+//				boolean oneVisible = false;
+//				while (it.hasNext()) {
+//					GeoElement parent = (GeoElement) it.next();
+//					if (parent.isVisible())
+//						oneVisible = true;
+//				}
+//				
+//				// no free parent is visible: show animation button
+//				if (!oneVisible) {
+//					needToShowAnimationButton = true;
+//					return;
+//				}
+//			}
+			
+		}		
+		
+
+		
+		// all animated geos have dynamic speed
+		needToShowAnimationButton = false;
+	}
+
+	
+	/**
 	 * Adds geo to the list of animated GeoElements.
 	 */
 	final public synchronized void addAnimatedGeo(GeoElement geo) {
 		if (geo.isAnimating() && !animatedGeos.contains(geo)) {
-			animatedGeos.add(geo);								
+			animatedGeos.add(geo);		
+			if (animatedGeos.size() == 1)
+				udpateNeedToShowAnimationButton();
 		}
 	}
 	
@@ -72,10 +145,9 @@ public class AnimationManager implements ActionListener {
 	 * Removes geo from the list of animated GeoElements.
 	 */
 	final public synchronized void removeAnimatedGeo(GeoElement geo) {
-		animatedGeos.remove(geo);
-		
-		if (animatedGeos.size() == 0) 
-			stopAnimation();
+		if (animatedGeos.remove(geo) && animatedGeos.size() == 0) { 
+				stopAnimation();
+		}
 	}
 	
 	/**
@@ -100,7 +172,7 @@ public class AnimationManager implements ActionListener {
 		// do we need to update anything?
 		if (changedGeos.size() > 0) {
 			// efficiently update all changed GeoElements
-			GeoElement.updateCascade(changedGeos);
+			GeoElement.updateCascade(changedGeos, getTempSet());
 			
 			// repaint views 
 			kernel.notifyRepaint();	
@@ -111,6 +183,14 @@ public class AnimationManager implements ActionListener {
 			
 			//System.out.println("UPDATE compTime: " + compTime + ", frameRate: " + frameRate);		
 		}
+	}
+	
+	private TreeSet tempSet;	
+	private TreeSet getTempSet() {
+		if (tempSet == null) {
+			tempSet = new TreeSet();
+		}
+		return tempSet;
 	}
 	
 	/**
@@ -126,7 +206,6 @@ public class AnimationManager implements ActionListener {
 			frameRate = Math.max(framesPossible, MIN_ANIMATION_FRAME_RATE);
 			timer.setDelay((int) Math.round(1000.0 / frameRate));
 			
-			// TODO: remove
 			//System.out.println("DECREASED frame rate: " + frameRate + ", framesPossible: " + framesPossible);	
 		}
 				
@@ -135,7 +214,6 @@ public class AnimationManager implements ActionListener {
 			frameRate = Math.min(framesPossible, MAX_ANIMATION_FRAME_RATE);
 			timer.setDelay((int) Math.round(1000.0 / frameRate));
 			
-			// TODO: remove
 			//System.out.println("INCREASED frame rate: " + frameRate + ", framesPossible: " + framesPossible);
 		}
 		

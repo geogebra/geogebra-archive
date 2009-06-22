@@ -96,6 +96,7 @@ public class AlgoListElement extends AlgoElement {
     		// check type:
     		if (nth.getGeoClassType() == element.getGeoClassType()) {
     			element.set(nth);
+    			
     		} else {
     			element.setUndefined();
     		}

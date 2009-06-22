@@ -17,6 +17,7 @@ import geogebra.main.Application;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.Color;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -105,6 +106,10 @@ public class ConstructionDefaults {
 	// defaultGeoElement list
 	protected FastHashMapKeyless defaultGeoElements;		
 	
+	private int lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
+	private int pointSize = EuclidianView.DEFAULT_POINT_SIZE;
+	private int angleSize = EuclidianView.DEFAULT_ANGLE_SIZE;
+	
 	/**
 	 * Creates a new ConstructionDefaults object to manage the
 	 * default objects of this construction.
@@ -112,7 +117,7 @@ public class ConstructionDefaults {
 	 */
 	public ConstructionDefaults(Construction cons) {
 		this.cons = cons;
-		createDefaultGeoElements();
+		createDefaultGeoElements();		
 	}
 
 	
@@ -142,6 +147,7 @@ public class ConstructionDefaults {
 		freePoint.setPointStyle(EuclidianView.POINT_STYLE_DOT);
 		freePoint.setLocalVariableLabel("Point" + strFree);
 		freePoint.setObjColor(colPoint);
+		freePoint.setPointSize(pointSize);
 		defaultGeoElements.put(DEFAULT_POINT_FREE, freePoint);
 		
 		// dependent point
@@ -151,6 +157,7 @@ public class ConstructionDefaults {
 		depPoint.setPointStyle(EuclidianView.POINT_STYLE_DOT);
 		depPoint.setLocalVariableLabel("Point" + strDependent);
 		depPoint.setObjColor(colDepPoint);
+		depPoint.setPointSize(pointSize);
 		defaultGeoElements.put(DEFAULT_POINT_DEPENDENT, depPoint);
 		
 		// point on path
@@ -160,6 +167,7 @@ public class ConstructionDefaults {
 		pathPoint.setPointStyle(EuclidianView.POINT_STYLE_DOT);
 		pathPoint.setLocalVariableLabel("PointOn");
 		pathPoint.setObjColor(colPathPoint);
+		pathPoint.setPointSize(pointSize);
 		defaultGeoElements.put(DEFAULT_POINT_ON_PATH, pathPoint);
 		
 		// point in region
@@ -222,6 +230,7 @@ public class ConstructionDefaults {
 		angle.setLocalVariableLabel("Angle");
 		angle.setObjColor(colAngle);		
 		angle.setAlphaValue(DEFAULT_ANGLE_ALPHA);
+		angle.setArcSize(angleSize);
 		//angle.setDrawable(true);
 		//angle.setParentAlgorithm(new AlgoElement(cons));
 		defaultGeoElements.put(DEFAULT_ANGLE, angle);
@@ -263,8 +272,10 @@ public class ConstructionDefaults {
 		GeoList list = new GeoList(cons);	
 //		list.setLocalVariableLabel(app.getPlain("List"));
 		list.setLocalVariableLabel("List");
-		list.setObjColor(colList);		
-		list.setAlphaValue(DEFAULT_POLYGON_ALPHA);
+		list.setObjColor(colList);
+		list.setAlphaValue(-1); // wait until we have an element in the list
+								// then we will use the alphaValue of the first element in the list
+								// see GeoList.setAlphaValue() and getAlphaValue()
 		defaultGeoElements.put(DEFAULT_LIST, list);
 	}
 	
@@ -384,7 +395,6 @@ public class ConstructionDefaults {
 		
 		// default
 		GeoElement defaultGeo = getDefaultGeo(type);
-		//Application.debug("defaultGeo = "+defaultGeo);
 		if (defaultGeo != null) {
 			geo.setAllVisualProperties(defaultGeo, isReset);		
 			
@@ -439,7 +449,54 @@ public class ConstructionDefaults {
 			labelVisible =  ! isPath() || app.showAlgebraView();
 		}*/
 	}
+	
+	public int getLineThicknessDefault() {
+		return lineThickness;
+	}
 
 
+	/**
+	 * Updates all default GeoElements according to the given font size.
+	 * This will change the size of newly created points and the thickness of
+	 * newly created lines.
+	 */
+	public void adaptDefaultsToFontSize(int fontSize) {
+		// 12pt is the default font size with a factor of 100%
+		double factor = fontSize / 12.0;
+		int sizeIncrease = fontSize - 12;
+		
+		// set new default line thickness
+		lineThickness = Math.min(EuclidianView.DEFAULT_LINE_THICKNESS + sizeIncrease/2, 9);
+		
+		// set new default point size
+		pointSize = (int) Math.min(Math.round(EuclidianView.DEFAULT_POINT_SIZE * factor), 7);
+		
+		// set new default angle size
+		angleSize = (int) Math.min(Math.round(EuclidianView.DEFAULT_ANGLE_SIZE * factor), 100);
+			
+		Iterator it = defaultGeoElements.values().iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();	
+			
+			// set line thickness
+			if (!geo.isGeoText() && !geo.isGeoImage()) // affects bounding box
+				geo.setLineThickness(lineThickness);
+					
+			switch (geo.getGeoClassType()) {
+			case GeoElement.GEO_CLASS_POINT:
+				((GeoPoint) geo).setPointSize(pointSize); 
+				break;
+				
+			case GeoElement.GEO_CLASS_LIST:
+				((GeoList) geo).setPointSize(pointSize); 
+				((GeoList) geo).setLineThickness(lineThickness); 
+				break;
+				
+				case GeoElement.GEO_CLASS_ANGLE:					
+					((GeoAngle) geo).setArcSize(angleSize);
+					break;				
+			}
+		}		
+	}
 
 }

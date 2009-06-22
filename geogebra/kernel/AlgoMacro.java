@@ -67,7 +67,12 @@ implements EuclidianViewAlgo {
     	initMap();    	  	
     	
     	setInputOutput();     	    	
-    	compute();    	
+    	compute(); 
+    	
+    	// check if macro construction has euclidianAlgos
+    	if (macro.getMacroConstruction().hasEuclidianViewAlgos()) {
+    		cons.registerEuclidianViewAlgo(this);
+    	}
         
         GeoElement.setLabels(labels, output);           
     }         
@@ -88,22 +93,6 @@ implements EuclidianViewAlgo {
 	protected void setInputOutput() {    	             
         setDependencies();
     }       
-    
-    
-
-	final public boolean wantsEuclidianViewUpdate() {
-		return macro.wantsEuclidianViewUpdate();
-	}
-	
-	public void euclidianViewUpdate() {
-    	// TODO: AlgoMacro.euclidianViewUpdate: make more efficient
-		// I can't figure out at the moment why a simple update() doesn't 
-		// do the trick to update locus lines in macros when the view
-		// size has changed, Markus 2008-03-13
-		
-		input[0].updateCascade();		
-		update();
-    }   
            	
     final protected void compute() {
     	try {    		
@@ -165,8 +154,7 @@ implements EuclidianViewAlgo {
 			GeoElement macroGeo = (GeoElement) macroOutputAndReferencedGeos.get(i);
 			GeoElement algoGeo = (GeoElement) algoOutputAndReferencedGeos.get(i);
 			algoGeo.set(macroGeo);	
-			
-			// TODO: remove
+
 //			System.out.println("RESULT from macro: " + macroGeo + "\n => " + algoGeo);			
 //			System.out.println("  macroGeo kernel: " + macroGeo.kernel + ", printFigures: " + macroGeo.kernel.getPrintFigures());
 //			System.out.println("  algoGeo  kernel: " + algoGeo.kernel + ", printFigures: " + algoGeo.kernel.getPrintFigures());
@@ -274,7 +262,7 @@ implements EuclidianViewAlgo {
 	 * the macro construction.
 	 */
 	private GeoElement createAlgoCopy(GeoElement macroGeo) {
-		GeoElement algoGeo = macroGeo.copyInternal(cons);		
+		GeoElement algoGeo = macroGeo.copyInternal(cons);	
 		return algoGeo;
 	}
 	
@@ -313,7 +301,7 @@ implements EuclidianViewAlgo {
 				initConic((GeoConic) macroGeo, (GeoConic) algoGeo);
 				break;
 
-			case GeoElement.GEO_CLASS_TEXT:
+			case GeoElement.GEO_CLASS_TEXT:				
 			case GeoElement.GEO_CLASS_VECTOR:
 			case GeoElement.GEO_CLASS_IMAGE:
 				initLocateable((Locateable) macroGeo, (Locateable) algoGeo);
@@ -444,20 +432,20 @@ implements EuclidianViewAlgo {
 		// left tree
 		if (left.isGeoElement()) {								
 			GeoElement referencedGeo = (GeoElement) left;			
-			if (macro.isInMacroConstruction(referencedGeo)) {		
+			if (macro.isInMacroConstruction(referencedGeo)) {
 				exp.setLeft(getAlgoGeo(referencedGeo));			
 			}	
-		}
+		}		
 		else if (left.isExpressionNode()) {
 			replaceReferencedMacroObjects((ExpressionNode) left);
-		}		
+		} 
 		
 		// right tree
 		if (right == null) 
 			return;
 		else if (right.isGeoElement()) {
 			GeoElement referencedGeo = (GeoElement) right;
-			if (macro.isInMacroConstruction(referencedGeo)) {		
+			if (macro.isInMacroConstruction(referencedGeo)) {	
 				exp.setRight(getAlgoGeo(referencedGeo));
 			}	
 		}

@@ -27,6 +27,7 @@ import geogebra.kernel.GeoElement;
  */
 public interface NumberValue extends ExpressionValue { 
     public MyDouble getNumber();
+    public boolean isAngle();
     public double getDouble(); 
     public GeoElement toGeoElement();
 }

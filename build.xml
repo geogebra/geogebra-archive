@@ -75,7 +75,7 @@ office@geogebra.org
 	
 	<manifest file="../manifest.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra"/>	
-		<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	
+		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
 	<target name="clean">
@@ -109,7 +109,7 @@ office@geogebra.org
 					  **/algo2command.properties,	
 					  **/algo2command4i2g.properties"			
 			excludes="geogebra/*,
-			        geogebra/properties/**, 
+
 					geogebra/gui/**,
 					geogebra/export/**, 
 					geogebra/cas/**,
@@ -148,6 +148,7 @@ office@geogebra.org
 		<jar jarfile="${build.dir}/geogebra_cas.jar"
 			basedir="${src.dir}"
 			includes="geogebra/cas/**,
+					jasymca/**,	
 					org/mathpiper/**"
 			excludes="**/*.java" 
 		/>
@@ -190,7 +191,7 @@ office@geogebra.org
 	    	
 		<!-- check if keystore file present -->
 		<condition property="keystore.present">
-			<available file="${workspace.dir}/keystore"/>
+			<available file="${workspace.dir}/geogebra-keystore.p12"/>
 		</condition>		
 		<antcall target="sign-pack"/>	
 	</target>
@@ -200,7 +201,7 @@ office@geogebra.org
 	    	
 		<!-- check if keystore file present -->
 		<condition property="keystore.present">
-			<available file="${workspace.dir}/keystore"/>
+			<available file="${workspace.dir}/geogebra-keystore.p12"/>
 		</condition>		
 		<antcall target="sign-pack"/>	
 	</target>
@@ -226,10 +227,12 @@ office@geogebra.org
 	    </p200ant>	   
 	            
 		<!-- sign jars -->
-		<signjar keystore="${workspace.dir}/keystore" alias="mhohen" storepass="mhohen">
-
+		<signjar 
+			keystore="${workspace.dir}/geogebra-keystore.p12" 	
+			alias="geogebra inc.&apos;s globalsign inc id"
+			storetype="pkcs12"
+			storepass="geogebra">
 		    <fileset dir="${build.dir}" includes="**/*.jar" />
-
 		</signjar>	
 	        
 		<!-- pack jars -->

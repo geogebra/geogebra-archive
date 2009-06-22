@@ -12,7 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 
 /**

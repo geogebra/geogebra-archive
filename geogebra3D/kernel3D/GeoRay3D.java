@@ -1,7 +1,6 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra.main.Application;
 
 public class GeoRay3D extends GeoLine3D {
 

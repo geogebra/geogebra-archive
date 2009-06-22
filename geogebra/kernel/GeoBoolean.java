@@ -17,6 +17,8 @@ import geogebra.kernel.arithmetic.BooleanValue;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyBoolean;
+import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.NumberValue;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +28,7 @@ import java.util.HashSet;
  * @author Markus
  * @version
  */
-public class GeoBoolean extends GeoElement implements BooleanValue,
+public class GeoBoolean extends GeoElement implements BooleanValue, NumberValue,
 AbsoluteScreenLocateable {			
 
 	/**
@@ -318,6 +320,23 @@ AbsoluteScreenLocateable {
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	
+	public boolean isNumberValue() {
+		return true;
+	}
+	
+	
+	/**
+	 * Returns 1 for true and 0 for false.
+	 */
+	public double getDouble() {		
+		return value ? 1 : 0;
+	}
+
+	public MyDouble getNumber() {
+		return new MyDouble(kernel, getDouble() );
 	}
 
 	

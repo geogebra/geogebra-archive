@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
+
 
 /**
  * Creates a dependent copy of the given GeoElement.
@@ -19,11 +21,13 @@ package geogebra.kernel;
 public class AlgoDependentGeoCopy extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
+	private ExpressionNode origGeoNode;
     private GeoElement origGeo, copyGeo;     // input, ouput              
         
-    public AlgoDependentGeoCopy(Construction cons, String label, GeoElement origGeo) {
+    public AlgoDependentGeoCopy(Construction cons, String label, ExpressionNode origGeoNode) {
     	super(cons);
-        this.origGeo = origGeo;
+    	this.origGeoNode = origGeoNode;
+        origGeo = (GeoElement) origGeoNode.evaluate();
         
         copyGeo = origGeo.copy();
         setInputOutput(); // for AlgoElement
@@ -58,7 +62,8 @@ public class AlgoDependentGeoCopy extends AlgoElement {
     }   
     
     final public String toString() {
-    	// expression is only label of original geo
-    	return origGeo.getLabel();
+    	// we use the expression as it may add $ signs 
+    	// to the label like $A$1
+    	return origGeoNode.toString();
     }
 }

@@ -21,8 +21,8 @@ import org.mathpiper.builtin.Array;
 import org.mathpiper.builtin.BuiltinContainer;
 import org.mathpiper.builtin.BuiltinFunctionInitialize;
 import org.mathpiper.lisp.Atom;
-import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.ConsPointer;
+import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.UtilityFunctions;
 
 /**

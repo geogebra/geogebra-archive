@@ -17,15 +17,15 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp.userfunctions;
 
-import org.mathpiper.lisp.UserStackInformation;
-import org.mathpiper.lisp.behaviours.BackQuote;
-import org.mathpiper.lisp.UtilityFunctions;
 import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.ConsTraverser;
 import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.LispExpressionEvaluator;
 import org.mathpiper.lisp.SubList;
+import org.mathpiper.lisp.UserStackInformation;
+import org.mathpiper.lisp.UtilityFunctions;
+import org.mathpiper.lisp.behaviours.BackQuote;
 
 public class MacroUserFunction extends BranchingUserFunction
 {

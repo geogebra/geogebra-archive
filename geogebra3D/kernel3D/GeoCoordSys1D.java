@@ -1,15 +1,11 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.euclidian3D.EuclidianView3D;
 
 public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 	

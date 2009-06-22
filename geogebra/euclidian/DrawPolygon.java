@@ -90,7 +90,7 @@ implements Previewable {
         	 // polygon on screen?		
     		if (!gp.intersects(0,0, view.width, view.height)) {				
     			isVisible = false;
-    			return;
+            	// don't return here to make sure that getBounds() works for offscreen points too
     		}
         	
 			if (labelVisible) {
@@ -107,14 +107,23 @@ implements Previewable {
         	if (poly.alphaValue > 0.0f) {
 				g2.setPaint(poly.getFillColor());                       
 				g2.fill(gp);  				
-        	}
-					  
+        	}        	        	
+            	
             if (geo.doHighlighting()) {
                 g2.setPaint(poly.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(gp);                
-            }            
-            
+            }        
+        	
+            // polygons (e.g. in GeoLists) that don't have labeled segments
+            // should also draw their border
+            else if (!poly.wasInitLabelsCalled() && poly.lineThickness > 0) {
+        		 g2.setPaint(poly.getObjectColor());
+                 g2.setStroke(objStroke);            
+                 g2.draw(gp);  
+        	}
+        	
+                                  
             if (labelVisible) {
 				g2.setPaint(poly.getLabelColor());
 				g2.setFont(view.fontPoint);

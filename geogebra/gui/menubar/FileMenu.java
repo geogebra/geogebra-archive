@@ -1,5 +1,10 @@
 package geogebra.gui.menubar;
 
+import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.util.ImageSelection;
+import geogebra.main.Application;
+
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -13,11 +18,6 @@ import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-
-import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.inputbar.AlgebraInput;
-import geogebra.gui.util.ImageSelection;
-import geogebra.main.Application;
 
 /**
  * The "File" menu.
@@ -162,7 +162,7 @@ class FileMenu extends BaseMenu {
 				if (app.hasGuiManager()) {
 					AlgebraInput ai = (AlgebraInput) (app.getGuiManager()
 							.getAlgebraInput());
-					ai.setString(null);
+					ai.replaceString(null);
 				}
 			}
 		};

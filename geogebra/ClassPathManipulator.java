@@ -57,18 +57,32 @@ public final class ClassPathManipulator {
 
 	/** Adds a URL to the Classpath */
 	public synchronized static boolean addURL(URL u, ClassLoader loader) {
-		Class[] parameter = new Class[] { URL.class };
 		// URLClassLoader sysloader =
 		// (URLClassLoader)ClassLoader.getSystemClassLoader();
 		// URLClassLoader sysloader =
 		// (URLClassLoader)geogebra.gui.menubar.MenubarImpl
 		// .class.getClassLoader();
+		
 		if (loader == null)
 			loader = ClassLoader.getSystemClassLoader();
 		URLClassLoader sysloader = (URLClassLoader) loader;
 		Class sysclass = URLClassLoader.class;
+				
+		// check if URL u is already on classpath
+		URL [] classpath = sysloader.getURLs();
+		if (classpath != null) {
+			for (int i=0; i < classpath.length; i++) {								
+				// u found on classpath
+				if (classpath[i].equals(u)) {
+//					System.out.println("ClassPathManipulator.addURL(): already on classpath: " + u);
+					return true;
+				}
+			}
+		}
+	
 		
 		try {
+			Class[] parameter = new Class[] { URL.class };
 			Method method = sysclass.getDeclaredMethod("addURL", parameter);
 			method.setAccessible(true);
 			method.invoke(sysloader, new Object[] { u });

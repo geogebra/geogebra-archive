@@ -1,5 +1,5 @@
 GeoGebra - Dynamic Mathematics for Everyone
-Copyright 2001-2008 GeoGebra Inc.
+Copyright 2001-2009 GeoGebra Inc.
 http://www.geogebra.org/
   
 LICENSE
@@ -14,26 +14,26 @@ DEVELOPERS
 
 Contributions by Loic Le Coq (Paris, France 2006); Joan Carles Naranjo, Victor Franco, 
   Eloi Puertas (Barcelona, Spain 2007); Philipp Weissenbacher (Vienna, Austria 2007); 
-  Amy Varkey (Boca Raton, USA 2007); Cong Liu, Quan Yuan (Boca Raton, USA 2008);  
+  Cong Liu, Amy Varkey, and Quan Yuan (Florida Atlantic University, USA 2007-2009);
   Hans-Petter Ulven (Norway 2008); Florian Sonner (Germany 2008)
   
 TRANSLATIONS
-  * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia)
+  * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia), Maha Ah (Egypt)
   * Basque: Gonzalo Elcano Vizcay (Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
   * Bulgarian: Hristo Stoyanov (Bulgaria)
-  * Catalan: Jorge Sanchez, Jaume Bartroli, Pep Bujosa, Antoni Goma, 
+  * Catalan: Jaume Bartroli, Pep Bujosa, Josep Lluis Canadilla, Carlos Gimenez, Antoni Goma, Jorge Sanchez,      
       Roser Sebastian (Spain)
   * Chinese (Traditional): Fu-Kwun Hwang, Chen-Hui Lin, Pegasus Roe, Joe Chen (Taiwan)
   * Chinese (Simplified): Chen Xing (China)
-  * Croatian: Sime Suljic, Ela Rac (Croatia)
+  * Croatian: Sime Suljic, Ela Rac, Josip Klicinovic (Croatia)
   * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
   * Danish: Steen Grode (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat, Carel van de Giessen (Belgium)
   * English: Markus Hohenwarter, Judith Hohenwarter (Austria), Yves Kreis (Luxembourg),
       Michael Borcherds (Great Britain)
   * Estonian: Jane Albre (Estonia)
-  * Finnish: Hannu Korhonen, Kirsi Malinen (Finland)
+  * Finnish: Hannu Korhonen, Juha Leino, Kirsi Malinen (Finland)
   * French: Noel Lambert (France)
   * Galician: Jesus Garcia Otero, Irene Arias Lopez (Spain) 
   * Georgian: Lasha Kokilashvili (Georgia)
@@ -41,16 +41,17 @@ TRANSLATIONS
   * Greek: Nicholas Mousoulides, Constantinos Christou (Cyprus), 
       Spiros Mavrogiannis, Manolis Koutlis, Fergadiotis Athanasios (Greece)
   * Hebrew: Guy Hed (Israel)
-  * Hungarian: Sulik Szabolcs, Zsuzsanna Papp-Varga (Hungary)
+  * Hungarian: Zsuzsanna Papp-Varga, Andras Hrasko, Peter Csiba, Major Zoltan (Hungary)
   * Icelandic: Freyja Hreinsdottir (Iceland)
   * Indonesian: Aam Sudrajat (Indonesia)
-  * Italian: Alessandra Tomasi, Palmira Ronchi, Simona Riva (Italy)
+  * Italian: Alessandra Tomasi, Simona Riva (Italy)
   * Japanese: Akihito Wachi, Kazuhiro Hasegawa (Japan)
-  * Korean: Choi Kyeong-Sik (Korea)
-  * Macedonian: Linda Fahlberg-Stojanovska, Jasmina Markoska (FYR Macedonia)
+  * Korean: Kyeong-Sik Choi (Korea)
+  * Lithuanian: Rokas Tamosiunas (Lithuania)
+  * Macedonian: Linda Fahlberg-Stojanovska, OIKT, Faculty of Technical Sciences, UKLO (FYR Macedonia)
   * Norwegian: Sigbjorn Hals (Norway)
-  * Persian: Saeed Aminorroaya (Iran)
-  * Polish: Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega, Kasia Winkowska-Nowak (Poland)
+  * Persian: Saeed Aminorroaya, Ali SafarNavadeh, Azam Zabihi (Iran)
+  * Polish: Ania Borkowska, Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega, Kasia Winkowska-Nowak (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
       Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
   * Portuguese (Portugal): Jorge Geraldes, Antonio Ribeiro (Portugal)
@@ -62,31 +63,38 @@ TRANSLATIONS
   * Spanish: Liliana Saidon (Argentina)
   * Turkish: Erol Karakirik, Mustafa Dogan, Suleyman Cengiz (Turkey)
   * Vietnamese: Nguyen Thanh Trung, Quang Nguyen (Vietnam)
+  * Welsh: Uned Gyfieithu Translation Unit, Prifysgol Bangor University; Gwyn Jones (Wales)
    
 PROJECTS
+  * Florida Atlantic University
+     08/2006 to 07/2009: NSF Math and Science Partnership project SMGEM
   * University of Luxembourg et. al., co-funded by the Community programme eContentplus
      09/2007 to 09/2010: Interoperable Interactive Geometry for Europe (Intergeo)
   * University of Luxembourg
      01/2007 to 12/2009: GeoGebra for Primary School 
-  * US National Science Foundation
-     08/2006 to 07/2009: Supplements for http://smgem.mspnet.org  
   * Austrian Federal Ministry for Education, Science and Culture
      01/2006 to 12/2007: GeoGebra for Austrian Schools
   * Austrian Academy of Sciences
      02/2004 to 01/2006: DOC scholarship for Markus Hohenwarter
      
 SUPPORT 
-  * Department of Mathematics, University of Salzburg 
-     hosting the GeoGebra Website     
+  * Department of Mathematical Sciences, Florida Atlantic University
+      Prof. Heinz-Otto Peitgen and Prof. Richard Voss, NSF MSP project SMGEM
+      2007-2009: support of software development with students Cong Liu, Amy Varkey, and Quan Yuan
+      2006-2009: support of workshops and presentations throughout the USA
   * Faculty LSHASE, University of Luxembourg
-     providing the multi-platform software deployment solution      
+      since 2009: hosting the GeoGebra website
+      since 2005: providing the multi-platform software deployment solutio
+  * Department of Mathematics, University of Salzburg
+      2002-2009: hosting the GeoGebra website   
   
 SOFTWARE
   * MathPiper, https://mathrider.dev.java.net
+  * Jasymca, http://webuser.hs-furtwangen.de/~dersch/
+  * Jama, http://math.nist.gov/javanumerics/jama/
   * FreeHEP Java Libraries, http://java.freehep.org
   * Java EPS Graphics2D package, http://www.jibble.org/epsgraphics
   * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
-  * Michael T. Flanagan's Java library, http://www.ee.ucl.ac.uk/~mflanaga/java/ 
   * Tango Icon Gallery, http://tango.freedesktop.org
   
 ----------------------------------------------------------------------

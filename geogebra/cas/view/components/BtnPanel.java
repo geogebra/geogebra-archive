@@ -1,9 +1,10 @@
 package geogebra.cas.view.components;
 
-import java.awt.FlowLayout;
-import javax.swing.JPanel;
-
 import geogebra.cas.view.CASView;
+
+import java.awt.FlowLayout;
+
+import javax.swing.JPanel;
 
 /**
  * JPanel with buttons

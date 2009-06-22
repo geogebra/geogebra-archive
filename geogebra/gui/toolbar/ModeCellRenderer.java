@@ -98,7 +98,7 @@ implements ListCellRenderer {
 			setText("\u2500\u2500\u2500 " + app.getMenu("Separator"));
 			setIcon(null);			
 		} else {			
-			setText(app.getModeText(mode));
+			setText(app.getToolName(mode));
 			setIcon(app.getModeIcon(mode));
 		}						
 	}

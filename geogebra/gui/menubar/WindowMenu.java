@@ -1,5 +1,8 @@
 package geogebra.gui.menubar;
 
+import geogebra.gui.app.GeoGebraFrame;
+import geogebra.main.Application;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -8,9 +11,6 @@ import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
-
-import geogebra.gui.app.GeoGebraFrame;
-import geogebra.main.Application;
 
 /**
  * The "Windows" menu.

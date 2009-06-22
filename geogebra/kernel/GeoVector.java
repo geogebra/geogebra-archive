@@ -147,7 +147,7 @@ implements Path, VectorValue, Locateable, Rotateable {
     /**
      * Retuns starting point of this vector or null.
      */
-    public GeoPoint getStartPoint() {
+    final public GeoPoint getStartPoint() {
 		return startPoint;
     }   
     
@@ -502,15 +502,12 @@ implements Path, VectorValue, Locateable, Rotateable {
 	public boolean isGeoVector() {
 		return true;
 	}
-
-	public void update() {  	
-		super.update();
-				
-
+	
+	public boolean isAlwaysFixed() {
+		return false;
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

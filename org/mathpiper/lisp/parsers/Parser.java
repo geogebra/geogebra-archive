@@ -18,9 +18,13 @@
 
 package org.mathpiper.lisp.parsers;
 
-import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.io.MathPiperInputStream;
-import org.mathpiper.lisp.*;
+import org.mathpiper.lisp.Atom;
+import org.mathpiper.lisp.ConsPointer;
+import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.SubList;
+import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 
 
 public class Parser

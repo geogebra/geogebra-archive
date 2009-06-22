@@ -64,16 +64,16 @@ public class AlgoTake extends AlgoElement {
     	size = inputList.size();
     	int start=(int)m.getDouble();
     	double nVal = n.getDouble();
-    	int end= start -1 + (int)nVal;
+    	int end = (int)nVal;
     	
-    	if (nVal == 0 && inputList.isDefined() && start >= 0 && start < size) {
+    	if (nVal == 0 && inputList.isDefined() && start > 0 && start <= size) {
     		// return empty list
         	outputList.setDefined(true);
         	outputList.clear();
         	return;
     	}
     	
-    	if (!inputList.isDefined() ||  size == 0 || start < 0 || end >= size || start > end) {
+    	if (!inputList.isDefined() ||  size == 0 || start <= 0 || end > size || start > end) {
     		outputList.setUndefined();
     		return;
     	} 
@@ -82,7 +82,7 @@ public class AlgoTake extends AlgoElement {
     	outputList.clear();
     	
     	for (int i=start ; i<=end ; i++)
-    		outputList.add(inputList.get(i).copyInternal(cons));
+    		outputList.add(inputList.get(i - 1).copyInternal(cons));
    }
   
 }

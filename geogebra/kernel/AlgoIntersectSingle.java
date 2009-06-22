@@ -28,8 +28,6 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		// check index
 		if (index < 0) 
 			index = 0;
-		else if (index >= algo.output.length)
-			index = algo.output.length - 1;
 		else 
 			this.index = index;
 		
@@ -90,15 +88,25 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		algo.initForNearToRelationship();
 		algo.setIntersectionPoint(index, point);
 		algo.compute();
+		
+	
+    
 	}
 
-	protected void compute() {		
-		if (input[0].isDefined() && input[1].isDefined()) {		
+	protected void compute() {
+		parentOutput = algo.getIntersectionPoints();
+		
+		if (input[0].isDefined() && input[1].isDefined() && index < parentOutput.length) {	
 			// 	get coordinates from helper algorithm
 			point.setCoords(parentOutput[index]);
 		} else {
 			point.setUndefined();
 		}
+		
+//    	System.out.println("  point after compute: " + index + ", " + point);
+//    	for (int i=0; i < parentOutput.length; i++) {
+//    		System.out.println("     parentOutput: " + i + ", " + parentOutput[i]);
+//    	}
 	}   
 	
 	public void remove() {

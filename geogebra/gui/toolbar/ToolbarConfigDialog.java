@@ -34,8 +34,8 @@ public class ToolbarConfigDialog extends JDialog {
 		super(app.getFrame(), true);
 		this.app = app;
 		
-		setTitle(app.getMenu("Toolbar.Customize"));				
-	
+		setTitle(app.getMenu("Toolbar.Customize"));		
+
 		getContentPane().setLayout(new BorderLayout(5, 5));
 		confPanel = new ToolbarConfigPanel(app);
 		getContentPane().add(confPanel, BorderLayout.CENTER);

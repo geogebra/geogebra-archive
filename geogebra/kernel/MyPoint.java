@@ -33,4 +33,8 @@ public class MyPoint {
 		return Kernel.isEqual(x, px, Kernel.MIN_PRECISION) &&
 			   Kernel.isEqual(y, py, Kernel.MIN_PRECISION);
 	}
+	
+	public String toString() {
+		return "(" + x + ", " + y + ")";
+	}
 }

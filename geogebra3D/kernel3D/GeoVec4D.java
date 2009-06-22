@@ -19,9 +19,6 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVec3D;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 

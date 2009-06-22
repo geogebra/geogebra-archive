@@ -18,8 +18,6 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.io;
 
-import org.mathpiper.*;
-import org.mathpiper.io.MathPiperInputStream;
 
 public class StringInputStream
 			extends MathPiperInputStream

@@ -62,7 +62,7 @@ public class AlgoListLCM extends AlgoElement {
     	
     	String MathPiperList=geoList.toValueString();
     	String MathPiperCommand="Lcm("+MathPiperList+")";    	
-		String result=kernel.evaluateMathPiperRaw(MathPiperCommand);
+		String result=kernel.evaluateMathPiper(MathPiperCommand);
 		try {
 			double lcm = Double.valueOf(result).doubleValue();
 			num.setValue(lcm);

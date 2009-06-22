@@ -3,13 +3,9 @@ package geogebra.plugin;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.View;
-import geogebra.util.Util;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import netscape.javascript.JSObject;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;

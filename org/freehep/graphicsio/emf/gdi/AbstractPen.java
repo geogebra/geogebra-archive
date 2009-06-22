@@ -1,19 +1,19 @@
 // Copyright 2007, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
-import org.freehep.graphicsio.emf.EMFConstants;
-import org.freehep.graphicsio.emf.EMFRenderer;
-
-import java.util.logging.Logger;
 import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.logging.Logger;
+
+import org.freehep.graphicsio.emf.EMFConstants;
+import org.freehep.graphicsio.emf.EMFRenderer;
 
 /**
  * @author Steffen Greiffenberg
- * @version $Id: AbstractPen.java,v 1.3 2008-05-04 12:18:00 murkle Exp $
+ * @version $Id: AbstractPen.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public abstract class AbstractPen implements EMFConstants, GDIObject {
 

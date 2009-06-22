@@ -1,6 +1,10 @@
 // Copyright 2000, SLAC, Stanford, California, U.S.A.
 package org.freehep.xml.util;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 /**
  * Utility class for traversing XML DOM trees. 
@@ -12,7 +16,7 @@ import org.w3c.dom.*;
  * 
  * @deprecated The design of this class is misguided, it is better to use SAX, and SAXTraverser. Will be removed from future FreeHEP releases
  * @author Tony Johnson (tonyj@slac.stanford.edu)
- * @version $Id: XMLNodeTraverser.java,v 1.3 2008-05-04 12:20:39 murkle Exp $
+ * @version $Id: XMLNodeTraverser.java,v 1.4 2009-06-22 02:18:23 hohenwarter Exp $
  */
 public abstract class XMLNodeTraverser
 {

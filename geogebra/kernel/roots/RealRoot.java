@@ -280,7 +280,7 @@ public class RealRoot{
             }
         }
         return root;
-    }
+    }*/
 
     // false position  method
     // accuracy suppled
@@ -359,7 +359,7 @@ public class RealRoot{
         }
         return root;
     }
-*/
+
 
     // Combined bisection and Newton Raphson method
     // accuracy supplied

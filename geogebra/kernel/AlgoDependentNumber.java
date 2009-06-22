@@ -40,6 +40,9 @@ public class AlgoDependentNumber extends AlgoElement {
     	super(cons);
         this.root = root;  
         
+        // simplify constant integers, e.g. -1 * 300 becomes -300
+        root.simplifyConstantIntegers();
+        
         if (isAngle) {
             number = new GeoAngle(cons);
         } else {

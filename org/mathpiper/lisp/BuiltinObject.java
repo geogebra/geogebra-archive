@@ -19,7 +19,6 @@
 package org.mathpiper.lisp;
 
 import org.mathpiper.builtin.BuiltinContainer;
-import org.mathpiper.*;
 
 
 public class BuiltinObject extends Cons

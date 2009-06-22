@@ -3,7 +3,6 @@ package geogebra.gui.util;
 import geogebra.io.MyXMLio;
 import geogebra.main.Application;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,7 +11,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Label;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Rectangle2D;
@@ -26,9 +24,6 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import sun.java2d.pipe.SolidTextRenderer;
 
 /**
  * An enhanced file chooser for GeoGebra which can be used

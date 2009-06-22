@@ -20,9 +20,9 @@ package geogebra.euclidian;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.BasicStroke;
@@ -36,8 +36,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
 /**
@@ -58,18 +56,12 @@ public abstract class Drawable {
 	public int xLabel, yLabel;
 	int mouseX, mouseY; // for Previewables
 	protected String labelDesc; // label Description
-	
-	private String labelCacheText; // the text which was used to generate the cached image
-	private Font labelCacheFont;
-	private Color labelCacheFg;
-	private Color labelCacheBg;
-	private boolean labelCacheAA;
-	private BufferedImage labelCacheImage; // a cache for the rendered label
-	
 	private String oldLabelDesc;	
 	private boolean labelHasIndex = false;
 	Rectangle labelRectangle = new Rectangle(); // for label hit testing
 	Shape strokedShape, strokedShape2;
+	
+	private int lastFontSize = -1;
 	
 	// tracing	
 	protected boolean isTracing = false;
@@ -92,8 +84,6 @@ public abstract class Drawable {
 	}
 	
 	void updateFontSize() {
-		//	this enforces reiniting of labelRectangle in drawLabel()
-		labelHasIndex = true;				
 	}
 	
 	/**
@@ -105,22 +95,76 @@ public abstract class Drawable {
 	}
 	
 	final protected void drawLabel(Graphics2D g2) {
-		if (labelDesc == null) return;
+		if (labelDesc == null) return;		
+		String label = labelDesc;
+		Font oldFont  = null;
 		
-		// no index in label
-		if (oldLabelDesc == labelDesc && !labelHasIndex) {
-			g2.drawString(labelDesc, xLabel, yLabel);
-			labelRectangle.setLocation(xLabel, yLabel - g2.getFont().getSize());
-		} else { // label with index
-			// label description has changed, search for possible indices
+		// label changed: check for bold or italic tags in caption
+		if (oldLabelDesc != labelDesc || labelDesc.startsWith("<")) {					
+			boolean italic = true;
+			
+			// support for bold and italic tags in captions
+			// must be whole caption
+			if (label.startsWith("<i>") && label.endsWith("</i>")) {
+				if (oldFont == null)
+					oldFont = g2.getFont();
+				
+				// use Serif font so that we can get a nice curly italic x
+				g2.setFont(new Font(view.getApplication().getAppFontNameSerif(), oldFont.getStyle() | Font.ITALIC, oldFont.getSize()));			
+				label = label.substring(3, label.length() - 4);
+				italic = true;
+			} 
+	
+			if (label.startsWith("<b>") && label.endsWith("</b>")) {			
+				if (oldFont == null)
+					oldFont = g2.getFont();
+	
+				g2.setFont(g2.getFont().deriveFont(Font.BOLD + (italic ? Font.ITALIC : 0)));	
+				label = label.substring(3, label.length() - 4);			
+			}
+		}
+				
+		// no index in label: draw it fast
+		int fontSize = g2.getFont().getSize();
+		if (oldLabelDesc == labelDesc && !labelHasIndex && false && lastFontSize != fontSize) {			
+			
+			lastFontSize = fontSize;
+			g2.drawString(label, xLabel, yLabel);
+			labelRectangle.setLocation(xLabel, yLabel - fontSize);
+		} 
+		else { // label with index or label has changed:
+			// do the slower index drawing routine and check for indices
 			oldLabelDesc = labelDesc;
 					
-			Point p = drawIndexedString(g2, labelDesc, xLabel, yLabel);
+			Point p = drawIndexedString(g2, label, xLabel, yLabel);
 			labelHasIndex = p.y > 0;
-			int fontSize = g2.getFont().getSize();
 			labelRectangle.setBounds(xLabel, yLabel - fontSize, p.x, fontSize + p.y);			
 		}		
+		
+		if (oldFont != null)
+			g2.setFont(oldFont);
 	}			
+	
+	/**
+	 * Adapts xLabel and yLabel to make sure that the label rectangle fits fully on screen.
+	 */
+	final public void ensureLabelDrawsOnScreen() {
+		// draw label and 
+		drawLabel(view.g2Dtemp);
+		
+		// make sure labelRectangle fits on screen horizontally		
+		if (xLabel < 3) 
+			xLabel = 3;
+		else
+			xLabel = Math.min(xLabel, view.width - labelRectangle.width - 3);					
+		if (yLabel < view.fontSize) 
+			yLabel = view.fontSize;
+		else
+			yLabel = Math.min(yLabel, view.height - 3);	
+		
+		// update label rectangle position
+		labelRectangle.setLocation(xLabel, yLabel - view.fontSize);		
+	}
 	
 	// Michael Borcherds 2008-06-10
 	final float textWidth(String str, Font font, FontRenderContext frc)
@@ -129,184 +173,245 @@ public abstract class Drawable {
 		TextLayout layout = new TextLayout(str , font, frc);
 		return layout.getAdvance();	
 		
+	}
+	
+	
+	/* old version
+	final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
+		
+		int fontSize = g2.getFont().getSize();
+		float lineSpread = fontSize * 1.0f;
+		float lineSpace = fontSize * 0.5f;
+
+		int maxhOffset=0;
+		float height=0;
+		
+		Dimension dim;
+		
+		labelDesc=labelDesc.replaceAll("\\$\\$", "\\$"); // replace $$ with $
+		labelDesc=labelDesc.replaceAll("\\\\\\[", "\\$");// replace \[ with $
+		labelDesc=labelDesc.replaceAll("\\\\\\]", "\\$");// replace \] with $
+		labelDesc=labelDesc.replaceAll("\\\\\\(", "\\$");// replace \( with $
+		labelDesc=labelDesc.replaceAll("\\\\\\)", "\\$");// replace \) with $
+		
+		
+		String[] lines=labelDesc.split("\n");
+		
+		
+		for (int k=0 ; k<lines.length ; k++)
+		{
+
+			String[] strings=lines[k].split("\\$");
+			int heights[] = new int[strings.length];
+
+			boolean latex=false;
+			if (lines[k].indexOf('$') == -1 && lines.length == 1) 
+			{
+				latex=true; // just latex
+			}
+
+			int maxHeight=0;
+			// calculate heights of each element
+			for (int j=0 ; j<strings.length ; j++)
+			{
+
+				if (!strings[j].equals(str(" ",strings[j].length()))) // check not empty or just spaces
+				{
+					if (latex)
+					{						
+						dim = drawEquation(view.getTempGraphics2D(),0,0, strings[j], font, fgColor, bgColor);
+						//dim = sHotEqn.getSizeof(strings[j]);
+						//widths[j] = dim.width;				
+						heights[j] = dim.height;
+					}
+					else
+					{
+						heights[j] = (int)lineSpread; //p.y;		
+					}
+				}
+				else
+				{
+					heights[j]=0;
+				}
+				latex=!latex;
+				if (heights[j] > maxHeight) maxHeight=heights[j];
+
+			}
+			
+			if (k!=0) maxHeight += lineSpace;
+			
+			int hOffset=0;
+			
+			latex=false;
+			if (lines[k].indexOf('$') == -1 && lines.length == 1) 
+			{
+				latex=true; // just latex
+				//Application.debug("just latex");
+			}
+
+			// draw elements
+			for (int j=0 ; j<strings.length ; j++)
+			{
+
+				if (!strings[j].equals(str(" ",strings[j].length()))) // check not empty or just spaces
+				{
+					
+					int vOffset = (maxHeight - heights[j] )/2; // vertical centering
+					
+					if (latex)
+					{
+						
+						dim = drawEquation(g2,xLabel + hOffset,(int)(yLabel + height) + vOffset, strings[j], font, fgColor, bgColor);
+						hOffset+=dim.width;
+					}
+					else
+					{				
+						Point p = drawIndexedString(g2, strings[j], xLabel + hOffset, yLabel + height + vOffset + lineSpread);
+						hOffset+=p.x;
+					}
+				}
+				latex=!latex;
+			}
+			if (hOffset > maxhOffset) maxhOffset = hOffset;
+			height += maxHeight;
+		}
+		labelRectangle.setBounds(xLabel, yLabel, maxhOffset, (int)height);
 	}	
+
+	// returns a string consisting of n consecutive "str"s
+	final private String str(String str, int n)
+	{
+		if (n == 0) return "";
+		else if (n == 1) return str;
+		else {
+			StringBuffer ret = new StringBuffer();
+			
+			for (int i=0 ; i<n ; i++) ret.append(str);
+			return ret.toString();
+		}
+	} */
+	
 	
 	/**
 	 * Draw a multiline LaTeX label. 
 	 * 
-	 * TODO: Refactor this!!
-	 * 
-	 * @author Florian Sonner
+	 * TODO: Improve performance (caching, etc.)
+	 * Florian Sonner
 	 * @param g2
 	 * @param font
 	 * @param fgColor
 	 * @param bgColor
 	 */
 	final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
-		// if the current text is cached
-		boolean isCached = (
-			labelDesc.equals(labelCacheText) && font == labelCacheFont
-				&& fgColor.equals(labelCacheFg) && bgColor.equals(labelCacheBg)
-				&& labelCacheAA == (g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING).equals(RenderingHints.VALUE_TEXT_ANTIALIAS_ON))
-		);
+		int fontSize = g2.getFont().getSize();
+		int lineSpread = (int)(fontSize * 1.0f);
+		int lineSpace = (int)(fontSize * 0.5f);
 		
-		if(!isCached) {	Application.debug("Generate LaTeX image..");
-			int fontSize = font.getSize();
-			int lineSpread = (int)(fontSize * 1.0f);
-			int lineSpace = (int)(fontSize * 0.5f);
-			
-			// latex delimiters \[ \] \( \) $$ -> $
-			labelDesc = labelDesc.replaceAll("(\\$\\$|\\\\\\[|\\\\\\]|\\\\\\(|\\\\\\))", "\\$");
-			
-			// split on $ but not \$
-			String[] elements = labelDesc.split("(?<![\\\\])(\\$)", -1);
-			
-			ArrayList<Integer> lineHeights = new ArrayList<Integer>();
-			lineHeights.add(new Integer(lineSpread + lineSpace));
-			ArrayList<Integer> elementHeights = new ArrayList<Integer>();
-			
-			// use latex by default just if there is just a single element
-			boolean isLaTeX = (elements.length == 1);
-			
-			int totalWidth = 0;
-			int totalHeight = 0;
-			
-			// calculate the required space of every element
-			for(int i = 0, currentLine = 0, currentElement = 0, xOffset = 0; i < elements.length; ++i) {
-				if(isLaTeX) {
-					// save the height of this element by drawing it to a temporary buffer
-					Dimension dim = drawEquation(view.app, view.getTempGraphics2D(), 0, 0, elements[i], font, fgColor, bgColor);
-					int height = dim.height;
-					elementHeights.add(new Integer(height));
+		// latex delimiters \[ \] \( \) $$ -> $
+		labelDesc = labelDesc.replaceAll("(\\$\\$|\\\\\\[|\\\\\\]|\\\\\\(|\\\\\\))", "\\$");
+		
+		// split on $ but not \$
+		String[] elements = labelDesc.split("(?<![\\\\])(\\$)", -1);
+		
+		ArrayList lineHeights = new ArrayList();
+		lineHeights.add(new Integer(lineSpread + lineSpace));
+		ArrayList elementHeights = new ArrayList();
+		
+		// use latex by default just if there is just a single element
+		boolean isLaTeX = (elements.length == 1);
+		
+		// calculate the required space of every element
+		for(int i = 0, currentLine = 0, currentElement = 0; i < elements.length; ++i) {			
+			if(isLaTeX) {
+				// save the height of this element by drawing it to a temporary buffer
+				int height = drawEquation(view.app, view.getTempGraphics2D(font), 0, 0, elements[i], font, fgColor, bgColor).height;
+				elementHeights.add(new Integer(height));
+				
+				// check if this element is taller than every else in the line
+				if(height > ((Integer)lineHeights.get(currentLine)).intValue())
+					lineHeights.set(currentLine, new Integer(height));
+				
+				++currentElement;
+			} else {
+				elements[i] = elements[i].replaceAll("\\\\\\$", "\\$");
+				String[] lines = elements[i].split("\\n", -1);
+				
+				for(int j = 0; j < lines.length; ++j) {
+					elementHeights.add(new Integer(lineSpread));
 					
-					xOffset += dim.width;
-					
-					// check if this element is taller than everything else in the line
-					if(height > lineHeights.get(currentLine).intValue())
-						lineHeights.set(currentLine, new Integer(height));
+					// create a new line
+					if(j + 1 < lines.length) {
+						++currentLine;
+						
+						lineHeights.add(new Integer(lineSpread + lineSpace));
+					}
 					
 					++currentElement;
-				} else {
-					elements[i] = elements[i].replaceAll("\\\\\\$", "\\$");
-					String[] lines = elements[i].split("\\n", -1);
-					
-					for(int j = 0; j < lines.length; ++j) {
-						elementHeights.add(new Integer(lineSpread));
-						
-						xOffset += drawIndexedString(view.getTempGraphics2D(), lines[j], 0, 0).x;
-						
-						// create a new line
-						if(j + 1 < lines.length) {
-							++currentLine;
-							
-							lineHeights.add(new Integer(lineSpread + lineSpace));
-							
-							if(xOffset > totalWidth)
-								totalWidth = xOffset;
-							
-							xOffset = 0;
-						}
-						
-						++currentElement;
-					}
 				}
-				
-				// last element, increase total height and check if this is the most wide element
-				if(i + 1 == elements.length) {
-					if(xOffset > totalWidth)
-						totalWidth = xOffset;
-				}
-				
-				isLaTeX = !isLaTeX;
 			}
 			
-			// calculate the height of the whole image, the width was already calculated
-			for(Integer height : lineHeights)
-				totalHeight += height;
-			
-			labelCacheImage = new BufferedImage(totalWidth + 6, totalHeight + 6, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D cacheGraphics = (Graphics2D)labelCacheImage.getGraphics();
-			
-			// enable / disable anti-aliasing based on the settings of the main graphic canvas
-			cacheGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING));
-			cacheGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
-			
-			int width = 0;
-			int height = 0;
-			
-			// use latex by default just if there is just a single element
-			isLaTeX = (elements.length == 1);
-			
-			int xOffset = 0;
-			int yOffset = 0;
-			
-			// now draw all elements
-			for(int i = 0, currentLine = 0, currentElement = 0; i < elements.length; ++i) {			
-				if(isLaTeX) {
-					// calculate the y offset of this element by: (lineHeight - elementHeight) / 2
-					yOffset = (lineHeights.get(currentLine).intValue() - elementHeights.get(currentElement).intValue()) / 2;
-					
-					// draw the equation and save the x offset
-					xOffset += drawEquation(view.app, cacheGraphics, xOffset, height + yOffset, elements[i], font, fgColor, bgColor).width;
-					
-					++currentElement;
-				} else {
-					String[] lines = elements[i].split("\\n", -1);
-					
-					for(int j = 0; j < lines.length; ++j) {
-						// calculate the y offset like done with the element
-						yOffset = (lineHeights.get(currentLine).intValue() - elementHeights.get(currentElement).intValue()) / 2;
-						
-						// draw the string
-						xOffset += drawIndexedString(cacheGraphics, lines[j], xOffset, height + yOffset + lineSpread).x;
-						
-						// add the height of this line if more lines follow
-						if(j + 1 < lines.length) {
-							height += lineHeights.get(currentLine).intValue();
-							
-							if(xOffset > width)
-								width = xOffset;
-							
-							++currentLine;
-							xOffset = 0;
-						}
-						
-						++currentElement;
-					}
-				}
-				
-				// last element, increase total height and check if this is the most wide element
-				if(i + 1 == elements.length) {
-					height += lineHeights.get(currentLine).intValue();
-					
-					if(xOffset > width)
-						width = xOffset;
-				}
-				
-				isLaTeX = !isLaTeX;
-			}
-			
-			// update the dimensions of the rectangle
-			labelRectangle.width = width + 6;
-			labelRectangle.height = height + 6;
-			
-			// save cache information
-			labelCacheText = labelDesc;
-			labelCacheFont = font;
-			labelCacheFg = fgColor;
-			labelCacheBg = bgColor;
-			labelCacheAA = (g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING).equals(RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
+			isLaTeX = !isLaTeX;
 		}
 		
-		// update position of the rectangle 
-		labelRectangle.x = xLabel - 3;
-		labelRectangle.y = yLabel - 3;	
+		int width = 0;
+		int height = 0;
 		
-		g2.drawImage(labelCacheImage, xLabel, yLabel, null);
+		// use latex by default just if there is just a single element
+		isLaTeX = (elements.length == 1);
+		
+		int xOffset = 0;
+		int yOffset = 0;
+		
+		// now draw all elements
+		for(int i = 0, currentLine = 0, currentElement = 0; i < elements.length; ++i) {			
+			if(isLaTeX) {
+				// calculate the y offset of this element by: (lineHeight - elementHeight) / 2
+				yOffset = (((Integer)(lineHeights.get(currentLine))).intValue() - ((Integer)(elementHeights.get(currentElement))).intValue()) / 2;
+				
+				// draw the equation and save the x offset
+				xOffset += drawEquation(view.app, g2, xLabel + xOffset, (int)(yLabel + height) + yOffset, elements[i], font, fgColor, bgColor).width;
+				
+				++currentElement;
+			} else {
+				String[] lines = elements[i].split("\\n", -1);
+				
+				for(int j = 0; j < lines.length; ++j) {
+					// calculate the y offset like done with the element
+					yOffset = (((Integer)(lineHeights.get(currentLine))).intValue() - ((Integer)(elementHeights.get(currentElement))).intValue()) / 2;
+					
+					// draw the string
+					xOffset += drawIndexedString(g2, lines[j], xLabel + xOffset, yLabel + height + yOffset + lineSpread).x;
+					
+					// add the height of this line if more lines follow
+					if(j + 1 < lines.length) {
+						height += ((Integer)(lineHeights.get(currentLine))).intValue();
+						
+						if(xOffset > width)
+							width = xOffset;
+					}
+					
+					// create a new line if more will follow
+					if(j + 1 < lines.length) {
+						++currentLine;
+						xOffset = 0;
+					} 
+					
+					++currentElement;
+				}
+			}
+			
+			// last element, increase total height and check if this is the most wide element
+			if(i + 1 == elements.length) {
+				height += ((Integer)(lineHeights.get(currentLine))).intValue();
+				
+				if(xOffset > width)
+					width = xOffset;
+			}
+			
+			isLaTeX = !isLaTeX;
+		}
+		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
-
 	
 	private static geogebra.gui.hoteqn.sHotEqn eqn;
 	
@@ -359,6 +464,9 @@ public abstract class Drawable {
 	}
 	
 	final void drawMultilineText(Graphics2D g2) {
+		
+		if (labelDesc == null) return;
+		
 		int lines = 0;				
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.5f;
@@ -437,7 +545,7 @@ public abstract class Drawable {
 	 * @param str
 	 * @return additional pixel needed to draw str (x-offset, y-offset) 
 	 */
-	final public static Point drawIndexedString(Graphics2D g2, String str, float xPos, float yPos) {
+	public static Point drawIndexedString(Graphics2D g2, String str, float xPos, float yPos) {
 		Font g2font = g2.getFont();
 		Font indexFont = getIndexFont(g2font);
 		Font font = g2font;
@@ -527,23 +635,50 @@ public abstract class Drawable {
 
 	/**
 	 * Adds geo's label offset to xLabel and yLabel.
+	 * 
 	 * @return whether something was changed
 	 */
 	final protected boolean addLabelOffset() {
-		if (geo.labelOffsetX == 0 && geo.labelOffsetY == 0) return false;
+		return addLabelOffset(false);
+	}
+		
+	/**
+	 * Adds geo's label offset to xLabel and yLabel.
+	 * @param ensureLabelOnScreen: if true we make sure that the label is drawn on screen
+	 * 
+	 * @return whether something was changed
+	 */
+	final protected boolean addLabelOffset(boolean ensureLabelOnScreen) {
+		if (ensureLabelOnScreen) {
+			// MAKE SURE LABEL STAYS ON SCREEN
+			int xLabelOld = xLabel;
+			int yLabelOld = yLabel;			
+			xLabel += geo.labelOffsetX;
+			yLabel += geo.labelOffsetY;
 			
-		int x = xLabel + geo.labelOffsetX;
-		int y = yLabel + geo.labelOffsetY;
-		
-		// don't let offset move label out of screen!
-		int xmax = view.width - 15;
-		int ymax = view.height - 5;
-		if (x < 5 || x > xmax ) return false;
-		if (y < 15 || y > ymax) return false;
-		
-		xLabel = x;
-		yLabel = y;
-		return true;
+			// change xLabel and yLabel so that label stays on screen
+			ensureLabelDrawsOnScreen();
+			
+			// something changed?
+			return xLabelOld != xLabel || yLabelOld != yLabel;
+		}
+		else {
+			// STANDARD BEHAVIOUR
+			if (geo.labelOffsetX == 0 && geo.labelOffsetY == 0) return false;
+				
+			int x = xLabel + geo.labelOffsetX;
+			int y = yLabel + geo.labelOffsetY;
+			
+			// don't let offset move label out of screen
+			int xmax = view.width - 15;
+			int ymax = view.height - 5;
+			if (x < 5 || x > xmax ) return false;
+			if (y < 15 || y > ymax) return false;
+			
+			xLabel = x;
+			yLabel = y;
+			return true;
+		}
 	}
 	
 	/**
@@ -577,15 +712,14 @@ public abstract class Drawable {
 		}
 	}
 	
-	final public static void drawGeneralPath(Shape shape, Graphics2D g2) {
+	final public static void drawWithValueStrokePure(Shape shape, Graphics2D g2) {
 		Object oldHint = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);			
-		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
-		
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);			
 		g2.draw(shape);
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
-	}
+	}		
 	
-	final public static void fillGeneralPath(Shape shape, Graphics2D g2) {
+	final public static void fillWithValueStrokePure(Shape shape, Graphics2D g2) {
 		Object oldHint = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);			
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
 		g2.fill(shape);
@@ -612,24 +746,26 @@ public abstract class Drawable {
     		/* TODO: use this, rather than the code in GeoNumeric.update()
     		case GeoElement.GEO_CLASS_NUMERIC:
     			
-    			GeoNumeric number = (GeoNumeric)geo;
-    		    	
-		    	col = number.getTraceColumn1(); // must be called before getTraceRow()
-		    	row = number.getTraceRow() + "";
-		    	
-		    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,number.getValue());
-		    	traceCell.setAuxiliaryObject(true);
-    	    	}
+    			cons.getApplication().getGuiManager().traceToSpreadsheet(geo);
     			
     			break;*/
     			
     		case GeoElement.GEO_CLASS_POINT:
     	    	//Application.debug("GEO_CLASS_POINT");   		
 	    		GeoPoint P = (GeoPoint)geo;
-		    	P.getInhomCoords(coords);
+	    		
+	    		boolean polar = P.getMode() == Kernel.COORD_POLAR;
+	    		
+		    	if (polar)
+		    		P.getPolarCoords(coords);
+		    	else
+		    		P.getInhomCoords(coords);
 		    	
 		    	
 		    	if (P.getLastTrace1() != coords[0] || P.getLastTrace2() != coords[1]) {
+		    		
+		    		cons.getApplication().getGuiManager().traceToSpreadsheet(geo);
+		    		/*
 			    	col = P.getTraceColumn1(); // call before getTraceRow()
 			    	row = P.getTraceRow();
 			    	if (row > 0) {
@@ -642,14 +778,18 @@ public abstract class Drawable {
 				    	col = P.getTraceColumn2(); // call before getTraceRow()
 		    	    	//Application.debug(col+row);   		
 				    	
-				    	GeoNumeric traceCell2 = new GeoNumeric(cons,col+row,coords[1]);
+				    	GeoNumeric traceCell2;
+				    	
+				    	if (polar) traceCell2 = new GeoAngle(cons,col+row,coords[1]);
+				    	else traceCell2 = new GeoNumeric(cons,col+row,coords[1]);
+				    	
 				    	traceCell2.setAuxiliaryObject(true);
 				    	
 				    	cons.getApplication().getGuiManager().setScrollToShow(false);	
 				    	
 				    	P.setLastTrace1(coords[0]);
 				    	P.setLastTrace2(coords[1]);
-			    	}
+			    	}*/
 			    	
 		    	}
 	    	break;
@@ -662,6 +802,10 @@ public abstract class Drawable {
 		    	vector.getInhomCoords(coords);
 		    	
 		    	if (vector.getLastTrace1() != coords[0] || vector.getLastTrace2() != coords[1]) {
+		    		
+		    		cons.getApplication().getGuiManager().traceToSpreadsheet(geo);
+		    		
+		    		/*
 			    	col = vector.getTraceColumn1();
 			    	row = vector.getTraceRow();
 			    	if (row > 0) {
@@ -676,7 +820,7 @@ public abstract class Drawable {
 				    	
 				    	vector.setLastTrace1(coords[0]);
 				    	vector.setLastTrace2(coords[1]);
-			    	}
+			    	}*/
 			    	
 		    	}
     	    	 	    			

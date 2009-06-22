@@ -1,12 +1,13 @@
 // Copyright 2007 FreeHEP
 package org.freehep.graphicsio.emf;
 
-import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+
+import javax.swing.JComponent;
 
 /**
  * simple panel which displays an EMF image using the {@link EMFRenderer}

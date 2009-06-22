@@ -24,9 +24,11 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 /**
@@ -77,7 +79,7 @@ implements Previewable {
 			labelVisible = showLabel && geo.isLabelVisible();       
 			updateStrokes(ray);
 			
-			A = ray.getStartPoint();
+			A = ray.getStartPoint();			
 			
 			// calc start point of ray in screen coords
 			a[0] = A.inhomX;
@@ -93,7 +95,7 @@ implements Previewable {
 			 // line on screen?		
     		if (!line.intersects(0,0, view.width, view.height)) {				
     			isVisible = false;
-    			return;
+            	// don't return here to make sure that getBounds() works for offscreen points too
     		}
 			
 			// draw trace
@@ -151,27 +153,31 @@ implements Previewable {
 			return;
 		}
 
-		line.setLine( a[0], a[1],  a[0] + lambda * v[0], a[1] + lambda * v[1]);		  
+		line.setLine( a[0], a[1],  a[0] + 100*lambda * v[0], a[1] + 100*lambda * v[1]);		  
     }
     
     final public void draw(Graphics2D g2) {
         if (isVisible) {			
             if (geo.doHighlighting()) {
-                g2.setPaint(ray.getSelColor());
+                g2.setPaint(geo.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(line);       
             }
             
-            g2.setPaint(ray.getObjectColor());             
+            g2.setPaint(geo.getObjectColor());             
             g2.setStroke(objStroke);            
 			g2.draw(line);            
                         
             if (labelVisible) {
-				g2.setPaint(ray.getLabelColor());
+				g2.setPaint(geo.getLabelColor());
 				g2.setFont(view.fontLine);
 				drawLabel(g2);
             }			
         }
+    }
+
+    final public void setStroke(BasicStroke objStroke) {
+    	this.objStroke = objStroke;
     }
     
     final public void drawTrace(Graphics2D g2) {
@@ -191,13 +197,50 @@ implements Previewable {
 		}
 	}
 	
-	final public void updateMousePos(int x, int y) {		
+	Point2D.Double endPoint = new Point2D.Double();
+
+	final public void updateMousePos(int x, int y) {	
+		
 		if (isVisible) { 				
+
+			// need these as we don't want rounding when Alt pressed (nearest 15 degrees)
+			double xx = (double)x;
+			double yy = (double)y;
+			
+			// round angle to nearest 15 degrees if alt pressed
+			if (points.size() == 1 && view.getEuclidianController().altDown) {
+				double xRW = view.toRealWorldCoordX(x);
+				double yRW = view.toRealWorldCoordY(y);
+				GeoPoint p = (GeoPoint)points.get(0);
+				double px = p.inhomX;
+				double py = p.inhomY;
+				double angle = Math.atan2(yRW - py, xRW - px) * 180 / Math.PI;
+				double radius = Math.sqrt((py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
+				
+				// round angle to nearest 15 degrees
+				angle = Math.round(angle / 15) * 15; 
+				
+				xRW = px + radius * Math.cos(angle * Math.PI / 180);
+				yRW = py + radius * Math.sin(angle * Math.PI / 180);
+				
+				endPoint.x = xRW;
+				endPoint.y = yRW;
+				view.getEuclidianController().setLineEndPoint(endPoint);
+				
+				
+				// don't use view.toScreenCoordX/Y() as we don't want rounding
+				xx = view.xZero + xRW * view.xscale;
+				yy = view.yZero - yRW * view.yscale;
+
+			}
+			else
+				view.getEuclidianController().setLineEndPoint(null);
+
 			a[0] = A.inhomX;
 			a[1] = A.inhomY;
 			view.toScreenCoords(a);
-			v[0] = x - a[0];
-			v[1] = y - a[1];
+			v[0] = xx - a[0];
+			v[1] = yy - a[1];
 			setClippedLine();                                   			                                            
 		}
 	}

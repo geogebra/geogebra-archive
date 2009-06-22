@@ -32,6 +32,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
 public class InputDialog extends JDialog implements ActionListener,
@@ -82,6 +83,14 @@ public class InputDialog extends JDialog implements ActionListener,
 		
 		if (initString != null && selectInitText)
 			inputPanel.selectText();
+		else
+            // workaround for Mac OS X 10.5 problem (first character typed deleted)
+			// TODO [UNTESTED]
+            if (Application.MAC_OS)
+	            SwingUtilities.invokeLater( new Runnable(){ public void
+	            	run() { inputPanel.getTextComponent().setSelectionStart(1);
+	            	inputPanel.getTextComponent().setSelectionEnd(1);} });
+
 	}	
 	
 	protected InputDialog(JFrame frame, boolean modal) {
@@ -103,6 +112,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		sl = new GeoElementSelectionListener() {
 			public void geoElementSelected(GeoElement geo, boolean addToSelection) {
 				insertGeoElement(geo);
+				inputPanel.getTextComponent().requestFocusInWindow();
 			}
 		};
 		
@@ -184,7 +194,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	public void insertGeoElement(GeoElement geo) {
 		if (geo != null)
-			inputPanel.insertString(geo.getLabel());
+			insertString(" " + geo.getLabel() + " ");
 	}
 	
 	public void insertString(String str) {

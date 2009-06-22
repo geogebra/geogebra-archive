@@ -1,10 +1,6 @@
 package geogebra.cas.view;
 
-import geogebra.main.Application;
-
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;

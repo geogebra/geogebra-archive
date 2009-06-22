@@ -13,19 +13,9 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 
 public class AlgoSumFunctions  extends AlgoElement {
@@ -112,20 +102,28 @@ public class AlgoSumFunctions  extends AlgoElement {
     		resultFun.setUndefined();
     		return;
     	}
-    	// add first two:
-    	resultFun = GeoFunction.add(resultFun,(GeoFunction)geoList.get(0), (GeoFunction)geoList.get(1));
-    	
-    	if (n == 2) return;
-    	
-    	for (int i = 2 ; i < n ; i++) {  	
-    		
-    		if (!geoList.get(i).isGeoFunction()) {
-        		resultFun.setUndefined();
-        		return;
-        	}
-    		resultFun = GeoFunction.add(resultFun,resultFun, (GeoFunction)geoList.get(i));
-    	}
-    	
+		
+		// try needed for Sum[Sequence[If[x < i, i x], i, 1, 3]] at the moment
+		try {
+	    	// add first two:
+	    	resultFun = GeoFunction.add(resultFun,(GeoFunction)geoList.get(0), (GeoFunction)geoList.get(1));
+	    	
+	    	if (n == 2) return;
+	    	
+	    	for (int i = 2 ; i < n ; i++) {  	
+	    		
+	    		if (!geoList.get(i).isGeoFunction()) {
+	        		resultFun.setUndefined();
+	        		return;
+	        	}
+	    		resultFun = GeoFunction.add(resultFun,resultFun, (GeoFunction)geoList.get(i));
+	    	}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+    		resultFun.setUndefined();
+    		return;			
+		}
     	
     	/*
     	// this works:

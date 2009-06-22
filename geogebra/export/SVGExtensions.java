@@ -3,7 +3,6 @@ package geogebra.export;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * adds support for grouping objects in SVG files

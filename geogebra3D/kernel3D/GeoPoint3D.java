@@ -31,7 +31,6 @@ import geogebra.kernel.PointProperties;
 import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
-import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 

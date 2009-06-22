@@ -38,7 +38,7 @@ implements EuclidianViewAlgo {
         corner.setEuclidianVisible(false);   	// hidden by default
         corner.setLabel(label);                  
         
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
     
     
     }   

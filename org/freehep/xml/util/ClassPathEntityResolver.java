@@ -2,6 +2,7 @@
 package org.freehep.xml.util;
 
 import java.io.InputStream;
+
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -12,7 +13,7 @@ import org.xml.sax.SAXException;
  * DTD files located on the current java class path
  *
  * @author Tony Johnson (tonyj@slac.stanford.edu)
- * @version $Id: ClassPathEntityResolver.java,v 1.3 2008-05-04 12:20:36 murkle Exp $
+ * @version $Id: ClassPathEntityResolver.java,v 1.4 2009-06-22 02:18:23 hohenwarter Exp $
  */
 public class ClassPathEntityResolver implements EntityResolver
 {

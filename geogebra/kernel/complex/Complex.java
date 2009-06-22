@@ -453,5 +453,148 @@ final public class Complex{
         	return (Double.isNaN(c.real) || Double.isNaN(c.imag));
         }
     	// <-- Added for Intergeo File Format (Yves Kreis)
+        
+        
+        
+        // ***********************************************
+        // following bits added from Complex.java Aug 2008
+        // ***********************************************
       
+        // returns a Complex number raised to a double power
+        public static Complex pow(Complex a, double b){
+                    return  powDouble(a, b);
+        }
+        // Principal value of the natural log of an Complex number
+        public static Complex log(Complex aa ){
+
+                double a=aa.real;
+                double b=aa.imag;
+                Complex c = new Complex();
+
+                c.real=Math.log(Complex.abs(aa));
+                c.imag=Math.atan2(b,a);
+
+                return c;
+        }
+        // Multiply a double by a Complex number [static method]
+        public static Complex times(double a, Complex b){
+                Complex c = new Complex();
+
+                c.real=a*b.real;
+                c.imag=a*b.imag;
+                return c;
+        }
+        
+        // Exponential of a complex number (static method)
+        public static Complex exp(Complex aa){
+                Complex z = new Complex();
+
+                double a = aa.real;
+                double b = aa.imag;
+
+                if(b==0.0D){
+                        z.real=Math.exp(a);
+                        z.imag=0.0D;
+                }
+                else{
+                        if(a==0D){
+                                z.real=Math.cos(b);
+                                z.imag=Math.sin(b);
+                        }
+                        else{
+                                double c=Math.exp(a);
+                                z.real=c*Math.cos(b);
+                                z.imag=c*Math.sin(b);
+                        }
+                }
+                return z;
+        }
+
+
+        // PRIVATE METHODS
+// returns a Complex number raised to a double power
+// this method is used for calculation within this class file
+// see above for corresponding public method
+private static Complex powDouble(Complex a, double b){
+        Complex z = new Complex();
+        double re=a.real;
+        double im=a.imag;
+
+        if(a.isZero()){
+            if(b==0.0){
+                z = new Complex(1.0, 0.0);
+            }
+            else{
+                if(b>0.0){
+                    z = new Complex(0.0, 0.0);
+                }
+                else{
+                    if(b<0.0){
+                        z = new Complex(Double.POSITIVE_INFINITY, 0.0);
+                    }
+                }
+            }
+        }
+        else{
+            if(im==0.0D && re>0.0D){
+                z.real=Math.pow(re, b);
+                z.imag=0.0D;
+            }
+            else{
+                if(re==0.0D){
+                    z=Complex.exp(Complex.times(b, Complex.log(a)));
+                }
+                else{
+                    double c=Math.pow(re*re+im*im, b/2.0D);
+                    double th=Math.atan2(im, re);
+                    z.real=c*Math.cos(b*th);
+                    z.imag=c*Math.sin(b*th);
+                }
+            }
+        }
+        return z;
 }
+
+// returns a Complex number raised to a Complex power
+public static Complex pow(Complex a, Complex b ){
+        Complex c = new Complex();
+        if(a.isZero()){
+            if(b.imag==0){
+                if(b.real==0){
+                    c = new Complex(1.0, 0.0);
+                }
+                else{
+                    if(a.real>0.0){
+                        c = new Complex(0.0, 0.0);
+                    }
+                    else{
+                        if(a.real<0.0){
+                            c = new Complex(Double.POSITIVE_INFINITY, 0.0);
+                        }
+                    }
+                }
+            }
+            else{
+                c=Complex.exp(b.times(Complex.log(a)));
+            }
+        }
+        else{
+            c=Complex.exp(b.times(Complex.log(a)));
+        }
+
+        return c;
+}
+
+// Multiply this Complex number by a Complex number [instance method]
+// this Complex number remains unaltered
+public Complex times(Complex a){
+        Complex b = new Complex();
+
+        b.real=this.real*a.real-this.imag*a.imag;
+        b.imag=this.real*a.imag+this.imag*a.real;
+        return b;
+}
+
+
+}
+

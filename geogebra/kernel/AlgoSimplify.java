@@ -68,21 +68,20 @@ public class AlgoSimplify extends AlgoElement {
 		getExpression().getCASstring(ExpressionNode.STRING_TYPE_MathPiper, false);*/
 		//Application.debug(functionIn);
 
-	    
 	    sb.setLength(0);
-        sb.append("Simplify(");
+        sb.append("Simplify(TrigSimpCombine(");
         sb.append(functionIn);
-        sb.append(")");
-		String functionOut = kernel.evaluateMathPiperRaw(sb.toString());
+        sb.append("))");
+		String functionOut = kernel.evaluateMathPiper(sb.toString());
 		
 		//Application.debug("Factorize input:"+functionIn);
 		//Application.debug("Factorize output:"+functionOut);
 		
 		boolean MathPiperError=false;
 		
-		if (functionOut.length()==0) MathPiperError=true; // MathPiper error
+		if (functionOut == null || functionOut.length()==0) MathPiperError=true; // MathPiper error
 		
-		if (functionOut.length()>7)
+		else if (functionOut.length()>7)
 			if (functionOut.startsWith("Simplify(") || // MathPiper error
 				functionOut.startsWith("Undefined") || // MathPiper error/bug eg Simplify(0.00000000000000001)
 				functionOut.startsWith("FWatom(") )  // MathPiper oddity??

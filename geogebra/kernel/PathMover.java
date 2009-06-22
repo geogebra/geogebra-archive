@@ -14,14 +14,11 @@ package geogebra.kernel;
 
 public interface PathMover {
 	
-	public static final int MIN_STEPS = 32;
-	public static final int DEFAULT_STEPS = 128;
+	public static final int MIN_STEPS = 128; // 128;
 	public static final double STEP_DECREASE_FACTOR = 0.5;
-	public static final double STEP_INCREASE_FACTOR = 1.5;
-	
-	public static final double INIT_STEP_WIDTH = 1E-2;
+	public static final double STEP_INCREASE_FACTOR = 2;
+		
 	public static final double MIN_STEP_WIDTH = 1E-8;
-	
 	public static final double OPEN_BORDER_OFFSET = 1E-5;	
 	
 	public static final int MAX_POINTS = 10000;
@@ -37,7 +34,7 @@ public interface PathMover {
 	 * Inits the path mover using a path parameter on the path
 	 * and sets the orientation to positive.
 	 */
-	public void init(double param);	
+	//public void init(double param);	
 	
 	/**
 	 * Sets point p to the current position on the path
@@ -89,7 +86,7 @@ public interface PathMover {
 	public boolean biggerStep();
 	
 	/**
-	 * Set step width. Returns whether this was possible.	 
+	 * Sets step width. Returns whether this was possible.	 
 	 */
 	public boolean setStep(double step);
 	

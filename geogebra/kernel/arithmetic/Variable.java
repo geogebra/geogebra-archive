@@ -89,7 +89,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
      * like A$1 or $A$1 a special ExpressionNode wrapper object is returned
      * that preserves this special name for displaying of the expression.
      */
-    final ExpressionValue resolveAsExpressionValue() {
+    final public ExpressionValue resolveAsExpressionValue() {
     	GeoElement geo = resolve();
     	
     	// spreadsheet dollar sign reference

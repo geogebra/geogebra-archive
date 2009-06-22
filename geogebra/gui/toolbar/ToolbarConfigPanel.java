@@ -15,10 +15,8 @@ import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
@@ -47,6 +45,9 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.event.ActionListener, javax.swing.event.TreeExpansionListener {	
 	
+	private static final int SCROLL_PANEL_WIDTH = 300;
+	private static final int SCROLL_PANEL_HEIGHT = 400;
+	
 	public JButton insertButton;
 	public JButton moveUpButton;
 	public JButton moveDownButton;
@@ -59,14 +60,11 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	JList toolList;	
 	DefaultListModel toolListModel;
 	int selectedRow;	
-	Application app;
+	Application app;	
 	
-	/**
-	 * 
-	 */
 	public ToolbarConfigPanel(Application app) {
 		super();	
-		this.app = app;				
+		this.app = app;			
 		
 		selectionPanel = new JPanel();
 		selectionPanel.setLayout(new BorderLayout(5, 5));
@@ -81,10 +79,9 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		setToolBarString(app.getGuiManager().getToolBarDefinition());	
 		
 		configScrollPane = new JScrollPane(tree);
-		configScrollPane.setPreferredSize(new Dimension(200, 400));
 		configScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		configScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		
+		//configScrollPane.setSize(150, 150);	
 		JPanel scrollSpacePanel = new JPanel();
 		scrollSpacePanel.setLayout(new BorderLayout(0, 0));
 		scrollSpacePanel.setBorder(new EmptyBorder(3, 5, 3, 5));
@@ -93,19 +90,32 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		scrollPanel.setLayout(new BorderLayout(0, 0));
 		scrollPanel.setBorder(new TitledBorder(app.getMenu("Toolbar")));
 		scrollPanel.add(scrollSpacePanel, BorderLayout.CENTER);
+				
+		scrollPanel.setPreferredSize(new Dimension(SCROLL_PANEL_WIDTH, SCROLL_PANEL_HEIGHT));
 		//
 		selectionPanel.add(scrollPanel, BorderLayout.WEST);
 		//
+		
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(2, 1, 5, 10));			
-		//
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+		buttonPanel.add(Box.createVerticalGlue());
+		
 		insertButton = new JButton("< " + app.getPlain("Insert"));		
 		insertButton.addActionListener(this);
+		insertButton.setAlignmentX(CENTER_ALIGNMENT);
 		buttonPanel.add(insertButton);
-		//		
+		buttonPanel.add(Box.createVerticalStrut(10));
+		
 		deleteButton = new javax.swing.JButton(app.getPlain("Remove") + " >");		
 		deleteButton.addActionListener(this);
-		buttonPanel.add(deleteButton);
+		deleteButton.setAlignmentX(CENTER_ALIGNMENT);
+		buttonPanel.add(deleteButton);		
+		
+		buttonPanel.add(Box.createVerticalGlue());
+		selectionPanel.add(buttonPanel, BorderLayout.CENTER);
+		
+		
+		
 		//		
 		JPanel upDownPanel = new JPanel();
 		moveUpButton = new javax.swing.JButton("\u25b2 " + app.getPlain("Up"));	
@@ -137,7 +147,6 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		toolList.setBackground(SystemColor.text);
 		modeScrollPane = new JScrollPane(toolList);		
-		modeScrollPane.setPreferredSize(new Dimension(200, 400));
 		modeScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		modeScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		toolList.setCellRenderer(new ModeCellRenderer(app));
@@ -150,6 +159,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		modeSpacePanel.add("Center", modeScrollPane);
 		
 		modePanel.add("Center", modeSpacePanel);
+		modePanel.setPreferredSize(new Dimension(SCROLL_PANEL_WIDTH, SCROLL_PANEL_HEIGHT));
 		selectionPanel.add("East", modePanel);		
 		add("Center", selectionPanel);
 		
@@ -404,7 +414,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	 *
 	 */
 	private JTree generateTree() {			
-		JTree jTree = new JTree() {
+		final JTree jTree = new JTree() {
 	        protected void setExpandedState(TreePath path, boolean state) {
 	            // Ignore all collapse requests of root        	
 	            if (path != getPathForRow(0)) {
@@ -416,7 +426,8 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		jTree.setCellRenderer(new ModeCellRenderer(app));
 		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		jTree.putClientProperty("JTree.lineStyle", "Angled");
-		jTree.addTreeExpansionListener(this);		
+		jTree.addTreeExpansionListener(this);						
+		
 		return jTree;
 	}
 	/**

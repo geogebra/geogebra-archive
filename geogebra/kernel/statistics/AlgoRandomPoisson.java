@@ -33,23 +33,14 @@ public class AlgoRandomPoisson extends AlgoElement {
 	public AlgoRandomPoisson(Construction cons, String label, NumberValue a) {
 		super(cons);
 	    this.a = a;
-	    num = new GeoNumeric(cons); 
-	    setInputOutput(); // for AlgoElement
 	    
-	    // compute angle
-	    compute();     
-	        
+	    // output is random number
+	    num = new GeoNumeric(cons);
+		cons.addRandomNumber(num);
+	    
+	    setInputOutput(); // for AlgoElement	    					   
+	    compute();	        	    	   
 	    num.setLabel(label);
-	    
-
-		// create dummy random number in (0,1)
-		// and call setRandomInputNumber() in order to
-		// make sure that this algorithm is updated when
-		// arrow keys are pressed
-		GeoNumeric randNum = new GeoNumeric(cons);
-		randNum.setUsedForRandom(true);
-		GeoNumeric[] randNums = { randNum };
-		setRandomInputNumbers(randNums);
 	}
 
 
@@ -84,7 +75,7 @@ public class AlgoRandomPoisson extends AlgoElement {
 	/*
 	 * poisson random number (Knuth)
 	 */
-	private int randomPoisson(int lambda) {
+	private int randomPoisson(double lambda) {
 		double L = Math.exp(-lambda);
 		double p = 1;
 		int k = 0;
@@ -108,7 +99,7 @@ public class AlgoRandomPoisson extends AlgoElement {
 	private int randomPoissonTRS(double mu) {
 		
 		
-		if (mu < 10) return randomPoisson((int)mu);
+		if (mu < 10) return randomPoisson(mu);
 			
 		double b = 0.931 +  + 2.53 * Math.sqrt(mu);
 		double a = -0.059 + 0.02438 * b;

@@ -1,18 +1,17 @@
 package geogebra.gui;
 
+import geogebra.kernel.ConstructionDefaults;
+import geogebra.main.Application;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.util.Hashtable;
 
-import geogebra.kernel.ConstructionDefaults;
-import geogebra.main.Application;
-
 import javax.swing.BorderFactory;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;

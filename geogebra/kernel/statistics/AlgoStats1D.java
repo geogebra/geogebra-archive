@@ -8,18 +8,17 @@ This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
-*/
+ */
 
 package geogebra.kernel.statistics;
 
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoAngle;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Construction;
-
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 
 /**
@@ -34,128 +33,152 @@ public abstract class AlgoStats1D extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList geoList; //input
-    public GeoNumeric Truncate; //input	
-    public GeoNumeric result; //output	
-    
-    private int stat;
-    
-    final static int STATS_MEAN = 0;
-    final static int STATS_VARIANCE = 1;
-    final static int STATS_SIGMAX = 2;
-    final static int STATS_SIGMAXX = 3;
-    final static int STATS_SD = 4;
-    final static int STATS_PRODUCT = 5;
-    
-    public AlgoStats1D(Construction cons, String label, GeoList geoList, int stat) {
-        this(cons, label, geoList, null, stat);
-    }
+	public GeoNumeric Truncate; //input	
+	public GeoNumeric result; //output	
 
-    AlgoStats1D(Construction cons, String label, GeoList geoList, GeoNumeric Truncate, int stat) {
-        super(cons);
-        this.geoList = geoList;
-        this.stat=stat;
-        this.Truncate=Truncate;
-        
-        result = new GeoNumeric(cons);
+	private int stat;
 
-        setInputOutput();
-        compute();
-        result.setLabel(label);
-    }
+	final static int STATS_MEAN = 0;
+	final static int STATS_VARIANCE = 1;
+	final static int STATS_SIGMAX = 2;
+	final static int STATS_SIGMAXX = 3;
+	final static int STATS_SD = 4;
+	final static int STATS_PRODUCT = 5;
+	final static int STATS_SXX = 6;
 
-    protected String getClassName() {
-        return "AlgoStats1D";
-    }
+	public AlgoStats1D(Construction cons, String label, GeoList geoList, int stat) {
+		this(cons, label, geoList, null, stat);
+	}
 
-    protected void setInputOutput(){
-    	if (Truncate == null) {
-	        input = new GeoElement[1];
-	        input[0] = geoList;
-    	}
-    	else {
-    		 input = new GeoElement[2];
-             input[0] = geoList;
-             input[1] = Truncate;
-    	}
+	AlgoStats1D(Construction cons, String label, GeoList geoList, GeoNumeric Truncate, int stat) {
+		super(cons);
+		this.geoList = geoList;
+		this.stat=stat;
+		this.Truncate=Truncate;
 
-        output = new GeoElement[1];
-        output[0] = result;
-        setDependencies(); // done by AlgoElement
-    }
+		if (geoList.size() > 0 && geoList.get(0).isAngle())
+			result = new GeoAngle(cons);
+		else
+			result = new GeoNumeric(cons);
 
-    public GeoNumeric getResult() {
-        return result;
-    }
-    
+		setInputOutput();
+		compute();
+		result.setLabel(label);
+	}
 
-    protected final void compute() {
-    	
-    	// TODO: remove
-    	//Application.debug("compute: " + geoList);
-    	
-    	int truncate;
-    	int size = geoList.size();
+	protected String getClassName() {
+		return "AlgoStats1D";
+	}
 
-    	if (Truncate!=null)
-    	{
-    		truncate=(int)Truncate.getDouble();
-    		if (truncate<1 || truncate>size)
-    		{
-        		result.setUndefined();
-        		return;
-    		}
-    		size=truncate; // truncate the list
-    	}
-    	
-    	if (!geoList.isDefined() ||  size == 0) {
-    		result.setUndefined();
-    		return;
-    	}
-    	
-    	double sumVal = 0;
-    	double sumSquares = 0;
-    	double product = 1;
-    	double val;
-    	for (int i=0; i < size; i++) {
-    		GeoElement geo = geoList.get(i);
-    		if (geo.isNumberValue()) {
-    			NumberValue num = (NumberValue) geo;
-    			val=num.getDouble();
-    			sumVal += val;
-    			sumSquares += val*val;
-    			product *= val;
-    		} else {
-        		result.setUndefined();
-    			return;
-    		}    		    		
-    	}   
-    	
-    	double mu=sumVal/(double)size;
-    	double var;
-    	
-        switch (stat)
-        {
-        case STATS_MEAN:
-        	result.setValue(mu);
-        	break;
-        case STATS_SD:
-        	var=sumSquares/(double)size-mu*mu;
-        	result.setValue(Math.sqrt(var));
-        	break;
-        case STATS_VARIANCE:
-        	var=sumSquares/(double)size-mu*mu;
-        	result.setValue(var);
-        	break;
-        case STATS_SIGMAX:
-        	result.setValue(sumVal);
-        	break;
-        case STATS_SIGMAXX:
-        	result.setValue(sumSquares);
-        	break;
-        case STATS_PRODUCT:
-        	result.setValue(product);
-        	break;
-        }
-    }
-    
-}
+	protected void setInputOutput(){
+		if (Truncate == null) {
+			input = new GeoElement[1];
+			input[0] = geoList;
+		}
+		else {
+			input = new GeoElement[2];
+			input[0] = geoList;
+			input[1] = Truncate;
+		}
+
+		output = new GeoElement[1];
+		output[0] = result;
+		setDependencies(); // done by AlgoElement
+	}
+
+	public GeoNumeric getResult() {
+		return result;
+	}
+
+
+	protected final void compute() {
+
+		// TODO: remove
+		//Application.debug("compute: " + geoList);
+		if (!geoList.isDefined()) {
+			result.setUndefined();
+			return;
+		}
+
+		int truncate;
+		int size = geoList.size();
+
+		if (Truncate != null)
+		{
+			truncate=(int)Truncate.getDouble();
+			if (truncate < 1 || truncate > size)
+			{
+				result.setUndefined();
+				return;
+			}
+			size = truncate; // truncate the list
+		}
+
+		if (size == 0) {
+			switch (stat)
+			{
+			case STATS_SIGMAX:
+			case STATS_SIGMAXX:
+				result.setValue(0);
+				return;
+			case STATS_PRODUCT:
+				result.setValue(1);
+				return;
+			default:
+				result.setUndefined();
+			return;
+			}
+		}
+
+
+			double sumVal = 0;
+			double sumSquares = 0;
+			double product = 1;
+			double val;
+			for (int i=0; i < size; i++) {
+				GeoElement geo = geoList.get(i);
+				if (geo.isNumberValue()) {
+					NumberValue num = (NumberValue) geo;
+					val=num.getDouble();
+					sumVal += val;
+					sumSquares += val*val;
+					product *= val;
+				} else {
+					result.setUndefined();
+					return;
+				}    		    		
+			}   
+
+			double mu=sumVal/(double)size;
+			double var;
+
+			switch (stat)
+			{
+			case STATS_MEAN:
+				result.setValue(mu);
+				break;
+			case STATS_SD:
+				var=sumSquares/(double)size-mu*mu;
+				result.setValue(Math.sqrt(var));
+				break;
+			case STATS_VARIANCE:
+				var=sumSquares/(double)size-mu*mu;
+				result.setValue(var);
+				break;
+			case STATS_SXX:
+				var=sumSquares - (sumVal * sumVal) / (double)size;
+				result.setValue(var);
+				break;
+			case STATS_SIGMAX:
+				result.setValue(sumVal);
+				break;
+			case STATS_SIGMAXX:
+				result.setValue(sumSquares);
+				break;
+			case STATS_PRODUCT:
+				result.setValue(product);
+				break;
+			}
+		}
+
+	}

@@ -22,9 +22,9 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	private boolean needsUpdatedBoundingBox = false;
 	
 	// font options
-	private boolean serifFont;
-	private int fontStyle;
-	private int fontSize; // size relative to default font size
+	private boolean serifFont = false;
+	private int fontStyle = Font.PLAIN;
+	private int fontSize = 0; // size relative to default font size
 	private int printDecimals = -1;
 	private int printFigures = -1;
 	public boolean useSignificantFigures = false;
@@ -57,12 +57,16 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}
 
 	public void set(GeoElement geo) {
-		GeoText gt = (GeoText) geo;
+		GeoText gt = (GeoText) geo;				
 		str = gt.str;
-
+		isLaTeX = gt.isLaTeX;		
+		
 		// macro output: don't set start point
 		if (cons != geo.cons && isAlgoMacroOutput()) 
 			return;
+		
+		// needed for Corner[Element[text
+		setBoundingBox(gt.getBoundingBox());
 	
 		try {
 			if (gt.startPoint != null) {
@@ -78,8 +82,6 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		catch (CircularDefinitionException e) {
 			Application.debug("set GeoText: CircularDefinitionException");
 		}		
-		
-		//setLaTeX(gt.isLaTeX, true);
 	}
 	
 	public void setVisualStyle(GeoElement geo) {
@@ -107,7 +109,9 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 			//TODO: check greek letters of latex string
 			str = Util.toLaTeXString(text, false);
 		} else {
-			str = text;
+			// replace "\n" with a proper newline
+			// for eg Text["Hello\nWorld",(1,1)]
+			str = text.replaceAll("\\\\n", "\n");
 		}		
 		
 	}
@@ -136,9 +140,12 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		}
 	}
 			
-	public void setStartPoint(GeoPoint p)  throws CircularDefinitionException { 
+	public void setStartPoint(GeoPoint p) throws CircularDefinitionException { 
+		// don't allow this if it's eg Text["hello",(2,3)]
+		if (alwaysFixed) return;		
+		
 		// macro output uses initStartPoint() only
-		if (isAlgoMacroOutput()) return; 
+		//if (isAlgoMacroOutput()) return; 
 		
 		// check for circular definition
 		if (isParentOf(p))
@@ -294,6 +301,11 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	
 	public boolean isTextCommand() {
 		return isTextCommand;
+	}
+	
+	void setAlgoMacroOutput(boolean isAlgoMacroOutput) {
+		super.setAlgoMacroOutput(true);
+		setIsCommand(true);
 	}
 	
 	// used for eg Text["text",(1,2)]
@@ -482,6 +494,12 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		
 		isLaTeX = b;
 		
+		// make sure LaTeX jar file is loaded so that this text
+		// can be rendered
+		if (isLaTeX) {
+			app.loadLaTeXJar();
+		}
+		
 		if (updateParentAlgo) {
 			updateCascadeParentAlgo();
 		}			
@@ -632,8 +650,19 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		}	
 	}
 	
+	public Rectangle2D getBoundingBox() 
+	{ 
+		return boundingBox;
+	}
+
+	public void setBoundingBox(Rectangle2D rect) 
+	{ 
+		boundingBox = rect;
+	}
+
 	public void setBoundingBox(double x, double y, double w, double h) 
 	{ 
+		
 		boolean firstTime = boundingBox == null;
 		if (firstTime) {
 			boundingBox = new Rectangle2D.Double();
@@ -698,7 +727,26 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		
 		return comparator;
 	}
+	
 	private static Comparator comparator;
+	
+		public void setTemporaryPrintAccuracy() {
+		if (useSignificantFigures()) {
+			kernel.setTemporaryPrintFigures(printFigures);
+		}
+		else
+		{
+			kernel.setTemporaryPrintDecimals(printDecimals);
+		}
+	}
+	
+	public void restorePrintAccuracy() {
+		kernel.restorePrintAccuracy();
+	}
+
+	public boolean isAlwaysFixed() {
+		return alwaysFixed;
+	}
 
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub

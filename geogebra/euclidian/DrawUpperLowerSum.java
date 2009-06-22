@@ -37,7 +37,7 @@ public class DrawUpperLowerSum extends Drawable {
     private double [] coords = new double[2];
     private boolean trapeziums;
     private boolean histogram;
-    private boolean boxplot;
+    private boolean boxplot, barchartFreqs;
    
     public DrawUpperLowerSum(EuclidianView view, GeoNumeric n) {
     	this.view = view; 	
@@ -50,6 +50,7 @@ public class DrawUpperLowerSum extends Drawable {
 		this.trapeziums = algo.useTrapeziums();
 		this.histogram = algo.isHistogram();
 		this.boxplot = algo.isBoxPlot();
+		this.barchartFreqs = algo.getType() == AlgoFunctionAreaSums.TYPE_BARCHART_FREQUENCY_TABLE;
         a = algo.getA();
         b = algo.getB();    
         update();
@@ -64,6 +65,12 @@ public class DrawUpperLowerSum extends Drawable {
 		if (boxplot)
 		{
 			updateBoxPlot();
+			return;
+		}
+		
+		if (barchartFreqs || histogram)
+		{
+			updateBarChart();
 			return;
 		}
 		
@@ -90,12 +97,13 @@ public class DrawUpperLowerSum extends Drawable {
 			coords[1] = yval[i];
 			view.toScreenCoords(coords);
 			
+			/* removed - so that getBounds() works
 			// avoid too big y values
 			if (coords[1] < 0 && !trapeziums) {
 				coords[1] = -1;
 			} else if (coords[1] > view.height && !trapeziums) {
 				coords[1] = view.height + 1;
-			}
+			}*/
 			
 			x = (float) coords[0];			
 			
@@ -128,7 +136,7 @@ public class DrawUpperLowerSum extends Drawable {
 		// gp on screen?		
 		if (!gp.intersects(0,0, view.width, view.height)) {				
 			isVisible = false;
-			return;
+        	// don't return here to make sure that getBounds() works for offscreen points too
 		}		
 
 		if (labelVisible) {
@@ -231,7 +239,7 @@ public class DrawUpperLowerSum extends Drawable {
 		// gp on screen?		
 		if (!gp.intersects(0,0, view.width, view.height)) {				
 			isVisible = false;
-			return;
+        	// don't return here to make sure that getBounds() works for offscreen points too
 		}		
 
 		if (labelVisible) {
@@ -243,7 +251,47 @@ public class DrawUpperLowerSum extends Drawable {
     
 
     }
-	final public void draw(Graphics2D g2) {
+    private void updateBarChart() {
+		gp.reset();
+		float base = (float) view.yZero;
+				
+		int N = algo.getIntervals();		
+		double [] leftBorder = algo.getLeftBorders();
+		double [] yval = algo.getValues();
+		
+		gp.moveTo(view.toScreenCoordX(leftBorder[0]), base);	
+		
+		for (int i = 0; i < N - 1; i++) {
+			
+			float x0 = view.toScreenCoordX(leftBorder[i]);	
+			float height = view.toScreenCoordY(yval[i]);
+			float x1 = view.toScreenCoordX(leftBorder[i + 1]);
+			
+			gp.lineTo(x0, height); // up
+			gp.lineTo(x1, height); // along
+			gp.lineTo(x1, base); // down
+			
+		} 	
+		
+		gp.lineTo(view.toScreenCoordX(leftBorder[0]), base);
+
+		
+		// gp on screen?		
+		if (!gp.intersects(0,0, view.width, view.height)) {				
+			isVisible = false;
+        	// don't return here to make sure that getBounds() works for offscreen points too
+		}		
+
+		if (labelVisible) {
+			xLabel = (view.toScreenCoordX(leftBorder[0]) + view.toScreenCoordX(leftBorder[N-1])) / 2 - 6;
+			yLabel = (int) view.yZero - view.fontSize;
+			labelDesc = geo.getLabelDescription();
+			addLabelOffset();
+		}
+
+    }
+
+    final public void draw(Graphics2D g2) {
         if (isVisible) {
         	try {
 	            if (geo.doHighlighting()) {
@@ -300,10 +348,10 @@ public class DrawUpperLowerSum extends Drawable {
     /**
 	 * Returns the bounding box of this Drawable in screen coordinates.	 
 	 */
-	final public Rectangle getBounds() {		
+	final public Rectangle getBounds() {	
 		if (!geo.isDefined() || !geo.isEuclidianVisible())
 			return null;
 		else 
-			return gp.getBounds();	
+			return (Rectangle) gp.getBounds();	
 	}
 }

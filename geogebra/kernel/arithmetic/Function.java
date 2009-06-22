@@ -198,7 +198,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         }
         
         //  simplify constant parts in expression
-        expression.simplifyConstants();
+        expression.simplifyConstantIntegers();
 
         initType();              
     }               
@@ -206,12 +206,13 @@ implements ExpressionValue, RealRootFunction, Functional {
     private void initType() {
     	// check type of function
         ExpressionValue ev = expression.evaluate();        
-        if (ev.isNumberValue()) {
+        if (ev.isBooleanValue()) {
+        	isBooleanFunction = true;
+        }        
+        else if (ev.isNumberValue()) {
         	isBooleanFunction = false;
         } 
-        else if (ev.isBooleanValue()) {
-        	isBooleanFunction = true;
-        } else
+        else
 			throw new MyError(app, "InvalidFunction");  
     }
 
@@ -307,8 +308,8 @@ implements ExpressionValue, RealRootFunction, Functional {
     final public void translate(double vx, double vy) {                  
         boolean isLeaf = expression.isLeaf();
         ExpressionValue left = expression.getLeft();
-             
-         // translate x
+
+        // translate x
         if (!kernel.isZero(vx)) {
             if (isLeaf && left == fVar) { // special case: f(x) = x
                 expression = shiftXnode(vx);            
@@ -334,11 +335,10 @@ implements ExpressionValue, RealRootFunction, Functional {
         // make sure that expression object is changed!
         // this is needed to know that the expression has changed
         if (expression.isLeaf() && expression.getLeft().isExpressionNode()) {
-        	expression = new ExpressionNode( (ExpressionNode) expression.getLeft());
+        	expression = new ExpressionNode( (ExpressionNode) expression.getLeft());    
         } else {
-        	 expression = new ExpressionNode(expression);
+            expression = new ExpressionNode(expression);
         }
-
     }
     
     // replace every x in tree by (x - vx)
@@ -703,7 +703,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 	            symbCoeffs[i] = evaluateToExpressionNode(strCoeffs[i]);         
 	            if (symbCoeffs[i] == null)
 					return null; 
-	            symbCoeffs[i].simplifyConstants();
+	            symbCoeffs[i].simplifyConstantIntegers();
 	        }                       
 	        return symbPolyFun;   
         } else { 
@@ -791,9 +791,9 @@ implements ExpressionValue, RealRootFunction, Functional {
             	return (Function) ob;
             }
         }
-
+        
         // ok, we really have to do it...
-        Function result = derivative(n);
+		Function result = derivative(n);
         derivativeMap.put(n, result); // remember the hard work
         return result;
      }
@@ -830,7 +830,19 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @param order of derivative
      * @return result as function
      */
-    final private Function derivative(int order) {      
+    final private Function derivative(int order) { 
+        // check for simple reference to another function 
+    	// like f(t) in a curve
+		if (expression.getLeft() instanceof GeoFunction && 
+			expression.getRight() instanceof FunctionVariable) 
+		{
+			GeoFunction geoFun = (GeoFunction) expression.getLeft();
+			if (geoFun.isDefined()) {
+				return geoFun.getFunction().getDerivative(order);
+			}	
+        }
+    	 
+		// use CAS to get derivative
         // temporarily replace the variable by "x"
         String oldVar = fVar.toString();
         fVar.setVarString("x");
@@ -843,15 +855,19 @@ implements ExpressionValue, RealRootFunction, Functional {
 	        sb.append("D(x,");
 	        sb.append(order);
 	        sb.append(") ");
-		}
-        
-        // function expression with multiply sign "*"                                  
+		}				
+		
+        // function expression with multiply sign "*"   
 		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));		
- 
-          
+
         try {                   	            
             // evaluate expression by MathPiper          	        	        	
             String result = kernel.evaluateMathPiper(sb.toString());       
+            
+            // check if MathPiper has got stuck
+            // eg D(x)Floor(x)
+            if (result.startsWith("D(x)") || result.startsWith("Deriv(x)"))
+            	return null;
             
         	sb.setLength(0);
             // it doesn't matter what label we use here as it is never used            			
@@ -989,19 +1005,103 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return result as function
      */
     final private Function integral() {
+    	
+    	// temporarily replace the variable by "x"
+        String oldVar = fVar.toString();
+        fVar.setVarString("x");
+    	
+        // build expression string for JASYMCA
+        sb.setLength(0);
+        sb.append("integrate(");
+        // function expression with multiply sign "*"
+        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));
+        sb.append(",x)");
+
+        try {           
+            // evaluate expression by JSCL
+            String result = kernel.evaluateJASYMCA(sb.toString());       
+            
+            
+            // remove spurious string from output eg
+            //exp for JASYMCA: integrate((((x) + (0.02))/((((x) + (0.02))^(2)) + (1))) - (0.45),x)
+            //result: (1/2*log(x^2+0.04*x+1.0004)+(-0.45*x+1/2*i*pi))
+
+            String badString = "*i*pi";
+            int badStringIndex = result.indexOf(badString);
+            if (badStringIndex > -1) {
+            	result = result.substring(0,badStringIndex) + result.substring(badStringIndex + badString.length(),result.length());
+            	Application.debug("Removed spurious '*i*pi' to get: "+result);
+            }
+            
+            if (result == null)
+           	 return integralMathPiper();
+            
+            sb.setLength(0);
+            // it doesn't matter what label we use here as it is never used
+            sb.append("f(x)="); 
+            sb.append(result);
+    
+             // parse result
+             Function fun =  kernel.getParser().parseFunction(sb.toString());
+             fun.initFunction();
+             
+             if (fun == null)
+            	 return integralMathPiper();
+             
+             return fun;
+         } catch (Error err) {   
+        	 Application.debug(err+"");
+             return integralMathPiper();
+         } catch (Exception e) {
+        	 Application.debug(e+"");
+             return integralMathPiper();
+         }      
+         finally {
+        	 fVar.setVarString(oldVar);
+         }
+    }
+    
+
+    
+    /**
+     * Calculates the integral of this function
+     * @return result as function
+     */
+    final private Function integralMathPiper() {    	
+    
+	    // Application.debug("Trying MathPiper");
+    
     	// temporarily replace the variable by "x"
         String oldVar = fVar.toString();
         fVar.setVarString("x");
     	
         // build expression string for MathPiper
         sb.setLength(0);
-        sb.append("Integrate(x) ");
+        
+        // Subst(a,1) workaround
+        // as sometimes returns ArcTan(x)/a in error        
+        //sb.append("Subst(a,1)AntiDeriv(x,");
+        // ... however it doesn't work if there's a GeoGebra variable 'a' in the expression
+        
+        sb.append("AntiDeriv(x,");
         // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));        
+        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));  
+        sb.append(")");
 
         try {           
             // evaluate expression by MathPiper
-            String result = kernel.evaluateMathPiper(sb.toString());                           
+            String result = kernel.evaluateMathPiper(sb.toString());     
+            
+            //Application.debug(sb.toString());
+            //Application.debug(result+"");
+            
+            // TODO remove when MathPiper is updated and Jasymca removed
+            // bug: MathPiper rerurns "0" from eg
+            // AntiDeriv(x,((1)/(Sqrt((2) * (3.14159)))) * ((2.72)^(((-1) * ((x)^(2)))/(2))))
+            if (result.equals("0")) {
+            	Application.debug("MathPiper returned '0', returning null instead");
+            	return null;
+            }
             
             sb.setLength(0);
             // it doesn't matter what label we use here as it is never used
@@ -1013,16 +1113,18 @@ implements ExpressionValue, RealRootFunction, Functional {
              fun.initFunction();
              return fun;
          } catch (Error err) {   
+        	 Application.debug(err+"");
              return null;
          } catch (Exception e) {
+        	 Application.debug(e+"");
              return null;
          }      
          finally {
         	 fVar.setVarString(oldVar);
-         }
-        
-        
-        /*
+         } 
+    }
+    
+            /*
         // build expression string for JASYMCA
         sb.setLength(0);
         sb.append("integrate(");
@@ -1051,8 +1153,8 @@ implements ExpressionValue, RealRootFunction, Functional {
          finally {
         	 fVar.setVarString(oldVar);
          }
-         */
-    }
+         
+    } */
     
     /**
      * Calculates the expanded version of this function,
@@ -1176,7 +1278,6 @@ implements ExpressionValue, RealRootFunction, Functional {
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

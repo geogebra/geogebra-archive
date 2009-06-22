@@ -10,13 +10,11 @@ a commercial license is also provided. Full license information can be
 found at http://www.jibble.org/licenses/
 
 $Author: hohenwarter $
-$Id: EpsGraphics2D.java,v 1.3 2008-10-23 19:04:04 hohenwarter Exp $
+$Id: EpsGraphics2D.java,v 1.4 2009-06-22 02:18:23 hohenwarter Exp $
 
 */
 
 package geogebra.export.epsgraphics;
-
-import geogebra.main.Application;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -1349,8 +1347,6 @@ public class EpsGraphics2D extends java.awt.Graphics2D {
             append("{currentfile 3 " + width + " mul string readhexstring pop} bind");
             append("false 3 colorimage");
         }
-        
-        Application.debug(getColorDepth()+"");
         
         StringBuffer line = new StringBuffer();
         for (int y = 0; y < height; y++) {

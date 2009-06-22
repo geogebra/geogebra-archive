@@ -61,6 +61,14 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
     }
 
     protected final void compute() {
+    	
+    	// bugfix Michael Borcherds
+    	// undefined unless A is a point on f
+        if (!f.isOnPath(A, Kernel.MIN_PRECISION)) {
+        	circle.setUndefined();
+        	return;
+        }
+        
     	double radius = 1/Math.abs(curv.getValue());
     	double r2 = radius*radius;
     	double x = r2 * v.x;

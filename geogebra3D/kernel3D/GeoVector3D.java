@@ -4,7 +4,6 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoVector3D extends GeoVec4D {
 

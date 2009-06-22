@@ -6,8 +6,11 @@
 
 package org.freehep.util;
 
-import java.io.*;
-import javax.swing.text.*;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 
 /**
  * An OutputStream implementation that places it's

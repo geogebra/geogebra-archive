@@ -1,14 +1,15 @@
 // Copyright 2000, CERN, Geneva, Switzerland and SLAC, Stanford, U.S.A.
 package org.freehep.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Methods for Package Info (version, name, ...)
  *
  * @author Mark Donszelmann
- * @version $Id: PackageInfo.java,v 1.3 2008-05-04 12:22:22 murkle Exp $
+ * @version $Id: PackageInfo.java,v 1.4 2009-06-22 02:18:20 hohenwarter Exp $
  */
 
 public class PackageInfo {

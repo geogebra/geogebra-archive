@@ -1,15 +1,12 @@
 package geogebra.gui.view.algebra;
 
-import geogebra.main.Application;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.SystemColor;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,19 +28,20 @@ public class InputPanel extends JPanel {
 	};
 		
 		private final static String [] specialChars = { 	
-			"\u00b0", // degree	
 			"\u00b2",  // exponents ^2 
 		"\u00b3",  // exponents ^3 
+		"\u00b0", // degree	
 		"\u03c0", // pi	
 		Kernel.EULER_STRING, // e
 		"\u221e", // infinity
-		ExpressionNode.strVECTORPRODUCT, //  "\u2297", // complex multiply (circled times)
+		//ExpressionNode.strVECTORPRODUCT, //  "\u2297", // vector product (circled times)
 		"sqrt(x)",
 		"cbrt(x)",
 		"abs(x)",
 		"sgn(x)",
 		"ln(x)",
 		"lg(x)",
+		"ld(x)",
 		"sin(x)",
 		"cos(x)",
 		"tan(x)",
@@ -59,6 +57,7 @@ public class InputPanel extends JPanel {
 		"floor(x)",
 		"ceil(x)",
 		"round(x)",
+		"gamma(x)",
 		"random()",
 		ExpressionNode.strEQUAL_BOOLEAN,
 		ExpressionNode.strNOT_EQUAL,
@@ -215,5 +214,6 @@ public class InputPanel extends JPanel {
 	 */
 	public void insertString(String str) {	
 		textComponent.replaceSelection(str);	
+		textComponent.requestFocus();
 	}		
 }

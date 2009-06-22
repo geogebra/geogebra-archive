@@ -1,16 +1,16 @@
 // Copyright 2007, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
-import org.freehep.graphicsio.emf.EMFTag;
-import org.freehep.graphicsio.emf.EMFOutputStream;
-
-import java.awt.Rectangle;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.IOException;
+
+import org.freehep.graphicsio.emf.EMFOutputStream;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * @author Steffen Greiffenberg
- * @version $Id: AbstractPolygon.java,v 1.3 2008-05-04 12:19:55 murkle Exp $
+ * @version $Id: AbstractPolygon.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
  */
 public abstract class AbstractPolygon extends EMFTag {
 

@@ -22,8 +22,8 @@ public class DefaultApplet extends AppletImplementation {
 		super(applet);
 	}
 	
-	protected Application buildApplication(String[] args, boolean ua) {
-		return new DefaultApplication(args, this, ua);
+	protected Application buildApplication(String[] args, boolean undoActive) {
+		return new DefaultApplication(args, this, undoActive);
 	}
 	
 }

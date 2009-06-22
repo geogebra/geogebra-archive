@@ -48,7 +48,7 @@ public class AlgoAffineRatio extends AlgoElement {
     protected final void compute() {
         //Check if the points are aligned
         if (GeoPoint.collinear(A, B, C)){
-        	if (B.equals(C)) {
+        	if (B.isEqual(C)) {
         		M.setValue(1.0); // changed, was undefined
         	}else{ 
         		M.setValue(GeoPoint.affineRatio(A, B, C));

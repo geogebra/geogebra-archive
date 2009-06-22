@@ -144,8 +144,16 @@ public class TextInputDialog extends InputDialog {
 						break;
 						
 					case 4: // segment
-						insertString(" \\overline{ " + selText + " } ");
-						setRelativeCaretPosition(-3);
+						String lang = app.getLocale().getLanguage();						
+						if (lang.equals("da")) {
+							// Danish uses |AB| notation for segments
+							insertString(" \\left| " + selText + " \\right| ");
+							setRelativeCaretPosition(-9);
+						} else {
+							// default: overline
+							insertString(" \\overline{ " + selText + " } ");
+							setRelativeCaretPosition(-3);
+						}															
 						break;
 						
 					case 5: // sum
@@ -242,8 +250,12 @@ public class TextInputDialog extends InputDialog {
 					setVisible(!finished);
 				} else {		
 					// text input field embedded in properties window
-					text.setLaTeX(isLaTeX, true);
-					setGeoText(text);
+					
+					// removed - causes text to be erased on an error
+					// (and not needed)
+					//text.setLaTeX(isLaTeX, true);
+					//setGeoText(text);
+
 				}
 			} 
 			else if (source == btCancel) {
@@ -421,10 +433,13 @@ public class TextInputDialog extends InputDialog {
                     
             // change existing text
             try {           
-                text.setLaTeX(isLaTeX, true);
                 GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);                         
                 
-                app.doAfterRedefine(newText);
+                // make sure newText is using correct LaTeX setting
+                newText.setLaTeX(isLaTeX, true);
+                newText.updateRepaint();
+                
+                app.doAfterRedefine(newText);                                
                 return newText != null;
 			} catch (Exception e) {
                 app.showError("ReplaceFailed");

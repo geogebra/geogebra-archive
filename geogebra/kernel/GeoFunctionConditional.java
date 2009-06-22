@@ -333,6 +333,20 @@ public class GeoFunctionConditional extends GeoFunction {
 		return false;
 	}
 
+	final public boolean isEqual(GeoElement geo) {
 
+		if (geo.getGeoClassType() != GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL)
+			return false;
+		
+		GeoFunctionConditional geoFun = (GeoFunctionConditional)geo;
+		
+		// TODO better CAS checking for condFun
+		
+		return 		condFun.toValueString().equals(geoFun.condFun.toValueString())
+					&& ifFun.isEqual(geoFun.ifFun)
+					&& elseFun.isEqual(geoFun.elseFun);		
+
+		
+	}
 
 }

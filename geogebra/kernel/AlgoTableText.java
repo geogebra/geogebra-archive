@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
-import geogebra.main.MyError;
 
 
 
@@ -85,9 +83,9 @@ public class AlgoTableText extends AlgoElement {
     	
     	if (args != null) {
     		String optionsStr = args.getTextString();
-    		if (optionsStr.endsWith("v")) alignment = VERTICAL; // vertical table
-    		if (optionsStr.startsWith("c")) justification = "c";
-    		else if (optionsStr.startsWith("r")) justification = "r";	
+    		if (optionsStr.indexOf("v") > -1) alignment = VERTICAL; // vertical table
+    		if (optionsStr.indexOf("c") > -1) justification = "c";
+    		else if (optionsStr.indexOf("r") > -1) justification = "r";	
     		
     	} else if (geoList.get(columns-1).isGeoText()) {
     		
@@ -95,9 +93,9 @@ public class AlgoTableText extends AlgoElement {
     		
      		GeoText options = (GeoText)geoList.get(columns-1);
      		String optionsStr = options.getTextString();
-     		if (optionsStr.endsWith("h")) alignment = HORIZONTAL; // horizontal table
-     		if (optionsStr.startsWith("c")) justification = "c";
-     		else if (optionsStr.startsWith("r")) justification = "r";
+     		if (optionsStr.indexOf("h") > -1) alignment = HORIZONTAL; // horizontal table
+     		if (optionsStr.indexOf("c") > -1) justification = "c";
+     		else if (optionsStr.indexOf("r") > -1) justification = "r";
  
      		columns --;
     	}
@@ -133,6 +131,7 @@ public class AlgoTableText extends AlgoElement {
     	}
 
     	
+    	text.setTemporaryPrintAccuracy();
     	
     	sb.setLength(0);
     	sb.append("\\begin{tabular}{");
@@ -169,7 +168,9 @@ public class AlgoTableText extends AlgoElement {
 	    	}   
 		
     	}
-    	
+
+    	text.restorePrintAccuracy();
+   	
     	sb.append("\\end{tabular}");
     	//Application.debug(sb.toString());
     	text.setTextString(sb.toString());
@@ -179,7 +180,13 @@ public class AlgoTableText extends AlgoElement {
     private void addCell(int c, int r) {
 		if (geoLists[c].size() > r) { // check list has an element at this position
 			GeoElement geo1 = geoLists[c].get(r);
-			sb.append(geo1.toLaTeXString(false));
+						
+			// replace " " and "" with a hard space (allow blank columns/rows)
+			String text = geo1.toLaTeXString(false);
+			if (" ".equals(text) || "".equals(text))
+				text = "\u00a0";	
+			
+			sb.append(text);
 		}
 		sb.append("&"); // separate columns    				
 

@@ -49,7 +49,7 @@ public class AlgoCrossRatio extends AlgoElement {
 
     protected final void compute() {
         //Check if the points are aligned
-    	if ( !(A.equals(D)) && !(B.equals(C)) 
+    	if ( !(A.isEqual(D)) && !(B.isEqual(C)) 
         	 && GeoPoint.collinear(B, C, D) && GeoPoint.collinear(A, C, D) ) {
         		M.setValue(GeoPoint.affineRatio(B, C, D) / GeoPoint.affineRatio(A, C, D));
         }else{

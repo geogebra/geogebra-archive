@@ -1,5 +1,11 @@
 package geogebra.gui.menubar;
 
+import geogebra.euclidian.EuclidianView;
+import geogebra.gui.layout.Layout;
+import geogebra.kernel.Kernel;
+import geogebra.main.Application;
+import geogebra.main.GeoGebraPreferences;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
@@ -9,12 +15,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
-
-import geogebra.euclidian.EuclidianView;
-import geogebra.gui.layout.Layout;
-import geogebra.kernel.Kernel;
-import geogebra.main.Application;
-import geogebra.main.GeoGebraPreferences;
 
 /**
  * The "Options" menu.

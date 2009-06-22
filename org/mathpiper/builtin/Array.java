@@ -18,10 +18,10 @@
 
 package org.mathpiper.builtin;
 
-import org.mathpiper.lisp.Cons;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.ConsPointerArray;
 import org.mathpiper.lisp.ArgList;
+import org.mathpiper.lisp.Cons;
+import org.mathpiper.lisp.ConsPointerArray;
+import org.mathpiper.lisp.LispError;
 
 
 public class Array extends BuiltinContainer

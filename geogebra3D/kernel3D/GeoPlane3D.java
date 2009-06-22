@@ -1,10 +1,7 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
-import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
-import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoPlane3D extends GeoCoordSys2D {

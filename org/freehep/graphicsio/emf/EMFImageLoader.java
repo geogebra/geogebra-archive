@@ -1,19 +1,19 @@
 package org.freehep.graphicsio.emf;
 
-import org.freehep.graphicsio.emf.gdi.BitmapInfoHeader;
-import org.freehep.graphicsio.emf.gdi.BlendFunction;
-
-import java.awt.image.BufferedImage;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+
+import org.freehep.graphicsio.emf.gdi.BitmapInfoHeader;
+import org.freehep.graphicsio.emf.gdi.BlendFunction;
 
 /**
  * this class creates a BufferedImage from EMF imaga data stored in
  * a byte[].
  *
  * @author Steffen Greiffenberg
- * @version $Id: EMFImageLoader.java,v 1.3 2008-05-04 12:16:48 murkle Exp $
+ * @version $Id: EMFImageLoader.java,v 1.4 2009-06-22 02:18:22 hohenwarter Exp $
  */
 public class EMFImageLoader {
 

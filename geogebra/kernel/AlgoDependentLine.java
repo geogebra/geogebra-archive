@@ -40,7 +40,7 @@ public class AlgoDependentLine extends AlgoElement {
         
     /** Creates new AlgoDependentLine */
     public AlgoDependentLine(Construction cons, String label, Equation equ) {        
-    	super(cons);
+       	super(cons, false); // don't add to construction list yet
         equation = equ;                              
         Polynomial lhs = equ.getNormalForm();
         
@@ -51,10 +51,14 @@ public class AlgoDependentLine extends AlgoElement {
    		// check coefficients
         for (int i=0; i<3; i++) {
             if (ev[i].isConstant()) ev[i] = ev[i].evaluate();
-            
-            // check that coefficients are numbers
-            ((NumberValue) ev[i].evaluate()).getDouble();    
+                       
+            // check that coefficient is a number: this may throw an exception
+            ExpressionValue eval = ev[i].evaluate();
+            ((NumberValue) eval).getDouble();            
         }
+        
+        // if we get here, all is ok: let's add this algorithm to the construction list
+        cons.addToConstructionList(this, false);
         
         g = new GeoLine(cons); 
         setInputOutput(); // for AlgoElement

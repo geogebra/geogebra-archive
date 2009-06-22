@@ -51,7 +51,7 @@ public class AlgoLetterToUnicode extends AlgoElement {
     protected void compute()
     {
       String t = text.getTextString();
-      if (t.length() != 1)
+      if (t == null || t.length() != 1)
       {
     	  num.setUndefined();
       }

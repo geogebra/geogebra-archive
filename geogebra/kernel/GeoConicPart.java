@@ -40,7 +40,7 @@ implements LimitedPath, NumberValue, LineProperties {
 	private boolean posOrientation;
 	private int conic_part_type;
 	
-	private double value;
+	private double value, area;
 	private boolean value_defined;
 	
 	private EllipticArcLength ellipticArcLength;
@@ -51,6 +51,11 @@ implements LimitedPath, NumberValue, LineProperties {
 	public GeoConicPart(Construction c, int type) {
 		super(c);				
 		conic_part_type = type;			
+	}
+	
+	public GeoConicPart(GeoConicPart conic) {
+		this(conic.cons, conic.getConicPartType());
+		set(conic);
 	}
 	
 	protected String getClassName() {	
@@ -84,14 +89,16 @@ implements LimitedPath, NumberValue, LineProperties {
 		super.set(geo);
 		if (!geo.isGeoConicPart()) return;
 		
-		GeoConicPart cp = (GeoConicPart) geo;				
-
+		GeoConicPart cp = (GeoConicPart) geo;		
+		
 		// class specific attributes
 		paramStart = cp.paramStart;
 		paramEnd = cp.paramEnd;
 		paramExtent = cp.paramExtent;
 		posOrientation = cp.posOrientation;
 		conic_part_type = cp.conic_part_type;
+		
+		lines = cp.lines;
 		
 		value = cp.value;
 		value_defined = cp.value_defined;	
@@ -179,8 +186,11 @@ implements LimitedPath, NumberValue, LineProperties {
 				double r = halfAxes[0];
 				if (conic_part_type == CONIC_PART_ARC) {
 					value = r * paramExtent; // length
+					// area arc = area sector - area triangle
+					area = r*r * (paramExtent - Math.sin(paramExtent) ) / 2.0; 
 				} else {
 					value = r*r * paramExtent / 2.0; // area		
+					area = value; // area	
 				}
 				value_defined = !Double.isNaN(value) &&
 								!Double.isInfinite(value);
@@ -237,7 +247,6 @@ implements LimitedPath, NumberValue, LineProperties {
 				value_defined = false;
 				//Application.debug("GeoConicPart: unsupported conic part for conic type: " + type);
 		}		
-			
 	}
 	
 	final public boolean isDefined() {
@@ -250,6 +259,10 @@ implements LimitedPath, NumberValue, LineProperties {
 	
 	final public double getValue() {
 		return value;
+	}
+	
+	final public double getArea() {
+		return area;
 	}
 	
     final public String toString() {
@@ -305,7 +318,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		// check if P lies on conic first
     	if (!isOnFullConic(P, eps))
     		return false;
-    	
+    		
 		// idea: calculate path parameter and check
 		//       if it is in [0, 1]
 		
@@ -336,6 +349,10 @@ implements LimitedPath, NumberValue, LineProperties {
 				pPP.t = -1;
 				//Application.debug("GeoConicPart.isIncident: unsupported conic part for conic type: " + type);
 		}					
+	
+		// adapt eps for very large circles (almost line)
+		if (halfAxes[0] > 100)
+    		eps = Math.max(Kernel.MAX_PRECISION, eps / halfAxes[0]);    	    		    		   
 		
 		boolean result = 	pPP.t >= -eps && 
 							pPP.t <= 1 + eps;
@@ -368,7 +385,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		
 		PathParameter pp = P.getPathParameter(); 
 		pp.pathType = type;
-		
+
 		switch (type) {
 			case CONIC_CIRCLE:
 			case CONIC_ELLIPSE:
@@ -403,13 +420,13 @@ implements LimitedPath, NumberValue, LineProperties {
 			default:
 				pp.t = Double.NaN;
 				//Application.debug("GeoConicPart.pointChanged(): unsupported conic part for conic type: " + type);
-		}		
+		}	
 	}
 	
 	private void setEllipseParameter(GeoPoint P) {
 		// let GeoConic do the work
 		super.pointChanged(P);		
-		
+			
 		// now transform parameter t from [paramStart, paramEnd] to [0, 1]
 		PathParameter pp = P.getPathParameter();
 		if (pp.t < 0)
@@ -452,7 +469,12 @@ implements LimitedPath, NumberValue, LineProperties {
 		
 		GeoPoint P = (GeoPoint) PI;
 		
-		PathParameter pp = P.getPathParameter();
+		PathParameter pp = P.getPathParameter();						
+		if (pp.pathType != type || Double.isNaN(pp.t)) {		
+			pointChanged(P);
+			return;
+		}
+
 		if (pp.t < 0.0) {
 			pp.t = 0;
 		} 
@@ -572,12 +594,12 @@ implements LimitedPath, NumberValue, LineProperties {
         // allowOutlyingIntersections
         sb.append("\t<outlyingIntersections val=\"");
         sb.append(allowOutlyingIntersections);
-        sb.append("\"/>");
+        sb.append("\"/>\n");
         
         // keepTypeOnGeometricTransform
         sb.append("\t<keepTypeOnTransform val=\"");
         sb.append(keepTypeOnGeometricTransform);
-        sb.append("\"/>");
+        sb.append("\"/>\n");              
         
         return sb.toString();   
     }
@@ -605,9 +627,11 @@ implements LimitedPath, NumberValue, LineProperties {
 	public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, 
 			GeoLine l, GeoVector vec, NumberValue n) {	
 
-		AlgoElement algoParent = keepTypeOnGeometricTransform ?
-				getParentAlgorithm() : null;			
-		
+		AlgoElement algoParent = null;		
+		if (keepTypeOnGeometricTransform) {
+			algoParent = getParentAlgorithm();			
+		}	
+
 		// CREATE CONIC PART
 		if (algoParent instanceof AlgoConicPartCircle) {	
 			//	transform points
@@ -626,7 +650,9 @@ implements LimitedPath, NumberValue, LineProperties {
 										
 			// create a new arc from the transformed circle using startPoint and endPoint
 			AlgoConicPartConicPoints algoResult = new AlgoConicPartConicPoints(cons, label, transformedCircle, points[1], points[2], conic_part_type);			
-			GeoElement [] geos = {algoResult.getConicPart(), points[0], points[1], points[2]};
+			GeoConicPart conicPart = algoResult.getConicPart();
+			GeoElement [] geos = {conicPart, points[0], points[2], points[1]};
+						
 			return geos;					
 		}
 		
@@ -638,7 +664,7 @@ implements LimitedPath, NumberValue, LineProperties {
 			AlgoConicPartCircumcircle algo = new AlgoConicPartCircumcircle(cons, label, points[0], points[1], points[2], conic_part_type);
 			GeoConicPart res = algo.getConicPart();
 			res.setLabel(label);
-			GeoElement [] geos = {res, points[0], points[1], points[2]};
+			GeoElement [] geos = {res, points[1], points[2], points[0]};
 			return geos;
 		}
 				
@@ -656,13 +682,15 @@ implements LimitedPath, NumberValue, LineProperties {
 		else if (algoParent instanceof AlgoConicPartConicPoints) {
 			AlgoConicPartConicPoints algo = (AlgoConicPartConicPoints) algoParent;			
 			GeoPoint [] points ={ algo.getStartPoint(), algo.getEndPoint() };			
-			points = kernel.transformPoints(type, points, Q, l, vec, n);
-						
-			GeoConic transformedConic = kernel.getTransformedConic(type,  algo.getConic(), Q, l, vec, n);	
-			cons.removeFromConstructionList(transformedConic.getParentAlgorithm());			
-										
+			points = kernel.transformPoints(type, points, Q, l, vec, n);									
+			GeoConic orgConic = algo.getConic();
+			
+			GeoConic transformedConic = kernel.getTransformedConic(type, orgConic, Q, l, vec, n);	
+			cons.removeFromConstructionList(transformedConic.getParentAlgorithm());		
+		
 			algo = new AlgoConicPartConicPoints(cons, label, transformedConic, points[0], points[1], conic_part_type);			
-			GeoElement [] geos = {algo.getConicPart(), points[0], points[1]};
+			GeoConicPart conicPart = algo.getConicPart();
+			GeoElement [] geos = {conicPart, points[0], points[1]};
 			return geos;
 		}
 		
@@ -689,6 +717,9 @@ implements LimitedPath, NumberValue, LineProperties {
 			GeoElement [] ret = { transformedConic };
 			return ret;
 		}	
+	}
+	final public GeoElement copy() {
+		return new GeoConicPart(this);
 	}
 	
 }

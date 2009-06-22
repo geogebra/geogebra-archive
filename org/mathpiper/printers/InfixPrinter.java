@@ -19,15 +19,15 @@
 package org.mathpiper.printers;
 
 import org.mathpiper.io.MathPiperOutputStream;
-import org.mathpiper.lisp.UtilityFunctions;
 import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.ConsTraverser;
 import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.lisp.InfixOperator;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.Operators;
+import org.mathpiper.lisp.UtilityFunctions;
 import org.mathpiper.lisp.printers.Printer;
+import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 
 
 public class InfixPrinter extends Printer

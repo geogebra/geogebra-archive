@@ -14,6 +14,7 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.roots.RealRootUtil;
 
@@ -38,7 +39,7 @@ public class DrawParametricCurve extends Drawable {
 	
 	// min distance between two evaluation positions in pixel
 	// e.g. needed for sin(1/x) to keep the number of points down around 0
-	private static final double MIN_X_PIXEL_DISTANCE = 0.05; // pixels
+	private static final double MIN_X_PIXEL_DISTANCE = 0.3; // pixels
 	
 	// maximum angle between two line segments
 	//private static final double MAX_BEND = 0.087488; // = tan(5 degrees)
@@ -46,7 +47,7 @@ public class DrawParametricCurve extends Drawable {
 	
 
 	// maximum number of iterations (max number of plot points = 2^MAX_DEPTH)
-	private static final int MAX_DEPTH = 32;
+	private static final int MAX_DEPTH = 40;
 	
 	// minimum and maximum number of positions evaluated at curve
 	private static final int MIN_EVALUATIONS = 10;
@@ -62,7 +63,7 @@ public class DrawParametricCurve extends Drawable {
 	private static final int MAX_INTERVAL_DEPTH = 8;
 	
 	// the curve is broken into this many intervals to plot it
-	private static final int SPLIT_INTERVALS = 30;
+	private static final int MAX_SPLIT_INTERVALS = 50;
    
     private ParametricCurve curve;        
 	private GeneralPath gp = new GeneralPath();
@@ -110,7 +111,7 @@ public class DrawParametricCurve extends Drawable {
 		// gp on screen?		
 		if (!gp.intersects(0,0, view.width, view.height)) {				
 			isVisible = false;
-			return;
+        	// don't return here to make sure that getBounds() works for offscreen points too
 		}
 				
 		if (labelPoint != null) {
@@ -166,9 +167,8 @@ public class DrawParametricCurve extends Drawable {
 		
 		// STANDARD CASE
 		else {			
-			labelPoint = splitAndPlotInterval(SPLIT_INTERVALS, curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);    		
-	 	   
-			//labelPoint = plotInterval(curve, t1, t2, 0, view, gp, calcLabelPos, moveToAllowed);									
+			labelPoint = splitAndPlotInterval(MAX_SPLIT_INTERVALS, curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);    		
+//			labelPoint = splitAndPlotInterval(1, curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);
 		} 
 		
 //		Application.debug("*** CURVE plot: " + curve);
@@ -224,7 +224,7 @@ public class DrawParametricCurve extends Drawable {
     	if (tooClose) {
         	// we could not find a split parameter, DESPERATE MODE:
     		// split interval into SPLIT_INTERVALS 
-    		return splitAndPlotInterval(SPLIT_INTERVALS, curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);    		
+    		return splitAndPlotInterval(MAX_SPLIT_INTERVALS, curve, t1, t2, view, gp, calcLabelPos, moveToAllowed);    		
     	} 
     	else {
     		// we got a split parameter: plot [t1, splitParam] and [splitParam, t2]
@@ -241,8 +241,9 @@ public class DrawParametricCurve extends Drawable {
     }
     
     /**
-     * Plots a curve by splitting up the parameter interval into 
-     * n intervals.
+     * Plots a curve by splitting up the parameter interval into a 
+     * maximum of n intervals. Splitting is only done if undefined
+     * function values are discovered.
      */
     private static Point splitAndPlotInterval(int n, ParametricCurve curve,
 			double t1, double t2, EuclidianView view, 
@@ -252,21 +253,46 @@ public class DrawParametricCurve extends Drawable {
     {
     	    
     //	Application.debug("split intervals: " + n);
-    	
     	Point labelPoint = null;
-    	
-    	//  plot all intervals					
+    	double [] eval = new double[2];				    				
 		double intervalWidth = (t2 - t1) / n;
-		t2 = t1 + intervalWidth;
-		for (int i=0; i < n; i++) {							
-			Point p = plotInterval(curve, t1, t2, 1, view, gp, 
+		double currIntervalStart = t1;
+		double currIntervalEnd = currIntervalStart;
+		
+		// init defined states
+		curve.evaluateCurve(currIntervalStart, eval);	
+		boolean startDefined = !(Double.isNaN(eval[0]) || Double.isNaN(eval[1]));
+		boolean endDefined = startDefined;
+		
+		// check all possible split points: only split for undefined f(t) 
+		for (int i=0; i < n; i++) {	
+			// evaluate for currIntervalEnd
+			currIntervalEnd += intervalWidth;							
+			curve.evaluateCurve(currIntervalEnd, eval);	
+			endDefined = !(Double.isNaN(eval[0]) || Double.isNaN(eval[1]));
+			
+			// if f(currIntervalEnd) is undefined, 
+			// we plot the interval [currIntervalStart, currIntervalEnd]
+			if (startDefined != endDefined) {
+				Point p = plotInterval(curve, currIntervalStart, currIntervalEnd, 1, view, gp, 
+						calcLabelPos && labelPoint == null, moveToAllowed);									
+				if (labelPoint == null)
+					labelPoint = p;	
+				
+				// reset interval start for next interval
+				currIntervalStart = currIntervalEnd;
+				startDefined = endDefined;
+			} 							
+		}			
+		
+		// plot last interval if we didn't already reach t2
+		if (!Kernel.isEqual(currIntervalStart, t2, Kernel.MIN_PRECISION)) {
+			Point p = plotInterval(curve, currIntervalStart, t2, 1, view, gp, 
 					calcLabelPos && labelPoint == null, moveToAllowed);									
 			if (labelPoint == null)
 				labelPoint = p;
-						
-			t1 = t2;
-			t2 = t1 + intervalWidth;	
-		}			
+		}
+		
 		return labelPoint;
     }
     
@@ -424,11 +450,15 @@ public class DrawParametricCurve extends Drawable {
 				ydiff = y - y0;
 				slope = ydiff / xdiff;		
 						
-				// stop at very small pixel distance
+				// stop at very small x pixel distance
 				if (curve.isFunctionInX()) {
 					// function in x,  e.g. important for sin(1/x)
 					if (Math.abs(xdiff) < MIN_X_PIXEL_DISTANCE)
-					{						
+					{					
+						// if we stopped for very close x pixel distance
+						// then the slope is typically huge and we should
+						// connect the points if the angle is not too large
+						distTooLarge = angleTooLarge;
 						break;
 					}					
 				} else {
@@ -798,12 +828,12 @@ public class DrawParametricCurve extends Drawable {
             if (geo.doHighlighting()) {
                 g2.setPaint(geo.getSelColor());
                 g2.setStroke(selStroke);            
-                drawGeneralPath(gp, g2);		                
+                drawWithValueStrokePure(gp, g2);		                
             } 
         	            
 		    g2.setPaint(geo.getObjectColor());		    
 			g2.setStroke(objStroke);                                   
-			drawGeneralPath(gp, g2);		    
+			drawWithValueStrokePure(gp, g2);		    
 			
             if (labelVisible) {
 				g2.setFont(view.fontConic);
@@ -816,7 +846,7 @@ public class DrawParametricCurve extends Drawable {
 	final void drawTrace(Graphics2D g2) {	   
 	   g2.setPaint(geo.getObjectColor());	   
 	   g2.setStroke(objStroke); 		   
-	   drawGeneralPath(gp, g2);		   
+	   drawWithValueStrokePure(gp, g2);		   
 	}		
     
 	final public boolean hit(int x,int y) {  

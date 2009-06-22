@@ -17,9 +17,9 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper;
 
-import  org.mathpiper.interpreters.Interpreters;
-import  org.mathpiper.interpreters.Interpreter;
-import  org.mathpiper.interpreters.EvaluationResponse;
+import org.mathpiper.interpreters.EvaluationResponse;
+import org.mathpiper.interpreters.Interpreter;
+import org.mathpiper.interpreters.Interpreters;
 
 /**
 	This class demonstrates how to use the synchronous interpreter interface to MathPiper.

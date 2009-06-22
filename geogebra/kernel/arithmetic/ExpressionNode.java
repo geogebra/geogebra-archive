@@ -21,6 +21,7 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
@@ -43,11 +44,14 @@ implements ExpressionValue {
 	
 	public static final int STRING_TYPE_GEOGEBRA_XML = 0;
 	public static final int STRING_TYPE_GEOGEBRA = 1;
+	public static final int STRING_TYPE_JASYMCA = 2;
 	public static final int STRING_TYPE_MATH_PIPER = 3;
 	public static final int STRING_TYPE_LATEX = 100;
 	
 	public static final String UNICODE_PREFIX = "uNiCoDe";
 	public static final String UNICODE_DELIMITER = "U";  
+	
+	private static final int NO_OPERATION = Integer.MIN_VALUE; 
     
 	// boolean
 	public static final int NOT_EQUAL = -100;
@@ -108,6 +112,7 @@ implements ExpressionValue {
     public static final int LOG2 = 31; 
     public static final int CBRT = 32;   
     public static final int RANDOM = 33;
+    public static final int COMPLEXMULTIPLY = 34; // TODO remove
     public static final int VECTORPRODUCT = 34;
      
     public static final int FUNCTION = 100;
@@ -122,8 +127,8 @@ implements ExpressionValue {
     private Application app;
     private Kernel kernel;
     private ExpressionValue left, right; 
-    int operation = -100;
-    public boolean forceVector = false, forcePoint = false;
+    int operation = NO_OPERATION;
+    private boolean forceVector = false, forcePoint = false;
     
     private boolean holdsLaTeXtext = false;
     
@@ -140,7 +145,7 @@ implements ExpressionValue {
         if (right != null) {
             setRight(right);        
         } else { // set dummy value
-        	setRight(new MyDouble(kernel, 0.0d));
+        	setRight(new MyDouble(kernel, Double.NaN));
         }     
     }           
     
@@ -203,9 +208,9 @@ implements ExpressionValue {
     }
     
     final public void setRight(ExpressionValue r) {
-        right = r;
-        right.setInTree(true); // needed fot list operations eg k=2 then k {1,2}
-        leaf = false;      
+        right = r;        
+        right.setInTree(true); // needed for list operations eg k=2 then k {1,2}
+        leaf = operation == NO_OPERATION; // right is a dummy MyDouble by default         
     }
     
     public ExpressionNode getRightTree() {
@@ -320,7 +325,7 @@ implements ExpressionValue {
     /** 
      * Replaces all constant parts in tree by their values
      */
-    final public void simplifyConstants() {                 
+    final public void simplifyConstantIntegers() {                 
         if (left.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) left;
             if (left.isConstant()) {            	
@@ -333,7 +338,7 @@ implements ExpressionValue {
             		left = eval;
             	}
             } else
-                node.simplifyConstants();
+                node.simplifyConstantIntegers();
         }
         
         if (right != null && right.isExpressionNode()) {
@@ -348,7 +353,7 @@ implements ExpressionValue {
 	        		right = eval;
 	        	}
             } else 
-                node.simplifyConstants();
+                node.simplifyConstantIntegers();
         }             
     }
     
@@ -400,7 +405,7 @@ implements ExpressionValue {
         ExpressionValue lt, rt;
         MyDouble num;
         MyBoolean bool;
-        GeoVec2D vec;
+        GeoVec2D vec, vec2;
         MyStringBuffer msb;
         Polynomial poly;
                         
@@ -434,7 +439,9 @@ implements ExpressionValue {
 
 	        }
         	else if (operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
-	            		&& !rt.isTextValue()) // bugfix "" + {1,2} Michael Borcherds 2008-06-05
+	            	&& operation != NOT_EQUAL // ditto	
+	            	&& !rt.isVectorValue() // eg {1,2} + (1,2)
+        			&& !rt.isTextValue()) // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	{ 
 	            	MyList myList = ((ListValue) lt).getMyList();
 	            	// list lt operation rt
@@ -443,6 +450,7 @@ implements ExpressionValue {
 	        }	        
         }
         else if (rt.isListValue() && operation != EQUAL_BOOLEAN // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
+            && !lt.isVectorValue() // eg {1,2} + (1,2)
         	&& !lt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	MyList myList = ((ListValue) rt).getMyList();
         	// lt operation list rt
@@ -630,7 +638,7 @@ implements ExpressionValue {
             }     
             // vector + number (for complex addition)
             else if (lt.isVectorValue() && rt.isNumberValue()) { 
-                vec = ((VectorValue)lt).getVector();
+                vec = ((VectorValue)lt).getVector();               
                 GeoVec2D.add(vec, ((NumberValue)rt) , vec);                                         
                 return vec;
             }     
@@ -638,6 +646,18 @@ implements ExpressionValue {
             else if (lt.isNumberValue() && rt.isVectorValue()) { 
                 vec = ((VectorValue)rt).getVector();
                 GeoVec2D.add(vec, ((NumberValue)lt) , vec);                                         
+                return vec;
+            }     
+            // list + vector 
+            else if (lt.isListValue() && rt.isVectorValue()) { 
+                vec = ((VectorValue)rt).getVector();
+                GeoVec2D.add(vec, ((ListValue)lt) , vec);                                         
+                return vec;
+            }     
+            // vector + list 
+            else if (rt.isListValue() && lt.isVectorValue()) { 
+                vec = ((VectorValue)lt).getVector();
+                GeoVec2D.add(vec, ((ListValue)rt) , vec);                                         
                 return vec;
             }     
             // text concatenation (left)
@@ -675,6 +695,27 @@ implements ExpressionValue {
                 poly.add((Polynomial)rt);                
                 return poly;
             }           
+            /* doesn't work: f + g gives a free object
+           else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {  
+            	
+            	GeoFunction resultFun = new GeoFunction(kernel.getConstruction());
+            	resultFun = GeoFunction.add(resultFun,(GeoFunction)lt, (GeoFunction)rt);
+            	return resultFun.getFunction();
+            }           
+           else if (lt instanceof GeoFunction && rt.isNumberValue()) {            	
+              	NumberValue nv = (NumberValue)rt;          	
+              	GeoNumeric numb = new GeoNumeric(kernel.getConstruction(),nv.getDouble());       	
+              	GeoFunction resultFun = new GeoFunction(kernel.getConstruction());
+              	resultFun = GeoFunction.add(resultFun,(GeoFunction)lt, ((GeoFunctionable)numb).getGeoFunction());
+              	return resultFun.getFunction();
+              }           
+           else if (rt instanceof GeoFunction && lt.isNumberValue()) {            	
+              	NumberValue nv = (NumberValue)lt;          	
+              	GeoNumeric numb = new GeoNumeric(kernel.getConstruction(),nv.getDouble());       	
+              	GeoFunction resultFun = new GeoFunction(kernel.getConstruction());
+              	resultFun = GeoFunction.add(resultFun,(GeoFunction)rt, ((GeoFunctionable)numb).getGeoFunction());
+              	return resultFun.getFunction();
+              }           */
             else {    
                 String [] str = { "IllegalAddition", lt.toString(), "+",  rt.toString() };
                 throw new MyError(app, str);
@@ -705,12 +746,45 @@ implements ExpressionValue {
                 GeoVec2D.sub(((NumberValue)lt), vec, vec);                                         
                 return vec;
             }     
+            // list - vector 
+            else if (lt.isListValue() && rt.isVectorValue()) { 
+                vec = ((VectorValue)rt).getVector();
+                GeoVec2D.sub(vec, ((ListValue)lt) , vec, false);                                         
+                return vec;
+            }     
+            // vector - list 
+            else if (rt.isListValue() && lt.isVectorValue()) { 
+                vec = ((VectorValue)lt).getVector();
+                GeoVec2D.sub(vec, ((ListValue)rt) , vec, true);                                         
+                return vec;
+            }     
             // polynomial - polynomial
             else if (lt.isPolynomialInstance() && rt.isPolynomialInstance()) {                 
                 poly = new Polynomial(kernel, (Polynomial)lt);
                 poly.sub((Polynomial)rt);                
                 return poly;
             }           
+            /* doesn't work: f + g gives a free object
+           else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {  
+            	
+            	GeoFunction resultFun = new GeoFunction(kernel.getConstruction());
+            	resultFun = GeoFunction.subtract(resultFun,(GeoFunction)lt, (GeoFunction)rt);
+            	return resultFun.getFunction();
+           }
+           else if (lt instanceof GeoFunction && rt.isNumberValue()) {            	
+             	NumberValue nv = (NumberValue)rt;          	
+             	GeoNumeric numb = new GeoNumeric(kernel.getConstruction(),nv.getDouble());       	
+             	GeoFunction resultFun = new GeoFunction(kernel.getConstruction());
+             	resultFun = GeoFunction.subtract(resultFun,(GeoFunction)lt, ((GeoFunctionable)numb).getGeoFunction());
+             	return resultFun.getFunction();
+             }           
+          else if (rt instanceof GeoFunction && lt.isNumberValue()) {            	
+             	NumberValue nv = (NumberValue)lt;          	
+             	GeoNumeric numb = new GeoNumeric(kernel.getConstruction(),nv.getDouble());       	
+             	GeoFunction resultFun = new GeoFunction(kernel.getConstruction());
+             	resultFun = GeoFunction.subtract(resultFun, ((GeoFunctionable)numb).getGeoFunction(),(GeoFunction)rt);
+             	return resultFun.getFunction();
+             }    */      
             else { 
                 String [] str = { "IllegalSubtraction", lt.toString(), "-", rt.toString() };
                 throw new MyError(app, str);
@@ -746,10 +820,20 @@ implements ExpressionValue {
                 }            
                 // vector * vector (inner product)
                 else if (rt.isVectorValue()) { 
-                    num = new MyDouble(kernel);
                     vec = ((VectorValue)lt).getVector();
-                    GeoVec2D.inner(vec, ((VectorValue)rt).getVector(), num);
-                    return num;
+                    if (vec.getMode() == Kernel.COORD_COMPLEX) {
+
+                    	// complex multiply
+                    		
+                    		GeoVec2D.complexMultiply(vec, ((VectorValue)rt).getVector(), vec);
+                    	return vec;
+                    }
+                    else
+                    {
+	                    num = new MyDouble(kernel);
+	                    GeoVec2D.inner(vec, ((VectorValue)rt).getVector(), num);
+	                    return num;
+                    }
                 }      
                 else {    
                     String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
@@ -816,9 +900,11 @@ implements ExpressionValue {
                 String [] str = { "IllegalDivision", lt.toString(), "/", rt.toString() };
                 throw new MyError(app, str);
             }
+            
         case VECTORPRODUCT:
-               String [] str3 = { "IllegalMultiplication", lt.toString(), strVECTORPRODUCT, rt.toString() };
-                throw new MyError(app, str3);
+        	// TODO implement vector product (2d & 3d)
+                String [] str2 = { "IllegalMultiplication", lt.toString(), strVECTORPRODUCT, rt.toString() };
+                throw new MyError(app, str2);
             
                                                
         case POWER:
@@ -883,20 +969,64 @@ implements ExpressionValue {
             }               
             // vector ^ 2 (inner product)
             else if (lt.isVectorValue() && rt.isNumberValue()) { 
-               // if (!rt.isConstant()) {
-               //     String [] str = { "ExponentMustBeConstant", lt.toString(), "^", rt.toString() };
-               //     throw new MyError(app, str);
-               // }                
-                num = ((NumberValue)rt).getNumber();                
-                if (num.getDouble() == 2.0) {                    
-                    vec = ((VectorValue)lt).getVector();
-                    GeoVec2D.inner(vec, vec, num);                
-                    return num;                       
-                } else {
-                    String [] str = { "IllegalExponent", lt.toString(), "^", rt.toString() };
-                    throw new MyError(app, str);
-                }                                               
-            }  
+                // if (!rt.isConstant()) {
+                //     String [] str = { "ExponentMustBeConstant", lt.toString(), "^", rt.toString() };
+                //     throw new MyError(app, str);
+                // }                
+                 vec = ((VectorValue)lt).getVector();
+                 num = ((NumberValue)rt).getNumber();   
+          	            
+                 if (vec.getMode() == Kernel.COORD_COMPLEX) {
+
+                 	// complex power
+                 		
+                 		GeoVec2D.complexPower(vec, num, vec);
+                 	return vec;
+                          
+                 	
+                 } else 
+                 {
+                 	// inner/scalar/dot product
+ 	                if (num.getDouble() == 2.0) {                    
+ 	                    GeoVec2D.inner(vec, vec, num);                
+ 	                    return num;                       
+ 	                } else {
+ 	                	num.set(Double.NaN);
+ 	                    //String [] str = { "IllegalExponent", lt.toString(), "^", rt.toString() };
+ 	                    //throw new MyError(app, str);
+ 	                }                            
+                 }
+                 // complex number ^ complex number
+            } else if (lt.isVectorValue() && rt.isVectorValue()) { 
+                // if (!rt.isConstant()) {
+                //     String [] str = { "ExponentMustBeConstant", lt.toString(), "^", rt.toString() };
+                //     throw new MyError(app, str);
+                // }                
+                vec = ((VectorValue)lt).getVector();
+                vec2 = ((VectorValue)rt).getVector();
+          	            
+
+                 	// complex power
+                 		
+                 	GeoVec2D.complexPower(vec, vec2, vec);
+                 	return vec;
+                          
+             }  
+         else if (lt.isNumberValue() && rt.isVectorValue()) { 
+            // if (!rt.isConstant()) {
+            //     String [] str = { "ExponentMustBeConstant", lt.toString(), "^", rt.toString() };
+            //     throw new MyError(app, str);
+            // }                
+            num = ((NumberValue)lt).getNumber();
+            vec = ((VectorValue)rt).getVector();
+      	            
+
+             	// real ^ complex
+             		
+             	GeoVec2D.complexPower(num, vec, vec);
+             	return vec;
+                      
+         }  
             // polynomial ^ number
             else if (lt.isPolynomialInstance() && rt.isPolynomialInstance()) { 
                 // the exponent must be a number
@@ -1172,6 +1302,16 @@ implements ExpressionValue {
                             )
                        );                   
             }     
+         else if (lt.isVectorValue()) { 
+            vec = ((VectorValue)lt).getVector();
+      	            
+
+             	// complex e^z
+             		
+             	GeoVec2D.complexExp(vec, vec);
+             	return vec;
+                      
+         }  
             else { 
                  String [] str = { "IllegalArgument", "exp", lt.toString() };
                 throw new MyError(app, str);
@@ -1190,6 +1330,16 @@ implements ExpressionValue {
                             )
                        );                   
             }     
+	         else if (lt.isVectorValue()) { 
+	             vec = ((VectorValue)lt).getVector();
+	       	            
+
+	              	// complex natural log(z)
+	              		
+	              	GeoVec2D.complexLog(vec, vec);
+	              	return vec;
+	                       
+	          }  
             else { 
                  String [] str = { "IllegalArgument", "log", lt.toString() };
                 throw new MyError(app, str);
@@ -1281,6 +1431,17 @@ implements ExpressionValue {
                             )
                        );                   
             }     
+	         else if (lt.isVectorValue()) { 
+	             vec = ((VectorValue)lt).getVector();
+	       	            
+
+	              	// complex Abs(z)
+	             // or magnitude of point
+
+	              	return new MyDouble(kernel, GeoVec2D.complexAbs(vec));
+
+	                       
+	          }  
             else { 
                  String [] str = { "IllegalArgument", "abs", lt.toString() };
                 throw new MyError(app, str);                
@@ -1306,8 +1467,9 @@ implements ExpressionValue {
 
         case FLOOR:
             // floor(number)
-            if (lt.isNumberValue())
+            if (lt.isNumberValue()) {
 				return ((NumberValue)lt).getNumber().floor();
+            }
 			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
                 lt = ((Polynomial) lt).getConstantCoefficient();                    
                 return new Polynomial( kernel,
@@ -1324,8 +1486,9 @@ implements ExpressionValue {
             
         case CEIL:
             // ceil(number)
-            if (lt.isNumberValue())
+            if (lt.isNumberValue()) {
 				return ((NumberValue)lt).getNumber().ceil();
+            }
 			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
                 lt = ((Polynomial) lt).getConstantCoefficient();                    
                 return new Polynomial( kernel,
@@ -1342,8 +1505,9 @@ implements ExpressionValue {
 
         case ROUND:
             // ceil(number)
-            if (lt.isNumberValue())
+            if (lt.isNumberValue()) {
 				return ((NumberValue)lt).getNumber().round();
+            }
 			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
                 lt = ((Polynomial) lt).getConstantCoefficient();                    
                 return new Polynomial( kernel,
@@ -1450,8 +1614,8 @@ implements ExpressionValue {
             	return new MyDouble(kernel, ((Vector3DValue)lt).getPointAsDouble()[2]);
             }
             else {
-	            String [] str2 = { "IllegalArgument", "z(", lt.toString(), ")" };
-	            throw new MyError(app, str2);
+	            String [] str3 = { "IllegalArgument", "z(", lt.toString(), ")" };
+	            throw new MyError(app, str3);
             }
                             
        
@@ -1537,19 +1701,21 @@ implements ExpressionValue {
      * @return false if not defined
      */
     private MyBoolean evalEquals(ExpressionValue lt, ExpressionValue rt) {
+    	// booleans
+    	if (lt.isBooleanValue() && rt.isBooleanValue())
+			return new MyBoolean(
+					((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
+				); 
+    	
     	//  nummber == number
-    	if (lt.isNumberValue() && rt.isNumberValue())
+    	else if (lt.isNumberValue() && rt.isNumberValue())
 			return new MyBoolean(
     			kernel.isEqual(
     				((NumberValue)lt).getDouble(),
 					((NumberValue)rt).getDouble()
 				)
     		);
-    	else if (lt.isBooleanValue() && rt.isBooleanValue())
-			return new MyBoolean(
-					((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
-				);      
-    	
+
     	// needed for eg If[""=="a",0,1]
     	// when lt and rt are MyStringBuffers
     	else if (lt.isTextValue() && rt.isTextValue()) {
@@ -1567,11 +1733,17 @@ implements ExpressionValue {
     		GeoElement geo1 = (GeoElement) lt;
     		GeoElement geo2 = (GeoElement) rt;
     		
-    		// Michael Borcherds 2008-05-01
-    		// replaced following code with one line:
     		return new MyBoolean(geo1.isEqual(geo2));
+    	}
+    	else if (lt.isVectorValue() && rt.isVectorValue()) {
+    		VectorValue vec1 = (VectorValue) lt;
+    		VectorValue vec2 = (VectorValue) rt;		
+    		return new MyBoolean(vec1.getVector().equals(vec2.getVector()));
+    	}
     		
-    		/*
+    		/*    		// Michael Borcherds 2008-05-01
+    		// replaced following code with one line:
+
     		if (geo1.isGeoPoint() && geo2.isGeoPoint()) {
     			return new MyBoolean(((GeoPoint)geo1).equals((GeoPoint) geo2));
     		}
@@ -1587,7 +1759,7 @@ implements ExpressionValue {
     		else if (geo1.isGeoList() && geo2.isGeoList()) { // Michael Borcherds 2008-04-12
     			return new MyBoolean(((GeoList)geo1).equals((GeoList) geo2));
     		}*/
-    	}      
+    	     
     	
     	return new MyBoolean(false);
     }
@@ -1691,6 +1863,41 @@ implements ExpressionValue {
         }
         
         return false;        
+    }
+    
+    /**
+     * Returns whether this ExpressionNode should evaluate to a GeoVector.
+     * This method returns true when all GeoElements in this tree are GeoVectors and
+     * there are no other constanct VectorValues (i.e. constant points)
+     */
+    public boolean shouldEvaluateToGeoVector() {   
+    	boolean evalToVector = false;
+    	
+        if (left.isExpressionNode()) {             
+        	evalToVector = (((ExpressionNode)left).shouldEvaluateToGeoVector());            
+        }                                                               
+        else if (left.isGeoElement()) {   
+        	GeoElement geo = (GeoElement) left;
+        	evalToVector = geo.isGeoVector() || geo.isNumberValue();
+       }			     
+        else if (left.isNumberValue()) {
+        	evalToVector = true;
+        }
+        
+        if (right != null && evalToVector) {
+            if (right.isExpressionNode()) {
+            	evalToVector = ((ExpressionNode)right).shouldEvaluateToGeoVector();            
+            }
+            else if (right.isGeoElement()) {
+            	GeoElement geo = (GeoElement) right;
+            	evalToVector = geo.isGeoVector() || geo.isNumberValue();
+           }	
+           else if (right.isNumberValue()) {
+            	evalToVector = true;
+           }
+        }
+        
+        return evalToVector;        
     }
     
     /**
@@ -1917,28 +2124,27 @@ implements ExpressionValue {
     final public boolean isVectorValue() {
         if (forcePoint) return false;
         if (forceVector) return true;
-        
-        GeoElement [] vars = getGeoElementVariables();                
-        if (vars == null || vars.length == 0) return false;
-                        
-        // at least one vector has to be part of the dependent tree
-        boolean vecFound = false;
-        for (int i=0; i < vars.length; i++) {          
-            if (vars[i].isGeoPoint() ) return false;  
-            if (!vecFound && vars[i].isGeoVector()) vecFound = true;
-        }
-        return vecFound;
+                     
+        return shouldEvaluateToGeoVector();
     }
     
-    public void forceVector() {
+    public void setForceVector() {
         // this expression should be considered as a vector, not a point
         forceVector = true;
     }
     
-    public void forcePoint() {
-        // this expression should be considered as a vector, not a point
+    final public boolean isForcedVector() {
+    	return forceVector;
+    }
+    
+    public void setForcePoint() {
+        // this expression should be considered as a point, not a vector
         forcePoint = true;
-    }         
+    }
+    
+    final public boolean isForcedPoint() {
+    	return forcePoint;
+    }
     
     /** 
      * Returns whether this tree has any operations
@@ -1990,6 +2196,14 @@ implements ExpressionValue {
          return leaf; //|| operation == NO_OPERATION;
     }   
     
+    final public boolean isSingleGeoElement() {
+		return leaf && left.isGeoElement();
+	}
+    
+    final public GeoElement getSingleGeoElement() {
+    	return (GeoElement) left;
+    }
+    
     public boolean isSingleVariable() {
         return (isLeaf() && (left instanceof Variable));
     }
@@ -2003,13 +2217,10 @@ implements ExpressionValue {
     final public String getCASstring(int STRING_TYPE, boolean symbolic) {
         int oldPrintForm = kernel.getCASPrintForm();
         kernel.setCASPrintForm(STRING_TYPE);
-        kernel.setTemporaryMaximumPrintAccuracy();        
-                
+ 
         String ret = printCASstring(symbolic);
-        
-        kernel.restorePrintAccuracy();      
-        kernel.setCASPrintForm(oldPrintForm);  
-                             
+            
+        kernel.setCASPrintForm(oldPrintForm);                       
         return ret;
     }
         
@@ -2237,7 +2448,7 @@ implements ExpressionValue {
 	           	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
 		      		case STRING_TYPE_MATH_PIPER:
-		      		//case STRING_TYPE_JASYMCA:
+		      		case STRING_TYPE_JASYMCA:
 		      			sb.append("=");
 		      			break;
 		      					      		
@@ -2364,7 +2575,7 @@ implements ExpressionValue {
        
             case PLUS:          
             	switch (STRING_TYPE) {
-	        		//case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append('(');
 	        			sb.append(leftStr);
@@ -2413,7 +2624,7 @@ implements ExpressionValue {
                 
             case MINUS:  
             	switch (STRING_TYPE) {
-	        		//case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append('(');
 	        			sb.append(leftStr);
@@ -2444,7 +2655,7 @@ implements ExpressionValue {
                 
             case MULTIPLY: 
             	switch (STRING_TYPE) {
-        		//case STRING_TYPE_JASYMCA:
+        		case STRING_TYPE_JASYMCA:
         		case STRING_TYPE_MATH_PIPER:
         			sb.append('(');
         			sb.append(leftStr);
@@ -2481,7 +2692,8 @@ implements ExpressionValue {
 	                }               
 	                     
 	                // right wing
-	                if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -           
+	                int opIDright = opID(right);
+	                if (right.isLeaf() || opIDright >= MULTIPLY) { // not +, -           
 	                    // two digits colide: insert *    
 	                    if (nounary) {                    	
 	                		   if (Character.isDigit(rightStr.charAt(0)) &&
@@ -2489,11 +2701,22 @@ implements ExpressionValue {
 	                           {
 	                			   sb.append(" * ");                    			   
 	                            }
-	                           else 
-	                               sb.append(' '); // space instead of '*'                      	                           
-	                    }                 
+	                           else {
+	                        	   switch (STRING_TYPE) {
+		                			case STRING_TYPE_GEOGEBRA_XML:
+		                				sb.append(" * ");  
+		                				break;
+		                				
+		                			default:                        
+		                				sb.append(' '); // space instead of '*'  
+	                        	   }	                        	   
+	                           }	                                             	                          
+	                    } 	                 
 	                    
-	                    if (rightStr.charAt(0) == '-') {
+	                    // show parentheses around these cases	
+	                    if (rightStr.charAt(0) == '-'   // 2 (-5) or -(-5)
+	                    	|| !nounary  && opIDright <= DIVIDE) // -(x * a) or -(x / a)
+	                    {
 	                    	sb.append('(');
 	                        sb.append(rightStr);
 	                        sb.append(')');
@@ -2527,7 +2750,7 @@ implements ExpressionValue {
                 		sb.append("}");
                 		break;
                 		
-    				//case STRING_TYPE_JASYMCA:
+    				case STRING_TYPE_JASYMCA:
     				case STRING_TYPE_MATH_PIPER:
     					 sb.append('(');
 		                 sb.append(leftStr);
@@ -2566,7 +2789,7 @@ implements ExpressionValue {
                 
             case POWER:
             	switch (STRING_TYPE) {			
-					//case STRING_TYPE_JASYMCA:
+					case STRING_TYPE_JASYMCA:
 					case STRING_TYPE_MATH_PIPER:
 						sb.append('(');
 	                    sb.append(leftStr);
@@ -2574,11 +2797,16 @@ implements ExpressionValue {
 		                 break;
 		            
 					default:
+						
+						/* removed Michael Borcherds 2009-02-08
+						 * doesn't work eg  m=1   g(x) = (x - 1)^m (x - 3)
+						 
 					    // check for 1 in exponent
             			if ("1".equals(rightStr)) {
             				sb.append(leftStr);
             				break;
             			}   
+            			*/
             	
 		                // left wing                   	
 		                if (leftStr.charAt(0) != '-' && // no unary
@@ -2600,7 +2828,8 @@ implements ExpressionValue {
                         sb.append(rightStr);
                         sb.append('}');
                         break;
-                        
+                     
+   	        		case STRING_TYPE_JASYMCA:    
 	        		case STRING_TYPE_GEOGEBRA_XML:
 					case STRING_TYPE_MATH_PIPER:
 	        			sb.append('^'); 
@@ -2901,12 +3130,9 @@ implements ExpressionValue {
             case EXP:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			 sb.append(Kernel.EULER_STRING);
-	        			 if (!"1".equals(leftStr)) {
-		        			 sb.append("^{");
-		        			 sb.append(leftStr);
-		        			 sb.append('}');
-	        			 }
+	        			sb.append("e^{");
+	        			 sb.append(leftStr);
+	        			 sb.append('}');
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2915,7 +3141,7 @@ implements ExpressionValue {
 	                    sb.append(')');
 	        			break;
 	        			
-	        		//case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_GEOGEBRA_XML:
 	        			sb.append("exp(");
 	        			sb.append(leftStr);
@@ -2923,22 +3149,15 @@ implements ExpressionValue {
 	        			break;
 	        			
 	        		default:	      
-		       			 if ("1".equals(leftStr)) {
-		       				sb.append(Kernel.EULER_STRING);
-		       			 } else {
-			        		sb.append("exp(");
-		        			sb.append(leftStr);
+	        			sb.append(Kernel.EULER_STRING);
+	        			if (left.isLeaf()) {
+	        				sb.append("^");  
+	        				sb.append(leftStr);
+	        			} else {
+		        			sb.append("^(");     
+			        		sb.append(leftStr);
 		                    sb.append(')');
-		       			 }
-//	                    sb.append(Kernel.EULER_STRING);
-//	        			if (left.isLeaf()) {
-//	        				sb.append("^");  
-//	        				sb.append(leftStr);
-//	        			} else {
-//		        			sb.append("^(");     
-//			        		sb.append(leftStr);
-//		                    sb.append(')');
-//	        			}
+	        			}
 	        			break;
 	        	}           	
                 break;
@@ -2946,21 +3165,17 @@ implements ExpressionValue {
             case LOG:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\ln(");
+	        			sb.append("\\log(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Ln(");
 	        			break;
 	        			
-	        		
+	        		case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_GEOGEBRA_XML:
-	        			sb.append("ln(");	        			
-	        			break;
-	        			
-	        		//case STRING_TYPE_JASYMCA:
-//	        			sb.append("log(");	        			
-//	        			break;
+	        			sb.append("log(");	        			
+	        			break;	        	
 	        			
 	        		default:
 	        			sb.append("ln("); 
@@ -2984,11 +3199,11 @@ implements ExpressionValue {
 	        			sb.append(")/Ln(10)");
 	        			break;
 	        			
-//	        		case STRING_TYPE_JASYMCA:
-//	        			sb.append("log(");	
-//	        			sb.append(leftStr);
-//	        			sb.append(")/log(10)");
-//	        			break;
+	        		case STRING_TYPE_JASYMCA:
+	        			sb.append("log(");	
+	        			sb.append(leftStr);
+	        			sb.append(")/log(10)");
+	        			break;
 	        			
 	        		default:
 	        			sb.append("lg(");  
@@ -3012,11 +3227,11 @@ implements ExpressionValue {
 	        			 sb.append(")/Ln(2)");
 	        			break;
 	        			
-//	        		case STRING_TYPE_JASYMCA:
-//	        			sb.append("log(");	
-//	        			sb.append(leftStr);
-//	        			sb.append(")/log(2)");
-//	        			break;
+	        		case STRING_TYPE_JASYMCA:
+	        			sb.append("log(");	
+	        			sb.append(leftStr);
+	        			sb.append(")/log(2)");
+	        			break;
 	        			
 	        		default:
 	        			sb.append("ld(");   
@@ -3099,9 +3314,9 @@ implements ExpressionValue {
 	        			sb.append("Sign(");
 	        			break;
 	        			
-//	        		case STRING_TYPE_JASYMCA:
-//	        			sb.append("sign(");
-//	        			break;
+	        		case STRING_TYPE_JASYMCA:
+	        			sb.append("sign(");
+	        			break;
 
 	        		default:
 	        			sb.append("sgn(");         		
@@ -3206,7 +3421,7 @@ implements ExpressionValue {
                     		sb.append(')');
             				break;
             				
-            			//case STRING_TYPE_JASYMCA:
+            			case STRING_TYPE_JASYMCA:
     	        		case STRING_TYPE_MATH_PIPER:
     	        			// note: see GeoGebraCAS.insertSpecialChars()
     	        			sb.append("x");		        		
@@ -3240,7 +3455,7 @@ implements ExpressionValue {
 	                		sb.append(')');
 	        				break;
 	        				
-	        			//case STRING_TYPE_JASYMCA:
+	        			case STRING_TYPE_JASYMCA:
 		        		case STRING_TYPE_MATH_PIPER:
 		        			// note: see GeoGebraCAS.insertSpecialChars()
 		        			sb.append("y");		        		
@@ -3293,16 +3508,53 @@ implements ExpressionValue {
             	} 
                 break;
                 
-            case FUNCTION:
+            case FUNCTION:            	
             	// GeoFunction and GeoFunctionConditional should not be expanded
             	if (left.isGeoElement() &&
-                     	((GeoElement)left).isGeoFunction()) {
-            		 sb.append(((GeoElement)left).getLabel());
-            	} else
-            		 sb.append(leftStr);            	 
-                sb.append('(');
-                sb.append(rightStr);
-                sb.append(')');
+                     	((GeoElement)left).isGeoFunction()) 
+            	{
+            		GeoFunction geo = (GeoFunction)left;
+            		if (geo.isLabelSet()) {
+            			sb.append(geo.getLabel());    
+            			sb.append('(');
+                        sb.append(rightStr);
+                        sb.append(')');
+            		} else {    
+            			// inline function: replace function var by right side
+            			FunctionVariable var = geo.getFunction().getFunctionVariable();
+            			String oldVarStr = var.toString();
+            			var.setVarString(rightStr);
+            			sb.append(geo.getLabel());
+            			var.setVarString(oldVarStr);
+            		}
+            	} 
+            	else if (valueForm && left.isExpressionNode()) {
+            		ExpressionNode en = (ExpressionNode) left;
+            		// left could contain $ nodes to wrap a GeoElement
+            		// e.g. A1(x) = x^2 and B1(x) = $A$1(x) 
+            		// value form of B1 is x^2 and NOT x^2(x)
+            		switch (en.operation) {
+            			case $VAR_ROW:
+            			case $VAR_COL:
+            			case $VAR_ROW_COL:
+            				sb.append(leftStr); 
+            				break;
+            				
+            			default:
+            				sb.append(leftStr);  
+	    	        		sb.append('(');
+	    	                sb.append(rightStr);
+	    	                sb.append(')');
+	    	                break;
+            		}
+            	} 
+            	else  {
+	            	// standard case if we get here
+	            	sb.append(leftStr);  
+	        		sb.append('(');
+	                sb.append(rightStr);
+	                sb.append(')');
+            	}
                 break;
                
             case VEC_FUNCTION:
@@ -3381,7 +3633,6 @@ implements ExpressionValue {
                 
             default:
                 sb.append("unhandled operation " + operation);
-            	Application.debug("unhandled operation " + operation);
         }                
         return sb.toString();
     }
@@ -3427,7 +3678,6 @@ implements ExpressionValue {
     }
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

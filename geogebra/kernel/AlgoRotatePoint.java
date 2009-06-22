@@ -57,7 +57,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
         B = (PointRotateable) Bgeo;
         setInputOutput();
 
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
         
         compute();
       

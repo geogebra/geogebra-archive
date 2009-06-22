@@ -15,7 +15,6 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.parser.Parser;
 
 /**
@@ -108,8 +107,7 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
     
     private double evaluateToDouble(String str) {
 		try {
-			ValidExpression ve = parser.parseGeoGebraExpression(str);
-			ExpressionNode en = (ExpressionNode) ve;
+			ExpressionNode en = parser.parseExpression(str);			
 			NumberValue nv = (NumberValue) en.evaluate();
 			return nv.getDouble();
 		} catch (Exception e) {

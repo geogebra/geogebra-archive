@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.GaussQuadIntegration;
 import geogebra.kernel.roots.RealRootFunction;
@@ -24,21 +23,21 @@ import geogebra.kernel.roots.RealRootFunction;
  */
 public class AlgoIntegralDefinite extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
     private NumberValue a, b; //input
     private GeoElement ageo, bgeo;
     private GeoNumeric n; // output g = integral(f(x), x, a, b)   
 
-    // for numerical adaptive GaussQuad integration
-    private static final int MAX_STEP = 40; // max bisection steps
+    // for symbolic integration
+    private GeoFunction symbIntegral;
+    
+    // for numerical adaptive GaussQuad integration  
     private static final int FIRST_ORDER = 5;
-    private static final int SECOND_ORDER = 7;
-    private static final double ACCURACY = Kernel.MIN_PRECISION;   
+    private static final int SECOND_ORDER = 7;   
     private static GaussQuadIntegration firstGauss, secondGauss;
+    private static int adaptiveGaussQuadCounter = 0;
+    private static final int MAX_GAUSS_QUAD_CALLS = 500;     
 
     public AlgoIntegralDefinite(
         Construction cons,
@@ -62,8 +61,18 @@ public class AlgoIntegralDefinite extends AlgoElement {
         this.b = b;
         ageo = a.toGeoElement();
         bgeo = b.toGeoElement();
+                
+        // create helper algorithm for symbolic integral
+        // don't use symbolic integral for conditional functions
+        if (!f.isGeoFunctionConditional()) {
+	        AlgoIntegral algoInt = new AlgoIntegral(cons, f);
+	        symbIntegral = algoInt.getIntegral();
+	        cons.removeFromConstructionList(algoInt);     
+        }
+        
         setInputOutput(); // for AlgoElement        
         compute();
+        n.setDrawable(true);
     }
 
     protected String getClassName() {
@@ -115,31 +124,35 @@ public class AlgoIntegralDefinite extends AlgoElement {
             n.setValue(0);
             return;
         }
-
-        // get function of f
-        Function fun = f.getFunction();
+        
+        // check if f(a) and f(b) are defined
+        double fa = f.evaluate(lowerLimit);
+        double fb = f.evaluate(upperLimit);
+        if (Double.isNaN(fa) || Double.isInfinite(fa)
+        	|| Double.isNaN(fb) || Double.isInfinite(fb)) {
+        	n.setUndefined();
+        	return;
+        }
 
         /* 
-         * Try to get symbolic integral
+         * Try to use symbolic integral
          *
          * We only do this for functions that do NOT include divisions by their variable.
          * Otherwise there might be problems like:
          * Integral[ 1/x, -2, -1 ] would be undefined (log(-1) - log(-2))
          * Integral[ 1/x^2, -1, 1 ] would be defined (-2)
          */
-        if (!f.includesDivisionByVar()) {
-	        Function intFun = fun.getIntegral();
-	        if (intFun != null) {
-	        	double val = intFun.evaluate(upperLimit) - intFun.evaluate(lowerLimit);
-	            n.setValue(val);	        
-	            if (n.isDefined()) return;
-	        }
+        if (symbIntegral != null && symbIntegral.isDefined() && !f.includesDivisionByVar()) {        
+        	double val = symbIntegral.evaluate(upperLimit) - symbIntegral.evaluate(lowerLimit);
+	            n.setValue(val);	 
+	            if (n.isDefined()) return;	        
         }                
 
         // numerical integration
        // max_error = ACCURACY; // current maximum error
-        //maxstep = 0;              
-        double integral = adaptiveGaussQuad(fun, lowerLimit, upperLimit);
+        //maxstep = 0;           
+        
+        double integral = adaptiveGaussQuad(f, lowerLimit, upperLimit);
         n.setValue(integral);
               
         /*
@@ -149,55 +162,55 @@ public class AlgoIntegralDefinite extends AlgoElement {
     }
     //  private int maxstep;
     
+    /**
+     * Computes integral of function fun in interval a, b using an adaptive Gauss 
+     * quadrature approach.
+     */
     public static double adaptiveGaussQuad(RealRootFunction fun, double a, double b) {
-    	return adaptiveGaussQuad(fun, a, b, 0, ACCURACY);
-    }    		
-
-    // adaptive GaussQuad integration:
-    // take bisection step if difference between two GaussQuad orders is too big
-    private static double adaptiveGaussQuad(
-    	RealRootFunction fun,
-        double a,
-        double b,
-        int step,
-        double maxError) 
-    {
+    	adaptiveGaussQuadCounter = 0;
+    	double result = doAdaptiveGaussQuad(fun, a, b);
+    	
+    	//System.out.println("calls: " + adaptiveGaussQuadCounter);  
+    	return result;
+    }
+    
+    private static double doAdaptiveGaussQuad(RealRootFunction fun, double a, double b) {    		   	
+    	if (++adaptiveGaussQuadCounter > MAX_GAUSS_QUAD_CALLS) {
+    		return Double.NaN;
+    	}
+    	
     	// init GaussQuad classes for numerical integration
         if (firstGauss == null) {
             firstGauss = new GaussQuadIntegration(FIRST_ORDER);
             secondGauss = new GaussQuadIntegration(SECOND_ORDER);
         }
     	
+        // integrate using gauss quadrature
         double firstSum = firstGauss.integrate(fun, a, b);
+        if (Double.isNaN(firstSum)) return Double.NaN;        
         double secondSum = secondGauss.integrate(fun, a, b);
-        double error = Math.abs(firstSum - secondSum);
-               
-        if (error <= maxError || error <= 1E-10) { // success              
+        if (Double.isNaN(secondSum)) return Double.NaN;
+        
+        // check if both results are equal
+        boolean equal = Kernel.isEqual(firstSum, secondSum, Kernel.STANDARD_PRECISION);
+       
+        if (equal) { 
+        	// success              
             return secondSum;
-        } else {
-            if (step < MAX_STEP) { // do bisection
-                double mid = (a + b) / 2;
-                int s = step + 1;
-                double err = maxError / 2;
-                double left = adaptiveGaussQuad(fun, a, mid, s, err);
-                if (Double.isNaN(left))
-                    return Double.NaN;
-                else
-                    return left + adaptiveGaussQuad(fun, mid, b, s, err);
-            } else
-				//  if we get here then the accuracy could not be reached
-                //Application.debug("MAX_STEP reached: no integral found: " + a + ", " + b + ", err: " + error);
+        } else {           
+            double mid = (a + b) / 2;                             
+            double left = doAdaptiveGaussQuad(fun, a, mid);
+            if (Double.isNaN(left))
                 return Double.NaN;
+            else
+                return left + doAdaptiveGaussQuad(fun, mid, b);           
         }
     }
 
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("IntegralOfAfromBtoC",f.getLabel(),ageo.getLabel(),bgeo.getLabel()));
-        
-        return sb.toString();
+        return app.getPlain("IntegralOfAfromBtoC",f.getLabel(),ageo.getLabel(),bgeo.getLabel());
     }
 
 }

@@ -38,6 +38,8 @@ implements NumberValue {
     
     private Kernel kernel;
     
+    public static double LARGEST_INTEGER = 9007199254740992.0; // 0x020000000000000
+    
     public MyDouble(Kernel kernel) {
     	this(kernel, 0.0);
     }
@@ -45,7 +47,7 @@ implements NumberValue {
     /** Creates new MyDouble */
     public MyDouble(Kernel kernel, double x) {
     	this.kernel = kernel;
-        val = x;        
+        val = x;                      
     }
     
     public MyDouble(MyDouble d) {
@@ -67,12 +69,18 @@ implements NumberValue {
 
     
 	public String toString() {
-		if (Double.isInfinite(val) || Double.isNaN(val))
-			return kernel.getApplication().getPlain("undefined");
-		else if (isAngle)
-			return kernel.formatAngle(val).toString();
-		else
-			return kernel.format(val); 
+		switch (kernel.getCASPrintForm()) {
+			default:
+				if (Double.isInfinite(val) || Double.isNaN(val))
+					return kernel.getApplication().getPlain("undefined");
+				
+			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+				if (isAngle)
+					return kernel.formatAngle(val).toString();
+				else
+					return kernel.format(val); 
+		}				
 	}
     
 	final public String toValueString() {
@@ -166,16 +174,55 @@ implements NumberValue {
     final public MyDouble sqrt() {  val = Math.sqrt(val); isAngle = false;  return this; }    
     final public MyDouble cbrt() {  val = MyMath.cbrt(val); isAngle = false;  return this; }
     final public MyDouble abs() {  val = Math.abs(val);  return this; }    
-	final public MyDouble floor() {  val = Math.floor(val);  return this; }
-	final public MyDouble ceil() {  val = Math.ceil(val);  return this; }
-	final public MyDouble round() { 
-		
-		// Java quirk/bug Round(NaN) = 0
-		if (!(Double.isInfinite(val) || Double.isNaN(val)))		
-			val = Math.round(val); 
-		
+	
+    final public MyDouble floor() {  
+    	// angle in degrees
+		if (isAngle && kernel.getAngleUnit() == Kernel.ANGLE_DEGREE) {
+			val = Kernel.PI_180 * Math.floor(val * Kernel.CONST_180_PI);		
+		}
+		else {		
+			// number or angle in radians
+			val = Math.floor(val); 
+		}				
+		return this;
+    }
+	
+    final public MyDouble ceil() {
+    	// angle in degrees
+		if (isAngle && kernel.getAngleUnit() == Kernel.ANGLE_DEGREE) {
+			val = Kernel.PI_180 * Math.ceil(val * Kernel.CONST_180_PI);		
+		}
+		else {		
+			// number or angle in radians
+			val = Math.ceil(val);
+		}				
+		return this;
+    }
+	
+	final public MyDouble round() {
+		// angle in degrees
+		if (isAngle && kernel.getAngleUnit() == Kernel.ANGLE_DEGREE) {
+			val = Kernel.PI_180 * MyDouble.round(val * Kernel.CONST_180_PI);		
+		}
+		else {		
+			// number or angle in radians
+			val = MyDouble.round(val);
+		}				
 		return this;
 	}
+	
+	/*
+	 * Java quirk/bug Round(NaN) = 0
+	 */
+	final public static double round(double x) {
+		if (!(Double.isInfinite(x) || Double.isNaN(x)))		
+			return Math.round(x);
+		else
+			return x;
+		
+	}	
+	
+
 	
     final public MyDouble sgn() {  
         val = MyMath.sgn(kernel, val);         
@@ -318,7 +365,6 @@ implements NumberValue {
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}    	
 }

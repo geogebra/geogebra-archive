@@ -15,6 +15,10 @@ package geogebra.kernel.arithmetic;
 import geogebra.kernel.Kernel;
 
 /**
+ * MyDouble that returns a certain string in toString(). 
+ * This is used for example for the degree sign in geogebra.parser.Parser.jj:
+ * new MySpecialDouble(kernel, Math.PI / 180.0d,  "\u00b0" );
+ * 
  * @author Markus Hohenwarter
  */
 public class MySpecialDouble extends MyDouble {

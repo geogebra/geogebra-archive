@@ -1,5 +1,5 @@
 /**
- * $Id: CreateDIBPatternBrushPt.java,v 1.3 2008-05-04 12:19:28 murkle Exp $
+ * $Id: CreateDIBPatternBrushPt.java,v 1.4 2009-06-22 02:18:18 hohenwarter Exp $
  *
  * Copyright (c) 1998-2006
  * semture GmbH
@@ -8,20 +8,20 @@
  */
 package org.freehep.graphicsio.emf.gdi;
 
-import org.freehep.graphicsio.emf.EMFTag;
-import org.freehep.graphicsio.emf.EMFInputStream;
+import java.awt.Rectangle;
+import java.awt.TexturePaint;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 import org.freehep.graphicsio.emf.EMFImageLoader;
+import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
 import org.freehep.graphicsio.emf.EMFRenderer;
-
-import java.io.IOException;
-import java.awt.image.BufferedImage;
-import java.awt.TexturePaint;
-import java.awt.Rectangle;
+import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * @author Steffen Greiffenberg
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class CreateDIBPatternBrushPt extends EMFTag {
 

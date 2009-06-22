@@ -100,19 +100,7 @@ implements Traceable {
     
     public void setPolar() { toStringMode = Kernel.COORD_POLAR; }
     public void setCartesian() { toStringMode = Kernel.COORD_CARTESIAN; }
-    public void setComplex() { toStringMode = Kernel.COORD_COMPLEX; }
-    
-    /** Yields true if the coordinates of this vector are equal to
-     * those of vector v. 
-     */
-    final public boolean equals(GeoVec3D v) {        
-        kernel.setMinPrecision();
-        boolean ret =  kernel.isEqual(x, v.x) && 
-								kernel.isEqual(y, v.y) && 
-								kernel.isEqual(z, v.z);                     
-        kernel.resetPrecision();
-        return ret;
-    }
+    public void setComplex() { toStringMode = Kernel.COORD_COMPLEX; }     
     
 	public boolean isTraceable() {
 		return true;

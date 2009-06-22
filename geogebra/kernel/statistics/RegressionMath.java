@@ -1,7 +1,9 @@
 package geogebra.kernel.statistics;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoElement;
+import geogebra.kernel.jama.Matrix;
+
 /* 
 GeoGebra - Dynamic Mathematics for Schools
 Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
@@ -29,6 +31,11 @@ the Free Software Foundation.
  * @version 24.04.08
  * Update 15.11.08:
  * 		public det22(...),...,det44(...) for use in FitSin() and FitLogistic()
+ * Update 27.01.09:
+ *      doPolyN():boolean
+ *      getPar():double[]
+ *      to serve the extending of FitPoly[...] to degree>=5
+ *      Matrix operations based on Jama.
  *
  *<ul><b>--- Interface: ---</b>
  *<li>RegressionMath(GeoList)
@@ -44,7 +51,7 @@ the Free Software Foundation.
 
 public final  class RegressionMath {
 
-    private final  boolean    DEBUG   =   false;       //24.04.08: false for release
+    //private final  boolean    DEBUG   =   false;       //24.04.08: false for release
     public final static int         LINEAR  =   1,
                                     QUAD    =   2,
                                     CUBIC   =   3,
@@ -57,7 +64,7 @@ public final  class RegressionMath {
 
     /// --- Properties --- ///
     private   boolean error   =   false;
-    private   int     regtype =   LINEAR;                     //Default
+    //private   int     regtype =   LINEAR;                     //Default
     private   double  r,                                      //Reg-coeff
                             p1,p2,p3,p4,p5,                         //Parameters
                             sigmax,sigmax2,sigmax3,sigmax4,         //Sums of x,x^2,...
@@ -69,9 +76,10 @@ public final  class RegressionMath {
     private   double[] ylist;
     private   int     size;
 
-
+    //27.01.09:
+    private	  	double[][]	marray,yarray;					//For (M_T*M)*Par=(M_T*Y)
+    private		double[]	pararray;						//Parameter array
     
-   
     /// --- Interface --- ///
     /** Constructor not needed */
     public RegressionMath() {  //private: Safety measure to avoid wrong use
@@ -87,8 +95,36 @@ public final  class RegressionMath {
     public  final double getSigmaX2() {return sigmax2;}
     public  final double getSigmaY() {return sigmay;}
     public  final double getSigmaY2() {return sigmay2;}
-    public  final double getSigmaXy() {return sigmaxy;}    
+    public  final double getSigmaXy() {return sigmaxy;}   
     
+    //27.01.09:
+    /** Returns array with calculated parameters */
+    public final double[] getPar(){return pararray;}
+    
+    /** Does the Polynom regression */
+    public final boolean doPolyN(GeoList gl,int degree) {
+    	error=false;
+    	geolist=gl;
+        size=geolist.size();
+        getPoints();        //getPoints from geolist
+        if(error) {return false;}       	
+    	try{
+    		makeMatrixArrays(degree);			//make marray and yarray
+    		Matrix M=new Matrix(marray);
+    		Matrix Y=new Matrix(yarray);
+    		/*Matrix M_T=M.transpose();			//Jama solves least-squares directly!
+    		Matrix A=M_T.times(M);				// Not neccessary...
+    		Matrix B=M_T.times(Y);
+    		Matrix Par=A.solve(B);
+    		*/
+    		Matrix Par=M.solve(Y);				//Par.print(3,3);
+    		pararray=Par.getRowPackedCopy();  
+		} catch (Throwable t) {
+			geogebra.main.Application.debug(t.getMessage());
+			error=true;    		
+    	}//try-catch.  ToDo: A bit more fine-grained error-handling...
+    	return !error;
+    }//doPolyN()
     
     public  final boolean doLinear(GeoList gl) {
         error=false;
@@ -432,10 +468,10 @@ public final  class RegressionMath {
 
     /* Get points to local array */
     private final  void getPoints(){
-        double x,y;
+        //double x,y;
         double xy[]=new double[2];
         GeoElement geoelement;
-        GeoPoint    geopoint;
+        //GeoPoint    geopoint;
         xlist=new double[size];    ylist=new double[size];
         for(int i=0;i<size;i++){
             geoelement=geolist.get(i);
@@ -449,7 +485,7 @@ public final  class RegressionMath {
         }//for all points    
     }//getPoints()
     
-    //Correllation coefficient in linear case (and psudo for exp,log, pow)
+    //Correllation coefficient in linear case (and pseudo for exp,log, pow)
     private final  double corrCoeff(){
         double cc;
         double n=(size*sigmax2-sigmax*sigmax)*(size*sigmay2-sigmay*sigmay); 
@@ -461,10 +497,46 @@ public final  class RegressionMath {
         return cc;
     }//corrCoeff()
     
+    //Make M with 1,x,x^2,... , and Y with y1,y2,.. for all datapoints
+    private final void makeMatrixArrays(int degree){
+    	marray=new double[size][degree+1];
+    	yarray=new double[size][1];					//column matrix
+    	for(int i=0;i<size;i++){
+    		//Y:
+    		yarray[i][0]=ylist[i];
+    		//M:
+    		for(int j=0;j<(degree+1);j++){
+    			marray[i][j]=Math.pow(xlist[i],j);
+    		}//for j (all degrees =columns in marray)
+    	}//for i (all datapoints = rows in marray, cols in yarray)
+    	
+    }//makeMatrixArrays()
+    
     /// --- DEBUG --- ///        !!! Remember to comment out calls before distribution !!!
 
-//24.04.08 removed testing routines for release
+/*//---SNIP START---
             
+    private static void aprint(double[] a){
+    	int rows=a.length;
+    	System.out.println();
+    	for(int i=0;i<rows;i++){    	
+    			System.out.print("   "+a[i]);
+    	}
+    	System.out.println();
+    }//
+    public static final void main(String[] args){
+    	double[][] d={{1,2,3}};
+    	double[]   r,c;
+    	Matrix D=new Matrix(d);
+    	D.print(3,3);
+    	r=D.getRowPackedCopy();
+    	aprint(r);
+    	c=D.getColumnPackedCopy();
+    	aprint(c);
+    }//main()
+    
+    
+*/ //--- SNIP END
 }// class RegressionMath
 
 

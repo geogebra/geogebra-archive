@@ -19,13 +19,13 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.complex.Complex;
-import geogebra.main.Application;
 
 import java.util.HashSet;
 
@@ -68,6 +68,7 @@ implements VectorValue {
     	this(v.kernel);
         x = v.x;
         y = v.y;
+        mode = v.mode;
     }
     
 	public ExpressionValue deepCopy(Kernel kernel) {
@@ -274,24 +275,103 @@ implements VectorValue {
     final public static void add(GeoVec2D a, GeoVec2D b, GeoVec2D c) {                                       
         c.x = a.x + b.x;
         c.y = a.y + b.y;
+        if (a.getMode() == Kernel.COORD_COMPLEX || b.getMode() ==Kernel.COORD_COMPLEX)
+        	c.setMode(Kernel.COORD_COMPLEX);
     }
     
-    /** (xc,yc) = (xa + b , yx)  ie complex + real */
-    final public static void add(GeoVec2D a, NumberValue b, GeoVec2D c) {                                       
-        c.x = a.x + b.getDouble();
-        c.y = a.y;
+    /** (xc,yc) = (xa + b , yx)  ie complex + real for complex nos
+     * or (xc,yc) = (xa + b , yx + b) for Points/Vectors
+     * */
+    final public static void add(GeoVec2D a, NumberValue b, GeoVec2D c) {    
+    	
+    	if (a.getMode() == Kernel.COORD_COMPLEX) {  	
+	        c.x = a.x + b.getDouble();
+	        c.y = a.y;
+          	c.setMode(Kernel.COORD_COMPLEX);
+          	} else {
+            c.x = a.x + b.getDouble();
+            c.y = a.y + b.getDouble();   		
+    	}
     }
     
-    /** (xc,yc) = (b - xa, -yx)  ie real - complex */
+    /** vector + 2D list (to give another vector) 
+     * */
+    final public static void add(GeoVec2D a, ListValue b, GeoVec2D c) {        	    	    	
+    	MyList list = b.getMyList();    	
+    	if (list.size() != 2) {
+    		c.x = Double.NaN;
+    		c.y = Double.NaN;
+    		return;
+    	}
+    	
+    	ExpressionValue enX = list.getListElement(0).evaluate();
+    	ExpressionValue enY = list.getListElement(1).evaluate();
+    	
+    	if (!enX.isNumberValue() || !enY.isNumberValue()) {
+    		c.x = Double.NaN;
+    		c.y = Double.NaN;
+    		return;    		
+    	}
+    	
+    	c.x = a.x + ((NumberValue)enX).getDouble();
+    	c.y = a.y + ((NumberValue)enY).getDouble();
+    }
+    
+    /* vector - 2D list (to give another vector) 
+     * */
+    final public static void sub(GeoVec2D a, ListValue b, GeoVec2D c, boolean reverse) {    
+    	
+    	MyList list = b.getMyList();    	
+    	if (list.size() != 2) {
+    		c.x = Double.NaN;
+    		c.y = Double.NaN;
+    		return;
+    	}
+    	
+    	ExpressionValue enX = list.getListElement(0).evaluate();
+    	ExpressionValue enY = list.getListElement(1).evaluate();
+    	
+    	if (!enX.isNumberValue() || !enY.isNumberValue()) {
+    		c.x = Double.NaN;
+    		c.y = Double.NaN;
+    		return;    		
+    	}
+    	
+    	if (reverse) {
+	    	c.x = a.x - ((NumberValue)enX).getDouble();
+	    	c.y = a.y - ((NumberValue)enY).getDouble();
+    	} else {
+	    	c.x = ((NumberValue)enX).getDouble() - a.x;
+	    	c.y = ((NumberValue)enY).getDouble() - a.y;
+    	}
+    }
+    
+    /** (xc,yc) = (b - xa, -yx)  ie real - complex 
+     * or (xc,yc) = (b - xa, b - yx)  for Vectors/Points
+     * */
     final public static void sub(NumberValue b, GeoVec2D a, GeoVec2D c) {                                       
-        c.x = b.getDouble() - a.x;
-        c.y = -a.y;
+    	if (a.getMode() == Kernel.COORD_COMPLEX) {  	
+            c.x = b.getDouble() - a.x;
+            c.y = -a.y;
+          	c.setMode(Kernel.COORD_COMPLEX);
+    	} else {
+            c.x = b.getDouble() - a.x;
+            c.y = b.getDouble() - a.y;
+    	}
     }
     
-    /** (xc,yc) = (xa - b , yx)  ie complex - real */
+    /** (xc,yc) = (xa - b , yx)  ie complex - real 
+     * or (xc,yc) = (xa - b , yx - b)   for Vectors/Points
+     * */
     final public static void sub(GeoVec2D a, NumberValue b, GeoVec2D c) {                                       
-        c.x = a.x - b.getDouble();
-        c.y = a.y;
+    	if (a.getMode() == Kernel.COORD_COMPLEX) {  	
+            c.x = a.x - b.getDouble();
+            c.y = a.y;
+          	c.setMode(Kernel.COORD_COMPLEX);
+    	} else {
+            c.x = a.x - b.getDouble();
+            c.y = a.y - b.getDouble();
+    	}
     }
     
      /** returns this - a */
@@ -305,6 +385,8 @@ implements VectorValue {
     final public static void sub(GeoVec2D a, GeoVec2D b, GeoVec2D c) {
         c.x = a.x - b.x;
         c.y = a.y - b.y;
+        if (a.getMode() == Kernel.COORD_COMPLEX || b.getMode() ==Kernel.COORD_COMPLEX)
+        	c.setMode(Kernel.COORD_COMPLEX);
     }       
         
     final public void mult(double b) {
@@ -334,6 +416,7 @@ implements VectorValue {
       
       c.x = out.getReal();
       c.y = out.getImag();
+    	c.setMode(Kernel.COORD_COMPLEX);
       
     }
     
@@ -354,6 +437,7 @@ implements VectorValue {
       
       c.x = out.getReal();
       c.y = out.getImag();
+    	c.setMode(Kernel.COORD_COMPLEX);
 }
     
     /** c = a * b Michael Borcherds 2007-12-09 */
@@ -363,6 +447,68 @@ implements VectorValue {
     	//  do multiply
       c.x = (x1 * x2 - y1 * y2);
       c.y = (y2 * x1 + x2 * y1);
+    	c.setMode(Kernel.COORD_COMPLEX);
+    }
+
+    /** c = a ^ b Michael Borcherds 2009-03-10 */
+    final public static void complexPower(GeoVec2D a, NumberValue b, GeoVec2D c) {                                       
+        Complex out = new Complex();
+        
+        out = Complex.pow(new Complex(a.x, a.y), b.getDouble());
+        
+        c.x = out.getReal();
+        c.y = out.getImag();
+      	c.setMode(Kernel.COORD_COMPLEX);
+    }
+
+    /** c = a ^ b Michael Borcherds 2009-03-10 */
+    final public static void complexPower(NumberValue a, GeoVec2D b, GeoVec2D c) {                                       
+        Complex out = new Complex();
+        
+        out = Complex.pow(new Complex(a.getDouble(), 0.0), new Complex(b.x, b.y));
+        
+        c.x = out.getReal();
+        c.y = out.getImag();
+      	c.setMode(Kernel.COORD_COMPLEX);
+    }
+
+    /** c = e ^ a Michael Borcherds 2009-03-10 */
+    final public static void complexExp(GeoVec2D a, GeoVec2D c) {                                       
+        Complex out = new Complex();
+        
+        out = Complex.exp(new Complex(a.x, a.y));
+        
+        c.x = out.getReal();
+        c.y = out.getImag();
+      	c.setMode(Kernel.COORD_COMPLEX);
+    }
+
+    /** c = natural log(a) Michael Borcherds 2009-03-10 */
+    final public static void complexLog(GeoVec2D a, GeoVec2D c) {                                       
+        Complex out = new Complex();
+        
+        out = Complex.log(new Complex(a.x, a.y));
+        
+        c.x = out.getReal();
+        c.y = out.getImag();
+      	c.setMode(Kernel.COORD_COMPLEX);
+    }
+
+    /** c = natural log(a) Michael Borcherds 2009-03-10 */
+    final public static double complexAbs(GeoVec2D a) {                                       
+                
+        return Complex.abs(new Complex(a.x, a.y));
+    }
+
+    /** c = a ^ b Michael Borcherds 2009-03-14 */
+    final public static void complexPower(GeoVec2D a, GeoVec2D b, GeoVec2D c) {                                       
+        Complex out = new Complex();
+        
+        out = Complex.pow(new Complex(a.x, a.y), new Complex(b.x, b.y));
+        
+        c.x = out.getReal();
+        c.y = out.getImag();
+      	c.setMode(Kernel.COORD_COMPLEX);
     }
 
     /** c = a * b Michael Borcherds 2007-12-09 */
@@ -372,6 +518,7 @@ implements VectorValue {
     	//  do multiply
       c.x = (x1 * x2);
       c.y = (x2 * y1);
+    	c.setMode(Kernel.COORD_COMPLEX);
     }
 
     final public static void inner(GeoVec2D a, GeoVec2D b, double c) {

@@ -77,7 +77,7 @@ public class DrawIntegralFunctions extends Drawable {
 //		 gp on screen?		
 		if (!gp.intersects(0,0, view.width, view.height)) {				
 			isVisible = false;
-			return;
+        	// don't return here to make sure that getBounds() works for offscreen points too
 		}
 
 		if (labelVisible) {
@@ -96,15 +96,15 @@ public class DrawIntegralFunctions extends Drawable {
             if (geo.doHighlighting()) {
                 g2.setPaint(n.getSelColor());
                 g2.setStroke(selStroke);            
-                Drawable.drawGeneralPath(gp, g2);             
+                Drawable.drawWithValueStrokePure(gp, g2);             
             }         	
             			
         	g2.setPaint(n.getFillColor());                                  
-        	Drawable.fillGeneralPath(gp, g2);       
+        	Drawable.fillWithValueStrokePure(gp, g2);       
 					
 			g2.setPaint(n.getObjectColor());
 			g2.setStroke(objStroke);                                   
-			Drawable.drawGeneralPath(gp, g2);    
+			Drawable.drawWithValueStrokePure(gp, g2);    
 			
             if (labelVisible) {
 				g2.setFont(view.fontConic);

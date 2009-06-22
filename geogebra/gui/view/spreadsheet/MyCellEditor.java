@@ -1,21 +1,22 @@
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 
-public class MyCellEditor extends DefaultCellEditor {
+public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,17 +27,20 @@ public class MyCellEditor extends DefaultCellEditor {
 	protected int column;
 	protected int row;
 	public boolean editing = false;
+	private boolean errorOnStopEditing = false;
+	private AutoCompleteTextField textField;
 
 	public MyCellEditor(Kernel kernel0) {
 		//super(new JTextField());
 		super(new AutoCompleteTextField(0, kernel0.getApplication(), false));
 		kernel = kernel0;
 		app = kernel.getApplication();
+		textField = (AutoCompleteTextField) editorComponent;
 		
 		editorComponent.addKeyListener(new KeyListener4());		
+		editorComponent.addFocusListener(this);
 	}
-	
-	private boolean clickedToType = false;
+
 
 	public Component getTableCellEditorComponent(JTable table0, Object value0,
 			boolean isSelected, int row0, int column0) {
@@ -46,16 +50,15 @@ public class MyCellEditor extends DefaultCellEditor {
 		if (font1 == null || font1.getSize() == 0) {
 			font1 = new Font("dialog", 0, 12);
 		}
-		getComponent().setFont(font1);
+		Component component = getComponent();
+		component.setFont(font1);
 		
 		if (value0 instanceof String) { // clicked to type
 			value = null;
-			clickedToType = true;
 		}
 		else
 		{
 			value = (GeoElement) value0;
-			clickedToType = false;
 		}
 		
 		column = column0;
@@ -63,11 +66,14 @@ public class MyCellEditor extends DefaultCellEditor {
 		String text = "";
 		
 		if (value != null) {
+			/*
 			if (value.isChangeable()) {
 				text = value.toValueString();
 			} else {
 				text = value.getCommandDescription();
-			}
+			}*/
+			text = getEditorInitString(value);
+
 			int index = text.indexOf("=");
 			if ((!value.isGeoText())) {
 				if (index == -1) {
@@ -79,86 +85,115 @@ public class MyCellEditor extends DefaultCellEditor {
 			}
 		}
 		delegate.setValue(text);
-		editing = true;
-		table.repaint();
-		Component component = getComponent();
+		editing = true;	
+		
 		return component;
 	}
+	
+	/**
+	 * Returns the definition of geo used to init the editor
+	 * when editing is started.
+	 * 
+	 * @param geo
+	 */
+	public String getEditorInitString(GeoElement geo) {
+		return geo.getRedefineString(true, true);
+	}
+	
+	boolean escape = false;
 
 	public class KeyListener4 implements KeyListener {
 
-		public void keyTyped(KeyEvent e) {
-
-			//checkCursorKeys(e); // needed for MAC_OS???
-
-			char keyChar = e.getKeyChar();
-			//Application.debug(e.toString());
-			switch (keyChar) {
-				case 0x1b:	// case KeyEvent.VK_ESCAPE:
-					cancelCellEditing();
-					editing = false;
-					
-					// restore old text in spreadsheet
-					table.getModel().setValueAt(kernel.getGeoAt(column, row), row, column);
-					
-					break;													
-			}	
+		public void keyTyped(KeyEvent e) {	
 		}
 
 		public void keyPressed(KeyEvent e) {
-			
 			checkCursorKeys(e);
-			
-				char keyChar = e.getKeyChar();
-				switch (keyChar) {
-			case 0x1b:	// case KeyEvent.VK_ESCAPE:
+			escape = false;
+			int keyCode = e.getKeyCode();
+				switch (keyCode) {
+			case KeyEvent.VK_ESCAPE:
+				escape = true;
+				GeoElement oldGeo = kernel.getGeoAt(column, row);
 				cancelCellEditing();
-				editing = false;
 				
 				// restore old text in spreadsheet
-				table.getModel().setValueAt(kernel.getGeoAt(column, row), row, column);
+				table.getModel().setValueAt(oldGeo, row, column);
 				
-				break;													
-			case 0x0a:	// case KeyEvent.VK_ENTER:
-					if (e.isConsumed())
-						break;
-					
-					// go to cell below
-					table.changeSelection(row + 1, column, false, false);	
-					break;							
+				//stopCellEditing(0,0);
+				// force nice redraw
+				table.changeSelection(row, column, false, false);
+				table.selectionChanged();
+				break;
+								
 			}	
 		}
 
 		public void keyReleased(KeyEvent e) {
 		}
 		
-		public void checkCursorKeys(KeyEvent e) {
+		public void checkCursorKeys(KeyEvent e) {			
+			
 			int keyCode = e.getKeyCode();
 			//Application.debug(e+"");
+			//int row = table.minSelectionRow;
+			//int col = table.minSelectionColumn;
 			switch (keyCode) {
 			case KeyEvent.VK_UP:
 				//Application.debug("UP");
-				stopCellEditing();		
+				stopCellEditing(0,-1);		
 				editing = false;
-				table.setRowSelectionInterval(table.minSelectionRow - 1,table.minSelectionRow - 1);
+				//table.setRowSelectionInterval(table.minSelectionRow - 1,table.minSelectionRow - 1);
+				//table.changeSelection(row - 1, column, false, false);
+				//table.selectionChanged();
+				e.consume();
 				break;
-			case KeyEvent.VK_RIGHT:
+			//case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_TAB:
 				//Application.debug("RIGHT");
-				stopCellEditing();		
+				// shift-tab moves left
+				// tab moves right
+				stopCellEditing(e.isShiftDown() ? -1 : 1,0);		
 				editing = false;
-				table.setColumnSelectionInterval(table.minSelectionColumn + 1,table.minSelectionColumn + 1);
+				//table.setColumnSelectionInterval(table.minSelectionColumn + 1,table.minSelectionColumn + 1);
+				//table.setColumnSelectionInterval(col + 1, col + 1);
+				//table.setRowSelectionInterval(row, row);
+			
 				break;
+				
+			case KeyEvent.VK_ENTER:				
+				// if incomplete command entered, want to move the cursor to between []
+				String text = (String) delegate.getCellEditorValue();
+				int bracketsIndex = text.indexOf("[]");
+				if (bracketsIndex == -1) {
+					//stopCellEditing(0,1);		
+					//editing = false;
+				} else {
+					textField.setCaretPosition(bracketsIndex + 1);
+					e.consume();
+				}				
+				break;
+				
 			case KeyEvent.VK_DOWN:
 				//Application.debug("DOWN");
-				stopCellEditing();		
+				stopCellEditing(0,1);		
 				editing = false;
-				table.setRowSelectionInterval(table.minSelectionRow + 1,table.minSelectionRow + 1);
+				//table.setRowSelectionInterval(table.minSelectionRow + 1,table.minSelectionRow + 1);
+				//table.setColumnSelectionInterval(col, col);
+				//table.setRowSelectionInterval(row + 1, row + 1);
 				break;
+				/*
 			case KeyEvent.VK_LEFT:
 				//Application.debug("LEFT");
-				stopCellEditing();		
+				stopCellEditing(-1,0);		
 				editing = false;
-				table.setColumnSelectionInterval(table.minSelectionColumn - 1,table.minSelectionColumn - 1);
+				//table.setColumnSelectionInterval(table.minSelectionColumn - 1,table.minSelectionColumn - 1);
+				table.setColumnSelectionInterval(col - 1, col - 1);
+				table.setRowSelectionInterval(row, row);
+				break;*/
+			case KeyEvent.VK_PAGE_DOWN:
+			case KeyEvent.VK_PAGE_UP:
+				e.consume();
 				break;
 			}
 			
@@ -175,12 +210,17 @@ public class MyCellEditor extends DefaultCellEditor {
 		String name = table.getModel().getColumnName(column) + (row + 1);
 		addLabel(name);
 	}
+	
+	public int getCaretPosition() {
+		return textField.getCaretPosition();
+	}
 
 	public void addLabel(String label) {
 		if (!editing)
 			return;
-		String text = (String) delegate.getCellEditorValue();
-		delegate.setValue(text + label);
+		//String text = (String) delegate.getCellEditorValue();			
+		//delegate.setValue(text + label);
+		textField.replaceSelection(" " + label + " ");
 	}
 
 	public void setLabel(String text) {
@@ -196,56 +236,81 @@ public class MyCellEditor extends DefaultCellEditor {
 	public Object getCellEditorValue() {
 		return value;
 	}
-
-	public boolean stopCellEditing() {
+	
+	public void cancelCellEditing() {
+		editing = false;
+		errorOnStopEditing = false;
 		
-		String text = (String) delegate.getCellEditorValue();
-
+		super.cancelCellEditing();				
+	}
+	
+	
+	public boolean stopCellEditing() {
+		String text = (String) delegate.getCellEditorValue();	
+		
+		errorOnStopEditing = true;
+		
 		try {
-			
-
 			// get GeoElement of current cell
 			value = kernel.lookupLabel(  GeoElement.getSpreadsheetCellName(column, row), false);
 
-			
-			value = prepareAddingValueToTableNoStoringUndoInfo(kernel, table,
-					text, value, column, row);
-			app.storeUndoInfo();
-
-			AlgebraInput ai = (AlgebraInput) (app.getGuiManager()
-					.getAlgebraInput());
-
-			// copy description into input bar
-			if (value != null) {
-				app.geoElementSelected(value, true); // copy definiton to input bar
-				//ai.setStxxring(value);
+			if (text.equals("")) {
+				if (value != null)
+					value.removeOrSetUndefinedIfHasFixedDescendent();
 			} else {
-				ai.clear();
+				GeoElement newVal = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);
+				if (newVal == null) {
+					return false;
+				}
+				
+				value = newVal;
 			}
+			
+			if (value != null)
+				app.storeUndoInfo();
 
 		} catch (Exception ex) {
 			// show GeoGebra error dialog
 			// kernel.getApplication().showError(ex.getMessage());
 			ex.printStackTrace();
+			super.stopCellEditing();
+			editing = false;
 			// Util.handleException(table, ex);
 			return false;
 		}
+		
+		errorOnStopEditing = false;
 		editing = false;
 		
-		boolean ret = super.stopCellEditing();
+		boolean success = super.stopCellEditing();
+		moveSelectedCell(0, 1);
+		return success;
+	}
+
+	public boolean stopCellEditing(int colOff, int rowOff) {		
+		boolean success = stopCellEditing();
+		moveSelectedCell(colOff, rowOff);		
+		return success;
+	}
+	
+	private void moveSelectedCell(int colOff, int rowOff) {
+		int nextRow = Math.min(row + rowOff, table.getRowCount()-1);
+		int nextColumn = Math.min(column + colOff, table.getColumnCount()-1);
+		table.changeSelection(nextRow, nextColumn, false, false);
 		table.selectionChanged();
-		return ret;
 	}
 
 	public void undoEdit() {
 		String text = "";
 		
 		if (value != null) {
+			/*
 			if (value.isChangeable()) {
 				text = value.toValueString();
 			} else {
 				text = value.getCommandDescription();
-			}
+			} */
+			text = value.getRedefineString(true, false);
 			if ((!value.isGeoText()) && text.indexOf("=") == -1) {
 				text = "=" + text;
 			}
@@ -263,26 +328,68 @@ public class MyCellEditor extends DefaultCellEditor {
 		if (text.startsWith("=")) {
 			text = text.substring(1);
 		}
+		text = text.trim();
 
 		// no equal sign in input
 		GeoElement[] newValues = null;
 		try {
-			// check if input is the name of an existing variable
-			if (kernel.lookupLabel(text) != null) {
-				// make sure we copy this existing geo by providing the new cell
-				// name in the beginning
-				text = name + " = " + text;
+			// check if input is same as name: circular definition
+			if (text.equals(name)) {
+				// circular definition
+				throw new CircularDefinitionException();
 			}
-
+						
 			// evaluate input text
 			newValues = kernel.getAlgebraProcessor()
 					.processAlgebraCommandNoExceptionHandling(text, false);
-			// newValues[0].setLabel(name);
+			
+			// check if text was the label of an existing geo 
+			if (text.equals(newValues[0].getLabel())) {
+				// make sure we create a copy of this existing or auto-created geo 
+				// by providing the new cell name in the beginning
+				text = name + " = " + text;		
+				newValues = kernel.getAlgebraProcessor()
+					.processAlgebraCommandNoExceptionHandling(text, false);
+			}
+			
+			// check if name was auto-created: if yes we could have a circular definition
+			GeoElement autoCreateGeo = kernel.lookupLabel(name);		
+			if (autoCreateGeo != null) {				
+				// check for circular definition: if newValue depends on autoCreateGeo
+				boolean circularDefinition = false;
+				for (int i=0; i < newValues.length; i++) {
+					if (newValues[i].isChildOf(autoCreateGeo)) {
+						circularDefinition = true;
+						break;
+					}
+				}
+				
+				if (circularDefinition) {
+					// remove the auto-created object and the result
+					autoCreateGeo.remove();
+					newValues[0].remove();
+					
+					// circular definition
+					throw new CircularDefinitionException();
+				}
+			}
+			
+			for (int i=0; i < newValues.length; i++) {
+				newValues[i].setAuxiliaryObject(true);
+				if (newValues[i].isGeoText())
+					newValues[i].setEuclidianVisible(false);
+			}
+			
 			GeoElement.setLabels(name, newValues); // set names to be D1, E1,
 													// F1, etc for multiple
-													// objects
-			newValues[0].setAuxiliaryObject(true);
-		} catch (Exception e) {
+													// objects			
+		} 
+		catch (CircularDefinitionException ce) {
+			// circular definition
+			kernel.getApplication().showError("CircularDefinition");
+			return null;
+		}
+		catch (Exception e) {
 			// create text if something went wrong
 			text = "\"" + text + "\"";
 			newValues = kernel.getAlgebraProcessor()
@@ -307,8 +414,9 @@ public class MyCellEditor extends DefaultCellEditor {
 			newValue = kernel.getAlgebraProcessor()
 					.changeGeoElementNoExceptionHandling(oldValue, text, true,
 							false);
+
 			// newValue.setConstructionDefaults();
-			newValue.setAllVisualProperties(oldValue, false);
+			newValue.setAllVisualProperties(oldValue, true);
 			if (oldValue.isAuxiliaryObject())
 				newValue.setAuxiliaryObject(true);
 
@@ -319,7 +427,12 @@ public class MyCellEditor extends DefaultCellEditor {
 			} else {
 				kernel.getApplication().refreshViews();
 			}
-		} catch (Throwable e) {
+		} 
+		catch (CircularDefinitionException cde) {			
+			kernel.getApplication().showError("CircularDefinition");
+			return null;
+		}
+		catch (Throwable e) {
 			 //Application.debug("SPREADSHEET: input error: " + e.getMessage());
 			 //Application.debug("text0 = " + text0);
 			
@@ -374,6 +487,21 @@ public class MyCellEditor extends DefaultCellEditor {
 			}
 		} else { // value != null;
 			return updateOldValue(kernel, oldValue, name, text);
+		}
+	}
+
+	public void focusGained(FocusEvent arg0) {
+		
+	}
+
+	public void focusLost(FocusEvent arg0) {		
+		// only needed if eg columns resized
+		if (editing == true) {
+			if (!errorOnStopEditing) {
+				stopCellEditing();				
+			} else if (!app.isErrorDialogShowing()) {
+				cancelCellEditing();
+			}
 		}
 	}
 

@@ -57,9 +57,14 @@ public final class DrawText extends Drawable {
         update();
     }
     
-    final public void update() {       
+    final public void update() {     
         isVisible = geo.isEuclidianVisible();       				 
-        if (!isVisible) return;          
+        if (!isVisible 
+        		&& !text.isNeedsUpdatedBoundingBox()) // needed for Corner[Element[text
+        	return;          
+        
+        if (isLaTeX) // needed eg for \sqrt
+        	updateStrokes(text);
         
         if (isLaTeX) // needed eg for \sqrt
         	updateStrokes(text);
@@ -181,9 +186,9 @@ public final class DrawText extends Drawable {
 		{									
 			// ensure that bounding box gets updated by drawing text once
 			if (isLaTeX) 
-				drawMultilineLaTeX(view.getTempGraphics2D(), textFont, geo.getObjectColor(),view.getBackground());
+				drawMultilineLaTeX(view.getTempGraphics2D(textFont), textFont, geo.getObjectColor(),view.getBackground());
 			else 
-				drawMultilineText(view.getTempGraphics2D());	
+				drawMultilineText(view.getTempGraphics2D(textFont));	
 			
 			// Michael Borcherds 2007-11-26 BEGIN update corners for Corner[] command
 			double xRW = view.toRealWorldCoordX(labelRectangle.x);
@@ -192,11 +197,6 @@ public final class DrawText extends Drawable {
 			text.setBoundingBox(xRW, yRW,
 					labelRectangle.width * view.invXscale,
 					-labelRectangle.height * view.invYscale);	
-			
-	    	// TODO: remove
-	    	//Application.debug("UPDATE  text & draw " + geo + ", invXscale " + view.invXscale);
-	    
-	    	
 		}
     }
 
@@ -284,19 +284,7 @@ public final class DrawText extends Drawable {
     final public void setGeoElement(GeoElement geo) {
         this.geo = geo;
     } 
-    
-    /**
-     * Removes HotEqn from view again    
-     */
-	final public void remove() {    	
-    	//if (eqn != null) view.remove(eqn);
-    }
 
-
-	final void updateFontSize() {	
-		doUpdateFontSize();
-	}
-	
 	private boolean doUpdateFontSize() {
 		// text's font size is relative to the global font size
 		int newFontSize = view.fontSize + text.getFontSize();		

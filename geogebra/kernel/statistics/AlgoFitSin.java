@@ -12,18 +12,17 @@ the Free Software Foundation.
 
 */
 
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.statistics.RegressionMath;
 
 
 /**************
@@ -36,6 +35,9 @@ import geogebra.kernel.statistics.RegressionMath;
  * 			20.11:	errorMsg->Application.debug
  * 			22.11:  got rid of all testcode, except out-commented hook; runTest(x[],y[])
  * 			?.12:   Step II and III in algorithm changed, using Discrete Fourier Transform instead
+ * 			17.01:  Changed to minimum 4 datapoints to give fewer undefined,
+ *                  even if this might not be very useful
+ *          14.02.09: Small bug in linje 256. Undefined if many iterations
  * Fits a+b*sin(c*x+d)  to a list of points.
  * Adapted from:
  *    	Nonlinear regression algorithms are well known, see:
@@ -141,9 +143,9 @@ public class AlgoFitSin extends AlgoElement{
     protected final void compute() {
         size=geolist.size();
         error=false;				//General flag
-        if(!geolist.isDefined() || (size<5) ) {	//Direction-algo needs two flanks, 3 in each.
+        if(!geolist.isDefined() || (size<4) ) {	//Direction-algo needs two flanks, 3 in each.
             geofunction.setUndefined();
-            errorMsg("List not properly defined or too small (5 points needed).");
+            errorMsg("List not properly defined or too small (4 points needed).");
             return;
         }else{
         	regMath = k.getRegressionMath();
@@ -245,14 +247,13 @@ public class AlgoFitSin extends AlgoElement{
         }//for all data
         
         //09.12: Checking half-period:
-        min_max_distance=Math.abs(xd[xmax]-xd[xmin]);	
+        min_max_distance=Math.abs(xd[xmax]-xd[xmin]);
         if(changes<=1){							//Did not succeed, abs extrema probably best
         	xmin=xmin_abs;xmax=xmax_abs;
         	min_max_distance=Math.abs(xd[xmin]-xd[xmax]);	//Update for final c further down
         	//min_max_distance might be 1,3,5,... halfperiods...find the one that gives the least sse
-        	numberofhalfperiods=findNumberOfHalfPeriods(size/6,xmin,xmax);	//At least 6 points in a period, hopefully
+        	numberofhalfperiods=findNumberOfHalfPeriods(size/4,xmin,xmax);	//At least 6 (14.02.09:4) points in a period, hopefully
         }//if too few extrema
-        
         c=PI*numberofhalfperiods/min_max_distance;			//debug("Final c: "+c);
      
         //Find d  
@@ -315,9 +316,11 @@ public class AlgoFitSin extends AlgoElement{
         lambda=startfaktor*0.001;   //Heuristic, suggested by several articles                                  
                                                                         //debug("Startlambda: "+lambda);
         while(Math.abs(da)+Math.abs(db)+Math.abs(dc)+Math.abs(dd)>EPSILON){
+
             iterations++;												//debug(""+iterations+"   : ");
             if((iterations>MAXITERATIONS)||(error)){                	//From experience: >100 gives unusable result
             	errorMsg("More than "+MAXITERATIONS+" iterations...");
+            	error=true;    //14.02.09: No use=>undefined!
             	break;
             }//if diverging
             b1=b2=b3=b4=0.0d;

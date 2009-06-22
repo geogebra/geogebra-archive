@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+
 /**
  *
  * @author  Markus
@@ -20,9 +21,6 @@ package geogebra.kernel;
  */
 public class AlgoIf extends AlgoElement {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoBoolean condition;     // input
 	private GeoElement ifGeo, elseGeo;  // input
@@ -76,9 +74,17 @@ public class AlgoIf extends AlgoElement {
     public GeoElement getGeoElement() { return result; }
     
     // calc the current value of the arithmetic tree
-    protected final void compute() {	 
+    protected final void compute() {	
+    	
+    	/* TODO do we want this?
+    	if (!ifGeo.getClass().isAssignableFrom(elseGeo.getClass()) &&
+    			!elseGeo.getClass().isAssignableFrom(ifGeo.getClass())) {
+    		result.setUndefined();
+    		return;
+    	}*/
+    	
     	try {
-	    	if (condition.getBoolean()) {
+	    	if (condition.getBoolean()) {	    		
 	    		result.set(ifGeo);
 	    	} else {
 	    		if (elseGeo == null)
@@ -87,6 +93,7 @@ public class AlgoIf extends AlgoElement {
 	    			result.set(elseGeo);
 	    	}    	
     	} catch (Exception e) {
+    		//e.printStackTrace();
     		result.setUndefined();
     	}
     }   

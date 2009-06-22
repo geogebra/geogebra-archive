@@ -29,12 +29,16 @@ public class AlgoIntegral extends AlgoElement {
     private GeoFunction g; // output g = integral(f(x), x)      
 
     public AlgoIntegral(Construction cons, String label, GeoFunction f) {
+        this(cons, f);
+        g.setLabel(label);
+    }
+    
+    AlgoIntegral(Construction cons, GeoFunction f) {
         super(cons);
         this.f = f;        
         g = (GeoFunction) f.copyInternal(cons);  // output
         setInputOutput(); // for AlgoElement        
         compute();
-        g.setLabel(label);
     }
     
     protected String getClassName() {

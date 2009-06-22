@@ -1,12 +1,11 @@
 package geogebra;
 
-import geogebra.main.Application;
 
 
 /**
- * JavaScript interface of GeoGebra applets
+ * JavaScript interface of GeoGebra applets.
  * 
- * @author mhohenwarter
+ * @author Markus Hohenwarter, Michael Borcherds
  */
 public interface JavaScriptAPI {
 	
@@ -61,11 +60,18 @@ public interface JavaScriptAPI {
 	 * prints a string to the Java Console
 	 */
 	public void debug(String string);
+	
 	/**
 	 * Evaluates the given string as if it was entered into MathPiper's 
-	 * input text field. 	 
+	 * input text field.
 	 */
 	public String evalMathPiper(String cmdString);
+	
+	/**
+	 * Evaluates the given string using the Yacas CAS.
+	 * @deprecated: use evalMathPiper() instead
+	 */
+	public String evalYacas(String cmdString);
 
 	/**
 	 * Turns showing of error dialogs on (true) or (off). 
@@ -74,8 +80,18 @@ public interface JavaScriptAPI {
 	public void setErrorDialogsActive(boolean flag);
 	
 	/**
+	 * Turns on the fly creation of points in graphics view on (true) or (off). 
+	 * Note: this is useful if you don't want tools to have the side effect
+	 * of creating points. For example, when this flag is set to false, the 
+	 * tool "line through two points" will not create points on the fly
+	 * when you click on the background of the graphics view. 
+	 */
+	public void setOnTheFlyPointCreationActive(boolean flag);
+	
+	public void setUndoPoint();
+	
+	/**
 	 * Resets the initial construction (given in filename parameter) of this applet.	
-	 * ...but the actual code is in a thread to avoid JavaScript security issues 
 	 */
 	public void reset();
 	
@@ -105,6 +121,11 @@ public interface JavaScriptAPI {
 	 * Shows or hides the object with the given name in the geometry window.
 	 */
 	public void setVisible(String objName, boolean visible);
+	
+	/**
+	 * returns true or false depending on whether the object is visible
+	 */
+	public boolean getVisible(String objName);
 	
 	/**
 	 * Sets the layer of the object with the given name in the geometry window.
@@ -150,6 +171,56 @@ public interface JavaScriptAPI {
 	 * Shows or hides the label of the object with the given name in the geometry window.
 	 */
 	public void setLabelMode(String objName, boolean visible);
+	
+	/**
+	 * Sets the line thickness of the object with the given name.
+	 */
+	public void setLineThickness(String objName, int thickness);
+	
+	/**
+	 * Returns the line thickness of the object
+	 */
+	public int getLineThickness(String objName);
+	
+	/**
+	 * Sets the lineType of the object with the given name.(if possible)
+	 */
+	public void setLineStyle(String objName, int style);
+	
+	/**
+	 * Returns the lineType of the object 
+	 */
+	public int getLineStyle(String objName);
+	
+	/**
+	 * Sets the filling of the object with the given name. (if possible)
+	 */
+	public void setFilling(String objName, double filling);
+	
+	/**
+	 * Returns the filling of the object as an int (or -1 for no filling)
+	 */
+	public double getFilling(String objName);
+	
+	/**
+	 * Returns the point style of the object as an int (or -1 for default, or not a point)
+	 */
+	public int getPointStyle(String objName);
+	
+	/**
+	 * Sets the point style of the object (-1 for default)
+	 */
+	public void setPointSize(String objName, int style);
+	
+	/**
+	 * Returns the point style of the object as an int (or -1 for default, or not a point)
+	 */
+	public int getPointSize(String objName);
+	
+	/**
+	 * Sets the point style of the object (-1 for default)
+	 */
+	public void setPointStyle(String objName, int style);
 	
 	/**
 	 * Sets the color of the object with the given name.
@@ -200,6 +271,11 @@ public interface JavaScriptAPI {
 	 * @see setAnimating()
 	 */
 	public void stopAnimation();
+	
+	/**
+	 * Whether or not to show the mouse pointer (cursor) when dragging
+	 */
+	public void hideCursorWhenDragging(boolean hideCursorWhenDragging);
 	
 	/**
 	 * Returns whether automatic animation is currently running.

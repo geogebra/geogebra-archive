@@ -1,7 +1,9 @@
 package geogebra.cas.view.components;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+
+import javax.swing.JFrame;
 
 /**
  * TestFrame_TMP 

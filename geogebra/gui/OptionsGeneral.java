@@ -1,8 +1,8 @@
 package geogebra.gui;
 
-import java.awt.BorderLayout;
-
 import geogebra.main.Application;
+
+import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;

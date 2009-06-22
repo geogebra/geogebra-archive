@@ -20,9 +20,6 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 
-
-
-
 /**
  *
  * @author  Markus
@@ -30,9 +27,6 @@ import java.util.ArrayList;
  */
 public class AlgoIntersectLineConic extends AlgoIntersect {    
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoLine g;  // input
     private GeoConic c;
@@ -47,7 +41,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     private boolean isPalive [];     
     
     private int i;
-    private boolean isTangent;
+    private boolean isDefinedAsTangent;
     private boolean firstIntersection = true;
     private boolean isPermutationNeeded = true;
     private GeoPoint tangentPoint;
@@ -79,16 +73,16 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         if (g.getParentAlgorithm() instanceof AlgoTangentPoint) {
             AlgoTangentPoint algo = (AlgoTangentPoint) g.getParentAlgorithm();
             tangentPoint = algo.getTangentPoint(c, g);
-            isTangent = (tangentPoint != null);            
+            isDefinedAsTangent = (tangentPoint != null);            
         }
         else if (g.getParentAlgorithm() instanceof AlgoTangentLine) { 
             AlgoTangentLine algo = (AlgoTangentLine) g.getParentAlgorithm();
             tangentPoint = algo.getTangentPoint(c, g);
-            isTangent = (tangentPoint != null);            
+            isDefinedAsTangent = (tangentPoint != null);            
         }                      
         
         // g is defined as tangent of c
-        if (isTangent) {
+        if (isDefinedAsTangent) {
             P  = new GeoPoint[1];
             P[0] = new GeoPoint(cons);
         } 
@@ -129,7 +123,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         setDependencies(); // done by AlgoElement
     }    
     
-    GeoPoint [] getIntersectionPoints() {
+    final GeoPoint [] getIntersectionPoints() {
         return P;
     }
     
@@ -144,7 +138,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     }
     	 
     final void initForNearToRelationship() {   
-    	if (isTangent) return;
+    	if (isDefinedAsTangent) return;
     	    	
     	isPermutationNeeded = true; // for non-continuous intersections    	
     	for (int i=0; i < P.length; i++) {        	 	
@@ -157,7 +151,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     // calc intersections of conic c and line g
     protected final void compute() {  
         // g is defined as tangent of c
-        if (isTangent) {
+        if (isDefinedAsTangent) {
             P[0].setCoords(tangentPoint);
             return;
         }              
@@ -175,8 +169,10 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         	computeContinous();        	        	        	        	
         } else {
         	computeNonContinous();
-        }        	
-    }     
+        }        
+              
+        avoidDoubleTangentPoint();
+    }           
             
     /**
      * There is an important special case we handle separately:
@@ -219,7 +215,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         int secondIndex = (firstIndex + 1) % 2;
                 
         if (firstIntersection && didSetIntersectionPoint(firstIndex)) {           
-        	if (!P[firstIndex].equals(pointOnConic)) {
+        	if (!P[firstIndex].isEqual(pointOnConic)) {
             	// pointOnConic is NOT equal to the loaded intersection point:
         		// we need to swap the indices
         		int temp = firstIndex;
@@ -237,7 +233,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         // the other intersection point should be the second one
         boolean didSetP1 = false;
         for (int i=0; i < 2; i++) {  
-	   		if (!Q[i].equals(P[firstIndex])) {
+	   		if (!Q[i].isEqual(P[firstIndex])) {
 	   			P[secondIndex].setCoords(Q[i]);
 	   			didSetP1 = true;
 	   			break;
@@ -294,7 +290,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
          
         // remember the defined points D, so that Di = Pi if Pi is defined        
         // and set age                
-        boolean noSingularity = !P[0].equals(P[1]); // singularity check        
+        boolean noSingularity = !P[0].isEqual(P[1]); // singularity check        
         for (i=0; i < 2; i++) {        	
         	boolean finite = P[i].isFinite();
         	
@@ -363,7 +359,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
      */
     private void handleLimitedPaths() {
     	//  singularity check        
-    	boolean noSingularity = !P[0].equals(P[1]);    	
+    	boolean noSingularity = !P[0].isEqual(P[1]);    	
         
     	for (i=0; i < P.length; i++) {
             if (P[i].isDefined()) {

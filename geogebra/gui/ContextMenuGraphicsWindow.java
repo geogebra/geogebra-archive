@@ -114,7 +114,7 @@ implements ActionListener {
         
         addSeparator();          
         
-        JMenuItem miProperties = new JMenuItem(app.getPlain("Properties"));
+        JMenuItem miProperties = new JMenuItem(app.getPlain("DrawingPad") + " ...");
         miProperties.setIcon(app.getImageIcon("document-properties.png"));
         miProperties.setActionCommand("properties");
         miProperties.addActionListener(this);

@@ -1,15 +1,20 @@
 // Copyright 2002, SLAC, Stanford, U.S.A.
 package org.freehep.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.AbstractCollection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Stores a hashtable of hashtables, which can be indexed by a key and a subkey.
  * Keys and Values can be null.
  *
  * @author Mark Donszelmann
- * @version $Id: DoubleHashtable.java,v 1.3 2008-05-04 12:22:34 murkle Exp $
+ * @version $Id: DoubleHashtable.java,v 1.4 2009-06-22 02:18:20 hohenwarter Exp $
  */
 
 public class DoubleHashtable extends AbstractCollection implements Serializable {

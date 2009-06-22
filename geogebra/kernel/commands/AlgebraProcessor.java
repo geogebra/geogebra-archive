@@ -23,7 +23,6 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyStringBuffer;
@@ -104,6 +103,15 @@ public class AlgebraProcessor {
 				newLabel = oldLabel;
 				ve.setLabel(newLabel);
 			}
+			
+			// make sure that points stay points and vectors stay vectors
+			if (ve instanceof ExpressionNode) {
+				ExpressionNode n = (ExpressionNode) ve;
+				if (geo.isGeoPoint()) 
+					n.setForcePoint();
+				else if (geo.isGeoVector())
+					n.setForceVector();
+			}
 
 			if (newLabel.equals(oldLabel)) {
 				// try to overwrite                
@@ -125,7 +133,7 @@ public class AlgebraProcessor {
 			}
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
-			throw new Exception("CircularDefinition");
+			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(app.getError("InvalidInput") + ":\n" + newValue);
@@ -182,7 +190,7 @@ public class AlgebraProcessor {
 			throw new Exception(e.getLocalizedMessage());
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
-			throw new Exception("CircularDefinition");
+			throw e;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw new Exception("InvalidInput");
@@ -196,7 +204,7 @@ public class AlgebraProcessor {
 	 */
 	public double evaluateToDouble(String str) {
 		try {
-			ValidExpression ve = parser.parseGeoGebraExpression(str);
+			ValidExpression ve = parser.parseExpression(str);
 			ExpressionNode en = (ExpressionNode) ve;
 			en.resolveVariables();
 			NumberValue nv = (NumberValue) en.evaluate();
@@ -319,19 +327,19 @@ public class AlgebraProcessor {
 	}
 
 	/**
-	 * Parses given String str and tries to evaluate it to a GeoNumeric
+	 * Parses given String str and tries to evaluate it to a NumberValue
 	 * Returns null if something went wrong.
 	 * Michael Borcherds 2008-08-13
 	 */
-	public GeoNumeric evaluateToNumeric(String str) {
+	public NumberValue evaluateToNumeric(String str) {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 
-		GeoNumeric func = null;
+		NumberValue num = null;
 		try {
 			ValidExpression ve = parser.parseGeoGebraExpression(str);		
 			GeoElement [] temp = processValidExpression(ve);
-			func = (GeoNumeric) temp[0];
+			num = (NumberValue) temp[0];
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");
@@ -347,7 +355,7 @@ public class AlgebraProcessor {
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
-		return func;
+		return num;
 	}
 
 	/**
@@ -364,7 +372,7 @@ public class AlgebraProcessor {
 			ValidExpression ve = parser.parseGeoGebraExpression(str);
 			if (ve instanceof ExpressionNode) {
 				ExpressionNode en = (ExpressionNode) ve;
-				en.forcePoint = true;	
+				en.setForcePoint();	
 			}
 			 
 			 temp = processValidExpression(ve);
@@ -428,7 +436,7 @@ public class AlgebraProcessor {
 
 	public GeoElement[] processValidExpression(ValidExpression ve)
 		throws MyError, Exception {
-		return processValidExpression(ve, false);
+		return processValidExpression(ve, true);
 	}
 
 	/**
@@ -523,11 +531,14 @@ public class AlgebraProcessor {
 					}
 					
 					// STANDARD CASE: REDFINED 
-					else {									
-						cons.replace(replaceable, ret[0]);
+					else {					
+						GeoElement newGeo = ret[0];
+						cons.replace(replaceable, newGeo);
+						
 						// now all objects have changed
 						// get the new object with same label as our result
-						ret[0] = kernel.lookupLabel(ret[0].getLabel(), false);						
+						String newLabel = newGeo.isLabelSet() ? newGeo.getLabel() : replaceable.getLabel();
+						ret[0] = kernel.lookupLabel(newLabel, false);						
 					}
 				} catch (CircularDefinitionException e) {
 					throw e;
@@ -545,44 +556,43 @@ public class AlgebraProcessor {
 	}
 	
 	private GeoElement [] doProcessValidExpression(ValidExpression ve) throws MyError, Exception {
-		GeoElement [] ret = null;
+		GeoElement [] ret = null;	
 		
-		Application.debug(ve.getClass()+"");
-		
-		if (ve instanceof ExpressionNode) {
-			ret = processExpressionNode((ExpressionNode) ve);
-		}
+			if (ve instanceof ExpressionNode) {
+				ret = processExpressionNode((ExpressionNode) ve);
+			}
+	
+			// Command		
+			else if (ve instanceof Command) {
+				ret = cmdDispatcher.processCommand((Command) ve, true);
+			}
+	
+			// Equation in x,y (linear or quadratic are valid): line or conic
+			else if (ve instanceof Equation) {
+				ret = processEquation((Equation) ve);
+			}
+	
+			// explicit Function in x
+			else if (ve instanceof Function) {
+				ret = processFunction(null, (Function) ve);
+			}						
+	
+			// Parametric Line        
+			else if (ve instanceof Parametric) {
+				ret = processParametric((Parametric) ve);
+			}
+	
+//			// Assignment: variable
+//			else if (ve instanceof Assignment) {
+//				ret = processAssignment((Assignment) ve);
+//			} 
+			
 
-		// Command		
-		else if (ve instanceof Command) {
-			ret = cmdDispatcher.processCommand((Command) ve, true);
-		}
-
-		// Equation in x,y (linear or quadratic are valid): line or conic
-		else if (ve instanceof Equation) {
-			ret = processEquation((Equation) ve);
-		}
-
-		// explicit Function in x
-		else if (ve instanceof Function) {
-			ret = processFunction((Function) ve);
-		}						
-
-		// Parametric Line        
-		else if (ve instanceof Parametric) {
-			ret = processParametric((Parametric) ve);
-		}
-
-//		// Assignment: variable
-//		else if (ve instanceof Assignment) {
-//			ret = processAssignment((Assignment) ve);
-//		} 
-		
 		return ret;
 	}
 	
 
-	private GeoElement[] processFunction(Function fun) {	
+	private GeoElement[] processFunction(ExpressionNode funNode, Function fun) {		
 		fun.initFunction();		
 		
 		String label = fun.getLabel();
@@ -623,6 +633,8 @@ public class AlgebraProcessor {
 			}
 		} 
 		catch (MyError eqnError) {
+			eqnError.printStackTrace();
+			
         	// invalid equation: maybe a function of form "y = <rhs>"?			
 			String lhsStr = equ.getLHS().toString().trim();
 			if (lhsStr.equals("y")) {
@@ -632,9 +644,10 @@ public class AlgebraProcessor {
 
 					// try to use label of equation							
 					fun.setLabel(equ.getLabel());
-					return processFunction(fun);
+					return processFunction(null, fun);
 				}
 				catch (MyError funError) {
+					funError.printStackTrace();
 				}        
 			} 
 			
@@ -729,13 +742,13 @@ public class AlgebraProcessor {
 
 		// get point
 		ExpressionNode node = par.getP();
-		node.forcePoint();
+		node.setForcePoint();
 		GeoElement[] temp = processExpressionNode(node);
 		GeoPoint P = (GeoPoint) temp[0];
 
 		//	get vector
 		node = par.getv();
-		node.forceVector();
+		node.setForceVector();
 		temp = processExpressionNode(node);
 		GeoVector v = (GeoVector) temp[0];
 
@@ -778,7 +791,8 @@ public class AlgebraProcessor {
 		// ELSE:  resolve variables and evaluate expressionnode		
 		n.resolveVariables();			
 		eval = n.evaluate(); //ggb3D : used by AlgebraProcessor3D in extended processExpressionNode		
-
+		boolean dollarLabelFound = false;		
+		
 		// leaf (no new label specified): just return the existing GeoElement
 		if (eval.isGeoElement() &&  n.getLabel() == null) 
 		{
@@ -791,7 +805,8 @@ public class AlgebraProcessor {
 				case ExpressionNode.$VAR_ROW:
 				case ExpressionNode.$VAR_ROW_COL:
 					// don't do anything here: we need to keep the wrapper ExpressionNode
-					// and must not return the GeoElement here				
+					// and must not return the GeoElement here	
+					dollarLabelFound = true;
 					break;
 					
 				default:
@@ -801,30 +816,29 @@ public class AlgebraProcessor {
 			}			
 		}		
 		
-		
-		if (eval.isNumberValue())
+		if (eval.isBooleanValue())
+			return processBoolean(n, eval);
+		else if (eval.isNumberValue())
 			return processNumber(n, eval);
 		else if (eval.isVectorValue())
 			return processPointVector(n, eval);	
 		else if (eval.isVector3DValue())
 			return processPointVector3D(n, eval);	
-		else if (eval.isListValue()) {
-			MyList myList = ((ListValue) eval).getMyList();
-			myList.setLabel(n.getLabel());
-			return processList(n, myList);	
-		} 
 		else if (eval.isTextValue())
-			return processText(n, eval);
-		else if (eval.isBooleanValue())
-			return processBoolean(n, eval);
+			return processText(n, eval);		
 		else if (eval instanceof Function) {
-			return processFunction((Function) eval);			
+			return processFunction(n, (Function) eval);			
+		} 		
+		else if (eval instanceof MyList) {
+			return processList(n, (MyList) eval);
 		} 
 		
 		// e.g. B1 = A1 where A1 is a GeoElement and B1 does not exist yet
 		// create a copy of A1
-		else if (eval.isGeoElement() && n.getLabel() != null) {		
-			return processGeoCopy(n.getLabel(), (GeoElement) eval);
+		else if (eval.isGeoElement()) {
+			if (n.getLabel() != null || dollarLabelFound) {
+				return processGeoCopy(n.getLabel(), n);	
+			}									
 		}		
 		
 		// if we get here, nothing worked
@@ -862,7 +876,7 @@ public class AlgebraProcessor {
 		
 		// no operations or no variables are present, e.g.
 		// { a, b, 7 } or  { 2, 3, 5 } + {1, 2, 4}
-		if (!n.hasOperations() || n.isConstant()) {
+		if (!n.hasOperations() || n.isConstant()) {		
 			
 			// PROCESS list items to generate a list of geoElements		
 			ArrayList geoElements = new ArrayList();
@@ -874,13 +888,14 @@ public class AlgebraProcessor {
 			
 			int size = evalList.size();
 			for (int i=0; i < size; i++) {
-				GeoElement [] results = processExpressionNode((ExpressionNode) evalList.getListElement(i));						
-				GeoElement geo = results[0];
+				ExpressionNode en = (ExpressionNode) evalList.getListElement(i);
+				// we only take one resulting object	
+				GeoElement [] results = processExpressionNode(en);						
+				GeoElement geo = results[0];										
 				
-				// we only take one resulting object			
-				geoElements.add(geo);
-						
-				if (results[0].isLabelSet() || !results[0].isIndependent())
+				// add to list
+				geoElements.add(geo);						
+				if (geo.isLabelSet() || !geo.isIndependent())
 					isIndependent = false;			
 			}		
 			cons.setSuppressLabelCreation(oldMacroMode);
@@ -930,48 +945,64 @@ public class AlgebraProcessor {
 	}
 
 	private GeoElement[] processPointVector(
-			ExpressionNode n,
-			ExpressionValue evaluate) {
-			String label = n.getLabel();				        
-			
-			GeoVec2D p = ((VectorValue) evaluate).getVector();
-							
-			boolean polar = p.getMode() == Kernel.COORD_POLAR;		
-			GeoVec3D[] ret = new GeoVec3D[1];
-			boolean isIndependent = n.isConstant();
+		ExpressionNode n,
+		ExpressionValue evaluate) {
+		String label = n.getLabel();				        
+		
+		GeoVec2D p = ((VectorValue) evaluate).getVector();
+		
+		boolean polar = p.getMode() == Kernel.COORD_POLAR;		
+		
+		// we want z = 3 + i to give a (complex) GeoPoint not a GeoVector
+		boolean complex = p.getMode() == Kernel.COORD_COMPLEX;
+		
+		GeoVec3D[] ret = new GeoVec3D[1];
+		boolean isIndependent = n.isConstant();
 
-			// make vector, if label begins with lowercase character
-			if (label != null) {
-				if (!(n.forcePoint
-					|| n.forceVector)) { // may be set by MyXMLHandler
-					if (Character.isLowerCase(label.charAt(0)))
-						n.forceVector();
-					else
-						n.forcePoint();
-				}
-			}
-			boolean isVector = n.isVectorValue();
-
-			if (isIndependent) {
-				// get coords
-				double x = p.getX();
-				double y = p.getY();
-				if (isVector)
-					ret[0] = kernel.Vector(label, x, y);
+		// make vector, if label begins with lowercase character
+		if (label != null) {
+			if (!(n.isForcedPoint() || n.isForcedVector())) { // may be set by MyXMLHandler
+				if (!complex && Character.isLowerCase(label.charAt(0)))
+					n.setForceVector();
 				else
-					ret[0] = kernel.Point(label, x, y);			
-			} else {
-				if (isVector)
-					ret[0] = kernel.DependentVector(label, n);
-				else
-					ret[0] = kernel.DependentPoint(label, n);
+					n.setForcePoint();
 			}
-			if (polar) {
-				ret[0].setMode(Kernel.COORD_POLAR);
-				ret[0].updateRepaint();
-			} 
-			return ret;
 		}
+		boolean isVector = n.isVectorValue();
+		
+		// check for free "complex" points like 2 + i that only depend on i
+		if (complex && !isIndependent) {
+			GeoElement [] vars = n.getGeoElementVariables();
+			if (vars.length == 1 && "i".equals(vars[0].getLabel())) {
+				isIndependent = true;			
+				complex = true;
+			}
+	
+		}
+
+		if (isIndependent) {
+			// get coords
+			double x = p.getX();
+			double y = p.getY();
+			if (isVector)
+				ret[0] = kernel.Vector(label, x, y);
+			else
+				ret[0] = kernel.Point(label, x, y, complex);			
+		} else {			
+			if (isVector)
+				ret[0] = kernel.DependentVector(label, n);
+			else
+				ret[0] = kernel.DependentPoint(label, n, complex);
+		}
+		if (polar) {
+			ret[0].setMode(Kernel.COORD_POLAR);
+			ret[0].updateRepaint();
+		} else if (complex) {
+			ret[0].setMode(Kernel.COORD_COMPLEX);
+			ret[0].updateRepaint();
+		}
+		return ret;
+	}
 		
 	/** empty method in 2D : see AlgebraProcessor3D to see implementation in 3D
 	 * @param n
@@ -988,9 +1019,9 @@ public class AlgebraProcessor {
 	/** 
 	 * Creates a dependent copy of origGeo with label
 	 */
-	private GeoElement[] processGeoCopy(String copyLabel, GeoElement origGeo) {
+	private GeoElement[] processGeoCopy(String copyLabel, ExpressionNode origGeoNode) {
 		GeoElement[] ret = new GeoElement[1];
-		ret[0] = kernel.DependentGeoCopy(copyLabel, origGeo);		
+		ret[0] = kernel.DependentGeoCopy(copyLabel, origGeoNode);		
 		return ret;
 	}
 

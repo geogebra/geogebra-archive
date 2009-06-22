@@ -3,11 +3,8 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
-import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoSegmentInterface;
-import geogebra.main.Application;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 

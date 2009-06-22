@@ -1,7 +1,6 @@
 package geogebra3D.Matrix;
 
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 /**
  * @author ggb3D

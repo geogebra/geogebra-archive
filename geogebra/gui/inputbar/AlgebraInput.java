@@ -12,17 +12,16 @@ the Free Software Foundation.
 
 package geogebra.gui.inputbar;
 
-import geogebra.main.Application;
 import geogebra.gui.view.algebra.InputPanel;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
-import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -33,20 +32,16 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 
 /**
  * @author Markus Hohenwarter
  */
-public class AlgebraInput extends  JPanel 
-implements ActionListener, MouseListener, KeyListener
-{
+public class AlgebraInput extends  JPanel implements ActionListener, KeyListener, MouseListener, FocusListener {
 	private static final long serialVersionUID = 1L;
 	
 	private Application app;
 
-	private JLabel helpButton;
-	private JToggleButton inputButton;	
+	private JLabel inputLabel, helpIcon;
  	
 	private JComboBox cmdCB; // for command list
 	
@@ -64,55 +59,59 @@ implements ActionListener, MouseListener, KeyListener
 	
 	public void initGUI() {
 		removeAll();
-		helpButton = new JLabel(app.getImageIcon("help.png")); 
-		inputButton = new JToggleButton(); // label text
+		helpIcon = new JLabel(app.getImageIcon("help.png")); 
+		helpIcon.addMouseListener(this);
+		inputLabel = new JLabel(); 
+		inputLabel.addMouseListener(this);
+
 		InputPanel inputPanel = new InputPanel(null, app, 30, true);
 		inputField = (AutoCompleteTextField) inputPanel.getTextComponent();		
 		
 		// set up input field		
-		inputField.setEditable(true);					
-		inputField.addMouseListener(this);			
+		inputField.setEditable(true);						
 		inputField.addKeyListener(this);
 		
 		// set up command combo box
 		cmdCB = new JComboBox();
-		if (app.showCmdList()) {			
+		if (app.showCmdList()) {
 			cmdCB.setMaximumSize(new Dimension(200, 200));
+			// set to approx half screen height
+			//cmdCB.setMaximumRowCount(app.getScreenSize().height/app.getFontSize()/3);
 			cmdCB.addActionListener(this);
 		}
-			
-		helpButton.addMouseListener(this);		
-		inputButton.addMouseListener(this);
+		
+		updateFonts();
 				
 		// add to panel				 		
-		JPanel p = new JPanel(new BorderLayout(5,5));
-		p.add(helpButton, BorderLayout.WEST);	
-		p.add(inputButton, BorderLayout.CENTER);    
-		
-		setLayout(new BorderLayout(5, 5));	
-		add(p, BorderLayout.WEST);   
+		setLayout(new BorderLayout(2, 2));	
+		JPanel iconLabelPanel = new JPanel();
+		iconLabelPanel.add(helpIcon);
+		iconLabelPanel.add(inputLabel);
+		add(iconLabelPanel, BorderLayout.WEST);   
 		add(inputPanel, BorderLayout.CENTER);
 		if (app.showCmdList()) {
-			p = new JPanel(new BorderLayout(5,5));
+			JPanel p = new JPanel(new BorderLayout(5,5));
 			p.add(cmdCB, BorderLayout.CENTER);		
 			add(p, BorderLayout.EAST);
 		}
 		
-		setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),  
-			BorderFactory.createEmptyBorder(2,2,2,2) )
-			);    	
+//		setBorder(BorderFactory.createCompoundBorder(
+//				   BorderFactory.createEtchedBorder(),  
+//				   BorderFactory.createEmptyBorder(2,2,2,2) )
+//			   );   
+
+		setBorder(BorderFactory.createEmptyBorder(3,3,3,3));	
 		
 		setLabels();
-	}		
+		inputField.addFocusListener(this);
+	}
 	
-	public JToggleButton getInputButton() {
-		return inputButton;
+	public boolean requestFocusInWindow() { 
+		return inputField.requestFocusInWindow();
 	}
 	
 	public void requestFocus() {
-		super.requestFocus();
-		inputField.requestFocus();
+		requestFocusInWindow();
 	}
 	
 	public boolean hasFocus() {
@@ -128,56 +127,44 @@ implements ActionListener, MouseListener, KeyListener
 	}
 	
 	/**
-	 * updates labels according to current locale
+	 * updates labesl according to current locale
 	 */
 	public void setLabels() {
-		if (inputButton != null)
-			inputButton.setText( app.getPlain("InputLabel") + ":");
+		if (inputLabel != null)
+			inputLabel.setText( app.getPlain("InputLabel") + ":");
 		//inputButton.setToolTipText(app.getMenu("Mode") + " " + app.getMenu("InputField"));   
-		if (helpButton != null)
-			helpButton.setToolTipText(app.getMenu("FastHelp"));		
+		if (helpIcon != null)
+			helpIcon.setToolTipText(app.getMenu("FastHelp"));		
 		//setCommandNames();				
 	}	
 	
 	public void updateFonts() {
 		inputField.setFont(app.getBoldFont());		
-		cmdCB.setFont(app.getPlainFont());
-		inputButton.setFont(app.getPlainFont());
+		inputLabel.setFont(app.getPlainFont());
+		if (app.showCmdList()) {	
+			cmdCB.setFont(app.getPlainFont());
+			// set to approx half screen height
+			cmdCB.setMaximumRowCount(app.getScreenSize().height/app.getFontSize()/3);
+		}
 	}    
 	
-	/**
-	 * Inserts string at current position of the input textfield and gives focus
-	 * to the input textfield.
-	 * @param str: inserted string
-	 */
-	public void insertString(String str) {
-		
-		inputField.replaceSelection(str);
-	}
+//	/**
+//	 * Inserts string at current position of the input textfield and gives focus
+//	 * to the input textfield.
+//	 * @param str: inserted string
+//	 */
+//	public void insertString(String str) {
+//		inputField.replaceSelection(str);
+//	}
 	
-	/*
-	 * puts the definition of the GeoElement into the input bar
-	 * eg A1(x) = x^2, A3 = 2 A2 - A1, B1 = (1,2)
+	/**
+	 * Sets the content of the input textfield and gives focus
+	 * to the input textfield.
 	 */
-	public void setString(GeoElement geo) {
-		
-		if (geo == null) {
-			inputField.setText("");
-			return;
-		}
-		
-    	// for expressions like "3 = 2 A2 - A1"
-    	// getAlgebraDescription() returns "3 = 5"
-    	// so we need to use getCommandDescription() in those cases
-    	String inputBarStr = geo.getCommandDescription();
-    	if (!inputBarStr.equals("")) {
-    		inputBarStr = geo.getLabel() + " = " + inputBarStr;
-    	} else {
-    		inputBarStr = geo.getAlgebraDescription();
-    	}
-		
-		inputField.setText(inputBarStr);
+	public void replaceString(String str) {
+		inputField.setText(str);
 	}
+
 	
 	// see actionPerformed
 	private void insertCommand(String cmd) {
@@ -201,7 +188,8 @@ implements ActionListener, MouseListener, KeyListener
 	/**
 	 * fill command list with command names of current locale
 	 */	
-	public void setCommandNames() {		
+	public void setCommandNames() {	
+		app.initTranslatedCommands();
 		LowerCaseDictionary dict = app.getCommandDictionary();
 		if (dict == null) return;
 		
@@ -242,63 +230,6 @@ implements ActionListener, MouseListener, KeyListener
 			}					
 		}			
 	}
-	
-      
-
-
-	/**
-	 * sets AlgebraInput mode when focus is gained
-	 *
-	public void focusGained(FocusEvent e) {
-		app.setAlgebraInputMode();	
-	}
-
-	public void focusLost(FocusEvent e) {
-	}*/
-
-
-	/**
-	 * sets AlgebraInput mode on double click
-	 */
-	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == inputField) {		
-			if (e.getClickCount() == 2) {
-				app.setAlgebraInputMode();
-				inputField.requestFocus();
-			}
-		}
-	}
-
-	public void mouseEntered(MouseEvent arg0) {
-	}
-
-
-	public void mouseExited(MouseEvent arg0) {
-	}
-
-
-	public void mousePressed(MouseEvent e) {
-		Object src = e.getSource();
-		if (src == inputButton) {	
-			if (!inputButton.isSelected()) {
-				inputButton.setSelected(true);
-				app.setMoveMode(); // change icon in toolbar
-				app.setAlgebraInputMode();
-				inputField.requestFocusInWindow();
-			} else {
-				//inputButton.setSelected(false);
-				app.setMoveMode();
-			}
-		} 	
-		else if (src == helpButton) {
-			// show help dialog
-			app.showHelp("InputFieldHelp");
-		}
-	}
-
-	public void mouseReleased(MouseEvent arg0) {
-	}
-
 
 	public void keyPressed(KeyEvent e) {
 		// the input field may have consumed this event
@@ -317,8 +248,8 @@ implements ActionListener, MouseListener, KeyListener
 			  app.getGuiManager().setScrollToShow(true);
 			  
 			  boolean success = null != 
-				 app.getKernel().getAlgebraProcessor().processAlgebraCommand( input, true );
-
+				 app.getKernel().getAlgebraProcessor().processAlgebraCommand( input, true );				
+			  
 			  app.getGuiManager().setScrollToShow(false);
 
 			  if (success) {						   
@@ -334,6 +265,36 @@ implements ActionListener, MouseListener, KeyListener
 
 
 	public void keyTyped(KeyEvent e) {	
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		
+	}
+
+	public void mouseEntered(MouseEvent arg0) {
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	public void mousePressed(MouseEvent e) {	
+		Object src = e.getSource();
+				
+		// click on help icon: open input bar help dialog
+		if (src == helpIcon || src == inputLabel) {
+			app.showHelp(app.getPlain("InputFieldHelp"));
+		}
+	}
+
+	public void mouseReleased(MouseEvent arg0) {
+	}
+
+	public void focusGained(FocusEvent arg0) {
+		app.clearSelectedGeos();
+	}
+
+	public void focusLost(FocusEvent arg0) {
+	
 	}	 
 
 }

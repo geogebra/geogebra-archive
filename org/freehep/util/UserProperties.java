@@ -4,9 +4,9 @@ package org.freehep.util;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.awt.Rectangle;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -24,7 +24,7 @@ import java.util.Properties;
  * improved and merged with PropertyUtilities, or moved into the graphicsio package (tonyj)
  *
  * @author Mark Donszelmann
- * @version $Id: UserProperties.java,v 1.3 2008-05-04 12:22:21 murkle Exp $
+ * @version $Id: UserProperties.java,v 1.4 2009-06-22 02:18:20 hohenwarter Exp $
  */
 
 public class UserProperties extends Properties {

@@ -29,7 +29,6 @@ import geogebra.kernel.statistics.AlgoDoubleListCovariance;
 import geogebra.kernel.statistics.AlgoDoubleListPMCC;
 import geogebra.kernel.statistics.AlgoDoubleListSXX;
 import geogebra.kernel.statistics.AlgoDoubleListSXY;
-import geogebra.kernel.statistics.AlgoDoubleListSYY;
 import geogebra.kernel.statistics.AlgoDoubleListSigmaXX;
 import geogebra.kernel.statistics.AlgoDoubleListSigmaXY;
 import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
@@ -63,6 +62,7 @@ import geogebra.kernel.statistics.AlgoRandom;
 import geogebra.kernel.statistics.AlgoRandomBinomial;
 import geogebra.kernel.statistics.AlgoRandomNormal;
 import geogebra.kernel.statistics.AlgoRandomPoisson;
+import geogebra.kernel.statistics.AlgoSXX;
 import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
@@ -72,7 +72,6 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.main.View;
 import geogebra.util.ScientificFormat;
-import geogebra.util.Util;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -90,9 +89,16 @@ public class Kernel {
 	// minimum precision
 	public final static double MIN_PRECISION = 1E-5;
 	private final static double INV_MIN_PRECISION = 1E5; 
+
+	// maximum reasonable precision
+	public final static double MAX_PRECISION = 1E-12;
 	
 	// current working precision
 	private double EPSILON = STANDARD_PRECISION;
+
+	// maximum precision of double numbers
+	public final static double MAX_DOUBLE_PRECISION = 1E-15;
+	public final static double INV_MAX_DOUBLE_PRECISION = 1E15;	
 	
 	 // style of point/vector coordinates
     public static final int COORD_STYLE_DEFAULT = 0;		// A = (3, 2)  and 	B = (3; 90�)
@@ -111,6 +117,8 @@ public class Kernel {
 	final public static double PI_2 = 2.0 * Math.PI;
 	final public static double PI_HALF =  Math.PI / 2.0;
 	final public static double SQRT_2_HALF =  Math.sqrt(2.0) / 2.0;
+	final public static double PI_180 = Math.PI / 180;
+	final public static double CONST_180_PI = 180 / Math.PI;
 	//private static boolean KEEP_LEADING_SIGN = true;
 	
 	// print precision
@@ -119,6 +127,10 @@ public class Kernel {
 	private NumberFormat nf;
 	private ScientificFormat sf;
 	public boolean useSignificantFigures = false;
+	
+	// rounding hack, see format()
+	private static final double ROUND_HALF_UP_FACTOR_DEFAULT = 1.0 + 1E-15;
+	private double ROUND_HALF_UP_FACTOR = ROUND_HALF_UP_FACTOR_DEFAULT;
 	
 	// used to store info when rounding is temporarily changed
 	private Stack useSignificantFiguresList;
@@ -203,9 +215,10 @@ public class Kernel {
 	
 	public Kernel() {
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
-
 		nf.setGroupingUsed(false);
+		
 		sf = new ScientificFormat(5, 16, false);
+		
 		setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
 	}
 	
@@ -299,7 +312,21 @@ public class Kernel {
     	if (parser == null)
     		parser = new Parser(this, cons);
     	return parser;
-    }		
+    }	
+
+	/** 
+     * Evaluates a JASYMCA expression and returns the result as a String.
+     * e.g. exp = "diff(x^2,x)" returns "2*x"
+     * @param expression string
+     * @return result string (null possible)
+     */ 
+	final public String evaluateJASYMCA(String exp) {
+		if (ggbCAS == null) {
+			getGeoGebraCAS();		
+		}				
+		
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateJASYMCA(exp);
+	}
 	
 	/** 
      * Evaluates a MathPiper expression and returns the result as a String.
@@ -313,25 +340,8 @@ public class Kernel {
 		}
 		
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiper(exp);
-	}
-	
-	/** 
-     * Evaluates a MathPiper expression without any preprocessing and returns the result as a String.
-     * e.g. exp = "D(x) (x^2)" returns "2*x"
-     * @param expression string
-     * @return result string (null possible)
-     */
-	final public String evaluateMathPiperRaw(String exp) {
-		if (ggbCAS == null) {
-			getGeoGebraCAS();		
-		}
-		//Application.debug("evalMathPiper input " + exp);		
-		String ret = ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiperRaw(exp);
-		//Application.debug("evalMathPiper output " + ret);
-		
-		return ret;
-	}
-		
+	}		
+			
 	final public boolean isGeoGebraCASready() {
 		return ggbCAS != null;
 	}
@@ -343,10 +353,6 @@ public class Kernel {
 		if (ggbCAS == null) {
 			app.loadCASJar();
 			ggbCAS = new geogebra.cas.GeoGebraCAS(this);
-			
-			// init Yacas for applets (force loading of required Yacas scripts)
-			// not needed for MathPiper
-			//evaluateMathPiperRaw("Simplify(1+2) + Lcm(1,1) + Gcd(1,1) + Factor(x+1) + TrigSimpCombine(Sin(x)*Cos(x))");			
 		}			
 		
 		return ggbCAS;
@@ -397,10 +403,17 @@ public class Kernel {
 		this.ymin = ymin;
 		this.ymax = ymax;
 		this.xscale = xscale;
-		this.yscale = yscale;
-				
+		this.yscale = yscale;	
+		
 		notifyEuclidianViewAlgos();
 	}	
+	
+	private void notifyEuclidianViewAlgos() {
+		if (macroManager != null) 
+			macroManager.notifyEuclidianViewAlgos();
+		
+		cons.notifyEuclidianViewAlgos();
+	}
 	
 	double getXmax() {
 		return xmax;
@@ -419,33 +432,7 @@ public class Kernel {
 	}
 	double getYscale() {
 		return yscale;
-	}	
-	
-	/**
-	 * Registers an algorithm that wants to be notified when setEuclidianViewBounds() is called.	 
-	 */
-	void registerEuclidianViewAlgo(EuclidianViewAlgo algo) {
-		if (euclidianViewAlgos == null)
-			euclidianViewAlgos = new ArrayList();
-		
-		if (!euclidianViewAlgos.contains(algo))
-			euclidianViewAlgos.add(algo);
 	}
-	
-	void unregisterEuclidianViewAlgo(EuclidianViewAlgo algo) {		
-		if (euclidianViewAlgos != null)
-			euclidianViewAlgos.remove(algo);
-	}
-	private ArrayList euclidianViewAlgos = new ArrayList();
-	
-	public void notifyEuclidianViewAlgos() {
-		if (euclidianViewAlgos == null) return;
-		
-		int size = euclidianViewAlgos.size();
-		for (int i=0; i < size; i++) {
-			((EuclidianViewAlgo) euclidianViewAlgos.get(i)).euclidianViewUpdate();
-		}
-	}		
 	
 	
 	/**
@@ -461,7 +448,7 @@ public class Kernel {
 			renameListenerAlgos.add(algo);
 	}
 	
-	void unregisterEuclidianViewAlgo(AlgoElement algo) {
+	void unregisterRenameListenerAlgo(AlgoElement algo) {
 		if (renameListenerAlgos != null) 
 			renameListenerAlgos.remove(algo);
 	}
@@ -484,7 +471,7 @@ public class Kernel {
 	}
 
 	final public void setMaximumFractionDigits(int digits) {
-		Application.debug(""+digits);
+		//Application.debug(""+digits);
 		useSignificantFigures = false;
 		nf.setMaximumFractionDigits(digits);
 	}
@@ -496,7 +483,7 @@ public class Kernel {
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 				casPrintFormPI = "Pi";
 				
-			//case ExpressionNode.STRING_TYPE_JASYMCA:
+			case ExpressionNode.STRING_TYPE_JASYMCA:
 			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
 				casPrintFormPI = "pi";
 		
@@ -510,10 +497,11 @@ public class Kernel {
 	}
 
 	final public void setPrintDecimals(int decimals) {
-		if (decimals >= 0 && nf.getMaximumFractionDigits() != decimals) {
+		if (decimals >= 0) {
 			useSignificantFigures = false;
 			nf.setMaximumFractionDigits(decimals);
 			PRINT_PRECISION = Math.pow(10, -decimals);
+			ROUND_HALF_UP_FACTOR = decimals < 15 ? ROUND_HALF_UP_FACTOR_DEFAULT : 1;
 		}
 	}
 	
@@ -526,8 +514,32 @@ public class Kernel {
 			useSignificantFigures = true;
 			sf.setSigDigits(figures);
 			sf.setMaxWidth(16); // for scientific notation
+			ROUND_HALF_UP_FACTOR = figures < 15 ? ROUND_HALF_UP_FACTOR_DEFAULT : 1;
 		}
 	}
+	
+	/**
+	 * Sets the print accuracy to at least the given decimals
+	 * or significant figures. If the current accuracy is already higher, nothing is changed.
+	 * 
+	 * @param decimalsOrFigures
+	 * @return whether the print accuracy was changed
+	 */
+	public boolean ensureTemporaryPrintAccuracy(int decimalsOrFigures) {
+		if (useSignificantFigures) {
+			if (sf.getSigDigits() < decimalsOrFigures) {
+				setTemporaryPrintFigures(decimalsOrFigures);
+				return true;
+			}
+		} else {
+			// decimals
+			if (nf.getMaximumFractionDigits() < decimalsOrFigures) {
+				setTemporaryPrintDecimals(decimalsOrFigures);
+				return true;
+			}
+		}
+		return false;
+	}	
 	
 	final public void setTemporaryPrintFigures(int figures) {
 		storeTemporaryRoundingInfoInList();				
@@ -537,20 +549,7 @@ public class Kernel {
 	final public void setTemporaryPrintDecimals(int decimals) {		
 		storeTemporaryRoundingInfoInList();		
 		setPrintDecimals(decimals);
-	}
-	
-	
-	/**
-	 * Sets number formatting to show all significant figures for
-	 * double values.
-	 */
-	final public void setTemporaryMaximumPrintAccuracy()
-	{
-		storeTemporaryRoundingInfoInList();		
-		setPrintFigures(16);
-		sf.setMaxWidth(309);
-	}
-	
+	}			
 
 	/*
 	 * stores information about the current no of decimal places/sig figures used
@@ -868,6 +867,13 @@ public class Kernel {
 		if (macroManager != null)
 			macroManager.setAllMacrosUnused();
 		
+		// clear animations
+		if (animationManager != null) {
+			animationManager.stopAnimation();
+			animationManager.clearAnimatedGeos();
+		}				
+		
+	
 		cons.clearConstruction();
 		notifyClearView();
 		notifyRepaint();
@@ -894,6 +900,14 @@ public class Kernel {
 	public void setUndoActive(boolean flag) {
 		undoActive = flag;
 		if (undoActive) initUndoInfo();		
+	}
+	
+	public void setUndoActiveNoReInit(boolean flag) {
+		undoActive = flag;				
+	}
+	
+	public boolean isUndoActive() {
+		return undoActive;
 	}
 	
 	public void storeUndoInfo() {
@@ -1124,7 +1138,9 @@ public class Kernel {
 				
 				
 				//app.setMoveMode();
-				notifyReset();			
+				
+				notifyEuclidianViewAlgos();
+				notifyReset();					
 				viewReiniting = false;
 			} 
 			else {
@@ -1166,7 +1182,7 @@ public class Kernel {
 			for (int i = 0; i < viewCnt; ++i) {			
 				views[i].repaintView();
 			}
-		}
+		} 
 	}
 	
 	final void notifyReset() {
@@ -1317,6 +1333,18 @@ public class Kernel {
 		GeoPoint p = new GeoPoint(cons);
 		p.setCoords(x, y, 1.0);
 		p.setMode(COORD_CARTESIAN);
+		p.setLabel(label); // invokes add()                
+		return p;
+	}
+
+	/** Point label with cartesian coordinates (x,y)   */
+	final public GeoPoint Point(String label, double x, double y, boolean complex) {
+		GeoPoint p = new GeoPoint(cons);
+		p.setCoords(x, y, 1.0);
+		if (complex)
+			p.setMode(COORD_COMPLEX);
+		else
+			p.setMode(COORD_CARTESIAN);
 		p.setLabel(label); // invokes add()                
 		return p;
 	}
@@ -1533,8 +1561,8 @@ public class Kernel {
 	 */
 	final public GeoPoint DependentPoint(
 		String label,
-		ExpressionNode root) {
-		AlgoDependentPoint algo = new AlgoDependentPoint(cons, label, root);
+		ExpressionNode root, boolean complex) {
+		AlgoDependentPoint algo = new AlgoDependentPoint(cons, label, root, complex);
 		GeoPoint P = algo.getPoint();
 		return P;
 	}
@@ -1594,8 +1622,8 @@ public class Kernel {
 	/** 
 	 * Creates a dependent copy of origGeo with label
 	 */
-	final public GeoElement DependentGeoCopy(String label, GeoElement origGeo) {
-		AlgoDependentGeoCopy algo = new AlgoDependentGeoCopy(cons, label, origGeo);
+	final public GeoElement DependentGeoCopy(String label, ExpressionNode origGeoNode) {
+		AlgoDependentGeoCopy algo = new AlgoDependentGeoCopy(cons, label, origGeoNode);
 		return algo.getGeo();
 	}
 	
@@ -1858,6 +1886,7 @@ public class Kernel {
 	final public GeoPoint PointIn(String label, Region region) {  
 		return PointIn(label,region,0,0); //TODO do as for paths
 	}	
+	
 	/** Point P + v   */
 	final public GeoPoint Point(String label, GeoPoint P, GeoVector v) {
 		AlgoPointVector algo = new AlgoPointVector(cons, label, P, v);
@@ -2474,10 +2503,21 @@ public class Kernel {
 	 * Michael Borcherds
 	 */
 	final public GeoNumeric SXX(String label, GeoList list) {
-		AlgoListSXX algo = new AlgoListSXX(cons, label, list);
-		GeoNumeric num = algo.getResult();
+		GeoNumeric num;
+		GeoElement geo = list.get(0);
+		if (geo.isNumberValue())
+		{  // list of numbers
+			AlgoSXX algo = new AlgoSXX(cons, label, list);
+			num = algo.getResult();
+		}
+		else
+		{  // (probably) list of points
+			AlgoListSXX algo = new AlgoListSXX(cons, label, list);			
+			num = algo.getResult();
+		}
 		return num;
 	}
+	
 	
 	/** 
 	 * SXY[list]
@@ -2575,16 +2615,6 @@ public class Kernel {
 	 */
 	final public GeoNumeric SXX(String label, GeoList listX, GeoList listY) {
 		AlgoDoubleListSXX algo = new AlgoDoubleListSXX(cons, label, listX, listY);
-		GeoNumeric num = algo.getResult();
-		return num;
-	}
-	
-	/** 
-	 * SYY[list,list]
-	 * Michael Borcherds
-	 */
-	final public GeoNumeric SYY(String label, GeoList listX, GeoList listY) {
-		AlgoDoubleListSYY algo = new AlgoDoubleListSYY(cons, label, listX, listY);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
@@ -3734,7 +3764,17 @@ public class Kernel {
 	 * of polynomials a, b
 	 */
 	final public GeoPoint[] IntersectPolynomials(String[] labels, GeoFunction a, GeoFunction b) {
-		if (!a.isPolynomialFunction(false) || !b.isPolynomialFunction(false)) return null;			
+		
+		if (!a.isPolynomialFunction(false) || !b.isPolynomialFunction(false)) {
+			
+			// dummy point 
+			GeoPoint A = new GeoPoint(cons);
+			A.setZero();
+
+			AlgoIntersectFunctionsNewton algo = new AlgoIntersectFunctionsNewton(cons, labels[0], a, b, A);
+			GeoPoint[] ret = {algo.getIntersectionPoint()};
+			return ret;
+		}
 			
 		AlgoIntersectPolynomials algo = getIntersectionAlgorithm(a, b);
 		algo.setPrintedInXML(true);
@@ -3785,13 +3825,22 @@ public class Kernel {
 			GeoFunction f,
 			GeoLine l) {
 				
-		if (!f.isPolynomialFunction(false))
-			return null;			
+		if (!f.isPolynomialFunction(false)) {
 			
+			// dummy point 
+			GeoPoint A = new GeoPoint(cons);
+			A.setZero();
+
+			AlgoIntersectFunctionLineNewton algo = new AlgoIntersectFunctionLineNewton(cons, labels[0], f, l, A);
+			GeoPoint[] ret = {algo.getIntersectionPoint()};
+			return ret;
+
+		}
+
 		AlgoIntersectPolynomialLine algo = getIntersectionAlgorithm(f, l);
 		algo.setPrintedInXML(true);
 		algo.setLabels(labels);
-		GeoPoint[] points = algo.getIntersectionPoints();		
+		GeoPoint[] points = algo.getIntersectionPoints();	
 		return points;
 	}
 	
@@ -3802,7 +3851,8 @@ public class Kernel {
 			String label,		
 			GeoFunction f,
 			GeoLine l, double xRW, double yRW) {
-		if (!f.isPolynomialFunction(false)) return null;	
+		
+		if (!f.isPolynomialFunction(false)) return null;
 			
 		AlgoIntersectPolynomialLine algo = getIntersectionAlgorithm(f, l);
 		int index = algo.getClosestPointIndex(xRW, yRW);		
@@ -4154,9 +4204,10 @@ public class Kernel {
 	 * translate geoTrans by vector v
 	 */
 	final public GeoElement [] Translate(String label, Translateable geoTrans, GeoVector v) {
+		
 		if (label == null)
 			label = transformedGeoLabel(geoTrans.toGeoElement());
-		
+
 		if (geoTrans.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
 			return ((LimitedPath) geoTrans).createTransformedObject(TRANSFORM_TRANSLATE, label, null, null, v, null); 
@@ -4266,13 +4317,19 @@ public class Kernel {
 		if (label == null)
 			label = transformedGeoLabel(geoMir.toGeoElement());
 		
-		if (geoMir.toGeoElement().isLimitedPath())
+		if (geoMir.toGeoElement().isLimitedPath()) {
 			// handle segments, rays and arcs separately
-			return  ((LimitedPath) geoMir).createTransformedObject(TRANSFORM_MIRROR_AT_LINE, label, null, g, null, null);
-		
+			GeoElement [] geos =  ((LimitedPath) geoMir).createTransformedObject(TRANSFORM_MIRROR_AT_LINE, label, null, g, null, null);
+			
+//			if (geos[0] instanceof Orientable && geoMir instanceof Orientable)
+//				((Orientable)geos[0]).setOppositeOrientation( (Orientable)geoMir);
+			
+			return geos;
+		}
 		// standard case
 		AlgoMirror algo = new AlgoMirror(cons, label, geoMir, g);		
 		GeoElement [] geos = {algo.getResult()};
+		
 		return geos;				
 	}			
 	
@@ -4405,6 +4462,16 @@ public class Kernel {
 	static final int TRANSFORM_ROTATE = 3;
 	static final int TRANSFORM_ROTATE_AROUND_POINT = 4;
 	static final int TRANSFORM_DILATE = 5;
+	
+	public static boolean keepOrientationForTransformation(int transformationType) {
+		switch (transformationType) {
+			case TRANSFORM_MIRROR_AT_LINE:	
+				return false;
+			
+			default:
+				return true;									
+		}
+	}
 	
 	GeoPoint [] transformPoints(int type, GeoPoint [] points, GeoPoint Q, GeoLine l, GeoVector vec, NumberValue n) {
 		GeoPoint [] result = null;
@@ -4845,34 +4912,25 @@ public class Kernel {
 	
 
 	/**
-
 	 * Calculate Curve Length between the points A and B: integral from t0 to t1 on T = sqrt(a'(t)^2+b'(t)^2)
-
 	 */
-
 	final public GeoNumeric CurveLength2Points(String label, GeoCurveCartesian c, GeoPoint A,GeoPoint B){
-
 		  AlgoLengthCurve2Points algo = new AlgoLengthCurve2Points(cons,label,c,A,B);
 		  GeoNumeric length = algo.getLength();
 		  return length;
-
 	}
 
-	
 
 	/** 
 	 * tangent to Curve f in point P: (b'(t), -a'(t), a'(t)*b(t)-a(t)*b'(t))
 	 */
-
 	final public GeoLine Tangent(String label,GeoPoint P,GeoCurveCartesian f) {
-
 		AlgoTangentCurve algo = new AlgoTangentCurve(cons, label, P, f);
 		GeoLine t = algo.getTangent();
 		t.setToExplicit();
 		t.update();     
 		notifyUpdate(t);
 		return t;
-
 	}
 
 	/**
@@ -5021,6 +5079,16 @@ public class Kernel {
 				leadingNonZero = i;
 				break;
 			}
+		}
+		
+		// check if integers and divide through gcd
+		boolean allIntegers = true;
+		for (int i = 0; i < numbers.length; i++) {
+			allIntegers = allIntegers && isInteger(numbers[i]);			
+		}		
+		if (allIntegers) {
+			// divide by greates common divisor
+			divide(numbers, gcd(numbers), numbers);
 		}
 
 		// no left hand side        
@@ -5259,48 +5327,90 @@ public class Kernel {
 
 	/**
 	 * Formats the value of x using the currently set
-	 * NumberFormat or ScientificFormat. 
+	 * NumberFormat or ScientificFormat. This method also
+	 * takes getCasPrintForm() into account.
 	 */
-	final public String format(double x) {
-		boolean isNaN = Double.isNaN(x);
-		boolean isInfinite = Double.isInfinite(x);
-  		
+	final public String format(double x) {		
 		switch (casPrintForm) {
-			//case ExpressionNode.STRING_TYPE_JASYMCA:
-			case ExpressionNode.STRING_TYPE_MATH_PIPER:
-				if (isNaN)
+			// number formatting for XML string output
+			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
+				return Double.toString(x);		
+		
+			// number formatting for CAS
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:				
+			case ExpressionNode.STRING_TYPE_JASYMCA:		
+				if (Double.isNaN(x))
 					return " 1/0 ";	
-				else if (isInfinite) {
-					return (x > 0) ? "Infinity" : "-Infinity";
- 				}
-				else if (isInteger(x)) {
-					return String.valueOf(Math.round(x));
-				}							
-
+				else if (Double.isInfinite(x)) {
+					return Double.toString(x); // "Infinity" or "-Infintiny"
+ 				}	
+				else if (isZero(x)) {
+					return "0";
+				} 
+				else {			
+					double abs = Math.abs(x);
+					// number small enough that Double.toString() won't create E notation
+					if (abs >= 10E-3 && abs < 10E7) {
+						long round = Math.round(x);
+						if (isEqual(x, round)) // isInteger
+							return Long.toString(round);
+						else
+							return Double.toString(x);	
+					}
+					// number would produce E notation with Double.toString()
+					else {						
+						// convert scientific notation 1.0E-20 to 1*10^(-20) 
+						String scientificStr = Double.toString(x);
+						StringBuffer sb = new StringBuffer(scientificStr.length() * 2);
+						boolean Efound = false;
+						for (int i=0; i < scientificStr.length(); i++) {
+							char ch = scientificStr.charAt(i);
+							if (ch == 'E') {
+								sb.append("*10^(");
+								Efound = true;
+							} else {
+								sb.append(ch);
+							}
+						}
+						if (Efound)
+							sb.append(")");
+						
+						return sb.toString();
+					}					
+				}
+								
+			// number formatting for screen output
 			default:
-				if (isNaN)
+				if (Double.isNaN(x))
 					return "?";	
-				else if (isInfinite) {
+				else if (Double.isInfinite(x)) {
 					return (x > 0) ? "\u221e" : "-\u221e"; // infinity
 				}
-			
-				// ROUNDING
-				if (-PRINT_PRECISION < x && x < PRINT_PRECISION) {
-					x = 0;				
-				} else {
-					// NumberFormat uses ROUND_HALF_EVEN as default which is not changeable
-					// so we need to hack this to get ROUND_HALF_UP like in schools				
-					double ROUND_HALF_UP_EPSILON = 5E-16;
-					x = (x > 0) ?  x + ROUND_HALF_UP_EPSILON : 
-								   x - ROUND_HALF_UP_EPSILON;
+				else if (isZero(x)) {
+					return "0";
 				}
-							
-				// take significant figures	or decimal format
-				if (useSignificantFigures) 
+				else if (x == Math.PI) {
+					return casPrintFormPI;
+				}	
+					
+			// ROUNDING hack							
+			// NumberFormat and SignificantFigures use ROUND_HALF_EVEN as 
+			// default which is not changeable, so we need to hack this 
+			// to get ROUND_HALF_UP like in schools: increase abs(x) slightly
+			//    x = x * ROUND_HALF_UP_FACTOR;
+			// We don't do this for large numbers as 
+				double abs = Math.abs(x);
+				if (abs < 10E7) {
+					// increase abs(x) slightly to round up
+					x = x * ROUND_HALF_UP_FACTOR;
+				}
+	
+				if (useSignificantFigures) {	
 					return formatSF(x);
-				else
+				} else {				
 					return formatNF(x);
-		}								
+				}
+			}								
 	}
 	
 	/**
@@ -5339,10 +5449,7 @@ public class Kernel {
 	private StringBuffer sbFormatSF;
 	
 	
-	final public String formatPiE(double x, NumberFormat nf) {
-		if (-PRINT_PRECISION < x && x < PRINT_PRECISION)
-			return "0";
-		
+	final public String formatPiE(double x, NumberFormat numF) {
 		/*
 		// 	E
 		if (x == Math.E) {
@@ -5362,7 +5469,11 @@ public class Kernel {
 		// PI
 		if (x == Math.PI) {
 			return casPrintFormPI;
-		}		
+		} 
+		// zero
+		else if (isEqual(x, 0, MAX_DOUBLE_PRECISION)) {
+			return "0";
+		}
 				
 		// 	MULTIPLES OF PI/2
 		// i.e. x = a * pi/2
@@ -5371,8 +5482,11 @@ public class Kernel {
 		if (sbFormat == null)
 			sbFormat = new StringBuffer();
 		sbFormat.setLength(0);
-		if (isEqual(a, aint)) {	
-			switch (aint) {					
+		if (isEqual(a, aint, MAX_DOUBLE_PRECISION)) {	
+			switch (aint) {		
+				case 0:
+					return "0";		
+					
 				case 1: // pi/2
 					sbFormat.append(casPrintFormPI);
 					sbFormat.append("/2");
@@ -5417,12 +5531,28 @@ public class Kernel {
 		}		
 		
 		// STANDARD CASE
-		return formatNF(x);
+		// use numberformat to get number string
+		String str = numF.format(x);
+		sbFormat.append(str);	
+		// if number is in scientific notation and ends with "E0", remove this
+		if (str.endsWith("E0"))
+			sbFormat.setLength(sbFormat.length() - 2);
+		return sbFormat.toString();
 	}
 	private StringBuffer sbFormat;
 
 
-	final public StringBuffer formatSigned(double x) {
+	final public String formatSignedCoefficient(double x) {
+		
+		if (isEqual(x, -1.0))
+			return "- ";
+		if (isEqual(x, 1.0))
+			return "+ ";
+
+		return formatSigned(x).toString();
+		
+	}
+		final public StringBuffer formatSigned(double x) {
 		sbFormatSigned.setLength(0);
 		if (-MIN_PRECISION < x && x < MIN_PRECISION) {
 			sbFormatSigned.append("+ 0");
@@ -5455,9 +5585,15 @@ public class Kernel {
 			}				
 			else {
 				phi = Math.toDegrees(phi);
-				if (phi < 0) phi += 360;				
+				if (phi < 0) 
+					phi += 360;	
+				else if (phi > 360)
+					phi = phi % 360;			
 				sbFormatAngle.append(format(phi));
 				sbFormatAngle.append('\u00b0');
+
+		        //	Application.printStacktrace("formatAngle: " + sbFormatAngle);
+				
 				return sbFormatAngle;
 			}
 		} else {
@@ -5498,13 +5634,14 @@ public class Kernel {
 		return q;
 	}
 
-	/*
-	 * compute greatest common divisor of given longs
+	/**
+	 * Compute greatest common divisor of given doubles.
+	 * Note: all double values are cast to long.
 	 */
-	final static long gcd(long[] numbers) {
-		long gcd = numbers[0];
+	final public static double gcd(double[] numbers) {
+		long gcd = (long) numbers[0];
 		for (int i = 0; i < numbers.length; i++) {
-			gcd = gcd(numbers[i], gcd);
+			gcd = gcd((long) numbers[i], gcd);
 		}
 		return gcd;
 	}
@@ -5625,6 +5762,16 @@ public class Kernel {
 	final public boolean isAnimationPaused() {
 		return animationManager != null && animationManager.isPaused();
 	}
+	
+	final public boolean needToShowAnimationButton() {
+		return animationManager != null && animationManager.needToShowAnimationButton();		
+	}
+	
+	final public void udpateNeedToShowAnimationButton() {
+		if (animationManager != null)
+			animationManager.udpateNeedToShowAnimationButton();		
+		
+	}	
 
 	/**
 	 * Turns silent mode on (true) or off (false). In silent mode, commands can
@@ -5684,23 +5831,5 @@ public class Kernel {
 	public String getLibraryJavaScript() {
 		return libraryJavaScript;
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

@@ -1,8 +1,24 @@
-Last merge into HEAD
+Merge into HEAD
 
 Note: Markus is taking care of branch merges, please contact 
 markus@geogebra.org if you'd like to have something merged.
 
-Branch: 	ggb32
-Start tag:	Root_ggb32
-Date:		January 12, 2009
+Las merge on: June 21, 2009
+ggb32 start tag:	Root_ggb32
+
+ggb32 tag before merge: 		ggb3-2-3-0
+HEAD version tag before merge:	ggb3-3-13-0
+HEAD version after merge:		ggb3-3-14-0
+
+
+HOW TO MERGE ggb32 -> HEAD
+
+* tag branch ggb32, e.g. ggb3-2-3-0
+* close project ggb32
+
+* open and update branch HEAD
+* tag branch HEAD with version before merge, e.g. ggb3-3-13-0
+* merge branch ggb32 into HEAD
+* commit changes to HEAD
+ 
+* tag branch HEAD with version after merge

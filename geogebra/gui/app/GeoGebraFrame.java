@@ -18,13 +18,13 @@
 package geogebra.gui.app;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
 import geogebra.main.DefaultApplication;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;
 
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -56,13 +56,30 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	
 	public GeoGebraFrame() {
 		instances.add(this);
-		activeInstance = this;				
+		activeInstance = this;					
 	}
 	
-
+//	public static void printInstances() {
+//		System.out.println("FRAMES: " + instances.size()); 
+//		for (int i=0; i < instances.size(); i++) {
+//			GeoGebraFrame frame = (GeoGebraFrame) instances.get(i);
+//			System.out.println(" " + (i+1) + ", applet: " + frame.app.isApplet() + ", "
+//					+ frame); 
+//		}				
+//	}
+	
+	/**
+	 * Disposes this frame and removes it from the static instance list.
+	 */
+	public void dispose() {
+		instances.remove(this);
+		if (this == activeInstance) 
+			activeInstance = null;
+	}
+	
 	public Application getApplication() {
 		return app;
-	}
+	}		
 
 	public void setApplication(Application app) {
 		this.app = app;
@@ -143,12 +160,22 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		
 		// use euclidian view pref size to set frame size 		
 		EuclidianView ev = app.getEuclidianView();		
+		SpreadsheetView sv = null;
+		
+		if (app.getGuiManager().hasSpreadsheetView())
+			sv = (SpreadsheetView)app.getGuiManager().getSpreadsheetView();		
 
 		// no preferred size
 		if (ev.hasPreferredSize()) {
 			ev.setMinimumSize(new Dimension(50,50));
 			Dimension evPref = ev.getPreferredSize();						
 			ev.setPreferredSize(evPref);
+			
+			Dimension svPref = null;
+			if (sv != null) {
+				svPref = sv.getPreferredSize();						
+				sv.setPreferredSize(svPref);
+			}
 		
 			// pack frame and correct size to really get the preferred size for euclidian view
 // Michael Borcherds 2007-12-08 BEGIN pack() sometimes fails (only when run from Eclipse??)
@@ -163,8 +190,12 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 //			 Michael Borcherds 2007-12-08 END
 			frameSize = getSize();
 			Dimension evSize = ev.getSize();
-			frameSize.width = frameSize.width + (evPref.width - evSize.width);
-			frameSize.height = frameSize.height + (evPref.height - evSize.height);					
+			Dimension svSize = null;
+			if (sv != null) 
+				svSize = sv.getSize();
+			
+			frameSize.width = frameSize.width + (evPref.width - evSize.width)+ (sv == null ? 0 : (svPref.width - svSize.width));
+			frameSize.height = frameSize.height + (evPref.height - evSize.height) + (sv == null ? 0 : (svPref.height - svSize.height));					
 		} else {
 			frameSize = new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);			
 		}
@@ -175,8 +206,9 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		// check if frame fits on screen
 
 		// Michael Borcherds 2007-11-22 BEGIN
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		Rectangle screenSize = env.getMaximumWindowBounds();
+		//GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		//Rectangle screenSize = env.getMaximumWindowBounds();
+		Rectangle screenSize = app.getScreenSize();
 
 		if (frameSize.width > screenSize.width || 
 				frameSize.height > screenSize.height) {
@@ -264,7 +296,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		GeoGebraFrame wnd = new GeoGebraFrame();
 		
 		//GeoGebra wnd = buildGeoGebra();
-		DefaultApplication app = new DefaultApplication(args, wnd, true);		
+		final DefaultApplication app = new DefaultApplication(args, wnd, true);		
 		
 		app.loadGUIJar();
 		//app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
@@ -276,13 +308,30 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		wnd.setDropTarget(new DropTarget(wnd, new geogebra.gui.FileDropTargetListener(app)));			
 		wnd.addWindowFocusListener(wnd);
 		
-		updateAllTitles();
-		
+		updateAllTitles();		
 		wnd.setVisible(true);
 		
-		// load all jar files in background and init dialogs
-		app.initInBackground();
-		
+		// init some things in the background
+		if (!app.isApplet())
+		{
+			Thread runner = new Thread() {
+				public void run() {											
+					// init CAS
+					app.initCAS();
+									
+					// init properties dialog
+					app.getGuiManager().initPropertiesDialog();		
+					
+					// init file chooser
+					app.getGuiManager().initFileChooser();
+					
+					// copy Jar files to temp directory
+					app.downloadJarFiles();				
+				}
+			};
+			runner.start();
+		}
+				
 		return wnd;
 	}
 

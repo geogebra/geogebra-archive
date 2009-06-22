@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra.kernel.jama.GgbMat;
 
 /**
  * Reverse a list. Adapted from AlgoSort
@@ -56,14 +56,14 @@ public class AlgoTranspose extends AlgoElement {
 
     protected final void compute() {
     	   		
-   		Ggb3DMatrix matrix = new Ggb3DMatrix(inputList);
+   		GgbMat matrix = new GgbMat(inputList);
    		
-   		if (matrix.isSingular()) {
+   		if (matrix.isUndefined()) {
   			outputList.setUndefined();
 	   		return;   		
 	   	}
    		
-   		matrix.transpose();
+   		matrix.transposeImmediate();
    		// Transpose[{{1,2},{3,4}}]
    		
    		outputList = matrix.getGeoList(outputList, cons);

@@ -38,16 +38,23 @@ public class AlgoDependentPoint extends AlgoElement {
     private GeoVec2D temp;
         
     /** Creates new AlgoJoinPoints */
-    public AlgoDependentPoint(Construction cons, String label, ExpressionNode root) {
+    public AlgoDependentPoint(Construction cons, String label, ExpressionNode root, boolean complex) {
     	super(cons);
         this.root = root;        
         
         P = new GeoPoint(cons); 
-        setInputOutput(); // for AlgoElement
         
-        // compute value of dependent number
+        
+        setInputOutput(); // for AlgoElement
+
+        if (complex)
+    		P.setMode(Kernel.COORD_COMPLEX);
+
+    	// compute value of dependent number
         compute();      
-        P.setLabel(label);
+        
+
+    	P.setLabel(label);
     }   
     
 	protected String getClassName() {
@@ -78,6 +85,9 @@ public class AlgoDependentPoint extends AlgoElement {
 	        } else {
 				P.setCoords( temp.x, temp.y, 1.0); 
 	        }		
+	        
+	        //P.setMode(temp.getMode());
+	        
     	} catch (Exception e) {
 	    	P.setUndefined();
 	    }

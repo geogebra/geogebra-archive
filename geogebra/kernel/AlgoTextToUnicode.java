@@ -51,6 +51,11 @@ public class AlgoTextToUnicode extends AlgoElement {
     protected void compute()
     {
     	String t = text.getTextString();
+    	
+    	if (t == null) {
+    		list.setUndefined();
+    		return;
+    	}
       
 	  	list.setDefined(true);
 		list.clear();

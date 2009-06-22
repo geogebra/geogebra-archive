@@ -42,7 +42,7 @@ implements EuclidianViewAlgo {
         corner.setLabel(label);     
 
       
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
     }   
     
     protected String getClassName() {

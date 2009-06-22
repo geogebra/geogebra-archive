@@ -5,14 +5,16 @@
  */
 
 package org.freehep.xml.util;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A utility for working with SAX parsers. A heirarchy of SAXTraversers can be
  * used to maintain state while parsing an XML file.
  * @author  tonyj
- * @version $Id: SAXTraverser.java,v 1.3 2008-05-04 12:20:46 murkle Exp $
+ * @version $Id: SAXTraverser.java,v 1.4 2009-06-22 02:18:23 hohenwarter Exp $
  */
 public class SAXTraverser extends DefaultHandler
 {

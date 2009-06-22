@@ -21,7 +21,7 @@ import org.freehep.util.DoubleWithError;
  *
  * @author Paul Spence
  * @author Mark Donszelmann
- * @version $Id: ScientificFormat.java,v 1.3 2009-01-13 04:06:50 hohenwarter Exp $
+ * @version $Id: ScientificFormat.java,v 1.4 2009-06-22 02:18:22 hohenwarter Exp $
  */
 
 public class ScientificFormat extends Format

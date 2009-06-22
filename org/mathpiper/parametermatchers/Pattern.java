@@ -32,15 +32,14 @@ package org.mathpiper.parametermatchers;
 /// to use these variables).
 
 
+import java.util.ArrayList;
+
 import org.mathpiper.lisp.Cons;
-import org.mathpiper.lisp.UtilityFunctions;
 import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.ConsTraverser;
-//import org.mathpiper.lisp.Atom;
 import org.mathpiper.lisp.Environment;
-//import org.mathpiper.lisp.SubList;
-import java.util.*;
+import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.UtilityFunctions;
 
 /// Class that matches function arguments to a pattern.
 /// This class (specifically, the matches() member function) can match

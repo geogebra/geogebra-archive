@@ -89,7 +89,7 @@ public class DrawSlope extends Drawable {
         	// gp on screen?		
     		if (!gp.intersects(0,0, view.width, view.height)) {				
     			isVisible = false;
-    			return;
+            	// don't return here to make sure that getBounds() works for offscreen points too
     		}		
                                    
             // label position

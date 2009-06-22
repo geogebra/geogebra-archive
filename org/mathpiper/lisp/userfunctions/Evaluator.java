@@ -21,11 +21,10 @@ package org.mathpiper.lisp.userfunctions;
 // new-style evaluator, passing arguments onto the stack in Environment
 
 import org.mathpiper.builtin.BuiltinFunctionInitialize;
-import org.mathpiper.*;
 import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.ConsTraverser;
 import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.SubList;
 
 

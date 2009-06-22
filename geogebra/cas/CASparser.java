@@ -17,7 +17,6 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.parser.Parser;
-import geogebra.main.Application;
 
 /**
  * Handles parsing and evaluating of input in the CAS view.

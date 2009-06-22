@@ -17,8 +17,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 
 
@@ -39,16 +39,23 @@ public class AlgoMod extends AlgoTwoNumFunction {
         return "AlgoMod";
     }       
     
-    // calc area of conic c 
     protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		
-    		double bInt = Math.round(b.getDouble());
-    		double mod = Math.round(a.getDouble()) % bInt;
+    		double mod = Math.round(a.getDouble());
+    		double bInt = Math.abs(Math.round(b.getDouble()));
+    		
+    		if (Math.abs(mod) > MyDouble.LARGEST_INTEGER || bInt > MyDouble.LARGEST_INTEGER) {
+    			num.setUndefined();
+    			return;
+    		}
+    		
+    		mod = mod % bInt;
 
     		if (mod < 0) mod += bInt; // bugfix Michael Borcherds 2008-08-07
     		
     		num.setValue(mod);
+    		
     	} else
     		num.setUndefined();
     }       

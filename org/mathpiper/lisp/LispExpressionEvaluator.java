@@ -21,7 +21,6 @@ import org.mathpiper.io.MathPiperOutputStream;
 import org.mathpiper.io.StringOutputStream;
 import org.mathpiper.lisp.userfunctions.Evaluator;
 import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
-
 import org.mathpiper.lisp.userfunctions.UserFunction;
 import org.mathpiper.printers.InfixPrinter;
 

@@ -23,6 +23,8 @@ local directory (in system's temp directory) to cache jar files of a specific Ge
 @version     2008-10-21
 */
 
+import geogebra.main.Application;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,11 +68,14 @@ public class JarManager {
 	// size of byte buffer to download / copy files
 	private static final int BYTE_BUFFER_SIZE = 65536;
 	
-	// singleton instance of JarManager
-	private static JarManager singleton;
+	// is this JarManager used by an applet?
+	private boolean usedByApplet = false;
 	
 	// classloader of main application
 	private ClassLoader appClassLoader;		
+	
+	// singleton JarManager instance
+	private static JarManager singleton;
 	
 	// jar connection opener (to open connections in background task)
 	private JarConnectionManager jarConnectionManager;
@@ -93,35 +98,38 @@ public class JarManager {
     private StringBuffer statusMessage = new StringBuffer();
     private String downloadJarFile = null;
     private double downloadProgress = 0;
+    	
+    /**
+     * Returns the singleton instance of JarManager. 
+     */
+    public static synchronized JarManager getSingleton(boolean isApplet) {
+    	if (singleton == null) {
+    		singleton = new JarManager(isApplet);    		
+    	}
+    	
+    	return singleton;    			
+    }
+    
     
 	/**
-	 * Returns a singleton instance of JarManager. This 
-	 * instance needs to be shared when we have multiple application instances (windows).
+	 * Creates an instance of JarManager for the given parent applet. 
+	 * @param parentApplet: use null for applicatoins
 	 */
-	public synchronized static JarManager getSingleton(boolean isApplet) {
-		if (singleton == null) {
-			singleton = new JarManager(isApplet);
-		}
-	
-		return singleton;		
-	}
+	private JarManager(boolean usedByApplet) {
+//		System.out.println("*** INIT JAR MANAGER ***");	
 		
-	/**
-	 * Creates the singleton instance of JarManager. 
-	 */
-	private JarManager(boolean isApplet) {
-		// TODO: remove
-		System.out.println("*** INIT JAR MANAGER ***");		
+		// used by an applet?
+		this.usedByApplet = usedByApplet;				
 		
 		// get connection manager to access jar URLs
-		jarConnectionManager = JarConnectionManager.getSingleton();
+		jarConnectionManager = new JarConnectionManager();
 		codebase = jarConnectionManager.getCodebase();				
 		
 		// use classloader of Application class: important for applets
 		appClassLoader = JarManager.class.getClassLoader();	
 		 				
 		// init application type as TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
-		initApplicationType(isApplet);				
+		initApplicationType();				
 			
 		// init localJar directory where the jar files can be found locally
 		initLocalJarDir();
@@ -133,11 +141,10 @@ public class JarManager {
 		{
 			jarConnectionManager.initConnectionsInBackground();
 		}
-		
-		// TODO: remove		
-		System.out.println("  codebase: " + codebase);
-		System.out.println("  app type: " + main_app_type);
-		System.out.println("  localJarDir: " + localJarDir);	
+				
+//		System.out.println("  codebase: " + codebase);
+//		System.out.println("  app type: " + main_app_type);
+//		System.out.println("  localJarDir: " + localJarDir);	
 	}		
 	
 	public final boolean usesExistingCacheDir() {
@@ -154,18 +161,19 @@ public class JarManager {
 	 * @return e.g. "geogebra_main.jar (62%)"
 	 * @see downloadFile()
 	 */
-	public String getDownloadStatusMessage() {
+	public String getDownloadStatusMessage() {		
 		if (downloadJarFile == null) 
 			return "";	
 		
+		int downloadProgressPercent = (int) Math.round(downloadProgress * 100);
+		if (downloadProgressPercent == 100) 
+			return "";	
+				
 		statusMessage.setLength(0);	
 		statusMessage.append(downloadJarFile);
-			
-		int downloadProgressPercent = (int) Math.round(downloadProgress * 100);
 		statusMessage.append(" (");
 		statusMessage.append(downloadProgressPercent);
 		statusMessage.append("%)");		
-		
 		return statusMessage.toString();
 	}
 		
@@ -242,9 +250,8 @@ public class JarManager {
 			System.err.println("Could not add to classpath: " + localJarFile);
 			jarFileOnClasspath[jarFileIndex] = false;
 		}		
-				
-		// TODO: remove			
-		System.out.println("Added to classpath (" + jarFileOnClasspath[jarFileIndex] + ") : " + localJarFile);									
+							
+		//System.out.println("Added to classpath (" + jarFileOnClasspath[jarFileIndex] + ") : " + localJarFile);									
 		return jarFileOnClasspath[jarFileIndex];
 	}
 	
@@ -270,8 +277,7 @@ public class JarManager {
 			// check jar file again
 			return isJarFileReadable(localJarFile);
 		} 
-		catch (Exception e) {
-			// TODO: remove			
+		catch (Exception e) {			
 			System.err.println("Jar file could not be downloaded: " + localJarFile);									
 			e.printStackTrace();
 			return false;
@@ -293,8 +299,7 @@ public class JarManager {
 			new ZipFile(localJarFile); 
 			return true;
 		}
-		catch (Exception e) {
-			// TODO: remove			
+		catch (Exception e) {			
 			System.err.println("Jar file is not readable: " + localJarFile);
 			return false;
 		}						
@@ -304,9 +309,9 @@ public class JarManager {
 	 * Sets main_app_type to type of application.
 	 * @return TYPE_APPLET, TYPE_WEBSTART, or TYPE_LOCAL_JARS
 	 */
-	private void initApplicationType(boolean isApplet) {			
+	private void initApplicationType() {			
 		// init main_app_type: applet, webstart, or local jar files
-		if (isApplet) {
+		if (usedByApplet) {
 			// APPLET
 			main_app_type = TYPE_APPLET;
 			return;
@@ -328,10 +333,8 @@ public class JarManager {
 			// check if jar file exists
 			File main_jar_file = new File(codebase.getPath(), JAR_FILES[JAR_FILE_GEOGEBRA]);															
 			
-			// TODO: remove
-			System.out.println("main_jar_file.exists() " + main_jar_file.exists() + ", " + main_jar_file);
-			
-			
+			//System.out.println("main_jar_file.exists() " + main_jar_file.exists() + ", " + main_jar_file);
+					
 			if (main_jar_file.exists()) {	
 				// LOCAL JARS
 				main_app_type =  TYPE_LOCAL_JARS;
@@ -374,16 +377,28 @@ public class JarManager {
 		}
 	}
 	
+	private static String tempDir = null;
+	
+	public static String getTempDir() {
+		
+		if (tempDir == null) {
+			tempDir = System.getProperty("java.io.tmpdir");
+			
+			// Mac OS doesn't add "/" at the end of directory path name
+			if (!tempDir.endsWith(File.separator)) 
+				tempDir += File.separator;			
+		}
+		
+		return tempDir;
+		
+	}
+	
 	/**
 	 * Creates a temporary directory using the current version number, e.g. "geogebra3.1.3"
 	 */
 	private synchronized File createLocalDir() {	
 		// initialize local jar directory		
-		String baseDir = System.getProperty("java.io.tmpdir");
-		
-		// Mac OS doesn't add "/" at the end of directory path name
-		if (!baseDir.endsWith(File.separator)) 
-			baseDir += File.separator;			
+		String baseDir = getTempDir();		
 											
 		// directory name, e.g. /tmp/geogebra/3.1.71.0/
 		StringBuffer sb = new StringBuffer(100);
@@ -396,22 +411,19 @@ public class JarManager {
 		
 		useExistingCacheDir = tempDir.exists();
 		if (useExistingCacheDir)	{
-			// TODO: remove
-			System.out.println("use existing cache directory : " + tempDir);			
+			//System.out.println("use existing cache directory : " + tempDir);			
 		} else {
 			// create local directory, e.g. /tmp/geogebra/3.1.71.0/
 			try {				
 				tempDir.mkdirs();
 				
-				// TODO: remove
-				System.out.println("local directory created: " + tempDir);
+				//System.out.println("local directory created: " + tempDir);
 			} 
 			catch (Exception e)	{
 				System.err.println(e.getMessage());
 				tempDir = new File(baseDir);
 				
-				// TODO: remove
-				System.err.println("COULD NOT create directory, use instead: " + tempDir);
+				//System.err.println("COULD NOT create directory, use instead: " + tempDir);
 			}
 		}
 					
@@ -429,8 +441,7 @@ public class JarManager {
 		String fileName = JAR_FILES[jarFileIndex];
 		File destFile = new File(localJarDir, fileName);
 		if (destFile.exists()) {
-			// TODO: remove
-			System.out.println("File found, no download needed for " + fileName + " in directory " + localJarDir);		
+			//System.out.println("File found, no download needed for " + fileName + " in directory " + localJarDir);		
 			
 			// destination file exists already
 			return true;
@@ -444,8 +455,7 @@ public class JarManager {
 			// download jar from URL to destFile					
 			copyURLToFile(jarFileIndex, destFile);
 			
-			// TODO: remove
-			System.out.println("downloaded " + fileName + " to directory " + localJarDir);
+			//System.out.println("downloaded " + fileName + " to directory " + localJarDir);
 			return destFile.exists();						
 		} catch (Exception e) {		
 			downloadJarFile = "ERROR: " + fileName;
@@ -484,18 +494,11 @@ public class JarManager {
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
 		try {			
-			// TODO: remove
-			long startTime = System.currentTimeMillis();
-			
 			// open input stream to jar URL
 			in = jarConnectionManager.getInputStream(jarFileIndex);
 			if (in == null)
 				throw new NullPointerException("jarFile not found: " + jarFileIndex);
-					
-			// TODO: remove
-			long endTime = System.currentTimeMillis();
-			System.out.println("openConnection time: " + (endTime - startTime) + " to " + JAR_FILES[jarFileIndex]);
-			
+
 			// create output file
 			out = new FileOutputStream(dest);
 					
@@ -547,6 +550,13 @@ public class JarManager {
 	 * @param destDir
 	 */
 	public synchronized void copyAllJarsTo(String destDir) throws Exception {
+		
+		// return if source == desination!
+		if (destDir.equals(localJarDir.toString()))
+			return;
+		
+		Application.debug("copying jars from "+localJarDir+" to "+destDir);
+		
 		// copy jar files to tempDir
 		for (int i = 0; i < JAR_FILES.length; i++) {
 			File srcFile = new File(localJarDir, JAR_FILES[i]);

@@ -62,7 +62,7 @@ public class AlgoListGCD extends AlgoElement {
     	
     	String MathPiperList=geoList.toValueString();
     	String MathPiperCommand="Gcd("+MathPiperList+")";    	
-		String result=kernel.evaluateMathPiperRaw(MathPiperCommand);
+		String result=kernel.evaluateMathPiper(MathPiperCommand);
 		try {
 			double gcd = Double.valueOf(result).doubleValue();
 			num.setValue(gcd);

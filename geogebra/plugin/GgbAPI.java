@@ -115,7 +115,22 @@ public class GgbAPI {
         }//if ggb not null
     }//evalCommand(String)
     */
+    /// --- 17.02.09 Ulven: --- ///
+    /** MathPiper console in Java Console
+    public void mathPiperJavaConsole(){
+    	System.out.println("---MathPiper Console---");
+    	org.mathpiper.ui.text.consoles.Console cons=new org.mathpiper.ui.text.consoles.Console();
+    	cons.repl(System.in,System.out);
+    }//mathPiperJavaConsole()
+    */
     
+    /** Making MathPiper available for Plugins
+     *  (Silent version, without debug to console)
+     */
+    public String evaluateMathPiper(String cmdString){
+    	return kernel.evaluateMathPiper(cmdString);
+    }//evaluateMathPiper(String)
+    	
     /// --- 29.05.08 Ulven: --- ///
     
     
@@ -153,10 +168,10 @@ public class GgbAPI {
 		if (geo == null) 
 			return "";	
 		else {
-			if (geo.isIndependent())
+			//if (geo.isIndependent()) removed as we want a way to get the <element> tag for all objects
 				return geo.getXML();
-			else
-				return "";
+			//else
+			//	return "";
 		}
 	}
 	
@@ -200,12 +215,14 @@ public class GgbAPI {
 		app.setXML(sb.toString(), false);
 	}
 
-	
 	/**
 	 * Evaluates the given string as if it was entered into GeoGebra's 
 	 * input text field. 	 
 	 */
 	public synchronized boolean evalCommand(String cmdString) {
+		
+		Application.debug("evalCommand called..."+cmdString);
+		
 		GeoElement [] result = kernel.getAlgebraProcessor().
 								processAlgebraCommand(cmdString, false);
 		// return success
@@ -217,7 +234,15 @@ public class GgbAPI {
 	 * input text field. 	 
 	 */
 	public synchronized String evalMathPiper(String cmdString) {
-		return 	kernel.evaluateMathPiperRaw(cmdString);
+		
+		String ret = kernel.evaluateMathPiper(cmdString);
+		
+		// useful for debugging JavaScript
+		// do not remove!
+		Application.debug("evalMathPiper\n input:"+cmdString+"\n"+"output: "+ret);
+		
+		return ret;
+
 	}
 
 	/**
@@ -286,6 +311,15 @@ public class GgbAPI {
 		if (geo == null) return;		
 		geo.setEuclidianVisible(visible);
 		geo.updateRepaint();
+	}
+	
+	/**
+	 * Shows or hides the object with the given name in the geometry window.
+	 */
+	public synchronized boolean getVisible(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return false;		
+		return (geo.isEuclidianVisible());
 	}
 	
 	/**
@@ -404,12 +438,13 @@ public class GgbAPI {
 	}
 	
 	/**
-	 * Starts an object animating
+	 * Sets the animation speed of an object
 	 */
 	public void setAnimationSpeed(String objName, double speed) {
 		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo != null) 
+		if (geo != null) {
 			geo.setAnimationSpeed(speed);
+		}
 	}
 	
 
@@ -422,6 +457,107 @@ public class GgbAPI {
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return "";		
 		return "#" + geogebra.util.Util.toHexString(geo.getObjectColor());		
+	}	
+	
+	public synchronized int getLineThickness(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return -1;		
+		return geo.getLineThickness();		
+	}	
+	
+	public synchronized void setLineThickness(String objName, int thickness) {
+		if (thickness == -1) thickness = EuclidianView.DEFAULT_LINE_THICKNESS;
+		if (thickness < 1 || thickness > 13) return;
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;		
+		geo.setLineThickness(thickness);		
+		geo.updateRepaint();
+	}	
+	
+	public synchronized int getPointStyle(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return -1;		
+		if (geo.isGeoPoint())
+			return ((GeoPoint) geo).getPointStyle();	
+		else
+			return -1;
+	}	
+	
+	public synchronized void setPointStyle(String objName, int style) {
+		// -1 OK: means default
+		if (style < -1 || style > 2) return;
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;	
+		if (geo.isGeoPoint()) {
+			((GeoPoint) geo).setPointStyle(style);		
+			geo.updateRepaint();
+		}
+	}	
+	
+	public synchronized int getPointSize(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return -1;		
+		if (geo.isGeoPoint())
+			return ((GeoPoint) geo).getPointSize();	
+		else
+			return -1;
+	}	
+	
+	public synchronized void setPointSize(String objName, int style) {
+		if (style < 1 || style > 9) return;
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;	
+		if (geo.isGeoPoint()) {
+			((GeoPoint) geo).setPointSize(style);
+			geo.updateRepaint();
+		}
+	}	
+	
+	public synchronized double getFilling(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return -1;		
+		return geo.getAlphaValue();		
+	}	
+	
+	public synchronized void setFilling(String objName, double filling) {
+		if (filling < 0.0 || filling > 1.0)
+			return;
+		
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;		
+
+		geo.setAlphaValue((float)filling);
+		geo.updateRepaint();
+	}	
+	
+	public synchronized int getLineStyle(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return -1;		
+		int type = geo.getLineType();	
+		
+		// convert from 0,10,15,20,30
+		// to 0,1,2,3,4
+		
+		Integer[] types = EuclidianView.getLineTypes();
+		for (int i = 0 ; i < types.length ; i++) {
+			if (type == types[i].intValue())
+				return i;
+		}
+		
+		return -1; // unknown type
+	}	
+	
+	public synchronized void setLineStyle(String objName, int style) {
+		Integer[] types = EuclidianView.getLineTypes();
+		
+		if (style < 0 || style >= types.length)
+			return;
+		
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) return;		
+		
+		geo.setLineType(types[style].intValue());
+		geo.updateRepaint();
 	}	
 	
 	/**
@@ -633,9 +769,14 @@ public class GgbAPI {
 		Construction cons = kernel.getConstruction();
 		TreeSet geoSet =  cons.getGeoSetConstructionOrder();
 		int size = geoSet.size();
+		
+		/* removed Michael Borcherds 2009-02-09
+		 * BUG!
+		 *
 		// don't build objNames if nothing changed
 		if (size == lastGeoElementsIteratorSize)
 			return objNames;		
+			*/
 		
 		// build objNames array
 		lastGeoElementsIteratorSize = size;		

@@ -176,19 +176,39 @@ public class GeoLocus extends GeoElement implements Path {
 	 * Returns the point of this locus that is closest
 	 * to GeoPoint P.
 	 */
-	private MyPoint getClosestPoint(GeoPoint P) {
-		if (!P.isDefined() || P.isInfinite())
+	private MyPoint getClosestPoint(GeoPoint P) {		
+		int size = myPointList.size();
+		if (size == 0)
 			return null;
 		
+		// can't use P.inhomX, P.inhomY in path updating yet, so compute them
+		double px = P.x/P.z;
+		double py = P.y/P.z;
+		
+		// handle undefined case: probably caused by path that became undefined
+		if (Double.isNaN(px) || Double.isNaN(py)) {	
+			// use previous path parameter
+			double pathParameter = P.getPathParameter().t;
+			if (Double.isNaN(pathParameter) || Double.isInfinite(pathParameter))
+				closestPointIndex = 0;
+			else {
+				closestPointIndex = (int) pathParameter;				
+				if (closestPointIndex < 0)
+					closestPointIndex = 0;
+				else if (closestPointIndex > size)
+					closestPointIndex = size - 1;
+			}			
+			return (MyPoint) myPointList.get(closestPointIndex);
+		}
+		
+		// search for closest point on path
 		MyPoint closestPoint  = null;
 		closestPointDist = Double.MAX_VALUE;
 		closestPointIndex = -1;
 		
-		double px = P.x/P.z;
-		double py = P.y/P.z;
 		
-		// search for closest point
-		int size = myPointList.size();
+		
+		// search for closest point		
 		for (int i=0; i < size; i++) {
 			MyPoint locusPoint = (MyPoint) myPointList.get(i);
 			double dist = locusPoint.distSqr(px, py);
@@ -206,7 +226,7 @@ public class GeoLocus extends GeoElement implements Path {
 
 	public void pathChanged(GeoPointInterface P) {
 		// find closest point on changed path to P
-		pointChanged(P);					
+		pointChanged(P);
 	}
 
 	public void pointChanged(GeoPointInterface PI) {
@@ -221,10 +241,11 @@ public class GeoLocus extends GeoElement implements Path {
 			P.x = closestPoint.x;
 			P.y = closestPoint.y;
 			P.z = 1.0;
-			pp.t = closestPointIndex;			
+			pp.t = closestPointIndex;					
 		}		
 		else {
-			pp.t = Double.NaN;
+			// remember last path parameter, don't delete it
+			//pp.t = Double.NaN;			
 		}		
 	}
 	
@@ -241,7 +262,6 @@ public class GeoLocus extends GeoElement implements Path {
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

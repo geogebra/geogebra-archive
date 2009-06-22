@@ -3,7 +3,6 @@ package geogebra.cas.view;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class CASTableModel extends DefaultTableModel {

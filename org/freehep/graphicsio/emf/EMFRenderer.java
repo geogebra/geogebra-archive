@@ -1,35 +1,35 @@
 package org.freehep.graphicsio.emf;
 
-import java.io.IOException;
-import java.awt.Graphics2D;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.BasicStroke;
-import java.awt.Stroke;
-import java.awt.Paint;
-import java.awt.Color;
-import java.awt.Shape;
 import java.awt.AlphaComposite;
-import java.awt.Image;
-import java.awt.RenderingHints;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Paint;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.util.logging.Logger;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
-import java.util.Map;
+import java.util.logging.Logger;
 
-import org.freehep.util.io.Tag;
 import org.freehep.graphicsio.emf.gdi.GDIObject;
+import org.freehep.util.io.Tag;
 
 /**
  * Standalone EMF renderer.
  *
  * @author Daniel Noll (daniel@nuix.com)
- * @version $Id: EMFRenderer.java,v 1.3 2008-05-04 12:16:53 murkle Exp $
+ * @version $Id: EMFRenderer.java,v 1.4 2009-06-22 02:18:22 hohenwarter Exp $
  */
 public class EMFRenderer {
     private static final Logger logger = Logger.getLogger("org.freehep.graphicsio.emf");

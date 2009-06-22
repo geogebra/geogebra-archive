@@ -3,11 +3,9 @@ package geogebra3D.kernel3D.commands;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic3D.MyVec3DNode;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
-import geogebra.main.MyError;
 import geogebra3D.kernel3D.Kernel3D;
 
 

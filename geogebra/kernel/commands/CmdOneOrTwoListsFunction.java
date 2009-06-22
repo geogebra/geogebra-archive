@@ -95,7 +95,7 @@ class CmdSXY extends CmdOneOrTwoListsFunction {
 
 }
 
-class CmdSYY extends CmdOneOrTwoListsFunction {
+class CmdSYY extends CmdOneListFunction {
 
 	public CmdSYY(Kernel kernel) {
 		super(kernel);
@@ -105,12 +105,6 @@ class CmdSYY extends CmdOneOrTwoListsFunction {
 	{
 		return kernel.SYY(a, b);
 	}
-
-	final protected GeoElement doCommand(String a, GeoList b, GeoList c)
-	{
-		return kernel.SYY(a, b, c);
-	}
-
 }
 
 class CmdCovariance extends CmdOneOrTwoListsFunction {

@@ -2,13 +2,13 @@
 //!!DO NOT EDIT
 package org.freehep.graphics2d.font;
 
-import java.util.*;
+import java.util.Hashtable;
 
 /**
  * Generated MAC Latin Encoding Table.
  *
  * @author org.freehep.graphics2d.font.CharTableConverter
- * @version $Id: MACLatin.java,v 1.3 2008-05-04 12:15:24 murkle Exp $
+ * @version $Id: MACLatin.java,v 1.4 2009-06-22 02:18:16 hohenwarter Exp $
  */
 public class MACLatin extends AbstractCharTable {
     private Hashtable unicodeToName = new Hashtable();

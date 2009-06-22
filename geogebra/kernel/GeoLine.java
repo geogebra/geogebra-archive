@@ -114,7 +114,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 			return true;
     	
     	// check if P lies on line first
-    	if (!isOnFullLine((GeoPoint) P, eps))
+  		if (!isOnFullLine(P, eps))
     		return false;    	
     	
     	// for a line we are done here: the point is on the line
@@ -696,52 +696,58 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 		
 		public PathMoverLine() {
 			super(GeoLine.this);
-			moverStartPoint = new GeoPoint(cons);
 		}
 		
-		public void init(GeoPoint p) {						
-			//	we need a point on the line:		
-			// p is a point on the line ;-)
-			moverStartPoint.set(p);
-			moverStartPoint.setConstruction(p.cons);
-			PathParameter pp = p.getPathParameter();
-			pp.t = 0;												
-			start_param = 0; 								
+		public void init(GeoPoint p) {	
+			// we need a start point for pathChanged() to work correctly
+			// with our path parameters
+			if (startPoint == null) {
+				moverStartPoint = new GeoPoint(cons);
+				setStartPoint(moverStartPoint);				
+			}
 			
-			min_param = -1 + PathMover.OPEN_BORDER_OFFSET;
-			max_param =  1 - PathMover.OPEN_BORDER_OFFSET;		
-			param_extent = max_param - min_param;			
-			init_step_width = INIT_STEP_WIDTH;
-			max_step_width  = param_extent / MIN_STEPS;			
-			posOrientation = true; 								
+			if (moverStartPoint != null) {
+				moverStartPoint.setCoords(p);
+			}
 			
-			/*
-			Application.debug("init_step_width: " + init_step_width);
-			Application.debug("MAX_STEP_WIDTH: " + MAX_STEP_WIDTH);
-			Application.debug("MIN_STEP_WIDTH: " + MIN_STEP_WIDTH);
-			*/
-			
-			resetStartParameter();
+			super.init(p);
+						
+//			//	we need a point on the line:		
+//			// p is a point on the line ;-)
+//			moverStartPoint.setCoords(p);
+//			PathParameter pp = p.getPathParameter();
+//			pp.t = 0;												
+//			start_param = 0;						
+//			
+//			min_param = -1 + PathMover.OPEN_BORDER_OFFSET;
+//			max_param =  1 - PathMover.OPEN_BORDER_OFFSET;			
+//			
+//			param_extent = max_param - min_param;
+//			max_step_width = param_extent / MIN_STEPS;		
+//			posOrientation = true; 											
+//			
+//			resetStartParameter();
 		}							
 		
-		protected void calcPoint(GeoPoint p) {
-			PathParameter pp = p.getPathParameter();
-			pp.t = PathMoverGeneric.infFunction(curr_param);	
-			p.x = moverStartPoint.inhomX + pp.t * y;
-			p.y = moverStartPoint.inhomY - pp.t * x;
-			p.z = 1.0;	
-			p.updateCoords();
-		}
-		
-		public boolean hasNext() {						
-			// check if we pass the start parameter 0:
-			// i.e. check if the sign will change from 
-			// last_param to the next parameter curr_param				
-			if (posOrientation)
-				return !(curr_param < 0 && (curr_param + step_width) >= 0);
-			else
-				return !(curr_param > 0 && (curr_param + step_width) <= 0);									
-		}					
+//		protected void calcPoint(GeoPoint p) {
+//			PathParameter pp = p.getPathParameter();
+//			pp.t = PathMoverGeneric.infFunction(curr_param);	
+//			p.x = moverStartPoint.inhomX + pp.t * y;
+//			p.y = moverStartPoint.inhomY - pp.t * x;
+//			p.z = 1.0;	
+//			p.updateCoords();
+//		}
+//		
+//		public boolean hasNext() {						
+//			// check if we pass the start parameter 0:
+//			// i.e. check if the sign will change from 
+//			// last_param to the next parameter curr_param	
+//			double next_param = curr_param + step_width;	
+//			if (posOrientation)
+//				return !(curr_param < 0 && next_param >= 0);
+//			else
+//				return !(curr_param > 0 && next_param <= 0);
+//		}					
 	}
 	
     public void setZero() {
@@ -749,7 +755,6 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
     }
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
     

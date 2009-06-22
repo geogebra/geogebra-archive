@@ -1,7 +1,6 @@
 package geogebra.gui;
 
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.event.KeyEvent;
@@ -104,7 +103,8 @@ public class MathTextField extends JTextField implements KeyListener {
 				switch (keyString.charAt(0)) {
 
 				case '*' :
-					insertStr = ExpressionNode.strVECTORPRODUCT; //  alt-* -> vector product "\u2297"
+					insertStr = "*";
+					// was ExpressionNode.strCOMPLEXMULTIPLY; //  alt-m -> complex multiply "\u2297"
 					break;
 				case '=' :
 					insertStr = "\u2260"; // alt-= -> notEqualTo
@@ -188,6 +188,12 @@ public class MathTextField extends JTextField implements KeyListener {
 						insertStr = "\u0398"; // alt-T -> unicode theta (upper case)
 					else
 						insertStr = "\u03b8"; // alt-t -> unicode theta
+					break;
+				case 'w' :
+					if (e.isShiftDown())
+						insertStr = "\u03a9"; // alt-W -> unicode omega (upper case)
+					else
+						insertStr = "\u03c9"; // alt-w -> unicode omega
 					break;
 				case '0' :
 					insertStr = "\u2070"; // alt-0 -> unicode superscript 0

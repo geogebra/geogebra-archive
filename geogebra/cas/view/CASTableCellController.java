@@ -1,15 +1,7 @@
 package geogebra.cas.view;
 
-import geogebra.cas.GeoGebraCAS;
-import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.main.Application;
-
-import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import javax.swing.SwingUtilities;
 
 public class CASTableCellController implements KeyListener {
 	

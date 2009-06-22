@@ -85,14 +85,13 @@ import org.freehep.graphicsio.emf.gdi.StretchDIBits;
 import org.freehep.graphicsio.emf.gdi.StrokeAndFillPath;
 import org.freehep.graphicsio.emf.gdi.StrokePath;
 import org.freehep.graphicsio.emf.gdi.WidenPath;
-
 import org.freehep.util.io.TagSet;
 
 /**
  * EMF specific tagset.
  * 
  * @author Mark Donszelmann
- * @version $Id: EMFTagSet.java,v 1.3 2008-05-04 12:16:55 murkle Exp $
+ * @version $Id: EMFTagSet.java,v 1.4 2009-06-22 02:18:22 hohenwarter Exp $
  */
 public class EMFTagSet extends TagSet {
 

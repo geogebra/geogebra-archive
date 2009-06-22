@@ -12,8 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra.kernel.jama.GgbMat;
 
 /**
  * Reverse a list. Adapted from AlgoSort
@@ -57,13 +56,14 @@ public class AlgoInvert extends AlgoElement {
 
     protected final void compute() {
     	   		
-   		Ggb3DMatrix matrix = new Ggb3DMatrix(inputList);
+   		GgbMat matrix = new GgbMat(inputList);
    		
-   		if (matrix.isSingular() || !matrix.isSquare()) {
+   		if (matrix.isUndefined() || !matrix.isSquare()) {
   			outputList.setUndefined();
 	   		return;   		
 	   	}
    		
+   		/*
    		if (matrix.getRows() == 1) {
    			
    			double det = matrix.det();
@@ -74,18 +74,18 @@ public class AlgoInvert extends AlgoElement {
    		   	}
    			
    			// invert 1x1 matrix
-   			matrix = new Ggb3DMatrix(1,1);
+   			matrix = new GgbMatrix(1,1);
    			matrix.set(1,1,1/det);
    			
    			outputList = matrix.getGeoList(outputList, cons);
    			return;
-   		}
+   		}*/
    		
-   		matrix = matrix.inverse();
+   		matrix.inverseImmediate();
    		
-   		if (matrix.isSingular()) {
-  			outputList.setUndefined();
-	   		return;   		
+   		if (matrix.isUndefined()) {
+  			//outputList.setUndefined();
+	   		//return;   		
 	   	}
    		// Invert[{{1,2},{3,4}}]
    		

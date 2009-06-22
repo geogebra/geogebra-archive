@@ -24,18 +24,10 @@ import geogebra.util.MyMath;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
-/**
- *
- * @author  Markus
- * @version 
- */
 public class GeoConic extends GeoElement
 implements Path, Traceable, 
 Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	// avoid very large and small coefficients for numerical stability	
 	private static final double MAX_COEFFICIENT_SIZE = 10000;
@@ -68,10 +60,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 *               ( A[4]  A[5]    A[2] )
 	 */
 
-	int type; // of conic
+	int type = -1; // of conic
 	double[] matrix = new double[6]; // flat matrix A
 	private double maxCoeffAbs; // maximum absolute value of coeffs in matrix A[]
-	private AffineTransform transform;
+	private AffineTransform transform, oldTransform;
 	public boolean trace;	
 
 	// (eigenvecX, eigenvecY) are coords of currently calculated first eigenvector
@@ -85,6 +77,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	public double excent, p;
 	GeoLine[] lines;
 	private GeoPoint singlePoint;
+	private GeoPoint [] startPoints;
 	private boolean defined = true;
 	private ArrayList pointsOnConic;
 	
@@ -95,7 +88,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	private int index = 0;
 	private double[] eigenval = new double[3];
 	private double[] mu = new double[2];
-	private GeoVec2D c = new GeoVec2D(kernel);		
+	private GeoVec2D c = new GeoVec2D(kernel);	
 
 	
 	public GeoConic(Construction c){
@@ -169,7 +162,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		}                       
 	} 
 
-	final public GeoElement copy() {
+	public GeoElement copy() {
 		return new GeoConic(this);
 	}
 	
@@ -210,13 +203,20 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	}
 	
 	/**
-	 * Returns a list of points that this conic passes through.
-	 * May return null.
+	 * Adds a point to the list of points that this conic passes through.
 	 */
 	final void addPointOnConic(GeoPoint p) {
 		if (pointsOnConic == null)
 			pointsOnConic = new ArrayList();
-		pointsOnConic.add(p);
+		pointsOnConic.add(p);				
+	}
+	
+	/**
+	 * Removes a point from the list of points that this conic passes through.
+	 */
+	final void removePointOnConic(GeoPoint p) {
+		if (pointsOnConic != null)
+			pointsOnConic.remove(p);
 	}
 
 	/** geo is expected to be a conic. make deep copy of
@@ -261,6 +261,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		}
 		defined = co.defined;		
 	}		
+	
+	/**
+	 * Updates this conic. If the transform has changed, we call makePathParametersInvalid()
+	 * to force an update of all path parameters of all points on this conic.
+	 */
+	public void update() {			
+		makePathParametersInvalid();
+		super.update();        				
+	}
 
 	final public void setToStringMode(int mode) {
 		switch (mode) {
@@ -370,28 +379,36 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		maxCoeffAbs = 0;		
 		
 		for (int i = 0; i < 6; i++) {
-			if (Double.isNaN(matrix[i]) || Double.isInfinite(matrix[i]))
+			if (Double.isNaN(matrix[i]) || Double.isInfinite(matrix[i])) {
 				return false;
+			}
+				
 			double abs = Math.abs(matrix[i]);			
-			allZero = allZero && abs < Kernel.MIN_PRECISION;
+			if (abs > Kernel.STANDARD_PRECISION) allZero = false;
 			maxCoeffAbs = maxCoeffAbs > abs ? maxCoeffAbs : abs;			
 		}
-		if (allZero) return false;		
+		if (allZero) {
+			return false;		
+		}
 		
 		// huge or tiny coefficients?
-		if (maxCoeffAbs > MAX_COEFFICIENT_SIZE) {			
-			double factor = 0.1;
-			while (maxCoeffAbs * factor > MAX_COEFFICIENT_SIZE) factor /= 2;
-			for (int i=0; i < 6; i++) matrix[i] *= factor;			
-			maxCoeffAbs *= factor;
-		}
-		else if (maxCoeffAbs < MIN_COEFFICIENT_SIZE) {
-			double factor = 10;
-			while (maxCoeffAbs * factor < MIN_COEFFICIENT_SIZE) factor *= 2;			
-			for (int i=0; i < 6; i++) matrix[i] *= factor;						
-			maxCoeffAbs *= factor;
-		}			
+		double factor = 1.0;
+		if (maxCoeffAbs < MIN_COEFFICIENT_SIZE) {
+			factor = 2;
+			while (maxCoeffAbs * factor < MIN_COEFFICIENT_SIZE) factor *= 2;					
+		}		
+		else if (maxCoeffAbs > MAX_COEFFICIENT_SIZE) {			
+			factor = 0.5;
+			while (maxCoeffAbs * factor > MAX_COEFFICIENT_SIZE) factor *= 0.5;					
+		}	
 		
+		// multiply matrix with factor to avoid huge and tiny coefficients
+		if (factor != 1.0) {
+			maxCoeffAbs *= factor;
+			for (int i=0; i < 6; i++) {
+				matrix[i] *= factor;
+			}
+		}
 		return true;
 	}
 
@@ -536,7 +553,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		coeffs[3] = 2 * matrix[4]; // x
 		coeffs[4] = 2 * matrix[5]; // y  
 		
-		sbToValueString.setLength(0);				
+		sbToValueString().setLength(0);				
 		
 		switch (toStringMode) {
 			case EQUATION_SPECIFIC :
@@ -701,8 +718,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		}
 	}
 	
-	// TODO: continue 
-	private StringBuffer sbToValueString = new StringBuffer(80);
+	private StringBuffer sbToValueString;
+	private StringBuffer sbToValueString() {
+		if (sbToValueString == null)
+			sbToValueString = new StringBuffer();
+		return sbToValueString;
+	}
 
 /*
 	public String printMatrix() {
@@ -752,11 +773,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		return transform;
 	}
 
-	final private void setAffineTransform() {
+	final private void setAffineTransform() {	
+		AffineTransform transform = getAffineTransform();	
+		
 		/*      ( v1x   v2x     bx )
 		 *      ( v1y   v2y     by )
-		 *      (  0     0      1  )   */
-		AffineTransform transform = getAffineTransform();
+		 *      (  0     0      1  )   */			
 		transform.setTransform(
 			eigenvec[0].x,
 			eigenvec[0].y,
@@ -787,7 +809,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		double px = P.x;
 		P.x = px * eigenvec[0].x + P.y * eigenvec[1].x;
 		P.y = px * eigenvec[0].y + P.y * eigenvec[1].y; 
-		
+	
 		// translate by b
 		P.x = P.x + P.z *  b.x;
 		P.y = P.y + P.z * b.y;
@@ -805,7 +827,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		// rotate by -alpha
 		double px = P.x;	
 		P.x = px * eigenvec[0].x + P.y * eigenvec[0].y;
-		P.y = px * eigenvec[1].x + P.y * eigenvec[1].y; 				
+		P.y = px * eigenvec[1].x + P.y * eigenvec[1].y;
 	}
 	
 	/** return copy of flat matrix */
@@ -828,25 +850,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			this.matrix[i] = matrix[i];
 		}
 		classifyConic();
-	}
-
-	/**
-	 * Sets both eigenvectors. 
-	 * (note: needed for "near-to-relationship" after loading a file)  
-	 * @param homogenous coordinates 
-	 */
-	final public void setEigenvectors(
-		double x0,
-		double y0,
-		double z0,
-		double x1,
-		double y1,
-		double z1) {
-		eigenvec[0].x = x0 / z0;
-		eigenvec[0].y = y0 / z0;
-		eigenvec[1].x = x1 / z1;
-		eigenvec[1].y = y1 / z1;
-	}
+	}	
 
 	/** 
 	 * Set conic's matrix from flat matrix (array of length 6).	 
@@ -1096,7 +1100,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	final public void translate(GeoVector v) {
 		doTranslate(v.x, v.y);
 
-		classifyConic();
+		//classifyConic();
 		setAffineTransform();
 		updateDegenerates(); // for degenerate conics            
 	}
@@ -1197,18 +1201,25 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 * dilate this conic from point S by factor r
 	 */
 	 final public void dilate(NumberValue rval, GeoPoint S) {  
-	    double r = rval.getDouble();	
+	    double r = rval.getDouble();		    	    	    
 	 	double sx = S.inhomX;
 		double sy = S.inhomY;
+		
+		// remember Eigenvector orientation
+		boolean oldOrientation = hasPositiveEigenvectorOrientation();
 		
 		// translate -S
 		doTranslate(-sx, -sy);
 		// do dilation
 		doDilate(r);
 		// translate +S
-		doTranslate(sx, sy);
-	
+		doTranslate(sx, sy);	
+				
+		// classify as type may have change
 		classifyConic();        
+		
+		// make sure we preserve old Eigenvector orientation
+		setPositiveEigenvectorOrientation(oldOrientation);
 	}
 	
 	final private void doDilate(double factor) {
@@ -1339,6 +1350,28 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	/*************************************
 	 * CONIC CLASSIFICATION
 	 *************************************/
+	
+	/**
+	 * Sets both eigenvectors on file load.
+	 * (note: needed for "near-to-relationship" after loading a file)  
+	 * @param homogenous coordinates 
+	 */
+	final public void setEigenvectors(
+		double x0,
+		double y0,
+		double z0,
+		double x1,
+		double y1,
+		double z1) {
+				
+		eigenvec[0].x = x0 / z0;
+		eigenvec[0].y = y0 / z0;
+		eigenvec[1].x = x1 / z1;
+		eigenvec[1].y = y1 / z1;
+		eigenvectorsSetOnLoad = true;
+	}
+	private boolean eigenvectorsSetOnLoad = false;
+	
 	final private void setEigenvectors() {
 		// newly calculated first eigenvector = (eigenvecX, eigenvecY)
 		// old eigenvectors: eigenvec[0], eigenvec[1]        
@@ -1352,7 +1385,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			eigenvecY = eigenvecY / length;
 		}
 		
-		if (kernel.isContinuous()) {
+		if (kernel.isContinuous()) {		
 			// first eigenvector
 			if (eigenvec[0].x * eigenvecX < -eigenvec[0].y * eigenvecY) {
 				eigenvec[0].x = -eigenvecX;
@@ -1372,12 +1405,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			}
 		} 	
 		// non-continous
-		else {
+		else if (!eigenvectorsSetOnLoad ){								
 			eigenvec[0].x = eigenvecX;
 			eigenvec[0].y = eigenvecY;
 			eigenvec[1].x = -eigenvecY;
 			eigenvec[1].y = eigenvecX;
 		}		
+		
+		eigenvectorsSetOnLoad = false;
 	}
 
 	final private void setParabolicEigenvectors() {
@@ -1408,43 +1443,96 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 				eigenvec[1].x = -eigenvecY;
 				eigenvec[1].y = eigenvecX;
 			}
-		} else {
+		} 
+		else if (!eigenvectorsSetOnLoad ){		
 			// non-continous
 			eigenvec[1].x = -eigenvecY;
 			eigenvec[1].y = eigenvecX;
 		}
+		
+		eigenvectorsSetOnLoad = false;
 	}
+	
+	/**
+	 * Makes all path parameters of points on this conic invalid if the 
+	 * Eigenvectors have changed. This will force recalculation of the path parameters
+	 * on the next call of pointChanged().
+	 */
+	private void makePathParametersInvalid() {		
+		if (pointsOnConic == null) return;
+
+		// eigenvectors have changed: we need to force an update of the
+		// path parameters of all points on this conic.		
+		getAffineTransform();
+		if (oldTransform == null)
+			oldTransform = new AffineTransform();
+		boolean eigenVectorsChanged = 
+			transform.getScaleX() != oldTransform.getScaleX() ||
+			transform.getScaleY() != oldTransform.getScaleY() ||
+			transform.getShearX() != oldTransform.getShearX() ||
+			transform.getShearY() != oldTransform.getShearY();
+		
+		if (eigenVectorsChanged) {				
+			// updated old transform
+			oldTransform.setTransform(transform);
+													
+			int size = pointsOnConic.size();
+			for (int i=0; i < size; i++) {
+				GeoPoint point = (GeoPoint) pointsOnConic.get(i);
+				if (point.getPath() == this) {					
+					point.getPathParameter().t = Double.NaN;				
+				}
+			}	
+		}
+	}
+	
+
 	
 	private void classifyConic() {
 		classifyConic(false);
 	}
 	
 	private void classifyConic(boolean degenerate) {		
-		defined = degenerate || checkDefined();
+		defined = degenerate || checkDefined();		
 		if (!defined)
 			return;
 
-		/* submatrix S =                  
-		 *  ( A[0]     A[3] )
-		 *  ( A[3]     A[1] )         
-		 */								
-		
 		// det of S lets us distinguish between
 		// parabolic and midpoint conics
 		// det(S) = A[0] * A[1] - A[3] * A[3]
-		double A0A1 =  matrix[0] * matrix[1];
-		double A3A3 = matrix[3] * matrix[3];					
-		
-		if (kernel.isEqual(A0A1,  A3A3)) {	// det S = 0
+		if (isDetSzero()) {
 			classifyParabolicConic(degenerate);
 		} else {
-			detS = A0A1 - A3A3;
+			// det(S) = A[0] * A[1] - A[3] * A[3]
+			detS = matrix[0] * matrix[1] - matrix[3] * matrix[3];
 			classifyMidpointConic(degenerate);
 		}		
 		setAffineTransform();		
 		
 		// Application.debug("conic: " + this.getLabel() + " type " + getTypeString() );
 		// Application.debug("           detS: " + (A0A1 - A3A3));
+	}
+	
+	
+	/**
+	 * Returns whether det(S) = A[0] * A[1] - A[3] * A[3] is zero.
+	 * This method takes care of possibly large coefficients and adapts the precision
+	 * used for the zero test automatically.    
+	 */								
+	private boolean isDetSzero() {	
+		// get largest abs of A0, A1, A3
+		double maxAbs = Math.abs(matrix[0]);
+		double abs = Math.abs(matrix[1]);
+		if (abs > maxAbs) maxAbs = abs;
+		abs = Math.abs(matrix[3]);
+		if (abs > maxAbs) maxAbs = abs;
+				
+		// det(S) = 0
+		// A[0] * A[1] = A[3] * A[3]  
+		// normalized: A[0]/maxAbs * A[1]/maxAbs = A[3]/maxAbs * A[3]/maxAbs 
+		// use precision: eps * maxAbs^2		
+		double eps = Kernel.STANDARD_PRECISION * maxAbs * maxAbs;
+		return Kernel.isEqual(matrix[0]*matrix[1], matrix[3]*matrix[3], eps);				
 	}
 
 	/*************************************
@@ -1468,10 +1556,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			eigenval[1] = - (matrix[0] + matrix[1]); // -spurS
 			eigenval[2] = 1.0d;
 			eqnSolver.solveQuadratic(eigenval, eigenval);
-
+	
 			// set first eigenvector
-			eigenvecX = matrix[3];
-			eigenvecY = eigenval[0] - matrix[0];
+			eigenvecX = -matrix[3];
+			eigenvecY = -eigenval[0] + matrix[0];
 		}
 
 		// calc translation vector b = midpoint
@@ -1556,6 +1644,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		lines[index].x = nx;
 		lines[index].y = ny;
 		lines[index].z = - (nx * b.x + ny * b.y);
+		
+		setStartPointsForLines();
 		//Application.debug("intersectingLines: " + lines[0] + ", " + lines[1]);
 	}
 
@@ -1721,6 +1811,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		lines[1].x = lines[0].x;
 		lines[1].y = lines[0].y;
 		lines[1].z = lines[0].z;
+		
+		//setStartPointsForLines();
 		//Application.debug("double line : " + lines[0]);
 	}
 	
@@ -1781,8 +1873,28 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			lines[0].z = -temp1 - mu[0];
 			lines[1].z = temp2;
 		}
+		
+		setStartPointsForLines();
+		
 		// Application.debug("parallel lines : " + lines[0] + ", " + lines[1]);
 		// Application.debug("coeff : " + mu[0]);
+	}
+	
+	private void setStartPointsForLines() {
+		// make sure we have a start point to compute line parameter	
+		if (startPoints == null) {
+			startPoints = new GeoPoint[2];
+			for (int i=0; i < 2; i++) {
+				startPoints[i] = new GeoPoint(cons);
+			}
+		}
+		
+		// update start points
+		for (int i=0; i < 2; i++) {		
+			lines[i].setStartPoint(null);
+			lines[i].getPointOnLine(startPoints[i]);
+			lines[i].setStartPoint(startPoints[i]);
+		}		
 	}
 
 	final private void parabola() {
@@ -1826,6 +1938,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			- matrix[1] * matrix[4] * matrix[4]
 			+ 2 * matrix[3] * matrix[4] * matrix[5];
 	}
+		
 	
 	/**
 	 * Returns true iff the determinant of 2x2 matrix of eigenvectors is
@@ -2091,7 +2204,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		double px, py;		
 		PathParameter pp = P.getPathParameter();
 		pp.pathType = type;
-		pp.branch = -1;
 			
 		switch (type) {
 			case CONIC_EMPTY:
@@ -2108,18 +2220,32 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			
 			case CONIC_INTERSECTING_LINES:
 			case CONIC_PARALLEL_LINES:
-				if (lines[0].distanceHom(P) <= lines[1].distanceHom(P)) {
-					lines[0].pointChanged(P);
-					pp.branch = 0;
-				} else {
-					lines[1].pointChanged(P);
-					pp.branch = 1;					
-				}
+				/* 
+				 * For line conics, we use the parameter ranges 
+				 *   first line: t = (-1, 1)
+				 *   second line: t = (1, 3)
+				 * and convert this to s = (-inf, inf) using		
+				 *   first line: s = t /(1 - abs(t)) 
+				 *   second line:  s = (t-2) /(1 - abs(t-2))
+				 * which allows us to use the line's path parameter s
+				 */
+				
+				// choose closest line
+				boolean firstLine = lines[0].distanceHom(P) <= lines[1].distanceHom(P);
+				GeoLine line = firstLine ? lines[0] : lines[1];
+				
+				// compute line path parameter
+				line.pointChanged(P);
+							
+				// convert line parameter to (-1,1)
+				pp.t = PathMoverGeneric.inverseInfFunction(pp.t);
+				if (!firstLine) {
+					pp.t = pp.t + 2;// convert from (-1,1) to (1,3)									
+				}				
 			break;
 			
 			case CONIC_DOUBLE_LINE:
 				lines[0].pointChanged(P);
-				pp.branch = 0;
 			break;
 			
 			case CONIC_CIRCLE:
@@ -2133,38 +2259,48 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 				
 				// relation between the internal parameter t and the angle theta:
 				// t = atan(a/b tan(theta)) where tan(theta) = py / px
-				pp.t = Math.atan2(halfAxes[0]*py, halfAxes[1]*px);
-
+				pp.t = Math.atan2(halfAxes[0]*py, halfAxes[1]*px);											
+				
 				// calc Point on conic using this parameter
 				P.x = halfAxes[0] * Math.cos(pp.t);	
-				P.y = halfAxes[1] * Math.sin(pp.t);
+				P.y = halfAxes[1] * Math.sin(pp.t);												
 				P.z = 1.0;
 				
 				//	transform back to real world coord system
-				coordsEVtoRW(P);								
+				coordsEVtoRW(P);				
 			break;			
 			
 			case CONIC_HYPERBOLA:
-				//	transform to eigenvector coord-system
-				coordsRWtoEV(P);				
+				/* 
+				 * For hyperbolas, we use the parameter ranges 
+				 *   right branch: t = (-1, 1)
+				 *   left branch: t = (1, 3)
+				 * and get this from  s = (-inf, inf) using		
+				 *   right branch: s = t /(1 - abs(t)) 
+				 * where we use the parameter form
+				 *   (a*cosh(s), b*sinh(s))
+				 * for the right branch of the hyperbola.
+				 */ 
 				
-				// calc parameter 
-				px =P.x / P.z;
+				// transform to eigenvector coord-system
+				coordsRWtoEV(P);
+				px = P.x / P.z;
 				py = P.y / P.z;
 				
-				// keep py				
-				pp.t = MyMath.asinh(py / halfAxes[1]);
-				P.x = halfAxes[0] * MyMath.cosh(pp.t);	
+				// calculate s in (-inf, inf) and keep py				
+				double s = MyMath.asinh(py / halfAxes[1]);
+				P.x = halfAxes[0] * MyMath.cosh(s);	
 				P.y = py;
 				P.z = 1.0;
-				if (px < 0) {										
-					pp.branch = 1;
+
+				// compute t in (-1,1) from s in (-inf, inf)
+				pp.t = PathMoverGeneric.inverseInfFunction(s);	
+				if (px < 0) { // left branch									
+					pp.t = pp.t + 2; // convert (-1,1) to (1,3)
 					P.x = -P.x;
-				} else {									
-					pp.branch = 0;
-				}
-					
-				//	transform back to real world coord system
+				}		
+
+				// transform back to real world coord system
 				coordsEVtoRW(P);													
 			break;																			
 			
@@ -2191,8 +2327,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		
 		// if type of path changed (other conic) then we
 		// have to recalc the parameter with pointChanged()
-		PathParameter pp = P.getPathParameter();
-		if (pp.pathType != type) {
+		PathParameter pp = P.getPathParameter();		
+		if (pp.pathType != type || Double.isNaN(pp.t)) {		
 			pointChanged(P);
 			return;
 		}
@@ -2202,64 +2338,89 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 				P.x = Double.NaN;
 				P.y = Double.NaN;
 				P.z = Double.NaN;
-			break;
+				break;
 			
 			case CONIC_SINGLE_POINT:
 				P.x = singlePoint.x;
 				P.y = singlePoint.y;
 				P.z = singlePoint.z;
-			break;
+				break;
 			
 			case CONIC_INTERSECTING_LINES:
 			case CONIC_PARALLEL_LINES:
-				if (pp.branch == 0) {
-					lines[0].pathChanged(P);					 
+				/* 
+				 * For line conics, we use the parameter ranges 
+				 *   first line: t = (-1, 1)
+				 *   second line: t = (1, 3)
+				 * and convert this to s = (-inf, inf) using		
+				 *   first line: s = t /(1 - abs(t)) 
+				 *   second line:  s = (t-2) /(1 - abs(t-2))
+				 * which allows us to use the line's path parameter s
+				 */ 
+				double pathParam = pp.t;
+				boolean leftBranch = pathParam > 1;
+				pp.t = leftBranch ? pathParam - 2 : pathParam;
+				// convert from (-1,1) to (-inf, inf) line path parameter
+				pp.t = pp.t /(1 - Math.abs(pp.t));
+				if (leftBranch) {
+					lines[1].pathChanged(P);					 
 				} else {
-					lines[1].pathChanged(P);										
+					lines[0].pathChanged(P);										
 				}
-			break;
+						
+				// set our path parameter again
+				pp.t = pathParam;
+				break;
 			
 			case CONIC_DOUBLE_LINE:
 				lines[0].pathChanged(P);	
-			break;
+				break;
 			
-			case CONIC_CIRCLE:	
-				//	calc Point on conic using this parameter (in eigenvector space)
-				 P.x = b.x + halfAxes[0] * Math.cos(pp.t);	
-				 P.y = b.y + halfAxes[0] * Math.sin(pp.t);
-				 P.z = 1.0;										
-			break;
-			
-			case CONIC_ELLIPSE:												
+			case CONIC_CIRCLE:
+			case CONIC_ELLIPSE:						
 				// calc Point on conic using this parameter (in eigenvector space)
 				P.x = halfAxes[0] * Math.cos(pp.t);	
 				P.y = halfAxes[1] * Math.sin(pp.t);
-				P.z = 1.0;
+				P.z = 1.0;		
 				
-				//	transform to real world coord system
-				coordsEVtoRW(P);								
-			break;			
+				// transform back to real world coord system
+				coordsEVtoRW(P);
+				break;			
 			
-			case CONIC_HYPERBOLA:																									
-				P.x = halfAxes[0] * MyMath.cosh(pp.t);
-				P.y = halfAxes[1] * MyMath.sinh(pp.t);
+			case CONIC_HYPERBOLA:			
+				/* 
+				 * For hyperbolas, we use the parameter ranges 
+				 *   right branch: t = (-1, 1)
+				 *   left branch: t = (1, 3)
+				 * and convert this to s = (-inf, inf) using		
+				 *   right branch: s = t /(1 - abs(t)) 
+				 *   left branch:  s = (t-2) /(1 - abs(t-2))
+				 * which allows us to use the parameter form
+				 *   (a*cosh(s), b*sinh(s))
+				 * for the right branch of the hyperbola.
+				 */ 
+				leftBranch = pp.t > 1;
+				double t = leftBranch ? pp.t - 2 : pp.t;
+				double s = t /(1 - Math.abs(t));
+				
+				P.x = halfAxes[0] * MyMath.cosh(s);
+				P.y = halfAxes[1] * MyMath.sinh(s);
 				P.z = 1.0;				
-				if (pp.branch == 1) P.x = -P.x;
-						
-				//	transform back to real world coord system
-				coordsEVtoRW(P);													
-			break;																			
+				if (leftBranch) P.x = -P.x;
+				
+				// transform back to real world coord system
+				coordsEVtoRW(P);
+				break;																			
 			
 			case CONIC_PARABOLA:
 				P.y = p * pp.t;				
 				P.x = P.y * pp.t  / 2.0;				
-				P.z = 1.0;				
+				P.z = 1.0;	
 				
-				//	transform back to real world coord system
-				coordsEVtoRW(P);					
-			break;
-		}		
-			
+				// transform back to real world coord system
+				coordsEVtoRW(P);
+				break;
+		}
 	}
 	
 	public boolean isOnPath(GeoPointInterface PI, double eps) {
@@ -2279,13 +2440,18 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 */
 	public double getMinParameter() {
 		switch (type) {		
+			case CONIC_PARABOLA:
+			case CONIC_DOUBLE_LINE:
+				return Double.NEGATIVE_INFINITY;
+				
+			case CONIC_HYPERBOLA:
 			case CONIC_INTERSECTING_LINES:
 			case CONIC_PARALLEL_LINES:
-			case CONIC_DOUBLE_LINE:
-			case CONIC_HYPERBOLA:
-			case CONIC_PARABOLA:
-				return Double.NEGATIVE_INFINITY;
-							
+				// For hyperbolas and line conics, we use the parameter ranges 
+				//   right branch: t = (-1, 1)
+				//   left branch: t = (1, 3)
+				return -1;
+															
 			case CONIC_EMPTY:										
 			case CONIC_SINGLE_POINT:
 			case CONIC_CIRCLE:
@@ -2301,17 +2467,22 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 * @return
 	 */
 	public double getMaxParameter() {
-		switch (type) {		
-			case CONIC_INTERSECTING_LINES:
-			case CONIC_PARALLEL_LINES:
-			case CONIC_DOUBLE_LINE:
-			case CONIC_HYPERBOLA:
+		switch (type) {
+			case CONIC_DOUBLE_LINE:			
 			case CONIC_PARABOLA:
 				return Double.POSITIVE_INFINITY;
 									
 			case CONIC_CIRCLE:
 			case CONIC_ELLIPSE:
 				return Kernel.PI_2;
+				
+			case CONIC_HYPERBOLA:
+			case CONIC_INTERSECTING_LINES:
+			case CONIC_PARALLEL_LINES:
+				// For hyperbolas and line conics, we use the parameter ranges 
+				//   right branch: t = (-1, 1)
+				//   left branch: t = (1, 3)
+				return 3;
 				
 			case CONIC_EMPTY:										
 			case CONIC_SINGLE_POINT:
@@ -2351,7 +2522,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		return false;
 	}
 	
-	public boolean isGeoConic() {
+	final public boolean isGeoConic() {
 		return true;
 	}
 	
@@ -2360,7 +2531,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

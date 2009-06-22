@@ -22,7 +22,6 @@ import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.main.Application;
-import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;
 
 import java.awt.dnd.DropTarget;

@@ -11,7 +11,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.text.JTextComponent;
 
 
 /**
@@ -32,12 +32,14 @@ public interface GuiManager {
 	public void initialize();
 	
 	public boolean isPropertiesDialogSelectionListener();	
+	public boolean isInputFieldSelectionListener();
 	public void clearPreferences();
 	public JComponent getAlgebraView();
 	public JComponent getSpreadsheetView();
+	public boolean hasSpreadsheetView();
+	public void updateSpreadsheetColumnWidths();
 	
-	public void setColumnWidth(int column, int width);
-	
+	public void setColumnWidth(int column, int width);	
 	public void setScrollToShow(boolean scrollToShow);
 	
 	public int getHighestUsedSpreadsheetColumn(); 
@@ -69,6 +71,7 @@ public interface GuiManager {
 	public  void setShowAuxiliaryObjects(boolean flag);
 
 	public JComponent getAlgebraInput();
+	public JTextComponent getAlgebraInputTextField();
 	public void updateAlgebraInput();
 
 	public void doAfterRedefine(GeoElement geo);
@@ -82,6 +85,7 @@ public interface GuiManager {
 	public void setShowToolBarHelp(boolean flag);
 	
 	public void updateToolbar();
+	public void allowGUIToRefresh();
 	
 	public void updateFrameSize();
 	public void updateFrameTitle();
@@ -178,8 +182,10 @@ public interface GuiManager {
 
 	/**
 	 * Displays the redefine dialog for geo
+	 * 
+	 * @param allowTextDialog: whether text dialog should be used for texts
 	 */
-	public void showRedefineDialog(GeoElement geo);
+	public void showRedefineDialog(GeoElement geo, boolean allowTextDialog);
 
 	/**
 	 * Creates a new slider at given location (screen coords).
@@ -322,19 +328,17 @@ public interface GuiManager {
 		
 		public AbstractAction getRedoAction() ;
 
-		public AbstractAction getUndoAction() ;
-	    	 
-		/*
-		 * KeyEventDispatcher implementation to handle key events globally for the
-		 * application
-		 */
-		public boolean dispatchKeyEvent(KeyEvent e);
+		public AbstractAction getUndoAction() ;	    	 	
 		
 		public void startEditing(GeoElement geo);
 		 
 		public void undo();
 		 
 		public void redo();
+		public void traceToSpreadsheet(GeoElement p);
+		public void startCollectingSpreadsheetTraces();
+		public void stopCollectingSpreadsheetTraces();
+		public void resetSpreadsheet();
 		 
 
 }

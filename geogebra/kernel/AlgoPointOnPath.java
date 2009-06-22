@@ -27,13 +27,14 @@ public class AlgoPointOnPath extends AlgoElement {
         double y) {
         super(cons);
         this.path = path;
-        P = new GeoPoint(cons, path);
-        P.setCoords(x, y, 1.0);
+        
+        // create point on path and compute current location
+        P = new GeoPoint(cons);
+        P.setPath(path);
+        P.setCoords(x, y, 1.0);                   
 
         setInputOutput(); // for AlgoElement
-
-        // compute line through P, Q
-        compute();
+       
         P.setLabel(label);
     }
 
@@ -57,7 +58,7 @@ public class AlgoPointOnPath extends AlgoElement {
     Path getPath() {
         return path;
     }
-
+      
     protected final void compute() {
     	if (input[0].isDefined()) {	    	
 	        path.pathChanged(P);
@@ -68,11 +69,8 @@ public class AlgoPointOnPath extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
         // Michael Borcherds 2008-03-30
-        // simplified to allow better Chinese translation
-        sb.append(app.getPlain("PointOnA",input[0].getLabel()));
-        
-        return sb.toString();
+        // simplified to allow better Chinese translation        
+        return app.getPlain("PointOnA", input[0].getLabel());
     }
 }

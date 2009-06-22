@@ -17,29 +17,20 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp;
 
-import org.mathpiper.lisp.printers.Printer;
+import org.mathpiper.builtin.BuiltinFunctionInitialize;
+import org.mathpiper.io.InputDirectories;
+import org.mathpiper.io.InputStatus;
 import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.io.MathPiperOutputStream;
-import org.mathpiper.builtin.BuiltinFunctionInitialize;
-import org.mathpiper.lisp.tokenizers.XmlTokenizer;
-import org.mathpiper.io.InputStatus;
-
-import org.mathpiper.io.InputDirectories;
-
+import org.mathpiper.lisp.printers.Printer;
 import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
-
-import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
-
-import org.mathpiper.lisp.userfunctions.MacroUserFunction;
-
-import org.mathpiper.lisp.userfunctions.UserFunction;
-
-import org.mathpiper.lisp.userfunctions.ListedBranchingUserFunction;
-
+import org.mathpiper.lisp.tokenizers.XmlTokenizer;
 import org.mathpiper.lisp.userfunctions.BranchingUserFunction;
-
+import org.mathpiper.lisp.userfunctions.ListedBranchingUserFunction;
 import org.mathpiper.lisp.userfunctions.ListedMacroUserFunction;
-
+import org.mathpiper.lisp.userfunctions.MacroUserFunction;
+import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
+import org.mathpiper.lisp.userfunctions.UserFunction;
 import org.mathpiper.printers.InfixPrinter;
 
 

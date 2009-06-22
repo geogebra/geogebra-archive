@@ -88,7 +88,7 @@ public interface EuclidianConstants {
 
 	public static final int MODE_ZOOM_OUT = 42;
 
-	public static final int MODE_ALGEBRA_INPUT = 43;
+	public static final int MODE_SELECTION_LISTENER = 43;
 
 	public static final int MODE_POLAR_DIAMETER = 44;
 

@@ -54,7 +54,7 @@ public class AlgoRotate extends AlgoTransformation {
         B = (Rotateable) Bgeo;
         setInputOutput();
         
-        kernel.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewAlgo(this);
 
         compute();        
     }

@@ -49,6 +49,7 @@ import geogebra.*;
 import geogebra.main.*;
 import geogebra.kernel.*;
 import geogebra.kernel.arithmetic.*;
+import geogebra.kernel.arithmetic3D.*;
 import java.util.*;
 
 public class Parser {
@@ -171,7 +172,7 @@ TOKEN :  {
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
-  | < UNDEFINED: ( "?" | "\ufffd" ) >
+  | < UNDEFINED: ( "?" | "\ufffd" | "Undefined" | "NaN" ) >
   | < POWER0:   "\u2070" >
   | < POWER1:   "\u00b9" >
   | < SQUARED:  "\u00b2" >
@@ -185,7 +186,7 @@ TOKEN :  {
   | < PI:       ( "pi" | "Pi" | "\u03c0") >
   | < E:        "\u212f" >  
   | < DEGREE:   "\u00b0" >
-  | < INFINITY: "\u221e" >
+  | < INFINITY: ("\u221e" | "Infinity") >
   | < RAD:      "rad" >
   | < DERIVATIVE: "'" >
   | < TRUE:     ( "true" | "True" ) >
@@ -195,7 +196,6 @@ TOKEN :  {
 TOKEN : {      
   		< VARX: "x" >
   |		< VARY: "y" >
-  |     < PARAMETRICVAR: "X" >
   |     < FLOAT: <INTEGER> ( "." <INTEGER> )? 
         | "." <INTEGER> 
         | <INTEGER> "."
@@ -227,7 +227,7 @@ TOKEN : {
     < ANY_LABEL:    ( <SPREADSHEET_LABEL> | <LABEL> ) >
  |
  	// labels for cells in the spreadsheet
- 	<SPREADSHEET_LABEL: (["A"-"Z"]|["a"-"z"])+(["0"-"9"])+ > // e.g. B12
+ 	<SPREADSHEET_LABEL: ("$")?(["A"-"Z"]|["a"-"z"])+("$")?(["0"-"9"])+ > // e.g. B12
  |
  	// standard case: labels for GeoElements and command names
    < LABEL:  
@@ -330,6 +330,10 @@ ValidExpression buildValidExpression() :
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
      |             
+     	// spreadsheet range like A1:B2
+		LOOKAHEAD (3)
+		ve = spreadsheetRange()
+     |     
         // h: X = (3,2) + t (5,1)
       	LOOKAHEAD(2147483647) 
       	 (l = <ANY_LABEL>) ":"  ve = parametric()      
@@ -339,7 +343,7 @@ ValidExpression buildValidExpression() :
         (l = <ANY_LABEL>)  ":"  ve = equation()        
     |          
         // special case "A: (3,2)" should become a point  
-        // CAS assignment "a := 5" shoudl be supported too                                     
+        // CAS assignment "a := 5" should be supported too                                     
 	  	LOOKAHEAD(2147483647)  
 	    (l = <ANY_LABEL>) (":" | <ASSIGNMENT> )  ve = expression()   
 	 |     
@@ -367,10 +371,7 @@ ValidExpression buildValidExpression() :
         ve = cmdexpression()     
      |	     
         LOOKAHEAD(2147483647)
-        labels = labellist() "=" ve = command()  
-    | 	
-		// special case "X = (3,2)" should become a point
-    	l = <PARAMETRICVAR> "=" ve = expression()      	  	                                       	                       	 	 
+        labels = labellist() "=" ve = command()    	  	                                       	                       	 	 
    	 |
         LOOKAHEAD(2147483647)                               
 	  	ve = cartesianvector_special()
@@ -566,7 +567,7 @@ Parametric parametric():
     Token s, par;    
 }
 {    
-    <PARAMETRICVAR> <EQUAL> P = enterm()
+    <LABEL> <EQUAL> P = enterm()
     ( 
      (s = <PLUS> | s = <MINUS>) par = <LABEL> (<MULTIPLY>)? v = expression()
          {                                    
@@ -1270,7 +1271,8 @@ ExpressionValue list():
 ExpressionValue numVecVariable():
 {
     GeoElement geo;
-    Token c, c2;
+    Token c;
+    ExpressionValue ev;
 }
 {
     c = <VARX>  
@@ -1285,6 +1287,28 @@ ExpressionValue numVecVariable():
 |
 	// spreadsheet range like A1:B2
 	LOOKAHEAD (3)
+	ev = spreadsheetRange()
+	{
+		return ev;
+	}
+|
+    ( c = <SPREADSHEET_LABEL> | c = <LABEL> )
+    {   
+    	// standard case for variable
+        return new ExpressionNode(kernel, new Variable(kernel, c.image));
+    }
+}
+
+
+/**
+ * spreadsheet range, e.g. A3:B5
+ */
+Command spreadsheetRange():
+{
+    Token c, c2;
+}
+{
+	// spreadsheet range like A1:B2
 	c = <SPREADSHEET_LABEL> ":" c2 = <SPREADSHEET_LABEL>
 	{
 		// build command CellRange[ startCell, endCell ]
@@ -1295,13 +1319,8 @@ ExpressionValue numVecVariable():
 		cmd.addArgument(endCell);
 		return cmd;
 	}
-|
-    ( c = <ANY_LABEL> )
-    {   
-    	// standard case for variable
-        return new Variable(kernel, c.image);
-    }
 }
+   
 
 /**
  * floating point number: angle or numeric are distinguished
@@ -1328,7 +1347,7 @@ ExpressionValue myDouble():
 |
     <DEGREE>
     {  // constant for degree to radians 
-        d = new MySpecialDouble(kernel, Math.PI / 180.0d,  "\u00b0" );
+        d = new MySpecialDouble(kernel, Math.PI / 180.0d, "\u00b0");
         d.setAngle();
         return d;
     }
@@ -1452,10 +1471,12 @@ ExpressionNode numberFunction():
     <GAMMA_FUNC> en = expressionnode() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA, null); }               
 | 
-  <RANDOM_FUNC> 
-      {  GeoNumeric randNum = new GeoNumeric(kernel.getConstruction());
-         randNum.setValue(Math.random());
-         randNum.setUsedForRandom(true);
+  <RANDOM_FUNC>
+      {  
+      	 Construction cons = kernel.getConstruction();
+      	 GeoNumeric randNum = new GeoNumeric(cons);
+         cons.addRandomNumber(randNum);
+         randNum.setValue(Math.random());         
       	 return new ExpressionNode(kernel, randNum, ExpressionNode.RANDOM, null); }               
 |
 	c = <FUNCTION_LABEL> en = expressionnode() ")"
@@ -1465,16 +1486,17 @@ ExpressionNode numberFunction():
       		String funcName = c.image.substring(0, c.image.length()-1);
       		int order = 0;
       		int index = funcName.length()-1;
-      		GeoElement geo = null;      
+      		GeoElement geo = null;    
+      		String label = null;  
       		while (index >= 0) {
-      			geo = kernel.lookupLabel(funcName.substring(0, index+1));
+      			label = funcName.substring(0, index+1);
+      			geo = kernel.lookupLabel(label);
       			if (geo != null) break;
       			if (c.image.charAt(index) == '\'') {
       				order++;
       				index--;
       			} else break;
-      		}
-      		
+      		}      		      	
       		if (geo == null) {
       				// return command
       				Command cmd = new Command(kernel, funcName, true );
@@ -1484,11 +1506,16 @@ ExpressionNode numberFunction():
 //      		  	String [] str = { "UndefinedVariable", funcName };
 //           	 	throw new MyParseError(app, str);    
            	}
+           	
+			// create variable object for label to make sure
+			// to handle lables like $A$1 correctly and keep the expression
+			Variable geoVar = new Variable(kernel, label);
+			ExpressionValue geoExp = geoVar.resolveAsExpressionValue();
       		
       		if (order > 0) { // derivative
       			if (geo.isGeoFunction()) {// function 
       				// n-th derivative of geo
-	      			ExpressionNode derivative =  new ExpressionNode(kernel, geo, ExpressionNode.DERIVATIVE, 
+	      			ExpressionNode derivative =  new ExpressionNode(kernel, geoExp, ExpressionNode.DERIVATIVE, 
 	      																new MyDouble(kernel, order));
 	      			return new ExpressionNode(kernel, derivative, ExpressionNode.FUNCTION, en); 
 	      		} 	      		
@@ -1499,9 +1526,9 @@ ExpressionNode numberFunction():
       		}
       		else { // no derivative
 	      		if (geo.isGeoFunction()) // function 
-	      			return new ExpressionNode(kernel, geo, ExpressionNode.FUNCTION, en); 
+	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.FUNCTION, en); 
 	      		else if (geo.isGeoCurveCartesian()) // vector function 
-	      			return new ExpressionNode(kernel, geo, ExpressionNode.VEC_FUNCTION, en); 
+	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.VEC_FUNCTION, en); 
 	      		else {// error: no function
 	      			String [] str = { "FunctionExpected", funcName };
 	                throw new MyParseError(app, str);

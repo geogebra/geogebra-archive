@@ -40,7 +40,7 @@ public class AlgoDependentConic extends AlgoElement {
         
     /** Creates new AlgoJoinPoints */
     public AlgoDependentConic(Construction cons,String label, Equation equ) {  
-       	super(cons);
+       	super(cons, false); // don't add to construction list yet
         equation = equ;                
         Polynomial lhs = equ.getNormalForm();
         
@@ -53,12 +53,16 @@ public class AlgoDependentConic extends AlgoElement {
        
         // check coefficients
         for (int i=0; i<6; i++) {
-        	  // find constant parts of input and evaluate them right now
+        	// find constant parts of input and evaluate them right now
             if (ev[i].isConstant()) ev[i] = ev[i].evaluate();
-            
-            // check that coefficients are numbers
-            ((NumberValue) ev[i].evaluate()).getDouble();    
+                 
+            // check that coefficient is a number: this may throw an exception
+            ExpressionValue eval = ev[i].evaluate();
+            ((NumberValue) eval).getDouble();  
         }  
+        
+        // if we get here, all is ok: let's add this algorithm to the construction list
+        cons.addToConstructionList(this, false);
         
         conic = new GeoConic(cons); 
         setInputOutput(); // for AlgoElement

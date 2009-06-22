@@ -4,9 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-import javax.swing.JPanel;
 import javax.swing.table.TableCellRenderer;
 
 public class TableCellMouseListener extends MouseAdapter {

@@ -28,7 +28,7 @@ import geogebra.kernel.roots.RealRootFunction;
  */
 public class GeoFunction extends GeoElement
 implements Path, Translateable, Traceable, Functional, GeoFunctionable,
-GeoDeriveable, ParametricCurve, LineProperties {
+GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 
 	/**
 	 * 
@@ -198,8 +198,11 @@ GeoDeriveable, ParametricCurve, LineProperties {
 	 * @param x
 	 * @return f(x)
 	 */
-	public double evaluate(double x) {		
-		return fun.evaluate(x);
+	public double evaluate(double x) {
+		if (fun == null)
+			return Double.NaN;
+		else
+			return fun.evaluate(x);
 	}
 	
 	/**
@@ -324,14 +327,14 @@ GeoDeriveable, ParametricCurve, LineProperties {
 	private StringBuffer sbToString = new StringBuffer(80);
 	
 	public String toValueString() {		
-		if (fun != null)
+		if (isDefined())
 			return fun.toValueString();
 		else
 			return app.getPlain("undefined");
 	}	
 	
 	public String toSymbolicString() {	
-		if (fun != null)
+		if (isDefined())
 			return fun.toString();
 		else
 			return app.getPlain("undefined");
@@ -392,6 +395,7 @@ GeoDeriveable, ParametricCurve, LineProperties {
 			  sb.append(label);
 		  sb.append("\">\n");
 		  sb.append(getXMLtags());
+		  sb.append(getCaptionXML());
 		  sb.append("</element>\n");
 		  
 		  return sb.toString();
@@ -616,10 +620,29 @@ GeoDeriveable, ParametricCurve, LineProperties {
 		this.parentCondFun = parentCondFun;
 	}*/
 	
-    // Michael Borcherds 2008-04-30
-	final public boolean isEqual(GeoElement geo) {
-		// return false if it's a different type, otherwise use equals() method
-		if (geo.isGeoFunction()) return equals((GeoFunction)geo); else return false;
+    // Michael Borcherds 2009-02-15
+	public boolean isEqual(GeoElement geo) {
+		
+		
+		// return return geo.isEqual(this); rather than false
+		// in case we improve checking in GeoFunctionConditional in future
+		if (geo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL)
+			return geo.isEqual(this);
+
+		
+		String f = getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+		String g = geo.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+		
+		String diff = ""; 
+			
+		try {
+			diff = kernel.evaluateMathPiper("TrigSimpCombine(ExpandBrackets(" + f + "-(" + g + ")))");
+		}
+		catch (Exception e) { return false; }
+		
+		
+		if ("0".equals(diff)) return true; else return false;
+		
 	}
 	
 	public static GeoFunction add(GeoFunction resultFun, GeoFunction fun1, GeoFunction fun2) {
@@ -643,9 +666,30 @@ GeoDeriveable, ParametricCurve, LineProperties {
        	
        	return resultFun;
 	}
+	
+	public static GeoFunction subtract(GeoFunction resultFun, GeoFunction fun1, GeoFunction fun2) {
+		
+		Kernel kernel = fun1.getKernel();
+		
+    	FunctionVariable x1 = fun1.getFunction().getFunctionVariable();
+    	FunctionVariable x2 = fun2.getFunction().getFunctionVariable();
+    	FunctionVariable x =  new FunctionVariable(kernel);
+    	
+
+    	ExpressionNode left = fun1.getFunctionExpression().getCopy(kernel);
+       	ExpressionNode right = fun2.getFunctionExpression().getCopy(kernel);    
+       	
+    	ExpressionNode sum = new ExpressionNode(fun1.getKernel(), left.replace(x1,x), ExpressionNode.MINUS, right.replace(x2,x));
+    	
+    	Function f = new Function(sum,x);
+    	
+       	resultFun.setFunction(f);
+       	resultFun.setDefined(true);
+       	
+       	return resultFun;
+	}	
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

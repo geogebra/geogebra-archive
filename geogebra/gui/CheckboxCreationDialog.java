@@ -209,7 +209,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 	
 	public void windowGainedFocus(WindowEvent arg0) {		
 		// make sure this dialog is the current selection listener
-		if (app.getMode() != EuclidianView.MODE_ALGEBRA_INPUT ||
+		if (app.getMode() != EuclidianView.MODE_SELECTION_LISTENER ||
 			app.getCurrentSelectionListener() != this) 
 		{
 			app.setSelectionListenerMode(this);

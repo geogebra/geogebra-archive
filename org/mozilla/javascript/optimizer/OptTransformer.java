@@ -38,8 +38,14 @@
 
 package org.mozilla.javascript.optimizer;
 
-import org.mozilla.javascript.*;
 import java.util.Map;
+
+import org.mozilla.javascript.Kit;
+import org.mozilla.javascript.Node;
+import org.mozilla.javascript.NodeTransformer;
+import org.mozilla.javascript.ObjArray;
+import org.mozilla.javascript.ScriptOrFnNode;
+import org.mozilla.javascript.Token;
 
 /**
  * This class performs node transforms to prepare for optimization.

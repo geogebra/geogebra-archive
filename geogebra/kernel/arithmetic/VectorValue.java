@@ -28,5 +28,5 @@ import geogebra.kernel.GeoVec2D;
 public interface VectorValue extends ExpressionValue { 
     public GeoVec2D getVector();    
     public int getMode(); // POLAR or CARTESIAN
-    public void setMode(int mode);       
+    public void setMode(int mode);  
 }

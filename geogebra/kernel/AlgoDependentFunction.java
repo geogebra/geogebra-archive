@@ -18,6 +18,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 /**
  * This class is only needed to handle dependencies
@@ -33,7 +34,7 @@ public class AlgoDependentFunction extends AlgoElement {
 	private Function fun;
     private GeoFunction f; // output         
     
-    private Function expandedFun;
+    private Function expandedFun;    
     private ExpressionNode expression;
     private boolean expContainsFunctions; // expression contains functions
 
@@ -102,7 +103,17 @@ public class AlgoDependentFunction extends AlgoElement {
         if (isDefined && expContainsFunctions) {
             // expand the functions and derivatives in expression tree
             ExpressionValue ev = null;
-            ev = expandFunctionDerivativeNodes(expression.deepCopy(kernel));
+            
+            try { // needed for eg f(x)=floor(x) f'(x)
+            	ev = expandFunctionDerivativeNodes(expression.deepCopy(kernel));
+            } catch (Exception e) {
+            	Application.debug("derivative failed");
+            }
+            
+            if (ev == null) {
+            	f.setUndefined();
+            	return;
+            }
 
             ExpressionNode node;
             if (ev.isExpressionNode()) 
@@ -188,7 +199,7 @@ public class AlgoDependentFunction extends AlgoElement {
         if (f.isLabelSet()) {
             sb.append(f.label);
             sb.append("(x) = ");
-        }       
+        }  
         sb.append(fun.toString());
         return sb.toString();
     }

@@ -18,7 +18,7 @@ public class RenameInputHandler implements InputHandler {
 	private static String[] invalidFunctionNames = { "gamma", "x", "y", "abs",
 			"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan", "acos",
 			"asin", "atan", "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
-			"floor", "ceil", "round", "min", "max", "random" };
+			"floor", "ceil", "round", "random" };
 
 	public RenameInputHandler(Application app, GeoElement geo, boolean storeUndo) {
 		this.app = app;

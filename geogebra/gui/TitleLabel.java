@@ -1,8 +1,8 @@
 package geogebra.gui;
 
 import java.awt.Font;
+
 import javax.swing.JLabel;
-import javax.swing.plaf.LabelUI;
 
 public class TitleLabel extends JLabel {
 	/**	 */

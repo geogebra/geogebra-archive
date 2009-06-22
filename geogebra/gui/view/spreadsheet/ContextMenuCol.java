@@ -2,7 +2,6 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

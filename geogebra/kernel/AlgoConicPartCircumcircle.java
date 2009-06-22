@@ -19,9 +19,6 @@ import geogebra.main.Application;
  */
 public class AlgoConicPartCircumcircle extends AlgoConicPart {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private GeoPoint A, B, C;	
@@ -30,7 +27,8 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
 
     AlgoConicPartCircumcircle(Construction cons, String label,
     		GeoPoint A, GeoPoint B, GeoPoint C,
-    		int type) {
+    		int type) 
+    {
     	this(cons, A, B, C, type);
     	 conicPart.setLabel(label);
     }

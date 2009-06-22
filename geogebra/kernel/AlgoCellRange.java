@@ -14,7 +14,6 @@ package geogebra.kernel;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 
 /**
  * Algorithm to create a GeoList with GeoElement objects of a given range 

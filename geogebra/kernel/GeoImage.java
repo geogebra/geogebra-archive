@@ -16,12 +16,8 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.Util;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.security.MessageDigest;
 import java.util.Vector;
-
-import javax.imageio.ImageIO;
 
 public class GeoImage extends GeoElement 
 implements Locateable, AbsoluteScreenLocateable,
@@ -83,9 +79,11 @@ implements Locateable, AbsoluteScreenLocateable,
 			tempPoints = new GeoPoint[3];
 	    	for (int i = 0; i < tempPoints.length; i++) {
 	    		tempPoints[i] = new GeoPoint(cons);    		
-	    	}
-	    	corners[0] = tempPoints[0];
+	    	}	    	
 		}
+		
+		if (corners[0] == null)
+			corners[0] = tempPoints[0];
 	}
 
 	public void set(GeoElement geo) {
@@ -746,7 +744,10 @@ implements Locateable, AbsoluteScreenLocateable,
 		if (md5A.equals(md5B)) return true;
 		return false;
 	}
-
+	
+	public boolean isAlwaysFixed() {
+		return false;
+	}	
 
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub

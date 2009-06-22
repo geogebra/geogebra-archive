@@ -12,6 +12,7 @@
 
 package geogebra.export;
 
+import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
@@ -291,25 +292,25 @@ public class WorksheetExportDialog extends JDialog {
 
 		// applet panel:
 		// radio buttons for dynamic worksheet and open button
-		JPanel appletPanel = new JPanel(new BorderLayout());
+		JPanel appletPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-		appletPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-				.createEtchedBorder(), BorderFactory.createEmptyBorder(5, 5, 5,
-				5)));
+		appletPanel.setBorder(BorderFactory.createEtchedBorder());
 		ButtonGroup bg = new ButtonGroup();
 		JRadioButton rb = new JRadioButton(app.getPlain("DynamicWorksheet"));
 		rb.setActionCommand("worksheet");
 		rb.addActionListener(lst);
 		rb.setSelected(true);
 		bg.add(rb);
-		appletPanel.add(rb, BorderLayout.NORTH);
+		appletPanel.add(rb);
+		
+		appletPanel.add(Box.createHorizontalGlue());
 
 		// open button
 		rb = new JRadioButton(app.getPlain("OpenButton"));
 		rb.setActionCommand("openButton");
 		rb.addActionListener(lst);
 		bg.add(rb);			
-		appletPanel.add(rb, BorderLayout.SOUTH);
+		appletPanel.add(rb);
 		
 		centerPanel.add(appletPanel, BorderLayout.CENTER);
 		tab.add(centerPanel, BorderLayout.CENTER);		
@@ -320,13 +321,14 @@ public class WorksheetExportDialog extends JDialog {
 	private JPanel createAdvancedSettingsTab() {
 		JPanel tab = new JPanel();
 		tab.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		tab.setLayout(new BoxLayout(tab, BoxLayout.Y_AXIS));				
+		//tab.setLayout(new BoxLayout(tab, BoxLayout.Y_AXIS));
+		tab.setLayout(new BorderLayout(5,5));
 				
 		// functionality panel
 		JPanel funcPanel = new JPanel();
 		funcPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Functionality")));
 		funcPanel.setLayout(new BoxLayout(funcPanel, BoxLayout.Y_AXIS));
-		tab.add(funcPanel);				
+		tab.add(funcPanel, BorderLayout.WEST);				
 		
 		// enable right click
 		cbEnableRightClick = new JCheckBox(app.getMenu("EnableRightClick"));	
@@ -345,12 +347,13 @@ public class WorksheetExportDialog extends JDialog {
 		// framPossible
 		cbShowFrame = new JCheckBox(app.getPlain("DoubleClickToOpen"));		
 		funcPanel.add(cbShowFrame);
+		funcPanel.add(Box.createVerticalGlue());
 		
 		// GUI panel
 		JPanel guiPanel = new JPanel();
 		guiPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("UserInterface")));
 		guiPanel.setLayout(new BoxLayout(guiPanel, BoxLayout.Y_AXIS));
-		tab.add(guiPanel);
+		tab.add(guiPanel, BorderLayout.EAST);
 		
 		// showMenuBar
 		cbShowMenuBar = new JCheckBox(app.getMenu("ShowMenuBar"));		
@@ -363,15 +366,10 @@ public class WorksheetExportDialog extends JDialog {
 		// showToolBarHelp				
 		cbShowToolBarHelp = new JCheckBox(app.getMenu("ShowToolBarHelp"));
 		cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
-		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0,0));
-		tempPanel.add(Box.createHorizontalStrut(20));
-		tempPanel.add(cbShowToolBarHelp);
-		tempPanel.setAlignmentX(LEFT_ALIGNMENT);
-		guiPanel.add(tempPanel);
-		
+		guiPanel.add(cbShowToolBarHelp);		
 				
 		// showAlgebraInput
-		cbShowInputField = new JCheckBox(app.getMenu("ShowInputField"));		
+		cbShowInputField = new JCheckBox(app.getMenu("ShowInputField"));
 		guiPanel.add(cbShowInputField);
 		
 		// width and height of applet, info about double clicking
@@ -392,10 +390,10 @@ public class WorksheetExportDialog extends JDialog {
 		JPanel appletPanel = new JPanel();
 		appletPanel.setBorder(BorderFactory.createTitledBorder("Java Applet"));
 		appletPanel.setLayout(new BoxLayout(appletPanel, BoxLayout.Y_AXIS));
-		tab.add(appletPanel);
+		tab.add(appletPanel, BorderLayout.SOUTH);
 		
 		// showAlgebraInput
-		cbOnlineArchive = new JCheckBox("archive=\"http://www.geogebra.org/webstart/geogebra.jar\"");		
+		cbOnlineArchive = new JCheckBox("archive = \"" + GeoGebra.GEOGEBRA_ONLINE_ARCHIVE + "\"");		
 		appletPanel.add(cbOnlineArchive);
 		
 		
@@ -467,6 +465,10 @@ public class WorksheetExportDialog extends JDialog {
 	 * Appends all selected applet parameters
 	 */
 	private void appendAppletParameters(StringBuffer sb) {
+		// increase Java runtime environment memory for applets
+		// works for Java 6 update 10 and later
+		sb.append("\t<param name=\"java_arguments\" value=\"-Xmx" + GeoGebra.MAX_HEAP_SPACE + "m\">\n");
+				
 		// framePossible (double click opens GeoGebra window)
 		sb.append("\t<param name=\"framePossible\" value=\"");
 		sb.append(cbShowFrame.isSelected());
@@ -475,6 +477,11 @@ public class WorksheetExportDialog extends JDialog {
 		// showResetIcon
 		sb.append("\t<param name=\"showResetIcon\" value=\"");
 		sb.append(cbShowResetIcon.isSelected());
+		sb.append("\"/>\n");
+		
+		// TODO: implement show animation controls
+		sb.append("\t<param name=\"showAnimationButton\" value=\"");
+		sb.append(true);
 		sb.append("\"/>\n");
 			
 		// enable right click
@@ -505,7 +512,7 @@ public class WorksheetExportDialog extends JDialog {
 		// showAlgebraInput
 		sb.append("\t<param name=\"showAlgebraInput\" value=\"");
 		sb.append(cbShowInputField.isSelected());
-		sb.append("\"/>\n");	
+		sb.append("\"/>\n");				
 	}
 
 	public void setVisible(boolean flag) {
@@ -667,7 +674,9 @@ public class WorksheetExportDialog extends JDialog {
 		
 		if (cbOnlineArchive.isSelected()) {
 			// use online geogebra.jar
-			sb.append(" archive=\"http://www.geogebra.org/webstart/geogebra.jar\"");
+			sb.append(" archive=\"");
+			sb.append(GeoGebra.GEOGEBRA_ONLINE_ARCHIVE);
+			sb.append("\"");
 		} else {
 			// use local geogebra.jar
 			sb.append(" archive=\"geogebra.jar\"");

@@ -17,17 +17,23 @@ the Free Software Foundation.
  */
 package geogebra3D;
 
-import java.awt.*;
-
-
-import javax.swing.*;
-
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.Kernel3D;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 
 
 public abstract class Application3D extends Application{

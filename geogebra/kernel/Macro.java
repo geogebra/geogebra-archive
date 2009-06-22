@@ -335,7 +335,6 @@ public class Macro {
 		int oldDecimals = kernel.getPrintDecimals();
 		int oldPrintForm = kernel.getCASPrintForm();        
 	    kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);                 		
-	    kernel.setPrintDecimals(50);
 	    kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 		 
     	// get the XML for all macro construction elements
@@ -366,7 +365,6 @@ public class Macro {
 //    	Application.debug("*** Macro XML END ***"); 
     	
     	 // restore old kernel settings
-        kernel.setPrintDecimals(oldDecimals);
         kernel.setCoordStyle(oldCoordStlye);   
         kernel.setCASPrintForm(oldPrintForm);
     	
@@ -584,16 +582,5 @@ public class Macro {
 	public ArrayList getUsedMacros() {
 		return macroCons.getUsedMacros();
 	}
-	
-	
-	final public boolean wantsEuclidianViewUpdate() {
-		if (wantsEuclidianViewUpdateFirstTime) {
-			wantsEuclidianViewUpdateFirstTime = false;
-			wantsEuclidianViewUpdate = macroCons.wantsEuclidianViewUpdate();
-		}
-		
-		return wantsEuclidianViewUpdate;
-	}
-	private boolean wantsEuclidianViewUpdate;
-	private boolean wantsEuclidianViewUpdateFirstTime = true;			  
+		  
 }

@@ -11,7 +11,6 @@ the Free Software Foundation.
 */
 package geogebra.gui;
 
-import geogebra.euclidian.EuclidianController;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;

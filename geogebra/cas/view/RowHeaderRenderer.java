@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
 
 import java.awt.Component;
@@ -22,7 +23,7 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 		this.app = casTable.app;
 				
 		setOpaque(true);
-		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Application.TABLE_GRID_COLOR));
+		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
 	}
 
 	public Component getListCellRendererComponent(JList list, Object value,	int index, boolean  isSelected, boolean cellHasFocus) {
@@ -30,10 +31,10 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 		setFont(casTable.getFont());
 		
 		if (isSelected) {
-			setBackground(Application.TABLE_HEADER_SELECTED_BACKGROUND_COLOR);
+			setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
 		}
 		else {								
-			setBackground(Application.TABLE_HEADER_BACKGROUND_COLOR);
+			setBackground(MyTable.BACKGROUND_COLOR_HEADER);
 		}
 	
 		// update height		

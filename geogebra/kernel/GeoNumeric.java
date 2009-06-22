@@ -51,7 +51,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	protected double value;	
 
 	private boolean isDrawable = false;
-	private boolean isUsedForRandom = false;
+	private boolean isRandomNumber = false;
 	
 	private int slopeTriangleSize = 1;
 
@@ -126,13 +126,14 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	
 	public void setEuclidianVisible(boolean visible) {
 		if (visible == isSetEuclidianVisible() || kernel.isMacroKernel() ) return;		
-		
-	
-		
+					
 		// slider is only possible for independent
 		// number with given min and max
 		if (isIndependent()) {
-			if (visible) {				
+			if (visible) {		
+				// make sure the slider value is not fixed 
+				setFixed(false);
+				
 				if (!intervalMinActive) {
 					if (!intervalMaxActive) {
 						// set both to default
@@ -249,6 +250,13 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 
 	// synchronized for animation
 	public void setValue(double x) {
+		doSetValue(x);
+		
+		// remember value for animation also
+		animationValue = value;
+	}
+	
+	public void doSetValue(double x) {
 		if (intervalMinActive && x < intervalMin) {			
 			value = intervalMin;			
 		}					
@@ -257,9 +265,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		}						
 		else		 
 			value = x;
-		
-		// remember value for animation also
-		animationValue = value;
 	}	
 
 	final public double getValue() {
@@ -320,10 +325,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public void setAllVisualProperties(GeoElement geo, boolean keepAdvanced) {
 		super.setAllVisualProperties(geo, keepAdvanced);
 		
-		/*
 		if (geo.isGeoNumeric()) {
 			isDrawable = ((GeoNumeric) geo).isDrawable;
-		}*/
+		}
 	}
 	
 	public void setVisualStyle(GeoElement geo) {
@@ -370,12 +374,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 	
 	protected boolean isSliderable() {
-		return isIndependent() && intervalMinActive || intervalMaxActive;
+		return isIndependent() && (intervalMinActive || intervalMaxActive);
 	}
 	
 	public boolean isFixable() {
 		// visible slider should not be fixable
-		return isIndependent() && !isSetEuclidianVisible();
+		return !isSetEuclidianVisible();
 	}
 	
 	String getXMLsliderTag() {
@@ -611,14 +615,14 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public boolean isGeoFunctionable() {
 		return true;
 	}
-
-	public final boolean isUsedForRandom() {
-		return isUsedForRandom;
+	
+	protected void doRemove() {
+		super.doRemove();
+		
+		// if this was a random number, make sure it's removed
+		cons.removeRandomNumber(this);
 	}
 
-	public final void setUsedForRandom(boolean isUsedForRandom) {
-		this.isUsedForRandom = isUsedForRandom;
-	}
 	
 	public void update() {  	
 		super.update();
@@ -628,7 +632,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
         // record to spreadsheet tool
     	if (this == view.getEuclidianController().recordObject
     			&& this.getLastTrace1() != value) {
-	    	
+    		
+    		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
+	    	/*
 	    	String col = getTraceColumn1(); // must be called before getTraceRow()
 	    	String row = getTraceRow() + "";
 	    	
@@ -638,10 +644,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	    	
 	    	traceCell.setAuxiliaryObject(true);
 	    	
-	    	setLastTrace1(value);
-
-	    	// TODO: handle in spreadsheet
-	    	//incrementTraceRow();
+	    	setLastTrace1(value);*/
     	}
     }	
 	
@@ -722,10 +725,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 										
 		// change slider's value
 		// note: don't call setValue() as this would change animationValue too
-		value = newValue;
+		doSetValue(newValue);
 		
 		// return whether value of slider has changed
-		return value != oldValue;	
+		return getValue() != oldValue;	
 	}	
 	
 	/**
@@ -762,9 +765,27 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public double getDefaultSliderMax() {
 		return isGeoAngle() ? DEFAULT_SLIDER_MAX_ANGLE : DEFAULT_SLIDER_MAX;
 	}
+	
+	protected void setRandomNumber(boolean flag) {
+		isRandomNumber = flag;
+	}
+	
+	public boolean isRandomNumber() {
+		return isRandomNumber;
+	}
+	
+	final public void updateRandomNumber() {	
+		// set random value (for numbers used in trees using random())
+		setValue(Math.random());
+		
+		// update parent algorithm, like AlgoRandom
+		AlgoElement algo = getParentAlgorithm();
+		if (algo != null) {
+			algo.compute(); // eg AlgoRandom etc
+		}				
+	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

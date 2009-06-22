@@ -1,5 +1,5 @@
 package geogebra.kernel.jama;
-import geogebra.kernel.jama.util.*;
+import geogebra.kernel.jama.util.Maths;
 
 /** Eigenvalues and eigenvectors of a real matrix. 
 <P>

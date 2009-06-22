@@ -19,9 +19,7 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.main.Application;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -63,9 +61,11 @@ public final class DrawPoint extends Drawable {
         update();
     }
     
-    final public void update() {       
+    final public void update() {   
+    	
         isVisible = geo.isEuclidianVisible();       				 
-        if (!isVisible) return;
+    	// still needs updating if it's being traced to the spreadsheet
+        if (!isVisible && !P.getSpreadsheetTrace()) return;
 		labelVisible = geo.isLabelVisible();
         		
         // compute lower left corner of bounding box
@@ -73,7 +73,15 @@ public final class DrawPoint extends Drawable {
         P.getInhomCoords(coords);                    
         
         // convert to screen
-		view.toScreenCoords(coords);						
+		view.toScreenCoords(coords);	
+		
+		// point outside screen?
+        if (coords[0] > view.width + P.pointSize || coords[0] < -P.pointSize ||
+        	coords[1] > view.height + P.pointSize || coords[1] < -P.pointSize)  
+        {
+        	isVisible = false;
+        	// don't return here to make sure that getBounds() works for offscreen points too
+        }
         
         if (pointSize != P.pointSize) {
         	pointSize = P.pointSize;
@@ -140,19 +148,12 @@ public final class DrawPoint extends Drawable {
 			}
 		}
 		
-		if (labelVisible) {      
+		if (isVisible && labelVisible) {      
 			labelDesc = geo.getLabelDescription();
 			xLabel = (int) Math.round(coords[0] + 4);
 			yLabel = (int)  Math.round(yUL - pointSize);    
-			addLabelOffset();           
-		}    
-		
-		// point outside screen?
-        if (coords[0] > view.width || coords[0] < 0
-        	|| coords[1] > view.height || coords[1] < 0)  
-        {
-        	isVisible = false;        		
-        }
+			addLabelOffset(true);
+		}    				
     }
 
     final public void draw(Graphics2D g2) {   

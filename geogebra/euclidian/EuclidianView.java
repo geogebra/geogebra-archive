@@ -26,6 +26,7 @@ import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoJavaScriptButton;
 import geogebra.kernel.GeoLine;
@@ -70,10 +71,12 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.TreeSet;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -83,8 +86,8 @@ import javax.swing.Timer;
  * @author Markus Hohenwarter
  * @version
  */
-public class EuclidianView extends JPanel implements View, EuclidianViewInterface, 
-						Printable, EuclidianConstants {
+public class EuclidianView extends JPanel  
+implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected static final long serialVersionUID = 1L;
 
@@ -211,10 +214,11 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 				RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 		defRenderingHints.put(RenderingHints.KEY_COLOR_RENDERING,
 				RenderingHints.VALUE_COLOR_RENDER_SPEED);
-
-		// needed for nice antialiasing of GeneralPath objects:
-		// defRenderingHints.put(RenderingHints.KEY_STROKE_CONTROL,
-		// RenderingHints.VALUE_STROKE_PURE);
+		
+		// This ensures fast image drawing. Note that DrawImage changes
+		// this hint for scaled and sheared images to improve their quality 
+		defRenderingHints.put(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);				
 	}
 
 	// FONTS
@@ -262,6 +266,8 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 
 	// END
+	
+	int pointStyle = POINT_STYLE_DOT;
 	
 	int booleanSize=13;
 
@@ -329,10 +335,11 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	protected BufferedImage bgImage;
 	protected Graphics2D bgGraphics; // g2d of bgImage
 	protected Image resetImage, playImage, pauseImage;
+	private boolean firstPaint = true;
 	
 	// temp image
 	protected Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
-	public Graphics2D lastGraphics2D;
+	//public Graphics2D lastGraphics2D;
 	
 	protected StringBuffer sb = new StringBuffer();
 
@@ -359,11 +366,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	
 		euclidianController = ec;
 		kernel = ec.getKernel();
-		app = ec.getApplication();
-		
-		// needed for arrow keys in applets
-		if (app.isApplet())
-			addKeyListener(new MyKeyListener(ec));
+		app = ec.getApplication();		
 		
 		this.showAxes[0] = showAxes[0];
 		this.showAxes[1] = showAxes[1];
@@ -434,6 +437,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		// showAxes = true;
 		// showGrid = false;
 		pointCapturingMode = POINT_CAPTURING_AUTOMATIC;
+		pointStyle = POINT_STYLE_DOT;
 		
 		booleanSize=13; // Michael Borcherds 2008-05-12
 
@@ -573,6 +577,26 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	final public int getBooleanSize() {
 		return booleanSize;
 	}
+	
+	/**
+	 * Sets the global style for point drawing.
+	 */
+	public void setPointStyle(int style) {
+		switch (style) {
+		case 1:
+		case 2:
+			pointStyle = style;
+			break;
+
+		default:
+			pointStyle = POINT_STYLE_DOT;
+		}
+		updateAllDrawables(true);
+	}
+
+	final public int getPointStyle() {
+		return pointStyle;
+	}
 
 	// added by Lo�c BEGIN
 	/**
@@ -687,7 +711,12 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	}
 
 	public void setDragCursor() {
-		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		
+		if (app.useTransparentCursorWhenDragging)
+			setCursor(app.getTransparentCursor());
+		else
+			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		
 	}
 
 	public void setMoveCursor() {
@@ -975,9 +1004,9 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 	public void setCoordSystem(double xZero, double yZero, double xscale,
 			double yscale, boolean repaint) {
-		if (xscale < Kernel.MIN_PRECISION || xscale > 1E8)
+		if (Double.isNaN(xscale) || xscale < Kernel.MAX_DOUBLE_PRECISION || xscale > Kernel.INV_MAX_DOUBLE_PRECISION)
 			return;
-		if (yscale < Kernel.MIN_PRECISION || yscale > 1E8)
+		if (Double.isNaN(yscale) || yscale < Kernel.MAX_DOUBLE_PRECISION || yscale > Kernel.INV_MAX_DOUBLE_PRECISION)
 			return;
 
 		this.xZero = xZero;
@@ -1014,7 +1043,20 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		// real world values
 		setRealWorldBounds();
 
-		GraphicsConfiguration gc = getGraphicsConfiguration();
+		GraphicsConfiguration gconf = getGraphicsConfiguration();
+		try {
+			createImage(gconf);			
+		} catch (OutOfMemoryError e) {
+			bgImage = null;
+			bgGraphics = null;
+			System.gc();
+		}
+
+		updateBackgroundImage();
+		updateAllDrawables(true);				
+	}
+	
+	private void createImage(GraphicsConfiguration gc) {
 		if (gc != null) {
 			bgImage = gc.createCompatibleImage(width, height);			
 			bgGraphics = bgImage.createGraphics();			
@@ -1022,11 +1064,8 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 				setAntialiasing(bgGraphics);
 			}
 		}
-
-		updateBackgroundImage();
-		updateAllDrawables(true);
 	}
-
+	
 	// move view:
 	/*
 	 * protected void setDrawMode(int mode) { if (mode != drawMode) { drawMode =
@@ -1058,13 +1097,14 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		double maxPix = 100; // only one tick is allowed per maxPix pixels
 		double units = maxPix / scale;
 		int exp = (int) Math.floor(Math.log(units) / Math.log(10));
-
+		int maxFractionDigtis = Math.max(-exp, kernel.getPrintDecimals());
+		
 		if (automaticAxesNumberingDistances[axis]) {
 			if (piAxisUnit[axis]) {
 				axesNumberingDistances[axis] = Math.PI;
 			} else {
 				double pot = Math.pow(10, exp);
-				double n = units * Math.pow(10, -exp);
+				double n = units / pot;
 
 				if (n > 5) {
 					axesNumberingDistances[axis] = 5 * pot;
@@ -1075,9 +1115,24 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 				}
 			}
 		}
-		AxesTickInterval[axis] = axesNumberingDistances[axis] / 2.0;
-		axesNumberFormat[axis].setMaximumFractionDigits(Math.max(-exp, kernel
-				.getPrintDecimals()));
+		AxesTickInterval[axis] = axesNumberingDistances[axis] / 2.0;		
+
+		// set axes number format
+		if (axesNumberFormat[axis] instanceof DecimalFormat) {
+			DecimalFormat df = (DecimalFormat) axesNumberFormat[axis];
+
+			// display large and small numbers in scienctific notation
+			if (axesNumberingDistances[axis] < 10E-6 || axesNumberingDistances[axis] > 10E6) {
+				df.applyPattern("0.##E0");	
+				// avoid  4.00000000000004E-11 due to rounding error when computing
+				// tick mark numbers
+				maxFractionDigtis = Math.min(14, maxFractionDigtis);
+			} else {
+				df.applyPattern("###0.##");					
+			}
+		}		
+		axesNumberFormat[axis].setMaximumFractionDigits(maxFractionDigtis);
+
 
 		if (automaticGridDistance) {			
 			gridDistances[axis] = axesNumberingDistances[axis] * automaticGridDistanceFactor;
@@ -1181,17 +1236,25 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 	final public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		lastGraphics2D = g2;
+		//lastGraphics2D = g2;
 
 		g2.setRenderingHints(defRenderingHints);
 		// g2.setClip(0, 0, width, height);
 
 		// BACKGROUND
 		// draw background image (with axes and/or grid)
-		if (bgImage == null)
-			updateSize();
-		else
+		if (bgImage == null) {
+			if (firstPaint) {
+				updateSize();
+				g2.drawImage(bgImage, 0, 0, null);
+				firstPaint = false;				
+			} else {
+				drawBackgroundWithImages(g2);
+			}
+		} else {
+			// draw background image
 			g2.drawImage(bgImage, 0, 0, null);
+		}
 
 		/*
 		 * switch (drawMode) { case DRAW_MODE_BACKGROUND_IMAGE: // draw
@@ -1217,7 +1280,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		if (showAxesRatio)
 			drawAxesRatio(g2);
 		
-		if (kernel.isAnimationRunning() || kernel.isAnimationPaused()) {
+		if (kernel.needToShowAnimationButton()) {
 			drawAnimationButtons(g2);
 		}
 	}
@@ -1376,7 +1439,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		} else {
 			// use points Export_1 and Export_2 to define corner
 			try {
-				Construction cons = kernel.getConstruction();
+				//Construction cons = kernel.getConstruction();
 				GeoPoint export1=(GeoPoint)kernel.lookupLabel(EXPORT1);	       
 				GeoPoint export2=(GeoPoint)kernel.lookupLabel(EXPORT2);
 				double [] xy1 = new double[2];
@@ -1408,7 +1471,10 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		// DRAWING
 		if (isTracing() || hasBackgroundImages()) {
 			// draw background image to get the traces
-			g2d.drawImage(bgImage, 0, 0, this);
+			if (bgImage == null)
+				drawBackgroundWithImages(g2d);
+			else
+				g2d.drawImage(bgImage, 0, 0, this);
 		} else {
 			drawBackground(g2d, true);
 		}
@@ -1480,6 +1546,10 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	}
 
 	final public void updateBackground() {
+		// make sure axis number formats are up to date
+		setAxesIntervals(xscale, 0);
+		setAxesIntervals(yscale, 1);
+		
 		updateBackgroundImage();
 		updateAllDrawables(true);
 		// repaint();
@@ -1487,11 +1557,14 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 	final protected void updateBackgroundImage() {
 		if (bgGraphics != null) {
-			clearBackground(bgGraphics);
-			bgImageList.drawAll(bgGraphics); 
-
-			drawBackground(bgGraphics, false);
+			drawBackgroundWithImages(bgGraphics);
 		}
+	}
+	
+	private void drawBackgroundWithImages(Graphics2D g) {
+		clearBackground(g);
+		bgImageList.drawAll(g); 
+		drawBackground(g, false);
 	}
 
 	final protected void drawBackground(Graphics2D g, boolean clear) {
@@ -1544,10 +1617,10 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		double xZeroTick = xZero;
 		double yBig = yZero + 4;
 		double xBig = xZero - 4;
-		double ySmall1 = yZero + 2;
-		double ySmall2 = yZero + 3;
-		double xSmall1 = xZero - 2;
-		double xSmall2 = xZero - 3;
+		double ySmall1 = yZero + 0;
+		double ySmall2 = yZero + 2;
+		double xSmall1 = xZero - 0;
+		double xSmall2 = xZero - 2;
 		int xoffset, yoffset;
 		boolean bold = axesLineType == AXES_LINE_TYPE_FULL_BOLD
 						|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
@@ -1586,7 +1659,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 //				RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		// X - AXIS
-		if (showAxes[0]) {
+		if (showAxes[0] && ymin < 0 && ymax > 0) {
 			if (showGrid) {
 				yoffset = fontsize + 4;
 				xoffset = 10;
@@ -1619,6 +1692,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 				rw += axesNumberingDistances[0];
 			}
 			int maxX = width - SCREEN_BORDER;
+			int prevTextEnd = -3;
 			for (; pix < width; rw += axesNumberingDistances[0], pix += axesStep) {
 				if (pix <= maxX) {
 					if (showAxesNumbers[0]) {
@@ -1639,7 +1713,12 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 						} else {
 							x = (int) (pix + xoffset - layout.getAdvance() / 2);
 						}
-						g2.drawString(sb.toString(), x, y);
+												
+						// make sure we don't print one string on top of the other
+						if (x > prevTextEnd + 5) {
+							prevTextEnd = (int) (x + layout.getAdvance()); 
+							g2.drawString(sb.toString(), x, y);
+						}
 					}
 
 					// big tick
@@ -1695,7 +1774,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		}
 
 		// Y-AXIS
-		if (showAxes[1]) {
+		if (showAxes[1] && xmin < 0 && xmax > 0) {
 			if (showGrid) {
 				xoffset = -2 - fontsize / 4;
 				yoffset = -2;
@@ -1790,7 +1869,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			tempLine.setLine(xZero, 0, xZero, height);
 			g2.draw(tempLine);
 
-			if (drawArrows) {
+			if (drawArrows && xmin < 0 && xmax > 0) {
 				// draw arrow for y-axis
 				tempLine.setLine(xZero, 0, xZero - arrowSize, arrowSize);
 				g2.draw(tempLine);
@@ -1804,10 +1883,10 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		if (xmin > 0 || xmax < 0 || ymin > 0 || ymax < 0) {
 			// uper left corner								
 			sb.setLength(0);
-			sb.append('(');
-			sb.append(axesNumberFormat[0].format(xmin));
+			sb.append('(');			
+			sb.append(kernel.formatPiE(xmin, axesNumberFormat[0]));
 			sb.append(", ");
-			sb.append(axesNumberFormat[1].format(ymax));
+			sb.append(kernel.formatPiE(ymax, axesNumberFormat[1]));
 			sb.append(')');
 			
 			int textHeight = 2 + fontAxes.getSize();
@@ -1816,10 +1895,10 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			
 			// lower right corner
 			sb.setLength(0);
-			sb.append('(');
-			sb.append(axesNumberFormat[0].format(xmax));
+			sb.append('(');			
+			sb.append(kernel.formatPiE(xmax, axesNumberFormat[0]));
 			sb.append(", ");
-			sb.append(axesNumberFormat[1].format(ymin));
+			sb.append(kernel.formatPiE(ymin, axesNumberFormat[1]));
 			sb.append(')');
 			
 			TextLayout layout = new TextLayout(sb.toString(), fontAxes, frc);	
@@ -2029,7 +2108,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		drawImageList.drawAll(g2);
 		
 		// draw HotEquations
-		// TODO layers for HotEquations
 		// all in layer 0 currently
 		// layer -1 means draw all
 		if (layer == 0 || layer == -1) paintChildren(g2);
@@ -2414,7 +2492,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 				else if (geo.hasMoveableInputPoints()) {
 					moveableList.add(geo);
 				}
-				break;
+				break;			
 
 			case TEST_ROTATEMOVEABLE:
 				// check for circular definition
@@ -2600,7 +2678,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			break;
 		
 		case GeoElement.GEO_CLASS_POINT:
-			d = new DrawPoint(this, (GeoPoint) geo);
+			d = new DrawPoint(this, (GeoPoint) geo);			
 			break;					
 
 		case GeoElement.GEO_CLASS_SEGMENT:
@@ -2870,8 +2948,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 			case GeoElement.GEO_CLASS_TEXT:
 				drawLayers[layer].remove(d);
-				// remove HotEqn
-				((DrawText) d).remove();
 				break;
 
 			case GeoElement.GEO_CLASS_IMAGE:
@@ -3121,61 +3197,116 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 	public final void setViewShowAllObjects(boolean storeUndo) {
 		
-		Rectangle rect=getBounds();
+		double x0RW = xmin;
+		double x1RW;
+		double y0RW;
+		double y1RW;
+		double y0RWfunctions = 0;
+		double y1RWfunctions = 0;
+		double factor=0.03d; // don't want objects at edge
+		double xGap = 0;
 		
-		double x0RW=toRealWorldCoordX(rect.getMinX());
-		double x1RW=toRealWorldCoordX(rect.getMaxX());
-		double y0RW=toRealWorldCoordY(rect.getMaxY());
-		double y1RW=toRealWorldCoordY(rect.getMinY());		
+		TreeSet allFunctions = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_FUNCTION);
+		
+		
+		int noVisible = 0;
+		// count no of visible functions
+		Iterator it = allFunctions.iterator();
+		while (it.hasNext()) 
+			if (((GeoFunction)(it.next())).isEuclidianVisible()) noVisible ++;;
+		
+			Rectangle rect=getBounds();			
+			if (kernel.isZero(rect.getHeight()) || kernel.isZero(rect.getWidth())) {				
+				if (noVisible == 0) return; // no functions or objects
+				
+				// just functions
+				x0RW = Double.MAX_VALUE;
+				x1RW = -Double.MAX_VALUE;
+				y0RW = Double.MAX_VALUE;
+				y1RW = -Double.MAX_VALUE;
+				
+				//Application.debug("just functions");
+				
+			}
+			else
+			{
+				
+				// get bounds of points, circles etc
+				x0RW=toRealWorldCoordX(rect.getMinX());
+				x1RW=toRealWorldCoordX(rect.getMaxX());
+				y0RW=toRealWorldCoordY(rect.getMaxY());
+				y1RW=toRealWorldCoordY(rect.getMinY());		
+			}
+			
+			xGap=(x1RW - x0RW) * factor;
+			
+			boolean ok = false;			
+			
+		if (noVisible != 0) {
+			
+			// if there are functions we don't want to zoom in horizintally
+			x0RW = Math.min(xmin, x0RW);
+			x1RW = Math.max(xmax, x1RW);
+			
+			if (kernel.isEqual(x0RW, xmin) && kernel.isEqual(x1RW, xmax)) {
+				// just functions (at sides!), don't need a gap
+				xGap = 0;
+			}
+			else
+			{
+				xGap = (x1RW - x0RW) * factor;
+			}
+			
+			//Application.debug("checking functions from "+x0RW+" to "+x1RW);
+			
+			y0RWfunctions = Double.MAX_VALUE;
+			y1RWfunctions = -Double.MAX_VALUE;
+		
+			it = allFunctions.iterator();
+			
+			
+			while (it.hasNext()) {
+				GeoFunction fun = (GeoFunction)(it.next());
+				double abscissa;
+				// check 100 random heights 
+				for (int i = 0 ; i < 200 ; i++) {
+					
+					if (i == 0)
+						abscissa = fun.evaluate(x0RW); // check far left
+					else if (i == 1)
+						abscissa = fun.evaluate(x1RW); // check far right
+					else
+						abscissa = fun.evaluate(x0RW + Math.random() * (x1RW - x0RW));
+					
+					if (!Double.isInfinite(abscissa) && !Double.isNaN(abscissa)) {
+						ok = true;
+						if (abscissa > y1RWfunctions) y1RWfunctions = abscissa;
+						// no else: there **might** be just one value
+						if (abscissa < y0RWfunctions) y0RWfunctions = abscissa;
+					}
+				}
+			}
+			
+		
+		}
+		
+		if (!kernel.isZero(y1RWfunctions - y0RWfunctions) && ok) {
+			y0RW = Math.min(y0RW, y0RWfunctions);
+			y1RW = Math.max(y1RW, y1RWfunctions);
+			//Application.debug("min height "+y0RW+" max height "+y1RW);
+		}
+
 		
 		// don't want objects at edge
-		double factor=0.03d;
-		double xGap=(x1RW-x0RW)*factor;
-		double yGap=(y1RW-y0RW)*factor;
+		double yGap = (y1RW - y0RW) * factor;
 		
-		final double x0RW2 = x0RW-xGap;
-		final double x1RW2 = x1RW+xGap;
-		final double y0RW2 = y0RW-yGap;
-		final double y1RW2 = y1RW+xGap;
+		final double x0RW2 = x0RW - xGap;
+		final double x1RW2 = x1RW + xGap;
+		final double y0RW2 = y0RW - yGap;
+		final double y1RW2 = y1RW + yGap;
 		
 		setAnimatedRealWorldCoordSystem(x0RW2, x1RW2, y0RW2, y1RW2, 10, storeUndo);
 
-		double xScale = this.width/(x1RW2-x0RW2);
-		double yScale = this.height/(y1RW2-y0RW2);
-		final double scale = Math.min(xScale,yScale);
-		setCoordSystem(-x0RW2*xScale,y1RW2*yScale ,scale,scale);
-		
-		updateSize();
-		
-/*
-		if (scaleRatio != 1.0) {
-			// set axes ratio back to 1
-			if (axesRatioZoomer == null)
-				axesRatioZoomer = new MyAxesRatioZoomer();
-			axesRatioZoomer.init(1, false);
-
-			Thread waiter = new Thread() {
-				public void run() {
-					// wait until zoomer has finished
-					axesRatioZoomer.startAnimation();
-					while (axesRatioZoomer.isRunning()) {
-						try {
-							Thread.sleep(100);
-						} catch (Exception e) {
-						}
-					}
-					// set the xscale and axes origin
-					setAnimatedCoordSystem(XZERO_STANDARD, YZERO_STANDARD,
-							SCALE_STANDARD, 15, false);
-				}
-			};
-			waiter.start();
-		} else {
-			// set the xscale and axes origin
-			setAnimatedCoordSystem(-x0RW2*scale, y1RW2*scale, scale, 15, false);
-		} */
-		if (storeUndo)
-			app.storeUndoInfo();
 	}
 	
 	public final void setStandardView(boolean storeUndo) {
@@ -3232,7 +3363,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	 *            y coord of new origin
 	 * @param newscale
 	 */
-	public final void setAnimatedCoordSystem(double ox, double oy, double newScale,
+	final public void setAnimatedCoordSystem(double ox, double oy, double newScale,
 			int steps, boolean storeUndo) {
 		if (!kernel.isEqual(xscale, newScale)) {
 			// different scales: zoom back to standard view
@@ -3307,11 +3438,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			factor = newScale / oldScale;
 			setCoordSystem(px + dx * factor, py + dy * factor, newScale,
 					newScale * scaleRatio);
-			
-			//TODO: check
-//			repaintView();
-//			updateAllDrawables(true);
-					
+
 			if (storeUndo)
 				app.storeUndoInfo();
 		}
@@ -3381,10 +3508,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 			timer.stop();
 			setRealWorldCoordSystem(x0, x1, y0, y1);
 			
-			//TODO: check
-//			repaintView();
-//			updateAllDrawables(true);
-					
 			if (storeUndo)
 				app.storeUndoInfo();
 		}
@@ -3720,7 +3843,7 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 
 	public static String getModeText(int mode) {
 		switch (mode) {
-		case EuclidianView.MODE_ALGEBRA_INPUT:
+		case EuclidianView.MODE_SELECTION_LISTENER:
 			return "Select";
 
 		case EuclidianView.MODE_MOVE:
@@ -3927,7 +4050,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 	public int getExportWidth() {
 		if (selectionRectangle != null) return selectionRectangle.width;
 		try {
-			Construction cons = kernel.getConstruction();
 			GeoPoint export1=(GeoPoint)kernel.lookupLabel(EXPORT1);	       
 			GeoPoint export2=(GeoPoint)kernel.lookupLabel(EXPORT2);
 			double [] xy1 = new double[2];
@@ -3950,7 +4072,6 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		if (selectionRectangle != null) return selectionRectangle.height;
 
 		try {
-			Construction cons = kernel.getConstruction();
 			GeoPoint export1=(GeoPoint)kernel.lookupLabel(EXPORT1);	       
 			GeoPoint export2=(GeoPoint)kernel.lookupLabel(EXPORT2);
 			double [] xy1 = new double[2];
@@ -3980,8 +4101,8 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		return euclidianController;
 	}
 	
-	final public Graphics2D getTempGraphics2D() {
-		g2Dtemp.setFont(this.getFont()); // Michael Borcherds 2008-06-11 bugfix for Corner[text,n]		
+	final public Graphics2D getTempGraphics2D(Font font) {
+		g2Dtemp.setFont(font); // Michael Borcherds 2008-06-11 bugfix for Corner[text,n]		
 		return g2Dtemp;
 	}
 	
@@ -3992,6 +4113,11 @@ public class EuclidianView extends JPanel implements View, EuclidianViewInterfac
 		case MODE_FITLINE: return true;
 		default: return false;
 		}
+	}
+
+	public void resetMaxLayerUsed() {
+		MAX_LAYER_USED = 0;
+		
 	}
 	
 	
