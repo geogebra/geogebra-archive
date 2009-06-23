@@ -25,6 +25,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.PointProperties;
@@ -387,6 +388,11 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	public double getY2D(){
 		return y2D;
+	}
+	
+	
+	public int getMode() { 
+		return Kernel.COORD_CARTESIAN; //TODO other modes
 	}
 	
 	

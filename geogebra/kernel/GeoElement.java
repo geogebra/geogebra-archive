@@ -1885,7 +1885,7 @@ public abstract class GeoElement
 		    //if (app.languageIs(app.getLocale(), "ar")) chars=arabic; else
 			chars = pointLabels;
 		
-			GeoPoint point = (GeoPoint)this;
+			GeoPointInterface point = (GeoPointInterface)this;
 			if (point.getMode() == Kernel.COORD_COMPLEX)
 				chars = complexLabels;
 				

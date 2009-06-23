@@ -41,6 +41,8 @@ public interface GeoPointInterface {
 	public void updateCoordsFrom2D(boolean b);
 
 	public boolean isPointOnPath();
+
+	public int getMode();
 	
 
 }
