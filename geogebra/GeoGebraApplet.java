@@ -168,9 +168,6 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 				
 		// applet initing finished
 		appletIsIniting = false;
-		
-		// notify JavaScript that the applet is initialized.
-		notifyAppletInitialized();	
 	}		
 
 	/**
@@ -552,12 +549,5 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 
 	public synchronized void unregisterUpdateListener(String JSFunctionName) {
 		getAppletImplementation().unregisterUpdateListener(JSFunctionName);
-	}
-	
-	/**
-	 * Calls a JavaScript function when the applet is initialized.
-	 */
-	public void notifyAppletInitialized() {
-		getAppletImplementation().notifyAppletInitialized();
 	}
 }

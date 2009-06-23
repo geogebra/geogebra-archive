@@ -480,16 +480,6 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 */
 	
 	/**
-	 * Calls a JavaScript function when the applet is initialized.
-	 */
-	public synchronized void notifyAppletInitialized() {
-		Application.debug("notifyAppletInitialized");
-		initJavaScript();
-		Object [] args = { };
-		callJavaScript("ggbOnInit", args );
-	}
-	
-	/**
 	 * Returns current construction as a ggb file in form of a byte array.
 	 * @return null if something went wrong 
 	 */
