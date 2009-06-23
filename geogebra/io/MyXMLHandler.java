@@ -3108,10 +3108,10 @@ public class MyXMLHandler implements DocHandler {
 				return true;
 
 			// process the command
-			String s ="";
-			ExpressionNode[] en = cmd.getArguments();
-			for(int i=0;i<en.length;i++)
-				s+=en[i].toString()+",";
+			//String s ="";
+			//ExpressionNode[] en = cmd.getArguments();
+			//for(int i=0;i<en.length;i++)
+			//	s+=en[i].toString()+",";
 			//Application.debug("process the command : "+cmd.getLabel()+" = "+cmd.getName()+"["+s+"]");
 			
 			cmdOutput = kernel.getAlgebraProcessor().processCommand(cmd, true);
