@@ -3016,7 +3016,7 @@ public class MyXMLHandler implements DocHandler {
 		Command cmd = null;
 		String name = (String) attrs.get("name");
 
-		Application.debug(name);
+		//Application.debug(name);
 		if (name != null)
 			cmd = new Command(kernel, name, false); // do not translate name
 		else
@@ -3056,7 +3056,7 @@ public class MyXMLHandler implements DocHandler {
 				// e.g. "1/2_{a,b}" could be a label name
 				geo = kernel.lookupLabel(arg);
 				
-				Application.debug("input : "+geo.getLabel());
+				//Application.debug("input : "+geo.getLabel());
 
 				// arg is a label and does not conatin $ signs (e.g. $A1 in
 				// spreadsheet)
@@ -3112,11 +3112,11 @@ public class MyXMLHandler implements DocHandler {
 			ExpressionNode[] en = cmd.getArguments();
 			for(int i=0;i<en.length;i++)
 				s+=en[i].toString()+",";
-			Application.debug("process the command : "+cmd.getLabel()+" = "+cmd.getName()+"["+s+"]");
+			//Application.debug("process the command : "+cmd.getLabel()+" = "+cmd.getName()+"["+s+"]");
 			
 			cmdOutput = kernel.getAlgebraProcessor().processCommand(cmd, true);
 			
-			Application.debug(cmdOutput[0].getLabel());
+			//Application.debug(cmdOutput[0].getLabel());
 			
 			String cmdName = cmd.getName();
 			if (cmdOutput == null)
