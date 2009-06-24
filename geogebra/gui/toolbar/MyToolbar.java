@@ -130,7 +130,6 @@ public class MyToolbar extends JPanel implements ComponentListener{
                 
         // put together panel
         removeAll();
-        setBorder(BorderFactory.createEmptyBorder(2, 2, 1, 2));
         setLayout(new BorderLayout(10,0));    
         add(toolbarPanel, BorderLayout.WEST); 
         

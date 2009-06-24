@@ -18,6 +18,7 @@ import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -95,13 +96,11 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			add(p, BorderLayout.EAST);
 		}
 		
-//		setBorder(BorderFactory.createCompoundBorder(
-//				   BorderFactory.createEtchedBorder(),  
-//				   BorderFactory.createEmptyBorder(2,2,2,2) )
-//			   );   
-
-		setBorder(BorderFactory.createEmptyBorder(3,3,3,3));	
-		
+		setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),  
+			BorderFactory.createEmptyBorder(2,2,2,2) )
+		);
+			
 		setLabels();
 		inputField.addFocusListener(this);
 	}
