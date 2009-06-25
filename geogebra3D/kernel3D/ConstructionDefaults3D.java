@@ -4,6 +4,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 
 import java.awt.Color;
 
@@ -89,7 +90,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	 */
 	public ConstructionDefaults3D(Construction cons) {
 		super(cons);
-		//Application.debug("ConstructionDefaults3D");
+		Application.debug("ConstructionDefaults3D");
 	}
 	
 	

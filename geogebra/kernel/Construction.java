@@ -19,7 +19,6 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -134,7 +133,8 @@ public class Construction {
 		if (parentConstruction != null)
 			consDefaults = parentConstruction.getConstructionDefaults();
 		else
-			consDefaults = new ConstructionDefaults(this);
+			newConstructionDefaults();
+			//consDefaults = new ConstructionDefaults(this);
 
 		xAxis = new GeoAxis(this, GeoAxis.X_AXIS);
 		yAxis = new GeoAxis(this, GeoAxis.Y_AXIS);
@@ -152,6 +152,14 @@ public class Construction {
 			return (GeoElement) geoSet.last();
 		else
 			return null;
+	}
+	
+	
+	/**
+	 * creates the ConstructionDefaults consDefaults
+	 */
+	protected void newConstructionDefaults(){
+		consDefaults = new ConstructionDefaults(this);
 	}
 
 	/**

@@ -361,7 +361,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     {
       GL gl = drawable.getGL();
       
-      Application.debug("reshape\n x = "+x+"\n y = "+y+"\n w = "+w+"\n h = "+h);
+      //Application.debug("reshape\n x = "+x+"\n y = "+y+"\n w = "+w+"\n h = "+h);
       
       //TODO change this
       viewOrtho(x,y,w,h);
