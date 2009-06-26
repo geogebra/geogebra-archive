@@ -206,7 +206,7 @@ public class Kernel3D
 	final public GeoPoint3D Point3D(String label, Path path, double x, double y, double z) {
 		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, x, y, z);
 		GeoPoint3D p = algo.getP();		
-		p.setLabel(label);
+		//p.setLabel(label);
 		//p.setObjColor(ConstructionDefaults.colPathPoint);
 		return p;
 	}	

@@ -294,7 +294,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null,path);	
 		
-		
 		setMouseInformation(point);
 		point.doPath();
 		
