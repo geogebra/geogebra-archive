@@ -1,4 +1,4 @@
-package geogebra3D.euclidian3D;
+package geogebra3D.euclidian3D.opengl;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;

@@ -1,18 +1,21 @@
-package geogebra3D.euclidian3D;
+package geogebra3D.euclidian3D.opengl;
 
 
 
 
 
-import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.DrawList3D;
+import geogebra3D.euclidian3D.Drawable3D;
+import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.euclidian3D.Hits3D;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.geom.Rectangle2D;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 
@@ -21,17 +24,13 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
 
-import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.FPSAnimator;
-import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.j2d.TextRenderer;
-
 
 
 /**
@@ -86,17 +85,38 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// for drawing
 	private Ggb3DMatrix4x4 m_drawingMatrix; //matrix for drawing
 	
-	/** no dash. */
-	static public double[][] DASH_NONE = null;
-	/** simple dash: 0.1-(0.1), ... */
-	static public double[][] DASH_SIMPLE = {{0.1,0.1}};
-	/** dotted dash: 0.03-(0.1), ... */
-	static public double[][] DASH_DOTTED = {{0.03,0.1}};
-	/** dotted/dashed dash: 0.1-(0.1)-0.03-(0.1), ... */
-	static public double[][] DASH_DOTTED_DASHED = {DASH_SIMPLE[0],DASH_DOTTED[0]};
 	
-	private double[][] m_dash = DASH_NONE; // dash is composed of couples {length of line, length of hole}
-	private double m_dash_factor; // for unit factor
+	///////////////////
+	//dash
+	
+    /** opengl organization of the dash textures */
+    private int[] texturesDash;
+    
+    /** number of dash styles */
+    private int DASH_NUMBER = 2;
+    
+	/** no dash. */
+	static public int DASH_NONE = -1;
+	
+	/** simple dash: 1-(1), ... */
+	static public int DASH_SIMPLE = 0;
+		
+	/** dotted/dashed dash: 7-(4)-1-(4), ... */
+	static public int DASH_DOTTED_DASHED = 1;
+	
+	/** description of the dash styles */
+	static private boolean[][] DASH_DESCRIPTION = {
+		{true, false}, // DASH_SIMPLE
+		{true,true,true,true, true,true,true,false, false,false,false,true, false,false,false,false} // DASH_DOTTED_DASHED
+	};
+	
+	
+	/** # of the dash */
+	private int dash = DASH_NONE; 
+	
+	
+	/////////////////////
+	// spencil attributes
 	
 	/** current drawing color {r,g,b} */
 	private Color color; 
@@ -108,6 +128,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private double m_thickness;
 	
 	
+	
+	///////////////////
+	// arrows
+	
 	/** no arrows */
 	static final public int ARROW_TYPE_NONE=0;
 	/** simple arrows */
@@ -117,7 +141,11 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private double m_arrowLength, m_arrowWidth;
 	
 	
+	
+	
+	///////////////////
 	// for picking
+	
 	private int mouseX, mouseY;
 	private boolean waitForPick = false;
 	private boolean doPick = false;
@@ -458,14 +486,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     
-    /**
-     * sets the dash used by the pencil.
-     * 
-     * @param a_dash description of the dash, see {@link #DASH_NONE}, {@link #DASH_SIMPLE}, ...
-     */
-    public void setDash(double[][] a_dash){
-    	m_dash = a_dash;
-    }
+
     
     /**
      * sets the thickness used by the pencil.
@@ -584,14 +605,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 		gl.glMultMatrixd(a_drawingMatrix,0);
     }     
     
-    /**
-     * switch the Y-direction to Z-direction
-     */ 
-    /*
-    private void switchYtoZ(){
-    	initMatrix(matrixYtoZ);
-    }
-    */
+
     
     /**
      * turn off the last drawing matrix set in openGL.
@@ -602,9 +616,71 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
-    
+    ////////////////////////////////////////////
+    //
+    // TEXTURES
+    //
+    ////////////////////////////////////////////
     
 
+    
+    private void initTextures(){
+    	
+    	gl.glEnable(GL.GL_TEXTURE_2D);
+    	
+    	
+    	
+    	// dash textures
+    	texturesDash = new int[DASH_NUMBER];
+        gl.glGenTextures(DASH_NUMBER, texturesDash, 0);
+        for(int i=0; i<DASH_NUMBER; i++)
+        	initDashTexture(texturesDash[i],DASH_DESCRIPTION[i]);
+         
+        
+        
+        gl.glDisable(GL.GL_TEXTURE_2D);
+    }
+    
+    
+    // dash
+    
+    private void initDashTexture(int n, boolean[] description){
+    	
+        int sizeX = 1; 
+        int sizeY = description.length;
+        
+        byte[] bytes = new byte[4*sizeX*sizeY];
+        
+        // if description[i]==true, then texture is white opaque, else is transparent
+        for (int i=0; i<sizeY; i++)
+        	if (description[i])      		
+        		bytes[4*i+0]=
+        			bytes[4*i+1]= 
+        				bytes[4*i+2]= 
+        					bytes[4*i+3]= (byte) 255;
+              
+        ByteBuffer buf = ByteBuffer.wrap(bytes);
+
+        gl.glBindTexture(GL.GL_TEXTURE_2D, n);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_NEAREST);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_NEAREST);
+        
+        
+        //TODO use gl.glTexImage1D
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  4, sizeX, sizeY, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buf);
+        
+    }
+    
+
+    
+    /**
+     * sets the dash used by the pencil.
+     * 
+     * @param dash # of the dash, see {@link #DASH_NONE}, {@link #DASH_SIMPLE}, ...
+     */
+    public void setDash(int dash){
+    	this.dash = dash;
+    }
     
     
     
@@ -624,7 +700,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	switch(m_arrowType){
     	case ARROW_TYPE_NONE:
     	default:
-    		drawSegmentDashedOrNot(a_x1, a_x2, m_dash!=null);
+    		drawSegment(a_x1, a_x2, dash!=DASH_NONE);
     	break;
     	case ARROW_TYPE_SIMPLE:
     		double x3=a_x2-m_arrowLength/m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS);
@@ -633,66 +709,41 @@ public class EuclidianRenderer3D implements GLEventListener {
     		drawCone(x3,a_x2);
     		setThickness(thickness);
     		if (x3>a_x1)
-    			drawSegmentDashedOrNot(a_x1, x3, m_dash!=null);
+    			drawSegment(a_x1, x3, dash!=DASH_NONE);
     		break;
     	}
 
     } 
     
     
-    /**
-     * 
-     * draws a segment from x=x1 to x=x2 according to drawing matrix, dashed or not according to the a_dash value.
-     * 
-     * @param a_x1 start of the segment
-     * @param a_x2 end of the segment
-     * @param a_dash true if the segment is to be dashed
-     */
-    private void drawSegmentDashedOrNot(double a_x1, double a_x2, boolean a_dash){
-    	if (a_dash)
-    		drawSegmentDashed(a_x1, a_x2);
-    	else
-    		drawSegmentNotDashed(a_x1, a_x2);
-    }
     
-    
-    /**
-     * 
-     * draws a not dashed segment from x=x1 to x=x2 according to drawing matrix.
-     * 
-     * @param a_x1 start of the segment
-     * @param a_x2 end of the segment
-     */
-    private void drawSegmentNotDashed(double a_x1, double a_x2){
+    private void drawSegment(double a_x1, double a_x2, boolean dashed){
+
+
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
-    	drawCylinder(m_thickness);
-    	resetMatrix();
-    } 
-   
-    
-    /**
-     * 
-     * draws a dashed segment from x=x1 to x=x2 according to drawing matrix.
-     * 
-     * @param a_x1 start of the segment
-     * @param a_x2 end of the segment
-     */
-    private void drawSegmentDashed(double a_x1, double a_x2){
-		
-    	m_dash_factor = 1/m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS);
-    	for(double l1=a_x1; l1<a_x2;){
-    		double l2=l1;
-    		for(int i=0; (i<m_dash.length)&&(l1<a_x2); i++){
-    			l2=l1+m_dash_factor*m_dash[i][0];
-    			if (l2>a_x2) l2=a_x2;
-    			drawSegmentNotDashed(l1,l2);
-    			l1=l2+m_dash_factor*m_dash[i][1];
-    		}	
-    	} 	
     	
-    } 
-    
-    
+    	if (dashed){
+    		gl.glEnable(GL.GL_TEXTURE_2D);
+    		//TODO use object properties
+    		gl.glBindTexture(GL.GL_TEXTURE_2D, texturesDash[0]);
+
+
+    		gl.glMatrixMode(GL.GL_TEXTURE);
+    		gl.glLoadIdentity();
+    		gl.glScalef(1f, (float) (4*(a_x2-a_x1)*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS)), 1.f);
+  
+    		gl.glMatrixMode(GL.GL_MODELVIEW);
+    	}
+    	
+       	drawCylinder(m_thickness);
+    	
+       	if (dashed)
+       		gl.glDisable(GL.GL_TEXTURE_2D);
+    	
+    	resetMatrix();
+
+    }
+   
     
     /** 
      * draws a segment from x=0 to x=1 according to current drawing matrix.
@@ -843,6 +894,47 @@ public class EuclidianRenderer3D implements GLEventListener {
     	resetMatrix();
     }
     
+    /*
+    public void drawQuad2(double a_x1, double a_y1, double a_x2, double a_y2){
+    	initMatrix(m_drawingMatrix.quad(a_x1, a_y1, a_x2, a_y2));
+    	drawQuad2();
+    	resetMatrix();
+    }
+    
+    private void drawQuad2(){    	
+    	 
+       	gl.glDisable(GL.GL_CULL_FACE);	
+       	gl.glEnable(GL.GL_TEXTURE_2D);
+    	
+        gl.glBegin(GL.GL_QUADS);	
+        
+        
+        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[0]);
+        
+        gl.glNormal3f(0.0f, 0.0f, 1.0f);
+        
+        
+        float v = 2f;
+        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glVertex3f(0.0f, 0.0f, 0.0f);
+        
+        gl.glTexCoord2f(v, 0.0f);
+        gl.glVertex3f(1.0f, 0.0f, 0.0f);
+        
+        gl.glTexCoord2f(v, v);
+        gl.glVertex3f(1.0f, 1.0f, 0.0f);	
+        
+        gl.glTexCoord2f(0.0f, v);
+        gl.glVertex3f(0.0f, 1.0f, 0.0f);
+              
+        gl.glEnd();		
+        
+	   	gl.glEnable(GL.GL_CULL_FACE);
+	   	gl.glDisable(GL.GL_TEXTURE_2D);
+       
+    }
+    */
+    
     /** draws a grid according to current drawing matrix.
      * @param a_x1 x-coordinate of the top-left corner
      * @param a_y1 y-coordinate of the top-left corner
@@ -873,6 +965,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     		ymax=a_y1;
     	}
     	
+    	
     	int nXmin= (int) Math.ceil(xmin/a_dx);
     	int nXmax= (int) Math.floor(xmax/a_dx);
     	int nYmin= (int) Math.ceil(ymin/a_dy);
@@ -897,6 +990,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	}
     	setMatrix(matrix);     		
 
+    	 
     }  
     
     
@@ -1031,7 +1125,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     public void drawCircle(double x, double y, double R){
 
     	initMatrix();
-    	drawCircleArcDashedOrNot((float) x, (float) y, (float) R, 0, 2f * (float) Math.PI, m_dash!=null);
+    	drawCircleArcDashedOrNot((float) x, (float) y, (float) R, 0, 2f * (float) Math.PI, dash!=0);
     	resetMatrix();
     }
     
@@ -1051,7 +1145,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	if (!dash)
     		drawCircleArcNotDashed(x, y, R, startAngle, endAngle);
     	else
-    		drawCircleArcDashed(x,y,R, startAngle, endAngle);
+    		drawCircleArcNotDashed(x,y,R, startAngle, endAngle);
     }
     
     /**
@@ -1062,6 +1156,8 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param startAngle starting angle for the arc
      * @param endAngle ending angle for the arc
      */
+    
+    /*
     private void drawCircleArcDashed(float x, float y, float R, float startAngle, float endAngle){
     	
     	m_dash_factor = 1/(R*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS));
@@ -1075,7 +1171,8 @@ public class EuclidianRenderer3D implements GLEventListener {
     			l1=l2+m_dash_factor*m_dash[i][1];
     		}	
     	} 	
-    }   
+    }  
+    */ 
     
     /**
      * draw a dashed circle with center (x,y) and radius R
@@ -1216,6 +1313,13 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param colored says if the text has to be colored
      */
     public void drawText(float x, float y, String s, boolean colored){
+    	
+        gl.glMatrixMode(GL.GL_TEXTURE);
+        gl.glLoadIdentity();
+        
+    	gl.glMatrixMode(GL.GL_MODELVIEW);
+    	
+    	
     	initMatrix();
     	initMatrix(m_view3D.getUndoRotationMatrix());
     	
@@ -1497,10 +1601,13 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glEnable(GL.GL_CULL_FACE);
         
         //blending
-        gl.glEnable(GL.GL_BLEND);	
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glEnable(GL.GL_BLEND);	
         //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);  
+        
+        gl.glAlphaFunc(GL.GL_NOTEQUAL, 0);//pixels with alpha=0 are not drawn
+        gl.glEnable(GL.GL_ALPHA_TEST);       
         
         //using glu quadrics
         quadric = glu.gluNewQuadric();// Create A Pointer To The Quadric Object (Return 0 If No Memory) (NEW)
@@ -1514,9 +1621,20 @@ public class EuclidianRenderer3D implements GLEventListener {
         //normal anti-scaling
         gl.glEnable(GL.GL_NORMALIZE);
         //gl.glEnable(GL.GL_RESCALE_NORMAL);
+        
+        
+        
+        //textures
+        initTextures();
+        
          
     }
 
+    
+    
+    
+    
+    
     
     
     

@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D;
 
+import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoQuadric;
 
 public class DrawQuadric extends Drawable3DTransparent {

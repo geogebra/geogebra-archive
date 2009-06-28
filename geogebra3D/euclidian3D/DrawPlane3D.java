@@ -7,6 +7,7 @@ import java.awt.Color;
 
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 
 
@@ -28,14 +29,18 @@ public class DrawPlane3D extends Drawable3DTransparent {
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		GeoPlane3D p = (GeoPlane3D) getGeoElement();
+		
+		//renderer.setMaterial(getGeoElement().getObjectColor(),1);
 		renderer.drawQuad(p.getXmin(),p.getYmin(),p.getXmax(),p.getYmax());
 		
+		/*
 		renderer.setDash(EuclidianRenderer3D.DASH_SIMPLE); //TODO use object property
 		renderer.setThickness(GRID3D_THICKNESS*getGeoElement().getLineThickness());
 		if (p.hasGrid())
 			renderer.drawGrid(p.getXmin(),p.getYmin(),
 					p.getXmax(),p.getYmax(),
 					p.getGridXd(),p.getGridYd());
+					*/
 					
 	}
 	

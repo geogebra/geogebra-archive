@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import geogebra.kernel.GeoElement;
 import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoSegment3D;
@@ -67,7 +68,8 @@ public abstract class Drawable3DSolid extends Drawable3D {
 		
 				
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-		renderer.setDash(EuclidianRenderer3D.DASH_SIMPLE); //TODO use object property
+		//renderer.setDash(EuclidianRenderer3D.DASH_SIMPLE); //TODO use object property
+		renderer.setDash(EuclidianRenderer3D.DASH_DOTTED_DASHED); //TODO use object property
 		renderer.setMatrix(getMatrix());		
 		drawGeometryHidden(renderer);		
 		

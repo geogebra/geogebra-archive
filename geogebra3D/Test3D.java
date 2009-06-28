@@ -634,7 +634,7 @@ public class Test3D{
 		//testPoint(1f,-1f,0f);
 		//testPoint(1f,1f,0f);
 		
-		File f = new File("test3d.ggb");
+		File f = new File("geogebra3D/test3d.ggb");
 		try {
 			f.createNewFile();
 		} catch (IOException e) {
@@ -647,7 +647,7 @@ public class Test3D{
 	
 	private void testLoad(){
 
-        app.loadXML(new File("test3d.ggb"), false);
+        app.loadXML(new File("geogebra3D/test3d.ggb"), false);
 
 		
 	}

@@ -2,6 +2,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoVec2D;
+import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoConic3D;
 
 /**

@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra.euclidian.Previewable;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoLine3D;
 
 import java.awt.Color;

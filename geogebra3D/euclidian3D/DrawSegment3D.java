@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoSegment3D;
 
 
@@ -34,7 +35,7 @@ public class DrawSegment3D extends Drawable3DSolid {
 	
 	public void drawGeometryHidden(EuclidianRenderer3D renderer){
 		
-		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
 		drawGeometry(renderer);
 	} 
 	

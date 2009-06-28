@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 

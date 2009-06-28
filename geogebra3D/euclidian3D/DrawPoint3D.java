@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 
