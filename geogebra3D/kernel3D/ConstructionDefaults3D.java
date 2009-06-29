@@ -30,16 +30,23 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_POINT3D_IN_REGION = 3013;
 
 	
+	/** default line 3D type */	
+	public static final int DEFAULT_LINE3D = 3100;
+	/** default segment 3D type */	
+	public static final int DEFAULT_SEGMENT3D = 3101;
+	
+	
+	
 	/** default plane 3D type */	
-	public static final int DEFAULT_PLANE3D = 3100;
+	public static final int DEFAULT_PLANE3D = 3200;
 	/** default polygon 3D type */	
-	public static final int DEFAULT_POLYGON3D = 3101;
+	public static final int DEFAULT_POLYGON3D = 3201;
 	
 	
 	/** default polyhedron type */
-	public static final int DEFAULT_POLYHEDRON = 3200;
+	public static final int DEFAULT_POLYHEDRON = 3300;
 	/** default quadric type */
-	public static final int DEFAULT_QUADRIC = 3201;
+	public static final int DEFAULT_QUADRIC = 3301;
 
 	
 	
@@ -133,6 +140,18 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		regionPoint.setLocalVariableLabel("Point3DInRegion");
 		regionPoint.setObjColor(colRegionPoint);
 		defaultGeoElements.put(DEFAULT_POINT3D_IN_REGION, regionPoint);
+		
+		// line
+		GeoLine3D line = new GeoLine3D(cons);
+		line.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		line.setLocalVariableLabel("Line3D");
+		defaultGeoElements.put(DEFAULT_LINE3D, line);		
+		
+		// line
+		GeoSegment3D segment = new GeoSegment3D(cons);
+		segment.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		segment.setLocalVariableLabel("Segment3D");
+		defaultGeoElements.put(DEFAULT_SEGMENT3D, segment);		
 
 		
 		// plane
@@ -188,6 +207,12 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 				else
 					return DEFAULT_POINT3D_DEPENDENT;
 			}
+			
+		case GeoElement3D.GEO_CLASS_LINE3D: 
+			return DEFAULT_LINE3D;
+		case GeoElement3D.GEO_CLASS_SEGMENT3D: 
+			return DEFAULT_SEGMENT3D;
+			
 		
 		case GeoElement3D.GEO_CLASS_PLANE3D: 
 			return DEFAULT_PLANE3D;

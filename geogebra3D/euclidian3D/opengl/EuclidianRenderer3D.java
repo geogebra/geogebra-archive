@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D.opengl;
 
 
 
+import geogebra.euclidian.EuclidianView;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -93,26 +94,33 @@ public class EuclidianRenderer3D implements GLEventListener {
     private int[] texturesDash;
     
     /** number of dash styles */
-    private int DASH_NUMBER = 2;
+    private int DASH_NUMBER = 3;
     
 	/** no dash. */
 	static public int DASH_NONE = -1;
 	
 	/** simple dash: 1-(1), ... */
 	static public int DASH_SIMPLE = 0;
+	
+	/** dotted dash: 1-(3), ... */
+	static public int DASH_DOTTED = 1;
 		
 	/** dotted/dashed dash: 7-(4)-1-(4), ... */
-	static public int DASH_DOTTED_DASHED = 1;
+	static public int DASH_DOTTED_DASHED = 2;
 	
 	/** description of the dash styles */
 	static private boolean[][] DASH_DESCRIPTION = {
 		{true, false}, // DASH_SIMPLE
+		{true, false, false, false}, // DASH_DOTTED
 		{true,true,true,true, true,true,true,false, false,false,false,true, false,false,false,false} // DASH_DOTTED_DASHED
 	};
 	
 	
 	/** # of the dash */
 	private int dash = DASH_NONE; 
+	
+	/** scale factor for dash */
+	private float dashScale = 1f;
 	
 	
 	/////////////////////
@@ -676,10 +684,36 @@ public class EuclidianRenderer3D implements GLEventListener {
     /**
      * sets the dash used by the pencil.
      * 
-     * @param dash # of the dash, see {@link #DASH_NONE}, {@link #DASH_SIMPLE}, ...
+     * @param dash # of the dash, see EuclidianView, ...
      */
     public void setDash(int dash){
-    	this.dash = dash;
+    	
+    	
+    	switch (dash) {
+		case EuclidianView.LINE_TYPE_DOTTED:
+			this.dash=DASH_DOTTED;
+			dashScale = 8f;
+			break;
+
+		case EuclidianView.LINE_TYPE_DASHED_SHORT:
+			this.dash=DASH_SIMPLE;
+			dashScale = 8f;
+			break;
+
+		case EuclidianView.LINE_TYPE_DASHED_LONG:
+			this.dash=DASH_SIMPLE;
+			dashScale = 4f;
+			break;
+
+		case EuclidianView.LINE_TYPE_DASHED_DOTTED:
+			this.dash=DASH_DOTTED_DASHED;
+			dashScale = 4f;
+			break;
+
+		default: // EuclidianView.LINE_TYPE_FULL
+			this.dash = DASH_NONE;
+		}
+    	
     }
     
     
@@ -725,12 +759,12 @@ public class EuclidianRenderer3D implements GLEventListener {
     	if (dashed){
     		gl.glEnable(GL.GL_TEXTURE_2D);
     		//TODO use object properties
-    		gl.glBindTexture(GL.GL_TEXTURE_2D, texturesDash[0]);
+    		gl.glBindTexture(GL.GL_TEXTURE_2D, texturesDash[dash]);
 
 
     		gl.glMatrixMode(GL.GL_TEXTURE);
     		gl.glLoadIdentity();
-    		gl.glScalef(1f, (float) (4*(a_x2-a_x1)*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS)), 1.f);
+    		gl.glScalef(1f, (float) (dashScale*(a_x2-a_x1)*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS)), 1.f);
   
     		gl.glMatrixMode(GL.GL_MODELVIEW);
     	}
