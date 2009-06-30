@@ -19,7 +19,6 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
-import javax.media.j3d.Transform3D;
 import javax.vecmath.Matrix4d;
 
 
@@ -673,27 +672,7 @@ public class GgbMatrix
 	
 	
 	
-	/** for Java3D */
-	public void getTransform3D(Transform3D t3d){
-		
-		Matrix4d m4d = new Matrix4d();
-		for(int j=1;j<=4;j++)
-			m4d.setColumn(j-1, get(1, j), get(2, j), get(3, j), get(4, j));
-		t3d.set(m4d);		
-		
-	}
-	
-	public GgbMatrix(Transform3D t3d){
-		
-		this(4,4);
-		Matrix4d m4d = new Matrix4d();
-		t3d.get(m4d);
-		for(int i=1;i<=4;i++)
-			for(int j=1;j<=4;j++)
-				this.set(i,j, m4d.getElement(i-1, j-1));
-				
-		
-	}
+
 	
 	
 	

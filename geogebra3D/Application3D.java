@@ -213,6 +213,12 @@ public abstract class Application3D extends Application{
 		f.setSize(new Dimension(400,400));
 		f.setVisible(true);
 		
+		f = new JFrame("spreadsheet view");
+		f.getContentPane().add(getGuiManager().getSpreadsheetView());
+		f.setLocation(400, 0);
+		f.setPreferredSize(new Dimension(400,400));
+		f.setSize(new Dimension(400,400));
+		f.setVisible(true);	
 		/*
 		if (updateUI) {
 			centerPanel.updateUI(); // needed for applets
