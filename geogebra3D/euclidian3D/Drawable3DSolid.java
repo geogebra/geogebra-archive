@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 import java.awt.Color;
 
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoElement3D;
@@ -22,13 +23,15 @@ import geogebra3D.kernel3D.GeoSegment3D;
 
 public abstract class Drawable3DSolid extends Drawable3D {
 
-	public Drawable3DSolid(EuclidianView3D a_view3d) {
-		super(a_view3d);
-	}
+
 	
 	
 	public Drawable3DSolid(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);
+	}
+
+	public Drawable3DSolid(EuclidianView3D a_view3d) {
+		super(a_view3d);
 	}
 
 	public void draw(EuclidianRenderer3D renderer) {
@@ -36,7 +39,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 			return;	
 		
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-		renderer.setDash(EuclidianRenderer3D.DASH_NONE); //TODO use object property
+		renderer.setDash(EuclidianRenderer3D.DASH_NONE); 
 		renderer.setMatrix(getMatrix());
 		
 		drawGeometry(renderer);
@@ -47,6 +50,8 @@ public abstract class Drawable3DSolid extends Drawable3D {
 
 	
 	public void drawPicked(EuclidianRenderer3D renderer) {
+				
+
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 		if (!getGeoElement().doHighlighting())
@@ -67,9 +72,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 			return;
 		
 				
-		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-		//renderer.setDash(EuclidianRenderer3D.DASH_SIMPLE); //TODO use object property
-		//renderer.setDash(EuclidianRenderer3D.DASH_DOTTED_DASHED); //TODO use object property
+		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);
 		renderer.setDash(getGeoElement().getLineType()); 
 		renderer.setMatrix(getMatrix());		
 		drawGeometryHidden(renderer);		

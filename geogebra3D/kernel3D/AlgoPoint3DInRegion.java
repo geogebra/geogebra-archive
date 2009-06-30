@@ -36,12 +36,15 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
         
         P.setWillingCoords(x, y, z, 1.0);
         
+        /*
         switch(region.toGeoElement().getGeoClassType()){
         case GeoElement3D.GEO_CLASS_POLYGON3D:
         	P.setCoordSys2D(((GeoPolygon3D) region.toGeoElement()).getCoordSys());
         	break;
        
-        }       
+        }  
+        */
+        
         region.pointChangedForRegion(P);
         
 

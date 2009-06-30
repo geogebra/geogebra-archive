@@ -21,7 +21,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoPolygon3D 
-extends GeoPolygon implements GeoElement3DInterface, Path {
+extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 
 	
 	/** 2D coord sys where the polygon exists */
@@ -223,7 +223,13 @@ extends GeoPolygon implements GeoElement3DInterface, Path {
 
 	
 	
-	
+	 /** says if the object is pickable
+	  * @return true if the object is pickable
+	  */
+	 public boolean isPickable(){
+		 return true;
+	 }
+	 
 	
     /** set the alpha value to alpha for openGL
      * @param alpha alpha value
@@ -326,7 +332,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path {
 	
 	
 	///////////////////////////////////
-	// REGION INTERFACE
+	// REGION3D INTERFACE
 	
 	public void setRegionChanged(GeoPointInterface PI, double x, double y){
 		
@@ -344,9 +350,29 @@ extends GeoPolygon implements GeoElement3DInterface, Path {
 		return isInRegion(PI.getX2D(), PI.getY2D());
 		
 	}
+	
+	public Ggb3DVector getPoint(double x2d, double y2d){
+		return coordSys.getPoint(x2d,y2d);
+	}
 
 	
+	/** return the normal projection of the (coords) point on the region 
+	 * @param coords coords of the point
+	 * @return normal projection
+	 */
+	public Ggb3DVector[] getNormalProjection(Ggb3DVector coords){
+		return coords.projectPlane(coordSys.getMatrix4x4());
+	}
 
+
+	/** return the willingDirection projection of the (coords) point on the region 
+	 * @param coords coords of the point
+	 * @param willingDirection direction of the projection
+	 * @return projection
+	 */
+	public Ggb3DVector[] getProjection(Ggb3DVector coords, Ggb3DVector willingDirection){
+		return coords.projectPlaneThruV(coordSys.getMatrix4x4(),willingDirection);
+	}
 
 	
 	

@@ -1,6 +1,7 @@
 package geogebra.kernel;
 
 
+
 /**
  * @author Mathieu Blossier
  * 
@@ -45,5 +46,8 @@ public interface Region {
 	 * Returns this region as an object of type GeoElement.
 	 */
 	public GeoElement toGeoElement();
+
+
+	
 	
 }

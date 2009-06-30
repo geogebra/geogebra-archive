@@ -54,7 +54,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// openGL variables
 	private GLU glu= new GLU();
 	//private GLUT glut = new GLUT();
-	private TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 18));
+	private TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 16));
 	/** default text scale factor */
 	private static final float DEFAULT_TEXT_SCALE_FACTOR = 0.008f;
 
@@ -280,12 +280,13 @@ public class EuclidianRenderer3D implements GLEventListener {
 
 
         //drawing picked parts
+        gl.glDepthMask(false);
         setMaterial(new Color(0f,0f,0f),0.75f);
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
         	d.drawPicked(this);	
         }
-
+        gl.glDepthMask(true);
 
 
         //drawing transparents parts
@@ -304,7 +305,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glDisable(GL.GL_LIGHTING);
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawLabel(this,true);	
+        	d.drawLabel(this,true,false);	
         }
         gl.glEnable(GL.GL_LIGHTING);
         
@@ -365,7 +366,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glDisable(GL.GL_LIGHTING);
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawLabel(this,true);	
+        	d.drawLabel(this,true,false);	
         }
         gl.glEnable(GL.GL_LIGHTING);
         
@@ -1514,7 +1515,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         		Drawable3D d = (Drawable3D) iter.next();
         		loop++;
         		gl.glLoadName(loop);
-        		d.drawLabel(this,false);
+        		d.drawLabel(this,false,true);
         		drawHits[loop] = d;
         	}
     		}

@@ -65,6 +65,12 @@ public interface GeoElement3DInterface {
 	public Drawable3D getDrawable3D();
 
 	
+	/** says if the object is pickable
+	 * @return true if the object is pickable
+	 */
+	public boolean isPickable();
+
+	
 
 
 }

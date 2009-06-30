@@ -2,18 +2,26 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.euclidian.Previewable;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
+import geogebra3D.kernel3D.GeoCoordSys1D;
+import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 
 
 
 
-public class DrawPoint3D extends Drawable3DSolid{
+public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 	
 	
 	
@@ -69,6 +77,57 @@ public class DrawPoint3D extends Drawable3DSolid{
 		return DRAW_PICK_ORDER_0D;
 	}	
 	
+	
+	
+	////////////////////////////////
+	// Previewable interface 
+	
+
+	public DrawPoint3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
+		
+		super(a_view3D);
+		
+
+		Kernel3D kernel = getView3D().getKernel();
+		kernel.setSilentMode(true);
+		GeoPoint3D p = kernel.Point3D(null, 1, 1, 0);
+		p.setIsPickable(false);
+		p.setLabelOffset(5, -5);
+		setGeoElement(p);
+		kernel.setSilentMode(false);
+		
+		//Application.debug("preview point : "+getGeoElement()+ " ("+((GeoElement3D) getGeoElement()).isPickable()+")");
+
+		updatePreview();
+		
+	}	
+
+	public void disposePreview() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void drawPreview(Graphics2D g2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void updateMousePos(int x, int y) {
+
+			
+		
+	}
+
+
+	public void updatePreview() {
+
+		
+	}
+	
+	
+
 	
 	
 	

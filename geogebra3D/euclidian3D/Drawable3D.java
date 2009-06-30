@@ -120,11 +120,11 @@ public abstract class Drawable3D {
 	/** objects that are picked are drawn with a thickness * PICKED_DILATATION*/
 	protected static final float PICKED_DILATATION = 1.3f;	
 	/** default radius for drawing 3D points*/
-	protected static final float POINT3D_RADIUS = 0.015f;
+	protected static final float POINT3D_RADIUS = 0.012f;
 	/** points on a path are a little bit more bigger than others */
 	protected static final float POINT_ON_PATH_DILATATION = 1.01f;
 	/** default thickness of 3D lines, segments, ... */
-	protected static final float LINE3D_THICKNESS = 0.007f;
+	protected static final float LINE3D_THICKNESS = 0.005f;
 	/** default thickness of lines of a 3D grid ... */	
 	protected static final float GRID3D_THICKNESS = 0.005f;
 		
@@ -188,11 +188,12 @@ public abstract class Drawable3D {
 	public Drawable3D(EuclidianView3D a_view3D, GeoElement a_geo){
 		this(a_view3D);
 		setGeoElement(a_geo);
-		((GeoElement3DInterface) a_geo).setDrawable3D(this);
+		
 		update();
 	}
 	
 	
+
 	
 	
 	
@@ -206,7 +207,8 @@ public abstract class Drawable3D {
 	/** update this according to the {@link GeoElement3D} */
 	public void update(){
 		//verify if object is visible for drawing
-		setVisible(getGeoElement().isEuclidianVisible() && getGeoElement().isDefined());       				 
+		setVisible(getGeoElement().isEuclidianVisible() 
+				&& getGeoElement().isDefined());       				 
 		if (!isVisible()) return;
 		setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
 		
@@ -374,6 +376,10 @@ public abstract class Drawable3D {
 	 * @param renderer the 3D renderer where to draw
 	 */			
 	public void drawForPicking(EuclidianRenderer3D renderer) {
+		if (!((GeoElement3DInterface) getGeoElement()).isPickable()){
+			//Application.debug(getGeoElement()+" is not pickable");
+			return;
+		}
 		if(!getGeoElement().isEuclidianVisible())
 			return;	
 		
@@ -388,8 +394,12 @@ public abstract class Drawable3D {
     /** draws the label (if any)
      * @param renderer 3D renderer
      * @param colored says if the text has to be colored
+     * @param forPicking says if this method is called for picking
      */
-    public void drawLabel(EuclidianRenderer3D renderer, boolean colored){
+    public void drawLabel(EuclidianRenderer3D renderer, boolean colored, boolean forPicking){
+
+    	if (forPicking && !((GeoElement3DInterface) getGeoElement()).isPickable())
+			return;
     	
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
@@ -547,6 +557,7 @@ public abstract class Drawable3D {
      */
     public void setGeoElement(GeoElement a_geo) {
         this.m_geo = a_geo;
+        ((GeoElement3DInterface) a_geo).setDrawable3D(this);
     } 
     
     

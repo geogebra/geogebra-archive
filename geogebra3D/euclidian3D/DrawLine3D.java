@@ -1,10 +1,13 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.euclidian.Previewable;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -20,10 +23,6 @@ public class DrawLine3D extends Drawable3DSolid implements Previewable {
 	}	
 	
 	
-	public DrawLine3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
-		
-		super(a_view3D);
-	}	
 	
 	
 	
@@ -68,7 +67,24 @@ public class DrawLine3D extends Drawable3DSolid implements Previewable {
 	////////////////////////////////
 	// Previewable interface 
 	
-	
+	GeoPoint3D[] points;
+	int numPoints = 0;
+
+	public DrawLine3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
+		
+		super(a_view3D, new GeoLine3D(a_view3D.getKernel().getConstruction()));
+		
+		getGeoElement().setEuclidianVisible(false);
+		
+		points = new GeoPoint3D[2];
+		for (int i=0;i<selectedPoints.size();i++)
+			points[i]=(GeoPoint3D) selectedPoints.get(i);
+		
+		numPoints = selectedPoints.size();
+
+		updatePreview();
+		
+	}	
 
 	public void disposePreview() {
 		// TODO Auto-generated method stub
@@ -83,13 +99,30 @@ public class DrawLine3D extends Drawable3DSolid implements Previewable {
 
 
 	public void updateMousePos(int x, int y) {
-		// TODO Auto-generated method stub
+		switch (numPoints){
+		case 1:
+			points[1]=getView3D().getKernel().Point3D(null, x, y, 0);
+			numPoints = 2;
+			updatePreview();
+			break;
+		case 2:
+			points[1].setCoords(x, y, 0, 1);
+			updatePreview();
+			break;
+		}
+			
 		
 	}
 
 
 	public void updatePreview() {
-		// TODO Auto-generated method stub
+		if (numPoints==2){
+			Application.debug("hop");
+			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(points[0].getCoords(), points[1].getCoords());
+			getGeoElement().setEuclidianVisible(true);
+		}else{
+			getGeoElement().setEuclidianVisible(false);
+		}
 		
 	}
 	

@@ -179,9 +179,12 @@ public interface EuclidianViewInterface {
 	 * @return the polygon previewable
 	 */		
 	public Previewable createPreviewPolygon(ArrayList selectedPoints);
+	
+	public Previewable createPreviewPoint(ArrayList selectedPoints);
 
 
 
+	public void updatePreviewable();
 
 
 	

@@ -4181,7 +4181,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/////////////////////////////////////////
 	// previewables
 	
+	public Previewable createPreviewPoint(ArrayList selectedPoints){
+		return null;
+	}
+	
 	public Previewable createPreviewLine(ArrayList selectedPoints){
+		
+		//Application.debug("createPreviewLine");
+		
 		return new DrawLine(this, selectedPoints);
 	}
 	
@@ -4199,7 +4206,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return new DrawPolygon(this, selectedPoints);
 	}	
 	
-	
+	public void updatePreviewable(){
+		Point mouseLoc = getEuclidianController().mouseLoc;
+		getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
+	}
 	
 	
 }

@@ -65,7 +65,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	private Region region;
 	private RegionParameters regionParameters;
 	/** 2D coord sys when point is on a region */
-	private GeoCoordSys2D coordSys2D = null;
+	//private GeoCoordSys2D coordSys2D = null;
 	/** 2D x-coord when point is on a region */
 	private double x2D = 0;
 	/** 2D y-coord when point is on a region */
@@ -102,14 +102,22 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     public GeoPoint3D(Construction c, Path path) {
 		super(c,4);
-		this.path = path;
+		setPath(path);
 	}
+    
+    public void setPath(Path path){
+    	this.path = path;
+    }
     
     
     public GeoPoint3D(Construction c, Region region) {
 		super(c,4);
-		this.region = region;
+		setRegion(region);
 	}
+    
+    public void setRegion(Region region){
+    	this.region = region;
+    }
     
 
     
@@ -331,21 +339,27 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     		regionParameters = new RegionParameters();
     	return regionParameters;
     }
+    
+    final public Region getRegion(){
+    	return region;
+    }
 	
     
     /** set the 2D coord sys where the region lies
      * @param cs 2D coord sys
      */
+    /*
     public void setCoordSys2D(GeoCoordSys2D cs){
     	this.coordSys2D = cs;
     }
+    */
     
     
     /**
      * update the 2D coords on the region (regarding willing coords and direction)
      */
     public void updateCoords2D(){
-    	if (coordSys2D!=null){ //use region 2D coord sys
+    	if (region!=null){ //use region 2D coord sys
     		Ggb3DVector coords;
     		Ggb3DVector[] project;
     		
@@ -355,9 +369,11 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     			coords = getCoords();
 
     		if (getWillingDirection()==null){ //use normal direction for projection
-    			project = coords.projectPlane(coordSys2D.getMatrix4x4());
+    			project = ((Region3D) region).getNormalProjection(coords);
+    			//coords.projectPlane(coordSys2D.getMatrix4x4());
     		}else{ //use willing direction for projection
-    			project = coords.projectPlaneThruV(coordSys2D.getMatrix4x4(),getWillingDirection());
+    			project = ((Region3D) region).getProjection(coords,getWillingDirection());
+    			//project = coords.projectPlaneThruV(coordSys2D.getMatrix4x4(),getWillingDirection());
     		}
     			
     		x2D = project[1].get(1);
@@ -401,7 +417,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	 * @param doPathOrRegion says if the path or the region calculations have to be done
 	 */
 	public void updateCoordsFrom2D(boolean doPathOrRegion){
-		setCoords(coordSys2D.getPoint(getX2D(), getY2D()), doPathOrRegion);
+		setCoords(((Region3D) region).getPoint(getX2D(), getY2D()), doPathOrRegion);
 	}
 	
 	

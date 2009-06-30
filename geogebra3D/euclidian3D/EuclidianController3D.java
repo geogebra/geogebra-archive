@@ -12,11 +12,13 @@ import geogebra.kernel.Region;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.kernel3D.ConstructionDefaults3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -107,6 +109,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	////////////////////////////////////////////
 	// setters movedGeoElement -> movedGeoPoint, ...
 	public void setMovedGeoPoint(GeoElement geo){
+		
 		movedGeoPoint3D = (GeoPoint3D) movedGeoElement;
 		startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
 
@@ -123,7 +126,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 	
-	
+	public void resetMovedGeoPoint(){
+		movedGeoPoint3D = null;
+	}
 
 
 	
@@ -279,36 +284,114 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// creating a new point
 	
 	
-	protected GeoPointInterface createNewPoint(){
+	
+	/**
+	 * return a copy of the preview point if one
+	 */
+	protected GeoPointInterface getNewPoint(Hits hits,
+			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
+			boolean doSingleHighlighting) {
 		
-		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
+		if (view.getPreviewDrawable()!=null){
+			GeoElement geo = ((Drawable3D) view.getPreviewDrawable()).getGeoElement();
+
+			if (geo.isGeoPoint()){
+				if (geo.isEuclidianVisible()){
+					GeoPoint3D point = (GeoPoint3D) geo;
+					GeoPoint3D ret;
+					if (point.hasPath())
+						ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
+					else if (point.hasRegion())
+						ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());
+					else{
+						ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
+						ret.setCoordDecoration(true);
+					}
+					ret.setCoords(point);
+					ret.updateCoords();
+					point.setEuclidianVisible(false);
+
+					return ret;
+				}
+			}
+		}
+		
+		return super.getNewPoint(hits, 
+				onPathPossible, inRegionPossible, intersectPossible, 
+				doSingleHighlighting);
+
+		
+	}
+	
+	
+	/**
+	 * create a new free point
+	 * or update the preview point
+	 */
+	protected GeoPointInterface createNewPoint(GeoPointInterface point){
+		
+		//Application.debug("point = "+point);
+		
+		if (point == null)
+			point = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
+		else{
+			GeoPoint3D point3D = (GeoPoint3D) point;
+			point3D.setPath(null);
+			point3D.setRegion(null);
+			point3D.setObjColor(ConstructionDefaults3D.colPoint);
+			point3D.setEuclidianVisible(true);
+		}
+		
 		setCurrentPlane(Ggb3DMatrix4x4.Identity());
-		movePointOnCurrentPlane(point, false);	
-		point.setCoordDecoration(true);
+		movePointOnCurrentPlane((GeoPoint3D) point, false);	
+		((GeoPoint3D) point).setCoordDecoration(true);
+		
 		return point;
 	}
 	
 	
-	
-	protected GeoPointInterface createNewPoint(Path path){
+	/**
+	 * create a new path point
+	 * or update the preview point
+	 */	
+	protected GeoPointInterface createNewPoint(GeoPointInterface point, Path path){
 			
-		GeoPoint3D point = ((Kernel3D) getKernel()).Point3D(null,path);	
+		if (point == null)
+			point = ((Kernel3D) getKernel()).Point3D(null,path);
+		else{
+			GeoPoint3D point3D = (GeoPoint3D) point;
+			point3D.setPath(path);
+			point3D.setRegion(null);
+			point3D.setObjColor(ConstructionDefaults3D.colPathPoint);
+			point3D.setCoordDecoration(false);
+			point3D.setEuclidianVisible(true);
+		}			
 		
-		setMouseInformation(point);
-		point.doPath();
-		
-		
+		setMouseInformation((GeoPoint3D) point);
+		((GeoPoint3D) point).doPath();
+				
 		return point;
-		
 	}
 	
-	
-	protected GeoPointInterface createNewPoint(Region region){
+	/**
+	 * create a new region point
+	 * or update the preview point
+	 */	
+	protected GeoPointInterface createNewPoint(GeoPointInterface point, Region region){
 		
-		GeoPoint3D point = ((Kernel3D) getKernel()).Point3DIn(null,region);	
+		if (point == null)
+			point = ((Kernel3D) getKernel()).Point3DIn(null,region);
+		else{
+			GeoPoint3D point3D = (GeoPoint3D) point;
+			point3D.setPath(null);
+			point3D.setRegion(region);
+			point3D.setObjColor(ConstructionDefaults3D.colRegionPoint);
+			point3D.setCoordDecoration(false);
+			point3D.setEuclidianVisible(true);
+		}
 		
-		setMouseInformation(point);
-		point.doRegion();
+		setMouseInformation((GeoPoint3D) point);
+		((GeoPoint3D) point).doRegion();
 		
 		return point;
 	}

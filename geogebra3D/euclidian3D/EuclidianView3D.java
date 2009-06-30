@@ -2,10 +2,13 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.euclidian.Drawable;
+import geogebra.euclidian.EuclidianController;
+import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.main.Application;
 import geogebra.main.View;
 import geogebra3D.Matrix.Ggb3DMatrix;
@@ -78,12 +81,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	int aOld, bOld;
 	
 	
-	//values for view frutum
-	/*
-	double left = 0; double right = 640;
-	double bottom = 0; double top = 480;
-	double front = -1000; double back = 1000;
-	*/
+
 	
 
 	//picking and hits
@@ -94,11 +92,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	static public Ggb3DVector vy = new Ggb3DVector(new double[] {0.0, 1.0, 0.0,  0.0});
 	static public Ggb3DVector vz = new Ggb3DVector(new double[] {0.0, 0.0, 1.0,  0.0});
 	
-	/*
-	protected GeoPlane3D movingPlane;
-	protected GeoSegment3D movingSegment;
-	protected Ggb3DVector movingPointProjected;
-	*/
+
+	//preview
+	private Previewable previewDrawable;
 
 
 	
@@ -119,11 +115,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		this.kernel3D = (Kernel3D) ec.getKernel();
 		euclidianController3D.setView(this);
 		
-		// TODO cast kernel to kernel3D
-		/*
-		kernel3D=new Kernel3D();
-		kernel3D.setConstruction(kernel.getConstruction());
-		*/
 		
 		//TODO replace canvas3D with GLDisplay
 		renderer = new EuclidianRenderer3D(this);
@@ -159,12 +150,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
+	/** return the 3D kernel
+	 * @return the 3D kernel
+	 */
+	public Kernel3D getKernel(){
+		return kernel3D;
+	}
 	
 	
 	
 	
-	
-	
+	public EuclidianController getEuclidianController(){
+		return euclidianController3D;
+	}
 	
 	
 	
@@ -801,8 +799,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public Previewable getPreviewDrawable() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return previewDrawable;
 	}
 
 
@@ -1175,14 +1173,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
-	public void setPreview(Previewable previewDrawable) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-
 
 
 
@@ -1350,8 +1340,29 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/////////////////////////////////////////
 	// previewables
 	
+	
+	// only used in 3D mode
+	public Previewable createPreviewPoint(ArrayList selectedPoints){
+		return new DrawPoint3D(this, selectedPoints);
+	}
+	
 	public Previewable createPreviewLine(ArrayList selectedPoints){
-		return null; //new DrawLine3D(this, selectedPoints);
+		
+		/*
+		Application.debug("createPreviewLine");
+		
+		selectedPoints = new ArrayList();
+		GeoPoint3D p1 = getKernel().Point3D("line1", 1, 1, 0);selectedPoints.add(p1);
+		//GeoPoint3D p2 = getKernel().Point3D("line2", 2, 1, 0);selectedPoints.add(p2);
+		
+
+				
+		Drawable3D d = new DrawLine3D(this, selectedPoints);
+		//drawList3D.add(d);
+		return (Previewable) d;
+		*/
+		
+		return null;
 	}
 	
 	public Previewable createPreviewSegment(ArrayList selectedPoints){
@@ -1365,6 +1376,41 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
 		return null;
 	}	
+
+
+	public void updatePreviewable(){
+		EuclidianController ec = getEuclidianController();
+		if (ec.getMode()==EuclidianView.MODE_POINT_IN_REGION){
+			GeoPointInterface point = (GeoPointInterface) ((Drawable3D) getPreviewDrawable()).getGeoElement();
+			//Application.debug("view.getHits().getTopHits() = "+getHits().getTopHits());
+			ec.updateNewPoint(point, 
+					getHits().getTopHits(), 
+					true, true, true, false, //TODO doSingleHighlighting = false ? 
+					false);
+		}else{
+			Point mouseLoc = getEuclidianController().getMouseLoc();
+			getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
+		}
+		
+	}
+	
+
+
+
+	public void setPreview(Previewable previewDrawable) {
+		
+		if (previewDrawable==null){
+			if (this.previewDrawable!=null)
+				drawList3D.remove((Drawable3D) this.previewDrawable);
+		}else
+			drawList3D.add((Drawable3D) previewDrawable);
+			
+			
+		this.previewDrawable = previewDrawable;
+		
+		
+		
+	}
 
 
 }

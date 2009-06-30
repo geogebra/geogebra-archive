@@ -271,6 +271,10 @@ public class EuclidianController implements MouseListener,
 	//void setView(EuclidianView view) {
 		this.view = view;
 	}
+	
+	public int getMode(){
+		return mode;
+	}
 
 	public void setMode(int newMode) {
 		endOfMode(mode);
@@ -322,6 +326,13 @@ public class EuclidianController implements MouseListener,
 		Previewable previewDrawable = null;
 		// init preview drawables
 		switch (mode) {
+		
+		
+		case EuclidianView.MODE_POINT_IN_REGION: // used for 3D : needs a previewable
+			previewDrawable = view.createPreviewPoint(null);
+			break;
+			
+		
 		case EuclidianView.MODE_JOIN: // line through two points
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewLine(selectedPoints);
@@ -440,6 +451,11 @@ public class EuclidianController implements MouseListener,
 		
 		// clear highlighting
 		refreshHighlighting(null);		
+	}
+	
+	
+	public Point getMouseLoc(){
+		return mouseLoc;
 	}
 
 	final public void mouseClicked(MouseEvent e) {	
@@ -1161,6 +1177,10 @@ public class EuclidianController implements MouseListener,
 		view.setShowMouseCoords(!app.isApplet()
 				&& !movedGeoPoint.hasPath());
 		view.setDragCursor();
+	}
+	
+	public void resetMovedGeoPoint(){
+		movedGeoPoint = null;
 	}
 	
 	
@@ -1902,7 +1922,6 @@ public class EuclidianController implements MouseListener,
 		}
 
 		if (hits.isEmpty()){
-			//Application.debug("hip");
 			view.setHits(mouseLoc,false);
 			hits = view.getHits();hits.removePolygons();
 			
@@ -1920,6 +1939,7 @@ public class EuclidianController implements MouseListener,
 		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
 						|| repaintNeeded;
 
+		
 		// set tool tip text
 		// the tooltips are only shown if algebra view is visible
 		if (app.isUsingLayout() && app.getGuiManager().showAlgebraView()) {
@@ -1934,8 +1954,8 @@ public class EuclidianController implements MouseListener,
 		}
 
 		// update previewable
-		if (view.getPreviewDrawable() != null) {
-			view.getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
+		if (view.getPreviewDrawable() != null) {			
+			view.updatePreviewable();
 			repaintNeeded = true;
 		}
 
@@ -2036,7 +2056,8 @@ public class EuclidianController implements MouseListener,
 		case EuclidianView.MODE_POINT_IN_REGION:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
-				hits.keepOnlyHitsForNewPointMode();
+				if (mode==EuclidianView.MODE_POINT)
+					hits.keepOnlyHitsForNewPointMode();
 				point(hits);
 			}
 			break;
@@ -2759,90 +2780,12 @@ public class EuclidianController implements MouseListener,
 		if (!allowPointCreation()) 
 			return false;
 		
-		// create hits for region
-		Hits regionHits = hits.getHits(Region.class, tempArrayList);
-		
-		// only keep polygon in hits if one side of polygon is in hits too
-		if (!hits.isEmpty())
-			hits.keepOnlyHitsForNewPointMode();
-		
-		Path path = null;	
-		Region region = null;
-		boolean createPoint = !hits.containsGeoPoint();//!view.containsGeoPoint(hits);
-		GeoPointInterface point = null;
-	
-		//Application.debug("createPoint 1 = "+createPoint);
-
-		//	try to get an intersection point
-		if (createPoint && intersectPossible) {
-			point = getSingleIntersectionPoint(hits);
-			if (point != null) {
-				// we don't use an undefined or infinite
-				// intersection point
-				if (!point.showInEuclidianView()) {
-					point.remove();
-				} else
-					createPoint = false;
-			}
-		}
-		
-		//Application.debug("createPoint 2 = "+createPoint);
-
-
-		// check for paths and regions
-		if (createPoint) {
-
-			// check if point lies in a region and if we are allowed to place a point
-			// in a region
-			if (!regionHits.isEmpty()) {
-				if (inRegionPossible) {
-					region = (Region) chooseGeo(regionHits, true);
-					createPoint = region != null;
-				} else {
-					createPoint = true;
-					// if inRegionPossible is false, the point is created as a free point
-				}
-				
-			}
-			
-			
-			//check if point lies on path and if we are allowed to place a point
-			// on a path			
-			Hits pathHits = hits.getHits(Path.class, tempArrayList);
-			if (!pathHits.isEmpty()) {
-				if (onPathPossible) {
-					path = (Path) chooseGeo(pathHits, true);
-					createPoint = path != null;
-				} else {
-					createPoint = false;
-				}
-			}
-			
-		}
-		
 
 		
-		//Application.debug("createPoint 3 = "+createPoint);
-
-		if (createPoint) {
-			transformCoords(); // use point capturing if on
-			if (path == null) {
-				if (region == null){
-					//point = kernel.Point(null, xRW, yRW);
-					point = createNewPoint();
-					view.setShowMouseCoords(true);
-				} else {
-					Application.debug("in Region : "+region);
-					point = createNewPoint(region);
-				}
-			} else {
-				//point = kernel.Point(null, path, xRW, yRW);
-				point = createNewPoint(path);
-			}
-		}
-
+		GeoPointInterface point = getNewPoint(hits, onPathPossible, inRegionPossible, intersectPossible, doSingleHighlighting);
+		
 		if (point != null) {
-			//movedGeoPoint = point;
+			
 			updateMovedGeoPoint(point);
 			
 			movedGeoElement = getMovedGeoPoint();
@@ -2860,15 +2803,130 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	
-	protected GeoPointInterface createNewPoint(){
+	// creates or get the new point (used for 3D)
+	protected GeoPointInterface getNewPoint(Hits hits,
+			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
+			boolean doSingleHighlighting) {
+
+		return updateNewPoint(null, hits, 
+				onPathPossible, inRegionPossible, intersectPossible, 
+				doSingleHighlighting, true);
+	}
+		
+	// update the new point (used for preview in 3D)
+	public GeoPointInterface updateNewPoint(
+			GeoPointInterface point,
+			Hits hits,
+			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible,
+			boolean doSingleHighlighting, boolean chooseGeo) {
+
+		// create hits for region
+		Hits regionHits = hits.getHits(Region.class, tempArrayList);
+		
+		// only keep polygon in hits if one side of polygon is in hits too
+		if (!hits.isEmpty())
+			hits.keepOnlyHitsForNewPointMode();
+		
+		Path path = null;	
+		Region region = null;
+		boolean createPoint = true;
+		if (hits.containsGeoPoint()){
+			createPoint = false;
+			if (point!=null)
+				((GeoElement) point).setEuclidianVisible(false);
+		}
+		
+	
+		
+	
+	
+		//	try to get an intersection point
+		if (createPoint && intersectPossible) {
+			GeoPointInterface intersectPoint = getSingleIntersectionPoint(hits);
+			if (intersectPoint != null) {
+				
+				point = intersectPoint;
+				// we don't use an undefined or infinite
+				// intersection point
+				if (!point.showInEuclidianView()) {
+					point.remove();
+				} else
+					createPoint = false;
+			}
+		}
+		
+	
+
+		// check for paths and regions
+		if (createPoint) {
+
+			// check if point lies in a region and if we are allowed to place a point
+			// in a region
+			if (!regionHits.isEmpty()) {
+				if (inRegionPossible) {
+					if (chooseGeo)
+						region = (Region) chooseGeo(regionHits, true);
+					else
+						region = (Region) regionHits.get(0);
+					createPoint = region != null;
+				} else {
+					createPoint = true;
+					// if inRegionPossible is false, the point is created as a free point
+				}
+				
+			}
+			
+			
+			//check if point lies on path and if we are allowed to place a point
+			// on a path			
+			Hits pathHits = hits.getHits(Path.class, tempArrayList);
+			if (!pathHits.isEmpty()) {
+				if (onPathPossible) {
+					if (chooseGeo)
+						path = (Path) chooseGeo(pathHits, true);
+					else
+						path = (Path) regionHits.get(0);
+					createPoint = path != null;
+				} else {
+					createPoint = false;
+				}
+			}
+			
+		}
+		
+
+		
+		//Application.debug("createPoint 3 = "+createPoint);
+
+		if (createPoint) {
+			transformCoords(); // use point capturing if on
+			if (path == null) {
+				if (region == null){
+					//point = kernel.Point(null, xRW, yRW);
+					point = createNewPoint(point);
+					view.setShowMouseCoords(true);
+				} else {
+					//Application.debug("in Region : "+region);
+					point = createNewPoint(point, region);
+				}
+			} else {
+				//point = kernel.Point(null, path, xRW, yRW);
+				point = createNewPoint(point, path);
+			}
+		}
+
+		return point;
+	}
+	
+	protected GeoPointInterface createNewPoint(GeoPointInterface point){
 		return kernel.Point(null, xRW, yRW);
 	}
 	
-	protected GeoPointInterface createNewPoint(Path path){
+	protected GeoPointInterface createNewPoint(GeoPointInterface point, Path path){
 		return kernel.Point(null, path, xRW, yRW);
 	}
 	
-	protected GeoPointInterface createNewPoint(Region region){
+	protected GeoPointInterface createNewPoint(GeoPointInterface point, Region region){
 		return kernel.PointIn(null,region,xRW, yRW);
 	}
 	
@@ -5597,7 +5655,7 @@ public class EuclidianController implements MouseListener,
 				}
 				
 				// find free point with the highest construction index
-				if (((GeoPoint)geo).isIndependent()) {
+				if (geo.isIndependent()) {
 					freePointCount ++;
 					if (retFree == null) {
 						retFree = geo;
