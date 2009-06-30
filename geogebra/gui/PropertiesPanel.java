@@ -4443,7 +4443,8 @@ class AnimationSpeedPanel
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == tfAnimSpeed)
 			doActionPerformed();
-		else if (e.getSource() == animationModeCB) setType(animationModeCB.getSelectedIndex());
+		else if (e.getSource() == animationModeCB) 
+			setType(animationModeCB.getSelectedIndex());
 	}
 
 	private void doActionPerformed() {
@@ -4457,6 +4458,8 @@ class AnimationSpeedPanel
 			}
 			kernel.udpateNeedToShowAnimationButton();
 			kernel.notifyRepaint();
+			
+			
 		}
 		update(geos);
 	}

@@ -49,6 +49,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -129,15 +130,11 @@ public class PropertiesDialog
 		}
 		
 		
-		//	LIST PANEL
-		JPanel listPanel = new JPanel();
-		//listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-		listPanel.setLayout(new BorderLayout(5, 2));
-		// JList with GeoElements		
-		
-		JScrollPane listScroller = new JScrollPane(geoTree);
-		//geoTree.setMinimumSize(new Dimension(150, 200));		
-		listPanel.add(listScroller, BorderLayout.CENTER);
+		//	LIST PANEL		
+		JScrollPane listScroller = new JScrollPane(geoTree);			
+		listScroller.setMinimumSize(new Dimension(120, 200));
+		listScroller.setBackground(geoTree.getBackground());
+		listScroller.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 
 		// delete button
 		delButton = new JButton(app.getImageIcon("delete_small.gif"));
@@ -146,15 +143,37 @@ public class PropertiesDialog
 				deleteSelectedGeos();
 			}
 		});
+		
+		// apply defaults button
+		defaultsButton = new JButton();
+		defaultsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				applyDefaults();
+			}
+		});	
 
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));			
-
+		closeButton = new JButton();
+		closeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				closeDialog();			
+			}
+		});			
+		
+		// build button panel with some buttons on the left
+		// and some on the right
+		JPanel buttonPanel = new JPanel(new BorderLayout());
+		JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
+		buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
+		
+		// left buttons
 		if (app.letDelete())
-			buttonPanel.add(delButton);
+			leftButtonPanel.add(delButton);
+		leftButtonPanel.add(defaultsButton);
 
-		listPanel.add(buttonPanel, BorderLayout.SOUTH);
-		listPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));	
-
+		// right buttons
+		rightButtonPanel.add(closeButton);		
 			
 		// PROPERTIES PANEL
 		if (colChooser == null) {
@@ -171,41 +190,19 @@ public class PropertiesDialog
 		}
 		selectionChanged(); // init propPanel		
 
-		closeButton = new JButton();
-		closeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				closeDialog();			
-			}
-		});		
-		
-		defaultsButton = new JButton();
-		defaultsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				applyDefaults();
-			}
-		});		
-
 		// put it all together				 		 		 
 		Container contentPane = getContentPane();
 		contentPane.removeAll();
-		//contentPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));		
-		contentPane.setLayout(new BorderLayout());
-				
-		buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(defaultsButton);
-		buttonPanel.add(closeButton);
-		//buttonPanel.add(cancelButton);
+		//contentPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		
-		JPanel rightPanel = new JPanel(new BorderLayout());
-		rightPanel.add(propPanel, BorderLayout.CENTER);
-		rightPanel.add(buttonPanel, BorderLayout.SOUTH);
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setLeftComponent(listScroller);
+		splitPane.setRightComponent(propPanel);
 		
-		JPanel dialogPanel = new JPanel(new BorderLayout());
-		dialogPanel.add(listPanel, BorderLayout.WEST);
-		dialogPanel.add(rightPanel, BorderLayout.CENTER);
-
-		contentPane.add(dialogPanel);						
-							
+		contentPane.setLayout(new BorderLayout());		
+		contentPane.add(splitPane, BorderLayout.CENTER);
+		contentPane.add(buttonPanel, BorderLayout.SOUTH);
+													
 		if (wasShowing) {
 			setVisible(true);
 		}		
@@ -845,18 +842,20 @@ public class PropertiesDialog
 			TreePath tp = getPathForLocation(e.getX(), e.getY());
 			GeoElement geo = AlgebraView.getGeoElementForPath(tp);
 
-			// check if we clicked on the 16x16 show/hide icon
-			Rectangle rect = getPathBounds(tp);
-			boolean iconClicked = rect != null && e.getX() - rect.x < 13; // distance from left border				
-			if (iconClicked) {
-				// icon clicked: toggle show/hide
-				geo.setEuclidianVisible(!geo.isSetEuclidianVisible());
-				geo.update();
-				kernel.notifyRepaint();
-				
-				// update properties dialog by selecting this geo again
-				geoElementSelected(geo, false);
-			}			
+			if (geo != null) {
+				// check if we clicked on the 16x16 show/hide icon
+				Rectangle rect = getPathBounds(tp);
+				boolean iconClicked = rect != null && e.getX() - rect.x < 13; // distance from left border				
+				if (iconClicked) {
+					// icon clicked: toggle show/hide
+					geo.setEuclidianVisible(!geo.isSetEuclidianVisible());
+					geo.update();
+					kernel.notifyRepaint();
+					
+					// update properties dialog by selecting this geo again
+					geoElementSelected(geo, false);
+				}			
+			}
 		}
 
 		public void mouseEntered(MouseEvent arg0) {
