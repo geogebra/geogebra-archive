@@ -2694,7 +2694,9 @@ public abstract class GeoElement
 				return getCaption();
 				
 			default : // case LABEL_NAME:
-				return label;
+				//return label;
+				//Mathieu Blossier - 2009-06-30
+				return getLabel();
 		}
 	}
 	

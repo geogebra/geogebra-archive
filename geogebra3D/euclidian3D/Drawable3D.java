@@ -412,7 +412,7 @@ public abstract class Drawable3D {
     	
 		renderer.setMatrix(labelMatrix);
 		renderer.drawText(getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY,
-				getGeoElement().getLabel(),colored); //TODO label position
+				getGeoElement().getLabelDescription(),colored); //TODO label position
     }
 	
 	
