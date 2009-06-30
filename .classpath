@@ -5,7 +5,11 @@
 	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="laf.jar"/>
 	<classpathentry kind="lib" path="3D/gluegen-rt.jar"/>
-	<classpathentry kind="lib" path="3D/jogl.jar"/>
+	<classpathentry kind="lib" path="3D/jogl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra/3D"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="p200ant_java5only.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="3D/vecmath.jar"/>
