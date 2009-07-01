@@ -23,6 +23,7 @@ package geogebra3D;
 //import geogebra.kernel.Construction;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
@@ -69,6 +70,8 @@ public class Test3D{
 		cons=kernel3D.getConstruction();
 		this.view2D = view2D;
 		this.app = app;
+		
+		app.setLabelingStyle(ConstructionDefaults.LABEL_VISIBLE_POINTS_ONLY);
 
 		//view2D.setAxesLineStyle(EuclidianView.AXES_LINE_TYPE_ARROW);
 		view2D.showAxes(true, true);
