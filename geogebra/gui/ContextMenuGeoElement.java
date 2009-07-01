@@ -611,7 +611,8 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				public void actionPerformed(ActionEvent e) {
 					File file =
 						app.getGuiManager().showSaveDialog(
-								Application.FILE_EXT_GIF, null,
+								"gif", // change to Application.FILE_EXT_GIF
+								null,
 								app.getPlain("gif") + " " + app.getMenu("Files"));
 
 
