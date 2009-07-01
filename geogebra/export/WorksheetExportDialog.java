@@ -619,8 +619,9 @@ public class WorksheetExportDialog extends JDialog {
 		int pageWidth = Math.max(appletWidth, DEFAULT_HTML_PAGE_WIDTH);
 		
 		// xhtml header
-		// Michael Borcherds 2008-05-01
-		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		// The declaration may be optionally omitted because it declares as its encoding the default encoding.
+		// and casuses problems on some servers
+		//sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n");
 		sb.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
 		sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
