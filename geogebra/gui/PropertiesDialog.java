@@ -221,7 +221,7 @@ public class PropertiesDialog
 		
 		delButton.setText(app.getPlain("Delete"));
 		closeButton.setText(app.getMenu("Close"));
-		defaultsButton.setText("Apply Defaults");
+		defaultsButton.setText(app.getMenu("ApplyDefaults"));
 		
 		geoTree.setLabels();
 		propPanel.setLabels();

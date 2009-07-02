@@ -83,7 +83,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	/**
 	 * inits GUI with labels of current language	 
 	 */
-	private void initGUI() {		
+	private void initGUI() {
 		// CREATE OBJECTS		
 		// colors
 		btBackgroundColor = new JButton("\u2588");		
@@ -97,16 +97,11 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		
 		// put it all together	
 		removeAll();	
-		JPanel dialogPanel = new JPanel(new BorderLayout());
-		dialogPanel.setBorder(BorderFactory.createEmptyBorder(5,5,0,5));
-		add(dialogPanel);					
-		JPanel northPanel = new JPanel(new BorderLayout());	
-		JPanel centerPanel = new JPanel(new BorderLayout());	
-		dialogPanel.add(northPanel, BorderLayout.NORTH);
-		dialogPanel.add(centerPanel, BorderLayout.CENTER);
+		setLayout(new BorderLayout());
+		
 		// tabbed pane for axes, grid
 		JTabbedPane tabbedPane = new JTabbedPane();
-		centerPanel.add(tabbedPane, BorderLayout.CENTER);	
+		add(tabbedPane, BorderLayout.CENTER);	
 		
 		// background color
 		JPanel bgPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
@@ -114,7 +109,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		bgPanel.add(label);
 		bgPanel.add(btBackgroundColor);
 		label.setLabelFor(btBackgroundColor);
-		northPanel.add(bgPanel, BorderLayout.NORTH);
+		add(bgPanel, BorderLayout.NORTH);
 			
 		// axes panel
 		JPanel axesPanel = new JPanel(new BorderLayout());

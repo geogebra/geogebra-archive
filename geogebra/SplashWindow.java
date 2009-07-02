@@ -92,8 +92,9 @@ public class SplashWindow extends Window {
      *
      * @param   owner       The frame owning the splash window.
      * @param   splashImage The splashImage to be displayed.
+     * @param	canDispose	If a mouse click should dispose the window
      */
-    public SplashWindow(Frame owner, Image splashImage) {
+    public SplashWindow(Frame owner, Image splashImage, boolean canDispose) {
         super(owner);
         this.splashImage = splashImage;
 
@@ -111,24 +112,27 @@ public class SplashWindow extends Window {
         setSize(imgWidth, imgHeight);
         setLocationRelativeTo(null);
 
-        // Users shall be able to close the splash window by
-        // clicking on its display area. This mouse listener
-        // listens for mouse clicks and disposes the splash window.
-        MouseAdapter disposeOnClick = new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                // Note: To avoid that method splash hangs, we
-                // must set paintCalled to true and call notifyAll.
-                // This is necessary because the mouse click may
-                // occur before the contents of the window
-                // has been painted.
-                synchronized(SplashWindow.this) {
-                    paintCalled = true;
-                    notifyAll();
-                }
-                setVisible(false);
-            }
-        };
-        addMouseListener(disposeOnClick);
+        // Florian Sonner (24.6.09)
+        if(canDispose) {
+	        // Users shall be able to close the splash window by
+	        // clicking on its display area. This mouse listener
+	        // listens for mouse clicks and disposes the splash window.
+	        MouseAdapter disposeOnClick = new MouseAdapter() {
+	            public void mouseClicked(MouseEvent evt) {
+	                // Note: To avoid that method splash hangs, we
+	                // must set paintCalled to true and call notifyAll.
+	                // This is necessary because the mouse click may
+	                // occur before the contents of the window
+	                // has been painted.
+	                synchronized(SplashWindow.this) {
+	                    paintCalled = true;
+	                    notifyAll();
+	                }
+	                setVisible(false);
+	            }
+	        };
+	        addMouseListener(disposeOnClick);
+        }
     }
 
     /**
@@ -172,7 +176,7 @@ public class SplashWindow extends Window {
      */
     public static Frame splash(Image splashImage) {
         Frame f = new Frame();
-        SplashWindow w = new SplashWindow(f, splashImage);
+        SplashWindow w = new SplashWindow(f, splashImage, false);
 
         // Show the window.
         w.toFront();

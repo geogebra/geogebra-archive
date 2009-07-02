@@ -49,12 +49,7 @@ GeoPointInterface {
 	// in GeoElement constructor
 	//public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	public int pointSize;
-	
-	/**
-	 * The individual style of this point. If the value is -1, the
-	 * global point style is used.
-	 */
-	private int pointStyle = -1; // Florian Sonner 2008-07-17
+	private int pointStyle;
 	
 	private Path path;
 	private PathParameter pathParameter;
@@ -204,9 +199,6 @@ GeoPointInterface {
 		case 2:
 			pointStyle = style;
 			break;
-			
-		default:
-			pointStyle = -1;
 		}
 	}
 	

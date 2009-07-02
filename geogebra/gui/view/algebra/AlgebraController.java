@@ -152,8 +152,14 @@ public class AlgebraController
 			}
 														
 			// single selection: popup menu
-			if (app.selectedGeosSize() < 2) {				
-				app.getGuiManager().showPopupMenu(geo, view, e.getPoint());						
+			if (app.selectedGeosSize() < 2) {		
+				// no geo selected, show general popup menu for the algebra view
+				if(geo == null) {
+					AlgebraContextMenu contextMenu = new AlgebraContextMenu(app);
+					contextMenu.show(view, e.getPoint().x, e.getPoint().y);
+				} else {
+					app.getGuiManager().showPopupMenu(geo, view, e.getPoint());
+				}		
 			} 
 			// multiple selection: properties dialog
 			else {														

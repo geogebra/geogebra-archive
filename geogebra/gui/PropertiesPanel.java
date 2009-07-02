@@ -2823,8 +2823,8 @@ public	class PropertiesPanel extends JPanel {
 		public PointStylePanel() {
 			ButtonGroup buttonGroup = new ButtonGroup();
 			
-			String[] strPointStyle = { app.getPlain("Default"), "\u25cf", "\u25cb", "\u2716" };
-			String[] strPointStyleAC = { "-1", "0", "2", "1" };
+			String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716" };
+			String[] strPointStyleAC = { "0", "2", "1" };
 			buttons = new JRadioButton[strPointStyle.length];
 			
 			for(int i = 0; i < strPointStyle.length; ++i) {

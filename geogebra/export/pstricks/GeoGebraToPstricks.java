@@ -1546,25 +1546,23 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			codePoint.append("pt 0");
 		}
 		
-		// TODO problems with defaults (F.S.)
-		if(dotstyle != -1) { // Florian Sonner 2008-08-31
-			if (coma) codePoint.append(",");
-			if (!bracket) codePoint.append("[");
-			coma = true;
-			bracket = true;
-			codePoint.append("dotstyle=");
-			switch(dotstyle){
-				case EuclidianView.POINT_STYLE_CIRCLE:
-					codePoint.append("o");
-				break;
-				case EuclidianView.POINT_STYLE_CROSS:
-					codePoint.append("x");
-				break;
-				case EuclidianView.POINT_STYLE_DOT:
-					codePoint.append("*");
-				break;
-			}
+		if (coma) codePoint.append(",");
+		if (!bracket) codePoint.append("[");
+		coma = true;
+		bracket = true;
+		codePoint.append("dotstyle=");
+		switch(dotstyle){
+			case EuclidianView.POINT_STYLE_CIRCLE:
+				codePoint.append("o");
+			break;
+			case EuclidianView.POINT_STYLE_CROSS:
+				codePoint.append("x");
+			break;
+			case EuclidianView.POINT_STYLE_DOT:
+				codePoint.append("*");
+			break;
 		}
+		
 		if (!dotcolor.equals(Color.BLACK)){
 			if (coma) codePoint.append(",");
 			if (!bracket) codePoint.append("[");

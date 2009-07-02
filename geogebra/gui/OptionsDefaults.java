@@ -251,15 +251,25 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 		
-		if(node == null || node == rootNode || node == pointsNode) {
+		if(node == null || node == rootNode) {
 			propPanel.setVisible(false);
 		} else {
 			if(!propPanel.isVisible()) {
 				propPanel.setVisible(true);
 			}
 			
-			if(typeToNode.containsKey(node)) {
-				propPanel.updateSelection(new Object[] { defaults.getDefaultGeo(typeToNode.get(node)) });
+			if(node == pointsNode) {
+				Object[] selection = new Object[pointsNode.getChildCount()];
+				
+				for(int i = 0; i < pointsNode.getChildCount(); ++i) {
+					selection[i] = defaults.getDefaultGeo(typeToNode.get(pointsNode.getChildAt(i)));
+				}
+				
+				propPanel.updateSelection(selection);
+			} else {
+				if(typeToNode.containsKey(node)) {
+					propPanel.updateSelection(new Object[] { defaults.getDefaultGeo(typeToNode.get(node)) });
+				}
 			}
 		}
 	}
