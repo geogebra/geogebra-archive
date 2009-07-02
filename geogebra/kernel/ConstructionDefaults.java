@@ -32,6 +32,7 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POINT_DEPENDENT = 11;
 	public static final int DEFAULT_POINT_ON_PATH = 12;
 	public static final int DEFAULT_POINT_IN_REGION = 13;
+	public static final int DEFAULT_POINT_COMPLEX =  14;
 	
 	public static final int DEFAULT_LINE = 20;			
 	public static final int DEFAULT_VECTOR = 30;	
@@ -57,7 +58,8 @@ public class ConstructionDefaults {
 	public static final Color colDepPoint = Color.darkGray;
 	public static final Color colPathPoint = new Color(125, 125, 255);
 	public static final Color colRegionPoint = colPathPoint;
-
+	public static final Color colComplexPoint = colPoint;
+	
 	// lines
 	private static final Color colLine = Color.black;
 
@@ -178,7 +180,16 @@ public class ConstructionDefaults {
 		regionPoint.setLocalVariableLabel("PointInRegion");
 		regionPoint.setObjColor(colRegionPoint);
 		defaultGeoElements.put(DEFAULT_POINT_IN_REGION, regionPoint);
-				
+		
+		// complex number (handled like a point)
+		GeoPoint complexPoint = new GeoPoint(cons);
+		complexPoint.setPointSize(EuclidianView.DEFAULT_POINT_SIZE);
+		complexPoint.setPointStyle(EuclidianView.POINT_STYLE_DOT);
+		complexPoint.setLocalVariableLabel("PointOn");
+		complexPoint.setObjColor(colComplexPoint);
+		complexPoint.setPointSize(pointSize);
+		defaultGeoElements.put(DEFAULT_POINT_COMPLEX, complexPoint);
+		
 		// line
 		GeoLine line = new GeoLine(cons);	
 //		line.setLocalVariableLabel(app.getPlain("Line"));
@@ -303,10 +314,13 @@ public class ConstructionDefaults {
 
 		switch (geo.getGeoClassType()) {
 		case GeoElement.GEO_CLASS_POINT:
-			if (geo.isIndependent()) {
+			GeoPoint p = (GeoPoint) geo;
+			
+			if(p.getMode() == Kernel.COORD_COMPLEX) {
+				type = DEFAULT_POINT_COMPLEX;
+			} else if (p.isIndependent()) {
 				type = DEFAULT_POINT_FREE;
 			} else {
-				GeoPoint p = (GeoPoint) geo;
 				if (p.hasPath())
 					type = DEFAULT_POINT_ON_PATH;	
 				else if (p.hasRegion())

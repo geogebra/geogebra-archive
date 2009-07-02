@@ -1341,11 +1341,15 @@ public class Kernel {
 	final public GeoPoint Point(String label, double x, double y, boolean complex) {
 		GeoPoint p = new GeoPoint(cons);
 		p.setCoords(x, y, 1.0);
-		if (complex)
+		if (complex) {
 			p.setMode(COORD_COMPLEX);
+			// we have to reset the visual style as the constructor
+			// did not know that this was a complex number
+			p.setConstructionDefaults();
+		}
 		else
 			p.setMode(COORD_CARTESIAN);
-		p.setLabel(label); // invokes add()                
+		p.setLabel(label); // invokes add()
 		return p;
 	}
 

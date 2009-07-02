@@ -57,7 +57,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 	/**
 	 * Nodes for points.
 	 */
-	private DefaultMutableTreeNode pointsNode, pointsFreeNode, pointsDepNode, pointsPathNode;
+	private DefaultMutableTreeNode pointsNode, pointsFreeNode, pointsDepNode, pointsPathNode, pointsInRegionNode, pointsComplexNode;
 	
 	private DefaultMutableTreeNode lineNode, vectorNode, conicNode, conicSectorNode;
 	
@@ -154,6 +154,8 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		pointsFreeNode = new DefaultMutableTreeNode();
 		pointsDepNode = new DefaultMutableTreeNode();
 		pointsPathNode = new DefaultMutableTreeNode();
+		pointsInRegionNode = new DefaultMutableTreeNode();
+		pointsComplexNode = new DefaultMutableTreeNode();
 		lineNode = new DefaultMutableTreeNode();
 		vectorNode = new DefaultMutableTreeNode();
 		conicNode = new DefaultMutableTreeNode();
@@ -172,6 +174,8 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		pointsNode.add(pointsFreeNode);
 		pointsNode.add(pointsDepNode);
 		pointsNode.add(pointsPathNode);
+		pointsNode.add(pointsInRegionNode);
+		pointsNode.add(pointsComplexNode);
 		
 		rootNode.add(lineNode);
 		rootNode.add(vectorNode);
@@ -193,6 +197,8 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		typeToNode.put(pointsFreeNode, ConstructionDefaults.DEFAULT_POINT_FREE);
 		typeToNode.put(pointsDepNode, ConstructionDefaults.DEFAULT_POINT_DEPENDENT);
 		typeToNode.put(pointsPathNode, ConstructionDefaults.DEFAULT_POINT_ON_PATH);
+		typeToNode.put(pointsInRegionNode, ConstructionDefaults.DEFAULT_POINT_IN_REGION);
+		typeToNode.put(pointsComplexNode, ConstructionDefaults.DEFAULT_POINT_COMPLEX);
 		typeToNode.put(lineNode, ConstructionDefaults.DEFAULT_LINE);
 		typeToNode.put(vectorNode, ConstructionDefaults.DEFAULT_VECTOR);
 		typeToNode.put(conicNode, ConstructionDefaults.DEFAULT_CONIC);
@@ -228,6 +234,8 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		pointsFreeNode.setUserObject(app.getPlain("PointFree"));
 		pointsDepNode.setUserObject(app.getPlain("PointDep"));
 		pointsPathNode.setUserObject(app.getPlain("PointOnPath"));
+		pointsInRegionNode.setUserObject(app.getPlain("PointInside"));
+		pointsComplexNode.setUserObject(app.getPlain("ComplexNumber"));
 		lineNode.setUserObject(app.getPlain("Line"));
 		vectorNode.setUserObject(app.getPlain("Vector"));
 		conicNode.setUserObject(app.getPlain("Conic"));

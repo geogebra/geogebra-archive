@@ -71,8 +71,8 @@ GeoPointInterface {
     private ArrayList locateableList;         
     
     public GeoPoint(Construction c) {     	 
-    	super(c);     	
-    	setUndefined();    	
+    	super(c);
+    	setUndefined();
     }
   
     /**

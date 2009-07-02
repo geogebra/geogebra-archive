@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
+// TODO deprecated due to OptionsDefaults (F.S.)
+
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Kernel;
