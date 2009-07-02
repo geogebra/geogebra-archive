@@ -4052,7 +4052,8 @@ class SliderPanel
 			cbSliderFixed.setSelected(num0.isSliderFixed());
 		
 		if (equalSliderHorizontal) {
-			coSliderHorizontal.setSelectedIndex(num0.isSliderHorizontal() ? 0 : 1);
+			// TODO why doesn't this work when you create a slider
+			//coSliderHorizontal.setSelectedIndex(num0.isSliderHorizontal() ? 0 : 1);
 		}
 			
 
