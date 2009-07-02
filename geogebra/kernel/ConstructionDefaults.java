@@ -282,6 +282,7 @@ public class ConstructionDefaults {
 		// list
 		GeoList list = new GeoList(cons);	
 //		list.setLocalVariableLabel(app.getPlain("List"));
+		list.setShowAllProperties(true); // show all properties in the defaults dialog
 		list.setLocalVariableLabel("List");
 		list.setObjColor(colList);
 		list.setAlphaValue(-1); // wait until we have an element in the list

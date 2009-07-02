@@ -131,10 +131,6 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		euclidianPanel = new OptionsEuclidian(app, app.getEuclidianView());
 
 		// init scroll panes for tabs (show no extra borders)
-		JScrollPane generalPanelScroll = new JScrollPane(generalPanel);
-		generalPanelScroll.setBorder(BorderFactory.createEmptyBorder());
-		JScrollPane defaultsPanelScroll = new JScrollPane(defaultsPanel);
-		defaultsPanelScroll.setBorder(BorderFactory.createEmptyBorder());
 		JScrollPane fontsAndLangPanelScroll = new JScrollPane(fontPanel);
 		fontsAndLangPanelScroll.setBorder(BorderFactory.createEmptyBorder());
 		JScrollPane euclidianPanelScroll = new JScrollPane(euclidianPanel);
@@ -145,11 +141,11 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		
 		// general
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), generalPanelScroll);
+				Color.RED), generalPanel);
 		
 		// defaults
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), defaultsPanelScroll);
+				Color.RED), defaultsPanel);
 		
 		// fonts & language
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",

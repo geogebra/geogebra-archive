@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import javax.swing.BorderFactory;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -106,14 +107,10 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		// init the real JTree component
 		tree = new JTree(treeModel);
 		
-		tree.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createMatteBorder(1, 1, 1, 1, SystemColor.controlDkShadow),
-				BorderFactory.createEmptyBorder(2, 2, 2, 2)
-		));
+		tree.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
 		tree.setRootVisible(false);
 		tree.setScrollsOnExpand(true);
-		tree.setPreferredSize(new Dimension(110, 0));
 		
 		// expand the point node and select the first point
 		tree.expandRow(0);
@@ -139,8 +136,14 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout());
 		
+		// tree scroll pane
+		JScrollPane treeScroller = new JScrollPane(tree);			
+		treeScroller.setMinimumSize(new Dimension(120, 200));
+		treeScroller.setBackground(tree.getBackground());
+		treeScroller.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SystemColor.controlDkShadow));
+		
 		// add components
-		add(tree, BorderLayout.WEST);
+		add(treeScroller, BorderLayout.WEST);
 		add(propPanel, BorderLayout.CENTER);
 	}
 	

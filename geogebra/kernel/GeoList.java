@@ -45,6 +45,13 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	private boolean isDrawable = true;
 	private int elementType = ELEMENT_TYPE_MIXED;
 	
+	/**
+	 * Whether this lists show all properties in the properties dialog. This
+	 * is just recommended for the default GeoList in order to show all possible
+	 * properties in the default configuration dialog.
+	 */
+	private boolean showAllProperties = false;
+	
 	private ArrayList colorFunctionListener; // Michael Borcherds 2008-04-02
     
     public GeoList(Construction c) { 
@@ -110,7 +117,17 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 				  
         isDefined = l.isDefined;
         elementType = l.elementType;	        
-    }    
+    }
+    
+    /**
+     * Set if the list should show all properties in the properties dialog. This
+     * is just recommended for the default list.
+     * 
+     * @param showAllProperties
+     */
+    public void setShowAllProperties(boolean showAllProperties) {
+    	this.showAllProperties = showAllProperties;
+    }
     
     private void copyListElements(GeoList otherList) {		
     	int otherListSize = otherList.size();
@@ -963,7 +980,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		 * {Circle[B, A], (x(A), y(A)), "text"}
 		 * we want to be able to set the line properties
 		 */
-		public boolean showLineProperties() {		
+		public boolean showLineProperties() {	
+			if(showAllProperties) return true;
 
 			for (int i=0 ; i < geoList.size() ; i++) {
 				GeoElement geo = (GeoElement)geoList.get(i);
@@ -979,7 +997,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		 * {Circle[B, A], (x(A), y(A)), "text"}
 		 * we want to be able to set the point properties
 		 */
-		public boolean showPointProperties() {		
+		public boolean showPointProperties() {	
+			if(showAllProperties) return true;		
 
 			for (int i=0 ; i < geoList.size() ; i++) {
 				GeoElement geo = (GeoElement)geoList.get(i);
