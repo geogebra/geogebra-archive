@@ -3923,6 +3923,7 @@ class SliderPanel
 		animationPanel.add(speedPanel);		
 			
 		initPanels();
+		setLabels();
 	}
 	
 	private void initPanels() {
@@ -4053,7 +4054,7 @@ class SliderPanel
 		
 		if (equalSliderHorizontal) {
 			// TODO why doesn't this work when you create a slider
-			//coSliderHorizontal.setSelectedIndex(num0.isSliderHorizontal() ? 0 : 1);
+			coSliderHorizontal.setSelectedIndex(num0.isSliderHorizontal() ? 0 : 1);
 		}
 			
 
@@ -4197,6 +4198,8 @@ class AnimationStepPanel
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(animPanel);
+		
+		setLabels();
 	}
 	
 	public void setLabels() {
@@ -4349,6 +4352,8 @@ class AnimationSpeedPanel
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(animPanel);
+		
+		setLabels();
 	}
 	
 	public void setLabels() {
@@ -4517,6 +4522,8 @@ class ShowConditionPanel
 		// put it all together
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		add(inputPanel);
+		
+		setLabels();
 	}
 	
 	public void setLabels() {
@@ -4689,6 +4696,8 @@ class ColorFunctionPanel
 		add(nameLabelB);		
 		add(inputPanelB);
 		add(btRemove);
+		
+		setLabels();
 	}
 	
 	public void setLabels() {
@@ -4884,6 +4893,7 @@ class NamePanel
 		captionLabel = new JLabel();		
 		captionLabel.setLabelFor(inputPanelCap);
 
+		setLabels();
 		updateGUI(true, true);
 	}
 
