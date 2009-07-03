@@ -3920,9 +3920,8 @@ class SliderPanel
 		
 		speedPanel = new AnimationSpeedPanel(app);
 		speedPanel.setPartOfSliderPanel();
-		animationPanel.add(speedPanel);		
-			
-		initPanels();
+		animationPanel.add(speedPanel);
+		
 		setLabels();
 	}
 	
