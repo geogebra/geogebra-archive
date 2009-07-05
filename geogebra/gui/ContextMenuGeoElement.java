@@ -606,7 +606,6 @@ public class ContextMenuGeoElement extends JPopupMenu {
 		if (geo.isAnimatable()) {            	
 			JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem( app.getPlain("ExportAnimatedGIF"));
 			cbItem.setIcon(app.getEmptyIcon());
-			cbItem.setSelected(((GeoNumeric) geo).isAnimating());
 			cbItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					File file =
@@ -631,8 +630,8 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					switch (type) {
 					case GeoElement.ANIMATION_DECREASING:
 						step = -num.getAnimationStep();
-						n = (int) ((max - min) / step);
-						if (app.getKernel().isZero(((max - min) / step) - n)) n++;
+						n = (int) ((max - min) / -step);
+						if (app.getKernel().isZero(((max - min) / -step) - n)) n++;
 						if (n == 0) n = 1;
 						time = 13000 / n;
 						val = max;
