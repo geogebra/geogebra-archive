@@ -608,6 +608,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			cbItem.setIcon(app.getEmptyIcon());
 			cbItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					
+					app.getKernel().getAnimatonManager().stopAnimation();
+					
 					File file =
 						app.getGuiManager().showSaveDialog(
 								"gif", // change to Application.FILE_EXT_GIF
