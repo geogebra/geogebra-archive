@@ -18,19 +18,25 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
+import org.apache.commons.math.distribution.DistributionFactory;
+import org.apache.commons.math.distribution.NormalDistribution;
+import org.apache.commons.math.distribution.TDistribution;
+
 /**
- * Normal
+ * 
  * @author Michael Borcherds
- * @version 20-01-2008
+ * @version 20090706
  */
 
 public class AlgoNormal extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private NumberValue a,b,c; //input
+	private NumberValue a, b, c; //input
     private GeoNumeric num; //output	
-
-    public AlgoNormal(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c) {
+    private DistributionFactory factory = app.getDistributionFactory();
+    private NormalDistribution normal = null;
+    
+    public AlgoNormal(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c) {
         super(cons);
         this.a = a;
         this.b = b;
@@ -62,14 +68,17 @@ public class AlgoNormal extends AlgoElement {
         return num;
     }
 
-    protected final void compute() {
+    @SuppressWarnings("deprecation")
+	protected final void compute() {
     	
     	
     	if (input[0].isDefined() && input[1].isDefined()) {
-    		    double mean=a.getDouble();
-    		    double sd=b.getDouble();
+		    double param = a.getDouble();
+		    double param2 = b.getDouble();
+    		    double val = c.getDouble();
         		try {
-            		num.setValue(getCDF((c.getDouble()-mean)/sd));
+        			NormalDistribution normal = getDistribution(param, param2);
+        			num.setValue(normal.cumulativeProbability(val));     // P(T <= val)
         			
         		}
         		catch (Exception e) {
@@ -78,52 +87,18 @@ public class AlgoNormal extends AlgoElement {
     	} else
     		num.setUndefined();
     }       
-    
-    // http://www4.ncsu.edu/unity/users/p/pfackler/www/ECG790C/accuratecumnorm.pdf
-    double getCDF(double x)
-    {
+        
+    @SuppressWarnings("deprecation")
+	NormalDistribution getDistribution(double param, double param2) {
+    	if (normal == null) 
+    		normal = factory.createNormalDistribution();
     	
-	double Cumnorm, build, Exponential;
-
-    	double XAbs = Math.abs(x);
-    	if (XAbs > 37) {
-    	Cumnorm = 0;
-    	} else {
-    	Exponential = Math.exp(-XAbs * XAbs / 2.0);
-    	if (XAbs < 7.07106781186547) {
-    	build = 3.52624965998911E-02 * XAbs + 0.700383064443688;
-    	build = build * XAbs + 6.37396220353165;
-    	build = build * XAbs + 33.912866078383;
-    	build = build * XAbs + 112.079291497871;
-    	build = build * XAbs + 221.213596169931;
-    	build = build * XAbs + 220.206867912376;
-    	Cumnorm = Exponential * build;
-    	build = 8.83883476483184E-02 * XAbs + 1.75566716318264;
-    	build = build * XAbs + 16.064177579207;
-    	build = build * XAbs + 86.7807322029461;
-    	build = build * XAbs + 296.564248779674;
-    	build = build * XAbs + 637.333633378831;
-    	build = build * XAbs + 793.826512519948;
-    	build = build * XAbs + 440.413735824752;
-    	Cumnorm = Cumnorm / build;
-    	} else {
-    	build = XAbs + 0.65;
-    	build = XAbs + 4 / build;
-    	build = XAbs + 3 / build;
-    	build = XAbs + 2 / build;
-    	build = XAbs + 1 / build;
-    	Cumnorm = Exponential / build / 2.506628274631;
-    	}
-    }
-    	if (x > 0) Cumnorm = 1 - Cumnorm;     
+    		normal.setMean(param);
+    		normal.setStandardDeviation(param2);
     	
-    	return Cumnorm;
+    	return normal;
     }
     
-    double normalZ(double X) {
-    	return Math.exp(- Math.sqrt(X) / 2.0)/Math.sqrt(2 * Math.PI);
-    }
-
 }
 
 

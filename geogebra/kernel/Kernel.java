@@ -66,6 +66,7 @@ import geogebra.kernel.statistics.AlgoSXX;
 import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
+import geogebra.kernel.statistics.AlgoTDistribution;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.kernel.statistics.RegressionMath;
 import geogebra.main.Application;
@@ -2789,6 +2790,16 @@ public class Kernel {
 	 */
 	final public GeoNumeric Normal(String label, NumberValue a, NumberValue b, NumberValue c) {
 		AlgoNormal algo = new AlgoNormal(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * TDistribution[degrees of freedom,x]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric TDistribution(String label, NumberValue a, NumberValue b) {
+		AlgoTDistribution algo = new AlgoTDistribution(cons, label, a, b);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}

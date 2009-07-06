@@ -22,6 +22,12 @@ import geogebra.kernel.arithmetic.NumberValue;
  * InverseNormal
  * @author Michael Borcherds
  * @version 20-01-2008
+ * 
+ * TODO change to use Apache commons math, but this needs fixing first:
+ *         	DistributionFactory factory = app.getDistributionFactory();
+        	NormalDistribution normal = factory.createNormalDistribution(0,1);
+        	double result = normal.inverseCumulativeProbability(0.977249868051820);
+throws an exception
  */
 
 public class AlgoInverseNormal extends AlgoElement {
