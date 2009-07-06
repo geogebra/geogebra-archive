@@ -703,7 +703,7 @@ public class WorksheetExportDialog extends JDialog {
 		}
 
 		sb.append("Sorry, the GeoGebra Applet could not be started. Please make sure that ");
-		sb.append("Java 1.4.2 (or later) is installed and active in your browser ");
+		sb.append("Java 1.5 (or later) is installed and active in your browser ");
 		sb.append("(<a href=\"http://java.sun.com/getjava\">Click here to install Java now</a>)\n");
 		sb.append("</applet>\n\n");
 		
