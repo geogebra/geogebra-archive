@@ -95,6 +95,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	//preview
 	private Previewable previewDrawable;
+	private GeoPoint3D previewPoint;
 
 
 	
@@ -143,6 +144,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		canvas.setFocusable(true);
 		
 		
+		
+		//previewables
+		kernel3D.setSilentMode(true);
+		previewPoint = kernel3D.Point3D(null, 1, 1, 0);
+		previewPoint.setIsPickable(false);
+		previewPoint.setLabelOffset(5, -5);
+		previewPoint.setEuclidianVisible(false);
+		kernel3D.setSilentMode(false);
 
 		
 		
@@ -1343,7 +1352,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	// only used in 3D mode
 	public Previewable createPreviewPoint(ArrayList selectedPoints){
-		return new DrawPoint3D(this, selectedPoints);
+		return new DrawPoint3D(this);
+	}
+	
+	/** return the point used for previewables
+	 * @return the point used for previewables
+	 */
+	public GeoPoint3D getPreviewPoint(){
+		return previewPoint;
 	}
 	
 	public Previewable createPreviewLine(ArrayList selectedPoints){

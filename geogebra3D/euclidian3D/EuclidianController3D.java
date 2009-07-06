@@ -338,6 +338,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			GeoPoint3D point3D = (GeoPoint3D) point;
 			point3D.setPath(null);
 			point3D.setRegion(null);
+			point3D.setCrossDecoration(true);
 			point3D.setObjColor(ConstructionDefaults3D.colPoint);
 			point3D.setEuclidianVisible(true);
 		}
@@ -362,6 +363,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			GeoPoint3D point3D = (GeoPoint3D) point;
 			point3D.setPath(path);
 			point3D.setRegion(null);
+			point3D.setCrossDecoration(false);
 			point3D.setObjColor(ConstructionDefaults3D.colPathPoint);
 			point3D.setCoordDecoration(false);
 			point3D.setEuclidianVisible(true);
@@ -385,6 +387,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			GeoPoint3D point3D = (GeoPoint3D) point;
 			point3D.setPath(null);
 			point3D.setRegion(region);
+			point3D.setCrossDecoration(true);
 			point3D.setObjColor(ConstructionDefaults3D.colRegionPoint);
 			point3D.setCoordDecoration(false);
 			point3D.setEuclidianVisible(true);

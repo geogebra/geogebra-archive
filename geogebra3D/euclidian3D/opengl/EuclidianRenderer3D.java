@@ -1053,53 +1053,137 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
  
     
-    /**
-     * draws a polygon according to current drawing matrix.
-     * 
-     * @param points coordinates of the vertices
-     */
-    public void drawPolygon(double[][] points){    	
-    	initMatrix();
-    	
-    	gl.glDisable(GL.GL_CULL_FACE);
+    
+    
+    /** draws a cross with edges using size and getThickness() parameters
+     * @param size size of the cross
+     */    
+    public void drawCrossWithEdges(double size){
     	
     	
-	    EuclidianRenderer3DTesselCallBack tessCallback = new EuclidianRenderer3DTesselCallBack(gl, glu);
+    	double thickness = getThickness()/2;
+    	
+    	double[][] cross = {
+    	    	{size, thickness},
+    	       	{thickness, thickness},
+    	       	{thickness, size},
+    	       	{-thickness, size},
+    	       	{-thickness, thickness},
+    	       	{-size, thickness},
+    	       	
+    	       	{-size, -thickness},
+    	       	{-thickness, -thickness},
+    	       	{-thickness, -size},
+    	       	{thickness, -size},
+    	       	{thickness, -thickness},
+    	    	{size, -thickness}
+    	};
+    	
+    	double thickness2 = thickness;
+    	
+    	double[][] outlineCross = {
+    	    	{size+thickness2, thickness+thickness2},
+    	       	{thickness+thickness2, thickness+thickness2},
+    	       	{thickness+thickness2, size+thickness2},
+    	       	{-thickness-thickness2, size+thickness2},
+    	       	{-thickness-thickness2, thickness+thickness2},
+    	       	{-size-thickness2, thickness+thickness2},
+    	       	
+    	       	{-size-thickness2, -thickness-thickness2},
+    	       	{-thickness-thickness2, -thickness-thickness2},
+    	       	{-thickness-thickness2, -size-thickness2},
+    	       	{thickness+thickness2, -size-thickness2},
+    	       	{thickness+thickness2, -thickness-thickness2},
+    	    	{size+thickness2, -thickness-thickness2}
+    	};
+    	
+    	
+    	gl.glDisable(GL.GL_LIGHTING);
+    	
+    	
+    	// the cross itself
+    	gl.glColor3f(1.0f, 1.0f, 1.0f);
+    	startPolygon(true);   	    	
+    	for (int i=0; i<cross.length; i++)
+    		addToPolygon(cross[i][0], cross[i][1], thickness);
+    	endPolygon();
+    	
+    	// the cross itself (back)
+    	gl.glColor3f(1.0f, 1.0f, 1.0f);
+    	startPolygon(true);   	    	
+    	for (int i=cross.length-1; i>=0; i--)
+    		addToPolygon(cross[i][0], cross[i][1], -thickness);
+    	endPolygon(); 
+    	
+    	
+    	
+    	// outline
+    	gl.glColor3f(0.0f, 0.0f, 0.0f);
+    	startPolygon(true);   	    	
+    	for (int i=0; i<cross.length; i++)
+    		addToPolygon(cross[i][0], cross[i][1], thickness);
+    	addToPolygon(cross[0][0], cross[0][1], thickness);
+    	for (int i=0; i<outlineCross.length; i++)
+    		addToPolygon(outlineCross[i][0], outlineCross[i][1], thickness);
+    	addToPolygon(outlineCross[0][0], outlineCross[0][1], thickness);
+    	endPolygon();   	
+    	
 
-	    
-	    tobj = glu.gluNewTess();
-
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
-
-	    gl.glShadeModel(GL.GL_SMOOTH);
-	    glu.gluTessBeginPolygon(tobj, null);
-	    glu.gluTessBeginContour(tobj);
-	    
-	    for (int i=0;i<points.length;i++)
-	    	glu.gluTessVertex(tobj, points[i], 0, points[i]);
-
-	    glu.gluTessEndContour(tobj);
-	    glu.gluTessEndPolygon(tobj);
-	    
-	    glu.gluDeleteTess(tobj);
-        
-	   	gl.glEnable(GL.GL_CULL_FACE);
-      
-        resetMatrix();
+    	// outline (back)
+    	gl.glColor3f(0.0f, 0.0f, 0.0f);
+    	startPolygon(true);   	    
+    	addToPolygon(cross[0][0], cross[0][1], -thickness);
+    	for (int i=cross.length-1; i>=0; i--)
+    		addToPolygon(cross[i][0], cross[i][1], -thickness); 
+    	addToPolygon(outlineCross[0][0], outlineCross[0][1], -thickness);
+    	for (int i=cross.length-1; i>=0; i--)
+    		addToPolygon(outlineCross[i][0], outlineCross[i][1], -thickness);    	
+    	endPolygon();     	
+    	
+    	
+    	// edges
+    	gl.glColor3f(0.0f, 0.0f, 0.0f);
+    	for (int i=0; i<outlineCross.length-1; i++){
+    		startPolygon(true);
+    		addToPolygon(outlineCross[i][0], outlineCross[i][1], thickness);
+    		addToPolygon(outlineCross[i][0], outlineCross[i][1], -thickness);
+    		addToPolygon(outlineCross[i+1][0], outlineCross[i+1][1], -thickness);
+    		addToPolygon(outlineCross[i+1][0], outlineCross[i+1][1], thickness);  		
+    		endPolygon();
+    	}  	
+		startPolygon(true);
+		addToPolygon(outlineCross[outlineCross.length-1][0], outlineCross[outlineCross.length-1][1], thickness);
+		addToPolygon(outlineCross[outlineCross.length-1][0], outlineCross[outlineCross.length-1][1], -thickness);
+		addToPolygon(outlineCross[0][0], outlineCross[0][1], -thickness);
+		addToPolygon(outlineCross[0][0], outlineCross[0][1], thickness);  		
+		endPolygon(true);
+    	
+    	
+    	
+    	gl.glEnable(GL.GL_LIGHTING);
+    	
     }
+    
+    
     
     
     /**
      * set the tesselator to start drawing a new polygon
      */
     public void startPolygon(){
+    	startPolygon(false);
+    }
+    
+    
+    /**
+     * set the tesselator to start drawing a new polygon
+     * @param cullFace says if the faces have to be culled
+     */
+    public void startPolygon(boolean cullFace){
     	initMatrix();
     	
-    	gl.glDisable(GL.GL_CULL_FACE);
+    	if(!cullFace)
+    		gl.glDisable(GL.GL_CULL_FACE);
     	
 
     	
@@ -1126,26 +1210,45 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param y y-coordinate
      */
     public void addToPolygon(double x, double y){
-    	double[] point = {x,y,0};//new double
-    	glu.gluTessVertex(tobj, point, 0, point);
+    	//double[] point = {x,y,0};//new double
+    	//glu.gluTessVertex(tobj, point, 0, point);
+    	addToPolygon(x, y, 0);
     }
+    
+    /** add the (x,y,z) point as a new vertex for the current polygon
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param z z-coordinate
+     */
+    public void addToPolygon(double x, double y, double z){
+    	double[] point = {x,y,z};//new double
+    	glu.gluTessVertex(tobj, point, 0, point);
+    }    
     
     
     /**
      * end of the current polygon
      */
     public void endPolygon(){
+
+    	endPolygon(false);
+    }
+    
+    /**
+     * end of the current polygon
+     * @param cullFace says if the faces have been culled
+     */
+    public void endPolygon(boolean cullFace){
 	    glu.gluTessEndContour(tobj);
 	    glu.gluTessEndPolygon(tobj);
 	    
 	    glu.gluDeleteTess(tobj);
         
-	   	gl.glEnable(GL.GL_CULL_FACE);
+	    if(!cullFace)
+	    	gl.glEnable(GL.GL_CULL_FACE);
       
         resetMatrix();   
-        
-
-
+ 
     }
     
     

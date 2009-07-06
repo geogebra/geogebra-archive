@@ -41,18 +41,24 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 	
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
-		GeoPoint3D l_point = (GeoPoint3D) getGeoElement(); 
+		GeoPoint3D point = (GeoPoint3D) getGeoElement(); 
 		
-		if (l_point.hasCoordDecoration()){
+		if (point.hasCoordDecoration()){
 			renderer.setThickness(LINE3D_THICKNESS);
 			//TODO use gui
 			renderer.drawCoordSegments(ConstructionDefaults3D.colXAXIS,ConstructionDefaults3D.colYAXIS,ConstructionDefaults3D.colZAXIS); 
 		}
 		
-		if (l_point.hasPath())
-			renderer.drawSphere(POINT3D_RADIUS*POINT_ON_PATH_DILATATION*l_point.getPointSize()); //points on path are more visible 
+		if (point.hasCrossDecoration()){
+			renderer.setThickness(0.025);
+			renderer.drawCrossWithEdges(0.12);
+		}
+		else if (point.hasPath())
+			renderer.drawSphere(POINT3D_RADIUS*POINT_ON_PATH_DILATATION*point.getPointSize()); //points on path are more visible 
 		else
-			renderer.drawSphere(POINT3D_RADIUS*l_point.getPointSize());
+			renderer.drawSphere(POINT3D_RADIUS*point.getPointSize());
+		
+
 	}
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
@@ -83,22 +89,16 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 	// Previewable interface 
 	
 
-	public DrawPoint3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
+	/**
+	 * @param a_view3D
+	 */
+	public DrawPoint3D(EuclidianView3D a_view3D){
 		
 		super(a_view3D);
 		
 
-		Kernel3D kernel = getView3D().getKernel();
-		kernel.setSilentMode(true);
-		GeoPoint3D p = kernel.Point3D(null, 1, 1, 0);
-		p.setIsPickable(false);
-		p.setLabelOffset(5, -5);
-		setGeoElement(p);
-		kernel.setSilentMode(false);
-		
-		//Application.debug("preview point : "+getGeoElement()+ " ("+((GeoElement3D) getGeoElement()).isPickable()+")");
 
-		updatePreview();
+		setGeoElement(a_view3D.getPreviewPoint());
 		
 	}	
 

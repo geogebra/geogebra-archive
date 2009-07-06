@@ -348,6 +348,10 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {	
+		
+		// Mathieu Blossier - 2009-07-06
+		// doClick seems to be called twice
+		
 		doClick();		
 	}
 	

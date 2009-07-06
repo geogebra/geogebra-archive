@@ -33,6 +33,7 @@ import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.EuclidianView3D;
 
 
 /**
@@ -77,7 +78,9 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 
     /** says if decoration have to be drawn for coordinates */
 	private boolean coordDecoration = false;
-    
+	
+    /** says if cross has to be drawn for coordinates */  
+	private boolean crossDecoration = false;
     
     public GeoPoint3D(Construction c) { 
     	super(c,4); 
@@ -117,6 +120,19 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     public void setRegion(Region region){
     	this.region = region;
+    	
+    	if (region!=null){
+    		// use drawing coordinates for the cross
+    		// only used for preview 
+    		getDrawingMatrix().setVx(((GeoElement3DInterface) region).getDrawingMatrix().getVx());
+    		getDrawingMatrix().setVy(((GeoElement3DInterface) region).getDrawingMatrix().getVy());
+    		getDrawingMatrix().setVz(((GeoElement3DInterface) region).getDrawingMatrix().getVz());
+    	}else{
+    		getDrawingMatrix().setVx(EuclidianView3D.vx);
+    		getDrawingMatrix().setVy(EuclidianView3D.vy);
+    		getDrawingMatrix().setVz(EuclidianView3D.vz);
+    	}
+		
     }
     
 
@@ -458,6 +474,15 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     }
     
     
+    public void setCrossDecoration(boolean val){
+    	crossDecoration = val;
+    }
+    
+    public boolean hasCrossDecoration(){
+    	return crossDecoration;
+    }
+    
+  
     
 	
 	
