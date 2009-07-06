@@ -574,7 +574,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         classname = getClassName();
         // dependent algorithm is an "Expression"
         if (classname.startsWith("AlgoDependent")) {
-            cmdname = "expression";
+            cmdname = "Expression";
         } else if (classname.equals("AlgoPointOnPath")) {
         	AlgoPointOnPath algo = (AlgoPointOnPath) this;
         	cmdname = getIntergeoString(classname + "+" + algo.getPath().toGeoElement().getClassName());
@@ -648,9 +648,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	if (mode == CONSTRAINTS) {
     	        // command
     	        String cmdname = getIntergeoName();
-    	        if (!cmdname.equals("expression"))
+    	        if (!cmdname.equals("Expression"))
     	            sb.append(getCmdI2G(cmdname));
-        	} else {
+        	} else if (output != null){
     	        // output               
     	        GeoElement geo;                   
     	        for (int i = 0; i < output.length; i++) {

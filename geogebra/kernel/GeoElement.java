@@ -3015,6 +3015,9 @@ public abstract class GeoElement
 	 * Intergeo File Format (Yves Kreis)
 	 */
 	public String getI2G(int mode) {
+		boolean oldValue = kernel.isTranslateCommandName();
+		kernel.setTranslateCommandName(false);
+		
 		String type = getXMLtypeString();
 		
 		StringBuffer sb = new StringBuffer();
@@ -3062,6 +3065,7 @@ public abstract class GeoElement
 			sb.append(">\n");
 		}
 		
+		kernel.setTranslateCommandName(oldValue);
 		return sb.toString();
 	}
 	

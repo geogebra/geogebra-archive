@@ -1381,8 +1381,10 @@ public class Construction {
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
 		int oldPrintForm = kernel.getCASPrintForm();
+        boolean oldValue = kernel.isTranslateCommandName();
 		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+        kernel.setTranslateCommandName(false); 
 
 		try {
 			ConstructionElement ce;
@@ -1415,6 +1417,8 @@ public class Construction {
 		// restore old kernel settings
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
+		kernel.setTranslateCommandName(oldValue);                          
+		
 		return sb.toString();
 	}
 

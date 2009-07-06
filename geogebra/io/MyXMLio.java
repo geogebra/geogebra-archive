@@ -84,8 +84,9 @@ public class MyXMLio {
 															// vertical pixels
 
 	// Added for Intergeo File Format (Yves Kreis) -->
-	final private static String I2G_IMAGES_FOLDER = "resources/images/";
-	final private static String I2G_PRIVATE_FOLDER = "private/org.geogebra/";
+	final private static String I2G_IMAGES = "resources/images/";
+	final private static String I2G_PRIVATE = "private/org.geogebra/";
+	final private static String I2G_PRIVATE_IMAGES = "private/org.geogebra/images/";
 	// <-- Added for Intergeo File Format (Yves Kreis)
 
 	// Use the default (non-validating) parser
@@ -425,7 +426,7 @@ public class MyXMLio {
 
 		// write construction images
 		writeConstructionImages(kernel.getConstruction(), zip,
-				I2G_IMAGES_FOLDER);
+				I2G_IMAGES);
 
 		// save macros
 		if (kernel.hasMacros()) {
@@ -433,17 +434,17 @@ public class MyXMLio {
 			ArrayList macros = kernel.getAllMacros();
 
 			// write all images used by macros
-			writeMacroImages(macros, zip, I2G_IMAGES_FOLDER);
+			writeMacroImages(macros, zip, I2G_PRIVATE_IMAGES);
 
 			// write all macros to one special XML file in zip
-			zip.putNextEntry(new ZipEntry(I2G_PRIVATE_FOLDER + XML_FILE_MACRO));
+			zip.putNextEntry(new ZipEntry(I2G_PRIVATE + XML_FILE_MACRO));
 			osw.write(getFullMacroXML(macros));
 			osw.flush();
 			zip.closeEntry();
 		}
 
 		// write XML file for construction
-		zip.putNextEntry(new ZipEntry(I2G_PRIVATE_FOLDER + XML_FILE));
+		zip.putNextEntry(new ZipEntry(I2G_PRIVATE + XML_FILE));
 		osw.write(getFullXML());
 		osw.flush();
 		zip.closeEntry();
