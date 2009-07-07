@@ -79,8 +79,6 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     /** says if decoration have to be drawn for coordinates */
 	private boolean coordDecoration = false;
 	
-    /** says if cross has to be drawn for coordinates */  
-	private boolean crossDecoration = false;
     
     public GeoPoint3D(Construction c) { 
     	super(c,4); 
@@ -473,16 +471,6 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     	return coordDecoration;
     }
     
-    
-    public void setCrossDecoration(boolean val){
-    	crossDecoration = val;
-    }
-    
-    public boolean hasCrossDecoration(){
-    	return crossDecoration;
-    }
-    
-  
     
 	
 	

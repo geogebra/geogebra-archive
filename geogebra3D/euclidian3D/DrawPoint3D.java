@@ -49,11 +49,13 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 			renderer.drawCoordSegments(ConstructionDefaults3D.colXAXIS,ConstructionDefaults3D.colYAXIS,ConstructionDefaults3D.colZAXIS); 
 		}
 		
+		/*
 		if (point.hasCrossDecoration()){
 			renderer.setThickness(0.025);
 			renderer.drawCrossWithEdges(0.12);
 		}
-		else if (point.hasPath())
+		*/
+		if (point.hasPath())
 			renderer.drawSphere(POINT3D_RADIUS*POINT_ON_PATH_DILATATION*point.getPointSize()); //points on path are more visible 
 		else
 			renderer.drawSphere(POINT3D_RADIUS*point.getPointSize());
@@ -96,8 +98,6 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 		
 		super(a_view3D);
 		
-
-
 		setGeoElement(a_view3D.getPreviewPoint());
 		
 	}	

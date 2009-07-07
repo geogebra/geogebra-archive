@@ -292,35 +292,40 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
 			boolean doSingleHighlighting) {
 		
-		if (view.getPreviewDrawable()!=null){
-			GeoElement geo = ((Drawable3D) view.getPreviewDrawable()).getGeoElement();
 
-			if (geo.isGeoPoint()){
-				if (geo.isEuclidianVisible()){
-					GeoPoint3D point = (GeoPoint3D) geo;
-					GeoPoint3D ret;
-					if (point.hasPath())
-						ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
-					else if (point.hasRegion())
-						ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());
-					else{
-						ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
-						ret.setCoordDecoration(true);
-					}
-					ret.setCoords(point);
-					ret.updateCoords();
-					point.setEuclidianVisible(false);
-
-					return ret;
-				}
+		if (view3D.previewPointIsNew()){
+			GeoPoint3D point = view3D.getPreviewPoint();
+			GeoPoint3D ret;
+			if (point.hasPath())
+				ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
+			else if (point.hasRegion())
+				ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());
+			else{
+				ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
+				ret.setCoordDecoration(true);
 			}
+			ret.setCoords(point);
+			ret.updateCoords();
+			ret.update();
+			point.setEuclidianVisible(false);
+
+			return ret;
+
 		}
-		
+	
+		Application.debug("super.getNewPoint");
 		return super.getNewPoint(hits, 
 				onPathPossible, inRegionPossible, intersectPossible, 
 				doSingleHighlighting);
 
 		
+	}
+	
+	/** put sourcePoint coordinates in point */
+	protected void createNewPoint(GeoPointInterface point, GeoPointInterface sourcePoint){
+		((GeoPoint3D) point).setCoords((GeoPoint3D) sourcePoint);
+		((GeoPoint3D) point).updateCoords();
+		view3D.setPreviewPointIsNew(false);
 	}
 	
 	
@@ -330,17 +335,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 */
 	protected GeoPointInterface createNewPoint(GeoPointInterface point){
 		
-		//Application.debug("point = "+point);
-		
 		if (point == null)
 			point = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
 		else{
 			GeoPoint3D point3D = (GeoPoint3D) point;
 			point3D.setPath(null);
 			point3D.setRegion(null);
-			point3D.setCrossDecoration(true);
-			point3D.setObjColor(ConstructionDefaults3D.colPoint);
-			point3D.setEuclidianVisible(true);
+			view3D.setPreviewPointIsNew(true);
 		}
 		
 		setCurrentPlane(Ggb3DMatrix4x4.Identity());
@@ -363,10 +364,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			GeoPoint3D point3D = (GeoPoint3D) point;
 			point3D.setPath(path);
 			point3D.setRegion(null);
-			point3D.setCrossDecoration(false);
-			point3D.setObjColor(ConstructionDefaults3D.colPathPoint);
-			point3D.setCoordDecoration(false);
-			point3D.setEuclidianVisible(true);
+			view3D.setPreviewPointIsNew(true);
 		}			
 		
 		setMouseInformation((GeoPoint3D) point);
@@ -387,10 +385,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			GeoPoint3D point3D = (GeoPoint3D) point;
 			point3D.setPath(null);
 			point3D.setRegion(region);
-			point3D.setCrossDecoration(true);
-			point3D.setObjColor(ConstructionDefaults3D.colRegionPoint);
-			point3D.setCoordDecoration(false);
-			point3D.setEuclidianVisible(true);
+			view3D.setPreviewPointIsNew(true);
 		}
 		
 		setMouseInformation((GeoPoint3D) point);

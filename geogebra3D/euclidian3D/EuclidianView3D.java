@@ -15,6 +15,7 @@ import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.kernel3D.ConstructionDefaults3D;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -96,8 +97,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//preview
 	private Previewable previewDrawable;
 	private GeoPoint3D previewPoint;
+	private boolean previewPointIsNew = false;
 
+	
+	//cursor
+	private static final int CURSOR_DEFAULT = 0;
+	private static final int CURSOR_DRAG = 1;
+	private static final int CURSOR_MOVE = 2;
+	private static final int CURSOR_HIT = 3;
+	private int cursor = CURSOR_DEFAULT;
+	
 
+	//mouse
+	private boolean hasMouse = false;
 	
 	//stuff TODO
 	protected Rectangle selectionRectangle = new Rectangle();
@@ -1060,10 +1072,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
-	public void setDefaultCursor() {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
@@ -1078,10 +1086,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
-	public void setDragCursor() {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
@@ -1089,17 +1093,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
-
-
-
-
-
-
-
-	public void setHitCursor() {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
@@ -1162,12 +1155,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
-
-
-	public void setMoveCursor() {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
@@ -1362,13 +1349,28 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return previewPoint;
 	}
 	
+	
+	/** sets if the preview point is a new point
+	 * @param v
+	 */
+	public void setPreviewPointIsNew(boolean v){
+		previewPointIsNew = v;
+	}
+	
+	/** says if the preview point is a new point
+	 * @return true if the preview point is a new point
+	 */
+	public boolean previewPointIsNew(){
+		return previewPointIsNew;
+	}
+	
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 		
-		/*
+		
 		Application.debug("createPreviewLine");
 		
-		selectedPoints = new ArrayList();
-		GeoPoint3D p1 = getKernel().Point3D("line1", 1, 1, 0);selectedPoints.add(p1);
+		//selectedPoints = new ArrayList();
+		//GeoPoint3D p1 = getKernel().Point3D("line1", 1, 1, 0);selectedPoints.add(p1);
 		//GeoPoint3D p2 = getKernel().Point3D("line2", 2, 1, 0);selectedPoints.add(p2);
 		
 
@@ -1376,9 +1378,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		Drawable3D d = new DrawLine3D(this, selectedPoints);
 		//drawList3D.add(d);
 		return (Previewable) d;
-		*/
 		
-		return null;
+		
+		//return null;
 	}
 	
 	public Previewable createPreviewSegment(ArrayList selectedPoints){
@@ -1396,18 +1398,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void updatePreviewable(){
 		EuclidianController ec = getEuclidianController();
-		if (ec.getMode()==EuclidianView.MODE_POINT_IN_REGION){
-			GeoPointInterface point = (GeoPointInterface) ((Drawable3D) getPreviewDrawable()).getGeoElement();
-			//Application.debug("view.getHits().getTopHits() = "+getHits().getTopHits());
+		//if (ec.getMode()==EuclidianView.MODE_POINT_IN_REGION){
+			//GeoPointInterface point = (GeoPointInterface) ((Drawable3D) getPreviewDrawable()).getGeoElement();
+			GeoPoint3D point = getPreviewPoint();
 			ec.updateNewPoint(point, 
 					getHits().getTopHits(), 
 					true, true, true, false, //TODO doSingleHighlighting = false ? 
 					false);
+			/*
 		}else{
 			Point mouseLoc = getEuclidianController().getMouseLoc();
 			getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
 		}
-		
+		*/
+			getPreviewDrawable().updatePreview();
 	}
 	
 
@@ -1417,16 +1421,106 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		if (previewDrawable==null){
 			if (this.previewDrawable!=null)
-				drawList3D.remove((Drawable3D) this.previewDrawable);
-		}else
+				drawList3D.remove((Drawable3D) this.previewDrawable);			
+		}else{
 			drawList3D.add((Drawable3D) previewDrawable);
+		}
 			
 			
+		setPreviewPointIsNew(false);
+		
 		this.previewDrawable = previewDrawable;
 		
 		
 		
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/////////////////////////////////////////////////////
+	// 
+	// CURSOR
+	//
+	/////////////////////////////////////////////////////
+	
+	public void drawCursor(EuclidianRenderer3D renderer){
+
+		if (hasMouse){
+			switch(cursor){
+			case CURSOR_DEFAULT:
+				if(previewPointIsNew())
+					drawCursorCross(renderer);
+				break;
+			case CURSOR_HIT:
+				if(previewPointIsNew()){
+					if (previewPoint.hasPath()){
+						drawCursorOnPath(renderer);
+					}else{
+						drawCursorCross(renderer);
+					}
+				}
+				break;
+			}
+		}
+	}
+	
+	private void drawCursorCross(EuclidianRenderer3D renderer){
+
+
+		renderer.setMatrix(getPreviewPoint().getDrawingMatrix());
+		renderer.setThickness(0.025);
+		renderer.drawCrossWithEdges(0.12);
+
+
+	}
+	
+	private void drawCursorOnPath(EuclidianRenderer3D renderer){
+		renderer.setMatrix(getPreviewPoint().getDrawingMatrix());
+		renderer.setMaterial(ConstructionDefaults3D.colPathPoint,1.0f);
+		renderer.drawSphere(Drawable3D.POINT3D_RADIUS*Drawable3D.POINT_ON_PATH_DILATATION*3);
+	}
+	
+	
+	public void setMoveCursor(){
+
+		//Application.printStacktrace("setMoveCursor");
+		cursor = CURSOR_MOVE;
+	}
+	
+	public void setDragCursor(){
+		//Application.printStacktrace("setDragCursor");
+		cursor = CURSOR_DRAG;
+	}
+	
+	public void setDefaultCursor(){
+		//Application.printStacktrace("setDefaultCursor");
+		cursor = CURSOR_DEFAULT;
+	}
+	
+	public void setHitCursor(){
+		//Application.printStacktrace("setHitCursor");
+		cursor = CURSOR_HIT;
+	}
+	
+	
+	
+	
+	public void mouseEntered(){
+		//Application.debug("mouseEntered");
+		hasMouse = true;
+	}
+	
+	public void mouseExited(){
+		hasMouse = false;
+	}
+	
 
 }

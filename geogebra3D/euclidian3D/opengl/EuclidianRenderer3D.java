@@ -81,7 +81,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// other
 	private DrawList3D drawList3D;
 	
-	private EuclidianView3D m_view3D;
+	private EuclidianView3D view3D;
 	
 	// for drawing
 	private Ggb3DMatrix4x4 m_drawingMatrix; //matrix for drawing
@@ -194,7 +194,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         
 
         
-		this.m_view3D=view;
+		this.view3D=view;
 	}
 	
 	
@@ -261,15 +261,17 @@ public class EuclidianRenderer3D implements GLEventListener {
         //start drawing
         viewOrtho();
         
-        m_view3D.update();
+        view3D.update();
         
         //init drawing matrix to view3D toScreen matrix
-        gl.glLoadMatrixd(m_view3D.getToScreenMatrix().get(),0);
+        gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         
         
  
 
 
+        //drawing the cursor
+        view3D.drawCursor(this);
         
         
         //drawing hidden part
@@ -348,7 +350,9 @@ public class EuclidianRenderer3D implements GLEventListener {
         */
         
 
-        
+        //re-drawing the cursor
+        view3D.drawCursor(this);
+       
         //drawing not hidden parts
         gl.glDisable(GL.GL_BLEND);
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
@@ -1459,7 +1463,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	
     	
     	initMatrix();
-    	initMatrix(m_view3D.getUndoRotationMatrix());
+    	initMatrix(view3D.getUndoRotationMatrix());
     	
 
     	textRenderer.begin3DRendering();
@@ -1630,7 +1634,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
         //hits are stored
-        m_view3D.getHits().init();
+        view3D.getHits().init();
         
         //String s="doPick:";
         
@@ -1649,7 +1653,7 @@ public class EuclidianRenderer3D implements GLEventListener {
           
           for (int j = 0; j < names; j++){ 
         	num = selectBuffer.get(ptr);
-        	((Hits3D) m_view3D.getHits()).addDrawable3D(drawHits[num],num>labelLoop);//,pickingMode==PICKING_MODE_LABELS);
+        	((Hits3D) view3D.getHits()).addDrawable3D(drawHits[num],num>labelLoop);//,pickingMode==PICKING_MODE_LABELS);
         	//s+="\n"+drawHits[num].getGeoElement().getLabel();
         	drawHits[num].zPickMin = zMin;
         	drawHits[num].zPickMax = zMax;
@@ -1662,7 +1666,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         //Application.debug(s);
         
         // sets the GeoElements in m_view3D.getHits()
-        ((Hits3D) m_view3D.getHits()).sort();
+        ((Hits3D) view3D.getHits()).sort();
         
         waitForPick = false;
     }

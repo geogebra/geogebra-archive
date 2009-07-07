@@ -4212,4 +4212,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 	
 	
+	
+	
+	public void mouseEntered(){
+		
+	}
+	
+	public void mouseExited(){
+		
+	}
+	
 }

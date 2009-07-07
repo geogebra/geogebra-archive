@@ -185,6 +185,10 @@ public interface EuclidianViewInterface {
 
 
 	public void updatePreviewable();
+	
+	
+	public void mouseEntered();
+	public void mouseExited();
 
 
 	

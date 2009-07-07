@@ -1711,7 +1711,7 @@ public class EuclidianController implements MouseListener,
 //		 Michael Borcherds 2007-10-12 bugfix: ctrl-click on a point does the original mode's command at end of drag if a point was clicked on
 //  also needed for right-drag
 		else
-		{
+		{			
 			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) changedKernel = processMode(hits, e);
 			if (changedKernel)
 			app.storeUndoInfo();
@@ -2300,6 +2300,7 @@ public class EuclidianController implements MouseListener,
 	public void mouseEntered(MouseEvent e) {
 		initToolTipManager();
 		initShowMouseCoords();
+		view.mouseEntered();
 	}
 
 	final public void mouseExited(MouseEvent e) {
@@ -2309,6 +2310,7 @@ public class EuclidianController implements MouseListener,
 		view.setShowMouseCoords(false);
 		mouseLoc = null;		
 		view.repaintEuclidianView();
+		view.mouseExited();
 	}
 
 	/*
@@ -2832,8 +2834,9 @@ public class EuclidianController implements MouseListener,
 		boolean createPoint = true;
 		if (hits.containsGeoPoint()){
 			createPoint = false;
-			if (point!=null)
-				((GeoElement) point).setEuclidianVisible(false);
+			if (point!=null){
+				createNewPoint(point,(GeoPointInterface) hits.getHits(GeoPointInterface.class, tempArrayList).get(0));				
+			}
 		}
 		
 	
@@ -2918,6 +2921,11 @@ public class EuclidianController implements MouseListener,
 		return point;
 	}
 	
+	/** only used in 3D */
+	protected void createNewPoint(GeoPointInterface point, GeoPointInterface sourcePoint){
+
+	}
+	
 	protected GeoPointInterface createNewPoint(GeoPointInterface point){
 		return kernel.Point(null, xRW, yRW);
 	}
@@ -2948,8 +2956,8 @@ public class EuclidianController implements MouseListener,
 
 		// points needed
 		addSelectedPoint(hits, 2, false);
+		//Application.debug("addSelectedPoint : "+hits+"\nselectedPoints = "+selectedPoints);
 		if (selPoints() == 2) {
-			
 			// fetch the two selected points
 			join();
 

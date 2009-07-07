@@ -8,6 +8,7 @@ import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -67,20 +68,25 @@ public class DrawLine3D extends Drawable3DSolid implements Previewable {
 	////////////////////////////////
 	// Previewable interface 
 	
-	GeoPoint3D[] points;
-	int numPoints = 0;
+	
+	private ArrayList selectedPoints;
 
 	public DrawLine3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
 		
-		super(a_view3D, new GeoLine3D(a_view3D.getKernel().getConstruction()));
+		super(a_view3D);//, new GeoLine3D(a_view3D.getKernel().getConstruction()));
 		
-		getGeoElement().setEuclidianVisible(false);
+		Kernel3D kernel = (Kernel3D) getView3D().getKernel();
 		
-		points = new GeoPoint3D[2];
-		for (int i=0;i<selectedPoints.size();i++)
-			points[i]=(GeoPoint3D) selectedPoints.get(i);
+		//kernel.setSilentMode(true);
+		GeoLine3D line = new GeoLine3D(kernel.getConstruction());
+		line.setIsPickable(false);
+		setGeoElement(line);
 		
-		numPoints = selectedPoints.size();
+		//kernel.setSilentMode(false);
+		
+		
+		this.selectedPoints = selectedPoints;
+		
 
 		updatePreview();
 		
@@ -99,31 +105,28 @@ public class DrawLine3D extends Drawable3DSolid implements Previewable {
 
 
 	public void updateMousePos(int x, int y) {
-		switch (numPoints){
-		case 1:
-			points[1]=getView3D().getKernel().Point3D(null, x, y, 0);
-			numPoints = 2;
-			updatePreview();
-			break;
-		case 2:
-			points[1].setCoords(x, y, 0, 1);
-			updatePreview();
-			break;
-		}
-			
 		
 	}
 
 
 	public void updatePreview() {
-		if (numPoints==2){
-			Application.debug("hop");
-			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(points[0].getCoords(), points[1].getCoords());
+		
+		//Application.debug("selectedPoints : "+selectedPoints);
+		
+		if (selectedPoints.size()==2){
+			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
+			GeoPoint3D secondPoint = (GeoPoint3D) selectedPoints.get(1);
+			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
+			getGeoElement().setEuclidianVisible(true);
+		}else if (selectedPoints.size()==1){
+			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
+			GeoPoint3D secondPoint = getView3D().getPreviewPoint();
+			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
 			getGeoElement().setEuclidianVisible(true);
 		}else{
 			getGeoElement().setEuclidianVisible(false);
 		}
-		
+			
 	}
 	
 	
