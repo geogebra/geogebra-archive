@@ -12,6 +12,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="p200ant_java5only.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="3D/vecmath.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

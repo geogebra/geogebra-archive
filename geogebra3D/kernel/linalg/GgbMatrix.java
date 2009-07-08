@@ -19,8 +19,6 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
-import javax.vecmath.Matrix4d;
-
 
 
 
