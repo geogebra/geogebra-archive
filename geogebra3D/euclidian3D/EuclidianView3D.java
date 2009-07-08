@@ -97,7 +97,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//preview
 	private Previewable previewDrawable;
 	private GeoPoint3D previewPoint;
-	private boolean previewPointIsNew = false;
+	private GeoElement[] previewPointIntersetionOf = new GeoElement[2]; 
+	
+	public static final int PREVIEW_POINT_ALREADY = 0;
+	public static final int PREVIEW_POINT_FREE = 1;
+	public static final int PREVIEW_POINT_PATH = 2;
+	public static final int PREVIEW_POINT_REGION = 3;
+	public static final int PREVIEW_POINT_DEPENDENT = 4;
+	private int previewPointType = PREVIEW_POINT_ALREADY;
 
 	
 	//cursor
@@ -1350,19 +1357,33 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	/** sets if the preview point is a new point
-	 * @param v
-	 */
-	public void setPreviewPointIsNew(boolean v){
-		previewPointIsNew = v;
+
+	
+	
+	public void setPreviewPointType(int v){
+		previewPointType = v;
 	}
 	
-	/** says if the preview point is a new point
-	 * @return true if the preview point is a new point
-	 */
-	public boolean previewPointIsNew(){
-		return previewPointIsNew;
+
+	public int getPreviewPointType(){
+		return previewPointType;
 	}
+	
+	
+	
+	public void setPreviewPointIntersetionOf(GeoElement previewPointIntersetionOf1, GeoElement previewPointIntersetionOf2){
+		this.previewPointIntersetionOf[0]=previewPointIntersetionOf1;
+		this.previewPointIntersetionOf[1]=previewPointIntersetionOf2;
+	}
+	
+	public GeoElement getPreviewPointIntersetionOf(int i){
+		return previewPointIntersetionOf[i];
+	}
+	
+	
+	
+	
+	
 	
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 		
@@ -1400,8 +1421,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		EuclidianController ec = getEuclidianController();
 		//if (ec.getMode()==EuclidianView.MODE_POINT_IN_REGION){
 			//GeoPointInterface point = (GeoPointInterface) ((Drawable3D) getPreviewDrawable()).getGeoElement();
-			GeoPoint3D point = getPreviewPoint();
-			ec.updateNewPoint(point, 
+			//GeoPoint3D point = getPreviewPoint();
+			ec.updateNewPoint(true, 
 					getHits().getTopHits(), 
 					true, true, true, false, //TODO doSingleHighlighting = false ? 
 					false);
@@ -1427,7 +1448,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 			
 			
-		setPreviewPointIsNew(false);
+		setPreviewPointType(PREVIEW_POINT_ALREADY);
 		
 		this.previewDrawable = previewDrawable;
 		
@@ -1456,16 +1477,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		if (hasMouse){
 			switch(cursor){
 			case CURSOR_DEFAULT:
-				if(previewPointIsNew())
+				if(getPreviewPointType()!=PREVIEW_POINT_ALREADY)
 					drawCursorCross(renderer);
 				break;
 			case CURSOR_HIT:
-				if(previewPointIsNew()){
-					if (previewPoint.hasPath()){
-						drawCursorOnPath(renderer);
-					}else{
-						drawCursorCross(renderer);
-					}
+				switch(getPreviewPointType()){
+				case PREVIEW_POINT_FREE:
+				case PREVIEW_POINT_REGION:
+					drawCursorCross(renderer);
+					break;
+				case PREVIEW_POINT_PATH:
+					drawCursorOnPath(renderer);
+					break;
+				case PREVIEW_POINT_DEPENDENT:
+					drawCursorDependent(renderer);
+					break;
 				}
 				break;
 			}
@@ -1488,6 +1514,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		renderer.drawSphere(Drawable3D.POINT3D_RADIUS*Drawable3D.POINT_ON_PATH_DILATATION*3);
 	}
 	
+	private void drawCursorDependent(EuclidianRenderer3D renderer){
+		renderer.setMatrix(getPreviewPoint().getDrawingMatrix());
+		renderer.setMaterial(ConstructionDefaults3D.colDepPoint,1.0f);
+		renderer.drawSphere(Drawable3D.POINT3D_RADIUS*Drawable3D.POINT_ON_PATH_DILATATION*3);
+	}
 	
 	public void setMoveCursor(){
 

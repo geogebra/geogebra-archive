@@ -88,6 +88,9 @@ public class Test3D{
 		
 		
 		testTetrahedron();
+		
+		
+		
         //testPoint(1,1,1);
         //testSegment3();
         //testPolygon();

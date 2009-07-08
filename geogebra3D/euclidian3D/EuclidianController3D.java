@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
@@ -293,62 +294,89 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			boolean doSingleHighlighting) {
 		
 
-		if (view3D.previewPointIsNew()){
-			GeoPoint3D point = view3D.getPreviewPoint();
-			GeoPoint3D ret;
-			if (point.hasPath())
-				ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
-			else if (point.hasRegion())
-				ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());
-			else{
-				ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
-				ret.setCoordDecoration(true);
-			}
-			ret.setCoords(point);
-			ret.updateCoords();
-			ret.update();
-			point.setEuclidianVisible(false);
+		GeoPoint3D point = view3D.getPreviewPoint();
+		GeoPoint3D ret;
+		
+		switch(view3D.getPreviewPointType()){		
+		case EuclidianView3D.PREVIEW_POINT_FREE:
+			ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
+			ret.setCoordDecoration(true);
+			break;
 
+		case EuclidianView3D.PREVIEW_POINT_PATH:
+			ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
+			break;
+		case EuclidianView3D.PREVIEW_POINT_REGION:
+			ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());
+			break;
+		case EuclidianView3D.PREVIEW_POINT_DEPENDENT:
+			ret = ((Kernel3D) kernel).Intersect(null, 
+					(GeoCoordSys1D) view3D.getPreviewPointIntersetionOf(0), 
+					(GeoCoordSys1D) view3D.getPreviewPointIntersetionOf(1));
 			return ret;
-
-		}
-	
-		Application.debug("super.getNewPoint");
+			//break;
+		case EuclidianView3D.PREVIEW_POINT_ALREADY:
+		default:
+			Application.debug("super.getNewPoint");
 		return super.getNewPoint(hits, 
 				onPathPossible, inRegionPossible, intersectPossible, 
-				doSingleHighlighting);
+				doSingleHighlighting);			
+
+		}
+		
+		ret.setCoords(point);
+		ret.updateCoords();
+		ret.update();
+		//point.setEuclidianVisible(false);
+
+		return ret;
+	
+		
 
 		
 	}
 	
 	/** put sourcePoint coordinates in point */
-	protected void createNewPoint(GeoPointInterface point, GeoPointInterface sourcePoint){
-		((GeoPoint3D) point).setCoords((GeoPoint3D) sourcePoint);
-		((GeoPoint3D) point).updateCoords();
-		view3D.setPreviewPointIsNew(false);
+	protected void createNewPoint(GeoPointInterface sourcePoint){
+		GeoPoint3D point3D = view3D.getPreviewPoint();
+		point3D.setCoords((GeoPoint3D) sourcePoint);
+		point3D.updateCoords();
+		view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_ALREADY);
 	}
 	
+	/** put intersectionPoint coordinates in point */
+	protected void createNewPointIntersection(GeoPointInterface intersectionPoint){
+		GeoPoint3D point3D = view3D.getPreviewPoint();
+		point3D.setCoords((GeoPoint3D) intersectionPoint);
+		//point3D.setParentAlgorithm(((GeoPoint3D) intersectionPoint).getParentAlgorithm());
+		point3D.updateCoords();
+		view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_DEPENDENT);
+		
+	}
+
 	
 	/**
 	 * create a new free point
 	 * or update the preview point
 	 */
-	protected GeoPointInterface createNewPoint(GeoPointInterface point){
+	protected GeoPointInterface createNewPoint(boolean forPreviewable){
 		
-		if (point == null)
-			point = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
+		GeoPoint3D point3D;
+		
+		if (!forPreviewable)
+			point3D = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
 		else{
-			GeoPoint3D point3D = (GeoPoint3D) point;
+			point3D = view3D.getPreviewPoint();
 			point3D.setPath(null);
 			point3D.setRegion(null);
-			view3D.setPreviewPointIsNew(true);
+			view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_FREE);
 		}
 		
 		setCurrentPlane(Ggb3DMatrix4x4.Identity());
-		movePointOnCurrentPlane((GeoPoint3D) point, false);	
-		((GeoPoint3D) point).setCoordDecoration(true);
+		movePointOnCurrentPlane(point3D, false);	
+		point3D.setCoordDecoration(true);
 		
-		return point;
+		return point3D;
 	}
 	
 	
@@ -356,48 +384,103 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * create a new path point
 	 * or update the preview point
 	 */	
-	protected GeoPointInterface createNewPoint(GeoPointInterface point, Path path){
+	protected GeoPointInterface createNewPoint(boolean forPreviewable, Path path){
 			
-		if (point == null)
-			point = ((Kernel3D) getKernel()).Point3D(null,path);
+		GeoPoint3D point3D;
+		
+		if (!forPreviewable)
+			point3D = ((Kernel3D) getKernel()).Point3D(null,path);
 		else{
-			GeoPoint3D point3D = (GeoPoint3D) point;
+			point3D = view3D.getPreviewPoint();
 			point3D.setPath(path);
 			point3D.setRegion(null);
-			view3D.setPreviewPointIsNew(true);
+			view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_PATH);
 		}			
 		
-		setMouseInformation((GeoPoint3D) point);
-		((GeoPoint3D) point).doPath();
+		setMouseInformation(point3D);
+		point3D.doPath();
 				
-		return point;
+		return point3D;
 	}
 	
 	/**
 	 * create a new region point
 	 * or update the preview point
 	 */	
-	protected GeoPointInterface createNewPoint(GeoPointInterface point, Region region){
+	protected GeoPointInterface createNewPoint(boolean forPreviewable, Region region){
 		
-		if (point == null)
-			point = ((Kernel3D) getKernel()).Point3DIn(null,region);
+		GeoPoint3D point3D;
+		
+		if (!forPreviewable)
+			point3D = ((Kernel3D) getKernel()).Point3DIn(null,region);
 		else{
-			GeoPoint3D point3D = (GeoPoint3D) point;
+			point3D = view3D.getPreviewPoint();
 			point3D.setPath(null);
 			point3D.setRegion(region);
-			view3D.setPreviewPointIsNew(true);
+			view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_REGION);
 		}
 		
-		setMouseInformation((GeoPoint3D) point);
-		((GeoPoint3D) point).doRegion();
+		setMouseInformation(point3D);
+		point3D.doRegion();
 		
-		return point;
+		return point3D;
 	}
 	
 	
 	protected void updateMovedGeoPoint(GeoPointInterface point){
 		movedGeoPoint3D = (GeoPoint3D) point;
 	}
+	
+	
+	
+	
+	// tries to get a single intersection point for the given hits
+	// i.e. hits has to include two intersectable objects.
+	protected GeoPointInterface getSingleIntersectionPoint(Hits hits) {
+
+		
+		if (hits.isEmpty() || hits.size() != 2)
+			return null;
+
+		GeoElement a = (GeoElement) hits.get(0);
+		GeoElement b = (GeoElement) hits.get(1);
+		GeoPoint3D point = null;
+
+		
+		
+		//Application.debug(""+hits);
+
+		kernel.setSilentMode(true);
+		
+		
+    	if (a instanceof GeoCoordSys1D){
+    		if (b instanceof GeoCoordSys1D){
+    			point = ((Kernel3D) kernel).Intersect(null, (GeoCoordSys1D) a, (GeoCoordSys1D) b);
+    		}
+    	}
+    	
+    	kernel.setSilentMode(false);
+		
+    	Application.debug("point is defined : "+point.isDefined());
+    	
+    	if (point.isDefined()){
+    		view3D.setPreviewPointIntersetionOf(a, b);
+    		return point;
+    	}else
+    		return null;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	///////////////////////////////////////

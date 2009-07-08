@@ -2810,14 +2810,14 @@ public class EuclidianController implements MouseListener,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
 			boolean doSingleHighlighting) {
 
-		return updateNewPoint(null, hits, 
+		return updateNewPoint(false, hits, 
 				onPathPossible, inRegionPossible, intersectPossible, 
 				doSingleHighlighting, true);
 	}
 		
 	// update the new point (used for preview in 3D)
 	public GeoPointInterface updateNewPoint(
-			GeoPointInterface point,
+			boolean forPreviewable,
 			Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible,
 			boolean doSingleHighlighting, boolean chooseGeo) {
@@ -2834,12 +2834,13 @@ public class EuclidianController implements MouseListener,
 		boolean createPoint = true;
 		if (hits.containsGeoPoint()){
 			createPoint = false;
-			if (point!=null){
-				createNewPoint(point,(GeoPointInterface) hits.getHits(GeoPointInterface.class, tempArrayList).get(0));				
+			if (forPreviewable){
+				createNewPoint((GeoPointInterface) hits.getHits(GeoPointInterface.class, tempArrayList).get(0));				
 			}
 		}
 		
 	
+		GeoPointInterface point = null;
 		
 	
 	
@@ -2847,14 +2848,18 @@ public class EuclidianController implements MouseListener,
 		if (createPoint && intersectPossible) {
 			GeoPointInterface intersectPoint = getSingleIntersectionPoint(hits);
 			if (intersectPoint != null) {
-				
-				point = intersectPoint;
-				// we don't use an undefined or infinite
-				// intersection point
-				if (!point.showInEuclidianView()) {
-					point.remove();
-				} else
+				if (!forPreviewable){
+					point = intersectPoint;
+					// we don't use an undefined or infinite
+					// intersection point
+					if (!point.showInEuclidianView()) {
+						point.remove();
+					} else
+						createPoint = false;
+				}else{
+					createNewPointIntersection(intersectPoint);
 					createPoint = false;
+				}
 			}
 		}
 		
@@ -2906,15 +2911,15 @@ public class EuclidianController implements MouseListener,
 			if (path == null) {
 				if (region == null){
 					//point = kernel.Point(null, xRW, yRW);
-					point = createNewPoint(point);
+					point = createNewPoint(forPreviewable);
 					view.setShowMouseCoords(true);
 				} else {
 					//Application.debug("in Region : "+region);
-					point = createNewPoint(point, region);
+					point = createNewPoint(forPreviewable, region);
 				}
 			} else {
 				//point = kernel.Point(null, path, xRW, yRW);
-				point = createNewPoint(point, path);
+				point = createNewPoint(forPreviewable, path);
 			}
 		}
 
@@ -2922,19 +2927,25 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	/** only used in 3D */
-	protected void createNewPoint(GeoPointInterface point, GeoPointInterface sourcePoint){
+	protected void createNewPoint(GeoPointInterface sourcePoint){
+
+		
+	}
+	
+	/** only used in 3D */
+	protected void createNewPointIntersection(GeoPointInterface intersectionPoint){
 
 	}
 	
-	protected GeoPointInterface createNewPoint(GeoPointInterface point){
+	protected GeoPointInterface createNewPoint(boolean forPreviewable){
 		return kernel.Point(null, xRW, yRW);
 	}
 	
-	protected GeoPointInterface createNewPoint(GeoPointInterface point, Path path){
+	protected GeoPointInterface createNewPoint(boolean forPreviewable, Path path){
 		return kernel.Point(null, path, xRW, yRW);
 	}
 	
-	protected GeoPointInterface createNewPoint(GeoPointInterface point, Region region){
+	protected GeoPointInterface createNewPoint(boolean forPreviewable, Region region){
 		return kernel.PointIn(null,region,xRW, yRW);
 	}
 	
@@ -3436,7 +3447,7 @@ public class EuclidianController implements MouseListener,
 
 	// tries to get a single intersection point for the given hits
 	// i.e. hits has to include two intersectable objects.
-	final protected GeoPoint getSingleIntersectionPoint(Hits hits) {
+	protected GeoPointInterface getSingleIntersectionPoint(Hits hits) {
 		if (hits.isEmpty() || hits.size() != 2)
 			return null;
 
