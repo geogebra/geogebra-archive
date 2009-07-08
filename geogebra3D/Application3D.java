@@ -214,10 +214,11 @@ public abstract class Application3D extends Application{
 		f.setVisible(true);
 		
 		f = new JFrame("spreadsheet view");
+		getGuiManager().attachSpreadsheetView();
 		f.getContentPane().add(getGuiManager().getSpreadsheetView());
 		f.setLocation(400, 0);
-		f.setPreferredSize(new Dimension(400,400));
-		f.setSize(new Dimension(400,400));
+		f.setPreferredSize(new Dimension(600,400));
+		f.setSize(new Dimension(600,400));
 		f.setVisible(true);	
 		/*
 		if (updateUI) {

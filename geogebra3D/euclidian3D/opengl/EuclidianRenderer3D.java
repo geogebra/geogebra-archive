@@ -1045,6 +1045,17 @@ public class EuclidianRenderer3D implements GLEventListener {
     }
     
     /**
+     * draws a point according to current drawing matrix.
+     * 
+     * @param radius radius of the sphere
+     */
+    public void drawPoint(float radius){
+    	initMatrix();
+    	glu.gluSphere(quadric, radius, 8, 8);
+    	resetMatrix();
+    }
+    
+    /**
      * draws a sphere according to current drawing matrix.
      * 
      * @param radius radius of the sphere

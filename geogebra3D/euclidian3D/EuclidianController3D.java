@@ -702,9 +702,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		switch (moveMode) {
 		case MOVE_VIEW:
 		default:
+			/*
 			view3D.setScale(view3D.getXscale()+r*10);
 			view3D.updateMatrix();
 			((Kernel3D) getKernel()).notifyRepaint();
+			*/
 			break;
 
 		case MOVE_POINT:

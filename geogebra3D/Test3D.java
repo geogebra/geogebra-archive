@@ -22,12 +22,14 @@ package geogebra3D;
 //import geogebra.Application;
 //import geogebra.kernel.Construction;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Region;
+import geogebra.main.View;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
@@ -87,8 +89,9 @@ public class Test3D{
 		testRepere();
 		
 		
-		testTetrahedron();
+		//testTetrahedron();
 		
+		testSpring();
 		
 		
         //testPoint(1,1,1);
@@ -658,4 +661,27 @@ public class Test3D{
 		
 	}
 
+	
+	private void testSpring(){
+		try {
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("k=0",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A1=0",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A2=A1+1",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B1=cos(A1/2)",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B2=cos(A2/2)",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C1=sin(A1/2)",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C2=sin(A2/2)",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D1=A1*(k+5)/100",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D2=A2*(k+5)/100",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E1=(B1,C1,D1)",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E2=(B2,C2,D2)",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F2=Segment[E1,E2]",false);
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	
 }

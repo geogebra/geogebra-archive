@@ -56,16 +56,16 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 		}
 		*/
 		if (point.hasPath())
-			renderer.drawSphere(POINT3D_RADIUS*POINT_ON_PATH_DILATATION*point.getPointSize()); //points on path are more visible 
+			renderer.drawPoint(POINT3D_RADIUS*POINT_ON_PATH_DILATATION*point.getPointSize()); //points on path are more visible 
 		else
-			renderer.drawSphere(POINT3D_RADIUS*point.getPointSize());
+			renderer.drawPoint(POINT3D_RADIUS*point.getPointSize());
 		
 
 	}
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
 		GeoPoint3D l_point = (GeoPoint3D) getGeoElement();
-		renderer.drawSphere(POINT3D_RADIUS*PICKED_DILATATION*l_point.getPointSize());
+		renderer.drawPoint(POINT3D_RADIUS*PICKED_DILATATION*l_point.getPointSize());
 		
 	}
 
