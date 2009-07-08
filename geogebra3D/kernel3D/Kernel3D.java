@@ -16,12 +16,15 @@ package geogebra3D.kernel3D;
 
 
 import geogebra.kernel.AlgoCircleThreePoints;
+import geogebra.kernel.AlgoDependentPoint;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -179,6 +182,17 @@ public class Kernel3D
 		return p;
 	}
 	
+	/** Point dependent on arithmetic expression with variables,
+	 * represented by a tree. e.g. P = (4t, 2s)
+	 */
+	final public GeoPoint3D DependentPoint3D(
+		String label,
+		ExpressionNode root) {
+		AlgoDependentPoint3D algo = new AlgoDependentPoint3D(cons, label, root);
+		GeoPoint3D P = algo.getPoint3D();
+		return P;
+	}
+
 	final public GeoVector3D Vector3D(String label, double x, double y, double z) {
 		GeoVector3D v = new GeoVector3D(cons, x, y, z);
 		v.setLabel(label); // invokes add()                

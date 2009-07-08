@@ -49,7 +49,7 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 			double z = p[2];
 			ret[0] = kernel3D.Point3D(label, x, y, z);			
 		} else {
-			ret[0] = null; //TODO kernel3D.DependentPoint3D(label, n);
+			ret[0] = kernel3D.DependentPoint3D(label, n);
 		}
 
 		return ret;
