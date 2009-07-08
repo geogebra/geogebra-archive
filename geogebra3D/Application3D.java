@@ -82,6 +82,8 @@ public abstract class Application3D extends Application{
         						+EuclidianView3D.MODE_JOIN
         						+" "
         						+EuclidianView3D.MODE_SEGMENT
+        						+" "
+        						+EuclidianView3D.MODE_RAY
         						+" || "
         						+EuclidianView3D.MODE_POLYGON
         						+" || "

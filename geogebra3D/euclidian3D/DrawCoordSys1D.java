@@ -1,69 +1,68 @@
 package geogebra3D.euclidian3D;
 
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
 import geogebra.euclidian.Previewable;
-import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-
-public class DrawLine3D extends DrawCoordSys1D implements Previewable {
+public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewable {
 
 	
-	
-	public DrawLine3D(EuclidianView3D a_view3D, GeoLine3D a_line3D){
+	public DrawCoordSys1D(EuclidianView3D a_view3D, GeoCoordSys1D cs1D){
 		
-		super(a_view3D, a_line3D);
+		super(a_view3D, cs1D);
 	}	
 	
 	
 	
-	
-	
-	
-	
+	public DrawCoordSys1D(EuclidianView3D a_view3d) {
+		super(a_view3d);
+		
+	}
 
 	
+	
+	
+	/////////////////////////////////////////
+	// DRAWING GEOMETRIES
+	
+	
 	public void drawGeometry(EuclidianRenderer3D renderer) {
+		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
 		
-		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
-		super.drawGeometry(renderer);
-		renderer.drawLine();
 	}
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
-		
-		//renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
-		super.drawGeometryPicked(renderer);
-		renderer.drawLine(); 
+		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		 
 	}
 	
-	/*
 	public void drawGeometryHidden(EuclidianRenderer3D renderer){
-	
-		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		
 		drawGeometry(renderer);
-	};
-	*/
+	} 
+	
+	
+	
+	
+	
+	
 	
 
-
 	
-
-
-	/*
 	public int getPickOrder(){
 		return DRAW_PICK_ORDER_1D;
-	}
+	}	
 
-	*/
+	
+	
+	
+	
 	
 	
 	
@@ -72,32 +71,25 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	// Previewable interface 
 	
 	
-	//private ArrayList selectedPoints;
+	private ArrayList selectedPoints;
 
-	public DrawLine3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
+	public DrawCoordSys1D(EuclidianView3D a_view3D, ArrayList selectedPoints, GeoCoordSys1D cs1D){
 		
-		super(a_view3D,selectedPoints, new GeoLine3D(a_view3D.getKernel().getConstruction()));
+		super(a_view3D);
 		
-		/*
 		Kernel3D kernel = (Kernel3D) getView3D().getKernel();
+
 		
-		//kernel.setSilentMode(true);
-		GeoLine3D line = new GeoLine3D(kernel.getConstruction());
-		line.setIsPickable(false);
-		setGeoElement(line);
-		
-		//kernel.setSilentMode(false);
-		
+		cs1D.setIsPickable(false);
+		setGeoElement(cs1D);
 		
 		this.selectedPoints = selectedPoints;
 		
 
 		updatePreview();
-		*/
 		
 	}	
 
-	/*
 	public void disposePreview() {
 		// TODO Auto-generated method stub
 		
@@ -135,11 +127,7 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 			
 	}
 	
-	*/
-
-	
 	
 
-	
 
 }

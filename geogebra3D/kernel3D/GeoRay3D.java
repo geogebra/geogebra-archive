@@ -11,6 +11,10 @@ public class GeoRay3D extends GeoLine3D {
 		// TODO Auto-generated constructor stub
 	}
 	
+	public GeoRay3D(Construction construction) {
+		super(construction);
+	}
+
 	public int getGeoClassType(){
 		return GEO_CLASS_RAY3D;
 		

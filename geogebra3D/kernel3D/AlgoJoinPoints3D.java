@@ -196,6 +196,9 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     	case GeoElement3D.GEO_CLASS_LINE3D:
     		s+="Line";
     		break;
+    	case GeoElement3D.GEO_CLASS_RAY3D:
+    		s+="Ray";
+    		break;
     	}		
     	
     	return s;
@@ -213,6 +216,9 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     		break;
     	case GeoElement3D.GEO_CLASS_LINE3D:
     		sb.append(app.getPlain("LineThroughAB",((GeoElement) P).getLabel(),((GeoElement) Q).getLabel()));
+    		break;
+    	case GeoElement3D.GEO_CLASS_RAY3D:
+    		sb.append(app.getPlain("RayThroughAB",((GeoElement) P).getLabel(),((GeoElement) Q).getLabel()));
     		break;
     	}	
 
