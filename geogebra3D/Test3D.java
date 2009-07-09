@@ -18,18 +18,13 @@ the Free Software Foundation.
 
 package geogebra3D;
 
-
-//import geogebra.Application;
-//import geogebra.kernel.Construction;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Region;
-import geogebra.main.View;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
@@ -45,17 +40,40 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 
-
-
-
-
-
 /**
- *
  * @author  ggb3D
- * @version 
  */
 public class Test3D{
+	
+	///////////////////////////////////////////////
+	// DEMOS
+	///////////////////////////////////////////////
+	
+	public void demos(){
+		
+		/* Demo with a tetrahedron */
+		//testRepere();testTetrahedron();
+		
+		/* Demo with an octahedron */
+		testRepere();testOctahedron();
+		
+		/* Demo with a spring and spreadsheet */
+		//testRepere();testSpring();
+		
+
+	}
+	
+	
+	///////////////////////////////////////////////
+	// 
+	///////////////////////////////////////////////
+	
+	
+	
+	
+	
+	
+	
 	
 	Construction cons;
 	Kernel3D kernel3D;
@@ -86,13 +104,14 @@ public class Test3D{
         view3D.setRotXY(-Math.PI/6,Math.PI/8,true);
         //view3D.setRotXY(-Math.PI/6,Math.PI/12,true);
         
-		testRepere();
+		//testRepere();
 		
 		
 		//testTetrahedron();
 		
-		testSpring();
+		//testSpring();
 		
+        demos();
 		
         //testPoint(1,1,1);
         //testSegment3();
@@ -681,6 +700,40 @@ public class Test3D{
 			
 			e.printStackTrace();
 		}
+	}
+	
+	
+	
+	private GeoPoint3D[] testOctahedron(){
+		GeoPoint3D[] points = new GeoPoint3D[6];
+		
+		try {
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A=(1,0,0)",false);
+			points[0]=(GeoPoint3D) kernel3D.lookupLabel("A");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B=(-y(A),x(A),0)",false);
+			points[1]=(GeoPoint3D) kernel3D.lookupLabel("B");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C=(-x(A),-y(A),0)",false);
+			points[2]=(GeoPoint3D) kernel3D.lookupLabel("C");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D=(y(A),-x(A),0)",false);
+			points[3]=(GeoPoint3D) kernel3D.lookupLabel("D");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E=(0,0,sqrt(x(A)^2+y(A)^2))",false);
+			points[4]=(GeoPoint3D) kernel3D.lookupLabel("E");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F=(0,0,-z(E))",false);
+			points[5]=(GeoPoint3D) kernel3D.lookupLabel("F");
+			
+			kernel3D.Polyhedron("octahedron", points, 
+					new int[][] {
+					{4,0,1},{4,1,2},{4,2,3},{4,3,0},
+					{5,0,1},{5,1,2},{5,2,3},{5,3,0}					
+			});
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+		
+		return points;
 	}
 	
 	
