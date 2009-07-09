@@ -22,7 +22,9 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.main.Application;
 import geogebra.main.MyParseError;
+import geogebra3D.kernel3D.Geo3DVec;
 
 import java.util.HashSet;
 
@@ -207,4 +209,10 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue {
     final public boolean isVector3DValue() {
     	return true;
     }
+
+	public Geo3DVec get3DVec() {
+		// TODO Auto-generated method stub
+		Application.debug("unimplemented");
+		return null;
+	}
 }

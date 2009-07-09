@@ -26,9 +26,12 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
+import geogebra.kernel.arithmetic3D.MyVec3DNode;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.Geo3DVec;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -635,6 +638,12 @@ implements ExpressionValue {
                 vec = ((VectorValue)lt).getVector();
                 GeoVec2D.add(vec, ((VectorValue)rt).getVector(), vec);                                         
                 return vec;
+            }     
+            // 3D vector + 3D vector
+            else if (lt.isVector3DValue() && rt.isVector3DValue()) { 
+                Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+                Geo3DVec.add(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);                                         
+                return vec3D;
             }     
             // vector + number (for complex addition)
             else if (lt.isVectorValue() && rt.isNumberValue()) { 

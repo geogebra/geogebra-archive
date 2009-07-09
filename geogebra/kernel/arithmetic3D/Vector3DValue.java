@@ -20,6 +20,7 @@ package geogebra.kernel.arithmetic3D;
 
 
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra3D.kernel3D.Geo3DVec;
 
 /**
  *
@@ -30,4 +31,5 @@ public interface Vector3DValue extends ExpressionValue {
     public double[] getPointAsDouble();    
     //public int getMode(); // POLAR or CARTESIAN
     //public void setMode(int mode);       
+	public Geo3DVec get3DVec();
 }
