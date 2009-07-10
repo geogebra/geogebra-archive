@@ -743,6 +743,12 @@ implements ExpressionValue {
                 GeoVec2D.sub(vec, ((VectorValue)rt).getVector(), vec);                                         
                 return vec;
             }
+            // 3D vector - 3D vector
+            else if (lt.isVector3DValue() && rt.isVector3DValue()) { 
+                Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+                Geo3DVec.sub(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);                                         
+                return vec3D;
+            }     
             // vector - number (for complex subtraction)
             else if (lt.isVectorValue() && rt.isNumberValue()) { 
                 vec = ((VectorValue)lt).getVector();
@@ -814,11 +820,30 @@ implements ExpressionValue {
                     GeoVec2D.mult(vec, ((NumberValue)lt).getDouble(), vec);
                     return vec;
                 }                        	  
+                // number * 3D vector
+                else if (rt.isVector3DValue()) { 
+                    Geo3DVec vec3D = ((Vector3DValue)rt).get3DVec();
+                    Geo3DVec.mult(vec3D, ((NumberValue)lt).getDouble(), vec3D);                                         
+                    return vec3D;
+                }     
                 else {                	
                     String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                     throw new MyError(app, str);    
                 }
             }
+            // 3D vector * number
+            else if (lt.isVector3DValue() && rt.isNumberValue()) { 
+                Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+                Geo3DVec.mult(vec3D, ((NumberValue)rt).getDouble(), vec3D);                                         
+                return vec3D;
+            }     
+            // 3D vector * 3D Vector (inner/dot product)
+            else if (lt.isVector3DValue() && rt.isVector3DValue()) { 
+                Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+                num = new MyDouble(kernel);
+                Geo3DVec.inner(vec3D, ((Vector3DValue)rt).get3DVec(), num);                                         
+                return num;
+            }     
             // vector * ...
             else if (lt.isVectorValue()) {
                 //  vector * number
@@ -827,7 +852,7 @@ implements ExpressionValue {
                     GeoVec2D.mult(vec, ((NumberValue)rt).getDouble(), vec);
                     return vec;
                 }            
-                // vector * vector (inner product)
+                // vector * vector (inner/dot product)
                 else if (rt.isVectorValue()) { 
                     vec = ((VectorValue)lt).getVector();
                     if (vec.getMode() == Kernel.COORD_COMPLEX) {
@@ -873,7 +898,13 @@ implements ExpressionValue {
                      vec = ((VectorValue)lt).getVector();                
                      GeoVec2D.div(vec, ((NumberValue)rt).getDouble(), vec);
                      return vec;
-                 }          
+                 }  
+                 // number * 3D vector
+                 else if (lt.isVector3DValue()) { 
+                     Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+                     Geo3DVec.div(vec3D, ((NumberValue)rt).getDouble(), vec3D);                                         
+                     return vec3D;
+                 }     
                 else { 
                        String [] str = { "IllegalDivision", lt.toString(), "/", rt.toString() };
                        throw new MyError(app, str);
@@ -976,6 +1007,17 @@ implements ExpressionValue {
                 MyDouble.pow(num, exponent, num);
                 return num;
             }               
+         // vector ^ 2 (inner product) (3D)
+            else if (lt.isVector3DValue() && rt.isNumberValue()) { 
+                num = ((NumberValue)rt).getNumber();   
+                Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+	                if (num.getDouble() == 2.0) {                    
+	                	Geo3DVec.inner(vec3D, vec3D, num);                                   
+ 	                } else {
+ 	                	num.set(Double.NaN);
+ 	                }    
+	                return num;
+            }     
             // vector ^ 2 (inner product)
             else if (lt.isVectorValue() && rt.isNumberValue()) { 
                 // if (!rt.isConstant()) {
@@ -1001,6 +1043,7 @@ implements ExpressionValue {
  	                    return num;                       
  	                } else {
  	                	num.set(Double.NaN);
+ 	                	return num;
  	                    //String [] str = { "IllegalExponent", lt.toString(), "^", rt.toString() };
  	                    //throw new MyError(app, str);
  	                }                            

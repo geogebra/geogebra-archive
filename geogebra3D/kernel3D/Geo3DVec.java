@@ -31,6 +31,7 @@ import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic3D.MyVec3DNode;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.complex.Complex;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 import java.util.HashSet;
@@ -373,11 +374,10 @@ implements Vector3DValue {
     //}
     
     /** c = a - b */
-    final public static void sub(GeoVec2D a, GeoVec2D b, GeoVec2D c) {
+    final public static void sub(Geo3DVec a, Geo3DVec b, Geo3DVec c) {
         c.x = a.x - b.x;
         c.y = a.y - b.y;
-        if (a.getMode() == Kernel.COORD_COMPLEX || b.getMode() ==Kernel.COORD_COMPLEX)
-        	c.setMode(Kernel.COORD_COMPLEX);
+        c.z = a.z - b.z;
     }       
         
     final public void mult(double b) {
@@ -386,9 +386,10 @@ implements Vector3DValue {
     }
     
     /** c = a * b */
-    final public static void mult(GeoVec2D a, double b, GeoVec2D c) {
+    final public static void mult(Geo3DVec a, double b, Geo3DVec c) {
         c.x = a.x * b;
         c.y = a.y * b;        
+        c.z = a.z * b;        
     }    
    
     /** c = a / b Michael Borcherds 2007-12-09 
@@ -516,14 +517,15 @@ implements Vector3DValue {
         c = a.x * b.x + a.y * b.y;        
     }       
     
-    final public static void inner(GeoVec2D a, GeoVec2D b, MyDouble c) {
-        c.set(a.x * b.x + a.y * b.y);        
+    final public static void inner(Geo3DVec a, Geo3DVec b, MyDouble c) {
+        c.set(a.x * b.x + a.y * b.y + a.z * b.z);        
     }           
     
     /** c = a / b */
-    final public static void div(GeoVec2D a, double b, GeoVec2D c) {
+    final public static void div(Geo3DVec a, double b, Geo3DVec c) {
         c.x = a.x / b;
         c.y = a.y / b;
+        c.z = a.z / b;
     }        
     
     final public boolean isDefined() {		
