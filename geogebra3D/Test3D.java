@@ -25,6 +25,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Region;
+import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
@@ -59,13 +60,14 @@ public class Test3D{
 		//testAxisAndPlane();testTetrahedron();
 		
 		/* Demo with an octahedron */
-		//testAxisAndPlane();testOctahedron();
+		//testAxisAndPlane();
+		testMorphingPolyhedra();
 		
 		/* Demo with a spring and spreadsheet */
 		//testAxisAndPlane();testSpring(2,true);
 		
 		/* Demo with a cube */
-		testCube(true);
+		//testCube(true);
 		
 		/* Demo with a cube and spring */
 		//testCube(false);testSpring(30,false);
@@ -733,27 +735,95 @@ public class Test3D{
 	
 	
 	
-	private GeoPoint3D[] testOctahedron(){
+	private GeoPoint3D[] testMorphingPolyhedra(){
 		GeoPoint3D[] points = new GeoPoint3D[6];
+		GeoPoint3D[] points2 = new GeoPoint3D[12];
 		
 		try {
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A=(1,0,0)",false);
+			
+			AlgebraProcessor ap = kernel3D.getAlgebraProcessor();
+			
+			ap.processAlgebraCommandNoExceptionHandling("A=(1,0,0)",false);
 			points[0]=(GeoPoint3D) kernel3D.lookupLabel("A");
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B=(-y(A),x(A),0)",false);
+			ap.processAlgebraCommandNoExceptionHandling("B=(-y(A),x(A),0)",false);
 			points[1]=(GeoPoint3D) kernel3D.lookupLabel("B");
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C=(-x(A),-y(A),0)",false);
+			ap.processAlgebraCommandNoExceptionHandling("C=(-x(A),-y(A),0)",false);
 			points[2]=(GeoPoint3D) kernel3D.lookupLabel("C");
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D=(y(A),-x(A),0)",false);
+			ap.processAlgebraCommandNoExceptionHandling("D=(y(A),-x(A),0)",false);
 			points[3]=(GeoPoint3D) kernel3D.lookupLabel("D");
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E=(0,0,sqrt(x(A)^2+y(A)^2))",false);
+			ap.processAlgebraCommandNoExceptionHandling("E=(0,0,sqrt(x(A)^2+y(A)^2))",false);
 			points[4]=(GeoPoint3D) kernel3D.lookupLabel("E");
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F=(0,0,-z(E))",false);
+			ap.processAlgebraCommandNoExceptionHandling("F=(0,0,-z(E))",false);
 			points[5]=(GeoPoint3D) kernel3D.lookupLabel("F");
 			
-			kernel3D.Polyhedron("octahedron", points, 
+			ap.processAlgebraCommandNoExceptionHandling("a=0.382",false);
+			kernel3D.lookupLabel("a").setEuclidianVisible(true);
+			
+			ap.processAlgebraCommandNoExceptionHandling("Q0 = a F + (1-a) A",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q1 = a F + (1-a) C",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q2 = a E + (1-a) A",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q3 = a E + (1-a) C",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q4 = a A + (1-a) B",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q5 = a C + (1-a) B",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q6 = a A + (1-a) D",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q7 = a C + (1-a) D",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q8 = a B + (1-a) E",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q9 = a B + (1-a) F",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q10 = a D + (1-a) E",false);
+			ap.processAlgebraCommandNoExceptionHandling("Q11 = a D + (1-a) F",false);
+			
+			/*
+			ap.processAlgebraCommandNoExceptionHandling("s0=Segment[E,A]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s1=Segment[E,B]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s2=Segment[E,C]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s3=Segment[E,D]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s4=Segment[F,A]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s5=Segment[F,B]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s6=Segment[F,C]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s7=Segment[F,D]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s8=Segment[A,B]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s9=Segment[B,C]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s10=Segment[C,D]",false);
+			ap.processAlgebraCommandNoExceptionHandling("s11=Segment[D,A]",false);
+			*/
+			
+			for (int i = 0 ; i < 12 ; i++)
+			kernel3D.lookupLabel("Q"+i).setLabelVisible(false);
+			
+			for (int i = 0 ; i < 12 ; i ++) {
+				points2[i]=(GeoPoint3D) kernel3D.lookupLabel("Q"+i);
+				points2[i].setEuclidianVisible(false);
+
+			}
+			
+			for (int i = 0 ; i < 6 ; i ++) {
+				points[i].setEuclidianVisible(false);
+
+			}
+
+			
+			//kernel3D.Polyhedron("octahedron", points, 
+			//		new int[][] {
+			//		{4,0,1},{4,1,2},{4,2,3},{4,3,0},
+			//		{5,0,1},{5,1,2},{5,2,3},{5,3,0}					
+			//});
+			kernel3D.Polyhedron("polyhedra1", points2, 
 					new int[][] {
-					{4,0,1},{4,1,2},{4,2,3},{4,3,0},
-					{5,0,1},{5,1,2},{5,2,3},{5,3,0}					
+					{2,6,10},{3,10,7},{3,5,8},{8,2,4},
+					{0,6,11},{0,9,4},{9,5,1},{1,7,11},
+			});
+			//kernel3D.lookupLabel("polyhedra1").setObjColor(new Color(255,255,0));
+			
+			//kernel3D.Polyhedron("polyhedra2", points2, 
+			//		new int[][] {
+			//		{3,8,2,10}, {10,6,11,7}, {2,4,0,6},
+			//		{11,0,9,1}, {4,8,5,9}, 
+			//		{8,2,10}
+			//});
+			kernel3D.Polyhedron("polyhedra3", points2, 
+					new int[][] {
+					{8,2,10}, {8,10,3}, {10,6,7}, {11,6,7}, {6,2,0}, {4,2,0}, {3,7,1}, {3,5,1},
+					{9,5,4}, {8,5,4}, {0,9,11}, {1,9,11}
 			});
 			
 		} catch (Exception e) {
