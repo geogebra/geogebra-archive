@@ -301,13 +301,22 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.PREVIEW_POINT_FREE:
 			ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
 			ret.setCoordDecoration(true);
+			ret.setCoords(point);
+			ret.updateCoords();
 			break;
 
 		case EuclidianView3D.PREVIEW_POINT_PATH:
+			Ggb3DVector coords = point.getCoords();
+			//Application.debug("coords = \n"+coords.toString());
 			ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
+					//,coords.get(1),coords.get(2),coords.get(3));
+			ret.setWillingCoords(point.getCoords());
+			ret.doPath();
 			break;
 		case EuclidianView3D.PREVIEW_POINT_REGION:
 			ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());
+			ret.setWillingCoords(point.getCoords());
+			ret.doRegion();
 			break;
 		case EuclidianView3D.PREVIEW_POINT_DEPENDENT:
 			ret = ((Kernel3D) kernel).Intersect(null, 
@@ -324,8 +333,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		}
 		
-		ret.setCoords(point);
-		ret.updateCoords();
+
 		ret.update();
 		//point.setEuclidianVisible(false);
 
@@ -553,7 +561,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		//remembers mouse location
 		startLoc = mouseLoc;
 		view.rememberOrigins();
-		Application.debug("");
+		//Application.debug("");
 	}
 	
 	/** right-drag the mouse makes 3D rotation 

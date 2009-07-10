@@ -34,6 +34,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	/** image of the 3D points in the coord sys*/
 	private GeoPoint[] points2D;
 	
+	
+	private boolean createSegments = true;
+	
 	/**
 	 * default constructor
 	 * @param c construction
@@ -43,7 +46,8 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 */
 	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GeoCoordSys2D cs2D, boolean createSegments) {
 		super(c, points, cs2D, createSegments);
-		//setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
+
+		this.createSegments = createSegments;
 		
 	}
 
@@ -124,6 +128,13 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 }
 
 
+	 
+
+	 public void setEuclidianVisible(boolean visible) {
+
+		 setEuclidianVisible(visible,createSegments);
+
+	 }  
 	
 	
 	/////////////////////////////////////////

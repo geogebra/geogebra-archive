@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.main.Application;
@@ -120,10 +121,14 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 				t = project[1].get(1);
 			}else{
 				//project current point coordinates
+				Ggb3DVector preDirection = P.getWillingCoords().sub(getOrigin()).crossProduct(getVx());
+				if(preDirection.equalsForKernel(0, Kernel.STANDARD_PRECISION))
+					preDirection = getVy();
+
 				Ggb3DVector[] project = P.getWillingCoords().projectOnLineWithDirection(
 						getOrigin(),
 						getVx(),
-						P.getWillingCoords().sub(getOrigin()).crossProduct(getVx()).crossProduct(getVx()));			
+						preDirection.crossProduct(getVx()));			
 				t = project[1].get(1);	
 			}
 		}else{

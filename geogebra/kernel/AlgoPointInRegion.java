@@ -32,6 +32,7 @@ public class AlgoPointInRegion extends AlgoElement {
 
         setInputOutput(); // for AlgoElement
 
+        
         compute();
         P.setLabel(label);
     }

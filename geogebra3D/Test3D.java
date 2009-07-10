@@ -51,14 +51,24 @@ public class Test3D{
 	
 	public void demos(){
 		
+		
+		
+		
+		
 		/* Demo with a tetrahedron */
-		testRepere();testTetrahedron();
+		//testAxisAndPlane();testTetrahedron();
 		
 		/* Demo with an octahedron */
-		//testRepere();testOctahedron();
+		//testAxisAndPlane();testOctahedron();
 		
 		/* Demo with a spring and spreadsheet */
-		//testRepere();testSpring();
+		//testAxisAndPlane();testSpring(2,true);
+		
+		/* Demo with a cube */
+		testCube(true);
+		
+		/* Demo with a cube and spring */
+		//testCube(false);testSpring(30,false);
 		
 
 	}
@@ -164,7 +174,7 @@ public class Test3D{
 		return kernel3D.Point3D(null,x,y,z);
 	}	
 	
-	private void testRepere(){
+	private void testAxisAndPlane(){
 		
 		
 		double longueur = 2.25;
@@ -685,21 +695,36 @@ public class Test3D{
 	}
 
 	
-	private void testSpring(){
+	private void testSpring(int nb, boolean labels){
 		try {
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("k=0",false);
+			GeoNumeric k = (GeoNumeric) kernel3D.lookupLabel("k");
+			k.setIntervalMin(0);k.setIntervalMax(10);k.setValue(0);k.setAnimationSpeed(10);
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A1=0",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A2=A1+1",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B1=cos(A1/2)",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B2=cos(A2/2)",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C1=sin(A1/2)",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C2=sin(A2/2)",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D1=A1*(k+5)/100",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D2=A2*(k+5)/100",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E1=(B1,C1,D1)",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E2=(B2,C2,D2)",false);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F2=Segment[E1,E2]",false);
+			kernel3D.lookupLabel("A1").setAuxiliaryObject(true);
 			
+			for (int i=1; i<nb; i++){
+				kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A"+(i+1)+"=A"+i+"+1",false);
+				kernel3D.lookupLabel("A"+(i+1)).setAuxiliaryObject(true);
+			}
+			
+			for(int i=1; i<=nb; i++){
+				kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B"+i+"=cos(A"+i+"/2)",false);
+				kernel3D.lookupLabel("B"+i).setAuxiliaryObject(true);
+				kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C"+i+"=sin(A"+i+"/2)",false);
+				kernel3D.lookupLabel("C"+i).setAuxiliaryObject(true);
+				kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D"+i+"=A"+i+"*k/100",false);
+				kernel3D.lookupLabel("D"+i).setAuxiliaryObject(true);
+				kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E"+i+"=(B"+i+",C"+i+",D"+i+")",false);
+				kernel3D.lookupLabel("E"+i).setAuxiliaryObject(true);
+				kernel3D.lookupLabel("E"+i).setLabelVisible(labels);
+			}
+			
+			for (int i=1; i<nb; i++){
+				kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F"+(i+1)+"=Segment[E"+i+",E"+(i+1)+"]",false);
+				kernel3D.lookupLabel("F"+(i+1)).setAuxiliaryObject(true);
+			}
+
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -730,6 +755,48 @@ public class Test3D{
 					{4,0,1},{4,1,2},{4,2,3},{4,3,0},
 					{5,0,1},{5,1,2},{5,2,3},{5,3,0}					
 			});
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+		
+		return points;
+	}
+	
+	
+
+	private GeoPoint3D[] testCube(boolean top){
+		GeoPoint3D[] points = new GeoPoint3D[8];
+		
+		try {
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A=(1,1,0)",false);
+			points[0]=(GeoPoint3D) kernel3D.lookupLabel("A");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B=(-y(A),x(A),z(A))",false);
+			points[1]=(GeoPoint3D) kernel3D.lookupLabel("B");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C=(-x(A),-y(A),z(A))",false);
+			points[2]=(GeoPoint3D) kernel3D.lookupLabel("C");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D=(y(A),-x(A),z(A))",false);
+			points[3]=(GeoPoint3D) kernel3D.lookupLabel("D");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E=(x(A),y(A), z(A)+sqrt((x(B)-x(A))^2+(y(B)-y(A))^2) )",false);
+			points[4]=(GeoPoint3D) kernel3D.lookupLabel("E");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F=(x(B),y(B),z(E))",false);
+			points[5]=(GeoPoint3D) kernel3D.lookupLabel("F");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("G=(x(C),y(C),z(E))",false);
+			points[6]=(GeoPoint3D) kernel3D.lookupLabel("G");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("H=(x(D),y(D),z(E))",false);
+			points[7]=(GeoPoint3D) kernel3D.lookupLabel("H");
+			
+			kernel3D.Polyhedron("cube", points, 
+					new int[][] {
+					{0,1,2,3},
+					{4,5,6,7},
+					{0,1,5,4},{1,2,6,5},{2,3,7,6},{3,0,4,7}
+			});
+			
+			if (!top)
+				kernel3D.lookupLabel("faceEFGH",false).setEuclidianVisible(false);
 			
 		} catch (Exception e) {
 			

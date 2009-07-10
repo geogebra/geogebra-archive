@@ -567,14 +567,21 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	}
 
    public void setEuclidianVisible(boolean visible) {
+
+	   setEuclidianVisible(visible,true);
+	
+   }  
+   
+   public void setEuclidianVisible(boolean visible, boolean updateSegments) {
 		super.setEuclidianVisible(visible);
-		if (segments != null) {
+		if (updateSegments && segments != null) {
 			for (int i=0; i < segments.length; i++) {
 				segments[i].setEuclidianVisible(visible);			
 				segments[i].update();
 			}
 		}		
-   }  
+  }  
+
 
    public void setObjColor(Color color) {
    		super.setObjColor(color);
