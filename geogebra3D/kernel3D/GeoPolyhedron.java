@@ -158,6 +158,20 @@ public class GeoPolyhedron extends GeoElement3D {
 	
 	
 	 
+	 public GeoSegment3D[] getSegments(){
+		 
+		 GeoSegment3D[] ret = new GeoSegment3D[segments.size()];
+		 int i=0;
+		 for (GeoSegment3D segment : segments.values()){
+			 ret[i]=segment;
+			 i++;
+		 }
+		 return ret;
+	 }
+	 
+	 public GeoPolygon3D[] getFaces(){
+		 return polygons;
+	 }
 	 
 	 
 	   public void setObjColor(Color color) {

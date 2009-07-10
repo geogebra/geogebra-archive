@@ -52,10 +52,10 @@ public class Test3D{
 	public void demos(){
 		
 		/* Demo with a tetrahedron */
-		//testRepere();testTetrahedron();
+		testRepere();testTetrahedron();
 		
 		/* Demo with an octahedron */
-		testRepere();testOctahedron();
+		//testRepere();testOctahedron();
 		
 		/* Demo with a spring and spreadsheet */
 		//testRepere();testSpring();

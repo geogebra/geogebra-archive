@@ -216,7 +216,11 @@ public class AlgoPolygon extends AlgoElement {
             sb.append(points[i].getLabel());
             sb.append(", ");
         }
-        sb.append(points[last].getLabel());        
+        sb.append(points[last].getLabel());     
+        
+        //TODO use app.getPlain()
+        if (polyhedron!=null)
+        	sb.append(" of "+polyhedron.getLabel());
         
         return  sb.toString();
     }

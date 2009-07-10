@@ -206,7 +206,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         doSetDependencies();   
     }
     
-    private void doSetDependencies() {
+    protected void doSetDependencies() {
         setOutputDependencies();           
         cons.addToAlgorithmList(this);  
     }

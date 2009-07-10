@@ -52,14 +52,27 @@ public class AlgoPolyhedron extends AlgoElement3D {
 
 		polyhedron = new GeoPolyhedron(c,points,faces);	
 		
-		setInputOutput(points, new GeoElement[] {polyhedron});
+		GeoSegment3D[] segments = polyhedron.getSegments();
+		GeoPolygon3D[] polygons = polyhedron.getFaces();
+		
+		GeoElement[] output = new GeoElement[1+segments.length+polygons.length];
+		
+		output[0] = polyhedron;
+		for(int i=0; i<segments.length; i++)
+			output[1+i] = segments[i];
+		for(int i=0; i<polygons.length; i++)
+			output[1+segments.length+i] = polygons[i];
+		
+		setInputOutput(points, output);
 		
 	}
 	
 
-	
-	
-	
+	// overrides AlgoElement.doSetDependencies() to avoid every output.setParentAlgorithm(this)
+	protected void doSetDependencies() {
+        polyhedron.setParentAlgorithm(this);           
+        cons.addToAlgorithmList(this);  
+    }
 
 	@Override
 	protected void compute() {
