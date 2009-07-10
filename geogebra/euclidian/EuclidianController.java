@@ -1217,9 +1217,12 @@ public class EuclidianController implements MouseListener,
 		
 		
 		//ggb3D - only for 3D view
-		if (Application.isRightClick(e) && !TEMPORARY_MODE ){
-			if (processRightDragFor3D()) //in 2D view, return false
-				return;
+		if (Application.isRightClick(e)){
+			//Application.debug("hit(0) = "+view.getHits().get(0));
+			// if there's no hit, or if first hit is not moveable, do 3D view rotation
+			if ((!TEMPORARY_MODE) || !((GeoElement) view.getHits().get(0)).isMoveable())				
+				if (processRightDragFor3D()) //in 2D view, return false
+					return;
 		}
 		
 		

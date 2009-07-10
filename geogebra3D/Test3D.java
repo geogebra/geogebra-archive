@@ -174,16 +174,19 @@ public class Test3D{
 		s=kernel3D.Segment3D("axeX3D",new Ggb3DVector(new double[] {-longueur,0,0,1}),new Ggb3DVector(new double[]{longueur,0,0,1}));
 		s.setObjColor(new Color(1f,0f,0f));
 		s.setLineThickness(1);
+		s.setAuxiliaryObject(true);
 		cons.addToConstructionList(s, false);
 		
 		s=kernel3D.Segment3D("axeY3D",new Ggb3DVector(new double[] {0,-longueur,0,1}),new Ggb3DVector(new double[]{0,longueur,0,1}));
 		s.setObjColor(new Color(0f,1f,0f));
 		s.setLineThickness(1);
+		s.setAuxiliaryObject(true);
 		cons.addToConstructionList(s, false);
 		
 		s=kernel3D.Segment3D("axeZ3D",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{0,0,longueur,1}));
 		s.setObjColor(new Color(0f,0f,1f));
 		s.setLineThickness(1);
+		s.setAuxiliaryObject(true);
 		cons.addToConstructionList(s, false);
 		
 		
@@ -195,6 +198,7 @@ public class Test3D{
 		xOyPlane.setObjColor(new Color(0.75f,0.75f,0.75f));
 		xOyPlane.setAlgebraVisible(false); //TODO make it works
 		xOyPlane.setLabelVisible(false);
+		xOyPlane.setAuxiliaryObject(true);
 		cons.addToConstructionList(xOyPlane, false);
 		
 		

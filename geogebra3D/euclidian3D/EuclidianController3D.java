@@ -553,6 +553,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		//remembers mouse location
 		startLoc = mouseLoc;
 		view.rememberOrigins();
+		Application.debug("");
 	}
 	
 	/** right-drag the mouse makes 3D rotation 
