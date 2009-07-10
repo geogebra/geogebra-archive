@@ -20,9 +20,8 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoVec3D;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
+import geogebra3D.kernel3D.arithmetic.ExpressionNode3D;
 
 /**
  *
@@ -35,13 +34,13 @@ public class AlgoDependentPoint3D extends AlgoElement3D {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ExpressionNode root;  // input
+	private ExpressionNode3D root;  // input
     private GeoPoint3D P;     // output         
     
     private double[] temp;
         
     /** Creates new AlgoJoinPoints */
-    public AlgoDependentPoint3D(Construction cons, String label, ExpressionNode root) {
+    public AlgoDependentPoint3D(Construction cons, String label, ExpressionNode3D root) {
     	super(cons);
         this.root = root;        
         
@@ -72,7 +71,7 @@ public class AlgoDependentPoint3D extends AlgoElement3D {
     
     public GeoPoint3D getPoint3D() { return P; }
     
-    public ExpressionNode getExpressionNode() {
+    public ExpressionNode3D getExpressionNode() {
     	return root;
     }
     

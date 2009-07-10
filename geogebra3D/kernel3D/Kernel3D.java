@@ -30,6 +30,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.kernel3D.arithmetic.ExpressionNode3D;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
 import java.util.LinkedHashMap;
@@ -187,7 +188,7 @@ public class Kernel3D
 	 */
 	final public GeoPoint3D DependentPoint3D(
 		String label,
-		ExpressionNode root) {
+		ExpressionNode3D root) {
 		AlgoDependentPoint3D algo = new AlgoDependentPoint3D(cons, label, root);
 		GeoPoint3D P = algo.getPoint3D();
 		return P;

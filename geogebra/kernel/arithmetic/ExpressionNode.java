@@ -26,12 +26,10 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
-import geogebra.kernel.arithmetic3D.MyVec3DNode;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.Geo3DVec;
-import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -127,17 +125,20 @@ implements ExpressionValue {
     public static final int $VAR_COL = 502;
     public static final int $VAR_ROW_COL = 503;
     
-    private Application app;
-    private Kernel kernel;
-    private ExpressionValue left, right; 
-    int operation = NO_OPERATION;
-    private boolean forceVector = false, forcePoint = false;
+    public Application app;
+    public Kernel kernel;
+    public ExpressionValue left, right; 
+    public int operation = NO_OPERATION;
+    public boolean forceVector = false, forcePoint = false;
     
-    private boolean holdsLaTeXtext = false;
+    public boolean holdsLaTeXtext = false;
     
     // for leaf mode
-    private boolean leaf = false;
+    public boolean leaf = false;
 
+    public ExpressionNode(){};
+    
+    
     /** Creates new ExpressionNode */        
     public ExpressionNode(Kernel kernel, ExpressionValue left, int operation, ExpressionValue right) {  
         this.kernel = kernel;
