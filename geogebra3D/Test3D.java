@@ -62,13 +62,13 @@ public class Test3D{
 		
 		
 		/* Demo with morphing polyhedra */
-		testMorphingPolyhedra();
+		//testMorphingPolyhedra();
 		
 		/* Demo with a spring and spreadsheet */
 		//testAxisAndPlane();testSpring(2,true);
 		
 		/* Demo with a cube */
-		//testCube(true);
+		testCube(true);
 		
 		/* Demo with a cube and spring */
 		//testCube(false);testSpring(30,false);

@@ -3,6 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.PathMover;
 import geogebra3D.Matrix.Ggb3DVector;
 
@@ -40,6 +41,9 @@ public class GeoLine3D extends GeoCoordSys1D {
 	}
 
 
+	public boolean isDefined() {
+		return super.isDefined() && !getMatrix().getColumn(1).equalsForKernel(0, Kernel.STANDARD_PRECISION);
+	}
 
 	public boolean isEqual(GeoElement Geo) {
 		// TODO Raccord de méthode auto-généré
