@@ -26,9 +26,6 @@ public class GeoRay3D extends GeoLine3D {
 	}
 	
 	
-	public boolean isDefined() {
-		return super.isDefined() && !getMatrix().getColumn(1).equalsForKernel(0, Kernel.STANDARD_PRECISION);
-	}
 	
 	
 	
