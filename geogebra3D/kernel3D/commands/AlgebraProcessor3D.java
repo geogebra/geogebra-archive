@@ -58,7 +58,9 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 
 	
 	
-	
+	protected ExpressionValue evaluate(ExpressionNode n){
+		return  (new ExpressionNode3D(n)).evaluate();
+	}
 	
 	
 	

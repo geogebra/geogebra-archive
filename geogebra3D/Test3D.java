@@ -59,8 +59,9 @@ public class Test3D{
 		/* Demo with a tetrahedron */
 		//testAxisAndPlane();testTetrahedron();
 		
-		/* Demo with an octahedron */
-		//testAxisAndPlane();
+		
+		
+		/* Demo with morphing polyhedra */
 		testMorphingPolyhedra();
 		
 		/* Demo with a spring and spreadsheet */

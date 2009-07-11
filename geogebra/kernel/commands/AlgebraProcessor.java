@@ -771,6 +771,11 @@ public class AlgebraProcessor {
 		GeoElement[] ret = { line };
 		return ret;
 	}
+	
+	
+	protected ExpressionValue evaluate(ExpressionNode n){
+		return n.evaluate();
+	}
 
 	protected GeoElement[] processExpressionNode(ExpressionNode n) throws MyError {					
 		// command is leaf: process command
@@ -790,7 +795,7 @@ public class AlgebraProcessor {
 		
 		// ELSE:  resolve variables and evaluate expressionnode		
 		n.resolveVariables();			
-		eval = n.evaluate(); //ggb3D : used by AlgebraProcessor3D in extended processExpressionNode		
+		eval = evaluate(n);//eval = n.evaluate(); //ggb3D : used by AlgebraProcessor3D in extended processExpressionNode		
 		boolean dollarLabelFound = false;		
 		
 		// leaf (no new label specified): just return the existing GeoElement
