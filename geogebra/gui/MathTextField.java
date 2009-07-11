@@ -1,6 +1,7 @@
 package geogebra.gui;
 
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.event.KeyEvent;
@@ -103,8 +104,7 @@ public class MathTextField extends JTextField implements KeyListener {
 				switch (keyString.charAt(0)) {
 
 				case '*' :
-					insertStr = "*";
-					// was ExpressionNode.strCOMPLEXMULTIPLY; //  alt-m -> complex multiply "\u2297"
+					insertStr = ExpressionNode.strVECTORPRODUCT; // alt-* -> vector product
 					break;
 				case '=' :
 					insertStr = "\u2260"; // alt-= -> notEqualTo

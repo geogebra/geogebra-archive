@@ -271,6 +271,16 @@ implements Vector3DValue {
         c.z = a.z + b.z;
     }
     
+    /** c = Vector (Cross) Product of a and b */
+    final public static void vectorProduct(Geo3DVec a, Geo3DVec b, Geo3DVec c) {    
+    	// tempX/Y needed because a and c can be the same variable
+    	double tempX = a.y * b.z - a.z * b.y;
+    	double tempY = - a.x * b.z + a.z * b.x;
+    	c.z = a.x * b.y - a.y * b.x;
+        c.x = tempX;
+        c.y = tempY;
+    }
+    
     /** (xc,yc) = (xa + b , yx)  ie complex + real for complex nos
      * or (xc,yc) = (xa + b , yx + b) for Points/Vectors
      * */

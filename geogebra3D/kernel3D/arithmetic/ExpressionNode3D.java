@@ -120,6 +120,13 @@ public class ExpressionNode3D extends ExpressionNode {
         	}     
         	break;
             
+        case VECTORPRODUCT:
+            // 3D vector * 3D Vector (inner/dot product)
+            if (lt.isVector3DValue() && rt.isVector3DValue()) { 
+                Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+                Geo3DVec.vectorProduct(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);                                         
+                return vec3D;
+            }     
         }
 
 		
