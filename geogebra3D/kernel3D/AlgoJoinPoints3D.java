@@ -156,17 +156,11 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 
     protected void compute() {
     	    
-    	/*
-    	// if there's a polygon which is undefined, then this is undefined
-    	if (polygon!=null)
-    		if (!polygon.isDefined()){
-    			cs.setUndefined();
-    			return;
-    		}
-    	*/
-    	
 
-    	cs.setCoord((GeoPoint3D) P, (GeoPoint3D) Q);
+    	if ((P.isDefined()||P.isInfinite())&&(Q.isDefined()||Q.isInfinite()))
+    		cs.setCoord((GeoPoint3D) P, (GeoPoint3D) Q);
+    	else
+    		cs.setUndefined();
 
 
     }

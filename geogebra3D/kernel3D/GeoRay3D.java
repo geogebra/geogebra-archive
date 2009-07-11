@@ -24,9 +24,6 @@ public class GeoRay3D extends GeoLine3D {
 		return "Ray3D";
 	}
 	
-	public boolean isDefined(){
-		return true;
-	}
 	
 	
 	

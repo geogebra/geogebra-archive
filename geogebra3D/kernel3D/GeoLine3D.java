@@ -39,10 +39,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 		return "Line3D";
 	}
 
-	public boolean isDefined() {
-		// TODO Raccord de méthode auto-généré
-		return true;
-	}
+
 
 	public boolean isEqual(GeoElement Geo) {
 		// TODO Raccord de méthode auto-généré
@@ -54,10 +51,6 @@ public class GeoLine3D extends GeoCoordSys1D {
 
 	}
 
-	public void setUndefined() {
-		// TODO Raccord de méthode auto-généré
-
-	}
 
 	public boolean showInAlgebraView() {
 		// TODO Raccord de méthode auto-généré
@@ -65,7 +58,6 @@ public class GeoLine3D extends GeoCoordSys1D {
 	}
 
 	protected boolean showInEuclidianView() {
-		// TODO Raccord de méthode auto-généré
 		return true;
 	}
 
