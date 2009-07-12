@@ -392,7 +392,7 @@ public	class PropertiesPanel extends JPanel {
 			if(!isDefaults) {
 				positionTab.setTitle(app.getMenu("Properties.Position"));
 				sliderTab.setTitle(app.getPlain("Slider")); 
-				scriptTab.setTitle(app.getPlain("Scriptxx")); 
+				scriptTab.setTitle(app.getPlain("JavaScript")); 
 				advancedTab.setTitle(app.getMenu("Advanced"));
 			}
 			
@@ -2259,21 +2259,30 @@ public	class PropertiesPanel extends JPanel {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;	
-		private ScriptInputDialog td;
+		private ScriptInputDialog jsDialog, jsGlobalDialog;
 		
 		public ScriptEditPanel() {	
-			td = new ScriptInputDialog(app, app.getPlain("Textxx"), null,
-										40, 10);
+			jsDialog = new ScriptInputDialog(app, app.getPlain("JavaScript"), null,
+					40, 10);
+			jsGlobalDialog = new ScriptInputDialog(app, app.getPlain("GlobalJavaScript"), null,
+					40, 10);
 			setLayout(new BorderLayout());
-			add(td.getInputPanel(), BorderLayout.CENTER);
+			//add(td.getInputPanel(), BorderLayout.NORTH);
+			//add(td2.getInputPanel(), BorderLayout.CENTER);
 			JPanel btPanel = new JPanel(new BorderLayout(0,0));
-			btPanel.add(td.getButtonPanel(), BorderLayout.EAST);
-			add(btPanel, BorderLayout.SOUTH);
+			btPanel.add(jsDialog.getInputPanel(), BorderLayout.NORTH);
+			btPanel.add(jsDialog.getButtonPanel(), BorderLayout.EAST);
+			add(btPanel, BorderLayout.NORTH);
+			JPanel btPanel2 = new JPanel(new BorderLayout(0,0));
+			btPanel2.add(jsGlobalDialog.getInputPanel(), BorderLayout.NORTH);
+			btPanel2.add(jsGlobalDialog.getButtonPanel(), BorderLayout.EAST);
+			add(btPanel2, BorderLayout.SOUTH);
 		}
 		
 		public void setLabels() {
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Editxx")));
-			td.setLabels(app.getPlain("Textxx"));
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("JavaScript")));
+			jsDialog.setLabels(app.getPlain("JavaScript"));
+			jsGlobalDialog.setLabels(app.getPlain("GlobalJavaScript"));
 		}
 
 		public JPanel update(Object[] geos) {			
@@ -2281,7 +2290,8 @@ public	class PropertiesPanel extends JPanel {
 				return null;			
 			
 			GeoJavaScriptButton button = (GeoJavaScriptButton) geos[0];			
-			td.setGeo(button);					
+			jsDialog.setGeo(button);	
+			jsGlobalDialog.setGlobal();
 			return this;
 		}
 

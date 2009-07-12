@@ -34,6 +34,7 @@ public class ScriptInputDialog extends InputDialog {
 	private static final long serialVersionUID = 1L;
 
 	private GeoJavaScriptButton button;
+	private boolean global = false;
 	
 	/**
 	 * Input Dialog for a GeoJavaScriptButton object
@@ -60,9 +61,24 @@ public class ScriptInputDialog extends InputDialog {
 	}
 	
 	public void setGeo(GeoJavaScriptButton button) {
+		
+		if (global) {
+			setGlobal();
+			return;
+		}
 		this.button = button;
 
         inputPanel.setText(button == null ? "TODO" : button.getScript());
+	}
+	
+	/*
+	 * edit global javascript
+	 */
+	public void setGlobal() {
+		this.button = null;
+		global = true;
+
+        inputPanel.setText(app.getKernel().getLibraryJavaScript());
 	}
 	
 	
@@ -111,6 +127,7 @@ public class ScriptInputDialog extends InputDialog {
 	 * @param geo
 	 */
 	public void insertGeoElement(GeoElement geo) {
+		Application.debug("unimplemented");
 	}
 	
 	/**
@@ -146,6 +163,10 @@ public class ScriptInputDialog extends InputDialog {
             if (inputValue == null) return false;                        
           
         
+            if (global) {
+            	app.getKernel().setLibraryJavaScript(inputValue);
+            	return true;
+            }
 
             if (button == null) {
             	button = new GeoJavaScriptButton(kernel.getConstruction());

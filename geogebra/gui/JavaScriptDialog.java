@@ -105,7 +105,7 @@ public class JavaScriptDialog extends JDialog
 		captionPanel.add(ip);
 		
 		// create script panel
-		JLabel scriptLabel = new JLabel(app.getMenu("JavaScriptxx")+":");
+		JLabel scriptLabel = new JLabel(app.getPlain("JavaScript")+":");
 		initString = (button == null || button.getScript().equals("")) ? "ggbApplet.evalCommand('A=(3,4)');\n" : button.getScript();
 		InputPanel ip2 = new InputPanel(initString, app, 10, 40, false, false, false);				
 		tfScript = ip2.getTextComponent();

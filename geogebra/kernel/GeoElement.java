@@ -1483,7 +1483,9 @@ public abstract class GeoElement
 			if (cons.isFreeLabel(newLabel)) { // rename    
 				doRenameLabel(newLabel);
 			} else {
-				System.out.println("setLabel DID NOT RENAME: " + this.label + " to " + newLabel + ", new label is not free: " + cons.lookupLabel(newLabel).getLongDescription());
+				System.out.println("setLabel DID NOT RENAME:");
+				if (cons.lookupLabel(newLabel) != null)
+					System.out.println(this.label + " to " + newLabel + ", new label is not free: " + cons.lookupLabel(newLabel).getLongDescription());
 			}
 		}	
 	}
