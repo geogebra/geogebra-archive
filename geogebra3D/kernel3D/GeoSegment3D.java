@@ -134,11 +134,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 		return true;
 	}
 
-	/**
-	 * TODO 
-	 * @return "todo"
-	 * 
-	 */	
+
 	public String toValueString() {
 		
 		return kernel.format(getLength());

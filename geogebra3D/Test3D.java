@@ -53,6 +53,8 @@ public class Test3D{
 	public void demos(){
 		
 		
+		/* empty demo */
+		testAxisAndPlane();
 		
 		
 		
@@ -68,11 +70,13 @@ public class Test3D{
 		//testAxisAndPlane();testSpring(2,true);
 		
 		/* Demo with a cube */
-		testCube(true);
+		//testCube(true);
 		
 		/* Demo with a cube and spring */
 		//testCube(false);testSpring(30,false);
 		
+		/* Demo with a splitting cube */
+		//testSplittingCube();
 
 	}
 	
@@ -859,15 +863,20 @@ public class Test3D{
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("H=(x(D),y(D),z(E))",false);
 			points[7]=(GeoPoint3D) kernel3D.lookupLabel("H");
 			
+			/*
 			kernel3D.Polyhedron("cube", points, 
 					new int[][] {
 					{0,1,2,3},
 					{4,5,6,7},
 					{0,1,5,4},{1,2,6,5},{2,3,7,6},{3,0,4,7}
 			});
+			*/
+			
+			kernel3D.Polyhedron("cube", points);
 			
 			if (!top)
 				kernel3D.lookupLabel("faceEFGH",false).setEuclidianVisible(false);
+				
 			
 		} catch (Exception e) {
 			
@@ -878,5 +887,52 @@ public class Test3D{
 		return points;
 	}
 	
+	
+	
+	private void testSplittingCube(){
+		
+		try {
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A1=(1,1,0)",false);
+			kernel3D.lookupLabel("A1").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B1=(-y(A1),x(A1),z(A1))",false);
+			kernel3D.lookupLabel("B1").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C1=(-x(A1),-y(A1),z(A1))",false);
+			kernel3D.lookupLabel("C1").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D1=(y(A1),-x(A1),z(A1))",false);
+			kernel3D.lookupLabel("D1").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E1=(x(A1),y(A1), z(A1)+sqrt((x(B1)-x(A1))^2+(y(B1)-y(A1))^2)/2 )",false);
+			kernel3D.lookupLabel("E1").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F1=(x(B1),y(B1),z(E1))",false);
+			kernel3D.lookupLabel("F1").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("G1=(x(C1),y(C1),z(E1))",false);
+			kernel3D.lookupLabel("G1").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("H1=(x(D1),y(D1),z(E1))",false);
+			kernel3D.lookupLabel("H1").setAuxiliaryObject(true);
+			
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("I1=Polyhedron[A1,B1,C1,D1,E1,F1,G1,H1]",false);
+		
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("k=0.5",false);
+			GeoNumeric k = (GeoNumeric) kernel3D.lookupLabel("k");
+			k.setIntervalMin(0);k.setIntervalMax(1);//k.setValue(0.5);k.setAnimationSpeed(1);
+			
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A2=k*E1+(1-k)*F1",false);
+			kernel3D.lookupLabel("A2").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B2=k*F1+(1-k)*G1",false);
+			kernel3D.lookupLabel("B2").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C2=k*G1+(1-k)*H1",false);
+			kernel3D.lookupLabel("C2").setAuxiliaryObject(true);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D2=k*H1+(1-k)*E1",false);
+			kernel3D.lookupLabel("D2").setAuxiliaryObject(true);
+			
+			
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+		
+	}
+
 	
 }

@@ -317,6 +317,19 @@ public class Kernel3D
 		
 	}	
     
+    /** Polyhedron "pseudo-prismatic" with vertices 
+     * @param label name
+     * @param points vertices
+     * @return the polyhedron
+     */
+    final public GeoPolyhedron Polyhedron(String label, GeoPoint3D[] points){
+		
+    	
+    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points,GeoPolyhedron.TYPE_PSEUDO_PRISM);
+    	
+    	return (GeoPolyhedron) algo.getOutput()[0];
+		
+	}	
     
     /** Polyhedron with vertices (last one as apex)
      * @param label name
@@ -324,9 +337,8 @@ public class Kernel3D
      * @return the polyhedron
      */
     final public GeoPolyhedron Pyramid(String label, GeoPoint3D[] points){
-		
-    	
-    	AlgoPyramid algo = new AlgoPyramid(cons,null,points);
+		    	
+    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points, GeoPolyhedron.TYPE_PYRAMID);
     	
     	return (GeoPolyhedron) algo.getOutput()[0];
 		

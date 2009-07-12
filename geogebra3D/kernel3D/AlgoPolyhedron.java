@@ -14,6 +14,83 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	/** the polyhedron created */
 	protected GeoPolyhedron polyhedron;
 	
+	private int type;
+	
+	
+	/////////////////////////////////////////////
+	// POLYHEDRON OF DETERMINED TYPE
+	////////////////////////////////////////////
+	
+	/** creates a polyhedron regarding vertices and faces description
+	 * @param c construction 
+	 * @param label name
+	 * @param points vertices
+	 * @param type type of polyhedron
+	 */
+	public AlgoPolyhedron(Construction c, String label, GeoPoint3D[] points, int type) {
+		this(c,points,type);
+		polyhedron.setLabel(label);
+	}
+	
+	/** creates a polyhedron regarding vertices and faces description
+	 * @param c construction 
+	 * @param points vertices
+	 * @param type type of polyhedron
+	 */
+	public AlgoPolyhedron(Construction c, GeoPoint3D[] points, int type) {
+		super(c);
+		
+		this.type = type;
+		
+		int[][] faces = null;
+		int numPoints;
+		
+		switch(type){
+		case GeoPolyhedron.TYPE_PYRAMID://construct a pyramid with last point as apex
+			numPoints = points.length;
+			faces = new int[numPoints][];
+			for (int i=0; i<numPoints-1; i++){
+				faces[i]=new int[3];
+				faces[i][0]=i;
+				faces[i][1]=(i+1)%(numPoints-1);
+				faces[i][2]=numPoints-1;//apex
+			}
+			faces[numPoints-1]=new int[numPoints-1];
+			for (int i=0; i<numPoints-1; i++)
+				faces[numPoints-1][i]=i;
+			break;
+		case GeoPolyhedron.TYPE_PSEUDO_PRISM://construct a "pseudo-prismatic" polyhedron
+			numPoints = points.length /2;
+			faces = new int[numPoints+2][];
+			for (int i=0; i<numPoints; i++){
+				faces[i]=new int[4];
+				faces[i][0]=i;
+				faces[i][1]=(i+1)%(numPoints);
+				faces[i][2]=numPoints + ((i+1)%(numPoints));
+				faces[i][3]=numPoints + i;
+			}
+			faces[numPoints]=new int[numPoints];
+			for (int i=0; i<numPoints; i++)
+				faces[numPoints][i]=i;
+			faces[numPoints+1]=new int[numPoints];
+			for (int i=0; i<numPoints; i++)
+				faces[numPoints+1][i]=numPoints+i;
+			break;
+		}
+		
+		end(c, points, faces);
+		
+	}
+	
+	
+	
+	
+	
+	/////////////////////////////////////////////
+	// POLYHEDRON OF TYPE NONE
+	////////////////////////////////////////////
+
+	
 	/** creates a polyhedron regarding vertices and faces description
 	 * @param c construction 
 	 * @param label name
@@ -32,22 +109,20 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	 */
 	public AlgoPolyhedron(Construction c, GeoPoint3D[] points, int[][] faces) {
 		super(c);
+		this.type = GeoPolyhedron.TYPE_NONE;
+		end(c,points,faces);
 		
-		if (faces == null){ //construct a pyramid with last point as apex
-			int numPoints = points.length;
-			faces = new int[numPoints][];
-			for (int i=0; i<numPoints-1; i++){
-				faces[i]=new int[3];
-				faces[i][0]=i;
-				faces[i][1]=(i+1)%(numPoints-1);
-				faces[i][2]=numPoints-1;//apex
-				//Application.debug("faces = "+i+","+((i+1)%(numPoints-1))+","+(numPoints-1));
-			}
-			faces[numPoints-1]=new int[numPoints-1];
-			for (int i=0; i<numPoints-1; i++)
-				faces[numPoints-1][i]=i;
-		}
-		
+	}
+	
+	
+	
+	
+	/////////////////////////////////////////////
+	// END OF THE CONSTRUCTION
+	////////////////////////////////////////////
+
+	
+	private void end(Construction c, GeoPoint3D[] points, int[][] faces){
 		
 
 		polyhedron = new GeoPolyhedron(c,points,faces);	
@@ -67,6 +142,28 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	// overrides AlgoElement.doSetDependencies() to avoid every output.setParentAlgorithm(this)
 	protected void doSetDependencies() {
@@ -83,7 +180,14 @@ public class AlgoPolyhedron extends AlgoElement3D {
 
 
 	protected String getClassName() {
-		return "AlgoPolyhedron";
+		switch(type){
+		case GeoPolyhedron.TYPE_PYRAMID:
+			return "AlgoPyramid";
+		case GeoPolyhedron.TYPE_PSEUDO_PRISM:
+		case GeoPolyhedron.TYPE_NONE:
+		default:
+			return "AlgoPolyhedron";
+		}
 	}
 	
 

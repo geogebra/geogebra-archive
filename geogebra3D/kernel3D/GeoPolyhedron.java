@@ -15,6 +15,12 @@ import java.util.Hashtable;
  */
 public class GeoPolyhedron extends GeoElement3D {
 
+	
+	public static final int TYPE_NONE = 0;
+	public static final int TYPE_PYRAMID = 1;
+	public static final int TYPE_PSEUDO_PRISM = 2;
+	
+	
 	/** vertices */
 	protected GeoPoint3D[] points;
 	
@@ -26,6 +32,8 @@ public class GeoPolyhedron extends GeoElement3D {
 	
 	/** faces description */
 	protected int[][] faces;
+	
+	
 	
 
 	
