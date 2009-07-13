@@ -50,30 +50,45 @@ public class Test3D{
 	// DEMOS
 	///////////////////////////////////////////////
 	
-	public void demos(){
+	private void demos(){				
 		
+		/* Demo with a cube 
+		 * Remove A to remove anything
+		 * Use it to create new points, segments, lines, etc. */
 		
-		/* empty demo */
-		testAxisAndPlane();
-		
-		
-		
-		/* Demo with a tetrahedron */
-		//testAxisAndPlane();testTetrahedron();
+		testAxisAndPlane();testCube(true);
 		
 		
 		
-		/* Demo with morphing polyhedra */
-		//testMorphingPolyhedra();
+		/* Demo with a spring and spreadsheet 
+		 * Expand-down the second line to create more points and segments 
+		 * Animate slider k */
 		
-		/* Demo with a spring and spreadsheet */
 		//testAxisAndPlane();testSpring(2,true);
 		
-		/* Demo with a cube */
-		//testCube(true);
+		
 		
 		/* Demo with a cube and spring */
-		//testCube(false);testSpring(30,false);
+		
+		//testCube(true);testSpring(50,false);
+		
+		
+		
+		/* Demo with a colored cube and more...
+		 * Animate slider k 
+		 * You can also create points, segments... */
+		
+		//testColoredCube(0.75);
+		
+		
+		
+		/* Demo with morphing polyhedra 
+		 * Michael's demo*/
+		
+		//testMorphingPolyhedra();
+		
+		
+		
 		
 	}
 	
@@ -704,6 +719,8 @@ public class Test3D{
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("k=0",false);
 			GeoNumeric k = (GeoNumeric) kernel3D.lookupLabel("k");
 			k.setIntervalMin(0);k.setIntervalMax(10);k.setValue(0);k.setAnimationSpeed(10);
+			k.setEuclidianVisible(true);k.setLabelVisible(true);
+			
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A1=0",false);
 			kernel3D.lookupLabel("A1").setAuxiliaryObject(true);
 			
@@ -851,7 +868,7 @@ public class Test3D{
 			points[2]=(GeoPoint3D) kernel3D.lookupLabel("C");
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D=(y(A),-x(A),z(A))",false);
 			points[3]=(GeoPoint3D) kernel3D.lookupLabel("D");
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E=(x(A),y(A), z(A)+sqrt((x(B)-x(A))^2+(y(B)-y(A))^2) )",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E=(x(A),y(A), z(A)+sqrt((A-B)^2) )",false);
 			points[4]=(GeoPoint3D) kernel3D.lookupLabel("E");
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F=(x(B),y(B),z(E))",false);
 			points[5]=(GeoPoint3D) kernel3D.lookupLabel("F");
@@ -885,57 +902,167 @@ public class Test3D{
 	}
 	
 	
-	
-	private void testSplittingCube(){
+	private void testColoredCube(double a){
+		GeoPoint3D[] points = new GeoPoint3D[8];
+		
+		Color color1 = Color.RED;
+		Color color2 = Color.BLUE;
+		Color color3 = Color.GREEN;
 		
 		try {
-			/*
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A1=(1,1,0)",false);
-			kernel3D.lookupLabel("A1").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B1=(-y(A1),x(A1),z(A1))",false);
-			kernel3D.lookupLabel("B1").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C1=(-x(A1),-y(A1),z(A1))",false);
-			kernel3D.lookupLabel("C1").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D1=(y(A1),-x(A1),z(A1))",false);
-			kernel3D.lookupLabel("D1").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E1=(x(A1),y(A1), z(A1)+sqrt((x(B1)-x(A1))^2+(y(B1)-y(A1))^2)/2 )",false);
-			kernel3D.lookupLabel("E1").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F1=(x(B1),y(B1),z(E1))",false);
-			kernel3D.lookupLabel("F1").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("G1=(x(C1),y(C1),z(E1))",false);
-			kernel3D.lookupLabel("G1").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("H1=(x(D1),y(D1),z(E1))",false);
-			kernel3D.lookupLabel("H1").setAuxiliaryObject(true);
-			
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("I1=Polyhedron[A1,B1,C1,D1,E1,F1,G1,H1]",false);
-		
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("k=0.5",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A=("+a+","+a+","+(-a/2)+")",false);
+			points[0]=(GeoPoint3D) kernel3D.lookupLabel("A");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B=(-y(A),x(A),z(A))",false);
+			points[1]=(GeoPoint3D) kernel3D.lookupLabel("B");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C=(-x(A),-y(A),z(A))",false);
+			points[2]=(GeoPoint3D) kernel3D.lookupLabel("C");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D=(y(A),-x(A),z(A))",false);
+			points[3]=(GeoPoint3D) kernel3D.lookupLabel("D");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E=(x(A),y(A), z(A)+sqrt((A-B)^2) )",false);
+			points[4]=(GeoPoint3D) kernel3D.lookupLabel("E");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F=(x(B),y(B),z(E))",false);
+			points[5]=(GeoPoint3D) kernel3D.lookupLabel("F");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("G=(x(C),y(C),z(E))",false);
+			points[6]=(GeoPoint3D) kernel3D.lookupLabel("G");
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("H=(x(D),y(D),z(E))",false);
+			points[7]=(GeoPoint3D) kernel3D.lookupLabel("H");
+	
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("k=1.0001",false);
 			GeoNumeric k = (GeoNumeric) kernel3D.lookupLabel("k");
-			k.setIntervalMin(0);k.setIntervalMax(1);//k.setValue(0.5);k.setAnimationSpeed(1);
+			k.setIntervalMin(0.5001);k.setIntervalMax(1.5001);
+			k.setAnimationSpeed(10);k.setAnimationStep(0.01);
+			k.setEuclidianVisible(true);k.setLabelVisible(true);
 			
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A2=k*E1+(1-k)*F1",false);
-			kernel3D.lookupLabel("A2").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B2=k*F1+(1-k)*G1",false);
-			kernel3D.lookupLabel("B2").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("C2=k*G1+(1-k)*H1",false);
-			kernel3D.lookupLabel("C2").setAuxiliaryObject(true);
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D2=k*H1+(1-k)*E1",false);
-			kernel3D.lookupLabel("D2").setAuxiliaryObject(true);
-			*/
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"I=(B+C+G+F)/4",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"J=(A+D+H+E)/4",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"I'=k*I+(1-k)*J",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"J'=k*J+(1-k)*I",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"Pyramid[B,C,G,F,I']",false);
+			kernel3D.lookupLabel("faceBCGF").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceBCI'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeBC").setObjColor(color3);
+			kernel3D.lookupLabel("faceGFI'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeGF").setObjColor(color3);
+			kernel3D.lookupLabel("faceCGI'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeCG").setObjColor(color2);
+			kernel3D.lookupLabel("faceFBI'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeBF").setObjColor(color2);
+			kernel3D.lookupLabel("edgeBI'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeCI'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeGI'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeFI'").setObjColor(color1);
+			kernel3D.lookupLabel("I'").setObjColor(color1);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"Pyramid[A,D,H,E,J']",false);
+			kernel3D.lookupLabel("faceADHE").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceADJ'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeAD").setObjColor(color3);
+			kernel3D.lookupLabel("faceHEJ'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeHE").setObjColor(color3);
+			kernel3D.lookupLabel("faceDHJ'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeDH").setObjColor(color2);
+			kernel3D.lookupLabel("faceEAJ'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeAE").setObjColor(color2);
+			kernel3D.lookupLabel("edgeAJ'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeDJ'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeHJ'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeEJ'").setObjColor(color1);
+			kernel3D.lookupLabel("J'").setObjColor(color1);
 			
-			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A=(1,1,0)",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"K=(A+B+C+D)/4",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"L=(E+F+G+H)/4",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"K'=k*K+(1-k)*L",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"L'=k*L+(1-k)*K",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"Pyramid[A,B,C,D,K']",false);
+			kernel3D.lookupLabel("faceABCD").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceBCK'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeBC").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceDAK'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeAD").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceABK'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeAB").setObjColor(color1);
+			kernel3D.lookupLabel("faceCDK'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeCD").setObjColor(color1);
+			kernel3D.lookupLabel("edgeAK'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeBK'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeCK'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeDK'").setObjColor(color2);
+			kernel3D.lookupLabel("K'").setObjColor(color2);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"Pyramid[E,F,G,H,L']",false);
+			kernel3D.lookupLabel("faceEFGH").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceFGL'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeFG").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceHEL'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeEH").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceEFL'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeEF").setObjColor(color1);
+			kernel3D.lookupLabel("faceGHL'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeGH").setObjColor(color1);
+			kernel3D.lookupLabel("edgeEL'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeFL'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeGL'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeHL'").setObjColor(color2);
+			kernel3D.lookupLabel("L'").setObjColor(color2);
 
-			/*
-			(-y(A),x(A),z(A))
-			(-x(A),-y(A),z(A))
-			(y(A),-x(A),z(A))
-			(x(A),y(A), z(A)+sqrt((x(B)-x(A))^2+(y(B)-y(A))^2)/2 )
-			(x(B1),y(B1),z(E1))
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"M=(A+B+F+E)/4",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"N=(D+C+G+H)/4",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"M'=k*M+(1-k)*N",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"N'=k*N+(1-k)*M",false);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"Pyramid[A,B,F,E,M']",false);
+			kernel3D.lookupLabel("faceABFE").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceABM'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeAB").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceFEM'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeFE").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceBFM'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeBF").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceEAM'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeAE").setEuclidianVisible(false);
+			kernel3D.lookupLabel("edgeAM'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeBM'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeFM'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeEM'").setObjColor(color3);
+			kernel3D.lookupLabel("M'").setObjColor(color3);
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"Pyramid[D,C,G,H,N']",false);
+			kernel3D.lookupLabel("faceDCGH").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceDCN'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeDC").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceGHN'").setObjColor(color1);
+			kernel3D.lookupLabel("edgeGH").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceCGN'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeCG").setEuclidianVisible(false);
+			kernel3D.lookupLabel("faceHDN'").setObjColor(color2);
+			kernel3D.lookupLabel("edgeDH").setEuclidianVisible(false);
+			kernel3D.lookupLabel("edgeDN'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeCN'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeGN'").setObjColor(color3);
+			kernel3D.lookupLabel("edgeHN'").setObjColor(color3);
+			kernel3D.lookupLabel("N'").setObjColor(color3);
 			
-			(x(C1),y(C1),z(E1))
-			
-			(x(D1),y(D1),z(E1))
-			*/
+			kernel3D.lookupLabel("I").setEuclidianVisible(false);
+			kernel3D.lookupLabel("J").setEuclidianVisible(false);
+			kernel3D.lookupLabel("K").setEuclidianVisible(false);
+			kernel3D.lookupLabel("L").setEuclidianVisible(false);
+			kernel3D.lookupLabel("M").setEuclidianVisible(false);
+			kernel3D.lookupLabel("N").setEuclidianVisible(false);
+
 			
 		} catch (Exception e) {
 			
