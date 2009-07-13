@@ -26,6 +26,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Region;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.plugin.GgbAPI;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
@@ -86,6 +87,9 @@ public class Test3D{
 		 * Michael's demo*/
 		
 		//testMorphingPolyhedra();
+		
+		/* Michael's slices through cube */
+		//testSlicesThroughCube();
 		
 		
 		
@@ -890,6 +894,66 @@ public class Test3D{
 			
 			if (!top)
 				kernel3D.lookupLabel("faceEFGH",false).setEuclidianVisible(false);
+				
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+		
+		return points;
+	}
+	
+	private GeoPoint3D[] testSlicesThroughCube(){
+		GeoPoint3D[] points = new GeoPoint3D[8];
+		
+		try {
+			
+			GgbAPI ggbapi = app.getGgbApi();
+			
+			ggbapi.evalCommand("P_1=(1,1,0)");
+			ggbapi.evalCommand("P_2=(-y(P_1),x(P_1),z(P_1))");
+			ggbapi.evalCommand("P_3=(-x(P_1),-y(P_1),z(P_1))");
+			ggbapi.evalCommand("P_4=(y(P_1),-x(P_1),z(P_1))");
+			ggbapi.evalCommand("P_5=(x(P_1),y(P_1), z(P_1)+sqrt((P_1-P_2)^2) )");
+			ggbapi.evalCommand("P_6=(x(P_2),y(P_2),z(P_5))");
+			ggbapi.evalCommand("P_7=(x(P_3),y(P_3),z(P_5))");
+			ggbapi.evalCommand("P_8=(x(P_4),y(P_4),z(P_5))");
+			
+			ggbapi.evalCommand("a = 0.5");
+			
+			ggbapi.evalCommand("Segment[P_1,P_2]");
+			ggbapi.evalCommand("Segment[P_1,P_4]");
+			ggbapi.evalCommand("Segment[P_1,P_5]");
+
+			ggbapi.evalCommand("Segment[P_7,P_3]");
+			ggbapi.evalCommand("Segment[P_7,P_6]");
+			ggbapi.evalCommand("Segment[P_7,P_8]");
+			
+			ggbapi.evalCommand("Segment[P_3,P_2]");
+			ggbapi.evalCommand("Segment[P_3,P_4]");
+			ggbapi.evalCommand("Segment[P_8,P_4]");
+
+			ggbapi.evalCommand("Segment[P_8,P_5]");
+			ggbapi.evalCommand("Segment[P_5,P_6]");
+			ggbapi.evalCommand("Segment[P_6,P_2]");
+
+
+			
+			ggbapi.evalCommand("Q_1 = a P_2 + (1-a) P_1");
+			ggbapi.evalCommand("Q_2 = a P_1 + (1-a) P_4");
+			ggbapi.evalCommand("Q_3 = a P_4 + (1-a) P_8");
+			ggbapi.evalCommand("Q_4 = a P_8 + (1-a) P_7");
+			ggbapi.evalCommand("Q_5 = a P_7 + (1-a) P_6");
+			ggbapi.evalCommand("Q_6 = a P_6 + (1-a) P_2");
+			
+			ggbapi.evalCommand("Polygon[Q_1,Q_2,Q_3,Q_4,Q_5,Q_6]");
+			
+			for (int i = 0 ; i < 8 ; i++ ) 
+				((GeoPoint3D) kernel3D.lookupLabel("P_"+(i+1))).setLabelVisible(false);
+			for (int i = 0 ; i < 6 ; i++ ) 
+				((GeoPoint3D) kernel3D.lookupLabel("Q_"+(i+1))).setLabelVisible(false);
 				
 			
 		} catch (Exception e) {
