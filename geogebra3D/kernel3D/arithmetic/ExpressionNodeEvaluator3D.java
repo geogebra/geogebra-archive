@@ -1,54 +1,50 @@
 package geogebra3D.kernel3D.arithmetic;
 
-import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
-import geogebra.main.MyError;
 import geogebra3D.kernel3D.Geo3DVec;
 
 
-public class ExpressionNode3D extends ExpressionNode {
-
-	public ExpressionNode3D(ExpressionNode node) {
-
-	    app = node.app;
-	    kernel = node.kernel;
-	    left = node.left ; 
-	    right = node.right; 
-	    operation = node.operation;
-	    forceVector = node.forceVector; 
-	    forcePoint = node.forcePoint;
-	    
-	    holdsLaTeXtext = node.holdsLaTeXtext;
-	    leaf = node.leaf;
-	}
+/**
+ * @author ggb3D
+ * 
+ * Evaluator for ExpressionNode (used in ExpressionNode.evaluate()) in 3D mode
+ *
+ */
+public class ExpressionNodeEvaluator3D extends ExpressionNodeEvaluator {
 	
 	
-    // used for 3D
-    protected ExpressionValue evaluate(ExpressionValue v){
-		if (v.isExpressionNode())
-			return (new ExpressionNode3D((ExpressionNode) v)).evaluate();
-		else
-			return v.evaluate();
-    }
-
-	
-	public ExpressionValue evaluate() {
-		
-		if (leaf) return evaluate(left);//left.evaluate(); // for wrapping ExpressionValues as ValidExpression
+    /** Evaluates the ExpressionNode described by the parameters
+     * @param expressionNode ExpressionNode to evaluate
+     * @return corresponding ExpressionValue
+     */
+    public ExpressionValue evaluate(ExpressionNode expressionNode){ 
+    	
+		Kernel kernel = expressionNode.kernel;
+		boolean leaf = expressionNode.leaf; 
+		ExpressionValue left = expressionNode.left; 
+		ExpressionValue right = expressionNode.right; 
+		int operation = expressionNode.operation;
+		//Application app = expressionNode.app;
+		//boolean holdsLaTeXtext = expressionNode.holdsLaTeXtext;
+    	
+        if (leaf) return left.evaluate(); // for wrapping ExpressionValues as ValidExpression
+               
+        //Application.debug(operation+"");
         
-		MyDouble num;
-		
         ExpressionValue lt, rt;
-
-        lt = evaluate(left);// left.evaluate(); // left tree
-        rt = evaluate(right);// right.evaluate(); // right tree      
+        MyDouble num;
+                        
+        lt = left.evaluate(); // left tree
+        rt = right.evaluate(); // right tree      
 
         
+
         switch (operation) {
         
         /*
@@ -131,7 +127,12 @@ public class ExpressionNode3D extends ExpressionNode {
 
 		
 		
-		return super.evaluate();
+		return super.evaluate(expressionNode);
 		
 	}
+
+        
+    
+    
+
 }

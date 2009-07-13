@@ -75,9 +75,6 @@ public class Test3D{
 		/* Demo with a cube and spring */
 		//testCube(false);testSpring(30,false);
 		
-		/* Demo with a splitting cube */
-		//testSplittingCube();
-
 	}
 	
 	
@@ -892,6 +889,7 @@ public class Test3D{
 	private void testSplittingCube(){
 		
 		try {
+			/*
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A1=(1,1,0)",false);
 			kernel3D.lookupLabel("A1").setAuxiliaryObject(true);
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("B1=(-y(A1),x(A1),z(A1))",false);
@@ -923,8 +921,21 @@ public class Test3D{
 			kernel3D.lookupLabel("C2").setAuxiliaryObject(true);
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("D2=k*H1+(1-k)*E1",false);
 			kernel3D.lookupLabel("D2").setAuxiliaryObject(true);
+			*/
 			
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A=(1,1,0)",false);
+
+			/*
+			(-y(A),x(A),z(A))
+			(-x(A),-y(A),z(A))
+			(y(A),-x(A),z(A))
+			(x(A),y(A), z(A)+sqrt((x(B)-x(A))^2+(y(B)-y(A))^2)/2 )
+			(x(B1),y(B1),z(E1))
 			
+			(x(C1),y(C1),z(E1))
+			
+			(x(D1),y(D1),z(E1))
+			*/
 			
 		} catch (Exception e) {
 			

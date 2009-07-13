@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
@@ -199,12 +200,17 @@ public class Kernel {
 	// Continuity on or off, default: false since V3.0
 	private boolean continuous = false;
 	private MacroManager macroManager;
+	
+	
+	/** Evaluator for ExpressionNode */
+	protected ExpressionNodeEvaluator expressionNodeEvaluator;
 				
 	public Kernel(Application app) {
 		this();
 		this.app = app;
-		//cons = new Construction(this);
+		
 		newConstruction();
+		newExpressionNodeEvaluator();
 	}
 	
 	/**
@@ -213,6 +219,22 @@ public class Kernel {
 	protected void newConstruction(){
 		cons = new Construction(this);	
 	}
+	
+	
+	/**
+	 * creates the Evaluator for ExpressionNode
+	 */
+	protected void newExpressionNodeEvaluator(){
+		expressionNodeEvaluator = new ExpressionNodeEvaluator();
+	}
+	
+	/** return the Evaluator for ExpressionNode
+	 * @return the Evaluator for ExpressionNode
+	 */
+	public ExpressionNodeEvaluator getExpressionNodeEvaluator(){
+		return expressionNodeEvaluator;
+	}
+	
 	
 	public Kernel() {
 		nf = NumberFormat.getInstance(Locale.ENGLISH);

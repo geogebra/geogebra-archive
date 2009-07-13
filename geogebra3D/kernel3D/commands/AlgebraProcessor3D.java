@@ -7,7 +7,7 @@ import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra3D.kernel3D.Kernel3D;
-import geogebra3D.kernel3D.arithmetic.ExpressionNode3D;
+import geogebra.kernel.arithmetic.ExpressionNode;
 
 
 public class AlgebraProcessor3D extends AlgebraProcessor {
@@ -50,17 +50,12 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 			double z = p[2];
 			ret[0] = kernel3D.Point3D(label, x, y, z);			
 		} else {
-			ret[0] = kernel3D.DependentPoint3D(label, new ExpressionNode3D(n));
+			ret[0] = kernel3D.DependentPoint3D(label, n);
 		}
 
 		return ret;
 	}
 
-	
-	
-	protected ExpressionValue evaluate(ExpressionNode n){
-		return  (new ExpressionNode3D(n)).evaluate();
-	}
 	
 	
 	
