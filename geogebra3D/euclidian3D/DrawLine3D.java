@@ -26,11 +26,29 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	
 	
 	
+	public boolean update(){
+		if (!super.update())
+			return false;
+		
+		Ggb3DVector o = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getOrigin());
+		Ggb3DVector v = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getVx());
+		
+				
+		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+				o, v);
+		
+		drawMin = minmax[0];
+		drawMax = minmax[1];
+		
+		return true;
+	}
+	
 	
 	
 	
 
-	
+	/*
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		
 		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
@@ -45,15 +63,7 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 		renderer.drawLine(); 
 	}
 	
-	/*
-	public void drawGeometryHidden(EuclidianRenderer3D renderer){
-	
-		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
-		drawGeometry(renderer);
-	};
-	*/
-	
-
+*/
 
 	
 

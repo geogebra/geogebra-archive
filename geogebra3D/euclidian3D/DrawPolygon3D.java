@@ -28,7 +28,7 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 
 		renderer.setLayer(getGeoElement().getLayer());
 
-		renderer.startPolygon();
+		renderer.startPolygonAndInitMatrix();
 		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
 
 
@@ -37,7 +37,7 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 			renderer.addToPolygon(polygon.getPointX(i), polygon.getPointY(i));
 		}
 
-		renderer.endPolygon();
+		renderer.endPolygonAndResetMatrix();
 		
 		renderer.setLayer(0);
 			

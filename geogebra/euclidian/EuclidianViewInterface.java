@@ -121,8 +121,9 @@ public interface EuclidianViewInterface {
 	boolean isGridOrAxesShown();
 	int getGridType();
 	void setCoordSystem(double x, double y, double xscale, double yscale);
+	
 	/** Sets coord system from mouse move */
-	public void setCoordSystemFromMouseMove(int dx, int dy);
+	public void setCoordSystemFromMouseMove(int dx, int dy, int mode);
 	void setAnimatedCoordSystem(double ox, double oy, double newScale,int steps, boolean storeUndo);
 
 
@@ -180,8 +181,6 @@ public interface EuclidianViewInterface {
 	 */		
 	public Previewable createPreviewPolygon(ArrayList selectedPoints);
 	
-	public Previewable createPreviewPoint(ArrayList selectedPoints);
-
 
 
 	public void updatePreviewable();

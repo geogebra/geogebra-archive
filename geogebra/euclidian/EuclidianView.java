@@ -965,7 +965,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 	
 	/** Sets coord system from mouse move */
-	final public void setCoordSystemFromMouseMove(int dx, int dy) {		
+	final public void setCoordSystemFromMouseMove(int dx, int dy, int mode) {		
 		setCoordSystem(xZeroOld + dx, yZeroOld + dy, getXscale(), getYscale());		
 	}
 	
@@ -4181,9 +4181,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/////////////////////////////////////////
 	// previewables
 	
-	public Previewable createPreviewPoint(ArrayList selectedPoints){
-		return null;
-	}
 	
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 		

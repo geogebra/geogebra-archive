@@ -120,11 +120,11 @@ public abstract class Drawable3D {
 	/** objects that are picked are drawn with a thickness * PICKED_DILATATION*/
 	protected static final float PICKED_DILATATION = 1.3f;	
 	/** default radius for drawing 3D points*/
-	protected static final float POINT3D_RADIUS = 0.012f;
+	protected static final float POINT3D_RADIUS = 1.2f;
 	/** points on a path are a little bit more bigger than others */
 	protected static final float POINT_ON_PATH_DILATATION = 1.01f;
 	/** default thickness of 3D lines, segments, ... */
-	protected static final float LINE3D_THICKNESS = 0.005f;
+	protected static final float LINE3D_THICKNESS = 0.5f;
 	/** default thickness of lines of a 3D grid ... */	
 	protected static final float GRID3D_THICKNESS = 0.005f;
 		
@@ -204,12 +204,12 @@ public abstract class Drawable3D {
 	///////////////////////////////////////////////////////////////////////////////
 	// update
 	
-	/** update this according to the {@link GeoElement3D} */
-	public void update(){
-		//verify if object is visible for drawing
-		setVisible(getGeoElement().isEuclidianVisible() 
-				&& getGeoElement().isDefined());       				 
-		if (!isVisible()) return;
+
+	/** update this according to the {@link GeoElement3D} 
+	 * @return true if it has been updated*/
+	public boolean update(){
+		//verify if object is visible for drawing     				 
+		if (!isVisible()) return false;
 		setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
 		
 
@@ -218,6 +218,8 @@ public abstract class Drawable3D {
 		
 		//update the label drawing matrix - TODO create a labelMatrix for GeoElement3D
 		labelMatrix.set(getMatrix().getColumn(4),4);
+		
+		return true;
 
 	}
 	
@@ -286,6 +288,8 @@ public abstract class Drawable3D {
 	 * @return the visibility
 	 */
 	protected boolean isVisible(){
+		setVisible(getGeoElement().isEuclidianVisible() 
+				&& getGeoElement().isDefined());  
 		return m_isVisible; 
 	}
 	

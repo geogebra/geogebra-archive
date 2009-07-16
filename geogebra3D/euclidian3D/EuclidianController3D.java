@@ -294,10 +294,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			boolean doSingleHighlighting) {
 		
 
-		GeoPoint3D point = view3D.getPreviewPoint();
+		GeoPoint3D point = view3D.getCursor3D();
 		GeoPoint3D ret;
 		
-		switch(view3D.getPreviewPointType()){		
+		switch(view3D.getCursor3DType()){		
 		case EuclidianView3D.PREVIEW_POINT_FREE:
 			ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
 			ret.setCoordDecoration(true);
@@ -320,8 +320,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;
 		case EuclidianView3D.PREVIEW_POINT_DEPENDENT:
 			ret = ((Kernel3D) kernel).Intersect(null, 
-					(GeoCoordSys1D) view3D.getPreviewPointIntersetionOf(0), 
-					(GeoCoordSys1D) view3D.getPreviewPointIntersetionOf(1));
+					(GeoCoordSys1D) view3D.getCursor3DIntersetionOf(0), 
+					(GeoCoordSys1D) view3D.getCursor3DIntersetionOf(1));
 			return ret;
 			//break;
 		case EuclidianView3D.PREVIEW_POINT_ALREADY:
@@ -346,19 +346,19 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	/** put sourcePoint coordinates in point */
 	protected void createNewPoint(GeoPointInterface sourcePoint){
-		GeoPoint3D point3D = view3D.getPreviewPoint();
+		GeoPoint3D point3D = view3D.getCursor3D();
 		point3D.setCoords((GeoPoint3D) sourcePoint);
 		point3D.updateCoords();
-		view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_ALREADY);
+		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
 	}
 	
 	/** put intersectionPoint coordinates in point */
 	protected void createNewPointIntersection(GeoPointInterface intersectionPoint){
-		GeoPoint3D point3D = view3D.getPreviewPoint();
+		GeoPoint3D point3D = view3D.getCursor3D();
 		point3D.setCoords((GeoPoint3D) intersectionPoint);
 		//point3D.setParentAlgorithm(((GeoPoint3D) intersectionPoint).getParentAlgorithm());
 		point3D.updateCoords();
-		view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_DEPENDENT);
+		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_DEPENDENT);
 		
 	}
 
@@ -374,10 +374,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (!forPreviewable)
 			point3D = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
 		else{
-			point3D = view3D.getPreviewPoint();
+			point3D = view3D.getCursor3D();
 			point3D.setPath(null);
 			point3D.setRegion(null);
-			view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_FREE);
+			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_FREE);
 		}
 		
 		setCurrentPlane(Ggb3DMatrix4x4.Identity());
@@ -399,10 +399,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (!forPreviewable)
 			point3D = ((Kernel3D) getKernel()).Point3D(null,path);
 		else{
-			point3D = view3D.getPreviewPoint();
+			point3D = view3D.getCursor3D();
 			point3D.setPath(path);
 			point3D.setRegion(null);
-			view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_PATH);
+			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_PATH);
 		}			
 		
 		setMouseInformation(point3D);
@@ -422,10 +422,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (!forPreviewable)
 			point3D = ((Kernel3D) getKernel()).Point3DIn(null,region);
 		else{
-			point3D = view3D.getPreviewPoint();
+			point3D = view3D.getCursor3D();
 			point3D.setPath(null);
 			point3D.setRegion(region);
-			view3D.setPreviewPointType(EuclidianView3D.PREVIEW_POINT_REGION);
+			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_REGION);
 		}
 		
 		setMouseInformation(point3D);
@@ -472,7 +472,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
     	Application.debug("point is defined : "+point.isDefined());
     	
     	if (point.isDefined()){
-    		view3D.setPreviewPointIntersetionOf(a, b);
+    		view3D.setCursor3DIntersetionOf(a, b);
     		return point;
     	}else
     		return null;
@@ -550,9 +550,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// EMPTY METHODS IN EuclidianController USED FOR EuclidianView3D	
 	
 	
-	/** set the hits in top of mouseMoved() */
+	/** set the hits in top of mouseMoved() and update the 3D cursor */
 	protected void mouseMoved3D(){
-		view.setHits(mouseLoc);
+		view.setHits(mouseLoc);		
+		((EuclidianView3D) view).updateCursor3D();
 	}
 
 
@@ -561,13 +562,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		//remembers mouse location
 		startLoc = mouseLoc;
 		view.rememberOrigins();
-		//Application.debug("");
+		view.setMoveCursor();
+
 	}
 	
 	/** right-drag the mouse makes 3D rotation 
 	 * @return true*/
 	protected boolean processRightDragFor3D(){
-		view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y);
+		view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y, MOVE_ROTATE_VIEW);
 		viewRotationOccured = true;
 		return true;
 	}
@@ -576,8 +578,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** right-release the mouse makes stop 3D rotation 
 	 * @return true if a rotation occured */
 	protected boolean processRightReleaseFor3D(){
+		
 		if (viewRotationOccured){
 			viewRotationOccured = false;
+			view.setHits(mouseLoc);
+			//Application.debug("hits"+view.getHits().toString());
+			((EuclidianView3D) view).updateCursor3D();
+			
+			view.setHitCursor();
 			return true;
 		}else
 			return false;
@@ -711,11 +719,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		switch (moveMode) {
 		case MOVE_VIEW:
 		default:
-			/*
+			view3D.setMoveCursor();//setZoomCursor
 			view3D.setScale(view3D.getXscale()+r*10);
 			view3D.updateMatrix();
-			((Kernel3D) getKernel()).notifyRepaint();
-			*/
+			view.setHits(mouseLoc);
+			((EuclidianView3D) view).updateCursor3D();
+			view3D.setHitCursor();
+			//((Kernel3D) getKernel()).notifyRepaint();
+			
 			break;
 
 		case MOVE_POINT:
@@ -765,7 +776,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 
-	
+	/*
 	protected void mousePressedTranslatedView(MouseEvent e){
 		
 		Hits hits;
@@ -786,7 +797,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	}
 
-	
+	*/
 	
 	
 	

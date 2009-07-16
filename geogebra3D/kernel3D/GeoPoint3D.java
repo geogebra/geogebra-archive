@@ -119,18 +119,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     public void setRegion(Region region){
     	this.region = region;
-    	
-    	if (region!=null){
-    		// use drawing coordinates for the cross
-    		// only used for preview 
-    		getDrawingMatrix().setVx(((GeoElement3DInterface) region).getDrawingMatrix().getVx());
-    		getDrawingMatrix().setVy(((GeoElement3DInterface) region).getDrawingMatrix().getVy());
-    		getDrawingMatrix().setVz(((GeoElement3DInterface) region).getDrawingMatrix().getVz());
-    	}else{
-    		getDrawingMatrix().setVx(EuclidianView3D.vx);
-    		getDrawingMatrix().setVy(EuclidianView3D.vy);
-    		getDrawingMatrix().setVz(EuclidianView3D.vz);
-    	}
+
 		
     }
     

@@ -132,12 +132,14 @@ public class Test3D{
 		
 		
         //init 3D view
-        view3D.setZZero(-7.0);
-        view3D.setRotXY(-Math.PI/6,Math.PI/6,true);
+        view3D.setZZero(-0.0);
+        view3D.setYZero(-100);
+        //view3D.setRotXY(-Math.PI/6,Math.PI/6,true);
         view3D.setRotXY(-Math.PI/6,Math.PI/8,true);
         //view3D.setRotXY(-Math.PI/6,Math.PI/12,true);
+        //view3D.setRotXY(0,0,true);
         
-		//testRepere();
+		//testAxisAndPlane();
 		
 		
 		//testTetrahedron();
@@ -146,6 +148,9 @@ public class Test3D{
 		
         demos();
 		
+        //testLine();
+        
+        
         //testPoint(1,1,1);
         //testSegment3();
         //testPolygon();
@@ -309,6 +314,20 @@ public class Test3D{
 		
 	}
 	
+	private void testLine(){
+
+		
+		
+		GeoPoint3D[] points = new GeoPoint3D[2];
+		points[0] = testPoint(1f,-1f,-0.5f);
+		points[1] = testPoint(1f,1f,-0.5f);	
+
+		
+		kernel3D.Line3D("line", points[0], points[1]);
+		
+		
+		
+	}
 	
 	/** number of points = n+1 */
 	private void test1(int n){

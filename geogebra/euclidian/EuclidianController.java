@@ -93,7 +93,7 @@ public class EuclidianController implements MouseListener,
 
 	protected static final int MOVE_VECTOR_STARTPOINT = 205;
 
-	protected static final int MOVE_VIEW = 106;
+	public static final int MOVE_VIEW = 106;
 	
 	protected static final int MOVE_FUNCTION = 107;
 
@@ -118,6 +118,8 @@ public class EuclidianController implements MouseListener,
 	
 	protected static final int MOVE_BOOLEAN = 118; // for checkbox moving
 	protected static final int MOVE_BUTTON = 119; 
+	
+	public static final int MOVE_ROTATE_VIEW = 120; // for 3D 
 
 	protected Application app;
 
@@ -326,11 +328,6 @@ public class EuclidianController implements MouseListener,
 		Previewable previewDrawable = null;
 		// init preview drawables
 		switch (mode) {
-		
-		
-		case EuclidianView.MODE_POINT_IN_REGION: // used for 3D : needs a previewable
-			previewDrawable = view.createPreviewPoint(null);
-			break;
 			
 		
 		case EuclidianView.MODE_JOIN: // line through two points
@@ -585,7 +582,7 @@ public class EuclidianController implements MouseListener,
 		//hits = view.getHits(mouseLoc);
 		view.setHits(mouseLoc);
 		hits = view.getHits();hits.removePolygons();
-		Application.debug("MODE_TRANSLATEVIEW - "+hits.toString());
+		//Application.debug("MODE_TRANSLATEVIEW - "+hits.toString());
 		
 		if (!hits.isEmpty() && hits.size() == 1) {
 			Object hit0 = hits.get(0);
@@ -929,7 +926,7 @@ public class EuclidianController implements MouseListener,
 
 			// point with changeable coord parent numbers
 			if (movedGeoElement.isGeoPoint() && 
-					((GeoPoint) movedGeoElement).hasChangeableCoordParentNumbers()) {
+					((GeoPointInterface) movedGeoElement).hasChangeableCoordParentNumbers()) {
 				translateableGeos = new ArrayList();
 				translateableGeos.add(movedGeoElement);
 			}
@@ -1423,7 +1420,7 @@ public class EuclidianController implements MouseListener,
 					view.setCoordSystem(xZeroOld + mouseLoc.x - startLoc.x, yZeroOld
 							+ mouseLoc.y - startLoc.y, view.getXscale(), view.getYscale());
 							*/
-					view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y);
+					view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y, MOVE_VIEW);
 				}
 				break;	
 								
@@ -1549,59 +1546,63 @@ public class EuclidianController implements MouseListener,
 			app.setUnsaved();
 			return;
 		}
+		
+		
 				
 // Michael Borcherds 2007-10-08 allow drag with right mouse button
-		if ((Application.isRightClick(e) || Application.isControlDown(e)) && !TEMPORARY_MODE)
+		if ((Application.isRightClick(e) || Application.isControlDown(e)))// && !TEMPORARY_MODE)
 		{		
 			if (processRightReleaseFor3D()) return;
-			if (!app.isRightClickEnabled()) return;
-			if (processZoomRectangle()) return;
-//			 Michael Borcherds 2007-10-08
+			if (!TEMPORARY_MODE){
+				if (!app.isRightClickEnabled()) return;
+				if (processZoomRectangle()) return;
+				//			 Michael Borcherds 2007-10-08
 
-			// make sure cmd-click selects multiple points (not open properties)
-			if (Application.MAC_OS && Application.isControlDown(e) 
-					|| !Application.isRightClick(e))
-				return;
-							
-			// get selected GeoElements						
-			// show popup menu after right click
-			view.setHits(mouseLoc);
-			hits = view.getHits().getTopHits();
-			if (hits.isEmpty()) {
-				// no hits
-				if (app.selectedGeosSize() == 1) {
-					GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
-					app.getGuiManager().showPopupMenu(selGeo, (JPanel) view, mouseLoc);
-				}
-				else if (app.selectedGeosSize() > 1) {
-					// there are selected geos: show them
-					app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
-				}
-				else {
-					// there are no selected geos: show drawing pad popup menu
-					app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
-				}
-			} else {		
-				// there are hits
-				if (app.selectedGeosSize() > 0) {	
-					// selected geos: add first hit to selection and show properties
-					app.addSelectedGeo((GeoElement) hits.get(0));
+				// make sure cmd-click selects multiple points (not open properties)
+				if (Application.MAC_OS && Application.isControlDown(e) 
+						|| !Application.isRightClick(e))
+					return;
 
+				// get selected GeoElements						
+				// show popup menu after right click
+				view.setHits(mouseLoc);
+				hits = view.getHits().getTopHits();
+				if (hits.isEmpty()) {
+					// no hits
 					if (app.selectedGeosSize() == 1) {
 						GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
 						app.getGuiManager().showPopupMenu(selGeo, (JPanel) view, mouseLoc);
 					}
-					else  { // more than 1 selected					
+					else if (app.selectedGeosSize() > 1) {
+						// there are selected geos: show them
 						app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
 					}
-				}
-				else {
-					// no selected geos: choose geo and show popup menu
-					geo = chooseGeo(hits, true);
-					app.getGuiManager().showPopupMenu(geo,(JPanel) view, mouseLoc);						
-				}																										
-			}				
-			return;
+					else {
+						// there are no selected geos: show drawing pad popup menu
+						app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
+					}
+				} else {		
+					// there are hits
+					if (app.selectedGeosSize() > 0) {	
+						// selected geos: add first hit to selection and show properties
+						app.addSelectedGeo((GeoElement) hits.get(0));
+
+						if (app.selectedGeosSize() == 1) {
+							GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
+							app.getGuiManager().showPopupMenu(selGeo, (JPanel) view, mouseLoc);
+						}
+						else  { // more than 1 selected					
+							app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
+						}
+					}
+					else {
+						// no selected geos: choose geo and show popup menu
+						geo = chooseGeo(hits, true);
+						app.getGuiManager().showPopupMenu(geo,(JPanel) view, mouseLoc);						
+					}																										
+				}				
+				return;
+			}
 		}
 
 		// handle moving
@@ -1623,7 +1624,6 @@ public class EuclidianController implements MouseListener,
 // Michael Borcherds 2007-10-08
 			if (allowSelectionRectangle()) {
 				processSelectionRectangle(e);	
-				
 				
 				return;
 			}
@@ -1730,6 +1730,7 @@ public class EuclidianController implements MouseListener,
 //			app.storeUndoInfo();
 //		Michael Borcherds 2007-10-12
 			
+		
 		if (!hits.isEmpty())
 			view.setDefaultCursor();		
 		else

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoRay3D;
 
@@ -16,7 +18,29 @@ public class DrawRay3D extends DrawCoordSys1D {
  		super(a_view, a_ray);
 	}
 	
+	
+	
+	public boolean update(){
+		if (!super.update())
+			return false;
+		
+		Ggb3DVector o = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getOrigin());
+		Ggb3DVector v = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getVx());
+		
+				
+		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {0,Double.POSITIVE_INFINITY},
+				o, v);
+		
+		drawMin = minmax[0];
+		drawMax = minmax[1];
+		
+		return true;
+	}
+	
+	
 
+	/*
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
 		super.drawGeometry(renderer);
@@ -28,6 +52,7 @@ public class DrawRay3D extends DrawCoordSys1D {
 		super.drawGeometryPicked(renderer);
 		renderer.drawRay();
 	}
+	*/
 
 
 	/*

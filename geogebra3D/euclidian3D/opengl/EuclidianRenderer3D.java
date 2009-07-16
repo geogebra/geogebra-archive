@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D.opengl;
 
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -17,6 +18,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 
@@ -56,7 +58,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	//private GLUT glut = new GLUT();
 	private TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 16));
 	/** default text scale factor */
-	private static final float DEFAULT_TEXT_SCALE_FACTOR = 0.008f;
+	private static final float DEFAULT_TEXT_SCALE_FACTOR = 0.8f;
 
 	/** matrix changing Y-direction to Z-direction */
 	//private double[] matrixYtoZ = {1,0,0,0, 0,0,1,0, 0,1,0,0, 0,0,0,1}; 
@@ -659,13 +661,15 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     private void initDashTexture(int n, boolean[] description){
     	
-        int sizeX = 1; 
-        int sizeY = description.length;
+        //int sizeX = 1; 
+        //int sizeY = description.length;
+        int sizeX = description.length; 
+        int sizeY = 1;
         
         byte[] bytes = new byte[4*sizeX*sizeY];
         
         // if description[i]==true, then texture is white opaque, else is transparent
-        for (int i=0; i<sizeY; i++)
+        for (int i=0; i<sizeX; i++)
         	if (description[i])      		
         		bytes[4*i+0]=
         			bytes[4*i+1]= 
@@ -697,22 +701,22 @@ public class EuclidianRenderer3D implements GLEventListener {
     	switch (dash) {
 		case EuclidianView.LINE_TYPE_DOTTED:
 			this.dash=DASH_DOTTED;
-			dashScale = 8f;
+			dashScale = 0.08f;
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_SHORT:
 			this.dash=DASH_SIMPLE;
-			dashScale = 8f;
+			dashScale = 0.08f;
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_LONG:
 			this.dash=DASH_SIMPLE;
-			dashScale = 4f;
+			dashScale = 0.04f;
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_DOTTED:
 			this.dash=DASH_DOTTED_DASHED;
-			dashScale = 4f;
+			dashScale = 0.04f;
 			break;
 
 		default: // EuclidianView.LINE_TYPE_FULL
@@ -769,12 +773,16 @@ public class EuclidianRenderer3D implements GLEventListener {
 
     		gl.glMatrixMode(GL.GL_TEXTURE);
     		gl.glLoadIdentity();
-    		gl.glScalef(1f, (float) (dashScale*(a_x2-a_x1)*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS)), 1.f);
-  
+    		float b = (float) (dashScale*(a_x2-a_x1)*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS)*view3D.getScale());
+    		float a = 0.75f/b-0.5f;
+    		
+    		gl.glScalef(b,1f,1f);
+    		gl.glTranslatef(a,0f,0f);
+    		
     		gl.glMatrixMode(GL.GL_MODELVIEW);
     	}
     	
-       	drawCylinder(m_thickness);
+       	drawCylinder(m_thickness/view3D.getScale());
     	
        	if (dashed)
        		gl.glDisable(GL.GL_TEXTURE_2D);
@@ -796,10 +804,12 @@ public class EuclidianRenderer3D implements GLEventListener {
     /** 
      * draws a line according to current drawing matrix.
      */
+    /*
     public void drawLine(){
     	//TODO use frustum
     	drawSegment(-20,21);
     }  
+    */
     
     
     
@@ -893,10 +903,12 @@ public class EuclidianRenderer3D implements GLEventListener {
     /** 
      * draws a ray (half-line) according drawing matrix.
      */
+    /*
     public void drawRay(){
     	//TODO use frustum
     	drawSegment(0,21);
     }  
+    */
     
     
     
@@ -1039,9 +1051,10 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param radius radius of the sphere
      */
     public void drawSphere(float radius){
-    	initMatrix();
-    	glu.gluSphere(quadric, radius, 16, 16);
-    	resetMatrix();
+    	//initMatrix();
+    	//glu.gluSphere(quadric, radius, 16, 16);
+    	//resetMatrix();
+    	drawSphere(radius/view3D.getScale(),16,16);
     }
     
     /**
@@ -1050,9 +1063,11 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param radius radius of the sphere
      */
     public void drawPoint(float radius){
-    	initMatrix();
-    	glu.gluSphere(quadric, radius, 8, 8);
-    	resetMatrix();
+    	//initMatrix();
+    	//glu.gluSphere(quadric, radius/view3D.getScale(), 8, 8);
+    	//resetMatrix();
+    	drawSphere(radius/view3D.getScale(),8,8);
+    	
     }
     
     /**
@@ -1061,19 +1076,61 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param radius radius of the sphere
      * @param numTriangles number of triangles
      */
-    public void drawSphere(float radius, int numTriangles){
+    public void drawSphere(double radius, int latitude, int longitude){
     	initMatrix();
-    	glu.gluSphere(quadric, radius, numTriangles, numTriangles);
-     	resetMatrix();
+    	
+    	gl.glScaled(radius, radius, radius);
+    	
+    	
+
+    	float da = (float) (Math.PI / latitude) ; 
+    	float db = (float) ( 2.0f * Math.PI / longitude ); 
+    	gl.glBegin(GL.GL_QUADS); 
+    	
+    	for( int i = 0; i < latitude + 1 ; i++ ) { 
+    		float r0 = (float) Math.sin ( i * da ); 
+    		float y0 = (float) Math.cos ( i * da ); 
+    		float r1 = (float) Math.sin ( (i+1) * da ); 
+    		float y1 = (float) Math.cos ( (i+1) * da ); 
+
+    		for( int j = 0; j < longitude + 1 ; j++ ) { 
+    			float x0 = r0 * (float) Math.sin( j * db ); 
+    			float z0 = r0 * (float) Math.cos( j * db ); 
+    			float x1 = r0 * (float) Math.sin( (j+1) * db ); 
+    			float z1 = r0 * (float) Math.cos( (j+1) * db ); 
+
+    			float x2 = r1 * (float) Math.sin( j * db ); 
+    			float z2 = r1 * (float) Math.cos( j * db ); 
+    			float x3 = r1 * (float) Math.sin( (j+1) * db ); 
+    			float z3 = r1 * (float) Math.cos( (j+1) * db ); 
+
+    			gl.glNormal3f(x0,y0,z0); 
+    			gl.glVertex3f(x0,y0,z0); 
+
+
+    			gl.glNormal3f(x2,y1,z2); 
+    			gl.glVertex3f(x2,y1,z2); 
+
+    			gl.glNormal3f(x3,y1,z3); 
+    			gl.glVertex3f(x3,y1,z3); 
+
+    			gl.glNormal3f(x1,y0,z1); 
+    			gl.glVertex3f(x1,y0,z1); 
+
+    		} 
+    	} 
+    	gl.glEnd();  
+
+    	resetMatrix();
     }
  
     
     
     
-    /** draws a cross with edges using size and getThickness() parameters
+    /** draws a cross cursor using size and getThickness() parameters
      * @param size size of the cross
      */    
-    public void drawCrossWithEdges(double size){
+    public void drawCursorCross(double size){
     	
     	
     	double thickness = getThickness()/2;
@@ -1114,6 +1171,8 @@ public class EuclidianRenderer3D implements GLEventListener {
     	
     	
     	gl.glDisable(GL.GL_LIGHTING);
+    	
+    	initMatrix();
     	
     	
     	// the cross itself
@@ -1174,6 +1233,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 		endPolygon(true);
     	
     	
+		resetMatrix();
     	
     	gl.glEnable(GL.GL_LIGHTING);
     	
@@ -1181,11 +1241,311 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
+    /** draws a cylinder cursor using size and getThickness() parameters
+     * @param size size of the cross
+     */    
+    public void drawCursorCylinder(double size){
+ 
+    	int latitude = 16;
+    	float center = 0.5f;
+    	
+    	gl.glDisable(GL.GL_LIGHTING);  
+    	
+    	initMatrix();
+    	gl.glScalef((float) size, 1f, 1f);
+    	
+    	// top - black
+    	gl.glPushMatrix();
+    	gl.glTranslatef(2f, 0, 0);
+    	setLayer(0);
+    	gl.glColor3f(0.0f, 0.0f, 0.0f);
+    	drawDisc(getThickness(), latitude);
+    	gl.glPopMatrix();
+    	
+    	// top - white
+    	
+    	gl.glPushMatrix();
+    	gl.glTranslatef(2f, 0, 0);
+    	setLayer(10);
+    	gl.glColor3f(1.0f, 1.0f, 1.0f);
+    	drawDisc(getThickness()*center, latitude);
+    	gl.glPopMatrix();
+    	
+    	
+    	// cylinder - black and white
+    	gl.glColor3f(0.0f, 0.0f, 0.0f);
+    	gl.glPushMatrix();
+    	gl.glTranslatef(-2f, 0, 0);
+    	drawCylinder(getThickness(), latitude);
+    	gl.glPopMatrix();
+    	
+    	gl.glPushMatrix();
+    	gl.glTranslatef(1f, 0, 0);
+    	drawCylinder(getThickness(), latitude);
+    	gl.glPopMatrix();
+    	
+    	gl.glPushMatrix();
+    	gl.glScalef(2f, 1f, 1f);
+    	gl.glColor3f(1.0f, 1.0f, 1.0f);
+    	gl.glTranslatef(-0.5f, 0, 0);
+    	drawCylinder(getThickness(), latitude);   	
+    	gl.glPopMatrix();
+ 
+
+    	
+    	// bottom - black
+    	gl.glPushMatrix();
+    	gl.glScalef(1f, 1, -1);
+    	gl.glTranslatef(-2f, 0, 0);
+    	setLayer(0);
+    	gl.glColor3f(0.0f, 0.0f, 0.0f);
+    	drawDisc(getThickness(), latitude);	
+    	gl.glPopMatrix();
+    	
+    	// bottom - white  	
+    	gl.glScalef(1f, 1, -1);
+    	gl.glTranslatef(-2f, 0, 0);
+    	setLayer(10);
+    	gl.glColor3f(1.0f, 1.0f, 1.0f);
+    	drawDisc(getThickness()*center, latitude);	
+    	
+    	setLayer(0);
+    	
+    	
+    	resetMatrix();
+    	
+    	gl.glEnable(GL.GL_LIGHTING);
+
+    	
+    }
+    
+    
+    
+
+    
+    /** draws a diamond cursor using getThickness() parameters
+     * @param size size of the cross
+     */    
+    public void drawCursorDiamond(){
+ 
+    	float t1 = 0.15f;
+    	float t2 = 1f-2*t1;
+    	
+    	gl.glDisable(GL.GL_LIGHTING);  
+    	
+    	initMatrix();
+        gl.glScaled(getThickness(), getThickness(), getThickness());
+  	
+        gl.glBegin(GL.GL_TRIANGLES);	
+        
+        
+
+
+
+
+        
+        //white, center of faces
+        gl.glColor3f(1f, 1f, 1f);
+        
+        gl.glVertex3f(t2, t1, t1);	
+        gl.glVertex3f(t1, t2, t1);	
+        gl.glVertex3f(t1, t1, t2);
+ 
+        gl.glVertex3f(t2, -t1, -t1);	
+        gl.glVertex3f(t1, -t2, -t1);	
+        gl.glVertex3f(t1, -t1, -t2);
+
+        gl.glVertex3f(-t2, t1, -t1);	
+        gl.glVertex3f(-t1, t2, -t1);	
+        gl.glVertex3f(-t1, t1, -t2);
+
+        gl.glVertex3f(-t2, -t1, t1);	
+        gl.glVertex3f(-t1, -t2, t1);	
+        gl.glVertex3f(-t1, -t1, t2);
+        
+        
+        
+
+        gl.glVertex3f(t2, t1, -t1);	
+        gl.glVertex3f(t1, t1, -t2);
+        gl.glVertex3f(t1, t2, -t1);	
+        
+        
+        gl.glVertex3f(t2, -t1, t1);	
+        gl.glVertex3f(t1, -t1, t2);
+        gl.glVertex3f(t1, -t2, t1);	
+
+        gl.glVertex3f(-t2, t1, t1);	
+        gl.glVertex3f(-t1, t1, t2);
+        gl.glVertex3f(-t1, t2, t1);     
+        
+        gl.glVertex3f(-t2, -t1, -t1);	
+        gl.glVertex3f(-t1, -t1, -t2);
+        gl.glVertex3f(-t1, -t2, -t1);         
+        
+        
+        gl.glEnd();	
+    	
+        
+        gl.glBegin(GL.GL_QUADS);	
+        
+        
+        //black - outline of faces
+        gl.glColor3f(0f, 0f, 0f);
+        
+        gl.glVertex3f(1f, 0f, 0f);	        
+        gl.glVertex3f(t2, t1, t1);	        
+        gl.glVertex3f(t1, t1, t2);
+        gl.glVertex3f(0f, 0f, 1f);
+        
+        gl.glVertex3f(0f, 0f, 1f);
+        gl.glVertex3f(t1, t1, t2);
+        gl.glVertex3f(t1, t2, t1);	
+        gl.glVertex3f(0f, 1f, 0f);	
+        
+        gl.glVertex3f(0f, 1f, 0f);	
+        gl.glVertex3f(t1, t2, t1);	
+        gl.glVertex3f(t2, t1, t1);	        
+        gl.glVertex3f(1f, 0f, 0f);
+        
+        
+        gl.glVertex3f(1f, -0f, -0f);	        
+        gl.glVertex3f(t2, -t1, -t1);	        
+        gl.glVertex3f(t1, -t1, -t2);
+        gl.glVertex3f(0f, -0f, -1f);
+        
+        gl.glVertex3f(0f, -0f, -1f);
+        gl.glVertex3f(t1, -t1, -t2);
+        gl.glVertex3f(t1, -t2, -t1);	
+        gl.glVertex3f(0f, -1f, -0f);	
+        
+        gl.glVertex3f(0f, -1f, -0f);	
+        gl.glVertex3f(t1, -t2, -t1);	
+        gl.glVertex3f(t2, -t1, -t1);	        
+        gl.glVertex3f(1f, -0f, -0f);	  
+ 
+        
+        gl.glVertex3f(-1f, -0f, 0f);	        
+        gl.glVertex3f(-t2, -t1, t1);	        
+        gl.glVertex3f(-t1, -t1, t2);
+        gl.glVertex3f(-0f, -0f, 1f);
+        
+        gl.glVertex3f(-0f, -0f, 1f);
+        gl.glVertex3f(-t1, -t1, t2);
+        gl.glVertex3f(-t1, -t2, t1);	
+        gl.glVertex3f(-0f, -1f, 0f);	
+        
+        gl.glVertex3f(-0f, -1f, 0f);	
+        gl.glVertex3f(-t1, -t2, t1);	
+        gl.glVertex3f(-t2, -t1, t1);	        
+        gl.glVertex3f(-1f, -0f, 0f);	  
+
+        
+        gl.glVertex3f(-1f, 0f, -0f);	        
+        gl.glVertex3f(-t2, t1, -t1);	        
+        gl.glVertex3f(-t1, t1, -t2);
+        gl.glVertex3f(-0f, 0f, -1f);
+        
+        gl.glVertex3f(-0f, 0f, -1f);
+        gl.glVertex3f(-t1, t1, -t2);
+        gl.glVertex3f(-t1, t2, -t1);	
+        gl.glVertex3f(-0f, 1f, -0f);	
+        
+        gl.glVertex3f(-0f, 1f, -0f);	
+        gl.glVertex3f(-t1, t2, -t1);	
+        gl.glVertex3f(-t2, t1, -t1);	        
+        gl.glVertex3f(-1f, 0f, -0f);	  
+        
+        
+        
+        
+        gl.glVertex3f(0f, 0f, -1f);
+        gl.glVertex3f(t1, t1, -t2);
+        gl.glVertex3f(t2, t1, -t1);	        
+        gl.glVertex3f(1f, 0f, -0f);	        
+        
+        gl.glVertex3f(0f, 1f, -0f);	
+        gl.glVertex3f(t1, t2, -t1);	
+        gl.glVertex3f(t1, t1, -t2);
+        gl.glVertex3f(0f, 0f, -1f);
+        
+        gl.glVertex3f(1f, 0f, -0f);	        
+        gl.glVertex3f(t2, t1, -t1);	        
+        gl.glVertex3f(t1, t2, -t1);	
+        gl.glVertex3f(0f, 1f, -0f);	
+
+ 
+        gl.glVertex3f(0f, -0f, 1f);
+        gl.glVertex3f(t1, -t1, t2);
+        gl.glVertex3f(t2, -t1, t1);	        
+        gl.glVertex3f(1f, -0f, 0f);	        
+        
+        gl.glVertex3f(0f, -1f, 0f);	
+        gl.glVertex3f(t1, -t2, t1);	
+        gl.glVertex3f(t1, -t1, t2);
+        gl.glVertex3f(0f, -0f, 1f);
+        
+        gl.glVertex3f(1f, -0f, 0f);	        
+        gl.glVertex3f(t2, -t1, t1);	        
+        gl.glVertex3f(t1, -t2, t1);	
+        gl.glVertex3f(0f, -1f, 0f);	
+
+        
+        gl.glVertex3f(-0f, 0f, 1f);
+        gl.glVertex3f(-t1, t1, t2);
+        gl.glVertex3f(-t2, t1, t1);	        
+        gl.glVertex3f(-1f, 0f, 0f);	        
+        
+        gl.glVertex3f(-0f, 1f, 0f);	
+        gl.glVertex3f(-t1, t2, t1);	
+        gl.glVertex3f(-t1, t1, t2);
+        gl.glVertex3f(-0f, 0f, 1f);
+        
+        gl.glVertex3f(-1f, 0f, 0f);	        
+        gl.glVertex3f(-t2, t1, t1);	        
+        gl.glVertex3f(-t1, t2, t1);	
+        gl.glVertex3f(-0f, 1f, 0f);	    
+        
+        
+        gl.glVertex3f(-0f, -0f, -1f);
+        gl.glVertex3f(-t1, -t1, -t2);
+        gl.glVertex3f(-t2, -t1, -t1);	        
+        gl.glVertex3f(-1f, -0f, -0f);	        
+        
+        gl.glVertex3f(-0f, -1f, -0f);	
+        gl.glVertex3f(-t1, -t2, -t1);	
+        gl.glVertex3f(-t1, -t1, -t2);
+        gl.glVertex3f(-0f, -0f, -1f);
+        
+        gl.glVertex3f(-1f, -0f, -0f);	        
+        gl.glVertex3f(-t2, -t1, -t1);	        
+        gl.glVertex3f(-t1, -t2, -t1);	
+        gl.glVertex3f(-0f, -1f, -0f);	
+        
+        gl.glEnd();	
+        
+        
+    	
+    	resetMatrix();
+    	
+    	gl.glEnable(GL.GL_LIGHTING);
+
+    	
+    }
+    
+    /**
+     * set the tesselator to start drawing a new polygon
+     * and inits the matrix
+     */
+    public void startPolygonAndInitMatrix(){
+    	initMatrix();
+    	startPolygon();
+    }  
     
     /**
      * set the tesselator to start drawing a new polygon
      */
-    public void startPolygon(){
+    private void startPolygon(){
     	startPolygon(false);
     }
     
@@ -1194,8 +1554,8 @@ public class EuclidianRenderer3D implements GLEventListener {
      * set the tesselator to start drawing a new polygon
      * @param cullFace says if the faces have to be culled
      */
-    public void startPolygon(boolean cullFace){
-    	initMatrix();
+    private void startPolygon(boolean cullFace){
+    	
     	
     	if(!cullFace)
     		gl.glDisable(GL.GL_CULL_FACE);
@@ -1244,7 +1604,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     /**
      * end of the current polygon
      */
-    public void endPolygon(){
+    private void endPolygon(){
 
     	endPolygon(false);
     }
@@ -1253,7 +1613,7 @@ public class EuclidianRenderer3D implements GLEventListener {
      * end of the current polygon
      * @param cullFace says if the faces have been culled
      */
-    public void endPolygon(boolean cullFace){
+    private void endPolygon(boolean cullFace){
 	    glu.gluTessEndContour(tobj);
 	    glu.gluTessEndPolygon(tobj);
 	    
@@ -1261,12 +1621,18 @@ public class EuclidianRenderer3D implements GLEventListener {
         
 	    if(!cullFace)
 	    	gl.glEnable(GL.GL_CULL_FACE);
-      
-        resetMatrix();   
  
     }
     
-    
+    /**
+     * end of the current polygon
+     * and reset the matrix
+     */
+    public void endPolygonAndResetMatrix(){
+
+    	endPolygon();
+    	resetMatrix(); 
+    }
     
     
     /**
@@ -1395,15 +1761,72 @@ public class EuclidianRenderer3D implements GLEventListener {
 
    
     ///////////////////////////////////////////////////////////
-    //drawing primitives TODO use glLists
+    //drawing primitives TODO use VBO
     
 
-
-    
-    private void drawCylinder(double a_thickness){
-    	gl.glRotatef(90f, 0.0f, 1.0f, 0.0f); //switch z-axis to x-axis
-    	glu.gluCylinder(quadric, a_thickness, a_thickness, 1.0f, 8, 1);
+    private void drawCylinder(double radius){
+    	drawCylinder(radius,8);
     }
+    
+    private void drawCylinder(double radius, int latitude){
+     	
+    	gl.glScaled(1, radius, radius);
+
+    	float dt = (float) 1/latitude;
+    	float da = (float) (2*Math.PI *dt) ; 
+    	gl.glBegin(GL.GL_QUADS); 
+    	
+    	for( int i = 0; i < latitude + 1 ; i++ ) { 
+    		float y0 = (float) Math.sin ( i * da ); 
+    		float z0 = (float) Math.cos ( i * da ); 
+    		float y1 = (float) Math.sin ( (i+1) * da ); 
+    		float z1 = (float) Math.cos ( (i+1) * da ); 
+
+    		gl.glTexCoord2f(0,i*dt);
+    		gl.glNormal3f(0,y0,z0); 
+    		gl.glVertex3f(0,y0,z0); 
+
+
+    		gl.glTexCoord2f(1,i*dt);
+    		gl.glNormal3f(1,y0,z0); 
+    		gl.glVertex3f(1,y0,z0); 
+
+    		gl.glTexCoord2f(1,(i+1)*dt);
+    		gl.glNormal3f(1,y1,z1); 
+    		gl.glVertex3f(1,y1,z1); 
+
+    		gl.glTexCoord2f(0,(i+1)*dt);
+    		gl.glNormal3f(0,y1,z1); 
+    		gl.glVertex3f(0,y1,z1); 
+
+    		
+    	} 
+    	gl.glEnd();  
+    }
+    
+    private void drawDisc(double radius, int latitude){
+     	
+    	gl.glScaled(1, radius, radius);
+
+    	float dt = (float) 1/latitude;
+    	float da = (float) (2*Math.PI *dt) ; 
+    	
+    	startPolygon(true);
+    	
+    	
+    	for( int i = 0; i < latitude ; i++ ) { 
+    		float y = (float) Math.cos ( i * da ); 
+    		float z = (float) Math.sin ( i * da ); 
+
+    		addToPolygon(0, y, z);
+    		
+    	} 
+    	
+    	endPolygon(true);
+    	 
+    }
+    
+    
     
     
     private void drawCone(double a_thickness){
@@ -1487,7 +1910,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         float w = (float) bounds.getWidth();
         float h = (float) bounds.getHeight();
         */
-        float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR;//0.01f;// / (w * 1.1f);
+        float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR/((float) view3D.getScale());
     	
     	
     	textRenderer.draw3D(s,
@@ -1717,8 +2140,15 @@ public class EuclidianRenderer3D implements GLEventListener {
      */
     public void init(GLAutoDrawable drawable) {
     	
+        
         gl = drawable.getGL();
         
+     // Check For VBO support
+        final boolean VBOsupported = gl.isFunctionAvailable("glGenBuffersARB") &&
+                gl.isFunctionAvailable("glBindBufferARB") &&
+                gl.isFunctionAvailable("glBufferDataARB") &&
+                gl.isFunctionAvailable("glDeleteBuffersARB");
+        Application.debug("vbo supported : "+VBOsupported);
         
         //light
         /*
@@ -1796,7 +2226,73 @@ public class EuclidianRenderer3D implements GLEventListener {
 	int left = 0; int right = 640;
 	int bottom = 0; int top = 480;
 	int front = -1000; int back = 1000;
-    
+	
+	
+	public int getLeft(){ return left;	}
+	public int getRight(){ return right;	}
+	public int getBottom(){ return bottom;	}
+	public int getTop(){ return top;	}
+	public int getFront(){ return front;	}
+	public int getBack(){ return back;	}
+	
+	
+	
+	
+	/** for a line described by (o,v), return the min and max parameters to draw the line
+	 * @param minmax initial interval
+	 * @param o origin of the line
+	 * @param v direction of the line
+	 * @return interval to draw the line
+	 */
+	public double[] getIntervalInFrustum(double[] minmax, Ggb3DVector o, Ggb3DVector v){
+		
+
+		
+		
+		double left = (getLeft() - o.get(1))/v.get(1);
+		double right = (getRight() - o.get(1))/v.get(1);		
+		updateIntervalInFrustum(minmax, left, right);
+		
+		double top = (getTop() - o.get(2))/v.get(2);
+		double bottom = (getBottom() - o.get(2))/v.get(2);
+		updateIntervalInFrustum(minmax, top, bottom);
+		
+		double front = (getFront() - o.get(3))/v.get(3);
+		double back = (getBack() - o.get(3))/v.get(3);
+		updateIntervalInFrustum(minmax, front, back);
+			
+		
+		/*
+		Application.debug("intersection = ("+left+","+right+
+				")/("+top+","+bottom+")/("+front+","+back+")"+
+				"\ninterval = ("+minmax[0]+","+minmax[1]+")");
+				*/
+				
+		
+		return minmax;
+	}
+	
+	/** return the intersection of intervals [minmax] and [v1,v2]
+	 * @param minmax initial interval
+	 * @param v1 first value
+	 * @param v2 second value
+	 * @return intersection interval
+	 */
+	private double[] updateIntervalInFrustum(double[] minmax, double v1, double v2){
+		
+		if (v1>v2){
+			double v = v1;
+			v1 = v2; v2 = v;
+		}
+		
+		if (v1>minmax[0])
+			minmax[0] = v1;
+		if (v2<minmax[1])
+			minmax[1] = v2;
+		
+		return minmax;
+	}
+   
 	
     /**
      * Set Up An Ortho View regarding left, right, bottom, front values
@@ -1814,6 +2310,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	gl.glMatrixMode(GL.GL_MODELVIEW);
     	
     	
+    	
     }
     
     
@@ -1827,14 +2324,30 @@ public class EuclidianRenderer3D implements GLEventListener {
      * 
      */
     private void viewOrtho(int x, int y, int w, int h){
-    	left=x;
-    	bottom=y;
+    	left=x-w/2;
+    	bottom=y-h/2;
     	right=left+w;
     	top = bottom+h;
+    	
+    	//view3D.setXZero(w/2);
+    	//view3D.setYZero(h/2);
+    	/*
+    	view3D.setXZero(0);
+    	view3D.setYZero(0);
+    	view3D.updateMatrix();
+    	*/
+    	
+    	Application.debug("viewOrtho:"+
+    			"\n left="+left+"\n right="+right+
+    			"\n top="+top+"\n bottom="+bottom+
+    			"\n front="+front+"\n back="+back
+    	);
     	
     	viewOrtho();
     }
    
+    
+
 
 
 

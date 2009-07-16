@@ -98,7 +98,7 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 		
 		super(a_view3D);
 		
-		setGeoElement(a_view3D.getPreviewPoint());
+		setGeoElement(a_view3D.getCursor3D());
 		
 	}	
 

@@ -12,6 +12,9 @@ import geogebra3D.kernel3D.Kernel3D;
 
 public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewable {
 
+	protected double drawMin = 0;
+	protected double drawMax = 1;
+
 	
 	public DrawCoordSys1D(EuclidianView3D a_view3D, GeoCoordSys1D cs1D){
 		
@@ -34,12 +37,12 @@ public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewa
 	
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
-		
+		renderer.drawSegment(drawMin,drawMax);
 	}
 	
 	public void drawGeometryPicked(EuclidianRenderer3D renderer){
 		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
-		 
+		renderer.drawSegment(drawMin,drawMax);
 	}
 	
 	public void drawGeometryHidden(EuclidianRenderer3D renderer){
@@ -118,7 +121,7 @@ public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewa
 			getGeoElement().setEuclidianVisible(true);
 		}else if (selectedPoints.size()==1){
 			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
-			GeoPoint3D secondPoint = getView3D().getPreviewPoint();
+			GeoPoint3D secondPoint = getView3D().getCursor3D();
 			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
 			getGeoElement().setEuclidianVisible(true);
 		}else{

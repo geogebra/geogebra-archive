@@ -63,8 +63,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private EuclidianRenderer3D renderer;
 	
 	//viewing values
-	private double XZero, YZero, ZZero;
+	private double XZero = 0;
+	private double YZero = 0;
+	private double ZZero = 0;
 	
+	private double XZeroOld = 0;
+	private double YZeroOld = 0;
 	
 	//list of 3D objects
 	//private boolean waitForUpdate = true; //says if it waits for update...
@@ -96,15 +100,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	//preview
 	private Previewable previewDrawable;
-	private GeoPoint3D previewPoint;
-	private GeoElement[] previewPointIntersetionOf = new GeoElement[2]; 
+	private GeoPoint3D cursor3D;
+	private GeoElement[] cursor3DIntersetionOf = new GeoElement[2]; 
 	
 	public static final int PREVIEW_POINT_ALREADY = 0;
 	public static final int PREVIEW_POINT_FREE = 1;
 	public static final int PREVIEW_POINT_PATH = 2;
 	public static final int PREVIEW_POINT_REGION = 3;
 	public static final int PREVIEW_POINT_DEPENDENT = 4;
-	private int previewPointType = PREVIEW_POINT_ALREADY;
+	private int cursor3DType = PREVIEW_POINT_ALREADY;
 
 	
 	//cursor
@@ -166,10 +170,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		//previewables
 		kernel3D.setSilentMode(true);
-		previewPoint = kernel3D.Point3D(null, 1, 1, 0);
-		previewPoint.setIsPickable(false);
-		previewPoint.setLabelOffset(5, -5);
-		previewPoint.setEuclidianVisible(false);
+		cursor3D = kernel3D.Point3D(null, 1, 1, 0);
+		cursor3D.setIsPickable(false);
+		cursor3D.setLabelOffset(5, -5);
+		cursor3D.setEuclidianVisible(false);
 		kernel3D.setSilentMode(false);
 
 		
@@ -193,6 +197,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	public EuclidianRenderer3D getRenderer(){
+		return renderer;
+	}
 	
 	
 
@@ -409,8 +416,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/** Sets coord system from mouse move */
-	final public void setCoordSystemFromMouseMove(int dx, int dy) {		
-		setRotXY(aOld + dx, bOld + dy, true);
+	final public void setCoordSystemFromMouseMove(int dx, int dy, int mode) {	
+		switch(mode){
+		case EuclidianController3D.MOVE_ROTATE_VIEW:
+			setRotXY(aOld + dx, bOld + dy, true);
+			break;
+		case EuclidianController3D.MOVE_VIEW:
+			setXZero(XZeroOld+dx);
+			setYZero(YZeroOld-dy);
+			updateMatrix();
+			update();
+			break;
+		}
 	}
 
 	public void addRotXY(int da, int db, boolean repaint){
@@ -426,22 +443,32 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 
-	//TODO interaction
-	public double getXZero() { XZero = 300; return XZero; }
-	public double getYZero() { YZero = 200; return YZero; }
+	/* TODO interaction - note : methods are called by EuclidianRenderer3D.viewOrtho() 
+	 * to re-center the scene */
+	public double getXZero() { return XZero; }
+	public double getYZero() { return YZero; }
 	public double getZZero() { return ZZero; }
 
 	public void setXZero(double val) { XZero=val; }
 	public void setYZero(double val) { YZero=val; }
 	public void setZZero(double val) { ZZero=val; }
 	
+	
+	//TODO specific scaling for each direction
 	private double scale = 100; 
+	private double scaleMin = 10;
 	public double getXscale() { return scale; }
 	public double getYscale() { return scale; }
 	public double getZscale() { return scale; }
 	
 	public void setScale(double val){
 		scale = val;
+		if (scale<scaleMin)
+			scale=scaleMin;
+	}
+	
+	public double getScale(){
+		return scale;
 	}
 
 	
@@ -449,6 +476,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void rememberOrigins(){
 		aOld = a;
 		bOld = b;
+		XZeroOld = XZero;
+		YZeroOld = YZero;
 	}
 
 	
@@ -547,8 +576,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			Ggb3DVector ret = new Ggb3DVector(
 					new double[] {
-							(double) x,
-							(double) -y+h,
+							(double) x+renderer.getLeft(),
+							(double) -y+renderer.getTop(),
 							//((double) (x-w)/w),
 							//((double) (-y+h)/w),
 							0, 1.0});
@@ -1344,40 +1373,45 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	// previewables
 	
 	
-	// only used in 3D mode
-	public Previewable createPreviewPoint(ArrayList selectedPoints){
-		return new DrawPoint3D(this);
-	}
+
 	
-	/** return the point used for previewables
-	 * @return the point used for previewables
+	/** return the point used for 3D cursor
+	 * @return the point used for 3D cursor
 	 */
-	public GeoPoint3D getPreviewPoint(){
-		return previewPoint;
+	public GeoPoint3D getCursor3D(){
+		return cursor3D;
 	}
 	
 	
 
 	
 	
-	public void setPreviewPointType(int v){
-		previewPointType = v;
+	public void setCursor3DType(int v){
+		cursor3DType = v;
 	}
 	
 
-	public int getPreviewPointType(){
-		return previewPointType;
+	public int getCursor3DType(){
+		return cursor3DType;
 	}
 	
 	
 	
-	public void setPreviewPointIntersetionOf(GeoElement previewPointIntersetionOf1, GeoElement previewPointIntersetionOf2){
-		this.previewPointIntersetionOf[0]=previewPointIntersetionOf1;
-		this.previewPointIntersetionOf[1]=previewPointIntersetionOf2;
+	/** sets that the current 3D cursor is at the intersection of the two GeoElement parameters
+	 * @param cursor3DIntersetionOf1 first GeoElement of intersection
+	 * @param cursor3DIntersetionOf2 second GeoElement of intersection
+	 */
+	public void setCursor3DIntersetionOf(GeoElement cursor3DIntersetionOf1, GeoElement cursor3DIntersetionOf2){
+		this.cursor3DIntersetionOf[0]=cursor3DIntersetionOf1;
+		this.cursor3DIntersetionOf[1]=cursor3DIntersetionOf2;
 	}
 	
-	public GeoElement getPreviewPointIntersetionOf(int i){
-		return previewPointIntersetionOf[i];
+	/** return the i-th GeoElement of intersection
+	 * @param i number of GeoElement of intersection
+	 * @return GeoElement of intersection
+	 */
+	public GeoElement getCursor3DIntersetionOf(int i){
+		return cursor3DIntersetionOf[i];
 	}
 	
 	
@@ -1388,20 +1422,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 		
 		
-		Application.debug("createPreviewLine");
+		//Application.debug("createPreviewLine");
 		
-		//selectedPoints = new ArrayList();
-		//GeoPoint3D p1 = getKernel().Point3D("line1", 1, 1, 0);selectedPoints.add(p1);
-		//GeoPoint3D p2 = getKernel().Point3D("line2", 2, 1, 0);selectedPoints.add(p2);
-		
-
 				
 		Drawable3D d = new DrawLine3D(this, selectedPoints);
-		//drawList3D.add(d);
+
+
 		return (Previewable) d;
 		
-		
-		//return null;
 	}
 	
 	public Previewable createPreviewSegment(ArrayList selectedPoints){
@@ -1418,21 +1446,28 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public void updatePreviewable(){
+		/*
 		EuclidianController ec = getEuclidianController();
-		//if (ec.getMode()==EuclidianView.MODE_POINT_IN_REGION){
-			//GeoPointInterface point = (GeoPointInterface) ((Drawable3D) getPreviewDrawable()).getGeoElement();
-			//GeoPoint3D point = getPreviewPoint();
-			ec.updateNewPoint(true, 
-					getHits().getTopHits(), 
-					true, true, true, false, //TODO doSingleHighlighting = false ? 
-					false);
-			/*
-		}else{
-			Point mouseLoc = getEuclidianController().getMouseLoc();
-			getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
-		}
-		*/
-			getPreviewDrawable().updatePreview();
+		ec.updateNewPoint(true, 
+				getHits().getTopHits(), 
+				true, true, true, false, //TODO doSingleHighlighting = false ? 
+				false);
+				*/
+		
+		//updateCursor3D();
+
+		getPreviewDrawable().updatePreview();
+	}
+	
+	
+	/**
+	 * update the 3D cursor with current hits
+	 */
+	public void updateCursor3D(){
+		getEuclidianController().updateNewPoint(true, 
+				getHits().getTopHits(), 
+				true, true, true, false, //TODO doSingleHighlighting = false ? 
+				false);
 	}
 	
 
@@ -1448,7 +1483,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 			
 			
-		setPreviewPointType(PREVIEW_POINT_ALREADY);
+		setCursor3DType(PREVIEW_POINT_ALREADY);
 		
 		this.previewDrawable = previewDrawable;
 		
@@ -1475,13 +1510,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void drawCursor(EuclidianRenderer3D renderer){
 
 		if (hasMouse){
+			
+			//updateCursor3D();
+			
 			switch(cursor){
 			case CURSOR_DEFAULT:
-				if(getPreviewPointType()!=PREVIEW_POINT_ALREADY)
+				//if(getCursor3DType()!=PREVIEW_POINT_ALREADY)
 					drawCursorCross(renderer);
 				break;
 			case CURSOR_HIT:
-				switch(getPreviewPointType()){
+				switch(getCursor3DType()){
 				case PREVIEW_POINT_FREE:
 				case PREVIEW_POINT_REGION:
 					drawCursorCross(renderer);
@@ -1500,24 +1538,63 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	private void drawCursorCross(EuclidianRenderer3D renderer){
 
-
-		renderer.setMatrix(getPreviewPoint().getDrawingMatrix());
-		renderer.setThickness(0.025);
-		renderer.drawCrossWithEdges(0.12);
+		switch(getCursor3DType()){
+		case PREVIEW_POINT_FREE:
+			// use default directions for the cross
+			getCursor3D().getDrawingMatrix().setVx(vx);
+			getCursor3D().getDrawingMatrix().setVy(vy);
+			getCursor3D().getDrawingMatrix().setVz(vz);
+			break;
+		case PREVIEW_POINT_REGION:
+			// use region drawing directions for the cross
+			getCursor3D().getDrawingMatrix().setVx(
+					((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx());
+			getCursor3D().getDrawingMatrix().setVy(
+					((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy());
+			getCursor3D().getDrawingMatrix().setVz(
+					((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz());
+			break;
+		}
+		
+		renderer.setMatrix(getCursor3D().getDrawingMatrix());
+		renderer.setThickness(2.5/getScale());
+		renderer.drawCursorCross(12/getScale());
 
 
 	}
 	
 	private void drawCursorOnPath(EuclidianRenderer3D renderer){
-		renderer.setMatrix(getPreviewPoint().getDrawingMatrix());
-		renderer.setMaterial(ConstructionDefaults3D.colPathPoint,1.0f);
-		renderer.drawSphere(Drawable3D.POINT3D_RADIUS*Drawable3D.POINT_ON_PATH_DILATATION*3);
+		
+		// use path drawing directions for the cross
+		getCursor3D().getDrawingMatrix().setVx(
+				((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVx().normalized());
+		getCursor3D().getDrawingMatrix().setVy(
+				((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVy());
+		getCursor3D().getDrawingMatrix().setVz(
+				((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVz());
+
+		renderer.setThickness((3+((GeoElement) getCursor3D().getPath()).getLineThickness())/getScale());
+		renderer.setMatrix(getCursor3D().getDrawingMatrix());
+		
+		renderer.drawCursorCylinder(1.25/getScale());
+		
 	}
 	
 	private void drawCursorDependent(EuclidianRenderer3D renderer){
-		renderer.setMatrix(getPreviewPoint().getDrawingMatrix());
-		renderer.setMaterial(ConstructionDefaults3D.colDepPoint,1.0f);
-		renderer.drawSphere(Drawable3D.POINT3D_RADIUS*Drawable3D.POINT_ON_PATH_DILATATION*3);
+		
+		getCursor3D().getDrawingMatrix().setVx(vx);
+		getCursor3D().getDrawingMatrix().setVy(vy);
+		getCursor3D().getDrawingMatrix().setVz(vz);
+		renderer.setMatrix(getCursor3D().getDrawingMatrix());
+		
+		int t1 = getCursor3DIntersetionOf(0).getLineThickness();
+		int t2 = getCursor3DIntersetionOf(1).getLineThickness();
+		if (t1>t2)
+			t2=t1;
+		renderer.setThickness((t2+6)/getScale());
+		renderer.drawCursorDiamond();
+		
+
 	}
 	
 	public void setMoveCursor(){

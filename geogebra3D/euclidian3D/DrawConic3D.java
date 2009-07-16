@@ -80,8 +80,11 @@ public class DrawConic3D extends Drawable3DSolid {
 
 	
 	
-	public void update(){
-		super.update();
+	public boolean update(){
+		
+		if (!super.update())
+			return false;
+		
 		
 		GeoConic3D conic = (GeoConic3D) getGeoElement();
 		
@@ -96,6 +99,8 @@ public class DrawConic3D extends Drawable3DSolid {
 			break;
 		
 		}
+		
+		return true;
 	}
 	
 	

@@ -12,7 +12,7 @@ public class DrawQuadric extends Drawable3DTransparent {
 	}
 	
 	public void drawGeometry(EuclidianRenderer3D renderer) {
-		renderer.drawSphere(1,40);
+		renderer.drawSphere(1,40,40);
 	}
 
 	void drawGeometryHiding(EuclidianRenderer3D renderer) {
