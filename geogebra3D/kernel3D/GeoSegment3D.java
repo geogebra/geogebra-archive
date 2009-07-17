@@ -44,7 +44,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	 * @param v1 start point
 	 * @param v2 end point
 	 */
-	public GeoSegment3D(Construction c, Ggb3DVector v1, Ggb3DVector v2){
+	private GeoSegment3D(Construction c, Ggb3DVector v1, Ggb3DVector v2){
 		super(c,v1,v2.sub(v1));
 	}
 	

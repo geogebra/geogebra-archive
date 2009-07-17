@@ -80,6 +80,7 @@ public class UndoManager {
 	 * Loads previous construction state from undo info list.
 	 */
 	public synchronized void undo() {
+		
 		if (undoPossible()) {		
 			iterator.previous();
 			loadUndoInfo(iterator.previous());     

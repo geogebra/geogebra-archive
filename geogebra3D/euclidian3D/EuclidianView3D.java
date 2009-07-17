@@ -632,7 +632,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	public void clearView() {
-		// TODO Raccord de méthode auto-généré
+		drawList3D.clear();
 		
 	}
 
@@ -663,7 +663,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public void reset() {
-		// TODO Raccord de méthode auto-généré
+		//drawList3D.clear();
 		
 	}
 

@@ -4,6 +4,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdPolygon;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -40,6 +41,7 @@ public class CmdPolyhedron extends CmdPolygon {
 		GeoElement[] arg;
 		arg = resArgs(c);
 
+		Application.debug("");
 		
 		// polygon for given points
         GeoPoint3D[] points = new GeoPoint3D[n];
@@ -53,7 +55,7 @@ public class CmdPolyhedron extends CmdPolygon {
         }
         // everything ok
         //TODO return kernel3D.Polyhedron(c.getLabels(), points);
-        return new GeoElement[] {kernel3D.Polyhedron(c.getLabel(), points)};
+        return kernel3D.Polyhedron(c.getLabel(), points);
 		
 		
 

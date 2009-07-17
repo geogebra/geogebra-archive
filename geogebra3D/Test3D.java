@@ -147,15 +147,18 @@ public class Test3D{
 		//testSpring();
 		
         demos();
-		
+        //testSave("polyhedron3d");
+        //testLoad("polyhedron3d");
+        //testLoad("polygon3d");
+        
         //testLine();
         
         
-        //testPoint(1,1,1);
-        //testSegment3();
-        //testPolygon();
-        //testSave();	
-        //testLoad();
+        //testPoint(1,1,1);testSave("point3d");
+        //testSegment();
+        //testPolygon();testSave("polygon3d");
+	
+        //testLoad("polygon3d");
         	
 		//testRegion();
 		
@@ -209,6 +212,7 @@ public class Test3D{
 		
 		GeoSegment3D s=null;
 		
+		/*
 		s=kernel3D.Segment3D("axeX3D",new Ggb3DVector(new double[] {-longueur,0,0,1}),new Ggb3DVector(new double[]{longueur,0,0,1}));
 		s.setObjColor(new Color(1f,0f,0f));
 		s.setLineThickness(1);
@@ -226,7 +230,7 @@ public class Test3D{
 		s.setLineThickness(1);
 		s.setAuxiliaryObject(true);
 		cons.addToConstructionList(s, false);
-		
+		*/
 		
 		//xOy plane
 		xOyPlane=kernel3D.Plane3D("xOy",
@@ -242,64 +246,8 @@ public class Test3D{
 		
 	}
 	
-	private void testPointSegment(){
-		
-		testPoint(1,0,0,1,0,0);
-		//testPoint(0,1,0,0,1,0);
-		testSegment(0,0,0,0,1,0);
-		
-		
-	}
-	
-	private void testSegmentSegment(){
-		
-		testSegment(0,0,0,1,1,0);
-		testSegment(1,0,1,0,1,1);
-		
-		
-	}
-	
 	
 	private void testSegment(){
-		GeoSegment3D s=null;
-		s=kernel3D.Segment3D("segment",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{1,1,1,1}));
-		cons.addToConstructionList(s, false);
-		//testPoint(1,1,1,1,1,1);
-	}
-	
-	private void testSegment(double x1, double y1, double z1, double x2, double y2, double z2){
-
-		GeoSegment3D s=null;
-		
-		s=kernel3D.Segment3D("segment",
-				new Ggb3DVector(new double[] {x1,y1,z1,1}),
-				new Ggb3DVector(new double[] {x2,y2,z2,1}));
-		s.setObjColor(new Color((float) (x1+x2)/2, (float) (y1+y2)/2, (float) (z1+z2)/2));
-		cons.addToConstructionList(s, false);
-
-	}
-	
-	private void testSegment2(){
-		
-		testSegment(0,0,0, 1,0,0);
-		testSegment(0,1,0, 1,1,0);
-		testSegment(0,0,1, 1,0,1);
-		testSegment(0,1,1, 1,1,1);
-		
-		testSegment(0,0,0, 0,1,0);
-		testSegment(1,0,0, 1,1,0);
-		testSegment(0,0,1, 0,1,1);
-		testSegment(1,0,1, 1,1,1);
-		
-		testSegment(0,0,0, 0,0,1);
-		testSegment(1,0,0, 1,0,1);
-		testSegment(0,1,0, 0,1,1);
-		testSegment(1,1,0, 1,1,1);
-		
-	}	
-	
-	
-	private void testSegment3(){
 
 		
 		
@@ -632,8 +580,8 @@ public class Test3D{
 		points[4] = testPoint(0f,0f,2f);
 		
 		
-		GeoPolyhedron p=kernel3D.Polyhedron("poly", points, 
-				new int[][] {{0,1,2,3},{0,1,4},{1,2,4},{2,3,4},{3,0,4}});
+		GeoPolyhedron p=(GeoPolyhedron) kernel3D.Polyhedron("poly", points, 
+				new int[][] {{0,1,2,3},{0,1,4},{1,2,4},{2,3,4},{3,0,4}})[0];
 	}
 	
 	private void testTetrahedron(){
@@ -657,7 +605,7 @@ public class Test3D{
 				new int[][] {{0,1,2},{0,1,3},{1,2,3},{2,0,3}});
 				*/
 		
-		GeoPolyhedron p=kernel3D.Pyramid("tetrahedron", points);
+		GeoPolyhedron p=(GeoPolyhedron) kernel3D.Pyramid("tetrahedron", points)[0];
 		
 		
 	}
@@ -713,12 +661,12 @@ public class Test3D{
 	
 	
 	
-	private void testSave(){
+	private void testSave(String s){
 
 		//testPoint(1f,-1f,0f);
 		//testPoint(1f,1f,0f);
 		
-		File f = new File("geogebra3D/test3d.ggb");
+		File f = new File("geogebra3D/test3d-"+s+".ggb");
 		try {
 			f.createNewFile();
 		} catch (IOException e) {
@@ -729,9 +677,9 @@ public class Test3D{
 	}
 	
 	
-	private void testLoad(){
+	private void testLoad(String s){
 
-        app.loadXML(new File("geogebra3D/test3d.ggb"), false);
+        app.loadXML(new File("geogebra3D/test3d-"+s+".ggb"), false);
 
 		
 	}

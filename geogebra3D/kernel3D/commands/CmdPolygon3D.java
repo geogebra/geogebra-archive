@@ -44,7 +44,8 @@ public class CmdPolygon3D extends CmdPolygon {
 			ok3D = ok3D && (arg[i].isGeoElement3D());
 		
 		Application.debug("CmdPolygon3D - "+ok3D);
-
+		//Application.printStacktrace("");
+		
 		if (ok3D){
 			// polygon for given points
 			GeoPoint3D[] points = new GeoPoint3D[n];

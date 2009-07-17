@@ -52,8 +52,7 @@ public class CmdPyramid extends CmdPolygon {
             }
         }
         // everything ok
-        //TODO return kernel3D.Pyramid(c.getLabels(), points);
-        return new GeoElement[] {kernel3D.Pyramid(c.getLabel(), points)};
+        return kernel3D.Pyramid(c.getLabel(), points);
 		
 		
 

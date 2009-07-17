@@ -5817,13 +5817,24 @@ public class Kernel {
 	 * list and the views are not notified about new objects. 
 	 */
 	public final void setSilentMode(boolean silentMode) {
+		
+		
 		this.silentMode = silentMode;
 		
 		// no new labels, no adding to construction list
 		cons.setSuppressLabelCreation(silentMode);
 		
 		// no notifying of views
-		notifyViewsActive = !silentMode;
+		//ggb3D - 2009-07-17
+		//changing :
+		//notifyViewsActive = !silentMode;
+		//(seems not to work with loading files)
+		//to :
+		setNotifyViewsActive(!silentMode);
+
+		
+		//Application.printStacktrace(""+silentMode);
+		
 	}
 	
 

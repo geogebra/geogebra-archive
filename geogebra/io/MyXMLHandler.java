@@ -3144,6 +3144,7 @@ public class MyXMLHandler implements DocHandler {
 
 				if (label != null) {
 					cmdOutput[i].setLoadedLabel(label);
+					//Application.debug("cmdOutput["+i+"].setLoadedLabel("+label+")");
 				}
 				i++;
 			}

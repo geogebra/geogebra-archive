@@ -1,6 +1,7 @@
 package geogebra3D.kernel3D.commands;
 
 
+import geogebra.kernel.commands.CmdIntersect;
 import geogebra.kernel.commands.CommandDispatcher;
 import geogebra3D.kernel3D.Kernel3D;
 
@@ -26,6 +27,11 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		cmdTable.put("Plane", new CmdPlane(kernel3D));
 		cmdTable.put("Pyramid", new CmdPyramid(kernel3D));
 		cmdTable.put("Polyhedron", new CmdPolyhedron(kernel3D));
+		
+		cmdTable.put("PointIn", new CmdPointIn3D(kernel3D));   
+		  
+    	cmdTable.put("Intersect", new CmdIntersect3D(kernel3D));	
+    	
 	}
 	
 	

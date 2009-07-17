@@ -50,6 +50,14 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		this.createSegments = createSegments;
 		
 	}
+	
+	/** common constructor for 3D.
+	 * @param c the construction
+	 * @param points vertices 
+	 */
+	public GeoPolygon3D(Construction c, GeoPointInterface[] points) {
+		this(c,points,null,true);
+	}
 
 
 	/////////////////////////////////////////
@@ -135,7 +143,12 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		 setEuclidianVisible(visible,createSegments);
 
 	 }  
-	
+	 
+
+	 protected String getClassName() {
+		 return "GeoPolygon3D";
+	 }
+
 	
 	/////////////////////////////////////////
 	// link with the 2D coord sys
@@ -168,6 +181,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		 points2D = new GeoPoint[points.length];
 		 for(int i=0; i<points.length; i++){
 			 points2D[i]=(GeoPoint) ((Kernel3D) this.getKernel()).From3Dto2D(null, (GeoPoint3D) points[i], this.coordSys);
+			 //cons.removeFromConstructionList(points2D[i]);    
 		 }
 		 
 		 // turn on the kernel notifications 

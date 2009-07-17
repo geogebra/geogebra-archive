@@ -19,6 +19,7 @@ import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -113,6 +114,9 @@ public class Kernel3D
 	 * all input and commands.
 	 */		
 	public AlgebraProcessor getAlgebraProcessor() {
+		
+		//Application.debug("hop-3d");
+		
     	if (algProcessor == null)
     		algProcessor = new AlgebraProcessor3D(this);
     	return algProcessor;
@@ -132,15 +136,22 @@ public class Kernel3D
      */
     public GeoElement createGeoElement(Construction cons, String type) throws MyError {    
     	
-    	Application.debug(type);
+    	//Application.debug(type);
+    	//Application.printStacktrace("");
     	
     	switch (type.charAt(0)) {
    		case 'p': // point, polygon
-			if (type.equals("point3d")){ 
+			if (type.equals("point3d"))
 				return new GeoPoint3D(cons);
-			}
+			else if (type.equals("polygon3D"))
+				return new GeoPolygon3D(cons, null);
+		case 's': // segment 
+			if (type.equals("segment3D"))
+				return new GeoSegment3D(cons, null, null);	 
 			
     	}
+    	
+
     	
     	return super.createGeoElement(cons,type);
 
@@ -156,7 +167,7 @@ public class Kernel3D
 			return super.handleCoords(geo, attrs);
 		}
 		
-		Application.debug("GeoVec4D : "+geo.getLabel());
+		//Application.debug("GeoVec4D : "+geo.getLabel());
 		
 		GeoVec4D v = (GeoVec4D) geo;
 
@@ -166,7 +177,7 @@ public class Kernel3D
 			double z = Double.parseDouble((String) attrs.get("z"));
 			double w = Double.parseDouble((String) attrs.get("w"));
 			v.setCoords(x, y, z, w);
-			Application.debug("x="+x+", y="+y+", z="+z+", w="+w);
+			//Application.debug("x="+x+", y="+y+", z="+z+", w="+w);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -262,11 +273,13 @@ public class Kernel3D
 	
 	
 	/** Segment3D label linking points v1 and v2   */
+	/*
 	final public GeoSegment3D Segment3D(String label, Ggb3DVector v1, Ggb3DVector v2){
 		GeoSegment3D s = new GeoSegment3D(cons,v1,v2);
 		s.setLabel(label);
 		return s;
 	}
+	*/
 	
 	/** Segment3D label linking points P1 and P2   */
 	final public GeoSegment3D Segment3D(String label, GeoPoint3D P1, GeoPoint3D P2){
@@ -301,7 +314,6 @@ public class Kernel3D
 	 * @param label name of the polygon
 	 * @param points vertices of the polygon
 	 * @return the polygon */
-	//TODO final public GeoPolygon3D Polygon3D(String[] label, GeoPoint3D[] points){
     final public GeoElement [] Polygon3D(String[] label, GeoPoint3D[] points){
 		
     	
@@ -317,12 +329,12 @@ public class Kernel3D
      * @param faces faces description
      * @return the polyhedron
      */
-    final public GeoPolyhedron Polyhedron(String label, GeoPoint3D[] points, int[][] faces){
+    final public GeoElement [] Polyhedron(String label, GeoPoint3D[] points, int[][] faces){
 		
     	
     	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points,faces);
     	
-    	return (GeoPolyhedron) algo.getOutput()[0];
+    	return algo.getOutput();
 		
 	}	
     
@@ -331,12 +343,12 @@ public class Kernel3D
      * @param points vertices
      * @return the polyhedron
      */
-    final public GeoPolyhedron Polyhedron(String label, GeoPoint3D[] points){
+    final public GeoElement [] Polyhedron(String label, GeoPoint3D[] points){
 		
     	
     	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points,GeoPolyhedron.TYPE_PSEUDO_PRISM);
     	
-    	return (GeoPolyhedron) algo.getOutput()[0];
+    	return algo.getOutput();
 		
 	}	
     
@@ -345,11 +357,11 @@ public class Kernel3D
      * @param points vertices
      * @return the polyhedron
      */
-    final public GeoPolyhedron Pyramid(String label, GeoPoint3D[] points){
+    final public GeoElement [] Pyramid(String label, GeoPoint3D[] points){
 		    	
     	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points, GeoPolyhedron.TYPE_PYRAMID);
     	
-    	return (GeoPolyhedron) algo.getOutput()[0];
+    	return algo.getOutput();
 		
 	}
 	
