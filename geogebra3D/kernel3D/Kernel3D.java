@@ -177,7 +177,7 @@ public class Kernel3D
 			double z = Double.parseDouble((String) attrs.get("z"));
 			double w = Double.parseDouble((String) attrs.get("w"));
 			v.setCoords(x, y, z, w);
-			//Application.debug("x="+x+", y="+y+", z="+z+", w="+w);
+			//Application.debug(geo.getLabel()+": x="+x+", y="+y+", z="+z+", w="+w);
 			return true;
 		} catch (Exception e) {
 			return false;

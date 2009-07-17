@@ -153,6 +153,8 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	 */    
 	final public void setCoords(Ggb3DVector v, boolean doPathOrRegion) {
 		
+		
+		
 		super.setCoords(v);
 		
 		updateCoords(); 
@@ -162,6 +164,8 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 			
 			// region
 			if (hasRegion()){
+				//Application.printStacktrace(getLabel());
+				
 				region.pointChangedForRegion(this);
 			}
 			
@@ -191,6 +195,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	final public void setCoords(double x, double y, double z, double w) {
 		
+		setWillingCoords(null);
 		setCoords(new Ggb3DVector(new double[] {x,y,z,w}));
 		
 	}  	
@@ -204,6 +209,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	
 	final public void updateCoords() {
+		
 		
 		
 		// infinite point

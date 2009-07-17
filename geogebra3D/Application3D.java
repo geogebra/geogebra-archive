@@ -43,7 +43,8 @@ public abstract class Application3D extends Application{
     private EuclidianController3D euclidianController3D;      
     protected Kernel3D kernel3D;
     
-
+	JFrame f2d = new JFrame("2d view");
+    JFrame fspr = new JFrame("spreadsheet view");
 
 
     public Application3D(String[] args, GeoGebraFrame frame, boolean undoActive) {
@@ -209,30 +210,24 @@ public abstract class Application3D extends Application{
 		centerPanel.add(cp1, BorderLayout.CENTER);
 
 		
-		JFrame f = new JFrame("2d view");
-		f.getContentPane().add(euclidianView);
-		f.setPreferredSize(new Dimension(400,400));
-		f.setSize(new Dimension(400,400));
-		f.setVisible(true);
+
+		f2d.getContentPane().add(euclidianView);
+		f2d.setPreferredSize(new Dimension(400,400));
+		f2d.setSize(new Dimension(400,400));
+		f2d.setVisible(true);
 		
-		f = new JFrame("spreadsheet view");
+
 		getGuiManager().attachSpreadsheetView();
-		f.getContentPane().add(getGuiManager().getSpreadsheetView());
-		f.setLocation(400, 0);
-		f.setPreferredSize(new Dimension(600,400));
-		f.setSize(new Dimension(600,400));
-		f.setVisible(true);	
-		/*
-		if (updateUI) {
-			centerPanel.updateUI(); // needed for applets
-			updateComponentTreeUI();
-		}
-		*/
+		fspr.getContentPane().add(getGuiManager().getSpreadsheetView());
+		fspr.setLocation(400, 0);
+		fspr.setPreferredSize(new Dimension(600,400));
+		fspr.setSize(new Dimension(600,400));
+		fspr.setVisible(true);	
+
+
 	}
     
     
-    //TODO
-	//public void storeUndoInfo() {}
     
 	//public void updateContentPane(){}
 	

@@ -122,6 +122,11 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
 
     protected void compute() {
     	    
+    	if (!cs1.isDefined() || !cs2.isDefined()){
+    		p.setUndefined();
+    		return;
+    	}
+    		
 
     	if (cs1 instanceof GeoCoordSys1D){
     		if (cs2 instanceof GeoCoordSys1D)

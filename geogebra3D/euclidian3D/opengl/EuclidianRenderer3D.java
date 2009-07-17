@@ -76,7 +76,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private GLUtessellator tobj;
 	
 	private IntBuffer selectBuffer;
-	private static int BUFSIZE = 512;
+	private static int BUFSIZE = 512;//100000;//512;
 	private static int MOUSE_PICK_WIDTH = 3;
 	
 	

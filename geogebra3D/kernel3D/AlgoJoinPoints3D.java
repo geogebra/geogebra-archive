@@ -156,6 +156,9 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 
     protected void compute() {
     	    
+    	if (poly!=null)
+    		if (!poly.isDefined())
+    			cs.setUndefined();
 
     	if ((P.isDefined()||P.isInfinite())&&(Q.isDefined()||Q.isInfinite()))
     		cs.setCoord((GeoPoint3D) P, (GeoPoint3D) Q);
