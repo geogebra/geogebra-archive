@@ -130,13 +130,14 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		GeoSegment3D[] segments = polyhedron.getSegments();
 		GeoPolygon3D[] polygons = polyhedron.getFaces();
 		
-		GeoElement[] output = new GeoElement[1+segments.length+polygons.length];
+		GeoElement[] output = new GeoElement[1+polygons.length+segments.length];
 		
 		output[0] = polyhedron;
-		for(int i=0; i<segments.length; i++)
-			output[1+i] = segments[i];
 		for(int i=0; i<polygons.length; i++)
-			output[1+segments.length+i] = polygons[i];
+			output[1+i] = polygons[i];
+		for(int i=0; i<segments.length; i++)
+			output[1+polygons.length+i] = segments[i];
+
 		
 		setInputOutput(points, output);
 		
