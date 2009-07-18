@@ -1631,4 +1631,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 
+
+	/**
+	 * returns settings in XML format
+	 * @return the XML description of 3D view settings
+	 */
+	public String getXML() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<euclidianView3D>\n");
+		
+		
+		sb.append("</euclidianView3D>\n");
+		return sb.toString();
+	}
+	
+
 }

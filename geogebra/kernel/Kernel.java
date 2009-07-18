@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.io.MyXMLHandler;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
@@ -218,6 +219,16 @@ public class Kernel {
 	 */
 	protected void newConstruction(){
 		cons = new Construction(this);	
+	}
+	
+	
+	/**
+	 * creates a new MyXMLHandler (used for 3D)
+	 * @param cons construction used in MyXMLHandler constructor
+	 * @return a new MyXMLHandler
+	 */
+	public MyXMLHandler newMyXMLHandler(Construction cons){
+		return new MyXMLHandler(this, cons);		
 	}
 	
 	

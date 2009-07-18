@@ -115,7 +115,9 @@ public class MyXMLio {
 	
 	private DocHandler getGGBHandler() {
 		if (ggbDocHandler == null)
-			ggbDocHandler = new MyXMLHandler(kernel, cons);		
+		    //ggb3D : to create also a MyXMLHandler3D
+			//ggbDocHandler = new MyXMLHandler(kernel, cons);		
+			ggbDocHandler = kernel.newMyXMLHandler(cons);
 		return ggbDocHandler;
 	}
 	

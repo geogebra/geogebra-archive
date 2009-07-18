@@ -409,6 +409,10 @@ public class DefaultGuiManager implements GuiManager {
 	public JComponent getLayoutRoot() {
 		return layout.getDockManager().getRoot();
 	}
+	
+	public Layout getLayout(){
+		return layout;
+	}
 
 	public JComponent getToolbarPanel() {
 		if (appToolbarPanel == null) {

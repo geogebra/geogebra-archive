@@ -18,7 +18,7 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 	public AlgebraProcessor3D(Kernel3D kernel3D) {
 		super(kernel3D);
 		this.kernel3D=kernel3D;
-		Application.debug("AlgebraProcessor3D");
+		//Application.debug("AlgebraProcessor3D");
 		cmdDispatcher = new CommandDispatcher3D(kernel3D);
 	}
 	

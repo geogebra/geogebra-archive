@@ -17,7 +17,9 @@ the Free Software Foundation.
  */
 package geogebra3D;
 
+import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.layout.Layout;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
@@ -89,14 +91,18 @@ public abstract class Application3D extends Application{
         						+EuclidianView3D.MODE_POLYGON
         						+" || "
         						+EuclidianView3D.MODE_TRANSLATEVIEW;
-        getGuiManager().setToolBarDefinition( myToolBar3D );
+        
+        DefaultGuiManager dgm = (DefaultGuiManager) getGuiManager();
+        dgm.setToolBarDefinition( myToolBar3D );
+        //dgm.getLayout().getPerspective(0).setToolbarDefinition(myToolBar3D);
+        
         updateToolBar();
  		
     }      
     
     
 	public void initKernel(){
-		Application.debug("initKernel() : Application3D");
+		//Application.debug("initKernel() : Application3D");
 		kernel3D = new Kernel3D(this);
 		kernel = kernel3D;
 	}
