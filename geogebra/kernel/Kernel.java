@@ -5826,11 +5826,10 @@ public class Kernel {
 		
 		// no notifying of views
 		//ggb3D - 2009-07-17
-		//changing :
+		//removing :
 		//notifyViewsActive = !silentMode;
 		//(seems not to work with loading files)
-		//to :
-		setNotifyViewsActive(!silentMode);
+
 
 		
 		//Application.printStacktrace(""+silentMode);
