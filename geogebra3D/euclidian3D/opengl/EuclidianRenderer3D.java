@@ -76,7 +76,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private GLUtessellator tobj;
 	
 	private IntBuffer selectBuffer;
-	private static int BUFSIZE = 512;//100000;//512;
+	private int BUFSIZE = 512;
 	private static int MOUSE_PICK_WIDTH = 3;
 	
 	
@@ -1983,7 +1983,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	
     	
 
-    	
+    	BUFSIZE = drawList3D.size()*2+1;
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
