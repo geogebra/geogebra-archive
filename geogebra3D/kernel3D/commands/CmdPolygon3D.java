@@ -43,7 +43,7 @@ public class CmdPolygon3D extends CmdPolygon {
 		for(int i=0;i<n;i++)
 			ok3D = ok3D && (arg[i].isGeoElement3D());
 		
-		Application.debug("CmdPolygon3D - "+ok3D);
+		//Application.debug("CmdPolygon3D - "+ok3D);
 		//Application.printStacktrace("");
 		
 		if (ok3D){
@@ -58,10 +58,12 @@ public class CmdPolygon3D extends CmdPolygon {
 				}
 			}
 			// everything ok
+			/*
 			String s="";
 			for (int i=0;i<c.getLabels().length;i++)
 				s+=c.getLabels()[i]+", ";
 			Application.debug("labels = "+s);
+			*/
 			return kernel3D.Polygon3D(c.getLabels(), points);
 		}
  

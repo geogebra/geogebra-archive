@@ -2329,19 +2329,13 @@ public class EuclidianRenderer3D implements GLEventListener {
     	right=left+w;
     	top = bottom+h;
     	
-    	//view3D.setXZero(w/2);
-    	//view3D.setYZero(h/2);
     	/*
-    	view3D.setXZero(0);
-    	view3D.setYZero(0);
-    	view3D.updateMatrix();
-    	*/
-    	
     	Application.debug("viewOrtho:"+
     			"\n left="+left+"\n right="+right+
     			"\n top="+top+"\n bottom="+bottom+
     			"\n front="+front+"\n back="+back
     	);
+    	*/
     	
     	viewOrtho();
     }

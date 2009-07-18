@@ -361,11 +361,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	
 	public void setRegionChanged(GeoPointInterface PI, double x, double y){
 		
-		Application.debug("x = "+x+", y = "+y);
-		//Application.debug("coordSys.getMatrix() = "+coordSys.getMatrix().toString());
-		//Application.debug("coordSys.getPoint = "+coordSys.getPoint(x, y).toString());
-		
-		//((GeoPoint3D) PI).setCoords(coordSys.getPoint(x, y));
+		//Application.debug("x = "+x+", y = "+y);
 		((GeoPoint3D) PI).setCoords2D(x, y);
 		((GeoPoint3D) PI).updateCoordsFrom2D(false);
 	}

@@ -45,6 +45,11 @@ public class Algo3Dto2D extends AlgoElement3D {
 		
 		switch(geo3D.getGeoClassType()){
 		case GeoElement3D.GEO_CLASS_POINT3D:
+			if (!geo3D.isDefined()){
+				geo.setUndefined();
+				return;
+			}
+			
 			Ggb3DVector p = ((GeoPoint3D) geo3D).getCoords();
 			Ggb3DVector[] project=p.projectPlane(cs.getMatrix4x4());
 			((GeoPoint) geo).setCoords(project[1].get(1), project[1].get(2), 1);

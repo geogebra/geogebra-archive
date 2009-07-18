@@ -146,9 +146,9 @@ public class Test3D{
 		
 		//testSpring();
 		
-        demos();
+        //demos();
         //testCube(true);testSave("polyhedron3d");
-        //testLoad("polyhedron3d");
+        testLoad("polyhedron3d");
         //testLoad("polygon3d");
         
         //testLine();

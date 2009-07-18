@@ -846,12 +846,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 			double yu = p1.inhomY - p0.inhomY;				
 			double xv = p2.inhomX - p0.inhomX;
 			double yv = p2.inhomY - p0.inhomY;
-			/*
-			P.x = p0.inhomX + rp.getT1()*xu + rp.getT2()*xv;
-			P.y = p0.inhomY + rp.getT1()*yu + rp.getT2()*yv;
-			P.z = 1;
-			*/
-			Application.debug("xu="+xu+", rp.getT1()="+ rp.getT1());
+			
+			//Application.debug("xu="+xu+", rp.getT1()="+ rp.getT1());
 			setRegionChanged(P,
 					p0.inhomX + rp.getT1()*xu + rp.getT2()*xv,
 					p0.inhomY + rp.getT1()*yu + rp.getT2()*yv);
