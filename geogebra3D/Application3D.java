@@ -179,8 +179,36 @@ public abstract class Application3D extends Application{
     }
     */
     
-    
+	////////////////////////////////////////////////
+	//
+	// Neutralizing center panel stuff to prevent opengl crash
+	// TODO remove this
+	//
+	////////////////////////////////////////////////
+	
+	private boolean init3D = true;
+	
+	public void updateContentPane(){}
+	
+	public void updateContentPaneAndSize() {}
+	
+	
     public void updateCenterPanel(boolean updateUI) {
+    
+    	if (init3D)
+    		createCenterPanel();
+    	
+    	init3D = false;
+    }
+    
+
+    
+    
+    
+    public void createCenterPanel() {
+            
+   	
+   	
 		centerPanel.removeAll();
 
 		JPanel euclidianPanel = new JPanel(new BorderLayout());
@@ -229,9 +257,7 @@ public abstract class Application3D extends Application{
     
     
     
-	//public void updateContentPane(){}
-	
-	//public void updateContentPaneAndSize() {}
+
  
     	
 }
