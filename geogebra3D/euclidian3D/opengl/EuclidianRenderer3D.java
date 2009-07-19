@@ -1574,8 +1574,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 	    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
 	    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
 	    
-	    //glu.gluTessNormal(tobj, 0, 0, 1);
+	    //TODO glu.gluTessNormal(tobj, 0, 0, 1);
 
+    	gl.glNormal3f(0, 0, 1);
+    	
 	    //gl.glShadeModel(GL.GL_SMOOTH);
 	    glu.gluTessBeginPolygon(tobj, null);
 	    glu.gluTessBeginContour(tobj);
@@ -1594,6 +1596,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	addToPolygon(x, y, 0);
     }
     
+    //TODO remove this
     /** add the (x,y,z) point as a new vertex for the current polygon
      * @param x x-coordinate
      * @param y y-coordinate
