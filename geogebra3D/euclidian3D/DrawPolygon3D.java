@@ -26,6 +26,8 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 
+		
+		
 		renderer.setLayer(getGeoElement().getLayer());
 
 		renderer.startPolygonAndInitMatrix();

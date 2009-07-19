@@ -174,10 +174,10 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		
 		// polygon
 		GeoPolygon3D polygon = new GeoPolygon3D(cons, null, null, false);	
-//		polygon.setLocalVariableLabel(app.getPlain("Polygon"));
 		polygon.setLocalVariableLabel("Polygon3D");
 		polygon.setObjColor(colPolygon3D);
 		polygon.setAlphaValue(DEFAULT_POLYGON3D_ALPHA);
+		polygon.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		polygon.setLayer(2);
 		defaultGeoElements.put(DEFAULT_POLYGON3D, polygon);
 

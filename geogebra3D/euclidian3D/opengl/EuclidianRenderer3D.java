@@ -283,14 +283,15 @@ public class EuclidianRenderer3D implements GLEventListener {
         }
 
 
-        //drawing picked parts
+        //drawing picked parts        
         gl.glDepthMask(false);
-        setMaterial(new Color(0f,0f,0f),0.75f);
+        //setMaterial(new Color(0f,0f,0f),0.75f);
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
         	d.drawPicked(this);	
         }
         gl.glDepthMask(true);
+        
 
 
         //drawing transparents parts
@@ -1572,10 +1573,13 @@ public class EuclidianRenderer3D implements GLEventListener {
 	    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
 	    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
 	    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
+	    
+	    //glu.gluTessNormal(tobj, 0, 0, 1);
 
-	    gl.glShadeModel(GL.GL_SMOOTH);
+	    //gl.glShadeModel(GL.GL_SMOOTH);
 	    glu.gluTessBeginPolygon(tobj, null);
 	    glu.gluTessBeginContour(tobj);
+	    
 
     }
     
@@ -2160,19 +2164,35 @@ public class EuclidianRenderer3D implements GLEventListener {
         */
         
         
-        float[] lightAmbient = {0.1f, 0.1f, 0.1f, 1.0f};
-        float[] lightDiffuse = {1.0f, 1.0f, 1.0f, 1.0f};
-        float[] lightPosition = {1.0f, 1.0f, 1.0f, 0.0f};
-        //float[] lightSpecular = {0.3f, 0.3f, 0.3f, 1f};
-        float[] lightSpecular = {0f, 0f, 0f, 1f};
+        float[] lightAmbient0 = {0.1f, 0.1f, 0.1f, 1.0f};
+        float[] lightDiffuse0 = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] lightPosition0 = {1.0f, 1.0f, 1.0f, 0.0f};
+        float[] lightSpecular0 = {0f, 0f, 0f, 1f};
        
-        
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightSpecular, 0);
-        gl.glEnable(GL.GL_LIGHTING);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient0, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse0, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition0, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightSpecular0, 0);
         gl.glEnable(GL.GL_LIGHT0);
+        
+        
+        /*
+        float[] lightAmbient1 = {0.1f, 0.1f, 0.1f, 1.0f};
+        float[] lightDiffuse1 = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] lightPosition1 = {-1.0f, -1.0f, -1.0f, 0.0f};
+        float[] lightSpecular1 = {0f, 0f, 0f, 1f};
+       
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbient1, 0);
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse1, 0);
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPosition1, 0);
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecular1, 0);
+        gl.glEnable(GL.GL_LIGHT1);      
+        */
+        
+        
+        gl.glEnable(GL.GL_LIGHTING);
+        gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE,GL.GL_TRUE);
+
         
         //common enabling
         gl.glEnable(GL.GL_DEPTH_TEST);
