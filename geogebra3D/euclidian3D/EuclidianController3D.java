@@ -586,6 +586,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			((EuclidianView3D) view).updateCursor3D();
 			
 			view.setHitCursor();
+			app.storeUndoInfo();
 			return true;
 		}else
 			return false;

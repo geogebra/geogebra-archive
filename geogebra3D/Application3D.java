@@ -155,6 +155,13 @@ public abstract class Application3D extends Application{
 	}
 	
 	
+	/** return 2D (and 3D) views settings
+	 * @return 2D (and 3D) views settings
+	 */
+	public String getEuclidianViewsXML() {
+		return getEuclidianView().getXML()+""+getEuclidianView3D().getXML();
+	}	
+	
 	
 	
 	

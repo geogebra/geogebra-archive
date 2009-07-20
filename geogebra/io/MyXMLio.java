@@ -723,6 +723,10 @@ public class MyXMLio {
 		return sb.toString();
 	}
 
+	
+
+	
+	
 	/**
 	 * Returns XML representation of all settings and construction needed for
 	 * undo.
@@ -735,9 +739,11 @@ public class MyXMLio {
 		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 
 		// save euclidianView settings
-		String addStr = app.getEuclidianView().getXML();
+		//String addStr = app.getEuclidianView().getXML();
+		String addStr = app.getEuclidianViewsXML();
 		sb.ensureCapacity(sb.length() + addStr.length());
 		sb.append(addStr);
+		
 
 		// save construction
 		addStr = c.getXML();
