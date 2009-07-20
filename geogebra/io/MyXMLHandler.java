@@ -81,6 +81,7 @@ public class MyXMLHandler implements DocHandler {
 	private static final int MODE_GEOGEBRA = 1;
 	private static final int MODE_MACRO = 50;
 	private static final int MODE_EUCLIDIAN_VIEW = 100;
+	protected static final int MODE_EUCLIDIAN_VIEW3D = 101; //only for 3D
 	private static final int MODE_SPREADSHEET_VIEW = 150;
 	private static final int MODE_CAS_VIEW = 160;
 	private static final int MODE_CAS_SESSION = 161;
@@ -109,7 +110,7 @@ public class MyXMLHandler implements DocHandler {
 	private GeoElement geo;
 	private Command cmd;
 	private Macro macro;
-	private Application app;
+	protected Application app;
 	
 	private String[] macroInputLabels, macroOutputLabels;
 	private GeoElement[] cmdOutput;
@@ -276,6 +277,10 @@ public class MyXMLHandler implements DocHandler {
 		case MODE_EUCLIDIAN_VIEW:
 			startEuclidianViewElement(eName, attrs);
 			break;
+			
+		case MODE_EUCLIDIAN_VIEW3D:
+			startEuclidianView3DElement(eName, attrs);
+			break;
 
 		case MODE_SPREADSHEET_VIEW:
 			startSpreadsheetViewElement(eName, attrs);
@@ -373,6 +378,10 @@ public class MyXMLHandler implements DocHandler {
 		switch (mode) {
 		case MODE_EUCLIDIAN_VIEW:
 			if (eName.equals("euclidianView"))
+				mode = MODE_GEOGEBRA;
+			break;
+		case MODE_EUCLIDIAN_VIEW3D:
+			if (eName.equals("euclidianView3D"))
 				mode = MODE_GEOGEBRA;
 			break;
 
@@ -493,8 +502,10 @@ public class MyXMLHandler implements DocHandler {
 	private void startGeoGebraElement(String eName, LinkedHashMap<String, String> attrs) {
 		if (eName.equals("euclidianView")) {
 			mode = MODE_EUCLIDIAN_VIEW;
+		} else if (eName.equals("euclidianView3D")) {
+			mode = MODE_EUCLIDIAN_VIEW3D;
 		} else if (eName.equals("kernel")) {
-			mode = MODE_KERNEL;
+				mode = MODE_KERNEL;
 		} else if (eName.equals("spreadsheetView")) {
 			mode = MODE_SPREADSHEET_VIEW;
 		} else if (eName.equals("casView")) {
@@ -529,6 +540,20 @@ public class MyXMLHandler implements DocHandler {
 			System.err.println("unknown tag in <macro>: " + eName);
 		}
 	}
+	
+	
+	// ====================================
+	// <euclidianView3D> only used in 3D
+	// ====================================
+	/** only used in MyXMLHandler3D
+	 * @param eName
+	 * @param attrs
+	 */
+	protected void startEuclidianView3DElement(String eName, LinkedHashMap<String, String> attrs) {
+		Application.debug("TODO : warn that it's a 3D file");
+	}
+	
+	
 
 	// ====================================
 	// <euclidianView>

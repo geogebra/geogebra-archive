@@ -414,10 +414,7 @@ public abstract class Application implements KeyEventDispatcher {
 		myXMLio = new MyXMLio(kernel, kernel.getConstruction());
 
 		// init euclidian view
-		euclidianController = new EuclidianController(kernel);
-		euclidianView = new EuclidianView(euclidianController, showAxes,
-				showGrid);
-		euclidianView.setAntialiasing(antialiasing);
+		initEuclidianViews();
 	
 		// set frame
 		if (!isApplet) {
@@ -468,7 +465,7 @@ public abstract class Application implements KeyEventDispatcher {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.addKeyEventDispatcher(this);	
 
-		// Mathieu Blossier - place for code to test 3D packages
+		
 
 		// init plugin manager for applications
 		if (!isApplet)
@@ -476,10 +473,26 @@ public abstract class Application implements KeyEventDispatcher {
 		
 	}
 		
+	/**
+	 * init the kernel (used for 3D)
+	 */
 	public void initKernel(){
-		//Application.debug("initKernel() : Application");
+		
 		kernel = new Kernel(this);
 	}
+	
+	/**
+	 * init the EuclidianView (and EuclidianView3D for 3D)
+	 */
+	public void initEuclidianViews(){
+
+		euclidianController = new EuclidianController(kernel);
+		euclidianView = new EuclidianView(euclidianController, showAxes,
+				showGrid);
+		euclidianView.setAntialiasing(antialiasing);
+	}
+	
+	
 	
 	/**
 	 * Returns this application's GUI manager which is an instance of

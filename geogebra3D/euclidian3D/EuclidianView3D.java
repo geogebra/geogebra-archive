@@ -81,9 +81,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private Ggb3DMatrix4x4 m = Ggb3DMatrix4x4.Identity(); 
 	private Ggb3DMatrix4x4 mInv = Ggb3DMatrix4x4.Identity();
 	private Ggb3DMatrix4x4 undoRotationMatrix = Ggb3DMatrix4x4.Identity();
-	int a = 0;
-	int b = 0;//angles
-	int aOld, bOld;
+	double a = 0;
+	double b = 0;//angles
+	double aOld, bOld;
 	
 	
 
@@ -372,8 +372,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//TODO use Ggb3DMatrix4x4
 		
 		//rotations
-		Ggb3DMatrix m1 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.X_AXIS, this.b*EuclidianController3D.ANGLE_SCALE - Math.PI/2.0);
-		Ggb3DMatrix m2 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.Z_AXIS, this.a*EuclidianController3D.ANGLE_SCALE);
+		Ggb3DMatrix m1 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.X_AXIS, this.b*EuclidianController3D.ANGLE_TO_DEGREES - Math.PI/2.0);
+		Ggb3DMatrix m2 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.Z_AXIS, this.a*EuclidianController3D.ANGLE_TO_DEGREES);
 		Ggb3DMatrix m3 = m1.mul(m2);
 
 		undoRotationMatrix.set(m3.inverse());
@@ -394,7 +394,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	
-	public void setRotXY(int a, int b, boolean repaint){
+	public void setRotXYinDegrees(double a, double b, boolean repaint){
 		
 		//Application.debug("setRotXY");
 		
@@ -419,7 +419,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	final public void setCoordSystemFromMouseMove(int dx, int dy, int mode) {	
 		switch(mode){
 		case EuclidianController3D.MOVE_ROTATE_VIEW:
-			setRotXY(aOld + dx, bOld + dy, true);
+			setRotXYinDegrees(aOld + dx, bOld + dy, true);
 			break;
 		case EuclidianController3D.MOVE_VIEW:
 			setXZero(XZeroOld+dx);
@@ -432,12 +432,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void addRotXY(int da, int db, boolean repaint){
 		
-		setRotXY(a+da,b+db,repaint);
+		setRotXYinDegrees(a+da,b+db,repaint);
 	}	
 
 	public void setRotXY(double a, double b, boolean repaint){
 		
-		setRotXY((int) (a/EuclidianController3D.ANGLE_SCALE),(int) (b/EuclidianController3D.ANGLE_SCALE),repaint);
+		setRotXYinDegrees(a/EuclidianController3D.ANGLE_TO_DEGREES,b/EuclidianController3D.ANGLE_TO_DEGREES,repaint);
 		
 	}
 	
@@ -1639,6 +1639,34 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public String getXML() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<euclidianView3D>\n");
+		
+		
+		// coord system
+		sb.append("\t<coordSystem");
+		
+		sb.append(" xZero=\"");
+		sb.append(getXZero());
+		sb.append("\"");
+		sb.append(" yZero=\"");
+		sb.append(getYZero());
+		sb.append("\"");
+		sb.append(" zZero=\"");
+		sb.append(getZZero());
+		sb.append("\"");	
+		
+		sb.append(" scale=\"");
+		sb.append(getXscale());
+		sb.append("\"");
+
+		sb.append(" xAngle=\"");
+		sb.append(b);
+		sb.append("\"");
+		sb.append(" zAngle=\"");
+		sb.append(a);
+		sb.append("\"");	
+		
+		sb.append("/>\n");
+		
 		
 		
 		sb.append("</euclidianView3D>\n");

@@ -57,7 +57,7 @@ public class Test3D{
 		 * Remove A to remove anything
 		 * Use it to create new points, segments, lines, etc. */
 		
-		testAxisAndPlane();testCube(true);
+		//testAxisAndPlane();testCube(true);
 		
 		
 		
@@ -79,7 +79,7 @@ public class Test3D{
 		 * Animate slider k 
 		 * You can also create points, segments... */
 		
-		//testColoredCube(0.75);
+		testColoredCube(0.75);
 		
 		
 		

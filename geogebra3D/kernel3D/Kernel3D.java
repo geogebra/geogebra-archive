@@ -15,11 +15,11 @@ package geogebra3D.kernel3D;
 
 
 
+import geogebra.io.MyXMLHandler;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -29,6 +29,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.io.MyXMLHandler3D;
 import geogebra3D.kernel3D.arithmetic.ExpressionNodeEvaluator3D;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
@@ -92,6 +93,16 @@ public class Kernel3D
 	protected void newConstruction(){
 		cons = new Construction3D(this);	
 	}	
+	
+	
+	/**
+	 * creates a new MyXMLHandler3D
+	 * @param cons construction used in MyXMLHandler constructor
+	 * @return a new MyXMLHandler
+	 */
+	public MyXMLHandler newMyXMLHandler(Construction cons){
+		return new MyXMLHandler3D(this, cons);		
+	}
 	
 	
 	/**

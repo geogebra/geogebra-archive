@@ -81,9 +81,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	private boolean viewRotationOccured = false;
 	
 	
-	//scale factor for changing angle of view : 2Pi <-> 300 pixels 
-	static final public double ANGLE_SCALE = 2*Math.PI/300f;
-	static final public int ANGLE_MAX = (int) ((Math.PI/2)/ANGLE_SCALE); //maximum vertical angle
+	//scale factor for changing angle of view : 2Pi <-> 360 pixels (so 1 pixel = 1° )
+	static final public double ANGLE_TO_DEGREES = 2*Math.PI/360;
+	static final public int ANGLE_MAX = 90;//(int) ((Math.PI/2)/ANGLE_TO_DEGREES); //maximum vertical angle
 
 
 	

@@ -62,17 +62,12 @@ public abstract class Application3D extends Application{
     	
     	super(args, frame, applet, undoActive);
 
-		euclidianController3D = new EuclidianController3D(kernel3D);
-        euclidianView3D = new EuclidianView3D(euclidianController3D);  
+
         
 	    //TODO remove 3D test : just comment following line        
         new Test3D(kernel3D,euclidianView,euclidianView3D,this);
         
-        //init 3D view
-        /*
-        euclidianView3D.setZZero(-7.0);
-        euclidianView3D.setRotXY(-Math.PI/6,Math.PI/6,true);
-         */
+
         
         //init toolbar
         
@@ -102,9 +97,22 @@ public abstract class Application3D extends Application{
     
     
 	public void initKernel(){
-		//Application.debug("initKernel() : Application3D");
 		kernel3D = new Kernel3D(this);
 		kernel = kernel3D;
+	}
+	
+	
+	/**
+	 * init the EuclidianView (and EuclidianView3D for 3D)
+	 */
+	public void initEuclidianViews(){
+		
+		//init the 2D euclidian view
+		super.initEuclidianViews();
+		
+		//init the 3D euclidian view
+		euclidianController3D = new EuclidianController3D(kernel3D);
+        euclidianView3D = new EuclidianView3D(euclidianController3D);  
 	}
     
 
@@ -113,12 +121,46 @@ public abstract class Application3D extends Application{
 	public void setMode(int mode) {
 		super.setMode(mode);
 		
-		if (euclidianView3D != null)
+		//if (euclidianView3D != null)
 			euclidianView3D.setMode(mode);
 		
 	}
 	
     
+	
+	
+	
+	
+	public String getCompleteUserInterfaceXML(boolean asPreference) {
+		StringBuffer sb = new StringBuffer();
+
+		// save super settings
+		sb.append(super.getCompleteUserInterfaceXML(asPreference));
+
+		// save euclidianView3D settings
+		//if (euclidianView3D != null) //TODO remove this
+			sb.append(euclidianView3D.getXML());
+
+
+		return sb.toString();
+	}
+	
+	
+	
+	/** return the 3D euclidian view
+	 * @return the 3D euclidian view
+	 */
+	public EuclidianView3D getEuclidianView3D(){
+		return euclidianView3D;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
     
     
     
