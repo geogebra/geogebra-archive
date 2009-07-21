@@ -658,6 +658,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		update();
 		
+		
 		//Application.debug("repaint View3D");
 		
 	}

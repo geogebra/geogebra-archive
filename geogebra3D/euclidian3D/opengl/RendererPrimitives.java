@@ -10,15 +10,39 @@ import javax.media.opengl.GL;
  */
 public class RendererPrimitives {
 	
-	/** radius for drawing 3D points*/
-	private static final float POINT3D_RADIUS = 1.4f;
 	
+	//////////////
+	// points
+	
+	/** radius for drawing 3D points*/
+	private static final float POINT3D_RADIUS = 1.4f;	
 	/** start index for point primitives list */
 	private int pointIndex;
 	/** TODO point primitives number of latitudes */
 	private int[] pointLatitudes  = {1,2,2, 2,2,2, 2,2,2};
 	/** TODO point primitives number of longitudes */
 	private int[] pointLongitudes = {2,4,8, 8,8,8, 8,8,8};
+	
+	
+	
+	//////////////
+	// lines
+	
+	/** radius for drawing 3D points*/
+	private static final float LINE3D_THICKNESS = 0.5f;
+	/** start index for segment primitives list */
+	private int segmentIndex;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * default constructor
@@ -35,12 +59,31 @@ public class RendererPrimitives {
 			gl.glEndList();
 		}
 		
+		//segments
+		segmentIndex = gl.glGenLists(1);
+		for (int i=0;i<1;i++){
+			gl.glNewList(segmentIndex+i, GL.GL_COMPILE);
+			segmentList(gl, 1+i);
+			gl.glEndList();
+		}
+		
 	}
 	
 	
-
-    
-    
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////////////////////////
+	// POINTS
+	///////////////////////////////
     
 	
     /**
@@ -145,6 +188,60 @@ public class RendererPrimitives {
     
     
     
+	///////////////////////////////
+	// SEGMENTS
+	///////////////////////////////
+
+    public void segment(GL gl, int thickness){
+    	gl.glCallList(segmentIndex);
+    	//segmentList(gl, thickness);
+    }
+
+    	
+    public void segmentList(GL gl, int thickness){
+
+    	int latitude = 8;
+    	
+    	float dt = (float) 1/latitude;
+    	float da = (float) (2*Math.PI *dt) ; 
+    	gl.glBegin(GL.GL_QUADS); 
+
+    	for( int i = 0; i < latitude + 1 ; i++ ) { 
+    		float y0 = 2 * LINE3D_THICKNESS * (float) Math.sin ( i * da ); 
+    		float z0 = 2 * LINE3D_THICKNESS * (float) Math.cos ( i * da ); 
+    		float y1 = 2 * LINE3D_THICKNESS * (float) Math.sin ( (i+1) * da ); 
+    		float z1 = 2 * LINE3D_THICKNESS * (float) Math.cos ( (i+1) * da ); 
+
+    		gl.glTexCoord2f(0,i*dt);
+    		gl.glNormal3f(0,y0,z0); 
+    		gl.glVertex3f(0,y0,z0); 
+
+
+    		gl.glTexCoord2f(1,i*dt);
+    		gl.glNormal3f(1,y0,z0); 
+    		gl.glVertex3f(1,y0,z0); 
+
+    		gl.glTexCoord2f(1,(i+1)*dt);
+    		gl.glNormal3f(1,y1,z1); 
+    		gl.glVertex3f(1,y1,z1); 
+
+    		gl.glTexCoord2f(0,(i+1)*dt);
+    		gl.glNormal3f(0,y1,z1); 
+    		gl.glVertex3f(0,y1,z1); 
+
+
+    	} 
+    	gl.glEnd();  
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -157,7 +254,7 @@ public class RendererPrimitives {
     
     
     //////////////////////////////
-    // TODO remove
+    // TODO remove below 
     
     
     

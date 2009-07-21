@@ -204,6 +204,7 @@ public class Renderer implements GLEventListener {
 	    
 	    //animator : 60 frames per second
 	    
+	    
 	    animator = new FPSAnimator( canvas, 60 );
         animator.setRunAsFastAsPossible(true);	  
         animator.start();
@@ -262,16 +263,18 @@ public class Renderer implements GLEventListener {
         
         gl = gLDrawable.getGL();
         
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         
         
         //picking        
         if(waitForPick){
         	doPick();
         	//Application.debug("doPick");
+        	return;
         }
         
         
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+        gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
         
         
@@ -419,7 +422,9 @@ public class Renderer implements GLEventListener {
     	double displayTimeOld = displayTime;
     	displayTime = System.currentTimeMillis();
     	fps = 0.9*fps + 0.1*1000/(displayTime-displayTimeOld);
-    	drawFPS(0, 0, ""+((int) fps), false);
+    	if (fps>100)
+    		fps=100;
+    	drawFPS(0, 0, "FPS="+((int) fps), false);
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
 
@@ -826,7 +831,10 @@ public class Renderer implements GLEventListener {
     		gl.glMatrixMode(GL.GL_MODELVIEW);
     	}
     	
-       	drawCylinder(m_thickness/view3D.getScale());
+       	//drawCylinder(m_thickness/view3D.getScale());
+    	double s = dilationValues[dilation]/view3D.getScale();
+    	gl.glScaled(1,s,s);
+       	primitives.segment(gl, (int) m_thickness);
     	
        	if (dashed)
        		gl.glDisable(GL.GL_TEXTURE_2D);
@@ -845,15 +853,6 @@ public class Renderer implements GLEventListener {
     
     
     
-    /** 
-     * draws a line according to current drawing matrix.
-     */
-    /*
-    public void drawLine(){
-    	//TODO use frustum
-    	drawSegment(-20,21);
-    }  
-    */
     
     
     

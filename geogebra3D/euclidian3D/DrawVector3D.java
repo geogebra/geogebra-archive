@@ -16,19 +16,19 @@ public class DrawVector3D extends Drawable3DSolid {
 	
 	
 	public void drawGeometry(Renderer renderer) {
-		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		renderer.setThickness(getGeoElement().getLineThickness());
 		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
 		renderer.setArrowLength(0.3); //TODO use object property
-		renderer.setArrowWidth(2*LINE3D_THICKNESS*getGeoElement().getLineThickness()); //TODO use object property
+		renderer.setArrowWidth(2*getGeoElement().getLineThickness()); //TODO use object property
 		renderer.drawSegment();
 		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);
 	}
 	
 	public void drawGeometryPicked(Renderer renderer){		
-		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		renderer.setThickness(getGeoElement().getLineThickness());
 		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
 		renderer.setArrowLength(0.3); //TODO use object property
-		renderer.setArrowWidth(2*LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness()); //TODO use object property
+		renderer.setArrowWidth(2*getGeoElement().getLineThickness()); //TODO use object property
 		renderer.drawSegment();
 		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);
 	}

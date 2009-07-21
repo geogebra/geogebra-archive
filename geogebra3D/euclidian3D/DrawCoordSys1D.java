@@ -36,12 +36,12 @@ public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewa
 	
 	
 	public void drawGeometry(Renderer renderer) {
-		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
+		renderer.setThickness(getGeoElement().getLineThickness());
 		renderer.drawSegment(drawMin,drawMax);
 	}
 	
 	public void drawGeometryPicked(Renderer renderer){
-		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		renderer.setThickness(getGeoElement().getLineThickness());
 		renderer.drawSegment(drawMin,drawMax);
 	}
 	

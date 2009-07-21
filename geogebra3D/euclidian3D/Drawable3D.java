@@ -124,7 +124,7 @@ public abstract class Drawable3D {
 	/** points on a path are a little bit more bigger than others */
 	protected static final float POINT_ON_PATH_DILATATION = 1.01f;
 	/** default thickness of 3D lines, segments, ... */
-	protected static final float LINE3D_THICKNESS = 0.5f;
+	//protected static final float LINE3D_THICKNESS = 0.5f;
 	/** default thickness of lines of a 3D grid ... */	
 	protected static final float GRID3D_THICKNESS = 0.005f;
 		

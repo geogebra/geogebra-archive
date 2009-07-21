@@ -45,7 +45,7 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 		GeoPoint3D point = (GeoPoint3D) getGeoElement(); 
 		
 		if (point.hasCoordDecoration()){
-			renderer.setThickness(LINE3D_THICKNESS);
+			renderer.setThickness(1);
 			//TODO use gui
 			renderer.drawCoordSegments(ConstructionDefaults3D.colXAXIS,ConstructionDefaults3D.colYAXIS,ConstructionDefaults3D.colZAXIS); 
 		}

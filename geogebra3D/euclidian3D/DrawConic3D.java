@@ -57,14 +57,14 @@ public class DrawConic3D extends Drawable3DSolid {
 
 	public void drawGeometry(Renderer renderer) {
 		
-		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());		
+		renderer.setThickness(getGeoElement().getLineThickness());		
 		drawGeometryForAll(renderer);
 
 	}
 
 
 	public void drawGeometryHidden(Renderer renderer) {
-		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());		
+		renderer.setThickness(getGeoElement().getLineThickness());		
 		drawGeometryForAll(renderer);
 
 	}
@@ -72,7 +72,7 @@ public class DrawConic3D extends Drawable3DSolid {
 
 	public void drawGeometryPicked(Renderer renderer) {
 		
-		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
+		renderer.setThickness(getGeoElement().getLineThickness());
 		drawGeometryForAll(renderer);
 
 	}
