@@ -4,7 +4,7 @@ import geogebra.euclidian.Previewable;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;

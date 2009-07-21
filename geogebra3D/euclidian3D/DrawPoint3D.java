@@ -5,7 +5,7 @@ package geogebra3D.euclidian3D;
 import geogebra.euclidian.Previewable;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
@@ -40,7 +40,8 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 	
 	
 
-	public void drawGeometry(EuclidianRenderer3D renderer) {
+	public void drawGeometry(Renderer renderer) {
+
 		GeoPoint3D point = (GeoPoint3D) getGeoElement(); 
 		
 		if (point.hasCoordDecoration()){
@@ -49,23 +50,18 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 			renderer.drawCoordSegments(ConstructionDefaults3D.colXAXIS,ConstructionDefaults3D.colYAXIS,ConstructionDefaults3D.colZAXIS); 
 		}
 		
-		/*
-		if (point.hasCrossDecoration()){
-			renderer.setThickness(0.025);
-			renderer.drawCrossWithEdges(0.12);
-		}
-		*/
+
 		if (point.hasPath())
-			renderer.drawPoint(POINT3D_RADIUS*POINT_ON_PATH_DILATATION*point.getPointSize()); //points on path are more visible 
+			renderer.drawPoint(point.getPointSize()); //points on path are more visible 
 		else
-			renderer.drawPoint(POINT3D_RADIUS*point.getPointSize());
+			renderer.drawPoint(point.getPointSize());
 		
 
 	}
 	
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){
+	public void drawGeometryPicked(Renderer renderer){
 		GeoPoint3D l_point = (GeoPoint3D) getGeoElement();
-		renderer.drawPoint(POINT3D_RADIUS*PICKED_DILATATION*l_point.getPointSize());
+		renderer.drawPoint(l_point.getPointSize());
 		
 	}
 
@@ -73,9 +69,9 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 	
 
 	
-	public void drawGeometryHidden(EuclidianRenderer3D renderer){
+	public void drawGeometryHidden(Renderer renderer){
+
 		drawGeometry(renderer);
-		
 	}	
 	
 

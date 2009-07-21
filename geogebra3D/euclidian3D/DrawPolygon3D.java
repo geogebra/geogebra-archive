@@ -4,7 +4,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoPolygon3D;
 
 
@@ -24,7 +24,7 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 	
 	//drawing
 
-	public void drawGeometry(EuclidianRenderer3D renderer) {
+	public void drawGeometry(Renderer renderer) {
 
 		
 		
@@ -45,15 +45,15 @@ public class DrawPolygon3D extends Drawable3DTransparent {
 			
 
 	}
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){
+	public void drawGeometryPicked(Renderer renderer){
 		drawGeometry(renderer);
 	}
-	public void drawGeometryHiding(EuclidianRenderer3D renderer) {
+	public void drawGeometryHiding(Renderer renderer) {
 		drawGeometry(renderer);
 	}
 	
 	
-	public void drawGeometryHidden(EuclidianRenderer3D renderer){};
+	public void drawGeometryHidden(Renderer renderer){};
 	
 	
 	

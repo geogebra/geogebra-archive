@@ -51,7 +51,7 @@ import com.sun.opengl.util.j2d.TextRenderer;
  * 
  * 
  */
-public class EuclidianRenderer3D implements GLEventListener {
+public class Renderer implements GLEventListener {
 	
 	// openGL variables
 	private GLU glu= new GLU();
@@ -88,6 +88,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 	// for drawing
 	private Ggb3DMatrix4x4 m_drawingMatrix; //matrix for drawing
 	
+	
+	///////////////////
+	//primitives
+	private RendererPrimitives primitives;
 	
 	///////////////////
 	//dash
@@ -151,6 +155,16 @@ public class EuclidianRenderer3D implements GLEventListener {
 	private double m_arrowLength, m_arrowWidth;
 	
 	
+	///////////////////
+	// dilation
+	
+	private static final int DILATION_NONE = 0;
+	private static final int DILATION_HIGHLITED = 1;
+	private int dilation = DILATION_NONE;
+	private double[] dilationValues = {
+			1,  // DILATION_NONE
+			1.3 // DILATION_HIGHLITED
+	};
 	
 	
 	///////////////////
@@ -167,7 +181,7 @@ public class EuclidianRenderer3D implements GLEventListener {
 	 * creates a renderer linked to an {@link EuclidianView3D} 
 	 * @param view the {@link EuclidianView3D} linked to 
 	 */
-	public EuclidianRenderer3D(EuclidianView3D view){
+	public Renderer(EuclidianView3D view){
 		super();
 		
 	    caps = new GLCapabilities();
@@ -195,8 +209,11 @@ public class EuclidianRenderer3D implements GLEventListener {
         animator.start();
         
 
-        
+        //link to 3D view
 		this.view3D=view;
+		
+		
+		
 	}
 	
 	
@@ -219,6 +236,10 @@ public class EuclidianRenderer3D implements GLEventListener {
 	}
 	
 	
+	double displayTime;
+	double fps;
+	
+	
 	/**
 	 * 
 	 * openGL method called when the display is to be computed.
@@ -237,7 +258,6 @@ public class EuclidianRenderer3D implements GLEventListener {
     public void display(GLAutoDrawable gLDrawable) {
     	
     	//Application.debug("display");
-    	
 
         
         gl = gLDrawable.getGL();
@@ -265,6 +285,12 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         view3D.update();
         
+        
+
+
+    	
+    	
+        
         //init drawing matrix to view3D toScreen matrix
         gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         
@@ -277,6 +303,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         
         //drawing hidden part
+        //gl.glDepthMask(true);
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
         	d.drawHidden(this);	
@@ -286,10 +313,14 @@ public class EuclidianRenderer3D implements GLEventListener {
         //drawing picked parts        
         gl.glDepthMask(false);
         //setMaterial(new Color(0f,0f,0f),0.75f);
+        dilation = DILATION_HIGHLITED;
+    	gl.glCullFace(GL.GL_FRONT); //draws inside parts
         for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         	Drawable3D d = (Drawable3D) iter.next();
         	d.drawPicked(this);	
         }
+        dilation = DILATION_NONE;
+        gl.glCullFace(GL.GL_BACK);
         gl.glDepthMask(true);
         
 
@@ -378,7 +409,19 @@ public class EuclidianRenderer3D implements GLEventListener {
         gl.glEnable(GL.GL_LIGHTING);
         
 
-         
+        
+        
+        
+
+        //FPS
+        gl.glDisable(GL.GL_LIGHTING);
+        gl.glDisable(GL.GL_DEPTH_TEST);
+    	double displayTimeOld = displayTime;
+    	displayTime = System.currentTimeMillis();
+    	fps = 0.9*fps + 0.1*1000/(displayTime-displayTimeOld);
+    	drawFPS(0, 0, ""+((int) fps), false);
+    	gl.glEnable(GL.GL_DEPTH_TEST);
+    	gl.glEnable(GL.GL_LIGHTING);
 
 
         gLDrawable.swapBuffers(); //TODO
@@ -1052,78 +1095,27 @@ public class EuclidianRenderer3D implements GLEventListener {
      * @param radius radius of the sphere
      */
     public void drawSphere(float radius){
-    	//initMatrix();
-    	//glu.gluSphere(quadric, radius, 16, 16);
-    	//resetMatrix();
-    	drawSphere(radius/view3D.getScale(),16,16);
+    	initMatrix();
+    	primitives.drawSphere(gl,radius/view3D.getScale(),16,16);
+    	resetMatrix();
     }
     
     /**
      * draws a point according to current drawing matrix.
      * 
-     * @param radius radius of the sphere
+     * @param radius radius of the point
      */
-    public void drawPoint(float radius){
-    	//initMatrix();
-    	//glu.gluSphere(quadric, radius/view3D.getScale(), 8, 8);
-    	//resetMatrix();
-    	drawSphere(radius/view3D.getScale(),8,8);
+    public void drawPoint(int size){
+    	initMatrix();
+    	double s = dilationValues[dilation]/view3D.getScale();
+    	gl.glScaled(s,s,s);
+    	primitives.point(gl,size);
+    	resetMatrix();
+    	
     	
     }
     
-    /**
-     * draws a sphere according to current drawing matrix.
-     * 
-     * @param radius radius of the sphere
-     * @param numTriangles number of triangles
-     */
-    public void drawSphere(double radius, int latitude, int longitude){
-    	initMatrix();
-    	
-    	gl.glScaled(radius, radius, radius);
-    	
-    	
 
-    	float da = (float) (Math.PI / latitude) ; 
-    	float db = (float) ( 2.0f * Math.PI / longitude ); 
-    	gl.glBegin(GL.GL_QUADS); 
-    	
-    	for( int i = 0; i < latitude + 1 ; i++ ) { 
-    		float r0 = (float) Math.sin ( i * da ); 
-    		float y0 = (float) Math.cos ( i * da ); 
-    		float r1 = (float) Math.sin ( (i+1) * da ); 
-    		float y1 = (float) Math.cos ( (i+1) * da ); 
-
-    		for( int j = 0; j < longitude + 1 ; j++ ) { 
-    			float x0 = r0 * (float) Math.sin( j * db ); 
-    			float z0 = r0 * (float) Math.cos( j * db ); 
-    			float x1 = r0 * (float) Math.sin( (j+1) * db ); 
-    			float z1 = r0 * (float) Math.cos( (j+1) * db ); 
-
-    			float x2 = r1 * (float) Math.sin( j * db ); 
-    			float z2 = r1 * (float) Math.cos( j * db ); 
-    			float x3 = r1 * (float) Math.sin( (j+1) * db ); 
-    			float z3 = r1 * (float) Math.cos( (j+1) * db ); 
-
-    			gl.glNormal3f(x0,y0,z0); 
-    			gl.glVertex3f(x0,y0,z0); 
-
-
-    			gl.glNormal3f(x2,y1,z2); 
-    			gl.glVertex3f(x2,y1,z2); 
-
-    			gl.glNormal3f(x3,y1,z3); 
-    			gl.glVertex3f(x3,y1,z3); 
-
-    			gl.glNormal3f(x1,y0,z1); 
-    			gl.glVertex3f(x1,y0,z1); 
-
-    		} 
-    	} 
-    	gl.glEnd();  
-
-    	resetMatrix();
-    }
  
     
     
@@ -1563,7 +1555,7 @@ public class EuclidianRenderer3D implements GLEventListener {
     	
 
     	
-	    EuclidianRenderer3DTesselCallBack tessCallback = new EuclidianRenderer3DTesselCallBack(gl, glu);
+	    RendererTesselCallBack tessCallback = new RendererTesselCallBack(gl, glu);
 
 	    
 	    tobj = glu.gluNewTess();
@@ -1936,7 +1928,36 @@ public class EuclidianRenderer3D implements GLEventListener {
     
     
     
-    
+    public void drawFPS(float x, float y, String s, boolean colored){
+    	
+    	
+        gl.glMatrixMode(GL.GL_TEXTURE);
+        gl.glLoadIdentity();
+        
+    	gl.glMatrixMode(GL.GL_MODELVIEW);
+    	
+    	initMatrix(view3D.getUndoRotationMatrix());
+    	
+    	
+    	textRenderer.begin3DRendering();
+
+    	
+    	textRenderer.setColor(Color.BLACK);
+    	
+
+        float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR/((float) view3D.getScale());
+    	
+    	
+    	textRenderer.draw3D(s,
+                x*textScaleFactor,//w / -2.0f * textScaleFactor,
+                y*textScaleFactor,//h / -2.0f * textScaleFactor,
+                0,
+                textScaleFactor);
+    	
+        textRenderer.end3DRendering();
+        
+        resetMatrix(); //initMatrix(m_view3D.getUndoRotationMatrix());
+    }
     
     
     
@@ -2150,12 +2171,16 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         gl = drawable.getGL();
         
-     // Check For VBO support
+        // Check For VBO support
         final boolean VBOsupported = gl.isFunctionAvailable("glGenBuffersARB") &&
                 gl.isFunctionAvailable("glBindBufferARB") &&
                 gl.isFunctionAvailable("glBufferDataARB") &&
                 gl.isFunctionAvailable("glDeleteBuffersARB");
         Application.debug("vbo supported : "+VBOsupported);
+        
+        
+        primitives = new RendererPrimitives(gl);
+        
         
         //light
         /*
@@ -2195,7 +2220,7 @@ public class EuclidianRenderer3D implements GLEventListener {
         
         gl.glEnable(GL.GL_LIGHTING);
         gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE,GL.GL_TRUE);
-
+        gl.glShadeModel(GL.GL_SMOOTH);
         
         //common enabling
         gl.glEnable(GL.GL_DEPTH_TEST);

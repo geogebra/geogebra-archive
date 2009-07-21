@@ -5,7 +5,7 @@ import java.awt.Color;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoSegment3D;
@@ -34,12 +34,12 @@ public abstract class Drawable3DSolid extends Drawable3D {
 		super(a_view3d);
 	}
 
-	public void draw(EuclidianRenderer3D renderer) {
+	public void draw(Renderer renderer) {
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
 		
 		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
-		renderer.setDash(EuclidianRenderer3D.DASH_NONE); 
+		renderer.setDash(Renderer.DASH_NONE); 
 		renderer.setMatrix(getMatrix());
 		
 		drawGeometry(renderer);
@@ -49,7 +49,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 	}
 
 	
-	public void drawPicked(EuclidianRenderer3D renderer) {
+	public void drawPicked(Renderer renderer) {
 				
 
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
@@ -57,8 +57,8 @@ public abstract class Drawable3DSolid extends Drawable3D {
 		if (!getGeoElement().doHighlighting())
 			return;
 		
-		renderer.setMaterial(new Color(0f,0f,0f),0.75f);
-		renderer.setDash(EuclidianRenderer3D.DASH_NONE);
+		renderer.setMaterial(new Color(0f,0f,0f),1f);
+		renderer.setDash(Renderer.DASH_NONE);
 		renderer.setMatrix(getMatrix());
 		drawGeometryPicked(renderer);		
 		
@@ -66,7 +66,7 @@ public abstract class Drawable3DSolid extends Drawable3D {
 	}
 	
 	
-	public void drawHidden(EuclidianRenderer3D renderer){
+	public void drawHidden(Renderer renderer){
 		
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
@@ -84,8 +84,8 @@ public abstract class Drawable3DSolid extends Drawable3D {
 
 	
 	// methods not used for solid drawables
-	public void drawHiding(EuclidianRenderer3D renderer) {}
-	public void drawTransp(EuclidianRenderer3D renderer) {}
+	public void drawHiding(Renderer renderer) {}
+	public void drawTransp(Renderer renderer) {}
 
 	public boolean isTransparent() {
 		return false;

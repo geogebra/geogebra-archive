@@ -4,12 +4,12 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellatorCallback;
 
-public class EuclidianRenderer3DTesselCallBack implements GLUtessellatorCallback
+public class RendererTesselCallBack implements GLUtessellatorCallback
   {
     private GL gl;
     private GLU glu;
 
-    public EuclidianRenderer3DTesselCallBack(GL gl, GLU glu)
+    public RendererTesselCallBack(GL gl, GLU glu)
     {
       this.gl = gl;
       this.glu = glu;

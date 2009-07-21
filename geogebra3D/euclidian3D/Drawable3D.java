@@ -6,7 +6,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -120,7 +120,7 @@ public abstract class Drawable3D {
 	/** objects that are picked are drawn with a thickness * PICKED_DILATATION*/
 	protected static final float PICKED_DILATATION = 1.3f;	
 	/** default radius for drawing 3D points*/
-	protected static final float POINT3D_RADIUS = 1.2f;
+	//protected static final float POINT3D_RADIUS = 1.2f;
 	/** points on a path are a little bit more bigger than others */
 	protected static final float POINT_ON_PATH_DILATATION = 1.01f;
 	/** default thickness of 3D lines, segments, ... */
@@ -329,57 +329,57 @@ public abstract class Drawable3D {
 	 * draw the geometry for not hidden parts
 	 * @param renderer the 3D renderer where to draw
 	 */
-	abstract public void drawGeometry(EuclidianRenderer3D renderer); 
+	abstract public void drawGeometry(Renderer renderer); 
 	
 	/**
 	 * draw the geometry for picked visibility
 	 * @param renderer the 3D renderer where to draw
 	 */
-	abstract public void drawGeometryPicked(EuclidianRenderer3D renderer); 
+	abstract public void drawGeometryPicked(Renderer renderer); 
 	
 	/**
 	 * draw the geometry to show the object is picked (highlighted)
 	 * @param renderer the 3D renderer where to draw
 	 */
-	abstract public void drawGeometryHidden(EuclidianRenderer3D renderer); 
+	abstract public void drawGeometryHidden(Renderer renderer); 
 	
 	/**
 	 * draw the geometry for hidden parts
 	 * @param renderer the 3D renderer where to draw
 	 */
-	abstract public void draw(EuclidianRenderer3D renderer); 
+	abstract public void draw(Renderer renderer); 
 	
 	/**
 	 * sets the matrix, the pencil and draw the geometry for hidden parts
 	 * @param renderer the 3D renderer where to draw
 	 */	
-	abstract public void drawHidden(EuclidianRenderer3D renderer); 
+	abstract public void drawHidden(Renderer renderer); 
 	
 	
 	/**
 	 * sets the matrix, the pencil and draw the geometry for transparent parts
 	 * @param renderer the 3D renderer where to draw
 	 */	
-	abstract public void drawTransp(EuclidianRenderer3D renderer); 
+	abstract public void drawTransp(Renderer renderer); 
 	
 	
 	/**
 	 * sets the matrix, the pencil and draw the geometry for hiding parts
 	 * @param renderer the 3D renderer where to draw
 	 */	
-	abstract public void drawHiding(EuclidianRenderer3D renderer); 
+	abstract public void drawHiding(Renderer renderer); 
 	
 	/**
 	 * sets the matrix, the pencil and draw the geometry to show the object is picked (highlighted)
 	 * @param renderer the 3D renderer where to draw
 	 */		
-	abstract public void drawPicked(EuclidianRenderer3D renderer); 
+	abstract public void drawPicked(Renderer renderer); 
 
 	/**
-	 * sets the matrix, the pencil and draw the geometry for the {@link EuclidianRenderer3D} to process picking
+	 * sets the matrix, the pencil and draw the geometry for the {@link Renderer} to process picking
 	 * @param renderer the 3D renderer where to draw
 	 */			
-	public void drawForPicking(EuclidianRenderer3D renderer) {
+	public void drawForPicking(Renderer renderer) {
 		if (!((GeoElement3DInterface) getGeoElement()).isPickable()){
 			//Application.debug(getGeoElement()+" is not pickable");
 			return;
@@ -388,7 +388,7 @@ public abstract class Drawable3D {
 			return;	
 		
 		renderer.setMatrix(getMatrix());
-		renderer.setDash(EuclidianRenderer3D.DASH_NONE);
+		renderer.setDash(Renderer.DASH_NONE);
 		drawGeometry(renderer);
 	}
 
@@ -400,7 +400,7 @@ public abstract class Drawable3D {
      * @param colored says if the text has to be colored
      * @param forPicking says if this method is called for picking
      */
-    public void drawLabel(EuclidianRenderer3D renderer, boolean colored, boolean forPicking){
+    public void drawLabel(Renderer renderer, boolean colored, boolean forPicking){
 
     	if (forPicking && !((GeoElement3DInterface) getGeoElement()).isPickable())
 			return;

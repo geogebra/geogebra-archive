@@ -7,7 +7,7 @@ import java.awt.Color;
 
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoPlane3D;
 
 
@@ -27,7 +27,7 @@ public class DrawPlane3D extends Drawable3DTransparent {
 	
 	
 
-	public void drawGeometry(EuclidianRenderer3D renderer) {
+	public void drawGeometry(Renderer renderer) {
 		GeoPlane3D p = (GeoPlane3D) getGeoElement();
 		
 		//renderer.setMaterial(getGeoElement().getObjectColor(),1);
@@ -45,19 +45,19 @@ public class DrawPlane3D extends Drawable3DTransparent {
 	}
 	
 	
-	public void drawGeometryHiding(EuclidianRenderer3D renderer) {
+	public void drawGeometryHiding(Renderer renderer) {
 		GeoPlane3D p = (GeoPlane3D) getGeoElement();
 		renderer.drawQuad(p.getXmin(),p.getYmin(),p.getXmax(),p.getYmax());
 	}
 	
 	
 	
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){}
+	public void drawGeometryPicked(Renderer renderer){}
 	
-	public void drawGeometryHidden(EuclidianRenderer3D renderer){};
+	public void drawGeometryHidden(Renderer renderer){};
 	
 	
-	public void drawPicked(EuclidianRenderer3D renderer){
+	public void drawPicked(Renderer renderer){
 
 	};	
 	

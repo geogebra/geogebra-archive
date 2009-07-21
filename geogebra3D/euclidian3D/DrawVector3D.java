@@ -1,7 +1,7 @@
 package geogebra3D.euclidian3D;
 
 
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoVector3D;
 
 public class DrawVector3D extends Drawable3DSolid {
@@ -15,26 +15,26 @@ public class DrawVector3D extends Drawable3DSolid {
 	
 	
 	
-	public void drawGeometry(EuclidianRenderer3D renderer) {
+	public void drawGeometry(Renderer renderer) {
 		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
-		renderer.setArrowType(EuclidianRenderer3D.ARROW_TYPE_SIMPLE);
+		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
 		renderer.setArrowLength(0.3); //TODO use object property
 		renderer.setArrowWidth(2*LINE3D_THICKNESS*getGeoElement().getLineThickness()); //TODO use object property
 		renderer.drawSegment();
-		renderer.setArrowType(EuclidianRenderer3D.ARROW_TYPE_NONE);
+		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);
 	}
 	
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){		
+	public void drawGeometryPicked(Renderer renderer){		
 		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
-		renderer.setArrowType(EuclidianRenderer3D.ARROW_TYPE_SIMPLE);
+		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
 		renderer.setArrowLength(0.3); //TODO use object property
 		renderer.setArrowWidth(2*LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness()); //TODO use object property
 		renderer.drawSegment();
-		renderer.setArrowType(EuclidianRenderer3D.ARROW_TYPE_NONE);
+		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);
 	}
 	
 
-	public void drawGeometryHidden(EuclidianRenderer3D renderer){
+	public void drawGeometryHidden(Renderer renderer){
 		drawGeometry(renderer);
 	};
 	

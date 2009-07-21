@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 
@@ -16,10 +16,10 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 
 	
 	
-	abstract void drawGeometryHiding(EuclidianRenderer3D renderer);
+	abstract void drawGeometryHiding(Renderer renderer);
 
 
-	public void drawHiding(EuclidianRenderer3D renderer){
+	public void drawHiding(Renderer renderer){
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 
@@ -36,7 +36,7 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 	
 
 	//TODO improve specific geometry for picking
-	public void drawPicked(EuclidianRenderer3D renderer){
+	public void drawPicked(Renderer renderer){
 		
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
@@ -52,7 +52,7 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 	
 
 
-	public void drawTransp(EuclidianRenderer3D renderer){
+	public void drawTransp(Renderer renderer){
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined()){
 			//Application.debug("not visible "+getGeoElement().isEuclidianVisible()+",");
 			return;
@@ -75,8 +75,8 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 	
 	
 	// method not used for transparent drawables
-	public void draw(EuclidianRenderer3D renderer){}
-	public void drawHidden(EuclidianRenderer3D renderer){} 	
+	public void draw(Renderer renderer){}
+	public void drawHidden(Renderer renderer){} 	
 	
 	
 	

@@ -14,7 +14,7 @@ import geogebra.main.View;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoElement3D;
@@ -60,7 +60,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//private Kernel kernel;
 	private Kernel3D kernel3D;
 	private EuclidianController3D euclidianController3D;
-	private EuclidianRenderer3D renderer;
+	private Renderer renderer;
 	
 	//viewing values
 	private double XZero = 0;
@@ -141,7 +141,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		//TODO replace canvas3D with GLDisplay
-		renderer = new EuclidianRenderer3D(this);
+		renderer = new Renderer(this);
 		renderer.setDrawList3D(drawList3D);
 		
 		
@@ -197,7 +197,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	public EuclidianRenderer3D getRenderer(){
+	public Renderer getRenderer(){
 		return renderer;
 	}
 	
@@ -1149,7 +1149,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		//sets the flag and mouse location for openGL picking
 		//renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_OBJECTS);
-		renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_LABELS);
+		renderer.setMouseLoc(p.x,p.y,Renderer.PICKING_MODE_LABELS);
 
 		//calc immediately the hits
 		renderer.display();
@@ -1464,10 +1464,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * update the 3D cursor with current hits
 	 */
 	public void updateCursor3D(){
+
 		getEuclidianController().updateNewPoint(true, 
 				getHits().getTopHits(), 
 				true, true, true, false, //TODO doSingleHighlighting = false ? 
 				false);
+		
 	}
 	
 
@@ -1507,7 +1509,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//
 	/////////////////////////////////////////////////////
 	
-	public void drawCursor(EuclidianRenderer3D renderer){
+	public void drawCursor(Renderer renderer){
 
 		if (hasMouse){
 			
@@ -1536,7 +1538,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 	}
 	
-	private void drawCursorCross(EuclidianRenderer3D renderer){
+	private void drawCursorCross(Renderer renderer){
 
 		switch(getCursor3DType()){
 		case PREVIEW_POINT_FREE:
@@ -1563,7 +1565,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	}
 	
-	private void drawCursorOnPath(EuclidianRenderer3D renderer){
+	private void drawCursorOnPath(Renderer renderer){
 		
 		// use path drawing directions for the cross
 		getCursor3D().getDrawingMatrix().setVx(
@@ -1580,7 +1582,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 	}
 	
-	private void drawCursorDependent(EuclidianRenderer3D renderer){
+	private void drawCursorDependent(Renderer renderer){
 		
 		getCursor3D().getDrawingMatrix().setVx(vx);
 		getCursor3D().getDrawingMatrix().setVy(vy);

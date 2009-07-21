@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import geogebra.euclidian.Previewable;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -35,17 +35,17 @@ public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewa
 	// DRAWING GEOMETRIES
 	
 	
-	public void drawGeometry(EuclidianRenderer3D renderer) {
+	public void drawGeometry(Renderer renderer) {
 		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
 		renderer.drawSegment(drawMin,drawMax);
 	}
 	
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){
+	public void drawGeometryPicked(Renderer renderer){
 		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
 		renderer.drawSegment(drawMin,drawMax);
 	}
 	
-	public void drawGeometryHidden(EuclidianRenderer3D renderer){
+	public void drawGeometryHidden(Renderer renderer){
 		
 		drawGeometry(renderer);
 	} 

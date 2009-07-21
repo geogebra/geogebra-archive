@@ -2,7 +2,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoVec2D;
-import geogebra3D.euclidian3D.opengl.EuclidianRenderer3D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoConic3D;
 
 /**
@@ -39,7 +39,7 @@ public class DrawConic3D extends Drawable3DSolid {
 
 	
 	
-	private void drawGeometryForAll(EuclidianRenderer3D renderer) {
+	private void drawGeometryForAll(Renderer renderer) {
 		
 		GeoConic3D conic = (GeoConic3D) getGeoElement();
 		
@@ -55,7 +55,7 @@ public class DrawConic3D extends Drawable3DSolid {
 	
 	
 
-	public void drawGeometry(EuclidianRenderer3D renderer) {
+	public void drawGeometry(Renderer renderer) {
 		
 		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());		
 		drawGeometryForAll(renderer);
@@ -63,14 +63,14 @@ public class DrawConic3D extends Drawable3DSolid {
 	}
 
 
-	public void drawGeometryHidden(EuclidianRenderer3D renderer) {
+	public void drawGeometryHidden(Renderer renderer) {
 		renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());		
 		drawGeometryForAll(renderer);
 
 	}
 
 
-	public void drawGeometryPicked(EuclidianRenderer3D renderer) {
+	public void drawGeometryPicked(Renderer renderer) {
 		
 		renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
 		drawGeometryForAll(renderer);
