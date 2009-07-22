@@ -32,8 +32,7 @@ public class DrawRay3D extends DrawCoordSys1D {
 				new double[] {0,Double.POSITIVE_INFINITY},
 				o, v);
 		
-		drawMin = minmax[0];
-		drawMax = minmax[1];
+		setDrawMinMax(minmax[0], minmax[1]);
 		
 		return true;
 	}

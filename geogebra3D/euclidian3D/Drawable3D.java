@@ -207,7 +207,7 @@ public abstract class Drawable3D {
 	 * @return true if it has been updated*/
 	public boolean update(){
 		//verify if object is visible for drawing     				 
-		if (!isVisible()) return false;
+		//if (!isVisible()) return false;
 		
 		
 		//setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	

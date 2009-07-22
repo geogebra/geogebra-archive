@@ -38,8 +38,11 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 				o, v);
 		
-		drawMin = minmax[0];
-		drawMax = minmax[1];
+
+		
+		setDrawMinMax(minmax[0], minmax[1]);
+		
+		//Application.debug("drawMin = "+drawMin+"\ndrawMax = "+drawMax);
 		
 		return true;
 	}

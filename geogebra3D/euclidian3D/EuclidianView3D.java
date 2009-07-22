@@ -266,8 +266,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;									
 				
 
-				case GeoElement3D.GEO_CLASS_LINE3D:					
-					d = new DrawLine3D(this, (GeoLine3D) geo);					
+				case GeoElement3D.GEO_CLASS_LINE3D:		
+					Application.debug("hip");
+					d = new DrawLine3D(this, (GeoLine3D) geo);	
+
 					break;									
 
 				case GeoElement3D.GEO_CLASS_RAY3D:					

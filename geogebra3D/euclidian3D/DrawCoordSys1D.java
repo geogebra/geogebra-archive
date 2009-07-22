@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import geogebra.euclidian.Previewable;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
@@ -12,8 +13,8 @@ import geogebra3D.kernel3D.Kernel3D;
 
 public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewable {
 
-	protected double drawMin = 0;
-	protected double drawMax = 1;
+	private double drawMin;
+	private double drawMax;
 
 	
 	public DrawCoordSys1D(EuclidianView3D a_view3D, GeoCoordSys1D cs1D){
@@ -30,6 +31,11 @@ public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewa
 
 	
 	
+	protected void setDrawMinMax(double drawMin, double drawMax){
+		this.drawMin = drawMin;
+		this.drawMax = drawMax;
+	}
+	
 	
 	/////////////////////////////////////////
 	// DRAWING GEOMETRIES
@@ -38,6 +44,7 @@ public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewa
 	public void drawGeometry(Renderer renderer) {
 		renderer.setThickness(getGeoElement().getLineThickness());
 		renderer.drawSegment(drawMin,drawMax);
+		//Application.debug("drawMin = "+drawMin+"\ndrawMax = "+drawMax);
 	}
 	
 	public void drawGeometryPicked(Renderer renderer){
@@ -119,11 +126,13 @@ public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewa
 			GeoPoint3D secondPoint = (GeoPoint3D) selectedPoints.get(1);
 			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
 			getGeoElement().setEuclidianVisible(true);
+			update();
 		}else if (selectedPoints.size()==1){
 			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
 			GeoPoint3D secondPoint = getView3D().getCursor3D();
 			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
 			getGeoElement().setEuclidianVisible(true);
+			update();
 		}else{
 			getGeoElement().setEuclidianVisible(false);
 		}

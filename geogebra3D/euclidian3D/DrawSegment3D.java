@@ -20,23 +20,12 @@ public class DrawSegment3D extends DrawCoordSys1D {
 	public DrawSegment3D(EuclidianView3D a_view3D, GeoSegment3D a_segment3D){
 		
 		super(a_view3D,a_segment3D);
-	}
-
-
-	/*
-	public void drawGeometry(EuclidianRenderer3D renderer) {
-		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
-		super.drawGeometry(renderer);
-		renderer.drawSegment(); 
-	}
-	
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){
-		//renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
-		super.drawGeometryPicked(renderer);
-		renderer.drawSegment(); 
-	}
 		
-		*/
+		setDrawMinMax(0, 1);
+	}
+
+
+	
 
 	
 	////////////////////////////////
