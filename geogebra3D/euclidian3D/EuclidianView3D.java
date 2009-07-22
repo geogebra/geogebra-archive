@@ -674,9 +674,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void update(GeoElement geo) {
 		if (geo.isGeoElement3D()){
-			//Application.debug("update("+geo.getLabel()+")");
-			((GeoElement3DInterface) geo).getDrawable3D().update();
-			repaintView();
+			Drawable3D d = ((GeoElement3DInterface) geo).getDrawable3D();
+			if (d!=null){
+				((GeoElement3DInterface) geo).getDrawable3D().update();
+				//repaintView();
+			}
 		}
 	}
 

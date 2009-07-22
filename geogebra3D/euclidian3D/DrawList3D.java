@@ -2,6 +2,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.opengl.Renderer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,8 +42,49 @@ public class DrawList3D extends LinkedList{
 	
 	
 	
+	public void drawHidden(Renderer renderer){
+
+        for (Iterator iter = iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawHidden(renderer);	
+        }
+	}
 	
 	
+	public void drawPicked(Renderer renderer){
+
+        for (Iterator iter = iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawPicked(renderer);	
+        }
+	}
+	
+	
+	public void drawTransp(Renderer renderer){
+
+        for (Iterator iter = iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawTransp(renderer);	
+        }
+	}
+	
+	
+	public void drawLabel(Renderer renderer){
+
+        for (Iterator iter = iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawLabel(renderer,true,false);	
+        }
+	}
+	
+	
+	public void drawHiding(Renderer renderer){
+
+        for (Iterator iter = iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	d.drawHiding(renderer);	
+        }
+	}
 	
 
 }

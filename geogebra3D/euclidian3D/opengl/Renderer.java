@@ -305,11 +305,7 @@ public class Renderer implements GLEventListener {
         
         
         //drawing hidden part
-        //gl.glDepthMask(true);
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawHidden(this);	
-        }
+        drawList3D.drawHidden(this);
 
 
         //drawing picked parts        
@@ -317,10 +313,7 @@ public class Renderer implements GLEventListener {
         //setMaterial(new Color(0f,0f,0f),0.75f);
         dilation = DILATION_HIGHLITED;
     	gl.glCullFace(GL.GL_FRONT); //draws inside parts
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawPicked(this);	
-        }
+    	drawList3D.drawPicked(this);
         dilation = DILATION_NONE;
         gl.glCullFace(GL.GL_BACK);
         gl.glDepthMask(true);
@@ -328,12 +321,8 @@ public class Renderer implements GLEventListener {
 
 
         //drawing transparents parts
-        //gl.glDisable(GL.GL_CULL_FACE);
         gl.glDepthMask(false);
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawTransp(this);	
-        }
+        drawList3D.drawTransp(this);
         gl.glDepthMask(true);
         
         
@@ -341,10 +330,7 @@ public class Renderer implements GLEventListener {
         
         //drawing labels
         gl.glDisable(GL.GL_LIGHTING);
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawLabel(this,true,false);	
-        }
+        drawList3D.drawLabel(this);
         gl.glEnable(GL.GL_LIGHTING);
         
         
@@ -356,34 +342,17 @@ public class Renderer implements GLEventListener {
         //drawing hiding parts
         gl.glClear(GL.GL_DEPTH_BUFFER_BIT); //clear depth buffer
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawHiding(this);	
-        }
+        drawList3D.drawHiding(this);	        
         gl.glColorMask(true,true,true,true);
  
 
         //re-drawing transparents parts for better transparent effect
         //TODO improve it !
         gl.glDepthMask(false);
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawTransp(this);	
-        }
+        drawList3D.drawTransp(this);
         gl.glDepthMask(true);
 
 
-        
-        
-        //drawing labels for hiding
-        /*
-        gl.glColorMask(false,false,false,false); //no writing in color buffer		
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawLabel(this,false);	
-        }
-        gl.glColorMask(true,true,true,true);
-        */
         
 
         //re-drawing the cursor

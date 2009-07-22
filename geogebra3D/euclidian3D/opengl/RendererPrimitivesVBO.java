@@ -139,6 +139,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
      */
     public void point(GL gl, int size){
     
+    	
     	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
     	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
     	
@@ -161,6 +162,8 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
         gl.glDisableClientState(GL.GL_NORMAL_ARRAY);  
 
+
+    	 
     }
     
     
@@ -210,7 +213,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     
     
 	///////////////////////////////
-	// POINTS
+	// SEGMENTS
 	///////////////////////////////
     
 	
@@ -222,6 +225,8 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
      */
     public void segment(GL gl, int thickness){
     
+    	
+ 
     	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
     	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
     	gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  // Enable texture Arrays
@@ -246,6 +251,8 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
         gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
 
+   	 
+    	 
     }
     
     
