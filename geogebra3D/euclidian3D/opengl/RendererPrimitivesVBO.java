@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.main.Application;
+
 import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL;
@@ -27,21 +29,24 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	// points
 	
 	/** index of vertices of 3D points*/
-	private int[] pointVertices = new int[1];  // Vertex VBO Name 
+	private int[] vboVertices = new int[1];  // Vertex VBO Name 
 	/** index of normals of 3D points*/
-	private int[] pointNormals = new int[1];  // Normal VBO Name 
+	private int[] vboNormals = new int[1];  // Normal VBO Name 
+	
+	/** offsets for points */
+	private int[] pointOffsets = new int[POINT_SIZE_NUMBER];
+	
+	
 	
 	
 	//////////////
 	// segment
 	
-	/** index of vertices of 3D segments */
-	private int[] segmentVertices = new int[1];  // Vertex VBO Name 
-	/** index of normals of 3D segments*/
-	private int[] segmentNormals = new int[1];  // Normal VBO Name 
 	/** index of texture of 3D segments*/
 	private int[] segmentTexture = new int[1];  // Normal VBO Name 
-	
+	/** offsets for segments */
+	private int[] segmentsOffsets = new int[THICKNESS_NUMBER];
+
 	
 	/**
 	 * default constructor
@@ -51,111 +56,102 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 		
 		super(gl); //TODO remove
 		
+		////////////////////////////////////
+		//count number of geometries needed
+		//and store the offsets
 		
+		int geometriesNumber = 0;
+		
+		//points
 		int size = 3;
+		
+		pointOffsets[size-1] = geometriesNumber;
+		geometriesNumber += getPointGeometryNumber(size);
+
+
+		Application.debug("point : "+geometriesNumber);
+		
+		//segments
+		int thickness = 2;
+		
+		segmentsOffsets[thickness-1] = geometriesNumber;
+		geometriesNumber += getSegmentGeometryNumber(thickness);
      	
-    	vertices = BufferUtil.newFloatBuffer(getPointGeometryNumber(size) * 3);
-    	normals = BufferUtil.newFloatBuffer(getPointGeometryNumber(size) * 3);
+		Application.debug("segment : "+geometriesNumber);
+		
+		////////////////////////////////////
+		//creates geometries 
+
+		
+    	vertices = BufferUtil.newFloatBuffer(geometriesNumber * 3);
+    	normals = BufferUtil.newFloatBuffer(geometriesNumber * 3);
+    	
+        gl.glGenBuffersARB(1, vboVertices, 0);  // Generate  The Vertex Buffer
+        gl.glGenBuffersARB(1, vboNormals, 0);  // Generate  The Normal Buffer
+
 		
 		//points		
-		// Generate And Bind The Vertex Buffer
-        gl.glGenBuffersARB(1, pointVertices, 0);  // Get A Valid Name
-        gl.glGenBuffersARB(1, pointNormals, 0);  // Get A Valid Name
-        
+    	
+        size=3;
+    	pointGeometry(size,pointLatitudes[size-1],pointLongitudes[size-1]);
 
- 
     	
-    	pointGeometry(3,pointLatitudes[size-1],pointLongitudes[size-1]);
-
+    	//segments		
         
-    	
-    	vertices.flip();
-    	normals.flip();
-    	
-    	
-    	size=1;
-    	
-       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, pointVertices[size-1]);  // Bind The Buffer
-        
-        // Load The Data
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getPointGeometryNumber(size) * 3 * 
-                BufferUtil.SIZEOF_FLOAT, vertices, GL.GL_STATIC_DRAW_ARB);
-        
-        
-       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, pointNormals[size-1]);  // Bind The Buffer
-        
-        // Load The Data
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getPointGeometryNumber(size) * 3 * 
-                BufferUtil.SIZEOF_FLOAT, normals, GL.GL_STATIC_DRAW_ARB);
-       
-        
-        vertices = null;
-        normals = null;
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        //segments		
-        
-        int thickness = 2;
-        
-		// Generate And Bind The Vertex Buffer
-        gl.glGenBuffersARB(1, segmentVertices, 0);  // Get A Valid Name
-        gl.glGenBuffersARB(1, segmentNormals, 0);  // Get A Valid Name
-        gl.glGenBuffersARB(1, segmentTexture, 0);  // Get A Valid Name
-        
-        
-        
-    	
-    	vertices = BufferUtil.newFloatBuffer(getSegmentGeometryNumber(thickness) * 3);
-    	normals = BufferUtil.newFloatBuffer(getSegmentGeometryNumber(thickness) * 3);
-    	texture = BufferUtil.newFloatBuffer(getSegmentGeometryNumber(thickness) * 2);
-    	
-        
-
-        
+        thickness = 2;
     	segmentGeometry(thickness);
     	
-
     	
+    	
+    	
+    	
+    	
+    	
+    	//bind the buffers
     	
     	vertices.flip();
     	normals.flip();
-    	texture.flip();
     	
-    	thickness = 1;
-    	
-       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentVertices[thickness-1]);  
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getSegmentGeometryNumber(thickness) * 3 * 
-                BufferUtil.SIZEOF_FLOAT, vertices, GL.GL_STATIC_DRAW_ARB);
+       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboVertices[0]);  
+        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, 
+        		geometriesNumber * 3 * BufferUtil.SIZEOF_FLOAT, 
+        		vertices, GL.GL_STATIC_DRAW_ARB);
         
-        
-       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentNormals[thickness-1]); 
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getSegmentGeometryNumber(thickness) * 3 * 
-                BufferUtil.SIZEOF_FLOAT, normals, GL.GL_STATIC_DRAW_ARB);
-        
-        
-        gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentTexture[thickness-1]);	
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getSegmentGeometryNumber(thickness) * 2 * 
-        		BufferUtil.SIZEOF_FLOAT, texture, GL.GL_STATIC_DRAW_ARB);
-
+        gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboNormals[0]);  
+        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, 
+        		geometriesNumber * 3 * BufferUtil.SIZEOF_FLOAT, 
+        		normals, GL.GL_STATIC_DRAW_ARB);
        
         
         vertices = null;
         normals = null;
-
         
+        
+        
+        
+        
+        
+        
+        
+        
+        bindBuffersAndSetPointers(gl);
 	}
 	
 	
 	
 	
+	
+	private void bindBuffersAndSetPointers(GL gl){
+		
+    	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboNormals[0]);
+        // Set The normal Pointer To The normal Buffer
+        gl.glNormalPointer(GL.GL_FLOAT, 0, 0);   
+        
+    	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboVertices[0]);
+        // Set The Vertex Pointer To The Vertex Buffer
+        gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);   
+        
+	}
 	
 	
 	///////////////////////////////
@@ -194,10 +190,12 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	 * @param y y coord
 	 */
 	protected void texture(float x, float y){
+		/*
 		if (texture!=null){
 			texture.put(x);texture.put(y);
 		}else
 			super.texture(x, y);
+			*/
 	}
 	
 	
@@ -224,16 +222,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
     	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
     	
-    	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, pointNormals[0]);
-        // Set The Vertex Pointer To The Vertex Buffer
-        gl.glNormalPointer(GL.GL_FLOAT, 0, 0);   
-        
-    	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, pointVertices[0]);
-        // Set The Vertex Pointer To The Vertex Buffer
-        gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);   
-        
-        
-        //gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertexCount); 
+
         gl.glDrawArrays(GL.GL_QUADS, 0, getPointGeometryNumber(size)); 
         
 
@@ -270,19 +259,20 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
  
     	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
     	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
-    	gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  // Enable texture Arrays
+    	//gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  // Enable texture Arrays
     	
-    	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentNormals[0]);
-        gl.glNormalPointer(GL.GL_FLOAT, 0, 0);   
+
         
-    	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentVertices[0]);
-        gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);   
+        /*
         
     	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentTexture[0]);
     	gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);
+    	*/
       
-        //gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertexCount); 
-        gl.glDrawArrays(GL.GL_QUADS, 0, getSegmentGeometryNumber(thickness)); 
+
+    	
+        gl.glDrawArrays(GL.GL_QUADS, segmentsOffsets[thickness-1], getSegmentGeometryNumber(thickness)); 
+        
         
 
         
@@ -290,7 +280,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         // Disable Vertex Arrays
         gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
         gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
-        gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+        //gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
 
    	 
     	 

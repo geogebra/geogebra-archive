@@ -25,6 +25,8 @@ public class RendererPrimitives {
 	private int pointIndex;
 	/** number of different sizes of points */
 	protected static final int POINT_SIZE_NUMBER = 9;
+	/** number of different thickness of objects */
+	protected static final int THICKNESS_NUMBER = 13;
 	/** TODO point primitives number of latitudes */
 	protected int[] pointLatitudes  = {2,2,2, 2,2,2, 2,2,2};
 	/** TODO point primitives number of longitudes */

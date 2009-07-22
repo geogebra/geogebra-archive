@@ -304,6 +304,9 @@ public class Renderer implements GLEventListener {
         view3D.drawCursor(this);
         
         
+        
+        
+        
         //drawing hidden part
         drawList3D.drawHidden(this);
 
