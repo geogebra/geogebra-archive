@@ -30,8 +30,6 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	private int[] pointVertices = new int[1];  // Vertex VBO Name 
 	/** index of normals of 3D points*/
 	private int[] pointNormals = new int[1];  // Normal VBO Name 
-	/** number of vertices of 3D points*/
-	private int[] pointVerticesNumber = new int[1];
 	
 	
 	//////////////
@@ -43,8 +41,6 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	private int[] segmentNormals = new int[1];  // Normal VBO Name 
 	/** index of texture of 3D segments*/
 	private int[] segmentTexture = new int[1];  // Normal VBO Name 
-	/** number of vertices of 3D segments*/
-	private int[] segmentVerticesNumber = new int[1];
 	
 	
 	/**
@@ -56,19 +52,104 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 		super(gl); //TODO remove
 		
 		
+		int size = 3;
+     	
+    	vertices = BufferUtil.newFloatBuffer(getPointGeometryNumber(size) * 3);
+    	normals = BufferUtil.newFloatBuffer(getPointGeometryNumber(size) * 3);
 		
 		//points		
 		// Generate And Bind The Vertex Buffer
         gl.glGenBuffersARB(1, pointVertices, 0);  // Get A Valid Name
         gl.glGenBuffersARB(1, pointNormals, 0);  // Get A Valid Name
-        pointVBO(gl, 1);
+        
+
+ 
+    	
+    	pointGeometry(3,pointLatitudes[size-1],pointLongitudes[size-1]);
+
+        
+    	
+    	vertices.flip();
+    	normals.flip();
+    	
+    	
+    	size=1;
+    	
+       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, pointVertices[size-1]);  // Bind The Buffer
+        
+        // Load The Data
+        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getPointGeometryNumber(size) * 3 * 
+                BufferUtil.SIZEOF_FLOAT, vertices, GL.GL_STATIC_DRAW_ARB);
+        
+        
+       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, pointNormals[size-1]);  // Bind The Buffer
+        
+        // Load The Data
+        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getPointGeometryNumber(size) * 3 * 
+                BufferUtil.SIZEOF_FLOAT, normals, GL.GL_STATIC_DRAW_ARB);
+       
+        
+        vertices = null;
+        normals = null;
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         //segments		
+        
+        int thickness = 2;
+        
 		// Generate And Bind The Vertex Buffer
         gl.glGenBuffersARB(1, segmentVertices, 0);  // Get A Valid Name
         gl.glGenBuffersARB(1, segmentNormals, 0);  // Get A Valid Name
         gl.glGenBuffersARB(1, segmentTexture, 0);  // Get A Valid Name
-        segmentVBO(gl, 1);
+        
+        
+        
+    	
+    	vertices = BufferUtil.newFloatBuffer(getSegmentGeometryNumber(thickness) * 3);
+    	normals = BufferUtil.newFloatBuffer(getSegmentGeometryNumber(thickness) * 3);
+    	texture = BufferUtil.newFloatBuffer(getSegmentGeometryNumber(thickness) * 2);
+    	
+        
+
+        
+    	segmentGeometry(thickness);
+    	
+
+    	
+    	
+    	vertices.flip();
+    	normals.flip();
+    	texture.flip();
+    	
+    	thickness = 1;
+    	
+       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentVertices[thickness-1]);  
+        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getSegmentGeometryNumber(thickness) * 3 * 
+                BufferUtil.SIZEOF_FLOAT, vertices, GL.GL_STATIC_DRAW_ARB);
+        
+        
+       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentNormals[thickness-1]); 
+        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getSegmentGeometryNumber(thickness) * 3 * 
+                BufferUtil.SIZEOF_FLOAT, normals, GL.GL_STATIC_DRAW_ARB);
+        
+        
+        gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentTexture[thickness-1]);	
+        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, getSegmentGeometryNumber(thickness) * 2 * 
+        		BufferUtil.SIZEOF_FLOAT, texture, GL.GL_STATIC_DRAW_ARB);
+
+       
+        
+        vertices = null;
+        normals = null;
+
         
 	}
 	
@@ -153,7 +234,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         
         
         //gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertexCount); 
-        gl.glDrawArrays(GL.GL_QUADS, 0, pointVerticesNumber[0]); 
+        gl.glDrawArrays(GL.GL_QUADS, 0, getPointGeometryNumber(size)); 
         
 
         
@@ -166,47 +247,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     	 
     }
     
-    
-    
-    private void pointVBO(GL gl, int size){
-    	
-    	
-    	int latitude = pointLatitudes[size-1];
-    	int longitude = pointLongitudes[size-1];
- 
   
-
-    	
-    	
-    	pointVerticesNumber[size-1] = getPointGeometryNumber(size);
-    	
-    	vertices = BufferUtil.newFloatBuffer(pointVerticesNumber[size-1] * 3);
-    	normals = BufferUtil.newFloatBuffer(pointVerticesNumber[size-1] * 3);
-    	
-    	pointGeometry(3,latitude,longitude);
-    	
-    	
-    	vertices.flip();
-    	normals.flip();
-    	
-    	
-       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, pointVertices[size-1]);  // Bind The Buffer
-        
-        // Load The Data
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, pointVerticesNumber[size-1] * 3 * 
-                BufferUtil.SIZEOF_FLOAT, vertices, GL.GL_STATIC_DRAW_ARB);
-        
-        
-       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, pointNormals[size-1]);  // Bind The Buffer
-        
-        // Load The Data
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, pointVerticesNumber[size-1] * 3 * 
-                BufferUtil.SIZEOF_FLOAT, normals, GL.GL_STATIC_DRAW_ARB);
-       
-        
-        vertices = null;
-        normals = null;
-    }
 
 	
 	
@@ -241,7 +282,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     	gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);
       
         //gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertexCount); 
-        gl.glDrawArrays(GL.GL_QUADS, 0, segmentVerticesNumber[0]); 
+        gl.glDrawArrays(GL.GL_QUADS, 0, getSegmentGeometryNumber(thickness)); 
         
 
         
@@ -257,44 +298,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     
     
     
-    private void segmentVBO(GL gl, int thickness){
-    	
-    	
-    	int latitude = 8;
-     	
-    	segmentVerticesNumber[thickness-1] = 4 * (latitude+1);
-    	
-    	vertices = BufferUtil.newFloatBuffer(segmentVerticesNumber[thickness-1] * 3);
-    	normals = BufferUtil.newFloatBuffer(segmentVerticesNumber[thickness-1] * 3);
-    	texture = BufferUtil.newFloatBuffer(segmentVerticesNumber[thickness-1] * 2);
-    	
-    	segmentGeometry(2);
-    	
-    	
-    	vertices.flip();
-    	normals.flip();
-    	texture.flip();
-    	
-    	
-       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentVertices[thickness-1]);  
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, segmentVerticesNumber[thickness-1] * 3 * 
-                BufferUtil.SIZEOF_FLOAT, vertices, GL.GL_STATIC_DRAW_ARB);
-        
-        
-       	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentNormals[thickness-1]); 
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, segmentVerticesNumber[thickness-1] * 3 * 
-                BufferUtil.SIZEOF_FLOAT, normals, GL.GL_STATIC_DRAW_ARB);
-        
-        
-        gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentTexture[thickness-1]);	
-        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, segmentVerticesNumber[thickness-1] * 2 * 
-        		BufferUtil.SIZEOF_FLOAT, texture, GL.GL_STATIC_DRAW_ARB);
 
-       
-        
-        vertices = null;
-        normals = null;
-    }
 
 	
 	

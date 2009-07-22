@@ -243,6 +243,18 @@ public class RendererPrimitives {
 	///////////////////////////////
 	// SEGMENTS
 	///////////////////////////////
+    
+    
+	/**
+	 * return the number of geometries for drawing a segment
+	 * @param thickness thickness of the segment
+	 * @return the number of geometries for drawing a segment
+	 */
+	protected int getSegmentGeometryNumber(int thickness){
+		int latitude = 8; //TODO list
+		return (latitude+1)*4;
+	}
+	
 
     public void segment(GL gl, int thickness){
     	gl.glCallList(segmentIndex);
