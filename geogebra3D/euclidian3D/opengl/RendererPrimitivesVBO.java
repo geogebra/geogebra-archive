@@ -25,14 +25,18 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	private FloatBuffer normals;
 	private FloatBuffer texture;
 	
+	
+	/** index of vbo vertices */
+	private int[] vboVertices = new int[1];  // Vertex VBO Name 
+	/** index of vbo normals */
+	private int[] vboNormals = new int[1];  // Normal VBO Name 
+	/** index of vbo texture */
+	private int[] vboTexture = new int[1];  // Normal VBO Name 
+	
+	
 	//////////////
 	// points
-	
-	/** index of vertices of 3D points*/
-	private int[] vboVertices = new int[1];  // Vertex VBO Name 
-	/** index of normals of 3D points*/
-	private int[] vboNormals = new int[1];  // Normal VBO Name 
-	
+
 	/** offsets for points */
 	private int[] pointOffsets = new int[POINT_SIZE_NUMBER];
 	
@@ -42,8 +46,6 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	//////////////
 	// segment
 	
-	/** index of texture of 3D segments*/
-	private int[] segmentTexture = new int[1];  // Normal VBO Name 
 	/** offsets for segments */
 	private int[] segmentsOffsets = new int[THICKNESS_NUMBER];
 
@@ -85,9 +87,11 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 		
     	vertices = BufferUtil.newFloatBuffer(geometriesNumber * 3);
     	normals = BufferUtil.newFloatBuffer(geometriesNumber * 3);
+    	texture = BufferUtil.newFloatBuffer(geometriesNumber * 3);
     	
         gl.glGenBuffersARB(1, vboVertices, 0);  // Generate  The Vertex Buffer
         gl.glGenBuffersARB(1, vboNormals, 0);  // Generate  The Normal Buffer
+        gl.glGenBuffersARB(1, vboTexture, 0);  // Generate  The Normal Buffer
 
 		
 		//points		
@@ -111,6 +115,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     	
     	vertices.flip();
     	normals.flip();
+    	texture.flip();
     	
        	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboVertices[0]);  
         gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, 
@@ -121,10 +126,21 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, 
         		geometriesNumber * 3 * BufferUtil.SIZEOF_FLOAT, 
         		normals, GL.GL_STATIC_DRAW_ARB);
+        
+        
+        gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboTexture[0]);		// Bind The Buffer
+        gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, 
+        		geometriesNumber * 2 * BufferUtil.SIZEOF_FLOAT, 
+        		texture, GL.GL_STATIC_DRAW_ARB);
+
+        
+      
+    	
        
         
         vertices = null;
         normals = null;
+        texture = null;
         
         
         
@@ -150,6 +166,10 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboVertices[0]);
         // Set The Vertex Pointer To The Vertex Buffer
         gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);   
+        
+        
+    	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboTexture[0]);
+    	gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);
         
 	}
 	
@@ -190,12 +210,12 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	 * @param y y coord
 	 */
 	protected void texture(float x, float y){
-		/*
+		
 		if (texture!=null){
 			texture.put(x);texture.put(y);
 		}else
 			super.texture(x, y);
-			*/
+			
 	}
 	
 	
@@ -259,15 +279,11 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
  
     	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
     	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
-    	//gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  // Enable texture Arrays
+    	gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  // Enable texture Arrays
     	
 
         
-        /*
-        
-    	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, segmentTexture[0]);
-    	gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);
-    	*/
+
       
 
     	
@@ -280,7 +296,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         // Disable Vertex Arrays
         gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
         gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
-        //gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+        gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
 
    	 
     	 

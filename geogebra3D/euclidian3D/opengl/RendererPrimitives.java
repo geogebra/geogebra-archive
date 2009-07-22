@@ -199,14 +199,18 @@ public class RendererPrimitives {
     			//up face
     			
     			normal(x1,y1,z1); 
+    			texture(j/longitude,i/(2*latitude));
     			vertex(x1,y1,z1); 
     			
+    			texture((j+1)/longitude,i/(2*latitude));
     			normal(x2,y2,z1); 
     			vertex(x2,y2,z1);
     			
+    			texture((j+1)/longitude,(i+1)/(2*latitude));
     			normal(x3,y3,z4); 
     			vertex(x3,y3,z4); 
     			
+    			texture(j/longitude,(i+1)/(2*latitude));
     			normal(x4,y4,z4); 
     			vertex(x4,y4,z4); 
     
@@ -214,15 +218,19 @@ public class RendererPrimitives {
     			//bottom face
     			
     			normal(x2,y2,-z1); 
+    			texture((j+1)/longitude,-i/(2*latitude));
     			vertex(x2,y2,-z1); 
     			
     			normal(x1,y1,-z1); 
+    			texture(j/longitude,-i/(2*latitude));
     			vertex(x1,y1,-z1);
     			
     			normal(x4,y4,-z4); 
+    			texture(j/longitude,-(i+1)/(2*latitude));
     			vertex(x4,y4,-z4); 
     			
     			normal(x3,y3,-z4); 
+    			texture((j+1)/longitude,-(i+1)/(2*latitude));
     			vertex(x3,y3,-z4); 
 
 
