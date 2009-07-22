@@ -74,19 +74,34 @@ public class GeoLine3D extends GeoCoordSys1D {
 	
 	final public String toString() {
 		
-		String s = getLabel();
-		
-		s+=" : "; //TODO use kernel property
+		StringBuffer sbToString = getSbToString();
+		sbToString.setLength(0);
+		sbToString.append(label);
+		sbToString.append(": ");  //TODO use kernel property
 		
 		
 		//TODO undefined...
 		String parameter = "\u03bb";
 		Ggb3DVector O = getMatrix().getColumn(2);//TODO inhom coords
 		Ggb3DVector V = getMatrix().getColumn(1);
-		s+="X = ("+kernel.format(O.get(1))+", "+kernel.format(O.get(2))+", "+kernel.format(O.get(3))+") + "
-			+parameter+" ("+kernel.format(V.get(1))+", "+kernel.format(V.get(2))+", "+kernel.format(V.get(3))+")";
+
+		sbToString.append("X = (");
+		sbToString.append(kernel.format(O.get(1)));
+		sbToString.append(", ");
+		sbToString.append(kernel.format(O.get(2)));
+		sbToString.append(", ");
+		sbToString.append(kernel.format(O.get(3)));
+		sbToString.append(") + ");
+		sbToString.append(parameter);
+		sbToString.append(" (");
+		sbToString.append(kernel.format(V.get(1)));
+		sbToString.append(", ");
+		sbToString.append(kernel.format(V.get(2)));
+		sbToString.append(", ");
+		sbToString.append(kernel.format(V.get(3)));
+		sbToString.append(")");
 		
-		return s;
+		return sbToString.toString();  
 	}
 	
 	

@@ -295,6 +295,17 @@ public abstract class GeoElement3D
 	}
 	
 	
+	////////////////////////////
+	// for toString()
+	
+	private StringBuffer sbToString;
+	protected StringBuffer getSbToString() {
+		if (sbToString == null)
+			sbToString = new StringBuffer(50);
+		return sbToString;
+	}
+	
+	
 	
 	/////////////////////////////////////////
 	// ExpressionValue implementation

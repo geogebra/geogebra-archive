@@ -148,15 +148,15 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	 */	
 	final public String toString() {
 		
-		String s = getLabel();
+		StringBuffer sbToString = getSbToString();
+		sbToString.setLength(0);
+		sbToString.append(label);
+		sbToString.append(": ");  //TODO use kernel property 
 		
-		s+=" = "; //TODO use kernel property
+
+		sbToString.append(kernel.format(getLength()));
 		
-		
-		//TODO undefined...
-		s+=kernel.format(getLength());
-		
-		return s;
+		return sbToString.toString();  
 	}
 	
 	

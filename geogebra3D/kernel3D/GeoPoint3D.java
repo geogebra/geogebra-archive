@@ -532,13 +532,14 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	final public String toString() {
 		
-		String s = getLabel();
+		StringBuffer sbToString = getSbToString();
+		sbToString.setLength(0);
+		sbToString.append(label);
+		sbToString.append(" = "); 
 		
-		s+=" = "; //TODO use kernel property
+		sbToString.append(toValueString());
 		
-		s+=toValueString();
-		
-		return s;
+		return sbToString.toString();  
 	}
 	
 	

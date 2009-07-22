@@ -204,11 +204,16 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		return "todo";
 	}
 	
+	
+
+	
+	
 	final public String toString() {
 		
-		String s = getLabel();
-		
-		s+=" : "; 
+		StringBuffer sbToString = getSbToString();
+		sbToString.setLength(0);
+		sbToString.append(label);
+		sbToString.append(": ");   
 		
 		
 		
@@ -216,10 +221,15 @@ public class GeoPlane3D extends GeoCoordSys2D {
 		//TODO remove x/y/z if not needed
 		//TODO check this
 		Ggb3DVector Vn = getMatrix4x4().getColumn(3);
-		s+=kernel.format(Vn.get(1))+"x + "+kernel.format(Vn.get(2))+"y + "+kernel.format(Vn.get(3))+"z = "
-			+kernel.format(Vn.dotproduct(getMatrix().getColumn(3)));
+		sbToString.append(kernel.format(Vn.get(1)));   
+		sbToString.append("x + "); 
+		sbToString.append(kernel.format(Vn.get(2))); 
+		sbToString.append("y + "); 
+		sbToString.append(kernel.format(Vn.get(3))); 
+		sbToString.append("z = "); 
+		sbToString.append(kernel.format(Vn.dotproduct(getMatrix().getColumn(3)))); 
 		
-		return s;
+		return sbToString.toString();  
 	}
 
 	
