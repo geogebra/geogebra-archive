@@ -1146,17 +1146,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void setHits(Point p) {
 		
-		//Application.debug("setHits");
-
 		//sets the flag and mouse location for openGL picking
-		//renderer.setMouseLoc(p.x,p.y,EuclidianRenderer3D.PICKING_MODE_OBJECTS);
 		renderer.setMouseLoc(p.x,p.y,Renderer.PICKING_MODE_LABELS);
 
 		//calc immediately the hits
 		renderer.display();
 		
-		
-		//Application.debug("end-setHits");		
 
 	}
 

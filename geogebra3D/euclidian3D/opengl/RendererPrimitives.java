@@ -12,16 +12,23 @@ public class RendererPrimitives {
 	
 	
 	//////////////
+	// opengl
+	
+	private GL gl;
+	
+	//////////////
 	// points
 	
 	/** radius for drawing 3D points*/
 	private static final float POINT3D_RADIUS = 1.4f;	
 	/** start index for point primitives list */
 	private int pointIndex;
+	/** number of different sizes of points */
+	protected static final int POINT_SIZE_NUMBER = 9;
 	/** TODO point primitives number of latitudes */
-	private int[] pointLatitudes  = {1,2,2, 2,2,2, 2,2,2};
+	protected int[] pointLatitudes  = {2,2,2, 2,2,2, 2,2,2};
 	/** TODO point primitives number of longitudes */
-	private int[] pointLongitudes = {2,4,8, 8,8,8, 8,8,8};
+	protected int[] pointLongitudes = {8,8,8, 8,8,8, 8,8,8};
 	
 	
 	
@@ -38,8 +45,12 @@ public class RendererPrimitives {
 	
 	
 	
-	
-	
+	/**
+	 * empty constructor
+	 */
+	protected RendererPrimitives(){
+		
+	}
 	
 	
 	
@@ -50,6 +61,7 @@ public class RendererPrimitives {
 	 */
 	public RendererPrimitives(GL gl){
 		
+		this();
 		
 		//points
 		pointIndex = gl.glGenLists(9);
@@ -72,18 +84,52 @@ public class RendererPrimitives {
 	
 	
 	
+	///////////////////////////////
+	// GEOMETRY
+	///////////////////////////////
+	
+	/** creates a vertex at coordinates (x,y,z)
+	 * @param x x coord
+	 * @param y y coord
+	 * @param z z coord
+	 */
+	protected void vertex(float x, float y, float z){
+		gl.glVertex3f(x,y,z); 
+	}
 	
 	
+	/** creates a vertex at coordinates (x,y,z)
+	 * @param x x coord
+	 * @param y y coord
+	 * @param z z coord
+	 */
+	protected void normal(float x, float y, float z){
+		gl.glNormal3f(x,y,z); 
+	}
 	
 	
-	
-	
+	/** creates a texture at coordinates (x,y)
+	 * @param x x coord
+	 * @param y y coord
+	 */
+	protected void texture(float x, float y){
+		gl.glTexCoord2f(x,y);
+	}
 	
 	
 	
 	///////////////////////////////
 	// POINTS
 	///////////////////////////////
+	
+	/**
+	 * return the number of geometries for drawing a point
+	 * @param size size of the point
+	 * @return the number of geometries for drawing a point
+	 */
+	protected int getPointGeometryNumber(int size){
+		return pointLatitudes[size-1]*pointLongitudes[size-1]*8;
+	}
     
 	
     /**
@@ -104,18 +150,28 @@ public class RendererPrimitives {
      * @param gl gl opengl drawing parameter
      * @param size size of the point
      */
-    public void pointList(GL gl, int size){
+    private void pointList(GL gl, int size){
     	
-    	int latitude = pointLatitudes[size-1];
-    	int longitude = pointLongitudes[size-1];
+    	gl.glBegin(GL.GL_QUADS); 
     	
-    	//gl.glShadeModel(GL.GL_FLAT);
+    	this.gl = gl;    	
+    	pointGeometry(size, pointLatitudes[size-1],pointLongitudes[size-1]);
     	
+    	gl.glEnd();  
 
+    }
+    
+    /** create the vertices an normals for points
+     * @param size size of the point
+     * @param latitude number of latitudes
+     * @param longitude number of longitudes
+     */
+    protected void pointGeometry(int size, int latitude, int longitude){
+    	
+ 
     	float da = (float) (Math.PI / (2*latitude)) ; 
     	float db = (float) ( 2*Math.PI / longitude ); 
     	
-    	gl.glBegin(GL.GL_QUADS); 
     	
     	
     	float rXY1 = POINT3D_RADIUS*size;
@@ -139,35 +195,33 @@ public class RendererPrimitives {
     			
     			
     			//up face
-    			//gl.glNormal3f((x1+x2+x3+x4)/4,(y1+y2+y3+y4)/4,(z1+z4)/2); 
     			
-    			gl.glNormal3f(x1,y1,z1); 
-    			gl.glVertex3f(x1,y1,z1); 
+    			normal(x1,y1,z1); 
+    			vertex(x1,y1,z1); 
     			
-    			gl.glNormal3f(x2,y2,z1); 
-    			gl.glVertex3f(x2,y2,z1);
+    			normal(x2,y2,z1); 
+    			vertex(x2,y2,z1);
     			
-    			gl.glNormal3f(x3,y3,z4); 
-    			gl.glVertex3f(x3,y3,z4); 
+    			normal(x3,y3,z4); 
+    			vertex(x3,y3,z4); 
     			
-    			gl.glNormal3f(x4,y4,z4); 
-    			gl.glVertex3f(x4,y4,z4); 
+    			normal(x4,y4,z4); 
+    			vertex(x4,y4,z4); 
     
     			
     			//bottom face
-    			//gl.glNormal3f((x1+x2+x3+x4)/4,(y1+y2+y3+y4)/4,-(z1+z4)/2); 
     			
-    			gl.glNormal3f(x2,y2,-z1); 
-    			gl.glVertex3f(x2,y2,-z1); 
+    			normal(x2,y2,-z1); 
+    			vertex(x2,y2,-z1); 
     			
-    			gl.glNormal3f(x1,y1,-z1); 
-    			gl.glVertex3f(x1,y1,-z1);
+    			normal(x1,y1,-z1); 
+    			vertex(x1,y1,-z1);
     			
-    			gl.glNormal3f(x4,y4,-z4); 
-    			gl.glVertex3f(x4,y4,-z4); 
+    			normal(x4,y4,-z4); 
+    			vertex(x4,y4,-z4); 
     			
-    			gl.glNormal3f(x3,y3,-z4); 
-    			gl.glVertex3f(x3,y3,-z4); 
+    			normal(x3,y3,-z4); 
+    			vertex(x3,y3,-z4); 
 
 
     			
@@ -181,11 +235,9 @@ public class RendererPrimitives {
     		
     		rXY1 = rXY4; z1 = z4;
     	} 
-    	gl.glEnd();  
-
+    	
     }
-    
-    
+
     
     
 	///////////////////////////////
@@ -197,8 +249,19 @@ public class RendererPrimitives {
     	//segmentList(gl, thickness);
     }
 
+    private void segmentList(GL gl, int thickness){
     	
-    public void segmentList(GL gl, int thickness){
+    	gl.glBegin(GL.GL_QUADS); 
+    	
+    	this.gl = gl;    	
+    	segmentGeometry(thickness);
+    	
+    	gl.glEnd();  
+    }
+
+    	
+    	
+    protected void segmentGeometry(int thickness){
 
     	int latitude = 8;
     	
@@ -212,22 +275,22 @@ public class RendererPrimitives {
     		float y1 = 2 * LINE3D_THICKNESS * (float) Math.sin ( (i+1) * da ); 
     		float z1 = 2 * LINE3D_THICKNESS * (float) Math.cos ( (i+1) * da ); 
 
-    		gl.glTexCoord2f(0,i*dt);
-    		gl.glNormal3f(0,y0,z0); 
-    		gl.glVertex3f(0,y0,z0); 
+    		texture(0,i*dt);
+    		normal(0,y0,z0); 
+    		vertex(0,y0,z0); 
 
 
-    		gl.glTexCoord2f(1,i*dt);
-    		gl.glNormal3f(1,y0,z0); 
-    		gl.glVertex3f(1,y0,z0); 
+    		texture(1,i*dt);
+    		normal(1,y0,z0); 
+    		vertex(1,y0,z0); 
 
-    		gl.glTexCoord2f(1,(i+1)*dt);
-    		gl.glNormal3f(1,y1,z1); 
-    		gl.glVertex3f(1,y1,z1); 
+    		texture(1,(i+1)*dt);
+    		normal(1,y1,z1); 
+    		vertex(1,y1,z1); 
 
-    		gl.glTexCoord2f(0,(i+1)*dt);
-    		gl.glNormal3f(0,y1,z1); 
-    		gl.glVertex3f(0,y1,z1); 
+    		texture(0,(i+1)*dt);
+    		normal(0,y1,z1); 
+    		vertex(0,y1,z1); 
 
 
     	} 

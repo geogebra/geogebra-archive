@@ -2177,8 +2177,11 @@ public class Renderer implements GLEventListener {
                 gl.isFunctionAvailable("glDeleteBuffersARB");
         Application.debug("vbo supported : "+VBOsupported);
         
-        
-        primitives = new RendererPrimitives(gl);
+        if (VBOsupported)
+        	primitives = new RendererPrimitivesVBO(gl);
+        	//primitives = new RendererPrimitives(gl);
+        else
+        	primitives = new RendererPrimitives(gl);
         
         
         //light
