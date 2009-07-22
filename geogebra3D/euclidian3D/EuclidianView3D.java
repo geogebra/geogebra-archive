@@ -71,7 +71,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private double YZeroOld = 0;
 	
 	//list of 3D objects
-	//private boolean waitForUpdate = true; //says if it waits for update...
+	private boolean waitForUpdate = true; //says if it waits for update...
 	//public boolean waitForPick = false; //says if it waits for update...
 	private boolean removeHighlighting = false; //for removing highlighting when mouse is clicked
 	DrawList3D drawList3D = new DrawList3D();
@@ -389,6 +389,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		mInv.set(m.inverse());
 		
+		waitForUpdate = true;
+		
 		//Application.debug("m = "); m.SystemPrint();
 		
 	}
@@ -514,8 +516,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		*/
 		
-		
-		drawList3D.updateAll();	//TODO waitForUpdate for each object
+		if (waitForUpdate){
+			drawList3D.updateAll();
+			waitForUpdate = false;
+		}
 
 
 
@@ -669,8 +673,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public void update(GeoElement geo) {
-		//Application.debug("update(GeoElement geo)");
-		repaintView();
+		if (geo.isGeoElement3D()){
+			//Application.debug("update("+geo.getLabel()+")");
+			((GeoElement3DInterface) geo).getDrawable3D().update();
+			repaintView();
+		}
 	}
 
 	public void updateAuxiliaryObject(GeoElement geo) {

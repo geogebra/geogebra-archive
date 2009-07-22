@@ -239,6 +239,13 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		else
 			return null;
 	}
+	
+	 public Ggb3DMatrix4x4 getLabelMatrix(){
+		 if (coordSys!=null)
+			 return coordSys.getLabelMatrix();
+		 else
+			 return null;
+	 }
 
 	
 	public void setDrawingMatrix(Ggb3DMatrix4x4 matrix) {

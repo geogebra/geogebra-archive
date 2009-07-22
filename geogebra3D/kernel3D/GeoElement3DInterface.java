@@ -21,10 +21,15 @@ public interface GeoElement3DInterface {
 	 * @return the drawing matrix*/
 	public Ggb3DMatrix4x4 getDrawingMatrix();
 	
+	/** returns a 4x4 matrix for drawing the label
+	 * @return the label drawing matrix*/
+	public Ggb3DMatrix4x4 getLabelMatrix();
+	
 	/** sets the 4x4 matrix for drawing the {@link Drawable3D} 
 	 * @param a_drawingMatrix the drawing matrix*/
 	public void setDrawingMatrix(Ggb3DMatrix4x4 a_drawingMatrix);
 	
+
 	
 	// link to 2D GeoElement
     /**

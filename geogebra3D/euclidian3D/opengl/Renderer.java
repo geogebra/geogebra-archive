@@ -237,8 +237,7 @@ public class Renderer implements GLEventListener {
 	}
 	
 	
-	double displayTime;
-	double fps;
+
 	
 	
 	/**
@@ -419,12 +418,8 @@ public class Renderer implements GLEventListener {
         //FPS
         gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
-    	double displayTimeOld = displayTime;
-    	displayTime = System.currentTimeMillis();
-    	fps = 0.9*fps + 0.1*1000/(displayTime-displayTimeOld);
-    	if (fps>100)
-    		fps=100;
-    	drawFPS(0, 0, "FPS="+((int) fps), false);
+
+    	drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
 
@@ -1927,7 +1922,18 @@ public class Renderer implements GLEventListener {
     
     
     
-    public void drawFPS(float x, float y, String s, boolean colored){
+    
+    
+    
+    
+    
+    /////////////////////////
+    // FPS
+    
+	double displayTime;
+	double fps;
+    
+    private void drawFPS(){
     	
     	
         gl.glMatrixMode(GL.GL_TEXTURE);
@@ -1935,7 +1941,8 @@ public class Renderer implements GLEventListener {
         
     	gl.glMatrixMode(GL.GL_MODELVIEW);
     	
-    	initMatrix(view3D.getUndoRotationMatrix());
+    	gl.glPushMatrix();
+    	gl.glLoadIdentity();
     	
     	
     	textRenderer.begin3DRendering();
@@ -1944,18 +1951,18 @@ public class Renderer implements GLEventListener {
     	textRenderer.setColor(Color.BLACK);
     	
 
-        float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR/((float) view3D.getScale());
+    	double displayTimeOld = displayTime;
+    	displayTime = System.currentTimeMillis();
+    	fps = 0.9*fps + 0.1*1000/(displayTime-displayTimeOld);
+    	if (fps>100)
+    		fps=100;
     	
-    	
-    	textRenderer.draw3D(s,
-                x*textScaleFactor,//w / -2.0f * textScaleFactor,
-                y*textScaleFactor,//h / -2.0f * textScaleFactor,
-                0,
-                textScaleFactor);
+        
+    	textRenderer.draw3D("FPS="+((int) fps),left,bottom,0,1);
     	
         textRenderer.end3DRendering();
         
-        resetMatrix(); //initMatrix(m_view3D.getUndoRotationMatrix());
+        gl.glPopMatrix();
     }
     
     

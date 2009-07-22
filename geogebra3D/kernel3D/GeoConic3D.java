@@ -94,6 +94,11 @@ extends GeoConic implements GeoElement3DInterface{
 		 coordSys.setDrawingMatrix(matrix);
 
 	 }
+	 
+
+	 public Ggb3DMatrix4x4 getLabelMatrix(){
+		 return coordSys.getLabelMatrix();
+	 }
 
 
 

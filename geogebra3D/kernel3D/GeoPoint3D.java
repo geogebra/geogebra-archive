@@ -252,6 +252,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		
 		//sets the drawing matrix to coords
 		getDrawingMatrix().setOrigin(getCoords());
+		getLabelMatrix().setOrigin(getCoords());
 
 	}
 	 

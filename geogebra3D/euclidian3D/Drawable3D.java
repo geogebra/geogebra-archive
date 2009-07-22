@@ -134,15 +134,13 @@ public abstract class Drawable3D {
 	private EuclidianView3D m_view3D; 
 	
 	/** matrix for openGL display */
-	private Ggb3DMatrix4x4 m_matrix = new Ggb3DMatrix4x4();
+	//private Ggb3DMatrix4x4 m_matrix = new Ggb3DMatrix4x4();
 	
 	/** label matrix for openGL display */
-	private Ggb3DMatrix4x4 labelMatrix = Ggb3DMatrix4x4.Identity();;
+	//private Ggb3DMatrix4x4 labelMatrix = Ggb3DMatrix4x4.Identity();;
 	
 	//links to the GeoElement
 	private GeoElement m_geo; 	
-	private boolean m_isVisible;
-	private boolean m_labelVisible;
 
 	//picking
 	//private boolean m_isPicked = false;	
@@ -210,14 +208,16 @@ public abstract class Drawable3D {
 	public boolean update(){
 		//verify if object is visible for drawing     				 
 		if (!isVisible()) return false;
-		setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
+		
+		
+		//setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
 		
 
 		//update the matrix of the drawable for the renderer to draw it
-		setMatrix(((GeoElement3DInterface) getGeoElement()).getDrawingMatrix());
+		//setMatrix(((GeoElement3DInterface) getGeoElement()).getDrawingMatrix());
 		
 		//update the label drawing matrix - TODO create a labelMatrix for GeoElement3D
-		labelMatrix.set(getMatrix().getColumn(4),4);
+		//labelMatrix.set(getMatrix().getColumn(4),4);
 		
 		return true;
 
@@ -241,9 +241,11 @@ public abstract class Drawable3D {
 	 * 
 	 * @param a_matrix the drawing matrix
 	 */
+	/*
 	public void setMatrix(Ggb3DMatrix4x4 a_matrix){
 		m_matrix=a_matrix;
 	}
+	*/
 	
 	
 	/**
@@ -252,7 +254,7 @@ public abstract class Drawable3D {
 	 * @return the drawing matrix
 	 */
 	public Ggb3DMatrix4x4 getMatrix(){
-		return m_matrix;
+		return ((GeoElement3DInterface) getGeoElement()).getDrawingMatrix();
 	}
 	
 	/**
@@ -261,7 +263,7 @@ public abstract class Drawable3D {
 	 * @return the label drawing matrix
 	 */
 	public Ggb3DMatrix4x4 getLabelMatrix(){
-		return labelMatrix;
+		return ((GeoElement3DInterface) getGeoElement()).getLabelMatrix();
 	}
 	
 	/**
@@ -288,36 +290,14 @@ public abstract class Drawable3D {
 	 * @return the visibility
 	 */
 	protected boolean isVisible(){
-		setVisible(getGeoElement().isEuclidianVisible() 
-				&& getGeoElement().isDefined());  
-		return m_isVisible; 
-	}
-	
-	/**
-	 * set the visibility of the Drawable3D
-	 * @param a_isVisible the visibility
-	 */
-	protected void setVisible(boolean a_isVisible){
-		m_isVisible=a_isVisible; 
+		return (getGeoElement().isEuclidianVisible() && getGeoElement().isDefined());  
 	}
 	
 
-	/**
-	 * get the visibility of the label
-	 * 
-	 * @return the visibility of the label
-	 */	
-	protected boolean getLabelVisible(){
-		return m_labelVisible; 
-	}
 	
-	/**
-	 * set the visibility of the label
-	 * @param a_labelVisible the visibility of the label
-	 */
-	protected void setLabelVisible(boolean a_labelVisible){
-		m_labelVisible=a_labelVisible; 
-	}
+
+	
+
 	
 	
 	
@@ -402,6 +382,8 @@ public abstract class Drawable3D {
      */
     public void drawLabel(Renderer renderer, boolean colored, boolean forPicking){
 
+
+    	
     	if (forPicking && !((GeoElement3DInterface) getGeoElement()).isPickable())
 			return;
     	
@@ -411,10 +393,11 @@ public abstract class Drawable3D {
     	if (!getGeoElement().isLabelVisible())
     		return;
     	
+    	
     	if (colored)
     		renderer.setTextColor(getGeoElement().getObjectColor());
     	
-		renderer.setMatrix(labelMatrix);
+		renderer.setMatrix(getLabelMatrix());
 		renderer.drawText(getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY,
 				getGeoElement().getLabelDescription(),colored); //TODO label position
     }
