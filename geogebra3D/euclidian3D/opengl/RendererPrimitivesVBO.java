@@ -159,6 +159,12 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	
 	private void bindBuffersAndSetPointers(GL gl){
 		
+    	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
+    	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
+    	gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  // Enable texture Arrays
+    	
+		
+		
     	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboNormals[0]);
         // Set The normal Pointer To The normal Buffer
         gl.glNormalPointer(GL.GL_FLOAT, 0, 0);   
@@ -170,6 +176,11 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         
     	gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, vboTexture[0]);
     	gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);
+    	
+    	
+        gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
+        gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
+        gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
         
 	}
 	
@@ -238,7 +249,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
      */
     public void point(GL gl, int size){
     
-    	
+    	gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
     	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
     	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
     	
@@ -253,7 +264,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         gl.glDisableClientState(GL.GL_NORMAL_ARRAY);  
 
 
-    	 
+        //gl.glFlush();
     }
     
   
@@ -298,6 +309,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
         gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
 
+        //gl.glFlush();
    	 
     	 
     }

@@ -398,8 +398,10 @@ public abstract class Drawable3D {
     		renderer.setTextColor(getGeoElement().getObjectColor());
     	
 		renderer.setMatrix(getLabelMatrix());
+		/*
 		renderer.drawText(getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY,
 				getGeoElement().getLabelDescription(),colored); //TODO label position
+				*/
     }
 	
 	
