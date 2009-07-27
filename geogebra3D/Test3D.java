@@ -147,9 +147,11 @@ public class Test3D{
 		//testSpring();
 		
         //demos();
-        testCube(true);//testSave("polyhedron3d");
+        //testCube(true);//testSave("polyhedron3d");
         //testLoad("polyhedron3d");
         //testLoad("polygon3d");
+        
+        testNumerous(200, Math.PI/48, 0.01);
         
         //testLine();
         
@@ -1098,6 +1100,36 @@ public class Test3D{
 		} catch (Exception e) {
 			
 			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void testNumerous(int nb, double angle, double h){
+
+		GeoPoint3D[] p1 = new GeoPoint3D[nb];
+		GeoPoint3D[] p2 = new GeoPoint3D[nb];
+		
+		for (int i=0;i<nb;i++){
+			double c = Math.cos(angle*i);
+			double s = Math.sin(angle*i);
+			p1[i] = kernel3D.Point3D("A"+i,c,s,h*i);
+			p2[i] = kernel3D.Point3D("B"+i,-c,-s,h*i);
+			p1[i].setObjColor(new Color((255*i)/nb,128,(255*(nb-i))/nb));
+			p2[i].setObjColor(new Color((255*i)/nb,128,(255*(nb-i))/nb));
+			p1[i].setLabelVisible(false);
+			p2[i].setLabelVisible(false);
+			
+			GeoSegment3D segment = kernel3D.Segment3D("seg"+i, p1[i], p2[i]);
+			segment.setObjColor(new Color((255*i)/nb,128,(255*(nb-i))/nb));
 		}
 		
 		

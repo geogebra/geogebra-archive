@@ -268,7 +268,7 @@ public class Renderer implements GLEventListener {
         if(waitForPick){
         	doPick();
         	//Application.debug("doPick");
-        	return;
+        	//return;
         }
         
         
@@ -391,7 +391,7 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
 
-    	//drawFPS();
+    	drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
 
@@ -2157,8 +2157,8 @@ public class Renderer implements GLEventListener {
         Application.debug("vbo supported : "+VBOsupported);
         
         if (VBOsupported)
-        	primitives = new RendererPrimitivesVBO(gl);
-        	//primitives = new RendererPrimitives(gl);
+        	//primitives = new RendererPrimitivesVBO(gl);
+        	primitives = new RendererPrimitives(gl);
         else
         	primitives = new RendererPrimitives(gl);
         
