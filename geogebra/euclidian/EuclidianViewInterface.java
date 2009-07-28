@@ -99,8 +99,6 @@ public interface EuclidianViewInterface {
 	Hits getHits();
 	/** set the hits regarding to the mouse location */
 	void setHits(Point p);
-	/** set the hits regarding to the mouse location with condition */
-	void setHits(Point p, boolean condition);
 	
 	
 	/**

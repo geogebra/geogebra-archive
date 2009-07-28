@@ -32,6 +32,19 @@ public class Hits3D extends Hits {
 	}
 	
 	
+	
+	public Hits3D clone() {
+
+		Hits3D ret = (Hits3D) super.clone();
+		ret.topHits = this.topHits.clone();
+		
+		// TreeSets are not cloned because they are only used when the hits are constructed
+
+		return ret;
+	} 
+	
+	
+	
 	public void init(){
 		super.init();
 		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
@@ -44,6 +57,9 @@ public class Hits3D extends Hits {
 		
 		
 	}
+	
+	
+
 	
 	
 	/** insert a drawable in the hitSet, called by EuclidianRenderer3D 
@@ -63,7 +79,6 @@ public class Hits3D extends Hits {
 			hitsOthers.add(d);	
 		
 		
-		//}
 		
 		
 	}
@@ -120,15 +135,6 @@ public class Hits3D extends Hits {
 	
 	
 	
-	/** update highlights */
-	/*
-	public TreeSet getHitsHighlighted(){
-		
-		return hitsHighlighted;
-
-	}
-	*/
-	
 	
 	
 	
@@ -138,7 +144,7 @@ public class Hits3D extends Hits {
 	public Hits getTopHits() {
 
 		if (topHits.isEmpty())
-			return this;
+			return clone();
 		else
 			return topHits;
 		
@@ -157,13 +163,6 @@ public class Hits3D extends Hits {
 			
 			return labelGeo;
 			
-			/*
-			// check if the label is the first hit
-			if (labelGeo==getTopHits().get(0))
-				return labelGeo;
-			else
-				return null;
-				*/
 		}
 	}
 	

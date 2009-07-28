@@ -469,7 +469,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
     	
     	kernel.setSilentMode(false);
 		
-    	Application.debug("point is defined : "+point.isDefined());
+    	//Application.debug("point is defined : "+point.isDefined());
     	
     	if (point.isDefined()){
     		view3D.setCursor3DIntersetionOf(a, b);
@@ -540,21 +540,39 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	///////////////////////////////////////////
+	// mouse moved
 	
 	
+	boolean mouseMoved = false;
+	MouseEvent mouseMovedEvent = null;
 	
+	protected void processMouseMoved(MouseEvent e) {	
+		((EuclidianView3D) view).setHits3D(mouseLoc);		
+		
+		mouseMovedEvent = e;
+		mouseMoved = true;
+		
+	}
+	
+	/**
+	 * tells to proceed mouseMoved() (for synchronization with 3D renderer)
+	 */
+	public void processMouseMoved(){
+		if (mouseMoved){
+			mouseMoved = false;
+			((EuclidianView3D) view).updateCursor3D();
+			super.processMouseMoved(mouseMovedEvent);
+		}
+	}
 	
 	
 
 	///////////////////////////////////////////
 	// EMPTY METHODS IN EuclidianController USED FOR EuclidianView3D	
 	
-	
-	/** set the hits in top of mouseMoved() and update the 3D cursor */
-	protected void mouseMoved3D(){
-		view.setHits(mouseLoc);		
-		((EuclidianView3D) view).updateCursor3D();
-	}
+
+
 
 
 	/** right-press the mouse makes start 3D rotation */

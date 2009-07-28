@@ -4,6 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 /**
@@ -96,6 +97,8 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 		setInputOutput(points, out, setDependencies);
 		
 		
+		
+		
 	}
 	
 	
@@ -105,6 +108,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 */
 	protected void createCoordSys(Construction c){
 		cs = new GeoCoordSys2D(c);
+		
 	}
 	
 	protected void compute() {
@@ -114,18 +118,12 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 		for(int i=0;(!cs.isMadeCoordSys())&&(i<points.length);i++)
 			cs.addPointToCoordSys(points[i].getCoords(),true,vxParallelToXoy);
 		
-		//if there's no coord sys, the coord sys is undefined
-		//TODO add case where the coord sys is made of colinear points
 		
-		
-		
-		//recompute the vertices
-		//polygon.updateVertices();
 		for(int i=0;i<points.length;i++){
 			//project the point on the coord sys
 			Ggb3DVector[] project=points[i].getCoords().projectPlane(cs.getMatrix4x4());
 			
-			//TODO check if the vertex lies on the coord sys
+			//check if the vertex lies on the coord sys
 			if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION))
 				cs.setUndefined();
 
@@ -134,8 +132,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 			if (createPoints2D)
 				points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
 		}
-
-
+		
 	}
 
 	

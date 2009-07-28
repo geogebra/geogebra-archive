@@ -841,7 +841,7 @@ public class EuclidianController implements MouseListener,
 		//Application.debug("laps("+(System.currentTimeMillis()-t0)+")");
 		
 		// find and set movedGeoElement
-		view.setHits(mouseLoc,false); //false : for 3D, assume that the hits are already down by mouseMoved
+		view.setHits(mouseLoc); 
 		Hits moveableList;		
 		
 		// if we just click (no drag) on eg an intersection, we want it selected
@@ -1189,7 +1189,7 @@ public class EuclidianController implements MouseListener,
 
 // Michael Borcherds 2007-10-07 allow right mouse button to drag points
 			if (Application.isRightClick(e)){
-				view.setHits(mouseLoc,false);
+				view.setHits(mouseLoc);
 				if (!(view.getHits().isEmpty())) 
 				{
 					TEMPORARY_MODE = true;
@@ -1870,16 +1870,18 @@ public class EuclidianController implements MouseListener,
 	
 	
 	
-	/** only used for 3D mode */
-	protected void mouseMoved3D(){
-		
-	}
+	
 	
 
 	public void mouseMoved(MouseEvent e) {		
 		setMouseLocation(e);
+		processMouseMoved(e);
+	}
 		
-		mouseMoved3D();
+	
+	
+	protected void processMouseMoved(MouseEvent e) {	
+	
 		
 		boolean repaintNeeded;
 		
@@ -1921,12 +1923,12 @@ public class EuclidianController implements MouseListener,
 		}
 		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_IN_REGION) {
 			// include polygons in hits
-			view.setHits(mouseLoc,false);
+			view.setHits(mouseLoc);
 			hits = view.getHits();
 		}
 
 		if (hits.isEmpty()){
-			view.setHits(mouseLoc,false);
+			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
 			
 		}

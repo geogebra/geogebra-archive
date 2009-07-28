@@ -33,6 +33,7 @@ import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.GeoPolyhedron;
 import geogebra3D.kernel3D.GeoQuadric;
 import geogebra3D.kernel3D.GeoSegment3D;
@@ -151,7 +152,8 @@ public class Test3D{
         //testLoad("polyhedron3d");
         //testLoad("polygon3d");
         
-        testNumerous(200, Math.PI/48, 0.01);
+        //testNumerous(400, Math.PI/48, 0.01);
+        //testNumerous2(400, Math.PI/6, 0.01);
         
         //testLine();
         
@@ -1131,6 +1133,44 @@ public class Test3D{
 			GeoSegment3D segment = kernel3D.Segment3D("seg"+i, p1[i], p2[i]);
 			segment.setObjColor(new Color((255*i)/nb,128,(255*(nb-i))/nb));
 		}
+		
+		
+	}
+	
+	
+	private void testNumerous2(int nb, double angle, double h){
+
+		GeoPoint3D[] p1 = new GeoPoint3D[nb];
+		GeoPoint3D[] p2 = new GeoPoint3D[nb];
+		GeoPoint3D[] p3 = new GeoPoint3D[nb];
+
+		double c = Math.cos(angle*0);
+		double s = Math.sin(angle*0);
+		double cOld; double sOld;
+
+		
+		for (int i=0;i<nb;i++){
+			cOld = c; sOld = s;
+			c = Math.cos(angle*(i+1));
+			s = Math.sin(angle*(i+1));
+			p1[i] = kernel3D.Point3D("A"+i,cOld,sOld,h*i);
+			p2[i] = kernel3D.Point3D("B"+i,c,s,h*i);
+			p3[i] = kernel3D.Point3D("C"+i,0,0,h*i);
+			Color color = new Color((255*i)/nb,128,(255*(nb-i))/nb);
+			p1[i].setObjColor(color);
+			p2[i].setObjColor(color);
+			p3[i].setObjColor(color);
+			p1[i].setLabelVisible(false);
+			p2[i].setLabelVisible(false);
+			p3[i].setLabelVisible(false);
+			
+			GeoPolygon3D p = (GeoPolygon3D) kernel3D.Polygon3D(null, 
+					new GeoPoint3D[] {p1[i],p2[i],p3[i]})[0];
+			p.setObjColor(color);
+			
+		}
+		
+		
 		
 		
 	}

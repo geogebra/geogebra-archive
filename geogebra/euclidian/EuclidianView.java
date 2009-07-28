@@ -2208,9 +2208,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 	
 	
-	public void setHits(Point p, boolean condition){
-			setHits(p);
-	}
 	
 	/**
 	 * sets the hits of GeoElements whose visual representation is at screen

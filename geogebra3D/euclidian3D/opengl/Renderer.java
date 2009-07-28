@@ -11,6 +11,7 @@ import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.DrawList3D;
 import geogebra3D.euclidian3D.Drawable3D;
+import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.euclidian3D.Hits3D;
 
@@ -285,6 +286,11 @@ public class Renderer implements GLEventListener {
         //start drawing
         viewOrtho();
         
+        
+        //update 3D controller
+        ((EuclidianController3D) view3D.getEuclidianController()).processMouseMoved();
+        
+        // update 3D view
         view3D.update();
         
         
@@ -2074,7 +2080,9 @@ public class Renderer implements GLEventListener {
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
         //hits are stored
-        view3D.getHits().init();
+        Hits3D hits3D = new Hits3D();
+        hits3D.init();
+        //view3D.getHits().init();
         
         //String s="doPick:";
         
@@ -2093,7 +2101,8 @@ public class Renderer implements GLEventListener {
           
           for (int j = 0; j < names; j++){ 
         	num = selectBuffer.get(ptr);
-        	((Hits3D) view3D.getHits()).addDrawable3D(drawHits[num],num>labelLoop);//,pickingMode==PICKING_MODE_LABELS);
+        	//((Hits3D) view3D.getHits()).addDrawable3D(drawHits[num],num>labelLoop);
+        	hits3D.addDrawable3D(drawHits[num],num>labelLoop);
         	//s+="\n"+drawHits[num].getGeoElement().getLabel();
         	drawHits[num].zPickMin = zMin;
         	drawHits[num].zPickMax = zMax;
@@ -2105,9 +2114,11 @@ public class Renderer implements GLEventListener {
         
         //Application.debug(s);
         
-        // sets the GeoElements in m_view3D.getHits()
-        ((Hits3D) view3D.getHits()).sort();
-        
+        // sets the GeoElements in view3D
+        //((Hits3D) view3D.getHits()).sort();
+        hits3D.sort();
+        view3D.setHits(hits3D);
+       
         waitForPick = false;
     }
     

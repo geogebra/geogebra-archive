@@ -164,18 +164,20 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		 
 		 setDefined();
 		 
-		 this.coordSys = (GeoCoordSys2D) cs;
+		 coordSys = (GeoCoordSys2D) cs;
 
+		 //Application.debug("coordSys==null : "+(coordSys==null));
 		 
 		 // turn off the kernel notifications for algos below
 		 this.getKernel().setSilentMode(true);
 		 
 		 // if there's no coord sys, create it with AlgoCoordSys2D
-		 if (this.coordSys==null){
+		 if (coordSys==null){
 			 AlgoCoordSys2D algo = new AlgoCoordSys2D(this.getConstruction(),null,(GeoPoint3D[]) points,false);
-			 this.coordSys = algo.getCoordSys();
+			 coordSys = algo.getCoordSys();
 		 }
 		 
+		 //Application.debug("coordSys==null : "+(coordSys==null));
 		 
 		 //sets the 2D points in coord sys
 		 points2D = new GeoPoint[points.length];
@@ -234,6 +236,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	
 	
 	public Ggb3DMatrix4x4 getDrawingMatrix() {
+		
+		//Application.debug("coordSys="+coordSys);
+		
 		if (coordSys!=null)
 			return coordSys.getDrawingMatrix();
 		else

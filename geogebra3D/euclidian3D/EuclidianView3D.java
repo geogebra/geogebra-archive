@@ -767,7 +767,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public Hits getHits() {
-		return hits;
+		//return hits;
+		return hits.clone();
 	}
 
 
@@ -1153,9 +1154,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	/*
+	Point pOld = null;
 
 
 	public void setHits(Point p) {
+		
+		
+		
+		if (p.equals(pOld)){
+			//Application.printStacktrace("");
+			return;
+		}
+		
+		
+		pOld = p;
 		
 		//sets the flag and mouse location for openGL picking
 		renderer.setMouseLoc(p.x,p.y,Renderer.PICKING_MODE_LABELS);
@@ -1165,15 +1178,40 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 
 	}
-
-
-	public void setHits(Point p, boolean condition){
-		if (condition)
-			setHits(p);
+	
+	*/
+	
+	// empty method : setHits3D() used instead
+	public void setHits(Point p) {
+		
 	}
+	
+	
+	/** sets the 3D hits regarding point location
+	 * @param p point location
+	 */
+	public void setHits3D(Point p) {
+		
+		//sets the flag and mouse location for openGL picking
+		renderer.setMouseLoc(p.x,p.y,Renderer.PICKING_MODE_LABELS);
+
+		//calc immediately the hits
+		//renderer.display();
+		
+
+	}
+	
 
 
 
+
+	
+	/** init the hits for this view
+	 * @param hits
+	 */
+	public void setHits(Hits3D hits){
+		this.hits = hits;
+	}
 
 
 
@@ -1453,15 +1491,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public void updatePreviewable(){
-		/*
-		EuclidianController ec = getEuclidianController();
-		ec.updateNewPoint(true, 
-				getHits().getTopHits(), 
-				true, true, true, false, //TODO doSingleHighlighting = false ? 
-				false);
-				*/
-		
-		//updateCursor3D();
+
 
 		getPreviewDrawable().updatePreview();
 	}
@@ -1472,7 +1502,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void updateCursor3D(){
 
-		getEuclidianController().updateNewPoint(true, 
+		//Application.debug("hits ="+getHits().toString());
+		
+		if (hasMouse)
+			getEuclidianController().updateNewPoint(true, 
 				getHits().getTopHits(), 
 				true, true, true, false, //TODO doSingleHighlighting = false ? 
 				false);

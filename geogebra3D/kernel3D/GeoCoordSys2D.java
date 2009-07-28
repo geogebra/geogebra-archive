@@ -154,9 +154,9 @@ public class GeoCoordSys2D extends GeoCoordSys {
 	}
 
 	public String toValueString() {
-		return null;
+		return "todo-GeoCoordSys2D.toValueString()";
 	}
-
+	
 
 	protected String getClassName() {
 		return "GeoCoordSys2D";

@@ -43,6 +43,18 @@ public class Hits extends ArrayList {
 		
 	}
 	
+	
+	
+	public Hits clone() {
+
+		Hits ret = (Hits) super.clone();
+		ret.listCount = this.listCount;
+		ret.polyCount = this.polyCount;
+		ret.imageCount = this.imageCount;
+
+		return ret;
+	} 
+	
 	/** adding specifics GeoElements */
 	public void add(GeoElement geo){
 		if (geo.isGeoList()) {
@@ -331,7 +343,7 @@ public class Hits extends ArrayList {
 	public Hits getTopHits() {
 		
 		if (isEmpty())
-			return this;
+			return clone();
 		
 		// point in there?
 		Hits topHitsList = new Hits();
@@ -340,7 +352,7 @@ public class Hits extends ArrayList {
 			//getHits(GeoPoint.class, false, topHitsList);
 			return topHitsList;
 		} else
-			return this;
+			return clone();
 	}
 
 
