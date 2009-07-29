@@ -13,7 +13,7 @@ import geogebra3D.kernel3D.GeoPlane3D;
 
 
 
-public class DrawPlane3D extends Drawable3DTransparent {
+public class DrawPlane3D extends Drawable3DSurfaces {
 
 
 

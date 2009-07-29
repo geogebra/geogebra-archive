@@ -11,7 +11,7 @@ import geogebra3D.kernel3D.GeoConic3D;
  * Drawable for GeoConic3D
  *
  */
-public class DrawConic3D extends Drawable3DSolid {
+public class DrawConic3D extends Drawable3DCurves {
 	
 	
 	

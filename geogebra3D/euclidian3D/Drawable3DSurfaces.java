@@ -8,9 +8,9 @@ import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 
-public abstract class Drawable3DTransparent extends Drawable3D {
+public abstract class Drawable3DSurfaces extends Drawable3D {
 
-	public Drawable3DTransparent(EuclidianView3D a_view3d, GeoElement a_geo) {
+	public Drawable3DSurfaces(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);
 	}
 
@@ -86,6 +86,12 @@ public abstract class Drawable3DTransparent extends Drawable3D {
 
 	public boolean isTransparent() {
 		return true;
+	}
+	
+	
+
+	public int getType(){
+		return DRAW_TYPE_SURFACES;
 	}
 
 

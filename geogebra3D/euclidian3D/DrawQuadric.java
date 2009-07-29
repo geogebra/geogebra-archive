@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoQuadric;
 
-public class DrawQuadric extends Drawable3DTransparent {
+public class DrawQuadric extends Drawable3DSurfaces {
 
 	public DrawQuadric(EuclidianView3D a_view3d, GeoQuadric a_quadric) {
 		

@@ -4,7 +4,7 @@ package geogebra3D.euclidian3D;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoVector3D;
 
-public class DrawVector3D extends Drawable3DSolid {
+public class DrawVector3D extends Drawable3DCurves {
 
 	
 	public DrawVector3D(EuclidianView3D a_view3D, GeoVector3D a_vector3D)

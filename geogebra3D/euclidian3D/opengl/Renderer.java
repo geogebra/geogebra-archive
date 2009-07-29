@@ -369,10 +369,7 @@ public class Renderer implements GLEventListener {
        
         //drawing not hidden parts
         gl.glDisable(GL.GL_BLEND);
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.draw(this);	
-        }
+        drawList3D.draw(this);
         gl.glEnable(GL.GL_BLEND);
         
         
@@ -382,10 +379,7 @@ public class Renderer implements GLEventListener {
          
         //drawing labels
         gl.glDisable(GL.GL_LIGHTING);
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	d.drawLabel(this,true,false);	
-        }
+        drawList3D.drawLabel(this);
         gl.glEnable(GL.GL_LIGHTING);
         
 
@@ -2039,31 +2033,30 @@ public class Renderer implements GLEventListener {
     	
     	
     	Drawable3D[] drawHits = new Drawable3D[BUFSIZE];
-        int loop = 0;
+        //int loop = 0;
+  
+        // picking objects
+        int loop = drawList3D.drawForPicking(this,drawHits,0);
+        /*
+        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
+        	Drawable3D d = (Drawable3D) iter.next();
+        	loop++;
+        	gl.glLoadName(loop);
+        	d.drawForPicking(this);	
+        	drawHits[loop] = d;
+        }
+        */
+        	
+        	
+
+        int labelLoop = loop;
         
-        //switch(pickingMode){
-        //case PICKING_MODE_OBJECTS:
-        //if (pickingMode == PICKING_MODE_OBJECTS){
-            // picking objects
-    		for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-    			Drawable3D d = (Drawable3D) iter.next();
-    			loop++;
-    			gl.glLoadName(loop);
-    			d.drawForPicking(this);	
-    			drawHits[loop] = d;
-    		}
-        //}
-        	//break;
-        	
-        	
-        	
-        //case PICKING_MODE_LABELS:
-    		int labelLoop = loop;
-    		if (pickingMode == PICKING_MODE_LABELS){
-    			
-    			//Application.debug("PICKING_MODE_LABELS");
-    			
+        if (pickingMode == PICKING_MODE_LABELS){
+
         	// picking labels
+        	loop = drawList3D.drawLabelForPicking(this,drawHits,loop);
+
+        	/*
         	for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
         		Drawable3D d = (Drawable3D) iter.next();
         		loop++;
@@ -2071,10 +2064,8 @@ public class Renderer implements GLEventListener {
         		d.drawLabel(this,false,true);
         		drawHits[loop] = d;
         	}
-    		}
-        	//break;
-        //}
-
+        	*/
+        }
 
         
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
@@ -2084,7 +2075,7 @@ public class Renderer implements GLEventListener {
         hits3D.init();
         //view3D.getHits().init();
         
-        //String s="doPick:";
+        //String s="doPick (labelLoop = "+labelLoop+")";
         
         int names, ptr = 0;
         float zMax, zMin;
@@ -2103,7 +2094,7 @@ public class Renderer implements GLEventListener {
         	num = selectBuffer.get(ptr);
         	//((Hits3D) view3D.getHits()).addDrawable3D(drawHits[num],num>labelLoop);
         	hits3D.addDrawable3D(drawHits[num],num>labelLoop);
-        	//s+="\n"+drawHits[num].getGeoElement().getLabel();
+        	//s+="\n("+num+") "+drawHits[num].getGeoElement().getLabel();
         	drawHits[num].zPickMin = zMin;
         	drawHits[num].zPickMax = zMax;
         	ptr++;
@@ -2118,10 +2109,15 @@ public class Renderer implements GLEventListener {
         //((Hits3D) view3D.getHits()).sort();
         hits3D.sort();
         view3D.setHits(hits3D);
+        //Application.debug(hits3D.toString());
        
         waitForPick = false;
     }
     
+    
+    public void glLoadName(int loop){
+    	gl.glLoadName(loop);
+    }
     
     /** returns the depth between 0 and 2, in double format, from an integer offset 
      *  lowest is depth, nearest is the object

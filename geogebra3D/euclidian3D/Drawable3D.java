@@ -26,8 +26,8 @@ import java.util.TreeSet;
  * We'll call here our new element "GeoNew3D" and create a drawable3D linked to it:
  * <ul>
 
-    <li> It extends {@link Drawable3DSolid} (for points, lines, ...) 
-         or {@link Drawable3DTransparent} (for planes, surfaces, ...)
+    <li> It extends {@link Drawable3DCurves} (for points, lines, ...) 
+         or {@link Drawable3DSurfaces} (for planes, surfaces, ...)
          <p>
          <code>
          public class DrawNew3D extends ... {
@@ -53,7 +53,7 @@ import java.util.TreeSet;
                   }
               </code>
          </li>
-         <li> for {@link Drawable3DSolid} :
+         <li> for {@link Drawable3DCurves} :
               <p>
               <code>
                 public void drawGeometry(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
@@ -69,7 +69,7 @@ import java.util.TreeSet;
             	}
               </code>
 		 </li>
-         <li> for {@link Drawable3DTransparent} :
+         <li> for {@link Drawable3DSurfaces} :
               <p>
               <code>
             public void drawGeometry(EuclidianRenderer3D renderer) { <br> &nbsp;&nbsp;
@@ -162,6 +162,16 @@ public abstract class Drawable3D {
 	
 	
 	
+
+	//type constants
+	/** type for drawing points */
+	public static final int DRAW_TYPE_POINTS = 0;
+	/** type for drawing lines, circles, etc. */
+	public static final int DRAW_TYPE_CURVES = 1;
+	/** type for drawing planes, polygons, quadrics, etc. */
+	public static final int DRAW_TYPE_SURFACES = 2;
+	/** number max of drawing types */
+	public static final int DRAW_TYPE_MAX = 3;
 	
 	
 	
@@ -553,7 +563,14 @@ public abstract class Drawable3D {
     
     
     
+
+    /////////////////////////////
+    // TYPE
     
+    /** return the type of the drawable
+     * @return the type of the drawable
+     */
+    abstract public int getType();
     
     
 

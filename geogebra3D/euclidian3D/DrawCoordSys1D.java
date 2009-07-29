@@ -11,7 +11,7 @@ import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 
-public abstract class DrawCoordSys1D extends Drawable3DSolid implements Previewable {
+public abstract class DrawCoordSys1D extends Drawable3DCurves implements Previewable {
 
 	private double drawMin;
 	private double drawMax;

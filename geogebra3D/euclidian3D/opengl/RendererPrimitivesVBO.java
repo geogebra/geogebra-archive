@@ -71,7 +71,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 		geometriesNumber += getPointGeometryNumber(size);
 
 
-		Application.debug("point : "+geometriesNumber);
+		//Application.debug("point : "+geometriesNumber);
 		
 		//segments
 		int thickness = 2;
@@ -79,7 +79,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 		segmentsOffsets[thickness-1] = geometriesNumber;
 		geometriesNumber += getSegmentGeometryNumber(thickness);
      	
-		Application.debug("segment : "+geometriesNumber);
+		//Application.debug("segment : "+geometriesNumber);
 		
 		////////////////////////////////////
 		//creates geometries 

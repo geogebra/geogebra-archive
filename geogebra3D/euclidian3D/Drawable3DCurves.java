@@ -21,16 +21,16 @@ import geogebra3D.kernel3D.GeoSegment3D;
  */
 
 
-public abstract class Drawable3DSolid extends Drawable3D {
+public abstract class Drawable3DCurves extends Drawable3D {
 
 
 	
 	
-	public Drawable3DSolid(EuclidianView3D a_view3d, GeoElement a_geo) {
+	public Drawable3DCurves(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);
 	}
 
-	public Drawable3DSolid(EuclidianView3D a_view3d) {
+	public Drawable3DCurves(EuclidianView3D a_view3d) {
 		super(a_view3d);
 	}
 
@@ -90,5 +90,12 @@ public abstract class Drawable3DSolid extends Drawable3D {
 	public boolean isTransparent() {
 		return false;
 	}
+	
+	
+	public int getType(){
+		return DRAW_TYPE_CURVES;
+	}
+	
+	
 
 }

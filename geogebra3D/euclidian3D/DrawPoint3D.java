@@ -19,9 +19,9 @@ import java.util.ArrayList;
 
 
 
+//TODO does not extend Drawable3DCurves
 
-
-public class DrawPoint3D extends Drawable3DSolid implements Previewable{
+public class DrawPoint3D extends Drawable3DCurves implements Previewable{
 	
 	
 	
@@ -124,6 +124,9 @@ public class DrawPoint3D extends Drawable3DSolid implements Previewable{
 	
 	
 
+	public int getType(){
+		return DRAW_TYPE_POINTS;
+	}
 	
 	
 	

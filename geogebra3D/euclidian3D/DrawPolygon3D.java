@@ -10,7 +10,7 @@ import geogebra3D.kernel3D.GeoPolygon3D;
 
 
 
-public class DrawPolygon3D extends Drawable3DTransparent {
+public class DrawPolygon3D extends Drawable3DSurfaces {
 
 
 	
