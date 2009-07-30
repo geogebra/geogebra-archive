@@ -266,10 +266,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;									
 				
 
-				case GeoElement3D.GEO_CLASS_LINE3D:		
-					Application.debug("hip");
+				case GeoElement3D.GEO_CLASS_LINE3D:	
 					d = new DrawLine3D(this, (GeoLine3D) geo);	
-
 					break;									
 
 				case GeoElement3D.GEO_CLASS_RAY3D:					
@@ -1204,6 +1202,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	/** add a drawable to the current hits
+	 * (used when a new object is created)
+	 * @param d drawable to add
+	 */
+	public void addToHits3D(Drawable3D d){
+		hits.addDrawable3D(d, false);
+		hits.sort();
+	}
 
 	
 	/** init the hits for this view

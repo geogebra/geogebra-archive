@@ -336,6 +336,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		ret.update();
 		//point.setEuclidianVisible(false);
+		
+		view3D.addToHits3D(ret.getDrawable3D());
 
 		return ret;
 	
@@ -503,6 +505,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		GeoPoint3D[] ret = new GeoPoint3D[selectedPoints.size()];
 		getSelectedPointsInterface(ret);
 		
+		//Application.printStacktrace("");
+		
 		return ret;	
 	}
 		
@@ -545,12 +549,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	boolean mouseMoved = false;
-	MouseEvent mouseMovedEvent = null;
+	MouseEvent mouseEvent = null;
 	
 	protected void processMouseMoved(MouseEvent e) {	
 		((EuclidianView3D) view).setHits3D(mouseLoc);		
 		
-		mouseMovedEvent = e;
+		mouseEvent = e;
 		mouseMoved = true;
 		
 	}
@@ -562,11 +566,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (mouseMoved){
 			mouseMoved = false;
 			((EuclidianView3D) view).updateCursor3D();
-			super.processMouseMoved(mouseMovedEvent);
+			super.processMouseMoved(mouseEvent);
 		}
 	}
 	
 	
+	
+	
+	
+
 
 	///////////////////////////////////////////
 	// EMPTY METHODS IN EuclidianController USED FOR EuclidianView3D	

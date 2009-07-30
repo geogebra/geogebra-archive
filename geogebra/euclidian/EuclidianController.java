@@ -5273,15 +5273,6 @@ public class EuclidianController implements MouseListener,
 		
 	final protected GeoPoint[] getSelectedPoints() {		
 		
-		/*
-		GeoPoint[] ret = new GeoPoint[selectedPoints.size()];
-		for (int i = 0; i < selectedPoints.size(); i++) {		
-			ret[i] = (GeoPoint) selectedPoints.get(i);
-		}
-		clearSelection(selectedPoints);
-		return ret;
-		*/
-		
 		GeoPoint[] ret = new GeoPoint[selectedPoints.size()];
 		getSelectedPointsInterface(ret);
 		
