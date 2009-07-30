@@ -3479,9 +3479,9 @@ public abstract class Application implements KeyEventDispatcher {
 		return transparentCursor;
 	}
 	
-	private DistributionFactory factory = null;
+	static private DistributionFactory factory = null;
 	
-	public DistributionFactory getDistributionFactory() {
+	public static DistributionFactory getDistributionFactory() {
 		if (factory == null)
 			factory = DistributionFactory.newInstance();
 		

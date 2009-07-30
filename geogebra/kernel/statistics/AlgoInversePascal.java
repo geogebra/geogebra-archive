@@ -12,42 +12,46 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
-import org.apache.commons.math.distribution.DistributionFactory;
-import org.apache.commons.math.distribution.TDistribution;
+import org.apache.commons.math.distribution.PascalDistribution;
 
 /**
  * 
  * @author Michael Borcherds
  */
 
-public class AlgoTDistribution extends AlgoDistribution {
+public class AlgoInversePascal extends AlgoDistribution {
 
 	private static final long serialVersionUID = 1L;
     
-    public AlgoTDistribution(Construction cons, String label, NumberValue a,NumberValue b) {
-        super(cons, label, a, b, null, null);
+    public AlgoInversePascal(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c) {
+        super(cons, label, a, b, c, null);
     }
 
     protected String getClassName() {
-        return "AlgoTDistribution";
+        return "AlgoInversePascal";
     }
 
     @SuppressWarnings("deprecation")
 	protected final void compute() {
     	
     	
-    	if (input[0].isDefined() && input[1].isDefined()) {
-    		    double param = a.getDouble();
-    		    double val = b.getDouble();
+    	if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()) {
+		    int param = (int)Math.round(a.getDouble());
+		    double param2 = b.getDouble();
+    		    double val = c.getDouble();
         		try {
-        			TDistribution t = getTDistribution(param);
-        			num.setValue(t.cumulativeProbability(val));     // P(T <= val)
+        			PascalDistribution dist = getPascalDistribution(param, param2);
+        			
+        			double result = dist.inverseCumulativeProbability(val);
+        			
+        			// eg InversePascal[1,1,1] returns  2147483647 
+        			if (result >= Integer.MAX_VALUE )
+        				num.setUndefined();
+        			else
+        				num.setValue(result);    
         			
         		}
         		catch (Exception e) {

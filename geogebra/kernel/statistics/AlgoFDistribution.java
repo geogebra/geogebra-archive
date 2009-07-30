@@ -12,30 +12,26 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
-import org.apache.commons.math.distribution.DistributionFactory;
-import org.apache.commons.math.distribution.TDistribution;
+import org.apache.commons.math.distribution.FDistribution;
 
 /**
  * 
  * @author Michael Borcherds
  */
 
-public class AlgoTDistribution extends AlgoDistribution {
+public class AlgoFDistribution extends AlgoDistribution {
 
 	private static final long serialVersionUID = 1L;
     
-    public AlgoTDistribution(Construction cons, String label, NumberValue a,NumberValue b) {
-        super(cons, label, a, b, null, null);
+    public AlgoFDistribution(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c) {
+        super(cons, label, a, b, c, null);
     }
 
     protected String getClassName() {
-        return "AlgoTDistribution";
+        return "AlgoFDistribution";
     }
 
     @SuppressWarnings("deprecation")
@@ -43,11 +39,12 @@ public class AlgoTDistribution extends AlgoDistribution {
     	
     	
     	if (input[0].isDefined() && input[1].isDefined()) {
-    		    double param = a.getDouble();
-    		    double val = b.getDouble();
+		    double param = a.getDouble();
+		    double param2 = b.getDouble();
+    		    double val = c.getDouble();
         		try {
-        			TDistribution t = getTDistribution(param);
-        			num.setValue(t.cumulativeProbability(val));     // P(T <= val)
+        			FDistribution dist = getFDistribution(param, param2);
+        			num.setValue(dist.cumulativeProbability(val));     // P(T <= val)
         			
         		}
         		catch (Exception e) {

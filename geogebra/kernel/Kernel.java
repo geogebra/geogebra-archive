@@ -27,6 +27,8 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
+import geogebra.kernel.statistics.AlgoCauchy;
+import geogebra.kernel.statistics.AlgoChiSquared;
 import geogebra.kernel.statistics.AlgoDoubleListCovariance;
 import geogebra.kernel.statistics.AlgoDoubleListPMCC;
 import geogebra.kernel.statistics.AlgoDoubleListSXX;
@@ -34,6 +36,8 @@ import geogebra.kernel.statistics.AlgoDoubleListSXY;
 import geogebra.kernel.statistics.AlgoDoubleListSigmaXX;
 import geogebra.kernel.statistics.AlgoDoubleListSigmaXY;
 import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
+import geogebra.kernel.statistics.AlgoExponential;
+import geogebra.kernel.statistics.AlgoFDistribution;
 import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitLineX;
 import geogebra.kernel.statistics.AlgoFitLineY;
@@ -42,7 +46,18 @@ import geogebra.kernel.statistics.AlgoFitLogistic;
 import geogebra.kernel.statistics.AlgoFitPoly;
 import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
+import geogebra.kernel.statistics.AlgoGamma;
+import geogebra.kernel.statistics.AlgoHyperGeometric;
+import geogebra.kernel.statistics.AlgoInverseCauchy;
+import geogebra.kernel.statistics.AlgoInverseChiSquared;
+import geogebra.kernel.statistics.AlgoInverseExponential;
+import geogebra.kernel.statistics.AlgoInverseFDistribution;
+import geogebra.kernel.statistics.AlgoInverseGamma;
+import geogebra.kernel.statistics.AlgoInverseHyperGeometric;
 import geogebra.kernel.statistics.AlgoInverseNormal;
+import geogebra.kernel.statistics.AlgoInversePascal;
+import geogebra.kernel.statistics.AlgoInverseTDistribution;
+import geogebra.kernel.statistics.AlgoInverseWeibull;
 import geogebra.kernel.statistics.AlgoListCovariance;
 import geogebra.kernel.statistics.AlgoListMeanX;
 import geogebra.kernel.statistics.AlgoListMeanY;
@@ -57,6 +72,7 @@ import geogebra.kernel.statistics.AlgoMean;
 import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoMode;
 import geogebra.kernel.statistics.AlgoNormal;
+import geogebra.kernel.statistics.AlgoPascal;
 import geogebra.kernel.statistics.AlgoProduct;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
@@ -70,6 +86,7 @@ import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoTDistribution;
 import geogebra.kernel.statistics.AlgoVariance;
+import geogebra.kernel.statistics.AlgoWeibull;
 import geogebra.kernel.statistics.RegressionMath;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -2836,6 +2853,107 @@ public class Kernel {
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+	final public GeoNumeric InverseTDistribution(String label, NumberValue a, NumberValue b) {
+		AlgoInverseTDistribution algo = new AlgoInverseTDistribution(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	final public GeoNumeric ChiSquared(String label, NumberValue a, NumberValue b) {
+		AlgoChiSquared algo = new AlgoChiSquared(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InverseChiSquared(String label, NumberValue a, NumberValue b) {
+		AlgoInverseChiSquared algo = new AlgoInverseChiSquared(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	final public GeoNumeric Exponential(String label, NumberValue a, NumberValue b) {
+		AlgoExponential algo = new AlgoExponential(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InverseExponential(String label, NumberValue a, NumberValue b) {
+		AlgoInverseExponential algo = new AlgoInverseExponential(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric FDistribution(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoFDistribution algo = new AlgoFDistribution(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InverseFDistribution(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoInverseFDistribution algo = new AlgoInverseFDistribution(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric Gamma(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoGamma algo = new AlgoGamma(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InverseGamma(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoInverseGamma algo = new AlgoInverseGamma(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric Cauchy(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoCauchy algo = new AlgoCauchy(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InverseCauchy(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoInverseCauchy algo = new AlgoInverseCauchy(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric Weibull(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoWeibull algo = new AlgoWeibull(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InverseWeibull(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoInverseWeibull algo = new AlgoInverseWeibull(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric Pascal(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoPascal algo = new AlgoPascal(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InversePascal(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoInversePascal algo = new AlgoInversePascal(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric HyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d) {
+		AlgoHyperGeometric algo = new AlgoHyperGeometric(cons, label, a, b, c, d);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InverseHyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d) {
+		AlgoInverseHyperGeometric algo = new AlgoInverseHyperGeometric(cons, label, a, b, c, d);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
 	
 	/** 
 	 * Sort[list]

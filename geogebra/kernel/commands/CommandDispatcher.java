@@ -306,6 +306,23 @@ public class CommandDispatcher {
     	cmdTable.put("DynamicCoordinates", new CmdDynamicCoordinates(kernel));  
 
     	cmdTable.put("TDistribution", new CmdTDistribution(kernel));  
+    	cmdTable.put("InverseTDistribution", new CmdInverseTDistribution(kernel));  
+    	cmdTable.put("FDistribution", new CmdFDistribution(kernel));  
+    	cmdTable.put("InverseFDistribution", new CmdInverseFDistribution(kernel));     	
+    	cmdTable.put("Gamma", new CmdGamma(kernel));  
+    	cmdTable.put("InverseGamma", new CmdInverseGamma(kernel));  
+    	cmdTable.put("Cauchy", new CmdCauchy(kernel));  
+    	cmdTable.put("InverseCauchy", new CmdInverseCauchy(kernel));  
+    	cmdTable.put("ChiSquared", new CmdChiSquared(kernel));  
+    	cmdTable.put("InverseChiSquared", new CmdInverseChiSquared(kernel));  
+    	cmdTable.put("Exponential", new CmdExponential(kernel));  
+    	cmdTable.put("InverseExponential", new CmdInverseExponential(kernel));  
+    	cmdTable.put("HyperGeometric", new CmdHyperGeometric(kernel));  
+    	cmdTable.put("InverseHyperGeometric", new CmdInverseHyperGeometric(kernel));  
+    	cmdTable.put("Pascal", new CmdPascal(kernel));  
+    	cmdTable.put("InversePascal", new CmdInversePascal(kernel));  
+    	cmdTable.put("Weibull", new CmdWeibull(kernel));  
+    	cmdTable.put("InverseWeibull", new CmdInverseWeibull(kernel));
     	
     	
     	//Mathieu Blossier

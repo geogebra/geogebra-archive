@@ -12,42 +12,40 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
-import org.apache.commons.math.distribution.DistributionFactory;
-import org.apache.commons.math.distribution.TDistribution;
+import org.apache.commons.math.distribution.HypergeometricDistribution;
 
 /**
  * 
  * @author Michael Borcherds
  */
 
-public class AlgoTDistribution extends AlgoDistribution {
+public class AlgoHyperGeometric extends AlgoDistribution {
 
 	private static final long serialVersionUID = 1L;
     
-    public AlgoTDistribution(Construction cons, String label, NumberValue a,NumberValue b) {
-        super(cons, label, a, b, null, null);
+    public AlgoHyperGeometric(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c, NumberValue d) {
+        super(cons, label, a, b, c, d);
     }
 
     protected String getClassName() {
-        return "AlgoTDistribution";
+        return "AlgoHyperGeometric";
     }
 
     @SuppressWarnings("deprecation")
 	protected final void compute() {
     	
     	
-    	if (input[0].isDefined() && input[1].isDefined()) {
-    		    double param = a.getDouble();
-    		    double val = b.getDouble();
+    	if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()) {
+		    int param = (int)Math.round(a.getDouble());
+		    int param2 = (int)Math.round(b.getDouble());
+		    int param3 = (int)Math.round(c.getDouble());
+    		    double val = d.getDouble();
         		try {
-        			TDistribution t = getTDistribution(param);
-        			num.setValue(t.cumulativeProbability(val));     // P(T <= val)
+        			HypergeometricDistribution dist = getHypergeometricDistribution(param, param2, param3);
+        			num.setValue(dist.cumulativeProbability(val));     // P(T <= val)
         			
         		}
         		catch (Exception e) {

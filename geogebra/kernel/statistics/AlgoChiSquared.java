@@ -12,30 +12,26 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
-import org.apache.commons.math.distribution.DistributionFactory;
-import org.apache.commons.math.distribution.TDistribution;
+import org.apache.commons.math.distribution.ChiSquaredDistribution;
 
 /**
  * 
  * @author Michael Borcherds
  */
 
-public class AlgoTDistribution extends AlgoDistribution {
+public class AlgoChiSquared extends AlgoDistribution {
 
 	private static final long serialVersionUID = 1L;
     
-    public AlgoTDistribution(Construction cons, String label, NumberValue a,NumberValue b) {
+    public AlgoChiSquared(Construction cons, String label, NumberValue a,NumberValue b) {
         super(cons, label, a, b, null, null);
     }
 
     protected String getClassName() {
-        return "AlgoTDistribution";
+        return "AlgoChiSquared";
     }
 
     @SuppressWarnings("deprecation")
@@ -46,8 +42,8 @@ public class AlgoTDistribution extends AlgoDistribution {
     		    double param = a.getDouble();
     		    double val = b.getDouble();
         		try {
-        			TDistribution t = getTDistribution(param);
-        			num.setValue(t.cumulativeProbability(val));     // P(T <= val)
+        			ChiSquaredDistribution dist = getChiSquaredDistribution(param);
+        			num.setValue(dist.cumulativeProbability(val));     // P(T <= val)
         			
         		}
         		catch (Exception e) {

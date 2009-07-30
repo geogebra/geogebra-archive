@@ -26,16 +26,16 @@ import org.apache.commons.math.distribution.TDistribution;
  * @author Michael Borcherds
  */
 
-public class AlgoTDistribution extends AlgoDistribution {
+public class AlgoInverseTDistribution extends AlgoDistribution {
 
 	private static final long serialVersionUID = 1L;
     
-    public AlgoTDistribution(Construction cons, String label, NumberValue a,NumberValue b) {
+    public AlgoInverseTDistribution(Construction cons, String label, NumberValue a,NumberValue b) {
         super(cons, label, a, b, null, null);
     }
 
     protected String getClassName() {
-        return "AlgoTDistribution";
+        return "AlgoInverseTDistribution";
     }
 
     @SuppressWarnings("deprecation")
@@ -47,7 +47,7 @@ public class AlgoTDistribution extends AlgoDistribution {
     		    double val = b.getDouble();
         		try {
         			TDistribution t = getTDistribution(param);
-        			num.setValue(t.cumulativeProbability(val));     // P(T <= val)
+        			num.setValue(t.inverseCumulativeProbability(val));    
         			
         		}
         		catch (Exception e) {
