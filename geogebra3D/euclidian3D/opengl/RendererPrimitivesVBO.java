@@ -38,7 +38,7 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 	// points
 
 	/** offsets for points */
-	private int[] pointOffsets = new int[POINT_SIZE_NUMBER];
+	private int[] pointOffsets = new int[pointGeometryNb.length];
 	
 	
 	
@@ -65,19 +65,19 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 		int geometriesNumber = 0;
 		
 		//points
-		int size = 3;
+		int lod = 0;
 		
-		pointOffsets[size-1] = geometriesNumber;
-		geometriesNumber += getPointGeometryNumber(size);
+		pointOffsets[lod] = geometriesNumber;
+		geometriesNumber += getPointGeometryNumber(lod);
 
 
 		//Application.debug("point : "+geometriesNumber);
 		
 		//segments
-		int thickness = 2;
+		lod = 0;
 		
-		segmentsOffsets[thickness-1] = geometriesNumber;
-		geometriesNumber += getSegmentGeometryNumber(thickness);
+		segmentsOffsets[lod] = geometriesNumber;
+		geometriesNumber += getSegmentGeometryNumber(lod);
      	
 		//Application.debug("segment : "+geometriesNumber);
 		
@@ -96,14 +96,15 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
 		
 		//points		
     	
-        size=3;
-    	pointGeometry(size,pointLatitudes[size-1],pointLongitudes[size-1]);
-
+        lod=0;
+    	pointGeometry(
+    			pointGeometryNb[lod][0],
+    			pointGeometryNb[lod][1]);
     	
     	//segments		
         
-        thickness = 2;
-    	segmentGeometry(thickness);
+        lod = 0;
+    	segmentGeometry(segmentGeometryNb[lod]);
     	
     	
     	
@@ -253,8 +254,10 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
     	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
     	
-
-        gl.glDrawArrays(GL.GL_QUADS, 0, getPointGeometryNumber(size)); 
+    	
+        gl.glDrawArrays(GL.GL_QUADS, 
+        		pointOffsets[pointLOD[size-1]], 
+        		getPointGeometryNumber(pointLOD[size-1])); 
         
 
         
@@ -296,9 +299,9 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
         
 
       
-
-    	
-        gl.glDrawArrays(GL.GL_QUADS, segmentsOffsets[thickness-1], getSegmentGeometryNumber(thickness)); 
+        gl.glDrawArrays(GL.GL_QUADS, 
+        		segmentsOffsets[segmentLOD[thickness-1]], 
+        		getSegmentGeometryNumber(segmentLOD[thickness-1])); 
         
         
 

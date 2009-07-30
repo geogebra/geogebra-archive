@@ -25,12 +25,18 @@ public class RendererPrimitives {
 	private int pointIndex;
 	/** number of different sizes of points */
 	protected static final int POINT_SIZE_NUMBER = 9;
+	/** for each point size, level of details computed */
+	protected int[] pointLOD = {0,0,0, 0,0,0, 0,0,0};
+	/** for each lod, point number of geometries (latitudes - longitudes) */
+	protected int[][] pointGeometryNb  = { {2,8} };
+	
+	
+	//////////////
+	// other objects
+	
+	
 	/** number of different thickness of objects */
 	protected static final int THICKNESS_NUMBER = 13;
-	/** TODO point primitives number of latitudes */
-	protected int[] pointLatitudes  = {2,2,2, 2,2,2, 2,2,2};
-	/** TODO point primitives number of longitudes */
-	protected int[] pointLongitudes = {8,8,8, 8,8,8, 8,8,8};
 	
 	
 	
@@ -38,10 +44,14 @@ public class RendererPrimitives {
 	// lines
 	
 	/** radius for drawing 3D points*/
-	private static final float LINE3D_THICKNESS = 0.5f;
+	private static final float LINE3D_THICKNESS = 0.17f;
 	/** start index for segment primitives list */
 	private int segmentIndex;
-	
+	/** for each segment thickness, level of details computed */
+	protected int[] segmentLOD = {0,0,0,0,0, 0,0,0,0,0, 0,0,0};
+	/** for each lod, segment number of geometries (latitudes) */
+	protected int[] segmentGeometryNb  = { 8 };
+
 	
 	
 	
@@ -66,18 +76,18 @@ public class RendererPrimitives {
 		this();
 		
 		//points
-		pointIndex = gl.glGenLists(9);
-		for (int i=0;i<9;i++){
-			gl.glNewList(pointIndex+i, GL.GL_COMPILE);
-			pointList(gl, 1+i);
+		pointIndex = gl.glGenLists(pointGeometryNb.length);
+		for (int lod=0;lod<pointGeometryNb.length;lod++){
+			gl.glNewList(pointIndex+lod, GL.GL_COMPILE);
+			pointList(gl, lod);
 			gl.glEndList();
 		}
 		
 		//segments
-		segmentIndex = gl.glGenLists(1);
-		for (int i=0;i<1;i++){
-			gl.glNewList(segmentIndex+i, GL.GL_COMPILE);
-			segmentList(gl, 1+i);
+		segmentIndex = gl.glGenLists(segmentGeometryNb.length);
+		for (int lod=0;lod<segmentGeometryNb.length;lod++){
+			gl.glNewList(segmentIndex+lod, GL.GL_COMPILE);
+			segmentList(gl, lod);
 			gl.glEndList();
 		}
 		
@@ -126,12 +136,13 @@ public class RendererPrimitives {
 	
 	/**
 	 * return the number of geometries for drawing a point
-	 * @param size size of the point
+	 * @param lod level of detail needed
 	 * @return the number of geometries for drawing a point
 	 */
-	protected int getPointGeometryNumber(int size){
-		return pointLatitudes[size-1]*pointLongitudes[size-1]*8;
+	protected int getPointGeometryNumber(int lod){
+		return pointGeometryNb[lod][0]*pointGeometryNb[lod][1]*8;
 	}
+	
     
 	
     /**
@@ -142,22 +153,23 @@ public class RendererPrimitives {
      */
     public void point(GL gl, int size){
     
-    	gl.glCallList(pointIndex+size-1);
-    	//pointList(gl, size);
+    	gl.glCallList(pointIndex+pointLOD[size-1]);
     }
     	
     	
     
     /** create a gl list for points
      * @param gl gl opengl drawing parameter
-     * @param size size of the point
+     * @param lod level of details of the point
      */
-    private void pointList(GL gl, int size){
+    private void pointList(GL gl, int lod){
     	
     	gl.glBegin(GL.GL_QUADS); 
     	
     	this.gl = gl;    	
-    	pointGeometry(size, pointLatitudes[size-1],pointLongitudes[size-1]);
+    	pointGeometry(
+    			pointGeometryNb[lod][0],
+    			pointGeometryNb[lod][1]);
     	
     	gl.glEnd();  
 
@@ -168,7 +180,7 @@ public class RendererPrimitives {
      * @param latitude number of latitudes
      * @param longitude number of longitudes
      */
-    protected void pointGeometry(int size, int latitude, int longitude){
+    protected void pointGeometry(int latitude, int longitude){
     	
  
     	float da = (float) (Math.PI / (2*latitude)) ; 
@@ -176,12 +188,12 @@ public class RendererPrimitives {
     	
     	
     	
-    	float rXY1 = POINT3D_RADIUS*size;
+    	float rXY1 = POINT3D_RADIUS;
     	float z1 = 0;
     	
     	for( int i = 0; i < latitude  ; i++ ) { 
-    		float rXY4 = POINT3D_RADIUS * size * (float) Math.cos( (i+1) * da ); 
-    		float z4   = POINT3D_RADIUS * size * (float) Math.sin( (i+1) * da ); 
+    		float rXY4 = POINT3D_RADIUS * (float) Math.cos( (i+1) * da ); 
+    		float z4   = POINT3D_RADIUS * (float) Math.sin( (i+1) * da ); 
     		
     		float x1 = rXY1;
     		float y1 = 0;
@@ -260,32 +272,32 @@ public class RendererPrimitives {
 	 * @param thickness thickness of the segment
 	 * @return the number of geometries for drawing a segment
 	 */
-	protected int getSegmentGeometryNumber(int thickness){
-		int latitude = 8; //TODO list
-		return (latitude+1)*4;
+	protected int getSegmentGeometryNumber(int lod){
+		return (segmentGeometryNb[lod]+1)*4;
 	}
 	
 
     public void segment(GL gl, int thickness){
-    	gl.glCallList(segmentIndex);
-    	//segmentList(gl, thickness);
+    	gl.glCallList(segmentIndex+segmentLOD[thickness-1]);
     }
 
-    private void segmentList(GL gl, int thickness){
+    private void segmentList(GL gl, int lod){
     	
     	gl.glBegin(GL.GL_QUADS); 
     	
     	this.gl = gl;    	
-    	segmentGeometry(thickness);
+    	segmentGeometry(segmentGeometryNb[lod]);
     	
     	gl.glEnd();  
     }
 
     	
     	
-    protected void segmentGeometry(int thickness){
+    /** create a segment geometry ((Ox)-cylinder with number of latitudes)
+     * @param latitude number of latitudes
+     */
+    protected void segmentGeometry(int latitude){
 
-    	int latitude = 8;
     	
     	float dt = (float) 1/latitude;
     	float da = (float) (2*Math.PI *dt) ; 

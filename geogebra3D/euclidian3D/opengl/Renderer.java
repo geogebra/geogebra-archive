@@ -140,7 +140,7 @@ public class Renderer implements GLEventListener {
 	/** current text color {r,g,b} */
 	private Color textColor; 
 	
-	private double m_thickness;
+	private double thickness;
 	
 	
 	
@@ -525,7 +525,7 @@ public class Renderer implements GLEventListener {
      * @param a_thickness the thickness
      */
     public void setThickness(double a_thickness){
-    	m_thickness = a_thickness;
+    	this.thickness = a_thickness;
     }
     
     
@@ -535,7 +535,7 @@ public class Renderer implements GLEventListener {
      * @return the thickness
      */
     public double getThickness(){
-    	return m_thickness;
+    	return thickness;
     }
     
     //arrows
@@ -798,10 +798,9 @@ public class Renderer implements GLEventListener {
     		gl.glMatrixMode(GL.GL_MODELVIEW);
     	}
     	
-       	//drawCylinder(m_thickness/view3D.getScale());
-    	double s = dilationValues[dilation]/view3D.getScale();
+    	double s = thickness*dilationValues[dilation]/view3D.getScale();
     	gl.glScaled(1,s,s);
-       	primitives.segment(gl, (int) m_thickness);
+       	primitives.segment(gl, (int) thickness);
     	
        	if (dashed)
        		gl.glDisable(GL.GL_TEXTURE_2D);
@@ -932,7 +931,7 @@ public class Renderer implements GLEventListener {
      */
     public void drawCone(double a_x1, double a_x2){
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
-    	drawCone(m_thickness);
+    	drawCone(thickness);
     	resetMatrix();
     } 
  
@@ -1073,7 +1072,7 @@ public class Renderer implements GLEventListener {
      */
     public void drawPoint(int size){
     	initMatrix();
-    	double s = dilationValues[dilation]/view3D.getScale();
+    	double s = size*dilationValues[dilation]/view3D.getScale();
     	gl.glScaled(s,s,s);
     	primitives.point(gl,size);
     	resetMatrix();
