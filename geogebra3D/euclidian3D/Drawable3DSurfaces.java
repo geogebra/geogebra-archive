@@ -36,7 +36,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	
 
 	//TODO improve specific geometry for picking
-	public void drawPicked(Renderer renderer){
+	public void drawHighlighting(Renderer renderer){
 		
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	

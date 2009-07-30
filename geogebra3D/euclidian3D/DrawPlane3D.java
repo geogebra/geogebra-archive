@@ -57,7 +57,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	public void drawGeometryHidden(Renderer renderer){};
 	
 	
-	public void drawPicked(Renderer renderer){
+	public void drawHighlighting(Renderer renderer){
 
 	};	
 	

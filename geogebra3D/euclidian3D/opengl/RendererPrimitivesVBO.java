@@ -250,24 +250,19 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
      */
     public void point(GL gl, int size){
     
-    	gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
-    	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
-    	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
-    	
+
+    	//enableVBO(gl);
     	
         gl.glDrawArrays(GL.GL_QUADS, 
         		pointOffsets[pointLOD[size-1]], 
         		getPointGeometryNumber(pointLOD[size-1])); 
         
 
-        
-        // Disable Pointers
-        // Disable Vertex Arrays
-        gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
-        gl.glDisableClientState(GL.GL_NORMAL_ARRAY);  
+       
+
+        //disableVBO(gl);
 
 
-        //gl.glFlush();
     }
     
   
@@ -289,30 +284,16 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
      */
     public void segment(GL gl, int thickness){
     
-    	
- 
-    	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
-    	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
-    	gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  // Enable texture Arrays
-    	
-
-        
-
-      
+    	//enableVBO(gl);
+       
         gl.glDrawArrays(GL.GL_QUADS, 
         		segmentsOffsets[segmentLOD[thickness-1]], 
         		getSegmentGeometryNumber(segmentLOD[thickness-1])); 
         
         
+        //disableVBO(gl);
 
-        
-        // Disable Pointers
-        // Disable Vertex Arrays
-        gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
-        gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
-        gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
-
-        //gl.glFlush();
+    
    	 
     	 
     }
@@ -321,7 +302,30 @@ public class RendererPrimitivesVBO extends RendererPrimitives {
     
 
 
-	
+	///////////////////////////////
+	// FOR VBOs
+	///////////////////////////////
+    
+    /**
+     * enable use of VBOs
+     * @param gl opengl context
+     */
+    public void enableVBO(GL gl){
+    	gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
+    	gl.glEnableClientState(GL.GL_NORMAL_ARRAY);  // Enable Normal Arrays
+    	gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  // Enable texture Arrays
+
+    }
+    
+    /**
+     * disable use of VBOs
+     * @param gl opengl context
+     */
+    public void disableVBO(GL gl){
+        gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
+        gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
+        gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+    }
 	
     
     

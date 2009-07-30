@@ -249,7 +249,7 @@ public class Renderer implements GLEventListener {
 	 * Then, for each {@link Drawable3D}, it calls:
 	 * <ul>
 	 * <li> {@link Drawable3D#drawHidden(EuclidianRenderer3D)} to draw hidden parts (dashed segments, lines, ...) </li>
-	 * <li> {@link Drawable3D#drawPicked(EuclidianRenderer3D)} to show objects that are picked (highlighted) </li>
+	 * <li> {@link Drawable3D#drawHighlighting(EuclidianRenderer3D)} to show objects that are picked (highlighted) </li>
 	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to draw transparent objects (planes, spheres, ...) </li>
 	 * <li> {@link Drawable3D#drawHiding(EuclidianRenderer3D)} to draw in the z-buffer objects that hides others (planes, spheres, ...) </li>
 	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to re-draw transparent objects for a better alpha-blending </li>
@@ -311,7 +311,7 @@ public class Renderer implements GLEventListener {
         
         
         
-        
+        primitives.enableVBO(gl);
         
         //drawing hidden part
         drawList3D.drawHidden(this);
@@ -322,7 +322,7 @@ public class Renderer implements GLEventListener {
         //setMaterial(new Color(0f,0f,0f),0.75f);
         dilation = DILATION_HIGHLITED;
     	gl.glCullFace(GL.GL_FRONT); //draws inside parts
-    	drawList3D.drawPicked(this);
+    	drawList3D.drawHighlighting(this);
         dilation = DILATION_NONE;
         gl.glCullFace(GL.GL_BACK);
         gl.glDepthMask(true);
@@ -373,11 +373,11 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_BLEND);
         
         
-        
+        primitives.disableVBO(gl);
      
      
          
-        //drawing labels
+        //re-drawing labels
         gl.glDisable(GL.GL_LIGHTING);
         drawList3D.drawLabel(this);
         gl.glEnable(GL.GL_LIGHTING);
@@ -2032,40 +2032,19 @@ public class Renderer implements GLEventListener {
     	
     	
     	Drawable3D[] drawHits = new Drawable3D[BUFSIZE];
-        //int loop = 0;
   
+    	primitives.enableVBO(gl);
+    	
         // picking objects
         int loop = drawList3D.drawForPicking(this,drawHits,0);
-        /*
-        for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        	Drawable3D d = (Drawable3D) iter.next();
-        	loop++;
-        	gl.glLoadName(loop);
-        	d.drawForPicking(this);	
-        	drawHits[loop] = d;
-        }
-        */
-        	
-        	
-
         int labelLoop = loop;
         
         if (pickingMode == PICKING_MODE_LABELS){
-
         	// picking labels
         	loop = drawList3D.drawLabelForPicking(this,drawHits,loop);
-
-        	/*
-        	for (Iterator iter = drawList3D.iterator(); iter.hasNext();) {
-        		Drawable3D d = (Drawable3D) iter.next();
-        		loop++;
-        		gl.glLoadName(loop);
-        		d.drawLabel(this,false,true);
-        		drawHits[loop] = d;
-        	}
-        	*/
         }
 
+        primitives.disableVBO(gl);
         
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
              

@@ -410,5 +410,28 @@ public class RendererPrimitives {
 
     }
 	
+    
+
+	///////////////////////////////
+	// FOR VBOs
+	///////////////////////////////
+    
+    /**
+     * enable use of VBOs
+     * @param gl opengl context
+     */
+    public void enableVBO(GL gl){
+    	
+    }
+    
+    /**
+     * disable use of VBOs
+     * @param gl opengl context
+     */
+    public void disableVBO(GL gl){
+    	
+    }
+  
+    
 
 }

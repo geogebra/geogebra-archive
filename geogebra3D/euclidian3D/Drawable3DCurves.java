@@ -49,7 +49,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 	}
 
 	
-	public void drawPicked(Renderer renderer) {
+	public void drawHighlighting(Renderer renderer) {
 				
 
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())

@@ -101,41 +101,59 @@ public class DrawList3D {
 	
 	
 
+	/** draw the hidden (dashed) parts of curves and points
+	 * @param renderer opengl context
+	 */
 	public void drawHidden(Renderer renderer){
 
-		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
-			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().drawHidden(renderer);	
+		// if there's no surfaces, no hidden part has to be drawn
+		if(!lists[Drawable3D.DRAW_TYPE_SURFACES].isEmpty()){
+			for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_POINTS].iterator(); d.hasNext();) 
+				d.next().drawHidden(renderer);
+			for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
+				d.next().drawHidden(renderer);
+		}
 
 
 	}
 
-
-	public void drawPicked(Renderer renderer){
+	/** draw the highlighting of objects
+	 * @param renderer opengl context
+	 */
+	public void drawHighlighting(Renderer renderer){
 
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().drawPicked(renderer);	
+				d.next().drawHighlighting(renderer);	
 
 	}
 
 
+	/** draw surfaces as transparent parts
+	 * @param renderer opengl context
+	 */
 	public void drawTransp(Renderer renderer){
 
-		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
-			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().drawTransp(renderer);	
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
+			d.next().drawTransp(renderer);	
 
 	}
 
-	public void draw(Renderer renderer){
+	/** draw the not hidden (solid) parts of curves and points
+	 * @param renderer opengl context
+	 */
+	public void draw(Renderer renderer){	
 
-		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
-			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().draw(renderer);	
-
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_POINTS].iterator(); d.hasNext();) 
+			d.next().draw(renderer);
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
+			d.next().draw(renderer);
+		
 	}
 	
+	/** draw the labels of objects
+	 * @param renderer opengl context
+	 */
 	public void drawLabel(Renderer renderer){
 
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
@@ -145,15 +163,23 @@ public class DrawList3D {
 	}
 
 
+	/** draw the hiding (surfaces) parts
+	 * @param renderer opengl context
+	 */
 	public void drawHiding(Renderer renderer){
 
-		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
-			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().drawHiding(renderer);	
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
+			d.next().drawHiding(renderer);	
 
 	}
 	
 	
+	/** draw objects to pick them
+	 * @param renderer opengl context
+	 * @param drawHits recording the its
+	 * @param loop counter
+	 * @return return the final counter
+	 */
 	public int drawForPicking(Renderer renderer, Drawable3D[] drawHits, int loop){
 
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
@@ -169,7 +195,12 @@ public class DrawList3D {
 
 	}
 	
-
+	/** draw objects labels to pick them
+	 * @param renderer opengl context
+	 * @param drawHits recording the its
+	 * @param loop counter
+	 * @return return the final counter
+	 */
 	public int drawLabelForPicking(Renderer renderer, Drawable3D[] drawHits, int loop){
 
 		
