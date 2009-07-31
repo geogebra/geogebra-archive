@@ -161,8 +161,10 @@ public class Layout {
 	 */
 	public void applyPerspective(Perspective perspective) {		
 		EuclidianView ev = app.getEuclidianView();
-		ev.showAxes(perspective.getShowAxes(), perspective.getShowAxes());
-		ev.showGrid(perspective.getShowGrid());
+		// TODO find out why these lines don't work
+		// (stop "save settings..." from working)
+		//ev.showAxes(perspective.getShowAxes(), perspective.getShowAxes());
+		//ev.showGrid(perspective.getShowGrid());
 		
 		app.getGuiManager().setToolBarDefinition(perspective.getToolbarDefinition());
 
