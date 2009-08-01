@@ -349,7 +349,7 @@ public class Renderer implements GLEventListener {
 
 
         //drawing hiding parts
-        gl.glClear(GL.GL_DEPTH_BUFFER_BIT); //clear depth buffer
+        //gl.glClear(GL.GL_DEPTH_BUFFER_BIT); //clear depth buffer
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
         drawList3D.drawHiding(this);	        
         gl.glColorMask(true,true,true,true);
@@ -365,7 +365,7 @@ public class Renderer implements GLEventListener {
         
 
         //re-drawing the cursor
-        view3D.drawCursor(this);
+        //view3D.drawCursor(this);
        
         //drawing not hidden parts
         gl.glDisable(GL.GL_BLEND);
@@ -378,10 +378,11 @@ public class Renderer implements GLEventListener {
      
          
         //re-drawing labels
+        /*
         gl.glDisable(GL.GL_LIGHTING);
         drawList3D.drawLabel(this);
         gl.glEnable(GL.GL_LIGHTING);
-        
+        */
 
         
         

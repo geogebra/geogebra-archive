@@ -1,20 +1,7 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoConic3D;
-import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoLine3D;
-import geogebra3D.kernel3D.GeoPlane3D;
-import geogebra3D.kernel3D.GeoPolygon3D;
-import geogebra3D.kernel3D.GeoQuadric;
-import geogebra3D.kernel3D.GeoRay3D;
-import geogebra3D.kernel3D.GeoSegment3D;
-import geogebra3D.kernel3D.GeoVector3D;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -106,10 +93,13 @@ public class DrawList3D {
 	 */
 	public void drawHidden(Renderer renderer){
 
+		// points TODO hidden aspect ?
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_POINTS].iterator(); d.hasNext();) 
+			d.next().drawHidden(renderer);
+		
+		// curves
 		// if there's no surfaces, no hidden part has to be drawn
 		if(!lists[Drawable3D.DRAW_TYPE_SURFACES].isEmpty()){
-			for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_POINTS].iterator(); d.hasNext();) 
-				d.next().drawHidden(renderer);
 			for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
 				d.next().drawHidden(renderer);
 		}
@@ -144,8 +134,13 @@ public class DrawList3D {
 	 */
 	public void draw(Renderer renderer){	
 
+		// points TODO hidden aspect ?
+		/*
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_POINTS].iterator(); d.hasNext();) 
 			d.next().draw(renderer);
+			*/
+		
+		// curves
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
 			d.next().draw(renderer);
 		
