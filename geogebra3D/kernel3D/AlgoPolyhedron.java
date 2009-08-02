@@ -14,6 +14,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	/** the polyhedron created */
 	protected GeoPolyhedron polyhedron;
 	
+	private GeoPoint3D[] points;
+	
 	private int type;
 	
 	
@@ -34,10 +36,10 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	
 	/** creates a polyhedron regarding vertices and faces description
 	 * @param c construction 
-	 * @param points vertices
+	 * @param a_points vertices
 	 * @param type type of polyhedron
 	 */
-	public AlgoPolyhedron(Construction c, GeoPoint3D[] points, int type) {
+	public AlgoPolyhedron(Construction c, GeoPoint3D[] a_points, int type) {
 		super(c);
 		
 		this.type = type;
@@ -47,6 +49,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		
 		switch(type){
 		case GeoPolyhedron.TYPE_PYRAMID://construct a pyramid with last point as apex
+			this.points = a_points;
 			numPoints = points.length;
 			faces = new int[numPoints][];
 			for (int i=0; i<numPoints-1; i++){
@@ -59,8 +62,35 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			for (int i=0; i<numPoints-1; i++)
 				faces[numPoints-1][i]=i;
 			break;
+			
 		case GeoPolyhedron.TYPE_PSEUDO_PRISM://construct a "pseudo-prismatic" polyhedron
+			this.points = a_points;
 			numPoints = points.length /2;
+			faces = new int[numPoints+2][];
+			for (int i=0; i<numPoints; i++){
+				faces[i]=new int[4];
+				faces[i][0]=i;
+				faces[i][1]=(i+1)%(numPoints);
+				faces[i][2]=numPoints + ((i+1)%(numPoints));
+				faces[i][3]=numPoints + i;
+			}
+			faces[numPoints]=new int[numPoints];
+			for (int i=0; i<numPoints; i++)
+				faces[numPoints][i]=i;
+			faces[numPoints+1]=new int[numPoints];
+			for (int i=0; i<numPoints; i++)
+				faces[numPoints+1][i]=numPoints+i;
+			break;
+
+		case GeoPolyhedron.TYPE_PRISM://construct a prism
+			numPoints = a_points.length - 1;
+			this.points = new GeoPoint3D[numPoints*2];
+			for(int i=0;i<numPoints+1;i++)
+				points[i] = a_points[i];
+			for(int i=numPoints+1;i<numPoints*2;i++)
+				points[i] = ((Kernel3D) kernel).Point3D(null, 0, 0, 0);
+			compute();
+			
 			faces = new int[numPoints+2][];
 			for (int i=0; i<numPoints; i++){
 				faces[i]=new int[4];
@@ -172,9 +202,13 @@ public class AlgoPolyhedron extends AlgoElement3D {
         cons.addToAlgorithmList(this);  
     }
 
-	@Override
 	protected void compute() {
-		// TODO Auto-generated method stub
+		switch(type){
+		case GeoPolyhedron.TYPE_PRISM:
+			
+			break;
+		default:
+		}
 
 	}
 
@@ -184,8 +218,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		switch(type){
 		case GeoPolyhedron.TYPE_PYRAMID:
 			return "AlgoPyramid";
-		case GeoPolyhedron.TYPE_PSEUDO_PRISM:
-		case GeoPolyhedron.TYPE_NONE:
+		case GeoPolyhedron.TYPE_PRISM:
+			return "AlgoPrism";
 		default:
 			return "AlgoPolyhedron";
 		}

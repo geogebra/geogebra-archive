@@ -19,6 +19,7 @@ public class GeoPolyhedron extends GeoElement3D {
 	public static final int TYPE_NONE = 0;
 	public static final int TYPE_PYRAMID = 1;
 	public static final int TYPE_PSEUDO_PRISM = 2;
+	public static final int TYPE_PRISM = 3;
 	
 	
 	/** vertices */
