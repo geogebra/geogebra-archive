@@ -64,7 +64,9 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 			return;
 		
 		//use 1-Math.sqrt(1-alpha) because transparent parts are drawn twice
-		renderer.setMaterial(getGeoElement().getObjectColor(),1-Math.sqrt(1-alpha));
+		//renderer.setMaterial(getGeoElement().getObjectColor(),1-Math.sqrt(1-alpha));
+		//TODO set this when the alpha is set
+		renderer.setMaterial(getGeoElement().getObjectColor(),1-Math.pow(1-alpha,1./3.));
 		renderer.setMatrix(getMatrix());
 		drawGeometry(renderer);
 		

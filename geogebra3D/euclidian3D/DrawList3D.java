@@ -98,11 +98,11 @@ public class DrawList3D {
 			d.next().drawHidden(renderer);
 		
 		// curves
-		// if there's no surfaces, no hidden part has to be drawn
-		if(!lists[Drawable3D.DRAW_TYPE_SURFACES].isEmpty()){
+		// TODO if there's no surfaces, no hidden part has to be drawn
+		//if(!lists[Drawable3D.DRAW_TYPE_SURFACES].isEmpty())
 			for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
 				d.next().drawHidden(renderer);
-		}
+		
 
 
 	}
@@ -125,6 +125,8 @@ public class DrawList3D {
 	public void drawTransp(Renderer renderer){
 
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
+			d.next().drawTransp(renderer);	
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
 			d.next().drawTransp(renderer);	
 
 	}
@@ -161,13 +163,22 @@ public class DrawList3D {
 	/** draw the hiding (surfaces) parts
 	 * @param renderer opengl context
 	 */
-	public void drawHiding(Renderer renderer){
+	public void drawSurfacesForHiding(Renderer renderer){
 
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
 			d.next().drawHiding(renderer);	
 
 	}
 	
+	/** draw the hiding (closed surfaces) parts
+	 * @param renderer opengl context
+	 */
+	public void drawClosedSurfacesForHiding(Renderer renderer){
+
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
+			d.next().drawHiding(renderer);	
+
+	}
 	
 	/** draw objects to pick them
 	 * @param renderer opengl context

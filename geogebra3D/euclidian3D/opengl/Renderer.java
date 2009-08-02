@@ -251,7 +251,7 @@ public class Renderer implements GLEventListener {
 	 * <li> {@link Drawable3D#drawHidden(EuclidianRenderer3D)} to draw hidden parts (dashed segments, lines, ...) </li>
 	 * <li> {@link Drawable3D#drawHighlighting(EuclidianRenderer3D)} to show objects that are picked (highlighted) </li>
 	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to draw transparent objects (planes, spheres, ...) </li>
-	 * <li> {@link Drawable3D#drawHiding(EuclidianRenderer3D)} to draw in the z-buffer objects that hides others (planes, spheres, ...) </li>
+	 * <li> {@link Drawable3D#drawSurfacesForHiding(EuclidianRenderer3D)} to draw in the z-buffer objects that hides others (planes, spheres, ...) </li>
 	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to re-draw transparent objects for a better alpha-blending </li>
 	 * <li> {@link Drawable3D#draw(EuclidianRenderer3D)} to draw not hidden parts (dash-less segments, lines, ...) </li>
 	 * </ul>
@@ -328,31 +328,38 @@ public class Renderer implements GLEventListener {
         gl.glDepthMask(true);
         
 
+        
 
+        
+        
+        
+        
+        
+        
         //drawing transparents parts
+        gl.glDisable(GL.GL_CULL_FACE);
         gl.glDepthMask(false);
         drawList3D.drawTransp(this);
         gl.glDepthMask(true);
-        
-        
-        
+
         
         //drawing labels
+        gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_LIGHTING);
         drawList3D.drawLabel(this);
         gl.glEnable(GL.GL_LIGHTING);
-        
-        
-        
-        
-        
 
-
+        
         //drawing hiding parts
-        //gl.glClear(GL.GL_DEPTH_BUFFER_BIT); //clear depth buffer
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
-        drawList3D.drawHiding(this);	        
+        gl.glCullFace(GL.GL_FRONT); //draws inside parts    
+        drawList3D.drawClosedSurfacesForHiding(this); //closed surfaces back-faces
+        gl.glDisable(GL.GL_CULL_FACE);
+        drawList3D.drawSurfacesForHiding(this); //non closed surfaces
         gl.glColorMask(true,true,true,true);
+
+
+        
  
 
         //re-drawing transparents parts for better transparent effect
@@ -361,13 +368,29 @@ public class Renderer implements GLEventListener {
         drawList3D.drawTransp(this);
         gl.glDepthMask(true);
 
+        
+        //drawing hiding parts
+        gl.glColorMask(false,false,false,false); //no writing in color buffer		
+        gl.glCullFace(GL.GL_BACK); //draws inside parts
+        gl.glEnable(GL.GL_CULL_FACE);
+        drawList3D.drawClosedSurfacesForHiding(this); //closed surfaces front-faces
+        gl.glColorMask(true,true,true,true);
+        
+        
+        
+        
+        //re-drawing transparents parts for better transparent effect
+        //TODO improve it !
+        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glDepthMask(false);
+        drawList3D.drawTransp(this);
+        gl.glDepthMask(true);
 
         
 
-        //re-drawing the cursor
-        //view3D.drawCursor(this);
        
         //drawing not hidden parts
+        gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_BLEND);
         drawList3D.draw(this);
         gl.glEnable(GL.GL_BLEND);
@@ -376,13 +399,7 @@ public class Renderer implements GLEventListener {
         primitives.disableVBO(gl);
      
      
-         
-        //re-drawing labels
-        /*
-        gl.glDisable(GL.GL_LIGHTING);
-        drawList3D.drawLabel(this);
-        gl.glEnable(GL.GL_LIGHTING);
-        */
+        
 
         
         
@@ -1136,14 +1153,14 @@ public class Renderer implements GLEventListener {
     	
     	// the cross itself
     	gl.glColor3f(1.0f, 1.0f, 1.0f);
-    	startPolygon(true);   	    	
+    	startPolygon();   	    	
     	for (int i=0; i<cross.length; i++)
     		addToPolygon(cross[i][0], cross[i][1], thickness);
     	endPolygon();
     	
     	// the cross itself (back)
     	gl.glColor3f(1.0f, 1.0f, 1.0f);
-    	startPolygon(true);   	    	
+    	startPolygon();   	    	
     	for (int i=cross.length-1; i>=0; i--)
     		addToPolygon(cross[i][0], cross[i][1], -thickness);
     	endPolygon(); 
@@ -1152,7 +1169,7 @@ public class Renderer implements GLEventListener {
     	
     	// outline
     	gl.glColor3f(0.0f, 0.0f, 0.0f);
-    	startPolygon(true);   	    	
+    	startPolygon();   	    	
     	for (int i=0; i<cross.length; i++)
     		addToPolygon(cross[i][0], cross[i][1], thickness);
     	addToPolygon(cross[0][0], cross[0][1], thickness);
@@ -1164,7 +1181,7 @@ public class Renderer implements GLEventListener {
 
     	// outline (back)
     	gl.glColor3f(0.0f, 0.0f, 0.0f);
-    	startPolygon(true);   	    
+    	startPolygon();   	    
     	addToPolygon(cross[0][0], cross[0][1], -thickness);
     	for (int i=cross.length-1; i>=0; i--)
     		addToPolygon(cross[i][0], cross[i][1], -thickness); 
@@ -1177,19 +1194,19 @@ public class Renderer implements GLEventListener {
     	// edges
     	gl.glColor3f(0.0f, 0.0f, 0.0f);
     	for (int i=0; i<outlineCross.length-1; i++){
-    		startPolygon(true);
+    		startPolygon();
     		addToPolygon(outlineCross[i][0], outlineCross[i][1], thickness);
     		addToPolygon(outlineCross[i][0], outlineCross[i][1], -thickness);
     		addToPolygon(outlineCross[i+1][0], outlineCross[i+1][1], -thickness);
     		addToPolygon(outlineCross[i+1][0], outlineCross[i+1][1], thickness);  		
     		endPolygon();
     	}  	
-		startPolygon(true);
+		startPolygon();
 		addToPolygon(outlineCross[outlineCross.length-1][0], outlineCross[outlineCross.length-1][1], thickness);
 		addToPolygon(outlineCross[outlineCross.length-1][0], outlineCross[outlineCross.length-1][1], -thickness);
 		addToPolygon(outlineCross[0][0], outlineCross[0][1], -thickness);
 		addToPolygon(outlineCross[0][0], outlineCross[0][1], thickness);  		
-		endPolygon(true);
+		endPolygon();
     	
     	
 		resetMatrix();
@@ -1501,25 +1518,16 @@ public class Renderer implements GLEventListener {
     	startPolygon();
     }  
     
-    /**
-     * set the tesselator to start drawing a new polygon
-     */
-    private void startPolygon(){
-    	startPolygon(false);
-    }
+   
     
     
     /**
      * set the tesselator to start drawing a new polygon
      * @param cullFace says if the faces have to be culled
      */
-    private void startPolygon(boolean cullFace){
+    private void startPolygon(){
     	
-    	
-    	if(!cullFace)
-    		gl.glDisable(GL.GL_CULL_FACE);
-    	
-
+ 
     	
 	    RendererTesselCallBack tessCallback = new RendererTesselCallBack(gl, glu);
 
@@ -1566,27 +1574,19 @@ public class Renderer implements GLEventListener {
     }    
     
     
-    /**
-     * end of the current polygon
-     */
-    private void endPolygon(){
 
-    	endPolygon(false);
-    }
     
     /**
      * end of the current polygon
      * @param cullFace says if the faces have been culled
      */
-    private void endPolygon(boolean cullFace){
+    private void endPolygon(){
 	    glu.gluTessEndContour(tobj);
 	    glu.gluTessEndPolygon(tobj);
 	    
 	    glu.gluDeleteTess(tobj);
         
-	    if(!cullFace)
-	    	gl.glEnable(GL.GL_CULL_FACE);
- 
+	
     }
     
     /**
@@ -1776,7 +1776,7 @@ public class Renderer implements GLEventListener {
     	float dt = (float) 1/latitude;
     	float da = (float) (2*Math.PI *dt) ; 
     	
-    	startPolygon(true);
+    	startPolygon();
     	
     	
     	for( int i = 0; i < latitude ; i++ ) { 
@@ -1787,7 +1787,7 @@ public class Renderer implements GLEventListener {
     		
     	} 
     	
-    	endPolygon(true);
+    	endPolygon();
     	 
     }
     

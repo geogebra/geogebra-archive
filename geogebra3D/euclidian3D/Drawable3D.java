@@ -168,10 +168,12 @@ public abstract class Drawable3D {
 	public static final int DRAW_TYPE_POINTS = 0;
 	/** type for drawing lines, circles, etc. */
 	public static final int DRAW_TYPE_CURVES = 1;
-	/** type for drawing planes, polygons, quadrics, etc. */
+	/** type for drawing planes, polygons, etc. */
 	public static final int DRAW_TYPE_SURFACES = 2;
+	/** type for drawing polyhedrons, quadrics, etc. */
+	public static final int DRAW_TYPE_CLOSED_SURFACES = 3;
 	/** number max of drawing types */
-	public static final int DRAW_TYPE_MAX = 3;
+	public static final int DRAW_TYPE_MAX = 4;
 	
 	
 	

@@ -76,7 +76,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			}
 			faces[numPoints]=new int[numPoints];
 			for (int i=0; i<numPoints; i++)
-				faces[numPoints][i]=i;
+				faces[numPoints][i]=numPoints-i-1;
 			faces[numPoints+1]=new int[numPoints];
 			for (int i=0; i<numPoints; i++)
 				faces[numPoints+1][i]=numPoints+i;

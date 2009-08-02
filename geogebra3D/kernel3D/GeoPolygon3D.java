@@ -34,6 +34,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	/** image of the 3D points in the coord sys*/
 	private GeoPoint[] points2D;
 	
+	/** says if this is a part of a closed surface (e.g. a polyhedron) */
+	private boolean isPartOfClosedSurface = false;
+	
 	
 	private boolean createSegments = true;
 	
@@ -276,6 +279,29 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		alphaValue = alpha;
 
 	}
+	
+	
+	
+	
+	/** set if this is a part of a closed surface
+	 * @param v
+	 */
+	public void setIsPartOfClosedSurface(boolean v){
+		isPartOfClosedSurface = v;
+	}
+	
+	
+	
+	/** if this is a part of a closed surface
+	 * @return if this is a part of a closed surface
+	 */
+	public boolean isPartOfClosedSurface(){
+		return isPartOfClosedSurface;
+	}
+	
+	
+	
+	
 	
 	
 	

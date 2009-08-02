@@ -65,6 +65,12 @@ public class DrawPolygon3D extends Drawable3DSurfaces {
 	
 	
 
+	public int getType(){
+		if (((GeoPolygon3D) getGeoElement()).isPartOfClosedSurface())
+			return DRAW_TYPE_CLOSED_SURFACES;
+		else
+			return DRAW_TYPE_SURFACES;
+	}
 	
 	
 
