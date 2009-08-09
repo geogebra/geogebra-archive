@@ -100,6 +100,8 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Stack;
 
+import org.apache.commons.math.complex.Complex;
+
 
 public class Kernel {
 
@@ -5118,6 +5120,10 @@ public class Kernel {
 			return 0.0d;
 		else
 			return x;
+	}
+	
+	final public boolean isReal(Complex c) {
+		return isZero(c.getImaginary());
 	}
 
 	/** is abs(x) < epsilon ? */

@@ -27,13 +27,13 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.complex.Complex;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.LinkedHashMap;
 
+import org.apache.commons.math.complex.Complex;
 import org.xml.sax.SAXException;
 
 /**
@@ -329,7 +329,7 @@ debug("startElements", eName);
     				break;
     			}
     			for (coord = 0; coord < coords.length; coord++) {
-    				if (Complex.isNaN(coords[coord])) {
+        			if (coords[coord].isNaN()) {
     					break;
     				}
     			}
@@ -369,8 +369,8 @@ debug("textElements", str);
     		        		coords[coord] = new Complex(Double.parseDouble(str), 0);
     		        	} else if (Double.isNaN(coords[coord].getReal())) {
     		        		coords[coord] = new Complex(Double.parseDouble(str), Double.NaN);
-    		        	} else if (Double.isNaN(coords[coord].getImag())) {
-    		        		coords[coord].setImag(Double.parseDouble(str));
+    		        	} else if (Double.isNaN(coords[coord].getImaginary())) {
+    		        		coords[coord] = new Complex(coords[coord].getReal(),Double.parseDouble(str));
     		        	} else {
             				Application.debug("more than 2 <double> specified for <complex>");
     		        	}
@@ -400,7 +400,7 @@ debug("endElements", eName);
     			break;
     			
     		case MODE_COORDINATES :
-				if (Complex.isNaN(coords[coords.length - 1])) {
+				if (coords[coords.length - 1].isNaN()) {
         			String tag = "<double>";
         			if (cmdName.equals("homogeneous_coordinates")) {
         				tag = "<double> or <complex>";
@@ -409,12 +409,12 @@ debug("endElements", eName);
 				} else {
 			        GeoVec3D v = (GeoVec3D) geo;
 					if (coords.length == 3) {
-						if (!coords[2].isReal()) {
-							coords[0] = Complex.over(coords[0], coords[2], new Complex());
-							coords[1] = Complex.over(coords[1], coords[2], new Complex());
-							coords[2] = Complex.over(coords[2], coords[2], new Complex());
+						if (!kernel.isReal(coords[2])) {
+							coords[0] = coords[0].divide(coords[2]);
+							coords[1] = coords[1].divide(coords[2]);
+							coords[2] = coords[2].divide(coords[2]);
 						}
-			            if (coords[0].isReal() && coords[1].isReal() && coords[2].isReal()) {
+			            if (kernel.isReal(coords[0]) && kernel.isReal(coords[1]) && kernel.isReal(coords[2])) {
 							v.setCoords(coords[0].getReal(), coords[1].getReal(), coords[2].getReal());
 			            } else {
 			            	Application.debug("could not import complex coordinates");
@@ -437,12 +437,12 @@ debug("endElements", eName);
     			break;
     			
     		case MODE_COORDINATES_COMPLEX :
-				if (coord < coords.length && Complex.isNaN(coords[coord])) {
+				if (coord < coords.length && coords[coord].isNaN()) {
 					if (Double.isNaN(coords[coord].getReal())) {
-						coords[coord] = new Complex();
+						coords[coord] = new Complex(0, 0);
     					Application.debug("no <double> specified for <complex>");
-					} else if (Double.isNaN(coords[coord].getImag())) {
-						coords[coord].setImag(0);
+					} else if (Double.isNaN(coords[coord].getImaginary())) {
+						coords[coord] = new Complex(coords[coord].getReal(), 0);
     					Application.debug("only 1 <double> specified for <complex>");
 					}
 				}
