@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.jama.GgbMat;
+import geogebra.util.GgbMat;
 
 /**
  * Reverse a list. Adapted from AlgoSort

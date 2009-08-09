@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.jama.GgbMat;
+import geogebra.util.GgbMat;
 
 /**
  * Reverse a list. Adapted from AlgoSort
@@ -63,7 +63,7 @@ public class AlgoDeterminant extends AlgoElement {
 	   		return;   		
 	   	}
    		
-   		num.setValue(matrix.det());
+   		num.setValue(matrix.getDeterminant());
    		
    		// Determinant[{{1,2},{3,4}}]
     }
