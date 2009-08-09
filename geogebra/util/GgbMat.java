@@ -69,6 +69,7 @@ public class GgbMat extends RealMatrixImpl {
 		try {
 			RealMatrix ret = inverse();
 			data = ret.getData();
+			luDecompose();
 			//m = ret.m;
 			//n = ret.n;
 		}
@@ -92,6 +93,7 @@ public class GgbMat extends RealMatrixImpl {
 			}
 		}
 		data = C;
+		luDecompose();
 		//int temp = n;
 		//n = m;
 		//m = temp;
