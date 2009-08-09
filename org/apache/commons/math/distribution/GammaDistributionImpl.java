@@ -19,12 +19,13 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.special.Gamma;
 
 /**
  * The default implementation of {@link GammaDistribution}.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class GammaDistributionImpl extends AbstractContinuousDistribution
     implements GammaDistribution, Serializable  {
@@ -50,7 +51,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     }
     
     /**
-     * For this disbution, X, this method returns P(X &lt; x).
+     * For this distribution, X, this method returns P(X &lt; x).
      * 
      * The implementation of this method is based on:
      * <ul>
@@ -91,6 +92,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
      * @throws IllegalArgumentException if <code>p</code> is not a valid
      *         probability.
      */
+    @Override
     public double inverseCumulativeProbability(final double p) 
     throws MathException {
         if (p == 0) {
@@ -109,7 +111,9 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
      */
     public void setAlpha(double alpha) {
         if (alpha <= 0.0) {
-            throw new IllegalArgumentException("alpha must be positive");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "alpha must be positive ({0})",
+                  alpha);
         }
         this.alpha = alpha;
     }
@@ -129,7 +133,9 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
      */
     public void setBeta(double beta) {
         if (beta <= 0.0) {
-            throw new IllegalArgumentException("beta must be positive");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "beta must be positive ({0})",
+                  beta);
         }
         this.beta = beta;
     }
@@ -141,7 +147,18 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     public double getBeta() {
         return beta;
     }
-    
+
+    /**
+     * Return the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     */
+    public double density(Double x) {
+        if (x < 0) return 0;
+        return Math.pow(x / getBeta(), getAlpha() - 1) / getBeta() * Math.exp(-x / getBeta()) / Math.exp(Gamma.logGamma(getAlpha()));
+    }
+
     /**
      * Access the domain value lower bound, based on <code>p</code>, used to
      * bracket a CDF root.  This method is used by
@@ -151,6 +168,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code>
      */
+    @Override
     protected double getDomainLowerBound(double p) {
         // TODO: try to improve on this estimate
         return Double.MIN_VALUE;
@@ -165,6 +183,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
      * @return domain value upper bound, i.e.
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
      */
+    @Override
     protected double getDomainUpperBound(double p) {
         // TODO: try to improve on this estimate
         // NOTE: gamma is skewed to the left
@@ -191,6 +210,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
      * @param p the desired probability for the critical value
      * @return initial domain value
      */
+    @Override
     protected double getInitialDomain(double p) {
         // TODO: try to improve on this estimate
         // Gamma is skewed to the left, therefore, P(X < &mu;) > .5

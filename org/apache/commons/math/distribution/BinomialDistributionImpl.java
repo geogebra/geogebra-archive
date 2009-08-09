@@ -19,13 +19,14 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.special.Beta;
 import org.apache.commons.math.util.MathUtils;
 
 /**
  * The default implementation of {@link BinomialDistribution}.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class BinomialDistributionImpl
     extends AbstractIntegerDistribution
@@ -76,7 +77,8 @@ public class BinomialDistributionImpl
      */
     public void setNumberOfTrials(int trials) {
         if (trials < 0) {
-            throw new IllegalArgumentException("number of trials must be non-negative.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "number of trials must be non-negative ({0})", trials);
         }
         numberOfTrials = trials;
     }
@@ -89,7 +91,8 @@ public class BinomialDistributionImpl
      */
     public void setProbabilityOfSuccess(double p) {
         if (p < 0.0 || p > 1.0) {
-            throw new IllegalArgumentException("probability of success must be between 0.0 and 1.0, inclusive.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
         }
         probabilityOfSuccess = p;
     }
@@ -102,6 +105,7 @@ public class BinomialDistributionImpl
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
      */
+    @Override
     protected int getDomainLowerBound(double p) {
         return -1;
     }
@@ -114,6 +118,7 @@ public class BinomialDistributionImpl
      * @return domain value upper bound, i.e.
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
      */
+    @Override
     protected int getDomainUpperBound(double p) {
         return getNumberOfTrials();
     }
@@ -125,6 +130,7 @@ public class BinomialDistributionImpl
      * @throws MathException if the cumulative probability can not be
      *            computed due to convergence or other numerical errors.
      */
+    @Override
     public double cumulativeProbability(int x) throws MathException {
         double ret;
         if (x < 0) {
@@ -142,7 +148,7 @@ public class BinomialDistributionImpl
     }
 
     /**
-     * For this disbution, X, this method returns P(X = x).
+     * For this distribution, X, this method returns P(X = x).
      * 
      * @param x the value at which the PMF is evaluated.
      * @return PMF for this distribution. 
@@ -174,6 +180,7 @@ public class BinomialDistributionImpl
      *            computed due to convergence or other numerical errors.
      * @throws IllegalArgumentException if p < 0 or p > 1
      */
+    @Override
     public int inverseCumulativeProbability(final double p) throws MathException {
         // handle extreme values explicitly
         if (p == 0) {

@@ -20,7 +20,7 @@ package org.apache.commons.math;
  * Error thrown when two dimensions differ.
  * 
  * @since 1.2
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  */
 public class DimensionMismatchException extends MathException {
     
@@ -33,10 +33,7 @@ public class DimensionMismatchException extends MathException {
      * @param dimension2 second dimension
      */
     public DimensionMismatchException(int dimension1, int dimension2) {
-        super("dimension mismatch {0} != {1}",
-              new Object[] {
-                new Integer(dimension1), new Integer(dimension2)
-              });
+        super("dimension mismatch {0} != {1}", dimension1, dimension2);
         this.dimension1 = dimension1;
         this.dimension2 = dimension2;
     }

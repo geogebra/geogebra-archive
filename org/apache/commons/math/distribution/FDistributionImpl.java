@@ -19,13 +19,14 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.special.Beta;
 
 /**
  * Default implementation of
  * {@link org.apache.commons.math.distribution.FDistribution}.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class FDistributionImpl
     extends AbstractContinuousDistribution
@@ -95,6 +96,7 @@ public class FDistributionImpl
      * @throws IllegalArgumentException if <code>p</code> is not a valid
      *         probability.
      */
+    @Override
     public double inverseCumulativeProbability(final double p) 
         throws MathException {
         if (p == 0) {
@@ -115,6 +117,7 @@ public class FDistributionImpl
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
      */
+    @Override
     protected double getDomainLowerBound(double p) {
         return 0.0;
     }
@@ -128,6 +131,7 @@ public class FDistributionImpl
      * @return domain value upper bound, i.e.
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
      */
+    @Override
     protected double getDomainUpperBound(double p) {
         return Double.MAX_VALUE;
     }
@@ -140,9 +144,15 @@ public class FDistributionImpl
      * @param p the desired probability for the critical value
      * @return initial domain value
      */
+    @Override
     protected double getInitialDomain(double p) {
-        return getDenominatorDegreesOfFreedom() /
-            (getDenominatorDegreesOfFreedom() - 2.0);
+        double ret = 1.0;
+        double d = getDenominatorDegreesOfFreedom();
+        if (d > 2.0) {
+            // use mean
+            ret = d / (d - 2.0);
+        }
+        return ret;
     }
     
     /**
@@ -153,8 +163,9 @@ public class FDistributionImpl
      */
     public void setNumeratorDegreesOfFreedom(double degreesOfFreedom) {
         if (degreesOfFreedom <= 0.0) {
-            throw new IllegalArgumentException(
-                "degrees of freedom must be positive.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "degrees of freedom must be positive ({0})",
+                  degreesOfFreedom);
         }
         this.numeratorDegreesOfFreedom = degreesOfFreedom;
     }
@@ -175,8 +186,9 @@ public class FDistributionImpl
      */
     public void setDenominatorDegreesOfFreedom(double degreesOfFreedom) {
         if (degreesOfFreedom <= 0.0) {
-            throw new IllegalArgumentException(
-                "degrees of freedom must be positive.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "degrees of freedom must be positive ({0})",
+                  degreesOfFreedom);
         }
         this.denominatorDegreesOfFreedom = degreesOfFreedom;
     }

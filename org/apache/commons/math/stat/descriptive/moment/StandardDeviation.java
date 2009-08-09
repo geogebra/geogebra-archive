@@ -35,7 +35,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
 public class StandardDeviation extends AbstractStorelessUnivariateStatistic
     implements Serializable {
@@ -61,6 +61,16 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      */
     public StandardDeviation(final SecondMoment m2) {
         variance = new Variance(m2);
+    }
+    
+    /**
+     * Copy constructor, creates a new {@code StandardDeviation} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code StandardDeviation} instance to copy
+     */
+    public StandardDeviation(StandardDeviation original) {
+        copy(original, this);
     }
     
     /**
@@ -93,29 +103,32 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * {@inheritDoc}
      */
+    @Override
     public void increment(final double d) {
         variance.increment(d);
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return variance.getN();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         return Math.sqrt(variance.getResult());
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         variance.clear();
     }
@@ -134,6 +147,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      * @return the standard deviation of the values or Double.NaN if length = 0
      * @throws IllegalArgumentException if the array is null
      */  
+    @Override
     public double evaluate(final double[] values)  {
         return Math.sqrt(variance.evaluate(values));
     }
@@ -156,6 +170,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      * @throws IllegalArgumentException if the array is null or the array index
      *  parameters are not valid
      */
+    @Override
     public double evaluate(final double[] values, final int begin, final int length)  {
        return Math.sqrt(variance.evaluate(values, begin, length));
     }
@@ -227,4 +242,28 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
     public void setBiasCorrected(boolean isBiasCorrected) {
         variance.setBiasCorrected(isBiasCorrected);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StandardDeviation copy() {
+        StandardDeviation result = new StandardDeviation();
+        copy(this, result);
+        return result;
+    }
+    
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source StandardDeviation to copy
+     * @param dest StandardDeviation to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(StandardDeviation source, StandardDeviation dest) {
+        dest.variance = source.variance.copy();
+    }
+    
 }

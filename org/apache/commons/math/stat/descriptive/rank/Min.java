@@ -35,7 +35,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:19 $
  */
 public class Min extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -57,8 +57,19 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * Copy constructor, creates a new {@code Min} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code Min} instance to copy
      */
+    public Min(Min original) {
+        copy(original, this);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void increment(final double d) {
         if (d < value || Double.isNaN(value)) {
             value = d;
@@ -67,22 +78,24 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         value = Double.NaN;
         n = 0;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         return value;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return n;
@@ -110,6 +123,7 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
      * @throws IllegalArgumentException if the array is null or the array index
      *  parameters are not valid
      */
+    @Override
     public double evaluate(final double[] values,final int begin, final int length) {
         double min = Double.NaN;
         if (test(values, begin, length)) {
@@ -121,5 +135,28 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
             }
         }
         return min;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Min copy() {
+        Min result = new Min();
+        copy(this, result);
+        return result;
+    }
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source Min to copy
+     * @param dest Min to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(Min source, Min dest) {
+        dest.n = source.n;
+        dest.value = source.value;
     }
 }

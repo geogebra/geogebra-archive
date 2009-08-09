@@ -18,9 +18,8 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
-import org.apache.commons.math.distribution.DistributionFactory;
 import org.apache.commons.math.distribution.NormalDistribution;
-import org.apache.commons.math.distribution.TDistribution;
+import org.apache.commons.math.distribution.NormalDistributionImpl;
 
 /**
  * 
@@ -33,7 +32,6 @@ public class AlgoNormal extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private NumberValue a, b, c; //input
     private GeoNumeric num; //output	
-    private DistributionFactory factory = app.getDistributionFactory();
     private NormalDistribution normal = null;
     
     public AlgoNormal(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c) {
@@ -91,7 +89,7 @@ public class AlgoNormal extends AlgoElement {
     @SuppressWarnings("deprecation")
 	NormalDistribution getDistribution(double param, double param2) {
     	if (normal == null) 
-    		normal = factory.createNormalDistribution();
+    		normal = new NormalDistributionImpl();
     	
     		normal.setMean(param);
     		normal.setStandardDeviation(param2);

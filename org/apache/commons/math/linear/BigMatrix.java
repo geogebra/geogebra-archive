@@ -26,9 +26,12 @@ import java.math.BigDecimal;
  * Matrix element indexing is 0-based -- e.g., <code>getEntry(0, 0)</code>
  * returns the element in the first row, first column of the matrix.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @deprecated as of 2.0, replaced by {@link FieldMatrix} with a {@link
+ * org.apache.commons.math.util.BigReal} parameter
  */
-public interface BigMatrix {
+@Deprecated
+public interface BigMatrix extends AnyMatrix {
 
     /**
      * Returns a (deep) copy of this.
@@ -274,32 +277,6 @@ public interface BigMatrix {
       *    matrix is not square
      */
     BigDecimal getDeterminant() throws InvalidMatrixException;
-    
-    /**
-     * Is this a square matrix?
-     * @return true if the matrix is square (rowDimension = columnDimension)
-     */
-    boolean isSquare();
-    
-    /**
-     * Is this a singular matrix?
-     * @return true if the matrix is singular
-     */
-    boolean isSingular();
-    
-    /**
-     * Returns the number of rows in the matrix.
-     *
-     * @return rowDimension
-     */
-    int getRowDimension();
-    
-    /**
-     * Returns the number of columns in the matrix.
-     *
-     * @return columnDimension
-     */
-    int getColumnDimension();
     
     /**
      * Returns the <a href="http://mathworld.wolfram.com/MatrixTrace.html">

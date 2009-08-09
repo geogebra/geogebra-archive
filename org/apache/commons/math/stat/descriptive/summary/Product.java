@@ -31,7 +31,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
  */
 public class Product extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -55,8 +55,19 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * Copy constructor, creates a new {@code Product} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code Product} instance to copy
      */
+    public Product(Product original) {
+        copy(original, this);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void increment(final double d) {
         if (n == 0) {
             value = d;
@@ -67,22 +78,24 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         return value;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return n;
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         value = Double.NaN;
         n = 0;
@@ -102,6 +115,7 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
      * @throws IllegalArgumentException if the array is null or the array index
      *  parameters are not valid
      */
+    @Override
     public double evaluate(final double[] values, final int begin, final int length) {
         double product = Double.NaN;
         if (test(values, begin, length)) {
@@ -111,6 +125,29 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
             }
         }
         return product;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Product copy() {
+        Product result = new Product();
+        copy(this, result);
+        return result;
+    }
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source Product to copy
+     * @param dest Product to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(Product source, Product dest) {
+        dest.n = source.n;
+        dest.value = source.value;
     }
 
 }

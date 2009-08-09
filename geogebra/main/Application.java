@@ -97,8 +97,6 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.FontUIResource;
 
-import org.apache.commons.math.distribution.DistributionFactory;
-
 public abstract class Application implements KeyEventDispatcher {
 	// disabled parts
 	public static final boolean DISABLE_I2G = true;
@@ -3477,15 +3475,6 @@ public abstract class Application implements KeyEventDispatcher {
 			             (image, new Point(0, 0), "invisibleCursor");
 		}
 		return transparentCursor;
-	}
-	
-	static private DistributionFactory factory = null;
-	
-	public static DistributionFactory getDistributionFactory() {
-		if (factory == null)
-			factory = DistributionFactory.newInstance();
-		
-		return factory;
 	}
 	
 

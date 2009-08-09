@@ -23,7 +23,7 @@ import org.apache.commons.math.ConvergenceException;
  * Error thrown when a double value cannot be converted to a fraction
  * in the allowed number of iterations.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  * @since 1.2
  */
 public class FractionConversionException extends ConvergenceException {
@@ -38,8 +38,7 @@ public class FractionConversionException extends ConvergenceException {
      * @param maxIterations maximal number of iterations allowed
      */
     public FractionConversionException(double value, int maxIterations) {
-        super("Unable to convert {0} to fraction after {1} iterations",
-              new Object[] { new Double(value), new Integer(maxIterations) });
+        super("Unable to convert {0} to fraction after {1} iterations", value, maxIterations);
     }
 
     /**
@@ -50,8 +49,7 @@ public class FractionConversionException extends ConvergenceException {
      * @param q current denominator
      */
     public FractionConversionException(double value, long p, long q) {
-        super("Overflow trying to convert {0} to fraction ({1}/{2})",
-              new Object[] { new Double(value), new Long(p), new Long(q) });
+        super("Overflow trying to convert {0} to fraction ({1}/{2})", value, p, q);
     }
 
 }

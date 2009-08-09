@@ -19,6 +19,7 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 
 
 /**
@@ -26,7 +27,7 @@ import org.apache.commons.math.MathException;
  * implementations are provided for some of the methods that do not vary
  * from distribution to distribution.
  *  
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public abstract class AbstractIntegerDistribution extends AbstractDistribution
     implements IntegerDistribution, Serializable {
@@ -73,11 +74,13 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
      * computed due to convergence or other numerical errors.
      * @throws IllegalArgumentException if <code>x0 > x1</code>
      */
+    @Override
     public double cumulativeProbability(double x0, double x1)
         throws MathException {
         if (x0 > x1) {
-            throw new IllegalArgumentException
-            ("lower endpoint must be less than or equal to upper endpoint");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})",
+                  x0, x1);
         }
         if (Math.floor(x0) < x0) {
             return cumulativeProbability(((int) Math.floor(x0)) + 1,
@@ -133,8 +136,9 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
      */
     public double cumulativeProbability(int x0, int x1) throws MathException {
         if (x0 > x1) {
-            throw new IllegalArgumentException
-                ("lower endpoint must be less than or equal to upper endpoint");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})",
+                  x0, x1);
         }
         return cumulativeProbability(x1) - cumulativeProbability(x0 - 1);
     }
@@ -152,8 +156,8 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
      */
     public int inverseCumulativeProbability(final double p) throws MathException{
         if (p < 0.0 || p > 1.0) {
-            throw new IllegalArgumentException(
-                "p must be between 0 and 1.0 (inclusive)");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
         }
         
         // by default, do simple bisection.

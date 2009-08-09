@@ -16,10 +16,10 @@
  */
 package org.apache.commons.math.transform;
 
-import java.io.Serializable;
 import org.apache.commons.math.analysis.*;
 import org.apache.commons.math.complex.*;
-import org.apache.commons.math.MathException;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.MathRuntimeException;
 
 /**
  * Implements the <a href="http://documents.wolfram.com/v5/Add-onsLinks/
@@ -33,14 +33,12 @@ import org.apache.commons.math.MathException;
  * Similar to FFT, we also require the length of data set to be power of 2.
  * In addition, the first element must be 0 and it's enforced in function
  * transformation after sampling.</p>
- *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * <p>As of version 2.0 this no longer implements Serializable</p>
+ * 
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:22 $
  * @since 1.2
  */
-public class FastSineTransformer implements Serializable {
-
-    /** serializable version identifier */
-    static final long serialVersionUID = -478002039949390854L;
+public class FastSineTransformer implements RealTransformer {
 
     /**
      * Construct a default transformer.
@@ -52,24 +50,22 @@ public class FastSineTransformer implements Serializable {
     /**
      * Transform the given real data set.
      * <p>
-     * The formula is $ F_n = \Sigma_{k=0}^{N-1} f_k \sin(\pi nk/N) $
+     * The formula is F<sub>n</sub> = &sum;<sub>k=0</sub><sup>N-1</sup> f<sub>k</sub> sin(&pi; nk/N)
      * </p>
      * 
      * @param f the real data array to be transformed
      * @return the real transformed array
-     * @throws MathException if any math-related errors occur
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    public double[] transform(double f[]) throws MathException,
-        IllegalArgumentException {
-
+    public double[] transform(double f[])
+        throws IllegalArgumentException {
         return fst(f);
     }
 
     /**
      * Transform the given real function, sampled on the given interval.
      * <p>
-     * The formula is $ F_n = \Sigma_{k=0}^{N-1} f_k \sin(\pi nk/N) $
+     * The formula is F<sub>n</sub> = &sum;<sub>k=0</sub><sup>N-1</sup> f<sub>k</sub> sin(&pi; nk/N)
      * </p>
      * 
      * @param f the function to be sampled and transformed
@@ -77,12 +73,13 @@ public class FastSineTransformer implements Serializable {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real transformed array
-     * @throws MathException if any math-related errors occur
+     * @throws FunctionEvaluationException if function cannot be evaluated
+     * at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    public double[] transform(
-        UnivariateRealFunction f, double min, double max, int n)
-        throws MathException, IllegalArgumentException {
+    public double[] transform(UnivariateRealFunction f,
+                              double min, double max, int n)
+        throws FunctionEvaluationException, IllegalArgumentException {
 
         double data[] = FastFourierTransformer.sample(f, min, max, n);
         data[0] = 0.0;
@@ -92,16 +89,14 @@ public class FastSineTransformer implements Serializable {
     /**
      * Transform the given real data set.
      * <p>
-     * The formula is $ F_n = \sqrt{2/N} \Sigma_{k=0}^{N-1} f_k \sin(\pi nk/N) $
+     * The formula is F<sub>n</sub> = &radic;(2/N) &sum;<sub>k=0</sub><sup>N-1</sup> f<sub>k</sub> sin(&pi; nk/N)
      * </p>
      * 
      * @param f the real data array to be transformed
      * @return the real transformed array
-     * @throws MathException if any math-related errors occur
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    public double[] transform2(double f[]) throws MathException,
-        IllegalArgumentException {
+    public double[] transform2(double f[]) throws IllegalArgumentException {
 
         double scaling_coefficient = Math.sqrt(2.0 / f.length);
         return FastFourierTransformer.scaleArray(fst(f), scaling_coefficient);
@@ -110,7 +105,7 @@ public class FastSineTransformer implements Serializable {
     /**
      * Transform the given real function, sampled on the given interval.
      * <p>
-     * The formula is $ F_n = \sqrt{2/N} \Sigma_{k=0}^{N-1} f_k \sin(\pi nk/N) $
+     * The formula is F<sub>n</sub> = &radic;(2/N) &sum;<sub>k=0</sub><sup>N-1</sup> f<sub>k</sub> sin(&pi; nk/N)
      * </p>
      * 
      * @param f the function to be sampled and transformed
@@ -118,12 +113,13 @@ public class FastSineTransformer implements Serializable {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real transformed array
-     * @throws MathException if any math-related errors occur
+     * @throws FunctionEvaluationException if function cannot be evaluated
+     * at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double[] transform2(
         UnivariateRealFunction f, double min, double max, int n)
-        throws MathException, IllegalArgumentException {
+        throws FunctionEvaluationException, IllegalArgumentException {
 
         double data[] = FastFourierTransformer.sample(f, min, max, n);
         data[0] = 0.0;
@@ -134,16 +130,14 @@ public class FastSineTransformer implements Serializable {
     /**
      * Inversely transform the given real data set.
      * <p>
-     * The formula is $ f_k = (2/N) \Sigma_{n=0}^{N-1} F_n \sin(\pi nk/N) $
+     * The formula is f<sub>k</sub> = (2/N) &sum;<sub>n=0</sub><sup>N-1</sup> F<sub>n</sub> sin(&pi; nk/N)
      * </p>
      * 
      * @param f the real data array to be inversely transformed
      * @return the real inversely transformed array
-     * @throws MathException if any math-related errors occur
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    public double[] inversetransform(double f[]) throws MathException,
-        IllegalArgumentException {
+    public double[] inversetransform(double f[]) throws IllegalArgumentException {
 
         double scaling_coefficient = 2.0 / f.length;
         return FastFourierTransformer.scaleArray(fst(f), scaling_coefficient);
@@ -152,7 +146,7 @@ public class FastSineTransformer implements Serializable {
     /**
      * Inversely transform the given real function, sampled on the given interval.
      * <p>
-     * The formula is $ f_k = (2/N) \Sigma_{n=0}^{N-1} F_n \sin(\pi nk/N) $
+     * The formula is f<sub>k</sub> = (2/N) &sum;<sub>n=0</sub><sup>N-1</sup> F<sub>n</sub> sin(&pi; nk/N)
      * </p>
      * 
      * @param f the function to be sampled and inversely transformed
@@ -160,12 +154,12 @@ public class FastSineTransformer implements Serializable {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws MathException if any math-related errors occur
+     * @throws FunctionEvaluationException if function cannot be evaluated
+     * at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    public double[] inversetransform(
-        UnivariateRealFunction f, double min, double max, int n)
-        throws MathException, IllegalArgumentException {
+    public double[] inversetransform(UnivariateRealFunction f, double min, double max, int n)
+        throws FunctionEvaluationException, IllegalArgumentException {
 
         double data[] = FastFourierTransformer.sample(f, min, max, n);
         data[0] = 0.0;
@@ -176,16 +170,14 @@ public class FastSineTransformer implements Serializable {
     /**
      * Inversely transform the given real data set.
      * <p>
-     * The formula is $ f_k = \sqrt{2/N} \Sigma_{n=0}^{N-1} F_n \sin(\pi nk/N) $
+     * The formula is f<sub>k</sub> = &radic;(2/N) &sum;<sub>n=0</sub><sup>N-1</sup> F<sub>n</sub> sin(&pi; nk/N)
      * </p>
      * 
      * @param f the real data array to be inversely transformed
      * @return the real inversely transformed array
-     * @throws MathException if any math-related errors occur
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    public double[] inversetransform2(double f[]) throws MathException,
-        IllegalArgumentException {
+    public double[] inversetransform2(double f[]) throws IllegalArgumentException {
 
         return transform2(f);
     }
@@ -193,7 +185,7 @@ public class FastSineTransformer implements Serializable {
     /**
      * Inversely transform the given real function, sampled on the given interval.
      * <p>
-     * The formula is $ f_k = \sqrt{2/N} \Sigma_{n=0}^{N-1} F_n \sin(\pi nk/N) $
+     * The formula is f<sub>k</sub> = &radic;(2/N) &sum;<sub>n=0</sub><sup>N-1</sup> F<sub>n</sub> sin(&pi; nk/N)
      * </p>
      * 
      * @param f the function to be sampled and inversely transformed
@@ -201,12 +193,12 @@ public class FastSineTransformer implements Serializable {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws MathException if any math-related errors occur
+     * @throws FunctionEvaluationException if function cannot be evaluated
+     * at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    public double[] inversetransform2(
-        UnivariateRealFunction f, double min, double max, int n)
-        throws MathException, IllegalArgumentException {
+    public double[] inversetransform2(UnivariateRealFunction f, double min, double max, int n)
+        throws FunctionEvaluationException, IllegalArgumentException {
 
         return transform2(f, min, max, n);
     }
@@ -216,18 +208,17 @@ public class FastSineTransformer implements Serializable {
      *
      * @param f the real data array to be transformed
      * @return the real transformed array
-     * @throws MathException if any math-related errors occur
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    protected double[] fst(double f[]) throws MathException,
-        IllegalArgumentException {
+    protected double[] fst(double f[]) throws IllegalArgumentException {
 
         double A, B, x[], F[] = new double[f.length];
 
         FastFourierTransformer.verifyDataSet(f);
         if (f[0] != 0.0) {
-            throw new IllegalArgumentException
-                ("The first element is not zero: " + f[0]);
+            throw MathRuntimeException.createIllegalArgumentException(
+                    "first element is not 0: {0}",
+                    f[0]);
         }
         int N = f.length;
         if (N == 1) {       // trivial case

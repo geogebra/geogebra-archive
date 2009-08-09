@@ -20,6 +20,7 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.special.Erf;
 
@@ -27,7 +28,7 @@ import org.apache.commons.math.special.Erf;
  * Default implementation of
  * {@link org.apache.commons.math.distribution.NormalDistribution}.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class NormalDistributionImpl extends AbstractContinuousDistribution 
         implements NormalDistribution, Serializable {
@@ -35,12 +36,15 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
     /** Serializable version identifier */
     private static final long serialVersionUID = 8589540077390120676L;
 
+    /** &sqrt;(2 &pi;) */
+    private static final double SQRT2PI = Math.sqrt(2 * Math.PI);
+
     /** The mean of this distribution. */
     private double mean = 0;
     
     /** The standard deviation of this distribution. */
     private double standardDeviation = 1;
-    
+
     /**
      * Create a normal distribution using the given mean and standard deviation.
      * @param mean mean for this distribution
@@ -91,14 +95,26 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      */
     public void setStandardDeviation(double sd) {
         if (sd <= 0.0) {
-            throw new IllegalArgumentException(
-                "Standard deviation must be positive.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "standard deviation must be positive ({0})",
+                  sd);
         }       
         standardDeviation = sd;
     }
 
     /**
-     * For this disbution, X, this method returns P(X &lt; <code>x</code>).
+     * Return the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     */
+    public double density(Double x) {
+        double x0 = x - getMean();
+        return Math.exp(-x0 * x0 / (2 * getStandardDeviation() * getStandardDeviation())) / (getStandardDeviation() * SQRT2PI);
+    }
+
+    /**
+     * For this distribution, X, this method returns P(X &lt; <code>x</code>).
      * @param x the value at which the CDF is evaluated.
      * @return CDF evaluted at <code>x</code>. 
      * @throws MathException if the algorithm fails to converge; unless
@@ -134,6 +150,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      * @throws IllegalArgumentException if <code>p</code> is not a valid
      *         probability.
      */
+    @Override
     public double inverseCumulativeProbability(final double p) 
     throws MathException {
         if (p == 0) {
@@ -154,6 +171,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
      */
+    @Override
     protected double getDomainLowerBound(double p) {
         double ret;
 
@@ -175,6 +193,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      * @return domain value upper bound, i.e.
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
      */
+    @Override
     protected double getDomainUpperBound(double p) {
         double ret;
 
@@ -195,6 +214,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      * @param p the desired probability for the critical value
      * @return initial domain value
      */
+    @Override
     protected double getInitialDomain(double p) {
         double ret;
 

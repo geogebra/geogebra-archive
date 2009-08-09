@@ -20,13 +20,13 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.math.DimensionMismatchException;
+import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealMatrixImpl;
 
 /**
  * Returns the covariance matrix of the available vectors.
  * @since 1.2
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
 public class VectorialCovariance implements Serializable {
 
@@ -45,7 +45,7 @@ public class VectorialCovariance implements Serializable {
     /** Number of vectors in the sample. */
     private long n;
 
-    /** Constructs a VectorialMean.
+    /** Constructs a VectorialCovariance.
      * @param dimension vectors dimension
      * @param isBiasCorrected if true, computed the unbiased sample covariance,
      * otherwise computes the biased population covariance
@@ -83,17 +83,16 @@ public class VectorialCovariance implements Serializable {
     public RealMatrix getResult() {
 
         int dimension = sums.length;
-        RealMatrixImpl result = new RealMatrixImpl(dimension, dimension);
+        RealMatrix result = MatrixUtils.createRealMatrix(dimension, dimension);
 
         if (n > 1) {
-            double[][] resultData = result.getDataRef();
             double c = 1.0 / (n * (isBiasCorrected ? (n - 1) : n));
             int k = 0;
             for (int i = 0; i < dimension; ++i) {
                 for (int j = 0; j <= i; ++j) {
                     double e = c * (n * productsSums[k++] - sums[i] * sums[j]);
-                    resultData[i][j] = e;
-                    resultData[j][i] = e;
+                    result.setEntry(i, j, e);
+                    result.setEntry(j, i, e);
                 }
             }
         }
@@ -117,6 +116,39 @@ public class VectorialCovariance implements Serializable {
         n = 0;
         Arrays.fill(sums, 0.0);
         Arrays.fill(productsSums, 0.0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (isBiasCorrected ? 1231 : 1237);
+        result = prime * result + (int) (n ^ (n >>> 32));
+        result = prime * result + Arrays.hashCode(productsSums);
+        result = prime * result + Arrays.hashCode(sums);
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof VectorialCovariance))
+            return false;
+        VectorialCovariance other = (VectorialCovariance) obj;
+        if (isBiasCorrected != other.isBiasCorrected)
+            return false;
+        if (n != other.n)
+            return false;
+        if (!Arrays.equals(productsSums, other.productsSums))
+            return false;
+        if (!Arrays.equals(sums, other.sums))
+            return false;
+        return true;
     }
 
 }

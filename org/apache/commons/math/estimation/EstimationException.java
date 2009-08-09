@@ -22,11 +22,13 @@ import org.apache.commons.math.MathException;
 /** 
  * This class represents exceptions thrown by the estimation solvers.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
+ * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
+ * been deprecated and replaced by package org.apache.commons.math.optimization.general
  *
  */
-
+@Deprecated
 public class EstimationException
 extends MathException {
 
@@ -39,7 +41,7 @@ extends MathException {
      * @param specifier format specifier (to be translated)
      * @param parts to insert in the format (no translation)
      */
-    public EstimationException(String specifier, Object[] parts) {
+    public EstimationException(String specifier, Object ... parts) {
         super(specifier, parts);
     }
 

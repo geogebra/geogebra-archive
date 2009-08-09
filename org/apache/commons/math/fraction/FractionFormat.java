@@ -17,15 +17,14 @@
 
 package org.apache.commons.math.fraction;
 
-import java.io.Serializable;
 import java.text.FieldPosition;
-import java.text.Format;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.Locale;
 
 import org.apache.commons.math.ConvergenceException;
+import org.apache.commons.math.MathRuntimeException;
 
 /**
  * Formats a Fraction number in proper format or improper format.  The number
@@ -33,25 +32,18 @@ import org.apache.commons.math.ConvergenceException;
  * configured.
  *
  * @since 1.1
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
-public class FractionFormat extends Format implements Serializable {
+public class FractionFormat extends AbstractFormat {
     
     /** Serializable version identifier */
-    private static final long serialVersionUID = -6337346779577272306L;
+    private static final long serialVersionUID = 3008655719530972611L;
 
-    /** The format used for the denominator. */
-    private NumberFormat denominatorFormat;
-
-    /** The format used for the numerator. */
-    private NumberFormat numeratorFormat;
-    
     /**
      * Create an improper formatting instance with the default number format
      * for the numerator and denominator.  
      */
     public FractionFormat() {
-        this(getDefaultNumberFormat());
     }
 
     /**
@@ -59,8 +51,8 @@ public class FractionFormat extends Format implements Serializable {
      * both the numerator and denominator.
      * @param format the custom format for both the numerator and denominator.
      */
-    public FractionFormat(NumberFormat format) {
-        this(format, (NumberFormat)format.clone());
+    public FractionFormat(final NumberFormat format) {
+        super(format);
     }
 
     /**
@@ -69,12 +61,18 @@ public class FractionFormat extends Format implements Serializable {
      * @param numeratorFormat the custom format for the numerator.
      * @param denominatorFormat the custom format for the denominator.
      */
-    public FractionFormat(NumberFormat numeratorFormat,
-            NumberFormat denominatorFormat)
-    {
-        super();
-        this.numeratorFormat = numeratorFormat;
-        this.denominatorFormat = denominatorFormat;
+    public FractionFormat(final NumberFormat numeratorFormat,
+                          final NumberFormat denominatorFormat) {
+        super(numeratorFormat, denominatorFormat);
+    }
+
+    /**
+     * Get the set of locales for which complex formats are available.  This
+     * is the same set as the {@link NumberFormat} set. 
+     * @return available complex format locales.
+     */
+    public static Locale[] getAvailableLocales() {
+        return NumberFormat.getAvailableLocales();
     }
 
     /**
@@ -86,15 +84,6 @@ public class FractionFormat extends Format implements Serializable {
      */
     public static String formatFraction(Fraction f) {
         return getImproperInstance().format(f);
-    }
-    
-    /**
-     * Get the set of locales for which complex formats are available.  This
-     * is the same set as the {@link NumberFormat} set. 
-     * @return available complex format locales.
-     */
-    public static Locale[] getAvailableLocales() {
-        return NumberFormat.getAvailableLocales();
     }
     
     /**
@@ -110,9 +99,8 @@ public class FractionFormat extends Format implements Serializable {
      * @param locale the specific locale used by the format.
      * @return the complex format specific to the given locale.
      */
-    public static FractionFormat getImproperInstance(Locale locale) {
-        NumberFormat f = getDefaultNumberFormat(locale);
-        return new FractionFormat(f);
+    public static FractionFormat getImproperInstance(final Locale locale) {
+        return new FractionFormat(getDefaultNumberFormat(locale));
     }
     
     /**
@@ -128,9 +116,8 @@ public class FractionFormat extends Format implements Serializable {
      * @param locale the specific locale used by the format.
      * @return the complex format specific to the given locale.
      */
-    public static FractionFormat getProperInstance(Locale locale) {
-        NumberFormat f = getDefaultNumberFormat(locale);
-        return new ProperFractionFormat(f);
+    public static FractionFormat getProperInstance(final Locale locale) {
+        return new ProperFractionFormat(getDefaultNumberFormat(locale));
     }
     
     /**
@@ -144,20 +131,6 @@ public class FractionFormat extends Format implements Serializable {
     }
     
     /**
-     * Create a default number format.  The default number format is based on
-     * {@link NumberFormat#getNumberInstance(java.util.Locale)} with the only
-     * customizing is the maximum number of fraction digits, which is set to 0.  
-     * @param locale the specific locale used by the format.
-     * @return the default number format specific to the given locale.
-     */
-    private static NumberFormat getDefaultNumberFormat(Locale locale) {
-        NumberFormat nf = NumberFormat.getNumberInstance(locale);
-        nf.setMaximumFractionDigits(0);
-        nf.setParseIntegerOnly(true);
-        return nf;
-    }
-    
-    /**
      * Formats a {@link Fraction} object to produce a string.  The fraction is
      * output in improper format.
      *
@@ -167,8 +140,8 @@ public class FractionFormat extends Format implements Serializable {
      *            offsets of the alignment field
      * @return the value passed in as toAppendTo.
      */
-    public StringBuffer format(Fraction fraction, StringBuffer toAppendTo,
-            FieldPosition pos) {
+    public StringBuffer format(final Fraction fraction,
+                               final StringBuffer toAppendTo, final FieldPosition pos) {
         
         pos.setBeginIndex(0);
         pos.setEndIndex(0);
@@ -182,7 +155,7 @@ public class FractionFormat extends Format implements Serializable {
     }
     
     /**
-     * Formats a object to produce a string.  <code>obj</code> must be either a 
+     * Formats an object and appends the result to a StringBuffer. <code>obj</code> must be either a 
      * {@link Fraction} object or a {@link Number} object.  Any other type of
      * object will result in an {@link IllegalArgumentException} being thrown.
      *
@@ -194,43 +167,28 @@ public class FractionFormat extends Format implements Serializable {
      * @see java.text.Format#format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition)
      * @throws IllegalArgumentException is <code>obj</code> is not a valid type.
      */
-    public StringBuffer format(Object obj, StringBuffer toAppendTo,
-            FieldPosition pos)
-    {
+    @Override
+    public StringBuffer format(final Object obj,
+                               final StringBuffer toAppendTo, final FieldPosition pos) {
         StringBuffer ret = null;
         
         if (obj instanceof Fraction) {
-            ret = format( (Fraction)obj, toAppendTo, pos);
+            ret = format((Fraction) obj, toAppendTo, pos);
         } else if (obj instanceof Number) {
             try {
-                ret = format( new Fraction(((Number)obj).doubleValue()),
-                    toAppendTo, pos);
+                ret = format(new Fraction(((Number) obj).doubleValue()),
+                             toAppendTo, pos);
             } catch (ConvergenceException ex) {
-                throw new IllegalArgumentException(
-                    "Cannot convert given object to a fraction.");
+                throw MathRuntimeException.createIllegalArgumentException(
+                    "cannot convert given object to a fraction number: {0}",
+                    ex.getLocalizedMessage());
             }
         } else { 
-            throw new IllegalArgumentException(
-                "Cannot format given object as a fraction");
+            throw MathRuntimeException.createIllegalArgumentException(
+                "cannot format given object as a fraction number");
         }
         
         return ret;
-    }
-
-    /**
-     * Access the denominator format.
-     * @return the denominator format.
-     */
-    public NumberFormat getDenominatorFormat() {
-        return denominatorFormat;
-    }
-    
-    /**
-     * Access the numerator format.
-     * @return the numerator format.
-     */
-    public NumberFormat getNumeratorFormat() {
-        return numeratorFormat;
     }
 
     /**
@@ -240,12 +198,14 @@ public class FractionFormat extends Format implements Serializable {
      * @exception ParseException if the beginning of the specified string
      *            cannot be parsed.
      */
-    public Fraction parse(String source) throws ParseException {
-        ParsePosition parsePosition = new ParsePosition(0);
-        Fraction result = parse(source, parsePosition);
+    @Override
+    public Fraction parse(final String source) throws ParseException {
+        final ParsePosition parsePosition = new ParsePosition(0);
+        final Fraction result = parse(source, parsePosition);
         if (parsePosition.getIndex() == 0) {
-            throw new ParseException("Unparseable fraction number: \"" +
-                source + "\"", parsePosition.getErrorIndex());
+            throw MathRuntimeException.createParseException(
+                    parsePosition.getErrorIndex(),
+                    "unparseable fraction number: \"{0}\"", source);
         }
         return result;
     }
@@ -257,14 +217,15 @@ public class FractionFormat extends Format implements Serializable {
      * @param pos input/ouput parsing parameter.
      * @return the parsed {@link Fraction} object.
      */
-    public Fraction parse(String source, ParsePosition pos) {
-        int initialIndex = pos.getIndex();
+    @Override
+    public Fraction parse(final String source, final ParsePosition pos) {
+        final int initialIndex = pos.getIndex();
 
         // parse whitespace
         parseAndIgnoreWhitespace(source, pos);
 
         // parse numerator
-        Number num = getNumeratorFormat().parse(source, pos);
+        final Number num = getNumeratorFormat().parse(source, pos);
         if (num == null) {
             // invalid integer number
             // set index back to initial, error index should already be set
@@ -274,8 +235,8 @@ public class FractionFormat extends Format implements Serializable {
         }
 
         // parse '/'
-        int startIndex = pos.getIndex();
-        char c = parseNextCharacter(source, pos);
+        final int startIndex = pos.getIndex();
+        final char c = parseNextCharacter(source, pos);
         switch (c) {
         case 0 :
             // no '/'
@@ -297,7 +258,7 @@ public class FractionFormat extends Format implements Serializable {
         parseAndIgnoreWhitespace(source, pos);
 
         // parse denominator
-        Number den = getDenominatorFormat().parse(source, pos);
+        final Number den = getDenominatorFormat().parse(source, pos);
         if (den == null) {
             // invalid integer number
             // set index back to initial, error index should already be set
@@ -308,82 +269,5 @@ public class FractionFormat extends Format implements Serializable {
 
         return new Fraction(num.intValue(), den.intValue());
     }
-
-    /**
-     * Parses a string to produce a object.
-     * @param source the string to parse
-     * @param pos input/ouput parsing parameter.
-     * @return the parsed object.
-     * @see java.text.Format#parseObject(java.lang.String, java.text.ParsePosition)
-     */
-    public Object parseObject(String source, ParsePosition pos) {
-        return parse(source, pos);
-    }
     
-    /**
-     * Modify the denominator format.
-     * @param format the new denominator format value.
-     * @throws IllegalArgumentException if <code>format</code> is
-     *         <code>null</code>.
-     */
-    public void setDenominatorFormat(NumberFormat format) {
-        if (format == null) {
-            throw new IllegalArgumentException(
-                "denominator format can not be null.");
-        }
-        this.denominatorFormat = format;
-    }
-    
-    /**
-     * Modify the numerator format.
-     * @param format the new numerator format value.
-     * @throws IllegalArgumentException if <code>format</code> is
-     *         <code>null</code>.
-     */
-    public void setNumeratorFormat(NumberFormat format) {
-        if (format == null) {
-            throw new IllegalArgumentException(
-                "numerator format can not be null.");
-        }
-        this.numeratorFormat = format;
-    }
-     
-    /**
-     * Parses <code>source</code> until a non-whitespace character is found.
-     * @param source the string to parse
-     * @param pos input/ouput parsing parameter.  On output, <code>pos</code>
-     *        holds the index of the next non-whitespace character.
-     */
-    protected static void parseAndIgnoreWhitespace(
-        String source, ParsePosition pos)
-    {
-        parseNextCharacter(source, pos);
-        pos.setIndex(pos.getIndex() - 1);
-    }
-
-    /**
-     * Parses <code>source</code> until a non-whitespace character is found.
-     * @param source the string to parse
-     * @param pos input/ouput parsing parameter.
-     * @return the first non-whitespace character.
-     */
-    protected static char parseNextCharacter(String source, ParsePosition pos) {
-         int index = pos.getIndex();
-         int n = source.length();
-         char ret = 0;
-
-         if (index < n) {
-             char c;
-             do {
-                 c = source.charAt(index++);
-             } while (Character.isWhitespace(c) && index < n);
-             pos.setIndex(index);
-         
-             if (index < n) {
-                 ret = c;
-             }
-         }
-         
-         return ret;
-    }
 }

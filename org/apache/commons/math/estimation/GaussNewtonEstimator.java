@@ -20,8 +20,11 @@ package org.apache.commons.math.estimation;
 import java.io.Serializable;
 
 import org.apache.commons.math.linear.InvalidMatrixException;
+import org.apache.commons.math.linear.LUDecompositionImpl;
+import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealMatrixImpl;
+import org.apache.commons.math.linear.RealVector;
+import org.apache.commons.math.linear.ArrayRealVector;
 
 /** 
  * This class implements a solver for estimation problems.
@@ -30,12 +33,42 @@ import org.apache.commons.math.linear.RealMatrixImpl;
  * squares criterion on the measurement residuals. It uses a
  * Gauss-Newton algorithm.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
+ * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
+ * been deprecated and replaced by package org.apache.commons.math.optimization.general
  *
  */
-
+@Deprecated
 public class GaussNewtonEstimator extends AbstractEstimator implements Serializable {
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 5485001826076289109L;
+
+    /** Default threshold for cost steady state detection. */
+    private static final double DEFAULT_STEADY_STATE_THRESHOLD = 1.0e-6;
+
+    /** Default threshold for cost convergence. */
+    private static final double DEFAULT_CONVERGENCE = 1.0e-6;
+
+    /** Threshold for cost steady state detection. */
+    private double steadyStateThreshold;
+
+    /** Threshold for cost convergence. */
+    private double convergence;
+
+    /** Simple constructor with default settings.
+     * <p>
+     * The estimator is built with default values for all settings.
+     * </p>
+     * @see #DEFAULT_STEADY_STATE_THRESHOLD
+     * @see #DEFAULT_CONVERGENCE
+     * @see AbstractEstimator#DEFAULT_MAX_COST_EVALUATIONS
+     */
+    public GaussNewtonEstimator() {
+        this.steadyStateThreshold = DEFAULT_STEADY_STATE_THRESHOLD;
+        this.convergence          = DEFAULT_CONVERGENCE;        
+    }
 
     /** 
      * Simple constructor.
@@ -63,17 +96,40 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
      * to improve the criterion anymore
      * @param steadyStateThreshold steady state detection threshold, the
      * problem has converged has reached a steady state if
-     * <code>Math.abs (Jn - Jn-1) < Jn * convergence</code>, where
-     * <code>Jn</code> and <code>Jn-1</code> are the current and
-     * preceding criterion value (square sum of the weighted residuals
-     * of considered measurements).
+     * <code>Math.abs(J<sub>n</sub> - J<sub>n-1</sub>) &lt;
+     * J<sub>n</sub> &times convergence</code>, where <code>J<sub>n</sub></code>
+     * and <code>J<sub>n-1</sub></code> are the current and preceding criterion
+     * values (square sum of the weighted residuals of considered measurements).
      */
-    public GaussNewtonEstimator(int maxCostEval,
-            double convergence,
-            double steadyStateThreshold) {
+    public GaussNewtonEstimator(final int maxCostEval, final double convergence,
+                                final double steadyStateThreshold) {
         setMaxCostEval(maxCostEval);
         this.steadyStateThreshold = steadyStateThreshold;
         this.convergence          = convergence;
+    }
+
+    /**
+     * Set the convergence criterion threshold.
+     * @param convergence criterion threshold below which we do not need
+     * to improve the criterion anymore
+     */
+    public void setConvergence(final double convergence) {
+        this.convergence = convergence;
+    }
+
+    /**
+     * Set the steady state detection threshold.
+     * <p>
+     * The problem has converged has reached a steady state if
+     * <code>Math.abs(J<sub>n</sub> - J<sub>n-1</sub>) &lt;
+     * J<sub>n</sub> &times convergence</code>, where <code>J<sub>n</sub></code>
+     * and <code>J<sub>n-1</sub></code> are the current and preceding criterion
+     * values (square sum of the weighted residuals of considered measurements).
+     * </p>
+     * @param steadyStateThreshold steady state detection threshold
+     */
+    public void setSteadyStateThreshold(final double steadyStateThreshold) {
+        this.steadyStateThreshold = steadyStateThreshold;
     }
 
     /** 
@@ -89,7 +145,7 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
      * below a physical threshold under which improvement are considered
      * useless or when the algorithm is unable to improve it (even if it
      * is still high). The first condition that is met stops the
-     * iterations. If the convergence it nos reached before the maximum
+     * iterations. If the convergence it not reached before the maximum
      * number of iterations, an {@link EstimationException} is
      * thrown.</p>
      *
@@ -99,6 +155,7 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
      * @see EstimationProblem
      *
      */
+    @Override
     public void estimate(EstimationProblem problem)
     throws EstimationException {
 
@@ -106,10 +163,9 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
 
         // work matrices
         double[] grad             = new double[parameters.length];
-        RealMatrixImpl bDecrement = new RealMatrixImpl(parameters.length, 1);
-        double[][] bDecrementData = bDecrement.getDataRef();
-        RealMatrixImpl wGradGradT = new RealMatrixImpl(parameters.length, parameters.length);
-        double[][] wggData        = wGradGradT.getDataRef();
+        ArrayRealVector bDecrement = new ArrayRealVector(parameters.length);
+        double[] bDecrementData   = bDecrement.getDataRef();
+        RealMatrix wGradGradT     = MatrixUtils.createRealMatrix(parameters.length, parameters.length);
 
         // iterate until convergence is reached
         double previous = Double.POSITIVE_INFINITY;
@@ -117,8 +173,8 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
 
             // build the linear problem
             incrementJacobianEvaluationsCounter();
-            RealMatrix b = new RealMatrixImpl(parameters.length, 1);
-            RealMatrix a = new RealMatrixImpl(parameters.length, parameters.length);
+            RealVector b = new ArrayRealVector(parameters.length);
+            RealMatrix a = MatrixUtils.createRealMatrix(parameters.length, parameters.length);
             for (int i = 0; i < measurements.length; ++i) {
                 if (! measurements [i].isIgnored()) {
 
@@ -128,15 +184,14 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
                     // compute the normal equation
                     for (int j = 0; j < parameters.length; ++j) {
                         grad[j] = measurements[i].getPartial(parameters[j]);
-                        bDecrementData[j][0] = weight * residual * grad[j];
+                        bDecrementData[j] = weight * residual * grad[j];
                     }
 
                     // build the contribution matrix for measurement i
                     for (int k = 0; k < parameters.length; ++k) {
-                        double[] wggRow = wggData[k];
                         double gk = grad[k];
                         for (int l = 0; l < parameters.length; ++l) {
-                            wggRow[l] =  weight * gk * grad[l];
+                            wGradGradT.setEntry(k, l, weight * gk * grad[l]);
                         }
                     }
 
@@ -150,15 +205,15 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
             try {
 
                 // solve the linearized least squares problem
-                RealMatrix dX = a.solve(b);
+                RealVector dX = new LUDecompositionImpl(a).getSolver().solve(b);
 
                 // update the estimated parameters
                 for (int i = 0; i < parameters.length; ++i) {
-                    parameters[i].setEstimate(parameters[i].getEstimate() + dX.getEntry(i, 0));
+                    parameters[i].setEstimate(parameters[i].getEstimate() + dX.getEntry(i));
                 }
 
             } catch(InvalidMatrixException e) {
-                throw new EstimationException("unable to solve: singular problem", new Object[0]);
+                throw new EstimationException("unable to solve: singular problem");
             }
 
 
@@ -170,14 +225,5 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
                   (Math.abs(cost) > convergence)));
 
     }
-
-    /** Threshold for cost steady state detection. */
-    private double steadyStateThreshold;
-
-    /** Threshold for cost convergence. */
-    private double convergence;
-
-    /** Serializable version identifier */
-     private static final long serialVersionUID = 5485001826076289109L;
 
 }

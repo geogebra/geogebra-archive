@@ -16,7 +16,11 @@
  */
 package org.apache.commons.math.stat.descriptive.moment;
 
+import java.io.Serializable;
+
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+
 
 /**
  * Computes the Kurtosis of the available values.
@@ -36,9 +40,9 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
-public class Kurtosis extends AbstractStorelessUnivariateStatistic  {
+public class Kurtosis extends AbstractStorelessUnivariateStatistic  implements Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 2784465764798260919L;  
@@ -71,30 +75,42 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  {
         incMoment = false;
         this.moment = m4;
     }
+    
+    /**
+     * Copy constructor, creates a new {@code Kurtosis} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code Kurtosis} instance to copy
+     */
+    public Kurtosis(Kurtosis original) {
+        copy(original, this);
+    }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * {@inheritDoc}
      */
+    @Override
     public void increment(final double d) {
         if (incMoment) {
             moment.increment(d);
         }  else  {
-            throw new IllegalStateException
-            ("Statistics constructed from external moments cannot be incremented");
+            throw MathRuntimeException.createIllegalStateException(
+                    "statistics constructed from external moments cannot be incremented");
         }
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         double kurtosis = Double.NaN;
         if (moment.getN() > 3) {
-            double variance = moment.m2 / (double) (moment.n - 1);
+            double variance = moment.m2 / (moment.n - 1);
                 if (moment.n <= 3 || variance < 10E-20) {
                     kurtosis = 0.0;
                 } else {
-                    double n = (double) moment.n;
+                    double n = moment.n;
                     kurtosis =
                         (n * (n + 1) * moment.m4 -
                                 3 * moment.m2 * moment.m2 * (n - 1)) /
@@ -105,19 +121,20 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  {
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         if (incMoment) {
             moment.clear();
         } else  {
-            throw new IllegalStateException
-                ("Statistics constructed from external moments cannot be cleared");
+            throw MathRuntimeException.createIllegalStateException(
+                    "statistics constructed from external moments cannot be cleared");
         }
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return moment.getN();
@@ -141,6 +158,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  {
      * @throws IllegalArgumentException if the input array is null or the array
      * index parameters are not valid
      */
+    @Override
     public double evaluate(final double[] values,final int begin, final int length) {
         // Initialize the kurtosis  
         double kurt = Double.NaN;   
@@ -173,6 +191,29 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  {
             kurt = (coefficientOne * accum3) - termTwo;
         }       
         return kurt;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Kurtosis copy() {
+        Kurtosis result = new Kurtosis();
+        copy(this, result);
+        return result;
+    }
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source Kurtosis to copy
+     * @param dest Kurtosis to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(Kurtosis source, Kurtosis dest) {
+        dest.moment = source.moment.copy();
+        dest.incMoment = source.incMoment;
     }
 
 }

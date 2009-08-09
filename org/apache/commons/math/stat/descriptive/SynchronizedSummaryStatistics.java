@@ -27,7 +27,7 @@ package org.apache.commons.math.stat.descriptive;
  * the instance nor compute another statistic. 
  *
  * @since 1.2
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:17 $
  */
 public class SynchronizedSummaryStatistics extends SummaryStatistics {
 
@@ -40,222 +40,294 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
     public SynchronizedSummaryStatistics() {
         super();
     }
+    
+    /**
+     * A copy constructor. Creates a deep-copy of the {@code original}.
+     * 
+     * @param original the {@code SynchronizedSummaryStatistics} instance to copy
+     */
+    public SynchronizedSummaryStatistics(SynchronizedSummaryStatistics original) {
+        copy(original, this);
+    }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getSummary()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StatisticalSummary getSummary() {
         return super.getSummary();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#addValue(double)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void addValue(double value) {
         super.addValue(value);
     }
 
     /** 
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getN()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized long getN() {
         return super.getN();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getSum()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getSum() {
         return super.getSum();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getSumsq()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getSumsq() {
         return super.getSumsq();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getMean()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getMean() {
         return super.getMean();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getStandardDeviation()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getStandardDeviation() {
         return super.getStandardDeviation();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getVariance()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getVariance() {
         return super.getVariance();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getMax()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getMax() {
         return super.getMax();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getMin()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getMin() {
         return super.getMin();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getGeometricMean()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getGeometricMean() {
         return super.getGeometricMean();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#toString()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized String toString() {
         return super.toString();
     }
 
     /** 
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#clear()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void clear() {
         super.clear();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#equals(Object)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized boolean equals(Object object) {
         return super.equals(object);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#hashCode()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized int hashCode() {
         return super.hashCode();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getSumImpl()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StorelessUnivariateStatistic getSumImpl() {
         return super.getSumImpl();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#setSumImpl(StorelessUnivariateStatistic)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setSumImpl(StorelessUnivariateStatistic sumImpl) {
         super.setSumImpl(sumImpl);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getSumsqImpl()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StorelessUnivariateStatistic getSumsqImpl() {
         return super.getSumsqImpl();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#setSumsqImpl(StorelessUnivariateStatistic)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setSumsqImpl(StorelessUnivariateStatistic sumsqImpl) {
         super.setSumsqImpl(sumsqImpl);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getMinImpl()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StorelessUnivariateStatistic getMinImpl() {
         return super.getMinImpl();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#setMinImpl(StorelessUnivariateStatistic)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setMinImpl(StorelessUnivariateStatistic minImpl) {
         super.setMinImpl(minImpl);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getMaxImpl()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StorelessUnivariateStatistic getMaxImpl() {
         return super.getMaxImpl();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#setMaxImpl(StorelessUnivariateStatistic)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setMaxImpl(StorelessUnivariateStatistic maxImpl) {
         super.setMaxImpl(maxImpl);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getSumLogImpl()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StorelessUnivariateStatistic getSumLogImpl() {
         return super.getSumLogImpl();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#setSumLogImpl(StorelessUnivariateStatistic)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setSumLogImpl(StorelessUnivariateStatistic sumLogImpl) {
         super.setSumLogImpl(sumLogImpl);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getGeoMeanImpl()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StorelessUnivariateStatistic getGeoMeanImpl() {
         return super.getGeoMeanImpl();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#setGeoMeanImpl(StorelessUnivariateStatistic)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setGeoMeanImpl(StorelessUnivariateStatistic geoMeanImpl) {
         super.setGeoMeanImpl(geoMeanImpl);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getMeanImpl()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StorelessUnivariateStatistic getMeanImpl() {
         return super.getMeanImpl();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#setMeanImpl(StorelessUnivariateStatistic)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setMeanImpl(StorelessUnivariateStatistic meanImpl) {
         super.setMeanImpl(meanImpl);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#getVarianceImpl()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized StorelessUnivariateStatistic getVarianceImpl() {
         return super.getVarianceImpl();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.SummaryStatistics#setVarianceImpl(StorelessUnivariateStatistic)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setVarianceImpl(StorelessUnivariateStatistic varianceImpl) {
         super.setVarianceImpl(varianceImpl);
+    }
+    
+    /**
+     * Returns a copy of this SynchronizedSummaryStatistics instance with the
+     * same internal state.
+     * 
+     * @return a copy of this
+     */
+    @Override
+    public synchronized SynchronizedSummaryStatistics copy() {
+        SynchronizedSummaryStatistics result = 
+            new SynchronizedSummaryStatistics();
+        copy(this, result);
+        return result; 
+    }
+     
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * <p>Acquires synchronization lock on source, then dest before copying.</p>
+     * 
+     * @param source SynchronizedSummaryStatistics to copy
+     * @param dest SynchronizedSummaryStatistics to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(SynchronizedSummaryStatistics source,
+            SynchronizedSummaryStatistics dest) {
+        synchronized (source) {
+            synchronized (dest) {
+                SummaryStatistics.copy(source, dest);
+            }
+        }
     }
     
 }

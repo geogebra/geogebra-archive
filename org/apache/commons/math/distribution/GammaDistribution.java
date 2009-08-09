@@ -27,9 +27,9 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
-public interface GammaDistribution extends ContinuousDistribution {
+public interface GammaDistribution extends ContinuousDistribution, HasDensity<Double> {
     /**
      * Modify the shape parameter, alpha.
      * @param alpha the new shape parameter.
@@ -53,4 +53,11 @@ public interface GammaDistribution extends ContinuousDistribution {
      * @return beta.
      */
     double getBeta();
+
+    /**
+     * Return the probability density for a particular point.
+     * @param x  The point at which the density should be computed.
+     * @return  The pdf at point x.
+     */
+    double density(Double x);
 }

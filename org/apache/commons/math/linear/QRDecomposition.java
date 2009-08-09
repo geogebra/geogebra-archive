@@ -17,28 +17,61 @@
 
 package org.apache.commons.math.linear;
 
+
 /**
- * An interface to classes that implement a algorithm to calculate the 
+ * An interface to classes that implement an algorithm to calculate the 
  * QR-decomposition of a real matrix.
+ * <p>This interface is based on the class with similar name from the now defunct
+ * <a href="http://math.nist.gov/javanumerics/jama/">JAMA</a> library, with the
+ * following changes:</p>
+ * <ul>
+ *   <li>a {@link #getQT() getQT} method has been added,</li>
+ *   <li>the <code>solve</code> and <code>isFullRank</code> methods have been replaced
+ *   by a {@link #getSolver() getSolver} method and the equivalent methods provided by
+ *   the returned {@link DecompositionSolver}.</li>
+ * </ul>
  *   
  * @see <a href="http://mathworld.wolfram.com/QRDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/QR_decomposition">Wikipedia</a>
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
  */
 public interface QRDecomposition {
 
     /**
      * Returns the matrix R of the decomposition. 
-     * 
+     * <p>R is an upper-triangular matrix</p>
      * @return the R matrix
      */
-    public abstract RealMatrix getR();
+    RealMatrix getR();
 
     /**
      * Returns the matrix Q of the decomposition.
-     * 
+     * <p>Q is an orthogonal matrix</p>
      * @return the Q matrix
      */
-    public abstract RealMatrix getQ();
+    RealMatrix getQ();
+
+    /**
+     * Returns the transpose of the matrix Q of the decomposition.
+     * <p>Q is an orthogonal matrix</p>
+     * @return the Q matrix
+     */
+    RealMatrix getQT();
+
+    /**
+     * Returns the Householder reflector vectors.
+     * <p>H is a lower trapezoidal matrix whose columns represent
+     * each successive Householder reflector vector. This matrix is used
+     * to compute Q.</p>
+     * @return a matrix containing the Householder reflector vectors
+     */
+    RealMatrix getH();
+
+    /**
+     * Get a solver for finding the A &times; X = B solution in least square sense.
+     * @return a solver
+     */
+    DecompositionSolver getSolver();
+
 }

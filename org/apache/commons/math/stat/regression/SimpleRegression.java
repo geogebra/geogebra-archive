@@ -19,6 +19,7 @@ package org.apache.commons.math.stat.regression;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.distribution.TDistribution;
 import org.apache.commons.math.distribution.TDistributionImpl;
 
@@ -50,7 +51,7 @@ import org.apache.commons.math.distribution.TDistributionImpl;
  * the necessary computations to return the requested statistic.</li>
  * </ul></p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  */
 public class SimpleRegression implements Serializable {
 
@@ -124,11 +125,11 @@ public class SimpleRegression implements Serializable {
         } else {
             double dx = x - xbar;
             double dy = y - ybar;
-            sumXX += dx * dx * (double) n / (double) (n + 1.0);
-            sumYY += dy * dy * (double) n / (double) (n + 1.0);
-            sumXY += dx * dy * (double) n / (double) (n + 1.0);
-            xbar += dx / (double) (n + 1.0);
-            ybar += dy / (double) (n + 1.0);
+            sumXX += dx * dx * (double) n / (n + 1d);
+            sumYY += dy * dy * (double) n / (n + 1d);
+            sumXY += dx * dy * (double) n / (n + 1d);
+            xbar += dx / (n + 1.0);
+            ybar += dy / (n + 1.0);
         }
         sumX += x;
         sumY += y;
@@ -136,6 +137,39 @@ public class SimpleRegression implements Serializable {
         
         if (n > 2) {
             distribution.setDegreesOfFreedom(n - 2);
+        }
+    }
+
+    
+    /**
+     * Removes the observation (x,y) from the regression data set.
+     * <p>
+     * Mirrors the addData method.  This method permits the use of 
+     * SimpleRegression instances in streaming mode where the regression 
+     * is applied to a sliding "window" of observations, however the caller is 
+     * responsible for maintaining the set of observations in the window.</p>
+     * 
+     * The method has no effect if there are no points of data (i.e. n=0)
+     *
+     * @param x independent variable value
+     * @param y dependent variable value
+     */
+    public void removeData(double x, double y) {
+        if (n > 0) {
+            double dx = x - xbar;
+            double dy = y - ybar;
+            sumXX -= dx * dx * (double) n / (n - 1d);
+            sumYY -= dy * dy * (double) n / (n - 1d);
+            sumXY -= dx * dy * (double) n / (n - 1d);
+            xbar -= dx / (n - 1.0);
+            ybar -= dy / (n - 1.0);
+            sumX -= x;
+            sumY -= y;
+            n--;
+            
+            if (n > 2) {
+                distribution.setDegreesOfFreedom(n - 2);
+            } 
         }
     }
 
@@ -158,6 +192,26 @@ public class SimpleRegression implements Serializable {
     public void addData(double[][] data) {
         for (int i = 0; i < data.length; i++) {
             addData(data[i][0], data[i][1]);
+        }
+    }
+
+
+    /**
+     * Removes observations represented by the elements in <code>data</code>.
+      * <p> 
+     * If the array is larger than the current n, only the first n elements are 
+     * processed.  This method permits the use of SimpleRegression instances in 
+     * streaming mode where the regression is applied to a sliding "window" of 
+     * observations, however the caller is responsible for maintaining the set 
+     * of observations in the window.</p>
+     * <p> 
+     * To remove all data, use <code>clear()</code>.</p>
+     * 
+     * @param data array of observations to be removed
+     */
+    public void removeData(double[][] data) {
+        for (int i = 0; i < data.length && n > 0; i++) {
+            removeData(data[i][0], data[i][1]);
         }
     }
 
@@ -299,6 +353,29 @@ public class SimpleRegression implements Serializable {
         }
         return sumYY;
     }
+    
+    /**
+     * Returns the sum of squared deviations of the x values about their mean.
+     *
+     * If <code>n < 2</code>, this returns <code>Double.NaN</code>.</p>
+     *
+     * @return sum of squared deviations of x values
+     */
+    public double getXSumSquares() {
+        if (n < 2) {
+            return Double.NaN;
+        }
+        return sumXX;
+    }
+    
+    /**
+     * Returns the sum of crossproducts, x<sub>i</sub>*y<sub>i</sub>.
+     *
+     * @return sum of cross products
+     */
+    public double getSumOfCrossProducts() {
+        return sumXY;
+    }
 
     /**
      * Returns the sum of squared deviations of the predicted y values about 
@@ -334,7 +411,7 @@ public class SimpleRegression implements Serializable {
         if (n < 3) {
             return Double.NaN;
         }
-        return getSumSquaredErrors() / (double) (n - 2);
+        return getSumSquaredErrors() / (n - 2);
     }
 
     /**
@@ -470,7 +547,9 @@ public class SimpleRegression implements Serializable {
     public double getSlopeConfidenceInterval(double alpha)
         throws MathException {
         if (alpha >= 1 || alpha <= 0) {
-            throw new IllegalArgumentException();
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "out of bounds significance level {0}, must be between {1} and {2}",
+                  alpha, 0.0, 1.0);
         }
         return getSlopeStdErr() *
             distribution.inverseCumulativeProbability(1d - alpha / 2d);
@@ -513,7 +592,7 @@ public class SimpleRegression implements Serializable {
     * @return the intercept of the regression line
     */
     private double getIntercept(double slope) {
-        return (sumY - slope * sumX) / ((double) n);
+        return (sumY - slope * sumX) / n;
     }
 
     /**

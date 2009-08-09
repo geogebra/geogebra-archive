@@ -18,6 +18,11 @@
 package org.apache.commons.math.complex;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.math.FieldElement;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.util.MathUtils;
 
 /**
@@ -34,13 +39,15 @@ import org.apache.commons.math.util.MathUtils;
  * or imaginary part - e.g., <pre>
  * <code>1 + NaNi  == NaN + i == NaN + NaNi.</code></pre></p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * implements Serializable since 2.0
+ * 
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
-public class Complex implements Serializable  {
-
-    /** Serializable version identifier */
-    private static final long serialVersionUID = -6530173849413811929L;
+public class Complex implements FieldElement<Complex>, Serializable  {
     
+    /** Serializable version identifier */
+    private static final long serialVersionUID = -6195664516687396620L;
+
     /** The square root of -1. A number representing "0.0 + 1.0i" */    
     public static final Complex I = new Complex(0.0, 1.0);
     
@@ -58,15 +65,23 @@ public class Complex implements Serializable  {
     
     /** 
      * The imaginary part 
-     * @deprecated to be made final and private in 2.0
      */
-    protected double imaginary;
+    private final double imaginary;
     
     /** 
      * The real part 
-     * @deprecated to be made final and private in 2.0
      */
-    protected double real;
+    private final double real;
+    
+    /**
+     * Record whether this complex number is equal to NaN
+     */
+    private final transient boolean isNaN;
+    
+    /**
+     * Record whether this complex number is infinite
+     */
+    private final transient boolean isInfinite;
     
     /**
      * Create a complex number given the real and imaginary parts.
@@ -78,6 +93,10 @@ public class Complex implements Serializable  {
         super();
         this.real = real;
         this.imaginary = imaginary;
+        
+        isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
+        isInfinite = !isNaN &&
+        (Double.isInfinite(real) || Double.isInfinite(imaginary));
     }
 
     /**
@@ -244,6 +263,7 @@ public class Complex implements Serializable  {
      *         not equal to this Complex instance
      * 
      */
+    @Override
     public boolean equals(Object other) {
         boolean ret;
         
@@ -257,10 +277,7 @@ public class Complex implements Serializable  {
                 if (rhs.isNaN()) {
                     ret = this.isNaN();
                 } else {
-                ret = (Double.doubleToRawLongBits(real) ==
-                        Double.doubleToRawLongBits(rhs.getReal())) &&
-                    (Double.doubleToRawLongBits(imaginary) ==
-                        Double.doubleToRawLongBits(rhs.getImaginary())); 
+                    ret = (real == rhs.real) && (imaginary == rhs.imaginary); 
                 }
             } catch (ClassCastException ex) {
                 // ignore exception
@@ -278,6 +295,7 @@ public class Complex implements Serializable  {
      * 
      * @return a hash code value for this object
      */
+    @Override
     public int hashCode() {
         if (isNaN()) {
             return 7;
@@ -312,7 +330,7 @@ public class Complex implements Serializable  {
      * false otherwise
      */
     public boolean isNaN() {
-        return Double.isNaN(real) || Double.isNaN(imaginary);        
+        return isNaN;        
     }
     
     /**
@@ -325,8 +343,7 @@ public class Complex implements Serializable  {
      * and neither part is <code>NaN</code>
      */
     public boolean isInfinite() {
-        return !isNaN() && 
-        (Double.isInfinite(real) || Double.isInfinite(imaginary));        
+        return isInfinite;        
     }
     
     /**
@@ -367,6 +384,44 @@ public class Complex implements Serializable  {
         }
         return createComplex(real * rhs.real - imaginary * rhs.imaginary,
                 real * rhs.imaginary + imaginary * rhs.real);
+    }
+    
+    /**
+     * Return the product of this complex number and the given scalar number.
+     * <p>
+     * Implements preliminary checks for NaN and infinity followed by
+     * the definitional formula:
+     * <pre><code>
+     * c(a + bi) = (ca) + (cb)i
+     * </code></pre>
+     * </p>
+     * <p>
+     * Returns {@link #NaN} if either this or <code>rhs</code> has one or more
+     * NaN parts.
+     * </p>
+     * Returns {@link #INF} if neither this nor <code>rhs</code> has one or more
+     * NaN parts and if either this or <code>rhs</code> has one or more
+     * infinite parts (same result is returned regardless of the sign of the
+     * components).
+     * </p>
+     * <p>
+     * Returns finite values in components of the result per the
+     * definitional formula in all remaining cases.
+     *  </p>
+     * 
+     * @param rhs the scalar number
+     * @return the complex number product
+     */
+    public Complex multiply(double rhs) {
+        if (isNaN() || Double.isNaN(rhs)) {
+            return NaN;
+        }
+        if (Double.isInfinite(real) || Double.isInfinite(imaginary) ||
+            Double.isInfinite(rhs)) {
+            // we don't use Complex.isInfinite() to avoid testing for NaN again
+            return INF;
+        }
+        return createComplex(real * rhs, imaginary * rhs);
     }
     
     /**
@@ -864,6 +919,82 @@ public class Complex implements Serializable  {
         
         return createComplex(MathUtils.sinh(real2) / d, Math.sin(imaginary2) / d);
     }
+    
+    
+    
+    /**
+     * <p>Compute the argument of this complex number.
+     * </p>
+     * <p>The argument is the angle phi between the positive real axis and the point
+     * representing this number in the complex plane. The value returned is between -PI (not inclusive) 
+     * and PI (inclusive), with negative values returned for numbers with negative imaginary parts.
+     * </p>
+     * <p>If either real or imaginary part (or both) is NaN, NaN is returned.  Infinite parts are handled
+     * as java.Math.atan2 handles them, essentially treating finite parts as zero in the presence of
+     * an infinite coordinate and returning a multiple of pi/4 depending on the signs of the infinite
+     * parts.  See the javadoc for java.Math.atan2 for full details.</p>
+     * 
+     * @return the argument of this complex number
+     */
+    public double getArgument() {
+        return Math.atan2(getImaginary(), getReal());
+    }
+    
+    /**
+     * <p>Computes the n-th roots of this complex number.
+     * </p>
+     * <p>The nth roots are defined by the formula: <pre>
+     * <code> z<sub>k</sub> = abs<sup> 1/n</sup> (cos(phi + 2&pi;k/n) + i (sin(phi + 2&pi;k/n))</code></pre>
+     * for <i><code>k=0, 1, ..., n-1</code></i>, where <code>abs</code> and <code>phi</code> are
+     * respectively the {@link #abs() modulus} and {@link #getArgument() argument} of this complex number.
+     * </p>
+     * <p>If one or both parts of this complex number is NaN, a list with just one element,
+     *  {@link #NaN} is returned.</p>
+     * <p>if neither part is NaN, but at least one part is infinite, the result is a one-element
+     * list containing {@link #INF}.</p>
+     * 
+     * @param n degree of root
+     * @return List<Complex> all nth roots of this complex number
+     * @throws IllegalArgumentException if parameter n is less than or equal to 0
+     * @since 2.0
+     */
+    public List<Complex> nthRoot(int n) throws IllegalArgumentException {
+
+        if (n <= 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                    "cannot compute nth root for null or negative n: {0}",
+                    n);
+        }
+        
+        List<Complex> result = new ArrayList<Complex>();
+        
+        if (isNaN()) {
+            result.add(Complex.NaN);
+            return result;
+        }
+        
+        if (isInfinite()) {
+            result.add(Complex.INF);
+            return result;
+        }
+
+        // nth root of abs -- faster / more accurate to use a solver here?
+        final double nthRootOfAbs = Math.pow(abs(), 1.0 / n);
+
+        // Compute nth roots of complex number with k = 0, 1, ... n-1
+        final double nthPhi = getArgument()/n;
+        final double slice = 2 * Math.PI / n;
+        double innerPart = nthPhi;
+        for (int k = 0; k < n ; k++) {
+            // inner part
+            final double realPart      = nthRootOfAbs *  Math.cos(innerPart);
+            final double imaginaryPart = nthRootOfAbs *  Math.sin(innerPart);
+            result.add(createComplex(realPart, imaginaryPart));
+            innerPart += slice;
+        }
+
+        return result;
+    }
 
     /**
      * Create a complex number given the real and imaginary parts.
@@ -876,4 +1007,20 @@ public class Complex implements Serializable  {
     protected Complex createComplex(double real, double imaginary) {
         return new Complex(real, imaginary);
     }
+
+    /**
+     * <p>Resolve the transient fields in a deserialized Complex Object.</p>
+     * <p>Subclasses will need to override {@link #createComplex} to deserialize properly</p> 
+     * @return A Complex instance with all fields resolved.
+     * @since 2.0
+     */
+    protected final Object readResolve() {
+        return createComplex(real, imaginary);
+    }
+    
+    /** {@inheritDoc} */
+    public ComplexField getField() {
+        return ComplexField.getInstance();
+    }
+
 }

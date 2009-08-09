@@ -22,7 +22,7 @@ import org.apache.commons.math.util.MathUtils;
 /**
  *  Value object representing the results of a univariate statistical summary.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:17 $
  */
 public class StatisticalSummaryValues implements Serializable, 
     StatisticalSummary {
@@ -126,6 +126,7 @@ public class StatisticalSummaryValues implements Serializable,
      * @param object the object to test equality against.
      * @return true if object equals this
      */
+    @Override
     public boolean equals(Object object) {
         if (object == this ) {
             return true;
@@ -147,6 +148,7 @@ public class StatisticalSummaryValues implements Serializable,
      * 
      * @return hash code
      */
+    @Override
     public int hashCode() {
         int result = 31 + MathUtils.hash(getMax());
         result = result * 31 + MathUtils.hash(getMean());

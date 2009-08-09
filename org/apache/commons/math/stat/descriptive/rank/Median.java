@@ -28,7 +28,7 @@ import java.io.Serializable;
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:19 $
  */
 public class Median extends Percentile implements Serializable {
 
@@ -41,5 +41,15 @@ public class Median extends Percentile implements Serializable {
     public Median() {
         super(50.0);
     }
+    
+    /**
+     * Copy constructor, creates a new {@code Median} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code Median} instance to copy
+     */
+    public Median(Median original) {
+        super(original);
+    }        
 
 }

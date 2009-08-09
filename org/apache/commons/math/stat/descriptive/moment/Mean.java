@@ -53,7 +53,7 @@ import org.apache.commons.math.stat.descriptive.summary.Sum;
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
 public class Mean extends AbstractStorelessUnivariateStatistic 
     implements Serializable {
@@ -87,10 +87,21 @@ public class Mean extends AbstractStorelessUnivariateStatistic
         this.moment = m1;
         incMoment = false;
     }
+    
+    /**
+     * Copy constructor, creates a new {@code Mean} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code Mean} instance to copy
+     */
+    public Mean(Mean original) {
+        copy(original, this);
+    }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * {@inheritDoc}
      */
+    @Override
     public void increment(final double d) {
         if (incMoment) {
             moment.increment(d);
@@ -98,8 +109,9 @@ public class Mean extends AbstractStorelessUnivariateStatistic
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         if (incMoment) {
             moment.clear();
@@ -107,14 +119,15 @@ public class Mean extends AbstractStorelessUnivariateStatistic
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         return moment.m1;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return moment.getN();
@@ -136,10 +149,11 @@ public class Mean extends AbstractStorelessUnivariateStatistic
      * @throws IllegalArgumentException if the array is null or the array index
      *  parameters are not valid
      */
+    @Override
     public double evaluate(final double[] values,final int begin, final int length) {
         if (test(values, begin, length)) {
             Sum sum = new Sum();
-            double sampleSize = (double) length;
+            double sampleSize = length;
             
             // Compute initial estimate using definitional formula
             double xbar = sum.evaluate(values, begin, length) / sampleSize;
@@ -152,5 +166,29 @@ public class Mean extends AbstractStorelessUnivariateStatistic
             return xbar + (correction/sampleSize);
         }
         return Double.NaN;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Mean copy() {
+        Mean result = new Mean();
+        copy(this, result);
+        return result;
+    }
+    
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source Mean to copy
+     * @param dest Mean to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(Mean source, Mean dest) {
+        dest.incMoment = source.incMoment;
+        dest.moment = source.moment.copy();
     }
 }

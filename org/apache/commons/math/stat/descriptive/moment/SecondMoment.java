@@ -40,7 +40,7 @@ import java.io.Serializable;
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
 public class SecondMoment extends FirstMoment implements Serializable {
 
@@ -59,8 +59,20 @@ public class SecondMoment extends FirstMoment implements Serializable {
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * Copy constructor, creates a new {@code SecondMoment} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code SecondMoment} instance to copy
      */
+    public SecondMoment(SecondMoment original) {
+        super(original);
+        this.m2 = original.m2;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void increment(final double d) {
         if (n < 1) {
             m1 = m2 = 0.0;
@@ -70,18 +82,43 @@ public class SecondMoment extends FirstMoment implements Serializable {
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         super.clear();
         m2 = Double.NaN;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         return m2;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SecondMoment copy() {
+        SecondMoment result = new SecondMoment();
+        copy(this, result);
+        return result; 
+    }
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source SecondMoment to copy
+     * @param dest SecondMoment to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(SecondMoment source, SecondMoment dest) {
+        FirstMoment.copy(source, dest);
+        dest.m2 = source.m2;
     }
 
 }

@@ -20,18 +20,18 @@ package org.apache.commons.math;
  * Error thrown when a numerical computation can not be performed because the
  * numerical result failed to converge to a finite value.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  */
 public class ConvergenceException extends MathException {
     
     /** Serializable version identifier */
-    private static final long serialVersionUID = 4380655778005469702L;
+    private static final long serialVersionUID = 4883703247677159141L;
 
     /**
      * Default constructor.
      */
     public ConvergenceException() {
-        super("Convergence failed", new Object[0]);
+        super("Convergence failed");
     }
     
     /**
@@ -41,7 +41,7 @@ public class ConvergenceException extends MathException {
      * @param arguments format arguments
      * @since 1.2
      */
-    public ConvergenceException(String pattern, Object[] arguments) {
+    public ConvergenceException(String pattern, Object ... arguments) {
         super(pattern, arguments);
     }
 
@@ -56,39 +56,13 @@ public class ConvergenceException extends MathException {
     /**
      * Constructs an exception with specified formatted detail message and root cause.
      * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param cause  the exception or error that caused this exception to be thrown
      * @param pattern format specifier
      * @param arguments format arguments
-     * @param cause  the exception or error that caused this exception to be thrown
      * @since 1.2
      */
-    public ConvergenceException(String pattern, Object[] arguments, Throwable cause) {
-        super(pattern, arguments, cause);
-    }
-    
-    /**
-     * Constructs a new <code>ConvergenceException</code> with specified
-     * detail message and nested <code>Throwable</code> root cause.
-     *
-     * @param msg  the error message.
-     * @param rootCause  the exception or error that caused this exception
-     * to be thrown.
-     * @deprecated as of 1.2, replaced by 
-     * {@link #ConvergenceException(String, Object[], Throwable)}
-     */
-    public ConvergenceException(String msg, Throwable rootCause) {
-        super(msg, rootCause);
-    }
-    
-    /**
-     * Constructs a new <code>ConvergenceException</code> with specified
-     * detail message.
-     *
-     * @param msg  the error message.
-     * @deprecated as of 1.2, replaced by 
-     * {@link #ConvergenceException(String, Object[])}
-     */
-    public ConvergenceException(String msg) {
-        super(msg);
+    public ConvergenceException(Throwable cause, String pattern, Object ... arguments) {
+        super(cause, pattern, arguments);
     }
 
 }

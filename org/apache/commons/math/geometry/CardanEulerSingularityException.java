@@ -22,7 +22,7 @@ import org.apache.commons.math.MathException;
 /** This class represents exceptions thrown while extractiong Cardan
  * or Euler angles from a rotation.
 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
  * @since 1.2
  */
 public class CardanEulerSingularityException
@@ -35,7 +35,7 @@ public class CardanEulerSingularityException
    * if false it is related to EulerAngles
    */
   public CardanEulerSingularityException(boolean isCardan) {
-    super(isCardan ? "Cardan angles singularity" : "Euler angles singularity", new Object[0]);
+    super(isCardan ? "Cardan angles singularity" : "Euler angles singularity");
   }
 
   /** Serializable version identifier */

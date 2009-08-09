@@ -16,6 +16,8 @@
  */
 package org.apache.commons.math.random;
 
+import org.apache.commons.math.MathRuntimeException;
+
 /**
  * Abstract class implementing the {@link  RandomGenerator} interface.
  * Default implementations for all methods other than {@link #nextDouble()} and
@@ -28,7 +30,7 @@ package org.apache.commons.math.random;
  * supplies them.</p>
  *
  * @since 1.1
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public abstract class AbstractRandomGenerator implements RandomGenerator {
     
@@ -58,7 +60,24 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
     public void clear() {
         cachedNormalDeviate = Double.NaN;
     }
-    
+
+    /** {@inheritDoc} */
+    public void setSeed(int seed) {
+        setSeed((long) seed);
+    }
+
+    /** {@inheritDoc} */
+    public void setSeed(int[] seed) {
+        // the following number is the largest prime that fits in 32 bits (it is 2^32 - 5)
+        final long prime = 4294967291l;
+
+        long combined = 0l;
+        for (int s : seed) {
+            combined = combined * prime + s;
+        }
+        setSeed(combined);
+    }
+
     /**
      * Sets the seed of the underyling random number generator using a 
      * <code>long</code> seed.  Sequences of values generated starting with the
@@ -135,7 +154,8 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      */
     public int nextInt(int n) {
         if (n <= 0 ) {
-            throw new IllegalArgumentException("upper bound must be positive");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "upper bound must be positive ({0})", n);
         }
         int result = (int) (nextDouble() * n);
         return result < n ? result : n - 1;

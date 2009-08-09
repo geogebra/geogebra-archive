@@ -18,8 +18,9 @@
 package org.apache.commons.math.random;
 
 import org.apache.commons.math.DimensionMismatchException;
+import org.apache.commons.math.linear.MatrixUtils;
+import org.apache.commons.math.linear.NotPositiveDefiniteMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealMatrixImpl;
 
 /** 
  * A {@link RandomVectorGenerator} that generates vectors with with 
@@ -54,12 +55,12 @@ import org.apache.commons.math.linear.RealMatrixImpl;
  * of the correlated vector. This class handles this situation
  * automatically.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  * @since 1.2
  */
 
 public class CorrelatedRandomVectorGenerator
-implements RandomVectorGenerator {
+    implements RandomVectorGenerator {
 
     /** Simple constructor.
      * <p>Build a correlated random vector generator from its mean
@@ -86,7 +87,7 @@ implements RandomVectorGenerator {
         if (mean.length != order) {
             throw new DimensionMismatchException(mean.length, order);
         }
-        this.mean = (double[]) mean.clone();
+        this.mean = mean.clone();
 
         decompose(covariance, small);
 
@@ -251,9 +252,11 @@ implements RandomVectorGenerator {
         }
 
         // build the root matrix
-        root = new RealMatrixImpl(order, rank);
+        root = MatrixUtils.createRealMatrix(order, rank);
         for (int i = 0; i < order; ++i) {
-            System.arraycopy(b[i], 0, root.getDataRef()[swap[i]], 0, rank);
+            for (int j = 0; j < rank; ++j) {
+                root.setEntry(index[i], j, b[i][j]);
+            }
         }
 
     }
@@ -286,7 +289,7 @@ implements RandomVectorGenerator {
     private double[] mean;
 
     /** Permutated Cholesky root of the covariance matrix. */
-    private RealMatrixImpl root;
+    private RealMatrix root;
 
     /** Rank of the covariance matrix. */
     private int rank;

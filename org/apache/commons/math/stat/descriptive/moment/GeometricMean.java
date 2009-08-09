@@ -16,6 +16,9 @@
  */
 package org.apache.commons.math.stat.descriptive.moment;
 
+import java.io.Serializable;
+
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.summary.SumOfLogs;
@@ -42,9 +45,9 @@ import org.apache.commons.math.stat.descriptive.summary.SumOfLogs;
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
-public class GeometricMean extends AbstractStorelessUnivariateStatistic {
+public class GeometricMean extends AbstractStorelessUnivariateStatistic implements Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -8178734905303459453L;  
@@ -60,33 +63,58 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic {
     }
     
     /**
+     * Copy constructor, creates a new {@code GeometricMean} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code GeometricMean} instance to copy
+     */
+    public GeometricMean(GeometricMean original) {
+        super();
+        copy(original, this);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GeometricMean copy() {
+        GeometricMean result = new GeometricMean();
+        copy(this, result);
+        return result;
+    }
+    
+    /**
      * Create a GeometricMean instance using the given SumOfLogs instance
+     * @param sumOfLogs sum of logs instance to use for computation
      */
     public GeometricMean(SumOfLogs sumOfLogs) {
         this.sumOfLogs = sumOfLogs;
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * {@inheritDoc}
      */
+    @Override
     public void increment(final double d) {
         sumOfLogs.increment(d);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         if (sumOfLogs.getN() > 0) {
-            return Math.exp(sumOfLogs.getResult() / (double) sumOfLogs.getN());
+            return Math.exp(sumOfLogs.getResult() / sumOfLogs.getN());
         } else {
             return Double.NaN;
         }
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         sumOfLogs.clear();
     }
@@ -107,14 +135,15 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic {
      * @throws IllegalArgumentException if the input array is null or the array
      * index parameters are not valid
      */
+    @Override
     public double evaluate(
         final double[] values, final int begin, final int length) {
         return Math.exp(
-            sumOfLogs.evaluate(values, begin, length) / (double) length);
+            sumOfLogs.evaluate(values, begin, length) / length);
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return sumOfLogs.getN();
@@ -147,12 +176,26 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic {
     }
     
     /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source GeometricMean to copy
+     * @param dest GeometricMean to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(GeometricMean source, GeometricMean dest) {
+        dest.sumOfLogs = source.sumOfLogs.copy();
+    }
+    
+    
+    /**
      * Throws IllegalStateException if n > 0.
      */
     private void checkEmpty() {
         if (getN() > 0) {
-            throw new IllegalStateException(
-                "Implementation must be configured before values are added.");
+            throw MathRuntimeException.createIllegalStateException(
+                    "{0} values have been added before statistic is configured",
+                    getN());
         }
     }
 

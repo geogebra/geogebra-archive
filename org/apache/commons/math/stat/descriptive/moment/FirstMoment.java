@@ -17,7 +17,6 @@
 package org.apache.commons.math.stat.descriptive.moment;
 
 import java.io.Serializable;
-
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 
 /**
@@ -43,13 +42,14 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
 public class FirstMoment extends AbstractStorelessUnivariateStatistic 
     implements Serializable {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = -803343206421984070L; 
+    private static final long serialVersionUID = 6112755307178490473L;
+
     
     /** Count of values that have been added */
     protected long n;
@@ -81,22 +81,35 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * Copy constructor, creates a new {@code FirstMoment} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code FirstMoment} instance to copy
      */
+     public FirstMoment(FirstMoment original) {
+         super();
+         copy(original, this);
+     }
+    
+    /**
+     * {@inheritDoc}
+     */
+     @Override
     public void increment(final double d) {
         if (n == 0) {
             m1 = 0.0;
         }
         n++;
-        double n0 = (double) n;
+        double n0 = n;
         dev = d - m1;
         nDev = dev / n0;
         m1 += nDev;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         m1 = Double.NaN;
         n = 0;
@@ -105,16 +118,42 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         return m1;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return n;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FirstMoment copy() {
+        FirstMoment result = new FirstMoment();
+        copy(this, result);
+        return result; 
+    }
+     
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source FirstMoment to copy
+     * @param dest FirstMoment to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(FirstMoment source, FirstMoment dest) {
+        dest.n = source.n;
+        dest.m1 = source.m1;
+        dest.dev = source.dev;
+        dest.nDev = dest.nDev;
     }
 }

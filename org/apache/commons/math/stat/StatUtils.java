@@ -16,6 +16,7 @@
  */
 package org.apache.commons.math.stat;
 
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.stat.descriptive.UnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
@@ -32,39 +33,39 @@ import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
  * StatUtils provides static methods for computing statistics based on data
  * stored in double[] arrays. 
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
  */
 public final class StatUtils {
 
     /** sum */
-    private static UnivariateStatistic sum = new Sum();
+    private static final UnivariateStatistic sum = new Sum();
 
     /** sumSq */
-    private static UnivariateStatistic sumSq = new SumOfSquares();
+    private static final UnivariateStatistic sumSq = new SumOfSquares();
 
     /** prod */
-    private static UnivariateStatistic prod = new Product();
+    private static final UnivariateStatistic prod = new Product();
 
     /** sumLog */
-    private static UnivariateStatistic sumLog = new SumOfLogs();
+    private static final UnivariateStatistic sumLog = new SumOfLogs();
 
     /** min */
-    private static UnivariateStatistic min = new Min();
+    private static final UnivariateStatistic min = new Min();
 
     /** max */
-    private static UnivariateStatistic max = new Max();
+    private static final UnivariateStatistic max = new Max();
 
     /** mean */
-    private static UnivariateStatistic mean = new Mean();
+    private static final UnivariateStatistic mean = new Mean();
 
     /** variance */
-    private static Variance variance = new Variance();
+    private static final Variance variance = new Variance();
 
     /** percentile */
-    private static Percentile percentile = new Percentile();
+    private static final Percentile percentile = new Percentile();
     
     /** geometric mean */
-    private static GeometricMean geometricMean = new GeometricMean();
+    private static final GeometricMean geometricMean = new GeometricMean();
 
     /**
      * Private Constructor
@@ -563,9 +564,10 @@ public final class StatUtils {
     public static double sumDifference(final double[] sample1, final double[] sample2)
         throws IllegalArgumentException {
         int n = sample1.length;
-        if (n  != sample2.length || n < 1) {
-            throw new IllegalArgumentException 
-                ("Input arrays must have the same (positive) length.");
+        if ((n  != sample2.length) || (n < 1)) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "input arrays must have the same positive length ({0} and {1})",
+                  n, sample2.length);
         }
         double result = 0;
         for (int i = 0; i < n; i++) {
@@ -586,7 +588,7 @@ public final class StatUtils {
      */
     public static double meanDifference(final double[] sample1, final double[] sample2)
     throws IllegalArgumentException {
-        return sumDifference(sample1, sample2) / (double) sample1.length;
+        return sumDifference(sample1, sample2) / sample1.length;
     }
     
     /**
@@ -608,14 +610,16 @@ public final class StatUtils {
         double diff = 0d;
         int n = sample1.length;
         if (n < 2 || n != sample2.length) {
-            throw new IllegalArgumentException("Input array lengths must be equal and at least 2.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "input arrays must have the same length and at least two elements ({0} and {1})",
+                  n, sample2.length);
         }
         for (int i = 0; i < n; i++) {
             diff = sample1[i] - sample2[i];
             sum1 += (diff - meanDifference) *(diff - meanDifference);
             sum2 += diff - meanDifference;
         }
-        return (sum1 - (sum2 * sum2 / (double) n)) / (double) (n - 1);
+        return (sum1 - (sum2 * sum2 / n)) / (n - 1);
     }      
     
 }

@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.math.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math.stat.descriptive.SummaryStatistics;
 
 /**
  * Represents an <a href="http://random.mat.sbg.ac.at/~ste/dipl/node11.html">
@@ -44,7 +45,7 @@ import org.apache.commons.math.stat.descriptive.StatisticalSummary;
  * generate random values "like" those in the input file -- i.e., the values
  * generated will follow the distribution of the values in the file.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public interface EmpiricalDistribution {
 
@@ -118,7 +119,7 @@ public interface EmpiricalDistribution {
      * 
      * @return List of bin statistics
      */
-    List getBinStats();
+    List<SummaryStatistics> getBinStats();
 
     /**
      * Returns the array of upper bounds for the bins.  Bins are: <br/>

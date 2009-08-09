@@ -16,8 +16,6 @@
  */
 package org.apache.commons.math.special;
 
-import java.io.Serializable;
-
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.util.ContinuedFraction;
 
@@ -25,12 +23,9 @@ import org.apache.commons.math.util.ContinuedFraction;
  * This is a utility class that provides computation methods related to the
  * Beta family of functions.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
  */
-public class Beta implements Serializable {
-
-    /** Serializable version identifier */
-    private static final long serialVersionUID = -3833485397404128220L;
+public class Beta {
 
     /** Maximum allowed numerical error. */
     private static final double DEFAULT_EPSILON = 10e-15;
@@ -132,8 +127,7 @@ public class Beta implements Serializable {
         } else {
             ContinuedFraction fraction = new ContinuedFraction() {
 
-                private static final long serialVersionUID = -7658917278956100597L;
-
+                @Override
                 protected double getB(int n, double x) {
                     double ret;
                     double m;
@@ -149,6 +143,7 @@ public class Beta implements Serializable {
                     return ret;
                 }
 
+                @Override
                 protected double getA(int n, double x) {
                     return 1.0;
                 }

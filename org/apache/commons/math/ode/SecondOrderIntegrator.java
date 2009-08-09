@@ -17,6 +17,7 @@
 
 package org.apache.commons.math.ode;
 
+
 /** This interface represents a second order integrator for
  * differential equations.
  *
@@ -26,28 +27,11 @@ package org.apache.commons.math.ode;
  * SecondOrderDifferentialEquations} interface.</p>
  *
  * @see SecondOrderDifferentialEquations
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
  */
 
-public interface SecondOrderIntegrator {
-
-  /** Get the name of the method.
-   * @return name of the method
-   */
-  public String getName();
-
-  /** Set the step handler for this integrator.
-   * The handler will be called by the integrator for each accepted
-   * step.
-   * @param handler handler for the accepted steps
-   */
-  public void setStepHandler (StepHandler handler);
-
-  /** Get the step handler for this integrator.
-   * @return the step handler for this integrator
-   */
-  public StepHandler getStepHandler();
+public interface SecondOrderIntegrator extends ODEIntegrator {
 
   /** Integrate the differential equations up to the given time
    * @param equations differential equations to integrate

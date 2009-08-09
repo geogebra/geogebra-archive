@@ -16,7 +16,7 @@
  */
 package org.apache.commons.math.stat.descriptive;
 
-import java.io.Serializable;
+import org.apache.commons.math.MathRuntimeException;
 
 /**
  * Abstract base class for all implementations of the 
@@ -29,16 +29,13 @@ import java.io.Serializable;
  * Also includes a <code>test</code> method that performs generic parameter
  * validation for the <code>evaluate</code> methods.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:17 $
  */
 public abstract class AbstractUnivariateStatistic
-    implements UnivariateStatistic, Serializable {
-    
-    /** Serialization UID */
-    private static final long serialVersionUID = -8007759382851708045L;
+    implements UnivariateStatistic {
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.UnivariateStatistic#evaluate(double[])
+     * {@inheritDoc}
      */
     public double evaluate(final double[] values) {
         test(values, 0, 0);
@@ -46,9 +43,14 @@ public abstract class AbstractUnivariateStatistic
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.UnivariateStatistic#evaluate(double[], int, int)
+     * {@inheritDoc}
      */
     public abstract double evaluate(final double[] values, final int begin, final int length);
+    
+    /**
+     * {@inheritDoc}
+     */
+    public abstract UnivariateStatistic copy();
 
     /**
      * This method is used by <code>evaluate(double[], int, int)</code> methods
@@ -75,20 +77,22 @@ public abstract class AbstractUnivariateStatistic
         final int length) {
 
         if (values == null) {
-            throw new IllegalArgumentException("input value array is null");
+            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
         }
         
         if (begin < 0) {
-            throw new IllegalArgumentException("start position cannot be negative");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "start position cannot be negative ({0})", begin);
         }
         
         if (length < 0) {
-            throw new IllegalArgumentException("length cannot be negative");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "length cannot be negative ({0})", length);
         }
         
         if (begin + length > values.length) {
-            throw new IllegalArgumentException(
-                "begin + length > values.length");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "subarray ends after array end");
         }
 
         if (length == 0) {

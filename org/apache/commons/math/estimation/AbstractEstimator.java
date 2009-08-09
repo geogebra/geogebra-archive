@@ -20,22 +20,33 @@ package org.apache.commons.math.estimation;
 import java.util.Arrays;
 
 import org.apache.commons.math.linear.InvalidMatrixException;
-import org.apache.commons.math.linear.RealMatrixImpl;
+import org.apache.commons.math.linear.LUDecompositionImpl;
+import org.apache.commons.math.linear.MatrixUtils;
+import org.apache.commons.math.linear.RealMatrix;
 
 /**
  * Base class for implementing estimators.
  * <p>This base class handles the boilerplates methods associated to thresholds
  * settings, jacobian and error estimation.</p>
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
+ * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
+ * been deprecated and replaced by package org.apache.commons.math.optimization.general
  *
  */
+@Deprecated
 public abstract class AbstractEstimator implements Estimator {
+
+    /** Default maximal number of cost evaluations allowed. */
+    public static final int DEFAULT_MAX_COST_EVALUATIONS = 100;
 
     /**
      * Build an abstract estimator for least squares problems.
+     * <p>The maximal number of cost evaluations allowed is set
+     * to its default value {@link #DEFAULT_MAX_COST_EVALUATIONS}.</p>
      */
     protected AbstractEstimator() {
+        setMaxCostEval(DEFAULT_MAX_COST_EVALUATIONS);
     }
 
     /**
@@ -98,7 +109,7 @@ public abstract class AbstractEstimator implements Estimator {
 
         if (++costEvaluations > maxCostEval) {
             throw new EstimationException("maximal number of evaluations exceeded ({0})",
-                                          new Object[] { new Integer(maxCostEval) });
+                                          maxCostEval);
         }
 
         cost = 0;
@@ -149,7 +160,7 @@ public abstract class AbstractEstimator implements Estimator {
     }
 
     /**
-     * Get the covariance matrix of estimated parameters.
+     * Get the covariance matrix of unbound estimated parameters.
      * @param problem estimation problem
      * @return covariance matrix
      * @exception EstimationException if the covariance matrix
@@ -163,7 +174,7 @@ public abstract class AbstractEstimator implements Estimator {
 
         // compute transpose(J).J, avoiding building big intermediate matrices
         final int rows = problem.getMeasurements().length;
-        final int cols = problem.getAllParameters().length;
+        final int cols = problem.getUnboundParameters().length;
         final int max  = cols * rows;
         double[][] jTj = new double[cols][cols];
         for (int i = 0; i < cols; ++i) {
@@ -179,16 +190,17 @@ public abstract class AbstractEstimator implements Estimator {
 
         try {
             // compute the covariances matrix
-            return new RealMatrixImpl(jTj).inverse().getData();
+            RealMatrix inverse =
+                new LUDecompositionImpl(MatrixUtils.createRealMatrix(jTj)).getSolver().getInverse();
+            return inverse.getData();
         } catch (InvalidMatrixException ime) {
-            throw new EstimationException("unable to compute covariances: singular problem",
-                                          new Object[0]);
+            throw new EstimationException("unable to compute covariances: singular problem");
         }
 
     }
 
     /**
-     * Guess the errors in estimated parameters.
+     * Guess the errors in unbound estimated parameters.
      * <p>Guessing is covariance-based, it only gives rough order of magnitude.</p>
      * @param problem estimation problem
      * @return errors in estimated parameters
@@ -199,12 +211,13 @@ public abstract class AbstractEstimator implements Estimator {
     public double[] guessParametersErrors(EstimationProblem problem)
       throws EstimationException {
         int m = problem.getMeasurements().length;
-        int p = problem.getAllParameters().length;
+        int p = problem.getUnboundParameters().length;
         if (m <= p) {
-            throw new EstimationException("no degrees of freedom ({0} measurements, {1} parameters)",
-                                          new Object[] { new Integer(m), new Integer(p)});
+            throw new EstimationException(
+                    "no degrees of freedom ({0} measurements, {1} parameters)",
+                    m, p);
         }
-        double[] errors = new double[problem.getAllParameters().length];
+        double[] errors = new double[problem.getUnboundParameters().length];
         final double c = Math.sqrt(getChiSquare(problem) / (m - p));
         double[][] covar = getCovariances(problem);
         for (int i = 0; i < errors.length; ++i) {

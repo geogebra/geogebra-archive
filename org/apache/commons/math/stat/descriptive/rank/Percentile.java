@@ -18,6 +18,8 @@ package org.apache.commons.math.stat.descriptive.rank;
 
 import java.io.Serializable;
 import java.util.Arrays;
+
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic;
 
 /**
@@ -61,7 +63,7 @@ import org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic;
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:19 $
  */
 public class Percentile extends AbstractUnivariateStatistic implements Serializable {
 
@@ -90,6 +92,16 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
         setQuantile(p);
     }
 
+    /**
+     * Copy constructor, creates a new {@code Percentile} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code Percentile} instance to copy
+     */
+    public Percentile(Percentile original) {
+        copy(original, this);
+    }        
+    
     /**
      * Returns an estimate of the <code>p</code>th percentile of the values
      * in the <code>values</code> array.
@@ -145,6 +157,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * @throws IllegalArgumentException if the parameters are not valid
      * 
      */
+    @Override
     public double evaluate( final double[] values, final int start, final int length) {
         return evaluate(values, start, length, quantile);
     }
@@ -185,7 +198,8 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
         test(values, begin, length);
 
         if ((p > 100) || (p <= 0)) {
-            throw new IllegalArgumentException("invalid quantile value: " + p);
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "out of bounds quantile value: {0}, must be in (0, 100]", p);
         }
         if (length == 0) {
             return Double.NaN;
@@ -193,7 +207,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
         if (length == 1) {
             return values[begin]; // always return single value for n = 1
         }
-        double n = (double) length;
+        double n = length;
         double pos = p * (n + 1) / 100;
         double fpos = Math.floor(pos);
         int intPos = (int) fpos;
@@ -233,9 +247,32 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      */
     public void setQuantile(final double p) {
         if (p <= 0 || p > 100) {
-            throw new IllegalArgumentException("Illegal quantile value: " + p);
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "out of bounds quantile value: {0}, must be in (0, 100]", p);
         }
         quantile = p;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Percentile copy() {
+        Percentile result = new Percentile();
+        copy(this, result);
+        return result;
+    }
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source Percentile to copy
+     * @param dest Percentile to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(Percentile source, Percentile dest) {
+        dest.quantile = source.quantile;
     }
 
 }

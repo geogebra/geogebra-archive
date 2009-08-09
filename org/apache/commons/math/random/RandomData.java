@@ -20,7 +20,7 @@ import java.util.Collection;
 
 /**
  * Random data generation utilities.
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public interface RandomData {
     /**
@@ -268,5 +268,5 @@ public interface RandomData {
      * @param k size of the sample
      * @return random sample of k elements from c
      */
-    Object[] nextSample(Collection c, int k);
+    Object[] nextSample(Collection<?> c, int k);
 }

@@ -23,7 +23,7 @@ import org.apache.commons.math.MathException;
  * This class represents exceptions thrown while building rotations
  * from matrices.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
  * @since 1.2
  */
 
@@ -36,7 +36,7 @@ public class NotARotationMatrixException
    * @param specifier format specifier (to be translated)
    * @param parts to insert in the format (no translation)
    */
-  public NotARotationMatrixException(String specifier, Object[] parts) {
+  public NotARotationMatrixException(String specifier, Object ... parts) {
     super(specifier, parts);
   }
 

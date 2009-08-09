@@ -26,10 +26,13 @@ package org.apache.commons.math.random;
  * 
  * @since 1.2
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 
 public class UniformRandomGenerator implements NormalizedRandomGenerator {
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 1569292426375546027L;
 
     /** Create a new generator.
      * @param generator underlying random generator to use

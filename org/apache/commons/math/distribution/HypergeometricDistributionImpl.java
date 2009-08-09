@@ -19,12 +19,13 @@ package org.apache.commons.math.distribution;
 
 import java.io.Serializable;
 
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.util.MathUtils;
 
 /**
  * The default implementation of {@link HypergeometricDistribution}.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
     implements HypergeometricDistribution, Serializable 
@@ -53,13 +54,14 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
         int numberOfSuccesses, int sampleSize) {
         super();
         if (numberOfSuccesses > populationSize) {
-            throw new IllegalArgumentException(
-                "number of successes must be less than or equal to " +
-                "population size");
+            throw MathRuntimeException.createIllegalArgumentException(
+                "number of successes ({0}) must be less than or equal to population size ({1})",
+                numberOfSuccesses, populationSize);
         }
         if (sampleSize > populationSize) {
-            throw new IllegalArgumentException(
-            "sample size must be less than or equal to population size");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "sample size ({0}) must be less than or equal to population size ({1})",
+                  sampleSize, populationSize);
         }
         setPopulationSize(populationSize);
         setSampleSize(sampleSize);
@@ -67,10 +69,11 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
     }
 
     /**
-     * For this disbution, X, this method returns P(X &le; x).
+     * For this distribution, X, this method returns P(X &le; x).
      * @param x the value at which the PDF is evaluated.
      * @return PDF for this distribution. 
      */
+    @Override
     public double cumulativeProbability(int x) {
         double ret;
         
@@ -113,6 +116,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
      */
+    @Override
     protected int getDomainLowerBound(double p) {
         return getLowerDomain(getPopulationSize(), getNumberOfSuccesses(),
             getSampleSize());
@@ -126,6 +130,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
      * @return domain value upper bound, i.e.
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
      */
+    @Override
     protected int getDomainUpperBound(double p) {
         return getUpperDomain(getSampleSize(), getNumberOfSuccesses());
     }
@@ -178,7 +183,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
     }
 
     /**
-     * For this disbution, X, this method returns P(X = x).
+     * For this distribution, X, this method returns P(X = x).
      * 
      * @param x the value at which the PMF is evaluated.
      * @return PMF for this distribution. 
@@ -201,7 +206,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
     }
     
     /**
-     * For the disbution, X, defined by the given hypergeometric distribution
+     * For the distribution, X, defined by the given hypergeometric distribution
      * parameters, this method returns P(X = x).
      * 
      * @param n the population size.
@@ -223,8 +228,9 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
      */
     public void setNumberOfSuccesses(int num) {
         if(num < 0){
-            throw new IllegalArgumentException(
-                "number of successes must be non-negative.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "number of successes must be non-negative ({0})",
+                  num);
         }
         numberOfSuccesses = num;
     }
@@ -236,8 +242,9 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
      */
     public void setPopulationSize(int size) {
         if(size <= 0){
-            throw new IllegalArgumentException(
-                "population size must be positive.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "population size must be positive ({0})",
+                  size);
         }
         populationSize = size;
     }
@@ -249,14 +256,15 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
      */
     public void setSampleSize(int size) {
         if (size < 0) {
-            throw new IllegalArgumentException(
-                "sample size must be non-negative.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "sample size must be positive ({0})",
+                  size);
         }    
         sampleSize = size;
     }
 
     /**
-     * For this disbution, X, this method returns P(X &ge; x).
+     * For this distribution, X, this method returns P(X &ge; x).
      * @param x the value at which the CDF is evaluated.
      * @return upper tail CDF for this distribution.
      * @since 1.1
@@ -281,7 +289,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
     }
     
     /**
-     * For this disbution, X, this method returns P(x0 &le; X &le; x1).  This
+     * For this distribution, X, this method returns P(x0 &le; X &le; x1).  This
      * probability is computed by summing the point probabilities for the values
      * x0, x0 + 1, x0 + 2, ..., x1, in the order directed by dx. 
      * @param x0 the inclusive, lower bound

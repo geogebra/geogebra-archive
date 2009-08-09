@@ -27,7 +27,7 @@ package org.apache.commons.math.stat.descriptive;
  * the instance nor compute another statistic. 
  *
  * @since 1.2
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:17 $
  */
 public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
 
@@ -48,83 +48,125 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
     public SynchronizedDescriptiveStatistics(int window) {
         super(window);
     }
+    
+    /**
+     * A copy constructor. Creates a deep-copy of the {@code original}.
+     * 
+     * @param original the {@code SynchronizedDescriptiveStatistics} instance to copy
+     */
+    public SynchronizedDescriptiveStatistics(SynchronizedDescriptiveStatistics original) {
+        copy(original, this);
+    }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.DescriptiveStatistics#addValue(double)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void addValue(double v) {
         super.addValue(v);
     }
 
     /**
-     * Apply the given statistic to this univariate collection.
-     * @param stat the statistic to apply
-     * @return the computed value of the statistic.
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double apply(UnivariateStatistic stat) {
         return super.apply(stat);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.DescriptiveStatistics#clear()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void clear() {
         super.clear();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.DescriptiveStatistics#getElement(int)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getElement(int index) {
         return super.getElement(index);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.DescriptiveStatistics#getN()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized long getN() {
         return super.getN();
     }
 
     /** 
-     * Returns the standard deviation of the available values.
-     * @return The standard deviation, Double.NaN if no values have been added 
-     * or 0.0 for a single value set. 
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double getStandardDeviation() {
         return super.getStandardDeviation();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.DescriptiveStatistics#getValues()
+     * {@inheritDoc}
      */
+    @Override
     public synchronized double[] getValues() {
         return super.getValues();
     }
 
     /**
-     * Access the window size.
-     * @return the current window size.
+     * {@inheritDoc}
      */
+    @Override
     public synchronized int getWindowSize() {
         return super.getWindowSize();
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.DescriptiveStatistics#setWindowSize(int)
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void setWindowSize(int windowSize) {
         super.setWindowSize(windowSize);
     }
 
     /**
-     * Generates a text report displaying univariate statistics from values
-     * that have been added.  Each statistic is displayed on a separate
-     * line.
-     * 
-     * @return String with line feeds displaying statistics
+     * {@inheritDoc}
      */
+    @Override
     public synchronized String toString() {
         return super.toString();
+    }
+    
+    /**
+     * Returns a copy of this SynchronizedDescriptiveStatistics instance with the
+     * same internal state.
+     * 
+     * @return a copy of this
+     */
+    @Override
+    public synchronized SynchronizedDescriptiveStatistics copy() {
+        SynchronizedDescriptiveStatistics result = 
+            new SynchronizedDescriptiveStatistics();
+        copy(this, result);
+        return result; 
+    }
+     
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * <p>Acquires synchronization lock on source, then dest before copying.</p>
+     * 
+     * @param source SynchronizedDescriptiveStatistics to copy
+     * @param dest SynchronizedDescriptiveStatistics to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(SynchronizedDescriptiveStatistics source,
+            SynchronizedDescriptiveStatistics dest) {
+        synchronized (source) {
+            synchronized (dest) {
+                DescriptiveStatistics.copy(source, dest);
+            }
+        }
     }
 }

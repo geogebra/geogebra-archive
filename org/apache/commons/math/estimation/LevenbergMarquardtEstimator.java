@@ -27,8 +27,7 @@ import java.util.Arrays;
  * (i.e. systems having more variables than equations). Over-determined systems
  * are solved by ignoring the variables which have the smallest impact according
  * to their jacobian column norm. Only the rank of the matrix and some loop bounds
- * are changed to implement this. This feature has undergone only basic testing
- * for now and should still be considered experimental.</p>
+ * are changed to implement this.</p>
  *
  * <p>The resolution engine is a simple translation of the MINPACK <a
  * href="http://www.netlib.org/minpack/lmder.f">lmder</a> routine with minor
@@ -93,10 +92,13 @@ import java.util.Arrays;
  * @author Kenneth E. Hillstrom (original fortran)
  * @author Jorge J. More (original fortran)
 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
+ * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
+ * been deprecated and replaced by package org.apache.commons.math.optimization.general
  *
  */
+@Deprecated
 public class LevenbergMarquardtEstimator extends AbstractEstimator implements Serializable {
 
   /** 
@@ -197,6 +199,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
    * @see #setParRelativeTolerance
    * @see #setOrthoTolerance
    */
+  @Override
   public void estimate(EstimationProblem problem)
     throws EstimationException {
 
@@ -401,16 +404,16 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           throw new EstimationException("cost relative tolerance is too small ({0})," +
                                         " no further reduction in the" +
                                         " sum of squares is possible",
-                                        new Object[] { new Double(costRelativeTolerance) });
+                                        costRelativeTolerance);
         } else if (delta <= 2.2204e-16 * xNorm) {
           throw new EstimationException("parameters relative tolerance is too small" +
                                         " ({0}), no further improvement in" +
                                         " the approximate solution is possible",
-                                        new Object[] { new Double(parRelativeTolerance) });
+                                        parRelativeTolerance);
         } else if (maxCosine <= 2.2204e-16)  {
           throw new EstimationException("orthogonality tolerance is too small ({0})," +
                                         " solution is orthogonal to the jacobian",
-                                        new Object[] { new Double(orthoTolerance) });
+                                        orthoTolerance);
         }
 
       }
@@ -733,8 +736,9 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
    * are performed in non-increasing columns norms order thanks to columns
    * pivoting. The diagonal elements of the R matrix are therefore also in
    * non-increasing absolute values order.</p>
+   * @exception EstimationException if the decomposition cannot be performed
    */
-  private void qrDecomposition() {
+  private void qrDecomposition() throws EstimationException {
 
     // initializations
     for (int k = 0; k < cols; ++k) {
@@ -759,6 +763,11 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
         for (int index = iDiag; index < jacobian.length; index += cols) {
           double aki = jacobian[index];
           norm2 += aki * aki;
+        }
+        if (Double.isInfinite(norm2) || Double.isNaN(norm2)) {
+            throw new EstimationException(
+                    "unable to perform Q.R decomposition on the {0}x{1} jacobian matrix",
+                    rows, cols);
         }
         if (norm2 > ak2) {
           nextColumn = i;

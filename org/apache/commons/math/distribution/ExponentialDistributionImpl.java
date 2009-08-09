@@ -19,11 +19,12 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 
 /**
  * The default implementation of {@link ExponentialDistribution}.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     implements ExponentialDistribution, Serializable {
@@ -50,7 +51,8 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
      */
     public void setMean(double mean) {
         if (mean <= 0.0) {
-            throw new IllegalArgumentException("mean must be positive.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "mean must be positive ({0})", mean);
         }
         this.mean = mean;
     }
@@ -64,7 +66,20 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * For this disbution, X, this method returns P(X &lt; x).
+     * Return the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     */
+    public double density(Double x) {
+        if (x < 0) {
+            return 0;
+        }
+        return Math.exp(-x / getMean()) / getMean();
+    }
+
+    /**
+     * For this distribution, X, this method returns P(X &lt; x).
      * 
      * The implementation of this method is based on:
      * <ul>
@@ -100,12 +115,13 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
      *            computed due to convergence or other numerical errors.
      * @throws IllegalArgumentException if p < 0 or p > 1.
      */
+    @Override
     public double inverseCumulativeProbability(double p) throws MathException {
         double ret;
         
         if (p < 0.0 || p > 1.0) {
-            throw new IllegalArgumentException
-                ("probability argument must be between 0 and 1 (inclusive)");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
         } else if (p == 1.0) {
             ret = Double.POSITIVE_INFINITY;
         } else {
@@ -123,6 +139,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code>
      */
+    @Override
     protected double getDomainLowerBound(double p) {
         return 0;
     }
@@ -135,6 +152,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
      * @return domain value upper bound, i.e.
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
      */
+    @Override
     protected double getDomainUpperBound(double p) {
         // NOTE: exponential is skewed to the left
         // NOTE: therefore, P(X < &mu;) > .5
@@ -155,8 +173,11 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
      * @param p the desired probability for the critical value
      * @return initial domain value
      */
+    @Override
     protected double getInitialDomain(double p) {
         // TODO: try to improve on this estimate
+        // TODO: what should really happen here is not derive from AbstractContinuousDistribution
+        // TODO: because the inverse cumulative distribution is simple.
         // Exponential is skewed to the left, therefore, P(X < &mu;) > .5
         if (p < .5) {
             // use 1/2 mean

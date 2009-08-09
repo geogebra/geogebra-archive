@@ -19,13 +19,14 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.special.Gamma;
 import org.apache.commons.math.util.MathUtils;
 
 /**
  * Implementation for the {@link PoissonDistribution}.
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class PoissonDistributionImpl extends AbstractIntegerDistribution
         implements PoissonDistribution, Serializable {
@@ -88,8 +89,9 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
      */
     public void setMean(double p) {
         if (p <= 0) {
-            throw new IllegalArgumentException(
-                    "The Poisson mean must be positive");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "the Poisson mean must be positive ({0})",
+                  p);
         }
         this.mean = p;
         normal.setMean(p);
@@ -118,6 +120,7 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
      * @throws MathException if the cumulative probability can not be
      *            computed due to convergence or other numerical errors.
      */
+    @Override
     public double cumulativeProbability(int x) throws MathException {
         if (x < 0) {
             return 0;
@@ -154,6 +157,7 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
      * @param p the desired probability for the critical value
      * @return domain lower bound
      */
+    @Override
     protected int getDomainLowerBound(double p) {
         return 0;
     }
@@ -166,6 +170,7 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
      * @param p the desired probability for the critical value
      * @return domain upper bound
      */
+    @Override
     protected int getDomainUpperBound(double p) {
         return Integer.MAX_VALUE;
     }

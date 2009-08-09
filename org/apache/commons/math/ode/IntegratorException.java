@@ -22,18 +22,21 @@ import org.apache.commons.math.MathException;
 /**
  * This exception is made available to users to report
  * the error conditions that are triggered during integration
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
  */
 public class IntegratorException
   extends MathException {
-    
+
+  /** Serializable version identifier */
+    private static final long serialVersionUID = -1607588949778036796L;
+
   /** Simple constructor.
    * Build an exception by translating and formating a message
    * @param specifier format specifier (to be translated)
    * @param parts to insert in the format (no translation)
    */
-  public IntegratorException(String specifier, Object[] parts) {
+  public IntegratorException(final String specifier, final Object ... parts) {
     super(specifier, parts);
   }
 
@@ -41,11 +44,8 @@ public class IntegratorException
    * Create an exception with a given root cause.
    * @param cause  the exception or error that caused this exception to be thrown
    */
-  public IntegratorException(Throwable cause) {
+  public IntegratorException(final Throwable cause) {
     super(cause);
   }
-
-  /** Serializable version identifier */
-  private static final long serialVersionUID = -1215318282266670558L;
 
 }

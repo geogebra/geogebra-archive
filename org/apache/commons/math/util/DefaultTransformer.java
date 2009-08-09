@@ -23,14 +23,14 @@ import org.apache.commons.math.MathException;
 
 /**
  * A Default NumberTransformer for java.lang.Numbers and Numeric Strings. This 
- * provides some simple conversion capabilities to turn any java/lang.Number 
+ * provides some simple conversion capabilities to turn any java.lang.Number 
  * into a primitive double or to turn a String representation of a Number into 
  * a double.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:19 $
  */
 public class DefaultTransformer implements NumberTransformer, Serializable {
-    
+   
     /** Serializable version identifier */
     private static final long serialVersionUID = 4019938025047800455L;
     
@@ -39,12 +39,12 @@ public class DefaultTransformer implements NumberTransformer, Serializable {
      * @return a double primitive representation of the Object o.
      * @throws org.apache.commons.math.MathException If it cannot successfully 
      * be transformed or is null.
-     * @see org.apache.commons.collections.Transformer#transform(java.lang.Object)
+     * @see <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/Transformer.html"/>
      */
     public double transform(Object o) throws MathException{
 
         if (o == null) {
-            throw new MathException("Conversion Exception in Transformation, Object is null", new Object[0]);
+            throw new MathException("Conversion Exception in Transformation, Object is null");
         }
 
         if (o instanceof Number) {
@@ -52,10 +52,30 @@ public class DefaultTransformer implements NumberTransformer, Serializable {
         }
             
         try {
-            return new Double(o.toString()).doubleValue();
+            return Double.valueOf(o.toString()).doubleValue();
         } catch (Exception e) {
-            throw new MathException("Conversion Exception in Transformation: {0}",
-                                    new Object[] { e.getMessage() }, e);
+            throw new MathException(e,
+                                    "Conversion Exception in Transformation: {0}", e.getMessage());
         }
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) { 
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        return other instanceof DefaultTransformer;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        // some arbitrary number ...
+        return 401993047;
+    }
+
 }

@@ -29,7 +29,7 @@ import java.util.Collection;
  * </p>
  *
  * @since 1.2
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $ 
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:18 $ 
  */
 public interface OneWayAnova {
     /**
@@ -50,7 +50,7 @@ public interface OneWayAnova {
      * @throws MathException if the statistic can not be computed do to a
      *         convergence or other numerical error.
      */
-    public double anovaFValue(Collection categoryData)
+    public double anovaFValue(Collection<double[]> categoryData)
         throws IllegalArgumentException, MathException;
 
     /**
@@ -71,7 +71,7 @@ public interface OneWayAnova {
      * @throws MathException if the statistic can not be computed do to a
      *         convergence or other numerical error.
      */
-    public double anovaPValue(Collection categoryData)
+    public double anovaPValue(Collection<double[]> categoryData)
         throws IllegalArgumentException, MathException;
 
     /**
@@ -96,7 +96,7 @@ public interface OneWayAnova {
      * @throws MathException if the statistic can not be computed do to a
      *         convergence or other numerical error.
     */
-    public boolean anovaTest(Collection categoryData, double alpha)
+    public boolean anovaTest(Collection<double[]> categoryData, double alpha)
         throws IllegalArgumentException, MathException;
 
 }

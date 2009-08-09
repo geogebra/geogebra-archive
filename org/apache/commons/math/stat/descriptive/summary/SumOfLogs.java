@@ -39,7 +39,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
  */
 public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -61,18 +61,30 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
        value = 0d;
        n = 0;
     }
+    
+    /**
+     * Copy constructor, creates a new {@code SumOfLogs} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code SumOfLogs} instance to copy
+     */
+    public SumOfLogs(SumOfLogs original) {
+        copy(original, this);
+    }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * {@inheritDoc}
      */
+    @Override
     public void increment(final double d) {
         value += Math.log(d);
         n++;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         if (n > 0) {
             return value;
@@ -82,15 +94,16 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return n;
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         value = 0d;
         n = 0;
@@ -113,6 +126,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      * @throws IllegalArgumentException if the array is null or the array index
      *  parameters are not valid
      */
+    @Override
     public double evaluate(final double[] values, final int begin, final int length) {
         double sumLog = Double.NaN;
         if (test(values, begin, length)) {
@@ -122,5 +136,28 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
             }
         }
         return sumLog;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SumOfLogs copy() {
+        SumOfLogs result = new SumOfLogs();
+        copy(this, result);
+        return result;
+    }
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source SumOfLogs to copy
+     * @param dest SumOfLogs to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(SumOfLogs source, SumOfLogs dest) {
+        dest.n = source.n;
+        dest.value = source.value;
     }
 }

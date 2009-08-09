@@ -16,22 +16,42 @@
  */
 package org.apache.commons.math.random;
 
-import java.io.Serializable;
 
 /**
  * Interface extracted from <code>java.util.Random</code>.  This interface is
  * implemented by {@link AbstractRandomGenerator}.  
  *
  * @since 1.1
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
-public interface RandomGenerator extends Serializable {
+public interface RandomGenerator {
     
     /**
-     * Sets the seed of the underyling random number generator using a 
-     * <code>long</code> seed.  Sequences of values generated starting with the
-     * same seeds should be identical.
-     *
+     * Sets the seed of the underyling random number generator using an
+     * <code>int</code> seed.
+     * <p>Sequences of values generated starting with the same seeds
+     * should be identical.
+     * </p>
+     * @param seed the seed value
+     */
+    void setSeed(int seed);
+
+    /**
+     * Sets the seed of the underyling random number generator using an
+     * <code>int</code> array seed.
+     * <p>Sequences of values generated starting with the same seeds
+     * should be identical.
+     * </p>
+     * @param seed the seed value
+     */
+    void setSeed(int[] seed);
+    
+    /**
+     * Sets the seed of the underyling random number generator using a
+     * <code>long</code> seed.
+     * <p>Sequences of values generated starting with the same seeds
+     * should be identical.
+     * </p>
      * @param seed the seed value
      */
     void setSeed(long seed);

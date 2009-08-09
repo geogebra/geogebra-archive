@@ -20,6 +20,7 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.util.MathUtils;
 
 /**
@@ -31,13 +32,13 @@ import org.apache.commons.math.util.MathUtils;
  * will result in a <code>ParseException</code>.</p>
  * 
  * @since 1.1
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
 public class ProperFractionFormat extends FractionFormat {
     
     /** Serializable version identifier */
-    private static final long serialVersionUID = -6337346779577272307L;
-    
+    private static final long serialVersionUID = 760934726031766749L;
+
     /** The format used for the whole number. */
     private NumberFormat wholeFormat;
 
@@ -84,6 +85,7 @@ public class ProperFractionFormat extends FractionFormat {
      *            offsets of the alignment field
      * @return the value passed in as toAppendTo.
      */
+    @Override
     public StringBuffer format(Fraction fraction, StringBuffer toAppendTo,
             FieldPosition pos) {
         
@@ -128,6 +130,7 @@ public class ProperFractionFormat extends FractionFormat {
      * @param pos input/ouput parsing parameter.
      * @return the parsed {@link Fraction} object.
      */
+    @Override
     public Fraction parse(String source, ParsePosition pos) {
         // try to parse improper fraction
         Fraction ret = super.parse(source, pos);
@@ -222,8 +225,8 @@ public class ProperFractionFormat extends FractionFormat {
      */
     public void setWholeFormat(NumberFormat format) {
         if (format == null) {
-            throw new IllegalArgumentException(
-                "whole format can not be null.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                "whole format can not be null");
         }
         this.wholeFormat = format;
     }

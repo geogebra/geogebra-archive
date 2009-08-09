@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-import org.apache.commons.discovery.tools.DiscoverClass;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Kurtosis;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
@@ -51,13 +51,13 @@ import org.apache.commons.math.util.ResizableDoubleArray;
  * {@link SynchronizedDescriptiveStatistics} if concurrent access from multiple
  * threads is required.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:17 $
  */
 public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     
     /** Serialization UID */
-    private static final long serialVersionUID = -2734185686570407433L;
-    
+    private static final long serialVersionUID = 4133067267405273064L;
+
     /** hold the window size **/
     protected int windowSize = INFINITE_WINDOW;
     
@@ -108,41 +108,17 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @param window the window size.
      */
     public DescriptiveStatistics(int window) {
-        super();
         setWindowSize(window);
     }
     
     /**
-     * Create an instance of a <code>DescriptiveStatistics</code>
-     * @param cls the type of <code>DescriptiveStatistics</code> object to
-     *        create. 
-     * @return a new instance. 
-     * @throws InstantiationException is thrown if the object can not be
-     *            created.
-     * @throws IllegalAccessException is thrown if the type's default
-     *            constructor is not accessible.
-     * @deprecated to be removed in commons-math 2.0
+     * Copy constructor.  Construct a new DescriptiveStatistics instance that
+     * is a copy of original.
+     * 
+     * @param original DescriptiveStatistics instance to copy
      */
-    public static DescriptiveStatistics newInstance(Class cls) throws InstantiationException, IllegalAccessException {
-        return (DescriptiveStatistics)cls.newInstance();
-    }
-    
-    /**
-     * Create an instance of a <code>DescriptiveStatistics</code>
-     * @return a new DescriptiveStatistics instance. 
-     * @deprecated to be removed in commons-math 2.0
-     */
-    public static DescriptiveStatistics newInstance() {
-        DescriptiveStatistics factory = null;
-        try {
-            DiscoverClass dc = new DiscoverClass();
-            factory = (DescriptiveStatistics) dc.newInstance(
-                DescriptiveStatistics.class,
-                "org.apache.commons.math.stat.descriptive.DescriptiveStatisticsImpl");
-        } catch(Throwable t) {
-            return new DescriptiveStatisticsImpl();
-        }
-        return factory;
+    public DescriptiveStatistics(DescriptiveStatistics original) {
+        copy(original, this);
     }
     
     /**
@@ -172,6 +148,24 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
         }
     }
 
+    /**
+     * Removes the most recent value from the dataset.
+     */
+    public void removeMostRecentValue() {
+        eDA.discardMostRecentElements(1);
+    }
+
+    /**
+     * Replaces the most recently stored value with the given value.
+     * There must be at least one element stored to call this method.
+     * 
+     * @param v the value to replace the most recent stored value
+     * @return replaced value
+     */
+    public double replaceMostRecentValue(double v) {
+        return eDA.substituteMostRecentElement(v);
+    }
+
     /** 
      * Returns the <a href="http://www.xycoon.com/arithmetic_mean.htm">
      * arithmetic mean </a> of the available values 
@@ -185,7 +179,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * Returns the <a href="http://www.xycoon.com/geometric_mean.htm">
      * geometric mean </a> of the available values
      * @return The geometricMean, Double.NaN if no values have been added, 
-     * or if the productof the available values is less than or equal to 0.
+     * or if the product of the available values is less than or equal to 0.
      */
     public double getGeometricMean() {
         return apply(geometricMeanImpl);
@@ -308,7 +302,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     public void setWindowSize(int windowSize) {
         if (windowSize < 1) {
             if (windowSize != INFINITE_WINDOW) {
-                throw new IllegalArgumentException("window size must be positive.");
+                throw MathRuntimeException.createIllegalArgumentException(
+                      "window size must be positive ({0})", windowSize);
             }
         }
         
@@ -332,10 +327,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      *         were added to this set
      */
     public double[] getValues() {
-        double[] copiedArray = new double[eDA.getNumElements()];
-        System.arraycopy(eDA.getElements(), 0, copiedArray,
-            0, eDA.getNumElements());
-        return copiedArray;
+        return eDA.getElements();
     }
 
     /**
@@ -368,7 +360,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * <a href="http://www.itl.nist.gov/div898/handbook/prc/section2/prc252.htm">here.</a>
      * </p><p>
      * <strong>Preconditions</strong>:<ul>
-     * <li><code>0 &lt; p &lt; 100</code> (otherwise an 
+     * <li><code>0 &lt; p &le; 100</code> (otherwise an 
      * <code>IllegalArgumentException</code> is thrown)</li>
      * <li>at least one value must be stored (returns <code>Double.NaN
      *     </code> otherwise)</li>
@@ -387,16 +379,17 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
             try {
                 percentileImpl.getClass().getMethod("setQuantile", 
                         new Class[] {Double.TYPE}).invoke(percentileImpl,
-                                new Object[] {new Double(p)});
+                                new Object[] {Double.valueOf(p)});
             } catch (NoSuchMethodException e1) { // Setter guard should prevent
-                throw new IllegalArgumentException(
-                   "Percentile implementation does not support setQuantile");
+                throw MathRuntimeException.createIllegalArgumentException(
+                      "percentile implementation {0} does not support setQuantile",
+                      percentileImpl.getClass().getName());
             } catch (IllegalAccessException e2) {
-                throw new IllegalArgumentException(
-                    "IllegalAccessException setting quantile"); 
+                throw MathRuntimeException.createIllegalArgumentException(
+                      "cannot access setQuantile method in percentile implementation {0}",
+                      percentileImpl.getClass().getName());
             } catch (InvocationTargetException e3) {
-                throw new IllegalArgumentException(
-                    "Error setting quantile" + e3.toString()); 
+                throw MathRuntimeException.createIllegalArgumentException(e3.getCause()); 
             }
         }
         return apply(percentileImpl);
@@ -409,17 +402,20 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * 
      * @return String with line feeds displaying statistics
      */
+    @Override
     public String toString() {
         StringBuffer outBuffer = new StringBuffer();
-        outBuffer.append("DescriptiveStatistics:\n");
-        outBuffer.append("n: " + getN() + "\n");
-        outBuffer.append("min: " + getMin() + "\n");
-        outBuffer.append("max: " + getMax() + "\n");
-        outBuffer.append("mean: " + getMean() + "\n");
-        outBuffer.append("std dev: " + getStandardDeviation() + "\n");
-        outBuffer.append("median: " + getPercentile(50) + "\n");
-        outBuffer.append("skewness: " + getSkewness() + "\n");
-        outBuffer.append("kurtosis: " + getKurtosis() + "\n");
+        String endl = "\n";
+        outBuffer.append("DescriptiveStatistics:").append(endl);
+        outBuffer.append("n: ").append(getN()).append(endl);
+        outBuffer.append("min: ").append(getMin()).append(endl);
+        outBuffer.append("max: ").append(getMax()).append(endl);
+        outBuffer.append("mean: ").append(getMean()).append(endl);
+        outBuffer.append("std dev: ").append(getStandardDeviation())
+            .append(endl);
+        outBuffer.append("median: ").append(getPercentile(50)).append(endl);
+        outBuffer.append("skewness: ").append(getSkewness()).append(endl);
+        outBuffer.append("kurtosis: ").append(getKurtosis()).append(endl);
         return outBuffer.toString();
     }
     
@@ -429,7 +425,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @return the computed value of the statistic.
      */
     public double apply(UnivariateStatistic stat) {
-        return stat.evaluate(eDA.getValues(), eDA.start(), eDA.getNumElements());
+        return stat.evaluate(eDA.getInternalValues(), eDA.start(), eDA.getNumElements());
     }
 
     // Implementation getters and setter
@@ -566,16 +562,17 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
         try {
             percentileImpl.getClass().getMethod("setQuantile", 
                     new Class[] {Double.TYPE}).invoke(percentileImpl,
-                            new Object[] {new Double(50.0d)});
+                            new Object[] {Double.valueOf(50.0d)});
         } catch (NoSuchMethodException e1) { 
-            throw new IllegalArgumentException(
-                    "Percentile implementation does not support setQuantile");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "percentile implementation {0} does not support setQuantile",
+                  percentileImpl.getClass().getName());
         } catch (IllegalAccessException e2) {
-            throw new IllegalArgumentException(
-                "IllegalAccessException setting quantile"); 
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "cannot access setQuantile method in percentile implementation {0}",
+                  percentileImpl.getClass().getName());
         } catch (InvocationTargetException e3) {
-            throw new IllegalArgumentException(
-                "Error setting quantile" + e3.toString()); 
+            throw MathRuntimeException.createIllegalArgumentException(e3.getCause()); 
         }
         this.percentileImpl = percentileImpl;
     }
@@ -664,5 +661,42 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      */
     public synchronized void setSumImpl(UnivariateStatistic sumImpl) {
         this.sumImpl = sumImpl;
-    }   
+    }  
+    
+    /**
+     * Returns a copy of this DescriptiveStatistics instance with the same internal state.
+     * 
+     * @return a copy of this
+     */
+    public DescriptiveStatistics copy() {
+        DescriptiveStatistics result = new DescriptiveStatistics();
+        copy(this, result);
+        return result; 
+    }
+     
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source DescriptiveStatistics to copy
+     * @param dest DescriptiveStatistics to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(DescriptiveStatistics source, DescriptiveStatistics dest) {
+        // Copy data and window size
+        dest.eDA = source.eDA.copy();
+        dest.windowSize = source.windowSize;
+        
+        // Copy implementations
+        dest.maxImpl = source.maxImpl.copy();
+        dest.meanImpl = source.meanImpl.copy();
+        dest.minImpl = source.minImpl.copy();
+        dest.sumImpl = source.sumImpl.copy();
+        dest.varianceImpl = source.varianceImpl.copy();
+        dest.sumsqImpl = source.sumsqImpl.copy();
+        dest.geometricMeanImpl = source.geometricMeanImpl.copy();
+        dest.kurtosisImpl = source.kurtosisImpl;
+        dest.skewnessImpl = source.skewnessImpl;
+        dest.percentileImpl = source.percentileImpl;
+    }
 }

@@ -19,12 +19,14 @@ package org.apache.commons.math.distribution;
 
 import java.io.Serializable;
 
+import org.apache.commons.math.MathRuntimeException;
+
 /**
  * Default implementation of
  * {@link org.apache.commons.math.distribution.WeibullDistribution}.
  *
  * @since 1.1
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class WeibullDistributionImpl extends AbstractContinuousDistribution
         implements WeibullDistribution, Serializable {
@@ -51,7 +53,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * For this disbution, X, this method returns P(X &lt; <code>x</code>).
+     * For this distribution, X, this method returns P(X &lt; <code>x</code>).
      * @param x the value at which the CDF is evaluated.
      * @return CDF evaluted at <code>x</code>. 
      */
@@ -93,11 +95,12 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      * @throws IllegalArgumentException if <code>p</code> is not a valid
      *         probability.
      */
+    @Override
     public double inverseCumulativeProbability(double p) {
         double ret;
         if (p < 0.0 || p > 1.0) {
-            throw new IllegalArgumentException
-                ("probability argument must be between 0 and 1 (inclusive)");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
         } else if (p == 0) {
             ret = 0.0;
         } else  if (p == 1) {
@@ -114,8 +117,9 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      */
     public void setShape(double alpha) {
         if (alpha <= 0.0) {
-            throw new IllegalArgumentException(
-                "Shape must be positive.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "shape must be positive ({0})",
+                  alpha);
         }       
         this.alpha = alpha;
     }
@@ -126,8 +130,9 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      */
     public void setScale(double beta) {
         if (beta <= 0.0) {
-            throw new IllegalArgumentException(
-                "Scale must be positive.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "scale must be positive ({0})",
+                  beta);
         }       
         this.beta = beta;
     }
@@ -141,6 +146,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
      */
+    @Override
     protected double getDomainLowerBound(double p) {
         return 0.0;
     }
@@ -154,6 +160,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      * @return domain value upper bound, i.e.
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
      */
+    @Override
     protected double getDomainUpperBound(double p) {
         return Double.MAX_VALUE;
     }
@@ -166,6 +173,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      * @param p the desired probability for the critical value
      * @return initial domain value
      */
+    @Override
     protected double getInitialDomain(double p) {
         // use median
         return Math.pow(getScale() * Math.log(2.0), 1.0 / getShape());

@@ -44,14 +44,19 @@ import java.io.Serializable;
  *
  * @see EstimationProblem
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
- *
+ * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
+ * been deprecated and replaced by package org.apache.commons.math.optimization.general
  */
 
+@Deprecated
 public abstract class WeightedMeasurement implements Serializable {
 
-  /** 
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 4360046376796901941L;
+
+    /** 
    * Simple constructor.
    * Build a measurement with the given parameters, and set its ignore
    * flag to false.

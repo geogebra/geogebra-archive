@@ -48,7 +48,7 @@ import java.io.Serializable;
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally. </p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
 public class FourthMoment extends ThirdMoment implements Serializable{
 
@@ -67,8 +67,20 @@ public class FourthMoment extends ThirdMoment implements Serializable{
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * Copy constructor, creates a new {@code FourthMoment} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code FourthMoment} instance to copy
      */
+     public FourthMoment(FourthMoment original) {
+         super();
+         copy(original, this);
+     }
+    
+    /**
+     * {@inheritDoc}
+     */
+     @Override
     public void increment(final double d) {
         if (n < 1) {
             m4 = 0.0;
@@ -82,25 +94,49 @@ public class FourthMoment extends ThirdMoment implements Serializable{
         
         super.increment(d);
         
-        double n0 = (double) n;
+        double n0 = n;
 
         m4 = m4 - 4.0 * nDev * prevM3 + 6.0 * nDevSq * prevM2 +
             ((n0 * n0) - 3 * (n0 -1)) * (nDevSq * nDevSq * (n0 - 1) * n0);
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
         return m4;
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         super.clear();
         m4 = Double.NaN;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FourthMoment copy() {
+        FourthMoment result = new FourthMoment();
+        copy(this, result);
+        return result;
+    }
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source FourthMoment to copy
+     * @param dest FourthMoment to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(FourthMoment source, FourthMoment dest) {
+        ThirdMoment.copy(source, dest);
+        dest.m4 = source.m4;
+    }  
 }

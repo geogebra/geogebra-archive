@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.math.DimensionMismatchException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
@@ -62,7 +63,7 @@ import org.apache.commons.math.util.MathUtils;
  * threads is required.</p>
  *
  * @since 1.2
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:17 $
  */
 public class MultivariateSummaryStatistics
   implements StatisticalMultivariateSummary, Serializable {
@@ -300,6 +301,7 @@ public class MultivariateSummaryStatistics
      * have been added.
      * @return String with line feeds displaying statistics
      */
+    @Override
     public String toString() {
         StringBuffer outBuffer = new StringBuffer();
         outBuffer.append("MultivariateSummaryStatistics:\n");
@@ -358,6 +360,7 @@ public class MultivariateSummaryStatistics
      * @param object the object to test equality against.
      * @return true if object equals this
      */
+    @Override
     public boolean equals(Object object) {
         if (object == this ) {
             return true;
@@ -383,6 +386,7 @@ public class MultivariateSummaryStatistics
      * 
      * @return hash code
      */
+    @Override
     public int hashCode() {
         int result = 31 + MathUtils.hash(getGeometricMean());
         result = result * 31 + MathUtils.hash(getGeometricMean());
@@ -421,7 +425,7 @@ public class MultivariateSummaryStatistics
      * @return the StorelessUnivariateStatistic implementing the sum
      */
     public StorelessUnivariateStatistic[] getSumImpl() {
-        return (StorelessUnivariateStatistic[]) sumImpl.clone();
+        return sumImpl.clone();
     }
 
     /**
@@ -448,7 +452,7 @@ public class MultivariateSummaryStatistics
      * @return the StorelessUnivariateStatistic implementing the sum of squares
      */
     public StorelessUnivariateStatistic[] getSumsqImpl() {
-        return (StorelessUnivariateStatistic[]) sumSqImpl.clone();
+        return sumSqImpl.clone();
     }
 
     /**
@@ -475,7 +479,7 @@ public class MultivariateSummaryStatistics
      * @return the StorelessUnivariateStatistic implementing the minimum
      */
     public StorelessUnivariateStatistic[] getMinImpl() {
-        return (StorelessUnivariateStatistic[]) minImpl.clone();
+        return minImpl.clone();
     }
 
     /**
@@ -502,7 +506,7 @@ public class MultivariateSummaryStatistics
      * @return the StorelessUnivariateStatistic implementing the maximum
      */
     public StorelessUnivariateStatistic[] getMaxImpl() {
-        return (StorelessUnivariateStatistic[]) maxImpl.clone();
+        return maxImpl.clone();
     }
 
     /**
@@ -529,7 +533,7 @@ public class MultivariateSummaryStatistics
      * @return the StorelessUnivariateStatistic implementing the log sum
      */
     public StorelessUnivariateStatistic[] getSumLogImpl() {
-        return (StorelessUnivariateStatistic[]) sumLogImpl.clone();
+        return sumLogImpl.clone();
     }
 
     /**
@@ -556,7 +560,7 @@ public class MultivariateSummaryStatistics
      * @return the StorelessUnivariateStatistic implementing the geometric mean
      */
     public StorelessUnivariateStatistic[] getGeoMeanImpl() {
-        return (StorelessUnivariateStatistic[]) geoMeanImpl.clone();
+        return geoMeanImpl.clone();
     }
 
     /**
@@ -583,7 +587,7 @@ public class MultivariateSummaryStatistics
      * @return the StorelessUnivariateStatistic implementing the mean
      */
     public StorelessUnivariateStatistic[] getMeanImpl() {
-        return (StorelessUnivariateStatistic[]) meanImpl.clone();
+        return meanImpl.clone();
     }
 
     /**
@@ -609,8 +613,9 @@ public class MultivariateSummaryStatistics
      */
     private void checkEmpty() {
         if (n > 0) {
-            throw new IllegalStateException(
-                "Implementations must be configured before values are added.");
+            throw MathRuntimeException.createIllegalStateException(
+                    "{0} values have been added before statistic is configured",
+                    n);
         }
     }
 

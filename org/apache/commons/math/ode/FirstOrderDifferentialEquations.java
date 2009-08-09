@@ -17,6 +17,7 @@
 
 package org.apache.commons.math.ode;
 
+
 /** This interface represents a first order differential equations set.
  *
  * <p>This interface should be implemented by all real first order
@@ -40,7 +41,7 @@ package org.apache.commons.math.ode;
  * @see FirstOrderConverter
  * @see SecondOrderDifferentialEquations
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
  */
 

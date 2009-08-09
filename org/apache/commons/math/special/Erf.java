@@ -16,20 +16,15 @@
  */
 package org.apache.commons.math.special;
 
-import java.io.Serializable;
-
 import org.apache.commons.math.MathException;
 
 /**
  * This is a utility class that provides computation methods related to the
  * error functions.
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
  */
-public class Erf implements Serializable {
-
-    /** Serializable version identifier */
-    private static final long serialVersionUID = 490960015010326571L;
+public class Erf {
 
     /**
      * Default constructor.  Prohibit instantiation.

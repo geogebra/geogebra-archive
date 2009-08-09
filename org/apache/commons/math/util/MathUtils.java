@@ -18,12 +18,25 @@
 package org.apache.commons.math.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Arrays;
+
+import org.apache.commons.math.MathRuntimeException;
 
 /**
  * Some useful additions to the built-in functions in {@link Math}.
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:51 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:19 $
  */
 public final class MathUtils {
+
+    /** Smallest positive number such that 1 - EPSILON is not numerically equal to 1. */
+    public static final double EPSILON = 0x1.0p-53;
+
+    /** Safe minimum, such that 1 / SAFE_MIN does not overflow.
+     * <p>In IEEE 754 arithmetic, this is also the smallest normalized
+     * number 2<sup>-1022</sup>.</p>
+     */
+    public static final double SAFE_MIN = 0x1.0p-1022;
 
     /** -1.0 cast as a byte. */
     private static final byte  NB = (byte)-1;
@@ -45,6 +58,12 @@ public final class MathUtils {
 
     /** 2 &pi;. */
     private static final double TWO_PI = 2 * Math.PI;
+
+    /** Gap between NaN and regular numbers. */
+    private static final int NAN_GAP = 4 * 1024 * 1024;
+
+    /** Offset to order signed double numbers lexicographically. */
+    private static final long SGN_MASK = 0x8000000000000000L;
 
     /**
      * Private Constructor
@@ -99,7 +118,7 @@ public final class MathUtils {
     private static long addAndCheck(long a, long b, String msg) {
         long ret;
         if (a > b) {
-            // use symmetry to reduce boundry cases
+            // use symmetry to reduce boundary cases
             ret = addAndCheck(b, a, msg);
         } else {
             // assert a <= b
@@ -113,7 +132,7 @@ public final class MathUtils {
                         throw new ArithmeticException(msg);
                     }
                 } else {
-                    // oppisite sign addition is always safe
+                    // opposite sign addition is always safe
                     ret = a + b;
                 }
             } else {
@@ -145,8 +164,7 @@ public final class MathUtils {
      * <li> The result is small enough to fit into a <code>long</code>. The
      * largest value of <code>n</code> for which all coefficients are
      * <code> < Long.MAX_VALUE</code> is 66. If the computed value exceeds
-     * <code>Long.MAX_VALUE</code> an <code>ArithMeticException
-     *      </code> is
+     * <code>Long.MAX_VALUE</code> an <code>ArithMeticException</code> is
      * thrown.</li>
      * </ul></p>
      * 
@@ -158,25 +176,49 @@ public final class MathUtils {
      *         by a long integer.
      */
     public static long binomialCoefficient(final int n, final int k) {
-        if (n < k) {
-            throw new IllegalArgumentException(
-                "must have n >= k for binomial coefficient (n,k)");
-        }
-        if (n < 0) {
-            throw new IllegalArgumentException(
-                "must have n >= 0 for binomial coefficient (n,k)");
-        }
+        checkBinomial(n, k);
         if ((n == k) || (k == 0)) {
             return 1;
         }
         if ((k == 1) || (k == n - 1)) {
             return n;
         }
-
-        long result = Math.round(binomialCoefficientDouble(n, k));
-        if (result == Long.MAX_VALUE) {
-            throw new ArithmeticException(
-                "result too large to represent in a long integer");
+        // Use symmetry for large k
+        if (k > n / 2)
+            return binomialCoefficient(n, n - k);
+        
+        // We use the formula
+        // (n choose k) = n! / (n-k)! / k!
+        // (n choose k) == ((n-k+1)*...*n) / (1*...*k)
+        // which could be written
+        // (n choose k) == (n-1 choose k-1) * n / k
+        long result = 1;
+        if (n <= 61) {
+            // For n <= 61, the naive implementation cannot overflow.
+            for (int j = 1, i = n - k + 1; j <= k; i++, j++) {
+                result = result * i / j;
+            }
+        } else if (n <= 66) {
+            // For n > 61 but n <= 66, the result cannot overflow,
+            // but we must take care not to overflow intermediate values.
+            for (int j = 1, i = n - k + 1; j <= k; i++, j++) {
+                // We know that (result * i) is divisible by j,
+                // but (result * i) may overflow, so we split j:
+                // Filter out the gcd, d, so j/d and i/d are integer.
+                // result is divisible by (j/d) because (j/d)
+                // is relative prime to (i/d) and is a divisor of
+                // result * (i/d).
+                long d = gcd(i, j);
+                result = (result / (j / d)) * (i / d);
+            }
+        } else {
+            // For n > 66, a result overflow might occur, so we check
+            // the multiplication, taking care to not overflow
+            // unnecessary.
+            for (int j = 1, i = n - k + 1; j <= k; i++, j++) {
+                long d = gcd(i, j);
+                result = mulAndCheck((result / (j / d)), (i / d));
+            }
         }
         return result;
     }
@@ -204,7 +246,26 @@ public final class MathUtils {
      * @throws IllegalArgumentException if preconditions are not met.
      */
     public static double binomialCoefficientDouble(final int n, final int k) {
-        return Math.floor(Math.exp(binomialCoefficientLog(n, k)) + 0.5);
+        checkBinomial(n, k);
+        if ((n == k) || (k == 0)) {
+            return 1d;
+        }
+        if ((k == 1) || (k == n - 1)) {
+            return n;
+        }
+        if (k > n/2) {
+            return binomialCoefficientDouble(n, n - k);
+        }
+        if (n < 67) {
+            return binomialCoefficient(n,k);
+        }
+        
+        double result = 1d;
+        for (int i = 1; i <= k; i++) {
+             result *= (double)(n - k + i) / (double)i;
+        }
+  
+        return Math.floor(result + 0.5);
     }
     
     /**
@@ -226,33 +287,89 @@ public final class MathUtils {
      * @throws IllegalArgumentException if preconditions are not met.
      */
     public static double binomialCoefficientLog(final int n, final int k) {
-        if (n < k) {
-            throw new IllegalArgumentException(
-                "must have n >= k for binomial coefficient (n,k)");
-        }
-        if (n < 0) {
-            throw new IllegalArgumentException(
-                "must have n >= 0 for binomial coefficient (n,k)");
-        }
+        checkBinomial(n, k);
         if ((n == k) || (k == 0)) {
             return 0;
         }
         if ((k == 1) || (k == n - 1)) {
-            return Math.log((double)n);
+            return Math.log(n);
         }
+        
+        /*
+         * For values small enough to do exact integer computation,
+         * return the log of the exact value 
+         */
+        if (n < 67) {  
+            return Math.log(binomialCoefficient(n,k));
+        }
+        
+        /*
+         * Return the log of binomialCoefficientDouble for values that will not
+         * overflow binomialCoefficientDouble
+         */
+        if (n < 1030) { 
+            return Math.log(binomialCoefficientDouble(n, k));
+        } 
+
+        if (k > n / 2) {
+            return binomialCoefficientLog(n, n - k);
+        }
+
+        /*
+         * Sum logs for values that could overflow
+         */
         double logSum = 0;
 
-        // n!/k!
-        for (int i = k + 1; i <= n; i++) {
-            logSum += Math.log((double)i);
+        // n!/(n-k)!
+        for (int i = n - k + 1; i <= n; i++) {
+            logSum += Math.log(i);
         }
 
-        // divide by (n-k)!
-        for (int i = 2; i <= n - k; i++) {
-            logSum -= Math.log((double)i);
+        // divide by k!
+        for (int i = 2; i <= k; i++) {
+            logSum -= Math.log(i);
         }
 
-        return logSum;
+        return logSum;      
+    }
+
+    /**
+     * Check binomial preconditions.
+     * @param n the size of the set
+     * @param k the size of the subsets to be counted
+     * @exception IllegalArgumentException if preconditions are not met.
+     */
+    private static void checkBinomial(final int n, final int k)
+        throws IllegalArgumentException {
+        if (n < k) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "must have n >= k for binomial coefficient (n,k), got n = {0}, k = {1}",
+                n, k);
+        }
+        if (n < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "must have n >= 0 for binomial coefficient (n,k), got n = {0}",
+                  n);
+        }
+    }
+    
+    /**
+     * Compares two numbers given some amount of allowed error.
+     * 
+     * @param x the first number
+     * @param y the second number
+     * @param eps the amount of error to allow when checking for equality
+     * @return <ul><li>0 if  {@link #equals(double, double, double) equals(x, y, eps)}</li>
+     *       <li>&lt; 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x &lt; y</li>
+     *       <li>> 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x > y</li></ul>
+     */
+    public static int compareTo(double x, double y, double eps) {
+        if (equals(x, y, eps)) {
+            return 0;
+        } else if (x < y) {
+          return -1;
+        }
+        return 1;
     }
     
     /**
@@ -279,6 +396,55 @@ public final class MathUtils {
     }
 
     /**
+     * Returns true iff both arguments are equal or within the range of allowed
+     * error (inclusive).
+     * <p>
+     * Two NaNs are considered equals, as are two infinities with same sign.
+     * </p>
+     * 
+     * @param x first value
+     * @param y second value
+     * @param eps the amount of absolute error to allow
+     * @return true if the values are equal or within range of each other
+     */
+    public static boolean equals(double x, double y, double eps) {
+      return equals(x, y) || (Math.abs(y - x) <= eps);
+    }
+    
+    /**
+     * Returns true iff both arguments are equal or within the range of allowed
+     * error (inclusive).
+     * Adapted from <a
+     * href="http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm">
+     * Bruce Dawson</a>
+     *
+     * @param x first value
+     * @param y second value
+     * @param maxUlps {@code (maxUlps - 1)} is the number of floating point
+     * values between {@code x} and {@code y}.
+     * @return {@code true} if there are less than {@code maxUlps} floating
+     * point values between {@code x} and {@code y}
+     */
+    public static boolean equals(double x, double y, int maxUlps) {
+        // Check that "maxUlps" is non-negative and small enough so that the
+        // default NAN won't compare as equal to anything.
+        assert maxUlps > 0 && maxUlps < NAN_GAP;
+
+        long xInt = Double.doubleToLongBits(x);
+        long yInt = Double.doubleToLongBits(y);
+
+        // Make lexicographically ordered as a two's-complement integer.
+        if (xInt < 0) {
+            xInt = SGN_MASK - xInt;
+        }
+        if (yInt < 0) {
+            yInt = SGN_MASK - yInt;
+        }
+
+        return Math.abs(xInt - yInt) <= maxUlps;
+    }
+
+    /**
      * Returns true iff both arguments are null or have same dimensions
      * and all their elements are {@link #equals(double,double) equals}
      * 
@@ -302,6 +468,13 @@ public final class MathUtils {
         }
         return true;
     }
+    
+    /** All long-representable factorials */
+    private static final long[] factorials = new long[] 
+       {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800,
+        479001600, 6227020800l, 87178291200l, 1307674368000l, 20922789888000l,
+        355687428096000l, 6402373705728000l, 121645100408832000l,
+        2432902008176640000l};
 
     /**
      * Returns n!. Shorthand for <code>n</code> <a
@@ -326,12 +499,16 @@ public final class MathUtils {
      * @throws IllegalArgumentException if n < 0
      */
     public static long factorial(final int n) {
-        long result = Math.round(factorialDouble(n));
-        if (result == Long.MAX_VALUE) {
-            throw new ArithmeticException(
-                "result too large to represent in a long integer");
+        if (n < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "must have n >= 0 for n!, got n = {0}",
+                  n);
         }
-        return result;
+        if (n > 20) {
+            throw new ArithmeticException(
+                    "factorial value is too large to fit in a long");
+        }
+        return factorials[n];
     }
 
     /**
@@ -356,7 +533,12 @@ public final class MathUtils {
      */
     public static double factorialDouble(final int n) {
         if (n < 0) {
-            throw new IllegalArgumentException("must have n >= 0 for n!");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "must have n >= 0 for n!, got n = {0}",
+                  n);
+        }
+        if (n < 21) {
+            return factorial(n);
         }
         return Math.floor(Math.exp(factorialLog(n)) + 0.5);
     }
@@ -376,11 +558,16 @@ public final class MathUtils {
      */
     public static double factorialLog(final int n) {
         if (n < 0) {
-            throw new IllegalArgumentException("must have n > 0 for n!");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "must have n >= 0 for n!, got n = {0}",
+                  n);
+        }
+        if (n < 21) {
+            return Math.log(factorial(n));
         }
         double logSum = 0;
         for (int i = 2; i <= n; i++) {
-            logSum += Math.log((double)i);
+            logSum += Math.log(i);
         }
         return logSum;
     }
@@ -392,14 +579,38 @@ public final class MathUtils {
      * operations. See Knuth 4.5.2 algorithm B. This algorithm is due to Josef
      * Stein (1961).
      * </p>
+     * Special cases:
+     * <ul>
+     * <li>The invocations
+     * <code>gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)</code>,
+     * <code>gcd(Integer.MIN_VALUE, 0)</code> and
+     * <code>gcd(0, Integer.MIN_VALUE)</code> throw an
+     * <code>ArithmeticException</code>, because the result would be 2^31, which
+     * is too large for an int value.</li>
+     * <li>The result of <code>gcd(x, x)</code>, <code>gcd(0, x)</code> and
+     * <code>gcd(x, 0)</code> is the absolute value of <code>x</code>, except
+     * for the special cases above.
+     * <li>The invocation <code>gcd(0, 0)</code> is the only one which returns
+     * <code>0</code>.</li>
+     * </ul>
      * 
-     * @param u a non-zero number
-     * @param v a non-zero number
-     * @return the greatest common divisor, never zero
+     * @param p any number
+     * @param q any number
+     * @return the greatest common divisor, never negative
+     * @throws ArithmeticException
+     *             if the result cannot be represented as a nonnegative int
+     *             value
      * @since 1.1
      */
-    public static int gcd(int u, int v) {
-        if (u * v == 0) {
+    public static int gcd(final int p, final int q) {
+        int u = p;
+        int v = q;
+        if ((u == 0) || (v == 0)) {
+            if ((u == Integer.MIN_VALUE) || (v == Integer.MIN_VALUE)) {
+                throw MathRuntimeException.createArithmeticException(
+                        "overflow: gcd({0}, {1}) is 2^31",
+                        p, q);
+            }
             return (Math.abs(u) + Math.abs(v));
         }
         // keep u and v negative, as negative integers range down to
@@ -422,7 +633,9 @@ public final class MathUtils {
             k++; // cast out twos.
         }
         if (k == 31) {
-            throw new ArithmeticException("overflow: gcd is 2^31");
+            throw MathRuntimeException.createArithmeticException(
+                    "overflow: gcd({0}, {1}) is 2^31",
+                    p, q);
         }
         // B2. Initialize: u and v have been divided by 2^k and at least
         // one is odd.
@@ -456,26 +669,18 @@ public final class MathUtils {
      * @return the hash code
      */
     public static int hash(double value) {
-        long bits = Double.doubleToLongBits(value);
-        return (int)(bits ^ (bits >>> 32));
+        return new Double(value).hashCode();
     }
 
     /**
-     * Returns an integer hash code representing the given double array value.
+     * Returns an integer hash code representing the given double array.
      * 
      * @param value the value to be hashed (may be null)
      * @return the hash code
      * @since 1.2
      */
     public static int hash(double[] value) {
-        if (value == null) {
-            return 0;
-        }
-        int result = value.length;
-        for (int i = 0; i < value.length; ++i) {
-            result = result * 31 + hash(value[i]);
-        }
-        return result;
+        return Arrays.hashCode(value);
     }
 
     /**
@@ -550,16 +755,37 @@ public final class MathUtils {
     }
 
     /**
-     * Returns the least common multiple between two integer values.
+     * <p>
+     * Returns the least common multiple of the absolute value of two numbers,
+     * using the formula <code>lcm(a,b) = (a / gcd(a,b)) * b</code>.
+     * </p>
+     * Special cases:
+     * <ul>
+     * <li>The invocations <code>lcm(Integer.MIN_VALUE, n)</code> and
+     * <code>lcm(n, Integer.MIN_VALUE)</code>, where <code>abs(n)</code> is a
+     * power of 2, throw an <code>ArithmeticException</code>, because the result
+     * would be 2^31, which is too large for an int value.</li>
+     * <li>The result of <code>lcm(0, x)</code> and <code>lcm(x, 0)</code> is
+     * <code>0</code> for any <code>x</code>.
+     * </ul>
      * 
-     * @param a the first integer value.
-     * @param b the second integer value.
-     * @return the least common multiple between a and b.
-     * @throws ArithmeticException if the lcm is too large to store as an int
+     * @param a any number
+     * @param b any number
+     * @return the least common multiple, never negative
+     * @throws ArithmeticException
+     *             if the result cannot be represented as a nonnegative int
+     *             value
      * @since 1.1
      */
     public static int lcm(int a, int b) {
-        return Math.abs(mulAndCheck(a / gcd(a, b), b));
+        if (a==0 || b==0){
+            return 0;
+        }
+        int lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
+        if (lcm == Integer.MIN_VALUE){
+            throw new ArithmeticException("overflow: lcm is 2^31");
+        }
+        return lcm;
     }
 
     /** 
@@ -614,7 +840,7 @@ public final class MathUtils {
         long ret;
         String msg = "overflow: multiply";
         if (a > b) {
-            // use symmetry to reduce boundry cases
+            // use symmetry to reduce boundary cases
             ret = mulAndCheck(b, a);
         } else {
             if (a < 0) {
@@ -709,6 +935,33 @@ public final class MathUtils {
                                         exponent | (mantissa - 1));
                 }
         }
+
+    }
+
+    /**
+     * Scale a number by 2<sup>scaleFactor</sup>.
+     * <p>If <code>d</code> is 0 or NaN or Infinite, it is returned unchanged.</p>
+     * 
+     * @param d base number
+     * @param scaleFactor power of two by which d sould be multiplied
+     * @return d &times; 2<sup>scaleFactor</sup>
+     * @since 2.0
+     */
+    public static double scalb(final double d, final int scaleFactor) {
+
+        // handling of some important special cases
+        if ((d == 0) || Double.isNaN(d) || Double.isInfinite(d)) {
+            return d;
+        }
+
+        // split the double in raw components
+        final long bits     = Double.doubleToLongBits(d);
+        final long exponent = bits & 0x7ff0000000000000L;
+        final long rest     = bits & 0x800fffffffffffffL;
+
+        // shift the exponent
+        final long newBits = rest | (exponent + (((long) scaleFactor) << 52));
+        return Double.longBitsToDouble(newBits);
 
     }
 
@@ -884,7 +1137,18 @@ public final class MathUtils {
             unscaled = Math.ceil(nextAfter(unscaled,  Double.POSITIVE_INFINITY));
             break;
         default :
-            throw new IllegalArgumentException("Invalid rounding method.");
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4})," +
+                  " {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})",
+                  roundingMethod,
+                  "ROUND_CEILING",     BigDecimal.ROUND_CEILING,
+                  "ROUND_DOWN",        BigDecimal.ROUND_DOWN,
+                  "ROUND_FLOOR",       BigDecimal.ROUND_FLOOR,
+                  "ROUND_HALF_DOWN",   BigDecimal.ROUND_HALF_DOWN,
+                  "ROUND_HALF_EVEN",   BigDecimal.ROUND_HALF_EVEN,
+                  "ROUND_HALF_UP",     BigDecimal.ROUND_HALF_UP,
+                  "ROUND_UNNECESSARY", BigDecimal.ROUND_UNNECESSARY,
+                  "ROUND_UP",          BigDecimal.ROUND_UP);
         }
         return unscaled;
     }
@@ -1038,4 +1302,297 @@ public final class MathUtils {
         return ret;
     }
 
+    /**
+     * Raise an int to an int power.
+     * @param k number to raise
+     * @param e exponent (must be positive or null)
+     * @return k<sup>e</sup>
+     * @exception IllegalArgumentException if e is negative
+     */
+    public static int pow(final int k, int e)
+        throws IllegalArgumentException {
+
+        if (e < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "cannot raise an integral value to a negative power ({0}^{1})",
+                k, e);
+        }
+
+        int result = 1;
+        int k2p    = k;
+        while (e != 0) {
+            if ((e & 0x1) != 0) {
+                result *= k2p;
+            }
+            k2p *= k2p;
+            e = e >> 1;
+        }
+
+        return result;
+
+    }
+
+    /**
+     * Raise an int to a long power.
+     * @param k number to raise
+     * @param e exponent (must be positive or null)
+     * @return k<sup>e</sup>
+     * @exception IllegalArgumentException if e is negative
+     */
+    public static int pow(final int k, long e)
+        throws IllegalArgumentException {
+
+        if (e < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "cannot raise an integral value to a negative power ({0}^{1})",
+                k, e);
+        }
+
+        int result = 1;
+        int k2p    = k;
+        while (e != 0) {
+            if ((e & 0x1) != 0) {
+                result *= k2p;
+            }
+            k2p *= k2p;
+            e = e >> 1;
+        }
+
+        return result;
+
+    }
+
+    /**
+     * Raise a long to an int power.
+     * @param k number to raise
+     * @param e exponent (must be positive or null)
+     * @return k<sup>e</sup>
+     * @exception IllegalArgumentException if e is negative
+     */
+    public static long pow(final long k, int e)
+        throws IllegalArgumentException {
+
+        if (e < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "cannot raise an integral value to a negative power ({0}^{1})",
+                k, e);
+        }
+
+        long result = 1l;
+        long k2p    = k;
+        while (e != 0) {
+            if ((e & 0x1) != 0) {
+                result *= k2p;
+            }
+            k2p *= k2p;
+            e = e >> 1;
+        }
+
+        return result;
+
+    }
+
+    /**
+     * Raise a long to a long power.
+     * @param k number to raise
+     * @param e exponent (must be positive or null)
+     * @return k<sup>e</sup>
+     * @exception IllegalArgumentException if e is negative
+     */
+    public static long pow(final long k, long e)
+        throws IllegalArgumentException {
+
+        if (e < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "cannot raise an integral value to a negative power ({0}^{1})",
+                k, e);
+        }
+
+        long result = 1l;
+        long k2p    = k;
+        while (e != 0) {
+            if ((e & 0x1) != 0) {
+                result *= k2p;
+            }
+            k2p *= k2p;
+            e = e >> 1;
+        }
+
+        return result;
+
+    }
+
+    /**
+     * Raise a BigInteger to an int power.
+     * @param k number to raise
+     * @param e exponent (must be positive or null)
+     * @return k<sup>e</sup>
+     * @exception IllegalArgumentException if e is negative
+     */
+    public static BigInteger pow(final BigInteger k, int e)
+        throws IllegalArgumentException {
+
+        if (e < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "cannot raise an integral value to a negative power ({0}^{1})",
+                k, e);
+        }
+
+        return k.pow(e);
+
+    }
+
+    /**
+     * Raise a BigInteger to a long power.
+     * @param k number to raise
+     * @param e exponent (must be positive or null)
+     * @return k<sup>e</sup>
+     * @exception IllegalArgumentException if e is negative
+     */
+    public static BigInteger pow(final BigInteger k, long e)
+        throws IllegalArgumentException {
+
+        if (e < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "cannot raise an integral value to a negative power ({0}^{1})",
+                k, e);
+        }
+
+        BigInteger result = BigInteger.ONE;
+        BigInteger k2p    = k;
+        while (e != 0) {
+            if ((e & 0x1) != 0) {
+                result = result.multiply(k2p);
+            }
+            k2p = k2p.multiply(k2p);
+            e = e >> 1;
+        }
+
+        return result;
+
+    }
+
+    /**
+     * Raise a BigInteger to a BigInteger power.
+     * @param k number to raise
+     * @param e exponent (must be positive or null)
+     * @return k<sup>e</sup>
+     * @exception IllegalArgumentException if e is negative
+     */
+    public static BigInteger pow(final BigInteger k, BigInteger e)
+        throws IllegalArgumentException {
+
+        if (e.compareTo(BigInteger.ZERO) < 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                "cannot raise an integral value to a negative power ({0}^{1})",
+                k, e);
+        }
+
+        BigInteger result = BigInteger.ONE;
+        BigInteger k2p    = k;
+        while (!BigInteger.ZERO.equals(e)) {
+            if (e.testBit(0)) {
+                result = result.multiply(k2p);
+            }
+            k2p = k2p.multiply(k2p);
+            e = e.shiftRight(1);
+        }
+
+        return result;
+
+    }
+
+    /**
+     * Calculates the L<sub>1</sub> (sum of abs) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>1</sub> distance between the two points
+     */
+    public static final double distance1(double[] p1, double[] p2) {
+        double sum = 0;
+        for (int i = 0; i < p1.length; i++) {
+            sum += Math.abs(p1[i] - p2[i]);
+        }
+        return sum;
+    }
+    
+    /**
+     * Calculates the L<sub>1</sub> (sum of abs) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>1</sub> distance between the two points
+     */
+    public static final int distance1(int[] p1, int[] p2) {
+      int sum = 0;
+      for (int i = 0; i < p1.length; i++) {
+          sum += Math.abs(p1[i] - p2[i]);
+      }
+      return sum;
+    }
+
+    /**
+     * Calculates the L<sub>2</sub> (Euclidean) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>2</sub> distance between the two points
+     */
+    public static final double distance(double[] p1, double[] p2) {
+        double sum = 0;
+        for (int i = 0; i < p1.length; i++) {
+            final double dp = p1[i] - p2[i];
+            sum += dp * dp;
+        }
+        return Math.sqrt(sum);
+    }
+    
+    /**
+     * Calculates the L<sub>2</sub> (Euclidean) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>2</sub> distance between the two points
+     */
+    public static final double distance(int[] p1, int[] p2) {
+      int sum = 0;
+      for (int i = 0; i < p1.length; i++) {
+          final int dp = p1[i] - p2[i];
+          sum += dp * dp;
+      }
+      return Math.sqrt(sum);
+    }
+    
+    /**
+     * Calculates the L<sub>&infin;</sub> (max of abs) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>&infin;</sub> distance between the two points
+     */
+    public static final double distanceInf(double[] p1, double[] p2) {
+        double max = 0;
+        for (int i = 0; i < p1.length; i++) {
+            max = Math.max(max, Math.abs(p1[i] - p2[i]));
+        }
+        return max;
+    }
+    
+    /**
+     * Calculates the L<sub>&infin;</sub> (max of abs) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>&infin;</sub> distance between the two points
+     */
+    public static final int distanceInf(int[] p1, int[] p2) {
+        int max = 0;
+        for (int i = 0; i < p1.length; i++) {
+            max = Math.max(max, Math.abs(p1[i] - p2[i]));
+        }
+        return max;
+    }
+
+    
 }

@@ -18,6 +18,7 @@ package org.apache.commons.math.stat.descriptive.moment;
 
 import java.io.Serializable;
 
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 
 /**
@@ -60,7 +61,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
  */
 public class Variance extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -132,6 +133,16 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
     }
    
     /**
+     * Copy constructor, creates a new {@code Variance} identical
+     * to the {@code original}
+     * 
+     * @param original the {@code Variance} instance to copy
+     */
+    public Variance(Variance original) {
+        copy(original, this);
+    }           
+    
+    /**
      * {@inheritDoc}  
      * <p>If all values are available, it is more accurate to use 
      * {@link #evaluate(double[])} rather than adding values one at a time
@@ -140,6 +151,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * list of values together to execute a two-pass algorithm.  
      * See {@link Variance}.</p>
      */
+    @Override
     public void increment(final double d) {
         if (incMoment) {
             moment.increment(d);
@@ -147,8 +159,9 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
+    @Override
     public double getResult() {
             if (moment.n == 0) {
                 return Double.NaN;
@@ -156,23 +169,24 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
                 return 0d;
             } else {
                 if (isBiasCorrected) {
-                    return moment.m2 / ((double) moment.n - 1d);
+                    return moment.m2 / (moment.n - 1d);
                 } else {
-                    return moment.m2 / ((double) moment.n);
+                    return moment.m2 / (moment.n);
                 }
             }
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getN()
+     * {@inheritDoc}
      */
     public long getN() {
         return moment.getN();
     }
     
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
      */
+    @Override
     public void clear() {
         if (incMoment) {
             moment.clear();
@@ -195,9 +209,10 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * @return the variance of the values or Double.NaN if length = 0
      * @throws IllegalArgumentException if the array is null
      */
+    @Override
     public double evaluate(final double[] values) {
         if (values == null) {
-            throw new IllegalArgumentException("input values array is null");
+            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
         }
         return evaluate(values, 0, values.length);
     }
@@ -222,6 +237,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * @throws IllegalArgumentException if the array is null or the array index
      *  parameters are not valid
      */
+    @Override
     public double evaluate(final double[] values, final int begin, final int length) {
 
         double var = Double.NaN;
@@ -282,7 +298,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
                     accum += dev * dev;
                     accum2 += dev;
                 }
-                double len = (double) length;            
+                double len = length;            
                 if (isBiasCorrected) {
                     var = (accum - (accum2 * accum2 / len)) / (len - 1.0);
                 } else {
@@ -334,6 +350,31 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      */
     public void setBiasCorrected(boolean isBiasCorrected) {
         this.isBiasCorrected = isBiasCorrected;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Variance copy() {
+        Variance result = new Variance();
+        copy(this, result);
+        return result;
+    }
+    
+    
+    /**
+     * Copies source to dest.
+     * <p>Neither source nor dest can be null.</p>
+     * 
+     * @param source Variance to copy
+     * @param dest Variance to copy to
+     * @throws NullPointerException if either source or dest is null
+     */
+    public static void copy(Variance source, Variance dest) {
+        dest.moment = source.moment.copy();
+        dest.isBiasCorrected = source.isBiasCorrected;
+        dest.incMoment = source.incMoment;
     }
 
 }

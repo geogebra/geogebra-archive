@@ -23,7 +23,7 @@ import org.apache.commons.math.MathException;
 /**
  * The default implementation of {@link ChiSquaredDistribution}
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
  */
 public class ChiSquaredDistributionImpl
     extends AbstractContinuousDistribution
@@ -70,9 +70,19 @@ public class ChiSquaredDistributionImpl
     public double getDegreesOfFreedom() {
         return getGamma().getAlpha() * 2.0;
     }
-        
+
     /**
-     * For this disbution, X, this method returns P(X &lt; x).
+     * Return the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     */
+    public double density(Double x) {
+        return gamma.density(x);
+    }
+
+    /**
+     * For this distribution, X, this method returns P(X &lt; x).
      * @param x the value at which the CDF is evaluated.
      * @return CDF for this distribution. 
      * @throws MathException if the cumulative probability can not be
@@ -95,6 +105,7 @@ public class ChiSquaredDistributionImpl
      * @throws IllegalArgumentException if <code>p</code> is not a valid
      *         probability.
      */
+    @Override
     public double inverseCumulativeProbability(final double p)
         throws MathException {
         if (p == 0) {
@@ -115,6 +126,7 @@ public class ChiSquaredDistributionImpl
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
      */
+    @Override
     protected double getDomainLowerBound(double p) {
         return Double.MIN_VALUE * getGamma().getBeta();
     }
@@ -128,6 +140,7 @@ public class ChiSquaredDistributionImpl
      * @return domain value upper bound, i.e.
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
      */
+    @Override
     protected double getDomainUpperBound(double p) {
         // NOTE: chi squared is skewed to the left
         // NOTE: therefore, P(X < &mu;) > .5
@@ -153,6 +166,7 @@ public class ChiSquaredDistributionImpl
      * @param p the desired probability for the critical value
      * @return initial domain value
      */
+    @Override
     protected double getInitialDomain(double p) {
         // NOTE: chi squared is skewed to the left
         // NOTE: therefore, P(X < &mu;) > .5

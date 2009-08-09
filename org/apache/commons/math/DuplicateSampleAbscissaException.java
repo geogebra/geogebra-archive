@@ -20,7 +20,7 @@ package org.apache.commons.math;
  * Exeption thrown when a sample contains several entries at the same abscissa.
  * 
  * @since 1.2
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  */
 public class DuplicateSampleAbscissaException extends MathException  {
     
@@ -35,7 +35,7 @@ public class DuplicateSampleAbscissaException extends MathException  {
      */
     public DuplicateSampleAbscissaException(double abscissa, int i1, int i2) {
         super("Abscissa {0} is duplicated at both indices {1} and {2}",
-              new Object[] { new Double(abscissa), new Integer(i1), new Integer(i2) });
+              abscissa, i1, i2);
     }
 
     /**

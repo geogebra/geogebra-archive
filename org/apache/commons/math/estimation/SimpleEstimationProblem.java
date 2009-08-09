@@ -18,7 +18,6 @@
 package org.apache.commons.math.estimation;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -36,18 +35,21 @@ import java.util.List;
  * type. The instances of the internal classes would have access to the
  * various parameters and their current estimate.</p>
 
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:47 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
+ * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
+ * been deprecated and replaced by package org.apache.commons.math.optimization.general
 
  */
+@Deprecated
 public class SimpleEstimationProblem implements EstimationProblem {
 
     /**
      * Build an empty instance without parameters nor measurements.
      */
     public SimpleEstimationProblem() {
-        parameters   = new ArrayList();
-        measurements = new ArrayList();
+        parameters   = new ArrayList<EstimatedParameter>();
+        measurements = new ArrayList<WeightedMeasurement>();
     }
 
     /** 
@@ -55,7 +57,7 @@ public class SimpleEstimationProblem implements EstimationProblem {
      * @return parameters
      */
     public EstimatedParameter[] getAllParameters() {
-        return (EstimatedParameter[]) parameters.toArray(new EstimatedParameter[parameters.size()]);
+        return parameters.toArray(new EstimatedParameter[parameters.size()]);
     }
 
     /** 
@@ -65,16 +67,15 @@ public class SimpleEstimationProblem implements EstimationProblem {
     public EstimatedParameter[] getUnboundParameters() {
 
         // filter the unbound parameters
-        List unbound = new ArrayList(parameters.size());
-        for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
-            EstimatedParameter p = (EstimatedParameter) iterator.next();
+        List<EstimatedParameter> unbound = new ArrayList<EstimatedParameter>(parameters.size());
+        for (EstimatedParameter p : parameters) {
             if (! p.isBound()) {
                 unbound.add(p);
             }
         }
 
         // convert to an array
-        return (EstimatedParameter[]) unbound.toArray(new EstimatedParameter[unbound.size()]);
+        return unbound.toArray(new EstimatedParameter[unbound.size()]);
         
     }
 
@@ -83,7 +84,7 @@ public class SimpleEstimationProblem implements EstimationProblem {
      * @return measurements
      */
     public WeightedMeasurement[] getMeasurements() {
-        return (WeightedMeasurement[]) measurements.toArray(new WeightedMeasurement[measurements.size()]);
+        return measurements.toArray(new WeightedMeasurement[measurements.size()]);
     }
 
     /** Add a parameter to the problem.
@@ -102,9 +103,9 @@ public class SimpleEstimationProblem implements EstimationProblem {
     }
 
     /** Estimated parameters. */
-    private final List parameters;
+    private final List<EstimatedParameter> parameters;
 
     /** Measurements. */
-    private final List measurements;
+    private final List<WeightedMeasurement> measurements;
 
 }

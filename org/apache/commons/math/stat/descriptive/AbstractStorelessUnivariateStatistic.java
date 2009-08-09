@@ -16,8 +16,8 @@
  */
 package org.apache.commons.math.stat.descriptive;
 
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.util.MathUtils;
-import java.io.Serializable;
 
 /**
  *
@@ -28,14 +28,11 @@ import java.io.Serializable;
  * <p>
  * <strong>Note that these implementations are not synchronized.</strong></p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:17 $
  */
 public abstract class AbstractStorelessUnivariateStatistic
     extends AbstractUnivariateStatistic
-    implements StorelessUnivariateStatistic, Serializable {
-
-    /** Serialization UID */
-    private static final long serialVersionUID = -44915725420072521L;
+    implements StorelessUnivariateStatistic {
     
     /**
      * This default implementation calls {@link #clear}, then invokes 
@@ -51,12 +48,14 @@ public abstract class AbstractStorelessUnivariateStatistic
      * input array.</p>
      * <p>
      * If the array is null, an IllegalArgumentException is thrown.</p>
-     * 
+     * @param values input array
+     * @return the value of the statistic applied to the input array
      * @see org.apache.commons.math.stat.descriptive.UnivariateStatistic#evaluate(double[])
      */
+    @Override
     public double evaluate(final double[] values) {
         if (values == null) {
-            throw new IllegalArgumentException("input value array is null");
+            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
         }
         return evaluate(values, 0, values.length);
     }
@@ -76,9 +75,13 @@ public abstract class AbstractStorelessUnivariateStatistic
      * <p>
      * If the array is null or the index parameters are not valid, an 
      * IllegalArgumentException is thrown.</p>
-     * 
+     * @param values the input array
+     * @param begin the index of the first element to include
+     * @param length the number of elements to include
+     * @return the value of the statistic applied to the included array entries
      * @see org.apache.commons.math.stat.descriptive.UnivariateStatistic#evaluate(double[], int, int)
      */
+    @Override
     public double evaluate(final double[] values, final int begin, final int length) {
         if (test(values, begin, length)) {
             clear();
@@ -88,17 +91,23 @@ public abstract class AbstractStorelessUnivariateStatistic
     }
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#clear()
+     * {@inheritDoc}
+     */
+    @Override
+    public abstract StorelessUnivariateStatistic copy();
+
+    /**
+     * {@inheritDoc}
      */
     public abstract void clear();
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#getResult()
+     * {@inheritDoc}
      */
     public abstract double getResult();
 
     /**
-     * @see org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic#increment(double)
+     * {@inheritDoc}
      */
     public abstract void increment(final double d);
     
@@ -114,7 +123,7 @@ public abstract class AbstractStorelessUnivariateStatistic
      */
     public void incrementAll(double[] values) {
         if (values == null) {
-            throw new IllegalArgumentException("input values array is null");
+            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
         }
         incrementAll(values, 0, values.length);
     } 
@@ -147,6 +156,7 @@ public abstract class AbstractStorelessUnivariateStatistic
      * @param object object to test equality against.
      * @return true if object returns the same value as this
      */
+    @Override
     public boolean equals(Object object) {
         if (object == this ) {
             return true;
@@ -164,6 +174,7 @@ public abstract class AbstractStorelessUnivariateStatistic
      * 
      * @return hash code
      */
+    @Override
     public int hashCode() {
         return 31* (31 + MathUtils.hash(getResult())) + MathUtils.hash(getN());
     }

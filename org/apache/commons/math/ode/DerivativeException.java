@@ -21,31 +21,31 @@ import org.apache.commons.math.MathException;
 
 /**
  * This exception is made available to users to report
- * the error conditions that are trigegred while computing
+ * the error conditions that are triggered while computing
  * the differential equations.
- * @version $Revision: 1.1 $ $Date: 2009-07-06 21:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
  * @since 1.2
  */
 public class DerivativeException
   extends MathException {
     
+  /** Serializable version identifier */
+  private static final long serialVersionUID = 5666710788967425123L;
+
   /** Simple constructor.
    * Build an exception by translating and formating a message
    * @param specifier format specifier (to be translated)
    * @param parts to insert in the format (no translation)
    */
-  public DerivativeException(String specifier, String[] parts) {
+  public DerivativeException(final String specifier, final Object ... parts) {
     super(specifier, parts);
   }
 
   /** Build an instance from an underlying cause.
    * @param cause cause for the exception
    */
-  public DerivativeException(Throwable cause) {
+  public DerivativeException(final Throwable cause) {
     super(cause);
   }
-
-  /** Serializable version identifier */
-  private static final long serialVersionUID = -4100440615830558122L;
 
 }
