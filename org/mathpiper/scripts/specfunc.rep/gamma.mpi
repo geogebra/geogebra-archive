@@ -1,6 +1,15 @@
 
 
 
+Internal'GammaNum(z) := N(Exp(Internal'LnGammaNum(z)));
+
+
+Internal'GammaNum(z,a) := N(Exp(Internal'LnGammaNum(z,a)));
+
+
+
+
+
 
 
 
@@ -48,8 +57,4 @@ Internal'LnGammaNum(z) := [
 	result;
 ];
 
-Internal'GammaNum(z) := N(Exp(Internal'LnGammaNum(z)));
-
-
-Internal'GammaNum(z,a) := N(Exp(Internal'LnGammaNum(z,a)));
 

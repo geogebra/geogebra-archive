@@ -18,7 +18,7 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.io;
 
-public class StringOutput extends MathPiperOutputStream
+public class StringOutput implements MathPiperOutputStream
 {
 	StringBuffer stringBuffer;
 	
@@ -59,5 +59,12 @@ public class StringOutput extends MathPiperOutputStream
 	{
 		this.stringBuffer.delete(0, this.stringBuffer.length());
 	}
+
+    public void write(String aString) throws Exception {
+        int i;
+        for (i = 0; i < aString.length(); i++) {
+            putChar(aString.charAt(i));
+        }
+    }
 	    
 }//end class.

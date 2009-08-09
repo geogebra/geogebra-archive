@@ -1,7 +1,14 @@
 Eliminate
 ExpandBrackets
-Simplify
-Flatten
-UnFlatten
 ExpandFrac
+Flatten
+GetNumerDenom
+SimpAdd
+SimpDiv
+SimpExpand
+SimpFlatten
+SimpImplode
+SimpMul
+Simplify
+UnFlatten
 }

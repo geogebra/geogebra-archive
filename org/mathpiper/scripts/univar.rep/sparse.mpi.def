@@ -1,4 +1,10 @@
-MultiplyTerms
-ExpandSparseUniVar
+AddTerm
+AddTerms
 DivTermList
+ExpandSparseUniVar
+MultiplySingleTerm
+MultiplyTerms
+SparseUniVar
+SubstractTerms
 }
+

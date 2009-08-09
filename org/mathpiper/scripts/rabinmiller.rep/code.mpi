@@ -3,7 +3,8 @@
 
 
 
-FastModularPower(a_IsPositiveInteger, b_IsPositiveInteger, n_IsPositiveInteger) <-- 
+
+FastModularPower(a_IsPositiveInteger, b_IsPositiveInteger, n_IsPositiveInteger) <--
 [
   Local(p, j, r);
   p := a;
@@ -22,7 +23,7 @@ FastModularPower(a_IsPositiveInteger, b_IsPositiveInteger, n_IsPositiveInteger) 
 
 
 
-IsStronglyProbablyPrime(b_IsPositiveInteger, n_IsPositiveInteger) <-- 
+IsStronglyProbablyPrime(b_IsPositiveInteger, n_IsPositiveInteger) <--
 [
   Local(m, q, r, a, flag, i, root);
   m := n-1;
@@ -34,7 +35,7 @@ IsStronglyProbablyPrime(b_IsPositiveInteger, n_IsPositiveInteger) <--
     q := ShiftRight(q, 1);
     r++;
   ];
-  
+
   a := FastModularPower(b, q, n);
   flag := (a = 1 Or a = m);
   i := 1;
@@ -52,7 +53,7 @@ IsStronglyProbablyPrime(b_IsPositiveInteger, n_IsPositiveInteger) <--
 
 
 
- 
+
 10 # RabinMillerSmall(1) <-- False;
 
 10 # RabinMillerSmall(2) <-- True;
@@ -138,3 +139,5 @@ RabinMiller(n_IsPositiveInteger) <--
 		RabinMillerProbabilistic(n, 40)	
 	);
 ];
+
+

@@ -1,14 +1,15 @@
 
 
+
 IncompleteGamma(_x, _a)_(x<=a+1) <--
-[ 
+[
    Local(prec,eps);
    prec:=BuiltinPrecisionGet();
    BuiltinPrecisionSet(Ceil(prec+1)); 
    eps:=5*10^(-prec);
 
    Local(term,result,k);
-   
+
    term:=1/a;
    k:=0;
    result:=0;
@@ -33,7 +34,7 @@ IncompleteGamma(_x, _a)_(x<=a+1) <--
    eps:=5*10^(-prec);
 
    Local(term,result,k,expr);
-   
+
    term:=1;
    k:=0;
    result:=0;
@@ -48,4 +49,6 @@ IncompleteGamma(_x, _a)_(x<=a+1) <--
   
   
   RoundTo(result,prec);
-];	
+];
+
+

@@ -4,6 +4,7 @@
 
 
 
+
 SetGlobalLazyVariable(I,Complex(0,1));
 
 
@@ -71,7 +72,7 @@ Rule("CachedConstant", 3, 10, And(IsAtom(C'atom), IsFunction(C'func)))
 		
 	  ],
 	  
-	  Echo("CachedConstant: Warning: constant ", C'atom, " already defined")		
+	  Echo("CachedConstant: Warning: constant ", C'atom, " already defined")
 	);
 ];
 
@@ -124,3 +125,4 @@ CachedConstant(CacheOfConstantsN, GoldenRatio, N( (1+Sqrt(5))/2 ) );
 CachedConstant(CacheOfConstantsN, Catalan, CatalanConstNum() );
 
 ]; 
+

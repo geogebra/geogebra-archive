@@ -1,5 +1,6 @@
 
 
+
 examplelist:=
 Hold(
 {
@@ -61,7 +62,7 @@ passed in.
 "Selecting a sublist from a list.
 "
   },
-  {Permutations({a,b,c}),
+  {Permute({a,b,c}),
 "Generate all permutations of a list.
 "
   },
@@ -92,5 +93,7 @@ Example():=
   NewLine();
   Eval(example[1]);
 ];
+
+
 
 

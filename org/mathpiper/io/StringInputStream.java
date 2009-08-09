@@ -19,6 +19,8 @@
 package org.mathpiper.io;
 
 
+import org.mathpiper.io.MathPiperInputStream;
+
 public class StringInputStream
 			extends MathPiperInputStream
 {

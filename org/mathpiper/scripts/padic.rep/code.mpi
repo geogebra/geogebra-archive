@@ -1,23 +1,79 @@
 
+Apart(_f) <-- Apart(f,x);
 
-
-
-Expand(x); 
-
-10 # PAdicExpand(_x,_y) <--
+Apart(_f,_var) <--
 [
-  Local(coefs);
-  coefs:=PAdicExpandInternal(x,y);
-  Subst(p,y)Add(coefs*(p^(0 .. Length(coefs))));
+  Local(rat);
+  rat:=RationalForm(f,var);
+  If(Degree(rat[1],var) = 0 And Degree(rat[2],var) = 0,
+     [
+       rat:={Coef(rat[1],var,0),Coef(rat[2],var,0)};
+       Local(summed,add);
+       summed := Eval(PartFracExpand(Rem(rat[1],rat[2]),rat[2]));
+       add:=(rat[1]/rat[2] - summed);
+       add + summed;
+     ]
+     ,
+     [
+       
+       Expand(Div(rat[1],rat[2])) + PartFracExpand(Rem(rat[1],rat[2]),rat[2]);
+     ]
+     );
 ];
- 
-10 # PAdicExpandInternal(0,_y) <-- {};
-20 # PAdicExpandInternal(_x,_y) <--
+
+
+
+ChineseRemainderInteger(mlist_IsList,vlist_IsList) <--
 [
-  Mod(x,y) : PAdicExpandInternal(Div(x,y),y);
+  Local(m,i,nr,result,msub,euclid,clist);
+  clist:={};
+  m:=Product(mlist);
+  result:=0;
+
+  nr:=Length(mlist);
+  For(i:=1,i<=nr,i++)
+  [
+    msub:=Div(m,mlist[i]);
+    euclid := ExtendedEuclidean(msub,mlist[i]);
+    Local(c);
+    c:=vlist[i] * euclid[2];
+    c:=Rem(c, mlist[i]);
+    DestructiveAppend(clist,c);
+    result:=result + msub * c;
+  ];
+  {result,clist};
 ];
 
 
+ChineseRemainderPoly(mlist_IsList,vlist_IsList) <--
+[
+  Local(m,i,nr,result,msub,euclid,clist);
+  clist:={};
+  m:=Product(mlist);
+  result:=0;
+
+
+
+
+  nr:=Length(mlist);
+  For(i:=1,i<=nr,i++)
+  [
+    msub:=Div(m,mlist[i]);
+
+
+
+    euclid := ExtendedEuclideanMonic(msub,mlist[i]);
+    Local(c);
+
+    c:=vlist[i] * euclid[2];
+
+    c:=Mod(c, mlist[i]);
+
+    DestructiveAppend(clist,c);
+    result:=result + msub * c;
+  ];
+  {Expand(result),clist};
+];
 
 
 
@@ -47,6 +103,7 @@ ExtendedEuclidean(_f,_g) <--
    ];
    {r[i],s[i],t[i]};
 ];
+
 
 ExtendedEuclideanMonic(_f,_g) <--
 [
@@ -92,61 +149,42 @@ ExtendedEuclideanMonic(_f,_g) <--
 
 
 
-
-
-
-
-
-
-ChineseRemainderInteger(mlist_IsList,vlist_IsList) <--
+GcdReduce(_f,_var)<--
 [
-  Local(m,i,nr,result,msub,euclid,clist);
-  clist:={};
-  m:=Factorize(mlist);
-  result:=0;
-  
-  nr:=Length(mlist);
-  For(i:=1,i<=nr,i++)
-  [
-    msub:=Div(m,mlist[i]);
-    euclid := ExtendedEuclidean(msub,mlist[i]);
-    Local(c);
-    c:=vlist[i] * euclid[2];
-    c:=Rem(c, mlist[i]);
-    DestructiveAppend(clist,c);
-    result:=result + msub * c;
-  ];
-  {result,clist};
+  Local(rat,gcd);
+  rat:=RationalForm(f,var);
+  gcd:=Gcd(rat[1],rat[2]);
+
+
+  Local(numer,denom,lc);
+  numer:=Div(rat[1],gcd);
+  denom:=Div(rat[2],gcd);
+  lc:=LeadingCoef(numer,var);
+  numer:=numer/lc;
+  denom:=denom/lc;
+  Expand(numer)/Expand(denom);
 ];
-ChineseRemainderPoly(mlist_IsList,vlist_IsList) <--
+
+
+
+
+
+Expand(x); 
+
+10 # PAdicExpand(_x,_y) <--
 [
-  Local(m,i,nr,result,msub,euclid,clist);
-  clist:={};
-  m:=Factorize(mlist);
-  result:=0;
-
-
-
-  
-  nr:=Length(mlist);
-  For(i:=1,i<=nr,i++)
-  [
-    msub:=Div(m,mlist[i]);
-
-
-
-    euclid := ExtendedEuclideanMonic(msub,mlist[i]);
-    Local(c);
-
-    c:=vlist[i] * euclid[2];
-
-    c:=Mod(c, mlist[i]);
-
-    DestructiveAppend(clist,c);
-    result:=result + msub * c;
-  ];
-  {Expand(result),clist};
+  Local(coefs);
+  coefs:=PAdicExpandInternal(x,y);
+  Subst(p,y)Add(coefs*(p^(0 .. Length(coefs))));
 ];
+
+
+10 # PAdicExpandInternal(0,_y) <-- {};
+20 # PAdicExpandInternal(_x,_y) <--
+[
+  Mod(x,y) : PAdicExpandInternal(Div(x,y),y);
+];
+
 
 
 PartFracExpand(_g,_f) <--
@@ -161,7 +199,7 @@ PartFracExpand(_g,_f) <--
 
   vlist:=Map("Rem",{FillList(g,Length(mlist)),mlist});
 
-  
+
 
 
 
@@ -181,7 +219,7 @@ PartFracExpand(_g,_f) <--
     Add(divlist),
     [
       result:=divlist[1];
-      ForEach(item,Tail(divlist))
+      ForEach(item,Rest(divlist))
       [
         result:=UnList({Atom("+"),result,item});
       ];
@@ -194,29 +232,6 @@ PartFracExpand(_g,_f) <--
      <-- { MakeUni(g,var),MakeUni(f,var)};
 20 # RationalForm(f_CanBeUni(var),_var)
      <-- { MakeUni(f,var),MakeUni(1,var)};
-
-Apart(_f) <-- Apart(f,x);
-
-Apart(_f,_var) <--
-[
-  Local(rat);
-  rat:=RationalForm(f,var);
-  If(Degree(rat[1],var) = 0 And Degree(rat[2],var) = 0,
-     [
-       rat:={Coef(rat[1],var,0),Coef(rat[2],var,0)};
-       Local(summed,add);
-       summed := Eval(PartFracExpand(Rem(rat[1],rat[2]),rat[2]));
-       add:=(rat[1]/rat[2] - summed);
-       add + summed;
-     ]
-     ,
-     [
-       
-       Expand(Div(rat[1],rat[2])) + PartFracExpand(Rem(rat[1],rat[2]),rat[2]);
-     ]
-     );
-];
-
 
 
 10 # Together((_f/_g) + (_h/_i)) <--
@@ -248,21 +263,4 @@ Apart(_f,_var) <--
 
 20 # Together(- _f) <-- - Together(f);
 30 # Together(_f) <--  f;
-
-
-GcdReduce(_f,_var)<--
-[
-  Local(rat,gcd); 
-  rat:=RationalForm(f,var);
-  gcd:=Gcd(rat[1],rat[2]);
-
-
-  Local(numer,denom,lc);
-  numer:=Div(rat[1],gcd);
-  denom:=Div(rat[2],gcd);
-  lc:=LeadingCoef(numer,var);
-  numer:=numer/lc;
-  denom:=denom/lc;
-  Expand(numer)/Expand(denom);
-];
 

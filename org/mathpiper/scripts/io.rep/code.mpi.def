@@ -1,10 +1,12 @@
-Print
-IsError
 Assert
+DefaultPrint
+DumpErrors
+Echo
 GetErrorTableau
 ClearErrors
-DumpErrors
-ClearError
+GetError
+IsError
 PrettyForm
 EvalFormula
+Print
 }

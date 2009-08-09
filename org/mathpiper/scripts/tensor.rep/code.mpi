@@ -1,44 +1,30 @@
 
 
 
+10  # ApplyDelta(_result,Delta(_i,_j)) <--
+    DestructiveInsert(result,1,Delta(i,j));
+20 # ApplyDelta(_result,(_x) ^ (n_IsInteger))_(n>0) <--
+    [
+      Local(i);
+      For(i:=1,i<=n,i++)
+      [
+        ApplyDelta(result,x);
+      ];
+    ];
+100 # ApplyDelta(_result,_term) <--
+    DestructiveAppend(result,term);
+
+
+
+
 
 RuleBase("Delta",{ind1,ind2});
-RuleBase("TList",{head,tail});
-RuleBase("TSum",{indices,body});
-RuleBase("TD",{ind});
-RuleBase("X",{ind});
 
 
-10 # (TD(_i)X(_j)) <-- Delta(i,j);
-10 # (TD(_i) ( (_f) + (_g) ) ) <-- (TD(i)f) + (TD(i)g);
-10 # (TD(_i) ( (_f) - (_g) ) ) <-- (TD(i)f) - (TD(i)g);
-10 # (TD(_i) (      - (_g) ) ) <--          -  TD(i)g;
-10 # (TD(_i) ( (_f) * (_g) ) ) <-- (TD(i)f)*g + f*(TD(i)g);
-10 # (TD(_i) ( (_f) ^ (n_IsPositiveInteger) ) ) <-- n*(TD(i)f)*f^(n-1);
-10 # (TD(_i)Delta(_j,_k)) <-- 0;
-10 # (TD(_i)f_IsNumber) <-- 0;
 
 
-10 # (TSum({})(_body)) <-- body;
 
 
-20 # (TSum(_indices)(_body))_(IsInteger(Ndim)) <--
-    LocalSymbols(index,i,sum)
-    [
-      Local(index,i,sum);
-      index:=indices[1];
-      sum:=0;
-      MacroLocal(index);
-      For(i:=1,i<=Ndim,i++)
-      [
-        MacroSet(index,i);
-        sum:=sum+Eval(TSum(Tail(indices))body);
-      ];
-      sum;
-    ];
-
-
-(TExplicitSum(Ndim_IsInteger)(_body)) <-- Eval(body);
 
 
 MoveDeltas(_list) <--
@@ -54,19 +40,35 @@ MoveDeltas(_list) <--
 ];
 
 
-10  # ApplyDelta(_result,Delta(_i,_j)) <--
-    DestructiveInsert(result,1,Delta(i,j));
-20 # ApplyDelta(_result,(_x) ^ (n_IsInteger))_(n>0) <--
-    [
-      Local(i);
-      For(i:=1,i<=n,i++)
-      [
-        ApplyDelta(result,x);
-      ];
-    ];
-100 # ApplyDelta(_result,_term) <--
-    DestructiveAppend(result,term);
-    
+
+
+RuleBase("TD",{ind});
+
+
+10 # (TD(_i)X(_j)) <-- Delta(i,j);
+10 # (TD(_i) ( (_f) + (_g) ) ) <-- (TD(i)f) + (TD(i)g);
+10 # (TD(_i) ( (_f) - (_g) ) ) <-- (TD(i)f) - (TD(i)g);
+10 # (TD(_i) (      - (_g) ) ) <--          -  TD(i)g;
+10 # (TD(_i) ( (_f) * (_g) ) ) <-- (TD(i)f)*g + f*(TD(i)g);
+10 # (TD(_i) ( (_f) ^ (n_IsPositiveInteger) ) ) <-- n*(TD(i)f)*f^(n-1);
+10 # (TD(_i)Delta(_j,_k)) <-- 0;
+10 # (TD(_i)f_IsNumber) <-- 0;
+
+
+
+
+
+(TExplicitSum(Ndim_IsInteger)(_body)) <-- Eval(body);
+
+
+
+
+RuleBase("TList",{head,tail});
+
+
+
+
+
 
 
 TSimplify(TSum(_indices)(_f)) <--
@@ -111,7 +113,44 @@ TSimplify(TSum(_indices)(_f)) <--
 
 
 
-10 # TSumSimplify(TList(Delta(_ind,_ind),_list))_Contains(indices,ind) <--  
+RuleBase("TSum",{indices,body});
+
+
+10 # (TSum({})(_body)) <-- body;
+
+
+20 # (TSum(_indices)(_body))_(IsInteger(Ndim)) <--
+    LocalSymbols(index,i,sum)
+    [
+      Local(index,i,sum);
+      index:=indices[1];
+      sum:=0;
+      MacroLocal(index);
+      For(i:=1,i<=Ndim,i++)
+      [
+        MacroSet(index,i);
+        sum:=sum+Eval(TSum(Rest(indices))body);
+      ];
+      sum;
+    ];
+
+UnFence("TSum",2);
+
+
+
+
+10 # TSumRest({}) <-- 1;
+20 # TSumRest(_list) <--
+[
+   TSumSimplify(TList(First(list),Rest(list)));
+];
+
+UnFence("TSumRest",1); 
+
+
+
+
+10 # TSumSimplify(TList(Delta(_ind,_ind),_list))_Contains(indices,ind) <--
 
 [
   
@@ -147,17 +186,12 @@ TSimplify(TSum(_indices)(_f)) <--
   term*TSumRest(list);
 ];
 
-
-10 # TSumRest({}) <-- 1;
-20 # TSumRest(_list) <--
-[
-   TSumSimplify(TList(Head(list),Tail(list)));
-];
-
-
-
 UnFence("TSumSimplify",1); 
-UnFence("TSumRest",1); 
-UnFence("TSum",2);
+
+
+
+
+RuleBase("X",{ind});
+
 
 

@@ -5,10 +5,6 @@ HoldArg("Function",oper);
 HoldArg("Function",args);
 HoldArg("Function",body);
 
-RuleBase("Macro",{oper,args,body});
-HoldArg("Macro",oper);
-HoldArg("Macro",args);
-HoldArg("Macro",body);
 
 
 Rule("Function",3,2047,
@@ -31,6 +27,52 @@ Rule("Function",3,2048,True)
 
 
 
+RuleBase("Function",{oper});
+
+Rule("Function",1,2047,
+	And(IsFunction(oper), GreaterThan(Length(oper), 1), Equals( MathNth(oper, Length(oper)), Atom("...") ))
+)
+[
+	Local(args);
+	Set(args,Rest(Listify(oper)));
+	DestructiveDelete(args,Length(args));	
+	If(RuleBaseDefined(Type(oper),Length(args)),
+		False,	
+		MacroRuleBaseListed(Type(oper),args)
+	);
+];
+
+
+
+Rule("Function",1,2048,
+	And(IsFunction(oper))
+)
+[
+	Local(args);
+	Set(args,Rest(Listify(oper)));
+	If(RuleBaseDefined(Type(oper),Length(args)),
+		False,	
+		MacroRuleBase(Type(oper),args)
+	);
+];
+
+
+
+Function("HoldArgNr",{function,arity,index})
+[
+  Local(args);
+  args:=RuleBaseArgList(function,arity);
+
+  ApplyPure("HoldArg",{function,args[index]});
+];
+
+
+RuleBase("Macro",{oper,args,body});
+HoldArg("Macro",oper);
+HoldArg("Macro",args);
+HoldArg("Macro",body);
+
+
 Rule("Macro",3,2047,
 	And(GreaterThan(Length(args), 1), Equals( MathNth(args, Length(args)), Atom("...") ))
 )
@@ -49,36 +91,6 @@ Rule("Macro",3,2048,True)
   MacroRule(oper,Length(args),1025,True) body;
 ];
 
-
-
-RuleBase("Function",{oper});
-
-Rule("Function",1,2047,
-	And(IsFunction(oper), GreaterThan(Length(oper), 1), Equals( MathNth(oper, Length(oper)), Atom("...") ))
-)
-[
-	Local(args);
-	Set(args,Tail(Listify(oper)));
-	DestructiveDelete(args,Length(args));	
-	If(RuleBaseDefined(Type(oper),Length(args)),
-		False,	
-		MacroRuleBaseListed(Type(oper),args)
-	);
-];
-
-Rule("Function",1,2048,
-	And(IsFunction(oper))
-)
-[
-	Local(args);
-	Set(args,Tail(Listify(oper)));
-	If(RuleBaseDefined(Type(oper),Length(args)),
-		False,	
-		MacroRuleBase(Type(oper),args)
-	);
-];
-
-
 RuleBase("Macro",{oper});
 
 Rule("Macro",1,2047,
@@ -86,7 +98,7 @@ Rule("Macro",1,2047,
 )
 [
 	Local(args,name);
-	Set(args,Tail(Listify(oper)));
+	Set(args,Rest(Listify(oper)));
 	DestructiveDelete(args,Length(args));	
   Set(name,Type(oper));
 	If(RuleBaseDefined(Type(oper),Length(args)),
@@ -100,7 +112,7 @@ Rule("Macro",1,2048,
 )
 [
 	Local(args,name);
-	Set(args,Tail(Listify(oper)));
+	Set(args,Rest(Listify(oper)));
   Set(name,Type(oper));
 	If(RuleBaseDefined(Type(oper),Length(args)),
 		False,	
@@ -118,10 +130,10 @@ HoldArg("TemplateFunction",args);
 HoldArg("TemplateFunction",body);
 Rule("TemplateFunction",3,2047,True)
 [
-  Retract(oper,Length(args)); 
+  Retract(oper,Length(args));
   Local(arglist);
   arglist:=FlatCopy(args);
-  
+
   DestructiveAppend(arglist,{args,UnList({Hold,body})});
   arglist:=ApplyPure("LocalSymbols",arglist);
 
@@ -130,14 +142,22 @@ Rule("TemplateFunction",3,2047,True)
 
 ];
 
-Function("HoldArgNr",{function,arity,index})
+
+
+
+RuleBase("UnHoldable",{var});
+HoldArg("UnHoldable",var);
+UnFence("UnHoldable",1);
+Rule("UnHoldable",1,10,Equals(Type(Eval(var)),"Eval"))
 [
-  Local(args);
-  args:=RuleBaseArgList(function,arity);
+  MacroSet(var,Eval(Eval(var)));
 
-  ApplyPure("HoldArg",{function,args[index]});
 ];
+Rule("UnHoldable",1,20,True)
+[
 
+  True;
+];
 
 
 
@@ -192,16 +212,16 @@ Rule("AssignArray",3,2,True)
 ];
 
 
-Rule(":=",2,10,IsFunction(aLeftAssign) And (Head(Listify(aLeftAssign)) = Nth))
+Rule(":=",2,10,IsFunction(aLeftAssign) And (First(Listify(aLeftAssign)) = Nth))
 [
  Local(frst,scnd);
 
  Local(lst);
  Set(lst,(Listify(aLeftAssign)));
- Set(lst,Tail(lst));
- Set(frst, Eval(Head(lst)));
- Set(lst,Tail(lst));
- Set(scnd, Eval(Head(lst)));
+ Set(lst,Rest(lst));
+ Set(frst, Eval(First(lst)));
+ Set(lst,Rest(lst));
+ Set(scnd, Eval(First(lst)));
 
  AssignArray(frst,scnd,Eval(aRightAssign));
 ];
@@ -211,43 +231,24 @@ Rule(":=",2,30,IsFunction(aLeftAssign) And Not(Equals(aLeftAssign[0], Atom(":=")
 [
   Local(oper,args,arity);
   Set(oper,String(aLeftAssign[0]));
-  Set(args,Tail(Listify(aLeftAssign)));
+  Set(args,Rest(Listify(aLeftAssign)));
   If(
 	And(GreaterThan(Length(args), 1), Equals( MathNth(args, Length(args)), Atom("...") )),
 	
 	[
 	  DestructiveDelete(args,Length(args));	
 	  Set(arity,Length(args));
-	  Retract(oper,arity); 
+	  Retract(oper,arity);
 	  MacroRuleBaseListed(oper, args);
 	],
 	
 	[
 	  Set(arity,Length(args));
-	  Retract(oper,arity); 
+	  Retract(oper,arity);
 	  MacroRuleBase(oper, args);
 	]
   );
   UnHoldable(aRightAssign);
   MacroRule(oper,arity,1025,True) aRightAssign;
 ];
-
-
-
-RuleBase("UnHoldable",{var});
-HoldArg("UnHoldable",var);
-UnFence("UnHoldable",1);
-Rule("UnHoldable",1,10,Equals(Type(Eval(var)),"Eval"))
-[
-  MacroSet(var,Eval(Eval(var)));
-
-];
-Rule("UnHoldable",1,20,True)
-[
-
-  True;
-];
-
-
-
 

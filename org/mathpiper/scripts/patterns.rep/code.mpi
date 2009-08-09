@@ -1,4 +1,43 @@
 
+RuleBase("DefinePattern",{leftOperand, rightOperand, rulePrecedence, postPredicate});
+
+
+
+Rule("DefinePattern",4,9,Equals(Type(leftOperand),"_"))
+[
+    DefinePattern(leftOperand[1], rightOperand, rulePrecedence, leftOperand[2]);
+];
+
+
+
+Rule("DefinePattern",4,10,True)
+[
+      Local(patternFlat,patternVariables, pattern, patternOperator, arg, arity);
+      
+      Set(patternFlat, Listify(leftOperand)); 
+      
+      Set(patternVariables, Rest(patternFlat)); 
+      
+      Set(patternOperator,String(First(patternFlat))); 
+      
+      Set(arity,Length(patternVariables)); 
+      
+      DefLoadFunction(patternOperator);  
+    
+      
+      If(Not(RuleBaseDefined(patternOperator,arity)),
+         [
+          MacroRuleBase(patternOperator,MakeVector(arg,arity));
+         ]
+        );
+    
+      Set(pattern,Pattern'Create(patternVariables,postPredicate));
+    
+      MacroRulePattern(patternOperator,arity,rulePrecedence, pattern)rightOperand;
+    
+      True;
+];
+
 
 RuleBase("MakeVector",{vec,dimension});
 Rule("MakeVector",2,1,True)
@@ -16,44 +55,25 @@ Rule("MakeVector",2,1,True)
 ];
 
 
-RuleBase("<--",{patternleft,patternright});
+RuleBase("<--",{leftOperand,rightOperand});
 
-Rule("<--",2,1,Equals(Type(patternleft),"#"))
-[
-  DefinePattern(patternleft[2],patternright,patternleft[1],True);
-];
-Rule("<--",2,2,IsFunction(patternleft))
-[
- DefinePattern(patternleft,patternright,0,True);
-];
-HoldArg("<--",patternleft);
-HoldArg("<--",patternright);
 
-RuleBase("DefinePattern",
-         {patternleft,patternright,patternprecedence,postpredicate});
-Rule("DefinePattern",4,9,Equals(Type(patternleft),"_"))
+
+Rule("<--",2,1,Equals(Type(leftOperand),"#"))
 [
- DefinePattern(patternleft[1],patternright,
-               patternprecedence,patternleft[2]);
+  DefinePattern(leftOperand[2],rightOperand,leftOperand[1],True);
 ];
 
-Rule("DefinePattern",4,10,True)
+
+
+Rule("<--",2,2,IsFunction(leftOperand))
 [
-  Local(patternflat,patternvars, patt, patternoper,arity);
-  Set(patternflat, Listify(patternleft));
-  Set(patternvars, Tail(patternflat));
-  Set(patternoper,String(Head(patternflat)));
-  Set(arity,Length(patternvars));
-  DefLoadFunction(patternoper);
-  If(Not(RuleBaseDefined(patternoper,arity)),
-     [
-      MacroRuleBase(patternoper,MakeVector(arg,arity));
-     ]
-    );
-  Set(patt,Pattern'Create(patternvars,postpredicate));
-  MacroRulePattern(patternoper,arity,patternprecedence,
-            patt)patternright;
-  True;
+ DefinePattern(leftOperand,rightOperand,0,True);
 ];
+
+HoldArg("<--",leftOperand);
+HoldArg("<--",rightOperand);
+
+
 
 

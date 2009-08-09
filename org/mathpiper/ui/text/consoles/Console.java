@@ -19,77 +19,113 @@ package org.mathpiper.ui.text.consoles;
 
 //import org.mathpiper.lisp.UtilityFunctions;
 
-import java.io.InputStream;
-
+import java.io.*;
 import org.mathpiper.Version;
 import org.mathpiper.interpreters.EvaluationResponse;
 import org.mathpiper.interpreters.Interpreter;
 import org.mathpiper.interpreters.Interpreters;
 
-
 /**
  * Provides a command line console which can be used to interact with a mathpiper instance.
- * 
  */
-public class Console
-{
-	Interpreter interpreter;
-                
-	public Console()
-	{
-		//MathPiper needs an output stream to send "side effect" output to.
-		//StandardFileOutputStream stdoutput = new StandardFileOutputStream(System.out);
-		interpreter = Interpreters.getSynchronousInterpreter();
-	}
-        
-        void addDirectory(String directory)
-        {
-            interpreter.addScriptsDirectory(directory);
+public class Console {
+
+    Interpreter interpreter;
+
+    public Console() {
+        //MathPiper needs an output stream to send "side effect" output to.
+        //StandardFileOutputStream stdoutput = new StandardFileOutputStream(System.out);
+        interpreter = Interpreters.getSynchronousInterpreter();
+    }
+
+    void addDirectory(String directory) {
+        interpreter.addScriptsDirectory(directory);
+    }
+
+    String readLine(InputStreamReader aStream) {
+        StringBuffer line = new StringBuffer();
+        try {
+            int c = aStream.read();
+            while (c != '\n') {
+                line.append((char) c);
+                c = aStream.read();
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
         }
-        
-        String readLine(InputStream aStream)
+        return line.toString();
+    }
 
-	{
-		StringBuffer line = new StringBuffer();
-		try
-		{
-			int c = aStream.read();
-			while (c != '\n')
-			{
-				line.append((char)c);
-				c = aStream.read();
-			}
-		}
-		catch (Exception e)
-		{
-			System.out.println(e.toString());
-		}
-		return line.toString();
-	}
-        
-        String evaluate(String input)
-        {
-            //return (String) interpreter.evaluate(input);
-            EvaluationResponse response = interpreter.evaluate(input);
-            String responseString = "Result> " + response.getResult() +"\n";
+    String evaluate(String input) {
+        //return (String) interpreter.evaluate(input);
+        EvaluationResponse response = interpreter.evaluate(input, true);
+        String responseString = "Result> " + response.getResult() + "\n";
 
-			
-			if(!response.getSideEffects().equalsIgnoreCase(""))
-			{
-				responseString = responseString + "Side Effects>\n" + response.getSideEffects() + "\n";
-			}
-			
-			if(!response.getExceptionMessage().equalsIgnoreCase(""))
-			{
-				responseString = responseString + response.getExceptionMessage() + "\n" ;
-			}
-                        
-                        
-            return responseString;
+
+        if (!response.getSideEffects().equalsIgnoreCase("")) {
+            responseString = responseString + "Side Effects>\n" + response.getSideEffects() + "\n";
         }
 
-    
+        if (!response.getExceptionMessage().equalsIgnoreCase("")) {
+            responseString = responseString + response.getExceptionMessage() +  " Source file name: " + response.getSourceFileName() + " Near line number: " + response.getLineNumber() + "\n";
+        }
 
+
+        return responseString;
+    }//end evaluate.
+
+
+
+    /**
+     * A Read Evaluate Print Loop for implementing text consoles.
+     *
+     * @param in console input.
+     * @param out console output.
+     */
+    public void repl(InputStream inputStream, PrintStream out) {
+        out.println("\nMathPiper version '" + Version.version + "'.");
+        out.println("See http://mathrider.org for more information and documentation on MathPiper.");
+        out.println("Place a backslash at the end of a line to enter multiline input.");
+        out.println("To exit MathPiper, enter \"Exit()\" or \"exit\" or \"quit\" or Ctrl-c.\n");
+        /*TODO fixme
+        System.out.println("Type ?? for help. Or type ?function for help on a function.\n");
+        System.out.println("Type 'restart' to restart MathPiper.\n");
+         */
+        //out.println("To see example commands, keep typing Example()\n");
+
+        //piper.Evaluate("BubbleSort(N(PSolve(x^3-3*x^2+2*x,x)), \"<\");");
+
+        boolean quitting = false;
+        String oneOrMoreLineInput = "";
+        String input;
+        while (!quitting) {
+            out.print("In> ");
+            input = readLine(new InputStreamReader(inputStream));
+            input = input.trim();
+
+            if(input.endsWith("\\"))
+            {
+                oneOrMoreLineInput += input.substring(0,input.length()-1);
+                continue;
+            }
+            else
+            {
+                oneOrMoreLineInput += input;
+            }
+
+
+            String responseString = evaluate(oneOrMoreLineInput);
+
+            oneOrMoreLineInput = "";
+
+            out.println(responseString);
+
+            if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("quit")) {
+
+                quitting = true;
+            }
+        }
+    }//end repl.
 
     /**
      * The normal entry point for running mathpiper from a command line.  It processes command line arguments,
@@ -98,28 +134,23 @@ public class Console
      *
      * @param argv
      */
-    public static void main(String[] argv)
-    {
+    public static void main(String[] argv) {
         Console console = new Console();
         String defaultDirectory = null;
         String archive = null;
-        
-        
-        
+
+
+
         int i = 0;
-        while (i < argv.length)
-        {
-            if (argv[i].equals("--rootdir"))
-            {
+        while (i < argv.length) {
+            if (argv[i].equals("--rootdir")) {
                 i++;
                 defaultDirectory = argv[i];
             }
-            if (argv[i].equals("--archive"))
-            {
+            if (argv[i].equals("--archive")) {
                 i++;
                 archive = argv[i];
-            } else
-            {
+            } else {
                 break;
             }
             i++;
@@ -128,44 +159,14 @@ public class Console
 
 
         //Change the default directory. tk.
-        if (defaultDirectory != null)
-        {
-            console.addDirectory(defaultDirectory );
+        if (defaultDirectory != null) {
+            console.addDirectory(defaultDirectory);
         }
-        
 
-        System.out.println("\nMathPiper version '" + Version.version + "'.");
-
-        System.out.println("See http://mathrider.org for more information and documentation on MathPiper.");
-
-        System.out.println("\nTo exit MathPiper, enter \"Exit()\" or \"exit\" or \"quit\" or Ctrl-c.\n");
-        /*TODO fixme
-        System.out.println("Type ?? for help. Or type ?function for help on a function.\n");
-        System.out.println("Type 'restart' to restart MathPiper.\n");
-         */
-        System.out.println("To see example commands, keep typing Example()\n");
-
-        //piper.Evaluate("BubbleSort(N(PSolve(x^3-3*x^2+2*x,x)), \"<\");");
-
-        //System.out.println("MathPiper in Java");
-        boolean quitting = false;
-        while (!quitting)
-        {
-            System.out.print("In> ");
-            String input = console.readLine(System.in);
-            input = input.trim();
+        console.repl(System.in, System.out);
 
 
-              String responseString = console.evaluate(input);
 
-            System.out.println(responseString);
-
-            if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("quit"))
-            {
-
-                quitting = true;
-            }
-        }
-    }
+    }//end main.
 }
 

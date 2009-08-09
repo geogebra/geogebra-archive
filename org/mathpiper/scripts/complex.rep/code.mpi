@@ -1,38 +1,12 @@
 
-
-
-
-
-
-
-
-10 # II^n_IsNegativeInteger <-- (-II)^(-n);
-20 # (II^_n)_(IsEven(n) = True) <-- (-1)^(n>>1);
-20 # (II^_n)_(IsOdd(n)  = True) <--  II*(-1)^(n>>1);
-
-LocalSymbols(complexReduce) [
-
-  Set(complexReduce,
-    Hold(
-    {
-      Exp(x_IsComplexII) <- Exp(ReII(x))*(Cos(ImII(x))+II*Sin(ImII(x)))
-    }));
-
-  NN(_c) <--
-  [
-    Local(result);
-    c := (c /:: complexReduce);
-    result := Coef(Expand(c,II),II,{0,1});
-    result;
-  ];
-
-]; 
-
-
-ReII(_c) <-- NN(c)[1];
-ImII(_c) <-- NN(c)[2];
-IsComplexII(_c) <-- (ImII(c) != 0);
-
+10 # Arg(Complex(Cos(_x),Sin(_x))) <-- x;
+10 # Arg(x_IsZero) <-- Undefined;
+15 # Arg(x_IsPositiveReal) <-- 0;
+15 # Arg(x_IsNegativeReal) <-- Pi;
+20 # Arg(Complex(r_IsZero,i_IsConstant)) <-- Sign(i)*Pi/2;
+30 # Arg(Complex(r_IsPositiveReal,i_IsConstant)) <-- ArcTan(i/r);
+40 # Arg(Complex(r_IsNegativeReal,i_IsPositiveReal)) <-- Pi+ArcTan(i/r);
+50 # Arg(Complex(r_IsNegativeReal,i_IsNegativeReal)) <-- ArcTan(i/r)-Pi;
 
 
 0 # Complex(_r,i_IsZero) <-- r;
@@ -43,27 +17,12 @@ IsComplexII(_c) <-- (ImII(c) != 0);
 6 # Complex(_x,Undefined) <-- Undefined;
 
 
-110 # Re(Complex(_r,_i)) <-- r;
-120 # Re(Undefined) <-- Undefined;
-300 # Re(_x) <-- x;
-
-
-110 # Im(Complex(_r,_i)) <-- i;
-120 # Im(Undefined) <-- Undefined;
-300 # Im(_x) <-- 0;
-
-
-1 # IsComplex(x_IsRationalOrNumber)     <-- True;
-2 # IsComplex(Complex(_r,_i)) <-- True;
-3 # IsComplex(_x)             <-- False;
-
-IsNotComplex(x) := Not(IsComplex(x));
 
 
 110 # Complex(_r1,_i1) + Complex(_r2,_i2) <-- Complex(r1+r2,i1+i2);
 300 # Complex(_r,_i) + x_IsConstant <-- Complex(r+x,i);
 300 # x_IsConstant + Complex(_r,_i) <-- Complex(r+x,i);
- 
+
 110 # - Complex(_r,_i) <-- Complex(-r,-i);
 
 300 # Complex(_r,_i) - x_IsConstant <-- Complex(r-x,i);
@@ -130,23 +89,64 @@ IsNotComplex(x) := Not(IsComplex(x));
 
 
 
+
 LocalSymbols(a,x)
 [
-Function("Conjugate",{a}) 
+Function("Conjugate",{a})
   Substitute(a,{{x},Type(x)="Complex"},{{x},Complex(x[1],-(x[2]))});
 ]; 
+
+
+
+110 # Im(Complex(_r,_i)) <-- i;
+120 # Im(Undefined) <-- Undefined;
+300 # Im(_x) <-- 0;
+
+
+ImII(_c) <-- NN(c)[2];
+
+
+
+1 # IsComplex(x_IsRationalOrNumber)     <-- True;
+2 # IsComplex(Complex(_r,_i)) <-- True;
+3 # IsComplex(_x)             <-- False;
+
+
+IsComplexII(_c) <-- (ImII(c) != 0);
+
+
+IsNotComplex(x) := Not(IsComplex(x));
+
 
 Function("Magnitude",{x}) [
 	Sqrt(Re(x)^2 + Im(x)^2);
 ];
 
-10 # Arg(Complex(Cos(_x),Sin(_x))) <-- x;
-10 # Arg(x_IsZero) <-- Undefined;
-15 # Arg(x_IsPositiveReal) <-- 0;
-15 # Arg(x_IsNegativeReal) <-- Pi;
-20 # Arg(Complex(r_IsZero,i_IsConstant)) <-- Sign(i)*Pi/2;
-30 # Arg(Complex(r_IsPositiveReal,i_IsConstant)) <-- ArcTan(i/r);
-40 # Arg(Complex(r_IsNegativeReal,i_IsPositiveReal)) <-- Pi+ArcTan(i/r);
-50 # Arg(Complex(r_IsNegativeReal,i_IsNegativeReal)) <-- ArcTan(i/r)-Pi;
 
+LocalSymbols(complexReduce) [
+
+  Set(complexReduce,
+    Hold(
+    {
+      Exp(x_IsComplexII) <- Exp(ReII(x))*(Cos(ImII(x))+II*Sin(ImII(x)))
+    }));
+
+  NN(_c) <--
+  [
+    Local(result);
+    c := (c /:: complexReduce);
+    result := Coef(Expand(c,II),II,{0,1});
+    result;
+  ];
+
+]; 
+
+
+
+110 # Re(Complex(_r,_i)) <-- r;
+120 # Re(Undefined) <-- Undefined;
+300 # Re(_x) <-- x;
+
+
+ReII(_c) <-- NN(c)[1];
 

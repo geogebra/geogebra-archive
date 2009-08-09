@@ -19,8 +19,7 @@
 package org.mathpiper.io;
 
 
-public class StandardFileOutputStream
-			extends MathPiperOutputStream //Note:tk: made this class public.
+public class StandardFileOutputStream implements MathPiperOutputStream //Note:tk: made this class public.
 {
 
 	java.io.OutputStream iFile;
@@ -35,4 +34,11 @@ public class StandardFileOutputStream
 	{
 		iFile.write(aChar);
 	}
+
+    public void write(String aString) throws Exception {
+        int i;
+        for (i = 0; i < aString.length(); i++) {
+            putChar(aString.charAt(i));
+        }
+    }
 };

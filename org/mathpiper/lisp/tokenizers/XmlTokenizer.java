@@ -18,9 +18,10 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp.tokenizers;
 
-import org.mathpiper.io.MathPiperInputStream;
+import org.mathpiper.lisp.collections.TokenMap;
 import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.TokenHash;
+import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
+import org.mathpiper.io.MathPiperInputStream;
 
 public class XmlTokenizer
 			extends MathPiperTokenizer
@@ -28,7 +29,7 @@ public class XmlTokenizer
 
 	/// NextToken returns a string representing the next token,
 	/// or an empty list.
-	public String nextToken(MathPiperInputStream aInput, TokenHash aHashTable)
+	public String nextToken(MathPiperInputStream aInput, TokenMap aHashTable)
 	throws Exception
 	{
 
@@ -52,7 +53,7 @@ public class XmlTokenizer
 			while (c != '>')
 			{
 				c = aInput.next();
-				LispError.check(!aInput.endOfStream(), LispError.KLispErrCommentToEndOfFile);
+				LispError.check(!aInput.endOfStream(), LispError.COMMENT_TO_END_OF_FILE);
 			}
 		}
 		else

@@ -6,6 +6,7 @@
 
 
 
+
 RuleBase("CForm",{expression});
 RuleBase("CForm",{expression, precedence});
 
@@ -54,7 +55,7 @@ LocalSymbols(cformRegularOps) [
   CFormRegularOps() := cformRegularOps;
 ]; 
 
-	 
+	
 
 	
 100 # CForm(+ _y, _p) <-- CFormBracketIf(p<OpPrecedence("+"), ConcatStrings(" + ", CForm(y, OpRightPrecedence("+")) ) );
@@ -132,7 +133,7 @@ CFormArgs(list_IsList) <--
 
 200 # CForm(_x, _p)_(IsFunction(x)) <--
 [
-  ConcatStrings(Type(x), "(", CFormArgs(Tail(Listify(x))),")" );
+  ConcatStrings(Type(x), "(", CFormArgs(Rest(Listify(x))),")" );
 ];
 
 
@@ -187,7 +188,7 @@ CFormStatement(_x) <-- CForm(x) : ";" : NlIndented();
 [
   Local(result);
   result:=CIndent():"{":NlIndented();
-  ForEach(item,Tail(Listify(x)))
+  ForEach(item,Rest(Listify(x)))
   [
     result:=result:CFormStatement(item);
   ];
@@ -206,7 +207,6 @@ CFormStatement(_x) <-- CForm(x) : ";" : NlIndented();
 	"while(" : CForm(pred,CFormMaxPrec()) : ")"
 	: CIndent() : NlIndented()
 	: CFormStatement(body) : CUndent();
-
 
 
 

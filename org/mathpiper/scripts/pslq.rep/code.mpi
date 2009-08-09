@@ -1,7 +1,6 @@
 
 
 
-
 Pslq(x, precision) :=
 [
   Local (ndigits, gam, A, B, H, n, i, j, k, s, y, tmp, t, m, maxi, gami,
@@ -266,9 +265,6 @@ Pslq(x, precision) :=
   ];
   result;
 ];
-
-
-
 
 
 

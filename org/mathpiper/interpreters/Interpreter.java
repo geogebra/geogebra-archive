@@ -33,6 +33,16 @@ public interface Interpreter
      * @return an EvaluationResponse object
      */
     public EvaluationResponse evaluate(String expression);
+    
+    /**
+     * Evaluates a MathPiper expression and optinally notifies evaluation listeners.  The results of the evaluation are returned
+     * in a {@link EvaluationResponse} object.
+     *
+     * @param expression the MathPiper expression to be evaluated
+     * @param notifyListeners if true, evaluation listeners will be notified
+     * @return an EvaluationResponse object
+     */
+    public EvaluationResponse evaluate(String expression, boolean notifyListeners);
 
     /**
      * Halts the current evaluation.

@@ -1,26 +1,5 @@
 
 
-Function("Substitute",{body,predicate,change})
-[
-  Substitute(body);
-];
-HoldArg("Substitute",predicate);
-HoldArg("Substitute",change);
-UnFence("Substitute",3);
-RuleBase("Substitute",{body});
-UnFence("Substitute",1);
-
-Rule("Substitute",1,1,Apply(predicate,{body}) = True)
-[
-  Apply(change,{body});
-];
-Rule("Substitute",1,2,IsFunction(body))
-[
-  Apply("MapArgs",{body,"Substitute"});
-];
-Rule("Substitute",1,3,True) body;
-
-
 Function("MacroSubstitute",{body,predicate,change})
 [
   `MacroSubstitute((Hold(@body)));
@@ -45,7 +24,6 @@ Rule("MacroSubstitute",1,3,True)
 ];
 
 
-
 LocalSymbols(predicate,list,result,item)
 [
   Function("Select",{predicate,list})
@@ -61,3 +39,25 @@ LocalSymbols(predicate,list,result,item)
   HoldArg("Select",predicate);
   UnFence("Select",2);
 ];
+
+
+Function("Substitute",{body,predicate,change})
+[
+  Substitute(body);
+];
+HoldArg("Substitute",predicate);
+HoldArg("Substitute",change);
+UnFence("Substitute",3);
+RuleBase("Substitute",{body});
+UnFence("Substitute",1);
+
+Rule("Substitute",1,1,Apply(predicate,{body}) = True)
+[
+  Apply(change,{body});
+];
+Rule("Substitute",1,2,IsFunction(body))
+[
+  Apply("MapArgs",{body,"Substitute"});
+];
+Rule("Substitute",1,3,True) body;
+

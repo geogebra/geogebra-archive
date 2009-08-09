@@ -18,18 +18,18 @@
 
 package org.mathpiper.lisp.userfunctions;
 
-import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.ConsTraverser;
-import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.SubList;
+import org.mathpiper.lisp.cons.ConsTraverser;
+import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.cons.SublistCons;
 
 
-public class ListedBranchingUserFunction extends BranchingUserFunction
+public class ListedBranchingUserFunction extends SingleArityBranchingUserFunction
 {
-	public ListedBranchingUserFunction(ConsPointer  aParameters) throws Exception
+	public ListedBranchingUserFunction(ConsPointer  aParameters, String functionName) throws Exception
 	{
-		super(aParameters);
+		super(aParameters, functionName);
 	}
 	
 	public boolean isArity(int aArity)
@@ -37,36 +37,36 @@ public class ListedBranchingUserFunction extends BranchingUserFunction
 		return (arity() <= aArity);
 	}
 	
-	public void evaluate(ConsPointer aResult, Environment aEnvironment, ConsPointer aArguments) throws Exception
+	public void evaluate( Environment aEnvironment,ConsPointer aResult, ConsPointer aArguments) throws Exception
 	{
 		ConsPointer newArgs = new ConsPointer();
-		ConsTraverser iter = new ConsTraverser(aArguments);
+		ConsTraverser consTraverser = new ConsTraverser(aArguments);
 		ConsPointer ptr =  newArgs;
 		int arity = arity();
 		int i=0;
-		while (i < arity && iter.getCons() != null)
+		while (i < arity && consTraverser.getCons() != null)
 		{
-			ptr.setCons(iter.getCons().copy(false));
-			ptr = (ptr.getCons().rest());
+			ptr.setCons(consTraverser.getCons().copy(false));
+			ptr = (ptr.cdr());
 			i++;
-			iter.goNext();
+			consTraverser.goNext();
 		}
-		if (iter.getCons().rest().getCons() == null)
+		if (consTraverser.cdr().getCons() == null)
 		{
-			ptr.setCons(iter.getCons().copy(false));
-			ptr = (ptr.getCons().rest());
+			ptr.setCons(consTraverser.getCons().copy(false));
+			ptr = (ptr.cdr());
 			i++;
-			iter.goNext();
-			LispError.lispAssert(iter.getCons() == null);
+			consTraverser.goNext();
+			LispError.lispAssert(consTraverser.getCons() == null);
 		}
 		else
 		{
 			ConsPointer head = new ConsPointer();
 			head.setCons(aEnvironment.iListAtom.copy(false));
-			head.getCons().rest().setCons(iter.getCons());
-			ptr.setCons(SubList.getInstance(head.getCons()));
+			head.cdr().setCons(consTraverser.getCons());
+			ptr.setCons(SublistCons.getInstance(head.getCons()));
 		}
-		super.evaluate(aResult, aEnvironment, newArgs);
+		super.evaluate(aEnvironment, aResult, newArgs);
 	}
 }
 

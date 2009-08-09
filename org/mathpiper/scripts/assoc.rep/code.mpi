@@ -4,9 +4,6 @@
 Function("Assoc",{key,list})  Builtin'Assoc(key,list);
 
 
-AssocIndices(associndiceslist_IsList) <--
-  DestructiveReverse(MapSingle("Head",associndiceslist));
-
 
 LocalSymbols(hash, key, element, hash'expr)
 [
@@ -38,4 +35,8 @@ LocalSymbols(hash, key, element, hash'expr)
 
 
 ];	
+
+
+AssocIndices(associndiceslist_IsList) <--
+  DestructiveReverse(MapSingle("First",associndiceslist));
 

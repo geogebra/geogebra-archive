@@ -1,5 +1,4 @@
 
-
 ArrayCreateFromList(list):=
 [
   Local(result,i);
@@ -7,12 +6,13 @@ ArrayCreateFromList(list):=
   i:=1;
   While (list != {})
   [
-    result[i]:=Head(list);
+    result[i]:=First(list);
     i++;
-    list:=Tail(list);
+    list:=Rest(list);
   ];
   result;
 ];
+
 
 ArrayToList(array):= (array[1 .. ArraySize(array) ]);
 

@@ -19,26 +19,27 @@
 package org.mathpiper.lisp.userfunctions;
 
 
-import java.util.ArrayList;
-
 import org.mathpiper.lisp.DefFile;
-import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.*;
+import java.util.*;
 
 
 
 /**
- * Holds a set of {@link SingleArityUserFunction} which are associated with one function name.
- * A specific SingleArityUserFunction can be selected by providing its name.  The
+ * Holds a set of {@link SingleArityBranchingUserFunction} which are associated with one function name.
+ * A specific SingleArityBranchingUserFunction can be selected by providing its name.  The
  * name of the file in which the function is defined can also be specified.
  */
 public class MultipleArityUserFunction
 {
 
-	/// Set of SingleArityUserFunction's provided by this MultipleArityUserFunction.
-	ArrayList iFunctions = new ArrayList();//<SingleArityUserFunction*>
+	/// Set of SingleArityBranchingUserFunction's provided by this MultipleArityUserFunction.
+	List<SingleArityBranchingUserFunction> iFunctions = new ArrayList();//
 
 	/// File to read for the definition of this function.
 	public DefFile iFileToOpen;
+    
+    public String iFileLocation;
 
 	/// Constructor.
 	public MultipleArityUserFunction()
@@ -47,17 +48,18 @@ public class MultipleArityUserFunction
 	}
 
 	/// Return user function with given arity.
-	public UserFunction userFunction(int aArity) throws Exception
+	public SingleArityBranchingUserFunction getUserFunction(int aArity) throws Exception
 	{
-		int i;
+		int ruleIndex;
 		//Find function body with the right arity
-		int nrc=iFunctions.size();
-		for (i=0;i<nrc;i++)
+		int numberOfRules=iFunctions.size();
+		for (ruleIndex =0; ruleIndex<numberOfRules; ruleIndex++)
 		{
-			LispError.lispAssert(iFunctions.get(i) != null);
-			if (((SingleArityUserFunction)iFunctions.get(i)).isArity(aArity))
+			LispError.lispAssert(iFunctions.get(ruleIndex) != null);
+
+			if (((SingleArityBranchingUserFunction)iFunctions.get(ruleIndex)).isArity(aArity))
 			{
-				return (SingleArityUserFunction)iFunctions.get(i);
+				return (SingleArityBranchingUserFunction)iFunctions.get(ruleIndex);
 			}
 		}
 
@@ -69,46 +71,59 @@ public class MultipleArityUserFunction
 	/// Specify that some argument should be held.
 	public void holdArgument(String aVariable) throws Exception
 	{
-		int i;
-		for (i=0;i<iFunctions.size();i++)
+		int ruleIndex ;
+		for (ruleIndex =0;ruleIndex <iFunctions.size();ruleIndex ++)
 		{
-			LispError.lispAssert(iFunctions.get(i) != null);
-			((SingleArityUserFunction)iFunctions.get(i)).holdArgument(aVariable);
+			LispError.lispAssert(iFunctions.get(ruleIndex ) != null);
+			((SingleArityBranchingUserFunction)iFunctions.get(ruleIndex )).holdArgument(aVariable);
 		}
 	}
 
-	/// Add another SingleArityUserFunction to #iFunctions.
-	public  void defineRuleBase(SingleArityUserFunction aNewFunction) throws Exception
+	/// Add another SingleArityBranchingUserFunction to #iFunctions.
+	public  void addRulebaseEntry(SingleArityBranchingUserFunction aNewFunction) throws Exception
 	{
-		int i;
+		int ruleIndex;
 		//Find function body with the right arity
-		int nrc=iFunctions.size();
-		for (i=0;i<nrc;i++)
+		int numberOfRules =iFunctions.size();
+		for (ruleIndex=0; ruleIndex<numberOfRules; ruleIndex++)
 		{
-			LispError.lispAssert(((SingleArityUserFunction)iFunctions.get(i)) != null);
+			LispError.lispAssert(((SingleArityBranchingUserFunction)iFunctions.get(ruleIndex)) != null);
 			LispError.lispAssert(aNewFunction != null);
-			LispError.check(!((SingleArityUserFunction)iFunctions.get(i)).isArity(aNewFunction.arity()),LispError.KLispErrArityAlreadyDefined);
-			LispError.check(!aNewFunction.isArity(((SingleArityUserFunction)iFunctions.get(i)).arity()),LispError.KLispErrArityAlreadyDefined);
+			LispError.check(!((SingleArityBranchingUserFunction)iFunctions.get(ruleIndex)).isArity(aNewFunction.arity()),LispError.ARITY_ALREADY_DEFINED);
+			LispError.check(!aNewFunction.isArity(((SingleArityBranchingUserFunction)iFunctions.get(ruleIndex)).arity()),LispError.ARITY_ALREADY_DEFINED);
 		}
 		iFunctions.add(aNewFunction);
 	}
 
-	/// Deletet user function with given arity.
-	public  void deleteBase(int aArity) throws Exception
+	/// Delete user function with given arity.  If arity is -1 then delete all functions regardless of arity.
+	public  void deleteRulebaseEntry(int aArity) throws Exception
 	{
-		int i;
+        if(aArity == -1) //Retract all functions regardless of arity.
+        {
+            iFunctions.clear();
+            return;
+        }//end if.
+
+		int ruleIndex;
 		//Find function body with the right arity
-		int nrc=iFunctions.size();
-		for (i=0;i<nrc;i++)
+		int numberOfRules =iFunctions.size();
+		for (ruleIndex=0; ruleIndex<numberOfRules; ruleIndex++)
 		{
-			LispError.lispAssert(((SingleArityUserFunction)iFunctions.get(i)) != null);
-			if (((SingleArityUserFunction)iFunctions.get(i)).isArity(aArity))
+			LispError.lispAssert(((SingleArityBranchingUserFunction)iFunctions.get(ruleIndex)) != null);
+
+            if (((SingleArityBranchingUserFunction)iFunctions.get(ruleIndex)).isArity(aArity))
 			{
-				iFunctions.remove(i);
+				iFunctions.remove(ruleIndex);
 				return;
 			}
 		}
 	}
+
+
+    public Iterator getFunctions()
+    {
+        return this.iFunctions.iterator();
+    }
 
 
 }

@@ -1,5 +1,38 @@
 
 
+10 # RandomInteger(n_IsPositiveInteger) <-- CeilN(Random()*n);
+
+
+
+10 # RandomInteger(lowerBoundInclusive_IsInteger, upperBoundInclusive_IsInteger) <--
+[
+    Local(difference);
+
+    difference := upperBoundInclusive - lowerBoundInclusive;
+
+    Round(Random() * difference) + lowerBoundInclusive;
+];
+
+
+
+RandomIntegerMatrix(_rows,_cols,_coefmin,_coefmax) <--
+	GenMatrix({{i,j}, FloorN(coefmin+Random()*(coefmax+1-coefmin))}, rows, cols );
+
+
+RandomIntegerVector(_count,_coefmin,_coefmax) <--
+  Table(FloorN(coefmin+Random()*(coefmax+1-coefmin)),i,1,count,1);
+
+
+
+
+RandomPoly(_var,_degree,_coefmin,_coefmax) <--
+  NormalForm(UniVariate(var,0,RandomIntegerVector(degree+1,coefmin,coefmax)));
+
+
+
+
+
+
 
 
 
@@ -44,16 +77,16 @@ Function() Rng(r);
 
 RngCreate() <-- RngCreate(0);
 
-10 # RngCreate(a'seed_IsInteger) <-- (RngCreate @ {Atom("seed") == a'seed});
+10 # RngCreate(a'seed_IsInteger) <-- (RngCreate @ {Atom("seed") -> a'seed});
 
 
-20 # RngCreate(_key == _value) <-- (RngCreate @ {{key == value}});
-20 # RngCreate(_key = _value) <-- (RngCreate @ {{key == value}});
+20 # RngCreate(_key -> _value) <-- (RngCreate @ {{key -> value}});
+20 # RngCreate(_key = _value) <-- (RngCreate @ {{key -> value}});
 
 
 30 # RngCreate(options_IsList) <--
 [
-	options := ListToHash @ {options};
+	options := OptionsListToHash @ {options};
 	
 	If(
 		options["seed"] = Empty Or options["seed"] <= 0,
@@ -67,11 +100,11 @@ RngCreate() <-- RngCreate(0);
 		options["dist"] = Empty Or Not (Assert("warning", {"RngCreate: invalid distribution", options["dist"]}) KnownRNGDists()[options["dist"] ] != Empty),
 		options["dist"] := "default"
 	);
-	
+
 	
 	
 	{
-		KnownRNGDists()[options["dist"] ], KnownRNGEngines()[options["engine"] ], 
+		KnownRNGDists()[options["dist"] ], KnownRNGEngines()[options["engine"] ],
 		
 		KnownRNGEngines()[options["engine"] ] @ { options["seed"] }
 	};
@@ -123,7 +156,7 @@ GaussianRNGDist(_rng) <--
 		a:=2*rnumber-1;
 		{new'state, rnumber} := (rng[2] @ {new'state});
 		b:=2*rnumber-1;
-		m:=a*a+b*b;	
+		m:=a*a+b*b;
 	];
 	{new'state, (a+I*b)*SqrtN(-2*DivideN(Internal'LnNum(m),m))};
 ];
@@ -238,6 +271,5 @@ Function("Random5",{}) RandomLCG(18014398509481984,2783377640906189,0);
 
 
 Function("Random",{}) Random3();
-
 
 

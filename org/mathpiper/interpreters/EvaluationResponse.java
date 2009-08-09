@@ -17,6 +17,8 @@ public class EvaluationResponse {
     private boolean exceptionThrown = false;
     private Exception exception = null;
     private int lineNumber;
+    private String sourceFileName = "";
+    private Object object = null;
             
     private EvaluationResponse()
     {
@@ -30,6 +32,26 @@ public class EvaluationResponse {
     public static EvaluationResponse newInstance()
     {
         return new EvaluationResponse();
+    }
+
+    /**
+     * Returns the name of the source file in which an error occurred.
+     *
+     * @return the name of the source file
+     */
+    public String getSourceFileName()
+    {
+        return sourceFileName;
+    }
+
+    /**
+     * Sets the name of the source file in which an error occurred.
+     *
+     * @param  name of the source file
+     */
+    public void setSourceFileName(String sourceFileName)
+    {
+        this.sourceFileName = sourceFileName;
     }
 
     /**
@@ -145,6 +167,25 @@ public class EvaluationResponse {
     {
         return exceptionThrown;
     }
-            
+
+    /**
+     * Sets a Java object to be returned to the user..
+     *
+     * @param exception the exception object
+     */
+    public void setObject(Object object)
+    {
+        this.object = object;
+    }
+
+    /**
+     * Allows the user to obtain a Java object from a function.
+     *
+     * @return a Java object if one is available to return to the user.
+     */
+    public Object getObject()
+    {
+        return object;
+    }
 
 }//end class.

@@ -1,4 +1,5 @@
 
+
 OMDef( "Not", "logic1","not" );
 OMDef( "=" , "relation1","eq"  );
 OMDef( ">=", "relation1","geq" );
@@ -19,8 +20,10 @@ OMDef( "Floor", "rounding1","floor"   );
 OMDef( "Ceil" , "rounding1","ceiling" );
 OMDef( "Round", "rounding1","round"   );
 
-OMDef( "Div"   , "piper","div"    );
-OMDef( "Mod"   , "piper","mod"    );
-OMDef( "Expand", "piper","expand" );
-OMDef( "Object", "piper","object" );
-OMDef( "Sign"  , "piper","sign"   );
+OMDef( "Div"   , mathpiper,"div"    );
+OMDef( "Mod"   , mathpiper,"mod"    );
+OMDef( "Expand", mathpiper,"expand" );
+OMDef( "Object", mathpiper,"object" );
+OMDef( "Sign"  , mathpiper,"sign"   );
+
+

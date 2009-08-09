@@ -1,3 +1,5 @@
-Integrate
 AntiDeriv
+Integrate
+MatchLinear
+MatchPureSquared
 }

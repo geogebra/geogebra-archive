@@ -1,76 +1,64 @@
 
-
-Function("LeviCivita",{indices})
+Function("BaseVector",{row,n})
 [
-  Local(i,j,length,left,right,factor);
-  length:=Length(indices);
-  factor:=1;
-
-  For (j:=length,j>1,j--)
-  [
-    For(i:=1,i<j,i++)
-    [
-      left:=indices[i];
-      right:=indices[i+1];
-
-      If (Equals(left,right),
-      [ factor := 0 ; ],
-      [
-        If(Not(Apply("<",{left,right})),
-        [
-
-          indices:=Insert(Delete(indices,i),i+1,left);
-          factor:= -factor;
-        ]);
-      ]);
-    ];
-  ];
-  factor;
-];
-
-Function("Permutations",{result,list})
-[
-  If (Length(list) = 0,
-  [
+    Local(i,result);
+    result:=ZeroVector(n);
+    result[row] := 1;
     result;
-  ],
-  [
-    Local(head);
-    Local(newresult);
-    Local(i);
-    head:=list[1];
-    newresult:={};
-    ForEach(item,result)
-    [
-      For(i:=Length(item)+1,i>0,i--)
-      [
-        DestructiveInsert(newresult,1,Insert(item,i,head));
-      ];
-    ];
-    newresult:=DestructiveReverse(newresult);
-    Permutations(newresult,Tail(list));
-  ]);
 ];
 
 
-Function("Permutations",{list})
+
+
+
+
+
+
+10 # Cholesky(A_IsMatrix) <--
 [
-  Permutations({{}},list);
+	Local(matrix,n,k,j);
+	n:=Length(A);
+	matrix:=ZeroMatrix(n);
+
+	
+        ForEach(i,1 .. n)
+                ForEach(j,1 .. n)
+			matrix[i][j] := A[i][j];
+
+	
+	ForEach(i,1 .. n)[
+		For(k:=1,k<=(i-1),k++)
+			matrix[i][i] := matrix[i][i] - matrix[k][i]^2;
+		Check( matrix[i][i] > 0, "Cholesky: Matrix is not positive definite");
+		matrix[i][i] := Sqrt(matrix[i][i]);
+		
+		For(j:=i+1,j<=n,j++)[
+			For(k:=1,k<=(i-1),k++)
+				matrix[i][j]:= matrix[i][j] - matrix[k][i]*matrix[k][j];
+			matrix[i][j] := matrix[i][j]/matrix[i][i];
+			
+		];
+	];
+	
+	ForEach(i,1 .. n)
+		ForEach(j,1 .. n)
+			If(i>j,matrix[i][j] := 0);
+	matrix;
 ];
 
-Function("InProduct",{aLeft,aRight})
-[
-  Local(length);
-  length:=Length(aLeft);
-  Check(length = Length(aRight),"InProduct: error, vectors not of the same dimension");
 
-  Local(result);
+Function("CoFactor",{matrix,ii,jj})
+[
+  Local(perms,indices,result);
+  indices:=Table(i,i,1,Length(matrix),1);
+  perms:=Permute(indices);
   result:=0;
-  Local(i);
-  For(i:=1,i<=length,i++)
-  [
-    result := result + aLeft[i] * aRight[i];
-  ];
+  ForEach(item,perms)
+     If(item[ii] = jj,
+       result:=result+
+         Product(i,1,Length(matrix),
+         If(ii=i,1,matrix[i][item[i] ])
+                  )*LeviCivita(item));
   result;
 ];
 
@@ -83,7 +71,7 @@ Function("CrossProduct",{aLeft,aRight})
   Check(length = Length(aRight),"OutProduct: error, vectors not of the same dimension");
 
   Local(perms);
-  perms := Permutations({1,2,3});
+  perms := Permute({1,2,3});
 
   Local(result);
   result:=ZeroVector(3);
@@ -98,135 +86,8 @@ Function("CrossProduct",{aLeft,aRight})
 ];
 
 
-_x o _y <-- Outer(x,y);
-
-
-Outer(t1_IsVector, t2_IsVector) <--
-[
-   Local(i,j,n,m,result);
-   n:=Length(t1);
-   m:=Length(t2);
-   result:=ZeroMatrix(n,m);
-   For(i:=1,i<=n,i++)
-      For(j:=1,j<=m,j++)
-	 result[i][j]:=t1[i]*t2[j];
-   result;
-];
-
-
-
-Function("ZeroVector",{n})
-[
-    Local(i,result);
-    result:={};
-    For(i:=1,i<=n,i++)
-    [
-      DestructiveInsert(result,1,0);
-    ];
-    result;
-];
-
-
-Function("BaseVector",{row,n})
-[
-    Local(i,result);
-    result:=ZeroVector(n);
-    result[row] := 1;
-    result;
-];
-
-RandomIntegerVector(_count,_coefmin,_coefmax) <--
-  Table(FloorN(coefmin+Random()*(coefmax+1-coefmin)),i,1,count,1);
-
-RandomIntegerMatrix(_rows,_cols,_coefmin,_coefmax) <--
-	GenMatrix({{i,j}, FloorN(coefmin+Random()*(coefmax+1-coefmin))}, rows, cols );
-
-
-Identity(n_IsNonNegativeInteger) <--
-[
-    Local(i,result);
-    result:={};
-    For(i:=1,i<=n,i++)
-    [
-      DestructiveAppend(result,BaseVector(i,n));
-    ];
-    result;
-];
-
-
-
-
-Function("Diagonal",{A})
-[
-	Local(result,i,n);
-	n:=Length(A);
-	result:=ZeroVector(n);
-	For(i:=1,i<=n,i++)
-	[
-		result[i] := A[i][i];
-	];      
-	result;
-];
-
-Function("DiagonalMatrix",{list})
-[
-  Local(result,i,n);
-  n:=Length(list);
-  result:=Identity(n);
-  For(i:=1,i<=n,i++)
-  [
-    result[i][i] := list[i];
-  ];
-  result;
-];
-
-Function("Normalize",{vector})
-[
-  Local(norm);
-  norm:=0;
-  ForEach(item,vector)
-  [
-    norm:=norm+item*item;
-  ];
-  (1/(norm^(1/2)))*vector;
-];
-
-5  # ZeroMatrix(n_IsNonNegativeInteger) <--  ZeroMatrix(n,n);
-10 # ZeroMatrix(n_IsNonNegativeInteger,m_IsNonNegativeInteger) <--
-[
-  Local(i,result);
-  result:={};
-  For(i:=1,i<=n,i++)
-    DestructiveInsert(result,i,ZeroVector(m));
-  result;
-];
-
-
-Transpose(matrix_IsList)_(Length(Dimensions(matrix))>1) <--
-[
-  Local(i,j,result);
-  result:=ZeroMatrix(Length(matrix[1]),Length(matrix));
-  For(i:=1,i<=Length(matrix),i++)
-    For(j:=1,j<=Length(matrix[1]),j++)
-      result[j][i]:=matrix[i][j];
-  result;
-];
-
-FrobeniusNorm(matrix_IsMatrix) <--
-[
-	Local(i,j,result);
-	result:=0;
-	For(i:=1,i<=Length(matrix),i++)
-		For(j:=1,j<=Length(matrix[1]),j++)
-			result:=result+Abs(matrix[i][j])^2;
-	
-	Sqrt(result);
-
-];
-
-
 10 # Determinant(_matrix)_(IsUpperTriangular(matrix) Or IsLowerTriangular(matrix)) <--
-[ 
+[
 	Local(result);
 	result:=1;
 	ForEach(i, Diagonal(matrix) )
@@ -246,6 +107,149 @@ FrobeniusNorm(matrix_IsMatrix) <--
 16 # Determinant(_matrix)_(VarList(matrix) != {}) <-- SymbolicDeterminant(matrix);
 
 20 # Determinant(_matrix) <-- GaussianDeterminant(matrix);
+
+
+
+
+
+Function("Diagonal",{A})
+[
+	Local(result,i,n);
+	n:=Length(A);
+	result:=ZeroVector(n);
+	For(i:=1,i<=n,i++)
+	[
+		result[i] := A[i][i];
+	];
+	result;
+];
+
+
+Function("DiagonalMatrix",{list})
+[
+  Local(result,i,n);
+  n:=Length(list);
+  result:=Identity(n);
+  For(i:=1,i<=n,i++)
+  [
+    result[i][i] := list[i];
+  ];
+  result;
+];
+
+
+
+
+LocalSymbols(x,i,n,m,aux,dim,result)
+[
+1 # Dimensions(x_IsList) <--
+    [
+      Local(i,n,m,aux,dim,result);
+      result:=List(Length(x));
+
+
+
+      If(Length(x)>0 And Length(Select(IsList,x))=Length(x),
+      [
+        n:=Length(x);
+	dim:=MapSingle(Dimensions,x);
+	m:=Min(MapSingle(Length,dim));
+
+	For(i:=1,i<=m,i++)
+	[
+	    aux:=Table(dim[j][i],j,1,n,1);
+	    If(Min(aux)=Max(aux),
+	    result:=DestructiveAppend(result,dim[1][i]),
+	    i:=m+1);
+        ];
+      ]);
+
+      result;
+    ];
+
+2 # Dimensions(_x) <-- List();
+];
+
+
+
+
+
+
+LocalSymbols(Dot0,Dot1)
+[
+
+Dot(t1_IsVector,t2_IsVector)_(Length(t1)=Length(t2)) <--
+   Dot0(t1,t2,Length(t1));
+
+
+Dot(t1_IsMatrix,t2_IsVector)_(Length(t1[1])=Length(t2)) <--
+[
+   Local(i,n,m,result);
+   n:=Length(t1);
+   m:=Length(t2);
+   result:=List();
+   For(i:=1,i<=n,i++)
+	DestructiveInsert(result,1,Dot0(t1[i],t2,m));
+   DestructiveReverse(result);
+];
+
+
+Dot(t1_IsVector,t2_IsMatrix)_(Length(t1)=Length(t2)
+                               And Length(t2[1])>0) <--
+   Dot1(t1,t2,Length(t1),Length(t2[1]));
+
+
+Dot(t1_IsMatrix,t2_IsMatrix)_(Length(t1[1])=Length(t2)
+                                  And Length(t2[1])>0) <--
+[
+   Local(i,n,k,l,result);
+   n:=Length(t1);
+   k:=Length(t2);
+   l:=Length(t2[1]);
+   result:=List();
+   For(i:=1,i<=n,i++)
+      DestructiveInsert(result,1,Dot1(t1[i],t2,k,l));
+   DestructiveReverse(result);
+];
+
+
+Dot0(_t1,_t2,_n) <--
+[
+   Local(i,result);
+   result:=0;
+   For(i:=1,i<=n,i++)
+      result:=result+t1[i]*t2[i];
+   result;
+];
+
+
+
+
+Dot1(_t1,_t2,_m,_n) <--
+[
+   Local(i,j,result);
+   result:=ZeroVector(n);
+   For(i:=1,i<=n,i++)
+      For(j:=1,j<=m,j++)
+         result[i]:=result[i]+t1[j]*t2[j][i];
+   result;
+];
+
+]; 
+
+
+FrobeniusNorm(matrix_IsMatrix) <--
+[
+	Local(i,j,result);
+	result:=0;
+	For(i:=1,i<=Length(matrix),i++)
+		For(j:=1,j<=Length(matrix[1]),j++)
+			result:=result+Abs(matrix[i][j])^2;
+
+	Sqrt(result);
+
+];
+
 
 GaussianDeterminant(matrix):=
 [
@@ -286,86 +290,88 @@ GaussianDeterminant(matrix):=
 ];
 
 
-20 # RecursiveDeterminant(_matrix) <--
+Function("GenMatrix",{func,m,n})
 [
-  
-  Local(result);
-  If(Equals(Length(matrix),1),matrix[1][1],[
-    result:=0;
-    ForEach(i,1 .. Length(matrix))
-      
-      If(Not(Equals(matrix[1][i],0)),
-        
-        result:=result+matrix[1][i]*(-1)^(i+1)* RecursiveDeterminant(Transpose(Drop(Transpose(Drop(matrix,{1,1})),{i,i}))));
+  Local(i,j,result);
+  result:=ZeroMatrix(m,n);
+
+  For(i:=1,i<=m,i++)
+    For(j:=1,j<=n,j++)
+          result[i][j]:=ApplyPure(func,{i,j});
+
+  result;
+];
+HoldArg("GenMatrix",func);
+UnFence("GenMatrix",3);
+
+
+
+HankelMatrix(n):=GenMatrix({{i,j}, If(i+j-1>n,0,i+j-1) }, n,n );
+HankelMatrix(m,n):=GenMatrix({{i,j}, If(i+j-1>n,0,i+j-1)}, m,n );
+
+
+
+
+HessianMatrix(f,v):=GenMatrix({{i,j}, Deriv(v[i]) Deriv(v[j]) f},Length(v),Length(v));
+
+
+HilbertInverseMatrix(n):=GenMatrix({{i,j},
+	(-1)^(i+j)*(i+j-1)*BinomialCoefficient(n+i-1,n-j)*BinomialCoefficient(n+j-1,n-i)*BinomialCoefficient(i+j-2,i-1)^2},n,n);
+
+
+
+
+HilbertMatrix(n):=GenMatrix({{i,j}, 1/(i+j-1)}, n,n );
+HilbertMatrix(m,n):=GenMatrix({{i,j}, 1/(i+j-1)}, m,n );
+
+
+
+Identity(n_IsNonNegativeInteger) <--
+[
+    Local(i,result);
+    result:={};
+    For(i:=1,i<=n,i++)
+    [
+      DestructiveAppend(result,BaseVector(i,n));
+    ];
     result;
-  ]);
 ];
 
 
-20 # SymbolicDeterminant(_matrix) <-- 
+Function("InProduct",{aLeft,aRight})
 [
-  Local(perms,indices,result);
-  Check((IsMatrix(matrix)),"Determinant: Argument must be a matrix");
-  indices:=Table(i,i,1,Length(matrix),1);
-  perms:=Permutations(indices);
+  Local(length);
+  length:=Length(aLeft);
+  Check(length = Length(aRight),"InProduct: error, vectors not of the same dimension");
+
+  Local(result);
   result:=0;
-  ForEach(item,perms)
-     result:=result+Factorize(i,1,Length(matrix),matrix[i][item[i] ])*
-                    LeviCivita(item);
+  Local(i);
+  For(i:=1,i<=length,i++)
+  [
+    result := result + aLeft[i] * aRight[i];
+  ];
   result;
 ];
 
-
-
-Function("Sparsity",{matrix})
-[
-	Local(rows,cols,nonzero);
-	nonzero:=0;
-	rows:=Length(matrix);
-	cols:=Length(matrix[1]);
-	ForEach(i, 1 .. rows )
-		ForEach(j, 1 .. cols )
-			If(matrix[i][j] != 0, nonzero:=nonzero+1 );
-
-	N(1 - nonzero/(rows*cols));
-];
-
-Function("CoFactor",{matrix,ii,jj})
-[
-  Local(perms,indices,result);
-  indices:=Table(i,i,1,Length(matrix),1);
-  perms:=Permutations(indices);
-  result:=0;
-  ForEach(item,perms)
-     If(item[ii] = jj,
-       result:=result+
-         Factorize(i,1,Length(matrix),
-         If(ii=i,1,matrix[i][item[i] ])
-                  )*LeviCivita(item));
-  result;
-];
-
-
-
-Minor(matrix,i,j) := CoFactor(matrix,i,j)*(-1)^(i+j);
 
 Function("Inverse",{matrix})
 [
   Local(perms,indices,inv,det,n);
   n:=Length(matrix);
   indices:=Table(i,i,1,n,1);
-  perms:=Permutations(indices);
+  perms:=Permute(indices);
   inv:=ZeroMatrix(n,n);
   det:=0;
   ForEach(item,perms)
   [
     Local(i,lc);
     lc := LeviCivita(item);
-    det:=det+Factorize(i,1,n,matrix[i][item[i] ])* lc;
+    det:=det+Product(i,1,n,matrix[i][item[i] ])* lc;
     For(i:=1,i<=n,i++)
         [
          inv[item[i] ][i] := inv[item[i] ][i]+
-           Factorize(j,1,n,
+           Product(j,1,n,
              If(j=i,1,matrix[j][item[j] ]))*lc;
         ];
   ];
@@ -373,96 +379,82 @@ Function("Inverse",{matrix})
   (1/det)*inv;
 ];
 
-Tr(x_IsList) <--
+
+
+
+JacobianMatrix(f,v):=GenMatrix({{i,j},Deriv(v[j])f[i]},Length(f),Length(f));
+
+
+
+
+
+
+10 # LU(A_IsSquareMatrix) <--
 [
-   Local(i,j,n,d,r,aux,result);
-   d:=Dimensions(x);
-   r:=Length(d); 
-   n:=Min(d);    
-   result:=0;
-   For(i:=1,i<=n,i++)
-   [
-      aux:=x[i];
-      For(j:=2,j<=r,j++)
-	 aux:=aux[i];
-      result:=result+aux;
-   ];
-   result;
-];
+	Local(n,matrix,L,U);
+	n:=Length(A);
+	L:=ZeroMatrix(n,n);
+	U:=ZeroMatrix(n,n);
+	matrix:=ZeroMatrix(n,n);
 
+        ForEach(i,1 .. n)
+                ForEach(j,1 .. n)
+                        matrix[i][j] := A[i][j];
 
-Trace(matrix_IsList) <-- Tr(matrix);
-
-
-x X y := CrossProduct(x,y);
-
-Function("VandermondeMatrix",{vector})[
-	Local(len,i,j,item,matrix);
-	len:=Length(vector);	
-	matrix:=ZeroMatrix(len,len);
-
-	For(i:=1,i<=Length(matrix),i++)[
-		For(j:=1,j<=Length(matrix[1]),j++)[
-      			matrix[j][i]:=vector[i]^(j-1);
+	
+	ForEach(i,1 ..(n-1))[
+		
+		ForEach(k,i+1 .. n)[
+			
+			matrix[k][i] := matrix[k][i] / matrix[i][i];
+			
+			ForEach(j,i+1 .. n)[
+				matrix[k][j] := matrix[k][j] - matrix[k][i]*matrix[i][j];
+			];
 		];
 	];
+	ForEach(i,1 .. n)[
+		ForEach(j,1 .. n)[
+			If(i<=j,U[i][j]:=matrix[i][j],L[i][j]:=matrix[i][j]);
+		];
+		
+		L[i][i]:=1;
+	];
 
-	matrix;
+	{L,U};
 ];
 
 
 
-Function("SylvesterMatrix",{poly1, poly2, var})
+
+Function("LeviCivita",{indices})
 [
-  Local(i,m,p,q,y,z,result);
-  y:=Degree(poly1,var);
-  z:=Degree(poly2,var);
-  m:=y+z;
-  p:={};
-  q:={};
-  result:=ZeroMatrix(m,m);
+  Local(i,j,length,left,right,factor);
+  length:=Length(indices);
+  factor:=1;
 
-  For(i:=y,i>=0,i--)
-    DestructiveAppend(p,Coef(poly1,var,i));
-  For(i:=z,i>=0,i--)
-    DestructiveAppend(q,Coef(poly2,var,i));
-
-  For(i:=1,i<=z,i++)
+  For (j:=length,j>1,j--)
   [
-    Local(j,k);
-        k:=1;
-    For(j:=i,k<=Length(p),j++)
-        [
-          result[i][j]:=p[k];
-          k++;
-        ];
-  ];
+    For(i:=1,i<j,i++)
+    [
+      left:=indices[i];
+      right:=indices[i+1];
 
-  For(i:=1,i<=y,i++)
-  [
-    Local(j,k);
-        k:=1;
-    For(j:=i,k<=Length(q),j++)
+      If (Equals(left,right),
+      [ factor := 0 ; ],
+      [
+        If(Not(Apply("<",{left,right})),
         [
-          result[i+z][j]:=q[k];
-          k++;
-        ];
+
+          indices:=Insert(Delete(indices,i),i+1,left);
+          factor:= -factor;
+        ]);
+      ]);
+    ];
   ];
-  result;
+  factor;
 ];
 
-
-
-Function("MatrixRow",{matrix,row})
-[
-  Check(row > 0, "MatrixRow: row index out of range");
-  Check(row <= Length(matrix), "MatrixRow: row index out of range");
-
-  Local(result);
-  result:=matrix[row];
-
-  result;
-];
 
 Function("MatrixColumn",{matrix,col})
 [
@@ -479,204 +471,6 @@ Function("MatrixColumn",{matrix,col})
 
   result;
 ];
-
-Function("GenMatrix",{func,m,n})
-[
-  Local(i,j,result);
-  result:=ZeroMatrix(m,n);
-
-  For(i:=1,i<=m,i++)
-    For(j:=1,j<=n,j++)
-          result[i][j]:=ApplyPure(func,{i,j});
-  
-  result;
-];
-HoldArg("GenMatrix",func);
-UnFence("GenMatrix",3);
-
-
-
-
-
-JacobianMatrix(f,v):=GenMatrix({{i,j},Deriv(v[j])f[i]},Length(f),Length(f));
-
-
-HessianMatrix(f,v):=GenMatrix({{i,j}, Deriv(v[i]) Deriv(v[j]) f},Length(v),Length(v));
-
-
-WronskianMatrix(f,v):=GenMatrix({{i,j}, Deriv(v,i-1) f[j]}, Length(f), Length(f) );
-
-
-HilbertMatrix(n):=GenMatrix({{i,j}, 1/(i+j-1)}, n,n );
-HilbertMatrix(m,n):=GenMatrix({{i,j}, 1/(i+j-1)}, m,n );
-HilbertInverseMatrix(n):=GenMatrix({{i,j}, 
-	(-1)^(i+j)*(i+j-1)*Bin(n+i-1,n-j)*Bin(n+j-1,n-i)*Bin(i+j-2,i-1)^2},n,n);
-
-HankelMatrix(n):=GenMatrix({{i,j}, If(i+j-1>n,0,i+j-1) }, n,n );
-HankelMatrix(m,n):=GenMatrix({{i,j}, If(i+j-1>n,0,i+j-1)}, m,n );
-
-ToeplitzMatrix(N):=GenMatrix({{i,j},N[Abs(i-j)+1]}, Length(N), Length(N) );
-
-
-
-
-
-
-
-WilkinsonMatrix(N):=GenMatrix({{i,j}, 
-		If( Abs(i-j)=1,1,
-		[ If(i=j,Abs( (N-1)/2 - i+1 ),0 ); ] )}, N,N );
-
-10 # Norm(_v) <-- PNorm(v,2);
-
-
-Function("PNorm",{v,p})
-[
-	Local(result,i);
-	Check(p>=1,"PNorm: p must be >= 1");
-
-	result:=0;
-	For(i:=1,i<=Length(v),i++)[
-		result:=result+Abs(v[i])^p;
-	];
-
-	
-	If(p=2,Sqrt(result),(result)^(1/p) );
-];
-
-
-
-
-
-
-Function("OrthogonalBasis",{W})[
-	Local(V,j,k);
-
-	V:=ZeroMatrix(Length(W),Length(W[1]) );
-
-	V[1]:=W[1];
-	For(k:=2,k<=Length(W),k++)[
-		Check(Not IsZero(Norm(W[k])) ,
-			"OrthogonalBasis: Input vectors must be linearly independent");
-		V[k]:=W[k]-Sum(j,1,k-1,InProduct(W[k],V[j])*V[j]/Norm(V[j])^2);
-	];	
-	V;
-];
-
-Function("OrthonormalBasis",{W})[
-	Local(i);
-	W:=OrthogonalBasis(W);
-	For(i:=1,i<=Length(W),i++)[
-		W[i]:=W[i]/Norm(W[i]);
-	];
-	W;
-];
-
-
-
-
-LocalSymbols(x,i,n,m,aux,dim,result)
-[
-1 # Dimensions(x_IsList) <-- 
-    [
-      Local(i,n,m,aux,dim,result);
-      result:=List(Length(x));
-
-
-
-      If(Length(x)>0 And Length(Select(IsList,x))=Length(x),
-      [
-        n:=Length(x);
-	dim:=MapSingle(Dimensions,x);
-	m:=Min(MapSingle(Length,dim));
-	
-	For(i:=1,i<=m,i++)
-	[
-	    aux:=Table(dim[j][i],j,1,n,1);
-	    If(Min(aux)=Max(aux),
-	    result:=DestructiveAppend(result,dim[1][i]),
-	    i:=m+1);
-        ];
-      ]);
-
-      result;
-    ];
-
-2 # Dimensions(_x) <-- List();
-];
-
-
-
-
-
-
-
-
-_x . _y <-- Dot(x,y);
-
-LocalSymbols(Dot0,Dot1)
-[
-
-Dot(t1_IsVector,t2_IsVector)_(Length(t1)=Length(t2)) <--
-   Dot0(t1,t2,Length(t1));
-
-
-Dot(t1_IsMatrix,t2_IsVector)_(Length(t1[1])=Length(t2)) <--
-[
-   Local(i,n,m,result);
-   n:=Length(t1);
-   m:=Length(t2);
-   result:=List();
-   For(i:=1,i<=n,i++)
-	DestructiveInsert(result,1,Dot0(t1[i],t2,m));
-   DestructiveReverse(result);
-];
-
-
-Dot(t1_IsVector,t2_IsMatrix)_(Length(t1)=Length(t2)
-                               And Length(t2[1])>0) <--
-   Dot1(t1,t2,Length(t1),Length(t2[1]));
-
-
-Dot(t1_IsMatrix,t2_IsMatrix)_(Length(t1[1])=Length(t2)
-                                  And Length(t2[1])>0) <--
-[
-   Local(i,n,k,l,result);
-   n:=Length(t1);
-   k:=Length(t2);
-   l:=Length(t2[1]);
-   result:=List();  
-   For(i:=1,i<=n,i++)
-      DestructiveInsert(result,1,Dot1(t1[i],t2,k,l));
-   DestructiveReverse(result);
-];
-  
-
-Dot0(_t1,_t2,_n) <--
-[
-   Local(i,result);
-   result:=0;
-   For(i:=1,i<=n,i++)
-      result:=result+t1[i]*t2[i];
-   result;
-];
-  
-
-
-
-Dot1(_t1,_t2,_m,_n) <--   
-[
-   Local(i,j,result);
-   result:=ZeroVector(n);
-   For(i:=1,i<=n,i++)
-      For(j:=1,j<=m,j++)
-         result[i]:=result[i]+t1[j]*t2[j][i];
-   result;
-];
-  
-]; 
-
-
 
 
 
@@ -700,6 +494,17 @@ MatrixPower(x_IsSquareMatrix, n_IsNonNegativeInteger) <--
 MatrixPower(x_IsSquareMatrix, n_IsNegativeInteger) <--
    MatrixPower(Inverse(x),-n);
 
+
+Function("MatrixRow",{matrix,row})
+[
+  Check(row > 0, "MatrixRow: row index out of range");
+  Check(row <= Length(matrix), "MatrixRow: row index out of range");
+
+  Local(result);
+  result:=matrix[row];
+
+  result;
+];
 
 
 10 # MatrixSolve(matrix_IsDiagonal,b_IsVector) <--
@@ -761,7 +566,7 @@ MatrixPower(x_IsSquareMatrix, n_IsNegativeInteger) <--
 ];
 
 
-20 # MatrixSolve(matrix_IsMatrix,b_IsVector) <-- 
+20 # MatrixSolve(matrix_IsMatrix,b_IsVector) <--
 [
 	Local(aug,rowsm,rowsb,x,s);
         rowsm:=Length(matrix);
@@ -790,8 +595,8 @@ MatrixPower(x_IsSquareMatrix, n_IsNegativeInteger) <--
 			aug[i]:=aug[p];
 			aug[p]:=tmp;
 		]);
-			
-	
+
+
 		ForEach(k, (i+1) .. rowsb )[
 			s:=aug[k][i];
 			ForEach(j, i .. (rowsb+1) )[
@@ -818,40 +623,219 @@ MatrixPower(x_IsSquareMatrix, n_IsNegativeInteger) <--
 ];
 
 
+Minor(matrix,i,j) := CoFactor(matrix,i,j)*(-1)^(i+j);
 
 
+10 # Norm(_v) <-- PNorm(v,2);
 
 
-	
-10 # Cholesky(A_IsMatrix) <-- 
+Function("Normalize",{vector})
 [
-	Local(matrix,n,k,j);
-	n:=Length(A);
-	matrix:=ZeroMatrix(n);
+  Local(norm);
+  norm:=0;
+  ForEach(item,vector)
+  [
+    norm:=norm+item*item;
+  ];
+  (1/(norm^(1/2)))*vector;
+];
+
+
+
+
+
+
+
+Function("OrthogonalBasis",{W})[
+	Local(V,j,k);
+
+	V:=ZeroMatrix(Length(W),Length(W[1]) );
+
+	V[1]:=W[1];
+	For(k:=2,k<=Length(W),k++)[
+		Check(Not IsZero(Norm(W[k])) ,
+			"OrthogonalBasis: Input vectors must be linearly independent");
+		V[k]:=W[k]-Sum(j,1,k-1,InProduct(W[k],V[j])*V[j]/Norm(V[j])^2);
+	];
+	V;
+];
+
+
+
+Function("OrthonormalBasis",{W})[
+	Local(i);
+	W:=OrthogonalBasis(W);
+	For(i:=1,i<=Length(W),i++)[
+		W[i]:=W[i]/Norm(W[i]);
+	];
+	W;
+];
+
+
+
+Outer(t1_IsVector, t2_IsVector) <--
+[
+   Local(i,j,n,m,result);
+   n:=Length(t1);
+   m:=Length(t2);
+   result:=ZeroMatrix(n,m);
+   For(i:=1,i<=n,i++)
+      For(j:=1,j<=m,j++)
+	 result[i][j]:=t1[i]*t2[j];
+   result;
+];
+
+
+
+Function("PNorm",{v,p})
+[
+	Local(result,i);
+	Check(p>=1,"PNorm: p must be >= 1");
+
+	result:=0;
+	For(i:=1,i<=Length(v),i++)[
+		result:=result+Abs(v[i])^p;
+	];
 
 	
-        ForEach(i,1 .. n)
-                ForEach(j,1 .. n)
-			matrix[i][j] := A[i][j];
+	If(p=2,Sqrt(result),(result)^(1/p) );
+];
 
-	
-	ForEach(i,1 .. n)[
-		For(k:=1,k<=(i-1),k++)
-			matrix[i][i] := matrix[i][i] - matrix[k][i]^2;
-		Check( matrix[i][i] > 0, "Cholesky: Matrix is not positive definite");
-		matrix[i][i] := Sqrt(matrix[i][i]);
-		
-		For(j:=i+1,j<=n,j++)[
-			For(k:=1,k<=(i-1),k++)
-				matrix[i][j]:= matrix[i][j] - matrix[k][i]*matrix[k][j];
-			matrix[i][j] := matrix[i][j]/matrix[i][i];
-			
+
+
+20 # RecursiveDeterminant(_matrix) <--
+[
+  
+  Local(result);
+  If(Equals(Length(matrix),1),matrix[1][1],[
+    result:=0;
+    ForEach(i,1 .. Length(matrix))
+      
+      If(Not(Equals(matrix[1][i],0)),
+        
+        result:=result+matrix[1][i]*(-1)^(i+1)* RecursiveDeterminant(Transpose(Drop(Transpose(Drop(matrix,{1,1})),{i,i}))));
+    result;
+  ]);
+];
+
+
+Function("Sparsity",{matrix})
+[
+	Local(rows,cols,nonzero);
+	nonzero:=0;
+	rows:=Length(matrix);
+	cols:=Length(matrix[1]);
+	ForEach(i, 1 .. rows )
+		ForEach(j, 1 .. cols )
+			If(matrix[i][j] != 0, nonzero:=nonzero+1 );
+
+	N(1 - nonzero/(rows*cols));
+];
+
+
+
+
+Function("SylvesterMatrix",{poly1, poly2, var})
+[
+  Local(i,m,p,q,y,z,result);
+  y:=Degree(poly1,var);
+  z:=Degree(poly2,var);
+  m:=y+z;
+  p:={};
+  q:={};
+  result:=ZeroMatrix(m,m);
+
+  For(i:=y,i>=0,i--)
+    DestructiveAppend(p,Coef(poly1,var,i));
+  For(i:=z,i>=0,i--)
+    DestructiveAppend(q,Coef(poly2,var,i));
+
+  For(i:=1,i<=z,i++)
+  [
+    Local(j,k);
+        k:=1;
+    For(j:=i,k<=Length(p),j++)
+        [
+          result[i][j]:=p[k];
+          k++;
+        ];
+  ];
+
+  For(i:=1,i<=y,i++)
+  [
+    Local(j,k);
+        k:=1;
+    For(j:=i,k<=Length(q),j++)
+        [
+          result[i+z][j]:=q[k];
+          k++;
+        ];
+  ];
+  result;
+];
+
+
+20 # SymbolicDeterminant(_matrix) <--
+[
+  Local(perms,indices,result);
+  Check((IsMatrix(matrix)),"Determinant: Argument must be a matrix");
+  indices:=Table(i,i,1,Length(matrix),1);
+  perms:=Permute(indices);
+  result:=0;
+  ForEach(item,perms)
+     result:=result+Product(i,1,Length(matrix),matrix[i][item[i] ])*
+                    LeviCivita(item);
+  result;
+];
+
+
+
+ToeplitzMatrix(N):=GenMatrix({{i,j},N[Abs(i-j)+1]}, Length(N), Length(N) );
+
+
+Tr(x_IsList) <--
+[
+   Local(i,j,n,d,r,aux,result);
+   d:=Dimensions(x);
+   r:=Length(d); 
+   n:=Min(d);    
+   result:=0;
+   For(i:=1,i<=n,i++)
+   [
+      aux:=x[i];
+      For(j:=2,j<=r,j++)
+	 aux:=aux[i];
+      result:=result+aux;
+   ];
+   result;
+];
+
+
+Trace(matrix_IsList) <-- Tr(matrix);
+
+
+Transpose(matrix_IsList)_(Length(Dimensions(matrix))>1) <--
+[
+  Local(i,j,result);
+  result:=ZeroMatrix(Length(matrix[1]),Length(matrix));
+  For(i:=1,i<=Length(matrix),i++)
+    For(j:=1,j<=Length(matrix[1]),j++)
+      result[j][i]:=matrix[i][j];
+  result;
+];
+
+
+Function("VandermondeMatrix",{vector})[
+	Local(len,i,j,item,matrix);
+	len:=Length(vector);
+	matrix:=ZeroMatrix(len,len);
+
+	For(i:=1,i<=Length(matrix),i++)[
+		For(j:=1,j<=Length(matrix[1]),j++)[
+      			matrix[j][i]:=vector[i]^(j-1);
 		];
 	];
-	
-	ForEach(i,1 .. n)
-		ForEach(j,1 .. n)
-			If(i>j,matrix[i][j] := 0);
+
 	matrix;
 ];
 
@@ -859,38 +843,52 @@ MatrixPower(x_IsSquareMatrix, n_IsNegativeInteger) <--
 
 
 
-10 # LU(A_IsSquareMatrix) <--
+
+
+
+WilkinsonMatrix(N):=GenMatrix({{i,j},
+		If( Abs(i-j)=1,1,
+		[ If(i=j,Abs( (N-1)/2 - i+1 ),0 ); ] )}, N,N );
+
+
+
+
+WronskianMatrix(f,v):=GenMatrix({{i,j}, Deriv(v,i-1) f[j]}, Length(f), Length(f) );
+
+
+x X y := CrossProduct(x,y);
+
+
+5  # ZeroMatrix(n_IsNonNegativeInteger) <--  ZeroMatrix(n,n);
+
+10 # ZeroMatrix(n_IsNonNegativeInteger,m_IsNonNegativeInteger) <--
 [
-	Local(n,matrix,L,U);
-	n:=Length(A);
-	L:=ZeroMatrix(n,n);
-	U:=ZeroMatrix(n,n);
-	matrix:=ZeroMatrix(n,n);
-
-        ForEach(i,1 .. n)
-                ForEach(j,1 .. n)
-                        matrix[i][j] := A[i][j];
-
-	
-	ForEach(i,1 ..(n-1))[
-		
-		ForEach(k,i+1 .. n)[
-			
-			matrix[k][i] := matrix[k][i] / matrix[i][i];
-			
-			ForEach(j,i+1 .. n)[
-				matrix[k][j] := matrix[k][j] - matrix[k][i]*matrix[i][j];
-			];
-		];
-	];
-	ForEach(i,1 .. n)[
-		ForEach(j,1 .. n)[
-			If(i<=j,U[i][j]:=matrix[i][j],L[i][j]:=matrix[i][j]);
-		];
-		
-		L[i][i]:=1;
-	];
-
-	{L,U};
+  Local(i,result);
+  result:={};
+  For(i:=1,i<=n,i++)
+    DestructiveInsert(result,i,ZeroVector(m));
+  result;
 ];
+
+
+Function("ZeroVector",{n})
+[
+    Local(i,result);
+    result:={};
+    For(i:=1,i<=n,i++)
+    [
+      DestructiveInsert(result,1,0);
+    ];
+    result;
+];
+
+
+_x o _y <-- Outer(x,y);
+
+
+
+
+
+
+_x . _y <-- Dot(x,y);
 

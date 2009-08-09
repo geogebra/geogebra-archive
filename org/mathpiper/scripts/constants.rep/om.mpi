@@ -1,6 +1,8 @@
 
+
 OMDef( "I", "nums1", "i" );
-OMDef( "CachedConstant",        "piper", "CachedConstant"        );
-OMDef( "AssignCachedConstants", "piper", "AssignCachedConstants" );
-OMDef( "ClearCachedConstants",  "piper", "ClearCachedConstants"  );
+OMDef( "CachedConstant",        mathpiper, "CachedConstant"        );
+OMDef( "AssignCachedConstants", mathpiper, "AssignCachedConstants" );
+OMDef( "ClearCachedConstants",  mathpiper, "ClearCachedConstants"  );
 OMDef( "Pi", "nums1", "pi" );
+

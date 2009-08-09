@@ -1,9 +1,10 @@
+BoundRealRoots
+FindRealRoots
+MaximumBound
+MinimumBound
+NumRealRoots
 SquareFree
 SturmSequence
 SturmVariations
-MaximumBound
-MinimumBound
-BoundRealRoots
-FindRealRoots
-NumRealRoots
 }
+

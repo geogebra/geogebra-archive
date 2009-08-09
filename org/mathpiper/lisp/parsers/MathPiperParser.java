@@ -17,39 +17,40 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp.parsers;
 
-import org.mathpiper.io.MathPiperInputStream;
-import org.mathpiper.lisp.Atom;
-import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.ConsTraverser;
-import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.InfixOperator;
+import org.mathpiper.lisp.printers.MathPiperPrinter;
+
+import org.mathpiper.lisp.Utility;
+import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.Operators;
-import org.mathpiper.lisp.SubList;
-import org.mathpiper.lisp.UtilityFunctions;
+import org.mathpiper.lisp.cons.ConsTraverser;
+import org.mathpiper.lisp.cons.AtomCons;
 import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
-import org.mathpiper.printers.InfixPrinter;
+import org.mathpiper.io.MathPiperInputStream;
+import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.cons.SublistCons;
+import org.mathpiper.lisp.InfixOperator;
+import org.mathpiper.lisp.collections.OperatorMap;
 
 public class MathPiperParser extends Parser
 {
 
-    public Operators iPrefixOperators;
-    public Operators iInfixOperators;
-    public Operators iPostfixOperators;
-    public Operators iBodiedOperators;
+    public OperatorMap iPrefixOperators;
+    public OperatorMap iInfixOperators;
+    public OperatorMap iPostfixOperators;
+    public OperatorMap iBodiedOperators;
     
     boolean iError;
     boolean iEndOfFile;
     String iLookAhead;
-    public ConsPointer iResult = new ConsPointer();
+    public ConsPointer iSExpressionResult = new ConsPointer();
 
     public MathPiperParser(MathPiperTokenizer aTokenizer,
             MathPiperInputStream aInput,
             Environment aEnvironment,
-            Operators aPrefixOperators,
-            Operators aInfixOperators,
-            Operators aPostfixOperators,
-            Operators aBodiedOperators)
+            OperatorMap aPrefixOperators,
+            OperatorMap aInfixOperators,
+            OperatorMap aPostfixOperators,
+            OperatorMap aBodiedOperators)
     {
         super(aTokenizer, aInput, aEnvironment);
         iPrefixOperators = aPrefixOperators;
@@ -65,7 +66,7 @@ public class MathPiperParser extends Parser
     public void parse(ConsPointer aResult) throws Exception
     {
         parse();
-        aResult.setCons(iResult.getCons());
+        aResult.setCons(iSExpressionResult.getCons());
     }
 
     public void parse() throws Exception
@@ -73,19 +74,19 @@ public class MathPiperParser extends Parser
         readToken();
         if (iEndOfFile)
         {
-            iResult.setCons(iEnvironment.iEndOfFileAtom.copy(true));
+            iSExpressionResult.setCons(iEnvironment.iEndOfFileAtom.copy(true));
             return;
         }
 
-        readExpression(InfixPrinter.KMaxPrecedence);  // least precedence
+        readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
 
-        if (iLookAhead != iEnvironment.iEndStatementAtom.string())
+        if (iLookAhead != iEnvironment.iEndStatementAtom.car())
         {
             fail();
         }
         if (iError)
         {
-            while (iLookAhead.length() > 0 && iLookAhead != iEnvironment.iEndStatementAtom.string())
+            while (iLookAhead.length() > 0 && iLookAhead != iEnvironment.iEndStatementAtom.car())
             {
                 readToken();
             }
@@ -93,9 +94,9 @@ public class MathPiperParser extends Parser
 
         if (iError)
         {
-            iResult.setCons(null);
+            iSExpressionResult.setCons(null);
         }
-        LispError.check(!iError, LispError.KLispErrInvalidExpression);
+        LispError.check(!iError, LispError.INVALID_EXPRESSION);
     }
 
     void readToken() throws Exception
@@ -125,21 +126,21 @@ public class MathPiperParser extends Parser
         for (;;)
         {
             //Handle special case: a[b]. a is matched with lowest precedence!!
-            if (iLookAhead == iEnvironment.iProgOpenAtom.string())
+            if (iLookAhead == iEnvironment.iProgOpenAtom.car())
             {
                 // Match opening bracket
                 matchToken(iLookAhead);
                 // Read "index" argument
-                readExpression(InfixPrinter.KMaxPrecedence);
+                readExpression(MathPiperPrinter.KMaxPrecedence);
                 // Match closing bracket
-                if (iLookAhead != iEnvironment.iProgCloseAtom.string())
+                if (iLookAhead != iEnvironment.iProgCloseAtom.car())
                 {
-                    LispError.raiseError("Expecting a ] close bracket for program block, but got " + iLookAhead + " instead.",iEnvironment);
+                    LispError.raiseError("Expecting a ] close bracket for program block, but got " + iLookAhead + " instead.");
                     return;
                 }
                 matchToken(iLookAhead);
                 // Build into Ntn(...)
-                String theOperator = iEnvironment.iNthAtom.string();
+                String theOperator = (String) iEnvironment.iNthAtom.car();
                 insertAtom(theOperator);
                 combine(2);
             } else
@@ -148,6 +149,12 @@ public class MathPiperParser extends Parser
                 if (op == null)
                 {
                     //printf("op [%s]\n",iLookAhead.String());
+                    if(iLookAhead.equals(""))
+                    {
+
+                       LispError.raiseError("Expression must end with a semi-colon (;)");
+                        return;
+                    }
                     if (MathPiperTokenizer.isSymbolic(iLookAhead.charAt(0)))
                     {
                         int origlen = iLookAhead.length();
@@ -229,57 +236,57 @@ public class MathPiperParser extends Parser
                 combine(1);
             }
         } // Else parse brackets
-        else if (iLookAhead == iEnvironment.iBracketOpenAtom.string())
+        else if (iLookAhead == iEnvironment.iBracketOpenAtom.car())
         {
             matchToken(iLookAhead);
-            readExpression(InfixPrinter.KMaxPrecedence);  // least precedence
-            matchToken(iEnvironment.iBracketCloseAtom.string());
+            readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
+            matchToken( (String) iEnvironment.iBracketCloseAtom.car());
         } //parse lists
-        else if (iLookAhead == iEnvironment.iListOpenAtom.string())
+        else if (iLookAhead == iEnvironment.iListOpenAtom.car())
         {
             int nrargs = 0;
             matchToken(iLookAhead);
-            while (iLookAhead != iEnvironment.iListCloseAtom.string())
+            while (iLookAhead != iEnvironment.iListCloseAtom.car())
             {
-                readExpression(InfixPrinter.KMaxPrecedence);  // least precedence
+                readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
                 nrargs++;
 
-                if (iLookAhead == iEnvironment.iCommaAtom.string())
+                if (iLookAhead == iEnvironment.iCommaAtom.car())
                 {
                     matchToken(iLookAhead);
-                } else if (iLookAhead != iEnvironment.iListCloseAtom.string())
+                } else if (iLookAhead != iEnvironment.iListCloseAtom.car())
                 {
-                    LispError.raiseError("Expecting a } close bracket for a list, but got " + iLookAhead + " instead.",iEnvironment);
+                    LispError.raiseError("Expecting a } close bracket for a list, but got " + iLookAhead + " instead.");
                     return;
                 }
             }
             matchToken(iLookAhead);
-            String theOperator = iEnvironment.iListAtom.string();
+            String theOperator = (String) iEnvironment.iListAtom.car();
             insertAtom(theOperator);
             combine(nrargs);
 
         } // parse prog bodies
-        else if (iLookAhead == iEnvironment.iProgOpenAtom.string())
+        else if (iLookAhead == iEnvironment.iProgOpenAtom.car())
         {
             int nrargs = 0;
 
             matchToken(iLookAhead);
-            while (iLookAhead != iEnvironment.iProgCloseAtom.string())
+            while (iLookAhead != iEnvironment.iProgCloseAtom.car())
             {
-                readExpression(InfixPrinter.KMaxPrecedence);  // least precedence
+                readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
                 nrargs++;
 
-                if (iLookAhead == iEnvironment.iEndStatementAtom.string())
+                if (iLookAhead == iEnvironment.iEndStatementAtom.car())
                 {
                     matchToken(iLookAhead);
                 } else
                 {
-                    LispError.raiseError("Expecting ; end of statement in program block, but got " + iLookAhead + " instead.",iEnvironment);
+                    LispError.raiseError("Expecting ; end of statement in program block, but got " + iLookAhead + " instead.");
                     return;
                 }
             }
             matchToken(iLookAhead);
-            String theOperator = iEnvironment.iProgAtom.string();
+            String theOperator = (String) iEnvironment.iProgAtom.car();
             insertAtom(theOperator);
 
             combine(nrargs);
@@ -290,21 +297,21 @@ public class MathPiperParser extends Parser
             matchToken(iLookAhead);
 
             int nrargs = -1;
-            if (iLookAhead == iEnvironment.iBracketOpenAtom.string())
+            if (iLookAhead == iEnvironment.iBracketOpenAtom.car())
             {
                 nrargs = 0;
                 matchToken(iLookAhead);
-                while (iLookAhead != iEnvironment.iBracketCloseAtom.string())
+                while (iLookAhead != iEnvironment.iBracketCloseAtom.car())
                 {
-                    readExpression(InfixPrinter.KMaxPrecedence);  // least precedence
+                    readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
                     nrargs++;
 
-                    if (iLookAhead == iEnvironment.iCommaAtom.string())
+                    if (iLookAhead == iEnvironment.iCommaAtom.car())
                     {
                         matchToken(iLookAhead);
-                    } else if (iLookAhead != iEnvironment.iBracketCloseAtom.string())
+                    } else if (iLookAhead != iEnvironment.iBracketCloseAtom.car())
                     {
-                        LispError.raiseError("Expecting ) closing bracket for sub-expression, but got " + iLookAhead + " instead.",iEnvironment);
+                        LispError.raiseError("Expecting ) closing bracket for sub-expression, but got " + iLookAhead + " instead.");
                         return;
                     }
                 }
@@ -313,7 +320,7 @@ public class MathPiperParser extends Parser
                 op = (InfixOperator) iBodiedOperators.lookUp(theOperator);
                 if (op != null)
                 {
-                    readExpression(op.iPrecedence); // InfixPrinter.KMaxPrecedence
+                    readExpression(op.iPrecedence); // MathPiperPrinter.KMaxPrecedence
                     nrargs++;
                 }
             }
@@ -346,37 +353,37 @@ public class MathPiperParser extends Parser
     void combine(int aNrArgsToCombine) throws Exception
     {
         ConsPointer subList = new ConsPointer();
-        subList.setCons(SubList.getInstance(iResult.getCons()));
-        ConsTraverser iter = new ConsTraverser(iResult);
+        subList.setCons(SublistCons.getInstance(iSExpressionResult.getCons()));
+        ConsTraverser consTraverser = new ConsTraverser(iSExpressionResult);
         int i;
         for (i = 0; i < aNrArgsToCombine; i++)
         {
-            if (iter.getCons() == null)
+            if (consTraverser.getCons() == null)
             {
                 fail();
                 return;
             }
-            iter.goNext();
+            consTraverser.goNext();
         }
-        if (iter.getCons() == null)
+        if (consTraverser.getCons() == null)
         {
             fail();
             return;
         }
-        subList.getCons().rest().setCons(iter.getCons().rest().getCons());
-        iter.getCons().rest().setCons(null);
+        subList.cdr().setCons(consTraverser.cdr().getCons());
+        consTraverser.cdr().setCons(null);
 
-        UtilityFunctions.internalReverseList(subList.getCons().getSubList().getCons().rest(),
-                subList.getCons().getSubList().getCons().rest());
-        iResult.setCons(subList.getCons());
+        Utility.reverseList(((ConsPointer) subList.car()).cdr(),
+                ((ConsPointer) subList.car()).cdr());
+        iSExpressionResult.setCons(subList.getCons());
     }
 
     void insertAtom(String aString) throws Exception
     {
         ConsPointer ptr = new ConsPointer();
-        ptr.setCons(Atom.getInstance(iEnvironment, aString));
-        ptr.getCons().rest().setCons(iResult.getCons());
-        iResult.setCons(ptr.getCons());
+        ptr.setCons(AtomCons.getInstance(iEnvironment, aString));
+        ptr.cdr().setCons(iSExpressionResult.getCons());
+        iSExpressionResult.setCons(ptr.getCons());
     }
 
     void fail() throws Exception // called when parsing fails, raising an exception
@@ -384,8 +391,8 @@ public class MathPiperParser extends Parser
         iError = true;
         if (iLookAhead != null)
         {
-            LispError.raiseError("Error parsing expression, near token " + iLookAhead + ".", iEnvironment);
+            LispError.raiseError("Error parsing expression, near token " + iLookAhead + ".");
         }
-        LispError.raiseError("Error parsing expression.",iEnvironment);
+        LispError.raiseError("Error parsing expression.");
     }
 };

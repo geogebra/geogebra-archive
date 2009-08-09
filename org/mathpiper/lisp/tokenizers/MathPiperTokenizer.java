@@ -17,10 +17,11 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp.tokenizers;
 
-import org.mathpiper.builtin.BigNumber;
+import org.mathpiper.lisp.collections.TokenMap;
 import org.mathpiper.io.MathPiperInputStream;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.TokenHash;
+import org.mathpiper.builtin.BigNumber;
+import org.mathpiper.lisp.*;
+
 
 public class MathPiperTokenizer {
 
@@ -30,7 +31,7 @@ public class MathPiperTokenizer {
 
     /// NextToken returns a string representing the next token,
     /// or an empty list.
-    public String nextToken(MathPiperInputStream aInput, TokenHash aTokenHashTable) throws Exception {
+    public String nextToken(MathPiperInputStream aInput, TokenMap aTokenHashTable) throws Exception {
         char streamCharacter;
         int firstpos = aInput.position();
 
@@ -68,7 +69,7 @@ public class MathPiperTokenizer {
                 aInput.next(); //consume *
                 while (true) {
                     while (aInput.next() != '*' && !aInput.endOfStream());
-                    LispError.check(!aInput.endOfStream(), LispError.KLispErrCommentToEndOfFile);
+                    LispError.check(!aInput.endOfStream(), LispError.COMMENT_TO_END_OF_FILE);
                     if (aInput.peek() == '/') {
                         aInput.next();  // consume /
                         redo = true;
@@ -92,11 +93,11 @@ public class MathPiperTokenizer {
                 while (aInput.peek() != '\"') {
                     if (aInput.peek() == '\\') {
                         aInput.next();
-                        LispError.check(!aInput.endOfStream(), LispError.KLispErrParsingInput);
+                        LispError.check(!aInput.endOfStream(), LispError.PARSING_INPUT);
                     }
                     //TODO FIXME is following append char correct?
                     aResult = aResult + ((char) aInput.next());
-                    LispError.check(!aInput.endOfStream(), LispError.KLispErrParsingInput);
+                    LispError.check(!aInput.endOfStream(), LispError.PARSING_INPUT);
                 }
                 //TODO FIXME is following append char correct?
                 aResult = aResult + ((char) aInput.next()); // consume the close quote

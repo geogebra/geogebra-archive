@@ -1,6 +1,7 @@
 
 
 
+
 Infix("=",90);
 Infix("And",1000);
 RightAssociative("And");
@@ -43,6 +44,12 @@ Infix("***", 50);
 Bodied("Integrate",60000);
 
 Bodied("Limit",60000);
+
+Bodied("Time", 60000);
+
+Bodied("Repeat", 60000);
+
+Infix("->",600);
 
 
 Infix(":",70);
@@ -100,5 +107,7 @@ Bodied(Assert, 60000);
 
 
 Bodied("Defun",0);
+
+
 
 

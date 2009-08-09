@@ -9,7 +9,7 @@ RuleBase("Nth",{alist,aindex});
 Rule("Nth",2,10,
     And(Equals(IsFunction(alist),True),
             Equals(IsInteger(aindex),True),
-            Not(Equals(Head(Listify(alist)),Nth))
+            Not(Equals(First(Listify(alist)),Nth))
             ))
      MathNth(alist,aindex);
 
@@ -72,7 +72,7 @@ Function("NrArgs",{aLeft}) Length(Listify(aLeft))-1;
 LocalSymbols(Numeric) [
   Set(Numeric,False);
 
-  
+
 
   
   LocalSymbols(prev'Numeric, prev'digits, numeric'result) Macro("N",{expr,digits})
@@ -102,11 +102,11 @@ LocalSymbols(Numeric) [
     Set(ex,Hold(@expr));
     `N(@ex,@dig);
   ];
-  
-  
-  
 
-	 
+
+
+
+
 
   LocalSymbols(result) Macro("NonN",{expr})
   [
@@ -134,7 +134,7 @@ LocalSymbols(Verbose) [
     result;
   ];
   Function("InVerboseMode",{}) Verbose;
-  
+
 ]; 
 HoldArg("V",aNumberBody);
 UnFence("V",1);
@@ -197,3 +197,4 @@ RuleBase("else",{ifthen,otherwise});
 HoldArg("else",ifthen);
 HoldArg("else",otherwise);
 UnFence("else",2);
+

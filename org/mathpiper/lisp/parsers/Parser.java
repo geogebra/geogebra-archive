@@ -18,13 +18,12 @@
 
 package org.mathpiper.lisp.parsers;
 
-import org.mathpiper.io.MathPiperInputStream;
-import org.mathpiper.lisp.Atom;
-import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.SubList;
+import org.mathpiper.lisp.cons.SublistCons;
+import org.mathpiper.lisp.cons.AtomCons;
+import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
+import org.mathpiper.io.MathPiperInputStream;
+import org.mathpiper.lisp.*;
 
 
 public class Parser
@@ -52,7 +51,7 @@ public class Parser
 		token = iTokenizer.nextToken(iInput,iEnvironment.getTokenHash());
 		if (token.length() == 0) //TODO FIXME either token == null or token.length() == 0?
 		{
-			aResult.setCons(Atom.getInstance(iEnvironment,"EndOfFile"));
+			aResult.setCons(AtomCons.getInstance(iEnvironment,"EndOfFile"));
 			return;
 		}
 		parseAtom(aResult,token);
@@ -65,15 +64,15 @@ public class Parser
 		ConsPointer iter = aResult;
 		if (iListed)
 		{
-			aResult.setCons(Atom.getInstance(iEnvironment,"List"));
-			iter  = (aResult.getCons().rest()); //TODO FIXME
+			aResult.setCons(AtomCons.getInstance(iEnvironment,"List"));
+			iter  = (aResult.cdr()); //TODO FIXME
 		}
 		for (;;)
 		{
 			//Get token.
 			token = iTokenizer.nextToken(iInput,iEnvironment.getTokenHash());
 			// if token is empty string, error!
-			LispError.check(token.length() > 0,LispError.KInvalidToken); //TODO FIXME
+			LispError.check(token.length() > 0,LispError.INVALID_TOKEN); //TODO FIXME
 			// if token is ")" return result.
 			if (token == iEnvironment.getTokenHash().lookUp(")"))
 			{
@@ -83,7 +82,7 @@ public class Parser
 			// results list.
 
 			parseAtom(iter,token);
-			iter = (iter.getCons().rest()); //TODO FIXME
+			iter = (iter.cdr()); //TODO FIXME
 		}
 	}
 
@@ -98,11 +97,11 @@ public class Parser
 		{
 			ConsPointer subList = new ConsPointer();
 			parseList(subList);
-			aResult.setCons(SubList.getInstance(subList.getCons()));
+			aResult.setCons(SublistCons.getInstance(subList.getCons()));
 			return;
 		}
 		// else make a simple atom, and return it.
-		aResult.setCons(Atom.getInstance(iEnvironment,aToken));
+		aResult.setCons(AtomCons.getInstance(iEnvironment,aToken));
 	}
 	
 }

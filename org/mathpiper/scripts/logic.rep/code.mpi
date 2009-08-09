@@ -1,9 +1,6 @@
 
 
-
-
-RuleBase("=>",{a,b});
-
+ 
 
 
 
@@ -38,6 +35,7 @@ RuleBase("=>",{a,b});
 27  # CNF(((_x) < (_y))    And ((_x) >= (_y)))    <-- False;
 28  # CNF(((_x) >= (_y))   Or  ((_x) < (_y)))     <-- True;
 28  # CNF(((_x) < (_y))    Or  ((_x) >= (_y)))    <-- True;
+
 
 
 120  # CNF((_x)  Or  (_y))            <-- LogOr(x, y, CNF(x), CNF(y));
@@ -85,110 +83,19 @@ RuleBase("=>",{a,b});
                                                     
 
 
-CanProveAux(_proposition)                           <-- LogicSimplify(proposition, 3);
-10 # LogicSimplify(_proposition, _level)_(level<2)  <-- CNF(proposition);
-
-20 # LogicSimplify(_proposition, _level) <--
-[
-  Local(cnf, list, clauses);
-  Check(level > 1, "Wrong level");
-  
-  Set(cnf, CNF(proposition));
-
-  If(level <= 1, cnf, [
-    Set(list, Flatten(cnf, "And"));
-    Set(clauses, {});
-    ForEach(clause, list)
-    [
-      Local(newclause);
-      
-      Set(newclause, LogicRemoveTautologies(Flatten(clause, "Or")));
-      If(newclause != {True}, DestructiveAppend(clauses, newclause));
-    ];
-
-    
-    Set(clauses, RemoveDuplicates(clauses));
-
-    If(Equals(level, 3) And (Length(clauses) != 0), [
-        Set(clauses, DoUnitSubsumptionAndResolution(clauses));
-        Set(clauses, LogicCombine(clauses));
-    ]);
-
-    Set(clauses, RemoveDuplicates(clauses));
-
-    If(Equals(Length(clauses), 0), True, [
-        
-        Local(result);
-        Set(result, True);
-        ForEach(item,clauses)
-        [
-            Set(result, result And UnFlatten(item, "Or", False));
-        ];
-
-        result;
-    ]);
-  ]);
-];
 
 
 
+
+ 
+
+
+
+
+CanProveAux(_proposition)    <-- LogicSimplify(proposition, 3);
 
 CanProve(_proposition)      <-- CanProveAux( proposition );
 
-1 # SimpleNegate(Not (_x))  <-- x;
-2 # SimpleNegate(_x)        <-- Not(x);
-
-
-
-
-LocalCmp(_e1, _e2)                  <-- LessThan(ToString() Write(e1), ToString() Write(e2));
-
-
-100 # SimplifyExpression(_x)        <-- x;
-
-
-
-
-LogicRemoveTautologies(_e) <--
-[
-  Local(i, len, negationfound); Set(len, Length(e));
-  Set(negationfound, False);
-
-  
-  e := BubbleSort(e, "LocalCmp");
-
-  For(Set(i, 1), (i <= len) And (Not negationfound), i++)
-  [
-    Local(x, n, j);
-    
-    
-    Set(x, MathNth(e,i));
-    Set(n, SimpleNegate(x));                    
-
-    For(Set(j, i+1), (j <= len) And (Not negationfound), j++) [
-        Local(y);
-        Set(y, MathNth(e,j));
-
-        If(Equals(y, n),
-            [
-                
-
-                Set(negationfound, True);
-                
-            ],
-        If(Equals(y, x),
-            [
-                
-                DestructiveDelete(e, j);
-                Set(len,SubtractN(len,1));
-            ])
-        );
-    ];
-    Check(len = Length(e), "The length computation is incorrect");
-  ];
-
-  If(negationfound, {True}, e);            
-];
 
 10 # Contradict((_x) - (_y) == 0, (_x) - (_z) == 0)_(y != z)     <-- True;
 12 # Contradict((_x) == (_y), (_x) == (_z))_(y != z)             <-- True;
@@ -196,67 +103,6 @@ LogicRemoveTautologies(_e) <--
 14 # Contradict((_x) - (_y) == 0, (_x) - (_z) >  0)_(z > y)      <-- True;
 14 # Contradict(Not (_x) - (_y) >= 0, (_x) - (_z) >  0)_(z > y)  <-- True;
 15 # Contradict(_a, _b)                                          <-- Equals(SimpleNegate(a), b);
-
-
-LogicFindWith(_list, _i, _n) <--
-[
-  Local(result, index, j);
-  Set(result, -1); Set(index, -1);
-
-  For(j := i+1, (result<0) And (j <= Length(list)), j++)
-  [
-    Local(k, len); Set(len, Length(list[j]));
-    For(k := 1, (result<0) And (k<=len), k++)
-    [
-      Local(el); Set(el, list[j][k]);
-
-      If(Contradict(n, el),
-        [Set(result, j); Set(index, k);]);
-    ];
-  ];
-  {result, index};
-];
-
-
-LogicCombine(_list) <--
-[
-  Local(i, j);
-  For(Set(i,1), i<=Length(list), Set(i,AddN(i,1)))
-  [
-    
-
-    For(j := 1, (j<=Length(list[i])), j++)
-    [
-      Local(tocombine, n, k);
-      Set(n, list[i][j]);
-
-      {tocombine, k} := LogicFindWith(list, i, n);
-                                                  
-      If(tocombine != -1,
-      [
-        Local(combination);
-        Check(k != -1, "k is -1");
-
-        Set(combination, LogicRemoveTautologies(Concat(list[i], list[tocombine])));
-        If(combination = {},                      
-          [Set(list, {{}}); Set(i, Length(list)+1);], []);
-      ]);
-    ];
-  ];
-  list;
-];
-
-10 # Subsumes((_x) - (_y) == 0, Not ((_x) - (_z)==0))_(y!=z)    <-- True;
-
-20 # Subsumes((_x) - (_y) == 0, (_z) - (_x) >= 0)_(z>=y)        <-- True;
-20 # Subsumes((_x) - (_y) == 0, (_z) - (_x) >  0)_(z>y)         <-- True;
-
-30 # Subsumes((_x) - (_y) == 0, (_x) - (_z) >= 0)_(y>=z)        <-- True;
-30 # Subsumes((_x) - (_y) == 0, (_x) - (_z) > 0)_(y>z)          <-- True;
-
-90 # Subsumes((_x), (_x))                                       <-- True;
-
-100# Subsumes((_x), (_y))                                       <-- False;
 
 
 
@@ -318,3 +164,178 @@ DoUnitSubsumptionAndResolution(_list) <--
 
     list;
 ];
+
+
+
+LogicCombine(_list) <--
+[
+  Local(i, j);
+  For(Set(i,1), i<=Length(list), Set(i,AddN(i,1)))
+  [
+    
+
+    For(j := 1, (j<=Length(list[i])), j++)
+    [
+      Local(tocombine, n, k);
+      Set(n, list[i][j]);
+
+      {tocombine, k} := LogicFindWith(list, i, n);
+                                                  
+      If(tocombine != -1,
+      [
+        Local(combination);
+        Check(k != -1, "k is -1");
+
+        Set(combination, LogicRemoveTautologies(Concat(list[i], list[tocombine])));
+        If(combination = {},                      
+          [Set(list, {{}}); Set(i, Length(list)+1);], []);
+      ]);
+    ];
+  ];
+  list;
+];
+
+
+
+LogicFindWith(_list, _i, _n) <--
+[
+  Local(result, index, j);
+  Set(result, -1); Set(index, -1);
+
+  For(j := i+1, (result<0) And (j <= Length(list)), j++)
+  [
+    Local(k, len); Set(len, Length(list[j]));
+    For(k := 1, (result<0) And (k<=len), k++)
+    [
+      Local(el); Set(el, list[j][k]);
+
+      If(Contradict(n, el),
+        [Set(result, j); Set(index, k);]);
+    ];
+  ];
+  {result, index};
+];
+
+
+ 
+
+1 # SimpleNegate(Not (_x))  <-- x;
+2 # SimpleNegate(_x)        <-- Not(x);
+
+
+
+
+LocalCmp(_e1, _e2)                  <-- LessThan(ToString() Write(e1), ToString() Write(e2));
+
+
+100 # SimplifyExpression(_x)        <-- x;
+
+
+
+
+LogicRemoveTautologies(_e) <--
+[
+  Local(i, len, negationfound); Set(len, Length(e));
+  Set(negationfound, False);
+
+  
+  e := BubbleSort(e, "LocalCmp");
+
+  For(Set(i, 1), (i <= len) And (Not negationfound), i++)
+  [
+    Local(x, n, j);
+    
+    
+    Set(x, MathNth(e,i));
+    Set(n, SimpleNegate(x));                    
+
+    For(Set(j, i+1), (j <= len) And (Not negationfound), j++) [
+        Local(y);
+        Set(y, MathNth(e,j));
+
+        If(Equals(y, n),
+            [
+                
+
+                Set(negationfound, True);
+                
+            ],
+        If(Equals(y, x),
+            [
+                
+                DestructiveDelete(e, j);
+                Set(len,SubtractN(len,1));
+            ])
+        );
+    ];
+    Check(len = Length(e), "The length computation is incorrect");
+  ];
+
+  If(negationfound, {True}, e);            
+];
+
+
+ 
+
+
+
+10 # LogicSimplify(_proposition, _level)_(level<2)  <-- CNF(proposition);
+
+20 # LogicSimplify(_proposition, _level) <--
+[
+  Local(cnf, list, clauses);
+  Check(level > 1, "Wrong level");
+  
+  Set(cnf, CNF(proposition));
+
+  If(level <= 1, cnf, [
+    Set(list, Flatten(cnf, "And"));
+    Set(clauses, {});
+    ForEach(clause, list)
+    [
+      Local(newclause);
+      
+      Set(newclause, LogicRemoveTautologies(Flatten(clause, "Or")));
+      If(newclause != {True}, DestructiveAppend(clauses, newclause));
+    ];
+
+    
+    Set(clauses, RemoveDuplicates(clauses));
+
+    If(Equals(level, 3) And (Length(clauses) != 0), [
+        Set(clauses, DoUnitSubsumptionAndResolution(clauses));
+        Set(clauses, LogicCombine(clauses));
+    ]);
+
+    Set(clauses, RemoveDuplicates(clauses));
+
+    If(Equals(Length(clauses), 0), True, [
+        
+        Local(result);
+        Set(result, True);
+        ForEach(item,clauses)
+        [
+            Set(result, result And UnFlatten(item, "Or", False));
+        ];
+
+        result;
+    ]);
+  ]);
+];
+
+
+10 # Subsumes((_x) - (_y) == 0, Not ((_x) - (_z)==0))_(y!=z)    <-- True;
+
+20 # Subsumes((_x) - (_y) == 0, (_z) - (_x) >= 0)_(z>=y)        <-- True;
+20 # Subsumes((_x) - (_y) == 0, (_z) - (_x) >  0)_(z>y)         <-- True;
+
+30 # Subsumes((_x) - (_y) == 0, (_x) - (_z) >= 0)_(y>=z)        <-- True;
+30 # Subsumes((_x) - (_y) == 0, (_x) - (_z) > 0)_(y>z)          <-- True;
+
+90 # Subsumes((_x), (_x))                                       <-- True;
+
+100# Subsumes((_x), (_y))                                       <-- False;
+
+
+RuleBase("=>",{a,b});
+

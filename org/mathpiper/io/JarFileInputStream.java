@@ -20,8 +20,9 @@ package org.mathpiper.io;
 
 
 import java.io.InputStreamReader;
-import java.net.JarURLConnection;
-import java.net.URL;
+import org.mathpiper.io.StringInputStream;
+
+import java.net.*;
 
 public class JarFileInputStream extends StringInputStream
 {

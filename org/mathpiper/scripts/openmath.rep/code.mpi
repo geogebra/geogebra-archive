@@ -4,6 +4,9 @@
 
 
 
+
+
+
 RuleBase("OMREP",{});
 Rule("OMREP",0,1,True)
 [
@@ -96,7 +99,7 @@ LocalSymbols(omindent) [
      OMEcho("<OME>");
      OMIndent();
      OMEcho("<OMS cd=\"":cd:"\" name=\"":name:"\"/>");
-     ForEach(i, Tail(function)) OMFormExpression(i);
+     ForEach(i, Rest(function)) OMFormExpression(i);
      OMUndent();
      OMEcho("</OME>");
      ];
@@ -464,9 +467,9 @@ FromString(str:" EndOfFile")
   Local(expandRules, result);
   expandRules := { _(_path) <- OMPathSelect(path, function) };
   expandRules[1][2][2] := function;
-  
+
   mapping := (mapping /: expandRules);
-  
+
   Local(ruleMatched);
   ruleMatched := False;
   If(Type(mapping) = "|",
@@ -493,7 +496,7 @@ FromString(str:" EndOfFile")
      ruleMatched := True;
      ]
     );
-  
+
   If(ruleMatched,
      If(Type(result) = ":",
         If(Length(result) = 2,
@@ -542,7 +545,7 @@ HoldArgNr("OMPathSelect", 2, 2);
      
      
      If(piperform = Empty,
-        If(cd = "piper", Atom(omname), OMS(omcd, omname)),
+        If(cd = mathpiper, Atom(omname), OMS(omcd, omname)),
         If(IsString(piperform), Atom(piperform), piperform));
      ]
     );
@@ -663,9 +666,9 @@ OMDef( "Or"   ,  "logic1", "or"    );
 OMDef( "True" ,  "logic1", "true"  );
 
 
-OMDef( "&" ,  "piper", "bitwise_and" );
-OMDef( "|" ,  "piper", "bitwise_or"  );
-OMDef( "%" ,  "piper", "bitwise_xor" );
+OMDef( "&" ,  mathpiper, "bitwise_and" );
+OMDef( "|" ,  mathpiper, "bitwise_or"  );
+OMDef( "%" ,  mathpiper, "bitwise_xor" );
 OMDef( "/" , "arith1", "divide");
 OMDef( "/" , "nums1", "rational", {$, _1, _2}_(IsRational(_1/_2)) | {OMS("arith1", "divide"), _1, _2}, {/, _1, _2});
 OMDef( "-" ,  "arith1", "unary_minus");
@@ -685,3 +688,5 @@ Use("org/mathpiper/scripts/sums.rep/om.mpi");
 Use("org/mathpiper/scripts/limit.rep/om.mpi");
 
 Use("org/mathpiper/scripts/functional.rep/om.mpi");
+
+

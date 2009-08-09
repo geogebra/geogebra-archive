@@ -4,6 +4,9 @@ IsNonObject
 Numer
 Denom
 NormalForm
+++
+--
+TableForm
 ==
 !==
 +-
@@ -23,3 +26,4 @@ InNumericMode
 V
 InVerboseMode
 }
+

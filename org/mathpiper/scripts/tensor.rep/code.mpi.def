@@ -1,6 +1,11 @@
-TSimplify
-TExplicitSum
-TSum
+ApplyDelta
 Delta
+MoveDeltas
 TD
+TExplicitSum
+TList
+TSimplify
+TSum
+TSumRest
+TSumSimplify
 }

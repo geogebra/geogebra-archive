@@ -1,4 +1,12 @@
 
+RuleBase("Curl", {aFunc, aBasis});
+
+Rule("Curl", 2, 1, Length(aBasis)=Length(aFunc))
+	{
+		Apply("D",{aBasis[2],aFunc[3]})-Apply("D",{aBasis[3],aFunc[2]}),
+		Apply("D",{aBasis[3],aFunc[1]})-Apply("D",{aBasis[1],aFunc[3]}),
+		Apply("D",{aBasis[1],aFunc[2]})-Apply("D",{aBasis[2],aFunc[1]})
+	};
 
 
 RuleBase("D",{aVar,aFunc});
@@ -33,12 +41,14 @@ Rule("D",3,3,True)
 HoldArg("D",aVar);
 HoldArg("D",aFunc);
 
+
+
 5 # (Deriv(_var,1)_func) <-- Deriv(var)func;
 5 # (Deriv(_var,0)_func) <-- func;
 10 # (Deriv(_var,n_IsPositiveInteger)_func) <-- Deriv(var)Deriv(var,n-1)func;
 10 # (Deriv(_var,n_IsNegativeInteger)_func) <-- Check(0,"Negative derivative");
 
- 
+
 
 0 # (Deriv(_var) (_var)) <-- 1;
 1 # (Deriv(_var)func_IsAtom) <-- 0;
@@ -89,10 +99,10 @@ HoldArg("D",aFunc);
 
 LocalSymbols(var,var2,a,b,y)[
    2 # (Deriv(_var)Integrate(_var)(_y)) <-- y;
-   2 # (Deriv(_var)Integrate(_var2,_a,_b)(y_IsFreeOf(var))) <-- 
+   2 # (Deriv(_var)Integrate(_var2,_a,_b)(y_IsFreeOf(var))) <--
          (Deriv(var)b)*(y Where var2 == b) -
          (Deriv(var)a)*(y Where var2 == a);
-   3 # (Deriv(_var)Integrate(_var2,_a,_b)(_y)) <-- 
+   3 # (Deriv(_var)Integrate(_var2,_a,_b)(_y)) <--
          (Deriv(var)b)*(y Where var2 == b) -
          (Deriv(var)a)*(y Where var2 == a) +
  	Integrate(var2,a,b) Deriv(var) y;
@@ -120,14 +130,4 @@ LocalSymbols(var,var2,a,b,y)[
 RuleBase("Diverge", {aFunc, aBasis});
 Rule("Diverge", 2, 1, IsList(aBasis) And IsList(aFunc) And Length(aBasis) = Length(aFunc))
 	Add(Map("D", {aBasis,aFunc}));
-
-RuleBase("Curl", {aFunc, aBasis});
-
-Rule("Curl", 2, 1, Length(aBasis)=Length(aFunc))
-	{
-		Apply("D",{aBasis[2],aFunc[3]})-Apply("D",{aBasis[3],aFunc[2]}),
-		Apply("D",{aBasis[3],aFunc[1]})-Apply("D",{aBasis[1],aFunc[3]}),
-		Apply("D",{aBasis[1],aFunc[2]})-Apply("D",{aBasis[2],aFunc[1]})
-	};
-
 

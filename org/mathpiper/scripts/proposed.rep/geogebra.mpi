@@ -1,0 +1,181 @@
+
+Retract("GeoGebra",*);
+
+LocalSymbols(options)
+[
+    options  := {};
+    
+    Local(updateObjects);
+    
+    updateObjects := "";
+    
+    options["updateObjects"] := updateObjects;
+    
+    
+
+GeoGebra() := options;
+
+
+GeoGebra(list) := (options := list);
+
+
+
+];
+
+
+GeoGebraHistogram(classBoundaries, data) := 
+[
+    Local(command);
+    
+    
+    
+    command := PatchString("Histogram[<?Write(classBoundaries)?>,<?Write(data)?>]");
+    JavaCall(geogebra, "evalCommand", command);
+];
+
+
+
+
+GeoGebraHistogram(data) := 
+[
+    Local(command, classBoundaries, noDuplicatesSorted, largestValue, smallestValue, x, numberOfUniqueValues);
+    
+    noDuplicatesSorted := HeapSort(RemoveDuplicates(data), "<" );
+    
+    smallestValue := Floor(noDuplicatesSorted[1]);
+    
+    numberOfUniqueValues := Length(noDuplicatesSorted);
+    
+    largestValue := Ceil(noDuplicatesSorted[Length(noDuplicatesSorted)]);
+    
+    classBoundaries := N(Table(x,x,smallestValue-.5,largestValue+.5,1));
+    
+    command := PatchString("Histogram[<?Write(classBoundaries)?>,<?Write(data)?>]");
+    JavaCall(geogebra, "evalCommand", command);
+];
+
+
+Retract("GeoGebraPlot",*);
+
+RuleBaseListed("GeoGebraPlot",{arg1,arg2});
+
+
+
+5 # GeoGebraPlot(_arg1) <-- GeoGebraPlot(arg1,{});  
+
+
+20 # GeoGebraPlot(function_IsFunction, options_IsList)_(Not IsList(function)) <--
+[
+    Local(command);
+    
+    function := (Subst(==,=) function);
+    
+    command := ConcatStrings(ToString()Write(function));
+    
+    JavaCall(geogebra,"evalCommand",command);
+];
+
+
+
+
+10 # GeoGebraPlot(list_IsList, _options)_(IsEven(Length(list)And IsNumericList(list)) )  <--
+[
+    If(IsList(options), options := OptionListToAssociativeList(options), options := OptionListToAssociativeList({options}));
+
+    Local(length, index, labelIndex, pointTemplate, segmentCommandTemplate, segmentElementTemplate, command, code, x, y);
+    
+    length := Length(list);
+    
+    index := 1;
+    
+    labelIndex := 1;
+    
+    pointTemplate := "<element type=\"point\" label=\"A<?Write(labelIndex)?>\"> <show object=\"true\" label=\"false\"/><objColor r=\"0\" g=\"0\" b=\"255\" alpha=\"0.0\"/>	<layer val=\"0\"/>	<animation step=\"0.1\" speed=\"1\" type=\"0\" playing=\"false\"/>	<coords x=\"<?Write(x)?>\" y=\"<?Write(y)?>\" z=\"1.0\"/>	<pointSize val=\"3\"/></element>";
+    segmentCommandTemplate := "<command name=\"Segment\"><input a0=\"A1\" a1=\"A2\"/><output a0=\"a\"/>";
+    segmentElementTemplate := "<element type=\"segment\" label=\"a<?Write(labelIndex-1)?>\"><lineStyle thickness=\"2\" type=\"0\"/><show object=\"true\" label=\"false\"/><layer val=\"0\"/><coords x=\"-1.0\" y=\"1.0\" z=\"0.0\"/><lineStyle thickness=\"2\" type=\"0\"/><eqnStyle style=\"implicit\"/><outlyingIntersections val=\"false\"/><keepTypeOnTransform val=\"true\"/></element>";
+    
+    
+    
+    
+    While(index < length+1)
+    [
+        x := list[index];
+        index++;
+        y := list[index];
+        index++;
+        
+        
+        code := PatchString(pointTemplate);
+        JavaCall(geogebra,"evalXML",code);
+        
+        If(options["lines"] = "True" And labelIndex > 1,
+        [
+            
+            command := PatchString("a<?Write(labelIndex-1)?> = Segment[A<?Write(labelIndex-1)?>,A<?Write(labelIndex)?>]");
+            JavaCall(geogebra, "evalCommand", command);
+
+            
+            code := PatchString(segmentElementTemplate);
+            JavaCall(geogebra,"evalXML",code);
+        ]
+        );
+       
+        labelIndex++;
+    ]; 
+    
+     
+
+];
+
+
+5 # GeoGebraPlot(list_IsList, _options)_(IsMatrix(IsInteger,list)) <--
+[
+    Local(flatList);
+    
+    flatList := {};
+    
+    ForEach(subList,list)
+    [
+        DestructiveAppend(flatList,subList[1]);
+        DestructiveAppend(flatList, subList[2]);
+    ];
+    
+    GeoGebraPlot(flatList, options);
+
+];
+
+
+
+
+Retract("GeoGebraPoint",*);
+
+10 # GeoGebraPoint(name_IsString, x_IsNumber, y_IsNumber)  <--
+[
+    Local(command);
+    
+    command := PatchString("<?Write(Atom(name))?>=(<?Write(x)?>,<?Write(y)?>)");
+    
+    JavaCall(geogebra,"evalCommand",command);
+];
+
+OptionListToAssociativeList(optionList) :=
+[
+    Local(associativeList, key, value);
+    
+    associativeList := {};
+    
+    ForEach(option, optionList)
+    [
+        If(option[0] = ->,
+        [
+            If(IsString(option[1]), key := option[1], key := String(option[1]));
+            If(IsString(option[2]), value := option[2], value := String(option[2]));
+            
+            associativeList := {key, value} : associativeList;
+        
+        ]);
+    
+    ];
+    associativeList;
+];
+

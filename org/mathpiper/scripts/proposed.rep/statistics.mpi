@@ -1,0 +1,611 @@
+
+Retract("IsSubset",*);
+
+IsSubset(bigList, littleList) :=
+[
+    Local(result);
+    result := True;
+    
+    ForEach(element, littleList)
+    [
+        If(Not Contains(bigList,element), result := False);
+    ];
+
+    result;
+];
+
+Mode(list) :=
+[
+    
+    Local(mostFrequent, highestFrequency, currentElementCount);
+    
+    highestFrequency := 0;
+    
+    noDuplicatesList := RemoveDuplicates(list);
+    
+    ForEach(element, noDuplicatesList)
+    [
+        If( (currentElementCount := Count(list, element)) > highestFrequency,[ mostFrequent := element; highestFrequency := currentElementCount;] );
+    ];
+    
+    mostFrequent;
+
+];
+
+
+Permutations(n, r) :=
+[
+    n! /(n-r)!;
+];
+
+
+ProbabilityMassFunction(sampleSize, numberOfSuccesses, probabilityOfSuccess) :=
+[
+    N(Combinations(sampleSize, numberOfSuccesses) * probabilityOfSuccess^numberOfSuccesses * (1-probabilityOfSuccess)^(sampleSize - numberOfSuccesses));
+];
+
+
+Retract("Quartile",*);
+
+Quartile(list) :=
+[
+    sortedList := HeapSort(list,"<");
+    
+    secondQuartile := Median(sortedList);
+    
+    If(IsOdd(Length(sortedList)),
+    [   
+        secondQuartileIndex := Find(sortedList, secondQuartile);
+        
+        leftList := Take(sortedList, secondQuartileIndex-1);
+        rightList := Take(sortedList, -(Length(sortedList) - (secondQuartileIndex) ) );
+    ],
+    [
+
+        leftList := Take(sortedList, Length(sortedList)/2);
+        rightList := Take(sortedList, -Length(sortedList)/2);
+    ]
+    );
+    
+    firstQuartile := Median(leftList);
+    
+    thirdQuartile := Median(rightList);
+    
+    interquartileRange := thirdQuartile - firstQuartile;
+    
+    {firstQuartile, secondQuartile, thirdQuartile, interquartileRange};
+
+];
+
+
+Retract("RandomPick",*);
+
+
+10 # RandomPick(list_IsList) <--
+[
+    pickPosition := RandomInteger(Length(list));
+
+    list[pickPosition];
+];
+
+
+Retract("RandomSymbol",*);
+
+RandomSymbol(list) :=
+[
+
+    Local(element);
+    
+    fractions := 0;
+    
+    symbols := {};
+    
+    lastWeight := 0;
+    
+    ForEach(element,list)
+    [        
+        fraction := element[2];
+
+        fractions := fractions + fraction;
+    ];
+    
+    If(fractions != 1, 
+        [
+            Echo("Error: The fractions must sum to 1."); False;
+        ],
+        [
+            ForEach(element,list)
+            [
+                fraction := element[2];
+                symbol := element[1];
+                symbols := Append(symbols, {symbol, {lastWeight, lastWeight := lastWeight + N(fraction)}} );
+            ];
+             
+            randomNumber := Random();
+            
+            ForEach(symbolData,symbols)
+            [
+                If(randomNumber >= symbolData[2][1] And randomNumber <= symbolData[2][2], result := symbolData[1] );
+            ];
+            
+            result;
+        ]
+        
+    );
+        
+
+];
+
+RandomSymbolVector(list, count) :=
+[
+    If(IsList(list)= True, Table(RandomSymbol(list),x,1,count,1), False );
+];
+
+
+
+
+Retract("Repeat",*);
+
+
+
+LocalSymbols(count, iterations, body)[
+
+
+RuleBase("Repeat",{iterations,body});
+
+
+
+Rule("Repeat",2,10,IsInteger(iterations) And iterations > 0)
+[
+    Local(count);
+
+    count := 0;
+
+    While (iterations > 0)
+    [
+        Eval(body);
+        iterations--;
+        count++;
+    ];
+
+    count;
+
+];
+
+
+
+
+
+RuleBase("Repeat",{body});
+
+
+Rule("Repeat",1,20,True)
+[
+    Local(count);
+
+    count := 0;
+    While (True)
+    [
+        Eval(body);
+        count++;
+    ];
+
+    count;
+];
+
+];
+
+UnFence("Repeat",2);
+HoldArgNr("Repeat",2,2);
+UnFence("Repeat",1);
+HoldArgNr("Repeat",1,1);
+
+
+
+
+Retract("Sample",*);
+
+
+10 # Sample(list_IsList, amount_IsInteger) <--
+[
+    Local(result);
+    list := Shuffle(list);
+
+    result := Take(list, amount);
+];
+
+
+Retract("Shuffle",*);
+
+
+10 # Shuffle(list_IsList) <--
+[
+    Local(index, randomIndex, temporary);
+    
+    index := Length(list);
+    
+    While(index > 1)
+    [
+        randomIndex := RandomInteger(1,index);
+        temporary := list[randomIndex];
+        list[randomIndex] := list[index];
+        list[index] := temporary;
+        index--;
+    ];      
+    
+    list;
+];
+
+
+
+
+trunc(x):= [
+
+  If(x < 0, s := -1, s := 1);
+s* Floor(Abs(x));
+];
+
+
+
+
+intlabels(y1,y2,tnumint) := [
+    diff :=y2-y1;
+    x := intervals(diff,tnumint);
+    bot := trunc(y1/x)*x;
+  yy = bot;
+  L = [];
+  
+  xx = 0;
+  breakLoop := False;
+  While (yy-x < y2 Or breakLoop = True) [
+      L := Append(L, yy);
+    yy := yy + x;
+    
+    xx++;
+    If (xx > 100, breakLoop := True);
+  ];
+  L[i] = yy;
+	L;
+];
+
+
+
+
+intervals(diff, NumCats) := [
+    t4 := trunc(N(Ln(diff))) * 0.4342945;
+  t4 = Power(10,t4);
+  T := [];
+  T := N(t4/10 : t4/5 : t4/2 : t4 : T);
+
+  
+  A := [];
+  
+  For (i := 0,i < 4, i++) [
+      A := Append(A,trunc(diff/T[i]) +1);
+  ];
+  
+  D := AbsN(10 - A[0]);
+  
+  index := 1;
+  For (i := 1, i < 4, i++) 
+  [
+    if (A[i] <= 25) [
+      if (A[i] > 2) [
+      XX := AbsN(NumCats - A[i]);
+	if (XX < D) [
+        D := XX;
+	  index = i+1;
+	];
+      ];
+    ];
+  ];
+  T[index-1];
+];
+
+
+
+
+
+stemandleaf(x) :=
+[
+  Echo("Stem and Leaf Display");
+  didzero := False;
+   N := x.length;
+  
+  if (N<20)
+    [
+      tNumInt := 5;
+    ] 
+  else 
+    [
+      if (N < 100) 
+	[
+	  tNumInt := 10;
+	] 
+      else 
+	[
+	  if (N < 150) 
+	    [
+	      tNumInt := 15;
+	    ] 
+	  else
+	    [
+	      tNumInt := 20;
+	    ];
+	];
+    ];
+   theMax := x[N-1];
+   theMin := x[0];
+  alldone := False;
+  if (theMax - theMin < 10) 
+  [
+     ratio := 1000/(theMax - theMin);
+    ratio := Math.max(ratio,1000);
+    ratio := trunc(Math.log(ratio) * 0.4342945);
+    ratio := Math.pow(10,ratio);
+    For ( i := 0, i < N , i++) 
+      [
+            x[i] := x[i] * ratio;
+      ];
+  ]
+  else 
+    [
+      	ratio := 1;
+    ];
+   zcount := 0; 	
+  theMin := x[0];
+   abMin := Math.abs(theMin);
+  theMax := x[N-1];
+   Y := intervals(theMax-theMin,tNumInt);
+   indexA := index +0;
+  if (indexA= 2) 
+    [
+      Y := Y * 5;
+       ncats :=5 ;
+       newz := 1;
+    ] 
+  else 
+    [
+      if(indexA=3) 
+	[
+	  Y := Y * 2;
+	   ncats := 2;
+	] 
+      else 
+	[
+	   ncats := 1;
+	   newz := 0; 
+	];
+    ];
+
+   cutoffs := intlabels(x[0], x[N-1], tNumInt);
+  theMax := ratio * Round(theMax);
+   nc := cutoffs.length;
+   xx8:=0;
+  While (cutoffs[nc-2] > theMax) 
+    [
+      nc--;
+    ];
+  theMax := cutoffs[nc-2];
+  if (Y > AbsN(theMax)) 
+    [
+      nc++;
+      While(Y > AbsN(theMax)) 
+	[
+	  xx8++;
+	  if(xx8>100)[break;];
+	  if (nc > Length(cutoffs)) 
+	    [
+	       temp := cutoffs[nc-2] - cutoffs[nc - 3];
+	      temp := temp + cutoffs[nc-2];
+	      cutoffs[nc-1] := temp;
+	    ];
+	  theMax := cutoffs[nc-1];
+	  nc++;
+	];
+    ];
+   base := trunc(theMax/Y);
+   leftover := Round(theMax - base * Y);
+  While (AbsN(leftover) > 10) 
+    [
+      leftover := AbsN(Round(leftover/10));
+    ];
+   theMax2 := Max(theMax,abMin);
+   t4 := trunc(theMax2/base);
+  t4 := trunc(N(Ln(t4) * .4342945));
+  t4 := Power(10,t4);
+   t3 := t4/10;
+  if (indexA = 2) 
+    [
+      if (leftover >= 8)
+	[
+	   newz := 1;
+	]
+    else 
+      [
+	if (leftover >= 6)  
+	  [
+	     newz := 0;
+	  ]
+	else 
+	  [
+	    if (leftover >= 4) 
+	      [
+		 newz := 4;
+	      ] 
+	    else 
+	      [
+		if (leftover >= 2) 
+		  [
+		     newz := 3;
+		  ] 
+		else 
+		  [
+		     newz := 2; 
+		  ];
+	      ];
+	  ];
+      ];
+    ]
+  else 
+    [
+    if (indexA = 3) 
+      [
+	if (leftover >=5) 
+	  [
+	     newz := 1;
+	  ] 
+	else 
+	  [
+	     newz := 0;
+	  ];
+      ];
+    ];
+   start := False;
+   LN := 1;
+   LN2 := 0;
+   nn := N;
+   cur := cutoffs[nc-2];
+   count := nc-2;
+   base2 :=base;
+   newline := True;
+   stems := {base2};
+   leaves := {""};
+
+ 
+  For ( i := nn-1, i >= 0 , i--) 
+    [
+     it := x[i];
+     dd := Round(it/t3) * t3;
+     b := trunc(dd/t4);
+     L := dd-t4*b;
+    leftover := AbsN(Round(L/t3));
+    While (leftover >= 10)
+      [
+	    leftover := Round(leftover/10);
+      ];
+    if (it >=0) 
+      [
+	     tt := t3;
+      ]
+    else 
+      [
+        tt := -t3;
+      ];
+      
+     xz := b * t4 + leftover * tt;
+     
+    if (it<0)
+      [
+	    if (xz > 0 ) 
+          [
+            xz := xz * -1;
+          ];
+          xz := xz - .00001;
+      ];
+      
+    if (xz<cur) 
+    [
+	    newline := True;
+        While (xz<cur)
+         [
+	          LN ++;
+              if (start) 
+              [
+	              LN2++;
+                  leaves  := Append(leaves, "");
+              ];
+              temp := trunc(LN/ncats);
+              temp := LN - temp*ncats;
+              
+              if(temp = newz)
+              [
+                if (base2 = 0) 
+                [
+                    if (didzero)
+                    [
+                base2 := base2 - 1;
+                    ] 
+                    else 
+                    [
+                        didzero := 1;
+                    ];
+               ]
+               else 
+                [
+            base2 := base2 - 1;
+                ];
+          ];
+	
+          count := count - 1;
+          
+          if (count < 0)
+          [
+            cur := xz -1000;
+          ] 
+          else 
+          [
+            cur := cutoffs[count];
+          ];
+          
+          if (base2 = 0)
+          [
+	            zcount ++;
+                if ( ((indexA = 2) And (zcount >=6)) Or ((indexA = 3) And (zcount >=3)) Or ((indexA = 1) And (zcount >1)) Or ((indexA = 4) And (zcount >1))) 
+                 [
+                    stems := Append(stems,"-" : String(base2));
+                 ] 
+                 else 
+                 [
+                        stems := Append(stems, String(base2));
+                 ];
+          ] 
+          else 
+          [
+	            stems := Append(stems, String(base2));
+          ];
+	
+	   ];
+      
+      
+      ];
+      
+    start := True;
+    leftover := String(leftover);
+    
+    if (it>=0) 
+      [
+     
+  leaves[LN2] := leftover : "" : leaves[LN2];
+     
+      ]
+    else 
+      [
+            leaves[LN2] := leaves[LN2] : "" : leftover;
+      ];
+    ];
+  
+  For ( i := 0, i < N , i++) [
+    x[i] := x[i] / ratio;
+  ];
+  
+
+  Echo("Stems Leaves");
+    For (i:=0, i<leaves.length, i++)[
+        test := " " : stems[i];
+    
+      While (test.length < 8) 
+       [
+            test := " " : test;
+       ];
+       test := test : "|";
+       Echo(test :  leaves[i]);
+      
+    ];
+  
+
+  
+];
+
+	
+	

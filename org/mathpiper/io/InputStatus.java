@@ -22,7 +22,7 @@ package org.mathpiper.io;
 public class InputStatus
 {
 	String iFileName;
-	int  iLineNumber;
+	private int  iLineNumber;
 
 	public InputStatus()
 	{

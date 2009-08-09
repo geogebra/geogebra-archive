@@ -6,6 +6,7 @@
 
 
 
+
 Use("org/mathpiper/scripts/initialization.rep/stdopers.mpi");
 
 
@@ -43,8 +44,8 @@ Rule(LoadPackages, 1, 1, True)
 [
 	If(Equals(packages,{}), True,
 	[
-		DefLoad(Head(packages));
-		LoadPackages(Tail(packages));
+		DefLoad(First(packages));
+		LoadPackages(Rest(packages));
 	]);
 ];
 
@@ -82,4 +83,6 @@ Rule("REP",0,1,True)
     ]);
   ];
 ];
-              
+
+
+

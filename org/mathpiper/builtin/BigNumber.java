@@ -17,11 +17,9 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.builtin;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 import org.mathpiper.io.MathPiperOutputStream;
 import org.mathpiper.lisp.LispError;
+import java.math.*;
 
 /**
  * 
@@ -32,7 +30,7 @@ public class BigNumber {
     BigInteger javaBigInteger = null;
     BigDecimal javaBigDecimal = null;
     int iPrecision;
-    int iTensExp;
+    int iTensExp;//TODO:tk:the purpose of this variable needs to be determined.
     private static BigDecimal zero = new BigDecimal("0");
     private static BigDecimal one = new BigDecimal("1");
     private static BigDecimal two = new BigDecimal("2");
@@ -99,11 +97,18 @@ public class BigNumber {
     public void setTo(String aString, int aPrecision, int aBase/*=10*/) {
         javaBigInteger = null;
         javaBigDecimal = null;
+        aString = aString.replace("+","");
         boolean isFloat = isFloat(aString, aBase);
 
         iPrecision = aPrecision;
+
         iTensExp = 0;
         if (isFloat) {
+
+            
+            javaBigDecimal = new BigDecimal(aString, new MathContext(aPrecision));
+
+            /*
             int decimalPos;
             decimalPos = aString.indexOf("e");
             if (decimalPos < 0) {
@@ -118,10 +123,13 @@ public class BigNumber {
             javaBigDecimal = new BigDecimal(aString); //TODO FIXME does not listen to aBase!!!
             if (javaBigDecimal.scale() > iPrecision) {
                 iPrecision = javaBigDecimal.scale();
-            }
+            }*/
+
+
         } else {
             javaBigInteger = new BigInteger(aString, aBase);
         }
+
     }
 
     /**
@@ -186,8 +194,9 @@ public class BigNumber {
             return javaBigInteger.toString(aBase);
         } else {
             String result = javaBigDecimal.toString();
+            result = result.replace("+", "");
             //System.out.println("BigNumResult: " + result);
-
+            /*
             
             int extraExp = 0;
             // Parse out the exponent
@@ -220,6 +229,8 @@ public class BigNumber {
                 if ((iTensExp + extraExp) != 0) {
                     result = result + "e" + (iTensExp + extraExp);
                 }
+		
+		*/
             
             return result;
         }
@@ -361,7 +372,7 @@ public class BigNumber {
 
     //arithmetic.
     /**
-     * Multiply the specified BigIntegers using the specified precision and place the result in this BigInteger.
+     * Multiply the specified BigNumbers using the specified precision and place the result in this BigNumber.
      *
      * @param aX
      * @param aY
@@ -373,11 +384,11 @@ public class BigNumber {
             BigDecimal dX = getDecimal(aX);
             BigDecimal dY = getDecimal(aY);
             javaBigInteger = null;
-            javaBigDecimal = dX.multiply(dY);
-            int newScale = iPrecision;
-            if (newScale < javaBigDecimal.scale()) {
-                javaBigDecimal = javaBigDecimal.setScale(newScale, BigDecimal.ROUND_HALF_EVEN);
-            }
+            javaBigDecimal = dX.multiply(dY,new MathContext(aPrecision));
+            //int newScale = iPrecision;
+            //if (newScale < javaBigDecimal.scale()) {
+            //    javaBigDecimal = javaBigDecimal.setScale(newScale, BigDecimal.ROUND_HALF_EVEN);
+            //}
             iTensExp = aX.iTensExp + aY.iTensExp;
         } else {
             javaBigDecimal = null;
@@ -386,7 +397,7 @@ public class BigNumber {
     }
 
     /**
-     * Add the specified BigIntegers using the specified precision and place the result in this BigInteger.
+     * Add the specified BigNumberss using the specified precision and place the result in this BigNumber.
      *
      * @param aX
      * @param aY
@@ -399,14 +410,14 @@ public class BigNumber {
             BigDecimal dY = getDecimal(aY);
 
             javaBigInteger = null;
-            if (aX.iTensExp > aY.iTensExp) {
+           /* if (aX.iTensExp > aY.iTensExp) {
                 dY = dY.movePointLeft(aX.iTensExp - aY.iTensExp);
                 iTensExp = aX.iTensExp;
             } else if (aX.iTensExp < aY.iTensExp) {
                 dX = dX.movePointLeft(aY.iTensExp - aX.iTensExp);
                 iTensExp = aY.iTensExp;
-            }
-            javaBigDecimal = dX.add(dY);
+            }*/
+            javaBigDecimal = dX.add(dY,new MathContext(aPrecision));
         } else {
             javaBigDecimal = null;
             javaBigInteger = aX.javaBigInteger.add(aY.javaBigInteger);
@@ -414,7 +425,7 @@ public class BigNumber {
     }
 
     /**
-     * Negate the specified BigInteger and place the result in this BigInteger.
+     * Negate the specified BigNumber and place the result in this BigNumber.
      * 
      * @param aX
      */
@@ -431,7 +442,7 @@ public class BigNumber {
     }
 
     /**
-     * Divide the specified BigIntegers using the specified precision and place the result in this BigInteger.
+     * Divide the specified BigNumbers using the specified precision and place the result in this Big.
      *
      * @param aX
      * @param aY
@@ -444,12 +455,15 @@ public class BigNumber {
             BigDecimal dX = getDecimal(aX);
             BigDecimal dY = getDecimal(aY);
             javaBigInteger = null;
-            int newScale = aPrecision + aY.getPrecision();
+
+            javaBigDecimal = dX.divide(dY,new MathContext(aPrecision));
+
+            /*int newScale = aPrecision + aY.getPrecision();
             if (newScale > dX.scale()) {
                 dX = dX.setScale(newScale);
             }
             javaBigDecimal = dX.divide(dY, BigDecimal.ROUND_HALF_EVEN);
-            iPrecision = javaBigDecimal.scale();
+            iPrecision = javaBigDecimal.scale();*/
             iTensExp = aX.iTensExp - aY.iTensExp;
         } else {
             javaBigDecimal = null;
@@ -458,16 +472,16 @@ public class BigNumber {
     }
 
     /**
-     * Perform y mod z on the two specified integers.  The result is placed into this BigInteger.
+     * Perform y mod z on the two specified integers.  The result is placed into this BigNumber.
      * 
      * @param aY
      * @param aZ
      * @throws java.lang.Exception
      */
     public void mod(BigNumber aY, BigNumber aZ) throws Exception {
-        LispError.check(aY.javaBigInteger != null, LispError.KLispErrNotInteger);
-        LispError.check(aZ.javaBigInteger != null, LispError.KLispErrNotInteger);
-        //TODO fixme    LispError.check(!IsZero(aZ),LispError.KLispErrInvalidArg);
+        LispError.check(aY.javaBigInteger != null, LispError.NOT_AN_INTEGER);
+        LispError.check(aZ.javaBigInteger != null, LispError.NOT_AN_INTEGER);
+        //TODO fixme    LispError.check(!IsZero(aZ),LispError.INVALID_ARGUMENT);
         javaBigInteger = aY.javaBigInteger.mod(aZ.javaBigInteger);
         javaBigDecimal = null;
     }
@@ -501,7 +515,7 @@ public class BigNumber {
 
 
     /**
-     * Perform a floor operation on this BigInteger, if possible.
+     * Perform a floor operation on the specified BigNumber, if possible, and place the result into this BigNumber.
      * @param aX
      */
     public void floor(BigNumber aX) {
@@ -517,6 +531,9 @@ public class BigNumber {
                 if (difference.signum() != 0) {
                     rounded = rounded.add(new BigInteger("-1"));
                 }
+
+                // javaBigInteger = d.round(new MathContext(d.precision(),RoundingMode.FLOOR)).toBigInteger();TODO:tk:This code produces errors.
+
             }
             javaBigInteger = rounded;
         } else {
@@ -526,16 +543,21 @@ public class BigNumber {
     }
 
     /**
-     * Set the precision of this BigInteger (in bits).
+     * Set the precision of this BigNumber (in bits).
      *
      * @param aPrecision
      */
-    public void precision(int aPrecision) {
+    public void setPrecision(int aPrecision) {
         iPrecision = aPrecision;
         if (javaBigDecimal != null) {
-            if (javaBigDecimal.scale() > aPrecision) {
-                javaBigDecimal = javaBigDecimal.setScale(aPrecision, BigDecimal.ROUND_HALF_EVEN);
-            }
+           // if (javaBigDecimal.scale() > aPrecision) {
+           //     javaBigDecimal = javaBigDecimal.setScale(aPrecision, BigDecimal.ROUND_HALF_EVEN);
+           // }
+           if(javaBigDecimal.precision() > aPrecision)
+           {
+               javaBigDecimal = new BigDecimal(javaBigDecimal.toString(),new MathContext(aPrecision));
+           }
+
         }
     }
 
@@ -643,6 +665,7 @@ public class BigNumber {
         if (javaBigInteger != null) {
             return javaBigInteger.abs().bitLength();
         }
+
         {
             BigDecimal d = javaBigDecimal.abs();
             if (iTensExp != 0) {
@@ -704,6 +727,6 @@ public class BigNumber {
         if (aNumber.javaBigDecimal != null) {
             return aNumber.javaBigDecimal;
         }
-        return new BigDecimal(aNumber.javaBigInteger);
+        return new BigDecimal(aNumber.javaBigInteger, new MathContext(iPrecision));
     }
 }

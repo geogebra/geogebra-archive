@@ -1,7 +1,7 @@
 
 
 
-LocalSymbols(TraceStart,TraceEnter,TraceLeave,DebugStart,DebugEnter, 
+LocalSymbols(TraceStart,TraceEnter,TraceLeave,DebugStart,DebugEnter,
              DebugLeave,ProfileStart,ProfileEnter,result,
              WriteLines,ClearScreenString,Debug'FileLoaded, Debug'FileLines, Debug'NrLines,
              debugstepoverfile, debugstepoverline) [
@@ -111,7 +111,7 @@ Macro(DebugEnter,{})
       ]);
 
   If(debugging = False And InDebugMode(),
-  [  
+  [
     Local(file,line);
     file := DebugFile(CustomEval'Expression());
     If(filebreakpoints[file] != Empty,
@@ -157,14 +157,14 @@ Macro(DebugLeave,{})
     debugstopdepth := -1;
   ]);
 
-  debugcallstack := Tail(debugcallstack);
+  debugcallstack := Rest(debugcallstack);
   If(debugverbose,Echo(CustomEval'Result()," <-- ",CustomEval'Expression()));
 ];
 Macro(Debug,{expression})
 ToStdout()
 [
    DebugStart();
-   CustomEval(DebugEnter(),DebugLeave(),If(debugstopped,Check(False,""),[debugging:=True;debugcallstack := Tail(debugcallstack);]),@expression);
+   CustomEval(DebugEnter(),DebugLeave(),If(debugstopped,Check(False,""),[debugging:=True;debugcallstack := Rest(debugcallstack);]),@expression);
 ];
 
 
@@ -191,10 +191,9 @@ Macro(Profile,{expression})
 Macro(Time,{expression})
 [
 	Local(result);
-	Echo(GetTime(Set(result, @expression)), "seconds taken");
+	Echo(GetTime()Set(result, @expression), "seconds taken");
 	result;
 ];
-
 
 
 
@@ -211,11 +210,11 @@ WriteLines(filename,lines,from,nrlines,breakpoints,current):=
   For(i:=from,i<from+nrlines And i<nr,i++)
   [
 
-    if (current = i) 
+    if (current = i)
       WriteString(">")
     else
       WriteString(" ");
-    if (Contains(breakpoints,i)) 
+    if (Contains(breakpoints,i))
       WriteString("*")
     else
       WriteString(" ");
@@ -239,8 +238,5 @@ DebugShowCode():=
 ];
 
 ]; 
-
-
-
 
 

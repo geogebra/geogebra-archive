@@ -10,6 +10,9 @@
 
 
 
+
+
+
 Internal'ZetaNum(_s, n_IsInteger) <-- [
 	Local(result, j, sign);
 	If (InVerboseMode(), Echo({"Internal'ZetaNum: Borwein's method, precision ", BuiltinPrecisionGet(), ", n = ", n}));
@@ -34,7 +37,7 @@ Internal'ZetaNum1(s, limit) := [
 	sum+1;	
 ];
 
-Internal'ZetaNum2(s, limit) := 
+Internal'ZetaNum2(s, limit) :=
 [
 	Local(i, prod);
 	If (InVerboseMode(), Echo({"Internal'ZetaNum: direct method (product), precision ", BuiltinPrecisionGet(), ", N = ", limit}));
@@ -50,7 +53,7 @@ Internal'ZetaNumCoeffEj(j,n) := [
 	Local(k);
 	2^n-If(j<n,
 		0,
-		Sum(k,0,j-n,Bin(n,k))	
+		Sum(k,0,j-n,BinomialCoefficient(n,k))	
 	);
 ];
 
@@ -80,7 +83,7 @@ Zeta3() :=
     ];
     result := 5/4*result;
   ], BuiltinPrecisionGet()+IntLog(BuiltinPrecisionGet(),10)+1);
-	
+
 	result;
 ];
 
@@ -115,4 +118,5 @@ Zeta3() :=
 	BuiltinPrecisionSet(prec);
 	result;
 ];
+
 

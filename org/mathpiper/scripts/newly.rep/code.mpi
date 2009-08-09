@@ -1,57 +1,34 @@
 
 
-Nl():=
-"
-";
 
-NewLine() := WriteN(Nl(),1);
-NewLine(n):= WriteN(Nl(),n);
-Space() := WriteN(" ",1);
-Space(n):= WriteN(" ",n);
 
-WriteN(string,n) :=
+
+
+BracketRational(r,eps):=
 [
-  Local(i);
-  For(i:=1,i<=n,i++) WriteString(string);
-  True;
+	Local(n,cflist, r1, r2);
+	cflist := ContFracList(r);
+	n:=2;
+	r1 := ContFracEval(Take(cflist,n));
+	r2 := -r1;
+	
+	While (n<Length(cflist) And ( Abs(N(Eval(r2-r1))) > Abs(N(Eval(eps*r)) ) ) )
+	[
+		r2 := r1;
+		n++;
+		r1 := ContFracEval(Take(cflist,n));
+	];
+	
+	
+	If(
+		n=Length(cflist),
+		{},	
+		If(N(Eval(r-r1))>0,
+			{r1, r2},	
+			{r2, r1}
+		)
+	);
 ];
-
-UniqueConstant() <--
-[
-  Local(result);
-  result := String(LocalSymbols(C)(C));
-  Atom(StringMidGet(2,Length(result)-1,result));
-];
-
-
-1 # IsFreeOf({},_expr) <-- True;
-2 # IsFreeOf(var_IsList, _expr) <-- And(IsFreeOf(Head(var),expr), IsFreeOf(Tail(var),expr));
-
-4 # IsFreeOf(_var,{}) <-- True;
-5 # IsFreeOf(_var,expr_IsList) <-- And(IsFreeOf(var,Head(expr)), IsFreeOf(var,Tail(expr)));
-
-
-10 # IsFreeOf(_expr,_expr) <-- False;
-
-
-11 # IsFreeOf(_var,expr_IsFunction) <-- IsFreeOf(var,Tail(Listify(expr)));
-
-
-12 # IsFreeOf(_var,_expr) <-- True;
-
-
-Function("IsZeroVector",{aList}) aList = ZeroVector(Length(aList));
-
-TemplateFunction("WithValue",{var,val,expr})
-[
-  If(IsList(var),
-     ApplyPure("MacroLocal",var),
-     MacroLocal(var)
-    ); 
-  ApplyPure(":=",{var,val});
-  Eval(expr);
-];
-
 
 
 Function("CharacteristicEquation",{matrix,var})
@@ -59,53 +36,73 @@ Function("CharacteristicEquation",{matrix,var})
 HoldArg("CharacteristicEquation",var);
 
 
-10 # EigenValues(matrix_IsUpperTriangular) <-- Diagonal(matrix);
-10 # EigenValues(matrix_IsLowerTriangular) <-- Diagonal(matrix);
 
-20 # EigenValues(matrix_IsMatrix) <-- Roots(CharacteristicEquation(matrix,xx));
 
-EigenVectors(_matrix,_eigenvalues) <--
+
+
+
+10 # ContFrac(_n) <-- ContFrac(n, 6);
+50 # ContFrac(_n,_depth) <-- ContFracEval(ContFracList(n, depth), rest);
+
+40 # ContFrac(n_CanBeUni,_depth)_(Length(VarList(n)) = 1) <--
 [
-  Local(result,n);
+  ContFracDoPoly(n,depth,VarList(n)[1]);
+];
 
-  n:=Length(eigenvalues);
-  result:={};
-  ForEach(e,eigenvalues)
-  [
-    Local(possible);
-
-    possible:=OldSolve(matrix*MakeVector(k,n)==e*MakeVector(k,n),MakeVector(k,n))[1];
-
-
-
-    If(Not(IsZeroVector(possible)),
-      DestructiveAppend(result,possible)
-      );
-
-  ];
-  result;
+5  # ContFracDoPoly(_exp,0,_var) <-- rest;
+5  # ContFracDoPoly(0,0,_var) <-- rest;
+10 # ContFracDoPoly(_exp,_depth,_var) <--
+[
+  Local(content,exp2,first,second);
+  first:=Coef(exp,var,0);
+  exp:=exp-first;
+  content:=Content(exp);
+  exp2:=DivPoly(1,PrimitivePart(exp),var,5+3*depth)-1;
+  second:=Coef(exp2,0);
+  exp2 := exp2 - second;
+  first+content/((1+second)+ContFracDoPoly(exp2,depth-1,var));
 ];
 
 
 
-Function("RationalizeNumber",{x})
-[
-  Check(IsNumber(x),"RationalizeNumber: Error: " : (ToString()Write(x)) :" is not a number");
-  Local(n,i);
-  n:=1;
-  i:=0;
-  
-  While(i<=BuiltinPrecisionGet() And Not(FloatIsInt(x)))  
-  [ 
-    n:=n*10; x:=x*10; 
-    i:=i+1;
 
-  ];
-  Floor(x+0.5)/n; 
-];
 
-Function("Rationalize",{a'number})
-  Substitute(a'number,{{x},IsNumber(x) And Not(IsInteger(x))},"RationalizeNumber");
+
+
+
+
+10 # ContFracEval({}, _rest) <-- rest;
+
+10 # ContFracEval({{_n, _m}}, _rest) <-- n+m+rest;
+15 # ContFracEval({_n}, _rest) <-- n+rest;
+
+20 # ContFracEval(list_IsList, _rest)_(IsList(First(list))) <-- First(First(list)) + Rest(First(list)) / ContFracEval(Rest(list), rest);
+
+30 # ContFracEval(list_IsList, _rest) <-- First(list) + 1 / ContFracEval(Rest(list), rest);
+
+
+ContFracEval(list_IsList) <-- ContFracEval(list, 0);
+
+
+
+
+
+
+
+
+10 # ContFracList(_n) <-- ContFracList(n, Infinity);
+
+10 # ContFracList(_n, _depth)_(depth <= 0) <-- {};
+20 # ContFracList(n_IsInteger, _depth) <-- {n};
+
+30 # ContFracList(n_IsNumber, _depth) _InNumericMode() <-- NonN(ContFracList(Rationalize(n), depth));
+
+40 # ContFracList(n_IsNumber, _depth) <-- ContFracList(Rationalize(n), depth);
+
+
+35 # ContFracList((n_IsNegativeInteger) / (m_IsInteger), _depth) <-- Push( ContFracList(m/Mod(n,m), depth-1) , Div(n,m)-1);
+
+40 # ContFracList((n_IsInteger) / (m_IsInteger), _depth) <-- Push( ContFracList(m/Mod(n,m), depth-1) , Div(n,m));
 
 
 10 # Decimal( n_IsInteger ) <-- {n,{0}};
@@ -136,7 +133,7 @@ Function("Rationalize",{a'number})
 DecimalFindPeriod(_list) <--
 [
   Local(period,nr,reversed,first,i);
-  reversed:=Tail(DestructiveReverse(FlatCopy(Tail(list))));
+  reversed:=Rest(DestructiveReverse(FlatCopy(Rest(list))));
   nr:=Length(reversed)>>1;
   period:=1;
   first:=reversed[1];
@@ -147,7 +144,7 @@ DecimalFindPeriod(_list) <--
       [
         period:=i;
         i:=nr;
-      ]  
+      ]
       );
   ];
 
@@ -176,14 +173,99 @@ DecimalMatches(_reversed,_period) <--
 
 
 
+10 # EigenValues(matrix_IsUpperTriangular) <-- Diagonal(matrix);
+10 # EigenValues(matrix_IsLowerTriangular) <-- Diagonal(matrix);
 
+20 # EigenValues(matrix_IsMatrix) <-- Roots(CharacteristicEquation(matrix,xx));
+
+
+EigenVectors(_matrix,_eigenvalues) <--
+[
+  Local(result,n);
+
+  n:=Length(eigenvalues);
+  result:={};
+  ForEach(e,eigenvalues)
+  [
+    Local(possible);
+
+    possible:=OldSolve(matrix*MakeVector(k,n)==e*MakeVector(k,n),MakeVector(k,n))[1];
+
+
+
+    If(Not(IsZeroVector(possible)),
+      DestructiveAppend(result,possible)
+      );
+
+  ];
+  result;
+];
+
+
+
+
+GuessRational(_x) <-- GuessRational(x, Floor(1/2*BuiltinPrecisionGet()));
+GuessRational(x_IsRationalOrNumber, prec_IsInteger) <-- [
+	Local(denom'estimate, cf, i);
+	denom'estimate := 1;
+	cf := ContFracList(x);
+	For(i:=2, i<=Length(cf) And denom'estimate < 10^prec, i++)
+		[	
+			denom'estimate := denom'estimate * If(
+				cf[i] = 1,
+				If(
+					i+2<=Length(cf),	
+					RoundTo(N(Eval(cf[i]+1/(cf[i+1]+1/cf[i+2]))), 3),
+					
+					RoundTo(N(Eval(cf[i]+1/cf[i+1])), 3)
+				),
+				
+				cf[i]
+			);
+		];
+	If (denom'estimate < 10^prec,
+		If(InVerboseMode(), Echo({"GuessRational: all ", i, "terms are within limits"})),
+		i--	
+	);
+	i--;	
+	If(InVerboseMode(), Echo({"GuessRational: using ", i, "terms of the continued fraction"}));
+	ContFracEval(Take(cf, i));
+];
+
+
+
+Function("InverseTaylor",{var,val,degree,func})
+[
+  Local(l1);
+  l1:=UniTaylor(func,var,val,degree);
+  val+ReversePoly(l1,var,var,var,degree+1);
+];
+
+
+1 # IsFreeOf({},_expr) <-- True;
+2 # IsFreeOf(var_IsList, _expr) <-- And(IsFreeOf(First(var),expr), IsFreeOf(Rest(var),expr));
+
+4 # IsFreeOf(_var,{}) <-- True;
+5 # IsFreeOf(_var,expr_IsList) <-- And(IsFreeOf(var,First(expr)), IsFreeOf(var,Rest(expr)));
+
+
+10 # IsFreeOf(_expr,_expr) <-- False;
+
+
+11 # IsFreeOf(_var,expr_IsFunction) <-- IsFreeOf(var,Rest(Listify(expr)));
+
+
+12 # IsFreeOf(_var,_expr) <-- True;
+
+
+Function("IsZeroVector",{aList}) aList = ZeroVector(Length(aList));
 
 
 LagrangeInt(_var,_list) <--
 [
   Local(nr);
   nr:=Length(list);
-  Factorize(FillList(var,nr)-list);
+  Product(FillList(var,nr)-list);
 ];
 
 LagrangeInterpolant(list_IsList,_values,_var) <--
@@ -198,137 +280,6 @@ LagrangeInterpolant(list_IsList,_values,_var) <--
     result:=result + values[i]*LagrangeInt(var,sublist)/LagrangeInt(list[i],sublist);
   ];
   result;
-];
-
-
-
-
-ReversePoly(_f,_g,_var,_newvar,_degree) <--
-[
-  Local(orig,origg,G,V,W,U,n,initval,firstder,j,k,newsum);
-  orig:=MakeUni(f,var);
-  origg:=MakeUni(g,var);
-  initval:=Coef(orig,0);
-  firstder:=Coef(orig,1);
-  V:=Coef(orig,1 .. Degree(orig));
-  V:=Concat(V,FillList(0,degree));
-  G:=Coef(origg,1 .. Degree(origg));
-  G:=Concat(G,FillList(0,degree));
-  W:=FillList(0,Length(V)+2);
-  W[1]:=G[1]/firstder;
-  U:=FillList(0,Length(V)+2);
-  U[1]:=1/firstder;
-  n:=1;
-  While(n<degree-1)
-  [
-    n++;
-    For(k:=0,k<n-1,k++)
-    [
-      newsum:=U[k+1];
-      For(j:=2,j<=k+1,j++)
-      [
-        newsum:=newsum-U[k+2-j]*V[j];
-      ];
-      U[k+1]:=newsum/firstder;
-    ];
-    newsum:=0;
-    For(k:=2,k<=n,k++)
-    [
-      newsum:=newsum - k*U[n+1-k]*V[k];
-    ];
-    U[n]:=newsum/firstder;
-    newsum:=0;
-    For(k:=1,k<=n,k++)
-    [
-      newsum:=newsum + k*U[n+1-k]*G[k]/n;
-    ];
-    W[n]:=newsum;
-  ];
-  DestructiveInsert(W,1,Coef(origg,0));
-  Subst(newvar,newvar-initval) 
-    NormalForm(UniVariate(newvar,0,W));
-];
-
-
-
-
-Function("InverseTaylor",{var,val,degree,func})
-[
-  Local(l1);
-  l1:=UniTaylor(func,var,val,degree);
-  val+ReversePoly(l1,var,var,var,degree+1);
-];
-
-
-
-
-
-
-
-
-
-
-
-
-
-10 # ContFracList(_n) <-- ContFracList(n, Infinity);
-
-10 # ContFracList(_n, _depth)_(depth <= 0) <-- {};
-20 # ContFracList(n_IsInteger, _depth) <-- {n};
-
-30 # ContFracList(n_IsNumber, _depth) _InNumericMode() <-- NonN(ContFracList(Rationalize(n), depth));
-
-40 # ContFracList(n_IsNumber, _depth) <-- ContFracList(Rationalize(n), depth);
-
-
-35 # ContFracList((n_IsNegativeInteger) / (m_IsInteger), _depth) <-- Push( ContFracList(m/Mod(n,m), depth-1) , Div(n,m)-1);
-
-40 # ContFracList((n_IsInteger) / (m_IsInteger), _depth) <-- Push( ContFracList(m/Mod(n,m), depth-1) , Div(n,m));
-
-
-10 # ContFrac(_n) <-- ContFrac(n, 6);
-50 # ContFrac(_n,_depth) <-- ContFracEval(ContFracList(n, depth), rest);
-
-
-
-
-
-
-
-
-10 # ContFracEval({}, _rest) <-- rest;
-
-10 # ContFracEval({{_n, _m}}, _rest) <-- n+m+rest;
-15 # ContFracEval({_n}, _rest) <-- n+rest;
-
-20 # ContFracEval(list_IsList, _rest)_(IsList(Head(list))) <-- Head(Head(list)) + Tail(Head(list)) / ContFracEval(Tail(list), rest);
-
-30 # ContFracEval(list_IsList, _rest) <-- Head(list) + 1 / ContFracEval(Tail(list), rest);
-
-
-ContFracEval(list_IsList) <-- ContFracEval(list, 0);
-
-
-
-
-
-40 # ContFrac(n_CanBeUni,_depth)_(Length(VarList(n)) = 1) <--
-[
-  ContFracDoPoly(n,depth,VarList(n)[1]);
-];
-
-5  # ContFracDoPoly(_exp,0,_var) <-- rest;
-5  # ContFracDoPoly(0,0,_var) <-- rest;
-10 # ContFracDoPoly(_exp,_depth,_var) <--
-[
-  Local(content,exp2,first,second);
-  first:=Coef(exp,var,0);
-  exp:=exp-first;
-  content:=Content(exp);
-  exp2:=DivPoly(1,PrimitivePart(exp),var,5+3*depth)-1;
-  second:=Coef(exp2,0);
-  exp2 := exp2 - second;
-  first+content/((1+second)+ContFracDoPoly(exp2,depth-1,var));
 ];
 
 
@@ -378,124 +329,122 @@ NearRational(x_IsRationalOrNumber, prec_IsInteger) <-- [
 ];
 
 
+NewLine() := WriteN(Nl(),1);
+NewLine(n):= WriteN(Nl(),n);
 
-GuessRational(_x) <-- GuessRational(x, Floor(1/2*BuiltinPrecisionGet()));
-GuessRational(x_IsRationalOrNumber, prec_IsInteger) <-- [
-	Local(denom'estimate, cf, i);
-	denom'estimate := 1;
-	cf := ContFracList(x);
-	For(i:=2, i<=Length(cf) And denom'estimate < 10^prec, i++)
-		[	
-			denom'estimate := denom'estimate * If(
-				cf[i] = 1,
-				If(
-					i+2<=Length(cf),	
-					RoundTo(N(Eval(cf[i]+1/(cf[i+1]+1/cf[i+2]))), 3),
-					
-					RoundTo(N(Eval(cf[i]+1/cf[i+1])), 3)
-				),
-				
-				cf[i]
-			);
-		];
-	If (denom'estimate < 10^prec,
-		If(InVerboseMode(), Echo({"GuessRational: all ", i, "terms are within limits"})),
-		i--	
-	);
-	i--;	
-	If(InVerboseMode(), Echo({"GuessRational: using ", i, "terms of the continued fraction"}));
-	ContFracEval(Take(cf, i));
+
+Nl():=
+"
+";
+
+
+Function("Rationalize",{a'number})
+  Substitute(a'number,{{x},IsNumber(x) And Not(IsInteger(x))},"RationalizeNumber");
+
+
+Function("RationalizeNumber",{x})
+[
+  Check(IsNumber(x),"RationalizeNumber: Error: " : (ToString()Write(x)) :" is not a number");
+  Local(n,i);
+  n:=1;
+  i:=0;
+  
+  While(i<=BuiltinPrecisionGet() And Not(FloatIsInt(x)))
+  [
+    n:=n*10; x:=x*10;
+    i:=i+1;
+
+  ];
+  Floor(x+0.5)/n; 
+];
+
+
+
+
+ReversePoly(_f,_g,_var,_newvar,_degree) <--
+[
+  Local(orig,origg,G,V,W,U,n,initval,firstder,j,k,newsum);
+  orig:=MakeUni(f,var);
+  origg:=MakeUni(g,var);
+  initval:=Coef(orig,0);
+  firstder:=Coef(orig,1);
+  V:=Coef(orig,1 .. Degree(orig));
+  V:=Concat(V,FillList(0,degree));
+  G:=Coef(origg,1 .. Degree(origg));
+  G:=Concat(G,FillList(0,degree));
+  W:=FillList(0,Length(V)+2);
+  W[1]:=G[1]/firstder;
+  U:=FillList(0,Length(V)+2);
+  U[1]:=1/firstder;
+  n:=1;
+  While(n<degree-1)
+  [
+    n++;
+    For(k:=0,k<n-1,k++)
+    [
+      newsum:=U[k+1];
+      For(j:=2,j<=k+1,j++)
+      [
+        newsum:=newsum-U[k+2-j]*V[j];
+      ];
+      U[k+1]:=newsum/firstder;
+    ];
+    newsum:=0;
+    For(k:=2,k<=n,k++)
+    [
+      newsum:=newsum - k*U[n+1-k]*V[k];
+    ];
+    U[n]:=newsum/firstder;
+    newsum:=0;
+    For(k:=1,k<=n,k++)
+    [
+      newsum:=newsum + k*U[n+1-k]*G[k]/n;
+    ];
+    W[n]:=newsum;
+  ];
+  DestructiveInsert(W,1,Coef(origg,0));
+  Subst(newvar,newvar-initval)
+    NormalForm(UniVariate(newvar,0,W));
 ];
 
 
 
 
 
+Space() := WriteN(" ",1);
+Space(n):= WriteN(" ",n);
 
-BracketRational(r,eps):=
+
+
+
+
+
+
+
+
+UniqueConstant() <--
 [
-	Local(n,cflist, r1, r2);
-	cflist := ContFracList(r);
-	n:=2;
-	r1 := ContFracEval(Take(cflist,n));
-	r2 := -r1;
-	
-	While (n<Length(cflist) And ( Abs(N(Eval(r2-r1))) > Abs(N(Eval(eps*r)) ) ) )
-	[
-		r2 := r1;
-		n++;
-		r1 := ContFracEval(Take(cflist,n));
-	];
-	
-	
-	If(
-		n=Length(cflist),
-		{},	
-		If(N(Eval(r-r1))>0,
-			{r1, r2},	
-			{r2, r1}
-		)
-	);
+  Local(result);
+  result := String(LocalSymbols(C)(C));
+  Atom(StringMidGet(2,Length(result)-1,result));
 ];
 
 
-LocalSymbols(a,b)[
-
-10 # MatchLinear(var_IsAtom,expr_CanBeUni(var)) <--
+TemplateFunction("WithValue",{var,val,expr})
 [
-  Set(expr,MakeUni(expr,var));
-  MatchLinear(expr);
+  If(IsList(var),
+     ApplyPure("MacroLocal",var),
+     MacroLocal(var)
+    );
+  ApplyPure(":=",{var,val});
+  Eval(expr);
 ];
-20 # MatchLinear(_var,_expr) <-- False;
 
-10 # MatchLinear(_expr)_(Degree(expr,var)<2) <--
+
+WriteN(string,n) :=
 [
-  Check(IsUniVar(expr),ToString()Echo({"Incorrect argument ",expr," passed to MatchLinear"}));
-
-
-
-
-
-  a := Coef(expr,1);
-  b := Coef(expr,0);
+  Local(i);
+  For(i:=1,i<=n,i++) WriteString(string);
   True;
 ];
-20 # MatchLinear(_expr) <-- False;
-UnFence("MatchLinear",1);
-UnFence("MatchLinear",2);
-
-
-10 # MatchPureSquared(var_IsAtom,_sign2,_sign0,expr_CanBeUni(var)) <--
-[
-  Set(expr,MakeUni(expr,var));
-  MatchPureSquared(expr,sign2,sign0);
-];
-20 # MatchPureSquared(_var,_sign2,_sign0,_expr) <-- False;
-
-10 # MatchPureSquared(_expr,_sign2,_sign0)_(Degree(expr,var)=2 And 
-                                    Coef(expr,1) = 0 And   
-				    IsNumber(Coef(expr,0)) And
-				    IsNumber(Coef(expr,2)) And
-				    Coef(expr,0)*sign0 > 0 And
-				    Coef(expr,2)*sign2 > 0
-				    ) <--
-[
-  Check(IsUniVar(expr),ToString()Echo({"Incorrect argument ",expr," passed to MatchLinear"}));
-
-
-
-  a := Coef(expr,2);
-  b := Coef(expr,0);
-  True;
-];
-20 # MatchPureSquared(_expr,_sign2,_sign0) <-- False;
-UnFence("MatchPureSquared",3);
-UnFence("MatchPureSquared",4);
-
-Matched'a() := a;
-Matched'b() := b;
-
-
-
-]; 
 

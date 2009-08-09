@@ -18,10 +18,9 @@
 
 package org.mathpiper.builtin;
 
-import org.mathpiper.lisp.ArgList;
-import org.mathpiper.lisp.Cons;
-import org.mathpiper.lisp.ConsPointerArray;
+import org.mathpiper.lisp.cons.Cons;
 import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.cons.ConsPointerArray;
 
 
 public class Array extends BuiltinContainer
@@ -32,10 +31,16 @@ public class Array extends BuiltinContainer
 	{
 		iArray = new ConsPointerArray(aSize,aInitialItem);
 	}
-	public String send(ArgList aArgList)
+	public String send(ArgumentList aArgList)
 	{
 		return null;
 	}
+
+	public JavaObject execute(String methodName, Object[] arguemnts) throws Exception
+	{
+		return null;
+	}
+
 	public String typeName()
 	{
 		return "\"Array\"";
@@ -56,7 +61,7 @@ public class Array extends BuiltinContainer
 		iArray.setElement(aItem-1,aObject);
 	}
 
-    public Object getJavaObject()
+    public Object getObject()
     {
         return null;
     }

@@ -1,5 +1,8 @@
 
 
+
+
+
 10 # OdeLeftHandSideEq(_l == _r) <-- (l-r);
 20 # OdeLeftHandSideEq(_e) <-- e;
 
@@ -111,7 +114,7 @@ OdeSolveLinearHomogeneousConstantCoefficients(_e) <--
 
   If(InVerboseMode(), Echo("OdeSolve: Auxiliary Eqn ",auxeqn) );
 
-  
+
   
   e := Apply("RootsWithMultiples",{e});
   e := RemoveDuplicates(e);
@@ -133,7 +136,7 @@ OdeSolveLinearHomogeneousConstantCoefficients(_e) <--
     
     {c,b,a} := Coef(auxeqn,x,0 .. 2);
 
-    
+
     roots := PSolve(a*x^2+b*x+c,x);
     If(InVerboseMode(),Echo("OdeSolve: Roots of quadratic:",roots) );
 
@@ -150,7 +153,7 @@ OdeSolveLinearHomogeneousConstantCoefficients(_e) <--
 	Add(OdeConstantList(2)*{Exp(roots[1]*x),Exp(roots[2]*x)});
     ] else [
       If(InVerboseMode(),Echo("OdeSolve: Complex conjugate pair roots"));
-      Local(alpha,beta); 
+      Local(alpha,beta);
       alpha:=Re(roots[1]);
       beta:=Im(roots[1]);
       Exp(alpha*x)*Add( OdeConstantList(2)*{Sin(beta*x),Cos(beta*x)} );
@@ -175,8 +178,8 @@ OdeSolveLinearHomogeneousConstantCoefficients(_e) <--
 	
 	
 	coefs:=Reverse(Listify(h)[3]);
-	While( Head(coefs) = 0 )[
-		coefs:=Tail(coefs);
+	While( First(coefs) = 0 )[
+		coefs:=Rest(coefs);
 	];
 	Length(coefs)-1;
 ];
@@ -194,11 +197,11 @@ OdeSolveLinearHomogeneousConstantCoefficients(_e) <--
 10 # OdeSolve(_a/y'==_expr)_(IsFreeOf(y,a)) <-- OdeSolve(y'==a/expr);
 
 
-10 # OdeSolve(y'==_expr)_(IsFreeOf({y,y',y''},expr)) <-- 
+10 # OdeSolve(y'==_expr)_(IsFreeOf({y,y',y''},expr)) <--
 [
 	If(InVerboseMode(),Echo("OdeSolve: Integral in disguise!"));
 	If(InVerboseMode(),Echo("OdeSolve: Attempting to integrate ",expr));
-	
+
 	(Integrate(x) expr)+UniqueConstant();
 ];
 
@@ -239,7 +242,4 @@ OdeTest(_e,_solution) <--
   e:=Simplify(e);
   e;
 ];
-
-
-
 

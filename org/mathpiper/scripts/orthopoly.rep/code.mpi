@@ -1,9 +1,12 @@
 
 
+
+
+
 10 # EvaluateHornerScheme({}, _x) <-- 0;
 
 10 # EvaluateHornerScheme({_coeffs}, _x) <-- coeffs;
-20 # EvaluateHornerScheme(coeffs_IsList, _x) <-- Head(coeffs)+x*EvaluateHornerScheme(Tail(coeffs), x);
+20 # EvaluateHornerScheme(coeffs_IsList, _x) <-- First(coeffs)+x*EvaluateHornerScheme(Rest(coeffs), x);
 
 
 
@@ -310,3 +313,5 @@ OrthoPolyCoeffs("Tscheb2", n_IsInteger, {}) <-- ChebUCoeffs(n);
 	];
 	result;
 ];
+
+

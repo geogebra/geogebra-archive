@@ -3,6 +3,7 @@
 
 
 
+
 RuleBase("FSin",{f,x});
 RuleBase("FCos",{f,x});
 RuleBase(":*:",{x,y});
@@ -50,7 +51,7 @@ FFromInternal(f):=Substitute(f,"IsMulF","FReplaceBack");
 
 
 
- FLog(s,f):=[]; 
+ FLog(s,f):=[];
 
 
 
@@ -126,8 +127,8 @@ FSimpFactor(flist):=
   [
     Local(term);
 FLog("simpfact",flist);
-    term:=Head(flist);
-    flist:=Tail(flist);
+    term:=First(flist);
+    flist:=Rest(flist);
     FProcessTerm(term);
   ];
 FLog("simpfact",flist);
@@ -247,11 +248,11 @@ Rule("FProcessTerm",1,2,Length(t)>1 And Not(IsFTrig(t[2])) )
 ];
 
 
-Rule("FProcessTerm",1,4,Length(t)=1 And Type(t[1]) = "FCos") 
+Rule("FProcessTerm",1,4,Length(t)=1 And Type(t[1]) = "FCos")
 [
   DestructiveInsert(rlist[1],1,t[1]);
 ];
-Rule("FProcessTerm",1,4,Length(t)=1 And Type(t[1]) = "FSin") 
+Rule("FProcessTerm",1,4,Length(t)=1 And Type(t[1]) = "FSin")
 [
   DestructiveInsert(rlist[2],1,t[1]);
 ];
@@ -264,7 +265,7 @@ Rule("FProcessTerm",1,5,Length(t)>1)
   y:=t[2];
   news:=TrigSimpCombineB(x,y);
   
-  t:=Tail(t);
+  t:=Rest(t);
   term1:=FlatCopy(t);
   term2:=FlatCopy(t);
   term1[1]:=news[1];
@@ -296,7 +297,7 @@ Rule("TrigSimpCombine",1,10,True)
 
   
   varlist:=VarList(f);
-  
+
 
   new:=FToInternal(new);
 FLog("Internal",new);
@@ -354,7 +355,7 @@ CosAdd(t):=
   If(look = Empty,
      [
        arg:=Expand(-arg,varlist);
-       look:=Assoc(arg,cassoc); 
+       look:=Assoc(arg,cassoc);
        If(look = Empty,
          DestructiveInsert(cassoc,1,{arg,t[1]}),
          look[2]:=look[2]+t[1]
@@ -385,6 +386,8 @@ SinAdd(t):=
     );
 ];
 UnFence("SinAdd",1);
+
+
 
 
 

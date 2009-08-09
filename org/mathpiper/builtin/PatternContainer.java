@@ -19,10 +19,11 @@
 package org.mathpiper.builtin;
 
 //import org.mathpiper.parametermatchers.PatternContainer;
-import org.mathpiper.lisp.ArgList;
-import org.mathpiper.lisp.ConsPointer;
-import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.Environment;
+import org.mathpiper.builtin.ArgumentList;
+import org.mathpiper.lisp.parametermatchers.Pattern;
 
 
 /**
@@ -31,12 +32,17 @@ import org.mathpiper.lisp.LispError;
  */
 public class PatternContainer extends BuiltinContainer
 {
-	protected org.mathpiper.parametermatchers.Pattern iPatternMatcher;
+	protected org.mathpiper.lisp.parametermatchers.Pattern iPatternMatcher;
 	
-	public PatternContainer(org.mathpiper.parametermatchers.Pattern aPatternMatcher)
+	public PatternContainer(org.mathpiper.lisp.parametermatchers.Pattern aPatternMatcher)
 	{
 		iPatternMatcher = aPatternMatcher;
 	}
+
+    public Pattern getPattern()
+    {
+        return iPatternMatcher;
+    }
 
 	public boolean matches(Environment  aEnvironment, ConsPointer aArguments) throws Exception
 	{
@@ -55,7 +61,12 @@ public class PatternContainer extends BuiltinContainer
 	}
 	
 	//From BuiltinContainer
-	public String send(ArgList aArgList)
+	public String send(ArgumentList aArgList)
+	{
+		return null;
+	}
+
+	public JavaObject execute(String methodName, Object[] arguemnts) throws Exception
 	{
 		return null;
 	}
@@ -65,7 +76,7 @@ public class PatternContainer extends BuiltinContainer
 		return "\"Pattern\"";
 	}
 
-     public Object getJavaObject()
+     public Object getObject()
     {
         return null;
     }

@@ -1,109 +1,4 @@
 
-SquareFree(_p) <--
-[
-  Local(dp,gcd);
-
-  dp:=MakeMultiNomial(`(D(x)(@p)),{x});
-
-  
-
-  p:=MakeMultiNomial(p,{x});
-
-
-  gcd:=MultiGcd(p,dp);
-
-
-  NormalForm(MultiDivide(p,{gcd})[1][1]);
-
-];
-
-
-SturmSequence(_p) <--
-[
-  Local(result,i,deg,nt);
-  result:={p,`D(@x)(@p)};
-  deg:=Degree(p);
-  For(i:=3,i<=deg+1,i++)
-  [
-    nt := -NormalForm(MultiDivide(MM(result[i-2],{x}),{MM(result[i-1],{x})})[2]);
-    DestructiveAppend(result,nt);
-  ];
-  result;
-];
-
-10 # SturmVariations(_S,Infinity) <--
-[
-  Local(i,s);
-  s:=FillList(0,Length(S));
-  For(i:=1,i<=Length(S),i++)
-  [
-    s[i] := LeadingCoef(S[i]);
-  ];
-  SturmVariations(s);
-];
-10 # SturmVariations(_S,-Infinity) <--
-[
-  Local(i,s);
-  s:=FillList(0,Length(S));
-  For(i:=1,i<=Length(S),i++)
-  [
-    s[i] := ((-1)^Degree(S[i]))*LeadingCoef(S[i]);
-  ];
-  SturmVariations(s);
-];
-
-20 # SturmVariations(_S,_x) <-- SturmVariations(Eval(S));
-SturmVariations(_S) <--
-[
-  Local(result,prev);
-
-  result:=0;
-  While(Length(S)>0 And IsZero(S[1])) S:=Tail(S);
-
-  if (Length(S)>0)
-  [
-    prev:=S[1];
-    ForEach(item,Tail(S))
-    [
-      if(Not IsZero(item))
-      [
-        if (prev*item < 0) [result++;];
-        prev:=item;
-      ];
-    ];
-  ];
-  result;
-];
-
-
-
- 5 # MaximumBound(_p)_(IsZero(p Where x==0)) <-- MaximumBound(Simplify(p/x));
-10 # MaximumBound(_p)_(Degree(p)>0) <--
-[
-  Local(an);
-  an:=Coef(p,(Degree(p)-1) .. 0)/Coef(p,Degree(p));
-  an := N(Eval(Abs(an)^(1/(1 .. Degree(p)))));
-  Rationalize(2*Max(an));
-];
-
-20 # MaximumBound(_p) <-- Infinity;
-
-10 # MinimumBound(_p)_(IsZero(p Where x==0)) <-- 0;
-
-20 # MinimumBound(_p)_(Degree(p)>0) <--
-[
-  Local(an,result);
-  an:=Coef(p,1 .. (Degree(p)))/Coef(p,0);
-  an := N(Eval(Abs(an)^(1/(1 .. Degree(p)))));
-
-  result:=0;
-  an:=2*Max(an);
-  if(Not IsZero(an)) [result := 1/an;];
-  Simplify(Rationalize(result));
-];
-30 # MinimumBound(_p) <-- -Infinity;
-
-
 BoundRealRoots(_p) <--
 [
   BoundRealRoots(p,MinimumBound(p),MaximumBound(p));
@@ -128,7 +23,7 @@ BoundRealRoots(_p,_Mmin,_Mmax) <--
   N:=Vmin - Vmax;
 
 
-  
+
 
   work:={};
   if (N=1)
@@ -147,8 +42,8 @@ BoundRealRoots(_p,_Mmin,_Mmax) <--
 
     While(work != {})
     [
-      {a,b,Va,Vb} := Head(work);
-      work := Tail(work);
+      {a,b,Va,Vb} := First(work);
+      work := Rest(work);
       c:=(a+b)/2;
 
       Vc := SturmVariations(S,c);
@@ -256,7 +151,7 @@ FindRealRoots(_p,_Mmin,_Mmax) <--
           b:=c;
           pb:=pc;
         ]
-        else 
+        else
         [
           a:=c;
           pa:=pc;
@@ -272,11 +167,121 @@ FindRealRoots(_p,_Mmin,_Mmax) <--
   result;
 ];
 
+
+
+ 5 # MaximumBound(_p)_(IsZero(p Where x==0)) <-- MaximumBound(Simplify(p/x));
+10 # MaximumBound(_p)_(Degree(p)>0) <--
+[
+  Local(an);
+  an:=Coef(p,(Degree(p)-1) .. 0)/Coef(p,Degree(p));
+  an := N(Eval(Abs(an)^(1/(1 .. Degree(p)))));
+  Rationalize(2*Max(an));
+];
+
+20 # MaximumBound(_p) <-- Infinity;
+
+
+10 # MinimumBound(_p)_(IsZero(p Where x==0)) <-- 0;
+
+20 # MinimumBound(_p)_(Degree(p)>0) <--
+[
+  Local(an,result);
+  an:=Coef(p,1 .. (Degree(p)))/Coef(p,0);
+  an := N(Eval(Abs(an)^(1/(1 .. Degree(p)))));
+
+  result:=0;
+  an:=2*Max(an);
+  if(Not IsZero(an)) [result := 1/an;];
+  Simplify(Rationalize(result));
+];
+30 # MinimumBound(_p) <-- -Infinity;
+
+
 NumRealRoots(_p) <--
 [
   Local(S);
   p:=SquareFree(Rationalize(p));
   S:=SturmSequence(p);
   SturmVariations(S,-Infinity)-SturmVariations(S,Infinity);
+];
+
+
+SquareFree(_p) <--
+[
+  Local(dp,gcd);
+
+  dp:=MakeMultiNomial(`(D(x)(@p)),{x});
+
+
+
+  p:=MakeMultiNomial(p,{x});
+
+
+  gcd:=MultiGcd(p,dp);
+
+
+  NormalForm(MultiDivide(p,{gcd})[1][1]);
+
+];
+
+
+
+SturmSequence(_p) <--
+[
+  Local(result,i,deg,nt);
+  result:={p,`D(@x)(@p)};
+  deg:=Degree(p);
+  For(i:=3,i<=deg+1,i++)
+  [
+    nt := -NormalForm(MultiDivide(MM(result[i-2],{x}),{MM(result[i-1],{x})})[2]);
+    DestructiveAppend(result,nt);
+  ];
+  result;
+];
+
+
+10 # SturmVariations(_S,Infinity) <--
+[
+  Local(i,s);
+  s:=FillList(0,Length(S));
+  For(i:=1,i<=Length(S),i++)
+  [
+    s[i] := LeadingCoef(S[i]);
+  ];
+  SturmVariations(s);
+];
+
+10 # SturmVariations(_S,-Infinity) <--
+[
+  Local(i,s);
+  s:=FillList(0,Length(S));
+  For(i:=1,i<=Length(S),i++)
+  [
+    s[i] := ((-1)^Degree(S[i]))*LeadingCoef(S[i]);
+  ];
+  SturmVariations(s);
+];
+
+20 # SturmVariations(_S,_x) <-- SturmVariations(Eval(S));
+SturmVariations(_S) <--
+[
+  Local(result,prev);
+
+  result:=0;
+  While(Length(S)>0 And IsZero(S[1])) S:=Rest(S);
+
+  if (Length(S)>0)
+  [
+    prev:=S[1];
+    ForEach(item,Rest(S))
+    [
+      if(Not IsZero(item))
+      [
+        if (prev*item < 0) [result++;];
+        prev:=item;
+      ];
+    ];
+  ];
+  result;
 ];
 

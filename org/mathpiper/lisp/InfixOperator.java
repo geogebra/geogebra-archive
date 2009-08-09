@@ -34,17 +34,17 @@ public class InfixOperator
 		iRightAssociative = 0;
 	}
 
-	public void SetRightAssociative()
+	public void setRightAssociative()
 	{
 		iRightAssociative = 1;
 	}
 
-	public void SetLeftPrecedence(int aPrecedence)
+	public void setLeftPrecedence(int aPrecedence)
 	{
 		iLeftPrecedence = aPrecedence;
 	}
 
-	public void SetRightPrecedence(int aPrecedence)
+	public void setRightPrecedence(int aPrecedence)
 	{
 		iRightPrecedence = aPrecedence;
 	}
