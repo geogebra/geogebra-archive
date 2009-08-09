@@ -17,18 +17,25 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 import org.apache.commons.math.distribution.CauchyDistribution;
+import org.apache.commons.math.distribution.CauchyDistributionImpl;
 import org.apache.commons.math.distribution.ChiSquaredDistribution;
-import org.apache.commons.math.distribution.DistributionFactory;
+import org.apache.commons.math.distribution.ChiSquaredDistributionImpl;
 import org.apache.commons.math.distribution.ExponentialDistribution;
+import org.apache.commons.math.distribution.ExponentialDistributionImpl;
 import org.apache.commons.math.distribution.FDistribution;
+import org.apache.commons.math.distribution.FDistributionImpl;
 import org.apache.commons.math.distribution.GammaDistribution;
+import org.apache.commons.math.distribution.GammaDistributionImpl;
 import org.apache.commons.math.distribution.HypergeometricDistribution;
+import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.apache.commons.math.distribution.PascalDistribution;
+import org.apache.commons.math.distribution.PascalDistributionImpl;
 import org.apache.commons.math.distribution.TDistribution;
+import org.apache.commons.math.distribution.TDistributionImpl;
 import org.apache.commons.math.distribution.WeibullDistribution;
+import org.apache.commons.math.distribution.WeibullDistributionImpl;
 
 /**
  * 
@@ -41,7 +48,6 @@ public abstract class AlgoDistribution extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	protected NumberValue a,b,c,d; //input
 	protected GeoNumeric num; //output	
-	protected static DistributionFactory factory = Application.getDistributionFactory();
 	private TDistribution t = null;
 	private ChiSquaredDistribution chisquared = null;
 	private FDistribution f = null;
@@ -98,7 +104,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	TDistribution getTDistribution(double param) {
 		if (t == null) 
-			t = factory.createTDistribution(param);
+			t = new TDistributionImpl(param);
 		if (t.getDegreesOfFreedom() != param)
 			t.setDegreesOfFreedom(param);
 		return t;
@@ -106,7 +112,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	FDistribution getFDistribution(double param, double param2) {
 		if (f == null) 
-			f = factory.createFDistribution(param,param2);
+			f = new FDistributionImpl(1,2);
 		if (f.getNumeratorDegreesOfFreedom() != param)
 			f.setNumeratorDegreesOfFreedom(param);
 		if (f.getDenominatorDegreesOfFreedom() != param2)
@@ -116,7 +122,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	GammaDistribution getGammaDistribution(double param, double param2) {
 		if (gamma == null) 
-			gamma = factory.createGammaDistribution(param, param2);
+			gamma = new GammaDistributionImpl(param, param2);
 		if (gamma.getAlpha() != param)
 			gamma.setAlpha(param);
 		if (gamma.getBeta() != param2)
@@ -126,7 +132,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	CauchyDistribution getCauchyDistribution(double param, double param2) {
 		if (cauchy == null) 
-			cauchy = factory.createCauchyDistribution(param, param2);
+			cauchy = new CauchyDistributionImpl(param, param2);
 		if (cauchy.getMedian() != param)
 			cauchy.setMedian(param);
 		if (cauchy.getScale() != param2)
@@ -136,7 +142,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	ChiSquaredDistribution getChiSquaredDistribution(double param) {
 		if (chisquared == null) 
-			chisquared = factory.createChiSquareDistribution(param);
+			chisquared = new ChiSquaredDistributionImpl(param);
 		if (chisquared.getDegreesOfFreedom() != param)
 			chisquared.setDegreesOfFreedom(param);
 		return chisquared;
@@ -144,7 +150,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	ExponentialDistribution getExponentialDistribution(double param) {
 		if (exponential == null) 
-			exponential = factory.createExponentialDistribution(param);
+			exponential = new ExponentialDistributionImpl(param);
 		if (exponential.getMean() != param)
 			exponential.setMean(param);
 		return exponential;
@@ -153,7 +159,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 	
 	HypergeometricDistribution getHypergeometricDistribution(int param, int param2, int param3) {
 		if (hypergeometric == null) 
-			hypergeometric = factory.createHypergeometricDistribution(param, param2, param3);
+			hypergeometric = new HypergeometricDistributionImpl(param, param2, param3);
 		if (hypergeometric.getPopulationSize() != param)
 			hypergeometric.setPopulationSize(param);
 		if (hypergeometric.getNumberOfSuccesses() != param2)
@@ -165,7 +171,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	PascalDistribution getPascalDistribution(int param, double param2) {
 		if (pascal == null) 
-			pascal = factory.createPascalDistribution(param, param2);
+			pascal = new PascalDistributionImpl(param, param2);
 		if (pascal.getNumberOfSuccesses() != param)
 			pascal.setNumberOfSuccesses(param);
 		if (pascal.getProbabilityOfSuccess() != param2)
@@ -175,7 +181,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	WeibullDistribution getWeibullDistribution(double param, double param2) {
 		if (weibull == null) 
-			weibull = factory.createWeibullDistribution(param, param2);
+			weibull = new WeibullDistributionImpl(param, param2);
 		if (weibull.getShape() != param)
 			weibull.setShape(param);
 		if (weibull.getScale() != param2)
