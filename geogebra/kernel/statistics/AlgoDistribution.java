@@ -105,54 +105,64 @@ public abstract class AlgoDistribution extends AlgoElement {
 	TDistribution getTDistribution(double param) {
 		if (t == null) 
 			t = new TDistributionImpl(param);
-		if (t.getDegreesOfFreedom() != param)
+		else if (t.getDegreesOfFreedom() != param)
 			t.setDegreesOfFreedom(param);
 		return t;
 	}
 
 	FDistribution getFDistribution(double param, double param2) {
 		if (f == null) 
-			f = new FDistributionImpl(1,2);
-		if (f.getNumeratorDegreesOfFreedom() != param)
-			f.setNumeratorDegreesOfFreedom(param);
-		if (f.getDenominatorDegreesOfFreedom() != param2)
-			f.setDenominatorDegreesOfFreedom(param2);
+			f = new FDistributionImpl(param, param2);
+		else {
+			if (f.getNumeratorDegreesOfFreedom() != param)
+				f.setNumeratorDegreesOfFreedom(param);
+			if (f.getDenominatorDegreesOfFreedom() != param2)
+				f.setDenominatorDegreesOfFreedom(param2);
+		}
 		return f;
 	}
 
 	GammaDistribution getGammaDistribution(double param, double param2) {
 		if (gamma == null) 
 			gamma = new GammaDistributionImpl(param, param2);
-		if (gamma.getAlpha() != param)
-			gamma.setAlpha(param);
-		if (gamma.getBeta() != param2)
-			gamma.setBeta(param2);
+		else {
+			if (gamma.getAlpha() != param)
+				gamma.setAlpha(param);
+			if (gamma.getBeta() != param2)
+				gamma.setBeta(param2);
+		}
 		return gamma;
 	}
 
 	CauchyDistribution getCauchyDistribution(double param, double param2) {
 		if (cauchy == null) 
 			cauchy = new CauchyDistributionImpl(param, param2);
-		if (cauchy.getMedian() != param)
-			cauchy.setMedian(param);
-		if (cauchy.getScale() != param2)
-			cauchy.setScale(param2);
+		else {
+			if (cauchy.getMedian() != param)
+				cauchy.setMedian(param);
+			if (cauchy.getScale() != param2)
+				cauchy.setScale(param2);
+		}
 		return cauchy;
 	}
 
 	ChiSquaredDistribution getChiSquaredDistribution(double param) {
 		if (chisquared == null) 
 			chisquared = new ChiSquaredDistributionImpl(param);
-		if (chisquared.getDegreesOfFreedom() != param)
-			chisquared.setDegreesOfFreedom(param);
+		else {
+			if (chisquared.getDegreesOfFreedom() != param)
+				chisquared.setDegreesOfFreedom(param);
+		}
 		return chisquared;
 	}
 
 	ExponentialDistribution getExponentialDistribution(double param) {
 		if (exponential == null) 
 			exponential = new ExponentialDistributionImpl(param);
-		if (exponential.getMean() != param)
-			exponential.setMean(param);
+		else {
+			if (exponential.getMean() != param)
+				exponential.setMean(param);
+		}
 		return exponential;
 	}
 
@@ -160,32 +170,38 @@ public abstract class AlgoDistribution extends AlgoElement {
 	HypergeometricDistribution getHypergeometricDistribution(int param, int param2, int param3) {
 		if (hypergeometric == null) 
 			hypergeometric = new HypergeometricDistributionImpl(param, param2, param3);
-		if (hypergeometric.getPopulationSize() != param)
-			hypergeometric.setPopulationSize(param);
-		if (hypergeometric.getNumberOfSuccesses() != param2)
-			hypergeometric.setNumberOfSuccesses(param2);
-		if (hypergeometric.getSampleSize() != param3)
-			hypergeometric.setSampleSize(param3);
+		else {
+			if (hypergeometric.getPopulationSize() != param)
+				hypergeometric.setPopulationSize(param);
+			if (hypergeometric.getNumberOfSuccesses() != param2)
+				hypergeometric.setNumberOfSuccesses(param2);
+			if (hypergeometric.getSampleSize() != param3)
+				hypergeometric.setSampleSize(param3);
+		}
 		return hypergeometric;
 	}
 
 	PascalDistribution getPascalDistribution(int param, double param2) {
 		if (pascal == null) 
 			pascal = new PascalDistributionImpl(param, param2);
-		if (pascal.getNumberOfSuccesses() != param)
-			pascal.setNumberOfSuccesses(param);
-		if (pascal.getProbabilityOfSuccess() != param2)
-			pascal.setProbabilityOfSuccess(param2);
+		else {
+			if (pascal.getNumberOfSuccesses() != param)
+				pascal.setNumberOfSuccesses(param);
+			if (pascal.getProbabilityOfSuccess() != param2)
+				pascal.setProbabilityOfSuccess(param2);
+		}
 		return pascal;
 	}
 
 	WeibullDistribution getWeibullDistribution(double param, double param2) {
 		if (weibull == null) 
 			weibull = new WeibullDistributionImpl(param, param2);
-		if (weibull.getShape() != param)
-			weibull.setShape(param);
-		if (weibull.getScale() != param2)
-			weibull.setScale(param2);
+		else {
+			if (weibull.getShape() != param)
+				weibull.setShape(param);
+			if (weibull.getScale() != param2)
+				weibull.setScale(param2);
+		}
 		return weibull;
 	}
 
