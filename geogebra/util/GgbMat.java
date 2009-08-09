@@ -5,11 +5,11 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealMatrixImpl;
 
 
-public class GgbMat extends RealMatrixImpl {
+public class GgbMat extends Array2DRowRealMatrix {
 
 	private boolean isUndefined = false;
 
