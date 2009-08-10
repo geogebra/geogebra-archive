@@ -30,6 +30,8 @@ import org.apache.commons.math.distribution.GammaDistribution;
 import org.apache.commons.math.distribution.GammaDistributionImpl;
 import org.apache.commons.math.distribution.HypergeometricDistribution;
 import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
+import org.apache.commons.math.distribution.NormalDistribution;
+import org.apache.commons.math.distribution.NormalDistributionImpl;
 import org.apache.commons.math.distribution.PascalDistribution;
 import org.apache.commons.math.distribution.PascalDistributionImpl;
 import org.apache.commons.math.distribution.TDistribution;
@@ -60,6 +62,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 	private PascalDistribution pascal = null;
 	private WeibullDistribution weibull = null;
 	private ZipfDistribution zipf = null;
+	private NormalDistribution normal = null;
 
 	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d) {
 		super(cons);
@@ -190,6 +193,16 @@ public abstract class AlgoDistribution extends AlgoElement {
 				weibull.setScale(param2);
 		}
 		return weibull;
+	}
+
+	NormalDistribution getNormalDistribution(double param, double param2) {
+		if (normal == null) 
+			normal = new NormalDistributionImpl(param, param2);
+		else {
+			normal.setMean(param);
+			normal.setStandardDeviation(param2);
+		}
+		return normal;
 	}
 
 	ZipfDistribution getZipfDistribution(int param, double param2) {
