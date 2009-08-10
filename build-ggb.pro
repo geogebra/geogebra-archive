@@ -16,13 +16,16 @@
 -libraryjars AppleJavaExtensions.jar
 ## Rhino javascript library uses reflection, so can't process with ProGuard
 -libraryjars ../build/geogebra_javascript.jar
+-libraryjars 3D/jogl.jar
+-libraryjars 3D/gluegen-rt.jar
+
 
 -dontoptimize
 -allowaccessmodification
 -overloadaggressively
 
 #-printmapping geogebra3-2-0-0.map 	 
--applymapping geogebra3-2-0-0.map	 
+#-applymapping geogebra3-2-0-0.map	 
 
 # Keep GeoGebra application
 -keep class geogebra.GeoGebra {

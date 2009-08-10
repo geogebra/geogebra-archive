@@ -34,7 +34,7 @@ office@geogebra.org
    @author Markus Hohenwarter
    @date Oct 23, 2008
 -->
-<project default="geogebra-test">
+<project default="geogebra">
 	
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>
@@ -109,22 +109,23 @@ office@geogebra.org
 					  **/algo2command.properties,	
 					  **/algo2command4i2g.properties"			
 			excludes="geogebra/*,
-
 					geogebra/gui/**,
 					geogebra/export/**, 
 					geogebra/cas/**,
 					jasymca/**,		
 					org/mathpiper/**,
 					org/mozilla/**,
-					geogebra/euclidian3D/**,
-					geogebra/kernel3D/**,
-					geogebra3D/**,					
 					org/freehep/**, 					  
 				    tutor/**,
-					3D/**,			
 					meta-inf/**"		
 		/>
 	</target>
+	<!--					geogebra/euclidian3D/**,
+						geogebra/kernel3D/**,
+						geogebra3D/**,			
+						geogebra.kernel.arithmetic3D/**,
+						3D/**,			
+						 -->
 	
 	<target name="ggb-export-jar" depends="clean" description="create unsigned geogebra_export.jar">
 		<jar jarfile="${build.dir}/geogebra_export.jar"
@@ -173,7 +174,7 @@ office@geogebra.org
 	<!-- Define Proguard task -->
 	<taskdef 
 		resource="proguard/ant/task.properties" 
-		classpath="proguard42.jar" />
+		classpath="proguard44.jar" />
 	
 	<!-- Define pack200 task -->
 	<taskdef name="p200ant"
