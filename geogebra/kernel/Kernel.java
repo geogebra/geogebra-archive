@@ -58,6 +58,7 @@ import geogebra.kernel.statistics.AlgoInverseNormal;
 import geogebra.kernel.statistics.AlgoInversePascal;
 import geogebra.kernel.statistics.AlgoInverseTDistribution;
 import geogebra.kernel.statistics.AlgoInverseWeibull;
+import geogebra.kernel.statistics.AlgoInverseZipf;
 import geogebra.kernel.statistics.AlgoListCovariance;
 import geogebra.kernel.statistics.AlgoListMeanX;
 import geogebra.kernel.statistics.AlgoListMeanY;
@@ -87,6 +88,7 @@ import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoTDistribution;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.kernel.statistics.AlgoWeibull;
+import geogebra.kernel.statistics.AlgoZipf;
 import geogebra.kernel.statistics.RegressionMath;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -2928,6 +2930,18 @@ public class Kernel {
 	
 	final public GeoNumeric InverseWeibull(String label, NumberValue a, NumberValue b, NumberValue c) {
 		AlgoInverseWeibull algo = new AlgoInverseWeibull(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric Zipf(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoZipf algo = new AlgoZipf(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InverseZipf(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoInverseZipf algo = new AlgoInverseZipf(cons, label, a, b, c);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}

@@ -323,6 +323,8 @@ public class CommandDispatcher {
     	cmdTable.put("InversePascal", new CmdInversePascal(kernel));  
     	cmdTable.put("Weibull", new CmdWeibull(kernel));  
     	cmdTable.put("InverseWeibull", new CmdInverseWeibull(kernel));
+    	cmdTable.put("Zipf", new CmdZipf(kernel));  
+    	cmdTable.put("InverseZipf", new CmdInverseZipf(kernel));
     	
     	
     	//Mathieu Blossier

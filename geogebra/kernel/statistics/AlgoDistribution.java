@@ -36,13 +36,15 @@ import org.apache.commons.math.distribution.TDistribution;
 import org.apache.commons.math.distribution.TDistributionImpl;
 import org.apache.commons.math.distribution.WeibullDistribution;
 import org.apache.commons.math.distribution.WeibullDistributionImpl;
+import org.apache.commons.math.distribution.ZipfDistribution;
+import org.apache.commons.math.distribution.ZipfDistributionImpl;
 
 /**
  * 
  * @author Michael Borcherds
  * @version 20090730
  */
-@SuppressWarnings("deprecation")
+
 public abstract class AlgoDistribution extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
@@ -57,6 +59,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 	private HypergeometricDistribution hypergeometric = null;
 	private PascalDistribution pascal = null;
 	private WeibullDistribution weibull = null;
+	private ZipfDistribution zipf = null;
 
 	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d) {
 		super(cons);
@@ -105,8 +108,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 	TDistribution getTDistribution(double param) {
 		if (t == null) 
 			t = new TDistributionImpl(param);
-		else if (t.getDegreesOfFreedom() != param)
-			t.setDegreesOfFreedom(param);
+		else t.setDegreesOfFreedom(param);
 		return t;
 	}
 
@@ -114,9 +116,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 		if (f == null) 
 			f = new FDistributionImpl(param, param2);
 		else {
-			if (f.getNumeratorDegreesOfFreedom() != param)
 				f.setNumeratorDegreesOfFreedom(param);
-			if (f.getDenominatorDegreesOfFreedom() != param2)
 				f.setDenominatorDegreesOfFreedom(param2);
 		}
 		return f;
@@ -126,9 +126,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 		if (gamma == null) 
 			gamma = new GammaDistributionImpl(param, param2);
 		else {
-			if (gamma.getAlpha() != param)
 				gamma.setAlpha(param);
-			if (gamma.getBeta() != param2)
 				gamma.setBeta(param2);
 		}
 		return gamma;
@@ -138,9 +136,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 		if (cauchy == null) 
 			cauchy = new CauchyDistributionImpl(param, param2);
 		else {
-			if (cauchy.getMedian() != param)
 				cauchy.setMedian(param);
-			if (cauchy.getScale() != param2)
 				cauchy.setScale(param2);
 		}
 		return cauchy;
@@ -150,7 +146,6 @@ public abstract class AlgoDistribution extends AlgoElement {
 		if (chisquared == null) 
 			chisquared = new ChiSquaredDistributionImpl(param);
 		else {
-			if (chisquared.getDegreesOfFreedom() != param)
 				chisquared.setDegreesOfFreedom(param);
 		}
 		return chisquared;
@@ -160,7 +155,6 @@ public abstract class AlgoDistribution extends AlgoElement {
 		if (exponential == null) 
 			exponential = new ExponentialDistributionImpl(param);
 		else {
-			if (exponential.getMean() != param)
 				exponential.setMean(param);
 		}
 		return exponential;
@@ -171,11 +165,8 @@ public abstract class AlgoDistribution extends AlgoElement {
 		if (hypergeometric == null) 
 			hypergeometric = new HypergeometricDistributionImpl(param, param2, param3);
 		else {
-			if (hypergeometric.getPopulationSize() != param)
 				hypergeometric.setPopulationSize(param);
-			if (hypergeometric.getNumberOfSuccesses() != param2)
 				hypergeometric.setNumberOfSuccesses(param2);
-			if (hypergeometric.getSampleSize() != param3)
 				hypergeometric.setSampleSize(param3);
 		}
 		return hypergeometric;
@@ -185,9 +176,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 		if (pascal == null) 
 			pascal = new PascalDistributionImpl(param, param2);
 		else {
-			if (pascal.getNumberOfSuccesses() != param)
 				pascal.setNumberOfSuccesses(param);
-			if (pascal.getProbabilityOfSuccess() != param2)
 				pascal.setProbabilityOfSuccess(param2);
 		}
 		return pascal;
@@ -197,12 +186,20 @@ public abstract class AlgoDistribution extends AlgoElement {
 		if (weibull == null) 
 			weibull = new WeibullDistributionImpl(param, param2);
 		else {
-			if (weibull.getShape() != param)
 				weibull.setShape(param);
-			if (weibull.getScale() != param2)
 				weibull.setScale(param2);
 		}
 		return weibull;
+	}
+
+	ZipfDistribution getZipfDistribution(int param, double param2) {
+		if (zipf == null) 
+			zipf = new ZipfDistributionImpl(param, param2);
+		else {
+			zipf.setNumberOfElements(param);
+			zipf.setExponent(param2);
+		}
+		return zipf;
 	}
 
 }
