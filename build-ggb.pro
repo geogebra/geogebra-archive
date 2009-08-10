@@ -13,9 +13,15 @@
 
 -libraryjars ../java150-rt.jar
 -libraryjars netscape_javascript.jar
+
+## These two needed for the Mac stuff
 -libraryjars AppleJavaExtensions.jar
+-libraryjars laf.jar
+
 ## Rhino javascript library uses reflection, so can't process with ProGuard
 -libraryjars ../build/geogebra_javascript.jar
+
+## 3D
 -libraryjars 3D/jogl.jar
 -libraryjars 3D/gluegen-rt.jar
 
