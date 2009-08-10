@@ -32,7 +32,6 @@ office@geogebra.org
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
-   @date Oct 23, 2008
 -->
 <project default="geogebra">
 	
@@ -70,7 +69,7 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar">		
+			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar">		
 	</target>
 	
 	<manifest file="../manifest.mf">	    
@@ -113,6 +112,10 @@ office@geogebra.org
 					geogebra/export/**, 
 					geogebra/cas/**,
 					jasymca/**,		
+					geogebra/euclidian3D/**,
+					geogebra/kernel3D/**,
+					geogebra3D/**,			
+					3D/**,			
 					org/mathpiper/**,
 					org/mozilla/**,
 					org/freehep/**, 					  
@@ -120,12 +123,6 @@ office@geogebra.org
 					meta-inf/**"		
 		/>
 	</target>
-	<!--					geogebra/euclidian3D/**,
-						geogebra/kernel3D/**,
-						geogebra3D/**,			
-						geogebra.kernel.arithmetic3D/**,
-						3D/**,			
-						 -->
 	
 	<target name="ggb-export-jar" depends="clean" description="create unsigned geogebra_export.jar">
 		<jar jarfile="${build.dir}/geogebra_export.jar"
@@ -159,6 +156,16 @@ office@geogebra.org
 		<jar jarfile="${build.dir}/geogebra_gui.jar"
 			basedir="${src.dir}"
 			includes="geogebra/gui/**"
+			excludes="**/*.java" 
+		/>
+	</target>
+	
+	<target name="ggb-3d-jar" depends="clean" description="create unsigned geogebra_3d.jar">
+		<jar jarfile="${build.dir}/geogebra_3d.jar"
+			basedir="${src.dir}"
+			includes="geogebra/euclidian3D/**,
+			geogebra/kernel3D/**,
+			geogebra3D/**,"			
 			excludes="**/*.java" 
 		/>
 	</target>

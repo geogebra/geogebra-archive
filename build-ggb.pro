@@ -1,13 +1,13 @@
 #
 # Proguard config file for GeoGebra
 #
-# Oct 23rd 2008
 #
 -injars ../build/geogebra.jar
 -injars ../build/geogebra_main.jar
 -injars ../build/geogebra_gui.jar
 -injars ../build/geogebra_export.jar
 -injars ../build/geogebra_cas.jar
+-injars ../build/geogebra_3d.jar
 
 -outjars ../build/temp
 
