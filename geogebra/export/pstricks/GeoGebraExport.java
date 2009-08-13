@@ -20,6 +20,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
@@ -332,7 +333,10 @@ public abstract class GeoGebraExport implements ActionListener{
         } else if (g.isGeoFunction()) {
         	drawFunction((GeoFunction)g);
         	drawLabel(g,null);
-        } else if (g.isGeoText()) {
+        } else if (g.isGeoCurveCartesian()) {
+        	drawCurveCartesian((GeoCurveCartesian)g);
+        	drawLabel(g,null);
+        }else if (g.isGeoText()) {
         	drawText((GeoText)g);
         } else if (g.isGeoImage()) {
         	//Image --> export to eps is better and easier!
@@ -392,6 +396,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void drawGeoConicPart(GeoConicPart geo);
 	abstract protected void drawLabel(GeoElement geo,Drawable drawGeo);
 	abstract protected void drawFunction(GeoFunction geo);
+	abstract protected void drawCurveCartesian (GeoCurveCartesian geo);
 	abstract protected void drawText(GeoText geo);
 	abstract protected void drawLocus(GeoLocus geo);
 	abstract protected void drawLine(double x1,double y1,double x2,double y2,GeoElement geo);

@@ -16,6 +16,7 @@ import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
@@ -51,6 +52,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	private static final int FORMAT_BEAMER=3;
 	private int functionIdentifier=0;
 	private boolean forceGnuplot=false;
+	private boolean gnuplotWarning=false;
 	public GeoGebraToPgf(Application app) {
     	super(app);
     }
@@ -1170,7 +1172,47 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		
 		
 	}
+	protected void drawCurveCartesian (GeoCurveCartesian geo){
+		drawCurveCartesian(geo,code);
+	}
+
+	private void drawCurveCartesian (GeoCurveCartesian geo,StringBuffer sb){
+//		  \parametricplot[algebraic=true,linecolor=red]  {-3.14}{3.14}{cos(3*t)|sin(2*t)}
+		// Only done using gnuplot
+		// add Warning
+		addWarningGnuplot();
+		double start=geo.getMinParameter();
+		double end=geo.getMaxParameter();
+//		boolean isClosed=geo.isClosedPath();
+		String fx=geo.getFunX();
+		fx=killSpace(Util.toLaTeXString(fx,true));
+		String fy=geo.getFunY();
+		fy=killSpace(Util.toLaTeXString(fy,true));
+		String variable=geo.getVarString();		
+		boolean warning=!(variable.equals("t"));
+		if(warning) code.append("% WARNING: You have to use the special variable t in parametric plot");
+		startBeamer(sb);
+		sb.append("\\draw");
+		String s=LineOptionCode(geo,true);
+		if (s.length()!=0){
+			sb.append("[");
+			sb.append(s);
+		}
+		if (s.length()!=0) sb.append(", ");
+		else sb.append("[");
+		sb.append("smooth,samples=100,domain=");
+		sb.append(start);
+		sb.append(":");
+		sb.append(end);
+		sb.append("] plot[parametric] function{");
+		sb.append(fx);
+		sb.append(",");
+		sb.append(fy);
+		sb.append("};\n");
+		endBeamer(sb);
+	}
 	
+
 	protected void drawFunction(GeoFunction geo){
 		drawFunction(geo,code);
 	}
@@ -1258,20 +1300,23 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		if (forceGnuplot) return true;
 		int ind=sb.indexOf(nameFunc);
 		if (ind!=-1){
-			codePreamble.append("% <<<<<<<WARNING>>>>>>>\n");
-			codePreamble.append("% PGF/Tikz doesn't support the following mathematical functions:\n");
-			codePreamble.append("% tan, cosh, acosh, sinh, asinh, tanh, atanh\n");
-			codePreamble.append("% Plotting will be done using GNUPLOT\n");
-			codePreamble.append("% GNUPLOT must be installed and you must allow Latex to call external programs by\n");	
-			codePreamble.append("% Adding the following option to your compiler\n");
-			codePreamble.append("% shell-escape    OR    enable-write18 \n");
-			codePreamble.append("% Example: pdflatex --shell-escape file.tex \n");
+			addWarningGnuplot();
 			return true;
 		}
 		return false;
 	}
-	
-	
+	private void addWarningGnuplot(){
+		if (gnuplotWarning) return;
+		gnuplotWarning=true;
+		codePreamble.append(" \n%<<<<<<<WARNING>>>>>>>\n");
+		codePreamble.append("% PGF/Tikz doesn't support the following mathematical functions:\n");
+		codePreamble.append("% tan, cosh, acosh, sinh, asinh, tanh, atanh\n\n");
+		codePreamble.append("% Plotting will be done using GNUPLOT\n");
+		codePreamble.append("% GNUPLOT must be installed and you must allow Latex to call external programs by\n");	
+		codePreamble.append("% Adding the following option to your compiler\n");
+		codePreamble.append("% shell-escape    OR    enable-write18 \n");
+		codePreamble.append("% Example: pdflatex --shell-escape file.tex \n\n");
+	}
 	
 	private void renameFunc(StringBuffer sb,String nameFunc,String nameNew){
 		int ind=sb.indexOf(nameFunc);

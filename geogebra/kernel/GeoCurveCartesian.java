@@ -30,7 +30,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	// samples to find interval with closest parameter position to given point
 	private static final int CLOSEST_PARAMETER_SAMPLES = 100;
 	
-	private Function funX, funY;	
+	private Function funX, funY;
 	private double startParam, endParam;
 	private boolean isDefined = true;
 	private boolean isClosedPath;
@@ -166,8 +166,14 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 			isDefined = false;
 		}	
 	}		
-		
-	
+	// added by Loïc Le Coq 2009/08/12
+	final public String getFunX(){
+		return funX.toValueString();
+	}
+	final public String getFunY(){
+		return funY.toValueString();
+	}
+	// end Loïc Le Coq
 	
 	final public RealRootFunction getRealRootFunctionX() {
 		return funX;

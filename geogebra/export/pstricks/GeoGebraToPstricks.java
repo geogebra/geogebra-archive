@@ -23,6 +23,7 @@ import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
@@ -93,7 +94,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
  			codePreamble.append("\\documentclass[" +
  	    			frame.getFontSize()+"pt]{article}\n");
  		}
- 		codePreamble.append("\\usepackage{pstricks,pstricks-add,pst-math,pst-xkey}\n\\pagestyle{empty}\n");
+ 		codePreamble.append("\\usepackage{pstricks-add}\n\\pagestyle{empty}\n");
      	codeBeginDoc.append("\\begin{document}\n");
  		if (format==GeoGebraToPstricks.FORMAT_BEAMER){
  	    	codeBeginDoc.append("\\begin{frame}\n");
@@ -895,6 +896,39 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		//}
 		endBeamer(code);
 	}
+	protected void drawCurveCartesian (GeoCurveCartesian geo){
+//		  \parametricplot[algebraic=true,linecolor=red]  {-3.14}{3.14}{cos(3*t)|sin(2*t)}
+		double start=geo.getMinParameter();
+		double end=geo.getMaxParameter();
+//		boolean isClosed=geo.isClosedPath();
+		String fx=geo.getFunX();
+		fx=killSpace(Util.toLaTeXString(fx,true));
+		String fy=geo.getFunY();
+		fy=killSpace(Util.toLaTeXString(fy,true));
+		String variable=geo.getVarString();
+		boolean warning=!(variable.equals("t"));
+		startBeamer(code);
+		if(warning) code.append("% WARNING: You have to use the special variable t in parametric plot");
+		code.append("\\parametricplot");
+		code.append(LineOptionCode(geo,true));
+		int index=code.lastIndexOf("]");
+		if (index==code.length()-1){
+			code.deleteCharAt(index);
+			code.append("]{");
+		}
+		else code.append("{");
+		code.append(start);
+		code.append("}{");
+		code.append(end);
+		code.append("}{");
+		code.append(fx);
+		code.append("|");
+		code.append(fy);
+		code.append("}\n");
+		endBeamer(code);	
+	}
+	
+	
 	protected void drawFunction(GeoFunction geo){
 		Function f=geo.getFunction();
 		if (null==f) return;
