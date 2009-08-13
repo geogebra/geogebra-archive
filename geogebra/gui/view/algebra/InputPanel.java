@@ -67,7 +67,10 @@ public class InputPanel extends JPanel {
 		ExpressionNode.strAND,
 		ExpressionNode.strOR, 
 		ExpressionNode.strPARALLEL,
-		ExpressionNode.strPERPENDICULAR
+		ExpressionNode.strPERPENDICULAR,
+		ExpressionNode.strIS_ELEMENT_OF,
+		ExpressionNode.strCONTAINS,
+		ExpressionNode.strCONTAINS_STRICT,
 	};
 	
 	public final static String [] greekLowerCase = {

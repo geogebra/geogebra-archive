@@ -22,13 +22,9 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
-import geogebra.main.MyError;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1112,6 +1108,51 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			
 		      		default:
 		      			sb.append(strNOT_EQUAL);        		
+		      	}       
+           	 	sb.append(' ');
+                sb.append(rightStr);
+                break;
+                
+        	case IS_ELEMENT_OF:
+           	 	sb.append(leftStr);
+           	 	sb.append(' ');
+	           	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\in");
+		      			break;
+		      			
+		      		default:
+		      			sb.append(strIS_ELEMENT_OF);        		
+		      	}       
+           	 	sb.append(' ');
+                sb.append(rightStr);
+                break;
+                
+        	case CONTAINS:
+           	 	sb.append(leftStr);
+           	 	sb.append(' ');
+	           	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\subseteq");
+		      			break;
+		      			      			
+		      		default:
+		      			sb.append(strCONTAINS);        		
+		      	}       
+           	 	sb.append(' ');
+                sb.append(rightStr);
+                break;
+                
+        	case CONTAINS_STRICT:
+           	 	sb.append(leftStr);
+           	 	sb.append(' ');
+	           	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\subset");
+		      			break;
+		      			
+		      		default:
+		      			sb.append(strCONTAINS_STRICT);        		
 		      	}       
            	 	sb.append(' ');
                 sb.append(rightStr);
@@ -2318,6 +2359,17 @@ implements ExpressionValue, ExpressionNodeConstants {
 
 	public boolean isVector3DValue() {
 		return false;
+	}
+	
+	public static boolean isEqual(ExpressionValue ev1, ExpressionValue ev2) {
+		if (ev1.isNumberValue() && ev2.isNumberValue()) {
+			return Kernel.isEqual( ((NumberValue)ev1).getDouble(), ((NumberValue)ev2).getDouble(), Kernel.EPSILON);
+		} else if (ev1.isTextValue() && ev2.isTextValue()) {
+			return ((TextValue)ev1).toString().equals(((TextValue)ev2).toString());
+		} else if (ev1.isGeoElement() && ev2.isGeoElement()) {
+			return ((GeoElement)ev1).isEqual(((GeoElement)ev2));
+		} else
+			return false;
 	}
 
 	

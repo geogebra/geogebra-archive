@@ -27,6 +27,9 @@ public interface ExpressionNodeConstants {
     public static final int GREATER_EQUAL = -92;    
     public static final int PARALLEL = -91;  
     public static final int PERPENDICULAR = -90;
+    public static final int IS_ELEMENT_OF = -89;
+    public static final int CONTAINS = -88;
+    public static final int CONTAINS_STRICT = -87;
     
     public static final String strNOT = "\u00ac";
     public static final String strAND = "\u2227";
@@ -38,6 +41,9 @@ public interface ExpressionNodeConstants {
     public static final String strPARALLEL = "\u2225";
     public static final String strPERPENDICULAR = "\u22a5";
     public static final String strVECTORPRODUCT = "\u2297";
+    public static final String strIS_ELEMENT_OF = "\u2208";
+    public static final String strCONTAINS = "\u2286";
+    public static final String strCONTAINS_STRICT = "\u2282";
         
     // arithmetic
     public static final int PLUS = 0;

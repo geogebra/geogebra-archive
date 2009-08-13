@@ -118,7 +118,7 @@ public class Kernel {
 	public final static double MAX_PRECISION = 1E-12;
 	
 	// current working precision
-	private double EPSILON = STANDARD_PRECISION;
+	public static double EPSILON = STANDARD_PRECISION;
 
 	// maximum precision of double numbers
 	public final static double MAX_DOUBLE_PRECISION = 1E-15;

@@ -14,8 +14,12 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
+import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.TextValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -1012,5 +1016,6 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		public boolean isVector3DValue() {
 			return false;
 		}
-  		
+		
+
 }

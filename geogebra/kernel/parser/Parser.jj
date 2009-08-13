@@ -158,6 +158,9 @@ TOKEN :  {
   | < AND:		("&&" | "\u2227" ) >
   | < EQUAL_BOOLEAN: ("==" | "\u225f" ) >
   | < NOT_EQUAL: ("!=" | "\u2260" ) >
+  | < IS_ELEMENT_OF: "\u2208" >
+  | < CONTAINS: "\u2286" >
+  | < CONTAINS_STRICT: "\u2282" >
   | < LESS:		"<" >
   | < GREATER:	">" >
   | < LESS_EQUAL: ("<=" | "\u2264") >
@@ -900,6 +903,24 @@ ExpressionValue COMPAREterm():
        (<NOT_EQUAL>  f = plusminusnode()
     	 {            
            ret = new ExpressionNode(kernel, ret, ExpressionNode.NOT_EQUAL, f);  
+         }
+       )   
+     |   
+       (<IS_ELEMENT_OF>  f = plusminusnode()
+    	 {            
+           ret = new ExpressionNode(kernel, ret, ExpressionNode.IS_ELEMENT_OF, f);  
+         }
+       )   
+     |   
+       (<CONTAINS>  f = plusminusnode()
+    	 {            
+           ret = new ExpressionNode(kernel, ret, ExpressionNode.CONTAINS, f);  
+         }
+       )   
+     |   
+       (<CONTAINS_STRICT>  f = plusminusnode()
+    	 {            
+           ret = new ExpressionNode(kernel, ret, ExpressionNode.CONTAINS_STRICT, f);  
          }
        )   
      |   

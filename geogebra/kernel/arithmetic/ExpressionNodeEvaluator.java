@@ -2,6 +2,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
@@ -76,6 +77,8 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 	        }
         	else if (operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
 	            	&& operation != NOT_EQUAL // ditto	
+	            	&& operation != CONTAINS // ditto	
+	            	&& operation != CONTAINS_STRICT // ditto	
 	            	&& !rt.isVectorValue() // eg {1,2} + (1,2)
         			&& !rt.isTextValue()) // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	{ 
@@ -86,6 +89,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 	        }	        
         }
         else if (rt.isListValue() && operation != EQUAL_BOOLEAN // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
+            	&& operation != NOT_EQUAL // ditto	
             && !lt.isVectorValue() // eg {1,2} + (1,2)
         	&& !lt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	MyList myList = ((ListValue) rt).getMyList();
@@ -170,18 +174,48 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	}
         	
         case NOT_EQUAL:
-	        {
-	    		MyBoolean b = evalEquals(kernel,lt, rt);
-	    		if (b == null) {
-	    			String [] str = { "IllegalComparison", lt.toString(), strNOT_EQUAL,  rt.toString() };
-	                throw new MyError(app, str);
-	    		} else {
-	    			// NOT equal
-	    			b.setValue(!b.getBoolean());
-	    			return b;
-	    		}
-            }         	
-                	
+        {
+    		MyBoolean b = evalEquals(kernel,lt, rt);
+    		if (b == null) {
+    			String [] str = { "IllegalComparison", lt.toString(), strNOT_EQUAL,  rt.toString() };
+                throw new MyError(app, str);
+    		} else {
+    			// NOT equal
+    			b.setValue(!b.getBoolean());
+    			return b;
+    		}
+        }         	
+            	
+        case IS_ELEMENT_OF:
+        {       	
+        	if (rt.isListValue()) {
+        		return new MyBoolean(MyList.isElementOf(lt, ((ListValue)rt).getMyList()));
+        	} else {    
+                String [] str = { "IllegalListOperation", lt.toString(), strIS_ELEMENT_OF,  rt.toString() };
+                throw new MyError(app, str);
+            }
+        }         	
+            	
+        case CONTAINS:
+        {       	
+        	if (lt.isListValue() && rt.isListValue()) {
+        		return new MyBoolean(MyList.listContains(((ListValue)lt).getMyList(), ((ListValue)rt).getMyList()));
+        	} else {    
+                String [] str = { "IllegalListOperation", lt.toString(), strIS_ELEMENT_OF,  rt.toString() };
+                throw new MyError(app, str);
+            }
+        }         	
+            	
+        case CONTAINS_STRICT:
+        {       	
+        	if (lt.isListValue() && rt.isListValue()) {
+        		return new MyBoolean(MyList.listContainsStrict(((ListValue)lt).getMyList(), ((ListValue)rt).getMyList()));
+        	} else {    
+                String [] str = { "IllegalListOperation", lt.toString(), strIS_ELEMENT_OF,  rt.toString() };
+                throw new MyError(app, str);
+            }
+        }         	
+            	
         case LESS:
         	// number < number
         	if (lt.isNumberValue() && rt.isNumberValue())

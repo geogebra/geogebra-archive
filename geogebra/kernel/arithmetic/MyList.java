@@ -537,4 +537,120 @@ public class MyList extends ValidExpression implements ListValue {
 	public boolean isVector3DValue() {
 		return false;
 	}
+	
+	public static boolean isElementOf(ExpressionValue a, MyList myList) {
+		//Application.debug(a.getClass()+"");
+		
+		for (int i = 0 ; i < myList.size() ; i++) {
+			ExpressionValue ev = myList.getListElement(i).evaluate();
+			if (ExpressionNode.isEqual(a, ev)) return true;			
+		}
+		
+		/*
+		if (a.isNumberValue()) {
+			double num = ((NumberValue)a).getDouble();
+			
+			for (int i = 0 ; i < myList.size() ; i++) {
+				ExpressionValue ev = myList.getListElement(i).evaluate();
+				if (ev.isNumberValue()) {
+					if (Kernel.isEqual(num, ((NumberValue)ev).getDouble(), Kernel.EPSILON)) return true;
+				}
+			}
+			
+		} else if (a.isTextValue()) {
+			String text = ((TextValue)a).toString();
+			
+			for (int i = 0 ; i < myList.size() ; i++) {
+				ExpressionValue ev = myList.getListElement(i).evaluate();
+				if (ev.isTextValue()) {
+					if (text.equals(((TextValue)ev).toString())) return true;
+				}
+			}
+			
+		} else if (a.isGeoElement()) {
+			GeoElement geo = (GeoElement)a;
+			
+			for (int i = 0 ; i < myList.size() ; i++) {
+				ExpressionValue ev = myList.getListElement(i).evaluate();
+				//Application.debug(ev.getClass()+"");
+				if (ev.isGeoElement()) {
+					if (geo.isEqual((GeoElement)ev)) return true;
+				}
+			}
+			
+			
+		} */
+		
+		return false;
+	}
+		
+	public static boolean listContains(MyList list1, MyList list2) {
+		if (list2.size() == 0) return true; // the empty set is a subset of all sets
+		if (list1.size() == 0) return false;
+		
+		for (int i = 0 ; i < list2.size() ; i++) {
+			ExpressionValue ev2 = list2.getListElement(i).evaluate();
+			boolean hasEqualMember = false;
+			for (int j = 0 ; j < list1.size() ; j++) {
+				ExpressionValue ev1 = list1.getListElement(j).evaluate();
+				
+				if (ExpressionNode.isEqual(ev1, ev2)) {
+					hasEqualMember = true;
+					break;
+				}
+				
+			}
+			
+			if (!hasEqualMember) return false;
+
+		}
+
+		return true;
+	}
+
+	public static boolean listContainsStrict(MyList list1, MyList list2) {
+		
+		// the empty set has no strict subsets of itself
+		if (list1.size() == 0) return false;
+		if (list2.size() == 0) return true;
+		
+
+		for (int i = 0 ; i < list2.size() ; i++) {
+			ExpressionValue ev2 = list2.getListElement(i).evaluate();
+			boolean hasEqualMember = false;
+			for (int j = 0 ; j < list1.size() ; j++) {
+				ExpressionValue ev1 = list1.getListElement(j).evaluate();
+				
+				if (ExpressionNode.isEqual(ev1, ev2)) {
+					hasEqualMember = true;
+					break;
+				}
+				
+			}
+			
+			if (!hasEqualMember) return false;
+
+		}
+		
+		// now must check sets aren't equal
+		for (int i = 0 ; i < list1.size() ; i++) {
+			ExpressionValue ev1 = list1.getListElement(i).evaluate();
+			boolean hasEqualMember = false;
+			for (int j = 0 ; j < list2.size() ; j++) {
+				ExpressionValue ev2 = list2.getListElement(j).evaluate();
+				if (ExpressionNode.isEqual(ev1, ev2)) {
+					hasEqualMember = true;
+					break;
+				}								
+			}
+			// we've found an element without a match
+			// so lists are not equal
+			if (!hasEqualMember) return true;
+
+		}
+		
+		// lists are equal
+		return false;	
+	}
+
 }
