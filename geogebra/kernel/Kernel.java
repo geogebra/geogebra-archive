@@ -3062,6 +3062,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * SetDifferece[list,list]
+	 * Michael Borcherds
+	 */
+	final public GeoList SetDifference(String label, GeoList list, GeoList list1) {
+		AlgoSetDifference algo = new AlgoSetDifference(cons, label, list, list1);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Insert[list,list,n]
 	 * Michael Borcherds
 	 */
