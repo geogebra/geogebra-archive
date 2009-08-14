@@ -124,6 +124,10 @@ public interface EuclidianConstants {
 	// GeoGebra 3.4 start
 	public static final int MODE_JAVASCRIPT_ACTION = 60;
 	
+	public static final int MODE_SCRIPT_ACTION = 61;
+	
+	public static final int MODE_WHITEBOARD = 62;
+	
 	// ggb3D start
 	/** special mode that allows to create point inside a region (polygon, etc.) */
 	public static final int MODE_POINT_IN_REGION = 101;

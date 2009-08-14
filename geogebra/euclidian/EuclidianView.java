@@ -4018,6 +4018,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		case MODE_JAVASCRIPT_ACTION:
 			return "JavaScriptAction";
 			
+		case MODE_SCRIPT_ACTION:
+			return "ScriptAction";
+			
+		case MODE_WHITEBOARD:
+			return "Whiteboard";
+			
 		case MODE_FITLINE:
 			return "FitLine";
 
