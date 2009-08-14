@@ -18,6 +18,9 @@
 
 package geogebra.euclidian;
 
+import geogebra.JarManager;
+import geogebra.gui.util.ImageSelection;
+import geogebra.io.MyImageIO;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
@@ -57,8 +60,17 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -68,6 +80,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -614,10 +630,55 @@ public class EuclidianController implements MouseListener,
 
 	}
 	
+	private BufferedImage whiteboardImage = null;
 
-	
+	private void handleMousePressedForWhiteboardMode(MouseEvent e) {
+		
+		
+		if (Application.isRightClick(e)) {
+			//open popup:
+			//	line thickness
+			//	colors
+			//	etc
+		}
+		
+		EuclidianView ev = app.getEuclidianView();
+		Graphics2D g2D = null;
+		if (whiteboardImage == null) {
+			//whiteboardImage = new BufferedImage(ev.getWidth(), ev.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			//g2D = whiteboardImage.createGraphics();
+			//g2D.setComposite(
+			//		  AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+			//		  new Rectangle2D.Double(0,0,ev.getWidth(),ev.getHeight()); 
+			//		g2D.fill(rect);
+			
+			GraphicsEnvironment ge =
+				GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+				GraphicsDevice gs = ge.getDefaultScreenDevice();
+
+				GraphicsConfiguration gc =
+				gs.getDefaultConfiguration();
+				whiteboardImage = gc.createCompatibleImage(ev.getWidth(),
+						ev.getHeight(), Transparency.BITMASK);
+
+		}
+		//Application.debug(whiteboardImage.getWidth()+" "+whiteboardImage.getHeight()+" "+e.getX()+" "+e.getY());
+		
+		if (g2D == null) g2D = whiteboardImage.createGraphics();
+		
+		g2D.setColor(Color.RED);
+		g2D.drawOval(e.getX(), e.getY(), 1, 1);
+		
+	}
 
 	public void mousePressed(MouseEvent e) {
+		
+		if (mode == EuclidianView.MODE_WHITEBOARD) {
+			handleMousePressedForWhiteboardMode(e);
+			return;
+		}
+		
 		//GeoElement geo;
 		Hits hits;
 		setMouseLocation(e);
@@ -1184,6 +1245,12 @@ public class EuclidianController implements MouseListener,
 	
 
 	public void mouseDragged(MouseEvent e) {
+		
+		if (mode == EuclidianView.MODE_WHITEBOARD) {
+			handleMousePressedForWhiteboardMode(e);
+			return;
+		}
+		
 		if (!DRAGGING_OCCURED) {
 			DRAGGING_OCCURED = true;			
 
@@ -1502,6 +1569,39 @@ public class EuclidianController implements MouseListener,
 	}
 
 	public void mouseReleased(MouseEvent e) {	
+		
+		if (whiteboardImage != null) {
+			
+			/*
+			File file;
+		
+				file = new File("c:\\geogebra.png");
+		
+				try {
+					MyImageIO.write(whiteboardImage, "png", 300,  file);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}	
+			//sendToClipboard(whiteboardImage);
+				*/
+			EuclidianView ev = app.getEuclidianView();
+				
+				ev.getGraphics().drawImage(whiteboardImage, 0, 0, null);
+				
+				String fileName = app.createImage(whiteboardImage, "whiteboard.png");
+				
+				GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
+				geoImage.setFileName(fileName);
+				geoImage.setCorner(new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(0),ev.toRealWorldCoordY(ev.getHeight()),1.0), 0);
+				geoImage.setLabel(null);
+		
+				GeoImage.updateInstances();
+
+
+			
+			whiteboardImage = null;
+		}
 		
 		
 		
@@ -1881,8 +1981,7 @@ public class EuclidianController implements MouseListener,
 	
 	
 	protected void processMouseMoved(MouseEvent e) {	
-	
-		
+
 		boolean repaintNeeded;
 		
 		// reset icon
@@ -2281,6 +2380,14 @@ public class EuclidianController implements MouseListener,
 
 		case EuclidianView.MODE_JAVASCRIPT_ACTION:
 			changedKernel = javaScriptButton();
+			break;
+
+		case EuclidianView.MODE_SCRIPT_ACTION:
+			changedKernel = scriptButton();
+			break;
+
+		case EuclidianView.MODE_WHITEBOARD:
+			changedKernel = whiteboard();
 			break;
 
 			// Michael Borcherds 2008-03-13	
@@ -5226,9 +5333,22 @@ public class EuclidianController implements MouseListener,
 	}		
 
 	// new JavaScript button
-	final protected boolean javaScriptButton() {		
+	final protected boolean javaScriptButton() {	
+		Application.debug("jhjh"+(mouseLoc != null));
 		return !selectionPreview && mouseLoc != null && app.getGuiManager().showJavaScriptButtonCreationDialog(mouseLoc.x, mouseLoc.y);
 	}		
+
+	// new Script button
+	final protected boolean scriptButton() {		
+		//return !selectionPreview && mouseLoc != null && app.getGuiManager().showScriptButtonCreationDialog(mouseLoc.x, mouseLoc.y);
+		return false;
+	}		
+
+	// new JavaScript button
+	final protected boolean whiteboard() {	
+		//Application.debug(app.getEuclidianView().getHeight()+" "+app.getEuclidianView().getWidth());
+		return false;
+}		
 
 	/***************************************************************************
 	 * helper functions for selection sets
