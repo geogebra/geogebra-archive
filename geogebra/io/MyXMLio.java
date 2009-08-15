@@ -134,8 +134,31 @@ public class MyXMLio {
 	 */
 	public final void readZipFromInputStream(InputStream is, boolean isGGTfile)
 			throws Exception {
-		ZipInputStream zip = new ZipInputStream(is);
+		
+		ZipInputStream zip = new ZipInputStream((InputStream)is);
+		
+		readZip(zip, isGGTfile);
+		
+	}
+		/**
+		 * Reads zipped file from String that includes the construction saved
+		 * in xml format and maybe image files.
+		 */
+		public final void readZipFromString(byte [] zipFile)
+				throws Exception {
+			
+			ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(zipFile));
 
+			readZip(zip, false);
+		}
+		
+			/**
+			 * Reads zipped file from zip input stream that includes the construction saved
+			 * in xml format and maybe image files.
+			 */
+			private final void readZip(ZipInputStream zip, boolean isGGTfile)
+					throws Exception {
+				
 		// we have to read everything (i.e. all images)
 		// before we process the XML file, that's why we
 		// read the XML file into a buffer first

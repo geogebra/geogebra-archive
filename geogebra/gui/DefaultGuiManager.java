@@ -645,7 +645,7 @@ public class DefaultGuiManager implements GuiManager {
 		if (optionsDialog != null)
 			optionsDialog.setLabels();
 			
-		layout.getDockManager().setLabels();			
+		//layout.getDockManager().setLabels();			
 	}
 
 	public void initMenubar() {
@@ -2333,7 +2333,11 @@ public class DefaultGuiManager implements GuiManager {
 		
 		public JFrame createFrame() {
 			GeoGebraFrame wnd = new GeoGebraFrame();
-			wnd.setGlassPane(layout.getDockManager().getGlassPane());
+			try {
+				//TODO: throws null pointer exception
+				wnd.setGlassPane(layout.getDockManager().getGlassPane());
+			} catch (Exception e) 
+			{ e.printStackTrace();}
 			wnd.setApplication(app);
 			
 			return wnd;

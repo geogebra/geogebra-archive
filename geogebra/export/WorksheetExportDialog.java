@@ -31,8 +31,11 @@ import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -48,6 +51,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 /**
  * Dialog which provides for exporting into an HTML page 
@@ -692,6 +697,20 @@ public class WorksheetExportDialog extends JDialog {
 		// parameters
 		sb.append("\t<param name=\"filename\" value=\"");
 		sb.append(ggbFile.getName());
+		sb.append("\"/>\n");
+
+		// parameters
+		sb.append("\t<param name=\"included\" value=\"");
+		//sb.append(geogebra.util.Base64.encodeObject();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			app.getXMLio().writeGeoGebraFile(baos);
+			//sb.append(geogebra.util.Base64.encodeObject(baos.toByteArray()));
+			sb.append(Base64.encode(baos.toByteArray()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		sb.append("\"/>\n");
 
 		if (useWorksheet) {

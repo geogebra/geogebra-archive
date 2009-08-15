@@ -171,8 +171,12 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		if (fileStr != null && 
 			!( fileStr.startsWith("http") || fileStr.startsWith("file") )) {
 			fileStr = applet.getCodeBase() + fileStr;			
-		}		
-
+		} else {
+			// ggb file encoded as base 64
+			String fileBase64 = applet.getParameter("included");
+			if (fileBase64 != null)
+				fileStr = "base64://" + fileBase64;
+		}
 		// type = "button" or parameter is not available 
 		String typeStr = applet.getParameter("type");
 		showOpenButton = typeStr != null && typeStr.equals("button");
