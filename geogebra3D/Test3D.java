@@ -873,7 +873,7 @@ public class Test3D{
 		}
 		
 		
-		kernel3D.Plane3D("plane", points[2], points[3], points[4]);
+		//kernel3D.Plane3D("plane", points[2], points[3], points[4]);
 		
 		return points;
 	}

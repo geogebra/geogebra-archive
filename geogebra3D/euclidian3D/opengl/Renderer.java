@@ -404,7 +404,7 @@ public class Renderer implements GLEventListener {
         
         
         
-
+        /*
         //FPS
         gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
@@ -412,8 +412,10 @@ public class Renderer implements GLEventListener {
     	drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
+         */
 
-
+    	
+    	
         gLDrawable.swapBuffers(); //TODO
         
 
