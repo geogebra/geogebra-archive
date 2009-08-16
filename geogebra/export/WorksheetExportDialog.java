@@ -700,7 +700,7 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("\"/>\n");
 
 		// parameters
-		sb.append("\t<param name=\"included\" value=\"");
+		sb.append("\t<param name=\"ggbBase64\" value=\"");
 		//sb.append(geogebra.util.Base64.encodeObject();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {

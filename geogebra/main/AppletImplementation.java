@@ -173,7 +173,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			fileStr = applet.getCodeBase() + fileStr;			
 		} else {
 			// ggb file encoded as base 64
-			String fileBase64 = applet.getParameter("included");
+			String fileBase64 = applet.getParameter("ggbBase64");
 			if (fileBase64 != null)
 				fileStr = "base64://" + fileBase64;
 		}
