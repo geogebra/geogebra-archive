@@ -6,7 +6,7 @@ package org.freehep.graphics2d.font;
  * particular encoding.
  * 
  * @author Sami Kama
- * @version $Id: CharTable.java,v 1.3 2008-05-04 12:15:12 murkle Exp $
+ * @version $Id: CharTable.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public interface CharTable {
 

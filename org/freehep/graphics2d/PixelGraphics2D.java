@@ -39,7 +39,7 @@ import org.freehep.graphics2d.font.FontEncoder;
 /**
  * @author Charles Loomis
  * @author Mark Donszelmann
- * @version $Id: PixelGraphics2D.java,v 1.5 2009-06-22 02:18:20 hohenwarter Exp $
+ * @version $Id: PixelGraphics2D.java,v 1.6 2009-08-17 21:44:44 murkle Exp $
  */
 public class PixelGraphics2D extends AbstractVectorGraphics {
 
@@ -161,14 +161,6 @@ public class PixelGraphics2D extends AbstractVectorGraphics {
     }
 
     public void printComment(String comment) {
-    }
-
-    // Michael Borcherds 2008-02-26
-    public void startGroup(String s) {
-    }
-
-    // Michael Borcherds 2008-02-26
-    public void endGroup(String s) {
     }
 
     public Graphics create(double x, double y, double width, double height) {

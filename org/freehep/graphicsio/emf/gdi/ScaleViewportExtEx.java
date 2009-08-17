@@ -11,7 +11,7 @@ import org.freehep.graphicsio.emf.EMFTag;
  * ScaleViewportExtEx TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: ScaleViewportExtEx.java,v 1.3 2008-05-04 12:18:03 murkle Exp $
+ * @version $Id: ScaleViewportExtEx.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class ScaleViewportExtEx extends EMFTag {
 
@@ -33,11 +33,9 @@ public class ScaleViewportExtEx extends EMFTag {
             throws IOException {
 
         /* int[] bytes = */ emf.readUnsignedByte(len);
-        return new ScaleViewportExtEx(
-            emf.readLONG(),
-            emf.readLONG(),
-            emf.readLONG(),
-            emf.readLONG());
+        ScaleViewportExtEx tag = new ScaleViewportExtEx(emf.readLONG(), emf
+                .readLONG(), emf.readLONG(), emf.readLONG());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -48,10 +46,8 @@ public class ScaleViewportExtEx extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  xNum: " + xNum +
-            "\n  xDenom: " + xDenom +
-            "\n  yNum: " + yNum +
-            "\n  yDenom: " + yDenom;
+        return super.toString() + "\n" + "  xNum: " + xNum + "\n"
+                + "  xDenom: " + xDenom + "\n" + "  yNum: " + yNum + "\n"
+                + "  yDenom: " + yDenom;
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2001-2007 freehep
+// Copyright 2001-2005 freehep
 package org.freehep.graphicsio.font;
 
 import java.awt.Font;
@@ -6,18 +6,16 @@ import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Locale;
 import java.util.Map;
 
 import org.freehep.graphics2d.font.CharTable;
-import org.freehep.graphics2d.font.FontUtilities;
 import org.freehep.graphics2d.font.Lookup;
 
 /**
  * A table to remember which fonts were used while writing a document.
  * 
  * @author Simon Fischer
- * @version $Id: FontTable.java,v 1.4 2008-08-06 19:23:28 murkle Exp $
+ * @version $Id: FontTable.java,v 1.5 2009-08-17 21:44:45 murkle Exp $
  */
 public abstract class FontTable {
 
@@ -32,7 +30,7 @@ public abstract class FontTable {
 
         private Entry(Font f, CharTable encoding) {
             // get attributes of font for the stored default font
-            Map/*<TextAttribute,?>*/ attributes = FontUtilities.getAttributes(f);
+            Map/*<TextAttribute,?>*/ attributes = f.getAttributes();
 
             // set default font size
             attributes.put(TextAttribute.SIZE, new Float(FontEmbedder.FONT_SIZE));
@@ -137,7 +135,7 @@ public abstract class FontTable {
      * @return something like Helvetica[BOLD:1][ITALIC:0][UNDERLINE:1]
      */
     private String getKey(Font font) {
-        Map/*<TextAttribute,?>*/ attributes = FontUtilities.getAttributes(font);
+        Map/*<TextAttribute,?>*/ attributes = font.getAttributes();
 
         StringBuffer result = new StringBuffer(font.getName());
 
@@ -190,24 +188,24 @@ public abstract class FontTable {
         // Java font names could end with ".plain" ".bold"
         // and ".italic". We have to convert this to an
         // attribute first
-        if (family.toLowerCase(Locale.US).endsWith(".bold")) {
+        if (family.toLowerCase().endsWith(".bold")) {
             attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
             // cut the ".bold"
-            int pos = family.toLowerCase(Locale.US).indexOf(".bold");
+            int pos = family.toLowerCase().indexOf(".bold");
             family = family.substring(0, pos);
-        } else if (family.toLowerCase(Locale.US).endsWith(".italic")) {
+        } else if (family.toLowerCase().endsWith(".italic")) {
             attributes.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
             // cut the ".italic"
-            int pos = family.toLowerCase(Locale.US).indexOf(".italic");
+            int pos = family.toLowerCase().indexOf(".bold");
             family = family.substring(0, pos);
-        } else if (family.toLowerCase(Locale.US).endsWith(".plain")) {
+        } else if (family.toLowerCase().endsWith(".plain")) {
             // cut the ".plain"
-            int pos = family.toLowerCase(Locale.US).indexOf(".plain");
+            int pos = family.toLowerCase().indexOf(".plain");
             family = family.substring(0, pos);
         }
 
         // first character up
-        family = family.substring(0, 1).toUpperCase(Locale.US) + family.substring(1, family.length());
+        family = family.substring(0, 1).toUpperCase() + family.substring(1, family.length());
         attributes.put(TextAttribute.FAMILY, family);
     }
 
@@ -220,7 +218,7 @@ public abstract class FontTable {
     }
 
     private CharTable getEncodingTable(Font font) {
-        String fontname = font.getName().toLowerCase(Locale.US);
+        String fontname = font.getName().toLowerCase();
         if (fontname.indexOf("symbol") >= 0)
             return Lookup.getInstance().getTable("Symbol");
         if (fontname.indexOf("zapfdingbats") >= 0)

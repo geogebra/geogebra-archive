@@ -1,8 +1,6 @@
 // Copyright 2001 freehep
 package org.freehep.graphicsio.pdf;
 
-import geogebra.main.Application;
-
 import java.awt.GradientPaint;
 import java.awt.Paint;
 import java.awt.TexturePaint;
@@ -14,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.freehep.graphicsio.ImageConstants;
+
 /**
  * Delay <tt>Paint</tt> objects (gradient/texture, not color) for writing
  * pattern/shading/function dictionaries to the pdf file when the pageStream is
@@ -22,7 +22,7 @@ import java.util.ListIterator;
  * yet (ps calculation)
  * 
  * @author Simon Fischer
- * @version $Id: PDFPaintDelayQueue.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
+ * @version $Id: PDFPaintDelayQueue.java,v 1.6 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFPaintDelayQueue {
 
@@ -94,7 +94,7 @@ public class PDFPaintDelayQueue {
                 } else if (e.paint instanceof TexturePaint) {
                     addTexturePaint(e);
                 } else {
-                    Application.debug("PDFWriter: Paint of class '"
+                    System.err.println("PDFWriter: Paint of class '"
                             + e.paint.getClass() + "' not supported.");
                     // FIXME, we could write a color here, to keep the file
                     // valid.
@@ -241,7 +241,15 @@ public class PDFPaintDelayQueue {
         // scale the tiling image to the correct size
         pattern.matrix(width, 0, 0, -height, 0, height);
 
-        pattern.inlineImage(image, null, e.writeAs);
+        String[] encode;
+        if (e.writeAs.equals(ImageConstants.ZLIB)) {
+            encode = new String[] { "Flate", "ASCII85" };
+        } else if (e.writeAs.equals(ImageConstants.JPG)) {
+            encode = new String[] { "DCT", "ASCII85" };
+        } else {
+            encode = new String[] { null, "ASCII85" };
+        }
+        pattern.inlineImage(image, null, encode);
         pdf.close(pattern);
     }
 

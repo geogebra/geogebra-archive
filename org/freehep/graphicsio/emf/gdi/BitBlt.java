@@ -4,16 +4,13 @@ package org.freehep.graphicsio.emf.gdi;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 
 import org.freehep.graphicsio.ImageGraphics2D;
 import org.freehep.graphicsio.emf.EMFConstants;
-import org.freehep.graphicsio.emf.EMFImageLoader;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 import org.freehep.graphicsio.raw.RawImageWriteParam;
 import org.freehep.util.UserProperties;
@@ -25,11 +22,11 @@ import org.freehep.util.io.NoCloseOutputStream;
  * of visual C++.
  * 
  * @author Mark Donszelmann
- * @version $Id: BitBlt.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: BitBlt.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class BitBlt extends EMFTag implements EMFConstants {
 
-    private final static int size = 100;
+    public final static int size = 100;
 
     private Rectangle bounds;
 
@@ -47,14 +44,14 @@ public class BitBlt extends EMFTag implements EMFConstants {
 
     private BitmapInfo bmi;
 
-    private BufferedImage image;
+    private RenderedImage image;
 
     public BitBlt() {
         super(76, 1);
     }
 
     public BitBlt(Rectangle bounds, int x, int y, int width, int height,
-            AffineTransform transform, BufferedImage image, Color bkg) {
+            AffineTransform transform, RenderedImage image, Color bkg) {
         this();
         this.bounds = bounds;
         this.x = x;
@@ -75,7 +72,6 @@ public class BitBlt extends EMFTag implements EMFConstants {
             throws IOException {
 
         BitBlt tag = new BitBlt();
-
         tag.bounds = emf.readRECTL(); // 16
         tag.x = emf.readLONG(); // 20
         tag.y = emf.readLONG(); // 24
@@ -94,24 +90,11 @@ public class BitBlt extends EMFTag implements EMFConstants {
         /* int bitmapOffset = */ emf.readDWORD(); // 88
         int bitmapSize = emf.readDWORD(); // 92
 
-        // read bmi
-        if (bmiSize > 0) {
-            tag.bmi = new BitmapInfo(emf);
-        } else {
-            tag.bmi = null;
-        }
+        // FIXME: this size can differ and can be placed somewhere else
+        bmi = (bmiSize > 0) ? new BitmapInfo(emf) : null;
 
-        if (bitmapSize > 0 && tag.bmi != null) {
-            tag.image = EMFImageLoader.readImage(
-                tag.bmi.getHeader(),
-                tag.width,
-                tag.height,
-                emf,
-                bitmapSize, null);
-        } else {
-            tag.image = null;
-        }
-
+        // FIXME: need to decode image into java Image.
+        /* int[] bytes = */ emf.readUnsignedByte(bitmapSize);
         return tag;
     }
 
@@ -137,15 +120,14 @@ public class BitBlt extends EMFTag implements EMFConstants {
         properties.setProperty(RawImageWriteParam.BACKGROUND, bkg);
         properties.setProperty(RawImageWriteParam.CODE, "BGR");
         properties.setProperty(RawImageWriteParam.PAD, 4);
-        ImageGraphics2D.writeImage((RenderedImage)image, "raw", properties,
+        ImageGraphics2D.writeImage(image, "raw", properties,
                 new NoCloseOutputStream(emf));
 
         // emf.writeImage(image, bkg, "BGR", 4);
         int length = emf.popBuffer();
 
-        BitmapInfoHeader header = new BitmapInfoHeader(
-            image.getWidth(),
-            image.getHeight(), 24, BI_RGB, length, 0, 0, 0, 0);
+        BitmapInfoHeader header = new BitmapInfoHeader(image.getWidth(), image
+                .getHeight(), 24, BI_RGB, length, 0, 0, 0, 0);
         bmi = new BitmapInfo(header);
         bmi.write(emf);
 
@@ -155,25 +137,12 @@ public class BitBlt extends EMFTag implements EMFConstants {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  bounds: " + bounds +
-            "\n  x, y, w, h: " + x + " " + y + " " + width + " " + height +
-            "\n  dwROP: 0x" + Integer.toHexString(dwROP) +
-            "\n  xSrc, ySrc: " + xSrc + " " + ySrc +
-            "\n  transform: " + transform +
-            "\n  bkg: " + bkg +
-            "\n  usage: " + usage +
-            "\n" + ((bmi != null) ? bmi.toString() : "  bitmap: null");
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        if (image != null) {
-            renderer.drawImage(image, transform);
-        }
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  x, y, w, h: " + x + " " + y + " " + width + " " + height
+                + "\n" + "  dwROP: 0x" + Integer.toHexString(dwROP) + "\n"
+                + "  xSrc, ySrc: " + xSrc + " " + ySrc + "\n" + "  transform: "
+                + transform + "\n" + "  bkg: " + bkg + "\n" + "  usage: "
+                + usage + "\n"
+                + ((bmi != null) ? bmi.toString() : "  bitmap: null");
     }
 }

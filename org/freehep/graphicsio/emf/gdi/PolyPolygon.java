@@ -13,26 +13,30 @@ import org.freehep.graphicsio.emf.EMFTag;
  * PolyPolygon TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: PolyPolygon.java,v 1.3 2008-05-04 12:19:52 murkle Exp $
+ * @version $Id: PolyPolygon.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class PolyPolygon extends AbstractPolyPolygon {
+public class PolyPolygon extends EMFTag {
+
+    private Rectangle bounds;
 
     private int start, end;
 
+    private int[] numberOfPoints;
+
+    private Point[][] points;
+
     public PolyPolygon() {
-        super(8, 1, null, null, null);
+        super(8, 1);
     }
 
-    public PolyPolygon(
-        Rectangle bounds,
-        int start,
-        int end,
-        int[] numberOfPoints,
-        Point[][] points) {
-
-        super(8, 1, bounds, numberOfPoints, points);
+    public PolyPolygon(Rectangle bounds, int start, int end,
+            int[] numberOfPoints, Point[][] points) {
+        this();
+        this.bounds = bounds;
         this.start = start;
         this.end = end;
+        this.numberOfPoints = numberOfPoints;
+        this.points = points;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
@@ -50,14 +54,12 @@ public class PolyPolygon extends AbstractPolyPolygon {
         for (int i = 0; i < np; i++) {
             points[i] = emf.readPOINTL(pc[i]);
         }
-        return new PolyPolygon(bounds, 0, np - 1, pc, points);
+        PolyPolygon tag = new PolyPolygon(bounds, 0, np - 1, pc, points);
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
-        int[] numberOfPoints = getNumberOfPoints();
-        Point[][] points = getPoints();
-
-        emf.writeRECTL(getBounds());
+        emf.writeRECTL(bounds);
         emf.writeDWORD(end - start + 1);
         int c = 0;
         for (int i = start; i < end + 1; i++) {
@@ -70,5 +72,10 @@ public class PolyPolygon extends AbstractPolyPolygon {
         for (int i = start; i < end + 1; i++) {
             emf.writePOINTL(numberOfPoints[i], points[i]);
         }
+    }
+
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  #polys: " + (end - start + 1);
     }
 }

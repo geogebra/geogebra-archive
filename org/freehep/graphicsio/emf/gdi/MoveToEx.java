@@ -2,19 +2,17 @@
 package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Point;
-import java.awt.geom.GeneralPath;
 import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * MoveToEx TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: MoveToEx.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: MoveToEx.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class MoveToEx extends EMFTag {
 
@@ -32,7 +30,8 @@ public class MoveToEx extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new MoveToEx(emf.readPOINTL());
+        MoveToEx tag = new MoveToEx(emf.readPOINTL());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -40,23 +39,11 @@ public class MoveToEx extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() + "\n  point: " + point;
+        return super.toString() + "\n" + "  point: " + point;
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        // The MoveToEx function updates the current position to the
-        // specified point
-        // and optionally returns the previous position.
-        GeneralPath currentFigure = new GeneralPath(
-            renderer.getWindingRule());
-        currentFigure.moveTo(
-            (float) point.getX(),
-            (float) point.getY());
-        renderer.setFigure(currentFigure);
+    public Point getPoint() {
+        return point;
     }
+
 }

@@ -13,7 +13,7 @@ import org.freehep.graphicsio.emf.EMFTag;
  * GradientFill TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: GradientFill.java,v 1.3 2008-05-04 12:17:51 murkle Exp $
+ * @version $Id: GradientFill.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class GradientFill extends EMFTag implements EMFConstants {
 
@@ -56,7 +56,8 @@ public class GradientFill extends EMFTag implements EMFConstants {
                 gradients[i] = new GradientRectangle(emf);
             }
         }
-        return new GradientFill(bounds, mode, vertices, gradients);
+        GradientFill tag = new GradientFill(bounds, mode, vertices, gradients);
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -74,27 +75,14 @@ public class GradientFill extends EMFTag implements EMFConstants {
 
     public String toString() {
         StringBuffer s = new StringBuffer();
-        s.append(super.toString());
-        s.append("\n");
-        s.append("  bounds: ");
-        s.append(bounds);
-        s.append("\n");
-        s.append("  mode: ");
-        s.append(mode);
-        s.append("\n");
+        s.append(super.toString() + "\n");
+        s.append("  bounds: " + bounds + "\n");
+        s.append("  mode: " + mode + "\n");
         for (int i = 0; i < vertices.length; i++) {
-            s.append("  vertex[");
-            s.append(i);
-            s.append("]: ");
-            s.append(vertices[i]);
-            s.append("\n");
+            s.append("  vertex[" + i + "]: " + vertices[i] + "\n");
         }
         for (int i = 0; i < gradients.length; i++) {
-            s.append("  gradient[");
-            s.append(i);
-            s.append("]: ");
-            s.append(gradients[i]);
-            s.append("\n");
+            s.append("  gradient[" + i + "]: " + gradients[i] + "\n");
         }
         return s.toString();
     }

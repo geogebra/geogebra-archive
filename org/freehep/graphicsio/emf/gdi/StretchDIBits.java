@@ -1,21 +1,18 @@
-// Copyright 2002-2007, FreeHEP.
+// Copyright 2002, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.Locale;
 
-import org.freehep.graphicsio.ImageConstants;
 import org.freehep.graphicsio.ImageGraphics2D;
 import org.freehep.graphicsio.emf.EMFConstants;
-import org.freehep.graphicsio.emf.EMFImageLoader;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
+import org.freehep.graphicsio.raw.RawImageWriteParam;
+import org.freehep.util.UserProperties;
 import org.freehep.util.io.NoCloseOutputStream;
 
 /**
@@ -24,7 +21,7 @@ import org.freehep.util.io.NoCloseOutputStream;
  * WINGDI.H file of visual C++.
  * 
  * @author Mark Donszelmann
- * @version $Id: StretchDIBits.java,v 1.4 2008-08-06 19:23:24 murkle Exp $
+ * @version $Id: StretchDIBits.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class StretchDIBits extends EMFTag implements EMFConstants {
 
@@ -42,14 +39,14 @@ public class StretchDIBits extends EMFTag implements EMFConstants {
 
     private BitmapInfo bmi;
 
-    private BufferedImage image;
+    private RenderedImage image;
 
     public StretchDIBits() {
         super(81, 1);
     }
 
     public StretchDIBits(Rectangle bounds, int x, int y, int width, int height,
-            BufferedImage image, Color bkg) {
+            RenderedImage image, Color bkg) {
         this();
         this.bounds = bounds;
         this.x = x;
@@ -93,13 +90,8 @@ public class StretchDIBits extends EMFTag implements EMFConstants {
         // FIXME: this size can differ and can be placed somewhere else
         tag.bmi = new BitmapInfo(emf);
 
-        tag.image = EMFImageLoader.readImage(
-            tag.bmi.getHeader(),
-            tag.width,
-            tag.height,
-            emf,
-            len - 72 - BitmapInfoHeader.size, null);
-
+        // FIXME: need to decode image into java Image.
+        /* int[] bytes = */ emf.readUnsignedByte(len - 72 - BitmapInfoHeader.size);
         return tag;
     }
 
@@ -121,11 +113,12 @@ public class StretchDIBits extends EMFTag implements EMFConstants {
         // plain
         encode = BI_RGB;
 
-        ImageGraphics2D.writeImage(
-            (RenderedImage) image,
-            ImageConstants.RAW.toLowerCase(Locale.US),
-            ImageGraphics2D.getRAWProperties(bkg, "BGR"),
-            new NoCloseOutputStream(emf));
+        UserProperties properties = new UserProperties();
+        properties.setProperty(RawImageWriteParam.BACKGROUND, bkg);
+        properties.setProperty(RawImageWriteParam.CODE, "BGR");
+        properties.setProperty(RawImageWriteParam.PAD, 1);
+        ImageGraphics2D.writeImage(image, "raw", properties,
+                new NoCloseOutputStream(emf));
         // emf.writeImage(image, bkg, "BGR", 1);
         // png
         // encode = BI_PNG;
@@ -152,31 +145,11 @@ public class StretchDIBits extends EMFTag implements EMFConstants {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  bounds: " + bounds +
-            "\n  x, y, w, h: " + x + " " + y + " " + width + " " + height +
-            "\n  xSrc, ySrc, widthSrc, heightSrc: " + xSrc + " "
-                + ySrc + " " + widthSrc + " " + heightSrc +
-            "\n  usage: " + usage +
-            "\n  dwROP: " + dwROP +
-            "\n  bkg: " + bkg +
-            "\n" + bmi.toString();
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        // The StretchDIBits function copies the color data for a rectangle of pixels in a
-        // DIB to the specified destination rectangle. If the destination rectangle is larger
-        // than the source rectangle, this function stretches the rows and columns of color
-        // data to fit the destination rectangle. If the destination rectangle is smaller
-        // than the source rectangle, this function compresses the rows and columns by using
-        // the specified raster operation.
-        if (image != null) {
-            renderer.drawImage(image, x, y, widthSrc, heightSrc);
-        }
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  x, y, w, h: " + x + " " + y + " " + width + " " + height
+                + "\n" + "  xSrc, ySrc, widthSrc, heightSrc: " + xSrc + " "
+                + ySrc + " " + widthSrc + " " + heightSrc + "\n" + "  usage: "
+                + usage + "\n" + "  dwROP: " + dwROP + "\n" + "  bkg: " + bkg
+                + "\n" + bmi.toString();
     }
 }

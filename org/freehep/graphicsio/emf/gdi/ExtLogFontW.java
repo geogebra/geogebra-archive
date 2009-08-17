@@ -7,15 +7,14 @@ import java.io.IOException;
 import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 
 /**
  * EMF ExtLogFontW
  * 
  * @author Mark Donszelmann
- * @version $Id: ExtLogFontW.java,v 1.3 2008-05-04 12:18:31 murkle Exp $
+ * @version $Id: ExtLogFontW.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class ExtLogFontW implements EMFConstants, GDIObject {
+public class ExtLogFontW implements EMFConstants {
 
     private LogFontW font;
 
@@ -73,8 +72,6 @@ public class ExtLogFontW implements EMFConstants, GDIObject {
         culture = emf.readDWORD();
         panose = new Panose(emf);
         emf.readWORD(); // Pad to 4-byte boundary
-        // to avoid an eception
-        emf.popBuffer();
     }
 
     public void write(EMFOutputStream emf) throws IOException {
@@ -92,24 +89,11 @@ public class ExtLogFontW implements EMFConstants, GDIObject {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  LogFontW\n" + font.toString() +
-            "\n    fullname: " + fullName +
-            "\n    style: " + style +
-            "\n    version: " + version +
-            "\n    stylesize: " + styleSize +
-            "\n    match: " + match +
-            "\n    vendorID: " + vendorID +
-            "\n    culture: "  + culture +
-            "\n" + panose.toString();
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        renderer.setFont(font.getFont());
+        return super.toString() + "\n" + "  LogFontW\n" + font.toString()
+                + "\n" + "    fullname: " + fullName + "\n" + "    style: "
+                + style + "\n" + "    version: " + version + "\n"
+                + "    stylesize: " + styleSize + "\n" + "    match: " + match
+                + "\n" + "    vendorID: " + vendorID + "\n" + "    culture: "
+                + culture + "\n" + panose.toString();
     }
 }

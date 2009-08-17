@@ -16,7 +16,7 @@ import org.freehep.graphicsio.emf.gdi.PolylineTo16;
 
 /**
  * @author Mark Donszelmann
- * @version $Id: EMFPathConstructor.java,v 1.3 2008-05-04 12:16:56 murkle Exp $
+ * @version $Id: EMFPathConstructor.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public class EMFPathConstructor extends QuadToCubicPathConstructor implements
         EMFConstants {

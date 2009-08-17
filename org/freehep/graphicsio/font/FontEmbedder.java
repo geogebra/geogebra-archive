@@ -33,7 +33,7 @@ import org.freehep.graphics2d.font.CharTable;
  * </ul>
  * 
  * @author Simon Fischer
- * @version $Id: FontEmbedder.java,v 1.3 2008-05-04 12:28:56 murkle Exp $
+ * @version $Id: FontEmbedder.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public abstract class FontEmbedder extends FontIncluder {
 

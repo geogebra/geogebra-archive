@@ -11,7 +11,7 @@ import org.freehep.graphicsio.emf.EMFOutputStream;
  * EMF BitmapInfoHeader
  * 
  * @author Mark Donszelmann
- * @version $Id: BitmapInfoHeader.java,v 1.3 2008-05-04 12:18:04 murkle Exp $
+ * @version $Id: BitmapInfoHeader.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class BitmapInfoHeader implements EMFConstants {
 
@@ -53,7 +53,8 @@ public class BitmapInfoHeader implements EMFConstants {
     }
 
     public BitmapInfoHeader(EMFInputStream emf) throws IOException {
-        /*int len = */ emf.readDWORD(); // seems fixed
+        int len = emf.readDWORD(); // seems fixed
+        System.out.println(len);
         width = emf.readLONG();
         height = emf.readLONG();
         planes = emf.readWORD();
@@ -81,36 +82,13 @@ public class BitmapInfoHeader implements EMFConstants {
     }
 
     public String toString() {
-        return "    size: " + size +
-            "\n    width: " + width +
-            "\n    height: " + height +
-            "\n    planes: " + planes +
-            "\n    bitCount: " + bitCount +
-            "\n    compression: " + compression +
-            "\n    sizeImage: " + sizeImage +
-            "\n    xPelsPerMeter: " + xPelsPerMeter +
-            "\n    yPelsPerMeter: " + yPelsPerMeter +
-            "\n    clrUsed: " + clrUsed +
-            "\n    clrImportant: " + clrImportant;
-    }
-
-    public int getBitCount() {
-        return bitCount;
-    }
-
-    public int getCompression() {
-        return compression;
-    }
-
-    public int getClrUsed() {
-        return clrUsed;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
+        return "    size: " + size + "\n" + "    width: " + width + "\n"
+                + "    height: " + height + "\n" + "    planes: " + planes
+                + "\n" + "    bitCount: " + bitCount + "\n"
+                + "    compression: " + compression + "\n" + "    sizeImage: "
+                + sizeImage + "\n" + "    xPelsPerMeter: " + xPelsPerMeter
+                + "\n" + "    yPelsPerMeter: " + yPelsPerMeter + "\n"
+                + "    clrUsed: " + clrUsed + "\n" + "    clrImportant: "
+                + clrImportant;
     }
 }

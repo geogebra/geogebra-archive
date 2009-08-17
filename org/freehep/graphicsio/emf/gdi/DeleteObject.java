@@ -5,14 +5,13 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * DeleteObject TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: DeleteObject.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: DeleteObject.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class DeleteObject extends EMFTag {
 
@@ -30,7 +29,8 @@ public class DeleteObject extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new DeleteObject(emf.readDWORD());
+        DeleteObject tag = new DeleteObject(emf.readDWORD());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -38,16 +38,11 @@ public class DeleteObject extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  index: 0x" + Integer.toHexString(index);
+        return super.toString() + "\n" + "  index: 0x"
+                + Integer.toHexString(index);
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        renderer.storeGDIObject(index, null);
+    public int getIndex() {
+        return index;
     }
 }

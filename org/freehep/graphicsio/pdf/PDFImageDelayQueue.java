@@ -10,13 +10,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.freehep.graphicsio.ImageConstants;
+
 /**
  * Delay <tt>Image</tt> objects for writing XObjects to the pdf file when the
  * pageStream is complete. Caches identical images to only write them once.
  * 
  * @author Simon Fischer
  * @author Mark Donszelmann
- * @version $Id: PDFImageDelayQueue.java,v 1.3 2008-05-04 12:31:07 murkle Exp $
+ * @version $Id: PDFImageDelayQueue.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFImageDelayQueue {
 
@@ -78,17 +80,27 @@ public class PDFImageDelayQueue {
             if (!entry.written) {
                 entry.written = true;
 
+                String[] encode;
+                if (entry.writeAs.equals(ImageConstants.ZLIB)
+                        || (entry.maskName != null)) {
+                    encode = new String[] { "Flate", "ASCII85" };
+                } else if (entry.writeAs.equals(ImageConstants.JPG)) {
+                    encode = new String[] { "DCT", "ASCII85" };
+                } else {
+                    encode = new String[] { null, "ASCII85" };
+                }
+
                 PDFStream img = pdf.openStream(entry.name);
                 img.entry("Subtype", pdf.name("Image"));
                 if (entry.maskName != null)
                     img.entry("SMask", pdf.ref(entry.maskName));
-                img.image(entry.image, entry.bkg, entry.writeAs);
+                img.image(entry.image, entry.bkg, encode);
                 pdf.close(img);
 
                 if (entry.maskName != null) {
                     PDFStream mask = pdf.openStream(entry.maskName);
                     mask.entry("Subtype", pdf.name("Image"));
-                    mask.imageMask(entry.image, entry.writeAs);
+                    mask.imageMask(entry.image, encode);
                     pdf.close(mask);
                 }
             }

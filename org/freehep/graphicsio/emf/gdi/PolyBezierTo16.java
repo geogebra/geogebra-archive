@@ -13,29 +13,44 @@ import org.freehep.graphicsio.emf.EMFTag;
  * PolyBezierTo16 TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: PolyBezierTo16.java,v 1.3 2008-05-04 12:19:23 murkle Exp $
+ * @version $Id: PolyBezierTo16.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class PolyBezierTo16 extends PolyBezierTo {
+public class PolyBezierTo16 extends EMFTag {
+
+    private Rectangle bounds;
+
+    private int numberOfPoints;
+
+    private Point[] points;
 
     public PolyBezierTo16() {
-        super(88, 1, null, 0, null);
+        super(88, 1);
     }
 
     public PolyBezierTo16(Rectangle bounds, int numberOfPoints, Point[] points) {
-        super(88, 1, bounds, numberOfPoints, points);
+        this();
+        this.bounds = bounds;
+        this.numberOfPoints = numberOfPoints;
+        this.points = points;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
-        throws IOException {
+            throws IOException {
 
         Rectangle r = emf.readRECTL();
         int n = emf.readDWORD();
-        return new PolyBezierTo16(r, n, emf.readPOINTS(n));
+        PolyBezierTo16 tag = new PolyBezierTo16(r, n, emf.readPOINTS(n));
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
-        emf.writeRECTL(getBounds());
-        emf.writeDWORD(getNumberOfPoints());
-        emf.writePOINTS(getNumberOfPoints(), getPoints());
+        emf.writeRECTL(bounds);
+        emf.writeDWORD(numberOfPoints);
+        emf.writePOINTS(numberOfPoints, points);
+    }
+
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  #points: " + numberOfPoints;
     }
 }

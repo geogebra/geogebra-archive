@@ -5,14 +5,13 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * CreateBrushIndirect TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: CreateBrushIndirect.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: CreateBrushIndirect.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class CreateBrushIndirect extends EMFTag {
 
@@ -33,9 +32,9 @@ public class CreateBrushIndirect extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new CreateBrushIndirect(
-            emf.readDWORD(),
-            new LogBrush32(emf));
+        CreateBrushIndirect tag = new CreateBrushIndirect(emf.readDWORD(),
+                new LogBrush32(emf));
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -44,25 +43,15 @@ public class CreateBrushIndirect extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  index: 0x" + Integer.toHexString(index) +
-            "\n" + brush.toString();
+        return super.toString() + "\n" + "  index: 0x"
+                + Integer.toHexString(index) + "\n" + brush.toString();
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        // CreateBrushIndirect
-        //
-        // The CreateBrushIndirect function creates a logical brush that has the
-        // specified style, color, and pattern.
-        //
-        // HBRUSH CreateBrushIndirect(
-        //   CONST LOGBRUSH *lplb   // brush information
-        // );
-        renderer.storeGDIObject(index, brush);
+    public int getIndex() {
+        return index;
+    }
+
+    public LogBrush32 getBrush() {
+        return brush;
     }
 }

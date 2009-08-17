@@ -1,4 +1,4 @@
-// Copyright 2000-2007, FreeHEP
+// Copyright 2000-2006 FreeHEP
 package org.freehep.graphicsio.pdf;
 
 import java.awt.BasicStroke;
@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.freehep.graphics2d.TagString;
-import org.freehep.graphics2d.font.FontUtilities;
 import org.freehep.graphics2d.font.Lookup;
 import org.freehep.graphicsio.AbstractVectorGraphicsIO;
 import org.freehep.graphicsio.FontConstants;
@@ -44,6 +43,7 @@ import org.freehep.graphicsio.ImageGraphics2D;
 import org.freehep.graphicsio.InfoConstants;
 import org.freehep.graphicsio.MultiPageDocument;
 import org.freehep.graphicsio.PageConstants;
+import org.freehep.graphicsio.font.FontUtilities;
 import org.freehep.util.UserProperties;
 
 /**
@@ -56,7 +56,7 @@ import org.freehep.util.UserProperties;
  * 
  * @author Simon Fischer
  * @author Mark Donszelmann
- * @version $Id: PDFGraphics2D.java,v 1.6 2008-08-07 18:33:56 murkle Exp $
+ * @version $Id: PDFGraphics2D.java,v 1.7 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		MultiPageDocument, FontUtilities.ShowString {
@@ -137,13 +137,13 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		defaultProperties.setProperty(BACKGROUND_COLOR, Color.GRAY);
 
 		defaultProperties.setProperty(VERSION, VERSION5);
-		defaultProperties.setProperty(COMPRESS, false);
+		defaultProperties.setProperty(COMPRESS, true);
 		defaultProperties.setProperty(PAGE_SIZE, PageConstants.INTERNATIONAL);
 		defaultProperties.setProperty(PAGE_MARGINS, PageConstants
 				.getMargins(PageConstants.SMALL));
 		defaultProperties.setProperty(ORIENTATION, PageConstants.PORTRAIT);
 		defaultProperties.setProperty(FIT_TO_PAGE, true);
-		defaultProperties.setProperty(EMBED_FONTS, true);
+		defaultProperties.setProperty(EMBED_FONTS, false);
 		defaultProperties.setProperty(EMBED_FONTS_AS,
 				FontConstants.EMBED_FONTS_TYPE3);
 		defaultProperties.setProperty(THUMBNAILS, defaultProperties
@@ -157,7 +157,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		defaultProperties.setProperty(KEYWORDS, "");
 
 		defaultProperties.setProperty(CLIP, true);
-		defaultProperties.setProperty(TEXT_AS_SHAPES, false);
+		defaultProperties.setProperty(TEXT_AS_SHAPES, true);
 	}
 
 	public static Properties getDefaultProperties() {
@@ -168,11 +168,11 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		defaultProperties.setProperties(newProperties);
 	}
 
-	public static final String version = "$Revision: 1.6 $";
+	public static final String version = "$Revision: 1.7 $";
 
 	private static final String PDF_VERSION = "1.4";
 
-	private static final String[] COMPRESS_FILTERS = { ImageConstants.ENCODING_FLATE, ImageConstants.ENCODING_ASCII85};
+	private static final String[] COMPRESS_FILTERS = { "Flate", "ASCII85" };
 
 	private static final String[] NO_FILTERS = {};
 
@@ -518,7 +518,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 
 		if (thumbnail != null) {
 			PDFStream thumbnailStream = os.openStream("Thumb" + currentPage);
-			thumbnailStream.image(thumbnail, Color.black, ImageConstants.ZLIB);
+			thumbnailStream.image(thumbnail, Color.black, COMPRESS_FILTERS);
 			os.close(thumbnailStream);
 		}
 
@@ -577,8 +577,6 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 					+ "Call openPage() to start a new one.");
 			return;
 		}
-        writeGraphicsRestore();
-        writeGraphicsRestore();
 		os.close(pageStream);
 		pageStream = null;
 
@@ -711,6 +709,23 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 			} else {
 				pageStream.fill();
 			}
+		} catch (IOException e) {
+			handleException(e);
+		}
+	}
+
+	// TODO: Does not use current stroke yet
+	public void fillAndDraw(Shape s, Color fillColor) {
+		try {
+			writeGraphicsSave();
+			setNonStrokeColor(fillColor);
+			boolean eofill = pageStream.drawPath(s);
+			if (eofill) {
+				pageStream.fillEvenOddAndStroke();
+			} else {
+				pageStream.fillAndStroke();
+			}
+			writeGraphicsRestore();
 		} catch (IOException e) {
 			handleException(e);
 		}
@@ -884,7 +899,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 
 	protected void writePaint(Color c) throws IOException {
 		float[] cc = c.getRGBComponents(null);
-		// Application.debug("alpha = "+cc[3]);
+		// System.out.println("alpha = "+cc[3]);
 		Float alpha = new Float(cc[3]);
 		String alphaName = (String) extGStates.get(alpha);
 		if (alphaName == null) {
@@ -939,18 +954,16 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		return null;
 	}
 
+	public boolean hit(Rectangle rect, Shape s, boolean onStroke) {
+		writeWarning(getClass()
+				+ ": hit(Rectangle, Shape, boolean) not implemented.");
+		return false;
+	}
+
 	public void writeComment(String comment) throws IOException {
 		// comments are ignored and disabled, because they confuse compressed
 		// streams
 	}
-
-    // Michael Borcherds 2008-02-26
-    public void startGroup(String s) {
-    }
-
-    // Michael Borcherds 2008-02-26
-    public void endGroup(String s) {
-    }
 
 	public String toString() {
 		return "PDFGraphics2D";
@@ -973,7 +986,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * 
 	 * @see FontUtilities#showString(java.awt.Font, String,
 	 *      org.freehep.graphics2d.font.CharTable,
-	 *      org.freehep.graphics2d.font.FontUtilities.ShowString)
+	 *      org.freehep.graphicsio.font.FontUtilities.ShowString)
 	 */
 	private void showCharacterCodes(String str) throws IOException {
 		FontUtilities.showString(getFont(), str, Lookup.getInstance().getTable(

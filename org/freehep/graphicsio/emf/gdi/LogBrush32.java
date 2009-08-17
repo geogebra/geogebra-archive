@@ -3,21 +3,19 @@ package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 
 /**
  * EMF LogBrush32
- *
+ * 
  * @author Mark Donszelmann
- * @version $Id: LogBrush32.java,v 1.3 2008-05-04 12:19:26 murkle Exp $ see
+ * @version $Id: LogBrush32.java,v 1.4 2009-08-17 21:44:44 murkle Exp $ see
  *          http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/brushes_8yk2.asp
  */
-public class LogBrush32 implements EMFConstants, GDIObject {
+public class LogBrush32 implements EMFConstants {
 
     private int style;
 
@@ -44,32 +42,19 @@ public class LogBrush32 implements EMFConstants, GDIObject {
     }
 
     public String toString() {
-        return "  LogBrush32\n" + "    style: " + style +
-            "\n    color: " + color +
-            "\n    hatch: " + hatch;
+        return "  LogBrush32\n" + "    style: " + style + "\n" + "    color: "
+                + color + "\n" + "    hatch: " + hatch;
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        if (style == EMFConstants.BS_SOLID) {
-            renderer.setBrushPaint(color);
-        } else if (style == EMFConstants.BS_NULL) {
-            // note: same value as BS_HOLLOW
-            // Should probably do this by making a paint implementation that does nothing,
-            // but a 100% transparent color works just as well for now.
-            renderer.setBrushPaint(new Color(0, 0, 0, 0));
+    public int getStyle() {
+        return style;
+    }
 
-            // TODO: Support pattern types
-            // TODO: Support hatching
-            // TODO: Support DIB types
-        } else {
-            Logger logger = Logger.getLogger("org.freehep.graphicsio.emf");
-            logger.warning("LogBrush32 style not supported: " + toString());
-            renderer.setBrushPaint(color);
-        }
+    public Color getColor() {
+        return color;
+    }
+
+    public int getHatch() {
+        return hatch;
     }
 }

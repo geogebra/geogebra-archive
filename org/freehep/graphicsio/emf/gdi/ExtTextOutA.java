@@ -6,45 +6,58 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFInputStream;
+import org.freehep.graphicsio.emf.EMFOutputStream;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * ExtTextOutA TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: ExtTextOutA.java,v 1.3 2008-05-04 12:19:28 murkle Exp $
+ * @version $Id: ExtTextOutA.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class ExtTextOutA extends AbstractExtTextOut implements EMFConstants {
+public class ExtTextOutA extends EMFTag implements EMFConstants {
 
-    private TextA text;
+    private Rectangle bounds;
+
+    private int mode;
+
+    private float xScale, yScale;
+
+    private Text text;
 
     public ExtTextOutA() {
-        super(83, 1, null, 0, 1, 1);
+        super(83, 1);
     }
 
-    public ExtTextOutA(
-        Rectangle bounds,
-        int mode,
-        float xScale,
-        float yScale,
-        TextA text) {
-
-        super(83, 1, bounds, mode, xScale, yScale);
+    public ExtTextOutA(Rectangle bounds, int mode, float xScale, float yScale,
+            Text text) {
+        this();
+        this.bounds = bounds;
+        this.mode = mode;
+        this.xScale = xScale;
+        this.yScale = yScale;
         this.text = text;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new ExtTextOutA(
-            emf.readRECTL(),
-            emf.readDWORD(),
-            emf.readFLOAT(),
-            emf.readFLOAT(),
-            TextA.read(emf));
+        ExtTextOutA tag = new ExtTextOutA(emf.readRECTL(), emf.readDWORD(), emf
+                .readFLOAT(), emf.readFLOAT(), new Text(emf));
+        return tag;
     }
 
-    public Text getText() {
-        return text;
+    public void write(int tagID, EMFOutputStream emf) throws IOException {
+        emf.writeRECTL(bounds);
+        emf.writeDWORD(mode);
+        emf.writeFLOAT(xScale);
+        emf.writeFLOAT(yScale);
+        text.write(emf);
+    }
+
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  mode: " + mode + "\n" + "  xScale: " + xScale + "\n"
+                + "  yScale: " + yScale + "\n" + text.toString();
     }
 }

@@ -10,7 +10,7 @@ import java.io.IOException;
  * Implements some of the PathConstructor functionality
  * 
  * @author Mark Donszelmann
- * @version $Id: AbstractPathConstructor.java,v 1.3 2008-05-04 12:15:35 murkle Exp $
+ * @version $Id: AbstractPathConstructor.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public abstract class AbstractPathConstructor implements PathConstructor {
 

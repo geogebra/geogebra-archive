@@ -1,16 +1,17 @@
-// Copyright 2000-2007, FreeHEP
 package org.freehep.graphicsio.pdf;
-
-import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Properties;
 
-import org.freehep.graphicsio.ImageConstants;
+import org.freehep.graphicsio.ImageGraphics2D;
+import org.freehep.graphicsio.raw.RawImageWriteParam;
+import org.freehep.util.UserProperties;
 import org.freehep.util.io.ASCII85OutputStream;
 import org.freehep.util.io.ASCIIHexOutputStream;
 import org.freehep.util.io.CountedByteOutputStream;
@@ -28,7 +29,7 @@ import org.freehep.util.io.FlateOutputStream;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFStream.java,v 1.6 2008-10-23 19:04:05 hohenwarter Exp $
+ * @version $Id: PDFStream.java,v 1.7 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFStream extends PDFDictionary implements PDFConstants {
 
@@ -50,7 +51,8 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
         this.name = name;
         object = parent;
         if (object == null)
-        	Application.debug("PDFWriter: 'PDFStream' cannot have a null parent");
+            System.err
+                    .println("PDFWriter: 'PDFStream' cannot have a null parent");
         // first write the dictionary
         dictionaryOpen = true;
         this.encode = encode;
@@ -123,7 +125,7 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
                 } else if (filters[i].equals("DCT")) {
                     os[i] = os[i + 1];
                 } else {
-                    Application.debug("PDFWriter: unknown stream format: "
+                    System.err.println("PDFWriter: unknown stream filter: "
                             + filters[i]);
                 }
             }
@@ -158,10 +160,6 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
         out.printPlain("\nendstream");
         out.println();
         object.close();
-        
-        if (gStates > 0) {
-            Application.debug("PDFStream: unbalanced saves()/restores(), too many saves: "+gStates);
-        }
     }
 
     String getName() {
@@ -200,9 +198,8 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
     }
 
     public void restore() throws IOException {
-        if (gStates <= 0) {
-            Application.debug("PDFStream: unbalanced saves()/restores(), too many restores");
-        }
+        if (gStates <= 0)
+            System.err.println("PDFStream: unbalanced saves()/restores()");
         gStates--;
         println("Q");
     }
@@ -364,7 +361,7 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
 
     public void beginText() throws IOException {
         if (textOpen)
-            Application.debug("PDFStream: nested beginText() not allowed.");
+            System.err.println("PDFStream: nested beginText() not allowed.");
         println("BT");
         textOpen = true;
     }
@@ -592,77 +589,55 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
     }
 
     /**
-     * returns the decode-format for an image -format
-     *
-     * @param encode {@link ImageConstants#ZLIB} or {@link ImageConstants#JPG}
-     * @return {@link #decodeFilters(String[])}
-     */
-    private PDFName[] getFilterName(String encode) {
-        if (ImageConstants.ZLIB.equals(encode)) {
-            return decodeFilters(new String[] {
-                ImageConstants.ENCODING_FLATE,
-                ImageConstants.ENCODING_ASCII85});
-        }
-
-        if (ImageConstants.JPG.equals(encode)) {
-            return decodeFilters(new String[] {
-                ImageConstants.ENCODING_DCT,
-                ImageConstants.ENCODING_ASCII85});
-        }
-
-        throw new IllegalArgumentException("unknown image encoding " + encode  + " for PDFStream");
-    }
-
-    /**
      * Image convenience function (see Table 4.35). Ouputs the data of the image
      * using "DeviceRGB" colorspace, and the requested encodings
-     *
-     * @param image Image to write
-     * @param bkg Background color, null for transparent image
-     * @param encode {@link org.freehep.graphicsio.ImageConstants#ZLIB} or {@link org.freehep.graphicsio.ImageConstants#JPG}
-     * @throws java.io.IOException thrown by ImageBytes
      */
-    public void image(RenderedImage image, Color bkg, String encode)
+    public void image(RenderedImage image, Color bkg, String[] encode)
             throws IOException {
-
-        ImageBytes bytes = new ImageBytes(image, bkg, encode, ImageConstants.COLOR_MODEL_RGB);
+        byte[] imageBytes = imageToBytes(image, bkg, encode);
+        PDFName[] filters = decodeFilters(encode);
 
         entry("Width", image.getWidth());
         entry("Height", image.getHeight());
         entry("ColorSpace", pdf.name("DeviceRGB"));
         entry("BitsPerComponent", 8);
-        entry("Filter", getFilterName(bytes.getFormat()));
-        write(bytes.getBytes());
+        entry("Filter", filters);
+
+        startStream(null);
+        write(imageBytes);
     }
 
-    public void imageMask(RenderedImage image, String encode)
+    public void imageMask(RenderedImage image, String[] encode)
             throws IOException {
-
-        ImageBytes bytes = new ImageBytes(image, null, encode, ImageConstants.COLOR_MODEL_A);
-
+        // FIXME hardcoded to A85, Flate
+        PDFName[] filters = decodeFilters(new String[] {"Flate", "ASCII85"});
         entry("Width", image.getWidth());
         entry("Height", image.getHeight());
         entry("BitsPerComponent", 8);
         entry("ColorSpace", pdf.name("DeviceGray"));
-        entry("Filter", getFilterName(bytes.getFormat()));
-        write(bytes.getBytes());
-    }
+        entry("Filter", filters);
 
+        startStream(null);
+        // FIXME hardcoded to A85, Flate
+        ASCII85OutputStream a85 = new ASCII85OutputStream(stream[0]);
+        FlateOutputStream imageStream = new FlateOutputStream(a85);
+        UserProperties props = new UserProperties();
+        props.setProperty(RawImageWriteParam.BACKGROUND, (Color) null);
+        props.setProperty(RawImageWriteParam.CODE, "A");
+        props.setProperty(RawImageWriteParam.PAD, 1);
+        ImageGraphics2D.writeImage(image, "raw", props, imageStream);
+        imageStream.finish();
+        a85.finish();
+    }
 
     /**
      * Inline Image convenience function (see Table 4.39 and 4.40). Ouputs the
      * data of the image using "DeviceRGB" colorspace, and the requested
      * encoding.
-
-     * @param image Image to write
-     * @param bkg Background color, null for transparent image
-     * @param encode {@link org.freehep.graphicsio.ImageConstants#ZLIB} or {@link org.freehep.graphicsio.ImageConstants#JPG}
-     * @throws java.io.IOException thrown by ImageBytes
      */
-    public void inlineImage(RenderedImage image, Color bkg, String encode)
+    public void inlineImage(RenderedImage image, Color bkg, String[] encode)
             throws IOException {
-
-        ImageBytes bytes = new ImageBytes(image, bkg, ImageConstants.JPG, ImageConstants.COLOR_MODEL_RGB);
+        byte[] imageBytes = imageToBytes(image, bkg, encode);
 
         println("BI");
         imageInfo("Width", image.getWidth());
@@ -670,12 +645,64 @@ public class PDFStream extends PDFDictionary implements PDFConstants {
         imageInfo("ColorSpace", pdf.name("DeviceRGB"));
         imageInfo("BitsPerComponent", 8);
 
-        imageInfo("Filter", getFilterName(bytes.getFormat()));
+        PDFName[] filters = decodeFilters(encode);
+        imageInfo("Filter", filters);
         print("ID\n");
 
-        write(bytes.getBytes());
+        write(imageBytes);
 
         println("\nEI");
+    }
+
+    /**
+     * Recursive method which returns the bytes of an image in the given
+     * encoding[0], unless the encoding[0] is null, in which case it returns the
+     * bytes and sets the encoding[0] to the encoding which gives the smallest
+     * image. If the image is transparent, Flate encoding is used by default.
+     */
+    private byte[] imageToBytes(RenderedImage image, Color bkg, String[] encode)
+            throws IOException {
+        if (encode[0] == null) {
+            if (image.getColorModel().hasAlpha() && (bkg == null)) {
+                encode[0] = "Flate";
+                return imageToBytes(image, bkg, encode);
+            }
+
+            // return the smallest
+            encode[0] = "Flate";
+            byte[] zlibBytes = imageToBytes(image, bkg, encode);
+            encode[0] = "DCT";
+            byte[] jpgBytes = imageToBytes(image, bkg, encode);
+
+            if (jpgBytes.length < 0.5 * zlibBytes.length) {
+                encode[0] = "DCT";
+                return jpgBytes;
+            } else {
+                encode[0] = "Flate";
+                return zlibBytes;
+            }
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // FIXME hardcoded to A85
+        ASCII85OutputStream a85 = new ASCII85OutputStream(baos);
+        OutputStream imageStream;
+        if (encode[0].equalsIgnoreCase("Flate")) {
+            imageStream = new FlateOutputStream(a85);
+            UserProperties props = new UserProperties();
+            props.setProperty(RawImageWriteParam.BACKGROUND, bkg);
+            props.setProperty(RawImageWriteParam.CODE, "RGB");
+            props.setProperty(RawImageWriteParam.PAD, 1);
+            ImageGraphics2D.writeImage(image, "raw", props, imageStream);
+        } else {
+            imageStream = a85;
+            ImageGraphics2D.writeImage(image, "jpg", new Properties(),
+                    imageStream);
+        }
+        imageStream.close();
+        a85.close();
+        baos.close();
+        return baos.toByteArray();
     }
 
     //

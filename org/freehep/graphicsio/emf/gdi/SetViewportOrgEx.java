@@ -6,14 +6,13 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * SetViewportOrgEx TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: SetViewportOrgEx.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: SetViewportOrgEx.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class SetViewportOrgEx extends EMFTag {
 
@@ -31,7 +30,8 @@ public class SetViewportOrgEx extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new SetViewportOrgEx(emf.readPOINTL());
+        SetViewportOrgEx tag = new SetViewportOrgEx(emf.readPOINTL());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -39,25 +39,6 @@ public class SetViewportOrgEx extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() + "\n  point: " + point;
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        // The SetViewportOrgEx function specifies which device point maps
-        // to the viewport origin (0,0).
-
-        // This function (along with SetViewportExtEx and SetWindowExtEx) helps
-        // define the mapping from the logical coordinate space (also known as a
-        // window) to the device coordinate space (the viewport). SetViewportOrgEx
-        // specifies which device point maps to the logical point (0,0). It has the
-        // effect of shifting the axes so that the logical point (0,0) no longer
-        // refers to the upper-left corner.
-        renderer.setViewportOrigin(point);
-        renderer.resetTransformation();
+        return super.toString() + "\n" + "  point: " + point;
     }
 }

@@ -12,7 +12,7 @@ import org.freehep.util.UserProperties;
 
 /**
  * 
- * @version $Id: RawImageWriteParam.java,v 1.3 2008-05-04 12:29:33 murkle Exp $
+ * @version $Id: RawImageWriteParam.java,v 1.4 2009-08-17 21:44:46 murkle Exp $
  */
 public class RawImageWriteParam extends ImageWriteParam implements
         ImageParamConverter {

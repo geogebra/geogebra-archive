@@ -2,19 +2,17 @@
 package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * StrokeAndFillPath TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: StrokeAndFillPath.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: StrokeAndFillPath.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class StrokeAndFillPath extends EMFTag {
 
@@ -32,7 +30,8 @@ public class StrokeAndFillPath extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new StrokeAndFillPath(emf.readRECTL());
+        StrokeAndFillPath tag = new StrokeAndFillPath(emf.readRECTL());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -40,21 +39,6 @@ public class StrokeAndFillPath extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() + "\n  bounds: " + bounds;
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        GeneralPath currentPath = renderer.getPath();
-        // fills the current path
-        if (currentPath != null) {
-            renderer.fillShape(currentPath);
-            renderer.drawShape(currentPath);
-            renderer.setPath(null);
-        }
+        return super.toString() + "\n" + "  bounds: " + bounds;
     }
 }

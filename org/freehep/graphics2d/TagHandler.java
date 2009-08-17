@@ -1,13 +1,11 @@
 // Copyright 2000, CERN, Geneva, Switzerland and University of Santa Cruz, California, U.S.A.
 package org.freehep.graphics2d;
 
-import geogebra.main.Application;
-
 
 /**
  * 
  * @author Mark Donszelmann
- * @version $Id: TagHandler.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
+ * @version $Id: TagHandler.java,v 1.6 2009-08-17 21:44:44 murkle Exp $
  */
 public class TagHandler {
 
@@ -151,7 +149,7 @@ public class TagHandler {
 
         TagString s = new TagString(text);
         TagHandler handler = new TagHandler();
-        Application.debug("\"" + s + "\"");
-        Application.debug(handler.parse(s));
+        System.out.println("\"" + s + "\"");
+        System.out.println(handler.parse(s));
     }
 }

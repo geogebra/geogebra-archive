@@ -9,7 +9,7 @@ import java.io.IOException;
 
 /**
  * @author Simon Fischer
- * @version $Id: PDFFontEmbedderType3.java,v 1.3 2008-05-04 12:31:21 murkle Exp $
+ * @version $Id: PDFFontEmbedderType3.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFFontEmbedderType3 extends PDFFontEmbedder {
 

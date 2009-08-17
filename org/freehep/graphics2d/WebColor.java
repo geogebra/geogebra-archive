@@ -10,7 +10,7 @@ import java.awt.Color;
  * in browsers without dithering. WebColors are opaque.
  * 
  * @author Mark Donszelmann
- * @version $Id: WebColor.java,v 1.3 2008-05-04 12:13:19 murkle Exp $
+ * @version $Id: WebColor.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class WebColor extends Color {
 

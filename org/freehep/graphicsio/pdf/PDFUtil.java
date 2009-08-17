@@ -13,7 +13,7 @@ import java.util.Calendar;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFUtil.java,v 1.4 2008-09-01 14:39:47 murkle Exp $
+ * @version $Id: PDFUtil.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFUtil implements PDFConstants {
 

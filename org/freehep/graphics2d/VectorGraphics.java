@@ -1,7 +1,6 @@
-// Copyright 2000-2007, FreeHEP.
+// Copyright 2000-2004, FreeHEP.
 package org.freehep.graphics2d;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Dimension;
@@ -19,7 +18,6 @@ import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ImageObserver;
@@ -27,7 +25,6 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.text.AttributedCharacterIterator;
 import java.util.Hashtable;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -61,7 +58,7 @@ import java.util.Properties;
  * 
  * @author Charles Loomis
  * @author Mark Donszelmann
- * @version $Id: VectorGraphics.java,v 1.6 2008-08-06 19:23:19 murkle Exp $
+ * @version $Id: VectorGraphics.java,v 1.7 2009-08-17 21:44:44 murkle Exp $
  */
 public abstract class VectorGraphics extends Graphics2D implements
         VectorGraphicsConstants {
@@ -254,40 +251,6 @@ public abstract class VectorGraphics extends Graphics2D implements
     public abstract void drawString(String str, float x, float y);
 
     public abstract void fill(Shape s);
-
-    /**
-     * Fills an are with the given paint using in offscreen BufferedImage.
-     * Used for drawing GradientPaint or image
-     * @param shape Shape usede as clipping area
-     * @param paint Paint used
-     */
-    protected void fill(Shape shape, Paint paint) {
-        Rectangle2D bounds = shape.getBounds2D();
-
-        // create image
-        BufferedImage image = new BufferedImage(
-            (int)Math.ceil(bounds.getWidth()) + 1,
-            (int)Math.ceil(bounds.getHeight()) + 1,
-            BufferedImage.TYPE_INT_ARGB);
-
-        // fill background
-        Graphics2D graphics = image.createGraphics();
-        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-        graphics.fill(graphics.getDeviceConfiguration().getBounds());
-        graphics.setComposite(AlphaComposite.SrcOver);
-
-        // draw paint
-        graphics.setPaint(paint);
-        graphics.translate(- bounds.getMinX(), - bounds.getMinY());
-        graphics.fill(shape);
-        graphics.dispose();
-
-        // draw image
-        Shape clip = getClip();
-        clip(shape);
-        drawImage(image, (int)bounds.getX(), (int)bounds.getY(), null);
-        setClip(clip);
-    }
 
     // NOTE: overridden in Graphics2D
     // public abstract void fill3DRect(int x, int y,
@@ -532,7 +495,7 @@ public abstract class VectorGraphics extends Graphics2D implements
     public abstract void setLineWidth(double width);
 
     public abstract void startExport();
-    
+
     // STATIC stuff below
     public static VectorGraphics create(Graphics g) {
         if ((g != null) && !(g instanceof VectorGraphics)) {
@@ -570,12 +533,12 @@ public abstract class VectorGraphics extends Graphics2D implements
     }
 
     public static int getTextAlignment(String name) {
-        Integer i = (Integer) alignments.get(name.toLowerCase(Locale.US));
+        Integer i = (Integer) alignments.get(name.toLowerCase());
         return (i != null) ? i.intValue() : TEXT_CENTER;
     }
 
     public static int getSymbol(String name) {
-        Integer i = (Integer) symbols.get(name.toLowerCase(Locale.US));
+        Integer i = (Integer) symbols.get(name.toLowerCase());
         return (i != null) ? i.intValue() : SYMBOL_PLUS;
     }
 

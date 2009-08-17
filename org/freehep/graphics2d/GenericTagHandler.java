@@ -1,4 +1,4 @@
-// Copyright FreeHEP, 2000-2007
+// Copyright FreeHEP, 2000-2006
 package org.freehep.graphics2d;
 
 import java.awt.Graphics2D;
@@ -10,14 +10,12 @@ import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 
-import org.freehep.graphics2d.font.FontUtilities;
-
 /**
  * The class converts HTML tags like <u> in instances of {@link TextAttribute}.
  *
  * @author Mark Donszelmann
  * @author Steffen Greiffenberg
- * @version $Id: GenericTagHandler.java,v 1.3 2008-05-04 12:13:25 murkle Exp $
+ * @version $Id: GenericTagHandler.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class GenericTagHandler extends TagHandler {
 
@@ -79,7 +77,6 @@ public class GenericTagHandler extends TagHandler {
      * @param s string to print using the stored graphics
      * @param x coordinate for drawing
      * @param y coordinate for drawing
-     * @param superscriptCorrection correction for to high / to low text
      */
     public void print(TagString s, double x, double y, double superscriptCorrection) {
 
@@ -101,7 +98,7 @@ public class GenericTagHandler extends TagHandler {
         // with current font settings
         AttributedString attributedString = new AttributedString(
             clearedText.toString(),
-            FontUtilities.getAttributes(graphics.getFont()));
+            graphics.getFont().getAttributes());
 
         // aplly attributes
         for (int i = 0; i < attributes.size(); i++) {
@@ -137,7 +134,7 @@ public class GenericTagHandler extends TagHandler {
         // with current font settings
         AttributedString attributedString = new AttributedString(
             clearedText.toString(),
-            FontUtilities.getAttributes(graphics.getFont()));
+            graphics.getFont().getAttributes());
 
         // aplly attributes
         for (int i = 0; i < attributes.size(); i++) {

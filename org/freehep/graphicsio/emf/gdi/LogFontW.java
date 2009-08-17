@@ -7,15 +7,14 @@ import java.io.IOException;
 import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 
 /**
  * EMF LogFontW
  * 
  * @author Mark Donszelmann
- * @version $Id: LogFontW.java,v 1.3 2008-05-04 12:18:33 murkle Exp $
+ * @version $Id: LogFontW.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class LogFontW implements EMFConstants, GDIObject {
+public class LogFontW implements EMFConstants {
 
     private int height;
 
@@ -44,11 +43,6 @@ public class LogFontW implements EMFConstants, GDIObject {
     private int pitchAndFamily;
 
     private String faceFamily;
-
-    /**
-     * cache for getFont()
-     */
-    private Font font;
 
     public LogFontW(int height, int width, int escapement, int orientation,
             int weight, boolean italic, boolean underline, boolean strikeout,
@@ -121,48 +115,15 @@ public class LogFontW implements EMFConstants, GDIObject {
         emf.writeWCHAR(faceFamily, 32);
     }
 
-    public Font getFont() {
-        if (font == null) {
-            int style = 0;
-            if (italic) {
-                style |= Font.ITALIC;
-            }
-
-            // 400 is considered to be normal.
-            if (weight > 400) {
-                style |= Font.BOLD;
-            }
-
-            int size = Math.abs(height);
-            font = new Font(faceFamily, style, size);
-
-        }
-        return font;
-    }
-
     public String toString() {
-        return "  LogFontW\n" + "    height: " + height +
-            "\n    width: " + width +
-            "\n    orientation: " + orientation +
-            "\n    weight: " + weight +
-            "\n    italic: " + italic +
-            "\n    underline: " + underline +
-            "\n    strikeout: " + strikeout +
-            "\n    charSet: " + charSet +
-            "\n    outPrecision: " + outPrecision +
-            "\n    clipPrecision: " + clipPrecision +
-            "\n    quality: " + quality +
-            "\n    pitchAndFamily: " + pitchAndFamily +
-            "\n    faceFamily: " + faceFamily;
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        // TODO: See if this ever happens.
-        renderer.setFont(font);
+        return "  LogFontW\n" + "    height: " + height + "\n" + "    width: "
+                + width + "\n" + "    orientation: " + orientation + "\n"
+                + "    weight: " + weight + "\n" + "    italic: " + italic
+                + "\n" + "    underline: " + underline + "\n"
+                + "    strikeout: " + strikeout + "\n" + "    charSet: "
+                + charSet + "\n" + "    outPrecision: " + outPrecision + "\n"
+                + "    clipPrecision: " + clipPrecision + "\n"
+                + "    quality: " + quality + "\n" + "    pitchAndFamily: "
+                + pitchAndFamily + "\n" + "    faceFamily: " + faceFamily;
     }
 }

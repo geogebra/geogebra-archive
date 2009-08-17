@@ -16,7 +16,7 @@ import java.awt.geom.Rectangle2D;
  * used at the same time.<br>
  * 
  * @author Simon Fischer
- * @version $Id: SymbolShape.java,v 1.4 2008-08-07 18:33:57 murkle Exp $
+ * @version $Id: SymbolShape.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class SymbolShape implements Shape {
 
@@ -137,7 +137,7 @@ public class SymbolShape implements Shape {
             t.transform(points, 0, pathIterator.points, 0, points.length / 2);
         }
         // if (!pathIterator.isDone()) {
-        // Application.debug("SymbolShape: concurrent PathIterator
+        // System.err.println("SymbolShape: concurrent PathIterator
         // requested!");
         // }
         pathIterator.reset();
@@ -148,7 +148,7 @@ public class SymbolShape implements Shape {
 
     private void createNew(int n) {
         // if (!pathIterator.isDone()) {
-        // Application.debug("SymbolShape: concurrent modification!");
+        // System.err.println("SymbolShape: concurrent modification!");
         // }
         ensureNumberOfPoints(n);
         pathIterator.numberOfPoints = n;

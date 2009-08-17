@@ -25,7 +25,7 @@ import org.freehep.util.io.EEXECEncryption;
  * </ul>
  * 
  * @author Simon Fischer
- * @version $Id: FontEmbedderType1.java,v 1.3 2008-05-04 12:28:57 murkle Exp $
+ * @version $Id: FontEmbedderType1.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public class FontEmbedderType1 extends FontEmbedder {
 

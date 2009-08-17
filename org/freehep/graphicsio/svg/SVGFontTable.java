@@ -1,21 +1,18 @@
 // Copyright 2001-2006, FreeHEP.
 package org.freehep.graphicsio.svg;
 
+import org.freehep.graphicsio.font.FontTable;
+import java.awt.geom.AffineTransform;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Properties;
-
-import org.freehep.graphics2d.font.FontUtilities;
-import org.freehep.graphicsio.font.FontTable;
 
 /**
  * A table to remember which glyphs were used while writing a svg file.
@@ -25,7 +22,7 @@ import org.freehep.graphicsio.font.FontTable;
  * in <text> tags.
  *
  * @author Steffen Greiffenberg
- * @version $Id: SVGFontTable.java,v 1.4 2008-08-06 19:23:27 murkle Exp $
+ * @version $Id: SVGFontTable.java,v 1.5 2009-08-17 21:44:45 murkle Exp $
  */
 public class SVGFontTable {
 
@@ -130,7 +127,7 @@ public class SVGFontTable {
             Font font = (Font) fonts.nextElement();
 
             // replace font family for svg
-            Map /*<TextAttribute, ?>*/ attributes = FontUtilities.getAttributes(font);
+            Map /*<TextAttribute, ?>*/ attributes = font.getAttributes();
 
             // Dialog -> Helvetica
             normalize(attributes);
@@ -218,7 +215,7 @@ public class SVGFontTable {
     }
 
     /**
-     * creates a font based on the parameter. The size will be {@link SVGGlyph#FONT_SIZE}
+     * creates a font based on the parameter. The size will be {@link SVGGlyph.FONT_SIZE}
      * and transformation will be removed. Example:<BR>
      * <code>java.awt.Font[family=SansSerif,name=SansSerif,style=plain,size=30]</code><BR>
      * will result to:<BR>
@@ -231,7 +228,7 @@ public class SVGFontTable {
      */
     private Font untransform(Font font) {
         // replace font family
-        Map /*<TextAttribute, ?>*/ attributes = FontUtilities.getAttributes(font);
+        Map /*<TextAttribute, ?>*/ attributes = font.getAttributes();
 
         // set default font size
         attributes.put(TextAttribute.SIZE, new Float(SVGGlyph.FONT_SIZE));
@@ -281,7 +278,7 @@ public class SVGFontTable {
 
         // get replaced font family name (Yes it's right, not the name!)
         String family = replaceFonts.getProperty(
-            ((String) attributes.get(TextAttribute.FAMILY)).toLowerCase(Locale.US));
+            ((String) attributes.get(TextAttribute.FAMILY)).toLowerCase());
         if (family == null) {
             family = (String) attributes.get(TextAttribute.FAMILY);
         }

@@ -13,16 +13,25 @@ import org.freehep.graphicsio.emf.EMFTag;
  * PolylineTo16 TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: PolylineTo16.java,v 1.3 2008-05-04 12:18:16 murkle Exp $
+ * @version $Id: PolylineTo16.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class PolylineTo16 extends PolylineTo {
+public class PolylineTo16 extends EMFTag {
+
+    private Rectangle bounds;
+
+    private int numberOfPoints;
+
+    private Point[] points;
 
     public PolylineTo16() {
-        super(89, 1, null, 0, null);
+        super(89, 1);
     }
 
     public PolylineTo16(Rectangle bounds, int numberOfPoints, Point[] points) {
-        super(89, 1, bounds, numberOfPoints, points);
+        this();
+        this.bounds = bounds;
+        this.numberOfPoints = numberOfPoints;
+        this.points = points;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
@@ -30,12 +39,18 @@ public class PolylineTo16 extends PolylineTo {
 
         Rectangle r = emf.readRECTL();
         int n = emf.readDWORD();
-        return new PolylineTo16(r, n, emf.readPOINTS(n));
+        PolylineTo16 tag = new PolylineTo16(r, n, emf.readPOINTS(n));
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
-        emf.writeRECTL(getBounds());
-        emf.writeDWORD(getNumberOfPoints());
-        emf.writePOINTS(getNumberOfPoints(), getPoints());
+        emf.writeRECTL(bounds);
+        emf.writeDWORD(numberOfPoints);
+        emf.writePOINTS(numberOfPoints, points);
+    }
+
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  #points: " + numberOfPoints;
     }
 }

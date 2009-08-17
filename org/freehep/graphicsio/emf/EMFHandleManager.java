@@ -6,7 +6,7 @@ import java.util.BitSet;
  * Allocates and frees handles for EMF files
  * 
  * @author Tony Johnson
- * @version $Id: EMFHandleManager.java,v 1.3 2008-05-04 12:17:00 murkle Exp $
+ * @version $Id: EMFHandleManager.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public class EMFHandleManager {
     private BitSet handles = new BitSet();

@@ -8,7 +8,7 @@ import java.io.IOException;
  * of Cubic Bezier Curves
  * 
  * @author Mark Donszelmann
- * @version $Id: QuadToCubicPathConstructor.java,v 1.3 2008-05-04 12:15:37 murkle Exp $
+ * @version $Id: QuadToCubicPathConstructor.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public abstract class QuadToCubicPathConstructor extends
         AbstractPathConstructor {

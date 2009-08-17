@@ -1,7 +1,7 @@
-// Copyright 2000-2007 FreeHEP
+// Copyright 2000-2006 FreeHEP
 package org.freehep.graphicsio.svg;
 
-import geogebra.main.Application;
+import geogebra.util.ScientificFormat;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,17 +12,19 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.Paint;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.TexturePaint;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,19 +32,15 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
 import java.util.zip.GZIPOutputStream;
 
-import org.freehep.graphics2d.font.FontUtilities;
 import org.freehep.graphicsio.AbstractVectorGraphicsIO;
 import org.freehep.graphicsio.FontConstants;
 import org.freehep.graphicsio.ImageConstants;
@@ -62,7 +60,7 @@ import org.freehep.xml.util.XMLWriter;
  * The current implementation is based on REC-SVG11-20030114
  *
  * @author Mark Donszelmann
- * @version $Id: SVGGraphics2D.java,v 1.10 2008-10-23 19:04:05 hohenwarter Exp $
+ * @version $Id: SVGGraphics2D.java,v 1.11 2009-08-17 21:44:45 murkle Exp $
  */
 public class SVGGraphics2D extends AbstractVectorGraphicsIO {
 
@@ -133,8 +131,8 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
 
         defaultProperties.setProperty(CLIP, true);
 
-        defaultProperties.setProperty(EMBED_FONTS, true);
-        defaultProperties.setProperty(TEXT_AS_SHAPES, false);
+        defaultProperties.setProperty(EMBED_FONTS, false);
+        defaultProperties.setProperty(TEXT_AS_SHAPES, true);
     }
 
     public static Properties getDefaultProperties() {
@@ -145,7 +143,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         defaultProperties.setProperties(newProperties);
     }
 
-    public static final String version = "$Revision: 1.10 $";
+    public static final String version = "$Revision: 1.11 $";
 
     // current filename including path
     private String filename;
@@ -156,7 +154,6 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     // The private writer used for this file.
     private OutputStream ros;
 
-    // Michael Borcherds changed from private:
     protected PrintWriter os;
 
     // table for gradients
@@ -269,10 +266,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         setBoundingBox();
         imageNumber = 0;
 
-        // Michael Borcherds 2008-06-06
-        // bugfix: added encoding="ISO-8859-1"
-        // as the date can contain accented characters eg június 6
-        os.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
+        os.println("<?xml version=\"1.0\" standalone=\"no\"?>");
         if (getProperty(VERSION).equals(VERSION_1_1)) {
             // no DTD anymore
         } else {
@@ -307,8 +301,8 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         os.println("     >");
         closeTags.push("</svg> <!-- bounding box -->");
 
-        os.print("<title>");
-        os.print(XMLWriter.normalizeText(getProperty(TITLE)));
+        os.println("<title>");
+        os.println(XMLWriter.normalizeText(getProperty(TITLE)));
         os.println("</title>");
 
         String producer = getClass().getName();
@@ -316,14 +310,19 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
             producer += " " + version.substring(1, version.length() - 1);
         }
 
-        os.print("<desc>");
-        os.print("Creator: " + XMLWriter.normalizeText(getCreator()));
-        os.print(" Producer: " + XMLWriter.normalizeText(producer));
-        os.print(" Source: " + XMLWriter.normalizeText(getProperty(FOR)));
+        os.println("<desc>");
+        os.println("<Title>" + XMLWriter.normalizeText(getProperty(TITLE))
+                + "</Title>");
+        os.println("<Creator>" + XMLWriter.normalizeText(getCreator())
+                + "</Creator>");
+        os.println("<Producer>" + XMLWriter.normalizeText(producer)
+                + "</Producer>");
+        os.println("<Source>" + XMLWriter.normalizeText(getProperty(FOR))
+                + "</Source>");
         if (!isDeviceIndependent()) {
-            os.print(" Date: "
+            os.println("<Date>"
                     + DateFormat.getDateTimeInstance(DateFormat.FULL,
-                            DateFormat.FULL).format(new Date()));
+                            DateFormat.FULL).format(new Date()) + "</Date>");
         }
         os.println("</desc>");
 
@@ -433,7 +432,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     /**
      * Draws the shape using the current paint as border
      *
-     * @param shape Shape to draw
+     * @param shape
      */
     public void draw(Shape shape) {
         // others than BasicStrokes are written by its
@@ -464,42 +463,36 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     /**
      * Fills the shape without a border using the current paint
      *
-     * @param shape Shape to be filled with the current paint
+     * @param shape
      */
     public void fill(Shape shape) {
-        // draw paint as image if needed
-        if (!(getPaint() instanceof Color || getPaint() instanceof GradientPaint)) {
-            // draw paint as image
-            fill(shape, getPaint());
+        PathIterator path = shape.getPathIterator(null);
+
+        Properties style = new Properties();
+
+        if (path.getWindingRule() == PathIterator.WIND_EVEN_ODD) {
+            style.put("fill-rule", "evenodd");
         } else {
-            PathIterator path = shape.getPathIterator(null);
-
-            Properties style = new Properties();
-
-            if (path.getWindingRule() == PathIterator.WIND_EVEN_ODD) {
-                style.put("fill-rule", "evenodd");
-            } else {
-                style.put("fill-rule", "nonzero");
-            }
-
-            // fill with paint
-            if (getPaint() != null) {
-                style.put("fill", hexColor(getPaint()));
-                style.put("fill-opacity", fixedPrecision(alphaColor(getPaint())));
-            }
-
-            // no border
-            style.put("stroke", "none");
-
-            writePathIterator(path, style);
+            style.put("fill-rule", "nonzero;");
         }
+
+        // fill with paint
+        if (getPaint() != null) {
+            style.put("fill", hexColor(getPaint()));
+            style.put("fill-opacity", fixedPrecision(alphaColor(getPaint())));
+        }
+
+        // no border
+        style.put("stroke", "none");
+
+        writePathIterator(path, style);
     }
 
     /**
      * writes a path using {@link #getPath(java.awt.geom.PathIterator)}
      * and the given style
      *
-     * @param pi PathIterator
+     * @param pi
      * @param style Properties for <g> tag
      */
     private void writePathIterator(PathIterator pi, Properties style) {
@@ -516,33 +509,11 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         // close style
         result.append("\n</g> <!-- drawing style -->");
 
-        boolean drawClipped = false;
-
-        // test if clip intersects pi
-        if (getClip() != null) {
-            GeneralPath gp = new GeneralPath();
-            gp.append(pi, true);
-            // create the stroked shape
-            Stroke stroke = getStroke() == null? defaultStroke : getStroke();
-            Rectangle2D bounds = stroke.createStrokedShape(gp).getBounds();
-            // clip should intersect the path
-            // if clip contains the bounds completely, clipping is not needed
-            drawClipped = getClip().intersects(bounds) && !getClip().contains(bounds);
-        }
-
-        if (drawClipped) {
-            // write in a transformed and clipped context
-            os.println(
-                getTransformedString(
-                    getTransform(),
-                    getClippedString(result.toString())));
-        } else {
-            // write in a transformed context
-            os.println(
-                getTransformedString(
-                    getTransform(),
-                    result.toString()));
-        }
+        // write in a transformed context
+        os.println(
+            getTransformedString(
+                getTransform(),
+                getClippedString(result.toString())));
     }
 
     /* 5.2. Images */
@@ -566,36 +537,36 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         boolean isTransparent = image.getColorModel().hasAlpha()
                 && (bkg == null);
 
+        byte[] pngBytes = null;
+        if (writeAs.equals(ImageConstants.PNG)
+                || writeAs.equals(ImageConstants.SMALLEST) || isTransparent) {
+            ByteArrayOutputStream png = new ByteArrayOutputStream();
+            ImageGraphics2D.writeImage(image, "png", new Properties(), png);
+            png.close();
+            pngBytes = png.toByteArray();
+        }
+
+        byte[] jpgBytes = null;
+        if ((writeAs.equals(ImageConstants.JPG) || writeAs
+                .equals(ImageConstants.SMALLEST))
+                && !isTransparent) {
+            ByteArrayOutputStream jpg = new ByteArrayOutputStream();
+            ImageGraphics2D.writeImage(image, "jpg", new Properties(), jpg);
+            jpg.close();
+            jpgBytes = jpg.toByteArray();
+        }
+
         String encode;
         byte[] imageBytes;
-
-        // write as PNG
-        if (ImageConstants.PNG.equalsIgnoreCase(writeAs) || isTransparent) {
-            encode = ImageConstants.PNG;
-            imageBytes = ImageGraphics2D.toByteArray(
-                image, ImageConstants.PNG, null, null);
-        }
-
-        // write as JPG
-        else if (ImageConstants.JPG.equalsIgnoreCase(writeAs)) {
-            encode = ImageConstants.JPG;
-            imageBytes = ImageGraphics2D.toByteArray(
-                image, ImageConstants.JPG, null, null);
-        }
-
-        // write as SMALLEST
-        else {
-            byte[] pngBytes = ImageGraphics2D.toByteArray(image, ImageConstants.PNG, null, null);
-            byte[] jpgBytes = ImageGraphics2D.toByteArray(image, ImageConstants.JPG, null, null);
-
-            // define encode and imageBytes
-            if (jpgBytes.length < 0.5 * pngBytes.length) {
-                encode = ImageConstants.JPG;
-                imageBytes = jpgBytes;
-            } else {
-                encode = ImageConstants.PNG;
-                imageBytes = pngBytes;
-            }
+        if (writeAs.equals(ImageConstants.PNG) || isTransparent) {
+            encode = "png";
+            imageBytes = pngBytes;
+        } else if (writeAs.equals(ImageConstants.JPG)) {
+            encode = "jpg";
+            imageBytes = jpgBytes;
+        } else {
+            encode = (jpgBytes.length < 0.5 * pngBytes.length) ? "jpg" : "png";
+            imageBytes = encode.equals("jpg") ? jpgBytes : pngBytes;
         }
 
         if (isProperty(EXPORT_IMAGES)) {
@@ -705,13 +676,12 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
      * is handled by {@link java.awt.Font#getTransform()}
      *
      * @return properties in svg style  for the font
-     * @param font Font to
      */
     private Properties getFontProperties(Font font) {
         Properties result = new Properties();
 
         // attribute for font properties
-        Map /*<TextAttribute, ?>*/ attributes = FontUtilities.getAttributes(font);
+        Map /*<TextAttribute, ?>*/ attributes = font.getAttributes();
 
         // dialog.bold -> Helvetica with TextAttribute.WEIGHT_BOLD
         SVGFontTable.normalize(attributes);
@@ -733,7 +703,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
             result.put("font-style", "normal");
         }
 
-        Object ul = attributes.get(TextAttribute.UNDERLINE);
+        Object ul = font.getAttributes().get(TextAttribute.UNDERLINE);
         if (ul != null) {
             // underline style, only supported by CSS 3
             if (TextAttribute.UNDERLINE_LOW_DOTTED.equals(ul)) {
@@ -748,7 +718,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
             result.put("text-decoration", "underline");
         }
 
-        if (attributes.get(TextAttribute.STRIKETHROUGH) != null) {
+        if (font.getAttributes().get(TextAttribute.STRIKETHROUGH) != null) {
             // is the property allready witten?
             if  (ul == null) {
                 result.put("text-decoration", "underline, line-through");
@@ -965,11 +935,44 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     }
 
     protected void writePaint(TexturePaint paint) throws IOException {
-        // written when needed
+        if (textures.get(paint) == null) {
+            String name = "texture-" + textures.size();
+            textures.put(paint, name);
+            BufferedImage image = paint.getImage();
+            Rectangle2D rect = paint.getAnchorRect();
+            os.println("<defs>");
+            os.print("  <pattern id=\"" + name + "\" ");
+            os.print("x=\"0\" ");
+            os.print("y=\"0\" ");
+            os.print("width=\"" + fixedPrecision(image.getWidth()) + "\" ");
+            os.print("height=\"" + fixedPrecision(image.getHeight()) + "\" ");
+            os.print("patternUnits=\"userSpaceOnUse\" ");
+            os.print("patternTransform=\"matrix("
+                    + fixedPrecision(rect.getWidth() / image.getWidth()) + ","
+                    + "0.0,0.0,"
+                    + fixedPrecision(rect.getHeight() / image.getHeight())
+                    + "," + fixedPrecision(rect.getX()) + ","
+                    + fixedPrecision(rect.getY()) + ")\" ");
+            os.println(">");
+            writeImage(image, null, null);
+            os.println("  </pattern>");
+            os.println("</defs>");
+        }
+
+        // write default stroke
+        os.print("<g ");
+        Properties style = new Properties();
+        style.put("stroke", hexColor(getPaint()));
+        os.print(style(style));
+        os.println(">");
+
+        // close color later
+        closeTags.push("</g> <!-- color -->");
     }
 
     protected void writePaint(Paint p) throws IOException {
-        // written when needed
+        writeWarning(getClass() + ": writePaint(Paint) not implemented for "
+                + p.getClass());
     }
 
     /* 8.3. font */
@@ -987,20 +990,15 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         return null;
     }
 
-    public void writeComment(String s) throws IOException {
-        Application.debug("<comment>");
-        os.println("<!-- " + s + " -->");
+    public boolean hit(Rectangle rect, Shape s, boolean onStroke) {
+        writeWarning(getClass()
+                + ": hit(Rectangle, Shape, boolean) not implemented.");
+        return false;
     }
 
-    // Michael Borcherds 2008-02-26
-    //public void startGroup(String s) {
-    //    os.println("<g id=\"" + s + "\">");
-    //}
-
-    // Michael Borcherds 2008-02-26
-    //public void endGroup(String s)  {
-    //    os.println("</g><!-- " + s + " -->");
-    //}
+    public void writeComment(String s) throws IOException {
+        os.println("<!-- " + s + " -->");
+    }
 
     public String toString() {
         return "SVGGraphics2D";
@@ -1051,8 +1049,8 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
     /**
      * Encapsulates a SVG-Tag by the current clipping area matrix
      *
-     * @param s SVG-Tag
-     * @return SVG Tag encapsulated by the current clip
+     * @param s
+     *            SVG-Tag
      */
     private String getClippedString(String s) {
         StringBuffer result = new StringBuffer();
@@ -1213,7 +1211,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
      * method creates
      * style="key1:value1;key2:value2;" or
      * key2="value2" key2="value2" depending on
-     * {@link #STYLABLE}.
+     * {@link STYLABLE}.
      *
      * @param style properties to convert
      * @return String
@@ -1224,10 +1222,9 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         }
 
         StringBuffer result = new StringBuffer();
-        boolean styleable = isProperty(STYLABLE);
 
         // embed everything in a "style" attribute
-        if (styleable) {
+        if (isProperty(STYLABLE)) {
             result.append("style=\"");
         }
 
@@ -1238,7 +1235,7 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
 
             result.append(key);
 
-            if (styleable) {
+            if (isProperty(STYLABLE)) {
                 result.append(":");
                 result.append(value);
                 result.append(";");
@@ -1253,27 +1250,16 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         }
 
         // close the style attribute
-        if (styleable) {
+        if (isProperty(STYLABLE)) {
             result.append("\"");
         }
 
         return result.toString();
     }
 
-    /**
-     * for fixedPrecision(double d), SVG does not understand "1E-7"
-     * we have to use ".0000007" instead
-     */
-    private static DecimalFormat scientific = new DecimalFormat(
-        "#.####################",
-        new DecimalFormatSymbols(Locale.US));
+    private static ScientificFormat scientific = new ScientificFormat(5, 8,
+            false);
 
-    /**
-     * converts the double value to a representing string
-     *
-     * @param d double value to convert
-     * @return same as string
-     */
     public static String fixedPrecision(double d) {
         return scientific.format(d);
     }

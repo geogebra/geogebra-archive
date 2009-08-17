@@ -11,7 +11,7 @@ import org.freehep.graphicsio.emf.EMFOutputStream;
  * EMF BitmapInfoHeader
  * 
  * @author Mark Donszelmann
- * @version $Id: BlendFunction.java,v 1.3 2008-05-04 12:18:24 murkle Exp $
+ * @version $Id: BlendFunction.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class BlendFunction implements EMFConstants {
 
@@ -34,10 +34,10 @@ public class BlendFunction implements EMFConstants {
     }
 
     public BlendFunction(EMFInputStream emf) throws IOException {
-        blendOp = emf.readUnsignedByte();
-        blendFlags = emf.readUnsignedByte();
-        sourceConstantAlpha = emf.readUnsignedByte();
-        alphaFormat = emf.readUnsignedByte();
+        blendOp = emf.readBYTE();
+        blendFlags = emf.readBYTE();
+        sourceConstantAlpha = emf.readBYTE();
+        alphaFormat = emf.readBYTE();
     }
 
     public void write(EMFOutputStream emf) throws IOException {
@@ -49,13 +49,5 @@ public class BlendFunction implements EMFConstants {
 
     public String toString() {
         return "BlendFunction";
-    }
-
-    public int getSourceConstantAlpha() {
-        return sourceConstantAlpha;
-    }
-
-    public int getAlphaFormat() {
-        return alphaFormat;
     }
 }

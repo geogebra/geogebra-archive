@@ -3,31 +3,35 @@ package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFOutputStream;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * PolylineTo TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: EMFPolygon.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: EMFPolygon.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
-public class EMFPolygon extends AbstractPolygon {
+public class EMFPolygon extends EMFTag {
+
+    private Rectangle bounds;
+
+    private int numberOfPoints;
+
+    private Point[] points;
 
     public EMFPolygon() {
-        super(3, 1, null, 0, null);
+        super(3, 1);
     }
 
     public EMFPolygon(Rectangle bounds, int numberOfPoints, Point[] points) {
-        super(3, 1, bounds, numberOfPoints, points);
-    }
-
-    protected EMFPolygon (int id, int version, Rectangle bounds, int numberOfPoints, Point[] points) {
-        super(id, version, bounds, numberOfPoints, points);
+        this();
+        this.bounds = bounds;
+        this.numberOfPoints = numberOfPoints;
+        this.points = points;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
@@ -35,27 +39,18 @@ public class EMFPolygon extends AbstractPolygon {
 
         Rectangle r = emf.readRECTL();
         int n = emf.readDWORD();
-        return new EMFPolygon(r, n, emf.readPOINTL(n));
+        EMFPolygon tag = new EMFPolygon(r, n, emf.readPOINTL(n));
+        return tag;
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        Point[] points = getPoints();
+    public void write(int tagID, EMFOutputStream emf) throws IOException {
+        emf.writeRECTL(bounds);
+        emf.writeDWORD(numberOfPoints);
+        emf.writePOINTL(numberOfPoints, points);
+    }
 
-        // Safety check.
-        if (points.length > 1) {
-            GeneralPath path = new GeneralPath(
-                renderer.getWindingRule());
-            path.moveTo((float)points[0].getX(), (float)points[0].getY());
-            for (int i = 1; i < points.length; i++) {
-                path.lineTo((float)points[i].getX(), (float)points[i].getY());
-            }
-            path.closePath();
-            renderer.fillAndDrawOrAppend(path);
-        }
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  #points: " + numberOfPoints;
     }
 }

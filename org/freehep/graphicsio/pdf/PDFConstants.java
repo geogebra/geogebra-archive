@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFConstants.java,v 1.3 2008-05-04 12:31:12 murkle Exp $
+ * @version $Id: PDFConstants.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public interface PDFConstants {
 

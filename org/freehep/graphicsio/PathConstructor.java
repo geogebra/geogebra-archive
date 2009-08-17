@@ -10,7 +10,7 @@ import java.io.IOException;
  * (stroking or filling) is not included.
  * 
  * @author Simon Fischer
- * @version $Id: PathConstructor.java,v 1.3 2008-05-04 12:15:39 murkle Exp $
+ * @version $Id: PathConstructor.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public interface PathConstructor {
 

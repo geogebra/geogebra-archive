@@ -1,4 +1,4 @@
-// Copyright 2000-2007, FreeHEP
+// Copyright 2000-2006, FreeHEP
 package org.freehep.graphics2d;
 
 import java.awt.BasicStroke;
@@ -13,7 +13,6 @@ import java.awt.Stroke;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -23,7 +22,6 @@ import java.awt.geom.RoundRectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.util.Properties;
 
-import org.freehep.graphics2d.font.FontUtilities;
 import org.freehep.util.UserProperties;
 
 /**
@@ -35,7 +33,7 @@ import org.freehep.util.UserProperties;
  * @author Simon Fischer
  * @author Mark Donszelmann
  * @author Steffen Greiffenberg
- * @version $Id: AbstractVectorGraphics.java,v 1.3 2008-05-04 12:13:01 murkle Exp $
+ * @version $Id: AbstractVectorGraphics.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public abstract class AbstractVectorGraphics extends VectorGraphics {
 
@@ -475,7 +473,7 @@ public abstract class AbstractVectorGraphics extends VectorGraphics {
         // FIXME: change y offset for vertical text
         TextLayout tl = new TextLayout(
             str,
-            FontUtilities.getAttributes(getFont()),
+            getFont().getAttributes(),
             getFontRenderContext());
 
         // draw the frame
@@ -740,32 +738,5 @@ public abstract class AbstractVectorGraphics extends VectorGraphics {
                 path.closePath();
         }
         return path;
-    }
-
-    /**
-     * Checks whether or not the specified <code>Shape</code> intersects
-     * the specified {@link Rectangle}, which is in device
-     * space.
-     *
-     * @param rect the area in device space to check for a hit
-     * @param s the <code>Shape</code> to check for a hit
-     * @param onStroke flag used to choose between testing the stroked or the filled shape.
-     * @see java.awt.Graphics2D#hit(Rectangle, Shape, boolean)
-     */
-    public boolean hit(Rectangle rect, Shape s, boolean onStroke) {
-        if (onStroke && getStroke() != null) {
-            s = getStroke().createStrokedShape(s);
-        }
-
-        if (getTransform() != null) {
-            s = getTransform().createTransformedShape(s);
-        }
-
-        Area area = new Area(s);
-        if (getClip() != null) {
-            area.intersect(new Area(getClip()));
-        }
-
-        return area.intersects(rect);
-    }
+    }    
 }

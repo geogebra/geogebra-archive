@@ -7,7 +7,7 @@ package org.freehep.graphics2d;
  * interface.
  * 
  * @author Charles Loomis
- * @version $Id: VectorGraphicsConstants.java,v 1.3 2008-05-04 12:13:23 murkle Exp $
+ * @version $Id: VectorGraphicsConstants.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public interface VectorGraphicsConstants {
 

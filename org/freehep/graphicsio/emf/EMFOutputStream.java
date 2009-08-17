@@ -9,6 +9,8 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.freehep.graphicsio.emf.gdi.GDIComment;
+import org.freehep.graphicsio.emf.gdiplus.EMFPlusTag;
 import org.freehep.util.io.ActionHeader;
 import org.freehep.util.io.Tag;
 import org.freehep.util.io.TagHeader;
@@ -19,7 +21,7 @@ import org.freehep.util.io.TaggedOutputStream;
  * binary EMF file.
  * 
  * @author Mark Donszelmann
- * @version $Id: EMFOutputStream.java,v 1.3 2008-05-04 12:17:00 murkle Exp $
+ * @version $Id: EMFOutputStream.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public class EMFOutputStream extends TaggedOutputStream {
 
@@ -65,7 +67,8 @@ public class EMFOutputStream extends TaggedOutputStream {
     public void close() throws IOException {
         int len = popBuffer();
         recordCount++;
-        EMFHeader header = new EMFHeader(imageBounds, getVersion(), 0, len,
+        // FIXME check this
+        EMFHeader header = new EMFHeader(EMFHeader.TYPE_WMF, imageBounds, getVersion(), 0, len,
                 recordCount, handles.maxHandlesUsed(), application, name,
                 device);
         writeHeader(header);
@@ -111,6 +114,13 @@ public class EMFOutputStream extends TaggedOutputStream {
         writeShort(c.getAlpha() << 8);
     }
 
+	public void writeCOLOR(Color c) throws IOException {
+        writeByte(c.getBlue());
+        writeByte(c.getGreen());
+        writeByte(c.getRed());
+        writeByte(c.getAlpha());
+	}
+	
     public void writeXFORM(AffineTransform t) throws IOException {
         writeFLOAT((float) t.getScaleX());
         writeFLOAT((float) t.getShearY());
@@ -228,20 +238,30 @@ public class EMFOutputStream extends TaggedOutputStream {
         return 4;
     }
 
+    protected TagHeader createTagHeader(Tag tag, long len) {
+        EMFTag emfTag = (EMFTag)tag;
+        return new EMFTagHeader(tag.getTag(), len, emfTag.getFlags());
+    }
+    
     protected void writeTagHeader(TagHeader header) throws IOException {
-
-        int tagID = header.getTag();
-        long length = header.getLength();
-        writeUnsignedInt(tagID);
-        writeUnsignedInt(length + 8);
+        EMFTagHeader tagHeader = (EMFTagHeader)header;
+        writeUnsignedInt(tagHeader.getTag() | (tagHeader.getFlags() << 16));
+        writeUnsignedInt(tagHeader.getLength() + 8);
     }
 
     public void writeTag(Tag tag) throws IOException {
-
-        recordCount++;
-        super.writeTag(tag);
+        // nest EMFPlusTags in GDIComments
+        if (tag instanceof EMFPlusTag) {
+            tag = new GDIComment((EMFPlusTag)tag);
+        }
+        writeTag(tag, true);
     }
 
+    public void writeTag(Tag tag, boolean doNotEmbed) throws IOException {
+        recordCount++;
+        super.writeTag(tag);      
+    }
+    
     protected void writeActionHeader(ActionHeader header) throws IOException {
         // empty
     }

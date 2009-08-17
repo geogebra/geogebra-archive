@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
  * shape and comes with an associated iterator.
  * 
  * @author Mark Donszelmann
- * @version $Id: ArrayPath.java,v 1.3 2008-05-04 12:13:28 murkle Exp $
+ * @version $Id: ArrayPath.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class ArrayPath implements Shape {
 

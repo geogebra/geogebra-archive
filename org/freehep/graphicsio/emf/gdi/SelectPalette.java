@@ -5,14 +5,13 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * SelectPalette TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: SelectPalette.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: SelectPalette.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class SelectPalette extends EMFTag {
 
@@ -30,7 +29,8 @@ public class SelectPalette extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new SelectPalette(emf.readDWORD());
+        SelectPalette tag = new SelectPalette(emf.readDWORD());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -38,19 +38,7 @@ public class SelectPalette extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  index: 0x" + Integer.toHexString(index);
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        // The SelectPalette function selects the specified
-        // logical palette into a device context.
-
-        // TODO needs CreatePalette and CreatePalletteIndex to work
+        return super.toString() + "\n" + "  index: 0x"
+                + Integer.toHexString(index);
     }
 }

@@ -1,10 +1,11 @@
-// Copyright 2002-2007, FreeHEP.
+// Copyright 2002, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
+import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
 
@@ -12,30 +13,44 @@ import org.freehep.graphicsio.emf.EMFOutputStream;
  * EMF Text
  * 
  * @author Mark Donszelmann
- * @version $Id: TextW.java,v 1.3 2008-05-04 12:19:46 murkle Exp $
+ * @version $Id: TextW.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class TextW extends Text {
+public class TextW implements EMFConstants {
 
-    public TextW(Point pos, String string, int options, Rectangle bounds, int[] widths) {
-        super(pos, string, options, bounds, widths);
+    private Point pos;
+
+    private String string;
+
+    private int options;
+
+    private int[] widths;
+
+    private Rectangle bounds;
+
+    public TextW(Point pos, String string, int options, Rectangle bounds,
+            int[] widths) {
+        this.pos = pos;
+        this.string = string;
+        this.options = options;
+        this.bounds = bounds;
+        this.widths = widths;
     }
 
-    public static TextW read(EMFInputStream emf) throws IOException {
-        Point pos = emf.readPOINTL();
+    public TextW(EMFInputStream emf) throws IOException {
+        pos = emf.readPOINTL();
         int sLen = emf.readDWORD();
         /* int sOffset = */ emf.readDWORD();
-        int options = emf.readDWORD();
-        Rectangle bounds = emf.readRECTL();
+        options = emf.readDWORD();
+        bounds = emf.readRECTL();
         /* int cOffset = */ emf.readDWORD();
         // FIXME: nothing done with offsets
-        String string = new String(emf.readBYTE(2 * sLen), "UTF-16LE");
+        string = new String(emf.readBYTE(2 * sLen), "UTF-16LE");
         if ((2 * sLen) % 4 != 0)
             for (int i = 0; i < 4 - (2 * sLen) % 4; i++)
                 emf.readBYTE();
-        int[] widths = new int[sLen];
+        widths = new int[sLen];
         for (int i = 0; i < sLen; i++)
             widths[i] = emf.readDWORD();
-        return new TextW(pos, string, options, bounds, widths);
     }
 
     public void write(EMFOutputStream emf) throws IOException {
@@ -60,16 +75,12 @@ public class TextW extends Text {
 
     public String toString() {
         StringBuffer widthsS = new StringBuffer();
-        for (int i = 0; i < string.length(); i++) {
-            widthsS.append(",");
-            widthsS.append(widths[i]);
-        }
+        for (int i = 0; i < string.length(); i++)
+            widthsS.append("," + widths[i]);
         widthsS.append(']');
         widthsS.setCharAt(0, '[');
-        return "  TextW\n" + "    pos: " + pos +
-            "\n    options: " + options +
-            "\n    bounds: " + bounds +
-            "\n    string: " + string +
-            "\n    widths: " + widthsS;
+        return "  Text\n" + "    pos: " + pos + "\n" + "    options: "
+                + options + "\n" + "    bounds: " + bounds + "\n"
+                + "    string: " + string + "\n" + "    widths: " + widthsS;
     }
 }

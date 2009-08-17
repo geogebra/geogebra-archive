@@ -10,7 +10,7 @@ import org.freehep.graphicsio.emf.EMFTag;
  * FlattenPath TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: FlattenPath.java,v 1.3 2008-05-04 12:18:40 murkle Exp $
+ * @version $Id: FlattenPath.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class FlattenPath extends EMFTag {
 

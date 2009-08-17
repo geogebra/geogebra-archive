@@ -12,7 +12,7 @@ import org.freehep.graphicsio.emf.EMFTag;
  * ExcludeClipRect TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: ExcludeClipRect.java,v 1.3 2008-05-04 12:19:38 murkle Exp $
+ * @version $Id: ExcludeClipRect.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class ExcludeClipRect extends EMFTag {
 
@@ -30,7 +30,8 @@ public class ExcludeClipRect extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new ExcludeClipRect(emf.readRECTL());
+        ExcludeClipRect tag = new ExcludeClipRect(emf.readRECTL());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -38,6 +39,6 @@ public class ExcludeClipRect extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() + "\n  bounds: " + bounds;
+        return super.toString() + "\n" + "  bounds: " + bounds;
     }
 }

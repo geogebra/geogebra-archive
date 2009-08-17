@@ -7,7 +7,7 @@ import org.freehep.graphicsio.QuadToCubicPathConstructor;
 
 /**
  * @author Mark Donszelmann
- * @version $Id: PDFPathConstructor.java,v 1.3 2008-05-04 12:31:09 murkle Exp $
+ * @version $Id: PDFPathConstructor.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFPathConstructor extends QuadToCubicPathConstructor {
     private PDFStream stream;

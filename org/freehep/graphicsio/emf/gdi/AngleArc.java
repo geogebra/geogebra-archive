@@ -12,7 +12,7 @@ import org.freehep.graphicsio.emf.EMFTag;
  * AngleArc TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: AngleArc.java,v 1.3 2008-05-04 12:18:32 murkle Exp $
+ * @version $Id: AngleArc.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class AngleArc extends EMFTag {
 
@@ -37,10 +37,9 @@ public class AngleArc extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new AngleArc(
-            emf.readPOINTL(),
-            emf.readDWORD(), emf.readFLOAT(),
-            emf.readFLOAT());
+        AngleArc tag = new AngleArc(emf.readPOINTL(), emf.readDWORD(), emf
+                .readFLOAT(), emf.readFLOAT());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -51,10 +50,8 @@ public class AngleArc extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  center: " + center +
-            "\n  radius: " + radius +
-            "\n  startAngle: " + startAngle +
-            "\n  sweepAngle: " + sweepAngle;
+        return super.toString() + "\n" + "  center: " + center + "\n"
+                + "  radius: " + radius + "\n" + "  startAngle: " + startAngle
+                + "\n" + "  sweepAngle: " + sweepAngle;
     }
 }

@@ -9,7 +9,7 @@ import java.util.Map;
  * This class defines a set of constants which describe a screen.
  * 
  * @author Mark Donszelmann
- * @version $Id: ScreenConstants.java,v 1.3 2008-05-04 12:13:26 murkle Exp $
+ * @version $Id: ScreenConstants.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class ScreenConstants {
     public final static String VGA = "600x480";

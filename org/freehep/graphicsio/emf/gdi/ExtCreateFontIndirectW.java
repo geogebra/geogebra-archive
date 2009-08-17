@@ -5,14 +5,13 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * ExtCreateFontIndirectW TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: ExtCreateFontIndirectW.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: ExtCreateFontIndirectW.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class ExtCreateFontIndirectW extends EMFTag {
 
@@ -33,9 +32,9 @@ public class ExtCreateFontIndirectW extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new ExtCreateFontIndirectW(
-            emf.readDWORD(),
-            new ExtLogFontW(emf));
+        ExtCreateFontIndirectW tag = new ExtCreateFontIndirectW(
+                emf.readDWORD(), new ExtLogFontW(emf));
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -44,17 +43,7 @@ public class ExtCreateFontIndirectW extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  index: 0x" + Integer.toHexString(index) +
-            "\n" + font.toString();
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        renderer.storeGDIObject(index, font);
+        return super.toString() + "\n" + "  index: 0x"
+                + Integer.toHexString(index) + "\n" + font.toString();
     }
 }

@@ -48,6 +48,7 @@ import javax.swing.SwingUtilities;
 
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
+import org.freehep.graphicsio.emf.EMFPlusGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.UserProperties;
@@ -238,7 +239,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 								break;		
 															
 							case FORMAT_EMF: // EMF
-								exportEMF(false);
+								exportEMF(false, true);
 								break;
 								
 							case FORMAT_PDF: // PDF
@@ -273,7 +274,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 								break;		
 															
 							case FORMAT_EMF: // EMF
-								exportEMF(true);
+								exportEMF(true, true);
 								break;
 								
 							case FORMAT_PDF: // PDF
@@ -457,7 +458,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	/**
 	  *  Exports drawing as emf
 	  */
-	final private boolean exportEMF(boolean exportToClipboard) {
+	final private boolean exportEMF(boolean exportToClipboard, boolean useEMFplus) {
 
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
@@ -476,8 +477,10 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		if (file == null)
 			return false;
 		try {					   
-			VectorGraphics g = new EMFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
-		    g.startExport();	
+			VectorGraphics g;
+			if (useEMFplus) g = new EMFPlusGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
+			else g = new EMFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
+			g.startExport();	
 			app.getEuclidianView().exportPaint(g, exportScale); 
 			g.endExport();		
 			

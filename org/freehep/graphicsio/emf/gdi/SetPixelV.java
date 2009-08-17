@@ -13,7 +13,7 @@ import org.freehep.graphicsio.emf.EMFTag;
  * SetPixelV TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: SetPixelV.java,v 1.3 2008-05-04 12:18:29 murkle Exp $
+ * @version $Id: SetPixelV.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class SetPixelV extends EMFTag {
 
@@ -34,7 +34,8 @@ public class SetPixelV extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new SetPixelV(emf.readPOINTL(), emf.readCOLORREF());
+        SetPixelV tag = new SetPixelV(emf.readPOINTL(), emf.readCOLORREF());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -43,8 +44,7 @@ public class SetPixelV extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  point: " + point +
-            "\n  color: " + color;
+        return super.toString() + "\n" + "  point: " + point + "\n"
+                + "  color: " + color;
     }
 }

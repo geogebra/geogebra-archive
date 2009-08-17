@@ -3,31 +3,35 @@ package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFOutputStream;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * PolylineTo TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: PolylineTo.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: PolylineTo.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
-public class PolylineTo extends AbstractPolygon {
+public class PolylineTo extends EMFTag {
+
+    private Rectangle bounds;
+
+    private int numberOfPoints;
+
+    private Point[] points;
 
     public PolylineTo() {
-        super(6, 1, null, 0, null);
+        super(6, 1);
     }
 
     public PolylineTo(Rectangle bounds, int numberOfPoints, Point[] points) {
-        this(6, 1, bounds, numberOfPoints, points);
-    }
-
-    protected PolylineTo (int id, int version, Rectangle bounds, int numberOfPoints, Point[] points) {
-        super(id, version, bounds, numberOfPoints, points);
+        this();
+        this.bounds = bounds;
+        this.numberOfPoints = numberOfPoints;
+        this.points = points;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
@@ -35,26 +39,18 @@ public class PolylineTo extends AbstractPolygon {
 
         Rectangle r = emf.readRECTL();
         int n = emf.readDWORD();
-        return new PolylineTo(r, n, emf.readPOINTL(n));
+        PolylineTo tag = new PolylineTo(r, n, emf.readPOINTL(n));
+        return tag;
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        Point[] points = getPoints();
-        int numberOfPoints = getNumberOfPoints();
-        GeneralPath currentFigure = renderer.getFigure();
+    public void write(int tagID, EMFOutputStream emf) throws IOException {
+        emf.writeRECTL(bounds);
+        emf.writeDWORD(numberOfPoints);
+        emf.writePOINTL(numberOfPoints, points);
+    }
 
-        if (points != null) {
-            for (int point = 0; point < numberOfPoints; point ++) {
-                // add a point to gp
-                currentFigure.lineTo(
-                    (float) points[point].getX(),
-                    (float) points[point].getY());
-            }
-        }
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  #points: " + numberOfPoints;
     }
 }

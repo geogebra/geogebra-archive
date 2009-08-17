@@ -5,7 +5,7 @@ package org.freehep.graphics2d;
 /**
  * 
  * @author Mark Donszelmann
- * @version $Id: TagString.java,v 1.3 2008-05-04 12:13:20 murkle Exp $
+ * @version $Id: TagString.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class TagString {
 

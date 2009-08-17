@@ -5,7 +5,7 @@ package org.freehep.graphicsio.emf;
  * EMF Constants
  * 
  * @author Mark Donszelmann
- * @version $Id: EMFConstants.java,v 1.3 2008-05-04 12:16:49 murkle Exp $
+ * @version $Id: EMFConstants.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public interface EMFConstants {
 
@@ -284,18 +284,4 @@ public interface EMFConstants {
     public static final int AC_SRC_OVER = 0x00;
 
     public static final int AC_SRC_ALPHA = 0x01;
-
-    public static final int GDICOMMENT_BEGINGROUP       = 0x00000002;
-
-    public static final int GDICOMMENT_ENDGROUP         = 0x00000003;
-
-    public static final int GDICOMMENT_UNICODE_STRING   = 0x00000040;
-
-    public static final int GDICOMMENT_UNICODE_END      = 0x00000080;
-
-    public static final int GDICOMMENT_MULTIFORMATS     = 0x40000004;
-
-    public static final int GDICOMMENT_IDENTIFIER       = 0x43494447;
-
-    public static final int GDICOMMENT_WINDOWS_METAFILE = 0x80000001;
 }

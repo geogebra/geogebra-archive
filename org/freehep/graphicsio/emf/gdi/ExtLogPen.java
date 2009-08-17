@@ -4,17 +4,17 @@ package org.freehep.graphicsio.emf.gdi;
 import java.awt.Color;
 import java.io.IOException;
 
+import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 
 /**
  * EMF ExtLogPen
  * 
  * @author Mark Donszelmann
- * @version $Id: ExtLogPen.java,v 1.3 2008-05-04 12:19:04 murkle Exp $
+ * @version $Id: ExtLogPen.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class ExtLogPen extends AbstractPen {
+public class ExtLogPen implements EMFConstants {
 
     private int penStyle;
 
@@ -28,14 +28,8 @@ public class ExtLogPen extends AbstractPen {
 
     private int[] style;
 
-    public ExtLogPen(
-        int penStyle,
-        int width,
-        int brushStyle,
-        Color color,
-        int hatch,
-        int[] style) {
-
+    public ExtLogPen(int penStyle, int width, int brushStyle, Color color,
+            int hatch, int[] style) {
         this.penStyle = penStyle;
         this.width = width;
         this.brushStyle = brushStyle;
@@ -73,40 +67,14 @@ public class ExtLogPen extends AbstractPen {
     public String toString() {
         StringBuffer s = new StringBuffer();
         s.append("  ExtLogPen\n");
-        s.append("    penStyle: ");
-        s.append(Integer.toHexString(penStyle));
-        s.append("\n");
-        s.append("    width: ");
-        s.append(width);
-        s.append("\n");
-        s.append("    brushStyle: ");
-        s.append(brushStyle);
-        s.append("\n");
-        s.append("    color: ");
-        s.append(color);
-        s.append("\n");
-        s.append("    hatch: ");
-        s.append(hatch);
-        s.append("\n");
+        s.append("    penStyle: " + Integer.toHexString(penStyle) + "\n");
+        s.append("    width: " + width + "\n");
+        s.append("    brushStyle: " + brushStyle + "\n");
+        s.append("    color: " + color + "\n");
+        s.append("    hatch: " + hatch + "\n");
         for (int i = 0; i < style.length; i++) {
-            s.append("      style[");
-            s.append(i);
-            s.append("]: ");
-            s.append(style[i]);
-            s.append("\n");
+            s.append("      style[" + i + "]: " + style[i] + "\n");
         }
         return s.toString();
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        renderer.setUseCreatePen(false);
-        renderer.setPenPaint(color);
-        renderer.setPenStroke(
-            createStroke(renderer, penStyle, style, width));
     }
 }

@@ -8,7 +8,7 @@ package org.freehep.graphicsio.pdf;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFRef.java,v 1.3 2008-05-04 12:31:00 murkle Exp $
+ * @version $Id: PDFRef.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFRef implements PDFConstants {
 

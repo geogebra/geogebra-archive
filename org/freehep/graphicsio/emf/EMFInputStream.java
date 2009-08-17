@@ -1,4 +1,4 @@
-// Copyright 2001, FreeHEP.
+// Copyright 2001-2006, FreeHEP.
 package org.freehep.graphicsio.emf;
 
 import java.awt.Color;
@@ -18,21 +18,24 @@ import org.freehep.util.io.TaggedInputStream;
  * primitives from the stream and to read TagHeaders.
  * 
  * @author Mark Donszelmann
- * @version $Id: EMFInputStream.java,v 1.3 2008-05-04 12:16:48 murkle Exp $
+ * @version $Id: EMFInputStream.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public class EMFInputStream extends TaggedInputStream implements EMFConstants {
 
     public static int DEFAULT_VERSION = 1;
 
-    public EMFInputStream(InputStream is) {
+    public EMFInputStream(InputStream is) throws IOException {
+
         this(is, DEFAULT_VERSION);
     }
 
-    public EMFInputStream(InputStream is, int version) {
+    public EMFInputStream(InputStream is, int version) throws IOException {
+
         this(is, new EMFTagSet(version));
     }
 
-    public EMFInputStream(InputStream is, EMFTagSet tagSet)  {
+    public EMFInputStream(InputStream is, EMFTagSet tagSet) throws IOException {
+
         // EMF is little-endian
         super(is, tagSet, null, true);
     }
@@ -89,6 +92,15 @@ public class EMFInputStream extends TaggedInputStream implements EMFConstants {
         return new Color(readShort() >> 8, readShort() >> 8, readShort() >> 8,
                 readShort() >> 8);
     }
+    
+	public Color readCOLOR() throws IOException {
+		int b = readUnsignedByte();
+		int g = readUnsignedByte();
+		int r = readUnsignedByte();
+		int a = readUnsignedByte();
+        Color c = new Color(r, g, b, a);
+        return c;
+	}
 
     public AffineTransform readXFORM() throws IOException {
         return new AffineTransform(readFLOAT(), readFLOAT(), readFLOAT(),
@@ -148,7 +160,7 @@ public class EMFInputStream extends TaggedInputStream implements EMFConstants {
     }
 
     public boolean readBOOLEAN() throws IOException {
-        return (readBYTE() != 0);
+        return (readBYTE() != 0) ? true : false;
     }
 
     public String readWCHAR(int size) throws IOException {
@@ -162,7 +174,7 @@ public class EMFInputStream extends TaggedInputStream implements EMFConstants {
         }
         return new String(bytes, 0, length, "UTF-16LE");
     }
-
+    
     protected TagHeader readTagHeader() throws IOException {
         // Read the tag.
         // byteAlign();
@@ -172,11 +184,11 @@ public class EMFInputStream extends TaggedInputStream implements EMFConstants {
             return null;
 
         tagID |= readUnsignedByte() << 8;
-        tagID |= readUnsignedByte() << 16;
-        tagID |= readUnsignedByte() << 24;
-
+        int flags = readUnsignedByte();
+        flags |= readUnsignedByte() << 8;
+        
         long length = readDWORD();
-        return new TagHeader(tagID, length - 8);
+        return new EMFTagHeader(tagID, length - 8, flags);
     }
 
     protected ActionHeader readActionHeader() throws IOException {

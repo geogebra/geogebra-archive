@@ -45,11 +45,7 @@ public class Region {
     }
 
     public String toString() {
-        return "  Region\n" + "    bounds: " + bounds +
-            "\n    region: " + region;
-    }
-
-    public Rectangle getBounds() {
-        return bounds;
+        return "  Region\n" + "    bounds: " + bounds + "\n" + "    region: "
+                + region;
     }
 }

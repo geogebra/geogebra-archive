@@ -1,7 +1,5 @@
-// Copyright 2000-2007, FreeHEP
+// Copyright 2000-2006, FreeHEP
 package org.freehep.graphicsio;
-
-import geogebra.main.Application;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -46,7 +44,6 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.freehep.graphics2d.font.FontEncoder;
-import org.freehep.graphics2d.font.FontUtilities;
 import org.freehep.util.images.ImageUtilities;
 
 /**
@@ -56,7 +53,7 @@ import org.freehep.util.images.ImageUtilities;
  * @author Charles Loomis
  * @author Mark Donszelmann
  * @author Steffen Greiffenberg
- * @version $Id: AbstractVectorGraphicsIO.java,v 1.5 2008-10-23 19:04:05 hohenwarter Exp $
+ * @version $Id: AbstractVectorGraphicsIO.java,v 1.6 2009-08-17 21:44:45 murkle Exp $
  */
 public abstract class AbstractVectorGraphicsIO extends VectorGraphicsIO {
 
@@ -65,7 +62,7 @@ public abstract class AbstractVectorGraphicsIO extends VectorGraphicsIO {
 
     public static final String EMIT_WARNINGS = rootKey + ".EMIT_WARNINGS";
 
-    public static final String TEXT_AS_SHAPES = rootKey + "." + FontConstants.TEXT_AS_SHAPES;
+    public static final String TEXT_AS_SHAPES = rootKey + ".TEXT_AS_SHAPES";
 
     public static final String EMIT_ERRORS = rootKey + ".EMIT_ERRORS";
 
@@ -579,7 +576,7 @@ public abstract class AbstractVectorGraphicsIO extends VectorGraphicsIO {
         	
         	// create glyph
             GlyphVector gv = font.createGlyphVector(getFontRenderContext(), string);
-
+            
             // draw it
             drawGlyphVector(gv, (float) x, (float) y);
         } else {
@@ -623,7 +620,7 @@ public abstract class AbstractVectorGraphicsIO extends VectorGraphicsIO {
             // initial attributes, we us TextAttribute.equals() rather
             // than Font.equals() because using Font.equals() we do
             // not get a 'false' if underline etc. is changed
-            Map/*<TextAttribute, ?>*/ attributes = FontUtilities.getAttributes(font);
+            Map/*<TextAttribute, ?>*/ attributes = font.getAttributes();
 
             // stores all characters which are written with the same font
             // if font is changed the buffer will be written and cleared
@@ -639,24 +636,21 @@ public abstract class AbstractVectorGraphicsIO extends VectorGraphicsIO {
                     sb.append(c);
 
                 } else {
-                    // TextLayout does not like 0 length strings
-                    if (sb.length() > 0) {
-                        // draw sb if font is changed
-                        drawString(sb.toString(), x, y);
-    
-                        // change the x offset for the next drawing
-                        // FIXME: change y offset for vertical text
-                        TextLayout tl = new TextLayout(
-                            sb.toString(),
-                            attributes,
-                            getFontRenderContext());
-    
-                        // calculate real width
-                        x = x + Math.max(
-                            tl.getAdvance(),
-                            (float)tl.getBounds().getWidth());
-                    }
-                    
+                    // draw sb if font is changed
+                    drawString(sb.toString(), x, y);
+
+                    // change the x offset for the next drawing
+                    // FIXME: change y offset for vertical text
+                    TextLayout tl = new TextLayout(
+                        sb.toString(),
+                        attributes,
+                        getFontRenderContext());
+
+                    // calculate real width
+                    x = x + Math.max(
+                        tl.getAdvance(),
+                        (float)tl.getBounds().getWidth());
+
                     // empty sb
                     sb = new StringBuffer();
                     sb.append(c);
@@ -805,11 +799,10 @@ s     *
     protected void writeSetTransform(AffineTransform transform) throws IOException {
     	try {
 	    	AffineTransform deltaTransform = new AffineTransform(transform);
-	        deltaTransform.concatenate(oldTransform.createInverse());
+	        transform.concatenate(oldTransform.createInverse());
 	    	writeTransform(deltaTransform);
     	} catch (NoninvertibleTransformException e) {
     		// ignored...
-    		Application.debug("Warning: (ignored) Could not invert matrix: "+oldTransform);
     	}
     }
 
@@ -1190,15 +1183,14 @@ s     *
     /* 8.3. font */
     /**
      * Gets the current font render context. This returns an standard
-     * FontRenderContext with anti-aliasing and uses
+     * FontRenderContext with an upside down matrix, anti-aliasing and uses
      * fractional metrics.
      *
      * @return current font render context
      */
     public FontRenderContext getFontRenderContext() {
         // NOTE: not sure?
-        // Fixed for VG-285
-        return new FontRenderContext(new AffineTransform(1, 0, 0, 1, 0, 0),
+        return new FontRenderContext(new AffineTransform(1, 0, 0, -1, 0, 0),
                 true, true);
     }
 
@@ -1238,13 +1230,8 @@ s     *
      * @param hints table to be set
      */
     public void setRenderingHints(Map hints) {
-        this.hints.clear();
-        if (hints instanceof RenderingHints) {
-        	RenderingHints renderingHints = (RenderingHints)hints;
-        	this.hints.putAll((Map)renderingHints.clone());
-        } else {
-        	this.hints.putAll(hints);
-        }
+        hints.clear();
+        hints.putAll(hints);
     }
 
     /**
@@ -1349,7 +1336,7 @@ s     *
      */
     protected void writeWarning(String warning) {
         if (isProperty(EMIT_WARNINGS)) {
-            Application.debug(warning);
+            System.err.println(warning);
         }
     }
 
@@ -1362,7 +1349,7 @@ s     *
         throw new RuntimeException(exception);
         // FIXME decide what we should do
         /*
-         * if (isProperty(EMIT_ERRORS)) { Application.debug(exception);
+         * if (isProperty(EMIT_ERRORS)) { System.err.println(exception);
          * exception.printStackTrace(System.err); }
          */
     }

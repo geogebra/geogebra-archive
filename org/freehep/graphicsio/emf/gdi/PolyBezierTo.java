@@ -3,31 +3,35 @@ package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFOutputStream;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * PolyBezierTo TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: PolyBezierTo.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: PolyBezierTo.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
-public class PolyBezierTo extends AbstractPolygon {
+public class PolyBezierTo extends EMFTag {
+
+    private Rectangle bounds;
+
+    private int numberOfPoints;
+
+    private Point[] points;
 
     public PolyBezierTo() {
-        super(5, 1, null, 0, null);
+        super(5, 1);
     }
 
     public PolyBezierTo(Rectangle bounds, int numberOfPoints, Point[] points) {
-        super(5, 1, bounds, numberOfPoints, points);
-    }
-
-    protected PolyBezierTo (int id, int version, Rectangle bounds, int numberOfPoints, Point[] points) {
-        super(id, version, bounds, numberOfPoints, points);
+        this();
+        this.bounds = bounds;
+        this.numberOfPoints = numberOfPoints;
+        this.points = points;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
@@ -35,32 +39,18 @@ public class PolyBezierTo extends AbstractPolygon {
 
         Rectangle r = emf.readRECTL();
         int n = emf.readDWORD();
-        return new PolyBezierTo(r, n, emf.readPOINTL(n));
+        PolyBezierTo tag = new PolyBezierTo(r, n, emf.readPOINTL(n));
+        return tag;
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        Point[] points = getPoints();
-        int numberOfPoints = getNumberOfPoints();
-        GeneralPath currentFigure = renderer.getFigure();
+    public void write(int tagID, EMFOutputStream emf) throws IOException {
+        emf.writeRECTL(bounds);
+        emf.writeDWORD(numberOfPoints);
+        emf.writePOINTL(numberOfPoints, points);
+    }
 
-        if (points != null && points.length > 0) {
-
-            Point p1, p2, p3;
-            for (int point = 0; point < numberOfPoints; point = point + 3) {
-                // add a point to gp
-                p1 = points[point];
-                p2 = points[point + 1];
-                p3 = points[point + 2];
-                currentFigure.curveTo(
-                    (float)p1.getX(), (float)p1.getY(),
-                    (float)p2.getX(), (float)p2.getY(),
-                    (float)p3.getX(), (float)p3.getY());
-            }
-        }
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  #points: " + numberOfPoints;
     }
 }

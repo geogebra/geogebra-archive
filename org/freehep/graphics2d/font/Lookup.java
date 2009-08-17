@@ -7,7 +7,7 @@ package org.freehep.graphics2d.font;
  * tables original code should be modified.
  * 
  * @author Sami Kama
- * @version $Id: Lookup.java,v 1.3 2008-05-04 12:14:59 murkle Exp $
+ * @version $Id: Lookup.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class Lookup {
     private static Lookup instance;

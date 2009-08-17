@@ -1,7 +1,5 @@
 package org.freehep.graphicsio.pdf;
 
-import geogebra.main.Application;
-
 import java.io.IOException;
 
 /**
@@ -9,7 +7,7 @@ import java.io.IOException;
  * <p>
  * 
  * @author Mark Donszelmann
- * @version $Id: PDFObject.java,v 1.6 2008-10-23 19:04:05 hohenwarter Exp $
+ * @version $Id: PDFObject.java,v 1.7 2009-08-17 21:44:44 murkle Exp $
  */
 public class PDFObject implements PDFConstants {
 
@@ -39,13 +37,13 @@ public class PDFObject implements PDFConstants {
 
     public void entry(int number) throws IOException {
         if (!ok)
-            Application.debug("PDFWriter: 'PDFObject' was closed");
+            System.err.println("PDFWriter: 'PDFObject' was closed");
         out.println(number);
     }
 
     public void entry(Object[] objs) throws IOException {
         if (!ok)
-            Application.debug("PDFWriter: 'PDFObject' was closed");
+            System.err.println("PDFWriter: 'PDFObject' was closed");
         out.print("[");
         for (int i = 0; i < objs.length; i++) {
             if (i != 0)
@@ -57,15 +55,16 @@ public class PDFObject implements PDFConstants {
     }
 
     // public void entry(String string) throws IOException {
-    // if (!ok) Application.debug("PDFWriter: 'PDFObject' was closed");
+    // if (!ok) System.err.println("PDFWriter: 'PDFObject' was closed");
     // out.println("("+PDFUtil.escape(string)+")");
     // }
 
     PDFDictionary openDictionary() throws IOException {
         if (!ok)
-            Application.debug("PDFWriter error: 'PDFDictionary' was closed");
+            System.err.println("PDFWriter error: 'PDFDictionary' was closed");
         if (open != null)
-        	Application.debug("PDFWriter error: '" + open + "' was not closed");
+            System.err
+                    .println("PDFWriter error: '" + open + "' was not closed");
         open = "PDFDictionary";
         PDFDictionary dictionary = new PDFDictionary(pdf, out, this);
         return dictionary;
@@ -78,7 +77,7 @@ public class PDFObject implements PDFConstants {
 
     PDFStream openStream(String name, String[] encode) throws IOException {
         if (!ok)
-            Application.debug("PDFWriter error: 'PDFStream' was closed");
+            System.err.println("PDFWriter error: 'PDFStream' was closed");
         if (open != null)
             System.err
                     .println("PDFWriter error: '" + open + "' was not closed");
@@ -94,7 +93,7 @@ public class PDFObject implements PDFConstants {
 
     PDFDocInfo openDocInfo(PDF pdf) throws IOException {
         if (!ok)
-            Application.debug("PDFWriter error: 'PDFDocInfo' was closed");
+            System.err.println("PDFWriter error: 'PDFDocInfo' was closed");
         if (open != null)
             System.err
                     .println("PDFWriter error: '" + open + "' was not closed");
@@ -105,7 +104,7 @@ public class PDFObject implements PDFConstants {
 
     PDFCatalog openCatalog(PDF pdf, PDFRef pageTree) throws IOException {
         if (!ok)
-            Application.debug("PDFWriter error: 'PDFCatalog' was closed");
+            System.err.println("PDFWriter error: 'PDFCatalog' was closed");
         if (open != null)
             System.err
                     .println("PDFWriter error: '" + open + "' was not closed");
@@ -116,7 +115,7 @@ public class PDFObject implements PDFConstants {
 
     PDFPageTree openPageTree(PDF pdf, PDFRef parent) throws IOException {
         if (!ok)
-            Application.debug("PDFWriter error: 'PDFPageTree' was closed");
+            System.err.println("PDFWriter error: 'PDFPageTree' was closed");
         if (open != null)
             System.err
                     .println("PDFWriter error: '" + open + "' was not closed");
@@ -127,7 +126,7 @@ public class PDFObject implements PDFConstants {
 
     PDFPage openPage(PDF pdf, PDFRef parent) throws IOException {
         if (!ok)
-            Application.debug("PDFWriter error: 'PDFPage' was closed");
+            System.err.println("PDFWriter error: 'PDFPage' was closed");
         if (open != null)
             System.err
                     .println("PDFWriter error: '" + open + "' was not closed");
@@ -151,7 +150,7 @@ public class PDFObject implements PDFConstants {
     PDFOutlineList openOutlineList(PDF pdf, PDFRef first, PDFRef last)
             throws IOException {
         if (!ok)
-            Application.debug("PDFWriter error: 'PDFOutlineList' was closed");
+            System.err.println("PDFWriter error: 'PDFOutlineList' was closed");
         if (open != null)
             System.err
                     .println("PDFWriter error: '" + open + "' was not closed");
@@ -163,7 +162,7 @@ public class PDFObject implements PDFConstants {
     PDFOutline openOutline(PDF pdf, PDFRef parent, String title, PDFRef prev,
             PDFRef next) throws IOException {
         if (!ok)
-            Application.debug("PDFWriter error: 'PDFOutline' was closed");
+            System.err.println("PDFWriter error: 'PDFOutline' was closed");
         if (open != null)
             System.err
                     .println("PDFWriter error: '" + open + "' was not closed");

@@ -4,17 +4,17 @@ package org.freehep.graphicsio.emf.gdi;
 import java.awt.Color;
 import java.io.IOException;
 
+import org.freehep.graphicsio.emf.EMFConstants;
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 
 /**
  * EMF LogPen
  * 
  * @author Mark Donszelmann
- * @version $Id: LogPen.java,v 1.3 2008-05-04 12:17:35 murkle Exp $
+ * @version $Id: LogPen.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class LogPen extends AbstractPen {
+public class LogPen implements EMFConstants {
 
     private int penStyle;
 
@@ -43,20 +43,19 @@ public class LogPen extends AbstractPen {
     }
 
     public String toString() {
-        return "  LogPen\n" + "    penstyle: " + penStyle +
-            "\n    width: " + width +
-            "\n    color: " + color;
+        return "  LogPen\n" + "    penstyle: " + penStyle + "\n"
+                + "    width: " + width + "\n" + "    color: " + color;
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        renderer.setUseCreatePen(true);
-        renderer.setPenPaint(color);
-        renderer.setPenStroke(
-            createStroke(renderer,  penStyle, null, width));
+    public int getPenStyle() {
+        return penStyle;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public Color getColor() {
+        return color;
     }
 }

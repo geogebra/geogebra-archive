@@ -10,7 +10,7 @@ import org.freehep.graphicsio.emf.EMFOutputStream;
  * EMF GradientTriangle
  * 
  * @author Mark Donszelmann
- * @version $Id: GradientTriangle.java,v 1.3 2008-05-04 12:18:47 murkle Exp $
+ * @version $Id: GradientTriangle.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class GradientTriangle extends Gradient {
 

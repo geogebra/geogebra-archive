@@ -11,7 +11,7 @@ import org.freehep.graphicsio.emf.EMFTag;
  * ScaleWindowExtEx TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: ScaleWindowExtEx.java,v 1.3 2008-05-04 12:18:03 murkle Exp $
+ * @version $Id: ScaleWindowExtEx.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class ScaleWindowExtEx extends EMFTag {
 
@@ -32,11 +32,9 @@ public class ScaleWindowExtEx extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new ScaleWindowExtEx(
-            emf.readLONG(),
-            emf.readLONG(),
-            emf.readLONG(),
-            emf.readLONG());
+        ScaleWindowExtEx tag = new ScaleWindowExtEx(emf.readLONG(), emf
+                .readLONG(), emf.readLONG(), emf.readLONG());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -47,10 +45,8 @@ public class ScaleWindowExtEx extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() +
-            "\n  xNum: " + xNum +
-            "\n  xDenom: " + xDenom +
-            "\n  yNum: " + yNum +
-            "\n  yDenom: " + yDenom;
+        return super.toString() + "\n" + "  xNum: " + xNum + "\n"
+                + "  xDenom: " + xDenom + "\n" + "  yNum: " + yNum + "\n"
+                + "  yDenom: " + yDenom;
     }
 }

@@ -11,7 +11,7 @@ import org.freehep.graphicsio.emf.EMFOutputStream;
  * EMF Panose
  * 
  * @author Mark Donszelmann
- * @version $Id: Panose.java,v 1.3 2008-05-04 12:18:47 murkle Exp $
+ * @version $Id: Panose.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
 public class Panose implements EMFConstants {
 
@@ -76,15 +76,12 @@ public class Panose implements EMFConstants {
     }
 
     public String toString() {
-        return "  Panose\n" + "    familytype: " + familyType +
-            "\n    serifStyle: " + serifStyle +
-            "\n    weight: " + weight +
-            "\n    proportion: " + proportion +
-            "\n    contrast: " + contrast +
-            "\n    strokeVariation: " + strokeVariation +
-            "\n    armStyle: " + armStyle +
-            "\n    letterForm: " + letterForm +
-            "\n    midLine: " + midLine +
-            "\n    xHeight: " + xHeight;
+        return "  Panose\n" + "    familytype: " + familyType + "\n"
+                + "    serifStyle: " + serifStyle + "\n" + "    weight: "
+                + weight + "\n" + "    proportion: " + proportion + "\n"
+                + "    contrast: " + contrast + "\n" + "    strokeVariation: "
+                + strokeVariation + "\n" + "    armStyle: " + armStyle + "\n"
+                + "    letterForm: " + letterForm + "\n" + "    midLine: "
+                + midLine + "\n" + "    xHeight: " + xHeight;
     }
 }

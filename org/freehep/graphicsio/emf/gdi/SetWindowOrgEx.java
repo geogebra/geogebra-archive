@@ -6,14 +6,13 @@ import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
 import org.freehep.graphicsio.emf.EMFOutputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * SetWindowOrgEx TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: SetWindowOrgEx.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: SetWindowOrgEx.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class SetWindowOrgEx extends EMFTag {
 
@@ -31,7 +30,8 @@ public class SetWindowOrgEx extends EMFTag {
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new SetWindowOrgEx(emf.readPOINTL());
+        SetWindowOrgEx tag = new SetWindowOrgEx(emf.readPOINTL());
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
@@ -39,18 +39,6 @@ public class SetWindowOrgEx extends EMFTag {
     }
 
     public String toString() {
-        return super.toString() + "\n  point: " + point;
-    }
-
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        // The SetWindowOrgEx function specifies which window point maps to
-        // the window origin (0,0).
-        renderer.setWindowOrigin(point);
-        renderer.resetTransformation();
+        return super.toString() + "\n" + "  point: " + point;
     }
 }

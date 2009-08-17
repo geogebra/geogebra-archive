@@ -13,34 +13,34 @@ import org.freehep.graphicsio.emf.EMFTag;
  * PolyPolyline TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: PolyPolyline.java,v 1.3 2008-05-04 12:19:41 murkle Exp $
+ * @version $Id: PolyPolyline.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class PolyPolyline extends AbstractPolyPolyline {
+public class PolyPolyline extends EMFTag {
+
+    private Rectangle bounds;
 
     private int start, end;
 
+    private int[] numberOfPoints;
+
+    private Point[][] points;
+
     public PolyPolyline() {
-        super(7, 1, null, null, null);
+        super(7, 1);
     }
 
-    public PolyPolyline(
-        Rectangle bounds,
-        int start,
-        int end,
-        int[] numberOfPoints,
-        Point[][] points) {
-
-        super(7, 1, bounds, numberOfPoints, points);
-
+    public PolyPolyline(Rectangle bounds, int start, int end,
+            int[] numberOfPoints, Point[][] points) {
+        this();
+        this.bounds = bounds;
         this.start = start;
         this.end = Math.min(end, numberOfPoints.length - 1);
+        this.numberOfPoints = numberOfPoints;
+        this.points = points;
     }
 
-    public EMFTag read(
-        int tagID,
-        EMFInputStream emf,
-        int len)
-        throws IOException {
+    public EMFTag read(int tagID, EMFInputStream emf, int len)
+            throws IOException {
 
         Rectangle bounds = emf.readRECTL();
         int np = emf.readDWORD();
@@ -54,14 +54,12 @@ public class PolyPolyline extends AbstractPolyPolyline {
         for (int i = 0; i < np; i++) {
             points[i] = emf.readPOINTL(pc[i]);
         }
-        return new PolyPolyline(bounds, 0, np - 1, pc, points);
+        PolyPolyline tag = new PolyPolyline(bounds, 0, np - 1, pc, points);
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
-        int[] numberOfPoints = getNumberOfPoints();
-        Point[][] points = getPoints();
-
-        emf.writeRECTL(getBounds());
+        emf.writeRECTL(bounds);
         emf.writeDWORD(end - start + 1);
         int c = 0;
         for (int i = start; i < end + 1; i++) {
@@ -74,5 +72,10 @@ public class PolyPolyline extends AbstractPolyPolyline {
         for (int i = start; i < end + 1; i++) {
             emf.writePOINTL(numberOfPoints[i], points[i]);
         }
+    }
+
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  #polys: " + (end - start);
     }
 }

@@ -1,74 +1,64 @@
-// Copyright 2002-2007, FreeHEP.
+// Copyright 2002, FreeHEP.
 package org.freehep.graphicsio.emf.gdi;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Arc2D;
 import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
+import org.freehep.graphicsio.emf.EMFOutputStream;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * Arc TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: Arc.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: Arc.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
-public class Arc extends AbstractArc {
+public class Arc extends EMFTag {
+
+    private Rectangle bounds;
+
+    private Point start, end;
 
     public Arc() {
-        super(45, 1, null, null, null);
+        super(45, 1);
     }
 
     public Arc(Rectangle bounds, Point start, Point end) {
-        super(45, 1, bounds, start, end);
+        this();
+        this.bounds = bounds;
+        this.start = start;
+        this.end = end;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
             throws IOException {
 
-        return new Arc(
-            emf.readRECTL(), 
-            emf.readPOINTL(), 
-            emf.readPOINTL());
+        Arc tag = new Arc(emf.readRECTL(), emf.readPOINTL(), emf.readPOINTL());
+        return tag;
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        // The Arc function draws an elliptical arc.
-        //
-        // BOOL Arc(
-        // HDC hdc, // handle to device context
-        // int nLeftRect, // x-coord of rectangle's upper-left corner
-        // int nTopRect, // y-coord of rectangle's upper-left corner
-        // int nRightRect, // x-coord of rectangle's lower-right corner
-        // int nBottomRect, // y-coord of rectangle's lower-right corner
-        // int nXStartArc, // x-coord of first radial ending point
-        // int nYStartArc, // y-coord of first radial ending point
-        // int nXEndArc, // x-coord of second radial ending point
-        // int nYEndArc // y-coord of second radial ending point
-        // );
-        // The points (nLeftRect, nTopRect) and (nRightRect, nBottomRect)
-        // specify the bounding rectangle.
-        // An ellipse formed by the specified bounding rectangle defines the
-        // curve of the arc.
-        // The arc extends in the current drawing direction from the point
-        // where it intersects the
-        // radial from the center of the bounding rectangle to the
-        // (nXStartArc, nYStartArc) point.
-        // The arc ends where it intersects the radial from the center of
-        // the bounding rectangle to
-        // the (nXEndArc, nYEndArc) point. If the starting point and ending
-        // point are the same,
-        // a complete ellipse is drawn.
+    public void write(int tagID, EMFOutputStream emf) throws IOException {
+        emf.writeRECTL(bounds);
+        emf.writePOINTL(start);
+        emf.writePOINTL(end);
+    }
 
-        renderer.fillAndDrawOrAppend(
-            getShape(renderer, Arc2D.OPEN));
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  start: " + start + "\n" + "  end: " + end;
+    }
+
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
+    public Point getStart() {
+        return start;
+    }
+
+    public Point getEnd() {
+        return end;
     }
 }

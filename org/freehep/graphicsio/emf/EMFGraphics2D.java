@@ -1,4 +1,4 @@
-// Copyright 2000-2007 FreeHEP
+// Copyright 2000-2006 FreeHEP
 package org.freehep.graphicsio.emf;
 
 import java.awt.BasicStroke;
@@ -18,7 +18,6 @@ import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -33,7 +32,6 @@ import java.util.Properties;
 import org.freehep.graphics2d.PrintColor;
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphics2d.font.FontEncoder;
-import org.freehep.graphics2d.font.FontUtilities;
 import org.freehep.graphicsio.AbstractVectorGraphicsIO;
 import org.freehep.graphicsio.PageConstants;
 import org.freehep.graphicsio.emf.gdi.AlphaBlend;
@@ -69,18 +67,18 @@ import org.freehep.graphicsio.emf.gdi.StrokeAndFillPath;
 import org.freehep.graphicsio.emf.gdi.StrokePath;
 import org.freehep.graphicsio.emf.gdi.TextW;
 import org.freehep.graphicsio.font.FontTable;
+import org.freehep.graphicsio.font.FontUtilities;
 import org.freehep.util.UserProperties;
-import org.freehep.util.images.ImageUtilities;
 
 /**
  * Enhanced Metafile Format Graphics 2D driver.
  *
  * @author Mark Donszelmann
- * @version $Id: EMFGraphics2D.java,v 1.4 2008-05-04 12:16:59 murkle Exp $
+ * @version $Id: EMFGraphics2D.java,v 1.5 2009-08-17 21:44:45 murkle Exp $
  */
 public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
         EMFConstants {
-    public static final String version = "$Revision: 1.4 $";
+    public static final String version = "$Revision: 1.5 $";
 
     private EMFHandleManager handleManager;
 
@@ -280,7 +278,7 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
             os.writeTag(new DeleteObject(handle));
             handleManager.freeHandle(handle);
         }
-        os.writeTag(new EOF());
+        os.writeTag(new EOF());        
     }
 
     public void closeStream() throws IOException {
@@ -342,6 +340,11 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
      * ================================================================================
      */
     /* 5.1.4. shapes */
+    Point[] points = new Point[] { new Point(0, 0), new Point(0, 0),
+            new Point(0, 0), new Point(0, 0) };
+
+    Color invisible = new Color(0, 0, 0, 0);
+
     public void draw(Shape shape) {
         try {
             if (getStroke() instanceof BasicStroke) {
@@ -360,14 +363,9 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
 
     public void fill(Shape shape) {
         try {
-            if (getPaint() instanceof Color) {
-                writeBrush(getColor());
-                writePath(shape);
-                os.writeTag(new FillPath(imageBounds));
-            } else {
-                // draw paint as image
-                fill(shape, getPaint());
-            }
+            writeBrush(getColor());
+            writePath(shape);
+            os.writeTag(new FillPath(imageBounds));
         } catch (IOException e) {
             handleException(e);
         }
@@ -375,17 +373,10 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
 
     public void fillAndDraw(Shape shape, Color fillColor) {
         try {
-            if (getPaint() instanceof Color) {
-                writePen((BasicStroke) getStroke(), getColor());
-                writeBrush(fillColor);
-                writePath(shape);
-                os.writeTag(new StrokeAndFillPath(imageBounds));
-            } else {
-                // draw paint as image
-                fill(shape, getPaint());
-                // draw shape
-                draw(shape);
-            }
+            writePen((BasicStroke) getStroke(), getColor());
+            writeBrush(fillColor);
+            writePath(shape);
+            os.writeTag(new StrokeAndFillPath(imageBounds));
         } catch (IOException e) {
             handleException(e);
         }
@@ -404,25 +395,21 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
             Color bkg) throws IOException {
         os.writeTag(new SaveDC());
 
-        AffineTransform imageTransform = new AffineTransform(
-            1.0, 0.0, 0.0, -1.0, 0.0, image.getHeight());
+        AffineTransform imageTransform = new AffineTransform(1.0, 0.0, 0.0,
+                -1.0, 0.0, image.getHeight());
         imageTransform.preConcatenate(xform);
         writeTransform(imageTransform);
 
-        BufferedImage bufferedImage = ImageUtilities.createBufferedImage(
-            image, null, null);
-        AlphaBlend alphaBlend = new AlphaBlend(
-            imageBounds,
-            toUnit(0),
-            toUnit(0),
-            toUnit(image.getWidth()),
-            toUnit(image.getHeight()),
-            new AffineTransform(),
-            bufferedImage,
-            bkg);
-
-        os.writeTag(alphaBlend);
+        os.writeTag(new AlphaBlend(imageBounds, toUnit(0), toUnit(0),
+                toUnit(image.getWidth()), toUnit(image.getHeight()),
+                new AffineTransform(), image, bkg));
         os.writeTag(new RestoreDC());
+    }
+
+    private final static Properties replaceFonts = new Properties();
+    static {
+        replaceFonts.setProperty("Symbol", "Arial Unicode MS");
+        replaceFonts.setProperty("ZapfDingbats", "Arial Unicode MS");
     }
 
     /* 5.3. Strings */
@@ -450,10 +437,10 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
         }
 
         // dialog.bold -> Dialog with TextAttribute.WEIGHT_BOLD
-        Map attributes = FontUtilities.getAttributes(getFont());
+        Map attributes = getFont().getAttributes();
         FontTable.normalize(attributes);
         Font font = new Font(attributes);
-
+        
         Font unitFont = (Font) unitFontTable.get(font);
 
         Integer fontIndex = (Integer) fontTable.get(font);
@@ -464,6 +451,7 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
             String fontName = font.getName();
             string = FontEncoder.getEncodedString(string, fontName);
 
+            fontName = replaceFonts.getProperty(fontName, fontName);
             String windowsFontName = FontUtilities
                 .getWindowsFontName(fontName);
 
@@ -538,17 +526,8 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
      * ================================================================================
      */
     protected void writeSetClip(Shape s) throws IOException {
-        if (!isProperty(CLIP)) {
+        if (s == null || !isProperty(CLIP)) {
             return;
-        }
-
-        // if s == null the clip is reset to the imageBounds
-        if (s == null && imageBounds != null) {
-            s = new Rectangle(imageBounds);
-            AffineTransform at = getTransform();
-            if (at != null) {
-                s = at.createTransformedShape(s);
-            }
         }
 
         writePath(s);
@@ -592,20 +571,28 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
     }
 
     protected void writePaint(GradientPaint p) throws IOException {
-        // all paint setting delayed
+        writeWarning(getClass()
+                + ": writePaint(GradientPaint) not implemented.");
+        // Write out the gradient paint.
+        setColor(PrintColor.mixColor(p.getColor1(), p.getColor2()));
     }
 
     protected void writePaint(TexturePaint p) throws IOException {
-        // all paint setting delayed
+        writeWarning(getClass() + ": writePaint(TexturePaint) not implemented.");
+        // Write out the texture paint.
+        setColor(Color.RED);
     }
 
     protected void writePaint(Paint p) throws IOException {
-        // all paint setting delayed
+        writeWarning(getClass() + ": writePaint(Paint) not implemented for "
+                + p.getClass());
+        // Write out the paint.
+        setColor(Color.WHITE);
     }
 
     /* 8.3. font */
     protected void writeFont(Font font) throws IOException {
-    	// written when needed
+	// written when needed
     }
 
     /* 8.4. rendering hints */
@@ -621,17 +608,16 @@ public class EMFGraphics2D extends AbstractVectorGraphicsIO implements
         return null;
     }
 
+    public boolean hit(Rectangle rect, Shape s, boolean onStroke) {
+        writeWarning(getClass()
+                + ": hit(Rectangle, Shape, boolean) not implemented.");
+        // Mostly unimplemented
+        return false;
+    }
+
     public void writeComment(String comment) throws IOException {
         writeWarning(getClass() + ": writeComment(String) not implemented.");
         // Write out the comment.
-    }
-
-    // Michael Borcherds 2008-02-26
-    public void startGroup(String s) {
-    }
-
-    // Michael Borcherds 2008-02-26
-    public void endGroup(String s) {
     }
 
     public String toString() {

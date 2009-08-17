@@ -13,24 +13,29 @@ import org.freehep.graphicsio.emf.EMFTag;
  * PolyPolygon16 TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: PolyPolygon16.java,v 1.3 2008-05-04 12:18:36 murkle Exp $
+ * @version $Id: PolyPolygon16.java,v 1.4 2009-08-17 21:44:44 murkle Exp $
  */
-public class PolyPolygon16 extends AbstractPolyPolygon {
+public class PolyPolygon16 extends EMFTag {
+
+    private Rectangle bounds;
 
     private int numberOfPolys;
 
+    private int[] numberOfPoints;
+
+    private Point[][] points;
+
     public PolyPolygon16() {
-        super(91, 1, null, null, null);
+        super(91, 1);
     }
 
-    public PolyPolygon16(
-        Rectangle bounds,
-        int numberOfPolys,
-        int[] numberOfPoints,
-        Point[][] points) {
-
-        super(91, 1, bounds, numberOfPoints,  points);
+    public PolyPolygon16(Rectangle bounds, int numberOfPolys,
+            int[] numberOfPoints, Point[][] points) {
+        this();
+        this.bounds = bounds;
         this.numberOfPolys = numberOfPolys;
+        this.numberOfPoints = numberOfPoints;
+        this.points = points;
     }
 
     public EMFTag read(int tagID, EMFInputStream emf, int len)
@@ -41,28 +46,23 @@ public class PolyPolygon16 extends AbstractPolyPolygon {
         /* int totalNumberOfPoints = */ emf.readDWORD();
         int[] pc = new int[np];
         Point[][] points = new Point[np][];
-
         for (int i = 0; i < np; i++) {
             pc[i] = emf.readDWORD();
             points[i] = new Point[pc[i]];
         }
-
         for (int i = 0; i < np; i++) {
             points[i] = emf.readPOINTS(pc[i]);
         }
-
-        return new PolyPolygon16(bounds, np, pc, points);
+        PolyPolygon16 tag = new PolyPolygon16(bounds, np, pc, points);
+        return tag;
     }
 
     public void write(int tagID, EMFOutputStream emf) throws IOException {
-        int[] numberOfPoints = getNumberOfPoints();
-        Point[][] points = getPoints();
-
-        emf.writeRECTL(getBounds());
+        emf.writeRECTL(bounds);
         emf.writeDWORD(numberOfPolys);
         int c = 0;
         for (int i = 0; i < numberOfPolys; i++) {
-            c += getNumberOfPoints()[i];
+            c += numberOfPoints[i];
         }
         emf.writeDWORD(c);
         for (int i = 0; i < numberOfPolys; i++) {
@@ -71,5 +71,10 @@ public class PolyPolygon16 extends AbstractPolyPolygon {
         for (int i = 0; i < numberOfPolys; i++) {
             emf.writePOINTS(numberOfPoints[i], points[i]);
         }
+    }
+
+    public String toString() {
+        return super.toString() + "\n" + "  bounds: " + bounds + "\n"
+                + "  #polys: " + numberOfPolys;
     }
 }

@@ -4,7 +4,7 @@ package org.freehep.graphicsio;
 /**
  * 
  * @author Mark Donszelmann
- * @version $Id: FontConstants.java,v 1.3 2008-05-04 12:15:45 murkle Exp $
+ * @version $Id: FontConstants.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public class FontConstants {
 
@@ -19,8 +19,6 @@ public class FontConstants {
     public static final String EMBED_FONTS_TYPE1 = "Type1";
 
     public static final String EMBED_FONTS_TYPE3 = "Type3";
-
-    public static final String TEXT_AS_SHAPES = "TEXT_AS_SHAPES";
 
     public static final String[] getEmbedFontsAsList() {
         return new String[] { EMBED_FONTS_TYPE1, EMBED_FONTS_TYPE3 };

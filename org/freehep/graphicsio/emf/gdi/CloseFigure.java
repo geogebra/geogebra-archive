@@ -4,14 +4,13 @@ package org.freehep.graphicsio.emf.gdi;
 import java.io.IOException;
 
 import org.freehep.graphicsio.emf.EMFInputStream;
-import org.freehep.graphicsio.emf.EMFRenderer;
 import org.freehep.graphicsio.emf.EMFTag;
 
 /**
  * CloseFigure TAG.
  * 
  * @author Mark Donszelmann
- * @version $Id: CloseFigure.java,v 1.4 2009-06-22 02:18:17 hohenwarter Exp $
+ * @version $Id: CloseFigure.java,v 1.5 2009-08-17 21:44:44 murkle Exp $
  */
 public class CloseFigure extends EMFTag {
 
@@ -25,12 +24,4 @@ public class CloseFigure extends EMFTag {
         return this;
     }
 
-    /**
-     * displays the tag using the renderer
-     *
-     * @param renderer EMFRenderer storing the drawing session data
-     */
-    public void render(EMFRenderer renderer) {
-        renderer.closeFigure();
-    }
 }

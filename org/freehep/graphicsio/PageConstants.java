@@ -13,7 +13,7 @@ import java.util.Map;
  * 
  * @author Charles Loomis
  * @author Mark Donszelmann
- * @version $Id: PageConstants.java,v 1.3 2008-05-04 12:15:55 murkle Exp $
+ * @version $Id: PageConstants.java,v 1.4 2009-08-17 21:44:45 murkle Exp $
  */
 public class PageConstants {
 
@@ -45,12 +45,6 @@ public class PageConstants {
     public static final String A5 = "A5";
 
     public static final String A6 = "A6";
-
-    /**
-     * Value for CUSTOM_PAGE_SIZE and Key for a Dimension
-     * object if custom size is used
-     */
-    public static final String CUSTOM_PAGE_SIZE = "Custom PageSize";
 
     public static final String LETTER = "Letter";
 
