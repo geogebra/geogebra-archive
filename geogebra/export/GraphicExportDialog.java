@@ -644,7 +644,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		try {
 			
 			BufferedImage img =
-			app.getEuclidianView().getExportImage(exportScale);			
+			app.getEuclidianView().getExportImage(exportScale, !exportToClipboard); // enable transparency if the user saves the png			
 			MyImageIO.write(img, "png", getDPI(),  file);	
 			
 			if (exportToClipboard) {
