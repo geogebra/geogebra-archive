@@ -121,8 +121,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			//update the moving plane altitude
 			getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
 			
-			movedGeoPoint3D.setCoordDecoration(true);
-
 		}
 	}
 
@@ -265,18 +263,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 
 
-
-	public void mouseReleased(MouseEvent e) {
-		
-		if (movedGeoPoint3D!=null)
-			movedGeoPoint3D.setCoordDecoration(false);
-		
-		super.mouseReleased(e);
-
-	}
-
-	
-
 	
 	
 	
@@ -300,7 +286,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		switch(view3D.getCursor3DType()){		
 		case EuclidianView3D.PREVIEW_POINT_FREE:
 			ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
-			ret.setCoordDecoration(true);
 			ret.setCoords(point);
 			ret.updateCoords();
 			break;
@@ -384,7 +369,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		setCurrentPlane(Ggb3DMatrix4x4.Identity());
 		movePointOnCurrentPlane(point3D, false);	
-		point3D.setCoordDecoration(true);
 		
 		return point3D;
 	}

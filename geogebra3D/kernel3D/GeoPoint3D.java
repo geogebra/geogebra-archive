@@ -77,8 +77,6 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     public Ggb3DVector inhom = new Ggb3DVector(3);
 
 
-    /** says if decoration have to be drawn for coordinates */
-	private boolean coordDecoration = false;
 	
     
     public GeoPoint3D(Construction c) { 
@@ -456,17 +454,6 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	}
 	
  
-    
-    ///////////////////////////////////////////////////////////
-    // DRAWING
-
-	public void setCoordDecoration(boolean val){
-		coordDecoration = val;
-	}
-    
-    public boolean hasCoordDecoration(){
-    	return coordDecoration;
-    }
     
     
 	

@@ -44,11 +44,6 @@ public class DrawPoint3D extends Drawable3DCurves implements Previewable{
 
 		GeoPoint3D point = (GeoPoint3D) getGeoElement(); 
 		
-		if (point.hasCoordDecoration()){
-			renderer.setThickness(1);
-			//TODO use gui
-			renderer.drawCoordSegments(ConstructionDefaults3D.colXAXIS,ConstructionDefaults3D.colYAXIS,ConstructionDefaults3D.colZAXIS); 
-		}
 		
 
 		if (point.hasPath())
