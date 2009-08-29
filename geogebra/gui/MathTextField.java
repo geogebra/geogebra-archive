@@ -64,7 +64,7 @@ public class MathTextField extends JTextField implements KeyListener {
 			
 			
 			// Numeric keypad numbers eg NumPad-8, NumPad *
-			if (e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD)
+			if (!e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD)
 				keyString = e.getKeyChar() + "";
 			
 			// workaround for different Java versions!!

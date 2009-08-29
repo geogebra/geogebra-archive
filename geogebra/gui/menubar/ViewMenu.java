@@ -4,15 +4,22 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
+import geogebra.gui.virtualkeyboard.keys;
+import geogebra.gui.virtualkeyboard.start_vk;
+import geogebra.gui.virtualkeyboard.vk_gui;
 import geogebra.io.layout.Perspective;
 import geogebra.main.Application;
+import geogebra.main.MyResourceBundle;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Hashtable;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
@@ -33,6 +40,7 @@ class ViewMenu extends BaseMenu {
 		showCASViewAction,
 		showAuxiliaryObjectsAction,
 		showAlgebraInputAction,
+		showKeyboardAction,
 		showCmdListAction,
 		showInputTopAction,
 		showToolBarAction,
@@ -63,6 +71,7 @@ class ViewMenu extends BaseMenu {
 		cbShowConsProtNavigationPlay,
 		cbShowConsProtNavigationOpenProt,
 		cbShowAlgebraInput,
+		cbShowKeyboard,
 		cbShowCmdList;
 	
 	private JMenu
@@ -147,6 +156,12 @@ class ViewMenu extends BaseMenu {
 		cbShowCASView.setIcon(app.getEmptyIcon());
 		cbShowCASView.setSelected(app.getGuiManager().showCASView());
 		add(cbShowCASView);
+
+		addSeparator();
+		
+		// show/hide keyboard
+		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
+		add(cbShowKeyboard);
 
 		addSeparator();
 
@@ -254,6 +269,25 @@ class ViewMenu extends BaseMenu {
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().setShowCASView(
 						!app.getGuiManager().showCASView());
+			}
+		};
+
+		showKeyboardAction = new AbstractAction(app.getMenu("ShowKeyboard"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				   //Hashtable<String, String> myConf = new Hashtable<String, String>();
+				   //Hashtable<String, keys>   myKeys = new Hashtable<String, keys>();
+	        	   //myConf = defaultConf.setDefault(myConf);
+	               //myKeys = defaultConf.setKeyboard(myKeys);
+	               start_vk.readConf();
+	               vk_gui thisClass = new vk_gui(app);
+	               thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	               thisClass.setVisible(true);
+	               ((JFrame)thisClass).setFocusable(false);
 			}
 		};
 
@@ -467,7 +501,6 @@ class ViewMenu extends BaseMenu {
 		cbShowSpreadsheetView.setSelected(app.getGuiManager()
 				.showSpreadsheetView());
 		cbShowCASView.setSelected(app.getGuiManager().showCASView());
-		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		
 		boolean showAlgebraView = app.getGuiManager().showAlgebraView();
