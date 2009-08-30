@@ -3,21 +3,21 @@ package geogebra.gui.virtualkeyboard;
 import geogebra.main.Application;
 
 import java.awt.AWTException;
-import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.Window;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -116,6 +116,25 @@ public class vk_gui extends JFrame {
       initialize();
       this.app = app;
       this.setFocusableWindowState(false);
+      this.setAlwaysOnTop(true);
+      
+      // http://java.sun.com/developer/technicalArticles/GUI/translucent_shaped_windows/#Setting-the-Opacity-Level-of-a-Window
+      //AWTUtilities.setWindowOpacity
+      
+      float transparency = 0.5f;
+      
+      try { // Java 6u10+ only
+    	   Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
+    	   Method mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
+    	   mSetWindowOpacity.invoke(null, this, Float.valueOf(transparency));
+    	} catch (Exception ex) {
+    		
+    		// fallback for OSX Leopard pre-6u10
+    		this.getRootPane().putClientProperty("Window.alpha", Float.valueOf(transparency));
+
+    	} 
+
+      
       
       try {
 

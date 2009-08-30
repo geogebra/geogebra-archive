@@ -287,7 +287,7 @@ class ViewMenu extends BaseMenu {
 	               vk_gui thisClass = new vk_gui(app);
 	               thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	               thisClass.setVisible(true);
-	               ((JFrame)thisClass).setFocusable(false);
+
 			}
 		};
 
