@@ -340,6 +340,20 @@ public class Util extends Object {
 	sbReplaceExp.setLength(0);
 	for (int i = 0; i < length; i++) {
 	    char c = str.charAt(i);
+	    
+	    // Guy Hed 30.8.2009
+	    // Fix Hebrew 'undefined' problem in Latex text.
+	    if( isRightToLeftChar(c) ) {
+	      int j;
+	      for( j=i; j<length && (isRightToLeftChar(str.charAt(j)) || str.charAt(j)=='\u00a0'); j++ );
+	      for( int k=j-1; k>=i ; k-- )
+	    	  sbReplaceExp.append(str.charAt(k));
+	      sbReplaceExp.append(' ');
+	      i=j-1;
+	      continue;
+	    }
+	    // Guy Hed 30.8.2009
+	    
 	    switch (c) {
 	    /*
 	     case '(':
@@ -526,6 +540,12 @@ public class Util extends Object {
     }
 
     private static StringBuffer sbReplaceExp = new StringBuffer(200);
+    
+    //Guy Hed 30.08.2009
+    private static boolean isRightToLeftChar( char c ) {
+    	return (Character.getDirectionality(c) == Character.DIRECTIONALITY_RIGHT_TO_LEFT); 
+    }
+    //Guy Hed 30.08.2009
     
     /**
      * Registers dialog for disposal on escape key-press.
