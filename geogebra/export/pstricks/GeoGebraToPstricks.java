@@ -1585,15 +1585,24 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		coma = true;
 		bracket = true;
 		codePoint.append("dotstyle=");
+		
+		if (dotstyle == -1) { // default
+			dotstyle = app.getEuclidianView().getPointStyle();
+		}
+		
 		switch(dotstyle){
-			case EuclidianView.POINT_STYLE_CIRCLE:
-				codePoint.append("o");
-			break;
+
 			case EuclidianView.POINT_STYLE_CROSS:
 				codePoint.append("x");
 			break;
 			case EuclidianView.POINT_STYLE_DOT:
 				codePoint.append("*");
+			break;
+			
+			// default:
+			case EuclidianView.POINT_STYLE_CIRCLE:
+			default:
+				codePoint.append("o");
 			break;
 		}
 		

@@ -1589,6 +1589,11 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			Color dotcolor=gp.getObjectColor();
 			double dotsize=gp.getPointSize();
 			int dotstyle=gp.getPointStyle();
+			
+			if (dotstyle == -1) { // default
+				dotstyle = app.getEuclidianView().getPointStyle();
+			}
+
 			startBeamer(codePoint);
 			
 			if (dotstyle==EuclidianView.POINT_STYLE_CIRCLE){
