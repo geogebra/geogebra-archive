@@ -40,6 +40,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}    
 
 	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey) {
+		super(app.getGuiManager());
 		setColumns(columns);
 
 		this.app = app;

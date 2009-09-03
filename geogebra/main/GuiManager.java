@@ -1,6 +1,7 @@
 package geogebra.main;
 
 
+import geogebra.gui.MyTextField;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -339,6 +340,8 @@ public interface GuiManager {
 		public void startCollectingSpreadsheetTraces();
 		public void stopCollectingSpreadsheetTraces();
 		public void resetSpreadsheet();
-		 
+		
+		public void setCurrentTextfield(MyTextField textfield);
+		public void insertStringIntoTextfield(String text);		 
 
 }

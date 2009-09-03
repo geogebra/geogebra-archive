@@ -3,12 +3,11 @@ package geogebra.gui;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
+import geogebra.main.GuiManager;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Locale;
-
-import javax.swing.JTextField;
 
 /*
  * Michael Borcherds
@@ -18,11 +17,11 @@ import javax.swing.JTextField;
  * (ctrl on MacOS)
  */
 
-public class MathTextField extends JTextField implements KeyListener {
+public class MathTextField extends MyTextField implements KeyListener {
 
 
-	public MathTextField() {
-		super();
+	public MathTextField(GuiManager guiManager) {
+		super(guiManager);
 		this.addKeyListener(this);
 	}
 	

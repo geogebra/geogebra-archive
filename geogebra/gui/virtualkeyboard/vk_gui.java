@@ -2,7 +2,6 @@ package geogebra.gui.virtualkeyboard;
 
 import geogebra.main.Application;
 
-import java.awt.AWTException;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -12,9 +11,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Window;
-import java.awt.event.KeyEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -105,7 +103,7 @@ public class vk_gui extends JFrame {
 
    private Application app;
    
-   WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
+   //WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
    //Keyboard kb;// = new Keyboard();
 
    /**
@@ -135,14 +133,14 @@ public class vk_gui extends JFrame {
     	} 
 
       
-      
+      /*
       try {
 
 		kb = new WindowUnicodeKeyboard();
 	} catch (AWTException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	}
+	}//*/
    }
 
    /**
@@ -443,12 +441,17 @@ public class vk_gui extends JFrame {
     * @return void
     */
    private void insertText(String addchar) {
-      KeyEvent ke = new KeyEvent(new javax.swing.JCheckBox(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), KeyEvent.SHIFT_DOWN_MASK, KeyEvent.VK_A, 'a', KeyEvent.KEY_LOCATION_STANDARD);
-      app.getGlobalKeyDispatcher().dispatchKeyEvent(ke);
+      //KeyEvent ke = new KeyEvent(new javax.swing.JCheckBox(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), KeyEvent.SHIFT_DOWN_MASK, KeyEvent.VK_A, 'a', KeyEvent.KEY_LOCATION_STANDARD);
+      //app.getGlobalKeyDispatcher().dispatchKeyEvent(ke);
+	   
+	   if (addchar.equals("<enter>"))
+		   addchar="\n";
 
-      kb.type(addchar);
+      app.getGuiManager().insertStringIntoTextfield(addchar);
+      
+      //kb.type(addchar);
       //kb.type("hello\u00b0");
-      Application.debug("");
+      //Application.debug("");
 
    }
 
@@ -459,11 +462,12 @@ public class vk_gui extends JFrame {
     */
    private void insertKeyText(keys Keys) {
       if(Upper) {
-    	  kb.type(Keys.getUpperCase());
+    	  //kb.type(Keys.getUpperCase());
+    	  insertText(Keys.getUpperCase());
       } else {
-    	  kb.type(Keys.getLowerCase());
+    	  //kb.type(Keys.getLowerCase());
+    	  insertText(Keys.getLowerCase());
       }
-      Application.debug("");
    }//*/
 
 

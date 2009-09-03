@@ -18,6 +18,7 @@ import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.gui.virtualkeyboard.WindowUnicodeKeyboard;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
@@ -47,6 +48,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -2357,6 +2359,51 @@ public class DefaultGuiManager implements GuiManager {
 		
 		public void setColumnWidth(int column, int width) {
 			((SpreadsheetView)getSpreadsheetView()).setColumnWidth(column, width);
+		}
+		
+		MyTextField currentTextfield = null;
+		WindowUnicodeKeyboard kb = null;
+
+		public void setCurrentTextfield(MyTextField textfield) {
+			currentTextfield = textfield;
+			
+		}
+		
+		public void insertStringIntoTextfield(String text) {
+			if (currentTextfield != null && !text.equals("\n")
+					&& (!text.startsWith("<") || !text.endsWith(">"))) {
+				currentTextfield.insertString(text);
+			} else {
+				// use Robot if no TextField currently active
+				// or for special keys eg Enter
+				if (kb == null) {
+					try{
+						kb = new WindowUnicodeKeyboard();
+					} catch (Exception e) {}
+				}
+				
+				if (kb != null) {
+					if (!text.startsWith("<") || !text.endsWith(">")) {
+						kb.type(text);
+					} else {
+						if (text.equals("<escape>"))
+							kb.doType(KeyEvent.VK_ESCAPE);
+						else if (text.equals("<left>"))
+							kb.doType(KeyEvent.VK_LEFT);
+						else if (text.equals("<right>"))
+							kb.doType(KeyEvent.VK_RIGHT);
+						else if (text.equals("<up>"))
+							kb.doType(KeyEvent.VK_UP);
+						else if (text.equals("<down>"))
+							kb.doType(KeyEvent.VK_DOWN);
+						else if (text.equals("<backspace>"))
+							kb.doType(KeyEvent.VK_BACK_SPACE);
+						else Application.debug("unknown keycode:"+text);
+					}
+						
+				}
+				
+			}
 		}
 		
 }
