@@ -1588,6 +1588,11 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			y=y/z;
 			Color dotcolor=gp.getObjectColor();
 			double dotsize=gp.getPointSize();
+
+			
+			
+			
+			
 			int dotstyle=gp.getPointStyle();
 			
 			if (dotstyle == -1) { // default
