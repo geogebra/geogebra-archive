@@ -25,11 +25,46 @@ public class MathTextField extends JTextField implements KeyListener {
 		super();
 		this.addKeyListener(this);
 	}
+	
+	boolean altPressed = false;
+	private static StringBuilder altCodes = new StringBuilder();
 
 	public void keyPressed(KeyEvent e) {   
+		//Application.debug("keyPressed");
 	}
 
 	public void keyTyped(KeyEvent e) {      
+		//Application.debug("keyTyped"+e.getKeyChar());
+		if (e.isAltDown()) {
+			if (!altPressed) {
+				altCodes.setLength(0);
+				Application.debug("alt pressed");
+			}
+			altPressed = true;
+		} else {
+			
+			if (altCodes.length() > 0) {
+				
+				// intercept wrong character and replace with correct Alt-code
+				char insertStr = (char) Integer.parseInt(altCodes.toString());
+				
+				int pos = getCaretPosition();
+				String oldText = getText();
+				StringBuffer sb = new StringBuffer();
+				sb.append(oldText.substring(0, pos));
+				sb.append(insertStr);
+				sb.append(oldText.substring(pos));            
+				setText(sb.toString());
+
+				setCaretPosition(pos + 1);
+				e.consume();
+				
+			}
+			
+			altPressed = false;
+			altCodes.setLength(0);
+		}
+
 		// we don't want to trap AltGr
 		// as it is used eg for entering {[}] is some locales
 		// NB e.isAltGraphDown() doesn't work
@@ -45,7 +80,7 @@ public class MathTextField extends JTextField implements KeyListener {
 
 
 	public void keyReleased(KeyEvent e) {   
-		
+		//Application.debug("keyReleased");
 		// ctrl pressed on Mac
 		// or alt on Windows
 		boolean modifierKeyPressed = Application.isAltDown(e);
@@ -62,6 +97,11 @@ public class MathTextField extends JTextField implements KeyListener {
 			//Application.debug(e+"");
 			//Application.debug(keyString);
 			
+			// support for alt codes
+			if (e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
+				altCodes.append(e.getKeyChar());
+				//Application.debug("alt:"+altCodes);
+			}
 			
 			// Numeric keypad numbers eg NumPad-8, NumPad *
 			if (!e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD)
