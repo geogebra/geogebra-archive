@@ -328,6 +328,8 @@ public class CommandDispatcher {
     	
     	cmdTable.put("SetDifference", new CmdSetDifference(kernel));
     	
+    	cmdTable.put("CopyFreeObject", new CmdCopyFreeObject(kernel));
+    	
     	
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   

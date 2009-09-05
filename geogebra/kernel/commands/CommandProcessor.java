@@ -5239,3 +5239,39 @@ class CmdOsculatingCircle extends CommandProcessor {
 		}
 	}
 
+ class CmdCopyFreeObject extends CommandProcessor {
+
+	 public CmdCopyFreeObject (Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 final public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+
+		 switch (n) {
+		 case 1 :    
+			 
+			 String label = c.getLabel();
+			 String command = label == null ? "" : label + "=";
+			 command += arg[0].toOutputValueString();
+			 try {
+					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command, true);
+
+					ret[0].setVisualStyle(arg[0]);
+			 
+					return ret;
+			 
+			 } catch (Exception e) {
+					e.printStackTrace();
+					throw argErr(app, c.getName(), arg[0]);
+				}
+
+			 // more than one argument
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }    
+ }
+
