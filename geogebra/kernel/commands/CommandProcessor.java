@@ -5257,6 +5257,14 @@ class CmdOsculatingCircle extends CommandProcessor {
 			 String command = label == null ? "" : label + "=";
 			 command += arg[0].toOutputValueString();
 			 try {
+				 
+				 if (arg[0].isGeoImage()) {
+					 GeoElement pic = (GeoImage)arg[0].copy();
+					 pic.setLabel(label);
+					 GeoElement[] ret = {pic};
+					 return ret;
+				 }
+				 
 					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command, true);
 
 					ret[0].setVisualStyle(arg[0]);
