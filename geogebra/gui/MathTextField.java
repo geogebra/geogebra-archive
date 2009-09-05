@@ -26,7 +26,7 @@ public class MathTextField extends MyTextField implements KeyListener {
 	}
 	
 	boolean altPressed = false;
-	private static StringBuilder altCodes = new StringBuilder();
+	private static StringBuffer altCodes = new StringBuffer();
 
 	public void keyPressed(KeyEvent e) {   
 		//Application.debug("keyPressed");
