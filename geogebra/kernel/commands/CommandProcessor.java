@@ -12,6 +12,7 @@
 
 package geogebra.kernel.commands;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoCellRange;
 import geogebra.kernel.CircularDefinitionException;
@@ -5476,6 +5477,160 @@ class CmdOsculatingCircle extends CommandProcessor {
 							return ret;
 				} else
 					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdLineStyle extends CommandProcessor {
+
+		public CmdLineStyle (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			boolean ok;
+			
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( ok = arg[0].isGeoLine() &&
+						arg[1].isNumberValue()) {
+
+							GeoLine line = (GeoLine) arg[0];
+							
+							int style = (int)((NumberValue)arg[1]).getDouble();
+							Integer[] types = EuclidianView.getLineTypes();
+			
+							if (style < 0 || style >= types.length)
+								throw argErr(app, c.getName(), arg[0]);
+							
+							line.setLineType(types[style].intValue());		
+							line.updateRepaint();
+							
+							GeoElement[] ret = { line };
+							return ret;
+				} else if (!ok)
+					throw argErr(app, c.getName(), arg[0]);
+				else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSetLineThickness extends CommandProcessor {
+
+		public CmdSetLineThickness (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+			boolean ok;
+			switch (n) {
+			case 2:
+			arg = resArgs(c);
+
+			if ( ok = arg[0].isGeoLine() &&
+					arg[1].isNumberValue()) {
+
+						GeoLine line = (GeoLine) arg[0];
+						
+						int thickness = (int)((NumberValue)arg[1]).getDouble();
+						
+						line.setLineThickness(thickness);		
+						line.updateRepaint();
+						
+						GeoElement[] ret = { line };
+						return ret;
+			} else if (!ok)
+				throw argErr(app, c.getName(), arg[0]);
+			else
+				throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSetPointStyle extends CommandProcessor {
+
+		public CmdSetPointStyle (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+			boolean ok;
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+
+
+					if ( ok = arg[0].isGeoPoint() &&
+						arg[1].isNumberValue()) {
+
+							GeoPoint point = (GeoPoint) arg[0];
+							
+							int style = (int)((NumberValue)arg[1]).getDouble();
+							
+							point.setPointStyle(style);
+							point.updateRepaint();
+							
+							GeoElement[] ret = { point };
+							return ret;
+				} else if (!ok)
+					throw argErr(app, c.getName(), arg[0]);
+				else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSetPointSize extends CommandProcessor {
+
+		public CmdSetPointSize (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+			boolean ok;
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+
+					if ( ok = arg[0].isGeoPoint() &&
+					arg[1].isNumberValue()) {
+
+						GeoPoint point = (GeoPoint) arg[0];
+						
+						int size = (int)((NumberValue)arg[1]).getDouble();
+						
+						point.setPointSize(size);
+						point.updateRepaint();
+						
+						GeoElement[] ret = { point };
+						return ret;
+			} else if (!ok)
+				throw argErr(app, c.getName(), arg[0]);
+			else
+				throw argErr(app, c.getName(), arg[1]);
 
 			default :
 				throw argNumErr(app, c.getName(), n);

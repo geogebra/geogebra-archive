@@ -110,13 +110,13 @@ public final class DrawPoint extends Drawable {
         		line1.setLine(xUL, yUL, xR, yB);
         		line2.setLine(xUL, yB, xR, yUL);
         		
-        		if (crossStrokes[pointSize] == null)
-        			crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
+        		//if (crossStrokes[pointSize] == null)
+        		//	crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
         		break;
         		        	
         	case EuclidianView.POINT_STYLE_CIRCLE:
-        		if (crossStrokes[pointSize] == null)
-        			crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
+        		//if (crossStrokes[pointSize] == null)
+        		//	crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
         		break;
         		
         	// case EuclidianView.POINT_STYLE_DOT:
@@ -170,7 +170,7 @@ public final class DrawPoint extends Drawable {
             	case EuclidianView.POINT_STYLE_CROSS:            		                     
              		// draw cross like: X     
                     g2.setPaint(geo.getObjectColor());
-                    g2.setStroke(crossStrokes[pointSize]);            
+                    g2.setStroke(getCrossStrokes(pointSize));            
                     g2.draw(line1);                              
                     g2.draw(line2);             		
             		break;
@@ -178,7 +178,7 @@ public final class DrawPoint extends Drawable {
             	case EuclidianView.POINT_STYLE_CIRCLE:
             		// draw a circle            		
         			g2.setPaint(geo.getObjectColor());	
-        			g2.setStroke(crossStrokes[pointSize]);
+        			g2.setStroke(getCrossStrokes(pointSize));
         			g2.draw(circle);  										                                                               		
            		break;
             	
@@ -213,7 +213,7 @@ public final class DrawPoint extends Drawable {
     	
 		switch (pointStyle) {
 	     	case EuclidianView.POINT_STYLE_CIRCLE:
-	 			g2.setStroke(crossStrokes[pointSize]);
+	 			g2.setStroke(getCrossStrokes(pointSize));
 	 			g2.draw(circle);  										                                                               		
 	    		break;
 	     	
@@ -253,6 +253,21 @@ public final class DrawPoint extends Drawable {
     final public void setGeoElement(GeoElement geo) {
         this.geo = geo;
     } 
+    
+    /*
+     * pointSize can be more than 9 (set from JavaScript, SetPointSize[])
+     */
+    final private BasicStroke getCrossStrokes(int pointSize) {
+    	
+    	if (pointSize > 9)
+    		return new BasicStroke(pointSize/2f); 
+    	
+		if (crossStrokes[pointSize] == null)
+			crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
+		
+		return crossStrokes[pointSize];
+
+    }
 
 }
 

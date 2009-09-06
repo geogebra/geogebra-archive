@@ -333,6 +333,10 @@ public class CommandDispatcher {
     	cmdTable.put("SetDynamicColor", new CmdSetDynamicColor(kernel));
     	cmdTable.put("SetConditionToShowObject", new CmdSetConditionToShowObject(kernel));
     	cmdTable.put("SetFilling", new CmdSetFilling(kernel));
+    	cmdTable.put("SetLineThickness", new CmdSetLineThickness(kernel));
+    	cmdTable.put("SetLineStyle", new CmdLineStyle(kernel));
+    	cmdTable.put("SetPointStyle", new CmdSetPointStyle(kernel));
+    	cmdTable.put("SetPointSize", new CmdSetPointSize(kernel));
     	cmdTable.put("SetFixed", new CmdSetFixed(kernel));
     	cmdTable.put("Rename", new CmdRename(kernel));
     	cmdTable.put("HideLayer", new CmdHideLayer(kernel));
