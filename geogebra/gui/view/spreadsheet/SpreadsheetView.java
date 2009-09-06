@@ -57,8 +57,8 @@ public class SpreadsheetView extends JScrollPane implements View
 	private Kernel kernel;
 	
 	// if these are increased above 32000, you need to change traceRow to an int[]
-	protected static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
-	protected static int MAX_ROWS = 9999; // TODO make sure this is actually used
+	public static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
+	public static int MAX_ROWS = 9999; // TODO make sure this is actually used
 	
 	private int highestUsedColumn = -1; // for trace
 	short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace

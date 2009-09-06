@@ -330,7 +330,18 @@ public class CommandDispatcher {
     	
     	cmdTable.put("CopyFreeObject", new CmdCopyFreeObject(kernel));
     	cmdTable.put("SetColor", new CmdSetColor(kernel));
-    	
+    	cmdTable.put("SetDynamicColor", new CmdSetDynamicColor(kernel));
+    	cmdTable.put("SetConditionToShowObject", new CmdSetConditionToShowObject(kernel));
+    	cmdTable.put("SetFilling", new CmdSetFilling(kernel));
+    	cmdTable.put("SetFixed", new CmdSetFixed(kernel));
+    	cmdTable.put("Rename", new CmdRename(kernel));
+    	cmdTable.put("HideLayer", new CmdHideLayer(kernel));
+       	cmdTable.put("ShowLayer", new CmdShowLayer(kernel));
+       	cmdTable.put("SetCoords", new CmdSetCoords(kernel));
+      	cmdTable.put("FillRow", new CmdFillRow(kernel));
+      	cmdTable.put("FillColumn", new CmdFillColumn(kernel));
+      	cmdTable.put("FillCells", new CmdFillCells(kernel));
+      	                  	
     	
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   

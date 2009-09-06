@@ -12,6 +12,7 @@
 
 package geogebra.kernel.commands;
 
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
@@ -46,6 +47,7 @@ import geogebra.main.MyError;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public abstract class CommandProcessor  {
 
@@ -5365,4 +5367,490 @@ class CmdOsculatingCircle extends CommandProcessor {
 		 }
 	 }    
  }
+ class CmdSetDynamicColor extends CommandProcessor {
+
+		public CmdSetDynamicColor (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			 case 4:			
+				 boolean[] ok = new boolean[n];
+				 arg = resArgs(c);
+				 if (	 (ok[1] = arg[1].isNumberValue()) &&
+						 (ok[2] = arg[2].isNumberValue()) &&
+						 (ok[3] = arg[3].isNumberValue())) 
+				 {
+					 
+						GeoElement geo = (GeoElement) arg[0];
+						
+						GeoList list = new GeoList(cons);
+						list.add(arg[1]);
+						list.add(arg[2]);
+						list.add(arg[3]);
+						
+						geo.setColorFunction(list);			
+						geo.updateRepaint();
+						
+						GeoElement[] ret = { geo };
+						return ret;
+
+				 }  else
+					 if (!ok[1])
+						 throw argErr(app, c.getName(), arg[1]);
+					 else if (!ok[2])
+						 throw argErr(app, c.getName(), arg[2]);
+					 else
+						 throw argErr(app, c.getName(), arg[3]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSetConditionToShowObject extends CommandProcessor {
+
+		public CmdSetConditionToShowObject (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[1] .isGeoBoolean()) {
+
+							GeoElement geo = (GeoElement) arg[0];
+														
+							try {
+								geo.setShowObjectCondition((GeoBoolean)arg[1]);
+							} catch (CircularDefinitionException e) {
+								e.printStackTrace();
+								throw argErr(app, c.getName(), arg[1]);
+							}		
+							geo.updateRepaint();
+							
+							GeoElement[] ret = { geo };
+							return ret;
+				} else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSetFilling extends CommandProcessor {
+
+		public CmdSetFilling (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[1].isNumberValue()) {
+
+							GeoElement geo = (GeoElement) arg[0];
+														
+							geo.setAlphaValue((float)((NumberValue)arg[1]).getDouble());
+							geo.updateRepaint();
+							
+							GeoElement[] ret = { geo };
+							return ret;
+				} else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSetFixed extends CommandProcessor {
+
+		public CmdSetFixed (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[1].isGeoBoolean()) {
+
+							GeoElement geo = (GeoElement) arg[0];
+														
+							geo.setFixed(((GeoBoolean)arg[1]).getBoolean());							geo.updateRepaint();
+							
+							GeoElement[] ret = { geo };
+							return ret;
+				} else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdRename extends CommandProcessor {
+
+		public CmdRename (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[1].isGeoText()) {
+
+							GeoElement geo = (GeoElement) arg[0];
+														
+							geo.rename(((GeoText)arg[1]).getTextString());
+							geo.updateRepaint();
+							
+							GeoElement[] ret = { geo };
+							return ret;
+				} else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdHideLayer extends CommandProcessor {
+
+		public CmdHideLayer (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 1 :
+				arg = resArgs(c);
+				if (arg[0].isNumberValue()) {
+					GeoNumeric layerGeo = (GeoNumeric)arg[0];
+					int layer = (int)layerGeo.getDouble();
+					
+					Iterator it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+					while (it.hasNext()) {
+						GeoElement geo = (GeoElement) it.next();
+						if (geo.getLayer() == layer) {
+							geo.setEuclidianVisible(false);
+							geo.updateRepaint();
+						}
+					}
+					
+					GeoElement[] ret = { layerGeo };
+					return ret;
+
+				} else
+					throw argErr(app, c.getName(), null);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdShowLayer extends CommandProcessor {
+
+		public CmdShowLayer (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 1 :
+				arg = resArgs(c);
+				if (arg[0].isNumberValue()) {
+					GeoNumeric layerGeo = (GeoNumeric)arg[0];
+					int layer = (int)layerGeo.getDouble();
+					
+					Iterator it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+					while (it.hasNext()) {
+						GeoElement geo = (GeoElement) it.next();
+						if (geo.getLayer() == layer) {
+							geo.setEuclidianVisible(true);
+							geo.updateRepaint();
+						}
+					}
+					
+					GeoElement[] ret = { layerGeo };
+					return ret;
+
+				} else
+					throw argErr(app, c.getName(), null);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSetCoords extends CommandProcessor {
+
+		public CmdSetCoords (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+
+			switch (n) {
+			case 3 :
+				arg = resArgs(c);
+				if ((ok[0] = (arg[0] instanceof GeoVec3D))
+						&& (ok[1] = (arg[1] .isGeoNumeric()))
+					&& (ok[2] = (arg[2] .isGeoNumeric()))) {
+
+					double x = ((GeoNumeric)arg[1]).getDouble();
+					double y = ((GeoNumeric)arg[2]).getDouble();
+					
+					GeoElement geo = (GeoElement) arg[0];
+					
+					if (geo.isGeoPoint()) {
+						((GeoPoint) geo).setCoords(x, y, 1);
+						geo.updateRepaint();
+					}
+					else if (geo.isGeoVector()) {
+						((GeoVector) geo).setCoords(x, y, 0);
+						geo.updateRepaint();
+					} else
+						throw argErr(app, c.getName(), arg[0]);
+						
+				
+					
+					GeoElement[] ret = { geo };
+					return ret;
+				
+				
+				} else
+					 if (!ok[0])
+						 throw argErr(app, c.getName(), arg[0]);
+					 else if (!ok[1])
+						 throw argErr(app, c.getName(), arg[1]);
+					 else
+						 throw argErr(app, c.getName(), arg[2]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdFillRow extends CommandProcessor {
+
+		public CmdFillRow (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ((ok[0] = (arg[0] .isGeoNumeric()))
+						&& (ok[1] = (arg[1] .isGeoList()))) {
+
+				int row = (int)((GeoNumeric)arg[0]).getDouble();
+				
+				if (row < 0 || row > SpreadsheetView.MAX_ROWS)
+					throw argErr(app, c.getName(), arg[0]);
+				
+				GeoList list = (GeoList)arg[1];
+				
+				GeoElement geo = (GeoElement) arg[1];
+				GeoElement[] ret = { geo };
+				
+				if (list.size() == 0)
+					return ret;
+				
+				StringBuffer sb = new StringBuffer();
+				
+				for (int col = 0 ; col < list.size() ; col++) {
+					String cellName = GeoElement.getSpreadsheetCellName(col, row);
+					GeoElement cellGeo = list.get(col);
+					
+					sb.setLength(0);
+					sb.append(cellName);
+					if (cellGeo.isGeoFunction()) sb.append("(x)");
+					sb.append("=");
+
+					// getLabel() returns algoParent.getCommandDescription() or  toValueString()
+					// if there's no label (eg {1,2})
+					sb.append(cellGeo.getLabel());
+					
+					// we only sometimes need (x), eg
+					// B2(x)=f(x)
+					// B2(x)=x^2
+					if (cellGeo.isGeoFunction() && cellGeo.isLabelSet()) sb.append("(x)");
+					
+					//Application.debug(sb.toString());
+					
+					try {
+						app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(sb.toString(), false);
+					
+						GeoElement cell = kernel.lookupLabel(cellName);
+						if (cell != null) {
+							cell.setAuxiliaryObject(true);
+							cell.setVisualStyle(cellGeo);
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw argErr(app, c.getName(), null);
+					}
+				}
+				
+				app.storeUndoInfo();
+				return ret;
+				
+				} else
+					 if (!ok[0])
+						 throw argErr(app, c.getName(), arg[0]);
+					 else 
+						 throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdFillColumn extends CommandProcessor {
+
+		public CmdFillColumn (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ((ok[0] = (arg[0] .isGeoNumeric()))
+						&& (ok[1] = (arg[1] .isGeoList()))) {
+
+				int col = (int)((GeoNumeric)arg[0]).getDouble();
+				
+				if (col < 0 || col > SpreadsheetView.MAX_COLUMNS)
+					throw argErr(app, c.getName(), arg[0]);
+				
+				GeoList list = (GeoList)arg[1];
+				
+				GeoElement geo = (GeoElement) arg[1];
+				GeoElement[] ret = { geo };
+				
+				if (list.size() == 0)
+					return ret;
+				
+				StringBuffer sb = new StringBuffer();
+				
+				for (int row = 0 ; row < list.size() ; row++) {
+					String cellName = GeoElement.getSpreadsheetCellName(col, row);
+					GeoElement cellGeo = list.get(row);
+					
+					sb.setLength(0);
+					sb.append(cellName);
+					if (cellGeo.isGeoFunction()) sb.append("(x)");
+					sb.append("=");
+
+					// getLabel() returns algoParent.getCommandDescription() or  toValueString()
+					// if there's no label (eg {1,2})
+					sb.append(cellGeo.getLabel());
+					
+					// we only sometimes need (x), eg
+					// B2(x)=f(x)
+					// B2(x)=x^2
+					if (cellGeo.isGeoFunction() && cellGeo.isLabelSet()) sb.append("(x)");
+					
+					//Application.debug(sb.toString());
+					
+					try {
+						app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(sb.toString(), false);
+					
+						GeoElement cell = kernel.lookupLabel(cellName);
+						if (cell != null) {
+							cell.setAuxiliaryObject(true);
+							cell.setVisualStyle(cellGeo);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw argErr(app, c.getName(), null);
+					}
+				}
+				
+				app.storeUndoInfo();
+				return ret;
+				
+				} else
+					 if (!ok[0])
+						 throw argErr(app, c.getName(), arg[0]);
+					 else 
+						 throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdFillCells extends CommandProcessor {
+
+		public CmdFillCells (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+
+			switch (n) {
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
 
