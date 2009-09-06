@@ -5331,7 +5331,35 @@ class CmdOsculatingCircle extends CommandProcessor {
 					throw argErr(app, c.getName(), arg[0]);
 				}
 
-			 // more than one argument
+		 case 4:			
+			 boolean[] ok = new boolean[n];
+			 arg = resArgs(c);
+			 if (	 (ok[1] = arg[1].isNumberValue()) &&
+					 (ok[2] = arg[2].isNumberValue()) &&
+					 (ok[3] = arg[3].isNumberValue())) 
+			 {
+				 int red = (int)(((NumberValue) arg[1]).getDouble()*255);
+				 if (red < 0) red = 0; else if (red > 255) red = 255;
+				 int green = (int)(((NumberValue) arg[2]).getDouble()*255);
+				 if (green < 0) green = 0; else if (green > 255) green = 255;
+				 int blue = (int)(((NumberValue) arg[3]).getDouble()*255);
+				 if (blue < 0) blue = 0; else if (blue > 255) blue = 255;
+				 
+				 arg[0].setObjColor(new Color(red, green, blue));
+				 arg[0].updateRepaint();
+				 
+					GeoElement geo = (GeoElement) arg[0];
+					GeoElement[] ret = { geo };
+					return ret;
+
+			 }  else
+				 if (!ok[1])
+					 throw argErr(app, c.getName(), arg[1]);
+				 else if (!ok[2])
+					 throw argErr(app, c.getName(), arg[2]);
+				 else
+					 throw argErr(app, c.getName(), arg[3]);
+
 		 default :
 			 throw argNumErr(app, c.getName(), n);
 		 }
