@@ -1731,7 +1731,46 @@ public abstract class GeoElement
 	public static final Pattern spreadsheetPattern = 
 		Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
 
-	// Cong Liu	
+	private static StringBuffer sb = null;
+
+	/*
+	 * used to set a cell to another geo
+	 * used by FillCells[] etc
+	 */
+	public static void setSpreadsheetCell(Application app, int row, int col, GeoElement cellGeo) {
+		String cellName = GeoElement.getSpreadsheetCellName(col, row);
+
+		if (sb == null)
+			sb = new StringBuffer();
+		else
+			sb.setLength(0);
+		
+		sb.append(cellName);
+		if (cellGeo.isGeoFunction()) sb.append("(x)");
+		sb.append("=");
+
+		// getLabel() returns algoParent.getCommandDescription() or  toValueString()
+		// if there's no label (eg {1,2})
+		sb.append(cellGeo.getLabel());
+		
+		// we only sometimes need (x), eg
+		// B2(x)=f(x)
+		// B2(x)=x^2
+		if (cellGeo.isGeoFunction() && cellGeo.isLabelSet()) sb.append("(x)");
+		
+		//Application.debug(sb.toString());
+		
+			app.getKernel().getAlgebraProcessor().processAlgebraCommand(sb.toString(), false);
+		
+			GeoElement cell = app.getKernel().lookupLabel(cellName);
+			if (cell != null) {
+				cell.setAuxiliaryObject(true);
+				cell.setVisualStyle(cellGeo);
+			}
+		
+	}
+
+			// Cong Liu	
 	public static int getSpreadsheetColumn(Matcher matcher) {	
 		if (! matcher.matches()) return -1;
 						

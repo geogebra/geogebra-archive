@@ -50,6 +50,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.regex.Matcher;
 
 public abstract class CommandProcessor  {
 
@@ -5709,6 +5710,15 @@ class CmdOsculatingCircle extends CommandProcessor {
 					String cellName = GeoElement.getSpreadsheetCellName(col, row);
 					GeoElement cellGeo = list.get(col);
 					
+					
+					try {
+						GeoElement.setSpreadsheetCell(app, row, col, cellGeo);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw argErr(app, c.getName(), arg[1]);
+					}
+					
+					/*
 					sb.setLength(0);
 					sb.append(cellName);
 					if (cellGeo.isGeoFunction()) sb.append("(x)");
@@ -5737,7 +5747,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 					} catch (Exception e) {
 						e.printStackTrace();
 						throw argErr(app, c.getName(), null);
-					}
+					}*/
 				}
 				
 				app.storeUndoInfo();
@@ -5791,33 +5801,11 @@ class CmdOsculatingCircle extends CommandProcessor {
 					String cellName = GeoElement.getSpreadsheetCellName(col, row);
 					GeoElement cellGeo = list.get(row);
 					
-					sb.setLength(0);
-					sb.append(cellName);
-					if (cellGeo.isGeoFunction()) sb.append("(x)");
-					sb.append("=");
-
-					// getLabel() returns algoParent.getCommandDescription() or  toValueString()
-					// if there's no label (eg {1,2})
-					sb.append(cellGeo.getLabel());
-					
-					// we only sometimes need (x), eg
-					// B2(x)=f(x)
-					// B2(x)=x^2
-					if (cellGeo.isGeoFunction() && cellGeo.isLabelSet()) sb.append("(x)");
-					
-					//Application.debug(sb.toString());
-					
 					try {
-						app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(sb.toString(), false);
-					
-						GeoElement cell = kernel.lookupLabel(cellName);
-						if (cell != null) {
-							cell.setAuxiliaryObject(true);
-							cell.setVisualStyle(cellGeo);
-						}
+						GeoElement.setSpreadsheetCell(app, row, col, cellGeo);
 					} catch (Exception e) {
 						e.printStackTrace();
-						throw argErr(app, c.getName(), null);
+						throw argErr(app, c.getName(), arg[1]);
 					}
 				}
 				
@@ -5884,17 +5872,74 @@ class CmdOsculatingCircle extends CommandProcessor {
 					for (int row = minRow ; row <= maxRow ; row++)
 					for (int col = minCol ; col <= maxCol ; col++) {
 						try {
-							setSpreadsheetCell(app, row, col, geo);
+							GeoElement.setSpreadsheetCell(app, row, col, geo);
 						} catch (Exception e) {
 							e.printStackTrace();
 							throw argErr(app, c.getName(), arg[1]);
 						}
 					}
+					return ret;
 				}
+				
+				GeoList list = (GeoList)geo;
+				
+				if (list.isMatrix())
+				
+				app.storeUndoInfo();
 				return ret;
 				
-				} else
-					 throw argErr(app, c.getName(), arg[0]);
+				} else {
+				
+					if (GeoElement.isSpreadsheetLabel(arg[0].getLabel())) {
+						
+						if (!arg[1].isGeoList())
+							throw argErr(app, c.getName(), arg[1]);
+						
+						GeoList list = (GeoList)arg[1];
+	 					
+						Matcher matcher = GeoElement.spreadsheetPattern.matcher(arg[0].getLabel());
+	 					int column = GeoElement.getSpreadsheetColumn(matcher);
+	 					int row = GeoElement.getSpreadsheetRow(matcher);
+	 					
+	 					if (row == -1 || column == -1)
+	 						throw argErr(app, c.getName(), arg[0]);
+						
+						if (list.isMatrix()) {
+							// 2D fill
+							try {
+								int rows = list.size();
+								int cols = ((GeoList)list.get(0)).size();
+								for (int r = 0 ; r < rows ; r++) {
+									GeoList rowList = (GeoList) list.get(r);
+									for (int c1 = 0 ; c1 < cols ; c1++) {
+										GeoElement.setSpreadsheetCell(app, row + r, column + c1, rowList.get(c1));
+									}
+								}
+							} catch (Exception e) {
+								throw argErr(app, c.getName(), list);
+							}
+							
+							
+							
+						} else {
+							// 1D fill
+							for (int i = 0 ; i < list.size() ; i++)
+								try {
+									GeoElement.setSpreadsheetCell(app, row, column + i, list.get(i));
+								} catch (Exception e) {
+									e.printStackTrace();
+									throw argErr(app, c.getName(), arg[1]);
+								}
+						}
+						
+					} else
+						throw argErr(app, c.getName(), arg[0]);
+				}
+				
+				GeoElement geo = (GeoElement) arg[1];
+				GeoElement[] ret = { geo };
+				app.storeUndoInfo();
+				return ret;
 
 
 			default :
@@ -5902,40 +5947,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 			}
 		}
 		
-		private static StringBuffer sb = null;
-
-		private static void setSpreadsheetCell(Application app, int row, int col, GeoElement cellGeo) throws Exception {
-			String cellName = GeoElement.getSpreadsheetCellName(col, row);
-
-			if (sb == null)
-				sb = new StringBuffer();
-			else
-				sb.setLength(0);
-			
-			sb.append(cellName);
-			if (cellGeo.isGeoFunction()) sb.append("(x)");
-			sb.append("=");
-
-			// getLabel() returns algoParent.getCommandDescription() or  toValueString()
-			// if there's no label (eg {1,2})
-			sb.append(cellGeo.getLabel());
-			
-			// we only sometimes need (x), eg
-			// B2(x)=f(x)
-			// B2(x)=x^2
-			if (cellGeo.isGeoFunction() && cellGeo.isLabelSet()) sb.append("(x)");
-			
-			//Application.debug(sb.toString());
-			
-				app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(sb.toString(), false);
-			
-				GeoElement cell = app.getKernel().lookupLabel(cellName);
-				if (cell != null) {
-					cell.setAuxiliaryObject(true);
-					cell.setVisualStyle(cellGeo);
-			
-		}
-	}
+	
  }
 
 
