@@ -645,8 +645,25 @@ public class Util extends Object {
     	}
     	
     	return sb.toString();
+    }
+    
+    public static String removeSpaces(String str) {
     	
+    	if (str == null || str.length() == 0) return "";
+
+    	if (sb == null)
+    		sb = new StringBuffer(); 
     	
+    	sb.setLength(0);
+    	char c;
     	
+    	for (int i = 0 ; i < str.length() ; i++) {
+    		c = str.charAt(i);
+    		if (c != ' ')
+    			sb.append(c);
+    	}
+    	
+    	return sb.toString();
+   	
     }
 }

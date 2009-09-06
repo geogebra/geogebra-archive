@@ -329,6 +329,7 @@ public class CommandDispatcher {
     	cmdTable.put("SetDifference", new CmdSetDifference(kernel));
     	
     	cmdTable.put("CopyFreeObject", new CmdCopyFreeObject(kernel));
+    	cmdTable.put("SetColor", new CmdSetColor(kernel));
     	
     	
     	//Mathieu Blossier

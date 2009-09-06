@@ -43,7 +43,9 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class CommandProcessor  {
 
@@ -5270,6 +5272,59 @@ class CmdOsculatingCircle extends CommandProcessor {
 					ret[0].setVisualStyle(arg[0]);
 			 
 					return ret;
+			 
+			 } catch (Exception e) {
+					e.printStackTrace();
+					throw argErr(app, c.getName(), arg[0]);
+				}
+
+			 // more than one argument
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }    
+ }
+
+ class CmdSetColor extends CommandProcessor {
+
+	 public CmdSetColor (Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 final public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+
+		 switch (n) {
+		 case 2 :    
+			 
+			 if (!arg[1].isGeoText())
+				 throw argErr(app, c.getName(), arg[1]);
+			 
+			 try {
+			 
+				 String color = geogebra.util.Util.removeSpaces(((GeoText)arg[1]).getTextString()).toLowerCase();
+
+				 Application.debug(color);
+				 
+				 // translate to English
+				 color = app.reverseGetPlain(color).toUpperCase();
+				 Application.debug(color);				 
+				 // lookup Color
+				 HashMap colors = app.getColorsHashMap();				 
+				 Color col = (Color)colors.get(color);
+				 
+				 if (col == null)
+					 throw argErr(app, c.getName(), arg[1]);
+				 
+				 arg[0].setObjColor(col);
+				 arg[0].updateRepaint();
+				 
+				GeoElement geo = (GeoElement) arg[0];
+				GeoElement[] ret = { geo };
+				return ret;
+
 			 
 			 } catch (Exception e) {
 					e.printStackTrace();
