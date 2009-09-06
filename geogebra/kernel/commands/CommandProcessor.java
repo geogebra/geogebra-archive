@@ -13,6 +13,7 @@
 package geogebra.kernel.commands;
 
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.kernel.AlgoCellRange;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
@@ -45,6 +46,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -5842,15 +5844,98 @@ class CmdOsculatingCircle extends CommandProcessor {
 
 		final public    GeoElement[] process(Command c) throws MyError {
 			int n = c.getArgumentNumber();
-			boolean[] ok = new boolean[n];
 			GeoElement[] arg;
 
 			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[0] .isGeoList()) {
+
+				
+					GeoList cellRange = (GeoList)arg[0];
+					
+					if (!(cellRange.getParentAlgorithm() instanceof AlgoCellRange)) {
+						Application.debug("not cell range");
+						throw argErr(app, c.getName(), arg[0]);
+						
+					}
+					
+					AlgoCellRange algo = (AlgoCellRange)cellRange.getParentAlgorithm();
+					
+					Point[] points = algo.getRectangle();
+					
+					Point startCoords = points[0];
+					Point endCoords = points[1];
+					
+			    	int minCol = Math.min(startCoords.x, endCoords.x);    	
+			    	int maxCol = Math.max(startCoords.x, endCoords.x);
+			    	int minRow = Math.min(startCoords.y, endCoords.y);
+			    	int maxRow = Math.max(startCoords.y, endCoords.y);
+
+					//Application.debug(minCol+" "+maxCol+" "+minRow+" "+maxRow);
+					
+					StringBuffer sb = new StringBuffer();
+			    	
+				
+				GeoElement geo = (GeoElement) arg[1];
+				GeoElement[] ret = { geo };
+				
+				if (!geo.isGeoList()) {
+					for (int row = minRow ; row <= maxRow ; row++)
+					for (int col = minCol ; col <= maxCol ; col++) {
+						try {
+							setSpreadsheetCell(app, row, col, geo);
+						} catch (Exception e) {
+							e.printStackTrace();
+							throw argErr(app, c.getName(), arg[1]);
+						}
+					}
+				}
+				return ret;
+				
+				} else
+					 throw argErr(app, c.getName(), arg[0]);
+
 
 			default :
 				throw argNumErr(app, c.getName(), n);
 			}
 		}
+		
+		private static StringBuffer sb = null;
+
+		private static void setSpreadsheetCell(Application app, int row, int col, GeoElement cellGeo) throws Exception {
+			String cellName = GeoElement.getSpreadsheetCellName(col, row);
+
+			if (sb == null)
+				sb = new StringBuffer();
+			else
+				sb.setLength(0);
+			
+			sb.append(cellName);
+			if (cellGeo.isGeoFunction()) sb.append("(x)");
+			sb.append("=");
+
+			// getLabel() returns algoParent.getCommandDescription() or  toValueString()
+			// if there's no label (eg {1,2})
+			sb.append(cellGeo.getLabel());
+			
+			// we only sometimes need (x), eg
+			// B2(x)=f(x)
+			// B2(x)=x^2
+			if (cellGeo.isGeoFunction() && cellGeo.isLabelSet()) sb.append("(x)");
+			
+			//Application.debug(sb.toString());
+			
+				app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(sb.toString(), false);
+			
+				GeoElement cell = app.getKernel().lookupLabel(cellName);
+				if (cell != null) {
+					cell.setAuxiliaryObject(true);
+					cell.setVisualStyle(cellGeo);
+			
+		}
 	}
+ }
 
 
