@@ -342,7 +342,11 @@ public class CommandDispatcher {
     	cmdTable.put("HideLayer", new CmdHideLayer(kernel));
        	cmdTable.put("ShowLayer", new CmdShowLayer(kernel));
        	cmdTable.put("SetCoords", new CmdSetCoords(kernel));
-      	cmdTable.put("FillRow", new CmdFillRow(kernel));
+       	cmdTable.put("Pan", new CmdPan(kernel));
+       	cmdTable.put("ZoomIn", new CmdZoomIn(kernel));
+       	cmdTable.put("ZoomOut", new CmdZoomOut(kernel));
+
+       	cmdTable.put("FillRow", new CmdFillRow(kernel));
       	cmdTable.put("FillColumn", new CmdFillColumn(kernel));
       	cmdTable.put("FillCells", new CmdFillCells(kernel));
       	                  	

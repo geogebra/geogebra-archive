@@ -12,6 +12,8 @@
 
 package geogebra.kernel.commands;
 
+import geogebra.euclidian.EuclidianConstants;
+import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoCellRange;
@@ -6105,4 +6107,144 @@ class CmdOsculatingCircle extends CommandProcessor {
 	
  }
 
+ class CmdPan extends CommandProcessor {
+
+		public CmdPan (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean ok;
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( ok=arg[0].isGeoNumeric()
+						&& arg[1].isGeoNumeric()) {
+
+					GeoNumeric x = (GeoNumeric) arg[0];
+					GeoNumeric y = (GeoNumeric) arg[1];
+					EuclidianView ev = app.getEuclidianView();
+					ev.rememberOrigins();
+					ev.setCoordSystemFromMouseMove((int)x.getDouble(), -(int)y.getDouble(), EuclidianController.MOVE_VIEW);
+							
+							GeoElement[] ret = { arg[0] };
+							return ret;
+				} else if (!ok)
+					throw argErr(app, c.getName(), arg[0]);
+				else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdZoomIn extends CommandProcessor {
+
+		public CmdZoomIn (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean ok;
+			GeoElement[] arg;
+
+			switch (n) {
+			case 1 :
+				arg = resArgs(c);
+				if (arg[0].isGeoNumeric()) {
+					GeoNumeric numGeo = (GeoNumeric)arg[0];
+					int zoom = (int)numGeo.getDouble();
+					
+					EuclidianView ev = app.getEuclidianView();					
+					double px = ev.getWidth() /2 ; //mouseLoc.x;
+					double py = ev.getHeight() / 2 ; //mouseLoc.y;
+					double dx = ev.getXZero() - px;
+					double dy = ev.getYZero() - py;
+					
+
+				double factor = numGeo.getDouble();
+				if (kernel.isZero(factor))
+					throw argErr(app, c.getName(), arg[0]);
+
+				// make zooming a little bit smoother by having some steps
+
+				
+				ev.setAnimatedCoordSystem(
+						px + dx * factor,
+						py + dy * factor,
+						ev.getXscale() * factor, 4, false);
+				//view.yscale * factor);
+				app.setUnsaved();
+
+									
+					GeoElement[] ret = { numGeo };
+					return ret;
+
+				} else
+					throw argErr(app, c.getName(), arg[0]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdZoomOut extends CommandProcessor {
+
+		public CmdZoomOut (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+
+			switch (n) {
+			case 1 :
+				arg = resArgs(c);
+				if (arg[0].isGeoNumeric()) {
+					GeoNumeric numGeo = (GeoNumeric)arg[0];
+					int zoom = (int)numGeo.getDouble();
+					
+					EuclidianView ev = app.getEuclidianView();					
+					double px = ev.getWidth() /2 ; //mouseLoc.x;
+					double py = ev.getHeight() / 2 ; //mouseLoc.y;
+					double dx = ev.getXZero() - px;
+					double dy = ev.getYZero() - py;
+					
+
+				double factor = numGeo.getDouble();
+				
+				if (kernel.isZero(factor))
+					throw argErr(app, c.getName(), arg[0]);
+
+				// make zooming a little bit smoother by having some steps
+
+				
+				ev.setAnimatedCoordSystem(
+						px + dx * factor,
+						py + dy * factor,
+						ev.getXscale() / factor, 4, false);
+				//view.yscale * factor);
+				app.setUnsaved();
+
+									
+					GeoElement[] ret = { numGeo };
+					return ret;
+
+				} else
+					throw argErr(app, c.getName(), arg[0]);
+				
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
 
