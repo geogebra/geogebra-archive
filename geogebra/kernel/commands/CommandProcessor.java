@@ -6248,3 +6248,65 @@ class CmdOsculatingCircle extends CommandProcessor {
 		}
 	}
 
+ class CmdSetLayer extends CommandProcessor {
+
+		public CmdSetLayer (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[1].isGeoNumeric()) {
+
+							GeoElement geo = (GeoElement) arg[0];
+														
+							geo.setLayer((int)((GeoNumeric)arg[1]).getDouble());							geo.updateRepaint();
+							
+							GeoElement[] ret = { geo };
+							return ret;
+				} else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSelectObject extends CommandProcessor {
+
+		public CmdSelectObject(Kernel kernel) {
+			super(kernel);
+		}
+
+		final public  GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+
+			switch (n) {
+			case 1 :
+				arg = resArgs(c);
+				if (ok[0] = (arg[0].isGeoElement())) {
+					GeoElement geo = (GeoElement) arg[0];
+					GeoElement[] ret = { geo };
+					
+					// unselect all objects
+					app.clearSelectedGeos();
+					// select just this one
+					app.addSelectedGeo(geo, true);
+					return ret;
+				} else
+					throw argErr(app, c.getName(), arg[0]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
