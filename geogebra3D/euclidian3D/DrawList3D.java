@@ -25,11 +25,15 @@ public class DrawList3D {
 	private Drawable3DList[] lists;
 	
 	
+	private EuclidianView3D view3D;
+	
 	
 	/**
 	 * default constructor
 	 */
-	public DrawList3D(){
+	public DrawList3D(EuclidianView3D view3D){
+		
+		this.view3D = view3D;
 		lists = new Drawable3DList[Drawable3D.DRAW_TYPE_MAX];
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			lists[i] = new Drawable3DList();
@@ -128,6 +132,8 @@ public class DrawList3D {
 			d.next().drawTransp(renderer);	
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
 			d.next().drawTransp(renderer);	
+		
+		view3D.getxOyPlaneDrawable().drawTransp(renderer);
 
 	}
 
@@ -167,6 +173,8 @@ public class DrawList3D {
 
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
 			d.next().drawHiding(renderer);	
+		
+		view3D.getxOyPlaneDrawable().drawHiding(renderer);
 
 	}
 	
@@ -196,6 +204,13 @@ public class DrawList3D {
 	        	d.drawForPicking(renderer);	
 	        	drawHits[loop] = d;
 			}
+		
+		//view3D plane
+    	Drawable3D d = view3D.getxOyPlaneDrawable();
+    	loop++;
+    	renderer.glLoadName(loop);
+    	d.drawForPicking(renderer);	
+    	drawHits[loop] = d;
 		
 		return loop;
 

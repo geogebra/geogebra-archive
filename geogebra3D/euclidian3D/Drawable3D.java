@@ -373,7 +373,6 @@ public abstract class Drawable3D {
 	 */			
 	public void drawForPicking(Renderer renderer) {
 		if (!((GeoElement3DInterface) getGeoElement()).isPickable()){
-			//Application.debug(getGeoElement()+" is not pickable");
 			return;
 		}
 		if(!getGeoElement().isEuclidianVisible())

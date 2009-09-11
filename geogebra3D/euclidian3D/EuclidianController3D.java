@@ -361,6 +361,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (!forPreviewable)
 			point3D = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
 		else{
+			//if xOy plane is visible, then the point is on it
+			if (view3D.getxOyPlane().isEuclidianVisible()) 
+				return createNewPoint(true, (Region) view3D.getxOyPlane());
+			
 			point3D = view3D.getCursor3D();
 			point3D.setPath(null);
 			point3D.setRegion(null);
@@ -456,6 +460,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
     	kernel.setSilentMode(false);
 		
     	//Application.debug("point is defined : "+point.isDefined());
+    	
+    	if (point==null)
+    		return null;
     	
     	if (point.isDefined()){
     		view3D.setCursor3DIntersetionOf(a, b);

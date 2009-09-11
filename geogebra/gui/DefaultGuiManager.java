@@ -1902,12 +1902,16 @@ public class DefaultGuiManager implements GuiManager {
 
 			public void actionPerformed(ActionEvent e) {
 				// toggle axes
+				app.toggleAxis();
+				
+				/*
 				boolean bothAxesShown = app.getEuclidianView().getShowXaxis()
 						&& app.getEuclidianView().getShowYaxis();
 				app.getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
 				app.getEuclidianView().repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();
+				*/
 			}
 		};
 

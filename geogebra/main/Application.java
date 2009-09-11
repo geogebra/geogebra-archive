@@ -89,6 +89,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -966,6 +967,26 @@ public abstract class Application implements KeyEventDispatcher {
 	public EuclidianView getEuclidianView() {
 		return euclidianView;
 	}
+	
+
+	public void toggleAxis(){
+		
+		boolean bothAxesShown = getEuclidianView().getShowXaxis()
+			&& getEuclidianView().getShowYaxis();
+		getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
+		getEuclidianView().repaint();
+		storeUndoInfo();
+		updateMenubar();
+	}
+	
+	public void setShowAxesSelected(JCheckBoxMenuItem cb){
+		cb.setSelected(getEuclidianView().getShowXaxis() && getEuclidianView().getShowYaxis());
+	}
+	
+
+	
+	
+	
 	
 	/** return 2D (and 3D) views settings
 	 * @return 2D (and 3D) views settings

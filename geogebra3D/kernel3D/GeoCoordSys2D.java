@@ -2,6 +2,8 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.Kernel;
 import geogebra3D.Matrix.Ggb3DVector;
 
 /**
@@ -10,7 +12,7 @@ import geogebra3D.Matrix.Ggb3DVector;
  * 2D coordinate system.
  *
  */
-public class GeoCoordSys2D extends GeoCoordSys {
+public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	
 	
 	
@@ -165,6 +167,43 @@ public class GeoCoordSys2D extends GeoCoordSys {
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	
+	
+	
+	/////////////////////////////////////
+	//
+	// REGION3D INTERFACE
+	//
+	/////////////////////////////////////
+	
+	
+	public Ggb3DVector[] getNormalProjection(Ggb3DVector coords) {
+		return coords.projectPlane(this.getMatrix4x4());
+	}
+
+	public Ggb3DVector[] getProjection(Ggb3DVector coords,
+			Ggb3DVector willingDirection) {
+		return coords.projectPlaneThruV(this.getMatrix4x4(),willingDirection);
+	}
+
+	public boolean isInRegion(GeoPointInterface P) {
+		Ggb3DVector planeCoords = getNormalProjection(((GeoPoint3D) P).getCoords())[1];
+		return Kernel.isEqual(planeCoords.get(3),0,Kernel.STANDARD_PRECISION);
+	}
+
+	public void pointChangedForRegion(GeoPointInterface P) {
+		
+		P.updateCoords2D();
+		P.updateCoordsFrom2D(false);
+		
+		
+	}
+
+	public void regionChanged(GeoPointInterface P) {
+		pointChangedForRegion(P);
+		
 	}
 	
 

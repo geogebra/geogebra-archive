@@ -420,7 +420,8 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 * @return normal projection
 	 */
 	public Ggb3DVector[] getNormalProjection(Ggb3DVector coords){
-		return coords.projectPlane(coordSys.getMatrix4x4());
+		//return coords.projectPlane(coordSys.getMatrix4x4());
+		return coordSys.getNormalProjection(coords);
 	}
 
 
@@ -430,7 +431,8 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 * @return projection
 	 */
 	public Ggb3DVector[] getProjection(Ggb3DVector coords, Ggb3DVector willingDirection){
-		return coords.projectPlaneThruV(coordSys.getMatrix4x4(),willingDirection);
+		//return coords.projectPlaneThruV(coordSys.getMatrix4x4(),willingDirection);
+		return coordSys.getProjection(coords, willingDirection);
 	}
 
 	

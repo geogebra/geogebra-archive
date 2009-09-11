@@ -20,6 +20,7 @@ package geogebra3D;
 import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.layout.Layout;
+import geogebra.kernel.GeoElement;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
@@ -31,6 +32,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -165,8 +167,18 @@ public abstract class Application3D extends Application{
 	
 	
 	
+	public void toggleAxis(){
+		
+		// toggle xOy plane
+		GeoElement p = getEuclidianView3D().getxOyPlane();
+		p.setEuclidianVisible(!p.isEuclidianVisible());
+	}
 	
 	
+	public void setShowAxesSelected(JCheckBoxMenuItem cb){
+		GeoElement p = getEuclidianView3D().getxOyPlane();
+		cb.setSelected(p.isEuclidianVisible());
+	}
 	
     
     

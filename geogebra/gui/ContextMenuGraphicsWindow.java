@@ -70,7 +70,8 @@ implements ActionListener {
         // checkboxes for axes and grid
         EuclidianView ev = app.getEuclidianView();
         JCheckBoxMenuItem cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());
-        cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
+        //cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
+        app.setShowAxesSelected(cbShowAxes);
         cbShowAxes.setBackground(getBackground());
         add(cbShowAxes);
         

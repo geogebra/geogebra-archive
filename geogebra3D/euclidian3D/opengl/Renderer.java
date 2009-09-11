@@ -1991,7 +1991,7 @@ public class Renderer implements GLEventListener {
     	
     	
 
-    	BUFSIZE = drawList3D.size()*2+1;
+    	BUFSIZE = (drawList3D.size()+1)*2+1;
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection

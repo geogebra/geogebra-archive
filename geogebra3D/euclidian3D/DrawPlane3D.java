@@ -111,8 +111,9 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 	
 	public int getPickOrder(){
-		return DRAW_PICK_ORDER_MAX; //for now : plane xOy should not be treated as a plane, but a part of the drawing pad
+		//return DRAW_PICK_ORDER_MAX; //for now : plane xOy should not be treated as a plane, but a part of the drawing pad
 		//TODO return DRAW_PICK_ORDER_2D;
+		return DRAW_PICK_ORDER_2D;
 	}		
 	
 	

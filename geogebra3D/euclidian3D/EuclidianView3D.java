@@ -74,7 +74,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private boolean waitForUpdate = true; //says if it waits for update...
 	//public boolean waitForPick = false; //says if it waits for update...
 	private boolean removeHighlighting = false; //for removing highlighting when mouse is clicked
-	DrawList3D drawList3D = new DrawList3D();
+	DrawList3D drawList3D;// = new DrawList3D();
 	
 	
 	//matrix for changing coordinate system
@@ -93,9 +93,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	Hits3D hits = new Hits3D(); //objects picked from openGL
 	
 	//base vectors for moving a point
+	static public Ggb3DVector o = new Ggb3DVector(new double[] {0.0, 0.0, 0.0,  1.0});
 	static public Ggb3DVector vx = new Ggb3DVector(new double[] {1.0, 0.0, 0.0,  0.0});
 	static public Ggb3DVector vy = new Ggb3DVector(new double[] {0.0, 1.0, 0.0,  0.0});
 	static public Ggb3DVector vz = new Ggb3DVector(new double[] {0.0, 0.0, 1.0,  0.0});
+	
+	//axis and xOy plane
+	private GeoPlane3D xOyPlane;
 	
 
 	//preview
@@ -130,14 +134,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public EuclidianView3D(EuclidianController3D ec){
 
 		
-		/*
-		setSize(new Dimension(EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT));
-		setPreferredSize(new Dimension(EuclidianGLDisplay.DEFAULT_WIDTH,EuclidianGLDisplay.DEFAULT_HEIGHT));
-		*/
+
 		
 		this.euclidianController3D = ec;
 		this.kernel3D = (Kernel3D) ec.getKernel();
 		euclidianController3D.setView(this);
+		
+		drawList3D = new DrawList3D(this);
 		
 		
 		//TODO replace canvas3D with GLDisplay
@@ -175,8 +178,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		cursor3D.setLabelOffset(5, -5);
 		cursor3D.setEuclidianVisible(false);
 		kernel3D.setSilentMode(false);
-
 		
+		
+		//axis
+		//kernel3D.setSilentMode(true);
+		xOyPlane = kernel3D.Plane3D("xOy", o, vx, vy);
+		//kernel3D.setSilentMode(false);
+		
+		add(xOyPlane);
+		xOyPlane.setObjColor(new Color(0.5f,0.5f,0.5f));
+		xOyPlane.setFixed(true);
+		/*
+		xOyPlane.setObjColor(Color.BLACK);
+		xOyPlane.setAlphaValue(1);
+		*/
 		
 	}
 	
@@ -1721,5 +1736,26 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return sb.toString();
 	}
 	
+	
+	
+	/////////////////////////////////////////////////////
+	// 
+	// AXIS AND PLANE
+	//
+	/////////////////////////////////////////////////////
+	
+	
+	public GeoPlane3D getxOyPlane()  {
+
+		return xOyPlane;
+		
+	}
+	
+	public DrawPlane3D getxOyPlaneDrawable()  {
+
+		return (DrawPlane3D) getxOyPlane().getDrawable3D();
+		
+	}
+
 
 }
