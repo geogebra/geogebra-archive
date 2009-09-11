@@ -726,6 +726,26 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	
+	
+	protected GeoElement chooseGeo(ArrayList geos, boolean includeFixed) {
+		
+		if (!geos.isEmpty())
+			//if the geo hitted is xOyPlane, then chooseGeo return null
+			if (geos.get(0)==view3D.getxOyPlane())
+				return null;
+		
+		return super.chooseGeo(geos, includeFixed);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	///////////////////////////////////////////
 	//
 	

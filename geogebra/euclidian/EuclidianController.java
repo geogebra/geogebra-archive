@@ -1698,7 +1698,11 @@ public class EuclidianController implements MouseListener,
 					else {
 						// no selected geos: choose geo and show popup menu
 						geo = chooseGeo(hits, true);
-						app.getGuiManager().showPopupMenu(geo,(JPanel) view, mouseLoc);						
+						if (geo!=null)
+							app.getGuiManager().showPopupMenu(geo,(JPanel) view, mouseLoc);
+						else
+							//for 3D : if the geo hitted is xOyPlane, then chooseGeo return null
+							app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
 					}																										
 				}				
 				return;
@@ -5709,7 +5713,7 @@ public class EuclidianController implements MouseListener,
 		return chooseGeo(hits.getHits(geoclass, tempArrayList), true);
 	}
 
-	final protected GeoElement chooseGeo(ArrayList geos, boolean includeFixed) {
+	protected GeoElement chooseGeo(ArrayList geos, boolean includeFixed) {
 		if (geos == null)
 		return null;
 
