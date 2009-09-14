@@ -40,7 +40,6 @@ public class vk_gui extends JFrame {
 
    private JButton SpaceButton      = null;
    private JButton CapsLockButton   = null;
-   private JButton TOButton         = null;
 
    private Application app;
    
@@ -167,41 +166,6 @@ public class vk_gui extends JFrame {
       return CapsLockButton;
    }
 
-    private JButton getTOButton() {
-      if (TOButton == null) {
-         final Integer linepos      = Integer.valueOf(start_vk.myConf.get("ButtonLineTO"));
-         final Integer ButtonStart  = Integer.valueOf(start_vk.myConf.get("TOButtonStart"));
-         final Integer ButtonX      = Integer.valueOf(start_vk.myConf.get("TOButtonSizeX"));
-         final Integer ButtonY      = Integer.valueOf(start_vk.myConf.get("TOButtonSizeY"));
-         
-         Image img = getToolkit().getImage("img/left_right.gif");
-         MediaTracker mt = new MediaTracker(this);
-         mt.addImage(img, 0);
-         try {
-            //Warten, bis das Image vollständig geladen ist,
-            mt.waitForAll();
-         } catch (InterruptedException e) {
-            //nothing
-         }
-         ImageIcon ImageIcon = new ImageIcon(img);
-         TOButton                = new JButton(ImageIcon);
-         TOButton.setSize(new Dimension(ButtonX, ButtonY));
-         TOButton.setLocation(new Point(ButtonStart, linepos));
-         TOButton.addActionListener(new java.awt.event.ActionListener() {
-               public void actionPerformed(java.awt.event.ActionEvent e) {
-                  //if(jTextArea.getComponentOrientation().isLeftToRight()) {
-                  //   jTextArea.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-                  //} else {
-                  //   jTextArea.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-                  //}
-               }
-           });
-      }
-      return TOButton;
-   }
-
-
-
 
    /**
     * This method initializes jContentPane
@@ -222,17 +186,6 @@ public class vk_gui extends JFrame {
          jContentPane.add(getSpaceButton(), null);
          jContentPane.add(getCapsLockButton(), null);
 
-         //Image img = getToolkit().getImage("img/left_right.gif");
-         //MediaTracker mt = new MediaTracker(this);
-         //mt.addImage(img, 0);
-         //try {
-         //   //Warten, bis das Image vollständig geladen ist,
-         //   mt.waitForAll();
-         //} catch (InterruptedException e) {
-         //   //nothing
-         //}
-         //ImageIcon ImageIcon = new ImageIcon(img);
-         jContentPane.add(getTOButton(), null);
       }
       return jContentPane;
    }
