@@ -447,6 +447,13 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     	return (GeoElement) geoList.get(index);
     }    
     
+    /**
+     * Returns the element at the specified position in this (2D) list.
+     */
+    final public GeoElement get(int index, int index2) {
+    	return ((GeoList) geoList.get(index)).get(index2);
+    }    
+    
    
     final public void ensureCapacity(int size) {
     	geoList.ensureCapacity(size);

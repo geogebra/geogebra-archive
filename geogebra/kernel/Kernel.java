@@ -3390,6 +3390,15 @@ public class Kernel {
 	}		
 	
 	/** 
+	 * Element[list, number, number]
+	 */
+	final public GeoElement Element(String label, GeoList list, NumberValue n, NumberValue m) {
+		AlgoListElement algo = new AlgoListElement(cons, label, list, n, m);
+		GeoElement geo = algo.getElement();
+		return geo;
+	}		
+	
+	/** 
 	 * Length[list]
 	 */
 	final public GeoNumeric Length(String label, GeoList list) {
