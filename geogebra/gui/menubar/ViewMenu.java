@@ -284,7 +284,7 @@ class ViewMenu extends BaseMenu {
 	        	   //myConf = defaultConf.setDefault(myConf);
 	               //myKeys = defaultConf.setKeyboard(myKeys);
 	               start_vk.readConf();
-	               vk_gui thisClass = new vk_gui(app);
+	               vk_gui thisClass = new vk_gui(app, 500, 500);
 	               thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	               thisClass.setVisible(true);
 

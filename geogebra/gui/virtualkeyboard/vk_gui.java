@@ -4,6 +4,7 @@ import geogebra.main.Application;
 
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MediaTracker;
@@ -11,8 +12,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.lang.reflect.Method;
-import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,8 +25,6 @@ import javax.swing.JPanel;
 
 public class vk_gui extends JFrame {
 
-//   private ComponentOrientation InputAreaCO = ComponentOrientation.RIGHT_TO_LEFT;  //  @jve:decl-index=0:
-   private ComponentOrientation InputAreaCO = ComponentOrientation.LEFT_TO_RIGHT;
 
 	Robot robot;
  
@@ -43,18 +43,60 @@ public class vk_gui extends JFrame {
 
    private Application app;
    
+   private int buttonRows = 5;
+   private int buttonCols = 12;
+   private int buttonSize;
+   
+   private int windowX, windowY;
+   
+   private Font font, smFont;
+   
    //WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
    //Keyboard kb;// = new Keyboard();
 
    /**
     * This is the default constructor
     */
-   public vk_gui(Application app) {
-      super();
-      initialize();
+   public vk_gui(final Application app, int sizeX, int sizeY) {
+      
+	   super();
+	   windowX = sizeX;
+	   windowY = sizeY;
       this.app = app;
       this.setFocusableWindowState(false);
       this.setAlwaysOnTop(true);
+      initialize();
+     
+   // Event Handling
+      this.addComponentListener(new ComponentAdapter()
+      {
+      public void componentResized(ComponentEvent e)
+      {
+      JFrame tmp = (JFrame)e.getSource();
+      
+     
+      if (tmp instanceof vk_gui)
+    	  windowResized();
+      /*
+      if (tmp.getWidth()<300)
+      {
+      tmp.setSize(300, getHeight());
+      validate();
+      }
+      else
+      if(tmp.getHeight()<600)
+      {
+      tmp.setSize(getWidth(), 600);
+      validate();
+      }
+      else if (tmp.getWidth()<300 && tmp.getHeight()<600)
+      {
+      tmp.setSize(300,650);
+      validate();
+      }*/
+      }
+      });
+      
       
       // http://java.sun.com/developer/technicalArticles/GUI/translucent_shaped_windows/#Setting-the-Opacity-Level-of-a-Window
       //AWTUtilities.setWindowOpacity
@@ -72,7 +114,7 @@ public class vk_gui extends JFrame {
 
     	} 
     	
-      
+      windowResized();
       /*
       try {
 
@@ -82,6 +124,18 @@ public class vk_gui extends JFrame {
 		e.printStackTrace();
 	}//*/
    }
+   
+   final private void windowResized() {
+	   
+	      int sizeX = getWidth();
+	      int sizeY = getHeight();
+	      
+	      buttonSize = Math.min(sizeX / (buttonCols ), sizeY / (buttonRows + 2));
+	      if (buttonSize < 20) buttonSize = 20;
+	   
+	   updateButtons();
+	   
+   }
 
    /**
     * This method initializes this
@@ -89,9 +143,7 @@ public class vk_gui extends JFrame {
     * @return void
     */
    private void initialize() {
-      final Integer   WindowX  = Integer.valueOf(start_vk.myConf.get("WindowSizeX"));
-      final Integer   WindowY  = Integer.valueOf(start_vk.myConf.get("WindowSizeY"));
-      this.setSize(WindowX, WindowY);
+      this.setSize(windowX, windowY);
       this.setName("MainPanel");
       this.setContentPane(getJContentPane());
       this.setTitle("Virtual Keyboard");
@@ -106,10 +158,17 @@ public class vk_gui extends JFrame {
       
 	   Upper = !Upper;
       
-      for (int i = 1 ; i <= 5 ; i++)
-          for (int j = 1 ; j <= 12 ; j++)
-        	  changeButton(i,j);	   
+	   updateButtons();
 
+   }
+   
+   public void updateButtons() {
+	      for (int i = 1 ; i <= buttonRows ; i++)
+	          for (int j = 1 ; j <= buttonCols ; j++)
+	        	  updateButton(i,j);	   
+	      
+	      updateSpaceButton();
+	      updateCapsLockButton();
    }
 
    /**
@@ -119,15 +178,12 @@ public class vk_gui extends JFrame {
     */
    private JButton getSpaceButton() {
       if (SpaceButton == null) {
-         final Integer linepos      = Integer.valueOf(start_vk.myConf.get("ButtonLine6"));
-         final Integer ButtonStart  = Integer.valueOf(start_vk.myConf.get("SpaceButtonStart"));
-         final Integer ButtonX      = Integer.valueOf(start_vk.myConf.get("SpaceButtonSizeX"));
-         final Integer ButtonY      = Integer.valueOf(start_vk.myConf.get("SpaceButtonSizeY"));
 
          SpaceButton                = new JButton();
          SpaceButton.setRequestFocusEnabled(false);
-         SpaceButton.setSize(new Dimension(ButtonX, ButtonY));
-         SpaceButton.setLocation(new Point(ButtonStart, linepos));
+         //SpaceButton.setSize(new Dimension(ButtonX, ButtonY));
+         //SpaceButton.setLocation(new Point(ButtonStart, linepos));
+         updateSpaceButton();
          SpaceButton.addActionListener(new java.awt.event.ActionListener() {
                public void actionPerformed(java.awt.event.ActionEvent e) {
                   insertText(" ");
@@ -137,26 +193,24 @@ public class vk_gui extends JFrame {
       return SpaceButton;
    }
    
+   private void updateSpaceButton() {
+       SpaceButton.setSize(new Dimension(buttonSize * 8, buttonSize / 2));
+       SpaceButton.setLocation(new Point(buttonSize * 2, buttonSize * 17 / 4));
+	   
+   }
+   
+   private void updateCapsLockButton() {
+	   CapsLockButton.setSize(new Dimension(buttonSize, buttonSize / 2));
+	   CapsLockButton.setLocation(new Point(buttonSize / 2, buttonSize * 17 / 4));
+	   
+	   CapsLockButton.setFont(getSmallFont(buttonSize * 5 / 18));
+   }
+   
    private JButton getCapsLockButton() {
       if (CapsLockButton == null) {
-         final Integer linepos      = Integer.valueOf(start_vk.myConf.get("ButtonLine6"));
-         final Integer ButtonStart  = Integer.valueOf(start_vk.myConf.get("CapsLockButtonStart"));
-         final Integer ButtonX      = Integer.valueOf(start_vk.myConf.get("CapsLockButtonSizeX"));
-         final Integer ButtonY      = Integer.valueOf(start_vk.myConf.get("CapsLockButtonSizeY"));
 
-         Image img = getToolkit().getImage("geogebra/gui/virtualkeyboard/caps_lock.gif");
-         MediaTracker mt = new MediaTracker(this);
-         mt.addImage(img, 0);
-         try {
-            //Warten, bis das Image vollständig geladen ist,
-            mt.waitForAll();
-         } catch (InterruptedException e) {
-            //nothing
-         }
-         ImageIcon ImageIcon = new ImageIcon(img);
-         CapsLockButton             = new JButton(ImageIcon);
-         CapsLockButton.setSize(new Dimension(ButtonX, ButtonY));
-         CapsLockButton.setLocation(new Point(ButtonStart, linepos));
+         CapsLockButton             = new JButton("\u21e7");
+         updateCapsLockButton();
          CapsLockButton.addActionListener(new java.awt.event.ActionListener() {
                public void actionPerformed(java.awt.event.ActionEvent e) {
                   invertButtons();
@@ -245,12 +299,8 @@ public class vk_gui extends JFrame {
    private JButton getButton(int i, int j) {
 	      if (Buttons[i][j] == null) {
 	         final keys      thisKeys = getKey(i, j); // start_vk.myKeys.get("B0101char");
-	         final Integer   start    = Integer.valueOf(start_vk.myConf.get("Button"+pad(j)+"Start"));
-	         final Integer   linepos  = Integer.valueOf(start_vk.myConf.get("ButtonLine"+i));
-	         final Integer   ButtonX  = Integer.valueOf(start_vk.myConf.get("ButtonSizeX"));
-	         final Integer   ButtonY  = Integer.valueOf(start_vk.myConf.get("ButtonSizeY"));
 	         Buttons[i][j]               = new JButton();
-	         Buttons[i][j].setBounds(new Rectangle(start, linepos, ButtonX, ButtonY));
+	         updateButton(i,j);
 	         Insets Inset = new Insets(0,0,0,0);
 	         Buttons[i][j].setMargin(Inset);
 	         String text = Upper ? thisKeys.getUpperCase() : thisKeys.getLowerCase();
@@ -282,13 +332,42 @@ public class vk_gui extends JFrame {
 	   return text;
    }
   
-   private void changeButton(int i, int j) {
+   private void updateButton(int i, int j) {
 	   keys k = getKey(i, j);
 	      if(Upper) {
 	         Buttons[i][j].setText(processSpecialKeys(k.getUpperCase()));
 	      } else {
 	         Buttons[i][j].setText(processSpecialKeys(k.getLowerCase()));
 	      }
+	      
+	      
+	      // skip a row (for spacebar etc)
+	      int ii = (i == 5) ? 6 : i;
+	      
+	         Buttons[i][j].setBounds(new Rectangle(buttonSize * (j - 1), buttonSize * (ii - 1), buttonSize, buttonSize));
+	         
+	         // make sure "Esc" fits
+	         int len = (Buttons[i][j].getText().length() + 1) / 2;
+	         if (len == 0) len = 1;
+	         
+	         Buttons[i][j].setFont(getFont(buttonSize * 10 / 12 / len));
+      
 	   }
+   
+   private Font getFont(int size) {
+	   
+	   if (font == null || font.getSize() != size)
+		   font = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size);
+	   
+	   return font;
+   }
+   
+   private Font getSmallFont(int size) {
+	   
+	   if (smFont == null || smFont.getSize() != size)
+		   smFont = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size);
+	   
+	   return smFont;
+   }
 
 }

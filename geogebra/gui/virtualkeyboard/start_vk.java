@@ -19,7 +19,7 @@ import javax.swing.UIManager;
 
 public class start_vk {
 
-   public static Hashtable<String, String> myConf = new Hashtable<String, String>();
+   //public static Hashtable<String, String> myConf = new Hashtable<String, String>();
    public static Hashtable<String, keys>   myKeys = new Hashtable<String, keys>();
 
    /**
@@ -67,13 +67,14 @@ public class start_vk {
 			}
 		}	
 
+		/*
 		ResourceBundle rbKeyboardPrefs = MyResourceBundle.loadSingleBundleFile("/geogebra/gui/virtualkeyboard/window");
 		keys = rbKeyboardPrefs.getKeys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			
 			myConf.put(key.trim(), rbKeyboardPrefs.getString(key).trim());
-			}
+			} */
 		}	
 
                         
