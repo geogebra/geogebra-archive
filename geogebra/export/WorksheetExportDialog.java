@@ -35,7 +35,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -51,8 +50,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 /**
  * Dialog which provides for exporting into an HTML page 

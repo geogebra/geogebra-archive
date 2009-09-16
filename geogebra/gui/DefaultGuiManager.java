@@ -11,8 +11,6 @@ import geogebra.gui.toolbar.MyToolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.GeoGebraFileChooser;
-import geogebra.gui.util.foxtrot.Job;
-import geogebra.gui.util.foxtrot.Worker;
 import geogebra.gui.view.algebra.AlgebraController;
 import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
@@ -1625,18 +1623,18 @@ public class DefaultGuiManager implements GuiManager {
 			return;
 		
 		 // use Foxtrot to wait a bit until screen has refreshed
-        Worker.post(new Job()
-        {
-           public Object run()
-           {  
-              try {
-            	  Thread.sleep(10);
-              } catch (InterruptedException e) {
-            	  e.printStackTrace();
-              }   
-              return null;
-           }
-        });
+//        Worker.post(new Job()
+//        {
+//           public Object run()
+//           {  
+//              try {
+//            	  Thread.sleep(10);
+//              } catch (InterruptedException e) {
+//            	  e.printStackTrace();
+//              }   
+//              return null;
+//           }
+//        });
 	}
 
 	public boolean loadFile(final File file, final boolean isMacroFile) {

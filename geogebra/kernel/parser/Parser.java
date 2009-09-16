@@ -2133,7 +2133,7 @@ ValidExpression  functionOrCommand():
                         label = funcName.substring(0, index+1);
                         geo = kernel.lookupLabel(label);
                         if (geo != null) break;
-                        if (c.image.charAt(index) == '\'') {
+                        if (c.image.charAt(index) == '\u005c'') {
                                 order++;
                                 index--;
                         } else break;
@@ -4105,7 +4105,7 @@ ValidExpression  functionOrCommand():
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List jj_expentries = new java.util.ArrayList();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
   private int[] jj_expentry;
   private int jj_kind = -1;
   private int[] jj_lasttokens = new int[100];
@@ -4120,7 +4120,7 @@ ValidExpression  functionOrCommand():
       for (int i = 0; i < jj_endpos; i++) {
         jj_expentry[i] = jj_lasttokens[i];
       }
-      jj_entries_loop: for (java.util.Iterator it = jj_expentries.iterator(); it.hasNext();) {
+      jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
         int[] oldentry = (int[])(it.next());
         if (oldentry.length == jj_expentry.length) {
           for (int i = 0; i < jj_expentry.length; i++) {
@@ -4174,7 +4174,7 @@ ValidExpression  functionOrCommand():
     jj_add_error_token(0, 0);
     int[][] exptokseq = new int[jj_expentries.size()][];
     for (int i = 0; i < jj_expentries.size(); i++) {
-      exptokseq[i] = (int[])jj_expentries.get(i);
+      exptokseq[i] = jj_expentries.get(i);
     }
     return new ParseException(token, exptokseq, tokenImage);
   }
