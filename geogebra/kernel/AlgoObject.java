@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 import java.util.Iterator;
 
 
@@ -85,17 +87,19 @@ public class AlgoObject extends AlgoElement {
     
     public GeoElement getResult() { return geo; }
     
-    protected final void compute() {     	    
-    	// did name of object change?
-    	if (currentLabel != text.getTextString() || refObject == null) {
+    protected final void compute() {     
+    	// did name of object change?  	
+    	// removed: needs updating when refObject has been deleted
+    	//if (currentLabel != text.getTextString() || refObject == null) {
     		updateReferencedObject();    		
-    	}
+    	//}
     	    	
     	// check if updateInput has same type
     	if (refObject != null && 
     		refObject.getGeoClassType() == geo.getGeoClassType())
     	{
     		geo.set(refObject);
+    		geo.setVisualStyle(refObject); 
     	} else {
     		geo.setUndefined();   
     	}    	    
