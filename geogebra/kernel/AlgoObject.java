@@ -73,7 +73,8 @@ public class AlgoObject extends AlgoElement {
         // create output object as copy of referenced object
         if (refObject != null ) {
      	   geo = refObject.copyInternal(cons);
-     	   geo.setVisualStyle(refObject);     	   
+     	   geo.setVisualStyle(refObject);  
+     	   geo.setUseVisualDefaults(false);
         } else {
      	   geo = new GeoNumeric(cons,Double.NaN);
         }
@@ -87,9 +88,9 @@ public class AlgoObject extends AlgoElement {
     
     public GeoElement getResult() { return geo; }
     
-    protected final void compute() {     
-    	// did name of object change?  	
-    	// removed: needs updating when refObject has been deleted
+    protected final void compute() {     	    
+    	// did name of object change?
+    	// removed - doesn't update when referenced object deleted
     	//if (currentLabel != text.getTextString() || refObject == null) {
     		updateReferencedObject();    		
     	//}
@@ -99,7 +100,6 @@ public class AlgoObject extends AlgoElement {
     		refObject.getGeoClassType() == geo.getGeoClassType())
     	{
     		geo.set(refObject);
-    		geo.setVisualStyle(refObject); 
     	} else {
     		geo.setUndefined();   
     	}    	    
