@@ -2029,6 +2029,14 @@ public class DefaultGuiManager implements GuiManager {
 		return handler.num;
 	}
 
+	public void showNumberInputDialogRegularPolygon(String title, GeoPoint geoPoint1, GeoPoint geoPoint2) {
+
+		NumberInputHandler handler = new NumberInputHandler();
+		InputDialog id = new InputDialogRegularPolygon(app, title, handler, geoPoint1, geoPoint2, kernel);
+		id.setVisible(true);
+
+	}
+
 	/**
 	 * Shows a modal dialog to enter an angle or angle variable name.
 	 * 
@@ -2051,7 +2059,7 @@ public class DefaultGuiManager implements GuiManager {
 		return ret;
 	}
 
-	private class NumberInputHandler implements InputHandler {
+	public class NumberInputHandler implements InputHandler {
 		NumberValue num = null;
 
 		public boolean processInput(String inputString) {

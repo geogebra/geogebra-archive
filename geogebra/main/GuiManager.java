@@ -342,6 +342,9 @@ public interface GuiManager {
 		public void resetSpreadsheet();
 		
 		public void setCurrentTextfield(MyTextField textfield);
-		public void insertStringIntoTextfield(String text);		 
+		public void insertStringIntoTextfield(String text);
+
+		public void showNumberInputDialogRegularPolygon(String menu,
+				GeoPoint geoPoint, GeoPoint geoPoint2);		 
 
 }

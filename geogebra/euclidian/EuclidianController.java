@@ -4347,18 +4347,10 @@ public class EuclidianController implements MouseListener,
 		// need two points
 		addSelectedPoint(hits, 2, false);
 		
-		// we got the rotation center point
 		if (selPoints() == 2) {					
-			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
-														app.getPlain("Points"), "4");													
-			
-			if (num == null) {
-				view.resetMode();
-				return false;
-			}
-			
 			GeoPoint [] points = getSelectedPoints();
-			kernel.RegularPolygon(null, points[0], points[1], num);			
+			app.getGuiManager().showNumberInputDialogRegularPolygon(app.getMenu(EuclidianView.getModeText(mode)),
+														points[0], points[1]);
 			return true;
 		}
 		return false;

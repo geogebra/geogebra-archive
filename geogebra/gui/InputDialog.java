@@ -54,7 +54,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected Application app;
 	protected InputHandler inputHandler;
 	
-	private GeoElement geo;
+	protected GeoElement geo;
 	
 	/**
 	 * Creates a non-modal standard input dialog.
@@ -258,7 +258,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		}
 		//setVisible(!finished);
 	}
-    private ArrayList tempArrayList = new ArrayList();
+    protected ArrayList tempArrayList = new ArrayList();
 	
 	public String getText() {
 		return inputPanel.getText();
