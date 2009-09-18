@@ -283,7 +283,7 @@ class ViewMenu extends BaseMenu {
 				   //Hashtable<String, keys>   myKeys = new Hashtable<String, keys>();
 	        	   //myConf = defaultConf.setDefault(myConf);
 	               //myKeys = defaultConf.setKeyboard(myKeys);
-	               start_vk.readConf();
+	               start_vk.readConf(app, null, false);
 	               vk_gui thisClass = new vk_gui(app, 500, 500);
 	               thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	               thisClass.setVisible(true);

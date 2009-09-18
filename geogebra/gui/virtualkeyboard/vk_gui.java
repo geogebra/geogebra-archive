@@ -2,12 +2,9 @@ package geogebra.gui.virtualkeyboard;
 
 import geogebra.main.Application;
 
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Insets;
-import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -15,8 +12,8 @@ import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -40,6 +37,8 @@ public class vk_gui extends JFrame {
 
    private JButton SpaceButton      = null;
    private JButton CapsLockButton   = null;
+   private JButton MathButton   = null;
+   private JButton GreekButton   = null;
 
    private Application app;
    
@@ -169,6 +168,8 @@ public class vk_gui extends JFrame {
 	      
 	      updateSpaceButton();
 	      updateCapsLockButton();
+	      updateMathButton();
+	      updateGreekButton();
    }
 
    /**
@@ -194,8 +195,8 @@ public class vk_gui extends JFrame {
    }
    
    private void updateSpaceButton() {
-       SpaceButton.setSize(new Dimension(buttonSize * 8, buttonSize / 2));
-       SpaceButton.setLocation(new Point(buttonSize * 2, buttonSize * 17 / 4));
+       SpaceButton.setSize(new Dimension(buttonSize * 6, buttonSize / 2));
+       SpaceButton.setLocation(new Point(buttonSize * 4, buttonSize * 17 / 4));
 	   
    }
    
@@ -206,19 +207,78 @@ public class vk_gui extends JFrame {
 	   CapsLockButton.setFont(getSmallFont(buttonSize * 5 / 18));
    }
    
-   private JButton getCapsLockButton() {
-      if (CapsLockButton == null) {
-
-         CapsLockButton             = new JButton("\u21e7");
-         updateCapsLockButton();
-         CapsLockButton.addActionListener(new java.awt.event.ActionListener() {
-               public void actionPerformed(java.awt.event.ActionEvent e) {
-                  invertButtons();
-               }
-           });
-      }
-      return CapsLockButton;
+   private void updateMathButton() {
+	   MathButton.setSize(new Dimension(buttonSize, buttonSize / 2));
+	   MathButton.setLocation(new Point(buttonSize * 3 / 2, buttonSize * 17 / 4));
+	   
+	   MathButton.setFont(getSmallFont(buttonSize * 5 / 18));
    }
+   
+   private void updateGreekButton() {
+	   GreekButton.setSize(new Dimension(buttonSize, buttonSize / 2));
+	   GreekButton.setLocation(new Point(buttonSize * 5 / 2, buttonSize * 17 / 4));
+	   
+	   GreekButton.setFont(getSmallFont(buttonSize * 5 / 18));
+   }
+   
+   private JButton getCapsLockButton() {
+	      if (CapsLockButton == null) {
+
+	         CapsLockButton             = new JButton("\u21e7");
+	         updateCapsLockButton();
+	         CapsLockButton.addActionListener(new java.awt.event.ActionListener() {
+	               public void actionPerformed(java.awt.event.ActionEvent e) {
+	                  invertButtons();
+	               }
+	           });
+	      }
+	      return CapsLockButton;
+	   }
+
+   private JButton getMathButton() {
+	      if (MathButton == null) {
+
+	    	  MathButton             = new JButton("\u222b");
+	         updateMathButton();
+	         MathButton.addActionListener(new java.awt.event.ActionListener() {
+	               public void actionPerformed(java.awt.event.ActionEvent e) {
+		                  math = !math;
+		                  greek = false;
+		                  if (math)
+		                	  start_vk.readConf(app, null, true);
+		                  else
+			            	  start_vk.readConf(app, null, false);
+		                	  
+		            	   updateButtons();
+	               }
+	           });
+	      }
+	      return MathButton;
+	   }
+   
+   boolean greek = false;
+   boolean math = false;
+
+   private JButton getGreekButton() {
+	      if (GreekButton == null) {
+
+	    	  GreekButton             = new JButton("\u03c3");
+	         updateGreekButton();
+	         GreekButton.addActionListener(new java.awt.event.ActionListener() {
+	               public void actionPerformed(java.awt.event.ActionEvent e) {
+	                  greek = !greek;
+	                  math = false;
+	                  if (greek)
+	                	  start_vk.readConf(app, new Locale("el"), false);
+	                  else
+		            	  start_vk.readConf(app, null, false);
+	                	  
+	            	   updateButtons();
+	               }
+	           });
+	      }
+	      return GreekButton;
+	   }
 
 
    /**
@@ -239,6 +299,8 @@ public class vk_gui extends JFrame {
          
          jContentPane.add(getSpaceButton(), null);
          jContentPane.add(getCapsLockButton(), null);
+         jContentPane.add(getMathButton(), null);
+         jContentPane.add(getGreekButton(), null);
 
       }
       return jContentPane;
@@ -296,9 +358,9 @@ public class vk_gui extends JFrame {
 	   else return ""+i;
    }
    
-   private JButton getButton(int i, int j) {
+   private JButton getButton(final int i, final int j) {
 	      if (Buttons[i][j] == null) {
-	         final keys      thisKeys = getKey(i, j); // start_vk.myKeys.get("B0101char");
+	         keys thisKeys = getKey(i, j); // start_vk.myKeys.get("B0101char");
 	         Buttons[i][j]               = new JButton();
 	         updateButton(i,j);
 	         Insets Inset = new Insets(0,0,0,0);
@@ -306,10 +368,10 @@ public class vk_gui extends JFrame {
 	         String text = Upper ? thisKeys.getUpperCase() : thisKeys.getLowerCase();
 	         
 			 Buttons[i][j].setText(processSpecialKeys(text));
-			         
+			 
 	         Buttons[i][j].addActionListener(new java.awt.event.ActionListener() {
 	            public void actionPerformed(java.awt.event.ActionEvent e) {
-	                  insertKeyText(thisKeys);
+	                  insertKeyText(getKey(i, j));
 	            }
 	         });
 	      }

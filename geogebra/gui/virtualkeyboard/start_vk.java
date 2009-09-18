@@ -3,18 +3,10 @@ package geogebra.gui.virtualkeyboard;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.ResourceBundle;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 
 public class start_vk {
@@ -43,9 +35,24 @@ public class start_vk {
     *
     * @return void
     */
-   public static void readConf() {
+   public static void readConf(Application app, Locale loc, boolean math) {
 	   
-		ResourceBundle rbKeyboard = MyResourceBundle.loadSingleBundleFile("/geogebra/gui/virtualkeyboard/keyboard");
+		//ResourceBundle rbKeyboard = MyResourceBundle.loadSingleBundleFile("/geogebra/gui/virtualkeyboard/keyboard_en_UK");
+
+	   ResourceBundle rbKeyboard;
+	   
+	   if (math) {
+		   rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard_math", app.getLocale());
+	   } else {
+		   if (loc == null)
+				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", app.getLocale());
+		   else {
+			   rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", new Locale("el"));
+		   }
+	   }
+	   
+	   //myKeys.clear();
+		
 		Enumeration keys = rbKeyboard.getKeys();
 		while (keys.hasMoreElements()) {
 			String keyU = (String) keys.nextElement();
