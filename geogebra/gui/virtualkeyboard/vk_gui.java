@@ -443,7 +443,7 @@ public class vk_gui extends JFrame {
 	   
 	   keys ret1 = start_vk.myKeys.get(sb.toString());
 	   
-	   Application.debug("keyboard mode="+KEYBOARD_MODE);
+	   //Application.debug("keyboard mode="+KEYBOARD_MODE);
 	   
 	   
 	   if (KEYBOARD_MODE == ' ')
