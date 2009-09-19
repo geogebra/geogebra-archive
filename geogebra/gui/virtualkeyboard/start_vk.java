@@ -42,7 +42,7 @@ public class start_vk {
 	   ResourceBundle rbKeyboard;
 	   
 	   if (math) {
-		   rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard_math", app.getLocale());
+		   rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboardMath", app.getLocale());
 	   } else {
 		   if (loc == null)
 				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", app.getLocale());

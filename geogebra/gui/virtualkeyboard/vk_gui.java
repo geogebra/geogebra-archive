@@ -242,14 +242,12 @@ public class vk_gui extends JFrame {
 	         updateMathButton();
 	         MathButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
-		                  math = !math;
-		                  greek = false;
-		                  if (math)
-		                	  start_vk.readConf(app, null, true);
+		                  if (KEYBOARD_MODE != KEYBOARD_MATH)
+		                	  setMode(KEYBOARD_MATH);
 		                  else
-			            	  start_vk.readConf(app, null, false);
+		                	  setMode(KEYBOARD_NORMAL);
 		                	  
-		            	   updateButtons();
+
 	               }
 	           });
 	      }
@@ -257,7 +255,7 @@ public class vk_gui extends JFrame {
 	   }
    
    boolean greek = false;
-   boolean math = false;
+   //boolean math = false;
 
    private JButton getGreekButton() {
 	      if (GreekButton == null) {
@@ -267,7 +265,7 @@ public class vk_gui extends JFrame {
 	         GreekButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
 	                  greek = !greek;
-	                  math = false;
+	                  setMode(KEYBOARD_NORMAL);
 	                  if (greek)
 	                	  start_vk.readConf(app, new Locale("el"), false);
 	                  else
@@ -410,6 +408,8 @@ public class vk_gui extends JFrame {
 		   KEYBOARD_MODE = mode;
 		   updateButtons();
 	   }
+	   
+	   //Application.debug("mode="+KEYBOARD_MODE);
 
    }
    /**
