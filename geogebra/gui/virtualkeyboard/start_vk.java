@@ -70,7 +70,7 @@ public class start_vk {
 				
 				//Application.debug(key+"char "+valueL+" "+valueU);
 				
-				myKeys.put(key+"char",keyItem);
+				myKeys.put(key,keyItem);
 			}
 		}	
 

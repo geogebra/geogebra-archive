@@ -305,6 +305,27 @@ public class vk_gui extends JFrame {
       }
       return jContentPane;
    }
+   
+   
+   public static char KEYBOARD_NORMAL = ' ';
+   public static char KEYBOARD_MATH = 'M';
+   public static char KEYBOARD_GREEK = 'H';
+   public static char KEYBOARD_ACUTE = 'A';
+   public static char KEYBOARD_GRAVE = 'G';
+   public static char KEYBOARD_UMLAUT = 'U';
+   public static char KEYBOARD_CEDILLA = 'c';
+   public static char KEYBOARD_CARON = 'v';
+   public static char KEYBOARD_CIRCUMFLEX = 'C';
+   public static char KEYBOARD_BREVE = 'B';
+   public static char KEYBOARD_TILDE = 'T';
+   public static char KEYBOARD_OGONEK = 'O';
+   public static char KEYBOARD_DOT_ABOVE = 'D';
+   public static char KEYBOARD_RING_ABOVE = 'R';
+   public static char KEYBOARD_DIALYTIKA_TONOS = 'd';
+   public static char KEYBOARD_DOUBLE_ACUTE = 'a';
+
+   
+   public char KEYBOARD_MODE = KEYBOARD_NORMAL;
 
    /**
     * This method adds a char to the text-field
@@ -313,6 +334,62 @@ public class vk_gui extends JFrame {
     */
    private void insertText(String addchar) {
 	   
+	   if (addchar.length() == 1) 
+		   switch (addchar.charAt(0)) {
+		   case '\u00b4' : // acute
+			   setMode(KEYBOARD_ACUTE);
+			   return;
+
+		   case '\u0060' : // grave
+			   setMode(KEYBOARD_GRAVE);
+			   return;
+			   
+		   case '\u02d8' : // breve
+			   setMode(KEYBOARD_BREVE);
+			   return;
+
+		   case '\u0303' : // tilde
+			   setMode(KEYBOARD_TILDE);
+			   return;
+
+		   case '\u005e' : // circumflex
+			   setMode(KEYBOARD_CIRCUMFLEX);
+			   return;
+
+		   case '\u0385' : // dialytika tonos
+			   setMode(KEYBOARD_DIALYTIKA_TONOS);
+			   return;
+
+		   case '\u00b8' : // tilde
+			   setMode(KEYBOARD_CEDILLA);
+			   return;
+
+		   case '\u00a8' : // umlaut
+			   setMode(KEYBOARD_UMLAUT);
+			   return;
+
+		   case '\u02c7' : // caron
+			   setMode(KEYBOARD_CARON);
+			   return;
+
+		   case '\u02d9' : // dot above
+			   setMode(KEYBOARD_DOT_ABOVE);
+			   return;
+
+		   case '\u02db' : // Ogonek
+			   setMode(KEYBOARD_OGONEK);
+			   return;
+
+		   case '\u02da' : // ring above
+			   setMode(KEYBOARD_RING_ABOVE);
+			   return;
+
+		   case '\u02dd' : // double acute
+			   setMode(KEYBOARD_DOUBLE_ACUTE);
+			   return;
+
+		   	}
+	   
 	   if (addchar.equals("<enter>"))
 		   addchar="\n";
 
@@ -320,6 +397,21 @@ public class vk_gui extends JFrame {
       
    }
 
+   private void setMode(char mode) {
+	   if (KEYBOARD_MODE == mode) {
+		   KEYBOARD_MODE = KEYBOARD_NORMAL;
+	   		updateButtons();
+	   } else {
+		   // reset first
+		   KEYBOARD_MODE = KEYBOARD_NORMAL;
+		   updateButtons();
+		   
+		   // new mode
+		   KEYBOARD_MODE = mode;
+		   updateButtons();
+	   }
+
+   }
    /**
     * This method adds a char to the text-field
     *
@@ -348,9 +440,20 @@ public class vk_gui extends JFrame {
 	   sb.append(i+"");
 	   if (j < 10) sb.append('0'); // pad from "1" to "01"
 	   sb.append(j+"");
-	   sb.append("char");
 	   
-	   return start_vk.myKeys.get(sb.toString());
+	   keys ret1 = start_vk.myKeys.get(sb.toString());
+	   
+	   Application.debug("keyboard mode="+KEYBOARD_MODE);
+	   
+	   
+	   if (KEYBOARD_MODE == ' ')
+		   return ret1; // no accent needed
+		
+	   sb.append(KEYBOARD_MODE); // append 'A' for acute etc
+	   
+	   keys ret2 = start_vk.myKeys.get(sb.toString());
+	   
+	   return ret2 != null ? ret2 : ret1;
    }
    
    private String pad(int i) {
