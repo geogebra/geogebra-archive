@@ -249,6 +249,7 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	public void updateDrawingMatrix(){
 		m_matrix4x4 = new Ggb3DMatrix4x4(m_matrix);
 		setDrawingMatrix(m_matrix4x4);
+		setLabelMatrix(m_matrix4x4);
 	}
 	
 	

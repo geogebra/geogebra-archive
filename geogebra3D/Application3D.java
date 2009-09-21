@@ -65,6 +65,8 @@ public abstract class Application3D extends Application{
     	super(args, frame, applet, undoActive);
 
 
+    	//euclidianView3D.initAxisAndPlane();
+    	
         
 	    //TODO remove 3D test : just comment following line        
         new Test3D(kernel3D,euclidianView,euclidianView3D,this);
@@ -115,6 +117,8 @@ public abstract class Application3D extends Application{
 		//init the 3D euclidian view
 		euclidianController3D = new EuclidianController3D(kernel3D);
         euclidianView3D = new EuclidianView3D(euclidianController3D);  
+        
+        
 	}
     
 

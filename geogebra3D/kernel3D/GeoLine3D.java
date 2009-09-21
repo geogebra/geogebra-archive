@@ -20,6 +20,10 @@ public class GeoLine3D extends GeoCoordSys1D {
 		super(c);
 	}
 
+	protected GeoLine3D(Construction c, Ggb3DVector o, Ggb3DVector v) {
+		super(c,o,v);
+	}
+
 	final void setStartPoint(GeoPoint3D P) {        	
     	startPoint = P;	    	
     }
@@ -31,7 +35,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 	}
 
 	public int getGeoClassType() {
-		// TODO Raccord de méthode auto-généré
+		
 		return GEO_CLASS_LINE3D;
 	}
 

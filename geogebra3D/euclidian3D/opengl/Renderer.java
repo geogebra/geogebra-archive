@@ -80,6 +80,8 @@ public class Renderer implements GLEventListener {
 	private int BUFSIZE = 512;
 	private static int MOUSE_PICK_WIDTH = 3;
 	
+	Drawable3D[] drawHits;
+	int pickingLoop;
 	
 	// other
 	private DrawList3D drawList3D;
@@ -820,6 +822,7 @@ public class Renderer implements GLEventListener {
     	
     	double s = thickness*dilationValues[dilation]/view3D.getScale();
     	gl.glScaled(1,s,s);
+    	
        	primitives.segment(gl, (int) thickness);
     	
        	if (dashed)
@@ -950,9 +953,16 @@ public class Renderer implements GLEventListener {
      * @param a_x2 x-coordinate of the top
      */
     public void drawCone(double a_x1, double a_x2){
+    	
+    	/*
+    	if (a_x1<a_x2)
+    		drawSegment(a_x1, a_x2, false);
+    		*/
+    	
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
     	drawCone(thickness);
     	resetMatrix();
+    	
     } 
  
     
@@ -1991,7 +2001,7 @@ public class Renderer implements GLEventListener {
     	
     	
 
-    	BUFSIZE = (drawList3D.size()+1)*2+1;
+    	BUFSIZE = (drawList3D.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
@@ -2034,17 +2044,18 @@ public class Renderer implements GLEventListener {
 
     	
     	
-    	Drawable3D[] drawHits = new Drawable3D[BUFSIZE];
+    	drawHits = new Drawable3D[BUFSIZE];
   
     	primitives.enableVBO(gl);
     	
         // picking objects
-        int loop = drawList3D.drawForPicking(this,drawHits,0);
-        int labelLoop = loop;
+        pickingLoop = 0;
+        drawList3D.drawForPicking(this);
+        int labelLoop = pickingLoop;
         
         if (pickingMode == PICKING_MODE_LABELS){
         	// picking labels
-        	loop = drawList3D.drawLabelForPicking(this,drawHits,loop);
+        	drawList3D.drawLabelForPicking(this);
         }
 
         primitives.disableVBO(gl);
@@ -2098,6 +2109,20 @@ public class Renderer implements GLEventListener {
     
     public void glLoadName(int loop){
     	gl.glLoadName(loop);
+    }
+    
+    public void pick(Drawable3D d){
+    	pickingLoop++;
+    	gl.glLoadName(pickingLoop);
+    	d.drawForPicking(this);	
+    	drawHits[pickingLoop] = d;
+    }
+    
+    public void pickLabel(Drawable3D d){
+    	pickingLoop++;
+    	gl.glLoadName(pickingLoop);
+    	d.drawLabel(this,false,true);	
+    	drawHits[pickingLoop] = d;
     }
     
     /** returns the depth between 0 and 2, in double format, from an integer offset 

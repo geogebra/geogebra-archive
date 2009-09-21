@@ -55,7 +55,9 @@ public class DrawList3D {
 	 */
 	public void remove(Drawable3D drawable){
 		
-		lists[drawable.getType()].remove(drawable);
+		//TODO fix it
+		if (drawable!=null)
+			lists[drawable.getType()].remove(drawable);
 		
 	}
 	
@@ -104,10 +106,11 @@ public class DrawList3D {
 		// curves
 		// TODO if there's no surfaces, no hidden part has to be drawn
 		//if(!lists[Drawable3D.DRAW_TYPE_SURFACES].isEmpty())
-			for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
-				d.next().drawHidden(renderer);
-		
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
+			d.next().drawHidden(renderer);
 
+
+		view3D.drawHidden(renderer);
 
 	}
 
@@ -133,7 +136,7 @@ public class DrawList3D {
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
 			d.next().drawTransp(renderer);	
 		
-		view3D.getxOyPlaneDrawable().drawTransp(renderer);
+		view3D.drawTransp(renderer);
 
 	}
 
@@ -151,6 +154,8 @@ public class DrawList3D {
 		// curves
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
 			d.next().draw(renderer);
+		
+		view3D.draw(renderer);
 		
 	}
 	
@@ -174,7 +179,7 @@ public class DrawList3D {
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
 			d.next().drawHiding(renderer);	
 		
-		view3D.getxOyPlaneDrawable().drawHiding(renderer);
+		view3D.drawHiding(renderer);
 
 	}
 	
@@ -194,25 +199,33 @@ public class DrawList3D {
 	 * @param loop counter
 	 * @return return the final counter
 	 */
-	public int drawForPicking(Renderer renderer, Drawable3D[] drawHits, int loop){
+	public void drawForPicking(Renderer renderer){
 
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			for (Iterator<Drawable3D> iter = lists[i].iterator(); iter.hasNext();) {
 	        	Drawable3D d = iter.next();
+	        	
+	        	renderer.pick(d);
+	        	/*
 	        	loop++;
 	        	renderer.glLoadName(loop);
 	        	d.drawForPicking(renderer);	
 	        	drawHits[loop] = d;
+	        	*/
 			}
 		
+		view3D.drawForPicking(renderer);
+		
 		//view3D plane
+		/*
     	Drawable3D d = view3D.getxOyPlaneDrawable();
     	loop++;
     	renderer.glLoadName(loop);
     	d.drawForPicking(renderer);	
     	drawHits[loop] = d;
+		*/
 		
-		return loop;
+		//return loop;
 
 	}
 	
@@ -222,19 +235,24 @@ public class DrawList3D {
 	 * @param loop counter
 	 * @return return the final counter
 	 */
-	public int drawLabelForPicking(Renderer renderer, Drawable3D[] drawHits, int loop){
+	public void drawLabelForPicking(Renderer renderer){
 
 		
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			for (Iterator<Drawable3D> iter = lists[i].iterator(); iter.hasNext();) {
 	        	Drawable3D d = iter.next();
+	        	
+	        	renderer.pickLabel(d);
+	        	
+	        	/*
 	        	loop++;
 	        	renderer.glLoadName(loop);
 	        	d.drawLabel(renderer,false,true);
 	        	drawHits[loop] = d;
+	        	*/
 			}
 		
-		return loop;
+		//return loop;
 
 	}
 	

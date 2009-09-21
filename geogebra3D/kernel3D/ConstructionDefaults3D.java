@@ -36,6 +36,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_SEGMENT3D = 3101;
 	/** default ray 3D type */	
 	public static final int DEFAULT_RAY3D = 3102;
+	/** default axis 3D type */	
+	public static final int DEFAULT_AXIS3D = 3103;
 	
 	
 	
@@ -165,6 +167,12 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		ray.setLocalVariableLabel("Ray3D");
 		defaultGeoElements.put(DEFAULT_RAY3D, ray);		
 		
+		// axis
+		GeoAxis3D axis = new GeoAxis3D(cons);
+		axis.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		axis.setLocalVariableLabel("Axis3D");
+		defaultGeoElements.put(DEFAULT_AXIS3D, axis);		
+		
 		// plane
 		GeoPlane3D plane = new GeoPlane3D(cons);	
 		plane.setLocalVariableLabel("Plane3D");
@@ -225,6 +233,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 			return DEFAULT_SEGMENT3D;
 		case GeoElement3D.GEO_CLASS_RAY3D: 
 			return DEFAULT_RAY3D;
+		case GeoElement3D.GEO_CLASS_AXIS3D: 
+			return DEFAULT_AXIS3D;
 			
 		
 		case GeoElement3D.GEO_CLASS_PLANE3D: 

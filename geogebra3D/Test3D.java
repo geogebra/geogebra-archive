@@ -137,6 +137,7 @@ public class Test3D{
         view3D.setYZero(-100);
         //view3D.setRotXY(-Math.PI/6,Math.PI/6,true);
         view3D.setRotXY(-Math.PI/6,Math.PI/8,true);
+        view3D.setRotXYinDegrees(-30,22.5,true);
         //view3D.setRotXY(-Math.PI/6,Math.PI/12,true);
         //view3D.setRotXY(0,0,true);
         
@@ -874,6 +875,8 @@ public class Test3D{
 		
 		
 		kernel3D.Plane3D("plane", points[2], points[3], points[4]);
+		
+		//kernel3D.Axis3D("Ox1", new Ggb3DVector(new double[] {0,0,0,1}), new Ggb3DVector(new double[] {1,0,0,0}));
 		
 		return points;
 	}

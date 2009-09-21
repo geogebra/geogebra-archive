@@ -383,6 +383,13 @@ public class Kernel3D
 		return p;
 	}	
 
+	/** Axis3D label linking with (o,v) coord sys   */
+	final public GeoAxis3D Axis3D(String label, Ggb3DVector o, Ggb3DVector v){
+		GeoAxis3D a=new GeoAxis3D(cons,o,v);
+		a.setLabel(label);
+		return a;
+	}	
+	
 	
 	
 	/** Sphere label linking with center o and radius r   */

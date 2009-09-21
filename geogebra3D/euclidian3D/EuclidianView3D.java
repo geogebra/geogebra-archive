@@ -16,6 +16,7 @@ import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
+import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -100,7 +101,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	//axis and xOy plane
 	private GeoPlane3D xOyPlane;
-	
+	private GeoAxis3D[] axis;
+	static final public int DRAWABLES_NB = 4;
 
 	//preview
 	private Previewable previewDrawable;
@@ -180,18 +182,44 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		kernel3D.setSilentMode(false);
 		
 		
-		//axis
-		//kernel3D.setSilentMode(true);
-		xOyPlane = kernel3D.Plane3D("xOy", o, vx, vy);
-		//kernel3D.setSilentMode(false);
 		
-		add(xOyPlane);
+		
+		initAxisAndPlane();
+		
+		
+	}
+	
+	
+	
+	/**
+	 * init the axis and xOy plane
+	 */
+	public void initAxisAndPlane(){
+		
+		
+
+		//plane and axis
+		
+		xOyPlane = kernel3D.Plane3D("xOy", o, vx, vy);
 		xOyPlane.setObjColor(new Color(0.5f,0.5f,0.5f));
 		xOyPlane.setFixed(true);
-		/*
-		xOyPlane.setObjColor(Color.BLACK);
-		xOyPlane.setAlphaValue(1);
-		*/
+		xOyPlane.setLabelVisible(false);
+		add(xOyPlane);
+
+
+		axis = new GeoAxis3D[3];
+		
+		axis[0] = kernel3D.Axis3D("Ox", o, vx);
+		axis[0].setObjColor(Color.BLUE);
+		axis[1] = kernel3D.Axis3D("Oy", o, vy);
+		axis[1].setObjColor(Color.RED);
+		axis[2] = kernel3D.Axis3D("Oz", o, vz);
+		axis[2].setObjColor(Color.GREEN);
+		for(int i=0;i<3;i++){
+			axis[i].setFixed(true);
+			axis[i].setLabelVisible(false);
+			add(axis[i]);
+		}
 		
 	}
 	
@@ -292,6 +320,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				case GeoElement3D.GEO_CLASS_CONIC3D:					
 					d = new DrawConic3D(this, (GeoConic3D) geo);
 					break;	
+					
+				case GeoElement3D.GEO_CLASS_AXIS3D:	
+					d = new DrawAxis3D(this, (GeoAxis3D) geo);	
+					break;									
+
 					
 
 
@@ -426,9 +459,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		updateMatrix();
-		//setWaitForUpdate(repaint);
-		if (repaint)
-			update();
+		
+		waitForUpdate = repaint;
+		//if (repaint)
+			//update();
 	}
 	
 	
@@ -512,27 +546,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void update(){
 
 
-		/*
-		if (waitForUpdate){
-
-			//picking
-			if ((waitForPick)&&(!removeHighlighting)){
-
-				waitForPick = false;
-			}
-			
-
-			//other
-			drawList3D.updateAll();	//TODO waitForUpdate for each object
-			
-			waitForUpdate = false;
-
-		}
-		
-		*/
+	
 		
 		if (waitForUpdate){
 			drawList3D.updateAll();
+			updateDrawables();
 			waitForUpdate = false;
 		}
 
@@ -1740,7 +1758,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	/////////////////////////////////////////////////////
 	// 
-	// AXIS AND PLANE
+	// EUCLIDIANVIEW DRAWABLES (AXIS AND PLANE)
 	//
 	/////////////////////////////////////////////////////
 	
@@ -1751,11 +1769,67 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 	}
 	
-	public DrawPlane3D getxOyPlaneDrawable()  {
-
-		return (DrawPlane3D) getxOyPlane().getDrawable3D();
+	
+	public boolean owns(GeoElement geo){
+		
+		boolean ret = (geo == xOyPlane);
+		
+		for(int i=0;(!ret)&&(i<3);i++)
+			ret = (geo == axis[i]);
+		
+		return ret;
 		
 	}
+	
+	
+	
+	/** draw transparent parts of view's drawables (xOy plane)
+	 * @param renderer
+	 */
+	public void drawTransp(Renderer renderer){
+		xOyPlane.getDrawable3D().drawTransp(renderer);
+	}
+	
+	
+	/** draw hiding parts of view's drawables (xOy plane)
+	 * @param renderer
+	 */
+	public void drawHiding(Renderer renderer){
+		xOyPlane.getDrawable3D().drawHiding(renderer);
+	}
+	
+	/** draw not hidden parts of view's drawables (axis)
+	 * @param renderer
+	 */
+	public void draw(Renderer renderer){
+		for(int i=0;i<3;i++)
+			axis[i].getDrawable3D().draw(renderer);
+	}
+	
+	/** draw hidden parts of view's drawables (axis)
+	 * @param renderer
+	 */
+	public void drawHidden(Renderer renderer){
+		for(int i=0;i<3;i++)
+			axis[i].getDrawable3D().drawHidden(renderer);
+	}
+	
+	
+	/** draw for picking view's drawables (plane and axis)
+	 * @param renderer
+	 */
+	public void drawForPicking(Renderer renderer){
+		renderer.pick(xOyPlane.getDrawable3D());
+		for(int i=0;i<3;i++)
+			renderer.pick(axis[i].getDrawable3D());
+	}
+	
+	public void updateDrawables(){
+		for(int i=0;i<3;i++)
+			axis[i].getDrawable3D().update();
+	}
+	
+	
 
 
 }
