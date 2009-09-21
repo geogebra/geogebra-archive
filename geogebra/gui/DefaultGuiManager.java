@@ -2379,9 +2379,12 @@ public class DefaultGuiManager implements GuiManager {
 			
 		}
 		
-		public void insertStringIntoTextfield(String text) {
+		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed) {
+			
 			if (currentTextfield != null && !text.equals("\n")
-					&& (!text.startsWith("<") || !text.endsWith(">"))) {
+					&& (!text.startsWith("<") || !text.endsWith(">"))
+					&& !altPressed
+					&& !ctrlPressed) {
 				currentTextfield.insertString(text);
 			} else {
 				// use Robot if no TextField currently active
@@ -2394,7 +2397,7 @@ public class DefaultGuiManager implements GuiManager {
 				
 				if (kb != null) {
 					if (!text.startsWith("<") || !text.endsWith(">")) {
-						kb.type(text);
+						kb.type(altPressed, ctrlPressed, text);
 					} else {
 						if (text.equals("<escape>"))
 							kb.doType(KeyEvent.VK_ESCAPE);

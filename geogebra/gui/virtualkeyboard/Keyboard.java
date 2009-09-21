@@ -12,7 +12,7 @@ public class Keyboard {
 
     protected Robot robot;
 
-    public static void main(String... args) throws Exception {
+    public static void mainx(String... args) throws Exception {
         Keyboard keyboard = new Keyboard();
         keyboard.type("Hello there, how are you?");
     }
@@ -31,6 +31,26 @@ public class Keyboard {
                 char character = characters.charAt(i);
                 type(character);
         }
+    }
+
+    public void type(boolean altPressed, boolean ctrlPressed, CharSequence characters) {
+    	
+       	if (altPressed)
+    		robot.keyPress(KeyEvent.VK_ALT);
+    	if (ctrlPressed)
+    		robot.keyPress(KeyEvent.VK_CONTROL);
+    	
+        int length = characters.length();
+        for (int i = 0; i < length; i++) {
+                char character = characters.charAt(i);
+                type(character);
+        }
+        
+    	if (altPressed)
+    		robot.keyRelease(KeyEvent.VK_ALT);
+    	if (ctrlPressed)
+    		robot.keyRelease(KeyEvent.VK_CONTROL);
+    	
     }
 
     public void type(char character) {
@@ -137,7 +157,7 @@ public class Keyboard {
         }
     }
 
-    public void doType(int... keyCodes) {
+    public void doType(int... keyCodes ) {
         doType(keyCodes, 0, keyCodes.length);
     }
 

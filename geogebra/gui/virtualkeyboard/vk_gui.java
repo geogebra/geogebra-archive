@@ -17,6 +17,7 @@ import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 
 
@@ -27,7 +28,7 @@ public class vk_gui extends JFrame {
  
    
    private static final long serialVersionUID = 1L;
-   private static Boolean Upper     = false;
+//   private static Boolean Upper     = false;
 
    private JPanel jContentPane      = null;
 
@@ -36,7 +37,9 @@ public class vk_gui extends JFrame {
    private JButton[][] Buttons = new JButton[6][13];
 
    private JButton SpaceButton      = null;
-   private JButton CapsLockButton   = null;
+   private JToggleButton CapsLockButton   = null;
+   private JToggleButton AltButton   = null;
+   private JToggleButton CtrlButton   = null;
    private JButton MathButton   = null;
    private JButton GreekButton   = null;
 
@@ -152,14 +155,14 @@ public class vk_gui extends JFrame {
     * This method inverts the whole keyboard from Upper to Lower and from Lower to Upper case.
     *
     * @return void
-    */
+    *
    public void invertButtons() {
       
 	   Upper = !Upper;
       
 	   updateButtons();
 
-   }
+   }//*/
    
    public void updateButtons() {
 	      for (int i = 1 ; i <= buttonRows ; i++)
@@ -170,6 +173,8 @@ public class vk_gui extends JFrame {
 	      updateCapsLockButton();
 	      updateMathButton();
 	      updateGreekButton();
+	      updateAltButton();
+	      updateCtrlButton();
    }
 
    /**
@@ -195,44 +200,92 @@ public class vk_gui extends JFrame {
    }
    
    private void updateSpaceButton() {
-       SpaceButton.setSize(new Dimension(buttonSize * 6, buttonSize / 2));
-       SpaceButton.setLocation(new Point(buttonSize * 4, buttonSize * 17 / 4));
+       SpaceButton.setSize(new Dimension(buttonSize * 5 , buttonSize));
+       SpaceButton.setLocation(new Point(buttonSize * 4, buttonSize * 4));
 	   
    }
    
    private void updateCapsLockButton() {
-	   CapsLockButton.setSize(new Dimension(buttonSize, buttonSize / 2));
-	   CapsLockButton.setLocation(new Point(buttonSize / 2, buttonSize * 17 / 4));
+	   CapsLockButton.setSize(new Dimension(buttonSize, buttonSize));
+	   CapsLockButton.setLocation(new Point(buttonSize / 2, buttonSize * 4));
 	   
 	   CapsLockButton.setFont(getSmallFont(buttonSize * 5 / 18));
+	   
+	   //CapsLockButton.set
+   }
+   
+   private void updateCtrlButton() {
+	   CtrlButton.setSize(new Dimension(buttonSize, buttonSize));
+	   CtrlButton.setLocation(new Point(buttonSize * 3 / 2, buttonSize * 4));
+	   
+	   CtrlButton.setFont(getSmallFont(buttonSize * 5 / 18));
+   }
+   
+   private void updateAltButton() {
+	   AltButton.setSize(new Dimension(buttonSize, buttonSize));
+	   AltButton.setLocation(new Point(buttonSize * 5 / 2, buttonSize * 4));
+	   
+	   AltButton.setFont(getSmallFont(buttonSize * 5 / 18));
    }
    
    private void updateMathButton() {
-	   MathButton.setSize(new Dimension(buttonSize, buttonSize / 2));
-	   MathButton.setLocation(new Point(buttonSize * 3 / 2, buttonSize * 17 / 4));
+	   MathButton.setSize(new Dimension(buttonSize, buttonSize));
+	   MathButton.setLocation(new Point(buttonSize * 19 / 2, buttonSize * 4));
 	   
 	   MathButton.setFont(getSmallFont(buttonSize * 5 / 18));
    }
    
    private void updateGreekButton() {
-	   GreekButton.setSize(new Dimension(buttonSize, buttonSize / 2));
-	   GreekButton.setLocation(new Point(buttonSize * 5 / 2, buttonSize * 17 / 4));
+	   GreekButton.setSize(new Dimension(buttonSize, buttonSize));
+	   GreekButton.setLocation(new Point(buttonSize * 21 / 2, buttonSize * 4));
 	   
 	   GreekButton.setFont(getSmallFont(buttonSize * 5 / 18));
    }
    
-   private JButton getCapsLockButton() {
+   private JToggleButton getCapsLockButton() {
 	      if (CapsLockButton == null) {
 
-	         CapsLockButton             = new JButton("\u21e7");
+	         CapsLockButton             = new JToggleButton("\u21e7");
 	         updateCapsLockButton();
 	         CapsLockButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
-	                  invertButtons();
+	                  updateButtons();
 	               }
 	           });
 	      }
 	      return CapsLockButton;
+	   }
+
+   private JToggleButton getAltButton() {
+	      if (AltButton == null) {
+
+	    	  AltButton             = new JToggleButton("Alt");
+	         updateAltButton();
+	         /*
+	         AltButton.addActionListener(new java.awt.event.ActionListener() {
+	               public void actionPerformed(java.awt.event.ActionEvent e) {
+	                  altPressed = !altPressed;
+	                  updateAltButton();
+	               }
+	           });*/
+	      }
+	      return AltButton;
+	   }
+
+   private JToggleButton getCtrlButton() {
+	      if (CtrlButton == null) {
+
+	    	  CtrlButton             = new JToggleButton("Ctrl");
+	         updateCtrlButton();
+	         /*
+	         CtrlButton.addActionListener(new java.awt.event.ActionListener() {
+	               public void actionPerformed(java.awt.event.ActionEvent e) {
+	                  ctrlPressed = !ctrlPressed;
+	                  updateCtrlButton();
+	               }
+	           });*/
+	      }
+	      return CtrlButton;
 	   }
 
    private JButton getMathButton() {
@@ -255,7 +308,6 @@ public class vk_gui extends JFrame {
 	   }
    
    boolean greek = false;
-   //boolean math = false;
 
    private JButton getGreekButton() {
 	      if (GreekButton == null) {
@@ -299,6 +351,8 @@ public class vk_gui extends JFrame {
          jContentPane.add(getCapsLockButton(), null);
          jContentPane.add(getMathButton(), null);
          jContentPane.add(getGreekButton(), null);
+         jContentPane.add(getAltButton(), null);
+         jContentPane.add(getCtrlButton(), null);
 
       }
       return jContentPane;
@@ -391,7 +445,7 @@ public class vk_gui extends JFrame {
 	   if (addchar.equals("<enter>"))
 		   addchar="\n";
 
-      app.getGuiManager().insertStringIntoTextfield(addchar);
+      app.getGuiManager().insertStringIntoTextfield(addchar, getAltButton().isSelected(), getCtrlButton().isSelected());
       
    }
 
@@ -412,13 +466,17 @@ public class vk_gui extends JFrame {
 	   //Application.debug("mode="+KEYBOARD_MODE);
 
    }
+   
+   private boolean Upper() {
+	   return getCapsLockButton().isSelected();
+   }
    /**
     * This method adds a char to the text-field
     *
     * @return void
     */
    private void insertKeyText(keys Keys) {
-      if(Upper) {
+      if(Upper()) {
     	  //kb.type(Keys.getUpperCase());
     	  insertText(Keys.getUpperCase());
       } else {
@@ -468,7 +526,7 @@ public class vk_gui extends JFrame {
 	         updateButton(i,j);
 	         Insets Inset = new Insets(0,0,0,0);
 	         Buttons[i][j].setMargin(Inset);
-	         String text = Upper ? thisKeys.getUpperCase() : thisKeys.getLowerCase();
+	         String text = Upper() ? thisKeys.getUpperCase() : thisKeys.getLowerCase();
 	         
 			 Buttons[i][j].setText(processSpecialKeys(text));
 			 
@@ -499,7 +557,7 @@ public class vk_gui extends JFrame {
   
    private void updateButton(int i, int j) {
 	   keys k = getKey(i, j);
-	      if(Upper) {
+	      if(Upper()) {
 	         Buttons[i][j].setText(processSpecialKeys(k.getUpperCase()));
 	      } else {
 	         Buttons[i][j].setText(processSpecialKeys(k.getLowerCase()));
