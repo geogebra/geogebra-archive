@@ -277,16 +277,8 @@ class ViewMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				
-				
-				   //Hashtable<String, String> myConf = new Hashtable<String, String>();
-				   //Hashtable<String, keys>   myKeys = new Hashtable<String, keys>();
-	        	   //myConf = defaultConf.setDefault(myConf);
-	               //myKeys = defaultConf.setKeyboard(myKeys);
-	               start_vk.readConf(app, null, false);
-	               vk_gui thisClass = new vk_gui(app, 400, 235);
-	               thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	               thisClass.setVisible(true);
+
+				app.toggleKeyboard();
 
 			}
 		};
@@ -510,6 +502,7 @@ class ViewMenu extends BaseMenu {
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
+		cbShowKeyboard.setSelected(app.showVirtualKeyboard());
 		cbShowCmdList.setSelected(app.showCmdList());
 		cbShowInputTop.setSelected(app.showInputTop());
 		cbShowToolBar.setSelected(app.showToolBar());
