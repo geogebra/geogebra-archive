@@ -445,7 +445,7 @@ public class vk_gui extends JFrame {
 	   if (addchar.equals("<enter>"))
 		   addchar="\n";
 
-      app.getGuiManager().insertStringIntoTextfield(addchar, getAltButton().isSelected(), getCtrlButton().isSelected());
+      app.getGuiManager().insertStringIntoTextfield(addchar, getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected());
       
    }
 

@@ -2379,8 +2379,8 @@ public class DefaultGuiManager implements GuiManager {
 			
 		}
 		
-		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed) {
-			
+		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed) {
+
 			if (currentTextfield != null && !text.equals("\n")
 					&& (!text.startsWith("<") || !text.endsWith(">"))
 					&& !altPressed
@@ -2397,20 +2397,20 @@ public class DefaultGuiManager implements GuiManager {
 				
 				if (kb != null) {
 					if (!text.startsWith("<") || !text.endsWith(">")) {
-						kb.type(altPressed, ctrlPressed, text);
+						kb.type(altPressed, ctrlPressed, shiftPressed, text);
 					} else {
 						if (text.equals("<escape>"))
-							kb.doType(KeyEvent.VK_ESCAPE);
+							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_ESCAPE);
 						else if (text.equals("<left>"))
-							kb.doType(KeyEvent.VK_LEFT);
+							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_LEFT);
 						else if (text.equals("<right>"))
-							kb.doType(KeyEvent.VK_RIGHT);
+							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_RIGHT);
 						else if (text.equals("<up>"))
-							kb.doType(KeyEvent.VK_UP);
+							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_UP);
 						else if (text.equals("<down>"))
-							kb.doType(KeyEvent.VK_DOWN);
+							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_DOWN);
 						else if (text.equals("<backspace>"))
-							kb.doType(KeyEvent.VK_BACK_SPACE);
+							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_BACK_SPACE);
 						else Application.debug("unknown keycode:"+text);
 					}
 						
