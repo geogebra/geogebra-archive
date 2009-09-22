@@ -277,7 +277,7 @@ class ViewMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 
-				app.toggleKeyboard();
+				app.getGuiManager().toggleKeyboard();
 
 			}
 		};
@@ -501,7 +501,7 @@ class ViewMenu extends BaseMenu {
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
-		cbShowKeyboard.setSelected(app.showVirtualKeyboard());
+		cbShowKeyboard.setSelected(app.getGuiManager().showVirtualKeyboard());
 		cbShowCmdList.setSelected(app.showCmdList());
 		cbShowInputTop.setSelected(app.showInputTop());
 		cbShowToolBar.setSelected(app.showToolBar());

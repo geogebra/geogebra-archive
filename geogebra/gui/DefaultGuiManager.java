@@ -17,6 +17,7 @@ import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.WindowUnicodeKeyboard;
+import geogebra.gui.virtualkeyboard.vk_gui;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
@@ -644,6 +645,9 @@ public class DefaultGuiManager implements GuiManager {
 			updateJavaUILanguage();
 		if (optionsDialog != null)
 			optionsDialog.setLabels();
+		
+		if (virtualKeyboard != null)
+			virtualKeyboard.setLabels();
 			
 		//layout.getDockManager().setLabels();			
 	}
@@ -2417,6 +2421,23 @@ public class DefaultGuiManager implements GuiManager {
 				}
 				
 			}
+		}
+		vk_gui virtualKeyboard = null;
+		
+		public void toggleKeyboard() {
+			
+			if (virtualKeyboard == null) {
+				virtualKeyboard = new vk_gui(app, 400, 235);
+			}
+			virtualKeyboard.setVisible(!virtualKeyboard.isVisible());
+
+		}
+		
+		public boolean showVirtualKeyboard() {
+			if (virtualKeyboard == null) 
+				return false;
+			
+			return virtualKeyboard.isVisible();
 		}
 		
 }

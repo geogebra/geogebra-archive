@@ -3700,21 +3700,4 @@ public abstract class Application implements KeyEventDispatcher {
 		return colors;
 	}
 	
-	vk_gui virtualKeyboard = null;
-	
-	public void toggleKeyboard() {
-		
-		if (virtualKeyboard == null) {
-			virtualKeyboard = new vk_gui(this, 400, 235);
-		}
-		virtualKeyboard.setVisible(!virtualKeyboard.isVisible());
-
-	}
-	
-	public boolean showVirtualKeyboard() {
-		if (virtualKeyboard == null) 
-			return false;
-		
-		return virtualKeyboard.isVisible();
-	}
 }

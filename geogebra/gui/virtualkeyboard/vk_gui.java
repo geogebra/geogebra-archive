@@ -641,5 +641,15 @@ public class vk_gui extends JFrame {
 			}
 		}	
    }
+   
+   public void setLabels() {
+	   readConf(app, null, false);
+	   greek = false;
+	   AltButton.setSelected(false);
+	   CtrlButton.setSelected(false);
+	   CapsLockButton.setSelected(false);
+	   KEYBOARD_MODE = KEYBOARD_NORMAL;
+	   updateButtons();
+   }
 
 }
