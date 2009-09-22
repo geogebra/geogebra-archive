@@ -1,6 +1,7 @@
 package geogebra.gui.virtualkeyboard;
 
 import geogebra.main.Application;
+import geogebra.main.MyResourceBundle;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,7 +13,10 @@ import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -62,6 +66,9 @@ public class vk_gui extends JFrame {
    public vk_gui(final Application app, int sizeX, int sizeY) {
       
 	   super();
+	   
+	   readConf(app, null, false);
+	   
 	   windowX = sizeX;
 	   windowY = sizeY;
       this.app = app;
@@ -319,9 +326,9 @@ public class vk_gui extends JFrame {
 	                  greek = !greek;
 	                  setMode(KEYBOARD_NORMAL);
 	                  if (greek)
-	                	  start_vk.readConf(app, new Locale("el"), false);
+	                	  readConf(app, new Locale("el"), false);
 	                  else
-		            	  start_vk.readConf(app, null, false);
+		            	  readConf(app, null, false);
 	                	  
 	            	   updateButtons();
 	               }
@@ -499,7 +506,7 @@ public class vk_gui extends JFrame {
 	   if (j < 10) sb.append('0'); // pad from "1" to "01"
 	   sb.append(j+"");
 	   
-	   keys ret1 = start_vk.myKeys.get(sb.toString());
+	   keys ret1 = myKeys.get(sb.toString());
 	   
 	   //Application.debug("keyboard mode="+KEYBOARD_MODE);
 	   
@@ -509,7 +516,7 @@ public class vk_gui extends JFrame {
 		
 	   sb.append(KEYBOARD_MODE); // append 'A' for acute etc
 	   
-	   keys ret2 = start_vk.myKeys.get(sb.toString());
+	   keys ret2 = myKeys.get(sb.toString());
 	   
 	   return ret2 != null ? ret2 : ret1;
    }
@@ -591,6 +598,48 @@ public class vk_gui extends JFrame {
 		   smFont = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size);
 	   
 	   return smFont;
+   }
+
+   private Hashtable<String, keys>   myKeys = new Hashtable<String, keys>();
+   
+   private void readConf(Application app, Locale loc, boolean math) {
+	   
+		//ResourceBundle rbKeyboard = MyResourceBundle.loadSingleBundleFile("/geogebra/gui/virtualkeyboard/keyboard_en_UK");
+
+	   ResourceBundle rbKeyboard;
+	   
+	   if (math) {
+		   rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboardMath", app.getLocale());
+	   } else {
+		   if (loc == null)
+				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", app.getLocale());
+		   else {
+			   rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", new Locale("el"));
+		   }
+	   }
+	   
+	   //myKeys.clear();
+		
+		Enumeration keys = rbKeyboard.getKeys();
+		while (keys.hasMoreElements()) {
+			String keyU = (String) keys.nextElement();
+			
+			if (keyU.endsWith("U")) {
+				keys keyItem = new keys();
+				String key = keyU.substring(0,keyU.length() - 1);
+
+				String valueU = rbKeyboard.getString(keyU);
+				String valueL = rbKeyboard.getString(key+"L");
+				
+				
+				keyItem.setLowerCase(valueL);
+				keyItem.setUpperCase(valueU);
+				
+				//Application.debug(key+"char "+valueL+" "+valueU);
+				
+				myKeys.put(key,keyItem);
+			}
+		}	
    }
 
 }

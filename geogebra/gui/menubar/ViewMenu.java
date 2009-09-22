@@ -5,7 +5,6 @@ import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.virtualkeyboard.keys;
-import geogebra.gui.virtualkeyboard.start_vk;
 import geogebra.gui.virtualkeyboard.vk_gui;
 import geogebra.io.layout.Perspective;
 import geogebra.main.Application;
