@@ -50,7 +50,7 @@ public class vk_gui extends JFrame {
    
    private int buttonRows = 5;
    private int buttonCols = 14;
-   private int buttonSize;
+   private double buttonSizeX, buttonSizeY;
    
    private JButton[][] Buttons = new JButton[buttonRows + 1][buttonCols];
 
@@ -124,6 +124,7 @@ public class vk_gui extends JFrame {
 
     	} 
     	
+    	    	
       windowResized();
       /*
       try {
@@ -137,11 +138,12 @@ public class vk_gui extends JFrame {
    
    final private void windowResized() {
 	   
-	      int sizeX = getWidth();
-	      int sizeY = getHeight();
+	      int sizeX = jContentPane.getWidth();
+	      int sizeY = jContentPane.getHeight();
 	      
-	      buttonSize = Math.min(sizeX / (buttonCols ), sizeY / (buttonRows + 2));
-	      if (buttonSize < 20) buttonSize = 20;
+	      buttonSizeX = 0.15 +(double)sizeX / (double)(buttonCols );
+	      buttonSizeY = 0.25 + (double)sizeY / (double)(buttonRows + 1);
+	      //if (buttonSize < 20) buttonSize = 20;
 	   
 	   updateButtons();
 	   
@@ -208,46 +210,46 @@ public class vk_gui extends JFrame {
    }
    
    private void updateSpaceButton() {
-       SpaceButton.setSize(new Dimension(buttonSize * 5 , buttonSize));
-       SpaceButton.setLocation(new Point(buttonSize * 4, buttonSize * 4));
+       SpaceButton.setSize(new Dimension((int)(buttonSizeX * 5d) , (int)buttonSizeY));
+       SpaceButton.setLocation(new Point((int)(buttonSizeX * 4d), (int)(buttonSizeY * 4d)));
 	   
    }
    
    private void updateCapsLockButton() {
-	   CapsLockButton.setSize(new Dimension(buttonSize, buttonSize));
-	   CapsLockButton.setLocation(new Point(buttonSize / 2, buttonSize * 4));
+	   CapsLockButton.setSize(new Dimension((int)(buttonSizeX ) , (int)buttonSizeY));
+	   CapsLockButton.setLocation(new Point((int)(buttonSizeX / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   CapsLockButton.setFont(getSmallFont(buttonSize * 5 / 18));
+	   CapsLockButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
 	   
 	   //CapsLockButton.set
    }
    
    private void updateCtrlButton() {
-	   CtrlButton.setSize(new Dimension(buttonSize, buttonSize));
-	   CtrlButton.setLocation(new Point(buttonSize * 3 / 2, buttonSize * 4));
+	   CtrlButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
+	   CtrlButton.setLocation(new Point((int)(buttonSizeX * 3d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   CtrlButton.setFont(getSmallFont(buttonSize * 5 / 18));
+	   CtrlButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
    }
    
    private void updateAltButton() {
-	   AltButton.setSize(new Dimension(buttonSize, buttonSize));
-	   AltButton.setLocation(new Point(buttonSize * 5 / 2, buttonSize * 4));
+	   AltButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
+	   AltButton.setLocation(new Point((int)(buttonSizeX * 5d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   AltButton.setFont(getSmallFont(buttonSize * 5 / 18));
+	   AltButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
    }
    
    private void updateMathButton() {
-	   MathButton.setSize(new Dimension(buttonSize, buttonSize));
-	   MathButton.setLocation(new Point(buttonSize * 19 / 2, buttonSize * 4));
+	   MathButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
+	   MathButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   MathButton.setFont(getSmallFont(buttonSize * 5 / 18));
+	   MathButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
    }
    
    private void updateGreekButton() {
-	   GreekButton.setSize(new Dimension(buttonSize, buttonSize));
-	   GreekButton.setLocation(new Point(buttonSize * 21 / 2, buttonSize * 4));
+	   GreekButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
+	   GreekButton.setLocation(new Point((int)(buttonSizeX * 21d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   GreekButton.setFont(getSmallFont(buttonSize * 5 / 18));
+	   GreekButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
    }
    
    private JToggleButton getCapsLockButton() {
@@ -581,13 +583,13 @@ public class vk_gui extends JFrame {
 	      // skip a row (for spacebar etc)
 	      int ii = (i == 5) ? 6 : i;
 	      
-	         Buttons[i][j].setBounds(new Rectangle(buttonSize * (j), buttonSize * (ii - 1), buttonSize, buttonSize));
+	         Buttons[i][j].setBounds(new Rectangle((int)(0.5 + buttonSizeX * (double)j), (int)(0.5 + buttonSizeY * (double)(ii - 1)), (int)buttonSizeX, (int)buttonSizeY));
 	         
 	         // make sure "Esc" fits
 	         int len = (Buttons[i][j].getText().length() + 1) / 2;
 	         if (len == 0) len = 1;
 	         
-	         Buttons[i][j].setFont(getFont(buttonSize * 10 / 12 / len));
+	         Buttons[i][j].setFont(getFont((int)(Math.min(buttonSizeX, buttonSizeY) * 10d / 14d / len)));
       
 	   }
    
