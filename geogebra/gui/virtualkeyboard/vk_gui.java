@@ -3,6 +3,7 @@ package geogebra.gui.virtualkeyboard;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -22,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 
 
 
@@ -34,7 +36,7 @@ public class vk_gui extends JFrame {
    private static final long serialVersionUID = 1L;
 //   private static Boolean Upper     = false;
 
-   private JPanel jContentPane      = null;
+   //private JPanel jContentPane      = null;
 
    //private JTextArea jTextArea      = null;
    
@@ -124,8 +126,17 @@ public class vk_gui extends JFrame {
 
     	} 
     	
-    	    	
-      windowResized();
+
+    	
+    	
+      //windowResized();
+      
+    	// TODO: fix
+    	// force resizing of contentPane
+      SwingUtilities.invokeLater( new Runnable(){ public void
+      	run() { windowResized();} });
+
+
       /*
       try {
 
@@ -138,8 +149,11 @@ public class vk_gui extends JFrame {
    
    final private void windowResized() {
 	   
-	      int sizeX = jContentPane.getWidth();
-	      int sizeY = jContentPane.getHeight();
+	      int sizeX = getContentPane().getWidth();
+	      int sizeY = getContentPane().getHeight();
+	      
+	      if (sizeX == 0) sizeX = getWidth();
+	      if (sizeY == 0) sizeY = getHeight();
 	      
 	      buttonSizeX = 0.15 +(double)sizeX / (double)(buttonCols );
 	      buttonSizeY = 0.25 + (double)sizeY / (double)(buttonRows + 1);
@@ -155,9 +169,10 @@ public class vk_gui extends JFrame {
     * @return void
     */
    private void initialize() {
-      this.setSize(windowX, windowY);
+	      this.setSize(windowX, windowY);
+	      this.setPreferredSize(new Dimension(windowX, windowY));
       this.setName("MainPanel");
-      this.setContentPane(getJContentPane());
+      populateContentPane();
       this.setTitle("Virtual Keyboard");
    }
 
@@ -346,26 +361,29 @@ public class vk_gui extends JFrame {
     * 
     * @return javax.swing.JPanel
     */
-   private JPanel getJContentPane() {
-      if (jContentPane == null) {
-         jContentPane = new JPanel();
+   private void populateContentPane() {
+      //if (jContentPane == null) {
+         //jContentPane = new JPanel();
 
-         jContentPane.setLayout(null);
+         setLayout(null);
          //jContentPane.add(getJTextArea(), null);
          
          for (int i = 1 ; i <= buttonRows ; i++)
          for (int j = 0 ; j < buttonCols ; j++)
-        	 jContentPane.add(getButton(i,j), null);
+        	 add(getButton(i,j), null);
          
-         jContentPane.add(getSpaceButton(), null);
-         jContentPane.add(getCapsLockButton(), null);
-         jContentPane.add(getMathButton(), null);
-         jContentPane.add(getGreekButton(), null);
-         jContentPane.add(getAltButton(), null);
-         jContentPane.add(getCtrlButton(), null);
+         add(getSpaceButton(), null);
+         add(getCapsLockButton(), null);
+         add(getMathButton(), null);
+         add(getGreekButton(), null);
+         add(getAltButton(), null);
+         add(getCtrlButton(), null);
+         
+         //jContentPane.setSize(getWidth(), getHeight());
+         //pack();
 
-      }
-      return jContentPane;
+     // }
+      //return getContentPane();
    }
    
    
