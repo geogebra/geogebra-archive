@@ -38,7 +38,6 @@ public class vk_gui extends JFrame {
 
    //private JTextArea jTextArea      = null;
    
-   private JButton[][] Buttons = new JButton[6][13];
 
    private JButton SpaceButton      = null;
    private JToggleButton CapsLockButton   = null;
@@ -50,9 +49,11 @@ public class vk_gui extends JFrame {
    private Application app;
    
    private int buttonRows = 5;
-   private int buttonCols = 12;
+   private int buttonCols = 14;
    private int buttonSize;
    
+   private JButton[][] Buttons = new JButton[buttonRows + 1][buttonCols];
+
    private int windowX, windowY;
    
    private Font font, smFont;
@@ -173,7 +174,7 @@ public class vk_gui extends JFrame {
    
    public void updateButtons() {
 	      for (int i = 1 ; i <= buttonRows ; i++)
-	          for (int j = 1 ; j <= buttonCols ; j++)
+	          for (int j = 0 ; j < buttonCols ; j++)
 	        	  updateButton(i,j);	   
 	      
 	      updateSpaceButton();
@@ -350,8 +351,8 @@ public class vk_gui extends JFrame {
          jContentPane.setLayout(null);
          //jContentPane.add(getJTextArea(), null);
          
-         for (int i = 1 ; i <= 5 ; i++)
-         for (int j = 1 ; j <= 12 ; j++)
+         for (int i = 1 ; i <= buttonRows ; i++)
+         for (int j = 0 ; j < buttonCols ; j++)
         	 jContentPane.add(getButton(i,j), null);
          
          jContentPane.add(getSpaceButton(), null);
@@ -508,7 +509,8 @@ public class vk_gui extends JFrame {
 	   
 	   keys ret1 = myKeys.get(sb.toString());
 	   
-	   //Application.debug("keyboard mode="+KEYBOARD_MODE);
+	   if (ret1 == null)
+	   Application.debug(sb.toString());
 	   
 	   
 	   if (KEYBOARD_MODE == ' ')
@@ -551,7 +553,7 @@ public class vk_gui extends JFrame {
 	   // check first for speed
 	   if (!text.startsWith("<")) return text;
 	   
-	   if (text.equals("<enter>")) return "\u21b2";
+	   if (text.equals("<enter>")) return unicodeString('\u21b2', "cr");
 	   if (text.equals("<backspace>")) return "\u21a4";
 	   if (text.equals("<escape>")) return "Esc";
 	   if (text.equals("<left>")) return "\u2190";
@@ -560,6 +562,11 @@ public class vk_gui extends JFrame {
 	   if (text.equals("<down>")) return "\u2193";
 	   
 	   return text;
+   }
+   
+   private String unicodeString(char c, String alternative) {
+	   if (font.canDisplay(c)) return c+"";
+	   else return alternative;
    }
   
    private void updateButton(int i, int j) {
@@ -574,7 +581,7 @@ public class vk_gui extends JFrame {
 	      // skip a row (for spacebar etc)
 	      int ii = (i == 5) ? 6 : i;
 	      
-	         Buttons[i][j].setBounds(new Rectangle(buttonSize * (j - 1), buttonSize * (ii - 1), buttonSize, buttonSize));
+	         Buttons[i][j].setBounds(new Rectangle(buttonSize * (j), buttonSize * (ii - 1), buttonSize, buttonSize));
 	         
 	         // make sure "Esc" fits
 	         int len = (Buttons[i][j].getText().length() + 1) / 2;
