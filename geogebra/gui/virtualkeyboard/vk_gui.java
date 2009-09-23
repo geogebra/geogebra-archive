@@ -3,7 +3,6 @@ package geogebra.gui.virtualkeyboard;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -21,7 +20,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
@@ -45,8 +43,8 @@ public class vk_gui extends JFrame {
    private JToggleButton CapsLockButton   = null;
    private JToggleButton AltButton   = null;
    private JToggleButton CtrlButton   = null;
-   private JButton MathButton   = null;
-   private JButton GreekButton   = null;
+   private JToggleButton MathButton   = null;
+   private JToggleButton GreekButton   = null;
 
    private Application app;
    
@@ -215,6 +213,7 @@ public class vk_gui extends JFrame {
          //SpaceButton.setSize(new Dimension(ButtonX, ButtonY));
          //SpaceButton.setLocation(new Point(ButtonStart, linepos));
          updateSpaceButton();
+  	   	SpaceButton.setMargin(new Insets(0,0,0,0));
          SpaceButton.addActionListener(new java.awt.event.ActionListener() {
                public void actionPerformed(java.awt.event.ActionEvent e) {
                   insertText(" ");
@@ -234,7 +233,7 @@ public class vk_gui extends JFrame {
 	   CapsLockButton.setSize(new Dimension((int)(buttonSizeX ) , (int)buttonSizeY));
 	   CapsLockButton.setLocation(new Point((int)(buttonSizeX / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   CapsLockButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
+	   CapsLockButton.setFont(getSmallFont((int)(buttonSizeX)));
 	   
 	   //CapsLockButton.set
    }
@@ -243,28 +242,28 @@ public class vk_gui extends JFrame {
 	   CtrlButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 	   CtrlButton.setLocation(new Point((int)(buttonSizeX * 3d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   CtrlButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
+	   CtrlButton.setFont(getSmallFont((int)(buttonSizeX)));
    }
    
    private void updateAltButton() {
 	   AltButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 	   AltButton.setLocation(new Point((int)(buttonSizeX * 5d / 2d), (int)(buttonSizeY * 4d)));
-	   
-	   AltButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
+
+	   AltButton.setFont(getSmallFont((int)(buttonSizeX )));
    }
    
    private void updateMathButton() {
 	   MathButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 	   MathButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   MathButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
+	   MathButton.setFont(getSmallFont((int)(buttonSizeX)));
    }
    
    private void updateGreekButton() {
 	   GreekButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 	   GreekButton.setLocation(new Point((int)(buttonSizeX * 21d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   GreekButton.setFont(getSmallFont((int)(buttonSizeX * 5d / 18d)));
+	   GreekButton.setFont(getSmallFont((int)(buttonSizeX)));
    }
    
    private JToggleButton getCapsLockButton() {
@@ -272,6 +271,7 @@ public class vk_gui extends JFrame {
 
 	         CapsLockButton             = new JToggleButton("\u21e7");
 	         updateCapsLockButton();
+	  	   	CapsLockButton.setMargin(new Insets(0,0,0,0));
 	         CapsLockButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
 	                  updateButtons();
@@ -286,6 +286,7 @@ public class vk_gui extends JFrame {
 
 	    	  AltButton             = new JToggleButton("Alt");
 	         updateAltButton();
+	  	   AltButton.setMargin(new Insets(0,0,0,0));
 	         /*
 	         AltButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -302,6 +303,7 @@ public class vk_gui extends JFrame {
 
 	    	  CtrlButton             = new JToggleButton("Ctrl");
 	         updateCtrlButton();
+	  	   		CtrlButton.setMargin(new Insets(0,0,0,0));
 	         /*
 	         CtrlButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -313,11 +315,12 @@ public class vk_gui extends JFrame {
 	      return CtrlButton;
 	   }
 
-   private JButton getMathButton() {
+   private JToggleButton getMathButton() {
 	      if (MathButton == null) {
 
-	    	  MathButton             = new JButton("\u222b");
+	    	  MathButton             = new JToggleButton("\u222b");
 	         updateMathButton();
+	  	   MathButton.setMargin(new Insets(0,0,0,0));
 	         MathButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
 		                  if (KEYBOARD_MODE != KEYBOARD_MATH)
@@ -332,18 +335,23 @@ public class vk_gui extends JFrame {
 	      return MathButton;
 	   }
    
-   boolean greek = false;
+   //boolean greek = false;
 
-   private JButton getGreekButton() {
+   private boolean greek() {
+	   return getGreekButton().isSelected();
+   }
+   
+   private JToggleButton getGreekButton() {
 	      if (GreekButton == null) {
 
-	    	  GreekButton             = new JButton("\u03c3");
+	    	  GreekButton             = new JToggleButton("\u03c3");
 	         updateGreekButton();
+	  	   GreekButton.setMargin(new Insets(0,0,0,0));
 	         GreekButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
-	                  greek = !greek;
+	                  //greek = !greek;
 	                  setMode(KEYBOARD_NORMAL);
-	                  if (greek)
+	                  if (greek())
 	                	  readConf(app, new Locale("el"), false);
 	                  else
 		            	  readConf(app, null, false);
@@ -601,20 +609,29 @@ public class vk_gui extends JFrame {
 	      // skip a row (for spacebar etc)
 	      int ii = (i == 5) ? 6 : i;
 	      
-	         Buttons[i][j].setBounds(new Rectangle((int)(0.5 + buttonSizeX * (double)j), (int)(0.5 + buttonSizeY * (double)(ii - 1)), (int)buttonSizeX, (int)buttonSizeY));
+	      int height = (int)buttonSizeY;
+	      
+	      // enter key: double height
+	      if (i == 3 && j == 13) Buttons[i][j].setVisible(KEYBOARD_MODE == KEYBOARD_MATH);
+	      if (i == 2 && j == 13 && KEYBOARD_MODE != KEYBOARD_MATH) height *= 2;
+	      
+	         Buttons[i][j].setBounds(new Rectangle((int)(0.5 + buttonSizeX * (double)j), (int)(0.5 + buttonSizeY * (double)(ii - 1)), (int)buttonSizeX, height));
 	         
 	         // make sure "Esc" fits
 	         int len = (Buttons[i][j].getText().length() + 1) / 2;
 	         if (len == 0) len = 1;
 	         
-	         Buttons[i][j].setFont(getFont((int)(Math.min(buttonSizeX, buttonSizeY) * 10d / 14d / len)));
+	         if (len == 1)
+	        	 Buttons[i][j].setFont(getFont((int)(Math.min(buttonSizeX, buttonSizeY) )));
+	         else
+	        	 Buttons[i][j].setFont(getSmallFont((int)(buttonSizeX )));
       
 	   }
    
    private Font getFont(int size) {
 	   
 	   if (font == null || font.getSize() != size)
-		   font = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size);
+		   font = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size * 100 / 135);
 	   
 	   return font;
    }
@@ -622,7 +639,7 @@ public class vk_gui extends JFrame {
    private Font getSmallFont(int size) {
 	   
 	   if (smFont == null || smFont.getSize() != size)
-		   smFont = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size);
+		   smFont = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size / 3);
 	   
 	   return smFont;
    }
@@ -671,7 +688,7 @@ public class vk_gui extends JFrame {
    
    public void setLabels() {
 	   readConf(app, null, false);
-	   greek = false;
+	   //greek = false;
 	   AltButton.setSelected(false);
 	   CtrlButton.setSelected(false);
 	   CapsLockButton.setSelected(false);
