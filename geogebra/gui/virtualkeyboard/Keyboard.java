@@ -109,7 +109,7 @@ public class Keyboard {
         case 'Y': doType(KeyEvent.VK_SHIFT, KeyEvent.VK_Y); break;
         case 'Z': doType(KeyEvent.VK_SHIFT, KeyEvent.VK_Z); break;
         case '`': doType(KeyEvent.VK_BACK_QUOTE); break;
-        case '0': doType(KeyEvent.VK_0); break;
+ /*       case '0': doType(KeyEvent.VK_0); break;
         case '1': doType(KeyEvent.VK_1); break;
         case '2': doType(KeyEvent.VK_2); break;
         case '3': doType(KeyEvent.VK_3); break;
@@ -118,7 +118,17 @@ public class Keyboard {
         case '6': doType(KeyEvent.VK_6); break;
         case '7': doType(KeyEvent.VK_7); break;
         case '8': doType(KeyEvent.VK_8); break;
-        case '9': doType(KeyEvent.VK_9); break;
+        case '9': doType(KeyEvent.VK_9); break;*/
+        case '0': doType(KeyEvent.VK_NUMPAD0); break;
+        case '1': doType(KeyEvent.VK_NUMPAD1); break;
+        case '2': doType(KeyEvent.VK_NUMPAD2); break;
+        case '3': doType(KeyEvent.VK_NUMPAD3); break;
+        case '4': doType(KeyEvent.VK_NUMPAD4); break;
+        case '5': doType(KeyEvent.VK_NUMPAD5); break;
+        case '6': doType(KeyEvent.VK_NUMPAD6); break;
+        case '7': doType(KeyEvent.VK_NUMPAD7); break;
+        case '8': doType(KeyEvent.VK_NUMPAD8); break;
+        case '9': doType(KeyEvent.VK_NUMPAD9); break;
         case '-': doType(KeyEvent.VK_MINUS); break;
         case '=': doType(KeyEvent.VK_EQUALS); break;
         case '~': doType(KeyEvent.VK_SHIFT, KeyEvent.VK_BACK_QUOTE); break;

@@ -3,6 +3,7 @@ package geogebra.gui.virtualkeyboard;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -250,7 +251,12 @@ public class vk_gui extends JFrame {
 	   AltButton.setLocation(new Point((int)(buttonSizeX * 5d / 2d), (int)(buttonSizeY * 4d)));
 
 	   AltButton.setFont(getSmallFont((int)(buttonSizeX )));
-   }
+
+	   if (AltButton.isSelected())
+		   AltButton.setBackground(Color.cyan);
+	   else
+		   AltButton.setBackground(null);
+}
    
    private void updateMathButton() {
 	   MathButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
@@ -264,6 +270,7 @@ public class vk_gui extends JFrame {
 	   GreekButton.setLocation(new Point((int)(buttonSizeX * 21d / 2d), (int)(buttonSizeY * 4d)));
 	   
 	   GreekButton.setFont(getSmallFont((int)(buttonSizeX)));
+	   		   
    }
    
    private JToggleButton getCapsLockButton() {
@@ -287,13 +294,13 @@ public class vk_gui extends JFrame {
 	    	  AltButton             = new JToggleButton("Alt");
 	         updateAltButton();
 	  	   AltButton.setMargin(new Insets(0,0,0,0));
-	         /*
+	         
 	         AltButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
-	                  altPressed = !altPressed;
+	                  //altPressed = !altPressed;
 	                  updateAltButton();
 	               }
-	           });*/
+	           });
 	      }
 	      return AltButton;
 	   }
@@ -411,6 +418,7 @@ public class vk_gui extends JFrame {
    public static char KEYBOARD_RING_ABOVE = 'R';
    public static char KEYBOARD_DIALYTIKA_TONOS = 'd';
    public static char KEYBOARD_DOUBLE_ACUTE = 'a';
+   public static char KEYBOARD_SOLIDUS = '/';
 
    
    public char KEYBOARD_MODE = KEYBOARD_NORMAL;
@@ -428,7 +436,12 @@ public class vk_gui extends JFrame {
 			   setMode(KEYBOARD_ACUTE);
 			   return;
 
+		   case '\u0338' : // solidus (/)
+			   setMode(KEYBOARD_SOLIDUS);
+			   return;
+
 		   case '\u0060' : // grave
+		   case '\u0300' : // combining grave
 			   setMode(KEYBOARD_GRAVE);
 			   return;
 			   
