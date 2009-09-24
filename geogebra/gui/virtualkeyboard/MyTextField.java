@@ -1,5 +1,7 @@
-package geogebra.gui;
+package geogebra.gui.virtualkeyboard;
 
+import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.main.Application;
 import geogebra.main.GuiManager;
 
 import java.awt.event.FocusEvent;
@@ -30,6 +32,21 @@ public class MyTextField extends JTextField implements FocusListener {
 	}
 	
 	public void insertString(String text) {
+
+		int start = getSelectionStart();
+		int end = getSelectionEnd();        
+		//    clear selection if there is one
+		if (start != end) {
+			int pos = getCaretPosition();
+			String oldText = getText();
+			StringBuffer sb = new StringBuffer();
+			sb.append(oldText.substring(0, start));
+			sb.append(oldText.substring(end));            
+			setText(sb.toString());
+			if (pos < sb.length()) setCaretPosition(pos);
+		}
+
+		
 		int pos = getCaretPosition();
 		String oldText = getText();
 		StringBuffer sb = new StringBuffer();
@@ -39,6 +56,15 @@ public class MyTextField extends JTextField implements FocusListener {
 		setText(sb.toString());
 
 		setCaretPosition(pos + text.length());
+		
+		
+		// make sure AutoComplete works
+		if (this instanceof AutoCompleteTextField) {
+			AutoCompleteTextField tf = (AutoCompleteTextField)this;
+			tf.updateCurrentWord();
+			tf.updateAutoCompletion();
+		}
+
 
 	}
 

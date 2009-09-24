@@ -272,7 +272,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 * Updates curWord to word at current caret position.
 	 * curWordStart, curWordEnd are set to this word's start and end position
 	 */
-	private void updateCurrentWord() {                    
+	public void updateCurrentWord() {                    
 		String text = getText();  
 		if (text == null) return;
 		int caretPos = getCaretPosition();          
@@ -326,7 +326,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	/**
 	 * returns wheter the input field's text was changed due to auotcompletion
 	 */ 
-	private void updateAutoCompletion() { 
+	public void updateAutoCompletion() { 
 		//    start autocompletion only for words with at least two characters                
 		if (curWord.length() < 2)  return;
 		int caretPos = getCaretPosition();

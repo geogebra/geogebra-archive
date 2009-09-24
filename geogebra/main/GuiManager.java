@@ -1,7 +1,7 @@
 package geogebra.main;
 
 
-import geogebra.gui.MyTextField;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.gui.virtualkeyboard.vk_gui;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.GeoBoolean;

@@ -16,6 +16,7 @@ import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.gui.virtualkeyboard.WindowUnicodeKeyboard;
 import geogebra.gui.virtualkeyboard.vk_gui;
 import geogebra.io.layout.Perspective;
