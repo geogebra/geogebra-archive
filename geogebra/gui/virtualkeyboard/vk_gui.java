@@ -112,7 +112,7 @@ public class vk_gui extends JFrame {
       // http://java.sun.com/developer/technicalArticles/GUI/translucent_shaped_windows/#Setting-the-Opacity-Level-of-a-Window
       //AWTUtilities.setWindowOpacity
       
-      float transparency = 0.5f;
+      float transparency = 0.7f;
       
       try { // Java 6u10+ only
     	   Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
