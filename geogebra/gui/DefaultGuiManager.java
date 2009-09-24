@@ -2384,6 +2384,14 @@ public class DefaultGuiManager implements GuiManager {
 			
 		}
 		
+		public WindowUnicodeKeyboard getKeyboard() {
+			
+			try{
+				kb = new WindowUnicodeKeyboard();
+			} catch (Exception e) {}
+			return kb;
+		}
+		
 		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed) {
 
 			if (currentTextfield != null && !text.equals("\n")

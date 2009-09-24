@@ -35,12 +35,13 @@ public class Keyboard {
 
     public void type(boolean altPressed, boolean ctrlPressed, boolean shiftPressed, CharSequence characters) {
     	
+    	/*
        	if (altPressed)
-    		robot.keyPress(KeyEvent.VK_ALT);
+    		robot.keyPress(KeyEvent.VK_ALT);//*/
     	if (ctrlPressed)
     		robot.keyPress(KeyEvent.VK_CONTROL);
     	if (shiftPressed)
-    		robot.keyPress(KeyEvent.VK_SHIFT);
+    		robot.keyPress(KeyEvent.VK_SHIFT);//*/
     	
         int length = characters.length();
         for (int i = 0; i < length; i++) {
@@ -48,9 +49,9 @@ public class Keyboard {
                 type(character);
         }
         
-    	robot.keyRelease(KeyEvent.VK_ALT);
+    	/*robot.keyRelease(KeyEvent.VK_ALT);//*/
     	robot.keyRelease(KeyEvent.VK_CONTROL);
-    	robot.keyRelease(KeyEvent.VK_SHIFT);
+    	robot.keyRelease(KeyEvent.VK_SHIFT);//*/
     	
     }
 
@@ -169,22 +170,30 @@ public class Keyboard {
     }
 
     public void doType(boolean altPressed, boolean ctrlPressed, boolean shiftPressed, int... keyCodes ) {
-       	if (altPressed)
-    		robot.keyPress(KeyEvent.VK_ALT);
+       	/*
+    	if (altPressed)
+    		robot.keyPress(KeyEvent.VK_ALT); //*/
     	if (ctrlPressed)
     		robot.keyPress(KeyEvent.VK_CONTROL);
     	if (shiftPressed)
-    		robot.keyPress(KeyEvent.VK_SHIFT);
+    		robot.keyPress(KeyEvent.VK_SHIFT);//*/
     	
         doType(keyCodes, 0, keyCodes.length);
         
-    	robot.keyRelease(KeyEvent.VK_ALT);
+    	/*robot.keyRelease(KeyEvent.VK_ALT);//*/
     	robot.keyRelease(KeyEvent.VK_CONTROL);
-    	robot.keyRelease(KeyEvent.VK_SHIFT);
+    	robot.keyRelease(KeyEvent.VK_SHIFT);//*/
     }
 
     public void doType( int... keyCodes ) {
         doType(keyCodes, 0, keyCodes.length);
+    }
+    
+    public void altPressed(boolean press) {
+    	if (press) 
+    		robot.keyPress(KeyEvent.VK_ALT);
+    	else
+    		robot.keyRelease(KeyEvent.VK_ALT);
     }
 
     private void doType(int[] keyCodes, int offset, int length) {

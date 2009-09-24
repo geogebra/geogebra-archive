@@ -236,7 +236,8 @@ public class vk_gui extends JFrame {
 	   
 	   CapsLockButton.setFont(getSmallFont((int)(buttonSizeX)));
 	   
-	   //CapsLockButton.set
+	   setColor(CapsLockButton);
+	   //app.getGuiManager().getKeyboard().shiftPressed(CapsLockButton.isSelected());
    }
    
    private void updateCtrlButton() {
@@ -244,6 +245,9 @@ public class vk_gui extends JFrame {
 	   CtrlButton.setLocation(new Point((int)(buttonSizeX * 3d / 2d), (int)(buttonSizeY * 4d)));
 	   
 	   CtrlButton.setFont(getSmallFont((int)(buttonSizeX)));
+
+	   setColor(CtrlButton);
+	   //app.getGuiManager().getKeyboard().ctrlPressed(CtrlButton.isSelected());
    }
    
    private void updateAltButton() {
@@ -252,10 +256,9 @@ public class vk_gui extends JFrame {
 
 	   AltButton.setFont(getSmallFont((int)(buttonSizeX )));
 
-	   if (AltButton.isSelected())
-		   AltButton.setBackground(Color.cyan);
-	   else
-		   AltButton.setBackground(null);
+	   setColor(AltButton);
+	   
+	   app.getGuiManager().getKeyboard().altPressed(AltButton.isSelected());
 }
    
    private void updateMathButton() {
@@ -263,6 +266,15 @@ public class vk_gui extends JFrame {
 	   MathButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
 	   
 	   MathButton.setFont(getSmallFont((int)(buttonSizeX)));
+
+	   setColor(MathButton);
+   }
+   
+   private void setColor(JToggleButton tb) {
+	   if (tb.isSelected())
+		   tb.setBackground(Color.cyan);
+	   else
+		   tb.setBackground(null);	   
    }
    
    private void updateGreekButton() {
@@ -271,6 +283,8 @@ public class vk_gui extends JFrame {
 	   
 	   GreekButton.setFont(getSmallFont((int)(buttonSizeX)));
 	   		   
+	   setColor(GreekButton);
+
    }
    
    private JToggleButton getCapsLockButton() {
@@ -311,13 +325,13 @@ public class vk_gui extends JFrame {
 	    	  CtrlButton             = new JToggleButton("Ctrl");
 	         updateCtrlButton();
 	  	   		CtrlButton.setMargin(new Insets(0,0,0,0));
-	         /*
+	         
 	         CtrlButton.addActionListener(new java.awt.event.ActionListener() {
 	               public void actionPerformed(java.awt.event.ActionEvent e) {
-	                  ctrlPressed = !ctrlPressed;
+	                  //ctrlPressed = !ctrlPressed;
 	                  updateCtrlButton();
 	               }
-	           });*/
+	           });
 	      }
 	      return CtrlButton;
 	   }
