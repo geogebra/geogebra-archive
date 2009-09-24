@@ -467,7 +467,7 @@ public class vk_gui extends JFrame {
 			   setMode(KEYBOARD_TILDE);
 			   return;
 
-		   case '\u005e' : // circumflex
+		   case '\u0302' : // circumflex
 			   setMode(KEYBOARD_CIRCUMFLEX);
 			   return;
 
@@ -475,7 +475,7 @@ public class vk_gui extends JFrame {
 			   setMode(KEYBOARD_DIALYTIKA_TONOS);
 			   return;
 
-		   case '\u00b8' : // tilde
+		   case '\u00b8' : // cedilla
 			   setMode(KEYBOARD_CEDILLA);
 			   return;
 
