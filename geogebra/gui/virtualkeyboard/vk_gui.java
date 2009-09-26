@@ -339,7 +339,7 @@ public class vk_gui extends JFrame {
 	}
 	
 	private double minButtonSize() {
-		double ret = Math.min(buttonSizeX, buttonSizeY * 1.5);
+		double ret = Math.min(buttonSizeX, buttonSizeY * 1.1);
 		
 		return (ret == 0) ? 1 : ret;
 	}
