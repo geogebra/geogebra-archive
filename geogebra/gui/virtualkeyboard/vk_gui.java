@@ -6,6 +6,7 @@ import geogebra.main.MyResourceBundle;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,6 +16,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -59,6 +61,9 @@ public class vk_gui extends JFrame {
    
    private Font font, smFont;
    
+   Font [] fonts = new Font[100];
+   int fontWidths[] = new int[100];
+   
    //WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
    //Keyboard kb;// = new Keyboard();
 
@@ -76,7 +81,25 @@ public class vk_gui extends JFrame {
       this.app = app;
       this.setFocusableWindowState(false);
       this.setAlwaysOnTop(true);
+      
+      String fName = app.getAppFontNameSansSerif();
+      
+     
+      for (int i = 0 ; i < 100 ; i++) {
+	      fonts[i] = new Font(fName, Font.PLAIN, i+1);    
+	      FontMetrics fm = getFontMetrics(fonts[i]);
+	      fontWidths[i] = 5 + fm.stringWidth("\u21d4"); // wide arrow <=>
+	      //fontWidths[i] = fm.stringWidth("W"); 
+	      //Application.debug(fm.stringWidth("W")+" "+fm.stringWidth("\u21d4"));
+      }
+
+      
       initialize();
+      
+      
+      
+      
+      
      
    // Event Handling
       this.addComponentListener(new ComponentAdapter()
@@ -84,6 +107,11 @@ public class vk_gui extends JFrame {
       public void componentResized(ComponentEvent e)
       {
       JFrame tmp = (JFrame)e.getSource();
+      
+      
+
+      
+      
       
      
       if (tmp instanceof vk_gui)
@@ -234,7 +262,7 @@ public class vk_gui extends JFrame {
 	   CapsLockButton.setSize(new Dimension((int)(buttonSizeX ) , (int)buttonSizeY));
 	   CapsLockButton.setLocation(new Point((int)(buttonSizeX / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   CapsLockButton.setFont(getSmallFont((int)(buttonSizeX)));
+	   CapsLockButton.setFont(getFont((int)(buttonSizeX)));
 	   
 	   setColor(CapsLockButton);
 	   //app.getGuiManager().getKeyboard().shiftPressed(CapsLockButton.isSelected());
@@ -244,7 +272,7 @@ public class vk_gui extends JFrame {
 	   CtrlButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 	   CtrlButton.setLocation(new Point((int)(buttonSizeX * 3d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   CtrlButton.setFont(getSmallFont((int)(buttonSizeX)));
+	   CtrlButton.setFont(getFont((int)(buttonSizeX / 2)));
 
 	   setColor(CtrlButton);
 	   //app.getGuiManager().getKeyboard().ctrlPressed(CtrlButton.isSelected());
@@ -254,7 +282,7 @@ public class vk_gui extends JFrame {
 	   AltButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 	   AltButton.setLocation(new Point((int)(buttonSizeX * 5d / 2d), (int)(buttonSizeY * 4d)));
 
-	   AltButton.setFont(getSmallFont((int)(buttonSizeX )));
+	   AltButton.setFont(getFont((int)(buttonSizeX / 2)));
 
 	   setColor(AltButton);
 	   
@@ -267,7 +295,7 @@ public class vk_gui extends JFrame {
 	   MathButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 	   MathButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   MathButton.setFont(getSmallFont((int)(buttonSizeX)));
+	   MathButton.setFont(getFont((int)(buttonSizeX)));
 
 	   setColor(MathButton);
    }
@@ -283,7 +311,7 @@ public class vk_gui extends JFrame {
 	   GreekButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 	   GreekButton.setLocation(new Point((int)(buttonSizeX * 21d / 2d), (int)(buttonSizeY * 4d)));
 	   
-	   GreekButton.setFont(getSmallFont((int)(buttonSizeX)));
+	   GreekButton.setFont(getFont((int)(buttonSizeX)));
 	   		   
 	   setColor(GreekButton);
 
@@ -698,19 +726,36 @@ public class vk_gui extends JFrame {
 	         if (len == 1)
 	        	 Buttons[i][j].setFont(getFont((int)(Math.min(buttonSizeX, buttonSizeY) )));
 	         else
-	        	 Buttons[i][j].setFont(getSmallFont((int)(buttonSizeX )));
+	        	 Buttons[i][j].setFont(getFont((int)(buttonSizeX / 3)));
       
 	   }
    
+   HashMap<Integer, Font> fontsHash = new HashMap(30);
+   
    private Font getFont(int size) {
 	   
-	   if (font == null || font.getSize() != size)
-		   font = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size * 100 / 135);
+	   Integer Size = new Integer(size);
 	   
-	   return font;
+	   Font ret = (Font)fontsHash.get(Size);
+	   
+	   // all OK, return
+	   if (ret != null) return ret;
+
+	      for (int i = 0 ; i < fonts.length - 1 ; i++) {
+			  if (fontWidths[i] < size && fontWidths[i+1] >= size)
+		      {
+		    	  font = fonts[i+1];
+		    	  fontsHash.put(Size, font);
+		    	  return font;
+		      }
+	      }
+	      
+	      font = fonts[fonts.length - 1];
+	      return font;
+
    }
    
-   private Font getSmallFont(int size) {
+   private Font getSmallFontxx(int size) {
 	   
 	   if (smFont == null || smFont.getSize() != size)
 		   smFont = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size / 3);
