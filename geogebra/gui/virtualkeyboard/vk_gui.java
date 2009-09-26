@@ -45,6 +45,7 @@ public class vk_gui extends JFrame {
    private JButton SpaceButton      = null;
    private JToggleButton CapsLockButton   = null;
    private JToggleButton AltButton   = null;
+   private JToggleButton AltGrButton   = null;
    private JToggleButton CtrlButton   = null;
    private JToggleButton MathButton   = null;
    private JToggleButton GreekButton   = null;
@@ -226,6 +227,7 @@ public class vk_gui extends JFrame {
 	      updateMathButton();
 	      updateGreekButton();
 	      updateAltButton();
+	      updateAltGrButton();
 	      updateCtrlButton();
    }
 
@@ -291,9 +293,19 @@ public class vk_gui extends JFrame {
 	   app.getGuiManager().getKeyboard().altPressed(AltButton.isSelected());
 }
    
+   private void updateAltGrButton() {
+	   AltGrButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
+	   AltGrButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
+
+	   AltGrButton.setFont(getFont((int)(buttonSizeX / 2)));
+
+	   setColor(AltGrButton);
+	   
+}
+   
    private void updateMathButton() {
 	   MathButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
-	   MathButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
+	   MathButton.setLocation(new Point((int)(buttonSizeX * 21d / 2d), (int)(buttonSizeY * 4d)));
 	   
 	   MathButton.setFont(getFont((int)(buttonSizeX)));
 
@@ -309,7 +321,7 @@ public class vk_gui extends JFrame {
    
    private void updateGreekButton() {
 	   GreekButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
-	   GreekButton.setLocation(new Point((int)(buttonSizeX * 21d / 2d), (int)(buttonSizeY * 4d)));
+	   GreekButton.setLocation(new Point((int)(buttonSizeX * 23d / 2d), (int)(buttonSizeY * 4d)));
 	   
 	   GreekButton.setFont(getFont((int)(buttonSizeX)));
 	   		   
@@ -347,6 +359,27 @@ public class vk_gui extends JFrame {
 	           });
 	      }
 	      return AltButton;
+	   }
+
+   private JToggleButton getAltGrButton() {
+	      if (AltGrButton == null) {
+
+	    	  AltGrButton             = new JToggleButton("AltG");
+	         updateAltGrButton();
+	         AltGrButton.setMargin(new Insets(0,0,0,0));
+	         
+	         AltGrButton.addActionListener(new java.awt.event.ActionListener() {
+	               public void actionPerformed(java.awt.event.ActionEvent e) {
+	                  //altPressed = !altPressed;
+		                  if (KEYBOARD_MODE != KEYBOARD_ALTGR)
+		                	  setMode(KEYBOARD_ALTGR);
+		                  else
+		                	  setMode(KEYBOARD_NORMAL);
+	                  updateAltGrButton();
+	               }
+	           });
+	      }
+	      return AltGrButton;
 	   }
 
    private JToggleButton getCtrlButton() {
@@ -436,6 +469,7 @@ public class vk_gui extends JFrame {
          add(getMathButton(), null);
          add(getGreekButton(), null);
          add(getAltButton(), null);
+         add(getAltGrButton(), null);
          add(getCtrlButton(), null);
          
          //jContentPane.setSize(getWidth(), getHeight());
@@ -448,6 +482,7 @@ public class vk_gui extends JFrame {
    
    public static char KEYBOARD_NORMAL = ' ';
    public static char KEYBOARD_MATH = 'M';
+   public static char KEYBOARD_ALTGR = 'Q';
    public static char KEYBOARD_GREEK = 'H';
    public static char KEYBOARD_ACUTE = 'A';
    public static char KEYBOARD_GRAVE = 'G';
