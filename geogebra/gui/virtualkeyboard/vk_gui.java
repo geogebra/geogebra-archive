@@ -417,7 +417,6 @@ public class vk_gui extends JFrame {
 					else
 						setMode(KEYBOARD_NORMAL);
 
-
 				}
 			});
 		}
@@ -444,8 +443,10 @@ public class vk_gui extends JFrame {
 						readConf(app, new Locale("el"), false);
 					else
 						readConf(app, null, false);
-
+					
 					updateButtons();
+
+
 				}
 			});
 		}
@@ -630,7 +631,6 @@ public class vk_gui extends JFrame {
 	private void setMode(char mode) {
 		if (KEYBOARD_MODE == mode) {
 			KEYBOARD_MODE = KEYBOARD_NORMAL;
-			updateButtons();
 		} else {
 			// reset first
 			KEYBOARD_MODE = KEYBOARD_NORMAL;
@@ -638,8 +638,18 @@ public class vk_gui extends JFrame {
 
 			// new mode
 			KEYBOARD_MODE = mode;
-			updateButtons();
 		}
+		
+		if (KEYBOARD_MODE != KEYBOARD_MATH) {
+			getMathButton().setSelected(false);
+		} 
+		if (KEYBOARD_MODE != KEYBOARD_ALTGR) {
+			getAltGrButton().setSelected(false);
+		}
+		
+		updateButtons();
+		
+
 
 		//Application.debug("mode="+KEYBOARD_MODE);
 
@@ -793,14 +803,6 @@ public class vk_gui extends JFrame {
 		font = fonts[fonts.length - 1];
 		return font;
 
-	}
-
-	private Font getSmallFontxx(int size) {
-
-		if (smFont == null || smFont.getSize() != size)
-			smFont = new Font(app.getAppFontNameSansSerif(), Font.PLAIN, size / 3);
-
-		return smFont;
 	}
 
 	private Hashtable<String, keys>   myKeys = new Hashtable<String, keys>();
