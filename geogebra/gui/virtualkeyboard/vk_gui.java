@@ -502,6 +502,40 @@ public class vk_gui extends JFrame {
 		   case '\u02dd' : // double acute
 			   setMode(KEYBOARD_DOUBLE_ACUTE);
 			   return;
+			   
+		   case '0' :
+		   case '1' :
+		   case '2' :
+		   case '3' :
+		   case '4' :
+		   case '5' :
+		   case '6' :
+		   case '7' :
+		   case '8' :
+		   case '9' :
+			   if (AltButton.isSelected()) {
+				   StringBuffer sb = getAltStringBuffer();
+				   
+				   sb.append(addchar);
+				   
+				   if (sb.length() < 4) return;
+				   
+				   // convert string to Unicode char
+				   char c = (char)Integer.parseInt(sb.toString());
+				   
+				   // release alt
+				   app.getGuiManager().getKeyboard().altPressed(false);
+				   AltButton.setSelected(false);
+				   updateAltButton();
+				   
+				   // type Unicode char
+				   app.getGuiManager().insertStringIntoTextfield(c + "", false, false, false);
+				   
+				   sb.setLength(0);
+				   return;
+				   
+			   } // else pass on as normal
+			   
 
 		   	}
 	   
@@ -510,6 +544,15 @@ public class vk_gui extends JFrame {
 
       app.getGuiManager().insertStringIntoTextfield(addchar, getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected());
       
+   }
+   
+   StringBuffer sbAlt;
+   
+   private StringBuffer getAltStringBuffer() {
+	   if (sbAlt == null)
+		   sbAlt = new StringBuffer();
+	   
+	   return sbAlt;
    }
 
    private void setMode(char mode) {
