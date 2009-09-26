@@ -53,8 +53,12 @@ public class vk_gui extends JFrame {
 	String ctrlText = "Ctrl";
 	String altText = "Alt";
 	String altGrText = "AltG";
+	String escText = "Esc";
 
 	private Application app;
+	
+	// max width character
+	private char wideChar = '\u21d4'; // wide arrow <=>
 
 	private int buttonRows = 5;
 	private int buttonCols = 14;
@@ -92,7 +96,7 @@ public class vk_gui extends JFrame {
 		for (int i = 0 ; i < 100 ; i++) {
 			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
 			FontMetrics fm = getFontMetrics(fonts[i]);
-			fontWidths[i] = 5 + fm.stringWidth("\u21d4"); // wide arrow <=>
+			fontWidths[i] = 5 + fm.stringWidth(wideChar+""); // wide arrow <=>
 			//fontWidths[i] = fm.stringWidth("W"); 
 			//Application.debug(fm.stringWidth("W")+" "+fm.stringWidth("\u21d4"));
 		}
@@ -269,7 +273,7 @@ public class vk_gui extends JFrame {
 		CapsLockButton.setSize(new Dimension((int)(buttonSizeX ) , (int)buttonSizeY));
 		CapsLockButton.setLocation(new Point((int)(buttonSizeX / 2d), (int)(buttonSizeY * 4d)));
 
-		CapsLockButton.setFont(getFont((int)(buttonSizeX)));
+		CapsLockButton.setFont(getFont((int)(minButtonSize())));
 
 		setColor(CapsLockButton);
 		//app.getGuiManager().getKeyboard().shiftPressed(CapsLockButton.isSelected());
@@ -279,7 +283,7 @@ public class vk_gui extends JFrame {
 		CtrlButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		CtrlButton.setLocation(new Point((int)(buttonSizeX * 3d / 2d), (int)(buttonSizeY * 4d)));
 
-		CtrlButton.setFont(getFont((int)(buttonSizeX / 2)));
+		CtrlButton.setFont(getFont((int)(minButtonSize() / 2)));
 
 		setColor(CtrlButton);
 		//app.getGuiManager().getKeyboard().ctrlPressed(CtrlButton.isSelected());
@@ -289,7 +293,7 @@ public class vk_gui extends JFrame {
 		AltButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		AltButton.setLocation(new Point((int)(buttonSizeX * 5d / 2d), (int)(buttonSizeY * 4d)));
 
-		AltButton.setFont(getFont((int)(buttonSizeX / 2)));
+		AltButton.setFont(getFont((int)(minButtonSize() / 2)));
 
 		setColor(AltButton);
 
@@ -302,7 +306,7 @@ public class vk_gui extends JFrame {
 		AltGrButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		AltGrButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
 
-		AltGrButton.setFont(getFont((int)(buttonSizeX / 2)));
+		AltGrButton.setFont(getFont((int)(minButtonSize() / 2)));
 
 		setColor(AltGrButton);
 
@@ -312,7 +316,7 @@ public class vk_gui extends JFrame {
 		MathButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		MathButton.setLocation(new Point((int)(buttonSizeX * 21d / 2d), (int)(buttonSizeY * 4d)));
 
-		MathButton.setFont(getFont((int)(buttonSizeX)));
+		MathButton.setFont(getFont((int)(minButtonSize())));
 
 		setColor(MathButton);
 	}
@@ -328,10 +332,16 @@ public class vk_gui extends JFrame {
 		GreekButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		GreekButton.setLocation(new Point((int)(buttonSizeX * 23d / 2d), (int)(buttonSizeY * 4d)));
 
-		GreekButton.setFont(getFont((int)(buttonSizeX)));
+		GreekButton.setFont(getFont((int)(minButtonSize())));
 
 		setColor(GreekButton);
 
+	}
+	
+	private double minButtonSize() {
+		double ret = Math.min(buttonSizeX, buttonSizeY * 1.5);
+		
+		return (ret == 0) ? 1 : ret;
 	}
 
 	private JToggleButton getCapsLockButton() {
@@ -735,7 +745,7 @@ public class vk_gui extends JFrame {
 
 		if (text.equals("<enter>")) return unicodeString('\u21b2', "cr");
 		if (text.equals("<backspace>")) return "\u21a4";
-		if (text.equals("<escape>")) return "Esc";
+		if (text.equals("<escape>")) return app.getPlain("Esc");
 		if (text.equals("<left>")) return "\u2190";
 		if (text.equals("<up>")) return "\u2191";
 		if (text.equals("<right>")) return "\u2192";
@@ -770,13 +780,21 @@ public class vk_gui extends JFrame {
 		Buttons[i][j].setBounds(new Rectangle((int)(0.5 + buttonSizeX * (double)j), (int)(0.5 + buttonSizeY * (double)(ii - 1)), (int)buttonSizeX, height));
 
 		// make sure "Esc" fits
-		int len = (Buttons[i][j].getText().length() + 1) / 2;
+
+		
+		
+		int len = Buttons[i][j].getText().length();
 		if (len == 0) len = 1;
 
 		if (len == 1)
-			Buttons[i][j].setFont(getFont((int)(Math.min(buttonSizeX, buttonSizeY) )));
-		else
-			Buttons[i][j].setFont(getFont((int)(buttonSizeX / 3)));
+			Buttons[i][j].setFont(getFont((int)minButtonSize() ));
+		else {
+			// make sure "Esc" fits
+			FontMetrics fm = getFontMetrics(font);
+			int width = 5 + fm.stringWidth(Buttons[i][j].getText()); // wide arrow <=>
+			int w2 = fm.stringWidth(wideChar+"");
+			Buttons[i][j].setFont(getFont((int)(minButtonSize() * w2 / width)));
+		}
 
 	}
 
