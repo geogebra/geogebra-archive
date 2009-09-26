@@ -258,6 +258,8 @@ public class vk_gui extends JFrame {
 
 	   setColor(AltButton);
 	   
+	   if (sbAlt != null) sbAlt.setLength(0);
+	   
 	   app.getGuiManager().getKeyboard().altPressed(AltButton.isSelected());
 }
    
@@ -517,6 +519,8 @@ public class vk_gui extends JFrame {
 				   StringBuffer sb = getAltStringBuffer();
 				   
 				   sb.append(addchar);
+				   
+				   AltButton.setBackground(Color.orange);
 				   
 				   if (sb.length() < 4) return;
 				   
