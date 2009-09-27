@@ -82,6 +82,9 @@ public class VirtualKeyboard extends JFrame {
 	private int buttonRows = 5;
 	private int buttonCols = 14;
 	private double buttonSizeX, buttonSizeY;
+	
+	private double horizontalMultiplier = 1.0;
+	private double verticalMultiplier = 1.1;
 
 	private JButton[][] Buttons = new JButton[buttonRows + 1][buttonCols];
 
@@ -358,7 +361,8 @@ public class VirtualKeyboard extends JFrame {
 	}
 	
 	private double minButtonSize() {
-		double ret = Math.min(buttonSizeX, buttonSizeY * 1.1);
+		double ret = Math.min(buttonSizeX * horizontalMultiplier,
+				buttonSizeY * verticalMultiplier);
 		
 		return (ret == 0) ? 1 : ret;
 	}
