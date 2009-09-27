@@ -83,8 +83,9 @@ public class VirtualKeyboard extends JFrame {
 	private int buttonCols = 14;
 	private double buttonSizeX, buttonSizeY;
 	
-	private double horizontalMultiplier = 1.0;
-	private double verticalMultiplier = 1.1;
+	// make sure fonts fit in buttons
+	private double horizontalMultiplier = 0.84;
+	private double verticalMultiplier = 0.8;
 
 	private JButton[][] Buttons = new JButton[buttonRows + 1][buttonCols];
 
@@ -113,12 +114,26 @@ public class VirtualKeyboard extends JFrame {
 		this.setFocusableWindowState(false);
 		this.setAlwaysOnTop(true);
 
-		String fName = app.getAppFontNameSansSerif();
+		
+		String fName;
+		
+		if (app != null)
+			fName = app.getAppFontNameSansSerif();
+		else
+			fName = "Arial Unicode MS";
+		
+		if (fName == "SansSerif") {
+			horizontalMultiplier = 1.0;
+			verticalMultiplier = 1.0;
 
+		}
+		
+		Application.debug(fName);
+		
 		for (int i = 0 ; i < 100 ; i++) {
 			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
 			FontMetrics fm = getFontMetrics(fonts[i]);
-			fontWidths[i] = 5 + fm.stringWidth(wideChar+""); // wide arrow <=>
+			fontWidths[i] = 5 + Math.max(fm.stringWidth("\u21d4"),fm.stringWidth("W")); // wide arrow <=>, W
 			//fontWidths[i] = fm.stringWidth("W"); 
 			//Application.debug(fm.stringWidth("W")+" "+fm.stringWidth("\u21d4"));
 		}
@@ -446,6 +461,9 @@ public class VirtualKeyboard extends JFrame {
 			MathButton.setMargin(new Insets(0,0,0,0));
 			MathButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					getGreekButton().setSelected(false);
+					
 					if (KEYBOARD_MODE != KEYBOARD_MATH)
 						setMode(KEYBOARD_MATH);
 					else
@@ -475,8 +493,8 @@ public class VirtualKeyboard extends JFrame {
 					setMode(KEYBOARD_NORMAL);
 					if (greek())
 						readConf(app, new Locale("el"), false);
-					else
-						readConf(app, null, false);
+					//else
+					//	readConf(app, null, false);
 					
 					updateButtons();
 
@@ -663,6 +681,10 @@ public class VirtualKeyboard extends JFrame {
 	}
 
 	private void setMode(char mode) {
+		
+		// restore language (eg if greek selected before)
+		readConf(app, null, false);
+		
 		if (KEYBOARD_MODE == mode) {
 			KEYBOARD_MODE = KEYBOARD_NORMAL;
 		} else {
@@ -775,7 +797,7 @@ public class VirtualKeyboard extends JFrame {
 
 		if (text.equals("<enter>")) return unicodeString('\u21b2', "");
 		if (text.equals("<backspace>")) return "\u21a4";
-		if (text.equals("<escape>")) return app.getPlain("Esc");
+		if (text.equals("<escape>")) return (app == null) ? "Esc" : app.getPlain("Esc");
 		if (text.equals("<left>")) return "\u2190";
 		if (text.equals("<up>")) return "\u2191";
 		if (text.equals("<right>")) return "\u2192";
@@ -860,12 +882,19 @@ public class VirtualKeyboard extends JFrame {
 		//ResourceBundle rbKeyboard = MyResourceBundle.loadSingleBundleFile("/geogebra/gui/virtualkeyboard/keyboard_en_UK");
 
 		ResourceBundle rbKeyboard;
+		
+		Locale locale;
+		
+		if (app != null)
+			locale = app.getLocale();
+		else
+			locale = new Locale("en");
 
 		if (math) {
-			rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboardMath", app.getLocale());
+			rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboardMath", locale);
 		} else {
 			if (loc == null)
-				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", app.getLocale());
+				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", locale);
 			else {
 				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", new Locale("el"));
 			}
