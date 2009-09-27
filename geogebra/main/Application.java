@@ -22,7 +22,7 @@ import geogebra.JarManager;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.ImageSelection;
-import geogebra.gui.virtualkeyboard.vk_gui;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.AlgoElement;

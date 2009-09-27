@@ -8,6 +8,10 @@ import java.awt.event.KeyEvent;
 
 //http://stackoverflow.com/questions/1248510/convert-string-to-keyevents
 
+/**
+ * adapted from
+ * http://stackoverflow.com/questions/1248510/convert-string-to-keyevents
+ */
 public class Keyboard {
 
     protected Robot robot;

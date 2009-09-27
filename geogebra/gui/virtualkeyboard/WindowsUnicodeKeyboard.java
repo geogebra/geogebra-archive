@@ -6,7 +6,11 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
-//http://stackoverflow.com/questions/1248510/convert-string-to-keyevents
+//
+/**
+ * adapted from
+ * http://stackoverflow.com/questions/1248510/convert-string-to-keyevents
+ */
 public class WindowsUnicodeKeyboard extends Keyboard {
 
     private Robot robot;
