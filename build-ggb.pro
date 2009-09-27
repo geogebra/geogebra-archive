@@ -30,6 +30,10 @@
 -allowaccessmodification
 -overloadaggressively
 
+# needed for eg StringBuilder.setLength()
+# see http://proguard.sourceforge.net/manual/troubleshooting.html
+-dontskipnonpubliclibraryclasses
+
 #-printmapping geogebra3-2-0-0.map 	 
 #-applymapping geogebra3-2-0-0.map	 
 
