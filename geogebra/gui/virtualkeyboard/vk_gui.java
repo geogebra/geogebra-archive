@@ -299,7 +299,7 @@ public class vk_gui extends JFrame {
 
 		if (sbAlt != null) sbAlt.setLength(0);
 
-		app.getGuiManager().getKeyboard().altPressed(AltButton.isSelected());
+		//app.getGuiManager().getKeyboard().altPressed(AltButton.isSelected());
 	}
 
 	private void updateAltGrButton() {

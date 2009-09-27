@@ -35,7 +35,7 @@ public class Keyboard {
 
     public void type(boolean altPressed, boolean ctrlPressed, boolean shiftPressed, CharSequence characters) {
     	
-    	/*
+    	
        	if (altPressed)
     		robot.keyPress(KeyEvent.VK_ALT);//*/
     	if (ctrlPressed)
@@ -49,7 +49,7 @@ public class Keyboard {
                 type(character);
         }
         
-    	/*robot.keyRelease(KeyEvent.VK_ALT);//*/
+    	robot.keyRelease(KeyEvent.VK_ALT);//*/
     	robot.keyRelease(KeyEvent.VK_CONTROL);
     	robot.keyRelease(KeyEvent.VK_SHIFT);//*/
     	
@@ -170,7 +170,7 @@ public class Keyboard {
     }
 
     public void doType(boolean altPressed, boolean ctrlPressed, boolean shiftPressed, int... keyCodes ) {
-       	/*
+       	
     	if (altPressed)
     		robot.keyPress(KeyEvent.VK_ALT); //*/
     	if (ctrlPressed)
@@ -180,7 +180,7 @@ public class Keyboard {
     	
         doType(keyCodes, 0, keyCodes.length);
         
-    	/*robot.keyRelease(KeyEvent.VK_ALT);//*/
+    	robot.keyRelease(KeyEvent.VK_ALT);//*/
     	robot.keyRelease(KeyEvent.VK_CONTROL);
     	robot.keyRelease(KeyEvent.VK_SHIFT);//*/
     }
