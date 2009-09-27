@@ -128,8 +128,6 @@ public class VirtualKeyboard extends JFrame {
 
 		}
 		
-		Application.debug(fName);
-		
 		for (int i = 0 ; i < 100 ; i++) {
 			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
 			FontMetrics fm = getFontMetrics(fonts[i]);
