@@ -326,7 +326,7 @@ public class VirtualKeyboard extends JFrame {
 		AltGrButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
 
 		AltGrButton.setFont(getFont((int)(minButtonSize() / 2)));
-
+		
 		setColor(AltGrButton);
 
 	}
@@ -405,10 +405,12 @@ public class VirtualKeyboard extends JFrame {
 			AltGrButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					//altPressed = !altPressed;
-					if (KEYBOARD_MODE != KEYBOARD_ALTGR)
-						setMode(KEYBOARD_ALTGR);
-					else
-						setMode(KEYBOARD_NORMAL);
+					//if (KEYBOARD_MODE != KEYBOARD_ALTGR)
+					//	setMode(KEYBOARD_ALTGR);
+					//else
+					//	setMode(KEYBOARD_NORMAL);
+					Application.debug(AltGrButton.isSelected()+"");
+					updateButtons();
 					updateAltGrButton();
 				}
 			});
@@ -517,7 +519,7 @@ public class VirtualKeyboard extends JFrame {
 
 	public static char KEYBOARD_NORMAL = ' ';
 	public static char KEYBOARD_MATH = 'M';
-	public static char KEYBOARD_ALTGR = 'Q';
+	//public static char KEYBOARD_ALTGR = 'Q';
 	public static char KEYBOARD_GREEK = 'H';
 	public static char KEYBOARD_ACUTE = 'A';
 	public static char KEYBOARD_GRAVE = 'G';
@@ -672,7 +674,10 @@ public class VirtualKeyboard extends JFrame {
 		if (KEYBOARD_MODE != KEYBOARD_MATH) {
 			getMathButton().setSelected(false);
 		} 
-		if (KEYBOARD_MODE != KEYBOARD_ALTGR) {
+		if (KEYBOARD_MODE == KEYBOARD_MATH
+		 || KEYBOARD_MODE == KEYBOARD_GREEK		
+		
+		) {
 			getAltGrButton().setSelected(false);
 		}
 		
@@ -721,13 +726,17 @@ public class VirtualKeyboard extends JFrame {
 		if (ret1 == null)
 			Application.debug(sb.toString());
 
-
-		if (KEYBOARD_MODE == ' ')
-			return ret1; // no accent needed
-
-		sb.append(KEYBOARD_MODE); // append 'A' for acute etc
+		sb.append(KEYBOARD_MODE); // append 'A' for acute , ' ' for default etc
 
 		keys ret2 = myKeys.get(sb.toString());
+		
+		// check for AltGr (Q) code if no accent etc available
+		if (ret2 == null && getAltGrButton().isSelected()) {
+			sb.setLength(sb.length() - 1); // remove MODE
+			sb.append("Q"); 
+			Application.debug(sb.toString());
+			ret2 = myKeys.get(sb.toString());
+		}
 
 		return ret2 != null ? ret2 : ret1;
 	}
@@ -762,7 +771,7 @@ public class VirtualKeyboard extends JFrame {
 		// check first for speed
 		if (!text.startsWith("<")) return text;
 
-		if (text.equals("<enter>")) return unicodeString('\u21b2', "cr");
+		if (text.equals("<enter>")) return unicodeString('\u21b2', "");
 		if (text.equals("<backspace>")) return "\u21a4";
 		if (text.equals("<escape>")) return app.getPlain("Esc");
 		if (text.equals("<left>")) return "\u2190";
@@ -894,6 +903,8 @@ public class VirtualKeyboard extends JFrame {
 			getAltButton().setText(app.getPlain("Alt"));
 			getAltGrButton().setText(app.getPlain("AltGr"));
 			updateCtrlButton();
+			updateAltButton();
+			updateAltGrButton();
 		}	      
 		getAltButton().setSelected(false);
 		getAltGrButton().setSelected(false);
