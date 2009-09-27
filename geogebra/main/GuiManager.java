@@ -2,7 +2,7 @@ package geogebra.main;
 
 
 import geogebra.gui.virtualkeyboard.MyTextField;
-import geogebra.gui.virtualkeyboard.WindowUnicodeKeyboard;
+import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -346,7 +346,7 @@ public interface GuiManager {
 		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed);
 		public void toggleKeyboard();
 		public boolean showVirtualKeyboard();
-		public WindowUnicodeKeyboard getKeyboard();
+		public WindowsUnicodeKeyboard getKeyboard();
 
 		public void showNumberInputDialogRegularPolygon(String menu,
 				GeoPoint geoPoint, GeoPoint geoPoint2);		 

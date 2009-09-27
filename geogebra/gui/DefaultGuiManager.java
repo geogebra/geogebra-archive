@@ -17,8 +17,8 @@ import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.MyTextField;
-import geogebra.gui.virtualkeyboard.WindowUnicodeKeyboard;
-import geogebra.gui.virtualkeyboard.vk_gui;
+import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
@@ -2377,17 +2377,17 @@ public class DefaultGuiManager implements GuiManager {
 		}
 		
 		MyTextField currentTextfield = null;
-		WindowUnicodeKeyboard kb = null;
+		WindowsUnicodeKeyboard kb = null;
 
 		public void setCurrentTextfield(MyTextField textfield) {
 			currentTextfield = textfield;
 			
 		}
 		
-		public WindowUnicodeKeyboard getKeyboard() {
+		public WindowsUnicodeKeyboard getKeyboard() {
 			
 			try{
-				kb = new WindowUnicodeKeyboard();
+				kb = new WindowsUnicodeKeyboard();
 			} catch (Exception e) {}
 			return kb;
 		}
@@ -2404,7 +2404,7 @@ public class DefaultGuiManager implements GuiManager {
 				// or for special keys eg Enter
 				if (kb == null) {
 					try{
-						kb = new WindowUnicodeKeyboard();
+						kb = new WindowsUnicodeKeyboard();
 					} catch (Exception e) {}
 				}
 				
@@ -2431,12 +2431,12 @@ public class DefaultGuiManager implements GuiManager {
 				
 			}
 		}
-		vk_gui virtualKeyboard = null;
+		VirtualKeyboard virtualKeyboard = null;
 		
 		public void toggleKeyboard() {
 			
 			if (virtualKeyboard == null) {
-				virtualKeyboard = new vk_gui(app, 400, 235);
+				virtualKeyboard = new VirtualKeyboard(app, 400, 235);
 			}
 			virtualKeyboard.setVisible(!virtualKeyboard.isVisible());
 

@@ -7,16 +7,16 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
 //http://stackoverflow.com/questions/1248510/convert-string-to-keyevents
-public class WindowUnicodeKeyboard extends Keyboard {
+public class WindowsUnicodeKeyboard extends Keyboard {
 
     private Robot robot;
 
-    public WindowUnicodeKeyboard(Robot robot) {
+    public WindowsUnicodeKeyboard(Robot robot) {
         super(robot);
         this.robot = robot;
     }
 
-    public WindowUnicodeKeyboard() throws AWTException {
+    public WindowsUnicodeKeyboard() throws AWTException {
 		super();
 		this.robot = super.robot;
 	}
