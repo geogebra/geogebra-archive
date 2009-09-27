@@ -619,7 +619,7 @@ public class VirtualKeyboard extends JFrame {
 			case '8' :
 			case '9' :
 				if (AltButton.isSelected()) {
-					StringBuffer sb = getAltStringBuffer();
+					StringBuilder sb = getAltStringBuffer();
 
 					sb.append(addchar);
 
@@ -653,11 +653,11 @@ public class VirtualKeyboard extends JFrame {
 
 	}
 
-	StringBuffer sbAlt;
+	StringBuilder sbAlt;
 
-	private StringBuffer getAltStringBuffer() {
+	private StringBuilder getAltStringBuffer() {
 		if (sbAlt == null)
-			sbAlt = new StringBuffer();
+			sbAlt = new StringBuilder();
 
 		return sbAlt;
 	}
@@ -710,7 +710,7 @@ public class VirtualKeyboard extends JFrame {
 		}
 	}//*/
 
-	private StringBuffer sb = new StringBuffer();
+	private StringBuilder sb = new StringBuilder();
 
 	/* to replace start_vk.myKeys.get("B0101char");
 	 * 
