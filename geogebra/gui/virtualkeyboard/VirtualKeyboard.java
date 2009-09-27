@@ -409,7 +409,6 @@ public class VirtualKeyboard extends JFrame {
 					//	setMode(KEYBOARD_ALTGR);
 					//else
 					//	setMode(KEYBOARD_NORMAL);
-					Application.debug(AltGrButton.isSelected()+"");
 					updateButtons();
 					updateAltGrButton();
 				}
