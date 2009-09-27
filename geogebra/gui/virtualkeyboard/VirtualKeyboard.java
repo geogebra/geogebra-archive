@@ -734,7 +734,6 @@ public class VirtualKeyboard extends JFrame {
 		if (ret2 == null && getAltGrButton().isSelected()) {
 			sb.setLength(sb.length() - 1); // remove MODE
 			sb.append("Q"); 
-			Application.debug(sb.toString());
 			ret2 = myKeys.get(sb.toString());
 		}
 
