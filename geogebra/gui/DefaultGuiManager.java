@@ -2377,21 +2377,14 @@ public class DefaultGuiManager implements GuiManager {
 		}
 		
 		MyTextField currentTextfield = null;
-		WindowsUnicodeKeyboard kb = null;
 
 		public void setCurrentTextfield(MyTextField textfield) {
 			currentTextfield = textfield;
 			
 		}
 		
-		public WindowsUnicodeKeyboard getKeyboard() {
-			
-			try{
-				kb = new WindowsUnicodeKeyboard();
-			} catch (Exception e) {}
-			return kb;
-		}
-		
+		WindowsUnicodeKeyboard kb = null;
+
 		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed) {
 
 			if (currentTextfield != null && !text.equals("\n")

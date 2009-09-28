@@ -39,6 +39,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 
 
@@ -99,6 +100,20 @@ public class VirtualKeyboard extends JFrame {
 	//WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
 	//Keyboard kb;// = new Keyboard();
 
+    public static void main(String[] args) {    
+    	
+		try {							
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+		}	
+    	
+    	VirtualKeyboard virtualKeyboard = new VirtualKeyboard(null, 400, 235);
+	
+	virtualKeyboard.setVisible(true);
+   	
+    	
+    	
+    }
 	/**
 	 * This is the default constructor
 	 */
@@ -647,7 +662,7 @@ public class VirtualKeyboard extends JFrame {
 					char c = (char)Integer.parseInt(sb.toString());
 
 					// release alt
-					app.getGuiManager().getKeyboard().altPressed(false);
+					//app.getGuiManager().getKeyboard().altPressed(false);
 					AltButton.setSelected(false);
 					updateAltButton();
 
@@ -665,8 +680,12 @@ public class VirtualKeyboard extends JFrame {
 		if (addchar.equals("<enter>"))
 			addchar="\n";
 
-		app.getGuiManager().insertStringIntoTextfield(addchar, getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected());
-
+		if (app != null)
+			app.getGuiManager().insertStringIntoTextfield(addchar, getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected());
+		else
+			getKeyboard().type(addchar);
+			
+		
 	}
 
 	StringBuilder sbAlt;
@@ -944,5 +963,17 @@ public class VirtualKeyboard extends JFrame {
 		KEYBOARD_MODE = KEYBOARD_NORMAL;
 		updateButtons();
 	}
+	
+	
+	WindowsUnicodeKeyboard kb = null;
+	
+	public WindowsUnicodeKeyboard getKeyboard() {
+		
+		try{
+			kb = new WindowsUnicodeKeyboard();
+		} catch (Exception e) {}
+		return kb;
+	}
+	
 
 }
