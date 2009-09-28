@@ -2401,27 +2401,8 @@ public class DefaultGuiManager implements GuiManager {
 					} catch (Exception e) {}
 				}
 				
-				if (kb != null) {
-					if (!text.startsWith("<") || !text.endsWith(">")) {
-						kb.type(altPressed, ctrlPressed, shiftPressed, text);
-					} else {
-						if (text.equals("<escape>"))
-							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_ESCAPE);
-						else if (text.equals("<left>"))
-							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_LEFT);
-						else if (text.equals("<right>"))
-							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_RIGHT);
-						else if (text.equals("<up>"))
-							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_UP);
-						else if (text.equals("<down>"))
-							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_DOWN);
-						else if (text.equals("<backspace>"))
-							kb.doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_BACK_SPACE);
-						else Application.debug("unknown keycode:"+text);
-					}
-						
-				}
-				
+				kb.doType(altPressed, ctrlPressed, shiftPressed, text);
+								
 			}
 		}
 		VirtualKeyboard virtualKeyboard = null;

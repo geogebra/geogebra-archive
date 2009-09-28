@@ -173,6 +173,29 @@ public class Keyboard {
         }
     }
 
+    /*
+     * process strings such as <enter>
+     */
+    public void doType(boolean altPressed, boolean ctrlPressed, boolean shiftPressed, String text ) {
+		if (!text.startsWith("<") || !text.endsWith(">")) {
+			type(altPressed, ctrlPressed, shiftPressed, text);
+		} else {
+			if (text.equals("<escape>"))
+				doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_ESCAPE);
+			else if (text.equals("<left>"))
+				doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_LEFT);
+			else if (text.equals("<right>"))
+				doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_RIGHT);
+			else if (text.equals("<up>"))
+				doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_UP);
+			else if (text.equals("<down>"))
+				doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_DOWN);
+			else if (text.equals("<backspace>"))
+				doType(altPressed, ctrlPressed, shiftPressed, KeyEvent.VK_BACK_SPACE);
+			else Application.debug("unknown keycode:"+text);
+		}
+    	
+    }
     public void doType(boolean altPressed, boolean ctrlPressed, boolean shiftPressed, int... keyCodes ) {
        	
     	if (altPressed)

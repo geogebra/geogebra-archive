@@ -8,7 +8,7 @@ This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
-*/
+ */
 
 
 
@@ -76,14 +76,14 @@ public class VirtualKeyboard extends JFrame {
 	String escText = "Esc";
 
 	private Application app;
-	
+
 	// max width character
 	private char wideChar = '\u21d4'; // wide arrow <=>
 
 	private int buttonRows = 5;
 	private int buttonCols = 14;
 	private double buttonSizeX, buttonSizeY;
-	
+
 	// make sure fonts fit in buttons
 	private double horizontalMultiplier = 0.84;
 	private double verticalMultiplier = 0.8;
@@ -100,20 +100,27 @@ public class VirtualKeyboard extends JFrame {
 	//WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
 	//Keyboard kb;// = new Keyboard();
 
-    public static void main(String[] args) {    
-    	
+	public static void main(String[] args) {    
+
 		try {							
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 		}	
-    	
-    	VirtualKeyboard virtualKeyboard = new VirtualKeyboard(null, 400, 235);
+
+		VirtualKeyboard virtualKeyboard = new VirtualKeyboard(400, 235);
+
+		virtualKeyboard.setVisible(true);
+
+
+
+	}
 	
-	virtualKeyboard.setVisible(true);
-   	
-    	
-    	
-    }
+	public VirtualKeyboard(int sizeX, int sizeY) {
+		this(null, sizeX, sizeY);
+	}
+	
+	
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -129,20 +136,20 @@ public class VirtualKeyboard extends JFrame {
 		this.setFocusableWindowState(false);
 		this.setAlwaysOnTop(true);
 
-		
+
 		String fName;
-		
+
 		if (app != null)
 			fName = app.getAppFontNameSansSerif();
 		else
 			fName = "Arial Unicode MS";
-		
+
 		if (fName == "SansSerif") {
 			horizontalMultiplier = 1.0;
 			verticalMultiplier = 1.0;
 
 		}
-		
+
 		for (int i = 0 ; i < 100 ; i++) {
 			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
 			FontMetrics fm = getFontMetrics(fonts[i]);
@@ -357,7 +364,7 @@ public class VirtualKeyboard extends JFrame {
 		AltGrButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
 
 		AltGrButton.setFont(getFont((int)(minButtonSize() / 2)));
-		
+
 		setColor(AltGrButton);
 
 	}
@@ -387,11 +394,11 @@ public class VirtualKeyboard extends JFrame {
 		setColor(GreekButton);
 
 	}
-	
+
 	private double minButtonSize() {
 		double ret = Math.min(buttonSizeX * horizontalMultiplier,
 				buttonSizeY * verticalMultiplier);
-		
+
 		return (ret == 0) ? 1 : ret;
 	}
 
@@ -474,9 +481,9 @@ public class VirtualKeyboard extends JFrame {
 			MathButton.setMargin(new Insets(0,0,0,0));
 			MathButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					
+
 					getGreekButton().setSelected(false);
-					
+
 					if (KEYBOARD_MODE != KEYBOARD_MATH)
 						setMode(KEYBOARD_MATH);
 					else
@@ -508,7 +515,7 @@ public class VirtualKeyboard extends JFrame {
 						readConf(app, new Locale("el"), false);
 					//else
 					//	readConf(app, null, false);
-					
+
 					updateButtons();
 
 
@@ -683,9 +690,9 @@ public class VirtualKeyboard extends JFrame {
 		if (app != null)
 			app.getGuiManager().insertStringIntoTextfield(addchar, getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected());
 		else
-			getKeyboard().type(addchar);
-			
-		
+			getKeyboard().doType(getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected(), addchar);
+
+
 	}
 
 	StringBuilder sbAlt;
@@ -698,10 +705,10 @@ public class VirtualKeyboard extends JFrame {
 	}
 
 	private void setMode(char mode) {
-		
+
 		// restore language (eg if greek selected before)
 		readConf(app, null, false);
-		
+
 		if (KEYBOARD_MODE == mode) {
 			KEYBOARD_MODE = KEYBOARD_NORMAL;
 		} else {
@@ -712,19 +719,19 @@ public class VirtualKeyboard extends JFrame {
 			// new mode
 			KEYBOARD_MODE = mode;
 		}
-		
+
 		if (KEYBOARD_MODE != KEYBOARD_MATH) {
 			getMathButton().setSelected(false);
 		} 
 		if (KEYBOARD_MODE == KEYBOARD_MATH
-		 || KEYBOARD_MODE == KEYBOARD_GREEK		
-		
+				|| KEYBOARD_MODE == KEYBOARD_GREEK		
+
 		) {
 			getAltGrButton().setSelected(false);
 		}
-		
+
 		updateButtons();
-		
+
 
 
 		//Application.debug("mode="+KEYBOARD_MODE);
@@ -771,7 +778,7 @@ public class VirtualKeyboard extends JFrame {
 		sb.append(KEYBOARD_MODE); // append 'A' for acute , ' ' for default etc
 
 		keys ret2 = myKeys.get(sb.toString());
-		
+
 		// check for AltGr (Q) code if no accent etc available
 		if (ret2 == null && getAltGrButton().isSelected()) {
 			sb.setLength(sb.length() - 1); // remove MODE
@@ -850,8 +857,8 @@ public class VirtualKeyboard extends JFrame {
 
 		// make sure "Esc" fits
 
-		
-		
+
+
 		int len = Buttons[i][j].getText().length();
 		if (len == 0) len = 1;
 
@@ -899,9 +906,9 @@ public class VirtualKeyboard extends JFrame {
 		//ResourceBundle rbKeyboard = MyResourceBundle.loadSingleBundleFile("/geogebra/gui/virtualkeyboard/keyboard_en_UK");
 
 		ResourceBundle rbKeyboard;
-		
+
 		Locale locale;
-		
+
 		if (app != null)
 			locale = app.getLocale();
 		else
@@ -963,17 +970,17 @@ public class VirtualKeyboard extends JFrame {
 		KEYBOARD_MODE = KEYBOARD_NORMAL;
 		updateButtons();
 	}
-	
-	
+
+
 	WindowsUnicodeKeyboard kb = null;
-	
+
 	public WindowsUnicodeKeyboard getKeyboard() {
-		
+
 		try{
 			kb = new WindowsUnicodeKeyboard();
 		} catch (Exception e) {}
 		return kb;
 	}
-	
+
 
 }
