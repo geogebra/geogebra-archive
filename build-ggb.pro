@@ -50,7 +50,7 @@
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
 
-# needed so that hoten can find Des12.gif, etc.
+# needed so that hoteqn can find Des12.gif, etc.
 -keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
 
 # Jasymca uses reflection to create functions like LambaSIN
@@ -59,6 +59,8 @@
 # supress foxtrot error messages
 -keep class java.util.LinkedList { java.lang.Object getFirst(); }
 -keep class java.lang.Object { java.lang.Object list; }
+
+-keep class geogebra.gui.virtualkeyboard.VirtualKeyboard { <methods>; }
 
 #####
 # Plugin part
