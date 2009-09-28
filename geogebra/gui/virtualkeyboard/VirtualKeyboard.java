@@ -245,7 +245,7 @@ public class VirtualKeyboard extends JFrame {
 		this.setPreferredSize(new Dimension(windowX, windowY));
 		this.setName("MainPanel");
 		populateContentPane();
-		this.setTitle("Virtual Keyboard");
+		this.setTitle((app == null) ? "Virtual Keyboard" : app.getPlain("VirtualKeyboard"));
 	}
 
 	/**
