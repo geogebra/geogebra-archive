@@ -38,7 +38,7 @@ public class MathTextField extends MyTextField implements KeyListener {
 		if (e.isAltDown()) {
 			if (!altPressed) {
 				altCodes.setLength(0);
-				Application.debug("alt pressed");
+				//Application.debug("alt pressed");
 			}
 			altPressed = true;
 		} else {
