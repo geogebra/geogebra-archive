@@ -124,7 +124,7 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("da")); // Danish
 		supportedLocales.add(new Locale("nl")); // Dutch
 		supportedLocales.add(new Locale("en")); // English
-		supportedLocales.add(new Locale("en", "UK")); // English (UK)
+		supportedLocales.add(new Locale("en", "GB")); // English (UK)
 		supportedLocales.add(new Locale("et")); // Estonian
 		supportedLocales.add(new Locale("fi")); // Finnish
 		supportedLocales.add(new Locale("fr")); // French
@@ -173,7 +173,7 @@ public abstract class Application implements KeyEventDispatcher {
 		specialLanguageNames.put("zhTW", "Chinese Traditional");
 		specialLanguageNames.put("cz", "Czech");
 		specialLanguageNames.put("en", "English (US)");
-		specialLanguageNames.put("enUK", "English (UK)");
+		specialLanguageNames.put("enGB", "English (UK)");
 		specialLanguageNames.put("deAT", "German (Austria)");
 		specialLanguageNames.put("gl", "Galician");
 		specialLanguageNames.put("noNO", "Norwegian (Bokm\u00e5l)");

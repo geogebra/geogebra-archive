@@ -963,7 +963,9 @@ public class VirtualKeyboard extends JFrame {
 		if (app != null)
 			locale = app.getLocale();
 		else
-			locale = new Locale("en");
+			locale = getLocale();
+		
+		//System.out.println("Using locale "+locale.toString());
 
 		if (math) {
 			rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboardMath", locale);
