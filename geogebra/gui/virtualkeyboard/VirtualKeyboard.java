@@ -63,6 +63,7 @@ public class VirtualKeyboard extends JFrame {
 
 
 	private JButton SpaceButton      = null;
+	private JButton DummyButton      = null;
 	private JToggleButton CapsLockButton   = null;
 	private JToggleButton AltButton   = null;
 	private JToggleButton AltGrButton   = null;
@@ -85,8 +86,10 @@ public class VirtualKeyboard extends JFrame {
 	private double buttonSizeX, buttonSizeY;
 
 	// make sure fonts fit in buttons
-	private double horizontalMultiplier = 0.84;
-	private double verticalMultiplier = 0.8;
+	//private double horizontalMultiplier = 0.84;
+	//private double verticalMultiplier = 0.8;
+	private double horizontalMultiplier = 1;
+	private double verticalMultiplier = 1;
 
 	private JButton[][] Buttons = new JButton[buttonRows + 1][buttonCols];
 
@@ -95,7 +98,7 @@ public class VirtualKeyboard extends JFrame {
 	private Font font, smFont;
 
 	Font [] fonts = new Font[100];
-	int fontWidths[] = new int[100];
+	//int fontWidths[] = new int[100];
 
 	//WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
 	//Keyboard kb;// = new Keyboard();
@@ -144,16 +147,17 @@ public class VirtualKeyboard extends JFrame {
 		else
 			fName = "Arial Unicode MS";
 
-		if (fName == "SansSerif") {
-			horizontalMultiplier = 1.0;
-			verticalMultiplier = 1.0;
+		//if (fName == "SansSerif") {
+			//horizontalMultiplier = 1.0;
+			//verticalMultiplier = 1.0;
 
-		}
+		//}
 
+		
 		for (int i = 0 ; i < 100 ; i++) {
 			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
-			FontMetrics fm = getFontMetrics(fonts[i]);
-			fontWidths[i] = 5 + Math.max(fm.stringWidth("\u21d4"),fm.stringWidth("W")); // wide arrow <=>, W
+			//FontMetrics fm = getFontMetrics(fonts[i]);
+			//fontWidths[i] = 5 + Math.max(fm.stringWidth("\u21d4"),fm.stringWidth("W")); // wide arrow <=>, W
 			//fontWidths[i] = fm.stringWidth("W"); 
 			//Application.debug(fm.stringWidth("W")+" "+fm.stringWidth("\u21d4"));
 		}
@@ -282,12 +286,23 @@ public class VirtualKeyboard extends JFrame {
 	   updateButtons();
 
    }//*/
+	
+	//int maxX, maxY;
 
 	public void updateButtons() {
+		
+		//maxX = 0;
+		//maxY = 0;
 		for (int i = 1 ; i <= buttonRows ; i++)
 			for (int j = 0 ; j < buttonCols ; j++)
 				updateButton(i,j);	   
 
+		//Application.debug(maxX*14+" "+maxY*6+" "+getWidth()+" "+getHeight());
+		
+	     // setSize(maxX * 14, maxY * 6);
+	     // validate();
+
+		
 		updateSpaceButton();
 		updateCapsLockButton();
 		updateMathButton();
@@ -318,6 +333,18 @@ public class VirtualKeyboard extends JFrame {
 			});
 		}
 		return SpaceButton;
+	}
+
+	private JButton getDummyButton() {
+		if (DummyButton == null) {
+
+			DummyButton                = new JButton(wideChar+"");
+			DummyButton.setRequestFocusEnabled(false);
+			DummyButton.setSize(new Dimension(10, 10));
+			DummyButton.setLocation(new Point(0, 0));
+			DummyButton.setMargin(new Insets(0,0,0,0));
+		}
+		return DummyButton;
 	}
 
 	private void updateSpaceButton() {
@@ -855,6 +882,9 @@ public class VirtualKeyboard extends JFrame {
 
 		Buttons[i][j].setBounds(new Rectangle((int)(0.5 + buttonSizeX * (double)j), (int)(0.5 + buttonSizeY * (double)(ii - 1)), (int)buttonSizeX, height));
 
+		Dimension size = Buttons[i][j].getPreferredSize();
+		//maxX = Math.max(size.width, maxX);
+		//maxY = Math.max(size.height, maxY);
 		// make sure "Esc" fits
 
 
@@ -877,6 +907,11 @@ public class VirtualKeyboard extends JFrame {
 	HashMap<Integer, Font> fontsHash = new HashMap(30);
 
 	private Font getFont(int size) {
+		
+		if (size < 10) {
+			font = fonts[0];
+			return font;
+		}
 
 		Integer Size = new Integer(size);
 
@@ -884,7 +919,23 @@ public class VirtualKeyboard extends JFrame {
 
 		// all OK, return
 		if (ret != null) return ret;
+		
+		
 
+		//Application.debug("starting loop"+size);
+		for (int i = fonts.length - 1 ; i >= 0 ; i--) {
+
+			getDummyButton().setFont(fonts[i]);
+			Dimension buttonSize = DummyButton.getPreferredSize();
+			if (buttonSize.width < size) {
+				
+				font = fonts[i];
+				fontsHash.put(Size, font);
+				//Application.debug("storing "+size+" "+i);
+				return font;
+			}
+		}
+		/*
 		for (int i = 0 ; i < fonts.length - 1 ; i++) {
 			if (fontWidths[i] < size && fontWidths[i+1] >= size)
 			{
@@ -892,9 +943,9 @@ public class VirtualKeyboard extends JFrame {
 				fontsHash.put(Size, font);
 				return font;
 			}
-		}
+		}*/
 
-		font = fonts[fonts.length - 1];
+		font = fonts[0];
 		return font;
 
 	}
