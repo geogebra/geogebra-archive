@@ -60,7 +60,7 @@
 -keep class java.util.LinkedList { java.lang.Object getFirst(); }
 -keep class java.lang.Object { java.lang.Object list; }
 
--keep class geogebra.gui.virtualkeyboard.VirtualKeyboard { <methods>; }
+-keep class geogebra.gui.virtualkeyboard.VirtualKeyboard { public static void main(java.lang.String[]); }
 
 #####
 # Plugin part
