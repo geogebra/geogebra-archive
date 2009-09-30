@@ -2410,7 +2410,7 @@ public class DefaultGuiManager implements GuiManager {
 		public void toggleKeyboard() {
 			
 			if (virtualKeyboard == null) {
-				virtualKeyboard = new VirtualKeyboard(app, 400, 235);
+				virtualKeyboard = new VirtualKeyboard(app, 400, 235, 0.7f);
 			}
 			virtualKeyboard.setVisible(!virtualKeyboard.isVisible());
 

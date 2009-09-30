@@ -25,9 +25,11 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -119,7 +121,7 @@ public class VirtualKeyboard extends JFrame {
 	}
 	
 	public VirtualKeyboard(int sizeX, int sizeY) {
-		this(null, sizeX, sizeY);
+		this(null, sizeX, sizeY, 0.7f);
 	}
 	
 	
@@ -127,7 +129,7 @@ public class VirtualKeyboard extends JFrame {
 	/**
 	 * This is the default constructor
 	 */
-	public VirtualKeyboard(final Application app, int sizeX, int sizeY) {
+	public VirtualKeyboard(final Application app, int sizeX, int sizeY, float transparency) {
 
 		super();
 
@@ -169,15 +171,24 @@ public class VirtualKeyboard extends JFrame {
 
 		setLabels();
 
+		windowResized();
 
+		
+		// make sure resizing the window dynamically updates the contents
+		// doesn't seem to be needed on Java 5
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		kit.setDynamicLayout(true);
 
-
+		
 		// Event Handling
-		this.addComponentListener(new ComponentAdapter()
+		getContentPane().addComponentListener(new ComponentAdapter()
 		{
 			public void componentResized(ComponentEvent e)
 			{
-					windowResized();
+				//Application.debug("resize");	
+				windowResized();
+
+				
 				/*
       if (tmp.getWidth()<300)
       {
@@ -202,7 +213,7 @@ public class VirtualKeyboard extends JFrame {
 		// http://java.sun.com/developer/technicalArticles/GUI/translucent_shaped_windows/#Setting-the-Opacity-Level-of-a-Window
 		//AWTUtilities.setWindowOpacity
 
-		float transparency = 0.7f;
+		
 
 		try { // Java 6u10+ only
 			Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
@@ -1049,6 +1060,9 @@ public class VirtualKeyboard extends JFrame {
 		} catch (Exception e) {}
 		return kb;
 	}
+
+
+
 
 
 }
