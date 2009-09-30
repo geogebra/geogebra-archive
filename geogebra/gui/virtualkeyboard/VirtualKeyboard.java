@@ -51,7 +51,7 @@ import javax.swing.UIManager;
 public class VirtualKeyboard extends JFrame {
 
 
-	Robot robot;
+	private Robot robot;
 
 
 	private static final long serialVersionUID = 1L;
@@ -71,15 +71,15 @@ public class VirtualKeyboard extends JFrame {
 	private JToggleButton MathButton   = null;
 	private JToggleButton GreekButton   = null;
 
-	String ctrlText = "Ctrl";
-	String altText = "Alt";
-	String altGrText = "AltG";
-	String escText = "Esc";
+	private String ctrlText = "Ctrl";
+	private String altText = "Alt";
+	private String altGrText = "AltG";
+	private String escText = "Esc";
 
 	private Application app;
 
 	// max width character
-	private char wideChar = '\u21d4'; // wide arrow <=>
+	private char wideChar = '@';//'\u21d4'; // wide arrow <=>
 
 	private int buttonRows = 5;
 	private int buttonCols = 14;
@@ -95,9 +95,9 @@ public class VirtualKeyboard extends JFrame {
 
 	private int windowX, windowY;
 
-	private Font font, smFont;
+	private Font font;
 
-	Font [] fonts = new Font[100];
+	private Font [] fonts = new Font[100];
 	//int fontWidths[] = new int[100];
 
 	//WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
@@ -177,15 +177,6 @@ public class VirtualKeyboard extends JFrame {
 		{
 			public void componentResized(ComponentEvent e)
 			{
-				JFrame tmp = (JFrame)e.getSource();
-
-
-
-
-
-
-
-				if (tmp instanceof VirtualKeyboard)
 					windowResized();
 				/*
       if (tmp.getWidth()<300)
@@ -848,7 +839,7 @@ public class VirtualKeyboard extends JFrame {
 
 		if (text.equals("<enter>")) return unicodeString('\u21b2', "");
 		if (text.equals("<backspace>")) return "\u21a4";
-		if (text.equals("<escape>")) return (app == null) ? "Esc" : app.getPlain("Esc");
+		if (text.equals("<escape>")) return (app == null) ? escText : app.getPlain("Esc");
 		if (text.equals("<left>")) return "\u2190";
 		if (text.equals("<up>")) return "\u2191";
 		if (text.equals("<right>")) return "\u2192";
@@ -904,7 +895,7 @@ public class VirtualKeyboard extends JFrame {
 
 	}
 
-	HashMap<Integer, Font> fontsHash = new HashMap(30);
+	private HashMap<Integer, Font> fontsHash = new HashMap(30);
 
 	private Font getFont(int size) {
 		
@@ -920,7 +911,30 @@ public class VirtualKeyboard extends JFrame {
 		// all OK, return
 		if (ret != null) return ret;
 		
+		int maxSize = 100;
+		int minSize = 1;
 		
+		
+		// interval bisection method to find desired fontsize
+		while (minSize != maxSize - 1) {
+			//Application.debug(minSize+" "+maxSize);
+			int midSize = (minSize + maxSize) / 2;
+			getDummyButton().setFont(fonts[midSize]);
+			Dimension buttonSize = DummyButton.getPreferredSize();
+			
+			if (buttonSize.width < size)
+				minSize = midSize;
+			else
+				maxSize = midSize;
+			
+		}
+		
+		font = fonts[minSize];
+		fontsHash.put(Size, font);
+		Application.debug("storing "+size+" "+minSize);
+		return font;
+		
+		/*
 
 		//Application.debug("starting loop"+size);
 		for (int i = fonts.length - 1 ; i >= 0 ; i--) {
@@ -934,7 +948,8 @@ public class VirtualKeyboard extends JFrame {
 				Application.debug("storing "+size+" "+i);
 				return font;
 			}
-		}
+		}*/
+		
 		/*
 		for (int i = 0 ; i < fonts.length - 1 ; i++) {
 			if (fontWidths[i] < size && fontWidths[i+1] >= size)
@@ -945,8 +960,8 @@ public class VirtualKeyboard extends JFrame {
 			}
 		}*/
 
-		font = fonts[0];
-		return font;
+		//font = fonts[0];
+		//return font;
 
 	}
 
@@ -1025,7 +1040,7 @@ public class VirtualKeyboard extends JFrame {
 	}
 
 
-	WindowsUnicodeKeyboard kb = null;
+	private WindowsUnicodeKeyboard kb = null;
 
 	public WindowsUnicodeKeyboard getKeyboard() {
 
