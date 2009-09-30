@@ -931,7 +931,7 @@ public class VirtualKeyboard extends JFrame {
 				
 				font = fonts[i];
 				fontsHash.put(Size, font);
-				//Application.debug("storing "+size+" "+i);
+				Application.debug("storing "+size+" "+i);
 				return font;
 			}
 		}
