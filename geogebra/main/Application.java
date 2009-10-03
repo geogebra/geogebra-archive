@@ -1063,6 +1063,18 @@ public abstract class Application implements KeyEventDispatcher {
 		return imageManager.getInternalImage("/geogebra/main/view-refresh.png");		
 	}
 	
+	public Image getUpArrowImage() {		
+		return getInternalImage("go-up.png");		
+	}
+	
+	public Image getDownArrowImage() {		
+		return getInternalImage("go-down.png");		
+	}
+	
+	public Image getBlobImage() {		
+		return getInternalImage("blob.png");		
+	}
+	
 	public Image getPlayImage() {		
 		// don't need to load gui jar as reset image is in main jar
 		return imageManager.getInternalImage("/geogebra/main/nav_play.png");		

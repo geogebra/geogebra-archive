@@ -334,7 +334,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	// protected int drawMode = DRAW_MODE_BACKGROUND_IMAGE;
 	protected BufferedImage bgImage;
 	protected Graphics2D bgGraphics; // g2d of bgImage
-	protected Image resetImage, playImage, pauseImage;
+	protected Image resetImage, playImage, pauseImage, upArrowImage, downArrowImage;
 	private boolean firstPaint = true;
 	
 	// temp image
@@ -1280,6 +1280,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if (showAxesRatio)
 			drawAxesRatio(g2);
 		
+		if (mode == EuclidianConstants.MODE_WHITEBOARD)
+			drawWhiteboardButtons(g2);
+		
 		if (kernel.needToShowAnimationButton()) {
 			drawAnimationButtons(g2);
 		}
@@ -1616,6 +1619,20 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			playImage = app.getPlayImage();
 		}
 		return playImage;
+	}
+	
+	private Image getUpArrowImage() {
+		if (upArrowImage == null) {
+			upArrowImage = app.getUpArrowImage();
+		}
+		return upArrowImage;
+	}
+	
+	private Image getDownArrowImage() {
+		if (downArrowImage == null) {
+			downArrowImage = app.getDownArrowImage();
+		}
+		return downArrowImage;
 	}
 	
 	private Image getPauseImage() {
@@ -2045,6 +2062,66 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		g2.drawRect(x-2, y-2, 18, 18);
 		Image img = kernel.isAnimationRunning() ? getPauseImage() : getPlayImage();			
 		g2.drawImage(img, x, y, null);
+	}
+	
+	final protected void drawWhiteboardButtons(Graphics2D g2) {
+		int x = 6;
+		int y = 6;
+				
+		//if (highlightAnimationButtons) {
+			// draw filled circle to highlight button
+			g2.setColor(Color.darkGray);
+		//} else {
+		//	g2.setColor(Color.lightGray);			
+		//}
+
+		// draw pause or play button
+			g2.setColor(Color.darkGray);
+			g2.drawRect(x-2, y-2, 18, 18);
+			Image img = getUpArrowImage();			
+			g2.drawImage(img, x, y, null);
+			
+			y+=18;
+			g2.setColor(Color.darkGray);
+			g2.drawRect(x-2, y-2, 18, 18);
+			g2.setColor(Color.red);
+			int size = 6;
+			g2.fillOval(x + 8 - size, y + 7 - size, size * 2 , size * 2);
+			
+			y+=18;
+			g2.setColor(Color.darkGray);
+			g2.drawRect(x-2, y-2, 18, 18);
+			img = getDownArrowImage();			
+			g2.drawImage(img, x, y, null);
+
+			y+=24;
+			g2.setColor(Color.darkGray);
+			g2.drawRect(x-2, y-2, 18, 18);
+			img = getUpArrowImage();			
+			g2.drawImage(img, x, y, null);
+
+			y+=18;
+
+			y+=18;
+			g2.setColor(Color.darkGray);
+			g2.drawRect(x-2, y-2, 18, 18);
+			img = getDownArrowImage();			
+			g2.drawImage(img, x, y, null);
+
+			y+=24;
+			g2.setColor(Color.darkGray);
+			g2.drawRect(x-2, y-2, 18, 18);
+			img = getUpArrowImage();			
+			g2.drawImage(img, x, y, null);
+
+			y+=18;
+
+			y+=18;
+			g2.setColor(Color.darkGray);
+			g2.drawRect(x-2, y-2, 18, 18);
+			img = getDownArrowImage();			
+			g2.drawImage(img, x, y, null);
+
 	}
 	
 	public final boolean hitAnimationButton(MouseEvent e) {
