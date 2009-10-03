@@ -68,10 +68,4 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 	}
 
-	public void insertStringFromVirtualKeyboard(String string,
-			boolean altPressed) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

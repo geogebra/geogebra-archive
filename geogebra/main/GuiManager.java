@@ -1,8 +1,7 @@
 package geogebra.main;
 
 
-import geogebra.gui.virtualkeyboard.MyTextField;
-import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
+import geogebra.gui.VirtualKeyboardListener;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -342,7 +341,7 @@ public interface GuiManager {
 		public void stopCollectingSpreadsheetTraces();
 		public void resetSpreadsheet();
 		
-		public void setCurrentTextfield(MyTextField textfield);
+		public void setCurrentTextfield(VirtualKeyboardListener textfield);
 		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed);
 		public void toggleKeyboard();
 		public boolean showVirtualKeyboard();

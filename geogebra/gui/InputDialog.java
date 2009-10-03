@@ -293,10 +293,4 @@ public class InputDialog extends JDialog implements ActionListener,
 		app.getGuiManager().setCurrentTextfield(null);
 	}
 
-	public void insertStringFromVirtualKeyboard(String string,
-			boolean altPressed) {
-		Application.debug("jhjhjh");
-		
-	}
-
 }
