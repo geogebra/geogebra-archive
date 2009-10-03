@@ -1,7 +1,7 @@
 package geogebra.gui.virtualkeyboard;
 
+import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
-import geogebra.main.Application;
 import geogebra.main.GuiManager;
 
 import java.awt.event.FocusEvent;
@@ -9,7 +9,7 @@ import java.awt.event.FocusListener;
 
 import javax.swing.JTextField;
 
-public class MyTextField extends JTextField implements FocusListener {
+public class MyTextField extends JTextField implements FocusListener, VirtualKeyboardListener {
 	
 	GuiManager guiManager;
 	
@@ -22,7 +22,7 @@ public class MyTextField extends JTextField implements FocusListener {
 	}
 
 	public void focusGained(FocusEvent e) {
-		guiManager.setCurrentTextfield(this);
+		guiManager.setCurrentTextfield((VirtualKeyboardListener)this);
 		
 	}
 
@@ -66,6 +66,12 @@ public class MyTextField extends JTextField implements FocusListener {
 		}
 
 
+	}
+
+	public void insertStringFromVirtualKeyboard(String string,
+			boolean altPressed) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

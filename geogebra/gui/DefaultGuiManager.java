@@ -17,8 +17,8 @@ import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.MyTextField;
-import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
+import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
@@ -48,7 +48,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -2376,10 +2375,10 @@ public class DefaultGuiManager implements GuiManager {
 			((SpreadsheetView)getSpreadsheetView()).setColumnWidth(column, width);
 		}
 		
-		MyTextField currentTextfield = null;
+		VirtualKeyboardListener currentKeyboardListener = null;
 
-		public void setCurrentTextfield(MyTextField textfield) {
-			currentTextfield = textfield;
+		public void setCurrentTextfield(VirtualKeyboardListener keyboardListener) {
+			currentKeyboardListener = keyboardListener;
 			
 		}
 		
@@ -2387,11 +2386,11 @@ public class DefaultGuiManager implements GuiManager {
 
 		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed) {
 
-			if (currentTextfield != null && !text.equals("\n")
+			if (currentKeyboardListener != null && !text.equals("\n")
 					&& (!text.startsWith("<") || !text.endsWith(">"))
 					&& !altPressed
 					&& !ctrlPressed) {
-				currentTextfield.insertString(text);
+					currentKeyboardListener.insertString(text);
 			} else {
 				// use Robot if no TextField currently active
 				// or for special keys eg Enter
