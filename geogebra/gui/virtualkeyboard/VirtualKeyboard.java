@@ -72,6 +72,7 @@ public class VirtualKeyboard extends JFrame {
 	private JToggleButton CtrlButton   = null;
 	private JToggleButton MathButton   = null;
 	private JToggleButton GreekButton   = null;
+	private JToggleButton EnglishButton   = null;
 
 	private String ctrlText = "Ctrl";
 	private String altText = "Alt";
@@ -105,7 +106,7 @@ public class VirtualKeyboard extends JFrame {
 	//WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
 	//Keyboard kb;// = new Keyboard();
 
-	public static void main(String[] args) {    
+	public static void mainx(String[] args) {    
 
 		try {							
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -309,6 +310,7 @@ public class VirtualKeyboard extends JFrame {
 		updateCapsLockButton();
 		updateMathButton();
 		updateGreekButton();
+		updateEnglishButton();
 		updateAltButton();
 		updateAltGrButton();
 		updateCtrlButton();
@@ -416,11 +418,23 @@ public class VirtualKeyboard extends JFrame {
 
 	private void updateGreekButton() {
 		GreekButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
-		GreekButton.setLocation(new Point((int)(buttonSizeX * 23d / 2d), (int)(buttonSizeY * 4d)));
+		GreekButton.setLocation(new Point((int)(buttonSizeX * 25d / 2d), (int)(buttonSizeY * 4d)));
 
 		GreekButton.setFont(getFont((int)(minButtonSize())));
 
 		setColor(GreekButton);
+
+	}
+
+	private void updateEnglishButton() {
+		EnglishButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
+		EnglishButton.setLocation(new Point((int)(buttonSizeX * 23d / 2d), (int)(buttonSizeY * 4d)));
+
+		EnglishButton.setFont(getFont((int)(minButtonSize())));
+		
+		EnglishButton.setVisible(true);
+
+		setColor(EnglishButton);
 
 	}
 
@@ -512,6 +526,7 @@ public class VirtualKeyboard extends JFrame {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 
 					getGreekButton().setSelected(false);
+					getEnglishButton().setSelected(false);
 
 					if (KEYBOARD_MODE != KEYBOARD_MATH)
 						setMode(KEYBOARD_MATH);
@@ -533,7 +548,7 @@ public class VirtualKeyboard extends JFrame {
 	private JToggleButton getGreekButton() {
 		if (GreekButton == null) {
 
-			GreekButton             = new JToggleButton("\u03c3");
+			GreekButton             = new JToggleButton("\u03b1");
 			updateGreekButton();
 			GreekButton.setMargin(new Insets(0,0,0,0));
 			GreekButton.addActionListener(new java.awt.event.ActionListener() {
@@ -542,6 +557,9 @@ public class VirtualKeyboard extends JFrame {
 					setMode(KEYBOARD_NORMAL);
 					if (greek())
 						readConf(app, new Locale("el"), false);
+					
+					getEnglishButton().setSelected(false);
+					
 					//else
 					//	readConf(app, null, false);
 
@@ -552,6 +570,36 @@ public class VirtualKeyboard extends JFrame {
 			});
 		}
 		return GreekButton;
+	}
+
+	private boolean english() {
+		return getEnglishButton().isSelected();
+	}
+
+	private JToggleButton getEnglishButton() {
+		if (EnglishButton == null) {
+
+			EnglishButton             = new JToggleButton("a");
+			updateEnglishButton();
+			EnglishButton.setMargin(new Insets(0,0,0,0));
+			EnglishButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					setMode(KEYBOARD_NORMAL);
+					if (english())
+						readConf(app, new Locale("en"), false);
+					
+					getGreekButton().setSelected(false);
+					
+					//else
+					//	readConf(app, null, false);
+
+					updateButtons();
+
+
+				}
+			});
+		}
+		return EnglishButton;
 	}
 
 
@@ -575,12 +623,13 @@ public class VirtualKeyboard extends JFrame {
 		add(getCapsLockButton(), null);
 		add(getMathButton(), null);
 		add(getGreekButton(), null);
+		add(getEnglishButton(), null);
 		add(getAltButton(), null);
 		add(getAltGrButton(), null);
 		add(getCtrlButton(), null);
 
 		//jContentPane.setSize(getWidth(), getHeight());
-		//pack();
+		pack();
 
 		// }
 		//return getContentPane();
@@ -999,7 +1048,7 @@ public class VirtualKeyboard extends JFrame {
 			if (loc == null)
 				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", locale);
 			else {
-				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", new Locale("el"));
+				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", loc);
 			}
 		}
 
@@ -1044,6 +1093,7 @@ public class VirtualKeyboard extends JFrame {
 		getAltGrButton().setSelected(false);
 		getMathButton().setSelected(false);
 		getGreekButton().setSelected(false);
+		getEnglishButton().setSelected(false);
 		getCtrlButton().setSelected(false);
 		getCapsLockButton().setSelected(false);
 		KEYBOARD_MODE = KEYBOARD_NORMAL;
