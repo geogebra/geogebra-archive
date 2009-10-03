@@ -207,7 +207,7 @@ class ViewMenu extends BaseMenu {
 
 		addSeparator();
 
-		menuPerspectives = new JMenu("Perspectives");
+		menuPerspectives = new JMenu(app.getMenu("Perspectives"));
 		menuPerspectives.setIcon(app.getImageIcon("perspective.gif"));
 		
 		if (!app.isApplet()) {
