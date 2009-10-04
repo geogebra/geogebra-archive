@@ -277,7 +277,7 @@ class ViewMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 
-				app.getGuiManager().toggleKeyboard();
+				app.getGuiManager().toggleKeyboard(!app.getGuiManager().showVirtualKeyboard());
 
 			}
 		};

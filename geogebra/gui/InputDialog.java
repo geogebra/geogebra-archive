@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
@@ -286,11 +287,12 @@ public class InputDialog extends JDialog implements ActionListener,
 		if (!isModal()) {
 			app.setSelectionListenerMode(sl);
 		}
-		app.getGuiManager().setCurrentTextfield(this);
+		app.getGuiManager().setCurrentTextfield(this, true);
 	}
 
 	public void windowLostFocus(WindowEvent arg0) {
-		app.getGuiManager().setCurrentTextfield(null);
+		app.getGuiManager().setCurrentTextfield(null, !(arg0.getOppositeWindow() instanceof VirtualKeyboard));
+		
 	}
 
 }

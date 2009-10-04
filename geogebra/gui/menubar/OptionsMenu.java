@@ -42,6 +42,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	private JMenu
 		menuAngleUnit,
 		menuPointCapturing,
+		menuVirtualKeyboard,
 		menuDecimalPlaces,
 		menuContinuity,
 		menuPointStyle,
@@ -82,6 +83,16 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 				strPointCapturing, strPointCapturingAC, 0);
 		add(menuPointCapturing);
 		updateMenuPointCapturing();
+
+		// virtual keyboard
+		menuVirtualKeyboard = new JMenu(app.getMenu("VirtualKeyboard"));
+		menuVirtualKeyboard.setIcon(app.getImageIcon("magnet.gif"));
+		String[] strVirtualKeyboard = { "Labeling.automatic", "on", "off" };
+		String[] strVirtualKeyboardAC = { "2 VirtualKeyboard", "1 VirtualKeyboard", "0 VirtualKeyboard" };
+		addRadioButtonMenuItems(menuVirtualKeyboard, (ActionListener) this,
+				strVirtualKeyboard, strVirtualKeyboardAC, 0);
+		add(menuVirtualKeyboard);
+		updateMenuVirtualKeyboard();
 
 		// Angle unit
 		menuAngleUnit = new JMenu(app.getMenu("AngleUnit"));
@@ -521,6 +532,25 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	}
 
 	/**
+	 * Update the virtual keyboard menu.
+	 */
+	private void updateMenuVirtualKeyboard() {
+		if (menuVirtualKeyboard == null)
+			return;
+
+		String pos = Integer.toString(app.getVirtualKeyboardMode());
+		for (int i = 0; i < 4; i++) {
+			JRadioButtonMenuItem mi = (JRadioButtonMenuItem) menuVirtualKeyboard
+					.getMenuComponent(i);
+			String ac = mi.getActionCommand();
+			if (ac.substring(0, 1).equals(pos)) {
+				mi.setSelected(true);
+				break;
+			}
+		}
+	}
+
+	/**
 	 * Update the menu with all decimal places.
 	 */
 	private void updateMenuDecimalPlaces() {
@@ -644,6 +674,13 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		else if (cmd.endsWith("PointCapturing")) {
 			int mode = Integer.parseInt(cmd.substring(0, 1));
 			app.getEuclidianView().setPointCapturing(mode);
+			app.setUnsaved();
+		}
+
+		// Virtual Keyboard
+		else if (cmd.endsWith("VirtualKeyboard")) {
+			int mode = Integer.parseInt(cmd.substring(0, 1));
+			app.setVirtualKeyboardMode(mode);
 			app.setUnsaved();
 		}
 

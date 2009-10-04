@@ -2377,8 +2377,20 @@ public class DefaultGuiManager implements GuiManager {
 		
 		VirtualKeyboardListener currentKeyboardListener = null;
 
-		public void setCurrentTextfield(VirtualKeyboardListener keyboardListener) {
+		private boolean ignoreNext = false;
+		
+		public void setCurrentTextfield(VirtualKeyboardListener keyboardListener, boolean autoClose) {
 			currentKeyboardListener = keyboardListener;
+			if (app.getVirtualKeyboardMode() == Application.VIRTUAL_KEYBOARD_AUTO) {
+				if (currentKeyboardListener == null) {
+					// close virtual keyboard when focus lost
+					// ... unless we've lost focus because we've just opened it!
+					if (autoClose) toggleKeyboard(false);
+				} else {
+					// open virtual keyboard when focus gained
+					toggleKeyboard(true);
+				}
+			}
 			
 		}
 		
@@ -2406,12 +2418,12 @@ public class DefaultGuiManager implements GuiManager {
 		}
 		VirtualKeyboard virtualKeyboard = null;
 		
-		public void toggleKeyboard() {
+		public void toggleKeyboard(boolean show) {
 			
 			if (virtualKeyboard == null) {
 				virtualKeyboard = new VirtualKeyboard(app, 400, 235, 0.7f);
 			}
-			virtualKeyboard.setVisible(!virtualKeyboard.isVisible());
+			virtualKeyboard.setVisible(show);
 
 		}
 		

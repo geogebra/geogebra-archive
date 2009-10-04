@@ -22,7 +22,6 @@ import geogebra.JarManager;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.ImageSelection;
-import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.AlgoElement;
@@ -3710,6 +3709,37 @@ public abstract class Application implements KeyEventDispatcher {
 		    }
 		
 		return colors;
+	}
+	
+	public static final int VIRTUAL_KEYBOARD_OFF = 0;
+	public static final int VIRTUAL_KEYBOARD_ON  = 1;
+	public static final int VIRTUAL_KEYBOARD_AUTO =2;
+	private int virtualKeyboardMode = VIRTUAL_KEYBOARD_OFF;
+	
+	public int getVirtualKeyboardMode() {
+		return virtualKeyboardMode;
+	}
+	
+	public void setVirtualKeyboardMode(int mode) {
+		
+		switch (mode) {
+		case VIRTUAL_KEYBOARD_ON:
+			virtualKeyboardMode = mode;
+			getGuiManager().toggleKeyboard(true);
+			break;
+			
+		case VIRTUAL_KEYBOARD_AUTO:
+			virtualKeyboardMode = mode;
+			getGuiManager().toggleKeyboard(false);
+			break;
+			default: // VIRTUAL_KEYBOARD_OFF:
+				virtualKeyboardMode = VIRTUAL_KEYBOARD_OFF;
+			getGuiManager().toggleKeyboard(false);
+			break;
+
+		}
+		virtualKeyboardMode = mode;
+		Application.debug(mode+"");
 	}
 	
 }
