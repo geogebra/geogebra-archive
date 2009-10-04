@@ -85,7 +85,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		updateMenuPointCapturing();
 
 		// virtual keyboard
-		menuVirtualKeyboard = new JMenu(app.getMenu("VirtualKeyboard"));
+		menuVirtualKeyboard = new JMenu(app.getPlain("VirtualKeyboard"));
 		menuVirtualKeyboard.setIcon(app.getImageIcon("magnet.gif"));
 		String[] strVirtualKeyboard = { "Labeling.automatic", "on", "off" };
 		String[] strVirtualKeyboardAC = { "2 VirtualKeyboard", "1 VirtualKeyboard", "0 VirtualKeyboard" };

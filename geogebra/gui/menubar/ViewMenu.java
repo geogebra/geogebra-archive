@@ -271,7 +271,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showKeyboardAction = new AbstractAction(app.getMenu("ShowKeyboard"),
+		showKeyboardAction = new AbstractAction(app.getPlain("ShowKeyboard"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
