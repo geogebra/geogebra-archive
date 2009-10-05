@@ -84,6 +84,7 @@ public class VirtualKeyboard extends JFrame {
 
 	// max width character
 	private char wideChar = '@';//'\u21d4'; // wide arrow <=>
+	private char wideChar2 = '\u21d4'; // wide arrow <=>
 
 	private int buttonRows = 5;
 	private int buttonCols = 14;
@@ -182,8 +183,10 @@ public class VirtualKeyboard extends JFrame {
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		kit.setDynamicLayout(true);
 		
-		
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);//.DISPOSE_ON_CLOSE);
+		if (app != null)
+			setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		else
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setVisible(true);
         addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
@@ -967,11 +970,6 @@ public class VirtualKeyboard extends JFrame {
 		Buttons[i][j].setBounds(new Rectangle((int)(0.5 + buttonSizeX * (double)j), (int)(0.5 + buttonSizeY * (double)(ii - 1)), (int)buttonSizeX, height));
 
 		Dimension size = Buttons[i][j].getPreferredSize();
-		//maxX = Math.max(size.width, maxX);
-		//maxY = Math.max(size.height, maxY);
-		// make sure "Esc" fits
-
-
 
 		int len = Buttons[i][j].getText().length();
 		if (len == 0) len = 1;
@@ -981,7 +979,7 @@ public class VirtualKeyboard extends JFrame {
 		else {
 			// make sure "Esc" fits
 			FontMetrics fm = getFontMetrics(font);
-			int width = 5 + fm.stringWidth(Buttons[i][j].getText()); // wide arrow <=>
+			int width = fm.stringWidth(Buttons[i][j].getText()); // wide arrow <=>
 			int w2 = fm.stringWidth(wideChar+"");
 			Buttons[i][j].setFont(getFont((int)(minButtonSize() * w2 / width)));
 		}
@@ -992,11 +990,6 @@ public class VirtualKeyboard extends JFrame {
 
 	private Font getFont(int size) {
 		
-		if (size < 10) {
-			font = fonts[0];
-			return font;
-		}
-
 		Integer Size = new Integer(size);
 
 		Font ret = (Font)fontsHash.get(Size);
@@ -1012,10 +1005,16 @@ public class VirtualKeyboard extends JFrame {
 		while (minSize != maxSize - 1) {
 			//Application.debug(minSize+" "+maxSize);
 			int midSize = (minSize + maxSize) / 2;
-			getDummyButton().setFont(fonts[midSize]);
-			Dimension buttonSize = DummyButton.getPreferredSize();
 			
-			if (buttonSize.width < size)
+			getDummyButton().setFont(fonts[midSize]);
+			getDummyButton().setText(wideChar+"");
+			Dimension buttonSize = DummyButton.getPreferredSize();
+			getDummyButton().setText(wideChar2+"");
+			Dimension buttonSize2 = DummyButton.getPreferredSize();
+			
+			int wideCharSize = Math.max(buttonSize.width, buttonSize2.width);
+			
+			if (wideCharSize < size)
 				minSize = midSize;
 			else
 				maxSize = midSize;
