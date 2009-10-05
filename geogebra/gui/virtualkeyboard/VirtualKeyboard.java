@@ -29,7 +29,8 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -175,10 +176,42 @@ public class VirtualKeyboard extends JFrame {
 		windowResized();
 
 		
+		
 		// make sure resizing the window dynamically updates the contents
 		// doesn't seem to be needed on Java 5
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		kit.setDynamicLayout(true);
+		
+		
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);//.DISPOSE_ON_CLOSE);
+        //setVisible(true);
+        addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                //System.out.println("Window close event occur");
+            }
+            public void windowActivated(WindowEvent arg0) {
+                //System.out.println("Window Activated");
+            }
+            public void windowClosing(WindowEvent arg0) {
+                //System.out.println("Window Closing");
+            	// if closed with the X, stop it auto-opening
+                Application.setVirtualKeyboardActive(false);
+                app.getGuiManager().updateMenubar();
+            }
+            public void windowDeactivated(WindowEvent arg0) {
+                //System.out.println("Window Deactivated");
+            }
+            public void windowDeiconified(WindowEvent arg0) {
+                //System.out.println("Window Deiconified");
+            }
+            public void windowIconified(WindowEvent arg0) {
+                //System.out.println("Window Iconified");
+            }
+            public void windowOpened(WindowEvent arg0) {
+                //System.out.println("Window Opened");
+            }
+        });
+    
 
 		
 		// Event Handling

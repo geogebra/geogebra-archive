@@ -3711,35 +3711,16 @@ public abstract class Application implements KeyEventDispatcher {
 		return colors;
 	}
 	
-	public static final int VIRTUAL_KEYBOARD_OFF = 0;
-	public static final int VIRTUAL_KEYBOARD_ON  = 1;
-	public static final int VIRTUAL_KEYBOARD_AUTO =2;
-	private int virtualKeyboardMode = VIRTUAL_KEYBOARD_OFF;
+	private static boolean virtualKeyboardActive = false;
 	
-	public int getVirtualKeyboardMode() {
-		return virtualKeyboardMode;
+	public static boolean isVirtualKeyboardActive() {
+		return virtualKeyboardActive;
 	}
 	
-	public void setVirtualKeyboardMode(int mode) {
-		
-		switch (mode) {
-		case VIRTUAL_KEYBOARD_ON:
-			virtualKeyboardMode = mode;
-			getGuiManager().toggleKeyboard(true);
-			break;
-			
-		case VIRTUAL_KEYBOARD_AUTO:
-			virtualKeyboardMode = mode;
-			getGuiManager().toggleKeyboard(false);
-			break;
-			default: // VIRTUAL_KEYBOARD_OFF:
-				virtualKeyboardMode = VIRTUAL_KEYBOARD_OFF;
-			getGuiManager().toggleKeyboard(false);
-			break;
+	public static void setVirtualKeyboardActive(boolean active) {
+		virtualKeyboardActive = active;
+		//Application.debug("VK active:"+virtualKeyboardActive);
+	}
+	
 
-		}
-		virtualKeyboardMode = mode;
-		Application.debug(mode+"");
-	}
-	
 }

@@ -276,8 +276,19 @@ class ViewMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-
-				app.getGuiManager().toggleKeyboard(!app.getGuiManager().showVirtualKeyboard());
+				
+				if (Application.isVirtualKeyboardActive() && !app.getGuiManager().showVirtualKeyboard()) {
+					
+					// if keyboard is active but hidden, just show it
+					app.getGuiManager().toggleKeyboard(true);
+					update();
+					
+				} else {
+				
+					Application.setVirtualKeyboardActive(!Application.isVirtualKeyboardActive());				
+					app.getGuiManager().toggleKeyboard(Application.isVirtualKeyboardActive());
+					update();
+				}
 
 			}
 		};
@@ -501,7 +512,7 @@ class ViewMenu extends BaseMenu {
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
-		cbShowKeyboard.setSelected(app.getGuiManager().showVirtualKeyboard());
+		cbShowKeyboard.setSelected(Application.isVirtualKeyboardActive());
 		cbShowCmdList.setSelected(app.showCmdList());
 		cbShowInputTop.setSelected(app.showInputTop());
 		cbShowToolBar.setSelected(app.showToolBar());
