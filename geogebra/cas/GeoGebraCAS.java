@@ -97,7 +97,7 @@ public class GeoGebraCAS {
 			// undo special character handling
 			result = insertSpecialChars(result);
 
-			//Application.debug("String for MathPiper: "+exp+"\nresult: "+result);
+			Application.debug("String for MathPiper: "+exp+"\nresult: "+result);
 
 			return result;
 		} catch (Throwable th) {
@@ -165,9 +165,9 @@ public class GeoGebraCAS {
 		String strGetPolynomialCoeffs = "getPolynomialCoeffs(expr,x) := If( CanBeUni(expr),[ Coef(MakeUni(expr,x),x, 0 .. Degree(expr,x));],{});";
 		ggbMathPiper.evaluate(strGetPolynomialCoeffs);
 		
-		// make sure Factor((((((((9.1) * ((x)^(7))) - ((32) * ((x)^(6)))) + ((48) * ((x)^(5)))) - ((40) * ((x)^(4)))) + ((20) * ((x)^(3)))) - ((6) * ((x)^(2)))) + (x))] works
-		String initFactor = "Factors(p_IsRational)_(Denom(p) != 1) <-- {{Factor(Numer(p)) / Factor(Denom(p)) , 1}};";
-		ggbMathPiper.evaluate(initFactor);
+		// make sure Factor[((((((((9.1) * ((x)^(7))) - ((32) * ((x)^(6)))) + ((48) * ((x)^(5)))) - ((40) * ((x)^(4)))) + ((20) * ((x)^(3)))) - ((6) * ((x)^(2)))) + (x))] works
+		//String initFactor = "Factors(p_IsRational)_(Denom(p) != 1) <-- {{Factor(Numer(p)) / Factor(Denom(p)) , 1}};";
+		//ggbMathPiper.evaluate(initFactor);
 
 		//evaluateMathPiper(exp)
 	}
