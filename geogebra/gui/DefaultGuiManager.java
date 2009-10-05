@@ -2381,15 +2381,16 @@ public class DefaultGuiManager implements GuiManager {
 		
 		public void setCurrentTextfield(VirtualKeyboardListener keyboardListener, boolean autoClose) {
 			currentKeyboardListener = keyboardListener;
-			if (currentKeyboardListener == null) {
-				// close virtual keyboard when focus lost
-				// ... unless we've lost focus because we've just opened it!
-				if (autoClose) toggleKeyboard(false);
-			} else {
-				// open virtual keyboard when focus gained
-				if (Application.isVirtualKeyboardActive())
-					toggleKeyboard(true);
-			}
+			if (virtualKeyboard != null)
+				if (currentKeyboardListener == null) {
+					// close virtual keyboard when focus lost
+					// ... unless we've lost focus because we've just opened it!
+					if (autoClose) toggleKeyboard(false);
+				} else {
+					// open virtual keyboard when focus gained
+					if (Application.isVirtualKeyboardActive())
+						toggleKeyboard(true);
+				}
 			
 			
 		}
