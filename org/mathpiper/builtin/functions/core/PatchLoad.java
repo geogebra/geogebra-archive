@@ -33,7 +33,7 @@ public class PatchLoad extends BuiltinFunction
     {
         aEnvironment.write("Function not yet implemented : PatchLoad");//TODO FIXME
 
-        throw new EvaluationException("Function not yet supported",-1);
+        throw new EvaluationException("Function not yet supported",aEnvironment.iInputStatus.fileName(), aEnvironment.iCurrentInput.iStatus.lineNumber());
     }
 }
 

@@ -38,7 +38,7 @@ public class Abs extends BuiltinFunction
         {
             z.negate(x);
         }
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(z));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(aEnvironment, z));
     }
 }//end class.
 

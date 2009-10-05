@@ -49,7 +49,7 @@ GetCoreError returns a string describing the core error.
 TrapError and GetCoreError can be used in combination to write
 a custom error handler error reporting facility that does not stop the execution is provided by the function {Assert}.
 
-*EG
+**E.G.
 
 	In>
 

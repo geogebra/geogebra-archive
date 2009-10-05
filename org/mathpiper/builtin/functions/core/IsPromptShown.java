@@ -33,7 +33,7 @@ public class IsPromptShown extends BuiltinFunction
     {
         aEnvironment.write("Function not yet implemented : LispIsPromptShown");//TODO FIXME
 
-        throw new EvaluationException("Function not yet supported",-1);
+        throw new EvaluationException("Function not yet supported",aEnvironment.iInputStatus.fileName(), aEnvironment.iCurrentInput.iStatus.lineNumber());
     }
 }//end class.
 
@@ -41,13 +41,13 @@ public class IsPromptShown extends BuiltinFunction
 
 /*
 %mathpiper_docs,name="IsPromptShown",categories="Programmer Functions;Built In"
-*CMD IsPromptShown --- test for the Yacas prompt option
+*CMD IsPromptShown --- test for the MathPiper prompt option
 *CORE
 *CALL
 	IsPromptShown()
 
 *DESC
-Returns {False} if Yacas has been started with the option to suppress the prompt, and {True} otherwise.
+Returns {False} if MathPiper has been started with the option to suppress the prompt, and {True} otherwise.
 
 %/mathpiper_docs
 */

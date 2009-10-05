@@ -24,6 +24,8 @@ import org.mathpiper.lisp.cons.AtomCons;
 import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.cons.Cons;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -96,6 +98,8 @@ public class Utility {
         5.
     };
     public static java.util.zip.ZipFile zipFile = null;
+
+    public static String scriptsPath = null;
 
 
     public static boolean isNumber(String ptr, boolean aAllowFloat) {
@@ -198,8 +202,8 @@ public class Utility {
 
     public static void returnUnEvaluated(ConsPointer aResult, ConsPointer aArguments, Environment aEnvironment) throws Exception {
         ConsPointer full = new ConsPointer();
-        full.setCons(aArguments.getCons().copy(false));
-        aResult.setCons(SublistCons.getInstance(full.getCons()));
+        full.setCons(aArguments.getCons().copy(aEnvironment, false));
+        aResult.setCons(SublistCons.getInstance(aEnvironment, full.getCons()));
 
         ConsTraverser consTraverser = new ConsTraverser(aArguments);
         consTraverser.goNext();
@@ -223,7 +227,7 @@ public class Utility {
                 AtomCons.getInstance(aEnvironment, getSymbolName(aEnvironment, aOperator));
         head.cdr().setCons(aArgs.getCons());
         ConsPointer body = new ConsPointer();
-        body.setCons(SublistCons.getInstance(head));
+        body.setCons(SublistCons.getInstance(aEnvironment, head));
         aEnvironment.iLispExpressionEvaluator.evaluate(aEnvironment, aResult, body);
     }
 
@@ -251,7 +255,7 @@ public class Utility {
                 String var = (String) oper2.car();
                 LispError.check(var != null, LispError.INVALID_ARGUMENT);
                 ConsPointer newly = new ConsPointer();
-                newly.setCons(args2.getCons().copy(false));
+                newly.setCons(args2.getCons().copy(aEnvironment, false));
                 aEnvironment.newLocalVariable(var, newly.getCons());
                 oper2.setCons(oper2.cdr().getCons());
                 args2.setCons(args2.cdr().getCons());
@@ -268,12 +272,12 @@ public class Utility {
 
 
     public static void putTrueInPointer(Environment aEnvironment, ConsPointer aResult) throws Exception {
-        aResult.setCons(aEnvironment.iTrueAtom.copy(false));
+        aResult.setCons(aEnvironment.iTrueAtom.copy(aEnvironment, false));
     }
 
 
     public static void putFalseInPointer(Environment aEnvironment, ConsPointer aResult) throws Exception {
-        aResult.setCons(aEnvironment.iFalseAtom.copy(false));
+        aResult.setCons(aEnvironment.iFalseAtom.copy(aEnvironment, false));
     }
 
 
@@ -286,7 +290,7 @@ public class Utility {
     }
 
 
-    public static void nth(ConsPointer aResult, ConsPointer aArg, int n) throws Exception {
+    public static void nth(Environment aEnvironment, ConsPointer aResult, ConsPointer aArg, int n) throws Exception {
         LispError.check(aArg.getCons() != null, LispError.INVALID_ARGUMENT);
         LispError.check(aArg.car() instanceof ConsPointer, LispError.INVALID_ARGUMENT);
         LispError.check(n >= 0, LispError.INVALID_ARGUMENT);
@@ -298,18 +302,18 @@ public class Utility {
             n--;
         }
         LispError.check(consTraverser.getCons() != null, LispError.INVALID_ARGUMENT);
-        aResult.setCons(consTraverser.getCons().copy(false));
+        aResult.setCons(consTraverser.getCons().copy(aEnvironment, false));
     }
 
 
-    public static void tail(ConsPointer aResult, ConsPointer aArg) throws Exception {
+    public static void tail(Environment aEnvironment, ConsPointer aResult, ConsPointer aArg) throws Exception {
         LispError.check(aArg.getCons() != null, LispError.INVALID_ARGUMENT);
         LispError.check(aArg.car() instanceof ConsPointer, LispError.INVALID_ARGUMENT);
 
         ConsPointer iter = (ConsPointer) aArg.car();
 
         LispError.check(iter.getCons() != null, LispError.INVALID_ARGUMENT);
-        aResult.setCons(SublistCons.getInstance(iter.cdr().getCons()));
+        aResult.setCons(SublistCons.getInstance(aEnvironment, iter.cdr().getCons()));
     }
 
 
@@ -437,6 +441,7 @@ public class Utility {
             optionPointer.goNext();
             LispError.check(optionPointer.type() == Utility.ATOM, LispError.INVALID_ARGUMENT);
             String key = (String) optionPointer.car();
+            key = Utility.stripEndQuotes(key);
 
             //Obtain value.
             optionPointer.goNext();
@@ -487,7 +492,7 @@ public class Utility {
 
 
     public static String stripEndQuotes(String aOriginal) throws Exception {
-    //If there are not quotes on both ends of the string then return without any changes.
+        //If there are not quotes on both ends of the string then return without any changes.
         if (aOriginal.startsWith("\"") && aOriginal.endsWith("\"")) {
             aOriginal = aOriginal.substring(1, aOriginal.length());
             aOriginal = aOriginal.substring(0, aOriginal.length() - 1);
@@ -507,12 +512,12 @@ public class Utility {
     }
 
 
-    public static void flatCopy(ConsPointer aResult, ConsPointer aOriginal) throws Exception {
+    public static void flatCopy(Environment aEnvironment, ConsPointer aResult, ConsPointer aOriginal) throws Exception {
         ConsTraverser orig = new ConsTraverser(aOriginal);
         ConsTraverser res = new ConsTraverser(aResult);
 
         while (orig.getCons() != null) {
-            res.getPointer().setCons(orig.getCons().copy(false));
+            res.getPointer().setCons(orig.getCons().copy(aEnvironment, false));
             orig.goNext();
             res.goNext();
         }
@@ -587,10 +592,10 @@ public class Utility {
     }
 
 
-    public static void substitute(ConsPointer aTarget, ConsPointer aSource, Substitute aBehaviour) throws Exception {
+    public static void substitute(Environment aEnvironment, ConsPointer aTarget, ConsPointer aSource, Substitute aBehaviour) throws Exception {
         Cons object = aSource.getCons();
         LispError.lispAssert(object != null);
-        if (!aBehaviour.matches(aTarget, aSource)) {
+        if (!aBehaviour.matches(aEnvironment, aTarget, aSource)) {
             Object oldList = object.car();
 
             ConsPointer oldListPointer = null;
@@ -603,13 +608,13 @@ public class Utility {
                 ConsPointer newList = new ConsPointer();
                 ConsPointer next = newList;
                 while (oldListPointer.getCons() != null) {
-                    substitute(next, oldListPointer, aBehaviour);
+                    substitute(aEnvironment, next, oldListPointer, aBehaviour);
                     oldListPointer = oldListPointer.cdr();
                     next = next.cdr();
                 }
-                aTarget.setCons(SublistCons.getInstance(newList.getCons()));
+                aTarget.setCons(SublistCons.getInstance(aEnvironment, newList.getCons()));
             } else {
-                aTarget.setCons(object.copy(false));
+                aTarget.setCons(object.copy(aEnvironment, false));
             }
         }//end matches if.
     }
@@ -639,7 +644,7 @@ public class Utility {
             ConsPointer readIn = new ConsPointer();
             while (!endoffile) {
                 // Read expression
-                parser.parse(readIn);
+                parser.parse(aEnvironment, readIn);
 
                 LispError.check(readIn.getCons() != null, LispError.READING_FILE);
                 // check for end of file
@@ -656,7 +661,7 @@ public class Utility {
 
 
         } catch (Exception e) {
-            EvaluationException ee = new EvaluationException(e.getMessage(), aEnvironment.iCurrentInput.iStatus.lineNumber());
+            EvaluationException ee = new EvaluationException(e.getMessage(), aEnvironment.iInputStatus.fileName(), aEnvironment.iCurrentInput.iStatus.lineNumber());
             throw ee;
         } finally {
             aEnvironment.iCurrentInput = previous;
@@ -687,12 +692,27 @@ public class Utility {
         doInternalLoad(aEnvironment, newInput);
         } else {*/
 //System.out.println("Loading: " + oper);
-        java.net.URL fileURL = java.lang.ClassLoader.getSystemResource(oper);
-        if (fileURL != null) //File is on the classpath.
+        Enumeration paths  = java.lang.ClassLoader.getSystemResources(Utility.scriptsPath + oper);
+
+
+        URL fileURL = null;
+        if(paths.hasMoreElements()) //File is on the classpath.
         {
+            while(paths.hasMoreElements())
+            {
+                fileURL = (URL) paths.nextElement();
+                if(fileURL.getPath().indexOf(Utility.scriptsPath) != -1)
+                {
+                    break;
+                }
+            }//end while.
+
+            LispError.check(fileURL != null, LispError.FILE_NOT_FOUND);
+
             newInput = new StandardFileInputStream(new InputStreamReader(fileURL.openStream()), aEnvironment.iInputStatus);
             LispError.check(newInput != null, LispError.FILE_NOT_FOUND);
             doInternalLoad(aEnvironment, newInput);
+            
         } else { //File may be in the filesystem.
             try {
                 // Open file
@@ -745,6 +765,7 @@ public class Utility {
 
 
     public static MathPiperInputStream openInputFile(String aFileName, InputStatus aInputStatus) throws Exception {//Note:tk:primary method for file opening.
+
         try {
             if (zipFile != null) {
                 java.util.zip.ZipEntry e = zipFile.getEntry(aFileName);
@@ -823,9 +844,9 @@ public class Utility {
                 } // Else evaluate
                 else {
                     String str = token;
-                    MultipleArityUserFunction multiUser = aEnvironment.getMultipleArityUserFunction(str);
+                    MultipleArityUserFunction multiUser = aEnvironment.getMultipleArityUserFunction(str, true);
                     if (multiUser.iFileToOpen != null) {
-                        throw new EvaluationException("[" + str + "]" + "] : def file already chosen: " + multiUser.iFileToOpen.iFileName, -1);
+                        throw new EvaluationException("[" + str + "]" + "] : def file already chosen: " + multiUser.iFileToOpen.iFileName, aEnvironment.iInputStatus.fileName(), aEnvironment.iCurrentInput.iStatus.lineNumber());
                     }
                     multiUser.iFileToOpen = def;
                     multiUser.iFileLocation = def.fileName();
@@ -862,9 +883,23 @@ public class Utility {
         doLoadDefFile(aEnvironment, newInput, def);
         } else {*/
 //System.out.println("Loading: " + flatfile);
-        java.net.URL fileURL = java.lang.ClassLoader.getSystemResource(flatfile);
-        if (fileURL != null) //File is on the classpath.
+        Enumeration paths  = java.lang.ClassLoader.getSystemResources(Utility.scriptsPath + flatfile);
+
+
+        URL fileURL = null;
+        if(paths.hasMoreElements()) //File is on the classpath.
         {
+            while(paths.hasMoreElements())
+            {
+                fileURL = (URL) paths.nextElement();
+                if(fileURL.getPath().indexOf(Utility.scriptsPath) != -1)
+                {
+                    break;
+                }
+            }
+
+            LispError.check(fileURL != null, LispError.FILE_NOT_FOUND);
+
             newInput = new StandardFileInputStream(new InputStreamReader(fileURL.openStream()), aEnvironment.iInputStatus);
             LispError.check(newInput != null, LispError.FILE_NOT_FOUND);
             doLoadDefFile(aEnvironment, newInput, def);
@@ -896,7 +931,7 @@ public class Utility {
         if (n <= log2_table_size && n >= 2) {
             return log2_table[n - 1];
         } else {
-            throw new EvaluationException("log2_table_lookup: error: invalid argument " + n, -1);
+            throw new EvaluationException("log2_table_lookup: error: invalid argument " + n,"none", -1);
         }
     }
 
@@ -1023,7 +1058,7 @@ public class Utility {
         if (aDestructive) {
             copied.setCons(((ConsPointer) evaluated.car()).getCons());
         } else {
-            Utility.flatCopy(copied, (ConsPointer) evaluated.car());
+            Utility.flatCopy(aEnvironment, copied, (ConsPointer) evaluated.car());
         }
 
         ConsPointer index = new ConsPointer();
@@ -1042,7 +1077,7 @@ public class Utility {
         ConsPointer next = new ConsPointer();
         next.setCons(consTraverser.cdr().getCons());
         consTraverser.getPointer().setCons(next.getCons());
-        BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(copied.getCons()));
+        BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment, copied.getCons()));
     }
 
 
@@ -1055,7 +1090,7 @@ public class Utility {
         if (aDestructive) {
             copied.setCons(((ConsPointer) evaluated.car()).getCons());
         } else {
-            Utility.flatCopy(copied, (ConsPointer) evaluated.car());
+            Utility.flatCopy(aEnvironment, copied, (ConsPointer) evaluated.car());
         }
 
         ConsPointer index = new ConsPointer();
@@ -1075,7 +1110,7 @@ public class Utility {
         toInsert.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 3).getCons());
         toInsert.cdr().setCons(consTraverser.getCons());
         consTraverser.getPointer().setCons(toInsert.getCons());
-        BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(copied.getCons()));
+        BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment, copied.getCons()));
     }
 
 
@@ -1095,7 +1130,7 @@ public class Utility {
         if (aDestructive) {
             copied.setCons(((ConsPointer) evaluated.car()).getCons());
         } else {
-            Utility.flatCopy(copied, (ConsPointer) evaluated.car());
+            Utility.flatCopy(aEnvironment, copied, (ConsPointer) evaluated.car());
         }
         LispError.checkArgument(aEnvironment, aStackTop, ind > 0, 2);
 
@@ -1111,7 +1146,7 @@ public class Utility {
         LispError.checkArgument(aEnvironment, aStackTop, consTraverser.getPointer().getCons() != null, 2);
         toInsert.cdr().setCons(consTraverser.getPointer().cdr().getCons());
         consTraverser.getPointer().setCons(toInsert.getCons());
-        BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(copied.getCons()));
+        BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment, copied.getCons()));
     }
 
 
@@ -1329,7 +1364,7 @@ public class Utility {
             if (userFunction instanceof MacroUserFunction) {
                 BackQuoteSubstitute backQuoteSubstitute = new BackQuoteSubstitute(aEnvironment);
                 ConsPointer substitutedBodyPointer = new ConsPointer();
-                Utility.substitute(substitutedBodyPointer, branch.getBodyPointer(), backQuoteSubstitute);
+                Utility.substitute(aEnvironment, substitutedBodyPointer, branch.getBodyPointer(), backQuoteSubstitute);
                 substitutedMacroBody = Utility.printExpression(substitutedBodyPointer, aEnvironment, 0);
             }
 
@@ -1352,5 +1387,33 @@ public class Utility {
         return dumpResult.toString();
 
     }//end method.
+
+
+    public static Cons associativeListGet(Environment aEnvironment, ConsPointer key, Cons listCons) throws Exception {
+
+
+        while (listCons != null) {
+            if (listCons.car() instanceof ConsPointer) {
+                Cons sub = ((ConsPointer) listCons.car()).getCons();
+                if (sub != null) {
+                    sub = sub.cdr().getCons();
+                    ConsPointer temp = new ConsPointer();
+                    temp.setCons(sub);
+                    if (Utility.equals(aEnvironment, key, temp)) {
+                        return listCons;
+                    }//end if.
+
+                }//end if.
+
+            }//end if.
+
+            listCons = listCons.cdr().getCons();
+
+        }//end if.
+
+        return null;
+    }//end method.
+
+
 }//end class.
 

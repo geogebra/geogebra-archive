@@ -13,10 +13,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */ //}}}
-
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
-
 package org.mathpiper.lisp.cons;
+
 
 import org.mathpiper.lisp.*;
 import org.mathpiper.lisp.cons.ConsPointer;
@@ -24,53 +23,48 @@ import org.mathpiper.lisp.cons.Cons;
 import org.mathpiper.builtin.BuiltinContainer;
 
 
+public class BuiltinObjectCons extends Cons {
 
-public class BuiltinObjectCons extends Cons
-{
-	BuiltinContainer iCarBuiltin;
+    BuiltinContainer iCarBuiltin;
     ConsPointer iCdr = new ConsPointer();
-	
-	public static BuiltinObjectCons getInstance(BuiltinContainer aClass) throws Exception
-	{
-		LispError.lispAssert(aClass!=null);
-		BuiltinObjectCons self = new BuiltinObjectCons(aClass);
-		LispError.check(self!=null,LispError.NOT_ENOUGH_MEMORY);
-		return self;
-	}
-    
+
+
+    public static BuiltinObjectCons getInstance(Environment aEnvironment,BuiltinContainer aClass) throws Exception {
+        LispError.lispAssert(aClass != null);
+        BuiltinObjectCons self = new BuiltinObjectCons(aEnvironment, aClass);
+        LispError.check(self != null, LispError.NOT_ENOUGH_MEMORY);
+        return self;
+    }
+
+
+    public Object car() {
+        return iCarBuiltin;
+    }
+
+
+    public Cons copy(Environment aEnvironment, boolean aRecursed) throws Exception  {
+
+        Cons copied = new BuiltinObjectCons(aEnvironment, iCarBuiltin);
+
+        copied.setMetadataMap(this.getMetadataMap());
+
+        return copied;
         
-        public Object car()
-        {
-            return iCarBuiltin;
-        }
-	
+    }
 
-	
 
-	
-	public Cons copy(boolean aRecursed)
-	{
-		Cons copied = new BuiltinObjectCons(iCarBuiltin);
-		return copied;
-	}
-	
-	public Cons setExtraInfo(ConsPointer aData)
-	{
-		//TODO FIXME
-		return null;
-	}
+    BuiltinObjectCons(Environment aEnvironment, BuiltinContainer aClass) throws Exception  {
+        super(aEnvironment);
+        iCarBuiltin = aClass;
+    }
 
-	BuiltinObjectCons(BuiltinContainer aClass)
-	{
-		iCarBuiltin = aClass;
-	}
 
     public ConsPointer cdr() {
         return iCdr;
     }
 
-    public int type()
-    {
+
+    public int type() {
         return Utility.OBJECT;
     }//end method.
 };

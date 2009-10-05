@@ -37,7 +37,7 @@ public class Prefix extends BuiltinFunction
 
 
 /*
-%mathpiper_docs,name="Prefix"
+%mathpiper_docs,name="Prefix",categories="User Functions;Built In"
 *CMD Prefix --- define function syntax (prefix operator)
 *CORE
 *CALL

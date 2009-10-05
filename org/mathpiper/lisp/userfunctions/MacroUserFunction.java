@@ -42,7 +42,7 @@ public class MacroUserFunction extends SingleArityBranchingUserFunction {
                 LispError.check(parameterTraverser.car() instanceof String, LispError.CREATING_USER_FUNCTION);
             }catch(EvaluationException ex)
             {
-                throw new EvaluationException(ex.getMessage() + " Function: " + this.functionName + "  ",-1) ;
+                throw new EvaluationException(ex.getMessage() + " Function: " + this.functionName + "  ", "none", -1) ;
             }//end catch.
 
 
@@ -94,7 +94,7 @@ public class MacroUserFunction extends SingleArityBranchingUserFunction {
                     /* Rule dump trace code. */
                     if (isTraced() && showFlag) {
                         ConsPointer argumentsPointer = new ConsPointer();
-                        argumentsPointer.setCons(SublistCons.getInstance(aArgumentsPointer.getCons()));
+                        argumentsPointer.setCons(SublistCons.getInstance(aEnvironment,aArgumentsPointer.getCons()));
                         String ruleDump = org.mathpiper.lisp.Utility.dumpRule(thisRule, aEnvironment, this);
                         Evaluator.traceShowRule(aEnvironment, argumentsPointer, ruleDump);
                     }
@@ -103,7 +103,7 @@ public class MacroUserFunction extends SingleArityBranchingUserFunction {
                     BackQuoteSubstitute backQuoteSubstitute = new BackQuoteSubstitute(aEnvironment);
 
                     ConsPointer originalBodyPointer =  thisRule.getBodyPointer();
-                    Utility.substitute(substitutedBodyPointer,originalBodyPointer, backQuoteSubstitute);
+                    Utility.substitute(aEnvironment,substitutedBodyPointer, originalBodyPointer, backQuoteSubstitute);
                     //              aEnvironment.iLispExpressionEvaluator.Eval(aEnvironment, aResult, thisRule.body());
                     break;
                 }
@@ -128,7 +128,7 @@ public class MacroUserFunction extends SingleArityBranchingUserFunction {
         // arguments.
         {
             ConsPointer full = new ConsPointer();
-            full.setCons(aArgumentsPointer.getCons().copy(false));
+            full.setCons(aArgumentsPointer.getCons().copy( aEnvironment, false));
             if (arity == 0) {
                 full.cdr().setCons(null);
             } else {
@@ -137,14 +137,14 @@ public class MacroUserFunction extends SingleArityBranchingUserFunction {
                     argumentsResultPointerArray[parameterIndex].cdr().setCons(argumentsResultPointerArray[parameterIndex + 1].getCons());
                 }
             }
-            aResult.setCons(SublistCons.getInstance(full.getCons()));
+            aResult.setCons(SublistCons.getInstance(aEnvironment,full.getCons()));
         }
         //FINISH:
 
         /*Leave trace code */
         if (isTraced() && showFlag) {
             ConsPointer tr = new ConsPointer();
-            tr.setCons(SublistCons.getInstance(aArgumentsPointer.getCons()));
+            tr.setCons(SublistCons.getInstance(aEnvironment,aArgumentsPointer.getCons()));
             String localVariables = aEnvironment.getLocalVariables();
             LispExpressionEvaluator.traceShowLeave(aEnvironment, aResult, tr, "macro", localVariables);
             tr.setCons(null);

@@ -45,7 +45,42 @@ public class IsInteger extends BuiltinFunction
             Utility.putFalseInPointer(aEnvironment, getTopOfStackPointer(aEnvironment, aStackTop));
         } else
         {
-            Utility.putBooleanInPointer(aEnvironment, getTopOfStackPointer(aEnvironment, aStackTop), num.isInt());
+            Utility.putBooleanInPointer(aEnvironment, getTopOfStackPointer(aEnvironment, aStackTop), num.isInteger());
         }
     }
 }
+
+
+
+/*
+%mathpiper_docs,name="IsInteger",categories="User Functions;Predicates;Built In"
+*CMD IsInteger --- test to see if a number is an integer
+*CORE
+*CALL
+	IsInteger(expr)
+
+*PARMS
+
+{expr} -- expression to test
+
+*DESC
+
+This function tests whether "expr" is an integer number. There are two kinds
+of numbers, integers (e.g. 6) and decimals (e.g. -2.75 or 6.0).
+*E.G.
+
+In> IsInteger(6);
+Out> True;
+
+In> IsInteger(3.25);
+Out> False;
+
+In> IsInteger(1/2);
+Out> False;
+
+In> IsInteger(3.2/10);
+Out> False;
+
+*SEE IsString, IsAtom, IsInteger, IsDecimal, IsPositiveNumber, IsNegativeNumber, IsNumber
+%/mathpiper_docs
+*/

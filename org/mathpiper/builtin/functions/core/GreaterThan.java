@@ -50,7 +50,7 @@ public class GreaterThan extends BuiltinFunction
 *DESC
 Comparing numbers or strings (lexicographically).
 
-*EG
+**E.G.
 	In> GreaterThan(1,1)
 	Out> False;
 	In> GreaterThan("b","a")

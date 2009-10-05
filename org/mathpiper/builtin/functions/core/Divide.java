@@ -35,7 +35,7 @@ public class Divide extends BuiltinFunction
         BigNumber y = org.mathpiper.lisp.Utility.getNumber(aEnvironment, aStackTop, 2);
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
         // if both arguments are integers, then BigNumber::Divide would perform an integer divide, but we want a float divide here.
-        if (x.isInt() && y.isInt())
+        if (x.isInteger() && y.isInteger())
         {
             // why can't we just say BigNumber temp; ?
             BigNumber tempx = new BigNumber(aEnvironment.getPrecision());
@@ -51,7 +51,7 @@ public class Divide extends BuiltinFunction
         {
             z.divide(x, y, aEnvironment.getPrecision());
         }
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(z));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(aEnvironment, z));
         return;
     }
 }//end class.

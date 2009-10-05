@@ -33,6 +33,6 @@ public class CustomEvalExpression extends BuiltinFunction
     {
         aEnvironment.write("Function not yet implemented : CustomEvalExpression");////TODO fixme
 
-        throw new EvaluationException("Function not yet supported",-1);
+        throw new EvaluationException("Function not yet supported",aEnvironment.iInputStatus.fileName(), aEnvironment.iCurrentInput.iStatus.lineNumber());
     }
 }

@@ -33,9 +33,9 @@ public class DestructiveReverse extends BuiltinFunction
     public void evaluate(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer reversed = new ConsPointer();
-        reversed.setCons(aEnvironment.iListAtom.copy(false));
+        reversed.setCons(aEnvironment.iListAtom.copy( aEnvironment, false));
         Utility.reverseList(reversed.cdr(), ((ConsPointer) getArgumentPointer(aEnvironment, aStackTop, 1).car()).cdr());
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(reversed.getCons()));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment,reversed.getCons()));
     }
 }
 

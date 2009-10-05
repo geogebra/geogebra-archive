@@ -1,0 +1,156 @@
+
+
+Retract("ListToString", *);
+
+
+10 # ListToString(list_IsList)_(Length(list) = 0) <-- "";
+
+
+
+20 # ListToString(list_IsList) <--
+[
+    Local(resultString, character);
+    
+    resultString := "";
+    
+    ForEach(element, list)
+    [
+        If(IsString(element), character := element, character := String(element));
+        
+        resultString := resultString : character;
+    ];
+    
+    resultString;
+
+];
+
+
+Retract("NumberLineZoom", *);
+
+Retract("ZoomInOnce", *);
+
+LocalSymbols(ZoomInOnce)
+[
+
+    10 # NumberLinePrintZoom(_lowValue, _highValue, divisions_IsPositiveInteger, depth_IsPositiveInteger)_(lowValue < highValue) <-- 
+    [
+    
+        Local(numbers, stepAmount, zoomIndexes, nextZoomIndex, outputWidth, numbersString, output, randomStep, randomZoomNumber, iteration);
+        
+        iteration := 1;
+        
+        While(iteration <= depth)
+        [
+            {numbers, stepAmount} := ZoomInOnce(lowValue, highValue, divisions);
+            
+            zoomIndexes := {};
+            
+            outputWidth := 0;
+            
+            numbersString := "";
+            
+            ForEach(number, numbers)
+            [
+                output := ToString() Write(number);
+                
+                zoomIndexes := Append(zoomIndexes, Length(output));
+                
+                numbersString := numbersString : output : ToString() Space(3);
+                
+                outputWidth := outputWidth + Length(output) + 3;
+            
+            ];
+            
+            randomStep := RandomInteger(divisions);
+            
+            randomZoomNumber := Sum(Take(zoomIndexes, randomStep));
+            
+            If(randomStep = 1, nextZoomIndex := randomZoomNumber + 1, nextZoomIndex := 3*(randomStep-1) + randomZoomNumber + 1);
+         
+            If(iteration > 1, Echo(ListToString(FillList("-", outputWidth-3)))); 
+            
+            Echo(numbersString);
+            
+            If(iteration != depth,[Space(nextZoomIndex);Echo("|");]);
+            
+            lowValue := numbers[randomStep];
+            
+            highValue := numbers[randomStep+1];
+            
+            iteration++;
+            
+        ];
+    
+    ];
+    
+    
+    
+    
+    ZoomInOnce(_lowValue, _highValue, divisions_IsPositiveInteger)_(lowValue < highValue) <--
+    [
+        Local(stepAmount, x, numbers);
+        
+        stepAmount := If(IsDecimal(lowValue) Or IsDecimal(highValue), N((highValue-lowValue)/divisions), (highValue-lowValue)/divisions);
+        
+        x := lowValue;
+        
+        numbers := {};
+        
+        While(x <= highValue)
+        [
+        
+            numbers := Append(numbers, x);
+            
+            x := x + stepAmount;
+        
+        ];
+        
+        {numbers, stepAmount};
+    
+    ];
+
+
+];
+
+
+N(NumberLineZoom(0,1,8,5), 50);
+
+
+Retract("PadLeft", *);
+
+10 # PadLeft(number_IsInteger, totalDigits_IsInteger) <--
+[
+    Local(integerString, padAmount, resultString);
+    
+    integerString := String(number);
+    
+    padAmount := totalDigits - Length(integerString);
+    
+    If(padAmount > 0,
+        resultString := ListToString(FillList(0, padAmount)) : integerString,
+        resultString := integerString );
+];
+
+
+Retract("StringToList", *);
+
+10 # StringToList(string_IsString)_(Length(string) = 0) <-- {};
+
+
+20 # StringToList(string_IsString) <--
+[
+    Local(resultList);
+    
+    resultList := {};
+    
+    ForEach(character, string)
+    [
+        resultList := Append(resultList, character);
+    ];
+    
+    resultList;
+
+];
+
+
+

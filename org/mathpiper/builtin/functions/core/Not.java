@@ -40,9 +40,9 @@ public class Not extends BuiltinFunction
         } else
         {
             ConsPointer ptr = new ConsPointer();
-            ptr.setCons(getArgumentPointer(aEnvironment, aStackTop, 0).getCons().copy(false));
+            ptr.setCons(getArgumentPointer(aEnvironment, aStackTop, 0).getCons().copy( aEnvironment, false));
             ptr.cdr().setCons(evaluated.getCons());
-            getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(ptr.getCons()));
+            getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment,ptr.getCons()));
         }
     }
 }

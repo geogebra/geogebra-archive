@@ -48,7 +48,7 @@ public class Continue extends BuiltinFunction
 
 *DESC
 
-If Break is executed inside of a While, Until, For, or ForEach loop, all the code between
+If Continue is executed inside of a While, Until, For, or ForEach loop, all the code between
 the continue command and the end of the loop will be skipped and the next loop iteration
 will be started.
 
@@ -56,15 +56,16 @@ will be started.
 
 /%mathpiper
 
-x := 1;
+x := 0;
 
-While(x <= 10)
+While(x < 8)
 [
+    x++;
+
+    If(x = 5, Continue());
+
     Echo(x);
 
-    If(x = 5, Break());
-
-    x++;
 ];
 
 /%/mathpiper
@@ -77,7 +78,9 @@ While(x <= 10)
       2
       3
       4
-      5
+      6
+      7
+      8
 .   /%/output
 
 *SEE While, Until, For, ForEach, Break

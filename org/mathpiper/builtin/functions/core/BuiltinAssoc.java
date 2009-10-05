@@ -13,10 +13,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */ //}}}
-
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
-
 package org.mathpiper.builtin.functions.core;
+
 
 import org.mathpiper.builtin.BuiltinFunction;
 import org.mathpiper.lisp.cons.AtomCons;
@@ -26,15 +25,14 @@ import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.Utility;
 
+
 /**
  *
  *  
  */
-public class BuiltinAssoc extends BuiltinFunction
-{
+public class BuiltinAssoc extends BuiltinFunction {
 
-    public void evaluate(Environment aEnvironment, int aStackTop) throws Exception
-    {
+    public void evaluate(Environment aEnvironment, int aStackTop) throws Exception {
         // key to find
         ConsPointer key = new ConsPointer();
         key.setCons(getArgumentPointer(aEnvironment, aStackTop, 1).getCons());
@@ -43,33 +41,26 @@ public class BuiltinAssoc extends BuiltinFunction
         ConsPointer list = new ConsPointer();
         list.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
-        Cons t;
+        Cons listCons;
 
         //check that it is a compound object
-        LispError.checkArgument(aEnvironment, aStackTop, list.car()  instanceof ConsPointer, 2);
-        t = ((ConsPointer) list.car()).getCons();
-        LispError.checkArgument(aEnvironment, aStackTop, t != null, 2);
-        t = t.cdr().getCons();
+        LispError.checkArgument(aEnvironment, aStackTop, list.car() instanceof ConsPointer, 2);
+        listCons = ((ConsPointer) list.car()).getCons();
+        LispError.checkArgument(aEnvironment, aStackTop, listCons != null, 2);
+        listCons = listCons.cdr().getCons();
 
-        while (t != null)
-        {
-            if (t.car() instanceof ConsPointer)
-            {
-                Cons sub =((ConsPointer)  t.car()).getCons();
-                if (sub != null)
-                {
-                    sub = sub.cdr().getCons();
-                    ConsPointer temp = new ConsPointer();
-                    temp.setCons(sub);
-                    if (Utility.equals(aEnvironment, key, temp))
-                    {
-                        getTopOfStackPointer(aEnvironment, aStackTop).setCons(t);
-                        return;
-                    }
-                }
-            }
-            t = t.cdr().getCons();
+        Cons result = Utility.associativeListGet(aEnvironment, key, listCons);
+
+        if (result != null) {
+            getTopOfStackPointer(aEnvironment, aStackTop).setCons(result);
+
+        } else {
+            getTopOfStackPointer(aEnvironment, aStackTop).setCons(AtomCons.getInstance(aEnvironment, "Empty"));
         }
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(AtomCons.getInstance(aEnvironment, "Empty"));
-    }
-}
+
+
+    }//end method.
+
+
+}//end class.
+

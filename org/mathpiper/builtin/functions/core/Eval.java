@@ -36,7 +36,7 @@ public class Eval extends BuiltinFunction
 
 
 /*
- %mathpiper_docs,name="Eval",categories="User Functions;Control Flow;Built In"
+%mathpiper_docs,name="Eval",categories="User Functions;Control Flow;Built In"
 *CMD Eval --- force evaluation of expression
 *CORE
 *CALL

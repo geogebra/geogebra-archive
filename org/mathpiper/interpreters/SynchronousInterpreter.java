@@ -16,6 +16,7 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.interpreters;
 
+
 import org.mathpiper.exceptions.EvaluationException;
 import org.mathpiper.io.InputStatus;
 import org.mathpiper.lisp.printers.MathPiperPrinter;
@@ -38,14 +39,15 @@ import org.mathpiper.builtin.JavaObject;
 import org.mathpiper.io.StringOutput;
 import org.mathpiper.lisp.Evaluator;
 
+
 /**
  * 
  * 
  */
 class SynchronousInterpreter implements Interpreter {
+
     private ArrayList<ResponseListener> removeListeners;
     private ArrayList<ResponseListener> responseListeners;
-
     private Environment environment = null;
     MathPiperTokenizer tokenizer = null;
     LispPrinter printer = null;
@@ -58,10 +60,11 @@ class SynchronousInterpreter implements Interpreter {
     MathPiperOutputStream sideEffectsStream;
     private static SynchronousInterpreter singletonInstance;
 
+
     private SynchronousInterpreter(String docBase) {
-	responseListeners = new ArrayList<ResponseListener>();
+        responseListeners = new ArrayList<ResponseListener>();
         removeListeners = new ArrayList<ResponseListener>();
-	
+
         sideEffectsStream = new StringOutput();
 
         try {
@@ -107,9 +110,12 @@ class SynchronousInterpreter implements Interpreter {
                     //eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
                     evaluate("DefaultDirectory(\"" + docBase + "\");");
 
-                }
+                }//end if.
 
-            }
+            }//end if.
+            
+
+            Utility.scriptsPath = "org/mathpiper/geogebrascripts/";
 
 
             /*  java.net.URL detectURL = java.lang.ClassLoader.getSystemResource("initialization.rep/mathpiperinit.mpi");
@@ -143,11 +149,11 @@ class SynchronousInterpreter implements Interpreter {
             }
             } else
             {
-            System.out.println("Cannot find org/mathpiper/scripts/initialization.rep/mathpiperinit.mpi.");
+            System.out.println("Cannot find org/mathpiper/assembledscripts/initialization.rep/mathpiperinit.mpi.");
             }*/
 
 
-            EvaluationResponse evaluationResponse = evaluate("Load(\"org/mathpiper/scripts/initialization.rep/mathpiperinit.mpi\");");
+            EvaluationResponse evaluationResponse = evaluate("Load(\"initialization.rep/mathpiperinit.mpi\");");
 
             if (evaluationResponse.isExceptionThrown()) {
                 System.out.println(evaluationResponse.getExceptionMessage() + "   Source file name: " + evaluationResponse.getSourceFileName() + "   Near line number: " + evaluationResponse.getLineNumber());
@@ -161,17 +167,21 @@ class SynchronousInterpreter implements Interpreter {
         }
     }//end constructor.
 
+
     private SynchronousInterpreter() {
         this(null);
     }
+
 
     static SynchronousInterpreter newInstance() {
         return new SynchronousInterpreter();
     }
 
+
     static SynchronousInterpreter newInstance(String docBase) {
         return new SynchronousInterpreter(docBase);
     }
+
 
     static SynchronousInterpreter getInstance() {
         if (singletonInstance == null) {
@@ -180,6 +190,7 @@ class SynchronousInterpreter implements Interpreter {
         return singletonInstance;
     }
 
+
     static SynchronousInterpreter getInstance(String docBase) {
         if (singletonInstance == null) {
             singletonInstance = new SynchronousInterpreter(docBase);
@@ -187,10 +198,12 @@ class SynchronousInterpreter implements Interpreter {
         return singletonInstance;
     }
 
+
     public synchronized EvaluationResponse evaluate(String inputExpression) {
-	    return this.evaluate(inputExpression, false);
+        return this.evaluate(inputExpression, false);
     }//end method.
-		    
+
+
     public synchronized EvaluationResponse evaluate(String inputExpression, boolean notifyEvaluationListeners) {
         EvaluationResponse evaluationResponse = EvaluationResponse.newInstance();
         if (inputExpression.length() == 0) {
@@ -201,7 +214,9 @@ class SynchronousInterpreter implements Interpreter {
         String resultString = "";
         try {
             environment.iEvalDepth = 0;
-            environment.iLispExpressionEvaluator.resetStack();
+
+            //todo:tk:this was causing problems with GeoGebraPoint() on Windows.
+            //environment.resetArgumentStack();
 
 
             //iError = null;
@@ -246,7 +261,7 @@ class SynchronousInterpreter implements Interpreter {
                 StringInputStream inputExpressionBuffer = new StringInputStream(inp, someStatus);
 
                 Parser infixParser = new MathPiperParser(tokenizer, inputExpressionBuffer, environment, environment.iPrefixOperators, environment.iInfixOperators, environment.iPostfixOperators, environment.iBodiedOperators);
-                infixParser.parse(inputExpressionPointer);
+                infixParser.parse(environment, inputExpressionPointer);
             }
 
             ConsPointer result = new ConsPointer();
@@ -278,7 +293,9 @@ class SynchronousInterpreter implements Interpreter {
 
             Evaluator.DEBUG = false;
             Evaluator.VERBOSE_DEBUG = false;
-            
+            Evaluator.TRACE_TO_STANDARD_OUT = false;
+            Evaluator.iTraced = false;
+
             if (exception instanceof EvaluationException) {
                 EvaluationException mpe = (EvaluationException) exception;
                 int errorLineNumber = mpe.getLineNumber();
@@ -287,11 +304,25 @@ class SynchronousInterpreter implements Interpreter {
                     if (errorLineNumber == -1) {
                         errorLineNumber = 1; //Code was probably a single line submitted from the command line or from a single line evaluation request.
                     }
+                    evaluationResponse.setLineNumber(errorLineNumber);
+                    evaluationResponse.setSourceFileName(environment.iInputStatus.fileName());
+                }
+                else
+                {
+                    evaluationResponse.setLineNumber(mpe.getLineNumber());
+                    evaluationResponse.setSourceFileName(mpe.getFileName());
                 }
 
+
+            } else {
+                int errorLineNumber = environment.iInputStatus.lineNumber();
+                if (errorLineNumber == -1) {
+                    errorLineNumber = 1; //Code was probably a single line submitted from the command line or from a single line evaluation request.
+                    }
                 evaluationResponse.setLineNumber(errorLineNumber);
                 evaluationResponse.setSourceFileName(environment.iInputStatus.fileName());
             }
+
             evaluationResponse.setException(exception);
             evaluationResponse.setExceptionMessage(exception.getMessage());
         }
@@ -326,20 +357,21 @@ class SynchronousInterpreter implements Interpreter {
             evaluationResponse.setExceptionMessage(e.getMessage());
             evaluationResponse.setException(e);
         }
-	
-	if(notifyEvaluationListeners)
-	{
-		notifyListeners(evaluationResponse);
-	}//end if.
+
+        if (notifyEvaluationListeners) {
+            notifyListeners(evaluationResponse);
+        }//end if.
 
         return evaluationResponse;
     }
+
 
     public void haltEvaluation() {
         synchronized (environment) {
             environment.iEvalDepth = environment.iMaxEvalDepth + 100;
         }
     }
+
 
     public Environment getEnvironment() {
         return environment;
@@ -349,6 +381,7 @@ class SynchronousInterpreter implements Interpreter {
     {
     return Utility.zipFile;
     }//end method.*/
+
     public void addScriptsDirectory(String directory) {
         String toEvaluate = "DefaultDirectory(\"" + directory + File.separator + "\");";
 
@@ -356,35 +389,32 @@ class SynchronousInterpreter implements Interpreter {
 
     }//addScriptsDirectory.
 
+
     public void addResponseListener(ResponseListener listener) {
-	    responseListeners.add(listener);
+        responseListeners.add(listener);
     }
+
 
     public void removeResponseListener(ResponseListener listener) {
-	    responseListeners.remove(listener);
+        responseListeners.remove(listener);
     }
-    
-    
-    protected void notifyListeners(EvaluationResponse response)
-    {
+
+
+    protected void notifyListeners(EvaluationResponse response) {
         //notify listeners.
-        for (ResponseListener listener : responseListeners)
-        {
+        for (ResponseListener listener : responseListeners) {
             listener.response(response);
 
-            if (listener.remove())
-            {
+            if (listener.remove()) {
                 removeListeners.add(listener);
             }//end if.
         }//end for.
 
 
         //Remove certain listeners.
-        for (ResponseListener listener : removeListeners)
-        {
+        for (ResponseListener listener : removeListeners) {
 
-            if (listener.remove())
-            {
+            if (listener.remove()) {
                 responseListeners.remove(listener);
             }//end if.
         }//end for.
@@ -392,6 +422,7 @@ class SynchronousInterpreter implements Interpreter {
         removeListeners.clear();
 
     }//end method.
-    
+
+
 }// end class.
 

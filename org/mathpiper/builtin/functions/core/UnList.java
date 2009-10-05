@@ -38,7 +38,7 @@ public class UnList extends BuiltinFunction
         Cons atom = ((ConsPointer) getArgumentPointer(aEnvironment, aStackTop, 1).car()).getCons();
         LispError.checkArgument(aEnvironment, aStackTop, atom != null, 1);
         LispError.checkArgument(aEnvironment, aStackTop, atom.car() == aEnvironment.iListAtom.car(), 1);
-        Utility.tail(getTopOfStackPointer(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1));
+        Utility.tail(aEnvironment,getTopOfStackPointer(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1));
     }
 }
 

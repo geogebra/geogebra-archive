@@ -92,7 +92,7 @@ public class LispExpressionEvaluator extends Evaluator {
         if ( aExpression.car() instanceof String) {
             String str = (String) aExpression.car();
             if (str.charAt(0) == '\"') {
-                aResult.setCons(aExpression.getCons().copy(false));
+                aResult.setCons(aExpression.getCons().copy( aEnvironment, false));
                 aEnvironment.iEvalDepth--;
                 return;
             }
@@ -100,11 +100,11 @@ public class LispExpressionEvaluator extends Evaluator {
             ConsPointer val = new ConsPointer();
             aEnvironment.getGlobalVariable(str, val);
             if (val.getCons() != null) {
-                aResult.setCons(val.getCons().copy(false));
+                aResult.setCons(val.getCons().copy( aEnvironment, false));
                 aEnvironment.iEvalDepth--;
                 return;
             }
-            aResult.setCons(aExpression.getCons().copy(false));
+            aResult.setCons(aExpression.getCons().copy( aEnvironment, false));
             aEnvironment.iEvalDepth--;
             return;
         }
@@ -150,7 +150,7 @@ public class LispExpressionEvaluator extends Evaluator {
                     return;
                 }
             }
-            aResult.setCons(aExpression.getCons().copy(false));
+            aResult.setCons(aExpression.getCons().copy( aEnvironment, false));
         }
         aEnvironment.iEvalDepth--;
     }
@@ -163,7 +163,7 @@ public class LispExpressionEvaluator extends Evaluator {
         if (userFunc != null) {
             return userFunc;
         } else if (head.car() instanceof String) {
-            MultipleArityUserFunction multiUserFunc = aEnvironment.getMultipleArityUserFunction( (String) head.car());
+            MultipleArityUserFunction multiUserFunc = aEnvironment.getMultipleArityUserFunction( (String) head.car(), true);
             if (multiUserFunc.iFileToOpen != null) {
                 DefFile def = multiUserFunc.iFileToOpen;
 

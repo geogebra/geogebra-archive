@@ -119,6 +119,6 @@ In> While (x! < 10^6) \
 9  362880
 Out> True;
 
- *SEE Until, For, ForEach, Break, Continue
+*SEE Until, For, ForEach, Break, Continue
 %/mathpiper_docs
  */

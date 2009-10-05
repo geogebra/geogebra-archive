@@ -13,68 +13,53 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */ //}}}
-
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
-
 package org.mathpiper.lisp.cons;
+
 
 import org.mathpiper.io.StringOutput;
 import org.mathpiper.lisp.*;
 import org.mathpiper.lisp.printers.LispPrinter;
 
 
-public class SublistCons extends Cons
-{
-	ConsPointer iCar = new ConsPointer();
-        ConsPointer iCdr = new ConsPointer();
-	
-	public static SublistCons getInstance(Cons aSubList)
-	{
-		return new SublistCons(aSubList);
-	}
-   
-        
-        public Object car()
-        {
-            return iCar;
-        }
-        
-        
-        
+public class SublistCons extends Cons {
 
+    ConsPointer iCar = new ConsPointer();
+    ConsPointer iCdr = new ConsPointer();
+
+
+    public static SublistCons getInstance(Environment aEnvironment, Cons aSubList) throws Exception {
+        return new SublistCons(aEnvironment, aSubList);
+    }
+
+
+    public Object car() {
+        return iCar;
+    }
+
+
+    /*
+    public String toString()
+    {
+    return iCar.toString();
+    }*/
+    public Cons copy(Environment aEnvironment, boolean aRecursed) throws Exception {
+        //TODO recursed copy needs to be implemented still
+        LispError.lispAssert(aRecursed == false);
+
+        Cons copied = new SublistCons(aEnvironment, iCar.getCons());
+
+        copied.setMetadataMap(this.getMetadataMap());
         
-        /*
-         public String toString()
-        {
-            return iCar.toString();
-        }*/
-        
-        
-	public Cons copy(boolean aRecursed) throws Exception
-	{
-		//TODO recursed copy needs to be implemented still
-		LispError.lispAssert(aRecursed == false);
-		Cons copied = new SublistCons(iCar.getCons());
-		return copied;
-	}
-        
-        
-	public Cons setExtraInfo(ConsPointer aData)
-	{
-		//TODO FIXME
-		/*
-		    Cons* result = NEW LispAnnotatedObject<SublistCons>(this);
-		    result->SetExtraInfo(aData);
-		    return result;
-		*/
-		return null;
-	}
-        
-        
-	SublistCons(Cons aSubList)
-	{
-		iCar.setCons(aSubList);
-	}
+        return copied;
+    }
+
+
+    SublistCons(Environment aEnvironment, Cons aSubList) throws Exception {
+        super(aEnvironment);
+        iCar.setCons(aSubList);
+    }
+
 
     public ConsPointer cdr() {
         return iCdr;
@@ -93,13 +78,10 @@ public class SublistCons extends Cons
     }//end method.
 
 
-    public int type()
-    {
+    public int type() {
         return Utility.SUBLIST;
     }//end method.
 
 
-
-    
-	
 }//end class.
+

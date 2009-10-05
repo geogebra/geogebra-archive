@@ -33,8 +33,8 @@ public class FlatCopy extends BuiltinFunction
     public void evaluate(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer copied = new ConsPointer();
-        Utility.flatCopy(copied, (ConsPointer) getArgumentPointer(aEnvironment, aStackTop, 1).car());
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(copied.getCons()));
+        Utility.flatCopy(aEnvironment, copied, (ConsPointer) getArgumentPointer(aEnvironment, aStackTop, 1).car());
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment,copied.getCons()));
     }
 }
 

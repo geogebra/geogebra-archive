@@ -109,7 +109,7 @@ For instance, one can have a function {foo(a,b)}
 with two arguments, and a macro {foo(a,b,c)} with three arguments.
 
 
-*EG
+**E.G.
 
 The following example defines a macro {myfor}, and shows one use, referencing
 a variable {a} from the calling environment.

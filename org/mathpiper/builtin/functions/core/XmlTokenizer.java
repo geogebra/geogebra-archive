@@ -70,7 +70,7 @@ Note that when reading XML, any plain text between tags is returned as one token
 Any malformed XML will be treated as plain text.
 
 
-*EG notest
+**E.G. notest
 
 	In> [XmlTokenizer(); q:=ReadToken(); \
 	  DefaultTokenizer();q;]

@@ -45,7 +45,7 @@ public class Postfix extends BuiltinFunction
 
 
 /*
-%mathpiper_docs,name="Postfix"
+%mathpiper_docs,name="Postfix",categories="User Functions;Built In"
 *CMD Postfix --- define function syntax (postfix operator)
 *CORE
 *CALL

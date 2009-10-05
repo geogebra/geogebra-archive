@@ -52,7 +52,7 @@ public class Or extends BuiltinFunction
                 ConsPointer ptr = new ConsPointer();
                 nrnogos++;
 
-                ptr.setCons(evaluated.getCons().copy(false));
+                ptr.setCons(evaluated.getCons().copy( aEnvironment, false));
                 ptr.cdr().setCons(nogos.getCons());
                 nogos.setCons(ptr.getCons());
             }
@@ -71,10 +71,10 @@ public class Or extends BuiltinFunction
                 Utility.reverseList(ptr, nogos);
                 nogos.setCons(ptr.getCons());
 
-                ptr.setCons(getArgumentPointer(aEnvironment, aStackTop, 0).getCons().copy(false));
+                ptr.setCons(getArgumentPointer(aEnvironment, aStackTop, 0).getCons().copy( aEnvironment, false));
                 ptr.cdr().setCons(nogos.getCons());
                 nogos.setCons(ptr.getCons());
-                getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(nogos.getCons()));
+                getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment,nogos.getCons()));
             }
         //aEnvironment.CurrentPrinter().Print(getTopOfStackPointer(aEnvironment, aStackTop), *aEnvironment.CurrentOutput());
         } else

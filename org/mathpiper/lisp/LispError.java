@@ -198,7 +198,7 @@ public class LispError
         if (!hastobetrue)
         {
             String errorMessage = errorString(aError);//"LispError number "+aError+" (//TODO FIXME still need to port over the string table)";
-            throw new EvaluationException(errorMessage,-1);
+            throw new EvaluationException(errorMessage,"none", -1);
         }
     }//end method.
 
@@ -207,14 +207,14 @@ public class LispError
     {
         if (!hastobetrue)
         {
-            throw new EvaluationException(aErrorMessage,-1);
+            throw new EvaluationException(aErrorMessage,"none", -1);
         }
     }//end method.
 
     
     public static void raiseError(String str) throws Exception
     {        
-        throw new EvaluationException(str,-1);
+        throw new EvaluationException(str,"none",-1);
     }
 
     public static void checkNumberOfArguments(int n, ConsPointer aArguments, Environment aEnvironment) throws Exception
@@ -230,12 +230,12 @@ public class LispError
     {
         if (aArguments.getCons() == null)
         {
-            throw new EvaluationException("Error in compiled code.",-1);
+            throw new EvaluationException("Error in compiled code.","none",-1);
         } else
         {
             //TODO FIXME      ShowStack(aEnvironment);
             String error = showFunctionError(aArguments, aEnvironment) + "expected " + needed + " arguments, got " + passed;
-            throw new EvaluationException(error,-1);
+            throw new EvaluationException(error,"none",-1);
 
         /*TODO FIXME
         LispChar str[20];
@@ -274,13 +274,13 @@ public class LispError
             ConsPointer arguments = BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 0);
             if (arguments.getCons() == null)
             {
-                throw new EvaluationException("Error in compiled code\n",-1);
+                throw new EvaluationException("Error in compiled code\n","none",-1);
             } else
             {
                 String error = "";
                 //TODO FIXME          ShowStack(aEnvironment);
                 error = error + showFunctionError(arguments, aEnvironment) + "generic error.";
-                throw new EvaluationException(error,-1);
+                throw new EvaluationException(error,"none",-1);
             }
         }
     }
@@ -289,7 +289,7 @@ public class LispError
     {
         if (!aPredicate)
         {
-            throw new EvaluationException("Assertion failed.",-1);
+            throw new EvaluationException("Assertion failed.","none",-1);
         }
     }
 
@@ -315,7 +315,7 @@ public class LispError
             ConsPointer arguments = BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 0);
             if (arguments.getCons() == null)
             {
-                throw new EvaluationException("Error in compiled code\n",-1);
+                throw new EvaluationException("Error in compiled code\n","none",-1);
             } else
             {
                 String error = "";
@@ -335,7 +335,7 @@ public class LispError
                 error = error + strout;
                 error = error + "\n";
 
-                throw new EvaluationException(error,-1);
+                throw new EvaluationException(error,"none",-1);
             }//end else.
         }
     }

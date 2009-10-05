@@ -43,7 +43,8 @@ public class NumberCons extends Cons {
      * @param aNumber
      * @param aString
      */
-    public NumberCons(BigNumber aNumber, String aString) {
+    public NumberCons(Environment aEnvironment,BigNumber aNumber, String aString) throws Exception {
+        super(aEnvironment);
         iCarStringNumber = aString;
         iCarBigNumber = aNumber;
     }
@@ -52,7 +53,8 @@ public class NumberCons extends Cons {
      * Construct a number from a BigNumber.
      * @param aNumber
      */
-    public NumberCons(BigNumber aNumber) {
+    public NumberCons(Environment aEnvironment,BigNumber aNumber) throws Exception {
+        super(aEnvironment);
         iCarStringNumber = null;
         iCarBigNumber = aNumber;
     }
@@ -63,7 +65,8 @@ public class NumberCons extends Cons {
      * @param aString a number in decimal format
      * @param aBasePrecision the number of decimal digits for the number
      */
-    public NumberCons(String aString, int aBasePrecision) {
+    public NumberCons(Environment aEnvironment,String aString, int aBasePrecision) throws Exception {
+        super(aEnvironment);
         //(also create a number object).
         iCarStringNumber = aString;
         iCarBigNumber = null;  // purge whatever it was.
@@ -72,8 +75,13 @@ public class NumberCons extends Cons {
     //TODO FIXME enable this in the end    NumberCons(aBasePrecision);
     }
 
-    public Cons copy(boolean aRecursed) {
-        return new NumberCons(iCarBigNumber, iCarStringNumber);
+    public Cons copy( Environment aEnvironment, boolean aRecursed) throws Exception  {
+
+        NumberCons numberCons = new NumberCons(aEnvironment, iCarBigNumber, iCarStringNumber);
+
+        numberCons.setMetadataMap(this.getMetadataMap());
+        
+        return numberCons;
     }
 
     /*public Object car() {
@@ -130,7 +138,7 @@ public class NumberCons extends Cons {
             iCarBigNumber = new BigNumber(str, aPrecision, 10/*TODO FIXME BASE10*/);
         } // check if the BigNumber object has enough precision, if not, extend it
         // (applies only to floats). Note that iNumber->GetPrecision() might be < 0
-        else if (!iCarBigNumber.isInt() && iCarBigNumber.getPrecision() < aPrecision) {
+        else if (!iCarBigNumber.isInteger() && iCarBigNumber.getPrecision() < aPrecision) {
             if (iCarStringNumber != null) {// have string representation, can extend precision
                 iCarBigNumber.setTo(iCarStringNumber, aPrecision, 10);
             } else {
@@ -141,17 +149,8 @@ public class NumberCons extends Cons {
         return iCarBigNumber;
     }
 
-    /**
-        Used to annotate data (not implemented yet).
-    */
-    public Cons setExtraInfo(ConsPointer aData) {
-        /*TODO FIXME
-        Cons* result = NEW LispAnnotatedObject<NumberCons>(this);
-        result->SetExtraInfo(aData);
-        return result;
-         */
-        return null;
-    }
+
+    
 
     public ConsPointer cdr() {
         return iCdr;

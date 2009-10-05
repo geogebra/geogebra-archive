@@ -64,7 +64,7 @@ or else the user will be unable to continue the session
 (everything a user types will be parsed using a non-default tokenizer).
 
 
-*EG notest
+**E.G. notest
 
 	In>
 

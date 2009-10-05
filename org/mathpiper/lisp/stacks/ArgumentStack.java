@@ -85,6 +85,12 @@ public class ArgumentStack
             iArgumentStack.setElement(iStackTopIndex, null);
         }
     }
+
+
+    public void reset() throws Exception
+    {
+        this.popTo(0);
+    }//end method.
     
     public void dump() throws Exception
     {

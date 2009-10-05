@@ -40,8 +40,8 @@ public class Atom extends PatternParameter
 	{
 		// If it is a floating point, don't even bother comparing
 		if (aExpression.getCons() != null)
-			if (aExpression.getCons().getNumber(0) != null)
-				if (! ((BigNumber) ((NumberCons) aExpression.getCons()).getNumber(0)).isInt())
+			if (aExpression.getCons().getNumber(aEnvironment.getPrecision()) != null)
+				if (! ((BigNumber) ((NumberCons) aExpression.getCons()).getNumber(aEnvironment.getPrecision())).isInteger())
 					return false;
 
 		return (iString == aExpression.car());

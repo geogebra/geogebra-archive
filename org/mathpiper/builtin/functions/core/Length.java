@@ -22,6 +22,7 @@ import org.mathpiper.builtin.BuiltinContainer;
 import org.mathpiper.builtin.BuiltinFunction;
 import org.mathpiper.lisp.cons.AtomCons;
 import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.Utility;
 
@@ -34,22 +35,19 @@ public class Length extends BuiltinFunction
 
     public void evaluate(Environment aEnvironment, int aStackTop) throws Exception
     {
-        Object subList =getArgumentPointer(aEnvironment, aStackTop, 1).car();
-        if (subList instanceof ConsPointer)
-        {
-            int num = Utility.listLength(((ConsPointer)subList).cdr());
-            getTopOfStackPointer(aEnvironment, aStackTop).setCons(AtomCons.getInstance(aEnvironment, "" + num));
-            return;
-        }
-        String string =  (String) getArgumentPointer(aEnvironment, aStackTop, 1).car();
-        if (Utility.isString(string))
-        {
-            int num = string.length() - 2;
-            getTopOfStackPointer(aEnvironment, aStackTop).setCons(AtomCons.getInstance(aEnvironment, "" + num));
-            return;
-        }
+        Object argument =getArgumentPointer(aEnvironment, aStackTop, 1).car();
         
-        if (getArgumentPointer(aEnvironment, aStackTop, 1).car() instanceof BuiltinContainer)
+
+        if (argument instanceof ConsPointer)
+        {
+            int num = Utility.listLength(((ConsPointer)argument).cdr());
+            getTopOfStackPointer(aEnvironment, aStackTop).setCons(AtomCons.getInstance(aEnvironment, "" + num));
+            return;
+        }//end if.
+        
+        
+        
+        if (argument instanceof BuiltinContainer)
         {
             BuiltinContainer gen = (BuiltinContainer) getArgumentPointer(aEnvironment, aStackTop, 1).car();
             if (gen.typeName().equals("\"Array\""))
@@ -59,9 +57,23 @@ public class Length extends BuiltinFunction
                 return;
             }
         //  CHK_ISLIST_CORE(aEnvironment,aStackTop,getArgumentPointer(aEnvironment, aStackTop, 1),1);
-        }
-    }
-}
+        }//end if.
+
+
+
+        LispError.check(argument instanceof String, LispError.INVALID_ARGUMENT);
+        String string =  (String) argument;
+        if (Utility.isString(string))
+        {
+            int num = string.length() - 2;
+            getTopOfStackPointer(aEnvironment, aStackTop).setCons(AtomCons.getInstance(aEnvironment, "" + num));
+            return;
+        }//end if.
+        
+
+    }//end method..
+
+}//end class.
 
 
 

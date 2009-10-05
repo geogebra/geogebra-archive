@@ -83,7 +83,7 @@ public class PatchString extends BuiltinFunction {
             StringInputStream inputExpressionBuffer = new StringInputStream(inp, someStatus);
 
             Parser infixParser = new MathPiperParser(tokenizer, inputExpressionBuffer, aEnvironment, aEnvironment.iPrefixOperators, aEnvironment.iInfixOperators, aEnvironment.iPostfixOperators, aEnvironment.iBodiedOperators);
-            infixParser.parse(inputExpressionPointer);
+            infixParser.parse(aEnvironment, inputExpressionPointer);
 
             aEnvironment.iLispExpressionEvaluator.evaluate(aEnvironment, result, inputExpressionPointer);
 

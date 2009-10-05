@@ -25,7 +25,6 @@ import org.mathpiper.lisp.collections.TokenMap;
 import org.mathpiper.lisp.collections.OperatorMap;
 import org.mathpiper.lisp.cons.AtomCons;
 import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.cons.Cons;
 import org.mathpiper.lisp.printers.LispPrinter;
 import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.io.MathPiperOutputStream;
@@ -35,6 +34,8 @@ import org.mathpiper.io.InputStatus;
 
 import org.mathpiper.io.InputDirectories;
 
+import org.mathpiper.lisp.cons.Cons;
+import org.mathpiper.lisp.cons.SublistCons;
 import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 
 import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
@@ -162,7 +163,7 @@ public class Environment {
     }
 
     public void setGlobalVariable(String aVariable, ConsPointer aValue, boolean aGlobalLazyVariable) throws Exception {
-        ConsPointer localVariable = findLocalVariable(aVariable);
+        ConsPointer localVariable = getLocalVariable(aVariable);
         if (localVariable != null) {
             localVariable.setCons(aValue.getCons());
             return;
@@ -176,7 +177,7 @@ public class Environment {
 
     public void getGlobalVariable(String aVariable, ConsPointer aResult) throws Exception {
         aResult.setCons(null);
-        ConsPointer localVariable = findLocalVariable(aVariable);
+        ConsPointer localVariable = getLocalVariable(aVariable);
         if (localVariable != null) {
             aResult.setCons(localVariable.getCons());
             return;
@@ -195,7 +196,8 @@ public class Environment {
         }
     }
 
-    public ConsPointer findLocalVariable(String aVariable) throws Exception {
+
+    public ConsPointer getLocalVariable(String aVariable) throws Exception {
         LispError.check(iLocalVariablesFrame != null, LispError.INVALID_STACK);
         //    check(iLocalsList.iFirst != null,INVALID_STACK);
         LocalVariable localVariable = iLocalVariablesFrame.iFirst;
@@ -208,7 +210,6 @@ public class Environment {
         }
         return null;
     }//end method.
-
     public String getLocalVariables() throws Exception {
         LispError.check(iLocalVariablesFrame != null, LispError.INVALID_STACK);
         //    check(iLocalsList.iFirst != null,INVALID_STACK);
@@ -243,13 +244,14 @@ public class Environment {
 
     }//end method.
 
-    public void unsetLocalVariable(String aString) throws Exception {
-        ConsPointer localVariable = findLocalVariable(aString);
+    public void unbindVariable(String aVariableName) throws Exception {
+        ConsPointer localVariable = getLocalVariable(aVariableName);
         if (localVariable != null) {
             localVariable.setCons(null);
             return;
         }
-        iGlobalState.release(aString);
+        iGlobalState.release(aVariableName);
+
     }
 
     public void newLocalVariable(String aVariable, Cons aValue) throws Exception {
@@ -317,12 +319,13 @@ public class Environment {
         userFunc.unFence();
     }
 
-    public MultipleArityUserFunction getMultipleArityUserFunction(String aOperator) throws Exception {
-        // Find existing multiuser func.
+    public MultipleArityUserFunction getMultipleArityUserFunction(String aOperator, boolean create) throws Exception {
+        // Find existing multiuser func.  Todo:tk:a user function name is added to the list even if a non-existing function
+        // is being executed or looked for by FindFunction();
         MultipleArityUserFunction multipleArityUserFunction = (MultipleArityUserFunction) iUserFunctions.lookUp(aOperator);
 
         // If none exists, add one to the user functions list
-        if (multipleArityUserFunction == null) {
+        if (multipleArityUserFunction == null && create == true) {
             MultipleArityUserFunction newMultipleArityUserFunction = new MultipleArityUserFunction();
             iUserFunctions.setAssociation(newMultipleArityUserFunction, aOperator);
             multipleArityUserFunction = (MultipleArityUserFunction) iUserFunctions.lookUp(aOperator);
@@ -332,7 +335,7 @@ public class Environment {
     }
 
     public void declareRulebase(String aOperator, ConsPointer aParametersPointer, boolean aListed) throws Exception {
-        MultipleArityUserFunction multipleArityUserFunction = getMultipleArityUserFunction(aOperator);
+        MultipleArityUserFunction multipleArityUserFunction = getMultipleArityUserFunction(aOperator, true);
 
         // add an operator with this arity to the multiuserfunc.
         SingleArityBranchingUserFunction newBranchingUserFunction;
@@ -365,7 +368,7 @@ public class Environment {
     }
 
     public void declareMacroRulebase(String aFunctionName, ConsPointer aParameters, boolean aListed) throws Exception {
-        MultipleArityUserFunction multipleArityUserFunc = getMultipleArityUserFunction(aFunctionName);
+        MultipleArityUserFunction multipleArityUserFunc = getMultipleArityUserFunction(aFunctionName, true);
 
         MacroUserFunction newMacroUserFunction;
 
@@ -398,5 +401,16 @@ public class Environment {
     public void write(String aString) throws Exception {
         iCurrentOutput.write(aString);
     }
-}
+
+
+
+    public void resetArgumentStack() throws Exception
+    {
+        this.iArgumentStack.reset();
+    }//end method.
+
+
+
+
+}//end class.
 

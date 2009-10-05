@@ -36,6 +36,6 @@ public class Nth extends BuiltinFunction
         LispError.checkArgument(aEnvironment, aStackTop, str != null, 2);
         LispError.checkArgument(aEnvironment, aStackTop, Utility.isNumber(str, false), 2);
         int index = Integer.parseInt(str);
-        Utility.nth(getTopOfStackPointer(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1), index);
+        Utility.nth(aEnvironment,getTopOfStackPointer(aEnvironment, aStackTop), getArgumentPointer(aEnvironment, aStackTop, 1), index);
     }
 }

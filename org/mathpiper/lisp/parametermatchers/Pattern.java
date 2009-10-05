@@ -245,9 +245,9 @@ public class Pattern {
 
                             Cons predicate = second.cdr().getCons();
                             if ( (predicate.car() instanceof ConsPointer)) {
-                                Utility.flatCopy(third, (ConsPointer) predicate.car());
+                                Utility.flatCopy(aEnvironment, third, (ConsPointer) predicate.car());
                             } else {
-                                third.setCons(second.cdr().getCons().copy(false));
+                                third.setCons(second.cdr().getCons().copy( aEnvironment, false));
                             }
 
                             String str = (String) second.car();
@@ -259,7 +259,7 @@ public class Pattern {
                             last.cdr().setCons(org.mathpiper.lisp.cons.AtomCons.getInstance(aEnvironment, str));
 
                             ConsPointer pred = new ConsPointer();
-                            pred.setCons(org.mathpiper.lisp.cons.SublistCons.getInstance(third.getCons()));
+                            pred.setCons(org.mathpiper.lisp.cons.SublistCons.getInstance(aEnvironment,third.getCons()));
 
                             iPredicates.add(pred);
                         }

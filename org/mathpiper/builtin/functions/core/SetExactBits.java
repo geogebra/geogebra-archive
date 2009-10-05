@@ -38,11 +38,11 @@ public class SetExactBits extends BuiltinFunction
         z.setTo(x);
 
         // do nothing for integers
-        if (!(z.isInt()))
+        if (!(z.isInteger()))
         {
             z.setPrecision((int) (Utility.bitsToDigits((long) (y.toDouble()), 10)));
         }
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(z));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(aEnvironment, z));
     }
 }
 

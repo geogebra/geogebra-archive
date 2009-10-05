@@ -37,17 +37,17 @@ public class DigitsToBits extends BuiltinFunction
         BigNumber y = org.mathpiper.lisp.Utility.getNumber(aEnvironment, aStackTop, 2);
         long result = 0;  // initialize just in case
 
-        if (x.isInt() && x.isSmall() && y.isInt() && y.isSmall())
+        if (x.isInteger() && x.isSmall() && y.isInteger() && y.isSmall())
         {
             // bits_to_digits uses unsigned long, see numbers.h
             int base = (int) y.toDouble();
             result = Utility.digitsToBits((long) (x.toDouble()), base);
         } else
         {
-            throw new EvaluationException("BitsToDigits: error: arguments (" + x.toDouble() + ", " + y.toDouble() + ") must be small integers",-1);
+            throw new EvaluationException("BitsToDigits: error: arguments (" + x.toDouble() + ", " + y.toDouble() + ") must be small integers",aEnvironment.iInputStatus.fileName(), aEnvironment.iCurrentInput.iStatus.lineNumber());
         }
         BigNumber z = new BigNumber(aEnvironment.getPrecision());
         z.setTo((long) result);
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(z));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(aEnvironment, z));
     }
 }

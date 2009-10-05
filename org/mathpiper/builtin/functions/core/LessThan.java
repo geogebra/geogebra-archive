@@ -51,7 +51,7 @@ public class LessThan extends BuiltinFunction
 *DESC
 Comparing numbers or strings (lexicographically).
 
-*EG
+**E.G.
 	In> LessThan(1,1)
 	Out> False;
 	In> LessThan("a","b")

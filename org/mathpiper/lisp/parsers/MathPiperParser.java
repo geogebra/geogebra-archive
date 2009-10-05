@@ -63,22 +63,22 @@ public class MathPiperParser extends Parser
         iLookAhead = null;
     }
 
-    public void parse(ConsPointer aResult) throws Exception
+    public void parse(Environment aEnvironment,ConsPointer aResult) throws Exception
     {
-        parse();
+        parse(aEnvironment);
         aResult.setCons(iSExpressionResult.getCons());
     }
 
-    public void parse() throws Exception
+    public void parse(Environment aEnvironment) throws Exception
     {
         readToken();
         if (iEndOfFile)
         {
-            iSExpressionResult.setCons(iEnvironment.iEndOfFileAtom.copy(true));
+            iSExpressionResult.setCons(iEnvironment.iEndOfFileAtom.copy( aEnvironment, true));
             return;
         }
 
-        readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
+        readExpression(aEnvironment,MathPiperPrinter.KMaxPrecedence);  // least precedence
 
         if (iLookAhead != iEnvironment.iEndStatementAtom.car())
         {
@@ -119,9 +119,9 @@ public class MathPiperParser extends Parser
         readToken();
     }
 
-    void readExpression(int depth) throws Exception
+    void readExpression(Environment aEnvironment,int depth) throws Exception
     {
-        readAtom();
+        readAtom(aEnvironment);
 
         for (;;)
         {
@@ -131,7 +131,7 @@ public class MathPiperParser extends Parser
                 // Match opening bracket
                 matchToken(iLookAhead);
                 // Read "index" argument
-                readExpression(MathPiperPrinter.KMaxPrecedence);
+                readExpression(aEnvironment,MathPiperPrinter.KMaxPrecedence);
                 // Match closing bracket
                 if (iLookAhead != iEnvironment.iProgCloseAtom.car())
                 {
@@ -142,7 +142,7 @@ public class MathPiperParser extends Parser
                 // Build into Ntn(...)
                 String theOperator = (String) iEnvironment.iNthAtom.car();
                 insertAtom(theOperator);
-                combine(2);
+                combine(aEnvironment,2);
             } else
             {
                 InfixOperator op = (InfixOperator) iInfixOperators.lookUp(iLookAhead);
@@ -216,12 +216,12 @@ public class MathPiperParser extends Parser
                 {
                     upper--;
                 }
-                getOtherSide(2, upper);
+                getOtherSide(aEnvironment,2, upper);
             }
         }
     }
 
-    void readAtom() throws Exception
+    void readAtom(Environment aEnvironment) throws Exception
     {
         InfixOperator op;
         // parse prefix operators
@@ -231,15 +231,15 @@ public class MathPiperParser extends Parser
             String theOperator = iLookAhead;
             matchToken(iLookAhead);
             {
-                readExpression(op.iPrecedence);
+                readExpression(aEnvironment,op.iPrecedence);
                 insertAtom(theOperator);
-                combine(1);
+                combine(aEnvironment,1);
             }
         } // Else parse brackets
         else if (iLookAhead == iEnvironment.iBracketOpenAtom.car())
         {
             matchToken(iLookAhead);
-            readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
+            readExpression(aEnvironment,MathPiperPrinter.KMaxPrecedence);  // least precedence
             matchToken( (String) iEnvironment.iBracketCloseAtom.car());
         } //parse lists
         else if (iLookAhead == iEnvironment.iListOpenAtom.car())
@@ -248,7 +248,7 @@ public class MathPiperParser extends Parser
             matchToken(iLookAhead);
             while (iLookAhead != iEnvironment.iListCloseAtom.car())
             {
-                readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
+                readExpression(aEnvironment,MathPiperPrinter.KMaxPrecedence);  // least precedence
                 nrargs++;
 
                 if (iLookAhead == iEnvironment.iCommaAtom.car())
@@ -263,7 +263,7 @@ public class MathPiperParser extends Parser
             matchToken(iLookAhead);
             String theOperator = (String) iEnvironment.iListAtom.car();
             insertAtom(theOperator);
-            combine(nrargs);
+            combine(aEnvironment, nrargs);
 
         } // parse prog bodies
         else if (iLookAhead == iEnvironment.iProgOpenAtom.car())
@@ -273,7 +273,7 @@ public class MathPiperParser extends Parser
             matchToken(iLookAhead);
             while (iLookAhead != iEnvironment.iProgCloseAtom.car())
             {
-                readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
+                readExpression(aEnvironment,MathPiperPrinter.KMaxPrecedence);  // least precedence
                 nrargs++;
 
                 if (iLookAhead == iEnvironment.iEndStatementAtom.car())
@@ -289,7 +289,7 @@ public class MathPiperParser extends Parser
             String theOperator = (String) iEnvironment.iProgAtom.car();
             insertAtom(theOperator);
 
-            combine(nrargs);
+            combine(aEnvironment, nrargs);
         } // Else we have an atom.
         else
         {
@@ -303,7 +303,7 @@ public class MathPiperParser extends Parser
                 matchToken(iLookAhead);
                 while (iLookAhead != iEnvironment.iBracketCloseAtom.car())
                 {
-                    readExpression(MathPiperPrinter.KMaxPrecedence);  // least precedence
+                    readExpression(aEnvironment,MathPiperPrinter.KMaxPrecedence);  // least precedence
                     nrargs++;
 
                     if (iLookAhead == iEnvironment.iCommaAtom.car())
@@ -320,14 +320,14 @@ public class MathPiperParser extends Parser
                 op = (InfixOperator) iBodiedOperators.lookUp(theOperator);
                 if (op != null)
                 {
-                    readExpression(op.iPrecedence); // MathPiperPrinter.KMaxPrecedence
+                    readExpression(aEnvironment,op.iPrecedence); // MathPiperPrinter.KMaxPrecedence
                     nrargs++;
                 }
             }
             insertAtom(theOperator);
             if (nrargs >= 0)
             {
-                combine(nrargs);
+                combine(aEnvironment, nrargs);
             }
         }
 
@@ -337,23 +337,23 @@ public class MathPiperParser extends Parser
         {
             insertAtom(iLookAhead);
             matchToken(iLookAhead);
-            combine(1);
+            combine(aEnvironment,1);
         }
     }
 
-    void getOtherSide(int aNrArgsToCombine, int depth) throws Exception
+    void getOtherSide(Environment aEnvironment,int aNrArgsToCombine, int depth) throws Exception
     {
         String theOperator = iLookAhead;
         matchToken(iLookAhead);
-        readExpression(depth);
+        readExpression(aEnvironment, depth);
         insertAtom(theOperator);
-        combine(aNrArgsToCombine);
+        combine(aEnvironment, aNrArgsToCombine);
     }
 
-    void combine(int aNrArgsToCombine) throws Exception
+    void combine(Environment aEnvironment,int aNrArgsToCombine) throws Exception
     {
         ConsPointer subList = new ConsPointer();
-        subList.setCons(SublistCons.getInstance(iSExpressionResult.getCons()));
+        subList.setCons(SublistCons.getInstance(aEnvironment,iSExpressionResult.getCons()));
         ConsTraverser consTraverser = new ConsTraverser(iSExpressionResult);
         int i;
         for (i = 0; i < aNrArgsToCombine; i++)

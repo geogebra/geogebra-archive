@@ -68,15 +68,13 @@ import org.mathpiper.builtin.functions.core.DestructiveReverse;
 import org.mathpiper.builtin.functions.core.DigitsToBits;
 import org.mathpiper.builtin.functions.core.Div;
 import org.mathpiper.builtin.functions.core.Divide;
-import org.mathpiper.builtin.functions.core.DumpBigNumberDebugInfo;
+import org.mathpiper.builtin.functions.core.DumpNumber;
 import org.mathpiper.builtin.functions.core.Equals;
 import org.mathpiper.builtin.functions.core.Eval;
 import org.mathpiper.builtin.functions.core.Exit;
 import org.mathpiper.builtin.functions.core.ExitRequested;
 import org.mathpiper.builtin.functions.core.XmlExplodeTag;
-import org.mathpiper.builtin.functions.core.ExtraInfoGet;
-import org.mathpiper.builtin.functions.core.ExtraInfoSet;
-import org.mathpiper.builtin.functions.core.Fac;
+import org.mathpiper.builtin.functions.core.Factorial;
 import org.mathpiper.builtin.functions.core.FastArcSin;
 import org.mathpiper.builtin.functions.core.FastIsPrime;
 import org.mathpiper.builtin.functions.core.FastLog;
@@ -162,8 +160,14 @@ import org.mathpiper.builtin.functions.core.Prog;
 import org.mathpiper.builtin.functions.core.Hold;
 import org.mathpiper.builtin.functions.core.Read;
 import org.mathpiper.builtin.functions.core.AskUser;
+import org.mathpiper.builtin.functions.core.IsDecimal;
 import org.mathpiper.builtin.functions.core.LispRead;
 import org.mathpiper.builtin.functions.core.LispReadListed;
+import org.mathpiper.builtin.functions.core.MetaEntries;
+import org.mathpiper.builtin.functions.core.MetaGet;
+import org.mathpiper.builtin.functions.core.MetaKeys;
+import org.mathpiper.builtin.functions.core.MetaSet;
+import org.mathpiper.builtin.functions.core.MetaValues;
 import org.mathpiper.builtin.functions.core.ReadToken;
 import org.mathpiper.builtin.functions.core.Replace;
 import org.mathpiper.builtin.functions.core.Retract;
@@ -579,6 +583,9 @@ public abstract class BuiltinFunction {
                 new BuiltinFunctionEvaluator(new IsNumber(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "IsNumber");
         aEnvironment.getBuiltinFunctions().setAssociation(
+                new BuiltinFunctionEvaluator(new IsDecimal(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                "IsDecimal");
+        aEnvironment.getBuiltinFunctions().setAssociation(
                 new BuiltinFunctionEvaluator(new IsInteger(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "IsInteger");
         aEnvironment.getBuiltinFunctions().setAssociation(
@@ -816,7 +823,7 @@ public abstract class BuiltinFunction {
                 new BuiltinFunctionEvaluator(new FastIsPrime(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "FastIsPrime");
         aEnvironment.getBuiltinFunctions().setAssociation(
-                new BuiltinFunctionEvaluator(new Fac(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                new BuiltinFunctionEvaluator(new Factorial(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "MathFac");
         aEnvironment.getBuiltinFunctions().setAssociation(
                 new BuiltinFunctionEvaluator(new ApplyPure(), 2, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
@@ -846,11 +853,20 @@ public abstract class BuiltinFunction {
                 new BuiltinFunctionEvaluator(new PatchString(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "PatchString");
         aEnvironment.getBuiltinFunctions().setAssociation(
-                new BuiltinFunctionEvaluator(new ExtraInfoSet(), 2, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
-                "ExtraInfoSet");
+                new BuiltinFunctionEvaluator(new MetaSet(), 3, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                "MetaSet");
         aEnvironment.getBuiltinFunctions().setAssociation(
-                new BuiltinFunctionEvaluator(new ExtraInfoGet(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
-                "ExtraInfo'Get");
+                new BuiltinFunctionEvaluator(new MetaGet(), 2, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                "MetaGet");
+        aEnvironment.getBuiltinFunctions().setAssociation(
+                new BuiltinFunctionEvaluator(new MetaKeys(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                "MetaKeys");
+        aEnvironment.getBuiltinFunctions().setAssociation(
+                new BuiltinFunctionEvaluator(new MetaValues(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                "MetaValues");
+        aEnvironment.getBuiltinFunctions().setAssociation(
+                new BuiltinFunctionEvaluator(new MetaEntries(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                "MetaEntries");
         aEnvironment.getBuiltinFunctions().setAssociation(
                 new BuiltinFunctionEvaluator(new DefaultTokenizer(), 0, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "DefaultTokenizer");
@@ -876,8 +892,8 @@ public abstract class BuiltinFunction {
                 new BuiltinFunctionEvaluator(new BackQuote(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Macro),
                 "`");
         aEnvironment.getBuiltinFunctions().setAssociation(
-                new BuiltinFunctionEvaluator(new DumpBigNumberDebugInfo(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
-                "MathDebugInfo");
+                new BuiltinFunctionEvaluator(new DumpNumber(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                "DumpNumber");
         aEnvironment.getBuiltinFunctions().setAssociation(
                 new BuiltinFunctionEvaluator(new InDebugMode(), 0, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "InDebugMode");
@@ -912,14 +928,14 @@ public abstract class BuiltinFunction {
                 new BuiltinFunctionEvaluator(new TellUser(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "TellUser");
         aEnvironment.getBuiltinFunctions().setAssociation(
-                new BuiltinFunctionEvaluator(new org.mathpiper.builtin.functions.core.GetTime(aEnvironment), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Macro),
-                "GetTime");
+                new BuiltinFunctionEvaluator(new org.mathpiper.builtin.functions.core.Time(aEnvironment), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Macro),
+                "Time");
         aEnvironment.getBuiltinFunctions().setAssociation(
                 new BuiltinFunctionEvaluator(new FileSize(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "FileSize");
         aEnvironment.getBuiltinFunctions().setAssociation(
-                new BuiltinFunctionEvaluator(new org.mathpiper.builtin.functions.core.CurrentTime(), 0, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
-                "CurrentTime");
+                new BuiltinFunctionEvaluator(new org.mathpiper.builtin.functions.core.SystemTimer(), 0, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+                "SystemTimer");
         aEnvironment.getBuiltinFunctions().setAssociation(
                 new BuiltinFunctionEvaluator(new org.mathpiper.builtin.functions.core.Break(), 0, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
                 "Break");

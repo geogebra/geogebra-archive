@@ -69,6 +69,6 @@ function, so {IsNumber} will return {False}.
 	In> IsNumber("duh");
 	Out> False;
 
-*SEE IsAtom, IsString, IsInteger, IsPositiveNumber, IsNegativeNumber, Complex
+*SEE IsAtom, IsString, IsInteger, IsDecimal, IsPositiveNumber, IsNegativeNumber, Complex
 %/mathpiper_docs
 */

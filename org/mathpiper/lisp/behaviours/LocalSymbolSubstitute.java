@@ -41,7 +41,7 @@ public class LocalSymbolSubstitute implements Substitute
 		iNewNames = aNewNames;
 		iNumberOfNames = aNrNames;
 	}
-	public boolean matches(ConsPointer aResult, ConsPointer aElement) throws Exception
+	public boolean matches(Environment aEnvironment,ConsPointer aResult, ConsPointer aElement) throws Exception
 	{
 		
 		if (!(aElement.car() instanceof String))

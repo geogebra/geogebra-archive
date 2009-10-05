@@ -30,7 +30,7 @@ public class BigNumber {
     BigInteger javaBigInteger = null;
     BigDecimal javaBigDecimal = null;
     int iPrecision;
-    int iTensExp;//TODO:tk:the purpose of this variable needs to be determined.
+    //int iTensExp;//TODO:tk:the purpose of this variable needs to be determined.
     private static BigDecimal zero = new BigDecimal("0");
     private static BigDecimal one = new BigDecimal("1");
     private static BigDecimal two = new BigDecimal("2");
@@ -71,7 +71,7 @@ public class BigNumber {
      */
     public BigNumber(int aPrecision/* = 20*/) {
         iPrecision = aPrecision;
-        iTensExp = 0;
+        //iTensExp = 0;
         javaBigInteger = new BigInteger("0");
     }
 
@@ -82,7 +82,7 @@ public class BigNumber {
      */
     public void setTo(BigNumber aOther) {
         iPrecision = aOther.getPrecision();
-        iTensExp = aOther.iTensExp;
+        //iTensExp = aOther.iTensExp;
         javaBigInteger = aOther.javaBigInteger;
         javaBigDecimal = aOther.javaBigDecimal;
     }
@@ -102,7 +102,7 @@ public class BigNumber {
 
         iPrecision = aPrecision;
 
-        iTensExp = 0;
+        //iTensExp = 0;
         if (isFloat) {
 
             
@@ -193,7 +193,7 @@ public class BigNumber {
         if (javaBigInteger != null) {
             return javaBigInteger.toString(aBase);
         } else {
-            String result = javaBigDecimal.toString();
+            String result = javaBigDecimal.toPlainString();
             result = result.replace("+", "");
             //System.out.println("BigNumResult: " + result);
             /*
@@ -285,11 +285,11 @@ public class BigNumber {
             if (otherd == null) {
                 otherd = getDecimal(aOther);
             }
-            if (iTensExp > aOther.iTensExp) {
+           /* if (iTensExp > aOther.iTensExp) {
                 thisd = thisd.movePointRight(iTensExp - aOther.iTensExp);
             } else if (iTensExp < aOther.iTensExp) {
                 otherd = otherd.movePointRight(iTensExp - aOther.iTensExp);
-            }
+            }*/
             return (thisd.compareTo(otherd) == 0);
         }
         return true;
@@ -300,9 +300,22 @@ public class BigNumber {
      *
      * @return
      */
-    public boolean isInt() {
+    public boolean isInteger() {
         return (javaBigInteger != null && javaBigDecimal == null);
     }
+
+
+
+    /**
+     * Determines if this BigNumber is a decimal.
+     *
+     * @return
+     */
+    public boolean isDecimal() {
+        return (javaBigDecimal != null && javaBigInteger == null);
+    }
+
+
 
     /**
      * Determines if this BigNumber is less than 65535.  (Floating point not implemented yet).
@@ -310,7 +323,7 @@ public class BigNumber {
      * @return
      */
     public boolean isSmall() {
-        if (isInt()) {
+        if (isInteger()) {
             BigInteger i = javaBigInteger.abs();
             return (i.compareTo(new BigInteger("65535")) < 0); //TODO: Should this be 65536?
         } else // a function to test smallness of a float is not present in ANumber, need to code a workaround to determine whether a number fits into double.
@@ -347,7 +360,7 @@ public class BigNumber {
     public void becomeFloat(int aPrecision/*=0*/) {
         if (javaBigInteger != null) {
             javaBigDecimal = new BigDecimal(javaBigInteger);
-            iTensExp = 0;
+            //iTensExp = 0;
             javaBigInteger = null;
         }
     }
@@ -389,7 +402,7 @@ public class BigNumber {
             //if (newScale < javaBigDecimal.scale()) {
             //    javaBigDecimal = javaBigDecimal.setScale(newScale, BigDecimal.ROUND_HALF_EVEN);
             //}
-            iTensExp = aX.iTensExp + aY.iTensExp;
+            //iTensExp = aX.iTensExp + aY.iTensExp;
         } else {
             javaBigDecimal = null;
             javaBigInteger = aX.javaBigInteger.multiply(aY.javaBigInteger);
@@ -437,7 +450,7 @@ public class BigNumber {
         if (aX.javaBigDecimal != null) {
             javaBigInteger = null;
             javaBigDecimal = aX.javaBigDecimal.negate();
-            iTensExp = aX.iTensExp;
+            //iTensExp = aX.iTensExp;
         }
     }
 
@@ -464,7 +477,7 @@ public class BigNumber {
             }
             javaBigDecimal = dX.divide(dY, BigDecimal.ROUND_HALF_EVEN);
             iPrecision = javaBigDecimal.scale();*/
-            iTensExp = aX.iTensExp - aY.iTensExp;
+            //iTensExp = aX.iTensExp - aY.iTensExp;
         } else {
             javaBigDecimal = null;
             javaBigInteger = aX.javaBigInteger.divide(aY.javaBigInteger);
@@ -492,11 +505,11 @@ public class BigNumber {
      * @param aOutput
      * @throws java.lang.Exception
      */
-    public void dumpDebugInfo(MathPiperOutputStream aOutput) throws Exception {
+    public void dumpNumber(MathPiperOutputStream aOutput) throws Exception {
         if (javaBigInteger != null) {
-            aOutput.write("integer: " + javaBigInteger.toString() + "\n");
+            aOutput.write("BigInteger: " + javaBigInteger.toString() + "\n");
         } else {
-            aOutput.write("decimal: " + javaBigDecimal.unscaledValue() + " scale " + javaBigDecimal.scale() + " x 10^(" + iTensExp + ")\n");
+            aOutput.write("BigDecimal: " + javaBigDecimal.toPlainString() + "   Precision: " + javaBigDecimal.precision()  + "   Unscaled Value: " + javaBigDecimal.unscaledValue() + "   Scale: " + javaBigDecimal.scale() + ".\n");
         }
     }
 
@@ -504,10 +517,10 @@ public class BigNumber {
 
     public String toString() {
         if (javaBigInteger != null) {
-            return ("Integer: " + javaBigInteger.toString() + "   \n");
+            return ("BigInteger: " + javaBigInteger.toString() + "   \n");
         } else {
 
-            return ("BigDecimal: " + javaBigDecimal.toString() + "  Decimal: " + javaBigDecimal.unscaledValue() + "  Scale: " + javaBigDecimal.scale() + " x 10^" + iTensExp+"   \n");
+            return ("BigDecimal: " + javaBigDecimal.toPlainString() + "   Precision: " + javaBigDecimal.precision()  + "   Unscaled Value: " + javaBigDecimal.unscaledValue() + "   Scale: " + javaBigDecimal.scale() + ".\n");
         }
     }
 
@@ -521,10 +534,12 @@ public class BigNumber {
     public void floor(BigNumber aX) {
         if (aX.javaBigDecimal != null) {
             BigDecimal d = aX.javaBigDecimal;
-            if (aX.iTensExp != 0) {
+
+           /* if (aX.iTensExp != 0) {
                 d = d.movePointRight(aX.iTensExp);
             }
             BigInteger rounded = d.toBigInteger();
+
             if (aX.javaBigDecimal.signum() < 0) {
                 BigDecimal back = new BigDecimal(rounded);
                 BigDecimal difference = aX.javaBigDecimal.subtract(back);
@@ -535,7 +550,19 @@ public class BigNumber {
                 // javaBigInteger = d.round(new MathContext(d.precision(),RoundingMode.FLOOR)).toBigInteger();TODO:tk:This code produces errors.
 
             }
-            javaBigInteger = rounded;
+            javaBigInteger = rounded;*/
+
+           
+            //int precision = d.precision();
+
+            //int scale = d.scale();
+
+            BigDecimal flooredDecimal = d.setScale(0, RoundingMode.FLOOR);
+
+            //BigDecimal flooredDecimal = d.round(new MathContext(1,RoundingMode.FLOOR));
+
+            javaBigInteger = flooredDecimal.toBigInteger();
+            
         } else {
             javaBigInteger = aX.javaBigInteger;
         }
@@ -668,9 +695,9 @@ public class BigNumber {
 
         {
             BigDecimal d = javaBigDecimal.abs();
-            if (iTensExp != 0) {
-                d = d.movePointRight(iTensExp);
-            }
+            //if (iTensExp != 0) {
+            //    d = d.movePointRight(iTensExp);
+            //}
             if (d.compareTo(one) > 0) {
                 return d.toBigInteger().bitLength();
             }

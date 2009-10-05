@@ -21,17 +21,24 @@ package org.mathpiper.exceptions;
 public class EvaluationException extends Exception //Note:tk: made this class public so that clients can use this exception.
 {
         private int lineNumber = -1;
+        private String fileName = null;
 
 
-	public EvaluationException(String message,int lineNumber)
+	public EvaluationException(String message, String fileName, int lineNumber)
 	{
 		super(message);
+                this.fileName = fileName;
                 this.lineNumber = lineNumber;
 	}
         
     public int getLineNumber()
     {
         return lineNumber;
+    }
+
+    public String getFileName()
+    {
+        return fileName;
     }
  
 }

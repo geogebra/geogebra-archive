@@ -42,10 +42,10 @@ public class Clear extends BuiltinFunction
             int nr = 1;
             while (consTraverser.getCons() != null)
             {
-                String str;
-                str =  (String) consTraverser.car();
-                LispError.checkArgument(aEnvironment, aStackTop, str != null, nr);
-                aEnvironment.unsetLocalVariable(str);
+                String variableName;
+                variableName =  (String) consTraverser.car();
+                LispError.checkArgument(aEnvironment, aStackTop, variableName != null, nr);
+                aEnvironment.unbindVariable(variableName);
                 consTraverser.goNext();
                 nr++;
             }
@@ -71,7 +71,8 @@ public class Clear extends BuiltinFunction
 
 All assignments made to the variables listed as arguments are
 undone. From now on, all these variables remain unevaluated (until a
-subsequent assignment is made). The result of the expression is
+subsequent assignment is made). Also clears any metadata that may have
+been set in an unbound variable.  The result of the expression is
 True.
 
 *E.G.

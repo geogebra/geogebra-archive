@@ -18,6 +18,7 @@
 
 package org.mathpiper.lisp.behaviours;
 
+import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.cons.ConsPointer;
 
 
@@ -25,5 +26,5 @@ import org.mathpiper.lisp.cons.ConsPointer;
  */
 public interface Substitute
 {
-	public boolean matches(ConsPointer aResult, ConsPointer aElement) throws Exception;
+	public boolean matches(Environment aEnvironment,ConsPointer aResult, ConsPointer aElement) throws Exception;
 };

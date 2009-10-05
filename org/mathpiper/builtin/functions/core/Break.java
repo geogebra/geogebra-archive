@@ -79,6 +79,6 @@ While(x <= 10)
       5
 .   /%/output
 
-*SEE While, Until, For, ForEach
+*SEE While, Until, For, ForEach, Continue
 %/mathpiper_docs
 */

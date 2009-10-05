@@ -50,7 +50,7 @@ public class BuiltinFunctionEvaluator extends Evaluator {
         /*Trace code*/
         if (isTraced()) {
             ConsPointer argumentsPointer = new ConsPointer();
-            argumentsPointer.setCons(SublistCons.getInstance(aArgumentsPointer.getCons()));
+            argumentsPointer.setCons(SublistCons.getInstance(aEnvironment,aArgumentsPointer.getCons()));
 
             String functionName = "";
             if (argumentsPointer.car() instanceof ConsPointer) {
@@ -113,18 +113,18 @@ public class BuiltinFunctionEvaluator extends Evaluator {
 
                 if (isTraced() && argumentsResultPointerArray != null  && showFlag) {
                     argumentsResultPointerArray[i] = new ConsPointer();
-                    argumentsResultPointerArray[i].setCons(argumentsConsTraverser.getCons().copy(false));
+                    argumentsResultPointerArray[i].setCons(argumentsConsTraverser.getCons().copy( aEnvironment, false));
                 }
 
-                aEnvironment.iArgumentStack.pushArgumentOnStack(argumentsConsTraverser.getCons().copy(false));
+                aEnvironment.iArgumentStack.pushArgumentOnStack(argumentsConsTraverser.getCons().copy( aEnvironment, false));
                 argumentsConsTraverser.goNext();
             }
 
             if ((iFlags & Variable) != 0) {//This macro has a variable number of arguments.
                 ConsPointer head = new ConsPointer();
-                head.setCons(aEnvironment.iListAtom.copy(false));
+                head.setCons(aEnvironment.iListAtom.copy( aEnvironment, false));
                 head.cdr().setCons(argumentsConsTraverser.getCons());
-                aEnvironment.iArgumentStack.pushArgumentOnStack(SublistCons.getInstance(head.getCons()));
+                aEnvironment.iArgumentStack.pushArgumentOnStack(SublistCons.getInstance(aEnvironment,head.getCons()));
             }//end if.
 
         } else {//This is a function, not a macro.
@@ -136,7 +136,7 @@ public class BuiltinFunctionEvaluator extends Evaluator {
 
                 if (isTraced() && argumentsResultPointerArray != null  && showFlag) {
                     argumentsResultPointerArray[i] = new ConsPointer();
-                    argumentsResultPointerArray[i].setCons(argumentResultPointer.getCons().copy(false));
+                    argumentsResultPointerArray[i].setCons(argumentResultPointer.getCons().copy( aEnvironment, false));
                 }
 
                 aEnvironment.iArgumentStack.pushArgumentOnStack(argumentResultPointer.getCons());
@@ -150,10 +150,10 @@ public class BuiltinFunctionEvaluator extends Evaluator {
                 //printf("Enter\n");
 
                 ConsPointer head = new ConsPointer();
-                head.setCons(aEnvironment.iListAtom.copy(false));
+                head.setCons(aEnvironment.iListAtom.copy( aEnvironment, false));
                 head.cdr().setCons(argumentsConsTraverser.getCons());
                 ConsPointer listPointer = new ConsPointer();
-                listPointer.setCons(SublistCons.getInstance(head.getCons()));
+                listPointer.setCons(SublistCons.getInstance(aEnvironment,head.getCons()));
 
 
                 /*
@@ -213,7 +213,7 @@ public class BuiltinFunctionEvaluator extends Evaluator {
 
         if (isTraced() && showFlag == true) {
             ConsPointer argumentsPointer = new ConsPointer();
-            argumentsPointer.setCons(SublistCons.getInstance(aArgumentsPointer.getCons()));
+            argumentsPointer.setCons(SublistCons.getInstance(aEnvironment,aArgumentsPointer.getCons()));
             String localVariables = aEnvironment.getLocalVariables();
             Evaluator.traceShowLeave(aEnvironment, aResultPointer, argumentsPointer, "builtin", localVariables);
             argumentsPointer.setCons(null);

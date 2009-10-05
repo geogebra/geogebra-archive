@@ -42,7 +42,7 @@ public class Parser
 		iListed = false;
 	}
 	
-	public void parse(ConsPointer aResult ) throws Exception
+	public void parse(Environment aEnvironment,ConsPointer aResult ) throws Exception
 	{
 		aResult.setCons(null);
 
@@ -54,10 +54,10 @@ public class Parser
 			aResult.setCons(AtomCons.getInstance(iEnvironment,"EndOfFile"));
 			return;
 		}
-		parseAtom(aResult,token);
+		parseAtom(aEnvironment,aResult, token);
 	}
 
-	void parseList(ConsPointer aResult) throws Exception
+	void parseList(Environment aEnvironment,ConsPointer aResult) throws Exception
 	{
 		String token;
 
@@ -81,12 +81,12 @@ public class Parser
 			// else parse simple atom with parse, and append it to the
 			// results list.
 
-			parseAtom(iter,token);
+			parseAtom(aEnvironment,iter, token);
 			iter = (iter.cdr()); //TODO FIXME
 		}
 	}
 
-	void parseAtom(ConsPointer aResult,String aToken) throws Exception
+	void parseAtom(Environment aEnvironment,ConsPointer aResult,String aToken) throws Exception
 	{
 		// if token is empty string, return null pointer (no expression)
 		if (aToken.length() == 0) //TODO FIXME either token == null or token.length() == 0?
@@ -96,8 +96,8 @@ public class Parser
 		if (aToken == iEnvironment.getTokenHash().lookUp("("))
 		{
 			ConsPointer subList = new ConsPointer();
-			parseList(subList);
-			aResult.setCons(SublistCons.getInstance(subList.getCons()));
+			parseList(aEnvironment, subList);
+			aResult.setCons(SublistCons.getInstance(aEnvironment,subList.getCons()));
 			return;
 		}
 		// else make a simple atom, and return it.

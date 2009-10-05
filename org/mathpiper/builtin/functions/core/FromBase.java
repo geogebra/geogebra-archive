@@ -44,7 +44,7 @@ public class FromBase extends BuiltinFunction
         BigNumber num = (BigNumber)  oper.getCons().getNumber(aEnvironment.getPrecision());
         LispError.checkArgument(aEnvironment, aStackTop, num != null, 1);
         // check that the base is an integer between 2 and 32
-        LispError.checkArgument(aEnvironment, aStackTop, num.isInt(), 1);
+        LispError.checkArgument(aEnvironment, aStackTop, num.isInteger(), 1);
 
         // Get a short platform integer from the car argument
         int base = (int) (num.toDouble());
@@ -62,7 +62,7 @@ public class FromBase extends BuiltinFunction
 
         // convert using correct base
         BigNumber z = new BigNumber(str2, aEnvironment.getPrecision(), base);
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(z));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(new org.mathpiper.lisp.cons.NumberCons(aEnvironment, z));
     }
 }
 

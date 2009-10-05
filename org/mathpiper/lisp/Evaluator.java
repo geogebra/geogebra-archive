@@ -266,8 +266,6 @@ public abstract class Evaluator {
 
 	public abstract void evaluate(Environment aEnvironment, ConsPointer aResult, ConsPointer aArgumentsOrExpression) throws Exception;
 
-	public void resetStack() {
-	}
 
 	public UserStackInformation stackInformation() {
 		return iBasicInfo;

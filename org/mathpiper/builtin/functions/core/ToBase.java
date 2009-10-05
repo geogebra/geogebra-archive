@@ -43,7 +43,7 @@ public class ToBase extends BuiltinFunction
         BigNumber num =(BigNumber) oper.getCons().getNumber(aEnvironment.getPrecision());
         LispError.checkArgument(aEnvironment, aStackTop, num != null, 1);
         // check that the base is an integer between 2 and 32
-        LispError.checkArgument(aEnvironment, aStackTop, num.isInt(), 1);
+        LispError.checkArgument(aEnvironment, aStackTop, num.isInteger(), 1);
 
         // Get a short platform integer from the car argument
         int base = (int) (num.toLong());
@@ -78,7 +78,7 @@ public class ToBase extends BuiltinFunction
 
 *DESC
 
-In Yacas, all numbers are written in decimal notation (base 10).
+In MathPiper, all numbers are written in decimal notation (base 10).
 The two functions {FromBase}, {ToBase} convert numbers between base 10 and a different base.
 Numbers in non-decimal notation are represented by strings.
 

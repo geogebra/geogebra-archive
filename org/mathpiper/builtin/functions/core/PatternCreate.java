@@ -52,6 +52,6 @@ public class PatternCreate extends BuiltinFunction
 
         org.mathpiper.lisp.parametermatchers.Pattern matcher = new org.mathpiper.lisp.parametermatchers.Pattern(aEnvironment, patternPointer, postPredicatePointer);
         PatternContainer patternContainer = new PatternContainer(matcher);
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(BuiltinObjectCons.getInstance(patternContainer));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(BuiltinObjectCons.getInstance(aEnvironment, patternContainer));
     }
 }

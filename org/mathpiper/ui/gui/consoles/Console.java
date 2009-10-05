@@ -68,6 +68,7 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
     private StringBuilder inputLines;
     private int responseInsertionOffset = -1;
     private boolean encounteredIn = false;
+    private boolean noLinesBetweenInAndEndOfTextArea = false;
     private JSplitPane splitPane;
     private int splitPaneDividerLocation = 400;
     private JScrollPane rawOutputCheckBoxScrollPane;
@@ -208,6 +209,7 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
             JOptionPane.showMessageDialog(this, this.helpMessage);
         } else if (src == clearConsoleButton) {
             this.textArea.setText("");
+            this.textArea.append("In> ");
         } else if (src == clearRawButton) {
             this.rawOutputTextArea.setText("");
         }
@@ -279,7 +281,7 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
                     int lineStartOffset = textArea.getLineStartOffset(lineNumber);
                     int lineEndOffset = textArea.getLineEndOffset(lineNumber);
 
-                    textArea.replaceRange("In>" + (String) history.get((history.size() - 1) - historyIndex), lineStartOffset, lineEndOffset);
+                    textArea.replaceRange("In> " + (String) history.get((history.size() - 1) - historyIndex), lineStartOffset, lineEndOffset);
 
                 } catch (BadLocationException ble) {
                     //Eat exception.
@@ -316,7 +318,7 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
                     int lineStartOffset = textArea.getLineStartOffset(lineNumber);
                     int lineEndOffset = textArea.getLineEndOffset(lineNumber);
 
-                    textArea.replaceRange("In>" + (String) history.get((history.size() - 1) - historyIndex), lineStartOffset, lineEndOffset);
+                    textArea.replaceRange("In> " + (String) history.get((history.size() - 1) - historyIndex), lineStartOffset, lineEndOffset);
 
                 } catch (BadLocationException ble) {
                     //Eat exception.
@@ -328,7 +330,7 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
                     int lineStartOffset = textArea.getLineStartOffset(lineNumber);
                     int lineEndOffset = textArea.getLineEndOffset(lineNumber);
 
-                    textArea.replaceRange("In>", lineStartOffset, lineEndOffset);
+                    textArea.replaceRange("In> ", lineStartOffset, lineEndOffset);
 
                     this.historyIndex = -1;
 
@@ -461,13 +463,26 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
             output += "\nException: " + response.getExceptionMessage();
         }
 
-        if (!encounteredIn) {
-            output = "\n" + output + "\n\nIn> ";
-        }
+        //try {
 
-        final String finalOutput = output;
-        try {
-            if (textArea.getLineOfOffset(responseInsertionOffset) == textArea.getLineCount()) {
+            //int insertionPointLine = textArea.getLineOfOffset(responseInsertionOffset);
+
+            //int lineCount = textArea.getLineCount();
+
+        if (!encounteredIn) {
+
+            if (noLinesBetweenInAndEndOfTextArea == true) {
+                output = "\n" + output + "\n\nIn> ";
+            } else {
+                output = output + "\n\nIn> ";
+            }//end if/else.
+
+        }//end if.
+
+            final String finalOutput = output;
+
+
+            /*if (insertionPointLine == lineCount - 1) {
                 SwingUtilities.invokeLater(new Runnable() {
 
                     public void run() {
@@ -479,7 +494,7 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
                 });
 
                 //textArea.setCaretPosition( textArea.getDocument().getLength() );
-            } else {
+            } else {*/
                 SwingUtilities.invokeLater(new Runnable() {
 
                     public void run() {
@@ -490,10 +505,10 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
 
                 });
 
-            }//end if/else.
-        } catch (BadLocationException ex) {
-            System.out.println(ex);
-        }
+           // }//end if/else.
+        //} catch (BadLocationException ex) {
+        //    System.out.println(ex);
+        //}
     }//end method.
 
 
@@ -561,6 +576,7 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
 
                 //Scan forwards to first line that does not start with In>.
                 boolean pastInputLines = false;
+                noLinesBetweenInAndEndOfTextArea = false;
                 do {
                     lineNumber++;
                     lineStartOffset = textArea.getLineStartOffset(lineNumber);
@@ -583,6 +599,7 @@ public class Console extends javax.swing.JPanel implements ActionListener, KeyLi
             }//end if.
 
         } catch (BadLocationException ex) {
+            noLinesBetweenInAndEndOfTextArea = true;
         }
 
 

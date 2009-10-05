@@ -116,7 +116,7 @@ public class XmlExplodeTag extends BuiltinFunction
                 Cons vl = AtomCons.getInstance(aEnvironment, value);
                 nm.cdr().setCons(vl);
                 ls.cdr().setCons(nm);
-                Cons newinfo = SublistCons.getInstance(ls);
+                Cons newinfo = SublistCons.getInstance(aEnvironment, ls);
                 newinfo.cdr().setCons(info);
                 info = newinfo;
             }
@@ -139,7 +139,7 @@ public class XmlExplodeTag extends BuiltinFunction
         {
             Cons ls = AtomCons.getInstance(aEnvironment, "List");
             ls.cdr().setCons(info);
-            info = SublistCons.getInstance(ls);
+            info = SublistCons.getInstance(aEnvironment, ls);
         }
 
         Cons xm = AtomCons.getInstance(aEnvironment, "XmlTag");
@@ -148,7 +148,7 @@ public class XmlExplodeTag extends BuiltinFunction
         info.cdr().setCons(tp);
         tg.cdr().setCons(info);
         xm.cdr().setCons(tg);
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(xm));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment, xm));
 
     }
 }

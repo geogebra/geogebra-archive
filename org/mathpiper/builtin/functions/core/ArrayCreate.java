@@ -46,7 +46,7 @@ public class ArrayCreate extends BuiltinFunction
         initarg.setCons(getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
 
         Array array = new Array(size, initarg.getCons());
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(BuiltinObjectCons.getInstance(array));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(BuiltinObjectCons.getInstance(aEnvironment, array));
     }
 }//end class.
 

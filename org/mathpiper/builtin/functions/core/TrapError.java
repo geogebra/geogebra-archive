@@ -62,7 +62,7 @@ TrapError evaluates its argument {expression}, returning the
 result of evaluating {expression}. If an error occurs,
 {errorHandler} is evaluated, returning its return value in stead.
 
-*EG
+**E.G.
 
 	In>
 

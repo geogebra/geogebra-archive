@@ -63,7 +63,7 @@ public class ToStdout extends BuiltinFunction
 When using {ToString} or {ToFile}, it might happen that something needs to be
 written to the standard default initial output (typically the screen). {ToStdout} can be used to select this stream.
 
-*EG
+**E.G.
 
 	In> ToString()[Echo("aaaa");ToStdout()Echo("bbbb");];
 	bbbb

@@ -35,7 +35,7 @@ public class Concatenate extends BuiltinFunction
     public void evaluate(Environment aEnvironment, int aStackTop) throws Exception
     {
         ConsPointer all = new ConsPointer();
-        all.setCons(aEnvironment.iListAtom.copy(false));
+        all.setCons(aEnvironment.iListAtom.copy( aEnvironment, false));
         ConsTraverser tail = new ConsTraverser(all);
         tail.goNext();
         int arg = 1;
@@ -45,7 +45,7 @@ public class Concatenate extends BuiltinFunction
         while (consTraverser.getCons() != null)
         {
             LispError.checkIsList(aEnvironment, aStackTop, consTraverser.getPointer(), arg);
-            Utility.flatCopy(tail.getPointer(), ((ConsPointer) consTraverser.getPointer().car()).cdr());
+            Utility.flatCopy(aEnvironment,tail.getPointer(), ((ConsPointer) consTraverser.getPointer().car()).cdr());
             while (tail.getCons() != null)
             {
                 tail.goNext();
@@ -53,7 +53,7 @@ public class Concatenate extends BuiltinFunction
             consTraverser.goNext();
             arg++;
         }
-        getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(all.getCons()));
+        getTopOfStackPointer(aEnvironment, aStackTop).setCons(SublistCons.getInstance(aEnvironment,all.getCons()));
     }
 }
 
