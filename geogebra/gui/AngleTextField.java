@@ -1,12 +1,12 @@
 package geogebra.gui;
 
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.main.Application;
+import geogebra.main.GuiManager;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Locale;
-
-import javax.swing.JTextField;
 
 /*
  * Michael Borcherds
@@ -17,10 +17,10 @@ import javax.swing.JTextField;
  * Ctrl-o Ctrl-p on Mac OSX
  */
 
-public class AngleTextField extends JTextField implements KeyListener {
+public class AngleTextField extends MyTextField implements KeyListener {
 
-	public AngleTextField(int i) {
-		super(i);
+	public AngleTextField(int i, GuiManager guiManager) {
+		super(guiManager, i);
 		this.addKeyListener(this);
 	}
 

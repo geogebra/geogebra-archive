@@ -22,6 +22,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		
 	}
 
+	public MyTextField(GuiManager guiManager, int i) {
+		super(i);
+		this.guiManager = guiManager;
+		addFocusListener(this);
+	}
+
 	public void focusGained(FocusEvent e) {
 		guiManager.setCurrentTextfield((VirtualKeyboardListener)this, false);
 	}
