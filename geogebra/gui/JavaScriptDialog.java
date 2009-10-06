@@ -70,7 +70,7 @@ public class JavaScriptDialog extends JDialog
 	 * @param x, y: location of slider in screen coords
 	 */
 	public JavaScriptDialog(Application app, int x, int y) {
-		super(app.getFrame(), true);
+		super(app.getFrame(), false);
 		this.app = app;		
 		addWindowListener(this);
 		

@@ -1,11 +1,16 @@
 package geogebra.gui.view.algebra;
 
+import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -16,9 +21,11 @@ import javax.swing.text.JTextComponent;
 /**
  * @author Markus Hohenwarter
  */
-public class InputPanel extends JPanel {
+public class InputPanel extends JPanel implements FocusListener, VirtualKeyboardListener {
 	
 	private static final long serialVersionUID = 1L;
+	
+	private Application app;
 	
 	private final static String [] displayChars = { 	
 		"\u2245", // congruent	
@@ -104,10 +111,15 @@ public class InputPanel extends JPanel {
 	
 	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,
 						boolean showGreekLetters, boolean showDisplayChars) {
+		
+		this.app = app;
+		
 		if (rows > 1) 
 			textComponent = new JTextArea(rows, columns);
 		else
 			textComponent = new AutoCompleteTextField(columns, app);		
+		
+		textComponent.addFocusListener(this);
 		
 		if (initText != null) textComponent.setText(initText);		
 		cbSpecialChars = new JComboBox();
@@ -219,4 +231,13 @@ public class InputPanel extends JPanel {
 		textComponent.replaceSelection(str);	
 		textComponent.requestFocus();
 	}		
+	
+	public void focusGained(FocusEvent e) {
+		app.getGuiManager().setCurrentTextfield(this, true);
+	}
+
+	public void focusLost(FocusEvent e) {
+		app.getGuiManager().setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
+	}
+
 }
