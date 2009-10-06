@@ -2,6 +2,7 @@ package geogebra.export;
 
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.main.Application;
 
 import java.awt.FlowLayout;
@@ -44,8 +45,8 @@ public class PrintScalePanel extends JPanel {
 		
 		setLayout(new FlowLayout(FlowLayout.LEFT));			
 		
-		tfScale1 = new JTextField();
-		tfScale2 = new JTextField();
+		tfScale1 = new MyTextField(app.getGuiManager());
+		tfScale2 = new MyTextField(app.getGuiManager());
 		tfScale1.setColumns(maxFracDigits);	
 		tfScale2.setColumns(maxFracDigits);
 		tfScale1.setHorizontalAlignment(SwingConstants.RIGHT);

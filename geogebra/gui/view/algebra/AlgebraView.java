@@ -18,19 +18,14 @@ the Free Software Foundation.
 
 package geogebra.gui.view.algebra;
 
+import geogebra.gui.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.View;
 import geogebra.util.FastHashMapKeyless;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.awt.font.TextLayout;
 import java.util.EventObject;
 
 import javax.swing.DefaultCellEditor;
@@ -166,7 +161,7 @@ public class AlgebraView extends JTree implements View {
 
 	private void initTreeCellRendererEditor() {
 		renderer = new MyRenderer(app);		
-		editTF = new JTextField();
+		editTF = new MathTextField(app.getGuiManager());
 		editor = new MyDefaultTreeCellEditor(this, renderer, 
 									new MyCellEditor(editTF));
 		

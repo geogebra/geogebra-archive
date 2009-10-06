@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
 
@@ -95,14 +96,14 @@ public class ToolNameIconPanel extends JPanel {
 			public void keyTyped(KeyEvent arg0) {}			
 		};
 		{			
-			tfToolName = new JTextField();
+			tfToolName = new MyTextField(app.getGuiManager());
 			int n = app.getKernel().getMacroNumber()+1;
 			tfToolName.setText(app.getMenu("Tool")+n);
 			add(tfToolName, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));											
 			tfToolName.addKeyListener(kl);
 		}	
 		{
-			tfCmdName = new JTextField();
+			tfCmdName = new MyTextField(app.getGuiManager());
 			tfCmdName.setText(tfToolName.getText());
 			add(tfCmdName, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));									
 			FocusListener fl = new FocusListener() {			
@@ -115,7 +116,7 @@ public class ToolNameIconPanel extends JPanel {
 			tfCmdName.addFocusListener(fl);
 		}
 		{
-			tfToolHelp = new JTextField();				
+			tfToolHelp = new MyTextField(app.getGuiManager());				
 			add(tfToolHelp, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		}
 		{

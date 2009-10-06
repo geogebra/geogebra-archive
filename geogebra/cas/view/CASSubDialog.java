@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -64,7 +65,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 				"ThisIsJustTheSplitString", evalText);
 		String[] strLabel = temp.split("ThisIsJustTheSplitString");
 		JLabel subLabel = new JLabel(strLabel[0]);
-		subStrfield = new JTextField(4);
+		subStrfield = new MyTextField(app.getGuiManager(),4);
 		JLabel subLabel2 = new JLabel(strLabel[1]);
 		subTitlePanel.add(subLabel);
 		subTitlePanel.add(subStrfield);

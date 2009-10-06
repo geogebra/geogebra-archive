@@ -16,6 +16,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.util.SpringUtilities;
 import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.CircularDefinitionException;
@@ -3897,8 +3898,8 @@ class SliderPanel
 					
 		tfMin = new AngleTextField(5, app.getGuiManager());
 		tfMax = new AngleTextField(5, app.getGuiManager());
-		tfWidth = new JTextField(4);
-		tfields = new JTextField[3];
+		tfWidth = new MyTextField(app.getGuiManager(),4);
+		tfields = new MyTextField[3];
 		tLabels = new JLabel[3];
 		tfields[0] = tfMin;
 		tfields[1] = tfMax;

@@ -12,6 +12,7 @@
 
 package geogebra.export;
 
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.main.Application;
 
 import java.awt.FlowLayout;
@@ -63,8 +64,8 @@ public class GraphicSizePanel extends JPanel implements ActionListener,
 	//this.app = app;
 
 	setLayout(new FlowLayout(5));
-	tfWidth = new JTextField(5);
-	tfHeight = new JTextField(5);
+	tfWidth = new MyTextField(app.getGuiManager(),5);
+	tfHeight = new MyTextField(app.getGuiManager(),5);
 	add(new JLabel(app.getPlain("Width") + ":"));
 	add(tfWidth);
 	add(new JLabel(app.getPlain("Height") + ":"));

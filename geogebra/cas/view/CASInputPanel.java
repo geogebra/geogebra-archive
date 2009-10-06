@@ -4,6 +4,9 @@
 
 package geogebra.cas.view;
 
+import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.main.Application;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -18,11 +21,15 @@ public class CASInputPanel extends JPanel {
 
 	private JTextField inputArea;
 
-	public CASInputPanel() {
+	private Application app;
+	
+	public CASInputPanel(Application app) {
+		this.app = app;
+		
 		setBackground(Color.white);		
 		setLayout(new BorderLayout(0,0));
 		
-		inputArea = new JTextField(20);	
+		inputArea = new MyTextField(app.getGuiManager(),20);	
 		inputArea.setBorder(BorderFactory.createEmptyBorder());						
 		add(inputArea, BorderLayout.CENTER);
 	}

@@ -29,7 +29,7 @@ public abstract class CASTableCell extends JPanel{
 		setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));		
 		setBackground(Color.white);
 		
-		inputPanel = new CASInputPanel();
+		inputPanel = new CASInputPanel(app);
 		outputPanel = new CASOutputPanel(view.getApp());		
 		add(inputPanel, BorderLayout.NORTH);
 		add(outputPanel, BorderLayout.CENTER);

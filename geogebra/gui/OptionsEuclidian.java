@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -142,8 +143,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         
         
         JPanel axesRatioPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,5,5));
-    	tfAxesRatioX = new JTextField(6);
-		tfAxesRatioY = new JTextField(6);
+    	tfAxesRatioX = new MyTextField(app.getGuiManager(),6);
+		tfAxesRatioY = new MyTextField(app.getGuiManager(),6);
 		tfAxesRatioX.addActionListener(this);
 		tfAxesRatioY.addActionListener(this);
 		tfAxesRatioX.addFocusListener(this);
