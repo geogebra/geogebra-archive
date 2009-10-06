@@ -123,13 +123,13 @@ public class VirtualKeyboard extends JFrame {
 
 
 	}
-	
+
 	public VirtualKeyboard(int sizeX, int sizeY) {
 		this(null, sizeX, sizeY, 0.7f);
 	}
-	
-	
-	
+
+
+
 	/**
 	 * This is the default constructor
 	 */
@@ -154,12 +154,12 @@ public class VirtualKeyboard extends JFrame {
 			fName = "Arial Unicode MS";
 
 		//if (fName == "SansSerif") {
-			//horizontalMultiplier = 1.0;
-			//verticalMultiplier = 1.0;
+		//horizontalMultiplier = 1.0;
+		//verticalMultiplier = 1.0;
 
 		//}
 
-		
+
 		for (int i = 0 ; i < 100 ; i++) {
 			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
 			//FontMetrics fm = getFontMetrics(fonts[i]);
@@ -177,47 +177,47 @@ public class VirtualKeyboard extends JFrame {
 
 		windowResized();
 
-		
-		
+
+
 		// make sure resizing the window dynamically updates the contents
 		// doesn't seem to be needed on Java 5
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		kit.setDynamicLayout(true);
-		
+
 		if (app != null)
 			setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		else
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //setVisible(true);
-        addWindowListener(new WindowListener() {
-            public void windowClosed(WindowEvent arg0) {
-                //System.out.println("Window close event occur");
-            }
-            public void windowActivated(WindowEvent arg0) {
-                //System.out.println("Window Activated");
-            }
-            public void windowClosing(WindowEvent arg0) {
-                //System.out.println("Window Closing");
-            	// if closed with the X, stop it auto-opening
-                Application.setVirtualKeyboardActive(false);
-                app.getGuiManager().updateMenubar();
-            }
-            public void windowDeactivated(WindowEvent arg0) {
-                //System.out.println("Window Deactivated");
-            }
-            public void windowDeiconified(WindowEvent arg0) {
-                //System.out.println("Window Deiconified");
-            }
-            public void windowIconified(WindowEvent arg0) {
-                //System.out.println("Window Iconified");
-            }
-            public void windowOpened(WindowEvent arg0) {
-                //System.out.println("Window Opened");
-            }
-        });
-    
+		//setVisible(true);
+		addWindowListener(new WindowListener() {
+			public void windowClosed(WindowEvent arg0) {
+				//System.out.println("Window close event occur");
+			}
+			public void windowActivated(WindowEvent arg0) {
+				//System.out.println("Window Activated");
+			}
+			public void windowClosing(WindowEvent arg0) {
+				//System.out.println("Window Closing");
+				// if closed with the X, stop it auto-opening
+				Application.setVirtualKeyboardActive(false);
+				app.getGuiManager().updateMenubar();
+			}
+			public void windowDeactivated(WindowEvent arg0) {
+				//System.out.println("Window Deactivated");
+			}
+			public void windowDeiconified(WindowEvent arg0) {
+				//System.out.println("Window Deiconified");
+			}
+			public void windowIconified(WindowEvent arg0) {
+				//System.out.println("Window Iconified");
+			}
+			public void windowOpened(WindowEvent arg0) {
+				//System.out.println("Window Opened");
+			}
+		});
 
-		
+
+
 		// Event Handling
 		getContentPane().addComponentListener(new ComponentAdapter()
 		{
@@ -226,7 +226,7 @@ public class VirtualKeyboard extends JFrame {
 				//Application.debug("resize");	
 				windowResized();
 
-				
+
 				/*
       if (tmp.getWidth()<300)
       {
@@ -251,7 +251,7 @@ public class VirtualKeyboard extends JFrame {
 		// http://java.sun.com/developer/technicalArticles/GUI/translucent_shaped_windows/#Setting-the-Opacity-Level-of-a-Window
 		//AWTUtilities.setWindowOpacity
 
-		
+
 
 		try { // Java 6u10+ only
 			Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
@@ -326,11 +326,11 @@ public class VirtualKeyboard extends JFrame {
 	   updateButtons();
 
    }//*/
-	
+
 	//int maxX, maxY;
 
 	public void updateButtons() {
-		
+
 		//maxX = 0;
 		//maxY = 0;
 		for (int i = 1 ; i <= buttonRows ; i++)
@@ -338,11 +338,11 @@ public class VirtualKeyboard extends JFrame {
 				updateButton(i,j);	   
 
 		//Application.debug(maxX*14+" "+maxY*6+" "+getWidth()+" "+getHeight());
-		
-	     // setSize(maxX * 14, maxY * 6);
-	     // validate();
 
-		
+		// setSize(maxX * 14, maxY * 6);
+		// validate();
+
+
 		updateSpaceButton();
 		updateCapsLockButton();
 		updateMathButton();
@@ -468,7 +468,7 @@ public class VirtualKeyboard extends JFrame {
 		EnglishButton.setLocation(new Point((int)(buttonSizeX * 23d / 2d), (int)(buttonSizeY * 4d)));
 
 		EnglishButton.setFont(getFont((int)(minButtonSize()), false));
-		
+
 		EnglishButton.setVisible(true);
 
 		setColor(EnglishButton);
@@ -594,9 +594,9 @@ public class VirtualKeyboard extends JFrame {
 					setMode(KEYBOARD_NORMAL);
 					if (greek())
 						readConf(app, new Locale("el"), false);
-					
+
 					getEnglishButton().setSelected(false);
-					
+
 					//else
 					//	readConf(app, null, false);
 
@@ -624,9 +624,9 @@ public class VirtualKeyboard extends JFrame {
 					setMode(KEYBOARD_NORMAL);
 					if (english())
 						readConf(app, new Locale("en"), false);
-					
+
 					getGreekButton().setSelected(false);
-					
+
 					//else
 					//	readConf(app, null, false);
 
@@ -949,7 +949,7 @@ public class VirtualKeyboard extends JFrame {
 		if (getCurrentFont().canDisplay(c)) return c+"";
 		else return alternative;
 	}
-	
+
 	HashMap<Character, MyBoolean> characterIsTooWide = new HashMap<Character, MyBoolean>(200);
 
 	private void updateButton(int i, int j) {
@@ -976,17 +976,17 @@ public class VirtualKeyboard extends JFrame {
 
 		String text = Buttons[i][j].getText();
 		int len = text.length();
-		
 
-		
+
+
 		if (len == 0) {
 			len = 1;
 			text = " ";
-			
+
 		}
 
 		if (len == 1) {
-		
+
 			// make sure extra-wide characters fit (eg <=> \u21d4 )
 			MyBoolean oversize = characterIsTooWide.get(new Character(text.charAt(0)));
 			if (oversize == null) {
@@ -998,7 +998,7 @@ public class VirtualKeyboard extends JFrame {
 				oversize = new MyBoolean((buttonSize2.getWidth() > buttonSize.getWidth()));
 				characterIsTooWide.put(new Character(text.charAt(0)), oversize);
 			}
-			
+
 			if (oversize.getBoolean()) {
 				Buttons[i][j].setFont(getFont((int)minButtonSize() * 10 / 12, false));
 			} else {				
@@ -1014,55 +1014,55 @@ public class VirtualKeyboard extends JFrame {
 		}
 
 	}
-	
+
 	private Font getCurrentFont() {
 		if (currentFont != null)
 			return currentFont;
-		
+
 		return getFont((int)(minButtonSize()), true);
 	}
 
 	private HashMap<Integer, Font> fontsHash = new HashMap<Integer, Font>(30);
 
 	private Font getFont(int size, boolean setFont) {
-		
+
 		Integer Size = new Integer(size);
 
 		Font ret = fontsHash.get(Size);
 
 		// all OK, return
 		if (ret != null) return ret;
-		
+
 		int maxSize = 100;
 		int minSize = 1;
-		
-		
+
+
 		// interval bisection method to find desired fontsize
 		while (minSize != maxSize - 1) {
 			//Application.debug(minSize+" "+maxSize);
 			int midSize = (minSize + maxSize) / 2;
-			
+
 			getDummyButton().setFont(fonts[midSize]);
 			getDummyButton().setText(wideChar+"");
 			Dimension buttonSize = DummyButton.getPreferredSize();
 			//getDummyButton().setText(wideChar2+"");
 			//Dimension buttonSize2 = DummyButton.getPreferredSize();
-			
+
 			//int wideCharSize = Math.max(buttonSize.width, buttonSize2.width);
 			int wideCharSize = buttonSize.width;
-			
+
 			if (wideCharSize < size)
 				minSize = midSize;
 			else
 				maxSize = midSize;
-			
+
 		}
-		
+
 		if (setFont) currentFont = fonts[minSize];
 		fontsHash.put(Size, fonts[minSize]);
 		Application.debug("storing "+size+" "+minSize);
 		return fonts[minSize];
-		
+
 		/*
 
 		//Application.debug("starting loop"+size);
@@ -1071,14 +1071,14 @@ public class VirtualKeyboard extends JFrame {
 			getDummyButton().setFont(fonts[i]);
 			Dimension buttonSize = DummyButton.getPreferredSize();
 			if (buttonSize.width < size) {
-				
+
 				font = fonts[i];
 				fontsHash.put(Size, font);
 				Application.debug("storing "+size+" "+i);
 				return font;
 			}
 		}*/
-		
+
 		/*
 		for (int i = 0 ; i < fonts.length - 1 ; i++) {
 			if (fontWidths[i] < size && fontWidths[i+1] >= size)
@@ -1108,7 +1108,7 @@ public class VirtualKeyboard extends JFrame {
 			locale = app.getLocale();
 		else
 			locale = getLocale();
-		
+
 		//System.out.println("Using locale "+locale.toString());
 
 		if (math) {
@@ -1123,7 +1123,8 @@ public class VirtualKeyboard extends JFrame {
 
 		//myKeys.clear();
 
-		Enumeration keys = rbKeyboard.getKeys();
+		Enumeration<String> keys = rbKeyboard.getKeys();
+
 		while (keys.hasMoreElements()) {
 			String keyU = (String) keys.nextElement();
 
