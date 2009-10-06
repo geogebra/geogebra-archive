@@ -14,6 +14,7 @@ the Free Software Foundation.
 
 package geogebra.gui.virtualkeyboard;
 
+import geogebra.kernel.arithmetic.MyBoolean;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
@@ -84,7 +85,7 @@ public class VirtualKeyboard extends JFrame {
 
 	// max width character
 	private char wideChar = '@';//'\u21d4'; // wide arrow <=>
-	private char wideChar2 = '\u21d4'; // wide arrow <=>
+	//private char wideChar2 = '\u21d4'; // wide arrow <=>
 
 	private int buttonRows = 5;
 	private int buttonCols = 14;
@@ -100,7 +101,7 @@ public class VirtualKeyboard extends JFrame {
 
 	private int windowX, windowY;
 
-	private Font font;
+	private Font currentFont;
 
 	private Font [] fonts = new Font[100];
 	//int fontWidths[] = new int[100];
@@ -397,7 +398,7 @@ public class VirtualKeyboard extends JFrame {
 		CapsLockButton.setSize(new Dimension((int)(buttonSizeX ) , (int)buttonSizeY));
 		CapsLockButton.setLocation(new Point((int)(buttonSizeX / 2d), (int)(buttonSizeY * 4d)));
 
-		CapsLockButton.setFont(getFont((int)(minButtonSize())));
+		CapsLockButton.setFont(getFont((int)(minButtonSize()), false));
 
 		setColor(CapsLockButton);
 		//app.getGuiManager().getKeyboard().shiftPressed(CapsLockButton.isSelected());
@@ -407,7 +408,7 @@ public class VirtualKeyboard extends JFrame {
 		CtrlButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		CtrlButton.setLocation(new Point((int)(buttonSizeX * 3d / 2d), (int)(buttonSizeY * 4d)));
 
-		CtrlButton.setFont(getFont((int)(minButtonSize() / 2)));
+		CtrlButton.setFont(getFont((int)(minButtonSize() / 2), false));
 
 		setColor(CtrlButton);
 		//app.getGuiManager().getKeyboard().ctrlPressed(CtrlButton.isSelected());
@@ -417,7 +418,7 @@ public class VirtualKeyboard extends JFrame {
 		AltButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		AltButton.setLocation(new Point((int)(buttonSizeX * 5d / 2d), (int)(buttonSizeY * 4d)));
 
-		AltButton.setFont(getFont((int)(minButtonSize() / 2)));
+		AltButton.setFont(getFont((int)(minButtonSize() / 2), false));
 
 		setColor(AltButton);
 
@@ -430,7 +431,7 @@ public class VirtualKeyboard extends JFrame {
 		AltGrButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		AltGrButton.setLocation(new Point((int)(buttonSizeX * 19d / 2d), (int)(buttonSizeY * 4d)));
 
-		AltGrButton.setFont(getFont((int)(minButtonSize() / 2)));
+		AltGrButton.setFont(getFont((int)(minButtonSize() / 2), false));
 
 		setColor(AltGrButton);
 
@@ -440,7 +441,7 @@ public class VirtualKeyboard extends JFrame {
 		MathButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		MathButton.setLocation(new Point((int)(buttonSizeX * 21d / 2d), (int)(buttonSizeY * 4d)));
 
-		MathButton.setFont(getFont((int)(minButtonSize())));
+		MathButton.setFont(getFont((int)(minButtonSize()), false));
 
 		setColor(MathButton);
 	}
@@ -456,7 +457,7 @@ public class VirtualKeyboard extends JFrame {
 		GreekButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		GreekButton.setLocation(new Point((int)(buttonSizeX * 25d / 2d), (int)(buttonSizeY * 4d)));
 
-		GreekButton.setFont(getFont((int)(minButtonSize())));
+		GreekButton.setFont(getFont((int)(minButtonSize()), false));
 
 		setColor(GreekButton);
 
@@ -466,7 +467,7 @@ public class VirtualKeyboard extends JFrame {
 		EnglishButton.setSize(new Dimension((int)(buttonSizeX) , (int)buttonSizeY));
 		EnglishButton.setLocation(new Point((int)(buttonSizeX * 23d / 2d), (int)(buttonSizeY * 4d)));
 
-		EnglishButton.setFont(getFont((int)(minButtonSize())));
+		EnglishButton.setFont(getFont((int)(minButtonSize()), false));
 		
 		EnglishButton.setVisible(true);
 
@@ -945,9 +946,11 @@ public class VirtualKeyboard extends JFrame {
 	}
 
 	private String unicodeString(char c, String alternative) {
-		if (font.canDisplay(c)) return c+"";
+		if (getCurrentFont().canDisplay(c)) return c+"";
 		else return alternative;
 	}
+	
+	HashMap<Character, MyBoolean> characterIsTooWide = new HashMap<Character, MyBoolean>(200);
 
 	private void updateButton(int i, int j) {
 		keys k = getKey(i, j);
@@ -971,28 +974,61 @@ public class VirtualKeyboard extends JFrame {
 
 		Dimension size = Buttons[i][j].getPreferredSize();
 
-		int len = Buttons[i][j].getText().length();
-		if (len == 0) len = 1;
+		String text = Buttons[i][j].getText();
+		int len = text.length();
+		
 
-		if (len == 1)
-			Buttons[i][j].setFont(getFont((int)minButtonSize() ));
+		
+		if (len == 0) {
+			len = 1;
+			text = " ";
+			
+		}
+
+		if (len == 1) {
+		
+			// make sure extra-wide characters fit (eg <=> \u21d4 )
+			MyBoolean oversize = characterIsTooWide.get(new Character(text.charAt(0)));
+			if (oversize == null) {
+				getDummyButton().setFont(getCurrentFont());
+				getDummyButton().setText(wideChar+"");
+				Dimension buttonSize = DummyButton.getPreferredSize();
+				getDummyButton().setText(text);
+				Dimension buttonSize2 = DummyButton.getPreferredSize();
+				oversize = new MyBoolean((buttonSize2.getWidth() > buttonSize.getWidth()));
+				characterIsTooWide.put(new Character(text.charAt(0)), oversize);
+			}
+			
+			if (oversize.getBoolean()) {
+				Buttons[i][j].setFont(getFont((int)minButtonSize() * 10 / 12, false));
+			} else {				
+				Buttons[i][j].setFont(getFont((int)minButtonSize(), true));
+			}
+		}
 		else {
 			// make sure "Esc" fits
-			FontMetrics fm = getFontMetrics(font);
+			FontMetrics fm = getFontMetrics(getCurrentFont());
 			int width = fm.stringWidth(Buttons[i][j].getText()); // wide arrow <=>
 			int w2 = fm.stringWidth(wideChar+"");
-			Buttons[i][j].setFont(getFont((int)(minButtonSize() * w2 / width)));
+			Buttons[i][j].setFont(getFont((int)(minButtonSize() * w2 / width), false));
 		}
 
 	}
+	
+	private Font getCurrentFont() {
+		if (currentFont != null)
+			return currentFont;
+		
+		return getFont((int)(minButtonSize()), true);
+	}
 
-	private HashMap<Integer, Font> fontsHash = new HashMap(30);
+	private HashMap<Integer, Font> fontsHash = new HashMap<Integer, Font>(30);
 
-	private Font getFont(int size) {
+	private Font getFont(int size, boolean setFont) {
 		
 		Integer Size = new Integer(size);
 
-		Font ret = (Font)fontsHash.get(Size);
+		Font ret = fontsHash.get(Size);
 
 		// all OK, return
 		if (ret != null) return ret;
@@ -1009,10 +1045,11 @@ public class VirtualKeyboard extends JFrame {
 			getDummyButton().setFont(fonts[midSize]);
 			getDummyButton().setText(wideChar+"");
 			Dimension buttonSize = DummyButton.getPreferredSize();
-			getDummyButton().setText(wideChar2+"");
-			Dimension buttonSize2 = DummyButton.getPreferredSize();
+			//getDummyButton().setText(wideChar2+"");
+			//Dimension buttonSize2 = DummyButton.getPreferredSize();
 			
-			int wideCharSize = Math.max(buttonSize.width, buttonSize2.width);
+			//int wideCharSize = Math.max(buttonSize.width, buttonSize2.width);
+			int wideCharSize = buttonSize.width;
 			
 			if (wideCharSize < size)
 				minSize = midSize;
@@ -1021,10 +1058,10 @@ public class VirtualKeyboard extends JFrame {
 			
 		}
 		
-		font = fonts[minSize];
-		fontsHash.put(Size, font);
+		if (setFont) currentFont = fonts[minSize];
+		fontsHash.put(Size, fonts[minSize]);
 		Application.debug("storing "+size+" "+minSize);
-		return font;
+		return fonts[minSize];
 		
 		/*
 
