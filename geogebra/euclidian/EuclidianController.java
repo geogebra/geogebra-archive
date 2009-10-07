@@ -5330,7 +5330,7 @@ public class EuclidianController implements MouseListener,
 
 	// new JavaScript button
 	final protected boolean javaScriptButton() {	
-		Application.debug("jhjh"+(mouseLoc != null));
+		//Application.debug("jhjh"+(mouseLoc != null));
 		return !selectionPreview && mouseLoc != null && app.getGuiManager().showJavaScriptButtonCreationDialog(mouseLoc.x, mouseLoc.y);
 	}		
 

@@ -916,17 +916,19 @@ public class DefaultGuiManager implements GuiManager {
 		
 		SliderDialog dialog = new SliderDialog(app, x, y);
 		dialog.setVisible(true);
+		/*
 		GeoNumeric num = (GeoNumeric) dialog.getResult();
+		Application.debug("finish");
 		if (num != null) {
 			// make sure that we show name and value of slider
 			num.setLabelMode(GeoElement.LABEL_NAME_VALUE);
 			num.setLabelVisible(true);
 			num.update();
-		}
+		}*/
 		
 		app.setDefaultCursor();
 		
-		return num != null;
+		return true;//num != null;
 	}
 
 	/**
@@ -937,14 +939,15 @@ public class DefaultGuiManager implements GuiManager {
 	public boolean showJavaScriptButtonCreationDialog(int x, int y) {
 		JavaScriptDialog dialog = new JavaScriptDialog(app, x, y);
 		dialog.setVisible(true);
-		GeoJavaScriptButton button = (GeoJavaScriptButton) dialog.getResult();
-		if (button != null) {
-			// make sure that we show name and value of slider
-			button.setLabelMode(GeoElement.LABEL_NAME_VALUE);
-			button.setLabelVisible(true);
-			button.update();
-		}
-		return button != null;
+		//GeoJavaScriptButton button = (GeoJavaScriptButton) dialog.getResult();
+		//Application.debug("finish");
+		//	if (button != null) {
+		//	// make sure that we show name and value of slider
+		//	button.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+		//	button.setLabelVisible(true);
+		//	button.update();
+		//}
+		return true;//button != null;
 	}
 
 	/**

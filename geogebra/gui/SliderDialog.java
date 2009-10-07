@@ -62,7 +62,7 @@ public class SliderDialog extends JDialog
 	 * @param x, y: location of slider in screen coords
 	 */
 	public SliderDialog(Application app, int x, int y) {
-		super(app.getFrame(), true);
+		super(app.getFrame(), false);
 		this.app = app;		
 		addWindowListener(this);
 		
@@ -175,7 +175,12 @@ public class SliderDialog extends JDialog
 		Object source = e.getSource();
 				
 		if (source == btApply) {				
-			geoResult = rbNumber.isSelected() ? number : angle; 			
+			geoResult = rbNumber.isSelected() ? number : angle; 		
+			getResult();
+			geoResult.setLabelMode(GeoElement.LABEL_NAME_VALUE);
+			geoResult.setLabelVisible(true);
+			geoResult.update();
+
 			setVisible(false);
 		} 
 		else if (source == btCancel) {						

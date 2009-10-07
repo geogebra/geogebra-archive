@@ -76,7 +76,7 @@ public class PrintPreview extends JDialog {
 	}
 
 	public PrintPreview(Application app, Printable target, int orientation) {
-		super(app.getFrame(), true);
+		super(app.getFrame(), false);
 		this.app = app;
 		initPrintPreview(target, orientation);
 	}

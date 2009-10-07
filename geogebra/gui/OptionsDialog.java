@@ -88,7 +88,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * @param app
 	 */
 	public OptionsDialog(Application app) {
-		super(app.getFrame(), true);
+		super(app.getFrame(), false);
 
 		this.app = app;
 

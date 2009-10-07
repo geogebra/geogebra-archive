@@ -81,7 +81,7 @@ public class WorksheetExportDialog extends JDialog {
 	private GuiManager guiManager;
 
 	public WorksheetExportDialog(Application app) {
-		super(app.getFrame(), true);
+		super(app.getFrame(), false);
 		this.app = app;
 		kernel = app.getKernel();
 		

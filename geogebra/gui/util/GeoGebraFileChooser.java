@@ -5,10 +5,12 @@ import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.Label;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
@@ -22,6 +24,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
@@ -424,4 +427,13 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 			}
 		}
 	}
+	
+	/*
+	 * TODO: override to make File Chooser non-modal for VirtualKeyboard
+    protected JDialog createDialog(Component parent) throws HeadlessException {
+        JDialog dialog = super.createDialog(parent);
+        dialog.setModal(false);
+        return dialog;
+    }*/
+
 }

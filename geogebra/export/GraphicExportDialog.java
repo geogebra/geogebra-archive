@@ -79,7 +79,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private final int FORMAT_EMF = 4;		
 
 	public GraphicExportDialog(Application app) {
-		super(app.getFrame(), true);
+		super(app.getFrame(), false);
 		this.app = app;
 
 		sizeLabelFormat = NumberFormat.getInstance(Locale.ENGLISH);		

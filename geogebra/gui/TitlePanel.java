@@ -12,6 +12,7 @@
 
 package geogebra.gui;
 
+import geogebra.gui.virtualkeyboard.MyFormattedTextField;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.main.Application;
@@ -59,7 +60,7 @@ public class TitlePanel extends JPanel {
 		setLayout(new BorderLayout(5, 5));
 		titleField = new MyTextField(app.getGuiManager());
 		authorField = new MyTextField(app.getGuiManager());
-		dateField = new JFormattedTextField(SimpleDateFormat
+		dateField = new MyFormattedTextField(app.getGuiManager(),SimpleDateFormat
 				.getDateInstance(SimpleDateFormat.LONG));
 		dateField.setColumns(12);
 		dateField.setFocusLostBehavior(JFormattedTextField.PERSIST);

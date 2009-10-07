@@ -80,7 +80,7 @@ ItemListener, WindowListener {
 	 * @param app: parent frame
 	 */
 	public PropertiesDialogGraphicsWindow(Application app, EuclidianView view) {
-		super(app.getFrame(), true);
+		super(app.getFrame(), false);
 		this.app = app;		
 		this.view = view;
 		kernel = app.getKernel();
