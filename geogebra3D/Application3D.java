@@ -173,9 +173,13 @@ public abstract class Application3D extends Application{
 	
 	public void toggleAxis(){
 		
-		// toggle xOy plane
+		// toggle axis and xOy plane
+		getEuclidianView3D().toggleAxis();
+		
+		/*
 		GeoElement p = getEuclidianView3D().getxOyPlane();
 		p.setEuclidianVisible(!p.isEuclidianVisible());
+		*/
 	}
 	
 	

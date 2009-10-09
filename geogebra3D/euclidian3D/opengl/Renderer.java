@@ -19,9 +19,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
-import java.util.Iterator;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -94,7 +92,13 @@ public class Renderer implements GLEventListener {
 	
 	///////////////////
 	//primitives
-	private RendererPrimitives primitives;
+	//private RendererPrimitives primitives;
+	
+	///////////////////
+	//geometries
+	private GeometryManager geometryManager;
+	
+	
 	
 	///////////////////
 	//dash
@@ -313,7 +317,7 @@ public class Renderer implements GLEventListener {
         
         
         
-        primitives.enableVBO(gl);
+        //primitives.enableVBO(gl);
         
         //drawing hidden part
         drawList3D.drawHidden(this);
@@ -398,7 +402,7 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_BLEND);
         
         
-        primitives.disableVBO(gl);
+        //primitives.disableVBO(gl);
      
      
         
@@ -823,7 +827,8 @@ public class Renderer implements GLEventListener {
     	double s = thickness*dilationValues[dilation]/view3D.getScale();
     	gl.glScaled(1,s,s);
     	
-       	primitives.segment(gl, (int) thickness);
+        //	primitives.segment(gl, (int) thickness);
+       	geometryManager.cylinder.draw();
     	
        	if (dashed)
        		gl.glDisable(GL.GL_TEXTURE_2D);
@@ -1091,7 +1096,11 @@ public class Renderer implements GLEventListener {
      */
     public void drawSphere(float radius){
     	initMatrix();
-    	primitives.drawSphere(gl,radius/view3D.getScale(),16,16);
+    	double s = radius/view3D.getScale();
+    	gl.glScaled(s,s,s);
+    	//primitives.point(gl,size);
+    	geometryManager.sphere.draw();
+    	//primitives.drawSphere(gl,radius/view3D.getScale(),16,16);
     	resetMatrix();
     }
     
@@ -1104,7 +1113,8 @@ public class Renderer implements GLEventListener {
     	initMatrix();
     	double s = size*dilationValues[dilation]/view3D.getScale();
     	gl.glScaled(s,s,s);
-    	primitives.point(gl,size);
+    	//primitives.point(gl,size);
+    	geometryManager.sphere.draw();
     	resetMatrix();
     	
     	
@@ -1740,10 +1750,6 @@ public class Renderer implements GLEventListener {
     ///////////////////////////////////////////////////////////
     //drawing primitives TODO use VBO
     
-
-    private void drawCylinder(double radius){
-    	drawCylinder(radius,8);
-    }
     
     private void drawCylinder(double radius, int latitude){
      	
@@ -2046,7 +2052,7 @@ public class Renderer implements GLEventListener {
     	
     	drawHits = new Drawable3D[BUFSIZE];
   
-    	primitives.enableVBO(gl);
+    	//primitives.enableVBO(gl);
     	
         // picking objects
         pickingLoop = 0;
@@ -2058,7 +2064,7 @@ public class Renderer implements GLEventListener {
         	drawList3D.drawLabelForPicking(this);
         }
 
-        primitives.disableVBO(gl);
+        //primitives.disableVBO(gl);
         
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
@@ -2169,11 +2175,18 @@ public class Renderer implements GLEventListener {
                 gl.isFunctionAvailable("glDeleteBuffersARB");
         Application.debug("vbo supported : "+VBOsupported);
         
+        /*
         if (VBOsupported)
         	//primitives = new RendererPrimitivesVBO(gl);
         	primitives = new RendererPrimitives(gl);
         else
         	primitives = new RendererPrimitives(gl);
+        	*/
+        
+        //TODO use gl lists / VBOs
+        geometryManager = new GeometryManager(gl,GeometryManager.TYPE_DIRECT);
+        
+        
         
         
         //light
