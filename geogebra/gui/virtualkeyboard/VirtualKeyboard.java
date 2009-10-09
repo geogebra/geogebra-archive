@@ -532,9 +532,9 @@ public class VirtualKeyboard extends JFrame {
 					getEnglishButton().setSelected(false);
 
 					if (KEYBOARD_MODE != KEYBOARD_MATH)
-						setMode(KEYBOARD_MATH);
+						setMode(KEYBOARD_MATH, null);
 					else
-						setMode(KEYBOARD_NORMAL);
+						setMode(KEYBOARD_NORMAL, null);
 
 				}
 			});
@@ -554,7 +554,7 @@ public class VirtualKeyboard extends JFrame {
 			GreekButton.setMargin(new Insets(0,0,0,0));
 			GreekButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					setMode(KEYBOARD_NORMAL);
+					setMode(KEYBOARD_NORMAL, null);
 					if (greek())
 						readConf(app, new Locale("el"), false);
 
@@ -581,7 +581,7 @@ public class VirtualKeyboard extends JFrame {
 			EnglishButton.setMargin(new Insets(0,0,0,0));
 			EnglishButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					setMode(KEYBOARD_NORMAL);
+					setMode(KEYBOARD_NORMAL, null);
 					if (english())
 						readConf(app, new Locale("en"), false);
 
@@ -627,7 +627,6 @@ public class VirtualKeyboard extends JFrame {
 	public static char KEYBOARD_NORMAL = ' ';
 	public static char KEYBOARD_MATH = 'M';
 	//public static char KEYBOARD_ALTGR = 'Q';
-	public static char KEYBOARD_GREEK = 'H';
 	public static char KEYBOARD_ACUTE = 'A';
 	public static char KEYBOARD_GRAVE = 'G';
 	public static char KEYBOARD_UMLAUT = 'U';
@@ -656,60 +655,60 @@ public class VirtualKeyboard extends JFrame {
 		if (addchar.length() == 1) 
 			switch (addchar.charAt(0)) {
 			case '\u00b4' : // acute
-				setMode(KEYBOARD_ACUTE);
+				setMode(KEYBOARD_ACUTE, kbLocale);
 				return;
 
 			case '\u0338' : // solidus (/)
-				setMode(KEYBOARD_SOLIDUS);
+				setMode(KEYBOARD_SOLIDUS, kbLocale);
 				return;
 
 			case '\u0060' : // grave
 			case '\u0300' : // combining grave
-				setMode(KEYBOARD_GRAVE);
+				setMode(KEYBOARD_GRAVE, kbLocale);
 				return;
 
 			case '\u02d8' : // breve
-				setMode(KEYBOARD_BREVE);
+				setMode(KEYBOARD_BREVE, kbLocale);
 				return;
 
 			case '\u0303' : // tilde
-				setMode(KEYBOARD_TILDE);
+				setMode(KEYBOARD_TILDE, kbLocale);
 				return;
 
 			case '\u0302' : // circumflex
-				setMode(KEYBOARD_CIRCUMFLEX);
+				setMode(KEYBOARD_CIRCUMFLEX, kbLocale);
 				return;
 
 			case '\u0385' : // dialytika tonos
-				setMode(KEYBOARD_DIALYTIKA_TONOS);
+				setMode(KEYBOARD_DIALYTIKA_TONOS, kbLocale);
 				return;
 
 			case '\u00b8' : // cedilla
-				setMode(KEYBOARD_CEDILLA);
+				setMode(KEYBOARD_CEDILLA, kbLocale);
 				return;
 
 			case '\u00a8' : // umlaut
-				setMode(KEYBOARD_UMLAUT);
+				setMode(KEYBOARD_UMLAUT, kbLocale);
 				return;
 
 			case '\u02c7' : // caron
-				setMode(KEYBOARD_CARON);
+				setMode(KEYBOARD_CARON, kbLocale);
 				return;
 
 			case '\u02d9' : // dot above
-				setMode(KEYBOARD_DOT_ABOVE);
+				setMode(KEYBOARD_DOT_ABOVE, kbLocale);
 				return;
 
 			case '\u02db' : // Ogonek
-				setMode(KEYBOARD_OGONEK);
+				setMode(KEYBOARD_OGONEK, kbLocale);
 				return;
 
 			case '\u02da' : // ring above
-				setMode(KEYBOARD_RING_ABOVE);
+				setMode(KEYBOARD_RING_ABOVE, kbLocale);
 				return;
 
 			case '\u02dd' : // double acute
-				setMode(KEYBOARD_DOUBLE_ACUTE);
+				setMode(KEYBOARD_DOUBLE_ACUTE, kbLocale);
 				return;
 
 			case '0' :
@@ -757,6 +756,9 @@ public class VirtualKeyboard extends JFrame {
 		else
 			getKeyboard().doType(getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected(), addchar);
 
+		
+		// no special keys pressed, reset to normal (except eg Greek)
+		setMode(KEYBOARD_NORMAL, kbLocale);
 
 	}
 
@@ -769,10 +771,10 @@ public class VirtualKeyboard extends JFrame {
 		return sbAlt;
 	}
 
-	private void setMode(char mode) {
+	private void setMode(char mode, Locale loc) {
 
-		// restore language (eg if greek selected before)
-		readConf(app, null, false);
+		// loc==null -> restore language (eg if greek selected before)
+		readConf(app, loc, false);
 
 		if (KEYBOARD_MODE == mode) {
 			KEYBOARD_MODE = KEYBOARD_NORMAL;
@@ -788,10 +790,7 @@ public class VirtualKeyboard extends JFrame {
 		if (KEYBOARD_MODE != KEYBOARD_MATH) {
 			getMathButton().setSelected(false);
 		} 
-		if (KEYBOARD_MODE == KEYBOARD_MATH
-				|| KEYBOARD_MODE == KEYBOARD_GREEK		
-
-		) {
+		if (KEYBOARD_MODE == KEYBOARD_MATH) {
 			getAltGrButton().setSelected(false);
 		}
 
@@ -859,6 +858,22 @@ public class VirtualKeyboard extends JFrame {
 			Buttons[i][j].addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					insertKeyText(getKey(i, j));
+					
+					boolean update = false;
+					
+					if (getCapsLockButton().isSelected()) {
+						getCapsLockButton().setSelected(false);
+						updateButtons();
+					}
+					
+					if (getAltGrButton().isSelected()) {
+						getAltGrButton().setSelected(false);
+						updateButtons();
+					}
+					
+					//if (KEYBOARD_MODE != KEYBOARD_NORMAL) {
+					//	setMode(KEYBOARD_NORMAL);
+					//}
 				}
 			});
 		}
@@ -999,6 +1014,8 @@ public class VirtualKeyboard extends JFrame {
 	}
 
 	private Hashtable<String, keys>   myKeys = new Hashtable<String, keys>();
+	
+	private Locale kbLocale = null;
 
 	private void readConf(Application app, Locale loc, boolean math) {
 
@@ -1010,6 +1027,8 @@ public class VirtualKeyboard extends JFrame {
 			locale = app.getLocale();
 		else
 			locale = getLocale();
+		
+		kbLocale = locale;
 
 		if (math) {
 			rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboardMath", locale);
@@ -1018,6 +1037,7 @@ public class VirtualKeyboard extends JFrame {
 				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", locale);
 			else {
 				rbKeyboard = MyResourceBundle.createBundle("/geogebra/gui/virtualkeyboard/keyboard", loc);
+				kbLocale = loc;
 			}
 		}
 
