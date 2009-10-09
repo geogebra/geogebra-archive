@@ -28,8 +28,12 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.lang.reflect.Method;
@@ -43,6 +47,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 
@@ -52,7 +57,7 @@ import javax.swing.UIManager;
  * (based loosely on http://sourceforge.net/projects/virtualkey/ )
  *
  */
-public class VirtualKeyboard extends JFrame {
+public class VirtualKeyboard extends JFrame implements ActionListener {
 
 
 	private Robot robot;
@@ -828,7 +833,7 @@ public class VirtualKeyboard extends JFrame {
 		keys ret1 = myKeys.get(sb.toString());
 
 		if (ret1 == null)
-			Application.debug(sb.toString());
+			Application.debug("KB Error: "+sb.toString());
 
 		sb.append(KEYBOARD_MODE); // append 'A' for acute , ' ' for default etc
 
@@ -854,26 +859,58 @@ public class VirtualKeyboard extends JFrame {
 			String text = Upper() ? thisKeys.getUpperCase() : thisKeys.getLowerCase();
 
 			Buttons[i][j].setText(processSpecialKeys(text));
+			
+			Buttons[i][j].addMouseListener(new MouseAdapter() // add anon inner class
+		    {
+			      public void mousePressed(MouseEvent e)
+			      {
+			    	  String text = Buttons[i][j].getText();
+				        if (Buttons[i][j].getText().equals("\u2190")) {
+				        	startAutoRepeat("<left>");
+				        } else
+				        if (Buttons[i][j].getText().equals("\u2191")) {
+				        	startAutoRepeat("<up>");
+				        } else
+				        if (Buttons[i][j].getText().equals("\u2192")) {
+				        	startAutoRepeat("<right>");
+				        } else
+				        if (Buttons[i][j].getText().equals("\u2193")) {
+				        	startAutoRepeat("<down>");
+				        } 
+			        //Application.debug(Buttons[i][j].getText());
+			        //System.out.println("From Anon Inner Class, Press at: " + point);
+			      }      
+			      public void mouseReleased(MouseEvent e)
+			      {
+			    	  stopAutoRepeat();
+			      }      
+		    });
+		  
 
 			Buttons[i][j].addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					insertKeyText(getKey(i, j));
 					
-					boolean update = false;
+					// don't insert if timer running
+					// (done in timer on auto-repeat)
+					if (timer == null || !timer.isRunning())
+					  insertKeyText(getKey(i, j));
 					
+					boolean doUpdateButtons = false;
+					
+					
+					// reset buttons on a keypress (one-shot mode)
 					if (getCapsLockButton().isSelected()) {
 						getCapsLockButton().setSelected(false);
-						updateButtons();
+						doUpdateButtons = true;
 					}
 					
 					if (getAltGrButton().isSelected()) {
 						getAltGrButton().setSelected(false);
-						updateButtons();
+						doUpdateButtons = true;
 					}
 					
-					//if (KEYBOARD_MODE != KEYBOARD_NORMAL) {
-					//	setMode(KEYBOARD_NORMAL);
-					//}
+					if (doUpdateButtons) updateButtons();
+					
 				}
 			});
 		}
@@ -1008,7 +1045,7 @@ public class VirtualKeyboard extends JFrame {
 
 		if (setFont) currentFont = fonts[minSize];
 		fontsHash.put(Size, fonts[minSize]);
-		Application.debug("storing "+size+" "+minSize);
+		Application.debug("KB: storing "+size+" "+minSize);
 		return fonts[minSize];
 
 	}
@@ -1097,6 +1134,33 @@ public class VirtualKeyboard extends JFrame {
 			kb = new WindowsUnicodeKeyboard();
 		} catch (Exception e) {}
 		return kb;
+	}
+	
+	private Timer timer;
+	private String timerInsertStr = "";
+	
+	final private void startAutoRepeat(String str) {
+		if (timer == null) timer = new Timer(1000, (ActionListener) this);	
+		timer.stop();
+		timer.setDelay(1000);
+		timer.start();
+		timer.setDelay(200); // long first pause then quicker repeat		
+		timerInsertStr = str;
+		insertAutoRepeatString();
+
+	}
+	
+	private void insertAutoRepeatString() {
+		app.getGuiManager().insertStringIntoTextfield(timerInsertStr, getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected());		
+	}
+
+	final private void stopAutoRepeat() {
+		if (timer != null) timer.stop();
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		// timer event
+		insertAutoRepeatString();
 	}
 
 }
