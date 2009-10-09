@@ -17,13 +17,18 @@ public class GeometrySphere extends Geometry {
 
 	public void init() {
 		
-		geometryRenderer.preInit(GL.GL_QUADS);
+		geometryRenderer.preInit(this);
 		
 		sphere(8,8,POINT3D_RADIUS);
 		
 		geometryRenderer.postInit();
 
 	}
+	
+	public int getType(){
+		return GL.GL_QUADS;
+	}
+
 
 	
 }

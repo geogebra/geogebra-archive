@@ -29,9 +29,9 @@ public abstract class GeometryRenderer {
 	
 	
 	/** method used at start of Geometry.init() method
-	 * @param glType type of geometry (GL_QUADS, ...)
+	 * @param geometry 
 	 */
-	abstract public void preInit(int glType);
+	abstract public void preInit(Geometry geometry);
 	
 	
 	/** method used at end of Geometry.init() method

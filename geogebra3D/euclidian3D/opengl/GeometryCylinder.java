@@ -19,12 +19,16 @@ public class GeometryCylinder extends Geometry {
 
 	public void init() {
 		
-		geometryRenderer.preInit(GL.GL_QUADS);
+		geometryRenderer.preInit(this);
 		
 		cylinder(8,LINE3D_THICKNESS);
 		
 		geometryRenderer.postInit();
 
+	}
+	
+	public int getType(){
+		return GL.GL_QUADS;
 	}
 
 	

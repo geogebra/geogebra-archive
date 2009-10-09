@@ -21,6 +21,10 @@ public abstract class Geometry {
 	protected GeometryRenderer geometryRenderer;
 	
 	
+	/** texture-normal-vertex description used for direct rendering */
+	protected GeometryTNV tnvList;
+	
+	
 	/**
 	 * Create the geometry linked to the renderer
 	 * @param geometryRenderer
@@ -40,6 +44,10 @@ public abstract class Geometry {
 	abstract public void init();
 	
 	
+	/** return the GL type of the geometry (GL_QUAD, ...)
+	 * @return the GL type of the geometry (GL_QUAD, ...)
+	 */
+	abstract public int getType();
 	
 	/**
 	 * calls the goemetryRenderer drawing method
@@ -128,8 +136,8 @@ public abstract class Geometry {
     			
     			//up face
     			
-    			normal(x1,y1,z1); 
     			texture(j/longitude,i/(2*latitude));
+    			normal(x1,y1,z1); 
     			vertex(x1,y1,z1); 
     			
     			texture((j+1)/longitude,i/(2*latitude));
@@ -147,23 +155,23 @@ public abstract class Geometry {
     			
     			//bottom face
     			
-    			normal(x2,y2,-z1); 
     			texture((j+1)/longitude,-i/(2*latitude));
+    			normal(x2,y2,-z1); 
     			vertex(x2,y2,-z1); 
-    			
-    			normal(x1,y1,-z1); 
+
     			texture(j/longitude,-i/(2*latitude));
+    			normal(x1,y1,-z1); 
     			vertex(x1,y1,-z1);
-    			
+
+    			texture(j/longitude,-i/(2*latitude));
     			normal(x4,y4,-z4); 
-    			texture(j/longitude,-(i+1)/(2*latitude));
     			vertex(x4,y4,-z4); 
-    			
-    			normal(x3,y3,-z4); 
+
     			texture((j+1)/longitude,-(i+1)/(2*latitude));
+    			normal(x3,y3,-z4); 
     			vertex(x3,y3,-z4); 
 
-    			
+
     			
     			x1=x2;y1=y2;
     			x4=x3;y4=y3;
