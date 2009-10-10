@@ -191,7 +191,7 @@ public abstract class Geometry {
     
     
     
-    /** create a segment geometry ((Ox)-cylinder with number of latitudes)
+    /** create a cylinder geometry ((Ox)-axis with number of latitudes)
      * @param latitude number of latitudes
      * @param thickness thickness of the cylinder
      */
@@ -201,11 +201,15 @@ public abstract class Geometry {
     	float dt = (float) 1/latitude;
     	float da = (float) (2*Math.PI *dt) ; 
 
+    	float y1 = 0f;
+    	float z1 = 2 * thickness;
+    	float y0,z0;
+    	
     	for( int i = 0; i < latitude + 1 ; i++ ) { 
-    		float y0 = 2 * thickness * (float) Math.sin ( i * da ); 
-    		float z0 = 2 * thickness * (float) Math.cos ( i * da ); 
-    		float y1 = 2 * thickness * (float) Math.sin ( (i+1) * da ); 
-    		float z1 = 2 * thickness * (float) Math.cos ( (i+1) * da ); 
+    		y0 = y1; 
+    		z0 = z1; 
+    		y1 = 2 * thickness * (float) Math.sin ( (i+1) * da ); 
+    		z1 = 2 * thickness * (float) Math.cos ( (i+1) * da ); 
 
     		texture(0,i*dt);
     		normal(0,y0,z0); 
@@ -229,7 +233,47 @@ public abstract class Geometry {
     }
     
     
-    
+    /** create a segment geometry ((Ox)-cylinder with number of latitudes)
+     * @param latitude number of latitudes
+     * @param thickness thickness of the cylinder
+     */
+    protected void cone(int latitude, float thickness){
+    	
+    	float dt = (float) 1/latitude;
+    	float da = (float) (2*Math.PI *dt) ; 
+
+    	float y1 = 0f;
+    	float z1 = 2 * thickness;
+    	float y0,z0;
+    	
+    	for( int i = 0; i < latitude + 1 ; i++ ) { 
+    		y0 = y1; 
+    		z0 = z1; 
+    		y1 = 2 * thickness * (float) Math.sin ( (i+1) * da ); 
+    		z1 = 2 * thickness * (float) Math.cos ( (i+1) * da ); 
+
+    		texture(0,i*dt);
+    		normal(0,y0,z0); 
+    		vertex(0,y0,z0); 
+
+
+
+    		texture(1,i*dt);
+    		normal(1,0,0); 
+    		vertex(1,0,0); 
+
+    		texture(1,(i+1)*dt);
+       		normal(1,0,0); 
+    		vertex(1,0,0); 
+
+
+    		texture(0,(i+1)*dt);
+    		normal(0,y1,z1); 
+    		vertex(0,y1,z1); 
+
+
+    	} 
+    }
     
 
 

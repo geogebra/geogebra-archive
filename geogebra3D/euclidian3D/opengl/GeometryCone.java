@@ -6,11 +6,12 @@ import javax.media.opengl.GL;
 
 
 
-public class GeometryCylinder extends Geometry {
-	
+public class GeometryCone extends Geometry {
 	
 
-	public GeometryCylinder(GeometryRenderer geometryRenderer) {
+	
+
+	public GeometryCone(GeometryRenderer geometryRenderer) {
 		super(geometryRenderer);
 	}
 
@@ -18,7 +19,7 @@ public class GeometryCylinder extends Geometry {
 		
 		geometryRenderer.preInit(this);
 		
-		cylinder(8,LINE3D_THICKNESS);
+		cone(8,LINE3D_THICKNESS);
 		
 		geometryRenderer.postInit();
 

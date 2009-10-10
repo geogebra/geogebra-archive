@@ -788,7 +788,7 @@ public class Renderer implements GLEventListener {
     		drawSegment(a_x1, a_x2, dash!=DASH_NONE);
     	break;
     	case ARROW_TYPE_SIMPLE:
-    		double x3=a_x2-m_arrowLength/m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS);
+    		double x3=a_x2-m_arrowLength/(m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS)*view3D.getScale());
     		double thickness = getThickness();
     		setThickness(m_arrowWidth);
     		drawCone(x3,a_x2);
@@ -959,14 +959,13 @@ public class Renderer implements GLEventListener {
      */
     public void drawCone(double a_x1, double a_x2){
     	
-    	/*
-    	if (a_x1<a_x2)
-    		drawSegment(a_x1, a_x2, false);
-    		*/
     	
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
-    	drawCone(thickness);
+		double s = thickness*dilationValues[dilation]/view3D.getScale();
+		gl.glScaled(1,s,s);
+		geometryManager.cone.draw();
     	resetMatrix();
+
     	
     } 
  
@@ -1811,12 +1810,8 @@ public class Renderer implements GLEventListener {
     
     
     
-    
-    private void drawCone(double a_thickness){
-    	gl.glRotatef(90f, 0.0f, 1.0f, 0.0f); //switch z-axis to x-axis
-    	glu.gluCylinder(quadric, a_thickness, 0, 1.0f, 8, 1);
-    }   
-    
+   
+   
     
     
     public void drawTriangle(){    	

@@ -15,8 +15,8 @@ public class DrawAxis3D extends DrawLine3D {
 	public void drawGeometry(Renderer renderer) {
 		
 		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
-		renderer.setArrowLength(0.2);
-		renderer.setArrowWidth(0.05);
+		renderer.setArrowLength(20);
+		renderer.setArrowWidth(10);
 		
 
 		super.drawGeometry(renderer);

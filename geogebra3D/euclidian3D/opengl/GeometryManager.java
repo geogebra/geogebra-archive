@@ -19,6 +19,8 @@ public class GeometryManager {
 	public GeometrySphere sphere;
 	/** geometry : cylinder */
 	public GeometryCylinder cylinder;
+	/** geometry : cone */
+	public GeometryCone cone;
 	
 	
 	/** create a manager for geometries
@@ -37,6 +39,7 @@ public class GeometryManager {
 		// creating geometries
 		sphere = new GeometrySphere(geometryRenderer);
 		cylinder = new GeometryCylinder(geometryRenderer);
+		cone = new GeometryCone(geometryRenderer);
 		
 		
 	}
