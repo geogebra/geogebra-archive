@@ -761,7 +761,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		else
 			getKeyboard().doType(getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected(), addchar);
 
-		
+
 		// no special keys pressed, reset to normal (except eg Greek)
 		setMode(KEYBOARD_NORMAL, kbLocale);
 
@@ -859,58 +859,66 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 			String text = Upper() ? thisKeys.getUpperCase() : thisKeys.getLowerCase();
 
 			Buttons[i][j].setText(processSpecialKeys(text));
-			
-			Buttons[i][j].addMouseListener(new MouseAdapter() // add anon inner class
-		    {
-			      public void mousePressed(MouseEvent e)
-			      {
-			    	  String text = Buttons[i][j].getText();
-				        if (Buttons[i][j].getText().equals("\u2190")) {
-				        	startAutoRepeat("<left>");
-				        } else
-				        if (Buttons[i][j].getText().equals("\u2191")) {
-				        	startAutoRepeat("<up>");
-				        } else
-				        if (Buttons[i][j].getText().equals("\u2192")) {
-				        	startAutoRepeat("<right>");
-				        } else
-				        if (Buttons[i][j].getText().equals("\u2193")) {
-				        	startAutoRepeat("<down>");
-				        } 
-			        //Application.debug(Buttons[i][j].getText());
-			        //System.out.println("From Anon Inner Class, Press at: " + point);
-			      }      
-			      public void mouseReleased(MouseEvent e)
-			      {
-			    	  stopAutoRepeat();
-			      }      
-		    });
-		  
+
+			Buttons[i][j].addMouseListener(new MouseAdapter() 
+			{
+				public void mousePressed(MouseEvent e)
+				{
+					String text = Buttons[i][j].getText();
+					if (text.equals("\u2190")) {
+						startAutoRepeat("<left>");
+					} else if (text.equals("\u2191")) {
+						startAutoRepeat("<up>");
+					} else	if (text.equals("\u2192")) {
+						startAutoRepeat("<right>");
+					} else if (text.equals("\u2193")) {
+						startAutoRepeat("<down>");
+					} else if (text.equals("\u21a4")) {
+						startAutoRepeat("<backspace>");
+					} 
+					//Application.debug(Buttons[i][j].getText());
+				}      
+				public void mouseReleased(MouseEvent e)
+				{
+					stopAutoRepeat();
+				}
+
+				public void mouseExited(MouseEvent e) {
+					stopAutoRepeat();
+
+				}      
+			});
+
 
 			Buttons[i][j].addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					
+
 					// don't insert if timer running
 					// (done in timer on auto-repeat)
 					if (timer == null || !timer.isRunning())
-					  insertKeyText(getKey(i, j));
-					
+						insertKeyText(getKey(i, j));
+
 					boolean doUpdateButtons = false;
-					
-					
+
+
 					// reset buttons on a keypress (one-shot mode)
 					if (getCapsLockButton().isSelected()) {
 						getCapsLockButton().setSelected(false);
 						doUpdateButtons = true;
 					}
-					
+
 					if (getAltGrButton().isSelected()) {
 						getAltGrButton().setSelected(false);
 						doUpdateButtons = true;
 					}
-					
+
+					if (getCtrlButton().isSelected()) {
+						getCtrlButton().setSelected(false);
+						doUpdateButtons = true;
+					}
+
 					if (doUpdateButtons) updateButtons();
-					
+
 				}
 			});
 		}
@@ -1051,7 +1059,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	}
 
 	private Hashtable<String, keys>   myKeys = new Hashtable<String, keys>();
-	
+
 	private Locale kbLocale = null;
 
 	private void readConf(Application app, Locale loc, boolean math) {
@@ -1064,7 +1072,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 			locale = app.getLocale();
 		else
 			locale = getLocale();
-		
+
 		kbLocale = locale;
 
 		if (math) {
@@ -1103,9 +1111,9 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	 * called when eg language changed
 	 */
 	public void setLabels() {
-		
+
 		setTitle((app == null) ? "Virtual Keyboard" : app.getPlain("VirtualKeyboard"));
-		
+
 		readConf(app, null, false);
 		if (app != null) {
 			getCtrlButton().setText(app.getPlain("Ctrl"));
@@ -1135,10 +1143,10 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		} catch (Exception e) {}
 		return kb;
 	}
-	
+
 	private Timer timer;
 	private String timerInsertStr = "";
-	
+
 	final private void startAutoRepeat(String str) {
 		if (timer == null) timer = new Timer(1000, (ActionListener) this);	
 		timer.stop();
@@ -1149,7 +1157,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		insertAutoRepeatString();
 
 	}
-	
+
 	private void insertAutoRepeatString() {
 		app.getGuiManager().insertStringIntoTextfield(timerInsertStr, getAltButton().isSelected(), getCtrlButton().isSelected(), getCapsLockButton().isSelected());		
 	}
