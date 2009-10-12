@@ -141,6 +141,10 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("ko")); // Korean
 		supportedLocales.add(new Locale("lt")); // Lithuanian
 		supportedLocales.add(new Locale("mk")); // Macedonian
+		
+		// no translation, just added for the virtual keyboard
+		supportedLocales.add(new Locale("ml")); // Malayalam
+		
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
 		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian(Nynorsk)
 		supportedLocales.add(new Locale("fa")); // Persian
@@ -177,6 +181,7 @@ public abstract class Application implements KeyEventDispatcher {
 		specialLanguageNames.put("gl", "Galician");
 		specialLanguageNames.put("noNO", "Norwegian (Bokm\u00e5l)");
 		specialLanguageNames.put("noNONY", "Norwegian (Nynorsk)");				
+		specialLanguageNames.put("ml", "Malayalam");				
 		specialLanguageNames.put("ptBR", "Portuguese (Brazil)");
 		specialLanguageNames.put("ptPT", "Portuguese (Portugal)");	
 	}
@@ -1295,6 +1300,14 @@ public abstract class Application implements KeyEventDispatcher {
 		else if ("ta".equals(lang)) {
 			// Tamil digit 1
 			char testCharacater = '\u0be7';
+			fontNameSansSerif = getFontCanDisplay("SansSerif", testCharacater);
+			fontNameSerif = getFontCanDisplay("Serif", testCharacater);
+		}
+		
+		// Malayalam
+		else if ("ml".equals(lang)) {
+			
+			char testCharacater = '\u0d10';
 			fontNameSansSerif = getFontCanDisplay("SansSerif", testCharacater);
 			fontNameSerif = getFontCanDisplay("Serif", testCharacater);
 		}
@@ -3405,7 +3418,7 @@ public abstract class Application implements KeyEventDispatcher {
 	// code from freenet
 	// http://emu.freenetproject.org/pipermail/cvs/2007-June/040186.html
 	// GPL2
-	private static String convertToHex(byte[] data) {
+	public static String convertToHex(byte[] data) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < data.length; i++) {
 			int halfbyte = (data[i] >>> 4) & 0x0F;

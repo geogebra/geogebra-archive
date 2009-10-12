@@ -208,7 +208,22 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	public void keyReleased(KeyEvent e) {
 
 		//Application.debug(e+"");
-
+		
+		/* test code to generate unicode strings for Virtual Keyboard
+		String text = getText();
+		String outStr = "";
+		for (int i = 0 ; i < text.length() ; i++) {
+			int ch = text.charAt(i);
+			if (ch < 128) outStr += text.charAt(i);
+			else {
+				String unicode = Integer.toHexString(ch);
+				if (unicode.length() < 4) unicode = "\\u0"+unicode;
+				else unicode = "\\u"+unicode;
+				outStr += unicode;
+			}
+		}
+		Application.debug(outStr);
+		//*/
 
 		// ctrl pressed on Mac
 		// or alt on Windows
@@ -259,6 +274,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
           isTextSelected && input.length() > 0) {
             setText(input.substring(0, input.length()));
         }*/
+		
+		
+		
 	}      
 
 
