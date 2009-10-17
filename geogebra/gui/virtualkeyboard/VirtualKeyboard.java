@@ -1052,6 +1052,15 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 				maxSize = midSize;
 
 		}
+		
+		/*
+		 * fallback for Mac OS
+		 * getPreferredSize() is returning a minimum of width = 75 height = 29
+		 * so we just choose size / 2 for the fontSize
+		 */
+		if (minSize < 3) {
+			minSize = size / 2;
+		}
 
 		if (setFont) currentFont = fonts[minSize];
 		fontsHash.put(Size, fonts[minSize]);
