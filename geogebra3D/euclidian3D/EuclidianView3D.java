@@ -1640,8 +1640,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 		
 		renderer.setMatrix(getCursor3D().getDrawingMatrix());
-		renderer.setThickness(2.5/getScale());
-		renderer.drawCursorCross(12/getScale());
+		renderer.setThickness(1/getScale());
+		renderer.drawCursorCross();
 
 
 	}

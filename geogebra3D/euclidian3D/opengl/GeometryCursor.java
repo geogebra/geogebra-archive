@@ -16,11 +16,18 @@ import javax.media.opengl.GL;
  */
 public class GeometryCursor extends Geometry {
 	
+	
+	static public int TYPE_CROSS2D = 0;
+	static public int TYPE_DIAMOND = 1;
+	
+	
+	
+	
 
-	static private float SIZE = 0.12f;
-	static private float THICKNESS = 0.0125f;
-	static private float THICKNESS2 = 0.0125f;
-	static private float DEPTH = 0.01f;
+	static private float SIZE = 12f;
+	static private float THICKNESS = 1.25f;
+	static private float THICKNESS2 = 1.25f;
+	static private float DEPTH = 1f;
 
 	/** common constructor
 	 * @param geometryRenderer
@@ -156,7 +163,37 @@ public class GeometryCursor extends Geometry {
 	
 	private void cursorDiamond(){
 		
+    	float t1 = 0.15f;
+    	float t2 = 1f-2*t1;
+    	
+    	//black parts
+		color(0,0,0);
+    	
+    	quadSymxOyRotOz90SymOz(1f, 0f, 0f,	        
+    			t2, t1, t1,	        
+    			t1, t1, t2,
+    			0f, 0f, 1f);
+    	
+    	
+    	quadSymxOyRotOz90SymOz(0f, 0f, 1f,
+    			t1, t1, t2,
+    			t1, t2, t1,	
+    			0f, 1f, 0f);	
+
+    	quadSymxOyRotOz90SymOz(0f, 1f, 0f,	
+    			t1, t2, t1,	
+    			t2, t1, t1,	        
+    			1f, 0f, 0f);
+    	
+		//white parts
+		color(1,1,1);
 		
+		quadSymxOyRotOz90SymOz(
+				t2, t1, t1,
+				t2, t1, t1,	
+				t1, t2, t1,	
+				t1, t1, t2);
+
 		
 	}
 
@@ -210,10 +247,10 @@ public class GeometryCursor extends Geometry {
 				);
 		
 		quadSymOz(
-				y1, x1, z1, 
-				y4, x4, z4,
-				y3, x3, z3, 
-				y2, x2, z2 
+				-y1, x1, z1, 
+				-y2, x2, z2,
+				-y3, x3, z3, 
+				-y4, x4, z4
 		);
 		
 		
