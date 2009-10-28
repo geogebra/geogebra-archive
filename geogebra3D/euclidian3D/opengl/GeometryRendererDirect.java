@@ -10,6 +10,8 @@ import javax.media.opengl.GL;
  * 
  * Renderer that redraws all primitives each time
  * 
+ * TODO remove
+ * 
  * @author ggb3D
  *
  */
@@ -36,17 +38,21 @@ public class GeometryRendererDirect extends GeometryRenderer {
 	public void preInit(Geometry geometry){
 		
 		this.geometry = geometry;
-		this.geometry.tnvList = new GeometryTNV();
+		this.geometry.tnvList = new GeometryVertexList();
+		
+	}
+	
+	public void startGeometry(Geometry geometry, int index){
+		
+	}
+	
+	public void endGeometry(Geometry geometry){
 		
 	}
 	
 	
-	public void postInit(){
-		gl.glEnd();
-	}
 	
-	
-	public void draw(Geometry geometry){
+	public void draw(Geometry geometry, int index){
 
 		gl.glBegin(geometry.getType());
 		
@@ -83,6 +89,10 @@ public class GeometryRendererDirect extends GeometryRenderer {
 		tnv[5] = x; tnv[6] = y; tnv[7] = z;
 		geometry.tnvList.add(tnv);
 		
+	}
+	
+	protected void color(float r, float g, float b){
+		//TODO ?
 	}
 	
 	

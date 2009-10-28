@@ -11,18 +11,19 @@ public class GeometrySphere extends Geometry {
 
 	
 
-	public GeometrySphere(GeometryRenderer geometryRenderer) {
-		super(geometryRenderer);
+	public GeometrySphere(GeometryRenderer geometryRenderer, boolean hasTexture) {
+		super(geometryRenderer,NORMAL_ON,hasTexture,COLOR_OFF);
 	}
 
 	public void init() {
 		
 		geometryRenderer.preInit(this);
 		
+		geometryRenderer.startGeometry(this);
 		sphere(8,8,POINT3D_RADIUS);
-		
-		geometryRenderer.postInit();
+		geometryRenderer.endGeometry(this);
 
+	
 	}
 	
 	public int getType(){
@@ -30,5 +31,8 @@ public class GeometrySphere extends Geometry {
 	}
 
 
+	public int getNb(){
+		return 1;
+	}
 	
 }

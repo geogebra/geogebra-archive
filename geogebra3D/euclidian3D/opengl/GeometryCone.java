@@ -11,23 +11,29 @@ public class GeometryCone extends Geometry {
 
 	
 
-	public GeometryCone(GeometryRenderer geometryRenderer) {
-		super(geometryRenderer);
+	public GeometryCone(GeometryRenderer geometryRenderer, boolean hasTexture) {
+		super(geometryRenderer,NORMAL_ON,hasTexture,COLOR_OFF);
 	}
 
 	public void init() {
 		
 		geometryRenderer.preInit(this);
 		
-		cone(8,LINE3D_THICKNESS);
 		
-		geometryRenderer.postInit();
-
+		geometryRenderer.startGeometry(this);
+		cone(8,LINE3D_THICKNESS);
+		geometryRenderer.endGeometry(this);
+		
+		
 	}
 	
 	public int getType(){
 		return GL.GL_QUADS;
 	}
 
+	
+	public int getNb(){
+		return 1;
+	}
 	
 }

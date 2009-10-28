@@ -10,23 +10,28 @@ public class GeometryCylinder extends Geometry {
 	
 	
 
-	public GeometryCylinder(GeometryRenderer geometryRenderer) {
-		super(geometryRenderer);
+	public GeometryCylinder(GeometryRenderer geometryRenderer, boolean hasTexture) {
+		super(geometryRenderer,NORMAL_ON,hasTexture,COLOR_OFF);
 	}
 
 	public void init() {
 		
 		geometryRenderer.preInit(this);
 		
+		geometryRenderer.startGeometry(this);
 		cylinder(8,LINE3D_THICKNESS);
-		
-		geometryRenderer.postInit();
+		geometryRenderer.endGeometry(this);
 
+	
 	}
 	
 	public int getType(){
 		return GL.GL_QUADS;
 	}
 
+	
+	public int getNb(){
+		return 1;
+	}
 	
 }

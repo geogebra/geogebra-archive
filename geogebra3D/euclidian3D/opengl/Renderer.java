@@ -410,7 +410,7 @@ public class Renderer implements GLEventListener {
         
         
         
-        /*
+        
         //FPS
         gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
@@ -418,7 +418,7 @@ public class Renderer implements GLEventListener {
     	drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
-         */
+         
 
     	
     	
@@ -1098,7 +1098,7 @@ public class Renderer implements GLEventListener {
     	double s = radius/view3D.getScale();
     	gl.glScaled(s,s,s);
     	//primitives.point(gl,size);
-    	geometryManager.sphere.draw();
+    	geometryManager.point.draw();
     	//primitives.drawSphere(gl,radius/view3D.getScale(),16,16);
     	resetMatrix();
     }
@@ -1113,7 +1113,7 @@ public class Renderer implements GLEventListener {
     	double s = size*dilationValues[dilation]/view3D.getScale();
     	gl.glScaled(s,s,s);
     	//primitives.point(gl,size);
-    	geometryManager.sphere.draw();
+    	geometryManager.point.draw();
     	resetMatrix();
     	
     	
@@ -1129,7 +1129,7 @@ public class Renderer implements GLEventListener {
      */    
     public void drawCursorCross(double size){
     	
-    	
+    	/*
     	double thickness = getThickness()/2;
     	
     	double[][] cross = {
@@ -1233,7 +1233,17 @@ public class Renderer implements GLEventListener {
 		resetMatrix();
     	
     	gl.glEnable(GL.GL_LIGHTING);
+    	*/
+    	gl.glDisable(GL.GL_LIGHTING);
     	
+    	initMatrix();
+
+    	geometryManager.cursor.draw();
+    	
+		resetMatrix();
+    	
+    	gl.glEnable(GL.GL_LIGHTING);
+   	
     }
     
     
@@ -2170,16 +2180,11 @@ public class Renderer implements GLEventListener {
                 gl.isFunctionAvailable("glDeleteBuffersARB");
         Application.debug("vbo supported : "+VBOsupported);
         
-        /*
-        if (VBOsupported)
-        	//primitives = new RendererPrimitivesVBO(gl);
-        	primitives = new RendererPrimitives(gl);
-        else
-        	primitives = new RendererPrimitives(gl);
-        	*/
+
         
         //TODO use gl lists / VBOs
-        geometryManager = new GeometryManager(gl,GeometryManager.TYPE_DIRECT);
+        //geometryManager = new GeometryManager(gl,GeometryManager.TYPE_DIRECT);
+        geometryManager = new GeometryManager(gl,GeometryManager.TYPE_GLLIST);
         
         
         

@@ -1427,7 +1427,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void zoom(double px, double py, double zoomFactor, int steps,
 			boolean storeUndo) {
-		// TODO Auto-generated method stub
+
+		setScale(getXscale()*zoomFactor);
+		updateMatrix();
 		
 	}
 	

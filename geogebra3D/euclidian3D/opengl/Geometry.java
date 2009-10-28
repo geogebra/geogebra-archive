@@ -21,20 +21,49 @@ public abstract class Geometry {
 	protected GeometryRenderer geometryRenderer;
 	
 	
+	
+	private boolean hasTexture;
+	private boolean hasNormal;
+	private boolean hasColor;
+	
+	static public boolean TEXTURE_ON = true;
+	static public boolean TEXTURE_OFF = false;
+	static public boolean NORMAL_ON = true;
+	static public boolean NORMAL_OFF = false;
+	static public boolean COLOR_ON = true;
+	static public boolean COLOR_OFF = false;
+	
+	
+	
 	/** texture-normal-vertex description used for direct rendering */
-	protected GeometryTNV tnvList;
+	protected GeometryVertexList tnvList;
+	
+	/** index used for GL Lists */
+	private int glListIndex;
 	
 	
 	/**
 	 * Create the geometry linked to the renderer
 	 * @param geometryRenderer
+	 * @param hasNormal says if there are normals
+	 * @param hasTexture says if there is texture
+	 * @param hasColor says if there are colors
 	 */
-	public Geometry(GeometryRenderer geometryRenderer){
+	public Geometry(GeometryRenderer geometryRenderer,
+			boolean hasNormal,
+			boolean hasTexture,
+			boolean hasColor){
 		
 		this.geometryRenderer = geometryRenderer;
 		
+		this.hasNormal = hasNormal;
+		this.hasTexture = hasTexture;
+		this.hasColor = hasColor;
+		
 		init();
 	}
+	
+	
 	
 	
 	/**
@@ -49,6 +78,20 @@ public abstract class Geometry {
 	 */
 	abstract public int getType();
 	
+	/** return number of geometries
+	 * @return number of geometries
+	 */
+	abstract public int getNb();
+	
+	public int getIndex(){
+		return glListIndex;
+	}
+	
+	public void setIndex(int index){
+		this.glListIndex = index;
+	}
+	
+	
 	/**
 	 * calls the goemetryRenderer drawing method
 	 */
@@ -57,6 +100,12 @@ public abstract class Geometry {
 		geometryRenderer.draw(this);
 	}
 	
+	/**
+	 * calls the goemetryRenderer drawing method with geometry index
+	 */
+	public void draw(int index){
+		geometryRenderer.draw(this,index);
+	}
 	
 	
 	
@@ -77,7 +126,8 @@ public abstract class Geometry {
 	 * @param z z coord
 	 */
 	protected void normal(float x, float y, float z){
-		geometryRenderer.normal(x, y, z);
+		if (hasNormal)
+			geometryRenderer.normal(x, y, z);
 	}
 	
 	
@@ -86,7 +136,20 @@ public abstract class Geometry {
 	 * @param y y coord
 	 */
 	protected void texture(float x, float y){
-		geometryRenderer.texture(x, y);
+		if (hasTexture)
+			geometryRenderer.texture(x, y);
+	}
+
+	
+	/** creates a color (r,g,b)
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * 
+	 */
+	protected void color(float r, float g, float b){
+		if (hasColor)
+			geometryRenderer.color(r, g, b);
 	}
 
 	

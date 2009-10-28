@@ -34,16 +34,38 @@ public abstract class GeometryRenderer {
 	abstract public void preInit(Geometry geometry);
 	
 	
-	/** method used at end of Geometry.init() method
-	 * 
+	/** starting new geometry
+	 * @param geometry 
+	 * @param index index of the new geometry
 	 */
-	abstract public void postInit();
+	abstract public void startGeometry(Geometry geometry, int index);
+	
+	public void startGeometry(Geometry geometry){
+		startGeometry(geometry, 0);
+	}
+	
+	
+	/** ending new geometry
+	 * @param geometry 
+	 */
+	abstract public void endGeometry(Geometry geometry);
+
+
 	
 	
 	/** draw the geometry
 	 * @param geometry
 	 */
-	abstract public void draw(Geometry geometry);
+	public void draw(Geometry geometry){
+		draw(geometry,0);
+	}
+	
+	
+	/** draw the indexed geometry
+	 * @param geometry
+	 * @param index index of the geometry
+	 */
+	abstract public void draw(Geometry geometry, int index);
 	
 	
 	
@@ -70,4 +92,14 @@ public abstract class GeometryRenderer {
 	abstract protected void texture(float x, float y);
 
 
+	/** creates a color (r,g,b)
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * 
+	 */
+	abstract protected void color(float r, float g, float b);
+
+	
+	
 }

@@ -12,15 +12,18 @@ public class GeometryManager {
 	
 	/** direct rendering */
 	static final int TYPE_DIRECT = 0;
+	static final int TYPE_GLLIST = 1;
 	
 	private GeometryRenderer geometryRenderer;
 	
-	/** geometry : sphere */
-	public GeometrySphere sphere;
+	/** geometry : point */
+	public GeometrySphere point;
 	/** geometry : cylinder */
 	public GeometryCylinder cylinder;
 	/** geometry : cone */
 	public GeometryCone cone;
+	/** geometry : cursor */
+	public GeometryCursor cursor;
 	
 	
 	/** create a manager for geometries
@@ -34,12 +37,16 @@ public class GeometryManager {
 		case TYPE_DIRECT:
 			geometryRenderer = new GeometryRendererDirect(gl);
 			break;
+		case TYPE_GLLIST:
+			geometryRenderer = new GeometryRendererGLList(gl);
+			break;	
 		}
 		
 		// creating geometries
-		sphere = new GeometrySphere(geometryRenderer);
-		cylinder = new GeometryCylinder(geometryRenderer);
-		cone = new GeometryCone(geometryRenderer);
+		point = new GeometrySphere(geometryRenderer,false);
+		cylinder = new GeometryCylinder(geometryRenderer,true);
+		cone = new GeometryCone(geometryRenderer,true);
+		cursor = new GeometryCursor(geometryRenderer);
 		
 		
 	}
