@@ -724,6 +724,7 @@ public class EuclidianController implements MouseListener,
 			view.setMode(EuclidianView.MODE_TRANSLATEVIEW);				
 		} 		
 
+		
 		switch (mode) {
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
@@ -1285,8 +1286,14 @@ public class EuclidianController implements MouseListener,
 			//Application.debug("hit(0) = "+view.getHits().get(0));
 			// if there's no hit, or if first hit is not moveable, do 3D view rotation
 			if ((!TEMPORARY_MODE) || !((GeoElement) view.getHits().get(0)).isMoveable())				
-				if (processRightDragFor3D()) //in 2D view, return false
+				if (processRightDragFor3D()){ //in 2D view, return false
+					if (TEMPORARY_MODE){
+						TEMPORARY_MODE = false;
+						mode = oldMode;
+						view.setMode(mode);
+					}
 					return;
+				}
 		}
 		
 		

@@ -278,7 +278,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected GeoPointInterface getNewPoint(Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
 			boolean doSingleHighlighting) {
-		
+				
 		GeoPoint3D point = view3D.getCursor3D();
 		GeoPoint3D ret;
 		
@@ -291,7 +291,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		case EuclidianView3D.PREVIEW_POINT_PATH:
 			Ggb3DVector coords = point.getCoords();
-			Application.debug("coords = \n"+coords.toString());
+			//Application.debug("coords = \n"+coords.toString());
 			ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
 					//,coords.get(1),coords.get(2),coords.get(3));
 			ret.setWillingCoords(point.getCoords());
