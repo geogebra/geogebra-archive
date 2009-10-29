@@ -451,7 +451,7 @@ public class Renderer implements GLEventListener {
       viewOrtho(x,y,w,h);
 
       
-      view3D.update(true);
+      view3D.setWaitForUpdate();
     }
 
     /**
