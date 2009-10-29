@@ -541,19 +541,22 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//////////////////////////////////////
 	// update
 	
-
-	/** update the drawables for 3D view, called by EuclidianRenderer3D */
-	public void update(){
-
-
 	
-		
-		if (waitForUpdate){
+	/** update the drawables for 3D view
+	 * @param forceUpdate if true, update even if waitForUpdate=false
+	 */
+	public void update(boolean forceUpdate){
+		if (forceUpdate){
 			drawList3D.updateAll();
 			updateDrawables();
 			waitForUpdate = false;
 		}
+	}
 
+	/** update the drawables for 3D view */
+	public void update(){
+		
+		update(waitForUpdate);
 
 
 	}

@@ -438,7 +438,6 @@ public class Renderer implements GLEventListener {
     
     
     
-    
     /**
      * openGL method called when the canvas is reshaped.
      */
@@ -448,16 +447,11 @@ public class Renderer implements GLEventListener {
       
       //Application.debug("reshape\n x = "+x+"\n y = "+y+"\n w = "+w+"\n h = "+h);
       
-      //TODO change this
+
       viewOrtho(x,y,w,h);
-      /*
-      gl.glViewport(0, 0, w, h);
-      gl.glMatrixMode(GL.GL_PROJECTION);
-      gl.glLoadIdentity();
-      gl.glOrtho(0.0, 8.0, 0.0, 8.0, -0.5, 2.5);
-      gl.glMatrixMode(GL.GL_MODELVIEW);
-      gl.glLoadIdentity();
-      */
+
+      
+      view3D.update(true);
     }
 
     /**
@@ -1930,7 +1924,6 @@ public class Renderer implements GLEventListener {
 	 */
 	public double[] getIntervalInFrustum(double[] minmax, Ggb3DVector o, Ggb3DVector v){
 		
-
 		
 		
 		double left = (getLeft() - o.get(1))/v.get(1);
@@ -1950,7 +1943,7 @@ public class Renderer implements GLEventListener {
 		Application.debug("intersection = ("+left+","+right+
 				")/("+top+","+bottom+")/("+front+","+back+")"+
 				"\ninterval = ("+minmax[0]+","+minmax[1]+")");
-				*/
+		*/
 				
 		
 		return minmax;
