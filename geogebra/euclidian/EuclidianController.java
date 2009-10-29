@@ -1614,7 +1614,7 @@ public class EuclidianController implements MouseListener,
 		
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
 		if (getMovedGeoPoint() != null){
-			
+						
 			// deselect point after drag, but not on click
 			if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
 			
@@ -1811,6 +1811,7 @@ public class EuclidianController implements MouseListener,
 		
 		
 		if (TEMPORARY_MODE) {
+			
 //			Michael Borcherds 2007-10-13 BEGIN
 			view.setMode(oldMode);
 			TEMPORARY_MODE = false;
@@ -1842,9 +1843,10 @@ public class EuclidianController implements MouseListener,
 //		Michael Borcherds 2007-10-12
 			
 		
-		if (!hits.isEmpty())
+		if (!hits.isEmpty()){
+			//Application.debug("hits ="+hits);
 			view.setDefaultCursor();		
-		else
+		}else
 			view.setHitCursor();
 
 		refreshHighlighting(null);

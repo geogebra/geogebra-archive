@@ -1690,7 +1690,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	public void setDefaultCursor(){
 		//Application.printStacktrace("setDefaultCursor");
-		cursor = CURSOR_DEFAULT;
+		//TODO cursor = CURSOR_DEFAULT;
+		setHitCursor();
 	}
 	
 	public void setHitCursor(){
