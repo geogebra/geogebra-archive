@@ -1129,93 +1129,23 @@ public class Renderer implements GLEventListener {
     public void drawCursorCross(){
     	
     	gl.glDisable(GL.GL_LIGHTING);
-    	
     	initMatrix();
-    	gl.glScaled(getThickness(), getThickness(), getThickness());
-    	
     	geometryManager.cursor.draw();
-    	
 		resetMatrix();
-    	
     	gl.glEnable(GL.GL_LIGHTING);
    	
     }
     
     
     
-    /** draws a cylinder cursor using size and getThickness() parameters
-     * @param size size of the cross
+    /** draws a cylinder cursor using getThickness() parameters
      */    
-    public void drawCursorCylinder(double size){
+    public void drawCursorCylinder(){
  
-    	int latitude = 16;
-    	float center = 0.5f;
-    	
     	gl.glDisable(GL.GL_LIGHTING);  
-    	
-    	initMatrix();
-    	gl.glScalef((float) size, 1f, 1f);
-    	
-    	// top - black
-    	gl.glPushMatrix();
-    	gl.glTranslatef(2f, 0, 0);
-    	setLayer(0);
-    	gl.glColor3f(0.0f, 0.0f, 0.0f);
-    	drawDisc(getThickness(), latitude);
-    	gl.glPopMatrix();
-    	
-    	// top - white
-    	
-    	gl.glPushMatrix();
-    	gl.glTranslatef(2f, 0, 0);
-    	setLayer(10);
-    	gl.glColor3f(1.0f, 1.0f, 1.0f);
-    	drawDisc(getThickness()*center, latitude);
-    	gl.glPopMatrix();
-    	
-    	
-    	// cylinder - black and white
-    	gl.glColor3f(0.0f, 0.0f, 0.0f);
-    	gl.glPushMatrix();
-    	gl.glTranslatef(-2f, 0, 0);
-    	drawCylinder(getThickness(), latitude);
-    	gl.glPopMatrix();
-    	
-    	gl.glPushMatrix();
-    	gl.glTranslatef(1f, 0, 0);
-    	drawCylinder(getThickness(), latitude);
-    	gl.glPopMatrix();
-    	
-    	gl.glPushMatrix();
-    	gl.glScalef(2f, 1f, 1f);
-    	gl.glColor3f(1.0f, 1.0f, 1.0f);
-    	gl.glTranslatef(-0.5f, 0, 0);
-    	drawCylinder(getThickness(), latitude);   	
-    	gl.glPopMatrix();
- 
-
-    	
-    	// bottom - black
-    	gl.glPushMatrix();
-    	gl.glScalef(1f, 1, -1);
-    	gl.glTranslatef(-2f, 0, 0);
-    	setLayer(0);
-    	gl.glColor3f(0.0f, 0.0f, 0.0f);
-    	drawDisc(getThickness(), latitude);	
-    	gl.glPopMatrix();
-    	
-    	// bottom - white  	
-    	gl.glScalef(1f, 1, -1);
-    	gl.glTranslatef(-2f, 0, 0);
-    	setLayer(10);
-    	gl.glColor3f(1.0f, 1.0f, 1.0f);
-    	drawDisc(getThickness()*center, latitude);	
-    	
-    	setLayer(0);
-    	
-    	
+     	initMatrix();
+    	geometryManager.cursor.draw(GeometryCursor.TYPE_CYLINDER);
     	resetMatrix();
-    	
     	gl.glEnable(GL.GL_LIGHTING);
 
     	
@@ -1226,24 +1156,14 @@ public class Renderer implements GLEventListener {
 
     
     /** draws a diamond cursor using getThickness() parameters
-     * @param size size of the cross
+     *
      */    
     public void drawCursorDiamond(){
  
-    	float t1 = 0.15f;
-    	float t2 = 1f-2*t1;
-    	
     	gl.glDisable(GL.GL_LIGHTING);  
-    	
     	initMatrix();
-        gl.glScaled(getThickness(), getThickness(), getThickness());
-  	
-        
-        geometryManager.cursor.draw(GeometryCursor.TYPE_DIAMOND);
-        
-   	
-    	resetMatrix();
-    	
+    	geometryManager.cursor.draw(GeometryCursor.TYPE_DIAMOND);
+    	resetMatrix();  	
     	gl.glEnable(GL.GL_LIGHTING);
 
     	

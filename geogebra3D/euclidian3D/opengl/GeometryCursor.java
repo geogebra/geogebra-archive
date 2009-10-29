@@ -19,15 +19,12 @@ public class GeometryCursor extends Geometry {
 	
 	static public int TYPE_CROSS2D = 0;
 	static public int TYPE_DIAMOND = 1;
+	static public int TYPE_CYLINDER = 2;
 	
 	
 	
 	
 
-	static private float SIZE = 12f;
-	static private float THICKNESS = 1.25f;
-	static private float THICKNESS2 = 1.25f;
-	static private float DEPTH = 1f;
 
 	/** common constructor
 	 * @param geometryRenderer
@@ -40,15 +37,18 @@ public class GeometryCursor extends Geometry {
 		
 		geometryRenderer.preInit(this);
 		
-		int index = 0;
 		
-		geometryRenderer.startGeometry(this, index);
+		geometryRenderer.startGeometry(this, TYPE_CROSS2D);
 		cursorCross2D();
 		geometryRenderer.endGeometry(this);
 		
-		index++;
-		geometryRenderer.startGeometry(this, index);
+		geometryRenderer.startGeometry(this, TYPE_DIAMOND);
 		cursorDiamond();
+		geometryRenderer.endGeometry(this);
+		
+		
+		geometryRenderer.startGeometry(this, TYPE_CYLINDER);
+		cursorCylinder();
 		geometryRenderer.endGeometry(this);
 
 	}
@@ -59,7 +59,7 @@ public class GeometryCursor extends Geometry {
 	}
 	
 	public int getNb(){
-		return 2;
+		return 3;
 	}
 	
 	
@@ -69,40 +69,46 @@ public class GeometryCursor extends Geometry {
 	
 	private void cursorCross2D(){
 		
+		float size = 12f;
+		float thickness = 1.25f;
+		float thickness2 = 1.25f;
+		float depth = 1f;
+
+		
 		//white parts
 		color(1,1,1);
 
 		//up
-		vertex(THICKNESS, SIZE, DEPTH);
-		vertex(-THICKNESS, SIZE, DEPTH);
-		vertex(-THICKNESS, -SIZE, DEPTH);
-		vertex(THICKNESS, -SIZE, DEPTH);
+		vertex(thickness, size, depth);
+		vertex(-thickness, size, depth);
+		vertex(-thickness, -size, depth);
+		vertex(thickness, -size, depth);
 				
-		vertex(SIZE, THICKNESS, DEPTH);
-		vertex(THICKNESS, THICKNESS, DEPTH);
-		vertex(THICKNESS, -THICKNESS, DEPTH);
-		vertex(SIZE, -THICKNESS, DEPTH);
+		vertex(size, thickness, depth);
+		vertex(thickness, thickness, depth);
+		vertex(thickness, -thickness, depth);
+		vertex(size, -thickness, depth);
 		
-		vertex(-SIZE, THICKNESS, DEPTH);
-		vertex(-SIZE, -THICKNESS, DEPTH);
-		vertex(-THICKNESS, -THICKNESS, DEPTH);
-		vertex(-THICKNESS, THICKNESS, DEPTH);
+		vertex(-size, thickness, depth);
+		vertex(-size, -thickness, depth);
+		vertex(-thickness, -thickness, depth);
+		vertex(-thickness, thickness, depth);
 		
 		//down
-		vertex(THICKNESS, SIZE, -DEPTH);
-		vertex(THICKNESS, -SIZE, -DEPTH);
-		vertex(-THICKNESS, -SIZE, -DEPTH);
-		vertex(-THICKNESS, SIZE, -DEPTH);
+		vertex(thickness, size, -depth);
+		vertex(thickness, -size, -depth);
+		vertex(-thickness, -size, -depth);
+		vertex(-thickness, size, -depth);
 				
-		vertex(SIZE, THICKNESS, -DEPTH);
-		vertex(SIZE, -THICKNESS, -DEPTH);
-		vertex(THICKNESS, -THICKNESS, -DEPTH);
-		vertex(THICKNESS, THICKNESS, -DEPTH);
+		vertex(size, thickness, -depth);
+		vertex(size, -thickness, -depth);
+		vertex(thickness, -thickness, -depth);
+		vertex(thickness, thickness, -depth);
 		
-		vertex(-SIZE, THICKNESS, -DEPTH);
-		vertex(-THICKNESS, THICKNESS, -DEPTH);
-		vertex(-THICKNESS, -THICKNESS, -DEPTH);
-		vertex(-SIZE, -THICKNESS, -DEPTH);
+		vertex(-size, thickness, -depth);
+		vertex(-thickness, thickness, -depth);
+		vertex(-thickness, -thickness, -depth);
+		vertex(-size, -thickness, -depth);
 		
 		
 		//black parts
@@ -110,47 +116,47 @@ public class GeometryCursor extends Geometry {
 
 		//up and down
 		quadSymxOyRotOz90SymOz(
-				THICKNESS, THICKNESS, DEPTH,
-				THICKNESS+THICKNESS2, THICKNESS+THICKNESS2, DEPTH,
-				THICKNESS+THICKNESS2, SIZE+THICKNESS2, DEPTH,
-				THICKNESS, SIZE, DEPTH
+				thickness, thickness, depth,
+				thickness+thickness2, thickness+thickness2, depth,
+				thickness+thickness2, size+thickness2, depth,
+				thickness, size, depth
 		);
 		
 		quadSymxOyRotOz90SymOz(
-				THICKNESS, -THICKNESS, DEPTH,
-				THICKNESS, -SIZE, DEPTH,
-				THICKNESS+THICKNESS2, -SIZE-THICKNESS2, DEPTH,
-				THICKNESS+THICKNESS2, -THICKNESS-THICKNESS2, DEPTH
+				thickness, -thickness, depth,
+				thickness, -size, depth,
+				thickness+thickness2, -size-thickness2, depth,
+				thickness+thickness2, -thickness-thickness2, depth
 		);
 		
 		quadSymxOyRotOz90SymOz(
-				SIZE, THICKNESS,DEPTH,
-				SIZE, -THICKNESS,DEPTH,
-				SIZE+THICKNESS2, -THICKNESS-THICKNESS2,  DEPTH,
-				SIZE+THICKNESS2, THICKNESS+THICKNESS2,  DEPTH
+				size, thickness,depth,
+				size, -thickness,depth,
+				size+thickness2, -thickness-thickness2,  depth,
+				size+thickness2, thickness+thickness2,  depth
 		);
 		
 		
 		//edges
 		quadSymxOyRotOz90SymOz(
-				THICKNESS+THICKNESS2, THICKNESS+THICKNESS2, -DEPTH,
-				THICKNESS+THICKNESS2, SIZE+THICKNESS2, -DEPTH,
-				THICKNESS+THICKNESS2, SIZE+THICKNESS2, DEPTH,
-				THICKNESS+THICKNESS2, THICKNESS+THICKNESS2, DEPTH
+				thickness+thickness2, thickness+thickness2, -depth,
+				thickness+thickness2, size+thickness2, -depth,
+				thickness+thickness2, size+thickness2, depth,
+				thickness+thickness2, thickness+thickness2, depth
 		);
 		
 		quadSymxOyRotOz90SymOz(
-				THICKNESS+THICKNESS2, -THICKNESS-THICKNESS2, -DEPTH,
-				THICKNESS+THICKNESS2, -THICKNESS-THICKNESS2, DEPTH,
-				THICKNESS+THICKNESS2, -SIZE-THICKNESS2, DEPTH,
-				THICKNESS+THICKNESS2, -SIZE-THICKNESS2, -DEPTH
+				thickness+thickness2, -thickness-thickness2, -depth,
+				thickness+thickness2, -thickness-thickness2, depth,
+				thickness+thickness2, -size-thickness2, depth,
+				thickness+thickness2, -size-thickness2, -depth
 		);
 		
 		quadRotOz90SymOz(
-				SIZE+THICKNESS2, THICKNESS+THICKNESS2,  -DEPTH,
-				SIZE+THICKNESS2, THICKNESS+THICKNESS2,  DEPTH,
-				SIZE+THICKNESS2, -THICKNESS-THICKNESS2,  DEPTH,
-				SIZE+THICKNESS2, -THICKNESS-THICKNESS2,  -DEPTH
+				size+thickness2, thickness+thickness2,  -depth,
+				size+thickness2, thickness+thickness2,  depth,
+				size+thickness2, -thickness-thickness2,  depth,
+				size+thickness2, -thickness-thickness2,  -depth
 		);	
 		
 		
@@ -194,6 +200,88 @@ public class GeometryCursor extends Geometry {
 				t1, t2, t1,	
 				t1, t1, t2);
 
+		
+	}
+
+	
+	
+	
+	private void cursorCylinder(){
+		
+		int latitude = 8;
+		float x1 = 4f;
+		float r1 = LINE3D_THICKNESS;
+		float r2 = (float) (r1*Math.sqrt(2));
+		float x2 = x1/3;
+		
+    	float da = (float) (Math.PI/latitude) ; 
+
+    	float y1;
+    	float z1;
+    	float y0,z0;
+
+    	
+    	//white parts
+		color(1,1,1);
+		  	
+		//ring
+    	y1 = 2 * r2 * (float) Math.sin ( da ); 
+		z1 = 2 * r2 * (float) Math.cos ( da );
+		
+    	for( int i = 1; i <= latitude  ; i++ ) { 
+    		y0 = y1; 
+    		z0 = z1; 
+    		y1 = 2 * r2 * (float) Math.sin ( (2*i+1) * da ); 
+    		z1 = 2 * r2 * (float) Math.cos ( (2*i+1) * da ); 
+
+    		vertex(-x2,y0,z0); 
+    		vertex(x2,y0,z0); 
+    		vertex(x2,y1,z1); 
+    		vertex(-x2,y1,z1); 
+
+
+    	} 
+    	
+    	//caps
+    	y1 = 2 * r1 * (float) Math.sin ( da ); 
+		z1 = 2 * r1 * (float) Math.cos ( da );
+		
+    	for( int i = 1; i < latitude/2  ; i++ ) { 
+    		y0 = y1; 
+    		z0 = z1; 
+    		y1 = 2 * r1 * (float) Math.sin ( (2*i+1) * da ); 
+    		z1 = 2 * r1 * (float) Math.cos ( (2*i+1) * da ); 
+
+    		quadSymOz(
+    				x1,y0,z0, 
+    				x1,-y0,z0, 
+    				x1,-y1,z1, 
+    				x1,y1,z1); 
+
+    	} 
+
+
+    	//black parts
+		color(0,0,0);
+		
+		//ring
+    	y1 = 2 * (float) Math.sin ( da ); 
+		z1 = 2 * (float) Math.cos ( da );
+		
+    	for( int i = 1; i <= latitude  ; i++ ) { 
+    		y0 = y1; 
+    		z0 = z1; 
+    		y1 = 2 * (float) Math.sin ( (2*i+1) * da ); 
+    		z1 = 2 * (float) Math.cos ( (2*i+1) * da ); 
+
+    		quadSymOz(x2,y0*r2,z0*r2,
+    				x1,y0*r1,z0*r1, 
+    				x1,y1*r1,z1*r1, 
+    				x2,y1*r2,z1*r2); 
+
+
+    	} 
+    	
 		
 	}
 

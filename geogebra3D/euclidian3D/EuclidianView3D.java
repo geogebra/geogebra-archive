@@ -1545,11 +1545,65 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		//Application.debug("hits ="+getHits().toString());
 		
-		if (hasMouse)
+		if (hasMouse){
 			getEuclidianController().updateNewPoint(true, 
 				getHits().getTopHits(), 
 				true, true, true, false, //TODO doSingleHighlighting = false ? 
 				false);
+			
+			
+			
+			// update cursor3D matrix
+			double t;
+			
+			switch(getCursor3DType()){
+			case PREVIEW_POINT_FREE:
+				// use default directions for the cross
+				t = 1/getScale();
+				getCursor3D().getDrawingMatrix().setVx((Ggb3DVector) vx.mul(t));
+				getCursor3D().getDrawingMatrix().setVy((Ggb3DVector) vy.mul(t));
+				getCursor3D().getDrawingMatrix().setVz((Ggb3DVector) vz.mul(t));
+				break;
+			case PREVIEW_POINT_REGION:
+				// use region drawing directions for the cross
+				t = 1/getScale();
+				getCursor3D().getDrawingMatrix().setVx(
+						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx().mul(t));
+				getCursor3D().getDrawingMatrix().setVy(
+						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy().mul(t));
+				getCursor3D().getDrawingMatrix().setVz(
+						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz().mul(t));
+				break;
+			case PREVIEW_POINT_PATH:
+				// use path drawing directions for the cross
+				t = 1/getScale();
+				getCursor3D().getDrawingMatrix().setVx(
+						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVx().normalized().mul(t));
+				t *= (10+((GeoElement) getCursor3D().getPath()).getLineThickness());
+				getCursor3D().getDrawingMatrix().setVy(
+						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVy().mul(t));
+				getCursor3D().getDrawingMatrix().setVz(
+						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVz().mul(t));
+				break;
+			case PREVIEW_POINT_DEPENDENT:
+				//use size of intersection
+				int t1 = getCursor3DIntersetionOf(0).getLineThickness();
+				int t2 = getCursor3DIntersetionOf(1).getLineThickness();
+				if (t1>t2)
+					t2=t1;
+				t = (t2+6)/getScale();
+				getCursor3D().getDrawingMatrix().setVx((Ggb3DVector) vx.mul(t));
+				getCursor3D().getDrawingMatrix().setVy((Ggb3DVector) vy.mul(t));
+				getCursor3D().getDrawingMatrix().setVz((Ggb3DVector) vz.mul(t));
+				break;
+			}
+			
+			
+			
+			
+			
+			//Application.debug("update");
+		}
 		
 	}
 	
@@ -1594,24 +1648,24 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		if (hasMouse){
 			
-			//updateCursor3D();
+			renderer.setMatrix(getCursor3D().getDrawingMatrix());
 			
 			switch(cursor){
 			case CURSOR_DEFAULT:
 				//if(getCursor3DType()!=PREVIEW_POINT_ALREADY)
-					drawCursorCross(renderer);
+				renderer.drawCursorCross();
 				break;
 			case CURSOR_HIT:
 				switch(getCursor3DType()){
 				case PREVIEW_POINT_FREE:
 				case PREVIEW_POINT_REGION:
-					drawCursorCross(renderer);
+					renderer.drawCursorCross();
 					break;
 				case PREVIEW_POINT_PATH:
-					drawCursorOnPath(renderer);
+					renderer.drawCursorCylinder();
 					break;
 				case PREVIEW_POINT_DEPENDENT:
-					drawCursorDependent(renderer);
+					renderer.drawCursorDiamond();
 					break;
 				}
 				break;
@@ -1619,66 +1673,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 	}
 	
-	private void drawCursorCross(Renderer renderer){
-
-		switch(getCursor3DType()){
-		case PREVIEW_POINT_FREE:
-			// use default directions for the cross
-			getCursor3D().getDrawingMatrix().setVx(vx);
-			getCursor3D().getDrawingMatrix().setVy(vy);
-			getCursor3D().getDrawingMatrix().setVz(vz);
-			break;
-		case PREVIEW_POINT_REGION:
-			// use region drawing directions for the cross
-			getCursor3D().getDrawingMatrix().setVx(
-					((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx());
-			getCursor3D().getDrawingMatrix().setVy(
-					((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy());
-			getCursor3D().getDrawingMatrix().setVz(
-					((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz());
-			break;
-		}
-		
-		renderer.setMatrix(getCursor3D().getDrawingMatrix());
-		renderer.setThickness(1/getScale());
-		renderer.drawCursorCross();
-
-
-	}
-	
-	private void drawCursorOnPath(Renderer renderer){
-		
-		// use path drawing directions for the cross
-		getCursor3D().getDrawingMatrix().setVx(
-				((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVx().normalized());
-		getCursor3D().getDrawingMatrix().setVy(
-				((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVy());
-		getCursor3D().getDrawingMatrix().setVz(
-				((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVz());
-
-		renderer.setThickness((3+((GeoElement) getCursor3D().getPath()).getLineThickness())/getScale());
-		renderer.setMatrix(getCursor3D().getDrawingMatrix());
-		
-		renderer.drawCursorCylinder(1.25/getScale());
-		
-	}
-	
-	private void drawCursorDependent(Renderer renderer){
-		
-		getCursor3D().getDrawingMatrix().setVx(vx);
-		getCursor3D().getDrawingMatrix().setVy(vy);
-		getCursor3D().getDrawingMatrix().setVz(vz);
-		renderer.setMatrix(getCursor3D().getDrawingMatrix());
-		
-		int t1 = getCursor3DIntersetionOf(0).getLineThickness();
-		int t2 = getCursor3DIntersetionOf(1).getLineThickness();
-		if (t1>t2)
-			t2=t1;
-		renderer.setThickness((t2+6)/getScale());
-		renderer.drawCursorDiamond();
-		
-
-	}
 	
 	public void setMoveCursor(){
 
