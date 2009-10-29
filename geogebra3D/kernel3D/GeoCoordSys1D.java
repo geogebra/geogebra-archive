@@ -134,10 +134,13 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 		}else{
 			//project current point coordinates
 			//Application.debug("project current point coordinates");
+			Ggb3DVector preDirection = P.getWillingCoords().sub(getOrigin()).crossProduct(getVx());
+			if(preDirection.equalsForKernel(0, Kernel.STANDARD_PRECISION))
+				preDirection = getMatrix4x4().getVy();
 			Ggb3DVector[] project = P.getCoords().projectOnLineWithDirection(
 					getOrigin(),
 					getVx(),
-					P.getCoords().sub(getOrigin()).crossProduct(getVx()).crossProduct(getVx()));			
+					preDirection.crossProduct(getVx()));			
 			t = project[1].get(1);	
 		}
 		
