@@ -121,10 +121,10 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 				t = project[1].get(1);
 			}else{
 				//project current point coordinates
+				//Application.debug("ici\n getWillingCoords=\n"+P.getWillingCoords()+"\n matrix=\n"+getMatrix().toString());
 				Ggb3DVector preDirection = P.getWillingCoords().sub(getOrigin()).crossProduct(getVx());
 				if(preDirection.equalsForKernel(0, Kernel.STANDARD_PRECISION))
-					preDirection = getVy();
-
+					preDirection = getMatrix4x4().getVy();
 				Ggb3DVector[] project = P.getWillingCoords().projectOnLineWithDirection(
 						getOrigin(),
 						getVx(),
@@ -133,7 +133,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 			}
 		}else{
 			//project current point coordinates
-			Application.debug("project current point coordinates");
+			//Application.debug("project current point coordinates");
 			Ggb3DVector[] project = P.getCoords().projectOnLineWithDirection(
 					getOrigin(),
 					getVx(),
@@ -141,7 +141,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 			t = project[1].get(1);	
 		}
 		
-
+		
 		if (t<getMinParameter())
 			t=getMinParameter();
 		else if (t>getMaxParameter())
