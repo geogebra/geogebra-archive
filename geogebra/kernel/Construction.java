@@ -98,9 +98,6 @@ public class Construction {
 	// showOnlyBreakpoints in construction protocol
 	private boolean showOnlyBreakpoints;
 
-	// member vars
-	int angleUnit = Kernel.ANGLE_DEGREE;
-
 	// construction belongs to kernel
 	private Kernel kernel;
 
@@ -170,7 +167,7 @@ public class Construction {
 	}
 
 	private void initGeoTable() {
-		geoTable.clear();
+		geoTable.clear();		
 		
 		// add axes labels both in English and current language
 		geoTable.put("xAxis", xAxis);
@@ -465,10 +462,10 @@ public class Construction {
 	 * Updates all objects in this construction.
 	 */
 	final public void updateConstruction() {
-		
-		kernel.app.getGuiManager().startCollectingSpreadsheetTraces();
-		
-		// update all independet GeoElements
+		if (!kernel.isMacroKernel() && kernel.app.hasGuiManager())
+			kernel.app.getGuiManager().startCollectingSpreadsheetTraces();
+
+		// update all independent GeoElements
 		int size = ceList.size();
 		for (int i = 0; i < size; ++i) {
 			ConstructionElement ce = (ConstructionElement) ceList.get(i);
@@ -476,19 +473,38 @@ public class Construction {
 				ce.update();
 			}
 		}
-		
+
 		// update all random numbers()
 		updateAllRandomNumbers();
 		
 		// init and update all algorithms
+		// make sure we call algo.initNearToRelationship() fist
+		// for all algorithms because algo.update() could have 
+		// the side-effect to call updateCascade() for points 
+		// that have locateables (see GeoPoint.update())
 		size = algoList.size();
+		
+		// init near to relationship for all algorithms:
+		// this makes sure intersection points stay at their saved positions
 		for (int i = 0; i < size; ++i) {
 			AlgoElement algo = (AlgoElement) algoList.get(i);
-			algo.initForNearToRelationship();			
+			algo.initForNearToRelationship();						
+		}
+		
+		// update all algorithms
+		for (int i = 0; i < size; ++i) {
+			AlgoElement algo = (AlgoElement) algoList.get(i);		
+			
+			// reinit near to relationship to make sure points stay at their saved position
+			// keep this line, see http://code.google.com/p/geogebra/issues/detail?id=62
+			algo.initForNearToRelationship();
+			
+			// update algorithm
 			algo.update();
 		}
 		
-		kernel.app.getGuiManager().stopCollectingSpreadsheetTraces();
+		if (!kernel.isMacroKernel() && kernel.app.hasGuiManager())
+			kernel.app.getGuiManager().stopCollectingSpreadsheetTraces();
 	}
 
 	final void updateAllAlgorithms() {
@@ -657,7 +673,7 @@ public class Construction {
 			return;
 
 		geoTable.put(geo.label, geo);
-		addToGeoSets(geo);
+		addToGeoSets(geo);		
 	}
 
 	/**
@@ -668,7 +684,7 @@ public class Construction {
 	 */
 	public void removeLabel(GeoElement geo) {
 		geoTable.remove(geo.label);
-		removeFromGeoSets(geo);
+		removeFromGeoSets(geo);		
 	}
 
 	private void addToGeoSets(GeoElement geo) {
@@ -760,14 +776,10 @@ public class Construction {
 
 		// STANDARD CASE: variable name found
 		if (geo != null) {
-			// check if geo is available for current step
-			if (geo.isAvailableAtConstructionStep(step))
-				return geo;
-			else
-				return null;
+			return checkConstructionStep(geo);
 		}
 		
-		// DESPARATE CASE: variable name not found
+		// DESPARATE CASE: variable name not found			
 						
 		/*
 		 * SPREADSHEET $ HANDLING
@@ -783,13 +795,26 @@ public class Construction {
 					labelWithout$.append(ch);
 			}
 
-			// allow autocreation of elements
+			// allow automatic creation of elements
 	        geo = lookupLabel(labelWithout$.toString(), allowAutoCreate);				
 			if (geo != null) {
 				// geo found for name that includes $ signs
-				return geo;
+				return checkConstructionStep(geo);
 			}
-        }			
+        }	
+        
+        // try upper case version for spreadsheet label like a1
+        if (allowAutoCreate) {	    	
+			if (Character.isLetter(label.charAt(0)) // starts with letter
+				&& Character.isDigit(label.charAt(label.length()-1)))  // ends with digit
+			{
+				String upperCaseLabel = label.toUpperCase();
+				geo = geoTabelVarLookup(upperCaseLabel);
+				if (geo != null) {
+					return checkConstructionStep(geo);
+				}
+			}
+        }
         
         // if we get here, nothing worked: 
         // possibly auto-create new GeoElement with that name			
@@ -798,6 +823,18 @@ public class Construction {
 		else
 			return null;			
 	}	
+	
+	/**
+	 * Returns geo if it is available at the current
+	 * construction step, otherwise returns null.
+	 */
+	private GeoElement checkConstructionStep(GeoElement geo) {
+		// check if geo is available for current step
+		if (geo.isAvailableAtConstructionStep(step))
+			return geo;
+		else
+			return null;
+	}
 
 	/**
 	 * Automatically creates a GeoElement object for a certain label that is not
@@ -991,7 +1028,7 @@ public class Construction {
 	public void replace(GeoElement oldGeo, GeoElement newGeo) throws Exception {
 		if (oldGeo == null || newGeo == null || oldGeo == newGeo)
 			return;
-		
+
 		// if oldGeo does not have any children, we can simply
 		// delete oldGeo and give newGeo the name of oldGeo
 		if (!oldGeo.hasChildren()) {
@@ -1227,8 +1264,14 @@ public class Construction {
 			throw new MyError(getApplication(), "ReplaceFailed");
 		}
 		
+//		System.out.println("REDEFINE: oldGeo: " + oldGeo + ", newGeo: " + newGeo);
+//		System.out.println(" old XML:\n" + consXML.substring(pos, pos + oldXML.length()));
+//		System.out.println(" new XML:\n" + newXML);
+//		System.out.println("END redefine.");
+		
 		// replace oldXML by newXML in consXML
 		consXML.replace(pos, pos + oldXML.length(), newXML);
+		
 	}
 	
 	/**
@@ -1237,6 +1280,8 @@ public class Construction {
 	private void buildConstruction(StringBuffer consXML) throws Exception {
 		// try to process the new construction
 		try {
+			if (undoManager == null)
+				undoManager = new UndoManager(this);
 			undoManager.processXML(consXML.toString());
 			kernel.notifyReset();
 			kernel.updateConstruction();
@@ -1253,58 +1298,59 @@ public class Construction {
 	 * XML output
 	 */
 
-	/**
-	 * Returns this construction in XML format. GeoGebra File Format.
-	 */
-	public String getXML() {
-		StringBuffer sb = new StringBuffer();
-
-		// kernel settings
-		sb.append("<kernel>\n");
-
-		// continuity: true or false, since V3.0
-		sb.append("\t<continuous val=\"");
-		sb.append(kernel.isContinuous());
-		sb.append("\"/>\n");
-		
-		if (kernel.useSignificantFigures) {
-			// significant figures
-			sb.append("\t<significantfigures val=\"");
-			sb.append(kernel.getPrintFigures());
-			sb.append("\"/>\n");			
-		}
-		else
-		{
-			// decimal places
-			sb.append("\t<decimals val=\"");
-			sb.append(kernel.getPrintDecimals());
-			sb.append("\"/>\n");
-		}
-		
-		// angle unit
-		sb.append("\t<angleUnit val=\"");
-		sb.append(angleUnit == Kernel.ANGLE_RADIANT ? "radiant" : "degree");
-		sb.append("\"/>\n");
-
-		// coord style
-		sb.append("\t<coordStyle val=\"");
-		sb.append(kernel.getCoordStyle());
-		sb.append("\"/>\n");
-		
-		// animation
-		if (kernel.isAnimationRunning()) {
-			sb.append("\t<startAnimation val=\"");
-			sb.append(kernel.isAnimationRunning());
-			sb.append("\"/>\n");
-		}
-
-		sb.append("</kernel>\n");
-
-		// construction XML
-		sb.append(getConstructionXML());
-
-		return sb.toString();
-	}
+//	/**
+//	 * Returns this construction in XML format. GeoGebra File Format.
+//	 */
+//	public String getXML(boolean includeConstruction) {
+//		StringBuffer sb = new StringBuffer();
+//
+//		// kernel settings
+//		sb.append("<kernel>\n");
+//
+//		// continuity: true or false, since V3.0
+//		sb.append("\t<continuous val=\"");
+//		sb.append(kernel.isContinuous());
+//		sb.append("\"/>\n");
+//		
+//		if (kernel.useSignificantFigures) {
+//			// significant figures
+//			sb.append("\t<significantfigures val=\"");
+//			sb.append(kernel.getPrintFigures());
+//			sb.append("\"/>\n");			
+//		}
+//		else
+//		{
+//			// decimal places
+//			sb.append("\t<decimals val=\"");
+//			sb.append(kernel.getPrintDecimals());
+//			sb.append("\"/>\n");
+//		}
+//		
+//		// angle unit
+//		sb.append("\t<angleUnit val=\"");
+//		sb.append(angleUnit == Kernel.ANGLE_RADIANT ? "radiant" : "degree");
+//		sb.append("\"/>\n");
+//
+//		// coord style
+//		sb.append("\t<coordStyle val=\"");
+//		sb.append(kernel.getCoordStyle());
+//		sb.append("\"/>\n");
+//		
+//		// animation
+//		if (kernel.isAnimationRunning()) {
+//			sb.append("\t<startAnimation val=\"");
+//			sb.append(kernel.isAnimationRunning());
+//			sb.append("\"/>\n");
+//		}
+//
+//		sb.append("</kernel>\n");
+//
+//		// construction XML
+//		if (includeConstruction)
+//			sb.append(getConstructionXML());
+//
+//		return sb.toString();
+//	}
 
 	/**
 	 * Returns this construction in I2G format. Intergeo File Format. (Yves

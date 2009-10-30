@@ -20,7 +20,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 
 /**
  * Draws definite Integral of a GeoFunction
@@ -32,7 +31,7 @@ public class DrawIntegralFunctions extends Drawable {
     private GeoFunction f, g;
     private NumberValue a, b;
     	
-	private GeneralPath gp;
+	private GeneralPathClipped gp;
     boolean isVisible, labelVisible;
    
     public DrawIntegralFunctions(EuclidianView view, GeoNumeric n) {
@@ -48,8 +47,6 @@ public class DrawIntegralFunctions extends Drawable {
         a = algo.getA();
         b = algo.getB();    
         
-		gp = new GeneralPath(); 
-        
         update();
     }
 
@@ -64,10 +61,12 @@ public class DrawIntegralFunctions extends Drawable {
 		double bRW = b.getDouble();		
 								
 		//	init first point of gp as (ax, ay) 	
-		int ax = view.toClippedScreenCoordX(aRW);
-		int ay = view.toClippedScreenCoordY(f.evaluate(aRW));	
+		double ax = view.toClippedScreenCoordX(aRW);
+		double ay = view.toClippedScreenCoordY(f.evaluate(aRW));	
 		
 		//	plot area between f and g
+		if (gp == null)
+			gp = new GeneralPathClipped(view); 
 		gp.reset();
 		gp.moveTo(ax, ay);
 		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, false);		
@@ -82,7 +81,7 @@ public class DrawIntegralFunctions extends Drawable {
 
 		if (labelVisible) {
 			int bx = view.toClippedScreenCoordX(bRW);							
-			xLabel = (ax + bx) / 2;
+			xLabel = (int) Math.round((ax + bx) / 2);
 			aRW = view.toRealWorldCoordX(xLabel);
 			double y = (f.evaluate(aRW) + g.evaluate(aRW))/2;
 			yLabel = view.toClippedScreenCoordY(y);			

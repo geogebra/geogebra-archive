@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -105,7 +106,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		// create and set corners, Markus December 08
 		Corner upperLeftCorner = new Corner(); //use FlowLayout
-		upperLeftCorner.addMouseListener(new MouseAdapter() {
+		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		upperLeftCorner.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				table.selectAll();
 			}
@@ -115,6 +116,8 @@ public class SpreadsheetView extends JScrollPane implements View
 		setCorner(JScrollPane.UPPER_LEFT_CORNER, upperLeftCorner);
 //		setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
 //		setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
+		
+		updateFonts();
 	}
 	
 	private class Corner extends JComponent {
@@ -527,7 +530,8 @@ public class SpreadsheetView extends JScrollPane implements View
 					}
 					table.repaint();
 				}
-			}	
+			}
+			/* G.Sturr 2009-9-30: moved this to mouseReleased
 			// RIGHT CLICK
 			else {	
 				if (!app.letShowPopupMenu()) return;    	
@@ -538,10 +542,41 @@ public class SpreadsheetView extends JScrollPane implements View
 				}	
 						
 			}
+			*/
+			
 		}
 		
 		public void mouseReleased(MouseEvent e)	{
+			//G.Sturr 2009-9-30: moved show contextMenu from mousePressed
+			// and added right click selection
 			
+			boolean rightClick = Application.isRightClick(e);
+			
+			if (rightClick) { 			
+				if (!app.letShowPopupMenu()) return; 
+				
+				
+				Point p = table.getIndexFromPixel(e.getX(), e.getY());
+				if (p == null) return;
+				
+				// if click is outside current selection then change selection
+				if(p.getY() < minSelectionRow ||  p.getY() > maxSelectionRow 
+						|| p.getX() < table.minSelectionColumn || p.getX() > table.maxSelectionColumn){
+					// switch to row selection mode and select row
+					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
+							table.getColumnSelectionAllowed() == true) {
+						table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						table.setColumnSelectionAllowed(false);
+						table.setRowSelectionAllowed(true);
+					}
+					table.selectNone();
+					table.setRowSelectionInterval((int)p.getY(), (int)p.getY());
+				}	
+			
+				//show contextMenu
+				ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, new boolean[0]);
+			        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				} 
 			
 		}
 
@@ -551,6 +586,9 @@ public class SpreadsheetView extends JScrollPane implements View
 	{
 		
 		public void mouseDragged(MouseEvent e) {
+			
+			if(Application.isRightClick(e))return; //G.Sturr 2009-9-30 
+			
 			int x = e.getX();
 			int y = e.getY();
 			Point point = table.getIndexFromPixel(x, y);
@@ -642,7 +680,10 @@ public class SpreadsheetView extends JScrollPane implements View
 			}
 			if (location.x >= tableModel.getColumnCount()) {
 				table.setMyColumnCount(location.x + 1);		
-				getColumnHeader().revalidate();
+				JViewport cH = getColumnHeader();
+				
+				// bugfix: double-click to load ggb file gives cH = null
+				if (cH != null) cH.revalidate();
 			}
 			tableModel.setValueAt(geo, location.y, location.x);
 		}			

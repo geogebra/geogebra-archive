@@ -232,10 +232,13 @@ public class RelativeCopy {
 			
 				GeoElement geo = (GeoElement)(iterator.next());
 				
-				Point p = geo.getSpreadsheetCoords();
-				doCopyNoStoringUndoInfo0(kernel, table, geo,
+				//G.Sturr 2009-9-18 bug fix: null test was missing
+				if (geo != null) {
+					Point p = geo.getSpreadsheetCoords();
+					doCopyNoStoringUndoInfo0(kernel, table, geo,
 						getValue(table, dx1 + ix, p.y), x - sx, 0);
-				//Application.debug(p.y+"");
+					//Application.debug(p.y+"");
+				}
 			}
 		}
 		/* old code
@@ -249,8 +252,8 @@ public class RelativeCopy {
 		} */
 	}
 	
-	
-	protected static final Pattern pattern2 = Pattern.compile("(::|\\$)([A-Z])(::|\\$)([0-9]+)");
+	//G.Sturr 2009-9-23 bug fix: [A-Z] needs to be [A-Z]+ for double letter columns
+	protected static final Pattern pattern2 = Pattern.compile("(::|\\$)([A-Z]+)(::|\\$)([0-9]+)");
 
 	public static GeoElement doCopyNoStoringUndoInfo0(Kernel kernel, MyTable table, GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
 		if (value == null) {
@@ -264,12 +267,17 @@ public class RelativeCopy {
 			return null;
 		}
 		String text = null;
-		if (value.isChangeable()) {
+		
+		if (value.isPointOnPath()) {
+			text = value.getCommandDescription();
+		}
+		else if (value.isChangeable()) {
 			text = value.toValueString();
 		}
 		else {
 			text = value.getCommandDescription(); 
 		}
+		
 		
 		// for E1 = Polynomial[D1] we need value.getCommandDescription(); 
 		// even though it's a GeoFunction
@@ -352,6 +360,7 @@ public class RelativeCopy {
 		
 		//Application.debug((row + dy) + "," + column);
 		//Application.debug("isGeoFunction()=" + value2.isGeoFunction());
+		//Application.debug("row0 ="+row0+" dy="+dy+" column0= "+column0+" dx="+dx);
 		table.setValueAt(value2, row0 + dy, column0 + dx);
 		return value2;
 		

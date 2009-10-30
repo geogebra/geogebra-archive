@@ -62,19 +62,19 @@ class OptionsFont extends JPanel implements ActionListener {
 		guiSizeCb.addActionListener(this);
 		guiSizeLabel = new JLabel();
 		
-		// font size of drawing pad
-		euclidianSizeCb = new JComboBox(fontSizeStr);
-		euclidianSizeCb.setMaximumSize(new Dimension(80, 0));
-		euclidianSizeCb.setSelectedItem(Integer.toString(app.getEuclidianFontSize()));
-		euclidianSizeCb.addActionListener(this);
-		euclidianSizeLabel = new JLabel();
-		
-		// font size of coordinate system 
-		axesSizeCb = new JComboBox(fontSizeStr);
-		axesSizeCb.setMaximumSize(new Dimension(80, 0));
-		axesSizeCb.setSelectedItem(Integer.toString(app.getAxesFontSize()));
-		axesSizeCb.addActionListener(this);
-		axesSizeLabel = new JLabel();
+//		// font size of drawing pad
+//		euclidianSizeCb = new JComboBox(fontSizeStr);
+//		euclidianSizeCb.setMaximumSize(new Dimension(80, 0));
+//		euclidianSizeCb.setSelectedItem(Integer.toString(app.getEuclidianFontSize()));
+//		euclidianSizeCb.addActionListener(this);
+//		euclidianSizeLabel = new JLabel();
+//		
+//		// font size of coordinate system 
+//		axesSizeCb = new JComboBox(fontSizeStr);
+//		axesSizeCb.setMaximumSize(new Dimension(80, 0));
+//		axesSizeCb.setSelectedItem(Integer.toString(app.getAxesFontSize()));
+//		axesSizeCb.addActionListener(this);
+//		axesSizeLabel = new JLabel();
 		
 		// construct the font size panel
 		fontTitleLabel = new TitleLabel();
@@ -164,8 +164,8 @@ class OptionsFont extends JPanel implements ActionListener {
 		axesSizeCb.removeActionListener(this);
 		
 		guiSizeCb.setSelectedItem(Integer.toString(app.getFontSize()));
-		euclidianSizeCb.setSelectedItem(Integer.toString(app.getEuclidianFontSize()));
-		axesSizeCb.setSelectedItem(Integer.toString(app.getAxesFontSize()));
+//		euclidianSizeCb.setSelectedItem(Integer.toString(app.getEuclidianFontSize()));
+//		axesSizeCb.setSelectedItem(Integer.toString(app.getAxesFontSize()));
 		
 		guiSizeCb.addActionListener(this);
 		euclidianSizeCb.addActionListener(this);
@@ -201,16 +201,16 @@ class OptionsFont extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == guiSizeCb) {
 			int fontSize = Integer.parseInt((String)guiSizeCb.getSelectedItem());
-			app.setGUIFontSize(fontSize, false);
+			app.setFontSize(fontSize, false);
 			updateFonts = true;
-		} else if(e.getSource() == axesSizeCb) {
-			int fontSize = Integer.parseInt((String)axesSizeCb.getSelectedItem());
-			app.setAxesFontSize(fontSize, false);
-			updateFonts = true;
-		} else if(e.getSource() == euclidianSizeCb) {
-			int fontSize = Integer.parseInt((String)euclidianSizeCb.getSelectedItem());
-			app.setEuclidianFontSize(fontSize, false);
-			updateFonts = true;
+//		} else if(e.getSource() == axesSizeCb) {
+//			int fontSize = Integer.parseInt((String)axesSizeCb.getSelectedItem());
+//			app.setAxesFontSize(fontSize, false);
+//			updateFonts = true;
+//		} else if(e.getSource() == euclidianSizeCb) {
+//			int fontSize = Integer.parseInt((String)euclidianSizeCb.getSelectedItem());
+//			app.setEuclidianFontSize(fontSize, false);
+//			updateFonts = true;
 		} else if(e.getSource() == languageCb) {
 			updateLanguage = true;
 		}

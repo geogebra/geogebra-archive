@@ -1,10 +1,12 @@
 package geogebra.gui.view.algebra;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -20,11 +22,13 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 	private static final long serialVersionUID = 1L;				
 			
 	private Application app;
+	private Kernel kernel;
 	private ImageIcon iconShown, iconHidden;
 		
 	public MyRenderer(Application app) {
 		setOpaque(true);		
 		this.app = app;
+		this.kernel = app.getKernel();
 		
 		iconShown = app.getImageIcon("shown.gif");
 		iconHidden = app.getImageIcon("hidden.gif");
@@ -44,13 +48,31 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		Object ob = node.getUserObject();
 					
 		if (ob instanceof GeoElement) {	
-			GeoElement geo = (GeoElement) ob;										
-			
-			setFont(app.boldFont);
+			GeoElement geo = (GeoElement) ob;	
 			setForeground(geo.getAlgebraColor());
-			String str = geo.getAlgebraDescriptionTextOrHTML();
-			//String str = geo.getAlgebraDescription();
-			setText(str);								
+			
+			String text = null;
+			if (geo.isIndependent()) {
+				text = geo.getAlgebraDescriptionTextOrHTML();
+			} else {
+				switch (kernel.getAlgebraStyle()) {
+					case Kernel.ALGEBRA_STYLE_VALUE:
+						text = geo.getAlgebraDescriptionTextOrHTML();
+						break;
+						
+					case Kernel.ALGEBRA_STYLE_DEFINITION:
+						text = geo.addLabelTextOrHTML(geo.getDefinitionDescription());
+						break;
+						
+					case Kernel.ALGEBRA_STYLE_COMMAND:
+						text = geo.addLabelTextOrHTML(geo.getCommandDescription());
+						break;
+				}	
+			}
+
+			// make sure we use a font that can display the text
+			setFont(app.getFontCanDisplay(text, Font.BOLD));
+			setText(text);
 			
 			if (geo.doHighlighting())				   
 				setBackground(Application.COLOR_SELECTION);
@@ -87,24 +109,38 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 			}
 			setForeground(Color.black);
 			setBackground(getBackgroundNonSelectionColor());
-			setFont(app.plainFont);
 			selected = false;				
 			setBorder(null);
-			setText(value.toString());
+			String str = value.toString();
+			setText(str);
+			
+			// make sure we use a font that can display the text
+			setFont(app.getFontCanDisplay(str));
 		}		
 		
 		return this;
 	}							
 	
-	/*
-	final public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);                                        
-		 g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);    
-		 super.paint(g);
-	}
-	*/	
+//	
+//	final public void paint(Graphics g) {
+//		Graphics2D g2 = (Graphics2D) g;
+//		 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//                RenderingHints.VALUE_ANTIALIAS_ON);                                        
+//		 g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+//		 
+//		 //Font f = app.getFontCanDisplay(getText(), Font.BOLD);
+//		 Font f = new Font("SansSerif", Font.BOLD, 12);
+//		 //UIManager.put("Tree.font", f);
+//		 //g2.setFont(f);
+//		 setFont(f);
+//		 super.paint(g);
+//		// UIManager.put("Tree.font", app.getBoldFont());
+//			
+//		 
+//		 //TODO: remove
+//		 System.out.println("paint renderer with font: " + getText() + ", "+ f);
+//	}
+	
 	
 } // MyRenderer

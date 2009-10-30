@@ -19,7 +19,6 @@ import geogebra.kernel.GeoPolygon;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 /**
@@ -33,8 +32,7 @@ implements Previewable {
     private GeoPolygon poly;            
     boolean isVisible, labelVisible;
     
-    private GeneralPath gp = new GeneralPath();
-	private GeneralPath gpPreview = new GeneralPath();
+    private GeneralPathClipped gp;
     private double [] coords = new double[2];
 	private ArrayList points;              
       
@@ -62,45 +60,50 @@ implements Previewable {
 			labelVisible = geo.isLabelVisible();       
 			updateStrokes(poly);
 			
-            // build general path for this polygon       
-			gp.reset();
-            GeoPoint [] points = poly.getPoints();
-			
-			// first point
-			points[0].getInhomCoords(coords);
-			view.toScreenCoords(coords);			
-            gp.moveTo((float) coords[0], (float) coords[1]);   
-			
-			// for centroid calculation (needed for label pos)
-			double xsum = coords[0];
-			double ysum = coords[1];
-            
-            for (int i=1; i < points.length; i++) {
-				points[i].getInhomCoords(coords);
-				view.toScreenCoords(coords);	
-				if (labelVisible) {
-					xsum += coords[0];
-					ysum += coords[1];
-				}			
-            	gp.lineTo((float) coords[0], (float) coords[1]);                  	
-            }
-            
-        	gp.closePath(); 	
+            // build general path for this polygon
+			addPointsToPath(poly.getPoints());
+			gp.closePath();
         	
         	 // polygon on screen?		
     		if (!gp.intersects(0,0, view.width, view.height)) {				
     			isVisible = false;
             	// don't return here to make sure that getBounds() works for offscreen points too
-    		}
-        	
-			if (labelVisible) {
-				labelDesc = geo.getLabelDescription();            				
-				xLabel = (int) (xsum / points.length);
-				yLabel = (int) (ysum / points.length);
-				addLabelOffset();                                       
-			}               
+    		}             
         }
     }
+	
+	private void addPointsToPath(GeoPoint[] points) {
+		if (gp == null)
+			gp = new GeneralPathClipped(view);
+		else
+			gp.reset();
+		
+		// first point
+		points[0].getInhomCoords(coords);
+		view.toScreenCoords(coords);			
+        gp.moveTo(coords[0], coords[1]);   
+		
+		// for centroid calculation (needed for label pos)
+		double xsum = coords[0];
+		double ysum = coords[1];
+        
+        for (int i=1; i < points.length; i++) {
+			points[i].getInhomCoords(coords);
+			view.toScreenCoords(coords);	
+			if (labelVisible) {
+				xsum += coords[0];
+				ysum += coords[1];
+			}			
+        	gp.lineTo(coords[0], coords[1]);                  	
+        }
+
+		if (labelVisible) {
+			labelDesc = geo.getLabelDescription();  
+			xLabel = (int) (xsum / points.length);
+			yLabel = (int) (ysum / points.length);
+			addLabelOffset();                                       
+		}  
+	}
         
 	final public void draw(Graphics2D g2) {
         if (isVisible) {
@@ -136,30 +139,17 @@ implements Previewable {
 		int size = points.size();
 		isVisible = size > 0;
 		
-		if (isVisible) { 			 
-			// build general path for this polygon       
-			gpPreview.reset();
-			
-			// first point
-			GeoPoint p = (GeoPoint) points.get(0);
-			p.getInhomCoords(coords);
-			view.toScreenCoords(coords);			
-			gpPreview.moveTo((float) coords[0], (float) coords[1]);   
-			
-			// rest of points		
-			for (int i=1; i < size; i++) {
-				p = (GeoPoint) points.get(i);
-				p.getInhomCoords(coords);
-				view.toScreenCoords(coords);	
-				gpPreview.lineTo((float) coords[0], (float) coords[1]);                  	
-			}    
-			gp = gpPreview;									              
+		if (isVisible) { 		
+			GeoPoint[] pointsArray = new GeoPoint[size];
+			for (int i=0; i < size; i++) {
+				pointsArray[i] = (GeoPoint) points.get(i);
+			}
+			addPointsToPath(pointsArray);								              
 		}	
 	}
 	
 	final public void updateMousePos(int x, int y) {
-		if (isVisible) { 	
-			gp = (GeneralPath) gpPreview.clone();
+		if (isVisible) {
 			gp.lineTo(x, y);
 		}
 	}
@@ -179,11 +169,11 @@ implements Previewable {
 	}
     
 	final public boolean hit(int x,int y) {		
-       return gp.contains(x, y) || gp.intersects(x-3, y-3, 6, 6);        
+       return gp != null && (gp.contains(x, y) || gp.intersects(x-3, y-3, 6, 6));        
     }
 	
     final public boolean isInside(Rectangle rect) {
-    	return rect.contains(gp.getBounds());  
+    	return gp != null && rect.contains(gp.getBounds());  
     }
     
     public GeoElement getGeoElement() {

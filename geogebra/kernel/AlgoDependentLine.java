@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.Equation;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
@@ -35,13 +36,25 @@ public class AlgoDependentLine extends AlgoElement {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Equation equation;
+	private GeoLine line1, line2;
+	private NumberValue num;
     private ExpressionValue [] ev = new ExpressionValue[3];  // input
-    private GeoLine g;     // output                 
+    private ExpressionNode root;
+    private GeoLine g;     // output       
+    
+    private int mode;
+    public final static int MODE_EQUATION = 0;
+    public final static int MODE_ADD      = 1;
+    public final static int MODE_SUBTRACT = 2;
+    public final static int MODE_MULTIPLY = 3;
+    public final static int MODE_DIVIDE   = 4;
+    
         
     /** Creates new AlgoDependentLine */
     public AlgoDependentLine(Construction cons, String label, Equation equ) {        
        	super(cons, false); // don't add to construction list yet
-        equation = equ;                              
+        equation = equ;  
+        mode = MODE_EQUATION;
         Polynomial lhs = equ.getNormalForm();
         
         ev[0] = lhs.getCoefficient("x");        
@@ -68,14 +81,72 @@ public class AlgoDependentLine extends AlgoElement {
         g.setLabel(label);        
     }   
     
+    public AlgoDependentLine(Construction cons, GeoLine line1, GeoLine line2, int mode, ExpressionNode root) {        
+       	super(cons, false); // don't add to construction list yet
+        this.line1 = line1;
+        this.line2 = line2;
+        this.mode = mode;
+        this.root = root;
+        
+        cons.addToConstructionList(this, false);
+        
+        g = new GeoLine(cons);
+        setInputOutput(); // for AlgoElement
+        
+        // compute value of dependent number        
+        g.setMode(GeoLine.EQUATION_IMPLICIT_NON_CANONICAL);
+        compute();      
+        g.setLabel(root.getLabel());        
+    }   
+    
+    public AlgoDependentLine(Construction cons, GeoLine line1, NumberValue num, int mode, ExpressionNode root) {        
+       	super(cons, false); // don't add to construction list yet
+        this.line1 = line1;
+        this.num = num;
+        this.mode = mode;
+        this.root = root;
+        
+        cons.addToConstructionList(this, false);
+        
+        g = new GeoLine(cons);
+        setInputOutput(); // for AlgoElement
+        
+        // compute value of dependent number        
+        g.setMode(GeoLine.EQUATION_IMPLICIT_NON_CANONICAL);
+        compute();      
+        g.setLabel(root.getLabel());        
+    }   
+    
 	protected String getClassName() {
 		return "AlgoDependentLine";
 	}
     
     // for AlgoElement
 	protected void setInputOutput() {
-        input = equation.getGeoElementVariables();         
-        
+		switch (mode) {
+		case MODE_EQUATION:
+		
+        input = equation.getGeoElementVariables();     
+		break;
+		
+		case MODE_ADD:
+		case MODE_SUBTRACT:
+			
+			input = new GeoElement[2];
+			input[0] = line1;
+			input[1] = line2;
+			break;
+			
+		case MODE_MULTIPLY:
+		case MODE_DIVIDE:
+			
+			input = new GeoElement[2];
+			input[0] = line1;
+			input[1] = num.toGeoElement();
+			break;
+		}
+			
+			
         output = new GeoElement[1];        
         output[0] = g;        
         setDependencies(); // done by AlgoElement
@@ -85,17 +156,51 @@ public class AlgoDependentLine extends AlgoElement {
     
     // calc the current value of the arithmetic tree
     protected final void compute() {  
-    	try {
-	        g.x = ((NumberValue) ev[0].evaluate()).getDouble();
-	        g.y = ((NumberValue) ev[1].evaluate()).getDouble();
-	        g.z = ((NumberValue) ev[2].evaluate()).getDouble();   
-	    } catch (Throwable e) {
-			g.setUndefined();
-		}
+    	
+    	switch (mode) {
+    	case MODE_EQUATION:
+	    	try {
+		        g.x = ((NumberValue) ev[0].evaluate()).getDouble();
+		        g.y = ((NumberValue) ev[1].evaluate()).getDouble();
+		        g.z = ((NumberValue) ev[2].evaluate()).getDouble();   
+		    } catch (Throwable e) {
+				g.setUndefined();
+			}
+    	break;
+    	case MODE_ADD:
+    		g.x = line1.x + line2.x;
+    		g.y = line1.y + line2.y;
+    		g.z = line1.z + line2.z;
+    		break;
+    	case MODE_SUBTRACT:
+    		g.x = line1.x - line2.x;
+    		g.y = line1.y - line2.y;
+    		g.z = line1.z - line2.z;
+    		break;
+    	case MODE_MULTIPLY:
+    		double n = num.getDouble();
+    		g.x = line1.x * n;
+    		g.y = line1.y * n;
+    		g.z = line1.z * n;
+    		break;
+    	case MODE_DIVIDE:
+    		n = num.getDouble();
+    		if (kernel.isZero(n))
+    			g.setUndefined();
+    		else {
+	    		g.x = line1.x / n;
+	    		g.y = line1.y / n;
+	    		g.z = line1.z / n;
+    		}
+    		break;
+    	}
     }   
           
     final public String toString() { 
-        return equation.toString();
+    	if (mode == MODE_EQUATION)
+    		return equation.toString();
+    	else
+    		return root.toString();
     } 
     
 }

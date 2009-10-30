@@ -18,7 +18,6 @@ the Free Software Foundation.
 package geogebra.main;
 
 import geogebra.GeoGebra;
-import geogebra.JarManager;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.ImageSelection;
@@ -63,18 +62,17 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.MemoryImageSource;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.InetAddress;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -96,21 +94,33 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
-import javax.swing.plaf.FontUIResource;
 
 public abstract class Application implements KeyEventDispatcher {
+	
 	// disabled parts
-	public static final boolean DISABLE_I2G = true;
 	public static final boolean PRINT_DEBUG_MESSAGES = true;
 	
 	// license file
 	public static final String LICENSE_FILE = "geogebra/gui/_license.txt";
 
+	// jar file names
+	public final static String CAS_JAR_NAME = "geogebra_cas.jar";
+	public static final String[] JAR_FILES = { 
+			"geogebra.jar", 
+			"geogebra_main.jar",
+			"geogebra_gui.jar", 
+			CAS_JAR_NAME, 
+			"geogebra_export.jar",
+			"geogebra_properties.jar" };
+
 	// supported GUI languages (from properties files)
 	public static ArrayList<Locale> supportedLocales = new ArrayList<Locale>();
 	static {
+		// TODO: remove IS_PRE_RELEASE
+		if (GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("sq")); // Albanian
+		
 		supportedLocales.add(new Locale("ar")); // Arabic
 		supportedLocales.add(new Locale("eu")); // Basque
 		supportedLocales.add(new Locale("bs")); // Bosnian
@@ -119,11 +129,12 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("zh", "CN")); // Chinese (Simplified)
 		supportedLocales.add(new Locale("zh", "TW")); // Chinese (Traditional)
 		supportedLocales.add(new Locale("hr")); // Croatian
-		supportedLocales.add(new Locale("cz")); // Czeck
+		supportedLocales.add(new Locale("cz")); // Czech
 		supportedLocales.add(new Locale("da")); // Danish
 		supportedLocales.add(new Locale("nl")); // Dutch
 		supportedLocales.add(new Locale("en")); // English
 		supportedLocales.add(new Locale("en", "GB")); // English (UK)
+		supportedLocales.add(new Locale("en", "AU")); // English (Australia)
 		supportedLocales.add(new Locale("et")); // Estonian
 		supportedLocales.add(new Locale("fi")); // Finnish
 		supportedLocales.add(new Locale("fr")); // French
@@ -132,7 +143,9 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("de")); // German
 		supportedLocales.add(new Locale("de", "AT")); // German (Austria)
 		supportedLocales.add(new Locale("el")); // Greek
+		// supportedLocales.add(new Locale("gu")); // Gujarati
 		supportedLocales.add(new Locale("iw")); // Hebrew
+		// supportedLocales.add(new Locale("hi")); // Hindi
 		supportedLocales.add(new Locale("hu")); // Hungarian
 		supportedLocales.add(new Locale("is")); // Icelandic
 		supportedLocales.add(new Locale("in")); // Indonesian
@@ -141,28 +154,45 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("ko")); // Korean
 		supportedLocales.add(new Locale("lt")); // Lithuanian
 		supportedLocales.add(new Locale("mk")); // Macedonian
-		
-		// no translation, just added for the virtual keyboard
-		supportedLocales.add(new Locale("ml")); // Malayalam
-		
+		// supportedLocales.add(new Locale("ne")); // Nepalese
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
 		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian(Nynorsk)
+		// supportedLocales.add(new Locale("oc")); // Occitan
 		supportedLocales.add(new Locale("fa")); // Persian
 		supportedLocales.add(new Locale("pl")); // Polish
 		supportedLocales.add(new Locale("pt", "BR")); // Portugese (Brazil)
 		supportedLocales.add(new Locale("pt", "PT")); // Portuguese (Portugal)
+		// supportedLocales.add(new Locale("pa")); // Punjabi
+		// supportedLocales.add(new Locale("ro")); // Romanian
 		supportedLocales.add(new Locale("ru")); // Russian
 		supportedLocales.add(new Locale("sr")); // Serbian
+		// TODO: remove IS_PRE_RELEASE
+		if (GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("si")); // Sinhala (Sri Lanka)
+		
 		supportedLocales.add(new Locale("sk")); // Slovakian
 		supportedLocales.add(new Locale("sl")); // Slovenian
 		supportedLocales.add(new Locale("es")); // Spanish
 		supportedLocales.add(new Locale("sv")); // Swedish
+		// supportedLocales.add(new Locale("ty")); // Tahitian
+		// TODO: remove IS_PRE_RELEASE
+		if (GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("ta")); // Tamil
+		
+		// supportedLocales.add(new Locale("te")); // Telugu
+		// TODO: remove IS_PRE_RELEASE
+		if (GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("th")); // Thai
+
 		supportedLocales.add(new Locale("tr")); // Turkish
+		// supportedLocales.add(new Locale("uk")); // Ukrainian
+		// supportedLocales.add(new Locale("ur")); // Urdu
 		supportedLocales.add(new Locale("vi")); // Vietnamese
 		supportedLocales.add(new Locale("cy")); // Welsh
-		
-		// TODO: add Yiddish
-		//supportedLocales.add(new Locale("ji")); // Yiddish
+
+		// TODO: remove IS_PRE_RELEASE
+		if (GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("ji")); // Yiddish
 	}
 
 	// specialLanguageNames: Java does not show an English name for all
@@ -171,31 +201,29 @@ public abstract class Application implements KeyEventDispatcher {
 	// specially
 	public static Hashtable<String, String> specialLanguageNames = new Hashtable<String, String>();
 	static {
-		specialLanguageNames.put("bs", "Bosnian");	
+		specialLanguageNames.put("bs", "Bosnian");
 		specialLanguageNames.put("zhCN", "Chinese Simplified");
 		specialLanguageNames.put("zhTW", "Chinese Traditional");
 		specialLanguageNames.put("cz", "Czech");
 		specialLanguageNames.put("en", "English (US)");
 		specialLanguageNames.put("enGB", "English (UK)");
+		specialLanguageNames.put("enAU", "English (Australia)");
 		specialLanguageNames.put("deAT", "German (Austria)");
 		specialLanguageNames.put("gl", "Galician");
 		specialLanguageNames.put("noNO", "Norwegian (Bokm\u00e5l)");
-		specialLanguageNames.put("noNONY", "Norwegian (Nynorsk)");				
-		specialLanguageNames.put("ml", "Malayalam");				
+		specialLanguageNames.put("noNONY", "Norwegian (Nynorsk)");
 		specialLanguageNames.put("ptBR", "Portuguese (Brazil)");
-		specialLanguageNames.put("ptPT", "Portuguese (Portugal)");	
+		specialLanguageNames.put("ptPT", "Portuguese (Portugal)");
+		specialLanguageNames.put("si", "Sinhala"); // better than Sinhalese
 	}
 
 	public static final Color COLOR_SELECTION = new Color(230, 230, 245);
 
-	
 	// Font settings
-	private static final String STANDARD_FONT_NAME_SANS_SERIF = "SansSerif";
-	private static final String STANDARD_FONT_NAME_SERIF = "Serif";
-	private static final int INIT_FONT_SIZE = 12;
 	public static final int MIN_FONT_SIZE = 10;
-	private String appFontNameSansSerif = "SansSerif";
-	private String appFontNameSerif = "Serif";
+	// currently used application fonts
+
+	private int appFontSize;
 
 	// file extension string
 	public static final String FILE_EXT_GEOGEBRA = "ggb";
@@ -209,6 +237,7 @@ public abstract class Application implements KeyEventDispatcher {
 	public static final String FILE_EXT_EMF = "emf";
 	public static final String FILE_EXT_SVG = "svg";
 	public static final String FILE_EXT_HTML = "html";
+	public static final String FILE_EXT_HTM = "htm";
 	public static final String FILE_EXT_TEX = "tex";
 
 	protected File currentPath, currentImagePath, currentFile = null;
@@ -265,10 +294,12 @@ public abstract class Application implements KeyEventDispatcher {
 	 */
 	private ArrayList<Perspective> tmpPerspectives;
 	
+	public static final int DEFAULT_ICON_SIZE = 32;
 
 	private JFrame frame;
 	private AppletImplementation appletImpl;
-
+	private FontManager fontManager;
+	
 	protected GuiManager appGuiManager;
 	private CasManager casView;
 
@@ -289,6 +320,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private Locale currentLocale;
 	private ResourceBundle rbmenu, rbcommand, rbcommandOld, rberror, rbplain, rbsettings;
 	private ImageManager imageManager;
+	private int maxIconSize = DEFAULT_ICON_SIZE;
 
 	// Hashtable for translation of commands from
 	// local language to internal name
@@ -298,7 +330,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private LowerCaseDictionary commandDict;
 
 	private boolean INITING = false;
-	
+	protected boolean showAlgebraView = true;	
 	private boolean showAuxiliaryObjects = false;
 	private boolean showAlgebraInput = true;
 	private boolean showInputTop = false;
@@ -310,7 +342,9 @@ public abstract class Application implements KeyEventDispatcher {
 	private boolean[] showAxes = { true, true };
 	private boolean showGrid = false;
 	private boolean antialiasing = true;
+	private boolean showSpreadsheet = false;
 	private boolean showCAS = false;
+	private boolean disableUndo = false;
 	private boolean printScaleString = false;
 	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
 
@@ -326,31 +360,31 @@ public abstract class Application implements KeyEventDispatcher {
 	private int guiFontSize;
 	private int axesFontSize;
 	private int euclidianFontSize;
-	public Font boldFont, plainFont, smallFont;
 
 	protected JPanel centerPanel;
 
 	private ArrayList<GeoElement> selectedGeos = new ArrayList<GeoElement>();
 
-	private JarManager jarmanager = null;
 	private GgbAPI ggbapi = null;
 	private PluginManager pluginmanager = null;
 	private ScriptManager scriptManager = null;
-	
-	public String IPAddress = "", hostName = "";
 
 	public Application(String[] args, JFrame frame, boolean undoActive) {
-		this(args, frame, null, undoActive);
+		this(args, frame, null, null, undoActive);
 	}
 
-	public Application(String[] args, AppletImplementation appletImpl, boolean undoActive) {
-		this(args, null, appletImpl, undoActive);
+	public Application(String[] args, AppletImplementation appletImpl,
+			boolean undoActive) {
+		this(args, null, appletImpl, null, undoActive);
+	}
+
+	public Application(String[] args, Container comp, boolean undoActive) {
+		this(args, null, null, comp, undoActive);
 	}
 
 	protected Application(String[] args, JFrame frame,
-			AppletImplementation appletImpl, boolean undoActive) {
-		
-		
+			AppletImplementation appletImpl, Container comp, boolean undoActive) {
+
 		/*
 		 * if (args != null) { for (int i=0; i < args.length; i++) {
 		 * Application.debug("argument " + i + ": " + args[i]);
@@ -364,7 +398,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// Michael Borcherds 2008-05-05
 		// added to help debug applets
-		Application.debug("GeoGebra " + GeoGebra.VERSION_STRING + " " +  GeoGebra.BUILD_DATE
+		System.out.println("GeoGebra " + GeoGebra.VERSION_STRING + " " +  GeoGebra.BUILD_DATE
 				+ " Java " + System.getProperty("java.version"));
 		
 		if(frame != null) {
@@ -373,43 +407,34 @@ public abstract class Application implements KeyEventDispatcher {
 			preferredSize = appletImpl.getJApplet().getSize();
 		}
 
-		try {
-	        InetAddress addr = InetAddress.getLocalHost();	    
-	        // Get IP Address
-	        IPAddress = addr.getHostAddress();
-	    
-	        // Get hostname
-	        hostName = addr.getHostName();
-	    } catch (UnknownHostException e) {
-	    	hostName = "";
-	    	IPAddress = "";
-	    }    
-		
 		isApplet = appletImpl != null;
+		JApplet applet = null;
 		if (frame != null) {
-			mainComp = frame;							
-		} 
-		else if (isApplet) {
-			JApplet appl = appletImpl.getJApplet();
-			mainComp = 	appl;			
-			setApplet(appletImpl);			
+			mainComp = frame;
+		} else if (isApplet) {
+			applet = appletImpl.getJApplet();
+			mainComp = applet;
+			setApplet(appletImpl);
+		} else {
+			mainComp = comp;
 		}
 		
+		// init codebase
+		initCodeBase();
+
 		// needed for JavaScript getCommandName(), getValueString() to work
 		// (security problem running non-locally)
 		if (isApplet) {
 			AlgoElement.initAlgo2CommandBundle(this);
 			// needs command.properties in main.jar
 			// causes problems when not in English
-			//initCommandBundle();
-		}		
+			// initCommandBundle();
+		}
 
-		// initialize jar manager for dynamic jar loading
-		jarmanager = JarManager.getSingleton(isApplet);
-		
-				// applet/command line options like file loading on startup
-		handleOptionArgs(args); // note: the locale is set here too
+		fontManager = new FontManager();
 		imageManager = new ImageManager(mainComp);
+		// applet/command line options like file loading on startup
+		handleOptionArgs(args); // note: the locale is set here too
 		
 		// init kernel
 		initKernel();
@@ -423,7 +448,7 @@ public abstract class Application implements KeyEventDispatcher {
 		initEuclidianViews();
 	
 		// set frame
-		if (!isApplet) {
+		if (!isApplet && frame != null) {
 			setFrame(frame);
 		}
 
@@ -431,16 +456,13 @@ public abstract class Application implements KeyEventDispatcher {
 		// INITING: to avoid multiple calls of setLabels() and
 		// updateContentPane()
 		INITING = true;
+		setFontSize(12);
 		
 		// use the layout in case at least one GUI element is displayed
 		useLayout = !isApplet;// || (isApplet && appletImpl.useGui());
 		if(useLayout) {
 			getGuiManager().initialize();
 		}
-		// set font sizes & construct default font objects
-		axesFontSize = INIT_FONT_SIZE - 2;
-		euclidianFontSize = INIT_FONT_SIZE;
-		setGUIFontSize(INIT_FONT_SIZE);
 
 		if (!isApplet) {
 			// init preferences
@@ -512,7 +534,6 @@ public abstract class Application implements KeyEventDispatcher {
 	final public synchronized GuiManager getGuiManager() {
 		if (appGuiManager == null) {
 			setWaitCursor();
-			loadGUIJar();
 
 			appGuiManager = new geogebra.gui.DefaultGuiManager(Application.this);
 			setDefaultCursor();
@@ -533,6 +554,57 @@ public abstract class Application implements KeyEventDispatcher {
 	final public boolean hasGuiManager() {
 		return appGuiManager != null;
 	}
+
+	final public JApplet getJApplet() {
+		if (appletImpl == null)
+			return null;
+		else
+			return appletImpl.getJApplet();
+	}
+	
+	final public Font getBoldFont() {
+		return fontManager.getBoldFont();
+	}
+	
+	final public Font getPlainFont() {
+		return fontManager.getPlainFont();
+	}
+	
+	final public Font getSerifFont() {
+		return fontManager.getSerifFont();
+	}
+	
+	final public Font getSmallFont() {
+		return fontManager.getSmallFont();
+	}
+	
+	final public Font getFont(boolean serif, int style, int size) {
+		String name = serif ? 
+				fontManager.getSerifFont().getFontName() :
+				fontManager.getPlainFont().getFontName();	
+		return FontManager.getFont(name, style, size);
+	}
+	
+	/**
+	 * Returns a font that can display testString.
+	 */
+	public Font getFontCanDisplay(String testString) {
+		return getFontCanDisplay(testString, false, Font.PLAIN, appFontSize);
+	}	
+	
+	/**
+	 * Returns a font that can display testString.
+	 */
+	public Font getFontCanDisplay(String testString, int fontStyle) {
+		return getFontCanDisplay(testString, false, fontStyle, appFontSize);
+	}
+	
+	/**
+	 * Returns a font that can display testString.
+	 */
+	public Font getFontCanDisplay(String testString, boolean serif, int fontStyle, int fontSize) {
+		return fontManager.getFontCanDisplay(testString, false, fontStyle, fontSize);
+	}
 	
 	/**
 	 * Initializes the GeoGebraCAS. Note: this method should
@@ -545,20 +617,6 @@ public abstract class Application implements KeyEventDispatcher {
 		kernel.evaluateMathPiper("Simplify(1+1)");
 	}
 	
-	/**
-	 * Copies all jar files to temp directory. Note: this method should
-	 * be called from a background task.
-	 */
-	public void downloadJarFiles() {
-		// download properties files first
-		jarmanager.downloadFile(JarManager.JAR_FILE_GEOGEBRA_PROPERTIES);
-		
-		for (int i = 0; i < JarManager.JAR_FILES.length; i++) {
-			jarmanager.downloadFile(i);
-		}	
-	}
-	
-	//private static boolean initInBackground_first_time = true;
 
 	public void setUnsaved() {
 		isSaved = false;
@@ -648,19 +706,25 @@ public abstract class Application implements KeyEventDispatcher {
 		Container cp;
 		if (isApplet)
 			cp = appletImpl.getJApplet().getContentPane();
-		else
+		else if (frame != null)
 			cp = frame.getContentPane();
+		else
+			cp = (Container) mainComp;
 		
 		addMacroCommands();
 		cp.removeAll();
 		cp.add(buildApplicationPanel());
-		setLAFFontSize();
+		fontManager.setFontSize(appFontSize);
 		
 		// update sizes		
 		euclidianView.updateSize();
 		
-		if (updateComponentTreeUI)
+		// update layout
+		if (updateComponentTreeUI) {
 			updateComponentTreeUI();
+		}
+		
+		// reset mode and focus
 		setMoveMode();
 		if (mainComp.isShowing())
 			euclidianView.requestFocusInWindow();
@@ -670,13 +734,15 @@ public abstract class Application implements KeyEventDispatcher {
 
 	protected void updateComponentTreeUI() {
 		if (appletImpl != null) {
-			SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());						
-		} 
-		
-		if (frame != null) {				
+			SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
+		}
+		else if (frame != null) {
 			SwingUtilities.updateComponentTreeUI(frame);
 		}
-						
+		else if (mainComp != null) {
+			SwingUtilities.updateComponentTreeUI(mainComp);
+		}
+			
 	}
 
 	/**
@@ -718,7 +784,18 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// init labels
 		setLabels();
-		return panel;
+		
+		// Menubar; if the main component is a JPanel, we need to add the 
+		// menubar manually to the north
+		if (showMenuBar() && mainComp instanceof JPanel) {
+			JPanel menuBarPanel = new JPanel(new BorderLayout());
+			menuBarPanel.add(getGuiManager().getMenuBar(), BorderLayout.NORTH);
+			menuBarPanel.add(panel, BorderLayout.CENTER);
+			return menuBarPanel;
+		} else {
+			// standard case: return 
+			return panel;
+		}
 	}
 
 	public void updateCenterPanel(boolean updateUI) {
@@ -783,6 +860,7 @@ public abstract class Application implements KeyEventDispatcher {
 										+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
 										+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
 										+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
+										+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
 										+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes"
 										+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off");
 					} else if (optionName.equals("language")) {
@@ -800,6 +878,8 @@ public abstract class Application implements KeyEventDispatcher {
 						getGuiManager().setShowAlgebraView(!optionValue.equals("false"));
 					} else if (optionName.equals("showCAS")) {
 						showCAS = (!optionValue.equals("false"));
+					} else if (optionName.equals("enableUndo")) {
+						setUndoActive(!optionValue.equals("false"));
 					} else if (optionName.equals("showAxes")) {
 						showAxes[0] = !optionValue.equals("false");
 						showAxes[1] = showAxes[0];
@@ -934,6 +1014,10 @@ public abstract class Application implements KeyEventDispatcher {
 	final public boolean isApplet() {
 		return isApplet;
 	}
+
+	public boolean isStandaloneApplication() {
+		return !isApplet && (mainComp instanceof JFrame);
+	}
 	
 	public synchronized JFrame getFrame() {
 		if (frame == null) {
@@ -1025,19 +1109,32 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setMoveMode() {
 		setMode(EuclidianView.MODE_MOVE);
 	}
+	
+		
+	/** 
+	 * Sets the maximum pixel size (width and height) of 
+	 * all icons in the user interface. Larger icons are scaled
+	 * down.
+	 * @param pixel: max icon size between 16 and 32 pixels
+	 */
+	public void setMaxIconSize(int pixel) {
+		maxIconSize = Math.min(32, Math.max(16, pixel));
+	}
+	
+	public int getMaxIconSize() {
+		return maxIconSize;
+	}
 
 	public ImageIcon getImageIcon(String filename) {
 		return getImageIcon(filename, null);
 	}
 
 	public ImageIcon getImageIcon(String filename, Color borderColor) {
-		loadGUIJar();
 		return imageManager.getImageIcon("/geogebra/gui/images/" + filename,
 				borderColor);
 	}
 	
 	public ImageIcon getToolBarImage(String filename, Color borderColor) {
-		loadGUIJar();
 		String path = "/geogebra/gui/toolbar/images/" + filename;
 		ImageIcon icon = imageManager.getImageIcon(path, borderColor);
 		
@@ -1048,16 +1145,18 @@ public abstract class Application implements KeyEventDispatcher {
 			icon = imageManager.getImageIcon(path, borderColor);
 		}
 				 
+		// scale icon if necessary
+		icon = ImageManager.getScaledIcon(icon, Math.min(icon.getIconWidth(), maxIconSize), 
+					Math.min(icon.getIconHeight(), maxIconSize));
+		
 		return icon;
 	}
 
 	public ImageIcon getEmptyIcon() {
-		loadGUIJar();
 		return imageManager.getImageIcon("/geogebra/gui/images/empty.gif");
 	}
 
 	public Image getInternalImage(String filename) {
-		loadGUIJar();
 		return imageManager
 				.getInternalImage("/geogebra/gui/images/" + filename);
 	}
@@ -1065,18 +1164,6 @@ public abstract class Application implements KeyEventDispatcher {
 	public Image getRefreshViewImage() {		
 		// don't need to load gui jar as reset image is in main jar
 		return imageManager.getInternalImage("/geogebra/main/view-refresh.png");		
-	}
-	
-	public Image getUpArrowImage() {		
-		return getInternalImage("go-up.png");		
-	}
-	
-	public Image getDownArrowImage() {		
-		return getInternalImage("go-down.png");		
-	}
-	
-	public Image getBlobImage() {		
-		return getInternalImage("blob.png");		
 	}
 	
 	public Image getPlayImage() {		
@@ -1248,119 +1335,7 @@ public abstract class Application implements KeyEventDispatcher {
 		return locale.getLanguage().equals(lang);
 	}
 
-	/**
-	 * Sets the application's fonts for the current language. The user interface
-	 * of certain languages like Chinese or Hebrew looks better with special
-	 * fonts.
-	 */
-	private void getLanguageFontName(Locale locale) throws Exception {
-		String lang = locale.getLanguage();
-
-		// new font names for language
-		String fontNameSansSerif = null;
-		String fontNameSerif = null;
-
-		// CHINESE
-		if ("zh".equals(lang)) {
-			// last CJK unified ideograph in unicode alphabet
-			char testCharacater = '\u984F';
-			fontNameSansSerif = getFontCanDisplay("\u00cb\u00ce\u00cc\u00e5",
-					testCharacater);
-			fontNameSerif = getFontCanDisplay("\u00cb\u00ce\u00cc\u00e5",
-					testCharacater);
-		}
-		
-		// GEORGIAN
-		else if ("ka".equals(lang)) {
-			// some Georgian letter
-			char testCharacater = '\u10d8';
-			fontNameSansSerif = getFontCanDisplay("SansSerif", testCharacater);
-			fontNameSerif = getFontCanDisplay("Sylfaen", testCharacater);
-		}
-		
-		// HEBREW
-		// Guy Hed, 26.4.2009 - added Yiddish, which also use Hebrew letters.
-		else if ("iw".equals(lang) || "ji".equals(lang)) {
-			// Hebrew letter "tav"
-			char testCharacater = '\u05ea';
-			fontNameSansSerif = getFontCanDisplay("Arial", testCharacater);
-			fontNameSerif = getFontCanDisplay("Times New Roman", testCharacater);
-			// Guy Hed, 25.8.2008 - rearranged fonts and changed test character.
-		}
-		
-		// JAPANESE
-		else if ("ja".equals(lang)) {
-			// Katakana letter N
-			char testCharacater = '\uff9d';
-			fontNameSansSerif = getFontCanDisplay("", testCharacater);
-			fontNameSerif = getFontCanDisplay("", testCharacater);
-		}
-		
-		// TAMIL
-		else if ("ta".equals(lang)) {
-			// Tamil digit 1
-			char testCharacater = '\u0be7';
-			fontNameSansSerif = getFontCanDisplay("SansSerif", testCharacater);
-			fontNameSerif = getFontCanDisplay("Serif", testCharacater);
-		}
-		
-		// Malayalam
-		else if ("ml".equals(lang)) {
-			
-			char testCharacater = '\u0d10';
-			fontNameSansSerif = getFontCanDisplay("SansSerif", testCharacater);
-			fontNameSerif = getFontCanDisplay("Serif", testCharacater);
-		}
-		
-		// make sure the font can display the Euler character for "e" = "\u212f"
-		if (fontNameSansSerif == null) {
-			char testCharacater = Kernel.EULER_STRING.charAt(0); // Euler character
-			fontNameSansSerif = getFontCanDisplay(STANDARD_FONT_NAME_SANS_SERIF, testCharacater);
-			fontNameSerif = getFontCanDisplay(STANDARD_FONT_NAME_SERIF, testCharacater);
-		}
-
-		// make sure we have sans serif and serif fonts
-		if (fontNameSansSerif == null)
-			fontNameSansSerif = STANDARD_FONT_NAME_SANS_SERIF;
-		if (fontNameSerif == null)
-			fontNameSerif = STANDARD_FONT_NAME_SERIF;
-
-		// update application fonts if changed
-		if (fontNameSerif != appFontNameSerif
-				|| fontNameSansSerif != appFontNameSansSerif) {
-			appFontNameSerif = fontNameSerif;
-			appFontNameSansSerif = fontNameSansSerif;
-			resetFonts();
-		}
-	
-		//System.out.println("Fonts used, sans: " + appFontNameSansSerif + ", serif: " + appFontNameSerif);
-	}
-
-	/**
-	 * Tries to find a font that can display the given unicode character. Starts
-	 * with standardFontName first.
-	 */
-	private String getFontCanDisplay(String standardFontName, char unicodeChar)
-			throws Exception {
-		// try standard font
-		if (testFontCanDisplay(standardFontName, unicodeChar))
-			return standardFontName;
-
-		// Determine which fonts support the character unicodeChar
-		Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment()
-				.getAllFonts();
-		for (int j = 0; j < allfonts.length; j++) {
-			if (allfonts[j].canDisplay(unicodeChar))
-				return allfonts[j].getFontName();
-		}
-		throw new Exception(
-				"Sorry, there is no font for this language available on your computer.");
-	}
-
-	private static boolean testFontCanDisplay(String fontName, char unicodeChar) {
-		Font testFont = new Font(fontName, Font.PLAIN, 12);
-		return testFont != null && testFont.canDisplay(unicodeChar);
-	}
+	StringBuffer testCharacters = new StringBuffer();
 
 	public void setLocale(Locale locale) {
 		Locale oldLocale = currentLocale;
@@ -1372,7 +1347,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// update font for new language (needed for e.g. chinese)
 		try {
-			getLanguageFontName(currentLocale);
+			fontManager.setLanguage(currentLocale);
 		} catch (Exception e) {
 			e.printStackTrace();
 			showError(e.getMessage());
@@ -1504,44 +1479,11 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/*
-	 * Jar managing
-	 */
-
-	final synchronized public boolean loadPropertiesJar() {
-		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_PROPERTIES);
-	}
-
-	final synchronized public boolean loadExportJar() {
-		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_EXPORT);
-	}
-
-	final synchronized public boolean loadJavaScriptJar() {
-		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_JAVASCRIPT);
-	}
-
-	final synchronized public boolean loadCASJar() {
-		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_CAS);
-	}
-
-	final synchronized public boolean loadGUIJar() {
-		return jarmanager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_GUI);
-	}
-
-	final synchronized public boolean loadLaTeXJar() {
-		return loadGUIJar();
-	}
-
-	final synchronized public String loadTextFile(String fileName) {
-		return jarmanager.loadTextFile(fileName);
-	}
-
-	/*
 	 * properties methods
 	 */
 
 	final public String getPlain(String key) {
 		if (rbplain == null) {
-			loadPropertiesJar();
 			initPlainResourceBundle();
 		}
 
@@ -1552,27 +1494,27 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 
-	final public String reverseGetPlain(String str) {
-		if (rbplain == null && loadPropertiesJar()) {			
-			initPlainResourceBundle();
-		}
-		
-		str = str.toLowerCase();
-
-		try {
-			Enumeration enumer = rbplain.getKeys();
-			
-			while (enumer.hasMoreElements()) {
-				String key = (String)enumer.nextElement();
-				if (rbplain.getString(key).toLowerCase().equals(str))
-					return key;
-			}
-			
-			return str;
-		} catch (Exception e) {
-			return str;
-		}
-	}
+//	final public String reverseGetPlain(String str) {
+//		if (rbplain == null) {			
+//			initPlainResourceBundle();
+//		}
+//		
+//		str = str.toLowerCase();
+//
+//		try {
+//			Enumeration enumer = rbplain.getKeys();
+//			
+//			while (enumer.hasMoreElements()) {
+//				String key = (String)enumer.nextElement();
+//				if (rbplain.getString(key).toLowerCase().equals(str))
+//					return key;
+//			}
+//			
+//			return str;
+//		} catch (Exception e) {
+//			return str;
+//		}
+//	}
 
 	private void initPlainResourceBundle() {
 		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
@@ -1650,7 +1592,6 @@ public abstract class Application implements KeyEventDispatcher {
 
 	final public String getMenu(String key) {
 		if (rbmenu == null) {
-			loadPropertiesJar();
 			rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale);
 		}
 
@@ -1663,7 +1604,6 @@ public abstract class Application implements KeyEventDispatcher {
 
 	final public String getError(String key) {
 		if (rberror == null) {
-			loadPropertiesJar();
 			rberror = MyResourceBundle.createBundle(RB_ERROR, currentLocale);
 		}
 		
@@ -1679,10 +1619,11 @@ public abstract class Application implements KeyEventDispatcher {
 	 * load the properties files first.
 	 */
 	final public void initTranslatedCommands() {
-		if (rbcommand == null) {			
-			loadPropertiesJar();
-			rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale);
-			fillCommandDict();					
+		if (rbcommand == null) {
+			rbcommand = MyResourceBundle
+					.createBundle(RB_COMMAND, currentLocale);
+			fillCommandDict();
+			kernel.updateLocalAxesNames();
 		}
 	}
 
@@ -1870,72 +1811,30 @@ public abstract class Application implements KeyEventDispatcher {
 		getGuiManager().updateFrameTitle();
 	}
 
-	public int getFontSize() {
-		return guiFontSize;
+
+	public void setFontSize(int points) {
+		setFontSize(points, true);
 	}
 	
-	public void setGUIFontSize(int points) {
-		setGUIFontSize(points, true);
-	}
-
-	public void setGUIFontSize(int points, boolean update) {
-		if (points == guiFontSize)
+	public void setFontSize(int points, boolean update) {
+		if (points == appFontSize)
 			return;
-		guiFontSize = points;
+		appFontSize = points;
 		isSaved = false;
+		if (!update) return;
+		
+		resetFonts();
 
-		if(update) {
-			resetFonts();
-	
-			if (!INITING) {
-				if (appletImpl != null)
-					SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
-				if (frame != null)
-					SwingUtilities.updateComponentTreeUI(frame);
-			}
+		if (!INITING) {
+			if (appletImpl != null)
+				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
+			if (frame != null)
+				SwingUtilities.updateComponentTreeUI(frame);
 		}
 	}
 	
-	/**
-	 * Set the font size of elements in the euclidian view.
-	 * @param points
-	 * @param update Whether to update the fonts now
-	 */
-	public void setEuclidianFontSize(int points, boolean update) {
-		if(points == euclidianFontSize)
-			return;
-		
-		euclidianFontSize = points;
-		
-		if(update)
-			updateFonts();
-	}
-	
-	public int getEuclidianFontSize() {
-		return euclidianFontSize;
-	}
-	
-	/**
-	 * Set the font size of the axes in the euclidian view.
-	 * @param points
-	 * @param update Whether to update the fonts now
-	 */
-	public void setAxesFontSize(int points, boolean update) {
-		if(points == axesFontSize)
-			return;
-		
-		axesFontSize = points;
-		
-		if(update)
-			updateFonts();
-	}
-	
-	public int getAxesFontSize() {
-		return axesFontSize;
-	}
-
 	public void resetFonts() {
-		setLAFFontSize();
+		fontManager.setFontSize(appFontSize);
 		updateFonts();
 	}
 
@@ -1948,74 +1847,8 @@ public abstract class Application implements KeyEventDispatcher {
 
 	}
 
-	public Font getBoldFont() {
-		return boldFont;
-	}
-
-	public Font getPlainFont() {
-		return plainFont;
-	}
-
-	public Font getSmallFont() {
-		return smallFont;
-	}
-
-	private void setLAFFontSize() {
-		int size = guiFontSize;
-		// create similar font with the specified size
-		FontUIResource plain = new FontUIResource(appFontNameSansSerif,
-				Font.PLAIN, size);
-		plainFont = plain;
-		smallFont = new FontUIResource(appFontNameSansSerif, Font.PLAIN,
-				size - 2);
-		boldFont = plainFont.deriveFont(Font.BOLD);
-
-		// Dialog
-		UIManager.put("ColorChooser.font", plain);
-		UIManager.put("FileChooser.font", plain);
-
-		// Panel, Pane, Bars
-		UIManager.put("Panel.font", plain);
-		UIManager.put("TextPane.font", plain);
-		UIManager.put("OptionPane.font", plain);
-		UIManager.put("OptionPane.messageFont", plain);
-		UIManager.put("OptionPane.buttonFont", plain);
-		UIManager.put("EditorPane.font", plain);
-		UIManager.put("ScrollPane.font", plain);
-		UIManager.put("TabbedPane.font", plain);
-		UIManager.put("ToolBar.font", plain);
-		UIManager.put("ProgressBar.font", plain);
-		UIManager.put("Viewport.font", plain);
-		UIManager.put("TitledBorder.font", plain);
-
-		// Buttons
-		UIManager.put("Button.font", plain);
-		UIManager.put("RadioButton.font", plain);
-		UIManager.put("ToggleButton.font", plain);
-		UIManager.put("ComboBox.font", plain);
-		UIManager.put("CheckBox.font", plain);
-
-		// Menus
-		UIManager.put("Menu.font", plain);
-		UIManager.put("Menu.acceleratorFont", plain);
-		UIManager.put("PopupMenu.font", plain);
-		UIManager.put("MenuBar.font", plain);
-		UIManager.put("MenuItem.font", plain);
-		UIManager.put("MenuItem.acceleratorFont", plain);
-		UIManager.put("CheckBoxMenuItem.font", plain);
-		UIManager.put("RadioButtonMenuItem.font", plain);
-
-		// Fields, Labels
-		UIManager.put("Label.font", plain);
-		UIManager.put("Table.font", plain);
-		UIManager.put("TableHeader.font", plain);
-		UIManager.put("Tree.font", plain);
-		UIManager.put("Tree.rowHeight", new Integer(size + 5));
-		UIManager.put("List.font", plain);
-		UIManager.put("TextField.font", plain);
-		UIManager.put("PasswordField.font", plain);
-		UIManager.put("TextArea.font", plain);
-		UIManager.put("ToolTip.font", plain);
+	public int getFontSize() {
+		return appFontSize;
 	}
 
 	private void setLabels() {
@@ -2145,8 +1978,6 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public synchronized CasManager getCasView() {
 		if (casView == null) {			
-			loadCASJar();
-
 			// this code wraps the creation of the cas view and is
 			// necessary to allow dynamic loading of this class
 			ActionListener al = new ActionListener() {
@@ -2512,7 +2343,7 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 	
-	private boolean loadXML(byte [] zipFile) {
+	public boolean loadXML(byte [] zipFile) {
 		try {
 			myXMLio.readZipFromString(zipFile);
 			
@@ -2718,11 +2549,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if(asPreference) {
 			sb.append("\t<font ");
 			sb.append(" size=\"");
-			sb.append(guiFontSize);
-			sb.append("\" axesSize=\"");
-			sb.append(axesFontSize);
-			sb.append("\" euclidianSize=\"");
-			sb.append(euclidianFontSize);
+			sb.append(appFontSize);
 			sb.append("\"/>\n");
 		}
 
@@ -2743,7 +2570,12 @@ public abstract class Application implements KeyEventDispatcher {
 		sb.append(getEuclidianView().getXML());
 
 		// save spreadsheetView settings
-		sb.append(getGuiManager().getSpreadsheetViewXML());
+		if (showSpreadsheet) {
+			sb.append(getGuiManager().getSpreadsheetViewXML());
+		}
+		
+		// coord style, decimal places settings etc
+		sb.append(kernel.getKernelXML());
 
 		// save cas view seeting and cas session
 //		if (casView != null) {
@@ -2769,10 +2601,45 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * Returns the CodeBase URL as String.
+	 * Returns the CodeBase URL.
 	 */
 	public URL getCodeBase() {
-		return jarmanager.getCodeBase();
+		if (codebase == null) {
+			initCodeBase();
+		}
+		return codebase;
+	}
+	private URL codebase;
+	private boolean hasFullPermissions = false;
+	
+	private void initCodeBase() {
+		try {
+			// application codebase
+			String path = GeoGebra.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
+			// remove "geogebra.jar" from end of codebase string
+			if (path.endsWith(JAR_FILES[0])) 
+				path = path.substring(0, path.length() -  JAR_FILES[0].length());
+			
+			// set codebase
+			codebase = new URL(path);	
+			hasFullPermissions = true;
+		} 
+		catch (Exception e) {
+			System.out.println("GeoGebra is running with restricted permissions.");
+			hasFullPermissions = false;
+			
+			if (appletImpl != null) {
+				// applet codebase
+				codebase = appletImpl.getJApplet().getCodeBase();
+			}
+		}
+		
+		// TODO: remove
+		System.out.println("codebase: " + codebase);
+	}
+	
+	final public boolean hasFullPermissions() {
+		return hasFullPermissions;
 	}
 	
 	/* selection handling */
@@ -2967,10 +2834,10 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public Component getGlassPane() {
-		if (appletImpl != null && mainComp == appletImpl.getJApplet())
-			return appletImpl.getJApplet().getGlassPane();
-		else if (mainComp == frame)
+		if (mainComp == frame)
 			return frame.getGlassPane();
+		else if (appletImpl != null && mainComp == appletImpl.getJApplet())
+			return appletImpl.getJApplet().getGlassPane();
 		else
 			return null;
 	}
@@ -2983,10 +2850,10 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public Container getContentPane() {
-		if (appletImpl != null && mainComp == appletImpl.getJApplet())
-			return appletImpl.getJApplet().getContentPane();
-		else if (mainComp == frame)
+		if (mainComp == frame)
 			return frame.getContentPane();
+		else if (appletImpl != null && mainComp == appletImpl.getJApplet())
+			return appletImpl.getJApplet().getContentPane();
 		else
 			return null;
 	}
@@ -3020,7 +2887,8 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// if the glass pane is visible, don't do anything
 		// (there might be an animation running)
-		if (getGlassPane().isVisible())
+		Component glassPane = getGlassPane();
+		if (glassPane != null && glassPane.isVisible())
 			return false;
 
 		// handle global keys like ESC and function keys		
@@ -3042,10 +2910,6 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setPrintScaleString(boolean printScaleString) {
 		this.printScaleString = printScaleString;
 	}
-	
-	public boolean isAntialiasing() {
-		return antialiasing;
-	}
 
 	public File getCurrentImagePath() {
 		return currentImagePath;
@@ -3056,11 +2920,24 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * Copies all jar files to the given destination directory.
+	 * Loads text file and returns content as String.
 	 */
-	public synchronized void copyJarsTo(String destDir) throws Exception {
-		jarmanager.copyAllJarsTo(destDir);
-	}
+	public String loadTextFile(String s) {
+        StringBuffer sb = new StringBuffer();        
+        try {
+          InputStream is = Application.class.getResourceAsStream(s);
+          BufferedReader br = new BufferedReader(new InputStreamReader(is));
+          String thisLine;
+          while ((thisLine = br.readLine()) != null) {  
+             sb.append(thisLine);
+             sb.append("\n");
+         }
+      }
+        catch (Exception e) {
+          e.printStackTrace();
+          }
+          return sb.toString();
+      }
 	
 	public final boolean isOnTheFlyPointCreationActive() {
 		return isOnTheFlyPointCreationActive;
@@ -3099,8 +2976,6 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	public ScriptManager getScriptManager() {
 		if (scriptManager == null) {
-			
-			loadJavaScriptJar();
 			scriptManager = new ScriptManager(this);
 		}
 		return scriptManager;
@@ -3247,14 +3122,6 @@ public abstract class Application implements KeyEventDispatcher {
 		// debug("ret = " + ret);
 		return ret;
 		// return e.isMetaDown();
-	}
-
-	public final String getAppFontNameSansSerif() {
-		return appFontNameSansSerif;
-	}
-
-	public final String getAppFontNameSerif() {
-		return appFontNameSerif;
 	}
 
 	// used by PropertyDialogGeoElement and MenuBarImpl

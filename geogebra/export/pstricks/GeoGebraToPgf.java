@@ -1116,9 +1116,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 
 		double a=xmin;
 		double b=xmax;
-		if (f.hasInterval()) {
-			a=Math.max(a,f.getIntervalMin());
-			b=Math.min(b,f.getIntervalMax());
+		if (geo.hasInterval()) {
+			a=Math.max(a,geo.getIntervalMin());
+			b=Math.min(b,geo.getIntervalMax());
 		}
 		double xrangemax=a,xrangemin=a;
 		while (xrangemax<b){

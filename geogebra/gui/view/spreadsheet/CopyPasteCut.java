@@ -330,8 +330,18 @@ public class CopyPasteCut {
 				int ix = x - x1;
 				for (int y = y1; y <= y2; ++ y) {
 					int iy = y - y1;
-					if (ix+column1 <= maxColumn && iy+row1 <= maxRow) { // check not outside selection rectangle
-						//Application.debug(ix+" "+iy);
+					
+					// check if we're pasting back into what we're copying from
+					boolean inSource =  x + (x3-x1) <= x2 &&
+										x + (x3-x1) >= x1 &&
+										y + (y3-y1) <= y2 &&
+										y + (y3-y1) >= y1;
+					
+					
+					//Application.debug("x1="+x1+" x2="+x2+" x3="+x3+" x4="+x4+" x="+x+" ix="+ix);
+					//Application.debug("y1="+y1+" y2="+y2+" y3="+y3+" y4="+y4+" y="+y+" iy="+iy);
+					if (ix+column1 <= maxColumn && iy+row1 <= maxRow//) { // check not outside selection rectangle
+							&& (!inSource) ) { // check we're not pasting over what we're copying
 
 						if (values1[ix][iy] != null) {
 
@@ -384,40 +394,55 @@ public class CopyPasteCut {
 		String[] lines = input.split("\\r*\\n", -1);
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
-			lines[i] = lines[i].trim();
-			Matcher matcher = null;
-			if (lines[i].indexOf('\t') != -1) {
-				matcher = pattern1.matcher(lines[i]);
-			}
-			else {
-				matcher = pattern2.matcher(lines[i]);
-			}
+			
+			// trim() removes tabs which we need
+			lines[i] = geogebra.util.Util.trimSpaces(lines[i]);
 			LinkedList list = new LinkedList();
-			while (matcher.find()) {
-				String data1 = matcher.group(3);
-				String data2 = matcher.group(4);
-				String data3 = matcher.group(5);
-				
-				//Application.debug("data1: "+data1);
-				//Application.debug("data2: "+data2);
-				//Application.debug("data3: "+data3);
-
-				if (data1 != null) {
-					data1 = data1.trim();
-					data1 = checkDecimalComma(data1); // allow decimal comma
-					list.addLast(data1);
-				}
-				else if (data2 != null) {
-					data2 = data2.trim();
-					data2 = checkDecimalComma(data2); // allow decimal comma
-					list.addLast(data2);
-				}
-				else if (data3 != null) {
-					data3 = data3.trim();
-					list.addLast(data3);
+			
+			int firstCommaIndex = lines[i].indexOf(",");
+			int lastCommaIndex = lines[i].lastIndexOf(",");
+			int firstBracketIndex = lines[i].indexOf("[");
+			int lastBracketIndex = lines[i].lastIndexOf("]");
+			
+			if (firstCommaIndex > firstBracketIndex && lastCommaIndex < lastBracketIndex) {
+				// assume it's a GeoGebra command and therefore we don't want to split on commas etc
+				list.addLast(lines[i]);
+			} else {
+			
+				Matcher matcher = null;
+				if (lines[i].indexOf('\t') != -1) {
+					matcher = pattern1.matcher(lines[i]);
 				}
 				else {
-					list.addLast("");
+					matcher = pattern2.matcher(lines[i]);
+				}
+	
+				while (matcher.find()) {
+					String data1 = matcher.group(3);
+					String data2 = matcher.group(4);
+					String data3 = matcher.group(5);
+					
+					//Application.debug("data1: "+data1);
+					//Application.debug("data2: "+data2);
+					//Application.debug("data3: "+data3);
+	
+					if (data1 != null) {
+						data1 = data1.trim();
+						data1 = checkDecimalComma(data1); // allow decimal comma
+						list.addLast(data1);
+					}
+					else if (data2 != null) {
+						data2 = data2.trim();
+						data2 = checkDecimalComma(data2); // allow decimal comma
+						list.addLast(data2);
+					}
+					else if (data3 != null) {
+						data3 = data3.trim();
+						list.addLast(data3);
+					}
+					else {
+						list.addLast("");
+					}
 				}
 			}
 			if (list.size() > 0 && list.getLast().equals("")) {
@@ -458,6 +483,8 @@ public class CopyPasteCut {
 		String[][] data = parseData(buf);
 		int rowStep = data.length;
 		int columnStep = data[0].length;
+		
+		if (columnStep == 0) return false;
 
 		int maxColumn = column2;
 		int maxRow = row2;

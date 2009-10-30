@@ -23,6 +23,10 @@ import geogebra.kernel.Kernel;
 
 import java.io.Serializable;
 
+/**
+ * A term is a pair of coefficient and variables in a Polynomial, 
+ * e.g. {4, "x"}, {a, "xy"}
+ */
 public class Term implements Comparable, Serializable {         
 	
 	private static final long serialVersionUID = 1L;
@@ -294,18 +298,19 @@ public class Term implements Comparable, Serializable {
         return ((Term) o).variables.toString().compareTo(variables.toString());
     }
     
-    public String toString() {        
-        String coeffStr = coeffString(coefficient);                    
-        if (coeffStr.equals("0")) return "0";
-        if (coeffStr.equals("1")) return variableString();
+    public String toString() {                          
+        if (ExpressionNode.isEqualString(coefficient, 0, true)) 
+        	return "0";
+        if (ExpressionNode.isEqualString(coefficient, 1, true)) 
+        	return variableString();
         
         StringBuffer sb = new StringBuffer();
         String var = variableString();
-        if (coeffStr.equals("-1") && var.length() > 0) { 
+        if (ExpressionNode.isEqualString(coefficient, -1, true) && var.length() > 0) { 
             sb.append('-');            
             sb.append(var);                    
         } else {
-            sb.append(coeffStr);                       
+            sb.append(coeffString(coefficient));                       
             if (var != null) {
                 sb.append(' ');
                 sb.append(var);

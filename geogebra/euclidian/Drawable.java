@@ -110,7 +110,7 @@ public abstract class Drawable {
 					oldFont = g2.getFont();
 				
 				// use Serif font so that we can get a nice curly italic x
-				g2.setFont(new Font(view.getApplication().getAppFontNameSerif(), oldFont.getStyle() | Font.ITALIC, oldFont.getSize()));			
+				g2.setFont(view.getApplication().getFont(true, oldFont.getStyle() | Font.ITALIC, oldFont.getSize()));			
 				label = label.substring(3, label.length() - 4);
 				italic = true;
 			} 
@@ -126,8 +126,7 @@ public abstract class Drawable {
 				
 		// no index in label: draw it fast
 		int fontSize = g2.getFont().getSize();
-		if (oldLabelDesc == labelDesc && !labelHasIndex && false && lastFontSize != fontSize) {			
-			
+		if (oldLabelDesc == labelDesc && !labelHasIndex && lastFontSize == fontSize) {
 			lastFontSize = fontSize;
 			g2.drawString(label, xLabel, yLabel);
 			labelRectangle.setLocation(xLabel, yLabel - fontSize);
@@ -419,11 +418,6 @@ public abstract class Drawable {
 	{
 		Dimension dim;
 		if (eqn == null) {
-			if (!app.loadLaTeXJar()) {
-				//Application.debug("Could not initialize LaTeX renderer");
-				return new Dimension(0,0);    		
-	    	}	
-			
 			eqn = new geogebra.gui.hoteqn.sHotEqn(text);
 			//Application.debug(eqn.getSize());
 			eqn.setDoubleBuffered(false);

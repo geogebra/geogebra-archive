@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.image.ImageObserver;
 
 /**
@@ -62,8 +61,8 @@ public class AppletSplashScreen implements ImageObserver {
 				splashScreenImageGraphics = splashScreenImage.getGraphics();
 	
 				// load splash image and animated progress image
-				splashImage = parentApplet.getImage(AppletSplashScreen.class.getResource("splash.gif"));
-				progressImage = parentApplet.getImage(AppletSplashScreen.class.getResource("progress.gif"));
+				splashImage = parentApplet.getImage(AppletSplashScreen.class.getResource("splash.png"));
+				progressImage = parentApplet.getImage(AppletSplashScreen.class.getResource("spinner.gif"));
 			} else {
 				// we couldn't get splashScreenImageGraphics
 				return;				
@@ -99,19 +98,6 @@ public class AppletSplashScreen implements ImageObserver {
 	
 		// draw progress image
 		g.drawImage(progressImage, progressX, progressY, this);
-	
-		// draw status message of JarManager below progress image
-		String statusMessage = parentApplet.getDownloadStatusMessage();
-
-		if (statusMessage != null) {
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			g.setColor(Color.darkGray);
-			g.setFont(DEFAULT_FONT);
-			g.drawString(statusMessage, width / 2
-					- (int) (2.5 * statusMessage.length()), progressY
-					+ PROGRESS_IMAGE_HEIGHT + 2 * DEFAULT_FONT.getSize());
-		}	
 	}
 	
 	public Image getImage() {

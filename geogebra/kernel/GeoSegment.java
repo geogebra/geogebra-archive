@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 import java.util.HashSet;
 

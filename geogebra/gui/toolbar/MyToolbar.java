@@ -106,7 +106,11 @@ public class MyToolbar extends JPanel implements ComponentListener{
         if (app.isUndoActive()) {
 	        // undo part                  	   
 	        undoPanel = new JPanel();
-	        undoPanel.setLayout(new BoxLayout(undoPanel, BoxLayout.Y_AXIS));
+	        if (app.getMaxIconSize() >= 32) {
+	        	undoPanel.setLayout(new BoxLayout(undoPanel, BoxLayout.Y_AXIS));
+	        } else {
+	        	undoPanel.setLayout(new BoxLayout(undoPanel, BoxLayout.X_AXIS));
+	        }
 	        undoPanel.add(Box.createVerticalGlue());
 	        
 	        // undo button
@@ -225,6 +229,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
     	
     	// tooltip
     	modeNameLabel.setToolTipText(app.getToolTooltipHTML(mode));
+    	toolbarHelpPanel.validate();
     }
     
     /** 
@@ -244,7 +249,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
     	} 
     	
     	// show no more than 2 lines
-     	int maxLines = Math.min(2, Math.round(panel.getHeight() / (float) fm.getHeight()));    	
+     	int maxLines = 2*fm.getHeight() < panel.getHeight() ? 2 : 1; 
+     	//Math.min(2, Math.round(panel.getHeight() / (float) fm.getHeight()));    	
     	StringBuffer sbToolName = new StringBuffer();    
     	sbToolName.append("<html><b>");
     	

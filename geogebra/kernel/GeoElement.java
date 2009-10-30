@@ -487,7 +487,7 @@ public abstract class GeoElement
 		boolean increasePrecision = kernel.ensureTemporaryPrintAccuracy(MIN_EDITING_PRINT_PRECISION);
 		
 		String ret = null;
-		boolean isIndependent = useChangeable ? isChangeable() : isIndependent();		
+		boolean isIndependent = !isPointOnPath() && useChangeable ? isChangeable() : isIndependent();		
 		if (isIndependent) {
 			ret = useOutputValueString ? toOutputValueString() : toValueString(); 
 		} else {
@@ -727,8 +727,6 @@ public abstract class GeoElement
 		case  GEO_CLASS_IMAGE:
 		case  GEO_CLASS_BOOLEAN:
 			typePriority = 20; break;
-		case  GEO_CLASS_TEXT:
-			typePriority = 30; break;
 		case  GEO_CLASS_LIST:
 			typePriority = 40; break;
 		case  GEO_CLASS_POLYGON :
@@ -755,8 +753,10 @@ public abstract class GeoElement
 			typePriority = 130; break;
 		case  GEO_CLASS_POINT:
 			typePriority = 140; break;
+		case  GEO_CLASS_TEXT:
+			typePriority = 150; break;
 		default: // shouldn't occur
-			typePriority = 150;
+			typePriority = 160;
 		}
 		
 		// priority = 100 000 000
@@ -1455,7 +1455,7 @@ public abstract class GeoElement
 	 * If newLabel is not already used, this object is renamed to newLabel. 
 	 * Otherwise nothing is done.
 	 */
-	public void setLabel(String newLabel) {				
+	public void setLabel(String newLabel) {	
 		if (cons.isSuppressLabelsActive())
 			return;
 		
@@ -1484,9 +1484,9 @@ public abstract class GeoElement
 			if (cons.isFreeLabel(newLabel)) { // rename    
 				doRenameLabel(newLabel);
 			} else {
-				System.out.println("setLabel DID NOT RENAME:");
-				if (cons.lookupLabel(newLabel) != null)
-					System.out.println(this.label + " to " + newLabel + ", new label is not free: " + cons.lookupLabel(newLabel).getLongDescription());
+				
+				// removed: null pointer exception on Intersect[a,b]
+				//System.out.println("setLabel DID NOT RENAME: " + this.label + " to " + newLabel + ", new label is not free: " + cons.lookupLabel(newLabel).getLongDescription());
 			}
 		}	
 	}
@@ -1590,6 +1590,10 @@ public abstract class GeoElement
 		this.label = label;
 		localVarLabelSet = true;
 	}
+	
+	public boolean isLocalVariable() {
+		return localVarLabelSet;
+	}
 
 	private void doSetLabel(String label) {		
 		// UPDATE KERNEL						
@@ -1619,7 +1623,7 @@ public abstract class GeoElement
 		algebraStringsNeedUpdate();
 		updateSpreadsheetCoordinates();
 		
-		notifyAdd();		
+		notifyAdd();					
 	}	
 	
 	private void updateSpreadsheetCoordinates() {				
@@ -1686,16 +1690,16 @@ public abstract class GeoElement
 		return getSpreadsheetColumnName(column) + row;
 	}
 		
-	public static String getSpreadsheetColumnName(int i) {
-		++ i;		
-		String col = "";
-		while (i > 0) {
-			col = (char)('A' + (i % 26) - 1) + col;
-			i /= 26;
-		}
-		return col;
-	}
-	
+    public static String getSpreadsheetColumnName(int i) {
+        ++ i;  
+        String col = "";
+        while (i > 0) {
+              col = (char)('A' + (i-1) % 26)  + col;
+              i = (i-1)/ 26; 
+        }
+        return col;
+  } 	
+    
 	public static String getSpreadsheetColumnName(String label) {
 		Matcher matcher = spreadsheetPattern.matcher(label);
 		if (! matcher.matches()) return null;
@@ -1998,7 +2002,7 @@ public abstract class GeoElement
 		}
 
 		int counter = 0, q, r;
-		sbDefaultLabel.setLength(0);
+		StringBuffer sbDefaultLabel = new StringBuffer();
 		sbDefaultLabel.append(chars[0]);
 		while (!cons.isFreeLabel(sbDefaultLabel.toString())) {
 			sbDefaultLabel.setLength(0);
@@ -2032,7 +2036,6 @@ public abstract class GeoElement
 		}
 		return sbDefaultLabel.toString();
 	}
-	private StringBuffer sbDefaultLabel = new StringBuffer();
 	
 	public String getIndexLabel(String prefix) {
 		if (prefix == null) 
@@ -2047,7 +2050,7 @@ public abstract class GeoElement
 		else
 			pref = prefix.substring(0, pos);
 		
-		sbIndexLabel.setLength(0);
+		StringBuffer sbIndexLabel = new StringBuffer();
 		int n = 0; // index
 		do {
 			sbIndexLabel.setLength(0);
@@ -2065,7 +2068,6 @@ public abstract class GeoElement
 		} while (!cons.isFreeLabel(sbIndexLabel.toString()));
 		return sbIndexLabel.toString();
 	}
-	private StringBuffer sbIndexLabel = new StringBuffer();
 
 	/**
 	 * Removes this object and all dependent objects from the Kernel.
@@ -2284,10 +2286,12 @@ public abstract class GeoElement
 	 * @param tempSet: a temporary set that is used to collect all algorithms that need to be updated
 	 */
 	final static public synchronized void updateCascade(ArrayList geos, TreeSet tempSet) {
-		// only one geo: call updateCascade()
+			// only one geo: call updateCascade()
 		if (geos.size() == 1) {
-			GeoElement geo = (GeoElement) geos.get(0);
-			geo.updateCascade();
+			ConstructionElement ce = (ConstructionElement) geos.get(0);
+			if (ce.isGeoElement()) {
+				((GeoElement) ce).updateCascade();
+			}
 			return;
 		}
 		
@@ -2297,12 +2301,17 @@ public abstract class GeoElement
 		
 		int size = geos.size();
 		for (int i=0; i < size; i++) {
-			GeoElement geo = (GeoElement) geos.get(i);
-			geo.update();
-			
-			if (geo.isIndependent() && geo.algoUpdateSet != null) {
-				// add all dependent algos of geo to the overall algorithm set
-				geo.algoUpdateSet.addAllToCollection(tempSet);
+			ConstructionElement ce = (ConstructionElement) geos.get(i);
+			if (ce.isGeoElement()) {
+				GeoElement geo = (GeoElement) geos.get(i);
+				geo.update();
+				
+				if ((geo.isIndependent() || geo.isPointOnPath()) && 
+						geo.algoUpdateSet != null) 
+				{
+					// add all dependent algos of geo to the overall algorithm set
+					geo.algoUpdateSet.addAllToCollection(tempSet);
+				}
 			}
 		}
 		
@@ -2323,16 +2332,7 @@ public abstract class GeoElement
 	final public void updateRepaint() {
 		updateCascade();
 		kernel.notifyRepaint();
-	}
-	
-	final void updateCascadeParentAlgo() {		
-		if (algoParent != null) {
-			algoParent.compute();
-			for (int i=0; i < algoParent.output.length; i++) {
-				algoParent.output[i].updateCascade();
-			}
-		}
-	}
+	}		
 
 	public String toString() {
 		return label;
@@ -2589,6 +2589,33 @@ public abstract class GeoElement
 	}
 	
 	/**
+	 * Converts indices to HTML <sub> tags if necessary.
+	 */
+	public static String convertIndicesToHTML(String text) {
+		// check for index
+		if (text.indexOf('_') > -1)
+			return indicesToHTML(text, true);
+		else
+			return text;
+	}
+	
+	public String addLabelTextOrHTML(String desc) {
+		String ret; 
+		if (desc.startsWith(label)) {
+			ret = desc;
+		} else {
+			StringBuffer sb = new StringBuffer();
+			sb.append(label);
+			sb.append(" = ");
+			sb.append(desc);
+			ret = sb.toString();
+		}
+		
+		// check for index
+		return convertIndicesToHTML(ret);
+	}
+	
+	/**
 	 * Returns type string of GeoElement. Note: this is
 	 * equal to getClassName().substring(3), but faster
 	 */
@@ -2614,7 +2641,7 @@ public abstract class GeoElement
 		if (algoParent == null)
 			return getNameDescription();
 		else {			
-			sbLongDesc.setLength(0);
+			StringBuffer sbLongDesc = new StringBuffer();
 			sbLongDesc.append(getNameDescription());			
 			// add dependency information
 			sbLongDesc.append(": ");
@@ -2622,7 +2649,6 @@ public abstract class GeoElement
 			return sbLongDesc.toString();
 		}
 	}
-	private StringBuffer sbLongDesc = new StringBuffer();
 
 	/**
 	 * returns Type, label and definition information about this GeoElement
@@ -2635,7 +2661,7 @@ public abstract class GeoElement
 		if (algoParent == null || isTextValue())
 			return getNameDescriptionHTML(colored, addHTMLtag);
 		else {
-			sbLongDescHTML.setLength(0);
+			StringBuffer sbLongDescHTML = new StringBuffer();
 			
 			String label = getLabel();
 			String typeString = translatedTypeString();			
@@ -2684,7 +2710,6 @@ public abstract class GeoElement
 			return sbLongDescHTML.toString();
 		}
 	}
-	private StringBuffer sbLongDescHTML = new StringBuffer();
 
 
 	/**
@@ -2697,7 +2722,8 @@ public abstract class GeoElement
 		if (geos == null)
 			return null;
 		
-		sbToolTipDesc.setLength(0);		
+		StringBuffer sbToolTipDesc = new StringBuffer();
+		
 		if (addHTMLtag)
 			sbToolTipDesc.append("<html>");
 		int count=0;
@@ -2715,7 +2741,6 @@ public abstract class GeoElement
 			sbToolTipDesc.append("</html>");
 		return sbToolTipDesc.toString();
 	}
-	private static StringBuffer sbToolTipDesc = new StringBuffer();
 
 	/**
 		* Returns the label and/or value of this object for 
@@ -2807,8 +2832,8 @@ public abstract class GeoElement
 		if (strAlgebraDescriptionNeedsUpdate) {
 			if (isDefined()) {
 				strAlgebraDescription = toString();
-			} else {				
-				sbAlgebraDesc.setLength(0);			
+			} else {			
+				StringBuffer sbAlgebraDesc = new StringBuffer();		
 				sbAlgebraDesc.append(label);
 				sbAlgebraDesc.append(' ');
 				sbAlgebraDesc.append(app.getPlain("undefined"));
@@ -2820,7 +2845,6 @@ public abstract class GeoElement
 		
 		return strAlgebraDescription;
 	}	
-	private StringBuffer sbAlgebraDesc = new StringBuffer();
 	
 	final public String getLaTeXdescription() {
 		if (strLaTeXneedsUpdate) {			
@@ -2856,7 +2880,8 @@ public abstract class GeoElement
 	private static String subBegin = "<sub><font size=\"-1\">";
 	private static String subEnd = "</font></sub>";
 	public static String indicesToHTML(String str, boolean addHTMLtag) {
-		sbIndicesToHTML.setLength(0);
+		StringBuffer sbIndicesToHTML = new StringBuffer();
+		
 		if (addHTMLtag)
 			sbIndicesToHTML.append("<html>");
 
@@ -2910,14 +2935,13 @@ public abstract class GeoElement
 			sbIndicesToHTML.append("</html>");
 		return sbIndicesToHTML.toString();
 	}
-	private static StringBuffer sbIndicesToHTML = new StringBuffer();
 
 	/**
 		* returns type and label of a GeoElement 
 		* (for tooltips and error messages)		
 		*/
 	public String getNameDescription() {
-		sbNameDescription.setLength(0);
+		StringBuffer sbNameDescription = new StringBuffer();
 		
 		String label = getLabel();
 		String typeString = translatedTypeString();
@@ -2937,7 +2961,6 @@ public abstract class GeoElement
 				
 		return sbNameDescription.toString();
 	}
-	private StringBuffer sbNameDescription = new StringBuffer();
 
 	/**
 		* returns type and label of a GeoElement 
@@ -2972,7 +2995,9 @@ public abstract class GeoElement
 	public String getNameDescriptionHTML(
 		boolean colored,
 		boolean addHTMLtag) {
-		sbNameDescriptionHTML.setLength(0);
+		
+		StringBuffer sbNameDescriptionHTML = new StringBuffer();
+		
 		if (addHTMLtag)
 			sbNameDescriptionHTML.append("<html>");
 		
@@ -3005,7 +3030,6 @@ public abstract class GeoElement
 			sbNameDescriptionHTML.append("</html>");							
 		return sbNameDescriptionHTML.toString();
 	}
-	private StringBuffer sbNameDescriptionHTML = new StringBuffer();
 
 	/*******************************************************
 	 * SAVING

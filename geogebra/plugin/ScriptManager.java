@@ -43,8 +43,6 @@ public class ScriptManager {
 	public boolean evalScript(String script) {
 		boolean success = true;
 
-		app.loadJavaScriptJar();
-		
         Context cx = Context.enter();
         try {
             // Initialize the standard objects (Object, Function, etc.)

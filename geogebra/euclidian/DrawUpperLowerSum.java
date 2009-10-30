@@ -20,7 +20,6 @@ import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 
 /**
  * Draws upper / lower sum of a GeoFunction
@@ -33,7 +32,7 @@ public class DrawUpperLowerSum extends Drawable {
 
     boolean isVisible, labelVisible;     
     private AlgoFunctionAreaSums algo;   
-    private GeneralPath gp = new GeneralPath();
+    private GeneralPathClipped gp;
     private double [] coords = new double[2];
     private boolean trapeziums;
     private boolean histogram;
@@ -62,6 +61,9 @@ public class DrawUpperLowerSum extends Drawable {
 		labelVisible = geo.isLabelVisible();            
 		updateStrokes(sum);
 		
+		if (gp == null)
+			gp = new GeneralPathClipped(view);
+		
 		if (boxplot)
 		{
 			updateBoxPlot();
@@ -79,9 +81,9 @@ public class DrawUpperLowerSum extends Drawable {
 		double aRW = a.getDouble();
 		double bRW = b.getDouble();
 
-		int ax = view.toScreenCoordX(aRW);
-		int bx = view.toScreenCoordX(bRW);
-		float y0 = (float) view.yZero;
+		double ax = view.toScreenCoordXd(aRW);
+		double bx = view.toScreenCoordXd(bRW);
+		double y0 = view.yZero;
 				
 		// plot upper/lower sum rectangles
 		int N = algo.getIntervals();		
@@ -89,8 +91,8 @@ public class DrawUpperLowerSum extends Drawable {
 		double [] yval = algo.getValues();
 		
 		// first point 						
-		float x = ax;
-		float y = y0;		
+		double x = ax;
+		double y = y0;		
 		gp.moveTo(x, y);					
 		for (int i=0; i < N; i++) {
 			coords[0] = leftBorder[i];						
@@ -105,14 +107,14 @@ public class DrawUpperLowerSum extends Drawable {
 				coords[1] = view.height + 1;
 			}*/
 			
-			x = (float) coords[0];			
+			x = (double) coords[0];			
 			
-			if (trapeziums) gp.lineTo(x, (float)coords[1]); // top
+			if (trapeziums) gp.lineTo(x, coords[1]); // top
 			else gp.lineTo(x, y); // top
 			
 			gp.lineTo(x, y0); // RHS
 			gp.moveTo(x, y);
-			y = (float) coords[1];
+			y = (double) coords[1];
 			gp.moveTo(x, y0);
 			gp.lineTo(x, y);			 								
 		} 	
@@ -121,7 +123,7 @@ public class DrawUpperLowerSum extends Drawable {
 			coords[0] = leftBorder[N];						
 			coords[1] = yval[N];
 			view.toScreenCoords(coords);
-			gp.lineTo(bx, (float) coords[1]); // last bar: top
+			gp.lineTo(bx, (double) coords[1]); // last bar: top
 		}
 		else
 		{
@@ -140,7 +142,7 @@ public class DrawUpperLowerSum extends Drawable {
 		}		
 
 		if (labelVisible) {
-			xLabel = (ax + bx) / 2 - 6;
+			xLabel = (int) Math.round((ax + bx) / 2) - 6;
 			yLabel = (int) view.yZero - view.fontSize;
 			labelDesc = geo.getLabelDescription();
 			addLabelOffset();
@@ -153,87 +155,84 @@ public class DrawUpperLowerSum extends Drawable {
 		gp.reset();
 		double yOff = a.getDouble();
 		double yScale = b.getDouble();
-
-		int ax = view.toScreenCoordY(yOff);
-		int bx = view.toScreenCoordX(yScale);
-				
+	
 		// plot upper/lower sum rectangles
 		double [] leftBorder = algo.getLeftBorders();
 		
 		coords[0] = leftBorder[0];						
 		coords[1] = -yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.moveTo((float)coords[0], (float)coords[1]);
+		gp.moveTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[0];						
 		coords[1] = yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[0];						
 		coords[1] = 0 + yOff;
 		view.toScreenCoords(coords);
-		gp.moveTo((float)coords[0], (float)coords[1]);
+		gp.moveTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[1];						
 		coords[1] = 0 + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[1];						
 		coords[1] = yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[3];						
 		coords[1] = yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[3];						
 		coords[1] = -yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[1];						
 		coords[1] = -yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[1];						
 		coords[1] = 0 + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[3];						
 		coords[1] = 0 + yOff;
 		view.toScreenCoords(coords);
-		gp.moveTo((float)coords[0], (float)coords[1]);
+		gp.moveTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[4];						
 		coords[1] = 0 + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[4];						
 		coords[1] = yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.moveTo((float)coords[0], (float)coords[1]);
+		gp.moveTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[4];						
 		coords[1] = -yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[2];						
 		coords[1] = yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.moveTo((float)coords[0], (float)coords[1]);
+		gp.moveTo((double)coords[0], (double)coords[1]);
 			
 		coords[0] = leftBorder[2];						
 		coords[1] = -yScale + yOff;
 		view.toScreenCoords(coords);
-		gp.lineTo((float)coords[0], (float)coords[1]);
+		gp.lineTo((double)coords[0], (double)coords[1]);
 			
 
 		// gp on screen?		
@@ -253,19 +252,19 @@ public class DrawUpperLowerSum extends Drawable {
     }
     private void updateBarChart() {
 		gp.reset();
-		float base = (float) view.yZero;
+		double base = (double) view.yZero;
 				
 		int N = algo.getIntervals();		
 		double [] leftBorder = algo.getLeftBorders();
 		double [] yval = algo.getValues();
 		
-		gp.moveTo(view.toScreenCoordX(leftBorder[0]), base);	
+		gp.moveTo(view.toScreenCoordXd(leftBorder[0]), base);	
 		
 		for (int i = 0; i < N - 1; i++) {
 			
-			float x0 = view.toScreenCoordX(leftBorder[i]);	
-			float height = view.toScreenCoordY(yval[i]);
-			float x1 = view.toScreenCoordX(leftBorder[i + 1]);
+			double x0 = view.toScreenCoordXd(leftBorder[i]);	
+			double height = view.toScreenCoordYd(yval[i]);
+			double x1 = view.toScreenCoordXd(leftBorder[i + 1]);
 			
 			gp.lineTo(x0, height); // up
 			gp.lineTo(x1, height); // along
@@ -273,7 +272,7 @@ public class DrawUpperLowerSum extends Drawable {
 			
 		} 	
 		
-		gp.lineTo(view.toScreenCoordX(leftBorder[0]), base);
+		gp.lineTo(view.toScreenCoordXd(leftBorder[0]), base);
 
 		
 		// gp on screen?		

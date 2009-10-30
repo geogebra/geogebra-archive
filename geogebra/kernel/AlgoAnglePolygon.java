@@ -88,7 +88,7 @@ public class AlgoAnglePolygon extends AlgoElement {
     // calc all angles of the polygon
     // this is done by the algorithms created in createAngles()
     // so nothing has to be done here
-    void update() {}
+    public void update() {}
 
     protected final void compute() {}
 

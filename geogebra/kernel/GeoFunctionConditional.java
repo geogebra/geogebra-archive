@@ -60,7 +60,7 @@ public class GeoFunctionConditional extends GeoFunction {
 		return new GeoFunctionConditional(this);
 	}		
 	
-	public void set(GeoElement geo) {				
+	public void set(GeoElement geo) {		
 		GeoFunctionConditional geoFunCond = (GeoFunctionConditional) geo;
 		isDefined = geoFunCond.isDefined;
 			
@@ -125,14 +125,6 @@ public class GeoFunctionConditional extends GeoFunction {
     	return elseFun;
     }
     
-    public boolean setInterval(double a, double b) {
-    	boolean success = ifFun.setInterval(a, b);
-    	if (elseFun != null)
-    		success = elseFun.setInterval(a, b) && success;
-    	
-    	return success;
-	}       
-    
 	 /**
      * Replaces geo and all its dependent geos in this function's
      * expressions by copies of their values.
@@ -179,7 +171,13 @@ public class GeoFunctionConditional extends GeoFunction {
 	 * @param x 
 	 * @return f(x) = condition(x) ? ifFun(x) : elseFun(x)
 	 */
-	final public double evaluate(double x) {		
+	final public double evaluate(double x) {	
+        if (interval) {
+            // check if x is in interval [a, b]
+            if (x < intervalMin || x > intervalMax) 
+            	return Double.NaN;           
+        }
+		
 		if (condFun.evaluateBoolean(x))
 			return ifFun.evaluate(x);
 		else {
@@ -286,39 +284,6 @@ public class GeoFunctionConditional extends GeoFunction {
 	
 	final public String toLaTeXString(boolean symbolic) {	
 		return toString(symbolic);
-	}
-			
-	/* 
-	 * Path interface
-	 */	 
-	public void pointChanged(GeoPointInterface PI) {		
-		
-		GeoPoint P = (GeoPoint) PI;
-		
-		if (P.z == 1.0) {
-			P.x = P.x;			
-		} else {
-			P.x = P.x / P.z;			
-		}						
-		
-		P.y = evaluate(P.x);
-		P.z = 1.0;
-		
-		// set path parameter for compatibility with
-		// PathMoverGeneric
-		PathParameter pp = P.getPathParameter();
-		pp.t = P.x;
-	}
-	
-	public boolean isOnPath(GeoPointInterface PI, double eps) {
-		
-		GeoPoint P = (GeoPoint) PI;
-		
-		if (P.getPath() == this)
-			return true;
-		
-		return isDefined() &&
-			Math.abs(evaluate(P.inhomX) - P.inhomY) <= eps;
 	}
 
 	public boolean isGeoFunction() {

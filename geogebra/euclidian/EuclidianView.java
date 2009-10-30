@@ -55,11 +55,14 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -148,16 +151,41 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public static final int AXES_TICK_STYLE_NONE = 2;
 
 	public static final int POINT_STYLE_DOT = 0;
-
 	public static final int POINT_STYLE_CROSS = 1;
-
 	public static final int POINT_STYLE_CIRCLE = 2;
+	public static final int POINT_STYLE_PLUS = 3;
+	public static final int POINT_STYLE_FILLED_DIAMOND = 4;
+	public static final int POINT_STYLE_EMPTY_DIAMOND = 5;
+	public static final int POINT_STYLE_TRIANGLE_NORTH = 6;
+	public static final int POINT_STYLE_TRIANGLE_SOUTH = 7;
+	public static final int POINT_STYLE_TRIANGLE_EAST = 8;
+	public static final int POINT_STYLE_TRIANGLE_WEST = 9;
+	public static final int MAX_POINT_STYLE = 9;
 
+	// G.Sturr added 2009-9-21 
+	public static final Integer[] getPointStyles() {
+		Integer[] ret = { new Integer(POINT_STYLE_DOT),
+				new Integer(POINT_STYLE_CROSS),
+				new Integer(POINT_STYLE_CIRCLE),
+				new Integer(POINT_STYLE_PLUS),
+				new Integer(POINT_STYLE_FILLED_DIAMOND),
+				new Integer(POINT_STYLE_EMPTY_DIAMOND),
+				new Integer(POINT_STYLE_TRIANGLE_NORTH),
+				new Integer(POINT_STYLE_TRIANGLE_SOUTH),
+				new Integer(POINT_STYLE_TRIANGLE_EAST),
+				new Integer(POINT_STYLE_TRIANGLE_WEST)	
+				};
+		return ret;
+	}
+	//end		
+	
 	public static final int RIGHT_ANGLE_STYLE_NONE = 0;
 
 	public static final int RIGHT_ANGLE_STYLE_SQUARE = 1;
 
 	public static final int RIGHT_ANGLE_STYLE_DOT = 2;
+
+	public static final int RIGHT_ANGLE_STYLE_L = 3; // Belgian style
 
 	public static final int DEFAULT_POINT_SIZE = 3;
 
@@ -582,15 +610,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * Sets the global style for point drawing.
 	 */
 	public void setPointStyle(int style) {
-		switch (style) {
-		case 1:
-		case 2:
+		if (style > 0 && style <= MAX_POINT_STYLE)
 			pointStyle = style;
-			break;
-
-		default:
+		else
 			pointStyle = POINT_STYLE_DOT;
-		}
+		
 		updateAllDrawables(true);
 	}
 
@@ -685,14 +709,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	public void updateFonts() {
-		fontSize = app.getEuclidianFontSize();
+		fontSize = app.getFontSize();
 
 		fontPoint = app.getPlainFont().deriveFont(Font.PLAIN, fontSize);
 		fontAngle = fontPoint;
 		fontLine = fontPoint;
 		fontVector = fontPoint;
 		fontConic = fontPoint;
-		fontCoords = app.getPlainFont().deriveFont(Font.PLAIN, app.getAxesFontSize());
+		fontCoords = app.getSmallFont();
 		fontAxes = fontCoords;
 			
 		updateDrawableFontSize();
@@ -879,60 +903,89 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * Converts real world coordinates to screen coordinates.
+	 * Note that MAX_SCREEN_COORD is used to avoid huge coordinates.
 	 * 
-	 * @param inOut:
-	 *            input and output array with x and y coords
+	 * @param inOut: input and output array with x and y coords
+	 * @return: if resulting coords are on screen
 	 */
-	final public void toScreenCoords(double[] inOut) {
+	final public boolean toScreenCoords(double[] inOut) {
+		// convert to screen coords
 		inOut[0] = xZero + inOut[0] * xscale;
 		inOut[1] = yZero - inOut[1] * yscale;
-
-		// java drawing crashes for huge coord values
-		if (Math.abs(inOut[0]) > MAX_SCREEN_COORD_VAL
-				|| Math.abs(inOut[0]) > MAX_SCREEN_COORD_VAL) {
-			inOut[0] = Double.NaN;
-			inOut[1] = Double.NaN;
-		}
-	}
-
-	public static final double MAX_SCREEN_COORD_VAL = 1E6;
-
-	/**
-	 * Converts real world coordinates to screen coordinates. If a coord value
-	 * is outside the screen it is clipped to a rectangle with border
-	 * PIXEL_OFFSET around the screen.
-	 * 
-	 * @param inOut:
-	 *            input and output array with x and y coords
-	 * @return true iff resulting coords are on screen, note: Double.NaN is NOT
-	 *         checked
-	 */
-	final public boolean toClippedScreenCoords(double[] inOut, int PIXEL_OFFSET) {
-		inOut[0] = xZero + inOut[0] * xscale;
-		inOut[1] = yZero - inOut[1] * yscale;
-
+		
+		// check if (x, y) is on screen
 		boolean onScreen = true;
-
-		// x-coord on screen?
-		if (inOut[0] < 0) {
-			inOut[0] = Math.max(inOut[0], -PIXEL_OFFSET);
-			onScreen = false;
-		} else if (inOut[0] > width) {
-			inOut[0] = Math.min(inOut[0], width + PIXEL_OFFSET);
+		
+		// note that java drawing has problems for huge coord values
+		// so we use FAR_OFF_SCREEN for clipping
+		if (Double.isNaN(inOut[0]) || Double.isInfinite(inOut[0])) {
+			inOut[0] = Double.NaN;
 			onScreen = false;
 		}
-
-		// y-coord on screen?
-		if (inOut[1] < 0) {
-			inOut[1] = Math.max(inOut[1], -PIXEL_OFFSET);
-			onScreen = false;
-		} else if (inOut[1] > height) {
-			inOut[1] = Math.min(inOut[1], height + PIXEL_OFFSET);
+		else if (inOut[0] < 0 ) { // x left of screen
+			//inOut[0] = Math.max(inOut[0], -MAX_SCREEN_COORD);
 			onScreen = false;
 		}
-
+		else if (inOut[0] > width) { // x right of screen
+			//inOut[0] = Math.min(inOut[0], width + MAX_SCREEN_COORD);
+			onScreen = false;
+		}
+		
+		// y undefined
+		if (Double.isNaN(inOut[1]) || Double.isInfinite(inOut[1])) {
+			inOut[1] = Double.NaN;
+			onScreen = false;
+		}
+		else if (inOut[1] < 0) { // y above screen
+			//inOut[1] = Math.max(inOut[1], -MAX_SCREEN_COORD);
+			onScreen = false;
+		}
+		else if (inOut[1] > height) { // y below screen
+			//inOut[1] = Math.min(inOut[1], height + MAX_SCREEN_COORD);
+			onScreen = false;
+		}
+			
 		return onScreen;
 	}
+
+	//private static final double MAX_SCREEN_COORD = Float.MAX_VALUE; //10000;
+
+//	/**
+//	 * Converts real world coordinates to screen coordinates. If a coord value
+//	 * is outside the screen it is clipped to a rectangle with border
+//	 * PIXEL_OFFSET around the screen.
+//	 * 
+//	 * @param inOut:
+//	 *            input and output array with x and y coords
+//	 * @return true iff resulting coords are on screen, note: Double.NaN is NOT
+//	 *         checked
+//	 */
+//	final public boolean toClippedScreenCoords(double[] inOut, int PIXEL_OFFSET) {
+//		inOut[0] = xZero + inOut[0] * xscale;
+//		inOut[1] = yZero - inOut[1] * yscale;
+//
+//		boolean onScreen = true;
+//
+//		// x-coord on screen?
+//		if (inOut[0] < 0) {
+//			inOut[0] = Math.max(inOut[0], -PIXEL_OFFSET);
+//			onScreen = false;
+//		} else if (inOut[0] > width) {
+//			inOut[0] = Math.min(inOut[0], width + PIXEL_OFFSET);
+//			onScreen = false;
+//		}
+//
+//		// y-coord on screen?
+//		if (inOut[1] < 0) {
+//			inOut[1] = Math.max(inOut[1], -PIXEL_OFFSET);
+//			onScreen = false;
+//		} else if (inOut[1] > height) {
+//			inOut[1] = Math.min(inOut[1], height + PIXEL_OFFSET);
+//			onScreen = false;
+//		}
+//
+//		return onScreen;
+//	}
 
 	/**
 	 * convert screen coordinate x to real world coordinate x
@@ -1001,6 +1054,42 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 	
 	protected MyZoomerRW zoomerRW;
+	
+	int widthTemp, heightTemp;
+	double xminTemp, xmaxTemp, yminTemp, ymaxTemp;
+
+	final public void setTemporaryCoordSystemForExport() {
+		widthTemp = width;
+		heightTemp = height;
+		xminTemp = xmin;
+		xmaxTemp = xmax;
+		yminTemp = ymin;
+		ymaxTemp = ymax;
+		
+		try {
+			GeoPoint export1=(GeoPoint)app.getKernel().lookupLabel(EuclidianView.EXPORT1);	       
+			GeoPoint export2=(GeoPoint)app.getKernel().lookupLabel(EuclidianView.EXPORT2);
+			
+			if (export1 == null || export2 == null) return;
+			
+			double [] xy1 = new double[2];
+			double [] xy2 = new double[2];
+			export1.getInhomCoords(xy1);
+			export2.getInhomCoords(xy2);
+
+			setRealWorldCoordSystem(Math.min(xy1[0], xy2[0]), Math.max(xy1[0], xy2[0]), Math.min(xy1[1], xy2[1]), Math.max(xy1[1], xy2[1]));
+
+		}
+		catch (Exception e) {
+			restoreOldCoordSystem();
+		}
+	}
+	
+	final public void restoreOldCoordSystem() {
+		width = widthTemp;
+		height = heightTemp;
+		setRealWorldCoordSystem(xminTemp, xmaxTemp, yminTemp, ymaxTemp);
+	}
 
 	public void setCoordSystem(double xZero, double yZero, double xscale,
 			double yscale, boolean repaint) {
@@ -1279,10 +1368,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			drawMouseCoords(g2);
 		if (showAxesRatio)
 			drawAxesRatio(g2);
-		
-		if (mode == EuclidianConstants.MODE_WHITEBOARD)
-			drawWhiteboardButtons(g2);
-		
+
 		if (kernel.needToShowAnimationButton()) {
 			drawAnimationButtons(g2);
 		}
@@ -1425,18 +1511,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * 
 	 */
 	public void exportPaint(Graphics2D g2d, double scale) {
-		exportPaint(g2d, scale, false);
-	}
-	public void exportPaint(Graphics2D g2d, double scale, boolean transparency) {
 		
-		exportPaintPre(g2d,scale, transparency);
+		exportPaintPre(g2d,scale);
 		drawObjects(g2d);			
 	}
-	
+
 	public void exportPaintPre(Graphics2D g2d, double scale) {
-		exportPaintPre(g2d, scale, false);
-	}
-	public void exportPaintPre(Graphics2D g2d, double scale, boolean transparency) {
 		g2d.scale(scale, scale);	
 		
 		// clipping on selection rectangle
@@ -1481,12 +1561,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if (isTracing() || hasBackgroundImages()) {
 			// draw background image to get the traces
 			if (bgImage == null)
-				drawBackgroundWithImages(g2d, transparency);
+				drawBackgroundWithImages(g2d);
 			else
 				g2d.drawImage(bgImage, 0, 0, this);
 		} else {
-			// just clear the background if transparency is disabled (clear = draw background color)
-			drawBackground(g2d, !transparency);
+            drawBackground(g2d, true);
 		}
 
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
@@ -1519,31 +1598,54 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * Returns image of drawing pad sized according to the given scale factor.
 	 */
 	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
-		return getExportImage(scale, false);
-	}
-	
-	public BufferedImage getExportImage(double scale, boolean transparency) throws OutOfMemoryError {
 		int width = (int) Math.floor(getExportWidth() * scale);
 		int height = (int) Math.floor(getExportHeight() * scale);		
-		BufferedImage img = createBufferedImage(width, height, transparency);
-		exportPaint(img.createGraphics(), scale, transparency); 
+		BufferedImage img = createBufferedImage(width, height);
+		
+		Graphics2D g2d = img.createGraphics();
+		//g2d.setComposite(AlphaComposite.Src);
+		
+		exportPaint(g2d, scale); 
 		img.flush();
 		return img;
 	}
-	
-	protected BufferedImage createBufferedImage(int width, int height) {
-		return createBufferedImage(width, height, false);
-	}
 
-	protected BufferedImage createBufferedImage(int width, int height, boolean transparency)
+	protected BufferedImage createBufferedImage(int width, int height)
 			throws OutOfMemoryError {
+		
+		
+		GraphicsEnvironment ge =
+			GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+			GraphicsDevice gs = ge.getDefaultScreenDevice();
+
+			GraphicsConfiguration gc =
+			gs.getDefaultConfiguration();
+			BufferedImage bufImg = gc.createCompatibleImage(width,
+				height, Transparency.BITMASK);
+
+
+
+				//Graphics2D g = (Graphics2D)bufImg.getGraphics();
+
+				//g.setBackground(new Color(0,0,0,0));
+
+				//g.clearRect(0,0,width,height);
+				
+				return bufImg;
+				
+				/*
+
+
+
+		
 		// this image might be too big for our memory
 		BufferedImage img = null;
 		try {
 			System.gc();
-			img = new BufferedImage(width, height, (transparency ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB));
+			img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		} catch (OutOfMemoryError e) {
-			Application.debug(e.getMessage() + ": BufferedImage.TYPE_INT_"+(transparency ? "A" : "")+"RGB");
+			Application.debug(e.getMessage() + ": BufferedImage.TYPE_INT_RGB");
 			try {
 				System.gc();
 				img = new BufferedImage(width, height,
@@ -1556,7 +1658,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						BufferedImage.TYPE_BYTE_INDEXED);
 			}
 		}
-		return img;
+		return img;*/
 	}
 
 	final public Graphics2D getBackgroundGraphics() {
@@ -1580,13 +1682,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 	
 	private void drawBackgroundWithImages(Graphics2D g) {
-		drawBackgroundWithImages(g, false);
-	}
-	
-	private void drawBackgroundWithImages(Graphics2D g, boolean transparency) {
-		if(!transparency)
-			clearBackground(g);
-		
+		clearBackground(g);
 		bgImageList.drawAll(g); 
 		drawBackground(g, false);
 	}
@@ -1619,20 +1715,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			playImage = app.getPlayImage();
 		}
 		return playImage;
-	}
-	
-	private Image getUpArrowImage() {
-		if (upArrowImage == null) {
-			upArrowImage = app.getUpArrowImage();
-		}
-		return upArrowImage;
-	}
-	
-	private Image getDownArrowImage() {
-		if (downArrowImage == null) {
-			downArrowImage = app.getDownArrowImage();
-		}
-		return downArrowImage;
 	}
 	
 	private Image getPauseImage() {
@@ -2057,71 +2139,13 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		} else {
 			g2.setColor(Color.lightGray);			
 		}
-
+		
+		g2.setStroke(EuclidianView.getDefaultStroke());
+		
 		// draw pause or play button
 		g2.drawRect(x-2, y-2, 18, 18);
 		Image img = kernel.isAnimationRunning() ? getPauseImage() : getPlayImage();			
 		g2.drawImage(img, x, y, null);
-	}
-	
-	final protected void drawWhiteboardButtons(Graphics2D g2) {
-		int x = 6;
-		int y = 6;
-				
-		//if (highlightAnimationButtons) {
-			// draw filled circle to highlight button
-			g2.setColor(Color.darkGray);
-		//} else {
-		//	g2.setColor(Color.lightGray);			
-		//}
-
-		// draw pause or play button
-			g2.setColor(Color.darkGray);
-			g2.drawRect(x-2, y-2, 18, 18);
-			Image img = getUpArrowImage();			
-			g2.drawImage(img, x, y, null);
-			
-			y+=18;
-			g2.setColor(Color.darkGray);
-			g2.drawRect(x-2, y-2, 18, 18);
-			g2.setColor(Color.red);
-			int size = 6;
-			g2.fillOval(x + 8 - size, y + 7 - size, size * 2 , size * 2);
-			
-			y+=18;
-			g2.setColor(Color.darkGray);
-			g2.drawRect(x-2, y-2, 18, 18);
-			img = getDownArrowImage();			
-			g2.drawImage(img, x, y, null);
-
-			y+=24;
-			g2.setColor(Color.darkGray);
-			g2.drawRect(x-2, y-2, 18, 18);
-			img = getUpArrowImage();			
-			g2.drawImage(img, x, y, null);
-
-			y+=18;
-
-			y+=18;
-			g2.setColor(Color.darkGray);
-			g2.drawRect(x-2, y-2, 18, 18);
-			img = getDownArrowImage();			
-			g2.drawImage(img, x, y, null);
-
-			y+=24;
-			g2.setColor(Color.darkGray);
-			g2.drawRect(x-2, y-2, 18, 18);
-			img = getUpArrowImage();			
-			g2.drawImage(img, x, y, null);
-
-			y+=18;
-
-			y+=18;
-			g2.setColor(Color.darkGray);
-			g2.drawRect(x-2, y-2, 18, 18);
-			img = getDownArrowImage();			
-			g2.drawImage(img, x, y, null);
-
 	}
 	
 	public final boolean hitAnimationButton(MouseEvent e) {
@@ -2487,8 +2511,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			}
 		}
 
-		// look for axis
-		if (imageCount == 0) {
+		// look for axes
+		if (foundHits.size() == 0) {
 			if (showAxes[0] && Math.abs(yZero - p.y) < 3) {
 				foundHits.add(kernel.getXAxis());
 			}
@@ -4118,9 +4142,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			
 		case MODE_SCRIPT_ACTION:
 			return "ScriptAction";
-			
-		case MODE_WHITEBOARD:
-			return "Whiteboard";
 			
 		case MODE_FITLINE:
 			return "FitLine";

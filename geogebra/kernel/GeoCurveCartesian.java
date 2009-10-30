@@ -546,6 +546,11 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		return false;
 		//if (geo.isGeoCurveCartesian()) return xxx; else return false;
 	}
+	
+	public boolean isFillable() {
+		return true;
+	}
+
 
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub

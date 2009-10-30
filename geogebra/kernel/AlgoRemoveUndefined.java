@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 /**
  * Take objects from the middle of a list
  * @author Michael Borcherds
@@ -70,7 +72,16 @@ public class AlgoRemoveUndefined extends AlgoElement {
     	for (int i=0 ; i<size ; i++)
     	{
     		GeoElement geo=inputList.get(i);
-    		if (geo.isDefined()) outputList.add(geo.copyInternal(cons));
+    		
+    		boolean isDefined = geo.isDefined();
+    		
+    		// intersection of 2 parallel lines "undefined" in AlgebraView
+    		// but isDefined() returns true
+    		if (isDefined && geo.isGeoPoint()) {
+    			isDefined = ((GeoPoint)geo).isFinite();
+    		}
+    		//Application.debug(isDefined+"");
+    		if (isDefined) outputList.add(geo.copyInternal(cons));
     	}
     } 	
   

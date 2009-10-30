@@ -62,25 +62,23 @@ implements NumberValue {
 		 return ret;
 	}   
     
-    final public void set(double x) { val = x; }
+    final public void set(double x) {
+    	val = x; 
+    }
     
     public void resolveVariables() {    	
     }
 
     
 	public String toString() {
-		switch (kernel.getCASPrintForm()) {
-			default:
-				if (Double.isInfinite(val) || Double.isNaN(val))
-					return kernel.getApplication().getPlain("undefined");
-				
-			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
-			case ExpressionNode.STRING_TYPE_MATH_PIPER:
-				if (isAngle)
-					return kernel.formatAngle(val).toString();
-				else
-					return kernel.format(val); 
-		}				
+		if (isAngle) {
+			// convert to angle value first, see issue 87
+			// http://code.google.com/p/geogebra/issues/detail?id=87
+			double angleVal = kernel.convertToAngleValue(val);
+			return kernel.formatAngle(angleVal).toString();
+		} else {
+			return kernel.format(val);
+		}
 	}
     
 	final public String toValueString() {
@@ -91,7 +89,10 @@ implements NumberValue {
 		return toString();
 	}
     
-    public void setAngle() { isAngle = true; }            
+    public void setAngle() { 
+    	isAngle = true;
+    }
+    
     public boolean isAngle() { return isAngle; }
     
 
@@ -102,58 +103,51 @@ implements NumberValue {
     }
     
     /** c = a + b */
-    final public static void add(MyDouble a, MyDouble b, MyDouble c) {
-        c.val = a.val + b.val;    
+    final public static void add(MyDouble a, MyDouble b, MyDouble c) {   
         c.isAngle = a.isAngle && b.isAngle;
+        c.set(a.val + b.val); 
     }
     
     /** c = a - b */
     final public static void sub(MyDouble a, MyDouble b, MyDouble c) {
-        c.val = a.val - b.val;
         c.isAngle = a.isAngle && b.isAngle;
+        c.set(a.val - b.val); 
     }
     
     /** c = a * b */
     final public static void mult(MyDouble a, MyDouble b, MyDouble c) {
-        c.val = a.val * b.val;
         c.isAngle = a.isAngle || b.isAngle;
+    	c.set(a.val * b.val);
     }
     
     /** c = a / b */
-    final public static void div(MyDouble a, MyDouble b, MyDouble c) {
-    	if (b.kernel.isZero(b.val)) {
-    		c.val = Double.NaN;
-    	} else {
-			c.val = a.val / b.val;
-    	}
+    final public static void div(MyDouble a, MyDouble b, MyDouble c) {   	
         c.isAngle = a.isAngle && !b.isAngle;
+		c.set(a.val / b.val); 
     }
     
     /** c = pow(a,b) */
-    final public static void pow(MyDouble a, MyDouble b, MyDouble c) {
-//    	if (b.val == 0d) {
-//    		if (a.val < 0d)
-//    			c.val = -1;
-//    		else
-//    			c.val = 1;    		
-//    	} else {
-//    		// check for integer value in exponent
-//    		//double bint = Math.round(b.val);
-//    		//if (b.kernel.isEqual(b.val, bint))
-//    		//	c.val = Math.pow(a.val, bint);
-//    		//else
-//    		c.val = Math.pow(a.val, b.val); 	
-//    	}
-//    	
-    	c.val = Math.pow(a.val, b.val);    		
+    final public static void pow(MyDouble a, MyDouble b, MyDouble c) {    		
         c.isAngle = a.isAngle && !b.isAngle;
+    	c.set(Math.pow(a.val, b.val));
     }
-
-    final public MyDouble cos() {  val = Math.cos(val); isAngle = false; return this; }
-    final public MyDouble sin() {  val = Math.sin(val); isAngle = false; return this; }
+    
+    final public MyDouble cos() {
+    	val = Math.cos(val);
+    	isAngle = false;
+    	return this; 
+    }
+    
+    final public MyDouble sin() {  
+    	val = Math.sin(val);
+    	isAngle = false; 
+    	return this; 
+    }
   
    final public MyDouble tan() {  		
-   		if (kernel.isZero(Math.cos(val))) {
+	    // Math.tan() gives a very large number for tan(pi/2)
+	    // but should be undefined for pi/2, 3pi/2, 5pi/2, etc.
+   		if (kernel.isEqual(val % Math.PI, Kernel.PI_HALF)) {
    			val = Double.NaN;
    		} else {
    			val = Math.tan(val);
@@ -162,9 +156,9 @@ implements NumberValue {
   		return this; 
   	}
   	
-    final public MyDouble acos() {  val = Math.acos(val); isAngle = kernel.arcusFunctionCreatesAngle; return this;  }
-    final public MyDouble asin() {  val = Math.asin(val); isAngle = kernel.arcusFunctionCreatesAngle; return this;  }
-    final public MyDouble atan() {  val = Math.atan(val); isAngle = kernel.arcusFunctionCreatesAngle; return this;  }
+    final public MyDouble acos() { isAngle = kernel.arcusFunctionCreatesAngle; set(Math.acos(val)); return this;  }
+    final public MyDouble asin() { isAngle = kernel.arcusFunctionCreatesAngle; set(Math.asin(val)); return this;  }
+    final public MyDouble atan() { isAngle = kernel.arcusFunctionCreatesAngle; set(Math.atan(val)); return this;  }
     
     final public MyDouble log() {  val = Math.log(val);  isAngle = false; return this; }
     final public MyDouble log10() {  val = Math.log(val)/MyMath.LOG10;  isAngle = false; return this; }
@@ -177,24 +171,26 @@ implements NumberValue {
 	
     final public MyDouble floor() {  
     	// angle in degrees
+    	// kernel.checkInteger() needed otherwise floor(60°) gives 59°
 		if (isAngle && kernel.getAngleUnit() == Kernel.ANGLE_DEGREE) {
-			val = Kernel.PI_180 * Math.floor(val * Kernel.CONST_180_PI);		
+			set(Kernel.PI_180 * Math.floor( kernel.checkInteger(val * Kernel.CONST_180_PI)));	
 		}
 		else {		
 			// number or angle in radians
-			val = Math.floor(val); 
+			set(Math.floor(val)); 
 		}				
 		return this;
     }
 	
     final public MyDouble ceil() {
     	// angle in degrees
+    	// kernel.checkInteger() needed otherwise ceil(241°) fails
 		if (isAngle && kernel.getAngleUnit() == Kernel.ANGLE_DEGREE) {
-			val = Kernel.PI_180 * Math.ceil(val * Kernel.CONST_180_PI);		
+			set(Kernel.PI_180 * Math.ceil(kernel.checkInteger(val * Kernel.CONST_180_PI)));		
 		}
 		else {		
 			// number or angle in radians
-			val = Math.ceil(val);
+			set( Math.ceil(val) );
 		}				
 		return this;
     }
@@ -202,11 +198,11 @@ implements NumberValue {
 	final public MyDouble round() {
 		// angle in degrees
 		if (isAngle && kernel.getAngleUnit() == Kernel.ANGLE_DEGREE) {
-			val = Kernel.PI_180 * MyDouble.round(val * Kernel.CONST_180_PI);		
+			set( Kernel.PI_180 * MyDouble.round(val * Kernel.CONST_180_PI) );		
 		}
 		else {		
 			// number or angle in radians
-			val = MyDouble.round(val);
+			set( MyDouble.round(val) );
 		}				
 		return this;
 	}

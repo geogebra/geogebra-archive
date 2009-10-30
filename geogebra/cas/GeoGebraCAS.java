@@ -1,6 +1,5 @@
 package geogebra.cas;
 
-import geogebra.JarManager;
 import geogebra.cas.view.CASView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -46,11 +45,16 @@ public class GeoGebraCAS {
 		sbInsertSpecial = new StringBuffer(80);
 		sbReplaceIndices = new StringBuffer(80);
 		
-		// initialize MathPiper
+		initCAS();
+	}
+	
+	private void initCAS() {
+		ggbMathPiper = null;
 		getMathPiper();
 		ggbJasymca = new GeoGebraJasymca();		
 	}
 
+	
     /** 
      * Evaluates a JASYMCA expression and returns the result as a string,
      * e.g. exp = "diff(x^2,x)" returns "2*x".
@@ -89,7 +93,7 @@ public class GeoGebraCAS {
 			
 			if (response.isExceptionThrown())
 			{
-				Application.debug("Exception from MathPiper: "+response.getExceptionMessage());
+				Application.debug("String for MathPiper: "+exp+"\nException from MathPiper: "+response.getExceptionMessage());
 				return null;
 			}
 			result = response.getResult();
@@ -141,10 +145,18 @@ public class GeoGebraCAS {
 			// where to find MathPiper scripts
 			//eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
 			String scriptBase = "jar:" + app.getCodeBase().toString() + 
-										JarManager.CAS_JAR_NAME + "!/";			
+										Application.CAS_JAR_NAME + "!/";			
 
 			ggbMathPiper = Interpreters.getSynchronousInterpreter(scriptBase);
-			initMyMathPiperFunctions();
+			boolean success = initMyMathPiperFunctions();
+			
+			if (!success) {
+				System.err.println("MathPiper creation failed with scriptbase: " + scriptBase);
+				ggbMathPiper = Interpreters.getSynchronousInterpreter(scriptBase);
+				success = initMyMathPiperFunctions();
+				if (!success)
+					System.out.println("MathPiper creation failed again with null scriptbase");
+			}
 		}
 		
 		return ggbMathPiper;
@@ -154,7 +166,7 @@ public class GeoGebraCAS {
 	 * Initialize special commands needed in our ggbMathPiper instance,e.g.
 	 * getPolynomialCoeffs(exp,x).
 	 */
-	private synchronized void initMyMathPiperFunctions() {		
+	private synchronized boolean initMyMathPiperFunctions() {
 // Expand expression and get polynomial coefficients using MathPiper:
 //		getPolynomialCoeffs(expr,x) :=
 //			       If( CanBeUni(expr),
@@ -163,18 +175,23 @@ public class GeoGebraCAS {
 //			           {};
 //			      );
 		String strGetPolynomialCoeffs = "getPolynomialCoeffs(expr,x) := If( CanBeUni(expr),[ Coef(MakeUni(expr,x),x, 0 .. Degree(expr,x));],{});";
-		ggbMathPiper.evaluate(strGetPolynomialCoeffs);
-		
+		EvaluationResponse resp = ggbMathPiper.evaluate(strGetPolynomialCoeffs);
+		if (resp.isExceptionThrown()) {
+			return false;
+		}
 		
 		// make sure we get (x^n)^2 not x^n^2
 		// (Issue 125)
 		ggbMathPiper.evaluate("LeftPrecedence(\"^\",19);");
-		
-		// make sure Factor[((((((((9.1) * ((x)^(7))) - ((32) * ((x)^(6)))) + ((48) * ((x)^(5)))) - ((40) * ((x)^(4)))) + ((20) * ((x)^(3)))) - ((6) * ((x)^(2)))) + (x))] works
-		//String initFactor = "Factors(p_IsRational)_(Denom(p) != 1) <-- {{Factor(Numer(p)) / Factor(Denom(p)) , 1}};";
-		//ggbMathPiper.evaluate(initFactor);
 
-		//evaluateMathPiper(exp)
+		// make sure Factor((((((((9.1) * ((x)^(7))) - ((32) * ((x)^(6)))) + ((48) * ((x)^(5)))) - ((40) * ((x)^(4)))) + ((20) * ((x)^(3)))) - ((6) * ((x)^(2)))) + (x))] works
+		String initFactor = "Factors(p_IsRational)_(Denom(p) != 1) <-- {{Factor(Numer(p)) / Factor(Denom(p)) , 1}};";
+		ggbMathPiper.evaluate(initFactor);
+
+		// define constanct for Degree
+		response = ggbMathPiper.evaluate("Degree := 180/pi;");
+		
+		return true;
 	}
 	
 
@@ -384,6 +401,7 @@ public class GeoGebraCAS {
 		}
 		return sbInsertSpecial.toString();
 	}
+
 	
 	
 	

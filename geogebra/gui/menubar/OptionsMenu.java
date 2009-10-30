@@ -48,7 +48,8 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		menuBooleanSize,
 		menuRightAngleStyle,
 		menuCoordStyle,
-		menuLabeling
+		menuLabeling, 
+		menuAlgebraStyle
 	;
 	
 	public OptionsMenu(Application app, Layout layout) {
@@ -70,6 +71,26 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	{
 		JMenu submenu;
 		int pos;
+		
+		//G.Sturr 2009-10-18
+		// Algebra description: show value or definition of objects
+		menuAlgebraStyle = new JMenu(app.getPlain("Algebra"));
+		menuAlgebraStyle.setIcon(app.getEmptyIcon());
+		String[] strDescription = { app.getPlain("Value"), 
+				app.getPlain("Definition"), 
+				app.getPlain("Command") };
+		String[] strDescriptionAC = { "0", "1", "2" };
+		ActionListener descAL = new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				int desc = Integer.parseInt(ae.getActionCommand());
+				kernel.setAlgebraStyle(desc);
+				kernel.updateConstruction();
+			}
+		};
+		addRadioButtonMenuItems(menuAlgebraStyle, descAL, strDescription, strDescriptionAC,0);
+		add(menuAlgebraStyle);
+		updateMenuViewDescription();
+		//END G.Sturr
 		
 		// point capturing
 		menuPointCapturing = new JMenu(app.getMenu("PointCapturing"));
@@ -120,13 +141,12 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 		addSeparator();
 
-		/*
 		// point style
 		menuPointStyle = new JMenu(app.getMenu("PointStyle"));
 		menuPointStyle.setIcon(app.getImageIcon("mode_point_16.gif"));
-		// dot, circle, cross
-		String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716" };
-		String[] strPointStyleAC = { "0", "2", "1" };
+		// dot, circle, cross, plus
+		String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716", "\u271a", "\u25c6", "\u25b2", "\u25bc" };
+		String[] strPointStyleAC = { "0", "2", "1", "3", "4", "6", "7" };
 		ActionListener psal = new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				int style = Integer.parseInt(ae.getActionCommand());
@@ -137,7 +157,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 				strPointStyleAC, 0);
 		add(menuPointStyle);
 		updateMenuPointStyle();
-		*/
 
 		// checkboxsize
 		// Michael Borcherds 2008-05-12
@@ -442,8 +461,9 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		updateMenuCoordStyle();
 		updateMenuDecimalPlaces();
 		updateMenuPointCapturing();
-		//updateMenuPointStyle();
+		updateMenuPointStyle();
 		updateMenuRightAngleStyle();
+		updateMenuViewDescription();
 	}
 	
 	/**
@@ -459,6 +479,28 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			((JRadioButtonMenuItem) menuAngleUnit.getMenuComponent(pos))
 					.setSelected(true);
 		}
+	}
+	
+	/**
+	 * Update algebra style description (switch between value / definition / command).
+	 */
+	private void updateMenuViewDescription() {
+		if (menuAlgebraStyle != null) {
+			((JRadioButtonMenuItem) menuAlgebraStyle.getMenuComponent(kernel.getAlgebraStyle()))
+					.setSelected(true);
+		}
+	}
+	
+	/**
+	 * Update default point drawing style.
+	 */
+	protected void updateMenuPointStyle() {
+		if (menuPointStyle == null) return;
+		
+		int pos = app.getEuclidianView().getPointStyle();
+		if (pos == 1) pos=2; else if (pos == 2) pos=1; // bugfix swap 2 and 1 Michael Borcherds 2008-03-13
+		if (pos > 5) pos--; // needed as hollow diamond not in menu (yet)
+		((JRadioButtonMenuItem) menuPointStyle.getMenuComponent(pos)).setSelected(true);
 	}
 	
 	/**
@@ -601,7 +643,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		// font size
 		else if (cmd.endsWith("pt")) {
 			try {
-				app.setGUIFontSize(Integer.parseInt(cmd.substring(0, 2)));
+				app.setFontSize(Integer.parseInt(cmd.substring(0, 2)));
 				app.setUnsaved();
 				System.gc();
 			} catch (Exception e) {

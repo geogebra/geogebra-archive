@@ -944,6 +944,8 @@ public class MyXMLHandler implements DocHandler {
 	private void startKernelElement(String eName, LinkedHashMap<String, String> attrs) {
 		if (eName.equals("angleUnit")) {
 			handleAngleUnit(attrs);
+		} else if (eName.equals("algebraStyle")) {    //G.Sturr 2009-10-18
+			handleAlgebraStyle(attrs);
 		} else if (eName.equals("coordStyle")) {
 			handleKernelCoordStyle(attrs);
 		} else if (eName.equals("continuous")) {
@@ -972,6 +974,15 @@ public class MyXMLHandler implements DocHandler {
 		else
 			return false;
 		return true;
+	}
+	
+	private boolean handleAlgebraStyle(LinkedHashMap attrs) {
+		try {
+			kernel.setAlgebraStyle(Integer.parseInt((String) attrs.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private boolean handleKernelCoordStyle(LinkedHashMap<String, String> attrs) {
@@ -1332,18 +1343,18 @@ public class MyXMLHandler implements DocHandler {
 
 			// old versions do just have a single font size and derive the font size for
 			// the axes / euclidian view from this single size
-			if(ggbFileFormat < 3.3) {
-				app.setEuclidianFontSize(guiSize, false);
-				app.setAxesFontSize(guiSize - 2, false); // always 2 points smaller than the default size
-			} else {
-				int axesSize = Integer.parseInt((String) attrs.get("axesSize"));
-				app.setAxesFontSize(axesSize, false);
-				
-				int euclidianSize = Integer.parseInt((String) attrs.get("euclidianSize"));
-				app.setEuclidianFontSize(euclidianSize, false);
-			}
+//			if(ggbFileFormat < 3.3) {
+//				app.setFontSize(guiSize, false);
+//				app.setAxesFontSize(guiSize - 2, false); // always 2 points smaller than the default size
+//			} else {
+//				int axesSize = Integer.parseInt((String) attrs.get("axesSize"));
+//				app.setAxesFontSize(axesSize, false);
+//				
+//				int euclidianSize = Integer.parseInt((String) attrs.get("euclidianSize"));
+//				app.setEuclidianFontSize(euclidianSize, false);
+//			}
 
-			app.setGUIFontSize(guiSize); // set gui font size and update all fonts
+			app.setFontSize(guiSize); // set gui font size and update all fonts
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -2236,14 +2247,26 @@ public class MyXMLHandler implements DocHandler {
 			double x = Double.parseDouble((String) attrs.get("x"));
 			double y = Double.parseDouble((String) attrs.get("y"));
 			double z = Double.parseDouble((String) attrs.get("z"));
-			v.setCoords(x, y, z);						
+				
+			// DEBUGGING code:
+			// check if dependent point is different to saved position
+//			if (geo.isGeoPoint() && !geo.isIndependent()) {
+//				GeoPoint point = (GeoPoint) geo;
+//				GeoPoint loadedPoint = new GeoPoint(cons);
+//				loadedPoint.setCoords(x, y, z);
+//				if (!point.isEqual(loadedPoint)) {
+//					System.out.println("UNEQUAL: point " + point + ", loaded: " + loadedPoint + ", parentAlgo: " + point.getParentAlgorithm());
+//				}
+//			}
+			
+			v.setCoords(x, y, z);
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 		*/
 	}
-
+	
 	// for point or vector
 	private boolean handleCoordStyle(LinkedHashMap<String, String> attrs) {
 		if (!(geo.isGeoPoint() || geo.isGeoVector())) {

@@ -12,7 +12,6 @@ package geogebra.plugin;
 
  */
 
-import geogebra.ClassPathManipulator;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
@@ -76,10 +75,9 @@ public class PluginManager implements ActionListener { // Listens on PluginMenu
 		this.app = app; // ref to Ggb application
 
 		//ClassPathManipulator.addURL(addPathToJar("."), null);
-		geogebra.JarManager jm=geogebra.JarManager.getSingleton(false);	//14.02.09
-		String cb=jm.getCodeBase().toString();
+		String cb=app.getCodeBase().toString();
 		if(!cb.startsWith("http://")){								//16.02.09: Don't use plugins with webstart
-			ClassPathManipulator.addURL(jm.getCodeBase(), null);            //14.02.09
+			ClassPathManipulator.addURL(app.getCodeBase(), null);            //14.02.09
 		}//if webstart
 		loadProperties();
 

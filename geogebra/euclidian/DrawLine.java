@@ -52,7 +52,7 @@ public final class DrawLine extends Drawable implements Previewable {
     private boolean isVisible, labelVisible;
     
     private ArrayList points; // for preview
-    private GeoPoint startPoint;    
+    private GeoPoint startPoint;
    
     // clipping attributes
     private boolean [] attr1 = new boolean[4], attr2 = new boolean[4];

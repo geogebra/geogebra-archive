@@ -10,7 +10,6 @@ package geogebra.plugin;
  the Free Software Foundation.
  
  */
-import geogebra.ClassPathManipulator;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
@@ -20,17 +19,24 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.PointProperties;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeSet;
+
+import javax.imageio.ImageIO;
 
 
 /** 
@@ -221,7 +227,7 @@ public class GgbAPI {
 	 */
 	public synchronized boolean evalCommand(String cmdString) {
 		
-		Application.debug("evalCommand called..."+cmdString);
+		//Application.debug("evalCommand called..."+cmdString);
 		
 		GeoElement [] result = kernel.getAlgebraProcessor().
 								processAlgebraCommand(cmdString, false);
@@ -281,14 +287,17 @@ public class GgbAPI {
 	}
 			
 	/**
-	 * Loads a construction from a  file (given URL).	
-	 * ...but the actual code is in a thread to avoid JavaScript security issues  
+	 * Loads a construction from a  file (given URL).
+	 * Note that this method does NOT refresh the user interface.
 	 */
 	public synchronized void openFile(String strURL) {
-		
-		Application.debug("todo: rewrite in this context");
-		
-
+		try {
+			String lowerCase = strURL.toLowerCase(Locale.US);
+			URL url = new URL(lowerCase);
+			app.loadXML(url, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 
@@ -484,12 +493,10 @@ public class GgbAPI {
 	}	
 	
 	public synchronized void setPointStyle(String objName, int style) {
-		// -1 OK: means default
-		if (style < -1 || style > 2) return;
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;	
-		if (geo.isGeoPoint()) {
-			((GeoPoint) geo).setPointStyle(style);		
+		if (geo instanceof PointProperties) {
+			((PointProperties) geo).setPointStyle(style);		
 			geo.updateRepaint();
 		}
 	}	
@@ -530,6 +537,49 @@ public class GgbAPI {
 		geo.updateRepaint();
 	}	
 	
+	/*
+	 * used by the automatic file tester (from JavaScript)
+	 * returns a checksum of the graphics view
+	 * to check it is the same as the baseline version
+	 */
+	public String getGraphicsViewCheckSum(String algorithm, String format) {
+		
+		if (!algorithm.equals("MD5"))
+			return "";
+		
+		try {
+		
+			BufferedImage img =
+				app.getEuclidianView().getExportImage(1);
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(img, format.toLowerCase(Locale.US), baos);
+			
+			MessageDigest md5 = getMessageDigestMD5();
+			byte[] bytesOut = baos.toByteArray();
+			md5.update(bytesOut);
+			byte[] md5hash = new byte[32];
+			md5hash = md5.digest();
+			return Application.convertToHex(md5hash);	
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+		
+	}
+	
+	private static MessageDigest messageDigestMD5 = null;
+
+	public static MessageDigest getMessageDigestMD5()
+			throws NoSuchAlgorithmException {
+		if (messageDigestMD5 == null)
+			messageDigestMD5 = MessageDigest.getInstance("MD5");
+
+		return messageDigestMD5;
+	}
+	
+
 	public synchronized int getLineStyle(String objName) {
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return -1;		

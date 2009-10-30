@@ -46,13 +46,6 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 			boolean isSelected, int row0, int column0) {
 		table = (MyTable) table0;
 		
-		Font font1 = kernel.getApplication().getPlainFont();
-		if (font1 == null || font1.getSize() == 0) {
-			font1 = new Font("dialog", 0, 12);
-		}
-		Component component = getComponent();
-		component.setFont(font1);
-		
 		if (value0 instanceof String) { // clicked to type
 			value = null;
 		}
@@ -85,6 +78,10 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 			}
 		}
 		delegate.setValue(text);
+		
+		Component component = getComponent();
+		component.setFont(app.getFontCanDisplay(text));
+		
 		editing = true;	
 		
 		return component;
@@ -472,6 +469,13 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 			if (text.length() == 0) {
 				text = null;
 			}
+		}
+		
+		// make sure that text can be changed to something else
+		// eg (2,3 can be overwritten as (2,3)
+		if (oldValue != null && oldValue.isGeoText() && !oldValue.hasChildren()) {
+			oldValue.remove();
+			oldValue = null;
 		}
 
 		if (text == null) {

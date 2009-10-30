@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -38,7 +39,7 @@ public class MyTable extends JTable
 	public static final int MAX_CELL_EDIT_STRING_LENGTH = 10;
 
 	public static final int TABLE_CELL_WIDTH = 70;
-	public static final int TABLE_CELL_HEIGHT = 20;
+	public static final int TABLE_CELL_HEIGHT = 21;  //G.Sturr (old height 20) + 1 to stop cell editor clipping
 	public static final int DOT_SIZE = 7;
 	public static final int LINE_THICKNESS1 = 3;
 	public static final int LINE_THICKNESS2 = 2;
@@ -57,6 +58,11 @@ public class MyTable extends JTable
 	protected MyColumnHeaderRenderer columnHeader;
 	protected SpreadsheetView view;
 	protected DefaultTableModel tableModel;
+	
+	//(G.Sturr 2009-9-12) test for dragging dot highlight
+	protected boolean isOverDot = false;
+	//(G.Sturr)
+	
 
 	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
 		super(tableModel);
@@ -224,6 +230,16 @@ public class MyTable extends JTable
 		if (min && column == 0 && row == 0) {
 			return new Point(0, 0);
 		}
+		
+		//G.Sturr 2009-9-23
+		//Replace old code with JTable method to get pixel location
+		Rectangle cellRect = getCellRect(row, column, false);
+		if (min)return new Point(cellRect.x, cellRect.y);
+		else return new Point(cellRect.x + cellRect.width , cellRect.y + cellRect.height);
+		
+		
+		//Old code -- adds extra border pixel when min false
+		/*
 		int x = 0;
 		int y = 0;
 		if (! min) {
@@ -238,6 +254,7 @@ public class MyTable extends JTable
 			y += rowHeight;
 		}
 		return new Point(x, y);
+		*/
 	}
 
 	protected Point getMinSelectionPixel() {
@@ -281,6 +298,8 @@ public class MyTable extends JTable
 		if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 			return;
 		}
+		
+		//draw sprecial dragging frame for cell editor
 		if (isDragging2) {
 			Point point1 = getPixel(minColumn2, minRow2, true);
 			Point point2 = getPixel(maxColumn2, maxRow2, false);
@@ -295,6 +314,8 @@ public class MyTable extends JTable
 			graphics.fillRect(x1, y2 - LINE_THICKNESS1, x2 - x1, LINE_THICKNESS1);
 			graphics.fillRect(x2 - LINE_THICKNESS1, y1, LINE_THICKNESS1, y2 - y1);
 		}
+		
+		// draw dragging frame
 		if (dragingToRow != -1 && dragingToColumn != -1) {
 			/*
 			Application.debug("minSelectionRow = " + minSelectionRow);
@@ -353,9 +374,18 @@ public class MyTable extends JTable
 				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS1);
 			}
 		}
+		
+		// draw dragging dot
 		Point pixel1 = getMaxSelectionPixel();
 		if (pixel1 != null && ! editor.isEditing()) {
-			graphics.setColor(Color.BLUE);
+			
+			//(G.Sturr 20099-12) Highlight the dragging dot if mouseover 
+			if (isOverDot) 
+				{graphics.setColor(Color.gray);}
+			else
+				{graphics.setColor(Color.BLUE);}
+			//(G.Sturr)
+			
 			int x = (int)pixel1.getX() - (DOT_SIZE + 1) / 2;
 			int y = (int)pixel1.getY() - (DOT_SIZE + 1) / 2;
 			graphics.fillRect(x, y, DOT_SIZE, DOT_SIZE);
@@ -368,17 +398,21 @@ public class MyTable extends JTable
 			int x2 = (int)max.getX();
 			int y2 = (int)max.getY();
 			graphics.setColor(Color.BLUE);
+			
+			// draw frame around current selection
+			// G.Sturr 2009-9-23 adjusted parameters to work with getPixel fix
 			if (! editor.isEditing()) {
 				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS2);
 				graphics.fillRect(x1, y1, LINE_THICKNESS2, y2 - y1);
-				graphics.fillRect(x2 - LINE_THICKNESS2, y1, LINE_THICKNESS2, y2 - y1 - DOT_SIZE / 2 - 2);		
-				graphics.fillRect(x1, y2 - LINE_THICKNESS2, x2 - x1 - DOT_SIZE / 2 - 2, LINE_THICKNESS2);
+				graphics.fillRect(x2 - LINE_THICKNESS2, y1, LINE_THICKNESS2, y2 - y1 - DOT_SIZE / 2 - 1);		
+				graphics.fillRect(x1, y2 - LINE_THICKNESS2, x2 - x1 - DOT_SIZE / 2 - 1, LINE_THICKNESS2);
 			}
+			// draw small frame around current editing cell 
 			else {
-				x1 -= LINE_THICKNESS2;
-				x2 += LINE_THICKNESS2 - 1;
-				y1 -= LINE_THICKNESS2;
-				y2 += LINE_THICKNESS2 - 1;
+				x1 -= LINE_THICKNESS2-1;
+				x2 += LINE_THICKNESS2-1;
+				y1 -= LINE_THICKNESS2-1;
+				y2 += LINE_THICKNESS2-1;
 				graphics.fillRect(x1, y1, x2 - x1, LINE_THICKNESS2);
 				graphics.fillRect(x1, y1, LINE_THICKNESS2, y2 - y1);
 				graphics.fillRect(x2 - LINE_THICKNESS2, y1, LINE_THICKNESS2, y2 - y1);		
@@ -430,6 +464,16 @@ public class MyTable extends JTable
 			if (point != null) {
 
 				if (doubleClick) {
+					
+					//G.Sturr added 2009-9-15
+					// auto-fill down if dragging dot is double-clicked
+					if(isOverDot) {
+						handleAutoFillDown();
+						return;
+					}  
+					// 
+					//otherwise, doubleClick edits cell
+					
 					allowEditing = true;
 					editCellAt(getSelectedRow(), getSelectedColumn()); 
 		            
@@ -483,7 +527,32 @@ public class MyTable extends JTable
 //			}
 		}				
 
-
+		//G. Sturr added 2009-9-18
+		// auto fill down on dragging dot double-click
+		public void handleAutoFillDown() {
+			int col = getSelectedColumn();
+			int row = maxSelectionRow;
+			if(tableModel.getValueAt(row,col) != null) {									
+				// count nonempty cells below selection 
+				// if no cells below, count left ... if none on the left, count right
+				while (row < getRowCount() - 1 && tableModel.getValueAt(row+1, col) != null) row++;
+				if ( row - maxSelectionRow == 0 && col > 0) 
+					while (row < getRowCount() - 1 && tableModel.getValueAt(row+1, col-1) != null) row++;
+				if (row - maxSelectionRow == 0 && maxSelectionColumn <= getColumnCount()-1 )
+					while ( row < getRowCount() - 1 && tableModel.getValueAt(row+1, maxSelectionColumn + 1) != null) row++;
+				int rowCount = row - maxSelectionRow;
+				
+				// now fill down
+				if (rowCount != 0){
+					boolean succ = relativeCopy.doCopy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow,
+							minSelectionColumn, maxSelectionRow + 1, maxSelectionColumn, maxSelectionRow + rowCount);
+					if (succ) app.storeUndoInfo();		
+				}
+				isDragingDot = false;
+			}
+		}
+		
+		
 		public void mouseEntered(MouseEvent e) {
 		}
 
@@ -551,12 +620,16 @@ public class MyTable extends JTable
 						}
 					}	
 				}
-				else if (x1 >= x2 - range && y1 <= y2 + range && y1 >= y2 - range && y1 <= y2 + range) {
+				else if (x1 >= x2 - range && x1 <= x2 + range && y1 >= y2 - range && y1 <= y2 + range) {
 					isDragingDot = true;
 					e.consume();
 				}
 			}
-
+			
+			/*
+			//G.Sturr 2009-9-23: moved show context menu to mouseReleased 
+			// to allow right click selection
+			
 			// RIGHT CLICK: show context menu
 			else {
 				if (!kernel.getApplication().letShowPopupMenu()) return;    	
@@ -566,10 +639,12 @@ public class MyTable extends JTable
 					popupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
+			*/
+			
 		}
 
 		public void mouseReleased(MouseEvent e)	 {
-			boolean rightClick = Application.isRightClick(e); 	                        
+			boolean rightClick = Application.isRightClick(e); 	        
 
 			if (!rightClick) {
 				if (editor.isEditing()) {
@@ -631,6 +706,13 @@ public class MyTable extends JTable
 						//	maxSelectionColumn = -1;
 						//	maxSelectionRow = -1;						
 					}
+					
+					//(G.Sturr 2009-9-12) extend the selection to include the drag copy selection
+					// and un-highlight dragging dot 
+					changeSelection(dragingToRow, dragingToColumn, true, true);
+					isOverDot = false;
+					//(G.Sturr)
+					
 					isDragingDot = false;
 					dragingToRow = -1;
 					dragingToColumn = -1;
@@ -650,6 +732,33 @@ public class MyTable extends JTable
 					return;
 				}					
 			}
+			
+			//G.Sturr 2009-9-23 
+			//Show context menu .... moved from mousePressed 
+			//to allow right click selection (as done in drawing pad)
+			if (rightClick){
+				if (!kernel.getApplication().letShowPopupMenu()) return;
+				
+				Point p = getIndexFromPixel(e.getX(), e.getY());
+				
+				// change selection if right click is outside current selection
+				if(p.getY() < minSelectionRow ||  p.getY() > maxSelectionRow 
+						|| p.getX() < minSelectionColumn || p.getX() > maxSelectionColumn)
+				{
+					if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
+						setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+						setColumnSelectionAllowed(true);
+						setRowSelectionAllowed(true);
+					}
+					changeSelection((int) p.getY(), (int) p.getX(),false, false );
+					selectionChanged();		
+				}
+				 					
+				ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, 
+						maxSelectionColumn, maxSelectionRow, selectedColumns);
+				popupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+			
 			
 		}		
 	}
@@ -700,6 +809,10 @@ public class MyTable extends JTable
 				int x = e.getX();
 				int y = e.getY();
 				Point point = getIndexFromPixel(x, y);
+				//(G.Sturr 2009-9-12) save the selected cell position so it can be re-selected if needed
+				int row = getSelectedRow();
+				int column = getSelectedColumn();
+				//(G.Sturr)
 				
 				if (point == null) {
 					dragingToRow = -1;
@@ -707,17 +820,32 @@ public class MyTable extends JTable
 				}
 				else {
 					dragingToRow = (int)point.getY();
-					dragingToColumn = (int)point.getX();
-								
-					// scroll to show "highest" selected cell
-					scrollRectToVisible(getCellRect(point.y, point.x, true));
+					dragingToColumn = (int)point.getX();							
 					
 					// increase size if we're at the bottom of the spreadsheet
 					
 					if (dragingToRow + 1 == getRowCount() && dragingToRow < SpreadsheetView.MAX_ROWS) {
 						tableModel.setRowCount(getRowCount() +1);		
-						getView().getRowHeader().revalidate();
+						getView().getRowHeader().revalidate();	
 					}
+					
+					//(G.Sturr 2009-9-12) increase size when you go off the right edge
+					// also moved scrolling call to the end so column addition works correctly   
+					
+					if (dragingToColumn + 1 == getColumnCount() && dragingToColumn < SpreadsheetView.MAX_COLUMNS) {
+						
+						setMyColumnCount(getColumnCount() +1);		
+						getView().getColumnHeader().revalidate();
+						
+						// Java's addColumn will clear selection, so re-select our cell 
+						changeSelection(row, column, false, false);
+						
+					}
+					
+					// scroll to show "highest" selected cell
+					scrollRectToVisible(getCellRect(point.y, point.x, true));
+					//(G.Sturr)
+					
 					
 					// 1|2|3
 					// 4|5|6
@@ -806,6 +934,22 @@ public class MyTable extends JTable
 				setToolTipText(geo.getLongDescriptionHTML(true, true));				
 			} else
 				setToolTipText(null);	
+			
+			//(G. Sturr 2009-9-12) highlight dragging dot on mouseover
+			Point point1 = getMaxSelectionPixel();
+			if (point1 == null) return;
+			int x1 = e.getX();
+			int y1 = e.getY();
+			int x2 = (int)point1.getX();
+			int y2 = (int)point1.getY();
+			int range = DOT_SIZE / 2;
+			boolean nowOverDot = (x1 >= x2 - range && x1 <= x2 + range && y1 >= y2 - range && y1 <= y2 + range); 
+			if (isOverDot != nowOverDot) {	
+				isOverDot = nowOverDot;
+				repaint();
+			}
+			//(G.Sturr)
+			
 		}
 
 	}
@@ -997,7 +1141,9 @@ public class MyTable extends JTable
 			case KeyEvent.VK_R:
 				if (Application.isControlDown(e)) {
 					kernel.updateConstruction();
+					e.consume();
 				}
+				else letterOrDigitTyped();
 				break;
 
 				// needs to be here to stop keypress starting a cell edit after the undo
@@ -1131,6 +1277,7 @@ public class MyTable extends JTable
 		
 		public void letterOrDigitTyped() {
 			allowEditing = true;
+			repaint();  //G.Sturr 2009-10-10: cleanup when keypress edit begins
 			tableModel.setValueAt(null, getSelectedRow(), getSelectedColumn());
 			editCellAt(getSelectedRow(), getSelectedColumn()); 
 			// workaround, see
@@ -1186,6 +1333,14 @@ public class MyTable extends JTable
 			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionColumn = selectionModel.getMinSelectionIndex(); 
 			maxSelectionColumn = selectionModel.getMaxSelectionIndex();
+			
+			//G.Sturr 2009-9-30  added to allow drawing column selection rectangle
+			if (getSelectionModel().getSelectionMode() == ListSelectionModel.MULTIPLE_INTERVAL_SELECTION) {
+				minSelectionRow = 0;
+				maxSelectionRow = MyTable.this.getRowCount() - 1;
+			}
+			// end G.Sturr
+			
 			selectedColumns = new boolean[getColumnCount()];
 			for (int i = 0; i < selectedColumns.length; ++ i) {
 				if (selectionModel.isSelectedIndex(i)) {
@@ -1275,9 +1430,10 @@ public class MyTable extends JTable
 			repaint();
 		}
 	}
-
-	// for column header
-
+	
+	
+	//  MouseListener2 is the column header listener
+	//
 	protected int column0 = -1;
 	protected boolean isResizing = false;
 
@@ -1339,14 +1495,47 @@ public class MyTable extends JTable
 
 		public void mouseReleased(MouseEvent e)	{
 			boolean rightClick = Application.isRightClick(e); 	 
-
+			
+			if (!kernel.getApplication().letShowPopupMenu()) return;    
+			
+			//G.Sturr 2009-9-30: added right click selection
+			
 			if (rightClick) { 	 
-				if (!kernel.getApplication().letShowPopupMenu()) return;    	
-
+			
+				if (!app.letShowPopupMenu()) return; 
+				
+				Point p = getIndexFromPixel(e.getX(), e.getY());	
+				if (p == null) return;
+				
+				// if click is outside current selection then change selection
+				if(p.getY() < minSelectionRow ||  p.getY() > maxSelectionRow 
+						|| p.getX() < minSelectionColumn || p.getX() > maxSelectionColumn)
+				{
+					// switch to column selection mode and select column
+					if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
+						getColumnSelectionAllowed() == true) {
+						setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						setColumnSelectionAllowed(true);
+						setRowSelectionAllowed(false);
+					}
+					selectNone();
+					setColumnSelectionInterval((int)p.getX(), (int)p.getX());
+					
+				}	
+				
+				//show contextMenu
+				ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
+						selectedColumns);
+		        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+			
+		        
+				/*    (old code)
 				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
 					ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, selectedColumns);
 					popupMenu.show(e.getComponent(), e.getX(), e.getY());
-				}				
+				}	
+				*/
+					
 			}
 			else if (isResizing) {				
 				int x = e.getX();
@@ -1374,10 +1563,16 @@ public class MyTable extends JTable
 
 	}
 
+	//
+	//  MouseMotionListener2 is the column header motion listener
+	
 	protected class MouseMotionListener2 implements MouseMotionListener
 	{
 
 		public void mouseDragged(MouseEvent e) {
+			
+			if(Application.isRightClick(e))return; //G.Sturr 2009-9-30 
+				
 			if (isResizing) return;
 			int x = e.getX();
 			int y = e.getY();

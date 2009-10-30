@@ -123,7 +123,12 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		
 		if (initText != null) textComponent.setText(initText);		
 		cbSpecialChars = new JComboBox();
-		cbGreekLetters  = new JComboBox();		
+		cbGreekLetters  = new JComboBox();	
+		
+		// make sure we use a font that can display special characters
+		cbSpecialChars.setFont(app.getFontCanDisplay(Kernel.EULER_STRING));
+		cbGreekLetters.setFont(app.getFontCanDisplay("\u03b1")); // alpha
+			
 		textComponent.setFocusable(true);
 		cbGreekLetters.setFocusable(false);
 		cbSpecialChars.setFocusable(false);		

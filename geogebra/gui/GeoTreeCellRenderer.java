@@ -17,6 +17,7 @@ import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -69,9 +70,9 @@ public class GeoTreeCellRenderer extends DefaultTreeCellRenderer {
 				setIcon(iconHidden);
 			}			
 			
-			setFont(app.boldFont);
 			setForeground(geo.getLabelColor());			
-			setText(geo.getLabelTextOrHTML());		
+			setText(geo.getLabelTextOrHTML());	
+			setFont(app.getFontCanDisplay(getText(), Font.BOLD));
 			
 			if (geo.doHighlighting())				   
 				setBackground(Application.COLOR_SELECTION);
@@ -80,7 +81,6 @@ public class GeoTreeCellRenderer extends DefaultTreeCellRenderer {
 		} 
 		else { 
 			// type node			
-			setFont(app.plainFont);
 			setForeground(Color.black);
 			
 			if (selected)
@@ -90,7 +90,9 @@ public class GeoTreeCellRenderer extends DefaultTreeCellRenderer {
 			
 			setBorder(null);					
 			setText(value.toString());
-			setIcon(null);		
+			setIcon(null);	
+			setFont(app.getFontCanDisplay(getText()));
+			
 		}	
 		
 		return this;

@@ -20,7 +20,6 @@ import geogebra.util.MyMath;
 
 import java.awt.Color;
 import java.util.HashSet;
-import java.util.Locale;
 
 /**
  * Polygon through given points
@@ -277,11 +276,20 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
         }       
     }
     
-    private void setLabel(GeoSegmentInterface s, GeoPointInterface geoPoint) {
-        if (!geoPoint.isLabelSet() || geoPoint.getLabel() == null) 
+    /**
+     * Sets label of segment to lower case label of point.
+     * If the point has no label, a default label is used for the segment.
+     * If the lower case label of the point is already used, an indexed label
+     * is created.
+     */
+    private void setLabel(GeoSegmentInterface s, GeoPointInterface p) {
+        if (!p.isLabelSet() || p.getLabel() == null) {
         	s.setLabel(null);
-        else 
-        	s.setLabel(geoPoint.getLabel().toLowerCase(Locale.US));
+        } else {
+        	// use lower case of point label as segment label
+        	String lowerCaseLabel = ((GeoElement)p).getFreeLabel(p.getLabel().toLowerCase());
+        	s.setLabel(lowerCaseLabel);
+        }
     }
 	
     /**

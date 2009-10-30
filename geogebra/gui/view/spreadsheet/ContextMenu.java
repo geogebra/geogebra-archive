@@ -7,9 +7,13 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.table.TableModel;
@@ -46,6 +50,26 @@ public class ContextMenu extends JPopupMenu
 	
 	protected void initMenu() {
    	 	//JCheckBoxMenuItem item1 = new JCheckBoxMenuItem( app.getPlain("ShowObject"));
+		
+		//G.Sturr 2009-10-3: Added menu title  
+		ArrayList geos = app.getSelectedGeos();
+   	 		
+   	 	//title = cell range if empty or multiple cell selection
+		String title = GeoElement.getSpreadsheetCellName(column1, row1);
+		if(column1 != column2 || row1 != row2){
+			title += ":" + GeoElement.getSpreadsheetCellName(column2, row2);
+		} 
+		// title = geo description if single geo in cell  
+		else if (geos.size() == 1){	 
+			GeoElement geo0 = (GeoElement) geos.get(0);
+			title = geo0.getLongDescriptionHTML(false, true);
+	        if (title.length() > 80)
+	        	title = geo0.getNameDescriptionHTML(false, true);          
+		}
+		setTitle(title);  
+		// end G.Sturr
+		
+		
    	 	JMenuItem item1 = new JMenuItem(app.getMenu("Copy"));
    	 	item1.setIcon(app.getImageIcon("edit-copy.png"));
    	 	item1.addActionListener(new ActionListenerCopy());
@@ -61,7 +85,7 @@ public class ContextMenu extends JPopupMenu
    	 	
    	 	
    	 	// don't show "Delete" if all selected objects fixed
-   	 	ArrayList geos = app.getSelectedGeos();
+   	 	// ArrayList geos = app.getSelectedGeos();   (G.Sturr: geos now declared above)   
    	 	
    	 	boolean allFixed = true;
    	 	
@@ -113,6 +137,27 @@ public class ContextMenu extends JPopupMenu
 		   	 	add(item8);
 	 		}
 	}
+	
+	//G.Sturr 2009-10-3: added setTitle (copied from gui.ContextMenuGeoElement)
+	void setTitle(String str) {
+    	JLabel title = new JLabel(str);
+        title.setFont(app.getBoldFont());                      
+        title.setBackground(bgColor);        
+                
+        title.setBorder(BorderFactory.createEmptyBorder(5, 10, 2, 5));      
+        add(title);
+        addSeparator();   
+        
+        title.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		setVisible(false);
+        	}
+        });
+        
+    }
+	// end G.Sturr
+	
+	
 	
 	public class ActionListenerCopy implements ActionListener
 	{
@@ -355,7 +400,7 @@ public class ContextMenu extends JPopupMenu
 		 	   	 				row += v2.getLabel() + ",";
 		 	   	 			}
 		 	   	 			else {
-		 	    				app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(j,i)));
+		 	    				app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
 		 	   		 	   	 	return;
 		 	   	 			}
 		 	   	 		}

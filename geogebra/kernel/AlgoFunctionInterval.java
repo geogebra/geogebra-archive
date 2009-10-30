@@ -77,7 +77,7 @@ public class AlgoFunctionInterval extends AlgoElement {
             g.setUndefined();
                
         // check if f has changed           
-        if (!hasEqualExpressions(f, g)) {        	 
+        if (!hasEqualExpressions(f, g)) {
         	g.set(f);
         }
                         

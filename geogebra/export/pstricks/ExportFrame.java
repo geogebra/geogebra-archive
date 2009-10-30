@@ -153,7 +153,7 @@ abstract public class ExportFrame extends JFrame{
 	protected void centerOnScreen() {
 		//	center on screen
 		pack();				
-		setLocationRelativeTo(app.getFrame());
+		setLocationRelativeTo(app.getMainComponent());
 	}
 	public boolean isGrayscale(){
 		return jcbGrayscale.isSelected();

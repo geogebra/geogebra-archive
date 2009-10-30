@@ -88,9 +88,6 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		algo.initForNearToRelationship();
 		algo.setIntersectionPoint(index, point);
 		algo.compute();
-		
-	
-    
 	}
 
 	protected void compute() {
@@ -102,11 +99,6 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		} else {
 			point.setUndefined();
 		}
-		
-//    	System.out.println("  point after compute: " + index + ", " + point);
-//    	for (int i=0; i < parentOutput.length; i++) {
-//    		System.out.println("     parentOutput: " + i + ", " + parentOutput[i]);
-//    	}
 	}   
 	
 	public void remove() {

@@ -38,9 +38,8 @@ public class AlgoSequence extends AlgoElement {
     private GeoList list; // output
         
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
-    private boolean expIsFunctionOrCurve, expIsRandom, isEmpty;
+    private boolean expIsFunctionOrCurve,  isEmpty;
     private AlgoElement expressionParentAlgo;
-    private ArrayList randomNumberPredecessors;
    
    
     /**
@@ -85,12 +84,7 @@ public class AlgoSequence extends AlgoElement {
         	
     	expressionParentAlgo = expression.getParentAlgorithm();
     	expIsFunctionOrCurve = expression.isGeoFunction() || expression.isGeoCurveCartesian();    	      
-    	
-    	// random number predecessors of expression
-    	randomNumberPredecessors = expression.getRandomNumberPredecessorsWithoutLabels();    
-    	expIsRandom = randomNumberPredecessors != null ||
-    					expression.isGeoNumeric() && ((GeoNumeric) expression).isRandomNumber();    	
-    	
+    	 	
 //    	Application.debug("expression: " + expression);
 //   	Application.debug("  parent algo: " + expression.getParentAlgorithm());
 //    //	Application.debug("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
@@ -157,10 +151,18 @@ public class AlgoSequence extends AlgoElement {
     	// setValues does not work for functions
     	setValuesOnly = setValuesOnly && !expIsFunctionOrCurve;    	
     	
+    	// avoid label creation, might happen e.g. in
+    	boolean oldSuppressLabels = cons.isSuppressLabelsActive();
+    	cons.setSuppressLabelCreation(true);
+    	
+    	// update list
     	if (setValuesOnly)
     		updateListItems(from, to, step);
     	else
-    		createNewList(from, to, step);        	
+    		createNewList(from, to, step);
+    	
+    	// revert label creation setting
+    	cons.setSuppressLabelCreation(oldSuppressLabels);
     }         
     
     private void createNewList(double from, double to, double step) {     
@@ -312,26 +314,15 @@ public class AlgoSequence extends AlgoElement {
     private void updateLocalVar(double varVal) {
     	// set local variable to given value
     	var.setValue(varVal);
-    	
-    	// update all random numbers without labels
-    	if (randomNumberPredecessors != null) {
-    		for (int i=0; i < randomNumberPredecessors.size(); i++) {
-    			GeoNumeric randNum = (GeoNumeric) randomNumberPredecessors.get(i);   				
-    			randNum.updateRandomNumber();    				    				
-    		}
-    	}
     		    	   
     	// update var's algorithms until we reach expression 
     	if (expressionParentAlgo != null) {    	    		
     		// update all dependent algorithms of the local variable var    		
     		this.setStopUpdateCascade(true);
     		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
-    		this.setStopUpdateCascade(false);    		
-		}
-    	
-    	if (expIsRandom) {
+    		this.setStopUpdateCascade(false);   
     		expressionParentAlgo.update();
-    	}
+		}
     }
     
 

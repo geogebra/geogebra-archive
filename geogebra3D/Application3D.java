@@ -51,6 +51,7 @@ public abstract class Application3D extends Application{
     JFrame fspr = new JFrame("spreadsheet view");
 
 
+
     public Application3D(String[] args, GeoGebraFrame frame, boolean undoActive) {
         this(args, frame, null, undoActive);
     }
@@ -62,7 +63,7 @@ public abstract class Application3D extends Application{
     
     private Application3D(String[] args, GeoGebraFrame frame, AppletImplementation applet, boolean undoActive) { 
     	
-    	super(args, frame, applet, undoActive);
+    	super(args, frame, applet, null, undoActive);
 
 
     	//euclidianView3D.initAxisAndPlane();

@@ -394,11 +394,8 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 				g2.setRenderingHint(RenderingHints.KEY_RENDERING,
 						RenderingHints.VALUE_RENDER_QUALITY);
 				
-				// activate antialiasing if possible
-				if(app.isAntialiasing()) {
-					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 							RenderingHints.VALUE_ANTIALIAS_ON);
-				}
 
 				// draw preview image if possible
 				if (img != null) {

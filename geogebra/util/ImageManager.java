@@ -17,12 +17,14 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.MediaTracker;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
@@ -237,5 +239,24 @@ public class ImageManager {
         return cm.hasAlpha();
     }
     
+	public static ImageIcon getScaledIcon(ImageIcon icon, int width, int height) {
+		if (icon.getIconWidth() == width && icon.getIconHeight() == height) {
+			return icon;
+		} else {
+			Image scaledImage = getScaledImage(icon.getImage(), width, height);
+			return new ImageIcon(scaledImage);
+		}
+	}
+	
+	public static Image getScaledImage(Image img, int width, int height) {
+		// scale image
+		BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics2D = scaledImage.createGraphics();
+		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+			RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		graphics2D.drawImage(img, 0, 0, width, height, null);
+		graphics2D.dispose();
+		return scaledImage;
+	}
     
 }

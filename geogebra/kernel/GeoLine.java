@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
@@ -29,6 +30,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
     public static final int EQUATION_IMPLICIT = 0;
     public static final int EQUATION_EXPLICIT = 1;
     public static final int PARAMETRIC = 2;		
+    public static final int EQUATION_IMPLICIT_NON_CANONICAL = 3;		
     
     private String parameter = "\u03bb";	
     GeoPoint startPoint, endPoint;    
@@ -40,6 +42,11 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
     public GeoLine(Construction c) { 
     	super(c); 
     	setMode( GeoLine.EQUATION_IMPLICIT );
+    }
+    
+    public GeoLine(Construction c, int mode) { 
+    	super(c); 
+    	setMode( mode );
     }
     
     /** Creates new GeoLine */     
@@ -481,7 +488,6 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
     final public void setToImplicit() {
         setMode(EQUATION_IMPLICIT);
     }
-    
             
     final public void setMode( int mode ) {
     	switch (mode) {
@@ -489,10 +495,14 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
                     toStringMode = PARAMETRIC;	
                     break;    			
                         
-                case EQUATION_EXPLICIT:
-                    toStringMode = EQUATION_EXPLICIT;
-                    break;
-                    
+            case EQUATION_EXPLICIT:
+                toStringMode = EQUATION_EXPLICIT;
+                break;
+                
+            case EQUATION_IMPLICIT_NON_CANONICAL:
+                toStringMode = EQUATION_IMPLICIT_NON_CANONICAL;
+                break;
+                
     		default:
     	            toStringMode = EQUATION_IMPLICIT;
     	}
@@ -522,7 +532,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
     
     private StringBuffer buildValueString() {		
         double [] P = new double[2];                       			 
-        double [] g = new double[3];	 
+        double [] g = new double[3];	
     	
        	switch (toStringMode) {     
             case EQUATION_EXPLICIT:   ///EQUATION    
@@ -546,16 +556,25 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 					sbBuildValueString.append(", ");
 					sbBuildValueString.append(kernel.format(-x));
 					sbBuildValueString.append(")");                    
-				  return sbBuildValueString;                                                                           
-            
-            default:   // EQUATION_IMPLICIT            	            
+				  return sbBuildValueString;     
+				  
+            case EQUATION_IMPLICIT_NON_CANONICAL:
                 g[0] = x;
                 g[1] = y;
                 g[2] = z;                
                 if (kernel.isZero(x) || kernel.isZero(y)) 
 					return kernel.buildExplicitLineEquation(g, vars);
                 else
-                    return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN);
+                    return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN, false);
+            
+            default:   // EQUATION_IMPLICIT    
+                g[0] = x;
+                g[1] = y;
+                g[2] = z;                
+                if (kernel.isZero(x) || kernel.isZero(y)) 
+					return kernel.buildExplicitLineEquation(g, vars);
+                else
+                    return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN, true);
         }    	    	
     }        
     
@@ -574,7 +593,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 			g[0] = x;
 			g[1] = y;
 			g[2] = z;  
-			return kernel.buildLHS(g, vars, KEEP_LEADING_SIGN); 
+			return kernel.buildLHS(g, vars, KEEP_LEADING_SIGN, true); 
         } else
 			return sbToStringLHS;                           	                   	               
     }
@@ -600,6 +619,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
                 
             case GeoLine.EQUATION_EXPLICIT:
                 sb.append("\t<eqnStyle style=\"explicit\"/>\n");
+                break;
+           
+            case GeoLine.EQUATION_IMPLICIT_NON_CANONICAL:
+                // don't want anything here
                 break;
            
             default:
@@ -708,6 +731,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 			
 			if (moverStartPoint != null) {
 				moverStartPoint.setCoords(p);
+				// point p is on the line and we use it's location
+				// as the startpoint, thus p needs to get path parameter 0
+				PathParameter pp = p.getPathParameter();
+				pp.t = 0;	
 			}
 			
 			super.init(p);
@@ -749,7 +776,31 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 //				return !(curr_param > 0 && next_param <= 0);
 //		}					
 	}
-	
+
+	   public void add(GeoLine line) {
+		   x += line.x;
+		   y += line.y;
+		   z += line.z;
+	   }
+	    
+	   public void subtract(GeoLine line) {
+		   x -= line.x;
+		   y -= line.y;
+		   z -= line.z;
+	   }
+	    
+	   public void multiply(GeoLine line) {
+		   x *= line.x;
+		   y *= line.y;
+		   z *= line.z;
+	   }
+	    
+	   public void divide(GeoLine line) {
+		   x /= line.x;
+		   y /= line.y;
+		   z /= line.z;
+	   }
+	   						
     public void setZero() {
     	setCoords(0, 1, 0);
     }

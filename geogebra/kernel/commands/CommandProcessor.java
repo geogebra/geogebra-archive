@@ -5313,18 +5313,20 @@ class CmdOsculatingCircle extends CommandProcessor {
 			 try {
 			 
 				 String color = geogebra.util.Util.removeSpaces(((GeoText)arg[1]).getTextString()).toLowerCase();
-
-				 Application.debug(color);
-				 
-				 // translate to English
-				 color = app.reverseGetPlain(color).toUpperCase();
-				 Application.debug(color);				 
 				 // lookup Color
 				 HashMap colors = app.getColorsHashMap();				 
 				 Color col = (Color)colors.get(color);
 				 
-				 if (col == null)
+				 // TODO: add support for translated color names
+				 if (col == null) {
+					 // translate to English
+					 //color = app.reverseGetColor(color).toUpperCase();
+					 //Application.debug(color);
+				 }
+				 
+				 if (col == null) {
 					 throw argErr(app, c.getName(), arg[1]);
+				 }
 				 
 				 arg[0].setObjColor(col);
 				 arg[0].updateRepaint();

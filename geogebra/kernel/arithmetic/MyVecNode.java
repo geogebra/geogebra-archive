@@ -95,8 +95,7 @@ public class MyVecNode extends ValidExpression implements VectorValue {
     	
         if (mode == Kernel.COORD_POLAR) {
             double r = ((NumberValue)evx).getDouble();
-            // negative radius yields undefined result
-            if (r < 0) r = Double.NaN;            
+            // allow negative radius for US
             double phi = ((NumberValue)evy).getDouble();                                      
             double [] ret = { r * Math.cos( phi ) ,
                               r * Math.sin( phi )  };

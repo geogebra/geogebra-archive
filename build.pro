@@ -16,7 +16,7 @@
 
 ## These two needed for the Mac stuff
 -libraryjars AppleJavaExtensions.jar
--libraryjars laf.jar
+#-libraryjars laf.jar
 
 ## Rhino javascript library uses reflection, so can't process with ProGuard
 -libraryjars ../build/geogebra_javascript.jar
@@ -44,6 +44,11 @@
 
 # Keep GeoGebra applet
 -keep class geogebra.GeoGebraApplet {
+    public <methods>;
+}
+
+# Keep GeoGebraPanel
+-keep class geogebra.GeoGebraPanel {
     public <methods>;
 }
 

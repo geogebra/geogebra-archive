@@ -295,8 +295,6 @@ class FileMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.loadExportJar();
-
 				try {
 					Thread runner = new Thread() {
 						public void run() {
@@ -343,7 +341,6 @@ class FileMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				try {
-					app.loadExportJar();
 					new geogebra.export.pstricks.GeoGebraToPstricks(app);
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPstricks not available");
@@ -360,7 +357,6 @@ class FileMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				try {
-					app.loadExportJar();
 					new geogebra.export.pstricks.GeoGebraToPgf(app);
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPGF not available");
@@ -380,8 +376,6 @@ class FileMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.loadExportJar();
-
 				try {
 
 					Thread runner = new Thread() {

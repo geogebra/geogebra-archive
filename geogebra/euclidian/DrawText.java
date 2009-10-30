@@ -53,6 +53,9 @@ public final class DrawText extends Drawable {
         geo = text;
         
         textFont = view.fontPoint;
+        
+        // this is needed as (bold) LaTeX texts are created with isLaTeX = false at this stage
+        updateStrokes(text);
           
         update();
     }
@@ -291,7 +294,8 @@ public final class DrawText extends Drawable {
 		int newFontStyle = text.getFontStyle();	
 		boolean newSerifFont = text.isSerifFont();
 		
-		if (fontSize !=newFontSize || fontStyle != newFontStyle || newSerifFont != serifFont) {					
+		if (textFont.canDisplayUpTo(text.getTextString()) != -1 ||
+				fontSize !=newFontSize || fontStyle != newFontStyle || newSerifFont != serifFont) {					
 			super.updateFontSize();
 			
 			fontSize = newFontSize;
@@ -302,8 +306,7 @@ public final class DrawText extends Drawable {
 			//	//setEqnFontSize();				
 			//} else {				
 				Application app = view.getApplication();
-				String fontName = serifFont ? app.getAppFontNameSerif() : app.getAppFontNameSansSerif();
-				textFont = new Font(fontName, fontStyle, fontSize);				
+				textFont = app.getFontCanDisplay(text.getTextString(), serifFont, fontStyle, fontSize);				
 			//}	
 				return true;
 		}			

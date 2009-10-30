@@ -1,5 +1,6 @@
 package geogebra.kernel.commands;
 
+import geogebra.kernel.AlgoDependentLine;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -835,6 +836,17 @@ public class AlgebraProcessor {
 		else if (eval instanceof MyList) {
 			return processList(n, (MyList) eval);
 		} 
+		
+		// REMOVED due to issue 131: http://code.google.com/p/geogebra/issues/detail?id=131
+//		// expressions like 2 a (where a:x + y = 1)
+//		//TODO A1=b doesn't work for these objects
+//		else if (eval instanceof GeoLine) {
+//			if (((GeoLine)eval).getParentAlgorithm() instanceof AlgoDependentLine) {
+//				GeoElement[] ret = {(GeoElement) eval };
+//				return ret;
+//			}
+// 
+//		}
 		
 		// e.g. B1 = A1 where A1 is a GeoElement and B1 does not exist yet
 		// create a copy of A1

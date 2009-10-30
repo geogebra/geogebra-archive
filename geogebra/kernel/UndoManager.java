@@ -42,7 +42,6 @@ public class UndoManager {
 	private ListIterator iterator;  // invariant: iterator.previous() is the current state
 	private MyXMLio xmlio;
 
-	private int lastUndoXMLlength = -1;
 	private Application app;
 
 	/**
@@ -72,7 +71,6 @@ public class UndoManager {
 	private synchronized void clearUndoInfo() {
 		undoInfoList.clear();
 		iterator = undoInfoList.listIterator();
-		lastUndoXMLlength = -1;
 		System.gc();
 	}
 
@@ -113,19 +111,13 @@ public class UndoManager {
 	/**
 	 * Adds construction state to undo info list.
 	 */
-	public void storeUndoInfo() {	
-		// this can cause a java.lang.OutOfMemoryError for very large constructions
-		final StringBuffer currentUndoXML = construction.getCurrentUndoXML();
-
-		// don't store undo info if it has same length
-		if (currentUndoXML.length() == lastUndoXMLlength) {			
-			return;
-		} else {			
-			lastUndoXMLlength = currentUndoXML.length();
-		}				
-
+	public void storeUndoInfo() {
+		if (!app.isUndoActive()) return;
+		
 		Thread undoSaverThread = new Thread() {
-			public void run() {					
+			public void run() {		
+				// this can cause a java.lang.OutOfMemoryError for very large constructions
+				StringBuffer currentUndoXML = construction.getCurrentUndoXML();
 				doStoreUndoInfo(currentUndoXML);								
 			}
 		};
@@ -133,7 +125,6 @@ public class UndoManager {
 	}
 
 	private synchronized void doStoreUndoInfo(final StringBuffer undoXML) {			
-		
 			// avoid security problems calling from JavaScript ie setUndoPoint()
 			AccessController.doPrivileged(new PrivilegedAction() {
 				public Object run() {
@@ -210,7 +201,6 @@ public class UndoManager {
 	 * restore info at position pos of undo list
 	 */
 	final private synchronized void loadUndoInfo(final Object info) { 
-		
 				try {    
 					// load from file
 					File tempFile = (File) info;
@@ -235,6 +225,7 @@ public class UndoManager {
 	 * Returns whether undo operation is possible or not.	 
 	 */
 	public boolean undoPossible() {  
+		if (!app.isUndoActive()) return false;
 		return iterator.nextIndex() > 1;	
 	}
 
@@ -242,6 +233,7 @@ public class UndoManager {
 	 * Returns whether redo operation is possible or not.	 
 	 */
 	public boolean redoPossible() {
+		if (!app.isUndoActive()) return false;
 		return iterator.hasNext();
 	}
 

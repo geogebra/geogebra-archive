@@ -321,7 +321,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
                 // now let's compute the roots of this factor           
                 //  compute all roots of polynomial polyFun
                 roots = polyFun.getCoeffsCopy();   
-                realRoots = eqnSolver.polynomialRoots(roots);                           
+                realRoots = eqnSolver.polynomialRoots(roots);  
                 addToCurrentRoots(roots, realRoots);                            
             }
         }         

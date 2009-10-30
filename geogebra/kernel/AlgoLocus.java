@@ -74,23 +74,40 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         super(cons);
         this.movingPoint = P;
         this.locusPoint = Q;    	
-    	//cache = new HashMap();
-                
+        
         path = P.getPath();
-        pathMover = path.createPathMover();
+        pathMover = path.createPathMover();        
         
         QstartPos = new GeoPoint(cons);
         PstartPos = new GeoPoint(cons);
             
-        init();  
+        init();        
         updateScreenBorders();
         locus = new GeoLocus(cons);                      
         setInputOutput(); // for AlgoElement       
         cons.registerEuclidianViewAlgo(this);
-        
         compute();
+        
+     	// we may have created a starting point for the path now
+        // make sure that the movingPoint in the main construction
+        // uses the correct path parameter for it
+        path.pointChanged(P);
+   
         locus.setLabel(label);
     }
+    
+//    private void printMacroConsStatus() {
+//		System.out.print("MOVER POINT: " + Pcopy);
+//		System.out.print(", pp.t: " + Pcopy.getPathParameter().t);    		
+//		System.out.println(", locus point: " + Qcopy);
+//		
+//		TreeSet geos = macroCons.getGeoSetLabelOrder();
+//		Iterator it = geos.iterator();
+//		while (it.hasNext()) {
+//			GeoElement geo = (GeoElement) it.next();
+//			System.out.println("  " + geo);
+//		}
+//    }
  
     protected String getClassName() {
         return "AlgoLocus";
@@ -217,7 +234,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	try {    	
     		// get XML for macro construction of P -> Q        	
         	String locusConsXML = Macro.buildMacroXML(kernel, locusConsElements);  
-        	
+
     		macroKernel.loadXML(locusConsXML);
     	
 	    	// get the copies of P and Q from the macro kernel
@@ -253,7 +270,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     }
     
     /**
-     *  Set all ellements in locusConsElements 
+     *  Set all elements in locusConsElements 
      *  to the current values of the main construction    
      */
     private void resetMacroConstruction() {       
@@ -280,12 +297,12 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
       }             
 
     // compute locus line
-    final protected void compute() {    	
+    final protected void compute() {    	    
     	if (!movingPoint.isDefined() || macroCons == null) {    		
     		locus.setUndefined();
     		return;
     	}
-    	
+ 
     	locus.clearPoints();    
     	clearCache();
     	pointCount = 0;	 	     	
@@ -300,10 +317,12 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	continuous = kernel.isContinuous();
     	macroKernel.setContinuous(continuous);  
     	
+        
+     	
     	// update macro construction with current values of global vars 
     	resetMacroConstruction();
     	macroCons.updateConstruction();
-		
+    	
     	// use current position of movingPoint to start Pcopy
     	pathMover.init(Pcopy);	
     	
@@ -318,7 +337,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	    	    
     	// update Pcopy to compute Qcopy      	
     	pcopyUpdateCascade();    	    	    
-   		prevQcopyDefined = Qcopy.isDefined();      	   		    	    	      		    
+   		prevQcopyDefined = Qcopy.isDefined();   	
     	
     	// move Pcopy along the path
     	// do this until Qcopy comes back to its start position
@@ -509,9 +528,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	    		Qcopy.setCoords(cachedPoint.x, cachedPoint.y, 1.0);
 	    		useCache++;
 	    	}    	   
-    	}	
-    	
-    
+    	}	    	    
 
 //    	if (Qcopy.isDefined()) {
 //    		if (!foundDefined)
@@ -576,7 +593,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	locus.insertPoint(x, y, lineTo);
     	lastX = x;
     	lastY = y;
-    	lastFarAway = isFarAway(lastX, lastY);      	    	
+    	lastFarAway = isFarAway(lastX, lastY);  
     }
     
     private boolean isFarAway(double x, double y) {
@@ -634,9 +651,6 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     }
     
     public void euclidianViewUpdate() {
-    	// TODO: remove
-    	//System.out.println("AlgoLocus.euclidianViewUpdate, kernel: " + kernel);
-    	
       	updateScreenBorders();
   		update();    	
    	}

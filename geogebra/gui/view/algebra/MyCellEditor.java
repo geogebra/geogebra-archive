@@ -4,6 +4,7 @@
 package geogebra.gui.view.algebra;
 
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 
 import java.awt.Component;
 
@@ -17,9 +18,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class MyCellEditor extends DefaultCellEditor {  
     
     private static final long serialVersionUID = 1L;
+    private Application app;
     
-    public MyCellEditor(final JTextField textField) {
+    public MyCellEditor(final JTextField textField, Application app) {
         super(textField);           
+        this.app = app;
     }
     
     /** Implements the <code>TreeCellEditor</code> interface. */
@@ -50,6 +53,9 @@ public class MyCellEditor extends DefaultCellEditor {
             stringValue = str;
         }           
         delegate.setValue(stringValue);
+        
+		// make sure we use a font that can display the text
+        editorComponent.setFont(app.getFontCanDisplay(str));
         return editorComponent;
     }
 }

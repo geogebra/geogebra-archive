@@ -20,8 +20,7 @@ package geogebra.kernel.roots;
 
 public class RealRootUtil {
 	
-	private static int ITER_MAX = 100;        // maximum number of iterations allowed
-	private static double EPSILON = 1E-12;        // epsilon			
+	private static int ITER_MAX = 100;        // maximum number of iterations allowed		
 		
 	/**
 	 * Returns an interval within [a, b] where f(x) is defined. 
@@ -80,7 +79,7 @@ public class RealRootUtil {
 		boolean leftDef = false, rightDef;
 				
 		int iter=0;
-	    while (iter < ITER_MAX && Math.abs(right - left) > EPSILON) {	    	
+	    while (iter < ITER_MAX && left != right) {	    	
 	    	double fleft = f.evaluate(left);
 	    	double fright = f.evaluate(right);	    	
 	    	leftDef  = !(Double.isNaN(fleft)  || Double.isInfinite(fleft));

@@ -188,7 +188,7 @@ TOKEN :  {
   | < POWER9:   "\u2079" >
   | < PI:       ( "pi" | "Pi" | "\u03c0") >
   | < E:        "\u212f" >  
-  | < DEGREE:   "\u00b0" >
+  | < DEGREE:   ( "\u00b0" ) >
   | < INFINITY: ("\u221e" | "Infinity") >
   | < RAD:      "rad" >
   | < DERIVATIVE: "'" >

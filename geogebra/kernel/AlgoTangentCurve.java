@@ -80,7 +80,7 @@ public class AlgoTangentCurve extends AlgoElement {
         }
 
         // first derivative
-        if (df == null) {
+        if (df == null || !df.isDefined()) {
             tangent.setUndefined();
             return;
         }

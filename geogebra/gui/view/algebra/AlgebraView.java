@@ -25,6 +25,7 @@ import geogebra.main.Application;
 import geogebra.main.View;
 import geogebra.util.FastHashMapKeyless;
 
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
@@ -153,17 +154,18 @@ public class AlgebraView extends JTree implements View {
 	}
 	
 	public void updateFonts() {
-		setFont(app.plainFont);
-		editor.setFont(app.plainFont);
-		renderer.setFont(app.plainFont);
-		editTF.setFont(app.plainFont);
+		Font font = app.getPlainFont();
+		setFont(font);
+		editor.setFont(font);
+		renderer.setFont(font);
+		editTF.setFont(font);
 	}    
 
 	private void initTreeCellRendererEditor() {
 		renderer = new MyRenderer(app);		
 		editTF = new MathTextField(app.getGuiManager());
 		editor = new MyDefaultTreeCellEditor(this, renderer, 
-									new MyCellEditor(editTF));
+									new MyCellEditor(editTF, app));
 		
 		editor.addCellEditorListener(editor); // self-listening
 		setCellRenderer(renderer);

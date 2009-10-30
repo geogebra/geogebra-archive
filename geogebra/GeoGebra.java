@@ -19,25 +19,28 @@ import java.net.URL;
 public class GeoGebra extends Object {
 	
 	// GeoGebra version
-	public static final String BUILD_DATE = "October 12, 2009";
-	public static final String VERSION_STRING = "3.3.33.0";
-	//public static final String VERSION_STRING = "3D alpha";
+	public static final String  BUILD_DATE = "October 12, 2009";
+	public static final String  VERSION_STRING = "3.3.33.0";
+	public static final boolean IS_PRE_RELEASE = !VERSION_STRING.endsWith(".0");
 		
+	// enable I2G on all pre-releases
+	public static final boolean DISABLE_I2G = !IS_PRE_RELEASE;	
+
 	// File format versions
 	public static final String XML_FILE_FORMAT = "3.3";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 
-	// URLs, license file
-	public final static String GEOGEBRA_ONLINE_ARCHIVE = "http://www.geogebra.org/webstart/3.2/geogebra.jar";
+	// URLs
+	public final static String GEOGEBRA_ONLINE_ARCHIVE_BASE = "http://www.geogebra.org/webstart/4.0/";
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
 	
 	// max possible heap space for applets in MB
 	public final static int MAX_HEAP_SPACE = 512;
 	
-    public static void main(String[] args) {    	
+    public static void main(String[] args) {  
     	  // Show splash screen
 		  Frame splashFrame = null;
-		  URL imageURL = GeoGebra.class.getResource("/geogebra/splash.gif");
+		  URL imageURL = GeoGebra.class.getResource("/geogebra/splash.png");
 		  if (imageURL != null) {
 		      splashFrame = SplashWindow.splash(
 		          Toolkit.getDefaultToolkit().createImage(imageURL)
@@ -56,16 +59,10 @@ public class GeoGebra extends Object {
 		  }
 		  
 		  // Hide splash screen
-		  if (splashFrame != null) splashFrame.setVisible(false);    	
+		  if (splashFrame != null) splashFrame.setVisible(false);
     }
     
     private static void startGeoGebra(String [] args) {
-    	// load geogebra_main.jar and geogebra_gui.jar file
-    	// they are needed to created the application window
-    	JarManager jarManager = JarManager.getSingleton(false);
-    	jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);      
-    	jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_GUI);
-    	
     	// create and open first GeoGebra window        	
     	geogebra.gui.app.GeoGebraFrame.main(args);
     }

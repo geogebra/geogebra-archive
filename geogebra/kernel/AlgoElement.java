@@ -42,6 +42,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     
     protected GeoElement[] input, output;
     private GeoElement [] efficientInput;
+    private GeoNumeric [] randomUnlabeledInput;
      
     private boolean isPrintedInXML = true;
     private boolean stopUpdateCascade = false;
@@ -119,8 +120,15 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 //    public static double computeTime, updateTime;
 //    public static double counter;
     
-    void update() {
-    	 if (stopUpdateCascade) return;
+    public void update() {
+    	if (stopUpdateCascade) return;
+    	 
+    	// update input random numbers without label
+    	if (randomUnlabeledInput != null) {
+    		for (int i=0; i < randomUnlabeledInput.length; i++) {
+    			randomUnlabeledInput[i].updateRandomNumber();
+    		}
+    	}
     	
 //    	counter++;
 //    	startTime = System.currentTimeMillis(); 
@@ -132,8 +140,6 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 //        computeTime += (endTime - startTime);
     	//startTime = System.currentTimeMillis(); 
         
-      
-    	
         // update dependent objects 
         for (int i = 0; i < output.length; i++) {           
                 output[i].update();
@@ -206,11 +212,37 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         doSetDependencies();   
     }
     
-    protected void doSetDependencies() {
+    private void doSetDependencies() {
+    	setRandomUnlabeledInput();
         setOutputDependencies();           
         cons.addToAlgorithmList(this);  
     }
-   
+    
+    /**
+     * Builds a list of all random input numbers that are unlabeled.
+     * These numbers need to be updated in update() before compute()
+     * is called.
+     */
+    private void setRandomUnlabeledInput() {
+    	ArrayList tempList = null;
+        for (int i = 0; i < input.length; i++) {  
+       	 if (input[i].isGeoNumeric() && !input[i].isLabelSet()) {
+       		 GeoNumeric num = (GeoNumeric) input[i];
+       		 if (num.isRandomNumber()) {
+       			 if (tempList == null) tempList = new ArrayList();
+       			 tempList.add(num);
+       		 }
+       	 }
+        } 
+        
+        if (tempList != null) {
+        	randomUnlabeledInput = new GeoNumeric[tempList.size()];
+        	for (int i=0; i < randomUnlabeledInput.length; i++) {
+        		randomUnlabeledInput[i] = (GeoNumeric) tempList.get(i);
+        	}
+        }
+    }
+    
     
     protected final void setEfficientDependencies(GeoElement [] standardInput, GeoElement [] efficientInput) {   	
     	// dependens on standardInput

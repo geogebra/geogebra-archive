@@ -24,7 +24,6 @@ import geogebra.kernel.Kernel;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 
 /**
  *
@@ -41,7 +40,7 @@ public class DrawSlope extends Drawable {
     String horLabel; // horizontal label, i.e. triangleSize    
     
     private double [] coords = new double[2];
-    private GeneralPath gp = new GeneralPath();  
+    private GeneralPathClipped gp;  
     private Kernel kernel;             
     
     public DrawSlope(EuclidianView view, GeoNumeric slope) {
@@ -78,13 +77,15 @@ public class DrawSlope extends Drawable {
             view.toScreenCoords(coords);
             
             // draw slope triangle       
-            float x = (float) coords[0];
-            float y = (float) coords[1];
-            float xright = (float) (x + view.xscale * slopeTriangleSize);
+            double x = coords[0];
+            double y = coords[1];
+            double xright = x + view.xscale * slopeTriangleSize;
+            if (gp == null)
+            	gp = new GeneralPathClipped(view);
             gp.reset(); 
             gp.moveTo(x, y);
             gp.lineTo(xright, y);
-            gp.lineTo(xright, y - (float) height);      
+            gp.lineTo(xright, y - height);      
             
         	// gp on screen?		
     		if (!gp.intersects(0,0, view.width, view.height)) {				

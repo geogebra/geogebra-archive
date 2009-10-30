@@ -1,15 +1,21 @@
 package geogebra.main;
 
+import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.PointProperties;
 
+import java.awt.Color;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 import javax.swing.JTable;
@@ -116,12 +122,11 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		return false;
 	}
 
-
 	/**
 	 * Handles general keys like ESC and function keys that don't involved
 	 * selected GeoElements.
 	 */
-	private boolean handleGeneralKeys(KeyEvent event) {
+	public boolean handleGeneralKeys(KeyEvent event) {
 		boolean consumed = false;
 
 		// ESC and function keys
@@ -160,57 +165,84 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 						
 		// Ctrl key down
 		if (Application.isControlDown(event)) {
-			switch (event.getKeyCode()) {							
-				case KeyEvent.VK_C:
-					// Ctrl-shift-c: copy graphcis view to clipboard
-					//   should also work in applets with no menubar
-					if (event.isShiftDown()) {
-						app.copyGraphicsViewToClipboard();	
-						consumed = true;
-					}
-					break;
+		
+			switch (event.getKeyCode()) {				
+			case KeyEvent.VK_1:
+				// Ctrl-1: set objects back to the default size (for font size 12)
+				changeFontsAndGeoElements(12, false);
+				break;
 				
-				// Ctrl + F: refresh views
-				case KeyEvent.VK_F:
-					app.refreshViews();
-					consumed = true;								
-					break;
-					
-					// needed on MacOS
-					// Cmd + Y: Redo
-					case KeyEvent.VK_Y:
-						app.getGuiManager().redo();
-						consumed = true;
-						break;
-						
-					// ctrl-R updates construction
-					// make sure it works in applets without a menubar
-					case KeyEvent.VK_R:
-						if (!app.isApplet() || app.isRightClickEnabled()) {
-							app.getKernel().updateConstruction();
-							app.setUnsaved();
-							consumed = true;
-						}
-						break;
-						
-					// Ctrl-(shift)-Q
-					// (deprecated - doesn't work on MacOS)
-					case KeyEvent.VK_Q:
-						if (event.isShiftDown())
-							app.selectAllDescendants();
-						else
-							app.selectAllPredecessors();
-						consumed = true;
-						break;
-												
-				// Ctrl + "+", Ctrl + "-" zooms in or out in graphics view
-				case KeyEvent.VK_PLUS:
-				case KeyEvent.VK_MINUS:
-				case KeyEvent.VK_EQUALS:				
-					app.getEuclidianView().getEuclidianController().zoomInOut(event);
+			case KeyEvent.VK_2:
+				// Ctrl-2: large font size and thicker lines for projectors etc
+				int fontSize = Math.min(32, app.getFontSize() + 4);
+				changeFontsAndGeoElements(fontSize, false);
+				break;
+			
+			case KeyEvent.VK_3:
+				// Ctrl-3: set black/white mode printing and visually impaired users
+				changeFontsAndGeoElements(app.getFontSize(), true);
+				break;
+				
+			case KeyEvent.VK_C:
+				// Ctrl-shift-c: copy graphcis view to clipboard
+				//   should also work in applets with no menubar
+				if (event.isShiftDown()) {
+					app.copyGraphicsViewToClipboard();	
+					consumed = true;
+				}
+				break;
+			
+			// Ctrl + F: refresh views
+			case KeyEvent.VK_F:
+				app.refreshViews();
+				consumed = true;								
+				break;
+				
+			// needed on MacOS
+			// Cmd + Y: Redo
+			case KeyEvent.VK_Y:
+				app.getGuiManager().redo();
+				consumed = true;
+				break;
+				
+			// ctrl-R updates construction
+			// make sure it works in applets without a menubar
+			case KeyEvent.VK_R:
+				if (!app.isApplet() || app.isRightClickEnabled()) {
+					app.getKernel().updateConstruction();
 					app.setUnsaved();
-					consumed = true;					
-					break;
+					consumed = true;
+				}
+				break;
+				
+			// Ctrl-(shift)-Q
+			// (deprecated - doesn't work on MacOS)
+			case KeyEvent.VK_Q:
+				if (event.isShiftDown())
+					app.selectAllDescendants();
+				else
+					app.selectAllPredecessors();
+				consumed = true;
+				break;
+											
+			// Ctrl + "+", Ctrl + "-" zooms in or out in graphics view
+			case KeyEvent.VK_PLUS:
+			case KeyEvent.VK_MINUS:
+			case KeyEvent.VK_EQUALS:				
+				app.getEuclidianView().getEuclidianController().zoomInOut(event);
+				app.setUnsaved();
+				consumed = true;					
+				break;
+				
+			// Ctrl + D: toggles algebra style: value, definition, command
+			case KeyEvent.VK_D:
+			case KeyEvent.VK_BACK_QUOTE:
+				Kernel kernel = app.getKernel();
+				kernel.setAlgebraStyle((kernel.getAlgebraStyle() + 1) % 3);
+				kernel.updateConstruction();
+				app.setUnsaved();
+				consumed = true;
+				break;
 			}
 		}
 
@@ -347,7 +379,6 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 
 		// change all geoelements
 		if (changeVal != 0) {
-			boolean needUpdate = false;
 			for (int i=geos.size()-1; i>=0; i--) {
 				GeoElement geo = (GeoElement) geos.get(i);								
 
@@ -361,7 +392,6 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 							newValue = app.getKernel().checkDecimalFraction(newValue);
 						}
 						num.setValue(newValue);					
-						needUpdate = true;
 					} 
 					
 					// update point on path
@@ -369,43 +399,29 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 						GeoPoint p = (GeoPoint) geo;
 						if (p.hasPath()) {
 							p.addToPathParameter(changeVal * p.animationIncrement);
-							needUpdate = true;
 						}
 					}
 				}	
 				
-				// update parent algo of number (this will update random numbers)
-				else if (geo.isGeoNumeric() && !geo.isIndependent()) {					
-					GeoNumeric num = (GeoNumeric) geo;
-					if (num.isRandomNumber()) {
-						num.updateRandomNumber();
-						needUpdate = true;
-					} else {
-						// allow updating of a = random() by pressing arrow keys
-						GeoElement [] input = num.getParentAlgorithm().getInput();
-						for (int k=0; k < input.length; k++) {
-							if (input[k].isGeoNumeric() && !input[k].isLabelSet()) {
-								GeoNumeric randNum = (GeoNumeric) input[k];   				
-								// check needed for eg
-								// list1 = Sequence[random(), i, 1, 2]
-								// a=Element[list1,1]
-								// click on 'a' in Algebra Window then press left/right
-								if (randNum.isRandomNumber()) {
-									randNum.updateRandomNumber();
-									input[k].updateCascade();
-									needUpdate = true;
-								}
-							}
-			    		}		
-					}																		
+				// update parent algo of dependent geo to update randomNumbers
+				else if (!geo.isIndependent()) {
+					// update labeled random number
+					if (geo.isLabelSet() && geo.isGeoNumeric()) {
+						GeoNumeric num = (GeoNumeric) geo;
+						if (num.isRandomNumber()) {
+							num.updateRandomNumber();
+						}
+					} 
+					
+					// update parent algorithm for unlabeled random numbers
+					// and all other algorithms
+					geo.getParentAlgorithm().update();
 				}
 			}
 			
-			if (needUpdate) {
-				// update all geos together
-				GeoElement.updateCascade(geos, getTempSet());
-				app.getKernel().notifyRepaint();
-			}
+			// update all geos together
+			GeoElement.updateCascade(geos, getTempSet());
+			app.getKernel().notifyRepaint();
 	
 			return true;
 		}
@@ -497,5 +513,98 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	}
 	private GeoVector tempVec;
 
+	/**
+	 * Changes the font size of the user interface and construction element styles (thickness,
+	 * size) for a given fontSize. 
+	 * @param fontSize: 12-32pt
+	 * @param grayScale: whether only black should be used as a color
+	 * @return whether change was performed
+	 */	
+	private boolean changeFontsAndGeoElements(int fontSize, boolean blackWhiteMode) {
+		if (app.isApplet()) 
+			return false;
+		
+		app.setWaitCursor();
+			
+		// determine styles
+		// set new default line thickness
+		int oldFontSize = app.getFontSize();
+		int angleSizeIncr = fontSize - oldFontSize;
+		int incr = getPointSizeInc(oldFontSize, fontSize);
+		
+		// construction defaults
+		ConstructionDefaults cd = app.getKernel().getConstruction().getConstructionDefaults();
+		cd.setDefaultLineThickness(EuclidianView.DEFAULT_LINE_THICKNESS + incr);
+		cd.setDefaultPointSize(EuclidianView.DEFAULT_POINT_SIZE + incr);
+		cd.setDefaultAngleSize(EuclidianView.DEFAULT_ANGLE_SIZE + angleSizeIncr);
+		// blackWhiteMode: set defaults for new GeoElements
+		cd.setBlackWhiteMode(blackWhiteMode);
+		
+		// change application font size
+		app.setFontSize(fontSize);
+		if (app.hasGuiManager())
+			app.getGuiManager().updateSpreadsheetColumnWidths();
+		
+		// apply styles to to selected or all geos
+		Iterator it = null;
+		if (app.getSelectedGeos().size() == 0) {
+			// change all geos
+			it = app.getKernel().getConstruction().getGeoSetConstructionOrder().iterator();
+		} else {
+			// just change selected geos
+			it = app.getSelectedGeos().iterator();
+		}	
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();
+			setGeoProperties(geo, incr, incr, angleSizeIncr, blackWhiteMode);
+		}
+		
+		app.getKernel().updateConstruction();
+		app.setUnsaved();
+		app.storeUndoInfo();
+		
+		app.setDefaultCursor();
+		return true;
+	}
+	
+	private int getPointSizeInc(int oldFontSize, int newFontSize) {
+		if (oldFontSize == newFontSize) return 0;
+		int step = newFontSize > oldFontSize ? 1 : -1;
+		
+		int left = Math.min(oldFontSize, newFontSize);
+		int right = Math.max(oldFontSize, newFontSize);
+		int [] borders = { 16, 22, 28 };
+		int incr = 0;
+		for (int i=0; i < borders.length; i++) {
+			if (left < borders[i] && borders[i] <= right) {
+				incr = incr + step;
+			}
+		}
+		
+		return incr;
+	}
+	
+	private void setGeoProperties(GeoElement geo, int lineThicknessIncr, int pointSizeIncr, 
+			int angleSizeIncr, boolean blackWhiteMode) 
+	{
+		if (!geo.isGeoText() && !geo.isGeoImage()) { // affects bounding box
+			geo.setLineThickness(geo.getLineThickness() + lineThicknessIncr);
+		}
+			
+		if (geo instanceof PointProperties) {
+			PointProperties p = (PointProperties) geo;
+			p.setPointSize(p.getPointSize() + pointSizeIncr);
+		}
+			
+		if (geo.isGeoAngle()) {
+			GeoAngle angle = (GeoAngle) geo;
+			angle.setArcSize(angle.getArcSize() + angleSizeIncr);
+		}
+			
+		if (blackWhiteMode) {
+			geo.setAlphaValue(0f);
+			geo.setObjColor(Color.black);
+		}
+	}
 	
 }

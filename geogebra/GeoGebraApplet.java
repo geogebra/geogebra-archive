@@ -33,7 +33,6 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 
 	// applet member variables
 	private AppletImplementationInterface appletImplementation = null;
-	private JarManager jarManager;
 	private boolean animationRunningAtLastStop = false;
 
 	private AppletSplashScreen splashScreen = null;
@@ -136,7 +135,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	/**
 	 * Returns the appletImplementation object.
 	 */
-	private synchronized AppletImplementationInterface getAppletImplementation() {
+	public synchronized AppletImplementationInterface getAppletImplementation() {
 		if (appletIsIniting) {
 			initAppletImplementation();						
 		}
@@ -144,18 +143,17 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		return appletImplementation;
 	}
 	
+	public void setAppletImplementation(AppletImplementationInterface appImp) {
+		appletImplementation = appImp;
+		appletIsIniting = false;
+	}
+	
 	/**
 	 * Initializes the appletImplementation object. Loads geogebra_main.jar file
 	 * and initializes applet if necessary.
 	 */
-	private synchronized void initAppletImplementation() {
-		if (!appletIsIniting) return;
-
-		// init jar manager to load jar files for applet
-		jarManager = JarManager.getSingleton(true);
-
-		// load geogebra_main.jar file
-		jarManager.addJarToClassPath(JarManager.JAR_FILE_GEOGEBRA_MAIN);
+	protected synchronized void initAppletImplementation() {
+		if (isAppletFullyLoaded()) return;
 
 		// create delegate object that implements our applet's methods
 		geogebra.main.DefaultApplet applImpl = new geogebra.main.DefaultApplet(this);
@@ -164,12 +162,9 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		applImpl.initGUI();		
 
 		// remember the applet implementation
-		appletImplementation = applImpl;	
-				
-		// applet initing finished
-		appletIsIniting = false;
+		setAppletImplementation(applImpl);
 	}		
-
+	
 	/**
 	 * Paints the applet or a loading screen while the applet is being
 	 * initialized.
@@ -207,14 +202,6 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 			super.paint(g);
 		}
 	}
-
-	/**
-	 * Returns the current status message of the JarManager. This is
-	 * used for progress reporting in the SplashScreen.
-	 */	
-	final String getDownloadStatusMessage() {
-		return jarManager == null ? null : jarManager.getDownloadStatusMessage();
-	}	
 	
 	final boolean isAppletFullyLoaded() {
 		return !appletIsIniting;
@@ -440,6 +427,10 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 
 	public synchronized void setFilling(String objName, double filling) {
 		getAppletImplementation().setFilling(objName, filling);
+	}
+
+	public synchronized String getGraphicsViewCheckSum(String algorithm, String format) {
+		return getAppletImplementation().getGraphicsViewCheckSum(algorithm, format);
 	}
 
 	public synchronized void setPointStyle(String objName, int style) {

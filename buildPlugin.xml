@@ -165,7 +165,7 @@ office@geogebra.org
 	</target>
 	
 	<target name="obfuscate" if="java142-rt.present" description="obfuscate jar files">
-			<proguard configuration="build-plugin.pro"/>
+			<proguard configuration="buildPlugin.pro"/>
 			<move todir="${build.dir}">
 			    <fileset dir="${temp.dir}">
 			      <include name="*.jar"/>

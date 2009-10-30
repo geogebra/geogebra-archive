@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.export;
 
-import geogebra.JarManager;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.epsgraphics.EpsGraphics2D;
 import geogebra.gui.util.FileTransferable;
@@ -20,9 +19,11 @@ import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyImageIO;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
+import geogebra.util.DownloadManager;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -402,7 +403,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private void centerOnScreen() {		
 		//	center on screen
 		pack();				
-		setLocationRelativeTo(app.getFrame());	
+		setLocationRelativeTo(app.getMainComponent());	
 	}
 
 	/**
@@ -421,7 +422,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = JarManager.getTempDir();
+		String tempDir = DownloadManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file= new File(tempDir+"geogebra.eps");
@@ -462,7 +463,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = JarManager.getTempDir();
+		String tempDir = DownloadManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file= new File(tempDir+"geogebra.emf");
@@ -506,7 +507,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportPDF(boolean exportToClipboard) {
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = JarManager.getTempDir();
+		String tempDir = DownloadManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file= new File(tempDir+"geogebra.pdf");
@@ -557,7 +558,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final private boolean exportSVG(boolean exportToClipboard) {
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = JarManager.getTempDir();
+		String tempDir = DownloadManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file= new File(tempDir+"geogebra.svg");
@@ -571,6 +572,8 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		
 		if (file == null)
 			return false;
+		EuclidianView ev=app.getEuclidianView();
+		ev.setTemporaryCoordSystemForExport(); // allow clipping with Export_1 and 2 Points
 		try {	
 			
 			// export text as shapes or plaintext
@@ -588,7 +591,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			
 
 			
-			EuclidianView ev=app.getEuclidianView();
+
 			
 		    g.startExport();
 			ev.exportPaintPre(g, exportScale);
@@ -617,7 +620,9 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			app.showError("SaveFileFailed");
 			Application.debug(ex.toString());
 			return false;
-		} 
+		} finally {
+			ev.restoreOldCoordSystem();			
+		}
 	}		
 
 	/**
@@ -626,7 +631,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	final public boolean exportPNG(boolean exportToClipboard) {
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
-		String tempDir = JarManager.getTempDir();
+		String tempDir = DownloadManager.getTempDir();
 		if (exportToClipboard)
 		{
 			file = new File(tempDir+"geogebra.png");
@@ -641,10 +646,15 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 
 		if (file == null) return false;
 
-		try {
-			
+		try {			
+			// draw graphics view into image
 			BufferedImage img =
-			app.getEuclidianView().getExportImage(exportScale, !exportToClipboard); // enable transparency if the user saves the png			
+				app.getEuclidianView().getExportImage(exportScale);		
+			
+			// make white color transparent in image
+			Transparency.makeColorTransparent(img, Color.WHITE);			
+			
+			// write image to file
 			MyImageIO.write(img, "png", getDPI(),  file);	
 			
 			if (exportToClipboard) {

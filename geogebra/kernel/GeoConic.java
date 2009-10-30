@@ -30,7 +30,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	
 	private static final long serialVersionUID = 1L;
 	// avoid very large and small coefficients for numerical stability	
-	private static final double MAX_COEFFICIENT_SIZE = 10000;
+	private static final double MAX_COEFFICIENT_SIZE = 100000;
 	private static final double MIN_COEFFICIENT_SIZE = 1;
 
 	// modes
@@ -558,7 +558,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		switch (toStringMode) {
 			case EQUATION_SPECIFIC :
 				if (!isSpecificPossible())
-					return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN);						
+					return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN, true);						
 				
 				switch (type) {					
 					case CONIC_CIRCLE :												
@@ -620,7 +620,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 							return kernel.buildImplicitEquation(								
 								coeffs,
 								vars, 
-								KEEP_LEADING_SIGN);
+								KEEP_LEADING_SIGN, true);
 
 					case CONIC_HYPERBOLA :
 						if (kernel.isZero(coeffs[1])) { // xy coeff = 0	
@@ -672,7 +672,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 							return kernel.buildImplicitEquation(
 								coeffs,
 								vars,
-								KEEP_LEADING_SIGN);
+								KEEP_LEADING_SIGN,
+								true);
 
 					case CONIC_PARABOLA :
 						if (!kernel.isZero(coeffs[2]))
@@ -691,7 +692,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 							return kernel.buildImplicitEquation(
 								coeffs,
 								vars,
-								KEEP_LEADING_SIGN);
+								KEEP_LEADING_SIGN,
+								true);
 
 					case CONIC_DOUBLE_LINE :
 						sbToValueString.append('(');
@@ -714,7 +716,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 					return kernel.buildExplicitConicEquation(coeffs, vars, 4, KEEP_LEADING_SIGN); 
 
 			default : //implicit
-				return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN);
+				return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN, true);
 		}
 	}
 	

@@ -130,6 +130,20 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		ctrlC = false;
 
 		switch (keyCode) {
+		
+		case KeyEvent.VK_0:
+		case KeyEvent.VK_1:
+		case KeyEvent.VK_2:
+		case KeyEvent.VK_3:
+		case KeyEvent.VK_4:
+		case KeyEvent.VK_5:
+		case KeyEvent.VK_6:
+		case KeyEvent.VK_7:
+		case KeyEvent.VK_8:
+		case KeyEvent.VK_9:
+			if (Application.isControlDown(e) && e.isShiftDown())
+				app.getGlobalKeyDispatcher().handleGeneralKeys(e);
+			break;
 
 		// process input
 		case KeyEvent.VK_C:
@@ -185,8 +199,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		case KeyEvent.VK_F9: 
 			// needed for applets
-			app.getKernel().updateConstruction();
-			e.consume();
+			app.getGlobalKeyDispatcher().handleGeneralKeys(e);
 			break;
 
 		case KeyEvent.VK_F1:            	

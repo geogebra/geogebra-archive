@@ -48,10 +48,6 @@ implements ExpressionValue, RealRootFunction, Functional {
     transient private Application app;
     transient private Kernel kernel;    
     
-    //  function may be limited to interval [a, b] 
-    private boolean interval = false; 
-    private double a, b; // interval borders 
-    
 	private StringBuffer sb = new StringBuffer(80);	
 
 	 /**
@@ -249,25 +245,8 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return f(x)
      */
     final public double evaluate(double x) {
-        if (interval) {
-            // check if x is in interval [a, b]
-            if ( !(a <= x && x <= b) ) return Double.NaN;           
-        }
-        
         fVar.set(x);
         return ((NumberValue) expression.evaluate()).getDouble();       
-    }
-    
-    public boolean setInterval(double a, double b) {
-    	if (a <= b) {         
-            interval = true;
-            this.a = a; 
-            this.b = b;              
-        } else {
-        	interval = false;            
-        }   
-    	
-    	return interval;  
     }
     
     /**
@@ -830,18 +809,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @param order of derivative
      * @return result as function
      */
-    final private Function derivative(int order) { 
-        // check for simple reference to another function 
-    	// like f(t) in a curve
-		if (expression.getLeft() instanceof GeoFunction && 
-			expression.getRight() instanceof FunctionVariable) 
-		{
-			GeoFunction geoFun = (GeoFunction) expression.getLeft();
-			if (geoFun.isDefined()) {
-				return geoFun.getFunction().getDerivative(order);
-			}	
-        }
-    	 
+    final private Function derivative(int order) {     	 
 		// use CAS to get derivative
         // temporarily replace the variable by "x"
         String oldVar = fVar.toString();
@@ -856,22 +824,32 @@ implements ExpressionValue, RealRootFunction, Functional {
 	        sb.append(order);
 	        sb.append(") ");
 		}				
-		
+						
         // function expression with multiply sign "*"   
 		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));		
 
         try {                   	            
-            // evaluate expression by MathPiper          	        	        	
-            String result = kernel.evaluateMathPiper(sb.toString());       
-            
-            // check if MathPiper has got stuck
-            // eg D(x)Floor(x)
-            if (result.startsWith("D(x)") || result.startsWith("Deriv(x)"))
+            // evaluate expression by MathPiper 
+            String result = kernel.evaluateMathPiper(sb.toString());  
+           
+            // fast fail for e.g. "D(x)Floor(x)"
+            if (result.startsWith("D(x)"))
             	return null;
             
-        	sb.setLength(0);
+    		// look for "Deriv(x)f(x)" strings and
+    		// replace them with "f'(x)"
+    		String [] derivs = result.split("Deriv\\(x\\)");
+    		sb.setLength(0);
+    		sb.append(derivs[0]); // part before first "Deriv(x)"
+    		for (int i=1; i < derivs.length; i++) {
+    			// replace "(x)" by "'(x)"
+    			sb.append(derivs[i].replaceFirst("\\(x\\)", "'(x)"));
+    		}
+    		result = sb.toString();
+                		
             // it doesn't matter what label we use here as it is never used            			
-			sb.append("f(x) = ");			
+    		sb.setLength(0);
+    		sb.append("f(x) = ");			
             sb.append(result);
     
              // parse result
@@ -1257,18 +1235,6 @@ implements ExpressionValue, RealRootFunction, Functional {
 			return fun.evaluate(x);
 		}
     }
-
-	public final double getIntervalMin() {
-		return a;
-	}
-
-	public final double getIntervalMax() {
-		return b;
-	}
-	
-	public final boolean hasInterval() {
-		return interval;
-	}
 	
 	public final boolean includesDivisionByVariable() {
 		if (expression == null)

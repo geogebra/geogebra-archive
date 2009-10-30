@@ -139,8 +139,6 @@ public class GeoGebraMenuBar extends JMenuBar {
 	 * @param app
 	 */
 	public static void showPrintPreview(final Application app) {
-		app.loadExportJar();
-
 		try {
 			Thread runner = new Thread() {
 				public void run() {

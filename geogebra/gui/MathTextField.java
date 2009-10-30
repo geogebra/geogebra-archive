@@ -196,6 +196,9 @@ public class MathTextField extends MyTextField implements KeyListener {
 					else
 						insertStr = "\u03b3"; // alt-g -> unicode gamma
 					break;
+				case 'i' :
+					insertStr = "\u221e"; // alt-i -> infinity
+					break;
 				case 'l' :
 					if (e.isShiftDown())
 						insertStr = "\u039b"; // alt-L -> unicode lambda (upper case)

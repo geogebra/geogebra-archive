@@ -31,7 +31,9 @@ public class AlgoTaylorSeries extends AlgoElement {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final int MAX_ORDER = 30;
+	// works OK for simple functions eg sin(x)
+	// sin(cos(x)) very slow for n=10 and above
+	private static final int MAX_ORDER = 80;
 
 	private GeoFunction f; // input
 	private NumberValue a; // series for f about the point x = a

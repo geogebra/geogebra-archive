@@ -277,21 +277,36 @@ public class DrawAngle extends Drawable {
 		// SPECIAL case for 90 degree angle, by Loic and Markus
 		if (show90degrees) {						
 			switch (view.rightAngleStyle) {									
-				case EuclidianView.RIGHT_ANGLE_STYLE_SQUARE:
-					// set 90 degrees square									
-					if (square == null) 
-						square = new GeneralPath();
-					else					
-						square.reset();
-					double length = angle.arcSize * 0.7071067811865;
-		     		square.moveTo((float)coords[0],(float)coords[1]);
-					square.lineTo((float)(coords[0]+length*Math.cos(angSt)),(float)(coords[1]-length*Math.sin(angSt)*view.getScaleRatio()));
-					square.lineTo((float)(coords[0]+angle.arcSize*Math.cos(angSt+Kernel.PI_HALF/2)),(float)(coords[1]-angle.arcSize*Math.sin(angSt+Kernel.PI_HALF/2)*view.getScaleRatio()));
-					square.lineTo((float)(coords[0]+length*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1]-length*Math.sin(angSt+Kernel.PI_HALF)*view.getScaleRatio()));
-					square.lineTo((float)coords[0],(float)coords[1]);
-					shape = square;
-					break;								
-					
+			case EuclidianView.RIGHT_ANGLE_STYLE_SQUARE:
+				// set 90 degrees square									
+				if (square == null) 
+					square = new GeneralPath();
+				else					
+					square.reset();
+				double length = angle.arcSize * 0.7071067811865;
+	     		square.moveTo((float)coords[0],(float)coords[1]);
+				square.lineTo((float)(coords[0]+length*Math.cos(angSt)),(float)(coords[1]-length*Math.sin(angSt)*view.getScaleRatio()));
+				square.lineTo((float)(coords[0]+angle.arcSize*Math.cos(angSt+Kernel.PI_HALF/2)),(float)(coords[1]-angle.arcSize*Math.sin(angSt+Kernel.PI_HALF/2)*view.getScaleRatio()));
+				square.lineTo((float)(coords[0]+length*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1]-length*Math.sin(angSt+Kernel.PI_HALF)*view.getScaleRatio()));
+				square.lineTo((float)coords[0],(float)coords[1]);
+				shape = square;
+				break;								
+				
+			case EuclidianView.RIGHT_ANGLE_STYLE_L:
+				// Belgian offset |_						
+				if (square == null) 
+					square = new GeneralPath();
+				else					
+					square.reset();
+				length = angle.arcSize * 0.7071067811865;
+				double offset = length * 0.4;
+				square.moveTo((float)(coords[0]+length*Math.cos(angSt)+offset*Math.cos(angSt)+offset*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1]-length*Math.sin(angSt)*view.getScaleRatio() - offset*Math.sin(angSt) - offset*Math.sin(angSt+Kernel.PI_HALF)));
+				square.lineTo((float)(coords[0]+offset*Math.cos(angSt)+offset*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1] - offset*Math.sin(angSt) - offset*Math.sin(angSt+Kernel.PI_HALF)));
+				square.lineTo((float)(coords[0]+length*Math.cos(angSt+Kernel.PI_HALF)+offset*Math.cos(angSt)+offset*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1]-length*Math.sin(angSt+Kernel.PI_HALF)*view.getScaleRatio() - offset*Math.sin(angSt) - offset*Math.sin(angSt+Kernel.PI_HALF)));
+				shape = square;
+				
+				break;								
+				
 				case EuclidianView.RIGHT_ANGLE_STYLE_DOT:					
 					//	set 90 degrees dot			
 					drawDot = true;

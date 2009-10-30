@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
 
@@ -45,7 +46,8 @@ public final class DrawPoint extends Drawable {
     // for dot and selection
 	private Ellipse2D.Double circle = new Ellipse2D.Double();
 	private Ellipse2D.Double circleSel = new Ellipse2D.Double();
-	private Line2D.Double line1, line2;// for cross	
+	private Line2D.Double line1, line2, line3, line4;// for cross
+	GeneralPath gp = null;
     
     private static BasicStroke borderStroke = EuclidianView.getDefaultStroke();
     private static BasicStroke [] crossStrokes = new BasicStroke[10];
@@ -62,6 +64,8 @@ public final class DrawPoint extends Drawable {
     }
     
     final public void update() {   
+    	
+    	if (gp != null) gp.reset(); // stop trace being left when (filled diamond) point moved
     	
         isVisible = geo.isEuclidianVisible();       				 
     	// still needs updating if it's being traced to the spreadsheet
@@ -98,25 +102,105 @@ public final class DrawPoint extends Drawable {
     	// Florian Sonner 2008-07-17
     	int pointStyle = P.getPointStyle();
     	
+    	if(pointStyle == -1)
+    		pointStyle = view.pointStyle;
+    	
+    	double root3over2;
+    	
         switch (pointStyle) {	       		        
-        	case EuclidianView.POINT_STYLE_CROSS:        		
-        	    double xR = coords[0] + pointSize;        		
-        		double yB = coords[1] + pointSize;
-        		
-        		if (line1 == null) {
-        			line1 = new Line2D.Double();
-        			line2 = new Line2D.Double();
-        		}        		
-        		line1.setLine(xUL, yUL, xR, yB);
-        		line2.setLine(xUL, yB, xR, yUL);
-        		
-        		//if (crossStrokes[pointSize] == null)
-        		//	crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
-        		break;
-        		        	
+    	case EuclidianView.POINT_STYLE_FILLED_DIAMOND:        		
+    	    double xR = coords[0] + pointSize;        		
+    		double yB = coords[1] + pointSize;
+    		
+    		if (gp == null) {
+    			gp = new GeneralPath();
+    		}        		
+    		gp.moveTo((float)(xUL+xR)/2, (float)yUL);
+    		gp.lineTo((float)xUL, (float)(yB + yUL)/2);
+    		gp.lineTo((float)(xUL+xR)/2, (float)yB);
+    		gp.lineTo((float)xR, (float)(yB + yUL)/2);
+    		gp.closePath();
+    		break;
+    		
+    	case EuclidianView.POINT_STYLE_TRIANGLE_SOUTH:        		
+    	case EuclidianView.POINT_STYLE_TRIANGLE_NORTH:
+    		
+    		double direction = 1.0;
+    		if (pointStyle == EuclidianView.POINT_STYLE_TRIANGLE_NORTH)
+    			direction = -1.0;
+    		
+    		if (gp == null) {
+    			gp = new GeneralPath();
+    		}        		
+    		root3over2 = Math.sqrt(3.0) / 2.0;
+    		gp.moveTo((float)coords[0], (float)(coords[1] + direction * pointSize));
+    		gp.lineTo((float)(coords[0] + pointSize * root3over2), (float)(coords[1] - direction * pointSize/2));
+    		gp.lineTo((float)(coords[0] - pointSize * root3over2), (float)(coords[1] - direction * pointSize/2));
+    		gp.lineTo((float)coords[0], (float)(coords[1] + direction * pointSize));
+    		gp.closePath();
+    		break;
+    		
+    	case EuclidianView.POINT_STYLE_TRIANGLE_EAST:        		
+    	case EuclidianView.POINT_STYLE_TRIANGLE_WEST:
+    		
+    		direction = 1.0;
+    		if (pointStyle == EuclidianView.POINT_STYLE_TRIANGLE_WEST)
+    			direction = -1.0;
+    		
+    		if (gp == null) {
+    			gp = new GeneralPath();
+    		}     
+    		root3over2 = Math.sqrt(3.0) / 2.0;   		
+    		gp.moveTo((float)(coords[0] + direction * pointSize), (float)coords[1]);
+    		gp.lineTo((float)(coords[0] - direction * pointSize/2), (float)(coords[1] + pointSize * root3over2));
+    		gp.lineTo((float)(coords[0] - direction * pointSize/2), (float)(coords[1] - pointSize * root3over2));
+    		gp.lineTo((float)(coords[0] + direction * pointSize), (float)coords[1]);
+    		gp.closePath();
+    		break;
+    		
+    	case EuclidianView.POINT_STYLE_EMPTY_DIAMOND:        		
+    	    xR = coords[0] + pointSize;        		
+    		yB = coords[1] + pointSize;
+    		
+    		if (line1 == null) {
+    			line1 = new Line2D.Double();
+    			line2 = new Line2D.Double();
+    		}        		
+    		if (line3 == null) {
+    			line3 = new Line2D.Double();
+    			line4 = new Line2D.Double();
+    		}        		
+    		line1.setLine((xUL+xR)/2, yUL, xUL, (yB + yUL)/2);
+    		line2.setLine(xUL, (yB + yUL)/2, (xUL+xR)/2, yB);
+    		line3.setLine((xUL+xR)/2, yB, xR, (yB + yUL)/2);
+    		line4.setLine(xR, (yB + yUL)/2, (xUL+xR)/2, yUL);
+    		break;
+    		        	
+    	case EuclidianView.POINT_STYLE_PLUS:        		
+    	    xR = coords[0] + pointSize;        		
+    		yB = coords[1] + pointSize;
+    		
+    		if (line1 == null) {
+    			line1 = new Line2D.Double();
+    			line2 = new Line2D.Double();
+    		}        		
+    		line1.setLine((xUL+xR)/2, yUL, (xUL+xR)/2, yB);
+    		line2.setLine(xUL, (yB + yUL)/2, xR, (yB + yUL)/2);
+    		break;
+    		        	
+    	case EuclidianView.POINT_STYLE_CROSS:        		
+    	    xR = coords[0] + pointSize;        		
+    		yB = coords[1] + pointSize;
+    		
+    		if (line1 == null) {
+    			line1 = new Line2D.Double();
+    			line2 = new Line2D.Double();
+    		}        		
+    		line1.setLine(xUL, yUL, xR, yB);
+    		line2.setLine(xUL, yB, xR, yUL); 
+    		break;
+    		        	
         	case EuclidianView.POINT_STYLE_CIRCLE:
-        		//if (crossStrokes[pointSize] == null)
-        		//	crossStrokes[pointSize] = new BasicStroke(pointSize/2f); 
         		break;
         		
         	// case EuclidianView.POINT_STYLE_DOT:
@@ -166,19 +250,47 @@ public final class DrawPoint extends Drawable {
         	// Florian Sonner 2008-07-17
         	int pointStyle = P.getPointStyle();
         	
+        	if(pointStyle == -1)
+        		pointStyle = view.pointStyle;
+        	
             switch (pointStyle) {
-            	case EuclidianView.POINT_STYLE_CROSS:            		                     
-             		// draw cross like: X     
-                    g2.setPaint(geo.getObjectColor());
-                    g2.setStroke(getCrossStrokes(pointSize));            
-                    g2.draw(line1);                              
-                    g2.draw(line2);             		
-            		break;
-            		
+        	case EuclidianView.POINT_STYLE_PLUS:            		                     
+        	case EuclidianView.POINT_STYLE_CROSS:            		                     
+         		// draw cross like: X or +     
+                g2.setPaint(geo.getObjectColor());
+                g2.setStroke(getCrossStroke(pointSize));            
+                g2.draw(line1);                              
+                g2.draw(line2);             		
+        		break;
+        		
+        	case EuclidianView.POINT_STYLE_EMPTY_DIAMOND:            		                     
+         		// draw diamond    
+                g2.setPaint(geo.getObjectColor());
+                g2.setStroke(getCrossStroke(pointSize));            
+                g2.draw(line1);                              
+                g2.draw(line2);             		
+                g2.draw(line3);                              
+                g2.draw(line4);             		
+        		break;
+        		
+        	case EuclidianView.POINT_STYLE_FILLED_DIAMOND:            		                     
+        	case EuclidianView.POINT_STYLE_TRIANGLE_NORTH:            		                     
+        	case EuclidianView.POINT_STYLE_TRIANGLE_SOUTH:            		                     
+        	case EuclidianView.POINT_STYLE_TRIANGLE_EAST:            		                     
+        	case EuclidianView.POINT_STYLE_TRIANGLE_WEST:            		                     
+         		// draw diamond    
+                g2.setPaint(geo.getObjectColor());
+                g2.setStroke(getCrossStroke(pointSize));  
+                drawWithValueStrokePure(gp, g2);
+				g2.fill(gp);    
+        		break;
+        		
+
+        		
             	case EuclidianView.POINT_STYLE_CIRCLE:
             		// draw a circle            		
         			g2.setPaint(geo.getObjectColor());	
-        			g2.setStroke(getCrossStrokes(pointSize));
+        			g2.setStroke(getCrossStroke(pointSize));
         			g2.draw(circle);  										                                                               		
            		break;
             	
@@ -213,7 +325,7 @@ public final class DrawPoint extends Drawable {
     	
 		switch (pointStyle) {
 	     	case EuclidianView.POINT_STYLE_CIRCLE:
-	 			g2.setStroke(getCrossStrokes(pointSize));
+	 			g2.setStroke(getCrossStroke(pointSize));
 	 			g2.draw(circle);  										                                                               		
 	    		break;
 	     	
@@ -257,7 +369,7 @@ public final class DrawPoint extends Drawable {
     /*
      * pointSize can be more than 9 (set from JavaScript, SetPointSize[])
      */
-    final private BasicStroke getCrossStrokes(int pointSize) {
+    final private BasicStroke getCrossStroke(int pointSize) {
     	
     	if (pointSize > 9)
     		return new BasicStroke(pointSize/2f); 

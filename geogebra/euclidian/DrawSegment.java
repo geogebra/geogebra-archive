@@ -44,7 +44,7 @@ implements Previewable {
     boolean isVisible, labelVisible;
     private ArrayList points;
     
-    private Line2D.Float line = new Line2D.Float();               
+    private Line2D.Double line = new Line2D.Double();               
     private double [] coordsA = new double[2];
 	private double [] coordsB = new double[2];
     
@@ -81,15 +81,24 @@ implements Previewable {
         
 		A.getInhomCoords(coordsA);
         B.getInhomCoords(coordsB);
-		view.toScreenCoords(coordsA);
-		view.toScreenCoords(coordsB);					
-		line.setLine(coordsA[0], coordsA[1], coordsB[0], coordsB[1]);        
-
-		// line on screen?		
-		if (!line.intersects(0,0, view.width, view.height)) {				
-			isVisible = false;			
-		}	
-		    		    	
+		boolean onscreenA = view.toScreenCoords(coordsA);
+		boolean onscreenB = view.toScreenCoords(coordsB);	
+		
+		if (onscreenA && onscreenB) {
+			// A and B on screen
+			line.setLine(coordsA[0], coordsA[1], coordsB[0], coordsB[1]);
+		} else {
+			// A or B off screen
+			// clip at screen, that's important for huge coordinates
+			Point2D.Double [] clippedPoints = 
+				Clipping.getClipped(coordsA[0], coordsA[1], coordsB[0], coordsB[1], 0, view.width, 0, view.height);
+			if (clippedPoints == null) {
+				isVisible = false;	
+			} else {
+				line.setLine(clippedPoints[0].x, clippedPoints[0].y, clippedPoints[1].x, clippedPoints[1].y);
+			}
+		}
+		     		    	
 		// draw trace
 		if (s.trace) {
 			isTracing = true;

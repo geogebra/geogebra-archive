@@ -192,7 +192,9 @@ public interface JavaScriptAPI {
 	 */
 	public void setFilling(String objName, double filling);
 	
-	/**
+	public String getGraphicsViewCheckSum(String algorithm, String format);
+
+		/**
 	 * Returns the filling of the object as an int (or -1 for no filling)
 	 */
 	public double getFilling(String objName);

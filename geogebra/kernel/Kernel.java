@@ -145,12 +145,23 @@ public class Kernel {
 	final public static double CONST_180_PI = 180 / Math.PI;
 	//private static boolean KEEP_LEADING_SIGN = true;
 	
+	//G.Sturr 2009-10-18
+	// algebra style 
+	final public static int ALGEBRA_STYLE_VALUE = 0;
+	final public static int ALGEBRA_STYLE_DEFINITION = 1;
+	final public static int ALGEBRA_STYLE_COMMAND = 2;
+	private int algebraStyle = Kernel.ALGEBRA_STYLE_VALUE;
+	//end G.Sturr
+	
 	// print precision
 	public static final int STANDARD_PRINT_DECIMALS = 2; 
 	private double PRINT_PRECISION = 1E-2;
 	private NumberFormat nf;
 	private ScientificFormat sf;
 	public boolean useSignificantFigures = false;
+	
+	// angle unit: degree, radians
+	private int angleUnit = Kernel.ANGLE_DEGREE;
 	
 	// rounding hack, see format()
 	private static final double ROUND_HALF_UP_FACTOR_DEFAULT = 1.0 + 1E-15;
@@ -406,7 +417,6 @@ public class Kernel {
 	 */
 	public synchronized Object getGeoGebraCAS() {
 		if (ggbCAS == null) {
-			app.loadCASJar();
 			ggbCAS = new geogebra.cas.GeoGebraCAS(this);
 		}			
 		
@@ -513,12 +523,24 @@ public class Kernel {
 		AlgoElement.updateCascadeAlgos(renameListenerAlgos);
 	}	
 	
+		
+	//G.Sturr 2009-10-18
+	final public void setAlgebraStyle(int style) {
+		algebraStyle = style;
+	}
+
+	final public int getAlgebraStyle() {
+		return algebraStyle;
+	}
+	//end G.Sturr
+	
+	
 	final public void setAngleUnit(int unit) {
-		cons.angleUnit = unit;
+		angleUnit = unit;
 	}
 
 	final public int getAngleUnit() {
-		return cons.angleUnit;
+		return angleUnit;
 	}
 	
 	final public int getMaximumFractionDigits() {
@@ -5275,7 +5297,8 @@ public class Kernel {
 	final private StringBuffer buildImplicitVarPart(		
 		double[] numbers,
 		String[] vars, 
-		boolean KEEP_LEADING_SIGN) {
+		boolean KEEP_LEADING_SIGN,
+		boolean CANCEL_DOWN) {
 		int leadingNonZero = -1;
 		sbBuildImplicitVarPart.setLength(0);
 
@@ -5286,14 +5309,16 @@ public class Kernel {
 			}
 		}
 		
-		// check if integers and divide through gcd
-		boolean allIntegers = true;
-		for (int i = 0; i < numbers.length; i++) {
-			allIntegers = allIntegers && isInteger(numbers[i]);			
-		}		
-		if (allIntegers) {
-			// divide by greates common divisor
-			divide(numbers, gcd(numbers), numbers);
+		if (CANCEL_DOWN) {
+			// check if integers and divide through gcd
+			boolean allIntegers = true;
+			for (int i = 0; i < numbers.length; i++) {
+				allIntegers = allIntegers && isInteger(numbers[i]);			
+			}		
+			if (allIntegers) {
+				// divide by greates common divisor
+				divide(numbers, gcd(numbers), numbers);
+			}
 		}
 
 		// no left hand side        
@@ -5347,10 +5372,11 @@ public class Kernel {
 	final StringBuffer buildImplicitEquation(
 		double[] numbers,
 		String[] vars,
-		boolean KEEP_LEADING_SIGN) {
+		boolean KEEP_LEADING_SIGN,
+		boolean CANCEL_DOWN) {
 
 		sbBuildImplicitEquation.setLength(0);
-		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN));
+		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN, CANCEL_DOWN));
 		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
 			sbBuildImplicitEquation.append(" == ");
 		else
@@ -5364,9 +5390,9 @@ public class Kernel {
 	private StringBuffer sbBuildImplicitEquation = new StringBuffer(80);
 
 	// lhs of lhs = 0
-	final public StringBuffer buildLHS(double[] numbers, String[] vars, boolean KEEP_LEADING_SIGN) {
+	final public StringBuffer buildLHS(double[] numbers, String[] vars, boolean KEEP_LEADING_SIGN, boolean CANCEL_DOWN) {
 		sbBuildLHS.setLength(0);
-		sbBuildLHS.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN));
+		sbBuildLHS.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN, CANCEL_DOWN));
 
 		// add constant coeff
 		double coeff = temp[vars.length];
@@ -5390,7 +5416,7 @@ public class Kernel {
 		double d, dabs, q = numbers[pos];
 		// coeff of y� is 0 or coeff of y is not 0
 		if (isZero(q))
-			return buildImplicitEquation(numbers, vars, KEEP_LEADING_SIGN);
+			return buildImplicitEquation(numbers, vars, KEEP_LEADING_SIGN, true);
 
 		int i, leadingNonZero = numbers.length;
 		for (i = 0; i < numbers.length; i++) {
@@ -5783,7 +5809,7 @@ public class Kernel {
 			return sbFormatAngle;
 		}			
 		
-		if (cons.angleUnit == ANGLE_DEGREE) {
+		if (angleUnit == ANGLE_DEGREE) {
 			if (isZero(phi)) {
 				sbFormatAngle.append("0\u00b0");
 				return sbFormatAngle;
@@ -5897,11 +5923,57 @@ public class Kernel {
 	 *******************************************************/
 
 	/**
-	 * Returns current construction in XML format.
-	 * GeoGebra File Format.
+	 * Returns the kernel settings in XML format.
 	 */
-	public String getConstructionXML() {
-		return cons.getXML();
+	public String getKernelXML() {
+		StringBuffer sb = new StringBuffer();
+	
+		// kernel settings
+		sb.append("<kernel>\n");
+	
+		// continuity: true or false, since V3.0
+		sb.append("\t<continuous val=\"");
+		sb.append(isContinuous());
+		sb.append("\"/>\n");
+		
+		if (useSignificantFigures) {
+			// significant figures
+			sb.append("\t<significantfigures val=\"");
+			sb.append(getPrintFigures());
+			sb.append("\"/>\n");			
+		}
+		else
+		{
+			// decimal places
+			sb.append("\t<decimals val=\"");
+			sb.append(getPrintDecimals());
+			sb.append("\"/>\n");
+		}
+		
+		// angle unit
+		sb.append("\t<angleUnit val=\"");
+		sb.append(angleUnit == Kernel.ANGLE_RADIANT ? "radiant" : "degree");
+		sb.append("\"/>\n");
+		
+		// algebra style
+		sb.append("\t<algebraStyle val=\"");
+		sb.append(algebraStyle);
+		sb.append("\"/>\n");
+		
+		// coord style
+		sb.append("\t<coordStyle val=\"");
+		sb.append(getCoordStyle());
+		sb.append("\"/>\n");
+		
+		// animation
+		if (isAnimationRunning()) {
+			sb.append("\t<startAnimation val=\"");
+			sb.append(isAnimationRunning());
+			sb.append("\"/>\n");
+		}
+	
+		sb.append("</kernel>\n");
+		return sb.toString();
 	}
 	
 	/**

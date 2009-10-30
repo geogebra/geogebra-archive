@@ -237,7 +237,7 @@ public final class DrawImage extends Drawable {
     			Object oldInterpolationHint = g2.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
         		
     			if (oldInterpolationHint == null)
-    				oldInterpolationHint = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
+        			oldInterpolationHint = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;			
     			
     			if (needsInterpolationRenderingHint) {
         			// improve rendering quality for transformed images

@@ -94,14 +94,37 @@ public class AlgoPolynomialFromCoordinates extends AlgoElement {
    		  }
         }
         
+        boolean remove[] = new boolean[n];
+        for (int i=0 ; i<n-1 ; i++) remove[i] = false;
+        
         // check all the x-coordinates are different
         for (int i=0 ; i<n-1 ; i++)
         for (int j=i+1 ; j<n ; j++)
         {
         	if (x[i]==x[j])
         	{
-       		    g.setUndefined();
-           	    return;			        		
+        		if (y[i] == y[j]) { // two equal points, remove one
+        			
+        			remove[j] = true;
+        		}
+        		else
+        		{
+	       		    g.setUndefined();
+	           	    return;			        	
+        		}
+        	}
+        }
+        
+        // remove duplicates at end of list
+        while (remove[n - 1] == true) n--;
+        
+        // remove duplicates in the middle;
+        if (n > 2)
+        for (int i = n - 2 ; i > 0 ; i--) {
+        	if (remove[i]) {
+        		x[i] = x[n - 1];
+        		y[i] = y[n - 1];
+        		n--;
         	}
         }
         

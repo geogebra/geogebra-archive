@@ -42,17 +42,18 @@ public class AlgoMod extends AlgoTwoNumFunction {
     protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		
-    		double mod = Math.round(a.getDouble());
-    		double bInt = Math.abs(Math.round(b.getDouble()));
+    		//double mod = Math.round(a.getDouble());
+    		//double bInt = Math.abs(Math.round(b.getDouble()));
+    		double aVal = a.getDouble();
+    		double bAbs = Math.abs(b.getDouble());
     		
-    		if (Math.abs(mod) > MyDouble.LARGEST_INTEGER || bInt > MyDouble.LARGEST_INTEGER) {
+    		if (Math.abs(aVal) > MyDouble.LARGEST_INTEGER || bAbs > MyDouble.LARGEST_INTEGER) {
     			num.setUndefined();
     			return;
     		}
     		
-    		mod = mod % bInt;
-
-    		if (mod < 0) mod += bInt; // bugfix Michael Borcherds 2008-08-07
+    		double mod = aVal % bAbs;
+    		if (mod < 0) mod += bAbs; // bugfix Michael Borcherds 2008-08-07
     		
     		num.setValue(mod);
     		

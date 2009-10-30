@@ -153,12 +153,13 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		this.setAlwaysOnTop(true);
 
 
-		String fName;
-
-		if (app != null)
-			fName = app.getAppFontNameSansSerif();
-		else
-			fName = "Arial Unicode MS";
+		// TODO: use app.getFontCanDisplay()
+		String fName = app.getPlainFont().getFontName();
+//
+//		if (app != null)
+//			fName = app.getAppFontNameSansSerif();
+//		else
+//			fName = "Arial Unicode MS";
 
 		//if (fName == "SansSerif") {
 		//horizontalMultiplier = 1.0;

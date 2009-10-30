@@ -1019,7 +1019,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	         		default:
 	         			sb.append(strNOT);        		
 	         	}           		
-        		sb.append(leftStr);
+        		if (left.isLeaf()) {
+       		 		sb.append(leftStr);
+        		} else {
+        			sb.append('(');
+        			sb.append(leftStr);
+        			sb.append(')');
+        		}
         		break;
         
         
@@ -1265,15 +1271,32 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    break;
 	                    
 	                default:
+	                	// TODO: remove
+//	                	System.out.println("PLUS: left: " + leftStr + " " + isEqualString(left, 0, !valueForm) +
+//	                			", right: " + isEqualString(left, 0, !valueForm) + " " + rightStr);
+	                	
 	                    // check for 0
-            			if ("0".equals(leftStr)) {
-		            		sb.append(rightStr);
+            			if (isEqualString(left, 0, !valueForm)) {
+		            		if (right.isLeaf() || opID(right) >= PLUS) {
+	        					sb.append(rightStr);
+	        				} else {
+	        					sb.append('(');
+	    	                    sb.append(rightStr);
+	    	                    sb.append(')'); 
+	        				}
         		    		break;
-            			} else if ("0".equals(rightStr)) {
-		            		sb.append(leftStr);
+            			} 
+            			else if (isEqualString(right, 0, !valueForm)) {
+            				if (left.isLeaf() || opID(left) >= PLUS) {
+	        					sb.append(leftStr);
+	        				} else {
+	        					sb.append('(');
+	    	                    sb.append(leftStr);
+	    	                    sb.append(')'); 
+	        				}
         		    		break;
             			}
-            			
+	                	            			
 	                	// we need parantheses around right text
 	                	// if right is not a leaf expression or
 	                	// it is a leaf GeoElement without a label (i.e. it is calculated somehow)        
@@ -1314,7 +1337,14 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    break;
 	                    
 	                default:
-		                sb.append(leftStr);                
+		                sb.append(leftStr);   
+		                
+		                // check for 0 at right
+	        			if (rightStr.equals("0")) {
+	    		    		break;
+	        			}
+		                
+		                
 		                if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -                    
 		                    if (rightStr.charAt(0) == '-') { // convert - - to +
 		                        sb.append(" + ");
@@ -1345,21 +1375,51 @@ implements ExpressionValue, ExpressionNodeConstants {
                     break;
                     
                 default:
-                    // check for 1
-            		if ("1".equals(leftStr)) {
-            			sb.append(rightStr);
-            			break;
-            		}
-            		else if ("1".equals(rightStr)) {
-            			sb.append(leftStr);
-            			break;
-            		}
-            		
+                	// check for 1 at left
+        			if (isEqualString(left, 1, !valueForm)) {
+        				if (right.isLeaf() || opID(right) >= MULTIPLY) {
+        					sb.append(rightStr);
+        				} else {
+        					sb.append('(');
+    	                    sb.append(rightStr);
+    	                    sb.append(')'); 
+        				}
+    		    		break;
+        			} 
+        			// check for 0 at right
+        			else if (isEqualString(right, 1, !valueForm)) {
+        				if (left.isLeaf() || opID(left) >= MULTIPLY) {
+        					sb.append(leftStr);
+        				} else {
+        					sb.append('(');
+    	                    sb.append(leftStr);
+    	                    sb.append(')'); 
+        				}
+    		    		break;
+        			}
+                   	// check for 0 at left
+        			else if (isEqualString(left, 0, !valueForm)) {
+        				sb.append("0");
+    		    		break;
+        			} 
+        			// check for 0 at right
+        			else if (isEqualString(right, 0, !valueForm)) {
+        				sb.append("0");
+    		    		break;
+        			}
+        			// check for degree sign at right
+        			else if (rightStr.equals("1\u00b0") || rightStr.equals("\u00b0")) {
+        				sb.append(leftStr);
+        				sb.append("\u00b0");
+        				break;
+        			}
+                	           
+        			
 	                boolean nounary = true;
 	                
 	                // left wing                  
 	                if (left.isLeaf() || opID(left) >= MULTIPLY) { // not +, - 
-	                    if (leftStr.equals("-1")) { // unary minus
+	                    if (isEqualString(left, -1, !valueForm)) { // unary minus
 	                        nounary = false;
 	                        sb.append('-');                     
 	                    } else {
@@ -1439,12 +1499,12 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                 sb.append(')');
 		                 break;
     				
-	    			default:
+	    			default:	    				
 	    				// check for 1 in denominator
-            			if ("1".equals(rightStr)) {
-            				sb.append(leftStr);
-            				break;
-            			}   
+            			if (isEqualString(right, 1, !valueForm)) {
+		            		sb.append(leftStr);
+        		    		break;
+            			}
             			                       
 		                // left wing              	
 		                if (left.isLeaf()|| opID(left) >= MULTIPLY) { // not +, -
@@ -1480,13 +1540,14 @@ implements ExpressionValue, ExpressionNodeConstants {
 						
 						/* removed Michael Borcherds 2009-02-08
 						 * doesn't work eg  m=1   g(x) = (x - 1)^m (x - 3)
+						 */
 						 
 					    // check for 1 in exponent
-            			if ("1".equals(rightStr)) {
+            			if (isEqualString(right, 1, !valueForm)) {
             				sb.append(leftStr);
             				break;
             			}   
-            			*/
+            			
             	
 		                // left wing                   	
 		                if (leftStr.charAt(0) != '-' && // no unary
@@ -2372,5 +2433,37 @@ implements ExpressionValue, ExpressionNodeConstants {
 			return false;
 	}
 
+    /**
+     * Returns whether the given expression will give the same String output
+     * as val.
+     * @param symbolic: whether we should use the value (true) or the label (false) of ev when
+     * it is a GeoElement
+     */
+    final public static boolean isEqualString(ExpressionValue ev, double val, boolean symbolic) {
+    	if (ev.isLeaf() && ev.isNumberValue()) {
+    		// function variables need to be kept
+    		if (ev instanceof FunctionVariable) {
+    			return false;
+    		}
+    		
+    		// check if ev is a labeled GeoElement
+    		if (symbolic) {
+    			if (ev.isGeoElement()) {
+    				// labeled GeoElement
+    				GeoElement geo = (GeoElement) ev;
+    				if (geo.isLabelSet() || geo.isLocalVariable() || !geo.isIndependent())
+    					return false;
+    			}
+    		}
+    		
+    		NumberValue nv;
+    		if (ev.isExpressionNode())
+    			nv = (NumberValue)(ev.evaluate());
+    		else
+    			nv = (NumberValue) ev;
+    		return nv.getDouble() == val;    		
+    	}
+    	return false;
+    }
 	
 }

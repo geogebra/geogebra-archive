@@ -43,6 +43,10 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	// if the function includes a division by var, e.g. 1/x, 1/(2+x)
     private boolean includesDivisionByVar = false;
     
+    //  function may be limited to interval [a, b] 
+    protected boolean interval = false; 
+    protected double intervalMin, intervalMax; // interval borders 
+    
     // parent conditional function
    // private GeoFunctionConditional parentCondFun = null;
     
@@ -119,12 +123,17 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		return fun;
 	}	
 	
-	public boolean setInterval(double a, double b) {
-		if (fun == null)
-			return false;
-		else
-			return fun.setInterval(a, b);
-	}		
+   final public boolean setInterval(double a, double b) {
+    	if (a <= b) {         
+            interval = true;
+            this.intervalMin = a; 
+            this.intervalMax = b;              
+        } else {
+        	interval = false;            
+        }   
+    	
+    	return interval;  
+    }		
 	
 	final public ExpressionNode getFunctionExpression() {
 		if (fun == null)
@@ -203,6 +212,18 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 			return Double.NaN;
 		else
 			return fun.evaluate(x);
+	}
+	
+	public final double getIntervalMin() {
+		return intervalMin;
+	}
+
+	public final double getIntervalMax() {
+		return intervalMax;
+	}
+	
+	public final boolean hasInterval() {
+		return interval;
 	}
 	
 	/**
@@ -427,14 +448,12 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 			P.x = P.x / P.z;			
 		}
 				
-		if (fun.hasInterval()) {
-			//	don't let P move out of interval
-			double a = fun.getIntervalMin();
-			double b = fun.getIntervalMax();			
-			if (P.x < a) 
-				P.x = a;
-			else if (P.x > b) 
-				P.x = b;
+		if (interval) {
+			//	don't let P move out of interval			
+			if (P.x < intervalMin) 
+				P.x = intervalMin;
+			else if (P.x > intervalMax) 
+				P.x = intervalMax;
 		}
 		
 		P.y = fun.evaluate(P.x);

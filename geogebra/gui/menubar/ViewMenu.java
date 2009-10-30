@@ -442,7 +442,6 @@ class ViewMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.loadExportJar();
 				try {
 					Thread runner = new Thread() {
 						public void run() {

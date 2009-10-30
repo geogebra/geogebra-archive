@@ -122,7 +122,7 @@ public class PropertiesDialog
 	 * inits GUI with labels of current language	 
 	 */
 	public void initGUI() {
-		geoTree.setFont(app.plainFont);			
+		geoTree.setFont(app.getPlainFont());			
 		
 		boolean wasShowing = isShowing();
 		if (wasShowing) {
@@ -208,6 +208,11 @@ public class PropertiesDialog
 		}		
 		
 		setLabels();
+	}
+	
+	public void showSliderTab() {
+		if (propPanel != null)
+			propPanel.showSliderTab();
 	}
 
 	/**

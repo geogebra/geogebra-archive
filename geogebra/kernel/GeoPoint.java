@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyVecNode;
@@ -150,8 +151,6 @@ GeoPointInterface {
     		setCoords(v.x, v.y, 1d);   
 	    	setMode(v.toStringMode); // complex etc
     	}
-    	
-
     } 
     
     
@@ -191,15 +190,13 @@ GeoPointInterface {
 	 * @version 2008-07-17
 	 * @param int style the new style to use
 	 */
-	public void setPointStyle(int style) {switch (style) {
-		// TODO: Remove violation of the DRY principle (EucledianView.setPointStyle)
-	
-		case 0:
-		case 1:
-		case 2:
+	public void setPointStyle(int style) {
+		
+		if (style > -1 && style <= EuclidianView.MAX_POINT_STYLE)
 			pointStyle = style;
-			break;
-		}
+		else
+			pointStyle = -1;
+		
 	}
 	
 	public boolean isChangeable() {
@@ -399,7 +396,7 @@ GeoPointInterface {
 	 * Sets homogeneous coordinates and updates
 	 * inhomogeneous coordinates
 	 */
-	final public void setCoords(double x, double y, double z) {				
+	final public void setCoords(double x, double y, double z) {	
 		// set coordinates
 		this.x = x;
 		this.y = y;
@@ -475,7 +472,7 @@ GeoPointInterface {
 				inhomX = Double.NaN;
 				inhomY = Double.NaN;
 			}
-		}
+		}	
 	}
 	
 	final public void setPolarCoords(double r, double phi) {        
@@ -727,9 +724,21 @@ GeoPointInterface {
     
     final public String toString() {     
 		sbToString.setLength(0);                               
-		sbToString.append(label);		
-		if (kernel.getCoordStyle() != Kernel.COORD_STYLE_AUSTRIAN) 
+		sbToString.append(label);	
+		
+		switch (kernel.getCoordStyle()) {
+		case Kernel.COORD_STYLE_FRENCH:
+			// no equal sign
+			sbToString.append(": ");
+	
+		case Kernel.COORD_STYLE_AUSTRIAN:
+			// no equal sign
+			break;
+			
+		default: 
 			sbToString.append(" = ");
+	}
+		
 		sbToString.append(buildValueString());       
         return sbToString.toString();
     }
@@ -901,7 +910,7 @@ GeoPointInterface {
 		super.update();
 						
 		// update all registered locatables (they have this point as start point)
-		if (locateableList != null) {			
+		if (locateableList != null) {	
 			GeoElement.updateCascade(locateableList, getTempSet());
 		}			
 	}

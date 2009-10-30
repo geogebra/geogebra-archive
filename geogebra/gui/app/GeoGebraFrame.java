@@ -298,7 +298,6 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		//GeoGebra wnd = buildGeoGebra();
 		final DefaultApplication app = new DefaultApplication(args, wnd, true);		
 		
-		app.loadGUIJar();
 		//app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
 		app.getGuiManager().initMenubar();
 		
@@ -323,10 +322,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 					app.getGuiManager().initPropertiesDialog();		
 					
 					// init file chooser
-					app.getGuiManager().initFileChooser();
-					
-					// copy Jar files to temp directory
-					app.downloadJarFiles();				
+					app.getGuiManager().initFileChooser();			
 				}
 			};
 			runner.start();

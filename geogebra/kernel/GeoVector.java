@@ -219,10 +219,11 @@ implements Path, VectorValue, Locateable, Rotateable {
 				Iterator it = waitingPointSet.iterator();
 				while (it.hasNext()) {
 					P = (GeoPoint) it.next();
-					pathSegment.pointChanged(P);
+					pathSegment.pointChanged(P);					
 					P.updateCoords();
 				}	
 			}
+			waitingPointSet = null;
 		}
     }
     
@@ -296,8 +297,20 @@ implements Path, VectorValue, Locateable, Rotateable {
     final public String toString() {            
 		sbToString.setLength(0);
 		sbToString.append(label);
-		if (kernel.getCoordStyle() != Kernel.COORD_STYLE_AUSTRIAN) 
+		
+		switch (kernel.getCoordStyle()) {
+		case Kernel.COORD_STYLE_FRENCH:
+			// no equal sign
+			sbToString.append(": ");
+	
+		case Kernel.COORD_STYLE_AUSTRIAN:
+			// no equal sign
+			break;
+			
+		default: 
 			sbToString.append(" = ");
+	}
+	
 		sbToString.append(buildValueString());
   		return sbToString.toString();
     }
@@ -429,7 +442,7 @@ implements Path, VectorValue, Locateable, Rotateable {
 	}
 	
 	public void pointChanged(GeoPointInterface P) {
-		if (waitingForStartPoint) {
+		if (startPoint == null && waitingForStartPoint) {
 			// remember waiting points
 			if (waitingPointSet == null) waitingPointSet = new HashSet();
 			waitingPointSet.add(P);

@@ -20,7 +20,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 
 /**
  * Draws definite Integral of a GeoFunction
@@ -32,7 +31,7 @@ public class DrawIntegral extends Drawable {
     private GeoFunction f;
     private NumberValue a, b;
     
-	private GeneralPath gp = new GeneralPath();
+	private GeneralPathClipped gp;
     boolean isVisible, labelVisible;
    
     public DrawIntegral(EuclidianView view, GeoNumeric n) {
@@ -59,12 +58,15 @@ public class DrawIntegral extends Drawable {
 		double aRW = a.getDouble();
 		double bRW = b.getDouble();
 
-		int ax = view.toScreenCoordX(aRW);
-		int bx = view.toScreenCoordX(bRW);
+		double ax = view.toScreenCoordXd(aRW);
+		double bx = view.toScreenCoordXd(bRW);
 		float y0 = (float) view.yZero;
 				
 		// plot definite integral
-		gp.reset(); 				
+		if (gp == null)
+			gp = new GeneralPathClipped(view);
+		else
+			gp.reset(); 				
 		gp.moveTo(ax, y0); 
 		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, false);
 		gp.lineTo(bx, y0);
@@ -77,7 +79,7 @@ public class DrawIntegral extends Drawable {
 		}
 
 		if (labelVisible) {
-			xLabel = (ax + bx) / 2 - 6;
+			xLabel = (int) Math.round((ax + bx) / 2) - 6;
 			yLabel = (int) view.yZero - view.fontSize;
 			labelDesc = geo.getLabelDescription();
 			addLabelOffset();

@@ -28,7 +28,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Locale;
@@ -60,6 +63,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public boolean showOpenButton, undoActive;
 	public boolean showToolBar, showToolBarHelp, showAlgebraInput;
 	public boolean enableRightClick = true;
+	public boolean errorDialogsActive = true;
 	public boolean enableLabelDrags = true;
 	boolean enableShiftDragZoom = true;
 	public boolean showMenuBar = false;
@@ -68,6 +72,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	boolean showResetIcon = false;	
 	Color bgColor, borderColor;
 	private String fileStr, customToolBar;	
+	private int maxIconSize;
 	public boolean showFrame = true;
 	private JFrame wnd;
 	private JSObject browserWindow;
@@ -79,8 +84,8 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	//private String javascriptLoadFileName="";
 	private GgbAPI  ggbApi=null;					//Ulven 29.05.08
 
-	/** Creates a new instance of GeoGebraApplet */
-	public AppletImplementation(JApplet applet) {
+	/** Creates a new instance of GeoGebraApplet */	
+	protected AppletImplementation(JApplet applet) {
 		this.applet = applet;
 		init();
 	}
@@ -89,6 +94,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		return applet;
 	}
 	
+
 	public void dispose() {
 		app = null;		
 		kernel = null;
@@ -106,17 +112,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 * Initializes the CAS, GUI components, and downloads jar files 
 	 * in a separate thread.
 	 */
-	public void initInBackground() {						
-		// init CAS and download jar files
-		Thread loader = new Thread() {
-			public void run() {
-				// download all jar files in background
-				app.downloadJarFiles();
-				System.gc();
-			}
-		};
-		loader.start();
-		
+	public void initInBackground() {	
 		// init CAS and download jar files
 		Thread casIniter = new Thread() {
 			public void run() {
@@ -169,14 +165,22 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		// filename of construction
 		fileStr = applet.getParameter("filename");
 		if (fileStr != null && 
-			!( fileStr.startsWith("http") || fileStr.startsWith("file") )) {
-			fileStr = applet.getCodeBase() + fileStr;			
+			!( fileStr.startsWith("http") || fileStr.startsWith("file") )) 
+		{
+			// add document base to file name 
+			String documentBase = applet.getDocumentBase().toString();
+			String path = documentBase.substring(0, documentBase.lastIndexOf('/')+1);
+			if (fileStr.startsWith("/")) {
+				fileStr = fileStr.substring(1);
+			}
+			fileStr = path + fileStr;			
 		} else {
-			// ggb file encoded as base 64
+			// check if ggb file is encoded as base 64
 			String fileBase64 = applet.getParameter("ggbBase64");
 			if (fileBase64 != null)
 				fileStr = "base64://" + fileBase64;
 		}
+
 		// type = "button" or parameter is not available 
 		String typeStr = applet.getParameter("type");
 		showOpenButton = typeStr != null && typeStr.equals("button");
@@ -213,13 +217,16 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		// rightClickActive, default is "true"
 		enableRightClick = !"false".equals(applet.getParameter("enableRightClick"));
 		
+		// errorDialogsActive, default is "true"
+		errorDialogsActive = !"false".equals(applet.getParameter("errorDialogsActive"));
+		
 		// enableLabelDrags, default is "true"
 		enableLabelDrags = !"false".equals(applet.getParameter("enableLabelDrags"));
 		
 		// enableShiftDragZoom, default is "true"
 		enableShiftDragZoom = !"false".equals(applet.getParameter("enableShiftDragZoom"));		
 		
-		undoActive = showToolBar || showMenuBar;
+		undoActive = (showToolBar || showMenuBar);
 		
 		// set language manually by iso language string
 		String language = applet.getParameter("language");
@@ -245,6 +252,13 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			borderColor = Color.decode(applet.getParameter("borderColor"));
 		} catch (Exception e) {
 			borderColor = Color.gray;
+		}
+		
+		// maximum icon size to be used in the toolbar
+		try {
+			maxIconSize = Integer.parseInt(applet.getParameter("maxIconSize"));
+		} catch (Exception e) {
+			maxIconSize = Application.DEFAULT_ICON_SIZE;
 		}
 
 		//	build application and open file
@@ -328,6 +342,40 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		app.setMoveMode();		
 	}
 	
+	/**
+	 * Initializes the user interface to only show the graphics view.
+	 */
+	public void initViewerGUI() {
+		// set application parameters
+		app.setUndoActive(false);			
+		app.setShowMenuBar(false);
+		app.setShowAlgebraInput(false);
+		app.setShowToolBar(false, false);	
+		app.setRightClickEnabled(false);
+		app.setErrorDialogsActive(errorDialogsActive);
+		app.setLabelDragsEnabled(enableLabelDrags);
+		app.setShiftDragZoomEnabled(enableShiftDragZoom);
+		app.setShowResetIcon(false);
+		app.setMaxIconSize(maxIconSize);
+						
+		
+		// build applet panel with graphics view
+		JPanel panel = new JPanel(new BorderLayout());
+		ev = app.getEuclidianView();
+		panel.add(ev, BorderLayout.CENTER);
+		// border around graphics panel
+		panel.setBorder(BorderFactory.createLineBorder(borderColor));		
+
+		// replace applet's content pane
+		Container cp = applet.getContentPane();
+		cp.setBackground(bgColor);
+		cp.removeAll();
+		cp.add(panel);
+		
+		// set move mode
+		app.setMoveMode();
+	}
+	
 	protected JPanel createGeoGebraAppletPanel() {
 		JPanel appletPanel = new JPanel(new BorderLayout());
 		appletPanel.setBackground(bgColor);
@@ -339,11 +387,13 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		app.setShowAlgebraInput(showAlgebraInput);
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
+		app.setErrorDialogsActive(errorDialogsActive);
 		app.setLabelDragsEnabled(enableLabelDrags);
 		app.setShiftDragZoomEnabled(enableShiftDragZoom);
 		if (customToolBar != null && customToolBar.length() > 0 && showToolBar)
 			app.getGuiManager().setToolBarDefinition(customToolBar);
 		app.setShowResetIcon(showResetIcon);
+		app.setMaxIconSize(maxIconSize);
 		
 		appletPanel.add(app.buildApplicationPanel(), BorderLayout.CENTER);		
 		ev = app.getEuclidianView();		
@@ -351,6 +401,8 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		
 		return appletPanel;
 	}
+	
+	
 
 	private class DoubleClickListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
@@ -640,6 +692,20 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 * Resets the initial construction (given in filename parameter) of this applet.	 
 	 */
 	public synchronized void reset() {	
+		
+		if (fileStr.startsWith("base64://")) {
+			byte[] zipFile;
+			try {
+				zipFile = geogebra.util.Base64.decode(fileStr
+						.substring(9));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+			app.loadXML(zipFile);
+			return;
+		}
+		
 		// avoid security problems calling from JavaScript
 		AccessController.doPrivileged(new PrivilegedAction() {
 			public Object run() {
@@ -674,14 +740,34 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 * 
 	 */
 	public synchronized String getIPAddress() {
-		return app.IPAddress;
+		return (String) AccessController.doPrivileged(new PrivilegedAction() {
+			public Object run() {
+				try {
+					InetAddress addr = InetAddress.getLocalHost();
+					// Get host name
+					return addr.getHostAddress();
+				} catch (UnknownHostException e) {
+					return "";
+				}
+			}
+		});
 	}
 			
 	/* returns hostname
 	 * 
 	 */
 	public synchronized String getHostname() {
-		return app.hostName;
+		return (String) AccessController.doPrivileged(new PrivilegedAction() {
+			public Object run() {
+				try {
+					InetAddress addr = InetAddress.getLocalHost();
+					// Get host name
+					return addr.getHostName();
+				} catch (UnknownHostException e) {
+					return "";
+				}
+			}
+		});
 	}
 			
 	/**
@@ -831,8 +917,24 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setFilling(String objName, double filling) {
 		ggbApi.setFilling(objName, filling);
 	}	
-		
-	/**
+	
+	/*
+	 * used by the automatic file tester (from JavaScript)
+	 */
+	public synchronized String getGraphicsViewCheckSum(final String algorithm, final String format) {
+		// avoid security problems calling from JavaScript
+		return (String)AccessController.doPrivileged(new PrivilegedAction() {
+			public Object run() {
+				// perform the security-sensitive operation here
+				return ggbApi.getGraphicsViewCheckSum(algorithm, format);
+			}
+		});
+
+
+
+	}
+
+		/**
 	 * Returns the color of the object as an hex string. Note that the hex-string 
 	 * starts with # and uses upper case letters, e.g. "#FF0000" for red.
 	 */
@@ -1410,7 +1512,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			if (browserWindow != null)
 				browserWindow.call(jsFunction, args);
 		} catch (Exception e) {						
-			Application.debug("JavaScript function "+jsFunction+" not found");
+			Application.debug("error calling JavaScript function "+jsFunction);
 		}    
 	} 
 

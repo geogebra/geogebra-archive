@@ -165,7 +165,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	    	private void centerOnScreen() {
 	    		//	center on screen
 	    		pack();				
-	    		setLocationRelativeTo(app.getFrame());
+	    		setLocationRelativeTo(app.getMainComponent());
 	    	}
 	        
 	        /*

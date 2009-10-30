@@ -172,7 +172,7 @@ public class AlgoPolygon extends AlgoElement {
         
     }
     
-    void update() {
+    public void update() {
         // compute output from input
         compute();
         output[0].update();

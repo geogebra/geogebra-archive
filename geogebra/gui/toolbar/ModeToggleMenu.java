@@ -44,7 +44,7 @@ public class ModeToggleMenu extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	ModeToggleButtonGroup bg;
-	private MyJToggleButton tbutton;
+	private MyJToggleButton tbutton, mouseOverButton;
 	private JPopupMenu popMenu;
 	private ArrayList menuItemList;
 	
@@ -58,11 +58,11 @@ public class ModeToggleMenu extends JPanel {
 		
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 			
-		tbutton = new MyJToggleButton(this, app);		
+		tbutton = new MyJToggleButton(this);		
 		tbutton.setAlignmentY(BOTTOM_ALIGNMENT);
 		add(tbutton);
 		
-		popMenu = new JPopupMenu();
+		popMenu = new JPopupMenu();		
 		menuItemList = new ArrayList();
 		popupMenuItemListener = new MenuItemListener();
 		size = 0;
@@ -141,7 +141,7 @@ public class ModeToggleMenu extends JPanel {
 			// add button to button group
 			bg.add(tbutton);
 		}
-	}		
+	}	
 	
 	/**
 	 * Removes all modes from the toggle menu. Used for the temporary perspective.
@@ -153,7 +153,7 @@ public class ModeToggleMenu extends JPanel {
 		popMenu.removeAll();
 		menuItemList.clear();
 		size = 0;
-	}
+	}	
 	
 	public void addSeparator() {
 		popMenu.addSeparator();
@@ -169,6 +169,15 @@ public class ModeToggleMenu extends JPanel {
 		}
 	}
 	
+	public void setMouseOverButton(MyJToggleButton bt) {
+		mouseOverButton = bt;
+		repaint();
+	}
+	
+	public JToggleButton getMouseOverButton() {
+		return mouseOverButton;
+	}
+	
 	public void mouseOver() {
 		//	popup menu is showing
 		JPopupMenu activeMenu = bg.getActivePopupMenu();		
@@ -182,18 +191,10 @@ public class ModeToggleMenu extends JPanel {
 		if (flag) {
 			bg.setActivePopupMenu(popMenu);	
 			if (popMenu.isShowing()) return;
-			Point locButton = tbutton.getLocationOnScreen();
+			Point locButton = tbutton.getLocationOnScreen();			
 			Point locApp = app.getMainComponent().getLocationOnScreen();
-			
-			// display the popup above the button if the toolbar is at the top of the window
-			if(app.showToolBarTop()) {
-				popMenu.show(app.getMainComponent(), locButton.x - locApp.x, 
-						locButton.y - locApp.y + tbutton.getHeight());
-			}
-			else {
-				popMenu.show(app.getMainComponent(), locButton.x - locApp.x, 
-						locButton.y - locApp.y - (int)popMenu.getPreferredSize().getHeight());
-			}
+			popMenu.show(app.getMainComponent(), locButton.x - locApp.x, 
+											locButton.y - locApp.y + tbutton.getHeight());
 		} else {
 			popMenu.setVisible(false);			
 		}
@@ -217,14 +218,12 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	 * 
 	 */
 	//private static final long serialVersionUID = 1L;
-	private static int BORDER = 6;
+	private int BORDER = 6;
 	private int iconWidth, iconHeight;
-	private GeneralPath gpDown; // the path for an arrow pointing down
-	private GeneralPath gpUp; // the path for an arrow pointing up
+	private GeneralPath gp;
 	private boolean showToolTipText = true;
-	private boolean popupTriangleHighlighting = false;
-	private ModeToggleMenu menu;
-	private Application app;
+	boolean popupTriangleHighlighting = false;
+	private ModeToggleMenu menu;		
 	
 	private static final Color arrowColor = new Color(0,0,0,130);
 	//private static final Color selColor = new Color(166, 11, 30,150);
@@ -232,10 +231,9 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	private static final Color selColor = new Color(0,0,153, 200);
 	private static final BasicStroke selStroke = new BasicStroke(3f);
 			
-	MyJToggleButton(ModeToggleMenu menu, Application app) {
+	MyJToggleButton(ModeToggleMenu menu) {
 		super();
 		this.menu = menu;
-		this.app = app;
 			
 		// add own listeners
 		addMouseListener(this);
@@ -258,7 +256,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	public void setIcon(Icon icon) {
 		super.setIcon(icon);  
 		iconWidth = icon.getIconWidth();
-		iconHeight = icon.getIconHeight();					
+		iconHeight = icon.getIconHeight();				
+		BORDER = (int) Math.round(icon.getIconWidth() * 0.1875); // 6 pixel border for 32 pixel icon
 		Dimension dim = new Dimension(iconWidth + 2*BORDER,
 								iconHeight + 2*BORDER);
 		setPreferredSize(dim); 
@@ -283,48 +282,47 @@ implements MouseListener, MouseMotionListener, ActionListener {
 							
 		// draw little arrow (for popup menu)
 		if (menu.size > 1) {
-			if (gpDown == null) initPath();							
+			if (gp == null) initPath();							
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 								RenderingHints.VALUE_ANTIALIAS_ON);
 			
-			GeneralPath usedPath = app.showToolBarTop() ? gpDown : gpUp;
-			
-			if (popupTriangleHighlighting || menu.isPopupShowing()) {
+			if (menu.getMouseOverButton() == this && 
+					(popupTriangleHighlighting || menu.isPopupShowing())) 
+			{
 				g2.setColor(Color.red);				
-				g2.fill(usedPath);
+				g2.fill(gp);
 				g2.setColor(Color.black);
-				g2.draw(usedPath);				
+				g2.draw(gp);				
 			} else {
 				g2.setColor(Color.white);
-				g2.fill(usedPath);
+				g2.fill(gp);
 				g2.setColor(arrowColor);
-				g2.draw(usedPath);
+				g2.draw(gp);
 			}
 			
 		}
 	}
 	
 	private void initPath() {
-		gpDown = new GeneralPath();	
+		gp = new GeneralPath();	
 		int x = BORDER + iconWidth + 2;
 		int y = BORDER + iconHeight + 1;
-		gpDown.moveTo(x-6, y-5);
-		gpDown.lineTo(x, y-5);
-		gpDown.lineTo(x-3,y);
-		gpDown.closePath();
-
-		gpUp = new GeneralPath();	
-		x = BORDER + iconWidth + 2;
-		y = BORDER + 2;
-		gpUp.moveTo(x-6, y);
-		gpUp.lineTo(x, y);
-		gpUp.lineTo(x-3,y-5);
-		gpUp.closePath();
+	
+		if (iconWidth > 20) {
+			gp.moveTo(x-6, y-5);
+			gp.lineTo(x, y-5);
+			gp.lineTo(x-3,y);
+		} else {
+			gp.moveTo(x-4, y-3);
+			gp.lineTo(x, y-3);
+			gp.lineTo(x-2,y);	
+		}
+		gp.closePath();			
 	}
 	
 	
-	private boolean inPopupTriangle(int x, int y) {
-		return (menu.size > 1 && (app.showToolBarTop() ? y > iconHeight-2 : y < 12));
+	private boolean popupTriangleClicked(int x, int y) {
+		return (menu.size > 1 && y > iconHeight-2);
 	}
 
 	public void mouseClicked(MouseEvent e) {	
@@ -332,25 +330,27 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
+		menu.setMouseOverButton(this);
 	}
 
 	public void mouseExited(MouseEvent arg0) {
+		menu.setMouseOverButton(null);
 		if (popupTriangleHighlighting) {
 			popupTriangleHighlighting = false;
 			repaint();
 		}
 	}
 
-	public void mousePressed(MouseEvent e) {		
-		menu.setPopupVisible(inPopupTriangle(e.getX(), e.getY()));
-		requestFocus();
-		//doClick();	removed to stop mode being selected when triangle clicked (for MODE_FITLINE)	
+	public void mousePressed(MouseEvent e) {
+		if (!menu.isPopupShowing() && popupTriangleClicked(e.getX(), e.getY())) {
+			menu.setPopupVisible(true);
+		}			
 	}
 
 	public void mouseReleased(MouseEvent e) {	
-		
-		// Mathieu Blossier - 2009-07-06
-		// doClick seems to be called twice
+		if (menu.isPopupShowing() && !popupTriangleClicked(e.getX(), e.getY())) {
+			menu.setPopupVisible(false);
+		}	
 		
 		doClick();		
 	}
@@ -362,7 +362,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	}
 
 	public void mouseDragged(MouseEvent e) {
-		if (inPopupTriangle(e.getX(), e.getY()))
+		if (popupTriangleClicked(e.getX(), e.getY()))
 			menu.setPopupVisible(true);
 	}
 	
@@ -372,10 +372,10 @@ implements MouseListener, MouseMotionListener, ActionListener {
 		
 		// highlight popup menu triangle
 		if (menu.size > 1 &&  
-					popupTriangleHighlighting != inPopupTriangle(e.getX(), e.getY())) {
+				popupTriangleHighlighting != popupTriangleClicked(e.getX(), e.getY())) {
 			popupTriangleHighlighting = !popupTriangleHighlighting;
 			repaint();
-		}
+		}			
 	}
 	
 	

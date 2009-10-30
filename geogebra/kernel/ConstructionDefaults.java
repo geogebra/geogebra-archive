@@ -111,6 +111,9 @@ public class ConstructionDefaults {
 	private int lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
 	private int pointSize = EuclidianView.DEFAULT_POINT_SIZE;
 	private int angleSize = EuclidianView.DEFAULT_ANGLE_SIZE;
+	private float filling = DEFAULT_POLYGON_ALPHA;
+	
+	private boolean blackWhiteMode = false;
 	
 	/**
 	 * Creates a new ConstructionDefaults object to manage the
@@ -457,7 +460,13 @@ public class ConstructionDefaults {
 			case LABEL_VISIBLE_USE_DEFAULTS:
 				// don't change anything
 				break;														
-		}				
+		}			
+		
+		if (blackWhiteMode) {
+			// use black color and no filling
+			geo.setObjColor(Color.black);
+			geo.setAlphaValue(0f);
+		}
 		
 		/*
 		void initSetLabelVisible() {
@@ -465,29 +474,86 @@ public class ConstructionDefaults {
 		}*/
 	}
 	
+	public void setBlackWhiteMode(boolean flag) {
+		blackWhiteMode = flag;
+	}
+	
+	public boolean getBlackWhiteMode() {
+		return blackWhiteMode;
+	}
+	
 	public int getLineThicknessDefault() {
 		return lineThickness;
 	}
+	
+	public int getAngleSizeDefault() {
+		return angleSize;
+	}
+	
+	public int getPointSizeDefault() {
+		return pointSize;
+	}
+	
+	public float getAlphaDefault() {
+		return filling;
+	}
+	
+	public void resetDefaults() {
+		lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
+		pointSize = EuclidianView.DEFAULT_POINT_SIZE;
+		angleSize = EuclidianView.DEFAULT_ANGLE_SIZE;
+		filling = DEFAULT_POLYGON_ALPHA;
+		
+		setDefaultLineThickness(lineThickness);
+		setDefaultPointSize(pointSize);
+		setDefaultAngleSize(angleSize);
+		setDefaultFilling(filling);
 
-
-	/**
-	 * Updates all default GeoElements according to the given font size.
-	 * This will change the size of newly created points and the thickness of
-	 * newly created lines.
-	 */
-	public void adaptDefaultsToFontSize(int fontSize) {
-		// 12pt is the default font size with a factor of 100%
-		double factor = fontSize / 12.0;
-		int sizeIncrease = fontSize - 12;
+	}
+	
+	public void setDefaultAngleSize(int angleSize) {
 		
-		// set new default line thickness
-		lineThickness = Math.min(EuclidianView.DEFAULT_LINE_THICKNESS + sizeIncrease/2, 9);
+		this.angleSize = angleSize;
+			
+		Iterator it = defaultGeoElements.values().iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();	
+			
+					
+			switch (geo.getGeoClassType()) {
+			
+				case GeoElement.GEO_CLASS_ANGLE:					
+					((GeoAngle) geo).setArcSize(angleSize);
+					break;				
+			}
+		}		
+	}
+	
+	public void setDefaultPointSize(int pointSize) {
+			
+		this.pointSize = pointSize;
 		
-		// set new default point size
-		pointSize = (int) Math.min(Math.round(EuclidianView.DEFAULT_POINT_SIZE * factor), 7);
+		Iterator it = defaultGeoElements.values().iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();	
+			
+				
+			switch (geo.getGeoClassType()) {
+			case GeoElement.GEO_CLASS_POINT:
+				((GeoPoint) geo).setPointSize(pointSize); 
+				break;
+				
+			case GeoElement.GEO_CLASS_LIST:
+				((GeoList) geo).setPointSize(pointSize); 
+				break;
+				
+			}
+		}		
+	}
+	
+	public void setDefaultLineThickness(int lineThickness) {
 		
-		// set new default angle size
-		angleSize = (int) Math.min(Math.round(EuclidianView.DEFAULT_ANGLE_SIZE * factor), 100);
+		this.lineThickness = lineThickness;
 			
 		Iterator it = defaultGeoElements.values().iterator();
 		while (it.hasNext()) {
@@ -498,19 +564,22 @@ public class ConstructionDefaults {
 				geo.setLineThickness(lineThickness);
 					
 			switch (geo.getGeoClassType()) {
-			case GeoElement.GEO_CLASS_POINT:
-				((GeoPoint) geo).setPointSize(pointSize); 
-				break;
 				
 			case GeoElement.GEO_CLASS_LIST:
-				((GeoList) geo).setPointSize(pointSize); 
 				((GeoList) geo).setLineThickness(lineThickness); 
 				break;
-				
-				case GeoElement.GEO_CLASS_ANGLE:					
-					((GeoAngle) geo).setArcSize(angleSize);
-					break;				
 			}
+		}		
+	}
+	public void setDefaultFilling(float filling) {
+		
+		this.filling = filling;
+			
+		Iterator it = defaultGeoElements.values().iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();	
+			
+			geo.setAlphaValue(filling);
 		}		
 	}
 

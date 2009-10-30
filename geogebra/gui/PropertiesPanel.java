@@ -233,6 +233,10 @@ public	class PropertiesPanel extends JPanel {
  			add(tabs, BorderLayout.CENTER); 			
 		}		
 		
+		public void showSliderTab() {
+			tabs.setSelectedIndex(1);
+		}
+		
 		// added by Loïc BEGIN
 		public void setSliderMinValue(){
 			arcSizePanel.setMinValue();

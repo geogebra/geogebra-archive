@@ -51,7 +51,10 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -75,7 +78,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicFileChooserUI;
 import javax.swing.text.JTextComponent;
 
 
@@ -593,10 +595,15 @@ public class DefaultGuiManager implements GuiManager {
 		if (appToolbarPanel != null) {
 			appToolbarPanel.initToolbar();
 		}
-
-		if (propDialog != null) {
-			propDialog.initGUI();			
+		
+		if (menuBar != null) {
+			menuBar.initMenubar();
 		}
+
+		if (propDialog != null)
+			// changed to force all panels to be updated
+			reinitPropertiesDialog();  //was propDialog.initGUI();
+			
 		if (constProtocol != null)
 			constProtocol.initGUI();
 		if (constProtocolNavigation != null)
@@ -615,12 +622,11 @@ public class DefaultGuiManager implements GuiManager {
 
 		if (app.showMenuBar()) {
 			initMenubar();
-			if (app.isApplet())
-				((JApplet) app.getMainComponent())
-						.setJMenuBar((JMenuBar) menuBar);
-			else
-				((JFrame) app.getMainComponent())
-						.setJMenuBar((JMenuBar) menuBar);
+			Component comp = app.getMainComponent();
+			if (comp instanceof JApplet)
+				((JApplet) comp).setJMenuBar((JMenuBar) menuBar);
+			else if (comp instanceof JFrame)
+				((JFrame) comp).setJMenuBar((JMenuBar) menuBar);
 		}
 
 		// update views
@@ -656,6 +662,7 @@ public class DefaultGuiManager implements GuiManager {
 		if (menuBar == null) {
 			menuBar = new GeoGebraMenuBar(app, layout);
 		}
+		//((GeoGebraMenuBar) menuBar).setFont(app.getPlainFont());
 		menuBar.initMenubar();
 	}
 	
@@ -774,6 +781,10 @@ public class DefaultGuiManager implements GuiManager {
 		// open properties dialog
 		initPropertiesDialog();
 		propDialog.setVisibleWithGeos(selGeos);
+
+		// double-click on slider -> open properties at slider tab
+		if (geos != null && geos.size() == 1  && ((GeoElement)geos.get(0)).isEuclidianVisible() && geos.get(0) instanceof GeoNumeric )
+		  propDialog.showSliderTab();
 		
 		app.setDefaultCursor();
 	}
@@ -1116,7 +1127,7 @@ public class DefaultGuiManager implements GuiManager {
 	 */
 	private void updateJavaUILanguage() {	
 		// load properties jar file
-		if (currentLocale == app.getLocale() || !app.loadPropertiesJar())
+		if (currentLocale == app.getLocale())
 			return;		
 		
 		// update locale
@@ -1221,10 +1232,12 @@ public class DefaultGuiManager implements GuiManager {
     	app.getEuclidianView().reset();
     	
     	// use null component for iconified frame
-    	GeoGebraFrame frame = (GeoGebraFrame) app.getFrame();
-    	Component comp = frame != null && !frame.isIconified() ? frame : null;
-
-
+    	Component comp = app.getMainComponent();
+    	if (app.getFrame() instanceof GeoGebraFrame) {
+    		GeoGebraFrame frame = (GeoGebraFrame) app.getFrame();
+    		comp = frame != null && !frame.isIconified() ? frame : null;
+    	}
+    	
     	// Michael Borcherds 2008-05-04
     	Object[] options = { app.getMenu("Save"), app.getMenu("DontSave"), app.getMenu("Cancel") };
     	int	returnVal=    
@@ -1293,7 +1306,7 @@ public class DefaultGuiManager implements GuiManager {
 		// Added for Intergeo File Format (Yves Kreis) -->
 		String[] fileExtensions;
 		String[] fileDescriptions;
-		if (Application.DISABLE_I2G) {
+		if (GeoGebra.DISABLE_I2G) {
 			fileExtensions = new String[] { Application.FILE_EXT_GEOGEBRA };
 			fileDescriptions = new String[] { app.getPlain("ApplicationName")
 					+ " " + app.getMenu("Files") };
@@ -1508,15 +1521,25 @@ public class DefaultGuiManager implements GuiManager {
 			MyFileFilter fileFilter = new MyFileFilter();
 			fileFilter.addExtension(Application.FILE_EXT_GEOGEBRA);
 			fileFilter.addExtension(Application.FILE_EXT_GEOGEBRA_TOOL);
+			fileFilter.addExtension(Application.FILE_EXT_HTML);
+			fileFilter.addExtension(Application.FILE_EXT_HTM);
 			fileFilter.setDescription(app.getPlain("ApplicationName") + " "
 					+ app.getMenu("Files"));
 			fileChooser.resetChoosableFileFilters();
 			// Modified for Intergeo File Format (Yves Kreis & Ingo Schandeler)
 			// -->
 			fileChooser.addChoosableFileFilter(fileFilter);
+			
+			// HTML File Filter (for ggbBase64 files)
+//			MyFileFilter fileFilterHTML = new MyFileFilter();
+//			fileFilterHTML.addExtension(Application.FILE_EXT_HTML);
+//			fileFilterHTML.addExtension(Application.FILE_EXT_HTM);
+//			fileFilterHTML.setDescription(Application.FILE_EXT_HTML + " "
+//					+ app.getMenu("Files"));
+//			fileChooser.addChoosableFileFilter(fileFilterHTML);
 
 			// Intergeo File Filter
-			if (!Application.DISABLE_I2G) {
+			if (!GeoGebra.DISABLE_I2G) {
 				MyFileFilter i2gFileFilter = new MyFileFilter();
 				i2gFileFilter.addExtension(Application.FILE_EXT_INTERGEO);
 				i2gFileFilter.setDescription("Intergeo " + app.getMenu("Files")
@@ -1524,7 +1547,7 @@ public class DefaultGuiManager implements GuiManager {
 				fileChooser.addChoosableFileFilter(i2gFileFilter);
 			}
 			// fileChooser.setFileFilter(fileFilter);
-			if (Application.DISABLE_I2G
+			if (GeoGebra.DISABLE_I2G
 					|| oldCurrentFile == null
 					|| Application.getExtension(oldCurrentFile).equals(
 							Application.FILE_EXT_GEOGEBRA)
@@ -1542,6 +1565,7 @@ public class DefaultGuiManager implements GuiManager {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				files = fileChooser.getSelectedFiles();
 			}
+			
 			// Modified for Intergeo File Format (Yves Kreis) -->
 			if (fileChooser.getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
 				fileFilter = (MyFileFilter) fileChooser.getFileFilter();
@@ -1587,13 +1611,18 @@ public class DefaultGuiManager implements GuiManager {
 					}
 					// <-- Modified for Intergeo File Format (Yves Kreis)
 				}
+				
+				String ext = Application.getExtension(file).toLowerCase(Locale.US);
 
 				if (file.exists()) {
-					if (Application.FILE_EXT_GEOGEBRA_TOOL.equals(
-							Application.getExtension(file).toLowerCase(Locale.US))) {
-						// load macro file
-						loadFile(file, true);
-					} else {
+					if (Application.FILE_EXT_GEOGEBRA_TOOL.equals(ext)) {
+							// load macro file
+							loadFile(file, true);
+						} else 	if (Application.FILE_EXT_HTML.equals(ext) 
+								|| Application.FILE_EXT_HTM.equals(ext) ) {
+							// load HTML file with applet param ggbBase64
+							loadBase64File(file);
+						} else {
 						// standard GeoGebra file
 						GeoGebraFrame inst = GeoGebraFrame.getInstanceWithFile(file);
 						if (inst == null) {
@@ -1629,7 +1658,7 @@ public class DefaultGuiManager implements GuiManager {
 		if (!SwingUtilities.isEventDispatchThread())
 			return;
 		
-		 // use Foxtrot to wait a bit until screen has refreshed
+//		 // use Foxtrot to wait a bit until screen has refreshed
 //        Worker.post(new Job()
 //        {
 //           public Object run()
@@ -1666,6 +1695,93 @@ public class DefaultGuiManager implements GuiManager {
         return success;
         
     }
+    
+    	/*
+	 * loads an html file with <param name="ggbBase64" value="UEsDBBQACAAI...
+	 */
+	public boolean loadBase64File(final File file) {
+		if (!file.exists()) {
+			// show file not found message
+			JOptionPane.showConfirmDialog(app.getMainComponent(),
+					app.getError("FileNotFound") + ":\n" + file.getAbsolutePath(),
+					app.getError("Error"), JOptionPane.DEFAULT_OPTION,
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}										     
+
+		boolean success = false;
+
+		app.setWaitCursor();  
+		// hide navigation bar for construction steps if visible
+		app.setShowConstructionProtocolNavigation(false);
+
+
+		try {
+			FileInputStream fis = null;
+			fis = new FileInputStream(file);
+			BufferedReader myInput = new BufferedReader
+			(new InputStreamReader(fis));
+
+			StringBuffer sb = new StringBuffer();
+
+			String thisLine;
+
+			boolean started = false;
+
+			while ((thisLine = myInput.readLine()) != null)  {
+
+				// don't start reading until ggbBase64 tag
+				if (!started && thisLine.indexOf("ggbBase64") > -1) started = true;
+
+				if (started) {
+					sb.append(thisLine);
+
+					if (thisLine.indexOf("</applet>") > -1) break;
+				}
+
+
+
+			}
+
+			String fileArgument = sb.toString();
+
+			String matchString = "name=\"ggbBase64\" value=\"";
+
+			int start = fileArgument.indexOf(matchString);
+			int end   = fileArgument.indexOf("\"/>");
+
+			// check for two <param> tags on the same line
+			if (start > end) {
+				fileArgument = fileArgument.substring(start);
+				start = 0;
+				end   = fileArgument.indexOf("\"/>");
+			}
+			
+			if (start < 0 || end < 0 || end <= start) {
+				app.setDefaultCursor();
+				app.showError(app.getError("LoadFileFailed") + ":\n" + file);
+				return false;
+			}
+
+			//Application.debug(fileArgument.substring(start, end));
+
+			// decode Base64
+			byte[] zipFile = geogebra.util.Base64.decode(fileArgument
+					.substring(matchString.length() + start, end));
+
+			// load file
+			success = app.loadXML(zipFile);   
+		} catch (Exception e) {
+			app.setDefaultCursor();
+			app.showError(app.getError("LoadFileFailed") + ":\n" + file);
+			e.printStackTrace();
+			return false;
+
+		}
+		app.setDefaultCursor();
+		return success;
+
+	}
 		
 	private void updateGUIafterLoadFile(boolean success, boolean isMacroFile) {
 		if(success && !isMacroFile && !app.isIgnoringDocumentPerspective()) {
@@ -1850,11 +1966,9 @@ public class DefaultGuiManager implements GuiManager {
 				if (fileChooser.getSelectedFile() != null) {
 					fileName = fileChooser.getSelectedFile().getName();
 				}
-				if (Application.MAC_OS) {
-					fileName = getFileNameMAC(fileName);
-				} else {
-					fileName = getFileName(fileName);
-				}
+				
+				//fileName = getFileName(fileName);
+				
 				if (fileName != null && fileName.indexOf(".") > -1) {
 					fileName = fileName.substring(0, fileName.lastIndexOf("."))
 							+ "."
@@ -1865,33 +1979,38 @@ public class DefaultGuiManager implements GuiManager {
 				}
 			}
 		}
-
-		private String getFileNameMAC(String fileName) {
-			if (fileChooser.getUI() instanceof apple.laf.AquaFileChooserUI) {
-				apple.laf.AquaFileChooserUI ui = (apple.laf.AquaFileChooserUI) fileChooser.getUI();
-				return ui.getFileName();
-			} else if (fileChooser.getUI() instanceof apple.laf.CUIAquaFileChooser) {
-				apple.laf.CUIAquaFileChooser ui = (apple.laf.CUIAquaFileChooser) fileChooser
-						.getUI();
-				return ui.getFileName();
-			} else if (fileName == null) {
-				Application.debug("Unknown UI in JFileChooser: "
-						+ fileChooser.getUI().getClass());
-			}
-			return fileName;
-		}
-
-		private String getFileName(String fileName) {
-			if (fileChooser.getUI() instanceof BasicFileChooserUI) {
-				BasicFileChooserUI ui = (BasicFileChooserUI) fileChooser
-						.getUI();
-				return ui.getFileName();
-			} else if (fileName == null) {
-				Application.debug("Unknown UI in JFileChooser: "
-						+ fileChooser.getUI().getClass());
-			}
-			return fileName;
-		}
+//
+//		private String getFileName(String fileName) {
+//			try {
+//				FileChooserUI fcui = fileChooser.getUI();
+//				
+//				// for Windows, Linux (and Mac for Java 1.6+)
+//				if (fcui instanceof BasicFileChooserUI) {
+//					BasicFileChooserUI ui = (BasicFileChooserUI) fcui;
+//					return ui.getFileName();
+//				} 
+//				
+//				// for Mac (until Java 1.5)
+//				else if (fcui instanceof apple.laf.AquaFileChooserUI) {
+//					apple.laf.AquaFileChooserUI ui = (apple.laf.AquaFileChooserUI) fcui;
+//					return ui.getFileName();
+//				} 
+//				else if (fcui instanceof apple.laf.CUIAquaFileChooser) {
+//					apple.laf.CUIAquaFileChooser ui = (apple.laf.CUIAquaFileChooser) fcui;
+//					return ui.getFileName();
+//				} 
+//				else if (fileName == null) {
+//					Application.debug("Unknown UI in JFileChooser: " + fileChooser.getUI().getClass());
+//				}
+//			} catch (Throwable e) {
+//				// catch Mac exception when casting to apple.laf.CUIAquaFileChooser
+//				// in Java 1.6+
+//				e.printStackTrace();
+//			}
+//			
+//			
+//			return fileName;
+//		}
 	}
 
 	// <-- Added for Intergeo File Format (Yves Kreis)
@@ -2120,12 +2239,12 @@ public class DefaultGuiManager implements GuiManager {
 	    }
 	    
 	    public void showURLinBrowser(URL url) {
-	        //	if (applet != null) {
-	         //   	applet.getAppletContext().showDocument(url, "_blank");
-	         //   } else {
-	            	BrowserLauncher.openURL(url.toExternalForm());
-	          //  }
-	        }
+        	if (app.getJApplet() != null) {
+        		app.getJApplet().getAppletContext().showDocument(url, "_blank");
+            } else {
+            	BrowserLauncher.openURL(url.toExternalForm());
+            }
+	    }
 	    
 
 	    public void openHelp(String command) {
@@ -2332,6 +2451,9 @@ public class DefaultGuiManager implements GuiManager {
 		}
 		
 		public void updateFrameTitle() {
+			if (!(app.getFrame() instanceof GeoGebraFrame))
+				return;
+			
 			GeoGebraFrame frame = (GeoGebraFrame) app.getFrame();
 
 			StringBuffer sb = new StringBuffer();

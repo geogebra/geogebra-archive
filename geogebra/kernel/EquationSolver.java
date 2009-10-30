@@ -13,6 +13,8 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+import java.util.Arrays;
+
 import geogebra.kernel.arithmetic.PolyFunction;
 import geogebra.kernel.complex.Complex;
 import geogebra.kernel.complex.ComplexPoly;
@@ -21,8 +23,6 @@ import geogebra.kernel.roots.RealRoot;
 public class EquationSolver { 
 		
 	private static final double LAGUERRE_EPS = 1E-5;
-	private static final double BISECT_EPS = 0.1;
-	
 	private double epsilon = Kernel.STANDARD_PRECISION;
 	
 	private RealRoot rootPolisher;
@@ -394,54 +394,56 @@ public class EquationSolver {
 		ComplexPoly poly = new ComplexPoly(eqn);	
 		Complex [] complexRoots = poly.roots(false, new Complex(LAGUERRE_START, 0)); // don't polish here 
 	
+		// sort complexRoots by real part into laguerreRoots
+		double [] laguerreRoots = new double[complexRoots.length];
+		for (int i=0; i < laguerreRoots.length; i++) {
+			laguerreRoots[i] = complexRoots[i].getReal();
+		}
+		Arrays.sort(laguerreRoots);
+		
 		// get the roots from Laguerre method
 		int realRoots = 0;		
-		double root, polish;
-		double [] val;		
+		double root;	
 				
-		for (int i=0; i < complexRoots.length; i++) {
-			// Application.debug("complexRoot[" + i + "] = " + complexRoots[i]);	
+		for (int i=0; i < laguerreRoots.length; i++) {
+			//System.out.println("laguerreRoots[" + i + "] = " + laguerreRoots[i]);	
 			
 			// let's polish all complex roots to get all real roots
-			// take (a + b) as a real start value for the complex root (a + ib)			
-			root = complexRoots[i].getReal() + complexRoots[i].getImag();
-			val = polyFunc.evaluateDerivFunc(root); // function's and first derivative's values
-				
-			try {
-				if (Math.abs(val[1]) > 0.1) {	// f'(root) big enough for Mr. Newton
-					polish = rootPolisher.newtonRaphson(polyFunc, root);
-					// Application.debug("Polish newtonRaphson: " + polish);	
-				} else {					
-					// check if root is bounded in intervall [root-eps, root+eps]
-					double f_left = polyFunc.evaluate(root - BISECT_EPS);
-					double f_right = polyFunc.evaluate(root + BISECT_EPS);
-					boolean bounded = f_left * f_right < 0.0; 
-					if (bounded) {						
-						//	small f'(root): don't go too fare from our laguerre root !	
-						polish = rootPolisher.bisectNewtonRaphson(polyFunc, root - BISECT_EPS, root + BISECT_EPS);
-						// Application.debug("Polish bisectNewtonRaphson: " + polish);
-					} else {
-						// the root is not bounded: give Mr. Newton a chance
-						polish = rootPolisher.newtonRaphson(polyFunc, root);
-						// Application.debug("Polish newtonRaphson: " + polish);
-					}					
-				}
-				root = polish;
-				// Application.debug("polished function successfully: " + root);
-			} catch (Exception e) {
+			root = laguerreRoots[i];
+			
+			// check if root is bounded in intervall [root-eps, root+eps]
+			double left = i==0 ? root - 1 : (root + laguerreRoots[i-1])/2;
+			double right = i==laguerreRoots.length - 1 ? root + 1 : (root + laguerreRoots[i+1])/2;
+			double f_left = polyFunc.evaluate(left);
+			double f_right = polyFunc.evaluate(right);
+			boolean bounded = f_left * f_right < 0.0; 
+			
+			try {					
+				if (bounded) {						
+					//	small f'(root): don't go too fare from our laguerre root !	
+					root = rootPolisher.bisectNewtonRaphson(polyFunc, left, right);
+					//System.out.println("Polish bisectNewtonRaphson: " + root);
+				} 
+				else {
+					// the root is not bounded: give Mr. Newton a chance
+					root = rootPolisher.newtonRaphson(polyFunc, root);
+					//System.out.println("Polish newtonRaphson: " + root);
+				}				
+			} 
+			catch (Exception e) {
 				// Application.debug("Polish FAILED: ");
 				// polishing failed: maybe we have an extremum here
 				// try to find a local extremum
-				try {					
-					polish = rootPolisher.bisectNewtonRaphson(derivFunc, root - 0.1, root + 0.1);	
-					root = polish;
-					// Application.debug("    find extremum successfull: " + root);
+				try {		
+					root = rootPolisher.bisectNewtonRaphson(derivFunc, left, right);	
+					//System.out.println("    find extremum successfull: " + root);
 				} catch (Exception ex) {
+					System.err.println(ex.getMessage());
 				}
 			}
 
 			//	check if the found root is really ok 												
-			val = polyFunc.evaluateDerivFunc(root); // get f(root) and f'(root)
+			double [] val = polyFunc.evaluateDerivFunc(root); // get f(root) and f'(root)
 			double error = Math.abs(val[0]); // | f(root) |
 			double slope = Math.abs(val[1]);
 			

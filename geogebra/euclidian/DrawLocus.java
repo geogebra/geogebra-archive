@@ -18,7 +18,6 @@ import geogebra.kernel.MyPoint;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 
@@ -28,15 +27,14 @@ public final class DrawLocus extends Drawable {
 	private GeoLocus locus;    	
     
     boolean isVisible, labelVisible;   
-	private GeneralPath gp;	
+	private GeneralPathClipped gp;	
 	private double [] lastPointCoords;
 	    
     public DrawLocus(EuclidianView view, GeoLocus locus) {      
     	this.view = view;          
         this.locus = locus;
         geo = locus;                          
-
-        gp = new GeneralPath();     
+   
         update();
     }
     
@@ -60,12 +58,15 @@ public final class DrawLocus extends Drawable {
 			yLabel = (int) (lastPointCoords[1] + 4 + view.fontSize);   
 			addLabelOffset();           
 		}
-    }
+   }
     
-    private void buildGeneralPath(ArrayList pointList) {    	
-    	gp.reset();     	  
+    private void buildGeneralPath(ArrayList pointList) {    
+    	if (gp == null)
+    		gp = new GeneralPathClipped(view);
+    	else
+    		gp.reset();     	  
     	double [] coords = new double[2];
-    	
+  	
     	int size = pointList.size();
 		for (int i=0; i < size; i++) {
 			MyPoint p = (MyPoint) pointList.get(i);    		
@@ -73,15 +74,11 @@ public final class DrawLocus extends Drawable {
     		coords[1] = p.y;
     		view.toScreenCoords(coords);      		    		
     		
-    		if ( coords[0] < Float.MAX_VALUE && 
-    			  coords[1] < Float.MAX_VALUE) 
-    		{
-	    		if (p.lineTo) {
-					gp.lineTo((float) coords[0], (float) coords[1]);					
-				} else {					
-					gp.moveTo((float) coords[0], (float) coords[1]);	   						
-				}           	 	    		
-    		}
+    		if (p.lineTo) {
+				gp.lineTo(coords[0], coords[1]);					
+			} else {					
+				gp.moveTo(coords[0], coords[1]);	   						
+			}           	 	    		
         }
     	
     	lastPointCoords = coords;    	

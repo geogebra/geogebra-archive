@@ -38,7 +38,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
 import java.awt.geom.RectangularShape;
@@ -79,7 +78,7 @@ final public class DrawConic extends Drawable implements Previewable {
     boolean firstCircle = true;
     private GeoVec2D midpoint;    
     private Arc2D.Double arc;   
-    private GeneralPath arcFiller, gp;
+    private GeneralPathClipped arcFiller, gp;
     private RectangularShape circle;
     double  mx, my, radius, yradius, angSt, angEnd;    
     
@@ -106,7 +105,7 @@ final public class DrawConic extends Drawable implements Previewable {
     private double a,b, tsq, step, t, denom;
     private double x, y;
     private int index0, index1, n, points;
-    private Polyline hypLeft, hypRight;    
+    private GeneralPathClipped hypLeft, hypRight;    
     private boolean hypLeftOnScreen, hypRightOnScreen;      
     
     // preview of circle (two points or three points)
@@ -214,7 +213,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	        case GeoConic.CONIC_PARABOLA:	           
 	        	// shape on screen?
 	        	// Michael Borcherds: bugfix getBounds2D() added otherwise rotated parabolas not displayed sometimes
-	        	if (!shape.getBounds2D().intersects(0,0, view.width, view.height)) {				
+	        	if (arcFiller == null && !shape.getBounds2D().intersects(0,0, view.width, view.height)) {				
 	    			isVisible = false;
 	    			return;
 	    		}
@@ -298,6 +297,8 @@ final public class DrawConic extends Drawable implements Previewable {
         radius =  halfAxes[0] * view.xscale;
         yradius =  halfAxes[1] * view.yscale; // radius scaled in y direction
                 
+        i = -1; // bugfix
+        
         // if circle is very big, draw arc: this is very important
         // for graphical continuity
         if (radius < BIG_CIRCLE_RADIUS || yradius < BIG_CIRCLE_RADIUS) {              
@@ -389,7 +390,7 @@ final public class DrawConic extends Drawable implements Previewable {
                     
             // set general path for filling the arc to screen borders
 			if (conic.alphaValue > 0.0f) {
-				if (gp == null) gp = new GeneralPath();
+				if (gp == null) gp = new GeneralPathClipped(view);
 				else gp.reset();
 				Point2D sp = arc.getStartPoint();
 				Point2D ep = arc.getEndPoint();
@@ -397,53 +398,53 @@ final public class DrawConic extends Drawable implements Previewable {
 				switch (i) { // case number
 					case 0: // left top
 						gp.moveTo(0,0);
-						gp.lineTo((float) sp.getX(), (float) sp.getY());
-						gp.lineTo((float) ep.getX(), (float) ep.getY());						
+						gp.lineTo(sp.getX(), sp.getY());
+						gp.lineTo(ep.getX(), ep.getY());						
 					break;
 					
 					case 1: // left middle
 						gp.moveTo(0,view.height);
-						gp.lineTo((float) sp.getX(), (float) sp.getY());
-						gp.lineTo((float) ep.getX(), (float) ep.getY());
+						gp.lineTo(sp.getX(), sp.getY());
+						gp.lineTo(ep.getX(), ep.getY());
 						gp.lineTo(0,0);						
 					break;
 					
 					case 2: // left bottom
 						gp.moveTo(0,view.height);
-						gp.lineTo((float) sp.getX(), (float) sp.getY());
-						gp.lineTo((float) ep.getX(), (float) ep.getY());												
+						gp.lineTo(sp.getX(), sp.getY());
+						gp.lineTo(ep.getX(), ep.getY());												
 					break;
 					
 					case 3: // middle bottom
 						gp.moveTo(view.width, view.height);
-						gp.lineTo((float) sp.getX(), (float) sp.getY());
-						gp.lineTo((float) ep.getX(), (float) ep.getY());
+						gp.lineTo(sp.getX(), sp.getY());
+						gp.lineTo(ep.getX(), ep.getY());
 						gp.lineTo(0, view.height);						
 					break;
 
 					case 4: // right bottom
 						gp.moveTo(view.width, view.height);
-						gp.lineTo((float) sp.getX(), (float) sp.getY());
-						gp.lineTo((float) ep.getX(), (float) ep.getY());											
+						gp.lineTo(sp.getX(), sp.getY());
+						gp.lineTo(ep.getX(), ep.getY());											
 					break;
 
 					case 5: // right middle
 						gp.moveTo(view.width, 0);
-						gp.lineTo((float) sp.getX(), (float) sp.getY());
-						gp.lineTo((float) ep.getX(), (float) ep.getY());
+						gp.lineTo(sp.getX(), sp.getY());
+						gp.lineTo(ep.getX(), ep.getY());
 						gp.lineTo(view.width, view.height);											
 					break;
 
 					case 6: // right top
 						gp.moveTo(view.width, 0);
-						gp.lineTo((float) sp.getX(), (float) sp.getY());
-						gp.lineTo((float) ep.getX(), (float) ep.getY());																
+						gp.lineTo(sp.getX(), sp.getY());
+						gp.lineTo(ep.getX(), ep.getY());																
 					break;
 
 					case 7: // top middle
 						gp.moveTo(0, 0);
-						gp.lineTo((float) sp.getX(), (float) sp.getY());
-						gp.lineTo((float) ep.getX(), (float) ep.getY());
+						gp.lineTo(sp.getX(), sp.getY());
+						gp.lineTo(ep.getX(), ep.getY());
 						gp.lineTo(view.width, 0);											
 					break;
 					
@@ -487,9 +488,13 @@ final public class DrawConic extends Drawable implements Previewable {
         if (firstHyperbola) {                                       
             firstHyperbola = false;
             points = PLOT_POINTS;
-            hypRight = new Polyline(2 * points - 1); // right wing
-            hypLeft   = new Polyline(2 * points - 1); // left wing                                     
-        }                
+            hypRight = new GeneralPathClipped(view); // right wing
+            hypLeft  = new GeneralPathClipped(view); // left wing                                     
+        }     
+        else {
+        	hypRight.reset();
+        	hypLeft.reset();
+        }
 	
         a = halfAxes[0];
 		b = halfAxes[1];
@@ -504,8 +509,7 @@ final public class DrawConic extends Drawable implements Previewable {
 						 Math.abs(midpoint.y - view.ymax) )
 			 );           
 		// ensure that rotated hyperbola is fully on screen:   			         
-		x0 *= 1.5;     
-		//x0 += 2* (view.xmax - view.xmin);
+		x0 *= 1.5; 
 	
 		//		init step width
 		if (x0 <= a) { // hyperbola is not visible on screen		
@@ -519,9 +523,7 @@ final public class DrawConic extends Drawable implements Previewable {
 		   (int) (Math.abs(x0 - a) / (view.xmax - view.xmin)) * 10;		
 		
 		if (points != n) {				
-			points = Math.min(n, MAX_PLOT_POINTS); 			
-			hypRight.setNumberOfPoints(2 * points -1);  
-			hypLeft.setNumberOfPoints(2 * points -1);  
+			points = Math.min(n, MAX_PLOT_POINTS);  
 		}		
 				
 		 // hyperbola is visible on screen	
@@ -536,10 +538,8 @@ final public class DrawConic extends Drawable implements Previewable {
         // build Polyline of parametric hyperbola
         // hyp(t) = 1/(1-t�) {a(1+t�), 2bt}, 0 <= t < 1
         // this represents the first quadrant's wing of a hypberola                                                
-        hypRight.x[points-1] = a;
-        hypRight.y[points-1] = 0.0f;
-        hypLeft.x[points-1] = -a;
-        hypLeft.y[points-1] = 0.0f;
+        hypRight.addPoint(points-1, a, 0);
+        hypLeft.addPoint(points-1, -a, 0);
   
   		t = step;
   		i = 1;
@@ -553,33 +553,36 @@ final public class DrawConic extends Drawable implements Previewable {
             y = (2.0 * b * t / denom);                              
 			
             // first quadrant
-            hypRight.x[index0] =  x; 
-            hypRight.y[index0] =  y;
-            // second quadrant                  
-            hypLeft.x[index0]  =   -x;
-            hypLeft.y[index0]  =    y;                   
+            hypRight.addPoint(index0, x, y); 
+            // second quadrant  
+            hypLeft.addPoint(index0, -x, y);                   
             // third quadrant
-            hypLeft.x[index1]  = -x;
-            hypLeft.y[index1]  = -y;
+            hypLeft.addPoint(index1, -x, -y);  
             // fourth quadrant
-            hypRight.x[index1] = x;
-            hypRight.y[index1] = -y;    
+            hypRight.addPoint(index1, x, -y);
             
 			index0++;
 			index1--;
 			i++;
 			t = i * step;                                                            
-        }                               
-
+        }     
+        
+        // we have drawn the hyperbola from x=a to x=x0
+        // ensure correct filling by adding points at (2*x0, y)
+        if (conic.alphaValue > 0.0f) {
+	        hypRight.lineTo(Float.MAX_VALUE, y);
+	        hypRight.lineTo(Float.MAX_VALUE, -y);
+	        hypLeft.lineTo(-Float.MAX_VALUE, y);
+	        hypLeft.lineTo(-Float.MAX_VALUE, -y);
+        }
+        
         // set transform for Graphics2D 
         transform.setTransform(view.coordTransform);
         transform.concatenate(conicTransform);
         
         // build general paths of hyperbola wings and transform them
-		hypLeft.buildGeneralPath();
-        hypRight.buildGeneralPath();
 		hypLeft.transform(transform);
-		hypRight.transform(transform);                                     
+		hypRight.transform(transform); 
 
         // set label coords
         labelCoords[0] = 2.0 * a; 
@@ -690,19 +693,20 @@ final public class DrawConic extends Drawable implements Previewable {
            case GeoConic.CONIC_HYPERBOLA:               		          
 				if (conic.alphaValue > 0.0f) {
 					g2.setColor(conic.getFillColor());
-					if (hypLeftOnScreen) hypLeft.fill(g2);                                                
-					if (hypRightOnScreen) hypRight.fill(g2); 
+					if (hypLeftOnScreen) Drawable.fillWithValueStrokePure(hypLeft, g2);                                                
+					if (hypRightOnScreen) Drawable.fillWithValueStrokePure(hypRight, g2); 
 				}	
 				if (geo.doHighlighting()) {
 					 g2.setStroke(selStroke);
-					 g2.setColor(conic.getSelColor());					
-					 if (hypLeftOnScreen) hypLeft.draw(g2);                                                
-					 if (hypRightOnScreen) hypRight.draw(g2); 				
+					 g2.setColor(conic.getSelColor());
+					 
+					 if (hypLeftOnScreen) Drawable.drawWithValueStrokePure(hypLeft, g2);                                               
+					 if (hypRightOnScreen) Drawable.drawWithValueStrokePure(hypRight, g2); 				
 				 }  
 				 g2.setStroke(objStroke);
 				 g2.setColor(conic.getObjectColor());				 
-				 if (hypLeftOnScreen) hypLeft.draw(g2);                                                
-				 if (hypRightOnScreen) hypRight.draw(g2); 
+				 if (hypLeftOnScreen) Drawable.drawWithValueStrokePure(hypLeft, g2);                                                
+				 if (hypRightOnScreen) Drawable.drawWithValueStrokePure(hypRight, g2); 
 				             
 				 if (labelVisible) {
 					 g2.setFont(view.fontConic); 
@@ -759,8 +763,8 @@ final public class DrawConic extends Drawable implements Previewable {
 		   case GeoConic.CONIC_HYPERBOLA:     
 				 g2.setStroke(objStroke);
 				 g2.setColor(conic.getObjectColor());				 
-				 hypLeft.draw(g2);                                                
-				 hypRight.draw(g2); 				  
+				 g2.draw(hypLeft);                                                
+				 g2.draw(hypRight); 				  
 				break;      
 		}
 	}
@@ -785,8 +789,8 @@ final public class DrawConic extends Drawable implements Previewable {
             	
             case GeoConic.CONIC_HYPERBOLA: 
             	if (strokedShape == null) {
-        			strokedShape = hypLeft.createStrokedShape(objStroke);
-        			strokedShape2 = hypRight.createStrokedShape(objStroke);
+        			strokedShape = objStroke.createStrokedShape(hypLeft);
+        			strokedShape2 = objStroke.createStrokedShape(hypRight);
         		}    		
         		return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);  
             	

@@ -109,9 +109,9 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 			//TODO: check greek letters of latex string
 			str = Util.toLaTeXString(text, false);
 		} else {
-			// replace "\n" with a proper newline
-			// for eg Text["Hello\nWorld",(1,1)]
-			str = text.replaceAll("\\\\n", "\n");
+			// replace "\\n" with a proper newline
+			// for eg Text["Hello\\nWorld",(1,1)]
+			str = text.replaceAll("\\\\\\\\n", "\n");
 		}		
 		
 	}
@@ -493,15 +493,13 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		if (b == isLaTeX) return;
 		
 		isLaTeX = b;
-		
-		// make sure LaTeX jar file is loaded so that this text
-		// can be rendered
-		if (isLaTeX) {
-			app.loadLaTeXJar();
-		}
-		
+	
+		// update parent algorithm if it's not a sequence
 		if (updateParentAlgo) {
-			updateCascadeParentAlgo();
+			AlgoElement parent = getParentAlgorithm();
+			if (parent != null && !(parent instanceof AlgoSequence)) {
+				parent.update();
+			}
 		}			
 	}		
 

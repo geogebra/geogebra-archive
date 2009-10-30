@@ -14,6 +14,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import javax.swing.JPanel;
+
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.NumberValue;
 
@@ -84,6 +86,14 @@ implements EuclidianViewAlgo {
 			break;
 		case 4:
 	    	corner.setCoords(zeroX,zeroY,1.0);
+			break;
+		case 5: // return size of Graphics View in pixels
+	    	corner.setCoords(ev.getWidth(), ev.getHeight(), 1.0);
+			break;
+		case 6: // return size of Window in pixels
+			// (to help with sizing for export to applet)
+			JPanel appCP = app.getCenterPanel();
+			corner.setCoords(appCP.getWidth(), appCP.getHeight(), 1.0);
 			break;
 		default:
 			corner.setUndefined();

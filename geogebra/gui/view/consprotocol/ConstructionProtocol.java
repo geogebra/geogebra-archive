@@ -394,8 +394,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 			public void actionPerformed(ActionEvent e) {
 				app.setWaitCursor();
-				app.loadExportJar();
-				
+
 				Thread runner = new Thread() {
                     public void run() { 		 		         
                     	new geogebra.export.PrintPreview(app, ConstructionProtocol.this, PageFormat.PORTRAIT);		                    		  		                    			                    	
@@ -413,7 +412,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 			public void actionPerformed(ActionEvent e) {
 				app.setWaitCursor();
-				app.loadExportJar();
 				
 				Thread runner = new Thread() {
 					public void run() {

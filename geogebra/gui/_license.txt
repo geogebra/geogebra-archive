@@ -17,7 +17,7 @@ DEVELOPERS
 Contributions by Loic Le Coq (Paris, France 2006); Joan Carles Naranjo, Victor Franco, 
   Eloi Puertas (Barcelona, Spain 2007); Philipp Weissenbacher (Vienna, Austria 2007); 
   Cong Liu, Amy Varkey, and Quan Yuan (Florida Atlantic University, USA 2007-2009);
-  Hans-Petter Ulven (Norway 2008)
+  Hans-Petter Ulven (Norway 2008); George Sturr (Sebastopol, USA 2009)
   
 TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia), Maha Ah (Egypt)
