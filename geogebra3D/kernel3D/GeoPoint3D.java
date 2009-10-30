@@ -157,7 +157,6 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		
 		updateCoords(); 
 		
-		//TODO understand a_path
 		if (doPathOrRegion){
 			
 			// region

@@ -246,11 +246,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 
+		//update 3D cursor coordinates (false : no path or region update)
+		view3D.getCursor3D().setCoords(movedGeoPoint3D.getCoords(),false);
 		
 		
 		if (repaint){
-			//kernel3D.notifyRepaint();
-			//view.update();
 			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
 		}else{
 			movedGeoPoint3D.updateCascade();//TODO modify movedGeoPoint3D.updateCascade()
