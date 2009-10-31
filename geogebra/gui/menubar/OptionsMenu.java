@@ -183,11 +183,12 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		menuRightAngleStyle = new JMenu(app.getMenu("RightAngleStyle"));
 		menuRightAngleStyle.setIcon(app.getImageIcon("right_angle.gif"));
 		// dot, none, square
-		String[] strAngleStyle = { app.getPlain("off"), "\u25a1", "\u2219" };
+		String[] strAngleStyle = { app.getPlain("off"), "\u25a1", "\u2219", "\u2335" };
 		String[] strAngleStyleAC = {
 				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_NONE),
 				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE),
-				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_DOT) };
+				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_DOT),
+				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_L) };
 		ActionListener asal = new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				int style = Integer.parseInt(ae.getActionCommand());
@@ -332,7 +333,9 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			if (items[i] == "---") {
 				menu.addSeparator();
 			} else {
-				mi = new JRadioButtonMenuItem(app.getMenu(items[i]));
+				String text = app.getMenu(items[i]);
+				mi = new JRadioButtonMenuItem(text);
+				mi.setFont(app.getFontCanDisplay(text));
 				if (i == selectedPos)
 					mi.setSelected(true);
 				mi.setActionCommand(actionCommands[i]);

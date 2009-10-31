@@ -484,7 +484,7 @@ public class DrawAngle extends Drawable {
 
 	final public void draw(Graphics2D g2) {
 		if (isVisible) {
-			if (angle.alphaValue > 0.0f) {
+			if (angle.alphaValue > 0.0f && (!show90degrees || view.rightAngleStyle != EuclidianView.RIGHT_ANGLE_STYLE_L)) {
 				g2.setPaint(angle.getFillColor());
 				g2.fill(shape);
 			}
