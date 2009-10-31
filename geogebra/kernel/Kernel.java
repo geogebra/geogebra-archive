@@ -3679,6 +3679,27 @@ public class Kernel {
 	}
 
 	/** 
+	 * circle with midpoint A and radius the same as circle
+	 * Michael Borcherds 2008-03-14
+	 */
+	final public GeoConic Circle(
+			// this is actually a macro
+		String label,
+		GeoPoint A,
+		GeoConic c) {
+
+		AlgoRadius radius = new AlgoRadius(cons, c);
+		cons.removeFromConstructionList(radius);
+		
+		AlgoCirclePointRadius algo = new AlgoCirclePointRadius(cons, label, A, radius.getRadius());
+		GeoConic circle = algo.getCircle();
+		circle.setToSpecific();
+		circle.update();
+		notifyUpdate(circle);
+		return circle;
+	}
+
+	/** 
 	 * circle with midpoint M and radius segment
 	 * Michael Borcherds 2008-03-15
 	 */

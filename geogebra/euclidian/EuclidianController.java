@@ -370,7 +370,7 @@ public class EuclidianController implements MouseListener,
 			
 	    // preview for compass: radius first
 		case EuclidianView.MODE_COMPASSES:
-			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints, selectedSegments);
+			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints, selectedSegments, selectedConics);
 			break;
 			
 		// preview for arcs and sectors
@@ -5002,6 +5002,29 @@ public class EuclidianController implements MouseListener,
 			}
 		} 
 		
+		// we already have a circle that defines the radius
+		else if (selConics() == 1) {
+			GeoConic circle =  (GeoConic) selectedConics.get(0);
+
+			// check for centerPoint
+			GeoPoint centerPoint = (GeoPoint) chooseGeo(hits, GeoPoint.class);
+			
+			if (centerPoint != null) {	
+				if (selectionPreview) {
+					// highlight the center point
+					tempArrayList.clear();
+					tempArrayList.add(centerPoint);
+					addToHighlightedList(selectedPoints, tempArrayList, 3);
+					return false;
+				}
+				else {
+					// center point and circle which defines radius
+					kernel.Circle(null, centerPoint, circle);
+					clearSelections();
+					return true;
+				}
+			}
+		}
 		// we already have a segment that defines the radius
 		else if (selSegments() == 1) {
 			GeoSegment segment =  (GeoSegment) selectedSegments.get(0);
@@ -5031,6 +5054,16 @@ public class EuclidianController implements MouseListener,
 		boolean hitPoint = (addSelectedPoint(hits, 2, false) != 0);
 		if (!hitPoint && selPoints() != 2 ) {
 			addSelectedSegment(hits, 1, false);
+			addSelectedConic(hits, 1, false);
+			
+			// don't allow conics other than circles to be selected
+			if (selectedConics.size() > 0) {
+				GeoConic c = (GeoConic)selectedConics.get(0);
+				if (!c.isCircle()) {
+					selectedConics.remove(0); 
+					clearSelections();
+				}
+			}
 		}
 			
 		return false;

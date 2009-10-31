@@ -34,12 +34,17 @@ public class AlgoRadius extends AlgoElement {
 	private GeoConic c;  // input
     private GeoNumeric num;     // output                  
     
-    AlgoRadius(Construction cons, String label,GeoConic c) {        
+    AlgoRadius(Construction cons, GeoConic c) {        
         super(cons);
         this.c = c;                                                              
         num = new GeoNumeric(cons);                
         setInputOutput(); // for AlgoElement                
         compute();              
+        
+    }   
+    
+    AlgoRadius(Construction cons, String label,GeoConic c) {        
+        this(cons,c);    
         num.setLabel(label);            
     }   
     

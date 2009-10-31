@@ -109,7 +109,7 @@ final public class DrawConic extends Drawable implements Previewable {
     private boolean hypLeftOnScreen, hypRightOnScreen;      
     
     // preview of circle (two points or three points)
-	private ArrayList prevPoints, prevSegments; 
+	private ArrayList prevPoints, prevSegments, prevConics; 
 	private GeoPoint [] previewTempPoints;  
 	private GeoNumeric previewTempRadius;
 	private int previewMode, neededPrevPoints;
@@ -153,10 +153,11 @@ final public class DrawConic extends Drawable implements Previewable {
 	/**
 	 * Creates a new DrawConic for preview of a compass circle (radius or segment first, then center point) 
 	 */
-	DrawConic(EuclidianView view, int mode, ArrayList points, ArrayList segments) {
+	DrawConic(EuclidianView view, int mode, ArrayList points, ArrayList segments, ArrayList conics) {
 		this.view = view; 
 		prevPoints = points;
 		prevSegments = segments;
+		prevConics = conics;
 		previewMode = mode;
 		
 		Construction cons = view.getKernel().getConstruction();
@@ -886,7 +887,7 @@ final public class DrawConic extends Drawable implements Previewable {
 		// compass: set radius of preview circle
 		if (previewMode == EuclidianView.MODE_COMPASSES) {
 			// two points or one segment selected to define radius
-			isVisible = conic != null && (prevPoints.size() == 2 || prevSegments.size() == 1);
+			isVisible = conic != null && (prevPoints.size() == 2 || prevSegments.size() == 1 || prevConics.size() == 1);
 			if (isVisible) {
 				if (prevPoints.size() == 2) {
 					GeoPoint p1 = (GeoPoint) prevPoints.get(0);
@@ -896,6 +897,10 @@ final public class DrawConic extends Drawable implements Previewable {
 				else if (prevSegments.size() == 1) {
 					GeoSegment seg = (GeoSegment) prevSegments.get(0);
 					previewTempRadius.setValue(seg.getLength());
+				}								
+				else if (prevConics.size() == 1) {
+					GeoConic circle = (GeoConic) prevConics.get(0);
+					previewTempRadius.setValue(circle.getCircleRadius());
 				}								
 				previewTempRadius.updateCascade();
 			}			
