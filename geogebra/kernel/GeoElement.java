@@ -699,8 +699,10 @@ public abstract class GeoElement
 	// Michael Borcherds 2008-03-01
 	public void setLayer(int layer){
 		if (layer == this.layer
-		// layer valid only for Drawable objects		
-			|| !isDrawable()) return;
+				// layer valid only for Drawable objects	
+				// DON'T check this: eg angles on file load are not yet isDrawable()
+				//	|| !isDrawable()
+			) return;
 		if (layer > EuclidianView.MAX_LAYERS) layer = EuclidianView.MAX_LAYERS;
 		else if (layer < 0) layer = 0;
 		EuclidianView ev =app.getEuclidianView();
