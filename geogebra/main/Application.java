@@ -102,7 +102,7 @@ public abstract class Application implements KeyEventDispatcher {
 	public static final boolean PRINT_DEBUG_MESSAGES = true;
 	
 	// license file
-	public static final String LICENSE_FILE = "geogebra/gui/_license.txt";
+	public static final String LICENSE_FILE = "/geogebra/gui/_license.txt";
 
 	// jar file names
 	public final static String CAS_JAR_NAME = "geogebra_cas.jar";
