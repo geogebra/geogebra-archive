@@ -1511,12 +1511,18 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * 
 	 */
 	public void exportPaint(Graphics2D g2d, double scale) {
+		exportPaint(g2d, scale, false);
+	}
+	public void exportPaint(Graphics2D g2d, double scale, boolean transparency) {
 		
-		exportPaintPre(g2d,scale);
+		exportPaintPre(g2d,scale, transparency);
 		drawObjects(g2d);			
 	}
-
+	
 	public void exportPaintPre(Graphics2D g2d, double scale) {
+		exportPaintPre(g2d, scale, false);
+	}
+	public void exportPaintPre(Graphics2D g2d, double scale, boolean transparency) {
 		g2d.scale(scale, scale);	
 		
 		// clipping on selection rectangle
@@ -1561,11 +1567,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if (isTracing() || hasBackgroundImages()) {
 			// draw background image to get the traces
 			if (bgImage == null)
-				drawBackgroundWithImages(g2d);
+				drawBackgroundWithImages(g2d, transparency);
 			else
 				g2d.drawImage(bgImage, 0, 0, this);
 		} else {
-            drawBackground(g2d, true);
+			// just clear the background if transparency is disabled (clear = draw background color)
+            drawBackground(g2d, !transparency);
 		}
 
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
@@ -1598,19 +1605,23 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * Returns image of drawing pad sized according to the given scale factor.
 	 */
 	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
+		return getExportImage(scale, false);
+	}
+	
+	public BufferedImage getExportImage(double scale, boolean transparency) throws OutOfMemoryError {
 		int width = (int) Math.floor(getExportWidth() * scale);
 		int height = (int) Math.floor(getExportHeight() * scale);		
-		BufferedImage img = createBufferedImage(width, height);
-		
-		Graphics2D g2d = img.createGraphics();
-		//g2d.setComposite(AlphaComposite.Src);
-		
-		exportPaint(g2d, scale); 
+		BufferedImage img = createBufferedImage(width, height, transparency);
+		exportPaint(img.createGraphics(), scale, transparency); 
 		img.flush();
 		return img;
 	}
+	
+	protected BufferedImage createBufferedImage(int width, int height) {
+		return createBufferedImage(width, height, false);
+	}
 
-	protected BufferedImage createBufferedImage(int width, int height)
+	protected BufferedImage createBufferedImage(int width, int height, boolean transparency)
 			throws OutOfMemoryError {
 		
 		
@@ -1622,7 +1633,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			GraphicsConfiguration gc =
 			gs.getDefaultConfiguration();
 			BufferedImage bufImg = gc.createCompatibleImage(width,
-				height, Transparency.BITMASK);
+				height, (transparency ? Transparency.TRANSLUCENT : Transparency.BITMASK));
 
 
 
@@ -1682,7 +1693,13 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 	
 	private void drawBackgroundWithImages(Graphics2D g) {
-		clearBackground(g);
+		drawBackgroundWithImages(g, false);
+	}
+	
+	private void drawBackgroundWithImages(Graphics2D g, boolean transparency) {
+		if(!transparency)
+			clearBackground(g);
+		
 		bgImageList.drawAll(g); 
 		drawBackground(g, false);
 	}
