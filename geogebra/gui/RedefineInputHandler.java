@@ -28,6 +28,15 @@ public class RedefineInputHandler implements InputHandler {
 			GeoElement newGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(
 					geo, inputValue, true);
 			app.doAfterRedefine(newGeo);
+			
+            // update after redefine
+			// http://code.google.com/p/geogebra/issues/detail?id=147
+            if (newGeo != null) {
+                            setGeoElement(newGeo);
+                            oldString = inputValue;
+            }
+            // -----------------------------------------------------------
+            
 			return newGeo != null;
 		} catch (Exception e) {
 			app.showError("ReplaceFailed");			
