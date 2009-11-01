@@ -40,6 +40,7 @@ import geogebra.kernel.Locateable;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.TextProperties;
 import geogebra.kernel.Traceable;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
@@ -4603,6 +4604,14 @@ class ShowConditionPanel
 		if (strCond == null || strCond.trim().length() == 0) {
 			cond = null;
 		} else {
+			// needed to make next replace easier
+			strCond = strCond.replaceAll("==", ExpressionNode.strEQUAL_BOOLEAN);
+			strCond = strCond.replaceAll("!=", ExpressionNode.strNOT_EQUAL);
+			
+			// allow A=B as well as A==B
+			// also stops A=B doing an assignment of B to A :)
+			strCond = strCond.replaceAll("=", ExpressionNode.strEQUAL_BOOLEAN);
+			
 			cond = kernel.getAlgebraProcessor().evaluateToBoolean(strCond);
 		}
 				
