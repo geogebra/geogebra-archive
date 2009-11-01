@@ -14,6 +14,11 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		super(a_view3d, a_geo);
 	}
 
+	public Drawable3DSurfaces(EuclidianView3D a_view3d) {
+		super(a_view3d);
+	}
+	
+	
 	
 	
 	abstract void drawGeometryHiding(Renderer renderer);

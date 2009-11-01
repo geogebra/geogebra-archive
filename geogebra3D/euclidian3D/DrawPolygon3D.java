@@ -3,14 +3,24 @@ package geogebra3D.euclidian3D;
 
 
 
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import geogebra.euclidian.Previewable;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.kernel3D.GeoCoordSys1D;
+import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPolygon3D;
+import geogebra3D.kernel3D.GeoRay3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 
 
 
-public class DrawPolygon3D extends Drawable3DSurfaces {
+public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
 	
@@ -70,6 +80,79 @@ public class DrawPolygon3D extends Drawable3DSurfaces {
 			return DRAW_TYPE_CLOSED_SURFACES;
 		else
 			return DRAW_TYPE_SURFACES;
+	}
+
+	
+	
+	
+	
+	
+	////////////////////////////////
+	// Previewable interface 
+
+	
+	private ArrayList selectedPoints;
+
+	public DrawPolygon3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
+		
+		super(a_view3D);
+		
+		Kernel3D kernel = (Kernel3D) getView3D().getKernel();
+
+		setGeoElement(new GeoPolygon3D(kernel.getConstruction(),null));
+		
+		this.selectedPoints = selectedPoints;
+		
+
+		updatePreview();
+		
+	}	
+
+	
+	
+
+
+	public void disposePreview() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void drawPreview(Graphics2D g2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void updateMousePos(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void updatePreview() {
+		
+		if (selectedPoints.size()<3)
+			getGeoElement().setEuclidianVisible(false);
+		else
+			getGeoElement().setEuclidianVisible(true);
+		
+		GeoPoint3D[] points = new GeoPoint3D[selectedPoints.size()];
+		
+		int index =0;
+		//String s="points = ";
+		for (Iterator p = selectedPoints.iterator(); p.hasNext();){
+			points[index]= (GeoPoint3D) p.next();
+			//s+=points[index].getLabel()+", ";
+			index++;
+		}
+		//Application.debug(s);
+			
+		((GeoPolygon3D) getGeoElement()).setPoints(points);
+		
 	}
 	
 	

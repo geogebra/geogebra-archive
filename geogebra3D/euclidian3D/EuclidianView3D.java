@@ -1528,10 +1528,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}	
 	
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
-		return null;
+		return new DrawPolygon3D(this, selectedPoints);
 	}	
 
 
+	
+	
 	public void updatePreviewable(){
 
 

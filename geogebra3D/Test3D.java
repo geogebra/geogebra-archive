@@ -137,7 +137,7 @@ public class Test3D{
         view3D.setYZero(-100);
         view3D.setRotXYinDegrees(-30,22.5,true);
 
-        view3D.updateDrawables();
+        //view3D.updateDrawables();
 		//testAxisAndPlane();
 		
 		
