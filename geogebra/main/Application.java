@@ -301,7 +301,6 @@ public abstract class Application implements KeyEventDispatcher {
 	private FontManager fontManager;
 	
 	protected GuiManager appGuiManager;
-	private CasManager casView;
 
 	private Component mainComp;
 	private boolean isApplet = false;
@@ -357,9 +356,9 @@ public abstract class Application implements KeyEventDispatcher {
 
 	private static LinkedList fileList = new LinkedList();
 	private boolean isSaved = true;
-	private int guiFontSize;
-	private int axesFontSize;
-	private int euclidianFontSize;
+//	private int guiFontSize;
+//	private int axesFontSize;
+//	private int euclidianFontSize;
 
 	protected JPanel centerPanel;
 
@@ -1976,24 +1975,6 @@ public abstract class Application implements KeyEventDispatcher {
 		return icon;
 	}
 
-	public synchronized CasManager getCasView() {
-		if (casView == null) {			
-			// this code wraps the creation of the cas view and is
-			// necessary to allow dynamic loading of this class
-			ActionListener al = new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					casView = new geogebra.cas.view.CASView(Application.this);
-				}
-			};
-			al.actionPerformed(null);
-		}
-
-		return casView;
-	}
-
-	public boolean hasCasView() {
-		return casView != null;
-	}
 
 	public boolean showAlgebraInput() {
 		return showAlgebraInput;

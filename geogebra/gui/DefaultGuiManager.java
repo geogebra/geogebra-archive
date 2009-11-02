@@ -48,6 +48,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -106,6 +107,7 @@ public class DefaultGuiManager implements GuiManager {
 	private AlgebraInput algebraInput;
 	private AlgebraController algebraController;
 	private AlgebraView algebraView;
+	private CasManager casView;
     private SpreadsheetView spreadsheetView;   
 
 	private GeoGebraFileChooser fileChooser;
@@ -183,6 +185,25 @@ public class DefaultGuiManager implements GuiManager {
 				app.setUndoActive(true);
 			}
 	    }
+	  
+	public synchronized CasManager getCasView() {
+		if (casView == null) {			
+			// this code wraps the creation of the cas view and is
+			// necessary to allow dynamic loading of this class
+			ActionListener al = new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					casView = new geogebra.cas.view.CASView(app);
+				}
+			};
+			al.actionPerformed(null);
+		}
+
+		return casView;
+	}
+	
+	public boolean hasCasView() {
+		return casView != null;
+	}
 
 	public JComponent getAlgebraView() {
 		if (algebraView == null) {
@@ -313,6 +334,9 @@ public class DefaultGuiManager implements GuiManager {
 			case Application.VIEW_SPREADSHEET:
 				attachSpreadsheetView();
 				break;
+			case Application.VIEW_CAS:
+				attachCasView();
+				break;
 		}
 	}
 	
@@ -331,6 +355,9 @@ public class DefaultGuiManager implements GuiManager {
 				break;
 			case Application.VIEW_SPREADSHEET:
 				detachSpreadsheetView();
+				break;
+			case Application.VIEW_CAS:
+				detachCasView();
 				break;
 		}
 	}
@@ -353,6 +380,16 @@ public class DefaultGuiManager implements GuiManager {
 	public void detachAlgebraView(){	
 		if (algebraView != null)
 			algebraView.detachView();		
+	}	
+	
+	public void attachCasView(){	
+		getCasView();
+		casView.attachView();		
+	}	
+	
+	public void detachCasView(){	
+		if (casView != null)
+			casView.detachView();		
 	}	
 	
 	public void setShowAuxiliaryObjects(boolean flag) {
@@ -609,8 +646,8 @@ public class DefaultGuiManager implements GuiManager {
 		if (constProtocolNavigation != null)
 			constProtocolNavigation.initGUI();
 		
-		if (app.hasCasView())
-			app.getCasView().updateFonts();
+		if (casView != null)
+			casView.updateFonts();
 			
 		SwingUtilities.updateComponentTreeUI(app.getMainComponent());			
 	}

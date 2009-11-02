@@ -18,8 +18,8 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.main.View;
 import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;
 

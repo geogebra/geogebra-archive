@@ -1,8 +1,8 @@
 package geogebra.plugin;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.main.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;

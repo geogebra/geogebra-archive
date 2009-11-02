@@ -356,7 +356,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 				view = app.getGuiManager().getSpreadsheetView();
 				break;
 			case Application.VIEW_CAS:
-				view = app.getCasView().getCASViewComponent();
+				view = app.getGuiManager().getCasView().getCASViewComponent();
 				break;
 			default:
 				throw new IllegalArgumentException("view ID can not be identified (#"+info.getViewId()+")");

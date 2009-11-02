@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import geogebra.util.Util;
+
 
 public class CASTableCellValue {
 	private String input, output, latex;
@@ -68,28 +70,40 @@ public class CASTableCellValue {
 
 	// generate the XML file for this CASTableCellValue
 	public String getXML() {
+		String input = getInput();
+		String output = getOutput();
+		
+		boolean inputEmpty = input == null || input.length() == 0;
+		boolean outputEmpty = output == null || output.length() == 0;
+		
+		// check if cell pair is empty
+		if (inputEmpty && outputEmpty)
+			return "";
+		
 		StringBuffer sb = new StringBuffer();
 		sb.append("\t<cellPair>\n");
 
 		// inputCell
-		sb.append("\t\t");
-		sb.append("<inputCell>\n");
-		sb.append("\t\t\t");
-		sb.append("<expression");
-		sb.append(" value=\"");
-		sb.append(this.getInput());
-		sb.append("\"/>\n");
-		sb.append("\t\t");
-		sb.append("</inputCell>\n");
+		if (!inputEmpty) {
+			sb.append("\t\t");
+			sb.append("<inputCell>\n");
+			sb.append("\t\t\t");
+			sb.append("<expression");
+			sb.append(" value=\"");
+			sb.append(Util.encodeXML(input));
+			sb.append("\"/>\n");
+			sb.append("\t\t");
+			sb.append("</inputCell>\n");
+		}
 
 		// outputCell
-		if (isOutputVisible()) {
+		if (!outputEmpty) {
 			sb.append("\t\t");
 			sb.append("<outputCell>\n");
 			sb.append("\t\t\t");
 			sb.append("<expression");
 			sb.append(" value=\"");
-			sb.append(this.getOutput());
+			sb.append(Util.encodeXML(output));
 			sb.append("\"/>\n");
 			sb.append("\t\t");
 			sb.append("</outputCell>\n");

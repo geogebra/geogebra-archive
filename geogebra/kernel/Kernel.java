@@ -92,7 +92,6 @@ import geogebra.kernel.statistics.AlgoZipf;
 import geogebra.kernel.statistics.RegressionMath;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra.main.View;
 import geogebra.util.ScientificFormat;
 
 import java.text.NumberFormat;

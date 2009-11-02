@@ -42,8 +42,8 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
+import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.main.View;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BasicStroke;

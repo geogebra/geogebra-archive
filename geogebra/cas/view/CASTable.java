@@ -208,7 +208,7 @@ public class CASTable extends JTable {
 	/*
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
-	public void deleteAllRow() {
+	public void deleteAllRows() {
 		int row = tableModel.getRowCount();
 
 		for (int i = row - 1; i >= 0; i--)

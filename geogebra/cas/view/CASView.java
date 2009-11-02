@@ -1,10 +1,12 @@
 package geogebra.cas.view;
 
 import geogebra.cas.GeoGebraCAS;
+import geogebra.gui.CasManager;
 import geogebra.gui.view.algebra.MyComboBoxListener;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.main.CasManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,14 +31,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * A class which will give the view of the CAS
- */
-
-/**
- * @author Quan Yuan
+ * Computer algebra view.
  * 
+ * @author Markus Hohenwarter, Quan Yuan
  */
-public class CASView extends JComponent implements CasManager, FocusListener {
+public class CASView extends JComponent implements CasManager, FocusListener, View {
 	
 	private Kernel kernel;
 	
@@ -63,12 +62,12 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 		
 		// init cas
 		cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();	
-		Thread casInit = new Thread() {
-			public void run() {
-				cas.evaluateMathPiper("Simplify(1+1)");
-			}
-		};
-		casInit.start();		
+//		Thread casInit = new Thread() {
+//			public void run() {
+//				cas.evaluateMathPiper("Simplify(1+1)");
+//			}
+//		};
+//		casInit.start();		
 	
 		// CAS input/output cells
 		createCASTable();	
@@ -144,68 +143,68 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 		consoleTable.addMouseListener(tableCellMouseListener);		
 	}
 
-	public static class CASListModel extends AbstractListModel {
-
-		private static final long serialVersionUID = 1L;
-		protected CASTableModel model;
-
-		public CASListModel(CASTableModel model0) {
-			model = model0;
-		}
-
-		public int getSize() {
-			return model.getRowCount();
-		}
-
-		public Object getElementAt(int index) {
-			return "" + (index + 1);
-		}
-	}
+//	public static class CASListModel extends AbstractListModel {
+//
+//		private static final long serialVersionUID = 1L;
+//		protected CASTableModel model;
+//
+//		public CASListModel(CASTableModel model0) {
+//			model = model0;
+//		}
+//
+//		public int getSize() {
+//			return model.getRowCount();
+//		}
+//
+//		public Object getElementAt(int index) {
+//			return "" + (index + 1);
+//		}
+//	}
 
 
 	// Key Listener for Console Table
-	protected class ConsoleTableKeyListener implements KeyListener {
-
-		public void keyTyped(KeyEvent e) {
-			// System.out.println("Key typed on rowheader");
-			e.consume();
-		}
-
-		public void keyPressed(KeyEvent e) {
-			int keyCode = e.getKeyCode();
-
-			boolean metaDown = Application.isControlDown(e);
-			boolean altDown = e.isAltDown();
-
-			// System.out.println("Key pressed on rowheader");
-			// Application.debug(keyCode);
-			switch (keyCode) {
-
-			case KeyEvent.VK_DELETE: // delete
-			case KeyEvent.VK_BACK_SPACE: // delete on MAC
-				int[] delRows = consoleTable.getSelectedRows();
-				int delRowsSize = delRows.length;
-				int i = 0;
-				while (i < delRowsSize) {
-					int delRow = delRows[i];
-					consoleTable.deleteRow(delRow - i);
-					System.out.println("Key Delete row : " + delRow);
-					i++;
-				}
-				
-				System.out.println("Key Delete or BackSpace Action Performed ");
-				break;
-			default:
-				e.consume();
-			}
-		}
-
-		public void keyReleased(KeyEvent e) {
-			// System.out.println("Key Released on rowheader");
-			e.consume();
-		}
-
-	}
+//	protected class ConsoleTableKeyListener implements KeyListener {
+//
+//		public void keyTyped(KeyEvent e) {
+//			// System.out.println("Key typed on rowheader");
+//			e.consume();
+//		}
+//
+//		public void keyPressed(KeyEvent e) {
+//			int keyCode = e.getKeyCode();
+//
+//			boolean metaDown = Application.isControlDown(e);
+//			boolean altDown = e.isAltDown();
+//
+//			// System.out.println("Key pressed on rowheader");
+//			// Application.debug(keyCode);
+//			switch (keyCode) {
+//
+//			case KeyEvent.VK_DELETE: // delete
+//			case KeyEvent.VK_BACK_SPACE: // delete on MAC
+//				int[] delRows = consoleTable.getSelectedRows();
+//				int delRowsSize = delRows.length;
+//				int i = 0;
+//				while (i < delRowsSize) {
+//					int delRow = delRows[i];
+//					consoleTable.deleteRow(delRow - i);
+//					System.out.println("Key Delete row : " + delRow);
+//					i++;
+//				}
+//				
+//				System.out.println("Key Delete or BackSpace Action Performed ");
+//				break;
+//			default:
+//				e.consume();
+//			}
+//		}
+//
+//		public void keyReleased(KeyEvent e) {
+//			// System.out.println("Key Released on rowheader");
+//			e.consume();
+//		}
+//
+//	}
 
 	
 
@@ -217,31 +216,31 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 		return consoleTable;
 	}
 
-	/**
-	 * returns settings in XML format
-	 */
-	public String getGUIXML() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<casView>\n");
-
-		int width = getWidth(); // getPreferredSize().width;
-		int height = getHeight(); // getPreferredSize().height;
-
-		// if (width > MIN_WIDTH && height > MIN_HEIGHT)
-		{
-			sb.append("\t<size ");
-			sb.append(" width=\"");
-			sb.append(width);
-			sb.append("\"");
-			sb.append(" height=\"");
-			sb.append(height);
-			sb.append("\"");
-			sb.append("/>\n");
-		}
-
-		sb.append("</casView>\n");
-		return sb.toString();
-	}
+//	/**
+//	 * returns settings in XML format
+//	 */
+//	public String getGUIXML() {
+//		StringBuffer sb = new StringBuffer();
+//		sb.append("<casView>\n");
+//
+//		int width = getWidth(); // getPreferredSize().width;
+//		int height = getHeight(); // getPreferredSize().height;
+//
+//		// if (width > MIN_WIDTH && height > MIN_HEIGHT)
+//		{
+//			sb.append("\t<size ");
+//			sb.append(" width=\"");
+//			sb.append(width);
+//			sb.append("\"");
+//			sb.append(" height=\"");
+//			sb.append(height);
+//			sb.append("\"");
+//			sb.append("/>\n");
+//		}
+//
+//		sb.append("</casView>\n");
+//		return sb.toString();
+//	}
 
 	public String getSessionXML() {
 	
@@ -294,7 +293,7 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 	 */
 	public void initCellPairs(LinkedList cellPairList) {
 		// Delete the current rows
-		consoleTable.deleteAllRow();
+		consoleTable.deleteAllRows();
 
 		if (cellPairList == null) {
 			CASTableCellValue cellPair = new CASTableCellValue(this);
@@ -565,6 +564,50 @@ public class CASView extends JComponent implements CasManager, FocusListener {
 
 	public void focusLost(FocusEvent arg0) {
 		
+	}
+
+	public void add(GeoElement geo) {
+	}
+
+	public void clearView() {
+		// TODO: remove
+		System.out.println("CAS view: clear view");
+		
+		initCellPairs(null);
+	}
+
+	public void remove(GeoElement geo) {
+	}
+
+	public void rename(GeoElement geo) {
+	}
+
+	public void repaintView() {
+	}
+
+	public void reset() {
+	}
+
+	public void update(GeoElement geo) {
+	}
+
+	public void updateAuxiliaryObject(GeoElement geo) {
+	}
+
+	public void attachView() {
+		clearView();
+		kernel.attach(this);
+		
+		// TODO: remove
+		System.out.println("CAS view: attach");
+	}
+
+	public void detachView() {
+		kernel.detach(this);
+		clearView();
+		
+		// TODO: remove
+		System.out.println("CAS view: detach");
 	}
 
 }

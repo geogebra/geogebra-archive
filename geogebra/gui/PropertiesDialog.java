@@ -17,9 +17,9 @@ import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
-import geogebra.main.View;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

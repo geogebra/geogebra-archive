@@ -1,6 +1,7 @@
 package geogebra.main;
 
 
+import geogebra.gui.CasManager;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.GeoBoolean;
@@ -35,6 +36,8 @@ public interface GuiManager {
 	public boolean isPropertiesDialogSelectionListener();	
 	public boolean isInputFieldSelectionListener();
 	public void clearPreferences();
+	public CasManager getCasView();
+	public boolean hasCasView();
 	public JComponent getAlgebraView();
 	public JComponent getSpreadsheetView();
 	public boolean hasSpreadsheetView();
@@ -347,6 +350,8 @@ public interface GuiManager {
 		public boolean showVirtualKeyboard();
 
 		public void showNumberInputDialogRegularPolygon(String menu,
-				GeoPoint geoPoint, GeoPoint geoPoint2);		 
+				GeoPoint geoPoint, GeoPoint geoPoint2);
+
+				 
 
 }

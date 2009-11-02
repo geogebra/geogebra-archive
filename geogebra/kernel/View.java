@@ -10,9 +10,8 @@ the Free Software Foundation.
 
 */
 
-package geogebra.main;
+package geogebra.kernel;
 
-import geogebra.kernel.GeoElement;
 
 public interface View {
 	public void add(GeoElement geo);

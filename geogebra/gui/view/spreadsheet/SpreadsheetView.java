@@ -8,8 +8,8 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.main.View;
 
 import java.awt.Color;
 import java.awt.Component;

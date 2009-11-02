@@ -680,6 +680,11 @@ public class MyXMLio {
 
 		// save construction
 		sb.append(cons.getConstructionXML());
+		
+		// save cas session
+		if (app.hasGuiManager() && app.getGuiManager().hasCasView()) {
+			sb.append(app.getGuiManager().getCasView().getSessionXML());
+		}
 
 		sb.append("</geogebra>");
 		return sb.toString();
@@ -775,8 +780,8 @@ public class MyXMLio {
 		sb.append(addStr);
 
 		// save cas session
-		if (app.hasCasView()) {
-			addStr = app.getCasView().getSessionXML();
+		if (app.hasGuiManager() && app.getGuiManager().hasCasView()) {
+			addStr = app.getGuiManager().getCasView().getSessionXML();
 			sb.ensureCapacity(sb.length() + addStr.length());
 			sb.append(addStr);
 		}

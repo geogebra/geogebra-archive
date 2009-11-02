@@ -490,10 +490,10 @@ public class GeoGebraCAS {
 	 * the values from those rows.
 	 */
 	private synchronized String resolveCASrowReferences(String inputExp) {
-		if (!app.hasCasView()) 
+		if (!app.hasGuiManager() || !app.getGuiManager().hasCasView()) 
 			return inputExp;
 				
-		CASView casView = (CASView) app.getCasView();	
+		CASView casView = (CASView) app.getGuiManager().getCasView();	
 		sbCASreferences.setLength(0);
 		int length = inputExp.length();
 		int lastPos = length -1;

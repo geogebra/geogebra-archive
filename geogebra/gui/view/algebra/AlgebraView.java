@@ -21,8 +21,8 @@ package geogebra.gui.view.algebra;
 import geogebra.gui.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.main.View;
 import geogebra.util.FastHashMapKeyless;
 
 import java.awt.Font;
