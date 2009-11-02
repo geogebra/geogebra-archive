@@ -24,6 +24,8 @@ public class GeometryManager {
 	public GeometryCone cone;
 	/** geometry : cursor */
 	public GeometryCursor cursor;
+	/** geometry : plane */
+	public GeometryPlane plane;
 	
 	
 	/** create a manager for geometries
@@ -47,6 +49,7 @@ public class GeometryManager {
 		cylinder = new GeometryCylinder(geometryRenderer,true);
 		cone = new GeometryCone(geometryRenderer,true);
 		cursor = new GeometryCursor(geometryRenderer);
+		plane = new GeometryPlane(geometryRenderer);
 		
 		
 	}

@@ -9,6 +9,9 @@ import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 
 public abstract class Drawable3DSurfaces extends Drawable3D {
+	
+	/** alpha value for rendering transparency */
+	private float alpha;
 
 	public Drawable3DSurfaces(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);
@@ -28,7 +31,6 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 
-		float alpha = getGeoElement().getAlphaValue();
 		if (alpha<=0)
 			return;
 		
@@ -63,15 +65,10 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 			return;
 		}
 		
-		float alpha = getGeoElement().getAlphaValue();
-		//Application.debug("alpha = "+alpha);
 		if (alpha<=0)
 			return;
 		
-		//use 1-Math.sqrt(1-alpha) because transparent parts are drawn twice
-		//renderer.setMaterial(getGeoElement().getObjectColor(),1-Math.sqrt(1-alpha));
-		//TODO set this when the alpha is set
-		renderer.setMaterial(getGeoElement().getObjectColor(),1-Math.pow(1-alpha,1./3.));
+		renderer.setMaterial(getGeoElement().getObjectColor(),alpha);
 		renderer.setMatrix(getMatrix());
 		drawGeometry(renderer);
 		
@@ -87,6 +84,16 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	
 	
 	
+	
+	public boolean update(){
+
+		//update alpha value
+		//use 1-Math.sqrt(1-alpha) because transparent parts are drawn twice
+		alpha = (float) (1-Math.pow(1-getGeoElement().getAlphaValue(),1./3.));
+		
+		return true;
+		
+	}
 	
 	
 

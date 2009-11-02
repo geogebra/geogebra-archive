@@ -504,12 +504,14 @@ public class Renderer implements GLEventListener {
     	color = c;
     	this.alpha = alpha;
  
+    	
     	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, 
     			new float[] {((float) c.getRed())/256f,
     							((float) c.getGreen())/256f,
     							((float) c.getBlue())/256f,
     							(float) alpha},
     			0);
+    	
     	
     	/*
     	gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, 
@@ -518,7 +520,7 @@ public class Renderer implements GLEventListener {
     							1f,
     							1f},
     			0);
-    			*/
+    	*/
     }
     
     
@@ -980,6 +982,17 @@ public class Renderer implements GLEventListener {
     	initMatrix(m_drawingMatrix.quad(a_x1, a_y1, a_x2, a_y2));
     	drawQuad();
     	resetMatrix();
+    }
+    
+    
+    /**
+     * draws a plane
+     */
+    public void drawPlane(){
+    	initMatrix();
+    	geometryManager.plane.draw();
+    	resetMatrix();
+    	
     }
     
     /*
