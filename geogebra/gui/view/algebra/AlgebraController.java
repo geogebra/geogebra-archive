@@ -99,8 +99,8 @@ public class AlgebraController
 		int clicks = e.getClickCount();
 		if (clicks == 2) {										
 			app.clearSelectedGeos();
-			if (geo != null && !e.isShiftDown() && !Application.isControlDown(e)) {
-				view.startEditing(geo);						
+			if (geo != null && !Application.isControlDown(e)) {
+				view.startEditing(geo, e.isShiftDown());						
 			}
 			return;
 		} 	

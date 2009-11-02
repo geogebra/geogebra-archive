@@ -268,26 +268,28 @@ public class AlgebraView extends JTree implements View {
 	/**
 	 * Open Editor textfield for geo.
 	 */
-	public void startEditing(GeoElement geo) {
+	public void startEditing(GeoElement geo, boolean shiftDown) {
 		if (geo == null) return;
 
-		if (!geo.isIndependent()
-		|| !attached )		// needed for F2 when Algebra View closed
-		 {
-			if (geo.isRedefineable()) { 
-				app.getGuiManager().showRedefineDialog(geo, true);
+		if (!shiftDown || !geo.isPointOnPath()) {
+			if (!geo.isIndependent()
+			|| !attached )		// needed for F2 when Algebra View closed
+			 {
+				if (geo.isRedefineable()) { 
+					app.getGuiManager().showRedefineDialog(geo, true);
+				}
+				return;
 			}
-			return;
-		}
-		
-		if (!geo.isChangeable()) {
-			if (geo.isFixed()) {
-				//app.showMessage(app.getError("AssignmentToFixed"));
-			} 
-			else if (geo.isRedefineable()) { 
-				app.getGuiManager().showRedefineDialog(geo, true);
+			
+			if (!geo.isChangeable()) {
+				if (geo.isFixed()) {
+					//app.showMessage(app.getError("AssignmentToFixed"));
+				} 
+				else if (geo.isRedefineable()) { 
+					app.getGuiManager().showRedefineDialog(geo, true);
+				}
+				return;
 			}
-			return;
 		}
 	
 		
@@ -531,6 +533,7 @@ public class AlgebraView extends JTree implements View {
 		}
 
 		public void editingStopped(ChangeEvent event) {
+			
 			// get the entered String
 			String newValue = getCellEditorValue().toString();
 			
@@ -559,70 +562,8 @@ public class AlgebraView extends JTree implements View {
 		 */
 
 		public boolean isCellEditable(EventObject event) {
-			boolean retValue = false;
-			boolean editable = false;
-			if (event != null) {
-				if (event.getSource() instanceof JTree) {
-					setTree((JTree) event.getSource());
-					if (event instanceof MouseEvent) {
-						TreePath path =
-							tree.getPathForLocation(
-								((MouseEvent) event).getX(),
-								((MouseEvent) event).getY());
-						editable =
-							(lastPath != null
-								&& path != null
-								&& lastPath.equals(path));
-						
-						if (editable) lastPath = path;
-					}
-				}
-			}
-			if (!realEditor.isCellEditable(event))
-				return false;
-			if (canEditImmediately(event) || ((MouseEvent) event).getClickCount() > 1)
-				retValue = true;
-			else if (editable && shouldStartEditingTimer(event)) {
-				startEditingTimer();
-			} else if (timer != null && timer.isRunning())
-				timer.stop();
-
-			/***********************************************************/
-			// ADDED by Markus Hohenwarter			
-			if (retValue) {
-				Object ob = lastPath == null ? null :
-					((DefaultMutableTreeNode) lastPath.getLastPathComponent())
-						.getUserObject();
-				
-				if (ob == null && event instanceof MouseEvent) {
-					TreePath path =
-						tree.getPathForLocation(
-							((MouseEvent) event).getX(),
-							((MouseEvent) event).getY());				
-					ob = path == null ? null :
-						((DefaultMutableTreeNode) path.getLastPathComponent())
-							.getUserObject();
-				}
-				
-				if (ob instanceof GeoElement) {
-					GeoElement geo = (GeoElement) ob;		
-					
-					// allow shift-double-click on a PointonPath in Algebra View to 
-					// change without redefine
-					boolean shiftDown = false;
-					if (event instanceof MouseEvent)
-						shiftDown = ((MouseEvent) event).isShiftDown();
-					
-					retValue = geo.isIndependent() || (shiftDown && geo.isPointOnPath()); // geo.isChangeable() || geo.isRedefineable();					
-				} else
-					retValue = false;
-			}
-			/***********************************************************/
-
-			if (retValue)
-				prepareForEditing();							
-				
-			return retValue;
+			
+			return true;
 		}
 
 		//

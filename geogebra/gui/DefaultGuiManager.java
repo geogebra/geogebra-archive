@@ -220,7 +220,7 @@ public class DefaultGuiManager implements GuiManager {
 	}
 	
 	public void startEditing(GeoElement geo) {
-		((AlgebraView)getAlgebraView()).startEditing(geo);
+		((AlgebraView)getAlgebraView()).startEditing(geo, false);
 	}
 	
 	public void setScrollToShow(boolean scrollToShow) {
