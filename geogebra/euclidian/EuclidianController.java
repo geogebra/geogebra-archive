@@ -621,9 +621,9 @@ public class EuclidianController implements MouseListener,
 
 	}
 	
-	private BufferedImage whiteboardImage = null;
+	private BufferedImage penImage = null;
 
-	private void handleMousePressedForWhiteboardMode(MouseEvent e) {
+	private void handleMousePressedForPenMode(MouseEvent e) {
 		
 		
 		if (Application.isRightClick(e)) {
@@ -635,7 +635,7 @@ public class EuclidianController implements MouseListener,
 		
 		EuclidianView ev = app.getEuclidianView();
 		Graphics2D g2D = null;
-		if (whiteboardImage == null) {
+		if (penImage == null) {
 			//whiteboardImage = new BufferedImage(ev.getWidth(), ev.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			//g2D = whiteboardImage.createGraphics();
 			//g2D.setComposite(
@@ -650,13 +650,13 @@ public class EuclidianController implements MouseListener,
 
 				GraphicsConfiguration gc =
 				gs.getDefaultConfiguration();
-				whiteboardImage = gc.createCompatibleImage(ev.getWidth(),
+				penImage = gc.createCompatibleImage(ev.getWidth(),
 						ev.getHeight(), Transparency.BITMASK);
 
 		}
 		//Application.debug(whiteboardImage.getWidth()+" "+whiteboardImage.getHeight()+" "+e.getX()+" "+e.getY());
 		
-		if (g2D == null) g2D = whiteboardImage.createGraphics();
+		if (g2D == null) g2D = penImage.createGraphics();
 		
 		g2D.setColor(Color.RED);
 		g2D.drawOval(e.getX(), e.getY(), 1, 1);
@@ -665,8 +665,8 @@ public class EuclidianController implements MouseListener,
 
 	public void mousePressed(MouseEvent e) {
 		
-		if (mode == EuclidianView.MODE_WHITEBOARD) {
-			handleMousePressedForWhiteboardMode(e);
+		if (mode == EuclidianView.MODE_PEN) {
+			handleMousePressedForPenMode(e);
 			return;
 		}
 		
@@ -1238,8 +1238,8 @@ public class EuclidianController implements MouseListener,
 
 	public void mouseDragged(MouseEvent e) {
 		
-		if (mode == EuclidianView.MODE_WHITEBOARD) {
-			handleMousePressedForWhiteboardMode(e);
+		if (mode == EuclidianView.MODE_PEN) {
+			handleMousePressedForPenMode(e);
 			return;
 		}
 		
@@ -1568,7 +1568,7 @@ public class EuclidianController implements MouseListener,
 
 	public void mouseReleased(MouseEvent e) {	
 		
-		if (whiteboardImage != null) {
+		if (penImage != null) {
 			
 			/*
 			File file;
@@ -1585,9 +1585,9 @@ public class EuclidianController implements MouseListener,
 				*/
 			EuclidianView ev = app.getEuclidianView();
 				
-				ev.getGraphics().drawImage(whiteboardImage, 0, 0, null);
+				ev.getGraphics().drawImage(penImage, 0, 0, null);
 				
-				String fileName = app.createImage(whiteboardImage, "whiteboard.png");
+				String fileName = app.createImage(penImage, "whiteboard.png");
 				
 				GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
 				geoImage.setFileName(fileName);
@@ -1598,7 +1598,7 @@ public class EuclidianController implements MouseListener,
 
 
 			
-			whiteboardImage = null;
+			penImage = null;
 		}
 		
 		
@@ -2390,8 +2390,8 @@ public class EuclidianController implements MouseListener,
 			changedKernel = scriptButton();
 			break;
 
-		case EuclidianView.MODE_WHITEBOARD:
-			changedKernel = whiteboard();
+		case EuclidianView.MODE_PEN:
+			changedKernel = pen();
 			break;
 
 			// Michael Borcherds 2008-03-13	
@@ -5374,7 +5374,7 @@ public class EuclidianController implements MouseListener,
 	}		
 
 	// new JavaScript button
-	final protected boolean whiteboard() {	
+	final protected boolean pen() {	
 		//Application.debug(app.getEuclidianView().getHeight()+" "+app.getEuclidianView().getWidth());
 		return false;
 }		

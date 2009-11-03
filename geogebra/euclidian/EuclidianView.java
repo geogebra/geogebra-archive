@@ -4157,6 +4157,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		case MODE_JAVASCRIPT_ACTION:
 			return "JavaScriptAction";
 			
+		case MODE_PEN:
+			return "Pen";
+			
 		case MODE_SCRIPT_ACTION:
 			return "ScriptAction";
 			

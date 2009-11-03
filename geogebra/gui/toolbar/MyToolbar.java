@@ -611,7 +611,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(" ");  
         sb.append(EuclidianView.MODE_JAVASCRIPT_ACTION);
         sb.append(" , ");  
-        sb.append(EuclidianView.MODE_WHITEBOARD);
+        sb.append(EuclidianView.MODE_PEN);
         sb.append(" , ");  
         sb.append(EuclidianView.MODE_TEXT );
         sb.append(" ");

@@ -126,7 +126,7 @@ public interface EuclidianConstants {
 	
 	public static final int MODE_SCRIPT_ACTION = 61;
 	
-	public static final int MODE_WHITEBOARD = 62;
+	public static final int MODE_PEN = 62;
 	
 	// ggb3D start
 	/** special mode that allows to create point inside a region (polygon, etc.) */
