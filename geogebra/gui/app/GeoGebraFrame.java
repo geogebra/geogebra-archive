@@ -250,8 +250,11 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
     		initMacSpecifics();
 				
     	// set system look and feel
-		try {							
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		try {		
+			if (Application.MAC_OS || Application.WINDOWS)
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			else // Linux or others
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		} catch (Exception e) {
 			Application.debug(e+"");
 		}	

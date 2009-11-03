@@ -1507,7 +1507,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             			}
             			                       
 		                // left wing              	
-		                if (left.isLeaf()|| opID(left) >= MULTIPLY) { // not +, -
+		                if (left.isLeaf()|| opID(left) >= DIVIDE) { // not +, -, *
 		                    sb.append(leftStr);                
 		                } else { 
 		                    sb.append('(');

@@ -29,8 +29,8 @@ class OptionsFont extends JPanel implements ActionListener {
 	private Application app;
 
 	private TitleLabel fontTitleLabel, languageTitleLabel;
-	private JLabel guiSizeLabel, axesSizeLabel, euclidianSizeLabel, languageLabel;
-	private JComboBox guiSizeCb, axesSizeCb, euclidianSizeCb;
+	private JLabel languageLabel, guiSizeLabel; //, axesSizeLabel, euclidianSizeLabel, languageLabel;
+	private JComboBox guiSizeCb; //, axesSizeCb, euclidianSizeCb;
 	private boolean updateFonts = false;
 	
 	private JComboBox languageCb;
@@ -83,10 +83,10 @@ class OptionsFont extends JPanel implements ActionListener {
 		
 		panel.add(guiSizeLabel);
 		panel.add(guiSizeCb);
-		panel.add(euclidianSizeLabel);
-		panel.add(euclidianSizeCb);
-		panel.add(axesSizeLabel);
-		panel.add(axesSizeCb);
+//		panel.add(euclidianSizeLabel);
+//		panel.add(euclidianSizeCb);
+//		panel.add(axesSizeLabel);
+//		panel.add(axesSizeCb);
 		
 		// language panel
 		String[] languages = new String[Application.supportedLocales.size()];
@@ -148,8 +148,8 @@ class OptionsFont extends JPanel implements ActionListener {
 	public void setLabels() {
 		fontTitleLabel.setText(app.getMenu("FontSize"));
 		guiSizeLabel.setText(app.getPlain("FontSizeGUI"));
-		euclidianSizeLabel.setText(app.getPlain("FontSizeEuclidian"));
-		axesSizeLabel.setText(app.getPlain("FontSizeAxes"));
+//		euclidianSizeLabel.setText(app.getPlain("FontSizeEuclidian"));
+//		axesSizeLabel.setText(app.getPlain("FontSizeAxes"));
 
 		languageTitleLabel.setText(app.getMenu("Language"));
 		languageLabel.setText(app.getMenu("Language"));
@@ -160,16 +160,16 @@ class OptionsFont extends JPanel implements ActionListener {
 	 */
 	public void updateGUI() {		
 		guiSizeCb.removeActionListener(this);
-		euclidianSizeCb.removeActionListener(this);
-		axesSizeCb.removeActionListener(this);
+//		euclidianSizeCb.removeActionListener(this);
+//		axesSizeCb.removeActionListener(this);
 		
 		guiSizeCb.setSelectedItem(Integer.toString(app.getFontSize()));
 //		euclidianSizeCb.setSelectedItem(Integer.toString(app.getEuclidianFontSize()));
 //		axesSizeCb.setSelectedItem(Integer.toString(app.getAxesFontSize()));
 		
 		guiSizeCb.addActionListener(this);
-		euclidianSizeCb.addActionListener(this);
-		axesSizeCb.addActionListener(this);
+//		euclidianSizeCb.addActionListener(this);
+//		axesSizeCb.addActionListener(this);
 		
 		for (int i = 0; i < Application.supportedLocales.size(); i++) {
 			if(app.getLocale() == (Locale) Application.supportedLocales.get(i)) {

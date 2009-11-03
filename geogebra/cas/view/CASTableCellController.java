@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import geogebra.main.Application;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -113,8 +115,8 @@ public class CASTableCellController implements KeyListener {
 	 * Enter checks the syntax of the input only. Shift+Enter evaluates the input 
 	 */
 	private synchronized void handleEnterKey(KeyEvent e) {
-		if (e.isShiftDown()) {
-			// Hold
+		if (Application.isControlDown(e)) {
+			// don't evaluate, only parse by GeoGebra
 			view.apply("Hold", null);	
 		} else {
 			// Eval

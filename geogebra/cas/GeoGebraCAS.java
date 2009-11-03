@@ -429,14 +429,19 @@ public class GeoGebraCAS {
 		// convert MathPiper result back into GeoGebra syntax
 		ve = parseMathPiper(MathPiperResult);				
 		
-		// if we evaluated an assignment, we may need to update a global variable 
-		if (assignmentLabel != null) {
-			// check for global variable with this name
-			if (kernel.lookupLabel(assignmentLabel) != null) {
+		// if we evaluated an assignment, we also try to evaluate it in GeoGebra 
+		if (assignmentLabel != null && resolveVariables) {
+			try {
+				// TODO: remove
+				System.out.println("assignment label: " + assignmentLabel + ", ve: " + ve);
+				
 				// process assignment in GeoGebra
 				ve.setLabel(assignmentLabel);
 				kernel.getAlgebraProcessor().processValidExpression(ve);
-			}			
+			} catch (Throwable e) {
+				System.err.println("assignment failed: " + ve);
+				e.printStackTrace();
+			}
 		}
 		
 		// return GeoGebra String

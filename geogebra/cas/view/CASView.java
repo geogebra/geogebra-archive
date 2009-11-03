@@ -402,13 +402,13 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	//Only needs an apply("Integrate",{"x","a","b"}) method
 	//The Substitute command has to be handled another way, though...todo...
 	
-	/** Called from buttons and menues with for example:
+	/** Called from buttons and menus with for example:
 	 *  "Integral", [par1, par2, ...]
 	 *  Copied from apply(int mod)
 	 */	
 	public void apply(String ggbcmd,String[] params){
 		// TODO: remove
-		System.out.println(ggbcmd);
+		System.out.println("apply: " + ggbcmd + ", params: " + params);
 		
 		// get editor and possibly selected text
 		CASTableCellEditor cellEditor = consoleTable.getEditor();		
@@ -459,7 +459,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		// simplify of equations should simplify lhs and rhs individually
 		else if (ggbcmd.equals("Simplify") ||
 				ggbcmd.equals("Expand") || 
-				ggbcmd.equals("Expand")) 
+				ggbcmd.equals("Factor")) 
 		{
 			 // equation in parentheses: 5 * (3x + 4 = 7) - 4		
 			 Matcher m = equationPatternParentheses.matcher(evalText);
@@ -519,7 +519,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		String evaluation = null;
 		try {
 			// evaluate
-			evaluation = cas.processCASInput(evalText, useGeoGebraVariableValues);			
+			evaluation = cas.processCASInput(evalText, useGeoGebraVariableValues);
 		} catch (Throwable th) {
 			th.printStackTrace();
 		}
@@ -570,9 +570,6 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	}
 
 	public void clearView() {
-		// TODO: remove
-		System.out.println("CAS view: clear view");
-		
 		initCellPairs(null);
 	}
 
@@ -597,17 +594,11 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	public void attachView() {
 		clearView();
 		kernel.attach(this);
-		
-		// TODO: remove
-		System.out.println("CAS view: attach");
 	}
 
 	public void detachView() {
 		kernel.detach(this);
 		clearView();
-		
-		// TODO: remove
-		System.out.println("CAS view: detach");
 	}
 
 }

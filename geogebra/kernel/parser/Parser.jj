@@ -568,7 +568,7 @@ Parametric parametric():
     Token s, par;    
 }
 {    
-    <LABEL> <EQUAL> P = enterm()
+    <LABEL> <EQUAL> P = multterm()
     ( 
      (s = <PLUS> | s = <MINUS>) par = <LABEL> (<MULTIPLY>)? v = expression()
          {                                    
@@ -973,8 +973,8 @@ ExpressionValue plusminusnode():
     Token x;
 }
 {
-    ret = enterm()                 
-    (( x = <PLUS> | x = <MINUS> ) f = enterm()
+    ret = multterm()                 
+    (( x = <PLUS> | x = <MINUS> ) f = multterm()
         {                       
             if (x.kind == PLUS) 
                 ret = new ExpressionNode(kernel, ret, ExpressionNode.PLUS, f);  
@@ -989,10 +989,37 @@ ExpressionValue plusminusnode():
 }
 
 /**
- * term =   unary * unary  |
- *          unary / unary
+ * multterm =   divterm * divterm 
  */
-ExpressionValue enterm():
+ExpressionValue multterm():
+{
+    ExpressionValue ret, f;
+    Token x;    
+}
+{
+    ret = divterm()           
+    (                 
+     ( x = <MULTIPLY> | x = <VECTORPRODUCT> ) f = divterm() 
+        {
+            if (x.kind == MULTIPLY) {
+                ret = new ExpressionNode(kernel, ret, ExpressionNode.MULTIPLY, f);   
+            } else {
+                ret = new ExpressionNode(kernel, ret, ExpressionNode.VECTORPRODUCT, f);  
+            }
+        }
+     |
+     f = powerdivterm()
+        { 
+               ret = new ExpressionNode(kernel, ret, ExpressionNode.MULTIPLY, f);  
+         }	
+    )*
+    { return ret; }  
+}
+
+/**
+ * divterm =  unary / unary
+ */
+ExpressionValue divterm():
 {
     ExpressionValue ret, f;
     Token x;    
@@ -1000,21 +1027,29 @@ ExpressionValue enterm():
 {
     ret = enunary()           
     (                 
-     ( x = <MULTIPLY> | x = <DIVIDE> | x = <VECTORPRODUCT> ) f = enunary() 
+       <DIVIDE> f = enunary() 
         {
-            if (x.kind == MULTIPLY) {
-                ret = new ExpressionNode(kernel, ret, ExpressionNode.MULTIPLY, f);  
-            } else if (x.kind == DIVIDE){
-                ret = new ExpressionNode(kernel, ret, ExpressionNode.DIVIDE, f);  
-            } else {
-                ret = new ExpressionNode(kernel, ret, ExpressionNode.VECTORPRODUCT, f);  
-            }
-        }
-     |
-      f = enpower()
-        { 
-               ret = new ExpressionNode(kernel, ret, ExpressionNode.MULTIPLY, f);  
-         }	
+            ret = new ExpressionNode(kernel, ret, ExpressionNode.DIVIDE, f); 
+        }	
+    )*
+    { return ret; }  
+}
+
+/**
+ * powerdivterm =  power / unary
+ */
+ExpressionValue powerdivterm():
+{
+    ExpressionValue ret, f;
+    Token x;    
+}
+{
+    ret = enpower()           
+    (                 
+       <DIVIDE> f = enunary() 
+        {
+            ret = new ExpressionNode(kernel, ret, ExpressionNode.DIVIDE, f); 
+        }	
     )*
     { return ret; }  
 }
