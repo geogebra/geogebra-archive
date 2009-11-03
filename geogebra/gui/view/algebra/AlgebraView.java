@@ -563,7 +563,13 @@ public class AlgebraView extends JTree implements View {
 
 		public boolean isCellEditable(EventObject event) {
 			
-			return true;
+			if (event instanceof MouseEvent)
+			{
+				MouseEvent mv = (MouseEvent)event;
+				if (mv.getClickCount() == 1) return false;
+			}
+			
+			return true;		
 		}
 
 		//
