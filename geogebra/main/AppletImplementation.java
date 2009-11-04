@@ -342,39 +342,39 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		app.setMoveMode();		
 	}
 	
-	/**
-	 * Initializes the user interface to only show the graphics view.
-	 */
-	public void initViewerGUI() {
-		// set application parameters
-		app.setUndoActive(false);			
-		app.setShowMenuBar(false);
-		app.setShowAlgebraInput(false);
-		app.setShowToolBar(false, false);	
-		app.setRightClickEnabled(false);
-		app.setErrorDialogsActive(errorDialogsActive);
-		app.setLabelDragsEnabled(enableLabelDrags);
-		app.setShiftDragZoomEnabled(enableShiftDragZoom);
-		app.setShowResetIcon(false);
-		app.setMaxIconSize(maxIconSize);
-						
-		
-		// build applet panel with graphics view
-		JPanel panel = new JPanel(new BorderLayout());
-		ev = app.getEuclidianView();
-		panel.add(ev, BorderLayout.CENTER);
-		// border around graphics panel
-		panel.setBorder(BorderFactory.createLineBorder(borderColor));		
-
-		// replace applet's content pane
-		Container cp = applet.getContentPane();
-		cp.setBackground(bgColor);
-		cp.removeAll();
-		cp.add(panel);
-		
-		// set move mode
-		app.setMoveMode();
-	}
+//	/**
+//	 * Initializes the user interface to only show the graphics view.
+//	 */
+//	public void initViewerGUI() {
+//		// set application parameters
+//		app.setUndoActive(false);			
+//		app.setShowMenuBar(false);
+//		app.setShowAlgebraInput(false);
+//		app.setShowToolBar(false, false);	
+//		app.setRightClickEnabled(false);
+//		app.setErrorDialogsActive(errorDialogsActive);
+//		app.setLabelDragsEnabled(enableLabelDrags);
+//		app.setShiftDragZoomEnabled(enableShiftDragZoom);
+//		app.setShowResetIcon(false);
+//		app.setMaxIconSize(maxIconSize);
+//						
+//		
+//		// build applet panel with graphics view
+//		JPanel panel = new JPanel(new BorderLayout());
+//		ev = app.getEuclidianView();
+//		panel.add(ev, BorderLayout.CENTER);
+//		// border around graphics panel
+//		panel.setBorder(BorderFactory.createLineBorder(borderColor));		
+//
+//		// replace applet's content pane
+//		Container cp = applet.getContentPane();
+//		cp.setBackground(bgColor);
+//		cp.removeAll();
+//		cp.add(panel);
+//		
+//		// set move mode
+//		app.setMoveMode();
+//	}
 	
 	protected JPanel createGeoGebraAppletPanel() {
 		JPanel appletPanel = new JPanel(new BorderLayout());

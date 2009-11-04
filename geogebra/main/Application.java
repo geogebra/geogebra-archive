@@ -400,7 +400,7 @@ public abstract class Application implements KeyEventDispatcher {
 		System.out.println("GeoGebra " + GeoGebra.VERSION_STRING + " " +  GeoGebra.BUILD_DATE
 				+ " Java " + System.getProperty("java.version"));
 		
-		if(frame != null) {
+		if(frame != null || comp != null) {
 			preferredSize = new Dimension(800, 600); // TODO redo (F.S:)
 		} else {
 			preferredSize = appletImpl.getJApplet().getSize();
@@ -484,15 +484,11 @@ public abstract class Application implements KeyEventDispatcher {
 		if(useLayout && !fileLoaded) {			
 			getGuiManager().setPerspectives(tmpPerspectives);	
 		}
-
-		if (isUndoActive())
-			kernel.initUndoInfo();
 		
-		// init undo
 		setUndoActive(undoActive);
 		
 		// applet/command line options like file loading on startup
-		handleOptionArgs(args); // note: the locale is set here too
+		handleOptionArgs(args); 
 		
 		INITING = false;
 
@@ -2083,8 +2079,19 @@ public abstract class Application implements KeyEventDispatcher {
 		return showMenuBar;
 	}
 
-	public void setUndoActive(boolean flag) {		
+	public void setUndoActive(boolean flag) {
+		// don't allow undo when running with restricted permissions
+		if (flag && !hasFullPermissions) {
+			flag = false;
+		}
+		
+		if (kernel.isUndoActive() == flag)
+			return;
+		
 		kernel.setUndoActive(flag);
+		if (flag) {
+			kernel.initUndoInfo();
+		}
 
 		if (appGuiManager != null)
 			getGuiManager().updateActions();
@@ -2502,14 +2509,14 @@ public abstract class Application implements KeyEventDispatcher {
 		// save the dimensions of the current window
 		sb.append("\t<window width=\"");
 		
-		if(frame.getWidth() > 0)
+		if(frame != null && frame.getWidth() > 0)
 			sb.append(frame.getWidth());
 		else
 			sb.append(800);
 		
 		sb.append("\" height=\"");
 		
-		if(frame.getHeight() > 0)
+		if(frame != null && frame.getHeight() > 0)
 			sb.append(frame.getHeight());
 		else
 			sb.append(600);
