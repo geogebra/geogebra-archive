@@ -836,8 +836,6 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Handles command line options (like -language).
 	 */
 	private void handleOptionArgs(String[] args) {
-		// TODO Save parameters in temporary variables, parameters ignored at the moment (F.S.)
-
 		if (args != null) {
 			// handle all options (starting with --)
 			for (int i = 0; i < args.length; i++) {
