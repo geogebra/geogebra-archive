@@ -432,8 +432,9 @@ public abstract class Application implements KeyEventDispatcher {
 
 		fontManager = new FontManager();
 		imageManager = new ImageManager(mainComp);
-		// applet/command line options like file loading on startup
-		handleOptionArgs(args); // note: the locale is set here too
+
+		// set locale
+		setLocale(mainComp.getLocale());
 		
 		// init kernel
 		initKernel();
@@ -456,12 +457,12 @@ public abstract class Application implements KeyEventDispatcher {
 		// updateContentPane()
 		INITING = true;
 		setFontSize(12);
-		
+	
 		// use the layout in case at least one GUI element is displayed
 		useLayout = !isApplet;// || (isApplet && appletImpl.useGui());
 		if(useLayout) {
 			getGuiManager().initialize();
-		}
+		}	
 
 		if (!isApplet) {
 			// init preferences
@@ -484,8 +485,15 @@ public abstract class Application implements KeyEventDispatcher {
 			getGuiManager().setPerspectives(tmpPerspectives);	
 		}
 
+		if (isUndoActive())
+			kernel.initUndoInfo();
+		
 		// init undo
 		setUndoActive(undoActive);
+		
+		// applet/command line options like file loading on startup
+		handleOptionArgs(args); // note: the locale is set here too
+		
 		INITING = false;
 
 		// for key listening
@@ -829,11 +837,6 @@ public abstract class Application implements KeyEventDispatcher {
 	 */
 	private void handleOptionArgs(String[] args) {
 		// TODO Save parameters in temporary variables, parameters ignored at the moment (F.S.)
-		
-		// locale should be set here either to default locale or
-		// according to the -language option
-		Locale initLocale = mainComp.getLocale();		
-		setLocale(initLocale);
 
 		if (args != null) {
 			// handle all options (starting with --)
@@ -863,7 +866,7 @@ public abstract class Application implements KeyEventDispatcher {
 										+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes"
 										+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off");
 					} else if (optionName.equals("language")) {
-						initLocale = getLocale(optionValue);
+						setLocale(getLocale(optionValue));
 
 						// Application.debug("lanugage option: " + optionValue);
 						// Application.debug("locale: " + initLocale);
@@ -872,9 +875,9 @@ public abstract class Application implements KeyEventDispatcher {
 					} else if (optionName.equals("showAlgebraInputTop")) {
 						setShowInputTop(optionValue.equals("true")); // Florian Sonner 2008-10-26
 					} else if (optionName.equals("showAlgebraWindow")) {
-						getGuiManager().setShowSpreadsheetView(!optionValue.equals("false"));
-					} else if (optionName.equals("showSpreadsheet")) {
 						getGuiManager().setShowAlgebraView(!optionValue.equals("false"));
+					} else if (optionName.equals("showSpreadsheet")) {
+						getGuiManager().setShowSpreadsheetView(!optionValue.equals("false"));
 					} else if (optionName.equals("showCAS")) {
 						showCAS = (!optionValue.equals("false"));
 					} else if (optionName.equals("enableUndo")) {
@@ -890,8 +893,6 @@ public abstract class Application implements KeyEventDispatcher {
 				}
 			}
 		}
-
-		setLocale(initLocale);
 	}
 
 	/**
@@ -1337,6 +1338,7 @@ public abstract class Application implements KeyEventDispatcher {
 	StringBuffer testCharacters = new StringBuffer();
 
 	public void setLocale(Locale locale) {
+		if (locale == currentLocale) return;
 		Locale oldLocale = currentLocale;
 
 		// only allow special locales due to some weird server

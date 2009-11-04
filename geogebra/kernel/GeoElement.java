@@ -1549,12 +1549,7 @@ public abstract class GeoElement
 		// for speed, check first for a %
 		if (caption.indexOf("%") < 0) return caption;
 	
-		if (captionSB == null)
-			captionSB = new StringBuffer();
-		
-		captionSB.setLength(0);
-		
-		
+		StringBuffer captionSB = new StringBuffer();
 		// replace %v with value and %n with name
 		for (int i = 0; i < caption.length(); i++) {
 			char ch = caption.charAt(i);
@@ -3207,7 +3202,6 @@ public abstract class GeoElement
 			sb.append("/>\n");
 		}
 		
-
 		// don't remove layer 0 information
 		// we always need it in case an earlier element has higher layer eg 1 
 		if (isDrawable) {

@@ -975,11 +975,6 @@ public class Kernel {
 
 	public void setUndoActive(boolean flag) {
 		undoActive = flag;
-		if (undoActive) initUndoInfo();		
-	}
-	
-	public void setUndoActiveNoReInit(boolean flag) {
-		undoActive = flag;				
 	}
 	
 	public boolean isUndoActive() {

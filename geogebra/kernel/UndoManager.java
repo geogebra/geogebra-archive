@@ -111,14 +111,14 @@ public class UndoManager {
 	/**
 	 * Adds construction state to undo info list.
 	 */
-	public void storeUndoInfo() {
-		if (!app.isUndoActive()) return;
+	public void storeUndoInfo() {	
+		// this can cause a java.lang.OutOfMemoryError for very large constructions
+		final StringBuffer currentUndoXML = construction.getCurrentUndoXML();
 		
 		Thread undoSaverThread = new Thread() {
-			public void run() {		
-				// this can cause a java.lang.OutOfMemoryError for very large constructions
-				StringBuffer currentUndoXML = construction.getCurrentUndoXML();
-				doStoreUndoInfo(currentUndoXML);								
+			public void run() {
+				doStoreUndoInfo(currentUndoXML);
+				System.gc();
 			}
 		};
 		undoSaverThread.start();
