@@ -96,6 +96,13 @@ public class GeoGebraPanel extends JPanel {
 	}
 	
 	/**
+	 * Sets the font size of the GeoGebra user interface.
+	 */
+	public synchronized void setFontSize(int points) {
+		app.setFontSize(points);
+	}
+	
+	/**
 	 * Sets the maximum pixel size of all icons in the GeoGebra
 	 * user interface including the toolbar. 
 	 * @pixel: a value between 16 and 32
