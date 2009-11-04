@@ -114,6 +114,9 @@ public final class DrawLocus extends Drawable {
      * location (x,y) in screen coords)
      */
     final public boolean hit(int x, int y) {
+
+    	if (gp == null) return false; // hasn't been drawn yet (hidden)
+
     	if (strokedShape == null) {
 			strokedShape = objStroke.createStrokedShape(gp);
 		}    		
