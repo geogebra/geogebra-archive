@@ -342,8 +342,6 @@ public abstract class Application implements KeyEventDispatcher {
 	private boolean showGrid = false;
 	private boolean antialiasing = true;
 	private boolean showSpreadsheet = false;
-	private boolean showCAS = false;
-	private boolean disableUndo = false;
 	private boolean printScaleString = false;
 	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
 
@@ -802,6 +800,8 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void updateCenterPanel(boolean updateUI) {
+		if (centerPanel == null) return;
+		
 		centerPanel.removeAll();
 		if(useLayout) {		
 			centerPanel.add(getGuiManager().getLayoutRoot(), BorderLayout.CENTER);
@@ -873,7 +873,7 @@ public abstract class Application implements KeyEventDispatcher {
 					} else if (optionName.equals("showSpreadsheet")) {
 						getGuiManager().setShowSpreadsheetView(!optionValue.equals("false"));
 					} else if (optionName.equals("showCAS")) {
-						showCAS = (!optionValue.equals("false"));
+						getGuiManager().setShowCASView(!optionValue.equals("false"));
 					} else if (optionName.equals("enableUndo")) {
 						setUndoActive(!optionValue.equals("false"));
 					} else if (optionName.equals("showAxes")) {

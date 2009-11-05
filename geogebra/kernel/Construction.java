@@ -1009,14 +1009,14 @@ public class Construction {
 		// undo unavailable in applets
 		//if (getApplication().isApplet()) return false;
 
-		return undoManager.undoPossible();
+		return undoManager != null && undoManager.undoPossible();
 	}
 
 	public boolean redoPossible() {
 		// undo unavailable in applets
 		//if (getApplication().isApplet()) return false;
 
-		return undoManager.redoPossible();
+		return undoManager != null && undoManager.redoPossible();
 	}
 
 
