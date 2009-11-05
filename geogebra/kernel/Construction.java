@@ -969,7 +969,6 @@ public class Construction {
 	 * construction state to the undo info list.
 	 */
 	public void initUndoInfo() {
-		
 		if (undoManager == null)
 			undoManager = new UndoManager(this);
 		undoManager.initUndoInfo();

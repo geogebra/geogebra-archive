@@ -200,7 +200,7 @@ public class Kernel {
 	public boolean arcusFunctionCreatesAngle = false;
 	
 	private boolean translateCommandName = true;
-	private boolean undoActive = true;
+	private boolean undoActive = false;
 	private boolean notifyViewsActive = true;
 	private boolean viewReiniting = false;
 	private boolean allowVisibilitySideEffects = true;

@@ -1,6 +1,7 @@
 package geogebra.cas;
 
 import geogebra.cas.view.CASView;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -93,7 +94,7 @@ public class GeoGebraCAS {
 			
 			if (response.isExceptionThrown())
 			{
-				Application.debug("String for MathPiper: "+exp+"\nException from MathPiper: "+response.getExceptionMessage());
+				System.err.println("evaluateMathPiper: "+exp+"\n  Exception: "+response.getExceptionMessage());
 				return null;
 			}
 			result = response.getResult();
@@ -101,7 +102,8 @@ public class GeoGebraCAS {
 			// undo special character handling
 			result = insertSpecialChars(result);
 
-			Application.debug("String for MathPiper: "+exp+"\nresult: "+result);
+			// TODO: remove
+			System.out.println("evaluateMathPiper: "+exp+"\n  Result: "+result);
 
 			return result;
 		} catch (Throwable th) {
@@ -410,42 +412,107 @@ public class GeoGebraCAS {
 	 * @boolean doEvaluate: whether inputExp should be evaluated (i.e. simplified).
 	 * @return result as String in GeoGebra syntax
 	 */
-	public synchronized String processCASInput(String inputExp, boolean resolveVariables) throws Throwable {
+	public synchronized String processCASInput(String inputExp, boolean useGeoGebraVariables) throws Throwable {
 		// replace #1, #2 references by row input
 		inputExp = resolveCASrowReferences(inputExp);
 		
-		// PARSE input
-		ValidExpression ve = parseGeoGebraCASInput(inputExp);
-		
-		// check for assignment, e.g. a := 5
-		String assignmentLabel = ve.getLabel();
-		
-		// convert parsed input to MathPiper string
-		String MathPiperString = toMathPiperString(ve, resolveVariables);
-		
-		// EVALUATE input in MathPiper 
-		String MathPiperResult = evaluateMathPiper(MathPiperString);
-				
-		// convert MathPiper result back into GeoGebra syntax
-		ve = parseMathPiper(MathPiperResult);				
-		
-		// if we evaluated an assignment, we also try to evaluate it in GeoGebra 
-		if (assignmentLabel != null && resolveVariables) {
-			try {
-				// TODO: remove
-				System.out.println("assignment label: " + assignmentLabel + ", ve: " + ve);
-				
-				// process assignment in GeoGebra
-				ve.setLabel(assignmentLabel);
-				kernel.getAlgebraProcessor().processValidExpression(ve);
-			} catch (Throwable e) {
-				System.err.println("assignment failed: " + ve);
-				e.printStackTrace();
-			}
+		// PARSE input to check if it's valid expression
+		ValidExpression inVE = parseGeoGebraCASInput(inputExp);
+					
+		// EVALUATE input expression with MathPiper
+		String mathPiperResult = null;
+		Throwable throwable = null;
+		try {
+			// evaluate input in MathPiper and convert result back to GeoGebra expression
+			mathPiperResult = processCASInputMathPiper(inVE, useGeoGebraVariables);
+		} catch (Throwable th1) {
+			throwable = th1;
+			System.err.println("mathPiper evaluation failed: " + inputExp + "\n error: " + th1.toString());
 		}
 		
-		// return GeoGebra String
-		return  ve.toString();
+		// check some things
+		boolean assignment = inVE.getLabel() != null;
+		boolean mathPiperSuccessful = mathPiperResult != null;
+		boolean mathPiperResultContainsCommands = mathPiperResult != null && mathPiperResult.indexOf('[') > -1;
+		
+		// EVALUATE input expression in GeoGebra if we have
+		// - an assignments (e.g. a := 5, f(x) := x^2)
+		// - or MathPiper was not successful
+		// - or MathPiper result contains commands
+		boolean evalInGeoGebra = useGeoGebraVariables && (assignment || !mathPiperSuccessful || mathPiperResultContainsCommands); 
+		String ggbResult = null;
+		if (evalInGeoGebra) {
+			// EVALUATE inputExp in GeoGebra
+			try {
+				// process assignment in GeoGebra
+				ggbResult = processCASInputGeoGebra(inputExp);
+				// TODO: remove
+				System.out.println("eval for GeoGebra: " + inputExp + ", result: " + ggbResult);
+			} catch (Throwable th2) {
+				if (throwable == null) throwable = th2;
+				System.err.println("GeoGebra evaluation failed: " + inputExp + "\n error: " + th2.toString());
+			}
+			
+//			if (ggbResult == null && mathPiperSuccessful) {
+//				// EVALUATE 
+//				
+//			}
+			
+			
+		}
+		
+		// return result string:
+		// use MathPiper if that worked, otherwise GeoGebra
+		if (mathPiperSuccessful) {
+			// MathPiper evaluation worked
+			return mathPiperResult;
+		} 
+		else if (ggbResult != null) {
+			// GeoGebra evaluation worked
+			return ggbResult;
+		}
+		else {
+			// nothing worked
+			throw throwable;
+		}
+	}
+	
+	/**
+	 * Evaluates expression with MathPiper and returns the resulting String in GeoGebra notation.
+	 * @param inputExpression
+	 * @param useGeoGebraVariables: 
+	 * @return
+	 * @throws Throwable
+	 */
+	private synchronized String processCASInputMathPiper(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
+		// convert parsed input to MathPiper string
+		String MathPiperString = toMathPiperString(casInput, useGeoGebraVariables);
+		
+		// EVALUATE input in MathPiper 
+		String result = evaluateMathPiper(MathPiperString);
+				
+		// convert MathPiper result back into GeoGebra syntax
+		return parseMathPiper(result).toString();
+	}
+	
+	/**
+	 * Evaluates expression with GeoGebra and returns the resulting string.
+	 */
+	private synchronized String processCASInputGeoGebra(String casInput) throws Throwable {
+		GeoElement [] ggbEval = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(casInput, false);
+
+		if (ggbEval.length == 1) {
+			return ggbEval[0].toString();
+		} else {
+			StringBuffer sb = new StringBuffer('{');
+			for (int i=0; i<ggbEval.length; i++) {
+				sb.append(ggbEval[i].toString());
+				if (i < ggbEval.length - 1)
+					sb.append(", ");
+			}
+			sb.append('}');
+			return sb.toString();
+		}
 	}
 	
 	
