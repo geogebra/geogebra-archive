@@ -22,7 +22,7 @@ import org.mathpiper.builtin.BuiltinFunction;
 import org.mathpiper.lisp.Utility;
 import org.mathpiper.lisp.cons.AtomCons;
 import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.InfixOperator;
+import org.mathpiper.lisp.Operator;
 import org.mathpiper.lisp.LispError;
 
 /**
@@ -34,7 +34,7 @@ public class OpLeftPrecedence extends BuiltinFunction
 
     public void evaluate(Environment aEnvironment, int aStackTop) throws Exception
     {
-        InfixOperator op = Utility.operatorInfo(aEnvironment, aStackTop, aEnvironment.iInfixOperators);
+        Operator op = Utility.operatorInfo(aEnvironment, aStackTop, aEnvironment.iInfixOperators);
         if (op == null)
         {  // infix and postfix operators have left precedence
 
@@ -68,6 +68,6 @@ For infix operators, right precedence can differ from left precedence. Bodied fu
 	In> OpLeftPrecedence("!")
 	Out> 0;
 
-*SEE OpPrecedence,OpRightPrecedence
+*SEE OpPrecedence,OpRightPrecedence,LeftPrecedence,RightPrecedence,RightAssociative
 %/mathpiper_docs
 */

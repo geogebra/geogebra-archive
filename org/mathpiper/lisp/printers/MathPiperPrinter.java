@@ -27,7 +27,7 @@ import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.cons.ConsTraverser;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
-import org.mathpiper.lisp.InfixOperator;
+import org.mathpiper.lisp.Operator;
 import org.mathpiper.lisp.collections.OperatorMap;
 import org.mathpiper.lisp.cons.Cons;
 
@@ -113,11 +113,11 @@ public class MathPiperPrinter extends LispPrinter {
         } else {
             int length = Utility.listLength(subList);
             string = (String) subList.car();
-            InfixOperator prefix = (InfixOperator) iPrefixOperators.lookUp(string);
-            InfixOperator infix = (InfixOperator) iInfixOperators.lookUp(string);
-            InfixOperator postfix = (InfixOperator) iPostfixOperators.lookUp(string);
-            InfixOperator bodied = (InfixOperator) iBodiedOperators.lookUp(string);
-            InfixOperator op = null;
+            Operator prefix = (Operator) iPrefixOperators.lookUp(string);
+            Operator infix = (Operator) iInfixOperators.lookUp(string);
+            Operator postfix = (Operator) iPostfixOperators.lookUp(string);
+            Operator bodied = (Operator) iBodiedOperators.lookUp(string);
+            Operator operator = null;
 
             if (length != 2) {
                 prefix = null;
@@ -127,16 +127,16 @@ public class MathPiperPrinter extends LispPrinter {
                 infix = null;
             }
             if (prefix != null) {
-                op = prefix;
+                operator = prefix;
             }
             if (postfix != null) {
-                op = postfix;
+                operator = postfix;
             }
             if (infix != null) {
-                op = infix;
+                operator = infix;
             }
 
-            if (op != null) {
+            if (operator != null) {
                 ConsPointer left = null;
                 ConsPointer right = null;
 
@@ -149,21 +149,26 @@ public class MathPiperPrinter extends LispPrinter {
                     left = subList.cdr();
                 }
 
-                if (iPrecedence < op.iPrecedence) {
+                if (iPrecedence < operator.iPrecedence) {
                     WriteToken(aOutput, "(");
                 } else {
                     //Vladimir?    aOutput.write(" ");
                 }
+
                 if (left != null) {
-                    Print(left, aOutput, op.iLeftPrecedence);
+                    Print(left, aOutput, operator.iLeftPrecedence);
                 }
+
                 WriteToken(aOutput, string);
+
                 if (right != null) {
-                    Print(right, aOutput, op.iRightPrecedence);
+                    Print(right, aOutput, operator.iRightPrecedence);
                 }
-                if (iPrecedence < op.iPrecedence) {
+
+                if (iPrecedence < operator.iPrecedence) {
                     WriteToken(aOutput, ")");
                 }
+                
             } else {
                 ConsTraverser consTraverser = new ConsTraverser(subList.cdr());
                 if (string == iCurrentEnvironment.iListAtom.car()) {

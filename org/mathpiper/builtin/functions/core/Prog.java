@@ -13,48 +13,63 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */ //}}}
-
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.builtin.functions.core;
 
+
 import org.mathpiper.builtin.BuiltinFunction;
+import org.mathpiper.exceptions.ReturnException;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.cons.ConsTraverser;
 import org.mathpiper.lisp.Utility;
 import org.mathpiper.lisp.cons.ConsPointer;
 
+
 /**
  *
  *  
  */
-public class Prog extends BuiltinFunction
-{
+public class Prog extends BuiltinFunction {
 
-    public void evaluate(Environment aEnvironment, int aStackTop) throws Exception
-    {
+    public void evaluate(Environment aEnvironment, int aStackTop) throws Exception {
         // Allow accessing previous locals.
         aEnvironment.pushLocalFrame(false, "Prog");
-        try
-        {
+
+        int beforeStackTop = -1;
+        int beforeEvaluationDepth = -1;
+        int progStackTop = aStackTop;
+
+        try {
             Utility.putTrueInPointer(aEnvironment, getTopOfStackPointer(aEnvironment, aStackTop));
 
-            // Evaluate args one by one.
+            beforeStackTop = aEnvironment.iArgumentStack.getStackTopIndex();
+            beforeEvaluationDepth = aEnvironment.iEvalDepth;
 
+            // Evaluate args one by one.
             ConsTraverser consTraverser = new ConsTraverser((ConsPointer) getArgumentPointer(aEnvironment, aStackTop, 1).car());
             consTraverser.goNext();
-            while (consTraverser.getCons() != null)
-            {
+            while (consTraverser.getCons() != null) {
                 aEnvironment.iLispExpressionEvaluator.evaluate(aEnvironment, getTopOfStackPointer(aEnvironment, aStackTop), consTraverser.getPointer());
                 consTraverser.goNext();
             }
-        } catch (Exception e)
-        {
+        } catch (ReturnException re) {
+
+            int stackTopIndex = aEnvironment.iArgumentStack.getStackTopIndex();
+            ConsPointer resultPointer =  getTopOfStackPointer(aEnvironment, stackTopIndex-1);
+
+            getTopOfStackPointer(aEnvironment, progStackTop).setCons(resultPointer.getCons());
+
+            aEnvironment.iArgumentStack.popTo(beforeStackTop);
+            aEnvironment.iEvalDepth = beforeEvaluationDepth;
+
+        } catch (Exception e) {
             throw e;
-        } finally
-        {
+        } finally {
             aEnvironment.popLocalFrame();
         }
     }
+
+
 }
 
 
@@ -79,6 +94,6 @@ arguments in order and return the result of the last evaluated expression.
 function bodies. The {[ ... ]} construct is a syntactically nicer version of the
 {Prog} call; it is converted into {Prog(...)} during the parsing stage.
 
-*SEE [, ]
+*SEE [, ], ReturnFromBlock
 %/mathpiper_docs
 */

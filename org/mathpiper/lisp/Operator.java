@@ -15,11 +15,39 @@
  */ //}}}
 
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
-package org.mathpiper;
 
-public class Version
+package org.mathpiper.lisp;
+
+
+public class Operator
 {
-//"$Id: Version.java,v 1.7 2009-11-05 23:12:28 murkle Exp $"
-   public  static final String version = ".76s";
-    
-}//end class.
+	public int iPrecedence;
+	public int iLeftPrecedence;
+	public int iRightPrecedence;
+	public int iRightAssociative;
+
+	public Operator(int aPrecedence)
+	{
+		iPrecedence = aPrecedence;
+		iLeftPrecedence = aPrecedence;
+		iRightPrecedence = aPrecedence;
+		iRightAssociative = 0;
+	}
+
+	public void setRightAssociative()
+	{
+		iRightAssociative = 1;
+	}
+
+	public void setLeftPrecedence(int aPrecedence)
+	{
+		iLeftPrecedence = aPrecedence;
+	}
+
+	public void setRightPrecedence(int aPrecedence)
+	{
+		iRightPrecedence = aPrecedence;
+	}
+
+}
+

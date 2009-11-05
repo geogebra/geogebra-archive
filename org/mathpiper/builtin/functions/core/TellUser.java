@@ -23,7 +23,7 @@ import org.mathpiper.builtin.BuiltinFunction;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.Utility;
-import org.mathpiper.lisp.cons.AtomCons;
+import org.mathpiper.lisp.cons.ConsPointer;
 
 /**
  *
@@ -35,9 +35,14 @@ public class TellUser extends BuiltinFunction
     public void evaluate(Environment aEnvironment, int aStackTop) throws Exception
     {
         LispError.checkArgument(aEnvironment, aStackTop, getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
-        String messageString = (String) getArgumentPointer(aEnvironment, aStackTop, 1).car();
-        LispError.checkArgument(aEnvironment, aStackTop, messageString != null, 1);
 
+        Object argument = getArgumentPointer(aEnvironment, aStackTop, 1).car();
+
+        LispError.check(argument instanceof String, "The argument to TellUser must be a string.");
+
+        String messageString = (String) argument;
+
+        LispError.checkArgument(aEnvironment, aStackTop, messageString != null, 1);
 
         messageString = Utility.stripEndQuotes(messageString);
 

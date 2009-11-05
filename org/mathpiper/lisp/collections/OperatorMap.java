@@ -21,32 +21,32 @@ package org.mathpiper.lisp.collections;
 import org.mathpiper.lisp.*;
 
 
-public class OperatorMap extends Map // <InfixOperator>
+public class OperatorMap extends Map // <Operator>
 {
 	
 	public void setOperator(int aPrecedence,String aString)
 	{
-		InfixOperator op = new InfixOperator(aPrecedence);
+		Operator op = new Operator(aPrecedence);
 		setAssociation(op, aString);
 	}
 	
 	public void setRightAssociative(String aString) throws Exception
 	{
-		InfixOperator op = (InfixOperator)lookUp(aString);
+		Operator op = (Operator)lookUp(aString);
 		LispError.check(op != null,LispError.NOT_AN_INFIX_OPERATOR);
 		op.setRightAssociative();
 	}
 	
 	public void setLeftPrecedence(String aString,int aPrecedence) throws Exception
 	{
-		InfixOperator op = (InfixOperator)lookUp(aString);
+		Operator op = (Operator)lookUp(aString);
 		LispError.check(op != null,LispError.NOT_AN_INFIX_OPERATOR);
 		op.setLeftPrecedence(aPrecedence);
 	}
 	
 	public void setRightPrecedence(String aString,int aPrecedence) throws Exception
 	{
-		InfixOperator op = (InfixOperator)lookUp(aString);
+		Operator op = (Operator)lookUp(aString);
 		LispError.check(op != null,LispError.NOT_AN_INFIX_OPERATOR);
 		op.setRightPrecedence(aPrecedence);
 	}

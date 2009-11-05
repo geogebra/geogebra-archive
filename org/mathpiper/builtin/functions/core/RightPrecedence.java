@@ -76,6 +76,6 @@ the same as {a-b-c}.
 
 Note that the right precedence of an infix operator does not affect the way MathPiper interprets expressions typed by the user. You cannot make MathPiper parse {a-b-c} as {a-(b-c)} unless you declare the operator "{-}" to be right-associative.
 
-*SEE OpPrecedence, OpLeftPrecedence, OpRightPrecedence, RightAssociative, LeftPrecedence
+*SEE OpPrecedence, OpLeftPrecedence, OpRightPrecedence, LeftPrecedence, RightAssociative
 %/mathpiper_docs
 */

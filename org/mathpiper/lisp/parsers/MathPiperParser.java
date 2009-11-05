@@ -28,7 +28,7 @@ import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.cons.SublistCons;
-import org.mathpiper.lisp.InfixOperator;
+import org.mathpiper.lisp.Operator;
 import org.mathpiper.lisp.collections.OperatorMap;
 
 public class MathPiperParser extends Parser
@@ -145,7 +145,7 @@ public class MathPiperParser extends Parser
                 combine(aEnvironment,2);
             } else
             {
-                InfixOperator op = (InfixOperator) iInfixOperators.lookUp(iLookAhead);
+                Operator op = (Operator) iInfixOperators.lookUp(iLookAhead);
                 if (op == null)
                 {
                     //printf("op [%s]\n",iLookAhead.String());
@@ -168,7 +168,7 @@ public class MathPiperParser extends Parser
                                     (String) iEnvironment.getTokenHash().lookUp(iLookAhead.substring(0, len));
 
                             //printf("trunc %s\n",lookUp.String());
-                            op = (InfixOperator) iInfixOperators.lookUp(lookUp);
+                            op = (Operator) iInfixOperators.lookUp(lookUp);
                             //if (op) printf("FOUND\n");
                             if (op != null)
                             {
@@ -223,9 +223,9 @@ public class MathPiperParser extends Parser
 
     void readAtom(Environment aEnvironment) throws Exception
     {
-        InfixOperator op;
+        Operator op;
         // parse prefix operators
-        op = (InfixOperator) iPrefixOperators.lookUp(iLookAhead);
+        op = (Operator) iPrefixOperators.lookUp(iLookAhead);
         if (op != null)
         {
             String theOperator = iLookAhead;
@@ -317,7 +317,7 @@ public class MathPiperParser extends Parser
                 }
                 matchToken(iLookAhead);
 
-                op = (InfixOperator) iBodiedOperators.lookUp(theOperator);
+                op = (Operator) iBodiedOperators.lookUp(theOperator);
                 if (op != null)
                 {
                     readExpression(aEnvironment,op.iPrecedence); // MathPiperPrinter.KMaxPrecedence
@@ -333,7 +333,7 @@ public class MathPiperParser extends Parser
 
         // parse postfix operators
 
-        while ((op = (InfixOperator) iPostfixOperators.lookUp(iLookAhead)) != null)
+        while ((op = (Operator) iPostfixOperators.lookUp(iLookAhead)) != null)
         {
             insertAtom(iLookAhead);
             matchToken(iLookAhead);

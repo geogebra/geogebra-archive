@@ -98,7 +98,6 @@ public class Utility {
         5.
     };
     public static java.util.zip.ZipFile zipFile = null;
-
     public static String scriptsPath = null;
 
 
@@ -685,34 +684,17 @@ public class Utility {
 
         MathPiperInputStream newInput = null;
 
-        /*java.io.MathPiperInputStream scriptStream = Scripts.getScriptStream(oper);
-        if (scriptStream != null) {
-        newInput = new StandardFileInputStream(scriptStream, aEnvironment.iInputStatus);
-        LispError.check(newInput != null, LispError.FILE_NOT_FOUND);
-        doInternalLoad(aEnvironment, newInput);
-        } else {*/
-//System.out.println("Loading: " + oper);
-        Enumeration paths  = java.lang.ClassLoader.getSystemResources(Utility.scriptsPath + oper);
+        String path = Utility.scriptsPath + oper;
+
+        java.io.InputStream inputStream = Utility.class.getResourceAsStream(path);
 
 
-        URL fileURL = null;
-        if(paths.hasMoreElements()) //File is on the classpath.
+        if (inputStream != null) //File is on the classpath.
         {
-            while(paths.hasMoreElements())
-            {
-                fileURL = (URL) paths.nextElement();
-                if(fileURL.getPath().indexOf(Utility.scriptsPath) != -1)
-                {
-                    break;
-                }
-            }//end while.
-
-            LispError.check(fileURL != null, LispError.FILE_NOT_FOUND);
-
-            newInput = new StandardFileInputStream(new InputStreamReader(fileURL.openStream()), aEnvironment.iInputStatus);
+            newInput = new StandardFileInputStream(new InputStreamReader(inputStream), aEnvironment.iInputStatus);
             LispError.check(newInput != null, LispError.FILE_NOT_FOUND);
             doInternalLoad(aEnvironment, newInput);
-            
+
         } else { //File may be in the filesystem.
             try {
                 // Open file
@@ -872,35 +854,16 @@ public class Utility {
         aEnvironment.iInputStatus.setTo(hashedname);
 
 
-
         MathPiperInputStream newInput = null;
 
+        String path = Utility.scriptsPath + flatfile;
 
-        /* java.io.MathPiperInputStream scriptStream = Scripts.getScriptStream(flatfile);
-        if (scriptStream != null) {
-        newInput = new StandardFileInputStream(scriptStream, aEnvironment.iInputStatus);
-        LispError.check(newInput != null, LispError.FILE_NOT_FOUND);
-        doLoadDefFile(aEnvironment, newInput, def);
-        } else {*/
-//System.out.println("Loading: " + flatfile);
-        Enumeration paths  = java.lang.ClassLoader.getSystemResources(Utility.scriptsPath + flatfile);
+        java.io.InputStream inputStream = Utility.class.getResourceAsStream(path);
 
 
-        URL fileURL = null;
-        if(paths.hasMoreElements()) //File is on the classpath.
+        if (inputStream != null) //File is on the classpath.
         {
-            while(paths.hasMoreElements())
-            {
-                fileURL = (URL) paths.nextElement();
-                if(fileURL.getPath().indexOf(Utility.scriptsPath) != -1)
-                {
-                    break;
-                }
-            }
-
-            LispError.check(fileURL != null, LispError.FILE_NOT_FOUND);
-
-            newInput = new StandardFileInputStream(new InputStreamReader(fileURL.openStream()), aEnvironment.iInputStatus);
+            newInput = new StandardFileInputStream(new InputStreamReader(inputStream), aEnvironment.iInputStatus);
             LispError.check(newInput != null, LispError.FILE_NOT_FOUND);
             doLoadDefFile(aEnvironment, newInput, def);
 
@@ -931,7 +894,7 @@ public class Utility {
         if (n <= log2_table_size && n >= 2) {
             return log2_table[n - 1];
         } else {
-            throw new EvaluationException("log2_table_lookup: error: invalid argument " + n,"none", -1);
+            throw new EvaluationException("log2_table_lookup: error: invalid argument " + n, "none", -1);
         }
     }
 
@@ -1007,7 +970,7 @@ public class Utility {
     }
 
 
-    public static InfixOperator operatorInfo(Environment aEnvironment, int aStackTop, OperatorMap aOperators) throws Exception {
+    public static Operator operatorInfo(Environment aEnvironment, int aStackTop, OperatorMap aOperators) throws Exception {
         // Get operator
         LispError.checkArgument(aEnvironment, aStackTop, BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1);
 
@@ -1017,7 +980,7 @@ public class Utility {
         String orig = (String) evaluated.car();
         LispError.checkArgument(aEnvironment, aStackTop, orig != null, 1);
         //
-        InfixOperator op = (InfixOperator) aOperators.lookUp(Utility.getSymbolName(aEnvironment, orig));
+        Operator op = (Operator) aOperators.lookUp(Utility.getSymbolName(aEnvironment, orig));
         return op;
     }
 

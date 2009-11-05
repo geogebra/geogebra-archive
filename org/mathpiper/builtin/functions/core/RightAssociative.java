@@ -62,6 +62,6 @@ function, because the reverse, making an infix operator left-associative, is
 not implemented. (All infix operators are by default left-associative until
 they are declared to be right-associative.)
 
-*SEE OpPrecedence
+*SEE OpPrecedence, OpLeftPrecedence, OpRightPrecedence, LeftPrecedence, RightPrecedence
 %/mathpiper_docs
 */

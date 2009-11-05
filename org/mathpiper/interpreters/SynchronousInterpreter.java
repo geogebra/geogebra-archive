@@ -115,7 +115,7 @@ class SynchronousInterpreter implements Interpreter {
             }//end if.
             
 
-            Utility.scriptsPath = "org/mathpiper/geogebrascripts/";
+            Utility.scriptsPath = "/org/mathpiper/geogebrascripts/";
 
 
             /*  java.net.URL detectURL = java.lang.ClassLoader.getSystemResource("initialization.rep/mathpiperinit.mpi");
