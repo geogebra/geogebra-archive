@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -42,8 +43,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	private static final long serialVersionUID = 1L;
 	private static int DEFAULT_SLIDER_WIDTH_RW = 4;
 	private static int DEFAULT_SLIDER_WIDTH_PIXEL = 100;	
-	double DEFAULT_SLIDER_MIN = -5;
-	double DEFAULT_SLIDER_MAX = 5;
+	public static double DEFAULT_SLIDER_MIN = -5;
+	public static double DEFAULT_SLIDER_MAX = 5;
+	public static double DEFAULT_SLIDER_INCREMENT = 0.1;
 	
 	double DEFAULT_SLIDER_MIN_ANGLE = 0;
 	double DEFAULT_SLIDER_MAX_ANGLE = 2*Math.PI;
@@ -74,7 +76,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		super(c);
 		setEuclidianVisible(isGeoAngle());
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
-		animationIncrement = 0.1;					
+		animationIncrement = DEFAULT_SLIDER_INCREMENT;					
 	}
 
 	protected String getClassName() {
@@ -96,6 +98,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 
 	public GeoNumeric(Construction c, double x) {
 		this(c);
+
 		value = x;
 	}
 
@@ -119,7 +122,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		isDrawable = flag;
 		
 		if (isDrawable && kernel.isNotifyViewsActive() && kernel.isAllowVisibilitySideEffects() ) {
-			//Application.debug("side effect for: " + this);
 			setEuclidianVisible(true);
 		}						
 	}
@@ -454,7 +456,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	
 	public void setIntervalMax(double max) {	
 		if (Double.isNaN(max) || Double.isInfinite(max)) return;
-	
+
 		intervalMax = max;
 		intervalMaxActive = true;
 		
@@ -468,7 +470,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public void setIntervalMin(double min) {
 		if (Double.isNaN(min) || Double.isInfinite(min))
 				return;
-
+		
 		intervalMin = min;
 		intervalMinActive = true;	
 		

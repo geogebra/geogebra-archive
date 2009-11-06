@@ -46,6 +46,10 @@ public final class GeoAngle extends GeoNumeric {
 
 	// Michael Borcherds 2007-10-20
 	private double rawValue;
+	
+	final public static double DEFAULT_SLIDER_MIN = 0;
+	final public static double DEFAULT_SLIDER_MAX = Kernel.PI_2;
+
 
 	final public static int ANGLE_ISANTICLOCKWISE = 0; // old
 														// allowReflexAngle=true
@@ -93,8 +97,6 @@ public final class GeoAngle extends GeoNumeric {
 		setLabelMode(GeoElement.LABEL_NAME);
 		setEuclidianVisible(false);
 		animationIncrement = Math.PI / 180.0;
-		DEFAULT_SLIDER_MIN = 0;
-		DEFAULT_SLIDER_MAX = Kernel.PI_2;
 	}
 
 	public GeoAngle(Construction c, String label, double x) {

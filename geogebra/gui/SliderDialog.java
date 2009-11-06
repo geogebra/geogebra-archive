@@ -46,7 +46,7 @@ public class SliderDialog extends JDialog
 	 */
 	private static final long serialVersionUID = 1L;
 	private JButton btApply, btCancel;
-	private JRadioButton rbNumber, rbAngle;
+	private JRadioButton rbNumber, rbAngle, rbInteger;
 	private InputPanel tfLabel;
 	private JPanel optionPane;
 	
@@ -96,10 +96,13 @@ public class SliderDialog extends JDialog
 		ButtonGroup bg = new ButtonGroup();
 		rbNumber = new JRadioButton(app.getPlain("Numeric"));		
 		rbAngle = new JRadioButton(app.getPlain("Angle"));		
+		rbInteger = new JRadioButton(app.getPlain("Integer"));		
 		rbNumber.addActionListener(this);
 		rbAngle.addActionListener(this);		
+		rbInteger.addActionListener(this);		
 		bg.add(rbNumber);
 		bg.add(rbAngle);			
+		bg.add(rbInteger);			
 		rbNumber.setSelected(true);
 		//JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		JPanel radioPanel = new JPanel();
@@ -107,6 +110,7 @@ public class SliderDialog extends JDialog
 		radioPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 20));
 		radioPanel.add(rbNumber);		
 		radioPanel.add(rbAngle);			
+		radioPanel.add(rbInteger);			
 		
 		// label textfield
 		tfLabel = new InputPanel(number.getDefaultLabel(), app, 1, 10, false, true, false);				
@@ -120,9 +124,9 @@ public class SliderDialog extends JDialog
 		// put together label textfield and radioPanel
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new BorderLayout(0,0));
-		//JPanel labelPanel = new JPanel();
-		//labelPanel.add(tfLabel);
-		topPanel.add(tfLabel, BorderLayout.CENTER);
+		JPanel labelPanel = new JPanel();
+		labelPanel.add(tfLabel);
+		topPanel.add(labelPanel, BorderLayout.CENTER);
 		topPanel.add(radioPanel, BorderLayout.WEST);
 
 		// slider panels		
@@ -175,7 +179,7 @@ public class SliderDialog extends JDialog
 		Object source = e.getSource();
 				
 		if (source == btApply) {				
-			geoResult = rbNumber.isSelected() ? number : angle; 		
+			geoResult = rbAngle.isSelected() ? angle : number; 		
 			getResult();
 			geoResult.setLabelMode(GeoElement.LABEL_NAME_VALUE);
 			geoResult.setLabelVisible(true);
@@ -186,8 +190,18 @@ public class SliderDialog extends JDialog
 		else if (source == btCancel) {						
 			setVisible(false);
 		} 
-		else if (source == rbNumber || source == rbAngle) {
-			GeoElement selGeo = rbNumber.isSelected() ? number : angle;
+		else if (source == rbNumber || source == rbAngle || source == rbInteger) {
+			GeoElement selGeo = rbAngle.isSelected() ? angle : number;
+			
+			if (source == rbInteger) {
+				number.setAnimationStep(1);
+				number.setIntervalMin(1);
+				number.setIntervalMax(30);
+			} else if (source == rbNumber) {
+				number.setAnimationStep(GeoNumeric.DEFAULT_SLIDER_INCREMENT);
+				number.setIntervalMin(GeoNumeric.DEFAULT_SLIDER_MIN);
+				number.setIntervalMax(GeoNumeric.DEFAULT_SLIDER_MAX);
+			}
 			GeoElement [] geos = { selGeo };			
 			sliderPanel.update(geos);			
 			
