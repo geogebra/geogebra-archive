@@ -37,14 +37,17 @@ import java.awt.geom.Line2D;
  */
 public final class DrawPoint extends Drawable {
 	 	
-	private  int SELECTION_OFFSET;
+	private  int HIGHLIGHT_OFFSET, SELECTION_OFFSET;
+	
+	private static int SELECTION_DIAMETER_MIN = 20;
 	       
     private GeoPoint P;    
     
-	private int diameter, selDiameter, pointSize;
+	private int diameter, hightlightDiameter, selDiameter, pointSize;
     boolean isVisible, labelVisible;   
     // for dot and selection
 	private Ellipse2D.Double circle = new Ellipse2D.Double();
+	private Ellipse2D.Double circleHighlight = new Ellipse2D.Double();
 	private Ellipse2D.Double circleSel = new Ellipse2D.Double();
 	private Line2D.Double line1, line2, line3, line4;// for cross
 	GeneralPath gp = null;
@@ -90,9 +93,17 @@ public final class DrawPoint extends Drawable {
         if (pointSize != P.pointSize) {
         	pointSize = P.pointSize;
 			diameter = 2 * pointSize;
-			//selDiameter =  diameter + SELECTION_DIAMETER_ADD;
-			SELECTION_OFFSET = pointSize / 2 + 1;
-			selDiameter =  diameter + 2 * SELECTION_OFFSET ;			
+			HIGHLIGHT_OFFSET = pointSize / 2 + 1;
+			//HIGHLIGHT_OFFSET = pointSize / 2 + 1;
+			hightlightDiameter =  diameter + 2 * HIGHLIGHT_OFFSET ;	
+			
+			selDiameter = hightlightDiameter;
+			
+			if (selDiameter < SELECTION_DIAMETER_MIN)
+				selDiameter = SELECTION_DIAMETER_MIN;
+			
+			SELECTION_OFFSET = (selDiameter - diameter) / 2;
+
         }        
          		
         double xUL = coords[0] - pointSize;
@@ -211,6 +222,9 @@ public final class DrawPoint extends Drawable {
         circle.setFrame(xUL, yUL, diameter, diameter);
         
         // selection area
+        circleHighlight.setFrame(xUL - HIGHLIGHT_OFFSET, 
+				yUL - HIGHLIGHT_OFFSET, hightlightDiameter, hightlightDiameter);
+		
         circleSel.setFrame(xUL - SELECTION_OFFSET, 
 				yUL - SELECTION_OFFSET, selDiameter, selDiameter);
 		
@@ -244,7 +258,7 @@ public final class DrawPoint extends Drawable {
         if (isVisible) { 
         	if (geo.doHighlighting()) {           
     		 	g2.setPaint(geo.getSelColor());		
-    		 	g2.fill(circleSel);  
+    		 	g2.fill(circleHighlight);  
             }
         	
         	// Florian Sonner 2008-07-17
