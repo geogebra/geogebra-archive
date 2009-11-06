@@ -28,24 +28,33 @@ public class GeoGebraPanel extends JPanel {
     	JFrame f = new JFrame();
     	
     	// prepare URL for ggb file
-    	URL ggbURL = null;
-    	try {
-        	File ggbFile = new File("test.ggb");
-        	ggbURL = ggbFile.toURL();
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
+//    	URL ggbURL = null;
+//    	try {
+//        	File ggbFile = new File("test.ggb");
+//        	ggbURL = ggbFile.toURL();
+//    	} catch (Exception e) {
+//    		e.printStackTrace();
+//    	}
     	
     	// create GeoGebraPanel and open test file
-    	GeoGebraPanel ggbPanel = new GeoGebraPanel(ggbURL);
+//    	GeoGebraPanel ggbPanel = new GeoGebraPanel(ggbURL);
+    	
+    	// create empty GeoGebraPanel
+    	GeoGebraPanel ggbPanel = new GeoGebraPanel();
+    	
     	// hide input bar
     	ggbPanel.setShowAlgebraInput(false);
     	// use smaller icons in toolbar
     	ggbPanel.setMaxIconSize(24); 
     	ggbPanel.buildGUI();
+    	
+    	// use GeoGebraAPI
+    	ggbPanel.getGeoGebraAPI().evalCommand("100 - x");
+    	ggbPanel.getGeoGebraAPI().evalCommand("x + 100");
+    	ggbPanel.getGeoGebraAPI().setAxesCornerCoordsVisible(false);
     
     	// add GeoGebraPanel to your application
-    	f.getContentPane().add(ggbPanel);
+    	f.add(ggbPanel);
     	f.setSize(800, 600);
     	f.setVisible(true);
     }

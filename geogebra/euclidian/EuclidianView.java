@@ -302,7 +302,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	int mode = MODE_MOVE;
 
 	protected boolean[] showAxes = { true, true };
-
+	private boolean showAxesCornerCoords = true;
+	
 	protected boolean[] showAxesNumbers = { true, true };
 
 	protected String[] axesLabels = { null, null };
@@ -2017,31 +2018,41 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 	
 		// if one of the axes is not visible, show upper left and lower right corner coords
-		if (xmin > 0 || xmax < 0 || ymin > 0 || ymax < 0) {
-			// uper left corner								
-			sb.setLength(0);
-			sb.append('(');			
-			sb.append(kernel.formatPiE(xmin, axesNumberFormat[0]));
-			sb.append(", ");
-			sb.append(kernel.formatPiE(ymax, axesNumberFormat[1]));
-			sb.append(')');
-			
-			int textHeight = 2 + fontAxes.getSize();
-			g2.setFont(fontAxes);			
-			g2.drawString(sb.toString(), 5, textHeight);
-			
-			// lower right corner
-			sb.setLength(0);
-			sb.append('(');			
-			sb.append(kernel.formatPiE(xmax, axesNumberFormat[0]));
-			sb.append(", ");
-			sb.append(kernel.formatPiE(ymin, axesNumberFormat[1]));
-			sb.append(')');
-			
-			TextLayout layout = new TextLayout(sb.toString(), fontAxes, frc);	
-			layout.draw(g2, (int) (width - 5 - layout.getAdvance()), 
-									height - 5);					
-		}	
+		if (showAxesCornerCoords) {
+			if (xmin > 0 || xmax < 0 || ymin > 0 || ymax < 0) {
+				// uper left corner								
+				sb.setLength(0);
+				sb.append('(');			
+				sb.append(kernel.formatPiE(xmin, axesNumberFormat[0]));
+				sb.append(", ");
+				sb.append(kernel.formatPiE(ymax, axesNumberFormat[1]));
+				sb.append(')');
+				
+				int textHeight = 2 + fontAxes.getSize();
+				g2.setFont(fontAxes);			
+				g2.drawString(sb.toString(), 5, textHeight);
+				
+				// lower right corner
+				sb.setLength(0);
+				sb.append('(');			
+				sb.append(kernel.formatPiE(xmax, axesNumberFormat[0]));
+				sb.append(", ");
+				sb.append(kernel.formatPiE(ymin, axesNumberFormat[1]));
+				sb.append(')');
+				
+				TextLayout layout = new TextLayout(sb.toString(), fontAxes, frc);	
+				layout.draw(g2, (int) (width - 5 - layout.getAdvance()), 
+										height - 5);					
+			}	
+		}
+	}
+	
+	public boolean isAxesCornerCoordsVisible() {
+		return showAxesCornerCoords;
+	}
+
+	public void setAxesCornerCoordsVisible(boolean showAxesCornerCoords) {
+		this.showAxesCornerCoords = showAxesCornerCoords;
 	}
 
 	final void drawGrid(Graphics2D g2) {

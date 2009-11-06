@@ -797,6 +797,15 @@ public class GgbAPI {
 	}	
 	
 	/**
+	 * If the origin is off screen and the axes are visible, GeoGebra shows coordinates
+	 * of the upper-left and bottom-right screen corner. This method lets you
+	 * hide these corner coordinates.
+	 */
+	public synchronized void setAxesCornerCoordsVisible(boolean showAxesCornerCoords) {		
+		app.getEuclidianView().setAxesCornerCoordsVisible(showAxesCornerCoords);
+	}	
+	
+	/**
 	 * Shows or hides the coordinate grid in the graphics window.
 	 */
 	public synchronized void setGridVisible(boolean flag) {		
