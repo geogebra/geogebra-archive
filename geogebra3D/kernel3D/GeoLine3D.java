@@ -70,8 +70,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 	}
 
 	public String toValueString() {
-		// TODO Raccord de méthode auto-généré
-		return "todo";
+		return toString();
 	}
 	
 	

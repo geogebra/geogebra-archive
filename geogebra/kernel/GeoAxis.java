@@ -54,7 +54,7 @@ public class GeoAxis extends GeoLine {
 	 * the given construction step (this depends on
 	 * this object's construction index).
 	 */
-	boolean isAvailableAtConstructionStep(int step) {
+	protected boolean isAvailableAtConstructionStep(int step) {
 		// this method is overwritten
 		// in order to make the axes available
 		// in empty constructions too (for step == -1)

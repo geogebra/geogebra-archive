@@ -209,12 +209,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		axis = new GeoAxis3D[3];
 		
+		/*
 		axis[0] = kernel3D.Axis3D("Ox", o, vx);
 		axis[0].setObjColor(Color.BLUE);
 		axis[1] = kernel3D.Axis3D("Oy", o, vy);
 		axis[1].setObjColor(Color.RED);
 		axis[2] = kernel3D.Axis3D("Oz", o, vz);
 		axis[2].setObjColor(Color.GREEN);
+		*/
+		
+		axis[0] = kernel3D.getXAxis3D();
+		axis[1] = kernel3D.getYAxis3D();
+		axis[2] = kernel3D.getZAxis3D();
+		
+		
 		for(int i=0;i<3;i++){
 			axis[i].setFixed(true);
 			axis[i].setLabelVisible(false);
@@ -222,6 +230,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 		
 	}
+	
 	
 	
 	

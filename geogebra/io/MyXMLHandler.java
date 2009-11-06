@@ -3070,6 +3070,7 @@ public class MyXMLHandler implements DocHandler {
 
 	private void startCommandElement(String eName, LinkedHashMap<String, String> attrs) {
 		boolean ok = true;
+		
 		if (eName.equals("input")) {
 			if (cmd == null)
 				throw new MyError(app, "no command set for <input>");
@@ -3160,7 +3161,7 @@ public class MyXMLHandler implements DocHandler {
 			
 			cmdOutput = kernel.getAlgebraProcessor().processCommand(cmd, true);
 			
-			//Application.debug(cmdOutput[0].getLabel());
+			//Application.debug("geo : "+cmdOutput[0]+", type : "+cmdOutput[0].getGeoClassType());
 			
 			String cmdName = cmd.getName();
 			if (cmdOutput == null)

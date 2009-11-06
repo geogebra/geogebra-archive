@@ -100,7 +100,7 @@ implements Comparable {
 	 * the given construction step (this depends on
 	 * this object's construction index).
 	 */
-	boolean isAvailableAtConstructionStep(int step) {
+	protected boolean isAvailableAtConstructionStep(int step) {
 		// Note: this method is overwritten by
 		// GeoAxis in order to make the axes available
 		// in empty constructions too (for step == -1)

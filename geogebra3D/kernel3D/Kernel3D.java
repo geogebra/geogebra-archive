@@ -29,10 +29,12 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.io.MyXMLHandler3D;
 import geogebra3D.kernel3D.arithmetic.ExpressionNodeEvaluator3D;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
+import java.awt.Color;
 import java.util.LinkedHashMap;
 
 
@@ -80,12 +82,26 @@ public class Kernel3D
 	
 	protected Application3D app3D;
 	
+	
 	public Kernel3D(Application3D app) {
 		
 		super(app);
 		this.app3D = app;
 		
+		
+		
 	}
+	
+	public GeoAxis3D getXAxis3D(){
+		return ((Construction3D) cons).getXAxis3D();
+	}
+	public GeoAxis3D getYAxis3D(){
+		return ((Construction3D) cons).getYAxis3D();
+	}
+	public GeoAxis3D getZAxis3D(){
+		return ((Construction3D) cons).getZAxis3D();
+	}
+
 	
 	/**
 	 * creates the 3D construction cons
@@ -152,8 +168,10 @@ public class Kernel3D
     	
     	switch (type.charAt(0)) {
    		case 'p': // point, polygon
-			if (type.equals("point3d"))
+			if (type.equals("point3d")){
+				Application.debug("ici");
 				return new GeoPoint3D(cons);
+			}
 			else if (type.equals("polygon3D"))
 				return new GeoPolygon3D(cons, null);
 		case 's': // segment 
@@ -174,23 +192,33 @@ public class Kernel3D
 	 * ********************************************/
 	public boolean handleCoords(GeoElement geo, LinkedHashMap<String, String> attrs) {
 		
+		/*
+		Application.debug("attrs =\n"+attrs);		
+		Application.debug("attrs(x) = "+attrs.get("x"));
+		Application.debug("attrs(y) = "+attrs.get("y"));
+		Application.debug("attrs(z) = "+attrs.get("z"));
+		Application.debug("attrs(w) = "+attrs.get("w"));
+		*/
+		
 		if (!(geo instanceof GeoVec4D)) {
 			return super.handleCoords(geo, attrs);
 		}
 		
-		//Application.debug("GeoVec4D : "+geo.getLabel());
 		
 		GeoVec4D v = (GeoVec4D) geo;
+		//Application.debug("GeoVec4D : "+v.getLabel()+", type = "+geo.getGeoClassType());
+		
 
 		try {
 			double x = Double.parseDouble((String) attrs.get("x"));
 			double y = Double.parseDouble((String) attrs.get("y"));
 			double z = Double.parseDouble((String) attrs.get("z"));
 			double w = Double.parseDouble((String) attrs.get("w"));
-			v.setCoords(x, y, z, w);
+			((GeoVec4D) geo).setCoords(x, y, z, w);
 			//Application.debug(geo.getLabel()+": x="+x+", y="+y+", z="+z+", w="+w);
 			return true;
 		} catch (Exception e) {
+			//Application.debug("erreur : "+e);
 			return false;
 		}
 	}	
@@ -210,7 +238,8 @@ public class Kernel3D
 		GeoPoint3D p = new GeoPoint3D(cons);
 		p.setCoords(x, y, z, 1.0);
 		p.setLabel(label); // invokes add()        
-		//p.setObjColor(ConstructionDefaults.colPoint);
+		
+
 		return p;
 	}
 	
@@ -384,12 +413,13 @@ public class Kernel3D
 	}	
 
 	/** Axis3D label linking with (o,v) coord sys   */
+	/*
 	final public GeoAxis3D Axis3D(String label, Ggb3DVector o, Ggb3DVector v){
 		GeoAxis3D a=new GeoAxis3D(cons,o,v);
 		a.setLabel(label);
 		return a;
 	}	
-	
+	*/
 	
 	
 	/** Sphere label linking with center o and radius r   */

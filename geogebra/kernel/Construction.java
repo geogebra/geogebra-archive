@@ -133,12 +133,20 @@ public class Construction {
 			newConstructionDefaults();
 			//consDefaults = new ConstructionDefaults(this);
 
-		xAxis = new GeoAxis(this, GeoAxis.X_AXIS);
-		yAxis = new GeoAxis(this, GeoAxis.Y_AXIS);
+		initAxis();
 
 		geoTable = new HashMap(200);
 		localVariableTable = new HashMap();
 		initGeoTable();
+	}
+	
+	
+	/**
+	 * init the axis
+	 */
+	protected void initAxis(){
+		xAxis = new GeoAxis(this, GeoAxis.X_AXIS);
+		yAxis = new GeoAxis(this, GeoAxis.Y_AXIS);
 	}
 
 	/**
@@ -166,7 +174,7 @@ public class Construction {
 		return consDefaults;
 	}
 
-	private void initGeoTable() {
+	protected void initGeoTable() {
 		geoTable.clear();		
 		
 		// add axes labels both in English and current language
