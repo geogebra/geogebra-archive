@@ -141,9 +141,9 @@ public class DockManager {
 				}
 				
 				if(directions[directions.length - 1].equals("0") || directions[directions.length - 1].equals("3")) {
-					currentParent.setLeftComponent(dockPanels[i]);
+					currentParent.setLeftComponent(getPanel(dpInfo[i].getViewId()));
 				} else {
-					currentParent.setRightComponent(dockPanels[i]);
+					currentParent.setRightComponent(getPanel(dpInfo[i].getViewId()));
 				}
 			}
 			

@@ -287,7 +287,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * Update the panel.
 	 */
 	public void updatePanel() {
-		// load content if panel was hidden till yet
+		// load content if panel was hidden till now
 		if(view == null && info.isVisible()) {
 			loadView();
 			add(view, BorderLayout.CENTER);
