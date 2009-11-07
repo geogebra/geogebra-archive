@@ -101,6 +101,9 @@ public class Kernel3D
 	public GeoAxis3D getZAxis3D(){
 		return ((Construction3D) cons).getZAxis3D();
 	}
+	public GeoPlane3DConstant getXOYPlane(){
+		return ((Construction3D) cons).getXOYPlane();
+	}
 
 	
 	/**

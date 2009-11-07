@@ -44,7 +44,7 @@ public class GeoAxis3D extends GeoLine3D {
 		}
 		
 		setFixed(true);
-		
+		setLabelVisible(false);
 		
 	}
 	

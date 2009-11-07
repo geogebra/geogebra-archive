@@ -21,7 +21,8 @@ public class Construction3D extends Construction {
 	
 	// axis objects
 	private GeoAxis3D xAxis3D, yAxis3D, zAxis3D;
-	private String xAxis3DLocalName, yAxis3DLocalName, zAxis3DLocalName;
+	private GeoPlane3DConstant xOyPlane;
+	private String xAxis3DLocalName, yAxis3DLocalName, zAxis3DLocalName, xOyPlaneLocalName;
 
 	
 	/** default constructor
@@ -50,6 +51,8 @@ public class Construction3D extends Construction {
 		yAxis3D = new GeoAxis3D(this,GeoAxis3D.Y_AXIS_3D);
 		zAxis3D = new GeoAxis3D(this,GeoAxis3D.Z_AXIS_3D);
 		
+		xOyPlane = new GeoPlane3DConstant(this,GeoPlane3DConstant.XOY_PLANE);
+		
 	}
 	
 	
@@ -61,6 +64,9 @@ public class Construction3D extends Construction {
 	}
 	public GeoAxis3D getZAxis3D(){
 		return zAxis3D;
+	}
+	public GeoPlane3DConstant getXOYPlane(){
+		return xOyPlane;
 	}
 
 	/**
@@ -81,11 +87,13 @@ public class Construction3D extends Construction {
 		geoTable.put("xAxis3D", xAxis3D);
 		geoTable.put("yAxis3D", yAxis3D);
 		geoTable.put("zAxis3D", zAxis3D);
+		geoTable.put("xOyPlane", xOyPlane);
 		
 		if (xAxis3DLocalName != null) {
 			geoTable.put(xAxis3DLocalName, xAxis3D);
 			geoTable.put(yAxis3DLocalName, yAxis3D);
 			geoTable.put(zAxis3DLocalName, zAxis3D);
+			geoTable.put(xOyPlaneLocalName, xOyPlane);
 		}	
 			
 	}
@@ -98,15 +106,18 @@ public class Construction3D extends Construction {
 		geoTable.remove(xAxis3DLocalName);
 		geoTable.remove(yAxis3DLocalName);
 		geoTable.remove(zAxis3DLocalName);
+		geoTable.remove(xOyPlaneLocalName);
 
 		Application app = getKernel().getApplication();
 		xAxis3DLocalName = app.getPlain("xAxis3D");
 		yAxis3DLocalName = app.getPlain("yAxis3D");
 		zAxis3DLocalName = app.getPlain("zAxis3D");
+		xOyPlaneLocalName = app.getPlain("xOyPlane");
 		
 		geoTable.put(xAxis3DLocalName, xAxis3D);
 		geoTable.put(yAxis3DLocalName, yAxis3D);	
 		geoTable.put(zAxis3DLocalName, zAxis3D);	
+		geoTable.put(xOyPlaneLocalName, xOyPlane);	
 		
 		
 		

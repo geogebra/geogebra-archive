@@ -20,8 +20,9 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	 */
 	public GeoPlane3D(Construction c){
 		super(c);
-		this.xmin = -3; this.xmax = 3;
-		this.ymin = -3; this.ymax = 3;	
+
+		this.xmin = -2.5; this.xmax = 2.5;
+		this.ymin = -2.5; this.ymax = 2.5;	
 		
 		//grid
 		setGridOrigin(new Ggb3DVector(new double[] {0,0,0,1}));
@@ -55,7 +56,13 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	
 	
 
+	///////////////////////////////////
+	// REGION INTERFACE
 	
+	
+	public boolean isRegion(){
+		return true;
+	}
 	
 
 	
@@ -201,7 +208,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 
 	public String toValueString() {
 		// TODO Raccord de méthode auto-généré
-		return "todo";
+		return toString();
 	}
 	
 	
