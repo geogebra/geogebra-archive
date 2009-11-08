@@ -29,8 +29,6 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 	
 	private boolean buttonFixed = false;
 	
-	private String script = "";
-	
 	public GeoJavaScriptButton(Construction c) {
 		super(c);			
 		setEuclidianVisible(true);
@@ -116,10 +114,6 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 	 */
 	protected String getXMLtags() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("\t<value val=\"");
-		sb.append(getXMLScript());
-		sb.append("\"/>\n");				
-				
 		sb.append(getXMLvisualTags(isIndependent()));
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
@@ -197,27 +191,6 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 		return false;
 	}
 	
-	public void setScript(String script) {
-		this.script = script;
-	}
-	
-	public String getScript() {
-		return script;
-	}
-	
-	public String getXMLScript() {
-		return Util.encodeXML(script);
-	}
-	
-	public void runScript() {
-		if (app.isApplet()) {
-			Object [] args = { };
-			app.getApplet().callJavaScript("ggb"+getLabel(), args);
-		} else {
-			app.getScriptManager().evalScript(script);
-		}
-	}
-
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub
 		return false;

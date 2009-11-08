@@ -2295,14 +2295,15 @@ public	class PropertiesPanel extends JPanel {
 			if (geos.length != 1 || !checkGeos(geos))
 				return null;			
 			
-			GeoJavaScriptButton button = (GeoJavaScriptButton) geos[0];			
+			GeoElement button = (GeoElement) geos[0];			
 			jsDialog.setGeo(button);	
 			jsGlobalDialog.setGlobal();
 			return this;
 		}
 
 		private boolean checkGeos(Object[] geos) {
-			return geos.length == 1 && geos[0] instanceof GeoJavaScriptButton;			
+			//return geos.length == 1 && geos[0] instanceof GeoJavaScriptButton;			
+			return geos.length == 1 && !(geos[0] instanceof GeoBoolean);			
 		}
 
 		/**

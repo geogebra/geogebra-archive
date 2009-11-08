@@ -1962,6 +1962,12 @@ public class MyXMLHandler implements DocHandler {
 				break;
 			}
 
+		case 'j':
+			if (eName.equals("javascript")) {
+				ok = handleJavaScript(attrs);
+				break;
+			}
+
 		case 'k':
 			if (eName.equals("keepTypeOnTransform")) {
 				ok = handleKeepTypeOnTransform(attrs);
@@ -2288,6 +2294,15 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleCaption(LinkedHashMap<String, String> attrs) {
 		try {
 			geo.setCaption((String) attrs.get("val"));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleJavaScript(LinkedHashMap<String, String> attrs) {
+		try {
+			geo.setScript((String) attrs.get("val"));
 			return true;
 		} catch (Exception e) {
 			return false;

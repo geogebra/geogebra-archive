@@ -33,7 +33,7 @@ public class ScriptInputDialog extends InputDialog {
 	
 	private static final long serialVersionUID = 1L;
 
-	private GeoJavaScriptButton button;
+	private GeoElement button;
 	private boolean global = false;
 	
 	/**
@@ -60,7 +60,7 @@ public class ScriptInputDialog extends InputDialog {
 		centerOnScreen();		
 	}
 	
-	public void setGeo(GeoJavaScriptButton button) {
+	public void setGeo(GeoElement button) {
 		
 		if (global) {
 			setGlobal();

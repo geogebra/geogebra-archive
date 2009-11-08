@@ -1763,9 +1763,8 @@ public class EuclidianController implements MouseListener,
 							GeoBoolean bool = (GeoBoolean)(hits.get(0));
 							bool.setValue(!bool.getBoolean());
 							bool.update();
-						} else if (hit != null && hit.isGeoJavaScriptButton()) {
-							GeoJavaScriptButton button = (GeoJavaScriptButton)(hits.get(0));
-							button.runScript();						
+						} else if (hit != null) {
+							hit.runScript();						
 						}
 					}
 			}

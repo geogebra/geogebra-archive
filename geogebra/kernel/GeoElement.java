@@ -3054,6 +3054,14 @@ public abstract class GeoElement
 		sb.append(Util.encodeXML(label));		
 		sb.append("\">\n");
 		sb.append(getXMLtags());
+		
+		// JavaScript
+		if (javaScript.length() > 0) {
+			sb.append("\t<javascript val=\"");
+			sb.append(javaScript);
+			sb.append("\"/>\n");				
+		}
+				
 		sb.append(getCaptionXML());
 				
 		sb.append("</element>\n");
@@ -3983,6 +3991,32 @@ public abstract class GeoElement
 	final public void setInTree(boolean flag) {
 		inTree = flag;
 	}
+	
+	// JavaScript
+	
+	private String javaScript = "";
+	
+	public void setScript(String script) {
+		this.javaScript = script;
+	}
+	
+	public String getScript() {
+		return javaScript;
+	}
+	
+	public String getXMLScript() {
+		return Util.encodeXML(javaScript);
+	}
+	
+	public void runScript() {
+		if (app.isApplet()) {
+			Object [] args = { };
+			app.getApplet().callJavaScript("ggb"+getLabel(), args);
+		} else {
+			app.getScriptManager().evalScript(javaScript);
+		}
+	}
+
 
 
 }
