@@ -847,15 +847,18 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		
 		public boolean isFillable() {
 			if (geoList == null || geoList.size() == 0) return false;
+			
+			boolean someFillable = false;
+			boolean allLabelsSet = true;
 
 			for (int i=0 ; i < geoList.size() ; i++) {
 				GeoElement geo = (GeoElement)geoList.get(i);
-					if (geo.isLabelSet() || !geo.isFillable()) return false;
+				if (geo.isFillable()) someFillable = true;
+				if (!geo.isLabelSet()) allLabelsSet = false;
 			}
 			
-			return true;
+			return someFillable && !allLabelsSet;
 		}
-
 		
 		public GeoElement getGeoElementForPropertiesDialog() {
 			if (geoList.size() > 0 && elementType != ELEMENT_TYPE_MIXED) {

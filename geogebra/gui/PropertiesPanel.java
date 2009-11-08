@@ -3557,7 +3557,8 @@ public	class PropertiesPanel extends JPanel {
 			if (geos == null || geos.length == 0) return false;
 			
 			for (int i = 0  ; i < geos.length ; i++) {
-				if (!((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoPolygon() )
+				GeoElement testGeo = ((GeoElement)geos[i]).getGeoElementForPropertiesDialog();
+				if (!testGeo.isGeoPolygon() && !testGeo.isGeoList())
 					return false;
 			}
 			

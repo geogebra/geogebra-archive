@@ -786,14 +786,20 @@ final public class DrawConic extends Drawable implements Previewable {
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-        		return strokedShape.intersects(x-3,y-3,6,6);            	
+    			if (conic.alphaValue > 0.0f) 
+    				return shape.intersects(x-3,y-3,6,6);  
+    			else
+    				return strokedShape.intersects(x-3,y-3,6,6);            	
             	
             case GeoConic.CONIC_HYPERBOLA: 
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(hypLeft);
         			strokedShape2 = objStroke.createStrokedShape(hypRight);
         		}    		
-        		return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);  
+    			if (conic.alphaValue > 0.0f) 
+    				return hypLeft.intersects(x-3,y-3,6,6) || hypRight.intersects(x-3,y-3,6,6);  
+    			else
+    				return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);  
             	
             	/*
             	if (tempPoint == null) {

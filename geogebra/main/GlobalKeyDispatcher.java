@@ -10,6 +10,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PointProperties;
+import geogebra.kernel.arithmetic.ExpressionNode;
 
 import java.awt.Color;
 import java.awt.KeyEventDispatcher;
@@ -254,7 +255,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * 
 	 * @return if key was consumed
 	 */
-	private boolean handleSelectedGeosKeys(KeyEvent event, ArrayList geos) {
+	private boolean handleSelectedGeosKeys(KeyEvent event, ArrayList<GeoElement> geos) {
 		if (geos == null || geos.size() == 0)
 			return false;
 		
@@ -264,7 +265,26 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		switch (keyCode) {
 			case KeyEvent.VK_F3:
 				// F3 key: copy definition to input field				
-				handleFunctionKeyForAlgebraInput(3, (GeoElement) geos.get(0));
+				if (geos.size() == 1)
+					handleFunctionKeyForAlgebraInput(3, (GeoElement) geos.get(0));
+				else {
+					// F3 key: copy definitions to input field as list 			
+					JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
+					
+					StringBuffer sb = new StringBuffer();
+					sb.append('{');
+					
+					Iterator<GeoElement> it = geos.iterator();
+					while (it.hasNext()) {
+						sb.append(((GeoElement) it.next()).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false));
+						if (it.hasNext()) sb.append(",");
+					}
+					sb.append('}');
+
+					textComponent.setText(sb.toString());
+					break;
+					
+				}
 				return true;
 				
 			case KeyEvent.VK_F4:

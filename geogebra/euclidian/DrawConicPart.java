@@ -361,7 +361,10 @@ implements Previewable {
 				if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-        		return strokedShape.intersects(x-3,y-3,6,6); 
+				if (geo.alphaValue > 0.0f)
+					return shape.intersects(x-3,y-3,6,6); 					
+				else
+					return strokedShape.intersects(x-3,y-3,6,6); 
 				
 				/*
 				// sector: take shape for hit testing
