@@ -5857,6 +5857,24 @@ public class EuclidianController implements MouseListener,
 			*/
 		
 		
+		// remove fixed objects (if there are some not fixed)
+		if (!includeFixed && geos.size() > 1) {
+			
+			boolean allFixed = true;
+			for (int i = 0 ; i < geos.size() ; i++)
+				if (!((GeoElement)geos.get(i)).isFixed())
+					allFixed = false;
+			
+			if (!allFixed)
+			for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+				GeoElement geo = (GeoElement)geos.get(i);
+				if (geo.isFixed()) geos.remove(i);		
+			}
+			
+			if (geos.size() == 1)
+				return (GeoElement)geos.get(0);
+		}
+
 		// no points selected, multiple objects selected
 		// popup a menu to choose from
 		ToolTipManager ttm = ToolTipManager.sharedInstance();		
