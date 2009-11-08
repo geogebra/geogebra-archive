@@ -5312,7 +5312,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 			 
 			 try {
 			 
-				 String color = geogebra.util.Util.removeSpaces(((GeoText)arg[1]).getTextString()).toLowerCase();
+				 String color = geogebra.util.Util.removeSpaces(((GeoText)arg[1]).getTextString()).toUpperCase();
 				 // lookup Color
 				 HashMap colors = app.getColorsHashMap();				 
 				 Color col = (Color)colors.get(color);
