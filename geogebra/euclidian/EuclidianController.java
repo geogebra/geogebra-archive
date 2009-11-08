@@ -1764,7 +1764,7 @@ public class EuclidianController implements MouseListener,
 							bool.setValue(!bool.getBoolean());
 							bool.update();
 						} else if (hit != null) {
-							hit.runScript();						
+							chooseGeo(hits, true).runScript();						
 						}
 					}
 			}
