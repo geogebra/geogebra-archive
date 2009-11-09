@@ -366,14 +366,15 @@ public class Util extends Object {
 	     */
 
 	    // Exponents
+		// added by Loïc Le Coq 2009/11/04
 	    case '\u2070': // ^0
-			sbReplaceExp.append("^0");
-			break;
-
-	    case '\u00b1': // ^1
-			sbReplaceExp.append("^1");
-			break;
-
+		sbReplaceExp.append("^0");
+		break;
+		
+	    case '\u00b9': // ^1
+	    sbReplaceExp.append("^1");
+		break;
+		// end Loïc
 	    case '\u00b2': // ^2
 			sbReplaceExp.append("^2");
 			break;
