@@ -114,18 +114,13 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 * in a separate thread.
 	 */
 	public void initInBackground() {	
-		// init CAS and download jar files
-		Thread casIniter = new Thread() {
-			public void run() {
-				// init CAS in background
-				app.initCAS();											
-				System.gc();
-			}
-		};
-		casIniter.start();
-						
+		// call JavaScript function ggbOnInit()
+		initJavaScript();
+		Object [] args = { };
+		callJavaScript("ggbOnInit", args );
+		
 		// give applet time to repaint
-		Thread guiThread = new Thread() {
+		Thread initingThread = new Thread() {
 			public void run() {				
 				// wait a bit for applet to draw first time
 				// then start background initing of GUI elements
@@ -143,16 +138,31 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				else if (showFrame) {
 					wnd = app.getFrame();						
 				}	
-				
+			
+//				// don't preload because this slows down applet startup
+//				// initialize CAS in background
+//				try {
+//					System.out.print("loading all jars in background...");
+//					Class.forName("geogebra.cas.GeoGebraCAS");
+//					System.out.println(" done.");
+//					
+//					// load GUI manager in background
+//					System.out.print("loading GUI in background...");
+//					Class.forName("geogebra.gui._license");
+//					System.out.println(" done.");
+//					
+//					// load properties in background
+//					System.out.print("loading properties in background...");
+//					app.getPlain("Algebra");
+//					System.out.println(" done.");
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+
 				System.gc();
 			}									
 		};
-		guiThread.start();		
-		
-		// call JavaScript function ggbOnInit()
-		initJavaScript();
-		Object [] args = { };
-		callJavaScript("ggbOnInit", args );
+		initingThread.start();
 	}
 
 	private void init() {
