@@ -163,18 +163,28 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	ArrayList ll=g.getMyPointList();
     	Iterator it=ll.iterator();
 		startBeamer(code);
-    	code.append("\\pscustom{");
+    	code.append("\\pscustom");
+		code.append(LineOptionCode(g,true));
+    	code.append("{");
+    	boolean first=true;
     	while(it.hasNext()){
     		MyPoint mp=(MyPoint)it.next();
-    		String x=kernel.format(mp.x);
-    		String y=kernel.format(mp.y);
-    		boolean b=mp.lineTo;
-    		if (b) code.append("\\lineto(");
-    		else code.append("\\moveto(");
-    		code.append(x);
-    		code.append(",");
-    		code.append(y);
-    		code.append(")\n");
+    		if (mp.x>xmin&&mp.x<xmax&&mp.y>ymin&&mp.y<ymax){
+        		String x=kernel.format(mp.x);
+        		String y=kernel.format(mp.y);
+    			boolean b=mp.lineTo;
+    			if (first) {
+    				code.append("\\moveto(");
+    				first=false;
+    			}
+    			else if (b) code.append("\\lineto(");
+    			else code.append("\\moveto(");
+    			code.append(x);
+    			code.append(",");
+    			code.append(y);
+    			code.append(")\n");
+    		}
+    		else first=true;
     	}
 		code.append("}\n");
 		endBeamer(code);
@@ -1595,6 +1605,27 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			break;
 			case EuclidianView.POINT_STYLE_DOT:
 				codePoint.append("*");
+			break;
+			case EuclidianView.POINT_STYLE_EMPTY_DIAMOND:
+				codePoint.append("square,dotangle=45");
+			break;
+			case EuclidianView.POINT_STYLE_FILLED_DIAMOND:
+				codePoint.append("square*,dotangle=45");
+			break;
+			case EuclidianView.POINT_STYLE_PLUS:
+				codePoint.append("+");
+			break;
+			case EuclidianView.POINT_STYLE_TRIANGLE_EAST:
+				codePoint.append("triangle*,dotangle=270");
+			break;
+			case EuclidianView.POINT_STYLE_TRIANGLE_NORTH:
+				codePoint.append("triangle*");
+			break;
+			case EuclidianView.POINT_STYLE_TRIANGLE_SOUTH:
+				codePoint.append("triangle*,dotangle=180");
+			break;
+			case EuclidianView.POINT_STYLE_TRIANGLE_WEST:
+				codePoint.append("triangle*,dotangle=90");
 			break;
 			default:
 				codePoint.append("*");

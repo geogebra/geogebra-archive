@@ -184,6 +184,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	Iterator it=ll.iterator();
 		startBeamer(code);
     	code.append("\\draw");
+		String s=LineOptionCode(g,true);
+		if (s.length()!=0) s="["+s+"] ";
+		code.append(s);
     	boolean first=true;
     	while(it.hasNext()){
     		MyPoint mp=(MyPoint)it.next();
@@ -195,6 +198,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     			else if (first) first=false;
     			writePoint(x,y,code);
     		}
+    		else first=true;
     	}
 		code.append(";\n");
 		endBeamer(code);
@@ -1186,8 +1190,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 //		boolean isClosed=geo.isClosedPath();
 		String fx=geo.getFunX();
 		fx=killSpace(Util.toLaTeXString(fx,true));
+		fx=fx.replaceAll("\\^", "**");
 		String fy=geo.getFunY();
 		fy=killSpace(Util.toLaTeXString(fy,true));
+		fy=fy.replaceAll("\\^", "**");
 		String variable=geo.getVarString();		
 		boolean warning=!(variable.equals("t"));
 		if(warning) code.append("% WARNING: You have to use the special variable t in parametric plot");
@@ -1588,11 +1594,6 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			y=y/z;
 			Color dotcolor=gp.getObjectColor();
 			double dotsize=gp.getPointSize();
-
-			
-			
-			
-			
 			int dotstyle=gp.getPointStyle();
 			
 			if (dotstyle == -1) { // default
@@ -1631,6 +1632,171 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				codePoint.append(dotsize);
 				codePoint.append("pt);\n");
 			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_EMPTY_DIAMOND){
+				codePoint.append("\\draw [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append("] ");
+				writePoint(x,y,codePoint);
+				codePoint.append(" ++(-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,0 pt) -- ++(");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt)--++(");
+				
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt)--++(-");
+				
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt)--++(-");
+				
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt);\n");	
+			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_FILLED_DIAMOND){
+				codePoint.append("\\fill [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append("] ");
+				writePoint(x,y,codePoint);
+				codePoint.append(" ++(-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,0 pt) -- ++(");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt)--++(");
+				
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt)--++(-");
+				
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt)--++(-");
+				
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt);\n");	
+			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_PLUS){
+				codePoint.append("\\draw [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append("] ");
+				writePoint(x,y,codePoint);
+				codePoint.append("-- ++(-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,0 pt) -- ++(");
+				codePoint.append(dotsize);
+				codePoint.append("pt,0 pt) ++(-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt,-");
+				codePoint.append(dotsize/2);
+				codePoint.append("pt) -- ++(0 pt,");
+				codePoint.append(dotsize);
+				codePoint.append("pt);\n");
+			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_TRIANGLE_EAST){
+				double radius=3*dotsize/4;
+				codePoint.append("\\fill [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append(",shift={");
+				writePoint(x,y,codePoint);
+				codePoint.append("},rotate=270] (0,0)");
+		
+				codePoint.append(" ++(0 pt,");
+				codePoint.append(radius);
+				codePoint.append("pt) -- ++(");
+				codePoint.append(kernel.format(radius/2*Math.sqrt(3)));
+				codePoint.append("pt,-");
+				codePoint.append(radius/2*3);
+				
+				codePoint.append("pt)--++(-");
+				codePoint.append(kernel.format(radius*Math.sqrt(3)));
+				codePoint.append("pt,0 pt) -- ++(");
+				codePoint.append(kernel.format(radius/2*Math.sqrt(3)));
+				codePoint.append("pt,");
+				codePoint.append(3*radius/2);
+				codePoint.append("pt);\n");	
+			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_TRIANGLE_NORTH){
+				double radius=3*dotsize/4;
+				codePoint.append("\\fill [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append(",shift={");
+				writePoint(x,y,codePoint);
+				codePoint.append("}] (0,0)");
+		
+				codePoint.append(" ++(0 pt,");
+				codePoint.append(radius);
+				codePoint.append("pt) -- ++(");
+				codePoint.append(kernel.format(radius/2*Math.sqrt(3)));
+				codePoint.append("pt,-");
+				codePoint.append(radius/2*3);
+				
+				codePoint.append("pt)--++(-");
+				codePoint.append(kernel.format(radius*Math.sqrt(3)));
+				codePoint.append("pt,0 pt) -- ++(");
+				codePoint.append(kernel.format(radius/2*Math.sqrt(3)));
+				codePoint.append("pt,");
+				codePoint.append(3*radius/2);
+				codePoint.append("pt);\n");	
+			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_TRIANGLE_SOUTH){
+				double radius=3*dotsize/4;
+				codePoint.append("\\fill [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append(",shift={");
+				writePoint(x,y,codePoint);
+				codePoint.append("},rotate=180] (0,0)");
+		
+				codePoint.append(" ++(0 pt,");
+				codePoint.append(radius);
+				codePoint.append("pt) -- ++(");
+				codePoint.append(kernel.format(radius/2*Math.sqrt(3)));
+				codePoint.append("pt,-");
+				codePoint.append(radius/2*3);
+				
+				codePoint.append("pt)--++(-");
+				codePoint.append(kernel.format(radius*Math.sqrt(3)));
+				codePoint.append("pt,0 pt) -- ++(");
+				codePoint.append(kernel.format(radius/2*Math.sqrt(3)));
+				codePoint.append("pt,");
+				codePoint.append(3*radius/2);
+				codePoint.append("pt);\n");	
+			}
+			else if (dotstyle==EuclidianView.POINT_STYLE_TRIANGLE_WEST){
+				double radius=3*dotsize/4;
+				codePoint.append("\\fill [color=");
+				ColorCode(dotcolor,codePoint);
+				codePoint.append(",shift={");
+				writePoint(x,y,codePoint);
+				codePoint.append("},rotate=90] (0,0)");
+		
+				codePoint.append(" ++(0 pt,");
+				codePoint.append(radius);
+				codePoint.append("pt) -- ++(");
+				codePoint.append(kernel.format(radius/2*Math.sqrt(3)));
+				codePoint.append("pt,-");
+				codePoint.append(radius/2*3);
+				
+				codePoint.append("pt)--++(-");
+				codePoint.append(kernel.format(radius*Math.sqrt(3)));
+				codePoint.append("pt,0 pt) -- ++(");
+				codePoint.append(kernel.format(radius/2*Math.sqrt(3)));
+				codePoint.append("pt,");
+				codePoint.append(3*radius/2);
+				codePoint.append("pt);\n");	
+			}
 			
 			// default is the circle point style
 			else {
@@ -1645,6 +1811,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			endBeamer(codePoint);
 		}
 	}
+	
 	/**
 	 * Generate the PGF/tikZ code to draw an infinite line
 	 */
