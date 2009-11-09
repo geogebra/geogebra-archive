@@ -366,9 +366,17 @@ public class Util extends Object {
 	     */
 
 	    // Exponents
+	    case '\u2070': // ^0
+			sbReplaceExp.append("^0");
+			break;
+
+	    case '\u00b1': // ^1
+			sbReplaceExp.append("^1");
+			break;
+
 	    case '\u00b2': // ^2
-		sbReplaceExp.append("^2");
-		break;
+			sbReplaceExp.append("^2");
+			break;
 
 	    case '\u00b3': // ^3
 		sbReplaceExp.append("^3");
@@ -385,6 +393,19 @@ public class Util extends Object {
 	    case '\u2076': // ^6
 		sbReplaceExp.append("^6");
 		break;
+		// added by Loïc Le Coq 2009/11/04
+	    case '\u2077': // ^7
+	    sbReplaceExp.append("^7");
+		break;
+	    
+	    case '\u2078': // ^8
+		sbReplaceExp.append("^8");
+		break;
+	    
+	    case '\u2079': // ^9
+		sbReplaceExp.append("^9");
+		break;
+		// end Loïc Le Coq
 
 	    default:
 		if (!convertGreekLetters) {
