@@ -42,9 +42,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	// TODO: add checkbox to set useGeoGebraVariableValues
 	private boolean useGeoGebraVariableValues = true;
 
-	
 	private CASTable consoleTable;
-
 
 	private Application app;
 	private GeoGebraCAS cas;

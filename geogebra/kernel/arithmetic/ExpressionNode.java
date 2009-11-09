@@ -2440,7 +2440,7 @@ implements ExpressionValue, ExpressionNodeConstants {
      * it is a GeoElement
      */
     final public static boolean isEqualString(ExpressionValue ev, double val, boolean symbolic) {
-    	if (ev.isLeaf() && ev.isNumberValue()) {
+    	if (ev.isLeaf() && ev instanceof NumberValue) {
     		// function variables need to be kept
     		if (ev instanceof FunctionVariable) {
     			return false;
@@ -2456,11 +2456,7 @@ implements ExpressionValue, ExpressionNodeConstants {
     			}
     		}
     		
-    		NumberValue nv;
-    		if (ev.isExpressionNode())
-    			nv = (NumberValue)(ev.evaluate());
-    		else
-    			nv = (NumberValue) ev;
+    		NumberValue nv = (NumberValue) ev;
     		return nv.getDouble() == val;    		
     	}
     	return false;

@@ -792,8 +792,11 @@ public class WorksheetExportDialog extends JDialog {
 		// archive geogebra.jar 
 		sb.append(" archive=\"geogebra.jar\"");
 		
-		// add codebase for online applets
-		if (!cbOfflineArchive.isSelected()) {
+		if (cbOfflineArchive.isSelected()) {
+			// codebase for offline applet
+			sb.append("\n\tcodebase=\"./\"");
+		} else {
+			// add codebase for online applets
 			sb.append("\n\tcodebase=\"");
 			sb.append(GeoGebra.GEOGEBRA_ONLINE_ARCHIVE_BASE);
 			if (!cbSavePrint.isSelected())
@@ -827,13 +830,8 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append("\"/>\n");
 		}
 
-		if (useWorksheet) {
-			appendAppletParameters(sb);			
-		} else {// button type
-			sb.append("\t<param name=\"type\" value=\"button\"/>\n");
-			// white background
-			sb.append("\t<param name=\"bgcolor\" value=\"#FFFFFF\"/>\n");
-		}
+		// add applet parameters
+		appendAppletParameters(sb);
 
 		sb.append("Sorry, the GeoGebra Applet could not be started. Please make sure that ");
 		sb.append("Java 1.4.2 (or later) is installed and active in your browser ");
@@ -872,6 +870,19 @@ public class WorksheetExportDialog extends JDialog {
 			if (i < Application.JAR_FILES.length-1) sb.append(", ");
 		}
 		sb.append("\"/>\n");
+		
+		// loading image for online applet
+		if (!cbOfflineArchive.isSelected()) {
+			sb.append("\t<param name=\"image\" value=\""+ Application.LOADING_GIF + "\"/>\n");
+			sb.append("\t<param name=\"boxborder\" value=\"false\"/>\n");
+			sb.append("\t<param name=\"centerimage\" value=\"true\">\n");
+		}
+
+		if (!useWorksheet) { // show only button as applet
+			sb.append("\t<param name=\"type\" value=\"button\"/>\n");
+			// white background
+			sb.append("\t<param name=\"bgcolor\" value=\"#FFFFFF\"/>\n");
+		}
 		
 		// framePossible (double click opens GeoGebra window)
 		sb.append("\t<param name=\"framePossible\" value=\"");

@@ -3138,7 +3138,7 @@ public class MyXMLHandler implements DocHandler {
 		return true;
 	}
 
-	private boolean handleCmdOutput(LinkedHashMap<String, String> attrs) {
+	private boolean handleCmdOutput(LinkedHashMap attrs) {
 		try {
 			// set labels for command processing
 			String label;
@@ -3168,19 +3168,10 @@ public class MyXMLHandler implements DocHandler {
 				return true;
 
 			// process the command
-			//String s ="";
-			//ExpressionNode[] en = cmd.getArguments();
-			//for(int i=0;i<en.length;i++)
-			//	s+=en[i].toString()+",";
-			//Application.debug("process the command : "+cmd.getLabel()+" = "+cmd.getName()+"["+s+"]");
-			
 			cmdOutput = kernel.getAlgebraProcessor().processCommand(cmd, true);
-			
-			//Application.debug("geo : "+cmdOutput[0]+", type : "+cmdOutput[0].getGeoClassType());
-			
 			String cmdName = cmd.getName();
 			if (cmdOutput == null)
-				throw new MyError(app, "processing of command " + cmdName
+				throw new MyError(app, "processing of command " + cmd
 						+ " failed");
 			cmd = null;
 
@@ -3202,9 +3193,8 @@ public class MyXMLHandler implements DocHandler {
 				if ("".equals(label))
 					label = null;
 
-				if (label != null) {
+				if (label != null && cmdOutput[i] != null) {
 					cmdOutput[i].setLoadedLabel(label);
-					//Application.debug("cmdOutput["+i+"].setLoadedLabel("+label+")");
 				}
 				i++;
 			}
@@ -3212,10 +3202,11 @@ public class MyXMLHandler implements DocHandler {
 		} catch (MyError e) {
 			throw e;
 		} catch (Exception e) {
-			throw new MyError(app, "processing of command: " + e.getMessage());
+			e.printStackTrace();
+			throw new MyError(app, "processing of command: " + cmd);
 		}
 	}
-
+	
 	/**
 	 * Reads all attributes into a String array.
 	 * 

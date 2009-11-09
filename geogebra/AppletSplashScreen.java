@@ -18,9 +18,7 @@ public class AppletSplashScreen implements ImageObserver {
 	private static final int SPLASH_IMAGE_HEIGHT = 106;
 	private static final int PROGRESS_IMAGE_WIDTH = 16;
 	private static final int PROGRESS_IMAGE_HEIGHT = 16;
-	private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 11);
 
-	
 	// splash screen stuff
 	private Image splashImage, progressImage;
 	private Image splashScreenImage;

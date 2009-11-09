@@ -42,6 +42,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import netscape.javascript.JSObject;
 
@@ -270,6 +271,15 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			app = new CustomApplication(args, this, undoActive);
 		}
 		*/
+		
+    	try {		
+  			if (Application.MAC_OS || Application.WINDOWS)
+  				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+  			else // Linux or others
+  				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+  		} catch (Exception e) {
+  			Application.debug(e+"");
+  		}
 
 		if (fileStr == null) {
 			app = buildApplication(null, undoActive);

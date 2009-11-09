@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra;
 
+import geogebra.main.Application;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -40,16 +42,12 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	
 	/**
 	 * Loads necessary jar files and initializes applet. During the loading of
-	 * jar files, a splash screen with progress information is shown.
+	 * jar files, a splash screen is shown.
 	 */
 	public void init() {		
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {		
-					try {
-						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					} catch (Exception e) {}											
-														
+				public void run() {										
 					// init splash screen 
 					splashScreen = new AppletSplashScreen(GeoGebraApplet.this);	
 					repaint();
@@ -71,7 +69,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 																									
 				// init CAS, GUI dialogs, and download jar files in background
 				SwingUtilities.invokeLater(new Runnable() {										
-			      public void run() {
+			      public void run() {	
 			    	// update GUI
 					SwingUtilities.updateComponentTreeUI(GeoGebraApplet.this);	
 										
