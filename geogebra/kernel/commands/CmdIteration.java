@@ -42,7 +42,7 @@ final public  GeoElement[] process(Command c) throws MyError {
                }                   		    		     
 
         default :
-            throw argNumErr(app, c.getLabel(), n);
+            throw argNumErr(app, c.getName(), n);
     }
 }
 }
