@@ -318,14 +318,14 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		{
 			Thread runner = new Thread() {
 				public void run() {											
-					// init CAS
-					app.initCAS();
-									
 					// init properties dialog
 					app.getGuiManager().initPropertiesDialog();		
 					
 					// init file chooser
-					app.getGuiManager().initFileChooser();			
+					app.getGuiManager().initFileChooser();	
+					
+					// init CAS
+					app.getKernel().getGeoGebraCAS();
 				}
 			};
 			runner.start();

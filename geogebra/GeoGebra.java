@@ -32,6 +32,7 @@ public class GeoGebra extends Object {
 
 	// URLs
 	public final static String GEOGEBRA_ONLINE_ARCHIVE_BASE = "http://www.geogebra.org/webstart/4.0/";
+	public static final String LOADING_GIF = "http://www.geogebra.org/webstart/loading.gif";
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
 	
 	// max possible heap space for applets in MB

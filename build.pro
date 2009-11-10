@@ -47,6 +47,11 @@
     public <methods>;
 }
 
+# Keep GeoGebraAppletPreloader
+-keep class geogebra.GeoGebraAppletPreloader {
+    public <methods>;
+}
+
 # Keep GeoGebraPanel
 -keep class geogebra.GeoGebraPanel {
     public <methods>;

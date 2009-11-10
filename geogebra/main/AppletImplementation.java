@@ -14,6 +14,7 @@ package geogebra.main;
 
 import geogebra.AppletImplementationInterface;
 import geogebra.GeoGebra;
+import geogebra.GeoGebraAppletPreloader;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.MyBoolean;
@@ -138,27 +139,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				else if (showFrame) {
 					wnd = app.getFrame();						
 				}	
-			
-//				// don't preload because this slows down applet startup
-//				// initialize CAS in background
-//				try {
-//					System.out.print("loading all jars in background...");
-//					Class.forName("geogebra.cas.GeoGebraCAS");
-//					System.out.println(" done.");
-//					
-//					// load GUI manager in background
-//					System.out.print("loading GUI in background...");
-//					Class.forName("geogebra.gui._license");
-//					System.out.println(" done.");
-//					
-//					// load properties in background
-//					System.out.print("loading properties in background...");
-//					app.getPlain("Algebra");
-//					System.out.println(" done.");
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-
+	
+				// load all jar files in background
+				GeoGebraAppletPreloader.loadAllJarFiles();
+				
 				System.gc();
 			}									
 		};
@@ -1519,7 +1503,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			try {							
 				browserWindow = JSObject.getWindow(applet);
 			} catch (Exception e) {							
-				Application.debug("Exception: could not initialize JSObject.getWindow() for GeoGebraApplet");
+				System.err.println("Exception: could not initialize JSObject.getWindow() for GeoGebraApplet");
 			}    			
 		}
 	}
@@ -1532,7 +1516,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			if (browserWindow != null)
 				browserWindow.call(jsFunction, args);
 		} catch (Exception e) {						
-			Application.debug("error calling JavaScript function "+jsFunction);
+			System.err.println("Error calling JavaScript function: "+jsFunction);
 		}    
 	} 
 

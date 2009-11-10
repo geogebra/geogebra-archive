@@ -41,15 +41,17 @@ office@geogebra.org
 	<property name="build.dir" location="../build"/>
 	<property name="temp.dir" location="../build/temp"/>
 	<property name="workspace.dir" location="../"/>
-    			
+	
 	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
-		depends="clean, ggb-jar-files, obfuscate, ggb-jar-index, copyJars, sign, pack, finish">	  
+		depends="clean, ggb-jar-files, obfuscate, ggb-jar-index, 
+					copyJars, sign, pack, preloadHtml, finish">	  
 	</target>
 	
 	<!-- build jar files for testing without obfuscation -->
 	<target name="geogebra-test" 
-		depends="clean, ggb-jar-files, ggb-jar-index, copyJars, sign, pack, finish">	  
+		depends="clean, ggb-jar-files, ggb-jar-index, 
+					copyJars, sign, pack, preloadHtml, finish">	  
 	</target>
 	
 	<!-- create all jar files -->
@@ -282,5 +284,27 @@ office@geogebra.org
 		<p200ant destdir="${build.dir}/packed"  configFile="p200.config">
 	        <fileset refid="signedJars"/>
 	    </p200ant>	
+	</target>
+	
+	<!-- reads the version number from geogebra.GeoGebra.java -->
+	<target name="readVersion">
+		<loadfile property="version"
+		      srcFile="${src.dir}/geogebra/GeoGebra.java">
+		  <filterchain>
+		  	<linecontainsregexp>
+		  	  <regexp pattern="VERSION_STRING = *"/>
+		  		</linecontainsregexp>
+		  	<deletecharacters chars="\spublicstaticfinalStringVERSION_STRING=&quot;;"/>
+		      </filterchain>
+		</loadfile>
+	</target>
+	
+	<!-- creates preload.html by inserting version strings into preload.txt -->
+	<target name="preloadHtml" depends="readVersion">
+		<copy file="${src.dir}/preload.txt"
+		      tofile="${build.dir}/unsigned/preload.html">
+		</copy>
+		<replace file="${build.dir}/unsigned/preload.html" 
+			token="VERSION_STRING" value="${version}"/>
 	</target>
 </project>

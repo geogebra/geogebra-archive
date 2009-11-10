@@ -71,9 +71,10 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 				SwingUtilities.invokeLater(new Runnable() {										
 			      public void run() {	
 			    	// update GUI
-					SwingUtilities.updateComponentTreeUI(GeoGebraApplet.this);	
-										
-					// dispose splash screen
+				    if (GeoGebraApplet.this.isShowing())
+				   		SwingUtilities.updateComponentTreeUI(GeoGebraApplet.this);	
+						
+				    // dispose splash screen
 					splashScreen.dispose();
 					splashScreen = null;
 					System.gc();

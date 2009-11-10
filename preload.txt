@@ -1,0 +1,6 @@
+<html>
+<applet code="geogebra.GeoGebraAppletPreloader" archive="geogebra.jar" codebase="./" width="1" height="1">
+	<param name="cache_archive" value="geogebra.jar, geogebra_main.jar, geogebra_gui.jar, geogebra_cas.jar, geogebra_export.jar, geogebra_properties.jar"/>
+	<param name="cache_version" value="VERSION_STRING, VERSION_STRING, VERSION_STRING, VERSION_STRING, VERSION_STRING, VERSION_STRING"/>
+</applet>
+</html>

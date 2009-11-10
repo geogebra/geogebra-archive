@@ -873,7 +873,7 @@ public class WorksheetExportDialog extends JDialog {
 		
 		// loading image for online applet
 		if (!cbOfflineArchive.isSelected()) {
-			sb.append("\t<param name=\"image\" value=\""+ Application.LOADING_GIF + "\"/>\n");
+			sb.append("\t<param name=\"image\" value=\""+ GeoGebra.LOADING_GIF + "\"/>\n");
 			sb.append("\t<param name=\"boxborder\" value=\"false\"/>\n");
 			sb.append("\t<param name=\"centerimage\" value=\"true\">\n");
 		}

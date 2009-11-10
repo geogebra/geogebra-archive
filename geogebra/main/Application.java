@@ -609,18 +609,6 @@ public abstract class Application implements KeyEventDispatcher {
 		return fontManager.getFontCanDisplay(testString, false, fontStyle, fontSize);
 	}
 	
-	/**
-	 * Initializes the GeoGebraCAS. Note: this method should
-	 * be called from a background task.
-	 */
-	public void initCAS() {	
-		// init CAS, do this first as we need it in applets				
-		kernel.getGeoGebraCAS();						
-		// speeds up later evaluation
-		kernel.evaluateMathPiper("Simplify(1+1)");
-	}
-	
-
 	public void setUnsaved() {
 		isSaved = false;
 	}
