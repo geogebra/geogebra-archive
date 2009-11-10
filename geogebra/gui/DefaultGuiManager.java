@@ -1739,33 +1739,38 @@ public class DefaultGuiManager implements GuiManager {
 	
 	public boolean loadURL(String urlString) {
 		
-		// special case: urlString is actually a bas64 encoded ggb file
+		boolean success = true;
+		app.setWaitCursor();
+		
+		// special case: urlString is actually a base64 encoded ggb file
 		if (urlString.startsWith("UEs")) {
 			// decode Base64
 			byte[] zipFile;
 			try {
 				zipFile = geogebra.util.Base64.decode(urlString);
 				// load file
-				return app.loadXML(zipFile);   
+				success = app.loadXML(zipFile);   
 			} catch (IOException e) {
 				app.setDefaultCursor();
 				app.showError(app.getError("LoadFileFailed"));
 				e.printStackTrace();
 				return false;
-			}
-
+			}			
+		} else {	
 			
+			try {
+				URL url = new URL(urlString);
+				success = loadBase64(url.openStream(), urlString);
+			} catch (IOException e) {
+				app.setDefaultCursor();
+				app.showError(app.getError("LoadFileFailed") + ":\n" + urlString);
+				e.printStackTrace();
+				return false;
+			}
 		}
 		
-		try {
-			URL url = new URL(urlString);
-			return loadBase64(url.openStream(), urlString);
-		} catch (IOException e) {
-			app.setDefaultCursor();
-			app.showError(app.getError("LoadFileFailed") + ":\n" + urlString);
-			e.printStackTrace();
-			return false;
-		}
+		app.setDefaultCursor();
+		return success;
 	}
 	
 	public boolean loadBase64(InputStream fis, String source) throws IOException {

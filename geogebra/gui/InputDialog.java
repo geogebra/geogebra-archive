@@ -49,7 +49,9 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected String inputText = null;
 	protected InputPanel inputPanel;	
 	protected JButton btApply, btCancel, btProperties, btOK;
-	private JPanel optionPane, buttonsPanel, btPanel, btPanel2;
+	protected JPanel optionPane;
+
+	private JPanel buttonsPanel, btPanel, btPanel2;
 	protected GeoElementSelectionListener sl;
 	protected JLabel msgLabel; 
 		

@@ -7,6 +7,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
@@ -14,8 +15,25 @@ public class InputDialogOpenURL extends InputDialog{
 	
 	
 	public InputDialogOpenURL(Application app) {
-		super(app, app.getPlain("EnterURL"), app.getMenu("LoadURL"), "", false, null);
+		super(app.getFrame(), false);
+		this.app = app;	
 		
+		initString = "http://";
+
+		createGUI(app.getMenu("LoadURL"), app.getPlain("EnterURL"), false, DEFAULT_COLUMNS, 1, false, false, true, false, false, false);
+		optionPane.add(inputPanel, BorderLayout.CENTER);		
+		centerOnScreen();
+		
+		inputPanel.selectText();
+		
+	}
+
+	public void setLabels(String title) {
+		setTitle(title);
+		
+		btOK.setText(app.getPlain("Open"));
+		btCancel.setText(app.getPlain("Cancel"));
+
 	}
 
 	/**
@@ -40,7 +58,6 @@ public class InputDialogOpenURL extends InputDialog{
 	
 	private boolean processInput() {
 		
-
 			return app.getGuiManager().loadURL(inputPanel.getText());
 		
 	}
