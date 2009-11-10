@@ -30,6 +30,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
@@ -158,11 +161,33 @@ public class WorksheetExportDialog extends JDialog {
 				runner.start();
 			}
 		});
+		
+		JButton clipboardButton = new JButton(app.getMenu("Clipboard"));
+		clipboardButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {				
+				Thread runner = new Thread() {
+					public void run() {
+						setVisible(false);
+						if (kernelChanged)
+							app.storeUndoInfo();
+						
+						Toolkit toolkit = Toolkit.getDefaultToolkit();
+						Clipboard clipboard = toolkit.getSystemClipboard();
+						StringSelection stringSelection = new StringSelection(getHTML(null));
+						clipboard.setContents(stringSelection, null);
+
+					}
+				};
+				runner.start();
+			}
+		});
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		buttonPanel.add(Box.createHorizontalGlue());
 		buttonPanel.add(exportButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+		buttonPanel.add(clipboardButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 		buttonPanel.add(cancelButton);
 		
