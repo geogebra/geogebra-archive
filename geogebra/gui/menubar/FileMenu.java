@@ -31,6 +31,7 @@ class FileMenu extends BaseMenu {
 		saveAction,
 		saveAsAction,
 		loadAction,
+		loadURLAction,
 		exportWorksheet,
 		exportGraphicAction,
 		exportPgfAction,
@@ -69,6 +70,7 @@ class FileMenu extends BaseMenu {
 
 		mi = add(loadAction);
 		setMenuShortCutAccelerator(mi, 'O'); // open
+		mi = add(loadURLAction);
 		addSeparator();
 		mi = add(saveAction);
 		setMenuShortCutAccelerator(mi, 'S');
@@ -252,6 +254,15 @@ class FileMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().openFile();
+			}
+		};
+
+		loadURLAction = new AbstractAction(app.getMenu("LoadURL") + " ...", app
+				.getImageIcon("document-open.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.getGuiManager().openURL();
 			}
 		};
 

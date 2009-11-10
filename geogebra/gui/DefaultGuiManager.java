@@ -1537,7 +1537,11 @@ public class DefaultGuiManager implements GuiManager {
 					fileName.substring(0, dotPos));
 	}
 
-	
+	public void openURL() {
+		InputDialog id = new InputDialogOpenURL(app);
+		id.setVisible(true);
+		
+	}
 
 	public void openFile() {
 		
@@ -1732,6 +1736,94 @@ public class DefaultGuiManager implements GuiManager {
         return success;
         
     }
+	
+	public boolean loadURL(String urlString) {
+		
+		// special case: urlString is actually a bas64 encoded ggb file
+		if (urlString.startsWith("UEs")) {
+			// decode Base64
+			byte[] zipFile;
+			try {
+				zipFile = geogebra.util.Base64.decode(urlString);
+				// load file
+				return app.loadXML(zipFile);   
+			} catch (IOException e) {
+				app.setDefaultCursor();
+				app.showError(app.getError("LoadFileFailed"));
+				e.printStackTrace();
+				return false;
+			}
+
+			
+		}
+		
+		try {
+			URL url = new URL(urlString);
+			return loadBase64(url.openStream(), urlString);
+		} catch (IOException e) {
+			app.setDefaultCursor();
+			app.showError(app.getError("LoadFileFailed") + ":\n" + urlString);
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean loadBase64(InputStream fis, String source) throws IOException {
+
+		BufferedReader myInput = new BufferedReader
+		(new InputStreamReader(fis));
+
+		StringBuffer sb = new StringBuffer();
+
+		String thisLine;
+
+		boolean started = false;
+
+		while ((thisLine = myInput.readLine()) != null)  {
+
+			// don't start reading until ggbBase64 tag
+			if (!started && thisLine.indexOf("ggbBase64") > -1) started = true;
+
+			if (started) {
+				sb.append(thisLine);
+
+				if (thisLine.indexOf("</applet>") > -1) break;
+			}
+
+
+
+		}
+
+		String fileArgument = sb.toString();
+
+		String matchString = "name=\"ggbBase64\" value=\"";
+
+		int start = fileArgument.indexOf(matchString);
+		int end   = fileArgument.indexOf("\"/>");
+
+		// check for two <param> tags on the same line
+		if (start > end) {
+			fileArgument = fileArgument.substring(start);
+			start = 0;
+			end   = fileArgument.indexOf("\"/>");
+		}
+		
+		if (start < 0 || end < 0 || end <= start) {
+			app.setDefaultCursor();
+			app.showError(app.getError("LoadFileFailed") + ":\n" + source);
+			return false;
+		}
+
+		//Application.debug(fileArgument.substring(start, end));
+
+		// decode Base64
+		byte[] zipFile = geogebra.util.Base64.decode(fileArgument
+				.substring(matchString.length() + start, end));
+
+		// load file
+		return app.loadXML(zipFile);   
+
+	}
     
     	/*
 	 * loads an html file with <param name="ggbBase64" value="UEsDBBQACAAI...
@@ -1756,58 +1848,8 @@ public class DefaultGuiManager implements GuiManager {
 		try {
 			FileInputStream fis = null;
 			fis = new FileInputStream(file);
-			BufferedReader myInput = new BufferedReader
-			(new InputStreamReader(fis));
-
-			StringBuffer sb = new StringBuffer();
-
-			String thisLine;
-
-			boolean started = false;
-
-			while ((thisLine = myInput.readLine()) != null)  {
-
-				// don't start reading until ggbBase64 tag
-				if (!started && thisLine.indexOf("ggbBase64") > -1) started = true;
-
-				if (started) {
-					sb.append(thisLine);
-
-					if (thisLine.indexOf("</applet>") > -1) break;
-				}
-
-
-
-			}
-
-			String fileArgument = sb.toString();
-
-			String matchString = "name=\"ggbBase64\" value=\"";
-
-			int start = fileArgument.indexOf(matchString);
-			int end   = fileArgument.indexOf("\"/>");
-
-			// check for two <param> tags on the same line
-			if (start > end) {
-				fileArgument = fileArgument.substring(start);
-				start = 0;
-				end   = fileArgument.indexOf("\"/>");
-			}
+			success = loadBase64(fis, file.toString());		
 			
-			if (start < 0 || end < 0 || end <= start) {
-				app.setDefaultCursor();
-				app.showError(app.getError("LoadFileFailed") + ":\n" + file);
-				return false;
-			}
-
-			//Application.debug(fileArgument.substring(start, end));
-
-			// decode Base64
-			byte[] zipFile = geogebra.util.Base64.decode(fileArgument
-					.substring(matchString.length() + start, end));
-
-			// load file
-			success = app.loadXML(zipFile);   
 		} catch (Exception e) {
 			app.setDefaultCursor();
 			app.showError(app.getError("LoadFileFailed") + ":\n" + file);

@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -253,6 +254,7 @@ public interface GuiManager {
 
 
 	public void openFile() ;
+	public void openURL() ;
 	public void doOpenFiles(File[] files,
 			boolean allowOpeningInThisInstance) ;
 
@@ -351,6 +353,8 @@ public interface GuiManager {
 
 		public void showNumberInputDialogRegularPolygon(String menu,
 				GeoPoint geoPoint, GeoPoint geoPoint2);
+
+		public boolean loadURL(String text);
 
 				 
 
