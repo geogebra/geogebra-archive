@@ -24,7 +24,7 @@ public class MyComboBox extends JComboBox implements PopupMenuListener {
 	 * in order to keep the correct width of the popup menu.
 	 */
 	public void setPrototypeDisplayValue(String str) {
-		popupWidth = getPreferredSize().width;
+		popupWidth = getPreferredSize().width + 10;
 		super.setPrototypeDisplayValue(str);
 	}
 
