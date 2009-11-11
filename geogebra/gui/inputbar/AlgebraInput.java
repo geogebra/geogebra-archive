@@ -197,8 +197,9 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			cmdCB.removeActionListener(listeners[i]);
 		
 		if (cmdCB.getItemCount() > 0) cmdCB.removeAllItems();		
-		cmdCB.addItem(app.getCommand("Command") + " ...");		
-		
+		String commandString = app.getCommand("Command") + " ...";
+		cmdCB.addItem(commandString);	
+		cmdCB.setPrototypeDisplayValue(commandString);		
 		
 		Iterator<?> it = dict.getLowerCaseIterator();
 		while (it.hasNext()) {
@@ -225,7 +226,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		if (source == cmdCB) { 			
 			if (cmdCB.getSelectedIndex() != 0) { // not title
 				insertCommand((String) cmdCB.getSelectedItem());				
-				cmdCB.setSelectedIndex(0);
+				//cmdCB.setSelectedIndex(0);
 			}					
 		}			
 	}

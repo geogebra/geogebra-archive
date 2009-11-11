@@ -122,7 +122,9 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		
 		if (initText != null) textComponent.setText(initText);		
 		cbSpecialChars = new JComboBox();
+		cbSpecialChars.setPrototypeDisplayValue("W");
 		cbGreekLetters  = new JComboBox();	
+		cbGreekLetters.setPrototypeDisplayValue("W");
 		
 		// make sure we use a font that can display special characters
 		cbSpecialChars.setFont(app.getFontCanDisplay(Kernel.EULER_STRING));
@@ -216,7 +218,10 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		
 		public void doActionPerformed(Object source) {			
 			if (source == cbSpecialChars) {				
-				insertString(cbSpecialChars.getSelectedItem().toString());								
+				String str = cbSpecialChars.getSelectedItem().toString();
+				insertString(str);	
+				if (str.length() > 1)
+					cbSpecialChars.setSelectedIndex(0);
 			}
 			else if (source == cbGreekLetters) {
 				insertString(cbGreekLetters.getSelectedItem().toString());		
