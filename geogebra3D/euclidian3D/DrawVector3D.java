@@ -48,6 +48,12 @@ public class DrawVector3D extends Drawable3DCurves {
 
 	
 
-
+	protected void updateForItSelf(){
+		
+	}
+	
+	protected void updateForView(){
+		
+	}
 
 }

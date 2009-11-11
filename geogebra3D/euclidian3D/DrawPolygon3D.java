@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.euclidian.Previewable;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPolygon3D;
@@ -16,14 +17,27 @@ import java.util.Iterator;
 
 
 
+
+
 public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
+	/** gl index of the polygon */
+	private int polygonIndex;
+	
+	private Renderer renderer;
 	
 	
-	public DrawPolygon3D(EuclidianView3D a_view3D, GeoPolygon3D a_polygon3D){
+	public DrawPolygon3D(EuclidianView3D a_view3D, GeoPolygon3D a_polygon3D, Renderer renderer){
 		
 		super(a_view3D, a_polygon3D);
+		
+		
+		this.renderer = renderer;
+		
+		
+
+		
 	}
 	
 
@@ -34,8 +48,10 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 		
 		
+		
 		renderer.setLayer(getGeoElement().getLayer());
 
+		/*
 		renderer.startPolygonAndInitMatrix();
 		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
 
@@ -46,6 +62,9 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		}
 
 		renderer.endPolygonAndResetMatrix();
+		*/
+		
+		renderer.drawPolygon(polygonIndex);
 		
 		renderer.setLayer(0);
 			
@@ -80,6 +99,46 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 	
 	
+	
+	protected void updateForItSelf(){
+		
+		super.updateForItSelf();
+		
+		/*
+		if (renderer == null)
+			return;
+			*/
+		
+		renderer.removePolygon(polygonIndex);
+		
+		//creates the polygon
+		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
+		
+		Ggb3DVector v = polygon.getNormal();
+		int index = renderer.startPolygon((float) v.get(1),(float) v.get(2),(float) v.get(3));
+		
+		// if index==0, no polygon have been created
+		if (index==0)
+			return;
+		
+		polygonIndex = index;
+		
+		//Application.debug("polygonIndex = "+polygonIndex);
+		
+		//Application.debug("normal\n"+v.toString());
+				
+		for(int i=0;i<polygon.getNumPoints();i++){
+			v = polygon.getPoint3D(i);
+			//Application.debug("point["+i+"]\n"+v.toString());
+			//renderer.addToPolygon(polygon.getPointX(i), polygon.getPointY(i));
+			renderer.addToPolygon(v.get(1),v.get(2),v.get(3));
+		}
+		
+		renderer.endPolygon();
+		
+	}
+	
+
 	
 	
 	

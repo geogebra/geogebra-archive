@@ -132,6 +132,12 @@ public abstract class Drawable3D {
 	/** view3D */
 	private EuclidianView3D m_view3D; 
 	
+	/** says if it has to be updated */
+	private boolean waitForUpdate;
+	
+	/** says if it has to be updated caused by the 3D view*/
+	private boolean viewChanged;
+	
 	/** matrix for openGL display */
 	//private Ggb3DMatrix4x4 m_matrix = new Ggb3DMatrix4x4();
 	
@@ -198,7 +204,8 @@ public abstract class Drawable3D {
 		this(a_view3D);
 		setGeoElement(a_geo);
 		
-		update();
+		waitForUpdate = true;
+		viewChanged = true;
 	}
 	
 	
@@ -215,28 +222,43 @@ public abstract class Drawable3D {
 	
 
 	/** update this according to the {@link GeoElement3D} 
-	 * @return true if it has been updated*/
-	public boolean update(){
-		//verify if object is visible for drawing     				 
-		//if (!isVisible()) return false;
-		
-		
-		//setLabelVisible(getGeoElement().isLabelVisible());  //TODO label  	
-		
+	 *
+	 */
+	final public void update(){
 
-		//update the matrix of the drawable for the renderer to draw it
-		//setMatrix(((GeoElement3DInterface) getGeoElement()).getDrawingMatrix());
+		if (waitForUpdate){
+			updateForItSelf();
+			waitForUpdate = false;
+		}
 		
-		//update the label drawing matrix - TODO create a labelMatrix for GeoElement3D
-		//labelMatrix.set(getMatrix().getColumn(4),4);
+		if (viewChanged){
+			updateForView();
+			viewChanged = false;
+		}
 		
-		return true;
-
+	}
+	
+	abstract protected void updateForView();
+	
+	abstract protected void updateForItSelf();
+	
+	
+	/**
+	 * says that it has to be updated
+	 */
+	public void setWaitForUpdate(){
+		
+		waitForUpdate = true;
 	}
 	
 	
-	
-	
+	/**
+	 * says that the view has changed
+	 */
+	public void viewChanged(){
+		
+		viewChanged = true;
+	}
 	
 	
 	

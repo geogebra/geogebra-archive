@@ -120,12 +120,28 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 
 	 /**
 	  * Returns the i-th 2D point of this polygon.
-	  * Note that this array may change dynamically.
 	  * @param i number of point
 	  * @return the i-th point
 	  */
 	 public GeoPoint getPoint(int i) {
 		 return (GeoPoint) points2D[i];
+	 }
+	 
+	 /**
+	  * Returns the i-th 3D point of this polygon.
+	  * @param i number of point
+	  * @return the i-th point
+	  */	 
+	 public Ggb3DVector getPoint3D(int i){
+		 return coordSys.getPoint(getPointX(i), getPointY(i));
+	 }
+	 
+	 
+	 /** return the normal of the polygon's plane
+	 * @return the normal of the polygon's plane
+	 */
+	public Ggb3DVector getNormal(){
+		 return coordSys.getMatrix4x4().getVz();
 	 }
 	 
 

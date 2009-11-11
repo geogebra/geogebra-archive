@@ -80,10 +80,7 @@ public class DrawConic3D extends Drawable3DCurves {
 
 	
 	
-	public boolean update(){
-		
-		if (!super.update())
-			return false;
+	protected void updateForItSelf(){
 		
 		
 		GeoConic3D conic = (GeoConic3D) getGeoElement();
@@ -99,10 +96,13 @@ public class DrawConic3D extends Drawable3DCurves {
 			break;
 		
 		}
-		
-		return true;
+
 	}
 	
+	
+	protected void updateForView(){
+		
+	}
 	
 	
 	

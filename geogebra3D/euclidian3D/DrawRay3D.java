@@ -16,9 +16,7 @@ public class DrawRay3D extends DrawCoordSys1D {
 	
 	
 	
-	public boolean update(){
-		if (!super.update())
-			return false;
+	protected void updateForView(){
 		
 		Ggb3DVector o = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getOrigin());
 		Ggb3DVector v = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getVx());
@@ -30,7 +28,7 @@ public class DrawRay3D extends DrawCoordSys1D {
 		
 		setDrawMinMax(minmax[0], minmax[1]);
 		
-		return true;
+		
 	}
 	
 	

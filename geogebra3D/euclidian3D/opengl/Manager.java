@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
 
 /**
  * Class that manage all geometry objects
@@ -17,6 +18,7 @@ abstract public class Manager {
 	
 	// GL 
 	protected GL gl;
+	protected GLU glu;
 
 	
 	
@@ -35,10 +37,12 @@ abstract public class Manager {
 	
 	/** create a manager for geometries
 	 * @param gl 
+	 * @param glu 
 	 */
-	public Manager(GL gl){
+	public Manager(GL gl, GLU glu){
 		
 		this.gl = gl;
+		this.glu = glu;
 		
 		
 		// creating geometries
@@ -82,6 +86,24 @@ abstract public class Manager {
 	 */
 	abstract public void endGeometry(Geometry geometry);
 
+
+	
+	
+	abstract public int startPolygon(float nx, float ny, float nz);
+
+	
+	abstract public void endPolygon();
+	
+	abstract public void removePolygon(int index);
+
+	
+	
+	
+	
+	
+	/////////////////////////////////////////////
+	// DRAWING METHODS
+	/////////////////////////////////////////////
 
 	
 	
@@ -131,6 +153,18 @@ abstract public class Manager {
 	 * 
 	 */
 	abstract protected void color(float r, float g, float b);
+	
+	
+	
+	/////////////////////////////////////////////
+	// POLYGONS DRAWING METHODS
+	/////////////////////////////////////////////
+
+	
+	abstract public void addVertexToPolygon(double x, double y, double z);
+	
+	abstract public void drawPolygon(int index);
+
 
 	
 	

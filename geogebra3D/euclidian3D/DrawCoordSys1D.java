@@ -69,6 +69,10 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 
 	
 	
+	protected void updateForItSelf(){
+		
+	}
+	
 	
 	
 	

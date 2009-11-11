@@ -91,6 +91,14 @@ public class DrawList3D {
 		
 	}
 	
+	/** says all 3D objects that view has changed */
+	public void viewChanged(){
+		
+		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
+			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
+				d.next().viewChanged();		
+		
+	}
 	
 	
 

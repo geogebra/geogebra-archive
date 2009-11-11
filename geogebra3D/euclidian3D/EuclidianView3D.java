@@ -36,6 +36,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.media.opengl.GLCanvas;
 import javax.swing.JPanel;
@@ -68,8 +69,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private boolean waitForUpdate = true; //says if it waits for update...
 	//public boolean waitForPick = false; //says if it waits for update...
 	private boolean removeHighlighting = false; //for removing highlighting when mouse is clicked
-	DrawList3D drawList3D;// = new DrawList3D();
-	
+	private DrawList3D drawList3D;// = new DrawList3D();
 	
 	//matrix for changing coordinate system
 	private Ggb3DMatrix4x4 m = Ggb3DMatrix4x4.Identity(); 
@@ -292,7 +292,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				
 
 				case GeoElement3D.GEO_CLASS_POLYGON3D:
-					d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
+					d = new DrawPolygon3D(this, (GeoPolygon3D) geo, renderer);
 					break;									
 				
 
@@ -535,7 +535,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void update(){
 		
 		if (waitForUpdate){
-			drawList3D.updateAll();
+			//drawList3D.updateAll();
+			drawList3D.viewChanged();
 			updateDrawables();
 			waitForUpdate = false;
 		}
@@ -697,10 +698,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		if (geo.isGeoElement3D()){
 			Drawable3D d = ((GeoElement3DInterface) geo).getDrawable3D();
 			if (d!=null){
-				((GeoElement3DInterface) geo).getDrawable3D().update();
+				update(((GeoElement3DInterface) geo).getDrawable3D());
+				//((GeoElement3DInterface) geo).getDrawable3D().update();
 				//repaintView();
 			}
 		}
+	}
+	
+	public void update(Drawable3D d){
+		d.setWaitForUpdate();
 	}
 
 	public void updateAuxiliaryObject(GeoElement geo) {
@@ -1831,8 +1837,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	public void updateDrawables(){
-		for(int i=0;i<3;i++)
+		
+		xOyPlane.getDrawable3D().viewChanged();
+		xOyPlane.getDrawable3D().update();
+		for(int i=0;i<3;i++){
+			axis[i].getDrawable3D().viewChanged();
 			axis[i].getDrawable3D().update();
+		}
 	}
 	
 	

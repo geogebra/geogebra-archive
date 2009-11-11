@@ -298,9 +298,9 @@ public class Renderer implements GLEventListener {
         
         // update 3D view
         view3D.update();
-        
-        
 
+        // update 3D drawables
+        drawList3D.updateAll();
 
     	
     	
@@ -1186,14 +1186,7 @@ public class Renderer implements GLEventListener {
     	
     }
     
-    /**
-     * set the tesselator to start drawing a new polygon
-     * and inits the matrix
-     */
-    public void startPolygonAndInitMatrix(){
-    	initMatrix();
-    	startPolygon();
-    }  
+   
     
    
     
@@ -1202,10 +1195,13 @@ public class Renderer implements GLEventListener {
      * set the tesselator to start drawing a new polygon
      * @param cullFace says if the faces have to be culled
      */
-    private void startPolygon(){
+    public int startPolygon(float nx, float ny, float nz){
     	
+    	//if (geometryManager!=null)
+    		return geometryManager.startPolygon(nx,ny,nz);
  
-    	
+    	//return 0;
+    	/*
 	    RendererTesselCallBack tessCallback = new RendererTesselCallBack(gl, glu);
 
 	    
@@ -1224,7 +1220,7 @@ public class Renderer implements GLEventListener {
 	    //gl.glShadeModel(GL.GL_SMOOTH);
 	    glu.gluTessBeginPolygon(tobj, null);
 	    glu.gluTessBeginContour(tobj);
-	    
+	    */
 
     }
     
@@ -1246,8 +1242,10 @@ public class Renderer implements GLEventListener {
      * @param z z-coordinate
      */
     public void addToPolygon(double x, double y, double z){
-    	double[] point = {x,y,z};//new double
-    	glu.gluTessVertex(tobj, point, 0, point);
+    	//double[] point = {x,y,z};//new double
+    	//glu.gluTessVertex(tobj, point, 0, point);
+    	//if (geometryManager!=null)
+    		geometryManager.addVertexToPolygon(x, y, z);
     }    
     
     
@@ -1257,25 +1255,31 @@ public class Renderer implements GLEventListener {
      * end of the current polygon
      * @param cullFace says if the faces have been culled
      */
-    private void endPolygon(){
+    public void endPolygon(){
+    	
+    	/*
 	    glu.gluTessEndContour(tobj);
 	    glu.gluTessEndPolygon(tobj);
 	    
 	    glu.gluDeleteTess(tobj);
+	    */
+    	//if (geometryManager!=null)
+    		geometryManager.endPolygon();
         
 	
     }
     
-    /**
-     * end of the current polygon
-     * and reset the matrix
-     */
-    public void endPolygonAndResetMatrix(){
-
-    	endPolygon();
-    	resetMatrix(); 
-    }
     
+    public void removePolygon(int index){
+    	if (geometryManager!=null)
+    		geometryManager.removePolygon(index);
+    }
+   
+    
+    
+    public void drawPolygon(int index){
+    	geometryManager.drawPolygon(index);
+    }
     
     /**
      * draw a circle with center (x,y) and radius R
@@ -1441,29 +1445,6 @@ public class Renderer implements GLEventListener {
     	} 
     	gl.glEnd();  
     }
-    
-    private void drawDisc(double radius, int latitude){
-     	
-    	gl.glScaled(1, radius, radius);
-
-    	float dt = (float) 1/latitude;
-    	float da = (float) (2*Math.PI *dt) ; 
-    	
-    	startPolygon();
-    	
-    	
-    	for( int i = 0; i < latitude ; i++ ) { 
-    		float y = (float) Math.cos ( i * da ); 
-    		float z = (float) Math.sin ( i * da ); 
-
-    		addToPolygon(0, y, z);
-    		
-    	} 
-    	
-    	endPolygon();
-    	 
-    }
-    
     
     
    
@@ -1830,7 +1811,7 @@ public class Renderer implements GLEventListener {
         
         //TODO use gl lists / VBOs
         //geometryManager = new GeometryManager(gl,GeometryManager.TYPE_DIRECT);
-        geometryManager = new ManagerGLList(gl);
+        geometryManager = new ManagerGLList(gl,glu);
         
         
         

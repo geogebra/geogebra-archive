@@ -61,6 +61,17 @@ public class DrawPoint3D extends Drawable3DCurves implements Previewable{
 	}	
 	
 
+	protected void updateForItSelf(){
+		
+
+		
+	}
+	
+	protected void updateForView(){
+		
+	}
+	
+	
 	
 	
 	public int getPickOrder(){
