@@ -5209,11 +5209,25 @@ public class Kernel {
 		return true;
 	}
 
+	final public boolean isInteger(double x) {
+		if (x > 1E17)
+			return true;
+		else
+			return isEqual(x, Math.round(x));		
+	}
+
 	/**
-	 * Returns whether x is equal to y	 	 
+	 * Returns whether x is equal to y	 
+	 * infinity == infinity returns true eg 1/0	 
+	 * -infinity == infinity returns false	 eg -1/0
+	 * -infinity == -infinity returns true
+	 * undefined == undefined returns false eg 0/0	 
 	 */
 	final public boolean isEqual(double x, double y) {	
-		return x - EPSILON < y && y < x + EPSILON;
+		if (x == y) // handles infinity and NaN cases
+			return true;
+		else
+			return x - EPSILON <= y && y <= x + EPSILON;
 	}
 	
 	public static boolean isEqual(double x, double y, double eps) {		
@@ -5242,10 +5256,6 @@ public class Kernel {
 				return false;
 		}
 		return true;
-	}
-	
-	final public boolean isInteger(double x) {
-		return isEqual(x, Math.round(x));		
 	}
 	
     final public double convertToAngleValue(double val) {
