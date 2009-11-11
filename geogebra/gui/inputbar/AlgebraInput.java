@@ -30,7 +30,6 @@ import java.awt.event.MouseListener;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -44,7 +43,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
 	private JLabel inputLabel, helpIcon;
  	
-	private JComboBox cmdCB; // for command list
+	private MyComboBox cmdCB; // for command list
 	
 	// autocompletion text field
 	private AutoCompleteTextField inputField;	
@@ -73,7 +72,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.addKeyListener(this);
 		
 		// set up command combo box
-		cmdCB = new JComboBox();
+		cmdCB = new MyComboBox();
 		if (app.showCmdList()) {
 			cmdCB.setMaximumSize(new Dimension(200, 200));
 			// set to approx half screen height
@@ -198,8 +197,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		
 		if (cmdCB.getItemCount() > 0) cmdCB.removeAllItems();		
 		String commandString = app.getCommand("Command") + " ...";
-		cmdCB.addItem(commandString);	
-		cmdCB.setPrototypeDisplayValue(commandString);		
+		cmdCB.addItem(commandString);		
 		
 		Iterator<?> it = dict.getLowerCaseIterator();
 		while (it.hasNext()) {
@@ -208,6 +206,9 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			if (cmdName != null && cmdName.length() > 0)
 				cmdCB.addItem(cmdName);
 		}	 
+		
+		// set width of combo box to fit "Command ..."
+		cmdCB.setPrototypeDisplayValue(commandString);
 				
 		for (int i=0; i < listeners.length; i++) 
 			cmdCB.addActionListener(listeners[i]);

@@ -2,6 +2,7 @@ package geogebra.gui.view.algebra;
 
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.inputbar.MyComboBox;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -100,7 +101,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	};
 	
 	private JTextComponent textComponent;	
-	private JComboBox cbSpecialChars, cbGreekLetters;
+	private MyComboBox cbSpecialChars, cbGreekLetters;
 	
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
 		this(initText, app, 1, columns, true, true, false);
@@ -121,10 +122,8 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		textComponent.addFocusListener(this);
 		
 		if (initText != null) textComponent.setText(initText);		
-		cbSpecialChars = new JComboBox();
-		cbSpecialChars.setPrototypeDisplayValue("W");
-		cbGreekLetters  = new JComboBox();	
-		cbGreekLetters.setPrototypeDisplayValue("W");
+		cbSpecialChars = new MyComboBox();
+		cbGreekLetters  = new MyComboBox();
 		
 		// make sure we use a font that can display special characters
 		cbSpecialChars.setFont(app.getFontCanDisplay(Kernel.EULER_STRING));
@@ -150,6 +149,10 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		for (int i=0; i < greekUpperCase.length; i++) {
 			cbGreekLetters.addItem(greekUpperCase[i]);
 		}
+		
+		// set widths of combo boxes
+		cbSpecialChars.setPrototypeDisplayValue("W");
+		cbGreekLetters.setPrototypeDisplayValue("W");
 		
 		ComboBoxListener cbl = new ComboBoxListener();
 		cbSpecialChars.addActionListener(cbl);			
