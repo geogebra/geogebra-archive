@@ -10,17 +10,17 @@ public class GeometryCylinder extends Geometry {
 	
 	
 
-	public GeometryCylinder(GeometryRenderer geometryRenderer, boolean hasTexture) {
-		super(geometryRenderer,NORMAL_ON,hasTexture,COLOR_OFF);
+	public GeometryCylinder(Manager manager, boolean hasTexture) {
+		super(manager,NORMAL_ON,hasTexture,COLOR_OFF);
 	}
 
 	public void init() {
 		
-		geometryRenderer.preInit(this);
+		manager.preInit(this);
 		
-		geometryRenderer.startGeometry(this);
+		manager.startGeometry(this);
 		cylinder(8,LINE3D_THICKNESS);
-		geometryRenderer.endGeometry(this);
+		manager.endGeometry(this);
 
 	
 	}

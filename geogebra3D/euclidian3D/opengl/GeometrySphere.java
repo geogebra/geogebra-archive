@@ -11,17 +11,17 @@ public class GeometrySphere extends Geometry {
 
 	
 
-	public GeometrySphere(GeometryRenderer geometryRenderer, boolean hasTexture) {
-		super(geometryRenderer,NORMAL_ON,hasTexture,COLOR_OFF);
+	public GeometrySphere(Manager manager, boolean hasTexture) {
+		super(manager,NORMAL_ON,hasTexture,COLOR_OFF);
 	}
 
 	public void init() {
 		
-		geometryRenderer.preInit(this);
+		manager.preInit(this);
 		
-		geometryRenderer.startGeometry(this);
+		manager.startGeometry(this);
 		sphere(8,8,POINT3D_RADIUS);
-		geometryRenderer.endGeometry(this);
+		manager.endGeometry(this);
 
 	
 	}

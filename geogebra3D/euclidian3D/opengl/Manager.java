@@ -3,29 +3,59 @@ package geogebra3D.euclidian3D.opengl;
 import javax.media.opengl.GL;
 
 /**
- * Class that render a geometry, implemented for direct mode, glList mode, VBO mode
+ * Class that manage all geometry objects
  * 
  * @author ggb3D
  *
  */
-
-
-public abstract class GeometryRenderer {
+abstract public class Manager {
 	
+	/** direct rendering */
+	static final int TYPE_GLLIST = 1;
+	
+	
+	
+	// GL 
 	protected GL gl;
+
 	
-	/**
-	 * creates the geometryRenderer, linked to the GL
-	 * @param gl
+	
+	
+	/** geometry : point */
+	public GeometrySphere point;
+	/** geometry : cylinder */
+	public GeometryCylinder cylinder;
+	/** geometry : cone */
+	public GeometryCone cone;
+	/** geometry : cursor */
+	public GeometryCursor cursor;
+	/** geometry : plane */
+	public GeometryPlane plane;
+	
+	
+	/** create a manager for geometries
+	 * @param gl 
 	 */
-	public GeometryRenderer(GL gl){
+	public Manager(GL gl){
 		
 		this.gl = gl;
+		
+		
+		// creating geometries
+		point = new GeometrySphere(this,false);
+		cylinder = new GeometryCylinder(this,true);
+		cone = new GeometryCone(this,true);
+		cursor = new GeometryCursor(this);
+		plane = new GeometryPlane(this);
+		
 		
 	}
 	
 	
 	
+	/////////////////////////////////////////////
+	// GEOMETRY METHODS
+	/////////////////////////////////////////////
 	
 	
 	/** method used at start of Geometry.init() method
@@ -39,6 +69,8 @@ public abstract class GeometryRenderer {
 	 * @param index index of the new geometry
 	 */
 	abstract public void startGeometry(Geometry geometry, int index);
+	
+	
 	
 	public void startGeometry(Geometry geometry){
 		startGeometry(geometry, 0);
@@ -102,4 +134,5 @@ public abstract class GeometryRenderer {
 
 	
 	
+
 }

@@ -11,18 +11,18 @@ public class GeometryCone extends Geometry {
 
 	
 
-	public GeometryCone(GeometryRenderer geometryRenderer, boolean hasTexture) {
-		super(geometryRenderer,NORMAL_ON,hasTexture,COLOR_OFF);
+	public GeometryCone(Manager manager, boolean hasTexture) {
+		super(manager,NORMAL_ON,hasTexture,COLOR_OFF);
 	}
 
 	public void init() {
 		
-		geometryRenderer.preInit(this);
+		manager.preInit(this);
 		
 		
-		geometryRenderer.startGeometry(this);
+		manager.startGeometry(this);
 		cone(8,LINE3D_THICKNESS);
-		geometryRenderer.endGeometry(this);
+		manager.endGeometry(this);
 		
 		
 	}

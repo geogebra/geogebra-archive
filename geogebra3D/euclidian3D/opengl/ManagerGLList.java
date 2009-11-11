@@ -2,29 +2,27 @@ package geogebra3D.euclidian3D.opengl;
 
 import javax.media.opengl.GL;
 
+
 /**
  * 
- * Renderer that redraws all primitives each time
+ * Manager using GL lists
  * 
  * @author ggb3D
  *
  */
 
+public class ManagerGLList extends Manager {
 
-public class GeometryRendererGLList extends GeometryRenderer {
-	
 
-	
-	/**
-	 * creates the direct geometryRenderer, linked to the GL
+
+	/** common constructor
 	 * @param gl
 	 */
-	public GeometryRendererGLList(GL gl) {
+	public ManagerGLList(GL gl) {
 		super(gl);
 	}
 
-	
-	
+
 	public void preInit(Geometry geometry){
 		
 		int index = gl.glGenLists(geometry.getNb());

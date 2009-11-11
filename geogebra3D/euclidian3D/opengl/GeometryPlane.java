@@ -11,15 +11,15 @@ public class GeometryPlane extends Geometry {
 
 	
 
-	public GeometryPlane(GeometryRenderer geometryRenderer) {
-		super(geometryRenderer,NORMAL_ON,TEXTURE_OFF,COLOR_OFF);
+	public GeometryPlane(Manager manager) {
+		super(manager,NORMAL_ON,TEXTURE_OFF,COLOR_OFF);
 	}
 
 	public void init() {
 		
-		geometryRenderer.preInit(this);
+		manager.preInit(this);
 		
-		geometryRenderer.startGeometry(this);
+		manager.startGeometry(this);
 
 		float size = 2.25f;
 		vertex(size, size, 0);
@@ -29,7 +29,7 @@ public class GeometryPlane extends Geometry {
 
 
 		
-		geometryRenderer.endGeometry(this);
+		manager.endGeometry(this);
 
 	
 	}

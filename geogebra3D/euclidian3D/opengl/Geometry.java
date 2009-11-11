@@ -18,7 +18,7 @@ public abstract class Geometry {
 
 	
 	/**  geometryRenderer that draws the geometry */
-	protected GeometryRenderer geometryRenderer;
+	protected Manager manager;
 	
 	
 	
@@ -35,8 +35,6 @@ public abstract class Geometry {
 	
 	
 	
-	/** texture-normal-vertex description used for direct rendering */
-	protected GeometryVertexList tnvList;
 	
 	/** index used for GL Lists */
 	private int glListIndex;
@@ -44,17 +42,17 @@ public abstract class Geometry {
 	
 	/**
 	 * Create the geometry linked to the renderer
-	 * @param geometryRenderer
+	 * @param manager
 	 * @param hasNormal says if there are normals
 	 * @param hasTexture says if there is texture
 	 * @param hasColor says if there are colors
 	 */
-	public Geometry(GeometryRenderer geometryRenderer,
+	public Geometry(Manager manager,
 			boolean hasNormal,
 			boolean hasTexture,
 			boolean hasColor){
 		
-		this.geometryRenderer = geometryRenderer;
+		this.manager = manager;
 		
 		this.hasNormal = hasNormal;
 		this.hasTexture = hasTexture;
@@ -97,14 +95,14 @@ public abstract class Geometry {
 	 */
 	public void draw(){
 		
-		geometryRenderer.draw(this);
+		manager.draw(this);
 	}
 	
 	/**
 	 * calls the goemetryRenderer drawing method with geometry index
 	 */
 	public void draw(int index){
-		geometryRenderer.draw(this,index);
+		manager.draw(this,index);
 	}
 	
 	
@@ -116,7 +114,7 @@ public abstract class Geometry {
 	 * @param z z coord
 	 */
 	protected void vertex(float x, float y, float z){
-		geometryRenderer.vertex(x, y, z);
+		manager.vertex(x, y, z);
 	}
 	
 	
@@ -127,7 +125,7 @@ public abstract class Geometry {
 	 */
 	protected void normal(float x, float y, float z){
 		if (hasNormal)
-			geometryRenderer.normal(x, y, z);
+			manager.normal(x, y, z);
 	}
 	
 	
@@ -137,7 +135,7 @@ public abstract class Geometry {
 	 */
 	protected void texture(float x, float y){
 		if (hasTexture)
-			geometryRenderer.texture(x, y);
+			manager.texture(x, y);
 	}
 
 	
@@ -149,7 +147,7 @@ public abstract class Geometry {
 	 */
 	protected void color(float r, float g, float b){
 		if (hasColor)
-			geometryRenderer.color(r, g, b);
+			manager.color(r, g, b);
 	}
 
 	

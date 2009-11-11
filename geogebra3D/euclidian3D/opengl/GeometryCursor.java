@@ -40,32 +40,32 @@ public class GeometryCursor extends Geometry {
 	/** common constructor
 	 * @param geometryRenderer
 	 */
-	public GeometryCursor(GeometryRenderer geometryRenderer) {
-		super(geometryRenderer,NORMAL_OFF,TEXTURE_OFF,COLOR_ON);
+	public GeometryCursor(Manager manager) {
+		super(manager,NORMAL_OFF,TEXTURE_OFF,COLOR_ON);
 	}
 
 	public void init() {
 		
-		geometryRenderer.preInit(this);
+		manager.preInit(this);
 		
 		
-		geometryRenderer.startGeometry(this, TYPE_CROSS2D);
+		manager.startGeometry(this, TYPE_CROSS2D);
 		cursorCross2D();
-		geometryRenderer.endGeometry(this);
+		manager.endGeometry(this);
 		
-		geometryRenderer.startGeometry(this, TYPE_DIAMOND);
+		manager.startGeometry(this, TYPE_DIAMOND);
 		cursorDiamond();
-		geometryRenderer.endGeometry(this);
+		manager.endGeometry(this);
 		
 		
-		geometryRenderer.startGeometry(this, TYPE_CYLINDER);
+		manager.startGeometry(this, TYPE_CYLINDER);
 		cursorCylinder();
-		geometryRenderer.endGeometry(this);
+		manager.endGeometry(this);
 
 		
-		geometryRenderer.startGeometry(this, TYPE_CROSS3D);
+		manager.startGeometry(this, TYPE_CROSS3D);
 		cursorCross3D();
-		geometryRenderer.endGeometry(this);
+		manager.endGeometry(this);
 		
 		
 	}
