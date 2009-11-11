@@ -20,11 +20,22 @@ public class GeometryCursor extends Geometry {
 	static public int TYPE_CROSS2D = 0;
 	static public int TYPE_DIAMOND = 1;
 	static public int TYPE_CYLINDER = 2;
+	static public int TYPE_CROSS3D = 3;
 	
 	
 	
+	static private float size = 12f;
+	static private float thickness = 1.25f;
+	static private float thickness2 = 1.25f;
+	static private float depth = 1f;
 	
 
+	/*
+	static private float size = 120f;
+	static private float thickness = 12.5f;
+	static private float thickness2 = 12.5f;
+	static private float depth = 10f;
+	*/
 
 	/** common constructor
 	 * @param geometryRenderer
@@ -51,6 +62,12 @@ public class GeometryCursor extends Geometry {
 		cursorCylinder();
 		geometryRenderer.endGeometry(this);
 
+		
+		geometryRenderer.startGeometry(this, TYPE_CROSS3D);
+		cursorCross3D();
+		geometryRenderer.endGeometry(this);
+		
+		
 	}
 	
 	
@@ -59,7 +76,7 @@ public class GeometryCursor extends Geometry {
 	}
 	
 	public int getNb(){
-		return 3;
+		return 4;
 	}
 	
 	
@@ -67,12 +84,13 @@ public class GeometryCursor extends Geometry {
 	// GEOMETRIES
 	//////////////////////////////////
 	
+	
+	
+	
+	
 	private void cursorCross2D(){
 		
-		float size = 12f;
-		float thickness = 1.25f;
-		float thickness2 = 1.25f;
-		float depth = 1f;
+
 
 		
 		//white parts
@@ -111,8 +129,10 @@ public class GeometryCursor extends Geometry {
 		vertex(-size, -thickness, -depth);
 		
 		
+		
 		//black parts
 		color(0,0,0);
+		
 
 		//up and down
 		quadSymxOyRotOz90SymOz(
@@ -160,11 +180,71 @@ public class GeometryCursor extends Geometry {
 		);	
 		
 		
+		
 	}
 	
 	
 	
+	private void cursorCross3D(){
+		
+		
+		cursorCross2D();
+		
+		/*
+		
+		//white parts
+		color(1,1,1);
+		
+		//up and down
+		quadSymxOyRotOz90SymOz(
+				thickness, thickness, depth,
+				thickness, size, depth,
+				-thickness, size, depth,
+				-thickness, thickness, depth
+		);
+		
+		//vertical
+		quadSymxOyRotOz90SymOz(
+				thickness, thickness+thickness2, depth,
+				-thickness, thickness+thickness2, depth,
+				-thickness, thickness+thickness2, depth+size,
+				thickness, thickness+thickness2, depth+size
+		);
+		
+
+		//black parts
+		color(0,0,0);
+		
+		cursorCross();
+		
+		//vertical
+		quadSymxOyRotOz90SymOz(
+				thickness+thickness2, thickness+thickness2, depth,
+				thickness, thickness+thickness2, depth,
+				thickness, thickness+thickness2, depth+size,
+				thickness+thickness2, thickness+thickness2, depth+size
+		);
+		quadSymxOyRotOz90SymOz(
+				thickness+thickness2, -thickness-thickness2, depth,
+				thickness+thickness2, -thickness-thickness2, depth+size,
+				thickness, -thickness-thickness2, depth+size,
+				thickness, -thickness-thickness2, depth
+		);
+		
+		//top and bottom
+		quadSymxOyRotOz90SymOz(
+				thickness+thickness2, thickness+thickness2, depth+size,
+				thickness, thickness+thickness2, depth+size,
+				thickness, thickness, depth+size,
+				thickness+thickness2, thickness, depth+size
+		);		
+		
+		*/
+		
+	}
 	
+	
+
 	
 	
 	private void cursorDiamond(){

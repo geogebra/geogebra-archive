@@ -1131,9 +1131,9 @@ public class Renderer implements GLEventListener {
     
     
     
-    /** draws a cross cursor using getThickness() parameter
+    /** draws a 2D cross cursor 
      */    
-    public void drawCursorCross(){
+    public void drawCursorCross2D(){
     	
     	gl.glDisable(GL.GL_LIGHTING);
     	initMatrix();
@@ -1143,9 +1143,19 @@ public class Renderer implements GLEventListener {
    	
     }
     
+    /** draws a 3D cross cursor
+     */    
+    public void drawCursorCross3D(){
+    	
+    	gl.glDisable(GL.GL_LIGHTING);
+    	initMatrix();
+    	geometryManager.cursor.draw(GeometryCursor.TYPE_CROSS3D);
+		resetMatrix();
+    	gl.glEnable(GL.GL_LIGHTING);
+   	
+    } 
     
-    
-    /** draws a cylinder cursor using getThickness() parameters
+    /** draws a cylinder cursor 
      */    
     public void drawCursorCylinder(){
  
@@ -1162,7 +1172,7 @@ public class Renderer implements GLEventListener {
     
 
     
-    /** draws a diamond cursor using getThickness() parameters
+    /** draws a diamond cursor  
      *
      */    
     public void drawCursorDiamond(){

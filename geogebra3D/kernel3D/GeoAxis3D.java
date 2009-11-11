@@ -27,19 +27,19 @@ public class GeoAxis3D extends GeoLine3D {
 		case X_AXIS_3D:
 			setCoord(EuclidianView3D.o,EuclidianView3D.vx);
 			label = "xAxis3D";
-			setObjColor(Color.BLUE);
+			setObjColor(Color.RED);
 			break;
 
 		case Y_AXIS_3D:
 			setCoord(EuclidianView3D.o,EuclidianView3D.vy);
 			label = "yAxis3D";
-			setObjColor(Color.RED);
+			setObjColor(Color.GREEN);
 			break;
 			
 		case Z_AXIS_3D:
 			setCoord(EuclidianView3D.o,EuclidianView3D.vz);
 			label = "zAxis3D";
-			setObjColor(Color.GREEN);
+			setObjColor(Color.BLUE);
 			break;
 		}
 		
