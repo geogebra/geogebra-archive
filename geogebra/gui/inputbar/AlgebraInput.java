@@ -208,7 +208,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		}	 
 		
 		// set width of combo box to fit "Command ..."
-		cmdCB.setPrototypeDisplayValue(commandString);
+		cmdCB.setPrototypeDisplayValue(commandString + "Wa");
 				
 		for (int i=0; i < listeners.length; i++) 
 			cmdCB.addActionListener(listeners[i]);

@@ -151,8 +151,8 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		}
 		
 		// set widths of combo boxes
-		cbSpecialChars.setPrototypeDisplayValue("W");
-		cbGreekLetters.setPrototypeDisplayValue("W");
+		cbSpecialChars.setPrototypeDisplayValue("Wa");
+		cbGreekLetters.setPrototypeDisplayValue("Wa");
 		
 		ComboBoxListener cbl = new ComboBoxListener();
 		cbSpecialChars.addActionListener(cbl);			
