@@ -1532,8 +1532,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		// det(S) = 0
 		// A[0] * A[1] = A[3] * A[3]  
 		// normalized: A[0]/maxAbs * A[1]/maxAbs = A[3]/maxAbs * A[3]/maxAbs 
-		// use precision: eps * maxAbs^2		
-		double eps = Kernel.STANDARD_PRECISION * maxAbs * maxAbs;
+		// use precision: eps * maxAbs^2	
+		double eps;
+		if (maxAbs > 1) {
+			eps = kernel.getEpsilon() * maxAbs * maxAbs;
+		} else {
+			eps = kernel.getEpsilon();
+		}
 		return Kernel.isEqual(matrix[0]*matrix[1], matrix[3]*matrix[3], eps);				
 	}
 
