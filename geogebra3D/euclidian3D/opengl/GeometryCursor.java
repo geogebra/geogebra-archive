@@ -1,7 +1,5 @@
 package geogebra3D.euclidian3D.opengl;
 
-import geogebra.main.Application;
-
 import javax.media.opengl.GL;
 
 

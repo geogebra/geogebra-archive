@@ -16,8 +16,8 @@
  */
 package org.apache.commons.discovery.jdk;
 
-import java.util.Enumeration;
 import java.io.IOException;
+import java.util.Enumeration;
 
 
 /**

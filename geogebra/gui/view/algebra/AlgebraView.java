@@ -23,11 +23,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.util.FastHashMapKeyless;
 
 import java.awt.Font;
-import java.awt.event.MouseEvent;
 import java.util.EventObject;
+import java.util.HashMap;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
@@ -63,7 +62,7 @@ public class AlgebraView extends JTree implements View {
 	private JTextField editTF;
 	
 	// store all pairs of GeoElement -> node in the Tree
-	private FastHashMapKeyless nodeTable = new FastHashMapKeyless(500);
+	private HashMap nodeTable = new HashMap(500);
 
 	// nodes
 	private DefaultMutableTreeNode root, depNode, indNode, auxiliaryNode;	

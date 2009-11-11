@@ -18,10 +18,9 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp.tokenizers;
 
-import org.mathpiper.lisp.collections.TokenMap;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.io.MathPiperInputStream;
+import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.collections.TokenMap;
 
 public class XmlTokenizer
 			extends MathPiperTokenizer

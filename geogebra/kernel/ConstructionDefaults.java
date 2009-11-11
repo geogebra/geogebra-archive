@@ -14,9 +14,9 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
-import geogebra.util.FastHashMapKeyless;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -106,7 +106,7 @@ public class ConstructionDefaults {
 	protected Construction cons;
 	
 	// defaultGeoElement list
-	protected FastHashMapKeyless defaultGeoElements;		
+	protected HashMap defaultGeoElements;		
 	
 	private int lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
 	private int pointSize = EuclidianView.DEFAULT_POINT_SIZE;
@@ -137,7 +137,7 @@ public class ConstructionDefaults {
 	protected String strDependent = " (dependent)";
 	
 	protected void createDefaultGeoElements() {
-		defaultGeoElements = new FastHashMapKeyless();		
+		defaultGeoElements = new HashMap();		
 		
 		Application app = cons.getApplication();		
 //		String strFree = " (" + app.getPlain("free") + ")";

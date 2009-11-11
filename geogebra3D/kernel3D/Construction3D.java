@@ -1,12 +1,7 @@
 package geogebra3D.kernel3D;
 
-import java.awt.Color;
-
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoAxis;
-import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.EuclidianView3D;
 
 /**
  * @author ggb3D

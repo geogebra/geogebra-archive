@@ -17,6 +17,7 @@
 package org.apache.commons.math.stat.inference;
 
 import java.util.Collection;
+
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.stat.descriptive.StatisticalSummary;
 
@@ -25,7 +26,7 @@ import org.apache.commons.math.stat.descriptive.StatisticalSummary;
  * perform inference tests.
  *
  * @since 1.1
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:18 $ 
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:21 $ 
  */
 public class TestUtils  {
     /**

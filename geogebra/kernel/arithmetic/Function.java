@@ -20,8 +20,8 @@ import geogebra.kernel.roots.RealRootDerivFunction;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra.util.FastHashMapKeyless;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -734,7 +734,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     private ExpressionNode diffParentExp, intParentExp, expandParentExp;
     
     //  stores derivatives as (order, result function) pairs
-    private FastHashMapKeyless derivativeMap = new FastHashMapKeyless(); 
+    private HashMap<Integer, Function> derivativeMap;
     private Function integralFun, expandedFun;
     
     /**
@@ -753,29 +753,36 @@ implements ExpressionValue, RealRootFunction, Functional {
     private GeoFunction geoDeriv;
  
     /**
-      * Returns n-th derivative of this function
-      */
-     final public Function getDerivative(int n) {
-        if (n < 0) return null;
-        else if (n == 0) return this;   
-        
-        //  do calculus only if parent expression changed
-        if (diffParentExp != expression) {  
-            diffParentExp = expression; 
-            derivativeMap.clear();
-        } else {
-            // do we have the desired result?
-            Object ob = derivativeMap.get(n);
-            if (ob != null) {            	
-            	return (Function) ob;
-            }
-        }
-        
-        // ok, we really have to do it...
+     * Returns n-th derivative of this function
+     */
+    final public Function getDerivative(int n) {
+       if (n < 0) return null;
+       else if (n == 0) return this;   
+       
+       //  do calculus only if parent expression changed
+       if (diffParentExp != expression) {  
+           diffParentExp = expression; 
+           getDerivativeMap().clear();
+       } 
+       else if (derivativeMap != null) {
+           // do we have the desired result?
+           Object ob = getDerivativeMap().get(n);
+           if (ob != null) {            	
+           	return (Function) ob;
+           }
+       }
+       
+       // ok, we really have to do it...
 		Function result = derivative(n);
-        derivativeMap.put(n, result); // remember the hard work
-        return result;
-     }
+		getDerivativeMap().put(n, result); // remember the hard work
+       return result;
+    }
+    
+    private HashMap<Integer, Function> getDerivativeMap() {
+   	 if (derivativeMap == null)
+			derivativeMap = new HashMap<Integer, Function>();
+   	 return derivativeMap;
+    }
       
     /**
       * Returns integral of this function

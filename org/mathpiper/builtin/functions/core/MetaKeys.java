@@ -20,6 +20,7 @@ package org.mathpiper.builtin.functions.core;
 
 import java.util.Iterator;
 import java.util.Map;
+
 import org.mathpiper.builtin.BuiltinFunction;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.cons.AtomCons;

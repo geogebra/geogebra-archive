@@ -18,7 +18,9 @@ package org.mathpiper.lisp.cons;
 
 
 import org.mathpiper.io.StringOutput;
-import org.mathpiper.lisp.*;
+import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.Utility;
 import org.mathpiper.lisp.printers.LispPrinter;
 
 

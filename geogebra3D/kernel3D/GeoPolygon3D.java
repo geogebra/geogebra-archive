@@ -8,7 +8,6 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
-import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;

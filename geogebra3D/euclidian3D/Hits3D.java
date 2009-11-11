@@ -1,13 +1,12 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.euclidian.Hits;
+import geogebra.kernel.GeoElement;
+import geogebra3D.kernel3D.GeoSegment3D;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
-
-import geogebra.euclidian.Hits;
-import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
-import geogebra3D.kernel3D.GeoSegment3D;
 
 public class Hits3D extends Hits {
 	

@@ -23,7 +23,6 @@ import geogebra.util.DownloadManager;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;

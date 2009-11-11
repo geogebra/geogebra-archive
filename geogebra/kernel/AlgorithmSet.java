@@ -12,9 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.util.FastHashMapKeyless;
-
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 
@@ -23,7 +22,7 @@ import java.util.Iterator;
  */
 public class AlgorithmSet {
 
-	private FastHashMapKeyless hashMap;
+	private HashMap hashMap;
 	
     private Link head, tail;
     private int size;   
@@ -52,7 +51,7 @@ public class AlgorithmSet {
     	// empty list?
         if (head == null) {
         	if (hashMap == null) {
-        		hashMap = new FastHashMapKeyless();
+        		hashMap = new HashMap();
         	}        	
         	hashMap.put(algo, algo);
           			

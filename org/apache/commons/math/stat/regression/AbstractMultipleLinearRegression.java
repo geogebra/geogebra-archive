@@ -17,14 +17,14 @@
 package org.apache.commons.math.stat.regression;
 
 import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math.linear.ArrayRealVector;
+import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.linear.RealVector;
 
 /**
  * Abstract base class for implementations of MultipleLinearRegression.
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:23 $
  * @since 2.0
  */
 public abstract class AbstractMultipleLinearRegression implements

@@ -19,8 +19,8 @@
 package org.mathpiper.lisp.parametermatchers;
 
 import org.mathpiper.builtin.BigNumber;
-import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.cons.NumberCons;
 
 

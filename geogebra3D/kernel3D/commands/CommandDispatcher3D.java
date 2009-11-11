@@ -1,7 +1,6 @@
 package geogebra3D.kernel3D.commands;
 
 
-import geogebra.kernel.commands.CmdIntersect;
 import geogebra.kernel.commands.CommandDispatcher;
 import geogebra3D.kernel3D.Kernel3D;
 

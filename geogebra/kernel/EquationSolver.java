@@ -13,12 +13,12 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-import java.util.Arrays;
-
 import geogebra.kernel.arithmetic.PolyFunction;
 import geogebra.kernel.complex.Complex;
 import geogebra.kernel.complex.ComplexPoly;
 import geogebra.kernel.roots.RealRoot;
+
+import java.util.Arrays;
 
 public class EquationSolver { 
 		

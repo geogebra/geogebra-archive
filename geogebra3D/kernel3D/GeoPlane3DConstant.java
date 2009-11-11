@@ -1,9 +1,9 @@
 package geogebra3D.kernel3D;
 
-import java.awt.Color;
-
 import geogebra.kernel.Construction;
 import geogebra3D.euclidian3D.EuclidianView3D;
+
+import java.awt.Color;
 
 public class GeoPlane3DConstant extends GeoPlane3D {
 	

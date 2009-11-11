@@ -18,9 +18,9 @@
 
 package org.mathpiper.lisp.parametermatchers;
 
+import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.Utility;
 import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.Environment;
 
 
 /// Class for matching against a pattern variable.

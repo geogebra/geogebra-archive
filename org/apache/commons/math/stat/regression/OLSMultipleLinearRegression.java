@@ -17,13 +17,13 @@
 package org.apache.commons.math.stat.regression;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.ArrayRealVector;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.QRDecomposition;
 import org.apache.commons.math.linear.QRDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealVector;
-import org.apache.commons.math.linear.ArrayRealVector;
 
 /**
  * <p>Implements ordinary least squares (OLS) to estimate the parameters of a 
@@ -53,7 +53,7 @@ import org.apache.commons.math.linear.ArrayRealVector;
  * </p>
  * Given Q and R, the last equation is solved by back-subsitution.</p>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:23 $
  * @since 2.0
  */
 public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegression {

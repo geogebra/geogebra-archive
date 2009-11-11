@@ -17,14 +17,17 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp.userfunctions;
 
-import org.mathpiper.lisp.stacks.UserStackInformation;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.cons.SublistCons;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.mathpiper.exceptions.EvaluationException;
+import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.Evaluator;
+import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.cons.SublistCons;
+import org.mathpiper.lisp.stacks.UserStackInformation;
 
 /**
  * A function (usually mathematical) which is defined by one or more rules.

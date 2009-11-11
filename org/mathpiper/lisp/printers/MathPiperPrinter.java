@@ -17,19 +17,16 @@
 package org.mathpiper.lisp.printers;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import org.mathpiper.builtin.BuiltinContainer;
 import org.mathpiper.io.MathPiperOutputStream;
-import org.mathpiper.lisp.Utility;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.cons.ConsTraverser;
 import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.Operator;
+import org.mathpiper.lisp.Utility;
 import org.mathpiper.lisp.collections.OperatorMap;
-import org.mathpiper.lisp.cons.Cons;
+import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.cons.ConsTraverser;
+import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 
 
 public class MathPiperPrinter extends LispPrinter {

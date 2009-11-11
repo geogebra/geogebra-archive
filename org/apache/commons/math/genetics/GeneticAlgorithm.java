@@ -16,15 +16,15 @@
  */
 package org.apache.commons.math.genetics;
 
-import org.apache.commons.math.random.RandomGenerator;
 import org.apache.commons.math.random.JDKRandomGenerator;
+import org.apache.commons.math.random.RandomGenerator;
 
 /**
  * Implementation of a genetic algorithm. All factors that govern the operation
  * of the algorithm can be configured for a specific problem.
  *
  * @since 2.0
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:24 $
  */
 public class GeneticAlgorithm {
 

@@ -16,15 +16,15 @@
  */
 package org.apache.commons.math.analysis.solvers;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.ConvergenceException;
+import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 
 /**
  * Utility routines for {@link UnivariateRealSolver} objects.
  * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:25 $
  */
 public class UnivariateRealSolverUtils {
     /**

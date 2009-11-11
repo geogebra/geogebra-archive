@@ -18,9 +18,9 @@
 
 package org.mathpiper.lisp.behaviours;
 
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.cons.AtomCons;
 import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.cons.AtomCons;
+import org.mathpiper.lisp.cons.ConsPointer;
 
 /** Substitute behaviour for changing the local variables to have unique
  * names.

@@ -16,9 +16,9 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.main.Application;
-import geogebra.util.FastHashMapKeyless;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -38,7 +38,7 @@ implements EuclidianViewAlgo {
 	private GeoElement [] macroInput, macroOutput;
 	
 	// maps macro geos to algo geos
-	private FastHashMapKeyless macroToAlgoMap;
+	private HashMap macroToAlgoMap;
 	
 	// all keys of macroToAlgoMap that are not part of macroInput
 	private ArrayList macroOutputAndReferencedGeos;
@@ -197,7 +197,7 @@ implements EuclidianViewAlgo {
 	 * construction.
 	 */
 	private void initMap() {	
-		macroToAlgoMap = new FastHashMapKeyless();
+		macroToAlgoMap = new HashMap();
 		macroOutputAndReferencedGeos = new ArrayList();
 		algoOutputAndReferencedGeos = new ArrayList();
 			

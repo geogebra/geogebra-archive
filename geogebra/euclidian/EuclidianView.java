@@ -44,7 +44,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -77,6 +76,7 @@ import java.awt.print.Printable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeSet;
@@ -338,7 +338,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	protected double printingScale;
 
 	// Map (geo, drawable) for GeoElements and Drawables
-	protected FastHashMapKeyless DrawableMap = new FastHashMapKeyless(500);
+	protected HashMap DrawableMap = new HashMap(500);
 
 	protected DrawableList allDrawableList = new DrawableList();
 	

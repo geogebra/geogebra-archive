@@ -17,12 +17,9 @@
 package org.mathpiper.lisp.printers;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.*;
 import org.mathpiper.io.MathPiperOutputStream;
-import org.mathpiper.lisp.cons.Cons;
+import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.cons.ConsPointer;
 
 
 public class LispPrinter {

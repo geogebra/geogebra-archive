@@ -20,9 +20,9 @@ package org.mathpiper.builtin.functions.core;
 
 import java.util.Iterator;
 import java.util.Map;
+
 import org.mathpiper.builtin.BuiltinFunction;
 import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.cons.AtomCons;
 import org.mathpiper.lisp.cons.Cons;
 import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.cons.SublistCons;

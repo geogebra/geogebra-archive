@@ -12,15 +12,12 @@ the Free Software Foundation.
 
 package geogebra;
 
-import geogebra.main.Application;
-
 import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JApplet;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * GeoGebra applet

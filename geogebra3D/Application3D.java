@@ -19,7 +19,6 @@ package geogebra3D;
 
 import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.layout.Layout;
 import geogebra.kernel.GeoElement;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;

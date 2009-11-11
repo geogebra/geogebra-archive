@@ -1,6 +1,5 @@
 package geogebra.kernel.commands;
 
-import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionable;

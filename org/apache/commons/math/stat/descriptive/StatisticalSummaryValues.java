@@ -17,12 +17,13 @@
 package org.apache.commons.math.stat.descriptive;
 
 import java.io.Serializable;
+
 import org.apache.commons.math.util.MathUtils;
 
 /**
  *  Value object representing the results of a univariate statistical summary.
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:25 $
  */
 public class StatisticalSummaryValues implements Serializable, 
     StatisticalSummary {

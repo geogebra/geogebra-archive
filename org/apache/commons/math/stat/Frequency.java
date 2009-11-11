@@ -18,8 +18,8 @@ package org.apache.commons.math.stat;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
-import java.util.Iterator;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 import org.apache.commons.math.MathRuntimeException;
@@ -43,7 +43,7 @@ import org.apache.commons.math.MathRuntimeException;
  * The values are ordered using the default (natural order), unless a  
  * <code>Comparator</code> is supplied in the constructor.</p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:25 $
  */
 public class Frequency implements Serializable {
     

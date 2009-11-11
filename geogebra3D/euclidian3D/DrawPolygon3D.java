@@ -3,19 +3,15 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.euclidian.Previewable;
+import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoPolygon3D;
+import geogebra3D.kernel3D.Kernel3D;
+
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import geogebra.euclidian.Previewable;
-import geogebra.kernel.GeoPointInterface;
-import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.GeoPolygon3D;
-import geogebra3D.kernel3D.GeoRay3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 
 

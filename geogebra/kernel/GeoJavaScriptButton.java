@@ -13,7 +13,6 @@
 
 package geogebra.kernel;
 
-import geogebra.util.Util;
 
 /**
  * 

@@ -114,8 +114,8 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		//Set the corners.
 		setCorner(JScrollPane.UPPER_LEFT_CORNER, upperLeftCorner);
-//		setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
-//		setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
+		setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
+		setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
 		
 		updateFonts();
 	}

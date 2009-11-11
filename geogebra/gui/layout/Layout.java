@@ -1,5 +1,14 @@
 package geogebra.gui.layout;
 
+import geogebra.euclidian.EuclidianView;
+import geogebra.gui.InputDialog;
+import geogebra.gui.InputHandler;
+import geogebra.gui.toolbar.MyToolbar;
+import geogebra.io.layout.DockPanelXml;
+import geogebra.io.layout.DockSplitPaneXml;
+import geogebra.io.layout.Perspective;
+import geogebra.main.Application;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -18,15 +27,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-
-import geogebra.main.Application;
-import geogebra.euclidian.EuclidianView;
-import geogebra.gui.InputDialog;
-import geogebra.gui.InputHandler;
-import geogebra.gui.toolbar.MyToolbar;
-import geogebra.io.layout.DockPanelXml;
-import geogebra.io.layout.DockSplitPaneXml;
-import geogebra.io.layout.Perspective;
 
 /**
  * Manage layout related stuff.

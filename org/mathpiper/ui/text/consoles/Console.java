@@ -19,7 +19,10 @@ package org.mathpiper.ui.text.consoles;
 
 //import org.mathpiper.lisp.UtilityFunctions;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+
 import org.mathpiper.Version;
 import org.mathpiper.interpreters.EvaluationResponse;
 import org.mathpiper.interpreters.Interpreter;

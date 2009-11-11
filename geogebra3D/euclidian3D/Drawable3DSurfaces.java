@@ -1,12 +1,9 @@
 package geogebra3D.euclidian3D;
 
-import java.awt.Color;
-
 import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoElement3DInterface;
+
+import java.awt.Color;
 
 public abstract class Drawable3DSurfaces extends Drawable3D {
 	

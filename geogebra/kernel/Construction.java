@@ -17,8 +17,8 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -71,7 +71,7 @@ public class Construction {
 	// a map for sets with all labeled GeoElements in alphabetical order of
 	// specific types
 	// (points, lines, etc.)
-	private FastHashMapKeyless geoSetsTypeMap;	
+	private HashMap geoSetsTypeMap;	
 
 	// list of Macro commands used in this construction
 	private ArrayList usedMacros;
@@ -124,7 +124,7 @@ public class Construction {
 
 		geoSet = new TreeSet();
 		geoSetLabelOrder = new TreeSet(new LabelComparator());
-		geoSetsTypeMap = new FastHashMapKeyless();
+		geoSetsTypeMap = new HashMap();
 		euclidianViewAlgos = new ArrayList();
 
 		if (parentConstruction != null)

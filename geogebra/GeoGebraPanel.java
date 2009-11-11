@@ -5,7 +5,6 @@ import geogebra.main.DefaultApplication;
 import geogebra.plugin.GgbAPI;
 
 import java.awt.BorderLayout;
-import java.io.File;
 import java.net.URL;
 import java.util.Locale;
 

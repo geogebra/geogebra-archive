@@ -18,8 +18,6 @@
 
 package org.mathpiper.lisp.cons;
 
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.cons.Cons;
 
 
 /** 

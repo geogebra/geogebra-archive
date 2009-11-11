@@ -1,14 +1,10 @@
 package geogebra3D.euclidian3D;
 
-import java.util.ArrayList;
-
-import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoRay3D;
+
+import java.util.ArrayList;
 
 public class DrawRay3D extends DrawCoordSys1D {
 

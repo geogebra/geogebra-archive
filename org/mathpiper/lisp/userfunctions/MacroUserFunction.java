@@ -18,16 +18,16 @@
 package org.mathpiper.lisp.userfunctions;
 
 import org.mathpiper.exceptions.EvaluationException;
-import org.mathpiper.lisp.stacks.UserStackInformation;
-import org.mathpiper.lisp.behaviours.BackQuoteSubstitute;
-import org.mathpiper.lisp.Utility;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.cons.ConsTraverser;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.Evaluator;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.LispExpressionEvaluator;
+import org.mathpiper.lisp.Utility;
+import org.mathpiper.lisp.behaviours.BackQuoteSubstitute;
+import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.cons.ConsTraverser;
 import org.mathpiper.lisp.cons.SublistCons;
+import org.mathpiper.lisp.stacks.UserStackInformation;
 
 public class MacroUserFunction extends SingleArityBranchingUserFunction {
 

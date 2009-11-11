@@ -20,7 +20,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.util.FastHashMapKeyless;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
@@ -46,6 +45,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -900,12 +900,12 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
         private ArrayList rowList;
         //  map for (GeoElement, RowData) pairs
-        private FastHashMapKeyless geoMap;
+        private HashMap geoMap;
         private int columnsCount = columns.length;
 
         public ConstructionTableData() {
             rowList = new ArrayList();
-            geoMap = new FastHashMapKeyless();
+            geoMap = new HashMap();
         }
         
         /**

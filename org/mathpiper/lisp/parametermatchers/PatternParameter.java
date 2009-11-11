@@ -18,8 +18,8 @@
 
 package org.mathpiper.lisp.parametermatchers;
 
-import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.cons.ConsPointer;
 
 
 /// Abstract class for matching one argument to a pattern.

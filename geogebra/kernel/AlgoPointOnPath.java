@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
 
 
 public class AlgoPointOnPath extends AlgoElement {

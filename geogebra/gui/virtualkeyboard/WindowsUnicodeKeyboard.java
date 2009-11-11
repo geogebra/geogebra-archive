@@ -1,7 +1,5 @@
 package geogebra.gui.virtualkeyboard;
 
-import geogebra.main.Application;
-
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;

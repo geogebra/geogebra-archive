@@ -17,6 +17,7 @@
 package org.apache.commons.math.stat.descriptive.moment;
 
 import java.io.Serializable;
+
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 
 /**
@@ -42,7 +43,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or 
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:25 $
  */
 public class FirstMoment extends AbstractStorelessUnivariateStatistic 
     implements Serializable {

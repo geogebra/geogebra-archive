@@ -16,10 +16,10 @@
  */
 package org.apache.commons.math.transform;
 
-import org.apache.commons.math.analysis.*;
-import org.apache.commons.math.complex.*;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.complex.Complex;
 
 /**
  * Implements the <a href="http://documents.wolfram.com/v5/Add-onsLinks/
@@ -35,7 +35,7 @@ import org.apache.commons.math.MathRuntimeException;
  * transformation after sampling.</p>
  * <p>As of version 2.0 this no longer implements Serializable</p>
  * 
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:22 $
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:22 $
  * @since 1.2
  */
 public class FastSineTransformer implements RealTransformer {

@@ -1,15 +1,10 @@
 package geogebra.gui;
 
 
-import geogebra.gui.DefaultGuiManager.NumberInputHandler;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 public class InputDialogOpenURL extends InputDialog{
 	

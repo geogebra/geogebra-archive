@@ -10,7 +10,6 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;

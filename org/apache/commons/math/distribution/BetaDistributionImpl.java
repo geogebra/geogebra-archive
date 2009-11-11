@@ -17,8 +17,8 @@
 package org.apache.commons.math.distribution;
 
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.special.Gamma;
 import org.apache.commons.math.special.Beta;
+import org.apache.commons.math.special.Gamma;
 
 /**
  * Implements the Beta distribution.
@@ -29,7 +29,7 @@ import org.apache.commons.math.special.Beta;
  * Beta distribution</a></li>
  * </ul>
  * </p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:22 $
  * @since 2.0
  */
 public class BetaDistributionImpl

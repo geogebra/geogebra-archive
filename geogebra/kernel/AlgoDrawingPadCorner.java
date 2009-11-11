@@ -14,10 +14,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import javax.swing.JPanel;
-
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.NumberValue;
+
+import javax.swing.JPanel;
 
 public class AlgoDrawingPadCorner extends AlgoElement 
 implements EuclidianViewAlgo {

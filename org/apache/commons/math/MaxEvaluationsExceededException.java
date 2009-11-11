@@ -17,13 +17,12 @@
 
 package org.apache.commons.math;
 
-import org.apache.commons.math.ConvergenceException;
 
 /**
  * Error thrown when a numerical computation exceeds its allowed
  * number of functions evaluations.
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:23 $
  * @since 2.0
  */
 public class MaxEvaluationsExceededException extends ConvergenceException {

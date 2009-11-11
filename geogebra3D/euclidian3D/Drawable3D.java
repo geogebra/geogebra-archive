@@ -4,7 +4,6 @@ package geogebra3D.euclidian3D;
 
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;

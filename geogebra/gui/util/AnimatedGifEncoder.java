@@ -1,9 +1,15 @@
 package geogebra.gui.util;
 
 
-import java.io.*;
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Class AnimatedGifEncoder - Encodes a GIF file consisting of one or more

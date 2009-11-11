@@ -17,8 +17,8 @@
 
 package org.apache.commons.math.random;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -45,7 +45,7 @@ import org.apache.commons.math.stat.descriptive.SummaryStatistics;
  * generate random values "like" those in the input file -- i.e., the values
  * generated will follow the distribution of the values in the file.</p>
  * 
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:22 $
  */
 public interface EmpiricalDistribution {
 

@@ -19,11 +19,11 @@
 package org.mathpiper.builtin.functions.core;
 
 import javax.swing.JOptionPane;
+
 import org.mathpiper.builtin.BuiltinFunction;
 import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.Utility;
-import org.mathpiper.lisp.cons.ConsPointer;
 
 /**
  *

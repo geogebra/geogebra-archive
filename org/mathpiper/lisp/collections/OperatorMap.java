@@ -18,7 +18,8 @@
 
 package org.mathpiper.lisp.collections;
 
-import org.mathpiper.lisp.*;
+import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.Operator;
 
 
 public class OperatorMap extends Map // <Operator>

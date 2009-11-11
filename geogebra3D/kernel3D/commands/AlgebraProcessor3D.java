@@ -5,9 +5,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.commands.AlgebraProcessor;
-import geogebra.main.Application;
 import geogebra3D.kernel3D.Kernel3D;
-import geogebra.kernel.arithmetic.ExpressionNode;
 
 
 public class AlgebraProcessor3D extends AlgebraProcessor {

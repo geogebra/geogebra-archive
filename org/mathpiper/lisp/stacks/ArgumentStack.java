@@ -18,10 +18,10 @@
 
 package org.mathpiper.lisp.stacks;
 
-import org.mathpiper.lisp.*;
-import org.mathpiper.lisp.cons.ConsPointerArray;
-import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.cons.Cons;
+import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.cons.ConsPointerArray;
 
 /** 
  * Implements a stack of pointers to CONS that can be used to pass

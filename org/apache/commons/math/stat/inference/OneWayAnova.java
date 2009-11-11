@@ -16,8 +16,9 @@
  */
 package org.apache.commons.math.stat.inference;
 
-import org.apache.commons.math.MathException;
 import java.util.Collection;
+
+import org.apache.commons.math.MathException;
 
 /**
  * An interface for one-way ANOVA (analysis of variance). 
@@ -29,7 +30,7 @@ import java.util.Collection;
  * </p>
  *
  * @since 1.2
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:18 $ 
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:21 $ 
  */
 public interface OneWayAnova {
     /**

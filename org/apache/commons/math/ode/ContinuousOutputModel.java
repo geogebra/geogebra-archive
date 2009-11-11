@@ -17,9 +17,9 @@
 
 package org.apache.commons.math.ode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.ode.nonstiff.AdaptiveStepsizeIntegrator;
@@ -79,7 +79,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see StepHandler
  * @see StepInterpolator
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:26 $
  * @since 1.2
  */
 

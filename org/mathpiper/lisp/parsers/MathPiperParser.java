@@ -17,19 +17,18 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp.parsers;
 
-import org.mathpiper.lisp.printers.MathPiperPrinter;
-
-import org.mathpiper.lisp.Utility;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.cons.ConsTraverser;
-import org.mathpiper.lisp.cons.AtomCons;
-import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.lisp.Environment;
-import org.mathpiper.lisp.cons.SublistCons;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.Operator;
+import org.mathpiper.lisp.Utility;
 import org.mathpiper.lisp.collections.OperatorMap;
+import org.mathpiper.lisp.cons.AtomCons;
+import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.cons.ConsTraverser;
+import org.mathpiper.lisp.cons.SublistCons;
+import org.mathpiper.lisp.printers.MathPiperPrinter;
+import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 
 public class MathPiperParser extends Parser
 {

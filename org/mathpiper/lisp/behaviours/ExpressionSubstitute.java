@@ -1,8 +1,8 @@
 package org.mathpiper.lisp.behaviours;
 
+import org.mathpiper.lisp.Environment;
 import org.mathpiper.lisp.Utility;
 import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.Environment;
 
 
 /** Substing one expression for another. The simplest form

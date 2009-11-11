@@ -4,7 +4,6 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 /**

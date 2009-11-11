@@ -20,8 +20,8 @@ import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.distribution.TDistribution;
 import org.apache.commons.math.distribution.TDistributionImpl;
-import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 
 /**
@@ -36,7 +36,7 @@ import org.apache.commons.math.stat.regression.SimpleRegression;
  * where <code>E(X)</code> is the mean of <code>X</code>, <code>E(Y)</code>
  * is the mean of the <code>Y</code> values and s(X), s(Y) are standard deviations.
  * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:25 $
  * @since 2.0
  */
 public class PearsonsCorrelation {

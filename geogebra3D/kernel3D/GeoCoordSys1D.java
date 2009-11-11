@@ -5,7 +5,6 @@ import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
-import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {

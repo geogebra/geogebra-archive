@@ -17,16 +17,16 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp.parametermatchers;
 
-import org.mathpiper.lisp.cons.Cons;
-import org.mathpiper.lisp.Utility;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.LispError;
-import org.mathpiper.lisp.cons.ConsTraverser;
-//import org.mathpiper.lisp.AtomCons;
-import org.mathpiper.lisp.Environment;
-//import org.mathpiper.lisp.SublistCons;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mathpiper.builtin.BigNumber;
+import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.LispError;
+import org.mathpiper.lisp.Utility;
+import org.mathpiper.lisp.cons.Cons;
+import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.cons.ConsTraverser;
 
 /**
  *Pattern matching code.

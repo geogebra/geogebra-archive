@@ -17,8 +17,8 @@
 package org.apache.commons.math.stat.correlation;
 
 import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
 import org.apache.commons.math.stat.descriptive.moment.Variance;
 
@@ -39,7 +39,7 @@ import org.apache.commons.math.stat.descriptive.moment.Variance;
  * 
  * <p>Non-bias-corrected estimates use <code>n</code> in place of <code>n - 1</code>
  * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:25 $
  * @since 2.0
  */
 public class Covariance {

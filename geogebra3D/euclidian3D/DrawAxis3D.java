@@ -1,6 +1,5 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 

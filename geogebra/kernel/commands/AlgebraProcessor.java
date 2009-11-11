@@ -1,6 +1,5 @@
 package geogebra.kernel.commands;
 
-import geogebra.kernel.AlgoDependentLine;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;

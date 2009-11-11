@@ -19,9 +19,12 @@
 package org.mathpiper.lisp.userfunctions;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.mathpiper.lisp.DefFile;
-import org.mathpiper.lisp.*;
-import java.util.*;
+import org.mathpiper.lisp.LispError;
 
 
 

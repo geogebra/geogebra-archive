@@ -13,13 +13,13 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.util.FastHashMapKeyless;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.HashMap;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -35,14 +35,14 @@ class DashListRenderer extends JPanel implements ListCellRenderer {
 	 */
 	private static final long serialVersionUID = 1L;
 	// map with (type, dashStrokes for type) pairs
-	private FastHashMapKeyless dashStrokeMap;
+	private HashMap dashStrokeMap;
 	private BasicStroke dashStroke;
 	//private Color bgColor;
 	private boolean nullValue = false;
 
 	public DashListRenderer() {
 		//	init stroke map 
-		dashStrokeMap = new FastHashMapKeyless();
+		dashStrokeMap = new HashMap();
 		Integer[] types = EuclidianView.getLineTypes();
 		int type;
 		BasicStroke stroke;

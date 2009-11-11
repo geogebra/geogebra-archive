@@ -19,9 +19,9 @@ package org.apache.commons.math.random;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.Collection;
 
 import org.apache.commons.math.MathRuntimeException;
@@ -82,7 +82,7 @@ import org.apache.commons.math.util.MathUtils;
  * </ul>
  * </p>
  * 
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:22 $
  */
 public class RandomDataImpl implements RandomData, Serializable {
 

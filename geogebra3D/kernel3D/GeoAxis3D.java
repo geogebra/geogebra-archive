@@ -1,12 +1,9 @@
 package geogebra3D.kernel3D;
 
-import java.awt.Color;
-
 import geogebra.kernel.Construction;
-import geogebra.kernel.Kernel;
-import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
+
+import java.awt.Color;
 
 public class GeoAxis3D extends GeoLine3D {
 	

@@ -17,39 +17,38 @@
 package org.mathpiper.lisp;
 
 
-import org.mathpiper.lisp.collections.OperatorMap;
-import org.mathpiper.lisp.cons.ConsTraverser;
-import org.mathpiper.lisp.cons.SublistCons;
-import org.mathpiper.lisp.cons.AtomCons;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.cons.Cons;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.mathpiper.io.MathPiperInputStream;
-import org.mathpiper.exceptions.EvaluationException;
-import org.mathpiper.io.InputStatus;
+
 import org.mathpiper.builtin.BigNumber;
 import org.mathpiper.builtin.BuiltinFunction;
+import org.mathpiper.exceptions.EvaluationException;
 import org.mathpiper.io.InputDirectories;
-import org.mathpiper.lisp.behaviours.Substitute;
-import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
-import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
-import org.mathpiper.lisp.printers.MathPiperPrinter;
-import org.mathpiper.lisp.parsers.MathPiperParser;
+import org.mathpiper.io.InputStatus;
 import org.mathpiper.io.JarFileInputStream;
+import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.io.StandardFileInputStream;
 import org.mathpiper.io.StringOutputStream;
 import org.mathpiper.lisp.behaviours.BackQuoteSubstitute;
+import org.mathpiper.lisp.behaviours.Substitute;
+import org.mathpiper.lisp.collections.OperatorMap;
+import org.mathpiper.lisp.cons.AtomCons;
+import org.mathpiper.lisp.cons.Cons;
+import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.cons.ConsTraverser;
 import org.mathpiper.lisp.cons.NumberCons;
+import org.mathpiper.lisp.cons.SublistCons;
 import org.mathpiper.lisp.parametermatchers.Pattern;
 import org.mathpiper.lisp.parametermatchers.PatternParameter;
+import org.mathpiper.lisp.parsers.MathPiperParser;
+import org.mathpiper.lisp.printers.MathPiperPrinter;
+import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.lisp.userfunctions.Branch;
 import org.mathpiper.lisp.userfunctions.FunctionParameter;
 import org.mathpiper.lisp.userfunctions.MacroUserFunction;
+import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
 import org.mathpiper.lisp.userfunctions.PatternBranch;
 import org.mathpiper.lisp.userfunctions.SingleArityBranchingUserFunction;
 

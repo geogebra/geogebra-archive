@@ -1,12 +1,12 @@
 package geogebra.gui.layout;
 
-import java.awt.Component;
-import java.awt.Rectangle;
-import java.awt.event.ComponentEvent;
-
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.main.Application;
+
+import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
 
 /**
  * Class responsible to manage the whole docking area of the window.

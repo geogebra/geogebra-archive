@@ -30,8 +30,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic3D.MyVec3DNode;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
-import geogebra.kernel.complex.Complex;
-import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 import java.util.HashSet;

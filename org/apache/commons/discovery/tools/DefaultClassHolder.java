@@ -18,8 +18,8 @@ package org.apache.commons.discovery.tools;
 
 import org.apache.commons.discovery.ResourceClass;
 import org.apache.commons.discovery.ResourceClassIterator;
-import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 
 
 /**

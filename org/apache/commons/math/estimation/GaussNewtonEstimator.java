@@ -19,12 +19,12 @@ package org.apache.commons.math.estimation;
 
 import java.io.Serializable;
 
+import org.apache.commons.math.linear.ArrayRealVector;
 import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealVector;
-import org.apache.commons.math.linear.ArrayRealVector;
 
 /** 
  * This class implements a solver for estimation problems.
@@ -33,7 +33,7 @@ import org.apache.commons.math.linear.ArrayRealVector;
  * squares criterion on the measurement residuals. It uses a
  * Gauss-Newton algorithm.</p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:23 $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general

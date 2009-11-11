@@ -62,24 +62,13 @@ public class AlgebraController
 	 * MouseListener implementation for popup menus
 	 */
 
-	public void mouseClicked(java.awt.event.MouseEvent e) {			
+	public void mouseClicked(java.awt.event.MouseEvent e) {	
+		// right click is consumed in mousePressed
 		if (e.isConsumed()) return;
 		
-		//if (kernelChanged) {
-		//	app.storeUndoInfo();
-		//	kernelChanged = false;
-		//}
-		
-		boolean rightClick = Application.isRightClick(e);
-		if (rightClick) return;
-		
-		// LEFT CLICK
-		int x = e.getX();
-		int y = e.getY();		
-		
 		// get GeoElement at mouse location		
-		TreePath tp = view.getPathForLocation(x, y);
-		GeoElement geo = AlgebraView.getGeoElementForPath(tp);								
+		TreePath tp = view.getPathForLocation(e.getX(), e.getY());
+		GeoElement geo = AlgebraView.getGeoElementForPath(tp);	
 	
 		// check if we clicked on the 16x16 show/hide icon
 		if (geo != null) {
@@ -97,16 +86,16 @@ public class AlgebraController
 		
 		// check double click
 		int clicks = e.getClickCount();
+		EuclidianView ev = app.getEuclidianView();
 		if (clicks == 2) {										
 			app.clearSelectedGeos();
+			ev.resetMode();
 			if (geo != null && !Application.isControlDown(e)) {
 				view.startEditing(geo, e.isShiftDown());						
 			}
 			return;
 		} 	
 		
-
-		EuclidianView ev = app.getEuclidianView();
 		int mode = ev.getMode();
 		if (mode == EuclidianView.MODE_MOVE ) {
 			// update selection	
@@ -140,52 +129,34 @@ public class AlgebraController
 
 	public void mousePressed(java.awt.event.MouseEvent e) {
 		view.cancelEditing();
-		
+
 		boolean rightClick = Application.isRightClick(e);
 		
 		// RIGHT CLICK
 		if (rightClick) {
-			GeoElement geo = AlgebraView.getGeoElementForLocation(view, e.getX(), e.getY());
+			e.consume();
+			
+			// get GeoElement at mouse location		
+			TreePath tp = view.getPathForLocation(e.getX(), e.getY());
+			GeoElement geo = AlgebraView.getGeoElementForPath(tp);	
+			if (geo == null) return;
 			
 			if (!app.containsSelectedGeo(geo)) {
 				app.clearSelectedGeos();					
 			}
 														
 			// single selection: popup menu
-			if (app.selectedGeosSize() < 2) {		
-				// no geo selected, show general popup menu for the algebra view
-				if(geo == null) {
-					AlgebraContextMenu contextMenu = new AlgebraContextMenu(app);
-					contextMenu.show(view, e.getPoint().x, e.getPoint().y);
-				} else {
-					app.getGuiManager().showPopupMenu(geo, view, e.getPoint());
-				}		
+			if (app.selectedGeosSize() < 2) {				
+				app.getGuiManager().showPopupMenu(geo, view, e.getPoint());						
 			} 
 			// multiple selection: properties dialog
 			else {														
 				app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());	
-			}								
+			}	
 		}
-		// tell selection listener
-		else if (app.getMode() == EuclidianView.MODE_SELECTION_LISTENER) {			
-			TreePath tp = view.getPathForLocation(e.getX(), e.getY());
-			GeoElement geo = AlgebraView.getGeoElementForPath(tp);		
-
-			// handle selecting geo
-			if (Application.isControlDown(e)) {												
-				app.geoElementSelected(geo, true);
-			} else {							
-				app.geoElementSelected(geo, false);
-			}
-			
-			if (geo != null)
-				e.consume();
-		}
-		
 	}
 
 	public void mouseReleased(java.awt.event.MouseEvent e) {
-
 	}
 
 	public void mouseEntered(java.awt.event.MouseEvent p1) {

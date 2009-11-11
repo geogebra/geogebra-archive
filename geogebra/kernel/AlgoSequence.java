@@ -21,8 +21,6 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
-import java.util.ArrayList;
-
 
 /**
  * Algorithm for the Sequence[ expression of var, var, from-value, to-value, step ] command.

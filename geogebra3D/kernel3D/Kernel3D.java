@@ -29,12 +29,10 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DVector;
-import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.io.MyXMLHandler3D;
 import geogebra3D.kernel3D.arithmetic.ExpressionNodeEvaluator3D;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
-import java.awt.Color;
 import java.util.LinkedHashMap;
 
 

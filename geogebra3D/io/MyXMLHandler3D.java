@@ -1,13 +1,12 @@
 package geogebra3D.io;
 
-import java.util.LinkedHashMap;
-
-import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Construction;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.Kernel3D;
+
+import java.util.LinkedHashMap;
 
 
 
