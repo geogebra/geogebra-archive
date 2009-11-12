@@ -222,6 +222,9 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		// enableLabelDrags, default is "true"
 		enableLabelDrags = !"false".equals(applet.getParameter("enableLabelDrags"));
 		
+		// paramter for JavaScript ggbOnInit() call
+		ggbOnInitParam = applet.getParameter("ggbOnInitParam");
+		
 		// enableShiftDragZoom, default is "true"
 		enableShiftDragZoom = !"false".equals(applet.getParameter("enableShiftDragZoom"));		
 		
