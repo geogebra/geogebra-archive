@@ -605,7 +605,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Returns a font that can display testString.
 	 */
 	public Font getFontCanDisplay(String testString, boolean serif, int fontStyle, int fontSize) {
-		return fontManager.getFontCanDisplay(testString, false, fontStyle, fontSize);
+		return fontManager.getFontCanDisplay(testString, serif, fontStyle, fontSize);
 	}
 	
 	public void setUnsaved() {
