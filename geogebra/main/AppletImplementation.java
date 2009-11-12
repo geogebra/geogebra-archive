@@ -86,6 +86,8 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	//private String javascriptLoadFileName="";
 	private GgbAPI  ggbApi=null;					//Ulven 29.05.08
 
+	public String ggbOnInitParam = null;
+
 	/** Creates a new instance of GeoGebraApplet */	
 	protected AppletImplementation(JApplet applet) {
 		this.applet = applet;
@@ -117,8 +119,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public void initInBackground() {	
 		// call JavaScript function ggbOnInit()
 		initJavaScript();
-		Object [] args = { };
-		callJavaScript("ggbOnInit", args );
+		Object [] noArgs = { };
+		Object [] arg = { ggbOnInitParam };
+		
+		callJavaScript("ggbOnInit", (ggbOnInitParam == null) ? noArgs : arg );
 		
 		// give applet time to repaint
 		Thread initingThread = new Thread() {
