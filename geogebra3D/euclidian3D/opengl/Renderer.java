@@ -320,7 +320,10 @@ public class Renderer implements GLEventListener {
         //primitives.enableVBO(gl);
         
         //drawing hidden part
+        gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
+        //gl.glDisable(GL.GL_BLEND);
         drawList3D.drawHidden(this);
+        gl.glDisable(GL.GL_ALPHA_TEST);       
 
 
         //drawing picked parts        
@@ -328,9 +331,9 @@ public class Renderer implements GLEventListener {
         //setMaterial(new Color(0f,0f,0f),0.75f);
         dilation = DILATION_HIGHLITED;
     	gl.glCullFace(GL.GL_FRONT); //draws inside parts
+        gl.glEnable(GL.GL_BLEND);
     	drawList3D.drawHighlighting(this);
         dilation = DILATION_NONE;
-        gl.glCullFace(GL.GL_BACK);
         gl.glDepthMask(true);
         
 
@@ -351,9 +354,13 @@ public class Renderer implements GLEventListener {
         
         //drawing labels
         gl.glEnable(GL.GL_CULL_FACE);
+        gl.glCullFace(GL.GL_BACK);
+        gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
         gl.glDisable(GL.GL_LIGHTING);
+        gl.glDisable(GL.GL_BLEND);
         drawList3D.drawLabel(this);
         gl.glEnable(GL.GL_LIGHTING);
+        gl.glDisable(GL.GL_ALPHA_TEST);       
 
         
         //drawing hiding parts
@@ -371,12 +378,14 @@ public class Renderer implements GLEventListener {
         //re-drawing transparents parts for better transparent effect
         //TODO improve it !
         gl.glDepthMask(false);
+        gl.glEnable(GL.GL_BLEND);
         drawList3D.drawTransp(this);
         gl.glDepthMask(true);
 
         
         //drawing hiding parts
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
+        gl.glDisable(GL.GL_BLEND);
         gl.glCullFace(GL.GL_BACK); //draws inside parts
         gl.glEnable(GL.GL_CULL_FACE);
         drawList3D.drawClosedSurfacesForHiding(this); //closed surfaces front-faces
@@ -389,6 +398,7 @@ public class Renderer implements GLEventListener {
         //TODO improve it !
         gl.glDisable(GL.GL_CULL_FACE);
         gl.glDepthMask(false);
+        gl.glEnable(GL.GL_BLEND);
         drawList3D.drawTransp(this);
         gl.glDepthMask(true);
 
@@ -399,7 +409,6 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_BLEND);
         drawList3D.draw(this);
-        gl.glEnable(GL.GL_BLEND);
         
         
         //primitives.disableVBO(gl);
@@ -499,28 +508,25 @@ public class Renderer implements GLEventListener {
      * @param c the color of the pencil
      * @param alpha the alpha value for blending
      */
-    public void setMaterial(Color c, double alpha){
+    public void setColor(Color c, double alpha){
 
     	color = c;
     	this.alpha = alpha;
  
+    	gl.glColor4f(((float) c.getRed())/256f,
+    							((float) c.getGreen())/256f,
+    							((float) c.getBlue())/256f,
+    							(float) alpha);
     	
+    	/*
     	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, 
     			new float[] {((float) c.getRed())/256f,
     							((float) c.getGreen())/256f,
     							((float) c.getBlue())/256f,
     							(float) alpha},
     			0);
-    	
-    	
-    	/*
-    	gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, 
-    			new float[] {1f,
-    							1f,
-    							1f,
-    							1f},
-    			0);
     	*/
+    	
     }
     
     
@@ -876,7 +882,7 @@ public class Renderer implements GLEventListener {
     		matrix.setVz(EuclidianView3D.vx);
     	}
     	
-    	setMaterial(axisZ, 1);
+    	setColor(axisZ, 1);
     	setMatrix(matrix);
     	drawSegment();
     	resetMatrix();
@@ -897,7 +903,7 @@ public class Renderer implements GLEventListener {
     		matrix.setVz(EuclidianView3D.vz);
     	}
     	
-    	setMaterial(axisX, 1);
+    	setColor(axisX, 1);
     	setMatrix(matrix);
     	drawSegment();
     	resetMatrix();
@@ -916,7 +922,7 @@ public class Renderer implements GLEventListener {
     		matrix.setVz(EuclidianView3D.vx);
     	}
     	
-    	setMaterial(axisY, 1);
+    	setColor(axisY, 1);
     	setMatrix(matrix);
     	drawSegment();
     	resetMatrix();
@@ -926,7 +932,7 @@ public class Renderer implements GLEventListener {
     	
     	// reset the drawing matrix and color
     	setMatrix(drawingMatrixOld);
-    	setMaterial(colorOld, alphaOld);
+    	setColor(colorOld, alphaOld);
     	
     }
     
@@ -995,46 +1001,6 @@ public class Renderer implements GLEventListener {
     	
     }
     
-    /*
-    public void drawQuad2(double a_x1, double a_y1, double a_x2, double a_y2){
-    	initMatrix(m_drawingMatrix.quad(a_x1, a_y1, a_x2, a_y2));
-    	drawQuad2();
-    	resetMatrix();
-    }
-    
-    private void drawQuad2(){    	
-    	 
-       	gl.glDisable(GL.GL_CULL_FACE);	
-       	gl.glEnable(GL.GL_TEXTURE_2D);
-    	
-        gl.glBegin(GL.GL_QUADS);	
-        
-        
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[0]);
-        
-        gl.glNormal3f(0.0f, 0.0f, 1.0f);
-        
-        
-        float v = 2f;
-        gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3f(0.0f, 0.0f, 0.0f);
-        
-        gl.glTexCoord2f(v, 0.0f);
-        gl.glVertex3f(1.0f, 0.0f, 0.0f);
-        
-        gl.glTexCoord2f(v, v);
-        gl.glVertex3f(1.0f, 1.0f, 0.0f);	
-        
-        gl.glTexCoord2f(0.0f, v);
-        gl.glVertex3f(0.0f, 1.0f, 0.0f);
-              
-        gl.glEnd();		
-        
-	   	gl.glEnable(GL.GL_CULL_FACE);
-	   	gl.glDisable(GL.GL_TEXTURE_2D);
-       
-    }
-    */
     
     /** draws a grid according to current drawing matrix.
      * @param a_x1 x-coordinate of the top-left corner
@@ -1872,7 +1838,6 @@ public class Renderer implements GLEventListener {
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);  
         
         gl.glAlphaFunc(GL.GL_NOTEQUAL, 0);//pixels with alpha=0 are not drawn
-        gl.glEnable(GL.GL_ALPHA_TEST);       
         
         //using glu quadrics
         quadric = glu.gluNewQuadric();// Create A Pointer To The Quadric Object (Return 0 If No Memory) (NEW)
@@ -1888,6 +1853,11 @@ public class Renderer implements GLEventListener {
         //gl.glEnable(GL.GL_RESCALE_NORMAL);
         
         
+        
+        //material
+        gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
+        gl.glEnable(GL.GL_COLOR_MATERIAL);
+
         
         //textures
         initTextures();

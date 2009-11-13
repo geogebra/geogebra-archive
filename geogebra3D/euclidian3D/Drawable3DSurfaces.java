@@ -47,7 +47,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		if (!getGeoElement().doHighlighting())
 			return;
 		
-		renderer.setMaterial(new Color(0f,0f,0f),0.25f);
+		renderer.setColor(new Color(0f,0f,0f),0.25f);
 		renderer.setMatrix(getMatrix());
 		drawGeometryPicked(renderer);
 		
@@ -66,7 +66,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		if (alpha<=0)
 			return;
 		
-		renderer.setMaterial(getGeoElement().getObjectColor(),alpha);
+		renderer.setColor(getGeoElement().getObjectColor(),alpha);
 		renderer.setMatrix(getMatrix());
 		drawGeometry(renderer);
 		

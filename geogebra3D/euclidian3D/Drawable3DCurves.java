@@ -33,7 +33,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
 		
-		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+		renderer.setColor(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
 		renderer.setDash(Renderer.DASH_NONE); 
 		renderer.setMatrix(getMatrix());
 		
@@ -52,7 +52,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if (!getGeoElement().doHighlighting())
 			return;
 		
-		renderer.setMaterial(new Color(0f,0f,0f),1f);
+		renderer.setColor(new Color(0f,0f,0f),1f);
 		renderer.setDash(Renderer.DASH_NONE);
 		renderer.setMatrix(getMatrix());
 		drawGeometryPicked(renderer);		
@@ -67,7 +67,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 			return;
 		
 				
-		renderer.setMaterial(getGeoElement().getObjectColor(),1.0f);
+		renderer.setColor(getGeoElement().getObjectColor(),1.0f);
 		renderer.setDash(getGeoElement().getLineType()); 
 		renderer.setMatrix(getMatrix());		
 		drawGeometryHidden(renderer);		
