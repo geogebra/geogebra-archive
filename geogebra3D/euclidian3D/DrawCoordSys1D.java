@@ -71,6 +71,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	protected void updateForItSelf(){
 		
+		viewChanged();
 	}
 	
 	
@@ -97,6 +98,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		
 		this.selectedPoints = selectedPoints;
 		
+		//viewChanged();
 
 		updatePreview();
 		
@@ -138,6 +140,8 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		}else{
 			getGeoElement().setEuclidianVisible(false);
 		}
+		
+		setWaitForUpdate();
 			
 	}
 	
