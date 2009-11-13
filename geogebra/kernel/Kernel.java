@@ -440,7 +440,27 @@ public class Kernel {
 
 	final public void setEpsilon(double epsilon) {
 		EPSILON = epsilon;
-		getEquationSolver().setEpsilon(epsilon);
+	
+		if (EPSILON > MIN_PRECISION)
+			EPSILON = MIN_PRECISION;
+		else if (EPSILON < MAX_PRECISION)
+			EPSILON = MAX_PRECISION;
+		
+		getEquationSolver().setEpsilon(EPSILON);
+	}
+	
+	/**
+	 * Sets the working epsilon precision according to the given 
+	 * print precision. After this method epsilon will always be
+	 * less or equal STANDARD_PRECISION.
+	 * @param printPrecision
+	 */
+	private void setEpsilonForPrintPrecision(double printPrecision) {
+		if (printPrecision < STANDARD_PRECISION) {
+			setEpsilon(printPrecision);
+		} else {
+			setEpsilon(STANDARD_PRECISION);
+		}
 	}
 
 	final public double getEpsilon() {
@@ -448,11 +468,11 @@ public class Kernel {
 	}
 
 	final public void setMinPrecision() {
-		EPSILON = MIN_PRECISION;
+		setEpsilon(MIN_PRECISION);
 	}
 
 	final public void resetPrecision() {
-		EPSILON = STANDARD_PRECISION;
+		setEpsilon(STANDARD_PRECISION);
 	}
 	
 	/**
@@ -576,8 +596,10 @@ public class Kernel {
 		if (decimals >= 0) {
 			useSignificantFigures = false;
 			nf.setMaximumFractionDigits(decimals);
-			PRINT_PRECISION = Math.pow(10, -decimals);
 			ROUND_HALF_UP_FACTOR = decimals < 15 ? ROUND_HALF_UP_FACTOR_DEFAULT : 1;
+			
+			PRINT_PRECISION = Math.pow(10, -decimals);
+			setEpsilonForPrintPrecision(PRINT_PRECISION);
 		}
 	}
 	
@@ -591,6 +613,9 @@ public class Kernel {
 			sf.setSigDigits(figures);
 			sf.setMaxWidth(16); // for scientific notation
 			ROUND_HALF_UP_FACTOR = figures < 15 ? ROUND_HALF_UP_FACTOR_DEFAULT : 1;
+			
+			PRINT_PRECISION = MAX_PRECISION;
+			setEpsilonForPrintPrecision(PRINT_PRECISION);
 		}
 	}
 	
@@ -5572,7 +5597,7 @@ public class Kernel {
 
 	/** doesn't show 1 or -1 */
 	final private String formatCoeff(double x) {
-		if (isEqual(Math.abs(x), 1.0)) {
+		if (Math.abs(x) == 1.0) {
 			if (x > 0.0)
 				return "";
 			else
@@ -5600,18 +5625,11 @@ public class Kernel {
 				else if (Double.isInfinite(x)) {
 					return Double.toString(x); // "Infinity" or "-Infintiny"
  				}	
-				else if (isZero(x)) {
-					return "0";
-				} 
 				else {			
 					double abs = Math.abs(x);
 					// number small enough that Double.toString() won't create E notation
 					if (abs >= 10E-3 && abs < 10E7) {
-						long round = Math.round(x);
-						if (isEqual(x, round)) // isInteger
-							return Long.toString(round);
-						else
-							return Double.toString(x);	
+						return Double.toString(x);	
 					}
 					// number would produce E notation with Double.toString()
 					else {						
@@ -5642,9 +5660,6 @@ public class Kernel {
 				else if (Double.isInfinite(x)) {
 					return (x > 0) ? "\u221e" : "-\u221e"; // infinity
 				}
-				else if (isZero(x)) {
-					return "0";
-				}
 				else if (x == Math.PI) {
 					return casPrintFormPI;
 				}	
@@ -5669,10 +5684,11 @@ public class Kernel {
 			}								
 	}
 	
+	
 	/**
 	 * Uses current NumberFormat nf to format a number.
 	 */
-	final private String formatNF(double x) {		
+	final private String formatNF(double x) {
 		return nf.format(x);
 	}
 	
@@ -5705,30 +5721,10 @@ public class Kernel {
 	private StringBuffer sbFormatSF;
 	
 	
-	final public String formatPiE(double x, NumberFormat numF) {
-		/*
-		// 	E
-		if (x == Math.E) {
-			switch (casPrintForm) {
-				case ExpressionNode.STRING_TYPE_GEOGEBRA:	
-					return EULER_STRING;
-				case ExpressionNode.STRING_TYPE_JASYMCA:
-					return "exp(1)";
-				case ExpressionNode.STRING_TYPE_MATH_PIPER:
-					return "Exp(1)";
-				default:
-					return formatNF(Math.E);
-			}
-		}	
-		*/		
-		
+	final public String formatPiE(double x, NumberFormat numF) {		
 		// PI
 		if (x == Math.PI) {
 			return casPrintFormPI;
-		} 
-		// zero
-		else if (isEqual(x, 0, MAX_DOUBLE_PRECISION)) {
-			return "0";
 		}
 				
 		// 	MULTIPLES OF PI/2
@@ -5738,7 +5734,7 @@ public class Kernel {
 		if (sbFormat == null)
 			sbFormat = new StringBuffer();
 		sbFormat.setLength(0);
-		if (isEqual(a, aint, MAX_DOUBLE_PRECISION)) {	
+		if (isEqual(a, aint, STANDARD_PRECISION)) {	
 			switch (aint) {		
 				case 0:
 					return "0";		
@@ -5788,7 +5784,8 @@ public class Kernel {
 		
 		// STANDARD CASE
 		// use numberformat to get number string
-		String str = numF.format(x);
+		// checkDecimalFraction() added to avoid 2.19999999999999 when set to 15dp
+		String str = numF.format(checkDecimalFraction(x));
 		sbFormat.append(str);	
 		// if number is in scientific notation and ends with "E0", remove this
 		if (str.endsWith("E0"))
@@ -5799,23 +5796,18 @@ public class Kernel {
 
 
 	final public String formatSignedCoefficient(double x) {
-		
-		if (isEqual(x, -1.0))
+		if (x == -1.0)
 			return "- ";
-		if (isEqual(x, 1.0))
+		if (x == 1.0)
 			return "+ ";
 
 		return formatSigned(x).toString();
-		
 	}
-		final public StringBuffer formatSigned(double x) {
-		sbFormatSigned.setLength(0);
-		if (-MIN_PRECISION < x && x < MIN_PRECISION) {
-			sbFormatSigned.append("+ 0");
-			return sbFormatSigned;
-		}			
 		
-		if (x > 0.0d) {
+	final public StringBuffer formatSigned(double x) {
+		sbFormatSigned.setLength(0);		
+		
+		if (x >= 0.0d) {
 			sbFormatSigned.append("+ ");
 			sbFormatSigned.append( format(x));
 			return sbFormatSigned;
@@ -5827,42 +5819,57 @@ public class Kernel {
 	}
 	private StringBuffer sbFormatSigned = new StringBuffer(40);
 
-	final public StringBuffer formatAngle(double phi) {
+	final public StringBuffer formatAngle(double phi) {		
 		sbFormatAngle.setLength(0);
-		if (Double.isNaN(phi)) {
-			sbFormatAngle.append(app.getPlain("undefined"));
-			return sbFormatAngle;
-		}			
-		
-		if (angleUnit == ANGLE_DEGREE) {
-			if (isZero(phi)) {
-				sbFormatAngle.append("0\u00b0");
-				return sbFormatAngle;
-			}				
-			else {
-				phi = Math.toDegrees(phi);
-				if (phi < 0) 
-					phi += 360;	
-				else if (phi > 360)
-					phi = phi % 360;			
-				sbFormatAngle.append(format(phi));
-				sbFormatAngle.append('\u00b0');
-
-		        //	Application.printStacktrace("formatAngle: " + sbFormatAngle);
+		switch (casPrintForm) {
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+			case ExpressionNode.STRING_TYPE_JASYMCA:
+				if (angleUnit == ANGLE_DEGREE) {
+					sbFormatAngle.append("(");
+					sbFormatAngle.append(format(Math.toDegrees(phi)));	
+					sbFormatAngle.append("*");
+					sbFormatAngle.append("\u00b0");
+					sbFormatAngle.append(")");
+				} else {
+					sbFormatAngle.append(format(phi));					
+				}
+				return sbFormatAngle;				
 				
-				return sbFormatAngle;
-			}
-		} else {
-			if (isZero(phi)) {
-				sbFormatAngle.append( "0 rad");
-				return sbFormatAngle;
-			}
-			else {				
-				sbFormatAngle.append(format(phi));
-				sbFormatAngle.append(" rad");
-				return sbFormatAngle;
-			}
+			default:
+				// STRING_TYPE_GEOGEBRA_XML
+				// STRING_TYPE_GEOGEBRA
+
+				if (Double.isNaN(phi)) {
+					sbFormatAngle.append("?");
+					return sbFormatAngle;
+				}		
+				
+				if (angleUnit == ANGLE_DEGREE) {
+					phi = Math.toDegrees(phi);
+					if (phi < 0) 
+						phi += 360;	
+					else if (phi > 360)
+						phi = phi % 360;
+					sbFormatAngle.append(format(phi));
+					
+					if (casPrintForm == ExpressionNode.STRING_TYPE_GEOGEBRA_XML) {
+						sbFormatAngle.append("*");
+					}
+					sbFormatAngle.append('\u00b0');
+					return sbFormatAngle;
+				} 
+				else {
+					// RADIANS
+					sbFormatAngle.append(format(phi));
+					
+					if (casPrintForm != ExpressionNode.STRING_TYPE_GEOGEBRA_XML) {
+						sbFormatAngle.append(" rad");
+					}
+					return sbFormatAngle;
+				}
 		}
+		
+		
 	}
 	private StringBuffer sbFormatAngle = new StringBuffer(40);
 
