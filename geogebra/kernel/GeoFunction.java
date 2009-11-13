@@ -330,7 +330,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	}
 
 	protected boolean showInEuclidianView() {
-		return isDefined();
+		return isDefined() && !isBooleanFunction();
 	}
 	
 	

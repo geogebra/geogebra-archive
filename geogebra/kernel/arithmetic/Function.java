@@ -245,8 +245,15 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return f(x)
      */
     final public double evaluate(double x) {
-        fVar.set(x);
-        return ((NumberValue) expression.evaluate()).getDouble();       
+    	if (isBooleanFunction) {
+    		// BooleanValue
+    		return evaluateBoolean(x) ? 1 : 0;
+    	}
+    	else {
+    		// NumberValue
+    		fVar.set(x);
+    		return ((NumberValue) expression.evaluate()).getDouble();
+    	}     
     }
     
     /**
