@@ -22,92 +22,57 @@ public class CASTableCellController implements KeyListener {
 		Object src = e.getSource();		
 		if (src == tableCellEditor.getInputArea())
 			handleKeyPressedInputTextField(e);
-
-		if (src == table)
-			handleKeyPressedTable(e);
-	}
-
-	private void handleKeyPressedTable(KeyEvent e) {
-		e.consume();
-		int selectedRow = table.getSelectedRow();
-
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:			
-			// Set the focus on the input text field
-			table.setShowCellSeparator(false);		
-			table.startEditingRow(selectedRow);						
-			break;
-
-		case KeyEvent.VK_DOWN:
-			// go to next cell
-			table.setShowCellSeparator(false);					
-			table.startEditingRow(selectedRow + 1);								
-			break;
-
-		case KeyEvent.VK_ENTER:
-			// Set the focus on the input text field
-			table.setShowCellSeparator(false);
-			table.insertRowAfter(selectedRow, null, true);
-			break;
-
-		default: // Other Keys
-			// Set the focus on the input text field
-			table.setShowCellSeparator(false);
-		
-			// put typed key into new cell 
-			CASTableCellValue value = new CASTableCellValue(Character.toString(e.getKeyChar()));
-			table.insertRowAfter(selectedRow, value, true);			
-			break;
-		}
 	}
 
 	private void handleKeyPressedInputTextField(final KeyEvent e) {
 		boolean consumeEvent = false;
+		boolean needUndo = false;
 		
 		int selectedRow = table.getSelectedRow();
+		int rowCount = table.getRowCount();
 
 		switch (e.getKeyCode()) {				
 		case KeyEvent.VK_ENTER:
-//			// evaluate input
-//			evalThread = new Thread() {
-//				public void run() {
-//					view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));				
-//					handleEnterKey(e);	
-//					view.setCursor(Cursor.getDefaultCursor());
-//					evalThread = null;
-//				}				
-//			};
-//			SwingUtilities.invokeLater(evalThread);
-			
 			handleEnterKey(e);
 			consumeEvent = true;
+			needUndo = true;
 			break;
 
 		case KeyEvent.VK_UP:
 			if (selectedRow >= 1) {
-				table.changeSelection(selectedRow - 1, CASTable.COL_CAS_CELLS, false, false);		
-				table.scrollRectToVisible(table.getCellRect(selectedRow - 1, CASTable.COL_CAS_CELLS, true ) );
-			} else if (table.isRowEmpty(0)) {
+				table.startEditingRow(selectedRow - 1);
+			} 
+			else if (table.isRowEmpty(0)) {
 				// insert empty row at beginning
 				table.insertRowAfter(-1, null, true);
+				needUndo = true;
 			}			
 			consumeEvent = true;
 			break;
 			
 		case KeyEvent.VK_DOWN:
-			if (selectedRow != view.getConsoleTable().getRowCount() - 1) {
-				// table.setRowHeight(selectedRow, curCell.addLinePanel());
-				table.setShowCellSeparator(true);
-				table.updateRow(selectedRow);
-			}
+			if (selectedRow != rowCount - 1) {
+				table.startEditingRow(selectedRow + 1);
+			} 
+			else {
+				// insert empty row at end
+				table.insertRow(null, true);
+				needUndo = true;
+			}	
 			consumeEvent = true;
 			break;
 		}
 
 		// consume keyboard event so the table
 		// does not process it again
-		if (consumeEvent)
+		if (consumeEvent) {
 			e.consume();
+		}
+		
+		if (needUndo) {
+			// store undo info
+			view.getApp().storeUndoInfo();
+		}
 	}
 	
 	/**

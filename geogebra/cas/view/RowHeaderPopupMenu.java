@@ -61,17 +61,27 @@ public class RowHeaderPopupMenu extends JPopupMenu implements ActionListener {
 		int [] selRows = rowHeader.getSelectedIndices();
 		if (selRows.length == 0) return;
 		
+		boolean undoNeeded = true;
+		
 		String ac = e.getActionCommand();
 		if (ac.equals("insertAbove")) {
 			table.insertRowAfter(selRows[0] - 1, null, true);
+			undoNeeded = true;
 		}
 		else if (ac.equals("insertBelow")) {
 			table.insertRowAfter(selRows[selRows.length-1], null, true);
+			undoNeeded = true;
 		}
 		else if (ac.equals("delete")) {
 			for (int i=selRows.length-1; i >= 0; i--) {
 				table.deleteRow(selRows[i]);
 			}
+			undoNeeded = true;
+		}
+		
+		if (undoNeeded) {
+			// store undo info
+			table.app.storeUndoInfo();
 		}
 	}
 }

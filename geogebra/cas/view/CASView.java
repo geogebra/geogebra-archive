@@ -14,11 +14,12 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
@@ -77,6 +78,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		scrollPane.setRowHeaderView(rowHeader);
 		scrollPane.setViewportView(consoleTable);
 		scrollPane.setBackground(Color.white);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 						
 		// put the scrollpanel in 
 		setLayout(new BorderLayout());	
@@ -95,6 +97,40 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 							rowHeader.setSelectedIndices(selRows);
 					}					
 				});
+		
+		// listen to clicks below last row in consoleTable: create new row
+		scrollPane.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					int clickedRow = consoleTable.rowAtPoint(e.getPoint());
+					boolean undoNeeded = false;
+					
+					if (clickedRow < 0) {
+						// clicked outside of console table
+						int rows = consoleTable.getRowCount();
+						if (rows == 0) {
+							// insert first row
+							consoleTable.insertRow(null, true);
+							undoNeeded = true;
+						} 
+						else {
+							CASTableCellValue cellValue = consoleTable.getCASTableCellValue(rows-1);
+							if (cellValue.isEmpty()) {
+								consoleTable.startEditingRow(rows-1);
+							} else {
+								consoleTable.insertRow(null, true);
+								undoNeeded = true;
+							}
+						}
+					}
+					
+					if (undoNeeded) {
+						// store undo info
+						getApp().storeUndoInfo();
+					}
+				}
+		
+			}
+		);
 		
 		// Ulven 01.03.09: excange line 90-97 with:
 		// BtnPanel which sets up all the button.
@@ -293,17 +329,13 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 				{"Hold", 		"\u2713", 	app.getPlain("CheckInput")}
 			},		
 			{  
-				{"Simplify", 	app.getCommand("Simplify")},
 				{"Expand", 		app.getCommand("Expand")}, 
-				{"Factor", 		app.getCommand("Factor")}				
-			}, 
-			{  
+				{"Factor", 		app.getCommand("Factor")},
+				{"Simplify", 	app.getCommand("Simplify")},
 				{"Substitute", 	app.getPlain("Substitute")},
-				{"Solve", 		app.getPlain("Solve")}						
-			},
-			{  
-				{"Derivative", 	"d/dx", 	app.getCommand("Derivative")}, 
-				{"Integral", 	"\u222b", 	app.getCommand("Integral")}				
+				{"Solve", 		app.getPlain("Solve")}, 
+				{"Derivative", 	"d/dx", 	 app.getCommand("Derivative")}, 
+				{"Integral", 	"\u222b dx", app.getCommand("Integral")}	
 			}
 		};
 		
@@ -520,6 +552,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		
 		// insert one empty row
 		consoleTable.insertRow(new CASTableCellValue(this), false);
+		repaintView();
 	}
 	
 	/**
@@ -536,7 +569,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	}
 
 	public void repaintView() {
-		consoleTable.repaint();
+		consoleTable.updateAllRows();
 	}
 
 	public void reset() {

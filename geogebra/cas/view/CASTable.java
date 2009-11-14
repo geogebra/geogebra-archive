@@ -29,7 +29,6 @@ public class CASTable extends JTable {
 	protected Kernel kernel;
 	protected Application app;
 	private CASView view;
-	private boolean showCellSeparator = false;
 	
 	
 	private CASTableCellEditor editor;
@@ -92,15 +91,6 @@ public class CASTable extends JTable {
 		return view;
 	}
 	
-	public final boolean isShowCellSeparator() {
-		return showCellSeparator;
-	}
-
-	public final void setShowCellSeparator(boolean showCellSeparator) {
-		this.showCellSeparator = showCellSeparator;
-	}
-
-	
 	public void stopEditing() {
 		// stop editing 
 		CellEditor editor = (CellEditor) getEditorComponent();
@@ -124,10 +114,7 @@ public class CASTable extends JTable {
 	 * Inserts a row after selectedRow and starts editing
 	 * the new row.
 	 */
-	public void insertRowAfter(int selectedRow, CASTableCellValue newValue, boolean startEditing) {		
-		// TODO: remove
-		System.out.println("insertRowAfter: " + selectedRow);
-							
+	public void insertRowAfter(int selectedRow, CASTableCellValue newValue, boolean startEditing) {							
 		if (newValue == null)
 			newValue = new CASTableCellValue(view);
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
@@ -213,15 +200,20 @@ public class CASTable extends JTable {
 		tableModel.fireTableRowsUpdated(row, row);	
 	}
 	
+	public void updateAllRows() {
+		int rowCount = tableModel.getRowCount();
+		if (rowCount > 0)
+			tableModel.fireTableRowsUpdated(0, rowCount - 1);
+		repaint();
+	}
+	
 	public CASTableCellValue getCASTableCellValue(int row) {
 		return (CASTableCellValue) tableModel.getValueAt(row, COL_CAS_CELLS);
 	}
 	
 	public boolean isRowEmpty(int row) {		
 		CASTableCellValue value = (CASTableCellValue) tableModel.getValueAt(row, 0);
-		String input = value.getInput();
-		String output = value.getOutput(); 
-		return (input == null || input.length() == 0) && (output == null || output.length() == 0);
+		return value.isEmpty();
 	}
 
 	
@@ -230,12 +222,9 @@ public class CASTable extends JTable {
 	 */
 	public void deleteAllRows() {
 		int row = tableModel.getRowCount();
-
 		for (int i = row - 1; i >= 0; i--)
 			tableModel.removeRow(i);
 		this.repaint();
-
-		this.getRowCount();
 		// if (tableModel.getRowCount() == 0)
 		// insertRow(-1, CASPara.contCol);
 	}
@@ -264,15 +253,16 @@ public class CASTable extends JTable {
 		else {		
 			// start editing
 			setRowSelectionInterval(editRow, editRow);	
-	        scrollRectToVisible(getCellRect( editRow, COL_CAS_CELLS, false ) );	
+	        scrollRectToVisible(getCellRect( editRow, COL_CAS_CELLS, true ) );	
 			editCellAt(editRow, COL_CAS_CELLS);			
 		}
 	}		
 	
 	public boolean editCellAt(int editRow, int editCol) {
 		boolean success = super.editCellAt(editRow, editCol);
-		if (success && editCol == COL_CAS_CELLS)
+		if (success && editCol == COL_CAS_CELLS) {
 			editor.setInputAreaFocused();
+		}
 		return success;
 	}
 

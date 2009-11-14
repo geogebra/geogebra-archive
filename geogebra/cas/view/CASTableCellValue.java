@@ -59,11 +59,6 @@ public class CASTableCellValue {
 
 	public void setInput(String inValue) {
 		input = inValue;
-		
-		// TODO:remove
-		System.out.println("setInput: " + input + ", output: " + output);
-		if (input == null || input.length() == 0)
-			Application.printStacktrace("input null");
 	}
 
 	public void setOutput(String inValue) {
@@ -74,9 +69,6 @@ public class CASTableCellValue {
 		this.output = output;
 		error = isError;
 		latex = null;
-		
-		// TODO:remove
-		System.out.println("setOutput: " + input + ", output: " + output + ", error: " + error);
 	}
 	
 	public boolean isOutputError() {

@@ -31,7 +31,7 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 		setFont(casTable.getFont());
 		
 		if (isSelected) {
-			setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
+			setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
 		}
 		else {								
 			setBackground(MyTable.BACKGROUND_COLOR_HEADER);

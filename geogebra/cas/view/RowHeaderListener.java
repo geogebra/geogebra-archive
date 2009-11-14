@@ -13,7 +13,7 @@ public class RowHeaderListener extends MouseAdapter implements MouseMotionListen
 	private CASTable table;
 	private JList rowHeader;
 	private int mousePressedRow;
-	private boolean dragged;
+	private boolean dragged, rightClick;
 	
 	public RowHeaderListener(CASTable table, JList rowHeader) {
 		this.table = table;
@@ -21,6 +21,8 @@ public class RowHeaderListener extends MouseAdapter implements MouseMotionListen
 	}
 	
 	public void mousePressed(MouseEvent e) {
+		rightClick = Application.isRightClick(e);
+		
 		e.consume();
 		table.stopEditing();
 				
@@ -53,8 +55,7 @@ public class RowHeaderListener extends MouseAdapter implements MouseMotionListen
 		e.consume();	
 		mousePressedRow = -1;
 				
-		int mouseReleasedRow = rowHeader.locationToIndex(e.getPoint());		
-		boolean rightClick = Application.isRightClick(e);
+		int mouseReleasedRow = rowHeader.locationToIndex(e.getPoint());
 		
 		// update selection if:
 		//   mouseReleasedRow is not selected yet

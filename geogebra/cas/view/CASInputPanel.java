@@ -49,8 +49,9 @@ public class CASInputPanel extends JPanel {
 	public void setInputAreaFocused() {
 		inputArea.requestFocus();
 		String text = inputArea.getText();
-		if (text != null)
+		if (text != null) {
 			inputArea.setCaretPosition(text.length());
+		}
 	}
 
 	final public void setFont(Font ft) {
