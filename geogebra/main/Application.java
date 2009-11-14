@@ -20,6 +20,7 @@ package geogebra.main;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.Perspective;
@@ -614,6 +615,24 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public boolean isIniting() {
 		return INITING;
+	}
+	
+	public void fileNew() {
+		// clear all 
+		clearConstruction();
+		
+		// clear input bar
+		if (hasGuiManager() && showAlgebraInput()) {
+			AlgebraInput ai = (AlgebraInput)(getGuiManager().getAlgebraInput());
+			ai.clear();
+		}
+		
+		// reset spreadsheet columns, reset trace columns
+		if (hasGuiManager()) {
+			getGuiManager().resetSpreadsheet();
+		}
+		
+		getEuclidianView().resetMaxLayerUsed();
 	}
 	
 	public boolean isUsingLayout() {

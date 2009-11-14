@@ -130,9 +130,6 @@ public class MyXMLHandler implements DocHandler {
 	// (needed for GeoText and GeoVector)
 	private LinkedList startPointList = new LinkedList();
 
-	// List of cell pairs in cas session
-	private LinkedList cellPairList = new LinkedList();	
-
 	// List of GeoExpPair condition objects
 	// for setting the conditions at the end of the construction
 	// (needed for GeoText and GeoVector)
@@ -455,9 +452,8 @@ public class MyXMLHandler implements DocHandler {
 		switch (casSessionMode) {
 		case MODE_CAS_SESSION:
 			if (eName.equals("casSession")) {
-				// process start points at end of construction
-				processCellPairList();
 				mode = MODE_GEOGEBRA;
+				app.getGuiManager().getCasView().repaintView();
 			}
 			break;
 
@@ -481,17 +477,6 @@ public class MyXMLHandler implements DocHandler {
 			System.err.println("unknown cas session mode:" + constMode);
 		}
 
-	}
-
-	private void processCellPairList() {
-		try {
-			app.getGuiManager().getCasView().initCellPairs(cellPairList);
-			cellPairList.clear();
-		} catch (Exception e) {
-			cellPairList.clear();
-			e.printStackTrace();
-			throw new MyError(app, "processCellPairList: " + e.toString());
-		}
 	}
 
 	// ====================================
@@ -1652,7 +1637,7 @@ public class MyXMLHandler implements DocHandler {
 		case MODE_CAS_SESSION:
 			if (eName.equals("cellPair")) {
 				casSessionMode = MODE_CAS_CELL_PAIR;
-				casTableCellValueElement = app.getGuiManager().getCasView().createCellValue();
+				casTableCellValueElement = app.getGuiManager().getCasView().createRow();
 			} else {
 				System.err.println("unknown tag in <cellPair>: " + eName);
 			}
@@ -1695,17 +1680,6 @@ public class MyXMLHandler implements DocHandler {
 				break;
 			}
 
-		case 'c':
-			if (eName.equals("color")) {
-				ok = handleCASPairColor(attrs);
-				if (ok) {
-					cellPairList.removeLast();
-					cellPairList.add(casTableCellValueElement);
-
-				}
-				break;
-			}
-
 		default:
 			System.err.println("unknown tag in <outputCell>: " + eName);
 		}
@@ -1729,13 +1703,11 @@ public class MyXMLHandler implements DocHandler {
 				break;
 			}
 
-		case 'c':
-			if (eName.equals("color")) {
-				ok = handleCASPairColor(attrs);
-				if (ok)
-					cellPairList.add(casTableCellValueElement);
-				break;
-			}
+//		case 'c':
+//			if (eName.equals("color")) {
+//				ok = handleCASPairColor(attrs);
+//				break;
+//			}
 
 		default:
 			System.err.println("unknown tag in <inputCell>: " + eName);
@@ -2424,12 +2396,8 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleInputExpression(LinkedHashMap<String, String> attrs) {
 		try {
-//			app.loadCASJar();
-//			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement)
-//					.setCommand((String) attrs.get("value"));
-
-			casTableCellValueElement = app.getGuiManager().getCasView().setInputExpression(casTableCellValueElement,
-					(String) attrs.get("value"));
+			String input = (String) attrs.get("value");
+			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setInput(input);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -2438,24 +2406,24 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleOutExpression(LinkedHashMap<String, String> attrs) {
 		try {
-			String ggbString = (String) attrs.get("value");
-			//String latexString = (String) attrs.get("latex");
-			casTableCellValueElement = app.getGuiManager().getCasView().setOutputExpression(casTableCellValueElement,
-					ggbString);
+			String output = (String) attrs.get("value");
+			boolean error = parseBoolean((String) attrs.get("error"));
+			
+			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setOutput(output, error);
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	private boolean handleCASPairColor(LinkedHashMap<String, String> attrs) {
-		Color col = handleColorAttrs(attrs);
-		if (col == null)
-			return false;
-		// geo.setObjColor(col);
-
-		return true;
-	}
+//	private boolean handleCASPairColor(LinkedHashMap<String, String> attrs) {
+//		Color col = handleColorAttrs(attrs);
+//		if (col == null)
+//			return false;
+//		// geo.setObjColor(col);
+//
+//		return true;
+//	}
 
 	/*
 	 * this should not be needed private boolean

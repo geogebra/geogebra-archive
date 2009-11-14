@@ -138,6 +138,31 @@ public class GeoGebraPanel extends JPanel {
 	}
 	
 	/**
+	 * Tells the panel to show/hide the algebra view.
+	 * Note that you need to call buildGUI() after this 
+	 * method to update the panel's structure.
+	 */
+	public synchronized void setShowAlgebraView(boolean show) {
+		app.getGuiManager().setShowAlgebraView(show);	
+	}
+	
+	/**
+	 * Tells the panel to show/hide the spreadsheet view.
+	 * Note that you need to call buildGUI() after this 
+	 * method to update the panel's structure.
+	 */
+	public synchronized void setShowSpreadsheetView(boolean show) {
+		app.getGuiManager().setShowSpreadsheetView(show);	
+	}
+	
+	/**
+	 * Returns the graphics view's panel.
+	 */
+	public JPanel getGraphicsPanel() {
+		return app.getEuclidianView();
+	}
+	
+	/**
 	 * Sets the language of the GeoGebraPanel.
 	 * Note that you need to call buildGUI() after this 
 	 * method to update the panel's structure.

@@ -26,6 +26,7 @@ import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 
 import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -276,7 +277,12 @@ public class GgbAPI {
 		//rewrite in this context
 	}
 	
-
+	/**
+	 * Clears the construction and resets all views.
+	 */
+	public synchronized void fileNew() {
+		app.fileNew();
+	}
 	
 	/**
 	 * Refreshs all views. Note: clears traces in
@@ -787,6 +793,16 @@ public class GgbAPI {
 	 */
 	public synchronized void setCoordSystem(double xmin, double xmax, double ymin, double ymax) {
 		app.getEuclidianView().setRealWorldCoordSystem(xmin, xmax, ymin, ymax);
+	}
+	
+	/**
+	 * Returns the dimensions of the real world coordinate system in the graphics view
+	 * as [xmin, ymin, width, height]
+	 */
+	public synchronized Rectangle2D.Double getCoordSystemRectangle() {
+		EuclidianView ev = app.getEuclidianView();
+		return new Rectangle2D.Double(ev.getXmin(), ev.getYmin(), 
+				ev.getXmax() - ev.getXmin(), ev.getYmax() - ev.getYmin());
 	}
 	
 	/**

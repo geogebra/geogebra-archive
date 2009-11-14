@@ -5629,7 +5629,12 @@ public class Kernel {
 					double abs = Math.abs(x);
 					// number small enough that Double.toString() won't create E notation
 					if (abs >= 10E-3 && abs < 10E7) {
-						return Double.toString(x);	
+						long round = Math.round(x);
+						if (x == round) {
+							return Long.toString(round);
+						} else {
+							return Double.toString(x);	
+						}
 					}
 					// number would produce E notation with Double.toString()
 					else {						

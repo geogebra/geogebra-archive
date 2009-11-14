@@ -280,56 +280,6 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	public JComponent getCASViewComponent() {
 		return this;
 	}
-
-	/**
-	 * Loads
-	 * 
-	 * @param cellPairList
-	 */
-	public void initCellPairs(LinkedList cellPairList) {
-		// Delete the current rows
-		consoleTable.deleteAllRows();
-
-		if (cellPairList == null) {
-			CASTableCellValue cellPair = new CASTableCellValue(this);
-			consoleTable.insertRowAfter(-1, cellPair);
-		} else {
-			Iterator it = cellPairList.iterator();
-			boolean firstElementFlag = true;
-			while (it.hasNext()) {
-				CASTableCellValue cellPair = (CASTableCellValue) it.next();
-				if (firstElementFlag) {
-					consoleTable.insertRowAfter(-1, cellPair);
-					firstElementFlag = false;
-				} else
-					consoleTable.insertRow(cellPair);
-			}
-		}
-
-		// Set the focus at the right cell
-		// table.setFocusAtRow(table.getRowCount() - 1,
-		// geogebra.cas.view.CASPara.contCol);
-	}
-
-	public Object setInputExpression(Object cellValue, String input) {
-		if (cellValue instanceof CASTableCellValue) {
-			((CASTableCellValue) cellValue).setInput(input);
-		}
-		return cellValue;
-	}
-
-	public Object setOutputExpression(Object cellValue, String output) {
-		if (cellValue instanceof CASTableCellValue) {
-			((CASTableCellValue) cellValue).setOutput(output);
-		}
-		return cellValue;
-	}
-
-	public Object createCellValue() {
-		CASTableCellValue cellValue = new CASTableCellValue(this);
-		return cellValue;
-	}
-	
 	
 
 	//Ulven 01.03.09: Drop this, do it in components.BtnPanel
@@ -565,7 +515,18 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	}
 
 	public void clearView() {
-		initCellPairs(null);
+		// delete all rows
+		consoleTable.deleteAllRows();
+		
+		// insert one empty row
+		consoleTable.insertRow(new CASTableCellValue(this));
+	}
+	
+	/**
+	 * Returns an empty row at the bottom of the cas view.
+	 */
+	public CASTableCellValue createRow() {
+		return consoleTable.createRow();
 	}
 
 	public void remove(GeoElement geo) {
@@ -575,6 +536,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	}
 
 	public void repaintView() {
+		consoleTable.repaint();
 	}
 
 	public void reset() {
@@ -595,5 +557,6 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		kernel.detach(this);
 		clearView();
 	}
+
 
 }

@@ -181,15 +181,34 @@ public class CASTable extends JTable {
         }
     }
 
-    
+    /**
+     * Creates a new row in the cas view.
+     */
+    public CASTableCellValue createRow() {
+    	// make sure we have at least one row
+    	int rows = getRowCount();
+    	if (rows == 0) { 
+    		insertRow(new CASTableCellValue(view));
+    		rows = 1;
+    	} 
+    	
+    	CASTableCellValue retRow;
+    	
+    	// check if last row is empty
+		if (isRowEmpty(rows-1)) {
+			// last row empty
+			retRow = getCASTableCellValue(rows-1);
+		}
+		else {
+			// last row is not empty
+			retRow = new CASTableCellValue(view);
+			insertRow(retRow);
+		}
+    	
+    	return retRow;
+    }
 	
 	public void updateRow(int row) {
-		//stopEditing();
-		
-		// TODO: remove
-		CASTableCellValue value = getCASTableCellValue(row);
-		System.out.println("update row: " + row + ", input: " + value.getInput() + ", output: " + value.getOutput());
-		
 		tableModel.fireTableRowsUpdated(row, row);	
 	}
 	
@@ -224,9 +243,6 @@ public class CASTable extends JTable {
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteRow(int row) {
-		// TODO:remove
-		System.out.println("tableModel.removeRow " + row);
-
 		tableModel.removeRow(row);
 
 		int rowCount = tableModel.getRowCount();
@@ -239,10 +255,7 @@ public class CASTable extends JTable {
 	/*
 	 * Function: Set the focus on the specified row
 	 */
-	public void startEditingRow(int editRow) {								
-		// TODO: remove
-		System.out.println("startEditingRow: " +editRow);
-				
+	public void startEditingRow(int editRow) {									
 		if (editRow >= tableModel.getRowCount()) {
 			// insert new row, this starts editing
 			insertRow(null);

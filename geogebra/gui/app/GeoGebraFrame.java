@@ -158,7 +158,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	public void updateSize() {
 		Dimension frameSize;
 		
-		// use euclidian view pref size to set frame size 		
+		// use euclidian view pref size to set frame size 	
 		EuclidianView ev = app.getEuclidianView();		
 		SpreadsheetView sv = null;
 		

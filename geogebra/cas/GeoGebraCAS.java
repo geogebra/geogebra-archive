@@ -536,6 +536,9 @@ public class GeoGebraCAS {
 	 * any LaTeX commands (i.e. no \).
 	 */
 	public synchronized String convertGeoGebraToLaTeXString(String ggbExp) {
+		if (ggbExp == null)
+			return null;
+		
 		try {
 			// parse input
 			ValidExpression ve = casParser.parseGeoGebraCASInput(ggbExp);

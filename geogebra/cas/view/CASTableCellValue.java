@@ -31,6 +31,12 @@ public class CASTableCellValue {
 	}
 	
 	public String getLaTeXOutput() {
+		if (error)
+			return null;
+		else if (latex == null) {
+			latex = view.getCAS().convertGeoGebraToLaTeXString(output);
+		}
+		
 		return latex;
 	}
 
@@ -52,6 +58,9 @@ public class CASTableCellValue {
 
 	public void setInput(String inValue) {
 		input = inValue;
+		
+		// TODO:remove
+		System.out.println("setInput: " + input + ", output: " + output);
 	}
 
 	public void setOutput(String inValue) {
@@ -61,7 +70,10 @@ public class CASTableCellValue {
 	public void setOutput(String output, boolean isError) {
 		this.output = output;
 		error = isError;
-		latex = isError ? null : view.getCAS().convertGeoGebraToLaTeXString(output);
+		latex = null;
+		
+		// TODO:remove
+		System.out.println("setOutput: " + input + ", output: " + output + ", error: " + error);
 	}
 	
 	public boolean isOutputError() {
@@ -75,10 +87,6 @@ public class CASTableCellValue {
 		
 		boolean inputEmpty = input == null || input.length() == 0;
 		boolean outputEmpty = output == null || output.length() == 0;
-		
-		// check if cell pair is empty
-		if (inputEmpty && outputEmpty)
-			return "";
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("\t<cellPair>\n");
@@ -104,7 +112,11 @@ public class CASTableCellValue {
 			sb.append("<expression");
 			sb.append(" value=\"");
 			sb.append(Util.encodeXML(output));
-			sb.append("\"/>\n");
+			sb.append("\"");
+			if (error) {
+				sb.append(" error=\"true\"");
+			}
+			sb.append("/>\n");
 			sb.append("\t\t");
 			sb.append("</outputCell>\n");
 		}

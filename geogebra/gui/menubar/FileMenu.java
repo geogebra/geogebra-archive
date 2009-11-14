@@ -158,14 +158,9 @@ class FileMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.clearConstruction();
-
-				// clear input bar
-				if (app.hasGuiManager()) {
-					AlgebraInput ai = (AlgebraInput) (app.getGuiManager()
-							.getAlgebraInput());
-					ai.replaceString(null);
-				}
+				app.setWaitCursor();		
+				app.fileNew();
+				app.setDefaultCursor();
 			}
 		};
 

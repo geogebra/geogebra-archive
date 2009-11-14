@@ -207,7 +207,7 @@ public class Util extends Object {
      */
     public static String encodeXML(String str) {
 	if (str == null)
-	    return null;
+	    return "";
 
 	//  convert every single character and append it to sb
 	StringBuffer sb = new StringBuffer();
