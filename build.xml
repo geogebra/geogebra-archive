@@ -62,7 +62,7 @@ office@geogebra.org
 	<manifest file="../manifest.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_javascript.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
@@ -125,6 +125,7 @@ office@geogebra.org
 			<arg value="geogebra_gui.jar"/>
 			<arg value="geogebra_cas.jar"/>
 			<arg value="geogebra_export.jar"/>
+			<arg value="geogebra_javascript.jar"/>
 			<arg value="geogebra_properties.jar"/>
 		 </exec>
 	</target>

@@ -111,6 +111,7 @@ public abstract class Application implements KeyEventDispatcher {
 			"geogebra_gui.jar", 
 			CAS_JAR_NAME, 
 			"geogebra_export.jar",
+			"geogebra_javascript.jar",
 			"geogebra_properties.jar" };
 	
 	public static final String LOADING_GIF = "http://www.geogebra.org/webstart/loading.gif";
