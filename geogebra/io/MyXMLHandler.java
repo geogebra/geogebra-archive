@@ -2274,7 +2274,7 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleJavaScript(LinkedHashMap<String, String> attrs) {
 		try {
-			geo.setScript((String) attrs.get("val"));
+			geo.setJavaScript((String) attrs.get("val"));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -2336,7 +2336,7 @@ public class MyXMLHandler implements DocHandler {
 				bool.setValue(parseBoolean(strVal));
 			} else if (isButton) {
 				GeoJavaScriptButton button = (GeoJavaScriptButton)geo;
-				button.setScript(strVal);
+				button.setJavaScript(strVal);
 			}
 			return true;
 		} catch (Exception e) {

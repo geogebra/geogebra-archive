@@ -68,7 +68,7 @@ public class ScriptInputDialog extends InputDialog {
 		}
 		this.button = button;
 
-        inputPanel.setText(button == null ? "TODO" : button.getScript());
+        inputPanel.setText(button == null ? "TODO" : button.getJavaScript());
 	}
 	
 	/*
@@ -175,7 +175,7 @@ public class ScriptInputDialog extends InputDialog {
                     
             // change existing text
             	
-            	button.setScript(inputValue);
+            	button.setJavaScript(inputValue);
             	
             	return true;
     }

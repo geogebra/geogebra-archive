@@ -3058,7 +3058,7 @@ public abstract class GeoElement
 		// JavaScript
 		if (javaScript.length() > 0) {
 			sb.append("\t<javascript val=\"");
-			sb.append(getXMLScript());
+			sb.append(getXMLJavaScript());
 			sb.append("\"/>\n");				
 		}
 				
@@ -3996,15 +3996,15 @@ public abstract class GeoElement
 	
 	private String javaScript = "";
 	
-	public void setScript(String script) {
+	public void setJavaScript(String script) {
 		this.javaScript = script;
 	}
 	
-	public String getScript() {
+	public String getJavaScript() {
 		return javaScript;
 	}
 	
-	public String getXMLScript() {
+	public String getXMLJavaScript() {
 		return Util.encodeXML(javaScript);
 	}
 	
