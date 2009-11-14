@@ -508,7 +508,7 @@ public class WorksheetExportDialog extends JDialog {
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();
 			String javaScript = geo.getJavaScript();
-			if (javaScript.equals("")) {
+			if (!javaScript.equals("")) {
 				// for each GeoElement with associated JavaScript, create a function call
 				// with the same name as the geo's label (prefixed by ggb)
 				sb.append("\nfunction ggb");
