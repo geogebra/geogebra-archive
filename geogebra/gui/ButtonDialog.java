@@ -39,7 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.text.JTextComponent;
 
-public class JavaScriptDialog extends JDialog 
+public class ButtonDialog extends JDialog 
 			implements ActionListener, KeyListener, WindowListener
 {
 	
@@ -69,7 +69,7 @@ public class JavaScriptDialog extends JDialog
 	 * Creates a dialog to create a new GeoNumeric for a slider.
 	 * @param x, y: location of slider in screen coords
 	 */
-	public JavaScriptDialog(Application app, int x, int y) {
+	public ButtonDialog(Application app, int x, int y) {
 		super(app.getFrame(), false);
 		this.app = app;		
 		addWindowListener(this);

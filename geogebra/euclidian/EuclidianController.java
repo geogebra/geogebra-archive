@@ -1390,7 +1390,7 @@ public class EuclidianController implements MouseListener,
 				
 			// checkbox, button
 			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:			
-			case EuclidianView.MODE_JAVASCRIPT_ACTION:
+			case EuclidianView.MODE_BUTTON_ACTION:
 				return true;
 				
 			default:
@@ -2381,12 +2381,8 @@ public class EuclidianController implements MouseListener,
 			changedKernel = showCheckBox(hits);
 			break;
 
-		case EuclidianView.MODE_JAVASCRIPT_ACTION:
-			changedKernel = javaScriptButton();
-			break;
-
-		case EuclidianView.MODE_SCRIPT_ACTION:
-			changedKernel = scriptButton();
+		case EuclidianView.MODE_BUTTON_ACTION:
+			changedKernel = button();
 			break;
 
 		case EuclidianView.MODE_PEN:
@@ -5360,19 +5356,12 @@ public class EuclidianController implements MouseListener,
 		return !selectionPreview && mouseLoc != null && app.getGuiManager().showSliderCreationDialog(mouseLoc.x, mouseLoc.y);
 	}		
 
-	// new JavaScript button
-	final protected boolean javaScriptButton() {	
+	// new button
+	final protected boolean button() {	
 		//Application.debug("jhjh"+(mouseLoc != null));
-		return !selectionPreview && mouseLoc != null && app.getGuiManager().showJavaScriptButtonCreationDialog(mouseLoc.x, mouseLoc.y);
+		return !selectionPreview && mouseLoc != null && app.getGuiManager().showButtonCreationDialog(mouseLoc.x, mouseLoc.y);
 	}		
 
-	// new Script button
-	final protected boolean scriptButton() {		
-		//return !selectionPreview && mouseLoc != null && app.getGuiManager().showScriptButtonCreationDialog(mouseLoc.x, mouseLoc.y);
-		return false;
-	}		
-
-	// new JavaScript button
 	final protected boolean pen() {	
 		//Application.debug(app.getEuclidianView().getHeight()+" "+app.getEuclidianView().getWidth());
 		return false;

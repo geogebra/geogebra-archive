@@ -294,17 +294,6 @@ public	class PropertiesPanel extends JPanel {
 			textTab = new TabPanel(textTabList);
 			tabPanelList.add(textTab);
 			
-			// script tab
-			if(!isDefaults) {
-				ArrayList<JPanel> scriptTabList = new ArrayList<JPanel>();			
-				//scriptTabList.add(scriptOptionsPanel);
-				
-				scriptTabList.add(scriptEditPanel);
-				
-				scriptTab = new TabPanel(scriptTabList);
-				tabPanelList.add(scriptTab);
-			}
-			
 			// slider tab
 			if(!isDefaults) {
 				ArrayList<JPanel> sliderTabList = new ArrayList<JPanel>();	
@@ -376,6 +365,18 @@ public	class PropertiesPanel extends JPanel {
 				advancedTab = new TabPanel(advancedTabList);
 				tabPanelList.add(advancedTab);
 			}
+			
+			// javascript tab
+			if(!isDefaults) {
+				ArrayList<JPanel> scriptTabList = new ArrayList<JPanel>();			
+				//scriptTabList.add(scriptOptionsPanel);
+				
+				scriptTabList.add(scriptEditPanel);
+				
+				scriptTab = new TabPanel(scriptTabList);
+				tabPanelList.add(scriptTab);
+			}
+			
 			
 			setLabels();
 		}

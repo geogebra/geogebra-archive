@@ -122,11 +122,9 @@ public interface EuclidianConstants {
 
 	public static final int MODE_RECORD_TO_SPREADSHEET = 59;
 	// GeoGebra 3.4 start
-	public static final int MODE_JAVASCRIPT_ACTION = 60;
+	public static final int MODE_BUTTON_ACTION = 60;
 	
-	public static final int MODE_SCRIPT_ACTION = 61;
-	
-	public static final int MODE_PEN = 62;
+	public static final int MODE_PEN = 61;
 	
 	// ggb3D start
 	/** special mode that allows to create point inside a region (polygon, etc.) */

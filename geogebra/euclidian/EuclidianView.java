@@ -4165,14 +4165,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		case MODE_SHOW_HIDE_CHECKBOX:
 			return "ShowCheckBox";
 			
-		case MODE_JAVASCRIPT_ACTION:
-			return "JavaScriptAction";
+		case MODE_BUTTON_ACTION:
+			return "ButtonAction";
 			
 		case MODE_PEN:
 			return "Pen";
-			
-		case MODE_SCRIPT_ACTION:
-			return "ScriptAction";
 			
 		case MODE_FITLINE:
 			return "FitLine";
