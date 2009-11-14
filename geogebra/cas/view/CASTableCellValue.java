@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 
@@ -61,6 +62,8 @@ public class CASTableCellValue {
 		
 		// TODO:remove
 		System.out.println("setInput: " + input + ", output: " + output);
+		if (input == null || input.length() == 0)
+			Application.printStacktrace("input null");
 	}
 
 	public void setOutput(String inValue) {

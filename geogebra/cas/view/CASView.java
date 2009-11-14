@@ -519,7 +519,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		consoleTable.deleteAllRows();
 		
 		// insert one empty row
-		consoleTable.insertRow(new CASTableCellValue(this));
+		consoleTable.insertRow(new CASTableCellValue(this), false);
 	}
 	
 	/**

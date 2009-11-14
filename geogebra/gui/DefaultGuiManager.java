@@ -1873,14 +1873,14 @@ public class DefaultGuiManager implements GuiManager {
 //		if (!app.isApplet())
 //			app.getScriptManager().evalScript("ggbOnInit();");
 
-
-		if (isMacroFile) {
-			app.updateToolBar();
-			app.updateContentPane();
-		} else {
-			app.updateContentPane();
-		}
-		
+//
+//		if (isMacroFile) {
+//			app.updateToolBar();
+//			app.updateContentPane();
+//		} else {
+//			app.updateContentPane();
+//		}
+//		
 	/* Markus: removed this, because it always thinks that the screen is too small and it's very slow
 			// update GUI
 			if (app.getEuclidianView().hasPreferredSize()) {

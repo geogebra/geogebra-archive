@@ -89,7 +89,7 @@ public class TableCellMouseListener extends MouseAdapter {
 			if (newValue == null) {
 				newValue = new CASTableCellValue(table.getCASView());			
 				newValue.setInput(outputStr);
-				table.insertRowAfter(clickedRow, newValue);	
+				table.insertRowAfter(clickedRow, newValue, true);	
 			}
 			
 			table.startEditingRow(clickedRow  + 1);

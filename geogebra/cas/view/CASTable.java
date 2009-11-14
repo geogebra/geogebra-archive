@@ -116,15 +116,15 @@ public class CASTable extends JTable {
 	 * Inserts a row at the end and starts editing
 	 * the new row.
 	 */
-	public void insertRow(CASTableCellValue newValue) {
-		insertRowAfter(tableModel.getRowCount()-1, newValue);		
+	public void insertRow(CASTableCellValue newValue, boolean startEditing) {
+		insertRowAfter(tableModel.getRowCount()-1, newValue, startEditing);		
 	}
 	
 	/**
 	 * Inserts a row after selectedRow and starts editing
 	 * the new row.
 	 */
-	public void insertRowAfter(int selectedRow, CASTableCellValue newValue) {		
+	public void insertRowAfter(int selectedRow, CASTableCellValue newValue, boolean startEditing) {		
 		// TODO: remove
 		System.out.println("insertRowAfter: " + selectedRow);
 							
@@ -133,7 +133,8 @@ public class CASTable extends JTable {
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
 		
 		// update height of new row
-		startEditingRow(selectedRow  + 1);
+		if (startEditing)
+			startEditingRow(selectedRow  + 1);
 	}	
 	
 	/**
@@ -188,7 +189,7 @@ public class CASTable extends JTable {
     	// make sure we have at least one row
     	int rows = getRowCount();
     	if (rows == 0) { 
-    		insertRow(new CASTableCellValue(view));
+    		insertRow(new CASTableCellValue(view), false);
     		rows = 1;
     	} 
     	
@@ -202,7 +203,7 @@ public class CASTable extends JTable {
 		else {
 			// last row is not empty
 			retRow = new CASTableCellValue(view);
-			insertRow(retRow);
+			insertRow(retRow, false);
 		}
     	
     	return retRow;
@@ -247,7 +248,7 @@ public class CASTable extends JTable {
 
 		int rowCount = tableModel.getRowCount();
 		if (rowCount == 0)
-			insertRowAfter(-1, null);
+			insertRowAfter(-1, null, true);
 		else 
 			startEditingRow(Math.min(row, rowCount-1));
 	}
@@ -258,7 +259,7 @@ public class CASTable extends JTable {
 	public void startEditingRow(int editRow) {									
 		if (editRow >= tableModel.getRowCount()) {
 			// insert new row, this starts editing
-			insertRow(null);
+			insertRow(null, true);
 		}
 		else {		
 			// start editing

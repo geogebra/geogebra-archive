@@ -47,7 +47,7 @@ public class CASTableCellController implements KeyListener {
 		case KeyEvent.VK_ENTER:
 			// Set the focus on the input text field
 			table.setShowCellSeparator(false);
-			table.insertRowAfter(selectedRow, null);
+			table.insertRowAfter(selectedRow, null, true);
 			break;
 
 		default: // Other Keys
@@ -56,7 +56,7 @@ public class CASTableCellController implements KeyListener {
 		
 			// put typed key into new cell 
 			CASTableCellValue value = new CASTableCellValue(Character.toString(e.getKeyChar()));
-			table.insertRowAfter(selectedRow, value);			
+			table.insertRowAfter(selectedRow, value, true);			
 			break;
 		}
 	}
@@ -89,7 +89,7 @@ public class CASTableCellController implements KeyListener {
 				table.scrollRectToVisible(table.getCellRect(selectedRow - 1, CASTable.COL_CAS_CELLS, true ) );
 			} else if (table.isRowEmpty(0)) {
 				// insert empty row at beginning
-				table.insertRowAfter(-1, null);
+				table.insertRowAfter(-1, null, true);
 			}			
 			consumeEvent = true;
 			break;

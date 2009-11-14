@@ -63,10 +63,10 @@ public class RowHeaderPopupMenu extends JPopupMenu implements ActionListener {
 		
 		String ac = e.getActionCommand();
 		if (ac.equals("insertAbove")) {
-			table.insertRowAfter(selRows[0] - 1, null);
+			table.insertRowAfter(selRows[0] - 1, null, true);
 		}
 		else if (ac.equals("insertBelow")) {
-			table.insertRowAfter(selRows[selRows.length-1], null);
+			table.insertRowAfter(selRows[selRows.length-1], null, true);
 		}
 		else if (ac.equals("delete")) {
 			for (int i=selRows.length-1; i >= 0; i--) {
