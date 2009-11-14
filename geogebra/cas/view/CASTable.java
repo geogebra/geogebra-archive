@@ -204,7 +204,6 @@ public class CASTable extends JTable {
 		int rowCount = tableModel.getRowCount();
 		if (rowCount > 0)
 			tableModel.fireTableRowsUpdated(0, rowCount - 1);
-		repaint();
 	}
 	
 	public CASTableCellValue getCASTableCellValue(int row) {

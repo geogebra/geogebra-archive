@@ -570,9 +570,11 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 
 	public void repaintView() {
 		consoleTable.updateAllRows();
+		validate();
 	}
 
 	public void reset() {
+		repaintView();
 	}
 
 	public void update(GeoElement geo) {
