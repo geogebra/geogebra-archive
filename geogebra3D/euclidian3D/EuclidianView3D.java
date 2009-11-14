@@ -8,6 +8,7 @@ import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.View;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -100,7 +101,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//preview
 	private Previewable previewDrawable;
 	private GeoPoint3D cursor3D;
-	private GeoElement[] cursor3DIntersetionOf = new GeoElement[2]; 
+	private GeoElement[] cursor3DIntersectionOf = new GeoElement[2]; 
 	
 	public static final int PREVIEW_POINT_ALREADY = 0;
 	public static final int PREVIEW_POINT_FREE = 1;
@@ -181,6 +182,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 	}
+	
+	
 	
 	
 	
@@ -292,7 +295,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				
 
 				case GeoElement3D.GEO_CLASS_POLYGON3D:
-					d = new DrawPolygon3D(this, (GeoPolygon3D) geo, renderer);
+					d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
 					break;									
 				
 
@@ -1478,25 +1481,27 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/** sets that the current 3D cursor is at the intersection of the two GeoElement parameters
-	 * @param cursor3DIntersetionOf1 first GeoElement of intersection
-	 * @param cursor3DIntersetionOf2 second GeoElement of intersection
+	 * @param cursor3DIntersectionOf1 first GeoElement of intersection
+	 * @param cursor3DIntersectionOf2 second GeoElement of intersection
 	 */
-	public void setCursor3DIntersetionOf(GeoElement cursor3DIntersetionOf1, GeoElement cursor3DIntersetionOf2){
-		this.cursor3DIntersetionOf[0]=cursor3DIntersetionOf1;
-		this.cursor3DIntersetionOf[1]=cursor3DIntersetionOf2;
+	public void setCursor3DIntersectionOf(GeoElement cursor3DIntersectionOf1, GeoElement cursor3DIntersectionOf2){
+		this.cursor3DIntersectionOf[0]=cursor3DIntersectionOf1;
+		this.cursor3DIntersectionOf[1]=cursor3DIntersectionOf2;
 	}
 	
 	/** return the i-th GeoElement of intersection
 	 * @param i number of GeoElement of intersection
 	 * @return GeoElement of intersection
 	 */
-	public GeoElement getCursor3DIntersetionOf(int i){
-		return cursor3DIntersetionOf[i];
+	public GeoElement getCursor3DIntersectionOf(int i){
+		return cursor3DIntersectionOf[i];
 	}
 	
 	
 	
-	
+	public DrawList3D getDrawList3D(){
+		return drawList3D;
+	}
 	
 	
 	public Previewable createPreviewLine(ArrayList selectedPoints){
@@ -1583,8 +1588,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				break;
 			case PREVIEW_POINT_DEPENDENT:
 				//use size of intersection
-				int t1 = getCursor3DIntersetionOf(0).getLineThickness();
-				int t2 = getCursor3DIntersetionOf(1).getLineThickness();
+				int t1 = getCursor3DIntersectionOf(0).getLineThickness();
+				int t2 = getCursor3DIntersectionOf(1).getLineThickness();
 				if (t1>t2)
 					t2=t1;
 				t = (t2+6)/getScale();
@@ -1608,13 +1613,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void setPreview(Previewable previewDrawable) {
 		
-		if (previewDrawable==null){
-			if (this.previewDrawable!=null)
-				drawList3D.remove((Drawable3D) this.previewDrawable);			
-		}else{
+		if (this.previewDrawable!=null)
+			this.previewDrawable.disposePreview();
+		
+		if (previewDrawable!=null){
 			drawList3D.add((Drawable3D) previewDrawable);
 		}
+		
+		//Application.debug("drawList3D :\n"+drawList3D);
 			
+		
 			
 		setCursor3DType(PREVIEW_POINT_ALREADY);
 		

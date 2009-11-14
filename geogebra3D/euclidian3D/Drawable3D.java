@@ -225,6 +225,11 @@ public abstract class Drawable3D {
 	 *
 	 */
 	final public void update(){
+		
+		/*
+		if (getGeoElement().isGeoPolygon())
+			Application.debug(getGeoElement()+"\n waitForUpdate="+waitForUpdate);
+			*/
 
 		if (waitForUpdate){
 			updateForItSelf();
@@ -596,7 +601,17 @@ public abstract class Drawable3D {
     
     
 
+    //////////////////////////////
+    // FOR PREVIEWABLE INTERFACE
     
+    /**
+     * remove this from the draw list 3D
+     */
+	public void disposePreview() {
+		getView3D().getDrawList3D().remove(this);		
+		
+	}
+
  	
 
     

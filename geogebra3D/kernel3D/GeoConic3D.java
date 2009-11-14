@@ -21,6 +21,10 @@ extends GeoConic implements GeoElement3DInterface{
 	private Drawable3D drawable3D = null;
 	
 	
+	private boolean isPickable;
+
+	
+	
 	
 	/**
 	 * Creates an empty 3D conic with 2D coord sys
@@ -168,5 +172,13 @@ extends GeoConic implements GeoElement3DInterface{
 		}
 
 	 
+		
+		/** sets the pickability of the object
+		 * @param v pickability
+		 */
+		public void setIsPickable(boolean v){
+			isPickable = v;
+		}
+
 	 
 }

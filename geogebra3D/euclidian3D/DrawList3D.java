@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
 import java.util.Iterator;
@@ -55,6 +56,8 @@ public class DrawList3D {
 	 */
 	public void remove(Drawable3D drawable){
 		
+		//Application.printStacktrace("");
+
 		//TODO fix it
 		if (drawable!=null)
 			lists[drawable.getType()].remove(drawable);
@@ -73,6 +76,17 @@ public class DrawList3D {
 	}
 	
 	
+	public String toString(){
+		String s="";
+		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++){
+			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
+				s+=d.next().getGeoElement()+"\n";	
+		}
+		
+		return s;
+	}
+	
+	
 	/**
 	 * clear all the lists
 	 */
@@ -86,8 +100,11 @@ public class DrawList3D {
 	public void updateAll(){
 		
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
-			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().update();		
+			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();){
+				Drawable3D d3d = d.next();
+				//Application.debug("updating :"+d3d.getGeoElement());
+				d3d.update();	
+			}		
 		
 	}
 	

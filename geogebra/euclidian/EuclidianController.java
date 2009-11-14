@@ -1764,7 +1764,10 @@ public class EuclidianController implements MouseListener,
 							bool.setValue(!bool.getBoolean());
 							bool.update();
 						} else if (hit != null) {
-							chooseGeo(hits, true).runScript();						
+							GeoElement geo1 = chooseGeo(hits, true);
+							//ggb3D : geo1 may be null if it's axes or xOy plane
+							if (geo1!=null)
+								geo1.runScript();						
 						}
 					}
 			}

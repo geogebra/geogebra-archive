@@ -39,6 +39,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	
 	private boolean createSegments = true;
 	
+	
+	private boolean isPickable;
+	
 	/**
 	 * default constructor
 	 * @param c construction
@@ -289,7 +292,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	  * @return true if the object is pickable
 	  */
 	 public boolean isPickable(){
-		 return true;
+		 return isPickable;
 	 }
 	 
 	
@@ -458,6 +461,14 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	}
 
 	
+	
+	/** sets the pickability of the object
+	 * @param v pickability
+	 */
+	public void setIsPickable(boolean v){
+		isPickable = v;
+	}
+
 	
 
 }

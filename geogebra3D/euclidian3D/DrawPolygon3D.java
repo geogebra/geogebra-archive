@@ -4,8 +4,11 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.euclidian.Previewable;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.kernel3D.ConstructionDefaults3D;
+import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -25,15 +28,13 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	/** gl index of the polygon */
 	private int polygonIndex;
 	
-	private Renderer renderer;
 	
 	
-	public DrawPolygon3D(EuclidianView3D a_view3D, GeoPolygon3D a_polygon3D, Renderer renderer){
+	public DrawPolygon3D(EuclidianView3D a_view3D, GeoPolygon3D a_polygon3D){
 		
 		super(a_view3D, a_polygon3D);
 		
 		
-		this.renderer = renderer;
 		
 		
 
@@ -102,6 +103,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 	protected void updateForItSelf(){
 		
+		
 		super.updateForItSelf();
 		
 		/*
@@ -109,23 +111,30 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 			return;
 			*/
 		
+		Renderer renderer = getView3D().getRenderer();
+		
 		renderer.removePolygon(polygonIndex);
 		
 		//creates the polygon
 		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
 		
 		Ggb3DVector v = polygon.getNormal();
+		Application.debug("normal\n"+v.toString());
+		
 		int index = renderer.startPolygon((float) v.get(1),(float) v.get(2),(float) v.get(3));
+		
+		
 		
 		// if index==0, no polygon have been created
 		if (index==0)
 			return;
 		
+		Application.debug("udpate polygon index : "+polygonIndex+" >> "+index);
+		
 		polygonIndex = index;
 		
-		//Application.debug("polygonIndex = "+polygonIndex);
 		
-		//Application.debug("normal\n"+v.toString());
+		
 				
 		for(int i=0;i<polygon.getNumPoints();i++){
 			v = polygon.getPoint3D(i);
@@ -156,6 +165,10 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 		setGeoElement(new GeoPolygon3D(kernel.getConstruction(),null));
 		
+		getGeoElement().setObjColor(ConstructionDefaults3D.colPolygon3D);
+		getGeoElement().setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
+		((GeoElement3DInterface) getGeoElement()).setIsPickable(false);
+		
 		this.selectedPoints = selectedPoints;
 		
 
@@ -167,10 +180,6 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 
 
-	public void disposePreview() {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
@@ -190,12 +199,19 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 	public void updatePreview() {
 		
-		if (selectedPoints.size()<3)
-			getGeoElement().setEuclidianVisible(false);
-		else
-			getGeoElement().setEuclidianVisible(true);
+		//Application.debug("DrawList3D:\n"+getView3D().getDrawList3D().toString());
+
 		
-		GeoPoint3D[] points = new GeoPoint3D[selectedPoints.size()];
+		if (selectedPoints.size()<2){
+			getGeoElement().setEuclidianVisible(false);
+			return;
+		}
+		
+
+		
+		getGeoElement().setEuclidianVisible(true);
+		
+		GeoPoint3D[] points = new GeoPoint3D[selectedPoints.size()+1];
 		
 		int index =0;
 		//String s="points = ";
@@ -204,9 +220,13 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 			//s+=points[index].getLabel()+", ";
 			index++;
 		}
+		
+		points[index] = getView3D().getCursor3D();
 		//Application.debug(s);
 			
-		((GeoPolygon3D) getGeoElement()).setPoints(points);
+		((GeoPolygon3D) getGeoElement()).setPoints(points,null,false);
+		
+		setWaitForUpdate();
 		
 	}
 	

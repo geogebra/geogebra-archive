@@ -83,64 +83,9 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 		
 		super(a_view3D,selectedPoints, new GeoLine3D(a_view3D.getKernel().getConstruction()));
 		
-		/*
-		Kernel3D kernel = (Kernel3D) getView3D().getKernel();
-		
-		//kernel.setSilentMode(true);
-		GeoLine3D line = new GeoLine3D(kernel.getConstruction());
-		line.setIsPickable(false);
-		setGeoElement(line);
-		
-		//kernel.setSilentMode(false);
-		
-		
-		this.selectedPoints = selectedPoints;
-		
-
-		updatePreview();
-		*/
 		
 	}	
 
-	/*
-	public void disposePreview() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void drawPreview(Graphics2D g2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void updateMousePos(int x, int y) {
-		
-	}
-
-
-	public void updatePreview() {
-		
-		//Application.debug("selectedPoints : "+selectedPoints);
-		
-		if (selectedPoints.size()==2){
-			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
-			GeoPoint3D secondPoint = (GeoPoint3D) selectedPoints.get(1);
-			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
-			getGeoElement().setEuclidianVisible(true);
-		}else if (selectedPoints.size()==1){
-			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
-			GeoPoint3D secondPoint = getView3D().getPreviewPoint();
-			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
-			getGeoElement().setEuclidianVisible(true);
-		}else{
-			getGeoElement().setEuclidianVisible(false);
-		}
-			
-	}
-	
-	*/
 
 	
 	

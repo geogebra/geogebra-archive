@@ -104,10 +104,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		
 	}	
 
-	public void disposePreview() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 	public void drawPreview(Graphics2D g2) {
@@ -130,18 +127,18 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 			GeoPoint3D secondPoint = (GeoPoint3D) selectedPoints.get(1);
 			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
 			getGeoElement().setEuclidianVisible(true);
-			update();
+			setWaitForUpdate();
 		}else if (selectedPoints.size()==1){
 			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
 			GeoPoint3D secondPoint = getView3D().getCursor3D();
 			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
 			getGeoElement().setEuclidianVisible(true);
-			update();
+			setWaitForUpdate();
 		}else{
 			getGeoElement().setEuclidianVisible(false);
 		}
 		
-		setWaitForUpdate();
+		
 			
 	}
 	

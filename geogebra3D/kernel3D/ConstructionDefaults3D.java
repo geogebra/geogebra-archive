@@ -61,7 +61,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	// polygon 3D
 	//private static final Color colPolygon3D = ConstructionDefaults.colPolygon;	
 	/** default color for 3D polygons */
-	private static final Color colPolygon3D = colPolygon;
+	public static final Color colPolygon3D = colPolygon;
 	/** default alpha for 3D polygons*/
 	public static final float DEFAULT_POLYGON3D_ALPHA = 0.5f;
 

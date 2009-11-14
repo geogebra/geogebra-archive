@@ -301,8 +301,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;
 		case EuclidianView3D.PREVIEW_POINT_DEPENDENT:
 			ret = ((Kernel3D) kernel).Intersect(null, 
-					(GeoCoordSys1D) view3D.getCursor3DIntersetionOf(0), 
-					(GeoCoordSys1D) view3D.getCursor3DIntersetionOf(1));
+					(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(0), 
+					(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(1));
 			return ret;
 			//break;
 		case EuclidianView3D.PREVIEW_POINT_ALREADY:
@@ -463,7 +463,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
     		return null;
     	
     	if (point.isDefined()){
-    		view3D.setCursor3DIntersetionOf(a, b);
+    		view3D.setCursor3DIntersectionOf(a, b);
     		return point;
     	}else
     		return null;
