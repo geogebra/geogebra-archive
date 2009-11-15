@@ -14,8 +14,8 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -29,6 +29,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.Box;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 
@@ -49,8 +51,10 @@ public final class DrawTextField extends Drawable {
 
 	private Point textSize = new Point(0,0);
 	
-	JTextField button;
+	JTextField textField;
+	JLabel label;
 	ButtonListener bl;
+    Container box = Box.createHorizontalBox();
 
 
 	public DrawTextField(EuclidianView view, GeoButton geoButton) {
@@ -60,12 +64,19 @@ public final class DrawTextField extends Drawable {
 
 		// action listener for checkBox
 		bl = new ButtonListener();
-		button = new JTextField();	
-		button.addFocusListener(bl);
-		button.addMouseListener(bl);
-		button.addMouseMotionListener(bl);
-		button.addKeyListener(bl);
-		view.add(button);
+		textField = new JTextField(20);	
+		label = new JLabel("Label");
+		label.setLabelFor(textField);
+		textField.setVisible(true);
+		label.setVisible(true);
+		textField.addFocusListener(bl);
+		textField.addMouseListener(bl);
+		textField.addMouseMotionListener(bl);
+		textField.addKeyListener(bl);
+	    box.add(label);
+	    box.add(textField);
+		view.add(box);
+
 		
 		update();
 	}
@@ -129,7 +140,7 @@ public final class DrawTextField extends Drawable {
 			}
 			else {
 				// handle right click and dragging
-				e.translatePoint(button.getX(), button.getY());
+				e.translatePoint(textField.getX(), textField.getY());
 				ec.mouseReleased(e);	
 			}
 			
@@ -161,7 +172,7 @@ public final class DrawTextField extends Drawable {
 
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyChar() == '\n') {
-				geo.runScript(button.getText());
+				geo.runScript(textField.getText());
 				view.requestFocus();
 			}
 			
@@ -178,7 +189,9 @@ public final class DrawTextField extends Drawable {
 
 	final public void update() {
 		isVisible = geo.isEuclidianVisible();
-		button.setVisible(isVisible);
+		//textField.setVisible(isVisible);
+		//label.setVisible(isVisible);
+		box.setVisible(isVisible);
 		if (!isVisible)
 			return;		
 
@@ -190,22 +203,22 @@ public final class DrawTextField extends Drawable {
 				oldCaption = caption;
 				labelDesc = GeoElement.indicesToHTML(caption, false);
 			}	
-			button.setText(labelDesc);
+			textField.setText(labelDesc);
 		} else {
 			// don't show label
 // Michael Borcherds 2007-10-18 BEGIN changed so that vertical position of checkbox doesn't change when label is shown/hidden
 //			checkBox.setText("");
-			button.setText(" ");
+			textField.setText(" ");
 // Michael Borcherds 2007-10-18 END
 		}			
 		
-		button.setOpaque(true);		
-		button.setFont(view.fontPoint);
-		button.setForeground(geo.getObjectColor());
+		textField.setOpaque(true);		
+		textField.setFont(view.fontPoint);
+		textField.setForeground(geo.getObjectColor());
 		
-		button.setFocusable(true);
-		button.setEditable(true);
-		button.setRequestFocusEnabled(true);
+		textField.setFocusable(true);
+		textField.setEditable(true);
+		textField.setRequestFocusEnabled(true);
 		// set checkbox state		
 		//jButton.removeItemListener(bl);
 		//jButton.setSelected(geo.getBoolean());
@@ -213,10 +226,10 @@ public final class DrawTextField extends Drawable {
 		
 		xLabel = geo.labelOffsetX;
 		yLabel = geo.labelOffsetY;		
-		Dimension prefSize = button.getPreferredSize();
+		Dimension prefSize = textField.getPreferredSize();
 		labelRectangle.setBounds(xLabel, yLabel, prefSize.width,
 				prefSize.height);
-		button.setBounds(labelRectangle);	}
+		box.setBounds(labelRectangle);	}
 
 	private void updateLabel() {
 		xLabel = geo.labelOffsetX;
@@ -247,7 +260,7 @@ public final class DrawTextField extends Drawable {
 	 * Removes button from view again
 	 */
 	final public void remove() {
-		view.remove(button);
+		view.remove(textField);
 	}
 	
 	/**
