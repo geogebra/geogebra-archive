@@ -40,7 +40,7 @@ public class ScriptManager {
 		//evalScript("ggbOnInit();");
 	}
 	
-	public boolean evalScript(String script) {
+	public boolean evalScript(String script, String arg) {
 		boolean success = true;
 
         Context cx = Context.enter();
@@ -54,6 +54,11 @@ public class ScriptManager {
             // GgbApi functions, eg ggbApplet.evalCommand()
             Object wrappedOut = Context.javaToJS(app.getGgbApi(), scope);
             ScriptableObject.putProperty(scope, "ggbApplet", wrappedOut);
+            
+            if (arg != null) {
+                Object wrappedArg = Context.javaToJS(arg, scope);
+                ScriptableObject.putProperty(scope, "arg", wrappedArg);            	
+            }
 
             // JavaScript to execute
             //String s = "ggbApplet.evalCommand('F=(2,3)')";
@@ -448,7 +453,7 @@ public class ScriptManager {
 			
 			//Application.debug(sb.toString());
 			
-			evalScript(sb.toString());
+			evalScript(sb.toString(), null);
 
 		}
 	}

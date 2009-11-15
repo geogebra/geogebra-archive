@@ -2820,8 +2820,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			d = new DrawBoolean(this, (GeoBoolean) geo);			
 			break;
 		
-		case GeoElement.GEO_CLASS_JAVASCRIPT_BUTTON:
+		case GeoElement.GEO_CLASS_BUTTON:
+
 			d = new DrawButton(this, (GeoButton) geo);			
+			break;
+		
+		case GeoElement.GEO_CLASS_TEXTFIELD:
+
+			d = new DrawTextField(this, (GeoButton) geo);	
 			break;
 		
 		case GeoElement.GEO_CLASS_POINT:
@@ -2954,7 +2960,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			drawLayers[layer].add(d);
 			break;
 		
-		case GeoElement.GEO_CLASS_JAVASCRIPT_BUTTON:			
+		case GeoElement.GEO_CLASS_BUTTON:			
+			drawLayers[layer].add(d);
+			break;
+		
+		case GeoElement.GEO_CLASS_TEXTFIELD:			
 			drawLayers[layer].add(d);
 			break;
 		
@@ -4167,6 +4177,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			
 		case MODE_BUTTON_ACTION:
 			return "ButtonAction";
+			
+		case MODE_TEXTFIELD_ACTION:
+			return "TextFieldAction";
 			
 		case MODE_PEN:
 			return "Pen";

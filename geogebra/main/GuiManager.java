@@ -203,7 +203,7 @@ public interface GuiManager {
 	 * 
 	 * @return whether a new slider (number) was create or not
 	 */
-	public boolean showButtonCreationDialog(int x, int y) ;
+	public boolean showButtonCreationDialog(int x, int y, boolean textfield) ;
 
 	/**
 	 * Creates a new image at the given location (real world coords).

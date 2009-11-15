@@ -234,7 +234,8 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_ANGLE = 10;
 	public static final int GEO_CLASS_AXIS = 20;
 	public static final int GEO_CLASS_BOOLEAN = 30;
-	public static final int GEO_CLASS_JAVASCRIPT_BUTTON = 31;
+	public static final int GEO_CLASS_BUTTON = 31;
+	public static final int GEO_CLASS_TEXTFIELD = 32;
 	public static final int GEO_CLASS_CONIC = 40;
 	public static final int GEO_CLASS_CONICPART = 50;
 	public static final int GEO_CLASS_FUNCTION = 60;
@@ -4014,7 +4015,7 @@ public abstract class GeoElement
 			Object [] args = { };
 			app.getApplet().callJavaScript("ggb"+getLabel(), args);
 		} else {
-			app.getScriptManager().evalScript(javaScript);
+			app.getScriptManager().evalScript(javaScript, null);
 		}
 	}
 	
@@ -4022,6 +4023,26 @@ public abstract class GeoElement
 		
 		if (!javaScript.equals("")) {
 			runJavaScript();
+			return;
+		}
+		
+		//TODO: run ggbScript here
+		
+	}
+
+	public void runJavaScript(String arg) {
+		if (app.isApplet()) {
+			Object [] args = { arg };
+			app.getApplet().callJavaScript("ggb"+getLabel(), args);
+		} else {
+			app.getScriptManager().evalScript(javaScript, arg);
+		}
+	}
+	
+	public void runScript(String arg) {
+		
+		if (!javaScript.equals("")) {
+			runJavaScript(arg);
 			return;
 		}
 		

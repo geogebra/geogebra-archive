@@ -608,6 +608,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);
         sb.append(" ");
         sb.append(EuclidianView.MODE_BUTTON_ACTION);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_TEXTFIELD_ACTION);
         sb.append(" , ");  
         sb.append(EuclidianView.MODE_PEN);
         sb.append(" , ");  

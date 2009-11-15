@@ -981,8 +981,8 @@ public class DefaultGuiManager implements GuiManager {
 	 * 
 	 * @return whether a new slider (number) was create or not
 	 */
-	public boolean showButtonCreationDialog(int x, int y) {
-		ButtonDialog dialog = new ButtonDialog(app, x, y);
+	public boolean showButtonCreationDialog(int x, int y, boolean textfield) {
+		ButtonDialog dialog = new ButtonDialog(app, x, y, textfield);
 		dialog.setVisible(true);
 		//GeoJavaScriptButton button = (GeoJavaScriptButton) dialog.getResult();
 		//Application.debug("finish");

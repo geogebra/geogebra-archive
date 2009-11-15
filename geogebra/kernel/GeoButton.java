@@ -42,7 +42,7 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 	}
     
     public int getGeoClassType() {
-    	return GEO_CLASS_JAVASCRIPT_BUTTON;
+    	return GEO_CLASS_BUTTON;
     }
     
 	public GeoElement copy() {
@@ -183,6 +183,10 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 
 	public final void setButtonFixed(boolean buttonFixed) {
 		this.buttonFixed = buttonFixed;
+	}
+	
+	public boolean isTextField() {
+		return false;
 	}
 	
     // Michael Borcherds 2008-04-30

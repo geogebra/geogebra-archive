@@ -15,8 +15,9 @@ package geogebra.gui;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoButton;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoTextField;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -69,14 +70,14 @@ public class ButtonDialog extends JDialog
 	 * Creates a dialog to create a new GeoNumeric for a slider.
 	 * @param x, y: location of slider in screen coords
 	 */
-	public ButtonDialog(Application app, int x, int y) {
+	public ButtonDialog(Application app, int x, int y, boolean textField) {
 		super(app.getFrame(), false);
 		this.app = app;		
 		addWindowListener(this);
 		
 		// create temp geos that may be returned as result
 		Construction cons = app.getKernel().getConstruction();
-		button = new GeoButton(cons);
+		button = textField ? new GeoTextField(cons) : new GeoButton(cons);
 		button.setEuclidianVisible(true);
 		button.setAbsoluteScreenLoc(x, y);
 		

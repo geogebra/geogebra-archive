@@ -1238,6 +1238,8 @@ public class EuclidianController implements MouseListener,
 
 	public void mouseDragged(MouseEvent e) {
 		
+		if (textfieldHasFocus) return;
+		
 		if (mode == EuclidianView.MODE_PEN) {
 			handleMousePressedForPenMode(e);
 			return;
@@ -1391,6 +1393,7 @@ public class EuclidianController implements MouseListener,
 			// checkbox, button
 			case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:			
 			case EuclidianView.MODE_BUTTON_ACTION:
+			case EuclidianView.MODE_TEXTFIELD_ACTION:
 				return true;
 				
 			default:
@@ -1567,6 +1570,8 @@ public class EuclidianController implements MouseListener,
 	}
 
 	public void mouseReleased(MouseEvent e) {	
+		
+		if (textfieldHasFocus) return;
 		
 		if (penImage != null) {
 			
@@ -1980,6 +1985,9 @@ public class EuclidianController implements MouseListener,
 	
 
 	public void mouseMoved(MouseEvent e) {		
+		
+		if (textfieldHasFocus) return;
+		
 		setMouseLocation(e);
 		processMouseMoved(e);
 	}
@@ -2385,7 +2393,11 @@ public class EuclidianController implements MouseListener,
 			break;
 
 		case EuclidianView.MODE_BUTTON_ACTION:
-			changedKernel = button();
+			changedKernel = button(false);
+			break;
+
+		case EuclidianView.MODE_TEXTFIELD_ACTION:
+			changedKernel = button(true);
 			break;
 
 		case EuclidianView.MODE_PEN:
@@ -2413,12 +2425,18 @@ public class EuclidianController implements MouseListener,
 	}
 
 	public void mouseEntered(MouseEvent e) {
+
+		if (textfieldHasFocus) return;
+
 		initToolTipManager();
 		initShowMouseCoords();
 		view.mouseEntered();
 	}
 
 	final public void mouseExited(MouseEvent e) {
+
+		if (textfieldHasFocus) return;
+
 		refreshHighlighting(null);
 		resetToolTipManager();
 		view.setAnimationButtonsHighlighted(false);
@@ -5360,9 +5378,9 @@ public class EuclidianController implements MouseListener,
 	}		
 
 	// new button
-	final protected boolean button() {	
+	final protected boolean button(boolean textfield) {	
 		//Application.debug("jhjh"+(mouseLoc != null));
-		return !selectionPreview && mouseLoc != null && app.getGuiManager().showButtonCreationDialog(mouseLoc.x, mouseLoc.y);
+		return !selectionPreview && mouseLoc != null && app.getGuiManager().showButtonCreationDialog(mouseLoc.x, mouseLoc.y, textfield);
 	}		
 
 	final protected boolean pen() {	
@@ -5897,7 +5915,10 @@ public class EuclidianController implements MouseListener,
 	 * Zooms in or out using mouse wheel
 	 */
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		    // don't allow mouse wheel zooming for applets if mode is not zoom mode
+
+		if (textfieldHasFocus) return;
+
+		// don't allow mouse wheel zooming for applets if mode is not zoom mode
 			boolean allowMouseWheel = 
 				!app.isApplet() ||
 				mode == EuclidianView.MODE_ZOOM_IN ||
@@ -5987,7 +6008,11 @@ public class EuclidianController implements MouseListener,
 		return movedGeoPoint;
 	}
 	
+	private boolean textfieldHasFocus = false;
 	
+	public void textfieldHasFocus(boolean hasFocus) {
+		textfieldHasFocus = hasFocus;
+	}
 	
 	
 	

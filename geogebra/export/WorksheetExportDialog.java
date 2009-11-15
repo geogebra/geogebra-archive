@@ -18,7 +18,7 @@ import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoButton;
+import geogebra.kernel.GeoTextField;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
@@ -513,7 +513,10 @@ public class WorksheetExportDialog extends JDialog {
 				// with the same name as the geo's label (prefixed by ggb)
 				sb.append("\nfunction ggb");
 				sb.append(geo.getLabel());
-				sb.append("() {\n");
+				if (geo instanceof GeoTextField)
+					sb.append("(arg) {\n");
+				else
+					sb.append("() {\n");
 				sb.append("var ggbApplet = document.ggbApplet;\n");
 				sb.append(javaScript);
 				sb.append("\n}\n");

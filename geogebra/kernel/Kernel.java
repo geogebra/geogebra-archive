@@ -785,9 +785,12 @@ public class Kernel {
     		case 's': // segment    			
     			return new GeoSegment(cons, null, null);	    			    			
     			
-    		case 't': // text
-    			return new GeoText(cons);
-    			
+    		case 't': 
+    			if (type.equals("text"))
+    				return new GeoText(cons); // text
+    			else
+        			return new GeoTextField(cons); // textfield
+   			
     		case 'v': // vector
 				return new GeoVector(cons);
     		
