@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.euclidian.Previewable;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -107,10 +108,6 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 
 
-	public void drawPreview(Graphics2D g2) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 	public void updateMousePos(int x, int y) {
@@ -120,7 +117,6 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 
 	public void updatePreview() {
 		
-		//Application.debug("selectedPoints : "+selectedPoints);
 		
 		if (selectedPoints.size()==2){
 			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
@@ -138,7 +134,8 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 			getGeoElement().setEuclidianVisible(false);
 		}
 		
-		
+		//Application.debug("selectedPoints : "+selectedPoints+" -- isEuclidianVisible : "+getGeoElement().isEuclidianVisible());
+	
 			
 	}
 	

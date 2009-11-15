@@ -119,7 +119,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
 		
 		Ggb3DVector v = polygon.getNormal();
-		Application.debug("normal\n"+v.toString());
+		//Application.debug("normal\n"+v.toString());
 		
 		int index = renderer.startPolygon((float) v.get(1),(float) v.get(2),(float) v.get(3));
 		
@@ -129,7 +129,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		if (index==0)
 			return;
 		
-		Application.debug("udpate polygon index : "+polygonIndex+" >> "+index);
+		//Application.debug("udpate polygon index : "+polygonIndex+" >> "+index);
 		
 		polygonIndex = index;
 		
@@ -156,6 +156,12 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 	
 	private ArrayList selectedPoints;
+	
+	/** segments of the polygon preview */
+	private ArrayList<DrawSegment3D> segments;
+	
+	private ArrayList<ArrayList> segmentsPoints;
+	
 
 	public DrawPolygon3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
 		
@@ -171,6 +177,9 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		this.selectedPoints = selectedPoints;
 		
+		segments = new ArrayList<DrawSegment3D>();
+		segmentsPoints = new ArrayList<ArrayList>();
+		
 
 		updatePreview();
 		
@@ -183,10 +192,6 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
 
-	public void drawPreview(Graphics2D g2) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
@@ -199,8 +204,57 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 	public void updatePreview() {
 		
-		//Application.debug("DrawList3D:\n"+getView3D().getDrawList3D().toString());
+		
 
+		int index =0;
+		Iterator<ArrayList> spi = segmentsPoints.iterator();
+		Iterator i = selectedPoints.iterator();
+		GeoPoint3D point = null; // current point of the selected points
+		ArrayList sp = null; // segment selected points
+		
+		// set points to existing segments points
+		for (; i.hasNext() && spi.hasNext();){
+			point = (GeoPoint3D) i.next();
+			if (sp!=null)
+				sp.add(point);	// add second point to precedent segment
+			
+			sp = spi.next(); 
+			sp.clear();	
+			sp.add(point);	// add first point to current segment			
+		}
+		
+		// clear segments points if there are some more
+		for (; spi.hasNext();){
+			sp = spi.next(); 
+			sp.clear();
+		}
+		
+		
+		// set points to new segments points
+		for (; i.hasNext() ;){
+			if (sp!=null && point!=null)
+				sp.add(point);	// add second point to precedent segment
+			
+			sp = new ArrayList();
+			segmentsPoints.add(sp);
+			point = (GeoPoint3D) i.next();
+			sp.add(point);
+			DrawSegment3D s = new DrawSegment3D(getView3D(),sp);
+			s.getGeoElement().setObjColor(ConstructionDefaults3D.colPolygon3D);
+			segments.add(s);
+			getView3D().getDrawList3D().add(s);
+		}
+		
+		// update segments
+		for (Iterator<DrawSegment3D> s = segments.iterator(); s.hasNext();)
+			s.next().updatePreview();
+		
+		
+		
+		//Application.debug("DrawList3D:\n"+getView3D().getDrawList3D().toString());
+		
+		
+		// polygon itself
 		
 		if (selectedPoints.size()<2){
 			getGeoElement().setEuclidianVisible(false);
@@ -213,7 +267,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		GeoPoint3D[] points = new GeoPoint3D[selectedPoints.size()+1];
 		
-		int index =0;
+		index =0;
 		//String s="points = ";
 		for (Iterator p = selectedPoints.iterator(); p.hasNext();){
 			points[index]= (GeoPoint3D) p.next();
@@ -228,9 +282,19 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		setWaitForUpdate();
 		
+		
 	}
 	
-	
+	public void disposePreview() {
+		super.disposePreview();
+		
+		// dispose segments
+		for (Iterator<DrawSegment3D> s = segments.iterator(); s.hasNext();)
+			s.next().disposePreview();
+
+		
+	}
+
 
 	
 

@@ -10,6 +10,7 @@ import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
 
+import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.TreeSet;
@@ -613,6 +614,12 @@ public abstract class Drawable3D {
 	}
 
  	
+	/** unused for 3D
+	 * @param g2
+	 */
+	public void drawPreview(Graphics2D g2) {
+		
+	}
 
     
 }
