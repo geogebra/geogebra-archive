@@ -1977,6 +1977,14 @@ public abstract class GeoElement
 				str = app.getPlain("Name.locus") + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
+		} else if (this instanceof GeoTextField) {
+			int counter = 0;			
+			String str;
+			do {
+				counter++;
+				str = app.getPlain("Name.textfield") + counter;
+			} while (!cons.isFreeLabel(str));
+			return str;
 		} else if (isGeoButton()) {
 			int counter = 0;			
 			String str;
