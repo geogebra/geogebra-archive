@@ -1976,7 +1976,7 @@ public abstract class GeoElement
 				str = app.getPlain("Name.locus") + counter;
 			} while (!cons.isFreeLabel(str));
 			return str;
-		} else if (isGeoJavaScriptButton()) {
+		} else if (isGeoButton()) {
 			int counter = 0;			
 			String str;
 			do {
@@ -3547,7 +3547,7 @@ public abstract class GeoElement
 		return false;
 	}
 
-	public boolean isGeoJavaScriptButton() {
+	public boolean isGeoButton() {
 		return false;
 	}
 
@@ -3995,6 +3995,7 @@ public abstract class GeoElement
 	// JavaScript
 	
 	private String javaScript = "";
+	private String ggbScript = "";
 	
 	public void setJavaScript(String script) {
 		this.javaScript = script;
@@ -4008,13 +4009,24 @@ public abstract class GeoElement
 		return Util.encodeXML(javaScript);
 	}
 	
-	public void runScript() {
+	public void runJavaScript() {
 		if (app.isApplet()) {
 			Object [] args = { };
 			app.getApplet().callJavaScript("ggb"+getLabel(), args);
 		} else {
 			app.getScriptManager().evalScript(javaScript);
 		}
+	}
+	
+	public void runScript() {
+		
+		if (!javaScript.equals("")) {
+			runJavaScript();
+			return;
+		}
+		
+		//TODO: run ggbScript here
+		
 	}
 
 

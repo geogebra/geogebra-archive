@@ -25,6 +25,7 @@ import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoBoolean;
+import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
@@ -32,7 +33,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
-import geogebra.kernel.GeoJavaScriptButton;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -181,7 +181,7 @@ public class EuclidianController implements MouseListener,
 	
 	protected GeoBoolean movedGeoBoolean;
 	
-	protected GeoJavaScriptButton movedGeoJavaScriptButton;
+	protected GeoButton movedGeoButton;
 
 	protected GeoElement movedLabelGeoElement;
 
@@ -490,7 +490,7 @@ public class EuclidianController implements MouseListener,
 				GeoElement geo0 = (GeoElement)hits.get(0);
 				if (!geo0.isFixed() && !(geo0.isGeoBoolean() && geo0.isIndependent()) &&
 						!(geo0.isGeoImage() && geo0.isIndependent())
-						&& !geo0.isGeoJavaScriptButton())
+						&& !geo0.isGeoButton())
 					app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0), true);
 			}
 			
@@ -1176,13 +1176,13 @@ public class EuclidianController implements MouseListener,
 			}
 		
 		//  button
-			else if (movedGeoElement.isGeoJavaScriptButton()) {
-				movedGeoJavaScriptButton = (GeoJavaScriptButton) movedGeoElement;
+			else if (movedGeoElement.isGeoButton()) {
+				movedGeoButton = (GeoButton) movedGeoElement;
 				// move checkbox
 				moveMode = MOVE_BUTTON;					
 				startLoc = mouseLoc;
-				oldLoc.x = movedGeoJavaScriptButton.getAbsoluteScreenLocX();
-				oldLoc.y = movedGeoJavaScriptButton.getAbsoluteScreenLocY();
+				oldLoc.x = movedGeoButton.getAbsoluteScreenLocX();
+				oldLoc.y = movedGeoButton.getAbsoluteScreenLocY();
 				
 				view.setShowMouseCoords(false);
 				view.setDragCursor();			
@@ -2600,13 +2600,13 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	final protected void moveButton(boolean repaint) {
-		movedGeoJavaScriptButton.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
+		movedGeoButton.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
 				oldLoc.y + mouseLoc.y-startLoc.y);
 			
 		if (repaint)
-			movedGeoJavaScriptButton.updateRepaint();
+			movedGeoButton.updateRepaint();
 		else
-			movedGeoJavaScriptButton.updateCascade();
+			movedGeoButton.updateCascade();
 	}
 	
 	final protected void moveNumeric(boolean repaint) {

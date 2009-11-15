@@ -16,7 +16,7 @@ import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoJavaScriptButton;
+import geogebra.kernel.GeoButton;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -61,7 +61,7 @@ public class ButtonDialog extends JDialog
 	private Application app;
 	
 	private GeoElement geoResult = null;
-	private GeoJavaScriptButton button = null;
+	private GeoButton button = null;
 	
 	InputPanel inputPanel, inputPanel2;
 	
@@ -76,7 +76,7 @@ public class ButtonDialog extends JDialog
 		
 		// create temp geos that may be returned as result
 		Construction cons = app.getKernel().getConstruction();
-		button = new GeoJavaScriptButton(cons);
+		button = new GeoButton(cons);
 		button.setEuclidianVisible(true);
 		button.setAbsoluteScreenLoc(x, y);
 		
@@ -86,7 +86,7 @@ public class ButtonDialog extends JDialog
 	}			
 	
 	private void createGUI() {
-		setTitle(app.getPlain("JavaScriptButton"));
+		setTitle(app.getPlain("Button"));
 		setResizable(false);		
 		
 		// create caption panel

@@ -18,7 +18,7 @@ import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoJavaScriptButton;
+import geogebra.kernel.GeoButton;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
@@ -767,7 +767,7 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append(getAppletTag(ggbFile, appletWidth, appletHeight));
 		sb.append("\n\n");
 		
-		// JavaScript from GeoJavaScriptButtons and kernel.libraryJavaScript
+		// JavaScript from GeoButtons and kernel.libraryJavaScript
 		appendJavaScript(sb);
 
 		// text after applet

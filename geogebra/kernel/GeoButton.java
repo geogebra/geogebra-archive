@@ -19,7 +19,7 @@ package geogebra.kernel;
  * @author Michael
  * @version
  */
-public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLocateable {			
+public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {			
 
 	/**
 	 * 
@@ -28,17 +28,17 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 	
 	private boolean buttonFixed = false;
 	
-	public GeoJavaScriptButton(Construction c) {
+	public GeoButton(Construction c) {
 		super(c);			
 		setEuclidianVisible(true);
 	}
 
 	protected String getClassName() {
-		return "GeoJavaScriptButton";
+		return "GeoButton";
 	}
 	
     protected String getTypeString() {
-		return "JavaScriptButton";
+		return "Button";
 	}
     
     public int getGeoClassType() {
@@ -49,7 +49,7 @@ public class GeoJavaScriptButton extends GeoElement implements AbsoluteScreenLoc
 		return this;
 	}
 	
-	public boolean isGeoJavaScriptButton() {
+	public boolean isGeoButton() {
 		return true;
 	}
 

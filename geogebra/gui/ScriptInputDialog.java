@@ -13,7 +13,7 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoJavaScriptButton;
+import geogebra.kernel.GeoButton;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -37,9 +37,9 @@ public class ScriptInputDialog extends InputDialog {
 	private boolean global = false;
 	
 	/**
-	 * Input Dialog for a GeoJavaScriptButton object
+	 * Input Dialog for a GeoButton object
 	 */
-	public ScriptInputDialog(Application app,  String title, GeoJavaScriptButton button,
+	public ScriptInputDialog(Application app,  String title, GeoButton button,
 								int cols, int rows) {	
 		super(app.getFrame(), false);
 		this.app = app;
@@ -169,7 +169,7 @@ public class ScriptInputDialog extends InputDialog {
             }
 
             if (button == null) {
-            	button = new GeoJavaScriptButton(kernel.getConstruction());
+            	button = new GeoButton(kernel.getConstruction());
             
             }
                     

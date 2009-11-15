@@ -1502,7 +1502,7 @@ public	class PropertiesPanel extends JPanel {
 				GeoElement geo = (GeoElement) geos[i];
 				if (geo instanceof AbsoluteScreenLocateable) {
 					AbsoluteScreenLocateable absLoc = (AbsoluteScreenLocateable) geo;
-					if (!absLoc.isAbsoluteScreenLocateable() || geo.isGeoBoolean() || geo.isGeoJavaScriptButton())
+					if (!absLoc.isAbsoluteScreenLocateable() || geo.isGeoBoolean() || geo.isGeoButton())
 						return false;
 				}					
 				else
@@ -4278,7 +4278,7 @@ class AnimationStepPanel
 					|| geo.isGeoImage()
 					|| geo.isGeoList()
 					|| geo.isGeoBoolean()
-					|| geo.isGeoJavaScriptButton()
+					|| geo.isGeoButton()
 					|| !partOfSliderPanel && geo.isGeoNumeric() && geo.isIndependent() // slider						
 			)  
 			{				
@@ -4974,7 +4974,7 @@ class NamePanel
 		// DEFINITION
 		//boolean showDefinition = !(currentGeo.isGeoText() || currentGeo.isGeoImage());
 		boolean showDefinition = currentGeo.isGeoText() ? ((GeoText)currentGeo).isTextCommand() :
-			! ((currentGeo.isGeoImage() && currentGeo.isIndependent()) || currentGeo.isGeoJavaScriptButton());
+			! ((currentGeo.isGeoImage() && currentGeo.isIndependent()) || currentGeo.isGeoButton());
 		if (showDefinition) {			
 			tfDefinition.removeActionListener(this);
 			defInputHandler.setGeoElement(currentGeo);

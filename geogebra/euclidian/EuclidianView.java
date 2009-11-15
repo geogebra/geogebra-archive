@@ -28,7 +28,7 @@ import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
-import geogebra.kernel.GeoJavaScriptButton;
+import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -2821,7 +2821,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;
 		
 		case GeoElement.GEO_CLASS_JAVASCRIPT_BUTTON:
-			d = new DrawJavaScriptButton(this, (GeoJavaScriptButton) geo);			
+			d = new DrawButton(this, (GeoButton) geo);			
 			break;
 		
 		case GeoElement.GEO_CLASS_POINT:

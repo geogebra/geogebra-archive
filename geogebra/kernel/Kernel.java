@@ -728,7 +728,10 @@ public class Kernel {
     			return new GeoAngle(cons);	    			     		    			
     			
     		case 'b': //angle
-    			return new GeoBoolean(cons);
+    			if (type.equals("boolean"))
+    				return new GeoBoolean(cons);
+    			else
+        			return new GeoButton(cons); // "button"
     		
     		case 'c': // conic
     			if (type.equals("conic"))
@@ -756,9 +759,6 @@ public class Kernel {
     				return new GeoImage(cons);
     			else if (type.equals("intersectinglines")) //  bug in GeoGebra 2.6c
     				return new GeoConic(cons);
-    		
-    		case 'j': // javascriptbutton
-    			return new GeoJavaScriptButton(cons);
     		
     		case 'l': // line, list, locus
     			if (type.equals("line"))
