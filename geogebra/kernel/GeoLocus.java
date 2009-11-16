@@ -264,5 +264,12 @@ public class GeoLocus extends GeoElement implements Path {
 	public boolean isVector3DValue() {
 		return false;
 	}
+	/**
+	 * Returns whether the value (e.g. equation) should be shown
+	 * as part of the label description
+	 */
+	final public boolean isLabelValueShowable() {
+		return false;
+	}
 
 }

@@ -70,8 +70,8 @@ public final class DrawTextField extends Drawable {
 		textField.setVisible(true);
 		label.setVisible(true);
 		textField.addFocusListener(bl);
-		textField.addMouseListener(bl);
-		textField.addMouseMotionListener(bl);
+		label.addMouseListener(bl);
+		label.addMouseMotionListener(bl);
 		textField.addKeyListener(bl);
 	    box.add(label);
 	    box.add(textField);
@@ -94,33 +94,33 @@ public final class DrawTextField extends Drawable {
 		}
 
 		public void mouseDragged(MouseEvent e) {	
-			/*
+			
 			dragging = true;			
-			e.translatePoint(button.getX(), button.getY());
+			e.translatePoint(box.getX(), box.getY());
 			ec.mouseDragged(e);
-			view.setToolTipText(null);*/
+			view.setToolTipText(null);
 		}
 
 		public void mouseMoved(MouseEvent e) {			
-			/*
-			e.translatePoint(button.getX(), button.getY());
+			
+			e.translatePoint(box.getX(), box.getY());
 			ec.mouseMoved(e);
-			view.setToolTipText(null);*/
+			view.setToolTipText(null);
 		}
 
 		public void mouseClicked(MouseEvent e) {
-			/*
+			
 			if (e.getClickCount() > 1) return;
 			
-			e.translatePoint(button.getX(), button.getY());
-			ec.mouseClicked(e);*/
+			e.translatePoint(box.getX(), box.getY());
+			ec.mouseClicked(e);
 		}
 
 		public void mousePressed(MouseEvent e) {
-			/*
+			
 			dragging = false;	
-			e.translatePoint(button.getX(), button.getY());
-			ec.mousePressed(e);		*/
+			e.translatePoint(box.getX(), box.getY());
+			ec.mousePressed(e);		
 		}
 
 		public void mouseReleased(MouseEvent e) {	
@@ -140,7 +140,7 @@ public final class DrawTextField extends Drawable {
 			}
 			else {
 				// handle right click and dragging
-				e.translatePoint(textField.getX(), textField.getY());
+				e.translatePoint(box.getX(), box.getY());
 				ec.mouseReleased(e);	
 			}
 			
@@ -162,6 +162,7 @@ public final class DrawTextField extends Drawable {
 
 		public void focusLost(FocusEvent e) {
 			view.getEuclidianController().textfieldHasFocus(false);
+			geo.runScript(textField.getText());
 			
 		}
 
@@ -203,22 +204,24 @@ public final class DrawTextField extends Drawable {
 				oldCaption = caption;
 				labelDesc = GeoElement.indicesToHTML(caption, false);
 			}	
-			textField.setText(labelDesc);
+			label.setText(labelDesc);
 		} else {
 			// don't show label
 // Michael Borcherds 2007-10-18 BEGIN changed so that vertical position of checkbox doesn't change when label is shown/hidden
 //			checkBox.setText("");
-			textField.setText(" ");
+			label.setText(" ");
 // Michael Borcherds 2007-10-18 END
 		}			
 		
 		textField.setOpaque(true);		
+		label.setOpaque(false);		
 		textField.setFont(view.fontPoint);
+		label.setFont(view.fontPoint);
 		textField.setForeground(geo.getObjectColor());
+		label.setForeground(geo.getObjectColor());
 		
 		textField.setFocusable(true);
 		textField.setEditable(true);
-		textField.setRequestFocusEnabled(true);
 		// set checkbox state		
 		//jButton.removeItemListener(bl);
 		//jButton.setSelected(geo.getBoolean());
@@ -226,18 +229,19 @@ public final class DrawTextField extends Drawable {
 		
 		xLabel = geo.labelOffsetX;
 		yLabel = geo.labelOffsetY;		
-		Dimension prefSize = textField.getPreferredSize();
+		Dimension prefSize = box.getPreferredSize();
 		labelRectangle.setBounds(xLabel, yLabel, prefSize.width,
 				prefSize.height);
 		box.setBounds(labelRectangle);	}
 
 	private void updateLabel() {
+		/*
 		xLabel = geo.labelOffsetX;
 		yLabel = geo.labelOffsetY;		
 
 		labelRectangle.setBounds(xLabel, yLabel,
 				 ((textSize == null) ? 0 : textSize.x),
-				12);
+				12);*/
 
 	}
 

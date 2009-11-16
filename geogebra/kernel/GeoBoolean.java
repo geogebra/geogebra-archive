@@ -339,5 +339,12 @@ AbsoluteScreenLocateable {
 		return new MyDouble(kernel, getDouble() );
 	}
 
-	
+	/**
+	 * Returns whether the value (e.g. equation) should be shown
+	 * as part of the label description
+	 */
+	final public boolean isLabelValueShowable() {
+		return false;
+	}
+
 }

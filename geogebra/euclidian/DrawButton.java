@@ -27,6 +27,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -112,7 +113,12 @@ public final class DrawButton extends Drawable {
 				// handle LEFT CLICK
 				//geoBool.setValue(!geoBool.getBoolean());
 				//geoBool.updateRepaint();
-				geo.runScript();
+				
+				// delayed run to allow time for focus leaving event 
+				// to be triggered for GeoTextField
+	            SwingUtilities.invokeLater( new Runnable(){ public void
+	            	run() { geo.runScript(); }});
+
 				
 				// make sure itemChanged does not change
 		    	// the value back my faking a drag

@@ -198,4 +198,14 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	/**
+	 * Returns whether the value (e.g. equation) should be shown
+	 * as part of the label description
+	 */
+	final public boolean isLabelValueShowable() {
+		return false;
+	}
+
+
 }

@@ -1089,10 +1089,10 @@ public abstract class GeoElement
 	/**
 	 * Returns whether the value (e.g. equation) should be shown
 	 * as part of the label description
+	 * false for eg GeoLocus, Boolean, Button, TextField
 	 */
-	final public boolean isLabelValueShowable() {
-		return !(isGeoLocus() ||
-					isGeoBoolean());
+	public boolean isLabelValueShowable() {
+		return true;
 	}
 
 	/**
