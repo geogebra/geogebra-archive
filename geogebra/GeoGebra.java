@@ -19,8 +19,8 @@ import java.net.URL;
 public class GeoGebra extends Object {
 	
 	// GeoGebra version
-	public static final String  BUILD_DATE = "November 14, 2009";
-	public static final String  VERSION_STRING = "3.3.38.0";
+	public static final String  BUILD_DATE = "November 16, 2009";
+	public static final String  VERSION_STRING = "3.3.39.0";
 	public static final boolean IS_PRE_RELEASE = !VERSION_STRING.endsWith(".0");
 		
 	// enable I2G on all pre-releases
