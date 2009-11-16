@@ -149,15 +149,15 @@ public class GeoGebraCAS {
 			String scriptBase = "jar:" + app.getCodeBase().toString() + 
 										Application.CAS_JAR_NAME + "!/";			
 
-			ggbMathPiper = Interpreters.getSynchronousInterpreter(scriptBase);
+			ggbMathPiper = Interpreters.getSynchronousInterpreter();
 			boolean success = initMyMathPiperFunctions();
 			
 			if (!success) {
-				System.err.println("MathPiper creation failed with scriptbase: " + scriptBase);
+				System.out.println("MathPiper creation failed again with null scriptbase");
 				ggbMathPiper = Interpreters.getSynchronousInterpreter(scriptBase);
 				success = initMyMathPiperFunctions();
 				if (!success)
-					System.out.println("MathPiper creation failed again with null scriptbase");
+					System.err.println("MathPiper creation failed with scriptbase: " + scriptBase);
 			}
 		}
 		
@@ -182,15 +182,7 @@ public class GeoGebraCAS {
 			return false;
 		}
 		
-		// make sure we get (x^n)^2 not x^n^2
-		// (Issue 125)
-		ggbMathPiper.evaluate("LeftPrecedence(\"^\",19);");
-
-		// make sure Factor((((((((9.1) * ((x)^(7))) - ((32) * ((x)^(6)))) + ((48) * ((x)^(5)))) - ((40) * ((x)^(4)))) + ((20) * ((x)^(3)))) - ((6) * ((x)^(2)))) + (x))] works
-		String initFactor = "Factors(p_IsRational)_(Denom(p) != 1) <-- {{Factor(Numer(p)) / Factor(Denom(p)) , 1}};";
-		ggbMathPiper.evaluate(initFactor);
-
-		// define constanct for Degree
+		// define constant for Degree
 		response = ggbMathPiper.evaluate("Degree := 180/pi;");
 		
 		return true;
