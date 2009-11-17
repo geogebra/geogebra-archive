@@ -4,7 +4,7 @@
 
 This script builds unsigned GeoGebra jar files for testing purposes.
 This Ant script must be run using JDK 1.5 (not 1.6, not 1.4)
-Note that GeoGebra itself needs to be compiled using Java 1.4.2 
+Note that GeoGebra itself needs to be compiled using Java 1.5 
 
 If you want to include GeoGebra with e.g. Linux distributions or 
 other software, please see the license conditions below and contact 
