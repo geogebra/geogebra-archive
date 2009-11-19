@@ -379,7 +379,7 @@ public class MyXMLio {
 			writeIntergeoFile(b);
 		} else {
 			// File Extension for GeoGebra: GGB or GGT
-			writeGeoGebraFile(b);
+			writeGeoGebraFile(b, true);
 		}
 		// <-- Modified for Intergeo File Format (Yves Kreis)
 		b.close();
@@ -390,7 +390,7 @@ public class MyXMLio {
 	 * Creates a zipped file containing the construction and all settings saved
 	 * in xml format plus all external images. GeoGebra File Format.
 	 */
-	public void writeGeoGebraFile(OutputStream os) throws IOException {
+	public void writeGeoGebraFile(OutputStream os, boolean includeThumbail) throws IOException {
 		// zip stream
 		ZipOutputStream zip = new ZipOutputStream(os);
 		OutputStreamWriter osw = new OutputStreamWriter(zip, "UTF8");
@@ -401,7 +401,8 @@ public class MyXMLio {
 		// Modified for Intergeo File Format (Yves Kreis) -->
 		// write construction thumbnails
 		// writeThumbnail(kernel.getConstruction(), zip);
-		writeThumbnail(kernel.getConstruction(), zip, XML_FILE_THUMBNAIL);
+		if (includeThumbail)
+			writeThumbnail(kernel.getConstruction(), zip, XML_FILE_THUMBNAIL);
 		// <-- Modified for Intergeo File Format (Yves Kreis)
 
 		// save macros

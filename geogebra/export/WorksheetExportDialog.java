@@ -851,7 +851,7 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append("\t<param name=\"ggbBase64\" value=\"");
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
-				app.getXMLio().writeGeoGebraFile(baos);
+				app.getXMLio().writeGeoGebraFile(baos, false);
 				sb.append(geogebra.util.Base64.encode(baos.toByteArray(), 0));
 			} catch (IOException e) {
 				e.printStackTrace();

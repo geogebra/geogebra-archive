@@ -150,7 +150,7 @@ public class GgbAPI {
 	public synchronized byte [] getGGBfile() {
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			app.getXMLio().writeGeoGebraFile(bos);
+			app.getXMLio().writeGeoGebraFile(bos, true);
 			bos.flush();
 			return bos.toByteArray();
 		} catch (IOException e) {
