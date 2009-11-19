@@ -56,7 +56,12 @@ public class GeoGebraPreferences {
 	 // preferences node name for GeoGebra 	 
 	 private  Preferences ggbPrefs;
 	  {
-		 ggbPrefs = Preferences.userRoot().node("/geogebra");
+		  try {
+			  ggbPrefs = Preferences.userRoot().node("/geogebra");
+		  } catch (Exception e) {
+			  // thrown when running unsigned JAR
+			  ggbPrefs = null;
+		  }
 	 }	 
 	 private  String XML_GGB_FACTORY_DEFAULT; // see loadPreferences()
      

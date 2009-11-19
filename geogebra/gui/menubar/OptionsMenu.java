@@ -306,7 +306,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		
 		add(showOptionsAction);
 		
-		if(!app.isApplet()) {
+		if(!app.isApplet() && Application.hasFullPermissions()) {
 			// submenu = new JMenu(app.getMenu("Settings"));
 			add(savePreferencesAction);
 			add(clearPreferencesAction);

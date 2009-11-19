@@ -2613,7 +2613,7 @@ public abstract class Application implements KeyEventDispatcher {
 		return codebase;
 	}
 	private URL codebase;
-	private boolean hasFullPermissions = false;
+	private static boolean hasFullPermissions = false;
 	
 	private void initCodeBase() {
 		try {
@@ -2641,7 +2641,7 @@ public abstract class Application implements KeyEventDispatcher {
 		System.out.println("codebase: " + codebase);
 	}
 	
-	final public boolean hasFullPermissions() {
+	final public static boolean hasFullPermissions() {
 		return hasFullPermissions;
 	}
 	
