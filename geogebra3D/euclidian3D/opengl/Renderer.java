@@ -244,7 +244,16 @@ public class Renderer implements GLEventListener {
 	}
 	
 	
-
+	
+	/** sets if openGL culling is done or not
+	 * @param flag
+	 */
+	public void setCulling(boolean flag){
+		if (flag)
+			gl.glEnable(GL.GL_CULL_FACE);
+		else
+			gl.glDisable(GL.GL_CULL_FACE);
+	}
 	
 	
 	/**
@@ -1643,6 +1652,7 @@ public class Renderer implements GLEventListener {
         glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
         gl.glOrtho(left,right,bottom,top,front,back);
     	gl.glMatrixMode(GL.GL_MODELVIEW);
+    	
         
     	
 

@@ -593,6 +593,10 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	// GeoPointInterface interface
 	
 	
+	public boolean isFinite(){
+		return isDefined && !isInfinite;
+	}
+	
 	public boolean isInfinite() {
 		return isInfinite;
 	}

@@ -226,31 +226,23 @@ public class DrawList3D {
 	 */
 	public void drawForPicking(Renderer renderer){
 
-		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
+		for(int i=0; i<Drawable3D.DRAW_TYPE_SURFACES; i++)
 			for (Iterator<Drawable3D> iter = lists[i].iterator(); iter.hasNext();) {
 	        	Drawable3D d = iter.next();
-	        	
 	        	renderer.pick(d);
-	        	/*
-	        	loop++;
-	        	renderer.glLoadName(loop);
-	        	d.drawForPicking(renderer);	
-	        	drawHits[loop] = d;
-	        	*/
 			}
+		
+		renderer.setCulling(false);
+		for(int i=Drawable3D.DRAW_TYPE_SURFACES; i<Drawable3D.DRAW_TYPE_MAX; i++)
+			for (Iterator<Drawable3D> iter = lists[i].iterator(); iter.hasNext();) {
+	        	Drawable3D d = iter.next();
+	        	renderer.pick(d);
+			}		
 		
 		view3D.drawForPicking(renderer);
 		
-		//view3D plane
-		/*
-    	Drawable3D d = view3D.getxOyPlaneDrawable();
-    	loop++;
-    	renderer.glLoadName(loop);
-    	d.drawForPicking(renderer);	
-    	drawHits[loop] = d;
-		*/
+		renderer.setCulling(true);
 		
-		//return loop;
 
 	}
 	

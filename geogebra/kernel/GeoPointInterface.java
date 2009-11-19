@@ -44,5 +44,7 @@ public interface GeoPointInterface {
 
 	public int getMode();
 	
+	public boolean isFinite();
+	
 
 }

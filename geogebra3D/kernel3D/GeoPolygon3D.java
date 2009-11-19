@@ -40,7 +40,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	private boolean createSegments = true;
 	
 	
-	private boolean isPickable;
+	private boolean isPickable = true;
 	
 	/**
 	 * default constructor
@@ -53,6 +53,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		super(c, points, cs2D, createSegments);
 
 		this.createSegments = createSegments;
+		
 		
 	}
 	
