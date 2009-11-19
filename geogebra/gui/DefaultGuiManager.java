@@ -1801,13 +1801,16 @@ public class DefaultGuiManager implements GuiManager {
 		String matchString = "name=\"ggbBase64\" value=\"";
 
 		int start = fileArgument.indexOf(matchString);
-		int end   = fileArgument.indexOf("\"/>");
+		// match "/> or " /> or "> etc
+		int end   = fileArgument.indexOf(">");
+		while (end > start && fileArgument.charAt(end) != '\"') end--;
 
 		// check for two <param> tags on the same line
 		if (start > end) {
 			fileArgument = fileArgument.substring(start);
 			start = 0;
-			end   = fileArgument.indexOf("\"/>");
+			end   = fileArgument.indexOf(">");
+			while (end > start && fileArgument.charAt(end) != '\"') end--;
 		}
 		
 		if (start < 0 || end < 0 || end <= start) {
