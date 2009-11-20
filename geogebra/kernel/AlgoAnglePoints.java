@@ -154,17 +154,14 @@ public class AlgoAnglePoints extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
         
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
         if (algoAnglePoly != null) 
-            sb.append(app.getPlain("AngleBetweenABCofD",A.getLabel(),B.getLabel(),C.getLabel(),algoAnglePoly.getPolygon().getNameDescription()));
+            return app.getPlain("AngleBetweenABCofD",A.getLabel(),B.getLabel(),C.getLabel(),algoAnglePoly.getPolygon().getNameDescription());
         else
-           	sb.append(app.getPlain("AngleBetweenABC",A.getLabel(),B.getLabel(),C.getLabel()));
+           	return app.getPlain("AngleBetweenABC",A.getLabel(),B.getLabel(),C.getLabel());
 
-        
-       
-        return sb.toString();
+
     }
 }
