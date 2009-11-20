@@ -17,9 +17,12 @@ package geogebra3D.kernel3D;
 
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.AlgoCircleThreePoints;
+import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -258,6 +261,21 @@ public class Kernel3D
 	final public GeoVector3D Vector3D(String label, double x, double y, double z) {
 		GeoVector3D v = new GeoVector3D(cons, x, y, z);
 		v.setLabel(label); // invokes add()                
+		return v;
+	}
+	
+	/** 
+	 * Vector named label from Point P to Q
+	 */
+	final public GeoVector3D Vector3D(
+		String label,
+		GeoPoint3D P,
+		GeoPoint3D Q) {
+		AlgoVector3D algo = new AlgoVector3D(cons, label, P, Q);
+		GeoVector3D v = (GeoVector3D) algo.getVector();
+		v.setEuclidianVisible(true);
+		v.update();
+		notifyUpdate(v);
 		return v;
 	}
 	

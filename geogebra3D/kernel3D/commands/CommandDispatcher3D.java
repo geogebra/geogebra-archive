@@ -20,6 +20,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		cmdTable.put("Segment", new CmdSegment3D(kernel3D));
 		cmdTable.put("Line", new CmdLine3D(kernel3D));
 		cmdTable.put("Ray", new CmdRay3D(kernel3D));
+		cmdTable.put("Vector", new CmdVector3D(kernel3D));
 		cmdTable.put("Polygon", new CmdPolygon3D(kernel3D));
 		cmdTable.put("Point", new CmdPoint3D(kernel3D));
 		cmdTable.put("Circle", new CmdCircle3D(kernel3D));

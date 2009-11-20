@@ -1828,9 +1828,9 @@ public class Renderer implements GLEventListener {
         */
         
         
-        gl.glEnable(GL.GL_LIGHTING);
         gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE,GL.GL_TRUE);
         gl.glShadeModel(GL.GL_SMOOTH);
+        gl.glEnable(GL.GL_LIGHTING);
         
         //common enabling
         gl.glEnable(GL.GL_DEPTH_TEST);

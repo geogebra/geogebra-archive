@@ -75,6 +75,25 @@ public abstract class Drawable3DCurves extends Drawable3D {
 
 
 	} 
+	
+	
+	
+	
+	/////////////////////////////////////////
+	// DRAWING GEOMETRIES
+	
+	
+
+	
+	public void drawGeometryPicked(Renderer renderer){
+		drawGeometry(renderer);
+	}
+	
+	public void drawGeometryHidden(Renderer renderer){
+		
+		drawGeometry(renderer);
+	} 
+	
 
 
 	

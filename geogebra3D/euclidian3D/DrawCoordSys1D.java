@@ -43,18 +43,9 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	public void drawGeometry(Renderer renderer) {
 		renderer.setThickness(getGeoElement().getLineThickness());
 		renderer.drawSegment(drawMin,drawMax);
-		//Application.debug("drawMin = "+drawMin+"\ndrawMax = "+drawMax);
 	}
 	
-	public void drawGeometryPicked(Renderer renderer){
-		renderer.setThickness(getGeoElement().getLineThickness());
-		renderer.drawSegment(drawMin,drawMax);
-	}
 	
-	public void drawGeometryHidden(Renderer renderer){
-		
-		drawGeometry(renderer);
-	} 
 	
 	
 	

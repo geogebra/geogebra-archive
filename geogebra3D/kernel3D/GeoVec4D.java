@@ -29,7 +29,7 @@ import geogebra3D.Matrix.Ggb3DVector;
  */
 public abstract class GeoVec4D extends GeoVec {
 
-    public GeoVec4D(Construction c) {  super(c);  }
+    public GeoVec4D(Construction c) {  this(c,4);  }
     public GeoVec4D(Construction c, int n) {super(c,n);}  
 
     /** Creates new GeoVec4D with coordinates (x,y,z,w) and label */

@@ -34,6 +34,7 @@ import geogebra.kernel.PointProperties;
 import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 
@@ -267,7 +268,8 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     final public double[] vectorTo(GeoPointInterface QI){
     	GeoPoint3D Q = (GeoPoint3D) QI;
-    	return Q.getInhomCoords().sub(getInhomCoords()).get();
+    	//Application.debug("v=\n"+Q.getCoords().sub(getCoords()).get());
+    	return Q.getCoords().sub(getCoords()).get();
     }
         
   

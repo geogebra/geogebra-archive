@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class DrawSegment3D extends DrawCoordSys1D {
 
 	
-	double dashLength;
 	
 	public DrawSegment3D(EuclidianView3D a_view3D, GeoSegment3D a_segment3D){
 		

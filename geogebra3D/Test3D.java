@@ -148,7 +148,7 @@ public class Test3D{
 		//testSpring();
 		
         //demos();
-        testCube(true);//testSave("polyhedron3d");
+        //testCube(true);//testSave("polyhedron3d");
         //testLoad("polyhedron3d");
         //testLoad("polygon3d");
         
@@ -176,7 +176,7 @@ public class Test3D{
 		//testQuadric();
     	
 		//testRay3D();
-		//testVector3D();
+		testVector3D();
 		//testAlgoPyramide();
 		
 		//testPolyhedron();
@@ -519,7 +519,12 @@ public class Test3D{
 	
 
 	private void testVector3D() {
-		kernel3D.Vector3D("MonVector3D", 1f,1f,1f);
+		
+		GeoPoint3D P1 = testPoint(0f,0f,0f);
+		GeoPoint3D P2 = testPoint(1f,1f,1f);
+		
+		kernel3D.Vector3D("v", P1, P2);
+		
 		
 	}
 	

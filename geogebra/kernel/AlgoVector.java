@@ -35,13 +35,13 @@ public class AlgoVector extends AlgoElement {
     private GeoVectorInterface  v;     // output     
         
     /** Creates new AlgoVector */  
-    AlgoVector(Construction cons, String label, GeoPointInterface P, GeoPointInterface Q) {
+    protected AlgoVector(Construction cons, String label, GeoPointInterface P, GeoPointInterface Q) {
         super(cons);
         this.P = P;
         this.Q = Q;         
         
         // create new vector
-        createNewVector();      
+        v=createNewVector();      
         //v = new GeoVector(cons);   
         try {     
         	if (P.isLabelSet())
@@ -65,9 +65,9 @@ public class AlgoVector extends AlgoElement {
     
     
     
-    protected void createNewVector(){
+    protected GeoVectorInterface createNewVector(){
     	
-    	v = new GeoVector(cons);
+    	return new GeoVector(cons);
     	
     }
     
@@ -75,10 +75,7 @@ public class AlgoVector extends AlgoElement {
     protected GeoPointInterface newStartPoint(){
     	
     	return new GeoPoint((GeoPoint) P);
-    	/*
-    	startPoint.set(P);
-    	v.setStartPoint(startPoint);
-    	*/
+ 
     }
     
     
@@ -102,7 +99,7 @@ public class AlgoVector extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }           
     
-    GeoVectorInterface getVector() { return v; }
+    public GeoVectorInterface getVector() { return v; }
     public GeoPointInterface getP() { return P; }
     public GeoPointInterface getQ() { return Q; }
     

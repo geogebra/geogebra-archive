@@ -13,34 +13,27 @@ public class DrawVector3D extends Drawable3DCurves {
 		super(a_view3D, a_vector3D);
 	}
 	
+	/////////////////////////////////////////
+	// DRAWING GEOMETRIES
 	
 	
 	public void drawGeometry(Renderer renderer) {
 		renderer.setThickness(getGeoElement().getLineThickness());
 		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
-		renderer.setArrowLength(0.3); //TODO use object property
-		renderer.setArrowWidth(2*getGeoElement().getLineThickness()); //TODO use object property
+		renderer.setArrowLength(20);
+		renderer.setArrowWidth(10);
+		
+
 		renderer.drawSegment();
-		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);
+		
+		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);		
 	}
-	
-	public void drawGeometryPicked(Renderer renderer){		
-		renderer.setThickness(getGeoElement().getLineThickness());
-		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
-		renderer.setArrowLength(0.3); //TODO use object property
-		renderer.setArrowWidth(2*getGeoElement().getLineThickness()); //TODO use object property
-		renderer.drawSegment();
-		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);
-	}
-	
-
-	public void drawGeometryHidden(Renderer renderer){
-		drawGeometry(renderer);
-	};
-	
-	
 
 
+	
+	
+	
+	
 	
 	public int getPickOrder() {		
 		return DRAW_PICK_ORDER_1D;
