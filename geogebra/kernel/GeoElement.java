@@ -445,7 +445,7 @@ public abstract class GeoElement
 		GeoPoint [] pointsCopy = new GeoPoint[points.length];
 		for (int i=0; i < points.length; i++) {
 			pointsCopy[i] = (GeoPoint) points[i].copyInternal(cons);			
-			pointsCopy[i].set(points[i]);
+			pointsCopy[i].set((GeoElement) points[i]);
 		}
 		return pointsCopy;
 	}

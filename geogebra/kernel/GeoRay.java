@@ -69,7 +69,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		GeoRay ray = (GeoRay) geo;		
 		keepTypeOnGeometricTransform = ray.keepTypeOnGeometricTransform; 
 										
-		startPoint.set(ray.startPoint);		
+		startPoint.set((GeoElement) ray.startPoint);		
 	}
 	
 	public void setVisualStyle(GeoElement geo) {

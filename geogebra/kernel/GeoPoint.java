@@ -132,9 +132,13 @@ GeoPointInterface {
     
     public GeoPoint(GeoPoint point) {
     	super(point.cons);    	
-        set(point);        
+        set((GeoElement) point);        
     }
     
+    
+    public void set(GeoPointInterface p){
+    	set((GeoElement) p);
+    }
     
     public void set(GeoElement geo) { 
     	if (geo.isGeoPoint()) {
@@ -530,7 +534,16 @@ GeoPointInterface {
         
     final public double getInhomY() {
        	return inhomY;
-    }     	
+    }     
+    
+    final public double[] vectorTo(GeoPointInterface QI){
+    	GeoPoint Q = (GeoPoint) QI;
+    	return new double[]{
+    			Q.getInhomX()-getInhomX(),
+    			Q.getInhomY()-getInhomY(),
+    			0
+    	                  };
+    }
         
     // euclidian distance between this GeoPoint and P
     final public double distance(GeoPoint P) {       

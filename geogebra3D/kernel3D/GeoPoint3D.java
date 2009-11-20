@@ -23,8 +23,10 @@ package geogebra3D.kernel3D;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
@@ -260,7 +262,13 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
      */
     final public Ggb3DVector getInhomCoords() {
     	return inhom.copyVector();
-    }        	
+    }   
+    
+    
+    final public double[] vectorTo(GeoPointInterface QI){
+    	GeoPoint3D Q = (GeoPoint3D) QI;
+    	return Q.getInhomCoords().sub(getInhomCoords()).get();
+    }
         
   
     
@@ -473,7 +481,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     public GeoPoint3D(GeoPoint3D point) {
     	super(point.cons);
-        set(point);        
+        set((GeoElement) point);        
     }
     
 
@@ -495,10 +503,32 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	}
 	
 	
+	public void set(GeoPointInterface P){
+		set((GeoElement) P);
+	}
+	
 	public void set(GeoElement geo) {
-		// TODO Auto-generated method stub
+
+    	if (geo.isGeoPoint()) {
+	    	GeoPoint3D p = (GeoPoint3D) geo;  
+	    	if (p.getPathParameter() != null) {
+	    		PathParameter pathParameter = getPathParameter();
+		    	pathParameter.set(p.getPathParameter());
+	    	}
+	    	setCoords(p);     
+	    	//TODO setMode(p.toStringMode); // complex etc
+    	}
+    	/* TODO
+    	else if (geo.isGeoVector()) {
+    		GeoVector v = (GeoVector) geo; 
+    		setCoords(v.x, v.y, 1d);   
+	    	setMode(v.toStringMode); // complex etc
+    	}
+    	*/
 		
 	}
+	
+	
 	public void setUndefined() {
 		isDefined = false;
 		

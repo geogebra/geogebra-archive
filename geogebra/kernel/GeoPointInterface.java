@@ -45,6 +45,13 @@ public interface GeoPointInterface {
 	public int getMode();
 	
 	public boolean isFinite();
+
+	public void set(GeoPointInterface p);
+
+	/** return the coordinates of the vector (this,Q) 
+	 * @param Q ending point
+	 * @return coords of the vector */
+	public double[] vectorTo(GeoPointInterface Q);
 	
 
 }

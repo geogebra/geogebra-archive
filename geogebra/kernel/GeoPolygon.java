@@ -398,7 +398,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		}
 		
 		for (int i=0; i < points.length; i++) {				
-			((GeoPoint) points[i]).set((GeoPoint) poly.points[i]);
+			((GeoPoint) points[i]).set(poly.points[i]);
 		}	
 		updateSegments();
 	}

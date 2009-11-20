@@ -446,7 +446,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	        else {	        
 		        // make sure that Pcopy is back at startPos now
 		        // look at Qcopy at startPos	    	         
-				Pcopy.set(PstartPos);
+				Pcopy.set((GeoElement) PstartPos);
 				pcopyUpdateCascade();
 				if (Qcopy.inhomX != lastX || Qcopy.inhomY != lastY)
 					insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceSmall(Qcopy));				
@@ -544,8 +544,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// check found defined
     	if (!foundDefined && Qcopy.isDefined()) {
     		pathMover.init(Pcopy);
-    		PstartPos.set(Pcopy);
-        	QstartPos.set(Qcopy);
+    		PstartPos.set((GeoElement) Pcopy);
+        	QstartPos.set((GeoElement) Qcopy);
         	foundDefined = true;
         	
         	// insert first point

@@ -42,7 +42,7 @@ GeoSegmentInterface {
 	public static final int SEGMENT_DECORATION_THREE_ARROWS = 6;
 //	 Michael Borcherds 20071006 end
 	
-	// added by Loïc
+	// added by Loï¿½c
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(SEGMENT_DECORATION_NONE),
 				new Integer(SEGMENT_DECORATION_ONE_TICK),
@@ -110,8 +110,8 @@ GeoSegmentInterface {
         defined = seg.defined;      
         keepTypeOnGeometricTransform = seg.keepTypeOnGeometricTransform; 	
     	    	     		   
-    	startPoint.set(seg.startPoint);
-    	endPoint.set(seg.endPoint);    	
+    	startPoint.set((GeoElement) seg.startPoint);
+    	endPoint.set((GeoElement) seg.endPoint);    	
 	}   
 
 	public void setVisualStyle(GeoElement geo) {

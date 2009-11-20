@@ -34,7 +34,7 @@ import java.util.Iterator;
  * @version 
  */
 final public class GeoVector extends GeoVec3D
-implements Path, VectorValue, Locateable, Rotateable {
+implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 
 	/**
 	 * 
@@ -85,7 +85,11 @@ implements Path, VectorValue, Locateable, Rotateable {
 		this.y = y;
 		this.z = z;
 	}     
-    
+	
+	final public void setCoords(double[] c) {
+		setCoords(c[0],c[1],c[2]);
+	}  
+	
 	final public void setCoords(GeoVec3D v) {
 		 x = v.x;
 		 y = v.y;
@@ -183,7 +187,11 @@ implements Path, VectorValue, Locateable, Rotateable {
 			} catch(Exception e) {}
 		}
 	}
-    
+	
+    public void setStartPoint(GeoPointInterface p) throws CircularDefinitionException { 
+    	setStartPoint((GeoPoint) p); 
+    }
+   
     public void setStartPoint(GeoPoint p) throws CircularDefinitionException {  
     	if (startPoint == p) return;
     	

@@ -198,7 +198,7 @@ public class AlgoPolygonRegular extends AlgoElement {
     	// let's create the points by rotating A around the center point
     	for (int k=2; k < n; k++) {    		
     		// rotate point around center point
-    		points[k].set(A); 
+    		points[k].set((GeoElement) A); 
     		rotAngle.set(k * alpha);
     		points[k].rotate(rotAngle, centerPoint);      		
     	}

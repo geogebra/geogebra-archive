@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 
 
 /**
@@ -29,33 +31,61 @@ package geogebra.kernel;
 public class AlgoVector extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private GeoPoint P, Q;   // input
-    private GeoVector  v;     // output     
+	private GeoPointInterface P, Q;   // input
+    private GeoVectorInterface  v;     // output     
         
     /** Creates new AlgoVector */  
-    AlgoVector(Construction cons, String label, GeoPoint P, GeoPoint Q) {
+    AlgoVector(Construction cons, String label, GeoPointInterface P, GeoPointInterface Q) {
         super(cons);
         this.P = P;
         this.Q = Q;         
         
         // create new vector
-        v = new GeoVector(cons);   
+        createNewVector();      
+        //v = new GeoVector(cons);   
         try {     
         	if (P.isLabelSet())
         		v.setStartPoint(P);
             else {
-            	GeoPoint startPoint = new GeoPoint(P);
+            	GeoPointInterface startPoint = newStartPoint();
+            	//GeoPoint startPoint = new GeoPoint(P);
             	startPoint.set(P);
             	v.setStartPoint(startPoint);
             }        		
         } catch (CircularDefinitionException e) {}
+        
+        
                  
         setInputOutput();
         
         // compute vector PQ        
         compute();                          
         v.setLabel(label);
-    }           
+    }        
+    
+    
+    
+    protected void createNewVector(){
+    	
+    	v = new GeoVector(cons);
+    	
+    }
+    
+    
+    protected GeoPointInterface newStartPoint(){
+    	
+    	return new GeoPoint((GeoPoint) P);
+    	/*
+    	startPoint.set(P);
+    	v.setStartPoint(startPoint);
+    	*/
+    }
+    
+    
+    
+    
+    
+    
     
     protected String getClassName() {
         return "AlgoVector";
@@ -64,29 +94,35 @@ public class AlgoVector extends AlgoElement {
     // for AlgoElement
     public void setInputOutput() {
         input = new GeoElement[2];
-        input[0] = P;
-        input[1] = Q;
+        input[0] = (GeoElement) P;
+        input[1] = (GeoElement) Q;
         
         output = new GeoElement[1];        
-        output[0] = v;        
+        output[0] = (GeoElement) v;        
         setDependencies(); // done by AlgoElement
     }           
     
-    GeoVector getVector() { return v; }
-    public GeoPoint getP() { return P; }
-    public GeoPoint getQ() { return Q; }
+    GeoVectorInterface getVector() { return v; }
+    public GeoPointInterface getP() { return P; }
+    public GeoPointInterface getQ() { return Q; }
     
     // calc the vector between P and Q    
     protected final void compute() {
-        if (P.isFinite() && Q.isFinite()) {        
+        if (P.isFinite() && Q.isFinite()) {     
+        	
+        	/*
             v.x = Q.inhomX - P.inhomX;
             v.y = Q.inhomY - P.inhomY;             
             v.z = 0.0;
+            */
+        	
+        	v.setCoords(P.vectorTo(Q));
             
             // update position of unlabeled startpoint
-            GeoPoint startPoint = v.getStartPoint();
-            if (!startPoint.isLabelSet())
-        		startPoint.set(P);            
+            GeoPointInterface startPoint = v.getStartPoint();
+            if (startPoint!=null)
+            	if (!startPoint.isLabelSet())
+            		startPoint.set(P);            
         } else {
             v.setUndefined();
         }

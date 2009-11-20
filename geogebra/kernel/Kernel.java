@@ -2183,7 +2183,7 @@ public class Kernel {
 		GeoPoint P,
 		GeoPoint Q) {
 		AlgoVector algo = new AlgoVector(cons, label, P, Q);
-		GeoVector v = algo.getVector();
+		GeoVector v = (GeoVector) algo.getVector();
 		v.setEuclidianVisible(true);
 		v.update();
 		notifyUpdate(v);
