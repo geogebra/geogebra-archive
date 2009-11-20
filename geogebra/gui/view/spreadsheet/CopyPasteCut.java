@@ -100,7 +100,7 @@ public class CopyPasteCut {
 		
 		/*
 		// print available data formats on clipboard
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < contents.getTransferDataFlavors().length; i++) {
 			sb.append(contents.getTransferDataFlavors()[i]);
 			sb.append("\n");
@@ -113,7 +113,7 @@ public class CopyPasteCut {
 			DataFlavor HTMLflavor = new	DataFlavor("text/html;class=java.lang.String");
 			String str = (String) contents.getTransferData(HTMLflavor);
 
-			final StringBuffer sbHTML = new StringBuffer();
+			final StringBuilder sbHTML = new StringBuilder();
 
 			// convert HTML table into CSV
 			HTMLEditorKit.ParserCallback callback = 

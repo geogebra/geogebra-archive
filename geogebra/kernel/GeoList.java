@@ -479,13 +479,13 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		sbToString.append(buildValueString());
 		return sbToString.toString();   
     }
-	StringBuffer sbToString = new StringBuffer(50);   
+	StringBuilder sbToString = new StringBuilder(50);   
 	
 	public String toValueString() {
 		return buildValueString().toString();
 	}
     
-    private StringBuffer buildValueString() {          	
+    private StringBuilder buildValueString() {          	
        sbBuildValueString.setLength(0);
        if (!isDefined) {
     	   sbBuildValueString.append("?");
@@ -511,7 +511,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
        sbBuildValueString.append(STR_CLOSE);       
        return sbBuildValueString;   	
     }        
-	private StringBuffer sbBuildValueString = new StringBuffer(50);                  
+	private StringBuilder sbBuildValueString = new StringBuilder(50);                  
     
 	
 	public boolean isGeoList() {
@@ -530,7 +530,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	   * save object in XML format
 	   */ 
 	  public final String getXML() {
-		 StringBuffer sb = new StringBuffer();
+		 StringBuilder sb = new StringBuilder();
 		 		 
 		 // an independent list needs to add
 		 // its expression itself

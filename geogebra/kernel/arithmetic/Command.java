@@ -136,7 +136,7 @@ implements ExpressionValue {
     			
     		default:
     	    	if (sbToString == null)
-    	    		 sbToString = new StringBuffer();
+    	    		 sbToString = new StringBuilder();
     	    	sbToString.setLength(0);
     	    	
     			// GeoGebra command syntax		               
@@ -156,7 +156,7 @@ implements ExpressionValue {
     	}
     	
     }
-    private StringBuffer sbToString;  
+    private StringBuilder sbToString;  
     
     private String toString(ExpressionValue ev, boolean symbolic, boolean LaTeX) {
     	if (LaTeX) {

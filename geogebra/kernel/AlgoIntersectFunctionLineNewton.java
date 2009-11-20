@@ -114,7 +114,7 @@ public class AlgoIntersectFunctionLineNewton extends AlgoRootNewton {
     }
 
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-31
         // simplified to allow better translation
         sb.append(app.getPlain("IntersectionPointOfABWithInitialValueC",input[0].getLabel(),input[1].getLabel(),startPoint.getLabel()));

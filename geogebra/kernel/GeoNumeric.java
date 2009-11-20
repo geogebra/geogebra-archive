@@ -288,7 +288,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return sbToString.toString();
 	}
 
-	private StringBuffer sbToString = new StringBuffer(50);
+	private StringBuilder sbToString = new StringBuilder(50);
 
 	public String toValueString() {
 		return kernel.format(value);
@@ -343,7 +343,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * returns all class-specific xml tags for saveXML
 	 */
 	protected String getXMLtags() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("\t<value val=\"");
 		sb.append(value);
 		sb.append("\"/>\n");
@@ -387,7 +387,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if (!isSliderable())
 			return "";
 		
-		StringBuffer sb = new StringBuffer();		
+		StringBuilder sb = new StringBuilder();		
 		sb.append("\t<slider");
 		if (intervalMinActive) {
 			sb.append(" min=\"");

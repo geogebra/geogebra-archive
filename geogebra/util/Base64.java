@@ -117,7 +117,7 @@ public final class Base64
     int srcLength = buf.length;
     byte[] input = new byte[3];
     int[] output = new int[4];
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
     int i = 0;
     int chars = 0;
 

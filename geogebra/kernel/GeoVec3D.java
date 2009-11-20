@@ -278,14 +278,14 @@ implements Traceable {
 		sbToString.append(')');
         return sbToString.toString();
     }
-	private StringBuffer sbToString = new StringBuffer(50);
+	private StringBuilder sbToString = new StringBuilder(50);
 	
     /**
      * returns all class-specific xml tags for saveXML
      * Geogebra File Format
      */
     protected String getXMLtags() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getXMLtags());
         
         sb.append("\t<coords");
@@ -302,7 +302,7 @@ implements Traceable {
      * Intergeo File Format (Yves Kreis)
      */
     protected String getI2Gtags() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getI2Gtags());
 
         sb.append("\t\t\t<homogeneous_coordinates>\n");

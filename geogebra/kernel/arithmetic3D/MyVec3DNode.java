@@ -110,7 +110,7 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue {
       
             
     final public String toString() {         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         sb.append('(');
         sb.append(x.toString());

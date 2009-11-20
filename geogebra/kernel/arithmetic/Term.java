@@ -32,18 +32,18 @@ public class Term implements Comparable, Serializable {
 	private static final long serialVersionUID = 1L;
     
     ExpressionValue coefficient; // hast to evaluate() to NumberValue
-    private StringBuffer variables;
+    private StringBuilder variables;
     private Kernel kernel;
     
     public Term(Kernel kernel, ExpressionValue coeff, String vars) {
-        this(kernel, coeff, new StringBuffer(vars));
+        this(kernel, coeff, new StringBuilder(vars));
     }
     
     public Term(Kernel kernel, double coeff, String vars) {
-        this(kernel, new MyDouble(kernel, coeff), new StringBuffer(vars));
+        this(kernel, new MyDouble(kernel, coeff), new StringBuilder(vars));
     }
     
-    public Term(Kernel kernel, ExpressionValue coeff, StringBuffer vars) {
+    public Term(Kernel kernel, ExpressionValue coeff, StringBuilder vars) {
         this.kernel = kernel;
         coefficient = coeff;
         variables = vars;
@@ -51,7 +51,7 @@ public class Term implements Comparable, Serializable {
              
     public Term(Term t) {                
         kernel = t.kernel;
-        variables = new StringBuffer(t.variables.toString());
+        variables = new StringBuilder(t.variables.toString());
         coefficient = ExpressionNode.copy(t.coefficient, kernel);               
     }
     
@@ -73,7 +73,7 @@ public class Term implements Comparable, Serializable {
         variables.append(vars);
     }
 
-    void setVariables(StringBuffer vars) {
+    void setVariables(StringBuilder vars) {
         variables.setLength(0);
         variables.append(vars);
     }
@@ -158,7 +158,7 @@ public class Term implements Comparable, Serializable {
      * return a new Term
      *
     Term mult(Term t) {         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
     
         // concatenate and sort (variables + t.variables)
         sb = sb.append(variables);
@@ -268,7 +268,7 @@ public class Term implements Comparable, Serializable {
     }   
              
     // sort single characters: "yx" -> "xy"
-    private void sort( StringBuffer sb ) {        
+    private void sort( StringBuilder sb ) {        
         int len = sb.length();
         char [] chVariables = new char[len];
     
@@ -304,7 +304,7 @@ public class Term implements Comparable, Serializable {
         if (ExpressionNode.isEqualString(coefficient, 1, true)) 
         	return variableString();
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String var = variableString();
         if (ExpressionNode.isEqualString(coefficient, -1, true) && var.length() > 0) { 
             sb.append('-');            
@@ -329,7 +329,7 @@ public class Term implements Comparable, Serializable {
                 variables.length() == 0)
 				return n.toString();
 			else {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append('(');
                 sb.append(n);
                 sb.append(')');

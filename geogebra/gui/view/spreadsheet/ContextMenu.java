@@ -198,7 +198,7 @@ public class ContextMenu extends JPopupMenu
  		public void actionPerformed(ActionEvent e) {
  			//Application.debug("CreatePoints " + column1 + " - " + column2+"   "+row1+" - "+row2);
  			//if (selected == null) throw new RuntimeException("error state");
- 			StringBuffer text = new StringBuffer();
+ 			StringBuilder text = new StringBuilder();
  			LinkedList list = new LinkedList();
  			TableModel model = table.getModel();
  			

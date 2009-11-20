@@ -142,7 +142,7 @@ public abstract class Application3D extends Application{
 	
 	
 	public String getCompleteUserInterfaceXML(boolean asPreference) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// save super settings
 		sb.append(super.getCompleteUserInterfaceXML(asPreference));

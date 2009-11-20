@@ -548,7 +548,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
 	final public String toString() {
 		
-		StringBuffer sbToString = getSbToString();
+		StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = "); 

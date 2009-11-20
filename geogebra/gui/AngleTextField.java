@@ -62,7 +62,7 @@ public class AngleTextField extends MyTextField implements KeyListener {
 			if (start != end) {
 				int pos = getCaretPosition();
 				String oldText = getText();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(oldText.substring(0, start));
 				sb.append(oldText.substring(end));            
 				setText(sb.toString());
@@ -74,7 +74,7 @@ public class AngleTextField extends MyTextField implements KeyListener {
 			// don't insert more than one degree sign or pi *in total*
 			if (oldText.indexOf('\u00b0') == -1 && oldText.indexOf('\u03c0') == -1) {
 				int pos = oldText.length(); // getCaretPosition();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(oldText.substring(0, pos));
 				sb.append(insertString);
 				sb.append(oldText.substring(pos));            

@@ -627,7 +627,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		sbToString.append(kernel.format( getArea() ));
 	    return sbToString.toString();
    }      
-   private StringBuffer sbToString = new StringBuffer(50);
+   private StringBuilder sbToString = new StringBuilder(50);
    
    final public String toValueString() {
 	   return kernel.format(getArea());

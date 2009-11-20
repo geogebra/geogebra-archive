@@ -53,7 +53,7 @@ public class Parametric extends ValidExpression {
     
   
     public String toString() {
-        StringBuffer sb = new StringBuffer();        
+        StringBuilder sb = new StringBuilder();        
         sb.append( getLabel() + " : ");
         sb.append( "X = " + P.evaluate() + " + " + parameter + " " + v.evaluate() );
         return sb.toString();    

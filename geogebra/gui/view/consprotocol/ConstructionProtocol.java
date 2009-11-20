@@ -1411,7 +1411,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
       * @param imgFile: image file to be included
       */
     public String getHTML(File imgFile) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("<html>\n");
         sb.append("<head>\n");
@@ -1530,7 +1530,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
     }
        
     public String getConsProtocolXML() {    	
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	
     	// COLUMNS
     	sb.append("\t<consProtColumns ");    	    	    

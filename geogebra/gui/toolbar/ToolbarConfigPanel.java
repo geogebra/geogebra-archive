@@ -345,7 +345,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	 * Separator ("||" between menus, "," in menu), New menu starts with "|"
 	 */
 	public String getToolBarString() {								
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();		            
         for (int i=0; i < root.getChildCount(); i++) {

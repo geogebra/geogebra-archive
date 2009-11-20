@@ -388,7 +388,7 @@ public class MyList extends ValidExpression implements ListValue {
 	}
 
 	public String toLaTeXString(boolean symbolic) {
-		StringBuffer toLaTeXString = new StringBuffer();
+		StringBuilder toLaTeXString = new StringBuilder();
 		toLaTeXString.append("\\{");
 
 		// first (n-1) elements
@@ -412,7 +412,7 @@ public class MyList extends ValidExpression implements ListValue {
 	// Michael Borcherds 2008-02-04
 	// adapted from GeoList
 	public String toString() {
-		StringBuffer sbBuildValueString = new StringBuffer();
+		StringBuilder sbBuildValueString = new StringBuilder();
 		sbBuildValueString.append("{");
 
 		// first (n-1) elements

@@ -656,7 +656,7 @@ public class MyXMLio {
 	/**
 	 * Compresses xml String and writes result to os.
 	 */
-	public static void writeZipped(OutputStream os, StringBuffer xmlString) throws IOException {
+	public static void writeZipped(OutputStream os, StringBuilder xmlString) throws IOException {
 		ZipOutputStream z = new ZipOutputStream(os);
 		z.putNextEntry(new ZipEntry(XML_FILE));
 		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(z, "UTF8"));
@@ -672,7 +672,7 @@ public class MyXMLio {
 	 * File Format.
 	 */
 	public String getFullXML() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 
@@ -696,7 +696,7 @@ public class MyXMLio {
 	 * Kreis)
 	 */
 	public String getFullI2G() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("<!--\n\tIntergeo File Format Version "
 				+ GeoGebra.I2G_FILE_FORMAT + "\n\twritten by "
@@ -709,7 +709,7 @@ public class MyXMLio {
 		// save construction
 		sb.append(kernel.getConstructionI2G());
 
-		StringBuffer display = new StringBuffer();
+		StringBuilder display = new StringBuilder();
 		display.append(kernel.getDisplayI2G());
 		if (!display.toString().equals("")) {
 			sb.append("\t<display>\n");
@@ -726,7 +726,7 @@ public class MyXMLio {
 	 * Returns XML representation of all settings WITHOUT construction.
 	 */
 	public String getPreferencesXML() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 						+ "\">\n");
@@ -742,7 +742,7 @@ public class MyXMLio {
 	 * Returns XML representation of given macros in the kernel.
 	 */
 	public String getFullMacroXML(ArrayList macros) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 						+ "\">\n");
@@ -758,10 +758,10 @@ public class MyXMLio {
 	 * Returns XML representation of all settings and construction needed for
 	 * undo.
 	 */
-	public static synchronized StringBuffer getUndoXML(Construction c) {
+	public static synchronized StringBuilder getUndoXML(Construction c) {
 		Application app = c.getApplication();
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 

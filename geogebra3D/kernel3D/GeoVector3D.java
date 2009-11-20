@@ -152,13 +152,13 @@ implements GeoVectorInterface, Locateable{
 		return sbToString.toString();
 	}
 	
-	private StringBuffer sbToString = new StringBuffer(50); 
+	private StringBuilder sbToString = new StringBuilder(50); 
 
 	final public String toValueString() {
 		return buildValueString().toString();
 	}
 
-	private StringBuffer buildValueString() {
+	private StringBuilder buildValueString() {
 		sbBuildValueString.setLength(0);
 		
 		/*
@@ -221,7 +221,7 @@ implements GeoVectorInterface, Locateable{
 			}
 		}
 
-		private StringBuffer sbBuildValueString = new StringBuffer(50);
+		private StringBuilder sbBuildValueString = new StringBuilder(50);
 		
 		
 		

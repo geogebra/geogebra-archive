@@ -154,7 +154,7 @@ extends GeoConic implements GeoElement3DInterface{
 	 
 	 
 		public String toString() {	
-			StringBuffer sbToString = getSbToString();
+			StringBuilder sbToString = getSbToString();
 			sbToString.setLength(0);
 			sbToString.append(label);
 			

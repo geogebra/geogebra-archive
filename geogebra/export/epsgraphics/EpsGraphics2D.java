@@ -9,8 +9,8 @@ Since the GPL may be too restrictive for use in a proprietary application,
 a commercial license is also provided. Full license information can be
 found at http://www.jibble.org/licenses/
 
-$Author: hohenwarter $
-$Id: EpsGraphics2D.java,v 1.4 2009-06-22 02:18:23 hohenwarter Exp $
+$Author: murkle $
+$Id: EpsGraphics2D.java,v 1.5 2009-11-20 22:28:46 murkle Exp $
 
 */
 
@@ -565,7 +565,7 @@ public class EpsGraphics2D extends java.awt.Graphics2D {
             append("newpath");
             Point2D location = transform(x, y);
             append(location.getX() + " " + location.getY() + " moveto");
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             for (char ch = iterator.first(); ch != CharacterIterator.DONE; ch = iterator.next()) {
                 if (ch == '(' || ch == ')') {
                     buffer.append('\\');
@@ -660,7 +660,7 @@ public class EpsGraphics2D extends java.awt.Graphics2D {
             append(_stroke.getLineJoin() + " setlinejoin");
             append(_stroke.getEndCap() + " setlinecap");
 
-            StringBuffer dashes = new StringBuffer();
+            StringBuilder dashes = new StringBuilder();
             dashes.append("[ ");
             float[] dashArray = _stroke.getDashArray();
             if (dashArray != null) {
@@ -1348,7 +1348,7 @@ public class EpsGraphics2D extends java.awt.Graphics2D {
             append("false 3 colorimage");
         }
         
-        StringBuffer line = new StringBuffer();
+        StringBuilder line = new StringBuilder();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Color color = new Color(pixels[x + width * y]);
@@ -1370,7 +1370,7 @@ public class EpsGraphics2D extends java.awt.Graphics2D {
                 
                 if (line.length() > 64) {
                     append(line.toString());
-                    line = new StringBuffer();
+                    line = new StringBuilder();
                 }
             }
         }

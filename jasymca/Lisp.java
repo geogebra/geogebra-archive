@@ -160,7 +160,7 @@ public class Lisp{
 
 	// Convert Object from Lisp-String 	
 	public static Object read( String s) throws ParseException{
-		return nextObject(new StringBuffer("("+s+")"));
+		return nextObject(new StringBuilder("("+s+")"));
 	}
 	
 
@@ -178,7 +178,7 @@ public class Lisp{
 	// Break up String s into Objects
 	// Objects are Numbers, Strings separated by meaning, lists of Objects (x1 x2 x3)
 	//and vektors [ x1 x2 x3 ]
-	public static Object nextObject(StringBuffer s) throws ParseException{
+	public static Object nextObject(StringBuilder s) throws ParseException{
 		int i=0;
 		while(i<s.length() && whitespace(s.charAt(i))) i++;
 		if(i==s.length()) return null;

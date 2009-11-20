@@ -266,7 +266,7 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 					if(fileName.endsWith(".ggb")) {
 						tmpImage = MyXMLio.getPreviewImage(file); // load preview from zip
 						
-						StringBuffer fileInfo = new StringBuffer();
+						StringBuilder fileInfo = new StringBuilder();
 						
 						if(fileName.length() > 20) {
 							fileInfo.append(fileName.substring(0, 20));
@@ -288,7 +288,7 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 					if (file.length() < 1024 * maxImageSize) {
 						tmpImage = ImageIO.read(file); // returns null if file isn't an image
 						
-						StringBuffer imgInfo = new StringBuffer();
+						StringBuilder imgInfo = new StringBuilder();
 						
 						String fileName = file.getName();
 						

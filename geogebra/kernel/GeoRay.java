@@ -168,7 +168,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
      * returns all class-specific xml tags for saveXML
      */
     protected String getXMLtags() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getXMLtags());
 		
         // allowOutlyingIntersections

@@ -5347,7 +5347,7 @@ public class Kernel {
 	private double[] temp = new double[6];
 
 	// lhs of implicit equation without constant coeff
-	final private StringBuffer buildImplicitVarPart(		
+	final private StringBuilder buildImplicitVarPart(		
 		double[] numbers,
 		String[] vars, 
 		boolean KEEP_LEADING_SIGN,
@@ -5420,9 +5420,9 @@ public class Kernel {
 		}
 		return sbBuildImplicitVarPart;
 	}
-	private StringBuffer sbBuildImplicitVarPart = new StringBuffer(80);
+	private StringBuilder sbBuildImplicitVarPart = new StringBuilder(80);
 
-	final StringBuffer buildImplicitEquation(
+	final StringBuilder buildImplicitEquation(
 		double[] numbers,
 		String[] vars,
 		boolean KEEP_LEADING_SIGN,
@@ -5440,10 +5440,10 @@ public class Kernel {
 
 		return sbBuildImplicitEquation;
 	}
-	private StringBuffer sbBuildImplicitEquation = new StringBuffer(80);
+	private StringBuilder sbBuildImplicitEquation = new StringBuilder(80);
 
 	// lhs of lhs = 0
-	final public StringBuffer buildLHS(double[] numbers, String[] vars, boolean KEEP_LEADING_SIGN, boolean CANCEL_DOWN) {
+	final public StringBuilder buildLHS(double[] numbers, String[] vars, boolean KEEP_LEADING_SIGN, boolean CANCEL_DOWN) {
 		sbBuildLHS.setLength(0);
 		sbBuildLHS.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN, CANCEL_DOWN));
 
@@ -5457,10 +5457,10 @@ public class Kernel {
 		}
 		return sbBuildLHS;
 	}
-	private StringBuffer sbBuildLHS = new StringBuffer(80);
+	private StringBuilder sbBuildLHS = new StringBuilder(80);
 
 	// form: y� = f(x) (coeff of y = 0)
-	final StringBuffer buildExplicitConicEquation(
+	final StringBuilder buildExplicitConicEquation(
 		double[] numbers,
 		String[] vars,
 		int pos,
@@ -5530,10 +5530,10 @@ public class Kernel {
 			return sbBuildExplicitConicEquation;
 		}
 	}
-	private StringBuffer sbBuildExplicitConicEquation = new StringBuffer(80);
+	private StringBuilder sbBuildExplicitConicEquation = new StringBuilder(80);
 
 	// y = k x + d
-	final StringBuffer buildExplicitLineEquation(
+	final StringBuilder buildExplicitLineEquation(
 		double[] numbers,
 		String[] vars) {
 
@@ -5588,7 +5588,7 @@ public class Kernel {
 		}
 		return sbBuildExplicitLineEquation;
 	}
-	private StringBuffer sbBuildExplicitLineEquation = new StringBuffer(50);
+	private StringBuilder sbBuildExplicitLineEquation = new StringBuilder(50);
 
 	/*
 	final private String formatAbs(double x) {
@@ -5643,7 +5643,7 @@ public class Kernel {
 					else {						
 						// convert scientific notation 1.0E-20 to 1*10^(-20) 
 						String scientificStr = Double.toString(x);
-						StringBuffer sb = new StringBuffer(scientificStr.length() * 2);
+						StringBuilder sb = new StringBuilder(scientificStr.length() * 2);
 						boolean Efound = false;
 						for (int i=0; i < scientificStr.length(); i++) {
 							char ch = scientificStr.charAt(i);
@@ -5706,7 +5706,7 @@ public class Kernel {
 	 */
 	final private String formatSF(double x) {					
 		if (sbFormatSF == null)
-			sbFormatSF = new StringBuffer();
+			sbFormatSF = new StringBuilder();
 		else
 			sbFormatSF.setLength(0);
 				
@@ -5726,7 +5726,7 @@ public class Kernel {
 		
 		return sbFormatSF.toString();
 	}
-	private StringBuffer sbFormatSF;
+	private StringBuilder sbFormatSF;
 	
 	
 	final public String formatPiE(double x, NumberFormat numF) {		
@@ -5740,7 +5740,7 @@ public class Kernel {
 		double a = 2*x / Math.PI;
 		int aint = (int) Math.round(a);
 		if (sbFormat == null)
-			sbFormat = new StringBuffer();
+			sbFormat = new StringBuilder();
 		sbFormat.setLength(0);
 		if (isEqual(a, aint, STANDARD_PRECISION)) {	
 			switch (aint) {		
@@ -5800,7 +5800,7 @@ public class Kernel {
 			sbFormat.setLength(sbFormat.length() - 2);
 		return sbFormat.toString();
 	}
-	private StringBuffer sbFormat;
+	private StringBuilder sbFormat;
 
 
 	final public String formatSignedCoefficient(double x) {
@@ -5812,7 +5812,7 @@ public class Kernel {
 		return formatSigned(x).toString();
 	}
 		
-	final public StringBuffer formatSigned(double x) {
+	final public StringBuilder formatSigned(double x) {
 		sbFormatSigned.setLength(0);		
 		
 		if (x >= 0.0d) {
@@ -5825,9 +5825,9 @@ public class Kernel {
 			return sbFormatSigned;
 		}
 	}
-	private StringBuffer sbFormatSigned = new StringBuffer(40);
+	private StringBuilder sbFormatSigned = new StringBuilder(40);
 
-	final public StringBuffer formatAngle(double phi) {		
+	final public StringBuilder formatAngle(double phi) {		
 		sbFormatAngle.setLength(0);
 		switch (casPrintForm) {
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
@@ -5879,7 +5879,7 @@ public class Kernel {
 		
 		
 	}
-	private StringBuffer sbFormatAngle = new StringBuffer(40);
+	private StringBuilder sbFormatAngle = new StringBuilder(40);
 
 	final private static char sign(double x) {
 		if (x > 0)
@@ -5966,7 +5966,7 @@ public class Kernel {
 	 * Returns the kernel settings in XML format.
 	 */
 	public String getKernelXML() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 	
 		// kernel settings
 		sb.append("<kernel>\n");

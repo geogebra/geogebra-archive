@@ -283,7 +283,7 @@ public abstract class Drawable {
 		if (n == 0) return "";
 		else if (n == 1) return str;
 		else {
-			StringBuffer ret = new StringBuffer();
+			StringBuilder ret = new StringBuilder();
 			
 			for (int i=0 ; i<n ; i++) ret.append(str);
 			return ret.toString();
@@ -720,7 +720,7 @@ public abstract class Drawable {
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, oldHint);			
 	}
 	
-	//private StringBuffer command = new StringBuffer();
+	//private StringBuilder command = new StringBuilder();
 	private double[] coords = new double[2];
 	
 	public void recordToSpreadsheet(GeoElement geo) {

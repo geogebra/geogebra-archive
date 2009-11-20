@@ -755,13 +755,13 @@ GeoPointInterface {
 		sbToString.append(buildValueString());       
         return sbToString.toString();
     }
-    private StringBuffer sbToString = new StringBuffer(50);        
+    private StringBuilder sbToString = new StringBuilder(50);        
     
     final public String toValueString() {
     	return buildValueString().toString();	
     }       
     
-	private StringBuffer buildValueString() { 
+	private StringBuilder buildValueString() { 
 		sbBuildValueString.setLength(0);
     	if (isInfinite()) {
 			sbBuildValueString.append(app.getPlain("undefined"));
@@ -800,7 +800,7 @@ GeoPointInterface {
         }        
 		return sbBuildValueString;
     }
-	private StringBuffer sbBuildValueString = new StringBuffer(50);   
+	private StringBuilder sbBuildValueString = new StringBuilder(50);   
     
     /**
      * interface VectorValue implementation
@@ -836,7 +836,7 @@ GeoPointInterface {
      * GeoGebra File Format
      */
     protected String getXMLtags() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getXMLtags()); 
         
         /* should not be needed
@@ -876,7 +876,7 @@ GeoPointInterface {
     }
     
     public String getStartPointXML() {
-    	StringBuffer sb = new StringBuffer();    	
+    	StringBuilder sb = new StringBuilder();    	
 		sb.append("\t<startPoint ");
 		
     	if (isAbsoluteStartPoint()) {		

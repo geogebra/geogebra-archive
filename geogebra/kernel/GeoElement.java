@@ -1494,11 +1494,11 @@ public abstract class GeoElement
 		}	
 	}
 
-//	private StringBuffer sb;
+//	private StringBuilder sb;
 //
 //	private String removeDollars(String s) {	
 //		if (sb == null)
-//			sb = new StringBuffer();
+//			sb = new StringBuilder();
 //		sb.setLength(0);
 //
 //		for (int i = 0; i < s.length(); i++) {
@@ -1541,7 +1541,7 @@ public abstract class GeoElement
 		return true;
 	}		
 
-	StringBuffer captionSB = null;
+	StringBuilder captionSB = null;
 	
 	public String getCaption() {
 		if (caption == null)
@@ -1550,7 +1550,7 @@ public abstract class GeoElement
 		// for speed, check first for a %
 		if (caption.indexOf("%") < 0) return caption;
 	
-		StringBuffer captionSB = new StringBuffer();
+		StringBuilder captionSB = new StringBuilder();
 		// replace %v with value and %n with name
 		for (int i = 0; i < caption.length(); i++) {
 			char ch = caption.charAt(i);
@@ -1714,7 +1714,7 @@ public abstract class GeoElement
 		String colName = getSpreadsheetColumnName(spreadsheetCoords.x);
 		String rowName = Integer.toString(spreadsheetCoords.y + 1);
 		
-		StringBuffer sb = new StringBuffer(label.length() + 2);
+		StringBuilder sb = new StringBuilder(label.length() + 2);
 		if (col$) sb.append('$');
 		sb.append(colName);
 		if (row$) sb.append('$');
@@ -1733,7 +1733,7 @@ public abstract class GeoElement
 	public static final Pattern spreadsheetPattern = 
 		Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
 
-	private static StringBuffer sb = null;
+	private static StringBuilder sb = null;
 
 	/*
 	 * used to set a cell to another geo
@@ -1743,7 +1743,7 @@ public abstract class GeoElement
 		String cellName = GeoElement.getSpreadsheetCellName(col, row);
 
 		if (sb == null)
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 		else
 			sb.setLength(0);
 		
@@ -2008,7 +2008,7 @@ public abstract class GeoElement
 		}
 
 		int counter = 0, q, r;
-		StringBuffer sbDefaultLabel = new StringBuffer();
+		StringBuilder sbDefaultLabel = new StringBuilder();
 		sbDefaultLabel.append(chars[0]);
 		while (!cons.isFreeLabel(sbDefaultLabel.toString())) {
 			sbDefaultLabel.setLength(0);
@@ -2056,7 +2056,7 @@ public abstract class GeoElement
 		else
 			pref = prefix.substring(0, pos);
 		
-		StringBuffer sbIndexLabel = new StringBuffer();
+		StringBuilder sbIndexLabel = new StringBuilder();
 		int n = 0; // index
 		do {
 			sbIndexLabel.setLength(0);
@@ -2610,7 +2610,7 @@ public abstract class GeoElement
 		if (desc.startsWith(label)) {
 			ret = desc;
 		} else {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(label);
 			sb.append(" = ");
 			sb.append(desc);
@@ -2647,7 +2647,7 @@ public abstract class GeoElement
 		if (algoParent == null)
 			return getNameDescription();
 		else {			
-			StringBuffer sbLongDesc = new StringBuffer();
+			StringBuilder sbLongDesc = new StringBuilder();
 			sbLongDesc.append(getNameDescription());			
 			// add dependency information
 			sbLongDesc.append(": ");
@@ -2667,7 +2667,7 @@ public abstract class GeoElement
 		if (algoParent == null || isTextValue())
 			return getNameDescriptionHTML(colored, addHTMLtag);
 		else {
-			StringBuffer sbLongDescHTML = new StringBuffer();
+			StringBuilder sbLongDescHTML = new StringBuilder();
 			
 			String label = getLabel();
 			String typeString = translatedTypeString();			
@@ -2728,7 +2728,7 @@ public abstract class GeoElement
 		if (geos == null)
 			return null;
 		
-		StringBuffer sbToolTipDesc = new StringBuffer();
+		StringBuilder sbToolTipDesc = new StringBuilder();
 		
 		if (addHTMLtag)
 			sbToolTipDesc.append("<html>");
@@ -2839,7 +2839,7 @@ public abstract class GeoElement
 			if (isDefined()) {
 				strAlgebraDescription = toString();
 			} else {			
-				StringBuffer sbAlgebraDesc = new StringBuffer();		
+				StringBuilder sbAlgebraDesc = new StringBuilder();		
 				sbAlgebraDesc.append(label);
 				sbAlgebraDesc.append(' ');
 				sbAlgebraDesc.append(app.getPlain("undefined"));
@@ -2886,7 +2886,7 @@ public abstract class GeoElement
 	private static String subBegin = "<sub><font size=\"-1\">";
 	private static String subEnd = "</font></sub>";
 	public static String indicesToHTML(String str, boolean addHTMLtag) {
-		StringBuffer sbIndicesToHTML = new StringBuffer();
+		StringBuilder sbIndicesToHTML = new StringBuilder();
 		
 		if (addHTMLtag)
 			sbIndicesToHTML.append("<html>");
@@ -2947,7 +2947,7 @@ public abstract class GeoElement
 		* (for tooltips and error messages)		
 		*/
 	public String getNameDescription() {
-		StringBuffer sbNameDescription = new StringBuffer();
+		StringBuilder sbNameDescription = new StringBuilder();
 		
 		String label = getLabel();
 		String typeString = translatedTypeString();
@@ -3002,7 +3002,7 @@ public abstract class GeoElement
 		boolean colored,
 		boolean addHTMLtag) {
 		
-		StringBuffer sbNameDescriptionHTML = new StringBuffer();
+		StringBuilder sbNameDescriptionHTML = new StringBuilder();
 		
 		if (addHTMLtag)
 			sbNameDescriptionHTML.append("<html>");
@@ -3055,7 +3055,7 @@ public abstract class GeoElement
 		
 		String type = getXMLtypeString();
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<element");
 		sb.append(" type=\"");
 		sb.append(type);
@@ -3080,7 +3080,7 @@ public abstract class GeoElement
 	}
 	
 	public String getCaptionXML() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		// caption text
 		if (caption != null && caption.length() > 0 && !caption.equals(label)) {
 			sb.append("\t<caption val=\"");
@@ -3100,7 +3100,7 @@ public abstract class GeoElement
 		
 		String type = getXMLtypeString();
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		if (mode == CONSTRAINTS) {
 			if (isIndependent() || isPointOnPath()) {
@@ -3151,7 +3151,7 @@ public abstract class GeoElement
 	
     final String getAuxiliaryXML() {
 		if (auxiliaryObject) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("\t<auxiliary val=\"");
 			sb.append(auxiliaryObject);
 			sb.append("\"/>\n");
@@ -3168,7 +3168,7 @@ public abstract class GeoElement
 	}
 		
 	String getXMLvisualTags(boolean withLabelOffset) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		boolean isDrawable = isDrawable();
 		
 		// show object and/or label in EuclidianView
@@ -3278,7 +3278,7 @@ public abstract class GeoElement
 	String getXMLanimationTags() {
 		// animation step width
 		if (isChangeable()) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("\t<animation");
 			sb.append(" step=\""+animationIncrement+"\"");
 			String animSpeed = animationSpeedObj == null ? "1" : animationSpeedObj.toGeoElement().getLabel();
@@ -3296,7 +3296,7 @@ public abstract class GeoElement
 	String getXMLfixedTag() {
 		//		is object fixed
 		if (fixed && isFixable()) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("\t<fixed val=\"");
 			sb.append(fixed);
 			sb.append("\"/>\n");
@@ -3310,7 +3310,7 @@ public abstract class GeoElement
 	 * GeoGebra File Format
 	 */
 	protected String getXMLtags() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(getLineStyleXML());
 		sb.append(getXMLvisualTags());
 		sb.append(getXMLanimationTags());
@@ -3335,7 +3335,7 @@ public abstract class GeoElement
 	String getLineStyleXML() {
 		if (isGeoPoint()) return "";
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("\t<lineStyle");
 		sb.append(" thickness=\"");
 		sb.append(lineThickness);
@@ -3353,7 +3353,7 @@ public abstract class GeoElement
 	 */
 	String getBreakpointXML() {		
 		if (isConsProtBreakpoint) {
-			StringBuffer sb = new StringBuffer();		
+			StringBuilder sb = new StringBuilder();		
 			sb.append("\t<breakpoint val=\"");		
 			sb.append(isConsProtBreakpoint);
 			sb.append("\"/>\n");
@@ -3364,7 +3364,7 @@ public abstract class GeoElement
 	
 	private String getShowObjectConditionXML() {
 		if (condShowObject != null) {
-			StringBuffer sb = new StringBuffer();		
+			StringBuilder sb = new StringBuilder();		
 			sb.append("\t<condition showObject=\"");		
 			sb.append(Util.encodeXML(condShowObject.getLabel()));
 			sb.append("\"/>\n");

@@ -271,7 +271,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					// F3 key: copy definitions to input field as list 			
 					JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
 					
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append('{');
 					
 					Iterator<GeoElement> it = geos.iterator();

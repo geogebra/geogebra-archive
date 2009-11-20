@@ -21,7 +21,7 @@ public class FontManager {
 	private String sansName, serifName;
 	
 	private static HashMap fontMap = new HashMap();
-	private static StringBuffer key = new StringBuffer();
+	private static StringBuilder key = new StringBuilder();
 	
 	private static char EULER_CHAR = '\u212f'; 
 	public static final String[] FONT_NAMES_SANSSERIF = { 
@@ -52,7 +52,7 @@ public class FontManager {
 		String fontNameSerif = null;
 
 		// certain languages need special fonts to display its characters
-		StringBuffer testCharacters = new StringBuffer();
+		StringBuilder testCharacters = new StringBuilder();
 		LinkedList tryFontsSansSerif = new LinkedList(Arrays.asList(FONT_NAMES_SANSSERIF));
 		LinkedList tryFontsSerif = new LinkedList(Arrays.asList(FONT_NAMES_SERIF));
 

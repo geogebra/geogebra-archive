@@ -708,7 +708,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	 * returns settings in XML format
 	 */
 	public String getXML() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<spreadsheetView>\n");
 		
 		int width = getWidth();//getPreferredSize().width;

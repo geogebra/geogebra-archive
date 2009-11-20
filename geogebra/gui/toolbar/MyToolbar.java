@@ -251,7 +251,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
     	// show no more than 2 lines
      	int maxLines = 2*fm.getHeight() < panel.getHeight() ? 2 : 1; 
      	//Math.min(2, Math.round(panel.getHeight() / (float) fm.getHeight()));    	
-    	StringBuffer sbToolName = new StringBuffer();    
+    	StringBuilder sbToolName = new StringBuilder();    
     	sbToolName.append("<html><b>");
     	
     	// check if mode name itself fits
@@ -295,7 +295,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
     	
 		
 		// mode help text
-		StringBuffer sbToolHelp = new StringBuffer();   
+		StringBuilder sbToolHelp = new StringBuilder();   
 		fm = getFontMetrics(app.getPlainFont());
 		
 		// try to put help text into single line
@@ -459,7 +459,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	 * Returns the default toolbar String definition.
 	 */
     public String getDefaultToolbarString() {
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	
     	sb.append(getDefaultToolbarStringNoMacros());
     	
@@ -488,7 +488,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	 * Returns the default toolbar String definition.
 	 */
     public static String getDefaultToolbarStringNoMacros() {
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	
     	// move
         sb.append(EuclidianView.MODE_MOVE);        

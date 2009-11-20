@@ -112,7 +112,7 @@ public class AlgoMirror extends AlgoTransformation {
     }       
     
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         // Michael Borcherds 2008-03-31
         // simplified to allow better translation

@@ -206,7 +206,7 @@ public class AlgoPolygon extends AlgoElement {
     }   
     
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
   
         sb.append(app.getPlain("Polygon"));
         sb.append(' ');     

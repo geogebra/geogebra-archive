@@ -32,7 +32,7 @@ public class GeoGebraCAS {
 
 	private Interpreter ggbMathPiper;
 	private GeoGebraJasymca ggbJasymca;	
-	private StringBuffer sbInsertSpecial, sbReplaceIndices, sbPolyCoeffs;
+	private StringBuilder sbInsertSpecial, sbReplaceIndices, sbPolyCoeffs;
 	private Application app;
 	private Kernel kernel;
 	private CASparser casParser;	
@@ -43,8 +43,8 @@ public class GeoGebraCAS {
 		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
 		
-		sbInsertSpecial = new StringBuffer(80);
-		sbReplaceIndices = new StringBuffer(80);
+		sbInsertSpecial = new StringBuilder(80);
+		sbReplaceIndices = new StringBuilder(80);
 		
 		initCAS();
 	}
@@ -121,7 +121,7 @@ public class GeoGebraCAS {
 	 * @return result string (null possible)
 	 */
 	final synchronized public String evaluateMathPiper(String wrapperCommand, String exp) {
-		StringBuffer sb = new StringBuffer(exp.length()+wrapperCommand.length()+2);
+		StringBuilder sb = new StringBuilder(exp.length()+wrapperCommand.length()+2);
 		sb.append(wrapperCommand);
 		sb.append('(');
 		sb.append(exp);				
@@ -202,7 +202,7 @@ public class GeoGebraCAS {
 	}
 	
 	private HashMap getPolynomialCoeffsCache = new HashMap(50);
-	private StringBuffer getPolynomialCoeffsSB = new StringBuffer();
+	private StringBuilder getPolynomialCoeffsSB = new StringBuilder();
 	
 	/**
 	 * Expands the given MathPiper expression and tries to get its polynomial
@@ -233,7 +233,7 @@ public class GeoGebraCAS {
 		
 		
 		if (sbPolyCoeffs == null)
-			sbPolyCoeffs = new StringBuffer();
+			sbPolyCoeffs = new StringBuilder();
 		else
 			sbPolyCoeffs.setLength(0);
 		
@@ -496,7 +496,7 @@ public class GeoGebraCAS {
 		if (ggbEval.length == 1) {
 			return ggbEval[0].toString();
 		} else {
-			StringBuffer sb = new StringBuffer('{');
+			StringBuilder sb = new StringBuilder('{');
 			for (int i=0; i<ggbEval.length; i++) {
 				sb.append(ggbEval[i].toString());
 				if (i < ggbEval.length - 1)
@@ -584,7 +584,7 @@ public class GeoGebraCAS {
 		return sbCASreferences.toString();
 	}
 
-	private StringBuffer sbCASreferences = new StringBuffer();
+	private StringBuilder sbCASreferences = new StringBuilder();
 	
 	/**
 	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
@@ -610,7 +610,7 @@ public class GeoGebraCAS {
 		
 		String veLabel = ve.getLabel();
 		if (veLabel != null) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			
 			if (ve instanceof Function) {
 				// function, e.g. f(x) := 2*x
@@ -646,7 +646,7 @@ public class GeoGebraCAS {
 	 * For example, getMathPiperCommand("Expand.0", {"3*(a+b)"}) returns "Expand( 3*(a+b) )"
 	 */
 	final synchronized public String getMathPiperCommand(String name, ArrayList args, boolean symbolic) {
-		StringBuffer sbMathPiperCommand = new StringBuffer(80);
+		StringBuilder sbMathPiperCommand = new StringBuilder(80);
 				
 		// build command key as name + "." + args.size()
 		sbMathPiperCommand.setLength(0);

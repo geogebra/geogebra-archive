@@ -251,7 +251,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 //	 * returns settings in XML format
 //	 */
 //	public String getGUIXML() {
-//		StringBuffer sb = new StringBuffer();
+//		StringBuilder sb = new StringBuilder();
 //		sb.append("<casView>\n");
 //
 //		int width = getWidth(); // getPreferredSize().width;
@@ -275,7 +275,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 
 	public String getSessionXML() {
 	
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<casSession>\n");
 
 		// get the number of pairs in the view
@@ -448,7 +448,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 				 String lhs = m.group(2);
 				 String rhs = m.group(3);
 				 String post = m.group(4);
-				 StringBuffer sb = new StringBuffer();
+				 StringBuilder sb = new StringBuilder();
 				 sb.append(ggbcmd);
 				 sb.append("[");
 				 sb.append(pre);

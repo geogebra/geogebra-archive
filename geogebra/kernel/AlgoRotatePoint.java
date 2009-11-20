@@ -94,7 +94,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
     }
        
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         // Michael Borcherds 2008-03-25
         // simplified to allow better Chinese translation

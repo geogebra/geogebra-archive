@@ -295,7 +295,7 @@ public class TextInputDialog extends InputDialog {
 		String leftText = text.substring(0, caretPos).trim();				
 		String rightText = text.substring(caretPos).trim();		
 		
-		StringBuffer insertedText = new StringBuffer();
+		StringBuilder insertedText = new StringBuilder();
 		int leftQuotesAdded = 0;
 		int rightQuotesAdded = 0;
 		

@@ -346,7 +346,7 @@ public final class GeoAngle extends GeoNumeric {
 	 * returns all class-specific xml tags for saveXML
 	 */
 	protected String getXMLtags() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("\t<value val=\"");
 		sb.append(rawValue);
@@ -379,7 +379,7 @@ public final class GeoAngle extends GeoNumeric {
 		if (isIndependent())
 			return "";
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		// Michael Borcherds 2007-10-21
 		sb.append("\t<allowReflexAngle val=\"");
 		sb.append(angleStyle != ANGLE_ISNOTREFLEX);
@@ -402,7 +402,7 @@ public final class GeoAngle extends GeoNumeric {
 			return "";
 		
 		// only store emphasizeRightAngle if "false"
-		StringBuffer sb = new StringBuffer();		
+		StringBuilder sb = new StringBuilder();		
 		sb.append("\t<emphasizeRightAngle val=\"");
 		sb.append(emphasizeRightAngle);
 		sb.append("\"/>\n");		

@@ -590,7 +590,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 * Note: the construction is NOT cleared before evaluating the XML string. 	 
 	 */
 	public synchronized void evalXML(String xmlString) {		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");

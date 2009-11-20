@@ -109,7 +109,7 @@ public class MacroManager {
 	public static String getMacroXML(ArrayList macros) {				
 		if (macros == null) return "";
 
-		StringBuffer sb = new StringBuffer();	
+		StringBuilder sb = new StringBuilder();	
 		// save selected macros
 		for (int i=0; i < macros.size(); i++) {				
 			sb.append(((Macro) macros.get(i)).getXML());

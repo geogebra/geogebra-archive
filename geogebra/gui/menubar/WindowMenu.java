@@ -44,7 +44,7 @@ class WindowMenu extends BaseMenu {
 			return;
 
 		addSeparator();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		ButtonGroup bg = new ButtonGroup();
 		JRadioButtonMenuItem mi;
 		for (int i = 0; i < size; i++) {

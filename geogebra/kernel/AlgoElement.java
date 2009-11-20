@@ -516,7 +516,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }
 
     public String getNameDescription() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (output[0].isLabelSet()) sb.append(output[0].getNameDescription());
         for (int i = 1; i < output.length; ++i) {
             if (output[i].isLabelSet()) {
@@ -530,7 +530,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 
   
     public String getAlgebraDescription() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         if (output[0].isLabelSet()) sb.append(output[0].getAlgebraDescription());       
         for (int i = 1; i < output.length; ++i) {
@@ -553,7 +553,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         if (cmdname.equals("Expression"))
 			return toString();
 		else {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             if (kernel.isTranslateCommandName()) {
                 sb.append(app.getCommand(cmdname));        
             } else {
@@ -633,7 +633,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);                           
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         try {
 	        // command
@@ -674,7 +674,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);             
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         try {
         	if (mode == CONSTRAINTS) {
@@ -704,7 +704,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     // Expressions should be shown as out = expression
     // e.g. <expression label="u" exp="a + 7 b"/>
     private String getExpXML() {                
-        StringBuffer sb = new StringBuffer();        
+        StringBuilder sb = new StringBuilder();        
         sb.append("<expression");
         // add label
         String labelStr = "";
@@ -740,7 +740,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 
     // standard command has cmdname, output, input
     private String getCmdXML(String cmdname) {      
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<command name=\"");
             sb.append(cmdname);
             sb.append("\"");    
@@ -795,7 +795,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     // standard command has cmdname, output, input
 	// Added for Intergeo File Format (Yves Kreis) -->
     private String getCmdI2G(String cmdname) {      
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("\t\t<" + cmdname + ">\n");
 
         String type;

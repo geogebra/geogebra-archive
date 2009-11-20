@@ -97,7 +97,7 @@ public class DrawSlope extends Drawable {
             labelVisible = geo.isLabelVisible();       
             if (labelVisible) {     
                 if (slopeTriangleSize > 1) {    
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     switch (slope.getLabelMode()) {
                         case GeoElement.LABEL_NAME_VALUE:
                             sb.append(slopeTriangleSize);   
@@ -128,7 +128,7 @@ public class DrawSlope extends Drawable {
                 // position off horizontal label (i.e. slopeTriangleSize)
                 xLabelHor = (int) ((x + xright) /2.0);
                 yLabelHor = (int) (y + view.fontSize + 2);
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append(slopeTriangleSize);
                 horLabel = sb.toString();
             }               

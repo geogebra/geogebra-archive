@@ -6,7 +6,7 @@ import geogebra.main.Application;
 
 public class GeoGebraJasymca extends Jasymca {
 	
-	private StringBuffer sb = new StringBuffer(100);
+	private StringBuilder sb = new StringBuilder(100);
 	
 	public GeoGebraJasymca() {
 		try {

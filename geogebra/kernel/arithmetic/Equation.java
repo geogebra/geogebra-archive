@@ -268,7 +268,7 @@ public class Equation extends ValidExpression {
 	}
 
 	public String toLaTeXString(boolean symbolic) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 	        
         if (lhs != null) 
         	sb.append(lhs.toLaTeXString(symbolic));
@@ -283,7 +283,7 @@ public class Equation extends ValidExpression {
 	}
 
 	final public String toValueString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
         
         if (lhs != null) 
         	sb.append(lhs.toValueString());
@@ -307,7 +307,7 @@ public class Equation extends ValidExpression {
 	}
 	
 	final public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         // left hand side
         if (lhs != null) 

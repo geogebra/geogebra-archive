@@ -39,7 +39,7 @@ public class RegionParameters {
 	}
 	
 	/*
-	void appendXML(StringBuffer sb) {
+	void appendXML(StringBuilder sb) {
 		// pathParameter
 		sb.append("\t<pathParameter val=\"");
 			sb.append(t);

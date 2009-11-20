@@ -730,7 +730,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 			case '8' :
 			case '9' :
 				if (AltButton.isSelected()) {
-					StringBuilder sb = getAltStringBuffer();
+					StringBuilder sb = getAltStringBuilder();
 
 					sb.append(addchar);
 
@@ -772,7 +772,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	StringBuilder sbAlt;
 
-	private StringBuilder getAltStringBuffer() {
+	private StringBuilder getAltStringBuilder() {
 		if (sbAlt == null)
 			sbAlt = new StringBuilder();
 

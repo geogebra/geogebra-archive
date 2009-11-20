@@ -227,7 +227,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	
 	public String toString() {
 		if (sbToString == null) {
-			sbToString = new StringBuffer(80);
+			sbToString = new StringBuilder(80);
 		}
 		sbToString.setLength(0);
 		if (isLabelSet()) {
@@ -239,13 +239,13 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
-	private StringBuffer sbToString;
-	private StringBuffer sbTemp;
+	private StringBuilder sbToString;
+	private StringBuilder sbTemp;
 	
 	public String toValueString() {		
 		if (isDefined) {
 			if (sbTemp == null) {
-				sbTemp = new StringBuffer(80);
+				sbTemp = new StringBuilder(80);
 			}
 			sbTemp.setLength(0);
 			sbTemp.append('(');
@@ -261,7 +261,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	public String toSymbolicString() {	
 		if (isDefined) {
 			if (sbTemp == null) {
-				sbTemp = new StringBuffer(80);
+				sbTemp = new StringBuilder(80);
 			}
 			sbTemp.setLength(0);
 			sbTemp.append('(');
@@ -277,7 +277,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	public String toLaTeXString(boolean symbolic) {
 		if (isDefined) {
 			if (sbTemp == null) {
-				sbTemp = new StringBuffer(80);
+				sbTemp = new StringBuilder(80);
 			}
 			sbTemp.setLength(0);
 			sbTemp.append("\\left(\\begin{array}{c}");
@@ -294,7 +294,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	* returns all class-specific xml tags for getXML
 	*/
    protected String getXMLtags() {
-	   StringBuffer sb = new StringBuffer();
+	   StringBuilder sb = new StringBuilder();
 	   sb.append(super.getXMLtags());
 	 
 	   //	line thickness and type  

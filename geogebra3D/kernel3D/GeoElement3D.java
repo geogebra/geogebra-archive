@@ -301,10 +301,10 @@ public abstract class GeoElement3D
 	////////////////////////////
 	// for toString()
 	
-	private StringBuffer sbToString;
-	protected StringBuffer getSbToString() {
+	private StringBuilder sbToString;
+	protected StringBuilder getSbToString() {
 		if (sbToString == null)
-			sbToString = new StringBuffer(50);
+			sbToString = new StringBuilder(50);
 		return sbToString;
 	}
 	

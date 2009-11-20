@@ -1001,7 +1001,7 @@ implements ExpressionValue, ExpressionNodeConstants {
     		boolean valueForm) {
 
     	ExpressionValue leftEval;   
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	
     	int STRING_TYPE = kernel.getCASPrintForm();
         

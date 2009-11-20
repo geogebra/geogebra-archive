@@ -262,7 +262,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		sbToString.append('\"');	
 		return sbToString.toString();
 	}
-	private StringBuffer sbToString = new StringBuffer(80);
+	private StringBuilder sbToString = new StringBuilder(80);
 
 	public boolean showInAlgebraView() {
 		return false;
@@ -355,7 +355,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	   * save object in XML format
 	   */ 
 	  public final String getXML() {
-		 StringBuffer sb = new StringBuffer();
+		 StringBuilder sb = new StringBuilder();
 	 
 		 // an independent text needs to add
 		 // its expression itself
@@ -385,7 +385,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	* returns all class-specific xml tags for getXML
 	*/
    	protected String getXMLtags() {   	
-	   	StringBuffer sb = new StringBuffer();
+	   	StringBuilder sb = new StringBuilder();
 	   	sb.append(getXMLvisualTags(false));			
 		
 		if (isFixed()) {
@@ -433,7 +433,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
    	 * Returns startPoint of this text in XML notation.  	 
    	 */
    	private String getXMLlocation() {   		
-   		StringBuffer sb = new StringBuffer();   				
+   		StringBuilder sb = new StringBuilder();   				
    		
    		if (hasAbsoluteScreenLocation) {
    			sb.append("\t<absoluteScreenLocation ");			

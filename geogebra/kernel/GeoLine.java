@@ -509,7 +509,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
     
     /** output depends on mode: PARAMETRIC or EQUATION */
     public String toString() {    
-    	StringBuffer sbToString = getSbToString();
+    	StringBuilder sbToString = getSbToString();
     	sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(": ");         
@@ -517,10 +517,10 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 		return sbToString.toString();   
     }
     
-	private StringBuffer sbToString;
-	private StringBuffer getSbToString() {
+	private StringBuilder sbToString;
+	private StringBuilder getSbToString() {
 		if (sbToString == null)
-			sbToString = new StringBuffer(50);
+			sbToString = new StringBuilder(50);
 		return sbToString;
 	}
 	
@@ -529,7 +529,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
 		return buildValueString().toString();
 	}
     
-    private StringBuffer buildValueString() {		
+    private StringBuilder buildValueString() {		
         double [] P = new double[2];                       			 
         double [] g = new double[3];	
     	
@@ -542,7 +542,7 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
             
             case PARAMETRIC:       				                  
 				  	getInhomPointOnLine(P); // point
-				  	StringBuffer sbBuildValueString = getSbBuildValueString();
+				  	StringBuilder sbBuildValueString = getSbBuildValueString();
 					sbBuildValueString.setLength(0);			                  
 					sbBuildValueString.append("X = (");
 					sbBuildValueString.append(kernel.format(P[0]));
@@ -577,15 +577,15 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
         }    	    	
     }        
     
-	private StringBuffer sbBuildValueString = new StringBuffer(50);
-	private StringBuffer getSbBuildValueString() {
+	private StringBuilder sbBuildValueString = new StringBuilder(50);
+	private StringBuilder getSbBuildValueString() {
 		if (sbBuildValueString == null)
-			sbBuildValueString = new StringBuffer(50);
+			sbBuildValueString = new StringBuilder(50);
 		return sbBuildValueString;
 	}
     
     /** left hand side as String : ax + by + c */
-    final public StringBuffer toStringLHS() {		  
+    final public StringBuilder toStringLHS() {		  
         double [] g = new double[3];	
         
         if (isDefined()) {
@@ -596,14 +596,14 @@ Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
         } else
 			return sbToStringLHS;                           	                   	               
     }
-	private static StringBuffer sbToStringLHS = new StringBuffer("\u221E");     
+	private static StringBuilder sbToStringLHS = new StringBuilder("\u221E");     
  
     /**
      * returns all class-specific xml tags for saveXML
      * GeoGebra File Format
      */
     protected String getXMLtags() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getXMLtags());
 		//	line thickness and type  
 		sb.append(getLineStyleXML());	  

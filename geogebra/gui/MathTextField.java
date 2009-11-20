@@ -27,7 +27,7 @@ public class MathTextField extends MyTextField implements KeyListener {
 	}
 	
 	boolean altPressed = false;
-	private static StringBuffer altCodes = new StringBuffer();
+	private static StringBuilder altCodes = new StringBuilder();
 
 	public void keyPressed(KeyEvent e) {   
 		//Application.debug("keyPressed");
@@ -50,7 +50,7 @@ public class MathTextField extends MyTextField implements KeyListener {
 				
 				int pos = getCaretPosition();
 				String oldText = getText();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(oldText.substring(0, pos));
 				sb.append(insertStr);
 				sb.append(oldText.substring(pos));            
@@ -282,7 +282,7 @@ Ctrl Alt               {   }
 			if (!insertStr.equals("")) {
 				int pos = getCaretPosition();
 				String oldText = getText();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(oldText.substring(0, pos));
 				sb.append(insertStr);
 				sb.append(oldText.substring(pos));            

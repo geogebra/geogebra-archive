@@ -429,7 +429,7 @@ implements Vector3DValue {
 		sbToString.append(')');         
         return sbToString.toString();
     }         
-	private StringBuffer sbToString = new StringBuffer(50);
+	private StringBuilder sbToString = new StringBuilder(50);
     
     /**
      * interface VectorValue implementation

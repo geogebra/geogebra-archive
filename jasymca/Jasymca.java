@@ -202,7 +202,7 @@ public class Jasymca extends javax.microedition.midlet.MIDlet{
 	
 	// Read everything until ';' or EOF
 	String readLine( InputStream in ){
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		try{
 			int c;
 			while((c=in.read()) != -1 && c!=';')

@@ -184,7 +184,7 @@ AbsoluteScreenLocateable {
 	}
 	
 	final public String toString() {
-		StringBuffer sbToString = getSbToString();
+		StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = ");
@@ -192,10 +192,10 @@ AbsoluteScreenLocateable {
 		return sbToString.toString();
 	}
 	
-	private StringBuffer sbToString;
-	private StringBuffer getSbToString() {
+	private StringBuilder sbToString;
+	private StringBuilder getSbToString() {
 		if (sbToString == null)
-			sbToString = new StringBuffer();
+			sbToString = new StringBuilder();
 		return sbToString;
 	}
 
@@ -225,7 +225,7 @@ AbsoluteScreenLocateable {
 	 * returns all class-specific xml tags for saveXML
 	 */
 	protected String getXMLtags() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("\t<value val=\"");
 		sb.append(value);
 		sb.append("\"/>\n");				

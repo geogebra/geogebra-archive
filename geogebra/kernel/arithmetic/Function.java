@@ -48,7 +48,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     transient private Application app;
     transient private Kernel kernel;    
     
-	private StringBuffer sb = new StringBuffer(80);	
+	private StringBuilder sb = new StringBuilder(80);	
 
 	 /**
      * Creates new Function from expression where x is

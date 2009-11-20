@@ -494,7 +494,7 @@ public class WorksheetExportDialog extends JDialog {
 		return tab;
 	}
 	
-	private void appendJavaScript(StringBuffer sb) {
+	private void appendJavaScript(StringBuilder sb) {
 		// framePossible (double click opens GeoGebra window)
 		sb.append("<script type=\"text/javascript\">\n");
 		
@@ -699,7 +699,7 @@ public class WorksheetExportDialog extends JDialog {
 	 *            construction File
 	 */
 	private String getHTML(File ggbFile) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// applet width
 		int appletWidth, appletHeight;
@@ -815,7 +815,7 @@ public class WorksheetExportDialog extends JDialog {
 	}
 	
 	private String getAppletTag(File ggbFile, int width, int height) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		// include applet
 		sb.append("<applet name=\"ggbApplet\" code=\"geogebra.GeoGebraApplet\"");
 		// archive geogebra.jar 
@@ -872,7 +872,7 @@ public class WorksheetExportDialog extends JDialog {
 	/**
 	 * Appends all selected applet parameters
 	 */
-	private void appendAppletParameters(StringBuffer sb) {
+	private void appendAppletParameters(StringBuilder sb) {
 		// JVM arguments, for Java 1.6.0_10 and later
 		// increase heap memory for applets
 		String javaArgs = "-Xmx" + GeoGebra.MAX_HEAP_SPACE + "m";

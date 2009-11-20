@@ -315,7 +315,7 @@ public class Layout {
 		 */ 
 		Perspective tmpPerspective = createPerspective("tmp");
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("\t<perspectives>\n");
 		
 		// save the current perspective

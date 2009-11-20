@@ -140,7 +140,7 @@ public class PolyFunction implements RealRootFunction, RealRootDerivFunction {
 	
 /*
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(coeffs[0]);
 		for (int i=1; i<coeffs.length; i++) {
 			sb.append(" + ");

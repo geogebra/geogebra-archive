@@ -24,7 +24,7 @@ public class AlgoTableText extends AlgoElement {
     
     private GeoList[] geoLists;
     
-    private StringBuffer sb = new StringBuffer();
+    private StringBuilder sb = new StringBuilder();
     
     private int VERTICAL = 0;
     private int HORIZONTAL = 1;

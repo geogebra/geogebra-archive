@@ -103,7 +103,7 @@ public class GeoLocus extends GeoElement implements Path {
 	*/
    	protected String getXMLtags() {   
    		//return super.getXMLtags();
-	   	StringBuffer sb = new StringBuffer();
+	   	StringBuilder sb = new StringBuilder();
 	   	sb.append(getXMLvisualTags());		
 	   	sb.append(getLineStyleXML());
 		return sb.toString();   

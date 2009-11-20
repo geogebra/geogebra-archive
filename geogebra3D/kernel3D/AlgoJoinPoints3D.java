@@ -205,7 +205,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 	
 	
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         switch(geoClassType){
     	case GeoElement3D.GEO_CLASS_SEGMENT3D:

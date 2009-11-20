@@ -217,7 +217,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	
 	final public String toString() {
 		
-		StringBuffer sbToString = getSbToString();
+		StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(": ");   

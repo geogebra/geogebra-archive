@@ -143,7 +143,7 @@ public abstract class CommandProcessor  {
 
 	protected final MyError argErr(Application app, String cmd, Object arg) {
 		String localName = app.getCommand(cmd);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(app.getCommand("Command") + " " + localName + ":\n");
 		sb.append(app.getError("IllegalArgument") + ": ");
 		if (arg instanceof GeoElement)
@@ -158,7 +158,7 @@ public abstract class CommandProcessor  {
 			Application app,
 			String cmd,
 			int argNumber) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(
 				app.getCommand("Command") + " " + app.getCommand(cmd) + ":\n");
 		sb.append(app.getError("IllegalArgumentNumber") + ": " + argNumber);
@@ -5794,7 +5794,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 				if (list.size() == 0)
 					return ret;
 				
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				
 				for (int col = 0 ; col < list.size() ; col++) {
 					String cellName = GeoElement.getSpreadsheetCellName(col, row);
@@ -5885,7 +5885,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 				if (list.size() == 0)
 					return ret;
 				
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				
 				for (int row = 0 ; row < list.size() ; row++) {
 					String cellName = GeoElement.getSpreadsheetCellName(col, row);
@@ -5952,7 +5952,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 
 					//Application.debug(minCol+" "+maxCol+" "+minRow+" "+maxRow);
 					
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 			    	
 				
 				GeoElement geo = (GeoElement) arg[1];

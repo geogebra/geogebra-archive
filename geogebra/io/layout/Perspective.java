@@ -219,7 +219,7 @@ public class Perspective {
 	 * @return The settings of this perspective as XML.
 	 */
 	public String getXml() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		sb.append("<perspective id=\"");
 		sb.append(getId());

@@ -21,7 +21,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  */
 public class AlgoLCM extends AlgoTwoNumFunction {        
 	
-	private StringBuffer sb;
+	private StringBuilder sb;
         
     AlgoLCM(Construction cons, String label, NumberValue a, NumberValue b) {       
 	  super(cons, label, a, b); 
@@ -38,7 +38,7 @@ public class AlgoLCM extends AlgoTwoNumFunction {
     				// Lcm[2^58+1,2] and Lcm[2^58,2] currently give the same answer
 	
     			if (sb == null)
-    				sb = new StringBuffer();
+    				sb = new StringBuilder();
     			
     			// build MathPiper command
     			sb.setLength(0);

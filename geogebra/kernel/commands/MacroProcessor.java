@@ -47,7 +47,7 @@ public class MacroProcessor extends CommandProcessor {
 			}
 			
 			if (!lengthOk) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 		        sb.append(app.getMenu("Macro") + " " + macro.getCommandName() + ":\n");
 		        sb.append(app.getError("IllegalArgumentNumber") + ": " + arg.length);
 		        sb.append("\n\nSyntax:\n" + macro.toString());
@@ -58,7 +58,7 @@ public class MacroProcessor extends CommandProcessor {
 		// check whether the types of the arguments are ok for our macro
 		for (int i=0; i < macroInputTypes.length; i++) {
 			if (!macroInputTypes[i].isInstance(arg[i]))	{				
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 		        sb.append(app.getPlain("Macro") + " " + macro.getCommandName() + ":\n");
 		        sb.append(app.getError("IllegalArgument") + ": ");	            
 	            sb.append(arg[i].getNameDescription());	            	            

@@ -40,7 +40,7 @@ public class MyResourceBundle extends PropertyResourceBundle {
 
 		// language properties file
 		String lang = locale.getLanguage();
-		StringBuffer sb = new StringBuffer(name);    	
+		StringBuilder sb = new StringBuilder(name);    	
     	sb.append('_');    	
     	sb.append(lang);
     	String fileNameLanguage = sb.toString();

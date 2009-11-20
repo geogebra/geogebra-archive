@@ -32,20 +32,20 @@ public class QDParser {
 	
 	private LinkedHashMap attrs;
 	private Stack stack;
-	private StringBuffer sb, etag;
+	private StringBuilder sb, etag;
 	
 	public QDParser() {
 		attrs = new LinkedHashMap();
 		stack = new Stack();
-		sb = new StringBuffer();
-		etag = new StringBuffer();
+		sb = new StringBuilder();
+		etag = new StringBuilder();
 	}
 	
 	public void reset() {
 		attrs.clear();
 		stack.clear();
-		sb = new StringBuffer();
-		etag = new StringBuffer();
+		sb = new StringBuilder();
+		etag = new StringBuilder();
 		System.gc();
 	}
 	
@@ -70,8 +70,8 @@ public class QDParser {
 		int c = 0;
 		int quotec = '"';
 		depth = 0;
-		//StringBuffer sb = new StringBuffer();
-		//StringBuffer etag = new StringBuffer();
+		//StringBuilder sb = new StringBuilder();
+		//StringBuilder etag = new StringBuilder();
 		sb.setLength(0);
 		etag.setLength(0);
 		String tagName = null;

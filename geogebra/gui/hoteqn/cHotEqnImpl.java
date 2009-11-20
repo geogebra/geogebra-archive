@@ -1337,7 +1337,7 @@ private BoxC BEGIN(int x, int y, boolean disp, Graphics g, int rec) {
       token = eqScan.nextToken();
 
       while (token.typ != EqToken.EndSym) {
-         StringBuffer SBuffer = new StringBuffer(token.stringS); 
+         StringBuilder SBuffer = new StringBuilder(token.stringS); 
          for (int z=0; z<SBuffer.length(); z++){
            // Application.debug("z= "+z+"  String="+SBuffer.charAt(z));
            switch (SBuffer.charAt(z)) {
@@ -1374,7 +1374,7 @@ private BoxC BEGIN(int x, int y, boolean disp, Graphics g, int rec) {
                    token  = eqScan.nextToken();
 
                    while (token.typ != EqToken.EndSym) {
-                      StringBuffer SBuffer2 = new StringBuffer(token.stringS); 
+                      StringBuilder SBuffer2 = new StringBuilder(token.stringS); 
                       for (int zzz=0; zzz<SBuffer2.length(); zzz++){
                          //Application.debug("zzz= "+zzz+"  String="+SBuffer2.charAt(zzz));
                          switch (SBuffer2.charAt(zzz)) {
@@ -1582,7 +1582,7 @@ private BoxC FG_BGColor(int x, int y, boolean disp, Graphics g, int rec,
 
    // Farbe vom Scanner holen (Wegen Unterscheidung Buchstaben Zahlen,
    // z.B. 000012 , ffccff ABER 00ff00 (MIX Buchst. Zahl.) Schleife)
-   StringBuffer SBuffer = new StringBuffer("");
+   StringBuilder SBuffer = new StringBuilder("");
    for (int i=1; i<7; i++){
        SBuffer.append(eqScan.nextToken().stringS); 
        if (SBuffer.length() == 6) break;     

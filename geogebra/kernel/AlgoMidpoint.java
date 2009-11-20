@@ -90,7 +90,7 @@ public class AlgoMidpoint extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
         sb.append(app.getPlain("MidpointOfAB",P.getLabel(),Q.getLabel()));

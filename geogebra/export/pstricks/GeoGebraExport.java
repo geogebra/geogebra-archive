@@ -48,7 +48,7 @@ import java.util.StringTokenizer;
 public abstract class GeoGebraExport implements ActionListener{
 	protected int beamerSlideNumber=1;
 	protected final double PRECISION_XRANGE_FUNCTION=0.00001;
-	protected StringBuffer code,codePoint,codePreamble,codeFilledObject,codeBeginDoc;
+	protected StringBuilder code,codePoint,codePreamble,codeFilledObject,codeBeginDoc;
 	protected Application app;
     protected Kernel kernel;
     protected Construction construction;
@@ -151,12 +151,12 @@ public abstract class GeoGebraExport implements ActionListener{
 	protected String sci2dec(double d){
 		String s=String.valueOf(d).toLowerCase(Locale.US);
 		StringTokenizer st=new StringTokenizer(s,"e");
-		StringBuffer number;
+		StringBuilder number;
 		if (st.countTokens()==1) return s;
 		else {
 			String token1=st.nextToken();
 			String token2=st.nextToken();
-			number=new StringBuffer(token1);
+			number=new StringBuilder(token1);
 			int exp=Integer.parseInt(token2);
 			if (exp>0){
 				int id_point=number.indexOf(".");
@@ -191,7 +191,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	String createCustomColor(int red,int green,int blue){
 		final String suff="qrstuvwxyzabcdef";
 		int[] nb={red,green,blue};
-		StringBuffer sb=new StringBuffer();
+		StringBuilder sb=new StringBuilder();
 		for (int i=0;i<nb.length;i++){
 			int quot=nb[i]/16;
 			int reste=nb[i]%16;
@@ -405,7 +405,7 @@ public abstract class GeoGebraExport implements ActionListener{
     abstract protected void drawArrowArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r, boolean clockwise);
 	abstract protected void createFrame();
 	abstract protected void generateAllCode();
-	abstract protected void ColorCode(Color color, StringBuffer sb);
+	abstract protected void ColorCode(Color color, StringBuilder sb);
 	/**
 	 * @return the xmin
 	 */
@@ -748,13 +748,13 @@ public abstract class GeoGebraExport implements ActionListener{
     }
 	
 
-	protected void startBeamer(StringBuffer sb){
+	protected void startBeamer(StringBuilder sb){
 		if (isBeamer) sb.append("\\onslide<"+beamerSlideNumber+"->{\n  ");
 	}
-	protected void endBeamer(StringBuffer sb){
+	protected void endBeamer(StringBuilder sb){
 		if (isBeamer) sb.append("}\n");
 	}
-	protected void resizeFont(StringBuffer sb){
+	protected void resizeFont(StringBuilder sb){
 		
 		// Number of units that represents the font size:
 		int ggbSize=app.getFontSize();

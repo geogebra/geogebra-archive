@@ -44,7 +44,7 @@ public class DockSplitPaneXml {
 	 * @return
 	 */
 	public String getXml() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<pane location=\"");
 		sb.append(location);
 		sb.append("\" divider=\"");

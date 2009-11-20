@@ -545,7 +545,7 @@ class LambdaLOADFILE extends Lambda{
 	}	
 	// Read everything until ';' or EOF
 	String readLine( InputStream in ){
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		int c=0;
 		try{
 			while((c=in.read()) != -1 && c!=';')

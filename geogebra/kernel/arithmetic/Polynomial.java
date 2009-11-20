@@ -369,7 +369,7 @@ public class Polynomial extends ValidExpression implements Serializable, Express
         int size = terms.size();
         if (size == 0) return null;
         
-        StringBuffer sb = new StringBuffer();        
+        StringBuilder sb = new StringBuilder();        
         String termStr;        
         boolean first = true;
                                 

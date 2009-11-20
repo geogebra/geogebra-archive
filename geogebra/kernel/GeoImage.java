@@ -402,7 +402,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	* returns all class-specific xml tags for getXML
 	*/
 	protected String getXMLtags() {   	
-	   	StringBuffer sb = new StringBuffer();	   		   		   	
+	   	StringBuilder sb = new StringBuilder();	   		   		   	
 			   	
 	   	// name of image file
 		sb.append("\t<file name=\"");
@@ -436,7 +436,7 @@ implements Locateable, AbsoluteScreenLocateable,
    	}
    	
    	private String getXMLabsScreenLoc() {
-   		StringBuffer sb = new StringBuffer();
+   		StringBuilder sb = new StringBuilder();
    		
    		sb.append("\t<absoluteScreenLocation x=\"");
    		sb.append(screenX);
@@ -447,7 +447,7 @@ implements Locateable, AbsoluteScreenLocateable,
    	}
    	
     private String getCornerPointXML(int number) {
-    	StringBuffer sb = new StringBuffer();    	
+    	StringBuilder sb = new StringBuilder();    	
 		sb.append("\t<startPoint number=\"");
 		sb.append(number);
 		sb.append("\"");

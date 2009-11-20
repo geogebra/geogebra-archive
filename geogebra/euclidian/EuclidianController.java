@@ -1950,7 +1950,7 @@ public class EuclidianController implements MouseListener,
 	
 				JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
 	
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(" {");
 				for (int i = 0 ; i < hits.size() ; i++ ) {
 					sb.append(((GeoElement)hits.get(i)).getLabel());

@@ -345,7 +345,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
-	private StringBuffer sbToString = new StringBuffer(80);
+	private StringBuilder sbToString = new StringBuilder(80);
 	
 	public String toValueString() {		
 		if (isDefined())
@@ -370,7 +370,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	
 	/*
 	public final String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(label);
 		sb.append("(x) = ");
 		if (fun != null)
@@ -395,7 +395,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	   * save object in xml format
 	   */ 
 	  public final String getXML() {
-		 StringBuffer sb = new StringBuffer();
+		 StringBuilder sb = new StringBuilder();
 		 
 		 // an indpendent function needs to add
 		 // its expression itself
@@ -426,7 +426,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	* returns all class-specific xml tags for getXML
 	*/
    protected String getXMLtags() {
-	   StringBuffer sb = new StringBuffer();
+	   StringBuilder sb = new StringBuilder();
 	   sb.append(super.getXMLtags());
 	 
 	   //	line thickness and type  

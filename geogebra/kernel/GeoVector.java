@@ -323,13 +323,13 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 		sbToString.append(buildValueString());
   		return sbToString.toString();
     }
-	private StringBuffer sbToString = new StringBuffer(50); 
+	private StringBuilder sbToString = new StringBuilder(50); 
     
 	final public String toValueString() {
 		return buildValueString().toString();
 	}
 	
-	private StringBuffer buildValueString() {
+	private StringBuilder buildValueString() {
 		sbBuildValueString.setLength(0);
 		switch (toStringMode) {
 		case Kernel.COORD_POLAR:                	
@@ -364,7 +364,7 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 		}
 		return sbBuildValueString;
 	}
-	private StringBuffer sbBuildValueString = new StringBuffer(50); 
+	private StringBuilder sbBuildValueString = new StringBuilder(50); 
     
      /**
      * interface VectorValue implementation
@@ -399,7 +399,7 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
      * returns all class-specific xml tags for saveXML
      */
     protected String getXMLtags() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getXMLtags());
 		//	line thickness and type  
 		sb.append(getLineStyleXML());	  

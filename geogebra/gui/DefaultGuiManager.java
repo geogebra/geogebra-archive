@@ -286,7 +286,7 @@ public class DefaultGuiManager implements GuiManager {
 	}
 	
 	public String getConsProtocolXML() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 	
 		if (constProtocol != null)
 			sb.append(constProtocol.getConsProtocolXML());
@@ -1057,7 +1057,7 @@ public class DefaultGuiManager implements GuiManager {
 				selection = (String) transfer
 						.getTransferData(DataFlavor.stringFlavor);
 			else if (transfer.isDataFlavorSupported(DataFlavor.plainTextFlavor)) {
-				StringBuffer sbuf = new StringBuffer();
+				StringBuilder sbuf = new StringBuilder();
 				InputStreamReader reader;
 				char readBuf[] = new char[1024 * 64];
 				int numChars;
@@ -1775,7 +1775,7 @@ public class DefaultGuiManager implements GuiManager {
 		BufferedReader myInput = new BufferedReader
 		(new InputStreamReader(fis));
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		String thisLine;
 
@@ -2450,7 +2450,7 @@ public class DefaultGuiManager implements GuiManager {
 	     * to application homepage in html.
 	     */
 	    public String getCreatedWithHTML() {
-	        StringBuffer sb = new StringBuffer();
+	        StringBuilder sb = new StringBuilder();
 	        sb.append(Util.toHTMLString(app.getPlain("CreatedWith"))); // MRB 2008-06-14 added Util.toHTMLString
 	        sb.append(" ");
 	        sb.append("<a href=\"");
@@ -2547,7 +2547,7 @@ public class DefaultGuiManager implements GuiManager {
 			
 			GeoGebraFrame frame = (GeoGebraFrame) app.getFrame();
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("GeoGebra");
 			if (app.getCurrentFile() != null) {
 				sb.append(" - ");

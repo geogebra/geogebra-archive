@@ -338,7 +338,7 @@ public class Macro {
 	    kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 		 
     	// get the XML for all macro construction elements
-    	StringBuffer macroConsXML = new StringBuffer(500);
+    	StringBuilder macroConsXML = new StringBuilder(500);
     	macroConsXML.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     	macroConsXML.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT  + "\">\n");
     	macroConsXML.append("<construction author=\"\" title=\"\" date=\"\">\n");
@@ -443,7 +443,7 @@ public class Macro {
 	 * Returns a String showing all needed types of this macro.
 	 */
 	public String getNeededTypesString() {
-		StringBuffer sb = new StringBuffer();			
+		StringBuilder sb = new StringBuilder();			
         sb.append(macroInput[0].translatedTypeString());	       
         for (int i = 1; i < macroInput.length; ++i) {
             sb.append(", ");	            
@@ -501,7 +501,7 @@ public class Macro {
 	 * Returns the syntax descriptiont of this macro.
 	 */
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(cmdName);
         sb.append("[ ");
                
@@ -526,7 +526,7 @@ public class Macro {
 	 * saving in a ggb file.
 	 */
     public String getXML() {      
-        StringBuffer sb = new StringBuffer();               
+        StringBuilder sb = new StringBuilder();               
         sb.append("<macro cmdName=\"");
         sb.append(Util.encodeXML(cmdName));         
         sb.append("\" toolName=\"");

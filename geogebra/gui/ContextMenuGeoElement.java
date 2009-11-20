@@ -161,7 +161,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 		line = (GeoLine) geo;
 		int mode = line.getMode();
 		AbstractAction action;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (mode != GeoLine.EQUATION_IMPLICIT) {
 			sb.setLength(0);
@@ -289,7 +289,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 		int mode = conic.getToStringMode();
 		AbstractAction action;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (mode != GeoConic.EQUATION_IMPLICIT) {
 			sb.append(app.getPlain("Equation"));

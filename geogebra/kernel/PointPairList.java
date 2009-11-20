@@ -117,7 +117,7 @@ public class PointPairList {
 
 	/*
 	final public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		PointPair currentPair = head;
 		while (currentPair != null) {
 			sb.append(currentPair);
@@ -151,7 +151,7 @@ class PointPair {
 	
 	/*
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		sb.append(indexP);
 		sb.append(", ");

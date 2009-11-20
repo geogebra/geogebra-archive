@@ -1344,7 +1344,7 @@ public abstract class Application implements KeyEventDispatcher {
 		return locale.getLanguage().equals(lang);
 	}
 
-	StringBuffer testCharacters = new StringBuffer();
+	StringBuilder testCharacters = new StringBuilder();
 
 	public void setLocale(Locale locale) {
 		if (locale == currentLocale) return;
@@ -1598,7 +1598,7 @@ public abstract class Application implements KeyEventDispatcher {
 		return sbPlain.toString();
 	}
 
-	private StringBuffer sbPlain = new StringBuffer();
+	private StringBuilder sbPlain = new StringBuilder();
 
 	final public String getMenu(String key) {
 		if (rbmenu == null) {
@@ -1897,7 +1897,7 @@ public abstract class Application implements KeyEventDispatcher {
      * @param mode: tool ID
      */
     public String getToolTooltipHTML(int mode) {
-    	StringBuffer sbTooltip = new StringBuffer();
+    	StringBuilder sbTooltip = new StringBuilder();
 		sbTooltip.append("<html><b>");
 		sbTooltip.append(Util.toHTMLString(getToolName(mode)));
 		sbTooltip.append("</b><br>");		
@@ -2518,7 +2518,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Returns gui settings in XML format
 	 */
 	public String getGuiXML(boolean asPreference) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<gui>\n");
 
 		// save the dimensions of the current window
@@ -2564,7 +2564,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public String getCompleteUserInterfaceXML(boolean asPreference) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// save gui tag settings
 		sb.append(getGuiXML(asPreference));
@@ -2593,7 +2593,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (appGuiManager == null)
 			return "";
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// construction protocol
 		if (getGuiManager().isUsingConstructionProtocol()) {
@@ -2926,7 +2926,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Loads text file and returns content as String.
 	 */
 	public String loadTextFile(String s) {
-        StringBuffer sb = new StringBuffer();        
+        StringBuilder sb = new StringBuilder();        
         try {
           InputStream is = Application.class.getResourceAsStream(s);
           BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -3289,7 +3289,7 @@ public abstract class Application implements KeyEventDispatcher {
 	// http://emu.freenetproject.org/pipermail/cvs/2007-June/040186.html
 	// GPL2
 	public static String convertToHex(byte[] data) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < data.length; i++) {
 			int halfbyte = (data[i] >>> 4) & 0x0F;
 			int two_halfs = 0;

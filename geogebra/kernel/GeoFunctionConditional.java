@@ -240,7 +240,7 @@ public class GeoFunctionConditional extends GeoFunction {
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
-	private StringBuffer sbToString = new StringBuffer(80);
+	private StringBuilder sbToString = new StringBuilder(80);
 	
 	final public String toValueString() {					
 		return toString(false);
@@ -252,7 +252,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	
 	private String toString(boolean symbolic) {					
 		if (isDefined()) {
-			StringBuffer sb = new StringBuffer(80);
+			StringBuilder sb = new StringBuilder(80);
 			sb.append(app.getCommand("If"));
 			sb.append("[");
 			

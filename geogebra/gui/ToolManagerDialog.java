@@ -323,7 +323,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 	       
 	        if (value != null) {
 	        	Macro macro = (Macro) value;
-	        	StringBuffer sb = new StringBuffer();
+	        	StringBuilder sb = new StringBuilder();
 	        	sb.append("<html><b>");
 	        	sb.append(macro.getToolName());
 	        	sb.append("</b>: ");

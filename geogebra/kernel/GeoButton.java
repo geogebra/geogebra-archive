@@ -94,16 +94,16 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 	}
 	
 	final public String toString() {
-		StringBuffer sbToString = getSbToString();
+		StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		return sbToString.toString();
 	}
 	
-	private StringBuffer sbToString;
-	private StringBuffer getSbToString() {
+	private StringBuilder sbToString;
+	private StringBuilder getSbToString() {
 		if (sbToString == null)
-			sbToString = new StringBuffer();
+			sbToString = new StringBuilder();
 		return sbToString;
 	}
 
@@ -112,7 +112,7 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 	 * returns all class-specific xml tags for saveXML
 	 */
 	protected String getXMLtags() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(getXMLvisualTags(isIndependent()));
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());

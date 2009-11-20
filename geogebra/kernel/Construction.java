@@ -796,7 +796,7 @@ public class Construction {
 		 * Let's remove all "$" signs from label and try again.
 		 */ 	
         if (label.indexOf('$') > -1) {
-			StringBuffer labelWithout$ = new StringBuffer(label.length());
+			StringBuilder labelWithout$ = new StringBuilder(label.length());
 			for (int i=0; i < label.length(); i++) {
 				char ch = label.charAt(i);
 				if (ch != '$')
@@ -1068,7 +1068,7 @@ public class Construction {
 		}			
 		
 		// get current construction XML
-		StringBuffer consXML = getCurrentUndoXML();
+		StringBuilder consXML = getCurrentUndoXML();
 							
 		// 3) replace oldGeo by newGeo in XML
 		doReplaceInXML(consXML, oldGeo, newGeo);
@@ -1185,7 +1185,7 @@ public class Construction {
 			return;
 		
 		// get current construction XML
-		StringBuffer consXML = getCurrentUndoXML();
+		StringBuilder consXML = getCurrentUndoXML();
 		
 		// replace all oldGeo -> newGeo pairs in XML
 		Iterator it = redefineMap.keySet().iterator();			
@@ -1215,7 +1215,7 @@ public class Construction {
 	/**
 	 * Replaces oldGeo by newGeo in consXML.
 	 */
-	private void doReplaceInXML(StringBuffer consXML, GeoElement oldGeo, GeoElement newGeo) {		
+	private void doReplaceInXML(StringBuilder consXML, GeoElement oldGeo, GeoElement newGeo) {		
 		String oldXML, newXML; // a = old string, b = new string
 		
 		AlgoElement oldGeoAlgo = oldGeo.getParentAlgorithm();
@@ -1284,7 +1284,7 @@ public class Construction {
 	/**
 	 * Tries to build the new construction from the given XML string.
 	 */
-	private void buildConstruction(StringBuffer consXML) throws Exception {
+	private void buildConstruction(StringBuilder consXML) throws Exception {
 		// try to process the new construction
 		try {
 			if (undoManager == null)
@@ -1309,7 +1309,7 @@ public class Construction {
 //	 * Returns this construction in XML format. GeoGebra File Format.
 //	 */
 //	public String getXML(boolean includeConstruction) {
-//		StringBuffer sb = new StringBuffer();
+//		StringBuilder sb = new StringBuilder();
 //
 //		// kernel settings
 //		sb.append("<kernel>\n");
@@ -1364,7 +1364,7 @@ public class Construction {
 	 * Kreis)
 	 */
 	public String getI2G(int mode) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// construction I2G
 		sb.append(getConstructionI2G(mode));
@@ -1376,7 +1376,7 @@ public class Construction {
 	 * Returns this construction in XML format. GeoGebra File Format.
 	 */
 	public String getConstructionXML() {
-		StringBuffer sb = new StringBuffer(500);
+		StringBuilder sb = new StringBuilder(500);
 
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
@@ -1429,7 +1429,7 @@ public class Construction {
 	 * Kreis)
 	 */
 	public String getConstructionI2G(int mode) {
-		StringBuffer sb = new StringBuffer(500);
+		StringBuilder sb = new StringBuilder(500);
 
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
@@ -1478,7 +1478,7 @@ public class Construction {
 	/**
 	 * Returns undo xml string of this construction.
 	 */
-	public StringBuffer getCurrentUndoXML() {
+	public StringBuilder getCurrentUndoXML() {
 		return MyXMLio.getUndoXML(this);
 	}
 

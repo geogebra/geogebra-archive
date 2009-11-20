@@ -526,7 +526,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 * in specific mode: y\u00b2 = ...  , (x - m)\u00b2 + (y - n)\u00b2 = r\u00b2, ...
 	 */
 	public String toString() {	
-		StringBuffer sbToString = getSbToString();
+		StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(": ");
@@ -534,10 +534,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		return sbToString.toString();
 	}
 		
-	private StringBuffer sbToString;
-	protected StringBuffer getSbToString() {
+	private StringBuilder sbToString;
+	protected StringBuilder getSbToString() {
 		if (sbToString == null)
-			sbToString = new StringBuffer(80);
+			sbToString = new StringBuilder(80);
 		return sbToString;
 	}
 	
@@ -545,7 +545,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		return buildValueString().toString();	
 	}			
 	
-	protected StringBuffer buildValueString() {
+	protected StringBuilder buildValueString() {
 		coeffs[0] = matrix[0]; // x\u00b2
 		coeffs[2] = matrix[1]; // y\u00b2
 		coeffs[5] = matrix[2]; // constant
@@ -720,16 +720,16 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		}
 	}
 	
-	private StringBuffer sbToValueString;
-	private StringBuffer sbToValueString() {
+	private StringBuilder sbToValueString;
+	private StringBuilder sbToValueString() {
 		if (sbToValueString == null)
-			sbToValueString = new StringBuffer();
+			sbToValueString = new StringBuilder();
 		return sbToValueString;
 	}
 
 /*
 	public String printMatrix() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("[\t");
 		sb.append(kernel.format(A[0]));
 		sb.append("\t\t");
@@ -2128,7 +2128,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 * returns all class-specific xml tags for saveXML
 	 */
 	protected String getXMLtags() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(super.getXMLtags());
 		//	line thickness and type  
 		sb.append(getLineStyleXML());

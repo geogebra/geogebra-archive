@@ -40,7 +40,7 @@ public class AlgoIntersectPolynomialLine extends AlgoRootsPolynomial {
     }
 
     public final String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-31
         // simplified to allow better translation
         sb.append(app.getPlain("IntersectionPointOfAB",input[0].getLabel(),input[1].getLabel()));

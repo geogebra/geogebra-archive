@@ -180,7 +180,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 	 * @param app
 	 */
 	public static void showAboutDialog(final Application app) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<html><b>");
 		sb.append(app.getPlain("ApplicationName"));
 		sb.append(" ");

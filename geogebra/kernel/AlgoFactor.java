@@ -24,7 +24,7 @@ public class AlgoFactor extends AlgoElement {
 	private GeoFunction f; // input
     private GeoFunction g; // output        
     
-    private StringBuffer sb = new StringBuffer();
+    private StringBuilder sb = new StringBuilder();
    
     public AlgoFactor(Construction cons, String label, GeoFunction f) {
     	super(cons);

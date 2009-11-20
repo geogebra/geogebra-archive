@@ -153,7 +153,7 @@ implements ActionListener {
       //ImageIcon icon;
       JMenuItem mi;
       boolean separatorAdded = false;
-      StringBuffer sb = new StringBuffer();       
+      StringBuilder sb = new StringBuilder();       
       for (int i=0; i < zoomFactors.length; i++) {
           perc = (int) (zoomFactors[i] * 100.0);
           
@@ -197,7 +197,7 @@ implements ActionListener {
         //int perc;   	         
         //ImageIcon icon;        
         boolean separatorAdded = false;
-        StringBuffer sb = new StringBuffer();       
+        StringBuilder sb = new StringBuilder();       
         for (int i=0; i < axesRatios.length; i++) {                        
             // build text like "1 : 2" 
             sb.setLength(0);

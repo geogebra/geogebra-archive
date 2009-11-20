@@ -121,7 +121,7 @@ public class Util extends Object {
 	byte g = (byte) col.getGreen();
 	byte b = (byte) col.getBlue();
 
-	StringBuffer sb = new StringBuffer(8);
+	StringBuilder sb = new StringBuilder(8);
 	// RED      
 	sb.append(hexChar[(r & 0xf0) >>> 4]);
 	// look up high nibble char             
@@ -153,7 +153,7 @@ public class Util extends Object {
 	if (str == null)
 	    return null;
 
-	StringBuffer sb = new StringBuffer();
+	StringBuilder sb = new StringBuilder();
 
 	// convert every single character and append it to sb
 	int len = str.length();
@@ -210,7 +210,7 @@ public class Util extends Object {
 	    return "";
 
 	//  convert every single character and append it to sb
-	StringBuffer sb = new StringBuffer();
+	StringBuilder sb = new StringBuilder();
 	int len = str.length();
 	for (int i = 0; i < len; i++) {
 	    char c = str.charAt(i);
@@ -561,7 +561,7 @@ public class Util extends Object {
 	return sbReplaceExp.toString();
     }
 
-    private static StringBuffer sbReplaceExp = new StringBuffer(200);
+    private static StringBuilder sbReplaceExp = new StringBuilder(200);
     
     //Guy Hed 30.08.2009
     private static boolean isRightToLeftChar( char c ) {
@@ -589,7 +589,7 @@ public class Util extends Object {
     public static String keepOnlyLettersAndDigits(String name) {
 		int length = name != null ? name.length() : 0;
     	
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
 		for (int i=0; i < length ; i++) {
 			char c = name.charAt(i);
 			if (Character.isLetterOrDigit(c) ||
@@ -618,7 +618,7 @@ public class Util extends Object {
     public static String processFilename(String name) {
 		int length = name != null ? name.length() : 0;
     	
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
 		for (int i=0; i < length ; i++) {
 			char c = name.charAt(i);
 			if     (c == '<' ||
@@ -647,7 +647,7 @@ public class Util extends Object {
 		return sb.toString();
 	}       
     
-    private static StringBuffer sb;
+    private static StringBuilder sb;
     /*
      * returns a string with n instances of s
      * eg string("hello",2) -> "hellohello";
@@ -658,7 +658,7 @@ public class Util extends Object {
     	if (n < 1) return "";
     	
     	if (sb == null)
-    		sb = new StringBuffer(); 
+    		sb = new StringBuilder(); 
     	
     	sb.setLength(0);
     	
@@ -674,7 +674,7 @@ public class Util extends Object {
     	if (str == null || str.length() == 0) return "";
 
     	if (sb == null)
-    		sb = new StringBuffer(); 
+    		sb = new StringBuilder(); 
     	
     	sb.setLength(0);
     	char c;

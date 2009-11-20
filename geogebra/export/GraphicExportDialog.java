@@ -374,7 +374,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		// takes dpi into account (note: eps has 72dpi)
 		exportScale = printingScale * getDPI() / 2.54 / ev.getXscale();
 						
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		// cm size
 		double cmWidth = printingScale * (ev.getExportWidth() / ev.getXscale());
 		double cmHeight = printingScale * (ev.getExportHeight() / ev.getYscale());	

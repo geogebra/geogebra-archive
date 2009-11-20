@@ -44,7 +44,7 @@ public class CasToolBar{
 	 * || separator before new menu
 	 */
 	public static String getToolbarDefinition() {
-		StringBuffer sb	=	new StringBuffer();
+		StringBuilder sb	=	new StringBuilder();
 		sb.append(MODE_SIMPLIFY);
 		sb.append(" | ");
 		sb.append(MODE_EXPAND);

@@ -148,7 +148,7 @@ public class DockPanelXml {
 	 * @return
 	 */
 	public String getXml() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<view id=\"");
 		sb.append(getViewId());
 		sb.append("\" visible=\"");

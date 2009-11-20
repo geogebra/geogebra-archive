@@ -113,7 +113,7 @@ public class UndoManager {
 	 */
 	public void storeUndoInfo() {	
 		// this can cause a java.lang.OutOfMemoryError for very large constructions
-		final StringBuffer currentUndoXML = construction.getCurrentUndoXML();
+		final StringBuilder currentUndoXML = construction.getCurrentUndoXML();
 		
 		Thread undoSaverThread = new Thread() {
 			public void run() {
@@ -124,7 +124,7 @@ public class UndoManager {
 		undoSaverThread.start();
 	}
 
-	private synchronized void doStoreUndoInfo(final StringBuffer undoXML) {			
+	private synchronized void doStoreUndoInfo(final StringBuilder undoXML) {			
 			// avoid security problems calling from JavaScript ie setUndoPoint()
 			AccessController.doPrivileged(new PrivilegedAction() {
 				public Object run() {
@@ -183,7 +183,7 @@ public class UndoManager {
 	/**
 	 * Creates a temporary file containing the zipped undoXML.
 	 */
-	private synchronized File createTempFile(StringBuffer undoXML) throws IOException {
+	private synchronized File createTempFile(StringBuilder undoXML) throws IOException {
 		// create temp file
 		File tempFile = File.createTempFile(TEMP_FILE_PREFIX, ".ggb");
 		// Remove when program ends

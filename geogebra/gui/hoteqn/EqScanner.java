@@ -85,7 +85,7 @@ class EqScanner {
    private boolean   collectB         = false;
    private int       selectCount1     = 0;
    private int       selectCount2     = 0;
-   private StringBuffer selectSB      = new StringBuffer("");
+   private StringBuilder selectSB      = new StringBuilder("");
 
 public EqScanner(String equation) {
    // Constructor
@@ -99,7 +99,7 @@ public String getSelectedArea(int count1, int count2) {
    selectCount1 = Math.min(count1, count2);
    selectCount2 = Math.max(count1, count2);
    selectB      = true;
-   selectSB     = new StringBuffer("");
+   selectSB     = new StringBuilder("");
 
    setEquation(this.equation);  // Scannvorgang neu anstossen   
 
@@ -291,7 +291,7 @@ private void advance() {
 private EqToken ScanNextToken() {
   // Bestimmung des nächsten Tokens
   // Token werden durch Trennzeichen abgetrennt
-  StringBuffer SBuffer = new StringBuffer("");
+  StringBuilder SBuffer = new StringBuilder("");
   String       SBufferString = new String("");
   EqToken      SlashToken = new EqToken();
   char         eqchar;

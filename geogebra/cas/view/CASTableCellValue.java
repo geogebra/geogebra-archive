@@ -83,7 +83,7 @@ public class CASTableCellValue {
 		boolean inputEmpty = input == null || input.length() == 0;
 		boolean outputEmpty = output == null || output.length() == 0;
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("\t<cellPair>\n");
 
 		// inputCell

@@ -27,7 +27,7 @@ public class AlgoSumText extends AlgoElement {
     public GeoNumeric Truncate; //input	
     public GeoText result; //output	
     
-	private StringBuffer sb;
+	private StringBuilder sb;
     
 
     
@@ -98,7 +98,7 @@ public class AlgoSumText extends AlgoElement {
     	}
     	
     	
-    	if (sb == null) sb = new StringBuffer();
+    	if (sb == null) sb = new StringBuilder();
     	
     	sb.setLength(0);
     	

@@ -21,7 +21,7 @@ public class AlgoFractionText extends AlgoElement {
     
     private double frac[] = {0,0};
  
-    private StringBuffer sb = new StringBuffer();
+    private StringBuilder sb = new StringBuilder();
     
     AlgoFractionText(Construction cons, String label, GeoNumeric num) {
     	this(cons, num);

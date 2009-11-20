@@ -44,7 +44,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		if (start != end) {
 			int pos = getCaretPosition();
 			String oldText = getText();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(oldText.substring(0, start));
 			sb.append(oldText.substring(end));            
 			setText(sb.toString());
@@ -54,7 +54,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		
 		int pos = getCaretPosition();
 		String oldText = getText();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(oldText.substring(0, pos));
 		sb.append(text);
 		sb.append(oldText.substring(pos));            

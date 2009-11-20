@@ -20,7 +20,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private static final long serialVersionUID = 1L;
 
 	private Application app;
-	private StringBuffer curWord;       
+	private StringBuilder curWord;       
 	private int curWordStart;
 
 	protected AutoCompleteDictionary dict;
@@ -46,7 +46,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		this.app = app;
 		setAutoComplete(true);
 		this.handleEscapeKey = handleEscapeKey;
-		curWord = new StringBuffer();
+		curWord = new StringBuilder();
 
 		historyIndex = 0;
 		history = new ArrayList(50);
@@ -264,7 +264,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if (start != end) {
 			int pos = getCaretPosition();
 			String oldText = getText();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(oldText.substring(0, start));
 			sb.append(oldText.substring(end));            
 			setText(sb.toString());
@@ -373,7 +373,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			return;     
 
 		// build new autocompletion text
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(cmd);
 		sb.append("[]"); // add brackets
 		cmd = sb.toString();            
@@ -423,7 +423,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			if (cmdWord == null ||
 					cmdWord.length() != selWord.length()) return false;
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int startPos = pos - selWord.length() - 2;
 			if (startPos > 0)
 				sb.append(text.substring(0, startPos));
@@ -525,7 +525,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		syntax = syntax.replaceAll("<", "&lt;");
 		syntax = syntax.replaceAll(">", "&gt;");
 		syntax = syntax.replaceAll("\n", "<br>");
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
 		sb.append(syntax);
 		sb.append("</html>");

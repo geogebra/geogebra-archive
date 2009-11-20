@@ -324,7 +324,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 */
 	public void updateTitle() {		
 		if(info.isOpenInFrame()) {
-			StringBuffer windowTitle = new StringBuffer();
+			StringBuilder windowTitle = new StringBuilder();
 			windowTitle.append(app.getPlain(viewTitle));
 			
 	        if (app.getCurrentFile() != null) {
@@ -443,7 +443,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * @return
 	 */
 	public String getEmbeddedDef() {
-		StringBuffer def = new StringBuffer();
+		StringBuilder def = new StringBuilder();
 
 		Component current = this;
 		Component parent = this.getParent();
@@ -497,7 +497,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * Dock panel information as string for debugging.
 	 */
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("[DockPanel,id=");
 		sb.append(info.getViewId());
 		sb.append(",visible=");

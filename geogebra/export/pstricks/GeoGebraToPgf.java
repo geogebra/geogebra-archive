@@ -68,13 +68,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	catch(NullPointerException e2){
     		xunit=1;yunit=1;
     	}
-    	// Initialize new StringBuffer for Pstricks code
+    	// Initialize new StringBuilder for Pstricks code
     	// and CustomColor
-    	code=new StringBuffer();
-    	codePoint=new StringBuffer();
-    	codePreamble=new StringBuffer();
-    	codeFilledObject=new StringBuffer();
-		codeBeginDoc=new StringBuffer();
+    	code=new StringBuilder();
+    	codePoint=new StringBuilder();
+    	codePreamble=new StringBuilder();
+    	codeFilledObject=new StringBuilder();
+		codeBeginDoc=new StringBuilder();
 		CustomColor=new HashMap();
  		if (format==GeoGebraToPgf.FORMAT_LATEX){
  	    	codePreamble.append("\\documentclass[" +
@@ -900,7 +900,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 		// MultiLine
 		else {
-			StringBuffer sb=new StringBuffer();
+			StringBuilder sb=new StringBuilder();
 			StringTokenizer stk=new StringTokenizer(st,"\n");
 			int width=0;
 			Font font = new Font(geo.isSerifFont() ? "Serif" : "SansSerif", style, size);
@@ -1048,10 +1048,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		else code.append("]");
 		if (geo.getConicPartType()==GeoConicPart.CONIC_PART_SECTOR){
 			code.append(" (0,0) -- ");
-			StringBuffer sb1=new StringBuffer();
+			StringBuilder sb1=new StringBuilder();
 			sb1.append(kernel.format(r1));
 			sb1.append("*cos(\\t r)");
-			StringBuffer sb2=new StringBuffer();
+			StringBuilder sb2=new StringBuilder();
 			sb2.append(kernel.format(r2));
 			sb2.append("*sin(\\t r)");
 			code.append(" plot[domain=");
@@ -1078,10 +1078,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			code.append(" -- cycle ;\n");
 		}
 		else if (geo.getConicPartType()==GeoConicPart.CONIC_PART_ARC){
-			StringBuffer sb1=new StringBuffer();
+			StringBuilder sb1=new StringBuilder();
 			sb1.append(kernel.format(r1));
 			sb1.append("*cos(\\t r)");
-			StringBuffer sb2=new StringBuffer();
+			StringBuilder sb2=new StringBuilder();
 			sb2.append(kernel.format(r2));
 			sb2.append("*sin(\\t r)");
 
@@ -1109,7 +1109,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 		endBeamer(code);	
 	}
-	private void drawFunction(GeoFunction geo,StringBuffer sb){
+	private void drawFunction(GeoFunction geo,StringBuilder sb){
 		Function f=geo.getFunction();
 		if (null==f) return;
 		String value=f.toValueString();
@@ -1180,7 +1180,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		drawCurveCartesian(geo,code);
 	}
 
-	private void drawCurveCartesian (GeoCurveCartesian geo,StringBuffer sb){
+	private void drawCurveCartesian (GeoCurveCartesian geo,StringBuilder sb){
 //		  \parametricplot[algebraic=true,linecolor=red]  {-3.14}{3.14}{cos(3*t)|sin(2*t)}
 		// Only done using gnuplot
 		// add Warning
@@ -1227,7 +1227,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	 * @param name The function
 	 */
 	private String replaceX(String name,String substitute){
-		StringBuffer sb=new StringBuffer(name);
+		StringBuilder sb=new StringBuilder(name);
 		// If the expression starts with minus -
 		// Insert a "0" (Bug from TikZ /PGF)
 		if (name.startsWith("-")) sb.insert(0,"0");
@@ -1267,7 +1267,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 **/
 	private String killSpace(String name){
 //		2  x +3 ----> 2*x+3
-		StringBuffer sb=new StringBuffer();
+		StringBuilder sb=new StringBuilder();
 		boolean operand=false;
 		boolean space=false;
 		for (int i=0;i<name.length();i++){
@@ -1324,7 +1324,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		codePreamble.append("% Example: pdflatex --shell-escape file.tex \n\n");
 	}
 	
-	private void renameFunc(StringBuffer sb,String nameFunc,String nameNew){
+	private void renameFunc(StringBuilder sb,String nameFunc,String nameNew){
 		int ind=sb.indexOf(nameFunc);
 		while(ind>-1){
 			sb.replace(ind,ind+nameFunc.length(),nameNew);
@@ -1581,7 +1581,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	
 	/**
 	 * This will generate the Tikz code to draw the GeoPoint gp 
-	 * into the StringBuffer PointCode
+	 * into the StringBuilder PointCode
 	 * @param gp The choosen GeoPoint
 	 */
 		
@@ -1869,7 +1869,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	}
 	/**
 	 * This will generate the Tikz code to draw the GeoSegment geo 
-	 * into the StringBuffer code
+	 * into the StringBuilder code
 	 * @param geo The choosen GeoPoint
 	 */
 	
@@ -2052,7 +2052,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeBeginDoc.append(";\n");
 			int x1=(int)(xmin/spaceTick);
 			double xstart=x1*spaceTick;
-			StringBuffer tmp=new StringBuffer();
+			StringBuilder tmp=new StringBuilder();
 			while(xstart<xmax){
 				if (Math.abs(xstart)>0.1) tmp.append(kernel.format(xstart));
 				xstart+=spaceTick;
@@ -2106,7 +2106,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			codeBeginDoc.append(";\n");
 			int y1=(int)(ymin/spaceTick);
 			double ystart=y1*spaceTick;
-			StringBuffer tmp=new StringBuffer();
+			StringBuilder tmp=new StringBuilder();
 			while(ystart<ymax){
 				if (Math.abs(ystart)>0.1) tmp.append(kernel.format(ystart));
 				ystart+=spaceTick;
@@ -2166,12 +2166,12 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	
 	
 	/**
-	 * A util method adds point coordinates to a StringBuffer
+	 * A util method adds point coordinates to a StringBuilder
 	 * @param x X point
 	 * @param y Y Point
-	 * @param sb The Stringbuffer code
+	 * @param sb The StringBuilder code
 	 */
-	private void writePoint(double x, double y,StringBuffer sb){
+	private void writePoint(double x, double y,StringBuilder sb){
 		sb.append("(");
 		sb.append(kernel.format(x));
 		sb.append(",");
@@ -2180,7 +2180,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	}
 	
 	private String LineOptionCode(GeoElement geo,boolean transparency){
-		StringBuffer sb=new StringBuffer(); 
+		StringBuilder sb=new StringBuilder(); 
 		Color linecolor=geo.getObjectColor();
 		int linethickness=geo.getLineThickness();
 		int linestyle=geo.getLineType();
@@ -2216,9 +2216,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	return new String(sb);
 	}
 /**
- * Append the line style parameters to the StringBuffer sb
+ * Append the line style parameters to the StringBuilder sb
  */
-	private void LinestyleCode(int linestyle,StringBuffer sb){
+	private void LinestyleCode(int linestyle,StringBuilder sb){
 		switch(linestyle){
 			case EuclidianView.LINE_TYPE_DOTTED:
 				sb.append("dotted");
@@ -2260,12 +2260,12 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	}
 
 /**
- * 	Append the name color to StringBuffer sb
+ * 	Append the name color to StringBuilder sb
  * It will create a custom color, if this color hasn't be defined yet
  * @param c The Choosen color
- * @param sb  The stringbuffer where the color has to be added
+ * @param sb  The StringBuilder where the color has to be added
  */
-	protected void ColorCode(Color c,StringBuffer sb){
+	protected void ColorCode(Color c,StringBuilder sb){
 		if (frame.isGrayscale()){
 			if (c.equals(Color.BLACK)) {sb.append("black");return;}
 			String colorname="";

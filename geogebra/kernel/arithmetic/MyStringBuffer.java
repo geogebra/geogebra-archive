@@ -23,10 +23,10 @@ import java.util.HashSet;
  */
 public class MyStringBuffer extends ValidExpression implements TextValue {
     
-    private StringBuffer sb;
+    private StringBuilder sb;
     
     public MyStringBuffer(String str) {
-        sb = new StringBuffer(str);
+        sb = new StringBuilder(str);
     }
     
     public void append(String str) {
@@ -38,7 +38,7 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
     }
     
     public String toString() {
-        StringBuffer temp = new StringBuffer();
+        StringBuilder temp = new StringBuilder();
         temp.append("\"");
         temp.append(sb);
         temp.append("\"");

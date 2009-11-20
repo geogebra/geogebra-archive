@@ -698,7 +698,7 @@ public class DockManager {
 	 */
 	private String getDebugTree(int depth, DockSplitPane pane)
 	{
-		StringBuffer strBuffer = new StringBuffer();
+		StringBuilder strBuffer = new StringBuilder();
 		
 		Component leftComponent = pane.getLeftComponent();
 		Component rightComponent = pane.getRightComponent();
@@ -726,7 +726,7 @@ public class DockManager {
 	
 	private String strRepeat(String str, int times)
 	{
-		StringBuffer strBuffer = new StringBuffer();
+		StringBuilder strBuffer = new StringBuilder();
 		for(int i = 0; i < times; ++i)
 			strBuffer.append(str);
 		return strBuffer.toString();

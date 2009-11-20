@@ -125,7 +125,7 @@ abstract public class ExportFrame extends JFrame{
 		        			System.out.println(s+" "+System.getProperty(s));
 		        		}*/
 		        		OutputStreamWriter osw = new  OutputStreamWriter(b, "UTF-8" );
-		        		StringBuffer sb=new StringBuffer(textarea.getText());
+		        		StringBuilder sb=new StringBuilder(textarea.getText());
 		        		if (isLaTeX()){
 		        			int id=sb.indexOf("\\usepackage{");
 		        			if (id!=-1){
@@ -180,7 +180,7 @@ abstract public class ExportFrame extends JFrame{
 	public double getLatexHeight(){
 		return textheight.getValue();
 	}
-	public void write(StringBuffer sb){
+	public void write(StringBuilder sb){
 		textarea.setText(new String(sb));
 		textarea.selectAll();
 	}
@@ -266,7 +266,7 @@ abstract public class ExportFrame extends JFrame{
 		}
 		else if (cmd.equals("combo")){
 			if (isLaTeX()){
-				StringBuffer sb=new StringBuffer();
+				StringBuilder sb=new StringBuilder();
 				sb.append("\\usepackage[");
 				sb.append(encode.get(menu.getSelectedItem().toString()));
 				sb.append("]{inputenc}\n");

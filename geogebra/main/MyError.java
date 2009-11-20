@@ -51,7 +51,7 @@ public class MyError extends java.lang.Error {
         if (strs == null) 
             return app.getError(getMessage());
         else {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(app.getError(strs[0]) + "\n");
             for (int i = 1; i < strs.length; i++) {
                 sb.append(app.getError(strs[i]) + " ");
@@ -61,7 +61,7 @@ public class MyError extends java.lang.Error {
     }
     
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         sb.append(getClass().toString() + ": ");
         if (strs == null) 

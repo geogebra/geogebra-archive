@@ -370,7 +370,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	protected Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
 	//public Graphics2D lastGraphics2D;
 	
-	protected StringBuffer sb = new StringBuffer();
+	protected StringBuilder sb = new StringBuilder();
 
 	protected Cursor defaultCursor;
 	
@@ -1254,7 +1254,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	protected String getXYscaleRatioString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("x : y = ");
 		if (xscale >= yscale) {
 			sb.append("1 : ");
@@ -1433,7 +1433,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			// Scale in cm: 1:1 (x), 1:2 (y)
 			String scaleString = null;
 			if (app.isPrintScaleString()) {
-				StringBuffer sb = new StringBuffer(app
+				StringBuilder sb = new StringBuilder(app
 						.getPlain("ScaleInCentimeter"));
 				if (printingScale <= 1) {
 					sb.append(": 1:");
@@ -3193,7 +3193,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * returns settings in XML format
 	 */
 	public String getXML() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<euclidianView>\n");
 		
 		if (width > MIN_WIDTH && height > MIN_HEIGHT) {

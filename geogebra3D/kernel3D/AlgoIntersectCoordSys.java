@@ -207,7 +207,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
 	
 	
     final public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(app.getPlain("Intersection",cs1.getLabel(),cs2.getLabel()));
         

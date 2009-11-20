@@ -109,7 +109,7 @@ public class Relation extends java.lang.Object {
      */
     final private String relation(GeoSegment a, GeoSegment b) {
         kernel.setMinPrecision();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(equalityString(a, b, a.isEqual(b)));
         sb.append("\n");
         //sb.append(app.getPlain("Length"));
@@ -258,7 +258,7 @@ public class Relation extends java.lang.Object {
      */
     final private String relation(GeoConicPart a, GeoConicPart b) {
     	kernel.setMinPrecision();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(equalityString(a, b, a.isEqual(b)));
                 
         int type = a.getConicPartType();
@@ -391,7 +391,7 @@ public class Relation extends java.lang.Object {
         GeoElement a,
         GeoElement b,
         boolean intersects) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-05-14
         // updated for better translation
         if (intersects)

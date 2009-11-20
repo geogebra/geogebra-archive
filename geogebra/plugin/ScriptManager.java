@@ -447,7 +447,7 @@ public class ScriptManager {
 		} else {
 
 			
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(jsFunction);
 			sb.append("(");
 			for (int i = 0 ; i < args.length ; i++) {

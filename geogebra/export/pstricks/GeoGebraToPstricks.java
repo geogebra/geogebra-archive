@@ -56,7 +56,7 @@ import java.util.StringTokenizer;
 
 public class GeoGebraToPstricks extends GeoGebraExport {
 	private static final int FORMAT_BEAMER=1;
-	private StringBuffer codeBeginPic;
+	private StringBuilder codeBeginPic;
 	public GeoGebraToPstricks(Application app) {
     	super(app);
 
@@ -77,14 +77,14 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     		xunit=1;yunit=1;
     	}
 //    	scaleratio=yunit/xunit;
-    	// Initialize new StringBuffer for Pstricks code
+    	// Initialize new StringBuilder for Pstricks code
     	// and CustomColor
-    	code=new StringBuffer();
-    	codePoint=new StringBuffer();
-    	codePreamble=new StringBuffer();
-    	codeFilledObject=new StringBuffer();
-		codeBeginDoc=new StringBuffer();
-		codeBeginPic=new StringBuffer();
+    	code=new StringBuilder();
+    	codePoint=new StringBuilder();
+    	codePreamble=new StringBuilder();
+    	codeFilledObject=new StringBuilder();
+		codeBeginDoc=new StringBuilder();
+		codeBeginPic=new StringBuilder();
 		CustomColor=new HashMap();
  		if (format==GeoGebraToPstricks.FORMAT_BEAMER){
  	    	codePreamble.append("\\documentclass[" +
@@ -813,7 +813,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		}
 		// MultiLine
 		else {
-			StringBuffer sb=new StringBuffer();
+			StringBuilder sb=new StringBuilder();
 			StringTokenizer stk=new StringTokenizer(st,"\n");
 			int width=0;
 			Font font = new Font(geo.isSerifFont() ? "Serif" : "SansSerif", style, size);
@@ -865,10 +865,10 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			if (startAngle>endAngle){
 				startAngle-=Math.PI*2;
 			}
-			StringBuffer sb1=new StringBuffer();
+			StringBuilder sb1=new StringBuilder();
 			sb1.append(kernel.format(r1));
 			sb1.append("*cos(t)");
-			StringBuffer sb2=new StringBuffer();
+			StringBuilder sb2=new StringBuilder();
 			sb2.append(kernel.format(r2));
 			sb2.append("*sin(t)");
 			code.append(startAngle);
@@ -988,7 +988,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 **/
 	private String killSpace(String name){
 //		2  x +3 ----> 2*x+3
-		StringBuffer sb=new StringBuffer();
+		StringBuilder sb=new StringBuilder();
 		boolean operand=false;
 		boolean space=false;
 		for (int i=0;i<name.length();i++){
@@ -1027,7 +1027,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		renameFunc(sb,Kernel.EULER_STRING,"2.718281828");
 		return new String(sb);
 	}
-	private void renameFunc(StringBuffer sb,String nameFunc,String nameNew){
+	private void renameFunc(StringBuilder sb,String nameFunc,String nameNew){
 		int ind=sb.indexOf(nameFunc);
 		while(ind>-1){
 			sb.replace(ind,ind+nameFunc.length(),nameNew);
@@ -1645,7 +1645,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	
 	}
 	private String LineOptionCode(GeoElement geo,boolean transparency){
-		StringBuffer sb=new StringBuffer(); 
+		StringBuilder sb=new StringBuilder(); 
 		Color linecolor=geo.getObjectColor();
 		int linethickness=geo.getLineThickness();
 		int linestyle=geo.getLineType();
@@ -1690,7 +1690,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	return new String(sb);
 	}
 	// Append the linestyle to PSTricks code
-	private void LinestyleCode(int linestyle,StringBuffer sb){
+	private void LinestyleCode(int linestyle,StringBuilder sb){
 		switch(linestyle){
 			case EuclidianView.LINE_TYPE_DOTTED:
 				sb.append("linestyle=dotted");
@@ -1730,8 +1730,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			break;
 		}
 	}
-	// Append the name color to StringBuffer sb 
-	protected void ColorCode(Color c,StringBuffer sb){
+	// Append the name color to StringBuilder sb 
+	protected void ColorCode(Color c,StringBuilder sb){
 		if (frame.isGrayscale()){
 			String colorname="";
 			int red=c.getRed();

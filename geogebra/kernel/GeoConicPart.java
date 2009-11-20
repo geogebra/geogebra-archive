@@ -272,7 +272,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		sbToString.append(toValueString());			     
         return sbToString.toString();
     }
-	private StringBuffer sbToString = new StringBuffer(50);
+	private StringBuilder sbToString = new StringBuilder(50);
 	
 	final public String toValueString() {
 		return kernel.format(value);	
@@ -588,7 +588,7 @@ implements LimitedPath, NumberValue, LineProperties {
      * returns all class-specific xml tags for saveXML
      */
     protected String getXMLtags() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getXMLtags());
 		
         // allowOutlyingIntersections

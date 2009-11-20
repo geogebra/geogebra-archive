@@ -100,7 +100,7 @@ public abstract class GeoVec4D extends GeoVec {
      * Geogebra File Format
      */
     protected String getXMLtags() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getXMLtags());
         
         sb.append("\t<coords");
