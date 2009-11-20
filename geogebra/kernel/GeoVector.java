@@ -168,7 +168,7 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 		return startPoint == null || startPoint.isAbsoluteStartPoint();
 	}
 	
-	public void setStartPoint(GeoPoint p, int number)  throws CircularDefinitionException {
+	public void setStartPoint(GeoPointInterface p, int number)  throws CircularDefinitionException {
 		setStartPoint(p);
 	}
 	
@@ -176,11 +176,11 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 	 * Sets the startpoint without performing any checks.
 	 * This is needed for macros.	 
 	 */
-	public void initStartPoint(GeoPoint p, int number) {
-		startPoint = p;
+	public void initStartPoint(GeoPointInterface p, int number) {
+		startPoint = (GeoPoint) p;
 	}
 	
-	public void removeStartPoint(GeoPoint p) {    
+	public void removeStartPoint(GeoPointInterface p) {    
 		if (startPoint == p) {
 			try {
 				setStartPoint(null);
@@ -188,11 +188,12 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 		}
 	}
 	
-    public void setStartPoint(GeoPointInterface p) throws CircularDefinitionException { 
-    	setStartPoint((GeoPoint) p); 
-    }
+
    
-    public void setStartPoint(GeoPoint p) throws CircularDefinitionException {  
+    public void setStartPoint(GeoPointInterface pI) throws CircularDefinitionException {  
+    	
+    	GeoPoint p = (GeoPoint) pI;
+    	
     	if (startPoint == p) return;
     	
     	// macro output uses initStartPoint() only

@@ -3747,7 +3747,7 @@ public abstract class GeoElement
 					GeoText movedGeoText = (GeoText) this;
 					if (movedGeoText.hasAbsoluteLocation()) {
 						//	absolute location: change location
-						GeoPoint loc = movedGeoText.getStartPoint();
+						GeoPoint loc = (GeoPoint) movedGeoText.getStartPoint();
 						loc.translate(rwTransVec);
 						movedGeo = true;
 					}						

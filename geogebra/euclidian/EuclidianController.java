@@ -1084,7 +1084,7 @@ public class EuclidianController implements MouseListener,
 				}
 				else if (movedGeoText.hasAbsoluteLocation()) {
 					//	absolute location: change location
-					GeoPoint loc = movedGeoText.getStartPoint();
+					GeoPoint loc = (GeoPoint) movedGeoText.getStartPoint();
 					if (loc == null) {
 						loc = new GeoPoint(kernel.getConstruction());
 						loc.setCoords(0, 0, 1.0);
@@ -2542,7 +2542,7 @@ public class EuclidianController implements MouseListener,
 		} else {
 			if (movedGeoText.hasAbsoluteLocation()) {
 				//	absolute location: change location
-				GeoPoint loc = movedGeoText.getStartPoint();
+				GeoPoint loc = (GeoPoint) movedGeoText.getStartPoint();
 				loc.setCoords(xRW - startPoint.x, yRW - startPoint.y, 1.0);
 			} else {
 				// relative location: move label (change label offset)

@@ -176,27 +176,27 @@ implements Locateable, AbsoluteScreenLocateable,
 		return image;
 	}		
 	
-	public void setStartPoint(GeoPoint p) throws CircularDefinitionException {    
-		setCorner(p, 0);
+	public void setStartPoint(GeoPointInterface p) throws CircularDefinitionException {    
+		setCorner((GeoPoint) p, 0);
 	}
 	
-	public void removeStartPoint(GeoPoint p) {    
+	public void removeStartPoint(GeoPointInterface p) {    
 		for (int i=0; i < corners.length; i++) {
 			if (corners[i] == p)
 				setCorner(null, i);
 		}
 	}
 	
-	public void setStartPoint(GeoPoint p, int number) throws CircularDefinitionException {
-		setCorner(p, number);
+	public void setStartPoint(GeoPointInterface p, int number) throws CircularDefinitionException {
+		setCorner((GeoPoint) p, number);
 	}
 	
 	/**
 	 * Sets the startpoint without performing any checks.
 	 * This is needed for macros.	 
 	 */
-	public void initStartPoint(GeoPoint p, int number) {
-		corners[number] = p;
+	public void initStartPoint(GeoPointInterface p, int number) {
+		corners[number] = (GeoPoint) p;
 	}
 	
 	/**

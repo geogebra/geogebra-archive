@@ -3,7 +3,6 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVectorInterface;
 import geogebra.kernel.Kernel;
@@ -11,13 +10,28 @@ import geogebra.kernel.Locateable;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 
+
+/**
+ * 3D vector class
+ * @author ggb3D
+ *
+ */
 public class GeoVector3D extends GeoVec4D
 implements GeoVectorInterface, Locateable{
 
+	/** simple constructor
+	 * @param c
+	 */
 	public GeoVector3D(Construction c) {
 		super(c);
 	}
 
+	/** simple constructor with (x,y,z) coords
+	 * @param c
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	public GeoVector3D(Construction c, double x, double y, double z) {
 		super(c,x,y,z,0);
 	}
@@ -207,27 +221,30 @@ implements GeoVectorInterface, Locateable{
 			}
 		}
 
-		private StringBuffer sbBuildValueString = new StringBuffer(50); 
-
-
+		private StringBuffer sbBuildValueString = new StringBuffer(50);
+		
+		
+		
+		
+		
 		///////////////////////////////////////////////
 		// LOCATEABLE INTERFACE
 		///////////////////////////////////////////////
 
-
-
-		public void setStartPoint(GeoPointInterface p)
-		throws CircularDefinitionException {
-			// TODO Auto-generated method stub
-
-		}
 		
-		public GeoPoint getStartPoint() {
+
+		public GeoPointInterface getStartPoint() {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public GeoPoint[] getStartPoints() {
+
+		public void setStartPoint(GeoPointInterface p)
+				throws CircularDefinitionException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public GeoPointInterface[] getStartPoints() {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -237,7 +254,7 @@ implements GeoVectorInterface, Locateable{
 			return false;
 		}
 
-		public void initStartPoint(GeoPoint p, int number) {
+		public void initStartPoint(GeoPointInterface p, int number) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -247,18 +264,12 @@ implements GeoVectorInterface, Locateable{
 			return false;
 		}
 
-		public void removeStartPoint(GeoPoint p) {
+		public void removeStartPoint(GeoPointInterface p) {
 			// TODO Auto-generated method stub
 			
 		}
 
-		public void setStartPoint(GeoPoint p)
-				throws CircularDefinitionException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public void setStartPoint(GeoPoint p, int number)
+		public void setStartPoint(GeoPointInterface p, int number)
 				throws CircularDefinitionException {
 			// TODO Auto-generated method stub
 			
@@ -267,6 +278,13 @@ implements GeoVectorInterface, Locateable{
 		public void setWaitForStartPoint() {
 			// TODO Auto-generated method stub
 			
-		}
+		} 
+
+
+		
+		
+		
+
+
 
 }

@@ -864,7 +864,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			x = geo.getAbsoluteScreenLocX();
 			y = geo.getAbsoluteScreenLocY(); 
 		} else {
-			gp = geo.getStartPoint();
+			gp = (GeoPoint) geo.getStartPoint();
 	        if (gp == null) {
 				x = (int) euclidianView.getXZero();
 				y = (int) euclidianView.getYZero();

@@ -124,15 +124,15 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	 * Sets the startpoint without performing any checks.
 	 * This is needed for macros.	 
 	 */
-	public void initStartPoint(GeoPoint p, int number) {
-		startPoint = p;
+	public void initStartPoint(GeoPointInterface p, int number) {
+		startPoint = (GeoPoint) p;
 	}
 	
-	public void setStartPoint(GeoPoint p, int number)  throws CircularDefinitionException {
+	public void setStartPoint(GeoPointInterface p, int number)  throws CircularDefinitionException {
 		setStartPoint(p);
 	}
 	
-	public void removeStartPoint(GeoPoint p) {    
+	public void removeStartPoint(GeoPointInterface p) {    
 		if (startPoint == p) {
 			try {
 				setStartPoint(null);
@@ -140,7 +140,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		}
 	}
 			
-	public void setStartPoint(GeoPoint p) throws CircularDefinitionException { 
+	public void setStartPoint(GeoPointInterface p) throws CircularDefinitionException { 
 		// don't allow this if it's eg Text["hello",(2,3)]
 		if (alwaysFixed) return;		
 		
@@ -148,7 +148,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		//if (isAlgoMacroOutput()) return; 
 		
 		// check for circular definition
-		if (isParentOf(p))
+		if (isParentOf((GeoElement) p))
 			throw new CircularDefinitionException();		
 		
 		// remove old dependencies
@@ -163,7 +163,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 			labelOffsetX = 0;
 			labelOffsetY = 0;					
 		} else {
-			startPoint = p;
+			startPoint = (GeoPoint) p;
 			//	add new dependencies
 			startPoint.registerLocateable(this);
 			
@@ -180,12 +180,12 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		if (startPoint != null) startPoint.unregisterLocateable(this);
 	}
 	
-	public GeoPoint getStartPoint() {
+	public GeoPointInterface getStartPoint() {
 		return startPoint;
 	}
 	
 	
-	public GeoPoint [] getStartPoints() {
+	public GeoPointInterface [] getStartPoints() {
 		if (startPoint == null)
 			return null;
 	
@@ -531,7 +531,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}
 	
 	public void setRealWorldLoc(double x, double y) {
-		GeoPoint loc = getStartPoint();
+		GeoPoint loc = (GeoPoint) getStartPoint();
 		if (loc == null) {
 			loc = new GeoPoint(cons);	
 			try {setStartPoint(loc); }

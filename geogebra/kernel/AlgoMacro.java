@@ -354,7 +354,7 @@ implements EuclidianViewAlgo {
 	 * in its construction.
 	 */	
 	private void initLocateable(Locateable macroLocateable, Locateable locateable) {
-		GeoPoint [] macroStartPoints = macroLocateable.getStartPoints();
+		GeoPoint [] macroStartPoints = (GeoPoint[]) macroLocateable.getStartPoints();
 		if (macroStartPoints == null) return;
 		
 		try {					

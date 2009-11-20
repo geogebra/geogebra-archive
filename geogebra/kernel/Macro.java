@@ -177,7 +177,7 @@ public class Macro {
 			 //       these points must be part of the macro construction
 			 if (output[i] instanceof Locateable) {
 				 Locateable loc = (Locateable) output[i];
-				 GeoPoint [] points = loc.getStartPoints();
+				 GeoPoint [] points = (GeoPoint[]) loc.getStartPoints();
 				 if (points != null) {
 					 for (int k=0; k < points.length; k++) {
 						 outputParents.add(points[k]);

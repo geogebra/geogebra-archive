@@ -119,7 +119,7 @@ public	class PropertiesPanel extends JPanel {
 		private TextOptionsPanel textOptionsPanel;
 		private ArcSizePanel arcSizePanel;
 		private LineStylePanel lineStylePanel;
-		// added by Loïc BEGIN
+		// added by Loï¿½c BEGIN
 		private DecoSegmentPanel decoSegmentPanel;
 		private DecoAnglePanel decoAnglePanel;
 		private RightAnglePanel rightAnglePanel;
@@ -201,7 +201,7 @@ public	class PropertiesPanel extends JPanel {
 			arcSizePanel = new ArcSizePanel();
 			slopeTriangleSizePanel = new SlopeTriangleSizePanel();
 			lineStylePanel = new LineStylePanel();
-			// added by Loïc BEGIN
+			// added by Loï¿½c BEGIN
 			decoSegmentPanel=new DecoSegmentPanel();
 			decoAnglePanel=new DecoAnglePanel();
 			rightAnglePanel=new RightAnglePanel();
@@ -237,7 +237,7 @@ public	class PropertiesPanel extends JPanel {
 			tabs.setSelectedIndex(1);
 		}
 		
-		// added by Loïc BEGIN
+		// added by Loï¿½c BEGIN
 		public void setSliderMinValue(){
 			arcSizePanel.setMinValue();
 		}
@@ -1981,7 +1981,7 @@ public	class PropertiesPanel extends JPanel {
 			}
 
 			// set location textfield
-			GeoPoint p = geo0.getStartPoint();
+			GeoPoint p = (GeoPoint) geo0.getStartPoint();
 			if (equalLocation && p != null) {
 				cbLocation.setSelectedItem(p.getLabel());
 			} else
@@ -3299,7 +3299,7 @@ public	class PropertiesPanel extends JPanel {
 			setBorder(BorderFactory.createTitledBorder(app.getPlain("Size")));
 		}
 		
-		//added by Loïc BEGIN
+		//added by Loï¿½c BEGIN
 		public void setMinValue(){
 			slider.setValue(20);
 		}
@@ -3347,7 +3347,7 @@ public	class PropertiesPanel extends JPanel {
 				GeoAngle angle;
 				for (int i = 0; i < geos.length; i++) {
 					angle = (GeoAngle) geos[i];
-					// addded by Loïc BEGIN
+					// addded by Loï¿½c BEGIN
 					// check if decoration could be drawn
 					if (size<20&&(angle.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| angle.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
@@ -3658,7 +3658,7 @@ public	class PropertiesPanel extends JPanel {
 	} 
 
 	
-	// added by Loïc
+	// added by Loï¿½c
 	private class DecoSegmentPanel extends JPanel implements ActionListener , UpdateablePanel {
 		private JComboBox decoCombo;
 		private JLabel decoLabel;
@@ -3780,7 +3780,7 @@ public	class PropertiesPanel extends JPanel {
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
 					geo.setDecorationType(type);
-					// addded by Loïc BEGIN
+					// addded by Loï¿½c BEGIN
 					// check if decoration could be drawn
 					if (geo.getArcSize()<20&&(geo.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| geo.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){

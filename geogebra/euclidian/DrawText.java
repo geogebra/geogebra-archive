@@ -87,7 +87,7 @@ public final class DrawText extends Drawable {
 			xLabel = text.getAbsoluteScreenLocX();
 			yLabel = text.getAbsoluteScreenLocY(); 
 		} else {
-			loc = text.getStartPoint();
+			loc = (GeoPoint) text.getStartPoint();
 	        if (loc == null) {
 				xLabel = (int) view.xZero;
 				yLabel = (int) view.yZero;
