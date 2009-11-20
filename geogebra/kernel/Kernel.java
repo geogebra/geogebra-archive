@@ -6141,7 +6141,9 @@ public class Kernel {
 		return resolveVariablesForCASactive;
 	}
 	
-	String libraryJavaScript = "function ggbOnInit() {}";
+	final public static String defaultLibraryJavaScript = "function ggbOnInit() {}";
+	
+	String libraryJavaScript = defaultLibraryJavaScript;
 	
 	public void setLibraryJavaScript(String str) {
 		Application.debug(str);

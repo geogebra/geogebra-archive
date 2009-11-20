@@ -40,9 +40,16 @@ public class ScriptManager {
 		//evalScript("ggbOnInit();");
 	}
 	
+	public void ggbOnInit() {
+		
+		// call only if libraryJavaScript is not the default (ie do nothing)
+		if (!app.getKernel().getLibraryJavaScript().equals(app.getKernel().defaultLibraryJavaScript))
+				evalScript("ggbOnInit();", null);
+	}
+	
 	public boolean evalScript(String script, String arg) {
 		boolean success = true;
-
+		//Application.debug(script);
         Context cx = Context.enter();
         try {
             // Initialize the standard objects (Object, Function, etc.)
