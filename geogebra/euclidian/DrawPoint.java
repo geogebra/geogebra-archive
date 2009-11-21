@@ -18,13 +18,24 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoIntersectConics;
+import geogebra.kernel.AlgoIntersectLineConic;
+import geogebra.kernel.AlgoIntersectLines;
+import geogebra.kernel.AlgoIntersectSingle;
+import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoSegment;
+import geogebra.main.Application;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -253,6 +264,47 @@ public final class DrawPoint extends Drawable {
 			addLabelOffset(true);
 		}    				
     }
+    
+    private Drawable drawable;
+    
+    private void drawClippedSection(GeoElement geo, Graphics2D g2) {
+		double [] coords = new double[2];
+        P.getInhomCoords(coords);                    
+		
+        view.toScreenCoords(coords);
+        
+		Ellipse2D.Float circle = new Ellipse2D.Float((int)coords[0] - 30, (int)coords[1] - 30, 60, 60);
+		g2.clip((Shape)circle);
+   	
+    	switch (geo.getGeoClassType()) {
+    	case GeoElement.GEO_CLASS_LINE:
+    		drawable = new DrawLine(view, (GeoLine)geo);
+    		break;
+    	case GeoElement.GEO_CLASS_SEGMENT:
+    		drawable = new DrawSegment(view, (GeoSegment)geo);
+    		break;
+    	case GeoElement.GEO_CLASS_CONIC:
+    		drawable = new DrawConic(view, (GeoConic)geo);
+    		break;
+    	case GeoElement.GEO_CLASS_CONICPART:
+    		drawable = new DrawConicPart(view, (GeoConicPart)geo);
+    		break;
+    		
+    		default:
+    			drawable = null;
+    			Application.debug("unsupported type for restriced drawing "+geo.getClass()+"");
+
+    	}
+   		
+    	if (drawable != null) {
+			geo.setEuclidianVisible(true);
+			drawable.update();
+			drawable.draw(g2);
+			geo.setEuclidianVisible(false);
+			g2.setClip(null);
+    	}
+    	
+    }
 
     final public void draw(Graphics2D g2) {   
         if (isVisible) { 
@@ -260,6 +312,19 @@ public final class DrawPoint extends Drawable {
     		 	g2.setPaint(geo.getSelColor());		
     		 	g2.fill(circleHighlight);  
             }
+        	
+        	
+        	/* TODO: add option "show trimmed intersecting lines" and use this
+        	AlgoElement algo = geo.getParentAlgorithm();
+        	
+        	if ( algo instanceof AlgoIntersectLines 
+            		|| algo instanceof AlgoIntersectLineConic
+            		|| algo instanceof AlgoIntersectSingle
+    			|| algo instanceof AlgoIntersectConics){
+        		GeoElement[] geos = algo.getInput();
+        		drawClippedSection(geos[0],g2);
+        		drawClippedSection(geos[1],g2);
+        	} */
         	
         	// Florian Sonner 2008-07-17
         	int pointStyle = P.getPointStyle();
