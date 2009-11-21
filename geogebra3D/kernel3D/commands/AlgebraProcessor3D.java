@@ -41,14 +41,33 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 		GeoElement[] ret = new GeoElement[1];
 		boolean isIndependent = n.isConstant();
 
+		// make vector, if label begins with lowercase character
+		if (label != null) {
+			if (!(n.isForcedPoint() || n.isForcedVector())) { // may be set by MyXMLHandler
+				if (Character.isLowerCase(label.charAt(0)))
+					n.setForceVector();
+				else
+					n.setForcePoint();
+			}
+		}
+		
+		boolean isVector = n.isVectorValue();
+		
+		
 		if (isIndependent) {
 			// get coords
 			double x = p[0];
 			double y = p[1];
 			double z = p[2];
-			ret[0] = kernel3D.Point3D(label, x, y, z);			
+			if (isVector)
+				ret[0] = kernel3D.Vector3D(label, x, y, z);	
+			else
+				ret[0] = kernel3D.Point3D(label, x, y, z);			
 		} else {
-			ret[0] = kernel3D.DependentPoint3D(label, n);
+			if (isVector)
+				ret[0] = kernel3D.DependentVector3D(label, n);
+			else
+				ret[0] = kernel3D.DependentPoint3D(label, n);
 		}
 
 		return ret;

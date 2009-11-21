@@ -271,12 +271,20 @@ public class Kernel3D
 	 * represented by a tree. e.g. P = (4t, 2s)
 	 */
 	final public GeoPoint3D DependentPoint3D(
-		String label,
-		ExpressionNode root) {
-		AlgoDependentPoint3D algo = new AlgoDependentPoint3D(cons, label, root);
-		GeoPoint3D P = algo.getPoint3D();
-		return P;
-	}
+			String label,
+			ExpressionNode root) {
+			AlgoDependentPoint3D algo = new AlgoDependentPoint3D(cons, label, root);
+			GeoPoint3D P = algo.getPoint3D();
+			return P;
+		}
+
+	final public GeoVector3D DependentVector3D(
+			String label,
+			ExpressionNode root) {
+			AlgoDependentVector3D algo = new AlgoDependentVector3D(cons, label, root);
+			GeoVector3D P = algo.getVector3D();
+			return P;
+		}
 
 	final public GeoVector3D Vector3D(String label, double x, double y, double z) {
 		GeoVector3D v = new GeoVector3D(cons, x, y, z);
