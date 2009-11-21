@@ -3,11 +3,11 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVectorInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Locateable;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 
@@ -47,6 +47,8 @@ implements GeoVectorInterface, Locateable{
 	
 	public void setCoords(double[] vals){
 		super.setCoords(vals);
+		
+		if (matrix == null) matrix = new Ggb3DMatrix(4,2);
 		
 		//sets the drawing matrix 
 		matrix.set(getCoords(), 1);

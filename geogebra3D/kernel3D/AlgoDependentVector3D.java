@@ -23,6 +23,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
+import geogebra.main.Application;
 
 /**
  *
@@ -36,7 +37,7 @@ public class AlgoDependentVector3D extends AlgoElement3D {
 	 */
 	private static final long serialVersionUID = 1L;
 	private ExpressionNode root;  // input
-    private GeoVector3D v;     // output         
+    private GeoVector3D vec;     // output         
     
     private double[] temp;
         
@@ -45,17 +46,17 @@ public class AlgoDependentVector3D extends AlgoElement3D {
     	super(cons);
         this.root = root;        
         
-        v = new GeoVector3D(cons); 
+        vec = new GeoVector3D(cons); 
         setInputOutput(); // for AlgoElement
         
         // compute value of dependent number
         //v.z = 0.0d;  
         compute();      
-        v.setLabel(label);
+        vec.setLabel(label);
     }   
     
 	protected String getClassName() {
-		return "AlgoDependentVector";
+		return "AlgoDependentVector3D";
 	}
 	
     // for AlgoElement
@@ -63,22 +64,19 @@ public class AlgoDependentVector3D extends AlgoElement3D {
         input = root.getGeoElementVariables();  
         
         output = new GeoElement[1];        
-        output[0] = v;        
+        output[0] = vec;        
         setDependencies(); // done by AlgoElement
     }    
     
-    public GeoVector3D getVector3D() { return v; }
+    public GeoVector3D getVector3D() { return vec; }
     
     // calc the current value of the arithmetic tree
     protected final void compute() {   
     	try {
 	        temp = ((Vector3DValue) root.evaluate()).getPointAsDouble();
-	        v.v.set(0,temp[0]);
-	        v.v.set(1,temp[1]);
-	        v.v.set(2,temp[2]);
-   
+	        vec.setCoords(temp);
 	    } catch (Exception e) {
-	    	v.setUndefined();
+	    	vec.setUndefined();
 	    }    
     }   
     
