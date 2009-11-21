@@ -268,13 +268,6 @@ public final class DrawPoint extends Drawable {
     private Drawable drawable;
     
     private void drawClippedSection(GeoElement geo, Graphics2D g2) {
-		double [] coords = new double[2];
-        P.getInhomCoords(coords);                    
-		
-        view.toScreenCoords(coords);
-        
-		Ellipse2D.Float circle = new Ellipse2D.Float((int)coords[0] - 30, (int)coords[1] - 30, 60, 60);
-		g2.clip((Shape)circle);
    	
     	switch (geo.getGeoClassType()) {
     	case GeoElement.GEO_CLASS_LINE:
@@ -297,6 +290,13 @@ public final class DrawPoint extends Drawable {
     	}
    		
     	if (drawable != null) {
+    		double [] coords = new double[2];
+            P.getInhomCoords(coords);                    
+    		
+            view.toScreenCoords(coords);
+            
+    		Ellipse2D.Float circle = new Ellipse2D.Float((int)coords[0] - 30, (int)coords[1] - 30, 60, 60);
+    		g2.clip((Shape)circle);
 			geo.setEuclidianVisible(true);
 			drawable.update();
 			drawable.draw(g2);
@@ -324,7 +324,7 @@ public final class DrawPoint extends Drawable {
         		GeoElement[] geos = algo.getInput();
         		drawClippedSection(geos[0],g2);
         		drawClippedSection(geos[1],g2);
-        	} */
+        	} //*/
         	
         	// Florian Sonner 2008-07-17
         	int pointStyle = P.getPointStyle();
