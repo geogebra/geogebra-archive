@@ -111,11 +111,11 @@ public class AlgoVector extends AlgoElement {
             
             // update position of unlabeled startpoint
             GeoPointInterface startPoint = v.getStartPoint();
-            /*
+            
             if (startPoint!=null)
             	if (!startPoint.isLabelSet())
             		startPoint.set(P);       
-            		*/     
+            		  
         } else {
             v.setUndefined();
         }
