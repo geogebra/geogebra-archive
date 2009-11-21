@@ -1756,8 +1756,15 @@ public class DefaultGuiManager implements GuiManager {
 		} else {	
 			
 			try {
+				
+				// try base64
 				URL url = new URL(urlString);
-				success = loadBase64(url.openStream(), urlString);
+				success = loadBase64fromHTML(url.openStream(), urlString);
+				
+				// try ggb
+				if (success == false) 
+					success = loadGgbFromHTML(url.openStream(), urlString);
+				
 			} catch (IOException e) {
 				app.setDefaultCursor();
 				app.showError(app.getError("LoadFileFailed") + ":\n" + urlString);
@@ -1766,11 +1773,15 @@ public class DefaultGuiManager implements GuiManager {
 			}
 		}
 		
+		if (!success) {
+			app.showError(app.getError("LoadFileFailed") + ":\n" + urlString);
+		}
+		
 		app.setDefaultCursor();
 		return success;
 	}
 	
-	public boolean loadBase64(InputStream fis, String source) throws IOException {
+	public boolean loadBase64fromHTML(InputStream fis, String source) throws IOException {
 
 		BufferedReader myInput = new BufferedReader
 		(new InputStreamReader(fis));
@@ -1814,8 +1825,8 @@ public class DefaultGuiManager implements GuiManager {
 		}
 		
 		if (start < 0 || end < 0 || end <= start) {
-			app.setDefaultCursor();
-			app.showError(app.getError("LoadFileFailed") + ":\n" + source);
+			//app.setDefaultCursor();
+			//app.showError(app.getError("LoadFileFailed") + ":\n" + source);
 			return false;
 		}
 
@@ -1827,6 +1838,69 @@ public class DefaultGuiManager implements GuiManager {
 
 		// load file
 		return app.loadXML(zipFile);   
+
+	}
+    
+	public boolean loadGgbFromHTML(InputStream fis, String source) throws IOException {
+
+		BufferedReader myInput = new BufferedReader
+		(new InputStreamReader(fis));
+
+		StringBuilder sb = new StringBuilder();
+
+		String thisLine;
+
+		boolean started = false;
+
+		while ((thisLine = myInput.readLine()) != null)  {
+
+			// don't start reading until ggbBase64 tag
+			if (!started && thisLine.indexOf("filename") > -1) started = true;
+
+			if (started) {
+				sb.append(thisLine);
+
+				if (thisLine.indexOf("</applet>") > -1) break;
+			}
+
+
+
+		}
+
+		String fileArgument = sb.toString();
+
+		String matchString = "name=\"filename\" value=\"";
+
+		int start = fileArgument.indexOf(matchString);
+		// match "/> or " /> or "> etc
+		int end   = fileArgument.indexOf(">");
+		while (end > start && fileArgument.charAt(end) != '\"') end--;
+
+		// check for two <param> tags on the same line
+		if (start > end) {
+			fileArgument = fileArgument.substring(start);
+			start = 0;
+			end   = fileArgument.indexOf(">");
+			while (end > start && fileArgument.charAt(end) != '\"') end--;
+		}
+		
+		if (start < 0 || end < 0 || end <= start) {
+			//app.setDefaultCursor();
+			//app.showError(app.getError("LoadFileFailed") + ":\n" + source);
+			return false;
+		}
+
+		
+		int index = source.lastIndexOf('/');
+		if (index != -1)
+			source = source.substring(0, index + 1); // path without file.ggb
+
+		Application.debug("Trying to load from:" + source + fileArgument
+				.substring(matchString.length() + start, end));
+
+		URL url = new URL(source + fileArgument.substring(matchString.length() + start, end));
+		
+		return app.loadXML(url, false);
 
 	}
     
@@ -1853,7 +1927,7 @@ public class DefaultGuiManager implements GuiManager {
 		try {
 			FileInputStream fis = null;
 			fis = new FileInputStream(file);
-			success = loadBase64(fis, file.toString());		
+			success = loadBase64fromHTML(fis, file.toString());		
 			
 		} catch (Exception e) {
 			app.setDefaultCursor();
