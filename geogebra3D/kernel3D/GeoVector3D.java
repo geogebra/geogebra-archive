@@ -3,6 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVectorInterface;
 import geogebra.kernel.Kernel;
@@ -18,12 +19,18 @@ import geogebra3D.Matrix.Ggb3DMatrix4x4;
  */
 public class GeoVector3D extends GeoVec4D
 implements GeoVectorInterface, Locateable{
+	
+	
+	private GeoPoint3D startPoint;
+	
+	private Ggb3DMatrix matrix;
 
 	/** simple constructor
 	 * @param c
 	 */
 	public GeoVector3D(Construction c) {
 		super(c);
+		matrix = new Ggb3DMatrix(4,2);
 	}
 
 	/** simple constructor with (x,y,z) coords
@@ -34,6 +41,7 @@ implements GeoVectorInterface, Locateable{
 	 */
 	public GeoVector3D(Construction c, double x, double y, double z) {
 		super(c,x,y,z,0);
+		matrix = new Ggb3DMatrix(4,2);
 	}
 	
 	
@@ -41,11 +49,15 @@ implements GeoVectorInterface, Locateable{
 		super.setCoords(vals);
 		
 		//sets the drawing matrix 
-		Ggb3DMatrix matrix = new Ggb3DMatrix(4,2);
 		matrix.set(getCoords(), 1);
 		
-		//TODO use start point
-		matrix.set(4, 2, 1.0);
+		
+		//TODO call only if startPoint has changed
+		if(startPoint!=null)
+			matrix.set(startPoint.getCoords(),2);
+		else
+			matrix.set(4, 2, 1.0);
+		
 		
 		setDrawingMatrix(new Ggb3DMatrix4x4(matrix));
 		
@@ -234,44 +246,75 @@ implements GeoVectorInterface, Locateable{
 		
 
 		public GeoPointInterface getStartPoint() {
-			// TODO Auto-generated method stub
-			return null;
+			return startPoint;
 		}
 
-		public void setStartPoint(GeoPointInterface p)
-				throws CircularDefinitionException {
-			// TODO Auto-generated method stub
+		public void setStartPoint(GeoPointInterface pI)	throws CircularDefinitionException {
+			
+	    	GeoPoint3D p = (GeoPoint3D) pI;
+	    	
+	    	if (startPoint == p) return;
+	    	
+	    	// macro output uses initStartPoint() only
+			//TODO if (isAlgoMacroOutput()) return; 				
+	    	
+			// check for circular definition
+			if (isParentOf(p))
+				throw new CircularDefinitionException();
+
+			// remove old dependencies
+			//if (startPoint != null) startPoint.unregisterLocateable(this);	
+		
+			// set new location	
+			startPoint = p;		
+			
+			//	add new dependencies
+			//if (startPoint != null) startPoint.registerLocateable(this);	
+
+
+			// update position matrix
+			if(startPoint!=null)
+				matrix.set(startPoint.getCoords(),2);
+			else
+				matrix.set(4, 2, 1.0);
+			
+			setDrawingMatrix(new Ggb3DMatrix4x4(matrix));			
 			
 		}
 
 		public GeoPointInterface[] getStartPoints() {
-			// TODO Auto-generated method stub
-			return null;
+			if (startPoint == null)
+				return null;
+		
+			GeoPoint3D [] ret = new GeoPoint3D[1];
+			ret[0] = startPoint;
+			return ret;	
 		}
 
 		public boolean hasAbsoluteLocation() {
-			// TODO Auto-generated method stub
-			return false;
+			return startPoint == null; //TODO || startPoint.isAbsoluteStartPoint();
 		}
 
 		public void initStartPoint(GeoPointInterface p, int number) {
-			// TODO Auto-generated method stub
+			startPoint = (GeoPoint3D) p;
 			
 		}
 
 		public boolean isAlwaysFixed() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		public void removeStartPoint(GeoPointInterface p) {
-			// TODO Auto-generated method stub
+			if (startPoint == p) {
+				try {
+					setStartPoint(null);
+				} catch(Exception e) {}
+			}
 			
 		}
 
-		public void setStartPoint(GeoPointInterface p, int number)
-				throws CircularDefinitionException {
-			// TODO Auto-generated method stub
+		public void setStartPoint(GeoPointInterface p, int number) throws CircularDefinitionException {
+			setStartPoint(p);
 			
 		}
 

@@ -63,31 +63,6 @@ public abstract class GeoVec4D extends GeoVec {
     }
     
 
-    /** Calculates the line through the point A with direction v.
-     * The result is stored in g.
-     */
-    
-    final public static void lineThroughPointVector(GeoPoint3D A, GeoVec4D v, GeoRay3D g) {
-    	// note: this could be done simply using cross(A, v, g)
-    	// but we want to avoid large coefficients in the line
-    	// and we want v to be the direction vector of the line
-        Application.debug("GeoVec4D : lineThroughPointVector");
-    	
- ///   	if (A.isInfinite()) {// A is direction
-//	TODO		g.setUndefined();
- //   	}
- //   	else 
-//   	{ // through point A
-        Ggb3DVector B = new Ggb3DVector( new double[]{
-        		   A.getX()+v.getX(),
-        		   A.getY()+v.getY(),
-        		   A.getZ()+v.getZ(),
-        		   v.getW()});
-			// v is direction
-		    g.setCoord(A.getCoords(), B);
-// 	}        
-    }      
-    
     
     
     

@@ -34,6 +34,7 @@ import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
@@ -2879,7 +2880,7 @@ public class MyXMLHandler implements DocHandler {
 
 			while (it.hasNext()) {
 				LocateableExpPair pair = (LocateableExpPair) it.next();
-				GeoPoint P = pair.point != null ? pair.point : 
+				GeoPointInterface P = pair.point != null ? pair.point : 
 								algProc.evaluateToPoint(pair.exp);
 				pair.locateable.setStartPoint(P, pair.number);
 			}

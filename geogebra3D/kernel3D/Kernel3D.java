@@ -37,6 +37,7 @@ import geogebra3D.kernel3D.arithmetic.ExpressionNodeEvaluator3D;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
 
 import java.util.LinkedHashMap;
+import java.util.TreeSet;
 
 
 
@@ -152,6 +153,25 @@ public class Kernel3D
     		algProcessor = new AlgebraProcessor3D(this);
     	return algProcessor;
     }
+	
+	
+	
+	
+	
+	
+	
+	/** return all points of the current construction */
+	public TreeSet getPointSet(){
+		TreeSet t3d = getConstruction().getGeoSetLabelOrder(GeoElement3D.GEO_CLASS_POINT3D);
+		//TODO add super.getPointSet()
+		return t3d;
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	

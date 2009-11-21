@@ -100,6 +100,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.TreeSet;
 
 import org.apache.commons.math.complex.Complex;
 
@@ -6159,6 +6160,13 @@ public class Kernel {
 	
 	public String getLibraryJavaScript() {
 		return libraryJavaScript;
+	}
+	
+	
+	
+	/** return all points of the current construction */
+	public TreeSet getPointSet(){
+		return getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
 	}
 	
 }

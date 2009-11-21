@@ -29,6 +29,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
@@ -1954,14 +1955,15 @@ public	class PropertiesPanel extends JPanel {
 
 			// repopulate model with names of points from the geoList's model
 			// take all points from construction
-			TreeSet points = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
+			//TreeSet points = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
+			TreeSet points = kernel.getPointSet();
 			if (points.size() != cbModel.getSize() - 1) {				
 				cbModel.removeAllElements();
 				cbModel.addElement(null);			
 				Iterator it = points.iterator();
 				int count = 0;
 				while (it.hasNext() || ++count > MAX_COMBOBOX_ENTRIES) {
-					GeoPoint p = (GeoPoint) it.next();
+					GeoElement p = (GeoElement) it.next();
 					cbModel.addElement(p.getLabel());				
 				}
 			}
@@ -1981,7 +1983,7 @@ public	class PropertiesPanel extends JPanel {
 			}
 
 			// set location textfield
-			GeoPoint p = (GeoPoint) geo0.getStartPoint();
+			GeoElement p = (GeoElement) geo0.getStartPoint();
 			if (equalLocation && p != null) {
 				cbLocation.setSelectedItem(p.getLabel());
 			} else
@@ -2015,7 +2017,7 @@ public	class PropertiesPanel extends JPanel {
 
 		private void doActionPerformed() {
 			String strLoc = (String) cbLocation.getSelectedItem();
-			GeoPoint newLoc = null;
+			GeoPointInterface newLoc = null;
 
 			if (strLoc == null || strLoc.trim().length() == 0) {
 				newLoc = null;
@@ -2179,7 +2181,7 @@ public	class PropertiesPanel extends JPanel {
 				number = 2;
 			
 			String strLoc = (String) cbLocation[number].getSelectedItem();
-			GeoPoint newLoc = null;
+			GeoPointInterface newLoc = null;
 
 			if (strLoc == null || strLoc.trim().length() == 0) {
 				newLoc = null;
@@ -2189,7 +2191,7 @@ public	class PropertiesPanel extends JPanel {
 
 			for (int i = 0; i < geos.length; i++) {
 				GeoImage im = (GeoImage) geos[i];		
-				im.setCorner(newLoc, number);
+				im.setCorner((GeoPoint) newLoc, number);
 				im.updateRepaint();				
 			}
 

@@ -106,20 +106,16 @@ public class AlgoVector extends AlgoElement {
     // calc the vector between P and Q    
     protected final void compute() {
         if (P.isFinite() && Q.isFinite()) {     
-        	
-        	/*
-            v.x = Q.inhomX - P.inhomX;
-            v.y = Q.inhomY - P.inhomY;             
-            v.z = 0.0;
-            */
-        	
+        	     	
         	v.setCoords(P.vectorTo(Q));
             
             // update position of unlabeled startpoint
             GeoPointInterface startPoint = v.getStartPoint();
+            /*
             if (startPoint!=null)
             	if (!startPoint.isLabelSet())
-            		startPoint.set(P);            
+            		startPoint.set(P);       
+            		*/     
         } else {
             v.setUndefined();
         }
