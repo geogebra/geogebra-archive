@@ -20,9 +20,11 @@ package geogebra.euclidian;
 
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntersectAbstract;
+import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
@@ -276,6 +278,12 @@ public final class DrawPoint extends Drawable {
     	case GeoElement.GEO_CLASS_CONIC:
     		drawable = new DrawConic(view, (GeoConic)geo);
     		break;
+    	case GeoElement.GEO_CLASS_FUNCTION:
+    		drawable = new DrawParametricCurve(view, (GeoFunction)geo);
+    		break;
+    	case GeoElement.GEO_CLASS_AXIS:
+    		drawable = null;
+    		break;
     	case GeoElement.GEO_CLASS_CONICPART:
     		drawable = new DrawConicPart(view, (GeoConicPart)geo);
     		break;
@@ -311,14 +319,17 @@ public final class DrawPoint extends Drawable {
             }
         	
         	
-        	/* TODO: add option "show trimmed intersecting lines" and use this
-        	AlgoElement algo = geo.getParentAlgorithm();
-        	
-        	if ( algo instanceof AlgoIntersectAbstract ){
-        		GeoElement[] geos = algo.getInput();
-        		drawClippedSection(geos[0],g2);
-        		drawClippedSection(geos[1],g2);
-        	} //*/
+        	 // option "show trimmed intersecting lines" 
+        	 if (geo.getShowTrimmedIntersectionLines()) {
+	        	AlgoElement algo = geo.getParentAlgorithm();
+	        	
+	        	if ( algo instanceof AlgoIntersectAbstract ){
+	        		GeoElement[] geos = algo.getInput();
+	        		drawClippedSection(geos[0], g2);
+	        		if (geos.length > 1)
+	        			drawClippedSection(geos[1], g2);
+	        	} 
+        	 }
         	
         	// Florian Sonner 2008-07-17
         	int pointStyle = P.getPointStyle();

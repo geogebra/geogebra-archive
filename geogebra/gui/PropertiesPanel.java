@@ -18,6 +18,7 @@ import geogebra.gui.util.SpringUtilities;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AbsoluteScreenLocateable;
+import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoAngle;
@@ -109,6 +110,7 @@ public	class PropertiesPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private NamePanel namePanel;
 		private ShowObjectPanel showObjectPanel;		
+		private ShowTrimmedIntersectionLines showTrimmedIntersectionLines;		
 		private ColorPanel colorPanel;
 		private LabelPanel labelPanel;
 		private LayerPanel layerPanel; // Michael Borcherds 2008-02-26
@@ -192,6 +194,7 @@ public	class PropertiesPanel extends JPanel {
 			}
 			
 			showObjectPanel = new ShowObjectPanel();
+			showTrimmedIntersectionLines = new ShowTrimmedIntersectionLines();
 			colorPanel = new ColorPanel(colChooser);
 			coordPanel = new CoordPanel();
 			lineEqnPanel = new LineEqnPanel();
@@ -282,6 +285,7 @@ public	class PropertiesPanel extends JPanel {
 			basicTabList.add(allowReflexAnglePanel);	
 			basicTabList.add(rightAnglePanel);
 			basicTabList.add(allowOutlyingIntersectionsPanel);
+			basicTabList.add(showTrimmedIntersectionLines);
 			basicTab = new TabPanel(basicTabList);
 			tabPanelList.add(basicTab);
 			
@@ -404,7 +408,8 @@ public	class PropertiesPanel extends JPanel {
 			}
 			
 			// update the labels of the panels
-			showObjectPanel.setLabels();		
+			showObjectPanel.setLabels();	
+			showTrimmedIntersectionLines.setLabels();
 			colorPanel.setLabels();
 			coordPanel.setLabels();
 			lineEqnPanel.setLabels();
@@ -568,98 +573,184 @@ public	class PropertiesPanel extends JPanel {
 		}
 		
 	
-	/**
-	 * panel with show/hide object checkbox
-	 */
-	private class ShowObjectPanel extends JPanel implements ItemListener, UpdateablePanel {
-	
-		private static final long serialVersionUID = 1L;
-		private Object[] geos; // currently selected geos
-		private JCheckBox showObjectCB;
-
-		public ShowObjectPanel() {
-			// check box for show object
-			showObjectCB = new JCheckBox();
-			showObjectCB.addItemListener(this);			
-			add(showObjectCB);			
-		}
+		/**
+		 * panel with show/hide object checkbox
+		 */
+		private class ShowObjectPanel extends JPanel implements ItemListener, UpdateablePanel {
 		
-		public void setLabels() {
-			showObjectCB.setText(app.getPlain("ShowObject"));
-		}			
+			private static final long serialVersionUID = 1L;
+			private Object[] geos; // currently selected geos
+			private JCheckBox showObjectCB;
 
-		public JPanel update(Object[] geos) {
-			this.geos = geos;
-			if (!checkGeos(geos))
-				return null;
-
-			showObjectCB.removeItemListener(this);
-
-			// check if properties have same values
-			GeoElement temp, geo0 = (GeoElement) geos[0];
-			boolean equalObjectVal = true;
-			boolean showObjectCondition = geo0.getShowObjectCondition() != null;
-
-			for (int i = 1; i < geos.length; i++) {
-				temp = (GeoElement) geos[i];
-				// same object visible value
-				if (geo0.isSetEuclidianVisible()
-					!= temp.isSetEuclidianVisible()) {
-					equalObjectVal = false;
-					break;
-				}
-				
-				if (temp.getShowObjectCondition() != null) {
-					showObjectCondition = true;
-				}
+			public ShowObjectPanel() {
+				// check box for show object
+				showObjectCB = new JCheckBox();
+				showObjectCB.addItemListener(this);			
+				add(showObjectCB);			
 			}
-
-			// set object visible checkbox
-			if (equalObjectVal)
-				showObjectCB.setSelected(geo0.isSetEuclidianVisible());
-			else
-				showObjectCB.setSelected(false);
-
-			showObjectCB.setEnabled(!showObjectCondition);
 			
-			showObjectCB.addItemListener(this);
-			return this;
-		}
+			public void setLabels() {
+				showObjectCB.setText(app.getPlain("ShowObject"));
+			}			
 
-		// show everything but numbers (note: drawable angles are shown)
-		private boolean checkGeos(Object[] geos) {
-			boolean geosOK = true;
-			for (int i = 0; i < geos.length; i++) {
-				GeoElement geo = (GeoElement) geos[i];
-				if (!geo.isDrawable()
-						// can't allow a free fixed number to become visible (as a slider)
-						|| (geo.isGeoNumeric() && geo.isFixed())) {
-					geosOK = false;
-					break;
+			public JPanel update(Object[] geos) {
+				this.geos = geos;
+				if (!checkGeos(geos))
+					return null;
+
+				showObjectCB.removeItemListener(this);
+
+				// check if properties have same values
+				GeoElement temp, geo0 = (GeoElement) geos[0];
+				boolean equalObjectVal = true;
+				boolean showObjectCondition = geo0.getShowObjectCondition() != null;
+
+				for (int i = 1; i < geos.length; i++) {
+					temp = (GeoElement) geos[i];
+					// same object visible value
+					if (geo0.isSetEuclidianVisible()
+						!= temp.isSetEuclidianVisible()) {
+						equalObjectVal = false;
+						break;
+					}
+					
+					if (temp.getShowObjectCondition() != null) {
+						showObjectCondition = true;
+					}
 				}
+
+				// set object visible checkbox
+				if (equalObjectVal)
+					showObjectCB.setSelected(geo0.isSetEuclidianVisible());
+				else
+					showObjectCB.setSelected(false);
+
+				showObjectCB.setEnabled(!showObjectCondition);
+				
+				showObjectCB.addItemListener(this);
+				return this;
 			}
-			return geosOK;
-		}
+
+			// show everything but numbers (note: drawable angles are shown)
+			private boolean checkGeos(Object[] geos) {
+				boolean geosOK = true;
+				for (int i = 0; i < geos.length; i++) {
+					GeoElement geo = (GeoElement) geos[i];
+					if (!geo.isDrawable()
+							// can't allow a free fixed number to become visible (as a slider)
+							|| (geo.isGeoNumeric() && geo.isFixed())) {
+						geosOK = false;
+						break;
+					}
+				}
+				return geosOK;
+			}
+
+			/**
+			 * listens to checkboxes and sets object and label visible state
+			 */
+			public void itemStateChanged(ItemEvent e) {
+				GeoElement geo;
+				Object source = e.getItemSelectable();
+
+				// show object value changed
+				if (source == showObjectCB) {
+					for (int i = 0; i < geos.length; i++) {
+						geo = (GeoElement) geos[i];
+						geo.setEuclidianVisible(showObjectCB.isSelected());
+						geo.updateRepaint();
+					}
+				}
+				updateSelection(geos);
+			}
+
+		} // ShowObjectPanel
 
 		/**
-		 * listens to checkboxes and sets object and label visible state
+		 * panel with show/hide trimmed intersection lines
 		 */
-		public void itemStateChanged(ItemEvent e) {
-			GeoElement geo;
-			Object source = e.getItemSelectable();
+		private class ShowTrimmedIntersectionLines extends JPanel implements ItemListener, UpdateablePanel {
+		
+			private static final long serialVersionUID = 1L;
+			private Object[] geos; // currently selected geos
+			private JCheckBox showTrimmedLinesCB;
 
-			// show object value changed
-			if (source == showObjectCB) {
-				for (int i = 0; i < geos.length; i++) {
-					geo = (GeoElement) geos[i];
-					geo.setEuclidianVisible(showObjectCB.isSelected());
-					geo.updateRepaint();
-				}
+			public ShowTrimmedIntersectionLines() {
+				// check box for show object
+				showTrimmedLinesCB = new JCheckBox();
+				showTrimmedLinesCB.addItemListener(this);			
+				add(showTrimmedLinesCB);			
 			}
-			updateSelection(geos);
-		}
+			
+			public void setLabels() {
+				showTrimmedLinesCB.setText(app.getPlain("ShowTrimmed"));
+			}			
 
-	} // ShowObjectPanel
+			public JPanel update(Object[] geos) {
+				this.geos = geos;
+				if (!checkGeos(geos))
+					return null;
+
+				showTrimmedLinesCB.removeItemListener(this);
+
+				// check if properties have same values
+				GeoElement temp, geo0 = (GeoElement) geos[0];
+				boolean equalObjectVal = true;
+
+				for (int i = 1; i < geos.length; i++) {
+					temp = (GeoElement) geos[i];
+					// same object visible value
+					if (geo0.getShowTrimmedIntersectionLines() != temp.getShowTrimmedIntersectionLines()) {
+						equalObjectVal = false;
+						break;
+					}
+					
+				}
+
+				// set object visible checkbox
+				if (equalObjectVal)
+					showTrimmedLinesCB.setSelected(geo0.getShowTrimmedIntersectionLines());
+				else
+					showTrimmedLinesCB.setSelected(false);
+
+				showTrimmedLinesCB.setEnabled(true);
+				
+				showTrimmedLinesCB.addItemListener(this);
+				return this;
+			}
+
+			// show everything but numbers (note: drawable angles are shown)
+			private boolean checkGeos(Object[] geos) {
+				boolean geosOK = true;
+				for (int i = 0; i < geos.length; i++) {
+					GeoElement geo = (GeoElement) geos[i];
+					if (!(geo.getParentAlgorithm() instanceof AlgoIntersectAbstract)) {
+						geosOK = false;
+						break;
+					}
+				}
+				return geosOK;
+			}
+
+			/**
+			 * listens to checkboxes and sets object and label visible state
+			 */
+			public void itemStateChanged(ItemEvent e) {
+				GeoElement geo;
+				Object source = e.getItemSelectable();
+
+				// show object value changed
+				if (source == showTrimmedLinesCB) {
+					for (int i = 0; i < geos.length; i++) {
+						geo = (GeoElement) geos[i];
+						geo.setShowTrimmedIntersectionLines(showTrimmedLinesCB.isSelected());
+						geo.updateRepaint();
+					}
+				}
+				updateSelection(geos);
+			}
+
+		} // ShowObjectPanel
 
 	/**
 	 * panel to fix checkbox (boolean object)

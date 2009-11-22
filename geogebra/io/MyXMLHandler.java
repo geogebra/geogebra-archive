@@ -2015,7 +2015,10 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("spreadsheetTrace")) {
 				ok = handleSpreadsheetTrace(attrs);
 				break;
-			}
+			} else if (eName.equals("showTrimmed")) {
+			ok = handleShowTrimmed(attrs);
+			break;
+		}
 
 		case 't':
 			if (eName.equals("trace")) {
@@ -2517,6 +2520,15 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			GeoPoint p = (GeoPoint) geo;
 			p.setSpreadsheetTrace(parseBoolean((String) attrs.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleShowTrimmed(LinkedHashMap<String, String> attrs) {
+		try {
+			geo.setShowTrimmedIntersectionLines(parseBoolean((String) attrs.get("val")));
 			return true;
 		} catch (Exception e) {
 			return false;

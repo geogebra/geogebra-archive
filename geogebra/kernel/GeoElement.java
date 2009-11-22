@@ -3193,6 +3193,10 @@ public abstract class GeoElement
 			sb.append("/>\n");
 		}
 		
+		if (getShowTrimmedIntersectionLines()) {
+			sb.append("\t<showTrimmed val=\"true\"/>\n");			
+		}
+		
 		// conditional visibility
 		sb.append(getShowObjectConditionXML());
 		
@@ -4065,6 +4069,16 @@ public abstract class GeoElement
 		
 		//TODO: run ggbScript here
 		
+	}
+	
+	boolean showTrimmedIntersectionLines = false;
+	
+	public void setShowTrimmedIntersectionLines(boolean show) {
+		showTrimmedIntersectionLines = show;
+	}
+
+	public boolean getShowTrimmedIntersectionLines() {
+		return showTrimmedIntersectionLines;
 	}
 
 

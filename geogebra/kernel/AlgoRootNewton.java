@@ -22,7 +22,7 @@ import geogebra.kernel.roots.RealRootUtil;
  * Finds one real root of a function with newtons method.
  * The first derivative of this function must exist. 
  */
-public class AlgoRootNewton extends AlgoElement {
+public class AlgoRootNewton extends AlgoIntersectAbstract {
 
     /**
 	 * 
