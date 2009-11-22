@@ -265,6 +265,7 @@ public abstract class GeoElement
 	private String caption; // only used by GeoBoolean for check boxes at the moment	
 	boolean labelWanted = false, labelSet = false, localVarLabelSet = false;
 	private boolean euclidianVisible = true;
+	private boolean forceEuclidianVisible = false;
 	protected boolean algebraVisible = true;
 	private boolean labelVisible = true;
 	private boolean isConsProtBreakpoint; // in construction protocol
@@ -935,6 +936,10 @@ public abstract class GeoElement
 	 * object should be drawn in euclidian view
 	 */
 	final public boolean isEuclidianVisible() {
+		
+		// used by DrawPoint to draw parts of intersection objects near the point
+		if (forceEuclidianVisible) return true;
+		
 		if (!showInEuclidianView()) return false;
 		
 		if (condShowObject == null)
@@ -945,6 +950,10 @@ public abstract class GeoElement
 
 	public void setEuclidianVisible(boolean visible) {
 		euclidianVisible = visible;		
+	}
+
+	public void forceEuclidianVisible(boolean visible) {
+		forceEuclidianVisible = visible;		
 	}
 
 	public boolean isSetEuclidianVisible() {

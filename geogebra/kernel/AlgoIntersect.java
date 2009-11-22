@@ -14,7 +14,7 @@ package geogebra.kernel;
 
 
 
-public abstract class AlgoIntersect extends AlgoElement {
+public abstract class AlgoIntersect extends AlgoIntersectAbstract {
 
     // gives the number of intersection algorithms
     // this algorithm is used by: see AlgoIntersectSingle

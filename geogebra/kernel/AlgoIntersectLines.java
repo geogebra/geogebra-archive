@@ -24,7 +24,7 @@ package geogebra.kernel;
  * @author  Markus
  * @version 
  */
-public class AlgoIntersectLines extends AlgoElement {
+public class AlgoIntersectLines extends AlgoIntersectAbstract {
 
     /**
 	 * 

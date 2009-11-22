@@ -19,10 +19,7 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.kernel.AlgoElement;
-import geogebra.kernel.AlgoIntersectConics;
-import geogebra.kernel.AlgoIntersectLineConic;
-import geogebra.kernel.AlgoIntersectLines;
-import geogebra.kernel.AlgoIntersectSingle;
+import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
@@ -297,10 +294,10 @@ public final class DrawPoint extends Drawable {
             
     		Ellipse2D.Float circle = new Ellipse2D.Float((int)coords[0] - 30, (int)coords[1] - 30, 60, 60);
     		g2.clip((Shape)circle);
-			geo.setEuclidianVisible(true);
+			geo.forceEuclidianVisible(true);
 			drawable.update();
 			drawable.draw(g2);
-			geo.setEuclidianVisible(false);
+			geo.forceEuclidianVisible(false);
 			g2.setClip(null);
     	}
     	
@@ -317,10 +314,7 @@ public final class DrawPoint extends Drawable {
         	/* TODO: add option "show trimmed intersecting lines" and use this
         	AlgoElement algo = geo.getParentAlgorithm();
         	
-        	if ( algo instanceof AlgoIntersectLines 
-            		|| algo instanceof AlgoIntersectLineConic
-            		|| algo instanceof AlgoIntersectSingle
-    			|| algo instanceof AlgoIntersectConics){
+        	if ( algo instanceof AlgoIntersectAbstract ){
         		GeoElement[] geos = algo.getInput();
         		drawClippedSection(geos[0],g2);
         		drawClippedSection(geos[1],g2);

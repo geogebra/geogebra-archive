@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-public class AlgoIntersection extends AlgoElement {
+public class AlgoIntersection extends AlgoIntersectAbstract {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
