@@ -1126,10 +1126,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 		double xrangemax=a,xrangemin=a;
 		while (xrangemax<b){
-			xrangemin=firstDefinedValue(f,a,b);
+			xrangemin=firstDefinedValue(geo,a,b);
 //			Application.debug("xrangemin "+xrangemin);
 			if (xrangemin==b) break;
-			xrangemax=maxDefinedValue(f,xrangemin,b);
+			xrangemax=maxDefinedValue(geo,xrangemin,b);
 //			Application.debug("xrangemax "+xrangemax);
 			startBeamer(sb);
 			sb.append("\\draw");
@@ -1331,7 +1331,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			ind=sb.indexOf(nameFunc);
 		}
 	}
-	private double maxDefinedValue(Function f,double a,double b){
+	private double maxDefinedValue(GeoFunction f,double a,double b){
 		double x=a;
 		double step=(b-a)/100;
 		while(x<=b){
@@ -1344,7 +1344,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 		return b;
 	}
-	private double firstDefinedValue(Function f,double a,double b){
+	private double firstDefinedValue(GeoFunction f,double a,double b){
 		double x=a;
 		double step=(b-a)/100;
 		while(x<=b){
