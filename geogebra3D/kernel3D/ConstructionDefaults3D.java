@@ -37,6 +37,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_RAY3D = 3102;
 	/** default axis 3D type */	
 	public static final int DEFAULT_AXIS3D = 3103;
+	/** default vector 3D type */	
+	public static final int DEFAULT_VECTOR3D = 3104;
 	
 	
 	
@@ -58,8 +60,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	
 	
 	// DEFAULT COLORs
+	
 	// polygon 3D
-	//private static final Color colPolygon3D = ConstructionDefaults.colPolygon;	
 	/** default color for 3D polygons */
 	public static final Color colPolygon3D = colPolygon;
 	/** default alpha for 3D polygons*/
@@ -172,6 +174,15 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		axis.setLocalVariableLabel("Axis3D");
 		defaultGeoElements.put(DEFAULT_AXIS3D, axis);		
 		
+		// vector 3D
+		GeoVector3D vector = new GeoVector3D(cons);
+		vector.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		vector.setLocalVariableLabel("Vector3D");
+		defaultGeoElements.put(DEFAULT_VECTOR3D, vector);		
+		
+		
+		
+		
 		// plane
 		GeoPlane3D plane = new GeoPlane3D(cons);	
 		plane.setLocalVariableLabel("Plane3D");
@@ -234,6 +245,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 			return DEFAULT_RAY3D;
 		case GeoElement3D.GEO_CLASS_AXIS3D: 
 			return DEFAULT_AXIS3D;
+		case GeoElement3D.GEO_CLASS_VECTOR3D: 
+			return DEFAULT_VECTOR3D;
 			
 		
 		case GeoElement3D.GEO_CLASS_PLANE3D: 
