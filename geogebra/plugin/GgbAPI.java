@@ -17,6 +17,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PointProperties;
@@ -667,7 +668,11 @@ public class GgbAPI {
 	 */
 	public synchronized String getValueString(String objName) {
 		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return "";		
+		if (geo == null) return "";	
+		
+		if (geo.isGeoText())
+			return ((GeoText)geo).getTextString();
+		
 		return geo.getAlgebraDescription();
 	}
 	
