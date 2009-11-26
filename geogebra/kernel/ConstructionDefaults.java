@@ -513,7 +513,7 @@ public class ConstructionDefaults {
 	
 	public void setDefaultAngleSize(int angleSize) {
 		
-		this.angleSize = angleSize;
+		this.angleSize = Math.max(angleSize, 1);
 			
 		Iterator it = defaultGeoElements.values().iterator();
 		while (it.hasNext()) {
@@ -531,7 +531,7 @@ public class ConstructionDefaults {
 	
 	public void setDefaultPointSize(int pointSize) {
 			
-		this.pointSize = pointSize;
+		this.pointSize = Math.max(pointSize, 1);
 		
 		Iterator it = defaultGeoElements.values().iterator();
 		while (it.hasNext()) {
@@ -553,7 +553,7 @@ public class ConstructionDefaults {
 	
 	public void setDefaultLineThickness(int lineThickness) {
 		
-		this.lineThickness = lineThickness;
+		this.lineThickness = Math.max(lineThickness, 1);
 			
 		Iterator it = defaultGeoElements.values().iterator();
 		while (it.hasNext()) {

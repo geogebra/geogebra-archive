@@ -607,18 +607,21 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	private void setGeoProperties(GeoElement geo, int lineThicknessIncr, int pointSizeIncr, 
 			int angleSizeIncr, boolean blackWhiteMode) 
 	{
-		if (!geo.isGeoText() && !geo.isGeoImage()) { // affects bounding box
-			geo.setLineThickness(geo.getLineThickness() + lineThicknessIncr);
+		if (!geo.isGeoText() && !geo.isGeoImage() && !geo.isGeoPolygon()) { // affects bounding box
+			int lineThickness = Math.max(0, geo.getLineThickness() + lineThicknessIncr);
+			geo.setLineThickness(lineThickness);
 		}
 			
 		if (geo instanceof PointProperties) {
 			PointProperties p = (PointProperties) geo;
-			p.setPointSize(p.getPointSize() + pointSizeIncr);
+			int pointSize = Math.max(0, p.getPointSize() + pointSizeIncr);
+			p.setPointSize(pointSize);
 		}
 			
 		if (geo.isGeoAngle()) {
 			GeoAngle angle = (GeoAngle) geo;
-			angle.setArcSize(angle.getArcSize() + angleSizeIncr);
+			int angleSize = Math.max(0, angle.getArcSize() + angleSizeIncr);
+			angle.setArcSize(angleSize);
 		}
 			
 		if (blackWhiteMode) {
