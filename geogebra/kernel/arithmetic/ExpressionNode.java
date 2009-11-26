@@ -1398,12 +1398,12 @@ implements ExpressionValue, ExpressionNodeConstants {
     		    		break;
         			}
                    	// check for 0 at left
-        			else if (isEqualString(left, 0, !valueForm)) {
+        			else if (valueForm && isEqualString(left, 0, !valueForm)) {
         				sb.append("0");
     		    		break;
         			} 
         			// check for 0 at right
-        			else if (isEqualString(right, 0, !valueForm)) {
+        			else if (valueForm && isEqualString(right, 0, !valueForm)) {
         				sb.append("0");
     		    		break;
         			}
