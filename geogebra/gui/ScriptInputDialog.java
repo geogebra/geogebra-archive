@@ -35,14 +35,16 @@ public class ScriptInputDialog extends InputDialog {
 
 	private GeoElement button;
 	private boolean global = false;
+	private boolean javaScript = false;
 	
 	/**
 	 * Input Dialog for a GeoButton object
 	 */
 	public ScriptInputDialog(Application app,  String title, GeoButton button,
-								int cols, int rows) {	
+								int cols, int rows, boolean javaScript) {	
 		super(app.getFrame(), false);
 		this.app = app;
+		this.javaScript = javaScript;
 		inputHandler = new TextInputHandler();
 				
 				
@@ -67,8 +69,9 @@ public class ScriptInputDialog extends InputDialog {
 			return;
 		}
 		this.button = button;
-
-        inputPanel.setText(button == null ? "TODO" : button.getJavaScript());
+		
+		if (button != null)
+			inputPanel.setText(javaScript ? button.getJavaScript() : button.getScript());
 	}
 	
 	/*
@@ -127,36 +130,16 @@ public class ScriptInputDialog extends InputDialog {
 	 * @param geo
 	 */
 	public void insertGeoElement(GeoElement geo) {
-		Application.debug("unimplemented");
+		Application.debug("TODO: unimplemented");
 	}
 	
-	/**
-	 * Returns how often the given char is in the given String
-	 * @param str
-	 * @param ch
-	 * @return
-	 */
-	private int countChar(char ch, String str) {
-		if (str == null) return 0;
-		
-		int count = 0;
-		for (int i=0; i < str.length(); i++) {
-			if (str.charAt(i) == ch) {
-				
-				count ++;
-			}
-		}
-		return count;		
-	}
 	
 	private class TextInputHandler implements InputHandler {
 		
 		private Kernel kernel;
-		private EuclidianView euclidianView;
        
         private TextInputHandler() { 
         	kernel = app.getKernel();
-        	euclidianView = app.getEuclidianView();
         }        
         
         public boolean processInput(String inputValue) {
@@ -174,8 +157,10 @@ public class ScriptInputDialog extends InputDialog {
             }
                     
             // change existing text
-            	
-            	button.setJavaScript(inputValue);
+            	if (javaScript)
+            		button.setJavaScript(inputValue);
+            	else
+            		button.setScript(inputValue);
             	
             	return true;
     }

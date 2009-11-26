@@ -4020,11 +4020,21 @@ public abstract class GeoElement
 	private String ggbScript = "";
 	
 	public void setJavaScript(String script) {
+		Application.debug(script);
 		this.javaScript = script;
+	}
+	
+	public void setScript(String script) {
+		Application.debug(script);
+		this.ggbScript = script;
 	}
 	
 	public String getJavaScript() {
 		return javaScript;
+	}
+	
+	public String getScript() {
+		return ggbScript;
 	}
 	
 	public String getXMLJavaScript() {
