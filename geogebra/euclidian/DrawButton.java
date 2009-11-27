@@ -117,7 +117,7 @@ public final class DrawButton extends Drawable {
 				// delayed run to allow time for focus leaving event 
 				// to be triggered for GeoTextField
 	            SwingUtilities.invokeLater( new Runnable(){ public void
-	            	run() { geo.runScript(); }});
+	            	run() { geo.runScripts(null); }});
 
 				
 				// make sure itemChanged does not change

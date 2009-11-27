@@ -162,7 +162,7 @@ public final class DrawTextField extends Drawable {
 
 		public void focusLost(FocusEvent e) {
 			view.getEuclidianController().textfieldHasFocus(false);
-			geo.runScript(textField.getText());
+			geo.runScripts(textField.getText());
 			
 		}
 
@@ -173,7 +173,10 @@ public final class DrawTextField extends Drawable {
 
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyChar() == '\n') {
-				geo.runScript(textField.getText());
+				//geo.runScripts(textField.getText());
+				
+				// this should be enough to trigger script event
+				// ie in focusLost
 				view.requestFocus();
 			}
 			

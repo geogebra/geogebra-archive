@@ -47,11 +47,9 @@ public class ScriptManager {
 				evalScript("ggbOnInit();", null);
 	}
 	
-	public boolean evalScript(String script, String arg) {
-		boolean success = true;
+	public void evalScript(String script, String arg) {
 		//Application.debug(script);
         Context cx = Context.enter();
-        try {
             // Initialize the standard objects (Object, Function, etc.)
             // This must be done before scripts can be executed. Returns
             // a scope object that we use in later calls.
@@ -75,15 +73,7 @@ public class ScriptManager {
 
             // Convert the result to a string and print it.
             //Application.debug("script result: "+(Context.toString(result)));
-        } catch (Exception e) {
-        	success = false;
-        	e.printStackTrace();
-        } finally {
-            // Exit from the context.
-            Context.exit();
-        }
         
-        return success;
 		
 	}
 	/*

@@ -21,6 +21,7 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Util;
@@ -4041,43 +4042,57 @@ public abstract class GeoElement
 		return Util.encodeXML(javaScript);
 	}
 	
-	public void runJavaScript() {
-		if (app.isApplet()) {
-			Object [] args = { };
-			app.getApplet().callJavaScript("ggb"+getLabel(), args);
-		} else {
-			app.getScriptManager().evalScript(javaScript, null);
+	private void runGgbScript(String arg) {
+
+		AlgebraProcessor ab = kernel.getAlgebraProcessor();
+		String script[] = (arg == null) ? ggbScript.split("\n") :
+			ggbScript.replaceAll("%0", arg).split("\n");
+		
+		boolean success = false;
+		int i = -1;
+		try {
+			for (i = 0 ; i < script.length ; i++) {
+				System.out.println(script[i]);
+				String command = script[i].trim();
+
+				if (!command.equals("") && command.charAt(0) != '#') {
+					ab.processAlgebraCommandNoExceptionHandling(command, false);
+					success = true;
+				}
+			}
+		} catch (Exception e) {
+			app.showError(app.getPlain("ErrorInScriptAtLineA",(i+1)+"")+"\n"+e);
+			success = false;
 		}
-	}
-	
-	public void runScript() {
 		
-		if (!javaScript.equals("")) {
-			runJavaScript();
-			return;
-		}
-		
-		//TODO: run ggbScript here
-		
+		if (success) app.storeUndoInfo();
 	}
 
 	public void runJavaScript(String arg) {
+		
+		try {
 		if (app.isApplet()) {
-			Object [] args = { arg };
-			app.getApplet().callJavaScript("ggb"+getLabel(), args);
+			if (arg == null) {
+				Object [] args = { };
+				app.getApplet().callJavaScript("ggb"+getLabel(), args);				
+			} else {
+				Object [] args = { arg };
+				app.getApplet().callJavaScript("ggb"+getLabel(), args);
+			}
 		} else {
 			app.getScriptManager().evalScript(javaScript, arg);
 		}
+		} catch (Exception e) {
+			app.showError(app.getPlain("ErrorInJavaScript")+"\n"+e);
+
+		}
 	}
 	
-	public void runScript(String arg) {
+	public void runScripts(String arg) {
 		
-		if (!javaScript.equals("")) {
-			runJavaScript(arg);
-			return;
-		}
+		runJavaScript(arg);
 		
-		//TODO: run ggbScript here
+		runGgbScript(arg);
 		
 	}
 	
