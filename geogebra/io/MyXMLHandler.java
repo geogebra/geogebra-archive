@@ -1926,6 +1926,12 @@ public class MyXMLHandler implements DocHandler {
 			}
 			// Michael Borcherds 2007-11-19
 
+		case 'g':
+			if (eName.equals("ggbscript")) {
+				ok = handleScript(attrs);
+				break;
+			}
+
 		case 'i':
 			if (eName.equals("isLaTeX")) {
 				ok = handleIsLaTeX(attrs);
@@ -2279,6 +2285,15 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleJavaScript(LinkedHashMap<String, String> attrs) {
 		try {
 			geo.setJavaScript((String) attrs.get("val"));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleScript(LinkedHashMap<String, String> attrs) {
+		try {
+			geo.setScript((String) attrs.get("val"));
 			return true;
 		} catch (Exception e) {
 			return false;

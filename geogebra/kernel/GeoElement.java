@@ -3081,6 +3081,13 @@ public abstract class GeoElement
 			sb.append("\"/>\n");				
 		}
 				
+		// Script
+		if (ggbScript.length() > 0) {
+			sb.append("\t<ggbscript val=\"");
+			sb.append(getXMLScript());
+			sb.append("\"/>\n");				
+		}
+				
 		sb.append(getCaptionXML());
 				
 		sb.append("</element>\n");
@@ -4040,6 +4047,10 @@ public abstract class GeoElement
 	
 	public String getXMLJavaScript() {
 		return Util.encodeXML(javaScript);
+	}
+	
+	public String getXMLScript() {
+		return Util.encodeXML(ggbScript);
 	}
 	
 	private void runGgbScript(String arg) {
