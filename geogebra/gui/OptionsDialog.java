@@ -34,6 +34,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
  * A central dialog with all important options.
  * 
  * @author Florian Sonner
+ * TODO Re-enable font tab (F.S.) 
  */
 public class OptionsDialog extends JDialog implements WindowListener {
 	/** */
@@ -64,7 +65,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	/**
 	 * The panel with all settings regarding font sizes & the current language.
 	 */
-	private OptionsFont fontPanel;
+	//private OptionsFont fontPanel;
 	
 	/**
 	 * The panel with all settings for the euclidian view. The "Drawing Pad Properties" dialog
@@ -107,7 +108,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	public void updateGUI() {
 		generalPanel.updateGUI();
 		defaultsPanel.updateGUI();
-		fontPanel.updateGUI();
+		//fontPanel.updateGUI();
 		euclidianPanel.updateGUI();
 	}
 
@@ -115,7 +116,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * Select the tab which shows the euclidian view settings.
 	 */
 	public void showEuclidianTab() {
-		tabbedPane.setSelectedIndex(3);
+		tabbedPane.setSelectedIndex(2); // TODO change back to 3 (F.S.)
 	}
 
 	/**
@@ -127,12 +128,12 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		// init tabs
 		generalPanel = new OptionsGeneral(app);
 		defaultsPanel = new OptionsDefaults(app);
-		fontPanel = new OptionsFont(app);
+		//fontPanel = new OptionsFont(app);
 		euclidianPanel = new OptionsEuclidian(app, app.getEuclidianView());
 
 		// init scroll panes for tabs (show no extra borders)
-		JScrollPane fontsAndLangPanelScroll = new JScrollPane(fontPanel);
-		fontsAndLangPanelScroll.setBorder(BorderFactory.createEmptyBorder());
+		//JScrollPane fontsAndLangPanelScroll = new JScrollPane(fontPanel);
+		//fontsAndLangPanelScroll.setBorder(BorderFactory.createEmptyBorder());
 		JScrollPane euclidianPanelScroll = new JScrollPane(euclidianPanel);
 		euclidianPanelScroll.setBorder(BorderFactory.createEmptyBorder());
 
@@ -148,8 +149,8 @@ public class OptionsDialog extends JDialog implements WindowListener {
 				Color.RED), defaultsPanel);
 		
 		// fonts & language
-		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), fontsAndLangPanelScroll);
+		/*tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
+				Color.RED), fontsAndLangPanelScroll);*/
 		
 		// euclidian properties
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
@@ -208,12 +209,12 @@ public class OptionsDialog extends JDialog implements WindowListener {
 
 		tabbedPane.setTitleAt(0, app.getMenu("General"));
 		tabbedPane.setTitleAt(1, app.getPlain("Defaults"));
-		tabbedPane.setTitleAt(2, app.getPlain("FontsAndLanguage"));
-		tabbedPane.setTitleAt(3, app.getPlain("DrawingPad"));
+		//tabbedPane.setTitleAt(2, app.getPlain("FontsAndLanguage"));
+		tabbedPane.setTitleAt(2, app.getPlain("DrawingPad")); // TODO change back to 3 (F.S.)
 		
 		generalPanel.setLabels();
 		euclidianPanel.setLabels();
-		fontPanel.setLabels();
+		//fontPanel.setLabels();
 		defaultsPanel.setLabels();
 	}
 
@@ -224,7 +225,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 */
 	private void apply() {
 		generalPanel.apply();
-		fontPanel.apply();
+		//fontPanel.apply();
 		defaultsPanel.apply();
 	}
 

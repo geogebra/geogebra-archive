@@ -118,7 +118,7 @@ class OptionsFont extends JPanel implements ActionListener {
 		panel.add(languageLabel);
 		panel.add(languageCb);
 		
-		panel.setLayout(new SpringLayout());
+		//panel.setLayout(new SpringLayout());
 		SpringUtilities.makeCompactGridColspan(panel,
 				7, 2, // rows, columns
 				3, 3, 
