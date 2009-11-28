@@ -20,7 +20,7 @@ public class GeometrySphere extends Geometry {
 		manager.preInit(this);
 		
 		manager.startGeometry(this);
-		sphere(8,8,POINT3D_RADIUS);
+		sphere(2,6,POINT3D_RADIUS);
 		manager.endGeometry(this);
 
 	

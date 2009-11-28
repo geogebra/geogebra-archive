@@ -194,9 +194,9 @@ public class Renderer implements GLEventListener {
 	    caps = new GLCapabilities();
 	    
 	    //anti-aliasing
-    	caps.setSampleBuffers(true);
-        caps.setNumSamples(4);    	
-        
+    	caps.setSampleBuffers(true);caps.setNumSamples(4);    	
+    	//caps.setSampleBuffers(false);
+       
         //avoid flickering
     	caps.setDoubleBuffered(true);	    
     	
@@ -214,6 +214,7 @@ public class Renderer implements GLEventListener {
 	    
 	    animator = new FPSAnimator( canvas, 60 );
         animator.setRunAsFastAsPossible(true);	  
+        //animator.setRunAsFastAsPossible(false);	  
         animator.start();
         
 
@@ -275,6 +276,7 @@ public class Renderer implements GLEventListener {
     	
     	//Application.debug("display");
 
+    	//double displayTime = System.currentTimeMillis();
         
         gl = gLDrawable.getGL();
         
@@ -443,6 +445,7 @@ public class Renderer implements GLEventListener {
         gLDrawable.swapBuffers(); //TODO
         
 
+        //Application.debug("display : "+((int) (System.currentTimeMillis()-displayTime)));
     }    
     
     
@@ -1094,7 +1097,6 @@ public class Renderer implements GLEventListener {
     	initMatrix();
     	double s = size*dilationValues[dilation]/view3D.getScale();
     	gl.glScaled(s,s,s);
-    	//primitives.point(gl,size);
     	geometryManager.point.draw();
     	resetMatrix();
     	
@@ -1527,10 +1529,37 @@ public class Renderer implements GLEventListener {
     /////////////////////////
     // FPS
     
-	double displayTime;
-	double fps;
+	double displayTime = 0;
+	int nbFrame = 0;
+	double fps = 0;
     
     private void drawFPS(){
+    	
+    	if (displayTime==0)
+    		displayTime = System.currentTimeMillis();
+    	
+    	nbFrame++;
+    	
+    	double newDisplayTime = System.currentTimeMillis();
+    	
+    	//Application.debug("delay = "+ (newDisplayTime-displayTime));
+    	
+    	//displayTime = System.currentTimeMillis();
+    	if (newDisplayTime > displayTime+1000){
+    		
+    		//Application.debug("nbFrame = "+nbFrame);
+    		/*
+    	fps = 0.9*fps + 0.1*1000/(displayTime-displayTimeOld);
+    	if (fps>100)
+    		fps=100;
+    		 */
+
+    		fps = 1000*nbFrame/(newDisplayTime - displayTime);
+    		displayTime = newDisplayTime;
+    		nbFrame = 0;
+    	}
+    	
+    	
     	
     	
         gl.glMatrixMode(GL.GL_TEXTURE);
@@ -1548,14 +1577,9 @@ public class Renderer implements GLEventListener {
     	textRenderer.setColor(Color.BLACK);
     	
 
-    	double displayTimeOld = displayTime;
-    	displayTime = System.currentTimeMillis();
-    	fps = 0.9*fps + 0.1*1000/(displayTime-displayTimeOld);
-    	if (fps>100)
-    		fps=100;
     	
         
-    	textRenderer.draw3D("FPS="+((int) fps),left,bottom,0,1);
+    	textRenderer.draw3D("FPS="+ ((int) fps),left,bottom,0,1);
     	
         textRenderer.end3DRendering();
         
@@ -1612,7 +1636,7 @@ public class Renderer implements GLEventListener {
      */
     public void doPick(){
     	
-    	
+    	//double pickTime = System.currentTimeMillis();
 
     	BUFSIZE = (drawList3D.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
@@ -1656,7 +1680,13 @@ public class Renderer implements GLEventListener {
         
     	
 
-    	
+    	gl.glDisable(GL.GL_ALPHA_TEST);
+    	gl.glDisable(GL.GL_BLEND);
+    	gl.glDisable(GL.GL_LIGHTING);
+       	gl.glDisable(GL.GL_TEXTURE);
+       	//gl.glDisable(GL.GL_DEPTH_TEST);
+       	//gl.glColorMask(false,false,false,false);
+       	//gl.glDisable(GL.GL_NORMALIZE);
     	
     	drawHits = new Drawable3D[BUFSIZE];
   
@@ -1718,6 +1748,11 @@ public class Renderer implements GLEventListener {
         //Application.debug(hits3D.toString());
        
         waitForPick = false;
+        
+        
+        //Application.debug("pick : "+((int) (System.currentTimeMillis()-pickTime)));
+        
+        gl.glEnable(GL.GL_LIGHTING);
     }
     
     
@@ -1872,7 +1907,7 @@ public class Renderer implements GLEventListener {
         //textures
         initTextures();
         
-         
+
     }
 
     
