@@ -20,14 +20,18 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import java.util.TreeSet;
+
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.LocateableList;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.PointProperties;
@@ -78,7 +82,10 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     public Ggb3DVector inhom = new Ggb3DVector(3);
 
 
-	
+    // list of Locateables (GeoElements) that this point is start point of
+    // if this point is removed, the Locateables have to be notified
+    private LocateableList locateableList;         
+
     
     public GeoPoint3D(Construction c) { 
     	super(c,4); 
@@ -617,8 +624,52 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	}
 
 	
+	//////////////////////////////////
+	// LocateableList
 	
 	
+	public LocateableList getLocateableList(){
+		if (locateableList == null)
+			locateableList = new LocateableList(this);
+		return locateableList;
+	}
+	
+	/**
+	 * Tells Locateables that their start point is removed
+	 * and calls super.remove()
+	 */
+	protected void doRemove() {
+		if (locateableList != null) {
+			
+			locateableList.doRemove();
+
+		}
+		
+
+		
+		super.doRemove();
+	}
+	
+	
+	/**
+	 * Calls super.update() and updateCascade() for all registered locateables.	 
+	 */
+	public void update() {  	
+		super.update();
+						
+		// update all registered locatables (they have this point as start point)
+		if (locateableList != null) {	
+			GeoElement.updateCascade(locateableList, getTempSet());
+		}			
+	}
+	
+	private static TreeSet tempSet;	
+	protected static TreeSet getTempSet() {
+		if (tempSet == null) {
+			tempSet = new TreeSet();
+		}
+		return tempSet;
+	}
 	
 	
 	//////////////////////////////////

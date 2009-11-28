@@ -219,7 +219,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		if (p == null) {
 			//	remove old dependencies
 			if (corners[number] != null) 
-				corners[number].unregisterLocateable(this);	
+				corners[number].getLocateableList().unregisterLocateable(this);	
 						
 			// copy old first corner as absolute position
 			if (number == 0 && corners[0] != null) {
@@ -237,11 +237,11 @@ implements Locateable, AbsoluteScreenLocateable,
 			
 			// remove old dependencies
 			if (corners[number] != null) 
-				corners[number].unregisterLocateable(this);		
+				corners[number].getLocateableList().unregisterLocateable(this);		
 			
 			corners[number] = p;
 			//	add new dependencies
-			corners[number].registerLocateable(this);								
+			corners[number].getLocateableList().registerLocateable(this);								
 		}					
 		
 		// absolute screen position should be deactivated
@@ -276,7 +276,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		super.doRemove();		
 		for (int i=0; i < corners.length; i++) {
 			// tell corner	
-			if (corners[i] != null) corners[i].unregisterLocateable(this);
+			if (corners[i] != null) corners[i].getLocateableList().unregisterLocateable(this);
 		}		
 	}
 	
@@ -510,7 +510,7 @@ implements Locateable, AbsoluteScreenLocateable,
 			// remove startpoints
 			for (int i=0; i < 3; i++) {
 				if (corners[i] != null) {
-					corners[i].unregisterLocateable(this);						
+					corners[i].getLocateableList().unregisterLocateable(this);						
 				}
 			}	
 			corners[1] = null;

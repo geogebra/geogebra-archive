@@ -204,13 +204,13 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 			throw new CircularDefinitionException();
 		
 		// remove old dependencies
-		if (startPoint != null) startPoint.unregisterLocateable(this);	
+		if (startPoint != null) startPoint.getLocateableList().unregisterLocateable(this);	
 	
 		// set new location	
 		startPoint = p;		
 		
 		//	add new dependencies
-		if (startPoint != null) startPoint.registerLocateable(this);	
+		if (startPoint != null) startPoint.getLocateableList().registerLocateable(this);	
 		
 		// reinit path
     	if (pathSegment != null) {
@@ -248,7 +248,7 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
     protected void doRemove() {
     	super.doRemove();
 		// tell startPoint	
-		if (startPoint != null) startPoint.unregisterLocateable(this);
+		if (startPoint != null) startPoint.getLocateableList().unregisterLocateable(this);
     }
     
     final public boolean isFinite() {

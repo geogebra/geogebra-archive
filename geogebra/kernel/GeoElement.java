@@ -3696,7 +3696,7 @@ public abstract class GeoElement
 	private static ArrayList moveObjectsUpdateList;	
 	private static TreeSet tempSet;
 	
-	private static TreeSet getTempSet() {
+	protected static TreeSet getTempSet() {
 		if (tempSet == null) {
 			tempSet = new TreeSet();
 		}

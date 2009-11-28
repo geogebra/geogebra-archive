@@ -35,13 +35,8 @@ public class DrawPoint3D extends Drawable3DCurves implements Previewable{
 
 		GeoPoint3D point = (GeoPoint3D) getGeoElement(); 
 		
-		
+		renderer.drawPoint(point.getPointSize());
 
-		if (point.hasPath())
-			renderer.drawPoint(point.getPointSize()); //points on path are more visible 
-		else
-			renderer.drawPoint(point.getPointSize());
-		
 
 	}
 	

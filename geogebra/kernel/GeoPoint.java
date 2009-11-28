@@ -69,7 +69,7 @@ GeoPointInterface {
     
     // list of Locateables (GeoElements) that this point is start point of
     // if this point is removed, the Locateables have to be notified
-    private ArrayList locateableList;         
+    private LocateableList locateableList;         
     
     public GeoPoint(Construction c) {     	 
     	super(c);
@@ -929,7 +929,7 @@ GeoPointInterface {
 	}
 	
 	private static TreeSet tempSet;	
-	private static TreeSet getTempSet() {
+	protected static TreeSet getTempSet() {
 		if (tempSet == null) {
 			tempSet = new TreeSet();
 		}
@@ -937,10 +937,17 @@ GeoPointInterface {
 	}
 	
 	
+	public LocateableList getLocateableList(){
+		if (locateableList == null)
+			locateableList = new LocateableList(this);
+		return locateableList;
+	}
+	
+	/*
 	/**
 	 * Tells this point that the given Locateable has this point
 	 * as start point.
-	 */
+	 *
 	public void registerLocateable(Locateable l) {	
 		if (locateableList == null) locateableList = new ArrayList();
 		if (locateableList.contains(l)) return;
@@ -958,12 +965,14 @@ GeoPointInterface {
 	/**
 	 * Tells this point that the given Locatable no longer has this point
 	 * as start point.
-	 */
+	 *
 	public void unregisterLocateable(Locateable l) {
 		if (locateableList != null) {
 			locateableList.remove(l);			
 		}
 	}
+	
+	*/
 	
 	/**
 	 * Tells Locateables that their start point is removed
@@ -971,6 +980,10 @@ GeoPointInterface {
 	 */
 	protected void doRemove() {
 		if (locateableList != null) {
+			
+			locateableList.doRemove();
+			
+			/*
 			// copy locateableList into array
 			Object [] locs = locateableList.toArray();	
 			locateableList.clear();
@@ -980,7 +993,8 @@ GeoPointInterface {
 				Locateable loc = (Locateable) locs[i];
 				loc.removeStartPoint(this);				
 				loc.toGeoElement().updateCascade();			
-			}			
+			}	
+			*/		
 		}
 		
 		if (path != null) {

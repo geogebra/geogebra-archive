@@ -226,6 +226,7 @@ public class DrawList3D {
 	 */
 	public void drawForPicking(Renderer renderer){
 
+		renderer.setCulling(true);
 		for(int i=0; i<Drawable3D.DRAW_TYPE_SURFACES; i++)
 			for (Iterator<Drawable3D> iter = lists[i].iterator(); iter.hasNext();) {
 	        	Drawable3D d = iter.next();

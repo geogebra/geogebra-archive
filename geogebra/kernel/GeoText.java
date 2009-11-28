@@ -152,7 +152,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 			throw new CircularDefinitionException();		
 		
 		// remove old dependencies
-		if (startPoint != null) startPoint.unregisterLocateable(this);	
+		if (startPoint != null) startPoint.getLocateableList().unregisterLocateable(this);	
 		
 		// set new location	
 		if (p == null) {
@@ -165,7 +165,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		} else {
 			startPoint = (GeoPoint) p;
 			//	add new dependencies
-			startPoint.registerLocateable(this);
+			startPoint.getLocateableList().registerLocateable(this);
 			
 			// absolute screen position should be deactivated
 			setAbsoluteScreenLocActive(false);
@@ -177,7 +177,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	protected void doRemove() {
 		super.doRemove();
 		// tell startPoint	
-		if (startPoint != null) startPoint.unregisterLocateable(this);
+		if (startPoint != null) startPoint.getLocateableList().unregisterLocateable(this);
 	}
 	
 	public GeoPointInterface getStartPoint() {
@@ -549,7 +549,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		if (flag) {
 			// remove startpoint
 			if (startPoint != null) {
-				startPoint.unregisterLocateable(this);				
+				startPoint.getLocateableList().unregisterLocateable(this);				
 				startPoint = null;
 			}			
 		} else {

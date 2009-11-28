@@ -265,13 +265,13 @@ implements GeoVectorInterface, Locateable{
 				throw new CircularDefinitionException();
 
 			// remove old dependencies
-			//if (startPoint != null) startPoint.unregisterLocateable(this);	
+			if (startPoint != null) startPoint.getLocateableList().unregisterLocateable(this);	
 		
 			// set new location	
 			startPoint = p;		
 			
 			//	add new dependencies
-			//if (startPoint != null) startPoint.registerLocateable(this);	
+			if (startPoint != null) startPoint.getLocateableList().registerLocateable(this);	
 
 
 			// update position matrix
