@@ -1709,7 +1709,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (!isErrorDialogsActive)
 			return;
 		
-		//Application.debug("showErrorDialog: "+msg);
+		Application.printStacktrace("showErrorDialog: "+msg);
 		
 		isErrorDialogShowing = true;
 		
@@ -2340,8 +2340,6 @@ public abstract class Application implements KeyEventDispatcher {
 			return loadXML(url.openStream(), isMacroFile);
 		} catch (Exception e) {
 			setCurrentFile(null);
-			e.printStackTrace();
-			showError(getError("LoadFileFailed") + ":\n" + url);
 			return false;
 		}
 	}

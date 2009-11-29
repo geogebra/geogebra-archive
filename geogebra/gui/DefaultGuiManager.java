@@ -1736,9 +1736,21 @@ public class DefaultGuiManager implements GuiManager {
 	
 	public boolean loadURL(String urlString) {
 		
-		boolean success = true;
+		boolean success = false;
 		app.setWaitCursor();
 		
+		// check first for ggb/ggt file
+		if (urlString.endsWith(".ggb") || urlString.endsWith(".ggt")) {
+			
+			try {
+				URL url = new URL(urlString);
+				success = app.loadXML(url, urlString.endsWith(".ggt"));   
+			} catch (IOException e) {
+				//success = false;
+			}
+
+			
+		} else
 		// special case: urlString is actually a base64 encoded ggb file
 		if (urlString.startsWith("UEs")) {
 			// decode Base64
@@ -1748,10 +1760,7 @@ public class DefaultGuiManager implements GuiManager {
 				// load file
 				success = app.loadXML(zipFile);   
 			} catch (IOException e) {
-				app.setDefaultCursor();
-				app.showError(app.getError("LoadFileFailed"));
-				e.printStackTrace();
-				return false;
+				//success = false;
 			}			
 		} else {	
 			
@@ -1766,15 +1775,12 @@ public class DefaultGuiManager implements GuiManager {
 					success = loadGgbFromHTML(url.openStream(), urlString);
 				
 			} catch (IOException e) {
-				app.setDefaultCursor();
-				app.showError(app.getError("LoadFileFailed") + ":\n" + urlString);
-				e.printStackTrace();
-				return false;
+				//success = false;
 			}
 		}
 		
 		if (!success) {
-			app.showError(app.getError("LoadFileFailed") + ":\n" + urlString);
+			app.showError(app.getError("LoadFileFailed") + "\n" + urlString);
 		}
 		
 		app.setDefaultCursor();
