@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoVector3D;
 
@@ -42,6 +43,9 @@ public class DrawVector3D extends Drawable3DCurves {
 	
 
 	protected void updateForItSelf(){
+		
+		((GeoVector3D) getGeoElement()).updateStartPointPosition();
+		
 		
 	}
 	

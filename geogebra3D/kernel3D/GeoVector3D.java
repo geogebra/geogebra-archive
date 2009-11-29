@@ -54,12 +54,26 @@ implements GeoVectorInterface, Locateable{
 		matrix.set(getCoords(), 1);
 		
 		
-		//TODO call only if startPoint has changed
+
+		
+		
+		setDrawingMatrix(new Ggb3DMatrix4x4(matrix));
+		
+	}
+	
+	
+	/**
+	 * update the start point position
+	 */
+	public void updateStartPointPosition(){
+		
 		if(startPoint!=null)
 			matrix.set(startPoint.getCoords(),2);
-		else
+		else{
+			for(int i=1;i<4;i++)
+				matrix.set(i, 2, 0.0);
 			matrix.set(4, 2, 1.0);
-		
+		}
 		
 		setDrawingMatrix(new Ggb3DMatrix4x4(matrix));
 		
@@ -275,12 +289,7 @@ implements GeoVectorInterface, Locateable{
 
 
 			// update position matrix
-			if(startPoint!=null)
-				matrix.set(startPoint.getCoords(),2);
-			else
-				matrix.set(4, 2, 1.0);
-			
-			setDrawingMatrix(new Ggb3DMatrix4x4(matrix));			
+			//updateStartPointPosition();		
 			
 		}
 
