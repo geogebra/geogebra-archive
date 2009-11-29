@@ -375,7 +375,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * Display this panel in an external window.
 	 */
 	private void windowPanel() {
-		dockManager.hide(this);
+		dockManager.hide(this, false);
 		info.setVisible(true);
 		createFrame();
 	}
