@@ -15,6 +15,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoTextField;
+import geogebra.main.Application;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -167,8 +168,18 @@ public final class DrawTextField extends Drawable {
 			GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
 			
 			if (linkedGeo != null) {
-				geo.getKernel().getAlgebraProcessor().changeGeoElement(linkedGeo, textField.getText(), false);			
+				try {
+					linkedGeo = geo.getKernel().getAlgebraProcessor().changeGeoElementNoExceptionHandling(linkedGeo, textField.getText(), false, true);
+				} catch (Exception e1) {
+					geo.getKernel().getApplication().showError(e1.getMessage());
+					updateText();
+					return;
+				}			
+				((GeoTextField)geo).setLinkedGeo(linkedGeo);
+				
+				updateText();
 
+				
 			}
 			
 			else geo.runScripts(textField.getText());
@@ -197,6 +208,13 @@ public final class DrawTextField extends Drawable {
 		}
 
 		
+	}
+	
+	private void updateText() {
+		
+		GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
+		if (linkedGeo != null)
+			textField.setText(linkedGeo.getAlgebraDescription());
 	}
 
 
@@ -234,6 +252,7 @@ public final class DrawTextField extends Drawable {
 		
 		textField.setFocusable(true);
 		textField.setEditable(true);
+		updateText();
 		// set checkbox state		
 		//jButton.removeItemListener(bl);
 		//jButton.setSelected(geo.getBoolean());

@@ -36,6 +36,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
@@ -129,14 +130,18 @@ public class MyXMLHandler implements DocHandler {
 	// List of LocateableExpPair objects
 	// for setting the start points at the end of the construction
 	// (needed for GeoText and GeoVector)
-	private LinkedList startPointList = new LinkedList();
+	private LinkedList<LocateableExpPair> startPointList = new LinkedList<LocateableExpPair>();
+
+	// List of GeoExpPair objects
+	// for setting the linked geos needed for GeoTextFields
+	private LinkedList<GeoExpPair> linkedGeoList = new LinkedList<GeoExpPair>();
 
 	// List of GeoExpPair condition objects
 	// for setting the conditions at the end of the construction
 	// (needed for GeoText and GeoVector)
-	private LinkedList showObjectConditionList = new LinkedList();
-	private LinkedList dynamicColorList = new LinkedList();
-	private LinkedList animationSpeedList = new LinkedList();
+	private LinkedList<GeoExpPair> showObjectConditionList = new LinkedList<GeoExpPair>();
+	private LinkedList<GeoExpPair> dynamicColorList = new LinkedList<GeoExpPair>();
+	private LinkedList<GeoExpPair> animationSpeedList = new LinkedList<GeoExpPair>();
 
 	private class GeoExpPair {
 		GeoElement geo;
@@ -1759,6 +1764,7 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("construction")) {
 				// process start points at end of construction
 				processStartPointList();
+				processLinkedGeoList();
 				processShowObjectConditionList();
 				processDynamicColorList();
 				//processDynamicCoordinatesList();
@@ -1965,6 +1971,9 @@ public class MyXMLHandler implements DocHandler {
 				break;
 			} else if (eName.equals("layer")) {
 				ok = handleLayer(attrs);
+				break;
+			} else if (eName.equals("linkedGeo")) {
+				ok = handleLinkedGeo(attrs);
 				break;
 			}
 
@@ -2917,6 +2926,48 @@ public class MyXMLHandler implements DocHandler {
 			throw new MyError(app, "processStartPointList: " + e.toString());
 		}
 		startPointList.clear();
+	}
+
+	/**
+	 * Linked Geos have to be handled at the end of the construction, because
+	 * they could depend on objects that are defined after this GeoElement.
+	 * 
+	 * So we store all (geo, expression) pairs and process them at
+	 * the end of the construction.
+	 * 
+	 * @see processLinkedGeoList
+	 */
+	private boolean handleLinkedGeo(LinkedHashMap<String, String> attrs) {
+
+		// name of linked geo
+		String exp = (String) attrs.get("exp");
+
+		if (exp != null) {
+			// store (geo, epxression, number) values
+			// they will be processed in processLinkedGeos() later
+			linkedGeoList.add(new GeoExpPair(geo, exp));	
+		}
+		else 
+			return false;
+		
+		return true;
+	}
+
+	private void processLinkedGeoList() {
+		try {
+			Iterator<GeoExpPair> it = linkedGeoList.iterator();
+
+			while (it.hasNext()) {
+				GeoExpPair pair = (GeoExpPair) it.next();
+				
+				((GeoTextField)pair.geo).setLinkedGeo(kernel.lookupLabel(pair.exp));
+			}
+		} catch (Exception e) {
+			linkedGeoList.clear();
+			e.printStackTrace();
+			throw new MyError(app, "processlinkedGeoList: " + e.toString());
+		}
+		linkedGeoList.clear();
 	}
 
 	private void processShowObjectConditionList() {
