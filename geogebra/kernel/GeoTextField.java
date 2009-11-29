@@ -2,6 +2,9 @@ package geogebra.kernel;
 
 public class GeoTextField extends GeoButton {
 
+	private GeoElement linkedGeo = null;
+	
+	
 	public GeoTextField(Construction c) {
 		
 		super(c);
@@ -20,6 +23,14 @@ public class GeoTextField extends GeoButton {
     
 	public boolean isTextField() {
 		return true;
+	}
+	
+	public void setLinkedGeo(GeoElement geo) {
+		linkedGeo = geo;
+	}
+	
+	public GeoElement getLinkedGeo() {
+		return linkedGeo;
 	}
 	
 

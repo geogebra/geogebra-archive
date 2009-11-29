@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
@@ -29,11 +30,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,8 +53,11 @@ public class ButtonDialog extends JDialog
 	private static final long serialVersionUID = 1L;
 	private JTextComponent tfCaption, tfScript, tfScript2;
 	private JPanel btPanel;
-	private DefaultListModel listModel;
+	//private DefaultListModel listModel;
 	private DefaultComboBoxModel comboModel;
+	
+	private GeoElement linkedGeo = null;
+	private boolean textField = false;
 	
 	private Point location;
 	private JButton btApply, btCancel;
@@ -73,6 +79,7 @@ public class ButtonDialog extends JDialog
 	public ButtonDialog(Application app, int x, int y, boolean textField) {
 		super(app.getFrame(), false);
 		this.app = app;		
+		this.textField = textField;
 		addWindowListener(this);
 		
 		// create temp geos that may be returned as result
@@ -104,6 +111,55 @@ public class ButtonDialog extends JDialog
 		JPanel captionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		captionPanel.add(captionLabel);
 		captionPanel.add(ip);
+		
+		
+		// combo box to link GeoElement to TextField
+		comboModel = new DefaultComboBoxModel();
+		TreeSet sortedSet = app.getKernel().getConstruction().
+									getGeoSetNameDescriptionOrder();			
+		
+		
+		if (textField) {
+			// lists for combo boxes to select input and output objects
+			// fill combobox models
+			Iterator it = sortedSet.iterator();
+			comboModel.addElement(null);
+			while (it.hasNext()) {
+				GeoElement geo = (GeoElement) it.next();				
+				if (geo.isEuclidianShowable()) {				
+					comboModel.addElement(geo);
+				}
+			}	
+			
+			if (comboModel.getSize() > 1) {
+		
+				final JComboBox cbAdd = new JComboBox(comboModel);
+				// listener for the combobox
+				MyComboBoxListener ac = new MyComboBoxListener() {
+					public void doActionPerformed(Object source) {				
+						GeoElement geo = (GeoElement) cbAdd.getSelectedItem();		
+						//if (geo == null)
+						//{
+						//	
+						//	return;
+						//}
+						
+						linkedGeo = geo;	
+						((GeoTextField)button).setLinkedGeo(geo);
+						
+						cbAdd.removeActionListener(this);		
+						
+						//cbAdd.setSelectedItem(null);
+						cbAdd.addActionListener(this);
+					}
+				};
+				cbAdd.addActionListener(ac);
+				cbAdd.addMouseListener(ac);
+				
+				captionPanel.add(cbAdd);
+			}
+		}
+
 		
 		// create script panel
 		JLabel scriptLabel = new JLabel(app.getPlain("JavaScript")+":");

@@ -14,6 +14,7 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoTextField;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -162,7 +163,15 @@ public final class DrawTextField extends Drawable {
 
 		public void focusLost(FocusEvent e) {
 			view.getEuclidianController().textfieldHasFocus(false);
-			geo.runScripts(textField.getText());
+			
+			GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
+			
+			if (linkedGeo != null) {
+				geo.getKernel().getAlgebraProcessor().changeGeoElement(linkedGeo, textField.getText(), false);			
+
+			}
+			
+			else geo.runScripts(textField.getText());
 			
 		}
 
