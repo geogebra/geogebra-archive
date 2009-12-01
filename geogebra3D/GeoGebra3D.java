@@ -23,6 +23,8 @@ import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.main.Application;
 import geogebra.util.Util;
+import geogebra3D.Application3D;
+import geogebra3D.GeoGebraApplication3D;
 
 import java.awt.dnd.DropTarget;
 
