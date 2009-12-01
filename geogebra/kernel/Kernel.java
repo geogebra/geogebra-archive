@@ -275,6 +275,8 @@ public class Kernel {
 	 * @return the Evaluator for ExpressionNode
 	 */
 	public ExpressionNodeEvaluator getExpressionNodeEvaluator(){
+		if (expressionNodeEvaluator == null)
+			newExpressionNodeEvaluator();
 		return expressionNodeEvaluator;
 	}
 	
