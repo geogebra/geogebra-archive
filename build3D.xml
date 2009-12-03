@@ -56,7 +56,7 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar">		
+			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jogl">		
 	</target>
 	
 	<manifest file="../manifest.mf">	    
@@ -75,7 +75,7 @@ office@geogebra.org
 		<mkdir dir="${build.dir}/unsigned/unpacked"/>
 		<mkdir dir="${propertiestemp.dir}"/>
 		<delete>
-		    <fileset dir="${build.dir}" includes="**/geogebra*.jar, **/*.jar.pack.gz"/>
+		    <fileset dir="${build.dir}" includes="**/geogebra*.jar, **/jogl.jar, **/gluegen-rt.jar **/*.jar.pack.gz"/>
 		</delete>		
 	</target>
 	
@@ -114,6 +114,16 @@ office@geogebra.org
 				includes="geogebra/*"			
 				excludes="**/*.java"/>
 		</jar>
+	</target>
+	
+	<!-- copies the jogl jars  -->
+	<target name="ggb-copy-jogl" depends="clean" description="copy jogl jars">		
+		<copy file="${src.dir}/3D/jogl.jar"
+		      tofile="${build.dir}/jogl.jar">
+		</copy>
+		<copy file="${src.dir}/3D/gluegen-rt.jar"
+		      tofile="${build.dir}/gluegen-rt.jar">
+		</copy>
 	</target>
 	
 	<!-- create index.list in geogebra.jar for optimized loading of other jars by Java classloader -->
