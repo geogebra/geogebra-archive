@@ -7,6 +7,7 @@
 -injars ../build/geogebra_gui.jar
 -injars ../build/geogebra_export.jar
 -injars ../build/geogebra_cas.jar
+-injars ../build/geogebra_3d.jar
 
 -outjars ../build/temp
 
@@ -20,7 +21,7 @@
 ## Rhino javascript library uses reflection, so can't process with ProGuard
 -libraryjars ../build/geogebra_javascript.jar
 
--libraryjars ../build/geogebra_3d.jar
+#-libraryjars ../build/geogebra_3d.jar
 
 ## 3D
 -libraryjars 3D/jogl.jar
