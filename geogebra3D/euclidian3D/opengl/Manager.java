@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import java.awt.Color;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
@@ -94,7 +96,6 @@ abstract public class Manager {
 	
 	abstract public void endPolygon();
 	
-	abstract public void removePolygon(int index);
 
 	
 	
@@ -106,7 +107,9 @@ abstract public class Manager {
 	/////////////////////////////////////////////
 
 	
-	
+	abstract public void draw(int index);
+	abstract public void remove(int index);
+
 	/** draw the geometry
 	 * @param geometry
 	 */
@@ -154,6 +157,14 @@ abstract public class Manager {
 	 */
 	abstract protected void color(float r, float g, float b);
 	
+	/** creates a color (r,g,b,a)
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a blue alpha
+	 * 
+	 */
+	abstract protected void color(float r, float g, float b, float a);
 	
 	
 	/////////////////////////////////////////////
@@ -163,7 +174,7 @@ abstract public class Manager {
 	
 	abstract public void addVertexToPolygon(double x, double y, double z);
 	
-	abstract public void drawPolygon(int index);
+	abstract public int newPlane(Color color, float alpha);
 
 
 	

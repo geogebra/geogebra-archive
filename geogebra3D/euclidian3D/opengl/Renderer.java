@@ -309,6 +309,7 @@ public class Renderer implements GLEventListener {
         
         // update 3D view
         view3D.update();
+        view3D.updateDrawablesNow();
 
         // update 3D drawables
         drawList3D.updateAll();
@@ -654,7 +655,7 @@ public class Renderer implements GLEventListener {
      * sets the drawing matrix to openGL.
      * same as initMatrix(m_drawingMatrix)
      */
-    private void initMatrix(){
+    public void initMatrix(){
     	initMatrix(m_drawingMatrix);
     }
     
@@ -681,7 +682,7 @@ public class Renderer implements GLEventListener {
     /**
      * turn off the last drawing matrix set in openGL.
      */
-    private void resetMatrix(){
+    public void resetMatrix(){
     	gl.glPopMatrix();
     }
     
@@ -786,6 +787,12 @@ public class Renderer implements GLEventListener {
     
     ///////////////////////////////////////////////////////////
     //drawing geometries
+    
+    
+    public Manager getGeometryManager(){
+    	return geometryManager;
+    }
+    
     
     /**
      * draws a segment from x=x1 to x=x2 according to drawing matrix
@@ -1014,6 +1021,9 @@ public class Renderer implements GLEventListener {
     }
     
     
+    
+    
+    
     /** draws a grid according to current drawing matrix.
      * @param a_x1 x-coordinate of the top-left corner
      * @param a_y1 y-coordinate of the top-left corner
@@ -1174,31 +1184,8 @@ public class Renderer implements GLEventListener {
      */
     public int startPolygon(float nx, float ny, float nz){
     	
-    	//if (geometryManager!=null)
-    		return geometryManager.startPolygon(nx,ny,nz);
+    	return geometryManager.startPolygon(nx,ny,nz);
  
-    	//return 0;
-    	/*
-	    RendererTesselCallBack tessCallback = new RendererTesselCallBack(gl, glu);
-
-	    
-	    tobj = glu.gluNewTess();
-
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
-	    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
-	    
-	    //TODO glu.gluTessNormal(tobj, 0, 0, 1);
-
-    	gl.glNormal3f(0, 0, 1);
-    	
-	    //gl.glShadeModel(GL.GL_SMOOTH);
-	    glu.gluTessBeginPolygon(tobj, null);
-	    glu.gluTessBeginContour(tobj);
-	    */
-
     }
     
     
@@ -1207,8 +1194,6 @@ public class Renderer implements GLEventListener {
      * @param y y-coordinate
      */
     public void addToPolygon(double x, double y){
-    	//double[] point = {x,y,0};//new double
-    	//glu.gluTessVertex(tobj, point, 0, point);
     	addToPolygon(x, y, 0);
     }
     
@@ -1219,10 +1204,7 @@ public class Renderer implements GLEventListener {
      * @param z z-coordinate
      */
     public void addToPolygon(double x, double y, double z){
-    	//double[] point = {x,y,z};//new double
-    	//glu.gluTessVertex(tobj, point, 0, point);
-    	//if (geometryManager!=null)
-    		geometryManager.addVertexToPolygon(x, y, z);
+    	geometryManager.addVertexToPolygon(x, y, z);
     }    
     
     
@@ -1234,28 +1216,20 @@ public class Renderer implements GLEventListener {
      */
     public void endPolygon(){
     	
-    	/*
-	    glu.gluTessEndContour(tobj);
-	    glu.gluTessEndPolygon(tobj);
-	    
-	    glu.gluDeleteTess(tobj);
-	    */
-    	//if (geometryManager!=null)
-    		geometryManager.endPolygon();
+    	geometryManager.endPolygon();
         
-	
     }
     
     
     public void removePolygon(int index){
     	if (geometryManager!=null)
-    		geometryManager.removePolygon(index);
+    		geometryManager.remove(index);
     }
    
     
     
     public void drawPolygon(int index){
-    	geometryManager.drawPolygon(index);
+    	geometryManager.draw(index);
     }
     
     /**

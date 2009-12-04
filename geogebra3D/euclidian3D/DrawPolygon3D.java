@@ -26,7 +26,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
 	/** gl index of the polygon */
-	private int polygonIndex;
+	private int polygonIndex = -1;
 	
 	
 	

@@ -1847,14 +1847,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void updateDrawables(){
 		
 		xOyPlane.getDrawable3D().viewChanged();
-		xOyPlane.getDrawable3D().update();
+		//xOyPlane.getDrawable3D().setWaitForUpdate();
 		for(int i=0;i<3;i++){
 			axis[i].getDrawable3D().viewChanged();
-			axis[i].getDrawable3D().update();
+			//axis[i].getDrawable3D().setWaitForUpdate();
 		}
 	}
 	
-	
+	public void updateDrawablesNow(){
+		
+		xOyPlane.getDrawable3D().update();
+		for(int i=0;i<3;i++){
+			axis[i].getDrawable3D().update();
+		}
+	}
 
 
 }

@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import java.awt.Color;
+
 import geogebra.main.Application;
 
 import javax.media.opengl.GL;
@@ -74,7 +76,10 @@ public class ManagerGLList extends Manager {
 	}
 	
 	
-	
+	/////////////////////////////////////////////
+	// POLYGONS METHODS
+	/////////////////////////////////////////////
+
 	
 	/** start a new polygon 
 	 * @param nx normal x coordinate
@@ -148,7 +153,7 @@ public class ManagerGLList extends Manager {
     /** remove the polygon from gl memory
      * @param index
      */
-    public void removePolygon(int index){
+    public void remove(int index){
     	
     	gl.glDeleteLists(index, 1);
     	
@@ -156,16 +161,24 @@ public class ManagerGLList extends Manager {
 
 	
 	
-	
-	
-	
+	/////////////////////////////////////////////
+	// PLANE METHODS
+	/////////////////////////////////////////////
+
+    public int newPlane(Color color, float alpha){
+    	return plane.create(color,alpha);
+    }
+    
+ 	
 	
 	
 	/////////////////////////////////////////////
 	// DRAWING METHODS
 	/////////////////////////////////////////////
 
-	
+	public void draw(int index){
+		gl.glCallList(index);
+	}
 	
 	public void draw(Geometry geometry, int index){
 
@@ -202,6 +215,9 @@ public class ManagerGLList extends Manager {
 		gl.glColor3f(r,g,b);
 	}
 	
+	protected void color(float r, float g, float b, float a){
+		gl.glColor4f(r,g,b,a);
+	}
 	
 	/////////////////////////////////////////////
 	// POLYGONS DRAWING METHODS
@@ -219,9 +235,7 @@ public class ManagerGLList extends Manager {
 	}
 	
 	
-	public void drawPolygon(int index){
-		gl.glCallList(index);
-	}
+
 	
 
 

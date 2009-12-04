@@ -8,7 +8,7 @@ import java.awt.Color;
 public abstract class Drawable3DSurfaces extends Drawable3D {
 	
 	/** alpha value for rendering transparency */
-	private float alpha;
+	protected float alpha;
 
 	public Drawable3DSurfaces(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);

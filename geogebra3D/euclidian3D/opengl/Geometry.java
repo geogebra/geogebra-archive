@@ -150,6 +150,18 @@ public abstract class Geometry {
 			manager.color(r, g, b);
 	}
 
+	/** creates a color (r,g,b,a)
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a alpha
+	 * 
+	 */
+	protected void color(float r, float g, float b, float a){
+		if (hasColor)
+			manager.color(r, g, b, a);
+	}
+
 	
 	
 	
