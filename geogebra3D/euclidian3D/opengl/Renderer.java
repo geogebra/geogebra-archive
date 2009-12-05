@@ -1136,6 +1136,7 @@ public class Renderer implements GLEventListener {
     	
     	gl.glDisable(GL.GL_LIGHTING);
     	initMatrix();
+    	//gl.glScalef(10f, 10f, 10f);
     	geometryManager.cursor.draw(GeometryCursor.TYPE_CROSS3D);
 		resetMatrix();
     	gl.glEnable(GL.GL_LIGHTING);

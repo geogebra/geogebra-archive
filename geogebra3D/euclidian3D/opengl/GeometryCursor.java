@@ -186,58 +186,141 @@ public class GeometryCursor extends Geometry {
 	private void cursorCross3D(){
 		
 		
-		cursorCross2D();
+		float t = (float) (thickness / Math.tan(Math.PI/8));
 		
-		/*
+		float size2 = size+thickness2;
 		
 		//white parts
 		color(1,1,1);
 		
-		//up and down
 		quadSymxOyRotOz90SymOz(
-				thickness, thickness, depth,
-				thickness, size, depth,
-				-thickness, size, depth,
-				-thickness, thickness, depth
-		);
+				thickness, t, t, 
+				-thickness, t, t,
+				-thickness, t, size2,
+				thickness, t, size2
+				);
 		
-		//vertical
 		quadSymxOyRotOz90SymOz(
-				thickness, thickness+thickness2, depth,
-				-thickness, thickness+thickness2, depth,
-				-thickness, thickness+thickness2, depth+size,
-				thickness, thickness+thickness2, depth+size
-		);
+				thickness, t, t, 
+				thickness, size2, t,
+				-thickness, size2, t, 
+				-thickness, t, t
+				);
 		
+		quadRotOz90SymOz(
+				t, t, thickness, 
+				t, t, -thickness,
+				t, size2, -thickness, 
+				t, size2, thickness
+				);
+				
+		quadRotOz90SymOz(
+				-t, t, thickness, 
+				-t, size2, thickness,
+				-t, size2, -thickness, 
+				-t, t, -thickness
+				);
+		
+		
+		quadRotOz90SymOz(
+				thickness, size2+t-thickness, -thickness,
+				-thickness, size2+t-thickness, -thickness,
+				-thickness, size2+t-thickness, thickness,
+				thickness, size2+t-thickness, thickness
+				);	
 
+		quadSymxOyRotOz90SymOz(
+				thickness, -thickness, size2+t-thickness, 
+				thickness, thickness, size2+t-thickness,
+				-thickness, thickness, size2+t-thickness,
+				-thickness, -thickness, size2+t-thickness
+				);	
+		
+		
 		//black parts
 		color(0,0,0);
 		
-		cursorCross();
-		
-		//vertical
 		quadSymxOyRotOz90SymOz(
-				thickness+thickness2, thickness+thickness2, depth,
-				thickness, thickness+thickness2, depth,
-				thickness, thickness+thickness2, depth+size,
-				thickness+thickness2, thickness+thickness2, depth+size
-		);
-		quadSymxOyRotOz90SymOz(
-				thickness+thickness2, -thickness-thickness2, depth,
-				thickness+thickness2, -thickness-thickness2, depth+size,
-				thickness, -thickness-thickness2, depth+size,
-				thickness, -thickness-thickness2, depth
-		);
+				thickness, t, t, 
+				thickness, t, size2,
+				t, thickness, size2,
+				t, thickness, t
+				);
 		
-		//top and bottom
 		quadSymxOyRotOz90SymOz(
-				thickness+thickness2, thickness+thickness2, depth+size,
-				thickness, thickness+thickness2, depth+size,
-				thickness, thickness, depth+size,
-				thickness+thickness2, thickness, depth+size
-		);		
+				thickness, t, t, 
+				t, t, thickness,
+				t, size2, thickness, 
+				thickness, size2, t
+				);
 		
-		*/
+		
+		quadSymxOyRotOz90SymOz(
+				-thickness, t, t, 
+				-thickness, size2, t,
+				-t, size2, thickness, 
+				-t, t, thickness
+				);
+
+		
+
+				
+		quadSymxOyRotOz90SymOz(
+				thickness, size2, t, 
+				thickness, size2+t-thickness, thickness,
+				-thickness, size2+t-thickness, thickness,
+				-thickness, size2, t
+				);	
+		
+		
+		
+		quadRotOz90SymOz(
+				t, size2, thickness, 
+				t, size2, -thickness,
+				thickness, size2+t-thickness, -thickness,
+				thickness, size2+t-thickness, thickness
+				);	
+		
+		quadRotOz90SymOz(
+				-t, size2, thickness, 
+				-thickness, size2+t-thickness, thickness,
+				-thickness, size2+t-thickness, -thickness,
+				-t, size2, -thickness
+				);	
+		
+		
+		quadSymxOyRotOz90SymOz(
+				t, thickness, size2,
+				thickness, thickness, size2+t-thickness,
+				thickness, -thickness, size2+t-thickness,
+				t, -thickness, size2
+				);	
+		
+		//color(1,1,1);
+		
+		//TODO use triangle
+		quadSymxOyRotOz90SymOz(
+				thickness, t, t, 
+				thickness, t, t,
+				t, thickness, t,
+				t, t, thickness
+				);	
+		
+		//TODO use triangle
+		quadSymxOzSymxOyRotOz90SymOz(
+				thickness, size2, t, 
+				thickness, size2, t, 
+				t, size2, thickness,
+				thickness, size2+t-thickness, thickness
+				);	
+
+		//TODO use triangle
+		quadSymxOyRotOz90SymOz(
+				thickness, t, size2, 
+				thickness, thickness, size2+t-thickness,
+				t, thickness, size2, 
+				thickness, t, size2
+				);	
 		
 	}
 	
@@ -400,6 +483,26 @@ public class GeometryCursor extends Geometry {
 		
 	}
 	
+	private void quadSymxOzSymxOyRotOz90SymOz(float x1, float y1, float z1, 
+			float x2, float y2, float z2,
+			float x3, float y3, float z3,
+			float x4, float y4, float z4){	
+		
+		quadSymxOyRotOz90SymOz(
+				x1, y1, z1, 
+				x2, y2, z2, 
+				x3, y3, z3, 
+				x4, y4, z4
+				);
+		
+		quadSymxOyRotOz90SymOz(
+				x1, -y1, z1, 
+				x4, -y4, z4, 
+				x3, -y3, z3, 
+				x2, -y2, z2
+				);
+		
+	}
 	private void quadRotOz90SymOz(float x1, float y1, float z1, 
 			float x2, float y2, float z2,
 			float x3, float y3, float z3,
