@@ -3061,7 +3061,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			case GeoElement.GEO_CLASS_BOOLEAN:
 				drawLayers[layer].remove(d);
 				// remove checkbox
-				((DrawBoolean) d).remove();
+				// not needed now it's not drawn by the view
+				//((DrawBoolean) d).remove();
+				break;
+			
+			case GeoElement.GEO_CLASS_BUTTON:
+			case GeoElement.GEO_CLASS_TEXTFIELD:
+				drawLayers[layer].remove(d);
+				// remove button
+				((DrawButton) d).remove();
 				break;
 			
 			case GeoElement.GEO_CLASS_POINT:
