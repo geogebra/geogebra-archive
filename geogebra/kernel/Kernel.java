@@ -1756,6 +1756,17 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Spreadsheet Object from coords
+	 */
+	final public GeoElement Cell(
+		String label,
+		NumberValue a, NumberValue b) {
+		AlgoCell algo = new AlgoCell(cons, label, a, b);
+		GeoElement ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
 	 * ColumnName[]
 	 */
 	final public GeoText ColumnName(
