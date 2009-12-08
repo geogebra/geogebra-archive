@@ -118,6 +118,7 @@ public class ButtonDialog extends JDialog
 		TreeSet sortedSet = app.getKernel().getConstruction().
 									getGeoSetNameDescriptionOrder();			
 		
+		final JComboBox cbAdd = new JComboBox(comboModel);
 		
 		if (textField) {
 			// lists for combo boxes to select input and output objects
@@ -126,14 +127,13 @@ public class ButtonDialog extends JDialog
 			comboModel.addElement(null);
 			while (it.hasNext()) {
 				GeoElement geo = (GeoElement) it.next();				
-				if (geo.isEuclidianShowable()) {				
+				if (!geo.isGeoImage() && !(geo.isGeoButton()) && !(geo.isGeoBoolean())) {				
 					comboModel.addElement(geo);
 				}
 			}	
 			
 			if (comboModel.getSize() > 1) {
 		
-				final JComboBox cbAdd = new JComboBox(comboModel);
 				// listener for the combobox
 				MyComboBoxListener ac = new MyComboBoxListener() {
 					public void doActionPerformed(Object source) {				
@@ -176,6 +176,11 @@ public class ButtonDialog extends JDialog
 		scriptPanel.add(scriptLabel);
 		scriptPanel.add(ip2);
 		
+		JPanel linkedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JLabel linkedLabel = new JLabel(app.getPlain("LinkedObject")+":");
+		linkedPanel.add(linkedLabel);
+		linkedPanel.add(cbAdd);
+		
 		// buttons
 		btApply = new JButton(app.getPlain("Apply"));
 		btApply.setActionCommand("Apply");
@@ -192,7 +197,10 @@ public class ButtonDialog extends JDialog
 		
 		// create object list
 		optionPane.add(captionPanel, BorderLayout.NORTH);
-		optionPane.add(scriptPanel, BorderLayout.CENTER);	
+		if (textField)
+			optionPane.add(linkedPanel, BorderLayout.CENTER);	
+		else
+			optionPane.add(scriptPanel, BorderLayout.CENTER);	
 		optionPane.add(btPanel, BorderLayout.SOUTH);	
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
