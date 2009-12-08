@@ -1,5 +1,4 @@
 GeoGebra - Dynamic Mathematics for Everyone
-Copyright 2001-2009 GeoGebra Inc.
 http://www.geogebra.org/
 
 IMPORTANT NOTE concerning LICENSES
@@ -12,7 +11,6 @@ repository for non-commercial purposes. For details please read
 on and see the file LICENSE.txt
 
 * GeoGebra Language Files (geogebra.properties folder)
-   Copyright 2001-2009 GeoGebra Inc.
    Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License 
    http://creativecommons.org/licenses/by-nc-nd/3.0/
 

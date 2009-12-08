@@ -1,6 +1,6 @@
 /* 
 GeoGebra - Dynamic Mathematics for Everyone
-Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
+http://www.geogebra.org
 
 This file is part of GeoGebra.
 

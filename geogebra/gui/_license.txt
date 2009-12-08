@@ -1,5 +1,4 @@
 GeoGebra - Dynamic Mathematics for Everyone
-Copyright 2001-2009 GeoGebra Inc.
 http://www.geogebra.org/
   
 LICENSE
@@ -102,7 +101,6 @@ SOFTWARE
 ----------------------------------------------------------------------
 
 GeoGebra - Dynamic Mathematics for Everyone
-Copyright 2001-2009 GeoGebra Inc.
 http://www.geogebra.org/
 
                                 LICENSE
@@ -120,7 +118,7 @@ Note for Commercial Users (e.g. publishers or online schools)
   If you would like to use GeoGebra applets, installers, or documentation
   for commercial purposes and put the resulting work under your copyright
   (e.g. for books, online courses, or on websites under your own copyright),
-  you can do so by setting up a commercial usage agreement with GeoGebra Inc. 
+  you can do so by setting up a commercial usage agreement with GeoGebra. 
   Please write to office@geogebra.org for details and we will help you to
   find a simple and good solution for your specific purposes.
 

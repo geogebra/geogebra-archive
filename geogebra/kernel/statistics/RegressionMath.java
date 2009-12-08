@@ -5,8 +5,8 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.jama.Matrix;
 
 /* 
-GeoGebra - Dynamic Mathematics for Schools
-Copyright Markus Hohenwarter and GeoGebra Inc.,  http://www.geogebra.org
+GeoGebra - Dynamic Mathematics for Everyone
+http://www.geogebra.org
 
 This file is part of GeoGebra.
 

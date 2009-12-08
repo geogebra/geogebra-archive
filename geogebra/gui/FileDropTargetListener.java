@@ -1,5 +1,5 @@
 /*
- * GeoGebra - Dynamic Mathematics for Schools Copyright Markus Hohenwarter and GeoGebra Inc., 
+ * GeoGebra - Dynamic Mathematics for Everyone 
  * http://www.geogebra.org
  * 
  * This file is part of GeoGebra.

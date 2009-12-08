@@ -1,6 +1,6 @@
 /* 
-GeoGebra - Dynamic Mathematics for Schools
-Copyright Yves Kreis and GeoGebra Inc.,  http://www.geogebra.org
+GeoGebra - Dynamic Mathematics for Everyone
+http://www.geogebra.org
 
 This file is part of GeoGebra.
 
