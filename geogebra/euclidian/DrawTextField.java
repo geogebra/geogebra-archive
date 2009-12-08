@@ -151,6 +151,7 @@ public final class DrawTextField extends Drawable {
 		public void mouseEntered(MouseEvent arg0) {
 			hit = true;
 			view.setToolTipText(null);
+			updateText();
 		}
 
 		public void mouseExited(MouseEvent arg0) {
@@ -159,6 +160,7 @@ public final class DrawTextField extends Drawable {
 
 		public void focusGained(FocusEvent e) {
 			view.getEuclidianController().textfieldHasFocus(true);
+			updateText();
 			
 		}
 

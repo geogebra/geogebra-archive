@@ -36,17 +36,19 @@ public class GeoTextField extends GeoButton {
 	}
 	
 	protected String getXMLtags() {
+		
+		StringBuilder sb = new StringBuilder(); 
+		sb.append(super.getXMLtags());
 		if (linkedGeo != null) {
-	    	StringBuilder sb = new StringBuilder();    	
+   	
 			sb.append("\t<linkedGeo exp=\"");
 			sb.append(Util.encodeXML(linkedGeo.getLabel()));
 				sb.append("\"");			    	
 	    	
 			sb.append("/>\n");
-			return sb.toString();
 		}
 		
-		return "";
+		return sb.toString();
 	}
 	
 

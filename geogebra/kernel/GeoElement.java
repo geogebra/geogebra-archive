@@ -4063,10 +4063,10 @@ public abstract class GeoElement
 		int i = -1;
 		try {
 			for (i = 0 ; i < script.length ; i++) {
-				System.out.println(script[i]);
 				String command = script[i].trim();
 
 				if (!command.equals("") && command.charAt(0) != '#') {
+					System.out.println(script[i]);
 					ab.processAlgebraCommandNoExceptionHandling(command, false);
 					success = true;
 				}

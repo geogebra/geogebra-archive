@@ -107,26 +107,6 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 		return sbToString;
 	}
 
-	
-	/**
-	 * returns all class-specific xml tags for saveXML
-	 */
-	protected String getXMLtags() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getXMLvisualTags(isIndependent()));
-		sb.append(getXMLfixedTag());
-		sb.append(getAuxiliaryXML());
-		
-		// checkbox fixed
-		if (buttonFixed) {			
-			sb.append("\t<checkbox fixed=\"");
-			sb.append(buttonFixed);
-			sb.append("\"/>\n");	
-		}
-		
-		return sb.toString();
-	}	
-
 	public boolean isVectorValue() {
 		return false;
 	}
