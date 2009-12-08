@@ -1,5 +1,5 @@
 GeoGebra Language Files License
-GeoGebra Inc, office@geogebra.org
+GeoGebra, office@geogebra.org
 
 All GeoGebra language files (*.properties files) are subject 
 to the following Creative Commons Attribution-NonCommercial-NoDerivs 3.0 
@@ -10,7 +10,7 @@ free of charge under the following conditions:
  * Attribution. You must attribute the work
      (i.e. by linking to http://www.geogebra.org/)
  * NonCommercial. You may not use this work for commercial purposes 
-     without permission of GeoGebra Inc (office@geogebra.org).
+     without permission of GeoGebra (office@geogebra.org).
  * No Derivative Works. You may not alter, transform, or build upon 
      this work.
 

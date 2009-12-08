@@ -188,7 +188,7 @@ Note for Non-commercial Users (e.g private, schools, or universities)
     * Attribution. You must attribute the work
         (i.e. by linking to http://www.geogebra.org/)
     * Noncommercial. You may not use this work for commercial purposes
-        (unless you have approval from GeoGebra Inc, please contact us
+        (unless you have approval from GeoGebra, please contact us
          at office@geogebra.org).
     * Share Alike. If you alter, transform, or build upon this work, 
         you may distribute the resulting work only under the same, 
