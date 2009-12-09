@@ -29,6 +29,7 @@ import geogebra3D.kernel3D.Kernel3D;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -71,8 +72,11 @@ public abstract class Application3D extends Application{
 	    //TODO remove 3D test : just comment following line        
         new Test3D(kernel3D,euclidianView,euclidianView3D,this);
         
-
+        initToolBar3D();
         
+    }
+    
+    private void initToolBar3D(){
         //init toolbar
         
         String myToolBar3D =  EuclidianView3D.MODE_MOVE
@@ -99,9 +103,29 @@ public abstract class Application3D extends Application{
         dgm.setToolBarDefinition( myToolBar3D );
         //dgm.getLayout().getPerspective(0).setToolbarDefinition(myToolBar3D);
         
-        updateToolBar();
+        super.updateToolBar();
  		
     }      
+    
+    
+    //TODO remove this - keep until perspective manager process toolbar
+    public void updateToolBar() {
+    	
+    }
+
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 	public void initKernel(){
