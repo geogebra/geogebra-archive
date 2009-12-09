@@ -165,7 +165,10 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("pt", "BR")); // Portugese (Brazil)
 		supportedLocales.add(new Locale("pt", "PT")); // Portuguese (Portugal)
 		// supportedLocales.add(new Locale("pa")); // Punjabi
-		// supportedLocales.add(new Locale("ro")); // Romanian
+		// TODO: remove IS_PRE_RELEASE
+		if (GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("ro")); // Romanian
+		
 		supportedLocales.add(new Locale("ru")); // Russian
 		supportedLocales.add(new Locale("sr")); // Serbian
 		// TODO: remove IS_PRE_RELEASE
