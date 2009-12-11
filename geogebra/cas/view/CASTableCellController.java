@@ -82,16 +82,12 @@ public class CASTableCellController implements KeyListener {
 	private synchronized void handleEnterKey(KeyEvent e) {
 		if (Application.isControlDown(e)) {
 			// don't evaluate, only parse by GeoGebra
-			view.apply("Hold", null);	
+			view.processInput("Hold", null);	
 		} else {
 			// Eval
-			view.apply("Eval", null);
+			view.processInput("Eval", null);
 		}		
 	}
-	
-
-		
-
 
 	public void keyReleased(KeyEvent arg0) {
 	

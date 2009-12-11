@@ -24,7 +24,7 @@ public abstract class  Command_ABS{
     public void process(String ggbcmdprefix,String[] params){
     	//some processing
         if(casview!=null){
-        	casview.apply(ggbcmdprefix,params);
+        	casview.processInput(ggbcmdprefix,params);
         }else{
         	geogebra.main.Application.debug("casview not initialized!");
         }//if

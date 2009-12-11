@@ -102,9 +102,6 @@ public class GeoGebraCAS {
 			// undo special character handling
 			result = insertSpecialChars(result);
 
-			// TODO: remove
-			System.out.println("evaluateMathPiper: "+exp+"\n  Result: "+result);
-
 			return result;
 		} catch (Throwable th) {
 			//MathPiper.Evaluate("restart;");
@@ -514,10 +511,6 @@ public class GeoGebraCAS {
 	public synchronized ValidExpression parseGeoGebraCASInput(String exp) throws Throwable {
 		// parse input
 		ValidExpression ve = casParser.parseGeoGebraCASInput(exp);
-		
-		// TODO: remove
-		//Application.debug("  checkCASinput: " + ve);
-		
 		return ve;		
 	}
 	
@@ -545,7 +538,7 @@ public class GeoGebraCAS {
 				}
 			}
 		} catch (Throwable e) {
-			e.printStackTrace();			
+			//e.printStackTrace();			
 		}		
 		
 		// no real latex string: return null
@@ -712,10 +705,7 @@ public class GeoGebraCAS {
 		} catch (MissingResourceException e) {
 			ret = null;
 		}
-		
-		// TODO: remove
-		Application.debug("getMathPiperCommand for " + key + " gives: " + ret);
-		
+
 		return ret;
 	}
 	

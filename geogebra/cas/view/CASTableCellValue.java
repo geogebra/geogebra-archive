@@ -7,6 +7,7 @@ import geogebra.util.Util;
 public class CASTableCellValue {
 	private String input, output, latex;
 	private boolean error = false;
+	private boolean allowLaTeX = true;
 		
 
 	private CASView view;
@@ -31,11 +32,20 @@ public class CASTableCellValue {
 		return output;
 	}
 	
+	public void setAllowLaTeX(boolean flag) {
+		allowLaTeX = flag;
+	}
+	
 	public String getLaTeXOutput() {
-		if (error)
+		if (error || !allowLaTeX)
 			return null;
 		else if (latex == null) {
-			latex = view.getCAS().convertGeoGebraToLaTeXString(output);
+			try {
+				latex = view.getCAS().convertGeoGebraToLaTeXString(output);
+			} catch (Throwable th) {
+				System.err.println("no latex for: " + output);
+				latex = "";
+			}
 		}
 		
 		return latex;

@@ -130,7 +130,7 @@ implements ExpressionValue {
     private String toString(boolean symbolic, boolean LaTeX) {    
     	switch (kernel.getCASPrintForm()){
     		case ExpressionNode.STRING_TYPE_MATH_PIPER:
-    			// Yacas command syntax
+    			// MathPiper command syntax
     			return ((geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS()).
     				getMathPiperCommand(name, args, symbolic);    			    	
     			

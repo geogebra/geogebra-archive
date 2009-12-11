@@ -41,17 +41,13 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	private boolean useGeoGebraVariableValues = true;
 
 	private CASTable consoleTable;
+	private CASInputHandler casInputHandler;
 
 	private Application app;
 	private GeoGebraCAS cas;
 	private JPanel btPanel;
 	
-	// equation patterns
-	// 5 * (3x + 4 = 7) - 4
-	private static Pattern equationPatternParentheses = Pattern.compile("(.*)\\((.+)=(.+)\\)(.*)");
-	// 3x + 4 = 7
-	private static Pattern equationPatternSimple = Pattern.compile("(.+)=(.+)");
-	
+
 	public CASView(Application app) {
 		kernel = app.getKernel();
 		this.app = app;
@@ -132,6 +128,9 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 			}
 		);
 		
+		// input handler
+		casInputHandler = new CASInputHandler(this);
+		
 		// Ulven 01.03.09: excange line 90-97 with:
 		// BtnPanel which sets up all the button.
 		//add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
@@ -140,6 +139,14 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		
 		addFocusListener(this);		
 	}		
+	
+	/** 
+	 * Process currently selected cell using the given command and parameters, e.g.
+	 *  "Integral", [ "x" ]
+	 */	
+	public void processInput(String ggbcmd, String[] params){
+		casInputHandler.processInput(ggbcmd, params);
+	}
 	
 	private void createButtonPanel() {
 		if (btPanel != null)
@@ -174,70 +181,9 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		consoleTable.addMouseListener(tableCellMouseListener);		
 	}
 
-//	public static class CASListModel extends AbstractListModel {
-//
-//		private static final long serialVersionUID = 1L;
-//		protected CASTableModel model;
-//
-//		public CASListModel(CASTableModel model0) {
-//			model = model0;
-//		}
-//
-//		public int getSize() {
-//			return model.getRowCount();
-//		}
-//
-//		public Object getElementAt(int index) {
-//			return "" + (index + 1);
-//		}
-//	}
-
-
-	// Key Listener for Console Table
-//	protected class ConsoleTableKeyListener implements KeyListener {
-//
-//		public void keyTyped(KeyEvent e) {
-//			// System.out.println("Key typed on rowheader");
-//			e.consume();
-//		}
-//
-//		public void keyPressed(KeyEvent e) {
-//			int keyCode = e.getKeyCode();
-//
-//			boolean metaDown = Application.isControlDown(e);
-//			boolean altDown = e.isAltDown();
-//
-//			// System.out.println("Key pressed on rowheader");
-//			// Application.debug(keyCode);
-//			switch (keyCode) {
-//
-//			case KeyEvent.VK_DELETE: // delete
-//			case KeyEvent.VK_BACK_SPACE: // delete on MAC
-//				int[] delRows = consoleTable.getSelectedRows();
-//				int delRowsSize = delRows.length;
-//				int i = 0;
-//				while (i < delRowsSize) {
-//					int delRow = delRows[i];
-//					consoleTable.deleteRow(delRow - i);
-//					System.out.println("Key Delete row : " + delRow);
-//					i++;
-//				}
-//				
-//				System.out.println("Key Delete or BackSpace Action Performed ");
-//				break;
-//			default:
-//				e.consume();
-//			}
-//		}
-//
-//		public void keyReleased(KeyEvent e) {
-//			// System.out.println("Key Released on rowheader");
-//			e.consume();
-//		}
-//
-//	}
-
-	
+	public boolean getUseGeoGebraVariableValues() {
+		return useGeoGebraVariableValues;
+	}
 
 	public GeoGebraCAS getCAS() {
 		return cas;
@@ -347,7 +293,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 				for (int i=0; i < menus.length; i++) {
 					if (source == menus[i]) {
 						int pos = menus[i].getSelectedIndex();
-						apply(menuStrings[i][pos][0], null);
+						processInput(menuStrings[i][pos][0], null);
 						// update tooltip
 						if (menuStrings[i][pos].length >= 3)
 							menus[i].setToolTipText(menuStrings[i][pos][2]);
@@ -372,153 +318,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		}
 							
 		return btPanel;	
-	}
-
-	// Ulven 01.03.09:
-	//Drop the whole ButtonListener, let buttons listen to themselves
-	//Only needs an apply("Integrate",{"x","a","b"}) method
-	//The Substitute command has to be handled another way, though...todo...
-	
-	/** Called from buttons and menus with for example:
-	 *  "Integral", [par1, par2, ...]
-	 *  Copied from apply(int mod)
-	 */	
-	public void apply(String ggbcmd,String[] params){
-		// TODO: remove
-		System.out.println("apply: " + ggbcmd + ", params: " + params);
-		
-		// get editor and possibly selected text
-		CASTableCellEditor cellEditor = consoleTable.getEditor();		
-		String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
-		int selStart = cellEditor.getInputSelectionStart();
-		int selEnd = cellEditor.getInputSelectionEnd();
-				
-		// save the edited value into the table model
-		consoleTable.stopEditing();
-		
-		// get current row and input text		
-		int selRow = consoleTable.getSelectedRow();	
-		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
-		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
-		String selRowInput = cellValue.getInput();	
-		if (selRowInput == null || selRowInput.length() == 0) {
-			consoleTable.startEditingRow(selRow);
-			return;
-		}
-		
-		// break text into prefix, evalText, postfix
-		String prefix, evalText, postfix;			
-		boolean hasSelectedText = selectedText == null || selectedText.trim().length() == 0;
-		if (hasSelectedText) {
-			// no selected text: evaluate input using current cell
-			prefix = "";
-			evalText = selRowInput;
-			postfix = "";		
-		}
-		else {
-			// selected text: break it up into prefix, evalText, and postfix
-			prefix = selRowInput.substring(0, selStart);
-			evalText = selectedText;
-			postfix = selRowInput.substring(selEnd);
-		}
-					
-		// TODO: remove
-		System.out.println("SELECTED ROW: " + selRow + ", prefix: " + prefix + ", evalText: " + evalText + ", postfix: " + postfix);					
-
-		if (ggbcmd.equals("Substitute")) {
-			// Create a CASSubDialog with the cell value
-			CASSubDialog d = new CASSubDialog(CASView.this, prefix, evalText, postfix, selRow);
-			d.setVisible(true);
-			return;
-		}
-		
-		// handle equations specially for simplify, expand, and factor
-		// simplify of equations should simplify lhs and rhs individually
-		else if (ggbcmd.equals("Simplify") ||
-				ggbcmd.equals("Expand") || 
-				ggbcmd.equals("Factor")) 
-		{
-			 // equation in parentheses: 5 * (3x + 4 = 7) - 4		
-			 Matcher m = equationPatternParentheses.matcher(evalText);
-			 boolean isEquation = m.matches();							 
-			 if (isEquation) {
-				 // Simplify[5 * (3x + 4 = 7) - 4] gets 
-				 // Simplify[5 * (3x + 4) - 4] = Simplify[5 * (7) - 4]
-				 String pre = m.group(1);
-				 String lhs = m.group(2);
-				 String rhs = m.group(3);
-				 String post = m.group(4);
-				 StringBuilder sb = new StringBuilder();
-				 sb.append(ggbcmd);
-				 sb.append("[");
-				 sb.append(pre);
-				 sb.append("(");
-				 sb.append(lhs);
-				 sb.append(")");
-				 sb.append(post);
-				 sb.append("]");
-				 sb.append("=");
-				 sb.append(ggbcmd);
-				 sb.append("[");
-				 sb.append(pre);
-				 sb.append("(");
-				 sb.append(rhs);
-				 sb.append(")");
-				 sb.append(post);
-				 sb.append("]");				 
-				 evalText = sb.toString();
-			 }
-			 else {
-				 // simple equation: 3x + 4 = 7
-				 m = equationPatternSimple.matcher(evalText);
-				 isEquation = m.matches();				 
-				 if (isEquation) {
-					 // Simplify[3x + 4 = 7] gets 
-					 // Simplify[3x + 4] = Simplify[7]				
-					 String lhs = m.group(1);
-					 String rhs = m.group(2);
-					 evalText=ggbcmd+"[" + lhs + "] = " + ggbcmd + "[" + rhs + "]";
-				 }
-				 else { 		
-					 // standard case: no equation
-					 evalText=ggbcmd+"["+ evalText + "]";
-				 }
-			 }						
-		}
-		
-		// standard case
-		else if (!ggbcmd.equals("Eval")){
-			// use action command as command for mathpiper
-			evalText=ggbcmd+"["+evalText+"]";
-		}
-									
-		// process evalText
-		String evaluation = null;
-		try {
-			// evaluate
-			evaluation = cas.processCASInput(evalText, useGeoGebraVariableValues);
-		} catch (Throwable th) {
-			th.printStackTrace();
-		}
-		
-		// Set the value into the table		
-		if (evaluation != null)	{
-			cellValue.setOutput(prefix + evaluation + postfix);
-		} else {
-			// 	error = app.getError("CAS.GeneralErrorMessage");
-			cellValue.setOutput(cas.getMathPiperError(), true);			
-		}
-		
-		consoleTable.updateRow(selRow);
-		
-		if (evaluation != null)	
-			// start editing next row (may create a new row)
-			consoleTable.startEditingRow(selRow + 1);
-		else
-			consoleTable.startEditingRow(selRow);
-		
-	}//apply(String,String[]
-		
+	}		
 
 	public Application getApp() {
 		return app;
