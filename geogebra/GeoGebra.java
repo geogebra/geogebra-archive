@@ -21,17 +21,18 @@ public class GeoGebra extends Object {
 	// GeoGebra version
 	public static final String  BUILD_DATE = "December 11, 2009";
 	public static final String  VERSION_STRING = "3.3.43.0";
-	public static final boolean IS_PRE_RELEASE = !VERSION_STRING.endsWith(".0");
-		
-	// enable I2G on all pre-releases
-	public static final boolean DISABLE_I2G = !IS_PRE_RELEASE;	
+	public static final String  SHORT_VERSION_STRING = "4.0"; // used for online archive
 
 	// File format versions
 	public static final String XML_FILE_FORMAT = "3.3";
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
+	
+	// pre-releases and I2G
+	public static final boolean IS_PRE_RELEASE = !VERSION_STRING.endsWith(".0");
+	public static final boolean DISABLE_I2G = !IS_PRE_RELEASE;	
 
 	// URLs
-	public final static String GEOGEBRA_ONLINE_ARCHIVE_BASE = "http://www.geogebra.org/webstart/4.0/";
+	public final static String GEOGEBRA_ONLINE_ARCHIVE_BASE = "http://www.geogebra.org/webstart/" + SHORT_VERSION_STRING + "/";
 	public static final String LOADING_GIF = "http://www.geogebra.org/webstart/loading.gif";
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
 	
