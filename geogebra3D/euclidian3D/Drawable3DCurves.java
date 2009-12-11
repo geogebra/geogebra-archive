@@ -30,8 +30,10 @@ public abstract class Drawable3DCurves extends Drawable3D {
 	}
 
 	public void draw(Renderer renderer) {
+		
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
+			
 		
 		renderer.setColor(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
 		renderer.setDash(Renderer.DASH_NONE); 

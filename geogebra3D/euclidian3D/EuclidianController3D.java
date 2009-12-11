@@ -217,27 +217,34 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			setMouseInformation(movedGeoPoint3D);			
 			movedGeoPoint3D.doRegion();
 					
-		}else if (isShiftDown){ //moves the point along z-axis
+		}else {
 			
-			//getting current pick point and direction v 
-			Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
-			view3D.toSceneCoords3D(o);
+			//update point decorations
+			view3D.updatePointDecorations(movedGeoPoint3D);
 			
-			Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
-			view3D.toSceneCoords3D(v);
-			
-			//getting new position of the point
-			Ggb3DVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
-			movedGeoPoint3D.setCoords(project);
-			
-			//update the moving plane altitude
-			getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
-			
-			
-		}else{
-			
-			movePointOnCurrentPlane(movedGeoPoint3D, true);
-		
+			if (isShiftDown){ //moves the point along z-axis
+
+
+				//getting current pick point and direction v 
+				Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+				view3D.toSceneCoords3D(o);
+
+				Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
+				view3D.toSceneCoords3D(v);
+
+				//getting new position of the point
+				Ggb3DVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
+				movedGeoPoint3D.setCoords(project);
+
+				//update the moving plane altitude
+				getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
+
+
+			}else{
+
+				movePointOnCurrentPlane(movedGeoPoint3D, true);
+
+			}
 			
 		}
 		
