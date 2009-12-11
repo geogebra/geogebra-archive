@@ -3,7 +3,7 @@
 <!-- README: Building GeoGebra 
 
 This script builds unsigned GeoGebra jar files for testing purposes.
-This Ant script must be run using JDK 1.5 (not 1.6, not 1.4)
+This Ant script must be run using JDK 1.5 or later.
 Note that GeoGebra itself needs to be compiled using Java 1.5 
 
 If you want to include GeoGebra with e.g. Linux distributions or 
@@ -218,7 +218,7 @@ office@geogebra.org
 	<!-- Define pack200 task -->
 	<taskdef name="p200ant"
 	    classname="de.matthiasmann.p200ant.P200AntTask"
-	    classpath="p200ant_java5only.jar"/>
+	    classpath="p200ant.jar"/>
 	
 	<!-- Obfuscate jar files without signing -->
 	<target name="obfuscate" depends="ggb-jar-files">

@@ -2345,12 +2345,9 @@ public abstract class Application implements KeyEventDispatcher {
 			
 			// set current file
 			if (!isMacroFile && url.toExternalForm().startsWith("file")) {
-				File f;
-				try {
-				  f = new File(url.toURI());
-				} catch(URISyntaxException e) {
-				  f = new File(url.getPath());
-				}
+				String path = url.getPath();
+				path = path.replaceAll("%20", " ");
+				File f = new File(path);
 				if (f.exists())
 					setCurrentFile(f);
 			}
