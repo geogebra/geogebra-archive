@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeSet;
@@ -878,6 +879,20 @@ public class GgbAPI {
 	 */
 	public synchronized String [] getAllObjectNames() {			
 		return getObjNames();
+	}	
+	
+	/**
+	 * Returns an array with the names of all selected objects.
+	 */
+	public synchronized String [] getSelectedObjectNames() {			
+		ArrayList selGeos = app.getSelectedGeos();
+		String [] objNames = new String[selGeos.size()];
+		
+		for (int i=0; i < selGeos.size(); i++) {
+			GeoElement geo = (GeoElement) selGeos.get(i);
+			objNames[i] = geo.getLabel();
+		}
+		return objNames;
 	}	
 	
 	/**

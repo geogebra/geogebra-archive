@@ -58,6 +58,7 @@ public class Parser {
     private Construction cons;
     private Application app;
     private boolean MathPiperParsing = false;
+    private boolean GeoGebraCASParsing = false;
     
     public Parser(Kernel kernel, Construction cons) {
     	 this ( new java.io.StringReader("") ); // dummy stream for parser initing
@@ -69,14 +70,15 @@ public class Parser {
     // reset for new parsing
     public void myReInit(String parseString) {
     	ReInit(new java.io.StringReader(parseString));    	
-    	MathPiperParsing = false;   
+    	MathPiperParsing = false;
+    	GeoGebraCASParsing = false;
     }
 
     /**
      * Parses a String and returns a ValidExpression Object     
      */
     public ValidExpression parseGeoGebraExpression(String parseString) throws ParseException {           
-        myReInit( parseString );                          
+        myReInit( parseString );                         
         return buildValidExpression();     
     }
     
@@ -84,7 +86,9 @@ public class Parser {
      * Parses a String and returns a ValidExpression Object     
      */
     public ValidExpression parseGeoGebraCAS(String parseString) throws ParseException {           
-        myReInit( parseString );                        
+        myReInit( parseString );
+        // parse x^2 + y^2 as an expression and don't throw Incomplete Equation error
+        GeoGebraCASParsing = true;                        
         return buildCASExpression();     
     }        
     
@@ -643,10 +647,7 @@ ExpressionNode expression():
 {    
     rhs = expressionnode()              
     {
-        if (rhs.includesPolynomial()) {
-        	// TODO: remove
-        	System.out.println("rhs includes polynomial:  " + rhs);
-        	
+        if (!GeoGebraCASParsing && rhs.includesPolynomial()) {
         	throw new MyError(app, "IncompleteEquation");
         }
         
@@ -679,7 +680,7 @@ ExpressionNode cmdexpression():
     // expression 
     en = expressionnode()              
     {
-        if (en.includesPolynomial()) {
+        if (!GeoGebraCASParsing && en.includesPolynomial()) {
         	if (en.isFunctionInX()) 
         		return new ExpressionNode(kernel, new Function(en));
         	else

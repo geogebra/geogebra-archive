@@ -68,6 +68,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -2340,7 +2341,21 @@ public abstract class Application implements KeyEventDispatcher {
 	 */
 	final public boolean loadXML(URL url, boolean isMacroFile) {
 		try {
-			return loadXML(url.openStream(), isMacroFile);
+			boolean success = loadXML(url.openStream(), isMacroFile);
+			
+			// set current file
+			if (!isMacroFile && url.toExternalForm().startsWith("file")) {
+				File f;
+				try {
+				  f = new File(url.toURI());
+				} catch(URISyntaxException e) {
+				  f = new File(url.getPath());
+				}
+				if (f.exists())
+					setCurrentFile(f);
+			}
+			
+			return success;
 		} catch (Exception e) {
 			setCurrentFile(null);
 			return false;

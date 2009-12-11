@@ -516,7 +516,7 @@ public class GeoGebraCAS {
 		ValidExpression ve = casParser.parseGeoGebraCASInput(exp);
 		
 		// TODO: remove
-		Application.debug("  checkCASinput: " + ve);
+		//Application.debug("  checkCASinput: " + ve);
 		
 		return ve;		
 	}
@@ -597,17 +597,11 @@ public class GeoGebraCAS {
 		// resolve global variables
 		if (resolveVariables) {				
 			casParser.resolveVariablesForCAS(ve);
-			
-			// TODO: remove
-			Application.debug("  resolveVariablesForCAS: " + ve);
 		}	
 		
 		// convert to MathPiper String
 		String MathPiperStr = casParser.toMathPiperString(ve, resolveVariables);
-	
-		
-		
-		
+
 		String veLabel = ve.getLabel();
 		if (veLabel != null) {
 			StringBuilder sb = new StringBuilder();

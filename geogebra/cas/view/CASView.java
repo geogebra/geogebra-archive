@@ -584,13 +584,11 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	}
 
 	public void attachView() {
-		clearView();
 		kernel.attach(this);
 	}
 
 	public void detachView() {
 		kernel.detach(this);
-		clearView();
 	}
 
 

@@ -24,8 +24,6 @@ public class GeoGebraPanel extends JPanel {
 	 * @param args
 	 */
     public static void main(String[] args) {  
-    	JFrame f = new JFrame();
-    	
     	// prepare URL for ggb file
 //    	URL ggbURL = null;
 //    	try {
@@ -45,6 +43,12 @@ public class GeoGebraPanel extends JPanel {
     	ggbPanel.setShowAlgebraInput(false);
     	// use smaller icons in toolbar
     	ggbPanel.setMaxIconSize(24); 
+    	
+    	// show menu bar and toolbar
+    	ggbPanel.setShowMenubar(true);
+    	ggbPanel.setShowToolbar(true);
+    	
+    	// build the user interface of the GeoGebraPanel
     	ggbPanel.buildGUI();
     	
     	// use GeoGebraAPI
@@ -53,6 +57,7 @@ public class GeoGebraPanel extends JPanel {
     	ggbPanel.getGeoGebraAPI().setAxesCornerCoordsVisible(false);
     
     	// add GeoGebraPanel to your application
+    	JFrame f = new JFrame();
     	f.add(ggbPanel);
     	f.setSize(800, 600);
     	f.setVisible(true);

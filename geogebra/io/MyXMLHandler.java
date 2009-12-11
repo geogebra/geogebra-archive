@@ -499,9 +499,12 @@ public class MyXMLHandler implements DocHandler {
 			mode = MODE_SPREADSHEET_VIEW;
 		} else if (eName.equals("casView")) {
 			mode = MODE_CAS_VIEW;
-		} else if (eName.equals("casSession")) {
+		} 
+		else if (eName.equals("casSession")) {
 			mode = MODE_CAS_SESSION;
-		} else if (eName.equals("gui")) {
+			app.getGuiManager().getCasView().clearView();
+		} 
+		else if (eName.equals("gui")) {
 			mode = MODE_GUI;
 			
 			if(ggbFileFormat < 3.3)

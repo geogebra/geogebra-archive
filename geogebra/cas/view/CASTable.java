@@ -173,6 +173,8 @@ public class CASTable extends JTable {
      * Creates a new row in the cas view.
      */
     public CASTableCellValue createRow() {
+    	stopEditing();
+    	
     	// make sure we have at least one row
     	int rows = getRowCount();
     	if (rows == 0) { 
