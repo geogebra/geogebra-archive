@@ -15,7 +15,7 @@
  *
  * @author Markus Hohenwarter
  */
-package geogebra3D;
+package geogebra;
 
 import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.app.GeoGebraFrame;

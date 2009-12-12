@@ -44,13 +44,13 @@ office@geogebra.org
 	
 	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
-		depends="clean, ggb-jar-files, obfuscate, ggb-jar-index, 
+		depends="clean, ggb-jar-files, obfuscate,  
 					copyJars, sign, pack, preloadHtml, finish">	  
 	</target>
 	
 	<!-- build jar files for testing without obfuscation -->
 	<target name="geogebra-test" 
-		depends="clean, ggb-jar-files, ggb-jar-index, 
+		depends="clean, ggb-jar-files,  
 					copyJars, sign, pack, preloadHtml, finish">	  
 	</target>
 	
@@ -60,7 +60,7 @@ office@geogebra.org
 	</target>
 	
 	<manifest file="../manifest.mf">	    
-		<attribute name="Main-Class" value="geogebra3D.GeoGebra3D"/>
+		<attribute name="Main-Class" value="geogebra.GeoGebra3D"/>
 		<attribute name="Class-Path" 
 			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_3d.jar geogebra_javascript.jar jogl.jar gluegen-rt.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
@@ -138,6 +138,8 @@ office@geogebra.org
 			<arg value="geogebra_export.jar"/>
 			<arg value="geogebra_javascript.jar"/>
 			<arg value="geogebra_properties.jar"/>
+			<arg value="geogebra_jogl.jar"/>
+			<arg value="geogebra_gluegen-rt.jar"/>
 		 </exec>
 	</target>
 	 
