@@ -15,7 +15,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoTextField;
-import geogebra.main.Application;
+import geogebra.kernel.arithmetic.ExpressionNode;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -216,7 +216,7 @@ public final class DrawTextField extends Drawable {
 		
 		GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
 		if (linkedGeo != null)
-			textField.setText(linkedGeo.getAlgebraDescription());
+			textField.setText(linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false));
 	}
 
 
