@@ -2208,8 +2208,8 @@ public abstract class GeoElement
 	/**
 	 * remove algorithm from dependency list of this GeoElement
 	 */
-	final void removeAlgorithm(AlgoElement algorithm) {
-		algorithmList.remove(algorithm);
+	public final void removeAlgorithm(AlgoElement algorithm) {
+		algorithmList.remove(algorithm); 
 		removeFromUpdateSets(algorithm);
 	}	
 

@@ -24,6 +24,7 @@ import java.util.TreeSet;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -469,7 +470,28 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	
  
     
-    
+    ///////////////////////////////////////////////////////////
+    // FREE UP THE POINT
+	
+	/**
+	 * free up the point from is region (TODO path, other algorithms)
+	 */
+	public void freeUp(){
+		if (hasRegion()){
+			//remove the parent algorithm
+			getRegion().toGeoElement().removeAlgorithm(getParentAlgorithm());
+			getConstruction().removeFromAlgorithmList(getParentAlgorithm());
+			setParentAlgorithm(null);
+			getConstruction().addToConstructionList(this, false);
+			//remove the region
+			setRegion(null);
+			//change the color
+			if (getObjectColor()==ConstructionDefaults.colRegionPoint)
+				setObjColor(ConstructionDefaults.colPoint);
+		}
+	
+	}
+ 
 	
 	
     ///////////////////////////////////////////////////////////

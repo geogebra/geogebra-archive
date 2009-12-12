@@ -213,9 +213,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			movedGeoPoint3D.doPath();
 						
 		}else if (movedGeoPoint3D.hasRegion()){
-			
-			setMouseInformation(movedGeoPoint3D);			
-			movedGeoPoint3D.doRegion();
+						
+			if ((isShiftDown)&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
+				//frees the point and moves it along z-axis if it belong to xOy plane
+				movedGeoPoint3D.freeUp();
+				setCurrentPlane(Ggb3DMatrix4x4.Identity());
+			}else{
+				setMouseInformation(movedGeoPoint3D);			
+				movedGeoPoint3D.doRegion();
+			}
 					
 		}else {
 			
