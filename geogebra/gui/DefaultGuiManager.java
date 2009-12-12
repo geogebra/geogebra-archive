@@ -1860,7 +1860,7 @@ public class DefaultGuiManager implements GuiManager {
 
 		while ((thisLine = myInput.readLine()) != null)  {
 
-			// don't start reading until ggbBase64 tag
+			// don't start reading until filename tag
 			if (!started && thisLine.indexOf("filename") > -1) started = true;
 
 			if (started) {
@@ -1876,8 +1876,16 @@ public class DefaultGuiManager implements GuiManager {
 		String fileArgument = sb.toString();
 
 		String matchString = "name=\"filename\" value=\"";
+		// old style, no quotes
+		String matchString2 = "name=filename value=\"";
 
 		int start = fileArgument.indexOf(matchString);
+		
+		if (start == -1) {
+			matchString = matchString2;
+			start = fileArgument.indexOf(matchString);
+		}
+		
 		// match "/> or " /> or "> etc
 		int end   = fileArgument.indexOf(">");
 		while (end > start && fileArgument.charAt(end) != '\"') end--;
