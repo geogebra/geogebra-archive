@@ -327,9 +327,7 @@ public class Renderer implements GLEventListener {
         //drawing the cursor
         view3D.drawCursor(this);
         
-        view3D.drawPointDecorations();
-        
-        
+         
         
         
         
@@ -427,8 +425,6 @@ public class Renderer implements GLEventListener {
         drawList3D.draw(this);
   
         
-        view3D.drawPointDecorations();
-
         
         //primitives.disableVBO(gl);
      

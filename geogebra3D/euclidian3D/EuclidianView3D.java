@@ -99,9 +99,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private GeoAxis3D[] axis;
 	static final public int DRAWABLES_NB = 4;
 
-	//point decorations
-	Ggb3DMatrix4x4 decorationMatrix;
-	DrawPointDecorationSegment decorationSegment;
+	//point decorations	
+	private DrawPointDecorations pointDecorations;
+	private boolean decorationVisible = false;
 
 	//preview
 	private Previewable previewDrawable;
@@ -188,10 +188,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//point decorations
 		initPointDecorations();
 		
-		decorationMatrix = Ggb3DMatrix4x4.Identity();
-		decorationMatrix.setVx(vz);
-		decorationMatrix.setVy((Ggb3DVector) vx.mul(10));
-		decorationMatrix.setVz((Ggb3DVector) vy.mul(10));
 		
 		
 	}
@@ -1660,34 +1656,30 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	private void initPointDecorations(){
 		//Application.debug("hop");
-		decorationSegment = new DrawPointDecorationSegment(this);
+		pointDecorations = new DrawPointDecorations(this);
 	}
 	
 	
+	/** update decorations for localizing point in the space
+	 *  if point==null, no decoration will be drawn
+	 * @param point
+	 */
 	public void updatePointDecorations(GeoPoint3D point){
 		
-		//set vz to point coords
-		//decorationMatrix.setVx(point.getDrawingMatrix().getColumn(4));
-		decorationMatrix.set(3,1,point.getDrawingMatrix().getOrigin().get(3));
+		if (point==null)
+			decorationVisible = false;
+		else{
+			decorationVisible = true;
+			pointDecorations.setPoint(point);
+		}
 		
-		//set origin to projection of the point on xOy plane
-		decorationMatrix.setOrigin(point.getDrawingMatrix().getOrigin());
-		decorationMatrix.set(3,4,0);
-		
-		Application.debug("point :\n"+point.getDrawingMatrix()+"\ndecorations :\n"+decorationMatrix);
+		//Application.debug("point :\n"+point.getDrawingMatrix()+"\ndecorations :\n"+decorationMatrix);
 		
 		
 	}
 	
 	
-	public void drawPointDecorations(){
-		
-		/*
-		renderer.setMatrix(decorationMatrix);
-		renderer.drawSegment();
-		*/
-		
-	}
+
 	
 	
 	
@@ -1857,7 +1849,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param renderer
 	 */
 	public void drawTransp(Renderer renderer){
-		xOyPlane.getDrawable3D().drawTransp(renderer);
+		if (xOyPlane.isEuclidianVisible())
+			xOyPlane.getDrawable3D().drawTransp(renderer);
+		else
+			if (decorationVisible)
+				pointDecorations.drawTransp(renderer);
 	}
 	
 	
@@ -1865,7 +1861,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param renderer
 	 */
 	public void drawHiding(Renderer renderer){
-		xOyPlane.getDrawable3D().drawHiding(renderer);
+		if (xOyPlane.isEuclidianVisible())
+			xOyPlane.getDrawable3D().drawHiding(renderer);
+		else
+			if (decorationVisible)
+				pointDecorations.drawHiding(renderer);
+		
 	}
 	
 	/** draw not hidden parts of view's drawables (axis)
@@ -1875,7 +1876,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		for(int i=0;i<3;i++)
 			axis[i].getDrawable3D().draw(renderer);
 		
-		decorationSegment.draw(renderer);
+		if (decorationVisible)
+			pointDecorations.draw(renderer);
 	}
 	
 	/** draw hidden parts of view's drawables (axis)
@@ -1884,6 +1886,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void drawHidden(Renderer renderer){
 		for(int i=0;i<3;i++)
 			axis[i].getDrawable3D().drawHidden(renderer);
+		
+		if (decorationVisible)
+			pointDecorations.drawHidden(renderer);
+		
 	}
 	
 	
@@ -1912,6 +1918,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		for(int i=0;i<3;i++){
 			axis[i].getDrawable3D().update();
 		}
+		pointDecorations.update();
 	}
 
 

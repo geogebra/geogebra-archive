@@ -1568,6 +1568,16 @@ public class EuclidianController implements MouseListener,
 			}
 		}
 	}
+	
+	// used for 3D
+	protected void processReleaseForMovedGeoPoint(){
+		
+		// deselect point after drag, but not on click
+		if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
+		
+		if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
+
+	}
 
 	public void mouseReleased(MouseEvent e) {	
 		
@@ -1610,11 +1620,14 @@ public class EuclidianController implements MouseListener,
 		
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
 		if (getMovedGeoPoint() != null){
-						
+
+			processReleaseForMovedGeoPoint();
+			/*
 			// deselect point after drag, but not on click
 			if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
 			
 			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
+			*/
 		}
 		if (movedGeoNumeric != null) {
 			

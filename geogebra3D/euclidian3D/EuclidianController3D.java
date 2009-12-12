@@ -219,8 +219,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					
 		}else {
 			
-			//update point decorations
-			view3D.updatePointDecorations(movedGeoPoint3D);
 			
 			if (isShiftDown){ //moves the point along z-axis
 
@@ -245,6 +243,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				movePointOnCurrentPlane(movedGeoPoint3D, true);
 
 			}
+			
+			//update point decorations
+			view3D.updatePointDecorations(movedGeoPoint3D);
+
 			
 		}
 		
@@ -539,6 +541,17 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
+	
+	///////////////////////////////////////////
+	// mouse released
+	
+	protected void processReleaseForMovedGeoPoint(){
+		
+		((EuclidianView3D) view).updatePointDecorations(null);
+		super.processReleaseForMovedGeoPoint();
+		
+	}
+
 	
 	///////////////////////////////////////////
 	// mouse moved
