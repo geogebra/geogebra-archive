@@ -216,6 +216,7 @@ office@geogebra.org
 		classpath="proguard44.jar" />
 	
 	<!-- Define pack200 task -->
+	<!-- bug in Java 6, see http://www.geogebra.org/forum/viewtopic.php?f=8&t=3972&st=0&sk=t&sd=a&start=15 -->
 	<taskdef name="p200ant"
 	    classname="de.matthiasmann.p200ant.P200AntTask"
 	    classpath="p200ant_java5only.jar"/>
