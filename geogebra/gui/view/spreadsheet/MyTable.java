@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -12,6 +13,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -33,7 +36,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
-public class MyTable extends JTable
+public class MyTable extends JTable implements FocusListener 
 {
 	
 	public static final int MAX_CELL_EDIT_STRING_LENGTH = 10;
@@ -136,6 +139,8 @@ public class MyTable extends JTable
 		setShowGrid(true); 	 
 		setGridColor(TABLE_GRID_COLOR); 	 
 
+		addFocusListener(this);
+		
 		// editing 	 
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);	}
 
@@ -1665,6 +1670,23 @@ public class MyTable extends JTable
 		if (geo != null && geo.isFixed()) return false;
 		
 		return true;
+	}
+
+
+	public void focusGained(FocusEvent e) {
+		if (Application.isVirtualKeyboardActive())
+			app.getGuiManager().toggleKeyboard(true);
+		
+	}
+
+
+	public void focusLost(FocusEvent e) {
+		// avoid infinite loop!
+		if (e.getOppositeComponent() instanceof VirtualKeyboard)
+			return;
+		
+		app.getGuiManager().toggleKeyboard(false);
+		
 	}
 
 }
