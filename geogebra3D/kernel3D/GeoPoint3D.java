@@ -23,6 +23,7 @@ package geogebra3D.kernel3D;
 import java.util.TreeSet;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoConic;
@@ -486,8 +487,11 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 			//remove the region
 			setRegion(null);
 			//change the color
-			if (getObjectColor()==ConstructionDefaults.colRegionPoint)
+			if (getObjectColor().equals(ConstructionDefaults.colRegionPoint))
 				setObjColor(ConstructionDefaults.colPoint);
+			// move from Dependent to Independent in AlgebraView
+			if (app.hasGuiManager())
+				((AlgebraView)(app.getGuiManager().getAlgebraView())).rename((GeoElement)this);
 		}
 	
 	}
