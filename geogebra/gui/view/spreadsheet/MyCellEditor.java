@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -497,7 +498,13 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		
 	}
 
-	public void focusLost(FocusEvent arg0) {		
+	public void focusLost(FocusEvent arg0) {	
+		
+		// VirtualKeyboard gets the focus very briefly when opened
+		// so ignore this!
+		if (arg0.getOppositeComponent() instanceof VirtualKeyboard)
+			return;
+		
 		// only needed if eg columns resized
 		if (editing == true) {
 			if (!errorOnStopEditing) {
