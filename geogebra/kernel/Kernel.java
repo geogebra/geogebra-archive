@@ -5640,8 +5640,8 @@ public class Kernel {
 				if (Double.isNaN(x))
 					return " 1/0 ";	
 				else if (Double.isInfinite(x)) {
-					return Double.toString(x); // "Infinity" or "-Infintiny"
- 				}	
+					return Double.toString(x); // "Infinity" or "-Infinity"
+ 				}
 				else {			
 					double abs = Math.abs(x);
 					// number small enough that Double.toString() won't create E notation

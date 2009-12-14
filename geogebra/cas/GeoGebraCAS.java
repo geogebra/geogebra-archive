@@ -476,12 +476,19 @@ public class GeoGebraCAS {
 	private synchronized String processCASInputMathPiper(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
 		// convert parsed input to MathPiper string
 		String MathPiperString = toMathPiperString(casInput, useGeoGebraVariables);
-		
+			
 		// EVALUATE input in MathPiper 
 		String result = evaluateMathPiper(MathPiperString);
-				
+
 		// convert MathPiper result back into GeoGebra syntax
-		return parseMathPiper(result).toString();
+		String ggbString = parseMathPiper(result).toString();
+		
+		// TODO: remove
+		System.out.println("eval with MathPiper: " + MathPiperString);
+		System.out.println("   result: " + result);
+		System.out.println("   ggbString: " + ggbString);
+		
+		return ggbString;
 	}
 	
 	/**

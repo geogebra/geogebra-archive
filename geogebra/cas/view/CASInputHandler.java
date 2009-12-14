@@ -58,9 +58,9 @@ public class CASInputHandler {
 		}
 		else {
 			// selected text: break it up into prefix, evalText, and postfix
-			prefix = selRowInput.substring(0, selStart);
+			prefix = selRowInput.substring(0, selStart).trim();
 			evalText = selectedText;
-			postfix = selRowInput.substring(selEnd);
+			postfix = selRowInput.substring(selEnd).trim();
 		}
 
 		// DIRECT MathPiper use: line starts with "MathPiper:"
@@ -154,7 +154,14 @@ public class CASInputHandler {
 		
 		// Set the value into the table		
 		if (evaluation != null)	{
-			cellValue.setOutput(prefix + evaluation + postfix);
+			if (prefix.length() == 0 && postfix.length() == 0) {
+				// no prefix, no postfix: just evaluation
+				cellValue.setOutput(evaluation);
+			} else {
+				// make sure that evaluation is put into parentheses
+				cellValue.setOutput(prefix + " (" + evaluation + ") " + postfix);
+			}
+			
 			cellValue.setAllowLaTeX(!directMathPiperCall);
 		} else {
 			// 	error = app.getError("CAS.GeneralErrorMessage");
