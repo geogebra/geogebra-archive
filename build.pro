@@ -7,6 +7,7 @@
 -injars ../build/geogebra_gui.jar
 -injars ../build/geogebra_export.jar
 -injars ../build/geogebra_cas.jar
+-injars ../build/geogebra_javascript.jar
 -injars ../build/geogebra_3d.jar
 
 -outjars ../build/temp
@@ -19,7 +20,7 @@
 #-libraryjars laf.jar
 
 ## Rhino javascript library uses reflection, so can't process with ProGuard
--libraryjars ../build/geogebra_javascript.jar
+#-libraryjars ../build/geogebra_javascript.jar
 
 ## 3D
 -libraryjars 3D/jogl.jar
@@ -70,7 +71,12 @@
 -keep class java.util.LinkedList { java.lang.Object getFirst(); }
 -keep class java.lang.Object { java.lang.Object list; }
 
+# keep JavaScript
+-keep class org.mozilla.javascript.* {}
+
 -keep class geogebra.gui.virtualkeyboard.VirtualKeyboard { public static void main(java.lang.String[]); }
+
+
 
 #####
 # Plugin part
