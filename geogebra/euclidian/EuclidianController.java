@@ -622,6 +622,8 @@ public class EuclidianController implements MouseListener,
 	}
 	
 	private BufferedImage penImage = null;
+	
+	ArrayList penPoints = new ArrayList();
 
 	private void handleMousePressedForPenMode(MouseEvent e) {
 		
@@ -658,9 +660,18 @@ public class EuclidianController implements MouseListener,
 		
 		if (g2D == null) g2D = penImage.createGraphics();
 		
-		g2D.setColor(Color.RED);
-		g2D.drawOval(e.getX(), e.getY(), 1, 1);
+		//g2D.setColor(Color.RED);
+		//g2D.drawOval(e.getX(), e.getY(), 5, 5);
 		
+		Point newPoint = new Point(e.getX(), e.getY());
+		
+		if (penPoints.size() == 0)
+			penPoints.add(newPoint);
+		else {
+			Point lastPoint = (Point)penPoints.get(penPoints.size() - 1);
+			if (lastPoint.distance(newPoint) > 20)
+			  penPoints.add(newPoint);
+		}
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -1578,12 +1589,31 @@ public class EuclidianController implements MouseListener,
 		if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
 
 	}
+	
+	String lastPenImage = null;
 
 	public void mouseReleased(MouseEvent e) {	
 		
 		if (textfieldHasFocus) return;
 		
 		if (penImage != null) {
+			
+			Point newPoint = new Point(e.getX(), e.getY());
+			penPoints.add(newPoint);
+
+			
+			if (lastPenImage != null) penImage = app.getExternalImage(lastPenImage);
+			
+			//Application.debug(penPoints.size()+"");
+			
+			PolyBezier pb = new PolyBezier(penPoints);
+			
+			Graphics2D g2d = (Graphics2D)penImage.getGraphics();
+			
+			g2d.setColor(Color.BLUE);
+			g2d.draw(pb.gp);
+			
+			penPoints.clear();
 			
 			/*
 			File file;
@@ -1602,18 +1632,23 @@ public class EuclidianController implements MouseListener,
 				
 				ev.getGraphics().drawImage(penImage, 0, 0, null);
 				
-				String fileName = app.createImage(penImage, "whiteboard.png");
 				
-				GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
-				geoImage.setFileName(fileName);
-				geoImage.setCorner(new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(0),ev.toRealWorldCoordY(ev.getHeight()),1.0), 0);
-				geoImage.setLabel(null);
-		
-				GeoImage.updateInstances();
-
-
+				if (lastPenImage == null) {
+					String fileName = app.createImage(penImage, "whiteboard.png");
+					Application.debug(fileName);
+					
+					GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
+					geoImage.setFileName(fileName);
+					geoImage.setCorner(new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(0),ev.toRealWorldCoordY(ev.getHeight()),1.0), 0);
+					geoImage.setLabel(null);
 			
+					GeoImage.updateInstances();
+	
+	
+					lastPenImage = fileName;
+				}
 			penImage = null;
+			return;
 		}
 		
 		
