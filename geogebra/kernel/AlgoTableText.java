@@ -134,7 +134,9 @@ public class AlgoTableText extends AlgoElement {
     	text.setTemporaryPrintAccuracy();
     	
     	sb.setLength(0);
-    	sb.append("\\begin{tabular}{");
+		// Added by Loïc 2009/12/15
+    	sb.append("\\begin{array}{");
+		// end Loïc
     	
     	
     	if (alignment == VERTICAL) {
@@ -176,8 +178,9 @@ public class AlgoTableText extends AlgoElement {
     	}
 
     	text.restorePrintAccuracy();
-   	
-    	sb.append("\\end{tabular}");
+		// Added by Loïc 2009/12/15
+    	sb.append("\\end{array}");
+		// end Loïc 2009/12/15
     	//Application.debug(sb.toString());
     	text.setTextString(sb.toString());
     	text.setLaTeX(true,false);
@@ -187,13 +190,20 @@ public class AlgoTableText extends AlgoElement {
     	// End Loïc
 		if (geoLists[c].size() > r) { // check list has an element at this position
 			GeoElement geo1 = geoLists[c].get(r);
-						
+			
 			// replace " " and "" with a hard space (allow blank columns/rows)
 			String text = geo1.toLaTeXString(false);
 			if (" ".equals(text) || "".equals(text))
 				text = "\u00a0";	
-			
+			// Modify by Loïc Le Coq 2009/12/15
+			if (geo1.isTextValue()){
+				sb.append("\\mathrm{");
+				sb.append(text);
+				sb.append("}");
+			}
+			else 
 			sb.append(text);
+			// End Loïc
 		}
 		// Modify by Loïc Le Coq 2009/12/15
 		if (!finalCell) sb.append("&"); // separate columns    				
