@@ -55,6 +55,7 @@ import java.util.StringTokenizer;
  */
 
 public class GeoGebraToPstricks extends GeoGebraExport {
+	private boolean eurosym=false;
 	private static final int FORMAT_BEAMER=1;
 	private StringBuilder codeBeginPic;
 	public GeoGebraToPstricks(Application app) {
@@ -773,6 +774,11 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	protected void drawText(GeoText geo){
 		boolean isLatex=geo.isLaTeX();
 		String st=geo.getTextString();
+		// try to replace euro symbol
+		if (st.indexOf("\u20ac")!=-1) {
+			st=st.replaceAll("\\u20ac", "\\\\euro{}");
+			if (!eurosym) codePreamble.append("\\usepackage{eurosym}\n");
+		}
 		Color geocolor=geo.getObjectColor();
 		int style=geo.getFontStyle();
 		int size=geo.getFontSize()+app.getFontSize();

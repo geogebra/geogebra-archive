@@ -145,7 +145,10 @@ public class AlgoTableText extends AlgoElement {
 	    	
 	    	for (int r=0; r < rows; r++) {
 	    		for (int c = 0 ; c < columns ; c++) {
-	    			addCell(c, r);
+	    			// Added by Loïc 2009/12/15
+	    			boolean finalCell=(r==rows-1);
+	    			addCell(c, r,finalCell);
+	    			// end Loïc
 	   		}
 	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
 	    	}   
@@ -162,7 +165,10 @@ public class AlgoTableText extends AlgoElement {
 	    	
 			for (int c = 0 ; c < columns ; c++) {
 	    	for (int r=0; r < rows; r++) {
-	    			addCell(c, r);
+    			// Added by Loïc 2009/12/15
+    			boolean finalCell=(r==rows-1);
+    			addCell(c, r,finalCell);
+    			// end Loïc
 	    		}
 	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
 	    	}   
@@ -176,8 +182,9 @@ public class AlgoTableText extends AlgoElement {
     	text.setTextString(sb.toString());
     	text.setLaTeX(true,false);
     }
-    
-    private void addCell(int c, int r) {
+	// Modify by Loïc Le Coq 2009/12/15
+    private void addCell(int c, int r, boolean finalCell) {
+    	// End Loïc
 		if (geoLists[c].size() > r) { // check list has an element at this position
 			GeoElement geo1 = geoLists[c].get(r);
 						
@@ -188,8 +195,9 @@ public class AlgoTableText extends AlgoElement {
 			
 			sb.append(text);
 		}
-		sb.append("&"); // separate columns    				
-
+		// Modify by Loïc Le Coq 2009/12/15
+		if (!finalCell) sb.append("&"); // separate columns    				
+		// End Loïc
     }
   
 }
