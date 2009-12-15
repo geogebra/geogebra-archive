@@ -2538,15 +2538,14 @@ public class DefaultGuiManager implements GuiManager {
 	     * to application homepage in html.
 	     */
 	    public String getCreatedWithHTML() {
-	        StringBuilder sb = new StringBuilder();
-	        sb.append(Util.toHTMLString(app.getPlain("CreatedWith"))); // MRB 2008-06-14 added Util.toHTMLString
-	        sb.append(" ");
-	        sb.append("<a href=\"");
-	        sb.append(GeoGebra.GEOGEBRA_WEBSITE);
-	        sb.append("\" target=\"_blank\" >");
-	        sb.append("GeoGebra");
-	        sb.append("</a>");
-	        return sb.toString();
+	        String ret = Util.toHTMLString(app.getPlain("CreatedWithGeoGebra")); // MRB 2008-06-14 added Util.toHTMLString
+
+	        if (ret.toLowerCase().indexOf("geogebra") == -1)
+	        	ret="Created with GeoGebra";
+	        
+	        ret = ret.replaceAll("[Gg]eo[Gg]ebra", "<a href=\""+GeoGebra.GEOGEBRA_WEBSITE+"\" target=\"_blank\" >GeoGebra<a/>");
+	        
+	        return ret;
 	    }
 	    
 	    public void setMode(int mode) {  
