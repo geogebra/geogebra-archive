@@ -50,19 +50,18 @@ Rule("CachedConstant", 3, 10, And(IsAtom(C'atom), IsFunction(C'func)))
 		[
 			Local(new'prec, new'C, cached'C);
 			Set(new'prec, BuiltinPrecisionGet());
-			
-			
+			// fetch the cache entry for this constant
+			// note that this procedure will store the name of the cache here in this statement as Eval(C'cache)
 			Set(cached'C, Builtin'Assoc(@C'name, @C'cache));
-			If(
-			  LessThan(MathNth(cached'C, 2), new'prec),
-			  [	
+			If( MathNth(cached'C, 2) != new'prec,
+			  [	// need to recalculate at current precision
 				If(Equals(InVerboseMode(),True), Echo("CachedConstant: Info: constant ", @C'name, " is being recalculated at precision ", new'prec));
-				Set(new'C, Eval(@C'func));
+				Set(new'C, RoundTo(Eval(@C'func),new'prec));
 				DestructiveReplace(cached'C, 2, new'prec);
 				DestructiveReplace(cached'C, 3, new'C);
 				new'C;
 			  ],
-			  
+			  // return cached value of C'atom
 			  MathNth(cached'C, 3)
 			);
 		]);
