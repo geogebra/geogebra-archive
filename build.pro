@@ -15,11 +15,11 @@
 -libraryjars ../java150-rt.jar
 -libraryjars lib_jsobject.jar
 -libraryjars lib_mac_extensions.jar
--libraryjars lib_rhino_javascript.jar
-
-## 3D
 -libraryjars 3D/jogl.jar
 -libraryjars 3D/gluegen-rt.jar
+
+# Rhino Javascript is not obfuscated
+-libraryjars ../build/geogebra_javascript.jar
 
 
 -dontoptimize
@@ -61,6 +61,16 @@
 
 # Jasymca uses reflection to create functions like LambaSIN
 -keep class jasymca.Lambda* {}
+
+# Rhino Javascript
+#-keep class org.mozilla.classfile.* {  }
+#-keep class org.mozilla.javascript.* { }
+#-keep class org.mozilla.javascript.jdk13.* { }
+#-keep class org.mozilla.javascript.jdk15.* {  }
+#-keep class org.mozilla.javascript.optimizer.* { }
+#-keep class org.mozilla.javascript.regexp.* {  }
+#-keep class org.mozilla.javascript.serialize.* {  }
+#-keep class org.mozilla.javascript.xml.* {  }
 
 # supress foxtrot error messages
 -keep class java.util.LinkedList { java.lang.Object getFirst(); }

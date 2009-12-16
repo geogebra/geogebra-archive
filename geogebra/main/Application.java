@@ -3009,17 +3009,21 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	
 	public static void debug(String s) {
-		debug(s, false, false);
+		doDebug(s, false, false);
+	}
+	
+	public static void debug(String s, boolean showTime, boolean showMemory) {
+		doDebug(s, showTime, showMemory);
 	}
 	
 	// Michael Borcherds 2008-06-22
-	public static void debug(String s, boolean showTime, boolean showMemory) {
+	private static void doDebug(String s, boolean showTime, boolean showMemory) {
 		Throwable t = new Throwable();
 		StackTraceElement[] elements = t.getStackTrace();
 
 		// String calleeMethod = elements[0].getMethodName();
-		String callerMethodName = elements[1].getMethodName();
-		String callerClassName = elements[1].getClassName();
+		String callerMethodName = elements[2].getMethodName();
+		String callerClassName = elements[2].getClassName();
 		
 		StringBuilder sb = new StringBuilder("*** Message from ");
 		sb.append("[");

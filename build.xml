@@ -67,6 +67,13 @@ office@geogebra.org
 	</manifest>	
 	
 	<target name="clean">
+		<!-- delete build directory -->
+		<delete includeemptydirs="true">
+		    <fileset dir="${build.dir}" defaultexcludes="false">
+		       <include name="**/*" />
+		    </fileset>
+		</delete>
+
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${build.dir}/packed"/>
 		<mkdir dir="${build.dir}/unpacked"/>
@@ -74,9 +81,6 @@ office@geogebra.org
 		<mkdir dir="${build.dir}/unsigned/packed"/>
 		<mkdir dir="${build.dir}/unsigned/unpacked"/>
 		<mkdir dir="${propertiestemp.dir}"/>
-		<delete>
-		    <fileset dir="${build.dir}" includes="**/geogebra*.jar, **/*.jar.pack.gz"/>
-		</delete>		
 	</target>
 	
 	<target name="finish">		
@@ -99,7 +103,7 @@ office@geogebra.org
 	</target>
 
 	<!-- put jar files into subdirectories signed and unsigned -->
-	<target name="copyJars">
+	<target name="copyJars" depends="ggb-jar-files">
 		   <copy todir="${build.dir}/unsigned/unpacked">
 		      <fileset dir="${build.dir}">
 	            <include name="*.jar" />
@@ -167,16 +171,11 @@ office@geogebra.org
 	</target>
 	
 	<target name="ggb-javascript-jar" depends="clean" description="create unsigned geogebra_javascript.jar">
-		<!-- simply copy the rhino library jar into the build directory -->
-		<copy file="${src.dir}/lib_rhino_javascript.jar"
-		      tofile="${build.dir}/geogebra_javascript.jar">
-		</copy>
-		
-		<!--<jar jarfile="${build.dir}/geogebra_javascript.jar"
+		<jar jarfile="${build.dir}/geogebra_javascript.jar"
 			basedir="${src.dir}"
 			includes="org/mozilla/**"
 			excludes="**/*.java" 
-		/>-->
+		/>
 	</target>
 	
 	<target name="ggb-cas-jar" depends="clean" description="create unsigned geogebra_cas.jar">
@@ -245,30 +244,40 @@ office@geogebra.org
 	</target>
 			
 	<!-- Sign jar files -->
-	<target name="sign" depends="ggb-jar-files">	    	
+	<target name="sign" description="repack and sign jar files twice (to ensure WebStart compatibility)">	    	
 		<!-- check if keystore file present -->
 		<condition property="keystore.present">
 			<available file="${workspace.dir}/geogebra-keystore.p12"/>
-		</condition>		
-		<antcall target="doSign"/>	
+		</condition>
+		
+		<!-- repack and sign jars first time -->
+		<antcall target="repack"/>
+		<antcall target="doSign"/>
+		
+		<!-- repack and sign jars second time -->
+		<antcall target="repack"/>
+		<antcall target="doSign"/>
 	</target>
-	<target name="doSign" if="keystore.present" description="sign jar files">	
-		<!-- repack jars -->
-	    <fileset id="jars2pack" dir="${build.dir}">
-	        <include name="*.jar"/>
-	    </fileset>	        
-	    <p200ant repack="true"  configFile="tools_p200.config">
-	        <fileset refid="jars2pack"/>
-	    </p200ant>	   
-	            
-		<!-- sign jars -->
+	
+	<!-- sign jars -->
+	<target name="doSign" if="keystore.present" description="sign jar files">
 		<signjar 
 			keystore="${workspace.dir}/geogebra-keystore.p12" 	
 			alias="geogebra inc.&apos;s globalsign inc id"
 			storetype="pkcs12"
 			storepass="geogebra">
 		    <fileset dir="${build.dir}" includes="*.jar" />
-		</signjar>	    
+		</signjar>	
+	</target>
+	
+	<!-- repack jars -->
+	<target name="repack" if="keystore.present" description="repack jar files in preparation for signing">
+	    <fileset id="jars2pack" dir="${build.dir}">
+	        <include name="*.jar"/>
+	    </fileset>	        
+	    <p200ant repack="true"  configFile="tools_p200.config">
+	        <fileset refid="jars2pack"/>
+	    </p200ant>	 
 	</target>
 	
 	<!-- pack jars -->
