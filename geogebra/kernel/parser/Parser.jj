@@ -1391,7 +1391,7 @@ ExpressionValue myDouble():
     {
     	double val =  Double.parseDouble( c.image );
     	
-    	if (MathPiperParsing) {
+    	if (MathPiperParsing || GeoGebraCASParsing) {
     		// preserve string from MathPiper: it may have higher
     		// precision than double
     	   return new MySpecialDouble(kernel, val, c.image);  

@@ -5671,6 +5671,9 @@ public class Kernel {
 						if (Efound)
 							sb.append(")");
 						
+						// TODO: remove
+						Application.printStacktrace(sb.toString());
+						
 						return sb.toString();
 					}					
 				}

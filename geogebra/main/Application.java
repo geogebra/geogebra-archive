@@ -3006,44 +3006,60 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 		return pluginmanager;
 	}// getPluginManager()
-
-	// Michael Borcherds 2008-06-22
+	
+	
 	public static void debug(String s) {
+		debug(s, false, false);
+	}
+	
+	// Michael Borcherds 2008-06-22
+	public static void debug(String s, boolean showTime, boolean showMemory) {
 		Throwable t = new Throwable();
 		StackTraceElement[] elements = t.getStackTrace();
 
 		// String calleeMethod = elements[0].getMethodName();
 		String callerMethodName = elements[1].getMethodName();
 		String callerClassName = elements[1].getClassName();
-
-		// Application.debug("CallerClassName=" + callerClassName +
-		// " , Caller method name: " + callerMethodName);
-		// Application.debug("Callee method name: " + calleeMethod);
-
-		Calendar calendar = new GregorianCalendar();
-
-		int min = calendar.get(Calendar.MINUTE);
-		String minS = (min < 10) ? "0" + min : "" + min;
-
-		int sec = calendar.get(Calendar.SECOND);
-		String secS = (sec < 10) ? "0" + sec : "" + sec;
-
-		String srcStr = "[" + callerClassName + "." + callerMethodName
-				+ "] at " + calendar.get(Calendar.HOUR) + ":" + minS + ":"
-				+ secS;
 		
-		srcStr += " free memory: "+Runtime.getRuntime().freeMemory();
+		StringBuilder sb = new StringBuilder("*** Message from ");
+		sb.append("[");
+		sb.append(callerClassName);
+		sb.append(".");
+		sb.append(callerMethodName);
+		sb.append("]");
+
+		if (showTime) {
+			Calendar calendar = new GregorianCalendar();
+			int min = calendar.get(Calendar.MINUTE);
+			String minS = (min < 10) ? "0" + min : "" + min;
+			int sec = calendar.get(Calendar.SECOND);
+			String secS = (sec < 10) ? "0" + sec : "" + sec;
+	
+			sb.append(" at ");
+			sb.append(calendar.get(Calendar.HOUR));
+			sb.append(":");
+			sb.append(minS);
+			sb.append(":");
+			sb.append(secS);
+		}
+		
+		if (showMemory) {
+			sb.append(" free memory: ");
+			sb.append(Runtime.getRuntime().freeMemory());
+		}
+			
 
 		// multi line message
 		if (s.indexOf("\n") > -1) {
-			System.out.println("*** BEGIN Message from " + srcStr);
+			System.out.println(sb.toString());
 			System.out.println(s);
-			System.out.println("*** END Message from " + srcStr + "\n");
+			System.out.println("*** END Message.");
 		}
 		// one line message
 		else {
-			System.out.println("*** Message from " + srcStr);
-			System.out.println("  " + s + "\n");
+			System.out.println(sb.toString());
+			System.out.print("\t");
+			System.out.println(s);
 		}
 	}
 

@@ -7,17 +7,15 @@
 -injars ../build/geogebra_gui.jar
 -injars ../build/geogebra_export.jar
 -injars ../build/geogebra_cas.jar
--injars ../build/geogebra_javascript.jar
 -injars ../build/geogebra_3d.jar
 
 -outjars ../build/temp
 
+# libraries
 -libraryjars ../java150-rt.jar
--libraryjars netscape_javascript.jar
-
-## These two needed for the Mac stuff
--libraryjars AppleJavaExtensions.jar
-#-libraryjars laf.jar
+-libraryjars lib_jsobject.jar
+-libraryjars lib_mac_extensions.jar
+-libraryjars lib_rhino_javascript.jar
 
 ## 3D
 -libraryjars 3D/jogl.jar
@@ -67,9 +65,6 @@
 # supress foxtrot error messages
 -keep class java.util.LinkedList { java.lang.Object getFirst(); }
 -keep class java.lang.Object { java.lang.Object list; }
-
-# keep JavaScript
--keep class org.mozilla.javascript.* {}
 
 -keep class geogebra.gui.virtualkeyboard.VirtualKeyboard { public static void main(java.lang.String[]); }
 

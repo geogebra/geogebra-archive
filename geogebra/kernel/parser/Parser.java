@@ -1938,7 +1938,7 @@ ValidExpression  functionOrCommand():
       }
         double val =  Double.parseDouble( c.image );
 
-        if (MathPiperParsing) {
+        if (MathPiperParsing || GeoGebraCASParsing) {
                 // preserve string from MathPiper: it may have higher
                 // precision than double
            {if (true) return new MySpecialDouble(kernel, val, c.image);}

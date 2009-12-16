@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="javax/|mathpiper/scripts/" kind="src" path=""/>
-	<classpathentry kind="lib" path="netscape_javascript.jar"/>
-	<classpathentry kind="lib" path="AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="3D/jogl.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra/3D"/>
@@ -13,6 +11,9 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra/3D"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib_jsobject.jar"/>
+	<classpathentry kind="lib" path="lib_mac_extensions.jar"/>
+	<classpathentry kind="lib" path="lib_rhino_javascript.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

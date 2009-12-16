@@ -167,11 +167,16 @@ office@geogebra.org
 	</target>
 	
 	<target name="ggb-javascript-jar" depends="clean" description="create unsigned geogebra_javascript.jar">
-		<jar jarfile="${build.dir}/geogebra_javascript.jar"
+		<!-- simply copy the rhino library jar into the build directory -->
+		<copy file="${src.dir}/lib_rhino_javascript.jar"
+		      tofile="${build.dir}/geogebra_javascript.jar">
+		</copy>
+		
+		<!--<jar jarfile="${build.dir}/geogebra_javascript.jar"
 			basedir="${src.dir}"
 			includes="org/mozilla/**"
 			excludes="**/*.java" 
-		/>
+		/>-->
 	</target>
 	
 	<target name="ggb-cas-jar" depends="clean" description="create unsigned geogebra_cas.jar">
@@ -213,13 +218,13 @@ office@geogebra.org
 	<!-- Define Proguard task -->
 	<taskdef 
 		resource="proguard/ant/task.properties" 
-		classpath="proguard44.jar" />
+		classpath="tools_proguard44.jar" />
 	
 	<!-- Define pack200 task -->
 	<!-- bug in Java 6, see http://www.geogebra.org/forum/viewtopic.php?f=8&t=3972&st=0&sk=t&sd=a&start=15 -->
 	<taskdef name="p200ant"
 	    classname="de.matthiasmann.p200ant.P200AntTask"
-	    classpath="p200ant_java5only.jar"/>
+	    classpath="tools_p200ant_java5only.jar"/>
 	
 	<!-- Obfuscate jar files without signing -->
 	<target name="obfuscate" depends="ggb-jar-files">
@@ -252,7 +257,7 @@ office@geogebra.org
 	    <fileset id="jars2pack" dir="${build.dir}">
 	        <include name="*.jar"/>
 	    </fileset>	        
-	    <p200ant repack="true"  configFile="p200.config">
+	    <p200ant repack="true"  configFile="tools_p200.config">
 	        <fileset refid="jars2pack"/>
 	    </p200ant>	   
 	            
@@ -271,7 +276,7 @@ office@geogebra.org
 	    <fileset id="unsignedJars" dir="${build.dir}/unsigned/unpacked">
 			<include name="*.jar"/>
 		</fileset>	
-		<p200ant destdir="${build.dir}/unsigned/packed"  configFile="p200.config">
+		<p200ant destdir="${build.dir}/unsigned/packed"  configFile="tools_p200.config">
 	        <fileset refid="unsignedJars"/>
 	    </p200ant>	
 		
@@ -283,7 +288,7 @@ office@geogebra.org
 		<fileset id="signedJars" dir="${build.dir}/unpacked">
 			<include name="*.jar"/>
 		</fileset>	
-		<p200ant destdir="${build.dir}/packed"  configFile="p200.config">
+		<p200ant destdir="${build.dir}/packed"  configFile="tools_p200.config">
 	        <fileset refid="signedJars"/>
 	    </p200ant>	
 	</target>
