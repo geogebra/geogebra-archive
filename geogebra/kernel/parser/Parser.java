@@ -2176,7 +2176,7 @@ ValidExpression  functionOrCommand():
                         label = funcName.substring(0, index+1);
                         geo = kernel.lookupLabel(label);
                         if (geo != null) break;
-                        if (c.image.charAt(index) == '\u005c'') {
+                        if (c.image.charAt(index) == '\'') {
                                 order++;
                                 index--;
                         } else break;

@@ -222,10 +222,9 @@ public class GeoPolyhedron extends GeoElement3D {
 	   }
 	 
 	 
-	 
-	 
-	 
-	 
+
+
+
 	 
 	 
 	 

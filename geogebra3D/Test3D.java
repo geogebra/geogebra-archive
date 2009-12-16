@@ -148,7 +148,7 @@ public class Test3D{
 		//testSpring();
 		
         //demos();
-        //testCube(true);//testSave("polyhedron3d");
+        testCube(true);//testSave("polyhedron3d");
         //testLoad("polyhedron3d");
         //testLoad("polygon3d");
         
@@ -837,7 +837,7 @@ public class Test3D{
 	
 
 	private GeoPoint3D[] testCube(boolean top){
-		GeoPoint3D[] points = new GeoPoint3D[8];
+		GeoPoint3D[] points = new GeoPoint3D[5];
 		
 		try {
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("A=(1,1,0)",false);
@@ -850,12 +850,15 @@ public class Test3D{
 			points[3]=(GeoPoint3D) kernel3D.lookupLabel("D");
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("E=(x(A),y(A), z(A)+sqrt((A-B)^2) )",false);
 			points[4]=(GeoPoint3D) kernel3D.lookupLabel("E");
+			
+			/*
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("F=(x(B),y(B),z(E))",false);
 			points[5]=(GeoPoint3D) kernel3D.lookupLabel("F");
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("G=(x(C),y(C),z(E))",false);
 			points[6]=(GeoPoint3D) kernel3D.lookupLabel("G");
 			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling("H=(x(D),y(D),z(E))",false);
 			points[7]=(GeoPoint3D) kernel3D.lookupLabel("H");
+			*/
 			
 			/*
 			kernel3D.Polyhedron("cube", points, 
@@ -866,7 +869,7 @@ public class Test3D{
 			});
 			*/
 			
-			kernel3D.Polyhedron("cube", points);
+			kernel3D.Prism("cube", points);
 			
 			if (!top)
 				kernel3D.lookupLabel("faceEFGH",false).setEuclidianVisible(false);

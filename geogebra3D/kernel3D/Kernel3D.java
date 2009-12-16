@@ -425,21 +425,21 @@ public class Kernel3D
 		
 	}	
     
-    /** Polyhedron "pseudo-prismatic" with vertices 
+    /** Prism with vertices (last one is first vertex of second parallel face)
      * @param label name
      * @param points vertices
      * @return the polyhedron
      */
-    final public GeoElement [] Polyhedron(String label, GeoPoint3D[] points){
+    final public GeoElement [] Prism(String label, GeoPoint3D[] points){
 		
     	
-    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points,GeoPolyhedron.TYPE_PSEUDO_PRISM);
+    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points,GeoPolyhedron.TYPE_PRISM);
     	
     	return algo.getOutput();
 		
 	}	
     
-    /** Polyhedron with vertices (last one as apex)
+    /** Pyramid with vertices (last one as apex)
      * @param label name
      * @param points vertices
      * @return the polyhedron

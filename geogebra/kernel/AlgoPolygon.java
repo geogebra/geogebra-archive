@@ -169,6 +169,7 @@ public class AlgoPolygon extends AlgoElement {
         Application.debug(s);
         */
         
+       
     }
     
     public void update() {
