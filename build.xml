@@ -247,7 +247,7 @@ office@geogebra.org
 	<target name="sign" description="repack and sign jar files twice (to ensure WebStart compatibility)">	    	
 		<!-- check if keystore file present -->
 		<condition property="keystore.present">
-			<available file="${workspace.dir}/geogebra-keystore.p12"/>
+			<available file="${workspace.dir}/igi-keystore.p12"/>
 		</condition>
 		
 		<!-- repack and sign jars first time -->
@@ -262,8 +262,8 @@ office@geogebra.org
 	<!-- sign jars -->
 	<target name="doSign" if="keystore.present" description="sign jar files">
 		<signjar 
-			keystore="${workspace.dir}/geogebra-keystore.p12" 	
-			alias="geogebra inc.&apos;s globalsign inc id"
+			keystore="${workspace.dir}/igi-keystore.p12" 	
+			alias="International GeoGebra Institute&apos;s GlobalSign nv-sa ID"
 			storetype="pkcs12"
 			storepass="geogebra">
 		    <fileset dir="${build.dir}" includes="*.jar" />
@@ -308,7 +308,7 @@ office@geogebra.org
 		      srcFile="${src.dir}/geogebra/GeoGebra.java">
 		  <filterchain>
 		  	<linecontainsregexp>
-		  	  <regexp pattern="VERSION_STRING = *"/>
+		  	  <regexp pattern="public static final String VERSION_STRING = *"/>
 		  		</linecontainsregexp>
 		  	<deletecharacters chars="\spublicstaticfinalStringVERSION_STRING=&quot;;"/>
 		      </filterchain>

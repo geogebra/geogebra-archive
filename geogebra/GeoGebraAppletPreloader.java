@@ -22,12 +22,12 @@ public class GeoGebraAppletPreloader extends JApplet {
 		Thread jarLoader = new Thread() {
 			public void run() {
 				// touch on file in all jar files to force loading
-				
+
 				// load main jar
 				System.out.print("loading geogebra_main.jar... ");
 				System.out.flush();
 				try {
-					geogebra.cas.GeoGebraCAS.class.getClass();
+					geogebra.main.Application.class.getClass();
 					System.out.println("done");
 				} catch (Exception e) {
 					System.out.println("failed");
