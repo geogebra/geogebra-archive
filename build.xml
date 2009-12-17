@@ -45,7 +45,7 @@ office@geogebra.org
 	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
 		depends="clean, ggb-jar-files, obfuscate, ggb-jar-index, 
-					copyJars, sign, pack, preloadHtml, finish">	  
+					copyJars, sign, pack, preloadHtml, finish, installer">	  
 	</target>
 	
 	<!-- build jar files for testing without obfuscation -->
@@ -80,6 +80,8 @@ office@geogebra.org
 		<mkdir dir="${build.dir}/unsigned"/>
 		<mkdir dir="${build.dir}/unsigned/packed"/>
 		<mkdir dir="${build.dir}/unsigned/unpacked"/>
+		<mkdir dir="${build.dir}/installer"/>
+		<mkdir dir="${build.dir}/installer/macosx"/>
 		<mkdir dir="${propertiestemp.dir}"/>
 	</target>
 	
@@ -302,16 +304,49 @@ office@geogebra.org
 	    </p200ant>	
 	</target>
 	
-	<!-- reads the version number from geogebra.GeoGebra.java -->
+	<!-- reads the version/build number from geogebra.GeoGebra.java -->
 	<target name="readVersion">
-		<loadfile property="version"
-		      srcFile="${src.dir}/geogebra/GeoGebra.java">
-		  <filterchain>
-		  	<linecontainsregexp>
-		  	  <regexp pattern="public static final String VERSION_STRING = *"/>
-		  		</linecontainsregexp>
-		  	<deletecharacters chars="\spublicstaticfinalStringVERSION_STRING=&quot;;"/>
-		      </filterchain>
+		<loadfile property="fullversion" srcfile="${src.dir}/geogebra/GeoGebra.java">
+			<filterchain>
+				<linecontainsregexp>
+					<regexp pattern="public static final String VERSION_STRING.*=" />
+				</linecontainsregexp>
+				<containsregex pattern=".*&quot;(.*)&quot;.*" replace="\1"/>
+				<deletecharacters chars="\r\n" />
+			</filterchain>
+		</loadfile>
+		<loadfile property="version" srcfile="${src.dir}/geogebra/GeoGebra.java">
+			<filterchain>
+				<linecontainsregexp>
+					<regexp pattern="public static final String VERSION_STRING.*=" />
+				</linecontainsregexp>
+				<containsregex pattern=".*&quot;(.*)\..*&quot;.*" replace="\1"/>
+				<deletecharacters chars="\r\n" />
+			</filterchain>
+		</loadfile>
+		<loadfile property="build" srcfile="${src.dir}/geogebra/GeoGebra.java">
+			<filterchain>
+				<linecontainsregexp>
+					<regexp pattern="public static final String VERSION_STRING.*=" />
+				</linecontainsregexp>
+				<containsregex pattern=".*&quot;.*\..*\..*\.(.*)&quot;.*" replace="\1"/>
+				<deletecharacters chars="\r\n" />
+			</filterchain>
+		</loadfile>
+		<!--
+		<echo>  ${fullversion} </echo>
+		<echo> ${version}  </echo>
+		<echo> ${build}  </echo>
+		-->
+	</target>
+	
+	<target name="readCopyright">
+		<loadfile property="copyright" srcFile="${src.dir}/geogebra/gui/_license.txt">
+			<filterchain>
+				<linecontainsregexp>
+					<regexp pattern="Copyright" />
+				</linecontainsregexp>
+			</filterchain>
 		</loadfile>
 	</target>
 	
@@ -321,6 +356,53 @@ office@geogebra.org
 		      tofile="${build.dir}/unsigned/preload.html">
 		</copy>
 		<replace file="${build.dir}/unsigned/preload.html" 
-			token="VERSION_STRING" value="${version}"/>
+			token="VERSION_STRING" value="${fullversion}"/>
+	</target>
+	
+	<target name="installer" depends="macosx">
+	</target>
+	
+	<!-- defines the jarbundler task used to create the Mac OS X bundle -->
+	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="tools_jarbundler.jar" />
+	
+	<!-- creates a GeoGebra.app bundle for Mac OS X -->
+	<target name="macosx" depends="readVersion, readCopyright">
+		<jarbundler
+				dir="${build.dir}/installer/macosx"
+				name="GeoGebra"
+				mainclass="geogebra.GeoGebra" 
+				jar="${build.dir}/unpacked/geogebra.jar"
+				build="${build}"
+				bundleid="geogebra.GeoGebra"
+				icon="geogebra.icns"
+				infostring="GeoGebra ${fullversion}, ${copyright}"
+				jvmversion="1.5.0+"
+				shortname="GeoGebra"
+				signature="GGB"
+				stubfile="JavaApplicationStub"
+				version="${version}">
+			<javaproperty name="apple.laf.useScreenMenuBar" value="true" />
+			<javafileset dir="${build.dir}/unpacked" />
+			<javafileset dir="${build.dir}/unsigned" includes="unpacked/*.jar" />
+			<documenttype
+				name="GeoGebra File"
+				extensions="ggb"
+				mimetypes="application/vnd.geogebra.file"
+				iconfile="geogebra.icns"
+				role="Editor" />
+			<documenttype
+				name="GeoGebra Tool"
+				extensions="ggt"
+				mimetypes="application/vnd.geogebra.tool"
+				iconfile="geogebra.icns"
+				role="Editor" />
+		</jarbundler>
+		<move file="${build.dir}/installer/macosx/GeoGebra.app/Contents/Resources/Java/unpacked" tofile="${build.dir}/installer/macosx/GeoGebra.app/Contents/Resources/Java/unsigned" />
+		<delete file="${build.dir}/installer/macosx/GeoGebra.zip" />
+		<zip destfile="${build.dir}/installer/macosx/GeoGebra.zip">
+			<zipfileset dir="${build.dir}/installer/macosx" excludes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" />
+			<zipfileset dir="${build.dir}/installer/macosx" includes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" filemode="755" />
+		</zip>
+		<delete dir="${build.dir}/installer/macosx/GeoGebra.app" />
 	</target>
 </project>
