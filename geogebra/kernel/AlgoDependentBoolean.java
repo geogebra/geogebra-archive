@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyBoolean;
 
 /**
@@ -59,7 +60,12 @@ public class AlgoDependentBoolean extends AlgoElement {
     // calc the current value of the arithmetic tree
     protected final void compute() {	
     	try {
-    		bool.setValue(((MyBoolean) root.evaluate()).getBoolean());
+    		
+    		ExpressionValue ev = root.evaluate();
+    		if (ev.isGeoElement())
+        		bool.setValue(((GeoBoolean) ev).getBoolean());
+    		else
+    			bool.setValue(((MyBoolean) ev).getBoolean());
     	} catch (Exception e) {
     		bool.setUndefined();
     	}
