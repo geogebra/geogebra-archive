@@ -191,7 +191,7 @@ public class DrawList3D {
 
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().drawLabel(renderer,true,false);	
+				d.next().drawLabel(renderer);	
 
 		view3D.drawLabel(renderer);
 	}

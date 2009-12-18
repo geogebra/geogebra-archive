@@ -340,7 +340,7 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_ALPHA_TEST);       
 
 
-        //drawing picked parts        
+        //drawing highlighted parts        
         gl.glDepthMask(false);
         //setMaterial(new Color(0f,0f,0f),0.75f);
         dilation = DILATION_HIGHLITED;
@@ -1748,7 +1748,7 @@ public class Renderer implements GLEventListener {
     public void pickLabel(Drawable3D d){
     	pickingLoop++;
     	gl.glLoadName(pickingLoop);
-    	d.drawLabel(this,false,true);	
+    	d.drawLabelForPicking(this);	
     	drawHits[pickingLoop] = d;
     }
     

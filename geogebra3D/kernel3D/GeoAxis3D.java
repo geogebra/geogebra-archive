@@ -10,6 +10,7 @@ public class GeoAxis3D extends GeoLine3D {
 	public static final int X_AXIS_3D = 1;
 	public static final int Y_AXIS_3D = 2;
 	public static final int Z_AXIS_3D = 3;
+	private String axisLabel;
 
 
 	public GeoAxis3D(Construction cons) {
@@ -24,18 +25,21 @@ public class GeoAxis3D extends GeoLine3D {
 		case X_AXIS_3D:
 			setCoord(EuclidianView3D.o,EuclidianView3D.vx);
 			label = "xAxis3D";
+			setAxisLabel("x");
 			setObjColor(Color.RED);
 			break;
 
 		case Y_AXIS_3D:
 			setCoord(EuclidianView3D.o,EuclidianView3D.vy);
 			label = "yAxis3D";
+			setAxisLabel("y");
 			setObjColor(Color.GREEN);
 			break;
 			
 		case Z_AXIS_3D:
 			setCoord(EuclidianView3D.o,EuclidianView3D.vz);
 			label = "zAxis3D";
+			setAxisLabel("z");
 			setObjColor(Color.BLUE);
 			break;
 		}
@@ -65,6 +69,21 @@ public class GeoAxis3D extends GeoLine3D {
 	public int getGeoClassType() {
 		
 		return GEO_CLASS_AXIS3D;
+	}
+	
+	
+	/** return label of the axis (e.g. x, y, z ...)
+	 * @return label of the axis
+	 */
+	public String getAxisLabel(){
+		return axisLabel;
+	}
+
+	/** set the label of the axis (e.g. x, y, z ...)
+	 * @param label label of the axis
+	 */
+	public void setAxisLabel(String label){
+		axisLabel = label;
 	}
 
 }

@@ -1795,6 +1795,38 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		
+		
+		// axis settings
+		for (int i = 0; i < 3; i++) {
+			sb.append("\t<axis id=\"");
+			sb.append(i);
+			sb.append("\" show=\"");
+			sb.append(axis[i].isEuclidianVisible());
+			/*
+			sb.append("\" label=\"");
+			sb.append(axesLabels[i] == null ? "" : axesLabels[i]);
+			sb.append("\" unitLabel=\"");
+			sb.append(axesUnitLabels[i] == null ? "" : axesUnitLabels[i]);
+			sb.append("\" tickStyle=\"");
+			sb.append(axesTickStyles[i]);
+			sb.append("\" showNumbers=\"");
+			sb.append(showAxesNumbers[i]);
+
+			// the tick distance should only be saved if
+			// it isn't calculated automatically
+			if (!automaticAxesNumberingDistances[i]) {
+				sb.append("\" tickDistance=\"");
+				sb.append(axesNumberingDistances[i]);
+			}
+			*/
+
+			sb.append("\"/>\n");
+		}
+
+		
+		
+		
+		
 		sb.append("</euclidianView3D>\n");
 		return sb.toString();
 	}
@@ -1913,7 +1945,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void drawLabel(Renderer renderer){
 		
 		for(int i=0;i<3;i++)
-			axis[i].getDrawable3D().drawLabel(renderer, true, false);
+			axis[i].getDrawable3D().drawLabel(renderer);
 		
 
 	}

@@ -411,17 +411,27 @@ public abstract class Drawable3D {
 	}
 
 	
+	/** draws the label (if any)
+     * @param renderer 3D renderer
+     * */
+	public void drawLabel(Renderer renderer){
+		drawLabel(renderer, true, false);
+	}
 	
+	/** draws the label for picking it 
+     * @param renderer 3D renderer
+     * */
+	public void drawLabelForPicking(Renderer renderer){
+		drawLabel(renderer, false, true);		
+	}
     
     /** draws the label (if any)
      * @param renderer 3D renderer
      * @param colored says if the text has to be colored
      * @param forPicking says if this method is called for picking
      */
-    public void drawLabel(Renderer renderer, boolean colored, boolean forPicking){
+    private void drawLabel(Renderer renderer, boolean colored, boolean forPicking){
 
-
-    	
     	if (forPicking && !((GeoElement3DInterface) getGeoElement()).isPickable())
 			return;
     	
