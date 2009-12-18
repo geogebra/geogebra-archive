@@ -2785,7 +2785,7 @@ public class EuclidianController implements MouseListener,
 		transformCoords(false);
 	} */
 
-	final protected void transformCoords() {
+	protected void transformCoords() {
 		// calc real world coords
 		calcRWcoords();
 		

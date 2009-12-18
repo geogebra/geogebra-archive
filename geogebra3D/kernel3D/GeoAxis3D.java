@@ -33,7 +33,8 @@ public class GeoAxis3D extends GeoLine3D {
 			setCoord(EuclidianView3D.o,EuclidianView3D.vy);
 			label = "yAxis3D";
 			setAxisLabel("y");
-			setObjColor(Color.GREEN);
+			//setObjColor(Color.GREEN);
+			setObjColor(new Color(0,0.5f,0));
 			break;
 			
 		case Z_AXIS_3D:

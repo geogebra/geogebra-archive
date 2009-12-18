@@ -702,6 +702,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	///////////////////////////////////////////
+	// POINT CAPTURING
+	
+	protected void transformCoords() {
+		//TODO point capturing
+	}
+		
 	
 	
 	

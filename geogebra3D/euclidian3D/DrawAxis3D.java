@@ -1,5 +1,8 @@
 package geogebra3D.euclidian3D;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
@@ -52,17 +55,19 @@ public class DrawAxis3D extends DrawLine3D {
   		renderer.setDash(Renderer.DASH_NONE);  	
     	
     	double ticksSize = 5;
+    	
 
-    	//gets the direction vector of the axis as it is drawn
+    	//gets the direction vector of the axis as it is drawn on screen
     	//TODO do this when updated
     	Ggb3DVector v = ((GeoCoordSys1D) getGeoElement()).getVx().copyVector();
     	getView3D().toScreenCoords3D(v);
     	v.set(3, 0); //set z-coord to 0
-    	v.normalize();
+    	double vScale = v.norm(); //axis scale, used for ticks distance
+    	//v.normalize();
     	
     	//calc orthogonal offsets
-    	int vx = (int) (v.get(1)*3*ticksSize);
-    	int vy = (int) (v.get(2)*3*ticksSize);
+    	int vx = (int) (v.get(1)*3*ticksSize/vScale);
+    	int vy = (int) (v.get(2)*3*ticksSize/vScale);
     	int xOffset = -vy;
     	int yOffset = vx;
     	
@@ -70,8 +75,31 @@ public class DrawAxis3D extends DrawLine3D {
     		xOffset = -xOffset;
     		yOffset = -yOffset;
     	}
-    	//Application.debug(getGeoElement().getLabel()+":v=\n"+v);
+    	
+    	
+    	//interval between two ticks
+    	//TODO merge with EuclidianView.setAxesIntervals(double scale, int axis)
+    	//Application.debug("vscale : "+vScale);
+    	double maxPix = 100; // only one tick is allowed per maxPix pixels
+		double units = 100*maxPix / (getView3D().getScale()*vScale);
+		int exp = (int) Math.floor(Math.log(units) / Math.log(10));
+		int maxFractionDigtis = Math.max(-exp, getView3D().getKernel().getPrintDecimals());
+		NumberFormat numberFormat = new DecimalFormat();
+		((DecimalFormat) numberFormat).applyPattern("###0.##");	
+		numberFormat.setMaximumFractionDigits(maxFractionDigtis);
+		double pot = Math.pow(10, exp);
+		double n = units / pot;
+		double distance;
 
+		if (n > 5) {
+			distance = 5 * pot;
+		} else if (n > 2) {
+			distance = 2 * pot;
+		} else {
+			distance = pot;
+		}
+    	
+    	
     	//matrix for each number 
     	Ggb3DMatrix4x4 numbersMatrix = Ggb3DMatrix4x4.Identity();
     	
@@ -84,13 +112,16 @@ public class DrawAxis3D extends DrawLine3D {
     	ticksMatrix.setVz((Ggb3DVector) drawingMatrix.getVz().mul(ticksSize));
   	
     	
-    	for(int i=(int) getDrawMin();i<=getDrawMax();i++){
-    		Ggb3DVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(i);
+    	//for(int i=(int) getDrawMin();i<=getDrawMax();i++){
+    	for(int i=(int) (getDrawMin()/distance);i<=getDrawMax()/distance;i++){
+    		double val = i*distance;
+    		Ggb3DVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
     		
     		//draw numbers
+    		String strNum = getView3D().getKernel().formatPiE(val,numberFormat);
     		numbersMatrix.setOrigin(origin);
     		renderer.setMatrix(numbersMatrix);
-       		renderer.drawText(xOffset-4,yOffset-6, ""+i,true); //TODO values 4 and 6 depend to label size 
+       		renderer.drawText(xOffset-4,yOffset-6, strNum,true); //TODO values 4 and 6 depend to label size 
     	
        		//draw ticks
        		ticksMatrix.setOrigin(origin);
