@@ -193,6 +193,7 @@ public class DrawList3D {
 			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
 				d.next().drawLabel(renderer,true,false);	
 
+		view3D.drawLabel(renderer);
 	}
 
 

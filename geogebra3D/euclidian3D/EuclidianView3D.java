@@ -215,7 +215,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		axis[2] = kernel3D.getZAxis3D();
 		
 		for(int i=0;i<3;i++){
-			//axis[i].setLabelVisible(false);
+			axis[i].setLabelVisible(true);
 			add(axis[i]);
 		}
 		
@@ -1845,6 +1845,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
+	
+	
+	
 	/** draw transparent parts of view's drawables (xOy plane)
 	 * @param renderer
 	 */
@@ -1901,6 +1904,23 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		for(int i=0;i<3;i++)
 			renderer.pick(axis[i].getDrawable3D());
 	}
+	
+	
+	
+	/** draw ticks on axis
+	 * @param renderer
+	 */
+	public void drawLabel(Renderer renderer){
+		
+		for(int i=0;i<3;i++)
+			axis[i].getDrawable3D().drawLabel(renderer, true, false);
+		
+
+	}
+	
+	
+	
+	
 	
 	public void updateDrawables(){
 		
