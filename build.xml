@@ -42,10 +42,16 @@ office@geogebra.org
 	<property name="temp.dir" location="../build/temp"/>
 	<property name="workspace.dir" location="../"/>
 	
-	<!-- build signed and unsigned GeoGebra jar files -->
+	<!-- build signed and unsigned GeoGebra jar files and installer -->
 	<target name="geogebra" 
 		depends="clean, ggb-jar-files, obfuscate, ggb-jar-index, 
 					copyJars, sign, pack, preloadHtml, finish, installer">	  
+	</target>
+	
+	<!-- build signed and unsigned GeoGebra 3D jar files -->
+	<target name="geogebra3D" 
+		depends="clean, ggb-jar-files3D, obfuscate3D, ggb-jar-index3D, 
+					copyJars3D, sign, pack, preloadHtml, finish">	  
 	</target>
 	
 	<!-- build jar files for testing without obfuscation -->
@@ -59,10 +65,22 @@ office@geogebra.org
 			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar">		
 	</target>
 	
+	<!-- create all jar files -->
+	<target name="ggb-jar-files3D" 
+			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jogl">		
+	</target>
+	
 	<manifest file="../manifest.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra"/>
 		<attribute name="Class-Path" 
 			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_javascript.jar"/>
+		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
+	</manifest>	
+	
+	<manifest file="../manifest3D.mf">	    
+		<attribute name="Main-Class" value="geogebra.GeoGebra3D"/>
+		<attribute name="Class-Path" 
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_3d.jar geogebra_javascript.jar jogl.jar gluegen-rt.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
@@ -113,9 +131,27 @@ office@geogebra.org
 	       </copy>
 	</target>
 	
+	<!-- put jar files into subdirectories signed and unsigned -->
+	<target name="copyJars3D" depends="ggb-jar-files3D">
+		   <copy todir="${build.dir}/unsigned/unpacked">
+		      <fileset dir="${build.dir}">
+	            <include name="*.jar" />
+		      </fileset>
+	       </copy>
+	</target>
+	
 	<!-- geogebra.jar loads the geogebra_main.jar file and starts up the application/applet  -->
 	<target name="ggb-jar" depends="clean" description="create unsigned geogebra.jar">		
 		<jar jarfile="${build.dir}/geogebra.jar" manifest="../manifest.mf" >		
+			<fileset dir="${src.dir}"		   
+				includes="geogebra/*"			
+				excludes="**/*.java"/>
+		</jar>
+	</target>
+	
+	<!-- geogebra.jar loads the geogebra_main.jar file and starts up the application/applet  -->
+	<target name="ggb-jar3D" depends="clean" description="create unsigned geogebra.jar">		
+		<jar jarfile="${build.dir}/geogebra.jar" manifest="../manifest3D.mf" >		
 			<fileset dir="${src.dir}"		   
 				includes="geogebra/*"			
 				excludes="**/*.java"/>
@@ -133,6 +169,32 @@ office@geogebra.org
 			<arg value="geogebra_export.jar"/>
 			<arg value="geogebra_javascript.jar"/>
 			<arg value="geogebra_properties.jar"/>
+		 </exec>
+	</target>
+	<!-- copies the jogl jars  -->
+	<target name="ggb-copy-jogl" depends="clean" description="copy jogl jars">		
+		<copy file="${src.dir}/3D/jogl.jar"
+		      tofile="${build.dir}/jogl.jar">
+		</copy>
+		<copy file="${src.dir}/3D/gluegen-rt.jar"
+		      tofile="${build.dir}/gluegen-rt.jar">
+		</copy>
+	</target>
+	
+	<!-- create index.list in geogebra.jar for optimized loading of other jars by Java classloader -->
+	<target name="ggb-jar-index3D" depends="ggb-jar-files3D" description="create index in geogegebra.jar">
+		<exec executable="jar" dir="${build.dir}">
+		    <arg value="i"/>
+		    <arg value="geogebra.jar"/>
+		    <arg value="geogebra_main.jar"/>
+			<arg value="geogebra_gui.jar"/>
+			<arg value="geogebra_cas.jar"/>
+			<arg value="geogebra_3d.jar"/>
+			<arg value="geogebra_export.jar"/>
+			<arg value="geogebra_javascript.jar"/>
+			<arg value="geogebra_properties.jar"/>
+			<arg value="geogebra_jogl.jar"/>
+			<arg value="geogebra_gluegen-rt.jar"/>
 		 </exec>
 	</target>
 	 
@@ -203,7 +265,7 @@ office@geogebra.org
 			basedir="${src.dir}"
 			includes="geogebra/euclidian3D/**,
 			geogebra/kernel3D/**,
-			geogebra3D/**,"			
+			geogebra3D/**,	"		
 			excludes="**/*.java" 
 		/>
 	</target>
@@ -229,6 +291,13 @@ office@geogebra.org
 	
 	<!-- Obfuscate jar files without signing -->
 	<target name="obfuscate" depends="ggb-jar-files">
+		<!-- check if java150-rt.jar file present -->
+	    <condition property="java150-rt.present">
+	    	<available file="${workspace.dir}/java150-rt.jar"/>
+	    </condition>
+		<antcall target="doObfuscate"/>
+	</target>
+	<target name="obfuscate3D" depends="ggb-jar-files3D">
 		<!-- check if java150-rt.jar file present -->
 	    <condition property="java150-rt.present">
 	    	<available file="${workspace.dir}/java150-rt.jar"/>

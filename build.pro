@@ -38,6 +38,12 @@
     public static void main(java.lang.String[]);
 }
 
+
+# Keep GeoGebra3D application
+-keep class geogebra.GeoGebra3D {
+    public static void main(java.lang.String[]);
+}
+
 # Keep GeoGebra applet
 -keep class geogebra.GeoGebraApplet {
     public <methods>;
