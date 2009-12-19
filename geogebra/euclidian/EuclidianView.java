@@ -1288,29 +1288,74 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	
+	/**
+	 * change showing flag of the axis
+	 * @param axis id of the axis
+	 * @param flag show/hide
+	 * @param update update (or not) the background image
+	 */
+	public void setShowAxis(int axis, boolean flag, boolean update){
+		if (flag == showAxes[axis])
+			return;
+		
+		showAxes[axis] = flag;
+		
+		if (update)
+			updateBackgroundImage();
+			
+	}
+	
 	
 
+	public void setShowAxes(boolean flag, boolean update){
+		setShowAxis(AXIS_X, flag, false);
+		setShowAxis(AXIS_Y, flag, true);
+	}
+	
+	
+
+	/** sets the visibility of x and y axis
+	 * @param showXaxis 
+	 * @param showYaxis
+	 * @deprecated use {@link EuclidianViewInterface#setShowAxes(boolean, boolean)} 
+	 * or {@link EuclidianViewInterface#setShowAxis(int, boolean, boolean)} instead
+	 */
 	public void showAxes(boolean xAxis, boolean yAxis) {
 		
-		
+		/*
 		if (xAxis == showAxes[0] && yAxis == showAxes[1])
 			return;
 
 		showAxes[0] = xAxis;
 		showAxes[1] = yAxis;
 		updateBackgroundImage();
+		*/
+		
+		setShowAxis(AXIS_X, xAxis, false);
+		setShowAxis(AXIS_Y, yAxis, true);
+		
 	}
 	
 	public final boolean isGridOrAxesShown() {
 		return showAxes[0] || showAxes[1] || showGrid;
 	}	
+	
+	/**
+	 * says if the axis is shown or not
+	 * @param axis id of the axis
+	 * @return if the axis is shown
+	 */
+	public boolean getShowAxis(int axis){
+		return showAxes[axis];
+	}
 
 	public boolean getShowXaxis() {
-		return showAxes[0];
+		//return showAxes[0];
+		return getShowAxis(AXIS_X);
 	}
 
 	public boolean getShowYaxis() {
-		return showAxes[1];
+		return getShowAxis(AXIS_Y);
 	}
 
 	public void showGrid(boolean show) {
@@ -3882,6 +3927,20 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			}
 		}
 	}
+	
+	
+	/**
+	 * sets the axis label to axisLabel
+	 * @param axis
+	 * @param axisLabel
+	 */
+	public void setAxisLabel(int axis, String axisLabel){
+		if (axisLabel != null && axisLabel.length() == 0) 
+			axesLabels[axis] = null;
+		else
+			axesLabels[axis] = axisLabel;
+	}
+	
 
 	public void setAutomaticAxesNumberingDistance(boolean flag, int axis) {
 		automaticAxesNumberingDistances[axis] = flag;
@@ -3986,6 +4045,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void setShowAxesNumbers(boolean[] showAxesNumbers) {
 		this.showAxesNumbers = showAxesNumbers;
 	}
+	
+	public void setShowAxisNumbers(int axis, boolean showAxisNumbers){
+		showAxesNumbers[axis]=showAxisNumbers;
+	}
 
 	public String[] getAxesUnitLabels() {
 		return axesUnitLabels;
@@ -4005,6 +4068,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	public int[] getAxesTickStyles() {
 		return axesTickStyles;
+	}
+	
+	public void setAxisTickStyle(int axis, int tickStyle){
+		axesTickStyles[axis]=tickStyle;
 	}
 
 	public void setAxesTickStyles(int[] axesTickStyles) {

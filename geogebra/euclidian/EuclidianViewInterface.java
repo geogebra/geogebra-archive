@@ -12,12 +12,17 @@ import java.util.ArrayList;
  * 
  * Interface between EuclidianView (2D or 3D) and EuclidianController (2D or 3D)
  * 
- * see EuclidianView for detail of methods
+ * (TODO) see EuclidianView for detail of methods
  * 
  */
 
 public interface EuclidianViewInterface {
 
+	
+	/** reference to x axis*/
+	public static final int AXIS_X = 0; 
+	/** reference to y axis*/	
+	public static final int AXIS_Y = 1; 
 
 	
 	
@@ -111,14 +116,68 @@ public interface EuclidianViewInterface {
 	
 
 	
+	//////////////////////////////////////////////////////
+	// AXIS, GRID, ETC.
+	//////////////////////////////////////////////////////	
 	
-	// axis, grid, etc.
-	boolean getShowYaxis();
+	
+	/** sets the visibility of x and y axis
+	 * @param showXaxis 
+	 * @param showYaxis
+	 * @deprecated use {@link EuclidianViewInterface#setShowAxes(boolean, boolean)} 
+	 * or {@link EuclidianViewInterface#setShowAxis(int, boolean, boolean)} instead
+	 */
+	//void showAxes(boolean showXaxis, boolean showYaxis);
+	
+	
+	
+	
 	boolean getShowXaxis();
-	void showAxes(boolean b, boolean showYaxis);
+	boolean getShowYaxis();
+	
+	
+	
 	boolean isGridOrAxesShown();
 	int getGridType();
 	void setCoordSystem(double x, double y, double xscale, double yscale);
+	
+	/**
+	 * sets showing flag of the axis
+	 * @param axis id of the axis
+	 * @param flag show/hide
+	 * @param update update (or not) the background image
+	 */
+	public void setShowAxis(int axis, boolean flag, boolean update);
+	
+	/**
+	 * sets showing flag of all axes
+	 * @param flag show/hide
+	 * @param update update (or not) the background image
+	 */	
+	public void setShowAxes(boolean flag, boolean update);
+	
+	
+	/**
+	 * sets the axis label to axisLabel
+	 * @param axis
+	 * @param axisLabel
+	 */
+	public void setAxisLabel(int axis, String axisLabel);
+	
+	
+	/** sets if numbers are shown on this axis
+	 * @param axis
+	 * @param showAxisNumbers
+	 */
+	public void setShowAxisNumbers(int axis, boolean showAxisNumbers);
+	
+	
+	/** sets the tickstyle of this axis
+	 * @param axis
+	 * @param tickStyle
+	 */
+	public void setAxisTickStyle(int axis, int tickStyle);
+	
 	
 	/** Sets coord system from mouse move */
 	public void setCoordSystemFromMouseMove(int dx, int dy, int mode);
@@ -139,6 +198,14 @@ public interface EuclidianViewInterface {
 	public int getViewWidth();
 	public int getViewHeight();
 	public double getGridDistances(int i);
+	public String[] getAxesLabels();
+	public void setAxesLabels(String[] labels);
+	public String[] getAxesUnitLabels();
+	public void setShowAxesNumbers(boolean[] showNums);
+	public void setAxesUnitLabels(String[] unitLabels);
+	public boolean[] getShowAxesNumbers();
+	public void setAxesNumberingDistance(double tickDist, int axis);
+	public int[] getAxesTickStyles();
 	
 	
 	/** remembers the origins values (xzero, ...) */
@@ -186,6 +253,9 @@ public interface EuclidianViewInterface {
 	
 	public void mouseEntered();
 	public void mouseExited();
+	
+	
+
 
 
 	

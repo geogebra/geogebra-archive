@@ -87,4 +87,23 @@ public class GeoAxis3D extends GeoLine3D {
 		axisLabel = label;
 	}
 
+	
+
+	public String getUnitLabel() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+
+	public int getTickStyle() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public boolean getShowNumbers() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

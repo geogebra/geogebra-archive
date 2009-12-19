@@ -20,6 +20,7 @@ package geogebra.io;
 
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.io.layout.Perspective;
@@ -685,7 +686,8 @@ public class MyXMLHandler implements DocHandler {
 			String strAxes = (String) attrs.get("axes");
 			if (strAxes != null) {
 				boolean showAxes = parseBoolean(strAxes);
-				ev.showAxes(showAxes, showAxes);
+				//ev.showAxes(showAxes, showAxes);
+				ev.setShowAxes(showAxes, true);
 			}
 
 			ev.showGrid(parseBoolean((String) attrs.get("grid")));
@@ -868,7 +870,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleAxis(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	protected boolean handleAxis(EuclidianViewInterface ev, LinkedHashMap<String, String> attrs) {
 		// <axis id="0" label="x" unitLabel="x" showNumbers="true"
 		// tickDistance="2"/>
 		try {
@@ -876,25 +878,30 @@ public class MyXMLHandler implements DocHandler {
 			String strShowAxis = (String) attrs.get("show");
 			String label = (String) attrs.get("label");
 			String unitLabel = (String) attrs.get("unitLabel");
-			boolean showNumbers = parseBoolean((String) attrs
-					.get("showNumbers"));
+			boolean showNumbers = parseBoolean((String) attrs.get("showNumbers"));
 
 			// show this axis
 			if (strShowAxis != null) {
 				boolean showAxis = parseBoolean(strShowAxis);
+				/*
 				if (axis == 0) { // xaxis
 					ev.showAxes(showAxis, ev.getShowYaxis());
 				} else if (axis == 1) { // yaxis
 					ev.showAxes(ev.getShowXaxis(), showAxis);
 				}
+				*/
+				ev.setShowAxis(axis, showAxis, true);
 			}
 
 			// set label
+			ev.setAxisLabel(axis, label);
+			/*
 			if (label != null && label.length() > 0) {
 				String[] labels = ev.getAxesLabels();
 				labels[axis] = label;
 				ev.setAxesLabels(labels);
 			}
+			*/
 
 			// set unitlabel
 			if (unitLabel != null && unitLabel.length() > 0) {
@@ -904,9 +911,12 @@ public class MyXMLHandler implements DocHandler {
 			}
 
 			// set showNumbers
+			ev.setShowAxisNumbers(axis, showNumbers);
+			/*
 			boolean showNums[] = ev.getShowAxesNumbers();
 			showNums[axis] = showNumbers;
 			ev.setShowAxesNumbers(showNums);
+			*/
 
 			// check if tickDistance is given
 			String strTickDist = (String) attrs.get("tickDistance");
@@ -919,13 +929,16 @@ public class MyXMLHandler implements DocHandler {
 			String strTickStyle = (String) attrs.get("tickStyle");
 			if (strTickStyle != null) {
 				int tickStyle = Integer.parseInt(strTickStyle);
-				ev.getAxesTickStyles()[axis] = tickStyle;
+				//ev.getAxesTickStyles()[axis] = tickStyle;
+				ev.setAxisTickStyle(axis, tickStyle);
 			} else {
 				// before v3.0 the default tickStyle was MAJOR_MINOR
-				ev.getAxesTickStyles()[axis] = EuclidianView.AXES_TICK_STYLE_MAJOR_MINOR;
+				//ev.getAxesTickStyles()[axis] = EuclidianView.AXES_TICK_STYLE_MAJOR_MINOR;
+				ev.setAxisTickStyle(axis, EuclidianView.AXES_TICK_STYLE_MAJOR_MINOR);
 			}
 			return true;
 		} catch (Exception e) {
+			//e.printStackTrace();
 			return false;
 		}
 	}
@@ -3335,7 +3348,7 @@ public class MyXMLHandler implements DocHandler {
 	// UTILS
 	// ====================================
 
-	private boolean parseBoolean(String str) throws Exception {
+	protected boolean parseBoolean(String str) throws Exception {
 		return "true".equals(str);
 	}
 }

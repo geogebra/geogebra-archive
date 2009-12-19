@@ -4575,11 +4575,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener {
 			if (geo instanceof GeoAxis)	{
 				switch (((GeoAxis) geo).getType()) {
 				case GeoAxis.X_AXIS:
-					view.showAxes(false, view.getShowYaxis());
+					//view.showAxes(false, view.getShowYaxis());
+					view.setShowAxis(EuclidianViewInterface.AXIS_X, false, true);
 					break;
 
 				case GeoAxis.Y_AXIS:
-					view.showAxes(view.getShowXaxis(), false);
+					//view.showAxes(view.getShowXaxis(), false);
+					view.setShowAxis(EuclidianViewInterface.AXIS_Y, false, true);
 					break;
 				}				
 				app.updateMenubar();

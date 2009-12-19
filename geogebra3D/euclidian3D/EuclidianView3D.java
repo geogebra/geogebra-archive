@@ -98,6 +98,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private GeoPlane3D xOyPlane;
 	private GeoAxis3D[] axis;
 	static final public int DRAWABLES_NB = 4;
+	/** id of z-axis */
+	static final int AXIS_Z = 2; //AXIS_X and AXIS_Y already defined in EuclidianViewInterface
 
 	//point decorations	
 	private DrawPointDecorations pointDecorations;
@@ -983,11 +985,27 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	public void setShowAxis(int axis, boolean flag, boolean update){
+		this.axis[axis].setEuclidianVisible(flag);
+	}
 
 
+	public void setShowAxes(boolean flag, boolean update){
+		setShowAxis(AXIS_X, flag, false);
+		setShowAxis(AXIS_Y, flag, false);
+		setShowAxis(AXIS_Z, flag, true);
+	}
 
-
-
+	
+	
+	/** sets the visibility of xOy plane
+	 * @param flag
+	 */
+	public void setShowPlane(boolean flag){
+		getxOyPlane().setEuclidianVisible(flag);
+	}
+	
+	
 
 
 
@@ -1355,14 +1373,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
-
-
-
-
-	public void showAxes(boolean b, boolean showYaxis) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
@@ -1759,7 +1769,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	/**
-	 * returns settings in XML format
+	 * returns settings in XML format, read by xml handlers
+	 * @see geogebra.io.MyXMLHandler
+	 * @see geogebra3D.io.MyXMLHandler3D
 	 * @return the XML description of 3D view settings
 	 */
 	public String getXML() {
@@ -1801,19 +1813,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			sb.append("\t<axis id=\"");
 			sb.append(i);
 			sb.append("\" show=\"");
-			sb.append(axis[i].isEuclidianVisible());
-			/*
+			sb.append(axis[i].isEuclidianVisible());			
 			sb.append("\" label=\"");
-			sb.append(axesLabels[i] == null ? "" : axesLabels[i]);
+			sb.append(axis[i].getAxisLabel());
 			sb.append("\" unitLabel=\"");
-			sb.append(axesUnitLabels[i] == null ? "" : axesUnitLabels[i]);
+			sb.append(axis[i].getUnitLabel());
 			sb.append("\" tickStyle=\"");
-			sb.append(axesTickStyles[i]);
+			sb.append(axis[i].getTickStyle());
 			sb.append("\" showNumbers=\"");
-			sb.append(showAxesNumbers[i]);
+			sb.append(axis[i].getShowNumbers());
 
 			// the tick distance should only be saved if
 			// it isn't calculated automatically
+			/*
 			if (!automaticAxesNumberingDistances[i]) {
 				sb.append("\" tickDistance=\"");
 				sb.append(axesNumberingDistances[i]);
@@ -1822,6 +1834,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 			sb.append("\"/>\n");
 		}
+		
+		
+		// xOy plane settings
+		sb.append("\t<plane show=\"");
+		sb.append(getxOyPlane().isEuclidianVisible());		
+		sb.append("\"/>\n");
 
 		
 		
@@ -1972,6 +1990,54 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 		pointDecorations.update();
 	}
+	
+	
+	
+	
+	//////////////////////////////////////////////////////
+	// AXES
+	//////////////////////////////////////////////////////
 
+	public String[] getAxesLabels(){
+		return null;
+	}
+	public void setAxesLabels(String[] labels){
+		
+	}
+	
+	public void setAxisLabel(int axis, String axisLabel){
+		
+	}
+	
+	public String[] getAxesUnitLabels(){
+		return null;
+	}
+	public void setShowAxesNumbers(boolean[] showNums){
+		
+	}
+	
+	public void setAxesUnitLabels(String[] unitLabels){
+		
+	}
+	
+	public boolean[] getShowAxesNumbers(){
+		return null;
+	}
+	
+	public void setShowAxisNumbers(int axis, boolean showAxisNumbers){
+		
+	}
+	
+	public void setAxesNumberingDistance(double tickDist, int axis){
+		
+	}
+	
+	public int[] getAxesTickStyles(){
+		return null;
+	}
+
+	public void setAxisTickStyle(int axis, int tickStyle){
+		
+	}
 
 }

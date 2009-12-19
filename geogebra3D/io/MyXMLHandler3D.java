@@ -1,7 +1,9 @@
 package geogebra3D.io;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Construction;
+import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -43,16 +45,18 @@ public class MyXMLHandler3D extends MyXMLHandler {
 		EuclidianView3D ev = ((Application3D) app).getEuclidianView3D();
 
 		switch (eName.charAt(0)) {
-		/*
+		
 		case 'a':
 			if (eName.equals("axesColor")) {
-				ok = handleAxesColor(ev, attrs);
+				//ok = handleAxesColor(ev, attrs);
 				break;
 			} else if (eName.equals("axis")) {
 				ok = handleAxis(ev, attrs);
+				//Application.debug("ok = "+ok);
 				break;
 			}
 
+			/*
 		case 'b':
 			if (eName.equals("bgColor")) {
 				ok = handleBgColor(ev, attrs);
@@ -86,6 +90,15 @@ public class MyXMLHandler3D extends MyXMLHandler {
 				ok = handleLineStyle(ev, attrs);
 				break;
 			}
+			*/
+			
+		case 'p':
+			if (eName.equals("plane")) {
+				ok = handlePlane(ev, attrs);
+				break;
+			}
+			
+			/*
 
 		case 's':
 			if (eName.equals("size")) {
@@ -127,6 +140,35 @@ public class MyXMLHandler3D extends MyXMLHandler {
 		}
 	}
 	
+	
+	
+	
+	
+	/** handles plane attributes for EuclidianView3D
+	 * @param ev
+	 * @param attrs
+	 * @return true if all is done ok
+	 */
+	protected boolean handlePlane(EuclidianView3D ev, LinkedHashMap<String, String> attrs) {
+		// <plane show="false"/>
+		try {
+			String strShowPlane = (String) attrs.get("show");
+
+			// show the plane
+			if (strShowPlane != null) {
+				boolean showPlane = parseBoolean(strShowPlane);
+				ev.setShowPlane(showPlane);
+			}
+			return true;
+		} catch (Exception e) {
+			//e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
+
+
 	
 
 }

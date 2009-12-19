@@ -1075,7 +1075,8 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		boolean bothAxesShown = getEuclidianView().getShowXaxis()
 			&& getEuclidianView().getShowYaxis();
-		getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
+		//getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
+		getEuclidianView().setShowAxes(!bothAxesShown, true);
 		getEuclidianView().repaint();
 		storeUndoInfo();
 		updateMenubar();

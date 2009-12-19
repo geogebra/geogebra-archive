@@ -381,7 +381,8 @@ ItemListener, WindowListener {
 					app.getGuiManager().showColorChooser(view.getGridColor()));			
 		}
 		else if (source == cbShowAxes) {
-			view.showAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());			
+			//view.showAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());	
+			view.setShowAxes(cbShowAxes.isSelected(), true);
 		}
 		else if (source == cbShowGrid) {
 			view.showGrid(cbShowGrid.isSelected());			
@@ -597,6 +598,7 @@ ItemListener, WindowListener {
 			Object source = e.getSource();
 			
 			if (source == cbShowAxis) {
+				/*
 				boolean showXaxis, showYaxis; 
 				if (axis == 0) {
 					showXaxis = cbShowAxis.isSelected();
@@ -605,7 +607,9 @@ ItemListener, WindowListener {
 					showXaxis = view.getShowXaxis();
 					showYaxis = cbShowAxis.isSelected();
 				}				
-				view.showAxes(showXaxis, showYaxis);	
+				view.showAxes(showXaxis, showYaxis);
+				*/	
+				view.setShowAxis(axis, cbShowAxis.isSelected(), true);
 			} 
 			else if (source == cbAxisNumber) {
 				boolean [] show = view.getShowAxesNumbers();

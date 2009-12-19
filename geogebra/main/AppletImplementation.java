@@ -1112,7 +1112,9 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 * Shows or hides the x- and y-axis of the coordinate system in the graphics window.
 	 */
 	public synchronized void setAxesVisible(boolean xVisible, boolean yVisible) {		
-		app.getEuclidianView().showAxes(xVisible, yVisible);
+		//app.getEuclidianView().showAxes(xVisible, yVisible);
+		app.getEuclidianView().setShowAxis(EuclidianView.AXIS_X, xVisible, false);
+		app.getEuclidianView().setShowAxis(EuclidianView.AXIS_Y, yVisible, true);
 	}	
 	
 	/**
