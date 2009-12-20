@@ -5381,8 +5381,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener {
 
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview
-	final protected boolean move(Hits hits) {		
-		addSelectedGeo(hits.getMoveableHits(), 1, false);		
+	protected boolean move(Hits hits) {		
+		addSelectedGeo(hits.getMoveableHits(), 1, false);	
 		return false;
 	}
 

@@ -354,6 +354,21 @@ public class Hits extends ArrayList {
 		} else
 			return clone();
 	}
+	
+	
+	/** return hits at the top, limited to a number of nb
+	 * @param nb number of top hits to return
+	 * @return hits at the top, limited to a number of nb
+	 */
+	public Hits getTopHits(int nb){
+		Hits topHits = getTopHits();
+		
+		//remove all last elements, since topHits.size()<=nb
+		for(;topHits.size()>nb;)
+			topHits.remove(topHits.size()-1);
+		
+		return topHits;
+	}
 
 
 	final public boolean containsGeoPoint() {

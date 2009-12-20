@@ -110,20 +110,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private GeoPoint3D cursor3D;
 	private GeoElement[] cursor3DIntersectionOf = new GeoElement[2]; 
 	
-	public static final int PREVIEW_POINT_ALREADY = 0;
+	//cursor
+	public static final int PREVIEW_POINT_NONE = 0;
 	public static final int PREVIEW_POINT_FREE = 1;
 	public static final int PREVIEW_POINT_PATH = 2;
 	public static final int PREVIEW_POINT_REGION = 3;
 	public static final int PREVIEW_POINT_DEPENDENT = 4;
-	private int cursor3DType = PREVIEW_POINT_ALREADY;
+	private int cursor3DType = PREVIEW_POINT_NONE;
 
 	
-	//cursor
 	private static final int CURSOR_DEFAULT = 0;
 	private static final int CURSOR_DRAG = 1;
 	private static final int CURSOR_MOVE = 2;
 	private static final int CURSOR_HIT = 3;
 	private int cursor = CURSOR_DEFAULT;
+	private boolean cursor3DVisible = false;
 	
 
 	//mouse
@@ -509,6 +510,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//TODO specific scaling for each direction
 	private double scale = 100; 
 	private double scaleMin = 10;
+
+
 	public double getXscale() { return scale; }
 	public double getYscale() { return scale; }
 	public double getZscale() { return scale; }
@@ -1524,15 +1527,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	public Previewable createPreviewLine(ArrayList selectedPoints){
-		
-		
-		//Application.debug("createPreviewLine");
-		
-				
-		Drawable3D d = new DrawLine3D(this, selectedPoints);
 
-
-		return (Previewable) d;
+		return new DrawLine3D(this, selectedPoints);
 		
 	}
 	
@@ -1643,7 +1639,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 		
 			
-		setCursor3DType(PREVIEW_POINT_ALREADY);
+		setCursor3DType(PREVIEW_POINT_NONE);
 		
 		this.previewDrawable = previewDrawable;
 		
@@ -1702,15 +1698,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	public void drawCursor(Renderer renderer){
 
-		if (hasMouse){
+		if (hasMouse && cursor3DVisible){
 			
 			renderer.setMatrix(getCursor3D().getDrawingMatrix());
 			
 			switch(cursor){
 			case CURSOR_DEFAULT:
 				//if(getCursor3DType()!=PREVIEW_POINT_ALREADY)
-				renderer.drawCursorCross3D();
-				break;
+				//renderer.drawCursorCross3D();
+				//break;
 			case CURSOR_HIT:
 				switch(getCursor3DType()){
 				case PREVIEW_POINT_FREE:
@@ -1732,6 +1728,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	/** sets the visibility of the 3D cursor
+	 * @param shown
+	 */
+	public void setShowCursor3D(boolean shown){
+		cursor3DVisible = shown;
+	}
+	
+	
 	public void setMoveCursor(){
 
 		//Application.printStacktrace("setMoveCursor");
@@ -1745,8 +1749,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	public void setDefaultCursor(){
 		//Application.printStacktrace("setDefaultCursor");
-		//TODO cursor = CURSOR_DEFAULT;
-		setHitCursor();
+		cursor = CURSOR_DEFAULT;
+		//setHitCursor();
 	}
 	
 	public void setHitCursor(){

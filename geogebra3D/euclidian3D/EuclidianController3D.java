@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.euclidian.EuclidianController;
+import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
@@ -320,7 +321,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(1));
 			return ret;
 			//break;
-		case EuclidianView3D.PREVIEW_POINT_ALREADY:
+		case EuclidianView3D.PREVIEW_POINT_NONE:
 		default:
 			Application.debug("super.getNewPoint");
 		return super.getNewPoint(hits, 
@@ -347,7 +348,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		GeoPoint3D point3D = view3D.getCursor3D();
 		point3D.setCoords((GeoPoint3D) sourcePoint);
 		point3D.updateCoords();
-		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
+		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_NONE);
 	}
 	
 	/** put intersectionPoint coordinates in point */
@@ -588,6 +589,24 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	protected void initNewMode(int mode) {
+		super.initNewMode(mode);
+		
+		//sets the visibility of EuclidianView3D 3D cursor
+		if (mode==EuclidianView.MODE_MOVE)
+			view3D.setShowCursor3D(false);
+		else
+			view3D.setShowCursor3D(true);
+	}
+
+	
+	
+	//not only moveable hits are selected in move mode
+	protected boolean move(Hits hits) {		
+		addSelectedGeo(hits.getTopHits(1), 1, false);	
+		//Application.debug("top hits: "+hits.getTopHits());
+		return false;
+	}
 	
 
 
@@ -761,12 +780,18 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected GeoElement chooseGeo(ArrayList geos, boolean includeFixed) {
 		
-		if (!geos.isEmpty())
+		if (!geos.isEmpty()){
 			//if the geo hitted is one of view3D's geos, then chooseGeo return null
 			if (view3D.owns((GeoElement) geos.get(0)))
 				return null;
+			//doesn't use choosing dialog TODO use choosing dialog ?
+			else 
+				return (GeoElement) geos.get(0);
+		}
+	
+		return null;
 		
-		return super.chooseGeo(geos, includeFixed);
+		//return super.chooseGeo(geos, includeFixed);
 	}
 	
 	
