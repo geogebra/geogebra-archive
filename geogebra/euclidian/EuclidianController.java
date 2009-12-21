@@ -714,7 +714,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		Graphics2D g2d = (Graphics2D)penImage.getGraphics();
 
-		g2d.setStroke(EuclidianView.getStroke(2, penLineStyle));
+		g2d.setStroke(EuclidianView.getStroke(2 * penSize, penLineStyle));
 		g2d.setColor(Color.BLUE);
 		g2d.draw(pb.gp);
 
@@ -6126,6 +6126,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	int penLineStyle = 0;
 	public void setLineStyle(int lineStyle) {
 		penLineStyle = lineStyle;
+		
+	}
+
+
+	int penSize = 1;
+	public void setSize(int size) {
+		penSize = size;
 		
 	}
 
