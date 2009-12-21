@@ -73,6 +73,11 @@ public class GeoAxis3D extends GeoLine3D {
 	}
 	
 	
+	public String toValueString() {
+		return label;
+	}
+	
+	
 	/** return label of the axis (e.g. x, y, z ...)
 	 * @return label of the axis
 	 */

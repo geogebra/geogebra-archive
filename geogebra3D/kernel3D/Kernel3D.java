@@ -187,13 +187,10 @@ public class Kernel3D
      */
     public GeoElement createGeoElement(Construction cons, String type) throws MyError {    
     	
-    	//Application.debug(type);
-    	//Application.printStacktrace("");
-    	
+     	
     	switch (type.charAt(0)) {
    		case 'p': // point, polygon
 			if (type.equals("point3d")){
-				Application.debug("ici");
 				return new GeoPoint3D(cons);
 			}
 			else if (type.equals("polygon3D"))

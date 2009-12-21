@@ -38,6 +38,9 @@ public class GeoPlane3DConstant extends GeoPlane3D {
 		// in empty constructions too (for step == -1)
 		return true;
 	}
-
+	
+	public String toValueString() {
+		return label;
+	}
 	
 }

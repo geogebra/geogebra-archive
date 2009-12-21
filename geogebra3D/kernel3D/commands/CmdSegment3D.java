@@ -40,7 +40,6 @@ public class CmdSegment3D extends CmdSegment {
 	    boolean[] ok = new boolean[n];
 	    GeoElement[] arg;
 
-	    Application.debug("CmdSegment3D.process, n="+n);
 	    
 	   if (n==2) {
             arg = resArgs(c);
