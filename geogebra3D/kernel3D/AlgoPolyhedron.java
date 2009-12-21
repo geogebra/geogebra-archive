@@ -158,6 +158,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	public AlgoPolyhedron(Construction c, GeoPoint3D[] points, int[][] faces) {
 		super(c);
 		this.type = GeoPolyhedron.TYPE_NONE;
+		this.points = points;
+		outputPointsIndex = points.length;
 		end(c,faces);
 		
 	}

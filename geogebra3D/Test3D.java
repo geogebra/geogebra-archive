@@ -80,7 +80,7 @@ public class Test3D{
 		 * Animate slider k 
 		 * You can also create points, segments... */
 		
-		testColoredCube(0.75);
+		//testColoredCube(0.75);
 		
 		
 		
@@ -147,8 +147,8 @@ public class Test3D{
 		
 		//testSpring();
 		
-        //demos();
-        testCube(true);//testSave("polyhedron3d");
+        demos();
+        //testCube(true);//testSave("polyhedron3d");
         //testLoad("polyhedron3d");
         //testLoad("polygon3d");
         

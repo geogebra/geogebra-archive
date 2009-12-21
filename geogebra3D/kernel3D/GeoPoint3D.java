@@ -480,8 +480,10 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	public void freeUp(){
 		if (hasRegion()){
 			//remove the parent algorithm
+			//Application.debug("algo : "+getParentAlgorithm().toString());
 			getRegion().toGeoElement().removeAlgorithm(getParentAlgorithm());
 			getConstruction().removeFromAlgorithmList(getParentAlgorithm());
+			getConstruction().removeFromConstructionList(getParentAlgorithm());
 			setParentAlgorithm(null);
 			getConstruction().addToConstructionList(this, false);
 			//remove the region
