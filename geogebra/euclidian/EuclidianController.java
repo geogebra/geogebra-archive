@@ -18,6 +18,7 @@
 
 package geogebra.euclidian;
 
+import geogebra.gui.PropertiesPanelMini;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
@@ -86,7 +87,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.text.JTextComponent;
 
 public class EuclidianController implements MouseListener,
-MouseMotionListener, MouseWheelListener, ComponentListener {
+MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniListener {
 
 	protected static final int MOVE_NONE = 101;
 
@@ -335,6 +336,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener {
 		Previewable previewDrawable = null;
 		// init preview drawables
 		switch (mode) {
+		
+		case EuclidianView.MODE_PEN:
+			
+			PropertiesPanelMini pm = new PropertiesPanelMini(app, this);
+			pm.setVisible(true);
+			
+			break;
 
 
 		case EuclidianView.MODE_JOIN: // line through two points
@@ -706,6 +714,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener {
 
 		Graphics2D g2d = (Graphics2D)penImage.getGraphics();
 
+		g2d.setStroke(EuclidianView.getStroke(2, penLineStyle));
 		g2d.setColor(Color.BLUE);
 		g2d.draw(pb.gp);
 
@@ -6109,6 +6118,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener {
 	 * @return false */
 	protected boolean processRightReleaseFor3D(){
 		return false;
+	}
+
+	//******************************
+	// PropertiesPanelMini Listeners
+	//******************************
+	int penLineStyle = 0;
+	public void setLineStyle(int lineStyle) {
+		penLineStyle = lineStyle;
+		
 	}
 
 }
