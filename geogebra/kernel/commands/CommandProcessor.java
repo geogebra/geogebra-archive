@@ -5279,10 +5279,11 @@ class CmdOsculatingCircle extends CommandProcessor {
 				 HashMap colors = app.getColorsHashMap();				 
 				 Color col = (Color)colors.get(color);
 				 
-				 // TODO: add support for translated color names
+				 // support for translated color names
 				 if (col == null) {
 					 // translate to English
-					 //color = app.reverseGetColor(color).toUpperCase();
+					 color = app.reverseGetColor(color).toUpperCase();
+					 col = (Color)colors.get(color);
 					 //Application.debug(color);
 				 }
 				 

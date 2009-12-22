@@ -68,11 +68,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -257,6 +257,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private static final String RB_ERROR = "/geogebra/properties/error";
 	private static final String RB_PLAIN = "/geogebra/properties/plain";
 	public static final String RB_JAVA_UI = "/geogebra/properties/javaui";
+	public static final String RB_COLORS = "/geogebra/properties/colors";
 
 	private static final String RB_SETTINGS = "/geogebra/export/settings";
 	private static final String RB_ALGO2COMMAND = "/geogebra/kernel/algo2command";
@@ -323,7 +324,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	// For language specific settings
 	private Locale currentLocale;
-	private ResourceBundle rbmenu, rbcommand, rbcommandOld, rberror, rbplain, rbsettings;
+	private ResourceBundle rbmenu, rbcommand, rbcommandOld, rberror, rbcolors, rbplain, rbsettings;
 	private ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -1431,6 +1432,8 @@ public abstract class Application implements KeyEventDispatcher {
 			rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
 		if (rbcommand != null)
 			rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale);
+		if (rbcolors != null)
+			rbcolors = MyResourceBundle.createBundle(RB_COLORS, currentLocale);
 	}
 	
 	private void fillCommandDict() {
@@ -1497,6 +1500,41 @@ public abstract class Application implements KeyEventDispatcher {
 	 * properties methods
 	 */
 
+	final public String getColor(String key) {
+		if (rbcolors == null) {
+			initColorsResourceBundle();
+		}
+
+		try {
+			return rbcolors.getString(key.toLowerCase(Locale.US));
+		} catch (Exception e) {
+			return key;
+		}
+	}
+
+	final public String reverseGetColor(String str) {
+		str = Util.removeSpaces(str.toLowerCase(Locale.US));
+		if (rbcolors == null) {
+			initColorsResourceBundle();
+		}
+
+		try {
+			
+			Enumeration<String> enumer = rbcolors.getKeys();
+			while (enumer.hasMoreElements()) {
+				String key = enumer.nextElement();
+				if (str.equals(Util.removeSpaces(rbcolors.getString(key).toLowerCase(Locale.US))))
+					return key;
+			}
+			
+			
+			
+			return str;
+		} catch (Exception e) {
+			return str;
+		}
+	}
+
 	final public String getPlain(String key) {
 		if (rbplain == null) {
 			initPlainResourceBundle();
@@ -1535,6 +1573,10 @@ public abstract class Application implements KeyEventDispatcher {
 		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
 		if (rbplain != null)
 			kernel.updateLocalAxesNames();
+	}
+
+	private void initColorsResourceBundle() {
+		rbcolors = MyResourceBundle.createBundle(RB_COLORS, currentLocale);
 	}
 
 	// Michael Borcherds 2008-03-25

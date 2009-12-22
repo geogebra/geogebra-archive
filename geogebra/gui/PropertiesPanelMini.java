@@ -177,18 +177,19 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 			 HashMap<String, Color> colors = app.getColorsHashMap();				 
 			 
 	        
-	        JMenuItem menuItem1 = new JMenuItem("Red", new ColorIcon(Color.red));  
-	        JMenuItem menuItem2 = new JMenuItem("Green", new ColorIcon(Color.green));  
-	        JMenuItem menuItem3 = new JMenuItem("Blue", new ColorIcon(Color.blue));  
-	        JMenuItem menuItem4 = new JMenuItem("Black", new ColorIcon(Color.black));  
-	        JMenuItem menuItem5 = new JMenuItem("White", new ColorIcon(Color.white));  
-	        JMenuItem menuItem6 = new JMenuItem("Yellow", new ColorIcon(Color.yellow));  
-	        JMenuItem menuItem7 = new JMenuItem("Cyan", new ColorIcon(Color.cyan));  
-	        JMenuItem menuItem8 = new JMenuItem("Magenta", new ColorIcon(Color.magenta));  
-	        JMenuItem menuItem9 = new JMenuItem("Orange", new ColorIcon(Color.orange));  
-	        JMenuItem menuItem10 = new JMenuItem("Pink", new ColorIcon(Color.pink));  
-	        JMenuItem menuItem11 = new JMenuItem("Gray", new ColorIcon(Color.gray));  
-	        JMenuItem menuItem12 = new JMenuItem("Purple", new ColorIcon(colors.get("PURPLE")));  
+	        JMenuItem menuItem1 = new JMenuItem(app.getColor("Red"), new ColorIcon(Color.red));  
+	        JMenuItem menuItem2 = new JMenuItem(app.getColor("Green"), new ColorIcon(Color.green));  
+	        JMenuItem menuItem3 = new JMenuItem(app.getColor("Blue"), new ColorIcon(Color.blue));  
+	        JMenuItem menuItem4 = new JMenuItem(app.getColor("Black"), new ColorIcon(Color.black));  
+	        JMenuItem menuItem5 = new JMenuItem(app.getColor("White"), new ColorIcon(Color.white));  
+	        JMenuItem menuItem6 = new JMenuItem(app.getColor("Yellow"), new ColorIcon(Color.yellow));  
+	        JMenuItem menuItem7 = new JMenuItem(app.getColor("Cyan"), new ColorIcon(Color.cyan));  
+	        JMenuItem menuItem8 = new JMenuItem(app.getColor("Magenta"), new ColorIcon(Color.magenta));  
+	        JMenuItem menuItem9 = new JMenuItem(app.getColor("Orange"), new ColorIcon(Color.orange));  
+	        JMenuItem menuItem10 = new JMenuItem(app.getColor("Pink"), new ColorIcon(Color.pink));  
+	        JMenuItem menuItem11 = new JMenuItem(app.getColor("Gray"), new ColorIcon(Color.gray));  
+	        JMenuItem menuItem12 = new JMenuItem(app.getColor("Purple"), new ColorIcon(colors.get("PURPLE")));  
+	        JMenuItem menuItem13 = new JMenuItem(app.getColor("Brown"), new ColorIcon(colors.get("BROWN")));  
 	        menuItem1.addActionListener(this);
 	        menuItem2.addActionListener(this);
 	        menuItem3.addActionListener(this);
@@ -201,6 +202,7 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 	        menuItem10.addActionListener(this);
 	        menuItem11.addActionListener(this);
 	        menuItem12.addActionListener(this);
+	        menuItem13.addActionListener(this);
 	        
 	        menu.add(menuItem1);
 	        menu.add(menuItem2);
@@ -214,6 +216,7 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 	        menu.add(menuItem10);
 	        menu.add(menuItem11);
 	        menu.add(menuItem12);
+	        menu.add(menuItem13);
 
 	        
 	      }
