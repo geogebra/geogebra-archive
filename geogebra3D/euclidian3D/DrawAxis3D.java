@@ -81,7 +81,7 @@ public class DrawAxis3D extends DrawLine3D {
     	//TODO merge with EuclidianView.setAxesIntervals(double scale, int axis)
     	//Application.debug("vscale : "+vScale);
     	double maxPix = 100; // only one tick is allowed per maxPix pixels
-		double units = 100*maxPix / (getView3D().getScale()*vScale);
+		double units = maxPix / vScale;
 		int exp = (int) Math.floor(Math.log(units) / Math.log(10));
 		int maxFractionDigtis = Math.max(-exp, getView3D().getKernel().getPrintDecimals());
 		NumberFormat numberFormat = new DecimalFormat();
