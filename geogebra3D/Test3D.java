@@ -87,7 +87,7 @@ public class Test3D{
 		/* Demo with morphing polyhedra 
 		 * Michael's demo*/
 		
-		//testMorphingPolyhedra();
+		testMorphingPolyhedra();
 		
 		/* Michael's slices through cube */
 		//testSlicesThroughCube();

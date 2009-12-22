@@ -3478,7 +3478,7 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	private HashMap colors = null;
 
-	public HashMap getColorsHashMap() {
+	public HashMap<String, Color> getColorsHashMap() {
 		
 		if (colors == null) {
 			 colors = new HashMap();

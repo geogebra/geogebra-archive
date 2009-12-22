@@ -65,6 +65,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.Transparency;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -74,6 +75,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -686,8 +688,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		Point newPoint = new Point(e.getX(), e.getY());
 		Graphics2D g2D = (Graphics2D) ev.getGraphics();
-		g2D.setColor(Color.RED);
-		g2D.drawOval(e.getX(), e.getY(), 1, 1);
+		g2D.setColor(penColor);
+		
+		Shape circle = new Ellipse2D.Float(e.getX() - penSize, e.getY() - penSize, penSize*2, penSize*2);
+
+		//g2D.drawOval(e.getX(), e.getY(), penSize, penSize);
+		g2D.fill(circle);
 
 		if (penPoints.size() == 0)
 			penPoints.add(newPoint);
@@ -715,7 +721,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		Graphics2D g2d = (Graphics2D)penImage.getGraphics();
 
 		g2d.setStroke(EuclidianView.getStroke(2 * penSize, penLineStyle));
-		g2d.setColor(Color.BLUE);
+		g2d.setColor(penColor);
 		g2d.draw(pb.gp);
 
 		penPoints.clear();
@@ -6130,10 +6136,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 
-	int penSize = 1;
+	int penSize = 3;
 	public void setSize(int size) {
 		penSize = size;
 		
+	}
+	
+	Color penColor = Color.black;
+	public void setColor(Color color) {
+		penColor = color;
 	}
 
 }
