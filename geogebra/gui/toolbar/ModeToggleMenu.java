@@ -223,6 +223,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	private GeneralPath gp;
 	private boolean showToolTipText = true;
 	boolean popupTriangleHighlighting = false;
+	boolean popupTriangleClicked = false;
 	private ModeToggleMenu menu;		
 	
 	private static final Color arrowColor = new Color(0,0,0,130);
@@ -249,8 +250,10 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	}
 	
 	// set mode
-	public void actionPerformed(ActionEvent e) {		
-		menu.setMode(Integer.parseInt(e.getActionCommand()));		
+	public void actionPerformed(ActionEvent e) {
+		//don't select mode if popup triangle clicked
+		if (!popupTriangleClicked || !menu.isPopupShowing())
+		  menu.setMode(Integer.parseInt(e.getActionCommand()));		
 	}
 
 	public void setIcon(Icon icon) {
@@ -322,7 +325,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	
 	
 	private boolean popupTriangleClicked(int x, int y) {
-		return (menu.size > 1 && y > iconHeight-2);
+		popupTriangleClicked = (menu.size > 1 && y > iconHeight-2);
+		return popupTriangleClicked;
 	}
 
 	public void mouseClicked(MouseEvent e) {	

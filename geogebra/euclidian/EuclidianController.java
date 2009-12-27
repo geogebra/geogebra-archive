@@ -50,6 +50,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Mirrorable;
 import geogebra.kernel.Path;
+import geogebra.kernel.PointProperties;
 import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Region;
 import geogebra.kernel.Translateable;
@@ -85,6 +86,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.text.JTextComponent;
 
@@ -326,8 +328,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			app.storeUndoInfo();
 	}
 	
-	PropertiesPanelMini ppm;
-
 	protected void initNewMode(int mode) {
 		this.mode = mode;
 		initShowMouseCoords();
@@ -337,7 +337,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//		 Michael Borcherds 2007-10-12
 		moveMode = MOVE_NONE;
 		
-		if (ppm != null) ppm.setVisible(false);
+		closeMiniPropertiesPanel();
 
 		Previewable previewDrawable = null;
 		// init preview drawables
@@ -345,26 +345,29 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		case EuclidianView.MODE_PEN:
 			
-			if (ppm == null)
-				ppm = new PropertiesPanelMini(app, this);
-			ppm.setVisible(true);
-			ppm.setListener(this);
-			//Application.printStacktrace("");
+			openMiniPropertiesPanel();
 			
 			break;
 
 
+		case EuclidianView.MODE_POINT: 
+			openMiniPropertiesPanel();
+			break;
+			
 		case EuclidianView.MODE_JOIN: // line through two points
+			openMiniPropertiesPanel();
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewLine(selectedPoints);
 			break;
 
 		case EuclidianView.MODE_SEGMENT:
+			openMiniPropertiesPanel();
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewSegment(selectedPoints);
 			break;
 
 		case EuclidianView.MODE_RAY:
+			openMiniPropertiesPanel();
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewRay(selectedPoints);
 			break;
@@ -382,6 +385,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
 		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
 		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:		
+			openMiniPropertiesPanel();
 			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints);
 			break;
 
@@ -3165,19 +3169,67 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	/** only used in 3D */
 	protected void createNewPointIntersection(GeoPointInterface intersectionPoint){
+	}
+	
+	PropertiesPanelMini ppm;
 
+	private void closeMiniPropertiesPanel() {
+		if (ppm != null) ppm.setVisible(false);
+	}
+	
+	private void openMiniPropertiesPanel() {
+		//Application.printStacktrace("");
+        SwingUtilities.invokeLater( new Runnable(){ public void
+        	run() { 
+        	if (ppm == null) ppm = new PropertiesPanelMini(app, app.getEuclidianView().getEuclidianController());
+    		ppm.setVisible(true);
+    		ppm.setListener(app.getEuclidianView().getEuclidianController());
+        	
+        } });
+	}
+	
+	private boolean miniPropertiesOpen() {
+		if (ppm == null || !ppm.isVisible()) return false;
+		return true;
+	}
+
+	/*
+	 * sets properties from the MiniPropertiesDialog
+	 * (if open)
+	 */
+	private void setProperties(GeoElement geo) {
+		
+		if (ppm == null || !ppm.isVisible()) return;
+		
+		if (geo instanceof PointProperties) {
+			PointProperties p = (PointProperties)geo;
+			p.setPointSize(penSize);
+		}
+		
+		geo.setLineThickness(penSize);
+		geo.setLineType(penLineStyle);
+		geo.setObjColor(penColor);
+		
+		geo.update();
+		
 	}
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable){
-		return kernel.Point(null, xRW, yRW);
+		GeoPointInterface ret = kernel.Point(null, xRW, yRW);
+		setProperties((GeoElement)ret);
+		return ret;
 	}
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable, Path path){
-		return kernel.Point(null, path, xRW, yRW);
+		GeoPointInterface ret = kernel.Point(null, path, xRW, yRW);
+		setProperties((GeoElement)ret);
+		return ret;
 	}
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable, Region region){
-		return kernel.PointIn(null,region,xRW, yRW);
+		GeoPointInterface ret = kernel.PointIn(null,region,xRW, yRW);
+		setProperties((GeoElement)ret);
+		return ret;
 	}
 
 
@@ -3211,7 +3263,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// fetch the two selected points
 	protected void join(){
 		GeoPoint[] points = getSelectedPoints();
-		kernel.Line(null, points[0], points[1]);
+		GeoLine line = kernel.Line(null, points[0], points[1]);
+		setProperties(line);
 	}
 
 	private void recordSingleObjectToSpreadSheet(GeoElement geo) {
@@ -3494,7 +3547,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// fetch the two selected points for segment
 	protected void segment(){
 		GeoPoint[] points = getSelectedPoints();
-		kernel.Segment(null, points[0], points[1]);
+		GeoSegment segment = kernel.Segment(null, points[0], points[1]);
+		setProperties(segment);
 	}
 
 	// get two points and create vector between them
