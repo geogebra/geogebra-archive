@@ -54,7 +54,7 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 		
 		this.setFocusableWindowState(false);
 		this.setAlwaysOnTop(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		
 		try { // Java 6u10+ only
 			Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
@@ -70,6 +70,10 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 
 		initialize();
 
+	}
+	
+	public void setListener(PropertiesPanelMiniListener listener) {
+		this.listener = listener;
 	}
 	
 	private void initialize() {

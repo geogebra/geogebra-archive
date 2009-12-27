@@ -325,6 +325,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (toggleModeChangedKernel)
 			app.storeUndoInfo();
 	}
+	
+	PropertiesPanelMini ppm;
 
 	protected void initNewMode(int mode) {
 		this.mode = mode;
@@ -334,6 +336,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (!TEMPORARY_MODE) clearSelections();
 		//		 Michael Borcherds 2007-10-12
 		moveMode = MOVE_NONE;
+		
+		if (ppm != null) ppm.setVisible(false);
 
 		Previewable previewDrawable = null;
 		// init preview drawables
@@ -341,8 +345,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		case EuclidianView.MODE_PEN:
 			
-			PropertiesPanelMini pm = new PropertiesPanelMini(app, this);
-			pm.setVisible(true);
+			if (ppm == null)
+				ppm = new PropertiesPanelMini(app, this);
+			ppm.setVisible(true);
+			ppm.setListener(this);
+			//Application.printStacktrace("");
 			
 			break;
 
@@ -473,6 +480,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	final public void mouseClicked(MouseEvent e) {	
+		
+		if (mode == EuclidianView.MODE_PEN)
+			return;
+		
 		Hits hits;
 		//GeoElement geo;
 
@@ -640,11 +651,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 		if (Application.isRightClick(e)) {
-			//open popup:
-			//	line thickness
-			//	colors
-			//	etc
+			if (ppm != null) ppm.setVisible(true);
+			return;
 		}
+		
+		app.getEuclidianView().setCursor(app.getTransparentCursor());
+		
 
 		EuclidianView ev = app.getEuclidianView();
 		//Graphics2D g2D = null;
@@ -699,13 +711,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			penPoints.add(newPoint);
 		else {
 			Point lastPoint = (Point)penPoints.get(penPoints.size() - 1);
-			if (lastPoint.distance(newPoint) > 10)
+			if (lastPoint.distance(newPoint) > 3)
 				penPoints.add(newPoint);
 		}
 	}
 
 	public void handleMouseReleasedForPenMode(MouseEvent e) {
 
+		
+		if (penImage == null) return; // right click
+		
+		app.setDefaultCursor();
+		
 		Point newPoint = new Point(e.getX(), e.getY());
 		penPoints.add(newPoint);
 
@@ -720,7 +737,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		Graphics2D g2d = (Graphics2D)penImage.getGraphics();
 
-		g2d.setStroke(EuclidianView.getStroke(2 * penSize, penLineStyle));
+		g2d.setStroke(EuclidianView.getStroke(2 * penSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
 		g2d.setColor(penColor);
 		g2d.draw(pb.gp);
 
@@ -733,7 +750,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 		if (lastPenImage == null) {
-			String fileName = app.createImage(penImage, "whiteboard.png");
+			String fileName = app.createImage(penImage, "penimage.png");
 			//Application.debug(fileName);
 
 			GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
@@ -752,7 +769,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			lastPenImage = geoImage;
 		}
 
-		app.storeUndoInfo();
+		// doesn't work as all changes are in the image not the XML
+		//app.storeUndoInfo();
+		app.setUnsaved();
 
 		penImage = null;
 
@@ -1678,11 +1697,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (textfieldHasFocus) return;
 
-		if (penImage != null) {
+		if (mode == EuclidianView.MODE_PEN) {
 			handleMouseReleasedForPenMode(e);
 			return;
 		}
-
 
 
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
