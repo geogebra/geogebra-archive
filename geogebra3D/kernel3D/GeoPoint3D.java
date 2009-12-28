@@ -553,6 +553,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		    	pathParameter.set(p.getPathParameter());
 	    	}
 	    	setCoords(p);     
+	    	updateCoords();
 	    	//TODO setMode(p.toStringMode); // complex etc
     	}
     	/* TODO

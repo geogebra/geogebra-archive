@@ -21,6 +21,7 @@ package geogebra3D;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
@@ -138,7 +139,7 @@ public class Test3D{
         view3D.setRotXYinDegrees(-30,22.5,true);
 
         
-        
+        //testList();
         //testLoad("plane");
         //testAxis();
 		
@@ -147,7 +148,7 @@ public class Test3D{
 		
 		//testSpring();
 		
-        demos();
+        //demos();
         //testCube(true);//testSave("polyhedron3d");
         //testLoad("polyhedron3d");
         //testLoad("polygon3d");
@@ -178,6 +179,7 @@ public class Test3D{
 		//testRay3D();
 		//testVector3D();
 		//testAlgoPyramide();
+        //testAlgoPolyhedron();
 		
 		//testPolyhedron();
 		//testTetrahedron();
@@ -192,6 +194,24 @@ public class Test3D{
 	/***********************************
 	 * TESTS
 	 ***********************************/
+	
+	
+	private void testList(){
+		
+		AlgebraProcessor ap = kernel3D.getAlgebraProcessor();
+		
+		try {
+			ap.processAlgebraCommandNoExceptionHandling("{(1,1,0),(1,0,0)}",false);
+			ap.processAlgebraCommandNoExceptionHandling("Element[liste1,1]",false);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//kernel3D.lookupLabel("A");
+		
+		
+	}
 	
 	private GeoPoint3D testPoint(int i, int j, int k, float x, float y, float z){
 		//String s="";
@@ -356,83 +376,40 @@ public class Test3D{
 		testPlane(1, 0, 0,  0, 1, 0,  0, 0, 1);
 	}
 	
+	private void testAlgoPolyhedron(){
+
+		AlgebraProcessor ap = kernel3D.getAlgebraProcessor();
+
+		try {
+			ap.processAlgebraCommandNoExceptionHandling("A=(1,0,0)",false);
+			ap.processAlgebraCommandNoExceptionHandling("B=(0,1,0)",false);
+			ap.processAlgebraCommandNoExceptionHandling("C=(0,0,0)",false);
+			ap.processAlgebraCommandNoExceptionHandling("D=(0,0,1)",false);
+			ap.processAlgebraCommandNoExceptionHandling("{{A,B,C},{B,A,C},{B,C,D},{C,A,D}}",false);
+			
+			GeoList list = (GeoList) kernel3D.lookupLabel("liste1");
+			kernel3D.Polyhedron("polyhedron", list);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 	private void testAlgoPyramide(){
 		
-		int i;
 		
-		GeoPoint3D[] P1 = new GeoPoint3D[3];				
+		GeoPoint3D[] P1 = new GeoPoint3D[4];				
 		P1[0] = testPoint(1f,0.6f,0f);
 		//P1[0].setLabel("Ax");
 		P1[1] = testPoint(0f,0f,0f);
 		//P1[1].setLabel("A");
-		P1[2] = testPoint(0.3f,1f,0.5f);
+		P1[2] = testPoint(0.3f,1f,0.f);
 		//P1[2].setLabel("Ay");
-		//P1[3] = testPoint(0f,1f,0f);
+		P1[3] = testPoint(0f,0f,1f);
 		
-		/*
-		GeoSegment3D s=null;
-		for(i=0;i<3;i++)
-			s=kernel3D.Segment3D("segment",P1[i],P1[(i+1)%3]);
-			*/
-
-		GeoPoint3D P2;				
-		P2 = testPoint(0.1f,0.1f,1f);
-		//P2.setLabel("Az");
-
-		//RG
-		/*
-		GeoPlane3D aPlane = xOyPlane;
-		for(i=0;i<3;i++)
-			kernel3D.From3Dto2D(P1[i].getLabel(), P1[i], aPlane);
-		kernel3D.From3Dto2D(P2.getLabel(), P2, aPlane);
-		*/
-		//finRG
-
-		/*
-		for(i=0;i<3;i++)
-			kernel3D.Segment3D("segment",P1[i],P2);
-			*/
-		/*
-		GeoPolygon3D t;
-		Color c = new Color(0.5f,0.2f,0.1f);
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[2]});
-		t.setObjColor(c);
+		kernel3D.Pyramid("pyramid", P1);
 		
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[1],P1[0]});
-		t.setObjColor(c);
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P1[1],P1[2],P1[0]});
-		t.setObjColor(c);
-		
-		t=kernel3D.Polygon3D("triangle",new GeoPoint3D[] {P2,P1[2],P1[0]});
-		t.setObjColor(c);
-		
-
-		GeoPoint3D A = testPoint(2f,0f,0f);
-		A.setLabel("sA");
-		GeoPoint3D B = testPoint(0.7f,-1.3f,0f);
-		B.setLabel("sB");
-
-		GeoSegment3D s = kernel3D.Segment3D("segment",A,B);
-		s.setLabel("s");
-		
-		GeoPoint3D P=kernel3D.Point3D("ps", s, 0.3, 0, 0);
-		P.setObjColor(new Color(1f,1f,0f));
-		
-		
-		GeoLine3D l=kernel3D.Line3D("line",P1[1],P);
-		l.setObjColor(new Color(1f,0.5f,0f));
-		l.setLineThickness(1);
-		
-		P=kernel3D.Point3D("pl", l, 2.7, -2, 0);
-		P.setObjColor(new Color(1f,0.75f,0f));
-		
-		
-		//P=kernel3D.Point3D("pt", t, 0, 0, 0);
-		//P.setObjColor(new Color(1f,0.25f,0f));
-		
-		//new AlgoTo2D(cons, "essai", s);
-		*/
 	}
 	
 
@@ -577,21 +554,6 @@ public class Test3D{
 	
 
 	
-	private void testPolyhedron(){
-
-		
-		
-		GeoPoint3D[] points = new GeoPoint3D[5];
-		points[0] = testPoint(1f,-1f,0f);
-		points[1] = testPoint(1f,1f,0f);
-		points[2] = testPoint(-1f,1f,0f);
-		points[3] = testPoint(-1f,-1f,0f);
-		points[4] = testPoint(0f,0f,2f);
-		
-		
-		GeoPolyhedron p=(GeoPolyhedron) kernel3D.Polyhedron("poly", points, 
-				new int[][] {{0,1,2,3},{0,1,4},{1,2,4},{2,3,4},{3,0,4}})[0];
-	}
 	
 	private void testTetrahedron(){
 
@@ -806,11 +768,19 @@ public class Test3D{
 			//		{4,0,1},{4,1,2},{4,2,3},{4,3,0},
 			//		{5,0,1},{5,1,2},{5,2,3},{5,3,0}					
 			//});
+			
+			ap.processAlgebraCommandNoExceptionHandling("l1 = {2,6,10}",false);
+			
+			/* ici
 			kernel3D.Polyhedron("polyhedra1", points2, 
 					new int[][] {
 					{2,6,10},{3,10,7},{3,5,8},{8,2,4},
 					{0,6,11},{0,9,4},{9,5,1},{1,7,11},
 			});
+			*/
+			
+			
+			
 			//kernel3D.lookupLabel("polyhedra1").setObjColor(new Color(255,255,0));
 			
 			//kernel3D.Polyhedron("polyhedra2", points2, 
@@ -819,11 +789,15 @@ public class Test3D{
 			//		{11,0,9,1}, {4,8,5,9}, 
 			//		{8,2,10}
 			//});
+			
+			
+			/* ici
 			kernel3D.Polyhedron("polyhedra3", points2, 
 					new int[][] {
 					{8,2,10}, {8,10,3}, {10,6,7}, {11,6,7}, {6,2,0}, {4,2,0}, {3,7,1}, {3,5,1},
 					{9,5,4}, {8,5,4}, {0,9,11}, {1,9,11}
 			});
+			*/
 			
 		} catch (Exception e) {
 			

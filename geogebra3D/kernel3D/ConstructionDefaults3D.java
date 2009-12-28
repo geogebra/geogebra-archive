@@ -202,7 +202,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		
 		
 		// polyhedron
-		GeoPolyhedron polyhedron = new GeoPolyhedron(cons, null, null);	
+		GeoPolyhedron polyhedron = new GeoPolyhedron(cons);	
 		polyhedron.setLocalVariableLabel("Polyhedron");
 		polyhedron.setObjColor(colPolyhedron);
 		polyhedron.setAlphaValue(DEFAULT_POLYGON3D_ALPHA);

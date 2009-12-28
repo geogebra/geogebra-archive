@@ -1,6 +1,7 @@
 package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CommandProcessor;
@@ -11,19 +12,19 @@ import geogebra3D.kernel3D.Kernel3D;
 
 
 /*
- * Pyramid[ <GeoPoint3D>, <GeoPoint3D>, <GeoPoint3D>, ... ] 
+ * Polyhedron[ <GeoList> ] 
  */
-public class CmdPyramid extends CommandProcessor {
+public class CmdPolyhedron extends CommandProcessor {
 	
 	Kernel3D kernel3D;
 
-	public CmdPyramid(Kernel kernel) {
+	public CmdPolyhedron(Kernel kernel) {
 		super(kernel);
 		
 		
 	}
 	
-	public CmdPyramid(Kernel3D kernel3D) {
+	public CmdPolyhedron(Kernel3D kernel3D) {
 		this( (Kernel) kernel3D);
 		this.kernel3D = kernel3D;
 		
@@ -40,19 +41,14 @@ public class CmdPyramid extends CommandProcessor {
 		arg = resArgs(c);
 
 		
-		// polygon for given points
-        GeoPoint3D[] points = new GeoPoint3D[n];
-        // check arguments
-        for (int i = 0; i < n; i++) {
-            if (!(arg[i].isGeoPoint()))
-				throw argErr(app, c.getName(), arg[i]);
-			else {
-                points[i] = (GeoPoint3D) arg[i];
-            }
-        }
-        // everything ok
-        return kernel3D.Pyramid(c.getLabel(), points);
-		
+       // check arguments
+		if (n!=1)
+			throw argNumErr(app, c.getName(), n);
+		else if (!(arg[0].isGeoList()))
+			throw argErr(app, c.getName(), arg[0]);
+		else 
+			return kernel3D.Polyhedron(c.getLabel(), (GeoList) arg[0]);
+
 		
 
 	}

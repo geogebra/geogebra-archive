@@ -20,6 +20,7 @@ import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
@@ -409,14 +410,13 @@ public class Kernel3D
 	
     /** Polyhedron with vertices and faces description
      * @param label name
-     * @param points vertices
      * @param faces faces description
      * @return the polyhedron
      */
-    final public GeoElement [] Polyhedron(String label, GeoPoint3D[] points, int[][] faces){
+    final public GeoElement[] Polyhedron(String label, GeoList faces){
 		
     	
-    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points,faces);
+    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,faces);
     	
     	return algo.getOutput();
 		
