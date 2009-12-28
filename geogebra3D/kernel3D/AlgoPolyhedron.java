@@ -3,6 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 import java.util.ArrayList;
@@ -146,7 +147,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		}
 		
 		polyhedron.updateFaces();
-		end(c);
+		updateInputOutput();
 		compute();
 
 		
@@ -178,16 +179,27 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	public AlgoPolyhedron(Construction c, GeoList faces) {
 		this(c);
 		this.type = GeoPolyhedron.TYPE_NONE;
-		ArrayList<GeoPoint3D> pointsList = new ArrayList<GeoPoint3D>();
+		
+		setFaces(faces);
+
+		outputPoints = new GeoPoint3D[0];
+		
+		updateInputOutput();
+		
+	}
+	
+	
+	/** send GeoList description of faces to polyhedron
+	 * and update polyhedron polygons and segments
+	 * @param faces
+	 */
+	private void setFaces(GeoList faces){
+		
 		this.faces = faces;
 		
-		// converts GeoList description of faces to int[][] description
-		// and creates points list
-		int[][] facesLists = new int[faces.size()][];
-		for(int i=0;i<faces.size();i++){ //TODO use iterator
+		for(int i=0;i<faces.size();i++){ 
 			polyhedron.startNewFace();
 			GeoList list = (GeoList) faces.get(i);
-			facesLists[i] = new int[list.size()];
 			for (int j=0;j<list.size();j++){
 				GeoPoint3D point = (GeoPoint3D) list.get(j);
 				polyhedron.addPointToCurrentFace(point);
@@ -199,10 +211,6 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		polyhedron.updateFaces();
 
 		
-		outputPoints = new GeoPoint3D[0];
-		
-		end(c);
-		
 	}
 	
 	
@@ -213,7 +221,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	////////////////////////////////////////////
 
 	
-	private void end(Construction c){
+	private void updateInputOutput(){
 		
 		//polyhedron = new GeoPolyhedron(c,this.points,faces);	
 		
@@ -304,6 +312,9 @@ public class AlgoPolyhedron extends AlgoElement3D {
 				outputPoints[i].updateCascade();
 				//Application.debug("point["+i+"]="+points[i]);
 			}
+			break;
+		case GeoPolyhedron.TYPE_NONE:
+			
 			break;
 		default:
 		}

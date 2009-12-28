@@ -62,6 +62,13 @@ public class GeoPolyhedron extends GeoElement3D {
 	}
 	
 	
+	/**
+	 * restart faces descriptions
+	 */
+	public void restartFaces(){
+		
+	}
+	
 	
 	/**
 	 * start a new face
@@ -276,9 +283,24 @@ public class GeoPolyhedron extends GeoElement3D {
 
 		 return polygonsArray;
 	 }
+
+
+	 public void setEuclidianVisible(boolean visible) {
+		 
+		 super.setEuclidianVisible(visible);
+
+		 for (GeoPolygon3D polygon : polygons.values()){
+			 polygon.setEuclidianVisible(visible,false);
+		 }
+
+		 for (GeoSegment3D segment : segments.values()){
+			 segment.setEuclidianVisible(visible);
+		 }
+	 }  
 	 
 	 
-	   public void setObjColor(Color color) {
+	 
+	 public void setObjColor(Color color) {
 		   
 	   		super.setObjColor(color);
 	   		

@@ -771,6 +771,8 @@ public class Test3D{
 			
 			ap.processAlgebraCommandNoExceptionHandling("l1 = {2,6,10}",false);
 			
+			String list = "{{Q2,Q6,Q10},{Q3,Q10,Q7},{Q3,Q5,Q8},{Q8,Q2,Q4},{Q0,Q6,Q11},{Q0,Q9,Q4},{Q9,Q5,Q1},{Q1,Q7,Q11}}";
+			ap.processAlgebraCommandNoExceptionHandling("Polyhedron["+list+"]",false);
 			/* ici
 			kernel3D.Polyhedron("polyhedra1", points2, 
 					new int[][] {
@@ -791,6 +793,9 @@ public class Test3D{
 			//});
 			
 			
+			list = "{{Q8,Q2,Q10}, {Q8,Q10,Q3}, {Q10,Q6,Q7}, {Q11,Q6,Q7}, {Q6,Q2,Q0}, {Q4,Q2,Q0}, {Q3,Q7,Q1}, {Q3,Q5,Q1}, {Q9,Q5,Q4}, {Q8,Q5,Q4}, {Q0,Q9,Q11}, {Q1,Q9,Q11}}";
+			ap.processAlgebraCommandNoExceptionHandling("Polyhedron["+list+"]",false);
+
 			/* ici
 			kernel3D.Polyhedron("polyhedra3", points2, 
 					new int[][] {
