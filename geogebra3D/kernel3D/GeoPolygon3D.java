@@ -220,6 +220,18 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		 
 			 
 	}
+	 
+	 
+	 /**
+	 * update the coord system and 2D points
+	 */
+	public void updateCoordSysAndPoints2D(){
+		 
+		 getCoordSys().getParentAlgorithm().update();
+		 
+		 for(int i=0; i<points2D.length; i++)
+			 points2D[i].getParentAlgorithm().update();
+	 }
 	
 	
 	

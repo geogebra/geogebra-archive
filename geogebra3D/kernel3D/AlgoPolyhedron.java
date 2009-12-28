@@ -73,7 +73,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			outputPoints = new GeoPoint3D[0];
 			numPoints = inputPoints.length;
 			
-			
+			//sides of the pyramid
 			for (int i=0; i<numPoints-1; i++){
 				polyhedron.startNewFace();
 				polyhedron.addPointToCurrentFace(this.inputPoints[i]);
@@ -82,8 +82,9 @@ public class AlgoPolyhedron extends AlgoElement3D {
 				polyhedron.endCurrentFace();
 			}
 			
+			//base of the pyramid
 			polyhedron.startNewFace();
-			for (int i=0; i<numPoints-1; i++)
+			for (int i=numPoints-2; i>=0; i--)
 				polyhedron.addPointToCurrentFace(this.inputPoints[i]);
 			polyhedron.endCurrentFace();
 			break;
@@ -123,7 +124,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			}
 			
 
-			
+			//sides of the prism
 			for (int i=0; i<numPoints; i++){
 				polyhedron.startNewFace();
 				polyhedron.addPointToCurrentFace(points[i]);
@@ -133,11 +134,13 @@ public class AlgoPolyhedron extends AlgoElement3D {
 				polyhedron.endCurrentFace();
 			}
 			
+			//bottom of the prism
 			polyhedron.startNewFace();
-			for (int i=0; i<numPoints; i++)
+			for (int i=numPoints-1; i>=0; i--)
 				polyhedron.addPointToCurrentFace(points[i]);
 			polyhedron.endCurrentFace();
 			
+			//top of the prism
 			polyhedron.startNewFace();
 			for (int i=0; i<numPoints; i++)
 				polyhedron.addPointToCurrentFace(points[numPoints+i]);
@@ -309,9 +312,14 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			for (int i=0;i<outputPoints.length;i++){
 				outputPoints[i].setCoords(inputPoints[i+1].getCoords().add(v));
 				outputPoints[i].updateCoords();
-				outputPoints[i].updateCascade();
+				//outputPoints[i].update();
+				//outputPoints[i].updateCascade();
 				//Application.debug("point["+i+"]="+points[i]);
 			}
+			
+			
+			polyhedron.updatePolygonsAndSegmentsFromParentAlgorithms();
+			//polyhedron.update();
 			break;
 		case GeoPolyhedron.TYPE_NONE:
 			

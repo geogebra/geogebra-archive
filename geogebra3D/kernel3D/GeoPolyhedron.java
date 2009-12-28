@@ -174,8 +174,9 @@ public class GeoPolyhedron extends GeoElement3D {
 		
 		
 		// create missing faces
-		for (int i=0; i < faces.size(); i++) {
-			currentFace = faces.get(i);
+		for (Iterator<ArrayList<Integer>> it = faces.iterator(); it.hasNext();){
+		//for (int i=0; i < faces.size(); i++) {
+			currentFace = it.next();//faces.get(i);
 			
 			//if a polygons already corresponds to the face description, then pass it
 			String faceKey = getFaceKey(currentFace);
@@ -186,19 +187,26 @@ public class GeoPolyhedron extends GeoElement3D {
 			GeoPoint3D[] p = new GeoPoint3D[currentFace.size()];
 			//edges linked to the face
 			GeoSegmentInterface[] s = new GeoSegmentInterface[currentFace.size()];
-			for (int j=0; j < currentFace.size(); j++) {
-				p[j]=points.get(currentFace.get(j));
-
+			
+			Iterator<Integer> it2 = currentFace.iterator();
+			int endPoint = it2.next();
+			int j=0;
+			p[j]=points.get(endPoint); //first point for the polygon
+			int firstPoint = endPoint;
+			for (; it2.hasNext();){
 				// creates edges
-				int startPoint = currentFace.get(j);
-				int endPoint = currentFace.get((j+1) % currentFace.size());
-				String key = getSegmentKey(startPoint, endPoint);
-
-				if (!segments.containsKey(key))
-					segments.put(key, createSegment(startPoint, endPoint));
+				int startPoint = endPoint;
+				endPoint = it2.next();
+				s[j] = createSegment(startPoint, endPoint);//segments.get(key);
 				
-				s[j] = segments.get(key);
+				//points for the polygon
+				j++;
+				p[j]=points.get(endPoint);
+
 			}
+			//last segment
+			s[j] = createSegment(endPoint, firstPoint);
+			
 			GeoPolygon3D polygon = createPolygon(p);
 			polygons.put(faceKey, polygon);
 			polygon.setSegments(s);
@@ -236,12 +244,20 @@ public class GeoPolyhedron extends GeoElement3D {
 	
 	 /**
 	  * return a segment joining startPoint and endPoint
+	  * if this segment already exists in segments, return the already stored one
 	  * @param startPoint the start point
 	  * @param endPoint the end point
 	  * @return the segment
 	  */
 	
 	 public GeoSegment3D createSegment(int startPoint, int endPoint){
+		 
+		 String key = getSegmentKey(startPoint, endPoint);
+
+		 if (segments.containsKey(key))
+			 return segments.get(key);
+				
+			
 		 GeoSegment3D segment;
 
 		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, 
@@ -255,6 +271,8 @@ public class GeoPolyhedron extends GeoElement3D {
 		 //TODO translation for edge
 		 segment.setLabel("edge"+points.get(startPoint).getLabel()+points.get(endPoint).getLabel());
 
+		 segments.put(key, segment);
+		 
 		 return segment;
 		 
 		 
@@ -355,7 +373,40 @@ public class GeoPolyhedron extends GeoElement3D {
 
 
 	 
+		
+
+
+		public void update() {
+
+			for (GeoPolygon3D polygon : polygons.values()){
+				polygon.update();
+			}
+
+			for (GeoSegment3D segment : segments.values()){
+				segment.update();
+			}
+
+
+		}
+		   
 	 
+		
+		/**
+		 * update the polygons and the segments from their parent algorithms
+		 */
+		public void updatePolygonsAndSegmentsFromParentAlgorithms() {
+
+			for (GeoPolygon3D polygon : polygons.values()){
+				polygon.updateCoordSysAndPoints2D();
+				polygon.getParentAlgorithm().update();
+			}
+
+			for (GeoSegment3D segment : segments.values()){
+				segment.getParentAlgorithm().update();
+			}
+
+
+		}
 	 
 	 
 	
