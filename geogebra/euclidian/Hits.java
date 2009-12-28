@@ -363,11 +363,17 @@ public class Hits extends ArrayList {
 	public Hits getTopHits(int nb){
 		Hits topHits = getTopHits();
 		
+		/*
 		//remove all last elements, since topHits.size()<=nb
 		for(;topHits.size()>nb;)
 			topHits.remove(topHits.size()-1);
+			*/
 		
-		return topHits;
+		Hits ret = new Hits();
+		for(int i=0;i<nb && i<topHits.size(); i++)
+			ret.add(topHits.get(i));
+		
+		return ret;
 	}
 
 
