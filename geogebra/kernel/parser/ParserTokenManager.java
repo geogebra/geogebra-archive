@@ -236,7 +236,7 @@ private int jjMoveStringLiteralDfa1_0(long active0, long active1)
 private int jjMoveStringLiteralDfa2_0(long old0, long active0, long old1, long active1)
 {
    if (((active0 &= old0) | (active1 &= old1)) == 0L)
-      return jjStartNfa_0(0, old0, old1); 
+      return jjStartNfa_0(0, old0, old1);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(1, active0, active1);
@@ -266,7 +266,7 @@ private int jjMoveStringLiteralDfa2_0(long old0, long active0, long old1, long a
 private int jjMoveStringLiteralDfa3_0(long old0, long active0, long old1, long active1)
 {
    if (((active0 &= old0) | (active1 &= old1)) == 0L)
-      return jjStartNfa_0(1, old0, old1); 
+      return jjStartNfa_0(1, old0, old1);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(2, 0L, active1);
@@ -286,7 +286,7 @@ private int jjMoveStringLiteralDfa3_0(long old0, long active0, long old1, long a
 private int jjMoveStringLiteralDfa4_0(long old1, long active1)
 {
    if (((active1 &= old1)) == 0L)
-      return jjStartNfa_0(2, 0L, old1); 
+      return jjStartNfa_0(2, 0L, old1);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(3, 0L, active1);
@@ -308,7 +308,7 @@ private int jjMoveStringLiteralDfa4_0(long old1, long active1)
 private int jjMoveStringLiteralDfa5_0(long old1, long active1)
 {
    if (((active1 &= old1)) == 0L)
-      return jjStartNfa_0(3, 0L, old1); 
+      return jjStartNfa_0(3, 0L, old1);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(4, 0L, active1);
@@ -326,7 +326,7 @@ private int jjMoveStringLiteralDfa5_0(long old1, long active1)
 private int jjMoveStringLiteralDfa6_0(long old1, long active1)
 {
    if (((active1 &= old1)) == 0L)
-      return jjStartNfa_0(4, 0L, old1); 
+      return jjStartNfa_0(4, 0L, old1);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(5, 0L, active1);
@@ -344,7 +344,7 @@ private int jjMoveStringLiteralDfa6_0(long old1, long active1)
 private int jjMoveStringLiteralDfa7_0(long old1, long active1)
 {
    if (((active1 &= old1)) == 0L)
-      return jjStartNfa_0(5, 0L, old1); 
+      return jjStartNfa_0(5, 0L, old1);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(6, 0L, active1);
@@ -2668,7 +2668,7 @@ private static final boolean jjCanMove_0(int hiByte, int i1, int i2, long l1, lo
    {
       case 34:
          return ((jjbitVec0[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2678,7 +2678,7 @@ private static final boolean jjCanMove_1(int hiByte, int i1, int i2, long l1, lo
    {
       case 34:
          return ((jjbitVec1[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2688,7 +2688,7 @@ private static final boolean jjCanMove_2(int hiByte, int i1, int i2, long l1, lo
    {
       case 34:
          return ((jjbitVec2[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2698,7 +2698,7 @@ private static final boolean jjCanMove_3(int hiByte, int i1, int i2, long l1, lo
    {
       case 34:
          return ((jjbitVec3[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2708,7 +2708,7 @@ private static final boolean jjCanMove_4(int hiByte, int i1, int i2, long l1, lo
    {
       case 34:
          return ((jjbitVec4[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2718,7 +2718,7 @@ private static final boolean jjCanMove_5(int hiByte, int i1, int i2, long l1, lo
    {
       case 34:
          return ((jjbitVec5[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2730,7 +2730,7 @@ private static final boolean jjCanMove_6(int hiByte, int i1, int i2, long l1, lo
          return ((jjbitVec6[i2] & l2) != 0L);
       case 34:
          return ((jjbitVec7[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2740,7 +2740,7 @@ private static final boolean jjCanMove_7(int hiByte, int i1, int i2, long l1, lo
    {
       case 34:
          return ((jjbitVec8[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2750,7 +2750,7 @@ private static final boolean jjCanMove_8(int hiByte, int i1, int i2, long l1, lo
    {
       case 255:
          return ((jjbitVec9[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2760,7 +2760,7 @@ private static final boolean jjCanMove_9(int hiByte, int i1, int i2, long l1, lo
    {
       case 3:
          return ((jjbitVec10[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2770,7 +2770,7 @@ private static final boolean jjCanMove_10(int hiByte, int i1, int i2, long l1, l
    {
       case 34:
          return ((jjbitVec11[i2] & l2) != 0L);
-      default : 
+      default :
          return false;
    }
 }
@@ -2780,7 +2780,7 @@ private static final boolean jjCanMove_11(int hiByte, int i1, int i2, long l1, l
    {
       case 0:
          return ((jjbitVec14[i2] & l2) != 0L);
-      default : 
+      default :
          if ((jjbitVec12[i1] & l1) != 0L)
             return true;
          return false;
@@ -2800,7 +2800,7 @@ private static final boolean jjCanMove_12(int hiByte, int i1, int i2, long l1, l
          return ((jjbitVec20[i2] & l2) != 0L);
       case 16:
          return ((jjbitVec21[i2] & l2) != 0L);
-      default : 
+      default :
          if ((jjbitVec15[i1] & l1) != 0L)
             if ((jjbitVec16[i2] & l2) == 0L)
                return false;
@@ -2845,7 +2845,7 @@ private static final boolean jjCanMove_13(int hiByte, int i1, int i2, long l1, l
          return ((jjbitVec37[i2] & l2) != 0L);
       case 255:
          return ((jjbitVec38[i2] & l2) != 0L);
-      default : 
+      default :
          if ((jjbitVec22[i1] & l1) != 0L)
             return true;
          return false;
@@ -2866,7 +2866,7 @@ null, "\143\142\162\164\50", null, null, null, null, null, null,
 
 /** Lexer state names. */
 public static final String[] lexStateNames = {
-   "DEFAULT", 
+   "DEFAULT",
 };
 static final long[] jjtoToken = {
    0xf99fffffffffffe1L, 0x3fdffffffL, 
@@ -2964,13 +2964,13 @@ public Token getNextToken()
 
   EOFLoop :
   for (;;)
-  {   
-   try   
-   {     
+  {
+   try
+   {
       curChar = input_stream.BeginToken();
-   }     
+   }
    catch(java.io.IOException e)
-   {        
+   {
       jjmatchedKind = 0;
       matchedToken = jjFillToken();
       return matchedToken;

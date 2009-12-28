@@ -413,20 +413,24 @@ public class ConstructionDefaults {
 		
 		// default
 		GeoElement defaultGeo = getDefaultGeo(type);
+		Application app = cons.getApplication();
+		
 		if (defaultGeo != null) {
 			geo.setAllVisualProperties(defaultGeo, isReset);		
 			
 			if(!isReset) {
 				// set to highest used layer
-				EuclidianView ev = cons.getApplication().getEuclidianView();
-				if (ev != null)
-					geo.setLayer(ev.getMaxLayerUsed());
+				if (app != null) {
+					EuclidianView ev = app.getEuclidianView();
+					if (ev != null)
+						geo.setLayer(ev.getMaxLayerUsed());
+				}
 			}
 		}
 
         // label visibility
-		Application app = cons.getApplication();
-		int labelingStyle = app.getLabelingStyle();
+		int labelingStyle = app == null ? LABEL_VISIBLE_USE_DEFAULTS : 
+										app.getLabelingStyle();
 		
 		// automatic labelling: 
 		// if algebra window open -> all labels

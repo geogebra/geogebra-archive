@@ -6185,4 +6185,32 @@ public class Kernel {
 		return getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
 	}
 	
+	/**
+	 * test kernel
+	 */
+	public static void main(String [] args) {
+		// create kernel with null application for testing
+		Kernel kernel = new Kernel(null);
+		Construction cons = kernel.getConstruction();
+		
+		// create points A and B
+		GeoPoint A = new GeoPoint(cons, "A", 0, 1, 1);
+		GeoPoint B = new GeoPoint(cons, "B", 3, 4, 1);
+		
+		// create line g through points A and B
+		GeoLine g = kernel.Line("g", A, B);
+		
+		// print current objects
+		System.out.println(A);
+		System.out.println(B);
+		System.out.println(g);
+		
+		// change B
+		B.setCoords(3, 2, 1);
+		B.updateCascade();
+		
+		// print current objects
+		System.out.println("changed " +B);
+		System.out.println(g);
+	}
 }
