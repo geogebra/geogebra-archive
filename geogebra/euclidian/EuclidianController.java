@@ -349,6 +349,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			
 			break;
 
+		case EuclidianView.MODE_MOVE:
+			
+			if (app.getSelectedGeos().size() > 0)
+				openMiniPropertiesPanel();
+			
+			break;
+
 
 		case EuclidianView.MODE_POINT: 
 			openMiniPropertiesPanel();
@@ -655,7 +662,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 		if (Application.isRightClick(e)) {
-			if (ppm != null) ppm.setVisible(true);
+			//if (ppm != null) ppm.setVisible(true);
+			app.getGuiManager().toggleMiniProperties(true);
 			return;
 		}
 		
@@ -3171,27 +3179,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void createNewPointIntersection(GeoPointInterface intersectionPoint){
 	}
 	
-	PropertiesPanelMini ppm;
-
-	private void closeMiniPropertiesPanel() {
-		if (ppm != null) ppm.setVisible(false);
-	}
-	
-	private void openMiniPropertiesPanel() {
-		//Application.printStacktrace("");
-        SwingUtilities.invokeLater( new Runnable(){ public void
-        	run() { 
-        	if (ppm == null) ppm = new PropertiesPanelMini(app, app.getEuclidianView().getEuclidianController());
-    		ppm.setVisible(true);
-    		ppm.setListener(app.getEuclidianView().getEuclidianController());
-        	
-        } });
-	}
-	
-	private boolean miniPropertiesOpen() {
-		if (ppm == null || !ppm.isVisible()) return false;
-		return true;
-	}
 
 	/*
 	 * sets properties from the MiniPropertiesDialog
@@ -3199,7 +3186,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	 */
 	private void setProperties(GeoElement geo) {
 		
-		if (ppm == null || !ppm.isVisible()) return;
+		if (!app.hasGuiManager()) return;
+		if (!app.getGuiManager().miniPropertiesOpen()) return;
 		
 		if (geo instanceof PointProperties) {
 			PointProperties p = (PointProperties)geo;
@@ -6205,6 +6193,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setLineStyle(int lineStyle) {
 		penLineStyle = lineStyle;
 		
+		if (mode == EuclidianView.MODE_MOVE) {
+			ArrayList geos = app.getSelectedGeos();
+			
+			for (int i = 0 ; i < geos.size() ; i++) {
+				GeoElement geo = (GeoElement)geos.get(i);
+				geo.setLineType(lineStyle);
+				geo.updateRepaint();
+				
+			}
+		}
 	}
 
 
@@ -6212,11 +6210,50 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setSize(int size) {
 		penSize = size;
 		
+		if (mode == EuclidianView.MODE_MOVE) {
+			ArrayList geos = app.getSelectedGeos();
+			
+			for (int i = 0 ; i < geos.size() ; i++) {
+				GeoElement geo = (GeoElement)geos.get(i);
+				if (geo instanceof PointProperties) {
+					((PointProperties)geo).setPointSize(size);
+					geo.updateRepaint();
+				} else {
+					geo.setLineThickness(size);
+					geo.updateRepaint();
+				}
+			}
+		}
+		
 	}
 	
 	Color penColor = Color.black;
 	public void setColor(Color color) {
 		penColor = color;
+		
+		if (mode == EuclidianView.MODE_MOVE) {
+			ArrayList geos = app.getSelectedGeos();
+			
+			for (int i = 0 ; i < geos.size() ; i++) {
+				GeoElement geo = (GeoElement)geos.get(i);
+				geo.setObjColor(color);
+				geo.updateRepaint();
+			}
+		}
+
+	}
+	
+	private void openMiniPropertiesPanel() {
+		if (!app.hasGuiManager()) return;
+		if (app.isMiniPropertiesActive())
+			app.getGuiManager().toggleMiniProperties(true);
+
+	}
+
+	private void closeMiniPropertiesPanel() {
+		if (!app.hasGuiManager()) return;
+		app.getGuiManager().toggleMiniProperties(false);
+
 	}
 
 }

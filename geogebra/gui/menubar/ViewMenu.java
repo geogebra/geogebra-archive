@@ -34,6 +34,7 @@ class ViewMenu extends BaseMenu {
 		showAuxiliaryObjectsAction,
 		showAlgebraInputAction,
 		showKeyboardAction,
+		showMiniPropertiesAction,
 		showCmdListAction,
 		showInputTopAction,
 		showToolBarAction,
@@ -65,6 +66,7 @@ class ViewMenu extends BaseMenu {
 		cbShowConsProtNavigationOpenProt,
 		cbShowAlgebraInput,
 		cbShowKeyboard,
+		cbShowMiniProperties,
 		cbShowCmdList;
 	
 	private JMenu
@@ -155,6 +157,12 @@ class ViewMenu extends BaseMenu {
 		// show/hide keyboard
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
 		add(cbShowKeyboard);
+
+		addSeparator();
+
+		// show/hide Mini Properties
+		cbShowMiniProperties = new JCheckBoxMenuItem(showMiniPropertiesAction);
+		add(cbShowMiniProperties);
 
 		addSeparator();
 
@@ -281,6 +289,28 @@ class ViewMenu extends BaseMenu {
 				
 					Application.setVirtualKeyboardActive(!Application.isVirtualKeyboardActive());				
 					app.getGuiManager().toggleKeyboard(Application.isVirtualKeyboardActive());
+					update();
+				}
+
+			}
+		};
+
+		showMiniPropertiesAction = new AbstractAction(app.getPlain("ShowMiniProperties"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				
+				if (Application.isMiniPropertiesActive() && !app.getGuiManager().showMiniProperties()) {
+					
+					// if keyboard is active but hidden, just show it
+					app.getGuiManager().toggleMiniProperties(true);
+					update();
+					
+				} else {
+				
+					Application.setMiniPropertiesActive(!Application.isMiniPropertiesActive());				
+					app.getGuiManager().toggleMiniProperties(Application.isMiniPropertiesActive());
 					update();
 				}
 

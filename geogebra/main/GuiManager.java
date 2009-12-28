@@ -349,6 +349,9 @@ public interface GuiManager {
 		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed);
 		public void toggleKeyboard(boolean show);
 		public boolean showVirtualKeyboard();
+		public void toggleMiniProperties(boolean show);
+		public boolean showMiniProperties();
+		public boolean miniPropertiesOpen();
 
 		public void showNumberInputDialogRegularPolygon(String menu,
 				GeoPoint geoPoint, GeoPoint geoPoint2);

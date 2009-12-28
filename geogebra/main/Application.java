@@ -2239,6 +2239,14 @@ public abstract class Application implements KeyEventDispatcher {
 			return;
 
 		getGuiManager().updateMenubarSelection();
+		
+		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {
+			if (selectedGeos.size() > 0) {
+				if (isMiniPropertiesActive()) getGuiManager().toggleMiniProperties(true);
+			} else {
+				getGuiManager().toggleMiniProperties(false);
+			}
+		}
 	}
 
 	public void updateMenuWindow() {
@@ -3679,6 +3687,17 @@ public abstract class Application implements KeyEventDispatcher {
 	public static void setVirtualKeyboardActive(boolean active) {
 		virtualKeyboardActive = active;
 		//Application.debug("VK active:"+virtualKeyboardActive);
+	}
+	
+	private static boolean miniPropertiesActive = true;
+	
+	public static boolean isMiniPropertiesActive() {
+		return miniPropertiesActive;
+	}
+	
+	public static void setMiniPropertiesActive(boolean active) {
+		miniPropertiesActive = active;
+		//Application.debug("miniprops active:"+miniPropertiesActive);
 	}
 	
 

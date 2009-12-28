@@ -2731,6 +2731,36 @@ public class DefaultGuiManager implements GuiManager {
 
 		}
 		
+		PropertiesPanelMini ppm;
+
+		public boolean miniPropertiesOpen() {
+			if (ppm == null || !ppm.isVisible()) return false;
+			return true;
+		}
+
+		
+		public boolean showMiniProperties() {
+			if (ppm == null) 
+				return false;
+			
+			return ppm.isVisible();
+		}
+		
+		public void toggleMiniProperties(final boolean show) {
+			
+			if (!show && ppm == null) return;
+
+		        SwingUtilities.invokeLater( new Runnable(){ public void
+		        	run() { 
+		        	if (ppm == null) ppm = new PropertiesPanelMini(app, app.getEuclidianView().getEuclidianController());
+		        	else ppm.setListener(app.getEuclidianView().getEuclidianController());
+		        	ppm.setVisible(show);
+		        	
+		        } });
+
+
+		}
+		
 		public boolean showVirtualKeyboard() {
 			if (virtualKeyboard == null) 
 				return false;
