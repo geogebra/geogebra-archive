@@ -2449,6 +2449,10 @@ implements ExpressionValue, ExpressionNodeConstants {
     		if (ev instanceof FunctionVariable) {
     			return false;
     		}
+    		else if (ev instanceof MySpecialDouble) {
+        		// special doubles like pi, degree, rad need to be kept
+    			return false;
+    		}
     		
     		// check if ev is a labeled GeoElement
     		if (symbolic) {
