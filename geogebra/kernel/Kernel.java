@@ -5714,33 +5714,44 @@ public class Kernel {
 	 * Uses current NumberFormat nf to format a number.
 	 */
 	final private String formatNF(double x) {
-		return nf.format(x);
+		if (-PRINT_PRECISION < x && x < PRINT_PRECISION) {
+			// avoid output of "-0"
+			return "0";
+		} else {
+			// standard case
+			return nf.format(x);
+		}
 	}
-	
+
 	/**
-	 * Uses current ScientificFormat sf to format a number.
-	 * Makes sure ".123" is returned as "0.123".
+	 * Uses current ScientificFormat sf to format a number. Makes sure ".123" is
+	 * returned as "0.123".
 	 */
-	final private String formatSF(double x) {					
+	final private String formatSF(double x) {
 		if (sbFormatSF == null)
 			sbFormatSF = new StringBuilder();
 		else
 			sbFormatSF.setLength(0);
-				
+
 		// get scientific format
-		String absStr;		
-		if (x >= 0) {
+		String absStr;
+		if (x == 0) {
+			// avoid output of "-0.00"
+			absStr = sf.format(0);
+		}
+		else if (x > 0) {
 			absStr = sf.format(x);
-		} else {
-			sbFormatSF.append('-');	
+		} 
+		else {
+			sbFormatSF.append('-');
 			absStr = sf.format(-x);
 		}
-	
+
 		// make sure ".123" is returned as "0.123".
 		if (absStr.charAt(0) == '.')
 			sbFormatSF.append('0');
 		sbFormatSF.append(absStr);
-		
+
 		return sbFormatSF.toString();
 	}
 	private StringBuilder sbFormatSF;
