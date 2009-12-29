@@ -1397,16 +1397,20 @@ implements ExpressionValue, ExpressionNodeConstants {
         				}
     		    		break;
         			}
-                   	// check for 0 at left
-        			else if (valueForm && isEqualString(left, 0, !valueForm)) {
-        				sb.append("0");
-    		    		break;
-        			} 
-        			// check for 0 at right
-        			else if (valueForm && isEqualString(right, 0, !valueForm)) {
-        				sb.append("0");
-    		    		break;
-        			}
+        			
+// removed 0 handling due to problems with functions, 
+// e.g 0 * x + 1 becomes 0 + 1 and no longer is a function
+//					// check for 0 at left
+//					else if (valueForm && isEqualString(left, 0, !valueForm)) {
+//							sb.append("0");
+//							break;
+//					} 
+//					// check for 0 at right
+//					else if (valueForm && isEqualString(right, 0, !valueForm)) {
+//						sb.append("0");
+//						break;
+//					}
+        			
         			// check for degree sign at right
         			else if (rightStr.equals("1\u00b0") || rightStr.equals("\u00b0")) {
         				sb.append(leftStr);
