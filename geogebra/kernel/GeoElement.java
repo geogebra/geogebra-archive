@@ -559,8 +559,11 @@ public abstract class GeoElement
 	 * Note: this is needed for texts that need to be quoted
 	 * in lists and as command arguments.
 	 */
-	public String toOutputValueString() {		
-		return toValueString();		
+	public String toOutputValueString() {	
+		if (isLocalVariable())
+			return label;
+		else
+			return toValueString();		
 	}
 	
 	public void setConstructionDefaults() {	
