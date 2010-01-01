@@ -221,11 +221,12 @@ public class CASInputHandler {
 					sbCASreferences.append(" ");
 				}
 				else if (rowRef >= 0 && rowRef < casView.getRowCount()) {
-					// success: insert referenced row
+					// #number or #number# 
+					// insert referenced row
 					String rowStr = (endCharacter == '#') ?
 							casView.getRowInputValue(rowRef) :
 							casView.getRowOutputValue(rowRef);
-					if (rowStr.length() == 1)
+					if (isNumberOrVariable(rowStr))
 						sbCASreferences.append(rowStr);
 					else {
 						sbCASreferences.append('(');
@@ -233,12 +234,29 @@ public class CASInputHandler {
 						sbCASreferences.append(')');
 					}
 				}
+				
+				// keep end character after reference
+				if (endCharacter!= '#')
+					sbCASreferences.append(endCharacter);
+				
 			} else {
 				sbCASreferences.append(ch);
 			}
 		}
 
 		return sbCASreferences.toString();
+	}
+	
+	/**
+	 * Returns whether str is a number or variable
+	 */
+	private boolean isNumberOrVariable(String str) {
+		for (int i=0; i < str.length(); i++) {
+			char ch = str.charAt(i);
+			if (!Character.isLetterOrDigit(ch) && ch != '.')
+				return false;
+		}
+		return true;
 	}
 
 }
