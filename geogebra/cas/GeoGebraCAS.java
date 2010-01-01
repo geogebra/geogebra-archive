@@ -402,9 +402,6 @@ public class GeoGebraCAS {
 	 * @return result as String in GeoGebra syntax
 	 */
 	public synchronized String processCASInput(String inputExp, boolean useGeoGebraVariables) throws Throwable {
-		// replace #1, #2 references by row input
-		inputExp = resolveCASrowReferences(inputExp);
-		
 		// PARSE input to check if it's valid expression
 		ValidExpression inVE = parseGeoGebraCASInput(inputExp);
 					
@@ -481,7 +478,7 @@ public class GeoGebraCAS {
 		String result = evaluateMathPiper(MathPiperString);
 
 		// convert MathPiper result back into GeoGebra syntax
-		String ggbString = parseMathPiper(result).toString();
+		String ggbString = toGeoGebraString(result);
 		
 		// TODO: remove
 		System.out.println("eval with MathPiper: " + MathPiperString);
@@ -552,39 +549,7 @@ public class GeoGebraCAS {
 		return null;
 	}
 	
-	/**
-	 * Replaces references to other rows (e.g. #3) in input string by
-	 * the values from those rows.
-	 */
-	private synchronized String resolveCASrowReferences(String inputExp) {
-		if (!app.hasGuiManager() || !app.getGuiManager().hasCasView()) 
-			return inputExp;
-				
-		CASView casView = (CASView) app.getGuiManager().getCasView();	
-		sbCASreferences.setLength(0);
-		int length = inputExp.length();
-		int lastPos = length -1;
-		for (int i = 0; i < length; i++) {
-			char ch = inputExp.charAt(i);
-			if (ch == '#' && i < lastPos) {
-				// get number after #
-				i++;
-				int pos = inputExp.charAt(i) - '0' - 1;
-				if (pos >= 0 && pos < casView.getRowCount()) {
-					// success
-					sbCASreferences.append(casView.getRowValue(pos));
-				} else
-					// failed
-					sbCASreferences.append(ch);
-			} else {
-				sbCASreferences.append(ch);
-			}
-		}
 
-		return sbCASreferences.toString();
-	}
-
-	private StringBuilder sbCASreferences = new StringBuilder();
 	
 	/**
 	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
@@ -628,10 +593,11 @@ public class GeoGebraCAS {
 	
 	
 	/**
-	 * Tries to parse a given MathPiper string and returns a ValidExpression object.
+	 * Tries to parse a given MathPiper string and returns a String in GeoGebra syntax.
 	 */
-	public synchronized ValidExpression parseMathPiper(String MathPiperString) throws Throwable {
-		return casParser.parseMathPiper(MathPiperString);
+	public synchronized String toGeoGebraString(String MathPiperString) throws Throwable {
+		ValidExpression ve = casParser.parseMathPiper(MathPiperString);
+		return casParser.toGeoGebraString(ve);
 	}
 	
 	/**

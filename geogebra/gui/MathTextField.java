@@ -33,7 +33,7 @@ public class MathTextField extends MyTextField implements KeyListener {
 		//Application.debug("keyPressed");
 	}
 
-	public void keyTyped(KeyEvent e) {      
+	public void keyTyped(KeyEvent e) {
 		//Application.debug("keyTyped"+e.getKeyChar());
 		if (e.isAltDown()) {
 			if (!altPressed) {

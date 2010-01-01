@@ -1271,10 +1271,6 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    break;
 	                    
 	                default:
-	                	// TODO: remove
-//	                	System.out.println("PLUS: left: " + leftStr + " " + isEqualString(left, 0, !valueForm) +
-//	                			", right: " + isEqualString(left, 0, !valueForm) + " " + rightStr);
-	                	
 	                    // check for 0
             			if (isEqualString(left, 0, !valueForm)) {
 		            		if (right.isLeaf() || opID(right) >= PLUS) {
@@ -1343,8 +1339,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			if (rightStr.equals("0")) {
 	    		    		break;
 	        			}
-		                
-		                
+ 
 		                if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -                    
 		                    if (rightStr.charAt(0) == '-') { // convert - - to +
 		                        sb.append(" + ");
@@ -1455,17 +1450,19 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                				sb.append(' '); // space instead of '*'  
 	                        	   }	                        	   
 	                           }	                                             	                          
-	                    } 	                 
+	                    } 	    
 	                    
 	                    // show parentheses around these cases	
 	                    if (rightStr.charAt(0) == '-'   // 2 (-5) or -(-5)
-	                    	|| !nounary  && opIDright <= DIVIDE) // -(x * a) or -(x / a)
+	                    	|| !nounary && !right.isLeaf() && opIDright <= DIVIDE) // -(x * a) or -(x / a)
 	                    {
 	                    	sb.append('(');
 	                        sb.append(rightStr);
 	                        sb.append(')');
-	                    } else
+	                    } else {
+	                    	// -1.0 * 5 becomes "-5"
 	                    	sb.append(rightStr);
+	                    }
 	                } else {
 	                    if (nounary) {
 	                    	switch (STRING_TYPE) {

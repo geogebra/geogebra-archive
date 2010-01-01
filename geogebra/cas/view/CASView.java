@@ -240,16 +240,17 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	
 	/**
 	 * Returns the output string in the n-th row of this CAS view. 
+	 */
+	public String getRowOutputValue(int n) {
+		return consoleTable.getCASTableCellValue(n).getOutput();
+	}
+	
+	/**
+	 * Returns the input string in the n-th row of this CAS view. 
 	 * If the n-th cell has no output string, the input string of this cell is returned.
 	 */
-	public String getRowValue(int n) {
-		CASTableCellValue temp = consoleTable.getCASTableCellValue(n);
-		
-		String result = temp.getOutput();
-		if (result == null || result.length() == 0)
-			result = temp.getInput();
-		
-		return result;
+	public String getRowInputValue(int n) {
+		return consoleTable.getCASTableCellValue(n).getInput();
 	}
 	
 	/**

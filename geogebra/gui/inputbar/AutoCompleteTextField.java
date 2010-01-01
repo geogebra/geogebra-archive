@@ -1,4 +1,5 @@
 package geogebra.gui.inputbar;
+import geogebra.cas.view.CASTableCellValue;
 import geogebra.gui.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 
 public class AutoCompleteTextField extends MathTextField implements 
 AutoComplete, KeyListener, GeoElementSelectionListener {
@@ -154,7 +156,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 			break;
 
-		case KeyEvent.VK_ENTER:                             
+		case KeyEvent.VK_ENTER:
 			// processEnterKey accepts a selection if there is one 
 			// in this case the ENTER key event is consumed 
 			// so that it is not processed by other objects (e.g. AlgebraInput)
@@ -258,6 +260,27 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		) return;        
 
 
+		clearSelection();
+
+		//Application.debug(e.isAltDown()+"");
+
+		
+		// handle alt-p etc
+		super.keyReleased(e);
+
+		if (getAutoComplete()) {
+			updateCurrentWord();
+			updateAutoCompletion();
+		}
+
+		/*
+        if (charCodePressed == KeyEvent.VK_BACK_SPACE &&
+          isTextSelected && input.length() > 0) {
+            setText(input.substring(0, input.length()));
+        }*/	
+	}      
+	
+	private void clearSelection() {
 		int start = getSelectionStart();
 		int end = getSelectionEnd();        
 		//    clear selection if there is one
@@ -270,27 +293,47 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			setText(sb.toString());
 			if (pos < sb.length()) setCaretPosition(pos);
 		}
-
-		//Application.debug(e.isAltDown()+"");
-
+	}
+	
+	/**
+	 * Automatically closes parentheses (, {, [ when next sign
+	 * is a space or end of input text.
+	 */
+	public void keyTyped(KeyEvent e) {
+		// only handle parentheses
+		char ch = e.getKeyChar();
+		if (!(ch == '(' || ch == '{' || ch == '[')) {
+			super.keyTyped(e);
+			return;
+		}
 		
-		// handle alt-p etc
-		super.keyReleased(e);
-
-		if (!getAutoComplete()) return;
+		clearSelection();
+		int caretPos = getCaretPosition();
+		String text = getText();
 		
-		updateCurrentWord();
-		updateAutoCompletion();
-
-		/*
-        if (charCodePressed == KeyEvent.VK_BACK_SPACE &&
-          isTextSelected && input.length() > 0) {
-            setText(input.substring(0, input.length()));
-        }*/
+		// auto-close parentheses
+		if (caretPos == text.length() || Character.isWhitespace(text.charAt(caretPos))) {		
+			switch (ch){
+				case '(':
+					// opening parentheses: insert closing parenthesis automatically
+					insertString(")");
+					break;	
+					
+				case '{':
+					// opening braces: insert closing parenthesis automatically
+					insertString("}");
+					break;
+					
+				case '[':
+					// opening bracket: insert closing parenthesis automatically
+					insertString("]");
+					break;
+			}
+		}
 		
-		
-		
-	}      
+		// make sure we keep the previous caret position
+		setCaretPosition(Math.min(text.length(), caretPos));
+	}
 
 
 	protected String lookup(String s) {

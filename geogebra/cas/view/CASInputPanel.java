@@ -4,6 +4,7 @@
 
 package geogebra.cas.view;
 
+import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.main.Application;
 
@@ -18,8 +19,7 @@ import javax.swing.text.JTextComponent;
 
 public class CASInputPanel extends JPanel {
 
-
-	private JTextField inputArea;
+	private AutoCompleteTextField inputArea;
 
 	private Application app;
 	
@@ -29,7 +29,11 @@ public class CASInputPanel extends JPanel {
 		setBackground(Color.white);		
 		setLayout(new BorderLayout(0,0));
 		
-		inputArea = new MyTextField(app.getGuiManager(),20);	
+		// use autocomplete text field from input bar 
+		// but ignore Escape, Up, Down keys
+		inputArea = new AutoCompleteTextField(20, app, false);	
+		inputArea.setAutoComplete(false);
+
 		inputArea.setBorder(BorderFactory.createEmptyBorder());						
 		add(inputArea, BorderLayout.CENTER);
 	}

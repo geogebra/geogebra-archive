@@ -14,7 +14,6 @@ public class CASInputHandler {
 	// 3x + 4 = 7
 	private static Pattern equationPatternSimple = Pattern.compile("(.+)=(.+)");
 	
-	
 	public CASInputHandler(CASView view) {
 		this.casView = view;
 		this.consoleTable = view.getConsoleTable();
@@ -25,11 +24,10 @@ public class CASInputHandler {
 	 *  Copied from apply(int mod)
 	 */	
 	public void processInput(String ggbcmd,String[] params){
-		// TODO: remove
-		System.out.println("processInput: " + ggbcmd + ", params: " + params);
-		
-		// get editor and possibly selected text
+		// get editor 
 		CASTableCellEditor cellEditor = consoleTable.getEditor();		
+
+		// get possibly selected text
 		String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
 		int selStart = cellEditor.getInputSelectionStart();
 		int selEnd = cellEditor.getInputSelectionEnd();
@@ -61,6 +59,15 @@ public class CASInputHandler {
 			prefix = selRowInput.substring(0, selStart).trim();
 			evalText = selectedText;
 			postfix = selRowInput.substring(selEnd).trim();
+		}
+		
+		// resolve # row references in strings
+		prefix = resolveCASrowReferences(prefix);
+		evalText = resolveCASrowReferences(evalText);
+		postfix = resolveCASrowReferences(postfix);
+		String newText = prefix + evalText + postfix;
+		if (!newText.equals(cellValue.getInput())) {
+			cellValue.setInput(newText);
 		}
 
 		// DIRECT MathPiper use: line starts with "MathPiper:"
@@ -177,5 +184,61 @@ public class CASInputHandler {
 			consoleTable.startEditingRow(selRow);
 		
 	}//apply(String,String[]
+	
+	/**
+	 * Replaces references to other rows (e.g. #3) in input string by
+	 * the values from those rows.
+	 */
+	private String resolveCASrowReferences(String inputExp) {		
+		StringBuilder sbCASreferences = new StringBuilder();
+		
+		int length = inputExp.length();
+		for (int i = 0; i < length; i++) {
+			char ch = inputExp.charAt(i);
+			if (ch == '#') {
+				int start = i+1;
+				int end = start;
+				char endCharacter = inputExp.charAt(end);
+				
+				// get digits after #
+				while (end < length && Character.isDigit(endCharacter = inputExp.charAt(end))) {
+					end++;
+				}
+				i = end;
+				
+				int rowRef;
+				if (start == end) {
+					// # references previous row
+					rowRef = consoleTable.getSelectedRow() - 1;
+				}
+				else {
+					// #n references n-th row
+					rowRef = Integer.parseInt(inputExp.substring(start, end)) - 1;
+				}
+				
+				if (rowRef == consoleTable.getSelectedRow()) {
+					// reference to selected row: insert blank
+					sbCASreferences.append(" ");
+				}
+				else if (rowRef >= 0 && rowRef < casView.getRowCount()) {
+					// success: insert referenced row
+					String rowStr = (endCharacter == '#') ?
+							casView.getRowInputValue(rowRef) :
+							casView.getRowOutputValue(rowRef);
+					if (rowStr.length() == 1)
+						sbCASreferences.append(rowStr);
+					else {
+						sbCASreferences.append('(');
+						sbCASreferences.append(rowStr);
+						sbCASreferences.append(')');
+					}
+				}
+			} else {
+				sbCASreferences.append(ch);
+			}
+		}
+
+		return sbCASreferences.toString();
+	}
 
 }
