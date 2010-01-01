@@ -5,6 +5,9 @@ import java.util.regex.Pattern;
 
 public class CASInputHandler {
 	
+	public static char ROW_REFERENCE_STATIC = '#';
+	public static char ROW_REFERENCE_DYNAMIC = '%';
+	
 	private CASView casView;
 	private CASTable consoleTable;
 	
@@ -61,14 +64,19 @@ public class CASInputHandler {
 			postfix = selRowInput.substring(selEnd).trim();
 		}
 		
-		// resolve # row references in strings
-		prefix = resolveCASrowReferences(prefix);
-		evalText = resolveCASrowReferences(evalText);
-		postfix = resolveCASrowReferences(postfix);
+		// resolve static row references and change input field accordingly
+		prefix = resolveCASrowReferences(prefix, selRow, ROW_REFERENCE_STATIC);
+		evalText = resolveCASrowReferences(evalText, selRow, ROW_REFERENCE_STATIC);
+		postfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_STATIC);
 		String newText = prefix + evalText + postfix;
 		if (!newText.equals(cellValue.getInput())) {
 			cellValue.setInput(newText);
 		}
+		
+		// resolve dynamic references for prefix and postfix
+		// dynamic references for evalText is handled in evaluateGeoGebraCAS()
+		prefix = resolveCASrowReferences(prefix, selRow, ROW_REFERENCE_DYNAMIC);
+		postfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_DYNAMIC);
 
 		// DIRECT MathPiper use: line starts with "MathPiper:"
 		boolean directMathPiperCall = selRowInput.startsWith("MathPiper:");
@@ -152,7 +160,7 @@ public class CASInputHandler {
 			}
 			else {
 				// evaluate using GeoGebraCAS syntax
-				evaluation = casView.getCAS().processCASInput(evalText, casView.getUseGeoGebraVariableValues());
+				evaluation = evaluateGeoGebraCAS(evalText, selRow);
 			}
 			
 		} catch (Throwable th) {
@@ -186,16 +194,28 @@ public class CASInputHandler {
 	}//apply(String,String[]
 	
 	/**
-	 * Replaces references to other rows (e.g. #3) in input string by
+	 * Evaluates evalText as GeoGebraCAS input. Dynamic references are
+	 * resolved according to the given row number.
+	 */
+	public String evaluateGeoGebraCAS(String evalText, int row) throws Throwable {
+		// resolve dynamic row references
+		evalText = resolveCASrowReferences(evalText, row, ROW_REFERENCE_DYNAMIC);
+		
+		// process this input
+		return casView.getCAS().processCASInput(evalText, casView.getUseGeoGebraVariableValues());
+	}
+	
+	/**
+	 * Replaces references to other rows (e.g. #3, %3) in input string by
 	 * the values from those rows.
 	 */
-	private String resolveCASrowReferences(String inputExp) {		
+	public String resolveCASrowReferences(String inputExp, int selectedRow, char delimiter) {		
 		StringBuilder sbCASreferences = new StringBuilder();
 		
 		int length = inputExp.length();
 		for (int i = 0; i < length; i++) {
 			char ch = inputExp.charAt(i);
-			if (ch == '#') {
+			if (ch == delimiter) {
 				int start = i+1;
 				int end = start;
 				char endCharacter = inputExp.charAt(end);
@@ -209,21 +229,21 @@ public class CASInputHandler {
 				int rowRef;
 				if (start == end) {
 					// # references previous row
-					rowRef = consoleTable.getSelectedRow() - 1;
+					rowRef = selectedRow - 1;
 				}
 				else {
 					// #n references n-th row
 					rowRef = Integer.parseInt(inputExp.substring(start, end)) - 1;
 				}
 				
-				if (rowRef == consoleTable.getSelectedRow()) {
+				if (rowRef == selectedRow) {
 					// reference to selected row: insert blank
 					sbCASreferences.append(" ");
 				}
 				else if (rowRef >= 0 && rowRef < casView.getRowCount()) {
 					// #number or #number# 
 					// insert referenced row
-					String rowStr = (endCharacter == '#') ?
+					String rowStr = (endCharacter == delimiter) ?
 							casView.getRowInputValue(rowRef) :
 							casView.getRowOutputValue(rowRef);
 					if (isNumberOrVariable(rowStr))
@@ -236,7 +256,7 @@ public class CASInputHandler {
 				}
 				
 				// keep end character after reference
-				if (endCharacter!= '#')
+				if (!Character.isDigit(endCharacter) && endCharacter != delimiter)
 					sbCASreferences.append(endCharacter);
 				
 			} else {
@@ -250,7 +270,7 @@ public class CASInputHandler {
 	/**
 	 * Returns whether str is a number or variable
 	 */
-	private boolean isNumberOrVariable(String str) {
+	private static boolean isNumberOrVariable(String str) {
 		for (int i=0; i < str.length(); i++) {
 			char ch = str.charAt(i);
 			if (!Character.isLetterOrDigit(ch) && ch != '.')
