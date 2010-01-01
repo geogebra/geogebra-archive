@@ -92,6 +92,13 @@ implements Comparable<ConstructionElementCycle>{
 		
 	}
 	
+	public boolean equals(Object obj){
+		if (!(obj instanceof ConstructionElementCycle))
+			return false;
+		
+		return compareTo((ConstructionElementCycle) obj)==0;
+	}
+	
 
 
 	private void setCycleFirst() {
