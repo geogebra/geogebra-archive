@@ -212,5 +212,14 @@ implements Comparable {
         
 	public boolean equals(Object obj) {
 		return this == obj;
+	}
+
+	/**
+	 * return the construction element ID
+	 * @return the construction element ID
+	 */
+	public long getID() {
+		
+		return ceID;
 	}   
 }
