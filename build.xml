@@ -42,7 +42,7 @@ office@geogebra.org
 	<property name="temp.dir" location="../build/temp"/>
 	<property name="workspace.dir" location="../"/>
 	
-	<!-- build signed and unsigned GeoGebra jar files and installer -->
+	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
 		depends="clean, ggb-jar-files, obfuscate, ggb-jar-index, 
 					copyJars, sign, pack, preloadHtml, finish">	  
@@ -99,8 +99,6 @@ office@geogebra.org
 		<mkdir dir="${build.dir}/unsigned"/>
 		<mkdir dir="${build.dir}/unsigned/packed"/>
 		<mkdir dir="${build.dir}/unsigned/unpacked"/>
-		<mkdir dir="${build.dir}/installer"/>
-		<mkdir dir="${build.dir}/installer/macosx"/>
 		<mkdir dir="${propertiestemp.dir}"/>
 	</target>
 	
@@ -403,21 +401,24 @@ office@geogebra.org
 				<deletecharacters chars="\r\n" />
 			</filterchain>
 		</loadfile>
-		<!--
-		<echo>  ${fullversion} </echo>
-		<echo> ${version}  </echo>
-		<echo> ${build}  </echo>
-		-->
-	</target>
-	
-	<target name="readCopyright">
-		<loadfile property="copyright" srcFile="${src.dir}/geogebra/gui/_license.txt">
+		<loadfile property="versionname" srcfile="${src.dir}/geogebra/GeoGebra.java">
 			<filterchain>
 				<linecontainsregexp>
-					<regexp pattern="Copyright" />
+					<regexp pattern="public static final String VERSION_STRING.*=" />
 				</linecontainsregexp>
+				<containsregex pattern=".*&quot;(.*)&quot;.*" replace="\1"/>
+				<deletecharacters chars="\r\n" />
+				<tokenfilter>
+					<replaceregex pattern="\." replace="_" flags="g" />
+				</tokenfilter>
 			</filterchain>
 		</loadfile>
+		<!--
+		<echo> ${fullversion} </echo>
+		<echo> ${version}     </echo>
+		<echo> ${build}       </echo>
+		<echo> ${versionname} </echo>
+		-->
 	</target>
 	
 	<!-- creates preload.html by inserting version strings into preload.txt -->
@@ -429,14 +430,64 @@ office@geogebra.org
 			token="VERSION_STRING" value="${fullversion}"/>
 	</target>
 	
-	<target name="installer" depends="macosx">
+	<target name="installer" depends="installer-clean, installer-windows, installer-macosx"/>
+	
+	<target name="installer-clean">
+		<delete dir="${build.dir}/installer"/>
+		<mkdir  dir="${build.dir}/installer"/>
+		<mkdir  dir="${build.dir}/installer/windows"/>
+		<mkdir  dir="${build.dir}/installer/windows/unsigned"/>
+		<mkdir  dir="${build.dir}/installer/macosx"/>
+	</target>
+	
+	<!-- defines the launch4j and nsis tasks used to create the Windows installer -->
+	<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="installer/launch4j/launch4j.jar" />
+    <taskdef name="nsis" classname="net.sf.nsisant.Task" classpath="installer/nsisant-1.2.jar" />
+	
+	<!-- creates a GeoGebra.exe installer for Windows -->
+	<target name="installer-windows" depends="readVersion">
+		<launch4j configFile="${src.dir}/installer/geogebra.xml"
+			outfile="${build.dir}/installer/windows/unsigned/geogebra.exe"
+			fileVersion="${fullversion}"
+			txtFileVersion="${fullversion}"
+			productVersion="${fullversion}"
+			txtProductVersion="${fullversion}"/>
+		<copy file="${build.dir}/installer/windows/unsigned/geogebra.exe" tofile="${build.dir}/installer/windows/geogebra.exe"/>
+		<condition property="keystore">
+			<and>
+				<available file="${workspace.dir}/igi-keystore.spc"/>
+				<or>
+					<and>
+						<os family="winnt"/>
+						<available file="${workspace.dir}/igi-keystore.pvk"/>
+					</and>
+					<and>
+						<os family="mac"/>
+						<available file="${workspace.dir}/igi-keystore.der"/>
+					</and>
+				</or>
+			</and>
+		</condition>
+		<antcall target="installer-signexe"/>
+		<!--
+		<nsis script="geogebra.nsi" verbosity="4"/>
+		-->
+		<delete dir="${build.dir}/installer/windows/unsigned"/>
+	</target>
+	<target name="installer-signexe" if="keystore">
+		<exec executable="${src.dir}/installer/signcode" osfamily="winnt">
+			<arg line="-spc '${workspace.dir}/igi-keystore.spc' -v '${workspace.dir}/igi-keystore.pvk' -n GeoGebra -i http://www.geogebra.org/ -t http://timestamp.verisign.com/scripts/timstamp.dll '${build.dir}/installer/windows/geogebra.exe'"/>
+		</exec>
+		<exec executable="${src.dir}/installer/osslsigncode" osfamily="mac">
+			<arg line="-spc '${workspace.dir}/igi-keystore.spc' -key '${workspace.dir}/igi-keystore.der' -n GeoGebra -i http://www.geogebra.org/ -t http://timestamp.verisign.com/scripts/timstamp.dll -in '${build.dir}/installer/windows/unsigned/geogebra.exe' -out '${build.dir}/installer/windows/geogebra.exe'"/>
+		</exec>
 	</target>
 	
 	<!-- defines the jarbundler task used to create the Mac OS X bundle -->
-	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="tools_jarbundler.jar" />
+	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="installer/jarbundler-2.1.0.jar" />
 	
 	<!-- creates a GeoGebra.app bundle for Mac OS X -->
-	<target name="macosx" depends="readVersion, readCopyright">
+	<target name="installer-macosx" depends="readVersion">
 		<jarbundler
 				dir="${build.dir}/installer/macosx"
 				name="GeoGebra"
@@ -444,12 +495,12 @@ office@geogebra.org
 				jar="${build.dir}/unpacked/geogebra.jar"
 				build="${build}"
 				bundleid="geogebra.GeoGebra"
-				icon="geogebra.icns"
-				infostring="GeoGebra ${fullversion}, ${copyright}"
+				icon="installer/geogebra.icns"
+				infostring="GeoGebra ${fullversion}, (C) 2001-2009 International GeoGebra Institute"
 				jvmversion="1.5.0+"
 				shortname="GeoGebra"
 				signature="GGB"
-				stubfile="JavaApplicationStub"
+				stubfile="installer/JavaApplicationStub"
 				version="${version}">
 			<javaproperty name="apple.laf.useScreenMenuBar" value="true" />
 			<javafileset dir="${build.dir}/unpacked" />
@@ -458,21 +509,20 @@ office@geogebra.org
 				name="GeoGebra File"
 				extensions="ggb"
 				mimetypes="application/vnd.geogebra.file"
-				iconfile="geogebra.icns"
+				iconfile="installer/geogebra.icns"
 				role="Editor" />
 			<documenttype
 				name="GeoGebra Tool"
 				extensions="ggt"
 				mimetypes="application/vnd.geogebra.tool"
-				iconfile="geogebra.icns"
+				iconfile="installer/geogebra.icns"
 				role="Editor" />
 		</jarbundler>
 		<move file="${build.dir}/installer/macosx/GeoGebra.app/Contents/Resources/Java/unpacked" tofile="${build.dir}/installer/macosx/GeoGebra.app/Contents/Resources/Java/unsigned" />
-		<delete file="${build.dir}/installer/macosx/GeoGebra.zip" />
-		<zip destfile="${build.dir}/installer/macosx/GeoGebra.zip">
+		<zip destfile="${build.dir}/installer/GeoGebra_${versionname}.zip">
 			<zipfileset dir="${build.dir}/installer/macosx" excludes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" />
 			<zipfileset dir="${build.dir}/installer/macosx" includes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" filemode="755" />
 		</zip>
-		<delete dir="${build.dir}/installer/macosx/GeoGebra.app" />
+		<delete dir="${build.dir}/installer/macosx" />
 	</target>
 </project>
