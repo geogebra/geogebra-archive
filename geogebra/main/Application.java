@@ -2239,12 +2239,15 @@ public abstract class Application implements KeyEventDispatcher {
 			return;
 
 		getGuiManager().updateMenubarSelection();
-		
-		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {
+		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
 			if (selectedGeos.size() > 0) {
-				if (isMiniPropertiesActive()) getGuiManager().toggleMiniProperties(true);
-			} else {
-				getGuiManager().toggleMiniProperties(false);
+				
+				EuclidianController ec = getEuclidianView().getEuclidianController();
+				
+				for (int i = 0 ; i < selectedGeos.size() ; i++) {
+					ec.setProperties(((GeoElement)(selectedGeos.get(i))));
+				}
+				
 			}
 		}
 	}

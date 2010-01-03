@@ -4264,6 +4264,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		case MODE_PEN:
 			return "Pen";
 			
+		case MODE_VISUAL_STYLE:
+			return "VisualStyle";
+			
 		case MODE_FITLINE:
 			return "FitLine";
 
@@ -4353,6 +4356,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	{
 		switch (mode)
 		{
+		case MODE_VISUAL_STYLE: return true;
 		case MODE_FITLINE: return true;
 		default: return false;
 		}

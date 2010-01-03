@@ -613,6 +613,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(" , ");  
         sb.append(EuclidianView.MODE_PEN);
         sb.append(" , ");  
+        sb.append(EuclidianView.MODE_VISUAL_STYLE);
+        sb.append(" , ");  
         sb.append(EuclidianView.MODE_TEXT );
         sb.append(" ");
         sb.append(EuclidianView.MODE_IMAGE);        

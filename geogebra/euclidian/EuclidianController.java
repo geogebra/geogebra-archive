@@ -344,21 +344,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		switch (mode) {
 		
 		case EuclidianView.MODE_PEN:
+		case EuclidianView.MODE_VISUAL_STYLE:
 			
 			openMiniPropertiesPanel();
 			
 			break;
 
-		case EuclidianView.MODE_MOVE:
-			
-			if (app.getSelectedGeos().size() > 0)
-			
-			break;
-
-
-		case EuclidianView.MODE_POINT: 
-			break;
-			
 		case EuclidianView.MODE_JOIN: // line through two points
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewLine(selectedPoints);
@@ -523,6 +514,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		switch (mode) {
+		case EuclidianView.MODE_VISUAL_STYLE:								
 		case EuclidianView.MODE_MOVE:								
 		case EuclidianView.MODE_SELECTION_LISTENER:
 			switch (e.getClickCount()) {
@@ -919,6 +911,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// move an object
 		case EuclidianView.MODE_MOVE:	
+		case EuclidianView.MODE_VISUAL_STYLE:	
 			handleMousePressedForMoveMode(e, false);			
 			break;
 
@@ -1508,6 +1501,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 		case EuclidianView.MODE_ROTATE_BY_ANGLE:
 		case EuclidianView.MODE_FITLINE:
+		case EuclidianView.MODE_VISUAL_STYLE:
 			return true;
 
 			// checkbox, button
@@ -2050,7 +2044,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			app.setSelectedGeos(hits);
 
 			// if alt pressed, create list of objects as string and copy to input bar
-			if (hits.size() > 0 && e.isAltDown() && app.hasGuiManager() && app.showAlgebraInput()) {
+			if (hits != null && hits.size() > 0 && e.isAltDown() && app.hasGuiManager() && app.showAlgebraInput()) {
 
 				JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
 
@@ -2128,7 +2122,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		altDown=e.isAltDown();		
 
 		// label hit in move mode: block all other hits
-		if (mode == EuclidianView.MODE_MOVE) {
+		if (moveMode(mode)) {
 			GeoElement geo = view.getLabelHit(mouseLoc);
 			if (geo != null) {				
 				//Application.debug("hop");
@@ -2250,6 +2244,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			hits = new Hits();
 
 		switch (mode) {
+		case EuclidianView.MODE_VISUAL_STYLE:
 		case EuclidianView.MODE_MOVE:
 			// move() is for highlighting and selecting
 			if (selectionPreview) {		
@@ -3178,7 +3173,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	 * sets properties from the MiniPropertiesDialog
 	 * (if open)
 	 */
-	private void setProperties(GeoElement geo) {
+	public void setProperties(GeoElement geo) {
 		
 		if (!app.hasGuiManager()) return;
 		if (!app.getGuiManager().miniPropertiesOpen()) return;
@@ -6243,6 +6238,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (!app.hasGuiManager()) return;
 		app.getGuiManager().toggleMiniProperties(false);
 
+	}
+	
+	private boolean moveMode(int mode) {
+		if (mode == EuclidianView.MODE_MOVE ||
+				mode == EuclidianView.MODE_VISUAL_STYLE)
+			return true;
+		
+		else return false;
 	}
 
 }
