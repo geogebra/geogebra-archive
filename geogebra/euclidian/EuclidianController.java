@@ -352,29 +352,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_MOVE:
 			
 			if (app.getSelectedGeos().size() > 0)
-				openMiniPropertiesPanel();
 			
 			break;
 
 
 		case EuclidianView.MODE_POINT: 
-			openMiniPropertiesPanel();
 			break;
 			
 		case EuclidianView.MODE_JOIN: // line through two points
-			openMiniPropertiesPanel();
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewLine(selectedPoints);
 			break;
 
 		case EuclidianView.MODE_SEGMENT:
-			openMiniPropertiesPanel();
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewSegment(selectedPoints);
 			break;
 
 		case EuclidianView.MODE_RAY:
-			openMiniPropertiesPanel();
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewRay(selectedPoints);
 			break;
@@ -392,7 +387,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
 		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
 		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:		
-			openMiniPropertiesPanel();
 			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints);
 			break;
 
@@ -3204,19 +3198,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable){
 		GeoPointInterface ret = kernel.Point(null, xRW, yRW);
-		setProperties((GeoElement)ret);
 		return ret;
 	}
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable, Path path){
 		GeoPointInterface ret = kernel.Point(null, path, xRW, yRW);
-		setProperties((GeoElement)ret);
 		return ret;
 	}
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable, Region region){
 		GeoPointInterface ret = kernel.PointIn(null,region,xRW, yRW);
-		setProperties((GeoElement)ret);
 		return ret;
 	}
 
@@ -3252,7 +3243,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void join(){
 		GeoPoint[] points = getSelectedPoints();
 		GeoLine line = kernel.Line(null, points[0], points[1]);
-		setProperties(line);
 	}
 
 	private void recordSingleObjectToSpreadSheet(GeoElement geo) {
@@ -3536,7 +3526,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void segment(){
 		GeoPoint[] points = getSelectedPoints();
 		GeoSegment segment = kernel.Segment(null, points[0], points[1]);
-		setProperties(segment);
 	}
 
 	// get two points and create vector between them
@@ -6193,7 +6182,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setLineStyle(int lineStyle) {
 		penLineStyle = lineStyle;
 		
-		if (mode == EuclidianView.MODE_MOVE) {
+		if (mode == EuclidianView.MODE_VISUAL_STYLE) {
 			ArrayList geos = app.getSelectedGeos();
 			
 			for (int i = 0 ; i < geos.size() ; i++) {
@@ -6210,7 +6199,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setSize(int size) {
 		penSize = size;
 		
-		if (mode == EuclidianView.MODE_MOVE) {
+		if (mode == EuclidianView.MODE_VISUAL_STYLE) {
 			ArrayList geos = app.getSelectedGeos();
 			
 			for (int i = 0 ; i < geos.size() ; i++) {
@@ -6231,7 +6220,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setColor(Color color) {
 		penColor = color;
 		
-		if (mode == EuclidianView.MODE_MOVE) {
+		if (mode == EuclidianView.MODE_VISUAL_STYLE) {
 			ArrayList geos = app.getSelectedGeos();
 			
 			for (int i = 0 ; i < geos.size() ; i++) {
