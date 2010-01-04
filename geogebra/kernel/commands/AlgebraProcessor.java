@@ -790,6 +790,9 @@ public class AlgebraProcessor {
 				 eqn.setLabels(n.getLabels());
 				 return processEquation(eqn);
 			 }
+			 else if (leaf instanceof Function) {
+				return processFunction(n, (Function) leaf);			
+			} 
 		}											
 		
 		// ELSE:  resolve variables and evaluate expressionnode		
@@ -829,10 +832,7 @@ public class AlgebraProcessor {
 		else if (eval.isVector3DValue())
 			return processPointVector3D(n, eval);	
 		else if (eval.isTextValue())
-			return processText(n, eval);		
-		else if (eval instanceof Function) {
-			return processFunction(n, (Function) eval);			
-		} 		
+			return processText(n, eval);				
 		else if (eval instanceof MyList) {
 			return processList(n, (MyList) eval);
 		} 

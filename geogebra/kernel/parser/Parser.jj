@@ -406,7 +406,7 @@ ValidExpression buildCASExpression() :
 {         
     (
        // CAS function
-        // f(x) := x^2 + 3x
+        // f(a) := a^2 + 3a
        LOOKAHEAD(2147483647)   
        ve = casFunction()
        //  ve = functionExpressionnode() 
@@ -722,38 +722,45 @@ Function  function():
 }
 
 /**
- * function = 	label(x) = expressionnode 
- * note: may also include commands in expressionnode
+ * function = 	f(var) = expressionnode 
+ * 				f(var) = command
  */
 ExpressionNode functionExpressionnode():
 {
     ExpressionNode rhs;
-    Token l = null;
+    Token funName = null;
+    Token varName = null;
     Token var;
 }
 {          
 (
-	   // f(x) =  x^2 + 3	
-	   l = <FUNCTION_LABEL> <VARX> ")" ("=" | <ASSIGNMENT>) 
-	 	 rhs = expressionnode()
-	    {	        
-	    	String label = l.image.substring(0,l.image.length()-1);	
-	    
-	        // convert to function if not only command
+	   // f(a) =  a^2 + 3	
+	   funName = <FUNCTION_LABEL> // includes "(" at end
+	   		  ( varName =  <VARX> |
+	   		    varName =  <SPREADSHEET_LABEL> | varName = <LABEL> ) ")" 
+	   		( <EQUAL > | <ASSIGNMENT> ) rhs = expressionnode()
+	    {
+			String funLabel = funName.image.substring(0,funName.image.length()-1);
+	      
+			// command: return function expression
+			// function: wrap function in ExpressionNode
 	    	if (!(rhs.getLeft() instanceof Command)) {
-	    	    Function fun = new Function(rhs);
-	    	    fun.setLabel(label);
+	    		// wrap function in ExpressionNode if it's not a command
+	    		FunctionVariable fVar = new FunctionVariable(kernel);
+	   			fVar.setVarString(varName.image);
+	   			Function fun = new Function(rhs, fVar);
+	    		fun.setLabel(funLabel);
        			rhs = new ExpressionNode(kernel, fun);       			   
        		}
-       		
-       		rhs.setLabel(label);		
+
+       		rhs.setLabel(funLabel);
        		return rhs;
 	    }   
 )	
 }
 
 /**
- * CAS function = 	label(x) := expressionnode 
+ * CAS function = 	label(var) := expressionnode 
  */
 Function casFunction():
 {
@@ -779,60 +786,8 @@ Function casFunction():
 	    	return fun;	       
 	    }   
 )	 
-}  
+}     
 
-/* 
-functions of other variables than x not implemented yet
-|
-(
-	// e.g. f(t) =  t^2	
-	var = <LABEL> ")" "="	 rhs = expressionnode()
-	    {
-	        f = new Function(rhs, var.image);
-	        f.setLabel(l.image.substring(0,l.image.length()-1));	       
-	        return f;
-	    }  	    
-)
-*/	    
-
-
-
-/**
- * function = 	label(x) = ( expressionnode | command ) 
- *
-ValidExpression  functionOrCommand():
-{
-    ExpressionNode rhs;
-    Token l = null;
-    Token var;
-    Function f;
-    Command c;
-}
-{   
-    LOOKAHEAD(10)  
-   (      
-	// f(x) = Derivative[ 3 x^2 ]
-	l = <FUNCTION_LABEL> <VARX> ")" "="  
-	    c = command()
-	    {	    		       
-	        c.setLabel(l.image.substring(0,l.image.length()-1));	       
-	        return c;
-	    }   
-	)
-	|
-	(
-	   // f(x) =  x^2 + 3	
-	    l = <FUNCTION_LABEL> <VARX> ")" "="  
-	 	rhs = expressionnode()
-	    {
-	        f = new Function(rhs);
-	        f.setLabel(l.image.substring(0,l.image.length()-1));	       
-	        return f;
-	    }   
-    )	   
-
-}
-*/
 
 /**
  *  expression =  term <OR> term

@@ -144,7 +144,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     }
     
     /**
-     * Use this methode only if you really know
+     * Use this method only if you really know
      * what you are doing.
      */
     public void setExpression(ExpressionNode exp) {
@@ -167,15 +167,32 @@ implements ExpressionValue, RealRootFunction, Functional {
     public FunctionVariable getFunctionVariable() {
         return fVar;
     }
+    
+    final public String getVarString() {
+    	return fVar == null ? "x" : fVar.toString();
+    }
 
     /**
      * Call this function to resolve variables and init the function.
      * May throw MyError (InvalidFunction).
      */
     public void initFunction() {              	
-        // check if this is really a function in x
-        if (fVar == null && !expression.isFunctionInX())
-            throw new MyError(app, "InvalidFunction");
+        
+    	// replace function variables in tree
+        if (fVar != null && !fVar.toString().equals("x")) {
+        	// look for Variable objects with name of function variable and replace them
+        	int replacements = expression.replaceVariables(fVar.toString(), fVar);
+        	isConstantFunction = replacements == 0;
+        } 
+        else {
+        	// check if this is really a function in x
+            if (!expression.isFunctionInX())
+                throw new MyError(app, "InvalidFunction");
+        	
+        	fVar = new FunctionVariable(kernel);        
+        	int replacements = expression.replacePolynomials(fVar);
+        	isConstantFunction = replacements == 0;
+        }
         
         // replace variable names by objects
         expression.resolveVariables();
@@ -187,16 +204,15 @@ implements ExpressionValue, RealRootFunction, Functional {
 
         // replace all polynomials in expression (they are all equal to "1x" if we got this far)
         // by an instance of MyDouble
-        if (fVar == null) {
-        	fVar = new FunctionVariable(kernel);        
-        	int replacements = expression.replacePolynomials(fVar);
-        	isConstantFunction = replacements == 0;
-        }
+        
         
         //  simplify constant parts in expression
         expression.simplifyConstantIntegers();
 
-        initType();              
+        initType();         
+        
+        // TODO: remove
+        System.out.println("init function: " + this);
     }               
     
     private void initType() {
@@ -208,8 +224,9 @@ implements ExpressionValue, RealRootFunction, Functional {
         else if (ev.isNumberValue()) {
         	isBooleanFunction = false;
         } 
-        else
+        else {
 			throw new MyError(app, "InvalidFunction");  
+        }
     }
 
     /**

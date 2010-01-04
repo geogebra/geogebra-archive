@@ -172,7 +172,11 @@ public class GeneralPathClipped implements Shape {
 		}
 		
 		if (lineTo && p != null) {
-			gp.lineTo((float) q.getX(), (float) q.getY());
+			try {
+				gp.lineTo((float) q.getX(), (float) q.getY());
+			} catch (Exception e) {
+				gp.moveTo((float) q.getX(), (float) q.getY());
+			}
 		} else {
 			gp.moveTo((float) q.getX(), (float) q.getY());
 		}

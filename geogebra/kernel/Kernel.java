@@ -5407,9 +5407,8 @@ public class Kernel {
 		// BUILD EQUATION STRING                              
 		// valid left hand side 
 		// leading coefficient
-		sbBuildImplicitVarPart.append(formatCoeff(temp[leadingNonZero]));
-		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
-			sbBuildImplicitVarPart.append("*");
+		String strCoeff = formatCoeff(temp[leadingNonZero]);
+		sbBuildImplicitVarPart.append(strCoeff);
 		sbBuildImplicitVarPart.append(vars[leadingNonZero]);
 
 		// other coefficients on lhs
@@ -5427,8 +5426,6 @@ public class Kernel {
 			if (abs >= PRINT_PRECISION || useSignificantFigures) {
 				sbBuildImplicitVarPart.append(sign);
 				sbBuildImplicitVarPart.append(formatCoeff(abs));
-				if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
-					sbBuildImplicitVarPart.append("*");
 				sbBuildImplicitVarPart.append(vars[i]);
 			}
 		}
@@ -5581,10 +5578,6 @@ public class Kernel {
 		dabs = Math.abs(d);
 		if (dabs >= PRINT_PRECISION || useSignificantFigures) {
 			sbBuildExplicitLineEquation.append(formatCoeff(d));
-			
-			if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
-				sbBuildExplicitLineEquation.append('*');
-			
 			sbBuildExplicitLineEquation.append('x');
 
 			// constant            
@@ -5619,8 +5612,15 @@ public class Kernel {
 				return "";
 			else
 				return "-";
-		} else
-			return format(x);
+		} else {
+			String numberStr = format(x);
+			if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
+				return numberStr + "*";
+			else {
+				// standard case
+				return numberStr;
+			}
+		}
 	}
 
 	/**

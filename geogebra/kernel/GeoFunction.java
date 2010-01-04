@@ -38,7 +38,6 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	private Function fun;		
 	protected boolean isDefined = true;
 	public boolean trace, spreadsheetTrace;	
-	private String varStr = "x";
 	
 	// if the function includes a division by var, e.g. 1/x, 1/(2+x)
     private boolean includesDivisionByVar = false;
@@ -339,7 +338,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		if (isLabelSet()) {
 			sbToString.append(label);
 			sbToString.append("(");
-			sbToString.append(varStr);
+			sbToString.append(getVarString());
 			sbToString.append(") = ");
 		}		
 		sbToString.append(toValueString());
@@ -623,7 +622,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	}
 	
 	public String getVarString() {	
-		return varStr;
+		return fun == null ? "x" : fun.getVarString();
 	}
 
 	final public boolean isFunctionInX() {		

@@ -584,6 +584,41 @@ implements ExpressionValue, ExpressionNodeConstants {
    }
      
    
+   /**
+    * Replaces all Variable objects with the given varName in tree by
+    * the given FunctionVariable object.
+    * @return number of replacements done
+    */
+   final int replaceVariables(String varName, FunctionVariable fVar) {
+   		int replacements = 0;
+   	
+       // left tree
+       if (left.isExpressionNode()) {
+       		replacements += ((ExpressionNode) left).replaceVariables(varName, fVar);
+       }
+       else if (left instanceof Variable) {
+    	   if (varName.equals(((Variable) left).getName())) {
+    		   left = fVar;
+    		   replacements++;
+    	   }
+       }
+       
+       // right tree
+       if (right != null) {
+           if (right.isExpressionNode()) {
+        	   replacements += ((ExpressionNode) right).replaceVariables(varName, fVar);
+           }
+           else if (right instanceof Variable) {
+        	   if (varName.equals(((Variable) right).getName())) {
+        		   right = fVar;
+        		   replacements++;
+        	   }
+           }
+       }
+        
+       return replacements;
+   }
+   
     /**
      * Replaces all Polynomials in tree by function variable
      * @return number of replacements done
