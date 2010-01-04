@@ -3,12 +3,12 @@
 	<classpathentry excluding="javax/|mathpiper/scripts/" kind="src" path=""/>
 	<classpathentry kind="lib" path="3D/jogl.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="${project_loc}/3D"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="${project_name}/3D"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="3D/gluegen-rt.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="${project_loc}/3D"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="${project_name}/3D"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib_jsobject.jar"/>
