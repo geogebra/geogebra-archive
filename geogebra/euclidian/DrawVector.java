@@ -41,14 +41,14 @@ public class DrawVector extends Drawable implements Previewable {
     private GeoVector v;
     private GeoPoint P;
     
-    private double x1, y1, x2, y2;    
-    private double length, fx, fy, vx, vy, factor; 
     boolean isVisible, labelVisible;
     private boolean traceDrawingNeeded = false;
            	          
-	private Line2D.Float line = new Line2D.Float();           	          
-    private GeneralPath gp = new GeneralPath(); // for arrow   
-    private double [] coords = new double[2];
+    private Line2D.Double line = new Line2D.Double();               
+    private double [] coordsA = new double[2];
+	private double [] coordsB = new double[2];   
+	private double [] coordsV = new double[2]; 
+    private GeneralPath gp; // for arrow   
     private ArrayList points;
     
     /** Creates new DrawVector */
@@ -73,42 +73,32 @@ public class DrawVector extends Drawable implements Previewable {
         
 		updateStrokes(v);
 		
-		//start point  
+		//start point in real world coords
 		P = v.getStartPoint();            		                            
         if (P != null && !P.isInfinite()) {
-        	P.getInhomCoords(coords);
-			x2 = coords[0];
-			y2 = coords[1];
-			view.toScreenCoords(coords);
+        	P.getInhomCoords(coordsA);
         } else {
-        	x2 = 0.0;
-        	y2 = 0.0;
-            coords[0] = view.xZero;
-           	coords[1] = view.yZero;			
-        }                  
-        x1 = coords[0];
-        y1 = coords[1];       
+            coordsA[0] = 0;
+           	coordsA[1] = 0;			
+        }       
+        
+        // vector
+        coordsV[0] = v.x;
+        coordsV[1] = v.y;
          
 		// end point 
-        coords[0] = x2 + v.x;
-        coords[1] = y2 + v.y;
-		view.toScreenCoords(coords);        
-        x2 = coords[0];
-        y2 = coords[1];
+        coordsB[0] = coordsA[0] + coordsV[0];
+        coordsB[1] = coordsA[1] + coordsV[1];
         
-        setArrow(v.lineThickness);	// uses x1, y1, x2, y2
-        
-    	// line on screen?		
-		if (!line.intersects(0,0, view.width, view.height)) {				
-			isVisible = false;
-        	// don't return here to make sure that getBounds() works for offscreen points too
-		}		
+        // set line and arrow of vector and converts all coords to screen
+		setArrow(v.lineThickness);
         
 		// label position
 		if (labelVisible) {
-			labelDesc = geo.getLabelDescription();        
-			xLabel = (int) ((x1 + x2)/ 2.0 + vy);
-			yLabel = (int) ((y1 + y2)/ 2.0 - vx);
+			labelDesc = geo.getLabelDescription();       
+			// note that coordsV was normalized in setArrow()
+			xLabel = (int) ((coordsA[0] + coordsB[0])/ 2.0 + coordsV[1]);
+			yLabel = (int) ((coordsA[1] + coordsB[1])/ 2.0 - coordsV[0]);
 			addLabelOffset();   
 		}    
 		
@@ -132,44 +122,72 @@ public class DrawVector extends Drawable implements Previewable {
 		}								 	                                
     }
 
-    
+    /**
+     * Sets the line and arrow of the vector.
+     */
     private void setArrow(float lineThickness) {
-		// arrow for endpoint
-		  vx = x2 - x1;
-		  vy = y2 - y1;
-		  factor = 12.0 + lineThickness;
-		  length = GeoVec2D.length(vx, vy);
+    	// screen coords of start and end point of vector
+    	boolean onscreenA = view.toScreenCoords(coordsA);
+		boolean onscreenB = view.toScreenCoords(coordsB);
+        coordsV[0] = coordsB[0] - coordsA[0];
+        coordsV[1] = coordsB[1] - coordsA[1];
+    	
+	      // calculate endpoint F at base of arrow
+		  double factor = 12.0 + lineThickness;
+		  double length = GeoVec2D.length(coordsV);
 		  if (length > 0.0) {
-			vx = (vx * factor) / length; 
-			vy = (vy * factor) / length;
+			coordsV[0] = (coordsV[0] * factor) / length; 
+			coordsV[1] = (coordsV[1] * factor) / length;
 		  }
-		                           
-		  // build arrow
-		  fx = x2 - vx;
-		  fy = y2 - vy;
-		  line.setLine(x1, y1, fx, fy);
-		  vx /= 4.0;
-		  vy /= 4.0;                            
-		  gp.reset();
-		  gp.moveTo((float) x2, (float) y2); // end point
-		  gp.lineTo((float) (fx - vy), (float)(fy + vx));
-		  gp.lineTo((float)(fx + vy), (float)(fy - vx));
-		  gp.closePath();	
+		  double [] coordsF = new double[2];
+		  coordsF[0] = coordsB[0] - coordsV[0];
+		  coordsF[1] = coordsB[1] - coordsV[1];
+		  
+        // set clipped line
+		if (onscreenA && onscreenB) {
+			// A and B on screen
+			line.setLine(coordsA[0], coordsA[1], coordsF[0], coordsF[1]);
+		} else {
+			// A or B off screen
+			// clip at screen, that's important for huge coordinates
+			Point2D.Double [] clippedPoints = 
+				Clipping.getClipped(coordsA[0], coordsA[1], coordsF[0], coordsF[1], 0, view.width, 0, view.height);
+			if (clippedPoints == null) {
+				isVisible = false;	
+			} else {
+				line.setLine(clippedPoints[0].x, clippedPoints[0].y, clippedPoints[1].x, clippedPoints[1].y);
+			}
+		}
+		
+		// add triangle if end point on screen
+		  if (gp == null) 
+			 gp = new GeneralPath();
+		  else 
+			gp.reset();
+		if (onscreenB && length > 0) {
+			  coordsV[0] /= 4.0;
+			  coordsV[1] /= 4.0;  
+			  
+			  gp.moveTo((float) coordsB[0], (float) coordsB[1]); // end point
+			  gp.lineTo((float) (coordsF[0] - coordsV[1]), (float)(coordsF[1] + coordsV[0]));
+			  gp.lineTo((float)(coordsF[0] + coordsV[1]), (float)(coordsF[1] - coordsV[0]));
+			  gp.closePath();	
+		}
     }
     
     public void draw(Graphics2D g2) {
         if (isVisible) {
-            if (geo.doHighlighting()) {
-                g2.setPaint(v.getSelColor());
-                g2.setStroke(selStroke);            
-                g2.draw(line);       
-            }
-            
         	if (traceDrawingNeeded) {
         		traceDrawingNeeded = false;
         		Graphics2D g2d = view.getBackgroundGraphics();
     			if (g2d != null) drawTrace(g2d);    			
         	}
+        	
+            if (geo.doHighlighting()) {
+                g2.setPaint(v.getSelColor());
+                g2.setStroke(selStroke);            
+                g2.draw(line);       
+            }
             
             g2.setPaint(v.getObjectColor());
 			g2.setStroke(objStroke);  
@@ -197,11 +215,10 @@ public class DrawVector extends Drawable implements Previewable {
 		if (isVisible) { 
 			//	start point
 			GeoPoint P = (GeoPoint) points.get(0);	
-			P.getInhomCoords(coords);
-			view.toScreenCoords(coords);	
-			x1 = coords[0];
-			y1 = coords[1];							   								                        				
-			line.setLine(x1, y1, x1, y1);                                   			                                            
+			P.getInhomCoords(coordsA);
+			coordsB[0] = coordsA[0];
+			coordsB[1] = coordsA[1];
+			setArrow(1);                              			                                            
 		}
 	}
     
@@ -209,13 +226,11 @@ public class DrawVector extends Drawable implements Previewable {
 	
 	final public void updateMousePos(int x, int y) {		
 		if (isVisible) {
-			x2 = x;
-			y2 = y;    		  
+			double xRW = view.toRealWorldCoordX(x);
+			double yRW = view.toRealWorldCoordY(y);
 			
 			// round angle to nearest 15 degrees if alt pressed
 			if (points.size() == 1 && view.getEuclidianController().altDown) {
-				double xRW = view.toRealWorldCoordX(x);
-				double yRW = view.toRealWorldCoordY(y);
 				GeoPoint p = (GeoPoint)points.get(0);
 				double px = p.inhomX;
 				double py = p.inhomY;
@@ -231,19 +246,15 @@ public class DrawVector extends Drawable implements Previewable {
 				endPoint.x = xRW;
 				endPoint.y = yRW;
 				view.getEuclidianController().setLineEndPoint(endPoint);
-				
-				
-				// don't use view.toScreenCoordX/Y() as we don't want rounding
-				x2 = view.xZero + xRW * view.xscale;
-				y2 = view.yZero - yRW * view.yscale;
-
 			}
 			else
 				view.getEuclidianController().setLineEndPoint(null);
-
-			
-			
-			line.setLine(x1, y1, x2, y2);        
+  
+			// set start and end point in real world coords
+			GeoPoint P = (GeoPoint) points.get(0);	
+			P.getInhomCoords(coordsA);
+			coordsB[0] = xRW;
+			coordsB[1] = yRW;
 			setArrow(1);
 		}						    	                                 
 	}
