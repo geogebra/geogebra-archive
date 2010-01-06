@@ -1010,7 +1010,11 @@ public abstract class Application implements KeyEventDispatcher {
 				
 		this.frame = frame;	
 		updateTitle();
-		frame.setIconImage(getInternalImage("geogebra.gif"));
+		
+		// Windows 7 uses this for the Toolbar icon too
+		// (needs to be larger)
+		frame.setIconImage(getInternalImage("geogebra32.gif"));
+
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
 		WindowListener [] wl = frame.getWindowListeners();
