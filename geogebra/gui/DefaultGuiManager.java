@@ -872,7 +872,7 @@ public class DefaultGuiManager implements GuiManager {
 				+ app.getPlain("NewNameForA", "<b>" + geo.getNameDescription()
 						+ "</b>") + // eg New name for <b>Segment a</b>
 				"</html>", app.getPlain("Rename"), initText, false, handler,
-				true, selectInitText, null);
+				false, selectInitText, null);
 
 		/*
 		 * InputDialog id = new InputDialog( this, "<html>" +
