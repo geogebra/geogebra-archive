@@ -176,6 +176,9 @@ public class MyFileFilter extends FileFilter {
 	fullDescription = null;
     }
 
+    public String toString() {
+    	return getDescription();
+    }
 
     /**
      * Returns the human readable description of this filter. For
