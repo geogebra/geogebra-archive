@@ -74,6 +74,7 @@ public class WorksheetExportDialog extends JDialog {
 	final private static int TYPE_HTMLCLIPBOARD = 1;
 	final private static int TYPE_MEDIAWIKI = 2;
 	final private static int TYPE_GOOGLEGADGET = 3;
+	final private static int TYPE_JSXGRAPH = 4;
 
 	private Application app;
 	private Kernel kernel;
@@ -479,7 +480,7 @@ public class WorksheetExportDialog extends JDialog {
 		appletPanel.add(cbOfflineArchiveAndGgbFile);
 		
 		// file type (file/clipboard, mediaWiki)
-		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" };
+		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": JSXGraph" };
 		cbFileType = new JComboBox(fileTypeStrings);
 		cbFileType.setEnabled(true);
 		JPanel secondLine2 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));				
@@ -592,6 +593,10 @@ public class WorksheetExportDialog extends JDialog {
 			
 		case TYPE_GOOGLEGADGET:
 			stringSelection = new StringSelection(getGoogleGadget());
+		break;
+		
+		case TYPE_JSXGRAPH:
+			stringSelection = new StringSelection(getJSXGraph());
 		break;
 		}
 		
@@ -789,6 +794,44 @@ public class WorksheetExportDialog extends JDialog {
 		
 	}
 
+	private String getJSXGraph() throws IOException {
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n");
+		sb.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
+		sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
+		sb.append("<head>\n");
+		sb.append("<title>\n");
+		Construction cons = kernel.getConstruction();
+		String title = cons.getTitle();
+		sb.append(Util.toHTMLString(title));
+		sb.append("</title>\n");
+		sb.append("  <link rel=\"stylesheet\" type=\"text/css\" href=\"../../distrib/jsxgraph.css\" />\n");
+		sb.append("  <script type=\"text/javascript\" src=\"../../src/loadjsxgraph.js\"></script>\n");
+		sb.append("  <script type=\"text/javascript\" src=\"../../src/GeogebraReader.js\"></script>\n");
+		sb.append("</head>\n");
+		sb.append("<body>\n");
+		sb.append("<body id=\"body\">\n");
+		sb.append("<div id=\"box\" class=\"jxgbox\" style=\"width:");
+		sb.append(sizePanel.getSelectedWidth()+"");
+		sb.append("px; height:");
+		sb.append(sizePanel.getSelectedHeight()+"");
+		sb.append("px;\"></div>\n");
+
+		sb.append("<div id=\"debug\" style=\"display:block;\"></div>\n");
+		sb.append("<script type=\"text/javascript\">\n");
+		sb.append("JXG.JSXGraph.loadBoardFromString('box','");
+		
+		// append base64 encoded XML (not zipped)
+		sb.append(geogebra.util.Base64.encode(app.getXMLio().getFullXML().getBytes(),0));
+		
+		sb.append("', 'Geogebra');\n");
+	    sb.append("</script>\n");
+	    sb.append("</body>\n");
+	    sb.append("</html>\n");
+		return sb.toString();
+	
+	}
 	private String getGoogleGadget() throws IOException {
 		StringBuffer sb = new StringBuffer();
 
