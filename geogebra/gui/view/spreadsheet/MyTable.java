@@ -64,9 +64,11 @@ public class MyTable extends JTable implements FocusListener
 	
 	//(G.Sturr 2009-9-12) test for dragging dot highlight
 	protected boolean isOverDot = false;
-	//(G.Sturr)
+	//G.Sturr: 2009-11-15
+	protected ArrayList selectedCellRanges;
+	protected boolean metaDown = false;
+	//END G.Sturr
 	
-
 	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
 		super(tableModel);
 
@@ -142,9 +144,13 @@ public class MyTable extends JTable implements FocusListener
 		addFocusListener(this);
 		
 		// editing 	 
-		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);	}
+		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
-
+		//G.Sturr 2009-11-15
+		selectedCellRanges = new ArrayList();   
+		
+	}
+	
 	public SpreadsheetView getView() {
 		return view;		
 	}
@@ -187,7 +193,72 @@ public class MyTable extends JTable implements FocusListener
 	protected boolean selectionChangedNonResponsive = false;
 	public long selectionTime = 0;
 
+	//G.Sturr 2009-11-15
+	//
+	// JTable does not support non-contiguous cell selection. It handles ctrl-down 
+	// cell selection as if it was shift-extend. To prevent this behavior the JTable 
+	// changeSelection method is overridden here. Ctrl-select will be handled in 
+	// selectionChanged where the ctrl-selected geos are stored in the SelectedGeos list.
+	// Note: JTable does not internally consider these geos as selected cells. We just
+	// render them as selected in the cell renderer. 
+	//
+	public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
+		if(metaDown) 
+			super.changeSelection(rowIndex, columnIndex, false, false);	
+		else
+			super.changeSelection(rowIndex, columnIndex, toggle, extend);	
+		selectionChanged();
+	}
+    //END G.Sturr
+
+
+	//G.Sturr 2009-11-15
+	// New selectionChanged, now supports ctrl-select
+	//
 	protected void selectionChanged() {
+		if (selectionChangedNonResponsive) return;
+		
+		ArrayList list = new ArrayList();
+		 // Get the min and max ranges of selected cells
+        int rowIndexStart = getSelectedRow();
+        int rowIndexEnd = getSelectionModel().getMaxSelectionIndex();
+        int colIndexStart = getSelectedColumn();
+        int colIndexEnd = getColumnModel().getSelectionModel().getMaxSelectionIndex();
+    
+        if(rowIndexStart == -1 && rowIndexEnd == -1 && colIndexStart != -1){
+        	rowIndexStart = 0;
+        	rowIndexEnd = getRowCount()-1;
+        }
+        if(colIndexStart == -1 && colIndexEnd == -1 && rowIndexStart != -1){
+        	colIndexStart = 0;
+        	colIndexEnd = getColumnCount()-1;
+        }
+      
+        if(!metaDown) selectedCellRanges.clear();
+      	selectedCellRanges.add(new int[]{colIndexStart,rowIndexStart, colIndexEnd,rowIndexEnd});	
+      	  
+        for (int i=0; i < selectedCellRanges.size(); i++) {
+	        //get cell block i
+	        colIndexStart = ((int []) selectedCellRanges.get(i))[0];
+	        rowIndexStart = ((int []) selectedCellRanges.get(i))[1];
+	        colIndexEnd = ((int []) selectedCellRanges.get(i))[2];
+	        rowIndexEnd = ((int []) selectedCellRanges.get(i))[3];
+	        //find all geos in this range
+	        for (int r=rowIndexStart; r<=rowIndexEnd; r++) {
+	            for (int c=colIndexStart; c<=colIndexEnd; c++) {
+	                	GeoElement geo = RelativeCopy.getValue(this, c, r);
+						if (geo != null) list.add(geo);						
+	            }
+	        }
+        }
+        app.setSelectedGeos(list);	
+      
+        }
+        
+        
+		/*  ------------  old code
+
+		protected void selectionChanged() {
 		if (selectionChangedNonResponsive) return;
 		selectionTime = System.currentTimeMillis();
 		int[] cols = this.getSelectedColumns();
@@ -226,7 +297,9 @@ public class MyTable extends JTable implements FocusListener
 			}
 		}
 		app.setSelectedGeos(list);		
-	}
+		*/
+		
+	
 
 	protected Point getPixel(int column, int row, boolean min) {
 		if (column < 0 || row < 0) {
@@ -300,11 +373,13 @@ public class MyTable extends JTable implements FocusListener
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
 
+		/* G.Sturr 2009-9-30: removed so we can draw row/column selection frames
 		if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 			return;
 		}
+		*/
 		
-		//draw sprecial dragging frame for cell editor
+		//draw special dragging frame for cell editor
 		if (isDragging2) {
 			Point point1 = getPixel(minColumn2, minRow2, true);
 			Point point2 = getPixel(maxColumn2, maxRow2, false);
@@ -395,6 +470,8 @@ public class MyTable extends JTable implements FocusListener
 			int y = (int)pixel1.getY() - (DOT_SIZE + 1) / 2;
 			graphics.fillRect(x, y, DOT_SIZE, DOT_SIZE);
 		}
+		
+
 		if (minSelectionRow != -1 && maxSelectionRow != -1 && minSelectionColumn != -1 && maxSelectionColumn != -1) {
 			Point min = this.getMinSelectionPixel();
 			Point max = this.getMaxSelectionPixel();
@@ -750,17 +827,25 @@ public class MyTable extends JTable implements FocusListener
 				if(p.getY() < minSelectionRow ||  p.getY() > maxSelectionRow 
 						|| p.getX() < minSelectionColumn || p.getX() > maxSelectionColumn)
 				{
+					//switch to cell selection mode 
 					if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 						setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 						setColumnSelectionAllowed(true);
 						setRowSelectionAllowed(true);
 					}
+					//now change the selection
 					changeSelection((int) p.getY(), (int) p.getX(),false, false );
 					selectionChanged();		
 				}
-				 					
+				//G.STURR 2009-12-20 A single ContextMenu is now used for all right clicks 
+				//				
+				//ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, 
+				//		maxSelectionColumn, maxSelectionRow, selectedColumns);
+				
 				ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, 
-						maxSelectionColumn, maxSelectionRow, selectedColumns);
+						maxSelectionColumn, maxSelectionRow, selectedColumns, ContextMenu.CELL_SELECT);
+				//END GSTURR
+				
 				popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 			
@@ -974,7 +1059,10 @@ public class MyTable extends JTable implements FocusListener
 			boolean altDown = e.isAltDown(); 	 
 			boolean ctrlDown = Application.isControlDown(e) // Windows ctrl/Mac Meta
 			|| e.isControlDown(); // Fudge (Mac ctrl key)	
-			
+						
+			//G.Sturr 2009-11-15: metaDown flag is needed for changeSelection method
+			metaDown = Application.isControlDown(e);
+					
 			int row = getSelectedRow();
 			int column = getSelectedColumn();
 			
@@ -1302,6 +1390,7 @@ public class MyTable extends JTable implements FocusListener
 		}
 
 		public void keyReleased(KeyEvent e) {
+			metaDown = false;    //G Sturr 
 		}
 
 	}
@@ -1316,6 +1405,8 @@ public class MyTable extends JTable implements FocusListener
 			if (getSelectionModel().getSelectionMode() == ListSelectionModel.MULTIPLE_INTERVAL_SELECTION) {
 				minSelectionColumn = 0;
 				maxSelectionColumn = MyTable.this.getColumnCount() - 1;
+				
+				selectionChanged();
 			}
 			/* removed Michael Borcherds 2008-08-08
 			 * causes a bug when multiple rows are selected
@@ -1326,7 +1417,7 @@ public class MyTable extends JTable implements FocusListener
 				}
 			}
 			 */
-			selectionChanged();
+			
 		}
 
 	}
@@ -1343,9 +1434,11 @@ public class MyTable extends JTable implements FocusListener
 			if (getSelectionModel().getSelectionMode() == ListSelectionModel.MULTIPLE_INTERVAL_SELECTION) {
 				minSelectionRow = 0;
 				maxSelectionRow = MyTable.this.getRowCount() - 1;
+				selectionChanged();	
 			}
-			// end G.Sturr
 			
+			//  old code --- selectedColumns is no longer used
+			/*
 			selectedColumns = new boolean[getColumnCount()];
 			for (int i = 0; i < selectedColumns.length; ++ i) {
 				if (selectionModel.isSelectedIndex(i)) {
@@ -1353,6 +1446,7 @@ public class MyTable extends JTable implements FocusListener
 				}
 			}
 			selectionChanged();	
+			*/
 		}
 
 	}
@@ -1485,7 +1579,9 @@ public class MyTable extends JTable implements FocusListener
 						}
 						else if (metaDown) {					
 							column0 = (int)point.getX();
-							addColumnSelectionInterval(column0, column0);
+							//G.Sturr 2009-11-15: ctrl-select now handled in changeSelection
+							setColumnSelectionInterval(column0, column0);
+							//addColumnSelectionInterval(column0, column0);
 						}
 						else {
 							column0 = (int)point.getX();
@@ -1529,8 +1625,14 @@ public class MyTable extends JTable implements FocusListener
 				}	
 				
 				//show contextMenu
-				ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
-						selectedColumns);
+				
+				//GSTURR 2009-11-15 added a parameter to indicate selection type
+				//
+				//ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
+				//		selectedColumns);
+				ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
+						selectedColumns, ContextMenu.COLUMN_SELECT);
+				//END GSTURR
 		        popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			
 		        
@@ -1604,7 +1706,13 @@ public class MyTable extends JTable implements FocusListener
 
 		public void keyPressed(KeyEvent e) {
 			//Application.debug("keypressed");
-			boolean metaDown = Application.isControlDown(e);
+			
+			//G.Sturr 2009-11-15: metaDown now declared above so it can be used in changeSelection
+			// to handle ctrl-select
+			//boolean metaDown = Application.isControlDown(e);
+			metaDown = Application.isControlDown(e);
+			
+			//boolean metaDown = Application.isControlDown(e);
 			boolean altDown = e.isAltDown();
 			int keyCode = e.getKeyCode();
 			switch (keyCode) {
@@ -1647,6 +1755,8 @@ public class MyTable extends JTable implements FocusListener
 		}
 
 		public void keyReleased(KeyEvent e) {
+			//G.Sturr 2009-11-15: metaDown flag needed to do ctrl-select in changeSelection 
+			metaDown = false;  
 		}
 
 	}

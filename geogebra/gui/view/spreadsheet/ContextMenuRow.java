@@ -14,8 +14,15 @@ public class ContextMenuRow extends ContextMenu
 	
 	private static final long serialVersionUID = -592258674730774706L;
 
+	// GSTURR 2009-12-20 ContextMenuRow is no longer needed.
+	// TO prevent compile errors until this is removed a dummy parameter is added to the declaration.   
+	//
+	//public ContextMenuRow(MyTable table0, int column01, int row01, int column02, int row02, boolean[] selected0) {
+	//	super(table0, column01, row01, column02, row02, selected0);
+	//}
+
 	public ContextMenuRow(MyTable table0, int column01, int row01, int column02, int row02, boolean[] selected0) {
-		super(table0, column01, row01, column02, row02, selected0);
+		super(table0, column01, row01, column02, row02, selected0, 1);
 	}
 
 	

@@ -106,9 +106,11 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		// create and set corners, Markus December 08
 		Corner upperLeftCorner = new Corner(); //use FlowLayout
-		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		upperLeftCorner.addMouseListener(new MouseAdapter() {
+		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
+		upperLeftCorner.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				table.selectAll();
+				table.selectionChanged(); //G.Sturr 2009-11-15
 			}
 		});
 		
@@ -124,7 +126,6 @@ public class SpreadsheetView extends JScrollPane implements View
 		private static final long serialVersionUID = -4426785169061557674L;
 
 		protected void paintComponent(Graphics g) {
-	        // Fill me with dirty brown/orange.
 	        g.setColor(MyTable.BACKGROUND_COLOR_HEADER);
 	        g.fillRect(0, 0, getWidth(), getHeight());
 	    }
@@ -520,10 +521,13 @@ public class SpreadsheetView extends JScrollPane implements View
 							table.setRowSelectionInterval(row0, row);
 						}
 					}
-					else if (metaDown) {					
+					else if (metaDown) {
 						row0 = (int)point.getY();
-						table.addRowSelectionInterval(row0, row0);
-					}
+						//G.Sturr 2009-11-15 (ctrl-select now handled in MyTable) 
+						table.setRowSelectionInterval(row0, row0);
+						//table.addRowSelectionInterval(row0, row0);
+						}
+					
 					else {
 						row0 = (int)point.getY();
 						table.setRowSelectionInterval(row0, row0);
@@ -574,9 +578,17 @@ public class SpreadsheetView extends JScrollPane implements View
 				}	
 			
 				//show contextMenu
-				ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, new boolean[0]);
-			        popupMenu.show(e.getComponent(), e.getX(), e.getY());
-				} 
+				
+				//G.STURR 2009-12-20 We now use single ContextMenu for all right clicks 
+				//
+				//ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, new boolean[0]);
+			    //   popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				
+				ContextMenu popupMenu = new ContextMenu(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, 
+						maxSelectionRow, new boolean[0], ContextMenu.ROW_SELECT);
+		        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+		        // END GSTURR
+			} 
 			
 		}
 
@@ -616,6 +628,9 @@ public class SpreadsheetView extends JScrollPane implements View
 			boolean metaDown = Application.isControlDown(e);				
 			boolean altDown = e.isAltDown();				
 			
+			//G.Sturr 2009-11-15: metaDown flag needed to handle ctrl-select in MyTable
+			table.metaDown = metaDown;
+			
 			//Application.debug(keyCode);
 			switch (keyCode) {				
 			case KeyEvent.VK_C : // control + c
@@ -652,6 +667,8 @@ public class SpreadsheetView extends JScrollPane implements View
 		}
 		
 		public void keyReleased(KeyEvent e) {
+			//G.Sturr 2009-11-15: metaDown flag needed to handle ctrl-select in MyTable
+			table.metaDown = false;
 			
 		}
 		

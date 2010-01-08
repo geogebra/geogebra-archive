@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -32,9 +33,21 @@ public class ContextMenu extends JPopupMenu
 	protected int column2 = -1;
 	protected boolean[] selectedColumns = null;
 	
+	//G.Sturr 2009-9-30
+	protected static int CELL_SELECT = 0;
+	protected static int ROW_SELECT = 1;
+	protected static int COLUMN_SELECT = 2;
+	protected int selectionType = CELL_SELECT;
+	// end G.Sturr
+	
 	protected Application app;
 	
-	public ContextMenu(MyTable table0, int column01, int row01, int column02, int row02, boolean[] selected0) {
+	
+	// G.Sturr 2009-10-3: Added selection type parameter.
+	// Allows a single context menu to serve rows, columns and cells
+	public ContextMenu(MyTable table0, int column01, int row01, int column02, int row02, 
+			boolean[] selected0,int selectionType01) {
+			
 		//Application.debug("showPopupMenu <<<<<<<<<<<<<<<<<<<");
 		table = table0;
 		column1 = column01;
@@ -43,6 +56,8 @@ public class ContextMenu extends JPopupMenu
 		row2 = row02;		
 		selectedColumns = selected0;
 		app = table.kernel.getApplication();
+				
+		selectionType = selectionType01;  //G.Sturr 2009-10-3
 		
 		initMenu();			
 	}
@@ -70,6 +85,7 @@ public class ContextMenu extends JPopupMenu
 		// end G.Sturr
 		
 		
+		// Cut Copy Paste Delete 
    	 	JMenuItem item1 = new JMenuItem(app.getMenu("Copy"));
    	 	item1.setIcon(app.getImageIcon("edit-copy.png"));
    	 	item1.addActionListener(new ActionListenerCopy());
@@ -102,40 +118,68 @@ public class ContextMenu extends JPopupMenu
 	   	 	item4.addActionListener(new ActionListenerClear());
 	   	 	add(item4);
    	 	}
-
 	 	addSeparator();
-
-	 		if (column1 + 1 <= column2) {
-   	 		
-   	 		JMenuItem item5 = new JMenuItem(app.getMenu("CreateListOfPoints"));
-   	   	 	item5.setIcon(app.getEmptyIcon());
-   	   	 	item5.addActionListener(new ActionListenerCreatePoints());
-   	   	 	add(item5);
-	 		}   	   	 	
-   	   	 	
-	 		if (column1 !=-1 && column2 !=-1 && row1 != -1 && row2 != -1) {
-	   	   	 	JMenuItem item6 = new JMenuItem(app.getMenu("CreateMatrix"));
-	   	   	 	item6.setIcon(app.getEmptyIcon());
-	   	   	 	item6.addActionListener(new ActionListenerCreateMatrix());
-	   	   	 	add(item6);
-	 		}
-   	   	 	
-	 		if ((column1 == column2 && column1 !=-1) || (row1 == row2 && row1 != -1)) {
-	   	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("CreateList"));
-	   	   	 	item7.setIcon(app.getEmptyIcon());
-	   	   	 	item7.addActionListener(new ActionListenerCreateList());
-	   	   	 	add(item7);
-	 		}
+	 	
+	 	
+	 	// G.Sturr 20009-10-2  
+	 	// Insert (insert new row or new column)
+	 	
+	 	if(selectionType == COLUMN_SELECT){
+		 	JMenuItem itemInsertLeft = new JMenuItem(app.getMenu("InsertLeft"));
+		 	itemInsertLeft.setIcon(app.getEmptyIcon());
+		 	itemInsertLeft.addActionListener(new InsertLeft());   	 	
+	   	 	add(itemInsertLeft);
+	   	 	JMenuItem itemInsertRight = new JMenuItem(app.getMenu("InsertRight"));
+	   	 	itemInsertRight.setIcon(app.getEmptyIcon());
+	   	 	itemInsertRight.addActionListener(new InsertRight());   	 	
+	   	 	add(itemInsertRight);
+			addSeparator();
+	 	}
+	 	
+	 	if(selectionType == ROW_SELECT){
+		 	JMenuItem itemInsertAbove = new JMenuItem(app.getMenu("InsertAbove"));
+		 	itemInsertAbove.setIcon(app.getEmptyIcon());
+		 	itemInsertAbove.addActionListener(new InsertAbove());   	 	
+	   	 	add(itemInsertAbove);
+	   	 	JMenuItem itemInsertBelow = new JMenuItem(app.getMenu("InsertBelow"));
+	   	 	itemInsertBelow.setIcon(app.getEmptyIcon());
+	   	 	itemInsertBelow.addActionListener(new InsertBelow());   	 	
+	   	 	add(itemInsertBelow);
+			addSeparator();
+	 	}
+	 	
+	 	
+	 	// Create (Lists, Matrix, etc.) 	
+ 		if (column1 + 1 <= column2) {
+ 		JMenuItem item5 = new JMenuItem(app.getMenu("CreateListOfPoints"));
+   	 	item5.setIcon(app.getEmptyIcon());
+   	 	item5.addActionListener(new ActionListenerCreatePoints());
+   	 	add(item5);
+ 		}   	   	 	
+   	 	
+ 		if (column1 !=-1 && column2 !=-1 && row1 != -1 && row2 != -1) {
+   	   	 	JMenuItem item6 = new JMenuItem(app.getMenu("CreateMatrix"));
+   	   	 	item6.setIcon(app.getEmptyIcon());
+   	   	 	item6.addActionListener(new ActionListenerCreateMatrix());
+   	   	 	add(item6);
+ 		}
+   	 	
+ 		if ((column1 == column2 && column1 !=-1) || (row1 == row2 && row1 != -1)) {
+   	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("CreateList"));
+   	   	 	item7.setIcon(app.getEmptyIcon());
+   	   	 	item7.addActionListener(new ActionListenerCreateList());
+   	   	 	add(item7);
+ 		}
+	 	
 	 		
-	 		if (app.selectedGeosSize() > 0) {
-
-			 	addSeparator();
-	
-			 	JMenuItem item8 = new JMenuItem(app.getMenu(app.getPlain("Properties"))+"...");
-		   	 	item8.setIcon(app.getImageIcon("document-properties.png"));
-		   	 	item8.addActionListener(new ActionListenerProperties());
-		   	 	add(item8);
-	 		}
+	 	// Object Properties 	
+ 		if (app.selectedGeosSize() > 0) {
+		 	addSeparator();
+		 	JMenuItem item8 = new JMenuItem(app.getMenu(app.getPlain("Properties"))+"...");
+	   	 	item8.setIcon(app.getImageIcon("document-properties.png"));
+	   	 	item8.addActionListener(new ActionListenerProperties());
+	   	 	add(item8);
+ 		}
 	}
 	
 	//G.Sturr 2009-10-3: added setTitle (copied from gui.ContextMenuGeoElement)
@@ -192,13 +236,154 @@ public class ContextMenu extends JPopupMenu
 	}
 	
 	
+	//G.Sturr 2009-10-9: Insert rows and columns. (Copied from old ContextMenuCol and ContextMenuRow)
+	
+	private class InsertLeft implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			int columns = table.getModel().getColumnCount();
+ 			if (columns == column1 + 1){
+ 				// last column: need to insert one more
+				table.setMyColumnCount(table.getColumnCount() +1);		
+				table.getView().getColumnHeader().revalidate();
+				columns++;
+ 			}
+ 			int rows = table.getModel().getRowCount();
+ 			boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
+ 			for (int x = columns - 2; x >= column1; -- x) {
+ 				for (int y = 0; y < rows; ++ y) {
+ 					GeoElement geo = RelativeCopy.getValue(table, x, y);
+ 					if (geo == null) continue;
+ 					
+ 					Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+ 					int column = GeoElement.getSpreadsheetColumn(matcher);
+ 					int row = GeoElement.getSpreadsheetRow(matcher);
+ 					column += 1;
+ 					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+ 					geo.setLabel(newLabel);
+ 					succ = true;
+ 				}
+ 			}
+ 			
+ 			if (succ)
+ 				app.storeUndoInfo();
+ 		}
+	}
+	
+	private class InsertRight implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			int columns = table.getModel().getColumnCount();
+			int rows = table.getModel().getRowCount();
+			boolean succ = false;
+ 			if (columns == column1 + 1){
+ 				// last column: insert another on right
+				table.setMyColumnCount(table.getColumnCount() +1);		
+				table.getView().getColumnHeader().revalidate();
+				// can't be undone
+ 			}
+ 			else
+ 			{
+	 			succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
+	 			for (int x = columns - 2; x >= column2 + 1; -- x) {
+	 				for (int y = 0; y < rows; ++ y) {
+	 					GeoElement geo = RelativeCopy.getValue(table, x, y);
+	 					if (geo == null) continue;
+	 					
+	 					Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+	 					int column = GeoElement.getSpreadsheetColumn(matcher);
+	 					int row = GeoElement.getSpreadsheetRow(matcher);
+	 					column += 1;
+	 					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+	 					geo.setLabel(newLabel);
+	 					succ = true;
+	 				}
+	 			}
+ 			}
+ 			
+ 			if (succ)
+ 				app.storeUndoInfo();
+ 		}
+	}
+	
+	private class InsertAbove implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			int columns = table.getModel().getColumnCount();
+ 			int rows = table.getModel().getRowCount();
+ 			if (rows == row2 + 1){
+ 				// last row: need to insert one more
+				table.tableModel.setRowCount(table.getRowCount() +1);		
+				table.getView().getRowHeader().revalidate();
+				rows++;
+ 			}
+ 			boolean succ = table.copyPasteCut.delete(0, rows - 1, columns - 1, rows - 1);
+ 			for (int y = rows - 2; y >= row1; -- y) {
+ 				for (int x = 0; x < columns; ++ x) {
+ 					GeoElement geo = RelativeCopy.getValue(table, x, y);
+ 					if (geo == null) continue;
+ 					
+ 					Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+ 					int column = GeoElement.getSpreadsheetColumn(matcher);
+ 					int row = GeoElement.getSpreadsheetRow(matcher);
+ 					row += 1;
+ 					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+ 					geo.setLabel(newLabel);
+ 					succ = true;
+ 				}
+ 			}
+ 			
+ 			if (succ)
+ 				app.storeUndoInfo();
+ 		}
+	}
+	
+	private class InsertBelow implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			int columns = table.getModel().getColumnCount();
+ 			int rows = table.getModel().getRowCount();
+ 			boolean succ = false;
+ 			if (rows == row2 + 1){
+ 				// last row: need to insert one more
+				table.tableModel.setRowCount(table.getRowCount() +1);		
+				table.getView().getRowHeader().revalidate();
+				// can't be undone
+ 			}
+ 			else
+ 			{
+	 			succ = table.copyPasteCut.delete(0, rows - 1, columns - 1, rows - 1);
+	 			for (int y = rows - 2; y >= row2 + 1; -- y) {
+	 				for (int x = 0; x < columns; ++ x) {
+	 					GeoElement geo = RelativeCopy.getValue(table, x, y);
+	 					if (geo == null) continue;
+	 					Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+	 					int column = GeoElement.getSpreadsheetColumn(matcher);
+	 					int row = GeoElement.getSpreadsheetRow(matcher);
+	 					row += 1;
+	 					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+	 					geo.setLabel(newLabel);
+	 					succ = true;
+	 				}
+	 			}
+ 			}
+ 			
+ 			if (succ)
+ 				app.storeUndoInfo();
+ 		}
+	}
+	
+ 	//
+	// end G.Sturr
+	
+	
 	
 	private class ActionListenerCreatePoints implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			//Application.debug("CreatePoints " + column1 + " - " + column2+"   "+row1+" - "+row2);
  			//if (selected == null) throw new RuntimeException("error state");
- 			StringBuilder text = new StringBuilder();
+ 			StringBuffer text = new StringBuffer();
  			LinkedList list = new LinkedList();
  			TableModel model = table.getModel();
  			
