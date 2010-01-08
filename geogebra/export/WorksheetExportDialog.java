@@ -811,7 +811,6 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("  <script type=\"text/javascript\" src=\"../../src/GeogebraReader.js\"></script>\n");
 		sb.append("</head>\n");
 		sb.append("<body>\n");
-		sb.append("<body id=\"body\">\n");
 		sb.append("<div id=\"box\" class=\"jxgbox\" style=\"width:");
 		sb.append(sizePanel.getSelectedWidth()+"");
 		sb.append("px; height:");
