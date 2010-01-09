@@ -125,7 +125,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	}
 	
 	/**
-	 * updates labesl according to current locale
+	 * updates labels according to current locale
 	 */
 	public void setLabels() {
 		if (inputLabel != null)
@@ -133,7 +133,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		//inputButton.setToolTipText(app.getMenu("Mode") + " " + app.getMenu("InputField"));   
 		if (helpIcon != null)
 			helpIcon.setToolTipText(app.getMenu("FastHelp"));		
-		//setCommandNames();				
+		setCommandNames();				
 	}	
 	
 	public void updateFonts() {
@@ -189,7 +189,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	public void setCommandNames() {	
 		app.initTranslatedCommands();
 		LowerCaseDictionary dict = app.getCommandDictionary();
-		if (dict == null) return;
+		if (dict == null || cmdCB == null) return;
 		
 		ActionListener [] listeners = cmdCB.getActionListeners();
 		for (int i=0; i < listeners.length; i++) 
