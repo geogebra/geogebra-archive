@@ -6,11 +6,8 @@ import geogebra.kernel.ConstructionElementCycle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.Drawable3D;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -42,6 +39,13 @@ public class GeoPolyhedron extends GeoElement3D {
 	/** faces description */
 	protected TreeSet<ConstructionElementCycle> faces;
 	
+	/** segments to remove for update */
+	protected TreeSet<ConstructionElementCycle> oldSegments;
+	
+	/** polygons to remove for update */
+	protected TreeSet<ConstructionElementCycle> oldPolygons;
+	
+	
 	/** face currently constructed */
 	private ConstructionElementCycle currentFace;
 	
@@ -57,11 +61,14 @@ public class GeoPolyhedron extends GeoElement3D {
 	 */
 	public GeoPolyhedron(Construction c) {
 		super(c);
-		//points = new ArrayList<GeoPoint3D>();
+
 		faces = new TreeSet<ConstructionElementCycle>();
 		
 		polygons = new TreeMap<ConstructionElementCycle, GeoPolygon3D>();
 		segments = new TreeMap<ConstructionElementCycle, GeoSegment3D>();
+		
+		oldPolygons = new TreeSet<ConstructionElementCycle>();		
+		oldSegments = new TreeSet<ConstructionElementCycle>();		
 
 	}
 	
@@ -70,6 +77,16 @@ public class GeoPolyhedron extends GeoElement3D {
 	 * restart faces descriptions
 	 */
 	public void restartFaces(){
+		
+		oldPolygons.clear();
+		for (ConstructionElementCycle key : polygons.keySet()){
+			//Application.debug("key : "+key);
+			oldPolygons.add(key);
+		}
+		
+		oldSegments.clear();
+		for (ConstructionElementCycle key : segments.keySet())
+			oldSegments.add(key);
 		
 	}
 	
@@ -87,16 +104,7 @@ public class GeoPolyhedron extends GeoElement3D {
 	 * @param point
 	 */
 	public void addPointToCurrentFace(GeoPoint3D point){
-		/*
-		int index;
-		if (points.contains(point))
-			index = points.indexOf(point);
-		else{
-			index = points.size();
-			points.add(point);
-		}
-		currentFace.add(new Integer(index));
-		*/
+
 		currentFace.add(point);
 	}
 	
@@ -106,7 +114,26 @@ public class GeoPolyhedron extends GeoElement3D {
 	 */
 	public void endCurrentFace(){
 		currentFace.setDirection();
-		faces.add(currentFace);
+		
+		//if the old polygons contains the current face, then this won't be removed nor recreated
+		if (oldPolygons.contains(currentFace)){
+			oldPolygons.remove(currentFace);
+			//update old segments
+			Iterator<ConstructionElement> it = currentFace.iterator();
+			GeoPoint3D endPoint = (GeoPoint3D) it.next();
+			GeoPoint3D firstPoint = endPoint;
+			for (; it.hasNext();){
+				GeoPoint3D startPoint = endPoint;
+				endPoint = (GeoPoint3D) it.next();
+				oldSegments.remove(
+						ConstructionElementCycle.SegmentDescription(startPoint, endPoint));
+			}
+			//last segment
+			oldSegments.remove(
+					ConstructionElementCycle.SegmentDescription(endPoint, firstPoint));
+		}else
+			faces.add(currentFace);
+		
 	}
 	
 	
@@ -117,11 +144,25 @@ public class GeoPolyhedron extends GeoElement3D {
 	 */
 	public void updateFaces(){
 		
-		if (faces == null) return;
 		
-		//TODO remove old faces and edges
-		
-		
+		//remove old faces and edges
+		for (ConstructionElementCycle key : oldPolygons){
+			
+			GeoPolygon3D polygon = polygons.get(key);
+			if (polygon!=null){
+				Application.debug("polygon : "+polygon.getLabel());
+				polygon.remove();
+				polygons.remove(key);
+			}
+		}
+		for (ConstructionElementCycle key : oldSegments){
+			GeoSegment3D segment = segments.get(key);
+			if (segment!=null){
+				Application.debug("segment : "+segment.getLabel());
+				segment.remove();
+				segments.remove(key);
+			}
+		}
 		
 		// create missing faces
 		for (Iterator<ConstructionElementCycle> it = faces.iterator(); it.hasNext();){
@@ -200,8 +241,12 @@ public class GeoPolyhedron extends GeoElement3D {
 	
 	 public GeoSegment3D createSegment(GeoPoint3D startPoint, GeoPoint3D endPoint){
 		 
-		 ConstructionElementCycle key = new ConstructionElementCycle();
-		 key.add(startPoint);key.add(endPoint);key.setDirection();
+		 ConstructionElementCycle key = 
+			 ConstructionElementCycle.SegmentDescription(startPoint,endPoint);
+		 /*
+			 new ConstructionElementCycle();
+		 key.add(startPoint);key.add(endPoint);
+		 */
 
 		 if (segments.containsKey(key))
 			 return segments.get(key);

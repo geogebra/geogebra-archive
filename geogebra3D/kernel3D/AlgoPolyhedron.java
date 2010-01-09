@@ -150,7 +150,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		}
 		
 		polyhedron.updateFaces();
-		updateInputOutput();
+		setInputOutput();
 		compute();
 
 		
@@ -182,23 +182,22 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	public AlgoPolyhedron(Construction c, GeoList faces) {
 		this(c);
 		this.type = GeoPolyhedron.TYPE_NONE;
-		
-		setFaces(faces);
+		this.faces = faces;
+		setFaces();
 
 		outputPoints = new GeoPoint3D[0];
 		
-		updateInputOutput();
+		setInputOutput();
 		
 	}
 	
 	
 	/** send GeoList description of faces to polyhedron
 	 * and update polyhedron polygons and segments
-	 * @param faces
+	 * 
 	 */
-	private void setFaces(GeoList faces){
+	private void setFaces(){
 		
-		this.faces = faces;
 		
 		for(int i=0;i<faces.size();i++){ 
 			polyhedron.startNewFace();
@@ -215,6 +214,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 
 		
 	}
+
 	
 	
 	
@@ -224,16 +224,9 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	////////////////////////////////////////////
 
 	
-	private void updateInputOutput(){
+	protected void setInputOutput(){
 		
-		//polyhedron = new GeoPolyhedron(c,this.points,faces);	
-		
-		GeoSegment3D[] segments = polyhedron.getSegments();
-		GeoPolygon3D[] polygons = polyhedron.getFaces();
-		
-		GeoElement[] input,output;
-		
-		// input : points from 0 to outputPointsIndex, or list of faces
+		// input : inputPoints or list of faces
 		if(this.faces == null){
 			input = inputPoints;
 		}else{
@@ -241,7 +234,33 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			input[0] = this.faces;
 		}
 		
-		// output : polyhedron, polygons, segments, and points from outputPointsIndex to end			
+		for (int i = 0; i < input.length; i++) {
+            input[i].addAlgorithm(this);
+        }
+
+		
+		updateOutput();
+		for (int i=0;i<outputPoints.length;i++)
+			outputPoints[i].setParentAlgorithm(this);
+			
+		
+        polyhedron.setParentAlgorithm(this); 
+       
+        cons.addToAlgorithmList(this);  
+		
+	}
+	
+	
+	
+	
+	
+	private void updateOutput(){
+						
+		GeoSegment3D[] segments = polyhedron.getSegments();
+		GeoPolygon3D[] polygons = polyhedron.getFaces();
+		
+		
+		// output : polyhedron, polygons, segments, and outputPoints			
 		output = new GeoElement[1+polygons.length+segments.length+outputPoints.length];	
 		
 		output[0] = polyhedron;
@@ -252,17 +271,9 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		for(int i=0; i<outputPoints.length; i++){
 			output[1+polygons.length+segments.length+ i] = outputPoints[i];
 		}
-
-		
-		setInputOutput(input, output);
 		
 	}
-	
-	
-	
-	
-	
-	
+
 	
 	
 	
@@ -281,23 +292,6 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	
 	
 
-	// overrides AlgoElement.doSetDependencies() to avoid every output.setParentAlgorithm(this)
-	/**
-	 * 
-	 */
-	
-	
-	protected void doSetDependencies() {
- 
-		
-		for (int i=0;i<outputPoints.length;i++)
-			outputPoints[i].setParentAlgorithm(this);
-			
-		
-        polyhedron.setParentAlgorithm(this); 
-       
-        cons.addToAlgorithmList(this);  
-    }
     
 
 	
@@ -322,7 +316,10 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			//polyhedron.update();
 			break;
 		case GeoPolyhedron.TYPE_NONE:
-			
+			//Application.printStacktrace("compute");
+			polyhedron.restartFaces();
+			setFaces();	
+			updateOutput();
 			break;
 		default:
 		}

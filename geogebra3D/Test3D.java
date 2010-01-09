@@ -385,7 +385,9 @@ public class Test3D{
 			ap.processAlgebraCommandNoExceptionHandling("B=(0,1,0)",false);
 			ap.processAlgebraCommandNoExceptionHandling("C=(0,0,0)",false);
 			ap.processAlgebraCommandNoExceptionHandling("D=(0,0,1)",false);
-			ap.processAlgebraCommandNoExceptionHandling("{{A,B,C},{B,A,C},{B,C,D},{C,A,D}}",false);
+			ap.processAlgebraCommandNoExceptionHandling("E=(1,0,1)",false);
+			//ap.processAlgebraCommandNoExceptionHandling("F=(1,0,2)",false);
+			ap.processAlgebraCommandNoExceptionHandling("{{A,B,C},{B,A,D},{B,C,D},{C,A,D}}",false);
 			
 			GeoList list = (GeoList) kernel3D.lookupLabel("liste1");
 			kernel3D.Polyhedron("polyhedron", list);

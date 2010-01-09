@@ -36,6 +36,20 @@ implements Comparable<ConstructionElementCycle>{
 	/** index to read through the cycle */
 	private int cycleIndex;
 	
+	
+	
+	/** return the cycle constituted of P1 and P2
+	 * @param P1
+	 * @param P2
+	 * @return the cycle constituted of P1 and P2
+	 */
+	static final public ConstructionElementCycle SegmentDescription(GeoElement P1, GeoElement P2){
+		ConstructionElementCycle cycle = new ConstructionElementCycle();
+		cycle.add(P1);cycle.add(P2);
+		return cycle;
+	}
+	
+	
 	public boolean add(ConstructionElement ce){
 		
 		if (minID>ce.getID()){
@@ -117,6 +131,21 @@ implements Comparable<ConstructionElementCycle>{
 			cycleIndex=0;
 		
 		return ret;
+	}
+	
+	
+	public String toString(){
+		
+		StringBuffer sb = new StringBuffer();
+
+		setCycleFirst();
+		for(int i=0;i<size();i++){
+			sb.append(getCycleNext().toString());
+			sb.append(" - ");
+		}
+		
+		return sb.toString();
+		
 	}
 
 
