@@ -1517,7 +1517,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         sb.append("</table>\n");
         
         // footer
-        sb.append(app.getGuiManager().getCreatedWithHTML());
+        sb.append(app.getGuiManager().getCreatedWithHTML(false));
         
         sb.append("</body>\n");
         sb.append("</html>");

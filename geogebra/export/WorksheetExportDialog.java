@@ -806,9 +806,29 @@ public class WorksheetExportDialog extends JDialog {
 		String title = cons.getTitle();
 		sb.append(Util.toHTMLString(title));
 		sb.append("</title>\n");
-		sb.append("  <link rel=\"stylesheet\" type=\"text/css\" href=\"../../distrib/jsxgraph.css\" />\n");
-		sb.append("  <script type=\"text/javascript\" src=\"../../src/loadjsxgraph.js\"></script>\n");
-		sb.append("  <script type=\"text/javascript\" src=\"../../src/GeogebraReader.js\"></script>\n");
+		
+		sb.append(" <style type=\"text/css\">\n");
+		sb.append("  .jxgbox {\n");
+		sb.append("    position:relative; /* for IE 7 */\n");
+		sb.append("    overflow:hidden;\n");
+		sb.append("    background-color:#ffffff;\n");
+		sb.append("    border-style:solid;\n");
+		sb.append("    border-width:1px;\n");
+		sb.append("    border-color:#356AA0;\n");
+		sb.append("    -moz-border-radius:10px;\n");
+		sb.append("    -webkit-border-radius:10px;\n");
+		sb.append("  }\n");
+		sb.append("  .JXGtext {\n");
+		sb.append("    background-color:transparent;\n");
+		sb.append("    font-family: Arial, Helvetica, Geneva;\n");
+		sb.append("    font-size:11px;\n");
+		sb.append("    padding:0px;\n");
+		sb.append("    margin:0px;\n");
+		sb.append("  }\n");
+		sb.append("  </style>\n");
+		
+		sb.append("  <script type=\"text/javascript\" src=\"http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/loadjsxgraph.js\"></script>\n");
+		sb.append("  <script type=\"text/javascript\" src=\"http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/GeogebraReader.js\"></script>\n");
 		sb.append("</head>\n");
 		sb.append("<body>\n");
 		sb.append("<div id=\"box\" class=\"jxgbox\" style=\"width:");
@@ -816,9 +836,12 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("px; height:");
 		sb.append(sizePanel.getSelectedHeight()+"");
 		sb.append("px;\"></div>\n");
+		
+		sb.append(getFooter(cons, true));
 
 		sb.append("<div id=\"debug\" style=\"display:block;\"></div>\n");
 		sb.append("<script type=\"text/javascript\">\n");
+		sb.append("JXG.JSXGraph.licenseText = '';\n");
 		sb.append("JXG.JSXGraph.loadBoardFromString('box','");
 		
 		// append base64 encoded XML (not zipped)
@@ -978,6 +1001,18 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append("</p>\n");
 		}
 
+		sb.append(getFooter(cons, false));
+
+		sb.append("</td></tr>\n");
+		sb.append("</table>");
+		sb.append("</body>\n");
+		sb.append("</html>");
+
+		return sb.toString();
+	}
+	
+	private String getFooter(Construction cons, boolean JSXGraph) {
+		StringBuilder sb = new StringBuilder();
 		// footer
 		// author and date information for footer
 		String author = cons.getAuthor();
@@ -999,15 +1034,10 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append(Util.toHTMLString(line));
 			sb.append(", ");
 		}
-		sb.append(guiManager.getCreatedWithHTML());
+		sb.append(guiManager.getCreatedWithHTML(JSXGraph));
 		sb.append("</span>");
-		sb.append("</p>");
-
-		sb.append("</td></tr>\n");
-		sb.append("</table>");
-		sb.append("</body>\n");
-		sb.append("</html>");
-
+		sb.append("</p>\n");
+		
 		return sb.toString();
 	}
 	

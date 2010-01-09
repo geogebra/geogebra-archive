@@ -2537,13 +2537,17 @@ public class DefaultGuiManager implements GuiManager {
 	     * Returns text "Created with <ApplicationName>" and link
 	     * to application homepage in html.
 	     */
-	    public String getCreatedWithHTML() {
-	        String ret = Util.toHTMLString(app.getPlain("CreatedWithGeoGebra")); // MRB 2008-06-14 added Util.toHTMLString
+	    public String getCreatedWithHTML(boolean JSXGraph) {
+	        String ret;
+	        
+	        if (!JSXGraph) ret = Util.toHTMLString(app.getPlain("CreatedWithGeoGebra")); // MRB 2008-06-14 added Util.toHTMLString
+	        else           ret = Util.toHTMLString(app.getPlain("CreatedWithGeoGebraAndJSXGraph"));
 
 	        if (ret.toLowerCase().indexOf("geogebra") == -1)
 	        	ret="Created with GeoGebra";
 	        
 	        ret = ret.replaceAll("[Gg]eo[Gg]ebra", "<a href=\""+GeoGebra.GEOGEBRA_WEBSITE+"\" target=\"_blank\" >GeoGebra<a/>");
+	        ret = ret.replaceAll("JSXGraph", "<a href=\"http://jsxgraph.org/\" target=\"_blank\" >JSXGraph<a/>");
 	        
 	        return ret;
 	    }

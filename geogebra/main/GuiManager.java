@@ -316,7 +316,7 @@ public interface GuiManager {
 	     * Returns text "Created with <ApplicationName>" and link
 	     * to application homepage in html.
 	     */
-	    public String getCreatedWithHTML() ;
+	    public String getCreatedWithHTML(boolean JSXGraph) ;
 	    
 	    public void setMode(int mode) ;
 	    public void setToolbarMode(int mode);
