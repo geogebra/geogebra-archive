@@ -13,10 +13,12 @@ import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -56,6 +58,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	private RowHeaderRenderer rowHeaderRenderer;
 	protected Application app;
 	private Kernel kernel;
+	private MyListModel listModel;  //GSturr 2010-1-9
 	
 	// if these are increased above 32000, you need to change traceRow to an int[]
 	public static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
@@ -65,6 +68,12 @@ public class SpreadsheetView extends JScrollPane implements View
 	short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
 	
 	private static int DEFAULT_COLUMN_WIDTH = 70;
+	
+	//G.STURR 2010-1-9: needed for resizing rows
+	public static Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+	private Cursor otherCursor = resizeCursor; 
+	private int mouseYOffset, resizingRow; 
+	//END GSTURR
 	
 	public SpreadsheetView(Application app0, int columns, int rows) {
 		/*
@@ -85,7 +94,7 @@ public class SpreadsheetView extends JScrollPane implements View
 
 		
 		// row header list
-		MyListModel listModel = new MyListModel(tableModel);
+		listModel = new MyListModel(tableModel); 
 		rowHeader = new JList(listModel);
 		rowHeader.setFocusable(true);
 		rowHeader.setAutoscrolls(false);
@@ -94,7 +103,10 @@ public class SpreadsheetView extends JScrollPane implements View
 		rowHeader.addKeyListener(new KeyListener1());
 		//rowHeader.setFixedCellWidth(MyTable.TABLE_CELL_WIDTH);
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
-		rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
+		
+		//G.STURR 2010-1-9: row heights are no longer fixed 
+		//rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
+		
 		rowHeaderRenderer = new RowHeaderRenderer(table, rowHeader);
 		rowHeader.setCellRenderer(rowHeaderRenderer);
 		// put the table and the row header list into a scroll plane
@@ -417,8 +429,18 @@ public class SpreadsheetView extends JScrollPane implements View
 			return "" + (index + 1);
 		}
 		
+		//G.STURR 2010-1-9: forces update of rowHeader, called after row resizing
+		public Void changed() {
+			this.fireContentsChanged(this, 0, model.getRowCount());
+			return null;
+			
+		}
+		
     }
 
+
+
+	
 	protected int minSelectionRow = -1;
 	protected int maxSelectionRow = -1;
 
@@ -455,6 +477,14 @@ public class SpreadsheetView extends JScrollPane implements View
 		}
 	
 		public Component getListCellRendererComponent(JList list, Object value,	int index, boolean  isSelected, boolean cellHasFocus) {
+			
+			// G.STURR 2010-1-9: adjust row height to match spreadsheet table row height 
+			Dimension size = getPreferredSize();
+		    size.height = table.getRowHeight(index);
+		    setPreferredSize(size);
+		    //END GSTURR
+			
+			
 			setText ((value == null) ? ""  : value.toString());
 						
 			if (minSelectionRow != -1 && maxSelectionRow != -1) {
@@ -482,6 +512,43 @@ public class SpreadsheetView extends JScrollPane implements View
 
     }
 
+	
+	
+	    //G.STURR 2010-1-9
+	    //
+	    // Returns index of row to be resized if mouse point P is 
+		// near a row boundary (within 3 pixels) 
+	 	private int getResizingRow(Point p){ 
+	 		int resizeRow = -1;
+	 		Point point = table.getIndexFromPixel(p.x, p.y);
+			if (point != null) {
+				// test if mouse is 3 pixels from row boundary
+				int cellRow = (int) point.getY();
+				if(cellRow >= 0) {
+					Rectangle r = table.getCellRect(cellRow, 0, true);
+					// near row bottom
+					if (p.y < r.y+3) resizeRow = cellRow-1;
+					// near row top
+					if (p.y > r.y + r.height - 3)resizeRow = cellRow;
+				}
+			}
+	        return resizeRow; 
+	    } 
+	    
+	    // Cursor change for when mouse is over a row boundary  
+	    private void swapCursor(){ 
+	        Cursor tmp = rowHeader.getCursor(); 
+	        rowHeader.setCursor(otherCursor); 
+	        otherCursor = tmp; 
+	    } 
+	    
+	    //
+	    //END GSTURR
+	
+	
+	
+	
+	
 	protected int row0 = -1;
 
 	protected class MouseListener1 implements MouseListener
@@ -505,8 +572,21 @@ public class SpreadsheetView extends JScrollPane implements View
 			int x = e.getX();
 			int y = e.getY();
 			
+			
+			//G.STURR 2010-1-9: 
+			// Update resizingRow. If nonnegative, then mouse is over a boundary
+			// and it gives the row to be resized (this is done in mouseDragged).
+			Point p = e.getPoint(); 
+	        resizingRow = getResizingRow(p); 
+	        mouseYOffset = p.y - table.getRowHeight(resizingRow); 
+	        //
+			
+			
 			// left click
-			if (!rightClick) {								
+			if (!rightClick) {		
+				
+				if(resizingRow >=0) return; //GSTURR 2010-1-9
+				
 				Point point = table.getIndexFromPixel(x, y);
 				if (point != null) {
 					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
@@ -590,6 +670,14 @@ public class SpreadsheetView extends JScrollPane implements View
 		        // END GSTURR
 			} 
 			
+			
+			//G.STURR 2010-1-9
+			// If entire table is selected while resizing a row, then resize all rows to this new height.
+			if (!rightClick && table.isSelectAll()) {
+				table.setRowHeight(table.getRowHeight(resizingRow));
+				updateRowHeader();	
+			}
+
 		}
 
 	}
@@ -598,10 +686,33 @@ public class SpreadsheetView extends JScrollPane implements View
 	{
 		
 		public void mouseDragged(MouseEvent e) {
-			
 			if(Application.isRightClick(e))return; //G.Sturr 2009-9-30 
 			
+			// G.STURR 2010-1-9
+			// On mouse drag either resize or select a row
 			int x = e.getX();
+			int y = e.getY();
+			if(resizingRow >= 0){   
+				// resize row 
+				int newHeight = y - mouseYOffset; 
+		        if(newHeight > 0){
+		        	table.setRowHeight(resizingRow, newHeight);
+		            updateRowHeader();
+		            }
+		        }
+			else
+			{   // select row
+			    Point point = table.getIndexFromPixel(x, y);
+			    if (point != null) {
+			    	int row = (int)point.getY();
+				    table.setRowSelectionInterval(row0, row);
+				    table.repaint();
+				}
+			}
+			
+			
+		    /* -------- old code	
+	        int x = e.getX();
 			int y = e.getY();
 			Point point = table.getIndexFromPixel(x, y);
 			if (point != null) {
@@ -609,9 +720,18 @@ public class SpreadsheetView extends JScrollPane implements View
 				table.setRowSelectionInterval(row0, row);
 				table.repaint();
 			}
+			*/
+				
 		}
 		
 		public void mouseMoved(MouseEvent e) {
+			
+			//G.STURR 2010-1-9
+			// Show resize cursor when mouse is over a row boundary
+			if ( ( getResizingRow(e.getPoint()) >= 0 ) != (rowHeader.getCursor() == resizeCursor ) ){
+				swapCursor();
+				}
+			//END GSTURR
 		}
 		
 	}
@@ -773,7 +893,11 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		table.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
 		rowHeader.setFixedCellWidth((int)(ROW_HEADER_WIDTH * multiplier));
-		rowHeader.setFixedCellHeight(table.getRowHeight()); 
+		
+		//G.STURR 2010-1-9 
+		//rowHeader.setFixedCellHeight(table.getRowHeight());
+		updateRowHeader();
+		//END GSTURR
 		
 		table.setFont(app.getPlainFont());
 		rowHeader.setFont(font);
@@ -804,6 +928,14 @@ public class SpreadsheetView extends JScrollPane implements View
 	public MyTable getTable() {
 		return table;
 	}
+	
+	//G.STURR 2010-1-9
+	public void updateRowHeader() {
+		listModel.changed();
+	}
+	//END GSTURR
+		
+	
 	
 }
 		

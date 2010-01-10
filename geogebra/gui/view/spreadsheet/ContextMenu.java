@@ -46,7 +46,7 @@ public class ContextMenu extends JPopupMenu
 	// G.Sturr 2009-10-3: Added selection type parameter.
 	// Allows a single context menu to serve rows, columns and cells
 	public ContextMenu(MyTable table0, int column01, int row01, int column02, int row02, 
-			boolean[] selected0,int selectionType01) {
+			boolean[] selected0,int selectionType0) {
 			
 		//Application.debug("showPopupMenu <<<<<<<<<<<<<<<<<<<");
 		table = table0;
@@ -57,7 +57,9 @@ public class ContextMenu extends JPopupMenu
 		selectedColumns = selected0;
 		app = table.kernel.getApplication();
 				
-		selectionType = selectionType01;  //G.Sturr 2009-10-3
+		selectionType = selectionType0;  //G.Sturr 2009-10-3
+		
+		
 		
 		initMenu();			
 	}
@@ -383,7 +385,7 @@ public class ContextMenu extends JPopupMenu
  		public void actionPerformed(ActionEvent e) {
  			//Application.debug("CreatePoints " + column1 + " - " + column2+"   "+row1+" - "+row2);
  			//if (selected == null) throw new RuntimeException("error state");
- 			StringBuffer text = new StringBuffer();
+ 			StringBuilder text = new StringBuilder();
  			LinkedList list = new LinkedList();
  			TableModel model = table.getModel();
  			

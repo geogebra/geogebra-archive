@@ -916,7 +916,12 @@ public class MyTable extends JTable implements FocusListener
 					
 					if (dragingToRow + 1 == getRowCount() && dragingToRow < SpreadsheetView.MAX_ROWS) {
 						tableModel.setRowCount(getRowCount() +1);		
-						getView().getRowHeader().revalidate();	
+					
+						//G.STURR 2010-1-9
+						//getView().getRowHeader().revalidate();
+						view.updateRowHeader();
+						//END GSTURR
+						
 					}
 					
 					//(G.Sturr 2009-9-12) increase size when you go off the right edge
@@ -1125,8 +1130,12 @@ public class MyTable extends JTable implements FocusListener
 			case KeyEvent.VK_DOWN:
 				// auto increase spreadsheet size when you go off the bottom	
 				if (getSelectedRow() + 1 == getRowCount() && getSelectedRow() < SpreadsheetView.MAX_ROWS) {
-					tableModel.setRowCount(getRowCount() +1);		
-					getView().getRowHeader().revalidate();
+					tableModel.setRowCount(getRowCount() +1);
+					
+					//G.STURR 2010-1-9
+					//getView().getRowHeader().revalidate();
+					view.updateRowHeader();
+					//END GSTURR
 				}
 				
 				else if (Application.isControlDown(e)) {
@@ -1798,5 +1807,18 @@ public class MyTable extends JTable implements FocusListener
 		app.getGuiManager().toggleKeyboard(false);
 		
 	}
+	
+	//G.STURR 2010-1-9
+	public boolean isSelectAll() 
+	{		
+		if (minSelectionColumn == 0 && maxSelectionColumn == getColumnCount()-1 && minSelectionRow == 0 
+				&& maxSelectionRow == getRowCount()-1)
+			return true;
+		
+		return false;
+	}
+	//END GSTURR
+	
+	
 
 }
