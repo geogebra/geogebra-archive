@@ -101,7 +101,7 @@ public abstract class Drawable {
 		
 		// label changed: check for bold or italic tags in caption
 		if (oldLabelDesc != labelDesc || labelDesc.startsWith("<")) {					
-			boolean italic = true;
+			boolean italic = false;
 			
 			// support for bold and italic tags in captions
 			// must be whole caption
