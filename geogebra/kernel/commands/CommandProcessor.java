@@ -6251,27 +6251,24 @@ class CmdOsculatingCircle extends CommandProcessor {
 
 		final public  GeoElement[] process(Command c) throws MyError {
 			int n = c.getArgumentNumber();
-			boolean[] ok = new boolean[n];
 			GeoElement[] arg;
 
-			switch (n) {
-			case 1 :
-				arg = resArgs(c);
-				if (ok[0] = (arg[0].isGeoElement())) {
-					GeoElement geo = (GeoElement) arg[0];
-					GeoElement[] ret = { geo };
-					
-					// unselect all objects
-					app.clearSelectedGeos();
-					// select just this one
-					app.addSelectedGeo(geo, true);
-					return ret;
-				} else
-					throw argErr(app, c.getName(), arg[0]);
+			GeoElement[] ret = {};
 
-			default :
-				throw argNumErr(app, c.getName(), n);
+			app.clearSelectedGeos();
+
+			if (n > 0) { 
+				arg = resArgs(c);
+				for (int i = 0 ; i < n ; i++) {
+					if ((arg[i].isGeoElement())) {
+						GeoElement geo = (GeoElement) arg[i];
+						app.addSelectedGeo(geo, true);
+					}
+				}
+
 			}
-		}
+			return ret;
+			
 	}
+ }
 
