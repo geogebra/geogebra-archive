@@ -2159,7 +2159,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// set tool tip text
 		// the tooltips are only shown if algebra view is visible
-		if (app.isUsingLayout() && app.getGuiManager().showAlgebraView()) {
+		//if (app.isUsingLayout() && app.getGuiManager().showAlgebraView()) {
 			//hits = view.getTopHits(hits);
 			hits = hits.getTopHits();
 			if (!hits.isEmpty()) {
@@ -2168,7 +2168,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				view.setToolTipText(text);
 			} else
 				view.setToolTipText(null);
-		}
+		//}
 
 		// update previewable
 		if (view.getPreviewDrawable() != null) {			

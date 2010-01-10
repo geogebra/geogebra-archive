@@ -261,6 +261,12 @@ public abstract class GeoElement
 	public static final int LABEL_VALUE = 2;
 	public static final int LABEL_CAPTION = 3; // Michael Borcherds 2008-02-18
 
+	public static final int TOOLTIP_ALGEBRAVIEW_SHOWING = 	0;
+	public static final int TOOLTIP_ON = 					1;
+	public static final int TOOLTIP_OFF = 					2;
+	public static final int TOOLTIP_CAPTION = 				3;
+	private static int tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
+
 	protected String label; // should only be used directly in subclasses
 	private String oldLabel; // see doRenameLabel
 	private String caption; // only used by GeoBoolean for check boxes at the moment	
@@ -1119,7 +1125,59 @@ public abstract class GeoElement
 	}
 	
 	public boolean showToolTipText() {
-		return isAlgebraVisible();
+		//return isAlgebraVisible();
+		switch (tooltipMode) {
+		default:
+		//case TOOLTIP_ALGEBRAVIEW_SHOWING:
+			if (!(app.isUsingLayout() && app.getGuiManager().showAlgebraView())) {
+				return false;
+			} else
+				return isAlgebraVisible(); // old behaviour
+		case TOOLTIP_OFF:
+			return false;
+		case TOOLTIP_ON:
+		case TOOLTIP_CAPTION:
+			return true;
+		}
+
+	}
+	
+	public String getTooltipText(boolean colored) {
+		//sbToolTipDesc.append(geo.getLongDescriptionHTML(colored, false));			
+		switch (tooltipMode) {
+		default:
+		case TOOLTIP_ALGEBRAVIEW_SHOWING:
+			if (!(app.isUsingLayout() && app.getGuiManager().showAlgebraView())) {
+				return "";
+			}
+			// else fall through:
+		case TOOLTIP_ON:		
+			return getLongDescriptionHTML(colored, false); // old behaviour
+		case TOOLTIP_OFF:
+			return "";
+		case TOOLTIP_CAPTION:
+			return getCaption();
+		}
+		
+	}
+
+	public void setTooltipMode(int mode) {
+		//return isAlgebraVisible();
+		switch (tooltipMode) {
+		default:
+		//case TOOLTIP_ALGEBRAVIEW_SHOWING:
+			tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
+		case TOOLTIP_OFF:
+			tooltipMode = TOOLTIP_OFF;
+			break;
+		case TOOLTIP_ON:
+			tooltipMode = TOOLTIP_ON;
+			break;
+		case TOOLTIP_CAPTION:
+			tooltipMode = TOOLTIP_CAPTION;
+			break;
+		}
+
 	}
 
 	public void setAlgebraVisible(boolean visible) {
@@ -2752,8 +2810,8 @@ public abstract class GeoElement
 		for (int i = 0; i < geos.size(); ++i) {
 			GeoElement geo = (GeoElement) geos.get(i);
 			if (geo.showToolTipText()) {
-				count++;
-				sbToolTipDesc.append(geo.getLongDescriptionHTML(colored, false));			
+				count++;	
+				sbToolTipDesc.append(geo.getTooltipText(colored));			
 				if (i+1 < geos.size())
 					sbToolTipDesc.append("<br>");
 			}				

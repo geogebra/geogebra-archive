@@ -6243,9 +6243,70 @@ class CmdOsculatingCircle extends CommandProcessor {
 		}
 	}
 
- class CmdSelectObject extends CommandProcessor {
+ class CmdSetLabelMode extends CommandProcessor {
 
-		public CmdSelectObject(Kernel kernel) {
+		public CmdSetLabelMode (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[1].isGeoNumeric()) {
+
+							GeoElement geo = (GeoElement) arg[0];
+														
+							geo.setLabelMode((int)((GeoNumeric)arg[1]).getDouble());							geo.updateRepaint();
+							
+							GeoElement[] ret = { geo };
+							return ret;
+				} else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSetCaption extends CommandProcessor {
+
+		public CmdSetCaption (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[1].isGeoText()) {
+
+							GeoElement geo = (GeoElement) arg[0];
+														
+							geo.setCaption(((GeoText)arg[1]).getTextString());
+							geo.updateRepaint();
+							
+							GeoElement[] ret = { geo };
+							return ret;
+				} else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
+ class CmdSelectObjects extends CommandProcessor {
+
+		public CmdSelectObjects(Kernel kernel) {
 			super(kernel);
 		}
 

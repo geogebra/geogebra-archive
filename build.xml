@@ -44,7 +44,7 @@ office@geogebra.org
 	
 	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
-		depends="clean, ggb-jar-files, obfuscate, ggb-jar-index, 
+		depends="clean, ggb-jar-files, obfuscate, delete3D, ggb-jar-index, 
 					copyJars, sign, pack, preloadHtml, finish">	  
 	</target>
 	
@@ -100,6 +100,17 @@ office@geogebra.org
 		<mkdir dir="${build.dir}/unsigned/packed"/>
 		<mkdir dir="${build.dir}/unsigned/unpacked"/>
 		<mkdir dir="${propertiestemp.dir}"/>
+	</target>
+	
+	<target name="delete3D">
+		<!-- delete build directory -->
+		<mkdir dir="${build.dir}"/>
+		<delete includeemptydirs="true">
+		    <fileset dir="${build.dir}" defaultexcludes="false">
+		       <include name="**/geogebra_3d.jar" />
+		    </fileset>
+		</delete>
+
 	</target>
 	
 	<target name="finish">		
