@@ -6273,6 +6273,36 @@ class CmdOsculatingCircle extends CommandProcessor {
 		}
 	}
 
+ class CmdSetTooltipMode extends CommandProcessor {
+
+		public CmdSetTooltipMode (Kernel kernel) {
+			super(kernel);
+		}
+
+		final public    GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+
+			switch (n) {
+			case 2 :
+				arg = resArgs(c);
+				if ( arg[1].isGeoNumeric()) {
+
+							GeoElement geo = (GeoElement) arg[0];
+														
+							geo.setTooltipMode((int)((GeoNumeric)arg[1]).getDouble());							geo.updateRepaint();
+							
+							GeoElement[] ret = { geo };
+							return ret;
+				} else
+					throw argErr(app, c.getName(), arg[1]);
+
+			default :
+				throw argNumErr(app, c.getName(), n);
+			}
+		}
+	}
+
  class CmdSetCaption extends CommandProcessor {
 
 		public CmdSetCaption (Kernel kernel) {

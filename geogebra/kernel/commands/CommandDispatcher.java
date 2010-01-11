@@ -349,6 +349,7 @@ public class CommandDispatcher {
        	cmdTable.put("SetLayer", new CmdSetLayer(kernel));
        	cmdTable.put("SetCaption", new CmdSetCaption(kernel));
        	cmdTable.put("SetLabelMode", new CmdSetLabelMode(kernel));
+       	cmdTable.put("SetTooltipMode", new CmdSetTooltipMode(kernel));
 
        	cmdTable.put("FillRow", new CmdFillRow(kernel));
       	cmdTable.put("FillColumn", new CmdFillColumn(kernel));
