@@ -2055,6 +2055,9 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("trace")) {
 				ok = handleTrace(attrs);
 				break;
+			} else if (eName.equals("tooltipMode")) {
+				ok = handleTooltipMode(attrs);
+				break;
 			}
 
 		case 'v':
@@ -3122,6 +3125,15 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleLabelMode(LinkedHashMap<String, String> attrs) {
 		try {
 			geo.setLabelMode(Integer.parseInt((String) attrs.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleTooltipMode(LinkedHashMap<String, String> attrs) {
+		try {
+			geo.setTooltipMode(Integer.parseInt((String) attrs.get("val")));
 			return true;
 		} catch (Exception e) {
 			return false;

@@ -265,7 +265,7 @@ public abstract class GeoElement
 	public static final int TOOLTIP_ON = 					1;
 	public static final int TOOLTIP_OFF = 					2;
 	public static final int TOOLTIP_CAPTION = 				3;
-	private static int tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
+	private int tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
 
 	protected String label; // should only be used directly in subclasses
 	private String oldLabel; // see doRenameLabel
@@ -862,6 +862,7 @@ public abstract class GeoElement
 		// label style
 		labelVisible = geo.labelVisible;
 		labelMode = geo.labelMode;
+		tooltipMode = geo.tooltipMode;
 		
 		// style of equation, coordinates, ...
 		if (getGeoClassType() == geo.getGeoClassType())
@@ -1163,10 +1164,11 @@ public abstract class GeoElement
 
 	public void setTooltipMode(int mode) {
 		//return isAlgebraVisible();
-		switch (tooltipMode) {
+		switch (mode) {
 		default:
 		//case TOOLTIP_ALGEBRAVIEW_SHOWING:
 			tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
+			break;
 		case TOOLTIP_OFF:
 			tooltipMode = TOOLTIP_OFF;
 			break;
@@ -3329,6 +3331,12 @@ public abstract class GeoElement
 			sb.append("\t<labelMode");
 			sb.append(" val=\"");
 			sb.append(labelMode);
+			sb.append("\"");
+			sb.append("/>\n");
+			
+			sb.append("\t<tooltipMode");
+			sb.append(" val=\"");
+			sb.append(tooltipMode);
 			sb.append("\"");
 			sb.append("/>\n");
 		}
