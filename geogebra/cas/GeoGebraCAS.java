@@ -2,6 +2,7 @@ package geogebra.cas;
 
 import geogebra.cas.view.CASView;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -181,6 +182,31 @@ public class GeoGebraCAS {
 		
 		// define constant for Degree
 		response = ggbMathPiper.evaluate("Degree := 180/pi;");
+		
+		// set default numeric precision to 16 significant figures
+		ggbMathPiper.evaluate("BuiltinPrecisionSet(16);");
+		
+		// Rules for equation manipulation
+		// allow certain commands for equations
+		ggbMathPiper.evaluate("Simplify(_x == _y)  <-- Simplify(x) == Simplify(y);");
+		ggbMathPiper.evaluate("Factor(_x == _y)  <-- Factor(x) == Factor(y);");
+		ggbMathPiper.evaluate("Expand(_x == _y)  <-- Expand(x) == Expand(y);");
+		ggbMathPiper.evaluate("ExpandBrackets(_x == _y)  <-- ExpandBrackets(x) == ExpandBrackets(y);");
+		ggbMathPiper.evaluate("Sqrt(_x == _y)  <-- Sqrt(x) == Sqrt(y);");
+		ggbMathPiper.evaluate("Exp(_x == _y)  <-- Exp(x) == Exp(y);");
+		ggbMathPiper.evaluate("Ln(_x == _y)  <-- Ln(x) == Ln(y);");
+		
+		// arithmetic for equations
+		ggbMathPiper.evaluate("(_x == _y) + _z <-- Simplify(x + z == y + z);");
+		ggbMathPiper.evaluate("_z + (_x == _y) <-- Simplify(z + x == z + y);");
+		ggbMathPiper.evaluate("(_x == _y) - _z <-- Simplify(x - z == y - z);");
+		ggbMathPiper.evaluate("_z - (_x == _y) <-- Simplify(z - x == z - y);");
+		ggbMathPiper.evaluate("(_x == _y) * _z <-- Simplify(x * z == y * z);");
+		ggbMathPiper.evaluate("_z * (_x == _y) <-- Simplify(z * x == z * y);");
+		ggbMathPiper.evaluate("(_x == _y) / _z <-- Simplify(x / z == y / z);");
+		ggbMathPiper.evaluate("_z / (_x == _y) <-- Simplify(z / x == z / y);");
+		ggbMathPiper.evaluate("(_x == _y) ^ _z <-- Simplify(x ^ z == y ^ z);");
+		ggbMathPiper.evaluate("_z ^ (_x == _y) <-- Simplify(z ^ x == z ^ y);");
 		
 		return true;
 	}
@@ -587,9 +613,29 @@ public class GeoGebraCAS {
 		}
 		
 		// TODO: remove
-		Application.debug(" toMathPiperString: " + MathPiperStr);
+		System.out.println("GeoGebraCAS.toMathPiperString: " + MathPiperStr);
 		return MathPiperStr;
-	}		
+	}	
+	
+	/**
+	 * Returns a function from GeoGebra as a MathPiper string. For example f(x) = a x^2 is
+	 * returned as "f(x) := a * x^2"
+	 */
+	public String toMathPiperString(GeoFunction geo) {
+		if (!geo.isDefined()) return null;
+		
+		StringBuilder sb = new StringBuilder();
+		Function fun = geo.getFunction();
+		
+		// function, e.g. f(x) := 2*x
+		sb.append(geo.getLabel());
+		sb.append("(" );
+		sb.append(fun.getFunctionVariable());
+		sb.append(") := ");
+		sb.append(casParser.toMathPiperString(fun, false));
+
+		return sb.toString();
+	}
 	
 	
 	/**

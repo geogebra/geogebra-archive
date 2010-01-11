@@ -5,11 +5,11 @@ import geogebra.util.Util;
 
 
 public class CASTableCellValue {
-	private String input, output, latex;
+	private String input, prefix, eval, postfix, output, latex;
 	private boolean error = false;
 	private boolean allowLaTeX = true;
 		
-
+	private String evalCmd;
 	private CASView view;
 
 	public CASTableCellValue(CASView view) {
@@ -17,11 +17,10 @@ public class CASTableCellValue {
 		
 		input = "";
 		output = "";
-	}	
-
-	public CASTableCellValue(String inCom) {
-		input = inCom;
-		output = "";
+		prefix = "";
+		eval = "";
+		postfix = "";
+		evalCmd = "";
 	}
 
 	public String getInput() {
@@ -69,6 +68,20 @@ public class CASTableCellValue {
 
 	public void setInput(String inValue) {
 		input = inValue;
+	}
+	
+	public void setEvalInformation(String prefix, String eval, String postfix) {
+		this.prefix = prefix;
+		this.eval = eval;
+		this.postfix = postfix;
+		
+		// extract command from eval
+		int bracketPos = eval.indexOf('[');
+		evalCmd = bracketPos > 0 ? eval.substring(0, bracketPos) : "";
+	}
+	
+	final public String getEvalCommand() {
+		return evalCmd;
 	}
 
 	public void setOutput(String inValue) {

@@ -45,7 +45,7 @@ public final class DrawLine extends Drawable implements Previewable {
     private GeoLine g;    
     //private double [] coeffs = new double[3];
     
-    private Line2D.Float line = new Line2D.Float();    
+    private Line2D.Double line;    
     private double y1, y2, x1, x2, k, d, gx, gy, gz;    
     private int labelPos = LEFT, p1Pos, p2Pos;
     private int x, y;    
@@ -155,6 +155,8 @@ public final class DrawLine extends Drawable implements Previewable {
             clipLeftRight();
         }                 
         
+        if (line == null)
+        	line = new Line2D.Double();
         line.setLine(x1, y1, x2, y2);
     }
         
@@ -398,7 +400,7 @@ public final class DrawLine extends Drawable implements Previewable {
      * location (x,y) in screen coords)
      */
     final public boolean hit(int x, int y) {
-        return line.intersects(x-3, y-3, 6, 6);
+        return isVisible && line.intersects(x-3, y-3, 6, 6);
     }
     
     final public boolean isInside(Rectangle rect) {  

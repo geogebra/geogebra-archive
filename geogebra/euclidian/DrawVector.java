@@ -44,7 +44,7 @@ public class DrawVector extends Drawable implements Previewable {
     boolean isVisible, labelVisible;
     private boolean traceDrawingNeeded = false;
            	          
-    private Line2D.Double line = new Line2D.Double();               
+    private Line2D.Double line;               
     private double [] coordsA = new double[2];
 	private double [] coordsB = new double[2];   
 	private double [] coordsV = new double[2]; 
@@ -144,6 +144,7 @@ public class DrawVector extends Drawable implements Previewable {
 		  coordsF[1] = coordsB[1] - coordsV[1];
 		  
         // set clipped line
+		if (line == null) line = new Line2D.Double();
 		if (onscreenA && onscreenB) {
 			// A and B on screen
 			line.setLine(coordsA[0], coordsA[1], coordsF[0], coordsF[1]);
@@ -272,12 +273,12 @@ public class DrawVector extends Drawable implements Previewable {
 	}
     
 	final public boolean hit(int x,int y) {        
-        return line.intersects(x-3, y-3, 6, 6) 
-				|| gp.intersects(x-3, y-3, 6, 6);
+        return isVisible && 
+        		(line.intersects(x-3, y-3, 6, 6) || gp.intersects(x-3, y-3, 6, 6));
     }
 	
 	final public boolean isInside(Rectangle rect) {  
-    	return rect.contains(line.getBounds());   
+    	return isVisible && rect.contains(line.getBounds());   
     }
 
     

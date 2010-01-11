@@ -53,7 +53,7 @@ public abstract class CASTableCell extends JPanel{
 		}
 		else {
 			outputPanel.setVisible(true);
-			outputPanel.setOutput(cellValue.getOutput(), cellValue.getLaTeXOutput(), cellValue.isOutputError());	
+			outputPanel.setOutput(cellValue.getOutput(), cellValue.getLaTeXOutput(), cellValue.getEvalCommand(), cellValue.isOutputError());	
 		}	
 	}
 

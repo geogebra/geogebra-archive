@@ -277,42 +277,43 @@ implements ExpressionValue, ExpressionNodeConstants {
         }             
     }
     
-    /**
+    /* Markus: no longer needed as we have added rules in MathPiper to support this 
+     * notation directly
      *  Expands equation expressions like (3*x + 2 = 5) / 2 to (3*x + 2)/2 = 5/2.
      */         
-    final public ExpressionValue expandEquationExpressions() {    
-    	if (leaf) return this;
-    	
-    	if (left.isExpressionNode()) {
-    		left = ((ExpressionNode) left).expandEquationExpressions();
-        }
-    	if (right.isExpressionNode()) {
-    		right = ((ExpressionNode) right).expandEquationExpressions();
-        }
-    	    	
-    	switch (operation) {
-	    	case PLUS:	  
-	    	case MINUS:
-	    	case MULTIPLY:
-	    	case DIVIDE:
-	    		// equ <operation> val 
-	    		if (left instanceof Equation) {	    			
-	    			((Equation) left).applyOperation(operation, right, false);
-	    			leaf = true;
-	    			right = null;
-	        	}
-	    		// val <operation> equ  
-	    		else if (right instanceof Equation) {
-	    			((Equation) right).applyOperation(operation, left, true);
-	    			left = right;
-	    			right = null;
-	    			leaf = true;
-	    		}
-	    		break;	    		
-    	}
-    	
-    	return this;
-    }
+//    final public ExpressionValue expandEquationExpressions() {    
+//    	if (leaf) return this;
+//    	
+//    	if (left.isExpressionNode()) {
+//    		left = ((ExpressionNode) left).expandEquationExpressions();
+//        }
+//    	if (right.isExpressionNode()) {
+//    		right = ((ExpressionNode) right).expandEquationExpressions();
+//        }
+//    	    	
+//    	switch (operation) {
+//	    	case PLUS:	  
+//	    	case MINUS:
+//	    	case MULTIPLY:
+//	    	case DIVIDE:
+//	    		// equ <operation> val 
+//	    		if (left instanceof Equation) {	    			
+//	    			((Equation) left).applyOperation(operation, right, false);
+//	    			leaf = true;
+//	    			right = null;
+//	        	}
+//	    		// val <operation> equ  
+//	    		else if (right instanceof Equation) {
+//	    			((Equation) right).applyOperation(operation, left, true);
+//	    			left = right;
+//	    			right = null;
+//	    			leaf = true;
+//	    		}
+//	    		break;	    		
+//    	}
+//    	
+//    	return this;
+//    }
     
     // used for 3D
     /*

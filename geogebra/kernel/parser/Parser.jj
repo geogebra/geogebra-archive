@@ -811,11 +811,30 @@ ExpressionNode expressionnode():
     	else
     		en = new ExpressionNode(kernel, ret);
     	
-    	en.expandEquationExpressions();
+    	//en.expandEquationExpressions();
     	if (MathPiperParsing)
-    			en.simplifyLeafs();
+    		en.simplifyLeafs();
     	return en; 
     }
+}
+
+/**
+ *  expressionOrEquation =  equation | expressionnode 
+ */
+ExpressionNode expressionOrEquation():
+{
+    ExpressionNode en, rhs;
+}
+{ 
+ 		en = expressionnode()
+    	(  <EQUAL> rhs = expressionnode()
+	        {             
+	            en = new ExpressionNode(kernel, new Equation(kernel, en, rhs)); 
+	        }    
+    	)?
+	{                
+		return en;             
+	}
 }
 
 /**
@@ -1213,7 +1232,7 @@ ExpressionValue enelement():
 | 
  // equation
     LOOKAHEAD(2147483647)
-    "("  ev = equation()  ")" 
+    "(" ev = equation()  ")" 
         { return ev; }       
 |
     // parenthesis
@@ -1401,85 +1420,85 @@ ExpressionNode numberFunction():
     Token c;
 }
 {           
-    <X_FUNC> en = expressionnode() ")"
+    <X_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.XCOORD, null); }  
 |
-     <Y_FUNC> en = expressionnode() ")"
+     <Y_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.YCOORD, null); }  
 |
-     <Z_FUNC> en = expressionnode() ")"
+     <Z_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ZCOORD, null); }  
 |
-     <COS_FUNC> en = expressionnode() ")"
+     <COS_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COS, null); }   
 |
-    <SIN_FUNC> en = expressionnode() ")"
+    <SIN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SIN, null); }  
 |
-    <TAN_FUNC> en = expressionnode() ")"
+    <TAN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.TAN, null); }  
 |
-    <ACOS_FUNC> en = expressionnode() ")"
+    <ACOS_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ARCCOS, null); }   
 |
-    <ASIN_FUNC> en = expressionnode() ")"
+    <ASIN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ARCSIN, null); }  
 |
-    <ATAN_FUNC> en = expressionnode() ")"
+    <ATAN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ARCTAN, null); }  
 |
-    <COSH_FUNC> en = expressionnode() ")"
+    <COSH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COSH, null); }   
 |
-    <SINH_FUNC> en = expressionnode() ")"
+    <SINH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SINH, null); }  
 |
-    <TANH_FUNC> en = expressionnode() ")"
+    <TANH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.TANH, null); }  
 |
-    <ACOSH_FUNC> en = expressionnode() ")"
+    <ACOSH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ACOSH, null); }   
 |
-    <ASINH_FUNC> en = expressionnode() ")"
+    <ASINH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ASINH, null); }  
 |
-    <ATANH_FUNC> en = expressionnode() ")"
+    <ATANH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ATANH, null); }  
 |
-    <EXP_FUNC> en = expressionnode() ")"
+    <EXP_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.EXP, null); }  
 |
-    <LOG_FUNC> en = expressionnode() ")"
+    <LOG_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.LOG, null); }   
 |
- 	<LG_FUNC> en = expressionnode() ")"
+ 	<LG_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.LOG10, null); }  
 |
- 	<LD_FUNC> en = expressionnode() ")"
+ 	<LD_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.LOG2, null); }  
 |
-    <SQRT_FUNC> en = expressionnode() ")"
+    <SQRT_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SQRT, null); }  
 |
-    <CBRT_FUNC> en = expressionnode() ")"
+    <CBRT_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.CBRT, null); }  
 |
-    <ABS_FUNC> en = expressionnode() ")"
+    <ABS_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ABS, null); }   
 |
-    <SGN_FUNC> en = expressionnode() ")"
+    <SGN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SGN, null); }
 |
-    <FLOOR_FUNC> en = expressionnode() ")"
+    <FLOOR_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.FLOOR, null); }         
 |
-    <CEIL_FUNC> en = expressionnode() ")"
+    <CEIL_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.CEIL, null); }               
 | 
-    <ROUND_FUNC> en = expressionnode() ")"
+    <ROUND_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ROUND, null); }               
 | 
-    <GAMMA_FUNC> en = expressionnode() ")"
+    <GAMMA_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA, null); }               
 | 
   <RANDOM_FUNC>

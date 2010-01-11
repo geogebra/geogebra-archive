@@ -209,10 +209,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         //  simplify constant parts in expression
         expression.simplifyConstantIntegers();
 
-        initType();         
-        
-        // TODO: remove
-        System.out.println("init function: " + this);
+        initType();
     }               
     
     private void initType() {

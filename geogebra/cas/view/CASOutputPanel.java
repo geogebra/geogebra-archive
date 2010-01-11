@@ -16,16 +16,19 @@ public class CASOutputPanel extends JPanel {
 	
 	private static Color TEXT_COLOR = Color.blue;
 	private static Color ERROR_COLOR = Color.red;
+	private static String OUTPUT_PREFIX = "\u2192";
 
 	private JLabel outputSign;
 	private JLabel outputArea;
 	private LaTeXPanel latexPanel; 
+	private Application app;
 
 	public CASOutputPanel(Application app) {
+		this.app = app;
 		setBackground(Color.white);		
 		setLayout(new BorderLayout(5,0));
 		
-		outputSign = new JLabel("\u2192");	
+		outputSign = new JLabel(OUTPUT_PREFIX);	
 		outputSign.setForeground(Color.lightGray);
 		
 		outputArea = new JLabel();	
@@ -41,7 +44,7 @@ public class CASOutputPanel extends JPanel {
 		add(centerPanel, BorderLayout.CENTER);
 	}
 	
-	public void setOutput(String output, String latexOutput, boolean isError) {
+	public void setOutput(String output, String latexOutput, String cmd, boolean isError) {
 		boolean useLaTeXpanel = latexOutput != null && !isError;
 		outputArea.setVisible(!useLaTeXpanel);
 		latexPanel.setVisible(useLaTeXpanel);		
@@ -55,6 +58,12 @@ public class CASOutputPanel extends JPanel {
 			else
 				outputArea.setForeground(TEXT_COLOR);	
 		}	
+		
+		// update output sign
+		if (cmd.length() == 0)
+			outputSign.setText(OUTPUT_PREFIX);
+		else
+			outputSign.setText(app.getCommand(cmd) + ":");
 	}
 
 	public String getOutput() {

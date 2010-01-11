@@ -426,6 +426,14 @@ public class Kernel {
 	}
 	
 	/**
+	 * Returns this kernel's GeoGebraCAS object.
+	 */
+	public synchronized void clearGeoGebraCAS() {
+		ggbCAS = null;
+		System.gc();
+	}
+	
+	/**
      * Finds the polynomial coefficients of
      * the given expression and returns it in ascending order. 
      * If exp is not a polynomial null is returned.

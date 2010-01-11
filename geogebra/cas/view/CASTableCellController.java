@@ -84,7 +84,7 @@ public class CASTableCellController implements KeyListener {
 			// don't evaluate, only parse by GeoGebra
 			view.processInput("Hold", null);	
 		} else {
-			// Eval
+			// Simplify
 			view.processInput("Eval", null);
 		}		
 	}

@@ -4,6 +4,7 @@ import geogebra.cas.GeoGebraCAS;
 import geogebra.gui.CasManager;
 import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
@@ -16,8 +17,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -53,13 +52,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		this.app = app;
 		
 		// init cas
-		cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();	
-//		Thread casInit = new Thread() {
-//			public void run() {
-//				cas.evaluateMathPiper("Simplify(1+1)");
-//			}
-//		};
-//		casInit.start();		
+		initCAS();	
 	
 		// CAS input/output cells
 		createCASTable();	
@@ -144,8 +137,8 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	 * Process currently selected cell using the given command and parameters, e.g.
 	 *  "Integral", [ "x" ]
 	 */	
-	public void processInput(String ggbcmd, String[] params){
-		casInputHandler.processInput(ggbcmd, params);
+	public void processInput(String ggbcmd, String [] params) {
+		casInputHandler.processCurrentRow(ggbcmd, params);
 	}
 	
 	private void createButtonPanel() {
@@ -271,7 +264,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		final String [][][] menuStrings = {
 			{  
 				// command for apply, visible text, tooltip text
-				{"Eval", 		"=", 		app.getPlain("Evaluate") }, 
+				{"Eval", 	"=", 		app.getPlain("Evaluate") }, 
 				{"Numeric", 	"\u2248", 	app.getPlain("Approximate")}, 
 				{"Hold", 		"\u2713", 	app.getPlain("CheckInput")}
 			},		
@@ -344,7 +337,50 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		
 	}
 
+	/**
+	 * Defines new functions in the CAS 
+	 */
 	public void add(GeoElement geo) {
+		// TODO: remove
+		System.out.println("CASview.add: " + geo);
+		
+		try {
+			if (geo.isGeoFunction()) {
+				String funStr = cas.toMathPiperString((GeoFunction) geo);
+				cas.evaluateMathPiper(funStr);
+			}
+		} catch (Throwable e) {
+			System.err.println("CASView.add: " + geo + ", " +  e.getMessage());
+		}
+	}
+	
+	/**
+	 * Removes function definitions from the CAS 
+	 */
+	public void remove(GeoElement geo) {
+		// TODO: remove
+		System.out.println("CASView.remove: " + geo);
+		
+		try {
+			if (geo.isGeoFunction()) {
+				StringBuilder sb = new StringBuilder("Clear(");
+				sb.append(geo.getLabel());
+				sb.append(')');
+				cas.evaluateMathPiper(sb.toString());
+			}
+		} catch (Throwable e) {
+			System.err.println("CASView.remove: " + geo + ", " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Renames function definitions in the CAS 
+	 */
+	public void rename(GeoElement geo) {
+		if (geo.isGeoFunction()) {
+			remove(geo);
+			add(geo);
+		}
 	}
 
 	public void clearView() {
@@ -363,11 +399,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		return consoleTable.createRow();
 	}
 
-	public void remove(GeoElement geo) {
-	}
-
-	public void rename(GeoElement geo) {
-	}
+	
 
 	public void repaintView() {
 		consoleTable.updateAllRows();
@@ -385,11 +417,29 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	}
 
 	public void attachView() {
+		// TODO: remove
+		System.out.println("attach CAS view");
+		
+		// make sure CAS is ready
+		initCAS();
 		kernel.attach(this);
+	}
+	
+	private void initCAS() {
+		if (cas == null) {
+			cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();	
+		}
 	}
 
 	public void detachView() {
+		// TODO: remove
+		System.out.println("detach CAS view");
+		
 		kernel.detach(this);
+		
+		// clear CAS
+		kernel.clearGeoGebraCAS();
+		initCAS();
 	}
 
 

@@ -44,7 +44,7 @@ implements Previewable {
     boolean isVisible, labelVisible;
     private ArrayList points;
     
-    private Line2D.Double line = new Line2D.Double();               
+    private Line2D.Double line;               
     private double [] coordsA = new double[2];
 	private double [] coordsB = new double[2];
     
@@ -83,6 +83,9 @@ implements Previewable {
         B.getInhomCoords(coordsB);
 		boolean onscreenA = view.toScreenCoords(coordsA);
 		boolean onscreenB = view.toScreenCoords(coordsB);	
+		
+		if (line == null)
+			line = new Line2D.Double();
 		
 		if (onscreenA && onscreenB) {
 			// A and B on screen
@@ -344,7 +347,10 @@ implements Previewable {
 			//	start point
 			A = (GeoPoint) points.get(0);						   			
 			A.getInhomCoords(coordsA);			                        
-			view.toScreenCoords(coordsA);						
+			view.toScreenCoords(coordsA);		
+			
+			if (line == null)
+				line = new Line2D.Double();
 			line.setLine(coordsA[0], coordsA[1], coordsA[0], coordsA[1]);                                   			                                            
 		}
 	}
@@ -395,11 +401,11 @@ implements Previewable {
 	}
     
 	final public boolean hit(int x,int y) {        
-        return line.intersects(x-3, y-3, 6, 6);        
+        return line != null && line.intersects(x-3, y-3, 6, 6);        
     }
 	
     final public boolean isInside(Rectangle rect) {
-    	return rect.contains(line.getP1()) &&
+    	return line != null && rect.contains(line.getP1()) &&
     			rect.contains(line.getP2());  
     }
     
@@ -415,7 +421,7 @@ implements Previewable {
 	 * Returns the bounding box of this Drawable in screen coordinates.	 
 	 */
 	final public Rectangle getBounds() {		
-		if (!geo.isDefined() || !geo.isEuclidianVisible())
+		if (line == null || !geo.isDefined() || !geo.isEuclidianVisible())
 			return null;
 		else 
 			return line.getBounds();	
