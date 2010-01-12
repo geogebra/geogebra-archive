@@ -555,6 +555,16 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	  *  Exports drawing as SVG
 	  */
 	final private boolean exportSVG(boolean exportToClipboard) {
+
+		EuclidianView ev = app.getEuclidianView();
+		double printingScale = ev.getPrintingScale();
+		
+		// set dpi to 72
+		exportScale = printingScale * 72 / 2.54 / ev.getXscale();
+		// ... and update bounding box accordingly
+		pixelWidth = (int) Math.floor(ev.getExportWidth() * exportScale);
+		pixelHeight = (int) Math.floor(ev.getExportHeight() * exportScale);	
+		
 		//  Michael Borcherds 2008-03-02 BEGIN
 		File file;
 		String tempDir = DownloadManager.getTempDir();
@@ -571,7 +581,6 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		
 		if (file == null)
 			return false;
-		EuclidianView ev=app.getEuclidianView();
 		ev.setTemporaryCoordSystemForExport(); // allow clipping with Export_1 and 2 Points
 		try {	
 			
