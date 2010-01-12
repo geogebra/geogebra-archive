@@ -846,9 +846,9 @@ implements ExpressionValue, RealRootFunction, Functional {
         // build expression string for MathPiper             
 		sb.setLength(0);
 		if (order == 1)
-			sb.append("D(x) ");
+			sb.append("Differentiate(x) ");
 		else {
-	        sb.append("D(x,");
+	        sb.append("Differentiate(x,");
 	        sb.append(order);
 	        sb.append(") ");
 		}				
@@ -860,8 +860,8 @@ implements ExpressionValue, RealRootFunction, Functional {
             // evaluate expression by MathPiper 
             String result = kernel.evaluateMathPiper(sb.toString());  
            
-            // fast fail for e.g. "D(x)Floor(x)"
-            if (result.startsWith("D(x)"))
+            // fast fail for e.g. "Differentiate(x)Floor(x)"
+            if (result.startsWith("Differentiate(x)"))
             	return null;
             
     		// look for "Deriv(x)f(x)" strings and
@@ -1105,7 +1105,7 @@ implements ExpressionValue, RealRootFunction, Functional {
             // bug: MathPiper rerurns "0" from eg
             // AntiDeriv(x,((1)/(Sqrt((2) * (3.14159)))) * ((2.72)^(((-1) * ((x)^(2)))/(2))))
             if (result.equals("0")) {
-            	Application.debug("MathPiper returned '0', returning null instead");
+            	System.err.println("Function.integralMathPiper: MathPiper returned '0', returning null instead");
             	return null;
             }
             
