@@ -17,9 +17,9 @@
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
 package org.mathpiper.lisp;
 
-import org.mathpiper.builtin.BuiltinFunction;
-import org.mathpiper.exceptions.EvaluationException;
 import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.exceptions.EvaluationException;
+import org.mathpiper.builtin.BuiltinFunction;
 
 
 public class LispError

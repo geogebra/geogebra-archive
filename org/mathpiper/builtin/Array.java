@@ -18,8 +18,8 @@
 
 package org.mathpiper.builtin;
 
-import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.cons.Cons;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.cons.ConsPointerArray;
 
 

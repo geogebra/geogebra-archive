@@ -17,38 +17,39 @@
 package org.mathpiper.lisp;
 
 
+import org.mathpiper.lisp.collections.OperatorMap;
+import org.mathpiper.lisp.cons.ConsTraverser;
+import org.mathpiper.lisp.cons.SublistCons;
+import org.mathpiper.lisp.cons.AtomCons;
+import org.mathpiper.lisp.cons.ConsPointer;
+import org.mathpiper.lisp.cons.Cons;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
+import org.mathpiper.io.MathPiperInputStream;
+import org.mathpiper.exceptions.EvaluationException;
+import org.mathpiper.io.InputStatus;
 import org.mathpiper.builtin.BigNumber;
 import org.mathpiper.builtin.BuiltinFunction;
-import org.mathpiper.exceptions.EvaluationException;
 import org.mathpiper.io.InputDirectories;
-import org.mathpiper.io.InputStatus;
+import org.mathpiper.lisp.behaviours.Substitute;
+import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
+import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
+import org.mathpiper.lisp.printers.MathPiperPrinter;
+import org.mathpiper.lisp.parsers.MathPiperParser;
 import org.mathpiper.io.JarFileInputStream;
-import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.io.StandardFileInputStream;
 import org.mathpiper.io.StringOutputStream;
 import org.mathpiper.lisp.behaviours.BackQuoteSubstitute;
-import org.mathpiper.lisp.behaviours.Substitute;
-import org.mathpiper.lisp.collections.OperatorMap;
-import org.mathpiper.lisp.cons.AtomCons;
-import org.mathpiper.lisp.cons.Cons;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.cons.ConsTraverser;
 import org.mathpiper.lisp.cons.NumberCons;
-import org.mathpiper.lisp.cons.SublistCons;
 import org.mathpiper.lisp.parametermatchers.Pattern;
 import org.mathpiper.lisp.parametermatchers.PatternParameter;
-import org.mathpiper.lisp.parsers.MathPiperParser;
-import org.mathpiper.lisp.printers.MathPiperPrinter;
-import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
 import org.mathpiper.lisp.userfunctions.Branch;
 import org.mathpiper.lisp.userfunctions.FunctionParameter;
 import org.mathpiper.lisp.userfunctions.MacroUserFunction;
-import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
 import org.mathpiper.lisp.userfunctions.PatternBranch;
 import org.mathpiper.lisp.userfunctions.SingleArityBranchingUserFunction;
 
@@ -217,12 +218,11 @@ public class Utility {
     }
 
 
-    public static void applyString(Environment aEnvironment, ConsPointer aResult,
-            String aOperator, ConsPointer aArgs) throws Exception {
+    //Evaluate a function which is in string form.
+    public static void applyString(Environment aEnvironment, ConsPointer aResult, String aOperator, ConsPointer aArgs) throws Exception {
         LispError.check(isString(aOperator), LispError.NOT_A_STRING);
 
-        Cons head =
-                AtomCons.getInstance(aEnvironment, getSymbolName(aEnvironment, aOperator));
+        Cons head = AtomCons.getInstance(aEnvironment, getSymbolName(aEnvironment, aOperator));
         head.cdr().setCons(aArgs.getCons());
         ConsPointer body = new ConsPointer();
         body.setCons(SublistCons.getInstance(aEnvironment, head));
@@ -1113,10 +1113,10 @@ public class Utility {
 
 
     /**
-     *Implements the MathPiper functions RuleBase and MacroRuleBase .
+     *Implements the MathPiper functions Rulebase and MacroRulease .
      * The real work is done by Environment.declareRulebase().
      */
-    public static void ruleDatabase(Environment aEnvironment, int aStackTop, boolean aListed) throws Exception {
+    public static void rulebase(Environment aEnvironment, int aStackTop, boolean aListed) throws Exception {
         //TESTARGS(3);
 
         // Get operator
@@ -1183,7 +1183,7 @@ public class Utility {
     }
 
 
-    public static void defMacroRuleBase(Environment aEnvironment, int aStackTop, boolean aListed) throws Exception {
+    public static void defMacroRulebase(Environment aEnvironment, int aStackTop, boolean aListed) throws Exception {
         // Get operator
         ConsPointer args = new ConsPointer();
         ConsPointer body = new ConsPointer();
@@ -1374,6 +1374,33 @@ public class Utility {
         }//end if.
 
         return null;
+    }//end method.
+
+
+
+    /**
+     * Returns the type of a.
+     * @param aEnvironment
+     * @param expressionPointer
+     * @throws java.lang.Exception
+     */
+    public static String functionType(ConsPointer expressionPointer) throws Exception
+    {
+        if (!( expressionPointer.car() instanceof ConsPointer))
+        {
+            return "";
+        }
+
+        ConsPointer subList = (ConsPointer) expressionPointer.car();
+        Cons head = null;
+        head = subList.getCons();
+        if (!( head.car() instanceof String))
+        {
+            return "";
+        }//end if.
+
+        return (String) head.car();
+
     }//end method.
 
 
