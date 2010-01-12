@@ -13,7 +13,7 @@ the Free Software Foundation; either version 2 of the License, or
 /*
  * Parser.jj
  * javacc definition file to generate Parser.java
- * <BR> <BR>
+ * <BR>
  * This class provides a static function to  
  * parse a String and return an appropriate ValidExpression.
  * Direct subclasses of ValidExpression are: 
