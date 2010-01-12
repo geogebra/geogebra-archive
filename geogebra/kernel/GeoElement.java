@@ -1161,6 +1161,10 @@ public abstract class GeoElement
 		}
 		
 	}
+	
+	public int getTooltipMode() {
+		return tooltipMode;
+	}
 
 	public void setTooltipMode(int mode) {
 		//return isAlgebraVisible();

@@ -113,6 +113,7 @@ public	class PropertiesPanel extends JPanel {
 		private ShowTrimmedIntersectionLines showTrimmedIntersectionLines;		
 		private ColorPanel colorPanel;
 		private LabelPanel labelPanel;
+		private TooltipPanel tooltipPanel;
 		private LayerPanel layerPanel; // Michael Borcherds 2008-02-26
 		private CoordPanel coordPanel;
 		private LineEqnPanel lineEqnPanel;
@@ -180,6 +181,7 @@ public	class PropertiesPanel extends JPanel {
 			if(!isDefaults) {
 				namePanel = new NamePanel(app);		
 				labelPanel = new LabelPanel();
+				tooltipPanel = new TooltipPanel();
 				layerPanel = new LayerPanel(); // Michael Borcherds 2008-02-26
 				animatingPanel = new AnimatingPanel();
 				scriptEditPanel = new ScriptEditPanel();
@@ -367,6 +369,8 @@ public	class PropertiesPanel extends JPanel {
 				//advancedTabList.add(coordinateFunctionPanel);	
 				advancedTabList.add(layerPanel); // Michael Borcherds 2008-02-26
 				
+				advancedTabList.add(tooltipPanel);
+				
 				advancedTab = new TabPanel(advancedTabList);
 				tabPanelList.add(advancedTab);
 			}
@@ -437,6 +441,7 @@ public	class PropertiesPanel extends JPanel {
 			if(!isDefaults) {
 				namePanel.setLabels();
 				labelPanel.setLabels();
+				tooltipPanel.setLabels();
 				layerPanel.setLabels();
 				animatingPanel.setLabels();
 				scriptEditPanel.setLabels();
@@ -1185,6 +1190,122 @@ public	class PropertiesPanel extends JPanel {
 		}
 
 	} // LabelPanel
+	
+	/**
+	 * panel with label properties
+	 */
+	private class TooltipPanel
+		extends JPanel
+		implements ItemListener, ActionListener , UpdateablePanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private Object[] geos; // currently selected geos
+		private JComboBox tooltipModeCB;
+		private boolean showNameValueComboBox;
+		JLabel label;
+
+		public TooltipPanel() {
+			
+			label = new JLabel();
+			label.setLabelFor(tooltipModeCB);
+
+			// combo box for label mode: name or algebra
+			tooltipModeCB = new JComboBox();
+			tooltipModeCB.addActionListener(this);
+
+			// labelPanel with show checkbox
+			setLayout(new FlowLayout(FlowLayout.LEFT));
+			add(label);			
+			add(tooltipModeCB);			
+		}
+		
+		public void setLabels() {
+			
+			label.setText(app.getMenu("Tooltip"+":"));
+
+			int selectedIndex = tooltipModeCB.getSelectedIndex();
+			tooltipModeCB.removeActionListener(this);
+			
+			tooltipModeCB.removeAllItems();
+			tooltipModeCB.addItem(app.getMenu("Labeling.automatic")); // index 0
+			tooltipModeCB.addItem(app.getMenu("On")); // index 1
+			tooltipModeCB.addItem(app.getMenu("Off")); // index 2
+			tooltipModeCB.addItem(app.getPlain("Caption")); // index 3 Michael Borcherds
+			
+			tooltipModeCB.setSelectedIndex(selectedIndex);
+			tooltipModeCB.removeActionListener(this);
+			
+
+		}
+
+		public JPanel update(Object[] geos) {
+			this.geos = geos;
+			if (!checkGeos(geos))
+				return null;
+
+			tooltipModeCB.removeActionListener(this);
+
+			// check if properties have same values
+			GeoElement temp, geo0 = (GeoElement) geos[0];
+			boolean equalLabelMode = true;
+
+			for (int i = 1; i < geos.length; i++) {
+				temp = (GeoElement) geos[i];
+
+				//	same tooltip mode
+				if (geo0.getLabelMode() != temp.getTooltipMode())
+					equalLabelMode = false;
+
+			}
+			
+			//	set label visible checkbox
+			if (equalLabelMode)
+				tooltipModeCB.setSelectedIndex(geo0.getTooltipMode());
+			else
+				tooltipModeCB.setSelectedItem(null);
+
+			// locus in selection
+			tooltipModeCB.addActionListener(this);
+			return this;
+		}
+
+		// show everything but numbers (note: drawable angles are shown)
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				if (!geo.isDrawable()) {
+					geosOK = false;
+					break;
+				}
+			}
+			return geosOK;
+		}
+
+		/**
+		 * listens to checkboxes and sets object and label visible state
+		 */
+		public void itemStateChanged(ItemEvent e) {
+		}
+
+		/**
+		* action listener implementation for label mode combobox
+		*/
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
+			if (source == tooltipModeCB) {
+				GeoElement geo;
+				int mode = tooltipModeCB.getSelectedIndex();
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoElement) geos[i];
+					geo.setTooltipMode(mode);
+				}
+			}
+		}
+
+	} // TooltipPanel
 
 	/*
 	 * panel with layers properties
