@@ -391,49 +391,60 @@ public class MyXMLio {
 	 * in xml format plus all external images. GeoGebra File Format.
 	 */
 	public void writeGeoGebraFile(OutputStream os, boolean includeThumbail) throws IOException {
-		// zip stream
-		ZipOutputStream zip = new ZipOutputStream(os);
-		OutputStreamWriter osw = new OutputStreamWriter(zip, "UTF8");
-
-		// write construction images
-		writeConstructionImages(kernel.getConstruction(), zip);
-
-		// Modified for Intergeo File Format (Yves Kreis) -->
-		// write construction thumbnails
-		// writeThumbnail(kernel.getConstruction(), zip);
-		if (includeThumbail)
-			writeThumbnail(kernel.getConstruction(), zip, XML_FILE_THUMBNAIL);
-		// <-- Modified for Intergeo File Format (Yves Kreis)
-
-		// save macros
-		if (kernel.hasMacros()) {
-			// get all registered macros from kernel
-			ArrayList macros = kernel.getAllMacros();
-
-			// write all images used by macros
-			writeMacroImages(macros, zip);
-
-			// write all macros to one special XML file in zip
-			zip.putNextEntry(new ZipEntry(XML_FILE_MACRO));
-			osw.write(getFullMacroXML(macros));
+		boolean isSaving = kernel.isSaving();
+		kernel.setSaving(true);
+		
+		try {
+			// zip stream
+			ZipOutputStream zip = new ZipOutputStream(os);
+			OutputStreamWriter osw = new OutputStreamWriter(zip, "UTF8");
+	
+			// write construction images
+			writeConstructionImages(kernel.getConstruction(), zip);
+	
+			// Modified for Intergeo File Format (Yves Kreis) -->
+			// write construction thumbnails
+			// writeThumbnail(kernel.getConstruction(), zip);
+			if (includeThumbail)
+				writeThumbnail(kernel.getConstruction(), zip, XML_FILE_THUMBNAIL);
+			// <-- Modified for Intergeo File Format (Yves Kreis)
+	
+			// save macros
+			if (kernel.hasMacros()) {
+				// get all registered macros from kernel
+				ArrayList macros = kernel.getAllMacros();
+	
+				// write all images used by macros
+				writeMacroImages(macros, zip);
+	
+				// write all macros to one special XML file in zip
+				zip.putNextEntry(new ZipEntry(XML_FILE_MACRO));
+				osw.write(getFullMacroXML(macros));
+				osw.flush();
+				zip.closeEntry();
+			}
+	
+			// write library JavaScript to one special file in zip
+			zip.putNextEntry(new ZipEntry(JAVASCRIPT_FILE));
+			osw.write(kernel.getLibraryJavaScript());
 			osw.flush();
 			zip.closeEntry();
+	
+			// write XML file for construction
+			zip.putNextEntry(new ZipEntry(XML_FILE));
+			osw.write(getFullXML());
+			osw.flush();
+			zip.closeEntry();
+	
+			osw.close();
+			zip.close();
+		} 
+		catch (IOException e) {
+			throw e;
 		}
-
-		// write library JavaScript to one special file in zip
-		zip.putNextEntry(new ZipEntry(JAVASCRIPT_FILE));
-		osw.write(kernel.getLibraryJavaScript());
-		osw.flush();
-		zip.closeEntry();
-
-		// write XML file for construction
-		zip.putNextEntry(new ZipEntry(XML_FILE));
-		osw.write(getFullXML());
-		osw.flush();
-		zip.closeEntry();
-
-		osw.close();
-		zip.close();
+		finally {
+			kernel.setSaving(isSaving);
+		}
 	}
 
 	/**
@@ -441,46 +452,57 @@ public class MyXMLio {
 	 * format plus all external images. Intergeo File Format (Yves Kreis)
 	 */
 	public void writeIntergeoFile(OutputStream os) throws IOException {
-		// zip stream
-		ZipOutputStream zip = new ZipOutputStream(os);
-		OutputStreamWriter osw = new OutputStreamWriter(zip, "UTF8");
-
-		// write I2G file for construction
-		zip.putNextEntry(new ZipEntry(I2G_FILE));
-		osw.write(getFullI2G());
-		osw.flush();
-		zip.closeEntry();
-
-		// write construction thumbnails
-		writeThumbnail(kernel.getConstruction(), zip, I2G_FILE_THUMBNAIL);
-
-		// write construction images
-		writeConstructionImages(kernel.getConstruction(), zip,
-				I2G_IMAGES);
-
-		// save macros
-		if (kernel.hasMacros()) {
-			// get all registered macros from kernel
-			ArrayList macros = kernel.getAllMacros();
-
-			// write all images used by macros
-			writeMacroImages(macros, zip, I2G_PRIVATE_IMAGES);
-
-			// write all macros to one special XML file in zip
-			zip.putNextEntry(new ZipEntry(I2G_PRIVATE + XML_FILE_MACRO));
-			osw.write(getFullMacroXML(macros));
+		boolean isSaving = kernel.isSaving();
+		kernel.setSaving(true);
+		
+		try {
+			// zip stream
+			ZipOutputStream zip = new ZipOutputStream(os);
+			OutputStreamWriter osw = new OutputStreamWriter(zip, "UTF8");
+	
+			// write I2G file for construction
+			zip.putNextEntry(new ZipEntry(I2G_FILE));
+			osw.write(getFullI2G());
 			osw.flush();
 			zip.closeEntry();
+	
+			// write construction thumbnails
+			writeThumbnail(kernel.getConstruction(), zip, I2G_FILE_THUMBNAIL);
+	
+			// write construction images
+			writeConstructionImages(kernel.getConstruction(), zip,
+					I2G_IMAGES);
+	
+			// save macros
+			if (kernel.hasMacros()) {
+				// get all registered macros from kernel
+				ArrayList macros = kernel.getAllMacros();
+	
+				// write all images used by macros
+				writeMacroImages(macros, zip, I2G_PRIVATE_IMAGES);
+	
+				// write all macros to one special XML file in zip
+				zip.putNextEntry(new ZipEntry(I2G_PRIVATE + XML_FILE_MACRO));
+				osw.write(getFullMacroXML(macros));
+				osw.flush();
+				zip.closeEntry();
+			}
+	
+			// write XML file for construction
+			zip.putNextEntry(new ZipEntry(I2G_PRIVATE + XML_FILE));
+			osw.write(getFullXML());
+			osw.flush();
+			zip.closeEntry();
+	
+			osw.close();
+			zip.close();
+		} 
+		catch (IOException e) {
+			throw e;
 		}
-
-		// write XML file for construction
-		zip.putNextEntry(new ZipEntry(I2G_PRIVATE + XML_FILE));
-		osw.write(getFullXML());
-		osw.flush();
-		zip.closeEntry();
-
-		osw.close();
-		zip.close();
+		finally {
+			kernel.setSaving(isSaving);
+		}
 	}
 
 	/**

@@ -5998,6 +5998,16 @@ public class Kernel {
 	 * SAVING
 	 *******************************************************/
 
+	private boolean isSaving;
+	
+	public synchronized boolean isSaving() {
+		return isSaving;
+	}
+	
+	public synchronized void setSaving(boolean saving) {
+		isSaving = saving;
+	}
+	
 	/**
 	 * Returns the kernel settings in XML format.
 	 */

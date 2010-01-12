@@ -154,7 +154,10 @@ public class AnimationManager implements ActionListener {
 	 * Updates all geos in the updateCascadeQueue and their dependent algorithms 
 	 * and repaints all views.
 	 */
-	final public synchronized void actionPerformed(ActionEvent e) {		
+	final public synchronized void actionPerformed(ActionEvent e) {	
+		// skip animation frames while kernel is saving XML
+		if (kernel.isSaving()) return;
+		
 		long startTime = System.currentTimeMillis();
 		
 		// clear list of geos that need to be updated

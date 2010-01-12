@@ -159,6 +159,15 @@ public final class GeoAngle extends GeoNumeric {
 	}
 	
 	/**
+	 * Sets the value of this angle without changing the animationValue. Needed
+	 * for animations.
+	 */
+	public void doSetValue(double x) {
+		double angVal = calcAngleValue(x);
+		super.doSetValue(angVal);
+	}
+	
+	/**
 	 * Converts the val to a value between 0 and 2pi.
 	 */
 	private double calcAngleValue(double val) {
