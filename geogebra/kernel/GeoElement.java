@@ -1094,7 +1094,7 @@ public abstract class GeoElement
 	 * Euclidian view.
 	 */
 	public boolean isLabelVisible() {
-		return labelVisible;
+		return labelVisible && isLabelSet();
 	}
 	
 	/**
