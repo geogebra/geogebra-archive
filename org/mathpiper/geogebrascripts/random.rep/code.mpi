@@ -1,0 +1,275 @@
+
+
+10 # RandomInteger(n_IsPositiveInteger) <-- CeilN(Random()*n);
+
+
+
+10 # RandomInteger(lowerBoundInclusive_IsInteger, upperBoundInclusive_IsInteger) <--
+[
+    Local(difference);
+
+    difference := upperBoundInclusive - lowerBoundInclusive;
+
+    Round(Random() * difference) + lowerBoundInclusive;
+];
+
+
+
+RandomIntegerMatrix(_rows,_cols,_coefmin,_coefmax) <--
+	GenMatrix({{i,j}, FloorN(coefmin+Random()*(coefmax+1-coefmin))}, rows, cols );
+
+
+RandomIntegerVector(_count,_coefmin,_coefmax) <--
+  Table(FloorN(coefmin+Random()*(coefmax+1-coefmin)),i,1,count,1);
+
+
+
+
+RandomPoly(_var,_degree,_coefmin,_coefmax) <--
+  NormalForm(UniVariate(var,0,RandomIntegerVector(degree+1,coefmin,coefmax)));
+
+
+
+
+
+
+
+
+
+
+
+
+LocalSymbols(knownRNGEngines, knownRNGDists) [
+  knownRNGEngines :=
+  {
+    { "default", "RNGEngine'LCG'2"},
+    { "advanced", "RNGEngine'L'Ecuyer"},
+  };
+
+  knownRNGDists :=
+  {
+    {"default", "FlatRNGDist"},
+    {"flat", "FlatRNGDist"},
+  
+    {"gauss", "GaussianRNGDist"},
+  };
+
+  KnownRNGDists() := knownRNGDists;
+  KnownRNGEngines() := knownRNGEngines;
+];
+
+
+
+
+
+
+Function() RngCreate();
+Function() RngCreate(seed, ...);
+HoldArg("RngCreate", seed);	
+
+
+Function() RngSeed(r, seed);
+
+
+Function() Rng(r);
+
+
+
+RngCreate() <-- RngCreate(0);
+
+10 # RngCreate(a'seed_IsInteger) <-- (RngCreate @ {Atom("seed") -> a'seed});
+
+
+20 # RngCreate(_key -> _value) <-- (RngCreate @ {{key -> value}});
+20 # RngCreate(_key = _value) <-- (RngCreate @ {{key -> value}});
+
+
+30 # RngCreate(options_IsList) <--
+[
+	options := OptionsListToHash @ {options};
+	
+	If(
+		options["seed"] = Empty Or options["seed"] <= 0,
+		options["seed"] := 76544321	
+	);
+	If(
+		options["engine"] = Empty Or Not (Assert("warning", {"RngCreate: invalid engine", options["engine"]}) KnownRNGEngines()[options["engine"] ] != Empty),
+		options["engine"] := "default"
+	);
+	If(
+		options["dist"] = Empty Or Not (Assert("warning", {"RngCreate: invalid distribution", options["dist"]}) KnownRNGDists()[options["dist"] ] != Empty),
+		options["dist"] := "default"
+	);
+
+	
+	
+	{
+		KnownRNGDists()[options["dist"] ], KnownRNGEngines()[options["engine"] ],
+		
+		KnownRNGEngines()[options["engine"] ] @ { options["seed"] }
+	};
+];
+
+
+Rng(_r) <--
+[
+	Local(state, result);
+	{state, result} := (r[1] @ {r});	
+	DestructiveReplace(r, 3, state);	
+	result;	
+];
+
+
+RngSeed(_r, seed_IsInteger) <--
+[
+	Local(state);
+	(Assert("warning", {"RngSeed: seed must be positive", seed}) seed > 0
+	) Or (seed:=76544321);
+	state := (r[2] @ {seed});	
+	DestructiveReplace(r, 3, state);	
+	True;
+];
+
+
+
+
+
+
+
+
+
+FlatRNGDist(_r) <-- (r[2] @ {r[3]});	
+
+
+
+GaussianRNGDist(_rng) <--
+[
+	
+	
+	
+	Local(a,b,m, new'state, rnumber);
+	new'state := rng[3];	
+	m:=0;
+	While(m=0 Or m>=1)	
+	[
+		{new'state, rnumber} := (rng[2] @ {new'state});
+		a:=2*rnumber-1;
+		{new'state, rnumber} := (rng[2] @ {new'state});
+		b:=2*rnumber-1;
+		m:=a*a+b*b;
+	];
+	{new'state, (a+I*b)*SqrtN(-2*DivideN(Internal'LnNum(m),m))};
+];
+
+
+
+
+
+
+
+
+
+RNGEngine'LCG'1(seed_IsInteger) <-- {seed};
+
+RNGEngine'LCG'1(state_IsList) <-- LCG'1(state);
+
+
+RNGEngine'LCG'2(seed_IsInteger) <-- {seed};
+
+RNGEngine'LCG'2(state_IsList) <-- LCG'2(state);
+
+
+RNGEngine'LCG'3(seed_IsInteger) <-- {seed};
+
+RNGEngine'LCG'3(state_IsList) <-- LCG'3(state);
+
+
+RNGEngine'LCG'4(seed_IsInteger) <-- {seed};
+
+RNGEngine'LCG'4(state_IsList) <-- LCG'4(state);
+
+
+LCG'1(state) := RandomLCG(state, 2147483647,950706376,0);
+LCG'2(state) := RandomLCG(state, 4294967296,1099087573,0);
+LCG'3(state) := RandomLCG(state, 281474976710656,68909602460261,0);
+LCG'4(state) := RandomLCG(state, 18014398509481984,2783377640906189,0);
+
+
+
+RandomLCG(_state, _im, _ia, _ic) <--
+{
+	DestructiveReplace(state,1, ModN(state[1]*ia+ic,im)),
+	DivideN(state[1], im)	
+};
+
+
+
+
+
+
+RNGEngine'L'Ecuyer(a'seed_IsInteger) <--
+[
+	
+	Local(rng'aux, result);
+	rng'aux := (RngCreate @ {a'seed});
+	
+	result:=ZeroVector(6);
+	
+	Local(i);
+	For(i:=1, i<=6, i++)
+	[
+		Rng(rng'aux);
+		result[i] := rng'aux[3][1];	
+	];
+	
+	result;
+];
+
+
+RNGEngine'L'Ecuyer(state_IsList) <--
+[
+	Local(new'state, result);
+	new'state := {
+		Mod(1403580*state[2]-810728*state[3], 4294967087), state[1], state[2],
+		Mod(527612*state[4]-1370589*state[6], 4294944433), state[4], state[5]
+	};
+	result:=Mod(state[1]-state[4], 4294967087);
+	{
+		new'state,
+		DivideN(If(result=0, 4294967087, result), 4294967088)
+	};
+];
+
+
+
+
+
+
+LocalSymbols(RandSeed) [
+  
+  RandSeed:=76544321;
+
+  
+  Function("RandomSeed", {seed}) Set(RandSeed, seed);
+
+  
+  RandomLCG(_im, _ia, _ic) <--
+  [
+    RandSeed:=ModN(RandSeed*ia+ic,im);
+    DivideN(RandSeed,im);	
+  ];
+]; 
+
+
+Function("Random1",{}) RandomLCG(4294967296,1103515245,12345);
+Function("Random6",{}) RandomLCG(1771875,2416,374441);
+
+Function("Random2",{}) RandomLCG(2147483647,950706376,0);
+Function("Random3",{}) RandomLCG(4294967296,1099087573,0);
+Function("Random4",{}) RandomLCG(281474976710656,68909602460261,0);
+Function("Random5",{}) RandomLCG(18014398509481984,2783377640906189,0);
+
+
+Function("Random",{}) Random3();
+
+

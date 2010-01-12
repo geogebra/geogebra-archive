@@ -18,13 +18,11 @@
 package org.mathpiper.builtin;
 
 // new-style evaluator, passing arguments onto the stack in Environment
-import org.mathpiper.lisp.Evaluator;
-import org.mathpiper.builtin.BuiltinFunction;
-
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.Environment;
+import org.mathpiper.lisp.Evaluator;
+import org.mathpiper.lisp.LispError;
 import org.mathpiper.lisp.cons.AtomCons;
+import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.cons.SublistCons;
 
 public class BuiltinFunctionEvaluator extends Evaluator {

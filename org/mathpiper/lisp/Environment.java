@@ -18,41 +18,31 @@
 package org.mathpiper.lisp;
 
 import java.util.List;
-import org.mathpiper.lisp.stacks.ArgumentStack;
-import org.mathpiper.lisp.collections.DefFileMap;
-import org.mathpiper.lisp.collections.Map;
-import org.mathpiper.lisp.collections.TokenMap;
-import org.mathpiper.lisp.collections.OperatorMap;
-import org.mathpiper.lisp.cons.AtomCons;
-import org.mathpiper.lisp.cons.ConsPointer;
-import org.mathpiper.lisp.printers.LispPrinter;
+
+import org.mathpiper.builtin.BuiltinFunction;
+import org.mathpiper.io.InputDirectories;
+import org.mathpiper.io.InputStatus;
 import org.mathpiper.io.MathPiperInputStream;
 import org.mathpiper.io.MathPiperOutputStream;
-import org.mathpiper.builtin.BuiltinFunction;
-import org.mathpiper.lisp.tokenizers.XmlTokenizer;
-import org.mathpiper.io.InputStatus;
-
-import org.mathpiper.io.InputDirectories;
-
+import org.mathpiper.lisp.collections.DefFileMap;
+import org.mathpiper.lisp.collections.Map;
+import org.mathpiper.lisp.collections.OperatorMap;
+import org.mathpiper.lisp.collections.TokenMap;
+import org.mathpiper.lisp.cons.AtomCons;
 import org.mathpiper.lisp.cons.Cons;
-import org.mathpiper.lisp.cons.SublistCons;
-import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
-
-import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
-
-import org.mathpiper.lisp.userfunctions.MacroUserFunction;
-
-
-import org.mathpiper.lisp.userfunctions.ListedBranchingUserFunction;
-
-import org.mathpiper.lisp.userfunctions.SingleArityBranchingUserFunction;
-
-import org.mathpiper.lisp.userfunctions.ListedMacroUserFunction;
-
-import org.mathpiper.lisp.printers.MathPiperPrinter;
-
+import org.mathpiper.lisp.cons.ConsPointer;
 import org.mathpiper.lisp.localvariables.LocalVariable;
 import org.mathpiper.lisp.localvariables.LocalVariableFrame;
+import org.mathpiper.lisp.printers.LispPrinter;
+import org.mathpiper.lisp.printers.MathPiperPrinter;
+import org.mathpiper.lisp.stacks.ArgumentStack;
+import org.mathpiper.lisp.tokenizers.MathPiperTokenizer;
+import org.mathpiper.lisp.tokenizers.XmlTokenizer;
+import org.mathpiper.lisp.userfunctions.ListedBranchingUserFunction;
+import org.mathpiper.lisp.userfunctions.ListedMacroUserFunction;
+import org.mathpiper.lisp.userfunctions.MacroUserFunction;
+import org.mathpiper.lisp.userfunctions.MultipleArityUserFunction;
+import org.mathpiper.lisp.userfunctions.SingleArityBranchingUserFunction;
 
 public class Environment {
 
@@ -68,7 +58,6 @@ public class Environment {
     public Cons iProgOpenAtom;
     public Cons iProgCloseAtom;
     public Cons iNthAtom;
-    public Cons iComplexAtom;
     public Cons iBracketOpenAtom;
     public Cons iBracketCloseAtom;
     public Cons iListOpenAtom;
@@ -101,8 +90,8 @@ public class Environment {
     public String iError = null;
     public DefFileMap iDefFiles = new DefFileMap();
     public InputDirectories iInputDirectories = new InputDirectories();
-    public String iPrettyReaderName = null;
-    public String iPrettyPrinterName = null;
+    public String iPrettyReader = null;
+    public String iPrettyPrinter = null;
 
     public Environment(MathPiperOutputStream aCurrentOutput/*TODO FIXME*/) throws Exception {
         iCurrentTokenizer = iDefaultTokenizer;
@@ -119,7 +108,6 @@ public class Environment {
         iProgOpenAtom = AtomCons.getInstance(this, "[");
         iProgCloseAtom = AtomCons.getInstance(this, "]");
         iNthAtom = AtomCons.getInstance(this, "Nth");
-        iComplexAtom = AtomCons.getInstance(this, "Complex");
         iBracketOpenAtom = AtomCons.getInstance(this, "(");
         iBracketCloseAtom = AtomCons.getInstance(this, ")");
         iListOpenAtom = AtomCons.getInstance(this, "{");

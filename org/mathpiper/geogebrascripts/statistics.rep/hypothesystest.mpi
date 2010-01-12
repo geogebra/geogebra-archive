@@ -1,0 +1,23 @@
+
+
+
+
+
+100 # ChiSquareTest( observed'freqs_IsList, expected'freqs_IsList, estimated'params_IsInteger)
+  <--
+ [
+   Local( nominator, chi2, p'value, k, dof);
+   k:=Length(observed'freqs);
+   nominator:=(observed'freqs-expected'freqs)^2; 
+   chi2:=Sum(i,1,k,nominator[i]/(expected'freqs[i]));
+   dof := k-estimated'params-1; 
+   p'value:=1-N(IncompleteGamma(chi2/2,dof/2)/Gamma(dof/2));
+   { TestStatistics <- chi2 , P'value <- p'value,Atom("dof") <- dof};
+
+ ];
+
+
+100 # ChiSquareTest( observed'freqs_IsList,
+	 expected'freqs_IsList) <-- ChiSquareTest( observed'freqs, expected'freqs, 0);
+
+
