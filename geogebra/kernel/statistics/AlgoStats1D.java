@@ -106,6 +106,10 @@ public abstract class AlgoStats1D extends AlgoElement {
 		if (Truncate != null)
 		{
 			truncate=(int)Truncate.getDouble();
+			if (truncate == 0) {
+				result.setValue(0);
+				return;
+			}
 			if (truncate < 1 || truncate > size)
 			{
 				result.setUndefined();
