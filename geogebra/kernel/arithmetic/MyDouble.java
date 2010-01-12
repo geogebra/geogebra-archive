@@ -177,7 +177,7 @@ implements NumberValue {
 		}
 		else {		
 			// number or angle in radians
-			set(Math.floor(val)); 
+			set(Math.floor(kernel.checkInteger(val))); 
 		}				
 		return this;
     }
@@ -190,7 +190,7 @@ implements NumberValue {
 		}
 		else {		
 			// number or angle in radians
-			set( Math.ceil(val) );
+			set( Math.ceil(kernel.checkInteger(val)));
 		}				
 		return this;
     }
