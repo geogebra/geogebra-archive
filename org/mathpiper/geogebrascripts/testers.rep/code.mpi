@@ -1,0 +1,238 @@
+
+Function("BenchCall",{expr})
+[
+  Echo({"In&gt ",expr});
+  WriteString("<font color=ff0000>");
+  Eval(expr);
+  WriteString("</font>");
+  True;
+];
+HoldArgument("BenchCall",expr);
+
+
+Function("BenchShow",{expr})
+[
+  Echo({"In&gt ",expr});
+  WriteString("<font color=ff0000> ");
+  Echo({"Out&gt ",Eval(expr),"</font>"});
+  True;
+];
+HoldArgument("BenchShow",expr);
+
+
+Function("KnownFailure",{expr})
+[
+  Local(rfail);
+  Echo({"Known failure: ", expr});
+  Set(rfail,Eval(expr));
+  If(rfail,Echo({"Failure resolved!"}));
+];
+HoldArgument("KnownFailure",expr);
+
+
+
+LocalSymbols(TrueFalse)
+[
+  MacroRulebase(TrueFalse,{var,expr});
+  10 # TrueFalse(var_IsAtom,_expr) <-- `{(@expr) Where (@var)==False,(@expr) Where (@var)==True};
+  20 # TrueFalse({},_expr) <-- `(@expr);
+  30 # TrueFalse(var_IsList,_expr) <--
+  `[
+    Local(t,h);
+    Set(h,First(@var));
+    Set(t,Rest(@var));
+    TrueFalse(h,TrueFalse(t,@expr));
+  ];
+
+  Macro(LogicTest,{vars,expr1,expr2}) Verify(TrueFalse((@vars),(@expr1)), TrueFalse((@vars),(@expr2)));
+];
+
+
+Function("LogicVerify",{aLeft,aRight})
+[
+  If(aLeft != aRight,
+    Verify(CanProve(aLeft => aRight),True)
+  );
+];
+
+
+Function("NextTest",{aLeft})
+[
+
+WriteString("
+Test suite for ":aLeft:" : "
+           );
+  NewLine();
+];
+
+
+
+
+
+RandVerifyArithmetic(_n)<--
+[
+ While(n>0)
+ [
+   n--;
+   VerifyArithmetic(FloorN(300*Random()),FloorN(80*Random()),FloorN(90*Random()));
+ ];
+];
+
+
+
+
+
+10 # RoundTo(x_IsNumber, precision_IsPositiveInteger) <--
+[
+  Local(oldPrec,result);
+
+  oldPrec:=BuiltinPrecisionGet();
+
+  BuiltinPrecisionSet(precision);
+
+  Set(result,DivideN( Round( MultiplyN(x, 10^precision) ), 10^precision ));
+
+  BuiltinPrecisionSet(oldPrec);
+
+  result;
+];
+
+
+
+
+10 # RoundTo(Complex(r_IsNumber, i_IsNumber), precision_IsPositiveInteger) <-- Complex(RoundTo(r, precision), RoundTo(i, precision));
+
+
+
+
+
+20 # RoundTo( Infinity,precision_IsPositiveInteger) <--  Infinity;
+
+20 # RoundTo(-Infinity,precision_IsPositiveInteger) <-- -Infinity;
+
+
+
+
+Macro(NumericEqual,{left,right,precision})
+[
+  Verify(RoundTo((@left)-(@right),@precision),0);
+];
+
+
+
+
+ShowLine() := [Echo({CurrentFile(),": ",CurrentLine()});];
+
+
+
+
+
+
+
+
+Function ("TestMathPiper", {expr, ans})
+[
+	Local(diff);
+	diff := Simplify(Eval(expr)-Eval(ans));
+		If (Simplify(diff)=0, True,
+			[
+			  WriteString("******************");
+			  NewLine();
+			  ShowLine();
+			  Write(expr);
+			  WriteString(" evaluates to ");
+			  NewLine();
+			  Write(Eval(expr));
+			  NewLine();
+			  WriteString(" which differs from ");
+			  NewLine();
+			  Write(Eval(ans));
+			  NewLine();
+			  WriteString(" by ");
+			  NewLine();
+			  Write(diff);
+			  NewLine();
+			  WriteString("******************");
+			  NewLine();
+			  False;
+			 ]
+			);
+];
+
+HoldArgument("TestMathPiper", expr);
+HoldArgument("TestMathPiper", ans);
+
+
+
+Function("Testing",{aLeft})
+[
+ WriteString("--");
+ WriteString(aLeft); NewLine();
+];
+
+
+
+
+
+Function("Verify",{aLeft,aRight})
+[
+
+	Local(result);
+	result := Eval(aLeft);	
+  If (Not(IsEqual(result,aRight)),
+    [
+      WriteString("******************");
+      NewLine();
+      ShowLine();
+      NewLine();
+      Write(aLeft);
+      NewLine();
+      WriteString(" evaluates to ");
+      NewLine();
+	  Write(result);
+      NewLine();
+	  WriteString(" which differs from ");
+      NewLine();
+      Write(aRight);
+      NewLine();
+      WriteString("******************");
+      NewLine();
+      False;
+    ],
+    True
+  );
+];
+HoldArgument("Verify",aLeft);
+UnFence("Verify",2);
+
+
+Macro("Verify", {a,b,message})
+[
+	Echo("test ", @message);
+	Verify(@a, @b);
+];
+
+
+
+LocalSymbols(f1,f2)
+[
+  
+  f1(x,n,m):=(x^n-1)*(x^m-1);
+  f2(x,n,m):=x^(n+m)-(x^n)-(x^m)+1;
+
+  VerifyArithmetic(x,n,m):=
+  [
+    Verify(f1(x,n,m),f2(x,n,m));
+  ];
+];
+
+
+VerifyDiv(_u,_v) <--
+[
+  Local(q,r);
+  q:=Quotient(u,v);
+  r:=Rem(u,v);
+
+  Verify(Expand(u),Expand(q*v+r));
+];
+
