@@ -1,0 +1,129 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LocalSymbols(m,n,r,
+             NthRoot'Table)
+[
+
+
+
+
+NthRoot(m_IsNonNegativeInteger,n_IsInteger)_(n>1) <--
+[
+   Local(r);
+   r:=NthRoot'Restore(m,n);
+   If(Length(r)=0,
+   [
+      r:=NthRoot'Calc(m,n);
+      NthRoot'Save(m,n,r);
+   ]);
+   r;
+];
+
+
+Function("NthRoot'Calc",{m,n})
+[
+   Local(i,j,f,r,in);
+   Set(i,2);
+   Set(j,Ceil(FastPower(m,N(1.0/n))+1));
+   Set(f,1);
+   Set(r,m);
+   
+   
+   
+   
+
+   While(LessThan(i,j))
+   [
+      Set(in,PowerN(i,n));
+
+      While(Equals(ModN(r,in),0))
+      [
+	 Set(f,MultiplyN(f,i));
+	 Set(r,DivN(r,in));
+      ];
+      While(Equals(ModN(r,i),0))   
+	 Set(r,DivN(r,i));         
+      
+      Set(i,NextPseudoPrime(i));
+      Set(j,Ceil(FastPower(r,N(1.0/n))+1));
+   ];
+   
+   List(f,DivN(m,PowerN(f,n))); 
+];
+
+
+Function("NthRoot'List",{n})
+[
+   If(Length(NthRoot'Table)>0,
+   [
+      Local(p,xx);
+      p:=Select({{xx},First(xx)=n},NthRoot'Table);
+      If(Length(p)=1,Rest(p[1]),List());
+   ],
+   List());
+];
+
+Function("NthRoot'Restore",{m,n})
+[
+   Local(p);
+   p:=NthRoot'List(n);
+   If(Length(p)>0,
+   [
+      Local(r,xx);
+      r:=Select({{xx},First(xx)=m},p);
+      If(Length(r)=1,First(Rest(r[1])),List());
+   ],
+   List());
+];
+
+Function("NthRoot'Save",{m,n,r})
+[
+   Local(p);
+   p:=NthRoot'List(n);
+   If(Length(p)=0,
+   
+   DestructiveInsert(NthRoot'Table,1,List(n,List(m,r))),
+   [
+      Local(rr,xx);
+      rr:=Select({{xx},First(xx)=m},p);
+      If(Length(rr)=0,
+      [
+	 
+	 DestructiveAppend(p,List(m,r));
+      ],
+      
+      False);
+   ]);
+];
+
+
+Function("NthRoot'Clear",{}) SetGlobalLazyVariable(NthRoot'Table,List());
+
+
+NthRoot'Clear();
+
+]; 
+
+
+
+
+

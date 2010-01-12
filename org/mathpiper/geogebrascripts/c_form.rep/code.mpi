@@ -1,0 +1,261 @@
+
+
+
+
+
+
+
+
+
+RuleBase("CForm",{expression});
+RuleBase("CForm",{expression, precedence});
+
+Function ("CFormBracketIf", {predicate, string})
+[
+	Check(IsBoolean(predicate) And IsString(string), "CForm internal error: non-boolean and/or non-string argument of CFormBracketIf");
+	If(predicate, ConcatStrings("( ", string, ") "), string);
+];
+
+
+
+
+CFormMaxPrec() := 60000;	 
+
+100 # CForm(_x) <-- CForm(x, CFormMaxPrec());
+
+
+110 # CForm(x_IsInteger, _p) <-- String(x);
+111 # CForm(x_IsZero, _p) <-- "0.";
+112 # CForm(x_IsNumber, _p) <-- String(x);
+
+190 # CForm(False, _p) <-- "false";
+190 # CForm(True, _p) <-- "true";
+200 # CForm(x_IsAtom, _p) <-- String(x);
+
+
+100 # CForm(x_IsString, _p) <-- ConcatStrings("\"", x, "\"");
+
+
+
+
+
+
+
+
+LocalSymbols(cformRegularOps) [
+  cformRegularOps := { {"+"," + "}, {"-"," - "}, {"*"," * "},
+                       {"/"," / "}, {":="," = "}, {"=="," == "},
+                       {"="," == "}, {"!="," != "}, {"<="," <= "},
+                       {">="," >= "}, {"<"," < "}, {">"," > "},
+                       {"And"," && "}, {"Or"," || "}, {">>", " >> "},
+                       { "<<", " << " }, { "&", " & " }, { "|", " | " },
+                       { "%", " % " }, { "^", " ^ " },
+                     };
+
+  CFormRegularOps() := cformRegularOps;
+]; 
+
+	
+
+	
+100 # CForm(+ _y, _p) <-- CFormBracketIf(p<OpPrecedence("+"), ConcatStrings(" + ", CForm(y, OpRightPrecedence("+")) ) );
+
+	
+100 # CForm(- _y, _p) <-- CFormBracketIf(p<OpPrecedence("-"), ConcatStrings(" - ", CForm(y, OpRightPrecedence("-")) ) );
+
+	
+100 # CForm(_x ^ _y, _p) <-- CFormBracketIf(p<=OpPrecedence("^"), ConcatStrings("pow(", CForm(x, CFormMaxPrec()), ", ", CForm(y, CFormMaxPrec()), ")" ) );
+
+100 # CForm(if(_pred)_body, _p) <-- "if (":CForm(pred,60000):") ":CForm(body);
+100 # CForm(_left else _right, _p) <-- CForm(left):" else ":CForm(right);
+
+
+LocalSymbols(cformMathFunctions) [
+  cformMathFunctions :=
+    {
+      {"Sqrt","sqrt"},
+      {"Cos","cos"},
+      {"Sin","sin"},
+      {"Tan","tan"},
+      {"Cosh","cosh"},
+      {"Sinh","sinh"},
+      {"Tanh","tanh"},
+      {"Exp","exp"},
+      {"Ln","log"},
+      {"ArcCos","acos"},
+      {"ArcSin","asin"},
+      {"ArcTan","atan"},
+      {"ArcCosh","acosh"},
+      {"ArcSinh","asinh"},
+      {"ArcTanh","atanh"},
+      {"Max","max"},
+      {"Min","min"},
+      {"Abs","fabs"},
+      {"Floor","floor"},
+      {"Ceil","ceil"},
+    {"!","factorial"}
+    };
+
+  CFormMathFunctions() := cformMathFunctions;
+
+]; 
+
+
+
+
+120 # CForm(expr_IsFunction, _p)_(NrArgs(expr)=2 And Contains(AssocIndices(CFormRegularOps()), Type(expr)) ) <--
+      CFormBracketIf(p<OpPrecedence(Type(expr)), ConcatStrings(CForm(Listify(expr)[2], OpLeftPrecedence(Type(expr))), CFormRegularOps()[Type(expr)], CForm(Listify(expr)[3], OpRightPrecedence(Type(expr))) ) );
+
+
+
+
+120 # CForm(expr_IsFunction, _p) _
+      (NrArgs(expr)=1 And Contains(AssocIndices(CFormMathFunctions()), Type(expr)) ) <--
+      ConcatStrings(CFormMathFunctions()[Type(expr)], "(", CForm( Listify(expr)[2], CFormMaxPrec()),")" );
+
+
+
+
+
+CFormArgs(list_IsList) <--
+[
+  Local(i,nr,result);
+  result:="";
+  nr:=Length(list);
+  For (i:=1,i<=nr,i++)
+  [
+    result:=result:CForm(list[i]);
+    If (i<nr, result:=result:", ");
+  ];
+  result;
+];
+
+
+200 # CForm(_x, _p)_(IsFunction(x)) <--
+[
+  ConcatStrings(Type(x), "(", CFormArgs(Rest(Listify(x))),")" );
+];
+
+
+100 # CForm(Complex(0, 1), _p) <-- "I";
+100 # CForm(Complex(_x, 0), _p) <-- CForm(x, p);
+110 # CForm(Complex(_x, 1), _p) <-- CForm(x+Hold(I), p);
+110 # CForm(Complex(0, _y), _p) <-- CForm(Hold(I)*y, p);
+120 # CForm(Complex(_x, _y), _p) <-- CForm(x+Hold(I)*y, p);
+
+
+
+100 # CForm(Mod(_x, _y), _p) <-- CFormBracketIf(p<OpPrecedence("/"), ConcatStrings(CForm(x, OpPrecedence("/")), " % ", CForm(y, OpPrecedence("/")) ) )
+;
+
+
+
+
+100 # CForm(Nth(_x, _i), _p) <-- ConcatStrings(CForm(x, CFormMaxPrec()), "[", CForm(i, CFormMaxPrec()), "]");
+
+LocalSymbols(cindent) [
+  cindent:=1;
+
+  NlIndented():=
+  [
+    Local(result);
+
+    result:=
+"
+";
+    Local(i);
+    For(i:=1,i<cindent,i++)
+    [
+      result:=result:"  ";
+    ];
+    result;
+  ];
+  CIndent() :=
+  [
+  (cindent++);
+  "";
+  ];
+  CUndent() :=
+  [
+  (cindent--);
+  "";
+  ];
+]; 
+
+CFormStatement(_x) <-- CForm(x) : ";" : NlIndented();
+
+120 # CForm(_x,_p)_(Type(x) = "Prog") <--
+[
+  Local(result);
+  result:=CIndent():"{":NlIndented();
+  ForEach(item,Rest(Listify(x)))
+  [
+    result:=result:CFormStatement(item);
+  ];
+  result:=result:"}":CUndent():NlIndented();
+  result;
+];
+
+120 # CForm(For(_from,_to,_step)_body,_p) <--
+  "for(" : CForm(from,CFormMaxPrec()) : ";"
+	: CForm(to,CFormMaxPrec()) : ";"
+	: CForm(step,CFormMaxPrec()) : ")"
+	: CIndent() : NlIndented()
+	: CFormStatement(body) : CUndent();
+
+120 # CForm(While(_pred)_body, _p) <--
+	"while(" : CForm(pred,CFormMaxPrec()) : ")"
+	: CIndent() : NlIndented()
+	: CFormStatement(body) : CUndent();
+
+
+
+
+
+
+LocalSymbols(CFormAllFunctions) [
+
+  
+
+  
+  
+  IsCFormable(_expr) <-- `IsCFormable(@expr, {});
+
+  
+  IsCFormable(_expr, funclist_IsList) <--
+  [
+    Local(bad'functions);
+    bad'functions := Difference(`FuncList(@expr), Concat(CFormAllFunctions, funclist));
+    If(Length(bad'functions)=0,
+      True,
+      [
+        If(InVerboseMode(),
+          Echo(Concat({"IsCFormable: Info: unexportable function(s): "}, bad'functions))
+        );
+        False;
+      ]
+    );
+  ];
+  HoldArgNr("IsCFormable", 1, 1);
+  HoldArgNr("IsCFormable", 2, 1);
+
+  
+  CFormAllFunctions := MapSingle(Atom, Concat(AssocIndices(CFormMathFunctions()), AssocIndices(CFormRegularOps()),
+  
+  {
+    "For",
+    "While",
+    "Prog",
+    "Nth",
+    "Mod",
+    "Complex",
+    "if",
+    "else",
+    "++",
+    "--",
+  }
+  ));
+
+
+]; 
+

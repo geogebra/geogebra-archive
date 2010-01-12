@@ -1,0 +1,315 @@
+
+
+
+
+
+
+
+
+
+
+
+
+TexForm(_expr) <-- [DumpErrors();WriteString(TeXForm(expr));NewLine();];
+
+RuleBase("TeXForm",{expression});
+RuleBase("TeXForm",{expression, precedence});
+
+
+
+
+
+
+Function ("TeXFormBracketIf", {predicate, string})
+[
+	Check(IsBoolean(predicate) And IsString(string), "TeXForm internal error: non-boolean and/or non-string argument of TeXFormBracketIf");
+	If(predicate, ConcatStrings("\\left( ", string, "\\right) "), string);
+];
+
+
+
+TeXFormMaxPrec() := 60000;	 
+
+
+100 # TeXForm(_x) <-- ConcatStrings("$", TeXForm(x, TeXFormMaxPrec()), "$");
+
+
+
+110 # TeXForm(x_IsNumber, _p) <-- String(x);
+
+200 # TeXForm(x_IsAtom, _p) <-- TeXFormTeXify(String(x));
+
+
+100 # TeXForm(x_IsString, _p) <-- ConcatStrings("\\mathrm{", x, "}");
+
+
+100 # TeXForm(x_IsAtom, _p)_(IsInfix(String(x))) <-- ConcatStrings("\\mathrm{", String(x), "}");
+
+
+
+
+100 # TeXForm(x_IsList, _p)_(Length(x)=0) <-- TeXFormBracketIf(True, "");
+110 # TeXForm(x_IsList, _p) <-- TeXFormBracketIf(True, ConcatStrings(TeXForm(First(x), TeXFormMaxPrec()), TeXFormFinishList(Rest(x)) ) );
+100 # TeXFormFinishList(x_IsList)_(Length(x)=0) <-- "";
+110 # TeXFormFinishList(x_IsList) <-- ConcatStrings(", ", TeXForm(First(x), TeXFormMaxPrec()), TeXFormFinishList(Rest(x)));
+
+
+
+
+	
+
+
+115 # TeXForm(_expr * n_IsNumber, _p) <-- TeXFormBracketIf(p<OpPrecedence("*"), ConcatStrings(TeXForm(expr, OpLeftPrecedence("*")), "\\cdot ", TeXForm(n, OpRightPrecedence("*")) ) );
+
+116 # TeXForm(_n * _expr, _p) _ (IsFunction(expr) And Contains({"^", "!", "!!"}, Type(expr)) And IsNumber(Listify(expr)[2])) <-- TeXFormBracketIf(p<OpPrecedence("*"), ConcatStrings(TeXForm(n, OpLeftPrecedence("*")), "\\cdot ", TeXForm(expr, OpRightPrecedence("*")) ) );
+
+	
+120 # TeXForm(expr_IsFunction, _p)_(NrArgs(expr)=2 And IsInfix(Type(expr)) ) <-- TeXFormBracketIf(p<OpPrecedence(Type(expr)), ConcatStrings(TeXForm(Listify(expr)[2], OpLeftPrecedence(Type(expr))), TeXFormTeXify(Type(expr)), TeXForm(Listify(expr)[3], OpRightPrecedence(Type(expr))) ) );
+
+	
+
+	
+	
+120 # TeXForm(expr_IsFunction, _p)_(NrArgs(expr)=1 And IsPrefix(Type(expr))) <-- TeXFormBracketIf(p<OpPrecedence(Type(expr)), ConcatStrings(
+	TeXFormTeXify(Type(expr)),
+	TeXForm(Listify(expr)[2], OpRightPrecedence(Type(expr)))
+) );
+	
+120 # TeXForm(expr_IsFunction, _p)_(NrArgs(expr)=1 And IsPostfix(Type(expr))) <-- TeXFormBracketIf(p<OpLeftPrecedence(Type(expr)), ConcatStrings(
+	TeXForm(Listify(expr)[2], OpLeftPrecedence(Type(expr))),
+	TeXFormTeXify(Type(expr))
+) );
+
+	
+100 # TeXForm(_x / _y, _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings("\\frac{", TeXForm(x, TeXFormMaxPrec()), "}{", TeXForm(y, TeXFormMaxPrec()), "} ") );
+
+	
+100 # TeXForm(_x ^ (1/2), _p) <-- ConcatStrings("\\sqrt{", TeXForm(x, TeXFormMaxPrec()), "}");
+101 # TeXForm(_x ^ (1/_y), _p) <-- ConcatStrings("\\sqrt[", TeXForm(y, TeXFormMaxPrec()), "]{", TeXForm(x, TeXFormMaxPrec()), "}");
+
+
+120 # TeXForm(_x ^ _y, _p) <-- TeXFormBracketIf(p<=OpPrecedence("^"), ConcatStrings(TeXForm(x, OpPrecedence("^")), " ^{", TeXForm(y, TeXFormMaxPrec()), "}" ) );
+
+
+
+
+LocalSymbols(TeXFormRegularOps, TeXFormRegularPrefixOps, TeXFormGreekLetters, TeXFormSpecialNames) [
+
+	
+
+  TeXFormRegularOps :=
+  {
+    {"+"," + "},
+    {"-"," - "},
+    {"*"," "},
+    {":=","\\equiv "},
+    {"=="," = "},
+    {"="," = "},
+    {"!=","\\neq "},
+    {"<=","\\leq "},
+    {">=","\\geq "},
+    {"<"," < "},
+    {">"," > "},
+    {"And","\\wedge "},
+    {"Or", "\\vee "},
+    {"<>", "\\sim "},
+    {"<=>", "\\approx "},
+    {"=>", "\\Rightarrow "},
+    {"%", "\\bmod "},
+  };
+
+  TeXFormRegularPrefixOps := { {"+"," + "}, {"-"," - "}, {"Not"," \\neg "} };
+
+
+
+    
+
+  TeXFormGreekLetters := {"Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Upsilon", "Phi", "Psi", "Omega", "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "varpi", "varrho", "varsigma", "varphi", "varepsilon"};
+  TeXFormSpecialNames := {
+    {"I", "\\imath "},	
+    {"Pi", "\\pi "},	
+    {"Infinity", "\\infty "},
+    {"TeX", "\\textrm{\\TeX\\/}"},
+    {"LaTeX", "\\textrm{\\LaTeX\\/}"},
+    {"Max", "\\max "},	
+    {"Min", "\\min "},
+    {"Prog", " "},
+    {"Zeta", "\\zeta "},
+  };
+
+
+  
+  Function ("TeXFormTeXify", {string})
+  [
+    Check(IsString(string), "TeXForm internal error: non-string argument of TeXFormTeXify");
+    
+    If (Contains(AssocIndices(TeXFormSpecialNames), string), TeXFormSpecialNames[string],
+    If (Contains(TeXFormGreekLetters, string), ConcatStrings("\\", string, " "),
+    If (Contains(AssocIndices(TeXFormRegularOps), string), TeXFormRegularOps[string],
+    If (Contains(AssocIndices(TeXFormRegularPrefixOps), string), TeXFormRegularPrefixOps[string],
+    If (Length(string) >= 2 And IsNumber(Atom(StringMidGet(2, Length(string)-1, string))), ConcatStrings(StringMidGet(1,1,string), "_{", StringMidGet(2, Length(string)-1, string), "}"),
+    If (Length(string) > 2, ConcatStrings("\\mathrm{ ", string, " }"),
+    string
+    ))))));
+  ];
+
+];
+
+
+
+
+
+200 # TeXForm(x_IsFunction, _p) _ (IsBodied(Type(x))) <-- [
+	Local(func, args, last'arg);
+	func := Type(x);
+	args := Rest(Listify(x));
+	last'arg := PopBack(args);
+	TeXFormBracketIf(p<OpPrecedence(func), ConcatStrings(
+	  TeXFormTeXify(func), TeXForm(args, TeXFormMaxPrec()),  TeXForm(last'arg, OpPrecedence(func))
+	));
+];
+
+
+
+220 # TeXForm(x_IsFunction, _p) <-- ConcatStrings(TeXFormTeXify(Type(x)), TeXForm(Rest(Listify(x)), TeXFormMaxPrec()) );
+
+	
+100 # TeXForm(Sqrt(_x), _p) <-- ConcatStrings("\\sqrt{", TeXForm(x, TeXFormMaxPrec()), "}");
+
+	
+100 # TeXForm(Exp(_x), _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings("\\exp ", TeXFormBracketIf(True, TeXForm(x, TeXFormMaxPrec())) ) );
+
+
+LocalSymbols(TeXFormMathFunctions, TeXFormMathFunctions2) [
+
+  
+  
+  TeXFormMathFunctions := { {"Cos","\\cos "}, {"Sin","\\sin "}, {"Tan","\\tan "}, {"Cosh","\\cosh "}, {"Sinh","\\sinh "}, {"Tanh","\\tanh "}, {"Ln","\\ln "}, {"ArcCos","\\arccos "}, {"ArcSin","\\arcsin "}, {"ArcTan","\\arctan "}, {"ArcCosh","\\mathrm{arccosh}\\, "}, {"ArcSinh","\\mathrm{arcsinh}\\, "}, {"ArcTanh","\\mathrm{arctanh}\\, "},
+  {"Erf", "\\mathrm{erf}\\, "}, {"Erfc", "\\mathrm{erfc}\\, "},
+  };
+
+  
+  TeXFormMathFunctions2 := {
+  {"BesselI", "I "}, {"BesselJ", "J "},
+  {"BesselK", "K "}, {"BesselY", "Y "},
+  {"OrthoH", "H "}, {"OrthoP", "P "},
+  {"OrthoT", "T "}, {"OrthoU", "U "},
+  };
+
+  
+
+  
+
+  
+  120 # TeXForm(expr_IsFunction, _p) _ (NrArgs(expr)=1 And Contains(AssocIndices(TeXFormMathFunctions), Type(expr)) ) <-- TeXFormBracketIf(p<OpPrecedence("*"), ConcatStrings(TeXFormMathFunctions[Type(expr)], TeXForm( Listify(expr)[2], OpPrecedence("*")) ) );
+
+  
+  120 # TeXForm(expr_IsFunction, _p) _ (NrArgs(expr)=2 And Contains(AssocIndices(TeXFormMathFunctions2), Type(expr)) ) <-- TeXFormBracketIf(p<OpPrecedence("*"),
+    ConcatStrings(
+    TeXFormMathFunctions2[Type(expr)],
+    "_{",
+    TeXForm( Listify(expr)[2], TeXFormMaxPrec()),	
+    "}",
+    TeXFormBracketIf(True, TeXForm(Listify(expr)[3], TeXFormMaxPrec()) ) 
+    )
+  );
+
+]; 
+
+
+
+100 # TeXForm(Complex(0, 1), _p) <-- TeXForm(Hold(I), p);
+100 # TeXForm(Complex(_x, 0), _p) <-- TeXForm(x, p);
+110 # TeXForm(Complex(_x, 1), _p) <-- TeXForm(x+Hold(I), p);
+110 # TeXForm(Complex(0, _y), _p) <-- TeXForm(Hold(I)*y, p);
+120 # TeXForm(Complex(_x, _y), _p) <-- TeXForm(x+Hold(I)*y, p);
+
+
+
+100 # TeXForm(Abs(_x), _p) <-- ConcatStrings("\\left| ", TeXForm(x, TeXFormMaxPrec()), "\\right| ");
+100 # TeXForm(Floor(_x), _p) <-- ConcatStrings("\\left\\lfloor ", TeXForm(x, TeXFormMaxPrec()), "\\right\\rfloor ");
+100 # TeXForm(Ceil(_x), _p) <-- ConcatStrings("\\left\\lceil ", TeXForm(x, TeXFormMaxPrec()), "\\right\\rceil ");
+
+
+
+100 # TeXForm(Mod(_x, _y), _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings(TeXForm(x, OpPrecedence("/")), "\\bmod ", TeXForm(y, OpPrecedence("/")) ) );
+
+100 # TeXForm(Union(_x, _y), _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings(TeXForm(x, OpPrecedence("/")), "\\cup ", TeXForm(y, OpPrecedence("/")) ) );
+
+100 # TeXForm(Intersection(_x, _y), _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings(TeXForm(x, OpPrecedence("/")), "\\cap ", TeXForm(y, OpPrecedence("/")) ) );
+
+100 # TeXForm(Difference(_x, _y), _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings(TeXForm(x, OpPrecedence("/")), "\\setminus ", TeXForm(y, OpPrecedence("/")) ) );
+
+
+
+100 # TeXForm(Contains(_x, _y), _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings(TeXForm(y, OpPrecedence("/")), "\\in ", TeXForm(x, OpPrecedence("/")) ) );
+
+
+100 # TeXForm(BinomialCoefficient(_n, _m), _p) <-- TeXFormBracketIf(False, ConcatStrings("{", TeXForm(n, TeXFormMaxPrec()), " \\choose ", TeXForm(m, TeXFormMaxPrec()), "}" )
+);
+
+
+
+100 # TeXForm(Sum(_x, _x1, _x2, _expr), _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings("\\sum _{", TeXForm(x, TeXFormMaxPrec()), " = ", TeXForm(x1, TeXFormMaxPrec()), "} ^{", TeXForm(x2, TeXFormMaxPrec()), "} ", TeXForm(expr, OpPrecedence("*")) ) );
+
+100 # TeXForm(Product(_x, _x1, _x2, _expr), _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings("\\prod _{", TeXForm(x, TeXFormMaxPrec()), " = ", TeXForm(x1, TeXFormMaxPrec()), "} ^{", TeXForm(x2, TeXFormMaxPrec()), "} ", TeXForm(expr, OpPrecedence("*")) ) );
+
+100 # TeXForm(Integrate(_x, _x1, _x2) _expr, _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings(
+"\\int _{", TeXForm(x1, TeXFormMaxPrec()), "} ^{", TeXForm(x2, TeXFormMaxPrec()), " } ", TeXForm(expr, OpPrecedence("*")), " d", TeXForm(x, TeXFormMaxPrec())
+) );
+
+
+100 # TeXForm(Integrate(_x) _expr, _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings(
+"\\int ", TeXForm(expr, OpPrecedence("*")), " d", TeXForm(x, TeXFormMaxPrec())
+) );
+
+100 # TeXForm(Limit(_x, _x1) _expr, _p) <-- TeXFormBracketIf(p<OpPrecedence("/"), ConcatStrings("\\lim _{", TeXForm(x, TeXFormMaxPrec()), "\\rightarrow ", TeXForm(x1, TeXFormMaxPrec()), "} ", TeXForm(expr, OpPrecedence("/")) ) );
+
+
+
+
+100 # TeXForm(Deriv(_x)_y, _p) <-- TeXFormBracketIf(p<OpPrecedence("-"), ConcatStrings(
+	If(Length(VarList(y))>1, "\\frac{\\partial}{\\partial ", "\\frac{d}{d "
+	), TeXForm(x, OpPrecedence("^")), "}", TeXForm(y, OpPrecedence("/")) ) );
+
+100 # TeXForm(Deriv(_x, _n)_y, _p) <-- TeXFormBracketIf(p<OpPrecedence("-"), ConcatStrings(
+	If(
+		Length(VarList(y))>1,
+		"\\frac{\\partial^" : TeXForm(n, TeXFormMaxPrec()) : "}{\\partial ",
+		"\\frac{d^" : TeXForm(n, TeXFormMaxPrec()) : "}{d "
+	), TeXForm(x, OpPrecedence("^")), " ^", TeXForm(n, TeXFormMaxPrec()), "}", TeXForm(y, OpPrecedence("/")) ) );
+100 # TeXForm(D(_x)_y, _p) <-- TeXForm(Deriv(x) y, p);
+100 # TeXForm(D(_x, _n)_y, _p) <-- TeXForm(Deriv(x, n) y, p);
+
+
+
+
+
+
+100 # TeXForm(Nth(Nth(_x, i_IsList), _j), _p) <-- TeXForm(TeXFormNth(x, Append(i,j)), p);
+100 # TeXForm(TeXFormNth(Nth(_x, i_IsList), _j), _p) <-- TeXForm(TeXFormNth(x, Append(i,j)), p);
+110 # TeXForm(Nth(Nth(_x, _i), _j), _p) <-- TeXForm(TeXFormNth(x, List(i,j)), p);
+120 # TeXForm(Nth(_x, _i), _p) <-- ConcatStrings(TeXForm(x, TeXFormMaxPrec()), " _{", TeXForm(i, TeXFormMaxPrec()), "}");
+120 # TeXForm(TeXFormNth(_x, _i), _p) <-- ConcatStrings(TeXForm(x, TeXFormMaxPrec()), " _{", TeXForm(i, TeXFormMaxPrec()), "}");
+
+
+
+80 # TeXForm(M_IsMatrix, _p) <-- TeXFormBracketIf(True, TeXFormPrintMatrix(M));
+
+Function ("TeXFormPrintMatrix", {M})
+[
+
+	Local(row, col, result, ncol);
+	result := "\\begin{array}{";
+	ForEach(col, M[1]) result:=ConcatStrings(result, "c");
+	result := ConcatStrings(result, "}");
+
+	ForEach(row, 1 .. Length(M)) [
+		ForEach(col, 1 .. Length(M[row])) [
+			result := ConcatStrings( result, " ", TeXForm(M[row][col], TeXFormMaxPrec()), If(col = Length(M[row]), If(row = Length(M), "", " \\\\"), " &"));
+		];
+	];
+
+	ConcatStrings(result, " \\end{array} ");
+];
+
