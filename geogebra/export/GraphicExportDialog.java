@@ -13,7 +13,7 @@ the Free Software Foundation.
 package geogebra.export;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.export.epsgraphics.EpsGraphics2D;
+import geogebra.export.epsgraphics.ColorMode;
 import geogebra.gui.util.FileTransferable;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyImageIO;
@@ -33,6 +33,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -45,6 +47,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
 
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
@@ -436,10 +439,10 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			return false;
 		try {		
 			
-			EpsGraphics2D g =
-				new EpsGraphics2D(
+			geogebra.export.epsgraphics.EpsGraphics g =
+				new geogebra.export.epsgraphics.EpsGraphics(
 					app.getPlain("ApplicationName") + ", " + app.getPlain("ApplicationURL"),
-					file, 0,0, pixelWidth, pixelHeight);		
+					(OutputStream)(new FileOutputStream(file)), 0,0, pixelWidth, pixelHeight, ColorMode.COLOR_RGB);		
 										
 	    	// draw to epsGraphics2D
 			ev.exportPaint(g, exportScale); 

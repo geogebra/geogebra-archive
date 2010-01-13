@@ -94,7 +94,7 @@ SOFTWARE
   * Jasymca, http://webuser.hs-furtwangen.de/~dersch/
   * Jama, http://math.nist.gov/javanumerics/jama/
   * FreeHEP Java Libraries, http://java.freehep.org
-  * Java EPS Graphics2D package, http://www.jibble.org/epsgraphics
+  * EPS Graphics, http://epsgraphics.sf.net
   * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
   * Tango Icon Gallery, http://tango.freedesktop.org
   
