@@ -1526,7 +1526,7 @@ public abstract class GeoElement
 	 * (this is needed for saving: only object's with isLabelSet() == true should
 	 * be saved)
 	 */
-	final public boolean isLabelSet() {
+	public boolean isLabelSet() {
 		return labelSet;
 	}
 

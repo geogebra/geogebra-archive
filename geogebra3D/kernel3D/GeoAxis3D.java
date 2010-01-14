@@ -93,6 +93,12 @@ public class GeoAxis3D extends GeoLine3D {
 	}
 
 	
+	/**
+	 * overrides GeoElement method : this is a "constant" element, so the label is set
+	 */
+	public boolean isLabelSet() {
+		return true;
+	}	
 
 	public String getUnitLabel() {
 		// TODO Auto-generated method stub
