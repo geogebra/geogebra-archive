@@ -182,6 +182,18 @@ public class ContextMenu extends JPopupMenu
 	   	 	item8.addActionListener(new ActionListenerProperties());
 	   	 	add(item8);
  		}
+ 		
+ 		//G.STURR 2010-1-11
+ 	    // Import Data	
+ 		if (app.selectedGeosSize() > 0) {
+		 	addSeparator();
+		 	JMenuItem item9 = new JMenuItem(app.getMenu(app.getPlain("Import Data"))+"...");
+	   	 	item9.setIcon(app.getEmptyIcon());
+	   	 	item9.addActionListener(new ActionListenerImportData());
+	   	 	add(item9);
+	   	 //END GSTURR
+ 		}
+ 		
 	}
 	
 	//G.Sturr 2009-10-3: added setTitle (copied from gui.ContextMenuGeoElement)
@@ -694,6 +706,22 @@ public class ContextMenu extends JPopupMenu
  			} 
 		}
 	}
+	
+	private class ActionListenerImportData implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			
+ 			// launch file chooser dialog and get file name  (filter .txt)
+ 			// open file and copy contents to clipboard
+ 			// clear spreadsheet
+ 			// paste from clipboard into spreadsheet
+ 			
+ 		}
+	}
+	
+	
+	
+	
 	
 	private static String removeComma(String s)
 	{

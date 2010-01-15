@@ -653,7 +653,7 @@ public class SpreadsheetView extends JScrollPane implements View
 						table.setColumnSelectionAllowed(false);
 						table.setRowSelectionAllowed(true);
 					}
-					table.selectNone();
+					//table.selectNone();
 					table.setRowSelectionInterval((int)p.getY(), (int)p.getY());
 				}	
 			

@@ -65,7 +65,7 @@ public class MyTable extends JTable implements FocusListener
 	//(G.Sturr 2009-9-12) test for dragging dot highlight
 	protected boolean isOverDot = false;
 	//G.Sturr: 2009-11-15
-	protected ArrayList selectedCellRanges;
+	public ArrayList selectedCellRanges;
 	protected boolean metaDown = false;
 	//END G.Sturr
 	
@@ -1628,7 +1628,7 @@ public class MyTable extends JTable implements FocusListener
 						setColumnSelectionAllowed(true);
 						setRowSelectionAllowed(false);
 					}
-					selectNone();
+					//selectNone();
 					setColumnSelectionInterval((int)p.getX(), (int)p.getX());
 					
 				}	
