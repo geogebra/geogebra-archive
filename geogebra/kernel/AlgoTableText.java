@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+import geogebra.main.MyError;
 
 
 
@@ -24,7 +26,7 @@ public class AlgoTableText extends AlgoElement {
     
     private GeoList[] geoLists;
     
-    private StringBuilder sb = new StringBuilder();
+    private StringBuffer sb = new StringBuffer();
     
     private int VERTICAL = 0;
     private int HORIZONTAL = 1;
@@ -138,7 +140,6 @@ public class AlgoTableText extends AlgoElement {
     	sb.append("\\begin{array}{");
 		// end Loïc
     	
-    	
     	if (alignment == VERTICAL) {
     	
 	    	for (int c = 0 ; c < columns ; c++)
@@ -148,7 +149,7 @@ public class AlgoTableText extends AlgoElement {
 	    	for (int r=0; r < rows; r++) {
 	    		for (int c = 0 ; c < columns ; c++) {
 	    			// Added by Loïc 2009/12/15
-	    			boolean finalCell = (r == rows - 1) && (c == columns - 1);
+	    			boolean finalCell = (c == columns - 1);
 	    			addCell(c, r,finalCell);
 	    			// end Loïc
 	   		}
@@ -168,7 +169,8 @@ public class AlgoTableText extends AlgoElement {
 			for (int c = 0 ; c < columns ; c++) {
 	    	for (int r=0; r < rows; r++) {
     			// Added by Loïc 2009/12/15
-    			boolean finalCell = (r == rows - 1) && (c == columns - 1);
+    			boolean finalCell = (r == rows - 1);
+    			addCell(c, r,finalCell);
     			// end Loïc
 	    		}
 	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
