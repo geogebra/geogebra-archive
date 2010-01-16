@@ -24,6 +24,7 @@ import java.util.TreeSet;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.AlgebraView;
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoConic;
@@ -481,11 +482,14 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		if (hasRegion()){
 			//remove the parent algorithm
 			//Application.debug("algo : "+getParentAlgorithm().toString());
-			getRegion().toGeoElement().removeAlgorithm(getParentAlgorithm());
-			getConstruction().removeFromAlgorithmList(getParentAlgorithm());
-			getConstruction().removeFromConstructionList(getParentAlgorithm());
+			AlgoElement parent = getParentAlgorithm();
+			int index = parent.getConstructionIndex();
+			getRegion().toGeoElement().removeAlgorithm(parent);
+			getConstruction().removeFromAlgorithmList(parent);			
 			setParentAlgorithm(null);
-			getConstruction().addToConstructionList(this, false);
+			getConstruction().removeFromConstructionList(parent);
+			getConstruction().addToConstructionList(this, index);
+			
 			//remove the region
 			setRegion(null);
 			//change the color

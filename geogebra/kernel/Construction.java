@@ -321,12 +321,28 @@ public class Construction {
 		if (checkContains && ce.isInConstructionList())
 			return;
 
+		/*
 		++step;
 		updateAllConstructionProtocolAlgorithms(); // Michael Borcherds
 													// 2008-05-15
 
 		ceList.add(step, ce);
 		updateConstructionIndex(step);
+		*/
+		addToConstructionList(ce, step+1);
+	}
+	
+	
+	/** Adds the given Construction Element to this Construction at position index
+	 * @param ce
+	 * @param index
+	 */
+	public void addToConstructionList(ConstructionElement ce, int index){
+		
+		++step;
+		updateAllConstructionProtocolAlgorithms();
+		ceList.add(index, ce);
+		updateConstructionIndex(index);
 	}
 
 	/**
