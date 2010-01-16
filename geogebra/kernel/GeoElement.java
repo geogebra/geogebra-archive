@@ -265,6 +265,7 @@ public abstract class GeoElement
 	public static final int TOOLTIP_ON = 					1;
 	public static final int TOOLTIP_OFF = 					2;
 	public static final int TOOLTIP_CAPTION = 				3;
+	public static final int TOOLTIP_NEXTCELL = 				4;
 	private int tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
 
 	protected String label; // should only be used directly in subclasses
@@ -1138,6 +1139,7 @@ public abstract class GeoElement
 			return false;
 		case TOOLTIP_ON:
 		case TOOLTIP_CAPTION:
+		case TOOLTIP_NEXTCELL:
 			return true;
 		}
 
@@ -1158,6 +1160,15 @@ public abstract class GeoElement
 			return "";
 		case TOOLTIP_CAPTION:
 			return getCaption();
+		case TOOLTIP_NEXTCELL: // tooltip is the next cell to the right (spreadsheet objects only)
+			String label = getLabel();
+			Point coords = getSpreadsheetCoordsForLabel(label);
+			if (coords == null) return "";
+			coords.x++;
+			label = getSpreadsheetCellName(coords.x, coords.y);
+			if (label == null) return "";
+			GeoElement geo = kernel.lookupLabel(label);
+			return (geo == null) ? "" : geo.toValueString();
 		}
 		
 	}
@@ -1170,17 +1181,13 @@ public abstract class GeoElement
 		//return isAlgebraVisible();
 		switch (mode) {
 		default:
-		//case TOOLTIP_ALGEBRAVIEW_SHOWING:
 			tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
 			break;
 		case TOOLTIP_OFF:
-			tooltipMode = TOOLTIP_OFF;
-			break;
 		case TOOLTIP_ON:
-			tooltipMode = TOOLTIP_ON;
-			break;
 		case TOOLTIP_CAPTION:
-			tooltipMode = TOOLTIP_CAPTION;
+		case TOOLTIP_NEXTCELL:
+			tooltipMode = mode;
 			break;
 		}
 
