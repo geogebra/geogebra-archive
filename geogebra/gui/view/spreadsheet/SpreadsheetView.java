@@ -132,6 +132,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
 		
 		updateFonts();
+		attachView(); //G.Sturr 2010-1-18
 	}
 	
 	private class Corner extends JComponent {
