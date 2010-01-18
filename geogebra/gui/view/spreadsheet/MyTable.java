@@ -916,11 +916,8 @@ public class MyTable extends JTable implements FocusListener
 					
 					if (dragingToRow + 1 == getRowCount() && dragingToRow < SpreadsheetView.MAX_ROWS) {
 						tableModel.setRowCount(getRowCount() +1);		
-					
-						//G.STURR 2010-1-9
-						//getView().getRowHeader().revalidate();
-						view.updateRowHeader();
-						//END GSTURR
+							
+						//getView().getRowHeader().revalidate();  //G.STURR 2010-1-9
 						
 					}
 					
@@ -1132,10 +1129,7 @@ public class MyTable extends JTable implements FocusListener
 				if (getSelectedRow() + 1 == getRowCount() && getSelectedRow() < SpreadsheetView.MAX_ROWS) {
 					tableModel.setRowCount(getRowCount() +1);
 					
-					//G.STURR 2010-1-9
-					//getView().getRowHeader().revalidate();
-					view.updateRowHeader();
-					//END GSTURR
+					//getView().getRowHeader().revalidate();   //G.STURR 2010-1-9
 				}
 				
 				else if (Application.isControlDown(e)) {
@@ -1816,6 +1810,27 @@ public class MyTable extends JTable implements FocusListener
 			return true;
 		
 		return false;
+	}
+	//END GSTURR
+	
+	
+	
+	//G.STURR 2010-1-15
+	// Keep row heights of table and rowHeader in sync
+	public void setRowHeight(int row, int rowHeight) {
+		super.setRowHeight(row, rowHeight);
+		try {
+			view.updateRowHeader();
+		} catch (Exception e) {
+		}
+	}
+
+	public void setRowHeight(int row) {
+		super.setRowHeight(row);
+		try {
+			view.updateRowHeader();
+		} catch (Exception e) {
+		}
 	}
 	//END GSTURR
 	

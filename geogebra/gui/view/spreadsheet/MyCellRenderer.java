@@ -4,7 +4,9 @@ import geogebra.euclidian.Drawable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
+import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -27,7 +29,8 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private Kernel kernel;
 	
 	private ImageIcon latexIcon, emptyIcon; //G.Sturr 2010-1-15
-
+	private String latexStr = new String();
+	
 	public MyCellRenderer(Application app) {
 		this.app = app;		
 		kernel = app.getKernel();
@@ -35,7 +38,9 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		//G.Sturr 2009-10-3:  add horizontal padding
 		setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 		
-		//G.Sturr 2010-1-15: icons for displaying LaTeX 
+		//G.Sturr 2010-1-15
+		// The cell renderer is an extension of JLabel and thus supports an icon.
+		// Here the icon is used to display LaTeX.
 		latexIcon = new ImageIcon();
 		emptyIcon = new ImageIcon();
 		
@@ -101,14 +106,30 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			setHorizontalAlignment(JLabel.RIGHT);
 		}		
 		
-		//G.STURR 2010-1-15
-		// The cell renderer is an extension of JLabel and thus supports an icon.
-		// This icon is used to display LaTeX. 
-		if(geo.isGeoText()){
-			if(((GeoText) geo).isLaTeX()) {
-				setText("");
-				drawLatexImageIcon( latexIcon,  geo, bgColor, getFont());
+		// G.STURR 2010-1-17
+		// set LaTeX icons
+		// use LaTeX for any geo other than geoNumeric or non-latex geoText
+		
+		if (kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
+
+			if (!(geo.isGeoText() && !((GeoText) geo).isLaTeX()) && !geo.isGeoNumeric()  ) {
+				latexStr = Util.toLaTeXString(geo.getFormulaString(
+						ExpressionNode.STRING_TYPE_LATEX, true), false);
+				drawLatexImageIcon(latexIcon, latexStr, getFont(), geo.getAlgebraColor(), bgColor);
 				setIcon(latexIcon);
+				setText("");
+
+				
+				// Auto resize row height
+				// .... not working correctly yet
+				// doRowResize flag is set in MyCellEditor, but this does not handle rename and repeated copies
+				if (MyCellEditor.doRowResize) {
+					if (latexIcon.getIconHeight() > table.getRowHeight(row)) {
+						table.setRowHeight(row, latexIcon.getIconHeight() + 4);
+						MyCellEditor.doRowResize = false;
+					}
+				}
+
 			}
 		}
 		//END GSTURR
@@ -117,38 +138,37 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		return this;
 	}
 
-	public void drawLatexImageIcon(ImageIcon latexIcon, GeoElement geo,  Color bgColor, Font font) {
+	private void drawLatexImageIcon(ImageIcon latexIcon, String latex, Font font, Color fgColor, Color bgColor) {
 		
+		// Create image with dummy size, then draw into it to get the correct size
 		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2image = image.createGraphics();
-		
 		g2image.setBackground(bgColor);
 		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-							RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-							RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		// draw the LaTeX image just to get its size
 		Dimension d = new Dimension();
-		d = Drawable.drawEquation(app, g2image, 0, 0, geo.toValueString(), font, geo.getAlgebraColor(), bgColor);
-		
-		// now use this size and draw again to get the final image
+		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, fgColor,
+				bgColor);
+
+		// Now use this size and draw again to get the final image
 		image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
 		g2image = image.createGraphics();
 		g2image.setBackground(bgColor);
 		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
-		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		d = Drawable.drawEquation(app, g2image, 0, 0, geo.toValueString(), getFont(), geo.getAlgebraColor(), bgColor);
-		
+		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, fgColor,
+				bgColor);
+
 		latexIcon.setImage(image);
 		
 	}
-	
 	
 	
 

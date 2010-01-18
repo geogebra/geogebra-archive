@@ -11,6 +11,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -740,5 +744,41 @@ public class CopyPasteCut {
 		return comparator;
 	}
 	private static Comparator comparator;
+	
+	
+	//G.STURR 2010-1-15
+	
+	public boolean pasteFromFile(File aFile, int column1, int row1, int column2, int row2) {
+
+		StringBuilder contents = new StringBuilder();
+		
+		try {
+			BufferedReader input = new BufferedReader(new FileReader(aFile));
+			try {
+				String line = null;
+				while ((line = input.readLine()) != null) {
+					contents.append(line);
+					contents.append(System.getProperty("line.separator"));
+				}
+			} finally {
+				input.close();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+
+		StringSelection stringSelection = new StringSelection(contents.toString());
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(stringSelection, null);
+		
+		// paste from clipboard into spreadsheet
+
+		return paste(column1, row1, column2, row2);
+
+	}
+	
+	//END GSTURR
+
 
 }

@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -185,7 +186,7 @@ public class ContextMenu extends JPopupMenu
  		
  		//G.STURR 2010-1-11
  	    // Import Data	
- 		if (app.selectedGeosSize() > 0) {
+ 		if (app.selectedGeosSize() >= 0) {
 		 	addSeparator();
 		 	JMenuItem item9 = new JMenuItem(app.getMenu(app.getPlain("Import Data"))+"...");
 	   	 	item9.setIcon(app.getEmptyIcon());
@@ -707,21 +708,25 @@ public class ContextMenu extends JPopupMenu
 		}
 	}
 	
-	private class ActionListenerImportData implements ActionListener
-	{
- 		public void actionPerformed(ActionEvent e) {
- 			
- 			// launch file chooser dialog and get file name  (filter .txt)
- 			// open file and copy contents to clipboard
- 			// clear spreadsheet
- 			// paste from clipboard into spreadsheet
- 			
- 		}
+	private class ActionListenerImportData implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+
+			/* test code
+			
+			File dataFile = new File("C:testTab.txt");
+
+			// paste file into spreadsheet
+			boolean succ = table.copyPasteCut.pasteFromFile(dataFile, 0, 0, 0, 0);
+			if (succ)
+				app.storeUndoInfo();
+				
+		   */
+		}
 	}
-	
-	
-	
-	
+
+
+
+
 	
 	private static String removeComma(String s)
 	{

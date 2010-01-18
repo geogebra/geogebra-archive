@@ -675,7 +675,6 @@ public class SpreadsheetView extends JScrollPane implements View
 			// If entire table is selected while resizing a row, then resize all rows to this new height.
 			if (!rightClick && table.isSelectAll()) {
 				table.setRowHeight(table.getRowHeight(resizingRow));
-				updateRowHeader();	
 			}
 
 		}
@@ -697,7 +696,6 @@ public class SpreadsheetView extends JScrollPane implements View
 				int newHeight = y - mouseYOffset; 
 		        if(newHeight > 0){
 		        	table.setRowHeight(resizingRow, newHeight);
-		            updateRowHeader();
 		            }
 		        }
 			else
@@ -892,13 +890,10 @@ public class SpreadsheetView extends JScrollPane implements View
 		double multiplier = (double)(size)/12.0;
 		
 		table.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
-		rowHeader.setFixedCellWidth((int)(ROW_HEADER_WIDTH * multiplier));
+		rowHeader.setFixedCellWidth((int)(ROW_HEADER_WIDTH * multiplier));	
 		
-		//G.STURR 2010-1-9 
-		//rowHeader.setFixedCellHeight(table.getRowHeight());
-		updateRowHeader();
-		//END GSTURR
-		
+		//rowHeader.setFixedCellHeight(table.getRowHeight()); //G.STURR 2010-1-9 
+	
 		table.setFont(app.getPlainFont());
 		rowHeader.setFont(font);
 		table.columnHeader.setFont(font);
