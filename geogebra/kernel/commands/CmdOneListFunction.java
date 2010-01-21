@@ -25,6 +25,8 @@ public abstract class CmdOneListFunction extends CommandProcessor {
 		arg = resArgs(c);
 
 		switch (n) {
+		case 0:
+			throw argNumErr(app, c.getName(), n);
 		case 1:
 			if (arg[0].isGeoList()) {
 				GeoElement[] ret = { 
