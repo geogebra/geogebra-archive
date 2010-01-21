@@ -1235,6 +1235,48 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		matrix[5] *= r;
 	}	
 
+	/*
+	 * Michael Borcherds 2010-01-21
+	 * Invert circle in circle
+	 */
+	    final public void mirror(GeoConic c) {
+	    	if (c.isCircle() && this.isCircle() )
+	    	{ // Mirror point in circle
+	    		double r1 =  c.getHalfAxes()[0];
+	    		GeoVec2D midpoint1=c.getTranslationVector();
+	    		double x1=midpoint1.x;
+	    		double y1=midpoint1.y;
+	    		
+	    		double r2 =  getHalfAxes()[0];
+	    		GeoVec2D midpoint2=getTranslationVector();
+	    		double x2=midpoint2.x;
+	    		double y2=midpoint2.y;
+	    		
+	    		// distance between centres
+	    		double p = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+	    		
+	    		double x = r1*r1 / (p - r2);
+	    		double y = r1*r1 / (p + r2);
+	    		
+	    		// radius of new circle
+	    		double r3 = Math.abs(y - x) / 2.0;
+	    		double centerX = x1 + (x2-x1) * (Math.min(x,y)+r3) / p; 
+	    		double centerY = y1 + (y2-y1) * (Math.min(x,y)+r3) / p; 
+	    		
+	    		//double sf=r1*r1/((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+	            //setCoords( x1+sf*(x2-x1), y1+sf*(y2-y1) ,1.0);
+	    		GeoPoint temp = new GeoPoint(cons,null,centerX,centerY,1.0);
+	    		setCircleMatrix(temp, r3);
+	    		temp.removeOrSetUndefinedIfHasFixedDescendent();
+	    	}
+	    	else
+	    	{
+	    		setUndefined();
+	    	}
+			setAffineTransform();
+			//updateDegenerates(); // for degenerate conics
+	    }
+	    
 	/**
 	 * mirror this conic at point Q
 	 */

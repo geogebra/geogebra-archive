@@ -4586,7 +4586,7 @@ public class Kernel {
 	}
 
 	/**
-	 * mirror point Q in conic 
+	 * mirror (invert) point Q in circle 
 	 * Michael Borcherds 2008-02-10
 	 */
 	final public GeoElement [] Mirror(String label, GeoPoint Q, GeoConic conic) {	
@@ -4594,6 +4594,19 @@ public class Kernel {
 			label = transformedGeoLabel(Q);
 	
 		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);		
+		GeoElement [] geos = {algo.getResult()};
+		return geos;	
+	}
+
+	/**
+	 * mirror (invert) circle conic0 in circle conic1 
+	 * Michael Borcherds 2008-02-10
+	 */
+	final public GeoElement [] Mirror(String label, GeoConic conic0, GeoConic conic1) {	
+		if (label == null)
+			label = transformedGeoLabel(conic0);
+	
+		AlgoMirror algo = new AlgoMirror(cons, label, conic0, conic1);		
 		GeoElement [] geos = {algo.getResult()};
 		return geos;	
 	}

@@ -669,7 +669,10 @@ GeoPointInterface {
         				 z );
     }
     
-// Michael Borcherds 2008-02-10
+/*
+ * Michael Borcherds 2008-02-10
+ * Invert point in circle
+ */
     final public void mirror(GeoConic c) {
     	if (c.getType()==GeoConic.CONIC_CIRCLE)
     	{ // Mirror point in circle

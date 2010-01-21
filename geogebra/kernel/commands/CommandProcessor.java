@@ -2595,6 +2595,19 @@ class CmdMirror extends CommandProcessor {
 
 			}
 
+			if (arg[0].isGeoConic() && arg[1].isGeoConic())
+			{  // mirror point in circle Michael Borcherds 2008-02-10
+				GeoConic conic0 = (GeoConic) arg[0];
+				GeoConic conic1 = (GeoConic) arg[1];
+
+				if (conic0.getType()==GeoConic.CONIC_CIRCLE && conic1.getType()==GeoConic.CONIC_CIRCLE)
+				{
+					ret = kernel.Mirror(label, conic0, conic1);
+					return ret;
+				}
+
+			}
+
 			// mirror object
 			if (ok[0] = (arg[0] instanceof Mirrorable)) {
 				Mirrorable p = (Mirrorable) arg[0];
