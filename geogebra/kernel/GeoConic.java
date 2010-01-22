@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
@@ -53,6 +54,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	public static final int CONIC_DOUBLE_LINE = 7;
 	public static final int CONIC_PARALLEL_LINES = 8;
 	public static final int CONIC_PARABOLA = 9;
+	public static final int CONIC_LINE = 10;
 
 	/* 
 	 *               ( A[0]  A[3]    A[4] )
@@ -150,6 +152,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 				return "Hyperbola";
 			case GeoConic.CONIC_INTERSECTING_LINES: 
 				return "IntersectingLines"; 
+			case GeoConic.CONIC_LINE: 
+				return "Line"; 
 			case GeoConic.CONIC_PARABOLA: 
 				return "Parabola"; 
 			case GeoConic.CONIC_PARALLEL_LINES: 
@@ -345,6 +349,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 				return kernel.isZero(matrix[0]) || kernel.isZero(matrix[1]);
 
 			default :
+			case CONIC_LINE :
 				return false;
 		}
 	}
@@ -354,6 +359,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 * is possible. 
 	 */
 	final public boolean isExplicitPossible() {
+		if (type == CONIC_LINE) return false;
 		return !kernel.isZero(matrix[5]) && kernel.isZero(matrix[3]) && kernel.isZero(matrix[1]);
 	}
 
@@ -426,6 +432,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			case CONIC_DOUBLE_LINE :
 			case CONIC_PARALLEL_LINES :
 			case CONIC_INTERSECTING_LINES :
+			case CONIC_LINE :
 				return true;
 
 			default :
@@ -554,6 +561,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		coeffs[4] = 2 * matrix[5]; // y  
 		
 		sbToValueString().setLength(0);				
+		
+		if (type == CONIC_LINE) {
+			sbToValueString.append(lines[0].toStringLHS());
+			sbToValueString.append(" = 0");
+			return sbToValueString;
+		}
 		
 		switch (toStringMode) {
 			case EQUATION_SPECIFIC :
@@ -709,6 +722,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 						sbToValueString.append(lines[1].toStringLHS());
 						sbToValueString.append(") = 0");
 						return sbToValueString;
+						
 				}
 				
 			case EQUATION_EXPLICIT:
@@ -1254,6 +1268,26 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	    		
 	    		// distance between centres
 	    		double p = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+	    		
+	    		// does circle being inverted pass through center of the other?
+	    		if (kernel.isEqual(p, r2)) { 
+	    			AlgoIntersectConics intersect = new AlgoIntersectConics(cons, this, c);
+	    			cons.removeFromConstructionList(intersect);
+	    			
+	    			GeoPoint [] points = intersect.getIntersectionPoints();
+	    			
+	    			if (lines == null) {
+	    				lines = new GeoLine[2];
+	    				lines[0] = new GeoLine(cons);
+	    				lines[1] = new GeoLine(cons);
+	    			}
+	    				
+	    			type = GeoConic.CONIC_LINE;
+	    			GeoVec3D.lineThroughPoints(points[0], points[1], lines[0]);
+	    			lines[1].setUndefined();
+
+	    			return;
+	    		}
 	    		
 	    		double x = r1*r1 / (p - r2);
 	    		double y = r1*r1 / (p + r2);
@@ -2028,7 +2062,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	        case GeoConic.CONIC_INTERSECTING_LINES:  
 	        case GeoConic.CONIC_DOUBLE_LINE: 
 	        case GeoConic.CONIC_PARALLEL_LINES:                
-	            return lines[0].isOnFullLine(P, eps) || lines[1].isOnFullLine(P, eps);	    
+	            return lines[0].isOnFullLine(P, eps) || lines[1].isOnFullLine(P, eps);	
+	            
+	        case GeoConic.CONIC_LINE:                
+	            return lines[0].isOnFullLine(P, eps);	    
 	        
 	        case GeoConic.CONIC_EMPTY:
 	        	return false;
@@ -2236,7 +2273,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			 case GeoConic.CONIC_INTERSECTING_LINES:
 				 ret = app.getPlain("ConicLinesEquation");
 				 break;                  
-		 }
+				 
+			 case GeoConic.CONIC_LINE:
+				 ret = app.getPlain("DoubleLineEquation");
+				 break;                  
+
+		  }
 		 return ret;
 	  }
 
@@ -2293,6 +2335,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 				}				
 			break;
 			
+			case CONIC_LINE:
 			case CONIC_DOUBLE_LINE:
 				lines[0].pointChanged(P);
 			break;
@@ -2420,7 +2463,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 				// set our path parameter again
 				pp.t = pathParam;
 				break;
-			
+				
+			case CONIC_LINE:
 			case CONIC_DOUBLE_LINE:
 				lines[0].pathChanged(P);	
 				break;
@@ -2491,6 +2535,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		switch (type) {		
 			case CONIC_PARABOLA:
 			case CONIC_DOUBLE_LINE:
+			case CONIC_LINE:
 				return Double.NEGATIVE_INFINITY;
 				
 			case CONIC_HYPERBOLA:
@@ -2519,6 +2564,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		switch (type) {
 			case CONIC_DOUBLE_LINE:			
 			case CONIC_PARABOLA:
+			case CONIC_LINE:
 				return Double.POSITIVE_INFINITY;
 									
 			case CONIC_CIRCLE:

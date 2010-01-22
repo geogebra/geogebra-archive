@@ -186,6 +186,7 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_INTERSECTING_LINES:  
             case GeoConic.CONIC_DOUBLE_LINE: 
             case GeoConic.CONIC_PARALLEL_LINES:
+            case GeoConic.CONIC_LINE:
                 updateLines();
                 break;                             
                 
@@ -667,6 +668,10 @@ final public class DrawConic extends Drawable implements Previewable {
                 drawLines[1].draw(g2);
                 break;             
                 
+            case GeoConic.CONIC_LINE:
+                drawLines[0].draw(g2);
+                break;             
+                
             case GeoConic.CONIC_CIRCLE:                                                                                 
             case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 	
@@ -753,6 +758,10 @@ final public class DrawConic extends Drawable implements Previewable {
 				drawLines[1].drawTrace(g2);
 				break;             
                 
+			case GeoConic.CONIC_LINE:
+				drawLines[0].drawTrace(g2);
+				break;             
+                
 			case GeoConic.CONIC_CIRCLE:                                                                                 
 			case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 			                                                  
@@ -779,6 +788,9 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_DOUBLE_LINE: 
             case GeoConic.CONIC_PARALLEL_LINES:                
                 return drawLines[0].hit(x, y) || drawLines[1].hit(x, y);
+                                                
+            case GeoConic.CONIC_LINE:                
+                return drawLines[0].hit(x, y);
                                                 
             case GeoConic.CONIC_CIRCLE:  
             case GeoConic.CONIC_ELLIPSE:
