@@ -153,18 +153,9 @@ public final class GeoAngle extends GeoNumeric {
 	 * 
 	 * @see setAngleStyle()
 	 */
-	public void setValue(double val) {
+	void setValue(double val, boolean changeAnimationValue) {
 		double angVal = calcAngleValue(val);
-		super.setValue(angVal);
-	}
-	
-	/**
-	 * Sets the value of this angle without changing the animationValue. Needed
-	 * for animations.
-	 */
-	public void doSetValue(double x) {
-		double angVal = calcAngleValue(x);
-		super.doSetValue(angVal);
+		super.setValue(angVal, changeAnimationValue);
 	}
 	
 	/**

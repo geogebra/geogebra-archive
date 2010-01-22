@@ -249,15 +249,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if (geo.isGeoNumeric()) return kernel.isEqual(value, ((GeoNumeric)geo).value); else return false;
 	}
 
-	// synchronized for animation
-	public void setValue(double x) {
-		doSetValue(x);
-		
-		// remember value for animation also
-		animationValue = value;
+	final public void setValue(double x) {
+		setValue(x, true);
 	}
 	
-	public void doSetValue(double x) {
+	void setValue(double x, boolean changeAnimationValue) {
 		if (intervalMinActive && x < intervalMin) {			
 			value = intervalMin;			
 		}					
@@ -266,7 +262,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		}						
 		else		 
 			value = x;
-	}	
+		
+		// remember value for animation also
+		if (changeAnimationValue) 
+			animationValue = value;
+	}
 
 	final public double getValue() {
 		return value;
@@ -724,9 +724,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			newValue = kernel.checkDecimalFraction(newValue);
 		}
 										
-		// change slider's value
-		// note: don't call setValue() as this would change animationValue too
-		doSetValue(newValue);
+		// change slider's value without changing animationValue
+		setValue(newValue, false);
 		
 		// return whether value of slider has changed
 		return getValue() != oldValue;	

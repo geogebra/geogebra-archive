@@ -5322,6 +5322,8 @@ public class Kernel {
 	}
 	
     final public double convertToAngleValue(double val) {
+		if (val > EPSILON && val < PI_2) return val;
+		
     	double value = val % PI_2; 
 		if (isZero(value)) {
 			if (val < 1.0) value = 0.0;
