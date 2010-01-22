@@ -73,6 +73,7 @@ public class SpreadsheetView extends JScrollPane implements View
 	public static Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
 	private Cursor otherCursor = resizeCursor; 
 	private int mouseYOffset, resizingRow; 
+	private boolean doRowResize = false;
 	//END GSTURR
 	
 	public SpreadsheetView(Application app0, int columns, int rows) {
@@ -673,9 +674,15 @@ public class SpreadsheetView extends JScrollPane implements View
 			
 			
 			//G.STURR 2010-1-9
-			// If entire table is selected while resizing a row, then resize all rows to this new height.
-			if (!rightClick && table.isSelectAll()) {
-				table.setRowHeight(table.getRowHeight(resizingRow));
+			// If row resize has happened, resize all other selected rows
+			if (doRowResize) {
+				if (minSelectionRow != -1 && maxSelectionRow != -1
+						&& (maxSelectionRow - minSelectionRow > 1)) {
+					for (int row = minSelectionRow; row <= maxSelectionRow; row++) {
+						table.setRowHeight(row, table.getRowHeight(resizingRow));
+					}
+				}
+				doRowResize = false;
 			}
 
 		}
@@ -692,20 +699,21 @@ public class SpreadsheetView extends JScrollPane implements View
 			// On mouse drag either resize or select a row
 			int x = e.getX();
 			int y = e.getY();
-			if(resizingRow >= 0){   
-				// resize row 
-				int newHeight = y - mouseYOffset; 
-		        if(newHeight > 0){
-		        	table.setRowHeight(resizingRow, newHeight);
-		            }
-		        }
-			else
-			{   // select row
-			    Point point = table.getIndexFromPixel(x, y);
-			    if (point != null) {
-			    	int row = (int)point.getY();
-				    table.setRowSelectionInterval(row0, row);
-				    table.repaint();
+			if (resizingRow >= 0) {
+				// resize row
+				int newHeight = y - mouseYOffset;
+				if (newHeight > 0) {
+					table.setRowHeight(resizingRow, newHeight);
+					// set this flag to resize all selected rows on mouse release
+					doRowResize = true; 
+				}
+
+			} else { // select row
+				Point point = table.getIndexFromPixel(x, y);
+				if (point != null) {
+					int row = (int) point.getY();
+					table.setRowSelectionInterval(row0, row);
+					table.repaint();
 				}
 			}
 			
