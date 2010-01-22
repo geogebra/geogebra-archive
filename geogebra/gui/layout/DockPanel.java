@@ -26,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  * Every object which should be dragged needs to be of type DockPanel.
@@ -350,7 +351,8 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 				view = app.getEuclidianView();
 				break;
 			case Application.VIEW_ALGEBRA:
-				view = app.getGuiManager().getAlgebraView();
+				view = new JScrollPane(app.getGuiManager().getAlgebraView());
+				((JScrollPane)view).setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
 				break;
 			case Application.VIEW_SPREADSHEET:
 				view = app.getGuiManager().getSpreadsheetView();
