@@ -17,6 +17,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
@@ -38,6 +39,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -988,7 +991,7 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append("</p>\n");
 		}
 
-		// includ applet tag
+		// include applet tag
 		sb.append("\n\n");
 		sb.append(getAppletTag(ggbFile, appletWidth, appletHeight));
 		sb.append("\n\n");
@@ -1005,11 +1008,45 @@ public class WorksheetExportDialog extends JDialog {
 
 		sb.append("</td></tr>\n");
 		sb.append("</table>");
+		
+		appendJavaScript(sb);
+		
 		sb.append("</body>\n");
 		sb.append("</html>");
 
 		return sb.toString();
 	}
+	
+	private void appendJavaScript(StringBuffer sb) {
+		sb.append("<script type=\"text/javascript\">\n");
+		
+		sb.append("var ggbApplet = document.ggbApplet;\n");
+		sb.append(kernel.getLibraryJavaScript());
+
+		Construction cons = kernel.getConstruction();
+		TreeSet geoSet =  cons.getGeoSetConstructionOrder();
+				
+		Iterator it = geoSet.iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();
+			
+			String script = geo.getJavaScript();
+			if (!script.equals("")) {
+				// for each GeoElement with a JavaScript, create a function call
+				// with the same name as the geo's label (prefixed by ggb)
+				sb.append("\nfunction ggb");
+				sb.append(geo.getLabel());
+				sb.append("() {\n");
+				sb.append("var ggbApplet = document.ggbApplet;\n");
+				sb.append(geo.getJavaScript());
+				sb.append("\n}\n");
+				
+			}
+		}
+		
+		sb.append("\n</script>\n");
+	}
+
 	
 	private String getFooter(Construction cons, boolean JSXGraph) {
 		StringBuilder sb = new StringBuilder();
