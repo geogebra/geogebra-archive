@@ -145,11 +145,9 @@ public class DrawVector extends Drawable implements Previewable {
 		  coordsF[0] = coordsB[0] - coordsV[0];
 		  coordsF[1] = coordsB[1] - coordsV[1];
 		  
-		boolean onscreenF = view.isOnScreen(coordsF);
-		  
         // set clipped line
 		if (line == null) line = new Line2D.Double();
-		if (onscreenA && onscreenF) {
+		if (onscreenA && onscreenB) {
 			// A and B on screen
 			line.setLine(coordsA[0], coordsA[1], coordsF[0], coordsF[1]);
 		} else {
