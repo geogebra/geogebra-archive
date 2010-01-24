@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.main.Application;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellatorCallback;
@@ -83,8 +85,8 @@ public class RendererTesselCallBack implements GLUtessellatorCallback
       String estring;
 
       estring = glu.gluErrorString(errnum);
-      System.err.println("Tessellation Error: " + estring);
-      System.exit(0);
+      Application.debug("Tessellation Error: " + estring);
+      //System.exit(0);
     }
 
     public void beginData(int type, Object polygonData)
