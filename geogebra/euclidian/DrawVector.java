@@ -156,7 +156,7 @@ public class DrawVector extends Drawable implements Previewable {
 			// A or B off screen
 			// clip at screen, that's important for huge coordinates
 			Point2D.Double [] clippedPoints = 
-				Clipping.getClipped(coordsA[0], coordsA[1], coordsF[0], coordsF[1], 0, view.width, 0, view.height);
+				Clipping.getClipped(coordsA[0], coordsA[1], coordsB[0], coordsB[1], 0, view.width, 0, view.height);
 			if (clippedPoints == null) {
 				isVisible = false;	
 			} else {
@@ -170,8 +170,7 @@ public class DrawVector extends Drawable implements Previewable {
 		  else 
 			gp.reset();
 
-		arrowheadVisible = length > 0 && (onscreenF || onscreenB);
-		if (arrowheadVisible) {
+		if (length > 0) {
 			  coordsV[0] /= 4.0;
 			  coordsV[1] /= 4.0;  
 			  
