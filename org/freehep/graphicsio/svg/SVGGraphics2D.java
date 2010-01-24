@@ -266,7 +266,10 @@ public class SVGGraphics2D extends AbstractVectorGraphicsIO {
         setBoundingBox();
         imageNumber = 0;
 
-        os.println("<?xml version=\"1.0\" standalone=\"no\"?>");
+        // Michael Borcherds 2008-06-06
+        // bugfix: added encoding="ISO-8859-1"
+        // as the date can contain accented characters eg június 6
+        os.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
         if (getProperty(VERSION).equals(VERSION_1_1)) {
             // no DTD anymore
         } else {
