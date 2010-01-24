@@ -50,7 +50,7 @@ public class DrawVector extends Drawable implements Previewable {
 	private double [] coordsB = new double[2];   
 	private double [] coordsV = new double[2]; 
     private GeneralPath gp; // for arrow   
-    boolean arrowheadVisible;
+    private boolean arrowheadVisible;
     private ArrayList points;
     
     /** Creates new DrawVector */
@@ -145,9 +145,11 @@ public class DrawVector extends Drawable implements Previewable {
 		  coordsF[0] = coordsB[0] - coordsV[0];
 		  coordsF[1] = coordsB[1] - coordsV[1];
 		  
+		boolean onscreenF = view.isOnScreen(coordsF);
+		  
         // set clipped line
 		if (line == null) line = new Line2D.Double();
-		if (onscreenA && onscreenB) {
+		if (onscreenA && onscreenF) {
 			// A and B on screen
 			line.setLine(coordsA[0], coordsA[1], coordsF[0], coordsF[1]);
 		} else {
@@ -167,7 +169,9 @@ public class DrawVector extends Drawable implements Previewable {
 			 gp = new GeneralPath();
 		  else 
 			gp.reset();
-		if (length > 0) {
+
+		arrowheadVisible = length > 0 && (onscreenF || onscreenB);
+		if (arrowheadVisible) {
 			  coordsV[0] /= 4.0;
 			  coordsV[1] /= 4.0;  
 			  
@@ -197,7 +201,7 @@ public class DrawVector extends Drawable implements Previewable {
             g2.setPaint(v.getObjectColor());
 			g2.setStroke(objStroke);  
 			g2.draw(line);              
-            g2.fill(gp);
+			if (arrowheadVisible) g2.fill(gp);
                                               
             if (labelVisible) {
 				g2.setFont(view.fontVector);

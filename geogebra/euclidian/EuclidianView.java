@@ -948,6 +948,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			
 		return onScreen;
 	}
+	
+	/**
+	 * Checks if (screen) coords are on screen.
+	 * @param coords
+	 * @return
+	 */
+	final public boolean isOnScreen(double [] coords) {
+		return coords[0] >= 0 && coords[0] <= width && coords[1] >=0 && coords[1] <= height;
+	}
 
 	//private static final double MAX_SCREEN_COORD = Float.MAX_VALUE; //10000;
 
