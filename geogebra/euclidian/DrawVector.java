@@ -23,6 +23,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -49,6 +50,7 @@ public class DrawVector extends Drawable implements Previewable {
 	private double [] coordsB = new double[2];   
 	private double [] coordsV = new double[2]; 
     private GeneralPath gp; // for arrow   
+    boolean arrowheadVisible;
     private ArrayList points;
     
     /** Creates new DrawVector */
@@ -165,7 +167,7 @@ public class DrawVector extends Drawable implements Previewable {
 			 gp = new GeneralPath();
 		  else 
 			gp.reset();
-		if (onscreenB && length > 0) {
+		if (length > 0) {
 			  coordsV[0] /= 4.0;
 			  coordsV[1] /= 4.0;  
 			  
@@ -174,6 +176,8 @@ public class DrawVector extends Drawable implements Previewable {
 			  gp.lineTo((float)(coordsF[0] + coordsV[1]), (float)(coordsF[1] - coordsV[0]));
 			  gp.closePath();	
 		}
+		
+		arrowheadVisible = gp.intersects(0,0, view.width, view.height);
     }
     
     public void draw(Graphics2D g2) {
@@ -208,7 +212,7 @@ public class DrawVector extends Drawable implements Previewable {
 		g2.setPaint(v.getObjectColor());
 		g2.setStroke(objStroke);  
 		g2.draw(line);  
-		g2.fill(gp);       
+		if (arrowheadVisible) g2.fill(gp);       
 	}
     
 	final public void updatePreview() {		
@@ -264,7 +268,7 @@ public class DrawVector extends Drawable implements Previewable {
 		if (isVisible) {		
 			g2.setPaint(ConstructionDefaults.colPreview);
 			g2.setStroke(objStroke);  
-			g2.fill(gp);                                    
+			if (arrowheadVisible) g2.fill(gp);                                    
 			g2.draw(line);                                    			      
 		}
 	}
