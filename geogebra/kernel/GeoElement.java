@@ -2694,7 +2694,7 @@ public abstract class GeoElement
 	
 	public String addLabelTextOrHTML(String desc) {
 		String ret; 
-		if (desc.startsWith(label)) {
+		if (desc.startsWith(label+" ")) {
 			ret = desc;
 		} else {
 			StringBuilder sb = new StringBuilder();
