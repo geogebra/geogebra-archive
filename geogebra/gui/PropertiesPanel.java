@@ -3077,8 +3077,39 @@ public	class PropertiesPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
 		private JRadioButton[] buttons;
+		private JComboBox cbStyle;  //G.Sturr 2010-1-24
 		
 		public PointStylePanel() {
+
+			//G.STURR 2010-1-24 
+			// Point styles were previously displayed with fonts,
+			// but not all point styles had font equivalents. This is
+			// now replaced by a comboBox holding rendered point styles 
+			// and radio buttons to select default or custom point style.
+			
+			PointStyleListRenderer renderer = new PointStyleListRenderer();
+			renderer.setPreferredSize(new Dimension(18,18));		
+			cbStyle = new JComboBox(EuclidianView.getPointStyles());
+			cbStyle.setRenderer(renderer);
+			cbStyle.setMaximumRowCount(EuclidianView.MAX_POINT_STYLE+1);
+			cbStyle.setBackground(getBackground());
+			cbStyle.addActionListener(this);
+			
+			buttons = new JRadioButton[2];
+			buttons[0] = new JRadioButton(app.getPlain("Default"));			
+			buttons[0].setActionCommand("default");
+			buttons[0].addActionListener(this);
+			buttons[1] = new JRadioButton();
+			add(buttons[0]);
+			add(buttons[1]);
+			
+			ButtonGroup buttonGroup = new ButtonGroup();
+			buttonGroup.add(buttons[0]);
+			buttonGroup.add(buttons[1]);
+			
+			add(cbStyle);
+		
+			/* ----- old code
 			ButtonGroup buttonGroup = new ButtonGroup();
 			
 			String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716" };
@@ -3097,6 +3128,10 @@ public	class PropertiesPanel extends JPanel {
 				buttonGroup.add(buttons[i]);
 				add(buttons[i]);
 			}		
+			*/
+			
+			//END G.STURR
+			
 		}
 
 		public void setLabels() {
@@ -3113,12 +3148,34 @@ public	class PropertiesPanel extends JPanel {
 			//	set value to first point's style 
 			PointProperties geo0 = (PointProperties) geos[0];
 
+
+			//G.STURR 2010-1-24: 
+			// update comboBox and radio buttons
+			cbStyle.removeActionListener(this);
+			if(geo0.getPointStyle() == -1){   
+				// select default button
+				buttons[0].setSelected(true);
+				cbStyle.setSelectedIndex(app.getEuclidianView().getPointStyle());
+				
+			} else {   
+				// select custom button and set combo box selection
+				buttons[1].setSelected(true);
+				cbStyle.setSelectedIndex(geo0.getPointStyle());
+			}
+			cbStyle.addActionListener(this);
+		
+			
+			/* ----- old code to update radio button group			  
 			for(int i = 0; i < buttons.length; ++i) {
 				if(Integer.parseInt(buttons[i].getActionCommand()) == geo0.getPointStyle())
 					buttons[i].setSelected(true);
 				else
 					buttons[i].setSelected(false);
 			}
+			*/
+			
+			//END G.STURR
+			
 			
 			return this;
 		}
@@ -3137,7 +3194,27 @@ public	class PropertiesPanel extends JPanel {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			int style = Integer.parseInt(e.getActionCommand());
+			
+			//G.STURR 2010-1-24: 
+			//Handle comboBox and radio button clicks
+			
+			//int style = Integer.parseInt(e.getActionCommand());
+			int style = -1;
+			   // comboBox click
+			if (e.getSource() == cbStyle){
+				style = cbStyle.getSelectedIndex();
+				buttons[1].removeActionListener(this);
+				buttons[1].setSelected(true);
+				buttons[1].addActionListener(this);
+			}	
+			   // default button click	
+			if (e.getActionCommand()=="default"){	
+				cbStyle.removeActionListener(this);
+				cbStyle.setSelectedIndex(app.getEuclidianView().getPointStyle());
+				cbStyle.addActionListener(this);
+			}	
+			// END G.STURR	
+			
 			
 			PointProperties point;
 			for (int i = 0; i < geos.length; i++) {
