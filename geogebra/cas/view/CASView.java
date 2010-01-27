@@ -42,8 +42,8 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	private CASTable consoleTable;
 	private CASInputHandler casInputHandler;
 
-	private Application app;
 	private GeoGebraCAS cas;
+	private Application app;
 	private JPanel btPanel;
 	
 
@@ -51,9 +51,9 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		kernel = app.getKernel();
 		this.app = app;
 		
-		// init cas
-		initCAS();	
-	
+		// init CAS
+		getCAS();
+
 		// CAS input/output cells
 		createCASTable();	
 		
@@ -178,7 +178,11 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		return useGeoGebraVariableValues;
 	}
 
-	public GeoGebraCAS getCAS() {
+	final public GeoGebraCAS getCAS() {
+		if (cas == null) {
+			cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();
+		}
+		
 		return cas;
 	}
 
@@ -341,13 +345,10 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	 * Defines new functions in the CAS 
 	 */
 	public void add(GeoElement geo) {
-		// TODO: remove
-		System.out.println("CASview.add: " + geo);
-		
 		try {
 			if (geo.isGeoFunction()) {
-				String funStr = cas.toMathPiperString((GeoFunction) geo);
-				cas.evaluateMathPiper(funStr);
+				String funStr = getCAS().toMathPiperString((GeoFunction) geo);
+				getCAS().evaluateMathPiper(funStr);
 			}
 		} catch (Throwable e) {
 			System.err.println("CASView.add: " + geo + ", " +  e.getMessage());
@@ -358,18 +359,15 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	 * Removes function definitions from the CAS 
 	 */
 	public void remove(GeoElement geo) {
-		// TODO: remove
-		System.out.println("CASView.remove: " + geo);
-		
-		try {
-			if (geo.isGeoFunction()) {
-				StringBuilder sb = new StringBuilder("Clear(");
-				sb.append(geo.getLabel());
-				sb.append(')');
-				cas.evaluateMathPiper(sb.toString());
-			}
-		} catch (Throwable e) {
-			System.err.println("CASView.remove: " + geo + ", " + e.getMessage());
+		removeFromMathPiper(geo.getLabel(), geo.isGeoFunction());
+	}
+	
+	/**
+	 * Removes function definitions in the CAS 
+	 */
+	public void update(GeoElement geo) {
+		if (geo.isGeoFunction()) {
+			add(geo);
 		}
 	}
 
@@ -377,13 +375,39 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	 * Renames function definitions in the CAS 
 	 */
 	public void rename(GeoElement geo) {
-		if (geo.isGeoFunction()) {
-			remove(geo);
-			add(geo);
+		// remove old function name from MathPiper
+		removeFromMathPiper(geo.getOldLabel(), geo.isGeoFunction());
+		
+		// add new function name to MathPiper
+		add(geo);
+	}
+	
+	/**
+	 * Removes variables and and functions with name geoLabel from MathPiper.
+	 * @param geoLabel
+	 */
+	private void removeFromMathPiper(String geoLabel, boolean isFunction) {
+		StringBuilder sb = new StringBuilder();
+		
+		if (isFunction) {
+			// clear function variable, e.g. Retract("f", *)
+			sb.append("Retract(\"");
+			sb.append(geoLabel);
+			sb.append("\", *)");	
+		} else {
+			// standard case: clear variable, e.g. Unbind(f)
+			sb.append("Unbind(");
+			sb.append(geoLabel);
+			sb.append(")");
 		}
+		
+		getCAS().evaluateMathPiper(sb.toString());
 	}
 
 	public void clearView() {
+		// TODO: restart cas
+		// cas.restart();
+		
 		// delete all rows
 		consoleTable.deleteAllRows();
 		
@@ -400,7 +424,6 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	}
 
 	
-
 	public void repaintView() {
 		consoleTable.updateAllRows();
 		validate();
@@ -410,36 +433,18 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		repaintView();
 	}
 
-	public void update(GeoElement geo) {
-	}
-
 	public void updateAuxiliaryObject(GeoElement geo) {
 	}
 
 	public void attachView() {
-		// TODO: remove
-		System.out.println("attach CAS view");
-		
-		// make sure CAS is ready
-		initCAS();
+		clearView();
+		kernel.notifyAddAll(this);
 		kernel.attach(this);
-	}
-	
-	private void initCAS() {
-		if (cas == null) {
-			cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();	
-		}
 	}
 
 	public void detachView() {
-		// TODO: remove
-		System.out.println("detach CAS view");
-		
 		kernel.detach(this);
-		
-		// clear CAS
-		kernel.clearGeoGebraCAS();
-		initCAS();
+		clearView();
 	}
 
 

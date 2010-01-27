@@ -426,14 +426,6 @@ public class Kernel {
 	}
 	
 	/**
-	 * Returns this kernel's GeoGebraCAS object.
-	 */
-	public synchronized void clearGeoGebraCAS() {
-		ggbCAS = null;
-		System.gc();
-	}
-	
-	/**
      * Finds the polynomial coefficients of
      * the given expression and returns it in ascending order. 
      * If exp is not a polynomial null is returned.
@@ -986,12 +978,12 @@ public class Kernel {
 		if (animationManager != null) {
 			animationManager.stopAnimation();
 			animationManager.clearAnimatedGeos();
-		}				
-		
-	
+		}
+				
 		cons.clearConstruction();
 		notifyClearView();
 		notifyRepaint();
+
 		System.gc();
 	}
 
@@ -1155,14 +1147,14 @@ public class Kernel {
 		}			
 	}	
 	
-	/*
-	final public void notifyRemoveAll(View view) {
-		Collection geos = cons.getAllGeoElements();
-		Iterator it = geos.iterator();
-		while (it.hasNext()) {
-			view.remove((GeoElement) it.next());
-		}
-	}*/
+
+//	final public void notifyRemoveAll(View view) {
+//		Iterator it = cons.getGeoSetConstructionOrder().iterator();
+//		while (it.hasNext()) {
+//			GeoElement geo = (GeoElement) it.next();
+//			view.remove(geo);
+//		}	
+//	}
 
 	/**
 	 * Tells views to update all labeled elements of current construction.

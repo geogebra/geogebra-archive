@@ -166,7 +166,7 @@ public class GeoGebraCAS {
 	 * Initialize special commands needed in our ggbMathPiper instance,e.g.
 	 * getPolynomialCoeffs(exp,x).
 	 */
-	private synchronized boolean initMyMathPiperFunctions() {
+	private synchronized boolean initMyMathPiperFunctions() {		
 // Expand expression and get polynomial coefficients using MathPiper:
 //		getPolynomialCoeffs(expr,x) :=
 //			       If( CanBeUni(expr),
@@ -428,7 +428,7 @@ public class GeoGebraCAS {
 	 * @return result as String in GeoGebra syntax
 	 */
 	public synchronized String processCASInput(String inputExp, boolean useGeoGebraVariables) throws Throwable {
-		// PARSE input to check if it's valid expression
+		// PARSE input to check if it's a valid expression
 		ValidExpression inVE = parseGeoGebraCASInput(inputExp);
 					
 		// EVALUATE input expression with MathPiper
@@ -444,14 +444,17 @@ public class GeoGebraCAS {
 		
 		// check some things
 		boolean assignment = inVE.getLabel() != null;
+		boolean delete = inputExp.startsWith("Delete");
 		boolean mathPiperSuccessful = mathPiperResult != null;
 		boolean mathPiperResultContainsCommands = mathPiperResult != null && mathPiperResult.indexOf('[') > -1;
 		
 		// EVALUATE input expression in GeoGebra if we have
 		// - an assignments (e.g. a := 5, f(x) := x^2)
+		// - or Delete, e.g. Delete[a]
 		// - or MathPiper was not successful
 		// - or MathPiper result contains commands
-		boolean evalInGeoGebra = useGeoGebraVariables && (assignment || !mathPiperSuccessful || mathPiperResultContainsCommands); 
+		boolean evalInGeoGebra = useGeoGebraVariables && 
+			(assignment || delete || !mathPiperSuccessful || mathPiperResultContainsCommands); 
 		String ggbResult = null;
 		if (evalInGeoGebra) {
 			// EVALUATE inputExp in GeoGebra
@@ -476,13 +479,25 @@ public class GeoGebraCAS {
 		// return result string:
 		// use MathPiper if that worked, otherwise GeoGebra
 		if (mathPiperSuccessful) {
-			// MathPiper evaluation worked
-			return mathPiperResult;
+			if (assignment && "true".equals(mathPiperResult)) {
+				// MathPiper returned true: use ggbResult if we have one, otherwise return ""
+//				if (ggbResult != null) {
+//					return ggbResult;
+//				} else {
+					return "";
+//				}
+			} 
+			else {
+				// MathPiper evaluation worked
+				return mathPiperResult;
+			}	
 		} 
+		
 		else if (ggbResult != null) {
 			// GeoGebra evaluation worked
 			return ggbResult;
 		}
+		
 		else {
 			// nothing worked
 			throw throwable;

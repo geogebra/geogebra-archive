@@ -80,6 +80,7 @@ public class CASInputHandler {
 			cellValue.setInput(newText);
 		}
 		
+		// Substitute dialog
 		if (ggbcmd.equals("SubstituteDialog")) {
 			// show substitute dialog
 			CASSubDialog d = new CASSubDialog(casView, prefix, evalText, postfix, selRow);
