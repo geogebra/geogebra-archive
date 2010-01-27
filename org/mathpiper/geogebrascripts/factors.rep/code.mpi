@@ -1,0 +1,2001 @@
+
+LocalSymbols(lastcoef,OrdBuild, AddFoundSolutionSingle , AddFoundSolution, Fct, MkfactD,p)
+[
+
+LastCoef(_vector,_p) <--
+[
+  Local(n);
+  n:=Length(vector);
+  Add(vector*p^(0 .. (n-1)));
+];
+
+
+
+OrdBuild(vector,q):=
+[
+  Local(i,result,n);
+  Set(i,2);
+  Set(result, 0);
+  Set(n, Length(vector));
+  While (i<=n)
+  [
+    Set(result,result+(i-1)*vector[i]*p^(i-2));
+    Set(i, i+2);
+  ];
+  q*result;
+];
+
+
+Function(AddFoundSolutionSingle,{p})
+[
+  Local(calc);
+
+
+    Set(calc, Eval(lastcoef));
+    If (IsEqual(calc, 0),
+    [
+      Local(newlist,count,root);
+      count:=0;
+      root := p;
+      Local(rem);
+
+      rem:={-root,1};
+      {testpoly,rem}:=MkfactD(testpoly,rem);
+
+      rem:={-root,1};
+      {newlist,rem}:=MkfactD(poly,rem);
+      While (rem = {})
+      [
+        count++;
+        Set(poly,newlist);
+        rem:={-root,1};
+        {newlist,rem}:=MkfactD(poly,rem);
+      ];
+
+      Local(lgcd,lc);
+      Set(lgcd,Gcd({andiv,an,root}));
+      Set(lc,Quotient(an,lgcd));
+      Set(result,{var+ (-(Quotient(root,lgcd)/lc)),count}:result);
+      Set(andiv,Quotient(andiv,lgcd^count));
+      Set(anmul,anmul*lc^count);
+
+
+
+
+      Local(p,q);
+      Set(lastcoef, LastCoef(testpoly,p));
+      Set(ord, OrdBuild(testpoly,q));
+    ]);
+
+];
+UnFence(AddFoundSolutionSingle,1);
+
+Function(AddFoundSolution,{p})
+[
+  AddFoundSolutionSingle(p);
+  AddFoundSolutionSingle(-2*q+p);
+];
+UnFence(AddFoundSolution,1);
+
+Function(Fct,{poly,var})
+[
+  Local(maxNrRoots,result,ord,p,q,accu,calc,twoq,mask);
+
+  Local(gcd);
+  [
+    Set(gcd,Gcd(poly));
+    If(poly[Length(poly)] < 0,Set(gcd, gcd * -1));
+    Set(poly,poly/gcd);
+  ];
+
+  Local(unrat);
+  Set(unrat,Lcm(MapSingle("Denominator",poly)));
+  Set(poly,unrat*poly);
+
+  Local(origdegree);
+  Set(origdegree,Length(poly)-1);
+
+  Local(an,andiv,anmul);
+  Set(an,poly[Length(poly)]);
+  Set(poly,poly* (an^((origdegree-1) .. -1)));
+  Set(andiv,an^(origdegree-1));
+  Set(anmul,1);
+
+  Local(leadingcoef,lowestcoef);
+  Set(leadingcoef,poly[Length(poly)]);
+  [
+    Local(i);
+    Set(i,1);
+    Set(lowestcoef,Abs(poly[i]));
+    While (lowestcoef = 0 And i<=Length(poly))
+    [
+      Set(i,i+1);
+      Set(lowestcoef,Abs(poly[i]));
+    ];
+  ];
+  
+  
+  
+  Local(testpoly);
+
+  Local(deriv);
+  
+  deriv:=Rest(poly);
+  [
+    Local(i);
+    For (i:=1,i<=Length(deriv),i++)
+    [
+      deriv[i] := deriv[i]*i;
+    ];
+
+
+  ];
+  [
+    Local(q,r,next);
+    q:=poly;
+    r:=deriv;
+    While(r != {})
+    [
+
+      next := MkfactD(q,r)[2];
+      q:=r;
+      r:=next;
+    ];
+    
+
+    
+    q:=q/q[Length(q)];
+    testpoly:=MkfactD(poly,q)[1];
+
+  ];
+
+
+
+  Set(maxNrRoots,Length(testpoly)-1);
+  Set(result, {});
+
+  Set(lastcoef, LastCoef(testpoly,p));
+  Set(ord, OrdBuild(testpoly,q));
+
+  Set(accu,{});
+  Set(q,1);
+  Set(twoq,MultiplyN(q,2));
+  Set(mask,AddN(twoq,MathNegate(1)));
+  if (IsEven(testpoly[1]))
+  [
+    Set(accu,0:accu);
+    AddFoundSolutionSingle(0);
+  ];
+  Set(p,1);
+  Set(calc, Eval(lastcoef));
+  If (IsEven(calc),
+  [
+    Set(accu,1:accu);
+    AddFoundSolution(1);
+  ]);
+  Set(q,twoq);
+  Set(twoq,MultiplyN(q,2));
+  Set(mask,AddN(twoq,MathNegate(1)));
+  While(Length(result)<maxNrRoots And Length(accu)>0 And q<=Abs(testpoly[1]))
+  [
+    Local(newaccu);
+    Set(newaccu,{});
+    ForEach(p,accu)
+    [
+      Set(calc,Eval(lastcoef));
+      If (IsLessThan(calc,0),
+        Set(calc, AddN(calc,MultiplyN(twoq,QuotientN(AddN(MathNegate(calc),twoq),twoq))))
+         );
+      Set(calc, BitAnd(calc, mask));
+      If ( IsEqual(calc, 0),
+      [
+        Set(newaccu, p:newaccu);
+        AddFoundSolutionSingle(-2*q+p);
+      ]);
+      Set(calc, AddN(calc, Eval(ord)));
+      If (IsLessThan(calc,0),
+        Set(calc, AddN(calc,MultiplyN(twoq,QuotientN(AddN(MathNegate(calc),twoq),twoq))))
+         );
+      Set(calc, BitAnd(calc, mask));
+      If ( IsEqual(calc, 0),
+      [
+        Set(newaccu, AddN(p,q):newaccu);
+        AddFoundSolution(AddN(p,q));
+      ]);
+    ];
+    Set(accu, newaccu);
+    Set(q,twoq);
+    Set(twoq,MultiplyN(q,2));
+    Set(mask,AddN(twoq,MathNegate(1)));
+
+
+
+
+  ];
+
+  
+  
+  Set(poly,poly*an^(0 .. (Length(poly)-1)));
+  Set(poly,gcd*anmul*poly);
+  
+  If(Not IsZero(unrat * andiv ),Set(poly,poly/(unrat * andiv )));
+  If(poly != {1},
+  [
+    result:={(Add(poly*var^(0 .. (Length(poly)-1)))),1}:result;
+  ]);
+  result;
+];
+
+
+
+BinaryFactors(expr):=
+[
+  Local(result,uni,coefs);
+  uni:=MakeUni(expr,VarList(expr)[1]);
+  uni:=FunctionToList(uni);
+  coefs:=uni[4];
+  coefs:=Concat(ZeroVector(uni[3]),coefs);
+  result:=Fct(coefs,uni[2]);
+
+
+
+  result;
+];
+
+
+
+MkfactD(numer,denom):=
+[
+  Local(q,r,i,j,ln,ld,nq);
+  DropEndZeroes(numer);
+  DropEndZeroes(denom);
+  Set(numer,Reverse(numer));
+  Set(denom,Reverse(denom));
+  Set(ln,Length(numer));
+  Set(ld,Length(denom));
+  Set(q,FillList(0,ln));
+  Set(r,FillList(0,ln));
+
+  Set(i,1);
+  If(ld>0,
+  [
+    While(Length(numer)>=Length(denom))
+    [
+      Set(nq,numer[1]/denom[1]);
+      q[ln-(Length(numer)-ld)] := nq;
+      For(j:=1,j<=Length(denom),j++)
+      [
+        numer[j] := (numer[j] - nq*denom[j]);
+      ];
+      r[i] := r[1] + numer[1];
+
+      Set(numer, Rest(numer));
+      i++;
+    ];
+  ]);
+  For(j:=0,j<Length(numer),j++)
+  [
+    r[i+j] := r[i+j] + numer[j+1];
+  ];
+  Set(q,Reverse(q));
+  Set(r,Reverse(r));
+  DropEndZeroes(q);
+  DropEndZeroes(r);
+  {q,r};
+];
+
+]; 
+
+
+
+
+
+
+5  # FW(_list)_(Length(list) = 0) <-- 1;
+10 # FW(_list)_(Length(list) = 1) <-- FWatom(list[1]);
+20 # FW(_list) <--
+[
+  Local(result);
+  result:=FWatom(First(list));
+  ForEach(item,Rest(list))
+  [
+   result := ListToFunction({ ToAtom("*"),result,FWatom(item)});
+  ];
+  result;
+];
+
+
+10 # FWatom({_a,1}) <-- a;
+20 # FWatom({_a,_n}) <-- ListToFunction({ToAtom("^"),a, n});
+
+
+
+
+
+
+
+
+
+Factor(_x) <-- xFactor(x);
+
+
+Retract("FactorCancel",*);
+
+10 # FactorCancel( p_IsRationalFunction ) <--
+[
+    Local(fs,n,d,tnu,newn,newd,s);
+    fs := xFactors( p );
+    n  := Numerator(fs);
+    d  := Denominator(fs);
+    ForEach(f,d) [ DestructiveAppend(n,{f[1],-f[2]}); ];
+    tnu := RemoveDuplicates(Transpose(n)[1]);
+    newn := {};
+    newd := {};
+    ForEach(f,tnu)
+    [
+       s := Select(n,Lambda({X},X[1]=f));
+       k := Sum(Transpose(s)[2]);
+       If( k > 0, DestructiveAppend(newn,{f,k}) );
+       If( k < 0, DestructiveAppend(newd,{f,-k}) );
+    ];
+    FW(newn)/FW(newd);
+];
+
+15 # FactorCancel( _p ) <-- p;
+
+
+
+
+
+
+Function("FactorQS",{n})[
+	Local(x,k,fb,j);
+	
+	
+	k:=Round(N(Sqrt(Exp(Sqrt(Ln(n)*Ln(Ln(n)))))));
+	fb:=ZeroVector(k);
+	For(j:=1,j<=k,j++)[
+		fb[j]:=NextPrime(j);
+	];
+];
+
+
+
+
+
+
+1# FactorizeInt(0) <-- {};
+1# FactorizeInt(1) <-- {};
+
+3# FactorizeInt(n_IsInteger) <--
+[
+  Local(small'powers);
+  n := Abs(n);	
+  
+  
+  If(
+  	Gcd(ProductPrimesTo257(), n) > 1,	
+	small'powers := TrialFactorize(n, 257),	
+	small'powers := {n}	
+  );
+  n := small'powers[1];	
+  If(n=1, Rest(small'powers),
+  
+	  [
+	  	
+		SortFactorList(
+	  	  PollardCombineLists(Rest(small'powers), PollardRhoFactorize(n))
+		);
+	  ]
+  );
+];
+
+
+
+
+
+
+
+
+
+Factors(_x) <-- xFactors(x);
+
+
+Retract("FactorsBinomials",*);
+
+10 # FactorsBinomials( _x + y_IsFreeOf(x) ) <-- {x+y,1};
+
+10 # FactorsBinomials( _x - y_IsFreeOf(x) ) <-- {x-y,1};
+
+10 # FactorsBinomials( c_IsConstant * _x + y_IsFreeOf(x) ) <-- {c*x+y,1};
+
+10 # FactorsBinomials( c_IsConstant * _x - y_IsFreeOf(x) ) <-- {c*x-y,1};
+
+10 # FactorsBinomials( _x^m_IsOdd + _y ) <--
+[
+    If(InVerboseMode(),Tell("FactorsBinomialssum",{x,m,y}));
+    Local(nn,qq);
+    nn := (m-1)/2;
+    qq := (y^(1/m));
+    If(InVerboseMode(),Tell("  FBinsum1",{nn,qq}));
+    r := {{x+qq,1},{Sum(k,0,m-1,(-1)^k*qq^k*x^(m-1-k)),1}};
+];
+
+
+12 # FactorsBinomials( c_IsConstant * _x^m_IsOdd + _y ) <--
+[
+    If(InVerboseMode(),Tell("FactorsBinomialssum",{c,x,m,y}));
+    Local(nn,qq);
+    nn := (m-1)/2;
+    qq := ((y/c)^(1/m));
+    If(InVerboseMode(),Tell("  FBinsum.1b",{nn,qq}));
+    If( c=1,
+          r := {{x+qq,1},{Sum(k,0,m-1,(-1)^k*qq^k*x^(m-1-k)),1}},
+          r := {{c,1},{x+qq,1},{Sum(k,0,m-1,(-1)^k*qq^k*x^(m-1-k)),1}}
+    );  
+];
+
+
+10 # FactorsBinomials( _x^m_IsInteger - _y ) <--
+[
+    If(InVerboseMode(),Tell("FactorsBinomialsdif",{x,m,y}));
+    Local(pp,qq,r,L);
+    pp := m-1;
+    qq := (y^(1/m));
+    If(IsNumber(y),qq:=GuessRational(N(qq)));
+    If(InVerboseMode(),Tell("  FBindif.1",{pp,qq}));
+    
+    if      (m = 2)
+        [
+            L := FunctionToList(y);
+            If(And(L[1]=ToAtom("^"),L[3]=2),qq:=L[2]);
+            r := {{x+qq,1},{x-qq,1}};
+        ]
+    else if (m = 4)
+        [r := {{x+qq,1},{x-qq,1},{x^2+qq^2,1}};]
+    else if (m = 6)
+        [r := {{x+qq,1},{x-qq,1},{x^2+x*qq+qq^2,1},{x^2-x*qq+qq^2,1}};]
+    else
+        [r := {{x-qq,1},{Sum(k,0,pp,qq^k*x^(pp-k)),1}};];
+    r;
+];
+
+
+12 # xFactorsBinomials( c_IsConstant * _x^m_IsInteger - _y ) <--
+[
+    If(InVerboseMode(),Tell("FactorsBinomialsdif",{c,x,m,y}));
+    Local(aa,bb,c0,r);
+    aa := c^(1/m);
+    bb := ((y)^(1/m));
+    If(IsNumber(y),bb:=GuessRational(N(bb)));
+    If(InVerboseMode(),Tell("  FBindif.1b",{aa,bb}));
+    r  := FactorsBinomials( (aa*x)^m - bb^m );
+];
+
+
+Retract("FactorsMonomial",*);
+
+10 # FactorsMonomial(expr_IsMonomial) <--
+[
+  If(InVerboseMode(),Tell("FactorsMonomial",expr));
+  Local(den,num,Ns,flat,prod,quot,result,f,ff);
+  If( IsRationalFunction(expr),
+    [
+      den := Denominator(expr);
+      num := Flatten(Numerator(expr),"*");
+    ],
+    [
+      den := 1;
+      num := Flatten(expr,"*");
+    ]
+  );
+  If(InVerboseMode(),Tell("     ",{num,den}));
+  Ns  := Select(num, "IsComplex");
+  If(InVerboseMode(),Tell("     ",Ns));
+  If( Ns = {},
+       If( den != 1, DestructiveInsert(num,1,1/den)),
+       DestructiveReplace(num,Find(num,Ns[1]),Ns[1]/den)
+  );
+  If(InVerboseMode(),Tell("     ",num));
+  result := {};
+  ForEach(f,num)
+  [
+      If( IsComplex(f), 
+          DestructiveAppend(result,{(f),1}),
+          If( IsAtom(f),
+              DestructiveAppend(result,{f,1}),
+              DestructiveAppend(result,DestructiveDelete(FunctionToList(f),1))
+          )
+      );
+  ];
+  result;
+];
+
+
+Retract("FactorsPolynomialOverIntegers",*);
+Retract("TryToReduceSpecialPolynomial",*);
+
+
+
+10 # FactorsPolynomialOverIntegers(_expr)_IsPolynomialOverIntegers(expr) <--
+[
+    Local(x);
+    x := VarList(expr)[1];
+    FactorsPolynomialOverIntegers(expr,x);
+
+];
+
+15 # FactorsPolynomialOverIntegers(_expr) <-- expr;
+
+
+10 # FactorsPolynomialOverIntegers(_expr,_var)_(IsPolynomialOverIntegers(expr,var)) <--
+[
+    Local(factorsList,factListTransp,factrs,multiplicities,factrsUnMonic);
+    Local(polyFactors,normalizations,normDivisor,polyFactors,factList);
+    Local(n,result,newResult,gtotal,r,rr,d,g);
+    factorsList := BinaryFactors(expr);
+    
+    
+    
+    
+    
+    
+    
+    factListTransp := Transpose(factorsList);
+    factrs := factListTransp[1];
+    multiplicities := factListTransp[2];
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    factrsUnMonic := MapSingle("Together",factrs);
+        
+    
+    
+    
+    
+    
+    
+    
+    {polyFactors,normalizations}:=Transpose(MapSingle("GetNumerDenom",factrsUnMonic));
+        
+    
+    
+    
+    
+    
+    
+    
+            
+    normDivisor := Product(Map("^",{normalizations,multiplicities}));
+    
+    
+    
+    
+    
+    
+    
+    
+    polyFactors[1] := Simplify(polyFactors[1]/normDivisor);
+    
+    
+    
+    
+    factListTransp[1] := polyFactors;
+    factList := Transpose(factListTransp);
+    
+    
+    
+    result := factList;
+    
+    
+    Local(newResult,gtotal,d,g,rr);
+    newResult := {};
+    gtotal    := 1;
+    ForEach(r,result) [
+        d := Degree(r[1],var);
+        g := Gcd(Coef(r[1],var,0 .. d));
+        If( g > 1,   
+               [ gtotal:=g*gtotal; 
+                 r[1]:=Simplify(r[1]/g);
+               ]
+          );
+        If(d > 2,
+            [
+                
+                rr := TryToReduceSpecialPolynomial(r[1]);
+                If( IsList(rr),newResult := Concat(newResult,rr) );
+            ],
+                If( r != {1,1}, newResult := r:newResult )
+          );
+    ];  
+    If(gtotal>1,newResult:={gtotal,1}:newResult);    
+    newResult;
+];
+
+
+
+
+
+
+ 
+10 # TryToReduceSpecialPolynomial(_x^4+_x^2+1) <-- {{x^2+x+1,1},{x^2-x+1,1}};
+
+10 # TryToReduceSpecialPolynomial(_x^6-1) <-- {{x+1,1},{x-1,1},{x^2+x+1,1},{x^2-x+1,1}};
+
+
+
+
+Retract("FactorsSmallInteger",*);
+
+10 # FactorsSmallInteger( N_IsInteger ) <--
+[
+	Local(n, power, prime, result, limit);
+    n      := Abs(N);         
+    limit  := Ceil(SqrtN(n)); 
+	prime  := 2;	          
+    result := {};
+	While( prime <= limit And n > 1 And prime*prime <= n )
+	[	
+		{n, power} := FindPrimeFactor(n, prime);
+		If(	power > 0,	DestructiveAppend(result, {prime,power}) );
+		prime := NextPseudoPrime(prime);	
+	];
+	
+	If( n > 1, DestructiveAppend(result, {n,1}) );
+    result;
+];
+
+
+
+
+
+
+
+FindPrimeFactor(n, prime) :=
+[
+	Local(power, factor, old'factor, step);
+	power := 1;
+	old'factor := 1;	
+	factor := prime;
+	
+	While(Modulo(n, factor)=0)	
+	[
+		old'factor := factor;	
+		factor := factor^2;
+		power := power*2;
+	];
+	power := Quotient(power,2);
+	factor := old'factor;
+	n := Quotient(n, factor);
+	
+	step := Quotient(power,2);
+	While(step>0 And n > 1)
+	[
+		factor := prime^step;
+		If(
+			Modulo(n, factor)=0,
+			[
+				n := Quotient(n, factor);
+				power := power + step;
+			]
+		);
+		step := Quotient(step, 2);
+	];
+	{n, power};
+];
+
+
+
+
+
+FindPrimeFactorSimple(n, prime) :=
+[
+	Local(power, factor);
+	power := 0;
+	factor := prime;
+	While(Modulo(n, factor)=0)
+	[
+		factor := factor*prime;
+		power++;
+	];
+	{n/(factor/prime), power};
+];
+
+
+Retract("CanBeMonomial",*);
+Retract("IsMonomial",*);
+Retract("FactorsMonomial",*);
+
+10 # CanBeMonomial(_expr)<--Not (HasFunc(expr,ToAtom("+")) Or HasFunc(expr,ToAtom("-")));
+
+10 # IsMonomial(expr_CanBeMonomial) <-- 
+[
+    Local(r);
+    If( IsRationalFunction(expr),
+        r := (VarList(Denominator(expr)) = {}),
+        r := True
+    );
+];
+
+15 # IsMonomial(_expr) <-- False;
+
+
+10 # FactorsMonomial(expr_IsMonomial) <--
+[
+  If(InVerboseMode(),Tell("FactorsMonomial",expr));
+  Local(den,num,Ns,flat,prod,quot,result,f,ff);
+  If( IsRationalFunction(expr),
+    [
+      den := Denominator(expr);
+      num := Flatten(Numerator(expr),"*");
+    ],
+    [
+      den := 1;
+      num := Flatten(expr,"*");
+    ]
+  );
+  If(InVerboseMode(),Tell("     ",{num,den}));
+  Ns  := Select(num, "IsComplex");
+  If(InVerboseMode(),Tell("     ",Ns));
+  If( Ns = {},
+       If( den != 1, DestructiveInsert(num,1,1/den)),
+       DestructiveReplace(num,Find(num,Ns[1]),Ns[1]/den)
+  );
+  If(InVerboseMode(),Tell("     ",num));
+  result := {};
+  ForEach(f,num)
+  [
+      If( IsComplex(f), 
+          DestructiveAppend(result,{(f),1}),
+          If( IsAtom(f),
+              DestructiveAppend(result,{f,1}),
+              DestructiveAppend(result,DestructiveDelete(FunctionToList(f),1))
+          )
+      );
+  ];
+  result;
+];
+
+
+
+
+10 # Roots(poly_CanBeUni) <--
+[
+  Local(factors,result,uni,root,i,deg);
+  factors:=Factors(poly);
+  result:={};
+  ForEach(item,factors)
+  [
+    uni:=MakeUni(item[1]);
+    deg:=Degree(uni);
+    If(deg > 0 And deg < 3,
+      [
+        root:= PSolve(uni);
+        If(Not IsList(root),root:={root});
+        For(i:=0,i<item[2],i++)
+          result:= Concat(root, result);
+      ]
+      );
+  ];
+  result;
+];
+
+
+
+
+10 # RootsWithMultiples(poly_CanBeUni) <--
+[
+  Local(factors,result,uni,root,i,deg);
+  factors:=Factors(poly);
+  result:={};
+  ForEach(item,factors)
+  [
+    uni:=MakeUni(item[1]);
+
+    deg:=Degree(uni);
+    If(deg > 0 And deg < 3,
+      [
+        root:= PSolve(uni);
+        If(Not IsList(root),root:={root});
+        For(i:=1,i<=Length(root),i++)
+          result:= Concat({{root[i],item[2]}}, result);
+      ]
+      );
+  ];
+  result;
+];
+
+
+
+LocalSymbols(a,b, list) [
+
+SortFactorList(list) := HeapSort(list, {{a,b}, a[1]<b[1]});
+
+];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TrialFactorize(n, limit) :=
+[
+	Local(power, prime, result);
+	result := {n};	
+	prime := 2;	
+	While(prime <= limit And n>1 And prime*prime <= n)
+	[	
+		{n, power} := FindPrimeFactor(n, prime);
+		If(
+			power>0,
+			DestructiveAppend(result, {prime,power})
+		);
+		prime := NextPseudoPrime(prime);	
+	];
+	
+	DestructiveReplace(result, 1, n);
+];
+
+
+
+
+
+
+10 # YacasFactor(p_CanBeUni) <-- FW(YacasFactors(p));
+
+
+Retract("YacasFactors",*);
+Retract("FactorsMultivariateSpecialCases",*);
+Retract("FactorsSomethingElse",*);
+Retract("CombineNumericalFactors",*);
+
+
+ 
+
+10 # YacasFactors(p_IsPositiveInteger) <--  FactorizeInt(p);
+
+11 # YacasFactors(p_IsInteger) <-- FactorizeInt(p);
+
+12 # YacasFactors(p_IsRational)_(Denominator(p) != 1) <-- {{YacasFactor(Numerator(p)) /YacasFactor(Denominator(p)) , 1}}; 
+     
+
+14 # YacasFactors(p_IsGaussianInteger)	<-- GaussianFactors(p);
+
+20 # YacasFactors(p_CanBeUni)_(Length(VarList(p)) = 1) <--  
+[
+    Local(x,d,coeffs,nterms,factorsList,result);
+    x := VarList(p)[1];
+    d := Degree(p,x);
+    
+    
+    coeffs := Coef(p,x,0 .. Degree(p,x));
+    nterms := Length(Select(coeffs, "IsNotZero"));
+    
+    If( nterms = 2 And d > 2, 
+      [  result := FactorsBinomials(p);  ],    
+      [  
+        factorsList := BinaryFactors(p);
+           
+           
+        
+        If( AllSatisfy("IsInteger",coeffs),
+          [
+              
+              result := FactorsPolynomialOverIntegers(p,x);
+          ],
+          [
+              
+              
+              Local(notInt,rat,dd,lcm,newCoeffs,NewPoly,facs);
+              notInt := Select(coeffs, Lambda({i},Not IsInteger(i)));
+              rat := Rationalize(coeffs);            
+              dd  := MapSingle("Denominator",rat);
+              lcm := Lcm(dd);
+              newCoeffs := lcm * rat;
+              newPoly := NormalForm(UniVariate(x,0,newCoeffs));
+              facs := FactorsPolynomialOverIntegers(newPoly);
+              If( InVerboseMode(), [
+                  Echo("coeffs ",coeffs);
+                  Echo("notInt ",notInt);
+                  Echo("rat ",rat);
+                  Echo("dd  ",dd);
+                  Echo("lcm ",lcm);
+                  Echo("newCoeffs ",newCoeffs);
+                  Echo("newPoly ",newPoly);
+                  Echo("facs ",facs);
+                 ]
+              );
+              result := {(1/lcm),1}:facs;
+              
+        ]
+      );
+    ]
+   );
+      CombineNumericalFactors( result );
+];
+
+
+30 # YacasFactors(p_CanBeUni) <--  
+[
+    
+    Local(vl,nvars,coeffs,result);
+    vl     := VarList(p);
+    nvars  := Length(vl);
+    coeffs := Coef(p,x,0 .. 8);
+    If(InVerboseMode(),Tell("CBU",{vl,nvars,coeffs}));
+    If (nvars > 1, 
+         [
+            If( InVerboseMode(), Echo(" special ",p));
+            result := FactorsMultivariateSpecialCases(p);
+         ], 
+            result := FactorsSomethingElse(p) 
+       );
+       CombineNumericalFactors( result );
+];
+
+
+40 # YacasFactors(_p) <--
+[
+    
+     If( InVerboseMode(), Echo("Possibly trying to factor polynomial with non-integral exponents") );
+     Local( result);
+     
+     
+     result := {{p,1}};
+     CombineNumericalFactors( result );
+     
+];
+
+
+
+
+
+10 # FactorsMultivariateSpecialCases(-_expr) <-- {-1,1}:FactorsMultivariateSpecialCases(expr);
+
+10 # FactorsMultivariateSpecialCases(x_IsAtom + y_IsAtom) <-- [If(InVerboseMode(),Tell(1));{{x+y,1}};];
+
+10 # FactorsMultivariateSpecialCases(x_IsAtom - y_IsAtom) <-- [If(InVerboseMode(),Tell(2));{{x-y,1}};];
+
+10 # FactorsMultivariateSpecialCases(_n*_x^p_IsInteger + _n*_y) <-- [If(InVerboseMode(),Tell(3));{n,1}:FactorsMultivariateSpecialCases(x+y);];
+
+10 # FactorsMultivariateSpecialCases(_n*_x^p_IsInteger - _n*_y) <-- [If(InVerboseMode(),Tell(4));{n,1}:FactorsMultivariateSpecialCases(x-y);];
+
+10 # FactorsMultivariateSpecialCases(n_IsInteger*_x + m_IsInteger*_y)_(Gcd(n,m)>1) <-- {{Gcd(n,m),1},{(Simplify((n*x+m*y)/Gcd(n,m))),1}};
+
+10 # FactorsMultivariateSpecialCases(n_IsInteger*_x - m_IsInteger*_y)_(Gcd(n,m)>1) <-- {{Gcd(n,m),1},{(Simplify((n*x-m*y)/Gcd(n,m))),1}};
+
+10 # FactorsMultivariateSpecialCases(_n*_x + _n*_y) <-- {n,1}:FactorsMultivariateSpecialCases(x+y);
+
+10 # FactorsMultivariateSpecialCases(_n*_x - _n*_y) <-- {n,1}:FactorsMultivariateSpecialCases(x-y);
+
+10 # FactorsMultivariateSpecialCases(_x^n_IsInteger - _y) <-- FactorsBinomials(x^n - y); 
+
+10 # FactorsMultivariateSpecialCases(_x^n_IsInteger + _y) <-- FactorsBinomials(x^n + y); 
+
+20 # FactorsSomethingElse(_p) <-- 
+  [
+      If( InVerboseMode(),
+          [
+              ECHO("   *** FactorsSomethingElse: NOT IMPLEMENTED YET ***");
+          ]
+      );
+      p;
+  ];
+
+
+
+
+10 # CombineNumericalFactors( factrs_IsList ) <--
+  [
+      If( InVerboseMode(), Tell("Combine",factrs) );
+      Local(q,a,b,t,f,err);
+      err := False;
+      t   := 1;
+      f   := {};
+      ForEach(q,factrs)
+      [
+          If( InVerboseMode(), Tell(1,q) );
+          If( IsList(q) And Length(q)=2,
+              [
+                  {a,b} := q;
+                  If( InVerboseMode(), Echo("     ",{a,b}) );
+                  If( IsNumericList( {a,b} ),
+                      t := t * a^b,
+                      f := {a,b}:f
+                  );
+              ],
+              err := True
+          );
+      ];
+      If( InVerboseMode(),
+        [
+            Echo("      t = ",t);
+            Echo("      f = ",f);
+            Echo("    err = ",err);
+        ]
+      );
+      If(Not err And t != 1, {t,1}:Reverse(f), factrs);
+  ];
+
+
+
+
+Retract("xContent",*);
+
+
+10 # xContent( poly_IsPolynomial ) <--
+[
+    Local(disassem,gcdCoefs,minExpts);
+    disassem := DisassembleExpression(poly);
+    gcdCoefs := Gcd(disassem[3]);
+    minExpts := Minimum /@ Transpose(disassem[2]);
+    gcdCoefs * Product(disassem[1]^minExpts);
+];
+
+
+Retract("xFactor",*);
+
+10 # xFactor( p_CanBeUni ) <-- FW(xFactors(p));
+
+
+10 # xFactor( p_IsRationalFunction ) <--
+[
+    Local(fs,n,d);
+    fs := xFactors( p );
+    n  := FW(Numerator(fs));
+    d  := FW(Denominator(fs));
+    n/d;
+];
+
+
+10 # xFactor( L_IsList ) <-- 
+[
+    Local (result,x,f);
+    result := {};
+    ForEach(x,L)
+    [
+        f := xFactors(x);
+        If( f = {}, f := 0, f := FW(f) );
+        DestructiveAppend(result,f);
+    ];
+    result;
+];
+
+
+
+20 # xFactor( _expr ) <-- expr;
+
+
+
+
+Retract("xFactors",*);
+Retract("xFactorsPrimitivePart",*);
+Retract("xFactorsUnivariate",*);
+Retract("xFactorsMultivariate",*);
+Retract("xFactorsHomogeneousBivariate",*);
+
+Retract("ApproximateRealCoefficients",*);
+Retract("FixUpMonicFactors",*);
+Retract("CombineNumericalFactors",*);
+Retract("IsPureRational",*);
+Retract("HasRealCoefficients",*);
+Retract("HasRationalCoefficients",*);
+Retract("matchPower",*);
+Retract("IsIrreducible",*);     
+
+
+
+
+10 # xFactors( L_IsList ) <-- xFactors /@ L;
+
+
+
+
+
+10 # xFactors(p_IsPositiveInteger) <--  
+[
+    If( p < 1600, FactorsSmallInteger(p), FactorizeInt(p) );
+];
+
+
+12 # xFactors(p_IsNegativeInteger) <-- xFactors(-p);
+
+
+14 # xFactors(p_IsRational)_(Denominator(p) != 1) <-- 
+             { {xFactor(Numerator(p)) / xFactor(Denominator(p) ) , 1} }; 
+             
+
+16 # xFactors(p_IsGaussianInteger)	<-- GaussianFactors(p);
+
+
+18 # xFactors(_p)_(Length(VarList(p))=0) <-- p;
+
+
+
+
+
+21 # xFactors( poly_CanBeUni ) <--
+[
+    If(InVerboseMode(),Tell("xFactors_can_be_uni_100122",poly));
+    Local(content,pp,ppFactors,monomialFactors,result);
+    Local(vars,nvars,disassem,degrees,mpoly,nterms,allCoeffs);
+    Local(hasRealCoefficients,hasRationalCoefficients);
+
+    
+    
+    hasRealCoefficients := HasRealCoefficients(poly);
+    If( hasRealCoefficients, 
+      [
+         Local(realPoly);
+         realPoly  := poly;   
+         disassem  := DisassembleExpression(poly);
+         allCoeffs := disassem[3];
+         poly      := ApproximateRealCoefficients(poly);
+      ]
+    );
+    
+    
+    hasRationalCoefficients := HasRationalCoefficients(poly);
+    
+    
+    content := xContent( poly );
+    pp      := xPrimitivePart( poly, content );
+    If(InVerboseMode(),Tell("  ",{content,pp}));
+    
+    
+    
+    
+    
+    vars      := VarList(pp);
+    nvars     := Length(vars);
+    disassem  := DisassembleExpression(pp);
+    nterms    := Length(disassem[3]);
+    degrees   := {};
+    allCoeffs := disassem[3];
+    If(nvars > 0,
+      [
+        ForEach(v,vars)
+           [ DestructiveAppend(degrees,Degree(pp,v)); ];
+        isHomogeneous     := [
+            
+            
+            Local(sd,cmp); 
+            sd  := Sum /@ disassem[2];
+            cmp := FillList(sd[1],Length(sd));
+            IsZeroVector(sd - cmp);
+        ];
+      ]
+    );
+    
+    
+    
+    
+    pp := MetaSet(pp,"nvars",nvars);
+    pp := MetaSet(pp,"nterms",nterms);
+    pp := MetaSet(pp,"degrees",degrees);
+    pp := MetaSet(pp,"isHomogeneous",isHomogeneous);
+    
+    If(InVerboseMode(),
+      [
+        Tell("               ",vars);
+        Tell("              ",nvars);
+        Tell("             ",nterms);
+        Tell("            ",degrees);
+        Tell("           ",disassem);
+        Tell("          ",allCoeffs);
+        Tell("      ",isHomogeneous);
+        NewLine();
+      ]
+    );
+    
+    
+    ppFactors := xFactorsPrimitivePart( pp );
+    
+    If(InVerboseMode(),[NewLine();Tell("  ",ppFactors);]);
+    
+    
+    If(InVerboseMode(),NewLine());
+    monomialFactors := FactorsMonomial(content);
+    If(InVerboseMode(),[Tell("  ",monomialFactors);]);
+    If( monomialFactors[1][1] = 1,
+        result := ppFactors,        
+        result := Concat(monomialFactors,ppFactors)
+    );
+    
+    If(InVerboseMode(),[NewLine();Tell("  final  ",result);]);
+    result;
+];
+
+
+
+
+
+     
+10 # xFactorsPrimitivePart( _pp )_(nterms=2) <--
+[
+    If(InVerboseMode(),Tell("Binomial"));
+    ppFactors := xFactorsBinomial(pp);
+];
+UnFence("xFactorsPrimitivePart",1);
+
+
+     
+12 # xFactorsPrimitivePart( _pp )_(isHomogeneous And nvars=2) <--
+[
+    If(InVerboseMode(),Tell("Homogeneous and Bivariate"));
+    ppFactors := xFactorsHomogeneousBivariate(disassem);
+];
+UnFence("xFactorsPrimitivePart",1);
+
+
+     
+14 # xFactorsPrimitivePart( _pp )_(nvars=0) <--
+[
+    ppfactors := {};
+];
+
+
+     
+16 # xFactorsPrimitivePart( _pp )_(nvars=1) <--  xFactorsUnivariate(pp); 
+UnFence("xFactorsPrimitivePart",1);
+
+
+     
+18 # xFactorsPrimitivePart( _pp )_(nvars>1) <-- xFactorsMultivariate(pp);
+UnFence("xFactorsPrimitivePart",1);
+
+
+     
+20 # xFactorsPrimitivePart( _pp ) <-- Tell("Should never get here!");
+UnFence("xFactorsPrimitivePart",1);
+
+
+
+
+
+30 # xFactorsUnivariate( poly_CanBeUni )_(Length(VarList(poly))=1) <--
+[
+    Local(factrs,coeffs,deg,X,residuals,factrsnew);
+
+    If(InVerboseMode(),
+      [
+         NewLine();
+         Tell("xFactorsUnivariate",poly);
+         Tell("       ",allCoeffs);
+      ]
+    );
+    
+    
+    
+    
+    factrs := BinaryFactors(poly);
+    If(InVerboseMode(),Tell("   output of BinaryFactors",factrs));
+
+    
+    
+    
+    
+    
+    {factrsnew,residuals} := FixUpMonicFactors(factrs);
+    
+    
+    Local(residOut);
+    residOut := {};
+    If(Length(residuals) > 0, residOut := xFactorsResiduals( residuals ) );
+    
+    If(InVerboseMode(),
+      [
+          NewLine();
+          Tell(" just before end of univariate factoring");
+          Tell("    ",factrs);
+          Tell("    ",factrsnew);
+          Tell("    ",residOut);
+      ]
+    );
+    
+     
+     Concat(factrsnew,residOut);
+];   
+UnFence("xFactorsUnivariate",1);
+
+
+
+
+40 # xFactorsMultivariate( poly_CanBeUni )_(Length(VarList(poly))>1) <--
+[
+    Local(factrs);
+    
+    If(InVerboseMode(),[NewLine();Tell("xFactorsMultivariate",poly);]);
+    If( nterms = 2, 
+      [
+        If(InVerboseMode(),Tell("   Is Binomial"));
+        factrs := xFactorsBinomial(poly); 
+      ],
+      [
+        If(InVerboseMode(),Tell("   Has more than 2 terms"));
+      ]
+    );
+    factrs;
+];
+UnFence("xFactorsMultivariate",1);
+
+
+
+
+10 # xFactorsHomogeneousBivariate( dis_IsList ) <-- 
+[
+    If(InVerboseMode(),[NewLine();Tell("xFactorsHomogeneousBivariate",dis);]);
+    Local(dis1,f,dis2,poly1,ppFactors,residuals);
+    dis1  := {{xi},{{X},{X[1]}} /@ dis[2],dis[3]};
+    If(InVerboseMode(),Tell("   ",dis1));
+    poly1 := Sum(ReassembleListTerms(dis1));
+    If(InVerboseMode(),Tell("   ",poly1));
+    ppFactors := BinaryFactors(poly1);
+    {ppFactors,residuals} := FixUpMonicFactors(ppFactors);
+    For(ii:=1,ii<=Length(ppFactors),ii++)
+    [
+        f := ppFactors[ii];
+        If(InVerboseMode(),Tell("          ",f[1]));
+        lst := DisassembleExpression(f[1]);
+        If(InVerboseMode(),
+          [
+             Tell("               ",lst);
+             Tell("                            ",dis[1]);
+          ]
+        );
+        DestructiveReplace(lst,1,dis[1]);
+        DestructiveAppend(lst[2][1],0);
+        DestructiveAppend(lst[2][2],1);
+        If(InVerboseMode(),Tell("               ",lst));
+        preassem  := Sum(ReassembleListTerms(lst)) ;
+        If(InVerboseMode(),Tell("               ",preassem));
+        ppFactors[ii][1] := preassem;
+    ];
+    If(InVerboseMode(),[Tell("   ",ppFactors); Tell("   ",residuals);NewLine();] );  
+    ppFactors;
+];
+UnFence("xFactorsHomogeneousBivariate",1);
+
+
+
+
+
+10 # ApproximateRealCoefficients( poly_IsPolynomial ) <--
+[
+    
+    
+    If(InVerboseMode(),[NewLine();Tell("  REAL",poly);]);
+    Local(coeffs,gcd,lcm);
+    coeffs := Rationalize /@ (allCoeffs);
+    If(InVerboseMode(),[Tell("      to-Q",coeffs);Tell("      to-Z",coeffs);]);
+    Local(gcd,lcm);
+    gcd    := Gcd(Numerator /@ coeffs);
+    lcm    := Lcm(Denominator /@ coeffs);
+    If(InVerboseMode(),[Tell("       ",gcd);Tell("       ",lcm);]);
+    disassem[3] := coeffs;
+    allCoeffs   := coeffs;
+    poly        := Sum(ReassembleListTerms(disassem));
+    If(InVerboseMode(),Tell("   new",poly));
+    poly;
+];
+UnFence("ApproximateRealCoefficients",1);
+
+
+100 # CombineNumericalFactors( factrs_IsList ) <--
+[
+      If( InVerboseMode(), Tell("Combine",factrs) );
+      Local(q,a,b,t,f,ff,err);
+      err := False;
+      t   := 1;
+      f   := {};
+      ForEach(q,factrs)
+      [
+          If( InVerboseMode(), Tell(1,q) );
+          If( IsList(q) And Length(q)=2,
+            [
+                {a,b} := q;
+                If( InVerboseMode(), Echo("     ",{a,b}) );
+                If( IsNumericList( {a,b} ),
+                    t := t * a^b,
+                    f := {a,b}:f
+                );
+            ],
+              err := True
+          );
+      ];
+      If( InVerboseMode(),
+        [
+            Echo("      t = ",t);
+            Echo("      f = ",f);
+            Echo("    err = ",err);
+        ]
+      );
+      ff := If(Not err And t != 1, {t,1}:Reverse(f), factrs);
+      ff := Select(Lambda({x},x!={1,1}),ff);
+      If(ff[1]<0,ff[1]:=-ff[1]);
+];
+
+
+
+
+150 # xFactors( expr_IsRationalFunction )_
+        (IsPolynomial(Numerator(expr)) And IsPolynomial(Denominator(expr))) <--
+[
+    If(InVerboseMode(),[NewLine();Tell("xFactors_Rational_Function",expr);]);
+    Local(Numer,Denom,fNumer,fDenom);
+    Numer  := Numerator(expr);
+    Denom  := Denominator(expr);
+    fNumer := xFactors(Numer);
+    fDenom := xFactors(Denom);
+    If(InVerboseMode(),[Tell("   ",fNumer); Tell("   ",fDenom);]);
+    fNumer/fDenom;
+];
+
+
+
+
+200 # xFactors( _expr )_(Length(VarList(expr)) = 1) <--
+[
+    If(InVerboseMode(),[NewLine();Tell("Some other kind of expression",expr);]);
+    Local(dis,X,pows);
+    dis := DisassembleExpression(expr);
+    X   := VarList(expr)[1];
+    pows := matchPower /@ dis[1];
+    rats := NearRational /@ pows;
+    dis[1] := x^rats;
+    p := Sum(ReassembleListTerms(dis));
+    If(InVerboseMode(),Tell("    new ",p));
+    xFactors(p);
+];
+
+
+
+
+10 # IsPureRational( N_IsRational )_(Not IsInteger(N)) <-- True;
+
+12 # IsPureRational( _N ) <-- False;
+
+
+10 # HasRealCoefficients( poly_IsPolynomial ) <--
+[
+    Local(disassem);
+    disassem := DisassembleExpression(poly);
+    (Length(Select(disassem[3],"IsDecimal")) > 0);
+];
+
+
+10 # HasRationalCoefficients( poly_IsPolynomial ) <--
+[
+    Local(disassem);
+    disassem := DisassembleExpression(poly);
+    
+    (Length(Select(disassem[3],"IsPureRational")) > 0);
+];
+
+
+10 # FixUpMonicFactors( factrs_IsList ) <--
+[
+    If(InVerboseMode(),[ NewLine(); Tell("   doing monic fixup"); ] );
+    Local(factrsnew,residuals,uni);
+    factrsnew := {};
+    residuals := {};
+    ForEach(f,factrs)
+    [
+        If(InVerboseMode(),Tell("               ",f));
+        uni := MakeUni(f[1]);
+        
+        If( Degree(f[1])=1,
+          [
+            Local(cc,lcm,fnew);
+            If(InVerboseMode(),Tell("                          ",Degree(f[1])));
+            cc      := Coef(f[1],uni[1],0 .. 1);
+            lcm     := Lcm( Denominator /@ cc );
+            uni[3]  := lcm * cc;
+            fnew    := NormalForm(uni);
+            If( hasRationalCoefficients,
+              [
+                 DestructiveAppend(factrsnew,f);
+              ],
+              [ 
+                 DestructiveAppend(factrsnew,{fnew,f[2]});
+              ]
+            );
+          ]
+        );
+        If( Degree(f[1])=2,
+          [
+            If(InVerboseMode(),Tell("                          ",Degree(f[1])));
+            Local(pq);
+            pq      := PrimitivePart(f[1]);
+            DestructiveAppend(factrsnew,{pq,f[2]});
+          ]
+        );
+        
+        
+        If( Degree(f[1]) > 2,
+          [
+            If(InVerboseMode(),Tell("                          ",Degree(f[1])));
+            Local(pq);
+            pq      := PrimitivePart(f[1]);
+            DestructiveAppend(residuals,{pq,f[2]});
+            If(InVerboseMode(),Tell("                   appending to residuals",pq));
+          ]
+        );       
+    ];
+    {factrsnew,residuals};
+];
+UnFence("FixUpMonicFactors",1);
+
+10 # IsIrreducible( poly_IsPolynomial )_(Length(VarList(poly))=1) <--
+[
+    
+    
+    
+    
+    
+    If(InVerboseMode(),Tell("IsIrreducible",poly));
+    Local(var,deg,coeffs,num1);
+    var    := VarList(poly)[1];
+    deg    := Degree(poly);
+    coeffs := Coef(poly,var,deg .. 0);
+    If(InVerboseMode(),Tell("   ",deg));
+    Local(ii,res,nprimes);
+    nprimes := 0;
+    For(ii:=-3*deg,ii<=3*deg,ii:=ii+3)
+    [
+        res := N(Subst(x,ii) poly);
+        
+        If(Abs(res)=1 Or IsPrime(res), nprimes := nprimes + 1, );
+    ];
+    Tell("   ",nprimes);
+    If(nprimes > 2*deg, True, False );
+];
+
+
+10 # matchPower(_Z^n_IsNumber) <-- n;
+
+15 # matchPower(_Z) <-- 1;
+
+
+
+
+
+
+
+
+Retract("xFactorsBinomial",*);
+Retract("xFB1",*);
+Retract("xFB2",*);
+
+
+10 # xFactorsBinomial( poly_IsPolynomial )_(Length(VarList(poly))=1)  <-- 
+                        xFB1( DisassembleExpression(poly) );
+
+
+10 # xFactorsBinomial( poly_IsPolynomial )_(Length(VarList(poly))=2)  <-- 
+                        xFB2( DisassembleExpression(poly) );
+
+
+12 # xFB1( dis_IsList )_(Length(dis)=3 And Length(dis[3])=2) <--
+[
+    If(InVerboseMode(),[NewLine();Tell("xFB1",dis);]);
+    Local(n,X,Y,y,var,A,B,s,Ar,Br,ii,fac1);
+    n     := Maximum(dis[2])[1];
+    X     := dis[1][1];
+    var   := dis[1][1];
+    A     := Abs(dis[3][1]);
+    B     := Abs(dis[3][2]);
+    s     := Sign(dis[3][1]*dis[3][2]);
+    Ar    := NearRational(N(A^(1/n)));
+    Br    := NearRational(N(B^(1/n)));
+    X     := Ar*X;
+    Y     := Br;
+    Unbind(y);
+    y     := 1;
+    If(InVerboseMode(),
+      [
+         Tell("     ",n);
+         Tell("     ",X);
+         Tell("     ",{A,B,s});
+         Tell("     ",{Ar,Br});
+         Tell("     ",{X,Y});
+      ]
+    );
+    fac1  := xFB1( X/Y,n,s);    
+    
+    If( Y != 1,
+      [
+          Local(f,d);
+          For(ii:=1,ii<=Length(fac1),ii++)
+          [
+              f := fac1[ii][1];
+              d := Degree(f);
+              fac1[ii][1] := Simplify(Y^d*f);
+          ];
+      ]
+    );
+    fac1;
+];
+UnFence("xFB1",1);
+
+
+15 # xFB1(_X,n_IsSmallPrime,s_IsNotZero)_(IsOdd(n)) <--
+[
+    Local(ans,k);
+    If(InVerboseMode(),[NewLine();Tell("   xFB1prime",{X,n,s});]);
+    ans := {{X+s,1}};
+    If( n > 1, ans := Concat(ans,{{Sum(k,0,n-1,(-s)^k*X^(n-1-k)),1}}) );
+    If(InVerboseMode(),Tell("          ",ans));
+    ans;
+];
+UnFence("xFB1",3);
+
+
+20 # xFB1(_X, n_IsOdd, s_IsPositiveInteger) <--
+[
+    Local(ans,ans1);
+    If(InVerboseMode(),[NewLine(); Tell("   xFB1oddsum",{X,Y,n});]);
+    If( n = 9,  ans := {{X+1,1},{X^2-X+1,1},{X^6-X^3+1,1}} );
+    If( n = 15, ans := {{X+1,1},{X^2-X+1,1},{X^4-X^3+X^2-X+1,1},{X^8+X^7-X^5-X^4-X^3+X+1,1}} );
+    If( n = 21, ans := {{X+1,1},{X^2-X+1,1},{X^6-X^5+X^4-X^3+X^2-X+1,1},{X^12+X^11-X^9-X^8+X^6-X^4-X^3+X+1,1}} );    
+    
+    If( n > 21, ans := BinaryFactors(X^n+1) );  
+    ans;
+];
+
+
+25 # xFB1(_X,n_IsOdd, s_IsNegativeInteger) <--
+[
+    Local(ans);
+    If(InVerboseMode(),[NewLine(); Tell("   xFB1odddif",{X,n});]);
+    If( n = 9,  ans := {{X-1,1},{X^2+X+1,1},{X^6+X^3+1,1}} );
+    If( n = 15, ans := {{X-1,1},{X^2+X+1,1},{X^4+X^3+X^2+X+1,1},{X^8-X^7+X^5-X^4+X^3-X+1,1}} );
+    If( n = 21, ans := {{X-1,1},{X^2+X+1,1},{X^6+X^5+X^4+X^3+X^2+X+1,1},{X^12-X^11+X^9-X^8+X^6-X^4+X^3-X+1,1}} );    
+    
+    If( n > 21, ans := BinaryFactors(X^n-1) );  
+    If(InVerboseMode(),Tell("    ",ans));
+    ans;
+];
+
+
+30 # xFB1(_X, n_IsEven, s_IsPositiveInteger) <--
+[
+    Local(ans,fn,mx,my);
+    If(InVerboseMode(),[NewLine(); Tell("   xFB1evensum",{X,n});]);
+    fn    := {{1,1}};
+    If( n > 1, fn := FactorsSmallInteger(n) );
+    If(Length(fn)=1 And IsOdd(fn[1][1]), mx:= fn[1][1]^(fn[1][2]-1));
+    If(Length(fn)>1,
+         ForEach(f,fn) [ If( IsOdd(f[1]), mx := f[1]^f[2] ); ]);
+    my    := n/mx;
+
+    If( n = 2, [ ans:={{X^2+1,1}};] );
+    If( n != 2 And CheckIntPower(n,2)[2]!=1,
+      [
+         
+         ans := {{X^n+1,1}};
+      ],
+      [
+         
+         If( n = 6, ans := {{X^2+1,1},{X^4-X^2+1,1}} );
+         If( n > 8, 
+              ans := {{X^my+1,1},{Sum(k,0,mx-1,X^(n-my-k*my)*(-1)^k),1}} );
+      ]
+    );
+    If(InVerboseMode(),Tell("    ",ans));
+    ans;
+];
+
+
+35 # xFB1(_X, n_IsEven, s_IsNegativeInteger) <--
+[
+    Local(ans);
+    If(InVerboseMode(),[NewLine(); Tell("   xFB1evendif",{X,n});]);
+    If( n = 2, 
+        [ ans := {{X-1,1},{X+1,1}}; ],
+        [ ans := Concat( xFB1(X,n/2,1), xFB1(X,n/2,-1) ); ]
+    );
+    If(InVerboseMode(),Tell("    ",ans));
+    ans;
+];
+
+
+
+50 # xFB2( dis_IsList )_(Length(dis)=3 And Length(dis[3])=2) <--
+[
+    If(InVerboseMode(),[NewLine();Tell("xFB2",dis);]);
+    Local(ns,n,X,Y,vars,A,B,s,Ar,Br,ii,fn,mx,my,fac2);
+    n     := Maximum(dis[2])[1];
+    X     := dis[1][1];
+    Y     := dis[1][2];
+    vars  := dis[1];
+    A     := Abs(dis[3][1]);
+    B     := Abs(dis[3][2]);
+    s     := Sign(dis[3][1]*dis[3][2]);
+    Ar    := NearRational(N(A^(1/n)));
+    Br    := NearRational(N(B^(1/n)));
+    If(InVerboseMode(),
+      [
+         Tell("     ",n);
+         Tell("     ",{X,Y});
+         Tell("     ",{A,B,s});
+         Tell("     ",{Ar,Br});
+      ]
+    );
+    X     := Ar*X;
+    Y     := Br*Y;
+    If(InVerboseMode(),Tell("     ",{X,Y}));
+    fac2  := xFB1( X/Y,n,s);    
+    If(InVerboseMode(),Tell("      ",fac2));
+    
+    
+
+    If( Y != 1,
+      [
+          Local(f,d);
+          For(ii:=1,ii<=Length(fac2),ii++)
+          [
+              f := fac2[ii][1];
+              d := Degree(f);
+              fac2[ii][1] := Simplify(Simplify(Y^d*f));
+          ];
+      ]
+    );
+    fac2;
+];
+UnFence("xFB2",1);
+
+
+
+Retract("TestPlus1",*);
+Retract("TestMinus1",*);
+
+
+1000 # TestMinus1() <--
+[
+    Local(n,poly,a,b,result,prod,ok);
+    NewLine(1);
+    Tell("Test Binomial Dif, 1 Variable");
+    a := 2;
+    b := 3;
+    For(n:=2,n<=12,n++)
+    [
+        poly   := ExpandBrackets(a^n*x^n-b^n);
+        result := xFactorsBinomial1v(poly);
+        prod   := ExpandBrackets(FW(result));
+        ok     := Verify(a^n*x^n-b^n,prod);
+        NewLine(1);
+        Tell("    ",poly);
+        If(InVerboseMode(),
+          [
+             Tell("         ",result);
+             Tell("         ",prod);
+          ]
+        );
+        Tell("    ",ok);
+    ];
+];
+
+
+1000 # TestPlus1() <--
+[
+    Local(n,poly,a,b,result,prod,ok);
+    NewLine(1);
+    Tell("Test Binomial Sum, 1 Variable");
+    a := 2;
+    b := 3;
+    For(n:=2,n<=12,n++)
+    [
+        poly   := ExpandBrackets(a^n*x^n+b^n);
+        result := xFactorsBinomial1v(poly);
+        prod   := ExpandBrackets(FW(result));
+        ok     := Verify(a^n*x^n+b^n,prod);
+        NewLine(1);
+        Tell("    ",poly);
+        If(InVerboseMode(),
+          [
+             Tell("         ",result);
+             Tell("         ",prod);
+          ]
+        );
+        Tell("    ",ok);
+    ];
+];
+
+
+Retract("xFactorsResiduals",*);
+
+10 # xFactorsResiduals( residualList_IsList ) <--
+[
+    If(InVerboseMode(),[NewLine(); Tell("Residuals",residualList);]);
+    If(InVerboseMode(),Tell("  --",content));
+    If(InVerboseMode(),Tell("  --",factrs));
+    If(InVerboseMode(),Tell("  --",factrsnew));
+    If(InVerboseMode(),Tell("  --",residuals));
+    Local(resid,sqf,sqfGood);
+    ForEach(resid,residualList)
+    [
+        If(InVerboseMode(),Tell("   ",resid));
+        
+        
+        sqf := SquareFree(resid[1]);
+        If(InVerboseMode(),
+          [
+             Tell("          trying SQF");
+             Tell("            ",resid[1]);
+             Tell("            ",sqf);
+          ]
+        );
+        If(Degree(sqf) < Degree(resid[1]),
+          [
+            If(InVerboseMode(),Tell("               sqf helps factor resid"));
+            sqfGood := True;
+            Local(f1,f2);
+            f1 := sqf;
+            f2 := Simplify(resid[1]/sqf);
+            factrsnew := Concat({{f1,resid[2]},{f2,resid[2]}},factrsnew);
+            
+            residuals := Difference(residuals,{resid});
+            If(InVerboseMode(),Tell("                       new",residuals));
+          ],
+          [
+            If(InVerboseMode(),
+              [
+                 Tell("               sqf DOES NOT HELP factor resid");
+                 sqfGood := False;
+              ]
+            );
+          ]
+        );
+        If(InVerboseMode(),Tell(" after sqf ",factrsnew));
+        If(InVerboseMode(),Tell("           ",residuals));
+        
+    ];
+    If(InVerboseMode(),
+      [
+         Tell("   after SQF on all residuals    ",factrsnew);
+         Tell("       ",sqfGood);
+         NewLine();
+      ]
+    );
+        
+    
+    
+    ForEach(resid,residuals)
+    [
+        Local(nrr,rr,ptry,uptry);
+        nrr := RealRootsCount(resid[1]);
+        If(InVerboseMode(),
+          [
+             Tell("          trying REAL roots");
+             Tell("            ",resid[1]);
+             Tell("            ",nrr);
+          ]
+        );
+        If( nrr = 2,
+          [
+             
+             rr := FindRealRoots(resid[1]);
+             ptry  := Expand((x-rr[1])*(x-rr[2]));
+             If(InVerboseMode(),[Tell("    ",rr);Tell("    ",ptry);]);
+             uptry    := MakeUni(ptry);
+             uptry[3] := "GuessRational" /@ uptry[3];
+             ptry     := NormalForm(uptry);
+             If(InVerboseMode(),Tell("    ",ptry));
+             If( Abs(Lcm(uptry[3])) < 100,
+               [
+                  
+                  Local(f1,f2,new);
+                  f1    := ptry;
+                  f2    := Simplify(resid[1]/f1);
+                  new   := {{f1,resid[2]},{f2,resid[2]}};
+                  If(InVerboseMode(),Tell("    ",new));
+                  resid := new;
+                  residOut := new;
+                  If(InVerboseMode(),Tell("    ",residOut)); 
+               ]
+             );
+          ],
+          [
+             If( nrr = 0,
+               [
+                  
+                  If(InVerboseMode(),
+                    [
+                       NewLine();
+                       Tell("               NO real solutions");
+                       Tell("               try something else");
+                    ]
+                  );
+                  
+                  Local(u,X);
+                  u := MakeUni(resid[1]);
+                  X := u[1];
+                  If( u[2]=0 And u[3]={1,0,1,0,1},
+                    [ 
+                       DestructiveAppend(residOut,{X^2-X+1,1});
+                       DestructiveAppend(residOut,{X^2+X+1,1});
+                       If(InVerboseMode(),
+                         [
+                            Tell("     found ",factrsnew);
+                            Tell("           ",resid);
+                            Tell("           ",factrs);
+                            Tell("           ",residOut);
+                         ]
+                       );
+                    ]
+                  );
+               ],
+               [
+                  
+                  rr := FindRealRoots(resid[1]);
+                  If(InVerboseMode(),Tell("    ",rr));
+                  
+                  goodptry := 0;
+                  For(ii:=2,ii<=nrr,ii++)
+                  [
+                      ptry     := Expand((x-rr[1])*(x-rr[ii]));
+                      uptry    := MakeUni(ptry);
+                      uptry[3] := "GuessRational" /@ uptry[3];
+                      If(InVerboseMode(),Tell("    rat",uptry[3]));
+                      If(InVerboseMode(),Tell("  ",Maximum(Denominator /@ uptry[3])));
+                      If( Maximum(Denominator /@ uptry[3]) < 100,
+                        [ goodptry := NormalForm(uptry); ]    );
+                  ];
+                  If(InVerboseMode(),Tell("    ",goodptry));
+                  DestructiveAppend(residOut,goodptry);
+               ]
+             );  
+          ]
+        );  
+     ];  
+     
+     residOut;
+];
+UnFence("xFactorsResiduals",1);
+
+
+
+Retract("xPrimitivePart",*);
+    
+10 # xPrimitivePart(poly_CanBeUni) <-- 
+[
+    Local(cont,pp);
+    cont := xContent(poly);
+    pp   := Simplify(Simplify(poly/cont));
+];
+
+
+Macro("xPrimitivePart",{poly,xcont})
+[
+    Local(result,xCont);
+    
+    If( IsBound(@xcont), 
+      [
+          result := Simplify(Simplify(Eval(@poly)/Eval(@xcont)));
+      ],
+      [
+          Local(xCont);
+          xCont  := xContent(Eval(@poly));
+          @xcont := xCont;
+          result := Simplify(Simplify(Eval(@poly)/xCont));
+      ]
+    );
+    result;
+];
+
