@@ -53,7 +53,15 @@ public abstract class CASTableCell extends JPanel{
 		}
 		else {
 			outputPanel.setVisible(true);
-			outputPanel.setOutput(cellValue.getOutput(), cellValue.getLaTeXOutput(), cellValue.getEvalCommand(), cellValue.isOutputError());	
+			
+			// show command in output cell
+			String cmd = app.getCommand(cellValue.getEvalCommand());
+			if (cellValue.getInput().startsWith(cmd)) {
+				// don't show command if it is already at beginning of input
+				cmd = "";
+			}
+			
+			outputPanel.setOutput(cellValue.getOutput(), cellValue.getLaTeXOutput(), cmd, cellValue.isOutputError());	
 		}	
 	}
 

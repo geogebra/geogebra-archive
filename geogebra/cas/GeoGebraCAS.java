@@ -459,21 +459,25 @@ public class GeoGebraCAS {
 		if (evalInGeoGebra) {
 			// EVALUATE inputExp in GeoGebra
 			try {
-				// process assignment in GeoGebra
+				// process inputExp in GeoGebra
 				ggbResult = processCASInputGeoGebra(inputExp);
-				// TODO: remove
-				System.out.println("eval for GeoGebra: " + inputExp + ", result: " + ggbResult);
 			} catch (Throwable th2) {
 				if (throwable == null) throwable = th2;
 				System.err.println("GeoGebra evaluation failed: " + inputExp + "\n error: " + th2.toString());
 			}
 			
-//			if (ggbResult == null && mathPiperSuccessful) {
-//				// EVALUATE 
-//				
-//			}
-			
-			
+			// inputExp failed with GeoGebra
+			// try to evaluate result of MathPiper
+			if (ggbResult == null && mathPiperSuccessful) {
+				// EVALUATE result of MathPiper
+				try {
+					// process mathPiperResult in GeoGebra
+					ggbResult = processCASInputGeoGebra(mathPiperResult);
+				} catch (Throwable th2) {
+					if (throwable == null) throwable = th2;
+					System.err.println("GeoGebra evaluation failed: " + mathPiperResult + "\n error: " + th2.toString());
+				}
+			}
 		}
 		
 		// return result string:
@@ -481,11 +485,11 @@ public class GeoGebraCAS {
 		if (mathPiperSuccessful) {
 			if (assignment && "true".equals(mathPiperResult)) {
 				// MathPiper returned true: use ggbResult if we have one, otherwise return ""
-//				if (ggbResult != null) {
-//					return ggbResult;
-//				} else {
-					return "";
-//				}
+				if (ggbResult != null) {
+					return ggbResult;
+				} else {
+					return mathPiperResult;
+				}
 			} 
 			else {
 				// MathPiper evaluation worked
@@ -536,11 +540,11 @@ public class GeoGebraCAS {
 		GeoElement [] ggbEval = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(casInput, false);
 
 		if (ggbEval.length == 1) {
-			return ggbEval[0].toString();
+			return ggbEval[0].toValueString();
 		} else {
 			StringBuilder sb = new StringBuilder('{');
 			for (int i=0; i<ggbEval.length; i++) {
-				sb.append(ggbEval[i].toString());
+				sb.append(ggbEval[i].toValueString());
 				if (i < ggbEval.length - 1)
 					sb.append(", ");
 			}
@@ -608,6 +612,7 @@ public class GeoGebraCAS {
 		// convert to MathPiper String
 		String MathPiperStr = casParser.toMathPiperString(ve, resolveVariables);
 
+		// handle assignments
 		String veLabel = ve.getLabel();
 		if (veLabel != null) {
 			StringBuilder sb = new StringBuilder();
@@ -619,7 +624,12 @@ public class GeoGebraCAS {
 				sb.append("(" );
 				sb.append(fun.getFunctionVariable());
 				sb.append(") := ");
+				
+				// evaluate right hand side:
+				// import for e.g. g(x) := Eval(D(x) x^2)
+				sb.append("Eval(");
 				sb.append(MathPiperStr);
+				sb.append(")");
 				MathPiperStr = sb.toString();
 			} else {	
 				// assignment, e.g. a := 5

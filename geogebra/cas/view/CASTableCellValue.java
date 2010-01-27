@@ -63,7 +63,11 @@ public class CASTableCellValue {
 	}
 	
 	public boolean isOutputEmpty() {
-		return (output == null || output.length() == 0);
+		return (output == null || output.length() == 0 || input != null && input.endsWith(";"));
+	}
+	
+	public boolean showOutput() {
+		return !isEmpty()  && input.endsWith(";");
 	}
 
 	public void setInput(String inValue) {

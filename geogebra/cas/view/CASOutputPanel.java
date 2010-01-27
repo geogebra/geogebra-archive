@@ -12,10 +12,11 @@ import javax.swing.JPanel;
 
 public class CASOutputPanel extends JPanel {
 	
-	public static final int INDENT = 20; // pixel
+	//public static final int INDENT = 20; // pixel
 	
 	private static Color TEXT_COLOR = Color.blue;
 	private static Color ERROR_COLOR = Color.red;
+	private static Color OUTPUT_PREFIX_COLOR = Color.gray;
 	private static String OUTPUT_PREFIX = "\u2192";
 
 	private JLabel outputSign;
@@ -28,8 +29,8 @@ public class CASOutputPanel extends JPanel {
 		setBackground(Color.white);		
 		setLayout(new BorderLayout(5,0));
 		
-		outputSign = new JLabel(OUTPUT_PREFIX);	
-		outputSign.setForeground(Color.lightGray);
+		outputSign = new JLabel();	
+		outputSign.setForeground(OUTPUT_PREFIX_COLOR);
 		
 		outputArea = new JLabel();	
 		latexPanel = new LaTeXPanel(app);
@@ -63,7 +64,7 @@ public class CASOutputPanel extends JPanel {
 		if (cmd.length() == 0)
 			outputSign.setText(OUTPUT_PREFIX);
 		else
-			outputSign.setText(app.getCommand(cmd) + ":");
+			outputSign.setText(cmd + ": ");
 	}
 
 	public String getOutput() {

@@ -53,7 +53,6 @@ public class CASInputHandler {
 			return;
 		}
 		
-		
 		// STANDARD CASE: GeoGebraCAS input
 		// break text into prefix, evalText, postfix
 		String prefix, evalText, postfix;			
@@ -75,11 +74,16 @@ public class CASInputHandler {
 		prefix = resolveCASrowReferences(prefix, selRow, ROW_REFERENCE_STATIC);
 		evalText = resolveCASrowReferences(evalText, selRow, ROW_REFERENCE_STATIC);
 		postfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_STATIC);
+		
+		// FIX common INPUT ERRORS in evalText
+		if (ggbcmd.equals("Eval") || ggbcmd.equals("Hold"))
+			evalText = fixInputErrors(evalText);
+		
 		String newText = prefix + evalText + postfix;
 		if (!newText.equals(cellValue.getInput())) {
 			cellValue.setInput(newText);
 		}
-		
+	
 		// Substitute dialog
 		if (ggbcmd.equals("SubstituteDialog")) {
 			// show substitute dialog
@@ -262,5 +266,27 @@ public class CASInputHandler {
 		}
 		return true;
 	}
+	
+	/**
+	 * Fixes common input errors and returns the corrected input String.
+	 * @param input
+	 * @return
+	 */
+	private static String fixInputErrors(String input) {
+		// replace f(x) = x^2 by f(x) := x^2
+		// replace a = 25 / 5 by a := 25 / 5
+		if (functionDefinition.matcher(input).matches() ||
+			numberDefinition.matcher(input).matches()) 
+		{
+			input = input.replaceFirst("=", ":=");
+		}
+		
+		return input;
+	}
+	
+	// f(x) = x^2
+	private static Pattern functionDefinition = Pattern.compile("(\\p{L})*\\([\\p{L}&&[^\\)]]*\\)(\\s)*[=].*");
+	// a = 5 but not x = 5
+	private static Pattern numberDefinition = Pattern.compile("([\\p{L}&&[^xyz]])*(\\s)*[=][^\\p{L}]*");
 
 }
