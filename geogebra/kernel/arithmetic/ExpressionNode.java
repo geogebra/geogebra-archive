@@ -1308,26 +1308,28 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    
 	                default:
 	                    // check for 0
-            			if (isEqualString(left, 0, !valueForm)) {
-		            		if (right.isLeaf() || opID(right) >= PLUS) {
-	        					sb.append(rightStr);
-	        				} else {
-	        					sb.append('(');
-	    	                    sb.append(rightStr);
-	    	                    sb.append(')'); 
-	        				}
-        		    		break;
-            			} 
-            			else if (isEqualString(right, 0, !valueForm)) {
-            				if (left.isLeaf() || opID(left) >= PLUS) {
-	        					sb.append(leftStr);
-	        				} else {
-	        					sb.append('(');
-	    	                    sb.append(leftStr);
-	    	                    sb.append(')'); 
-	        				}
-        		    		break;
-            			}
+	                	if (valueForm) {
+	            			if (isEqualString(left, 0, !valueForm)) {
+			            		if (right.isLeaf() || opID(right) >= PLUS) {
+		        					sb.append(rightStr);
+		        				} else {
+		        					sb.append('(');
+		    	                    sb.append(rightStr);
+		    	                    sb.append(')'); 
+		        				}
+	        		    		break;
+	            			} 
+	            			else if (isEqualString(right, 0, !valueForm)) {
+	            				if (left.isLeaf() || opID(left) >= PLUS) {
+		        					sb.append(leftStr);
+		        				} else {
+		        					sb.append('(');
+		    	                    sb.append(leftStr);
+		    	                    sb.append(')'); 
+		        				}
+	        		    		break;
+	            			}
+	                	}
 	                	            			
 	                	// we need parantheses around right text
 	                	// if right is not a leaf expression or
@@ -1372,7 +1374,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                sb.append(leftStr);   
 		                
 		                // check for 0 at right
-	        			if (rightStr.equals("0")) {
+	        			if (valueForm && rightStr.equals("0")) {
 	    		    		break;
 	        			}
  
