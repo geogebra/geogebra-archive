@@ -1837,6 +1837,17 @@ public class Kernel {
 	 */
 	final public GeoText Text(
 		String label,
+		GeoElement geo, GeoPoint p, GeoBoolean substituteVars, GeoBoolean latex) {
+		AlgoText algo = new AlgoText(cons, label, geo, p, substituteVars, latex);
+		GeoText t = algo.getGeoText();
+		return t;
+	}
+	
+	/** 
+	 * Text of geo.
+	 */
+	final public GeoText Text(
+		String label,
 		GeoElement geo, GeoPoint p) {
 		AlgoText algo = new AlgoText(cons, label, geo, p);
 		GeoText t = algo.getGeoText();

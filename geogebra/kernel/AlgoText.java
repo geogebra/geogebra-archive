@@ -30,27 +30,32 @@ public class AlgoText extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoElement geo;  // input
-	private GeoBoolean substituteVars; // optional input
+	private GeoBoolean substituteVars, latex; // optional input
 	private GeoPoint startPoint, startPointCopy; // optional input
 	private GeoText text;     // output              
 
 	public AlgoText(Construction cons, String label, GeoElement geo) {
-		this(cons, label, geo, null, null);
+		this(cons, label, geo, null, null, null);
 	}   
 
 	public AlgoText(Construction cons, String label, GeoElement geo, GeoBoolean substituteVars) {
-		this(cons, label, geo, null, substituteVars);
+		this(cons, label, geo, null, substituteVars, null);
 	}   
 	
 	public AlgoText(Construction cons, String label, GeoElement geo, GeoPoint p) {
-		this(cons, label, geo, p, null);
+		this(cons, label, geo, p, null, null);
 	}   
 
 	public AlgoText(Construction cons, String label, GeoElement geo, GeoPoint p, GeoBoolean substituteVars) {
+		this(cons, label, geo, p, substituteVars, null);
+	}   
+
+	public AlgoText(Construction cons, String label, GeoElement geo, GeoPoint p, GeoBoolean substituteVars, GeoBoolean latex) {
 		super(cons);
 		this.geo = geo;
 		this.startPoint = p;
 		this.substituteVars = substituteVars;
+		this.latex = latex;
 
 		text = new GeoText(cons);
 		text.setIsCommand(true); // stop editing as text
@@ -85,12 +90,14 @@ public class AlgoText extends AlgoElement {
 		int inputs = 1;
 		if (startPoint != null) inputs++;
 		if (substituteVars != null) inputs++;
+		if (latex != null) inputs++;
 
 		int i=0;
 		input = new GeoElement[inputs];
 		input[i++] = geo;
 		if (startPoint != null) input[i++] = startPoint;
 		if (substituteVars != null) input[i++] = substituteVars;
+		if (latex != null) input[i++] = latex;
 
 		output = new GeoElement[1];        
 		output[0] = text;        
@@ -104,6 +111,7 @@ public class AlgoText extends AlgoElement {
 		// undefined text
 		if (!geo.isDefined() || 
 				(startPoint != null && !startPoint.isDefined()) ||
+				(substituteVars != null && !substituteVars.isDefined()) || 
 				(substituteVars != null && !substituteVars.isDefined())) 
 		{
 			text.setUndefined();
@@ -114,7 +122,10 @@ public class AlgoText extends AlgoElement {
 		
 		// standard case: set text
 		boolean bool = substituteVars == null ? true : substituteVars.getBoolean();
+		boolean formula = latex == null ? false : latex.getBoolean();
 		text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, bool));	
+		text.setLaTeX(formula, false);
+		text.update();
 		
 		text.restorePrintAccuracy();
 		
