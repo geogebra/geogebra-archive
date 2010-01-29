@@ -14,6 +14,9 @@ package geogebra.kernel;
 
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionNodeConstants;
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -870,6 +873,7 @@ public class Construction {
 	 */
 	private GeoElement autoCreateGeoElement(String label) {		
 		GeoElement createdGeo = null;
+		boolean fix = true;
 		
 		// if referring to variable "i" (complex) that is undefined, create it
 		if (label.equals("i")) {
@@ -887,6 +891,28 @@ public class Construction {
 			createdGeo = number;			
 		}
 		
+		// expression like AB, autocreate AB=Distance[A,B] or AB = A * B according to whether A,B are points or numbers
+		else if (label.length() == 2) {
+			GeoElement geo1 = kernel.lookupLabel(label.charAt(0)+"");
+			if (geo1 != null && geo1.isGeoPoint()) {
+				GeoElement geo2 = kernel.lookupLabel(label.charAt(1)+"");
+				if (geo2 != null && geo2.isGeoPoint()) {
+					AlgoDistancePoints dist = new AlgoDistancePoints(this, null, (GeoPoint)geo1, (GeoPoint)geo2);
+					createdGeo = dist.getDistance();
+					fix = false;
+				}
+			} else if (geo1 != null && geo1.isNumberValue()) {
+				GeoElement geo2 = kernel.lookupLabel(label.charAt(1)+"");
+				if (geo2 != null && geo2.isNumberValue()) {
+					ExpressionNode node = new ExpressionNode(kernel, ((NumberValue)geo1).evaluate(), ExpressionNodeConstants.MULTIPLY, ((NumberValue)geo2).evaluate());
+					AlgoDependentNumber algo = new AlgoDependentNumber(this, null, node, false);
+					createdGeo = algo.getNumber();
+					fix = false;					
+				}
+			}
+
+		}
+		
 		// handle i or e case
 		if (createdGeo != null) {
 			// make sure that label creation is turned on
@@ -895,7 +921,7 @@ public class Construction {
 			
 			createdGeo.setAuxiliaryObject(true);
 			createdGeo.setLabel(label);
-			createdGeo.setFixed(true);
+			createdGeo.setFixed(false);
 			
 			// revert to previous label creation state
 			setSuppressLabelCreation(oldSuppressLabelsActive);	
