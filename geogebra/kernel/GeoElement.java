@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
@@ -1474,10 +1475,11 @@ public abstract class GeoElement
 	}
 
     public String toLaTeXString(boolean symbolic) {
-    	if (symbolic)
-    		return toString();
-    	else
-    		return toDefinedValueString();	
+    	return getFormulaString(ExpressionNode.STRING_TYPE_LATEX, !symbolic);
+    	//if (symbolic)
+    	//	return toString();
+    	//else
+    	//	return toDefinedValueString();	
     }     
 
 	/* *******************************************************
@@ -2005,7 +2007,7 @@ public abstract class GeoElement
 		return getDefaultLabel(); 
 	}
 		
-	public String getDefaultLabel() {				
+	public String getDefaultLabel() {			
 		char[] chars;
 
 		if (isGeoPoint()) {
@@ -4020,12 +4022,20 @@ public abstract class GeoElement
 	 					geoFun.getFunction().toString(); 
 	 		}
 		}
+		// matrices
+		else if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
+			return this.toLaTeXString(substituteNumbers);
+		}
 		else 
 		{
 			ret = substituteNumbers ? this.toValueString()
 					: this.getCommandDescription();
 		}
 		
+		// GeoNumeric eg a=1
+		if (ret.equals("") && this.isGeoNumeric() && !substituteNumbers && label != null) {
+			ret = label;
+		}
 		if (ret.equals("") && !this.isGeoText()) {
 			// eg Text[ (1,2), false]
 			ret = toOutputValueString();
