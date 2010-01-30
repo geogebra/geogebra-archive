@@ -1032,7 +1032,6 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	    		for (int i = 0 ; i < size() ; i++) {
 	    			GeoList geo = (GeoList)get(i);
 	    			for (int j = 0 ; j < geo.size() ; j++) {
-	    				Application.debug(geo.get(j).label+"");
 	    				sb.append(geo.get(j).toLaTeXString(symbolic));
 	    				if (j < geo.size() - 1) sb.append("&");
 	    			}
