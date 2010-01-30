@@ -4024,7 +4024,7 @@ public abstract class GeoElement
 		}
 		// matrices
 		else if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
-			return this.toLaTeXString(substituteNumbers);
+			ret = this.toLaTeXString(substituteNumbers);
 		}
 		else 
 		{
