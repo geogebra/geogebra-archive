@@ -16,6 +16,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -1023,5 +1024,27 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			return false;
 		}
 		
+	    public String toLaTeXString(boolean symbolic) {
+	    	
+	    	if (isMatrix()) {
+	    		StringBuilder sb = new StringBuilder();
+	    		sb.append("\\begin{array}{ll}");
+	    		for (int i = 0 ; i < size() ; i++) {
+	    			GeoList geo = (GeoList)get(i);
+	    			for (int j = 0 ; j < geo.size() ; j++) {
+	    				Application.debug(geo.get(j).label+"");
+	    				sb.append(geo.get(j).toLaTeXString(symbolic));
+	    				if (j < geo.size() - 1) sb.append("&");
+	    			}
+	    			sb.append("\\\\");
+	    		}
+	    		sb.append(" \\end{array}");
+	    		return sb.toString();
+		    	//return "\\begin{array}{ll}1&2 \\\\ 3&4 \\\\ \\end{array}";
+	    	}
+	    	
+	    	return super.toLaTeXString(symbolic);
+
+	    }     
 
 }
