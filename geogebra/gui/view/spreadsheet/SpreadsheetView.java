@@ -76,6 +76,14 @@ public class SpreadsheetView extends JScrollPane implements View
 	private boolean doRowResize = false;
 	//END GSTURR
 	
+	//G.STURR 
+	// Moved these rowHeader selection var declarations up to here.
+	// NOTE: MyTable uses its own minSelectionRow and maxSelectionRow.
+	//       The rowHeaderRenderer keeps them in sync.
+	private int minSelectionRow = -1 ; // G.Sturr (just moved these declarations up)
+	private int maxSelectionRow = -1 ; // G.Sturr
+	
+	
 	public SpreadsheetView(Application app0, int columns, int rows) {
 		/*
 		JList table = new JList();
@@ -86,6 +94,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		app = app0;
 		kernel = app.getKernel();
+		
 		// table
 		tableModel = new DefaultTableModel(rows, columns);
 		table = new MyTable(this, tableModel);
@@ -110,6 +119,7 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		rowHeaderRenderer = new RowHeaderRenderer(table, rowHeader);
 		rowHeader.setCellRenderer(rowHeaderRenderer);
+		
 		// put the table and the row header list into a scroll plane
 		setRowHeaderView(rowHeader);
 		setViewportView(table);
@@ -122,8 +132,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
 		upperLeftCorner.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
+				table.setSelectionType(table.CELL_SELECT);
 				table.selectAll();
-				table.selectionChanged(); //G.Sturr 2009-11-15
+				//table.selectionChanged(); //G.Sturr 2010-1-29
 			}
 		});
 		
@@ -135,6 +146,8 @@ public class SpreadsheetView extends JScrollPane implements View
 		updateFonts();
 		attachView(); //G.Sturr 2010-1-18
 	}
+	
+	
 	
 	private class Corner extends JComponent {
 		private static final long serialVersionUID = -4426785169061557674L;
@@ -163,12 +176,18 @@ public class SpreadsheetView extends JScrollPane implements View
 		return app;
 	}
 	
+	public MyTable getTable() {
+		return table;
+	}
+	
+
+	
 	public int getHighestUsedColumn() {
 		resetTraceRow(highestUsedColumn+1);
 		resetTraceRow(highestUsedColumn+2);
 		return highestUsedColumn;
 	}
-	
+		
 	private void resetTraceRow(int col) {
 		if (col < MAX_COLUMNS) traceRow[col] = 1;
 	}
@@ -311,6 +330,7 @@ public class SpreadsheetView extends JScrollPane implements View
 //		highestUsedColumn++;
 //	}
 	
+	
 	public void add(GeoElement geo) {	
 		//Application.debug(new Date() + " ADD: " + geo);				
 
@@ -347,6 +367,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 	}
 	
+	/**
+	 * Updates highestUsedColumn when this is sent as a parameter
+	 */
 	private void checkColumnEmpty(int col) {
 		
 		if (col == -1) return; // end recursion
@@ -373,14 +396,15 @@ public class SpreadsheetView extends JScrollPane implements View
 		if (location != null) {
 			doRemove(geo, location.y, location.x);
 		}
-
+		
 		add(geo);
 	}
 	
 	public void updateAuxiliaryObject(GeoElement geo) {		
 	}
 	
-	public static HashSet selectedElems = new HashSet();
+// G.STURR -- this no longer  used	
+//	public static HashSet selectedElems = new HashSet();
 	
 	public void repaintView() {
 		/*
@@ -440,11 +464,9 @@ public class SpreadsheetView extends JScrollPane implements View
 		
     }
 
-
-
-	
-	protected int minSelectionRow = -1;
-	protected int maxSelectionRow = -1;
+// G.Sturr, moved these declarations to the top
+//	protected int minSelectionRow = -1;
+//	protected int maxSelectionRow = -1;
 
 	public class RowHeaderRenderer extends JLabel implements ListCellRenderer, ListSelectionListener {
 	
@@ -486,9 +508,20 @@ public class SpreadsheetView extends JScrollPane implements View
 		    setPreferredSize(size);
 		    //END GSTURR
 			
+			setText((value == null) ? "" : value.toString());
+
+			if (table.getSelectionType() == table.COLUMN_SELECT ) {
+				setBackground(defaultBackground);
+			} else {
+				if (table.selectedRowSet.contains(index)
+						|| (index >= minSelectionRow && index <= maxSelectionRow)) {
+					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
+				} else {
+					setBackground(defaultBackground);
+				}
+			}
 			
-			setText ((value == null) ? ""  : value.toString());
-						
+			/* --------- old code
 			if (minSelectionRow != -1 && maxSelectionRow != -1) {
 				if (index >= minSelectionRow && index <= maxSelectionRow &&
 						selectionModel.isSelectedIndex(index)) 
@@ -501,10 +534,15 @@ public class SpreadsheetView extends JScrollPane implements View
 			}
 			else {
 				setBackground(defaultBackground);
-			}
+			}		
+			*/
+			
 			return this;
 		}
 	
+		/**
+		 * Update the rowHeader list when row selection changes in the table
+		 */
 		public void valueChanged(ListSelectionEvent e) {
 			selectionModel = (ListSelectionModel)e.getSource();
 			minSelectionRow = selectionModel.getMinSelectionIndex();
@@ -591,25 +629,33 @@ public class SpreadsheetView extends JScrollPane implements View
 				
 				Point point = table.getIndexFromPixel(x, y);
 				if (point != null) {
+					//G.STURR 2010-1-29
+					if(table.getSelectionType() != table.ROW_SELECT){
+						table.setSelectionType(table.ROW_SELECT);
+					}
+					/*
 					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
 							table.getColumnSelectionAllowed() == true) {
 						table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						table.setColumnSelectionAllowed(false);
 						table.setRowSelectionAllowed(true);
 					}
+					*/
 					if (shiftPressed) {
 						if (row0 != -1) {
 							int row = (int)point.getY();
 							table.setRowSelectionInterval(row0, row);
 						}
-					}
-					else if (metaDown) {
-						row0 = (int)point.getY();
-						//G.Sturr 2009-11-15 (ctrl-select now handled in MyTable) 
+					}	
+					/*
+				    * G.Sturr 2009-11-15 (ctrl-select now handled in table)
+					} else if (metaDown) {
+						row0 = (int) point.getY();
 						table.setRowSelectionInterval(row0, row0);
-						//table.addRowSelectionInterval(row0, row0);
-						}
-					
+						// table.addRowSelectionInterval(row0, row0);
+					}
+                     */
+						
 					else {
 						row0 = (int)point.getY();
 						table.setRowSelectionInterval(row0, row0);
@@ -649,12 +695,18 @@ public class SpreadsheetView extends JScrollPane implements View
 				if(p.getY() < minSelectionRow ||  p.getY() > maxSelectionRow 
 						|| p.getX() < table.minSelectionColumn || p.getX() > table.maxSelectionColumn){
 					// switch to row selection mode and select row
+					//G.STURR 2010-1-29
+					if(table.getSelectionType() != table.ROW_SELECT){
+						table.setSelectionType(table.ROW_SELECT);
+					}
+					/*------- old code
 					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
 							table.getColumnSelectionAllowed() == true) {
 						table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						table.setColumnSelectionAllowed(false);
 						table.setRowSelectionAllowed(true);
 					}
+					*/
 					//table.selectNone();
 					table.setRowSelectionInterval((int)p.getY(), (int)p.getY());
 				}	
@@ -667,7 +719,7 @@ public class SpreadsheetView extends JScrollPane implements View
 			    //   popupMenu.show(e.getComponent(), e.getX(), e.getY());
 				
 				ContextMenu popupMenu = new ContextMenu(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, 
-						maxSelectionRow, new boolean[0], ContextMenu.ROW_SELECT);
+						maxSelectionRow, new boolean[0],1);
 		        popupMenu.show(e.getComponent(), e.getX(), e.getY());
 		        // END GSTURR
 			} 
@@ -713,7 +765,7 @@ public class SpreadsheetView extends JScrollPane implements View
 				if (point != null) {
 					int row = (int) point.getY();
 					table.setRowSelectionInterval(row0, row);
-					table.repaint();
+					//table.repaint();
 				}
 			}
 			
@@ -742,7 +794,10 @@ public class SpreadsheetView extends JScrollPane implements View
 		}
 		
 	}
-		
+	
+	
+
+	
 	protected class KeyListener1 implements KeyListener 
 	{
 		
@@ -832,22 +887,10 @@ public class SpreadsheetView extends JScrollPane implements View
 			tableModel.setValueAt(geo, location.y, location.x);
 		}			
 	}	
+
 	
-	/*
-	public void add(GeoElement geo) {
-	}
-	public void remove(GeoElement geo) {
-	}	
-	public void rename(GeoElement geo) {
-	}	
-	public void updateAuxiliaryObject(GeoElement geo) {
-	}	
-	public void repaintView() {
-	}
-	public void clearView() {
-	}
 	
-	/**/
+	
 	/**
 	 * returns settings in XML format
 	 */
@@ -882,16 +925,10 @@ public class SpreadsheetView extends JScrollPane implements View
 		return sb.toString();
 	}
 	
-	public void setColumnWidth(int col, int width) {
-		//Application.debug("col = "+col+" width = "+width);
-		TableColumn column = table.getColumnModel().getColumn(col); 
-		column.setPreferredWidth(width);
-		//column.
-	}
+
 	
 	public void updateFonts() {
-		
-		
+			
 		Font font = app.getPlainFont();
 		
 		int size = font.getSize();
@@ -911,10 +948,16 @@ public class SpreadsheetView extends JScrollPane implements View
 		table.columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH * multiplier)
 						, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
 		
-
-	
-		
 	}
+	
+	
+	public void setColumnWidth(int col, int width) {
+		//Application.debug("col = "+col+" width = "+width);
+		TableColumn column = table.getColumnModel().getColumn(col); 
+		column.setPreferredWidth(width);
+		//column.
+	}
+	
 	
 	public void updateColumnWidths() {
 		Font font = app.getPlainFont();
@@ -926,12 +969,9 @@ public class SpreadsheetView extends JScrollPane implements View
 			table.getColumnModel().getColumn(i).setPreferredWidth((int)(MyTable.TABLE_CELL_WIDTH * multiplier));
 		}
 		
-
 	}
 
-	public MyTable getTable() {
-		return table;
-	}
+	
 	
 	//G.STURR 2010-1-9
 	public void updateRowHeader() {

@@ -35,13 +35,14 @@ public class ContextMenu extends JPopupMenu
 	protected boolean[] selectedColumns = null;
 	
 	//G.Sturr 2009-9-30
-	protected static int CELL_SELECT = 0;
-	protected static int ROW_SELECT = 1;
-	protected static int COLUMN_SELECT = 2;
-	protected int selectionType = CELL_SELECT;
+
+	private ArrayList<CellRange> selectedCellRanges;
+	private int selectionType;
 	// end G.Sturr
 	
+	
 	protected Application app;
+	
 	
 	
 	// G.Sturr 2009-10-3: Added selection type parameter.
@@ -58,8 +59,8 @@ public class ContextMenu extends JPopupMenu
 		selectedColumns = selected0;
 		app = table.kernel.getApplication();
 				
-		selectionType = selectionType0;  //G.Sturr 2009-10-3
-		
+		selectionType = table.getSelectionType();  //G.Sturr 2009-10-3
+		selectedCellRanges = table.selectedCellRanges;
 		
 		
 		initMenu();			
@@ -127,7 +128,7 @@ public class ContextMenu extends JPopupMenu
 	 	// G.Sturr 20009-10-2  
 	 	// Insert (insert new row or new column)
 	 	
-	 	if(selectionType == COLUMN_SELECT){
+	 	if(selectionType == table.COLUMN_SELECT){
 		 	JMenuItem itemInsertLeft = new JMenuItem(app.getMenu("InsertLeft"));
 		 	itemInsertLeft.setIcon(app.getEmptyIcon());
 		 	itemInsertLeft.addActionListener(new InsertLeft());   	 	
@@ -139,7 +140,7 @@ public class ContextMenu extends JPopupMenu
 			addSeparator();
 	 	}
 	 	
-	 	if(selectionType == ROW_SELECT){
+	 	if(selectionType == table.ROW_SELECT){
 		 	JMenuItem itemInsertAbove = new JMenuItem(app.getMenu("InsertAbove"));
 		 	itemInsertAbove.setIcon(app.getEmptyIcon());
 		 	itemInsertAbove.addActionListener(new InsertAbove());   	 	
@@ -153,7 +154,7 @@ public class ContextMenu extends JPopupMenu
 	 	
 	 	
 	 	// Create (Lists, Matrix, etc.) 	
- 		if (column1 + 1 <= column2) {
+	 	if (table.getCellRangeProcessor().isCreatePointListPossible(selectedCellRanges))  {
  		JMenuItem item5 = new JMenuItem(app.getMenu("CreateListOfPoints"));
    	 	item5.setIcon(app.getEmptyIcon());
    	 	item5.addActionListener(new ActionListenerCreatePoints());
@@ -167,7 +168,8 @@ public class ContextMenu extends JPopupMenu
    	   	 	add(item6);
  		}
    	 	
- 		if ((column1 == column2 && column1 !=-1) || (row1 == row2 && row1 != -1)) {
+ 		//if ((column1 == column2 && column1 !=-1) || (row1 == row2 && row1 != -1)) {
+ 		if (!isEmptySelection()) {
    	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("CreateList"));
    	   	 	item7.setIcon(app.getEmptyIcon());
    	   	 	item7.addActionListener(new ActionListenerCreateList());
@@ -392,10 +394,23 @@ public class ContextMenu extends JPopupMenu
 	// end G.Sturr
 	
 	
+	// G.STURR 2010-1029: Create list now done by CellRangeProcessor
+	private class ActionListenerCreatePoints implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+
+			if (table.getCellRangeProcessor().isCreatePointListPossible(selectedCellRanges)) {
+
+				table.getCellRangeProcessor().CreatePointList(selectedCellRanges, true, true);
+			}
+		}
+	}
 	
-	private class ActionListenerCreatePoints implements ActionListener
+	// OLD CREATE POINTS --- to be removed
+	private class ActionListenerCreatePointsOLD implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
+ 			
+ 			
  			//Application.debug("CreatePoints " + column1 + " - " + column2+"   "+row1+" - "+row2);
  			//if (selected == null) throw new RuntimeException("error state");
  			StringBuilder text = new StringBuilder();
@@ -634,7 +649,17 @@ public class ContextMenu extends JPopupMenu
  		}
 	}
 	
+	// G.STURR 2010-1029: Create list now done by CellRangeProcessor
 	private class ActionListenerCreateList implements ActionListener
+	{
+ 		public void actionPerformed(ActionEvent e) {
+ 			table.getCellRangeProcessor().CreateList(selectedCellRanges, true, true);
+ 		}
+	}
+	
+	
+	// OLD CREATE LIST -- to be removed
+	private class ActionListenerCreateList_OLD implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
  			Application.debug("CreateList " + column1 + " - " + column2+"   "+row1+" - "+row2);
@@ -724,9 +749,11 @@ public class ContextMenu extends JPopupMenu
 		}
 	}
 
-
-
-
+	//G.STURR 2010-1-29
+	private boolean isEmptySelection(){
+		return (app.getSelectedGeos().isEmpty()) ;
+	}
+	// END G.STURR
 	
 	private static String removeComma(String s)
 	{
