@@ -22,6 +22,8 @@ public class EditMenu extends BaseMenu {
 
 	private AbstractAction
 		deleteAction,
+		showhideAction,
+		showhideLabelsAction,
 		drawingPadToClipboardAction,
 		propertiesAction,
 		selectAllAction,
@@ -78,6 +80,14 @@ public class EditMenu extends BaseMenu {
 								KeyEvent.VK_DELETE, 0));
 			}
 		}
+		addSeparator();
+
+		mi = add(showhideAction);
+		setMenuShortCutAccelerator(mi, 'H');
+
+		mi = add(showhideLabelsAction);
+		setMenuShortCutShiftAccelerator(mi, 'H');
+
 		addSeparator();
 
 		mi = add(selectAllAction);
@@ -178,6 +188,27 @@ public class EditMenu extends BaseMenu {
 			}
 		};
 
+		showhideAction = new AbstractAction(app
+				.getMenu("ShowHide"), app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+
+				app.showHideSelection();
+
+			}
+		};
+
+		showhideLabelsAction = new AbstractAction(app
+				.getMenu("ShowHideLabels"), app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+
+				app.showHideSelectionLabels();
+			}
+		};
+
 		deleteAction = new AbstractAction(app.getPlain("Delete"), app
 				.getImageIcon("delete_small.gif")) {
 			private static final long serialVersionUID = 1L;
@@ -226,6 +257,8 @@ public class EditMenu extends BaseMenu {
 		deleteAction.setEnabled(layer != -1); // -1 means nothing selected, -2
 												// means different layers
 												// selected
+		showhideAction.setEnabled(layer != -1); 
+		showhideLabelsAction.setEnabled(layer != -1); 
 		selectCurrentLayerAction.setEnabled(getSelectedLayer() >= 0); // exactly
 																		// one
 																		// layer

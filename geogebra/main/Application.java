@@ -2777,6 +2777,28 @@ public abstract class Application implements KeyEventDispatcher {
 		updateSelection();
 	}
 
+	final public void showHideSelection() {
+
+		for (int i = 0; i < selectedGeos.size(); i++) {
+			GeoElement geo = (GeoElement) selectedGeos.get(i);
+			geo.setEuclidianVisible(!geo.isEuclidianVisible());
+			geo.update();
+		}
+		kernel.notifyRepaint();
+		updateSelection();
+	}
+
+	final public void showHideSelectionLabels() {
+
+		for (int i = 0; i < selectedGeos.size(); i++) {
+			GeoElement geo = (GeoElement) selectedGeos.get(i);
+			geo.setLabelVisible(!geo.isLabelVisible());
+			geo.update();
+		}
+		kernel.notifyRepaint();
+		updateSelection();
+	}
+
 	final public void selectAllDescendants() {
 
 		for (int i = 0; i < selectedGeos.size(); i++) {
