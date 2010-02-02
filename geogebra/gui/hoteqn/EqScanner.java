@@ -1,13 +1,13 @@
 /*****************************************************************************
-*                                                                            *
-*                             S C A N N E R                                  *
-*                                  for                                       *
-*                         HotEqn Equation Applet                             *
-*                                                                            *
-******************************************************************************
-*    Die Klasse "EqScanner" stellt Methoden zur Erkennung                    *
-*    der Elemente (Token) in einer Gleichung zur Verfügung.                  *
-******************************************************************************
+ *                                                                            *
+ *                             S C A N N E R                                  *
+ *                                  for                                       *
+ *                         HotEqn Equation Applet                             *
+ *                                                                            *
+ ******************************************************************************
+ *    Die Klasse "EqScanner" stellt Methoden zur Erkennung                    *
+ *    der Elemente (Token) in einer Gleichung zur Verfügung.                  *
+ ******************************************************************************
 
 Copyright 2006 Stefan Müller and Christian Schmid
 
@@ -23,46 +23,46 @@ This file is part of the HotEqn package.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-******************************************************************************
-* Methoden:                                                                  *
-*       EqToken    nextToken()      nächstes Token                           *
-*       boolean    EoT()            true, wenn Tokenende erreicht            *
-*       void       start()          countT=-1: Scanner zurueckstellen, aber  *
-*                                   NICHT neu scannen                        *
-*       int        get_count()      Wert von "countT" (für Rekursive Token)  *
-*       void       set_count(int)   ruft init() und springt bis countT=int   *
-*       void       setEquation(eq)  eq scannen und in TokenV ablegen         * 
-*                                                                            *
-* Methoden (intern):                                                         *
-*       EqToken    ScanNextToken() nächstes Token aus Gleichungsstring       *
-*       char       getChar()      aktueller char                             *
-*       void       advance()      eine Stelle weiterschalten                 *
-*                                                                            *
-**************   Version 2.0     *********************************************
-*        1997,1998 Chr. Schmid, S. Mueller                                   *
-*                                                                            *
-* 22.12.1997  Separation from HotEqn.java                            (2.00p) * 
-* 22.12.1997  \choose \atop                                                  *
-* 23.12.1997  overline underline overbrace underbrace stackrel begin end     *
-* 30.12.1997  \choose mapped to \atop + ()                           (2.00s) *
-*             setEquation, ScanInit combined                                 *
-* 31.12.1997  <> Angle new                                           (2.00t) * 
-* 01.01.1998  Tokens stored dynamically (limit 500 tokens removed)   (2.00v) * 
-* 08.01.1998  Rearranged and new symbols                             (2.00z1)* 
-* 13.01.1998  new media tracking, cached images, get/set_img neu     (2.00z4)*
-*             Symbols and greek symbols scanning reorganized                 *
-* 18.01.1998  Image cache realized by hash table                     (2.01a) *
-*             get_img and set_img removed                                    *
-* 27.02.1998  \sqrt[ ]{}                                             (2.01c) *
-* 03.05.1998  bug: if \ is last char --> StringIndexOutOfBoundsExc.. (2.02a) *
-*             line 335: additional EOF-checking                              *
-* 21.05.1998  getSelectedArea(count1,count2) return the selected part(2.03)  *
-* 27.10.2002  Package atp introduced                                 (3.12)  * 
-**************   Release of Version 4.00 *************************************
-* 14.07.2003  Adapted to XPCom. Same as 3.12,only mHotEqn affected   (4.00)  *
-* 14.09.2006  \sech and \csch added                                  (4.02)  *
-*                                                                            *
-*****************************************************************************/
+ ******************************************************************************
+ * Methoden:                                                                  *
+ *       EqToken    nextToken()      nächstes Token                           *
+ *       boolean    EoT()            true, wenn Tokenende erreicht            *
+ *       void       start()          countT=-1: Scanner zurueckstellen, aber  *
+ *                                   NICHT neu scannen                        *
+ *       int        get_count()      Wert von "countT" (für Rekursive Token)  *
+ *       void       set_count(int)   ruft init() und springt bis countT=int   *
+ *       void       setEquation(eq)  eq scannen und in TokenV ablegen         * 
+ *                                                                            *
+ * Methoden (intern):                                                         *
+ *       EqToken    ScanNextToken() nächstes Token aus Gleichungsstring       *
+ *       char       getChar()      aktueller char                             *
+ *       void       advance()      eine Stelle weiterschalten                 *
+ *                                                                            *
+ **************   Version 2.0     *********************************************
+ *        1997,1998 Chr. Schmid, S. Mueller                                   *
+ *                                                                            *
+ * 22.12.1997  Separation from HotEqn.java                            (2.00p) * 
+ * 22.12.1997  \choose \atop                                                  *
+ * 23.12.1997  overline underline overbrace underbrace stackrel begin end     *
+ * 30.12.1997  \choose mapped to \atop + ()                           (2.00s) *
+ *             setEquation, ScanInit combined                                 *
+ * 31.12.1997  <> Angle new                                           (2.00t) * 
+ * 01.01.1998  Tokens stored dynamically (limit 500 tokens removed)   (2.00v) * 
+ * 08.01.1998  Rearranged and new symbols                             (2.00z1)* 
+ * 13.01.1998  new media tracking, cached images, get/set_img neu     (2.00z4)*
+ *             Symbols and greek symbols scanning reorganized                 *
+ * 18.01.1998  Image cache realized by hash table                     (2.01a) *
+ *             get_img and set_img removed                                    *
+ * 27.02.1998  \sqrt[ ]{}                                             (2.01c) *
+ * 03.05.1998  bug: if \ is last char --> StringIndexOutOfBoundsExc.. (2.02a) *
+ *             line 335: additional EOF-checking                              *
+ * 21.05.1998  getSelectedArea(count1,count2) return the selected part(2.03)  *
+ * 27.10.2002  Package atp introduced                                 (3.12)  * 
+ **************   Release of Version 4.00 *************************************
+ * 14.07.2003  Adapted to XPCom. Same as 3.12,only mHotEqn affected   (4.00)  *
+ * 14.09.2006  \sech and \csch added                                  (4.02)  *
+ *                                                                            *
+ *****************************************************************************/
 
 package geogebra.gui.hoteqn;
 
@@ -71,262 +71,263 @@ package geogebra.gui.hoteqn;
 //import atp.*;
 import geogebra.main.Application;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 class EqScanner {
-   private String    equation;                           // Gleichung als String
-   private int       count;                              // Zeichen Position
-   private int       countT;                             // Token Position
-   private EqToken   token;                              // Momentanes Token
-   private boolean   EOF              = false;           // Fileende Variable
-   //public  boolean inScanPaint      = false;           // Scan  semaphore
-   private Vector    TokenV = new Vector (50,50);        // dynamischer Vector mit allen Tokens
-   private boolean   selectB          = false;           // find selected area
-   private boolean   collectB         = false;
-   private int       selectCount1     = 0;
-   private int       selectCount2     = 0;
-   private StringBuilder selectSB      = new StringBuilder("");
+	private String    equation;                           // Gleichung als String
+	private int       count;                              // Zeichen Position
+	private int       countT;                             // Token Position
+	private EqToken   token;                              // Momentanes Token
+	private boolean   EOF              = false;           // Fileende Variable
+	//public  boolean inScanPaint      = false;           // Scan  semaphore
+	private Vector    TokenV = new Vector (50,50);        // dynamischer Vector mit allen Tokens
+	private boolean   selectB          = false;           // find selected area
+	private boolean   collectB         = false;
+	private int       selectCount1     = 0;
+	private int       selectCount2     = 0;
+	private StringBuilder selectSB      = new StringBuilder("");
 
-public EqScanner(String equation) {
-   // Constructor
-   token         = new EqToken(EqToken.Null);
-   setEquation(equation);
-}
+	public EqScanner(String equation) {
+		// Constructor
+		token         = new EqToken(EqToken.Null);
+		setEquation(equation);
+	}
 
-public String getSelectedArea(int count1, int count2) {
-   // return the mouse-selected part of the equation as a LaTeX-string
+	public String getSelectedArea(int count1, int count2) {
+		// return the mouse-selected part of the equation as a LaTeX-string
 
-   selectCount1 = Math.min(count1, count2);
-   selectCount2 = Math.max(count1, count2);
-   selectB      = true;
-   selectSB     = new StringBuilder("");
+		selectCount1 = Math.min(count1, count2);
+		selectCount2 = Math.max(count1, count2);
+		selectB      = true;
+		selectSB     = new StringBuilder("");
 
-   setEquation(this.equation);  // Scannvorgang neu anstossen   
+		setEquation(this.equation);  // Scannvorgang neu anstossen   
 
-   selectB      = false;
-   return selectSB.toString();
-}
+		selectB      = false;
+		return selectSB.toString();
+	}
 
-public void setEquation(String equation) {
-   //if (inScanPaint)  return; // Semaphore
-   //inScanPaint=true;
-   // Zum setzen der Gleichung
-   this.equation = equation;
+	public void setEquation(String equation) {
+		//if (inScanPaint)  return; // Semaphore
+		//inScanPaint=true;
+		// Zum setzen der Gleichung
+		this.equation = equation;
 
-   // Scanner rücksetzen und EINmal Gleichung scannen.
-   // Tokens in TokenV ablegen
+		// Scanner rücksetzen und EINmal Gleichung scannen.
+		// Tokens in TokenV ablegen
 
-   int i             = 0;
-   int ii            = 0;
-   int countBeginEnd = 0;
+		int i             = 0;
+		int ii            = 0;
+		int countBeginEnd = 0;
 
-   EOF       = false;
-   countT    = -1;
-   count     = -1;
-   TokenV.removeAllElements();  // alle alten Tokens entfernen
-   advance();                   // leere Gleichungen abfangen
-   while (!EOF) {
-      countT ++;
-      if (selectB && (countT == selectCount1 )) collectB=true;
-      TokenV.addElement(ScanNextToken());
-      if (selectB && (countT == selectCount2 )) collectB=false;
-      //Application.debug("scanNextToken "+((EqToken)TokenV.lastElement()).stringS);
-   }
-   countT = -1;
+		EOF       = false;
+		countT    = -1;
+		count     = -1;
+		TokenV.removeAllElements();  // alle alten Tokens entfernen
+		advance();                   // leere Gleichungen abfangen
+		while (!EOF) {
+			countT ++;
+			if (selectB && (countT == selectCount1 )) collectB=true;
+			TokenV.addElement(ScanNextToken());
+			if (selectB && (countT == selectCount2 )) collectB=false;
+			//Application.debug("scanNextToken "+((EqToken)TokenV.lastElement()).stringS);
+		}
+		countT = -1;
 
-   // Beseitigung von Sprachkonflikten: 
-   // { ... \choose ... } --> \choose{ ... }{ ... }
-   // { ... \atop ... }   --> \atop{ ... }{ ... }
-   while ( i < TokenV.size() ) {   
-      if (((EqToken)TokenV.elementAt(i)).typ == EqToken.CHOOSE){
+		// Beseitigung von Sprachkonflikten: 
+		// { ... \choose ... } --> \choose{ ... }{ ... }
+		// { ... \atop ... }   --> \atop{ ... }{ ... }
+		while ( i < TokenV.size() ) {   
+			if (((EqToken)TokenV.elementAt(i)).typ == EqToken.CHOOSE){
 
-          // einzelnes { suchen
-          ii            = i-1; 
-          countBeginEnd = 0;
-          while ( ii>0 ) {
-             if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.EndSym )        countBeginEnd--;
-             else if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.BeginSym ) countBeginEnd++;
-             if ( countBeginEnd == 1 ) break; 
-             ii--;
-          } // end while ii
+				// einzelnes { suchen
+				ii            = i-1; 
+				countBeginEnd = 0;
+				while ( ii>0 ) {
+					if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.EndSym )        countBeginEnd--;
+					else if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.BeginSym ) countBeginEnd++;
+					if ( countBeginEnd == 1 ) break; 
+					ii--;
+				} // end while ii
 
-          // einzelnes } suchen
-          int jj        = i+1;
-          countBeginEnd = 0;
-          while ( jj < TokenV.size() ) {
-             if ( ((EqToken)TokenV.elementAt(jj)).typ == EqToken.EndSym )        countBeginEnd++;
-             else if ( ((EqToken)TokenV.elementAt(jj)).typ == EqToken.BeginSym ) countBeginEnd--;
-             if ( countBeginEnd == 1 ) break; 
-             jj++;
-          } // end while jj
-          if ((countBeginEnd == 1) && (ii >=0)) {
- 
-             // rechte Klammer ) einfuegen
-             TokenV.insertElementAt(new EqToken(EqToken.Paren,")"),jj+1);
-             TokenV.insertElementAt(new EqToken(EqToken.RIGHT),jj+1);
+				// einzelnes } suchen
+				int jj        = i+1;
+				countBeginEnd = 0;
+				while ( jj < TokenV.size() ) {
+					if ( ((EqToken)TokenV.elementAt(jj)).typ == EqToken.EndSym )        countBeginEnd++;
+					else if ( ((EqToken)TokenV.elementAt(jj)).typ == EqToken.BeginSym ) countBeginEnd--;
+					if ( countBeginEnd == 1 ) break; 
+					jj++;
+				} // end while jj
+				if ((countBeginEnd == 1) && (ii >=0)) {
 
-             // bei \choose }{ einfuegen
-             TokenV.setElementAt(new EqToken(EqToken.EndSym),i);
-             TokenV.insertElementAt(new EqToken(EqToken.BeginSym),i+1);
+					// rechte Klammer ) einfuegen
+					TokenV.insertElementAt(new EqToken(EqToken.Paren,")"),jj+1);
+					TokenV.insertElementAt(new EqToken(EqToken.RIGHT),jj+1);
 
-             // \atop einsetzen mit Klammer ( 
-             TokenV.insertElementAt(new EqToken(EqToken.ATOP),ii);
-             TokenV.insertElementAt(new EqToken(EqToken.Paren,"("),ii);
-             TokenV.insertElementAt(new EqToken(EqToken.LEFT),ii);
+					// bei \choose }{ einfuegen
+					TokenV.setElementAt(new EqToken(EqToken.EndSym),i);
+					TokenV.insertElementAt(new EqToken(EqToken.BeginSym),i+1);
 
-             i +=4; // 4 Token nach rechts gerückt
+					// \atop einsetzen mit Klammer ( 
+					TokenV.insertElementAt(new EqToken(EqToken.ATOP),ii);
+					TokenV.insertElementAt(new EqToken(EqToken.Paren,"("),ii);
+					TokenV.insertElementAt(new EqToken(EqToken.LEFT),ii);
 
-         } // end if
+					i +=4; // 4 Token nach rechts gerückt
 
-      } // end if \choose
-      else if ( ((EqToken)TokenV.elementAt(i)).typ == EqToken.ATOP ){
+				} // end if
 
-          // einzelnes { suchen
-          ii            = i-1; 
-          countBeginEnd = 0;
-          while ( ii>0 ) {
-             if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.EndSym )        countBeginEnd--;
-             else if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.BeginSym ) countBeginEnd++;
-             if ( countBeginEnd == 1 ) break; 
-             ii--;
-          } // end while ii
-          if ( ii >= 0 ) {
+			} // end if \choose
+			else if ( ((EqToken)TokenV.elementAt(i)).typ == EqToken.ATOP ){
 
-             // bei \atop }{ einfuegen
-             TokenV.setElementAt(new EqToken(EqToken.EndSym),i);
-             TokenV.insertElementAt(new EqToken(EqToken.BeginSym),i+1);
+				// einzelnes { suchen
+				ii            = i-1; 
+				countBeginEnd = 0;
+				while ( ii>0 ) {
+					if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.EndSym )        countBeginEnd--;
+					else if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.BeginSym ) countBeginEnd++;
+					if ( countBeginEnd == 1 ) break; 
+					ii--;
+				} // end while ii
+				if ( ii >= 0 ) {
 
-             // \atop an neue Stelle kopieren
-             TokenV.insertElementAt(new EqToken(EqToken.ATOP),ii);
-             i +=2; // 2 Token nach rechts gerückt
+					// bei \atop }{ einfuegen
+					TokenV.setElementAt(new EqToken(EqToken.EndSym),i);
+					TokenV.insertElementAt(new EqToken(EqToken.BeginSym),i+1);
 
-         } // end if
+					// \atop an neue Stelle kopieren
+					TokenV.insertElementAt(new EqToken(EqToken.ATOP),ii);
+					i +=2; // 2 Token nach rechts gerückt
 
-      } // end if \atop
+				} // end if
 
-      i++;
-   } // end while i
+			} // end if \atop
 
-   // Beseitigung von Sprachkonflikten: 
-   // \sqrt[ ... ]{ ... } --> \sqrt[ ... }{ ... }
-   i = 0;
-   while ( i < TokenV.size()-2 ) {   
-      if (((EqToken)TokenV.elementAt(i)).typ == EqToken.SQRT){
-          if (((EqToken)TokenV.elementAt(i+1)).typ == EqToken.Paren) {
-             ii             = i+2;  
-             countBeginEnd  = 0;
-             int countParen = 1;
-             while ( ii<TokenV.size() ) {
-                if ( ((EqToken)TokenV.elementAt(ii)).typ      == EqToken.EndSym )   countBeginEnd--;
-                else if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.BeginSym ) countBeginEnd++;
-                if ( countBeginEnd == 0 ) {
-                   if ( ((EqToken)TokenV.elementAt(ii)).stringS.equals("[") )      countParen++;
-                   else if ( ((EqToken)TokenV.elementAt(ii)).stringS.equals("]") ) countParen--;
-                   if ( countParen== 0 ){
-                      // "]" gefunden u. alle geschweiften Klammern und "]" sind zu.
-                      // "]" durch "EndSym" ersetzen.
-                      TokenV.setElementAt(new EqToken(EqToken.EndSym),ii);
-                      break;
-                   }
-                } 
-                ii++;
+			i++;
+		} // end while i
 
-             } // end while ii
+		// Beseitigung von Sprachkonflikten: 
+		// \sqrt[ ... ]{ ... } --> \sqrt[ ... }{ ... }
+		i = 0;
+		while ( i < TokenV.size()-2 ) {   
+			if (((EqToken)TokenV.elementAt(i)).typ == EqToken.SQRT){
+				if (((EqToken)TokenV.elementAt(i+1)).typ == EqToken.Paren) {
+					ii             = i+2;  
+					countBeginEnd  = 0;
+					int countParen = 1;
+					while ( ii<TokenV.size() ) {
+						if ( ((EqToken)TokenV.elementAt(ii)).typ      == EqToken.EndSym )   countBeginEnd--;
+						else if ( ((EqToken)TokenV.elementAt(ii)).typ == EqToken.BeginSym ) countBeginEnd++;
+						if ( countBeginEnd == 0 ) {
+							if ( ((EqToken)TokenV.elementAt(ii)).stringS.equals("[") )      countParen++;
+							else if ( ((EqToken)TokenV.elementAt(ii)).stringS.equals("]") ) countParen--;
+							if ( countParen== 0 ){
+								// "]" gefunden u. alle geschweiften Klammern und "]" sind zu.
+								// "]" durch "EndSym" ersetzen.
+								TokenV.setElementAt(new EqToken(EqToken.EndSym),ii);
+								break;
+							}
+						} 
+						ii++;
 
-             i++; // 1 Token nach rechts rücken
-          } // end Paren
-      } // end if
+					} // end while ii
 
-   i++;
-   } // end while i
+					i++; // 1 Token nach rechts rücken
+				} // end Paren
+			} // end if
 
-   //inScanPaint=false; // Semaphore
-} // end SetEquation
+			i++;
+		} // end while i
 
-public void start(){
-   // Rücksetzen des Pointers auf die Token. 
-   // Erspart weitere Scannerläufe, nachdem Gleichung einmal
-   // gescannt wurde.
-   countT = -1;
-} // end start
+		//inScanPaint=false; // Semaphore
+	} // end SetEquation
 
-public int get_count() {
-   return countT;
-} // end get_count
+	public void start(){
+		// Rücksetzen des Pointers auf die Token. 
+		// Erspart weitere Scannerläufe, nachdem Gleichung einmal
+		// gescannt wurde.
+		countT = -1;
+	} // end start
 
-public void set_count(int ccount) {
-   countT = ccount;
-} // end set_count
+	public int get_count() {
+		return countT;
+	} // end get_count
 
-public EqToken nextToken() {
-   // returns next token of TokenV
-   countT ++;
-   if ( countT >= TokenV.size() ) {
-      countT = TokenV.size()-1;
-      return new EqToken(EqToken.Null);
-   }
-   else {
-      return (EqToken)TokenV.elementAt(countT);
-   }
-} // end nextToken
+	public void set_count(int ccount) {
+		countT = ccount;
+	} // end set_count
 
-public boolean EoT() {
-   // True if End Of Tokens
-   return countT == TokenV.size()-1;
-} // end EoT
+	public EqToken nextToken() {
+		// returns next token of TokenV
+		countT ++;
+		if ( countT >= TokenV.size() ) {
+			countT = TokenV.size()-1;
+			return new EqToken(EqToken.Null);
+		}
+		else {
+			return (EqToken)TokenV.elementAt(countT);
+		}
+	} // end nextToken
 
-private char getChar() {
-   return equation.charAt(count);  
-} // end nextChar
+	public boolean EoT() {
+		// True if End Of Tokens
+		return countT == TokenV.size()-1;
+	} // end EoT
 
-private void advance() {
-   if (collectB) selectSB.append(equation.charAt(count));
-   if (count < equation.length()-1) {
-          count++;
-          EOF = false;}
-   else { count = equation.length();
-          EOF   = true;}
-} // end advance
+	private char getChar() {
+		return equation.charAt(count);  
+	} // end nextChar
 
-private EqToken ScanNextToken() {
-  // Bestimmung des nächsten Tokens
-  // Token werden durch Trennzeichen abgetrennt
-  StringBuilder SBuffer = new StringBuilder("");
-  String       SBufferString = new String("");
-  EqToken      SlashToken = new EqToken();
-  char         eqchar;
-  boolean      tag     = false; // alround Boolean  
- 
-  while (!EOF) {
-      eqchar = getChar(); // aktueller Char aus Equation
-      switch (eqchar) {
-      case '\n':
-      case '\r':
-      case '\t': advance();
-                 break;
-      case ' ': advance();           
-                return new EqToken(EqToken.SpaceChar,new String(" "));
-      case '+': case '-': case '*': case '/':
-      case '=': case '<': case '>': case '#':
-      case '~': case ';': case ':': case ',':
-      case '!': advance();
-                return new EqToken(EqToken.Op,String.valueOf(eqchar));
-      case '{': advance();
-                return new EqToken(EqToken.BeginSym);
-      case '}': advance();
-                return new EqToken(EqToken.EndSym);
-      case '[': 
-      case ']': 
-      case '(': 
-      case ')': 
-      case '|': advance();
-                return new EqToken(EqToken.Paren,String.valueOf(eqchar));
-      case '&': advance();
-                return new EqToken(EqToken.AndSym);
-                // Michael Borcherds 2008-06-02 START
-                // add support for unicode characters etc
-                // also removed "defualt:" at end
-/*
+	private void advance() {
+		if (collectB) selectSB.append(equation.charAt(count));
+		if (count < equation.length()-1) {
+			count++;
+			EOF = false;}
+		else { count = equation.length();
+		EOF   = true;}
+	} // end advance
+
+	private EqToken ScanNextToken() {
+		// Bestimmung des nächsten Tokens
+		// Token werden durch Trennzeichen abgetrennt
+		StringBuilder SBuffer = new StringBuilder("");
+		String       SBufferString = new String("");
+		EqToken      SlashToken = new EqToken();
+		char         eqchar;
+		boolean      tag     = false; // alround Boolean  
+
+		while (!EOF) {
+			eqchar = getChar(); // aktueller Char aus Equation
+			switch (eqchar) {
+			case '\n':
+			case '\r':
+			case '\t': advance();
+			break;
+			case ' ': advance();           
+			return new EqToken(EqToken.SpaceChar,new String(" "));
+			case '+': case '-': case '*': case '/':
+			case '=': case '<': case '>': case '#':
+			case '~': case ';': case ':': case ',':
+			case '!': advance();
+			return new EqToken(EqToken.Op,String.valueOf(eqchar));
+			case '{': advance();
+			return new EqToken(EqToken.BeginSym);
+			case '}': advance();
+			return new EqToken(EqToken.EndSym);
+			case '[': 
+			case ']': 
+			case '(': 
+			case ')': 
+			case '|': advance();
+			return new EqToken(EqToken.Paren,String.valueOf(eqchar));
+			case '&': advance();
+			return new EqToken(EqToken.AndSym);
+			// Michael Borcherds 2008-06-02 START
+			// add support for unicode characters etc
+			// also removed "defualt:" at end
+			/*
       case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': 
       case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': 
       case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u':
@@ -338,114 +339,122 @@ private EqToken ScanNextToken() {
       // Markus Hohenwarter, May 2008
       case '%':
      // Markus Hohenwarter, May 2008 */
-                default :
-                    // Michael Borcherds 2008-06-02 END
-              SBuffer.append(eqchar);
-              advance();
-              tag = false;
-              while (!EOF && !tag) {
-                 eqchar = getChar();
-                 switch (eqchar) {
-                 case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': 
-                 case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
-                 case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
-                 case 's': case 't': case 'u': case 'v': case 'w': case 'x':
-                 case 'y': case 'z':
-                 case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': 
-                 case 'G': case 'H': case 'I': case 'J': case 'K': case 'L':
-                 case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
-                 case 'S': case 'T': case 'U': case 'V': case 'W': case 'X':
-                 case 'Y': case 'Z': case '\'': case'@':
-                    SBuffer.append(eqchar);
-                    advance();
-                    break;
-                 default: 
-                    tag = true;
-                    break;     
-                 }
-              }
-              return new EqToken(EqToken.Id,SBuffer.toString());
+			default :
+				// Michael Borcherds 2008-06-02 END
+				SBuffer.append(eqchar);
+				advance();
+				tag = false;
+				while (!EOF && !tag) {
+					eqchar = getChar();
+					switch (eqchar) {
+					case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': 
+					case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
+					case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
+					case 's': case 't': case 'u': case 'v': case 'w': case 'x':
+					case 'y': case 'z':
+					case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': 
+					case 'G': case 'H': case 'I': case 'J': case 'K': case 'L':
+					case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
+					case 'S': case 'T': case 'U': case 'V': case 'W': case 'X':
+					case 'Y': case 'Z': case '\'': case'@':
+						SBuffer.append(eqchar);
+						advance();
+						break;
+					default: 
+						tag = true;
+						break;     
+					}
+				}
+				return new EqToken(EqToken.Id,SBuffer.toString());
 
-      case '0': case '1': case '2': case '3': case '4': case '5': case '6':
-      case '7': case '8': case '9': case '.':
-              SBuffer.append(eqchar);
-              advance();
-              tag = false;
-              while (!EOF && !tag) {
-                 eqchar = getChar();
-                 switch (eqchar) {
-                 case '0': case '1': case '2': case '3': case '4': case '5': 
-                 case '6': case '7': case '8': case '9': case '.':
-                    SBuffer.append(eqchar);
-                    advance();
-                    break;
-                 default: 
-                    tag = true;
-                    break;     
-                 }
-              }
-              return new EqToken(EqToken.Num,SBuffer.toString());
+			case '0': case '1': case '2': case '3': case '4': case '5': case '6':
+			case '7': case '8': case '9': case '.':
+				SBuffer.append(eqchar);
+				advance();
+				tag = false;
+				while (!EOF && !tag) {
+					eqchar = getChar();
+					switch (eqchar) {
+					case '0': case '1': case '2': case '3': case '4': case '5': 
+					case '6': case '7': case '8': case '9': case '.':
+						SBuffer.append(eqchar);
+						advance();
+						break;
+					default: 
+						tag = true;
+						break;     
+					}
+				}
+				return new EqToken(EqToken.Num,SBuffer.toString());
 
-      case '\\':
-      // /////////////////////////////////////
-      // Alle Token die mit BACKSLASH beginnen
-      // Es gilt immer \command  (in command sind NUR Buchstaben)
-      advance();
-      tag = false;
-      if (EOF) break;
-      eqchar = getChar();
-         switch (eqchar) {
-         case '\\': advance();
-                    return new EqToken(EqToken.DBackSlash);
-         case '{': advance();
-                   return new EqToken(EqToken.Paren,String.valueOf(eqchar));
-         case '|': advance();
-                   return new EqToken(EqToken.Paren,"||");
-         case '}': advance();
-                   return new EqToken(EqToken.Paren,String.valueOf(eqchar));
-         case ',': advance();
-                   return new EqToken(EqToken.SPACE,"3");
-         case ':': advance();
-                   return new EqToken(EqToken.SPACE,"4");
-         case ';': advance();
-                   return new EqToken(EqToken.SPACE,"5");
-         case '!': advance();
-                   return new EqToken(EqToken.SPACE,"-3");
+			case '\\':
+				// /////////////////////////////////////
+				// Alle Token die mit BACKSLASH beginnen
+				// Es gilt immer \command  (in command sind NUR Buchstaben)
+				advance();
+				tag = false;
+				if (EOF) break;
+				eqchar = getChar();
+				switch (eqchar) {
+				case '\\': advance();
+				return new EqToken(EqToken.DBackSlash);
+				case '{': advance();
+				return new EqToken(EqToken.Paren,String.valueOf(eqchar));
+				case '|': advance();
+				return new EqToken(EqToken.Paren,"||");
+				case '}': advance();
+				return new EqToken(EqToken.Paren,String.valueOf(eqchar));
+				case ',': advance();
+				return new EqToken(EqToken.SPACE,"3");
+				case ':': advance();
+				return new EqToken(EqToken.SPACE,"4");
+				case ';': advance();
+				return new EqToken(EqToken.SPACE,"5");
+				case '!': advance();
+				return new EqToken(EqToken.SPACE,"-3");
 
-         case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': 
-         case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': 
-         case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u':
-         case 'v': case 'w': case 'x': case 'y': case 'z':
-         case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': 
-         case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': 
-         case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': 
-         case 'V': case 'W': case 'X': case 'Y': case 'Z': case '$' :
-              SBuffer.append(eqchar);
-              advance();
-              tag = false;
-              while (!EOF && !tag) {
-                 eqchar = getChar();
-                 switch (eqchar) {
-                 case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': 
-                 case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
-                 case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
-                 case 's': case 't': case 'u': case 'v': case 'w': case 'x':
-                 case 'y': case 'z':
-                 case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': 
-                 case 'G': case 'H': case 'I': case 'J': case 'K': case 'L':
-                 case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
-                 case 'S': case 'T': case 'U': case 'V': case 'W': case 'X':
-                 case 'Y': case 'Z': case '$' :
-    
-                	 
-                    SBuffer.append(eqchar);
-                    advance();
-                    break;
-                 default: 
-                    tag = true;
-                    break;     
-                 }
-              }
+				case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': 
+				case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': 
+				case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u':
+				case 'v': case 'w': case 'x': case 'y': case 'z':
+				case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': 
+				case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': 
+				case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': 
+				case 'V': case 'W': case 'X': case 'Y': case 'Z': case '$' :
+					SBuffer.append(eqchar);
+					advance();
+					tag = false;
+					while (!EOF && !tag) {
+						eqchar = getChar();
+						switch (eqchar) {
+						case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': 
+						case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
+						case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
+						case 's': case 't': case 'u': case 'v': case 'w': case 'x':
+						case 'y': case 'z':
+						case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': 
+						case 'G': case 'H': case 'I': case 'J': case 'K': case 'L':
+						case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
+						case 'S': case 'T': case 'U': case 'V': case 'W': case 'X':
+						case 'Y': case 'Z': case '$' :
+
+
+							SBuffer.append(eqchar);
+							advance();
+							break;
+						default: 
+							tag = true;
+							break;     
+						}
+					}
+
+					HashMap<String, EqToken> hm = getHashMap();
+
+					EqToken ret = (EqToken)hashmap.get(SBuffer.toString());
+
+					if (ret != null) return ret;
+
+					/*
              SBufferString=SBuffer.toString();
              if (SBufferString.equals("acute"))
                   return new EqToken(EqToken.ACCENT, "\u2019"); //  "´" 
@@ -988,19 +997,19 @@ private EqToken ScanNextToken() {
              if (SBufferString.equals("dotso")) return new EqToken(EqToken.Id,"\u2026");
              if (SBufferString.equals("ddots")) return new EqToken(EqToken.Id,"\u22f1");
              if (SBufferString.equals("varepsilon")) return new EqToken(EqToken.Id,"\u03b5");
-             
+
              // \$
              if (SBufferString.equals("$")) return new EqToken(EqToken.Id,"$");
-             
+
              // TODO doesn't seem to be in standard font?
              //if (SBufferString.equals("triangle")) return new EqToken(EqToken.Id,"\u25b5");
              //if (SBufferString.equals("epsilon")) return new EqToken(EqToken.Id,"\u03f5");
 
-             
+
              // TODO how do we get java to use 5 digit unicode?? supported font ???
              //if (SBufferString.equals("imath")) return new EqToken(EqToken.Id,"\u1d6a4");            
              //if (SBufferString.equals("jmath")) return new EqToken(EqToken.Id,"\u1d6a5");            
-             
+
              if ((" alpha delta epsilon iota kappa lambda nu omega pi sigma theta tau upsilon varepsilon varpi vartheta"
                  +" pm mp times div cdot cdots ldots ast star amalg cap cup uplus sqcap sqcup vee wedge wr circ bullet diamond lhd rhd oslash odot Box bigtriangleup triangleleft triangleright oplus ominus otimes"
                  +" ll subset sqsubset in vdash models gg supset sqsupset ni dashv perp neq doteq approx cong equiv propto prec sim simeq asymp smile frown bowtie succ"
@@ -1018,28 +1027,658 @@ private EqToken ScanNextToken() {
 
              if ((" Uparrow Downarrow Updownarrow ")
                  .indexOf(" "+SBufferString+" ")>=0) return new EqToken(EqToken.SYMBOPD,SBufferString+"Big");
- 
-         default :
-                   tag = true;
-                   advance();
-                   Application.debug("Scanner invalid tag: \\"+SBuffer.toString());
-                   return new EqToken(EqToken.Invalid);
-         } // end switch \command (all backslash commands)
+					 */
+				default :
+					tag = true;
+					advance();
+					Application.debug("Scanner invalid tag: \\"+SBuffer.toString());
+					return new EqToken(EqToken.Invalid);
+				} // end switch \command (all backslash commands)
 
-         
-      case '^': advance();
-                return new EqToken(EqToken.SUP);
-      case '_': advance();
-                return new EqToken(EqToken.SUB);
-      /* REMOVED Michael Borcherds 2008-06-02 replaced higher up
+
+			case '^': advance();
+			return new EqToken(EqToken.SUP);
+			case '_': advance();
+			return new EqToken(EqToken.SUB);
+			/* REMOVED Michael Borcherds 2008-06-02 replaced higher up
          default:  advance();
                 Application.debug("Scanner invalid character: "+eqchar);
                 return new EqToken(EqToken.Invalid);*/
-      } // end switch
-   } // end while
-   return new EqToken(EqToken.Null);
-} // end ScanNextToken
+			} // end switch
+		} // end while
+		return new EqToken(EqToken.Null);
+	} // end ScanNextToken
 
+	private HashMap<String, EqToken> hashmap;
+
+	final private static String[] symbols = {"alpha", "delta", "epsilon", "iota", "kappa", "lambda", "nu", "omega", "pi", "sigma", "theta", "tau", "upsilon", "varepsilon", "varpi", "vartheta", "pm", "mp", "times", "div", "cdot", "cdots", "ldots", "ast", "star", "amalg", "cap", "cup", "uplus", "sqcap", "sqcup", "vee", "wedge", "wr", "circ", "bullet", "diamond", "lhd", "rhd", "oslash", "odot", "Box", "bigtriangleup", "triangleleft", "triangleright", "oplus", "ominus", "otimes",
+		"ll", "subset", "sqsubset", "in", "vdash", "models", "gg", "supset", "sqsupset", "ni", "dashv", "perp", "neq", "doteq", "approx", "cong", "equiv", "propto", "prec", "sim", "simeq", "asymp", "smile", "frown", "bowtie", "succ",
+		"aleph", "forall", "hbar", "exists", "imath", "neg", "flat", "ell", "Re", "angle", "Im", "backslash", "mho", "Box", "prime", "emptyset", "triangle", "nabla", "partial", "top", "bot", "Join", "infty", "vdash", "dashv",
+		"Fourier", "Laplace", "leftarrow", "gets", "hookrightarrow", "leftharpoondown", "rightarrow", "to", "rightharpoondown", "leadsto", "leftrightarrow", "mapsto", "hookleftarrow", "leftharpoonup", "rightharpoonup", "rightleftharpoons", "longleftarrow", "longrightarrow", "longleftrightarrow", "longmapsto"};
+
+	final private static String[] symbols2 = {"beta", "chi", "eta", "gamma", "mu", "psi", "phi", "rho", "varrho", "varsigma", "varphi", "xi", "zeta",
+		"le", "leq", "ge", "geq", "vdots", "ddots", "natural", "jmath", "bigtriangledown", "sharp", "uparrow", "downarrow", "updownarrow", "nearrow", "searrow", "swarrow", "nwarrow", "succeq", "mid", "preceq", "parallel", "subseteq", "sqsubseteq", "supseteq", "sqsupseteq", "clubsuit", "diamondsuit", "heartsuit", "spadesuit", "wp", "dagger", "ddagger", "setminus", "unlhd", "unrhd", "bigcirc"};
+
+	final private static String[] symbols3 = {"Delta", "Gamma", "Lambda", "Omega", "Pi", "Phi", "Psi", "Sigma", "Theta", "Upsilon", "Xi",
+		"Leftarrow", "Rightarrow", "Leftrightarrow", "Longleftarrow", "Longrightarrow", "Longleftrightarrow", "Diamond"};
+
+	final private static String[] symbols4 = {"Uparrow", "Downarrow", "Updownarrow"}; 
+	
+	final private static String[] functions = {"arccos", "arcsin", "arctan", "arg", "cos", "cosh", "cot", "coth", "csc", "csch", "def", "deg", "dim", "exp", "hom", "ker", "lg", "ln", "log", "sec", "sech", "sin", "sinh", "tan", "tanh"};
+
+	final private static String[] limits = {"det", "gcd", "inf", "lim", "max", "min", "Pr", "sup"};
+
+	private HashMap<String, EqToken> getHashMap() {
+
+		if (hashmap == null) {
+			hashmap = new HashMap<String, EqToken>();
+
+			hashmap.put("acute",
+					new EqToken(EqToken.ACCENT, "\u2019")); //  "´" 
+			hashmap.put("array",
+					new EqToken(EqToken.ARRAY));
+			hashmap.put("bar",
+					new EqToken(EqToken.VEC,"bar")); 
+			hashmap.put("ddot",
+					new EqToken(EqToken.ACCENT,"..")); 
+			hashmap.put("dot",
+					new EqToken(EqToken.ACCENT,"."));
+			hashmap.put("frac",
+					new EqToken(EqToken.FRAC));
+			hashmap.put("grave",
+					new EqToken(EqToken.ACCENT,"`")); 
+			hashmap.put("hat",
+					new EqToken(EqToken.ACCENT,"^")); 
+			hashmap.put("int",
+					new EqToken(EqToken.SYMBOLBIG,"int"));
+			hashmap.put("oint",
+					new EqToken(EqToken.SYMBOLBIG,"oint"));
+			hashmap.put("left",
+					new EqToken(EqToken.LEFT));
+			hashmap.put("limsup",
+					new EqToken(EqToken.LIM,"lim sup"));
+			hashmap.put("liminf",
+					new EqToken(EqToken.LIM,"lim inf"));
+			hashmap.put("prod",
+					new EqToken(EqToken.SYMBOLBIG,"prod"));
+			hashmap.put("right",
+					new EqToken(EqToken.RIGHT));
+			hashmap.put("sqrt",
+					new EqToken(EqToken.SQRT));
+			hashmap.put("sum",
+					new EqToken(EqToken.SYMBOLBIG,"sum")); 
+			hashmap.put("tilde",
+					new EqToken(EqToken.ACCENT,"~"));
+			hashmap.put("vec",
+					new EqToken(EqToken.VEC));
+			hashmap.put("widehat",
+					new EqToken(EqToken.VEC,"widehat"));
+			hashmap.put("widetilde",
+					new EqToken(EqToken.VEC,"widetilde"));
+			hashmap.put("quad",
+					new EqToken(EqToken.SPACE,"18"));
+			hashmap.put("qquad",
+					new EqToken(EqToken.SPACE,"36"));
+			hashmap.put("backslash",
+					new EqToken(EqToken.Num,"\\"));
+			hashmap.put("langle",
+					new EqToken(EqToken.ANGLE,"<"));
+			hashmap.put("rangle",
+					new EqToken(EqToken.ANGLE,">"));
+
+			hashmap.put("not",
+					new EqToken(EqToken.NOT));                 
+
+			hashmap.put("atop",
+					new EqToken(EqToken.ATOP));
+			hashmap.put("choose",
+					new EqToken(EqToken.CHOOSE));
+
+			hashmap.put("overline",
+					new EqToken(EqToken.OverLINE));
+			hashmap.put("underline",
+					new EqToken(EqToken.UnderLINE));
+
+			hashmap.put("overbrace",
+					new EqToken(EqToken.OverBRACE));
+			hashmap.put("underbrace",
+					new EqToken(EqToken.UnderBRACE));
+
+			hashmap.put("stackrel",
+					new EqToken(EqToken.STACKREL));
+
+			hashmap.put("begin",
+					new EqToken(EqToken.BEGIN));
+			hashmap.put("end",
+					new EqToken(EqToken.END));
+
+			hashmap.put("fgcolor",
+					new EqToken(EqToken.FGColor));
+			hashmap.put("bgcolor",
+					new EqToken(EqToken.BGColor));
+
+			hashmap.put("fbox",
+					new EqToken(EqToken.FBOX));
+			hashmap.put("mbox",
+					new EqToken(EqToken.MBOX));
+
+			
+			for (int i = 0 ; i < functions.length ; i++)
+				hashmap.put(functions[i], new EqToken(EqToken.FUNC,functions[i]));
+
+			for (int i = 0 ; i < limits.length ; i++)
+				hashmap.put(limits[i], new EqToken(EqToken.FUNC,limits[i]));
+
+
+
+			//if (" arccos arcsin arctan arg cos cosh cot coth csc csch def deg dim exp hom ker lg ln log sec sech sin sinh tan tanh "
+			//   .indexOf(" "+SBufferString+" ")>=0) return new EqToken(EqToken.FUNC,SBufferString));
+
+
+			//if (" det gcd inf lim max min Pr sup "
+			//   .indexOf(" "+SBufferString+" ")>=0) return new EqToken(EqToken.LIM,SBufferString));
+
+			// Michael Borcherds 2008-06-15
+			// unicode equivalents to LaTeX symbols
+			// information from http://userscripts.org/scripts/review/3459
+			hashmap.put("quad", new EqToken(EqToken.Id,"\u2003"));
+			hashmap.put("qquad", new EqToken(EqToken.Id,"\u2003\u2003"));
+			hashmap.put("thickspace", new EqToken(EqToken.Id,"\u2002"));
+			hashmap.put(";", new EqToken(EqToken.Id,"\u2002"));
+			hashmap.put("medspace", new EqToken(EqToken.Id,"\u2005"));
+			hashmap.put(":", new EqToken(EqToken.Id,"\u2005"));
+			hashmap.put("thinspace", new EqToken(EqToken.Id,"\u2004"));
+			hashmap.put(",", new EqToken(EqToken.Id,"\u2004"));
+			hashmap.put("!", new EqToken(EqToken.Id,"\u200b"));
+			hashmap.put("qedsymbol", new EqToken(EqToken.Id,"\u25a0"));
+			hashmap.put("{", new EqToken(EqToken.Id,"{"));
+			hashmap.put("lgroup", new EqToken(EqToken.Id,"("));
+			hashmap.put("lbrace", new EqToken(EqToken.Id,"{"));
+			hashmap.put("lvert", new EqToken(EqToken.Id,"|"));
+			hashmap.put("lVert", new EqToken(EqToken.Id,"\u2016"));
+			hashmap.put("lceil", new EqToken(EqToken.Id,"\u2308"));
+			hashmap.put("lfloor", new EqToken(EqToken.Id,"\u230a"));
+			hashmap.put("lmoustache", new EqToken(EqToken.Id,"\u23b0"));
+			hashmap.put("langle", new EqToken(EqToken.Id,"\u2329"));
+			hashmap.put("}", new EqToken(EqToken.Id,"}"));
+			hashmap.put("rbrace", new EqToken(EqToken.Id,"}"));
+			hashmap.put("rgroup", new EqToken(EqToken.Id,")"));
+			hashmap.put("rvert", new EqToken(EqToken.Id,"|"));
+			hashmap.put("rVert", new EqToken(EqToken.Id,"\u2016"));
+			hashmap.put("rceil", new EqToken(EqToken.Id,"\u2309"));
+			hashmap.put("rfloor", new EqToken(EqToken.Id,"\u230b"));
+			hashmap.put("rmoustache", new EqToken(EqToken.Id,"\u23b1"));
+			hashmap.put("rangle", new EqToken(EqToken.Id,"\u232a"));
+			hashmap.put("amalg", new EqToken(EqToken.Id,"\u2a3f"));
+			hashmap.put("ast", new EqToken(EqToken.Id,"*"));
+			hashmap.put("ast", new EqToken(EqToken.Id,"\u2217"));
+			hashmap.put("barwedge", new EqToken(EqToken.Id,"\u22bc"));
+			hashmap.put("barwedge", new EqToken(EqToken.Id,"\u2305"));
+			hashmap.put("bigcirc", new EqToken(EqToken.Id,"\u25cb"));
+			hashmap.put("bigtriangledown", new EqToken(EqToken.Id,"\u25bd"));
+			hashmap.put("bigtriangleup", new EqToken(EqToken.Id,"\u25b3"));
+			hashmap.put("boxdot", new EqToken(EqToken.Id,"\u22a1"));
+			hashmap.put("boxminus", new EqToken(EqToken.Id,"\u229f"));
+			hashmap.put("boxplus", new EqToken(EqToken.Id,"\u229e"));
+			hashmap.put("boxtimes", new EqToken(EqToken.Id,"\u22a0"));
+			hashmap.put("bullet", new EqToken(EqToken.Id,"\u2022"));
+			hashmap.put("bullet", new EqToken(EqToken.Id,"\u2219"));
+			hashmap.put("cap", new EqToken(EqToken.Id,"\u2229"));
+			hashmap.put("Cap", new EqToken(EqToken.Id,"\u22d2"));
+			hashmap.put("cdot", new EqToken(EqToken.Id,"\u22c5"));
+			hashmap.put("centerdot", new EqToken(EqToken.Id,"\u00b7"));
+			hashmap.put("circ", new EqToken(EqToken.Id,"\u2218"));
+			hashmap.put("circledast", new EqToken(EqToken.Id,"\u229b"));
+			hashmap.put("circledcirc", new EqToken(EqToken.Id,"\u229a"));
+			hashmap.put("circleddash", new EqToken(EqToken.Id,"\u229d"));
+			hashmap.put("cup", new EqToken(EqToken.Id,"\u222a"));
+			hashmap.put("Cup", new EqToken(EqToken.Id,"\u22d3"));
+			hashmap.put("curlyvee", new EqToken(EqToken.Id,"\u22ce"));
+			hashmap.put("curlywedge", new EqToken(EqToken.Id,"\u22cf"));
+			hashmap.put("dagger", new EqToken(EqToken.Id,"\u2020"));
+			hashmap.put("ddagger", new EqToken(EqToken.Id,"\u2021"));
+			hashmap.put("diamond", new EqToken(EqToken.Id,"\u22c4"));
+			hashmap.put("div", new EqToken(EqToken.Id,"\u00f7"));
+			hashmap.put("divideontimes", new EqToken(EqToken.Id,"\u22c7"));
+			hashmap.put("dotplus", new EqToken(EqToken.Id,"\u2214"));
+			hashmap.put("doublebarwedge", new EqToken(EqToken.Id,"\u2306"));
+			hashmap.put("doublecap", new EqToken(EqToken.Id,"\u22d2"));
+			hashmap.put("doublecup", new EqToken(EqToken.Id,"\u22d3"));
+			hashmap.put("gtrdot", new EqToken(EqToken.Id,"\u22d7"));
+			hashmap.put("intercal", new EqToken(EqToken.Id,"\u22ba"));
+			hashmap.put("land", new EqToken(EqToken.Id,"\u2227"));
+			hashmap.put("leftthreetimes", new EqToken(EqToken.Id,"\u22cb"));
+			hashmap.put("lessdot", new EqToken(EqToken.Id,"\u22d6"));
+			hashmap.put("lor", new EqToken(EqToken.Id,"\u2228"));
+			hashmap.put("ltimes", new EqToken(EqToken.Id,"\u22c9"));
+			hashmap.put("mp", new EqToken(EqToken.Id,"\u2213"));
+			hashmap.put("odot", new EqToken(EqToken.Id,"\u2299"));
+			hashmap.put("ominus", new EqToken(EqToken.Id,"\u2296"));
+			hashmap.put("oplus", new EqToken(EqToken.Id,"\u2295"));
+			hashmap.put("oslash", new EqToken(EqToken.Id,"\u2298"));
+			hashmap.put("otimes", new EqToken(EqToken.Id,"\u2297"));
+			hashmap.put("pm", new EqToken(EqToken.Id,"\u00b1"));
+			hashmap.put("rightthreetimes", new EqToken(EqToken.Id,"\u22cc"));
+			hashmap.put("rtimes", new EqToken(EqToken.Id,"\u22ca"));
+			hashmap.put("setminus", new EqToken(EqToken.Id,"\u2216"));
+			hashmap.put("smallsetminus", new EqToken(EqToken.Id,"\u2216"));
+			hashmap.put("sqcap", new EqToken(EqToken.Id,"\u2293"));
+			hashmap.put("sqcup", new EqToken(EqToken.Id,"\u2294"));
+			hashmap.put("star", new EqToken(EqToken.Id,"\u22c6"));
+			hashmap.put("times", new EqToken(EqToken.Id,"\u00d7"));
+			hashmap.put("triangleleft", new EqToken(EqToken.Id,"\u25c1"));
+			hashmap.put("triangleright", new EqToken(EqToken.Id,"\u25b7"));
+			hashmap.put("uplus", new EqToken(EqToken.Id,"\u228e"));
+			hashmap.put("vee", new EqToken(EqToken.Id,"\u2228"));
+			hashmap.put("veebar", new EqToken(EqToken.Id,"\u22bb"));
+			hashmap.put("veebar", new EqToken(EqToken.Id,"\u2a61"));
+			hashmap.put("wedge", new EqToken(EqToken.Id,"\u2227"));
+			hashmap.put("wr", new EqToken(EqToken.Id,"\u2240"));
+			hashmap.put("colon", new EqToken(EqToken.Id,":"));
+			hashmap.put("vert", new EqToken(EqToken.Id,"|"));
+			hashmap.put("Vert", new EqToken(EqToken.Id,"\u2016"));
+			hashmap.put("|", new EqToken(EqToken.Id,"\u2016"));
+			hashmap.put("backslash", new EqToken(EqToken.Id,"\\"));
+			hashmap.put("downarrow", new EqToken(EqToken.Id,"\u2193"));
+			hashmap.put("Downarrow", new EqToken(EqToken.Id,"\u21d3"));
+			hashmap.put("uparrow", new EqToken(EqToken.Id,"\u2191"));
+			hashmap.put("Uparrow", new EqToken(EqToken.Id,"\u21d1"));
+			hashmap.put("updownarrow", new EqToken(EqToken.Id,"\u2195"));
+			hashmap.put("Updownarrow", new EqToken(EqToken.Id,"\u21d5"));
+			hashmap.put("bigcap", new EqToken(EqToken.Id,"\u22c2"));
+			hashmap.put("bigcup", new EqToken(EqToken.Id,"\u22c3"));
+			hashmap.put("bigodot", new EqToken(EqToken.Id,"\u2a00"));
+			hashmap.put("bigoplus", new EqToken(EqToken.Id,"\u2a01"));
+			hashmap.put("bigotimes", new EqToken(EqToken.Id,"\u2a02"));
+			hashmap.put("bigsqcup", new EqToken(EqToken.Id,"\u2a06"));
+			hashmap.put("biguplus", new EqToken(EqToken.Id,"\u2a04"));
+			hashmap.put("bigvee", new EqToken(EqToken.Id,"\u22c1"));
+			hashmap.put("bigwedge", new EqToken(EqToken.Id,"\u22c0"));
+			hashmap.put("coprod", new EqToken(EqToken.Id,"\u2210"));
+			hashmap.put("prod", new EqToken(EqToken.Id,"\u220f"));
+			hashmap.put("sum", new EqToken(EqToken.Id,"\u2211"));
+			hashmap.put("int", new EqToken(EqToken.Id,"\u222b"));
+			hashmap.put("smallint", new EqToken(EqToken.Id,"\u222b"));
+			hashmap.put("oint", new EqToken(EqToken.Id,"\u222e"));
+			hashmap.put("angle", new EqToken(EqToken.Id,"\u2220"));
+			hashmap.put("backprime", new EqToken(EqToken.Id,"\u2035"));
+			hashmap.put("bigstar", new EqToken(EqToken.Id,"\u2605"));
+			hashmap.put("blacklozenge", new EqToken(EqToken.Id,"\u29eb"));
+			hashmap.put("blacksquare", new EqToken(EqToken.Id,"\u25a0"));
+			hashmap.put("blacksquare", new EqToken(EqToken.Id,"\u25aa"));
+			hashmap.put("blacktriangle", new EqToken(EqToken.Id,"\u25b4"));
+			hashmap.put("blacktriangledown", new EqToken(EqToken.Id,"\u25be"));
+			hashmap.put("bot", new EqToken(EqToken.Id,"\u22a5"));
+			hashmap.put("clubsuit", new EqToken(EqToken.Id,"\u2663"));
+			hashmap.put("diagdown", new EqToken(EqToken.Id,"\u2572"));
+			hashmap.put("diagup", new EqToken(EqToken.Id,"\u2571"));
+			hashmap.put("diamondsuit", new EqToken(EqToken.Id,"\u2662"));
+			hashmap.put("emptyset", new EqToken(EqToken.Id,"\u2205"));
+			hashmap.put("exists", new EqToken(EqToken.Id,"\u2203"));
+			hashmap.put("flat", new EqToken(EqToken.Id,"\u266d"));
+			hashmap.put("forall", new EqToken(EqToken.Id,"\u2200"));
+			hashmap.put("heartsuit", new EqToken(EqToken.Id,"\u2661"));
+			hashmap.put("infty", new EqToken(EqToken.Id,"\u221e"));
+			hashmap.put("lnot", new EqToken(EqToken.Id,"\u00ac"));
+			hashmap.put("lozenge", new EqToken(EqToken.Id,"\u25ca"));
+			hashmap.put("measuredangle", new EqToken(EqToken.Id,"\u2221"));
+			hashmap.put("nabla", new EqToken(EqToken.Id,"\u2207"));
+			hashmap.put("natural", new EqToken(EqToken.Id,"\u266e"));
+			hashmap.put("neg", new EqToken(EqToken.Id,"\u00ac"));
+			hashmap.put("nexists", new EqToken(EqToken.Id,"\u2204"));
+			hashmap.put("prime", new EqToken(EqToken.Id,"\u2032"));
+			hashmap.put("sharp", new EqToken(EqToken.Id,"\u266f"));
+			hashmap.put("spadesuit", new EqToken(EqToken.Id,"\u2660"));
+			hashmap.put("sphericalangle", new EqToken(EqToken.Id,"\u2222"));
+			hashmap.put("square", new EqToken(EqToken.Id,"\u25a1"));
+			hashmap.put("surd", new EqToken(EqToken.Id,"\u221a"));
+			hashmap.put("top", new EqToken(EqToken.Id,"\u22a4"));
+			hashmap.put("triangledown", new EqToken(EqToken.Id,"\u25bf"));
+			hashmap.put("varnothing", new EqToken(EqToken.Id,"\u2205"));
+			hashmap.put("aleph", new EqToken(EqToken.Id,"\u2135"));
+			hashmap.put("Bbbk", new EqToken(EqToken.Id,"\u1d55C"));
+			hashmap.put("beth", new EqToken(EqToken.Id,"\u2136"));
+			hashmap.put("circledS", new EqToken(EqToken.Id,"\u24c8"));
+			hashmap.put("complement", new EqToken(EqToken.Id,"\u2201"));
+			hashmap.put("daleth", new EqToken(EqToken.Id,"\u2138"));
+			hashmap.put("ell", new EqToken(EqToken.Id,"\u2113"));
+			hashmap.put("eth", new EqToken(EqToken.Id,"\u00f0"));
+			hashmap.put("Finv", new EqToken(EqToken.Id,"\u2132"));
+			hashmap.put("Game", new EqToken(EqToken.Id,"\u2141"));
+			hashmap.put("gimel", new EqToken(EqToken.Id,"\u2137"));
+			hashmap.put("hbar", new EqToken(EqToken.Id,"\u210f"));
+			hashmap.put("hslash", new EqToken(EqToken.Id,"\u210f"));
+			hashmap.put("Im", new EqToken(EqToken.Id,"\u2111"));
+			hashmap.put("mho", new EqToken(EqToken.Id,"\u2127"));
+			hashmap.put("partial", new EqToken(EqToken.Id,"\u2202"));
+			hashmap.put("Re", new EqToken(EqToken.Id,"\u211c"));
+			hashmap.put("wp", new EqToken(EqToken.Id,"\u2118"));
+			hashmap.put("approx", new EqToken(EqToken.Id,"\u2248"));
+			hashmap.put("approxeq", new EqToken(EqToken.Id,"\u224a"));
+			hashmap.put("asymp", new EqToken(EqToken.Id,"\u224d"));
+			hashmap.put("backsim", new EqToken(EqToken.Id,"\u223d"));
+			hashmap.put("backsimeq", new EqToken(EqToken.Id,"\u22cd"));
+			hashmap.put("bumpeq", new EqToken(EqToken.Id,"\u224f"));
+			hashmap.put("Bumpeq", new EqToken(EqToken.Id,"\u224e"));
+			hashmap.put("circeq", new EqToken(EqToken.Id,"\u2257"));
+			hashmap.put("cong", new EqToken(EqToken.Id,"\u2245"));
+			hashmap.put("curlyeqprec", new EqToken(EqToken.Id,"\u22de"));
+			hashmap.put("curlyeqsucc", new EqToken(EqToken.Id,"\u22df"));
+			hashmap.put("doteq", new EqToken(EqToken.Id,"\u2250"));
+			hashmap.put("doteqdot", new EqToken(EqToken.Id,"\u2251"));
+			hashmap.put("eqcirc", new EqToken(EqToken.Id,"\u2256"));
+			hashmap.put("eqsim", new EqToken(EqToken.Id,"\u2242"));
+			hashmap.put("eqslantgtr", new EqToken(EqToken.Id,"\u2a96"));
+			hashmap.put("eqslantless", new EqToken(EqToken.Id,"\u2a95"));
+			hashmap.put("equiv", new EqToken(EqToken.Id,"\u2261"));
+			hashmap.put("fallingdotseq", new EqToken(EqToken.Id,"\u2252"));
+			hashmap.put("ge", new EqToken(EqToken.Id,"\u2265"));
+			hashmap.put("geq", new EqToken(EqToken.Id,"\u2265"));
+			hashmap.put("geqq", new EqToken(EqToken.Id,"\u2267"));
+			hashmap.put("geqslant", new EqToken(EqToken.Id,"\u2a7e"));
+			hashmap.put("gg", new EqToken(EqToken.Id,"\u226b"));
+			hashmap.put("gg", new EqToken(EqToken.Id,"\u2aa2"));
+			hashmap.put("ggg", new EqToken(EqToken.Id,"\u22d9"));
+			hashmap.put("gggtr", new EqToken(EqToken.Id,"\u22d9"));
+			hashmap.put("gnapprox", new EqToken(EqToken.Id,"\u2a8a"));
+			hashmap.put("gneq", new EqToken(EqToken.Id,"\u2a88"));
+			hashmap.put("gneqq", new EqToken(EqToken.Id,"\u2269"));
+			hashmap.put("gnsim", new EqToken(EqToken.Id,"\u22e7"));
+			hashmap.put("gtrapprox", new EqToken(EqToken.Id,"\u2a86"));
+			hashmap.put("gtreqless", new EqToken(EqToken.Id,"\u22db"));
+			hashmap.put("gtreqqless", new EqToken(EqToken.Id,"\u2a8c"));
+			hashmap.put("gtrless", new EqToken(EqToken.Id,"\u2277"));
+			hashmap.put("gtrsim", new EqToken(EqToken.Id,"\u2273"));
+			hashmap.put("gvertneqq", new EqToken(EqToken.Id,"\u2269"));
+			hashmap.put("le", new EqToken(EqToken.Id,"\u2264"));
+			hashmap.put("leq", new EqToken(EqToken.Id,"\u2264"));
+			hashmap.put("leqq", new EqToken(EqToken.Id,"\u2266"));
+			hashmap.put("leqslant", new EqToken(EqToken.Id,"\u2a7d"));
+			hashmap.put("lessapprox", new EqToken(EqToken.Id,"\u2a85"));
+			hashmap.put("lesseqgtr", new EqToken(EqToken.Id,"\u22da"));
+			hashmap.put("lesseqqgtr", new EqToken(EqToken.Id,"\u2a8b"));
+			hashmap.put("lessgtr", new EqToken(EqToken.Id,"\u2276"));
+			hashmap.put("lesssim", new EqToken(EqToken.Id,"\u2272"));
+			hashmap.put("ll", new EqToken(EqToken.Id,"\u226a"));
+			hashmap.put("llless", new EqToken(EqToken.Id,"\u22d8"));
+			hashmap.put("lnapprox", new EqToken(EqToken.Id,"\u2a89"));
+			hashmap.put("lneq", new EqToken(EqToken.Id,"\u2a87"));
+			hashmap.put("lneqq", new EqToken(EqToken.Id,"\u2268"));
+			hashmap.put("lnsim", new EqToken(EqToken.Id,"\u22e6"));
+			hashmap.put("lvertneqq", new EqToken(EqToken.Id,"\u2268"));
+			hashmap.put("ncong", new EqToken(EqToken.Id,"\u2247"));
+			hashmap.put("ne", new EqToken(EqToken.Id,"\u2260"));
+			hashmap.put("neq", new EqToken(EqToken.Id,"\u2260"));
+			hashmap.put("ngeq", new EqToken(EqToken.Id,"\u2271"));
+			hashmap.put("ngeqq", new EqToken(EqToken.Id,"\u2267"));
+			hashmap.put("ngeqslant", new EqToken(EqToken.Id,"\u2a7e"));
+			hashmap.put("ngtr", new EqToken(EqToken.Id,"\u226f"));
+			hashmap.put("nleq", new EqToken(EqToken.Id,"\u2270"));
+			hashmap.put("nleqq", new EqToken(EqToken.Id,"\u2266"));
+			hashmap.put("nleqslant", new EqToken(EqToken.Id,"\u2a7d"));
+			hashmap.put("nless", new EqToken(EqToken.Id,"\u226e"));
+			hashmap.put("nprec", new EqToken(EqToken.Id,"\u2280"));
+			hashmap.put("npreceq", new EqToken(EqToken.Id,"\u2aaf"));
+			hashmap.put("nsim", new EqToken(EqToken.Id,"\u2241"));
+			hashmap.put("nsucc", new EqToken(EqToken.Id,"\u2281"));
+			hashmap.put("nsucceq", new EqToken(EqToken.Id,"\u2ab0"));
+			hashmap.put("prec", new EqToken(EqToken.Id,"\u227a"));
+			hashmap.put("precapprox", new EqToken(EqToken.Id,"\u2ab7"));
+			hashmap.put("preccurlyeq", new EqToken(EqToken.Id,"\u227c"));
+			hashmap.put("preceq", new EqToken(EqToken.Id,"\u2aaf"));
+			hashmap.put("precnapprox", new EqToken(EqToken.Id,"\u2ab9"));
+			hashmap.put("precneqq", new EqToken(EqToken.Id,"\u2ab5"));
+			hashmap.put("precnsim", new EqToken(EqToken.Id,"\u22e8"));
+			hashmap.put("precsim", new EqToken(EqToken.Id,"\u227e"));
+			hashmap.put("risingdotseq", new EqToken(EqToken.Id,"\u2253"));
+			hashmap.put("sim", new EqToken(EqToken.Id,"\u223c"));
+			hashmap.put("simeq", new EqToken(EqToken.Id,"\u2243"));
+			hashmap.put("succ", new EqToken(EqToken.Id,"\u227b"));
+			hashmap.put("succapprox", new EqToken(EqToken.Id,"\u2ab8"));
+			hashmap.put("succcurlyeq", new EqToken(EqToken.Id,"\u227d"));
+			hashmap.put("succeq", new EqToken(EqToken.Id,"\u2ab0"));
+			hashmap.put("succnapprox", new EqToken(EqToken.Id,"\u2aba"));
+			hashmap.put("succneqq", new EqToken(EqToken.Id,"\u2ab6"));
+			hashmap.put("succnsim", new EqToken(EqToken.Id,"\u22e9"));
+			hashmap.put("succsim", new EqToken(EqToken.Id,"\u227f"));
+			hashmap.put("thickapprox", new EqToken(EqToken.Id,"\u2248"));
+			hashmap.put("thicksim", new EqToken(EqToken.Id,"\u223c"));
+			hashmap.put("triangleq", new EqToken(EqToken.Id,"\u225c"));
+			hashmap.put("curvearrowleft", new EqToken(EqToken.Id,"\u21b6"));
+			hashmap.put("curvearrowright", new EqToken(EqToken.Id,"\u21b7"));
+			hashmap.put("downdownarrows", new EqToken(EqToken.Id,"\u21ca"));
+			hashmap.put("downharpoonleft", new EqToken(EqToken.Id,"\u21c3"));
+			hashmap.put("downharpoonright", new EqToken(EqToken.Id,"\u21c2"));
+			hashmap.put("gets", new EqToken(EqToken.Id,"\u2190"));
+			hashmap.put("hookleftarrow", new EqToken(EqToken.Id,"\u21a9"));
+			hashmap.put("hookrightarrow", new EqToken(EqToken.Id,"\u21aa"));
+			hashmap.put("leftarrow", new EqToken(EqToken.Id,"\u2190"));
+			hashmap.put("Leftarrow", new EqToken(EqToken.Id,"\u21d0"));
+			hashmap.put("leftarrowtail", new EqToken(EqToken.Id,"\u21a2"));
+			hashmap.put("leftharpoondown", new EqToken(EqToken.Id,"\u21bd"));
+			hashmap.put("leftharpoonup", new EqToken(EqToken.Id,"\u21bc"));
+			hashmap.put("leftleftarrows", new EqToken(EqToken.Id,"\u21c7"));
+			hashmap.put("leftrightarrow", new EqToken(EqToken.Id,"\u2194"));
+			hashmap.put("leftrightarrows", new EqToken(EqToken.Id,"\u21c6"));
+			hashmap.put("leftrightharpoons", new EqToken(EqToken.Id,"\u21cb"));
+			hashmap.put("leftrightsquigarrow", new EqToken(EqToken.Id,"\u21ad"));
+			hashmap.put("Lleftarrow", new EqToken(EqToken.Id,"\u21da"));
+			hashmap.put("longleftarrow", new EqToken(EqToken.Id,"\u27f5"));
+			hashmap.put("Longleftarrow", new EqToken(EqToken.Id,"\u27f8"));
+			hashmap.put("longleftrightarrow", new EqToken(EqToken.Id,"\u27f7"));
+			hashmap.put("Longleftrightarrow", new EqToken(EqToken.Id,"\u27fa"));
+			hashmap.put("looparrowleft", new EqToken(EqToken.Id,"\u21ab"));
+			hashmap.put("looparrowright", new EqToken(EqToken.Id,"\u21ac"));
+			hashmap.put("Lsh", new EqToken(EqToken.Id,"\u21b0"));
+			hashmap.put("mapsto", new EqToken(EqToken.Id,"\u21a6"));
+			hashmap.put("multimap", new EqToken(EqToken.Id,"\u22b8"));
+			hashmap.put("nearrow", new EqToken(EqToken.Id,"\u2197"));
+			hashmap.put("nleftarrow", new EqToken(EqToken.Id,"\u219a"));
+			hashmap.put("nLeftarrow", new EqToken(EqToken.Id,"\u21cd"));
+			hashmap.put("nleftrightarrow", new EqToken(EqToken.Id,"\u21ae"));
+			hashmap.put("nLeftrightarrow", new EqToken(EqToken.Id,"\u21ce"));
+			hashmap.put("nrightarrow", new EqToken(EqToken.Id,"\u219b"));
+			hashmap.put("nRightarrow", new EqToken(EqToken.Id,"\u21cf"));
+			hashmap.put("nwarrow", new EqToken(EqToken.Id,"\u2196"));
+			hashmap.put("restriction", new EqToken(EqToken.Id,"\u21be"));
+			hashmap.put("rightarrow", new EqToken(EqToken.Id,"\u2192"));
+			hashmap.put("Rightarrow", new EqToken(EqToken.Id,"\u21d2"));
+			hashmap.put("rightarrowtail", new EqToken(EqToken.Id,"\u21a3"));
+			hashmap.put("rightharpoondown", new EqToken(EqToken.Id,"\u21c1"));
+			hashmap.put("rightharpoonup", new EqToken(EqToken.Id,"\u21c0"));
+			hashmap.put("rightleftarrows", new EqToken(EqToken.Id,"\u21c4"));
+			hashmap.put("rightleftharpoons", new EqToken(EqToken.Id,"\u21cc"));
+			hashmap.put("rightrightarrows", new EqToken(EqToken.Id,"\u21c9"));
+			hashmap.put("rightsquigarrow", new EqToken(EqToken.Id,"\u219d"));
+			hashmap.put("Rrightarrow", new EqToken(EqToken.Id,"\u21db"));
+			hashmap.put("Rsh", new EqToken(EqToken.Id,"\u21b1"));
+			hashmap.put("searrow", new EqToken(EqToken.Id,"\u2198"));
+			hashmap.put("swarrow", new EqToken(EqToken.Id,"\u2199"));
+			hashmap.put("to", new EqToken(EqToken.Id,"\u2192"));
+			hashmap.put("twoheadleftarrow", new EqToken(EqToken.Id,"\u219e"));
+			hashmap.put("twoheadrightarrow", new EqToken(EqToken.Id,"\u21a0"));
+			hashmap.put("upharpoonleft", new EqToken(EqToken.Id,"\u21bf"));
+			hashmap.put("upharpoonright", new EqToken(EqToken.Id,"\u21be"));
+			hashmap.put("upuparrows", new EqToken(EqToken.Id,"\u21c8"));
+			hashmap.put("backepsilon", new EqToken(EqToken.Id,"\u03f6"));
+			hashmap.put("because", new EqToken(EqToken.Id,"\u2235"));
+			hashmap.put("between", new EqToken(EqToken.Id,"\u226c"));
+			hashmap.put("blacktriangleleft", new EqToken(EqToken.Id,"\u25c0"));
+			hashmap.put("blacktriangleright", new EqToken(EqToken.Id,"\u25b6"));
+			hashmap.put("bowtie", new EqToken(EqToken.Id,"\u22c8"));
+			hashmap.put("dashv", new EqToken(EqToken.Id,"\u22a3"));
+			hashmap.put("frown", new EqToken(EqToken.Id,"\u2323"));
+			hashmap.put("in", new EqToken(EqToken.Id,"\u220a"));
+			hashmap.put("mid", new EqToken(EqToken.Id,"\u2223"));
+			hashmap.put("models", new EqToken(EqToken.Id,"\u22a7"));
+			hashmap.put("ni", new EqToken(EqToken.Id,"\u220b"));
+			hashmap.put("ni", new EqToken(EqToken.Id,"\u220d"));
+			hashmap.put("nmid", new EqToken(EqToken.Id,"\u2224"));
+			hashmap.put("notin", new EqToken(EqToken.Id,"\u2209"));
+			hashmap.put("nparallel", new EqToken(EqToken.Id,"\u2226"));
+			hashmap.put("nshortmid", new EqToken(EqToken.Id,"\u2224"));
+			hashmap.put("nshortparallel", new EqToken(EqToken.Id,"\u2226"));
+			hashmap.put("nsubseteq", new EqToken(EqToken.Id,"\u2286"));
+			hashmap.put("nsubseteq", new EqToken(EqToken.Id,"\u2288"));
+			hashmap.put("nsubseteqq", new EqToken(EqToken.Id,"\u2ac5"));
+			hashmap.put("nsupseteq", new EqToken(EqToken.Id,"\u2287"));
+			hashmap.put("nsupseteq", new EqToken(EqToken.Id,"\u2289"));
+			hashmap.put("nsupseteqq", new EqToken(EqToken.Id,"\u2ac6"));
+			hashmap.put("ntriangleleft", new EqToken(EqToken.Id,"\u22ea"));
+			hashmap.put("ntrianglelefteq", new EqToken(EqToken.Id,"\u22ec"));
+			hashmap.put("ntriangleright", new EqToken(EqToken.Id,"\u22eb"));
+			hashmap.put("ntrianglerighteq", new EqToken(EqToken.Id,"\u22ed"));
+			hashmap.put("nvdash", new EqToken(EqToken.Id,"\u22ac"));
+			hashmap.put("nvDash", new EqToken(EqToken.Id,"\u22ad"));
+			hashmap.put("nVdash", new EqToken(EqToken.Id,"\u22ae"));
+			hashmap.put("nVDash", new EqToken(EqToken.Id,"\u22af"));
+			hashmap.put("owns", new EqToken(EqToken.Id,"\u220d"));
+			hashmap.put("parallel", new EqToken(EqToken.Id,"\u2225"));
+			hashmap.put("perp", new EqToken(EqToken.Id,"\u22a5"));
+			hashmap.put("pitchfork", new EqToken(EqToken.Id,"\u22d4"));
+			hashmap.put("propto", new EqToken(EqToken.Id,"\u221d"));
+			hashmap.put("shortmid", new EqToken(EqToken.Id,"\u2223"));
+			hashmap.put("shortparallel", new EqToken(EqToken.Id,"\u2225"));
+			hashmap.put("smallfrown", new EqToken(EqToken.Id,"\u2322"));
+			hashmap.put("smallsmile", new EqToken(EqToken.Id,"\u2323"));
+			hashmap.put("smile", new EqToken(EqToken.Id,"\u2323"));
+			hashmap.put("sqsubset", new EqToken(EqToken.Id,"\u228f"));
+			hashmap.put("sqsubseteq", new EqToken(EqToken.Id,"\u2291"));
+			hashmap.put("sqsupset", new EqToken(EqToken.Id,"\u2290"));
+			hashmap.put("sqsupseteq", new EqToken(EqToken.Id,"\u2292"));
+			hashmap.put("subset", new EqToken(EqToken.Id,"\u2282"));
+			hashmap.put("Subset", new EqToken(EqToken.Id,"\u22d0"));
+			hashmap.put("subseteq", new EqToken(EqToken.Id,"\u2286"));
+			hashmap.put("subseteqq", new EqToken(EqToken.Id,"\u2ac5"));
+			hashmap.put("subsetneq", new EqToken(EqToken.Id,"\u228a"));
+			hashmap.put("subsetneqq", new EqToken(EqToken.Id,"\u2acb"));
+			hashmap.put("supset", new EqToken(EqToken.Id,"\u2283"));
+			hashmap.put("Supset", new EqToken(EqToken.Id,"\u22d1"));
+			hashmap.put("supseteq", new EqToken(EqToken.Id,"\u2287"));
+			hashmap.put("supseteqq", new EqToken(EqToken.Id,"\u2ac6"));
+			hashmap.put("supsetneq", new EqToken(EqToken.Id,"\u228b"));
+			hashmap.put("supsetneqq", new EqToken(EqToken.Id,"\u2acc"));
+			hashmap.put("therefore", new EqToken(EqToken.Id,"\u2234"));
+			hashmap.put("trianglelefteq", new EqToken(EqToken.Id,"\u22b4"));
+			hashmap.put("trianglerighteq", new EqToken(EqToken.Id,"\u22b5"));
+			hashmap.put("varpropto", new EqToken(EqToken.Id,"\u221d"));
+			hashmap.put("varsubsetneq", new EqToken(EqToken.Id,"\u228a"));
+			hashmap.put("varsubsetneqq", new EqToken(EqToken.Id,"\u2acb"));
+			hashmap.put("varsupsetneq", new EqToken(EqToken.Id,"\u228b"));
+			hashmap.put("varsupsetneqq", new EqToken(EqToken.Id,"\u2acc"));
+			hashmap.put("vartriangle", new EqToken(EqToken.Id,"\u25b5"));
+			hashmap.put("vartriangleleft", new EqToken(EqToken.Id,"\u22b2"));
+			hashmap.put("vartriangleright", new EqToken(EqToken.Id,"\u22b3"));
+			hashmap.put("vdash", new EqToken(EqToken.Id,"\u22a2"));
+			hashmap.put("vDash", new EqToken(EqToken.Id,"\u22a8"));
+			hashmap.put("Vdash", new EqToken(EqToken.Id,"\u22a9"));
+			hashmap.put("Vvdash", new EqToken(EqToken.Id,"\u22aa"));
+			hashmap.put("alpha", new EqToken(EqToken.Id,"\u03b1"));
+			hashmap.put("beta", new EqToken(EqToken.Id,"\u03b2"));
+			hashmap.put("chi", new EqToken(EqToken.Id,"\u03c7"));
+			hashmap.put("delta", new EqToken(EqToken.Id,"\u03b4"));
+			hashmap.put("Delta", new EqToken(EqToken.Id,"\u0394"));
+			hashmap.put("digamma", new EqToken(EqToken.Id,"\u03dd"));
+			hashmap.put("eta", new EqToken(EqToken.Id,"\u03b7"));
+			hashmap.put("gamma", new EqToken(EqToken.Id,"\u03b3"));
+			hashmap.put("Gamma", new EqToken(EqToken.Id,"\u0393"));
+			hashmap.put("iota", new EqToken(EqToken.Id,"\u03b9"));
+			hashmap.put("kappa", new EqToken(EqToken.Id,"\u03ba"));
+			hashmap.put("lambda", new EqToken(EqToken.Id,"\u03bb"));
+			hashmap.put("Lambda", new EqToken(EqToken.Id,"\u039b"));
+			hashmap.put("mu", new EqToken(EqToken.Id,"\u03bc"));
+			hashmap.put("nu", new EqToken(EqToken.Id,"\u03bd"));
+			hashmap.put("omega", new EqToken(EqToken.Id,"\u03c9"));
+			hashmap.put("Omega", new EqToken(EqToken.Id,"\u03a9"));
+			hashmap.put("phi", new EqToken(EqToken.Id,"\u03c6"));
+			hashmap.put("Phi", new EqToken(EqToken.Id,"\u03a6"));
+			hashmap.put("pi", new EqToken(EqToken.Id,"\u03c0"));
+			hashmap.put("Pi", new EqToken(EqToken.Id,"\u03a0"));
+			hashmap.put("psi", new EqToken(EqToken.Id,"\u03c8"));
+			hashmap.put("Psi", new EqToken(EqToken.Id,"\u03a8"));
+			hashmap.put("rho", new EqToken(EqToken.Id,"\u03c1"));
+			hashmap.put("sigma", new EqToken(EqToken.Id,"\u03c3"));
+			hashmap.put("Sigma", new EqToken(EqToken.Id,"\u03a3"));
+			hashmap.put("tau", new EqToken(EqToken.Id,"\u03c4"));
+			hashmap.put("theta", new EqToken(EqToken.Id,"\u03b8"));
+			hashmap.put("Theta", new EqToken(EqToken.Id,"\u0398"));
+			hashmap.put("upsilon", new EqToken(EqToken.Id,"\u03c5"));
+			hashmap.put("Upsilon", new EqToken(EqToken.Id,"\u03d2"));
+			hashmap.put("varkappa", new EqToken(EqToken.Id,"\u03f0"));
+			hashmap.put("varphi", new EqToken(EqToken.Id,"\u03d5"));
+			hashmap.put("varpi", new EqToken(EqToken.Id,"\u03d6"));
+			hashmap.put("varrho", new EqToken(EqToken.Id,"\u03f1"));
+			hashmap.put("varsigma", new EqToken(EqToken.Id,"\u03c2"));
+			hashmap.put("vartheta", new EqToken(EqToken.Id,"\u03d1"));
+			hashmap.put("xi", new EqToken(EqToken.Id,"\u03be"));
+			hashmap.put("Xi", new EqToken(EqToken.Id,"\u039e"));
+			hashmap.put("zeta", new EqToken(EqToken.Id,"\u03b6"));
+			hashmap.put("vdots", new EqToken(EqToken.Id,"\u22ee"));
+			hashmap.put("hdots", new EqToken(EqToken.Id,"\u2026"));
+			hashmap.put("ldots", new EqToken(EqToken.Id,"\u2026"));
+			hashmap.put("dots", new EqToken(EqToken.Id,"\u2026"));
+			hashmap.put("cdots", new EqToken(EqToken.Id,"\u00b7\u00b7\u00b7"));
+			hashmap.put("dotsb", new EqToken(EqToken.Id,"\u00b7\u00b7\u00b7"));
+			hashmap.put("dotsc", new EqToken(EqToken.Id,"\u2026"));
+			hashmap.put("dotsi", new EqToken(EqToken.Id,"\u22c5\u22c5\u22c5"));
+			hashmap.put("dotsm", new EqToken(EqToken.Id,"\u22c5\u22c5\u22c5"));
+			hashmap.put("dotso", new EqToken(EqToken.Id,"\u2026"));
+			hashmap.put("ddots", new EqToken(EqToken.Id,"\u22f1"));
+			hashmap.put("varepsilon", new EqToken(EqToken.Id,"\u03b5"));
+
+			// \$
+			hashmap.put("$", new EqToken(EqToken.Id,"$"));
+
+			// TODO doesn't seem to be in standard font?
+			//if (SBufferString.equals("triangle", new EqToken(EqToken.Id,"\u25b5"));
+			//if (SBufferString.equals("epsilon", new EqToken(EqToken.Id,"\u03f5"));
+
+
+			// TODO how do we get java to use 5 digit unicode?? supported font ???
+			//if (SBufferString.equals("imath", new EqToken(EqToken.Id,"\u1d6a4"));            
+			//if (SBufferString.equals("jmath", new EqToken(EqToken.Id,"\u1d6a5"));   
+
+
+
+			for (int i = 0 ; i < symbols.length ; i++)
+				hashmap.put(symbols[i], new EqToken(EqToken.SYMBOP,symbols[i]));
+
+			for (int i = 0 ; i < symbols2.length ; i++)
+				hashmap.put(symbols2[i], new EqToken(EqToken.SYMBOPD,symbols2[i]));
+
+			for (int i = 0 ; i < symbols3.length ; i++)
+				hashmap.put(symbols3[i], new EqToken(EqToken.SYMBOP,symbols3[i]+"Big"));
+
+			for (int i = 0 ; i < symbols4.length ; i++)
+				hashmap.put(symbols4[i], new EqToken(EqToken.SYMBOPD,symbols4[i]+"Big"));
+
+			//if ((" alpha delta epsilon iota kappa lambda nu omega pi sigma theta tau upsilon varepsilon varpi vartheta"
+			//        +" pm mp times div cdot cdots ldots ast star amalg cap cup uplus sqcap sqcup vee wedge wr circ bullet diamond lhd rhd oslash odot Box bigtriangleup triangleleft triangleright oplus ominus otimes"
+			//        +" ll subset sqsubset in vdash models gg supset sqsupset ni dashv perp neq doteq approx cong equiv propto prec sim simeq asymp smile frown bowtie succ"
+			//       +" aleph forall hbar exists imath neg flat ell Re angle Im backslash mho Box prime emptyset triangle nabla partial top bot Join infty vdash dashv"
+			//        +" Fourier Laplace leftarrow gets hookrightarrow leftharpoondown rightarrow to rightharpoondown leadsto leftrightarrow mapsto hookleftarrow leftharpoonup rightharpoonup rightleftharpoons longleftarrow longrightarrow longleftrightarrow longmapsto ")
+			//        .indexOf(" "+SBufferString+" ")>=0) return new EqToken(EqToken.SYMBOP,SBufferString);
+
+
+
+			//if ((" beta chi eta gamma mu psi phi rho varrho varsigma varphi xi zeta"
+			//        +" le leq ge geq vdots ddots natural jmath bigtriangledown sharp uparrow downarrow updownarrow nearrow searrow swarrow nwarrow succeq mid preceq parallel subseteq sqsubseteq supseteq sqsupseteq clubsuit diamondsuit heartsuit spadesuit wp dagger ddagger setminus unlhd unrhd bigcirc ")
+			//        .indexOf(" "+SBufferString+" ")>=0) return new EqToken(EqToken.SYMBOPD,SBufferString);
+
+
+			//if ((" Delta Gamma Lambda Omega Pi Phi Psi Sigma Theta Upsilon Xi"
+			//    +" Leftarrow Rightarrow Leftrightarrow Longleftarrow Longrightarrow Longleftrightarrow Diamond ")
+			//    .indexOf(" "+SBufferString+" ")>=0) return new EqToken(EqToken.SYMBOP,SBufferString+"Big");
+
+			//if ((" Uparrow Downarrow Updownarrow ")
+			//    .indexOf(" "+SBufferString+" ")>=0) return new EqToken(EqToken.SYMBOPD,SBufferString+"Big");
+
+
+		}
+
+
+		return hashmap;
+	}	
 
 } // end class EqScanner
 
