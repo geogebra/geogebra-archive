@@ -1009,8 +1009,8 @@ implements ExpressionValue, RealRootFunction, Functional {
     /**
      * Calculates the integral of this function
      * @return result as function
-     */
-    final private Function integral() {
+     *
+    final private Function integralOLD() {
     	
     	// temporarily replace the variable by "x"
         String oldVar = fVar.toString();
@@ -1065,7 +1065,7 @@ implements ExpressionValue, RealRootFunction, Functional {
          finally {
         	 fVar.setVarString(oldVar);
          }
-    }
+    } /*/
     
 
     
@@ -1073,7 +1073,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Calculates the integral of this function
      * @return result as function
      */
-    final private Function integralMathPiper() {
+    final private Function integral() {
     	
     	//Application.debug("Trying MathPiper");
     	
@@ -1104,10 +1104,10 @@ implements ExpressionValue, RealRootFunction, Functional {
             // TODO remove when MathPiper is updated and Jasymca removed
             // bug: MathPiper rerurns "0" from eg
             // AntiDeriv(x,((1)/(Sqrt((2) * (3.14159)))) * ((2.72)^(((-1) * ((x)^(2)))/(2))))
-            if (result.equals("0")) {
-            	System.err.println("Function.integralMathPiper: MathPiper returned '0', returning null instead");
-            	return null;
-            }
+            //if (result.equals("0")) {
+            //	System.err.println("Function.integralMathPiper: MathPiper returned '0', returning null instead");
+            //	return null;
+            //}
             
             sb.setLength(0);
             // it doesn't matter what label we use here as it is never used
