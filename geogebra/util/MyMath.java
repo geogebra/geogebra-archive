@@ -59,6 +59,19 @@ public final class MyMath {
 		return (e - 1.0) / (e + 1.0);  
 	}
 	
+	final public static double csch(double a) {  
+		return  1 / sinh(a);
+	}
+	
+	final public static double sech(double a) {  
+		return 1 / cosh(a);
+	}
+	
+	final public static double coth(double a) {  
+		double e = Math.exp(2.0 * a);
+		return (e + 1.0) / (e - 1.0);  
+	}
+	
 	final public static double acosh(double a) {  
 		return Math.log(a + Math.sqrt(a*a - 1.0));
 	}
@@ -69,6 +82,18 @@ public final class MyMath {
 
 	final public static double atanh(double a) {		  
 		return Math.log((1.0 + a)/(1.0 - a)) * 0.5;
+	}		
+	
+	final public static double csc(double a) {		  
+		return 1 / Math.sin(a);
+	}		
+	
+	final public static double sec(double a) {		  
+		return 1 / Math.cos(a);
+	}		
+	
+	final public static double cot(double a) {		  
+		return Math.cos(a) / Math.sin(a);
 	}		
 	
 	final public static double gamma(double x, Kernel kernel) {		

@@ -1754,6 +1754,108 @@ implements ExpressionValue, ExpressionNodeConstants {
                 sb.append(')');
                 break;
                 
+            case CSC:  
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\csc(");
+	        			break;
+	        			
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("Csc(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("csc(");         		
+	        	}            		
+                sb.append(leftStr);
+                sb.append(')');
+                break;
+                
+            case SEC:  
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\sec(");
+	        			break;
+	        			
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("Sec(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("sec(");         		
+	        	}            		
+                sb.append(leftStr);
+                sb.append(')');
+                break;
+                
+            case COT:  
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\cot(");
+	        			break;
+	        			
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("Cot(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("cot(");         		
+	        	}            		
+                sb.append(leftStr);
+                sb.append(')');
+                break;
+                
+            case CSCH:  
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\csch(");
+	        			break;
+	        			
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("Csch(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("csch(");         		
+	        	}            		
+                sb.append(leftStr);
+                sb.append(')');
+                break;
+                
+            case SECH:  
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\sech(");
+	        			break;
+	        			
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("Sech(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("sech(");         		
+	        	}            		
+                sb.append(leftStr);
+                sb.append(')');
+                break;
+                
+            case COTH:  
+               	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\coth(");
+	        			break;
+	        			
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("Coth(");
+	        			break;
+	        			
+	        		default:
+	        			sb.append("coth(");         		
+	        	}            		
+                sb.append(leftStr);
+                sb.append(')');
+                break;
+                
             case ARCCOS:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:

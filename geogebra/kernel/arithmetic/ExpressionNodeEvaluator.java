@@ -1019,6 +1019,114 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 throw new MyError(app, str);
             }
   
+        case CSC:
+            // csc(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().csc();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.CSC, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "csc", lt.toString() };
+                throw new MyError(app, str);
+            }
+  
+        case SEC:
+            // sec(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().sec();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.SEC, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "sec", lt.toString() };
+                throw new MyError(app, str);
+            }
+  
+        case COT:
+            // cot(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().cot();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.COT, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "cot", lt.toString() };
+                throw new MyError(app, str);
+            }
+  
+        case CSCH:
+            // csch(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().csch();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.CSCH, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "csch", lt.toString() };
+                throw new MyError(app, str);
+            }
+  
+        case SECH:
+            // sech(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().sech();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.SECH, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "sech", lt.toString() };
+                throw new MyError(app, str);
+            }
+  
+        case COTH:
+            // coth(number)
+            if (lt.isNumberValue())
+				return ((NumberValue)lt).getNumber().coth();
+			else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.COTH, null),
+                                ""
+                            )
+                       );                   
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "coth", lt.toString() };
+                throw new MyError(app, str);
+            }
+  
         case EXP:
             // exp(number)
             if (lt.isNumberValue())

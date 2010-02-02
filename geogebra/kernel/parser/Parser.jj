@@ -273,6 +273,12 @@ TOKEN: {
 |	< COS_FUNC: ( "cos(" | "Cos(" ) > 
 |	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
 |	< TAN_FUNC: ( "tan(" | "Tan(" ) > 
+|	< CSC_FUNC: ( "csc(" | "Csc(" | "cosec(" | "Cosec(") > 
+|	< SEC_FUNC: ( "sec(" | "Sec(" ) > 
+|	< COT_FUNC: ( "cot(" | "Cot(" ) > 
+|	< CSCH_FUNC: ( "csch(" | "Csch(" | "cosech(" | "Cosech(") > 
+|	< SECH_FUNC: ( "sech(" | "Sech(" ) > 
+|	< COTH_FUNC: ( "coth(" | "Coth(" ) > 
 |	< ACOS_FUNC: ( "acos(" | "arccos(" | "ArcCos(" )> 
 |	< ASIN_FUNC: ( "asin(" | "arcsin(" | "ArcSin(" ) > 
 |	< ATAN_FUNC: ( "atan(" | "arctan(" | "ArcTan(" )> 
@@ -1437,6 +1443,24 @@ ExpressionNode numberFunction():
 |
     <TAN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.TAN, null); }  
+|
+    <CSC_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.CSC, null); }   
+|
+    <SEC_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.SEC, null); }  
+|
+    <COT_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.COT, null); }  
+|
+    <CSCH_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.CSCH, null); }   
+|
+    <SECH_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.SECH, null); }  
+|
+    <COTH_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.COTH, null); }  
 |
     <ACOS_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ARCCOS, null); }   

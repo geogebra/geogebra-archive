@@ -256,6 +256,42 @@ implements NumberValue {
 		return this; 
 	}
 
+	final public MyDouble csc() {  
+		val = MyMath.csc(val);
+		isAngle = false;  
+		return this; 
+	}
+	
+	final public MyDouble sec() {  
+		val = MyMath.sec(val);
+		isAngle = false;  
+		return this; 
+	}
+	
+	final public MyDouble cot() {  
+		val = MyMath.cot(val);
+		isAngle = false;  
+		return this; 
+	}
+	
+	final public MyDouble csch() {  
+		val = MyMath.csch(val);
+		isAngle = false;  
+		return this; 
+	}
+	
+	final public MyDouble sech() {  
+		val = MyMath.sech(val);
+		isAngle = false;  
+		return this; 
+	}
+	
+	final public MyDouble coth() {  
+		val = MyMath.coth(val);
+		isAngle = false;  
+		return this; 
+	}
+	
 	final public MyDouble atanh() {  
 		val = MyMath.atanh(val);
 		isAngle = false;  
