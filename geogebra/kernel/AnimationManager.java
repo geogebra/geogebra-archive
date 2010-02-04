@@ -29,7 +29,7 @@ public class AnimationManager implements ActionListener {
 		
 	public synchronized void startAnimation() {
 		if (!timer.isRunning() && animatedGeos.size() > 0) {
-			udpateNeedToShowAnimationButton();
+			updateNeedToShowAnimationButton();
 			timer.start();			
 		}
 	}
@@ -37,7 +37,7 @@ public class AnimationManager implements ActionListener {
 	public synchronized void stopAnimation() {
 		if (timer.isRunning()) {			
 			timer.stop();
-			udpateNeedToShowAnimationButton();
+			updateNeedToShowAnimationButton();
 		}
 	}
 	
@@ -48,7 +48,7 @@ public class AnimationManager implements ActionListener {
 		}
 		
 		animatedGeos.clear();		
-		udpateNeedToShowAnimationButton();
+		updateNeedToShowAnimationButton();
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class AnimationManager implements ActionListener {
 	/**
 	 * Updates the needToShowAnimationButton value.
 	 */
-	public void udpateNeedToShowAnimationButton() {
+	public void updateNeedToShowAnimationButton() {
 		int size = animatedGeos.size();
 		if (size == 0) {
 			needToShowAnimationButton = false;
@@ -136,8 +136,8 @@ public class AnimationManager implements ActionListener {
 	final public synchronized void addAnimatedGeo(GeoElement geo) {
 		if (geo.isAnimating() && !animatedGeos.contains(geo)) {
 			animatedGeos.add(geo);		
-			if (animatedGeos.size() == 1)
-				udpateNeedToShowAnimationButton();
+			//if (animatedGeos.size() == 1) removed, might have geos with variable controlling speed
+				updateNeedToShowAnimationButton();
 		}
 	}
 	
@@ -148,6 +148,7 @@ public class AnimationManager implements ActionListener {
 		if (animatedGeos.remove(geo) && animatedGeos.size() == 0) { 
 				stopAnimation();
 		}
+		updateNeedToShowAnimationButton(); // added, might have geos with variable controlling speed
 	}
 	
 	/**

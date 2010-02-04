@@ -2231,7 +2231,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 	
 	public final boolean hitAnimationButton(MouseEvent e) {
-		return (e.getX() <= 20) && (e.getY() >= height - 20);		
+		return kernel.needToShowAnimationButton() && (e.getX() <= 20) && (e.getY() >= height - 20);		
 	}
 	
 	/**

@@ -457,12 +457,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			if (geo.isAnimatable()) {            	
 				cbItem = new JCheckBoxMenuItem( app.getPlain("Animating"));
 				cbItem.setIcon(app.getEmptyIcon());
-				cbItem.setSelected(((GeoNumeric) geo).isAnimating());
+                cbItem.setSelected(((GeoNumeric) geo).isAnimating() && app.getKernel().getAnimatonManager().isRunning());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						geo.setAnimating(!geo.isAnimating());
+                		geo.setAnimating(!(geo.isAnimating() && app.getKernel().getAnimatonManager().isRunning()));
 						geo.updateRepaint();
 						app.storeUndoInfo();
+						
+                        app.getEuclidianView().repaint();
 
 						// automatically start animation when animating was turned on
 						if (geo.isAnimating())

@@ -6150,7 +6150,7 @@ public class Kernel {
 	
 	final public void udpateNeedToShowAnimationButton() {
 		if (animationManager != null)
-			animationManager.udpateNeedToShowAnimationButton();		
+			animationManager.updateNeedToShowAnimationButton();		
 		
 	}	
 
