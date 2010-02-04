@@ -1783,6 +1783,7 @@ public class MyXMLHandler implements DocHandler {
 				processLinkedGeoList();
 				processShowObjectConditionList();
 				processDynamicColorList();
+				processAnimationSpeedList();
 				//processDynamicCoordinatesList();
 
 				if (kernel == origKernel) {
