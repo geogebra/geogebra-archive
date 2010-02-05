@@ -40,11 +40,16 @@ public class CopyPasteCut {
 	protected GeoElement[][] internalBuf;
 	protected int bufColumn;
 	protected int bufRow;
+	
+	protected SpreadsheetView view;
 
 	public CopyPasteCut(JTable table0, Kernel kernel0) {
 		table = (MyTable)table0;
 		kernel = kernel0;	
 		app = kernel.getApplication();
+		
+		view = table.getView();
+		
 	}
 
 	public void copy(int column1, int row1, int column2, int row2, boolean skipInternalCopy) {
@@ -96,6 +101,12 @@ public class CopyPasteCut {
 		return delete(column1, row1, column2, row2);	
 	}
 
+	
+	
+	public boolean paste(CellRange cr) {
+		return paste(cr.getMinColumn(),cr.getMinRow(),cr.getMaxColumn(),cr.getMaxRow());
+	}
+	
 	public boolean paste(int column1, int row1, int column2, int row2) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable contents = clipboard.getContents(null);
@@ -748,12 +759,21 @@ public class CopyPasteCut {
 	
 	//G.STURR 2010-1-15
 	
-	public boolean pasteFromFile(File aFile, int column1, int row1, int column2, int row2) {
-
-		StringBuilder contents = new StringBuilder();
+	// default file paste clears spreadsheet and pastes from upper left corner
+	public boolean pasteFromFile(File aFile) {
 		
+		CellRange cr = new CellRange(table, 0,0,0,0);
+		return pasteFromFile(aFile, cr, true);
+		
+	}
+
+	
+	public boolean pasteFromFile(File dataFile, CellRange targetRange, boolean clearSpreadsheet) {
+
+		// read file 
+		StringBuilder contents = new StringBuilder();
 		try {
-			BufferedReader input = new BufferedReader(new FileReader(aFile));
+			BufferedReader input = new BufferedReader(new FileReader(dataFile));
 			try {
 				String line = null;
 				while ((line = input.readLine()) != null) {
@@ -768,13 +788,17 @@ public class CopyPasteCut {
 			return false;
 		}
 
+		//System.out.println(dataFile.getName() + ": " + contents.capacity());
+		
+		// copy file contents to clipboard
 		StringSelection stringSelection = new StringSelection(contents.toString());
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents(stringSelection, null);
 		
+		
 		// paste from clipboard into spreadsheet
-
-		return paste(column1, row1, column2, row2);
+		if(clearSpreadsheet) view.clearView();
+		return paste(targetRange);
 
 	}
 	

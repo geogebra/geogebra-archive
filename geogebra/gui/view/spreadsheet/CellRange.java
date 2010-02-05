@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Term;
 
-/***********************************************
- * Utility class for handling cell ranges.
- ***********************************************
+/**
+ * Utility class for spreadsheet cell ranges.
+ *
  *
  * A cell range is any rectangular block of cells defined by two
- * diagonal corners. Includes rows, columns and single cells.
+ * diagonal corner cells. One corner is designated as the anchor 
+ * cell. This is the cell first clicked when dragging out a cell range. 
+ * Once the corner index values are set the max and min corner
+ * index values are calculated as follows:
  *  
  *        minColumn   
  *    minRow *---------*
@@ -18,12 +21,15 @@ import geogebra.kernel.arithmetic.Term;
  *           *-------- * maxRow
  *                 maxColumn      
  *  
- * row:     minRow >=0, minColumn = -1, maxColumn = -1  
- * column:  minColumn >=0, minRow = -1, maxRow = -1  
+ * Rows and columns have index values of -1.
+ * 
+ *      row:     minRow >=0, minColumn = -1, maxColumn = -1  
+ *   column:  minColumn >=0, minRow = -1, maxRow = -1  
  * 
  * 
  * @author George Sturr, 2010-1-23
  */
+
 
 public class CellRange {
 	

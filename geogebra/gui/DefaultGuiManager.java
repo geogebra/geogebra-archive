@@ -1259,6 +1259,60 @@ public class DefaultGuiManager implements GuiManager {
 
 	}
 
+	
+	/**
+	 * Opens file chooser and returns a data file for the spreadsheet
+	 * G.Sturr 2010-2-5
+	 */
+	public File getDataFile() {
+		
+		//TODO -- create MODE_DATA that shows preview of text file (or no preview?)
+
+		File dataFile = null;
+
+		try {
+			app.setWaitCursor();
+			initFileChooser();
+
+			fileChooser.setCurrentDirectory(app.getCurrentImagePath());
+			fileChooser.setMode(GeoGebraFileChooser.MODE_GEOGEBRA);
+
+			MyFileFilter fileFilter = new MyFileFilter();
+			fileFilter.addExtension("txt");
+			fileFilter.addExtension("cvs");
+
+			// fileFilter.setDescription(app.getPlain("Image"));
+			fileChooser.resetChoosableFileFilters();
+			fileChooser.setFileFilter(fileFilter);
+
+			int returnVal = fileChooser.showOpenDialog(app.getMainComponent());
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				dataFile = fileChooser.getSelectedFile();
+				if (dataFile != null) {
+					app.setCurrentImagePath(dataFile.getParentFile());
+					if (!app.isApplet()) {
+						GeoGebraPreferences.getPref().saveDefaultImagePath(
+								app.getCurrentImagePath());
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			app.setDefaultCursor();
+			e.printStackTrace();
+			app.showError("LoadFileFailed");
+			return null;
+		}
+
+		app.setDefaultCursor();
+		return dataFile;
+
+	}
+	
+	
+	
+	
+	
 	  // returns true for YES or NO and false for CANCEL
     public boolean saveCurrentFile() {    	
     	if (propDialog != null && propDialog.isShowing()) 

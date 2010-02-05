@@ -736,16 +736,16 @@ public class ContextMenu extends JPopupMenu
 	private class ActionListenerImportData implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
-			/* test code
 			
-			File dataFile = new File("C:testTab.txt");
+			//File dataFile = new File("C:testTab.txt");
+			File dataFile = app.getGuiManager().getDataFile();
+			
 
 			// paste file into spreadsheet
-			boolean succ = table.copyPasteCut.pasteFromFile(dataFile, 0, 0, 0, 0);
-			if (succ)
+			boolean succ = table.copyPasteCut.pasteFromFile(dataFile);
+			if (succ){
 				app.storeUndoInfo();
-				
-		   */
+			}
 		}
 	}
 

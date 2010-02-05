@@ -237,6 +237,14 @@ public interface GuiManager {
 	 */
 	public String getImageFromFile();
 	
+	
+	//G.STURR 2010-2-5
+	/**
+	 * Opens file dialog to choose and return a data file for the spreadsheet.
+	 */
+	public File getDataFile();
+	
+	
 	  // returns true for YES or NO and false for CANCEL
     public boolean saveCurrentFile() ;
 
