@@ -135,7 +135,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				new Integer(LINE_TYPE_DASHED_DOTTED) };
 		return ret;
 	}
-
+	
+	// need to clip just outside the viewing area when drawing eg vectors
+	// as a near-horizontal thick vector isn't drawn correctly otherwise
+	public static final int CLIP_DISTANCE = 5;
+	
 	public static final int AXES_LINE_TYPE_FULL = 0;
 
 	public static final int AXES_LINE_TYPE_ARROW = 1;
