@@ -92,7 +92,7 @@ public final class DrawLine extends Drawable implements Previewable {
             setClippedLine();
 			
             // line on screen?		
-    		if (!line.intersects(0,0, view.width, view.height)) {				
+    		if (!line.intersects( -EuclidianView.CLIP_DISTANCE,  -EuclidianView.CLIP_DISTANCE, view.width + EuclidianView.CLIP_DISTANCE, view.height + EuclidianView.CLIP_DISTANCE)) {				
     			isVisible = false;
             	// don't return here to make sure that getBounds() works for offscreen points too
     		}
@@ -130,7 +130,7 @@ public final class DrawLine extends Drawable implements Previewable {
             k = gx / gy * view.scaleRatio; 
             d = view.yZero + gz/gy * view.yscale - k * view.xZero;
             
-            x1 = 0;
+            x1 = -EuclidianView.CLIP_DISTANCE;
             y1 = d;            
             x2 = view.width + EuclidianView.CLIP_DISTANCE;
             y2 = k * x2 + d; 
@@ -146,9 +146,9 @@ public final class DrawLine extends Drawable implements Previewable {
             k = gy / (gx * view.scaleRatio) ; 
             d = view.xZero - gz/gx * view.xscale - k * view.yZero;
             
-            y1 = view.height;   
+            y1 = view.height + EuclidianView.CLIP_DISTANCE;   
             x1 = k * y1 + d;
-            y2 = 0;
+            y2 = -EuclidianView.CLIP_DISTANCE;
             x2 = d;
             p1Pos = BOTTOM;
             p2Pos = TOP;                        
@@ -165,10 +165,10 @@ public final class DrawLine extends Drawable implements Previewable {
     // points (0, y1), (width, y2) -> clip on y=0 and y=height
     final private void clipTopBottom() {
         // calc clip attributes for both points (x1,y1), (x2,y2)        
-        attr1[TOP]      = y1 < 0;
-        attr1[BOTTOM]   = y1 > view.height;                
-        attr2[TOP]      = y2 < 0;
-        attr2[BOTTOM]   = y2 > view.height;
+        attr1[TOP]      = y1 < -EuclidianView.CLIP_DISTANCE;
+        attr1[BOTTOM]   = y1 > view.height + EuclidianView.CLIP_DISTANCE;                
+        attr2[TOP]      = y2 < -EuclidianView.CLIP_DISTANCE;
+        attr2[BOTTOM]   = y2 > view.height + EuclidianView.CLIP_DISTANCE;
         
         // both points outside (TOP or BOTTOM)
         if ((attr1[TOP] && attr2[TOP]) ||
@@ -177,26 +177,26 @@ public final class DrawLine extends Drawable implements Previewable {
         // at least one point inside -> clip        
         // point1 TOP -> clip with y=0
         if (attr1[TOP]) { 
-            y1 = 0; 
+            y1 = -EuclidianView.CLIP_DISTANCE; 
             x1 = -d/k;  
             p1Pos = TOP;
         }
         // point1 BOTTOM -> clip with y=height
         else if (attr1[BOTTOM]) { 
-            y1 = view.height;
+            y1 = view.height + EuclidianView.CLIP_DISTANCE;
             x1 = (y1 - d)/k;             
             p1Pos = BOTTOM;
         }
         
         // point2 TOP -> clip with y=0
         if (attr2[TOP]) { 
-            y2 = 0; 
+            y2 = -EuclidianView.CLIP_DISTANCE; 
             x2 = -d/k;  
             p2Pos = TOP;
         }
         // point2 BOTTOM -> clip with y=height
         else if (attr2[BOTTOM]) { 
-            y2 = view.height;
+            y2 = view.height + EuclidianView.CLIP_DISTANCE;
             x2 = (y2 - d)/k;             
             p2Pos = BOTTOM;
         }        
@@ -207,10 +207,10 @@ public final class DrawLine extends Drawable implements Previewable {
     // points (x1, 0), (x2, height) -> clip on x=0 and x=width
     final private void clipLeftRight() {
         // calc clip attributes for both points (x1,y1), (x2,y2)        
-        attr1[LEFT]     = x1 < 0;
-        attr1[RIGHT]    = x1 > view.width;                
-        attr2[LEFT]     = x2 < 0;
-        attr2[RIGHT]    = x2 > view.width;
+        attr1[LEFT]     = x1 < -EuclidianView.CLIP_DISTANCE;
+        attr1[RIGHT]    = x1 > view.width + EuclidianView.CLIP_DISTANCE;                
+        attr2[LEFT]     = x2 < -EuclidianView.CLIP_DISTANCE;
+        attr2[RIGHT]    = x2 > view.width + EuclidianView.CLIP_DISTANCE;
         
         // both points outside (LEFT or RIGHT)
         if ((attr1[LEFT] && attr2[LEFT]) ||
@@ -219,26 +219,26 @@ public final class DrawLine extends Drawable implements Previewable {
         // at least one point inside -> clip        
         // point1 LEFT -> clip with x=0
         if (attr1[LEFT]) { 
-            x1 = 0; 
+            x1 = -EuclidianView.CLIP_DISTANCE; 
             y1 = -d/k;  
             p1Pos = LEFT;
         }
         // point1 RIGHT -> clip with x=width
         else if (attr1[RIGHT]) { 
-            x1 = view.width;
+            x1 = view.width + EuclidianView.CLIP_DISTANCE;
             y1 = (x1 - d)/k;             
             p1Pos = RIGHT;
         }
         
         // point2 LEFT -> clip with x=0
         if (attr2[LEFT]) { 
-            x2 = 0; 
+            x2 = -EuclidianView.CLIP_DISTANCE; 
             y2 = -d/k;  
             p2Pos = LEFT;
         }
         // point2 RIGHT -> clip with x=width
         else if (attr2[RIGHT]) { 
-            x2 = view.width;
+            x2 = view.width + EuclidianView.CLIP_DISTANCE;
             y2 = (x2 - d)/k;             
             p2Pos = RIGHT;
         }        
