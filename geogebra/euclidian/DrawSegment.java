@@ -94,7 +94,7 @@ implements Previewable {
 			// A or B off screen
 			// clip at screen, that's important for huge coordinates
 			Point2D.Double [] clippedPoints = 
-				Clipping.getClipped(coordsA[0], coordsA[1], coordsB[0], coordsB[1], 0, view.width, 0, view.height);
+				Clipping.getClipped(coordsA[0], coordsA[1], coordsB[0], coordsB[1], -EuclidianView.CLIP_DISTANCE, view.width + EuclidianView.CLIP_DISTANCE, -EuclidianView.CLIP_DISTANCE, view.height + EuclidianView.CLIP_DISTANCE);
 			if (clippedPoints == null) {
 				isVisible = false;	
 			} else {

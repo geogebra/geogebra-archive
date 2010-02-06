@@ -132,7 +132,7 @@ public final class DrawLine extends Drawable implements Previewable {
             
             x1 = 0;
             y1 = d;            
-            x2 = view.width;
+            x2 = view.width + EuclidianView.CLIP_DISTANCE;
             y2 = k * x2 + d; 
             p1Pos = LEFT;
             p2Pos = RIGHT;            
