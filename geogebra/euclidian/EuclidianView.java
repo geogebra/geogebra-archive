@@ -3126,13 +3126,13 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			case GeoElement.GEO_CLASS_BUTTON:
 				drawLayers[layer].remove(d);
 				// remove button
-				((DrawTextField) d).remove();
+				((DrawButton) d).remove();
 				break;
 				
 			case GeoElement.GEO_CLASS_TEXTFIELD:
 				drawLayers[layer].remove(d);
 				// remove button
-				((DrawButton) d).remove();
+				((DrawTextField) d).remove();
 				break;
 			
 			case GeoElement.GEO_CLASS_POINT:
