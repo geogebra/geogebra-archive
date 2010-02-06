@@ -117,7 +117,7 @@ public class GeneralPathClipped implements Shape {
 		
 		// at least one point is not on screen: clip line at screen
 		Point2D.Double [] clippedPoints = 
-			Clipping.getClipped(prevP.x, prevP.y, curP.x, curP.y, -5, view.width+5, -5, view.height+5);
+			Clipping.getClipped(prevP.x, prevP.y, curP.x, curP.y, -10, view.width+10, -10, view.height+10);
 
 		if (clippedPoints != null) {
 			// we have two intersection points with the screen
