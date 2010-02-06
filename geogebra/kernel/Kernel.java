@@ -4451,12 +4451,21 @@ public class Kernel {
 	}
 
 	/** 
-	 * excentricity of c
+	 * linear eccentricity of c
 	 */
 	final public GeoNumeric Excentricity(String label, GeoConic c) {
 		AlgoExcentricity algo = new AlgoExcentricity(cons, label, c);
-		GeoNumeric excentricity = algo.getExcentricity();
-		return excentricity;
+		GeoNumeric linearEccentricity = algo.getLinearEccentricity();
+		return linearEccentricity;
+	}
+
+	/** 
+	 * eccentricity of c
+	 */
+	final public GeoNumeric Eccentricity(String label, GeoConic c) {
+		AlgoEccentricity algo = new AlgoEccentricity(cons, label, c);
+		GeoNumeric eccentricity = algo.getEccentricity();
+		return eccentricity;
 	}
 
 	/** 

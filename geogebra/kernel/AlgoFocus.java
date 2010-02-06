@@ -92,8 +92,8 @@ public class AlgoFocus extends AlgoElement {
                 
             case GeoConic.CONIC_ELLIPSE:
             case GeoConic.CONIC_HYPERBOLA:
-                temp1 = c.excent * eigenvec[0].x;
-                temp2 = c.excent * eigenvec[0].y;
+                temp1 = c.linearEccentricity * eigenvec[0].x;
+                temp2 = c.linearEccentricity * eigenvec[0].y;
                 focus[0].setCoords( b.x - temp1, b.y - temp2, 1.0d);
                 focus[1].setCoords( b.x + temp1, b.y + temp2, 1.0d);
                 break;

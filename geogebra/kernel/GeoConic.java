@@ -76,7 +76,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	// translation vector (midpoint, vertex)    
 	GeoVec2D b = new GeoVec2D(kernel);
 	double[] halfAxes = new double[2];
-	public double excent, p;
+	public double linearEccentricity, eccentricity, p;
 	GeoLine[] lines;
 	private GeoPoint singlePoint;
 	private GeoPoint [] startPoints;
@@ -245,7 +245,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		b.setCoords(co.b);
 		halfAxes[0] = co.halfAxes[0];
 		halfAxes[1] = co.halfAxes[1];
-		excent = co.excent;
+		linearEccentricity = co.linearEccentricity;
+		eccentricity = co.eccentricity;
 		p = co.p;
 		mu[0] = co.mu[0];
 		mu[1] = co.mu[1];
@@ -1020,7 +1021,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		if (r > kernel.getEpsilon()) { // radius not zero 
 			if (type != CONIC_CIRCLE) {
 				type = CONIC_CIRCLE;
-				excent = 0.0d;
+				linearEccentricity = 0.0d;
+				eccentricity = 0.0d;
 				// set first eigenvector and eigenvectors
 				eigenvecX = 1.0d;
 				eigenvecY = 0.0d;
@@ -1751,7 +1753,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			type = GeoConic.CONIC_CIRCLE;
 			halfAxes[0] = Math.sqrt(1.0d / mu[0]);
 			halfAxes[1] = halfAxes[0];
-			excent = 0.0d;
+			linearEccentricity = 0.0d;
+			eccentricity = 0.0d;
 			//Application.debug("circle: M = " + b + ", r = " + halfAxes[0]);    
 		} else { // elipse
 			type = GeoConic.CONIC_ELLIPSE;
@@ -1759,7 +1762,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			mu[1] = 1.0d / mu[1];
 			halfAxes[0] = Math.sqrt(mu[0]);
 			halfAxes[1] = Math.sqrt(mu[1]);
-			excent = Math.sqrt(mu[0] - mu[1]);
+			linearEccentricity = Math.sqrt(mu[0] - mu[1]);
+			eccentricity = linearEccentricity / mu[0];
 
 			/*
 			Application.debug("Ellipse");            
@@ -1789,7 +1793,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		mu[1] = -1.0d / mu[1];
 		halfAxes[0] = Math.sqrt(mu[0]);
 		halfAxes[1] = Math.sqrt(mu[1]);
-		excent = Math.sqrt(mu[0] + mu[1]);
+		linearEccentricity = Math.sqrt(mu[0] + mu[1]);
+		eccentricity = linearEccentricity / mu[0];
 
 		/*
 		Application.debug("Hyperbola");            
@@ -1998,6 +2003,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			eigenvec[0].y = -eigenvec[0].y;
 			p = -p;
 		}
+
+		linearEccentricity = p / 2;
+		eccentricity = 1;
 
 		/*
 		Application.debug("parabola");

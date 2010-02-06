@@ -2156,6 +2156,7 @@ class CmdSecondAxisLength extends CommandProcessor {
 }
 
 /*
+ * LinearEccentricity[ <GeoConic> ]
  * Excentricity[ <GeoConic> ]
  */
 class CmdExcentricity extends CommandProcessor {
@@ -2182,6 +2183,36 @@ class CmdExcentricity extends CommandProcessor {
 
 		default :
 			throw argNumErr(app, "Excentricity", n);
+		}
+	}
+}
+/*
+ * Eccentricity[ <GeoConic> ]
+ */
+class CmdEccentricity extends CommandProcessor {
+
+	public CmdEccentricity(Kernel kernel) {
+		super(kernel);
+	}
+
+	final public  GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+
+		switch (n) {
+		case 1 :
+			arg = resArgs(c);
+
+			// asymptotes to conic
+			if (arg[0] .isGeoConic()) {
+				GeoElement[] ret =
+				{ kernel.Eccentricity(c.getLabel(), (GeoConic) arg[0])};
+				return ret;
+			} else
+				throw argErr(app, "Eccentricity", arg[0]);
+
+		default :
+			throw argNumErr(app, "Eccentricity", n);
 		}
 	}
 }

@@ -23,6 +23,8 @@ package geogebra.kernel;
  *
  * @author  Markus
  * @version 
+ * calculates the *Linear* Eccentricity
+ * see AlgoEccentricity
  */
 public class AlgoExcentricity extends AlgoElement {
 
@@ -56,7 +58,7 @@ public class AlgoExcentricity extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }
 
-    GeoNumeric getExcentricity() {
+    GeoNumeric getLinearEccentricity() {
         return num;
     }
     GeoConic getConic() {
@@ -72,7 +74,8 @@ public class AlgoExcentricity extends AlgoElement {
 
             case GeoConic.CONIC_HYPERBOLA :
             case GeoConic.CONIC_ELLIPSE :
-                num.setValue(c.excent);
+            case GeoConic.CONIC_PARABOLA :
+                num.setValue(c.linearEccentricity);
                 break;
 
             default :

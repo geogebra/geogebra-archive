@@ -159,7 +159,10 @@ public class CommandDispatcher {
     	cmdTable.put("Extremum", new CmdExtremum(kernel));	   
     	cmdTable.put("CircumcircleArc", new CmdCircumcircleArc(kernel));	   
     	cmdTable.put("Translate", new CmdTranslate(kernel));	   
-    	cmdTable.put("Excentricity", new CmdExcentricity(kernel));	   
+    	// linear eccentricity (used in Germany etc) LinearExcentricity[]
+    	cmdTable.put("Excentricity", new CmdExcentricity(kernel));	  
+    	// eccentricity
+    	cmdTable.put("Eccentricity", new CmdEccentricity(kernel));	   
     	cmdTable.put("OrthogonalLine", new CmdOrthogonalLine(kernel));	   
     	cmdTable.put("Relation", new CmdRelation(kernel));	   
     	cmdTable.put("Polygon", new CmdPolygon(kernel));	   
