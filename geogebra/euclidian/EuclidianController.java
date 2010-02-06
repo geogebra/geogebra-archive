@@ -1814,6 +1814,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		boolean changedKernel = POINT_CREATED;		
 		if (DRAGGING_OCCURED) {			
 
+			DRAGGING_OCCURED = false;
 			//			// copy value into input bar
 			//			if (mode == EuclidianView.MODE_MOVE && movedGeoElement != null) {
 			//				app.geoElementSelected(movedGeoElement,false);
@@ -2044,7 +2045,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			app.setSelectedGeos(hits);
 
 			// if alt pressed, create list of objects as string and copy to input bar
-			if (hits != null && hits.size() > 0 && e.isAltDown() && app.hasGuiManager() && app.showAlgebraInput()) {
+			if (hits != null && hits.size() > 0 && e != null && e.isAltDown() && app.hasGuiManager() && app.showAlgebraInput()) {
 
 				JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
 
