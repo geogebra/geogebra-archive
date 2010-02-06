@@ -359,6 +359,7 @@ public class CommandDispatcher {
       	cmdTable.put("FillCells", new CmdFillCells(kernel));
       	
       	cmdTable.put("Cell", new CmdCell(kernel));
+    	cmdTable.put("Factors", new CmdFactors(kernel));
       	                  	
     	
     	//Mathieu Blossier

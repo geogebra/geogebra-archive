@@ -4986,6 +4986,15 @@ public class Kernel {
 	}
 	
 	/**
+	 * Factors
+	 * Michael Borcherds 2008-04-04
+	 */
+	final public GeoList Factors(String label, GeoFunction func) {		
+		AlgoFactors algo = new AlgoFactors(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Taylor series of function f about point x=a of order n
 	 */
 	final public GeoFunction TaylorSeries(
