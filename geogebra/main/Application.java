@@ -2761,6 +2761,20 @@ public abstract class Application implements KeyEventDispatcher {
 		updateSelection();
 	}
 
+	final public void invertSelection() {
+
+		Iterator it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();
+			if (selectedGeos.contains(geo))
+				removeSelectedGeo(geo, false);
+			else
+				addSelectedGeo(geo, false);
+		}
+		kernel.notifyRepaint();
+		updateSelection();
+	}
+
 	final public void selectAllPredecessors() {
 
 		for (int i = 0; i < selectedGeos.size(); i++) {

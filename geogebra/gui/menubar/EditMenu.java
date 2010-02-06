@@ -22,6 +22,7 @@ public class EditMenu extends BaseMenu {
 
 	private AbstractAction
 		deleteAction,
+		invertAction,
 		showhideAction,
 		showhideLabelsAction,
 		drawingPadToClipboardAction,
@@ -81,6 +82,9 @@ public class EditMenu extends BaseMenu {
 			}
 		}
 		addSeparator();
+
+		mi = add(invertAction);
+		setMenuShortCutAccelerator(mi, 'I');
 
 		mi = add(showhideAction);
 		setMenuShortCutAccelerator(mi, 'H');
@@ -217,7 +221,16 @@ public class EditMenu extends BaseMenu {
 				app.deleteSelectedObjects();
 			}
 		};
-	}
+	
+	
+	invertAction = new AbstractAction(app.getMenu("InvertSelection"), app.getEmptyIcon()) {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			app.invertSelection();
+		}
+	};
+}
 
 	/*
 	 * Michael Borcherds 2008-03-03 return -1 if nothing selected return -2 if
@@ -265,6 +278,7 @@ public class EditMenu extends BaseMenu {
 																		// selected
 		// Michael Borcherds 2008-03-03 END
 		boolean haveSelection = !app.getSelectedGeos().isEmpty();
+		invertAction.setEnabled(haveSelection);
 		selectAllDescendantsAction.setEnabled(haveSelection);
 		selectAllAncestorsAction.setEnabled(haveSelection);
 
