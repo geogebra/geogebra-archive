@@ -3475,6 +3475,23 @@ public class Kernel {
 		return algo.getLength();
 	}
 	
+	/** 
+	 * Element[text, number]
+	 */
+	final public GeoElement Element(String label, GeoText text, NumberValue n) {
+		AlgoTextElement algo = new AlgoTextElement(cons, label, text, n);
+		GeoElement geo = algo.getText();
+		return geo;
+	}		
+	
+	/** 
+	 * Length[text]
+	 */
+	final public GeoNumeric Length(String label, GeoText text) {
+		AlgoTextLength algo = new AlgoTextLength(cons, label, text);
+		return algo.getLength();
+	}
+	
 	// PhilippWeissenbacher 2007-04-10
 	
 	/**
