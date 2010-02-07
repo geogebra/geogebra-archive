@@ -361,6 +361,8 @@ public class CommandDispatcher {
       	cmdTable.put("Cell", new CmdCell(kernel));
     	cmdTable.put("Factors", new CmdFactors(kernel));
     	cmdTable.put("RandomUniform", new CmdRandomUniform(kernel));   
+    	cmdTable.put("Degree", new CmdDegree(kernel));   
+    	cmdTable.put("Coefficients", new CmdCoefficients(kernel));   
      	                  	
     	
     	//Mathieu Blossier

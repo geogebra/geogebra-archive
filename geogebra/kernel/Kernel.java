@@ -5024,6 +5024,24 @@ public class Kernel {
 	}
 	
 	/**
+	 * Degree
+	 * Michael Borcherds 2008-04-04
+	 */
+	final public GeoNumeric Degree(String label, GeoFunction func) {		
+		AlgoDegree algo = new AlgoDegree(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
+	 * Coefficients
+	 * Michael Borcherds 2008-04-04
+	 */
+	final public GeoList Coefficients(String label, GeoFunction func) {		
+		AlgoCoefficients algo = new AlgoCoefficients(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Taylor series of function f about point x=a of order n
 	 */
 	final public GeoFunction TaylorSeries(
