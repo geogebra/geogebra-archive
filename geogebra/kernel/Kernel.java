@@ -81,6 +81,7 @@ import geogebra.kernel.statistics.AlgoRandom;
 import geogebra.kernel.statistics.AlgoRandomBinomial;
 import geogebra.kernel.statistics.AlgoRandomNormal;
 import geogebra.kernel.statistics.AlgoRandomPoisson;
+import geogebra.kernel.statistics.AlgoRandomUniform;
 import geogebra.kernel.statistics.AlgoSXX;
 import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
@@ -2872,6 +2873,16 @@ public class Kernel {
 	 */
 	final public GeoNumeric Random(String label, NumberValue a, NumberValue b) {
 		AlgoRandom algo = new AlgoRandom(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * RandomUniform[max,min]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric RandomUniform(String label, NumberValue a, NumberValue b) {
+		AlgoRandomUniform algo = new AlgoRandomUniform(cons, label, a, b);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}

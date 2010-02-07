@@ -121,6 +121,21 @@ class CmdRandom extends CmdTwoNumFunction {
 	}
 
 }
+/*
+ * RandomUniform[ <Number>, <Number> ]
+ */
+class CmdRandomUniform extends CmdTwoNumFunction {
+
+	public CmdRandomUniform(Kernel kernel) {
+		super(kernel);
+	}
+
+	protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
+	{
+		return kernel.RandomUniform(a, b, c);
+	}
+
+}
 
 /*
  * RandomBinomial[ <Number>, <Number> ]

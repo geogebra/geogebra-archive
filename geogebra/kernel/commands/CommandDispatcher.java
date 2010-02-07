@@ -360,7 +360,8 @@ public class CommandDispatcher {
       	
       	cmdTable.put("Cell", new CmdCell(kernel));
     	cmdTable.put("Factors", new CmdFactors(kernel));
-      	                  	
+    	cmdTable.put("RandomUniform", new CmdRandomUniform(kernel));   
+     	                  	
     	
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   
