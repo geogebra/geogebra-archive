@@ -60,37 +60,6 @@ class CmdBinomial extends CmdTwoNumFunction {
 }
 
 /*
- * Div[ <Number>, <Number> ]
- */
-class CmdDiv extends CmdTwoNumFunction {
-
-	public CmdDiv(Kernel kernel) {
-		super(kernel);
-	}
-
-	final protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
-	{
-		return kernel.Div(a, b, c);
-	}
-
-}
-
-/*
- * Mod[ <Number>, <Number> ]
- */
-class CmdMod extends CmdTwoNumFunction {
-
-	public CmdMod(Kernel kernel) {
-		super(kernel);
-	}
-
-	final protected GeoElement doCommand(String a, NumberValue b, NumberValue c)
-	{
-		return kernel.Mod(a, b, c);
-	}
-}
-
-/*
  * RandomNormal[ <Number>, <Number> ]
  */
 class CmdRandomNormal extends CmdTwoNumFunction {

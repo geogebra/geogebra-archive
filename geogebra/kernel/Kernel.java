@@ -2522,6 +2522,24 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Mod[a, b] Polynomial remainder
+	 */
+	final public GeoFunction Mod(String label, GeoFunction a, GeoFunction b) {
+		AlgoPolynomialMod algo = new AlgoPolynomialMod(cons, label, a, b);
+		GeoFunction f = algo.getResult();
+		return f;
+	}
+	
+	/** 
+	 * Div[a, b] Polynomial Division
+	 */
+	final public GeoFunction Div(String label, GeoFunction a, GeoFunction b) {
+		AlgoPolynomialDiv algo = new AlgoPolynomialDiv(cons, label, a, b);
+		GeoFunction f = algo.getResult();
+		return f;
+	}
+	
+	/** 
 	 * Min[a, b]
 	 */
 	final public GeoNumeric Min(String label, NumberValue a, NumberValue b) {
