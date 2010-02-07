@@ -66,7 +66,7 @@ public class Construction {
 	private TreeSet geoSet;
 
 	// set with all labeled GeoElements in alphabetical order
-	private TreeSet geoSetLabelOrder;
+	private TreeSet<GeoElement> geoSetLabelOrder;
 	
 	// list of random numbers
 	private TreeSet randomNumbers;
@@ -271,7 +271,7 @@ public class Construction {
 	 * Returns a set with all labeled GeoElement objects of this construction in
 	 * alphabetical order of their labels.
 	 */
-	final public TreeSet getGeoSetLabelOrder() {
+	final public TreeSet<GeoElement> getGeoSetLabelOrder() {
 		return geoSetLabelOrder;
 	}
 
