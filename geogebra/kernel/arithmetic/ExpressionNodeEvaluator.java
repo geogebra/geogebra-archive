@@ -1258,7 +1258,14 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                             )
                        );                   
             }     
-            else { 
+            else if (lt.isVectorValue()){
+            	vec = ((VectorValue)lt).getVector();
+
+            		// complex cbrt
+            		GeoVec2D.complexCbrt(vec, vec);
+            		return vec;
+
+            }else { 
                  String [] str = { "IllegalArgument", "cbrt", lt.toString() };
                 throw new MyError(app, str);
             }
