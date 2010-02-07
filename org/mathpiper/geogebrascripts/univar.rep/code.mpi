@@ -1,0 +1,892 @@
+
+10 # BigOh(UniVariate(_var,_first,_coefs),_var,_degree) <--
+    [
+     While(first+Length(coefs)>=(degree+1) And Length(coefs)>0) DestructiveDelete(coefs,Length(coefs));
+     UniVariate(var,first,coefs);
+    ];
+20 # BigOh(_uv,_var,_degree)_CanBeUni(uv,var) <-- NormalForm(BigOh(MakeUni(uv,var),var,degree));
+
+
+
+Function("CanBeUni",{expression}) CanBeUni(UniVarList(expression),expression);
+
+
+
+
+
+10 # CanBeUni({},_expression) <-- True;
+20 # CanBeUni(var_IsList,_expression) <--
+    CanBeUni(First(var),expression) And CanBeUni(Rest(var),expression);
+
+
+30 # CanBeUni(_var,expression_IsAtom) <-- True;
+35 # CanBeUni(_var,expression_IsFreeOf(var)) <-- True;
+
+
+40 # CanBeUni(_var,_x + _y) <-- CanBeUni(var,x) And CanBeUni(var,y);
+40 # CanBeUni(_var,_x - _y) <-- CanBeUni(var,x) And CanBeUni(var,y);
+40 # CanBeUni(_var,   + _y) <-- CanBeUni(var,y);
+40 # CanBeUni(_var,   - _y) <-- CanBeUni(var,y);
+40 # CanBeUni(_var,_x * _y) <-- CanBeUni(var,x) And CanBeUni(var,y);
+40 # CanBeUni(_var,_x / _y) <-- CanBeUni(var,x) And IsFreeOf(var,y);
+
+40 # CanBeUni(_var,_x ^ y_IsInteger)_(y >= 0 And CanBeUni(var,x)) <-- True;
+41 # CanBeUni(_var,(x_IsFreeOf(var)) ^ (y_IsFreeOf(var))) <-- True;
+50 # CanBeUni(_var,UniVariate(_var,_first,_coefs)) <-- True;
+1000 # CanBeUni(_var,_f)_(Not(IsFreeOf(var,f))) <-- False;
+1001 # CanBeUni(_var,_f) <-- True;
+
+
+5 # Coef(uv_IsUniVar,order_IsList) <--
+[
+  Local(result);
+  result:={};
+  ForEach(item,order)
+  [
+    DestructiveAppend(result,Coef(uv,item));
+  ];
+  result;
+];
+
+10 # Coef(uv_IsUniVar,order_IsInteger)_(order<uv[2]) <-- 0;
+10 # Coef(uv_IsUniVar,order_IsInteger)_(order>=uv[2]+Length(uv[3])) <-- 0;
+20 # Coef(uv_IsUniVar,order_IsInteger) <-- uv[3][(order-uv[2])+1];
+30 # Coef(uv_CanBeUni,_order)_(IsInteger(order) Or IsList(order)) <-- Coef(MakeUni(uv),order);
+
+Function("Coef",{expression,var,order})
+    NormalForm(Coef(MakeUni(expression,var),order));
+
+
+
+
+10 # Content(UniVariate(_var,_first,_coefs)) <-- Gcd(coefs)*var^first;
+20 # Content(poly_CanBeUni) <-- NormalForm(Content(MakeUni(poly)));
+
+
+Rulebase("Degree",{expr});
+Rule("Degree",1,0, IsUniVar(expr))
+[
+
+  Local(i,min,max);
+  min:=expr[2];
+  max:=min+Length(expr[3]);
+  i:=max;
+  While(i >= min And IsZero(Coef(expr,i))) i--;
+  i;
+];
+
+10 # Degree(_poly)      <-- Degree(MakeUni(poly));
+10 # Degree(_poly,_var) <-- Degree(MakeUni(poly,var));
+
+
+DivPoly(_A,_B,_var,_deg) <--
+[
+  Local(a,b,c,i,j,denom);
+  b:=MakeUni(B,var);
+  denom:=Coef(b,0);
+
+  if (denom = 0)
+  [
+    Local(f);
+    f:=Content(b);
+    b:=PrimitivePart(b);
+    A:=Simplify(A/f);
+    denom:=Coef(b,0);
+  ];
+  a:=MakeUni(A,var);
+
+  c:=FillList(0,deg+1);
+  For(i:=0,i<=deg,i++)
+  [
+    Local(sum,j);
+    sum:=0;
+    For(j:=0,j<i,j++)
+    [
+      sum := sum + c[j+1]*Coef(b,i-j);
+    ];
+    c[i+1] := (Coef(a,i)-sum) / denom;
+  ];
+  NormalForm(UniVariate(var,0,c));
+];
+
+
+DropEndZeroes(list):=
+[
+  Local(end);
+  end:=Length(list);
+  While(list[end] = 0)
+  [
+    DestructiveDelete(list,end);
+    end:=end-1;
+  ];
+];
+
+
+Function("ExpandUniVariate",{var,first,coefs})
+[
+  Local(result,i);
+  result:=0;
+  For(i:=Length(coefs),i>0,i--)
+  [
+    Local(term);
+    term:=NormalForm(coefs[i])*var^(first+i-1);
+    result:=result+term;
+  ];
+  result;
+];
+
+
+
+
+
+Horner(_e,_v) <--
+[
+  Local(uni,coefs,result);
+  uni := MakeUni(e,v);
+  coefs:=DestructiveReverse(uni[3]);
+  result:=0;
+
+  While(coefs != {})
+  [
+    result := result*v;
+    result := result+First(coefs);
+    coefs  := Rest(coefs);
+  ];
+  result:=result*v^uni[2];
+  result;
+];
+
+
+10 # IsUniVar(UniVariate(_var,_first,_coefs)) <-- True;
+20 # IsUniVar(_anything) <-- False;
+
+200 # aLeft_IsUniVar ^ aRight_IsPositiveInteger <--
+      RepeatedSquaresMultiply(aLeft,aRight);
+
+
+200 # aLeft_IsUniVar - aRight_IsUniVar <--
+[
+  Local(from,result);
+  Local(curl,curr,left,right);
+
+  curl:=aLeft[2];
+  curr:=aRight[2];
+  left:=aLeft[3];
+  right:=aRight[3];
+  result:={};
+  from:=Minimum(curl,curr);
+
+  While(curl<curr And left != {})
+  [
+    DestructiveAppend(result,First(left));
+    left:=Rest(left);
+    curl++;
+  ];
+  While(curl<curr)
+  [
+    DestructiveAppend(result,0);
+    curl++;
+  ];
+  While(curr<curl And right != {})
+  [
+    DestructiveAppend(result,-First(right));
+    right:=Rest(right);
+    curr++;
+  ];
+  While(curr<curl)
+  [
+    DestructiveAppend(result,0);
+    curr++;
+  ];
+  While(left != {} And right != {})
+  [
+    DestructiveAppend(result,First(left)-First(right));
+    left  := Rest(left);
+    right := Rest(right);
+  ];
+
+
+  While(left != {})
+  [
+    DestructiveAppend(result,First(left));
+    left  := Rest(left);
+  ];
+  While(right != {})
+  [
+    DestructiveAppend(result,-First(right));
+    right := Rest(right);
+  ];
+
+  UniVariate(aLeft[1],from,result);
+];
+
+
+
+
+
+201 # (aLeft_IsUniVar * _aRight)_((IsFreeOf(aLeft[1],aRight))) <--
+[
+    aRight*aLeft;
+];
+
+
+
+10 # LeadingCoef(uv_IsUniVar) <-- Coef(uv,Degree(uv));
+
+20 # LeadingCoef(uv_CanBeUni) <--
+[
+  Local(uvi);
+  uvi:=MakeUni(uv);
+  Coef(uvi,Degree(uvi));
+];
+10 # LeadingCoef(uv_CanBeUni(var),_var) <--
+[
+  Local(uvi);
+  uvi:=MakeUni(uv,var);
+  Coef(uvi,var,Degree(uvi));
+];
+
+
+Function("MakeUni",{expression}) MakeUni(expression,UniVarList(expression));
+
+
+Rulebase("MakeUni",{expression,var});
+
+5 # MakeUni(_expr,{}) <-- UniVariate(dummyvar,0,{expression});
+6 # MakeUni(_expr,var_IsList) <--
+[
+  Local(result,item);
+  result:=expression;
+  ForEach(item,var)
+  [
+    result:=MakeUni(result,item);
+  ];
+  result;
+];
+
+10 # MakeUni(UniVariate(_var,_first,_coefs),_var) <--
+    UniVariate(var,first,coefs);
+
+20 # MakeUni(UniVariate(_v,_first,_coefs),_var) <--
+[
+  Local(reslist,item);
+  reslist:={};
+  ForEach(item,expression[3])
+  [
+    If(IsFreeOf(var,item),
+      DestructiveAppend(reslist,item),
+      DestructiveAppend(reslist,MakeUni(item,var))
+      );
+  ];
+  UniVariate(expression[1],expression[2],reslist);
+];
+
+
+LocalSymbols(a,b,var,expression)
+[
+  20 # MakeUni(expression_IsFreeOf(var),_var)
+       <-- UniVariate(var,0,{expression});
+  30 # MakeUni(_var,_var) <-- UniVariate(var,1,{1});
+  30 # MakeUni(_a + _b,_var) <-- MakeUni(a,var) + MakeUni(b,var);
+  30 # MakeUni(_a - _b,_var) <-- MakeUni(a,var) - MakeUni(b,var);
+  30 # MakeUni(   - _b,_var) <--                - MakeUni(b,var);
+  30 # MakeUni(_a * _b,_var) <-- MakeUni(a,var) * MakeUni(b,var);
+  1 # MakeUni(_a ^ n_IsInteger,_var) <-- MakeUni(a,var) ^ n;
+  30 # MakeUni(_a / (b_IsFreeOf(var)),_var) <-- MakeUni(a,var) * (1/b);
+];
+
+
+10 # Monic(UniVariate(_var,_first,_coefs)) <--
+[
+  DropEndZeroes(coefs);
+  UniVariate(var,first,coefs/coefs[Length(coefs)]);
+];
+20 # Monic(poly_CanBeUni) <-- NormalForm(Monic(MakeUni(poly)));
+
+30 # Monic(_poly,_var)_CanBeUni(poly,var) <-- NormalForm(Monic(MakeUni(poly,var)));
+
+
+
+
+0 # NormalForm(UniVariate(_var,_first,_coefs)) <--
+    ExpandUniVariate(var,first,coefs);
+
+
+PSolve( _uni ) <-- YacasPSolve( uni );
+
+PSolve( _uni, _var ) <-- YacasPSolve( uni, var );
+
+
+10 # PrimitivePart(UniVariate(_var,_first,_coefs)) <--
+	UniVariate(var,0,coefs/Gcd(coefs));
+20 # PrimitivePart(poly_CanBeUni) <-- NormalForm(PrimitivePart(MakeUni(poly)));
+
+
+
+10 # RepeatedSquaresMultiply(_a,- (n_IsInteger)) <-- 1/RepeatedSquaresMultiply(a,n);
+
+15 #  RepeatedSquaresMultiply(UniVariate(_var,_first,{_coef}),(n_IsInteger)) <--
+      UniVariate(var,first*n,{coef^n});
+20 # RepeatedSquaresMultiply(_a,n_IsInteger) <--
+[
+  Local(m,b);
+  Bind(m,1);
+  Bind(b,1);
+  While(m<=n) Bind(m,(ShiftLeft(m,1)));
+  Bind(m, ShiftRight(m,1));
+  While(m>0)
+  [
+    Bind(b,b*b);
+    If (Not(IsEqual(BitAnd(m,n), 0)),Bind(b,b*a));
+    Bind(m, ShiftRight(m,1));
+  ];
+  b;
+];
+
+
+
+
+
+
+Function("UniDivide",{u,v})
+[
+  Local(m,n,q,r,k,j);
+  m := Length(u)-1;
+  n := Length(v)-1;
+  While (m>0 And IsZero(u[m+1])) m--;
+  While (n>0 And IsZero(v[n+1])) n--;
+  q := ZeroVector(m-n+1);
+  r := FlatCopy(u);  
+  For(k:=m-n,k>=0,k--)
+  [
+    q[k+1] := r[n+k+1]/v[n+1];
+    For (j:=n+k-1,j>=k,j--)
+    [
+      r[j+1] := r[j+1] - q[k+1]*v[j-k+1];
+    ];
+  ];
+  Local(end);
+  end:=Length(r);
+  While (end>n)
+  [
+    DestructiveDelete(r,end);
+    end:=end-1;
+  ];
+
+  {q,r};
+];
+
+
+Function("UniGcd",{u,v})
+[
+  Local(l,div,mod,m);
+
+  DropEndZeroes(u);
+  DropEndZeroes(v);
+
+
+
+  l:=UniDivide(u,v);
+
+  div:=l[1];
+  mod:=l[2];
+
+  DropEndZeroes(mod);
+  m := Length(mod);
+
+
+
+  If(m = 0,
+     v,
+
+     UniGcd(v,mod));
+];
+
+
+Function("UniTaylor",{taylorfunction,taylorvariable,taylorat,taylororder})
+[
+  Local(n,result,dif,polf);
+  result:={};
+  [
+    MacroLocal(taylorvariable);
+    MacroBind(taylorvariable,taylorat);
+    DestructiveAppend(result,Eval(taylorfunction));
+  ];
+  dif:=taylorfunction;
+  polf:=(taylorvariable-taylorat);
+  For(n:=1,n<=taylororder,n++)
+  [
+    dif:= Deriv(taylorvariable) dif;
+    MacroLocal(taylorvariable);
+    MacroBind(taylorvariable,taylorat);
+    DestructiveAppend(result,(Eval(dif)/n!));
+  ];
+  UniVariate(taylorvariable,0,result);
+];
+
+
+
+
+UniVarList(expr) := VarList(expr);
+
+
+
+ShiftUniVar(UniVariate(_var,_first,_coefs),_fact,_shift)
+   <--
+   [
+
+     UniVariate(var,first+shift,fact*coefs);
+   ];
+
+
+
+Rulebase("UniVariate",{var,first,coefs});
+
+Rule("UniVariate",3,10,Length(coefs)>0 And coefs[1]=0)
+  UniVariate(var,first+1,Rest(coefs));
+Rule("UniVariate",3,1000,IsComplex(var) Or IsList(var))
+    ExpandUniVariate(var,first,coefs);
+
+500 # UniVariate(_var,_f1,_c1) + UniVariate(_var,_f2,_c2) <--
+[
+  Local(from,result);
+  Local(curl,curr,left,right);
+
+  Bind(curl, f1);
+  Bind(curr, f2);
+  Bind(left, c1);
+  Bind(right, c2);
+  Bind(result, {});
+  Bind(from, Minimum(curl,curr));
+
+  While(And(IsLessThan(curl,curr),left != {}))
+  [
+    DestructiveAppend(result,First(left));
+    Bind(left,Rest(left));
+    Bind(curl,AddN(curl,1));
+  ];
+  While(IsLessThan(curl,curr))
+  [
+    DestructiveAppend(result,0);
+    Bind(curl,AddN(curl,1));
+  ];
+  While(And(IsLessThan(curr,curl), right != {}))
+  [
+    DestructiveAppend(result,First(right));
+    Bind(right,Rest(right));
+    Bind(curr,AddN(curr,1));
+  ];
+  While(IsLessThan(curr,curl))
+  [
+    DestructiveAppend(result,0);
+    Bind(curr,AddN(curr,1));
+  ];
+  While(And(left != {}, right != {}))
+  [
+    DestructiveAppend(result,First(left)+First(right));
+    Bind(left, Rest(left));
+    Bind(right, Rest(right));
+  ];
+  While(left != {})
+  [
+    DestructiveAppend(result,First(left));
+    Bind(left, Rest(left));
+  ];
+  While(right != {})
+  [
+    DestructiveAppend(result,First(right));
+    Bind(right, Rest(right));
+  ];
+
+  UniVariate(var,from,result);
+];
+
+
+200 # UniVariate(_var,_first,_coefs) + a_IsNumber <--
+      UniVariate(var,first,coefs) + UniVariate(var,0,{a});
+200 # a_IsNumber + UniVariate(_var,_first,_coefs) <--
+      UniVariate(var,first,coefs) + UniVariate(var,0,{a});
+
+
+200 # - UniVariate(_var,_first,_coefs) <-- UniVariate(var,first,-coefs);
+
+
+200 # (_factor * UniVariate(_var,_first,_coefs))_((IsFreeOf(var,factor))) <--
+  UniVariate(var,first,coefs*factor);
+
+200 # (UniVariate(_var,_first,_coefs)/_factor)_((IsFreeOf(var,factor))) <--
+  UniVariate(var,first,coefs/factor);
+
+
+
+200 # UniVariate(_var,_f1,_c1) * UniVariate(_var,_f2,_c2) <--
+[
+  Local(i,j,n,shifted,result);
+  Bind(result,MakeUni(0,var));
+
+
+  Bind(n,Length(c1));
+  For(i:=1,i<=n,i++)
+  [
+
+
+    Bind(result,result+ShiftUniVar(UniVariate(var,f2,c2),MathNth(c1,i),f1+i-1));
+
+  ];
+
+  result;
+];
+
+
+
+
+
+Rulebase("YacasPSolve",{uni});
+
+Rule("YacasPSolve",1,1,IsUniVar(uni) And Degree(uni) = 1)
+    -Coef(uni,0)/Coef(uni,1);
+
+
+Rule("YacasPSolve",1,1,IsUniVar(uni) And Degree(uni) = 2)
+    [
+     Local(a,b,c,d,q,r);
+     c:=Coef(uni,0);
+     b:=Coef(uni,1);
+     a:=Coef(uni,2);
+     d:=b*b-4*a*c;
+     q:=RadSimp(Sqrt(d)/(2*a));
+     r:=Simplify(-b/(2*a));
+     If(InVerboseMode(),[ Tell("   ",{c,b,a,d}); Tell("   ",{q,r}); ]);
+     {r+q,r-q};
+    ];
+
+
+Rule("YacasPSolve",1,1,IsUniVar(uni) And Degree(uni) = 3 )
+    [
+     Local(p,q,r,w,ww,a,b);
+     Local(coef0,coef1,coef3,adjust);
+
+
+
+     adjust := (-Coef(uni,2))/(3*Coef(uni,3));
+     coef3 := Coef(uni,3);
+     coef1 := 2*Coef(uni,2)*adjust+3*Coef(uni,3)*adjust^2+Coef(uni,1);
+     coef0 := Coef(uni,2)*adjust^2+Coef(uni,3)*adjust^3+
+              adjust*Coef(uni,1)+Coef(uni,0);
+
+     p:=coef3;
+     q:=coef1/p;
+     r:=coef0/p;
+    w:=Complex(-1/2,Sqrt(3/4));
+    ww:=Complex(-1/2,-Sqrt(3/4));
+
+
+
+
+  a:=(-r/2 + Sqrt(q^3/27+ r*r/4))^(1/3);
+  b:=(-r/2 - Sqrt(q^3/27+ r*r/4))^(1/3);
+
+  {a+b+adjust,w*a+ww*b+adjust,ww*a+w*b+adjust};
+];
+
+
+
+Rule("YacasPSolve",1,1,IsUniVar(uni) And Degree(uni) = 4 )
+[
+    Local(coef4,a1,a2,a3,a4,y,y1,z,t,s);
+
+    coef4:=Coef(uni,4);
+    a1:=Coef(uni,3)/coef4;
+    a2:=Coef(uni,2)/coef4;
+    a3:=Coef(uni,1)/coef4;
+    a4:=Coef(uni,0)/coef4;
+
+    
+    y1:=First(YacasPSolve(y^3-a2*y^2+(a1*a3-4*a4)*y+(4*a2*a4-a3^2-a1^2*a4),y));
+    t := Sqrt(y1^2/4-a4);
+    If(t=0, s:=Sqrt(y1+a1^2/4-a2), s:=(a1*y1-2*a3)/(4*t));
+    Concat(YacasPSolve(z^2+(a1/2+s)*z+y1/2+t,z),
+           YacasPSolve(z^2+(a1/2-s)*z+y1/2-t,z));
+];
+
+Function("YacasPSolve",{uni,var})
+    [
+     YacasPSolve(MakeUni(uni,var));
+     ];
+
+
+Retract("xPSolve",*);
+Retract("xPSolveCubic",*);
+Retract("xPSC1",*);
+Retract("xPSC2",*);
+
+
+
+ 
+Rulebase("xPSolve",{uni});
+
+Rule("xPSolve",1,1,IsUniVar(uni) And Degree(uni) = 1)
+[
+    If(iDebug,Tell("   xPSolve_1",uni));
+    {-Coef(uni,0)/Coef(uni,1)};
+];
+
+Rule("xPSolve",1,1,IsUniVar(uni) And Degree(uni) = 2)
+[
+     If(iDebug,Tell("   xPSolve_2",uni));
+     Local(a,b,c,d,q,r);
+     c:=Coef(uni,0);
+     b:=Coef(uni,1);
+     a:=Coef(uni,2);
+     If(iDebug,Tell("        ",{a,b,c}));
+     d:=b*b-4*a*c;
+     If(iDebug,Tell("              ",d));
+     
+     q:=Sqrt(d)/(2*a);
+     If(iDebug,Tell("              ",q));
+     r:=Simplify(-b/(2*a));
+     If(iDebug,Tell("              ",r));
+     {r+q,r-q};
+];
+
+
+
+Rule("xPSolve",1,1,IsUniVar(uni) And Degree(uni) = 3 )
+[
+     If(iDebug,Tell("   xPSolve_3",uni));
+     Local(p,q,r,s,t,w1,w2,a,b);
+     Local(c0,c1,c3,adjust);
+
+     
+     w1 := (1/2)*Complex(-1, Sqrt(3));
+     w2 := Conjugate(w1);
+     If( iDebug, Tell("   ",{w1,w2}) );
+     
+     
+     adjust := (-uni[3][3])/(3*uni[3][4]);
+     If( iDebug, Tell("   ",adjust));
+     c3  := uni[3][4];
+     c1  := (3*uni[3][4]*adjust+2*uni[3][3])*adjust+uni[3][2];
+     c0  :=((uni[3][4]*adjust+uni[3][3])*adjust+uni[3][2])*adjust+uni[3][1];
+     If( iDebug, Tell("   ",{c0,c1,c3})); 
+
+     
+     Assert("Invariant", "Coefficients Must be Real") And(Im(c0)=0,Im(c1)=0,Im(c2)=0);
+     If( IsError("Invariant"), DumpErrors() );
+
+     p :=c3;
+     q :=c1/p;
+     r :=c0/p;
+     If( iDebug, Tell("   ",{p,q,r}));
+     Local(a3,b3,qq,r1,r2,r3);
+     qq := Sqrt(q^3/27 + r^2/4);
+     a3 := -r/2 + qq;
+     b3 := -r/2 - qq;
+     
+     If( iDebug, [Tell("   ",{qq,a3,b3}); Tell("   ",N(a3+b3+r)); Tell("   ",N(a3-b3-2*qq));]);
+     a  := (a3)^(1/3);
+     b  := (b3)^(1/3);
+     If( iDebug, Tell("   ",{a,b}));
+     r1 := a+b+adjust;
+     r2 := w1*a+w2*b+adjust;
+     r3 := w2*a+w1*b+adjust;
+     
+     If( iDebug,
+       [
+          Tell("   ",r1);
+          Tell("   ",r2);
+          Tell("   ",r3);
+       ]
+     );
+     {r1,r2,r3};
+];
+
+
+
+
+Rule("xPSolve",1,1,IsUniVar(uni) And Degree(uni) = 4 )
+[
+    If(iDebug,Tell("   xPSolve_4",uni));
+    Local(coef4,a1,a2,a3,a4,y,y1,z,t,s);
+
+    coef4:=Coef(uni,4);
+    a1:=Coef(uni,3)/coef4;
+    a2:=Coef(uni,2)/coef4;
+    a3:=Coef(uni,1)/coef4;
+    a4:=Coef(uni,0)/coef4;
+    If( iDebug, Tell("        ",{a1,a2,a3,a4}));
+
+    
+    Local(ys);
+    ys := xPSolveCubic(y^3-a2*y^2+(a1*a3-4*a4)*y+(4*a2*a4-a3^2-a1^2*a4));
+    If( iDebug, [NewLine(); Tell("        ",ys[1]);] );
+    y1:=First(ys);
+    If( iDebug, Tell("        ",y1));
+    t := Sqrt(y1^2/4-a4);
+    If( iDebug, Tell("        ",t));
+    If(t=0, s:=Sqrt(y1+a1^2/4-a2), s:=(a1*y1-2*a3)/(4*t));
+    If( iDebug, Tell("        ",s));
+    
+    Local(q11,q12,q21,q2,quad1,quad2);
+    q11 := a1/2+s;    q12 := y1/2+t;
+    q21 := a1/2-s;    q22 := y1/2-t;
+    If( iDebug, Tell("        ",{q11,q12}));
+    If( iDebug, Tell("        ",{q21,q22}));
+    quad1 := z^2 + q11*z + q12;
+    quad2 := z^2 + q21*z + q22;
+    If( iDebug, Tell("        ",{quad1,quad2}));
+    
+    Local(r1,r2,r3,r4);
+    {r1,r2} := xPSolve( quad1, z );
+    {r3,r4} := xPSolve( quad2, z );
+    r1 := NearRational(N(r1,10),8);
+    r2 := NearRational(N(r2,10),8);
+    r3 := NearRational(N(r3,10),8);
+    r4 := NearRational(N(r4,10),8);
+    
+    {r1,r2,r3,r4};
+];
+
+
+Function("xPSolve",{expr,var})
+[
+    If( Not IsBound(iDebug), iDebug := False );
+    If(iDebug,Tell("xPSolve_notUni",{expr,var}));  
+    Local(lhs,rhs,cc,pp,uni,solnpp,solncc,soln);
+    If( IsEquation(expr), 
+      [
+         If(iDebug,Tell("   is Equation"));
+         lhs  := EquationLeft(expr);
+         rhs  := EquationRight(expr);
+         expr := lhs - rhs;
+      ]
+    );
+    If(iDebug,Tell("   ",expr));
+    cc := xContent(expr);
+    pp := xPrimitivePart(expr,cc);
+    If(iDebug,Tell("   ",{cc,pp}));
+    solnpp := xPSolve(MakeUni(pp,var));
+    If(iDebug,Tell("   ",solnpp));
+    If( Length(VarList(cc)) > 0 And Contains(VarList(cc),var ),
+      [
+         solncc := xPSolve(MakeUni(cc,var));
+         If(iDebug,Tell("   ",solncc));
+         soln   := Concat(solncc,solnpp);
+      ],
+      [
+         soln   := solnpp;
+      ]
+    );
+    soln;
+];
+
+
+10 # xPSolveCubic( poly_IsPolynomial )_
+                   (Length(VarList(poly))=1 And Degree(poly)=3) <--
+[
+    If( iDebug, Tell("  xPSolveCubic",poly) );
+    Local(var,coeffs,ans);
+    var    := VarList(poly)[1];
+    coeffs := Coef(poly,var,3 .. 0);
+    If( iDebug, Tell("     ",{var,coeffs}));
+    ans    := xPSC1(coeffs);    
+];
+UnFence("xPSolveCubic",1);
+
+
+10 # xPSC1( coeffs_IsList ) <--
+[
+    If( iDebug, Tell("    xPSC1",coeffs) );
+    
+     Local(f,g,h,j,iType,ans);
+     f := coeffs[2]/coeffs[1]/3;
+     g := coeffs[3]/coeffs[1]/3 - f^2;
+     h := coeffs[4]/coeffs[1]/2 + f^3 - f * coeffs[3]/coeffs[1]/2;
+     j := g^3 + h^2;
+     If( iDebug, Tell("     ",{f,g,h,j}) );
+     ans := xPSC2( {f,g,h,j} );
+];
+
+
+10 # xPSC2( xs_IsList )_(xs[4]=0) <--
+[
+    If( iDebug, Tell("        Type 1",xs) );                 
+    Local(f,g,h,j,m,r1,r2,r3,ans);
+    {f,g,h,j} := FlatCopy(xs);
+    m   := 2*(-h)^(1/3);
+    r1  := NearRational(N(m - f,10),8);
+    r2  := NearRational(N(-m/2 - f,10),8);
+    r3  := NearRational(N(-m/2 - f,10),8);
+    ans := {r1,r2,r3};
+];
+
+10 # xPSC2( xs_IsList )_(xs[4]>0) <--
+[
+    If( iDebug, Tell("        Type 2",xs) ); 
+    Local(f,g,h,j,k,l1,l2,m,n,r1,r2,r3,ans); 
+    {f,g,h,j} := FlatCopy(xs);
+    k   := Sqrt(j);
+    l1  := (-h + k)^(1/3);
+    l2  := (-h - k)^(1/3);
+    m   := l1 + l2;
+    n   := (l1 - l2)*Sqrt(3)/2;
+    r1  := NearRational(N(m - f,10),8);
+    r2  := NearRational(N(-m/2 - f + I*n,10),8);
+    r3  := NearRational(N(Conjugate(r2),10),8);
+    ans := {r1,r2,r3};
+    
+];
+
+10 # xPSC2( xs_IsList )_(xs[4]<0 And xs[3]=0) <--
+[
+    If( iDebug, Tell("        Type 3a",xs) );
+    Local(f,g,h,j,p,r1,r2,r3,ans);
+    {f,g,h,j} := FlatCopy(xs);
+    p   := 2*Sqrt(-g);
+    r1  := NearRational(N(-f,10),8);
+    r2  := NearRational(N( p*Sqrt(3)/2 - f,10),8);
+    r3  := NearRational(N(-p*Sqrt(3)/2 - f,10),8);
+    ans := {r1,r2,r3};
+];
+
+10 # xPSC2( xs_IsList )_(xs[4]<0 And xs[3]>0) <--
+[
+    If( iDebug, Tell("        Type 3b",xs) );
+    Local(p,x,alpha,beta,gama,r1,r2,r3,ans);
+    {f,g,h,j} := FlatCopy(xs);
+    p     := 2*Sqrt(-g);
+    k     := Sqrt(-j);
+    alpha := ArcTan(k/(-h));   
+    beta  := Pi + alpha;
+    gama  := beta / 3;
+    If( iDebug,
+      [
+         Tell("          ",{p,k});
+         Tell("          ",{alpha,beta,gama});
+         Tell("          ",57.2957795*N({alpha,beta,gama}));
+         Tell("          ",N(Cos(gama)));
+      ]
+    );
+    r1    := NearRational(N(p * Cos(gama) - f,10),8);
+    r2    := NearRational(N(p * Cos(gama+2*Pi/3) - f,10),8);
+    r3    := NearRational(N(p * Cos(gama+4*Pi/3) - f,10),8);
+    ans   := {r1,r2,r3};
+];
+
+10 # xPSC2( xs_IsList )_(xs[4]<0 And xs[3]<0) <--
+[
+    If( iDebug, Tell("        Type 3c",xs) );
+    Local(f,g,h,j,p,k,alpha,beta,gama,r1,r2,r3,ans);
+    {f,g,h,j} := FlatCopy(xs);
+    p     := 2*Sqrt(-g);
+    k     := Sqrt(-j);
+    alpha := ArcTan(k/(-h));   
+    beta  := alpha;
+    gama  := beta / 3;
+    If(iDebug,[Tell("          ",{p,k}); Tell("          ",{alpha,beta,gama});]);
+    r1    := NearRational(N(p * Cos(gama) - f,10),8);
+    r2    := NearRational(N(p * Cos(gama+2*Pi/3) - f,10),8);
+    r3    := NearRational(N(p * Cos(gama+4*Pi/3) - f,10),8);
+    ans   := {r1,r2,r3};
+];
+
