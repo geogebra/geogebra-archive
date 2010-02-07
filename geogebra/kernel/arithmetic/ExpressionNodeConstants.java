@@ -87,6 +87,7 @@ public interface ExpressionNodeConstants {
     public static final int CBRT = 38;   
     public static final int RANDOM = 39;
     public static final int VECTORPRODUCT = 40;
+    public static final int CONJUGATE = 41;
      
     public static final int FUNCTION = 100;
     public static final int VEC_FUNCTION = 101;
