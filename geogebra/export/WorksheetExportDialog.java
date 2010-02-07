@@ -450,7 +450,7 @@ public class WorksheetExportDialog extends JDialog {
 		
 		// right column
 		// save, print
-		cbSavePrint = new JCheckBox(app.getMenu("Save") + ", " + app.getMenu("Print"));
+		cbSavePrint = new JCheckBox(app.getMenu("Save") + ", " + app.getMenu("Print") + ", " + app.getMenu("Undo"));
 		guiPanelEast.add(cbSavePrint);
 		// showToolBarHelp				
 		cbShowToolBarHelp = new JCheckBox(app.getMenu("ShowToolBarHelp"));
