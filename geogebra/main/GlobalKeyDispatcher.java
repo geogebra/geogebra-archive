@@ -152,6 +152,14 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				}
 				break;			
 				
+			case KeyEvent.VK_TAB:
+				if (app.getEuclidianView().hasFocus()|| app.getGuiManager().getAlgebraView().hasFocus()) {
+					if (event.isShiftDown()) app.selectLastGeo(); else app.selectNextGeo();
+					consumed = true;
+				}
+				
+				break;
+				
 							
 			// F9 updates construction
 			// cmd-f9 on Mac OS

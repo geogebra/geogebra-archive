@@ -2886,6 +2886,40 @@ public abstract class Application implements KeyEventDispatcher {
 		updateSelection();
 	}
 
+	final public void selectNextGeo() {
+		if (selectedGeos.size() != 1) return;
+		GeoElement selGeo = selectedGeos.get(0);
+		Iterator<GeoElement> it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+		while (it.hasNext()) {
+			GeoElement geo = it.next();
+			if (selGeo == geo) {
+				removeSelectedGeo(selGeo);
+				if (!it.hasNext()) it = kernel.getConstruction().getGeoSetLabelOrder().iterator();					
+				addSelectedGeo(it.next());
+				break;
+			}
+		}
+	}
+
+	final public void selectLastGeo() {
+		if (selectedGeos.size() != 1) return;
+		GeoElement selGeo = selectedGeos.get(0);
+		GeoElement lastGeo = null;
+		Iterator<GeoElement> it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+		while (it.hasNext()) { lastGeo = it.next(); }
+			
+		it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+		while (it.hasNext()) {
+			GeoElement geo = it.next();
+			if (selGeo == geo) {
+				removeSelectedGeo(selGeo);			
+				addSelectedGeo(lastGeo);
+				break;
+			}
+			lastGeo = geo;
+		}
+	}
+
 	final public void addSelectedGeo(GeoElement geo) {
 		addSelectedGeo(geo, true);
 	}
