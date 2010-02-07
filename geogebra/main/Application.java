@@ -2709,6 +2709,11 @@ public abstract class Application implements KeyEventDispatcher {
 		System.out.println("codebase: " + codebase);
 	}
 	
+	final public boolean webstart() {
+		if (codebase == null) return false;
+		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_WEBSITE+"webstart");
+	}
+	
 	final public static boolean hasFullPermissions() {
 		return hasFullPermissions;
 	}

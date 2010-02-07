@@ -185,6 +185,8 @@ public class GeoGebraMenuBar extends JMenuBar {
 		sb.append(app.getPlain("ApplicationName"));
 		sb.append(" ");
 		sb.append(GeoGebra.VERSION_STRING);
+		if (app.getApplet() != null) sb.append(" Applet");
+		else if (app.webstart()) sb.append(" Webstart");
 		sb.append("</b>  (");
 		sb.append("Java "+ System.getProperty("java.version") + ", " +(app.getHeapSize()/1024/1024)+"MB"); 
 		sb.append(")<br>");	
