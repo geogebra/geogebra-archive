@@ -490,6 +490,11 @@ implements VectorValue {
       	c.setMode(Kernel.COORD_COMPLEX);
     }
 
+    /** c = sqrt(a) Michael Borcherds 2010-02-07 */
+    final public static double arg(GeoVec2D a) {                                       
+        return Math.atan2(a.y, a.x);
+    }
+
     /** c = a ^ b Michael Borcherds 2009-03-10 */
     final public static void complexPower(NumberValue a, GeoVec2D b, GeoVec2D c) {                                       
         Complex out = new Complex(a.getDouble(), 0);     

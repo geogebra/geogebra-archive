@@ -88,15 +88,16 @@ public interface ExpressionNodeConstants {
     public static final int RANDOM = 39;
     public static final int VECTORPRODUCT = 40;
     public static final int CONJUGATE = 41;
+    public static final int ARG = 42;
      
-    public static final int FUNCTION = 42;
-    public static final int VEC_FUNCTION = 43;
-    public static final int DERIVATIVE = 44;  
+    public static final int FUNCTION = 43;
+    public static final int VEC_FUNCTION = 44;
+    public static final int DERIVATIVE = 45;  
     
     
     // spreadsheet absolute reference using $ signs
-    public static final int $VAR_ROW = 45;
-    public static final int $VAR_COL = 46;
-    public static final int $VAR_ROW_COL = 47;
+    public static final int $VAR_ROW = 46;
+    public static final int $VAR_COL = 47;
+    public static final int $VAR_ROW_COL = 48;
 	
 }

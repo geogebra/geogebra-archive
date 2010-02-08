@@ -1286,6 +1286,17 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 throw new MyError(app, str);
             }
                         
+        case ARG:
+        	if (lt.isVectorValue()) { 
+	             vec = ((VectorValue)lt).getVector();
+
+	             return new MyDouble(kernel, GeoVec2D.arg(vec));
+	        } else if (lt.isNumberValue()){
+	        	  return new MyDouble(kernel, ((NumberValue)lt).getDouble() < 0 ? Math.PI : 0);
+	        } else {
+                 String [] str = { "IllegalArgument", "arg", lt.toString() };
+                throw new MyError(app, str);
+            }                        
             
         case ABS:
             // abs(number)

@@ -299,6 +299,7 @@ TOKEN: {
 |	< FLOOR_FUNC: ( "floor(" | "Floor(" ) > 
 |	< CEIL_FUNC:  ( "ceil(" | "Ceil(" ) > 
 |	< CONJUGATE_FUNC:  ( "conjugate(" | "Conjugate(" ) > 
+|	< ARG_FUNC:  ( "arg(" | "Arg(" ) > 
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 
 |	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
 |	< RANDOM_FUNC:  "random()"  > 
@@ -1522,6 +1523,9 @@ ExpressionNode numberFunction():
 | 
     <CONJUGATE_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.CONJUGATE, null); }               
+| 
+    <ARG_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.ARG, null); }               
 | 
     <ROUND_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ROUND, null); }               
