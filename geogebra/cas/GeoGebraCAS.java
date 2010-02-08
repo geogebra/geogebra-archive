@@ -142,20 +142,20 @@ public class GeoGebraCAS {
 	
 	private synchronized Interpreter getMathPiper() {				
 		if (ggbMathPiper == null) {
-			// where to find MathPiper scripts
-			//eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
-			String scriptBase = "jar:" + app.getCodeBase().toString() + 
-										Application.CAS_JAR_NAME + "!/";			
 
 			ggbMathPiper = Interpreters.getSynchronousInterpreter();
 			boolean success = initMyMathPiperFunctions();
 			
 			if (!success) {
-				System.out.println("MathPiper creation failed again with null scriptbase");
+				System.out.println("MathPiper creation failed with null scriptbase");
+				// where to find MathPiper scripts
+				//eg docBase = "jar:http://www.geogebra.org/webstart/alpha/geogebra_cas.jar!/";
+				String scriptBase = "jar:" + app.getCodeBase().toString() + 
+											Application.CAS_JAR_NAME + "!/";			
 				ggbMathPiper = Interpreters.getSynchronousInterpreter(scriptBase);
 				success = initMyMathPiperFunctions();
 				if (!success)
-					System.err.println("MathPiper creation failed with scriptbase: " + scriptBase);
+					System.err.println("MathPiper creation failed again with scriptbase: " + scriptBase);
 			}
 		}
 		
