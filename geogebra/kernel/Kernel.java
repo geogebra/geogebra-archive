@@ -5033,6 +5033,15 @@ public class Kernel {
 	}
 	
 	/**
+	 * Limit
+	 * Michael Borcherds 
+	 */
+	final public GeoNumeric Limit(String label, GeoFunction func, NumberValue num) {		
+		AlgoLimit algo = new AlgoLimit(cons, label, func, num);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Coefficients
 	 * Michael Borcherds 2008-04-04
 	 */
