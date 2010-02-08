@@ -364,6 +364,7 @@ public class CommandDispatcher {
     	cmdTable.put("Degree", new CmdDegree(kernel));   
     	cmdTable.put("Coefficients", new CmdCoefficients(kernel));   
     	cmdTable.put("Limit", new CmdLimit(kernel));   
+ 
      	                  	
     	
     	//Mathieu Blossier

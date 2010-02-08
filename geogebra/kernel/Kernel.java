@@ -5016,7 +5016,7 @@ public class Kernel {
 	
 	/**
 	 * Factors
-	 * Michael Borcherds 2008-04-04
+	 * Michael Borcherds 
 	 */
 	final public GeoList Factors(String label, GeoFunction func) {		
 		AlgoFactors algo = new AlgoFactors(cons, label, func);
@@ -5024,8 +5024,17 @@ public class Kernel {
 	}
 	
 	/**
+	 * Asymptotes
+	 * Michael Borcherds 
+	 */
+	final public GeoList AsymptoteFunction(String label, GeoFunction func) {		
+		AlgoAsymptoteFunction algo = new AlgoAsymptoteFunction(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Degree
-	 * Michael Borcherds 2008-04-04
+	 * Michael Borcherds 
 	 */
 	final public GeoNumeric Degree(String label, GeoFunction func) {		
 		AlgoDegree algo = new AlgoDegree(cons, label, func);

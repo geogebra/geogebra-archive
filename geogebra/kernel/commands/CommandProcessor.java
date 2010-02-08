@@ -2084,6 +2084,12 @@ class CmdAsymptote extends CommandProcessor {
 			if (arg[0] .isGeoConic())
 				return kernel.Asymptote(c.getLabels(), (GeoConic) arg[0]);
 			else
+				if (arg[0] .isGeoFunction()) {
+					GeoElement[] ret =
+					{ kernel.AsymptoteFunction(c.getLabel(), (GeoFunction) arg[0])};
+					return ret;
+
+				}
 				throw argErr(app, "Asymptote", arg[0]);
 
 		default :
@@ -6632,3 +6638,4 @@ class CmdOsculatingCircle extends CommandProcessor {
 	     }
 	 }    
 	}
+ 
