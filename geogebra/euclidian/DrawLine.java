@@ -178,7 +178,7 @@ public final class DrawLine extends Drawable implements Previewable {
         // point1 TOP -> clip with y=0
         if (attr1[TOP]) { 
             y1 = -EuclidianView.CLIP_DISTANCE; 
-            x1 = -d/k;  
+            x1 = (y1 - d)/k;  
             p1Pos = TOP;
         }
         // point1 BOTTOM -> clip with y=height
@@ -191,7 +191,7 @@ public final class DrawLine extends Drawable implements Previewable {
         // point2 TOP -> clip with y=0
         if (attr2[TOP]) { 
             y2 = -EuclidianView.CLIP_DISTANCE; 
-            x2 = -d/k;  
+            x2 = (y2 - d)/k;  
             p2Pos = TOP;
         }
         // point2 BOTTOM -> clip with y=height
@@ -220,7 +220,7 @@ public final class DrawLine extends Drawable implements Previewable {
         // point1 LEFT -> clip with x=0
         if (attr1[LEFT]) { 
             x1 = -EuclidianView.CLIP_DISTANCE; 
-            y1 = -d/k;  
+            y1 = (x1 - d)/k;  
             p1Pos = LEFT;
         }
         // point1 RIGHT -> clip with x=width
@@ -233,7 +233,7 @@ public final class DrawLine extends Drawable implements Previewable {
         // point2 LEFT -> clip with x=0
         if (attr2[LEFT]) { 
             x2 = -EuclidianView.CLIP_DISTANCE; 
-            y2 = -d/k;  
+            y2 = (x2 - d)/k;  
             p2Pos = LEFT;
         }
         // point2 RIGHT -> clip with x=width
