@@ -6145,6 +6145,10 @@ class CmdOsculatingCircle extends CommandProcessor {
 					for (int row = minRow ; row <= maxRow ; row++)
 					for (int col = minCol ; col <= maxCol ; col++) {
 						try {
+							// cell will have been autocreated by eg A1:A3 in command, so delete
+							// in case it's being filled by eg GeoText
+							kernel.lookupLabel(GeoElement.getSpreadsheetCellName(col, row)).remove();
+							
 							GeoElement.setSpreadsheetCell(app, row, col, geo);
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -6180,6 +6184,9 @@ class CmdOsculatingCircle extends CommandProcessor {
 						
 						if (list.isMatrix()) {
 							// 2D fill
+							// FillCells[B3,{"a","b"}] will autocreate B3=0 so we need to remove B3
+							arg[0].remove();
+							
 							try {
 								int rows = list.size();
 								int cols = ((GeoList)list.get(0)).size();
@@ -6197,6 +6204,9 @@ class CmdOsculatingCircle extends CommandProcessor {
 							
 						} else {
 							// 1D fill
+							// FillCells[B3,{"a","b"}] will autocreate B3=0 so we need to remove B3
+							arg[0].remove();
+							
 							for (int i =  list.size() - 1 ; i >= 0 ; i--)
 								try {
 									//Application.debug("setting "+row+" "+(column+i)+" to "+list.get(i).toString());
