@@ -151,7 +151,7 @@ public class Test3D{
         //demos();
         //testCube(true);//testSave("polyhedron3d");
         //testLoad("polyhedron3d");
-        //testLoad("polygon3d");
+        //testLoad("tetrahedron-and-plane-empty");
         
         //testNumerous(400, Math.PI/48, 0.01);
         //testNumerous2(400, Math.PI/6, 0.01);
@@ -390,7 +390,7 @@ public class Test3D{
 			ap.processAlgebraCommandNoExceptionHandling("{{A,B,C},{B,A,D},{B,C,D},{C,A,D}}",false);
 			
 			GeoList list = (GeoList) kernel3D.lookupLabel("liste1");
-			kernel3D.Polyhedron("polyhedron", list);
+			kernel3D.Polyhedron(null, list);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -410,7 +410,7 @@ public class Test3D{
 		//P1[2].setLabel("Ay");
 		P1[3] = testPoint(0f,0f,1f);
 		
-		kernel3D.Pyramid("pyramid", P1);
+		kernel3D.Pyramid(null, P1);
 		
 	}
 	
@@ -578,7 +578,7 @@ public class Test3D{
 				new int[][] {{0,1,2},{0,1,3},{1,2,3},{2,0,3}});
 				*/
 		
-		GeoPolyhedron p=(GeoPolyhedron) kernel3D.Pyramid("tetrahedron", points)[0];
+		GeoPolyhedron p=(GeoPolyhedron) kernel3D.Pyramid(null, points)[0];
 		
 		
 	}
@@ -652,7 +652,7 @@ public class Test3D{
 	
 	private void testLoad(String s){
 
-        app.loadXML(new File("geogebra3D/test3d-"+s+".ggb"), false);
+        app.loadXML(new File("geogebra3D/samples/"+s+".ggb"), false);
 
 		
 	}
@@ -850,7 +850,7 @@ public class Test3D{
 			});
 			*/
 			
-			kernel3D.Prism("cube", points);
+			kernel3D.Prism(null, points);
 			
 			if (!top)
 				kernel3D.lookupLabel("faceEFGH",false).setEuclidianVisible(false);

@@ -52,7 +52,7 @@ public class CmdPrism extends CommandProcessor {
             }
         }
         // everything ok
-        return kernel3D.Prism(c.getLabel(), points);
+        return kernel3D.Prism(c.getLabels(), points);
 		
 		
 

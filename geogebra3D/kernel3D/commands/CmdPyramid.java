@@ -51,7 +51,7 @@ public class CmdPyramid extends CommandProcessor {
             }
         }
         // everything ok
-        return kernel3D.Pyramid(c.getLabel(), points);
+        return kernel3D.Pyramid(c.getLabels(), points);
 		
 		
 

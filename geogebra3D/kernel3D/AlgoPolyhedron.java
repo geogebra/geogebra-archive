@@ -48,17 +48,19 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	 * @param points vertices
 	 * @param type type of polyhedron
 	 */
+	/*
 	public AlgoPolyhedron(Construction c, String label, GeoPoint3D[] points, int type) {
 		this(c,points,type);
 		polyhedron.setLabel(label);
 	}
+	*/
 	
 	/** creates a polyhedron regarding vertices and faces description
 	 * @param c construction 
 	 * @param a_points vertices
 	 * @param type type of polyhedron
 	 */
-	public AlgoPolyhedron(Construction c, GeoPoint3D[] a_points, int type) {
+	public AlgoPolyhedron(Construction c, String[] labels, GeoPoint3D[] a_points, int type) {
 		this(c);
 		
 		this.type = type;
@@ -73,6 +75,13 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			outputPoints = new GeoPoint3D[0];
 			numPoints = inputPoints.length;
 			
+			
+			//base of the pyramid
+			polyhedron.startNewFace();
+			for (int i=numPoints-2; i>=0; i--)
+				polyhedron.addPointToCurrentFace(this.inputPoints[i]);
+			polyhedron.endCurrentFace();
+			
 			//sides of the pyramid
 			for (int i=0; i<numPoints-1; i++){
 				polyhedron.startNewFace();
@@ -82,11 +91,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 				polyhedron.endCurrentFace();
 			}
 			
-			//base of the pyramid
-			polyhedron.startNewFace();
-			for (int i=numPoints-2; i>=0; i--)
-				polyhedron.addPointToCurrentFace(this.inputPoints[i]);
-			polyhedron.endCurrentFace();
+
+			
 			break;
 			
 			/*
@@ -123,7 +129,12 @@ public class AlgoPolyhedron extends AlgoElement3D {
 				points[numPoints+1+i] = outputPoints[i];
 			}
 			
-
+			//bottom of the prism
+			polyhedron.startNewFace();
+			for (int i=numPoints-1; i>=0; i--)
+				polyhedron.addPointToCurrentFace(points[i]);
+			polyhedron.endCurrentFace();
+			
 			//sides of the prism
 			for (int i=0; i<numPoints; i++){
 				polyhedron.startNewFace();
@@ -134,11 +145,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 				polyhedron.endCurrentFace();
 			}
 			
-			//bottom of the prism
-			polyhedron.startNewFace();
-			for (int i=numPoints-1; i>=0; i--)
-				polyhedron.addPointToCurrentFace(points[i]);
-			polyhedron.endCurrentFace();
+
 			
 			//top of the prism
 			polyhedron.startNewFace();
@@ -151,6 +158,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		
 		polyhedron.updateFaces();
 		setInputOutput();
+		polyhedron.initLabels(labels);
 		compute();
 
 		
@@ -170,9 +178,9 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	 * @param label name
 	 * @param faces faces description
 	 */
-	public AlgoPolyhedron(Construction c, String label, GeoList faces) {
+	public AlgoPolyhedron(Construction c, String[] labels, GeoList faces) {
 		this(c,faces);
-		polyhedron.setLabel(label);
+		polyhedron.initLabels(labels);
 	}
 	
 	/** creates a polyhedron regarding vertices and faces description

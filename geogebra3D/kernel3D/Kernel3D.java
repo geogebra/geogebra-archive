@@ -413,10 +413,10 @@ public class Kernel3D
      * @param faces faces description
      * @return the polyhedron
      */
-    final public GeoElement[] Polyhedron(String label, GeoList faces){
+    final public GeoElement[] Polyhedron(String[] labels, GeoList faces){
 		
     	
-    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,faces);
+    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,faces);
     	
     	return algo.getOutput();
 		
@@ -427,10 +427,10 @@ public class Kernel3D
      * @param points vertices
      * @return the polyhedron
      */
-    final public GeoElement [] Prism(String label, GeoPoint3D[] points){
+    final public GeoElement [] Prism(String[] labels, GeoPoint3D[] points){
 		
     	
-    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points,GeoPolyhedron.TYPE_PRISM);
+    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,points,GeoPolyhedron.TYPE_PRISM);
     	
     	return algo.getOutput();
 		
@@ -441,9 +441,9 @@ public class Kernel3D
      * @param points vertices
      * @return the polyhedron
      */
-    final public GeoElement [] Pyramid(String label, GeoPoint3D[] points){
+    final public GeoElement [] Pyramid(String[] labels, GeoPoint3D[] points){
 		    	
-    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,null,points, GeoPolyhedron.TYPE_PYRAMID);
+    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,points, GeoPolyhedron.TYPE_PYRAMID);
     	
     	return algo.getOutput();
 		

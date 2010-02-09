@@ -30,20 +30,36 @@ public class GeoPolyhedron extends GeoElement3D {
 	/** vertices */
 	//protected ArrayList<GeoPoint3D> points;
 	
+	
+	/** edges index */
+	protected TreeMap<ConstructionElementCycle,Long> segmentsIndex;
+	
+	/** max faces edges */
+	protected long segmentsIndexMax = 0;
+
 	/** edges */
-	protected TreeMap<ConstructionElementCycle, GeoSegment3D> segments;
+	protected TreeMap<Long, GeoSegment3D> segments;
+	
+	
+	
+	
+	/** faces index */
+	protected TreeMap<ConstructionElementCycle,Long> polygonsIndex;
+	
+	/** max faces index */
+	protected long polygonsIndexMax = 0;
 	
 	/** faces */
-	protected TreeMap<ConstructionElementCycle,GeoPolygon3D> polygons;
+	protected TreeMap<Long,GeoPolygon3D> polygons;
 	
-	/** faces description */
-	protected TreeSet<ConstructionElementCycle> faces;
 	
 	/** segments to remove for update */
 	protected TreeSet<ConstructionElementCycle> oldSegments;
 	
 	/** polygons to remove for update */
 	protected TreeSet<ConstructionElementCycle> oldPolygons;
+	
+	
 	
 	
 	/** face currently constructed */
@@ -62,10 +78,12 @@ public class GeoPolyhedron extends GeoElement3D {
 	public GeoPolyhedron(Construction c) {
 		super(c);
 
-		faces = new TreeSet<ConstructionElementCycle>();
 		
-		polygons = new TreeMap<ConstructionElementCycle, GeoPolygon3D>();
-		segments = new TreeMap<ConstructionElementCycle, GeoSegment3D>();
+		polygonsIndex = new TreeMap<ConstructionElementCycle,Long>();
+		polygons = new TreeMap<Long, GeoPolygon3D>();
+		
+		segmentsIndex = new TreeMap<ConstructionElementCycle,Long>();
+		segments = new TreeMap<Long, GeoSegment3D>();
 		
 		oldPolygons = new TreeSet<ConstructionElementCycle>();		
 		oldSegments = new TreeSet<ConstructionElementCycle>();		
@@ -79,13 +97,13 @@ public class GeoPolyhedron extends GeoElement3D {
 	public void restartFaces(){
 		
 		oldPolygons.clear();
-		for (ConstructionElementCycle key : polygons.keySet()){
+		for (ConstructionElementCycle key : polygonsIndex.keySet()){
 			//Application.debug("key : "+key);
 			oldPolygons.add(key);
 		}
 		
 		oldSegments.clear();
-		for (ConstructionElementCycle key : segments.keySet())
+		for (ConstructionElementCycle key : segmentsIndex.keySet())
 			oldSegments.add(key);
 		
 	}
@@ -130,9 +148,12 @@ public class GeoPolyhedron extends GeoElement3D {
 			}
 			//last segment
 			oldSegments.remove(
-					ConstructionElementCycle.SegmentDescription(endPoint, firstPoint));
-		}else
-			faces.add(currentFace);
+					ConstructionElementCycle.SegmentDescription(endPoint, firstPoint));	
+		}else{
+			//faces.add(currentFace);
+			polygonsIndex.put(currentFace, new Long(polygonsIndexMax));
+			polygonsIndexMax++;
+		}
 		
 	}
 	
@@ -164,16 +185,21 @@ public class GeoPolyhedron extends GeoElement3D {
 			}
 		}
 		
+		
 		// create missing faces
+		/*
 		for (Iterator<ConstructionElementCycle> it = faces.iterator(); it.hasNext();){
 			currentFace = it.next();
+			*/
+		for (ConstructionElementCycle currentFace : polygonsIndex.keySet()){
 			
 			//if a polygons already corresponds to the face description, then pass it
-			if (polygons.containsKey(currentFace))
+			if (polygons.containsKey(polygonsIndex.get(currentFace)))
 				continue;
 			
 			//vertices of the face
 			GeoPoint3D[] p = new GeoPoint3D[currentFace.size()];
+			
 			//edges linked to the face
 			GeoSegmentInterface[] s = new GeoSegmentInterface[currentFace.size()];
 			
@@ -197,7 +223,7 @@ public class GeoPolyhedron extends GeoElement3D {
 			s[j] = createSegment(endPoint, firstPoint);
 			
 			GeoPolygon3D polygon = createPolygon(p);
-			polygons.put(currentFace, polygon);
+			polygons.put(polygonsIndex.get(currentFace), polygon);
 			polygon.setSegments(s);
         }  
 	}
@@ -223,7 +249,7 @@ public class GeoPolyhedron extends GeoElement3D {
 		 String s="face";
 		 for(int i=0;i<points.length;i++)
 			 s+=points[i].getLabel();
-		 polygon.setLabel(s);
+		 //polygon.setLabel(s);
 		 
 
 		 return polygon;
@@ -248,8 +274,8 @@ public class GeoPolyhedron extends GeoElement3D {
 		 key.add(startPoint);key.add(endPoint);
 		 */
 
-		 if (segments.containsKey(key))
-			 return segments.get(key);
+		 if (segmentsIndex.containsKey(key))
+			 return segments.get(segmentsIndex.get(key));
 				
 			
 		 GeoSegment3D segment;
@@ -263,14 +289,88 @@ public class GeoPolyhedron extends GeoElement3D {
 		 segment.setObjColor(getObjectColor()); 
 		 
 		 //TODO translation for edge
-		 segment.setLabel("edge"+startPoint.getLabel()+endPoint.getLabel());
+		 //segment.setLabel("edge"+startPoint.getLabel()+endPoint.getLabel());
 
-		 segments.put(key, segment);
-		 
+		 Long index = new Long(segmentsIndexMax);
+		 segmentsIndex.put(key, index);
+		 segments.put(index, segment);
+		 segmentsIndexMax++;
+			
 		 return segment;
 		 
 		 
 	 }
+	 
+	 
+	 
+	 
+	 
+	 
+	    /**
+	     * Inits the labels of this polyhedron, its faces and edges.
+	     * labels[0] for polyhedron itself, labels[1..n] for faces and edges,
+	     * @param labels
+	     */
+	    void initLabels(String [] labels) {       	 
+	    	
+	    	int index=1;
+	    	
+	    	if (labels == null || labels.length == 0) 
+	    		return;
+
+	        // first label for polyhedron itself
+	    	setLabel(labels[0]); 
+	    	
+	    	
+	    	if (labels.length - index < polygons.size()){
+	    		defaultPolygonsLabels();
+	    		defaultSegmentLabels();
+	    		return;
+	    	}
+	    	
+	    	
+	    	// labels for polygons
+	    	for (GeoPolygon3D polygon : polygons.values()){
+	    		polygon.setLabel(labels[index]);
+	    		index++;
+	    	}
+
+	    	
+	    	if (labels.length - index < segments.size()){
+	    		defaultSegmentLabels();
+	    		return;
+	    	}
+
+	    	
+	    	// labels for segments
+	    	for (GeoSegment3D segment : segments.values()){
+	    		segment.setLabel(labels[index]);
+	    		index++;
+	    	}			 
+	 
+	    }
+
+	    private void defaultPolygonsLabels() {
+	    	for (ConstructionElementCycle key : polygonsIndex.keySet()){
+	    		StringBuffer sb = new StringBuffer();
+	    		sb.append("face"); //TODO translation
+	    		for(Iterator<ConstructionElement> it = key.iterator();it.hasNext();)
+	    			sb.append(((GeoElement) it.next()).getLabel());
+	    		polygons.get(polygonsIndex.get(key)).setLabel(sb.toString());
+	    	}	
+	    }
+
+
+	    private void defaultSegmentLabels() {
+	    	for (ConstructionElementCycle key : segmentsIndex.keySet()){
+	    		StringBuffer sb = new StringBuffer();
+	    		sb.append("edge"); //TODO translation
+	    		for(Iterator<ConstructionElement> it = key.iterator();it.hasNext();)
+	    			sb.append(((GeoElement) it.next()).getLabel());
+	    		segments.get(segmentsIndex.get(key)).setLabel(sb.toString());
+	    	}	
+	    }
+	 
 	
 	
 	 
