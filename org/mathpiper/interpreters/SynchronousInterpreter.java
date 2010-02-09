@@ -69,6 +69,8 @@ class SynchronousInterpreter implements Interpreter {
         removeListeners = new ArrayList<ResponseListener>();
 
         sideEffectsStream = new StringOutput();
+        
+        Utility.scriptsPath = "/org/mathpiper/geogebrascripts/";
 
         try {
             iEnvironment = new Environment(sideEffectsStream);
@@ -117,8 +119,6 @@ class SynchronousInterpreter implements Interpreter {
 
             }//end if.
 
-
-            Utility.scriptsPath = "/org/mathpiper/geogebrascripts/";
 
 
             /*  java.net.URL detectURL = java.lang.ClassLoader.getSystemResource("initialization.rep/mathpiperinit.mpi");

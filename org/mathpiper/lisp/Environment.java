@@ -138,8 +138,11 @@ public class Environment {
         //System.out.println("Classpath: " + System.getProperty("java.class.path"));
         
         BuiltinFunction.addCoreFunctions(this);
-        List failList = BuiltinFunction.addOptionalFunctions(this, "org/mathpiper/builtin/functions/optional/");
-
+        
+        if(! Utility.scriptsPath.contains("geogebra"))
+        {
+            List failList = BuiltinFunction.addOptionalFunctions(this, "org/mathpiper/builtin/functions/optional/");
+        }
         pushLocalFrame(true, "<START>");
     }
 
