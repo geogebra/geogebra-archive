@@ -84,9 +84,9 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 
 		// solve 1/f(x) == 0 to find vertical asymptotes
 	    sb.setLength(0);
-        sb.append("Solve(1/(");
+        sb.append("Solve(Simplify(1/(");
         sb.append(functionIn);
-        sb.append(")==0,x)");
+        sb.append("))==0,x)");
 		String verticalAsymptotes = kernel.evaluateMathPiper(sb.toString());
 		
 		Application.debug("input:"+sb.toString());
