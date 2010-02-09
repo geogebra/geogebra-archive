@@ -56,7 +56,7 @@ office@geogebra.org
 	
 	<!-- build jar files for testing without obfuscation -->
 	<target name="geogebra-test" 
-		depends="clean, ggb-jar-files, ggb-jar-index, 
+		depends="clean, ggb-jar-files, delete3D, ggb-jar-index, 
 					copyJars, sign, pack, preloadHtml, finish">	  
 	</target>
 	

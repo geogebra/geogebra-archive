@@ -6139,7 +6139,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 			    	
 				
 				GeoElement geo = (GeoElement) arg[1];
-				GeoElement[] ret = { geo };
+				GeoElement[] ret = {  };
 				
 				if (!geo.isGeoList()) {
 					for (int row = minRow ; row <= maxRow ; row++)
@@ -6156,7 +6156,8 @@ class CmdOsculatingCircle extends CommandProcessor {
 				
 				GeoList list = (GeoList)geo;
 				
-				if (list.isMatrix())
+				// TODO finish
+				//if (list.isMatrix())
 				
 				app.storeUndoInfo();
 				return ret;
@@ -6196,8 +6197,9 @@ class CmdOsculatingCircle extends CommandProcessor {
 							
 						} else {
 							// 1D fill
-							for (int i = 0 ; i < list.size() ; i++)
+							for (int i =  list.size() - 1 ; i >= 0 ; i--)
 								try {
+									//Application.debug("setting "+row+" "+(column+i)+" to "+list.get(i).toString());
 									GeoElement.setSpreadsheetCell(app, row, column + i, list.get(i));
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -6210,7 +6212,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 				}
 				
 				GeoElement geo = (GeoElement) arg[1];
-				GeoElement[] ret = { geo };
+				GeoElement[] ret = {  };
 				app.storeUndoInfo();
 				return ret;
 

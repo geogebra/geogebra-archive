@@ -1851,7 +1851,7 @@ public abstract class GeoElement
 		
 		//Application.debug(sb.toString());
 		
-			app.getKernel().getAlgebraProcessor().processAlgebraCommand(sb.toString(), false);
+		app.getKernel().getAlgebraProcessor().processAlgebraCommand(sb.toString(), false);
 		
 			GeoElement cell = app.getKernel().lookupLabel(cellName);
 			if (cell != null) {
@@ -4023,8 +4023,8 @@ public abstract class GeoElement
 	 		}
 		}
 		// matrices
-		else if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
-			ret = this.toLaTeXString(substituteNumbers);
+		else if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && ((GeoList)this).isMatrix()) {
+			ret = toLaTeXString(substituteNumbers);
 		}
 		else 
 		{
