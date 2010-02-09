@@ -32,7 +32,7 @@ public class AlgoTextElement extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoText text; //input
 	private NumberValue num = null; // input
-	private GeoElement numGeo, num2Geo = null;
+	private GeoElement numGeo;
     private GeoText textOut; //output	
 
     AlgoTextElement(Construction cons, String label, GeoText text, NumberValue num) {
@@ -42,6 +42,7 @@ public class AlgoTextElement extends AlgoElement {
         numGeo = num.toGeoElement();
         
         textOut = new GeoText(cons);
+        textOut.setIsCommand(true);
 
         setInputOutput();
         compute();
@@ -76,11 +77,12 @@ public class AlgoTextElement extends AlgoElement {
     	
     	String str = text.getTextString();
     	int n = (int)num.getNumber().getDouble();
-    	if (n < 1 || n > str.length())
+    	if (n < 1 || n > str.length()) {
     		textOut.setUndefined();
-    	else
+    	}
+    	else {
     		textOut.setTextString(str.charAt(n - 1) + "");
-    	
+    	}
      }
     
 }
