@@ -838,9 +838,8 @@ GeoPointInterface {
      * returns all class-specific xml tags for saveXML
      * GeoGebra File Format
      */
-    protected String getXMLtags() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.getXMLtags()); 
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb); 
         
         /* should not be needed
         if (path != null) {        	
@@ -874,8 +873,7 @@ GeoPointInterface {
 				sb.append(pointStyle);
 			sb.append("\"/>\n");
 		}
-            
-        return sb.toString();   
+ 
     }
     
     public String getStartPointXML() {

@@ -3260,11 +3260,16 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		repaint();
 	}
 
+	public String getXML() {
+		StringBuilder sb = new StringBuilder();
+    	getXML(sb);
+    	return sb.toString();
+    }
+    	
 	/**
 	 * returns settings in XML format
 	 */
-	public String getXML() {
-		StringBuilder sb = new StringBuilder();
+	public void getXML(StringBuilder sb) {
 		sb.append("<euclidianView>\n");
 		
 		if (width > MIN_WIDTH && height > MIN_HEIGHT) {
@@ -3388,7 +3393,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		}
 
 		sb.append("</euclidianView>\n");
-		return sb.toString();
 	}
 
 	/***************************************************************************

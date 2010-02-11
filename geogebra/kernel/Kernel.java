@@ -6129,8 +6129,7 @@ public class Kernel {
 	/**
 	 * Returns the kernel settings in XML format.
 	 */
-	public String getKernelXML() {
-		StringBuilder sb = new StringBuilder();
+	public void getKernelXML(StringBuilder sb) {
 	
 		// kernel settings
 		sb.append("<kernel>\n");
@@ -6177,7 +6176,6 @@ public class Kernel {
 		}
 	
 		sb.append("</kernel>\n");
-		return sb.toString();
 	}
 	
 	/**

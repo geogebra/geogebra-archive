@@ -306,7 +306,7 @@ public class Layout {
 	 * @param asPreference If the collected data is used for the preferences
 	 * @return
 	 */
-	public String getXml(boolean asPreference) {
+	public void getXml(StringBuilder sb, boolean asPreference) {
 		/**
 		 * Create a temporary perspective which is used to store the layout
 		 * of the document at the moment. This perspective isn't accessible
@@ -315,7 +315,6 @@ public class Layout {
 		 */ 
 		Perspective tmpPerspective = createPerspective("tmp");
 
-		StringBuilder sb = new StringBuilder();
 		sb.append("\t<perspectives>\n");
 		
 		// save the current perspective
@@ -341,8 +340,7 @@ public class Layout {
 			sb.append(isTitleBarVisible());
 			sb.append("\" />\n");
 		}
-		
-		return sb.toString();
+
 	}
 
 	/**

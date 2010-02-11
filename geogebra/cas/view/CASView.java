@@ -216,9 +216,8 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 //		return sb.toString();
 //	}
 
-	public String getSessionXML() {
+	public void getSessionXML(StringBuilder sb) {
 	
-		StringBuilder sb = new StringBuilder();
 		sb.append("<casSession>\n");
 
 		// get the number of pairs in the view
@@ -232,7 +231,6 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		}
 
 		sb.append("</casSession>\n");
-		return sb.toString();
 	}
 	
 	/**

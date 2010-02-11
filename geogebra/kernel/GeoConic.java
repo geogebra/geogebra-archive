@@ -2214,9 +2214,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
-	protected String getXMLtags() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.getXMLtags());
+	protected void getXMLtags(StringBuilder sb) {
+		super.getXMLtags(sb);
 		//	line thickness and type  
 		sb.append(getLineStyleXML());
 
@@ -2251,7 +2250,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 				sb.append("\t<eqnStyle style=\"implicit\"/>\n");
 		}
 
-		return sb.toString();
 	}
 
 	public String getSpecificEquation() {

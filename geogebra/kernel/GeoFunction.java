@@ -414,7 +414,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 			  sb.append(" label=\"");
 			  sb.append(label);
 		  sb.append("\">\n");
-		  sb.append(getXMLtags());
+		  getXMLtags(sb);
 		  sb.append(getCaptionXML());
 		  sb.append("</element>\n");
 		  
@@ -424,14 +424,12 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	/**
 	* returns all class-specific xml tags for getXML
 	*/
-   protected String getXMLtags() {
-	   StringBuilder sb = new StringBuilder();
-	   sb.append(super.getXMLtags());
+		protected void getXMLtags(StringBuilder sb) {
+	   super.getXMLtags(sb);
 	 
 	   //	line thickness and type  
 	   sb.append(getLineStyleXML());	  
 
-	   return sb.toString();   
    }
 
 	/* 

@@ -550,7 +550,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			  sb.append(" label=\"");
 			  sb.append(label);
 		  sb.append("\">\n");
-		  sb.append(getXMLtags());
+		  getXMLtags(sb);
 		  
 		  // point style
 			sb.append("\t<pointSize val=\"");
@@ -1045,5 +1045,11 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	    	return super.toLaTeXString(symbolic);
 
 	    }     
+		protected void getXMLtags(StringBuilder sb) {
+	        super.getXMLtags(sb);
+	        
+	        sb.append(getLineStyleXML());
+
+	    }
 
 }

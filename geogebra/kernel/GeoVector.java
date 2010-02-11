@@ -398,9 +398,8 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
     /**
      * returns all class-specific xml tags for saveXML
      */
-    protected String getXMLtags() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.getXMLtags());
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb);
 		//	line thickness and type  
 		sb.append(getLineStyleXML());	  
         
@@ -423,7 +422,6 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 			sb.append(startPoint.getStartPointXML());
 		}
 
-        return sb.toString();   
     }   
     
 	public boolean isNumberValue() {

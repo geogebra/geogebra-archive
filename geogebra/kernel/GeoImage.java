@@ -401,8 +401,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	/**
 	* returns all class-specific xml tags for getXML
 	*/
-	protected String getXMLtags() {   	
-	   	StringBuilder sb = new StringBuilder();	   		   		   	
+	protected void getXMLtags(StringBuilder sb) {  		   	
 			   	
 	   	// name of image file
 		sb.append("\t<file name=\"");
@@ -430,9 +429,8 @@ implements Locateable, AbsoluteScreenLocateable,
 		
 //	   	sb.append(getXMLvisualTags());
 //	   	sb.append(getBreakpointXML());
-		sb.append(super.getXMLtags());
-			
-	   return sb.toString();   
+		super.getXMLtags(sb);
+ 
    	}
    	
    	private String getXMLabsScreenLoc() {

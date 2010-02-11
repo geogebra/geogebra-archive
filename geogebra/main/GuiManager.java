@@ -69,8 +69,8 @@ public interface GuiManager {
 	public void setPerspectives(ArrayList<Perspective> perspectives);
 	public void updateLayout();
 	
-	public String getSpreadsheetViewXML();
-	public String getConsProtocolXML();
+	public void getSpreadsheetViewXML(StringBuilder sb);
+	public void getConsProtocolXML(StringBuilder sb);
 	
 	public  void setShowAuxiliaryObjects(boolean flag);
 
@@ -81,7 +81,7 @@ public interface GuiManager {
 	public void doAfterRedefine(GeoElement geo);
 
 	// Layout methods - Florian Sonner 2008-11-02
-	public String getLayoutXml(boolean isPreference);
+	public void getLayoutXml(StringBuilder sb, boolean isPreference);
 	public JComponent getLayoutRoot(); 
 	
 	public JComponent getToolbarPanel() ;

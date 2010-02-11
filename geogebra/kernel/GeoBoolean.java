@@ -224,8 +224,7 @@ AbsoluteScreenLocateable {
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
-	protected String getXMLtags() {
-		StringBuilder sb = new StringBuilder();
+	protected void getXMLtags(StringBuilder sb) {
 		sb.append("\t<value val=\"");
 		sb.append(value);
 		sb.append("\"/>\n");				
@@ -240,8 +239,7 @@ AbsoluteScreenLocateable {
 			sb.append(checkboxFixed);
 			sb.append("\"/>\n");	
 		}
-		
-		return sb.toString();
+
 	}	
 
 	public boolean isBooleanValue() {

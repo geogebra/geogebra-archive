@@ -112,7 +112,7 @@ public class MacroManager {
 		StringBuilder sb = new StringBuilder();	
 		// save selected macros
 		for (int i=0; i < macros.size(); i++) {				
-			sb.append(((Macro) macros.get(i)).getXML());
+			((Macro) macros.get(i)).getXML(sb);
 		}						
 		return sb.toString();
 	}

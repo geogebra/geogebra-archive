@@ -664,17 +664,15 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
      * returns all class-specific xml tags for saveXML
      * GeoGebra File Format
      */
-    protected String getXMLtags() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.getXMLtags()); 
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb); 
         
         
 		// point size
 		sb.append("\t<pointSize val=\"");
 			sb.append(pointSize);
 		sb.append("\"/>\n");
-		            
-        return sb.toString();   
+ 
     }
 
 	

@@ -3134,24 +3134,29 @@ public abstract class GeoElement
 		return getClassName().substring(3).toLowerCase(Locale.US);
 	}
 	
+	public String getXML() {
+		StringBuilder sb = new StringBuilder();
+    	getXML(sb);
+    	return sb.toString();
+    }
+    	
 	/**
 	 * save object in xml format
 	 * GeoGebra File Format
 	 */
-	public String getXML() {
+	public void getXML(StringBuilder sb) {
 		boolean oldValue = kernel.isTranslateCommandName();
 		kernel.setTranslateCommandName(false);
 		
 		String type = getXMLtypeString();
-		
-		StringBuilder sb = new StringBuilder();
+
 		sb.append("<element");
 		sb.append(" type=\"");
 		sb.append(type);
 		sb.append("\" label=\"");
 		sb.append(Util.encodeXML(label));		
 		sb.append("\">\n");
-		sb.append(getXMLtags());
+		getXMLtags(sb);
 		
 		// JavaScript
 		if (javaScript.length() > 0) {
@@ -3172,7 +3177,6 @@ public abstract class GeoElement
 		sb.append("</element>\n");
 		
 		kernel.setTranslateCommandName(oldValue);
-		return sb.toString();
 	}
 	
 	public String getCaptionXML() {
@@ -3415,15 +3419,13 @@ public abstract class GeoElement
 	 * returns all class-specific xml tags for getXML
 	 * GeoGebra File Format
 	 */
-	protected String getXMLtags() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getLineStyleXML());
+	protected void getXMLtags(StringBuilder sb) {
+		//sb.append(getLineStyleXML());
 		sb.append(getXMLvisualTags());
 		sb.append(getXMLanimationTags());
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
 		sb.append(getBreakpointXML());		
-		return sb.toString();
 	}
 
 	/**

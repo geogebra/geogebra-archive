@@ -375,7 +375,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 			  sb.append(" label=\"");
 			  sb.append(Util.encodeXML(label));
 		  sb.append("\">\n");
-		  sb.append(getXMLtags());
+		  getXMLtags(sb);
 		  sb.append("</element>\n");
 	  	  
 		  return sb.toString();
@@ -384,8 +384,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	/**
 	* returns all class-specific xml tags for getXML
 	*/
-   	protected String getXMLtags() {   	
-	   	StringBuilder sb = new StringBuilder();
+		protected void getXMLtags(StringBuilder sb) {
 	   	sb.append(getXMLvisualTags(false));			
 		
 		if (isFixed()) {
@@ -425,8 +424,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 
 		// store location of text (and possible labelOffset)
 		sb.append(getXMLlocation());			
-			
-	   return sb.toString();   
+
    	}
    	
    	/**

@@ -74,9 +74,8 @@ public abstract class GeoVec4D extends GeoVec {
      * returns all class-specific xml tags for saveXML
      * Geogebra File Format
      */
-    protected String getXMLtags() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.getXMLtags());
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb);
         
         sb.append("\t<coords");
                 sb.append(" x=\"" + getX() + "\"");
@@ -84,8 +83,7 @@ public abstract class GeoVec4D extends GeoVec {
                 sb.append(" z=\"" + getZ() + "\"");
                 sb.append(" w=\"" + getW() + "\"");
         sb.append("/>\n");
-        
-        return sb.toString();
+
     }
 }
 

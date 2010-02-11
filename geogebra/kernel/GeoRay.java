@@ -167,9 +167,8 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	/**
      * returns all class-specific xml tags for saveXML
      */
-    protected String getXMLtags() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.getXMLtags());
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb);
 		
         // allowOutlyingIntersections
         sb.append("\t<outlyingIntersections val=\"");
@@ -180,8 +179,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
         sb.append("\t<keepTypeOnTransform val=\"");
         sb.append(keepTypeOnGeometricTransform);
         sb.append("\"/>\n");
-        
-        return sb.toString();   
+ 
     }
 
    

@@ -342,8 +342,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
-	protected String getXMLtags() {
-		StringBuilder sb = new StringBuilder();
+	protected void getXMLtags(StringBuilder sb) {
 		sb.append("\t<value val=\"");
 		sb.append(value);
 		sb.append("\"/>\n");
@@ -371,7 +370,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
 		sb.append(getBreakpointXML());
-		return sb.toString();
 	}
 	
 	protected boolean isSliderable() {

@@ -1417,8 +1417,7 @@ public class Construction {
 	/**
 	 * Returns this construction in XML format. GeoGebra File Format.
 	 */
-	public String getConstructionXML() {
-		StringBuilder sb = new StringBuilder(500);
+	public void getConstructionXML(StringBuilder sb) {
 
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
@@ -1451,7 +1450,7 @@ public class Construction {
 			int size = ceList.size();
 			for (int i = 0; i < size; ++i) {
 				ce = (ConstructionElement) ceList.get(i);
-				sb.append(ce.getXML());
+				ce.getXML(sb);
 			}
 
 			sb.append("</construction>\n");
@@ -1463,7 +1462,6 @@ public class Construction {
 		kernel.setCASPrintForm(oldPrintForm);
 		kernel.setTranslateCommandName(oldValue);                          
 		
-		return sb.toString();
 	}
 
 	/**

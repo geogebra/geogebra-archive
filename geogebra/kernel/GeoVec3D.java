@@ -284,17 +284,15 @@ implements Traceable {
      * returns all class-specific xml tags for saveXML
      * Geogebra File Format
      */
-    protected String getXMLtags() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.getXMLtags());
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb);
         
         sb.append("\t<coords");
                 sb.append(" x=\"" + x + "\"");
                 sb.append(" y=\"" + y + "\"");
                 sb.append(" z=\"" + z + "\"");
         sb.append("/>\n");
-        
-        return sb.toString();
+
     }
 
     /**

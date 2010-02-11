@@ -293,14 +293,12 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
    /**
 	* returns all class-specific xml tags for getXML
 	*/
-   protected String getXMLtags() {
-	   StringBuilder sb = new StringBuilder();
-	   sb.append(super.getXMLtags());
+	protected void getXMLtags(StringBuilder sb) {
+	   super.getXMLtags(sb);
 	 
 	   //	line thickness and type  
 	   sb.append(getLineStyleXML());	  
-
-	   return sb.toString();   
+ 
    }
 
 	/* 

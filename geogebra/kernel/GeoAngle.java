@@ -345,8 +345,7 @@ public final class GeoAngle extends GeoNumeric {
 	/**
 	 * returns all class-specific xml tags for saveXML
 	 */
-	protected String getXMLtags() {
-		StringBuilder sb = new StringBuilder();
+	protected void getXMLtags(StringBuilder sb) {
 
 		sb.append("\t<value val=\"");
 		sb.append(rawValue);
@@ -372,7 +371,6 @@ public final class GeoAngle extends GeoNumeric {
 		sb.append(getXMLfixedTag());
 		sb.append(getAuxiliaryXML());
 		sb.append(getBreakpointXML());
-		return sb.toString();
 	}
 
 	private String getXMLAllowReflexAngleTag() {

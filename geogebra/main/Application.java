@@ -2606,7 +2606,7 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		sb.append("\" />");
 		
-		sb.append(getGuiManager().getLayoutXml(asPreference));
+		getGuiManager().getLayoutXml(sb, asPreference);
 
 		// labeling style
 		if (labelingStyle != ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC) {
@@ -2638,15 +2638,15 @@ public abstract class Application implements KeyEventDispatcher {
 		sb.append(getGuiXML(asPreference));
 
 		// save euclidianView settings
-		sb.append(getEuclidianView().getXML());
+		getEuclidianView().getXML(sb);
 
 		// save spreadsheetView settings
 		if (showSpreadsheet) {
-			sb.append(getGuiManager().getSpreadsheetViewXML());
+			getGuiManager().getSpreadsheetViewXML(sb);
 		}
 		
 		// coord style, decimal places settings etc
-		sb.append(kernel.getKernelXML());
+		kernel.getKernelXML(sb);
 
 		// save cas view seeting and cas session
 //		if (casView != null) {
@@ -2665,7 +2665,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// construction protocol
 		if (getGuiManager().isUsingConstructionProtocol()) {
-			sb.append(getGuiManager().getConsProtocolXML());
+			getGuiManager().getConsProtocolXML(sb);
 		}
 
 		return sb.toString();

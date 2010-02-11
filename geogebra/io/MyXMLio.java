@@ -702,11 +702,11 @@ public class MyXMLio {
 		sb.append(app.getCompleteUserInterfaceXML(false));		
 
 		// save construction
-		sb.append(cons.getConstructionXML());
+		cons.getConstructionXML(sb);
 		
 		// save cas session
 		if (app.hasGuiManager() && app.getGuiManager().hasCasView()) {
-			sb.append(app.getGuiManager().getCasView().getSessionXML());
+			app.getGuiManager().getCasView().getSessionXML(sb);
 		}
 
 		sb.append("</geogebra>");
@@ -788,28 +788,19 @@ public class MyXMLio {
 		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 
 		// save euclidianView settings
-		String addStr = app.getEuclidianView().getXML();
-		sb.ensureCapacity(sb.length() + addStr.length());
-		sb.append(addStr);
+		app.getEuclidianView().getXML(sb);
 		
 		// save kernel settings
-		addStr = c.getKernel().getKernelXML();
-		sb.ensureCapacity(sb.length() + addStr.length());
-		sb.append(addStr);
+		c.getKernel().getKernelXML(sb);
 
 		// save construction
-		addStr = c.getConstructionXML();
-		sb.ensureCapacity(sb.length() + addStr.length());
-		sb.append(addStr);
+		c.getConstructionXML(sb);
 
 		// save cas session
 		if (app.hasGuiManager() && app.getGuiManager().hasCasView()) {
-			addStr = app.getGuiManager().getCasView().getSessionXML();
-			sb.ensureCapacity(sb.length() + addStr.length());
-			sb.append(addStr);
+			app.getGuiManager().getCasView().getSessionXML(sb);
 		}
-			
-		sb.ensureCapacity(sb.length() + 20);
+
 		sb.append("</geogebra>");
 
 		/*

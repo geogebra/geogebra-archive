@@ -621,19 +621,24 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * Returns this algorithm and it's output objects (GeoElement) in XML format.
      * GeoGebra File Format.
      */
-    final public String getXML() {
-    	return getXML(true);
+	public void getXML(StringBuilder sb) {
+    	getXML(sb, true);
     }
     	
-    final String getXML(boolean includeOutputGeos) {  
+	public String getXML() {
+		StringBuilder sb = new StringBuilder();
+    	getXML(sb, true);
+    	return sb.toString();
+    }
+    	
+    final void getXML(StringBuilder sb, boolean includeOutputGeos) {  
         // this is needed for helper commands like 
         // intersect for single intersection points
-        if (!isPrintedInXML) return ""; 
+        if (!isPrintedInXML) return; 
         
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);                           
-        StringBuilder sb = new StringBuilder();
         
         try {
 	        // command
@@ -650,7 +655,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		            geo = output[i];
 		            // save only GeoElements that have a valid label
 		            if (geo.isLabelSet()) {
-		                sb.append(geo.getXML());
+		                geo.getXML(sb);
 		            }
 		        }
 	        }            
@@ -659,7 +664,6 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         }
         
         kernel.setTranslateCommandName(oldValue);        
-        return sb.toString();
     }
 
     /**

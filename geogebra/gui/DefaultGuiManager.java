@@ -278,15 +278,12 @@ public class DefaultGuiManager implements GuiManager {
 			spreadsheetView.traceToSpreadsheet(geo);		
 	}
 	
-	public String getSpreadsheetViewXML() {
+	public void getSpreadsheetViewXML(StringBuilder sb) {
 		if (spreadsheetView != null)
-			return spreadsheetView.getXML();
-		else
-			return "";
+			spreadsheetView.getXML(sb);
 	}
 	
-	public String getConsProtocolXML() {
-		StringBuilder sb = new StringBuilder();
+	public void getConsProtocolXML(StringBuilder sb) {
 	
 		if (constProtocol != null)
 			sb.append(constProtocol.getConsProtocolXML());
@@ -311,8 +308,7 @@ public class DefaultGuiManager implements GuiManager {
 			sb.append("\"");
 			sb.append("/>\n");
 		}
-		
-		return sb.toString();
+
 	}
 	
 	/**
@@ -439,8 +435,8 @@ public class DefaultGuiManager implements GuiManager {
 		}
 	}
 	
-	public String getLayoutXml(boolean isPreference) {
-		return layout.getXml(isPreference);
+	public void getLayoutXml(StringBuilder sb, boolean isPreference) {
+		layout.getXml(sb, isPreference);
 	}
 	
 	public JComponent getLayoutRoot() {

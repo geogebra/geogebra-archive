@@ -348,11 +348,11 @@ public class Macro {
     		ConstructionElement ce = (ConstructionElement) it.next();    		    		
     		
     		if (ce.isGeoElement()) {
-    			macroConsXML.append(ce.getXML());
+    			ce.getXML(macroConsXML);
     		}
     		else if (ce.isAlgoElement()) {
     			AlgoElement algo = (AlgoElement) ce;
-        		macroConsXML.append(algo.getXML(false));    			
+        		algo.getXML(macroConsXML, false);    			
     		}
     	}
     	
@@ -525,8 +525,7 @@ public class Macro {
 	 * Returns XML representation of this macro for
 	 * saving in a ggb file.
 	 */
-    public String getXML() {      
-        StringBuilder sb = new StringBuilder();               
+    public void getXML(StringBuilder sb) {               
         sb.append("<macro cmdName=\"");
         sb.append(Util.encodeXML(cmdName));         
         sb.append("\" toolName=\"");
@@ -565,10 +564,9 @@ public class Macro {
         
         // macro construction XML
        // sb.append(macroConsXML);
-        sb.append(macroCons.getConstructionXML());
+        macroCons.getConstructionXML(sb);
         
         sb.append("</macro>\n");           
-        return sb.toString();
     }
 
 	public final boolean isShowInToolBar() {
