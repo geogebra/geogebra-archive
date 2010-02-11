@@ -16,7 +16,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 /**
- * Try to expand the given function 
+ * Find asymptotes
  * 
  * @author Michael Borcherds
  */
@@ -92,6 +92,86 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		Application.debug("input:"+sb.toString());
 		Application.debug("verticalAsymptotes: "+verticalAsymptotes);
 		
+	    sb.setLength(0);
+        sb.append("Differentiate(x)");
+        sb.append(functionIn);
+		String firstDerivative = kernel.evaluateMathPiper(sb.toString());
+
+	    sb.setLength(0);
+        sb.append("Differentiate(x)");
+        sb.append(firstDerivative);
+		String secondDerivative = kernel.evaluateMathPiper(sb.toString());
+		
+		StringBuilder diagonalAsymptotes = new StringBuilder();
+		String gradientStrMinus="";
+		String interceptStrMinus="";
+		
+		sb.setLength(0);
+        sb.append("Limit(x,-Infinity)");
+        sb.append(secondDerivative);
+		String limitMinusInfinity2d = kernel.evaluateMathPiper(sb.toString());
+		if (limitMinusInfinity2d.equals("0")) {
+			// look for diagonal asymptote
+			
+			sb.setLength(0);
+	        sb.append("Limit(x,-Infinity)");
+	        sb.append(firstDerivative);
+			gradientStrMinus = kernel.evaluateMathPiper(sb.toString());
+			
+			if (!mathPiperError(gradientStrMinus)) {
+				sb.setLength(0);
+		        sb.append("Limit(x,-Infinity)Simplify(");
+		        sb.append(functionIn);
+		        sb.append("-");
+		        sb.append(gradientStrMinus);
+		        sb.append("*x)");
+				interceptStrMinus = kernel.evaluateMathPiper(sb.toString());
+				
+				if (!mathPiperError(interceptStrMinus)) {
+					diagonalAsymptotes.append("y=");
+					diagonalAsymptotes.append(gradientStrMinus);
+					diagonalAsymptotes.append("*x+");
+					diagonalAsymptotes.append(interceptStrMinus);
+					Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
+				}
+			}		
+		}
+		
+
+		sb.setLength(0);
+        sb.append("Limit(x,Infinity)");
+        sb.append(secondDerivative);
+		String limitPlusInfinity2d = kernel.evaluateMathPiper(sb.toString());
+		if (limitPlusInfinity2d.equals("0")) {
+			// look for diagonal asymptote
+			
+			sb.setLength(0);
+	        sb.append("Limit(x,Infinity)");
+	        sb.append(firstDerivative);
+			String gradientStrPlus = kernel.evaluateMathPiper(sb.toString());
+			
+			if (!mathPiperError(gradientStrPlus)) {
+				sb.setLength(0);
+		        sb.append("Limit(x,Infinity)Simplify(");
+		        sb.append(functionIn);
+		        sb.append("-");
+		        sb.append(gradientStrPlus);
+		        sb.append("*x)");
+				String interceptStrPlus = kernel.evaluateMathPiper(sb.toString());
+				
+				if (!mathPiperError(interceptStrPlus) && !gradientStrPlus.equals(gradientStrMinus) && !interceptStrPlus.equals(interceptStrMinus)) {
+					if (diagonalAsymptotes.length() > 0) diagonalAsymptotes.append(",");
+					diagonalAsymptotes.append("y=");
+					diagonalAsymptotes.append("gradientStr");
+					diagonalAsymptotes.append("*x+");
+					diagonalAsymptotes.append("interceptStr");
+					Application.debug("diagonal asymptote plus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
+				}
+			}		
+		}
+		
+
+		
 		boolean addComma = false;
 		
 	    sb.setLength(0);
@@ -113,6 +193,11 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
 	    	verticalAsymptotes = verticalAsymptotes.replaceAll("==", "=");
 	    	sb.append(verticalAsymptotes);
+	    	addComma = true;
+	    }
+	    if (diagonalAsymptotes.length() > 0) {
+	    	if (addComma) sb.append(",");
+	    	sb.append(diagonalAsymptotes);
 	    }
 	    sb.append("}");
 		
