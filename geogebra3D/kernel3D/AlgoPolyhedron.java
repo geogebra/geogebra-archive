@@ -78,7 +78,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			
 			//base of the pyramid
 			polyhedron.startNewFace();
-			for (int i=numPoints-2; i>=0; i--)
+			//for (int i=numPoints-2; i>=0; i--)
+			for (int i=0; i<numPoints-1; i++)
 				polyhedron.addPointToCurrentFace(this.inputPoints[i]);
 			polyhedron.endCurrentFace();
 			
@@ -131,7 +132,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			
 			//bottom of the prism
 			polyhedron.startNewFace();
-			for (int i=numPoints-1; i>=0; i--)
+			//for (int i=numPoints-1; i>=0; i--)
+			for (int i=0; i<numPoints; i++)
 				polyhedron.addPointToCurrentFace(points[i]);
 			polyhedron.endCurrentFace();
 			
