@@ -354,8 +354,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	/**
 	   * save object in XML format
 	   */ 
-	  public final String getXML() {
-		 StringBuilder sb = new StringBuilder();
+	  public final void getXML(StringBuilder sb) {
 	 
 		 // an independent text needs to add
 		 // its expression itself
@@ -377,8 +376,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		  sb.append("\">\n");
 		  getXMLtags(sb);
 		  sb.append("</element>\n");
-	  	  
-		  return sb.toString();
+
 	  }
 
 	/**

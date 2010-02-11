@@ -530,8 +530,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	/**
 	   * save object in XML format
 	   */ 
-	  public final String getXML() {
-		 StringBuilder sb = new StringBuilder();
+	  public final void getXML(StringBuilder sb) {
 		 		 
 		 // an independent list needs to add
 		 // its expression itself
@@ -586,8 +585,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 				sb.append("\"/>\n");
 			}
 		  sb.append("</element>\n");
-		  
-		  return sb.toString();
+
 	  }
 	  
 	  	/**

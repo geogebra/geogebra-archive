@@ -393,8 +393,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	/**
 	   * save object in xml format
 	   */ 
-	  public final String getXML() {
-		 StringBuilder sb = new StringBuilder();
+	  public final void getXML(StringBuilder sb) {
 		 
 		 // an indpendent function needs to add
 		 // its expression itself
@@ -417,8 +416,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		  getXMLtags(sb);
 		  sb.append(getCaptionXML());
 		  sb.append("</element>\n");
-		  
-		  return sb.toString();
+
 	  }
 	
 	/**
