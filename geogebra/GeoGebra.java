@@ -19,8 +19,8 @@ import java.net.URL;
 public class GeoGebra extends Object {
 	
 	// GeoGebra version
-	public static final String BUILD_DATE = "February 09, 2010";
-	public static final String VERSION_STRING = "3.3.63.0";
+	public static final String BUILD_DATE = "February 1, 2010";
+	public static final String VERSION_STRING = "3.3.64.0";
 	public static final String SHORT_VERSION_STRING = "4.0"; // used for online archive
 
 	// File format versions
