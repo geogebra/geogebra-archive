@@ -25,6 +25,7 @@ public class GeoGebra extends Object {
 
 	// File format versions
 	public static final String XML_FILE_FORMAT = "3.3";
+	public static final String XSD_FILENAME = "ggb32.xsd"; // TODO change to ggb40.xsd
 	public static final String I2G_FILE_FORMAT = "1.00.20080731";
 	
 	// pre-releases and I2G

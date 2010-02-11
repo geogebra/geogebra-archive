@@ -696,7 +696,10 @@ public class MyXMLio {
 	public String getFullXML() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
+		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\"");
+		sb.append(" xsi:noNamespaceSchemaLocation=\"http://www.geogebra.org/");
+		sb.append(GeoGebra.XSD_FILENAME); //eg	ggb32.xsd
+		sb.append("\" xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >\n");
 
 		// save gui settings
 		sb.append(app.getCompleteUserInterfaceXML(false));		
