@@ -151,7 +151,7 @@ public class Test3D{
         //demos();
         //testCube(true);//testSave("polyhedron3d");
         //testLoad("polyhedron3d");
-        //testLoad("tetrahedron-and-plane-empty");
+        //testLoad("tetrahedron-and-plane");
         
         //testNumerous(400, Math.PI/48, 0.01);
         //testNumerous2(400, Math.PI/6, 0.01);

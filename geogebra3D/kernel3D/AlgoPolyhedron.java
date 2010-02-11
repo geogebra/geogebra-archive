@@ -308,6 +308,16 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	
 	protected void compute() {
 		switch(type){
+		case GeoPolyhedron.TYPE_PYRAMID:
+			//TODO remove this and replace with tesselation
+			Ggb3DVector interiorPoint = new Ggb3DVector(4);
+			for (int i=0;i<inputPoints.length;i++){
+				interiorPoint = (Ggb3DVector) interiorPoint.add(inputPoints[i].getCoords());
+			}
+			interiorPoint = (Ggb3DVector) interiorPoint.mul((double) 1/(inputPoints.length));
+			polyhedron.setInteriorPoint(interiorPoint);
+			//Application.debug("interior\n"+interiorPoint);
+			break;
 		case GeoPolyhedron.TYPE_PRISM:
 			//translation from bottom to top
 			Ggb3DVector v = inputPoints[inputPoints.length-1].getCoords().sub(inputPoints[0].getCoords());
@@ -323,7 +333,16 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			
 			
 			polyhedron.updatePolygonsAndSegmentsFromParentAlgorithms();
-			//polyhedron.update();
+			//polyhedron.update();			
+			
+			//TODO remove this and replace with tesselation
+			interiorPoint = new Ggb3DVector(4);
+			for (int i=0;i<inputPoints.length-1;i++){
+				interiorPoint = (Ggb3DVector) interiorPoint.add(inputPoints[i].getCoords());
+			}
+			interiorPoint = (Ggb3DVector) interiorPoint.mul((double) 1/(inputPoints.length-1));
+			polyhedron.setInteriorPoint((Ggb3DVector) interiorPoint.add(v.mul(0.5)));
+			
 			break;
 		case GeoPolyhedron.TYPE_NONE:
 			//Application.printStacktrace("compute");

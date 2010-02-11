@@ -8,6 +8,7 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
@@ -145,8 +146,29 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 * @return the normal of the polygon's plane
 	 */
 	public Ggb3DVector getNormal(){
-		 return coordSys.getMatrix4x4().getVz();
+		
+		
+		if (interiorPoint==null)
+			return coordSys.getMatrix4x4().getVz();
+		
+		Ggb3DVector vn = coordSys.getMatrix4x4().getVz();
+		
+		//Application.debug("polygon("+getLabel()+") : "+vn.dotproduct(interiorPoint.sub(getPoint3D(0))));
+
+		if (vn.dotproduct(interiorPoint.sub(getPoint3D(0)))>0)
+			return (Ggb3DVector) vn.mul(-1); //vn is oriented to interior
+		else
+			return vn; 
 	 }
+	
+	
+	/** interior point for oriented surfaces */
+	//TODO remove this and replace with tesselation
+	private Ggb3DVector interiorPoint = null;
+	
+	public void setInteriorPoint(Ggb3DVector point){
+		interiorPoint = point;
+	}
 	 
 
 	 /**
