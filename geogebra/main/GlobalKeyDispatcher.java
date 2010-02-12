@@ -201,7 +201,17 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				}
 				break;
 			
-			// Ctrl + F: refresh views
+				// Ctrl + H / G: Show Hide objects (labels)
+			case KeyEvent.VK_G:
+			case KeyEvent.VK_H:
+				if (event.isShiftDown()) 
+					app.showHideSelectionLabels();
+				else
+					app.showHideSelection();
+				consumed = true;								
+				break;
+				
+				// Ctrl + F: refresh views
 			case KeyEvent.VK_F:
 				app.refreshViews();
 				consumed = true;								

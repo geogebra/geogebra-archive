@@ -87,10 +87,10 @@ public class EditMenu extends BaseMenu {
 		setMenuShortCutAccelerator(mi, 'I');
 
 		mi = add(showhideAction);
-		setMenuShortCutAccelerator(mi, 'H');
+		setMenuShortCutAccelerator(mi, 'G');
 
 		mi = add(showhideLabelsAction);
-		setMenuShortCutShiftAccelerator(mi, 'H');
+		setMenuShortCutShiftAccelerator(mi, 'G');
 
 		addSeparator();
 
