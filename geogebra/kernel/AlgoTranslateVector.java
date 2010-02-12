@@ -78,11 +78,9 @@ public class AlgoTranslateVector extends AlgoElement {
     }       
     
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("TranslationOfAtoB",v.getLabel(),A.getLabel()));
+    	return app.getPlain("TranslationOfAtoB",v.getLabel(),A.getLabel());
 
-        return sb.toString();
     }
 }

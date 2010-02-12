@@ -52,12 +52,9 @@ public class AlgoTurningPointPolynomial extends AlgoRootsPolynomial {
     }
 
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("InflectionPointofA",f.getLabel()));
-        
-        return sb.toString();
+        return app.getPlain("InflectionPointofA",f.getLabel());
     }
 
 }

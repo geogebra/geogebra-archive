@@ -99,8 +99,7 @@ public class AlgoSumText extends AlgoElement {
     	
     	
     	if (sb == null) sb = new StringBuilder();
-    	
-    	sb.setLength(0);
+    	else sb.setLength(0);
     	
     	for (int i = 0 ; i < size ; i++) {
     		GeoElement p = geoList.get(i);

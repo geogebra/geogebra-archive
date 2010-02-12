@@ -104,10 +104,6 @@ public class AlgoEllipseFociPoint extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(app.getPlain("EllipseWithFociABPassingThroughC",A.getLabel(),B.getLabel(),C.getLabel()));
-        
-        return sb.toString();
+        return app.getPlain("EllipseWithFociABPassingThroughC",A.getLabel(),B.getLabel(),C.getLabel());
     }
 }

@@ -94,12 +94,9 @@ public class AlgoRotatePoint extends AlgoTransformation {
     }
        
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
-
         // Michael Borcherds 2008-03-25
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("ARotatedByAngleB",Ageo.getLabel(),angleGeo.getLabel()));
+        return app.getPlain("ARotatedByAngleB",Ageo.getLabel(),angleGeo.getLabel());
 
-        return sb.toString();
     }
 }

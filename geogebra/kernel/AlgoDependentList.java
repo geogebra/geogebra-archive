@@ -118,8 +118,11 @@ public class AlgoDependentList extends AlgoElement {
     	}
     }   
     
+	StringBuilder sb; 
     final public String toString() {
-    	StringBuilder sb = new StringBuilder();
+
+        if (sb == null) sb = new StringBuilder();
+        else sb.setLength(0);
     	sb.append("{");
     	
     	if(input.length > 0) { // Florian Sonner 2008-07-12

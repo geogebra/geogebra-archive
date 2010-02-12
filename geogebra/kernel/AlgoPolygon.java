@@ -206,8 +206,11 @@ public class AlgoPolygon extends AlgoElement {
         poly.updateRegionCS();
     }   
     
+    StringBuilder sb;
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
+
+        if (sb == null) sb = new StringBuilder();
+        else sb.setLength(0);
   
         sb.append(app.getPlain("Polygon"));
         sb.append(' ');     

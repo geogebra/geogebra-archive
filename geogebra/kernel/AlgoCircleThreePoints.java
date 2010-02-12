@@ -262,12 +262,8 @@ public class AlgoCircleThreePoints extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
-
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("CircleThroughABC",A.getLabel(),B.getLabel(),C.getLabel()));
-
-        return sb.toString();
+    	return app.getPlain("CircleThroughABC",A.getLabel(),B.getLabel(),C.getLabel());
     }
 }

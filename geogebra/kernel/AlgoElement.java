@@ -515,8 +515,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         return false;
     }
 
+    StringBuilder sb = new StringBuilder();
+
     public String getNameDescription() {
-        StringBuilder sb = new StringBuilder();
+        sb.setLength(0);
         if (output[0].isLabelSet()) sb.append(output[0].getNameDescription());
         for (int i = 1; i < output.length; ++i) {
             if (output[i].isLabelSet()) {
@@ -530,7 +532,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 
   
     public String getAlgebraDescription() {
-        StringBuilder sb = new StringBuilder();
+    	 sb.setLength(0);
         
         if (output[0].isLabelSet()) sb.append(output[0].getAlgebraDescription());       
         for (int i = 1; i < output.length; ++i) {
@@ -553,7 +555,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         if (cmdname.equals("Expression"))
 			return toString();
 		else {
-            StringBuilder sb = new StringBuilder();
+			 sb.setLength(0);
             if (kernel.isTranslateCommandName()) {
                 sb.append(app.getCommand(cmdname));        
             } else {

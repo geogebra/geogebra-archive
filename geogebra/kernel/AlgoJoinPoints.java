@@ -76,19 +76,10 @@ public class AlgoJoinPoints extends AlgoElement {
     }   
     
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
-        
+     
         // Michael Borcherds 2008-03-31
         // simplified to allow better translation
-        sb.append(app.getPlain("LineThroughAB",P.getLabel(),Q.getLabel()));
+        return app.getPlain("LineThroughAB",P.getLabel(),Q.getLabel());
 
-        /*
-        sb.append(app.getPlain("LineThrough"));
-        sb.append(' ');
-        sb.append(P.getLabel());
-        sb.append(", ");
-        sb.append(Q.getLabel());*/
-        
-        return sb.toString();
     }
 }

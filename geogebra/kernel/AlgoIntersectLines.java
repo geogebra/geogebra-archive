@@ -85,11 +85,9 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract {
     }
 
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("IntersectionPointOfAB",g.getLabel(),h.getLabel()));
-        
-        return sb.toString();
+        return app.getPlain("IntersectionPointOfAB",g.getLabel(),h.getLabel());
+
     }
 }

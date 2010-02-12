@@ -81,12 +81,8 @@ public class AlgoUnitVectorVector extends AlgoElement {
     }   
     
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
-        
         // Michael Borcherds 2008-03-31
         // simplified to allow better translation
-        sb.append(app.getPlain("UnitVectorOfA",v.getLabel()));
-
-        return sb.toString();
+    	return app.getPlain("UnitVectorOfA",v.getLabel());
     }
 }

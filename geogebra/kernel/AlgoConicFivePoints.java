@@ -140,12 +140,8 @@ public class AlgoConicFivePoints extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
-
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("ConicThroughABCDE",P[0].getLabel(),P[1].getLabel(),P[2].getLabel(),P[3].getLabel(),P[4].getLabel()));
-
-        return sb.toString();
+        return app.getPlain("ConicThroughABCDE",P[0].getLabel(),P[1].getLabel(),P[2].getLabel(),P[3].getLabel(),P[4].getLabel());
     }
 }

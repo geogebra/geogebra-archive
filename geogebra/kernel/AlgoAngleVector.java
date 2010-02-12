@@ -65,11 +65,9 @@ public class AlgoAngleVector extends AlgoElement {
     }
 
     public final String toString() {
-        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("AngleOfA",vec.getLabel()));
+        return app.getPlain("AngleOfA",vec.getLabel());
 
-        return sb.toString();
     }
 }

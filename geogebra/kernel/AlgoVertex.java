@@ -128,11 +128,9 @@ public class AlgoVertex extends AlgoElement {
     }
     
     public final String toString() {
-        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("VertexOfA",c.getLabel()));
-        
-        return sb.toString();
+        return app.getPlain("VertexOfA",c.getLabel());
+
     }
 }

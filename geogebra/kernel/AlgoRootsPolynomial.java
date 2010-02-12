@@ -521,12 +521,9 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("RootOfA",f.getLabel()));
-        
-        return sb.toString();
+    	return app.getPlain("RootOfA",f.getLabel());
     }
 
 }

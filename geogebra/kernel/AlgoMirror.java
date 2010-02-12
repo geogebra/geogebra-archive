@@ -114,19 +114,9 @@ public class AlgoMirror extends AlgoTransformation {
     }       
     
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
-        
         // Michael Borcherds 2008-03-31
         // simplified to allow better translation
-        sb.append(app.getPlain("AMirroredAtB",geoIn.getLabel(),mirror.getLabel()));
+        return app.getPlain("AMirroredAtB",geoIn.getLabel(),mirror.getLabel());
 
-        /*
-        sb.append(geoIn.getLabel());
-        sb.append(' ');        
-        sb.append(app.getPlain("mirroredAt"));
-        sb.append(' ');
-        sb.append(mirror.getLabel());   */
-        
-        return sb.toString();
     }
 }

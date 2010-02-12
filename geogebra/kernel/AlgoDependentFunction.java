@@ -193,9 +193,11 @@ public class AlgoDependentFunction extends AlgoElement {
         }
         return false;
     }
-
+    
+    StringBuilder sb;
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
+        if (sb == null) sb = new StringBuilder();
+        else sb.setLength(0);
         if (f.isLabelSet()) {
             sb.append(f.label);
             sb.append("(x) = ");

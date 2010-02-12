@@ -87,11 +87,8 @@ public class AlgoTranslate extends AlgoTransformation {
 
     
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
 
         // Michael Borcherds 2008-03-24 simplified code!
-        sb.append(app.getPlain("TranslationOfAbyB",inGeo.getLabel(),v.getLabel()));
-        
-        return sb.toString();
+        return app.getPlain("TranslationOfAbyB",inGeo.getLabel(),v.getLabel());
     }
 }

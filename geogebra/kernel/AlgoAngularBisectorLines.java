@@ -261,11 +261,8 @@ public class AlgoAngularBisectorLines extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        sb.append(app.getPlain("AngleBisectorOfAB",g.getLabel(),h.getLabel()));
-
-        return sb.toString();
+    	return app.getPlain("AngleBisectorOfAB",g.getLabel(),h.getLabel());
     }
 }

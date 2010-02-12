@@ -137,15 +137,12 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     }
 
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
-
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        if (poly!=null)
-            sb.append(app.getPlain("SegmentABofC",P.getLabel(),Q.getLabel(),poly.getNameDescription()));
+        if (poly != null)
+        	return app.getPlain("SegmentABofC",P.getLabel(),Q.getLabel(),poly.getNameDescription());
         else
-            sb.append(app.getPlain("SegmentAB",P.getLabel(),Q.getLabel()));
-      	
-        return sb.toString();
+        	return app.getPlain("SegmentAB",P.getLabel(),Q.getLabel());
+
     }
 }

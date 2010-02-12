@@ -105,8 +105,10 @@ public class AlgoDerivative extends AlgoElement {
         }      
     }
 
+    StringBuilder sb = new StringBuilder();   
     final public String toString() {
-        StringBuilder sb = new StringBuilder();   
+        if (sb == null) sb = new StringBuilder();
+        else sb.setLength(0);
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
         if (order != null)
