@@ -26,21 +26,26 @@ import geogebra.main.Application;
 public class AlgoLimit extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private GeoFunction f;
-	private NumberValue num; // input
+	protected GeoFunction f;
+	protected NumberValue num; // input
     private GeoNumeric outNum; // output        
     
-    private StringBuilder sb = new StringBuilder();
+    protected StringBuilder sb = new StringBuilder();
    
     public AlgoLimit(Construction cons, String label, GeoFunction f, NumberValue num) {
     	super(cons);
         this.f = f;            	
         this.num = num;
     	
+        init(label);
+    }
+    
+    private void init(String label) {
         outNum = new GeoNumeric(cons);                
         setInputOutput(); // for AlgoElement        
         compute();
         outNum.setLabel(label);
+    	
     }
     
     protected String getClassName() {
@@ -71,13 +76,7 @@ public class AlgoLimit extends AlgoElement {
         
 	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 
-	    sb.setLength(0);
-        sb.append("Limit(x,");
-        sb.append(num.getDouble()+"");
-        sb.append(")");
-        sb.append(functionIn);
-        
- 		String functionOut = kernel.evaluateMathPiper(sb.toString());
+ 		String functionOut = kernel.evaluateMathPiper(getMathPiperString(functionIn));
  		
 		Application.debug("Limit input:"+sb.toString());
 		Application.debug("Limit output:"+functionOut);
@@ -128,6 +127,21 @@ public class AlgoLimit extends AlgoElement {
     
     final public String toString() {
     	return getCommandDescription();
+    }
+    
+    /*
+     * over-ridden by AlgoLimitUp/Down
+     */
+    protected String getMathPiperString(String functionIn) {
+	    sb.setLength(0);
+        sb.append("Limit(x,");
+        sb.append(num.getDouble()+"");
+        sb.append(")");
+        sb.append(functionIn);
+        
+        return sb.toString();
+        
+
     }
 
 }

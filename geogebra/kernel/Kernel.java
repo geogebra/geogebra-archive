@@ -5051,6 +5051,24 @@ public class Kernel {
 	}
 	
 	/**
+	 * LimitUp
+	 * Michael Borcherds 
+	 */
+	final public GeoNumeric LimitUp(String label, GeoFunction func, NumberValue num) {		
+		AlgoLimitUp algo = new AlgoLimitUp(cons, label, func, num);
+		return algo.getResult();			
+	}
+	
+	/**
+	 * LimitDown
+	 * Michael Borcherds 
+	 */
+	final public GeoNumeric LimitDown(String label, GeoFunction func, NumberValue num) {		
+		AlgoLimitDown algo = new AlgoLimitDown(cons, label, func, num);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Coefficients
 	 * Michael Borcherds 2008-04-04
 	 */
