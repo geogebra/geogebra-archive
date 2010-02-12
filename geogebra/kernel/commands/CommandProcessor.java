@@ -5981,7 +5981,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 				
 				for (int col = 0 ; col < list.size() ; col++) {
 					String cellName = GeoElement.getSpreadsheetCellName(col, row);
-					GeoElement cellGeo = list.get(col);
+					GeoElement cellGeo = list.get(col).copy();
 					
 					
 					try {
@@ -6072,7 +6072,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 				
 				for (int row = 0 ; row < list.size() ; row++) {
 					String cellName = GeoElement.getSpreadsheetCellName(col, row);
-					GeoElement cellGeo = list.get(row);
+					GeoElement cellGeo = list.get(row).copy();
 					
 					try {
 						GeoElement.setSpreadsheetCell(app, row, col, cellGeo);
@@ -6193,7 +6193,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 								for (int r = 0 ; r < rows ; r++) {
 									GeoList rowList = (GeoList) list.get(r);
 									for (int c1 = 0 ; c1 < cols ; c1++) {
-										GeoElement.setSpreadsheetCell(app, row + r, column + c1, rowList.get(c1));
+										GeoElement.setSpreadsheetCell(app, row + r, column + c1, rowList.get(c1).copy());
 									}
 								}
 							} catch (Exception e) {
@@ -6210,7 +6210,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 							for (int i =  list.size() - 1 ; i >= 0 ; i--)
 								try {
 									//Application.debug("setting "+row+" "+(column+i)+" to "+list.get(i).toString());
-									GeoElement.setSpreadsheetCell(app, row, column + i, list.get(i));
+									GeoElement.setSpreadsheetCell(app, row, column + i, list.get(i).copy());
 								} catch (Exception e) {
 									e.printStackTrace();
 									throw argErr(app, c.getName(), arg[1]);
