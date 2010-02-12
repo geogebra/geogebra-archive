@@ -3351,11 +3351,13 @@ public abstract class GeoElement
 			sb.append("\"");
 			sb.append("/>\n");
 			
-			sb.append("\t<tooltipMode");
-			sb.append(" val=\"");
-			sb.append(tooltipMode);
-			sb.append("\"");
-			sb.append("/>\n");
+			if (tooltipMode != TOOLTIP_ALGEBRAVIEW_SHOWING) {
+				sb.append("\t<tooltipMode");
+				sb.append(" val=\"");
+				sb.append(tooltipMode);
+				sb.append("\"");
+				sb.append("/>\n");
+			}
 		}
 
 		// trace on or off
