@@ -254,17 +254,19 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
                 //  get difference f - line
                 Function.difference(f.getFunction(), line, diffFunction);               
                 calcRoots(diffFunction, 0);
-                
-                // check if the intersection points really are on the line
-                // this is important for segments and rays
-                for (int i = 0; i < curRealRoots; i++) {
-                	tempPoint.setCoords(curRoots[i], f.evaluate(curRoots[i]), 1.0);
-                	if (! line.isIntersectionPointIncident(tempPoint, Kernel.MIN_PRECISION) ){
-                		removeRoot(i);
-                		i--;
-                	}                	
-                }             
             }
+            
+            // check if the intersection points really are on the line
+            // this is important for segments and rays
+            //Zbynek Konecny 2010-02-12 -- following must be done for both vertical and standard
+            for (int i = 0; i < curRealRoots; i++) {
+            	tempPoint.setCoords(curRoots[i], f.evaluate(curRoots[i]), 1.0);
+            	if (! line.isIntersectionPointIncident(tempPoint, Kernel.MIN_PRECISION) ){
+            		removeRoot(i);
+            		i--;
+            	}                	
+            }
+            //end Zbynek Konecny
         } else {
             curRealRoots = 0;
         }
