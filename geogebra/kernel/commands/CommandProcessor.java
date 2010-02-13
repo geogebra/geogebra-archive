@@ -6135,7 +6135,6 @@ class CmdOsculatingCircle extends CommandProcessor {
 
 					//Application.debug(minCol+" "+maxCol+" "+minRow+" "+maxRow);
 					
-					StringBuilder sb = new StringBuilder();
 			    	
 				
 				GeoElement geo = (GeoElement) arg[1];

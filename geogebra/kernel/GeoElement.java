@@ -1838,11 +1838,17 @@ public abstract class GeoElement
 		
 		sb.append(cellName);
 		if (cellGeo.isGeoFunction()) sb.append("(x)");
-		sb.append("=");
-
+		
 		// getLabel() returns algoParent.getCommandDescription() or  toValueString()
 		// if there's no label (eg {1,2})
-		sb.append(cellGeo.getLabel());
+		String label = cellGeo.getLabel();
+		
+		// need an = for B3=B4
+		// need a : for B2:x² + y² = 2
+		if (label.indexOf('=') == -1) sb.append('=');
+		else sb.append(':');
+
+		sb.append(label);
 		
 		// we only sometimes need (x), eg
 		// B2(x)=f(x)
