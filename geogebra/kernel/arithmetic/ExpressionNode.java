@@ -1504,6 +1504,8 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                } else {
 	                    if (nounary) {
 	                    	switch (STRING_TYPE) {
+                			case STRING_TYPE_PGF:
+                			case STRING_TYPE_PSTRICKS:
 	                			case STRING_TYPE_GEOGEBRA_XML:
 	                				sb.append(" * ");  
 	                				break;
@@ -1713,6 +1715,10 @@ implements ExpressionValue, ExpressionNodeConstants {
             			sb.append("Cos(");
             			break;
             			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("COS(");  
+	                	break;
+	                	
             		default:
             			sb.append("cos(");         		
             	}    		
@@ -1730,6 +1736,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Sin(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("SIN(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("sin(");         		
 	        	}           		
@@ -1747,6 +1757,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Tan(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("TAN(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("tan(");         		
 	        	}            		
@@ -1764,6 +1778,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Csc(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("CSC(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("csc(");         		
 	        	}            		
@@ -1781,6 +1799,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Sec(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("SEC(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("sec(");         		
 	        	}            		
@@ -1798,6 +1820,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Cot(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("COT(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("cot(");         		
 	        	}            		
@@ -1815,6 +1841,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Csch(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("CSCH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("csch(");         		
 	        	}            		
@@ -1832,6 +1862,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Sech(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("SECH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("sech(");         		
 	        	}            		
@@ -1849,6 +1883,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Coth(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("COTH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("coth(");         		
 	        	}            		
@@ -1866,6 +1904,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("ArcCos(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("ACOS(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("acos(");         		
 	        	}  	             	
@@ -1883,6 +1925,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("ArcSin(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("ASIN(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("asin(");         		
 	        	}  	   
@@ -1900,6 +1946,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("ArcTan(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("ATAN(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("atan(");         		
 	        	}  	        	      
@@ -1917,6 +1967,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Cosh(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("COSH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("cosh(");         		
 	        	}  	         	       		                
@@ -1934,6 +1988,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Sinh(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("SINH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("sinh(");         		
 	        	}    		                 
@@ -1951,6 +2009,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Tanh(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("TANH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("tanh(");         		
 	        	}    	
@@ -1968,6 +2030,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("ArcCosh(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("ACOSH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("acosh(");         		
 	        	}           	        	            	
@@ -1985,6 +2051,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("ArcSinh(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("ASINH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("asinh(");         		
 	        	}               	
@@ -2002,6 +2072,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("ArcTanh(");
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("ATANH(");  
+	                	break;
+	                	
 	        		default:
 	        			sb.append("atanh(");         		
 	        	}      
@@ -2030,6 +2104,12 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    sb.append(')');
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("EXP(");  
+	        			sb.append(leftStr);
+	        			sb.append(')');
+	                	break;
+        			
 	        		default:	      
 	        			sb.append(Kernel.EULER_STRING);
 	        			if (left.isLeaf()) {
@@ -2059,6 +2139,8 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("log(");	        			
 	        			break;	        	
 	        			
+        			case STRING_TYPE_PSTRICKS:		
+        			case STRING_TYPE_PGF:
 	        		default:
 	        			sb.append("ln("); 
 	        			break;
@@ -2075,6 +2157,18 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    sb.append(')');
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("log(");  
+	        			sb.append(leftStr);
+	        			sb.append(')');
+	                	break;
+        			
+        			case STRING_TYPE_PGF:
+	        			sb.append("log10(");  
+	        			sb.append(leftStr);
+	        			sb.append(')');
+	                	break;
+        			
 	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Ln(");
 	        			sb.append(leftStr);
@@ -2242,6 +2336,12 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                sb.append(')');
 	        			break;
 	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("ceiling(");  
+	        			sb.append(leftStr);
+	        			sb.append(')');
+	                	break;
+
 	        		default:
 	        			sb.append("ceil(");  
 		        		sb.append(leftStr);

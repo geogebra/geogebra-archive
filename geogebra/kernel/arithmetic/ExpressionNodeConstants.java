@@ -9,6 +9,8 @@ public interface ExpressionNodeConstants {
 	public static final int STRING_TYPE_JASYMCA = 2;
 	public static final int STRING_TYPE_MATH_PIPER = 3;
 	public static final int STRING_TYPE_LATEX = 4;
+	public static final int STRING_TYPE_PSTRICKS = 5;
+	public static final int STRING_TYPE_PGF = 6;
 	
 	public static final String UNICODE_PREFIX = "uNiCoDe";
 	public static final String UNICODE_DELIMITER = "U";  
