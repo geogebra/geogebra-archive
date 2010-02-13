@@ -364,8 +364,8 @@ public class CommandDispatcher {
     	cmdTable.put("Degree", new CmdDegree(kernel));   
     	cmdTable.put("Coefficients", new CmdCoefficients(kernel));   
     	cmdTable.put("Limit", new CmdLimit(kernel));   
-    	cmdTable.put("LimitUp", new CmdLimitUp(kernel));   
-    	cmdTable.put("LimitDown", new CmdLimitDown(kernel));   
+    	cmdTable.put("LimitBelow", new CmdLimitBelow(kernel));   
+    	cmdTable.put("LimitAbove", new CmdLimitAbove(kernel));   
  
      	                  	
     	

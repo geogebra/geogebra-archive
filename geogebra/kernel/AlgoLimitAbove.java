@@ -23,14 +23,14 @@ import geogebra.main.Application;
  * 
  * @author Michael Borcherds
  */
-public class AlgoLimitDown extends AlgoLimit {
+public class AlgoLimitAbove extends AlgoLimit {
    
-    public AlgoLimitDown(Construction cons, String label, GeoFunction f, NumberValue num) {
+    public AlgoLimitAbove(Construction cons, String label, GeoFunction f, NumberValue num) {
     	super(cons, label, f, num);
     }
     
     protected String getClassName() {
-        return "AlgoLimitDown";
+        return "AlgoLimitAbove";
     }
      
     protected String getMathPiperString(String functionIn) {

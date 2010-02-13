@@ -5051,11 +5051,11 @@ public class Kernel {
 	}
 	
 	/**
-	 * LimitUp
+	 * LimitBelow
 	 * Michael Borcherds 
 	 */
-	final public GeoNumeric LimitUp(String label, GeoFunction func, NumberValue num) {		
-		AlgoLimitUp algo = new AlgoLimitUp(cons, label, func, num);
+	final public GeoNumeric LimitBelow(String label, GeoFunction func, NumberValue num) {		
+		AlgoLimitBelow algo = new AlgoLimitBelow(cons, label, func, num);
 		return algo.getResult();			
 	}
 	
@@ -5063,8 +5063,8 @@ public class Kernel {
 	 * LimitDown
 	 * Michael Borcherds 
 	 */
-	final public GeoNumeric LimitDown(String label, GeoFunction func, NumberValue num) {		
-		AlgoLimitDown algo = new AlgoLimitDown(cons, label, func, num);
+	final public GeoNumeric LimitAbove(String label, GeoFunction func, NumberValue num) {		
+		AlgoLimitAbove algo = new AlgoLimitAbove(cons, label, func, num);
 		return algo.getResult();			
 	}
 	

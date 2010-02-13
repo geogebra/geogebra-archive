@@ -130,7 +130,7 @@ public class AlgoLimit extends AlgoElement {
     }
     
     /*
-     * over-ridden by AlgoLimitUp/Down
+     * over-ridden by AlgoLimitBelow/Above
      */
     protected String getMathPiperString(String functionIn) {
 	    sb.setLength(0);

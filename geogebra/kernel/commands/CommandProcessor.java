@@ -6619,9 +6619,9 @@ class CmdOsculatingCircle extends CommandProcessor {
 		 }    
 		}
  
- class CmdLimitUp extends CommandProcessor {
+ class CmdLimitBelow extends CommandProcessor {
 		
-		public CmdLimitUp (Kernel kernel) {
+		public CmdLimitBelow (Kernel kernel) {
 			super(kernel);
 		}
 		
@@ -6637,7 +6637,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 		            		 (arg[1].isNumberValue())) {
 		                 GeoElement[] ret =
 		                     {
-		                          kernel.LimitUp (
+		                          kernel.LimitBelow (
 		                             c.getLabel(), (GeoFunction)arg[0], (NumberValue)arg[1])};
 		                 return ret;                
 		             }                        
@@ -6651,9 +6651,9 @@ class CmdOsculatingCircle extends CommandProcessor {
 		 }    
 		}
  
- class CmdLimitDown extends CommandProcessor {
+ class CmdLimitAbove extends CommandProcessor {
 		
-		public CmdLimitDown (Kernel kernel) {
+		public CmdLimitAbove (Kernel kernel) {
 			super(kernel);
 		}
 		
@@ -6669,7 +6669,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 		            		 (arg[1].isNumberValue())) {
 		                 GeoElement[] ret =
 		                     {
-		                          kernel.LimitDown (
+		                          kernel.LimitAbove (
 		                             c.getLabel(), (GeoFunction)arg[0], (NumberValue)arg[1])};
 		                 return ret;                
 		             }                        
