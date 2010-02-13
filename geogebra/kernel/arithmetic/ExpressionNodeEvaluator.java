@@ -329,15 +329,38 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             }     
             // list + vector 
             else if (lt.isListValue() && rt.isVectorValue()) { 
-                vec = ((VectorValue)rt).getVector();
-                GeoVec2D.add(vec, ((ListValue)lt) , vec);                                         
-                return vec;
+            	MyList list = ((ListValue)lt).getMyList();
+            	if (list.size() > 0) {
+	            	ExpressionValue ev = list.getListElement(0);
+	            	if (ev.isNumberValue()) { // eg {1,2} + (1,2) treat as point + point
+		                vec = ((VectorValue)rt).getVector();
+		                GeoVec2D.add(vec, ((ListValue)lt) , vec);                                         
+		                return vec;
+	            	}
+            	}
+            	// not a list with numbers, do list operation
+            	MyList myList = ((ListValue) lt).getMyList();
+            	// list lt operation rt
+            	myList.applyRight(operation, rt);
+            	return myList;
+     
             }     
             // vector + list 
             else if (rt.isListValue() && lt.isVectorValue()) { 
-                vec = ((VectorValue)lt).getVector();
-                GeoVec2D.add(vec, ((ListValue)rt) , vec);                                         
-                return vec;
+            	MyList list = ((ListValue)rt).getMyList();
+            	if (list.size() > 0) {
+	            	ExpressionValue ev = list.getListElement(0);
+	            	if (ev.isNumberValue()) { // eg {1,2} + (1,2) treat as point + point
+	                    vec = ((VectorValue)lt).getVector();
+	                    GeoVec2D.add(vec, ((ListValue)rt) , vec);                                         
+	                    return vec;
+	            	}
+            	}
+            	// not a list with numbers, do list operation
+            	MyList myList = ((ListValue) rt).getMyList();
+            	// lt operation list rt
+            	myList.applyLeft(operation, lt);
+            	return myList;
             }     
             // text concatenation (left)
             else if (lt.isTextValue()) { 
