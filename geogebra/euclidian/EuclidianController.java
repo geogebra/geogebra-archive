@@ -1866,7 +1866,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					if (hit != null && hit.isGeoBoolean()) {
 						GeoBoolean bool = (GeoBoolean)(hits.get(0));
 						bool.setValue(!bool.getBoolean());
-						bool.update();
+						bool.updateCascade();
 					} else if (hit != null) {
 						GeoElement geo1 = chooseGeo(hits, true);
 						//ggb3D : geo1 may be null if it's axes or xOy plane
