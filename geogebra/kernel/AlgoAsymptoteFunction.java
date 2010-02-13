@@ -126,17 +126,18 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         sb.append("Simplify(Differentiate(x)");
         sb.append(firstDerivative);
         sb.append(')');
-		String secondDerivative = kernel.evaluateMathPiper(sb.toString());
+		//String secondDerivative = kernel.evaluateMathPiper(sb.toString());
 		
 		StringBuilder diagonalAsymptotes = new StringBuilder();
 		String gradientStrMinus="";
 		String interceptStrMinus="";
 		
-		sb.setLength(0);
-        sb.append("Limit(x,-Infinity)");
-        sb.append(secondDerivative);
-		String limitMinusInfinity2d = kernel.evaluateMathPiper(sb.toString());
-		if (limitMinusInfinity2d.equals("0")) {
+		//sb.setLength(0);
+        // sb.append("Limit(x,-Infinity)");
+        //sb.append(secondDerivative);
+		//String limitMinusInfinity2d = kernel.evaluateMathPiper(sb.toString());
+		//if (limitMinusInfinity2d.equals("0"))
+		{
 			// look for diagonal asymptote
 			
 			sb.setLength(0);
@@ -164,11 +165,12 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		}
 		
 
-		sb.setLength(0);
-        sb.append("Limit(x,Infinity)");
-        sb.append(secondDerivative);
-		String limitPlusInfinity2d = kernel.evaluateMathPiper(sb.toString());
-		if (limitPlusInfinity2d.equals("0")) {
+		//sb.setLength(0);
+        //sb.append("Limit(x,Infinity)");
+        //sb.append(secondDerivative);
+		//String limitPlusInfinity2d = kernel.evaluateMathPiper(sb.toString());
+		//if (limitPlusInfinity2d.equals("0"))
+		{
 			// look for diagonal asymptote
 			
 			sb.setLength(0);
