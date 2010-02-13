@@ -18,20 +18,21 @@ public interface ExpressionNodeConstants {
 	public static final int NO_OPERATION = Integer.MIN_VALUE; 
     
 	// boolean
-	public static final int NOT_EQUAL = -14;
-	public static final int NOT = -13;
-	public static final int OR = -12;
-    public static final int AND = -11;
-    public static final int EQUAL_BOOLEAN = -10;
-    public static final int LESS = -9;
-    public static final int GREATER = -8;
-    public static final int LESS_EQUAL = -7;
-    public static final int GREATER_EQUAL = -6;    
-    public static final int PARALLEL = -5;  
-    public static final int PERPENDICULAR = -4;
-    public static final int IS_ELEMENT_OF = -3;
-    public static final int CONTAINS = -2;
-    public static final int CONTAINS_STRICT = -1;
+	public static final int NOT_EQUAL = -15;
+	public static final int NOT = -14;
+	public static final int OR = -13;
+    public static final int AND = -12;
+    public static final int EQUAL_BOOLEAN = -11;
+    public static final int LESS = -10;
+    public static final int GREATER = -9;
+    public static final int LESS_EQUAL = -8;
+    public static final int GREATER_EQUAL = -7;    
+    public static final int PARALLEL = -6;  
+    public static final int PERPENDICULAR = -5;
+    public static final int IS_ELEMENT_OF = -4;
+    public static final int CONTAINS = -3;
+    public static final int CONTAINS_STRICT = -2;
+    public static final int SET_DIFFERENCE = -1;
     
     public static final String strNOT = "\u00ac";
     public static final String strAND = "\u2227";
@@ -46,6 +47,7 @@ public interface ExpressionNodeConstants {
     public static final String strIS_ELEMENT_OF = "\u2208";
     public static final String strCONTAINS = "\u2286";
     public static final String strCONTAINS_STRICT = "\u2282";
+    public static final String strSET_DIFFERENCE = "\\";
         
     // arithmetic
     public static final int PLUS = 0;

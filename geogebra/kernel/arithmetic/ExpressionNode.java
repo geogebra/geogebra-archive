@@ -1200,6 +1200,21 @@ implements ExpressionValue, ExpressionNodeConstants {
                 sb.append(rightStr);
                 break;
                 
+        	case SET_DIFFERENCE:
+           	 	sb.append(leftStr);
+           	 	sb.append(' ');
+	           	switch (STRING_TYPE) {
+		      		case STRING_TYPE_LATEX:
+		      			sb.append("\\setminus");
+		      			break;
+		      			
+		      		default:
+		      			sb.append(strSET_DIFFERENCE);        		
+		      	}       
+           	 	sb.append(' ');
+                sb.append(rightStr);
+                break;
+                
             case LESS:
             	 sb.append(leftStr);
         		 sb.append(" < ");

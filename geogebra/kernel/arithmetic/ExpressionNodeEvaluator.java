@@ -78,6 +78,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 	            	&& operation != NOT_EQUAL // ditto	
 	            	&& operation != CONTAINS // ditto	
 	            	&& operation != CONTAINS_STRICT // ditto	
+	            	&& operation != SET_DIFFERENCE // ditto	
 	            	&& !rt.isVectorValue() // eg {1,2} + (1,2)
         			&& !rt.isTextValue()) // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	{ 
@@ -200,7 +201,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	if (lt.isListValue() && rt.isListValue()) {
         		return new MyBoolean(MyList.listContains(((ListValue)lt).getMyList(), ((ListValue)rt).getMyList()));
         	} else {    
-                String [] str = { "IllegalListOperation", lt.toString(), strIS_ELEMENT_OF,  rt.toString() };
+                String [] str = { "IllegalListOperation", lt.toString(), strCONTAINS,  rt.toString() };
                 throw new MyError(app, str);
             }
         }         	
@@ -210,7 +211,17 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	if (lt.isListValue() && rt.isListValue()) {
         		return new MyBoolean(MyList.listContainsStrict(((ListValue)lt).getMyList(), ((ListValue)rt).getMyList()));
         	} else {    
-                String [] str = { "IllegalListOperation", lt.toString(), strIS_ELEMENT_OF,  rt.toString() };
+                String [] str = { "IllegalListOperation", lt.toString(), strCONTAINS_STRICT,  rt.toString() };
+                throw new MyError(app, str);
+            }
+        }         	
+            	
+        case SET_DIFFERENCE:
+        {       	
+        	if (lt.isListValue() && rt.isListValue()) {
+        		return MyList.setDifference(kernel, ((ListValue)lt).getMyList(), ((ListValue)rt).getMyList());
+        	} else {    
+                String [] str = { "IllegalListOperation", lt.toString(), strSET_DIFFERENCE,  rt.toString() };
                 throw new MyError(app, str);
             }
         }         	

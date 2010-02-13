@@ -652,5 +652,33 @@ public class MyList extends ValidExpression implements ListValue {
 		// lists are equal
 		return false;	
 	}
+	
+	public static MyList setDifference(Kernel kernel, MyList list1, MyList list2) {
+
+		if (list2.size() == 0) return list1;
+		
+		MyList ret = new MyList(kernel);
+		if (list1.size() == 0) return ret;
+		
+		for (int i = 0 ; i < list1.size() ; i++) {
+			ExpressionValue ev0 = list1.getListElement(i);
+			ExpressionValue ev1 = ev0.evaluate();
+			boolean addToList = true;
+			for (int j = 0 ; j < list2.size() ; j++) {
+				ExpressionValue ev2 = list2.getListElement(j).evaluate();
+				if (ExpressionNode.isEqual(ev1, ev2)) {
+					addToList = false;
+					break;
+				}												
+			}
+			if (addToList) ret.addListElement(ev0);
+		}
+		
+		
+		
+		
+		return ret;
+		
+	}
 
 }

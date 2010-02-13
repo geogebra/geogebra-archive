@@ -165,6 +165,7 @@ TOKEN :  {
   | < IS_ELEMENT_OF: "\u2208" >
   | < CONTAINS: "\u2286" >
   | < CONTAINS_STRICT: "\u2282" >
+  | < SET_DIFFERENCE: "\\" >
   | < LESS:		"<" >
   | < GREATER:	">" >
   | < LESS_EQUAL: ("<=" | "\u2264") >
@@ -904,6 +905,12 @@ ExpressionValue COMPAREterm():
        (<CONTAINS_STRICT>  f = plusminusnode()
     	 {            
            ret = new ExpressionNode(kernel, ret, ExpressionNode.CONTAINS_STRICT, f);  
+         }
+       )   
+     |   
+       (<SET_DIFFERENCE>  f = plusminusnode()
+    	 {            
+           ret = new ExpressionNode(kernel, ret, ExpressionNode.SET_DIFFERENCE, f);  
          }
        )   
      |   
