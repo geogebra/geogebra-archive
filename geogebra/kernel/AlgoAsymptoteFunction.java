@@ -89,32 +89,50 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         sb.append("))==0,x)");
 		String verticalAsymptotes = kernel.evaluateMathPiper(sb.toString());
 		
-    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
-    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
-    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
-    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
-    	
-    	// check they are really asymptotes
-    	StringBuilder verticalSB = new StringBuilder();
     	boolean addComma = false;
-    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
-    		sb.setLength(0);
-            sb.append("Limit(x,");
-            sb.append(verticalAsymptotesArray[i]);
-            sb.append(",Left)");
-            sb.append(functionIn);
-     		String limit = kernel.evaluateMathPiper(sb.toString());
-            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
-            if (!mathPiperError(limit, true) && limit.endsWith("Infinity")) {
-            	if (addComma) verticalSB.append(',');
-            	addComma = true;
-            	verticalSB.append("x=");
-            	verticalSB.append(verticalAsymptotesArray[i]);
-            }
-   		
-    	}
-
-		Application.debug("verticalAsymptotes: "+verticalSB);
+    	StringBuilder verticalSB = new StringBuilder();
+    	
+    	if (!mathPiperError(verticalAsymptotes, false)) {
+		
+	    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
+	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
+	    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
+	    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
+	    	
+	    	// check they are really asymptotes
+	    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
+	    		
+	    		boolean repeat = false;
+	    		if (i > 0) { // check for repeats
+	    			for (int j = i ; j < verticalAsymptotesArray.length ; i++) {
+	    				if (verticalAsymptotesArray[i].equals(verticalAsymptotesArray[j])) {
+	    					repeat = true;
+	    					break;
+	    				}
+	    			}
+	    		}
+	    		
+	    		if (!repeat) {
+	    		
+		    		sb.setLength(0);
+		            sb.append("Limit(x,");
+		            sb.append(verticalAsymptotesArray[i]);
+		            sb.append(",Left)");
+		            sb.append(functionIn);
+		     		String limit = kernel.evaluateMathPiper(sb.toString());
+		            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
+		            if (!mathPiperError(limit, true) && limit.endsWith("Infinity")) {
+		            	if (addComma) verticalSB.append(',');
+		            	addComma = true;
+		            	verticalSB.append("x=");
+		            	verticalSB.append(verticalAsymptotesArray[i]);
+		            }
+	    		}
+	   		
+	    	}
+	
+			Application.debug("verticalAsymptotes: "+verticalSB);
+		}
 		
 	    sb.setLength(0);
         sb.append("Simplify(Differentiate(x)");
