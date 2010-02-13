@@ -5330,37 +5330,6 @@ class CmdOsculatingCircle extends CommandProcessor {
 	 }
 
  }
- class CmdSetDifference extends CommandProcessor {
-
-		public CmdSetDifference (Kernel kernel) {
-			super(kernel);
-		}
-
-		final public    GeoElement[] process(Command c) throws MyError {
-			int n = c.getArgumentNumber();
-			boolean[] ok = new boolean[n];
-			GeoElement[] arg;
-
-			switch (n) {
-			case 2 :
-				arg = resArgs(c);
-				if ((ok[0] = (arg[0] .isGeoList()))
-						&& (ok[1] = (arg[1] .isGeoList()))) {
-					GeoElement[] ret =
-					{
-							kernel.SetDifference(
-									c.getLabel(),                      
-									(GeoList)arg[0],
-									(GeoList)arg[1])};
-					return ret;
-				} else
-					throw argErr(app, c.getName(), null);
-
-			default :
-				throw argNumErr(app, c.getName(), n);
-			}
-		}
-	}
 
  class CmdCopyFreeObject extends CommandProcessor {
 

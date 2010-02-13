@@ -329,8 +329,6 @@ public class CommandDispatcher {
     	cmdTable.put("Zipf", new CmdZipf(kernel));  
     	cmdTable.put("InverseZipf", new CmdInverseZipf(kernel));
     	
-    	cmdTable.put("SetDifference", new CmdSetDifference(kernel));
-    	
     	cmdTable.put("CopyFreeObject", new CmdCopyFreeObject(kernel));
     	cmdTable.put("SetColor", new CmdSetColor(kernel));
     	cmdTable.put("SetDynamicColor", new CmdSetDynamicColor(kernel));
