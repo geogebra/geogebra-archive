@@ -31,6 +31,7 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.main.Application;
 import geogebra.util.Util;
@@ -58,7 +59,10 @@ public class GeoGebraToPgf extends GeoGebraExport {
     }
  
     public void generateAllCode() {
-       	format=((ExportFrame)frame).getFormat();
+		int oldCASPrintform = kernel.getCASPrintForm();
+		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_PGF);
+
+		format=((ExportFrame)frame).getFormat();
        	forceGnuplot=((PgfFrame)frame).getGnuplot();
     	// init unit variables
     	try{	
@@ -177,6 +181,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		code.insert(0,codeBeginDoc+"");		
         code.insert(0,codePreamble+"");
 		frame.write(code);
+		
+		kernel.setCASPrintForm(oldCASPrintform);
+
 	}	    	
     
     protected void drawLocus(GeoLocus g){
@@ -1291,8 +1298,17 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				operand=false;
 			}
 		}
+		
+		/* moved these to ExpressionNode eg,
+		case STRING_TYPE_PSTRICKS:
+			sb.append("ceiling(");  
+			sb.append(leftStr);
+			sb.append(')');
+	    	break;
+
 		// rename functions log
-		renameFunc(sb,"log(","ln(");
+		renameFunc(sb,"log(","ln(");*/
+		
 		// for exponential in new Geogebra version.
 		renameFunc(sb,Kernel.EULER_STRING,"2.718281828");
 		return new String(sb);

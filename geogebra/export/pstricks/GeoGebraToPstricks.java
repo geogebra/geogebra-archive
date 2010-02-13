@@ -38,6 +38,7 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.main.Application;
 import geogebra.util.Util;
@@ -68,6 +69,10 @@ public class GeoGebraToPstricks extends GeoGebraExport {
   
 	 
     public void generateAllCode() {
+    	
+		int oldCASPrintform = kernel.getCASPrintForm();
+		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_PSTRICKS);
+    	
        	format=((ExportFrame)frame).getFormat();
     	// init unit variables
     	try{	
@@ -158,6 +163,9 @@ public class GeoGebraToPstricks extends GeoGebraExport {
  		}
         code.append("\\end{document}");		
 		frame.write(code);
+		
+		kernel.setCASPrintForm(oldCASPrintform);
+
 	}	
 
     protected void drawLocus(GeoLocus g){
@@ -1018,6 +1026,14 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				operand=false;
 			}
 		}
+		
+		/* moved these to ExpressionNode eg,
+		case STRING_TYPE_PSTRICKS:
+			sb.append("ceiling(");  
+			sb.append(leftStr);
+			sb.append(')');
+	    	break;
+
 		// rename functions log, ceil and exp
 		renameFunc(sb,"log(","ln(");
 		renameFunc(sb,"ceil(","ceiling(");
@@ -1028,7 +1044,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		renameFunc(sb,"asinh(","ASINH(");
 		renameFunc(sb,"atanh(","ATANH(");
 		renameFunc(sb,"sinh(","SINH(");
-		renameFunc(sb,"tanh(","TANH(");
+		renameFunc(sb,"tanh(","TANH("); */
+		
 		// for exponential in new Geogbra version.
 		renameFunc(sb,Kernel.EULER_STRING,"2.718281828");
 		return new String(sb);
