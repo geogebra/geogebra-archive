@@ -89,17 +89,43 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         sb.append("))==0,x)");
 		String verticalAsymptotes = kernel.evaluateMathPiper(sb.toString());
 		
-		Application.debug("input:"+sb.toString());
-		Application.debug("verticalAsymptotes: "+verticalAsymptotes);
+    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
+    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
+    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
+    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
+    	
+    	// check they are really asymptotes
+    	StringBuilder verticalSB = new StringBuilder();
+    	boolean addComma = false;
+    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
+    		sb.setLength(0);
+            sb.append("Limit(x,");
+            sb.append(verticalAsymptotesArray[i]);
+            sb.append(",Left)");
+            sb.append(functionIn);
+     		String limit = kernel.evaluateMathPiper(sb.toString());
+            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
+            if (!mathPiperError(limit, true) && limit.endsWith("Infinity")) {
+            	if (addComma) verticalSB.append(',');
+            	addComma = true;
+            	verticalSB.append("x=");
+            	verticalSB.append(verticalAsymptotesArray[i]);
+            }
+   		
+    	}
+
+		Application.debug("verticalAsymptotes: "+verticalSB);
 		
 	    sb.setLength(0);
-        sb.append("Differentiate(x)");
+        sb.append("Simplify(Differentiate(x)");
         sb.append(functionIn);
+        sb.append(')');
 		String firstDerivative = kernel.evaluateMathPiper(sb.toString());
 
 	    sb.setLength(0);
-        sb.append("Differentiate(x)");
+        sb.append("Simplify(Differentiate(x)");
         sb.append(firstDerivative);
+        sb.append(')');
 		String secondDerivative = kernel.evaluateMathPiper(sb.toString());
 		
 		StringBuilder diagonalAsymptotes = new StringBuilder();
@@ -118,7 +144,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	        sb.append(firstDerivative);
 			gradientStrMinus = kernel.evaluateMathPiper(sb.toString());
 			
-			if (!mathPiperError(gradientStrMinus)) {
+			if (!mathPiperError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
 				sb.setLength(0);
 		        sb.append("Limit(x,-Infinity)Simplify(");
 		        sb.append(functionIn);
@@ -127,7 +153,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		        sb.append("*x)");
 				interceptStrMinus = kernel.evaluateMathPiper(sb.toString());
 				
-				if (!mathPiperError(interceptStrMinus)) {
+				if (!mathPiperError(interceptStrMinus, false)) {
 					diagonalAsymptotes.append("y=");
 					diagonalAsymptotes.append(gradientStrMinus);
 					diagonalAsymptotes.append("*x+");
@@ -150,7 +176,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	        sb.append(firstDerivative);
 			String gradientStrPlus = kernel.evaluateMathPiper(sb.toString());
 			
-			if (!mathPiperError(gradientStrPlus)) {
+			if (!mathPiperError(gradientStrPlus, false) && !gradientStrPlus.equals("0")) {
 				sb.setLength(0);
 		        sb.append("Limit(x,Infinity)Simplify(");
 		        sb.append(functionIn);
@@ -159,7 +185,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		        sb.append("*x)");
 				String interceptStrPlus = kernel.evaluateMathPiper(sb.toString());
 				
-				if (!mathPiperError(interceptStrPlus) && !gradientStrPlus.equals(gradientStrMinus) && !interceptStrPlus.equals(interceptStrMinus)) {
+				if (!mathPiperError(interceptStrPlus, false) && !gradientStrPlus.equals(gradientStrMinus) && !interceptStrPlus.equals(interceptStrMinus)) {
 					if (diagonalAsymptotes.length() > 0) diagonalAsymptotes.append(",");
 					diagonalAsymptotes.append("y=");
 					diagonalAsymptotes.append("gradientStr");
@@ -172,27 +198,26 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		
 
 		
-		boolean addComma = false;
+		addComma = false;
 		
 	    sb.setLength(0);
 	    sb.append("{");
-	    if (!mathPiperError(limitPlusInfinity) && !limitPlusInfinity.endsWith("Infinity")) {
+	    if (!mathPiperError(limitPlusInfinity, false) && !limitPlusInfinity.endsWith("Infinity")) {
 	    	sb.append("y=");
 	    	sb.append(limitPlusInfinity);
 	    	addComma = true;
 	    }
-	    if (!limitMinusInfinity.equals(limitPlusInfinity) && !mathPiperError(limitMinusInfinity) && !limitMinusInfinity.endsWith("Infinity")) {
+	    if (!limitMinusInfinity.equals(limitPlusInfinity) && !mathPiperError(limitMinusInfinity, false) && !limitMinusInfinity.endsWith("Infinity")) {
 	    	if (addComma) sb.append(",");
 	    	sb.append("y=");
 	    	sb.append(limitMinusInfinity);
 	    	addComma = true;
 	    }
-	    if (!mathPiperError(verticalAsymptotes) && verticalAsymptotes.length() > 2) {
+	    
+	    // vertical asymptotes
+	    if (verticalSB.length() > 0) {
 	    	if (addComma) sb.append(",");
-	    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replaceAll("==", "=");
-	    	sb.append(verticalAsymptotes);
+	    	sb.append(verticalSB);	    	
 	    	addComma = true;
 	    }
 	    if (diagonalAsymptotes.length() > 0) {
@@ -209,13 +234,13 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		
     }
     
-    final private boolean mathPiperError(String str) {
+    final private boolean mathPiperError(String str, boolean allowInfinity) {
 		if (str == null || str.length()==0) return true;
 		if (str.length() > 6) {
 			if (str.startsWith("Limit")) return true;
 			if (str.startsWith("Solve")) return true;
 			if (str.startsWith("Undefined")) return true;
-			if (str.indexOf("Infinity") > -1) return true;
+			if (!allowInfinity && str.indexOf("Infinity") > -1) return true;
 		}
 		return false;    	
     }
