@@ -165,8 +165,8 @@ public class ManagerGLList extends Manager {
 	// PLANE METHODS
 	/////////////////////////////////////////////
 
-    public int newPlane(Color color, float alpha){
-    	return plane.create(color,alpha);
+    public int newPlane(Color color, float alpha, float size){
+    	return plane.create(color,alpha,size);
     }
     
  	

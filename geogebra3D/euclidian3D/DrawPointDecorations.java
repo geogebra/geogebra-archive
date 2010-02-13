@@ -108,7 +108,7 @@ public class DrawPointDecorations extends Drawable3D {
 	protected void updateForItSelf() {
 		
 		Renderer renderer = getView3D().getRenderer();
-		planeIndex = renderer.getGeometryManager().newPlane(Color.GRAY,0.25f);
+		planeIndex = renderer.getGeometryManager().newPlane(Color.GRAY,0.25f,1f);
 	}
 
 

@@ -74,12 +74,17 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		GeoPlane3D geo = (GeoPlane3D) getGeoElement();
 		
 		
-		planeIndex = renderer.getGeometryManager().newPlane(geo.getObjectColor(),alpha);
+		planeIndex = renderer.getGeometryManager().newPlane(
+				geo.getObjectColor(),
+				alpha,
+				(float) (200/getView3D().getScale()));
 		
 		//Application.debug("plane : "+geo.getLabel()+", index = "+planeIndex);
 	}
 
-	
+	protected void updateForView(){
+		updateForItSelf();
+	}
 
 	
 	public int getPickOrder(){

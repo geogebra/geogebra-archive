@@ -174,7 +174,7 @@ abstract public class Manager {
 	
 	abstract public void addVertexToPolygon(double x, double y, double z);
 	
-	abstract public int newPlane(Color color, float alpha);
+	abstract public int newPlane(Color color, float alpha, float size);
 
 
 	

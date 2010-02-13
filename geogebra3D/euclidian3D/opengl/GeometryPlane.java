@@ -79,7 +79,7 @@ public class GeometryPlane extends Geometry {
 	
 	
 	
-	public int create(Color color, float alpha){
+	public int create(Color color, float alpha, float size){
 			
 		manager.preInit(this);
 		
@@ -91,8 +91,7 @@ public class GeometryPlane extends Geometry {
 		float b = color.getBlue()/255f;
 		float a = alpha;
 		
-		float size = 2f;
-		float size2 = 1f;
+		float size2 = size/2f;
 
 		normal(0,0,1);
 		
