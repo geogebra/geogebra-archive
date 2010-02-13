@@ -89,6 +89,8 @@ public class GeoGebraCAS {
 			// MathPiper has problems with indices like a_3, b_{12}
 			exp = replaceIndices(exp);
 			
+			//Application.debug("Expression for mathPiper: "+exp);
+			
 			// evaluate the MathPiper expression
 			Interpreter mathpiper = getMathPiper();
 			response = mathpiper.evaluate(exp);

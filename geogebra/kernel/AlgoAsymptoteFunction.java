@@ -89,10 +89,12 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         sb.append("))==0,x)");
 		String verticalAsymptotes = kernel.evaluateMathPiper(sb.toString());
 		
+		Application.debug("solutions: "+verticalAsymptotes);
+		
     	boolean addComma = false;
     	StringBuilder verticalSB = new StringBuilder();
     	
-    	if (!mathPiperError(verticalAsymptotes, false)) {
+    	if (!mathPiperError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
 		
 	    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
 	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
@@ -121,7 +123,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		            sb.append(functionIn);
 		     		String limit = kernel.evaluateMathPiper(sb.toString());
 		            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
-		            if (!mathPiperError(limit, true) && limit.endsWith("Infinity")) {
+		            if (!mathPiperError(limit, true)) {
 		            	if (addComma) verticalSB.append(',');
 		            	addComma = true;
 		            	verticalSB.append("x=");
@@ -222,12 +224,12 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		
 	    sb.setLength(0);
 	    sb.append("{");
-	    if (!mathPiperError(limitPlusInfinity, false) && !limitPlusInfinity.endsWith("Infinity")) {
+	    if (!mathPiperError(limitPlusInfinity, false)) {
 	    	sb.append("y=");
 	    	sb.append(limitPlusInfinity);
 	    	addComma = true;
 	    }
-	    if (!limitMinusInfinity.equals(limitPlusInfinity) && !mathPiperError(limitMinusInfinity, false) && !limitMinusInfinity.endsWith("Infinity")) {
+	    if (!limitMinusInfinity.equals(limitPlusInfinity) && !mathPiperError(limitMinusInfinity, false)) {
 	    	if (addComma) sb.append(",");
 	    	sb.append("y=");
 	    	sb.append(limitMinusInfinity);
