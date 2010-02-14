@@ -24,7 +24,7 @@ public class AlgoSimplify extends AlgoElement {
 	private GeoFunction f; // input
     private GeoFunction g; // output     
     
-    private StringBuilder sb = new StringBuilder();
+    protected StringBuilder sb = new StringBuilder();
    
     public AlgoSimplify(Construction cons, String label, GeoFunction f) {
     	super(cons);
@@ -68,11 +68,8 @@ public class AlgoSimplify extends AlgoElement {
 		getExpression().getCASstring(ExpressionNode.STRING_TYPE_MathPiper, false);*/
 		//Application.debug(functionIn);
 
-	    sb.setLength(0);
-        sb.append("Simplify(TrigSimpCombine(");
-        sb.append(functionIn);
-        sb.append("))");
-		String functionOut = kernel.evaluateMathPiper(sb.toString());
+
+		String functionOut = kernel.evaluateMathPiper(getMathPiperString(functionIn));
 		
 		//Application.debug("Factorize input:"+functionIn);
 		//Application.debug("Factorize output:"+functionOut);
@@ -83,6 +80,7 @@ public class AlgoSimplify extends AlgoElement {
 		
 		else if (functionOut.length()>7)
 			if (functionOut.startsWith("Simplify(") || // MathPiper error
+				functionOut.startsWith("Apart(") || // MathPiper error
 				functionOut.startsWith("Undefined") || // MathPiper error/bug eg Simplify(0.00000000000000001)
 				functionOut.startsWith("FWatom(") )  // MathPiper oddity??
 				MathPiperError=true;
@@ -104,5 +102,17 @@ public class AlgoSimplify extends AlgoElement {
     final public String toString() {
     	return getCommandDescription();
     }
+    
+    // over-ridden by AlgoPartialFractions
+    protected String getMathPiperString(String functionIn) {
+	    sb.setLength(0);
+        sb.append("Simplify(TrigSimpCombine(");
+        sb.append(functionIn);
+        sb.append("))");        
+        return sb.toString();
+        
+
+    }
+
 
 }

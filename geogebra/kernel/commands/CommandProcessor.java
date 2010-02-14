@@ -6652,6 +6652,36 @@ class CmdOsculatingCircle extends CommandProcessor {
 		 }    
 		}
 
+ class CmdPartialFractions extends CommandProcessor {
+		
+		public CmdPartialFractions (Kernel kernel) {
+			super(kernel);
+		}
+		
+		final public GeoElement[] process(Command c) throws MyError {
+		     int n = c.getArgumentNumber();
+		     GeoElement[] arg;
+		     arg = resArgs(c);
+		     
+		     switch (n) {
+		         case 1 :             
+		             if ( (arg[0] .isGeoFunction())) {
+		                 GeoElement[] ret =
+		                     {
+		                          kernel.PartialFractions (
+		                             c.getLabel(), (GeoFunction)arg[0])};
+		                 return ret;                
+		             }                        
+		              else
+		            	 throw argErr(app, c.getName(), arg[0]);         
+					 
+			     // more than one argument
+		         default :
+		            	 throw argNumErr(app, c.getName(), n);
+		     }
+		 }    
+		}
+
  class CmdDegree extends CommandProcessor {
 		
 		public CmdDegree (Kernel kernel) {

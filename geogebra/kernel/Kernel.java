@@ -5050,11 +5050,20 @@ public class Kernel {
 	}
 	
 	/**
-	 * LimitDown
+	 * LimitAbove
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric LimitAbove(String label, GeoFunction func, NumberValue num) {		
 		AlgoLimitAbove algo = new AlgoLimitAbove(cons, label, func, num);
+		return algo.getResult();			
+	}
+	
+	/**
+	 * Partial Fractions
+	 * Michael Borcherds 
+	 */
+	final public GeoFunction PartialFractions(String label, GeoFunction func) {		
+		AlgoPartialFractions algo = new AlgoPartialFractions(cons, label, func);
 		return algo.getResult();			
 	}
 	
