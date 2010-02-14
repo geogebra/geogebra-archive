@@ -28,7 +28,7 @@ public class AlgoLimit extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	protected GeoFunction f;
 	protected NumberValue num; // input
-    private GeoNumeric outNum; // output        
+    protected GeoNumeric outNum; // output       
     
     protected StringBuilder sb = new StringBuilder();
    
@@ -67,61 +67,14 @@ public class AlgoLimit extends AlgoElement {
         return outNum;
     }
 
-    protected final void compute() {       
+    // over-ridden in LimitAbove/Below
+    protected void compute() {       
         if (!f.isDefined() || !input[1].isDefined()) {
         	outNum.setUndefined();
         	return;
         }    
                 
-        
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-
- 		String functionOut = kernel.evaluateMathPiper(getMathPiperString(functionIn));
- 		
-		Application.debug("Limit input:"+sb.toString());
-		Application.debug("Limit output:"+functionOut);
-		
-		boolean yacasError=false;
-		
-		if (functionOut == null || functionOut.length()==0) yacasError=true; // Yacas error
-		
-		else if (functionOut.length()>7)
-			if (functionOut.startsWith("Limit(") || // Yacas error
-			    functionOut.startsWith("FWatom(") )  // Yacas oddity??
-				yacasError=true;
-			
-
-		if (yacasError) // Yacas error
-		{
-			outNum.setUndefined(); 
-		}
-		else
-		{
-			//outNum.set(kernel.getAlgebraProcessor().evaluateToNumeric(functionOut).toGeoElement());		
-			//if (functionOut.equals("Infinity")) outNum.setValue(Double.POSITIVE_INFINITY);
-			//else if (functionOut.equals("-Infinity")) outNum.setValue(Double.NEGATIVE_INFINITY);
-			//else outNum.setValue(Integer.parseInt(functionOut));
-			
-			GeoGebraCAS cas = (GeoGebraCAS)(kernel.getGeoGebraCAS());
-			try {
-				ValidExpression ve = cas.parseGeoGebraCASInput(functionOut);
-				
-				ExpressionValue ev = ve.evaluate();
-				
-				if (ev.isNumberValue())
-					outNum.setValue(((NumberValue)ev).getDouble());
-				else if (ev.isGeoElement())
-					outNum.set((GeoNumeric)ev);
-				else {
-					Application.debug("unhandled ExpressionValue type: "+ev.getClass());
-					outNum.setValue(Double.NaN);
-				}
-
-			} catch (Throwable e) {
-				e.printStackTrace();
-				outNum.setValue(Double.NaN);
-			}
-		}
+        outNum.setValue(f.getLimit(num.getDouble(), 0));
 		
     }
     
@@ -129,19 +82,5 @@ public class AlgoLimit extends AlgoElement {
     	return getCommandDescription();
     }
     
-    /*
-     * over-ridden by AlgoLimitBelow/Above
-     */
-    protected String getMathPiperString(String functionIn) {
-	    sb.setLength(0);
-        sb.append("Limit(x,");
-        sb.append(num.getDouble()+"");
-        sb.append(")");
-        sb.append(functionIn);
-        
-        return sb.toString();
-        
-
-    }
 
 }

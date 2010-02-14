@@ -24,7 +24,7 @@ import geogebra.main.Application;
  * @author Michael Borcherds
  */
 public class AlgoLimitAbove extends AlgoLimit {
-   
+
     public AlgoLimitAbove(Construction cons, String label, GeoFunction f, NumberValue num) {
     	super(cons, label, f, num);
     }
@@ -33,16 +33,16 @@ public class AlgoLimitAbove extends AlgoLimit {
         return "AlgoLimitAbove";
     }
      
-    protected String getMathPiperString(String functionIn) {
-	    sb.setLength(0);
-        sb.append("Limit(x,");
-        sb.append(num.getDouble()+"");
-        sb.append(",Right)");
-        sb.append(functionIn);
-        
-        return sb.toString();
-        
-
+    protected final void compute() {       
+        if (!f.isDefined() || !input[1].isDefined()) {
+        	outNum.setUndefined();
+        	return;
+        }    
+                
+        outNum.setValue(f.getLimit(num.getDouble(), -1));
+		
     }
+
+    
 
 }

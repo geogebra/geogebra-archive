@@ -12,11 +12,14 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
+import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 
@@ -716,6 +719,52 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		return x > intervalMin && x < intervalMax;
 	}
 	
+	public double getLimit(double x, int direction) {
+   	String functionIn = getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    
+    	if (sb == null) sb = new StringBuilder();
+    	else sb.setLength(0);
+	    sb.setLength(0);
+        sb.append("Limit(x,");
+        sb.append(x+"");
+        switch (direction) {
+        case -1:
+            sb.append(",Right)");
+        	break;
+        case 1:
+            sb.append(",Left)");
+       	break;
+        case 0:
+            sb.append(')');
+       	break;
+        }
+        sb.append(functionIn);
+		String functionOut = evaluateMathPiper(sb.toString());
+		
+		try {
+			GeoGebraCAS cas = (GeoGebraCAS)(kernel.getGeoGebraCAS());
+		
+			ValidExpression ve = cas.parseGeoGebraCASInput(functionOut);
+			
+			ExpressionValue ev = ve.evaluate();
+			
+			if (ev.isNumberValue())
+				return (((NumberValue)ev).getDouble());
+			else if (ev.isGeoElement())
+				return ((GeoNumeric)ev).getDouble();
+			else {
+				Application.debug("unhandled ExpressionValue type: "+ev.getClass());
+				return Double.NaN;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Double.NaN;
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Double.NaN;
+	}
+	}
+
 	/* over-ridden in GeoFunctionConditional
 	 * 
 	 */

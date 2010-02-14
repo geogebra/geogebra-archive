@@ -356,6 +356,13 @@ public class GeoFunctionConditional extends GeoFunction {
 		return condFun.evaluateBoolean(x);
 	}
 	
+	public double getLimit(double x, int direction) {
+		if (evaluateCondition(x))
+			return ifFun.getLimit(x, direction);
+			else if (elseFun != null) return elseFun.getLimit(x, direction);
+		return Double.NaN;
+	}
+
 	public void getVerticalAsymptotes(GeoFunction f, StringBuilder verticalSB, boolean reverse) {
 		ifFun.getVerticalAsymptotes((GeoFunction)this, verticalSB, false);
 		if (elseFun != null) elseFun.getVerticalAsymptotes((GeoFunction)this, verticalSB, true);
