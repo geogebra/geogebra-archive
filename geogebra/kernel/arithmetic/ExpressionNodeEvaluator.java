@@ -78,6 +78,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 	            	&& operation != NOT_EQUAL // ditto	
 	            	&& operation != CONTAINS // ditto	
 	            	&& operation != CONTAINS_STRICT // ditto	
+	            	
 	            	&& operation != SET_DIFFERENCE // ditto	
 	            	&& !rt.isVectorValue() // eg {1,2} + (1,2)
         			&& !rt.isTextValue()) // bugfix "" + {1,2} Michael Borcherds 2008-06-05
@@ -91,7 +92,8 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         else if (rt.isListValue() && operation != EQUAL_BOOLEAN // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
             	&& operation != NOT_EQUAL // ditto	
             && !lt.isVectorValue() // eg {1,2} + (1,2)
-        	&& !lt.isTextValue()) { // bugfix "" + {1,2} Michael Borcherds 2008-06-05
+        	&& !lt.isTextValue() // bugfix "" + {1,2} Michael Borcherds 2008-06-05
+        	&& operation != IS_ELEMENT_OF) {
         	MyList myList = ((ListValue) rt).getMyList();
         	// lt operation list rt
         	myList.applyLeft(operation, lt);
