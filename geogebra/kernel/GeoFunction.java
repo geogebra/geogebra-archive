@@ -739,6 +739,8 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
         sb.append(functionStr);
 		String limit = f.evaluateMathPiper(sb.toString()).trim();
 		
+		System.err.println(sb.toString()+" = "+limit);
+		
 	    if (!f.mathPiperError(limit, false)) {
 	    	
 	    	// check not duplicated
