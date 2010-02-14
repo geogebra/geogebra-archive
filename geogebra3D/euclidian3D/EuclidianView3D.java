@@ -509,7 +509,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	//TODO specific scaling for each direction
 	private double scale = 100; 
-	private double scaleMin = 10;
 
 
 	public double getXscale() { return scale; }
@@ -518,8 +517,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	public void setScale(double val){
 		scale = val;
-		if (scale<scaleMin)
-			scale=scaleMin;
 	}
 	
 	public double getScale(){
@@ -550,6 +547,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	/** update the drawables for 3D view */
 	public void update(){
+		
+		if (isAnimated()){
+			animate();
+			setWaitForUpdate();
+		}
 		
 		if (waitForUpdate){
 			//drawList3D.updateAll();
@@ -1102,18 +1104,97 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	//////////////////////////////////////////////////
+	// ANIMATION
+	//////////////////////////////////////////////////
 
 
+	/** tells if the view is under animation */
+	private boolean isAnimated(){
+		return animatedScale || animatedRot;
+	}
+	
+	/** tells if the view is under animation for scale */
+	private boolean animatedScale = false;
+	/** starting and ending scales */
+	private double startScale, endScale;
+	/** velocity of animated scaling */
+	private double scaleTimeFactor;
+	
+	private long startScaleTime;
+	
+	
+	/** tells if the view is under animation for rotation */
+	private boolean animatedRot = false;
+	
+	private double animatedRotSpeed;
+	
+	private long startRotTime;
+	
+	private boolean storeUndo;
 
 	public void setAnimatedCoordSystem(double ox, double oy, double newScale,
 			int steps, boolean storeUndo) {
-		// TODO Auto-generated method stub
 		
+
+		startScale = getScale();
+		startScaleTime = System.currentTimeMillis();
+		endScale = newScale;
+		animatedScale = true;
+		
+		scaleTimeFactor = 0.005; //it will take about 1/2s to achieve it
+		
+		this.storeUndo = storeUndo;
+
+		//setHits(new Point(ox,oy));
+		//updateCursor3D();
+		//setHitCursor();
+		
+	}
+	
+	
+	public void setRotAnimation(double rotSpeed){
+		//Application.debug("rotSpeed="+rotSpeed);
+
+		animatedRot = true;
+		animatedRotSpeed = rotSpeed;
+		startRotTime = System.currentTimeMillis() - 16;
+		bOld = b;
+		aOld = a;
+	}
+	
+	public void stopRotAnimation(){
+		animatedRot = false;
 	}
 
 
-
-
+	/** animate the view for changing scale, orientation, etc. */
+	private void animate(){
+		if (animatedScale){
+			double t = (System.currentTimeMillis()-startScaleTime)*scaleTimeFactor;
+			t+=0.2; //starting at 1/4
+			
+			if (t>=1){
+				t=1;
+				animatedScale = false;
+			}
+			
+			//Application.debug("t="+t+"\nscale="+(startScale*(1-t)+endScale*t));
+			
+			setScale(startScale*(1-t)+endScale*t);
+			
+			if (storeUndo)
+				getEuclidianController().getApplication().storeUndoInfo();
+		}
+		
+		if (animatedRot){
+			double da = (System.currentTimeMillis()-startRotTime)*animatedRotSpeed;			
+			setRotXYinDegrees(aOld + da, bOld, true);
+		}
+			
+		
+		updateMatrix();
+	}
 
 
 

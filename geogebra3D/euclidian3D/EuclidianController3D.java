@@ -619,17 +619,40 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	/** right-press the mouse makes start 3D rotation */
 	protected void processRightPressFor3D(){
+		
+		view3D.stopRotAnimation();
+		
 		//remembers mouse location
 		startLoc = mouseLoc;
 		view.rememberOrigins();
 		view.setMoveCursor();
+		
+		timeOld = System.currentTimeMillis();
+		xOld = startLoc.x;
 
 	}
+	
+	/** for continuing rotation */
+	private double vRot;
+	
+	private long timeOld;
+	
+	private int xOld;
+	
+
 	
 	/** right-drag the mouse makes 3D rotation 
 	 * @return true*/
 	protected boolean processRightDragFor3D(){
-		view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, mouseLoc.y - startLoc.y, MOVE_ROTATE_VIEW);
+
+		long time = System.currentTimeMillis();
+		int x = mouseLoc.x;
+		vRot = (double) (x-xOld)/(time-timeOld);
+		timeOld = time; xOld = x;
+		//Application.debug("vRot="+vRot);
+		view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, 
+				mouseLoc.y - startLoc.y, 
+				MOVE_ROTATE_VIEW);
 		viewRotationOccured = true;
 		return true;
 	}
@@ -647,6 +670,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 			view.setHitCursor();
 			app.storeUndoInfo();
+			
+			//if last drag occured less than 1/5 s ago, then animate 3D view in rotation
+			if (System.currentTimeMillis()-timeOld<200)
+				((EuclidianView3D) view).setRotAnimation(vRot);
+			
 			return true;
 		}else
 			return false;
@@ -806,6 +834,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	//
 	
 
+	/*
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		
 		double r = e.getWheelRotation();
@@ -840,7 +869,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
 			//kernel3D.notifyRepaint();
 			
-			*/
+			*
 			break;	
 		
 		
@@ -850,6 +879,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 
 	}
+	*/
 	
 	
 	
