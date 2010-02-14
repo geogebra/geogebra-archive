@@ -94,7 +94,7 @@ public class ButtonDialog extends JDialog
 	}			
 	
 	private void createGUI() {
-		setTitle(app.getPlain("Button"));
+		setTitle(textField ? app.getPlain("TextField") : app.getPlain("Button") );
 		setResizable(false);		
 		
 		// create caption panel
