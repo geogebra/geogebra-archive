@@ -36,6 +36,8 @@ the Free Software Foundation.
  *      getPar():double[]
  *      to serve the extending of FitPoly[...] to degree>=5
  *      Matrix operations based on Jama.
+ * Update 13.02.10:
+ * 		Start changing from Jama to Apache     
  *
  *<ul><b>--- Interface: ---</b>
  *<li>RegressionMath(GeoList)
