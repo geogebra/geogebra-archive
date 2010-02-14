@@ -351,5 +351,10 @@ public class GeoFunctionConditional extends GeoFunction {
 
 		
 	}
+	
+	final public boolean evaluateCondition(double x) {
+		System.err.println("GeoFunctionConditional");
+		return condFun.evaluateBoolean(x);
+	}
 
 }

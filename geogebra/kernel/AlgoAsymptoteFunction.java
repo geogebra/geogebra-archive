@@ -63,21 +63,51 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         }    
                 
         
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    String functionIn;// = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    String functionIn2 = null;
+	    
+	    GeoFunctionConditional f2;
+	    GeoFunction condFun1, condFun2;
+	    if (f.isGeoFunctionConditional()) {
+	    	f2 = (GeoFunctionConditional)f;
+	    	condFun1 = f2.getIfFunction();
+	    	condFun2 = f2.getElseFunction();
+	    	functionIn = condFun1.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    	functionIn2 = condFun2.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 
-	    	    
-	    sb.setLength(0);
-        sb.append("Limit(x,Infinity)");
-        sb.append(functionIn);
-		String limitPlusInfinity = evaluateMathPiper(sb.toString());
+	    } else {
+	    	functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    }
+	    
+
+	    String limitPlusInfinity="";
+	    if (f.evaluateCondition(Double.POSITIVE_INFINITY)) {
+		    sb.setLength(0);
+	        sb.append("Limit(x,Infinity)");
+	        sb.append(functionIn);
+			limitPlusInfinity = evaluateMathPiper(sb.toString());
+	    } else if (functionIn2 != null) {
+		    sb.setLength(0);
+	        sb.append("Limit(x,Infinity)");
+	        sb.append(functionIn2);
+			limitPlusInfinity = evaluateMathPiper(sb.toString());    	
+	    }
 		
 		Application.debug("input:"+sb.toString());
 		Application.debug("limitPlusInfinity: "+limitPlusInfinity);
 
-		sb.setLength(0);
-        sb.append("Limit(x,-Infinity)");
-        sb.append(functionIn);
-		String limitMinusInfinity = evaluateMathPiper(sb.toString());
+		String limitMinusInfinity="";
+	    if (f.evaluateCondition(Double.NEGATIVE_INFINITY)) {
+			sb.setLength(0);
+	        sb.append("Limit(x,-Infinity)");
+	        sb.append(functionIn);
+			limitMinusInfinity = evaluateMathPiper(sb.toString());
+	    } else if (functionIn2 != null) {
+		    sb.setLength(0);
+	        sb.append("Limit(x,-Infinity)");
+	        sb.append(functionIn2);
+	        limitMinusInfinity = evaluateMathPiper(sb.toString());    	
+	    }
 		
 		Application.debug("input:"+sb.toString());
 		Application.debug("limitMinusInfinity: "+limitMinusInfinity);

@@ -706,5 +706,13 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	public boolean isVector3DValue() {
 		return false;
 	}
+	
+	// over-ridden in GeoFunctionConditional
+	public boolean evaluateCondition(double x) {
+		System.err.println("GeoFunction");
+		if (!interval) return true;
+		return x > intervalMin && x < intervalMax;
+	}
+
 
 }
