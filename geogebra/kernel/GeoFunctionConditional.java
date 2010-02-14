@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 
 
@@ -250,11 +251,47 @@ public class GeoFunctionConditional extends GeoFunction {
 		return toString(true);
 	}	
 	
-	private String toString(boolean symbolic) {					
+	private String toString(boolean symbolic) {			
+		
+		switch (kernel.getCASPrintForm()) {
+		case ExpressionNode.STRING_TYPE_MATH_PIPER:
+			
+			if (isDefined()) {
+				StringBuilder sb = new StringBuilder(80);
+				sb.append("if(");
+				
+				if (symbolic) 
+					sb.append(condFun.toSymbolicString());
+				else
+					sb.append(condFun.toValueString());
+				
+				sb.append(")(");
+				
+				if (symbolic)
+					sb.append(ifFun.toSymbolicString());
+				else
+					sb.append(ifFun.toValueString());
+				
+				if (elseFun != null) {
+					sb.append(") else (");
+					if (symbolic)
+						sb.append(elseFun.toSymbolicString());
+					else
+						sb.append(elseFun.toValueString());
+				}
+				sb.append(')');
+				return sb.toString();
+			} 
+			else
+				return app.getPlain("Undefined");
+			
+			default:
+		
+				
 		if (isDefined()) {
 			StringBuilder sb = new StringBuilder(80);
 			sb.append(app.getCommand("If"));
-			sb.append("[");
+			sb.append('[');
 			
 			if (symbolic) 
 				sb.append(condFun.toSymbolicString());
@@ -275,11 +312,12 @@ public class GeoFunctionConditional extends GeoFunction {
 				else
 					sb.append(elseFun.toValueString());
 			}
-			sb.append("]");
+			sb.append(']');
 			return sb.toString();
 		} 
 		else
 			return app.getPlain("undefined");
+		}
 	}	
 	
 	final public String toLaTeXString(boolean symbolic) {	

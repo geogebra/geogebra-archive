@@ -4021,7 +4021,14 @@ public abstract class GeoElement
 		kernel.setCASPrintForm(ExpressionNodeType);
 
 		String ret="";
-		if (this.isGeoFunction()) {
+		if (this.isGeoFunctionConditional() && ExpressionNodeType == ExpressionNode.STRING_TYPE_MATH_PIPER) {
+			GeoFunctionConditional geoFun = (GeoFunctionConditional)this;
+			
+			// get in form If(x<3, etc
+			ret = geoFun.toSymbolicString();
+			Application.debug(ret);
+			
+		} else if (this.isGeoFunction()) {
 			GeoFunction geoFun = (GeoFunction)this;
 	 				   
 	 		if (geoFun.isIndependent()) {
