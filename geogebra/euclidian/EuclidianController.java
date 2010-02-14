@@ -5501,13 +5501,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// new slider
 	final protected boolean slider() {		
-		return !selectionPreview && mouseLoc != null && app.getGuiManager().showSliderCreationDialog(mouseLoc.x, mouseLoc.y);
+		if (!selectionPreview && mouseLoc != null) app.getGuiManager().showSliderCreationDialog(mouseLoc.x, mouseLoc.y);
+		return false;
 	}		
 
 	// new button
 	final protected boolean button(boolean textfield) {	
-		//Application.debug("jhjh"+(mouseLoc != null));
-		return !selectionPreview && mouseLoc != null && app.getGuiManager().showButtonCreationDialog(mouseLoc.x, mouseLoc.y, textfield);
+		if (!selectionPreview && mouseLoc != null) app.getGuiManager().showButtonCreationDialog(mouseLoc.x, mouseLoc.y, textfield);
+		return false;
 	}		
 
 	final protected boolean pen() {	

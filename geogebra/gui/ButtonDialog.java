@@ -261,6 +261,8 @@ public class ButtonDialog extends JDialog
 
 			geoResult = button;		
 			setVisible(false);
+			
+			app.getKernel().storeUndoInfo();
 		} 
 		else if (source == btCancel) {		
 			geoResult = null;

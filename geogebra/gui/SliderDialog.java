@@ -186,6 +186,8 @@ public class SliderDialog extends JDialog
 			geoResult.update();
 
 			setVisible(false);
+			
+			app.getKernel().storeUndoInfo();
 		} 
 		else if (source == btCancel) {						
 			setVisible(false);
