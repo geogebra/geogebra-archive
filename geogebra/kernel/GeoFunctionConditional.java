@@ -353,7 +353,6 @@ public class GeoFunctionConditional extends GeoFunction {
 	}
 	
 	final public boolean evaluateCondition(double x) {
-		System.err.println("GeoFunctionConditional");
 		return condFun.evaluateBoolean(x);
 	}
 	
@@ -362,9 +361,16 @@ public class GeoFunctionConditional extends GeoFunction {
 		if (elseFun != null) elseFun.getVerticalAsymptotes((GeoFunction)this, verticalSB, true);
 	}
 
-	public void getDiagonalAsymptotes(GeoFunction f, StringBuilder verticalSB, boolean reverse) {
-		ifFun.getVerticalAsymptotes((GeoFunction)this, verticalSB, false);
-		if (elseFun != null) elseFun.getVerticalAsymptotes((GeoFunction)this, verticalSB, true);
+	public void getDiagonalPositiveAsymptote(GeoFunction f, StringBuilder verticalSB) {
+		if (evaluateCondition(Double.POSITIVE_INFINITY))
+			ifFun.getDiagonalPositiveAsymptote((GeoFunction)this, verticalSB);
+			else if (elseFun != null) elseFun.getDiagonalPositiveAsymptote((GeoFunction)this, verticalSB);
+	}
+
+	public void getDiagonalNegativeAsymptote(GeoFunction f, StringBuilder verticalSB) {
+		if (evaluateCondition(Double.NEGATIVE_INFINITY))
+			ifFun.getDiagonalNegativeAsymptote((GeoFunction)this, verticalSB);
+			else if (elseFun != null) elseFun.getDiagonalNegativeAsymptote((GeoFunction)this, verticalSB);
 	}
 
 	public void getHorizontalPositiveAsymptote(GeoFunction f, StringBuilder verticalSB) {

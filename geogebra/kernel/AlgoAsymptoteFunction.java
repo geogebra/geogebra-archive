@@ -61,180 +61,20 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         	g.setUndefined();
         	return;
         }    
-                
-        
-	    String functionIn;// = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-	    String functionIn2 = null;
-	    
-	    GeoFunctionConditional f2;
-	    GeoFunction condFun1, condFun2;
-	    if (f.isGeoFunctionConditional()) {
-	    	f2 = (GeoFunctionConditional)f;
-	    	condFun1 = f2.getIfFunction();
-	    	condFun2 = f2.getElseFunction();
-	    	functionIn = condFun1.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-	    	if (condFun2 != null) functionIn2 = condFun2.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-
-	    } else {
-	    	functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-	    }
-	    
-
-	    String limitPlusInfinity="";
-	    if (f.evaluateCondition(Double.POSITIVE_INFINITY)) {
-		    sb.setLength(0);
-	        sb.append("Limit(x,Infinity)");
-	        sb.append(functionIn);
-			limitPlusInfinity = evaluateMathPiper(sb.toString());
-	    } else if (functionIn2 != null) {
-		    sb.setLength(0);
-	        sb.append("Limit(x,Infinity)");
-	        sb.append(functionIn2);
-			limitPlusInfinity = evaluateMathPiper(sb.toString());    	
-	    }
-		
-		Application.debug("input:"+sb.toString());
-		Application.debug("limitPlusInfinity: "+limitPlusInfinity);
-
-		String limitMinusInfinity="";
-	    if (f.evaluateCondition(Double.NEGATIVE_INFINITY)) {
-			sb.setLength(0);
-	        sb.append("Limit(x,-Infinity)");
-	        sb.append(functionIn);
-			limitMinusInfinity = evaluateMathPiper(sb.toString());
-	    } else if (functionIn2 != null) {
-		    sb.setLength(0);
-	        sb.append("Limit(x,-Infinity)");
-	        sb.append(functionIn2);
-	        limitMinusInfinity = evaluateMathPiper(sb.toString());    	
-	    }
-		
-		Application.debug("input:"+sb.toString());
-		Application.debug("limitMinusInfinity: "+limitMinusInfinity);
-
-    	StringBuilder verticalSB = new StringBuilder();
-
-    	
-    	f.getVerticalAsymptotes(f, verticalSB, false);
-    	//getVerticalAsymptotes(functionIn, f, verticalSB, false);
-    	//if (functionIn2 != null) getVerticalAsymptotes(functionIn2, f, verticalSB, true);
-		
-	    sb.setLength(0);
-        sb.append("Simplify(Differentiate(x)");
-        sb.append(functionIn);
-        sb.append(')');
-		String firstDerivative = evaluateMathPiper(sb.toString());
-		
-		StringBuilder diagonalAsymptotes = new StringBuilder();
-		if (!mathPiperError(firstDerivative, false)) {
-	
-		    //sb.setLength(0);
-	        //sb.append("Simplify(Differentiate(x)");
-	        //sb.append(firstDerivative);
-	        //sb.append(')');
-			//String secondDerivative = evaluateMathPiper(sb.toString());
-			
-			String gradientStrMinus="";
-			String interceptStrMinus="";
-			
-			//sb.setLength(0);
-	        // sb.append("Limit(x,-Infinity)");
-	        //sb.append(secondDerivative);
-			//String limitMinusInfinity2d = evaluateMathPiper(sb.toString());
-			//if (limitMinusInfinity2d.equals("0"))
-			{
-				// look for diagonal asymptote
-				
-				sb.setLength(0);
-		        sb.append("Limit(x,-Infinity)");
-		        sb.append(firstDerivative);
-				gradientStrMinus = evaluateMathPiper(sb.toString());
-				
-				if (!mathPiperError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
-					sb.setLength(0);
-			        sb.append("Limit(x,-Infinity)Simplify(");
-			        sb.append(functionIn);
-			        sb.append("-");
-			        sb.append(gradientStrMinus);
-			        sb.append("*x)");
-					interceptStrMinus = evaluateMathPiper(sb.toString());
-					
-					if (!mathPiperError(interceptStrMinus, false)) {
-						diagonalAsymptotes.append("y=");
-						diagonalAsymptotes.append(gradientStrMinus);
-						diagonalAsymptotes.append("*x+");
-						diagonalAsymptotes.append(interceptStrMinus);
-						Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
-					}
-				}		
-			}
-			
-	
-			//sb.setLength(0);
-	        //sb.append("Limit(x,Infinity)");
-	        //sb.append(secondDerivative);
-			//String limitPlusInfinity2d = evaluateMathPiper(sb.toString());
-			//if (limitPlusInfinity2d.equals("0"))
-			{
-				// look for diagonal asymptote
-				
-				sb.setLength(0);
-		        sb.append("Limit(x,Infinity)");
-		        sb.append(firstDerivative);
-				String gradientStrPlus = evaluateMathPiper(sb.toString());
-				
-				if (!mathPiperError(gradientStrPlus, false) && !gradientStrPlus.equals("0")) {
-					sb.setLength(0);
-			        sb.append("Limit(x,Infinity)Simplify(");
-			        sb.append(functionIn);
-			        sb.append("-");
-			        sb.append(gradientStrPlus);
-			        sb.append("*x)");
-					String interceptStrPlus = evaluateMathPiper(sb.toString());
-					
-					if (!mathPiperError(interceptStrPlus, false) && !gradientStrPlus.equals(gradientStrMinus) && !interceptStrPlus.equals(interceptStrMinus)) {
-						if (diagonalAsymptotes.length() > 0) diagonalAsymptotes.append(",");
-						diagonalAsymptotes.append("y=");
-						diagonalAsymptotes.append("gradientStr");
-						diagonalAsymptotes.append("*x+");
-						diagonalAsymptotes.append("interceptStr");
-						Application.debug("diagonal asymptote plus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
-					}
-				}		
-			}
-		}
-
-		
-		/*
-	    if (!mathPiperError(limitPlusInfinity, false)) {
-	    	sb.append("y=");
-	    	sb.append(limitPlusInfinity);
-	    	addComma = true;
-	    }
-	    if (!mathPiperError(limitMinusInfinity, false) && !limitMinusInfinity.equals(limitPlusInfinity)) {
-	    	if (addComma) sb.append(",");
-	    	sb.append("y=");
-	    	sb.append(limitMinusInfinity);
-	    	addComma = true;
-	    }*/
 		
 	    sb.setLength(0);
 	    sb.append("{");
 		f.getHorizontalPositiveAsymptote(f, sb);
 		f.getHorizontalNegativeAsymptote(f, sb);
 	    
-	    // vertical asymptotes
-	    if (verticalSB.length() > 0) {
-	    	if (sb.length() > 1) sb.append(",");
-	    	sb.append(verticalSB);	    	
-	    }
-	    if (diagonalAsymptotes.length() > 0) {
-	    	if (sb.length() > 1) sb.append(",");
-	    	sb.append(diagonalAsymptotes);
-	    }
+		f.getDiagonalPositiveAsymptote(f, sb);
+		f.getDiagonalNegativeAsymptote(f, sb);
+		
+    	f.getVerticalAsymptotes(f, sb, false);
+
 	    sb.append("}");
 		
-	    Application.debug(sb.toString());
+	    //Application.debug(sb.toString());
 		g.set(kernel.getAlgebraProcessor().evaluateToList(sb.toString()));	
 		
 		g.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
@@ -245,103 +85,10 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		
     }
     
-    private void getVerticalAsymptotes(String functionIn, GeoFunction f, StringBuilder verticalSB, boolean reverseCondition) {
-    	// solve 1/f(x) == 0 to find vertical asymptotes
-	    sb.setLength(0);
-	    
-        sb.append("Solve(Simplify(1/(");
-        
-        sb.append(functionIn);
-        sb.append("))==0,x)");
-		String verticalAsymptotes = evaluateMathPiper(sb.toString());
-		
-		Application.debug("solutions: "+verticalAsymptotes);
-		
-    	
-    	if (!mathPiperError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
-		
-	    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replace('(',' '); // eg (-1)
-	    	verticalAsymptotes = verticalAsymptotes.replace(')',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
-	    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
-	    	
-	    	// check they are really asymptotes
-	    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
-	    		
-	    		boolean repeat = false;
-	    		if (i > 0) { // check for repeats
-	    			for (int j = i ; j < verticalAsymptotesArray.length ; i++) {
-	    				if (verticalAsymptotesArray[i].equals(verticalAsymptotesArray[j])) {
-	    					repeat = true;
-	    					break;
-	    				}
-	    			}
-	    		}
-	    		
-	    		boolean isInRange = f.evaluateCondition(Double.parseDouble(verticalAsymptotesArray[i]));
-	    		if (reverseCondition) isInRange = !isInRange;
-	    		
-	    		if (!repeat && isInRange) {
-	    		
-		    		sb.setLength(0);
-		            sb.append("Limit(x,");
-		            sb.append(verticalAsymptotesArray[i]);
-		            sb.append(",Left)");
-		            sb.append(functionIn);
-		     		String limit = evaluateMathPiper(sb.toString());
-		            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
-		            if (!mathPiperError(limit, true)) {
-		            	if (verticalSB.length() > 0) verticalSB.append(',');
-           	
-		            	verticalSB.append("x=");
-		            	verticalSB.append(verticalAsymptotesArray[i]);
-		            }
-	    		}
-	   		
-	    	}
-	
-			Application.debug("verticalAsymptotes: "+verticalSB);
-		}
-	}
-
-	final private boolean mathPiperError(String str, boolean allowInfinity) {
-		if (str == null || str.length()==0) return true;
-		if (str.length() > 6) {
-			if (str.startsWith("Limit")) return true;
-			if (str.startsWith("Solve")) return true;
-			if (str.startsWith("Undefined")) return true;
-			if (!allowInfinity && str.indexOf("Infinity") > -1) return true;
-		}
-		return false;    	
-    }
     
     final public String toString() {
     	return getCommandDescription();
     }
-    
-    private String evaluateMathPiper(String exp) {
-    	String ret = kernel.evaluateMathPiper(exp);
-    	
-    	// workaround for http://code.google.com/p/mathpiper/issues/detail?id=35
-    	// TODO remove when fixed
-    	if (ret != null) ret = ret.replaceAll("else", " else ");
-    	
-    	// *partial* workaround for MathPiper bug
-    	// http://code.google.com/p/mathpiper/issues/detail?id=31
-    	if (ret == null || ret.indexOf("else") == -1) return ret;
-    	
-    	String str[] = ret.split("else");
-    	if (str.length != 2) return "Undefined";
-    	
-    	if (str[0].equals(str[1])) {
-    		//System.err.println("Manually simplifying "+ret+" to "+str[1]);
-    		return str[0]; // eg 0else0 returned
-    	}
-    	
-    	return ret; // might be error or valid expression
-    	
-    }
+ 
 
 }

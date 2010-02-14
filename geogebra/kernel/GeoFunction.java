@@ -708,27 +708,107 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		return false;
 	}
 	
-	// over-ridden in GeoFunctionConditional
+	/* over-ridden in GeoFunctionConditional
+	 * 
+	 */
 	public boolean evaluateCondition(double x) {
-		System.err.println("GeoFunction");
 		if (!interval) return true;
 		return x > intervalMin && x < intervalMax;
 	}
 	
+	/* over-ridden in GeoFunctionConditional
+	 * 
+	 */
 	public void getVerticalAsymptotes(GeoFunction f, StringBuilder verticalSB, boolean reverse) {
 		getVerticalAsymptotesStatic(this, f, verticalSB, reverse);
 	}
 	
+	/* over-ridden in GeoFunctionConditional
+	 * 
+	 */
 	public void getHorizontalPositiveAsymptote(GeoFunction f, StringBuilder SB) {
 		getHorizontalAsymptoteStatic(this, f, SB, true);		
 	}
 	
+	/* over-ridden in GeoFunctionConditional
+	 * 
+	 */
 	public void getHorizontalNegativeAsymptote(GeoFunction f, StringBuilder SB) {
 		getHorizontalAsymptoteStatic(this, f, SB, false);		
 	}
 	
-	private static StringBuilder sb;
+	/* over-ridden in GeoFunctionConditional
+	 * 
+	 */
+	public void getDiagonalPositiveAsymptote(GeoFunction f, StringBuilder SB) {
+		getDiagonalAsymptoteStatic(this, f, SB, true);		
+	}
 	
+	/* over-ridden in GeoFunctionConditional
+	 * 
+	 */
+	public void getDiagonalNegativeAsymptote(GeoFunction f, StringBuilder SB) {
+		getDiagonalAsymptoteStatic(this, f, SB, false);		
+	}
+	
+	private static StringBuilder sb;
+
+    protected static void getDiagonalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
+    	String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    
+    	if (sb == null) sb = new StringBuilder();
+    	else sb.setLength(0);
+        sb.append("Simplify(Differentiate(x)");
+        sb.append(functionIn);
+        sb.append(')');
+		String firstDerivative = f.evaluateMathPiper(sb.toString());
+		
+		if (!f.mathPiperError(firstDerivative, false)) {
+	
+		
+			String gradientStrMinus="";
+			String interceptStrMinus="";
+			
+			{
+				
+				sb.setLength(0);
+		        sb.append("Limit(x,");
+		        if (!positiveInfinity) sb.append('-'); // -Infinity
+		        sb.append("Infinity)");
+		        sb.append(firstDerivative);
+				gradientStrMinus = f.evaluateMathPiper(sb.toString());
+				
+				if (!f.mathPiperError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
+					sb.setLength(0);
+			        sb.append("Limit(x,");
+			        if (!positiveInfinity) sb.append('-'); // -Infinity
+			        sb.append("Infinity)Simplify(");
+			        sb.append(functionIn);
+			        sb.append("-");
+			        sb.append(gradientStrMinus);
+			        sb.append("*x)");
+					interceptStrMinus = f.evaluateMathPiper(sb.toString());
+					
+					if (!f.mathPiperError(interceptStrMinus, false)) {
+						sb.setLength(0);
+						sb.append("y=");
+						sb.append(gradientStrMinus);
+						sb.append("*x+");
+						sb.append(interceptStrMinus);
+						
+						if (!SB.toString().endsWith(sb.toString())) { // not duplicated
+							if (SB.length() > 1) SB.append(',');
+							SB.append(sb);
+							//Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
+						}
+						
+					}
+				}		
+			}
+		}
+
+    }
+    
     protected static void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
     	String functionStr = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
     	if (sb == null) sb = new StringBuilder();
@@ -739,7 +819,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
         sb.append(functionStr);
 		String limit = f.evaluateMathPiper(sb.toString()).trim();
 		
-		System.err.println(sb.toString()+" = "+limit);
+		//System.err.println(sb.toString()+" = "+limit);
 		
 	    if (!f.mathPiperError(limit, false)) {
 	    	
@@ -770,7 +850,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
         sb.append("))==0,x)");
 		String verticalAsymptotes = f.evaluateMathPiper(sb.toString());
 		
-		Application.debug("solutions: "+verticalAsymptotes);
+		//Application.debug("solutions: "+verticalAsymptotes);
 		
     	
     	if (!f.mathPiperError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
@@ -809,7 +889,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		            sb.append(",Left)");
 		            sb.append(functionStr);
 		     		String limit = f.evaluateMathPiper(sb.toString());
-		            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
+		            //Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
 		            if (!f.mathPiperError(limit, true)) {
 		            	if (verticalSB.length() > 1) verticalSB.append(',');
            	
@@ -820,7 +900,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	   		
 	    	}
 	
-			Application.debug("verticalAsymptotes: "+verticalSB);
+			//Application.debug("verticalAsymptotes: "+verticalSB);
 		}
 	}
 
@@ -837,8 +917,9 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
     
    
     private String evaluateMathPiper(String exp) {
-    	String ret = kernel.evaluateMathPiper(exp);
-    	
+    	return kernel.evaluateMathPiper(exp);
+
+    	/*
     	// workaround for http://code.google.com/p/mathpiper/issues/detail?id=35
     	// TODO remove when fixed
     	if (ret != null) ret = ret.replaceAll("else", " else ");
@@ -855,7 +936,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
     		return str[0]; // eg 0else0 returned
     	}
     	
-    	return ret; // might be error or valid expression
+    	return ret; // might be error or valid expression */
     	
     }
 
