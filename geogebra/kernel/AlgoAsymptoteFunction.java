@@ -141,83 +141,85 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         sb.append(functionIn);
         sb.append(')');
 		String firstDerivative = kernel.evaluateMathPiper(sb.toString());
-
-	    sb.setLength(0);
-        sb.append("Simplify(Differentiate(x)");
-        sb.append(firstDerivative);
-        sb.append(')');
-		//String secondDerivative = kernel.evaluateMathPiper(sb.toString());
 		
 		StringBuilder diagonalAsymptotes = new StringBuilder();
-		String gradientStrMinus="";
-		String interceptStrMinus="";
-		
-		//sb.setLength(0);
-        // sb.append("Limit(x,-Infinity)");
-        //sb.append(secondDerivative);
-		//String limitMinusInfinity2d = kernel.evaluateMathPiper(sb.toString());
-		//if (limitMinusInfinity2d.equals("0"))
-		{
-			// look for diagonal asymptote
+		if (!mathPiperError(firstDerivative, false)) {
+	
+		    //sb.setLength(0);
+	        //sb.append("Simplify(Differentiate(x)");
+	        //sb.append(firstDerivative);
+	        //sb.append(')');
+			//String secondDerivative = kernel.evaluateMathPiper(sb.toString());
 			
-			sb.setLength(0);
-	        sb.append("Limit(x,-Infinity)");
-	        sb.append(firstDerivative);
-			gradientStrMinus = kernel.evaluateMathPiper(sb.toString());
+			String gradientStrMinus="";
+			String interceptStrMinus="";
 			
-			if (!mathPiperError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
-				sb.setLength(0);
-		        sb.append("Limit(x,-Infinity)Simplify(");
-		        sb.append(functionIn);
-		        sb.append("-");
-		        sb.append(gradientStrMinus);
-		        sb.append("*x)");
-				interceptStrMinus = kernel.evaluateMathPiper(sb.toString());
+			//sb.setLength(0);
+	        // sb.append("Limit(x,-Infinity)");
+	        //sb.append(secondDerivative);
+			//String limitMinusInfinity2d = kernel.evaluateMathPiper(sb.toString());
+			//if (limitMinusInfinity2d.equals("0"))
+			{
+				// look for diagonal asymptote
 				
-				if (!mathPiperError(interceptStrMinus, false)) {
-					diagonalAsymptotes.append("y=");
-					diagonalAsymptotes.append(gradientStrMinus);
-					diagonalAsymptotes.append("*x+");
-					diagonalAsymptotes.append(interceptStrMinus);
-					Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
-				}
-			}		
-		}
-		
-
-		//sb.setLength(0);
-        //sb.append("Limit(x,Infinity)");
-        //sb.append(secondDerivative);
-		//String limitPlusInfinity2d = kernel.evaluateMathPiper(sb.toString());
-		//if (limitPlusInfinity2d.equals("0"))
-		{
-			// look for diagonal asymptote
-			
-			sb.setLength(0);
-	        sb.append("Limit(x,Infinity)");
-	        sb.append(firstDerivative);
-			String gradientStrPlus = kernel.evaluateMathPiper(sb.toString());
-			
-			if (!mathPiperError(gradientStrPlus, false) && !gradientStrPlus.equals("0")) {
 				sb.setLength(0);
-		        sb.append("Limit(x,Infinity)Simplify(");
-		        sb.append(functionIn);
-		        sb.append("-");
-		        sb.append(gradientStrPlus);
-		        sb.append("*x)");
-				String interceptStrPlus = kernel.evaluateMathPiper(sb.toString());
+		        sb.append("Limit(x,-Infinity)");
+		        sb.append(firstDerivative);
+				gradientStrMinus = kernel.evaluateMathPiper(sb.toString());
 				
-				if (!mathPiperError(interceptStrPlus, false) && !gradientStrPlus.equals(gradientStrMinus) && !interceptStrPlus.equals(interceptStrMinus)) {
-					if (diagonalAsymptotes.length() > 0) diagonalAsymptotes.append(",");
-					diagonalAsymptotes.append("y=");
-					diagonalAsymptotes.append("gradientStr");
-					diagonalAsymptotes.append("*x+");
-					diagonalAsymptotes.append("interceptStr");
-					Application.debug("diagonal asymptote plus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
-				}
-			}		
+				if (!mathPiperError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
+					sb.setLength(0);
+			        sb.append("Limit(x,-Infinity)Simplify(");
+			        sb.append(functionIn);
+			        sb.append("-");
+			        sb.append(gradientStrMinus);
+			        sb.append("*x)");
+					interceptStrMinus = kernel.evaluateMathPiper(sb.toString());
+					
+					if (!mathPiperError(interceptStrMinus, false)) {
+						diagonalAsymptotes.append("y=");
+						diagonalAsymptotes.append(gradientStrMinus);
+						diagonalAsymptotes.append("*x+");
+						diagonalAsymptotes.append(interceptStrMinus);
+						Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
+					}
+				}		
+			}
+			
+	
+			//sb.setLength(0);
+	        //sb.append("Limit(x,Infinity)");
+	        //sb.append(secondDerivative);
+			//String limitPlusInfinity2d = kernel.evaluateMathPiper(sb.toString());
+			//if (limitPlusInfinity2d.equals("0"))
+			{
+				// look for diagonal asymptote
+				
+				sb.setLength(0);
+		        sb.append("Limit(x,Infinity)");
+		        sb.append(firstDerivative);
+				String gradientStrPlus = kernel.evaluateMathPiper(sb.toString());
+				
+				if (!mathPiperError(gradientStrPlus, false) && !gradientStrPlus.equals("0")) {
+					sb.setLength(0);
+			        sb.append("Limit(x,Infinity)Simplify(");
+			        sb.append(functionIn);
+			        sb.append("-");
+			        sb.append(gradientStrPlus);
+			        sb.append("*x)");
+					String interceptStrPlus = kernel.evaluateMathPiper(sb.toString());
+					
+					if (!mathPiperError(interceptStrPlus, false) && !gradientStrPlus.equals(gradientStrMinus) && !interceptStrPlus.equals(interceptStrMinus)) {
+						if (diagonalAsymptotes.length() > 0) diagonalAsymptotes.append(",");
+						diagonalAsymptotes.append("y=");
+						diagonalAsymptotes.append("gradientStr");
+						diagonalAsymptotes.append("*x+");
+						diagonalAsymptotes.append("interceptStr");
+						Application.debug("diagonal asymptote plus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
+					}
+				}		
+			}
 		}
-		
 
 		
 		addComma = false;
@@ -229,7 +231,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	    	sb.append(limitPlusInfinity);
 	    	addComma = true;
 	    }
-	    if (!limitMinusInfinity.equals(limitPlusInfinity) && !mathPiperError(limitMinusInfinity, false)) {
+	    if (!mathPiperError(limitMinusInfinity, false) && !limitMinusInfinity.equals(limitPlusInfinity)) {
 	    	if (addComma) sb.append(",");
 	    	sb.append("y=");
 	    	sb.append(limitMinusInfinity);
