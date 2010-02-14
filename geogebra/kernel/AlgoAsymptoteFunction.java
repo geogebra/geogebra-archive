@@ -69,7 +69,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	    sb.setLength(0);
         sb.append("Limit(x,Infinity)");
         sb.append(functionIn);
-		String limitPlusInfinity = kernel.evaluateMathPiper(sb.toString());
+		String limitPlusInfinity = evaluateMathPiper(sb.toString());
 		
 		Application.debug("input:"+sb.toString());
 		Application.debug("limitPlusInfinity: "+limitPlusInfinity);
@@ -77,17 +77,20 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		sb.setLength(0);
         sb.append("Limit(x,-Infinity)");
         sb.append(functionIn);
-		String limitMinusInfinity = kernel.evaluateMathPiper(sb.toString());
+		String limitMinusInfinity = evaluateMathPiper(sb.toString());
 		
 		Application.debug("input:"+sb.toString());
 		Application.debug("limitMinusInfinity: "+limitMinusInfinity);
 
 		// solve 1/f(x) == 0 to find vertical asymptotes
 	    sb.setLength(0);
+	    
+	    // TODO: doesn't work with GeoFunctionConditionals
         sb.append("Solve(Simplify(1/(");
+        
         sb.append(functionIn);
         sb.append("))==0,x)");
-		String verticalAsymptotes = kernel.evaluateMathPiper(sb.toString());
+		String verticalAsymptotes = evaluateMathPiper(sb.toString());
 		
 		Application.debug("solutions: "+verticalAsymptotes);
 		
@@ -121,7 +124,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		            sb.append(verticalAsymptotesArray[i]);
 		            sb.append(",Left)");
 		            sb.append(functionIn);
-		     		String limit = kernel.evaluateMathPiper(sb.toString());
+		     		String limit = evaluateMathPiper(sb.toString());
 		            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
 		            if (!mathPiperError(limit, true)) {
 		            	if (addComma) verticalSB.append(',');
@@ -140,7 +143,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         sb.append("Simplify(Differentiate(x)");
         sb.append(functionIn);
         sb.append(')');
-		String firstDerivative = kernel.evaluateMathPiper(sb.toString());
+		String firstDerivative = evaluateMathPiper(sb.toString());
 		
 		StringBuilder diagonalAsymptotes = new StringBuilder();
 		if (!mathPiperError(firstDerivative, false)) {
@@ -149,7 +152,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	        //sb.append("Simplify(Differentiate(x)");
 	        //sb.append(firstDerivative);
 	        //sb.append(')');
-			//String secondDerivative = kernel.evaluateMathPiper(sb.toString());
+			//String secondDerivative = evaluateMathPiper(sb.toString());
 			
 			String gradientStrMinus="";
 			String interceptStrMinus="";
@@ -157,7 +160,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 			//sb.setLength(0);
 	        // sb.append("Limit(x,-Infinity)");
 	        //sb.append(secondDerivative);
-			//String limitMinusInfinity2d = kernel.evaluateMathPiper(sb.toString());
+			//String limitMinusInfinity2d = evaluateMathPiper(sb.toString());
 			//if (limitMinusInfinity2d.equals("0"))
 			{
 				// look for diagonal asymptote
@@ -165,7 +168,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 				sb.setLength(0);
 		        sb.append("Limit(x,-Infinity)");
 		        sb.append(firstDerivative);
-				gradientStrMinus = kernel.evaluateMathPiper(sb.toString());
+				gradientStrMinus = evaluateMathPiper(sb.toString());
 				
 				if (!mathPiperError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
 					sb.setLength(0);
@@ -174,7 +177,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 			        sb.append("-");
 			        sb.append(gradientStrMinus);
 			        sb.append("*x)");
-					interceptStrMinus = kernel.evaluateMathPiper(sb.toString());
+					interceptStrMinus = evaluateMathPiper(sb.toString());
 					
 					if (!mathPiperError(interceptStrMinus, false)) {
 						diagonalAsymptotes.append("y=");
@@ -190,7 +193,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 			//sb.setLength(0);
 	        //sb.append("Limit(x,Infinity)");
 	        //sb.append(secondDerivative);
-			//String limitPlusInfinity2d = kernel.evaluateMathPiper(sb.toString());
+			//String limitPlusInfinity2d = evaluateMathPiper(sb.toString());
 			//if (limitPlusInfinity2d.equals("0"))
 			{
 				// look for diagonal asymptote
@@ -198,7 +201,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 				sb.setLength(0);
 		        sb.append("Limit(x,Infinity)");
 		        sb.append(firstDerivative);
-				String gradientStrPlus = kernel.evaluateMathPiper(sb.toString());
+				String gradientStrPlus = evaluateMathPiper(sb.toString());
 				
 				if (!mathPiperError(gradientStrPlus, false) && !gradientStrPlus.equals("0")) {
 					sb.setLength(0);
@@ -207,7 +210,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 			        sb.append("-");
 			        sb.append(gradientStrPlus);
 			        sb.append("*x)");
-					String interceptStrPlus = kernel.evaluateMathPiper(sb.toString());
+					String interceptStrPlus = evaluateMathPiper(sb.toString());
 					
 					if (!mathPiperError(interceptStrPlus, false) && !gradientStrPlus.equals(gradientStrMinus) && !interceptStrPlus.equals(interceptStrMinus)) {
 						if (diagonalAsymptotes.length() > 0) diagonalAsymptotes.append(",");
@@ -271,6 +274,25 @@ public class AlgoAsymptoteFunction extends AlgoElement {
     
     final public String toString() {
     	return getCommandDescription();
+    }
+    
+    private String evaluateMathPiper(String exp) {
+    	String ret = kernel.evaluateMathPiper(exp);
+    	
+    	// *partial* workaround for MathPiper bug
+    	// http://code.google.com/p/mathpiper/issues/detail?id=31
+    	if (ret == null || ret.indexOf("else") == -1) return ret;
+    	
+    	String str[] = ret.split("else");
+    	if (str.length != 2) return "Undefined";
+    	
+    	if (str[0].equals(str[1])) {
+    		//System.err.println("Manually simplifying "+ret+" to "+str[1]);
+    		return str[0]; // eg 0else0 returned
+    	}
+    	
+    	return ret; // might be error or valid expression
+    	
     }
 
 }
