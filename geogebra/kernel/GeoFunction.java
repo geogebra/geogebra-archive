@@ -18,6 +18,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.roots.RealRootFunction;
+import geogebra.main.Application;
 
 /**
  * Explicit function in one variable ("x"). This is actually a wrapper class for Function
@@ -713,6 +714,147 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		if (!interval) return true;
 		return x > intervalMin && x < intervalMax;
 	}
+	
+	public void getVerticalAsymptotes(GeoFunction f, StringBuilder verticalSB, boolean reverse) {
+		getVerticalAsymptotesStatic(this, f, verticalSB, reverse);
+	}
+	
+	public void getHorizontalPositiveAsymptote(GeoFunction f, StringBuilder SB) {
+		getHorizontalAsymptoteStatic(this, f, SB, true);		
+	}
+	
+	public void getHorizontalNegativeAsymptote(GeoFunction f, StringBuilder SB) {
+		getHorizontalAsymptoteStatic(this, f, SB, false);		
+	}
+	
+	private static StringBuilder sb;
+	
+    protected static void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
+    	String functionStr = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+    	if (sb == null) sb = new StringBuilder();
+    	else sb.setLength(0);
+        sb.append("Limit(x,");
+        if (!positiveInfinity) sb.append('-'); // -Infinity
+        sb.append("Infinity)");
+        sb.append(functionStr);
+		String limit = f.evaluateMathPiper(sb.toString()).trim();
+		
+	    if (!f.mathPiperError(limit, false)) {
+	    	
+	    	// check not duplicated
+	    	sb.setLength(0);
+	    	sb.append("y=");
+	    	sb.append(limit);
+	    	if (!SB.toString().endsWith(sb.toString())) { // not duplicated
+	    	
+		    	if (SB.length() > 1) SB.append(',');
+		    	SB.append(sb);
+	    	}
+	    }
 
+
+    }
+    
+    protected static void getVerticalAsymptotesStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder verticalSB, boolean reverseCondition) {
+    	
+    	String functionStr = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+    	// solve 1/f(x) == 0 to find vertical asymptotes
+    	if (sb == null) sb = new StringBuilder();
+    	else sb.setLength(0);
+	    
+        sb.append("Solve(Simplify(1/(");
+        
+        sb.append(functionStr);
+        sb.append("))==0,x)");
+		String verticalAsymptotes = f.evaluateMathPiper(sb.toString());
+		
+		Application.debug("solutions: "+verticalAsymptotes);
+		
+    	
+    	if (!f.mathPiperError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
+		
+	    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
+	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
+	    	verticalAsymptotes = verticalAsymptotes.replace('(',' '); // eg (-1)
+	    	verticalAsymptotes = verticalAsymptotes.replace(')',' ');
+	    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
+	    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
+	    	
+	    	// check they are really asymptotes
+	    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
+	    		
+	    		boolean repeat = false;
+	    		if (i > 0) { // check for repeats
+	    			for (int j = i ; j < verticalAsymptotesArray.length ; i++) {
+	    				if (verticalAsymptotesArray[i].equals(verticalAsymptotesArray[j])) {
+	    					repeat = true;
+	    					break;
+	    				}
+	    			}
+	    		}
+	    		
+	    		boolean isInRange = false;
+	    		try {
+	    			isInRange = parentFunction.evaluateCondition(Double.parseDouble(verticalAsymptotesArray[i]));
+	    		} catch (Exception e) {Application.debug("Error parsing: "+verticalAsymptotesArray[i]);}
+	    		if (reverseCondition) isInRange = !isInRange;
+	    		
+	    		if (!repeat && isInRange) {
+	    		
+		    		sb.setLength(0);
+		            sb.append("Limit(x,");
+		            sb.append(verticalAsymptotesArray[i]);
+		            sb.append(",Left)");
+		            sb.append(functionStr);
+		     		String limit = f.evaluateMathPiper(sb.toString());
+		            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
+		            if (!f.mathPiperError(limit, true)) {
+		            	if (verticalSB.length() > 1) verticalSB.append(',');
+           	
+		            	verticalSB.append("x=");
+		            	verticalSB.append(verticalAsymptotesArray[i]);
+		            }
+	    		}
+	   		
+	    	}
+	
+			Application.debug("verticalAsymptotes: "+verticalSB);
+		}
+	}
+
+	final private boolean mathPiperError(String str, boolean allowInfinity) {
+		if (str == null || str.length()==0) return true;
+		if (str.length() > 6) {
+			if (str.startsWith("Limit")) return true;
+			if (str.startsWith("Solve")) return true;
+			if (str.startsWith("Undefined")) return true;
+			if (!allowInfinity && str.indexOf("Infinity") > -1) return true;
+		}
+		return false;    	
+    }
+    
+   
+    private String evaluateMathPiper(String exp) {
+    	String ret = kernel.evaluateMathPiper(exp);
+    	
+    	// workaround for http://code.google.com/p/mathpiper/issues/detail?id=35
+    	// TODO remove when fixed
+    	if (ret != null) ret = ret.replaceAll("else", " else ");
+    	
+    	// *partial* workaround for MathPiper bug
+    	// http://code.google.com/p/mathpiper/issues/detail?id=31
+    	if (ret == null || ret.indexOf("else") == -1) return ret;
+    	
+    	String str[] = ret.split("else");
+    	if (str.length != 2) return "Undefined";
+    	
+    	if (str[0].equals(str[1])) {
+    		//System.err.println("Manually simplifying "+ret+" to "+str[1]);
+    		return str[0]; // eg 0else0 returned
+    	}
+    	
+    	return ret; // might be error or valid expression
+    	
+    }
 
 }

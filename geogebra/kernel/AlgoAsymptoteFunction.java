@@ -73,7 +73,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	    	condFun1 = f2.getIfFunction();
 	    	condFun2 = f2.getElseFunction();
 	    	functionIn = condFun1.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-	    	functionIn2 = condFun2.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    	if (condFun2 != null) functionIn2 = condFun2.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 
 	    } else {
 	    	functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
@@ -112,11 +112,12 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		Application.debug("input:"+sb.toString());
 		Application.debug("limitMinusInfinity: "+limitMinusInfinity);
 
-    	boolean addComma = false;
     	StringBuilder verticalSB = new StringBuilder();
 
-    	getVerticalAsymptotes(functionIn, f, verticalSB, false);
-    	if (functionIn2 != null) getVerticalAsymptotes(functionIn2, f, verticalSB, true);
+    	
+    	f.getVerticalAsymptotes(f, verticalSB, false);
+    	//getVerticalAsymptotes(functionIn, f, verticalSB, false);
+    	//if (functionIn2 != null) getVerticalAsymptotes(functionIn2, f, verticalSB, true);
 		
 	    sb.setLength(0);
         sb.append("Simplify(Differentiate(x)");
@@ -204,10 +205,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		}
 
 		
-		addComma = false;
-		
-	    sb.setLength(0);
-	    sb.append("{");
+		/*
 	    if (!mathPiperError(limitPlusInfinity, false)) {
 	    	sb.append("y=");
 	    	sb.append(limitPlusInfinity);
@@ -218,20 +216,25 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	    	sb.append("y=");
 	    	sb.append(limitMinusInfinity);
 	    	addComma = true;
-	    }
+	    }*/
+		
+	    sb.setLength(0);
+	    sb.append("{");
+		f.getHorizontalPositiveAsymptote(f, sb);
+		f.getHorizontalNegativeAsymptote(f, sb);
 	    
 	    // vertical asymptotes
 	    if (verticalSB.length() > 0) {
-	    	if (addComma) sb.append(",");
+	    	if (sb.length() > 1) sb.append(",");
 	    	sb.append(verticalSB);	    	
-	    	addComma = true;
 	    }
 	    if (diagonalAsymptotes.length() > 0) {
-	    	if (addComma) sb.append(",");
+	    	if (sb.length() > 1) sb.append(",");
 	    	sb.append(diagonalAsymptotes);
 	    }
 	    sb.append("}");
 		
+	    Application.debug(sb.toString());
 		g.set(kernel.getAlgebraProcessor().evaluateToList(sb.toString()));	
 		
 		g.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
