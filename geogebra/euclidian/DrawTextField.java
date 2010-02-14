@@ -297,7 +297,7 @@ public final class DrawTextField extends Drawable {
 	 * Removes button from view again
 	 */
 	final public void remove() {
-		view.remove(textField);
+		view.remove(box);
 	}
 	
 	/**
