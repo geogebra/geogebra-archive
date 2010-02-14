@@ -205,6 +205,8 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		geoBoolean.setEuclidianVisible(true);
 		geoBoolean.setLabelVisible(true);
 		geoBoolean.updateRepaint();
+		
+		app.getKernel().storeUndoInfo();
 	}
 	
 	public void windowGainedFocus(WindowEvent arg0) {		

@@ -4502,7 +4502,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return false;
 
 		app.getGuiManager().showBooleanCheckboxCreationDialog(mouseLoc, null);
-		return true;
+		return false;
 	}
 
 	// get (point or line) and (conic or function or curve)
