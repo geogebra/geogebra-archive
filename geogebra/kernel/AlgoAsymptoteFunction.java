@@ -112,62 +112,11 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		Application.debug("input:"+sb.toString());
 		Application.debug("limitMinusInfinity: "+limitMinusInfinity);
 
-		// solve 1/f(x) == 0 to find vertical asymptotes
-	    sb.setLength(0);
-	    
-	    // TODO: doesn't work with GeoFunctionConditionals
-        sb.append("Solve(Simplify(1/(");
-        
-        sb.append(functionIn);
-        sb.append("))==0,x)");
-		String verticalAsymptotes = evaluateMathPiper(sb.toString());
-		
-		Application.debug("solutions: "+verticalAsymptotes);
-		
     	boolean addComma = false;
     	StringBuilder verticalSB = new StringBuilder();
-    	
-    	if (!mathPiperError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
-		
-	    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
-	    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
-	    	
-	    	// check they are really asymptotes
-	    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
-	    		
-	    		boolean repeat = false;
-	    		if (i > 0) { // check for repeats
-	    			for (int j = i ; j < verticalAsymptotesArray.length ; i++) {
-	    				if (verticalAsymptotesArray[i].equals(verticalAsymptotesArray[j])) {
-	    					repeat = true;
-	    					break;
-	    				}
-	    			}
-	    		}
-	    		
-	    		if (!repeat) {
-	    		
-		    		sb.setLength(0);
-		            sb.append("Limit(x,");
-		            sb.append(verticalAsymptotesArray[i]);
-		            sb.append(",Left)");
-		            sb.append(functionIn);
-		     		String limit = evaluateMathPiper(sb.toString());
-		            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
-		            if (!mathPiperError(limit, true)) {
-		            	if (addComma) verticalSB.append(',');
-		            	addComma = true;
-		            	verticalSB.append("x=");
-		            	verticalSB.append(verticalAsymptotesArray[i]);
-		            }
-	    		}
-	   		
-	    	}
-	
-			Application.debug("verticalAsymptotes: "+verticalSB);
-		}
+
+    	getVerticalAsymptotes(functionIn, f, verticalSB, false);
+    	if (functionIn2 != null) getVerticalAsymptotes(functionIn2, f, verticalSB, true);
 		
 	    sb.setLength(0);
         sb.append("Simplify(Differentiate(x)");
@@ -293,7 +242,68 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		
     }
     
-    final private boolean mathPiperError(String str, boolean allowInfinity) {
+    private void getVerticalAsymptotes(String functionIn, GeoFunction f, StringBuilder verticalSB, boolean reverseCondition) {
+    	// solve 1/f(x) == 0 to find vertical asymptotes
+	    sb.setLength(0);
+	    
+        sb.append("Solve(Simplify(1/(");
+        
+        sb.append(functionIn);
+        sb.append("))==0,x)");
+		String verticalAsymptotes = evaluateMathPiper(sb.toString());
+		
+		Application.debug("solutions: "+verticalAsymptotes);
+		
+    	
+    	if (!mathPiperError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
+		
+	    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
+	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
+	    	verticalAsymptotes = verticalAsymptotes.replace('(',' '); // eg (-1)
+	    	verticalAsymptotes = verticalAsymptotes.replace(')',' ');
+	    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
+	    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
+	    	
+	    	// check they are really asymptotes
+	    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
+	    		
+	    		boolean repeat = false;
+	    		if (i > 0) { // check for repeats
+	    			for (int j = i ; j < verticalAsymptotesArray.length ; i++) {
+	    				if (verticalAsymptotesArray[i].equals(verticalAsymptotesArray[j])) {
+	    					repeat = true;
+	    					break;
+	    				}
+	    			}
+	    		}
+	    		
+	    		boolean isInRange = f.evaluateCondition(Double.parseDouble(verticalAsymptotesArray[i]));
+	    		if (reverseCondition) isInRange = !isInRange;
+	    		
+	    		if (!repeat && isInRange) {
+	    		
+		    		sb.setLength(0);
+		            sb.append("Limit(x,");
+		            sb.append(verticalAsymptotesArray[i]);
+		            sb.append(",Left)");
+		            sb.append(functionIn);
+		     		String limit = evaluateMathPiper(sb.toString());
+		            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
+		            if (!mathPiperError(limit, true)) {
+		            	if (verticalSB.length() > 0) verticalSB.append(',');
+           	
+		            	verticalSB.append("x=");
+		            	verticalSB.append(verticalAsymptotesArray[i]);
+		            }
+	    		}
+	   		
+	    	}
+	
+			Application.debug("verticalAsymptotes: "+verticalSB);
+		}
+	}
+
+	final private boolean mathPiperError(String str, boolean allowInfinity) {
 		if (str == null || str.length()==0) return true;
 		if (str.length() > 6) {
 			if (str.startsWith("Limit")) return true;
