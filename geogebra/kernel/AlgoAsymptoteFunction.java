@@ -259,6 +259,8 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		
 		g.setDefined(true);	
 		
+		kernel.evaluateMathPiper("Limit(x,Infinity)(if(x-1<0)1 else -1)");
+		
     }
     
     final private boolean mathPiperError(String str, boolean allowInfinity) {
@@ -278,6 +280,10 @@ public class AlgoAsymptoteFunction extends AlgoElement {
     
     private String evaluateMathPiper(String exp) {
     	String ret = kernel.evaluateMathPiper(exp);
+    	
+    	// workaround for http://code.google.com/p/mathpiper/issues/detail?id=35
+    	// TODO remove when fixed
+    	if (ret != null) ret = ret.replaceAll("else", " else ");
     	
     	// *partial* workaround for MathPiper bug
     	// http://code.google.com/p/mathpiper/issues/detail?id=31
