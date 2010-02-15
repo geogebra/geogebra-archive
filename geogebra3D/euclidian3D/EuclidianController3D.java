@@ -6,6 +6,7 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
@@ -84,6 +85,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	static final public int ANGLE_MAX = 90;//(int) ((Math.PI/2)/ANGLE_TO_DEGREES); //maximum vertical angle
 
 
+	
+	/** for animated rotation */
+	private double animatedRotSpeed;
+	/** used when time is needed */
+	private long timeOld;
+	/** used to record x information */
+	private int xOld;
+	
+	
 	
 	
 	public EuclidianController3D(Kernel kernel) {
@@ -527,10 +537,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		((Kernel3D) getKernel()).Segment3D(null,points[0], points[1]);
 	}
 	
-	// fetch the two selected points for segment
+	// fetch the two selected points for ray
 	protected void ray(){
 		GeoPoint3D[] points = getSelectedPoints3D();
 		((Kernel3D) getKernel()).Ray3D(null,points[0], points[1]);
+	}
+	
+	// fetch the two selected points for vector
+	protected void vector(){
+		GeoPoint3D[] points = getSelectedPoints3D();
+		((Kernel3D) getKernel()).Vector3D(null,points[0], points[1]);
 	}
 	
 	
@@ -632,12 +648,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	}
 	
-	/** for continuing rotation */
-	private double vRot;
-	
-	private long timeOld;
-	
-	private int xOld;
+
 	
 
 	
@@ -647,7 +658,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		long time = System.currentTimeMillis();
 		int x = mouseLoc.x;
-		vRot = (double) (x-xOld)/(time-timeOld);
+		animatedRotSpeed = (double) (x-xOld)/(time-timeOld);
 		timeOld = time; xOld = x;
 		//Application.debug("vRot="+vRot);
 		view.setCoordSystemFromMouseMove(mouseLoc.x - startLoc.x, 
@@ -673,7 +684,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 			//if last drag occured less than 1/5 s ago, then animate 3D view in rotation
 			if (System.currentTimeMillis()-timeOld<200)
-				((EuclidianView3D) view).setRotAnimation(vRot);
+				((EuclidianView3D) view).setRotAnimation(animatedRotSpeed);
 			
 			return true;
 		}else

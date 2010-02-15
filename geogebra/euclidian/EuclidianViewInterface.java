@@ -238,7 +238,15 @@ public interface EuclidianViewInterface {
 	 * @return the ray previewable
 	 */	
 	public Previewable createPreviewRay(ArrayList selectedPoints);
+
 	
+	/**
+	 * create a previewable for vector construction
+	 * @param selectedPoints points
+	 * @return the ray previewable
+	 */	
+	public Previewable createPreviewVector(ArrayList selectedPoints);
+
 	/**
 	 * create a previewable for polygon construction
 	 * @param selectedPoints points

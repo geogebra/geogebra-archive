@@ -367,7 +367,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		case EuclidianView.MODE_VECTOR:
 			useLineEndPoint = false;
-			previewDrawable = new DrawVector((EuclidianView) view, selectedPoints);
+			previewDrawable = view.createPreviewVector(selectedPoints);
 			break;
 
 		case EuclidianView.MODE_POLYGON:
@@ -3533,11 +3533,20 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		addSelectedPoint(hits, 2, false);
 		if (selPoints() == 2) {
 			// fetch the two selected points
+			/*
 			GeoPoint[] points = getSelectedPoints();
 			kernel.Vector(null, points[0], points[1]);
+			*/
+			vector();
 			return true;
 		}
 		return false;
+	}
+	
+	// fetch the two selected points for vector
+	protected void vector(){
+		GeoPoint[] points = getSelectedPoints();
+		kernel.Vector(null, points[0], points[1]);
 	}
 
 	//	get two points and create ray with them

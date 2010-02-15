@@ -4463,6 +4463,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return new DrawRay(this, selectedPoints);
 	}	
 	
+	public Previewable createPreviewVector(ArrayList selectedPoints){
+		return new DrawVector(this, selectedPoints);
+	}
+	
+	
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
 		return new DrawPolygon(this, selectedPoints);
 	}	

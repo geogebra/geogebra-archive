@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 
+import geogebra.euclidian.DrawVector;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
@@ -129,6 +130,31 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	//mouse
 	private boolean hasMouse = false;
+	
+	
+	
+	// animation
+	
+	/** tells if the view is under animation for scale */
+	private boolean animatedScale = false;
+	/** starting and ending scales */
+	private double animatedScaleStart, animatedScaleEnd;
+	/** velocity of animated scaling */
+	private double animatedScaleTimeFactor;
+	/** starting time for animated scale */
+	private long animatedScaleTimeStart;
+	
+	
+	/** tells if the view is under animation for rotation */
+	private boolean animatedRot = false;
+	/** speed for animated rotation */
+	private double animatedRotSpeed;
+	/** starting time for animated rotation */
+	private long animatedRotTimeStart;
+	
+	private boolean storeUndo;
+	
+	
 	
 	//stuff TODO
 	protected Rectangle selectionRectangle = new Rectangle();
@@ -1114,35 +1140,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return animatedScale || animatedRot;
 	}
 	
-	/** tells if the view is under animation for scale */
-	private boolean animatedScale = false;
-	/** starting and ending scales */
-	private double startScale, endScale;
-	/** velocity of animated scaling */
-	private double scaleTimeFactor;
-	
-	private long startScaleTime;
-	
-	
-	/** tells if the view is under animation for rotation */
-	private boolean animatedRot = false;
-	
-	private double animatedRotSpeed;
-	
-	private long startRotTime;
-	
-	private boolean storeUndo;
 
 	public void setAnimatedCoordSystem(double ox, double oy, double newScale,
 			int steps, boolean storeUndo) {
 		
 
-		startScale = getScale();
-		startScaleTime = System.currentTimeMillis();
-		endScale = newScale;
+		animatedScaleStart = getScale();
+		animatedScaleTimeStart = System.currentTimeMillis();
+		animatedScaleEnd = newScale;
 		animatedScale = true;
 		
-		scaleTimeFactor = 0.005; //it will take about 1/2s to achieve it
+		animatedScaleTimeFactor = 0.005; //it will take about 1/2s to achieve it
 		
 		this.storeUndo = storeUndo;
 
@@ -1158,7 +1166,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		animatedRot = true;
 		animatedRotSpeed = rotSpeed;
-		startRotTime = System.currentTimeMillis() - 16;
+		animatedRotTimeStart = System.currentTimeMillis() - 16;
 		bOld = b;
 		aOld = a;
 	}
@@ -1171,7 +1179,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/** animate the view for changing scale, orientation, etc. */
 	private void animate(){
 		if (animatedScale){
-			double t = (System.currentTimeMillis()-startScaleTime)*scaleTimeFactor;
+			double t = (System.currentTimeMillis()-animatedScaleTimeStart)*animatedScaleTimeFactor;
 			t+=0.2; //starting at 1/4
 			
 			if (t>=1){
@@ -1181,14 +1189,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			//Application.debug("t="+t+"\nscale="+(startScale*(1-t)+endScale*t));
 			
-			setScale(startScale*(1-t)+endScale*t);
+			setScale(animatedScaleStart*(1-t)+animatedScaleEnd*t);
 			
 			if (storeUndo)
 				getEuclidianController().getApplication().storeUndoInfo();
 		}
 		
 		if (animatedRot){
-			double da = (System.currentTimeMillis()-startRotTime)*animatedRotSpeed;			
+			double da = (System.currentTimeMillis()-animatedRotTimeStart)*animatedRotSpeed;			
 			setRotXYinDegrees(aOld + da, bOld, true);
 		}
 			
@@ -1620,6 +1628,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public Previewable createPreviewRay(ArrayList selectedPoints){
 		return new DrawRay3D(this, selectedPoints);
 	}	
+	
+	public Previewable createPreviewVector(ArrayList selectedPoints){
+		//return new DrawVector3D(this, selectedPoints);
+		return null;
+	}
 	
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
 		return new DrawPolygon3D(this, selectedPoints);
