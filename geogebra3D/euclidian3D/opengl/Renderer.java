@@ -341,17 +341,19 @@ public class Renderer implements GLEventListener {
 
 
         //drawing highlighted parts -- points and curves     
-        gl.glDepthMask(false);
+        //gl.glDepthMask(false);
         //setMaterial(new Color(0f,0f,0f),0.75f);
         dilation = DILATION_HIGHLITED;
     	gl.glCullFace(GL.GL_FRONT); //draws inside parts
-        gl.glEnable(GL.GL_BLEND);
+        //gl.glEnable(GL.GL_BLEND);
     	drawList3D.drawHighlightingPointsAndCurves(this);
         dilation = DILATION_NONE;
         
        
 
         //drawing highlighted parts -- surfaces
+        gl.glDepthMask(false);
+        gl.glEnable(GL.GL_BLEND);
         gl.glDisable(GL.GL_CULL_FACE);
         drawList3D.drawHighlightingSurfaces(this);
         
