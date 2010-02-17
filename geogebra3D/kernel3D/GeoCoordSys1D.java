@@ -196,6 +196,20 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 	
 	
 	
+	////////////////////////////////////
+	// XML
+	////////////////////////////////////
+	
+	
+    /**
+     * returns all class-specific xml tags for saveXML
+     */
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb);
+		//	line thickness and type  
+		sb.append(getLineStyleXML());
+		
+	}
 	
 	
 	
