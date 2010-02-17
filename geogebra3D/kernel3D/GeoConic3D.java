@@ -4,6 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**
@@ -133,6 +134,11 @@ extends GeoConic implements GeoElement3DInterface{
 	 public void setGeoElement2D(GeoElement geo) {
 
 	 }
+	 
+
+	 //TODO implement this
+	 public Ggb3DVector getNormal(){ return null;};
+
 
 
 

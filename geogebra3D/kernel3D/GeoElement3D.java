@@ -24,6 +24,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra3D.Test3D;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -277,6 +278,10 @@ public abstract class GeoElement3D
 
 	}
 	
+	
+	//TODO remove this
+	public Ggb3DVector getNormal(){ return null;};
+
 
 
 	/////////////////////////////////////////

@@ -55,6 +55,7 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	}
 	
 	
+	
 
 	///////////////////////////////////
 	// REGION INTERFACE
@@ -171,10 +172,6 @@ public class GeoPlane3D extends GeoCoordSys2D {
 	}
 
 
-	public boolean isDefined() {
-		// TODO Raccord de méthode auto-généré
-		return true;
-	}
 
 
 	public boolean isEqual(GeoElement Geo) {

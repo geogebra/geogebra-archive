@@ -99,7 +99,10 @@ public abstract class Application3D extends Application{
         						+" "
         						+EuclidianView3D.MODE_ZOOM_IN
         						+" "
-        						+EuclidianView3D.MODE_ZOOM_OUT;
+        						+EuclidianView3D.MODE_ZOOM_OUT
+        						+" | "
+        						+EuclidianView3D.MODE_VIEW_IN_FRONT_OF
+        						;
         
         DefaultGuiManager dgm = (DefaultGuiManager) getGuiManager();
         dgm.setToolBarDefinition( myToolBar3D );

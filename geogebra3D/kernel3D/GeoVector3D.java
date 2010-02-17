@@ -254,6 +254,20 @@ implements GeoVectorInterface, Locateable{
 		
 		
 		
+	    /**
+	     * returns all class-specific xml tags for saveXML
+	     */
+		protected void getXMLtags(StringBuilder sb) {
+	        super.getXMLtags(sb);
+			//	line thickness and type  
+			sb.append(getLineStyleXML());
+			
+			//	startPoint of vector
+			if (startPoint != null) {
+				//TODO sb.append(startPoint.getStartPointXML());
+			}
+
+		}
 		
 		///////////////////////////////////////////////
 		// LOCATEABLE INTERFACE

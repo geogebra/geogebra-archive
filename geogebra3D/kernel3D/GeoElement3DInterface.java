@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.GeoElement;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -52,8 +53,12 @@ public interface GeoElement3DInterface {
      */
     public void setGeoElement2D(GeoElement geo);
 	
-	
 
+    /** return a vector normal to this
+     * (null if none)
+     * @return a vector normal to this
+     */
+	public Ggb3DVector getNormal();
 
 	/////////////////////////////////////////
 	// link with Drawable3D

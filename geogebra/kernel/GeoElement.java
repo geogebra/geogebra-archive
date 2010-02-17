@@ -3448,7 +3448,7 @@ public abstract class GeoElement
 	 * Returns line type and line thickness as xml string.
 	 * @see getXMLtags() of GeoConic, GeoLine and GeoVector      
 	 */
-	String getLineStyleXML() {
+	protected String getLineStyleXML() {
 		if (isGeoPoint()) return "";
 		
 		StringBuilder sb = new StringBuilder();

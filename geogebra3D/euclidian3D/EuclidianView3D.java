@@ -4,14 +4,17 @@ package geogebra3D.euclidian3D;
 import geogebra.euclidian.DrawVector;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianController;
+import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DMatrixUtil;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
@@ -79,8 +82,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private Ggb3DMatrix4x4 mInv = Ggb3DMatrix4x4.Identity();
 	private Ggb3DMatrix4x4 undoRotationMatrix = Ggb3DMatrix4x4.Identity();
 	double a = 0;
-	double b = 0;//angles
+	double b = 0;//angles (in degrees)
 	double aOld, bOld;
+	double aNew, bNew;
 	
 	
 
@@ -145,12 +149,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private long animatedScaleTimeStart;
 	
 	
-	/** tells if the view is under animation for rotation */
-	private boolean animatedRot = false;
+	/** tells if the view is under continue animation for rotation */
+	private boolean animatedContinueRot = false;
 	/** speed for animated rotation */
 	private double animatedRotSpeed;
 	/** starting time for animated rotation */
 	private long animatedRotTimeStart;
+	
+	/** tells if the view is under animation for rotation */
+	private boolean animatedRot = false;
+
+	
+	
+	
 	
 	private boolean storeUndo;
 	
@@ -448,8 +459,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//TODO use Ggb3DMatrix4x4
 		
 		//rotations
-		Ggb3DMatrix m1 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.X_AXIS, this.b*EuclidianController3D.ANGLE_TO_DEGREES - Math.PI/2.0);
-		Ggb3DMatrix m2 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.Z_AXIS, this.a*EuclidianController3D.ANGLE_TO_DEGREES);
+		Ggb3DMatrix m1 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.X_AXIS, (this.b-90)*EuclidianController3D.ANGLE_TO_DEGREES);
+		Ggb3DMatrix m2 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.Z_AXIS, (-this.a-90)*EuclidianController3D.ANGLE_TO_DEGREES);
 		Ggb3DMatrix m3 = m1.mul(m2);
 
 		undoRotationMatrix.set(m3.inverse());
@@ -498,7 +509,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	final public void setCoordSystemFromMouseMove(int dx, int dy, int mode) {	
 		switch(mode){
 		case EuclidianController3D.MOVE_ROTATE_VIEW:
-			setRotXYinDegrees(aOld + dx, bOld + dy, true);
+			setRotXYinDegrees(aOld - dx, bOld + dy, true);
 			break;
 		case EuclidianController3D.MOVE_VIEW:
 			setXZero(XZeroOld+dx);
@@ -763,6 +774,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		// TODO Raccord de mÃ©thode auto-gÃ©nÃ©rÃ©
 		return 0;
 	}
+
 
 
 
@@ -1137,7 +1149,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	/** tells if the view is under animation */
 	private boolean isAnimated(){
-		return animatedScale || animatedRot;
+		return animatedScale || animatedContinueRot || animatedRot;
 	}
 	
 
@@ -1161,17 +1173,109 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	public void setRotAnimation(double rotSpeed){
-		//Application.debug("rotSpeed="+rotSpeed);
+	/** sets a continued animation for rotation
+	 * if delay is too long, no animation
+	 * if speed is too small, no animation
+	 * @param delay delay since last drag
+	 * @param rotSpeed speed of rotation
+	 */
+	public void setRotContinueAnimation(long delay, double rotSpeed){
+		//Application.debug("delay="+delay+", rotSpeed="+rotSpeed);
 
-		animatedRot = true;
-		animatedRotSpeed = rotSpeed;
-		animatedRotTimeStart = System.currentTimeMillis() - 16;
+		//if last drag occured more than 200ms ago, then no animation
+		if (delay>200)
+			return;
+		
+		//if speed is too small, no animation
+		if (Math.abs(rotSpeed)<0.01)
+			return;
+		
+			
+		animatedContinueRot = true;
+		animatedRot = false;
+		animatedRotSpeed = -rotSpeed;
+		animatedRotTimeStart = System.currentTimeMillis() - delay;
 		bOld = b;
 		aOld = a;
 	}
 	
+	
+	public void setRotAnimation(Ggb3DVector vn){
+
+		animatedRot = true;
+		animatedContinueRot = false;
+		animatedRotTimeStart = System.currentTimeMillis();// - 16;
+		aOld = this.a % 360;
+		bOld = this.b % 360;
+		
+		Ggb3DVector spheric;
+		//put the eye in front of the visible side
+		Ggb3DVector eye = Ggb3DMatrixUtil.cartesianCoords(1,aOld*Math.PI/180,bOld*Math.PI/180);
+		//Application.debug("c="+eye.dotproduct(vn));
+		if(eye.dotproduct(vn)>0)
+			spheric = Ggb3DMatrixUtil.sphericalCoords(vn);
+		else
+			spheric = Ggb3DMatrixUtil.sphericalCoords((Ggb3DVector) vn.mul(-1));
+		
+		//Application.debug("vn\n"+vn+"\nbis\n"+Ggb3DMatrixUtil.cartesianCoords(spheric));
+		
+		aNew = spheric.get(2)*180/Math.PI;
+		bNew = spheric.get(3)*180/Math.PI;
+		
+
+		/*
+		Application.debug(
+				"(a,b)=(" + (this.a) +"°,"+ (this.b)+"°)\n"
+				+
+				"(aOld,bOld)=(" + (this.aOld) +"°,"+ (this.bOld)+"°)\n"
+				+
+				"(aNew,bNew)=(" + (this.aNew) +"°,"+ (this.bNew)+"°)"
+		);
+		*/
+		
+		
+		//if (aNew,bNew)=(0°,90°), then change it to (90°,90°) to have correct xOy orientation
+		if (Kernel.isEqual(aNew, 0, Kernel.STANDARD_PRECISION) &&
+				Kernel.isEqual(Math.abs(bNew), 90, Kernel.STANDARD_PRECISION))
+			aNew=-90;
+		
+		
+		//looking for the smallest path
+		if (aOld-aNew>180)
+			aOld-=360;
+		/*
+		else if (aOld-aNew<-180)
+			aOld+=360;
+			*/
+		else if (Kernel.isEqual(aOld, aNew, Kernel.STANDARD_PRECISION))
+			if (Kernel.isEqual(bOld, bNew, Kernel.STANDARD_PRECISION)){
+				if (!Kernel.isEqual(Math.abs(bNew), 90, Kernel.STANDARD_PRECISION))
+					aNew+=180;
+				bNew*=-1;
+				//Application.debug("ici");
+			}
+		if (bOld>180)
+			bOld-=360;
+
+
+
+		
+
+		/*
+		Application.debug(
+				"bis\n(a,b)=(" + (this.a) +"°,"+ (this.b)+"°)\n"
+				+
+				"(aOld,bOld)=(" + (this.aOld) +"°,"+ (this.bOld)+"°)\n"
+				+
+				"(aNew,bNew)=(" + (this.aNew) +"°,"+ (this.bNew)+"°)"
+		);
+		*/
+		
+	}
+	
+	
 	public void stopRotAnimation(){
+		animatedContinueRot = false;
 		animatedRot = false;
 	}
 
@@ -1190,18 +1294,30 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			//Application.debug("t="+t+"\nscale="+(startScale*(1-t)+endScale*t));
 			
 			setScale(animatedScaleStart*(1-t)+animatedScaleEnd*t);
+			updateMatrix();
 			
-			if (storeUndo)
-				getEuclidianController().getApplication().storeUndoInfo();
 		}
 		
-		if (animatedRot){
+		if (animatedContinueRot){
 			double da = (System.currentTimeMillis()-animatedRotTimeStart)*animatedRotSpeed;			
 			setRotXYinDegrees(aOld + da, bOld, true);
 		}
+		
+		if (animatedRot){
+			double t = (System.currentTimeMillis()-animatedRotTimeStart)*0.001;
+			//t+=0.2; //starting at 1/4
+			
+			if (t>=1){
+				t=1;
+				animatedRot = false;
+			}
+			
+			setRotXYinDegrees(aOld*(1-t)+aNew*t, bOld*(1-t)+bNew*t, true);
+		}
+
 			
 		
-		updateMatrix();
+		
 	}
 
 

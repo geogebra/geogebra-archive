@@ -152,6 +152,8 @@ public class Test3D{
         //testCube(true);//testSave("polyhedron3d");
         //testLoad("polyhedron3d");
         //testLoad("tetrahedron-and-plane");
+        //testLoad("viewInFrontOf");
+        //testLoad("plan");
         
         //testNumerous(400, Math.PI/48, 0.01);
         //testNumerous2(400, Math.PI/6, 0.01);

@@ -1983,7 +1983,7 @@ public abstract class Application implements KeyEventDispatcher {
 			}
 		} else {
 			// STANDARD TOOL
-			String modeText = EuclidianView.getModeText(mode);
+			String modeText = getKernel().getModeText(mode);
 			if (toolName) {
 				// tool name
 				ret = getMenu(modeText);
@@ -2021,7 +2021,7 @@ public abstract class Application implements KeyEventDispatcher {
 			}
 		} else {
 			// standard case
-			String modeText = EuclidianView.getModeText(mode);
+			String modeText = getKernel().getModeText(mode);
 			// bugfix for Turkish locale added Locale.US
 			String iconName = "mode_" + modeText.toLowerCase(Locale.US)
 					+ "_32.gif";

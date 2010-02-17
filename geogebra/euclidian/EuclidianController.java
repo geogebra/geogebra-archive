@@ -513,6 +513,30 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		}
 
+		mouseClickedMode(e,mode);
+
+		// Alt click: copy definition to input field
+		if (e.isAltDown() && app.showAlgebraInput()) {
+			view.setHits(mouseLoc);
+			hits = view.getHits().getTopHits();
+			hits.removePolygons();
+			if (hits != null && hits.size() > 0) {
+				GeoElement geo = (GeoElement) hits.get(0);
+
+				// F3 key: copy definition to input bar
+				app.getGlobalKeyDispatcher().handleFunctionKeyForAlgebraInput(3, geo);
+
+				moveMode = MOVE_NONE;	
+				return;
+			}					
+		}
+	}
+	
+	
+	
+	protected void mouseClickedMode(MouseEvent e, int mode){
+		
+
 		switch (mode) {
 		case EuclidianView.MODE_VISUAL_STYLE:								
 		case EuclidianView.MODE_MOVE:								
@@ -550,22 +574,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.zoom(mouseLoc.x, mouseLoc.y, 1d/EuclidianView.MODE_ZOOM_FACTOR, 15, false);
 			toggleModeChangedKernel = true;
 			break;
-		}
-
-		// Alt click: copy definition to input field
-		if (e.isAltDown() && app.showAlgebraInput()) {
-			view.setHits(mouseLoc);
-			hits = view.getHits().getTopHits();
-			hits.removePolygons();
-			if (hits != null && hits.size() > 0) {
-				GeoElement geo = (GeoElement) hits.get(0);
-
-				// F3 key: copy definition to input bar
-				app.getGlobalKeyDispatcher().handleFunctionKeyForAlgebraInput(3, geo);
-
-				moveMode = MOVE_NONE;	
-				return;
-			}					
 		}
 	}
 
@@ -4499,7 +4507,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (selPoints() == 2) {					
 			GeoPoint [] points = getSelectedPoints();
-			app.getGuiManager().showNumberInputDialogRegularPolygon(app.getMenu(EuclidianView.getModeText(mode)),
+			app.getGuiManager().showNumberInputDialogRegularPolygon(app.getMenu(getKernel().getModeText(mode)),
 					points[0], points[1]);
 			return true;
 		}
@@ -4963,7 +4971,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// we got the rotation center point
 		if (selPoints() == 1 && selGeos() > 0) {					
-			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(getKernel().getModeText(mode)),
 					app.getPlain("Angle"), defaultRotateAngle);
 			NumberValue num = (NumberValue) ob[0];											
 			geogebra.gui.AngleInputDialog dialog = (geogebra.gui.AngleInputDialog) ob[1];
@@ -5026,7 +5034,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// we got the mirror point
 		if (selPoints() == 1) {		
-			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(getKernel().getModeText(mode)),
 					app.getPlain("Numeric"), null);			
 			if (num == null) {
 				view.resetMode();
@@ -5070,7 +5078,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// we got the point
 		if (selPoints() == 1) {
 			// get length of segment
-			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(getKernel().getModeText(mode)),
 					app.getPlain("Length"), null);		
 
 			if (num == null) {
@@ -5236,7 +5244,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// we got the points		
 		if (selPoints() == 2 || selSegments() == 1) {
 			// get angle			
-			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(getKernel().getModeText(mode)),
 					app.getPlain("Angle"), "45\u00b0");
 			NumberValue num = (NumberValue) ob[0];
 			geogebra.gui.AngleInputDialog aDialog = (geogebra.gui.AngleInputDialog) ob[1]; 			
@@ -5277,7 +5285,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// we got the center point
 		if (selPoints() == 1) {	
-			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(EuclidianView.getModeText(mode)),
+			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(getKernel().getModeText(mode)),
 					app.getPlain("Radius"), null);
 
 			if (num == null) {

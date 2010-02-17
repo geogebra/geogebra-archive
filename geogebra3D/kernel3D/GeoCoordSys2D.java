@@ -206,6 +206,14 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 		
 	}
 	
+	
+	
+	///////////////////////////////////
+	// GEOELEMENT3DINTERFACE INTERFACE	
+	public Ggb3DVector getNormal(){ 
+		return getMatrix4x4().getVz();
+	};
+
 
 	
 }

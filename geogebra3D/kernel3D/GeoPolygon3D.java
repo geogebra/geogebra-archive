@@ -149,9 +149,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		
 		
 		if (interiorPoint==null)
-			return coordSys.getMatrix4x4().getVz();
+			return coordSys.getNormal();
 		
-		Ggb3DVector vn = coordSys.getMatrix4x4().getVz();
+		Ggb3DVector vn = coordSys.getNormal();
 		
 		//Application.debug("polygon("+getLabel()+") : "+vn.dotproduct(interiorPoint.sub(getPoint3D(0))));
 

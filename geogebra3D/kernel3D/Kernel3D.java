@@ -15,6 +15,7 @@ package geogebra3D.kernel3D;
 
 
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoVector;
@@ -33,6 +34,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
 import geogebra3D.Matrix.Ggb3DVector;
+import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.io.MyXMLHandler3D;
 import geogebra3D.kernel3D.arithmetic.ExpressionNodeEvaluator3D;
 import geogebra3D.kernel3D.commands.AlgebraProcessor3D;
@@ -107,7 +109,38 @@ public class Kernel3D
 	public GeoPlane3DConstant getXOYPlane(){
 		return ((Construction3D) cons).getXOYPlane();
 	}
+	
+	
+	
 
+    
+	/* *******************************************
+	 *  Methods for EuclidianView/EuclidianView3D
+	 * ********************************************/
+    
+
+	public String getModeText(int mode) {
+		switch (mode) {
+		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
+			return "ViewInFrontOf";
+			
+		default:
+			return super.getModeText(mode);
+		}
+	}
+    
+    
+    
+    
+    
+	/* *******************************************
+	 *  Methods for MyXMLHandler
+	 * ********************************************/
+
+	
+	
+	
+	
 	
 	/**
 	 * creates the 3D construction cons

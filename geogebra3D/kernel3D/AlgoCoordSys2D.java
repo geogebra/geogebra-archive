@@ -4,6 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DVector;
 
 /**
@@ -117,6 +118,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 		for(int i=0;(!cs.isMadeCoordSys())&&(i<points.length);i++)
 			cs.addPointToCoordSys(points[i].getCoords(),true,vxParallelToXoy);
 		
+	
 		
 		for(int i=0;i<points.length;i++){
 			//project the point on the coord sys

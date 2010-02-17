@@ -19,10 +19,11 @@ public class DrawVector3D extends Drawable3DCurves {
 	
 	
 	public void drawGeometry(Renderer renderer) {
-		renderer.setThickness(getGeoElement().getLineThickness());
+		double t = getGeoElement().getLineThickness();
+		renderer.setThickness(t);
 		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
-		renderer.setArrowLength(20);
-		renderer.setArrowWidth(10);
+		renderer.setArrowLength(10*t);
+		renderer.setArrowWidth(5*t);
 		
 
 		renderer.drawSegment();

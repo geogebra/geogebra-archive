@@ -13,9 +13,11 @@ import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.main.Application;
 import geogebra3D.Matrix.Ggb3DMatrix4x4;
+import geogebra3D.Matrix.Ggb3DMatrixUtil;
 import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 
@@ -624,6 +626,38 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return false;
 	}
 	
+	
+	
+	protected void mouseClickedMode(MouseEvent e, int mode){
+		
+
+		switch (mode) {
+		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
+			Hits hits = view.getHits().getTopHits();
+			if(!hits.isEmpty()){
+				GeoElement3DInterface geo = (GeoElement3DInterface) view.getHits().getTopHits().get(0);
+				Ggb3DVector vn = geo.getNormal();
+				if (vn!=null){
+					/*
+					Ggb3DVector spheric = Ggb3DMatrixUtil.sphericalCoords(vn);
+					Application.debug("MODE_VIEW_IN_FRONT_OF : "
+							+ (((GeoElement) geo).getLabel())
+							+ "\nnormal:\n" + vn
+							+ "\nspheric:\n" + spheric
+							+ "\n(" + (spheric.get(2)*180/Math.PI) +"°,"+ (spheric.get(3)*180/Math.PI)+"°)"
+					);
+					*/
+					
+					view3D.setRotAnimation(vn);
+				}
+			}
+			
+			break;
+			default:
+				super.mouseClickedMode(e,mode);
+		}
+	}
+	
 
 
 	///////////////////////////////////////////
@@ -682,16 +716,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			view.setHitCursor();
 			app.storeUndoInfo();
 			
-			//if last drag occured less than 1/5 s ago, then animate 3D view in rotation
-			if (System.currentTimeMillis()-timeOld<200)
-				((EuclidianView3D) view).setRotAnimation(animatedRotSpeed);
+
+			((EuclidianView3D) view).setRotContinueAnimation(System.currentTimeMillis()-timeOld,animatedRotSpeed);
 			
 			return true;
 		}else
 			return false;
 	}
-	
-	
 	
 	
 	

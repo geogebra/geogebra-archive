@@ -402,7 +402,7 @@ public abstract class Drawable3D {
 		if (!((GeoElement3DInterface) getGeoElement()).isPickable()){
 			return;
 		}
-		if(!getGeoElement().isEuclidianVisible())
+		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
 		
 		renderer.setMatrix(getMatrix());
