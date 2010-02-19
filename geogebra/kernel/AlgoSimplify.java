@@ -106,9 +106,9 @@ public class AlgoSimplify extends AlgoElement {
     // over-ridden by AlgoPartialFractions
     protected String getMathPiperString(String functionIn) {
 	    sb.setLength(0);
-        sb.append("Simplify(TrigSimpCombine(");
+        sb.append("Simplify(TrigSimpCombine(FactorCancel(");
         sb.append(functionIn);
-        sb.append("))");        
+        sb.append(")))");        
         return sb.toString();
         
 
