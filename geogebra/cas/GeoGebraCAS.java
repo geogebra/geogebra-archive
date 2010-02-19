@@ -186,7 +186,7 @@ public class GeoGebraCAS {
 		}
 		
 		// define constant for Degree
-		response = ggbMathPiper.evaluate("Degree := 180/pi;");
+		response = ggbMathPiper.evaluate("Degree := 180/Pi;");
 		
 		// set default numeric precision to 16 significant figures
 		ggbMathPiper.evaluate("BuiltinPrecisionSet(16);");
@@ -201,17 +201,24 @@ public class GeoGebraCAS {
 		ggbMathPiper.evaluate("Exp(_x == _y)  <-- Exp(x) == Exp(y);");
 		ggbMathPiper.evaluate("Ln(_x == _y)  <-- Ln(x) == Ln(y);");
 		
-		// arithmetic for equations
-		ggbMathPiper.evaluate("(_x == _y) + _z <-- Simplify(x + z == y + z);");
-		ggbMathPiper.evaluate("_z + (_x == _y) <-- Simplify(z + x == z + y);");
-		ggbMathPiper.evaluate("(_x == _y) - _z <-- Simplify(x - z == y - z);");
-		ggbMathPiper.evaluate("_z - (_x == _y) <-- Simplify(z - x == z - y);");
-		ggbMathPiper.evaluate("(_x == _y) * _z <-- Simplify(x * z == y * z);");
-		ggbMathPiper.evaluate("_z * (_x == _y) <-- Simplify(z * x == z * y);");
-		ggbMathPiper.evaluate("(_x == _y) / _z <-- Simplify(x / z == y / z);");
-		ggbMathPiper.evaluate("_z / (_x == _y) <-- Simplify(z / x == z / y);");
-		ggbMathPiper.evaluate("(_x == _y) ^ _z <-- Simplify(x ^ z == y ^ z);");
-		ggbMathPiper.evaluate("_z ^ (_x == _y) <-- Simplify(z ^ x == z ^ y);");
+		// arithmetic for equations and scalars
+		ggbMathPiper.evaluate("NotIsEquation(exp) := Not( IsEquation(exp));");
+		ggbMathPiper.evaluate("(_x == _y) + z_NotIsEquation <-- Simplify(x + z == y + z);");
+		ggbMathPiper.evaluate("z_NotIsEquation + (_x == _y) <-- Simplify(z + x == z + y);");
+		ggbMathPiper.evaluate("(_x == _y) - z_NotIsEquation <-- Simplify(x - z == y - z);");
+		ggbMathPiper.evaluate("z_NotIsEquation - (_x == _y) <-- Simplify(z - x == z - y);");
+		ggbMathPiper.evaluate("(_x == _y) * z_NotIsEquation <-- Simplify(x * z == y * z);");
+		ggbMathPiper.evaluate("z_NotIsEquation * (_x == _y) <-- Simplify(z * x == z * y);");
+		ggbMathPiper.evaluate("(_x == _y) / z_NotIsEquation <-- Simplify(x / z == y / z);");
+		ggbMathPiper.evaluate("z_NotIsEquation / (_x == _y) <-- Simplify(z / x == z / y);");
+		ggbMathPiper.evaluate("(_x == _y) ^ z_NotIsEquation <-- Simplify(x ^ z == y ^ z);");
+		ggbMathPiper.evaluate("z_NotIsEquation ^ (_x == _y) <-- Simplify(z ^ x == z ^ y);");
+		
+		// arithmetic for two equations
+		ggbMathPiper.evaluate("(_a == _b) + (_c == _d) <-- Simplify(a + c == b + d);");
+		ggbMathPiper.evaluate("(_a == _b) - (_c == _d) <-- Simplify(a - c == b - d);");
+		ggbMathPiper.evaluate("(_a == _b) * (_c == _d) <-- Simplify(a * c == b * d);");
+		ggbMathPiper.evaluate("(_a == _b) / (_c == _d) <-- Simplify(a / c == b / d);");
 		
 		return true;
 	}
@@ -489,7 +496,7 @@ public class GeoGebraCAS {
 		// use MathPiper if that worked, otherwise GeoGebra
 		if (mathPiperSuccessful) {
 			if (assignment && "true".equals(mathPiperResult)) {
-				// MathPiper returned true: use ggbResult if we have one, otherwise return ""
+				// MathPiper returned true: use ggbResult if we have one, otherwise return mathPiperResult
 				if (ggbResult != null) {
 					return ggbResult;
 				} else {

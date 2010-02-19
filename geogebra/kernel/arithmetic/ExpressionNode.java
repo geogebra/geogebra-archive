@@ -1413,15 +1413,15 @@ implements ExpressionValue, ExpressionNodeConstants {
                 
             case MULTIPLY: 
             	switch (STRING_TYPE) {
-        		case STRING_TYPE_JASYMCA:
-        		case STRING_TYPE_MATH_PIPER:
-        			sb.append('(');
-        			sb.append(leftStr);
-                    sb.append(") * (");
-                    sb.append(rightStr);
-                    sb.append(')');
-                    break;
-                    
+//        		case STRING_TYPE_JASYMCA:
+//        		case STRING_TYPE_MATH_PIPER:
+//        			sb.append('(');
+//        			sb.append(leftStr);
+//                    sb.append(") * (");
+//                    sb.append(rightStr);
+//                    sb.append(')');
+//                    break;
+                  
                 default:
                 	// check for 1 at left
         			if (isEqualString(left, 1, !valueForm)) {
@@ -1466,6 +1466,8 @@ implements ExpressionValue, ExpressionNodeConstants {
         				break;
         			}
                 	           
+            	case STRING_TYPE_JASYMCA:
+        		case STRING_TYPE_MATH_PIPER:
         			
 	                boolean nounary = true;
 	                
@@ -1496,6 +1498,8 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                           else {
 	                        	   switch (STRING_TYPE) {
 		                			case STRING_TYPE_GEOGEBRA_XML:
+		                			case STRING_TYPE_JASYMCA:
+		                    		case STRING_TYPE_MATH_PIPER:
 		                				sb.append(" * ");  
 		                				break;
 		                				
@@ -1521,7 +1525,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    	switch (STRING_TYPE) {
                 			case STRING_TYPE_PGF:
                 			case STRING_TYPE_PSTRICKS:
-	                			case STRING_TYPE_GEOGEBRA_XML:
+	                		case STRING_TYPE_GEOGEBRA_XML:
+	                		case STRING_TYPE_JASYMCA:
+	                    	case STRING_TYPE_MATH_PIPER:
 	                				sb.append(" * ");  
 	                				break;
 	                				

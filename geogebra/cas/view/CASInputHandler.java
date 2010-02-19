@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class CASInputHandler {
 	
 	public static char ROW_REFERENCE_STATIC = '#';
-	public static char ROW_REFERENCE_DYNAMIC = '%';
+	public static char ROW_REFERENCE_DYNAMIC = '$';
 	
 	private CASView casView;
 	private CASTable consoleTable;
@@ -272,11 +272,21 @@ public class CASInputHandler {
 	 * @param input
 	 * @return
 	 */
-	private static String fixInputErrors(String input) {
+	private String fixInputErrors(String input) {
+		input = input.trim();
+		
+		// replace a :=  with  Delete[a]
+		if (input.endsWith(":=")) {
+			input = casView.getApp().getCommand("Delete") + "[" + input.substring(0, input.length()-2).trim() + "];";
+		}
+		
+		// remove trailing = 
+		else if (input.endsWith("=")) {
+			input = input.substring(0, input.length()-1);
+		}
+		
 		// replace f(x) = x^2 by f(x) := x^2
-		// replace a = 25 / 5 by a := 25 / 5
-		if (functionDefinition.matcher(input).matches() ||
-			numberDefinition.matcher(input).matches()) 
+		else if (functionDefinition.matcher(input).matches()) 
 		{
 			input = input.replaceFirst("=", ":=");
 		}
@@ -285,8 +295,7 @@ public class CASInputHandler {
 	}
 	
 	// f(x) = x^2
+	// should be changed to f(x) := x^2
 	private static Pattern functionDefinition = Pattern.compile("(\\p{L})*\\([\\p{L}&&[^\\)]]*\\)(\\s)*[=].*");
-	// a = 5 but not x = 5
-	private static Pattern numberDefinition = Pattern.compile("([\\p{L}&&[^xyz]])*(\\s)*[=][^\\p{L}]*");
 
 }

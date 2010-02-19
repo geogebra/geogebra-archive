@@ -156,7 +156,7 @@ TOKEN : {
 /* OPERATORS */
 TOKEN :  {   
     < ASSIGNMENT: ":=" >
-  | < CARTESIAN_SPECIAL_SEPERATOR: "|" >
+  | < VERTICAL_BAR: "|" >
   | < NOT: ("\u00ac") > 
   | < OR:		("||" | "\u2228" ) >
   | < AND:		("&&" | "\u2227" ) >
@@ -350,11 +350,11 @@ ValidExpression buildValidExpression() :
      |     
         // h: X = (3,2) + t (5,1)
       	LOOKAHEAD(2147483647) 
-      	(l = <SPREADSHEET_LABEL> | l = <LABEL>) ":"  ve = parametric()      
+      	(l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = parametric()      
      |     
         // g: 3x + y = 7 
         LOOKAHEAD(2147483647)      
-        (l = <SPREADSHEET_LABEL> | l = <LABEL>)  ":"  ve = equation()        
+        (l = <SPREADSHEET_LABEL> | l = <LABEL>)  (":" | <ASSIGNMENT> )  ve = equation()        
     |          
         // special case "A: (3,2)" should become a point  
         // CAS assignment "a := 5" should be supported too                                     
@@ -414,21 +414,24 @@ ValidExpression buildCASExpression() :
 } 
 {         
     (
-       // CAS function
+        // CAS function
         // f(a) := a^2 + 3a
-       LOOKAHEAD(2147483647)   
-       ve = casFunction()
-       //  ve = functionExpressionnode() 
+        LOOKAHEAD(2147483647)   
+        ve = casFunction()
     |
-       // assignment         
+        // assignment         
         // b := 27 + c
-        LOOKAHEAD(2147483647)                                          
-	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) <ASSIGNMENT> ve = expressionnode()            
+        LOOKAHEAD(2147483647)
+		l = casLabel() <ASSIGNMENT> ve = expressionnode() 
 	|	   
+       	// labeled equation, e.g. g: 3x + y = 7
+       	LOOKAHEAD(2147483647)   
+       	l = casLabel() (<ASSIGNMENT> | ":") ve = equation()   
+ 	|	   
        	// equation, e.g. 3x + y = 7
        	LOOKAHEAD(2147483647)   
-       	ve = equation()        
-    |   
+       	ve = equation()
+    | 
     	// expression
     	// 5a + 3    
     	LOOKAHEAD(2147483647)
@@ -443,6 +446,7 @@ ValidExpression buildCASExpression() :
     }    
 }
 
+
 /**
  * convert MathPiper String to GeoGebra string
  */
@@ -454,11 +458,7 @@ ValidExpression buildMathPiperExpression() :
     Vector labels = new Vector();
 } 
 {         
-    (
-       	// convert Solve results like {x==5, x==7} to simple list {5, 7} 
-       	LOOKAHEAD(2147483647)   
-       	ve = MathPiperSolveResult()        
-    |       
+    (     
 		// try to parse MathPiper string as standard GeoGebra expression 
     	ve = expressionnode()     	     	   
 	)                     
@@ -470,7 +470,7 @@ ValidExpression buildMathPiperExpression() :
 
 /**
  * convert Solve results like {x==5, x==7} to simple list {5, 7} 
- */
+ *
 ValidExpression MathPiperSolveResult() : 
 {    
 	ExpressionValue ev;
@@ -503,14 +503,19 @@ ValidExpression MathPiperSolveResult() :
     {  return myList;  } 
     )  
 }
+*/
 
 /**
  * (<VARX> | <VARY> | <LABEL> | <SPREADSHEET_LABEL>) 
  */
-void casLabel():
-{}
+Token casLabel():
 {
-	(<VARX> | <VARY> | <LABEL> | <SPREADSHEET_LABEL>) 
+  Token l;
+}
+{
+	(l = <VARX> | l = <VARY> | l = <LABEL> | l = <SPREADSHEET_LABEL>)
+	{
+	  return l;	}
 }
 
 /**
@@ -1620,7 +1625,7 @@ VectorValue cartesianvector():
     (  LOOKAHEAD(2147483647)
    ( "(" x = expression() "," y = expression() ")"  ) 	
     | 
-    (  "(" x = expression() <CARTESIAN_SPECIAL_SEPERATOR> y = expression() ")" )
+    (  "(" x = expression() <VERTICAL_BAR> y = expression() ")" )
     )
         {  return new MyVecNode(kernel, x, y); }           
 }
@@ -1638,7 +1643,7 @@ Vector3DValue cartesianvector3D():
     (  LOOKAHEAD(2147483647)
    ( "(" x = expression() "," y = expression() "," z = expression() ")"  ) 	
     | 
-    (  "(" x = expression() <CARTESIAN_SPECIAL_SEPERATOR> y = expression() <CARTESIAN_SPECIAL_SEPERATOR> z = expression() ")" )
+    (  "(" x = expression() <VERTICAL_BAR> y = expression() <VERTICAL_BAR> z = expression() ")" )
     )
         {  return new MyVec3DNode(kernel, x, y, z); }           
 }
@@ -1672,7 +1677,7 @@ ExpressionNode cartesianvector_special():
 }
 {   
     // cartesian coordinates
-    (   l = <FUNCTION_LABEL>  x = expression() <CARTESIAN_SPECIAL_SEPERATOR> y = expression() ")" )
+    (   l = <FUNCTION_LABEL>  x = expression() <VERTICAL_BAR> y = expression() ")" )
         {         
         	ExpressionNode en =  new ExpressionNode(kernel, new MyVecNode(kernel, x, y)); 
         	en.setLabel(l.image.substring(0,l.image.length()-1));
