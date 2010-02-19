@@ -32,7 +32,7 @@ public class GeoGebraCAS {
 	final public String RB_GGB_TO_MathPiper = "/geogebra/cas/ggb2mathpiper";
 
 	private Interpreter ggbMathPiper;
-	private GeoGebraJasymca ggbJasymca;	
+	//private GeoGebraJasymca ggbJasymca;	
 	private StringBuilder sbInsertSpecial, sbReplaceIndices, sbPolyCoeffs;
 	private Application app;
 	private Kernel kernel;
@@ -53,7 +53,7 @@ public class GeoGebraCAS {
 	private void initCAS() {
 		ggbMathPiper = null;
 		getMathPiper();
-		ggbJasymca = new GeoGebraJasymca();		
+		//ggbJasymca = new GeoGebraJasymca();		
 	}
 
 	
@@ -61,7 +61,7 @@ public class GeoGebraCAS {
      * Evaluates a JASYMCA expression and returns the result as a string,
      * e.g. exp = "diff(x^2,x)" returns "2*x".
      * @return result string, null possible
-     */ 
+     * 
     final public String evaluateJASYMCA(String exp) {    
     	String result = ggbJasymca.evaluate(exp);      	
     	  
@@ -74,7 +74,7 @@ public class GeoGebraCAS {
     	//System.out.println("         result: " + result);  
     	        
         return result;
-    }
+    }*/
 
     /**
 	 * Evaluates a MathPiper expression and returns the result as a string in MathPiper syntax, 

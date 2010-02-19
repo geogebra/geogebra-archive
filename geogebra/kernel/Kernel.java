@@ -389,14 +389,14 @@ public class Kernel {
      * e.g. exp = "diff(x^2,x)" returns "2*x"
      * @param expression string
      * @return result string (null possible)
-     */ 
+     *
 	final public String evaluateJASYMCA(String exp) {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}				
 		
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateJASYMCA(exp);
-	}
+	}*/
 	
 	/** 
      * Evaluates a MathPiper expression and returns the result as a String.
