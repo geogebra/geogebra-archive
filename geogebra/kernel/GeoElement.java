@@ -1637,9 +1637,11 @@ public abstract class GeoElement
 			return getLabel();
 		
 		// for speed, check first for a %
-		if (caption.indexOf("%") < 0) return caption;
+		if (caption.indexOf('%') < 0) return caption;
 	
-		StringBuilder captionSB = new StringBuilder();
+		if (captionSB == null) captionSB = new StringBuilder();
+		else captionSB.setLength(0);
+		
 		// replace %v with value and %n with name
 		for (int i = 0; i < caption.length(); i++) {
 			char ch = caption.charAt(i);
