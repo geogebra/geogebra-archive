@@ -2,8 +2,11 @@ package geogebra3D.io;
 
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.util.LinkedHashMap;
@@ -162,6 +165,19 @@ public class MyXMLHandler3D extends MyXMLHandler {
 			//e.printStackTrace();
 			return false;
 		}
+	}
+	
+	
+	
+	/** create absolute start point (coords expected) */
+	protected GeoPointInterface handleAbsoluteStartPoint(LinkedHashMap<String, String> attrs) {
+		double x = Double.parseDouble((String) attrs.get("x"));
+		double y = Double.parseDouble((String) attrs.get("y"));
+		double z = Double.parseDouble((String) attrs.get("z"));
+		double w = Double.parseDouble((String) attrs.get("w"));
+		GeoPoint3D p = new GeoPoint3D(cons);
+		p.setCoords(x, y, z, w);
+		return p;
 	}
 	
 	

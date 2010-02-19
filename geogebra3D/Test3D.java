@@ -136,7 +136,7 @@ public class Test3D{
         //init 3D view
         view3D.setZZero(-0.0);
         view3D.setYZero(-100);
-        view3D.setRotXYinDegrees(-30,22.5,true);
+        view3D.setRotXYinDegrees(-60,22.5,true);
 
         
         //testList();
@@ -153,7 +153,7 @@ public class Test3D{
         //testLoad("polyhedron3d");
         //testLoad("tetrahedron-and-plane");
         //testLoad("viewInFrontOf");
-        //testLoad("plan");
+        //testLoad("vectors");
         
         //testNumerous(400, Math.PI/48, 0.01);
         //testNumerous2(400, Math.PI/6, 0.01);

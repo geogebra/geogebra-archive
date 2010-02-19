@@ -42,6 +42,7 @@ import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
+import geogebra.util.Util;
 import geogebra3D.Matrix.Ggb3DVector;
 
 
@@ -674,6 +675,34 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		sb.append("\"/>\n");
  
     }
+	
+	
+	
+    public String getStartPointXML() {
+    	StringBuilder sb = new StringBuilder();    	
+		sb.append("\t<startPoint ");
+		
+    	if (isAbsoluteStartPoint()) {		
+			sb.append(" x=\"" + getCoords().get(1) + "\"");
+			sb.append(" y=\"" + getCoords().get(2) + "\"");
+			sb.append(" z=\"" + getCoords().get(3) + "\"");			
+			sb.append(" w=\"" + getCoords().get(4) + "\"");			
+    	} else {
+			sb.append("exp=\"");
+			boolean oldValue = kernel.isTranslateCommandName();
+			kernel.setTranslateCommandName(false);
+			sb.append(Util.encodeXML(getLabel()));
+			kernel.setTranslateCommandName(oldValue);
+			sb.append("\"");			    	
+    	}
+		sb.append("/>\n");
+		return sb.toString();
+    }
+    
+	final public boolean isAbsoluteStartPoint() {
+		return isIndependent() && !isLabelSet();
+	}
+ 
 
 	
 

@@ -264,7 +264,7 @@ implements GeoVectorInterface, Locateable{
 			
 			//	startPoint of vector
 			if (startPoint != null) {
-				//TODO sb.append(startPoint.getStartPointXML());
+				sb.append(startPoint.getStartPointXML());
 			}
 
 		}
@@ -280,6 +280,9 @@ implements GeoVectorInterface, Locateable{
 		}
 
 		public void setStartPoint(GeoPointInterface pI)	throws CircularDefinitionException {
+			
+
+			Application.debug("point : "+((GeoElement) pI).getLabel());
 			
 	    	GeoPoint3D p = (GeoPoint3D) pI;
 	    	
