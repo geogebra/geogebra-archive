@@ -156,7 +156,7 @@ public final class DrawButton extends Drawable {
 			String caption = geo.getCaption();
 			if (!caption.equals(oldCaption)) {
 				oldCaption = caption;
-				labelDesc = GeoElement.indicesToHTML(caption, false);
+				labelDesc = GeoElement.indicesToHTML(caption, true);
 			}	
 			button.setText(labelDesc);
 		} else {
