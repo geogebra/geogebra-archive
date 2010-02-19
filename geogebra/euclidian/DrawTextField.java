@@ -234,7 +234,7 @@ public final class DrawTextField extends Drawable {
 			String caption = geo.getCaption();
 			if (!caption.equals(oldCaption)) {
 				oldCaption = caption;
-				labelDesc = GeoElement.indicesToHTML(caption, false);
+				labelDesc = GeoElement.indicesToHTML(caption, true);
 			}	
 			label.setText(labelDesc);
 		} else {
