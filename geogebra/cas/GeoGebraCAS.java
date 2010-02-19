@@ -765,4 +765,23 @@ public class GeoGebraCAS {
 		return ret;
 	}
 	
+	/**
+	 * Returns true if the two input expressions are structurally equal. 
+	 * For example "2 + 2/3" is structurally equal to "2 + (2/3)"
+	 * but unequal to "(2 + 2)/3"
+	 */
+	public boolean isStructurallyEqual(String input1, String input2) {
+		try {
+			// parse both input expressions
+			ValidExpression ve1 = parseGeoGebraCASInput(input1);
+			ValidExpression ve2 = parseGeoGebraCASInput(input2);
+			
+			// compare if the parsed expressions are equal
+			return ve1.toString().equals(ve2.toString());
+		} catch (Throwable th) {
+		}
+		
+		return false;
+	}
+	
 }

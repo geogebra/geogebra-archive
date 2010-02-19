@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import geogebra.kernel.arithmetic.ValidExpression;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,18 +58,18 @@ public class CASInputHandler {
 		// STANDARD CASE: GeoGebraCAS input
 		// break text into prefix, evalText, postfix
 		String prefix, evalText, postfix;			
-		boolean hasSelectedText = selectedText == null || selectedText.trim().length() == 0;
+		boolean hasSelectedText = selectedText != null && selectedText.trim().length() > 0;
 		if (hasSelectedText) {
+			// selected text: break it up into prefix, evalText, and postfix
+			prefix = selRowInput.substring(0, selStart).trim();
+			evalText = "(" + selectedText + ")";
+			postfix = selRowInput.substring(selEnd).trim();
+		}
+		else {
 			// no selected text: evaluate input using current cell
 			prefix = "";
 			evalText = selRowInput;
-			postfix = "";		
-		}
-		else {
-			// selected text: break it up into prefix, evalText, and postfix
-			prefix = selRowInput.substring(0, selStart).trim();
-			evalText = selectedText;
-			postfix = selRowInput.substring(selEnd).trim();
+			postfix = "";	
 		}
 		
 		// resolve static row references and change input field accordingly
@@ -79,8 +81,9 @@ public class CASInputHandler {
 		if (ggbcmd.equals("Eval") || ggbcmd.equals("Hold"))
 			evalText = fixInputErrors(evalText);
 		
+		// change the input cell if the structure has changed during preprocessing
 		String newText = prefix + evalText + postfix;
-		if (!newText.equals(cellValue.getInput())) {
+		if (!casView.getCAS().isStructurallyEqual(cellValue.getInput(), newText)) {			
 			cellValue.setInput(newText);
 		}
 	
@@ -266,6 +269,8 @@ public class CASInputHandler {
 		}
 		return true;
 	}
+	
+
 	
 	/**
 	 * Fixes common input errors and returns the corrected input String.
