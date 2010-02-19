@@ -30,7 +30,7 @@ public class AlgoPartialFractions extends AlgoSimplify {
     }
     
     protected String getClassName() {
-        return "AlgoLimitAbove";
+        return "AlgoPartialFractions";
     }
      
     protected String getMathPiperString(String functionIn) {
