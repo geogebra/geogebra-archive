@@ -1862,6 +1862,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				changedKernel = POINT_CREATED;
 				break;
 
+			case EuclidianView.MODE_BUTTON_ACTION:
+			case EuclidianView.MODE_TEXTFIELD_ACTION:
+				// make sure script not triggered
+				break;
 
 			default:
 
