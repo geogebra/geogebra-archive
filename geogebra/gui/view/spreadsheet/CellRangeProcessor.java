@@ -107,7 +107,7 @@ public class CellRangeProcessor {
 	
 	
 	
-	public void CreateList(ArrayList<CellRange> rangeList, boolean byValue, boolean scanByColumn) {
+	public void CreateList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
 
 		String listString = "";
 		ArrayList list = new ArrayList();
@@ -117,7 +117,7 @@ public class CellRangeProcessor {
 			CellRange cr = new CellRange(table);
 			for (int i = 0; i < rangeList.size(); i++) {
 				cr = (CellRange) rangeList.get(i);
-				list.addAll(0, cr.toGeoLabelList(scanByColumn));
+				list.addAll(0, cr.toGeoLabelList(scanByColumn, copyByValue));
 			}
 			listString = list.toString();
 			listString = listString.replace("[", "{");
@@ -129,8 +129,8 @@ public class CellRangeProcessor {
 					.processAlgebraCommandNoExceptionHandling(listString, false);
 
 			// get geo name and set label
-			String listName = geos[0].getIndexLabel("L");
-			geos[0].setLabel(listName);
+		//	String listName = geos[0].getIndexLabel("L");
+		//	geos[0].setLabel(listName);
 
 		} catch (Exception ex) {
 			Application.debug("Creating list failed with exception " + ex);

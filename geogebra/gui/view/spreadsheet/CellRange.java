@@ -178,7 +178,7 @@ public class CellRange {
 	/**
 	 * ArrayList of labels for each geo found in the cell range
 	 */
-	public ArrayList toGeoLabelList(boolean scanByColumn) {
+	public ArrayList toGeoLabelList(boolean scanByColumn, boolean copyByValue) {
 
 		ArrayList list = new ArrayList();
 
@@ -187,7 +187,10 @@ public class CellRange {
 				for (int row = minRow; row <= maxRow; ++row) {
 					GeoElement geo = RelativeCopy.getValue(table, col, row);
 					if (geo != null){
-						list.add(geo.getValueForInputBar());
+						if (copyByValue)
+							list.add(geo.getValueForInputBar());
+						else
+							list.add(geo.getLabel());
 					}
 				}
 			}
@@ -196,7 +199,10 @@ public class CellRange {
 				for (int col = minColumn; col <= maxColumn; ++col) {
 					GeoElement geo = RelativeCopy.getValue(table, col, row);
 					if (geo != null)
-						list.add(geo.getLabel());
+						if (copyByValue)
+							list.add(geo.getValueForInputBar());
+						else
+							list.add(geo.getLabel());
 				}
 			}
 		}
