@@ -80,8 +80,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 		g.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		
 		g.setDefined(true);	
-		
-		kernel.evaluateMathPiper("Limit(x,Infinity)(if(x-1<0)1 else -1)");
+
 		
     }
     
