@@ -31,6 +31,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -175,6 +177,18 @@ public class MyTable extends JTable implements FocusListener
 		getSelectionModel().addListSelectionListener(new RowSelectionListener());
 		getColumnModel().getSelectionModel().addListSelectionListener(new ColumnSelectionListener());
 		getColumnModel().getSelectionModel().addListSelectionListener(columnHeader);
+		
+		// table model listener
+		tableModel.addTableModelListener(new TableModelListener() {
+
+			public void tableChanged(TableModelEvent e) {
+				if(e.getType()==e.INSERT){
+					updateRowHeader();
+				}
+			}
+
+		});
+		
 		
 		// relative copy
 		relativeCopy = new RelativeCopy(this, kernel);
@@ -2080,6 +2094,13 @@ public class MyTable extends JTable implements FocusListener
 		
 	}
 	//END GSTURR
+	
+	public void updateRowHeader() {
+		view.updateRowHeader();
+		
+	}
+	
+	
 	
 	public void setSelectionType(int selType) {
 		
