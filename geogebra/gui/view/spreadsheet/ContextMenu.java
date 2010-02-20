@@ -1,6 +1,8 @@
 
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.gui.InputDialog;
+import geogebra.gui.InputDialogOpenURL;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 
@@ -16,6 +18,7 @@ import java.util.regex.Matcher;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.table.TableModel;
@@ -42,7 +45,7 @@ public class ContextMenu extends JPopupMenu
 	
 	
 	protected Application app;
-	
+	private SpreadsheetView view;
 	
 	
 	// G.Sturr 2009-10-3: Added selection type parameter.
@@ -62,7 +65,7 @@ public class ContextMenu extends JPopupMenu
 		selectionType = table.getSelectionType();  //G.Sturr 2009-10-3
 		selectedCellRanges = table.selectedCellRanges;
 		
-		
+		view = table.getView();
 		initMenu();			
 	}
 
@@ -190,15 +193,40 @@ public class ContextMenu extends JPopupMenu
  	    // Import Data	
  		if (app.selectedGeosSize() >= 0) {
 		 	addSeparator();
-		 	JMenuItem item9 = new JMenuItem(app.getMenu(app.getPlain("Import Data"))+"...");
-	   	 	item9.setIcon(app.getEmptyIcon());
-	   	 	item9.addActionListener(new ActionListenerImportData());
-	   	 	add(item9);
+		 //	JMenuItem item9 = new JMenuItem(app.getMenu(app.getPlain("Import Data"))+"...");
+	   	 //	item9.setIcon(app.getEmptyIcon());
+	   	 //	item9.addActionListener(new ActionListenerImportData());
+	   	 //	add(item9);
+	   	 	
+	   	 	JMenu submenu = new JMenu(app.getPlain("Import Data"));
+			submenu.setIcon(app.getEmptyIcon());
+			add(submenu);
+			
+			JMenuItem item = new JMenuItem(app.getMenu(app.getPlain("File"))+"...");
+			item.setIcon(app.getEmptyIcon());
+			item.addActionListener(new ActionListenerImportDataFile());
+			submenu.add(item);
+			
+			item = new JMenuItem(app.getMenu(app.getPlain("URL"))+"...");
+			item.setIcon(app.getEmptyIcon());
+			item.addActionListener(new ActionListenerImportDataURL());
+			submenu.add(item);
+			
+			submenu.addSeparator();
+			item = new JMenuItem(app.getMenu(app.getPlain("Browser")));
+			item.setIcon(app.getEmptyIcon());
+			item.addActionListener(new ActionListenerShowBrowser());
+			submenu.add(item);
+				
+	   	 	
 	   	 //END GSTURR
  		}
  		
+ 				
 	}
 	
+	
+
 	//G.Sturr 2009-10-3: added setTitle (copied from gui.ContextMenuGeoElement)
 	void setTitle(String str) {
     	JLabel title = new JLabel(str);
@@ -218,6 +246,15 @@ public class ContextMenu extends JPopupMenu
     }
 	// end G.Sturr
 	
+	
+	
+	
+	
+	
+	
+	//=============================================
+	// Actions
+	//=============================================
 	
 	
 	public class ActionListenerCopy implements ActionListener
@@ -733,22 +770,37 @@ public class ContextMenu extends JPopupMenu
 		}
 	}
 	
-	private class ActionListenerImportData implements ActionListener {
+	private class ActionListenerImportDataFile implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-
-			
-			//File dataFile = new File("C:testTab.txt");
+	
 			File dataFile = app.getGuiManager().getDataFile();
 			
-
-			// paste file into spreadsheet
-			boolean succ = table.copyPasteCut.pasteFromFile(dataFile);
-			if (succ){
-				app.storeUndoInfo();
-			}
+			table.getView().loadSpreadsheetFromURL(dataFile);
+			
 		}
 	}
 
+	
+	private class ActionListenerImportDataURL implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+	
+			InputDialog id = new InputDialogOpenDataURL(app,view);
+			id.setVisible(true);
+			
+		}
+	}
+	
+	
+	private class ActionListenerShowBrowser implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+
+			table.getView().setBrowserPanelVisible(true);
+			
+		}
+	}
+
+	
+	
 	//G.STURR 2010-1-29
 	private boolean isEmptySelection(){
 		return (app.getSelectedGeos().isEmpty()) ;

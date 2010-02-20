@@ -12,11 +12,12 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -759,21 +760,23 @@ public class CopyPasteCut {
 	
 	//G.STURR 2010-1-15
 	
-	// default file paste clears spreadsheet and pastes from upper left corner
-	public boolean pasteFromFile(File aFile) {
+	// default pasteFromFile: clear spreadsheet and then paste from upper left corner
+	public boolean pasteFromURL(URL url) {
 		
 		CellRange cr = new CellRange(table, 0,0,0,0);
-		return pasteFromFile(aFile, cr, true);
+		return pasteFromURL(url, cr, true);
 		
 	}
 
 	
-	public boolean pasteFromFile(File dataFile, CellRange targetRange, boolean clearSpreadsheet) {
+	public boolean pasteFromURL(URL url, CellRange targetRange, boolean clearSpreadsheet) {
 
 		// read file 
 		StringBuilder contents = new StringBuilder();
-		try {
-			BufferedReader input = new BufferedReader(new FileReader(dataFile));
+		
+		try {				
+			InputStream is = url.openStream();
+			BufferedReader input = new BufferedReader(new InputStreamReader(is));
 			try {
 				String line = null;
 				while ((line = input.readLine()) != null) {
@@ -782,6 +785,7 @@ public class CopyPasteCut {
 				}
 			} finally {
 				input.close();
+			
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -790,15 +794,21 @@ public class CopyPasteCut {
 
 		//System.out.println(dataFile.getName() + ": " + contents.capacity());
 		
-		// copy file contents to clipboard
+		// copy file contents to clipboard		
 		StringSelection stringSelection = new StringSelection(contents.toString());
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Transferable oldContent = clipboard.getContents(null);
 		clipboard.setContents(stringSelection, null);
 		
 		
 		// paste from clipboard into spreadsheet
 		if(clearSpreadsheet) view.clearView();
-		return paste(targetRange);
+		boolean succ = paste(targetRange);
+		clipboard.setContents(oldContent, null);
+		
+		return succ;
+		
+		
 
 	}
 	

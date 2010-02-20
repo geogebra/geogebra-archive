@@ -25,8 +25,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.swing.AbstractListModel;
@@ -35,6 +37,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
@@ -45,29 +48,31 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
-public class SpreadsheetView extends JScrollPane implements View
+public class SpreadsheetView extends JSplitPane implements View
 {
 
-	public static final int ROW_HEADER_WIDTH = 35; // wide enough for "9999"
-	
 	private static final long serialVersionUID = 1L;
 
+	protected Application app;
+	private Kernel kernel;
+	
+	// spreadsheet table and row header
 	protected MyTable table;
 	protected DefaultTableModel tableModel;
 	public JList rowHeader;
 	private RowHeaderRenderer rowHeaderRenderer;
-	protected Application app;
-	private Kernel kernel;
-	private MyListModel listModel;  //GSturr 2010-1-9
+	private MyListModel listModel;  
 	
 	// if these are increased above 32000, you need to change traceRow to an int[]
 	public static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
 	public static int MAX_ROWS = 9999; // TODO make sure this is actually used
 	
+	private static int DEFAULT_COLUMN_WIDTH = 70;
+	public static final int ROW_HEADER_WIDTH = 35; // wide enough for "9999"
+	
 	private int highestUsedColumn = -1; // for trace
 	short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
 	
-	private static int DEFAULT_COLUMN_WIDTH = 70;
 	
 	//G.STURR 2010-1-9: needed for resizing rows
 	public static Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
@@ -77,13 +82,25 @@ public class SpreadsheetView extends JScrollPane implements View
 	//END GSTURR
 	
 	//G.STURR 
-	// Moved these rowHeader selection var declarations up to here.
-	// NOTE: MyTable uses its own minSelectionRow and maxSelectionRow.
-	//       The rowHeaderRenderer keeps them in sync.
-	private int minSelectionRow = -1 ; // G.Sturr (just moved these declarations up)
-	private int maxSelectionRow = -1 ; // G.Sturr
+	// note: MyTable uses its own minSelectionRow and maxSelectionRow.
+	// The rowHeaderRenderer keeps them in sync.
+	private int minSelectionRow = -1 ; 
+	private int maxSelectionRow = -1 ; 
 	
 	
+	// G.STURR 2010-2-12: needed for split panel
+	private JScrollPane spreadsheet;
+	private FileBrowserPanel browserPanel;
+	private int dividerLocation = 200;
+	private boolean isBrowserPanelVisible = false;
+	
+	
+	
+	
+	/**
+	 * Construct spreadsheet view as split panel. 
+	 * Left panel holds file tree browser, right panel holds spreadsheet. 
+	 */
 	public SpreadsheetView(Application app0, int columns, int rows) {
 		/*
 		JList table = new JList();
@@ -119,10 +136,13 @@ public class SpreadsheetView extends JScrollPane implements View
 		
 		rowHeaderRenderer = new RowHeaderRenderer(table, rowHeader);
 		rowHeader.setCellRenderer(rowHeaderRenderer);
+			
 		
 		// put the table and the row header list into a scroll plane
-		setRowHeaderView(rowHeader);
-		setViewportView(table);
+		// G.STURR 2010-2-12: scrollPane now named as spreadsheet
+		spreadsheet = new JScrollPane();
+		spreadsheet.setRowHeaderView(rowHeader);
+		spreadsheet.setViewportView(table);
 		
 		// Florian Sonner 2008-10-20
 		setBorder(BorderFactory.createEmptyBorder());
@@ -138,13 +158,25 @@ public class SpreadsheetView extends JScrollPane implements View
 			}
 		});
 		
+		
 		//Set the corners.
-		setCorner(JScrollPane.UPPER_LEFT_CORNER, upperLeftCorner);
-		setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
-		setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
+		spreadsheet.setCorner(JScrollPane.UPPER_LEFT_CORNER, upperLeftCorner);
+		spreadsheet.setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
+		spreadsheet.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
+		
+		//G.STURR 2010-2-12
+		// Create file browser panel (hidden)
+		browserPanel = new FileBrowserPanel(this);
+		browserPanel.setMinimumSize(new Dimension(150, 150));
+		setBrowserPanelVisible(false);
+		
+		// Add browser panel and spreadsheet to SpreadsheetView
+		setLeftComponent(browserPanel);
+		setRightComponent(spreadsheet);
 		
 		updateFonts();
 		attachView(); //G.Sturr 2010-1-18
+		
 	}
 	
 	
@@ -427,7 +459,11 @@ public class SpreadsheetView extends JScrollPane implements View
 	}
 	
 	public void clearView() {
+		//G.STURR 2010-2-12
+		table.copyPasteCut.delete(0, 0, tableModel.getColumnCount(), tableModel.getRowCount());
+		
 		//Application.debug(new Date() + " CLEAR VIEW");
+		/*
 		int rows = tableModel.getRowCount();
 		int columns = tableModel.getColumnCount();
 		for (int c = 0; c < columns; ++c) {
@@ -435,6 +471,8 @@ public class SpreadsheetView extends JScrollPane implements View
 				tableModel.setValueAt(null, r, c);
 			}
 		}
+		*/
+		
 	}
 		
 	public static class MyListModel extends AbstractListModel {
@@ -875,11 +913,11 @@ public class SpreadsheetView extends JScrollPane implements View
 			
 			if (location.y >= tableModel.getRowCount()) {
 				tableModel.setRowCount(location.y + 1);		
-				getRowHeader().revalidate();
+				spreadsheet.getRowHeader().revalidate();
 			}
 			if (location.x >= tableModel.getColumnCount()) {
 				table.setMyColumnCount(location.x + 1);		
-				JViewport cH = getColumnHeader();
+				JViewport cH = spreadsheet.getColumnHeader();
 				
 				// bugfix: double-click to load ggb file gives cH = null
 				if (cH != null) cH.revalidate();
@@ -978,7 +1016,82 @@ public class SpreadsheetView extends JScrollPane implements View
 	//END GSTURR
 		
 	
+	//G.STURR 2010-2-12: Added methods to support file browser
+	//
+	
+	public JViewport getRowHeader(){
+		return spreadsheet.getRowHeader();
+	}
+	
+	public JViewport getColumnHeader(){
+		return spreadsheet.getColumnHeader();
+	}
+	
+	
+	public boolean loadSpreadsheetFromURL(File f) {
+		
+		boolean succ = false;
+		
+		URL url = null;
+		try {
+			url = f.toURI().toURL();
+			succ = loadSpreadsheetFromURL(url); 
+		} 
+		
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		
+		return succ;
+	}
+	
+	public boolean loadSpreadsheetFromURL(URL url) {
+		
+		boolean succ = table.copyPasteCut.pasteFromURL(url);
+		if (succ) {
+			app.storeUndoInfo();
+		}
+		return succ;
+	}
+	
+	public FileBrowserPanel getBrowserPanel() {		
+		if (browserPanel == null) {
+			browserPanel = new FileBrowserPanel(this);
+			browserPanel.setMinimumSize(new Dimension(150, 150));
+		}
+		// Add browser panel and spreadsheet to SpreadsheetView
+		setLeftComponent(browserPanel);
+		return browserPanel;
+	}
+	
+	
+	public void setBrowserPanelVisible(boolean show) {
+		
+		if (show) {
+			this.setDividerLocation(dividerLocation);
+			this.setDividerSize(4);
+			isBrowserPanelVisible = true;
+		} else {
+			dividerLocation = this.getDividerLocation();
+			this.setDividerLocation(0);
+			this.setDividerSize(0);
+			isBrowserPanelVisible = false;
+
+		}
+	}
+	
+	
+	public void toggleBrowserPanel(){
+		if(isBrowserPanelVisible){
+			setBrowserPanelVisible(false);
+		}else{
+			setBrowserPanelVisible(true);
+		}
+	}
+	
+	//END GSTURR (file browser support)
 	
 }
-		
+	
+
 
