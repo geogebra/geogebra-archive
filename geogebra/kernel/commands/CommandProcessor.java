@@ -2099,6 +2099,41 @@ class CmdAsymptote extends CommandProcessor {
 }
 
 /*
+ * Numerator[ <Function> ]
+ */
+class CmdNumerator extends CommandProcessor {
+
+	public CmdNumerator(Kernel kernel) {
+		super(kernel);
+	}
+
+	final public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+
+		switch (n) {
+		case 1 :
+			arg = resArgs(c);
+
+			// asymptotes to conic
+			if (arg[0] .isGeoConic())
+				return kernel.Asymptote(c.getLabels(), (GeoConic) arg[0]);
+			else
+				if (arg[0] .isGeoFunction()) {
+					GeoElement[] ret =
+					{ kernel.Numerator(c.getLabel(), (GeoFunction) arg[0])};
+					return ret;
+
+				}
+				throw argErr(app, "Numerator", arg[0]);
+
+		default :
+			throw argNumErr(app, "Numerator", n);
+		}
+	}
+}
+
+/*
  * Axes[ <GeoConic> ]
  */
 class CmdAxes extends CommandProcessor {

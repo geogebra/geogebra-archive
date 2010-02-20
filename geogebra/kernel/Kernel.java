@@ -5250,6 +5250,15 @@ public class Kernel {
 	}
 	
 	/**
+	 * Numerator
+	 * Michael Borcherds 
+	 */
+	final public GeoFunction Numerator(String label, GeoFunction func) {		
+		AlgoNumerator algo = new AlgoNumerator(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Degree
 	 * Michael Borcherds 
 	 */

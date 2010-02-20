@@ -366,6 +366,7 @@ public class CommandDispatcher {
     	cmdTable.put("LimitAbove", new CmdLimitAbove(kernel));   
     	
     	cmdTable.put("PartialFractions", new CmdPartialFractions(kernel));   
+    	cmdTable.put("Numerator", new CmdNumerator(kernel));   
  
      	                  	
     	

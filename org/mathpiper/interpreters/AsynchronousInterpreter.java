@@ -23,6 +23,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.mathpiper.lisp.Environment;
 
 /**
@@ -30,11 +33,11 @@ import org.mathpiper.lisp.Environment;
  */
 class AsynchronousInterpreter implements Interpreter
 {
-    private static AsynchronousInterpreter singletonInstance;
+    protected static AsynchronousInterpreter singletonInstance;
     private SynchronousInterpreter interpreter;
     private String expression;
 
-    private AsynchronousInterpreter(SynchronousInterpreter interpreter)
+    protected AsynchronousInterpreter(SynchronousInterpreter interpreter)
     {
         this.interpreter = interpreter;
     }//end constructor.
@@ -78,13 +81,29 @@ class AsynchronousInterpreter implements Interpreter
     public EvaluationResponse evaluate(String expression, boolean notifyEvaluationListeners)
     {
 
-        FutureTask task = new EvaluationTask(new Evaluator(expression, notifyEvaluationListeners));
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        es.submit(task);
+        FutureTask<EvaluationResponse> task = new EvaluationTask(new Evaluator(expression, notifyEvaluationListeners));
+        Thread thd = new Thread(task);
+        thd.start();
+        EvaluationResponse response = null;// = EvaluationResponse.newInstance();
+        try
+        {
+             response = task.get(5000,TimeUnit.MILLISECONDS); // timeout in 1 second
+        }
+        catch (ExecutionException e)
+        {
+           //response.setExceptionMessage("MathPiper: ExecutionException");
+        }
+        catch (InterruptedException e)
+        {
+           // response.setExceptionMessage("MathPiper: InterruptedException");
+        }
+        catch (TimeoutException e)
+        {
+           // response.setExceptionMessage("MathPiper: TimeoutException");
+        }
 
 
-        return EvaluationResponse.newInstance();
-
+        return response;
 
     }//end method.
 
@@ -116,7 +135,7 @@ class AsynchronousInterpreter implements Interpreter
         return interpreter.getEnvironment();
     }
 
-    private class Evaluator implements Callable
+    class Evaluator implements Callable
     {
 
         private String expression;
@@ -135,7 +154,7 @@ class AsynchronousInterpreter implements Interpreter
         }
     } // MyCallable
 
-    private class EvaluationTask extends FutureTask
+    class EvaluationTask extends FutureTask
     {
 
         public EvaluationTask(Callable arg0)

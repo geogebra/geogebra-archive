@@ -142,4 +142,8 @@ public class Interpreters {
     public static Interpreter getAsynchronousInterpreter(String docBase) {
         return AsynchronousInterpreter.getInstance(docBase);
     }
+
+	public static Interpreter getTimeoutInterpreter(int i) {
+		return TimeoutInterpreter.getInstance(i);
+	}
 }//end class.

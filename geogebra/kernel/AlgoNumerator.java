@@ -12,34 +12,37 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.NumberValue;
+
 /**
- * Find asymptotes
+ * Find Numerator
  * 
  * @author Michael Borcherds
  */
-public class AlgoAsymptoteFunction extends AlgoElement {
+public class AlgoNumerator extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
-    private GeoList g; // output        
+    private GeoFunction g; // output        
     
     private StringBuilder sb = new StringBuilder();
    
-    public AlgoAsymptoteFunction(Construction cons, String label, GeoFunction f) {
+    public AlgoNumerator(Construction cons, String label, GeoFunction f) {
     	super(cons);
         this.f = f;            	
     	
-        g = new GeoList(cons);                
+        g = new GeoFunction(cons);                
         setInputOutput(); // for AlgoElement        
         compute();
         g.setLabel(label);
     }
     
     protected String getClassName() {
-        return "AlgoAsymptoteFunction";
+        return "AlgoNumerator";
     }
     
     // for AlgoElement
@@ -52,7 +55,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }
 
-    public GeoList getResult() {
+    public GeoFunction getResult() {
         return g;
     }
 
@@ -63,28 +66,32 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         }    
         
         ExpressionNode root = f.getFunctionExpression();
-        Application.debug((root.operation == ExpressionNode.DIVIDE)+"");
-		
-	    sb.setLength(0);
-	    sb.append("{");
-		f.getHorizontalPositiveAsymptote(f, sb);
-		f.getHorizontalNegativeAsymptote(f, sb);
-	    
-		f.getDiagonalPositiveAsymptote(f, sb);
-		f.getDiagonalNegativeAsymptote(f, sb);
-		
-    	f.getVerticalAsymptotes(f, sb, false);
-
-	    sb.append("}");
-		
-	    //Application.debug(sb.toString());
-		g.set(kernel.getAlgebraProcessor().evaluateToList(sb.toString()));	
-		
-		g.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-		
-		g.setDefined(true);	
-
-		
+        if (root.operation != ExpressionNode.DIVIDE) {
+        	g.setUndefined();
+    		return;
+    	}    
+        
+        ExpressionValue ev = root.left;
+        
+        //Application.debug(root.left.getClass()+"");
+          
+        if (ev.isExpressionNode()) {
+        	Function fun = new Function((ExpressionNode)ev, f.getFunction().getFunctionVariable());
+        	g.setFunction(fun);
+        }      else if (ev instanceof FunctionVariable) {
+        	g.set(kernel.getAlgebraProcessor().evaluateToFunction("x"));
+        }
+        else if (ev.isNumberValue()) {
+        	double val = ((NumberValue)ev).getDouble();
+        	g.set(kernel.getAlgebraProcessor().evaluateToFunction("0x+"+val));
+        }
+        else
+        {
+        	//Application.debug(ev.getClass()+"");
+        	g.setUndefined();
+    		return;
+    	}    
+	
     }
     
     
