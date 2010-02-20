@@ -2,7 +2,11 @@ package geogebra.kernel.statistics;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.jama.Matrix;
+//import geogebra.kernel.jama.Matrix;		//Ulven 20.02.10, Apache:
+import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.QRDecompositionImpl;
+import org.apache.commons.math.linear.DecompositionSolver;
 
 /* 
 GeoGebra - Dynamic Mathematics for Everyone
@@ -28,7 +32,8 @@ the Free Software Foundation.
  * 
  * 
  * @author Hans-Petter Ulven
- * @version 24.04.08
+ * @version 20.02.10
+ * Start  24.04.08
  * Update 15.11.08:
  * 		public det22(...),...,det44(...) for use in FitSin() and FitLogistic()
  * Update 27.01.09:
@@ -36,8 +41,10 @@ the Free Software Foundation.
  *      getPar():double[]
  *      to serve the extending of FitPoly[...] to degree>=5
  *      Matrix operations based on Jama.
- * Update 13.02.10:
- * 		Start changing from Jama to Apache     
+ * Update 20.02.2010:
+ * 		Changed from JaMa to Apache matrix library
+ *      See doPolyN()  
+ *      Got rid of r=corrcoff(), not used. Exists as separate command now.   
  *
  *<ul><b>--- Interface: ---</b>
  *<li>RegressionMath(GeoList)
@@ -67,7 +74,7 @@ public final  class RegressionMath {
     /// --- Properties --- ///
     private   boolean error   =   false;
     //private   int     regtype =   LINEAR;                     //Default
-    private   double  r,                                      //Reg-coeff
+    private   double  //r,                                      //Reg-coeff
                             p1,p2,p3,p4,p5,                         //Parameters
                             sigmax,sigmax2,sigmax3,sigmax4,         //Sums of x,x^2,...
                             sigmax5,sigmax6,sigmax7,sigmax8,
@@ -92,7 +99,7 @@ public final  class RegressionMath {
     public  final double getP3()   {return p3; }    
     public  final double getP4()   {return p4; }    
     public  final double getP5()   {return p5; }    
-    public  final double getR()    {return r;  }
+    //public  final double getR()    {return r;  }
     public  final double getSigmaX() {return sigmax;}
     public  final double getSigmaX2() {return sigmax2;}
     public  final double getSigmaY() {return sigmay;}
@@ -103,7 +110,7 @@ public final  class RegressionMath {
     /** Returns array with calculated parameters */
     public final double[] getPar(){return pararray;}
     
-    /** Does the Polynom regression */
+    /** Does the Polynom regression for degree > 4*/
     public final boolean doPolyN(GeoList gl,int degree) {
     	error=false;
     	geolist=gl;
@@ -111,18 +118,28 @@ public final  class RegressionMath {
         getPoints();        //getPoints from geolist
         if(error) {return false;}       	
     	try{
+    		/* Old Jama version:
+    		long time=System.currentTimeMillis();
     		makeMatrixArrays(degree);			//make marray and yarray
     		Matrix M=new Matrix(marray);
     		Matrix Y=new Matrix(yarray);
-    		/*Matrix M_T=M.transpose();			//Jama solves least-squares directly!
-    		Matrix A=M_T.times(M);				// Not neccessary...
-    		Matrix B=M_T.times(Y);
-    		Matrix Par=A.solve(B);
-    		*/
     		Matrix Par=M.solve(Y);				//Par.print(3,3);
-    		pararray=Par.getRowPackedCopy();  
+    		pararray=Par.getRowPackedCopy();
+    		System.out.println(System.currentTimeMillis()-time);
+    		*/
+    		makeMatrixArrays(degree);			//make marray and yarray
+    	    RealMatrix M=new Array2DRowRealMatrix(marray,false);
+    	    DecompositionSolver solver= new QRDecompositionImpl(M).getSolver();
+    	    //time=System.currentTimeMillis();
+   	        RealMatrix Y=new Array2DRowRealMatrix(yarray,false);
+   	        RealMatrix P=solver.solve(Y);
+
+   	        pararray=P.getColumn(0);
+   	        
+   	        //System.out.println(System.currentTimeMillis()-time);
+    		//diff(pararray,par);
 		} catch (Throwable t) {
-			geogebra.main.Application.debug(t.getMessage());
+			System.out.println(t.toString());
 			error=true;    		
     	}//try-catch.  ToDo: A bit more fine-grained error-handling...
     	return !error;
@@ -143,7 +160,7 @@ public final  class RegressionMath {
         }else{
             p1=det22(sigmay,sigmax,sigmaxy,sigmax2)/n;
             p2=det22(size,sigmay,sigmax,sigmaxy)/n;
-            r=corrCoeff();
+            //r=corrCoeff();
             return true;
         }//if-else
     }//doLinearReg(GeoList)
@@ -179,7 +196,7 @@ public final  class RegressionMath {
                 sigmax,     sigmax2,    sigmaxy,
                 sigmax2,    sigmax3,    sigmax2y
             )/n;
-            r=0.0d; // Not useful
+            //r=0.0d; // Not useful
             return true;
         }//if-else
     }//doQuad(Geolist)
@@ -225,7 +242,7 @@ public final  class RegressionMath {
                 sigmax2,          sigmax3,      sigmax4,      sigmax2y,
                 sigmax3,          sigmax4,      sigmax5,      sigmax3y
             )/n;
-            r=0.0d; // Not useful
+            //r=0.0d; // Not useful
             return true;
         }//if-else
     }//doCubic(Geolist)
@@ -282,7 +299,7 @@ public final  class RegressionMath {
                        sigmax3,     sigmax4,    sigmax5,    sigmax6,    sigmax3y,
                        sigmax4,     sigmax5,    sigmax6,    sigmax7,    sigmax4y 
             )/n;
-            r=0.0d; // Not useful
+            //r=0.0d; // Not useful
             return true;
         }//if-else
     }//doQuart(Geolist)
@@ -314,7 +331,7 @@ public final  class RegressionMath {
             p2=det22(size,sigmay,sigmax,sigmaxy)/n;
             //transform back:
             p1=Math.exp(p1);
-            r=corrCoeff();
+            //r=corrCoeff();
             return true;
         }//if-else
     }//doExp(GeoList)    
@@ -345,7 +362,7 @@ public final  class RegressionMath {
             p1=det22(sigmay,sigmax,sigmaxy,sigmax2)/n;
             p2=det22(size,sigmay,sigmax,sigmaxy)/n;
             //No transformation of p1 or p2 neccessary
-            r=corrCoeff();
+            //r=corrCoeff();
             return true;
         }//if-else
     }//doLog(GeoList)    
@@ -378,7 +395,7 @@ public final  class RegressionMath {
             p2=det22(size,sigmay,sigmax,sigmaxy)/n;
             //Transform back:
             p1=Math.exp(p1);
-            r=corrCoeff();
+            //r=corrCoeff();
             return true;
         }//if-else
     }//doPow(GeoList)    
@@ -516,27 +533,43 @@ public final  class RegressionMath {
     
     /// --- DEBUG --- ///        !!! Remember to comment out calls before distribution !!!
 
-/*//---SNIP START---
-            
-    private static void aprint(double[] a){
-    	int rows=a.length;
-    	System.out.println();
-    	for(int i=0;i<rows;i++){    	
-    			System.out.print("   "+a[i]);
-    	}
-    	System.out.println();
-    }//
-    public static final void main(String[] args){
-    	double[][] d={{1,2,3}};
-    	double[]   r,c;
-    	Matrix D=new Matrix(d);
-    	D.print(3,3);
-    	r=D.getRowPackedCopy();
-    	aprint(r);
-    	c=D.getColumnPackedCopy();
-    	aprint(c);
-    }//main()
+/* //---SNIP START---
     
+    // Debug of 2D array
+    public static void aprint(double[][] a){
+        int cols=a.length;
+        int rows=a[0].length;
+        for(int r=0;r<rows;r++){
+            for(int c=0;c<cols;c++){
+                System.out.print(a[c][r]+" ");
+            }//
+            System.out.println();
+        }//
+    }//aprint()
+    
+    //debug of 1D array
+    public static void aprint(double[] a){
+        for(int i=0;i<a.length;i++){
+            System.out.println(a[i]+"  ");
+        }
+    }//
+    
+    // Differences between Jama and Apache Solution
+    // Outside GeoGebra the diffs are <E-14
+    // In GeoGebra other rounding results in diffs <E-10
+    // Jama is twice as fast if small datasets and degrees,
+    // Apache about the same if things get big...
+    public static void diff(double[] a, double[] b){
+        int size=Math.min(a.length,b.length);
+        double dif=0.0d;
+        for(int i=0;i<size;i++){
+            dif=a[i]-b[i];
+            if(dif>1.0E-10){
+            	//System.out.println("TOO BIG DIFFERENCE???");}
+                System.out.println(Math.abs(dif));
+            }//if too big diff
+        }//for all data
+    }//diff
     
 */ //--- SNIP END
 }// class RegressionMath
