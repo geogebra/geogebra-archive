@@ -20,6 +20,9 @@ import java.util.ResourceBundle;
 import org.mathpiper.interpreters.EvaluationResponse;
 import org.mathpiper.interpreters.Interpreter;
 import org.mathpiper.interpreters.Interpreters;
+import org.qtitools.mathassess.tools.maximaconnector.MaximaTimeoutException;
+import org.qtitools.mathassess.tools.maximaconnector.PropertiesMaximaConfiguration;
+import org.qtitools.mathassess.tools.maximaconnector.RawMaximaSession;
 
 /**
  * This class provides an interface for GeoGebra to use the computer algebra
@@ -32,6 +35,7 @@ public class GeoGebraCAS {
 	final public String RB_GGB_TO_MathPiper = "/geogebra/cas/ggb2mathpiper";
 
 	private Interpreter ggbMathPiper;
+	private RawMaximaSession ggbMaxima;
 	//private GeoGebraJasymca ggbJasymca;	
 	private StringBuilder sbInsertSpecial, sbReplaceIndices, sbPolyCoeffs;
 	private Application app;
@@ -116,6 +120,45 @@ public class GeoGebraCAS {
 		} 
 	}
 				
+    /**
+	 * Evaluates a Maxima expression and returns the result as a string in Maxima syntax, 
+	 * e.g. evaluateMaxima("integrate (sin(x)^3, x);") returns "cos(x)^3/3-cos(x)".
+	 * 
+	 * @return result string (null possible)
+	 */
+	final synchronized public String evaluateMaxima(String exp) {
+		try {
+			String result;
+						
+			// MathPiper has problems with indices like a_3, b_{12}
+			exp = replaceIndices(exp);
+			
+			final boolean debug = true;
+			if (debug) Application.debug("Expression for Maxima: "+exp);
+			
+			// evaluate the MathPiper expression
+			RawMaximaSession maxima = getMaxima();
+			result = maxima.executeExpectingSingleOutput(exp);
+			
+			if (response == null)
+			{
+				System.err.println("evaluateMaxima: "+exp+"\n  Exception ");
+				return null;
+			}
+			
+			if (debug) System.out.println("Result: "+result);
+					
+			// undo special character handling
+			result = insertSpecialChars(result);
+
+			return result;
+		} catch (Throwable th) {
+			//MathPiper.Evaluate("restart;");
+			th.printStackTrace();
+			return null;
+		} 
+	}
+				
 	/**
 	 * Evaluates a MathPiper expression wrapped in a command and returns the result as a string, 
 	 * e.g. wrapperCommand = "Factor", exp = "3*(a+b)" evaluates "Factor(3*(a+b)" and 
@@ -142,6 +185,27 @@ public class GeoGebraCAS {
 		else 
 			return null;
 	}
+	
+	private synchronized RawMaximaSession getMaxima() {
+		if (ggbMaxima == null) {
+		    PropertiesMaximaConfiguration configuration = new PropertiesMaximaConfiguration();
+		    ggbMaxima = new RawMaximaSession(configuration);
+		    try {
+				ggbMaxima.open();
+				
+				// make sure results are returned
+			    ggbMaxima.executeRaw("display2d:false;");
+			} catch (MaximaTimeoutException e) {
+				Application.debug("Timeout from Maxima");
+				return null;
+			}
+			
+		}
+		
+		return ggbMaxima;
+	}
+	
+
 	
 	EvaluationResponse response ;	
 	

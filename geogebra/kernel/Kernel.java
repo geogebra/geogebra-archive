@@ -399,6 +399,20 @@ public class Kernel {
 	}*/
 	
 	/** 
+     * Evaluates a Maxima expression and returns the result as a String.
+     * e.g. exp = "integrate (sin(x)^3, x);" returns "cos(x)^3/3-cos(x)"
+     * @param expression string
+     * @return result string (null possible)
+     */
+	final public String evaluateMaxima(String exp) {
+		if (ggbCAS == null) {
+			getGeoGebraCAS();		
+		}
+		
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMaxima(exp);
+	}		
+			
+	/** 
      * Evaluates a MathPiper expression and returns the result as a String.
      * e.g. exp = "D(x) (x^2)" returns "2*x"
      * @param expression string

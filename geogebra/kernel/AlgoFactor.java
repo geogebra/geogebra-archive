@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 /**
  * Try to expand the given function 
  * 
@@ -58,13 +59,34 @@ public class AlgoFactor extends AlgoElement {
         if (!f.isDefined()) {
         	g.setUndefined();
         	return;
-        }    
+        }   
+        
+	    /* Experimental Maxima code
+
+        // *************************** TODO: change to STRING_TYPE_MAXIMA
+	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+
+	    sb.setLength(0);
+        sb.append("factor(");
+        sb.append(functionIn);
+        sb.append(");");
+		String functionOut = kernel.evaluateMaxima(sb.toString());
+		
+		Application.debug("Factorize input:"+functionIn);
+		Application.debug("Factorize output:"+functionOut);
+		
+		if (functionOut == null || functionOut.length()==0) 
+		{
+			g.set(f); // set to input ie leave unchanged
+		}
+		else
+		{
+			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));					
+		} */
                 
         
 	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 
-	    
-	    // old code, put back when Factor[2 x³ - 18 x] works in MathPiper
 	    
 	    sb.setLength(0);
 	    // added Rationalize to cope with eg Factor[9.1 x^7 - 32 x^6 + 48 x^5 - 40 x^4 + 20 x³ - 6 x² + x ]
