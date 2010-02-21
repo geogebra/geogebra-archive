@@ -17,6 +17,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 /**
  * Find Numerator
@@ -78,12 +79,12 @@ public class AlgoNumerator extends AlgoElement {
         if (ev.isExpressionNode()) {
         	Function fun = new Function((ExpressionNode)ev, f.getFunction().getFunctionVariable());
         	g.setFunction(fun);
-        }      else if (ev instanceof FunctionVariable) {
+        } else if (ev instanceof FunctionVariable) {
         	g.set(kernel.getAlgebraProcessor().evaluateToFunction("x"));
         }
         else if (ev.isNumberValue()) {
         	double val = ((NumberValue)ev).getDouble();
-        	g.set(kernel.getAlgebraProcessor().evaluateToFunction("0x+"+val));
+        	g.set(kernel.getAlgebraProcessor().evaluateToFunction(""+val));
         }
         else
         {
