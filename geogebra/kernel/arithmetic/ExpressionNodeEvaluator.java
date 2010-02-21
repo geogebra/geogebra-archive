@@ -26,15 +26,17 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
      */
     public ExpressionValue evaluate(ExpressionNode expressionNode){ 
     	
-		Kernel kernel = expressionNode.kernel;
 		boolean leaf = expressionNode.leaf; 
 		ExpressionValue left = expressionNode.left; 
+
+        if (leaf) return left.evaluate(); // for wrapping ExpressionValues as ValidExpression
+
+		Kernel kernel = expressionNode.kernel;
 		ExpressionValue right = expressionNode.right; 
 		int operation = expressionNode.operation;
 		Application app = expressionNode.app;
 		boolean holdsLaTeXtext = expressionNode.holdsLaTeXtext;
     	
-        if (leaf) return left.evaluate(); // for wrapping ExpressionValues as ValidExpression
                
         //Application.debug(operation+"");
         
