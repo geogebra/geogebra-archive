@@ -26,13 +26,18 @@ import org.qtitools.mathassess.tools.maximaconnector.RawMaximaSession;
 
 /**
  * This class provides an interface for GeoGebra to use the computer algebra
- * systems Jasymca and MathPiper.
+ * systems Maxima and MathPiper.
  * 
  * @author Markus Hohenwarter
  */
 public class GeoGebraCAS {
 	
+	// determines which CAS is being used
+	//final public static int CAS = ExpressionNode.STRING_TYPE_MAXIMA;
+	final public static int CAS = ExpressionNode.STRING_TYPE_MATH_PIPER;
+	
 	final public String RB_GGB_TO_MathPiper = "/geogebra/cas/ggb2mathpiper";
+	final public String RB_GGB_TO_Maxima = "/geogebra/cas/ggb2maxima";
 
 	private Interpreter ggbMathPiper;
 	private RawMaximaSession ggbMaxima;
@@ -42,6 +47,7 @@ public class GeoGebraCAS {
 	private Kernel kernel;
 	private CASparser casParser;	
 	private ResourceBundle ggb2MathPiper;
+	private ResourceBundle ggb2Maxima;
 
 	public GeoGebraCAS(Kernel kernel) {
 		this.kernel = kernel;
@@ -508,21 +514,21 @@ public class GeoGebraCAS {
 		ValidExpression inVE = parseGeoGebraCASInput(inputExp);
 					
 		// EVALUATE input expression with MathPiper
-		String mathPiperResult = null;
+		String CASResult = null;
 		Throwable throwable = null;
 		try {
 			// evaluate input in MathPiper and convert result back to GeoGebra expression
-			mathPiperResult = processCASInputMathPiper(inVE, useGeoGebraVariables);
+			CASResult = processCASInput(inVE, useGeoGebraVariables);
 		} catch (Throwable th1) {
 			throwable = th1;
-			System.err.println("mathPiper evaluation failed: " + inputExp + "\n error: " + th1.toString());
+			System.err.println("CAS evaluation failed: " + inputExp + "\n error: " + th1.toString());
 		}
 		
 		// check some things
 		boolean assignment = inVE.getLabel() != null;
 		boolean delete = inputExp.startsWith("Delete");
-		boolean mathPiperSuccessful = mathPiperResult != null;
-		boolean mathPiperResultContainsCommands = mathPiperResult != null && mathPiperResult.indexOf('[') > -1;
+		boolean CASSuccessful = CASResult != null;
+		boolean CASResultContainsCommands = CASResult != null && CASResult.indexOf('[') > -1;
 		
 		// EVALUATE input expression in GeoGebra if we have
 		// - an assignments (e.g. a := 5, f(x) := x^2)
@@ -530,7 +536,7 @@ public class GeoGebraCAS {
 		// - or MathPiper was not successful
 		// - or MathPiper result contains commands
 		boolean evalInGeoGebra = useGeoGebraVariables && 
-			(assignment || delete || !mathPiperSuccessful || mathPiperResultContainsCommands); 
+			(assignment || delete || !CASSuccessful || CASResultContainsCommands); 
 		String ggbResult = null;
 		if (evalInGeoGebra) {
 			// EVALUATE inputExp in GeoGebra
@@ -544,32 +550,32 @@ public class GeoGebraCAS {
 			
 			// inputExp failed with GeoGebra
 			// try to evaluate result of MathPiper
-			if (ggbResult == null && mathPiperSuccessful) {
+			if (ggbResult == null && CASSuccessful) {
 				// EVALUATE result of MathPiper
 				try {
 					// process mathPiperResult in GeoGebra
-					ggbResult = processCASInputGeoGebra(mathPiperResult);
+					ggbResult = processCASInputGeoGebra(CASResult);
 				} catch (Throwable th2) {
 					if (throwable == null) throwable = th2;
-					System.err.println("GeoGebra evaluation failed: " + mathPiperResult + "\n error: " + th2.toString());
+					System.err.println("GeoGebra evaluation failed: " + CASResult + "\n error: " + th2.toString());
 				}
 			}
 		}
 		
 		// return result string:
 		// use MathPiper if that worked, otherwise GeoGebra
-		if (mathPiperSuccessful) {
-			if (assignment && "true".equals(mathPiperResult)) {
+		if (CASSuccessful) {
+			if (assignment && "true".equals(CASResult)) {
 				// MathPiper returned true: use ggbResult if we have one, otherwise return mathPiperResult
 				if (ggbResult != null) {
 					return ggbResult;
 				} else {
-					return mathPiperResult;
+					return CASResult;
 				}
 			} 
 			else {
 				// MathPiper evaluation worked
-				return mathPiperResult;
+				return CASResult;
 			}	
 		} 
 		
@@ -582,6 +588,40 @@ public class GeoGebraCAS {
 			// nothing worked
 			throw throwable;
 		}
+	}
+	
+	private synchronized String processCASInput(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
+
+		if (CAS == ExpressionNode.STRING_TYPE_MAXIMA)
+			return processCASInputMaxima(casInput, useGeoGebraVariables);
+		else
+			return processCASInputMathPiper(casInput, useGeoGebraVariables);
+	}
+
+	/**
+	 * Evaluates expression with Maxima and returns the resulting String in GeoGebra notation.
+	 * @param inputExpression
+	 * @param useGeoGebraVariables: 
+	 * @return
+	 * @throws Throwable
+	 */
+	private synchronized String processCASInputMaxima(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
+		// convert parsed input to Maxima string
+		// TODO: change to toMaximaString
+		String MathPiperString = toMathPiperString(casInput, useGeoGebraVariables);
+			
+		// EVALUATE input in MathPiper 
+		String result = evaluateMaxima(MathPiperString);
+
+		// convert MathPiper result back into GeoGebra syntax
+		String ggbString = toGeoGebraString(result);
+		
+		// TODO: remove
+		System.out.println("eval with Maxima: " + MathPiperString);
+		System.out.println("   result: " + result);
+		System.out.println("   ggbString: " + ggbString);
+		
+		return ggbString;
 	}
 	
 	/**
@@ -747,38 +787,45 @@ public class GeoGebraCAS {
 		return casParser.toGeoGebraString(ve);
 	}
 	
+	private synchronized String getCASCommand(String key) {
+		if (CAS == ExpressionNode.STRING_TYPE_MAXIMA)
+			return getMaximaCommand(key);
+		else
+			return getMathPiperCommand(key); //ExpressionNode.STRING_TYPE_MATH_PIPER
+	}
+	
 	/**
-	 * Returns the MathPiper command for the given key (from ggb2MathPiper.properties)
+	 * Returns the MathPiper/Maxima command for the given key (from ggb2MathPiper/Maxima.properties)
 	 * and the given command arguments. 
-	 * For example, getMathPiperCommand("Expand.0", {"3*(a+b)"}) returns "Expand( 3*(a+b) )"
+	 * For example, getCASCommand("Expand.0", {"3*(a+b)"}) returns "Expand( 3*(a+b) )"
 	 */
-	final synchronized public String getMathPiperCommand(String name, ArrayList args, boolean symbolic) {
-		StringBuilder sbMathPiperCommand = new StringBuilder(80);
+	final synchronized public String getCASCommand(String name, ArrayList args, boolean symbolic) {
+		StringBuilder sbCASCommand = new StringBuilder(80);
 				
 		// build command key as name + "." + args.size()
-		sbMathPiperCommand.setLength(0);
-		sbMathPiperCommand.append(name);
-		sbMathPiperCommand.append('.');
-		sbMathPiperCommand.append(args.size());
+		sbCASCommand.setLength(0);
+		sbCASCommand.append(name);
+		sbCASCommand.append('.');
+		sbCASCommand.append(args.size());
 		
-		// get translation ggb -> MathPiper
-		String translation = getMathPiperCommand(sbMathPiperCommand.toString());
-		sbMathPiperCommand.setLength(0);		
+		// get translation ggb -> MathPiper/Maxima
+		String translation = getCASCommand(sbCASCommand.toString());
+		sbCASCommand.setLength(0);		
 		
 		// no translation found: 
 		// use key as command name
 		if (translation == null) {			
-			sbMathPiperCommand.append(name);
-			sbMathPiperCommand.append('(');
+			sbCASCommand.append(name);
+			sbCASCommand.append('(');
 			for (int i=0; i < args.size(); i++) {
 				ExpressionValue ev = (ExpressionValue) args.get(i);				
 				if (symbolic)
-					sbMathPiperCommand.append(ev.toString());
+					sbCASCommand.append(ev.toString());
 				else
-					sbMathPiperCommand.append(ev.toValueString());
-				sbMathPiperCommand.append(',');
+					sbCASCommand.append(ev.toValueString());
+				sbCASCommand.append(',');
 			}
-			sbMathPiperCommand.setCharAt(sbMathPiperCommand.length()-1, ')');
+			sbCASCommand.setCharAt(sbCASCommand.length()-1, ')');
 		}
 		
 		// translation found: 
@@ -794,22 +841,40 @@ public class GeoGebraCAS {
 						// success: insert argument(pos)
 						ExpressionValue ev = (ExpressionValue) args.get(pos);				
 						if (symbolic)
-							sbMathPiperCommand.append(ev.toString());
+							sbCASCommand.append(ev.toString());
 						else
-							sbMathPiperCommand.append(ev.toValueString());
+							sbCASCommand.append(ev.toValueString());
 					} else {
 						// failed
-						sbMathPiperCommand.append(ch);
+						sbCASCommand.append(ch);
 					}
 				} else {
-					sbMathPiperCommand.append(ch);
+					sbCASCommand.append(ch);
 				}
 			}
 		}
 
-		return sbMathPiperCommand.toString();
+		return sbCASCommand.toString();
 	}
 	
+	
+	/**
+	 * Returns the Maxima command for the given key (from ggb2Maxima.properties)
+	 */ 
+	private synchronized String getMaximaCommand(String key) {
+		if (ggb2Maxima == null) {
+			ggb2Maxima = MyResourceBundle.loadSingleBundleFile(RB_GGB_TO_Maxima);
+		}
+		
+		String ret;
+		try {
+			ret =  ggb2Maxima.getString(key);
+		} catch (MissingResourceException e) {
+			ret = null;
+		}
+
+		return ret;
+	}
 	
 	/**
 	 * Returns the MathPiper command for the given key (from ggb2MathPiper.properties)

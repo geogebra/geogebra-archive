@@ -132,7 +132,7 @@ implements ExpressionValue {
     		case ExpressionNode.STRING_TYPE_MATH_PIPER:
     			// MathPiper command syntax
     			return ((geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS()).
-    				getMathPiperCommand(name, args, symbolic);    			    	
+    				getCASCommand(name, args, symbolic);    			    	
     			
     		default:
     	    	if (sbToString == null)
