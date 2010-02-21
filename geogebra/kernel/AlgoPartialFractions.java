@@ -33,9 +33,9 @@ public class AlgoPartialFractions extends AlgoSimplify {
         return "AlgoPartialFractions";
     }
      
-    protected String getMathPiperString(String functionIn) {
+    protected String getCASString(String functionIn) {
 	    sb.setLength(0);
-        sb.append("Apart(");
+        sb.append("PartialFractions(");
         sb.append(functionIn);
         sb.append(')');
 

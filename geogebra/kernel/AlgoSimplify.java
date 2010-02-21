@@ -12,9 +12,11 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 /**
- * Try to expand the given function 
+ * Try to simplify the given function 
  * 
  * @author Michael Borcherds
  */
@@ -60,39 +62,32 @@ public class AlgoSimplify extends AlgoElement {
         	return;
         }    
 
-        // MathPiper version       
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+    
+	    String functionIn = f.getFormulaString(kernel.getCASPrintForm(), true);
 
-        /*
-		String functionIn = f.getFunction().
-		getExpression().getCASstring(ExpressionNode.STRING_TYPE_MathPiper, false);*/
-		//Application.debug(functionIn);
+		String functionOut = null;
+		String CASString = getCASString(functionIn);
+		try {
+			functionOut = ((GeoGebraCAS)(kernel.getGeoGebraCAS())).processCASInput(CASString, true);
+		} catch (Throwable e) {
+			Application.debug(getClassName()+" error processing: "+CASString);
+		}
+		
+		//Application.debug(getClassName()+" input:"+functionIn);
+		//Application.debug(getClassName()+" output:"+functionOut);
 
-
-		String functionOut = kernel.evaluateMathPiper(getMathPiperString(functionIn));
-		
-		//Application.debug("Factorize input:"+functionIn);
-		//Application.debug("Factorize output:"+functionOut);
-		
-		boolean MathPiperError=false;
-		
-		if (functionOut == null || functionOut.length()==0) MathPiperError=true; // MathPiper error
-		
-		else if (functionOut.length()>7)
-			if (functionOut.startsWith("Simplify(") || // MathPiper error
-				functionOut.startsWith("Apart(") || // MathPiper error
-				functionOut.startsWith("Undefined") || // MathPiper error/bug eg Simplify(0.00000000000000001)
-				functionOut.startsWith("FWatom(") )  // MathPiper oddity??
-				MathPiperError=true;
-			
-
-		if (MathPiperError) // MathPiper error
+		if (functionOut == null || functionOut.length() == 0) // CAS error
 		{
 			g.set(f); // set to input ie leave unchanged
 		}
 		else
 		{
-			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));					
+			try {
+				g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));
+			} catch (Exception e) {
+				g.set(f); // set to input ie leave unchanged
+				Application.debug(getClassName()+" error processing: "+functionOut);
+			}
 		}
 		
 		g.setDefined(true);	
@@ -104,14 +99,12 @@ public class AlgoSimplify extends AlgoElement {
     }
     
     // over-ridden by AlgoPartialFractions
-    protected String getMathPiperString(String functionIn) {
+    protected String getCASString(String functionIn) {
 	    sb.setLength(0);
-        sb.append("Simplify(TrigSimpCombine(FactorCancel(");
+        sb.append("SimplifyFull(");
         sb.append(functionIn);
-        sb.append(")))");        
+        sb.append(")");        
         return sb.toString();
-        
-
     }
 
 
