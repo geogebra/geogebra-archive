@@ -500,7 +500,7 @@ public class GeoGebraCAS {
 	
 	/**
 	 * Processes the CAS input string and returns an evaluation result.
-	 * @boolean doEvaluate: whether inputExp should be evaluated (i.e. simplified).
+	 * @boolean useGeoGebraVariables: whether GeoGebra objects should be substituted before evaluation
 	 * @return result as String in GeoGebra syntax
 	 */
 	public synchronized String processCASInput(String inputExp, boolean useGeoGebraVariables) throws Throwable {
