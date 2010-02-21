@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
@@ -877,6 +878,15 @@ implements ExpressionValue, ExpressionNodeConstants {
     
     public boolean isSingleVariable() {
         return (isLeaf() && (left instanceof Variable));
+    }
+    
+    /**
+     * Returns a string representation of this node that can be used with 
+     * the current CAS, e.g. "*" and "^" are always printed.
+     * @param symbolic: true for variable names, false for values of variables
+     */
+    final public String getCASstring(boolean symbolic) {
+        return getCASstring(GeoGebraCAS.CAS, symbolic);
     }
     
     /**

@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
@@ -1168,16 +1169,16 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return result as function
      */
     final private Function expand() {    
-        // build expression string for MathPiper
+        // build expression string for CAS
         sb.setLength(0);
-        sb.append("ExpandBrackets(");
+        sb.append("Expand(");
         // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));    
+        sb.append(expression.getCASstring(true));    
         sb.append(")");
 
         try {           
-            // evaluate expression by MathPiper
-            String result = kernel.evaluateMathPiper(sb.toString());                           
+            // evaluate expression by CAS
+            String result = kernel.evaluateCAS(sb.toString());                           
             
             sb.setLength(0);
             // it doesn't matter what label we use here as it is never used

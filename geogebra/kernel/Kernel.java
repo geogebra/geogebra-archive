@@ -418,6 +418,20 @@ public class Kernel {
      * @param expression string
      * @return result string (null possible)
      */
+	final public String evaluateCAS(String exp) {
+		if (ggbCAS == null) {
+			getGeoGebraCAS();		
+		}
+		
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateCAS(exp);
+	}		
+			
+	/** 
+     * Evaluates a MathPiper expression and returns the result as a String.
+     * e.g. exp = "D(x) (x^2)" returns "2*x"
+     * @param expression string
+     * @return result string (null possible)
+     */
 	final public String evaluateMathPiper(String exp) {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		

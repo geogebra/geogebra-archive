@@ -94,6 +94,21 @@ public class GeoGebraCAS {
 	 * 
 	 * @return result string (null possible)
 	 */
+	final synchronized public String evaluateCAS(String exp) {
+		
+		if (CAS == ExpressionNode.STRING_TYPE_MAXIMA)
+			return evaluateMaxima(exp);
+		else
+			return evaluateMathPiper(exp);
+	
+	}
+	
+    /**
+	 * Evaluates a MathPiper expression and returns the result as a string in MathPiper syntax, 
+	 * e.g. evaluateMathPiper("D(x) (x^2)") returns "2*x".
+	 * 
+	 * @return result string (null possible)
+	 */
 	final synchronized public String evaluateMathPiper(String exp) {
 		try {
 			String result;
