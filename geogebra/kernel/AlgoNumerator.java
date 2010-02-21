@@ -71,7 +71,7 @@ public class AlgoNumerator extends AlgoElement {
     		return;
     	}    
         
-        ExpressionValue ev = root.left;
+        ExpressionValue ev = getPart(root); // get Numerator
         
         //Application.debug(root.left.getClass()+"");
           
@@ -92,6 +92,13 @@ public class AlgoNumerator extends AlgoElement {
     		return;
     	}    
 	
+    }
+    
+    /*
+     * over-ridden in AlgoDenominator
+     */
+    protected ExpressionValue getPart(ExpressionNode node) {
+    	return node.left;
     }
     
     

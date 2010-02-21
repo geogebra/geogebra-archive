@@ -5259,6 +5259,15 @@ public class Kernel {
 	}
 	
 	/**
+	 * Denominator
+	 * Michael Borcherds 
+	 */
+	final public GeoFunction Denominator(String label, GeoFunction func) {		
+		AlgoDenominator algo = new AlgoDenominator(cons, label, func);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Degree
 	 * Michael Borcherds 
 	 */

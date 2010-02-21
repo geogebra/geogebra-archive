@@ -2115,11 +2115,7 @@ class CmdNumerator extends CommandProcessor {
 		case 1 :
 			arg = resArgs(c);
 
-			// asymptotes to conic
-			if (arg[0] .isGeoConic())
-				return kernel.Asymptote(c.getLabels(), (GeoConic) arg[0]);
-			else
-				if (arg[0] .isGeoFunction()) {
+			if (arg[0] .isGeoFunction()) {
 					GeoElement[] ret =
 					{ kernel.Numerator(c.getLabel(), (GeoFunction) arg[0])};
 					return ret;
@@ -2129,6 +2125,38 @@ class CmdNumerator extends CommandProcessor {
 
 		default :
 			throw argNumErr(app, "Numerator", n);
+		}
+	}
+}
+
+/*
+ * Denominator[ <Function> ]
+ */
+class CmdDenominator extends CommandProcessor {
+
+	public CmdDenominator(Kernel kernel) {
+		super(kernel);
+	}
+
+	final public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+
+		switch (n) {
+		case 1 :
+			arg = resArgs(c);
+
+			
+				if (arg[0] .isGeoFunction()) {
+					GeoElement[] ret =
+					{ kernel.Denominator(c.getLabel(), (GeoFunction) arg[0])};
+					return ret;
+
+				}
+				throw argErr(app, "Denominator", arg[0]);
+
+		default :
+			throw argNumErr(app, "Denominator", n);
 		}
 	}
 }
