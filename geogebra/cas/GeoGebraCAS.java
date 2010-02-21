@@ -1,6 +1,5 @@
 package geogebra.cas;
 
-import geogebra.cas.view.CASView;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
@@ -8,10 +7,8 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.kernel.arithmetic.Variable;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
-import jasymca.GeoGebraJasymca;
 
 import java.util.ArrayList;
 import java.util.HashMap;
