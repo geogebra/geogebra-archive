@@ -212,7 +212,7 @@ public class GeoGebraCAS {
 	private synchronized Interpreter getMathPiper() {				
 		if (ggbMathPiper == null) {
 
-			ggbMathPiper = Interpreters.getTimeoutInterpreter(3000);
+			ggbMathPiper = Interpreters.getSynchronousInterpreter();
 			boolean success = initMyMathPiperFunctions();
 			
 			if (!success) {
