@@ -425,6 +425,17 @@ public class Kernel {
 		
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiper(exp);
 	}		
+	
+	/** 
+     *  Returns whether var is a defined variable in GeoGebraCAS.
+     */
+	final public boolean isCASVariableBound(String var) {
+		if (ggbCAS == null) {
+			return false;		
+		} else {
+			return ((geogebra.cas.GeoGebraCAS) ggbCAS).isVariableBound(var);
+		}
+	}	
 			
 	final public boolean isGeoGebraCASready() {
 		return ggbCAS != null;

@@ -8,6 +8,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.arithmetic.Variable;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 import jasymca.GeoGebraJasymca;
@@ -52,12 +53,16 @@ public class GeoGebraCAS {
 	public GeoGebraCAS(Kernel kernel) {
 		this.kernel = kernel;
 		app = kernel.getApplication();
-		casParser = new CASparser(kernel);
+		casParser = new CASparser(this);
 		
 		sbInsertSpecial = new StringBuilder(80);
 		sbReplaceIndices = new StringBuilder(80);
 		
 		initCAS();
+	}
+	
+	Kernel getKernel() {
+		return kernel;
 	}
 	
 	private void initCAS() {
@@ -293,19 +298,6 @@ public class GeoGebraCAS {
 		return true;
 	}
 	
-
-	final public String simplifyMathPiper(String exp) {
-		return evaluateMathPiper("Simplify", exp );
-	}
-	
-	final public String factorMathPiper(String exp) {
-		return evaluateMathPiper("Factor", exp );
-	}
-
-	final public String expandMathPiper(String exp) {
-		return evaluateMathPiper("ExpandBrackets", exp );
-	}
-	
 	private HashMap getPolynomialCoeffsCache = new HashMap(50);
 	private StringBuilder getPolynomialCoeffsSB = new StringBuilder();
 	
@@ -500,9 +492,6 @@ public class GeoGebraCAS {
 		}
 		return sbInsertSpecial.toString();
 	}
-
-	
-	
 	
 	/**
 	 * Processes the CAS input string and returns an evaluation result.
@@ -625,6 +614,16 @@ public class GeoGebraCAS {
 	}
 	
 	/**
+	 * Returns whether var is a defined variable in MathPiper.
+	 */
+	public boolean isVariableBound(String var) {
+		StringBuilder exp = new StringBuilder("IsBound(");
+		exp.append(var);
+		exp.append(')');
+		return "True".equals(evaluateMathPiper(exp.toString()));
+	}
+	
+	/**
 	 * Evaluates expression with MathPiper and returns the resulting String in GeoGebra notation.
 	 * @param inputExpression
 	 * @param useGeoGebraVariables: 
@@ -721,7 +720,7 @@ public class GeoGebraCAS {
 	public synchronized String toMathPiperString(ValidExpression ve, boolean resolveVariables) {
 		
 		// resolve global variables
-		if (resolveVariables) {				
+		if (resolveVariables) {			
 			casParser.resolveVariablesForCAS(ve);
 		}	
 		

@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.GeoDummyVariable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.MyParseError;
@@ -43,10 +44,10 @@ public class Variable extends ValidExpression implements ExpressionValue {
     
 	public ExpressionValue deepCopy(Kernel kernel) {
 		return new Variable(kernel, name);
-	}   
+	}
     
     public String getName() { return name; }
-
+    
     public boolean isConstant() {
         return false;
     }
@@ -72,15 +73,24 @@ public class Variable extends ValidExpression implements ExpressionValue {
      * Looks up the name of this variable in the kernel and returns the 
      * according GeoElement object.
      */
-    GeoElement resolve(boolean allowAutoCreateGeoElement) {    	
+    GeoElement resolve(boolean allowAutoCreateGeoElement) {
+    	// keep bound CAS variables when resolving a CAS expression
+    	if (kernel.isResolveVariablesForCASactive() &&
+    		kernel.isCASVariableBound(name)) 
+    	{
+    		// resolve unknown variable as dummy geo to keep its name and 
+			// avoid an "unknown variable" error message
+			return new GeoDummyVariable(kernel.getConstruction(), name);
+    	}
+       
     	// lookup variable name, create missing variables automatically if allowed
-        GeoElement geo = kernel.lookupLabel(name, allowAutoCreateGeoElement);    	
+    	GeoElement geo = kernel.lookupLabel(name, allowAutoCreateGeoElement);    	
         if (geo != null)
-			return  geo;                            		        		
-			
+			return  geo;     
+	
         // if we get here we couldn't resolve this variable name as a GeoElement
         String [] str = { "UndefinedVariable", name };
-        throw new MyParseError(kernel.getApplication(), str);                         
+        throw new MyParseError(kernel.getApplication(), str); 	
     }
     
     /**

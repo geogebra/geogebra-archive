@@ -155,7 +155,7 @@ TOKEN : {
 
 /* OPERATORS */
 TOKEN :  {   
-    < ASSIGNMENT: ":=" >
+    < ASSIGNMENT: ( ":=") >
   | < VERTICAL_BAR: "|" >
   | < NOT: ("\u00ac") > 
   | < OR:		("||" | "\u2228" ) >
@@ -391,8 +391,7 @@ ValidExpression buildValidExpression() :
 	  	ve = cartesianvector_special()
 	|
 	 	 LOOKAHEAD(2147483647)    
-	 	 	ve = polarvector_special()
-	    
+	 	 	ve = polarvector_special()  
     )                     
     ( <EOL> | <EOF> )     
     {                      
@@ -426,7 +425,7 @@ ValidExpression buildCASExpression() :
 	|	   
        	// labeled equation, e.g. g: 3x + y = 7
        	LOOKAHEAD(2147483647)   
-       	l = casLabel() (<ASSIGNMENT> | ":") ve = equation()   
+       	l = casLabel() ( ":" | <ASSIGNMENT >) ve = equation()   
  	|	   
        	// equation, e.g. 3x + y = 7
        	LOOKAHEAD(2147483647)   

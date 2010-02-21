@@ -16,6 +16,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.arithmetic.Variable;
 import geogebra.kernel.parser.Parser;
 
 /**
@@ -25,11 +26,13 @@ import geogebra.kernel.parser.Parser;
  */
 public class CASparser {
 	
+	private GeoGebraCAS ggbCAS;
 	private Kernel kernel;
 	private Parser ggbParser;
 	
-	public CASparser(Kernel kernel) {	
-		this.kernel = kernel;
+	public CASparser(GeoGebraCAS ggbCAS) {	
+		this.ggbCAS = ggbCAS;
+		this.kernel = ggbCAS.getKernel();
 		ggbParser = kernel.getParser();
 	}
 	
@@ -47,7 +50,7 @@ public class CASparser {
 	 */
 	public synchronized void resolveVariablesForCAS(ExpressionValue ev) {
 		// resolve variables of valid expression
-		kernel.setResolveVariablesForCASactive(true);		
+		kernel.setResolveVariablesForCASactive(true);
 		ev.resolveVariables();
 		kernel.setResolveVariablesForCASactive(false);				
 	}
