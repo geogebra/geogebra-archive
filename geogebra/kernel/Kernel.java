@@ -3813,6 +3813,17 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Polygon formed by operation on two input polygons.
+	 * Possible operations: addition, subtraction or intersection
+	 */	
+	final public GeoElement [] PolygonOperation(String [] labels, GeoPolygon A, GeoPolygon B, NumberValue n) {
+		AlgoPolygonOperation algo = new AlgoPolygonOperation(cons, labels, A, B,n);
+		return algo.getOutput();
+	}
+	
+	
+	
+	/** 
 	 * Creates new point B with distance n from A and  new segment AB 
 	 * The labels[0] is for the segment, labels[1] for the new point	 
 	 */

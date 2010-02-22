@@ -3,6 +3,7 @@ package geogebra.kernel.commands;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -31,6 +32,14 @@ public GeoElement[] process(Command c) throws MyError {
 	        arg[1].isGeoPoint() &&
 	        arg[2].isNumberValue())
 				return kernel.RegularPolygon(c.getLabels(), (GeoPoint) arg[0], (GeoPoint) arg[1], (NumberValue) arg[2]);		
+        
+        // polygon operation
+        if (arg[0].isGeoPolygon() && 
+	        arg[1].isGeoPolygon() &&
+	        arg[2].isNumberValue())
+				return kernel.PolygonOperation(c.getLabels(), (GeoPolygon) arg[0], (GeoPolygon) arg[1],(NumberValue) arg[2]);		
+        
+        
         
         default:
 			// polygon for given points

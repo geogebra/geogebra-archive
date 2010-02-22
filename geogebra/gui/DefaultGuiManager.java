@@ -1275,7 +1275,7 @@ public class DefaultGuiManager implements GuiManager {
 
 			MyFileFilter fileFilter = new MyFileFilter();
 			fileFilter.addExtension("txt");
-			fileFilter.addExtension("cvs");
+			fileFilter.addExtension("csv");
 
 			// fileFilter.setDescription(app.getPlain("Image"));
 			fileChooser.resetChoosableFileFilters();
