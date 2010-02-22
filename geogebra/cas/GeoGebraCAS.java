@@ -112,7 +112,6 @@ public class GeoGebraCAS {
 	final synchronized public String evaluateMathPiper(String exp) {
 		try {
 			String result;
-						Application.printStacktrace("");
 
 			// MathPiper has problems with indices like a_3, b_{12}
 			exp = replaceIndices(exp);

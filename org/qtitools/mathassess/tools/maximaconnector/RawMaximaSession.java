@@ -148,8 +148,8 @@ public final class RawMaximaSession {
         String[] maximaRuntimeEnvironment = maximaConfiguration.getMaximaRuntimeEnvironment();
 
         /* Start up Maxima with the -q option (which suppresses the startup message) */
-        Application.debug("Starting Maxima at {} using environment {}"+ maximaExecutablePath+ 
-                Arrays.toString(maximaRuntimeEnvironment));
+        //Application.debug("Starting Maxima at {} using environment {}"+ maximaExecutablePath+ 
+        //        Arrays.toString(maximaRuntimeEnvironment));
         try {
             maximaProcess = Runtime.getRuntime().exec(new String[] { maximaExecutablePath, "-q" },
                     maximaRuntimeEnvironment);
@@ -191,12 +191,12 @@ public final class RawMaximaSession {
         try {
             if (timeout > 0) {
                 /* Wait until timeout */
-                Application.debug("Doing Maxima call with timeout {}s"+ Integer.valueOf(timeout));
+                //Application.debug("Doing Maxima call with timeout {}s"+ Integer.valueOf(timeout));
                 result = maximaCall.get(timeout, TimeUnit.SECONDS);
             }
             else {
                 /* Wait indefinitely (this can be dangerous!) */
-                Application.debug("Doing Maxima call without timeout");
+                //Application.debug("Doing Maxima call without timeout");
                 result = maximaCall.get();
             }
         }
@@ -224,7 +224,7 @@ public final class RawMaximaSession {
         }
 
         public String call() {
-            Application.debug("Reading output from Maxima until first prompt matching {}"+ promptPattern);
+            //Application.debug("Reading output from Maxima until first prompt matching {}"+ promptPattern);
             outputBuilder.setLength(0);
             errorOutputBuilder.setLength(0);
             int outChar;
@@ -294,7 +294,7 @@ public final class RawMaximaSession {
     
     private String doMaximaUntil(String input, String inchar) throws MaximaTimeoutException {
         ensureStarted();
-        Application.printStacktrace("Sending input '{}' to Maxima"+ input);
+        Application.debug("Sending to Maxima: "+ input);
         maximaInput.println(input);
         maximaInput.flush();
         if (maximaInput.checkError()) {
@@ -330,7 +330,7 @@ public final class RawMaximaSession {
         /* Strip out any intermediate input prompts */
         rawOutput = rawOutput.replaceAll("\\(%i\\d+\\)", "");
         
-        Application.debug("Returning raw output " + rawOutput);
+        //Application.debug("Returning raw output " + rawOutput);
         return rawOutput;
     }
     
@@ -380,7 +380,7 @@ public final class RawMaximaSession {
                 executor.shutdown();
                 
                 /* Ask Maxima to nicely close down by closing its input */
-                Application.debug("Attempting to close Maxima nicely");
+                //Application.debug("Attempting to close Maxima nicely");
                 maximaInput.close();
                 if (maximaInput.checkError()) {
                     Application.debug("Forcibly terminating Maxima");
