@@ -71,6 +71,21 @@ public class CASparser {
 	}
 	
 	/**
+	 * Returns the given expression as a string in Maxima syntax.
+	 */
+	public String toMaximaString(ExpressionValue ev, boolean substituteVariables) {
+		String MathPiperString;
+		
+		if (!ev.isExpressionNode()) {
+			ev = new ExpressionNode(kernel, ev);			
+		}
+		
+		MathPiperString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MAXIMA, !substituteVariables);		
+				
+		return MathPiperString;
+	}
+	
+	/**
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
 	public ValidExpression parseMathPiper(String MathPiperString) throws Throwable {

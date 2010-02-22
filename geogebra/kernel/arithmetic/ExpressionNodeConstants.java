@@ -6,7 +6,7 @@ public interface ExpressionNodeConstants {
 
 	public static final int STRING_TYPE_GEOGEBRA_XML = 0;
 	public static final int STRING_TYPE_GEOGEBRA = 1;
-	public static final int STRING_TYPE_MAXIMA = 1;
+	public static final int STRING_TYPE_MAXIMA = 2;
 	public static final int STRING_TYPE_MATH_PIPER = 3;
 	public static final int STRING_TYPE_LATEX = 4;
 	public static final int STRING_TYPE_PSTRICKS = 5;

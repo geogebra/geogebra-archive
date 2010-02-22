@@ -129,7 +129,8 @@ implements ExpressionValue {
     
     private String toString(boolean symbolic, boolean LaTeX) {    
     	switch (kernel.getCASPrintForm()){
-    		case ExpressionNode.STRING_TYPE_MATH_PIPER:
+		case ExpressionNode.STRING_TYPE_MATH_PIPER:
+		case ExpressionNode.STRING_TYPE_MAXIMA:
     			// MathPiper command syntax
     			return ((geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS()).
     				getCASCommand(name, args, symbolic);    			    	

@@ -67,7 +67,7 @@ public class AlgoSimplify extends AlgoElement {
         }    
 
     
-	    String functionIn = f.getFormulaString(kernel.getCASPrintForm(), true);
+	    String functionIn = f.getFunction().getExpression().getCASstring(true);
 
 		String functionOut = null;
 		String CASString = getCASString(functionIn);

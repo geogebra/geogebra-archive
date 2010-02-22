@@ -625,17 +625,16 @@ public class GeoGebraCAS {
 	 */
 	private synchronized String processCASInputMaxima(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
 		// convert parsed input to Maxima string
-		// TODO: change to toMaximaString
-		String MathPiperString = toMathPiperString(casInput, useGeoGebraVariables);
+		String MaximaString = toMaximaString(casInput, useGeoGebraVariables);
 			
 		// EVALUATE input in MathPiper 
-		String result = evaluateMaxima(MathPiperString);
+		String result = evaluateMaxima(MaximaString);
 
 		// convert MathPiper result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
 		
 		// TODO: remove
-		System.out.println("eval with Maxima: " + MathPiperString);
+		System.out.println("eval with Maxima: " + MaximaString);
 		System.out.println("   result: " + result);
 		System.out.println("   ggbString: " + ggbString);
 		
@@ -784,6 +783,52 @@ public class GeoGebraCAS {
 		// TODO: remove
 		System.out.println("GeoGebraCAS.toMathPiperString: " + MathPiperStr);
 		return MathPiperStr;
+	}	
+	
+	/**
+	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
+	 * 
+	 * @param resolveVariables: states whether variables from the GeoGebra kernel 
+	 *    should be used. Note that this changes the given ExpressionValue. 
+	 */
+	public synchronized String toMaximaString(ValidExpression ve, boolean resolveVariables) {
+		
+		// resolve global variables
+		if (resolveVariables) {			
+			casParser.resolveVariablesForCAS(ve);
+		}	
+		
+		// convert to Maxima String
+		String MaximaStr = casParser.toMaximaString(ve, resolveVariables);
+
+		// handle assignments
+		String veLabel = ve.getLabel();
+		if (veLabel != null) {
+			StringBuilder sb = new StringBuilder();
+			
+			if (ve instanceof Function) {
+				// function, e.g. f(x) := 2*x
+				Function fun = (Function) ve;
+				sb.append(veLabel);
+				sb.append("(" );
+				sb.append(fun.getFunctionVariable());
+				sb.append(") := ");
+				
+				// evaluate right hand side:
+				// import for e.g. g(x) := Eval(D(x) x^2)
+				//sb.append("Eval(");
+				sb.append(MaximaStr);
+				//sb.append(")");
+				MaximaStr = sb.toString();
+			} else {	
+				// assignment, e.g. a := 5
+				MaximaStr = veLabel + " := " + MaximaStr;
+			}
+		}
+		
+		// TODO: remove
+		System.out.println("GeoGebraCAS.toMaxima: " + MaximaStr);
+		return MaximaStr;
 	}	
 	
 	/**
