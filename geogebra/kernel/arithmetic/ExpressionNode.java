@@ -1324,6 +1324,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_MATH_PIPER:
+	        		case STRING_TYPE_MAXIMA:
 	        			sb.append('(');
 	        			sb.append(leftStr);
 	                    sb.append(") + (");
@@ -1388,6 +1389,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_MATH_PIPER:
+	        		case STRING_TYPE_MAXIMA:
 	        			sb.append('(');
 	        			sb.append(leftStr);
 	                    sb.append(") - (");
@@ -1478,6 +1480,7 @@ implements ExpressionValue, ExpressionNodeConstants {
                 	           
             	case STRING_TYPE_JASYMCA:
         		case STRING_TYPE_MATH_PIPER:
+        		case STRING_TYPE_MAXIMA:
         			
 	                boolean nounary = true;
 	                
@@ -1564,6 +1567,7 @@ implements ExpressionValue, ExpressionNodeConstants {
                 		
     				case STRING_TYPE_JASYMCA:
     				case STRING_TYPE_MATH_PIPER:
+    				case STRING_TYPE_MAXIMA:
     					 sb.append('(');
 		                 sb.append(leftStr);
 		                 sb.append(")/(");
@@ -1603,6 +1607,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             	switch (STRING_TYPE) {			
 					case STRING_TYPE_JASYMCA:
 					case STRING_TYPE_MATH_PIPER:
+					case STRING_TYPE_MAXIMA:
 						sb.append('(');
 	                    sb.append(leftStr);
 	                    sb.append(')');
@@ -1645,6 +1650,7 @@ implements ExpressionValue, ExpressionNodeConstants {
    	        		case STRING_TYPE_JASYMCA:    
 	        		case STRING_TYPE_GEOGEBRA_XML:
 					case STRING_TYPE_MATH_PIPER:
+					case STRING_TYPE_MAXIMA:
 	        			sb.append('^'); 
                         sb.append('(');
                         sb.append(rightStr);
@@ -2130,6 +2136,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			
 	        		case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_GEOGEBRA_XML:
+	        		case STRING_TYPE_MAXIMA:
 	        			sb.append("exp(");
 	        			sb.append(leftStr);
 	                    sb.append(')');
@@ -2165,6 +2172,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("Ln(");
 	        			break;
 	        			
+	        		case STRING_TYPE_MAXIMA:
 	        		case STRING_TYPE_JASYMCA:
 	        		case STRING_TYPE_GEOGEBRA_XML:
 	        			sb.append("log(");	        			
@@ -2194,8 +2202,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append(')');
 	                	break;
         			
+        			case STRING_TYPE_MAXIMA:
         			case STRING_TYPE_PGF:
-	        			sb.append("log10(");  
+	        			sb.append("log10(");  // user-defined function in Maxima
 	        			sb.append(leftStr);
 	        			sb.append(')');
 	                	break;
@@ -2228,6 +2237,12 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    sb.append(')');
 	        			break;
 	        			
+        			case STRING_TYPE_MAXIMA:
+	        			sb.append("log2(");  // user-defined function in Maxima
+	        			sb.append(leftStr);
+	        			sb.append(')');
+	                	break;
+        			
 	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Ln(");
 	        			 sb.append(leftStr);
@@ -2322,6 +2337,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			break;
 	        			
 	        		case STRING_TYPE_JASYMCA:
+	        		case STRING_TYPE_MAXIMA:
 	        			sb.append("sign(");
 	        			break;
 
@@ -2367,6 +2383,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                sb.append(')');
 	        			break;
 	        			
+        			case STRING_TYPE_MAXIMA:
         			case STRING_TYPE_PSTRICKS:
 	        			sb.append("ceiling(");  
 	        			sb.append(leftStr);

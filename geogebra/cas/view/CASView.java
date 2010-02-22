@@ -345,8 +345,8 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	public void add(GeoElement geo) {
 		try {
 			if (geo.isGeoFunction()) {
-				String funStr = getCAS().toMathPiperString((GeoFunction) geo);
-				getCAS().evaluateMathPiper(funStr);
+				String funStr = getCAS().toCASString((GeoFunction) geo);
+				getCAS().evaluateCAS(funStr);
 			}
 		} catch (Throwable e) {
 			System.err.println("CASView.add: " + geo + ", " +  e.getMessage());

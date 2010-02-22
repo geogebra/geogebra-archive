@@ -844,25 +844,26 @@ implements ExpressionValue, RealRootFunction, Functional {
         String oldVar = fVar.toString();
         fVar.setVarString("x");
                 
-        // build expression string for MathPiper             
+        // build expression string for CAS             
 		sb.setLength(0);
-		if (order == 1)
-			sb.append("Differentiate(x) ");
-		else {
-	        sb.append("Differentiate(x,");
-	        sb.append(order);
-	        sb.append(") ");
-		}				
-						
+        sb.append("Derivative(");
         // function expression with multiply sign "*"   
 		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));		
+		if (order > 1) {
+	        sb.append(",x,");
+	        sb.append(order);
+		}
+        sb.append(") ");
+		
+		
+						
 
         try {                   	            
             // evaluate expression by MathPiper 
-            String result = kernel.evaluateMathPiper(sb.toString());  
+            String result = kernel.evaluateCAS(sb.toString());  
            
             // fast fail for e.g. "Differentiate(x)Floor(x)"
-            if (result.startsWith("Differentiate(x)"))
+            if (result.startsWith("Differentiate(") || result.startsWith("'diff("))
             	return null;
             
     		// look for "Deriv(x)f(x)" strings and
@@ -892,7 +893,9 @@ implements ExpressionValue, RealRootFunction, Functional {
          } catch (Exception e) {
         	 //e.printStackTrace();
              return null;
-         }     
+         } catch (Throwable e) {
+			 return null;
+		}     
          finally {
         	 fVar.setVarString(oldVar);
          }

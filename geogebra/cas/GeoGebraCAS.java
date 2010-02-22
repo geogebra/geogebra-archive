@@ -112,7 +112,8 @@ public class GeoGebraCAS {
 	final synchronized public String evaluateMathPiper(String exp) {
 		try {
 			String result;
-						
+						Application.printStacktrace("");
+
 			// MathPiper has problems with indices like a_3, b_{12}
 			exp = replaceIndices(exp);
 			
@@ -213,6 +214,9 @@ public class GeoGebraCAS {
 		if (ggbMaxima == null) {
 		    PropertiesMaximaConfiguration configuration = new PropertiesMaximaConfiguration();
 		    ggbMaxima = new RawMaximaSession(configuration);
+		}
+		
+		if (!ggbMaxima.isOpen()) {
 		    try {
 				ggbMaxima.open();
 				
@@ -224,7 +228,7 @@ public class GeoGebraCAS {
 			}
 			
 		}
-		
+	
 		return ggbMaxima;
 	}
 	
@@ -262,9 +266,10 @@ public class GeoGebraCAS {
 	    // make sure integral(1/x) = log(abs(x))
 	    ggbMaxima.executeRaw("logabs:true;");
 	    
-	    // define log10 and log2
+	    // define custom functions
 	    ggbMaxima.executeRaw("log10(x) := log(x) / log(10);");
 	    ggbMaxima.executeRaw("log2(x) := log(x) / log(2);");
+	    ggbMaxima.executeRaw("cbrt(x) := x^(1/3);");
 	    
 	    // define Degree
 	    //ggbMaxima.executeRaw("Degree := 180 / %pi;");
@@ -626,6 +631,8 @@ public class GeoGebraCAS {
 	private synchronized String processCASInputMaxima(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
 		// convert parsed input to Maxima string
 		String MaximaString = toMaximaString(casInput, useGeoGebraVariables);
+		
+		if (!MaximaString.endsWith(";")) MaximaString = MaximaString + ';';
 			
 		// EVALUATE input in MathPiper 
 		String result = evaluateMaxima(MaximaString);
@@ -835,7 +842,7 @@ public class GeoGebraCAS {
 	 * Returns a function from GeoGebra as a MathPiper string. For example f(x) = a x^2 is
 	 * returned as "f(x) := a * x^2"
 	 */
-	public String toMathPiperString(GeoFunction geo) {
+	public String toCASString(GeoFunction geo) {
 		if (!geo.isDefined()) return null;
 		
 		StringBuilder sb = new StringBuilder();
@@ -846,7 +853,8 @@ public class GeoGebraCAS {
 		sb.append("(" );
 		sb.append(fun.getFunctionVariable());
 		sb.append(") := ");
-		sb.append(casParser.toMathPiperString(fun, false));
+		sb.append(casParser.toCASString(fun, false));
+		sb.append(";");
 
 		return sb.toString();
 	}

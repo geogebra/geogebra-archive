@@ -99,7 +99,7 @@ import javax.swing.WindowConstants;
 public abstract class Application implements KeyEventDispatcher {
 	
 	// disabled parts
-	public static final boolean PRINT_DEBUG_MESSAGES = true;
+	private static final boolean PRINT_DEBUG_MESSAGES = true;
 	
 	// license file
 	public static final String LICENSE_FILE = "/geogebra/gui/_license.txt";

@@ -58,6 +58,14 @@ public class CASparser {
 	/**
 	 * Returns the given expression as a string in MathPiper syntax.
 	 */
+	public String toCASString(ExpressionValue ev, boolean substituteVariables) {
+		if (GeoGebraCAS.CAS == ExpressionNode.STRING_TYPE_MAXIMA) return toMaximaString(ev, substituteVariables);
+		else return toMathPiperString(ev, substituteVariables);
+		
+	}
+	/**
+	 * Returns the given expression as a string in MathPiper syntax.
+	 */
 	public String toMathPiperString(ExpressionValue ev, boolean substituteVariables) {
 		String MathPiperString;
 		
