@@ -6073,9 +6073,11 @@ public class Kernel {
 			// number formatting for CAS
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:				
 			case ExpressionNode.STRING_TYPE_JASYMCA:		
+			case ExpressionNode.STRING_TYPE_MAXIMA:		
 				if (Double.isNaN(x))
 					return " 1/0 ";	
 				else if (Double.isInfinite(x)) {
+					if (casPrintForm == ExpressionNode.STRING_TYPE_MAXIMA) return (x<0) ? "-infinity" : "infinity";
 					return Double.toString(x); // "Infinity" or "-Infinity"
  				}
 				else {			
