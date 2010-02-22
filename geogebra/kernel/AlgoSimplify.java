@@ -23,19 +23,23 @@ import geogebra.main.Application;
 public class AlgoSimplify extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private GeoFunction f; // input
-    private GeoFunction g; // output     
+	protected GeoFunction f; // input
+    protected GeoFunction g; // output     
     
     protected StringBuilder sb = new StringBuilder();
    
     public AlgoSimplify(Construction cons, String label, GeoFunction f) {
+    	this(cons, f);
+        g.setLabel(label);
+    }
+    
+    public AlgoSimplify(Construction cons, GeoFunction f) {
     	super(cons);
         this.f = f;            	
     	
         g = new GeoFunction(cons);                
         setInputOutput(); // for AlgoElement        
         compute();
-        g.setLabel(label);
     }
     
     protected String getClassName() {
@@ -68,7 +72,7 @@ public class AlgoSimplify extends AlgoElement {
 		String functionOut = null;
 		String CASString = getCASString(functionIn);
 		try {
-			functionOut = ((GeoGebraCAS)(kernel.getGeoGebraCAS())).processCASInput(CASString, true);
+			functionOut = ((GeoGebraCAS)(kernel.getGeoGebraCAS())).processCASInput(CASString, false);
 		} catch (Throwable e) {
 			Application.debug(getClassName()+" error processing: "+CASString);
 		}
@@ -94,7 +98,7 @@ public class AlgoSimplify extends AlgoElement {
 		
     }
     
-    final public String toString() {
+    public String toString() {
     	return getCommandDescription();
     }
     

@@ -1090,14 +1090,14 @@ implements ExpressionValue, RealRootFunction, Functional {
         //sb.append("Subst(a,1)AntiDeriv(x,");
         // ... however it doesn't work if there's a GeoGebra variable 'a' in the expression
         
-        sb.append("AntiDeriv(x,");
+        sb.append("Integral(");
         // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));  
+        sb.append(expression.getCASstring(true));  
         sb.append(")");
 
         try {           
             // evaluate expression by MathPiper
-            String result = kernel.evaluateMathPiper(sb.toString());     
+            String result = kernel.evaluateCAS(sb.toString());     
             
             //Application.debug(sb.toString());
             //Application.debug(result+"");
@@ -1125,7 +1125,10 @@ implements ExpressionValue, RealRootFunction, Functional {
          } catch (Exception e) {
         	 Application.debug(e+"");
              return null;
-         }      
+         } catch (Throwable e) {
+           	 Application.debug(e+"");
+             return null;
+		}      
          finally {
         	 fVar.setVarString(oldVar);
          } 
@@ -1193,7 +1196,9 @@ implements ExpressionValue, RealRootFunction, Functional {
              return null;
          } catch (Exception e) {
              return null;
-         }         
+         } catch (Throwable e) {
+        	 return null;
+		}         
     }
     
     public boolean isNumberValue() {

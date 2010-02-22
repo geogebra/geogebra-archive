@@ -216,8 +216,8 @@ public class GeoGebraCAS {
 		    try {
 				ggbMaxima.open();
 				
-				// make sure results are returned
-			    ggbMaxima.executeRaw("display2d:false;");
+				initMyMaximaFunctions();
+				
 			} catch (MaximaTimeoutException e) {
 				Application.debug("Timeout from Maxima");
 				return null;
@@ -253,6 +253,23 @@ public class GeoGebraCAS {
 		
 		return ggbMathPiper;
 	}	
+	
+	private void initMyMaximaFunctions() throws MaximaTimeoutException {
+		
+		// make sure results are returned
+	    ggbMaxima.executeRaw("display2d:false;");
+	    
+	    // make sure integral(1/x) = log(abs(x))
+	    ggbMaxima.executeRaw("logabs:true;");
+	    
+	    // define log10 and log2
+	    ggbMaxima.executeRaw("log10(x) := log(x) / log(10);");
+	    ggbMaxima.executeRaw("log2(x) := log(x) / log(2);");
+	    
+	    // define Degree
+	    //ggbMaxima.executeRaw("Degree := 180 / %pi;");
+	    
+	}
 	
 	/**
 	 * Initialize special commands needed in our ggbMathPiper instance,e.g.

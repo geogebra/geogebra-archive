@@ -418,13 +418,14 @@ public class Kernel {
      * e.g. exp = "D(x) (x^2)" returns "2*x"
      * @param expression string
      * @return result string (null possible)
+	 * @throws Throwable 
      */
-	final public String evaluateCAS(String exp) {
+	final public String evaluateCAS(String exp) throws Throwable {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
 		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateCAS(exp);
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).processCASInput(exp, true);
 	}		
 			
 	/** 
