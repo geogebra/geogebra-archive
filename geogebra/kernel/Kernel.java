@@ -91,6 +91,7 @@ import geogebra.kernel.statistics.AlgoTDistribution;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.kernel.statistics.AlgoWeibull;
 import geogebra.kernel.statistics.AlgoZipf;
+import geogebra.kernel.statistics.AlgoSumSquaredErrors;
 import geogebra.kernel.statistics.RegressionMath;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -2631,6 +2632,16 @@ public class Kernel {
 		AlgoSumLower algo = new AlgoSumLower(cons, label, f, a, b, n);
 		GeoNumeric sum = algo.getSum();
 		return sum;
+	}	
+	/**
+	 * SumSquaredErrors[<List of Points>,<Function>]
+	 * Hans-Petter Ulven
+	 * 2010-02-22
+	 */
+	final public GeoNumeric SumSquaredErrors(String label, GeoList list, GeoFunction function) {
+		AlgoSumSquaredErrors algo = new AlgoSumSquaredErrors(cons, label, list, function);
+		GeoNumeric sse=algo.getsse();
+		return sse;
 	}	
 
 	/** 
