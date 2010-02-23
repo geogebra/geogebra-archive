@@ -35,18 +35,32 @@ public class MySpecialDouble extends MyDouble {
 	public String toString() {
 		switch (kernel.getCASPrintForm()) {
 			//case ExpressionNode.STRING_TYPE_JASYMCA:
-			case ExpressionNode.STRING_TYPE_MATH_PIPER:
-				char ch = strToString.charAt(0);
-				switch (ch) {
-					// pi
-					case '\u03c0':	return "Pi";
-					// degree
-					case '\u00b0':	return "180/Pi";
-				} 				
+		case ExpressionNode.STRING_TYPE_MATH_PIPER:
+			char ch = strToString.charAt(0);
+			switch (ch) {
+				// pi
+				case '\u03c0':	return "Pi";
+				// degree
+				case '\u00b0':	return "180/Pi";
+			} 	
+			
+			break;
+			
+		case ExpressionNode.STRING_TYPE_MAXIMA:
+			ch = strToString.charAt(0);
+			switch (ch) {
+				// pi
+				case '\u03c0':	return "%pi";
+				// degree
+				case '\u00b0':	return "180/%pi";
+			} 	
+			
+			break;
 				
-			default:
-				return strToString;		
+			//default:
+			//	return strToString;		
 		}
+		return strToString;	
 	}
 
 }

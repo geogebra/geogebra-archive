@@ -588,6 +588,10 @@ public class Kernel {
 		nf.setMaximumFractionDigits(digits);
 	}
 	
+	final public String getPiString() {
+		return casPrintFormPI;
+	}
+	
 	final public void setCASPrintForm(int type) {
 		casPrintForm = type;
 		
@@ -597,7 +601,7 @@ public class Kernel {
 			break;
 			
 		case ExpressionNode.STRING_TYPE_MAXIMA:
-			casPrintFormPI = "%PI";
+			casPrintFormPI = "%pi";
 			break;
 			
 			case ExpressionNode.STRING_TYPE_JASYMCA:

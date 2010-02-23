@@ -194,7 +194,7 @@ public class CASmaxima extends CASgeneric {
 			result = casParser.insertSpecialChars(result);
 			
 			// convert Maxima's Pi to GeoGebra's
-			result = result.replaceAll("%PI", "pi");
+			result = result.replaceAll("%pi", "pi");
 
 			return result;
 		} catch (Throwable th) {

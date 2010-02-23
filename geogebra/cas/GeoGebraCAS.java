@@ -34,6 +34,7 @@ public class GeoGebraCAS {
 		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
 		
+		//setCurrentCAS(CAS_MAXIMA);
 		setCurrentCAS(CAS_MATHPIPER);
 	}
 	
