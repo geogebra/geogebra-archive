@@ -67,12 +67,12 @@ public class AlgoSimplify extends AlgoElement {
         }    
 
     
-	    String functionIn = f.getFunction().getExpression().getCASstring(true);
+	    String functionIn = f.getFunction().getExpression().getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 
 		String functionOut = null;
 		String CASString = getCASString(functionIn);
 		try {
-			functionOut = ((GeoGebraCAS)(kernel.getGeoGebraCAS())).processCASInput(CASString, false);
+			functionOut = kernel.evaluateMathPiper(functionIn);
 		} catch (Throwable e) {
 			Application.debug(getClassName()+" error processing: "+CASString);
 		}

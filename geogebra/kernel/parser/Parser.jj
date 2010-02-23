@@ -57,7 +57,7 @@ public class Parser {
     private Kernel kernel;
     private Construction cons;
     private Application app;
-    private boolean MathPiperParsing = false;
+    private boolean ExternalCASParsing = false;
     private boolean GeoGebraCASParsing = false;
     
     public Parser(Kernel kernel, Construction cons) {
@@ -70,7 +70,7 @@ public class Parser {
     // reset for new parsing
     public void myReInit(String parseString) {
     	ReInit(new java.io.StringReader(parseString));    	
-    	MathPiperParsing = false;
+    	ExternalCASParsing = false;
     	GeoGebraCASParsing = false;
     }
 
@@ -97,9 +97,17 @@ public class Parser {
      */
     public ValidExpression parseMathPiper(String parseString) throws ParseException {           
         myReInit( parseString ); 
-        // parse 3*x + 4*y == 2 as an equation 3x + 4y = 2
-        MathPiperParsing = true;                         
+        ExternalCASParsing = true;                         
         return buildMathPiperExpression();     
+    }
+
+    /**
+     * Parses a Maxima String and returns a ValidExpression Object     
+     */
+    public ValidExpression parseMaxima(String parseString) throws ParseException {           
+        myReInit( parseString ); 
+        ExternalCASParsing = true;                         
+        return buildMaximaExpression();     
     }
     
     /**
@@ -468,6 +476,27 @@ ValidExpression buildMathPiperExpression() :
 }
 
 /**
+ * convert Maxima String to GeoGebra string
+ */
+ValidExpression buildMaximaExpression() : 
+{
+    ValidExpression ve;
+    ExpressionNode lhs, rhs;
+    Token l = new Token();
+    Vector labels = new Vector();
+} 
+{         
+    (     
+		// try to parse Maxima string as standard GeoGebra expression 
+    	ve = expressionnode()     	     	   
+	)                     
+    ( <EOL> | <EOF> )     
+    {       	                         
+        return ve;
+    }    
+}
+
+/**
  * convert Solve results like {x==5, x==7} to simple list {5, 7} 
  *
 ValidExpression MathPiperSolveResult() : 
@@ -825,7 +854,7 @@ ExpressionNode expressionnode():
     		en = new ExpressionNode(kernel, ret);
     	
     	//en.expandEquationExpressions();
-    	if (MathPiperParsing)
+    	if (ExternalCASParsing)
     		en.simplifyLeafs();
     	return en; 
     }
@@ -881,7 +910,7 @@ ExpressionValue COMPAREterm():
     (         
        (<EQUAL_BOOLEAN>  f = plusminusnode()
     	 {            
-    	   if (MathPiperParsing)
+    	   if (ExternalCASParsing)
     	       ret = new ExpressionNode(kernel, new Equation(kernel, ret, f));
     	   else
            		ret = new ExpressionNode(kernel, ret, ExpressionNode.EQUAL_BOOLEAN, f);  
@@ -1384,7 +1413,7 @@ ExpressionValue myDouble():
     {
     	double val =  Double.parseDouble( c.image );
     	
-    	if (MathPiperParsing || GeoGebraCASParsing) {
+    	if (ExternalCASParsing || GeoGebraCASParsing) {
     		// preserve string from MathPiper: it may have higher
     		// precision than double
     	   return new MySpecialDouble(kernel, val, c.image);  

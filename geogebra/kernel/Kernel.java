@@ -87,11 +87,11 @@ import geogebra.kernel.statistics.AlgoSXX;
 import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
+import geogebra.kernel.statistics.AlgoSumSquaredErrors;
 import geogebra.kernel.statistics.AlgoTDistribution;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.kernel.statistics.AlgoWeibull;
 import geogebra.kernel.statistics.AlgoZipf;
-import geogebra.kernel.statistics.AlgoSumSquaredErrors;
 import geogebra.kernel.statistics.RegressionMath;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -384,55 +384,24 @@ public class Kernel {
     		parser = new Parser(this, cons);
     	return parser;
     }	
-
-	/** 
-     * Evaluates a JASYMCA expression and returns the result as a String.
-     * e.g. exp = "diff(x^2,x)" returns "2*x"
-     * @param expression string
-     * @return result string (null possible)
-     *
-	final public String evaluateJASYMCA(String exp) {
-		if (ggbCAS == null) {
-			getGeoGebraCAS();		
-		}				
-		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateJASYMCA(exp);
-	}*/
-	
-	/** 
-     * Evaluates a Maxima expression and returns the result as a String.
-     * e.g. exp = "integrate (sin(x)^3, x);" returns "cos(x)^3/3-cos(x)"
-     * @param expression string
-     * @return result string (null possible)
-     */
-	final public String evaluateMaxima(String exp) {
-		if (ggbCAS == null) {
-			getGeoGebraCAS();		
-		}
-		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMaxima(exp);
-	}		
 			
 	/** 
-     * Evaluates a MathPiper expression and returns the result as a String.
-     * e.g. exp = "D(x) (x^2)" returns "2*x"
-     * @param expression string
+	 * Evaluates an expression in GeoGebraCAS syntax.
      * @return result string (null possible)
 	 * @throws Throwable 
      */
-	final public String evaluateCAS(String exp) throws Throwable {
+	final public String evaluateGeoGebraCAS(String exp) throws Throwable {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
 		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).processCASInput(exp, true);
-	}		
-			
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateGeoGebraCAS(exp);
+	}	
+	
 	/** 
-     * Evaluates a MathPiper expression and returns the result as a String.
-     * e.g. exp = "D(x) (x^2)" returns "2*x"
-     * @param expression string
+	 * Evaluates an expression in MathPiper syntax with.
      * @return result string (null possible)
+	 * @throws Throwable 
      */
 	final public String evaluateMathPiper(String exp) {
 		if (ggbCAS == null) {
@@ -440,8 +409,21 @@ public class Kernel {
 		}
 		
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiper(exp);
-	}		
+	}	
 	
+	/** 
+	 * Evaluates an expression in Maxima syntax with.
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	final public String evaluateMaxima(String exp) {
+		if (ggbCAS == null) {
+			getGeoGebraCAS();		
+		}
+		
+		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMaxima(exp);
+	}	
+			
 	/** 
      *  Returns whether var is a defined variable in GeoGebraCAS.
      */

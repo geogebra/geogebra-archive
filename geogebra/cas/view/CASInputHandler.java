@@ -1,8 +1,10 @@
 package geogebra.cas.view;
 
+import geogebra.cas.CASparser;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ValidExpression;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CASInputHandler {
@@ -11,11 +13,15 @@ public class CASInputHandler {
 	public static char ROW_REFERENCE_DYNAMIC = '$';
 	
 	private CASView casView;
+	private Kernel kernel;
 	private CASTable consoleTable;
+	private CASparser casParser;
 
 	public CASInputHandler(CASView view) {
 		this.casView = view;
-		this.consoleTable = view.getConsoleTable();
+		kernel = view.getApp().getKernel();
+		casParser = casView.getCAS().getCASparser();
+		consoleTable = view.getConsoleTable();
 	}
 	
 	/** 
@@ -62,7 +68,13 @@ public class CASInputHandler {
 		if (hasSelectedText) {
 			// selected text: break it up into prefix, evalText, and postfix
 			prefix = selRowInput.substring(0, selStart).trim();
-			evalText = "(" + selectedText + ")";
+			if (selStart > 0 || selEnd < selRowInput.length()) {
+				// part of input is selected
+				evalText = "(" + selectedText + ")";
+			} else {
+				// full input is selected
+				evalText = selectedText;
+			}
 			postfix = selRowInput.substring(selEnd).trim();
 		}
 		else {
@@ -180,7 +192,7 @@ public class CASInputHandler {
 		} else {
 			// 	error = app.getError("CAS.GeneralErrorMessage");
 			cellValue.setOutput(casView.getApp().getError("CAS.GeneralErrorMessage"), true);
-			System.err.println("GeoGebraCAS.evaluateRow: " + casView.getCAS().getMathPiperError());
+			System.err.println("GeoGebraCAS.evaluateRow: " + casView.getCAS().getGeoGebraCASError());
 		}
 	}
 	
@@ -193,7 +205,7 @@ public class CASInputHandler {
 		evalText = resolveCASrowReferences(evalText, row, ROW_REFERENCE_DYNAMIC);
 		
 		// process this input
-		return casView.getCAS().processCASInput(evalText, casView.getUseGeoGebraVariableValues());
+		return processCASviewInput(evalText, casView.getUseGeoGebraVariableValues());
 	}
 	
 	/**
@@ -302,5 +314,117 @@ public class CASInputHandler {
 	// f(x) = x^2
 	// should be changed to f(x) := x^2
 	private static Pattern functionDefinition = Pattern.compile("(\\p{L})*\\([\\p{L}&&[^\\)]]*\\)(\\s)*[=].*");
+	
+	
+	/**
+	 * Processes the CASview input string and returns an evaluation result. Note that this method
+	 * can have side-effects on the GeoGebra kernel by creating new objects or deleting an existing object.
+	 * 
+	 * @boolean useGeoGebraVariables: whether GeoGebra objects should be substituted before evaluation
+	 * @return result as String in GeoGebra syntax
+	 */
+	 synchronized String processCASviewInput(String inputExp, boolean useGeoGebraVariables) throws Throwable {		
+		// PARSE input to check if it's a valid expression
+		ValidExpression inVE = casParser.parseGeoGebraCASInput(inputExp);
+					
+		// EVALUATE input expression with MathPiper
+		String CASResult = null;
+		Throwable throwable = null;
+		try {
+			// evaluate input in MathPiper and convert result back to GeoGebra expression
+			CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(inVE, useGeoGebraVariables);
+		} catch (Throwable th1) {
+			throwable = th1;
+			System.err.println("CAS evaluation failed: " + inputExp + "\n error: " + th1.toString());
+		}
+		
+		// check some things
+		boolean assignment = inVE.getLabel() != null;
+		boolean delete = inputExp.startsWith("Delete") || inputExp.startsWith(casView.getApp().getCommand("Delete"));
+		boolean CASSuccessful = CASResult != null;
+		boolean CASResultContainsCommands = CASResult != null && CASResult.indexOf('[') > -1;
+		
+		// EVALUATE input expression in GeoGebra if we have
+		// - an assignments (e.g. a := 5, f(x) := x^2)
+		// - or Delete, e.g. Delete[a]
+		// - or MathPiper was not successful
+		// - or MathPiper result contains commands
+		boolean evalInGeoGebra = useGeoGebraVariables && 
+			(assignment || delete || !CASSuccessful || CASResultContainsCommands); 
+		String ggbResult = null;
+		if (evalInGeoGebra) {
+			// EVALUATE inputExp in GeoGebra
+			try {
+				// process inputExp in GeoGebra
+				ggbResult = evalInGeoGebra(inputExp);
+			} catch (Throwable th2) {
+				if (throwable == null) throwable = th2;
+				System.err.println("GeoGebra evaluation failed: " + inputExp + "\n error: " + th2.toString());
+			}
+			
+			// inputExp failed with GeoGebra
+			// try to evaluate result of MathPiper
+			if (ggbResult == null && CASSuccessful) {
+				// EVALUATE result of MathPiper
+				try {
+					// process mathPiperResult in GeoGebra
+					ggbResult = evalInGeoGebra(CASResult);
+				} catch (Throwable th2) {
+					if (throwable == null) throwable = th2;
+					System.err.println("GeoGebra evaluation failed: " + CASResult + "\n error: " + th2.toString());
+				}
+			}
+		}
+		
+		// return result string:
+		// use MathPiper if that worked, otherwise GeoGebra
+		if (CASSuccessful) {
+			if (assignment && "true".equals(CASResult)) {
+				// MathPiper returned true: use ggbResult if we have one, otherwise return mathPiperResult
+				if (ggbResult != null) {
+					return ggbResult;
+				} else {
+					return CASResult;
+				}
+			} 
+			else {
+				// MathPiper evaluation worked
+				return CASResult;
+			}	
+		} 
+		
+		else if (ggbResult != null) {
+			// GeoGebra evaluation worked
+			return ggbResult;
+		}
+		
+		else {
+			// nothing worked
+			throw throwable;
+		}
+	}
+	 
+		/**
+		 * Evaluates expression with GeoGebra and returns the resulting string.
+		 */
+		private synchronized String evalInGeoGebra(String casInput) throws Throwable {
+			// TODO: remove
+			System.out.println("evalInGeoGebra: " + casInput);
+			
+			GeoElement [] ggbEval = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(casInput, false);
+
+			if (ggbEval.length == 1) {
+				return ggbEval[0].toValueString();
+			} else {
+				StringBuilder sb = new StringBuilder('{');
+				for (int i=0; i<ggbEval.length; i++) {
+					sb.append(ggbEval[i].toValueString());
+					if (i < ggbEval.length - 1)
+						sb.append(", ");
+				}
+				sb.append('}');
+				return sb.toString();
+			}
+		}
 
 }

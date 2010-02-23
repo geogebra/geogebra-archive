@@ -860,7 +860,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 
         try {                   	            
             // evaluate expression by MathPiper 
-            String result = kernel.evaluateCAS(sb.toString());  
+            String result = kernel.evaluateMathPiper(sb.toString());  
            
             // fast fail for e.g. "Differentiate(x)Floor(x)"
             if (result.startsWith("Differentiate(") || result.startsWith("'diff("))
@@ -1093,14 +1093,14 @@ implements ExpressionValue, RealRootFunction, Functional {
         //sb.append("Subst(a,1)AntiDeriv(x,");
         // ... however it doesn't work if there's a GeoGebra variable 'a' in the expression
         
-        sb.append("Integral(");
+        sb.append("Integral[");
         // function expression with multiply sign "*"
         sb.append(expression.getCASstring(true));  
-        sb.append(")");
+        sb.append("]");
 
         try {           
             // evaluate expression by MathPiper
-            String result = kernel.evaluateCAS(sb.toString());     
+            String result = kernel.evaluateGeoGebraCAS(sb.toString());     
             
             //Application.debug(sb.toString());
             //Application.debug(result+"");
@@ -1177,14 +1177,14 @@ implements ExpressionValue, RealRootFunction, Functional {
     final private Function expand() {    
         // build expression string for CAS
         sb.setLength(0);
-        sb.append("Expand(");
+        sb.append("ExpandBrackets(");
         // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(true));    
+        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));    
         sb.append(")");
 
         try {           
             // evaluate expression by CAS
-            String result = kernel.evaluateCAS(sb.toString());                           
+            String result = kernel.evaluateMathPiper(sb.toString());                           
             
             sb.setLength(0);
             // it doesn't matter what label we use here as it is never used

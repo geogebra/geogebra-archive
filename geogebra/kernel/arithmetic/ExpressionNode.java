@@ -882,15 +882,6 @@ implements ExpressionValue, ExpressionNodeConstants {
     
     /**
      * Returns a string representation of this node that can be used with 
-     * the current CAS, e.g. "*" and "^" are always printed.
-     * @param symbolic: true for variable names, false for values of variables
-     */
-    final public String getCASstring(boolean symbolic) {
-        return getCASstring(GeoGebraCAS.CAS, symbolic);
-    }
-    
-    /**
-     * Returns a string representation of this node that can be used with 
      * the given CAS, e.g. "*" and "^" are always printed.
      * @param symbolic: true for variable names, false for values of variables
      * @param STRING_TYPE: e.g. ExpressionNode.STRING_TYPE_JASYMCA
@@ -903,6 +894,14 @@ implements ExpressionValue, ExpressionNodeConstants {
             
         kernel.setCASPrintForm(oldPrintForm);                       
         return ret;
+    }
+    
+    /**
+     * Returns a string representation of this node that can be used with 
+     * the GeoGebraCAS.
+     */
+    final public String getCASstring(boolean symbolic) {
+        return getCASstring(STRING_TYPE_GEOGEBRA, symbolic);
     }
         
     private String printCASstring(boolean symbolic) {  

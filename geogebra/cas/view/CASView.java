@@ -346,7 +346,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		try {
 			if (geo.isGeoFunction()) {
 				String funStr = getCAS().toCASString((GeoFunction) geo);
-				getCAS().evaluateCAS(funStr);
+				getCAS().evaluateGeoGebraCAS(funStr);
 			}
 		} catch (Throwable e) {
 			System.err.println("CASView.add: " + geo + ", " +  e.getMessage());
@@ -357,7 +357,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	 * Removes function definitions from the CAS 
 	 */
 	public void remove(GeoElement geo) {
-		removeFromMathPiper(geo.getLabel(), geo.isGeoFunction());
+		getCAS().unbindVariable(geo.getLabel());
 	}
 	
 	/**
@@ -374,33 +374,13 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	 */
 	public void rename(GeoElement geo) {
 		// remove old function name from MathPiper
-		removeFromMathPiper(geo.getOldLabel(), geo.isGeoFunction());
+		getCAS().unbindVariable(geo.getOldLabel());
 		
 		// add new function name to MathPiper
 		add(geo);
 	}
 	
-	/**
-	 * Removes variables and and functions with name geoLabel from MathPiper.
-	 * @param geoLabel
-	 */
-	private void removeFromMathPiper(String geoLabel, boolean isFunction) {
-		StringBuilder sb = new StringBuilder();
-		
-		if (isFunction) {
-			// clear function variable, e.g. Retract("f", *)
-			sb.append("Retract(\"");
-			sb.append(geoLabel);
-			sb.append("\", *)");	
-		} else {
-			// standard case: clear variable, e.g. Unbind(f)
-			sb.append("Unbind(");
-			sb.append(geoLabel);
-			sb.append(")");
-		}
-		
-		getCAS().evaluateMathPiper(sb.toString());
-	}
+	
 
 	public void clearView() {
 		// TODO: restart cas

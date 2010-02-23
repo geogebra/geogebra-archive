@@ -12,14 +12,12 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 
@@ -742,20 +740,8 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		String functionOut = evaluateMathPiper(sb.toString());
 		
 		try {
-			GeoGebraCAS cas = (GeoGebraCAS)(kernel.getGeoGebraCAS());
-		
-			ValidExpression ve = cas.parseGeoGebraCASInput(functionOut);
-			
-			ExpressionValue ev = ve.evaluate();
-			
-			if (ev.isNumberValue())
-				return (((NumberValue)ev).getDouble());
-			else if (ev.isGeoElement())
-				return ((GeoNumeric)ev).getDouble();
-			else {
-				Application.debug("unhandled ExpressionValue type: "+ev.getClass());
-				return Double.NaN;
-			}
+			NumberValue nv = kernel.getAlgebraProcessor().evaluateToNumeric(functionOut);
+			return nv.getDouble();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Double.NaN;

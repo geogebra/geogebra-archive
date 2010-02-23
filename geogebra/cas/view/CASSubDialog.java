@@ -149,7 +149,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 			
 		try {
 			CASTableCellValue currCell = table.getCASTableCellValue(editRow);
-			String result = casView.getCAS().processCASInput(subCmd, casView.isUseGeoGebraVariableValues());
+			String result = casView.getCAS().evaluateGeoGebraCAS(subCmd, casView.isUseGeoGebraVariableValues());
 			currCell.setOutput(result);
 			table.startEditingRow(editRow + 1);
 			return true;
