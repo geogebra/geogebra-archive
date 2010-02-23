@@ -72,7 +72,7 @@ public class AlgoSimplify extends AlgoElement {
 		String functionOut = null;
 		String CASString = getCASString(functionIn);
 		try {
-			functionOut = kernel.evaluateMathPiper(functionIn);
+			functionOut = kernel.evaluateGeoGebraCAS(CASString);
 		} catch (Throwable e) {
 			Application.debug(getClassName()+" error processing: "+CASString);
 		}
