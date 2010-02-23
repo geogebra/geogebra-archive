@@ -15,15 +15,20 @@ package geogebra.kernel.statistics;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
-import org.apache.commons.math.linear.*;
+import geogebra.main.Application;
+
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.DecompositionSolver;
+import org.apache.commons.math.linear.QRDecompositionImpl;
+import org.apache.commons.math.linear.RealMatrix;
 
 /**
  * AlgoFit
@@ -135,9 +140,11 @@ public class AlgoFit extends AlgoElement {
 				mprint(P);
 				
 				//Make fitfunction
-				X=new FunctionVariable(kernel);
+				//X=new FunctionVariable(kernel);
+				//X=((GeoFunction)functionlist.get(0)).getFunction().getFunctionVariable();
+
 				
-				Function f=new Function(makeFunction(),X);
+				//Function f=new Function(makeFunction(),X);
 				//f.resolveVariables();				//?? not sure if this helps...
 
 				/*
@@ -146,7 +153,7 @@ public class AlgoFit extends AlgoElement {
 						((GeoFunction)functionlist.get(2)).getFunction().getFunctionVariable()
 						);
 				*/
-				fitfunction.setFunction(f);
+				fitfunction.set(kernel.getAlgebraProcessor().evaluateToFunction(buildFunction()));
 				fitfunction.setDefined(true);				
 				
 			}catch(Throwable t){
@@ -209,6 +216,19 @@ public class AlgoFit extends AlgoElement {
 		------------------------------------------ */
 		
 	}//makeMatrixes()
+	
+	private final String buildFunction() {
+		StringBuilder sb = new StringBuilder();
+		for(int i=0;i<functionsize;i++){
+			sb.append(P.getEntry(i,0));
+			sb.append('*');
+			sb.append(((GeoFunction)functionlist.get(i)).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true));
+			if (i != functionsize - 1) {
+				sb.append('+');
+			}
+		}
+		return sb.toString();
+	}
 	
 	// Making expression node for p1*f(x)+p2*g(x)+p3*h(x)+...
 	private final ExpressionNode makeFunction(){
