@@ -1512,6 +1512,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                			case STRING_TYPE_GEOGEBRA_XML:
 		                			case STRING_TYPE_JASYMCA:
 		                    		case STRING_TYPE_MATH_PIPER:
+		                    		case STRING_TYPE_MAXIMA:
 		                				sb.append(" * ");  
 		                				break;
 		                				
@@ -1540,6 +1541,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                		case STRING_TYPE_GEOGEBRA_XML:
 	                		case STRING_TYPE_JASYMCA:
 	                    	case STRING_TYPE_MATH_PIPER:
+	                    	case STRING_TYPE_MAXIMA:
 	                				sb.append(" * ");  
 	                				break;
 	                				
