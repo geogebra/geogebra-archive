@@ -592,12 +592,18 @@ public class Kernel {
 		casPrintForm = type;
 		
 		switch (casPrintForm) {
-			case ExpressionNode.STRING_TYPE_MATH_PIPER:
-				casPrintFormPI = "Pi";
-				
+		case ExpressionNode.STRING_TYPE_MATH_PIPER:
+			casPrintFormPI = "Pi";
+			break;
+			
+		case ExpressionNode.STRING_TYPE_MAXIMA:
+			casPrintFormPI = "%PI";
+			break;
+			
 			case ExpressionNode.STRING_TYPE_JASYMCA:
 			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
 				casPrintFormPI = "pi";
+				break;
 		
 			default:
 				casPrintFormPI = PI_STRING;
