@@ -186,15 +186,42 @@ public class CASmaxima extends CASgeneric {
 			
 			// evaluate the MathPiper expression
 			RawMaximaSession maxima = getMaxima();
-			result = maxima.executeExpectingSingleOutput(exp);
 			
-			if (debug) System.out.println("Result: "+result);
+			//result = maxima.executeExpectingSingleOutput(exp);
+			//String results[] = maxima.executeExpectingMultipleLabels(exp);			
+			//result = results[results.length - 1];
+			
+			String results[] = maxima.executeRaw(exp).split("\n");
+			
+			result = results[results.length - 1];
+			
+			// if last line is empty, look for next non-empty previous line
+			if (result.trim().length() == 0 && results.length > 1) {
+				int i = results.length - 2;
+				while (results[i].trim().length() == 0 && i > 0) i--;
+				result = results[i];
+			}
+			
+			// remove (%o1) at start
+			result = result.replaceFirst("\\(%o\\d+\\)\\s*", "").trim();
+			
+			
+			if (debug) {
+				for (int i = 0 ; i < results.length ; i++)
+					System.err.println("Result "+i+": "+results[i]);
+				System.out.println("result: "+result);
+			}
+			
 					
 			// undo special character handling
 			result = casParser.insertSpecialChars(result);
 			
 			// convert Maxima's Pi to GeoGebra's
 			result = result.replaceAll("%pi", "pi");
+			
+			// replace 3b-4 with 3*10^-4
+			result = result.replaceAll("([0-9])b-", "$1*10^-");
+			result = result.replaceAll("([0-9])b([0-9])", "$1*10^$2");
 
 			return result;
 		} catch (Throwable th) {
