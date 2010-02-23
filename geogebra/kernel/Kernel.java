@@ -39,6 +39,7 @@ import geogebra.kernel.statistics.AlgoDoubleListSigmaXY;
 import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
 import geogebra.kernel.statistics.AlgoExponential;
 import geogebra.kernel.statistics.AlgoFDistribution;
+import geogebra.kernel.statistics.AlgoFit;
 import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitLineX;
 import geogebra.kernel.statistics.AlgoFitLineY;
@@ -3079,7 +3080,7 @@ public class Kernel {
 	}
 
 	/** 
-	 * FitPow[list of coords]
+	 * FitSin[list of coords]
 	 * Hans-Petter Ulven
 	 */
 	final public GeoFunction FitSin(String label, GeoList list) {
@@ -3097,6 +3098,17 @@ public class Kernel {
 		GeoFunction function = algo.getFitLogistic();
 		return function;
 	}	
+	
+	/** 
+	 * Fit[list of points,list of functions]
+	 * Hans-Petter Ulven
+	 */
+	final public GeoFunction Fit(String label, GeoList ptslist,GeoList funclist) {
+		AlgoFit algo = new AlgoFit(cons, label, ptslist,funclist);
+		GeoFunction function = algo.getFit();
+		return function;
+	}	
+
 
 	/** 
 	 * Binomial[n,r]
