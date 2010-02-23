@@ -410,20 +410,7 @@ public class Kernel {
 		
 		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiper(exp);
 	}	
-	
-	/** 
-	 * Evaluates an expression in Maxima syntax with.
-     * @return result string (null possible)
-	 * @throws Throwable 
-     */
-	final public String evaluateMaxima(String exp) {
-		if (ggbCAS == null) {
-			getGeoGebraCAS();		
-		}
-		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMaxima(exp);
-	}	
-			
+
 	/** 
      *  Returns whether var is a defined variable in GeoGebraCAS.
      */
