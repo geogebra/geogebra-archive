@@ -705,6 +705,34 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
        	return resultFun;
 	}	
 
+	/** Multiplication of number and function.
+	 * Needed in Fit[<List of Points>,<List of Functions>]
+	 * to make the result a linear combination of existing functions; fit(x)=a*f(x)+b*g(x)+c*h(x)+..
+	 * @author Hans-Petter Ulven
+	 * @version 2010-02-22
+	 */
+	public static GeoFunction mult(GeoFunction resultFun, double number, GeoFunction fun) {
+		
+		Kernel kernel = fun.getKernel();
+		geogebra.kernel.arithmetic.MyDouble num = new geogebra.kernel.arithmetic.MyDouble(kernel,number);
+		
+    	FunctionVariable xold = fun.getFunction().getFunctionVariable();
+    	FunctionVariable x =  new FunctionVariable(kernel);
+    	
+
+    	ExpressionNode left = new ExpressionNode(kernel,num);
+       	ExpressionNode right = fun.getFunctionExpression().getCopy(kernel);    
+       	
+    	ExpressionNode product = new ExpressionNode(kernel,left, ExpressionNode.MULTIPLY, right.replace(xold,x));
+    	
+    	Function f = new Function(product,x);
+    	
+       	resultFun.setFunction(f);
+       	resultFun.setDefined(true);
+       	
+       	return resultFun;
+	}//mult()
+	
 	public boolean isVector3DValue() {
 		return false;
 	}
