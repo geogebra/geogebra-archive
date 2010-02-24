@@ -199,7 +199,7 @@ TOKEN :  {
   | < POWER7:   "\u2077" >
   | < POWER8:   "\u2078" >
   | < POWER9:   "\u2079" >
-  | < PI:       ( "pi" | "Pi" | "\u03c0") >
+  | < PI:       ( "pi" | "Pi" | "\u03c0" | "%pi") >
   | < E:        "\u212f" >  
   | < DEGREE:   ( "\u00b0" ) >
   | < INFINITY: ("\u221e" | "Infinity") >
@@ -216,7 +216,8 @@ TOKEN : {
         | "." <INTEGER> 
         | <INTEGER> "."
         >
- |     < EFLOAT: <FLOAT> "E"  (<MINUS>)? <INTEGER> >
+  |     < EFLOAT: <FLOAT> "E" (<MINUS>)? <INTEGER> >
+  |     < BFLOAT: <FLOAT> "b" (<MINUS>)? <INTEGER> >
   |     < #INTEGER: ( <DIGIT> )+ >
   |     < #DIGIT:                                     // unicode digits
        [
@@ -1407,11 +1408,20 @@ ExpressionValue myDouble():
 {
     Token c;
     MyDouble d;
+    double val;
 }
 {       
-   (c = <FLOAT> | c = <EFLOAT>)
-    {
-    	double val =  Double.parseDouble( c.image );
+   (     (c = <FLOAT> | c = <EFLOAT>)
+    	{
+    		val = Double.parseDouble( c.image );
+    	}
+    |
+      (c = <BFLOAT>) 
+  		{
+    		val = Double.parseDouble( c.image.replaceFirst("b", "E" ));
+    	}
+   )
+  {
     	
     	if (ExternalCASParsing || GeoGebraCASParsing) {
     		// preserve string from MathPiper: it may have higher

@@ -156,6 +156,7 @@ public class AlgebraProcessor {
 		try {
 			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo);
 		} catch (Exception e) {
+			e.printStackTrace();
 			app.showError(e.getMessage());
 			return null;
 		}	
