@@ -20,11 +20,10 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
+//Not used: import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.main.Application;
-
+//Not used: import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.*;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.DecompositionSolver;
 import org.apache.commons.math.linear.QRDecompositionImpl;
@@ -48,6 +47,8 @@ import org.apache.commons.math.linear.RealMatrix;
  * 		F={f,g,h,...}
  * 		right(x)=Regpoly[L,n]
  * 		fit(x)=Fit[L,F]
+ * 
+ * The solution is the usual: M_t*M*X=M_t*Y, the solution of overdetermined linear equation systems..
  * 
  * @author Hans-Petter Ulven
  * @version 2010-02-23
@@ -74,8 +75,6 @@ public class AlgoFit extends AlgoElement {
 
 	public AlgoFit(Construction cons, String label, GeoList pointlist,GeoList functionlist) {
 		super(cons);
-
-		//delete?: regMath = kernel.getRegressionMath();
 
 		this.pointlist = pointlist;
 		this.functionlist=functionlist;
@@ -110,7 +109,7 @@ public class AlgoFit extends AlgoElement {
 		functionarray	=	new GeoFunction[functionsize];
 		M				=	new Array2DRowRealMatrix(datasize,functionsize);
 		Y				=	new Array2DRowRealMatrix(datasize,1);
-		P				=	new Array2DRowRealMatrix(functionsize,1);
+		P				=	new Array2DRowRealMatrix(functionsize,1);  //Solution parameters
 
 		
 		if (!pointlist.isDefined() 		||	//Lot of things can go wrong...	
@@ -136,25 +135,16 @@ public class AlgoFit extends AlgoElement {
 				//Solve for parametermatrix P:
 				DecompositionSolver solver=new QRDecompositionImpl(M).getSolver();
 				P=solver.solve(Y);
-				errorMsg("P:");
-				mprint(P);
 				
-				//Make fitfunction
-				//X=new FunctionVariable(kernel);
-				//X=((GeoFunction)functionlist.get(0)).getFunction().getFunctionVariable();
-
+				//mprint("P:",P);					//debug, erase later
+						
+				fitfunction=makeFunction();
+				//walk(fitfunction.getFunctionExpression());  //debug, erase later
+				//System.out.println(fitfunction.getFunctionExpression().toString());
 				
-				//Function f=new Function(makeFunction(),X);
-				//f.resolveVariables();				//?? not sure if this helps...
-
-				/*
-				Function f=new Function(
-						((GeoFunction)functionlist.get(2)).getFunctionExpression(),
-						((GeoFunction)functionlist.get(2)).getFunction().getFunctionVariable()
-						);
-				*/
-				fitfunction.set(kernel.getAlgebraProcessor().evaluateToFunction(buildFunction()));
-				fitfunction.setDefined(true);				
+				//First solution (Borcherds):
+				//fitfunction.set(kernel.getAlgebraProcessor().evaluateToFunction(buildFunction()));
+				//fitfunction.setDefined(true);		
 				
 			}catch(Throwable t){
 				fitfunction.setUndefined();
@@ -195,28 +185,11 @@ public class AlgoFit extends AlgoElement {
 				M.setEntry(r,c,functionarray[c].evaluate(x));
 			}//for columns (=functions)			
 		}//for rows (=datapoints)
-		mprint(M);
-		mprint(Y);
-		
-		/* ---------------------------- test/example 
-		double[][] test={
-				{1,1,1},
-				{1,2,4},
-				{1,3,9},
-				{1,4,16},
-				{1,5,25}
-		};//test[][]
-		double[] y={1.0,3.0,5.0,4.0,2.0};
-		M=new Array2DRowRealMatrix(test,false);
-		Y=new Array2DRowRealMatrix(y);
-		errorMsg("M:");
-		aprint(M);
-		errorMsg("Y:");
-		aprint(Y);
-		------------------------------------------ */
-		
+		//mprint("M:",M);
+		//mprint(Y:",Y);
 	}//makeMatrixes()
 	
+	//First solution (Borcherds)
 	private final String buildFunction() {
 		StringBuilder sb = new StringBuilder();
 		for(int i=0;i<functionsize;i++){
@@ -230,39 +203,24 @@ public class AlgoFit extends AlgoElement {
 		return sb.toString();
 	}
 	
-	// Making expression node for p1*f(x)+p2*g(x)+p3*h(x)+...
-	private final ExpressionNode makeFunction(){
-		MyDouble p=null;
-		Function     f=null;
+	// Making GeoFunction fit(x)= p1*f(x)+p2*g(x)+p3*h(x)+...
+	private final GeoFunction makeFunction(){
+		double p;
 		GeoFunction gf=null;
-		ExpressionValue expr=null;
-		ExpressionNode  prod=null;
-		ExpressionNode   node=null;
-		ExpressionNode	funcnode=null;	//Functions need special treatment
+		GeoFunction product=new GeoFunction(cons);
 		
-		for(int i=0;i<functionsize;i++){
-			p=new MyDouble(kernel,P.getEntry(i,0));		//prameter
-			gf=(GeoFunction)functionlist.get(i);		//function	*** todo: checks
-			f=gf.getFunction();
-			//funcnode=f.getExpression();
-			//funcnode=new ExpressionNode(kernel,f,ExpressionNode.FUNCTION,f.getFunctionVariable());  ?? I feel FUNCTION should be used...
-			// but it did not help :-( And I don't quite understand how to use it... 
-			funcnode=new ExpressionNode(kernel,f.getExpression());
-
-			prod=new ExpressionNode(kernel,p,ExpressionNode.MULTIPLY,funcnode);
-			if(i==0){	//first
-				expr=prod;
-			}else if(i==(functionsize-1)) {  //last
-				node=new ExpressionNode(kernel,expr,ExpressionNode.PLUS,prod);
-			}else{      
-				expr=new ExpressionNode(kernel,expr,ExpressionNode.PLUS,prod);
-			}//if not first time
-		}//for all functions
-
-		errorMsg("node: "+node.toString());
+		//First product:
+		p=P.getEntry(0,0);		//parameter
+		gf=(GeoFunction)functionlist.get(0);		//Checks done in makeMatrixes...
+		fitfunction=GeoFunction.mult(fitfunction,p,gf);	//p1*f(x)
+		for(int i=1;i<functionsize;i++){
+			p=P.getEntry(i,0);
+			gf=(GeoFunction)functionlist.get(i);
+			product=GeoFunction.mult(product,p,gf);		//product= p*func
+			fitfunction=GeoFunction.add(fitfunction,fitfunction,product);	//fit(x)=...+p*func
+		}//for
 		
-		return node;
-		
+		return fitfunction;
 	}//makeFunction()
 	
 	
@@ -273,12 +231,13 @@ public class AlgoFit extends AlgoElement {
     
   // --- SNIP --- /// *** Comment out when finished ***
  	
-    // Hook
+    // Hook for plugin scripts
     public final void test(){
     	
     }//test()
     
-    public void mprint(RealMatrix m){
+    public void mprint(String s,RealMatrix m){
+    	System.out.println(s);
     	int rows=m.getRowDimension();
     	int cols=m.getColumnDimension();
     	for(int r=0;r<rows;r++){
@@ -288,6 +247,50 @@ public class AlgoFit extends AlgoElement {
     		System.out.println();
     	}//for r
     }//mprint()
+    
+    //Walk  the node tree and print some info
+    public void walk(ExpressionValue ev){
+    	ExpressionNode n=null;
+    	if(ev==null){
+    		return;
+    	}else{
+    		if(ev.isExpressionNode()){
+    			n=(ExpressionNode)ev;
+    			walk(n.left);    			walk(n.right);
+    			System.out.println("  Op: "+getOpString(n.getOperation()));
+    			System.out.println();
+    		}else if(ev.isGeoElement()){
+    			GeoElement geo=(GeoElement)ev;
+    			System.out.print("   geo.label "+geo.toString());
+    		}else if(ev.isVariable()){
+    			System.out.print("   var: ");
+    		}else if(ev.isNumberValue()){
+    			NumberValue nv=(NumberValue)ev;
+    			System.out.print("   number: "+nv.getDouble());
+    		}else if(ev.isConstant()){
+    			NumberValue nv=(NumberValue)ev;
+    			System.out.print("   const: "+nv.getDouble());
+    		
+    		}else{
+    			System.out.print("   type??");
+    			
+    		}//if right type
+    	}//if
+    }//walk node tree
+    
+    private String getOpString(int i){
+    	switch (i){
+    	case -2147483648: return("noop");
+    	case 0:return("add");
+    	case 1: return("minus");
+    	case 2: return("mullt");
+    	case 3: return("div");
+    	case 4: return("pow");
+    	case 43:return("Func");
+    		default:  break;
+    	}//switch
+    	return ""+i;
+    }//getOpString
 
  
  
