@@ -3793,6 +3793,19 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	private static String WINDOWS_MAXIMA_PATH = "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
 	
+	private static String programFiles[] = {
+		"Program Files",
+		"Programme",
+		"Programmes",
+		"Archivos de programa",
+		"Arquivos de programas",
+		"Ohjelmatiedostot",
+		"Program",
+		"Programas",
+		"ProgramFiler",
+		"Programmer",
+		"Programmi"};
+	
 	private static String LINUX_MAXIMA_PATH = "/usr/bin/maxima";
 	//private static String LINUX_MAXIMA_PATH = "/opt/local/bin/maxima";
 	
@@ -3831,54 +3844,45 @@ public abstract class Application implements KeyEventDispatcher {
 			
 			if (WINDOWS) {
 				
-				String codeBase = getCodeBase().toString();
-				if (codeBase.toLowerCase(Locale.US).startsWith("file:/c:/")) {
-					// running from eg c:\program files
-					
-					// remove file:/
-					codeBase = codeBase.substring(6, codeBase.length());
-					
-					// remove separator (if exists)
-					if (codeBase.endsWith("/")) {
-						codeBase = codeBase.substring(0, codeBase.length() - 1);
-					}
-					
-					// change / to Windows separator
-					while (codeBase.indexOf('/') > -1) codeBase = codeBase.replace('/', '\\');
-					
-					Application.debug(codeBase);
-					
-					if (codeBase.toLowerCase(Locale.US).endsWith("geogebra")) {
-						String path = codeBase.substring(0, codeBase.length() - 8);
-						
-						
-						// list all files/folders in c:\program files
-						File dir = new File(path);
-						String[] folders = dir.list(); 
+				for (int i = 0 ; i < programFiles.length ; i++) {
+					String path = "c:\\"+programFiles[i]+"\\";
+					File testFile = new File(path);
+					if (testFile.exists()) {
+						Application.debug("found path: "+path);
+						String[] folders = testFile.list(); 
 						
 						
 						// search in reverse order
 						// hopefully get lastest Maxima if 2 installed!?
-						if (folders != null) for (int i=folders.length -1 ; i >=0 ; i--) { // Get filename of file or directory
-							Application.debug(folders[i]);
-							if (folders[i].startsWith("Maxima-")) {
-								path += folders[i];
+						if (folders != null) for (int j=folders.length -1 ; j >=0 ; j--) { // Get filename of file or directory
+							Application.debug(folders[j]);
+							if (folders[j].startsWith("Maxima-")) {
+								path += folders[j];
 							}
 						}
 				
 						path += "\\bin\\maxima.bat";
-						//path += "Maxima-5.20.1\\bin\\maxima.bat";
 						
-						Application.debug("trying: "+codeBase);
+						Application.debug("trying: "+path);
 						File file = new File(path);
 						if (file.exists()) {
 							Application.debug("Maxima found at: "+path);
 							MAXIMA_PATH = path;
 							DEFAULT_CAS = CAS_MAXIMA;
 						} else System.err.println("Maxima not found at: "+path);
+						
+						
+						break;
 					}
 					
 				}
+				
+				if (MAXIMA_PATH == null) Application.debug("failed to find Maxima");
+				
+				return;
+				
+
+				/*
 				
 				File file = new File(WINDOWS_MAXIMA_PATH);
 				if (file.exists()) {
@@ -3886,7 +3890,7 @@ public abstract class Application implements KeyEventDispatcher {
 					MAXIMA_PATH = WINDOWS_MAXIMA_PATH;
 					DEFAULT_CAS = CAS_MAXIMA;
 				}
-				return;
+				return;*/
 			}
 					
 			// assume Linux
