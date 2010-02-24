@@ -19,10 +19,7 @@ import java.util.HashMap;
  */
 public class GeoGebraCAS {
 	
-	// determines which CAS is being used
-	final public static int CAS_MATHPIPER = 1;
-	final public static int CAS_MAXIMA = 2;
-	
+
 	public static final int MAXIMA_TIMEOUT = 3;
 
 	private StringBuilder sbPolyCoeffs;
@@ -55,7 +52,7 @@ public class GeoGebraCAS {
 	public void setCurrentCAS(int CAS) {
 		try {
 			switch (CAS) {
-				case CAS_MAXIMA:
+				case Application.CAS_MAXIMA:
 					cas = getMaxima();
 					break;
 				
