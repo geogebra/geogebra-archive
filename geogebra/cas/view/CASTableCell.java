@@ -48,7 +48,7 @@ public abstract class CASTableCell extends JPanel{
 		inputPanel.setInput(cellValue.getInput());
 		
 		// output panel
-		if (cellValue.isOutputEmpty()) {
+		if (!cellValue.showOutput()) {
 			outputPanel.setVisible(false);
 		}
 		else {

@@ -17,6 +17,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -36,7 +37,6 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	
 	private Kernel kernel;
 	
-	// TODO: add checkbox to set useGeoGebraVariableValues
 	private boolean useGeoGebraVariableValues = true;
 
 	private CASTable consoleTable;
@@ -45,8 +45,8 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	private GeoGebraCAS cas;
 	private Application app;
 	private JPanel btPanel;
+	private HashMap<String,CASTableCellValue> assignmentCellMap;
 	
-
 	public CASView(Application app) {
 		kernel = app.getKernel();
 		this.app = app;
@@ -55,7 +55,10 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		getCAS();
 
 		// CAS input/output cells
-		createCASTable();	
+		createCASTable();
+		
+		// map for assignments to cell
+		assignmentCellMap = new HashMap<String,CASTableCellValue>();
 		
 		// row header
 		final JList rowHeader = new RowHeader(consoleTable);		
@@ -345,7 +348,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	public void add(GeoElement geo) {
 		try {
 			if (geo.isGeoFunction()) {
-				String funStr = getCAS().toCASString((GeoFunction) geo);
+				String funStr = getCAS().toCASString(geo);
 				getCAS().evaluateGeoGebraCAS(funStr);
 			}
 		} catch (Throwable e) {
@@ -364,10 +367,33 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	 * Removes function definitions in the CAS 
 	 */
 	public void update(GeoElement geo) {
-		if (geo.isGeoFunction()) {
+		boolean updateHandled = false;
+		
+		// TODO: remove
+		System.out.println("update: " + geo);
+		
+		// TODO: avoid updating loops, e.g.
+		// c := Limit[ (3k+1)/k, k, Infinity ]
+		/*
+		// check if we have a cell with an assignment for geo
+		CASTableCellValue cellValue = assignmentCellMap.get(geo.getLabel());
+		if (cellValue != null) {
+			// make sure that we don't eval the input in GeoGebra again as
+			// this would lead to an updating loop
+			//setUseGeoGebraVariableValues(false);
+			cellValue.setInput(getCAS().toCASString(geo));
+			casInputHandler.processRowAndDependentsBelow(cellValue.getRow());
+			//setUseGeoGebraVariableValues(true);
+			updateHandled = true;
+		}
+		*/
+		
+		if (!updateHandled && geo.isGeoFunction()) {
 			add(geo);
 		}
 	}
+	
+	private GeoElement updatingGeo;
 
 	/**
 	 * Renames function definitions in the CAS 
@@ -425,5 +451,8 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		clearView();
 	}
 
+	public void setAssignment(String varLabel, CASTableCellValue cellValue) {
+		assignmentCellMap.put(varLabel, cellValue);
+	}
 
 }

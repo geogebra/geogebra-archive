@@ -23,6 +23,7 @@ public class CASmathpiper extends CASgeneric {
 	
 	public CASmathpiper(CASparser casParser) {
 		super(casParser);
+		getMathPiper();
 	}
 	
 	private synchronized Interpreter getMathPiper() {				
@@ -181,7 +182,8 @@ public class CASmathpiper extends CASgeneric {
 
 		// handle assignments
 		String veLabel = ve.getLabel();
-		if (veLabel != null) {
+		boolean assignment = veLabel != null;
+		if (assignment) {
 			StringBuilder sb = new StringBuilder();
 			
 			if (ve instanceof Function) {

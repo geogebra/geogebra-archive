@@ -1309,13 +1309,13 @@ public class Kernel {
 			views[viewCnt++] = view;
 		}
 				
-		/*
+		//TODO: remove
 		System.out.print("  current views: ");
 		for (int i = 0; i < viewCnt; i++) {
 			System.out.print(views[i] + ", ");
 		}
-		Application.debug();
-		*/
+		//Application.debug();
+		
 		
 		if (!notifyViewsActive) {
 			oldViewCnt = viewCnt;

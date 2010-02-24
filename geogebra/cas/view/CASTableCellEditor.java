@@ -35,6 +35,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			editing = true;
 			editingRow = row;
 			cellValue = (CASTableCellValue) value;
+			cellValue.setRow(row);
 			this.table = table;
 			
 			// fill input and output panel

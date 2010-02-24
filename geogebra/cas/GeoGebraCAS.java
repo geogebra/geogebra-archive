@@ -34,8 +34,8 @@ public class GeoGebraCAS {
 		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
 		
-		setCurrentCAS(CAS_MAXIMA);
-		//setCurrentCAS(CAS_MATHPIPER);
+		//setCurrentCAS(CAS_MAXIMA);
+		setCurrentCAS(CAS_MATHPIPER);
 	}
 	
 	public CASparser getCASparser() {
@@ -266,19 +266,25 @@ public class GeoGebraCAS {
 	 * Returns a function from GeoGebra as a MathPiper string. For example f(x) = a x^2 is
 	 * returned as "f(x) := a * x^2"
 	 */
-	public String toCASString(GeoFunction geo) {
+	public String toCASString(GeoElement geo) {
 		if (!geo.isDefined()) return null;
 		
 		StringBuilder sb = new StringBuilder();
-		Function fun = geo.getFunction();
-		
+
 		// function, e.g. f(x) := 2*x
-		sb.append(geo.getLabel());
-		sb.append("(" );
-		sb.append(fun.getFunctionVariable());
-		sb.append(") := ");
-		sb.append(fun.getExpression().getCASstring(true));
-		sb.append(";");
+		if (geo.isGeoFunction()) {
+			Function fun = ((GeoFunction)geo).getFunction();
+			sb.append(geo.getLabel());
+			sb.append("(" );
+			sb.append(fun.getFunctionVariable());
+			sb.append(") := ");
+			sb.append(fun.getExpression().getCASstring(true));
+		}
+		else {
+			sb.append(geo.getLabel());
+			sb.append(" := ");
+			sb.append(geo.toValueString());
+		}
 
 		return sb.toString();
 	}
