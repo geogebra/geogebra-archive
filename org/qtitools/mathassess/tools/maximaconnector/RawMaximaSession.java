@@ -5,6 +5,7 @@
  */
 package org.qtitools.mathassess.tools.maximaconnector;
 
+import geogebra.cas.GeoGebraCAS;
 import geogebra.main.Application;
 
 import java.io.BufferedReader;
@@ -13,7 +14,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -83,9 +83,6 @@ public final class RawMaximaSession {
     /** Helper to manage asynchronous calls to Maxima process thread */
     private final ExecutorService executor;
 
-    /** Configuration for this session */
-    private final MaximaConfiguration maximaConfiguration;
-
     /** Current Maxima process, or null if no session open */
     private Process maximaProcess;
     
@@ -107,11 +104,9 @@ public final class RawMaximaSession {
     /** Builds up error output from each command */
     private final StringBuilder errorOutputBuilder;
 
-    public RawMaximaSession(MaximaConfiguration maximaConfiguration) {
-        ensureNotNull(maximaConfiguration, "MaximaConfiguration");
-        this.maximaConfiguration = maximaConfiguration;
+    public RawMaximaSession() {
         this.executor = Executors.newFixedThreadPool(1);
-        this.timeout = maximaConfiguration.getDefaultCallTimeout();
+        this.timeout = GeoGebraCAS.MAXIMA_TIMEOUT;
         this.outputBuilder = new StringBuilder();
         this.errorOutputBuilder = new StringBuilder();
     }
@@ -144,8 +139,8 @@ public final class RawMaximaSession {
         ensureNotStarted();
         
         /* Extract relevant configuration required to get Maxima running */
-        String maximaExecutablePath = maximaConfiguration.getMaximaExecutablePath();
-        String[] maximaRuntimeEnvironment = maximaConfiguration.getMaximaRuntimeEnvironment();
+        String maximaExecutablePath = Application.getMaximaPath(); //maximaConfiguration.getMaximaExecutablePath();
+        String[] maximaRuntimeEnvironment = {};//maximaConfiguration.getMaximaRuntimeEnvironment();
 
         /* Start up Maxima with the -q option (which suppresses the startup message) */
         //Application.debug("Starting Maxima at {} using environment {}"+ maximaExecutablePath+ 

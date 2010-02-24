@@ -869,6 +869,8 @@ public abstract class Application implements KeyEventDispatcher {
 										+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
 										+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
 										+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes"
+										+ "  --CAS=[MATHPIPER|MAXIMA]\tselect which CAS to use, default MathPiper"
+										+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS"
 										+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off");
 					} else if (optionName.equals("language")) {
 						setLocale(getLocale(optionValue));
@@ -885,6 +887,10 @@ public abstract class Application implements KeyEventDispatcher {
 						getGuiManager().setShowSpreadsheetView(!optionValue.equals("false"));
 					} else if (optionName.equals("showCAS")) {
 						getGuiManager().setShowCASView(!optionValue.equals("false"));
+					} else if (optionName.equals("CAS")) {
+						setDefaultCAS(optionValue);
+					} else if (optionName.equals("maximaPath")) {
+						setMaximaPath(optionValue);
 					} else if (optionName.equals("enableUndo")) {
 						setUndoActive(!optionValue.equals("false"));
 					} else if (optionName.equals("showAxes")) {
@@ -3777,6 +3783,131 @@ public abstract class Application implements KeyEventDispatcher {
 	public static void setMiniPropertiesActive(boolean active) {
 		miniPropertiesActive = active;
 		//Application.debug("miniprops active:"+miniPropertiesActive);
+	}
+
+	// determines which CAS is being used
+	final public static int CAS_MATHPIPER = 1;
+	final public static int CAS_MAXIMA = 2;
+	
+	final private static String MAC_OS_MAXIMA_PATH = "/Applications/Maxima.app/Contents/Resources/bin/maxima";
+	
+	private static String WINDOWS_MAXIMA_PATH = "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
+	
+	private static String LINUX_MAXIMA_PATH = "/usr/bin/maxima";
+	//private static String LINUX_MAXIMA_PATH = "/opt/local/bin/maxima";
+	
+	private static String MAXIMA_PATH = null;
+
+	public static int DEFAULT_CAS = CAS_MATHPIPER; // default
+	
+	private void setMaximaPath(String optionValue) {
+		MAXIMA_PATH = optionValue;
+		
+		if (WINDOWS) MAXIMA_PATH += "\\bin\\maxima.bat";
+		else if (MAC_OS) MAXIMA_PATH += "/Contents/Resources/bin/maxima";
+		else MAXIMA_PATH += ""; // TODO (LINUX)
+		
+		File file = new File(MAXIMA_PATH);
+		if (file.exists()) {
+			DEFAULT_CAS = CAS_MAXIMA;
+			Application.debug("Maxima found at: "+MAXIMA_PATH);
+		} else {
+			System.err.println("Maxima not found at: "+MAXIMA_PATH);
+		}
+	}
+	
+	private void setDefaultCAS(String optionValue) {
+		if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
+			
+			if (MAC_OS) {
+				File file = new File(MAC_OS_MAXIMA_PATH);
+				if (file.exists()) { 
+					Application.debug("Maxima found at: "+MAC_OS_MAXIMA_PATH);
+					MAXIMA_PATH = MAC_OS_MAXIMA_PATH;
+					DEFAULT_CAS = CAS_MAXIMA;
+				} else System.err.println("Maxima not found at: "+MAC_OS_MAXIMA_PATH);
+				return;
+			}
+			
+			if (WINDOWS) {
+				
+				String codeBase = getCodeBase().toString();
+				if (codeBase.toLowerCase(Locale.US).startsWith("file:/c:/")) {
+					// running from eg c:\program files
+					
+					// remove file:/
+					codeBase = codeBase.substring(6, codeBase.length());
+					
+					// remove separator (if exists)
+					if (codeBase.endsWith("/")) {
+						codeBase = codeBase.substring(0, codeBase.length() - 1);
+					}
+					
+					// change / to Windows separator
+					while (codeBase.indexOf('/') > -1) codeBase = codeBase.replace('/', '\\');
+					
+					Application.debug(codeBase);
+					
+					if (codeBase.toLowerCase(Locale.US).endsWith("geogebra")) {
+						String path = codeBase.substring(0, codeBase.length() - 8);
+						
+						
+						// list all files/folders in c:\program files
+						File dir = new File(path);
+						String[] folders = dir.list(); 
+						
+						
+						// search in reverse order
+						// hopefully get lastest Maxima if 2 installed!?
+						if (folders != null) for (int i=folders.length -1 ; i >=0 ; i--) { // Get filename of file or directory
+							Application.debug(folders[i]);
+							if (folders[i].startsWith("Maxima-")) {
+								path += folders[i];
+							}
+						}
+				
+						path += "\\bin\\maxima.bat";
+						//path += "Maxima-5.20.1\\bin\\maxima.bat";
+						
+						Application.debug("trying: "+codeBase);
+						File file = new File(path);
+						if (file.exists()) {
+							Application.debug("Maxima found at: "+path);
+							MAXIMA_PATH = path;
+							DEFAULT_CAS = CAS_MAXIMA;
+						} else System.err.println("Maxima not found at: "+path);
+					}
+					
+				}
+				
+				File file = new File(WINDOWS_MAXIMA_PATH);
+				if (file.exists()) {
+					Application.debug("Maxima found at: "+WINDOWS_MAXIMA_PATH);
+					MAXIMA_PATH = WINDOWS_MAXIMA_PATH;
+					DEFAULT_CAS = CAS_MAXIMA;
+				}
+				return;
+			}
+					
+			// assume Linux
+			File file = new File(LINUX_MAXIMA_PATH);
+			if (file.exists()) {
+				Application.debug("Maxima found at: "+LINUX_MAXIMA_PATH);
+				MAXIMA_PATH = LINUX_MAXIMA_PATH;
+				DEFAULT_CAS = CAS_MAXIMA;
+			} else System.err.println("Maxima not found at: "+LINUX_MAXIMA_PATH);
+			return;
+			
+		}
+		
+	}
+
+
+
+	public static String getMaximaPath() {
+		
+		if (MAC_OS) return MAC_OS_MAXIMA_PATH;
+		return "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
 	}
 	
 

@@ -4,7 +4,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.qtitools.mathassess.tools.maximaconnector.MaximaTimeoutException;
-import org.qtitools.mathassess.tools.maximaconnector.PropertiesMaximaConfiguration;
 import org.qtitools.mathassess.tools.maximaconnector.RawMaximaSession;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -244,8 +243,8 @@ public class CASmaxima extends CASgeneric {
 	
 	private synchronized RawMaximaSession getMaxima() {
 		if (ggbMaxima == null) {
-		    PropertiesMaximaConfiguration configuration = new PropertiesMaximaConfiguration();
-		    ggbMaxima = new RawMaximaSession(configuration);
+		    //PropertiesMaximaConfiguration configuration = new PropertiesMaximaConfiguration();
+		    ggbMaxima = new RawMaximaSession();
 		}
 		
 		if (!ggbMaxima.isOpen()) {
