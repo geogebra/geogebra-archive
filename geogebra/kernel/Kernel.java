@@ -428,6 +428,13 @@ public class Kernel {
 		return ggbCAS != null;
 	}
 	
+	/*
+	 * needed eg change MathPiper -> Maxima
+	 */
+	final public void resetCAS() {
+		ggbCAS = null;
+	}
+	
 	/**
 	 * Returns this kernel's GeoGebraCAS object.
 	 */

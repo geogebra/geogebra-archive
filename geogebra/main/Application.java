@@ -3833,6 +3833,7 @@ public abstract class Application implements KeyEventDispatcher {
 		File file = new File(MAXIMA_PATH);
 		if (file.exists()) {
 			DEFAULT_CAS = CAS_MAXIMA;
+			kernel.resetCAS();
 			Application.debug("Maxima found at: "+MAXIMA_PATH);
 		} else {
 			System.err.println("Maxima not found at: "+MAXIMA_PATH);
@@ -3849,6 +3850,7 @@ public abstract class Application implements KeyEventDispatcher {
 					Application.debug("Maxima found at: "+MAC_OS_MAXIMA_PATH);
 					MAXIMA_PATH = MAC_OS_MAXIMA_PATH;
 					DEFAULT_CAS = CAS_MAXIMA;
+					kernel.resetCAS();
 				} else System.err.println("Maxima not found at: "+MAC_OS_MAXIMA_PATH);
 				return;
 			}
@@ -3892,6 +3894,7 @@ public abstract class Application implements KeyEventDispatcher {
 							Application.debug("Maxima found at: "+path);
 							MAXIMA_PATH = path;
 							DEFAULT_CAS = CAS_MAXIMA;
+							kernel.resetCAS();
 						} else System.err.println("Maxima not found at: "+path);
 						
 						
@@ -3922,6 +3925,7 @@ public abstract class Application implements KeyEventDispatcher {
 				Application.debug("Maxima found at: "+LINUX_MAXIMA_PATH);
 				MAXIMA_PATH = LINUX_MAXIMA_PATH;
 				DEFAULT_CAS = CAS_MAXIMA;
+				kernel.resetCAS();
 			} else System.err.println("Maxima not found at: "+LINUX_MAXIMA_PATH);
 			return;
 			
