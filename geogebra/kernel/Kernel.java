@@ -40,6 +40,7 @@ import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
 import geogebra.kernel.statistics.AlgoExponential;
 import geogebra.kernel.statistics.AlgoFDistribution;
 import geogebra.kernel.statistics.AlgoFit;
+import geogebra.kernel.statistics.AlgoFitGrowth;
 import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitLineX;
 import geogebra.kernel.statistics.AlgoFitLineY;
@@ -3119,6 +3120,15 @@ public class Kernel {
 		return function;
 	}	
 
+	/**
+	 * 'FitGrowth[<List of Points>]
+	 * Hans-Petter Ulven
+	 */
+	final public GeoFunction FitGrowth(String label, GeoList list) {
+		AlgoFitGrowth algo = new AlgoFitGrowth(cons, label, list);
+		GeoFunction function=algo.getFitGrowth();
+		return function;
+	}
 
 	/** 
 	 * Binomial[n,r]
