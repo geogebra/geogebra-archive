@@ -428,11 +428,14 @@ public class Kernel {
 		return ggbCAS != null;
 	}
 	
+	public static int DEFAULT_CAS = Application.CAS_MATHPIPER; // default
+
 	/*
 	 * needed eg change MathPiper -> Maxima
 	 */
-	final public void resetCAS() {
-		ggbCAS = null;
+	final public void setDefaultCAS(int cas) {
+		DEFAULT_CAS = cas;
+		if (ggbCAS != null) ((geogebra.cas.GeoGebraCAS) ggbCAS).setCurrentCAS(DEFAULT_CAS);
 	}
 	
 	/**
@@ -6653,7 +6656,7 @@ public class Kernel {
 	/**
 	 * test kernel
 	 */
-	public static void main(String [] args) {
+	public static void mainx(String [] args) {
 		// create kernel with null application for testing
 		Kernel kernel = new Kernel(null);
 		Construction cons = kernel.getConstruction();

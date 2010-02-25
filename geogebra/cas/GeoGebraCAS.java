@@ -34,7 +34,7 @@ public class GeoGebraCAS {
 		casParser = new CASparser(kernel);
 		
 		//setCurrentCAS(CAS_MAXIMA);
-		setCurrentCAS(Application.DEFAULT_CAS);
+		setCurrentCAS(Kernel.DEFAULT_CAS);
 	}
 	
 	public CASparser getCASparser() {
