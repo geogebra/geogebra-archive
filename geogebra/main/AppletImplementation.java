@@ -1114,7 +1114,8 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setAxesVisible(boolean xVisible, boolean yVisible) {		
 		//app.getEuclidianView().showAxes(xVisible, yVisible);
 		app.getEuclidianView().setShowAxis(EuclidianView.AXIS_X, xVisible, false);
-		app.getEuclidianView().setShowAxis(EuclidianView.AXIS_Y, yVisible, true);
+		app.getEuclidianView().setShowAxis(EuclidianView.AXIS_Y, yVisible, false);
+		kernel.notifyRepaint();
 	}	
 	
 	/**
