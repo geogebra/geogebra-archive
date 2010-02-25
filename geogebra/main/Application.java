@@ -869,6 +869,7 @@ public abstract class Application implements KeyEventDispatcher {
 										+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
 										+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
 										+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
+										+ "  --fontSize=NUMBER\tset default font size\n"
 										+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes"
 										+ "  --CAS=[MATHPIPER|MAXIMA]\tselect which CAS to use, default MathPiper"
 										+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS"
@@ -892,6 +893,8 @@ public abstract class Application implements KeyEventDispatcher {
 						setDefaultCAS(optionValue);
 					} else if (optionName.equals("maximaPath")) {
 						setMaximaPath(optionValue);
+					} else if (optionName.equals("fontSize")) {
+						setFontSize(Integer.parseInt(optionValue));
 					} else if (optionName.equals("enableUndo")) {
 						setUndoActive(!optionValue.equals("false"));
 					} else if (optionName.equals("showAxes")) {
