@@ -24,12 +24,12 @@ import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 
 /**
- * Fits an a*b^x to a list of pints.
+ * Fits an a*b^x to a list of points.
  * Needed for pupils who don't know about e, but in their curriculum are doing
  * mathematical models with growth (exponential) functions.
  * 
  * @author Hans-Petter Ulven
- * @version 24.04.08
+ * @version 2010-02-2010
  */
 
 public class AlgoFitGrowth extends AlgoElement {
