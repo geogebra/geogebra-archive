@@ -3844,9 +3844,21 @@ public abstract class Application implements KeyEventDispatcher {
 			
 			if (WINDOWS) {
 				
-				for (int i = 0 ; i < programFiles.length ; i++) {
-					String path = "c:\\"+programFiles[i]+"\\";
+				for (int i = 0 ; i < programFiles.length * 2 ; i++) {
+					String path;
+					
+					// check eg c:\Program Files\ and
+					// c:\Program Files (x86)\ (for 64-bit Windows)
+					if (Math.floor(i/2.0) == i/2.0)
+						path = "c:\\"+programFiles[i/2]+"\\";
+					else
+						path = "c:\\"+programFiles[i/2]+" (x86)\\";
+					
 					File testFile = new File(path);
+					
+					//System.out.println("checking "+path);
+
+					
 					if (testFile.exists()) {
 						Application.debug("found path: "+path);
 						String[] folders = testFile.list(); 
