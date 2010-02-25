@@ -3813,12 +3813,22 @@ public abstract class Application implements KeyEventDispatcher {
 
 	public static int DEFAULT_CAS = CAS_MATHPIPER; // default
 	
+	// eg --maximaPath="C:\Program Files\Maxima-5.20.1\bin\maxima.bat"
+	// eg --maximaPath="C:\Program Files\Maxima-5.20.1"	
 	private void setMaximaPath(String optionValue) {
 		MAXIMA_PATH = optionValue;
 		
-		if (WINDOWS) MAXIMA_PATH += "\\bin\\maxima.bat";
-		else if (MAC_OS) MAXIMA_PATH += "/Contents/Resources/bin/maxima";
-		else MAXIMA_PATH += ""; // TODO (LINUX)
+		if (WINDOWS) {
+			if (!MAXIMA_PATH.endsWith(".bat"))
+				MAXIMA_PATH += "\\bin\\maxima.bat";
+		}
+		else if (MAC_OS) {
+			if (!MAXIMA_PATH.endsWith("/bin/maxima"))
+				MAXIMA_PATH += "/Contents/Resources/bin/maxima";
+		}
+		else {
+			MAXIMA_PATH += ""; // TODO (LINUX)
+		}
 		
 		File file = new File(MAXIMA_PATH);
 		if (file.exists()) {
@@ -3829,6 +3839,7 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 	
+	// eg --CAS=maxima
 	private void setDefaultCAS(String optionValue) {
 		if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
 			
@@ -3867,7 +3878,7 @@ public abstract class Application implements KeyEventDispatcher {
 						// search in reverse order
 						// hopefully get lastest Maxima if 2 installed!?
 						if (folders != null) for (int j=folders.length -1 ; j >=0 ; j--) { // Get filename of file or directory
-							Application.debug(folders[j]);
+							//Application.debug(folders[j]);
 							if (folders[j].startsWith("Maxima-")) {
 								path += folders[j];
 							}
