@@ -6039,7 +6039,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			ToolTipManager ttm = ToolTipManager.sharedInstance();		
 			ttm.setEnabled(false);			
 			ListDialog dialog = new ListDialog((JPanel) view, geos, null);
-			ret = dialog.showDialog((JPanel) view, mouseLoc);			
+			if (app.areChooserPopupsEnabled()) ret = dialog.showDialog((JPanel) view, mouseLoc);			
 			ttm.setEnabled(true);				
 		}
 		return ret;	

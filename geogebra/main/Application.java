@@ -350,6 +350,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
 
 	private boolean rightClickEnabled = true;
+	private boolean chooserPopupsEnabled = true;	
 	private boolean labelDragsEnabled = true;
 	private boolean shiftDragZoomEnabled = true;
 	private boolean isErrorDialogsActive = true;
@@ -2179,7 +2180,15 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setRightClickEnabled(boolean flag) {
 		rightClickEnabled = flag;
 	}
-
+	
+	/**
+	 * Enables or disables popups when multiple objects selected This is useful
+	 * for applets.
+	 */
+	public void setChooserPopupsEnabled(boolean flag) {
+		chooserPopupsEnabled = flag;
+	}
+	
 	/**
 	 * Enables or disables label dragging in this application. This is useful
 	 * for applets.
@@ -2190,6 +2199,10 @@ public abstract class Application implements KeyEventDispatcher {
 
 	final public boolean isRightClickEnabled() {
 		return rightClickEnabled;
+	}
+
+	final public boolean areChooserPopupsEnabled() {
+		return chooserPopupsEnabled;
 	}
 
 	final public boolean isLabelDragsEnabled() {

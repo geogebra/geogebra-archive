@@ -65,6 +65,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public boolean showOpenButton, undoActive;
 	public boolean showToolBar, showToolBarHelp, showAlgebraInput;
 	public boolean enableRightClick = true;
+	public boolean enableChooserPopups = true;
 	public boolean errorDialogsActive = true;
 	public boolean enableLabelDrags = true;
 	boolean enableShiftDragZoom = true;
@@ -215,6 +216,9 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			
 		// rightClickActive, default is "true"
 		enableRightClick = !"false".equals(applet.getParameter("enableRightClick"));
+		
+		// enableChooserPopups, default is "true"
+		enableChooserPopups = !"false".equals(applet.getParameter("enableChooserPopups"));
 		
 		// errorDialogsActive, default is "true"
 		errorDialogsActive = !"false".equals(applet.getParameter("errorDialogsActive"));
@@ -398,6 +402,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		app.setShowAlgebraInput(showAlgebraInput);
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
+		app.setChooserPopupsEnabled(enableChooserPopups);
 		app.setErrorDialogsActive(errorDialogsActive);
 		app.setLabelDragsEnabled(enableLabelDrags);
 		app.setShiftDragZoomEnabled(enableShiftDragZoom);
