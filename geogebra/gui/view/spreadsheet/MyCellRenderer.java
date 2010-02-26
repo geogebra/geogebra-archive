@@ -112,7 +112,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		
 		if (kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
-			if (!(geo.isGeoText() && !((GeoText) geo).isLaTeX())
+			if (geo.isDefined() && !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
 					&& !geo.isGeoNumeric()) {
 				try {
 					latexStr = Util.toLaTeXString(geo.getFormulaString(

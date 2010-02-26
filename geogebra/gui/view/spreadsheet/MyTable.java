@@ -269,7 +269,6 @@ public class MyTable extends JTable implements FocusListener
 	 * JTable does not support non-contiguous cell selection. It treats ctrl-down 
 	 * cell selection as if it was shift-extend. To prevent this behavior the JTable 
 	 * changeSelection method is overridden here. 
-	 * Also, selectionChanged is called to signal a change in single cell selection.
 	 */
 	@Override
 	public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
@@ -282,6 +281,18 @@ public class MyTable extends JTable implements FocusListener
 		selectionChanged();
 	}
 	
+	
+	@Override
+	public void selectAll(){
+		
+		setSelectionType(CELL_SELECT);
+		setRowSelectionInterval(0, getRowCount()-1);
+		getColumnModel().getSelectionModel().setSelectionInterval(0, getColumnCount()-1);
+		selectionChanged();
+
+	}
+	
+	
    
    //G.STURR 2010-1-29
 	/**
@@ -293,7 +304,7 @@ public class MyTable extends JTable implements FocusListener
 		CellRange newSelection = new CellRange(this);
 
 		switch (selectionType) {
-
+		
 		case CELL_SELECT:		
 			newSelection.setCellRange(getColumnModel().getSelectionModel()
 					.getAnchorSelectionIndex(), 
@@ -341,7 +352,7 @@ public class MyTable extends JTable implements FocusListener
 		}
 		
 	
-		// update sets of selected rwos/columns (used for rendering)
+		// update sets of selected rows/columns (used for rendering in the headers)
 		if(selectionType == COLUMN_SELECT)
 			for (int i = newSelection.getMinColumn(); i<= newSelection.getMaxColumn(); i++)
 				selectedColumnSet.add(i);

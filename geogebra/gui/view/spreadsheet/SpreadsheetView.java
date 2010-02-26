@@ -152,7 +152,7 @@ public class SpreadsheetView extends JSplitPane implements View
 		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
 		upperLeftCorner.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				table.setSelectionType(table.CELL_SELECT);
+				//table.setSelectionType(table.CELL_SELECT);
 				table.selectAll();
 				//table.selectionChanged(); //G.Sturr 2010-1-29
 			}
@@ -435,7 +435,7 @@ public class SpreadsheetView extends JSplitPane implements View
 	public void updateAuxiliaryObject(GeoElement geo) {		
 	}
 	
-// G.STURR -- this no longer  used	
+// G.STURR -- selectedElems is no longer  used	
 //	public static HashSet selectedElems = new HashSet();
 	
 	public void repaintView() {

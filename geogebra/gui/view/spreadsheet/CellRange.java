@@ -143,12 +143,12 @@ public class CellRange {
 	 */
 	public void setActualRange() {
 		
-		if (minRow == -1 && maxRow == -1 && minColumn != -1) {
+		if (minRow == -1 && maxRow == -1 ) {
 			minRow = 0;
 			maxRow = table.getRowCount() - 1;
 		}
 
-		if (minColumn == -1 && maxColumn == -1 && minRow != -1) {
+		if (minColumn == -1 && maxColumn == -1 ) {
 			minColumn = 0;
 			maxColumn = table.getColumnCount() - 1;
 		}
@@ -231,8 +231,8 @@ public class CellRange {
 	}
 	
 	public void debug(){
-		System.out.println("(" + anchorColumn + "," + anchorRow + ")" );
-		System.out.println("(" + minColumn + "," + minRow + ")  (" + maxColumn + "," + maxRow + ")"  );
+		System.out.println("anchor cell:  (" + anchorColumn + "," + anchorRow + ")" );
+		System.out.println("corner cells: (" + minColumn + "," + minRow + ")  (" + maxColumn + "," + maxRow + ")"  );
 	}
 	
 	
