@@ -459,21 +459,19 @@ public class SpreadsheetView extends JSplitPane implements View
 	}
 	
 	public void clearView() {
-		//G.STURR 2010-2-12
-		table.copyPasteCut.delete(0, 0, tableModel.getColumnCount(), tableModel.getRowCount());
 		
 		//Application.debug(new Date() + " CLEAR VIEW");
-		/*
+		
 		int rows = tableModel.getRowCount();
 		int columns = tableModel.getColumnCount();
 		for (int c = 0; c < columns; ++c) {
 			for (int r = 0; r < rows; ++r) {
 				tableModel.setValueAt(null, r, c);
 			}
-		}
-		*/
-		
+		}	
 	}
+	
+
 		
 	public static class MyListModel extends AbstractListModel {
 		

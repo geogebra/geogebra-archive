@@ -36,6 +36,7 @@ public class CopyPasteCut {
 	protected Kernel kernel;
 	protected Application app;
 	protected MyTable table;
+	protected DefaultTableModel tableModel;
 
 	protected String externalBuf;
 	protected GeoElement[][] internalBuf;
@@ -46,6 +47,7 @@ public class CopyPasteCut {
 
 	public CopyPasteCut(JTable table0, Kernel kernel0) {
 		table = (MyTable)table0;
+		tableModel = (DefaultTableModel) table.getModel();
 		kernel = kernel0;	
 		app = kernel.getApplication();
 		
@@ -759,6 +761,12 @@ public class CopyPasteCut {
 	
 	
 	//G.STURR 2010-1-15
+	public void deleteAll() {
+		
+		table.copyPasteCut.delete(0, 0, tableModel.getColumnCount(), tableModel.getRowCount());
+		
+	}
+		
 	
 	// default pasteFromFile: clear spreadsheet and then paste from upper left corner
 	public boolean pasteFromURL(URL url) {
@@ -802,7 +810,9 @@ public class CopyPasteCut {
 		
 		
 		// paste from clipboard into spreadsheet
-		if(clearSpreadsheet) view.clearView();
+		if(clearSpreadsheet){
+			deleteAll();
+		}
 		boolean succ = paste(targetRange);
 		clipboard.setContents(oldContent, null);
 		
