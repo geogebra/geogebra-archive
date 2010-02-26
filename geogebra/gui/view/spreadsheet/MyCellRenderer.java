@@ -112,22 +112,30 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		
 		if (kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
-			if (!(geo.isGeoText() && !((GeoText) geo).isLaTeX()) && !geo.isGeoNumeric()  ) {
-				latexStr = Util.toLaTeXString(geo.getFormulaString(
-						ExpressionNode.STRING_TYPE_LATEX, true), false);
-				drawLatexImageIcon(latexIcon, latexStr, getFont(), geo.getAlgebraColor(), bgColor);
-				setIcon(latexIcon);
-				setText("");
+			if (!(geo.isGeoText() && !((GeoText) geo).isLaTeX())
+					&& !geo.isGeoNumeric()) {
+				try {
+					latexStr = Util.toLaTeXString(geo.getFormulaString(
+							ExpressionNode.STRING_TYPE_LATEX, true), false);
 
-				
-				// Auto resize row height
-				// .... not working correctly yet
-				// doRowResize flag is set in MyCellEditor, but this does not handle rename and repeated copies
-				if (MyCellEditor.doRowResize) {
-					if (latexIcon.getIconHeight() > table.getRowHeight(row)) {
-						table.setRowHeight(row, latexIcon.getIconHeight() + 4);
-						MyCellEditor.doRowResize = false;
+					drawLatexImageIcon(latexIcon, latexStr, getFont(), geo
+							.getAlgebraColor(), bgColor);
+					setIcon(latexIcon);
+					setText("");
+
+					// Auto resize row height
+					// .... not working correctly yet
+					// doRowResize flag is set in MyCellEditor, but this does
+					// not handle rename and repeated copies
+					if (MyCellEditor.doRowResize) {
+						if (latexIcon.getIconHeight() > table.getRowHeight(row)) {
+							table.setRowHeight(row,
+									latexIcon.getIconHeight() + 4);
+							MyCellEditor.doRowResize = false;
+						}
 					}
+					
+				} catch (Exception e) {
 				}
 
 			}
