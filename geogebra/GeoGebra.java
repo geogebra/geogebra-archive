@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra;
 
+import geogebra.main.Application;
+
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.net.URL;
@@ -41,8 +43,15 @@ public class GeoGebra extends Object {
 	public final static int MAX_HEAP_SPACE = 512;
 	
     public static void main(String[] args) {  
+    	
+		Frame splashFrame = null;
+    	boolean showSplash = true;
+    	for (int i = 0 ; i < args.length ; i++) {
+    		if (args[i].equals("--showSplash=false")) showSplash = false;
+    	}
+    	
+    	if (showSplash) {
     	  // Show splash screen
-		  Frame splashFrame = null;
 		  URL imageURL = GeoGebra.class.getResource("/geogebra/splash.png");
 		  if (imageURL != null) {
 		      splashFrame = SplashWindow.splash(
@@ -51,6 +60,7 @@ public class GeoGebra extends Object {
 		  } else {
 		      System.err.println("Splash image not found");
 		  }
+    	}
 		  
 		  // Start GeoGebra
 		  try {        			  		

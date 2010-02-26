@@ -868,6 +868,7 @@ public abstract class Application implements KeyEventDispatcher {
 										+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
 										+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
 										+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
+										+ "  --showSplash=BOOLEAN\n"
 										+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
 										+ "  --fontSize=NUMBER\tset default font size\n"
 										+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes"
