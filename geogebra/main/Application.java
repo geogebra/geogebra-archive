@@ -3870,7 +3870,7 @@ public abstract class Application implements KeyEventDispatcher {
 			}
 			
 			if (WINDOWS) {
-				
+/*				
 				for (int i = 0 ; i < programFiles.length * 2 ; i++) {
 					String path;
 					
@@ -3920,7 +3920,7 @@ public abstract class Application implements KeyEventDispatcher {
 				
 				return;
 				
-
+*/
 				/*
 				
 				File file = new File(WINDOWS_MAXIMA_PATH);
@@ -3930,7 +3930,54 @@ public abstract class Application implements KeyEventDispatcher {
 					DEFAULT_CAS = CAS_MAXIMA;
 				}
 				return;*/
-			}
+				
+				/// --- Ulven 26.02 Just a suggestion: --- ///
+		        //Only if windows and jdk >=1.5: getenv
+				//With all-permissions webstart should be ok?
+				String programfiles;
+				String path;
+				File file,programfolder;
+				File[] folders;
+				try{
+					programfiles=System.getenv("ProgramFiles");
+					if(programfiles!=null){
+						programfolder=new File(programfiles);
+						folders=programfolder.listFiles(new MaximaFileFilter());
+						if(folders.length>0){
+							path=folders[0].getCanonicalPath();
+							path=replace(path);						//replaceAll() doesn't handle \ to well...
+							file=new File(path);
+							if (file.exists()) {
+								Application.debug("Maxima found at: "+path);
+								MAXIMA_PATH = path+"\\bin\\maxima.bat";				//setMaximaPath() not clled? Has to do it here?
+								kernel.setDefaultCAS(CAS_MAXIMA);
+								return;
+							} else System.err.println("Maxima not found at: "+path);
+						}else{System.err.println("Maxima not found under: "+programfolder);}
+					}else{System.err.println("Could not find environment variable Program Files");}
+					programfiles=System.getenv("ProgramFiles(x86)");
+					if(programfiles!=null){
+						programfolder=new File(programfiles);
+						folders=programfolder.listFiles(new MaximaFileFilter());
+						if(folders.length>0){
+							path=folders[0].getCanonicalPath();
+							path=replace(path);						//replaceAll() doesn't handle \ to well...
+							file=new File(path);
+							if (file.exists()) {
+								Application.debug("Maxima found at: "+path);
+								MAXIMA_PATH = path+"\\bin\\maxima.bat";				//setMaximaPath() not clled? Has to do it here?
+								kernel.setDefaultCAS(CAS_MAXIMA);
+								return;
+							} else System.err.println("Maxima not found at: "+path);
+						}else{System.err.println("Maxima not found under: "+programfolder);}
+					}else{System.err.println("Could not find environment variable ProgramFiles(x86)");}
+
+		        }catch(Exception e){
+		        	debug(e.toString());
+		        }//try-catch
+		        
+				return;
+			}//if WINDOWS
 					
 			// assume Linux
 			File file = new File(LINUX_MAXIMA_PATH);
@@ -3950,8 +3997,35 @@ public abstract class Application implements KeyEventDispatcher {
 	public static String getMaximaPath() {
 		
 		if (MAC_OS) return MAC_OS_MAXIMA_PATH;
-		return "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
+		//return "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
+		return MAXIMA_PATH;
 	}
+	
+    // I found no other way of doing this :-(
+    private static String replace(String s){
+        String result="";
+        char c;
+        for(int i=0;i<s.length();i++){
+            c=s.charAt(i);
+            if(c=='\\'){
+                result+="\\\\";
+            }else{
+                result+=c;
+            }
+        }//for
+        return result;
+    }//replace(String)
+
+	// If more sophisticated search is needed
+	class MaximaFileFilter implements java.io.FileFilter{
+		public final boolean accept(File file){
+			if(file.getName().startsWith("Maxima")){
+				return true;
+			}else{
+				return false;
+			}//if acceptable
+		}//accept(File)
+	}//class MaximaFileFilter
 	
 
 }
