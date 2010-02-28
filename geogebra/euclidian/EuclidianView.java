@@ -3399,6 +3399,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * ANIMATED ZOOMING
 	 **************************************************************************/
 
+	
 	/**
 	 * Zooms around fixed point (px, py)
 	 */
@@ -3407,6 +3408,25 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if (zoomer == null)
 			zoomer = new MyZoomer();
 		zoomer.init(px, py, zoomFactor, steps, storeUndo);
+		zoomer.startAnimation();
+		
+		
+	}
+
+	/**
+	 * Zooms around fixed point (center of screen)
+	 */
+	public final void zoomAroundCenter(double zoomFactor, int steps,
+			boolean storeUndo) {
+		
+		double width=toRealWorldCoordX((double)(getWidth()));
+		double height=toRealWorldCoordY((double)(getHeight()));
+		double zeroX=toRealWorldCoordX(0);
+		double zeroY=toRealWorldCoordY(0);
+
+		if (zoomer == null)
+			zoomer = new MyZoomer();
+		zoomer.init((width + zeroX)/2, (height + zeroY)/2, zoomFactor, steps, storeUndo);
 		zoomer.startAnimation();
 		
 		

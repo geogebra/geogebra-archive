@@ -81,6 +81,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public boolean showFrame = true;
 	private JFrame wnd;
 	private JSObject browserWindow;
+	private int width, height;
 	//public static URL codeBase=null;
 	//public static URL documentBase=null;
 	
@@ -92,7 +93,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public String ggbOnInitParam = null;
 
 	/** Creates a new instance of GeoGebraApplet */	
-	protected AppletImplementation(JApplet applet) {
+	protected AppletImplementation(final JApplet applet) {
 		this.applet = applet;
 		
 		applet.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -100,6 +101,18 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			{
 				Component c = e.getComponent();
 				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
+				
+				//if (!app.runningInFrame)
+				{
+					// average horizontal and vertical factors
+					// under normal circumstances, these should be the same			
+					double zoomFactor = ((double)c.getWidth() / (double)width + (double)c.getHeight() / (double)height )/2.0;
+					app.getEuclidianView().zoomAroundCenter(zoomFactor, 1, false);
+				}
+				
+				width = c.getWidth();
+				height = c.getHeight();
+				
 			}
 		   }); 
 
@@ -360,6 +373,12 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			
 		// replace applet's content pane
 		Container cp = applet.getContentPane();
+		
+		Application.debug("Initial size = "+cp.getWidth()+", "+cp.getHeight());
+		
+		width = cp.getWidth();
+		height = cp.getHeight();
+		
 		cp.setBackground(bgColor);
 		cp.removeAll();
 		cp.add(myContenPane);
