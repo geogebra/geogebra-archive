@@ -105,7 +105,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				Component c = e.getComponent();
 				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
 				
-				if (!app.runningInFrame)
+				if (!app.runningInFrame && !app.showAlgebraView() && !app.showSpreadsheetView())
 				{
 					// average horizontal and vertical factors
 					// under normal circumstances, these should be the same			

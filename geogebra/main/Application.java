@@ -4026,7 +4026,8 @@ public abstract class Application implements KeyEventDispatcher {
 		//return "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
 		return MAXIMA_PATH;
 	}
-	
+
+
 /************* moved to FindMaxima class	
     // I found no other way of doing this :-(
     private static String replace(String s){
@@ -4055,5 +4056,16 @@ public abstract class Application implements KeyEventDispatcher {
 	}//class MaximaFileFilter
 	
 	************************/
-
+	public boolean showAlgebraView() {
+		if (!hasGuiManager()) return false;
+		return getGuiManager().showAlgebraView();
+	}
+		
+	public boolean showSpreadsheetView() {
+		if (!hasGuiManager()) return false;
+		return getGuiManager().showSpreadsheetView();
+	}
+		
 }
+
+
