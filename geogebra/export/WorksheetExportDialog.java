@@ -1211,6 +1211,11 @@ public class WorksheetExportDialog extends JDialog {
 		// showAlgebraInput
 		appletParam(sb, "showAlgebraInput", cbShowInputField.isSelected(), type);
 		
+		// allowRescaling
+		appletParam(sb, "allowRescaling", true, type);
+		
+		
+		
 	}
 	
 	StringBuffer sb2 = new StringBuffer();

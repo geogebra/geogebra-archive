@@ -71,6 +71,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public boolean errorDialogsActive = true;
 	public boolean enableLabelDrags = true;
 	boolean enableShiftDragZoom = true;
+	boolean allowRescaling = true;
 	public boolean showMenuBar = false;
 	//public boolean showSpreadsheet = false;
 	//public boolean showAlgebraView = false;
@@ -96,13 +97,15 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	protected AppletImplementation(final JApplet applet) {
 		this.applet = applet;
 		
-		applet.addComponentListener(new java.awt.event.ComponentAdapter() {
+		
+		// Allow rescaling eg ctrl+ ctrl- in Firefox
+		if (allowRescaling)	applet.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent e)
 			{
 				Component c = e.getComponent();
 				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
 				
-				//if (!app.runningInFrame)
+				if (!app.runningInFrame)
 				{
 					// average horizontal and vertical factors
 					// under normal circumstances, these should be the same			
@@ -255,6 +258,9 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		
 		// enableShiftDragZoom, default is "true"
 		enableShiftDragZoom = !"false".equals(applet.getParameter("enableShiftDragZoom"));		
+		
+		// allowRescaling, default is "false"
+		allowRescaling = "true".equals(applet.getParameter("allowRescaling"));		
 		
 		undoActive = (showToolBar || showMenuBar);
 		
