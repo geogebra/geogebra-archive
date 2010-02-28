@@ -689,9 +689,9 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				s=LineOptionCode(geo,true);
 				if (s.length()!=0) code.append("["+s+"] ");
 				writePoint(x1,x2,code);
-				code.append(" circle ");
+				code.append(" circle (");
 				code.append(kernel.format(diameter/2));
-				code.append(";\n");
+				code.append(");\n");
 				endBeamer(code);
 			}
         }
