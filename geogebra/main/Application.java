@@ -3856,7 +3856,31 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 	
 	// eg --CAS=maxima
-	private void setDefaultCAS(String optionValue) {
+	//Ulven 27.01.10
+	//Think I found an even better way:
+	
+	private void setDefaultCAS(String optionValue){
+		if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
+			geogebra.main.FindMaxima fm=new geogebra.main.FindMaxima();
+			fm.search();
+			if(fm.isMaximaFound()){
+				if(WINDOWS){				//some work to do...
+					MAXIMA_PATH = fm.getPath()+"\\bin\\maxima.bat";	
+					kernel.setDefaultCAS(CAS_MAXIMA);					
+					
+				}else {						//Mac/Linux: Full path to executable
+					MAXIMA_PATH=fm.getPath();
+					kernel.setDefaultCAS(CAS_MAXIMA);
+				}//if os
+				Application.debug("MAXIMA_PATH was finally set to: "+MAXIMA_PATH);
+			}else{
+				Application.debug("Maxima not found at all...");
+			}//if maxima was found
+		}//if option
+	}//setDefaultCas()
+	
+/***************found a better way?
+	private void xsetDefaultCAS(String optionValue) {
 		if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
 			
 			if (MAC_OS) {
@@ -3930,10 +3954,12 @@ public abstract class Application implements KeyEventDispatcher {
 					DEFAULT_CAS = CAS_MAXIMA;
 				}
 				return;*/
-				
+
+/************found a better way				
 				/// --- Ulven 26.02 Just a suggestion: --- ///
 		        //Only if windows and jdk >=1.5: getenv
 				//With all-permissions webstart should be ok?
+				
 				String programfiles;
 				String path;
 				File file,programfolder;
@@ -3990,17 +4016,18 @@ public abstract class Application implements KeyEventDispatcher {
 			
 		}
 		
-	}
-
+	}//setDefaultCas()
+**********************************/
 
 
 	public static String getMaximaPath() {
 		
-		if (MAC_OS) return MAC_OS_MAXIMA_PATH;
+		//if (MAC_OS) return MAC_OS_MAXIMA_PATH;
 		//return "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
 		return MAXIMA_PATH;
 	}
 	
+/************* moved to FindMaxima class	
     // I found no other way of doing this :-(
     private static String replace(String s){
         String result="";
@@ -4027,5 +4054,6 @@ public abstract class Application implements KeyEventDispatcher {
 		}//accept(File)
 	}//class MaximaFileFilter
 	
+	************************/
 
 }
