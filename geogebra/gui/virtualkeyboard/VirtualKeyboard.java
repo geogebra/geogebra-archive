@@ -14,7 +14,6 @@ the Free Software Foundation.
 
 package geogebra.gui.virtualkeyboard;
 
-import geogebra.kernel.arithmetic.MyBoolean;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
@@ -949,7 +948,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		else return alternative;
 	}
 
-	HashMap<Character, MyBoolean> characterIsTooWide = new HashMap<Character, MyBoolean>(200);
+	HashMap<Character, Boolean> characterIsTooWide = new HashMap<Character, Boolean>(200);
 
 	private void updateButton(int i, int j) {
 		keys k = getKey(i, j);
@@ -987,18 +986,18 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		if (len == 1) {
 
 			// make sure extra-wide characters fit (eg <=> \u21d4 )
-			MyBoolean oversize = characterIsTooWide.get(new Character(text.charAt(0)));
+			Boolean oversize = characterIsTooWide.get(new Character(text.charAt(0)));
 			if (oversize == null) {
 				getDummyButton().setFont(getCurrentFont());
 				getDummyButton().setText(wideChar+"");
 				Dimension buttonSize = DummyButton.getPreferredSize();
 				getDummyButton().setText(text);
 				Dimension buttonSize2 = DummyButton.getPreferredSize();
-				oversize = new MyBoolean((buttonSize2.getWidth() > buttonSize.getWidth()));
+				oversize = new Boolean((buttonSize2.getWidth() > buttonSize.getWidth()));
 				characterIsTooWide.put(new Character(text.charAt(0)), oversize);
 			}
 
-			if (oversize.getBoolean()) {
+			if (oversize.booleanValue()) {
 				Buttons[i][j].setFont(getFont((int)minButtonSize() * 10 / 12, false));
 			} else {				
 				Buttons[i][j].setFont(getFont((int)minButtonSize(), true));
