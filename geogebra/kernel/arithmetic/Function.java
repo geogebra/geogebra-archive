@@ -848,7 +848,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 		sb.setLength(0);
         sb.append("Derivative(");
         // function expression with multiply sign "*"   
-		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));		
+		sb.append(expression.getCASstring(true));		
 		if (order > 1) {
 	        sb.append(",x,");
 	        sb.append(order);
@@ -859,8 +859,8 @@ implements ExpressionValue, RealRootFunction, Functional {
 						
 
         try {                   	            
-            // evaluate expression by MathPiper 
-            String result = kernel.evaluateMathPiper(sb.toString());  
+            // evaluate expression by CAS 
+            String result = kernel.evaluateGeoGebraCAS(sb.toString());  
            
             // fast fail for e.g. "Differentiate(x)Floor(x)"
             if (result.startsWith("Differentiate(") || result.startsWith("'diff("))
@@ -1177,14 +1177,14 @@ implements ExpressionValue, RealRootFunction, Functional {
     final private Function expand() {    
         // build expression string for CAS
         sb.setLength(0);
-        sb.append("ExpandBrackets(");
+        sb.append("Expand(");
         // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true));    
+        sb.append(expression.getCASstring(true));    
         sb.append(")");
 
         try {           
             // evaluate expression by CAS
-            String result = kernel.evaluateMathPiper(sb.toString());                           
+            String result = kernel.evaluateGeoGebraCAS(sb.toString());                           
             
             sb.setLength(0);
             // it doesn't matter what label we use here as it is never used
