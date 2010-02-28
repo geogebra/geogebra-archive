@@ -486,7 +486,12 @@ public class DefaultGuiManager implements GuiManager {
 	}
 	
 	private boolean showView(int viewId) {
+		try { // TODO: null pointer when showToolbar=true
 		return layout.getDockManager().getPanel(viewId).getInfo().isVisible();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public boolean showAlgebraView() {
