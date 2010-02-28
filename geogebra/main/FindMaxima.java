@@ -100,7 +100,7 @@ public  class FindMaxima {
 				programfolder=new File(searchfolders[i]);
 				if(Application.WINDOWS){			//WIN
 					maximafolders=programfolder.listFiles(MaximaFileFilter.getInstance());	//get possible Maxima-x.xx folders
-					sizemaxima=maximafolders.length;
+					sizemaxima= (maximafolders == null) ? 0 : maximafolders.length;
 					if(sizemaxima>0){
 						//ToDo?: if(sizemaxima>1){ sort and decide highest version number...
 						pathstr=maximafolders[0].getCanonicalPath();	//use the first one for the time being
