@@ -54,7 +54,7 @@ public  class FindMaxima {
 	
 	private final static String[]	linuxfolders={
 			"/usr/bin/maxima",
-			"/usr/loal/bin/maxima",
+			"/usr/local/bin/maxima",
 			"/opt/bin/maxima",
 			"/opt/local/bin/maxima"
 	};//linuxfolders
