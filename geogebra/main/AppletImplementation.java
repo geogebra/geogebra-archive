@@ -27,6 +27,7 @@ import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -92,6 +93,14 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	/** Creates a new instance of GeoGebraApplet */	
 	protected AppletImplementation(JApplet applet) {
 		this.applet = applet;
+		
+		applet.addComponentListener(new java.awt.event.ComponentAdapter() {
+			public void componentResized(ComponentEvent e)
+			{
+				Application.debug("Applet resized");
+			}
+		   }); 
+
 		init();
 	}
 	
