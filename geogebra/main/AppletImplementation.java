@@ -22,6 +22,7 @@ import geogebra.plugin.GgbAPI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
@@ -97,7 +98,8 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		applet.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent e)
 			{
-				Application.debug("Applet resized");
+				Component c = e.getComponent();
+				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
 			}
 		   }); 
 
