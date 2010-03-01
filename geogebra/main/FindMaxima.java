@@ -96,7 +96,8 @@ public  class FindMaxima {
 		int		size			=	searchfolders.length;
 		foundmaxima=false;			//to be sure...
 		try{
-			for(int i=0;i<size;i++){					//todo: make a while(not found) to stop testing when found
+			int i = -1;
+			while (++i < size && foundmaxima == false) {
 				programfolder=new File(searchfolders[i]);
 				if(Application.WINDOWS){			//WIN
 					maximafolders=programfolder.listFiles(MaximaFileFilter.getInstance());	//get possible Maxima-x.xx folders

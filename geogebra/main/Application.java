@@ -3865,7 +3865,7 @@ public abstract class Application implements KeyEventDispatcher {
 			fm.search();
 			if(fm.isMaximaFound()){
 				if(WINDOWS){				//some work to do...
-					MAXIMA_PATH = fm.getPath()+"\\bin\\maxima.bat";	
+					MAXIMA_PATH = fm.getPath()+"\\\\bin\\\\maxima.bat";	
 					kernel.setDefaultCAS(CAS_MAXIMA);					
 					
 				}else {						//Mac/Linux: Full path to executable
