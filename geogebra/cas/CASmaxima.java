@@ -276,6 +276,12 @@ public class CASmaxima extends CASgeneric {
 	    ggbMaxima.executeRaw("log2(x) := log(x) / log(2);");
 	    ggbMaxima.executeRaw("cbrt(x) := x^(1/3);");
 	    
+	    // needed to define lcm()
+	    ggbMaxima.executeRaw("load(functs)$");
+	    
+	   
+
+	    
 	    // define Degree
 	    //ggbMaxima.executeRaw("Degree := 180 / %pi;");
 	    
