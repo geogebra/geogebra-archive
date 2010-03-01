@@ -105,12 +105,13 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				Component c = e.getComponent();
 				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
 				
-				if (!app.runningInFrame && !app.showAlgebraView() && !app.showSpreadsheetView())
+				if (!app.runningInFrame && app.onlyGraphicsViewShowing())
 				{
-					// average horizontal and vertical factors
+					// use just horizontal scale factors
 					// under normal circumstances, these should be the same			
-					double zoomFactor = ((double)c.getWidth() / (double)width + (double)c.getHeight() / (double)height )/2.0;
-					app.getEuclidianView().zoomAroundCenter(zoomFactor, 1, false);
+					double zoomFactor = (double)c.getWidth() / (double)width;// (double)c.getHeight() / (double)height ;
+					app.getEuclidianView().zoomAroundCenter(zoomFactor);
+
 				}
 				
 				width = c.getWidth();

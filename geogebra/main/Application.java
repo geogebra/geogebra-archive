@@ -4065,6 +4065,11 @@ public abstract class Application implements KeyEventDispatcher {
 		if (!hasGuiManager()) return false;
 		return getGuiManager().showSpreadsheetView();
 	}
+	
+	public boolean onlyGraphicsViewShowing() {
+		return !showSpreadsheetView() && !showAlgebraView();
+	}
+
 		
 }
 

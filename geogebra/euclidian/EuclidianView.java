@@ -3416,22 +3416,36 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * Zooms around fixed point (center of screen)
 	 */
-	public final void zoomAroundCenter(double zoomFactor, int steps,
-			boolean storeUndo) {
+	public final void zoomAroundCenter(double zoomFactor) {
 		
-		double width=toRealWorldCoordX((double)(getWidth()));
-		double height=toRealWorldCoordY((double)(getHeight()));
-		double zeroX=toRealWorldCoordX(0);
-		double zeroY=toRealWorldCoordY(0);
+		// keep xmin, xmax, ymin, ymax constant, adjust everything else
+		
+		xscale *= zoomFactor;
+		yscale *= zoomFactor;
+		
+		scaleRatio = yscale / xscale;
+		invXscale = 1.0d / xscale;
+		invYscale = 1.0d / yscale;
+		
+		xZero = -xmin * xscale;
+		width = (int)(xmax * xscale + xZero);
+		yZero = ymax * yscale;
+		height = (int)(yZero - ymin * yscale);
+		
+		setAxesIntervals(xscale, 0);
+		setAxesIntervals(yscale, 1);
+		calcPrintingScale();
+		
+		// tell kernel
+		kernel.setEuclidianViewBounds(xmin, xmax, ymin, ymax, xscale, yscale);
 
-		if (zoomer == null)
-			zoomer = new MyZoomer();
-		zoomer.init((width + zeroX)/2, (height + zeroY)/2, zoomFactor, steps, storeUndo);
-		zoomer.startAnimation();
-		
+		coordTransform.setTransform(xscale, 0.0d, 0.0d, -yscale, xZero, yZero);
+
+		updateBackgroundImage();
+		updateAllDrawables(true);
 		
 	}
-
+	
 	protected MyZoomer zoomer;
 
 	/**
