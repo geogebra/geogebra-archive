@@ -213,6 +213,10 @@ public class CASmaxima extends CASgeneric {
 				
 			// undo special character handling
 			result = casParser.insertSpecialChars(result);
+			
+			// replace eg [x=0,x=1] with {x=0,x=1}
+			while (result.indexOf('[') > -1) result = result.replace('[','{');
+			while (result.indexOf(']') > -1) result = result.replace(']','}');
 
 			return result;
 		} catch (Throwable th) {
