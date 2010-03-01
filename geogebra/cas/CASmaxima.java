@@ -219,11 +219,11 @@ public class CASmaxima extends CASgeneric {
 			while (result.indexOf(']') > -1) result = result.replace(']','}');
 
 			return result;
-		} catch (Throwable th) {
-			//MathPiper.Evaluate("restart;");
-			th.printStackTrace();
+		} catch (MaximaTimeoutException e) {
+			Application.debug("Timeout from Maxima, resetting");
+			ggbMaxima = null;
 			return null;
-		} 
+		}
 	}
 	
 	/**
@@ -259,6 +259,7 @@ public class CASmaxima extends CASgeneric {
 				
 			} catch (MaximaTimeoutException e) {
 				Application.debug("Timeout from Maxima");
+				ggbMaxima = null;
 				return null;
 			}
 			
