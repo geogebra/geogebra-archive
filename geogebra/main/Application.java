@@ -3806,26 +3806,6 @@ public abstract class Application implements KeyEventDispatcher {
 	final public static int CAS_MATHPIPER = 1;
 	final public static int CAS_MAXIMA = 2;
 	
-	final private static String MAC_OS_MAXIMA_PATH = "/Applications/Maxima.app/Contents/Resources/bin/maxima";
-	
-	private static String WINDOWS_MAXIMA_PATH = "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
-	
-	private static String programFiles[] = {
-		"Program Files",
-		"Programme",
-		"Programmes",
-		"Archivos de programa",
-		"Arquivos de programas",
-		"Ohjelmatiedostot",
-		"Program",
-		"Programas",
-		"ProgramFiler",
-		"Programmer",
-		"Programmi"};
-	
-	private static String LINUX_MAXIMA_PATH = "/usr/bin/maxima";
-	//private static String LINUX_MAXIMA_PATH = "/opt/local/bin/maxima";
-	
 	private static String MAXIMA_PATH = null;
 
 	
@@ -3857,8 +3837,6 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	// eg --CAS=maxima
 	//Ulven 27.01.10
-	//Think I found an even better way:
-	
 	private void setDefaultCAS(String optionValue){
 		if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
 			geogebra.main.FindMaxima fm=new geogebra.main.FindMaxima();
@@ -3879,183 +3857,11 @@ public abstract class Application implements KeyEventDispatcher {
 		}//if option
 	}//setDefaultCas()
 	
-/***************found a better way?
-	private void xsetDefaultCAS(String optionValue) {
-		if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
-			
-			if (MAC_OS) {
-				File file = new File(MAC_OS_MAXIMA_PATH);
-				if (file.exists()) { 
-					Application.debug("Maxima found at: "+MAC_OS_MAXIMA_PATH);
-					MAXIMA_PATH = MAC_OS_MAXIMA_PATH;
-					kernel.setDefaultCAS(CAS_MAXIMA);
-				} else System.err.println("Maxima not found at: "+MAC_OS_MAXIMA_PATH);
-				return;
-			}
-			
-			if (WINDOWS) {
-/*				
-				for (int i = 0 ; i < programFiles.length * 2 ; i++) {
-					String path;
-					
-					// check eg c:\Program Files\ and
-					// c:\Program Files (x86)\ (for 64-bit Windows)
-					if (Math.floor(i/2.0) == i/2.0)
-						path = "c:\\"+programFiles[i/2]+"\\";
-					else
-						path = "c:\\"+programFiles[i/2]+" (x86)\\";
-					
-					File testFile = new File(path);
-					
-					//System.out.println("checking "+path);
-
-					
-					if (testFile.exists()) {
-						Application.debug("found path: "+path);
-						String[] folders = testFile.list(); 
-						
-						
-						// search in reverse order
-						// hopefully get lastest Maxima if 2 installed!?
-						if (folders != null) for (int j=folders.length -1 ; j >=0 ; j--) { // Get filename of file or directory
-							//Application.debug(folders[j]);
-							if (folders[j].startsWith("Maxima-")) {
-								path += folders[j];
-							}
-						}
-				
-						path += "\\bin\\maxima.bat";
-						
-						Application.debug("trying: "+path);
-						File file = new File(path);
-						if (file.exists()) {
-							Application.debug("Maxima found at: "+path);
-							MAXIMA_PATH = path;
-							kernel.setDefaultCAS(CAS_MAXIMA);
-						} else System.err.println("Maxima not found at: "+path);
-						
-						
-						break;
-					}
-					
-				}
-				
-				if (MAXIMA_PATH == null) Application.debug("failed to find Maxima");
-				
-				return;
-				
-*/
-				/*
-				
-				File file = new File(WINDOWS_MAXIMA_PATH);
-				if (file.exists()) {
-					Application.debug("Maxima found at: "+WINDOWS_MAXIMA_PATH);
-					MAXIMA_PATH = WINDOWS_MAXIMA_PATH;
-					DEFAULT_CAS = CAS_MAXIMA;
-				}
-				return;*/
-
-/************found a better way				
-				/// --- Ulven 26.02 Just a suggestion: --- ///
-		        //Only if windows and jdk >=1.5: getenv
-				//With all-permissions webstart should be ok?
-				
-				String programfiles;
-				String path;
-				File file,programfolder;
-				File[] folders;
-				try{
-					programfiles=System.getenv("ProgramFiles");
-					if(programfiles!=null){
-						programfolder=new File(programfiles);
-						folders=programfolder.listFiles(new MaximaFileFilter());
-						if(folders.length>0){
-							path=folders[0].getCanonicalPath();
-							path=replace(path);						//replaceAll() doesn't handle \ to well...
-							file=new File(path);
-							if (file.exists()) {
-								Application.debug("Maxima found at: "+path);
-								MAXIMA_PATH = path+"\\bin\\maxima.bat";				//setMaximaPath() not clled? Has to do it here?
-								kernel.setDefaultCAS(CAS_MAXIMA);
-								return;
-							} else System.err.println("Maxima not found at: "+path);
-						}else{System.err.println("Maxima not found under: "+programfolder);}
-					}else{System.err.println("Could not find environment variable Program Files");}
-					programfiles=System.getenv("ProgramFiles(x86)");
-					if(programfiles!=null){
-						programfolder=new File(programfiles);
-						folders=programfolder.listFiles(new MaximaFileFilter());
-						if(folders.length>0){
-							path=folders[0].getCanonicalPath();
-							path=replace(path);						//replaceAll() doesn't handle \ to well...
-							file=new File(path);
-							if (file.exists()) {
-								Application.debug("Maxima found at: "+path);
-								MAXIMA_PATH = path+"\\bin\\maxima.bat";				//setMaximaPath() not clled? Has to do it here?
-								kernel.setDefaultCAS(CAS_MAXIMA);
-								return;
-							} else System.err.println("Maxima not found at: "+path);
-						}else{System.err.println("Maxima not found under: "+programfolder);}
-					}else{System.err.println("Could not find environment variable ProgramFiles(x86)");}
-
-		        }catch(Exception e){
-		        	debug(e.toString());
-		        }//try-catch
-		        
-				return;
-			}//if WINDOWS
-					
-			// assume Linux
-			File file = new File(LINUX_MAXIMA_PATH);
-			if (file.exists()) {
-				Application.debug("Maxima found at: "+LINUX_MAXIMA_PATH);
-				MAXIMA_PATH = LINUX_MAXIMA_PATH;
-				kernel.setDefaultCAS(CAS_MAXIMA);
-			} else System.err.println("Maxima not found at: "+LINUX_MAXIMA_PATH);
-			return;
-			
-		}
-		
-	}//setDefaultCas()
-**********************************/
-
 
 	public static String getMaximaPath() {
-		
-		//if (MAC_OS) return MAC_OS_MAXIMA_PATH;
-		//return "C:\\Program Files\\Maxima-5.20.1\\bin\\maxima.bat";
 		return MAXIMA_PATH;
 	}
 
-
-/************* moved to FindMaxima class	
-    // I found no other way of doing this :-(
-    private static String replace(String s){
-        String result="";
-        char c;
-        for(int i=0;i<s.length();i++){
-            c=s.charAt(i);
-            if(c=='\\'){
-                result+="\\\\";
-            }else{
-                result+=c;
-            }
-        }//for
-        return result;
-    }//replace(String)
-
-	// If more sophisticated search is needed
-	class MaximaFileFilter implements java.io.FileFilter{
-		public final boolean accept(File file){
-			if(file.getName().startsWith("Maxima")){
-				return true;
-			}else{
-				return false;
-			}//if acceptable
-		}//accept(File)
-	}//class MaximaFileFilter
-	
-	************************/
 	public boolean showAlgebraView() {
 		if (!hasGuiManager()) return false;
 		return getGuiManager().showAlgebraView();
