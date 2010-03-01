@@ -202,7 +202,7 @@ TOKEN :  {
   | < PI:       ( "pi" | "Pi" | "\u03c0" | "%pi") >
   | < E:        "\u212f" >  
   | < DEGREE:   ( "\u00b0" ) >
-  | < INFINITY: ("\u221e" | "Infinity") >
+  | < INFINITY: ("\u221e" | "Infinity" | "inf" | "infinity") >
   | < RAD:      "rad" >
   | < DERIVATIVE: "'" >
   | < TRUE:     ( "true" | "True" ) >
