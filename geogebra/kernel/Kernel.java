@@ -1321,10 +1321,11 @@ public class Kernel {
 		}
 				
 		//TODO: remove
-		System.out.print("  current views: ");
+		System.out.print("  current views:\n");
 		for (int i = 0; i < viewCnt; i++) {
-			System.out.print(views[i] + ", ");
+			System.out.print(views[i] + "\n");
 		}
+		System.out.print("\n");
 		//Application.debug();
 		
 		
