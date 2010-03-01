@@ -145,17 +145,17 @@ public  class FindMaxima {
     // I found no other way of doing this :-(
 	// replaceAll() doesn't handle \ to well...
     private static String fixSlashes(String s){
-        String result="";
+        StringBuilder result = new StringBuilder();
         char c;
         for(int i=0;i<s.length();i++){
             c=s.charAt(i);
             if(c=='\\'){
-                result+="\\\\";
+                result.append("\\\\");
             }else{
-                result+=c;
+                result.append(c);
             }
         }//for
-        return result;
+        return result.toString();
     }//replace(String)
 
 	// If more sophisticated search is needed
