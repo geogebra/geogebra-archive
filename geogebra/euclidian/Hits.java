@@ -1,6 +1,7 @@
 package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
@@ -349,7 +350,7 @@ public class Hits extends ArrayList {
 		Hits topHitsList = new Hits();
 		if (containsGeoPoint(topHitsList)) {
 			//Hits topHitsList = new Hits();
-			//getHits(GeoPoint.class, false, topHitsList);
+			getHits(GeoPoint.class, false, topHitsList);
 			return topHitsList;
 		} else
 			return clone();
