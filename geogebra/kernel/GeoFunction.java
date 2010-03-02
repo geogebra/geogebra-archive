@@ -20,6 +20,9 @@ import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
+
+import java.util.Locale;
 
 /**
  * Explicit function in one variable ("x"). This is actually a wrapper class for Function
@@ -746,7 +749,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	}
 	
 	public double getLimit(double x, int direction) {
-   	String functionIn = fun.getExpression().getCASstring(true);//getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+   	String functionIn = fun.getExpression().getCASstring(true);
 	    
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
@@ -812,17 +815,19 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	
 	private static StringBuilder sb;
 
-    protected static void getDiagonalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
-    	String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+    protected void getDiagonalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
+    	String functionIn = f.getFunction().getExpression().getCASstring(true);
 	    
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
-        sb.append("Simplify(Differentiate(x)");
+    	
+    	try {
+        sb.append("Simplify(Derivative(");
         sb.append(functionIn);
-        sb.append(')');
-		String firstDerivative = f.evaluateMathPiper(sb.toString());
+        sb.append("))");
+		String firstDerivative = kernel.evaluateGeoGebraCAS(sb.toString());
 		
-		if (!f.mathPiperError(firstDerivative, false)) {
+		if (!f.CASError(firstDerivative, false)) {
 	
 		
 			String gradientStrMinus="";
@@ -831,24 +836,29 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 			{
 				
 				sb.setLength(0);
-		        sb.append("Limit(x,");
+		        sb.append("Limit(");
+		        sb.append(firstDerivative);		        
+		        sb.append(',');
 		        if (!positiveInfinity) sb.append('-'); // -Infinity
-		        sb.append("Infinity)");
-		        sb.append(firstDerivative);
-				gradientStrMinus = f.evaluateMathPiper(sb.toString());
+		        sb.append(Unicode.Infinity);
+		        sb.append(')');
+
+				gradientStrMinus = kernel.evaluateGeoGebraCAS(sb.toString());
 				
-				if (!f.mathPiperError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
+				if (!f.CASError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
 					sb.setLength(0);
-			        sb.append("Limit(x,");
-			        if (!positiveInfinity) sb.append('-'); // -Infinity
-			        sb.append("Infinity)Simplify(");
+			        sb.append("Limit(Simplify(");
 			        sb.append(functionIn);
 			        sb.append("-");
 			        sb.append(gradientStrMinus);
-			        sb.append("*x)");
-					interceptStrMinus = f.evaluateMathPiper(sb.toString());
+			        sb.append("*x),");
+			        if (!positiveInfinity) sb.append('-'); // -Infinity
+			        sb.append(Unicode.Infinity);
+			        sb.append(')');
+
+			        interceptStrMinus = kernel.evaluateGeoGebraCAS(sb.toString());
 					
-					if (!f.mathPiperError(interceptStrMinus, false)) {
+					if (!f.CASError(interceptStrMinus, false)) {
 						sb.setLength(0);
 						sb.append("y=");
 						sb.append(gradientStrMinus);
@@ -865,138 +875,141 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 				}		
 			}
 		}
+    	}  catch (Throwable e) {
+			e.printStackTrace();
+		}
 
     }
     
-    protected static void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
-    	String functionStr = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+    protected void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
+    	String functionStr = f.getFunction().getExpression().getCASstring(true);
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
-        sb.append("Limit(x,");
-        if (!positiveInfinity) sb.append('-'); // -Infinity
-        sb.append("Infinity)");
+        sb.append("Limit(");
         sb.append(functionStr);
-		String limit = f.evaluateMathPiper(sb.toString()).trim();
-		
-		//System.err.println(sb.toString()+" = "+limit);
-		
-	    if (!f.mathPiperError(limit, false)) {
-	    	
-	    	// check not duplicated
-	    	sb.setLength(0);
-	    	sb.append("y=");
-	    	sb.append(limit);
-	    	if (!SB.toString().endsWith(sb.toString())) { // not duplicated
-	    	
-		    	if (SB.length() > 1) SB.append(',');
-		    	SB.append(sb);
-	    	}
-	    }
+        sb.append(',');
+        if (!positiveInfinity) sb.append('-'); // -Infinity
+        sb.append(Unicode.Infinity);
+        sb.append(')');
+
+        try {
+			String limit = kernel.evaluateGeoGebraCAS(sb.toString()).trim();
+			
+			//System.err.println(sb.toString()+" = "+limit);
+			
+		    if (!f.CASError(limit, false)) {
+		    	   	
+		    	// check not duplicated
+		    	sb.setLength(0);
+		    	sb.append("y=");
+		    	sb.append(limit);
+		    	if (!SB.toString().endsWith(sb.toString())) { // not duplicated
+		    	
+			    	if (SB.length() > 1) SB.append(',');
+			    	SB.append(sb);
+		    	}
+		    }
+        } catch (Throwable t) {
+        	// nothing to do
+        }
 
 
     }
     
-    protected static void getVerticalAsymptotesStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder verticalSB, boolean reverseCondition) {
+    protected void getVerticalAsymptotesStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder verticalSB, boolean reverseCondition) {
     	
-    	String functionStr = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+    	String functionStr = f.getFunction().getExpression().getCASstring(true);
     	// solve 1/f(x) == 0 to find vertical asymptotes
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
 	    
-        sb.append("Solve(Simplify(1/(");
+        sb.append("Solve(SimplifyFull(1/(");
         
         sb.append(functionStr);
-        sb.append("))==0,x)");
-		String verticalAsymptotes = f.evaluateMathPiper(sb.toString());
-		
-		//Application.debug("solutions: "+verticalAsymptotes);
-		
-    	
-    	if (!f.mathPiperError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
-		
-	    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replace('(',' '); // eg (-1)
-	    	verticalAsymptotes = verticalAsymptotes.replace(')',' ');
-	    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
-	    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
+        sb.append(")))");
+        
+        try {
+
+			String verticalAsymptotes = kernel.evaluateGeoGebraCAS(sb.toString());
+			
+			//Application.debug("solutions: "+verticalAsymptotes);
+			
 	    	
-	    	// check they are really asymptotes
-	    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
-	    		
-	    		boolean repeat = false;
-	    		if (i > 0) { // check for repeats
-	    			for (int j = i ; j < verticalAsymptotesArray.length ; i++) {
-	    				if (verticalAsymptotesArray[i].equals(verticalAsymptotesArray[j])) {
-	    					repeat = true;
-	    					break;
-	    				}
-	    			}
-	    		}
-	    		
-	    		boolean isInRange = false;
-	    		try {
-	    			isInRange = parentFunction.evaluateCondition(Double.parseDouble(verticalAsymptotesArray[i]));
-	    		} catch (Exception e) {Application.debug("Error parsing: "+verticalAsymptotesArray[i]);}
-	    		if (reverseCondition) isInRange = !isInRange;
-	    		
-	    		if (!repeat && isInRange) {
-	    		
-		    		sb.setLength(0);
-		            sb.append("Limit(x,");
-		            sb.append(verticalAsymptotesArray[i]);
-		            sb.append(",Left)");
-		            sb.append(functionStr);
-		     		String limit = f.evaluateMathPiper(sb.toString());
-		            //Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
-		            if (!f.mathPiperError(limit, true)) {
-		            	if (verticalSB.length() > 1) verticalSB.append(',');
-           	
-		            	verticalSB.append("x=");
-		            	verticalSB.append(verticalAsymptotesArray[i]);
-		            }
-	    		}
-	   		
-	    	}
+	    	if (!f.CASError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
+			
+		    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
+		    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
+		    	//verticalAsymptotes = verticalAsymptotes.replace('(',' '); // eg (-1)
+		    	//verticalAsymptotes = verticalAsymptotes.replace(')',' ');
+		    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
+		    	verticalAsymptotes = verticalAsymptotes.replaceAll("x =", "");
+		    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
+		    	
+		    	// check they are really asymptotes
+		    	for (int i = 0 ; i < verticalAsymptotesArray.length ; i++) {
+		    		//Application.debug(verticalAsymptotesArray[i]);
+		    		boolean repeat = false;
+		    		if (i > 0 && verticalAsymptotesArray.length > 1) { // check for repeats
+		    			for (int j = 0  ; j < i ; j++) {
+		    				if (verticalAsymptotesArray[i].equals(verticalAsymptotesArray[j])) {
+		    					repeat = true;
+		    					break;
+		    				}
+		    			}
+		    		}
+		    		
+		    		boolean isInRange = false;
+		    		try {
+		    			//isInRange = parentFunction.evaluateCondition(Double.parseDouble(verticalAsymptotesArray[i]));
+		    			isInRange = parentFunction.evaluateCondition(kernel.getAlgebraProcessor().evaluateToNumeric(verticalAsymptotesArray[i]).getDouble());
+		    		} catch (Exception e) {Application.debug("Error parsing: "+verticalAsymptotesArray[i]);}
+		    		if (reverseCondition) isInRange = !isInRange;
+		    		
+		    		if (!repeat && isInRange) {
+		    		
+			    		sb.setLength(0);
+			            sb.append("Limit(");
+			            sb.append(functionStr);
+			            sb.append(",");
+			            sb.append(verticalAsymptotesArray[i]);
+			            sb.append(")");
 	
-			//Application.debug("verticalAsymptotes: "+verticalSB);
-		}
+			            try {
+			     		String limit = kernel.evaluateGeoGebraCAS(sb.toString());
+			            //Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
+			            if (!f.CASError(limit, true)) {
+			            	if (verticalSB.length() > 1) verticalSB.append(',');
+	           	
+			            	verticalSB.append("x=");
+			            	verticalSB.append(verticalAsymptotesArray[i]);
+			            }
+			            } catch (Throwable e) {
+			            	e.printStackTrace();
+			            }
+		    		}
+		   		
+		    	}
+	    	}
+	    		
+	    }catch (Throwable t) { t.printStackTrace(); }
 	}
 
-	final private boolean mathPiperError(String str, boolean allowInfinity) {
+	final private boolean CASError(String str, boolean allowInfinity) {
 		if (str == null || str.length()==0) return true;
+		if (str.equals("?")) return true; // undefined/NaN
+//		if (str.indexOf("%i") > -1 ) return true; // complex answer
+		str = str.toLowerCase(Locale.US);
+		if (str.startsWith("'")) return true; // maxima error eg 'diff(
+		if (!allowInfinity && str.indexOf(Unicode.Infinity) > -1) return true;
 		if (str.length() > 6) {
-			if (str.startsWith("Limit")) return true;
-			if (str.startsWith("Solve")) return true;
-			if (str.startsWith("Undefined")) return true;
-			if (!allowInfinity && str.indexOf("Infinity") > -1) return true;
+			if (str.startsWith("limit")) return true;
+			if (str.startsWith("solve")) return true;
+			if (str.startsWith("undefined")) return true;
+			//if (!allowInfinity && str.indexOf("Infinity") > -1) return true;
 		}
 		return false;    	
     }
     
    
-    private String evaluateMathPiper(String exp) {
-    	return kernel.evaluateMathPiper(exp);
-
-    	/*
-    	// workaround for http://code.google.com/p/mathpiper/issues/detail?id=35
-    	// TODO remove when fixed
-    	if (ret != null) ret = ret.replaceAll("else", " else ");
-    	
-    	// *partial* workaround for MathPiper bug
-    	// http://code.google.com/p/mathpiper/issues/detail?id=31
-    	if (ret == null || ret.indexOf("else") == -1) return ret;
-    	
-    	String str[] = ret.split("else");
-    	if (str.length != 2) return "Undefined";
-    	
-    	if (str[0].equals(str[1])) {
-    		//System.err.println("Manually simplifying "+ret+" to "+str[1]);
-    		return str[0]; // eg 0else0 returned
-    	}
-    	
-    	return ret; // might be error or valid expression */
-    	
-    }
 
 }

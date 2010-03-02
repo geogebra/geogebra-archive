@@ -188,7 +188,7 @@ TOKEN :  {
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
-  | < UNDEFINED: ( "?" | "\ufffd" | "Undefined" | "NaN" ) >
+  | < UNDEFINED: ( "?" | "\ufffd" | "Undefined" | "NaN" | "und" ) >
   | < POWER0:   "\u2070" >
   | < POWER1:   "\u00b9" >
   | < SQUARED:  "\u00b2" >

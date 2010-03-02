@@ -289,7 +289,7 @@ public final class RawMaximaSession {
     
     private String doMaximaUntil(String input, String inchar) throws MaximaTimeoutException {
         ensureStarted();
-        Application.debug("Sending to Maxima: "+ input);
+        //Application.debug("Sending to Maxima: "+ input);
         maximaInput.println(input);
         maximaInput.flush();
         if (maximaInput.checkError()) {
