@@ -943,6 +943,10 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		    	//verticalAsymptotes = verticalAsymptotes.replace(')',' ');
 		    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
 		    	verticalAsymptotes = verticalAsymptotes.replaceAll("x =", "");
+		    	verticalAsymptotes = verticalAsymptotes.replaceAll("Complex(.*)", ""); // remove complex roots (MathPiper)
+		    	
+		    	//verticalAsymptotes = verticalAsymptotes.replaceAll("%i", ""); // remove complex roots (Maxima)
+
 		    	String[] verticalAsymptotesArray = verticalAsymptotes.split(",");
 		    	
 		    	// check they are really asymptotes
@@ -960,8 +964,10 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		    		
 		    		boolean isInRange = false;
 		    		try {
+		    			Application.debug(verticalAsymptotesArray[i]+"");
+		    			if (verticalAsymptotesArray[i].trim().equals("")) isInRange = false; // was complex root
 		    			//isInRange = parentFunction.evaluateCondition(Double.parseDouble(verticalAsymptotesArray[i]));
-		    			isInRange = parentFunction.evaluateCondition(kernel.getAlgebraProcessor().evaluateToNumeric(verticalAsymptotesArray[i]).getDouble());
+		    			else isInRange = parentFunction.evaluateCondition(kernel.getAlgebraProcessor().evaluateToNumeric(verticalAsymptotesArray[i]).getDouble());
 		    		} catch (Exception e) {Application.debug("Error parsing: "+verticalAsymptotesArray[i]);}
 		    		if (reverseCondition) isInRange = !isInRange;
 		    		
