@@ -746,28 +746,24 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	}
 	
 	public double getLimit(double x, int direction) {
-   	String functionIn = getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+   	String functionIn = fun.getExpression().getCASstring(true);//getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 	    
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
 	    sb.setLength(0);
-        sb.append("Limit(x,");
-        sb.append(x+"");
-        switch (direction) {
-        case -1:
-            sb.append(",Right)");
-        	break;
-        case 1:
-            sb.append(",Left)");
-       	break;
-        case 0:
-            sb.append(')');
-       	break;
-        }
+        sb.append("Limit");
+        if (direction == -1) sb.append("Above");
+        else if (direction == 1) sb.append("Below");       
+        sb.append('(');
         sb.append(functionIn);
-		String functionOut = evaluateMathPiper(sb.toString());
+        sb.append(',');
+        sb.append(x+"");
+        sb.append(')');
+
+
 		
 		try {
+			String functionOut = kernel.evaluateGeoGebraCAS(sb.toString());
 			NumberValue nv = kernel.getAlgebraProcessor().evaluateToNumeric(functionOut);
 			return nv.getDouble();
 		} catch (Exception e) {
