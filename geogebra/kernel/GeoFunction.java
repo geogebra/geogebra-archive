@@ -977,7 +977,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 			            try {
 			     		String limit = kernel.evaluateGeoGebraCAS(sb.toString());
 			            //Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
-			            if (!f.CASError(limit, true)) {
+			            if (limit.equals("?") || !f.CASError(limit, true)) {
 			            	if (verticalSB.length() > 1) verticalSB.append(',');
 	           	
 			            	verticalSB.append("x=");
