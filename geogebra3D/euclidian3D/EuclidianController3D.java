@@ -207,6 +207,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * @param point a point
 	 */
 	protected void setMouseInformation(GeoPoint3D point){
+		if (view3D == null) Application.debug("setMouseInformation: view3D = null");
+		if (mouseLoc == null) Application.debug("setMouseInformation: mouseLoc = null");
+		if (mouseLoc == null) return;
 		Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 		view3D.toSceneCoords3D(o);
 		point.setWillingCoords(o);
