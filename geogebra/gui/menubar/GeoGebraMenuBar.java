@@ -2,6 +2,7 @@ package geogebra.gui.menubar;
 
 import geogebra.GeoGebra;
 import geogebra.gui.layout.Layout;
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -185,7 +186,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 		sb.append(app.getPlain("ApplicationName"));
 		sb.append(" ");
 		sb.append(GeoGebra.VERSION_STRING);
-		sb.append((app.getKernel().DEFAULT_CAS == Application.CAS_MAXIMA) ? 'm' : "" );
+		sb.append((Kernel.DEFAULT_CAS == Application.CAS_MAXIMA) ? 'm' : "" );
 		if (app.getApplet() != null) sb.append(" Applet");
 		else if (app.webstart()) sb.append(" Webstart");
 		sb.append("</b>  (");
