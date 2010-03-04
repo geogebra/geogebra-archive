@@ -230,7 +230,7 @@ TOKEN : {
         "\u0a66"-"\u0a6f",
         "\u0ae6"-"\u0aef",
         "\u0b66"-"\u0b6f",
-        "\u0be7"-"\u0bef",
+        "\u0be6"-"\u0bef",
         "\u0c66"-"\u0c6f",
         "\u0ce6"-"\u0cef",
         "\u0d66"-"\u0d6f",
@@ -1414,12 +1414,12 @@ ExpressionValue myDouble():
 {       
    (     (c = <FLOAT> | c = <EFLOAT>)
     	{
-    		val = Double.parseDouble( c.image );
+    		val = MyDouble.parseDouble( c.image );
     	}
     |
       (c = <BFLOAT>) 
   		{
-    		val = Double.parseDouble( c.image.replaceFirst("b", "E" ));
+    		val = MyDouble.parseDouble( c.image.replaceFirst("b", "E" ));
     	}
    )
   {
