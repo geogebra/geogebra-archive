@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:annotation>
 		<xs:documentation>
-This schema shoul be compatible with GeoGebra 4.0 file format.
+This is a schema for file geogebra.xml which should be compatible with GeoGebra 4.0 file format.
 </xs:documentation>
 		<xs:appinfo>
 This schema is a part of GeoGebra which is free software; you can redistribute it and/or
@@ -20,16 +20,18 @@ along with GeoGebra; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 </xs:appinfo>
 	</xs:annotation>
+	<xs:include schemaLocation="common.xsd"/>
 	<xs:element name="geogebra">
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="gui" minOccurs="1"/>
-				<xs:element ref="euclidianView" minOccurs="1"/>
+			<xs:all>
+				<xs:element ref="gui"/>
+				<xs:element ref="euclidianView" minOccurs="0"/>
+				<xs:element ref="euclidianView3D" minOccurs="0"/>
 				<xs:element ref="spreadsheetView" minOccurs="0"/>
-				<xs:element ref="kernel" minOccurs="1"/>
-				<xs:element ref="construction" minOccurs="1"/>
+				<xs:element ref="kernel"/>
+				<xs:element ref="construction"/>
 				<xs:element ref="casSession" minOccurs="0"/>
-			</xs:sequence>
+			</xs:all>
 			<xs:attribute name="format" type="xs:double" use="required"/>
 		</xs:complexType>
 	</xs:element>
@@ -50,14 +52,38 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				
+				<xs:element name="labelingStyle" type="intVal" minOccurs="0"/>
+				<xs:element name="consProtColumns" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="col0" type="xs:boolean"/>
+						<xs:attribute name="col1" type="xs:boolean"/>
+						<xs:attribute name="col2" type="xs:boolean"/>
+						<xs:attribute name="col3" type="xs:boolean"/>
+						<xs:attribute name="col4" type="xs:boolean"/>
+						<xs:attribute name="col5" type="xs:boolean"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="consProtocol" minOccurs="0"> 
+					<xs:complexType>
+						<xs:attribute name="useColors" type="xs:boolean"/>
+						<xs:attribute name="showOnlyBreakpoints" type="xs:boolean"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="consProtNavigationBar" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="show" type="xs:boolean"/>
+						<xs:attribute name="playButton" type="xs:boolean"/>
+						<xs:attribute name="playDelay" type="xs:double"/>
+						<xs:attribute name="protButton" type="xs:boolean"/>
+						<xs:attribute name="consStep" type="xs:int"/>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="show" minOccurs="0"/>
 				
 				<xs:element ref="splitDivider" minOccurs="0"/>
 				
 				<xs:element ref="toolbar" minOccurs="0"/>
-				
-				
+								
 				<xs:element name="font" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="size" type="positiveInt" use="required"/>
@@ -81,7 +107,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			<xs:attribute name="cmdList" type="xs:boolean" />
 		</xs:complexType>
 	</xs:element>
-				
+	
 	<xs:element name="splitDivider">
 		<xs:annotation>
 			<xs:documentation>
@@ -96,7 +122,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			<xs:attribute name="horizontal" type="xs:boolean"/>
 		</xs:complexType>
 	</xs:element>
-				
+	
 	<xs:element name="toolbar">
 		<xs:annotation>
 			<xs:documentation>
@@ -223,21 +249,49 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 					</xs:complexType>
 				</xs:element>
 				
-				<xs:element name="axis" minOccurs="2" maxOccurs="2">
+				<xs:element ref="axis" minOccurs="2" maxOccurs="2"/>
+			
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="euclidianView3D">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="size" minOccurs="0"/><!-- does it really occur? -->
+				<xs:element name="coordSystem">
 					<xs:complexType>
-						<xs:attribute name="id" type="axisIds" use="required"/>
+						<xs:attribute name="xZero" type="xs:double"/>
+						<xs:attribute name="yZero" type="xs:double"/>
+						<xs:attribute name="zZero" type="xs:double"/>
+						<xs:attribute name="scale" type="xs:double"/>
+						<xs:attribute name="xAngle" type="xs:double"/>
+						<xs:attribute name="zAngle" type="xs:double"/>
+					</xs:complexType>
+				</xs:element>
+					
+				<xs:element ref="axis" minOccurs="3" maxOccurs="3"/>
+				<xs:element name="plane">
+					<xs:complexType>
 						<xs:attribute name="show" type="xs:boolean"/>
-						<xs:attribute name="label" type="xs:string"/>
-						<xs:attribute name="unitLabel" type="xs:string"/>
-						<xs:attribute name="tickStyle" type="tickStyles"/>
-						<xs:attribute name="tickDistance" type="xs:double"/>
-						<xs:attribute name="showNumbers" type="xs:boolean"/>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	
+	
+	<xs:element name="axis">
+		<xs:complexType>
+			<xs:attribute name="id" type="axisIds" use="required"/>
+			<xs:attribute name="show" type="xs:boolean"/>
+			<xs:attribute name="label" type="xs:string"/>
+			<xs:attribute name="unitLabel" type="xs:string"/>
+			<xs:attribute name="tickStyle" type="tickStyles"/>
+			<xs:attribute name="tickDistance" type="xs:double"/>
+			<xs:attribute name="showNumbers" type="xs:boolean"/>
+		</xs:complexType>
+	</xs:element>
 	
 	<xs:element name="kernel">
 		<xs:complexType>
@@ -256,175 +310,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="coordStyle" type="intVal"/>
+				<xs:element name="startAnimation" type="boolVal"/> 
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
-	<xs:element name="construction">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:choice maxOccurs="unbounded" minOccurs="0">
-					<xs:element name="command">
-						<xs:complexType>
-							<xs:sequence>
-								<xs:element name="input" type="ioType"/>
-								<xs:element name="output" type="ioType"/>
-							</xs:sequence>
-							<xs:attribute name="name" type="xs:string" use="required"/>
-						</xs:complexType>
-					</xs:element>
-					<xs:element ref="element"/>
-					<xs:element name="expression">
-						<xs:complexType>
-							<xs:attribute name="exp" type="xs:string"/>
-							<xs:attribute name="label" type="xs:string"/>
-							<xs:attribute name="type" type="elType"/>
-						</xs:complexType>
-					</xs:element>
-				</xs:choice>
-			</xs:sequence>
-			<xs:attribute name="title" type="xs:string"/>
-			<xs:attribute name="author" type="xs:string"/>
-			<xs:attribute name="date" type="xs:string"/>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="element">
-	<xs:annotation>
-	<xs:documentation>
-	Subelements tooltipMode, javascript and linkedGeo only available with GeoGebra >= 4.0.
-	</xs:documentation>
-	</xs:annotation>
-		<xs:complexType>
-			<xs:all>
-				<xs:element name="animation" type="animation" minOccurs="0"/>
-				
-				<xs:element name="lineStyle" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="thickness" type="lineThickness"/>
-						<xs:attribute name="type" type="lineTypes"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="eqnStyle" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="style" type="eqnStyles" use="required"/>
-						<xs:attribute name="parameter" type="xs:string"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="value" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="val" type="doubleOrBool" use="required"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="slopeTriangleSize" type="intVal" minOccurs="0"/>
-				
-				<xs:element name="show">
-					<xs:complexType>
-						<xs:attribute name="object" type="xs:boolean"/>
-						<xs:attribute name="label" type="xs:boolean"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="condition" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="showObject" type="xs:string"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="checkbox" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="fixed" type="xs:boolean"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="objColor" type="rgbaColor"/>
-				
-				<xs:element name="layer" type="intVal"/>
-				
-				<xs:element name="labelMode" type="intVal"/>
-				
-				<xs:element name="outlyingIntersections" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="keepTypeOnTransform" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="caption" type="stringVal" minOccurs="0"/>
-				
-				<xs:element name="absoluteScreenLocation" minOccurs="0" type="xyCoords"/>
-				
-				<xs:element name="labelOffset" minOccurs="0" type="xyCoords"/>
-				
-				<xs:element name="tooltipMode" minOccurs="0" type="tooltipModes"/>
-				
-				<xs:element name="linkedGeo" minOccurs="0">
-				<xs:complexType>
-							<xs:attribute name="exp" type="xs:string"/>
-							
-				</xs:complexType>
-				</xs:element>
-						
-				
-				<xs:element name="javascript" minOccurs="0" type="stringVal"/>
-				
-				<xs:element name="file" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="name" type="xs:string"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="inBackground" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="eigenvectors" type="eigenvectors" minOccurs="0"/>
-				
-				<xs:element name="matrix" type="matrix" minOccurs="0" />
-				
-				<xs:element name="auxiliary" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="slider" type="slider" minOccurs="0"/>
-				
-				<xs:element name="fixed" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="font" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="serif" type="xs:boolean"/>
-						<xs:attribute name="size" type="positiveInt"/>
-						<xs:attribute name="style" type="nonNegInt"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="coords" type="coords" minOccurs="0"/>
-				
-				<xs:element name="startPoint" type="expCoords" minOccurs="0"/>
-				
-				<xs:element name="pointStyle" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="val" type="pointStyles"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="pointSize" type="doubleVal" minOccurs="0"/>
-				<xs:element name="coordStyle" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="style" type="coordStyles"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="allowReflexAngle" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="forceReflexAngle" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="emphasizeRightAngle" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="arcSize" type="intVal" minOccurs="0"/>
-			
-			</xs:all>
-			<xs:attribute name="type" type="elType"/>
-			<xs:attribute name="label" type="xs:string"/>
-		</xs:complexType>
-	</xs:element>
-	
+
 	<xs:element name="casSession">
 		<xs:annotation>
 			<xs:documentation>
@@ -462,297 +352,4 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			<xs:attribute name="value" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
-	
-	<xs:simpleType name="positiveInt">
-		<xs:restriction base="xs:integer">
-			<xs:minInclusive value="1"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="nonNegInt">
-		<xs:restriction base="xs:integer">
-			<xs:minInclusive value="0"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:complexType name="intVal">
-		<xs:attribute name="val" type="xs:int" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="doubleVal">
-		<xs:attribute name="val" type="xs:double" use="required"/>
-	</xs:complexType>
-				
-	
-	<xs:simpleType name="doubleOrBool">
-		<xs:union memberTypes="xs:double xs:boolean"/>
-	</xs:simpleType>
-	<xs:complexType name="boolVal">
-		<xs:attribute name="val" type="xs:boolean" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="stringVal">
-		<xs:attribute name="val" type="xs:string" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="xyCoords">
-		<xs:attribute name="x" type="xs:double" use="required"/>
-		<xs:attribute name="y" type="xs:double" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="coords">
-		<xs:attribute name="x" type="xs:double" use="required"/>
-		<xs:attribute name="y" type="xs:double" use="required"/>
-		<xs:attribute name="z" type="xs:double" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="expCoords">
-		<xs:annotation>
-			<xs:documentation>
-	Either exp (for relative start point) or numers x, y, z (for absolute start point) must be entered.
-	Number parameter is valid only for image elements and reffers to one of the corners (1 to 3)
-	</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="number" type="nonNegInt"/>
-		<xs:attribute name="x" type="xs:double"/>
-		<xs:attribute name="y" type="xs:double"/>
-		<xs:attribute name="z" type="xs:double"/>
-		<xs:attribute name="exp" type="xs:string"/>
-	</xs:complexType>
-	
-	<xs:complexType name="animation">
-		<xs:attribute name="step" type="xs:double"/>
-		<xs:attribute name="speed" type="xs:double"/>
-		<xs:attribute name="type" type="nonNegInt"/>
-		<xs:attribute name="playing" type="xs:boolean"/>
-	</xs:complexType>
-	
-	<xs:complexType name="rgbColor">
-		<xs:attribute name="r" type="nonNegInt" use="required"/>
-		<xs:attribute name="g" type="nonNegInt" use="required"/>
-		<xs:attribute name="b" type="nonNegInt" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="rgbaColor">
-		<xs:attribute name="r" type="nonNegInt" use="required"/>
-		<xs:attribute name="g" type="nonNegInt" use="required"/>
-		<xs:attribute name="b" type="nonNegInt" use="required"/>
-		<xs:attribute name="alpha" type="xs:double"/>
-	</xs:complexType>
-				
-	
-	<xs:complexType name="ioType">
-		<xs:attribute name="a0" type="xs:string"/>
-		<xs:attribute name="a1" type="xs:string"/>
-		<xs:attribute name="a2" type="xs:string"/>
-		<xs:attribute name="a3" type="xs:string"/>
-		<xs:attribute name="a4" type="xs:string"/>
-		<xs:attribute name="a5" type="xs:string"/>
-		<xs:attribute name="a6" type="xs:string"/>
-		<xs:attribute name="a7" type="xs:string"/>
-		<xs:attribute name="a8" type="xs:string"/>
-		<xs:attribute name="a9" type="xs:string"/>
-		<xs:attribute name="a10" type="xs:string"/>
-		<xs:attribute name="a11" type="xs:string"/>
-	</xs:complexType>
-	
-	<xs:complexType name="slider">
-		<xs:attribute name="min" type="xs:double"/>
-		<xs:attribute name="max" type="xs:double"/>
-		<xs:attribute name="width" type="xs:double" use="required"/>
-		<xs:attribute name="x" type="xs:double" use="required"/>
-		<xs:attribute name="y" type="xs:double" use="required"/>
-		<xs:attribute name="fixed" type="xs:boolean" use="required"/>
-		<xs:attribute name="absoluteScreenLocation" type="xs:boolean"/>
-		<xs:attribute name="horizontal" type="xs:boolean" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="eigenvectors">
-		<xs:attribute name="x0" type="xs:double" use="required"/>
-		<xs:attribute name="x1" type="xs:double" use="required"/>
-		<xs:attribute name="y0" type="xs:double" use="required"/>
-		<xs:attribute name="y1" type="xs:double" use="required"/>
-		<xs:attribute name="z0" type="xs:double" use="required"/>
-		<xs:attribute name="z1" type="xs:double" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="matrix">
-		<xs:attribute name="A0" type="xs:double" use="required"/>
-		<xs:attribute name="A1" type="xs:double" use="required"/>
-		<xs:attribute name="A2" type="xs:double" use="required"/>
-		<xs:attribute name="A3" type="xs:double" use="required"/>
-		<xs:attribute name="A4" type="xs:double" use="required"/>
-		<xs:attribute name="A5" type="xs:double" use="required"/>
-	</xs:complexType>
-	
-	<xs:simpleType name="elType">
-	<xs:annotation>
-	<xs:documentation>
-	Values "button" and "textfield" only available for GeoGebra >=4.0
-	</xs:documentation>
-	</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:pattern value="angle|boolean|button|conic(part)?|function|image|line|list|numeric|point|polygon|ray|segment|text(field)?|vector"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="algebraStyles">
-		<xs:annotation>
-			<xs:documentation>
-				Meaning of values:0=value,1=definition,2=command.
-				</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="2"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="tickStyles">
-		<xs:annotation>
-			<xs:documentation>
-				Meaning of values:0=major minor,1=major,2=none
-				</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="2"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="axisTypes">
-		<xs:annotation>
-			<xs:documentation>
-				Meaning of values:0=full,1=arrrow,2=full bold,3=full arrow bold
-				</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="3"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="lineThickness">
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="1"/>
-			<xs:maxInclusive value="13"/>
-		</xs:restriction>
-	
-	</xs:simpleType>
-	
-	<xs:simpleType name="lineTypes">
-		<xs:annotation>
-			<xs:documentation>
-	Meanings of values: 0=full, 10=dashed short,15=dashed long,20=dotted,30=dashed dotted
-	</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:enumeration value="0"/>
-			<xs:enumeration value="10"/>
-			<xs:enumeration value="15"/>
-			<xs:enumeration value="20"/>
-			<xs:enumeration value="30"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="rightAngleStyles">
-		<xs:annotation>
-			<xs:documentation>
-	Meanings of values: 0=none, 1=square, 2=dot,3=L (Belgian style).
-	</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="3"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="pointCapturings">
-		<xs:annotation>
-			<xs:documentation>
-	Meanings of values: 0=off, 1=on, 2=on grid,3=automatic.
-	</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="3"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="gridTypes">
-		<xs:annotation>
-			<xs:documentation>
-	Meanings of values: 0=cartesian, 1=isometric
-	</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="1"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="axisIds">
-		<xs:annotation>
-			<xs:documentation>
-	Meanings of values: 0=x, 1=y
-	</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="1"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	
-	<xs:simpleType name="pointStyles">
-		<xs:annotation>
-			<xs:documentation>
-	Meanings of values: -1=none, 0=full dot, 1=cross, 2=empty dot, 3=plus sign, 4=full diamond, 5=empty diamond, 
-	6=triangle north, 7=triangle south, 8=triangle east, 9=triangle west.
-	</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="-1"/>
-			<xs:maxInclusive value="9"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="pointTypes">
-		<xs:annotation>
-			<xs:documentation>
-	Meanings of values: -1=none, 0=full dot, 1=cross, 2=empty dot, 3=plus sign, 4=full diamond, 5=empty diamond, 
-	6=triangle north, 7=triangle south, 8=triangle east, 9=triangle west.
-	</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="-1"/>
-			<xs:maxInclusive value="9"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="tooltipModes">
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="4"/>
-		</xs:restriction>
-		</xs:simpleType>
-		
-	<xs:simpleType name="eqnStyles">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="implicit|explicit|specific|parametric"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="angleUnits">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="degree|radiant"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="coordStyles">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="cartesian|polar|complex"/>
-		</xs:restriction>
-	</xs:simpleType>
-
 </xs:schema>
