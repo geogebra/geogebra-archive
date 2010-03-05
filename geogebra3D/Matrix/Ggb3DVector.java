@@ -81,6 +81,30 @@ public class Ggb3DVector
 		
 	}
 	
+	/** returns v "x-coord"  
+	 * @return x-coord*/	
+	public double getX(){
+		return get(1);
+	}
+	
+	/** returns v "y-coord"  
+	 * @return y-coord*/	
+	public double getY(){
+		return get(2);
+	}
+	
+	/** returns v "z-coord"  
+	 * @return z-coord*/	
+	public double getZ(){
+		return get(3);
+	}	
+	
+	/** returns v "w-coord"  
+	 * @return w-coord*/	
+	public double getW(){
+		return get(4);
+	}
+	
 	/** returns number of rows of the vector 
 	 * @return number of rows
 	 */
