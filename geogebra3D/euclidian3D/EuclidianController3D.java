@@ -181,6 +181,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 */
 	private void movePointOnCurrentPlane(GeoPoint3D point, boolean useOldMouse){
 		
+		// Michael Borcherds
+		// move mouse fast, sometimes get mouseLoc = null
+		if (mouseLoc == null) return;
 		
 		//getting current pick point and direction v 
 		Ggb3DVector o;
@@ -244,7 +247,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		}else {
 			
 			
-			if (isShiftDown){ //moves the point along z-axis
+			if (isShiftDown && mouseLoc != null){ //moves the point along z-axis
 
 
 				//getting current pick point and direction v 

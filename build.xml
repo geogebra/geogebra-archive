@@ -55,9 +55,15 @@ office@geogebra.org
 	</target>
 	
 	<!-- build jar files for testing without obfuscation -->
-	<target name="geogebra-test" 
+	<target name="geogebra-unobfuscated" 
 		depends="clean, ggb-jar-files, delete3D, ggb-jar-index, 
 					copyJars, sign, pack, preloadHtml, finish">	  
+	</target>
+	
+	<!-- build jar files for testing without obfuscation -->
+	<target name="geogebra3D-unobfuscated" 
+		depends="clean, ggb-jar-files3D, 
+					copyJars3D, sign, pack, preloadHtml, finish">	  
 	</target>
 	
 	<!-- create all jar files -->
