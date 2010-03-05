@@ -688,6 +688,20 @@ public class MyXMLio {
 		w.close();
 		z.close();
 	}
+	
+	private final static void addXMLHeader(StringBuilder sb) {
+		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+	}
+
+	private final static void addGeoGebraHeader(StringBuilder sb, boolean isMacro) {
+		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\"");
+		sb.append(" xsi:noNamespaceSchemaLocation=\"http://www.geogebra.org/");
+		if (isMacro)
+			sb.append(GeoGebra.GGT_XSD_FILENAME); //eg	ggt.xsd
+		else
+			sb.append(GeoGebra.GGB_XSD_FILENAME); //eg	ggb.xsd
+		sb.append("\" xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >\n");
+	}
 
 	/**
 	 * Returns XML representation of all settings and construction. GeoGebra
@@ -695,11 +709,13 @@ public class MyXMLio {
 	 */
 	public String getFullXML() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\"");
-		sb.append(" xsi:noNamespaceSchemaLocation=\"http://www.geogebra.org/");
-		sb.append(GeoGebra.XSD_FILENAME); //eg	ggb32.xsd
-		sb.append("\" xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >\n");
+		addXMLHeader(sb);
+		addGeoGebraHeader(sb, false);
+		//sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\"");
+		//sb.append(" xsi:noNamespaceSchemaLocation=\"http://www.geogebra.org/");
+		//sb.append(GeoGebra.GGB_XSD_FILENAME); //eg	ggb.xsd
+		//sb.append("\" xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >\n");
 
 		// save gui settings
 		sb.append(app.getCompleteUserInterfaceXML(false));		
@@ -752,9 +768,11 @@ public class MyXMLio {
 	 */
 	public String getPreferencesXML() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
-						+ "\">\n");
+		addXMLHeader(sb);
+		addGeoGebraHeader(sb, false);
+		//sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
+		//				+ "\">\n");
 
 		// save gui settings
 		sb.append(app.getCompleteUserInterfaceXML(true));		
@@ -768,9 +786,11 @@ public class MyXMLio {
 	 */
 	public String getFullMacroXML(ArrayList macros) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
-						+ "\">\n");
+		addXMLHeader(sb);
+		addGeoGebraHeader(sb, true);
+		//sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
+		//				+ "\">\n");
 
 		// save construction
 		sb.append(kernel.getMacroXML(macros));
@@ -787,8 +807,10 @@ public class MyXMLio {
 		Application app = c.getApplication();
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
+		addXMLHeader(sb);
+		addGeoGebraHeader(sb, false);
+		//sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 
 		// save euclidianView settings
 		app.getEuclidianView().getXML(sb);
