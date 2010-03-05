@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 </xs:appinfo>
 	</xs:annotation>
 	
-	<xs:include schemaLocation="cons.xsd"/>
+	<xs:include schemaLocation="common.xsd"/>
 	<xs:element name="geogebra">
 		<xs:complexType>
 			<xs:sequence>
