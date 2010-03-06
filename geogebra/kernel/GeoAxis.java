@@ -38,7 +38,7 @@ public class GeoAxis extends GeoLine {
 				break;
 			
 			case Y_AXIS:
-				setCoords(1, 0, 0);
+				setCoords(-1, 0, 0);
 				label = "yAxis";
 				break;
 		}

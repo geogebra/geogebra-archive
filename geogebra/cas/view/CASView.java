@@ -18,6 +18,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -46,6 +47,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	private Application app;
 	private JPanel btPanel;
 	private HashMap<String,CASTableCellValue> assignmentCellMap;
+	private HashSet<String> ignoreUpdateVars;
 	
 	public CASView(Application app) {
 		kernel = app.getKernel();
@@ -59,6 +61,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		
 		// map for assignments to cell
 		assignmentCellMap = new HashMap<String,CASTableCellValue>();
+		ignoreUpdateVars = new HashSet<String>();
 		
 		// row header
 		final JList rowHeader = new RowHeader(consoleTable);		
@@ -134,6 +137,9 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	
 		
 		addFocusListener(this);		
+		
+		// TODO: remove
+		//attachView();
 	}		
 	
 	/** 
@@ -367,33 +373,53 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	 * Removes function definitions in the CAS 
 	 */
 	public void update(GeoElement geo) {
+		// check if update should be ignored
+		if (ignoreUpdateVars.contains(geo.getLabel())) {
+			// TODO: remove
+			System.out.println("IGNORE update: " + geo.getLabel());
+			return;
+		}
+		
 		boolean updateHandled = false;
+		int updateStartRow = 0;
 		
 		// TODO: remove
 		System.out.println("update: " + geo);
 		
 		// TODO: avoid updating loops, e.g.
 		// c := Limit[ (3k+1)/k, k, Infinity ]
-		/*
+		
 		// check if we have a cell with an assignment for geo
 		CASTableCellValue cellValue = assignmentCellMap.get(geo.getLabel());
-		if (cellValue != null) {
-			// make sure that we don't eval the input in GeoGebra again as
-			// this would lead to an updating loop
-			//setUseGeoGebraVariableValues(false);
-			cellValue.setInput(getCAS().toCASString(geo));
-			casInputHandler.processRowAndDependentsBelow(cellValue.getRow());
-			//setUseGeoGebraVariableValues(true);
+		if (cellValue != null && cellValue.isIndependent()) {
+			int row = cellValue.getRow();
+			updateStartRow = row+1;
+
+			// process row if geo is independent
+			// set input of assignment row, e.g. a := 2;
+			String assignmentStr = getCAS().toCASString(geo);
+			cellValue.setInput(assignmentStr);
+			casInputHandler.processRow(row);
+			consoleTable.repaint();
+			
 			updateHandled = true;
 		}
-		*/
+		
+		// update all dependent rows
+		casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
 		
 		if (!updateHandled && geo.isGeoFunction()) {
 			add(geo);
 		}
 	}
 	
-	private GeoElement updatingGeo;
+	void addToIgnoreUpdates(String var) {
+		ignoreUpdateVars.add(var);
+	}
+	
+	void removeFromIgnoreUpdates(String var) {
+		ignoreUpdateVars.remove(var);
+	}
 
 	/**
 	 * Renames function definitions in the CAS 

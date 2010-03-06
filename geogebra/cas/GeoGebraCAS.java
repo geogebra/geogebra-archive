@@ -262,8 +262,8 @@ public class GeoGebraCAS {
 	}
 	
 	/**
-	 * Returns a function from GeoGebra as a MathPiper string. For example f(x) = a x^2 is
-	 * returned as "f(x) := a * x^2"
+	 * Returns a representation of geo in GeoGebraCAS syntax.
+	 * For example, "f(x) := a x^2" or "a := 20"
 	 */
 	public String toCASString(GeoElement geo) {
 		if (!geo.isDefined()) return null;
@@ -282,7 +282,10 @@ public class GeoGebraCAS {
 		else {
 			sb.append(geo.getLabel());
 			sb.append(" := ");
-			sb.append(geo.toValueString());
+			if (geo.isIndependent())
+				sb.append(geo.toValueString());
+			else 
+				sb.append(geo.getCommandDescription());
 		}
 
 		return sb.toString();

@@ -225,6 +225,13 @@ public class CASTableCellValue {
 	}
 	
 	/**
+	 * Returns whether this cell has no inputVariables and no row references.
+	 */
+	final public boolean isIndependent() {
+		return !includesRowReferences && (invars == null || invars.isEmpty()); 
+	}
+	
+	/**
 	 * Returns the assignment variable of this cell. For example,
 	 * "c" is the assignment variable of "c := a + b"
 	 * @return may be null

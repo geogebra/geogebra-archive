@@ -128,29 +128,33 @@ public class CASInputHandler {
 			evalText = sb.toString();
 		}
 		
-		// process row and all dependent rows below
-		boolean success = processRowAndDependentsBelow(selRow);
+		// process given row
+		boolean success = processRow(selRow);
+		
+		// process dependent rows below
+		if (success) {
+			// check if the processed row is an assignment, e.g. b := 25
+			String var = cellValue.getAssignmentVariable();
+			// process all dependent rows below
+			success = processDependentRows(var, selRow);
+		}
 		
 		// start editing row below successful evaluation
+		boolean isLastRow = consoleTable.getRowCount() == selRow+1;
 		boolean goDown = success && 
 			// we are in last row or next row is empty
-			(consoleTable.getRowCount() == selRow+1 || consoleTable.isRowEmpty(selRow+1));
+			(isLastRow || consoleTable.isRowEmpty(selRow+1));
 		consoleTable.startEditingRow(goDown ? selRow+1 : selRow);
 	}
 	
 	/**
-	 * Processes the given row and all rows below that depend on it.
+	 * Processes all dependent rows starting with the given row that depend on var
+	 * or have dynamic cell references.
+	 * @param var: changed variable
 	 * @return whether processing was successful
 	 */
-	public boolean processRowAndDependentsBelow(int row) {
-		// process given row
-		boolean success = processRow(row);
-		if (!success) return false;
-		
-		// check if the processed row is an assignment, e.g. b := 25
-		// then we need to process all rows below that depend on this variable b
-		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(row);
-		String var = cellValue.getAssignmentVariable();
+	public boolean processDependentRows(String var, int startRow) {
+		boolean success = false;
 		
 		// PROCESS DEPENDENT ROWS BELOW
 		// we need to collect all assignment variables that are changed
@@ -165,12 +169,13 @@ public class CASInputHandler {
 		changedVars.clear();
 		if (var != null) changedVars.add(var); // assignment variable like "b" in "b := 5"
 
-		// only allow assignments to free geos that already exist
+		// only allow assignments to free geos when they already exist
+		// in order to avoid redefinitions
 		assignToFreeGeoOnly = true;
 		
 		// process all rows below that have one of vars as inputVariable
-		for (int i = row + 1; i < consoleTable.getRowCount(); i++) {
-			cellValue = consoleTable.getCASTableCellValue(i);
+		for (int i = startRow; i < consoleTable.getRowCount(); i++) {
+			CASTableCellValue cellValue = consoleTable.getCASTableCellValue(i);
 			
 			// check for row references like $2
 			boolean needsProcessing = cellValue.includesRowReferences();
@@ -204,11 +209,32 @@ public class CASInputHandler {
 	}
 	
 	/**
+	 * Returns whether it's allowed to change var in GeoGebra at the moment.
+	 * This is important to avoid unnecessary redefinitions.
+	 * @param var
+	 * @return
+	 */
+	private boolean isGeoGebraAssignmentAllowed(String var) {		
+		// don't allow assignment to dependent geo
+		if (assignToFreeGeoOnly) {
+			// check for dependent geo with label var
+			GeoElement geo = kernel.lookupLabel(var);
+			if (geo != null && !geo.isIndependent()) {
+				// TODO: remove
+				System.out.println("NO assignment to dependent: " + var);
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Processes the input of the given row and updates the row's output.
 	 * @param row number
 	 * @return whether processing was successful
 	 */
-	private boolean processRow(int row) {
+	final boolean processRow(int row) {
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(row);
 		
 		// resolve dynamic references for prefix and postfix
@@ -220,8 +246,10 @@ public class CASInputHandler {
 		String result = null;
 		try {
 			// evaluate using GeoGebraCAS syntax
+			//currentUpdateVar = cellValue.getAssignmentVariable();
 			result = evaluateGeoGebraCAS(cellValue.getEvalText(), row);
 		} catch (Throwable th) {
+			th.printStackTrace();
 			System.err.println("GeoGebraCAS.processRow " + row + ": " + th.getMessage());
 		}
 		
@@ -387,7 +415,8 @@ public class CASInputHandler {
 	 private synchronized String processCASviewInput(String inputExp) throws Throwable {		 
 		// PARSE input to check if it's a valid expression
 		ValidExpression inVE = casParser.parseGeoGebraCASInput(inputExp);
-		boolean assignment = inVE.getLabel() != null;
+		String assignmentVar = inVE.getLabel();
+		boolean assignment = assignmentVar != null;
 		
 		// EVALUATE input expression with current CAS
 		String CASResult = null;
@@ -404,34 +433,26 @@ public class CASInputHandler {
 		// GeoGebra Evaluation needed?
 		boolean evalInGeoGebra = false;
 		if (casView.getUseGeoGebraVariableValues()) {
-			boolean continueChecking = true;
-			
-			// check if redefining geos is allowed
-			if (assignment && assignToFreeGeoOnly) {
-				GeoElement geo = kernel.lookupLabel(inVE.getLabel());
-				if (geo != null && !geo.isIndependent()) {
-					// don't allow assignment to dependent geo
-					evalInGeoGebra = false;
-					continueChecking = false;
-					//System.out.println("don't allow assignment to dependent geo: " + geo + ", CASResult: " + CASResult);
-				}
-			}
-			
-			if (continueChecking) {
-				boolean delete = inputExp.startsWith("Delete") || inputExp.startsWith(casView.getApp().getCommand("Delete"));	
-				boolean CASResultContainsCommands = CASResult != null && CASResult.indexOf('[') > -1;
-				
+			// check if assignment is allowed
+			if (assignment) {
+				// assignment (e.g. a := 5, f(x) := x^2)
+				evalInGeoGebra = isGeoGebraAssignmentAllowed(assignmentVar);
+			}		
+			else {
 				// evaluate input expression in GeoGebra if we have
-				// - a new assignment (e.g. a := 5, f(x) := x^2)
 				// - or Delete, e.g. Delete[a]
-				// - or MathPiper was not successful
-				// - or MathPiper result contains commands
-				evalInGeoGebra = assignment || delete || !CASSuccessful || CASResultContainsCommands;
+				// - or CAS was not successful
+				// - or CAS result contains commands
+				evalInGeoGebra = !CASSuccessful || isDeleteCommand(inputExp) || containsCommand(CASResult);
 			}
 		}
 
 		String ggbResult = null;
 		if (evalInGeoGebra) {
+			// we have just set this variable in the CAS, so ignore the update fired back by the
+			// GeoGebra kernel when we call evalInGeoGebra
+			casView.addToIgnoreUpdates(assignmentVar);
+			
 			// EVALUATE inputExp in GeoGebra
 			try {
 				// process inputExp in GeoGebra
@@ -463,6 +484,9 @@ public class CASInputHandler {
 					System.err.println("GeoGebra evaluation failed: " + ggbEval + "\n error: " + th2.toString());
 				}
 			}
+			
+			// handle future updates of assignmentVar again
+			casView.removeFromIgnoreUpdates(assignmentVar);
 		}
 		
 		// return result string:
@@ -494,6 +518,14 @@ public class CASInputHandler {
 		}
 	}
 	 
+	 private boolean isDeleteCommand(String inputExp) {
+		 return inputExp.startsWith("Delete") || inputExp.startsWith(casView.getApp().getCommand("Delete"));	
+	 }
+	 
+	 private boolean containsCommand(String CASResult) {
+		 return  CASResult != null && CASResult.indexOf('[') > -1;
+	 }
+
 	 private String getLabelForAssignment(ValidExpression ve) {
 			if (ve instanceof Function) {
 				StringBuilder sb = new StringBuilder();
