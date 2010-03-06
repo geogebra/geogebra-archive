@@ -15,8 +15,10 @@ package geogebra.main;
 
 
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
@@ -26,6 +28,13 @@ import java.util.prefs.Preferences;
  * @author Markus Hohenwarter
  * @date May 16, 2007
  */
+
+/*	Additions by Hans-Petter Ulven 6 Mars, 2010
+ *  Subclass GeoGebraPortablePreferences, for saving prefs to propertyfile
+ *  Added some constants
+ *  Small rewrite of getPref() to return subclass singleton instead of this.singleton 
+ */
+
 public class GeoGebraPreferences {		
 	
 	public static final String AUTHOR = "author";
@@ -72,15 +81,38 @@ public class GeoGebraPreferences {
 	private  final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
 	private  final String APP_FILE_ = "app_file_";		
 		
+	/* Ulven 06.03.10 */
+	private  final	int		MODE_SYS	=	0;		//Default
+	private  final	int		MODE_FILE	=	1;		//Preferences in property file
+	private final 	static	String	PROPERTY_FILENAME	=	"preferences.properties";
+	
 	
 	private static GeoGebraPreferences singleton;
 	
 	public synchronized static GeoGebraPreferences getPref() {
+		/* --- New code 06.03.10 - Ulven
+		 * Singleton getInstance() method
+		 * Checks if preferences.properties is in jar-folder
+		 * and returns subclass GeoGebraPortablePrefrences if it is,
+		 * otherwise as original 
+		 * @author H-P Ulven
+		 * @version 2010-03-06
+		 */ 
+		if (singleton == null){
+			try{
+				File propertyfile=geogebra.util.Util.findFile(PROPERTY_FILENAME);
+				if(propertyfile!=null){
+					singleton=geogebra.main.GeoGebraPortablePreferences.getPref();
+				}//if exists
+			}catch(Exception e){
+				Application.debug("Could not load preferences.properties...");//e.printStackTrace();
+			}//try-catch
+		}//if	
+		// --- New code end
 		if (singleton == null)
 			singleton = new GeoGebraPreferences();
 		return singleton;
 	}
-	
 	
 	public  String loadPreference(String key, String defaultValue) {
 		return ggbPrefs.get(key, defaultValue);
