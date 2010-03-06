@@ -15,12 +15,12 @@ package geogebra.kernel;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
-import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Util;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -1093,12 +1093,42 @@ public class Construction {
 			return;
 		}
 		
-		// check for circular definition
-		if (newGeo.isChildOf(oldGeo)) {
-			restoreCurrentUndoInfo();
-			throw new CircularDefinitionException();
-		}
-				
+	    // check for circular definition
+	    if (newGeo.isChildOf(oldGeo)) {
+
+	        // check for eg a = a + 1, A = A + (1,1)
+	    	if (oldGeo.isIndependent() && oldGeo instanceof GeoNumeric) {
+
+	            ((GeoNumeric)oldGeo).setValue(((GeoNumeric)newGeo).getDouble());
+	            oldGeo.updateRepaint();
+	            return;
+
+	        } else if (oldGeo.isIndependent() && oldGeo instanceof GeoPoint) {
+
+	            ((GeoPoint)oldGeo).set(newGeo);
+	            oldGeo.updateRepaint();
+	            return;
+
+	        } else if (oldGeo.isIndependent() && oldGeo instanceof GeoVector) {
+
+	            ((GeoVector)oldGeo).set(newGeo);
+	            oldGeo.updateRepaint();
+	            return;
+
+	        } else if (oldGeo.isIndependent() && oldGeo instanceof GeoPoint3D) {
+
+	            ((GeoPoint3D)oldGeo).set(newGeo);
+	            oldGeo.updateRepaint();
+	            return;
+
+	        } else {
+
+	            restoreCurrentUndoInfo();
+	            throw new CircularDefinitionException();
+
+	        }
+
+	    }				
 		// 1) remove all brothers and sisters of oldGeo
 		// 2) move all predecessors of newGeo to the left of oldGeo in construction list
 		prepareReplace(oldGeo, newGeo);
