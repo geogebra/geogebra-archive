@@ -276,6 +276,9 @@ public class CASmaxima extends CASgeneric {
 	    // make sure integral(1/x) = log(abs(x))
 	    ggbMaxima.executeRaw("logabs:true;");
 	    
+	    // make sure algsys (solve) doesn't return complex roots
+	    ggbMaxima.executeRaw("realonly:true;");
+	    
 	    // define custom functions
 	    ggbMaxima.executeRaw("log10(x) := log(x) / log(10);");
 	    ggbMaxima.executeRaw("log2(x) := log(x) / log(2);");
@@ -284,6 +287,15 @@ public class CASmaxima extends CASgeneric {
 	    // needed to define lcm()
 	    ggbMaxima.executeRaw("load(functs)$");
 	    
+	    /* This function takes an expression ex and returns a list of coefficients of v */
+	    ggbMaxima.executeRaw("coefflist(ex,v):= block([deg,kloop,cl]," +
+	    		"cl:[]," +
+	      "ex:ev(expand(ex),simp)," +
+	      "deg:degree(ex,v)," +
+	      "ev(for kloop:0 thru deg do\n" +
+	      "cl:append(cl,[coeff(ex,v,kloop)]),simp)," +
+	      "cl" +
+	      ")$");
 	   
 
 	    
