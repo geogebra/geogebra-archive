@@ -134,7 +134,7 @@ public class CASTableCellValue {
 	 * @param eval: selected part of the input that needs to be evaluated
 	 * @param postfix: end part that should not be evaluated
 	 */
-	public void setInput(String prefix, String eval, String postfix) {
+	public boolean setInput(String prefix, String eval, String postfix) {
 		this.prefix = prefix;
 		this.eval = eval;
 		this.postfix = postfix;
@@ -145,11 +145,15 @@ public class CASTableCellValue {
 			//setInput(newText);
 			// TODO: handle structure problem by causing error
 			System.err.println("Structure problem: " + newText);
+			setOutput(view.getApp().getError("CAS.SelectionStructureError"), true);
+			return false;
 		}
 		
 		// extract command from eval
 		int bracketPos = eval.indexOf('[');
 		evalCmd = bracketPos > 0 ? eval.substring(0, bracketPos) : "";
+		
+		return true;
 	}
 	
 	/**

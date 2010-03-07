@@ -101,8 +101,11 @@ public class CASInputHandler {
 			evalText = fixInputErrors(evalText);
 		
 		// remember input selection information for future calls of processRow()
-		cellValue.setInput(prefix, evalText, postfix);
-	
+		// check if structure of selection is ok
+		boolean structureOK = cellValue.setInput(prefix, evalText, postfix);
+		if (!structureOK)
+			return;
+		
 		// Substitute dialog
 		if (ggbcmd.equals("SubstituteDialog")) {
 			// show substitute dialog
@@ -112,27 +115,24 @@ public class CASInputHandler {
 		}
 		
 		// standard case: evaluate and update row
-		if (ggbcmd.equals("Eval")){
-			// replace "Eval" by "Simplify"
-			ggbcmd = "Simplify";
-		}
-		
-		// prepare evalText as ggbcmd[ evalText, parameters ... ]
-		StringBuilder sb = new StringBuilder();
-		sb.append(ggbcmd);
-		sb.append("[");
-		sb.append(evalText);
-		if (params != null) {
-			for (int i=0; i < params.length; i++) {
-				sb.append(',');
-				sb.append(params[i]);
+		if (!ggbcmd.equals("Eval")) {
+			// prepare evalText as ggbcmd[ evalText, parameters ... ]
+			StringBuilder sb = new StringBuilder();
+			sb.append(ggbcmd);
+			sb.append("[");
+			sb.append(evalText);
+			if (params != null) {
+				for (int i=0; i < params.length; i++) {
+					sb.append(',');
+					sb.append(params[i]);
+				}
 			}
+			sb.append("]");
+			evalText = sb.toString();
+			
+			// update input selection information for future calls of processRow()
+			cellValue.setInput(prefix, evalText, postfix);
 		}
-		sb.append("]");
-		evalText = sb.toString();
-		
-		// update input selection information for future calls of processRow()
-		cellValue.setInput(prefix, evalText, postfix);
 		
 		// process given row
 		boolean success = processRow(selRow);
@@ -160,7 +160,7 @@ public class CASInputHandler {
 	 * @return whether processing was successful
 	 */
 	public boolean processDependentRows(String var, int startRow) {
-		boolean success = false;
+		boolean success = true;
 		
 		// PROCESS DEPENDENT ROWS BELOW
 		// we need to collect all assignment variables that are changed
@@ -428,8 +428,15 @@ public class CASInputHandler {
 		String CASResult = null;
 		Throwable throwable = null;
 		try {
-			// evaluate input in MathPiper and convert result back to GeoGebra expression
-			CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(inVE, casView.getUseGeoGebraVariableValues());
+			// use Simplify command if we don't have an assignment
+			if (assignment) {
+				// evaluate input in CAS and convert result back to GeoGebra expression
+				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(inVE, casView.getUseGeoGebraVariableValues());
+			} else {
+				// evaluate Simplify[input] in CAS and convert result back to GeoGebra expression
+				String simplifyInputExp = "Simplify[" + inputExp + "]";
+				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(simplifyInputExp, casView.getUseGeoGebraVariableValues());
+			}
 		} catch (Throwable th1) {
 			throwable = th1;
 			System.err.println("CAS evaluation failed: " + inputExp + "\n error: " + th1.toString());

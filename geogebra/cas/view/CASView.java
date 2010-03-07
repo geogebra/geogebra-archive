@@ -282,8 +282,8 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 			{  
 				{"Expand", 		app.getCommand("Expand")}, 
 				{"Factor", 		app.getCommand("Factor")},
-				{"Simplify", 	app.getCommand("Simplify")},
-				{"Substitute", 	app.getPlain("Substitute")},
+			//	{"Simplify", 	app.getCommand("Simplify")},
+				{"SubstituteDialog", 	app.getPlain("Substitute")},
 				{"Solve", 		app.getPlain("Solve")}, 
 				{"Derivative", 	"d/dx", 	 app.getCommand("Derivative")}, 
 				{"Integral", 	"\u222b dx", app.getCommand("Integral")}	

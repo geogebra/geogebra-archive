@@ -144,7 +144,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		// substitute command
 		String subCmd = "Substitute[" + evalText + "," + fromExp + ", " +  toExp + "]"; 
 		if (actionCommand.equals("Eval")) {
-			subCmd = "Eval[" + subCmd + "]"; 
+			subCmd = "Simplify[" + subCmd + "]"; 
 		}
 			
 		try {
