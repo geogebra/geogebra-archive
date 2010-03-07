@@ -33,6 +33,8 @@ import java.util.prefs.Preferences;
  *  Subclass GeoGebraPortablePreferences, for saving prefs to propertyfile
  *  Added some constants
  *  Small rewrite of getPref() to return subclass singleton instead of this.singleton 
+ *  7mars: Addition of setPropertyFile(filename) to fascilitate cmdline option --settingsFile
+ *  (Set in line 263 geogebra.gui.app.GeoGebraFrame before getPref() is called first time.)
  */
 
 public class GeoGebraPreferences {		
@@ -72,41 +74,52 @@ public class GeoGebraPreferences {
 			  ggbPrefs = null;
 		  }
 	 }	 
-	 private  String XML_GGB_FACTORY_DEFAULT; // see loadPreferences()
+	  
+	 //Ulven: changed to make available to subclass GeoGebraPortablePreferences
+	 protected  String XML_GGB_FACTORY_DEFAULT; // see loadPreferences()
      
     // special preference keys
-	private  final String XML_USER_PREFERENCES = "xml_user_preferences";	
-	private  final String TOOLS_FILE_GGT = "tools_file_ggt";	
-	private  final String APP_LOCALE = "app_locale";	
-	private  final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
-	private  final String APP_FILE_ = "app_file_";		
+	protected  final String XML_USER_PREFERENCES = "xml_user_preferences";	
+	protected  final String TOOLS_FILE_GGT = "tools_file_ggt";	
+	protected  final String APP_LOCALE = "app_locale";	
+	protected  final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
+	protected  final String APP_FILE_ = "app_file_";		
 		
 	/* Ulven 06.03.10 */
-	private  final	int		MODE_SYS	=	0;		//Default
-	private  final	int		MODE_FILE	=	1;		//Preferences in property file
-	private final 	static	String	PROPERTY_FILENAME	=	"preferences.properties";
+
+	protected  static	String	PROPERTY_FILEPATH	=	"";		//full path
 	
 	
 	private static GeoGebraPreferences singleton;
 	
+	/* Set in geogebra.gui.app.GeoGebraFrame before first call to getPref()*/
+	public static void setPropertyFileName(String pfname){
+		PROPERTY_FILEPATH=pfname;									Application.debug("pf "+PROPERTY_FILEPATH);
+	}//setPropertyFileName(String)
+	
 	public synchronized static GeoGebraPreferences getPref() {
 		/* --- New code 06.03.10 - Ulven
 		 * Singleton getInstance() method
-		 * Checks if preferences.properties is in jar-folder
+		 * Checks if PROPERTY_FILENAME is given
 		 * and returns subclass GeoGebraPortablePrefrences if it is,
 		 * otherwise as original 
 		 * @author H-P Ulven
-		 * @version 2010-03-06
+		 * @version 2010-03-07
 		 */ 
 		if (singleton == null){
+			if(!PROPERTY_FILEPATH.equals("")){						//Application.debug(PROPERTY_FILENAME);
 			try{
-				File propertyfile=geogebra.util.Util.findFile(PROPERTY_FILENAME);
-				if(propertyfile!=null){
-					singleton=geogebra.main.GeoGebraPortablePreferences.getPref();
-				}//if exists
-			}catch(Exception e){
-				Application.debug("Could not load preferences.properties...");//e.printStackTrace();
-			}//try-catch
+				File propertyfile=new File(PROPERTY_FILEPATH);		//geogebra.util.Util.findFile(PROPERTY_FILENAME);
+					if(propertyfile.exists()){		
+						// available in subclass: geogebra.main.GeoGebraPortablePreferences.setPropertyFile(PROPERTY_FILENAME);
+						singleton=geogebra.main.GeoGebraPortablePreferences.getPref();					
+					}else{
+						Application.debug("Could not find settings file...");
+					}//if exists
+				}catch(Exception e){
+					Application.debug("Could not load settings file...");//e.printStackTrace();
+				}//try-catch
+			}//if property file given
 		}//if	
 		// --- New code end
 		if (singleton == null)
