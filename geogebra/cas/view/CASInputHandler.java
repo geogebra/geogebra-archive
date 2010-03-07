@@ -112,21 +112,27 @@ public class CASInputHandler {
 		}
 		
 		// standard case: evaluate and update row
-		if (!ggbcmd.equals("Eval")){
-			// prepare evalText as ggbcmd[ evalText, parameters ... ]
-			StringBuilder sb = new StringBuilder();
-			sb.append(ggbcmd);
-			sb.append("[");
-			sb.append(evalText);
-			if (params != null) {
-				for (int i=0; i < params.length; i++) {
-					sb.append(',');
-					sb.append(params[i]);
-				}
-			}
-			sb.append("]");
-			evalText = sb.toString();
+		if (ggbcmd.equals("Eval")){
+			// replace "Eval" by "Simplify"
+			ggbcmd = "Simplify";
 		}
+		
+		// prepare evalText as ggbcmd[ evalText, parameters ... ]
+		StringBuilder sb = new StringBuilder();
+		sb.append(ggbcmd);
+		sb.append("[");
+		sb.append(evalText);
+		if (params != null) {
+			for (int i=0; i < params.length; i++) {
+				sb.append(',');
+				sb.append(params[i]);
+			}
+		}
+		sb.append("]");
+		evalText = sb.toString();
+		
+		// update input selection information for future calls of processRow()
+		cellValue.setInput(prefix, evalText, postfix);
 		
 		// process given row
 		boolean success = processRow(selRow);

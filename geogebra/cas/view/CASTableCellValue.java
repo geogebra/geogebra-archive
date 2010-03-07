@@ -132,7 +132,7 @@ public class CASTableCellValue {
 	 * 
 	 * @param prefix: beginning part that should not be evaluated
 	 * @param eval: selected part of the input that needs to be evaluated
-	 * @param postfix: end part that sould not be evaluated
+	 * @param postfix: end part that should not be evaluated
 	 */
 	public void setInput(String prefix, String eval, String postfix) {
 		this.prefix = prefix;
@@ -142,7 +142,9 @@ public class CASTableCellValue {
 		// change the input if the structure of prefix + evalText + postfix is different
 		String newText = prefix + eval + postfix;
 		if (!view.getCAS().isStructurallyEqual(getInput(), newText)) {			
-			setInput(newText);
+			//setInput(newText);
+			// TODO: handle structure problem by causing error
+			System.err.println("Structure problem: " + newText);
 		}
 		
 		// extract command from eval
