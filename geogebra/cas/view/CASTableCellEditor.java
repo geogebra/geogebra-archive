@@ -69,6 +69,14 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		return getInputArea().getSelectionEnd();
 	}	
 	
+	public void setInputSelectionStart(int pos) {	
+		getInputArea().setSelectionStart(pos);
+	}
+	
+	public void setInputSelectionEnd(int pos) {	
+		getInputArea().setSelectionEnd(pos);
+	}	
+	
 	public void insertText(String text) {
 		getInputArea().replaceSelection(text);
 		getInputArea().requestFocusInWindow();

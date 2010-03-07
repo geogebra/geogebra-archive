@@ -103,8 +103,14 @@ public class CASInputHandler {
 		// remember input selection information for future calls of processRow()
 		// check if structure of selection is ok
 		boolean structureOK = cellValue.setInput(prefix, evalText, postfix);
-		if (!structureOK)
+		if (!structureOK) {
+			// show current selection again
+			consoleTable.startEditingRow(selRow);
+			cellEditor = consoleTable.getEditor();
+			cellEditor.setInputSelectionStart(selStart);
+			cellEditor.setInputSelectionEnd(selEnd);
 			return;
+		}
 		
 		// Substitute dialog
 		if (ggbcmd.equals("SubstituteDialog")) {

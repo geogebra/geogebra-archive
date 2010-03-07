@@ -314,10 +314,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// auto-close parentheses
 		if (caretPos == text.length() || Character.isWhitespace(text.charAt(caretPos))) {		
 			switch (ch){
-				case '(':
-					// opening parentheses: insert closing parenthesis automatically
-					insertString(")");
-					break;	
+//				case '(':
+//					// opening parentheses: insert closing parenthesis automatically
+//					insertString(")");
+//					break;	
 					
 				case '{':
 					// opening braces: insert closing parenthesis automatically

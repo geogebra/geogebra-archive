@@ -139,12 +139,11 @@ public class CASTableCellValue {
 		this.eval = eval;
 		this.postfix = postfix;
 		
-		// change the input if the structure of prefix + evalText + postfix is different
+		// check if the structure of the input and prefix + evalText + postfix is different
+		// this is important to catch wrong selections, e.g.
+		// 2 + 2/3 is not equal to the selection (2+2)/3
 		String newText = prefix + eval + postfix;
 		if (!view.getCAS().isStructurallyEqual(getInput(), newText)) {			
-			//setInput(newText);
-			// TODO: handle structure problem by causing error
-			System.err.println("Structure problem: " + newText);
 			setOutput(view.getApp().getError("CAS.SelectionStructureError"), true);
 			return false;
 		}
