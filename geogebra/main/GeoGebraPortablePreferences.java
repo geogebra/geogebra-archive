@@ -35,9 +35,9 @@ import java.util.Properties;
  * of GeoGebraPreferences itself, if the file
  * preferences.properties exists in the geogebra.jar-folder.
  * This opens up for three modes:
- * 	-PREFERENCES_IN_SYSTEM_PREFERENCES		(Normal)
- *  -PREFERENCES_IN_PROPERTY_FILE			(Portable GeoGebra)
- *  -PREFERENCES_IN_PROPERTY_FILE_READ_ONLY	(Read-only network share or CD/DVD)
+ * 	-	Normal
+ *  -	Portable GeoGebra
+ *  -	Read-only network share or CD/DVD, where we want same setting for all
  *  
  *  geogebra.properties must have one line:
  *  is_read_only=true (or false)
@@ -45,11 +45,11 @@ import java.util.Properties;
  * A cleaner implementation would be to rewrite GeoGebraPreferences to an abstract class, as
  * an interface for GeoGebraSystemPreferences and GeoGebraPropertyFile, but as there probably
  * never will be a demand for a third class later, I chose a solution which makes it unneccessary 
- * to change calling classes, by just making this one and do a small rewrite of getPrefs() in 
- * GeoGebraPreferences.
+ * to change too many calling classes, by just making this one and do a small rewrite of getPrefs() 
+ * and add a setPropertyFile() in GeoGebraPreferences which then behaves like a kind of "singleton factory".
  *  
- * This class implements all the commands of GeoGebraPreferences, but stores in
- * 		preferenes.properties			file
+ * This class implements all the commands of GeoGebraPreferences, but stores in propertyfile
+ * given on the commandline: --settingsFile=<path>\<filename>   (prefs.properties)
  * 
  * Options/ToDo:
  * 		Might as well store:
@@ -57,13 +57,14 @@ import java.util.Properties;
  * 			ggt in macro.bin
  *      to avoid escaping "=", b64 encode/decoding and save some time...
  *      Also useful to have the xml in a separate file for editing?
+ *      On the other hand, this is done automatically in Properties, so not really a problem.
  * 		
  * @author Hans-Petter Ulven
- * @version 2010-03-06
+ * @version 2010-03-07
  */
 public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 	
-	//*** ToDo: Make these protected in GeoGebraPreferences to avoid  duplicates here...
+	/* don't need, erase, have made protected in parentclass:
 	
 	 private  String XML_GGB_FACTORY_DEFAULT; // see loadPreferences()
     
@@ -73,24 +74,21 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 	private  final String APP_LOCALE = "app_locale";	
 	private  final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
 	private  final String APP_FILE_ = "app_file_";		
-	
+*/	
 	/// --- --- ///
 	private final static boolean 	DEBUG 	= 	true;
 	private final static String		ERROR	=	"Error?";		//For debugging
-	private final static String		EQUAL	=	"§EQUALS§";		//For substituting in xml and ggt, better than escape-complications?	
-	public  final static String 	PROPERTY_FILENAME = "preferences.properties";	
-	private       static String		folderpath=null;				//property folder
-	private		  static String		path=null;
-	private 	  static File		propertyfile=null;
-	private 	  static Properties	properties=new Properties();
+	//private final static String		EQUAL	=	"§EQUALS§";		//Substituting for "="
 		
 	/// --- Properties --- ///
+	// use parent class PROPERTY_FILEPATH	private		  static String		path=null;
+	private 	  static Properties	properties=new Properties();	
 	
 	private static GeoGebraPortablePreferences singleton=null;
-	///////private static System.Property					    properties;
-	
 	
 	/// --- Interface --- ///
+	/* private singleton constructor */
+	private GeoGebraPortablePreferences(){}	
 	
 	/* Singleton getInstance()->getPref() */
 	public synchronized static GeoGebraPreferences getPref() {
@@ -102,39 +100,41 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 	}//getPref()
 
 	private  void loadPreferences(){
-		try{
-			propertyfile=geogebra.util.Util.findFile(PROPERTY_FILENAME);
-			if(propertyfile!=null){
-				folderpath=propertyfile.getParent();									//debug("folderpath: "+folderpath);
-				path=propertyfile.getCanonicalPath();									debug("path: "+path);
+		try{																		//debug("path: "+GeoGebraPreferences.PROPERTY_FILEPATH);	
+			File propertyfile=new File(GeoGebraPreferences.PROPERTY_FILEPATH);
+			if(propertyfile.exists()){
+				//path=propertyfile.getCanonicalPath();			
 				BufferedInputStream fis=new BufferedInputStream(new FileInputStream(propertyfile));
 				properties.load(fis);	
-				fis.close();															properties.list(System.out);
+				fis.close();															//debug("loadPreferences():");properties.list(System.out);
 			}else{
-				debug("Found no preferences.properties...");		
+				debug("Found no settings file...");		
 			}//if
 		}catch(Exception e){
-			debug("Problem loading preferences.properties...");
-			//e.printStackTrace();
+			debug("Problem loading settings file...");
+			e.printStackTrace();
 		}//try-catch			
 	}//loadPreferences
 	
 	private void storePreferences(){
-		try {
-            BufferedOutputStream os=new BufferedOutputStream(new FileOutputStream(new File(path)));
-	   		properties.store(os,"Portable Preferences");
-	   	} catch (Exception e) {
-	   		Application.debug("Problem with storing of preferences.properties..."+e.toString());
-	   	}//try-catch		
+		if(!get("read_only","false").equals("true")){
+			try {
+				BufferedOutputStream os=new BufferedOutputStream(new FileOutputStream(new File(GeoGebraPreferences.PROPERTY_FILEPATH)));
+				properties.store(os,"Portable Preferences");											//Application.debug("storePreferences(): ");properties.list(System.out);
+				os.close();
+			} catch (Exception e) {
+				Application.debug("Problem with storing of preferences.properties..."+e.toString());
+			}//try-catch		
+		}//if not read-only. (else do nothing...)
 	}//storePreferences()
 	
 	
 	/// --- GeoGebraPreferences interface --- ///
-	public  String loadPreference(String key, String defaultValue) {
+	public  String loadPreference(String key, String defaultValue) {		//debug("loadPreferene() called with: "+key+",  "+defaultValue);
 		return get(key,defaultValue);
 	}//loadPreference(key,def)
 	
-	public  void savePreference(String key, String value) {
+	public  void savePreference(String key, String value) {					//debug("savePreferneces() called with: "+key+",  "+value);
 		set(key,value);
 	}//savePreferences(key,val)
 	
@@ -143,7 +143,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
     * Returns the path of the first file in the file list 
     */
    public  File getDefaultFilePath() {    
-   	File file = new File(properties.getProperty(APP_FILE_ + "1", ""));
+   	File file = new File(properties.getProperty(APP_FILE_ + "1", ""));		//debug("getDeafultFilepath(): "+file.toString());
    	if (file.exists())
    		return file.getParentFile();
    	else   
@@ -200,7 +200,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    public  void loadFileList() {
    	// load last four files
    	for (int i=4; i >= 1; i--) {	
-   		File file = new File(get(APP_FILE_ + i, ""));
+   		File file = new File(get(APP_FILE_ + i, ""));									//debug("loadFileList() called: "+file.toString());
    		Application.addToFileList(file);	    		
    	}				    	
    }//loadFileList()
@@ -209,18 +209,23 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
     * Saves the names of the four last used files.
     */
    public  void saveFileList() {
+	String path;
    	try {    		    		    		    	
 	    	// save last four files
 	    	for (int i=1; i <= 4; i++) {	    		
 	    		File file = Application.getFromFileList(i-1);
-	    		if (file != null)
-	    			set(APP_FILE_ + i, file.getCanonicalPath());
-	    		else
+	    		if (file != null){
+	    			path=file.getCanonicalPath();									//debug("saveFilelist(): "+path.toString());
+	    			set(APP_FILE_ + i, path);
+	    		}else
 	    			set(APP_FILE_ + i, "");
-	    	}				    	
+	    	}				    													//debug("list:");properties.list(System.out);
    	} catch (Exception e) {
    		e.printStackTrace();
    	}
+   	//If this is the last call to the pref system and is always done on exit
+   	//this should be enough: (??)
+   	storePreferences();
    }//saveFileList()   
   
 	/** Nothing to change: Inherited
@@ -239,7 +244,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
     * so no need to split up in pieces :-)
     * But we have to convert byte[]--b64-->String
     */
-   public  void saveXMLPreferences(Application app) {
+   public  void saveXMLPreferences(Application app) {						//debug("saveXMLPreferences(app):");
 	// preferences xml
    	String xml = app.getPreferencesXML();
    	
@@ -249,9 +254,12 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    	String	macrostring =geogebra.util.Base64.encode(macrofile,0);
    	
    	set(TOOLS_FILE_GGT,macrostring);
+   	
+   	//just an idea, might be useful?
+   	set("b64",getB64(app));
     
-   	//Fore writing, "flush":
-   	storePreferences();
+   	//Force writing, "flush":												//properties.list(System.out);
+   	storePreferences();												
    }//saveXMLPreferences(Application)
    
 
@@ -277,13 +285,14 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    		}//if error
        	    		
    		// load preferences xml
+    	initDefaultXML(app);			//This might not have been called before!
        	String xml = get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);        
    		app.setXML(xml, true);	   
    	} catch (Exception e) {	    		
    		e.printStackTrace();
    	}//try-catch    	
 
-   	app.setDefaultCursor();
+   	app.setDefaultCursor();													//debug("loadXMLPreferences() called");properties.list(System.out);
    }//loadXMLPreferences(Application)
    
    
@@ -295,7 +304,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    	try {
    		properties.clear();    		
    		//ggbPrefs.flush();
-   		properties.store(new FileOutputStream(new File(path)),"Portable Preferences");
+   		storePreferences();
    	} catch (Exception e) {
    		Application.debug(e+"");
    	}
@@ -314,12 +323,52 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    public final void set(String key,String val){
 	  if(properties!=null){ properties.setProperty(key, val);} 
    }//set()
-   
+
+   /****************** not needed
+    private static String addEscapes(String s){
+    
+       StringBuilder result = new StringBuilder();
+       char c;
+       for(int i=0;i<s.length();i++){
+           c=s.charAt(i);
+           if(c=='\\'){
+               result.append("\\\\");
+           }else if (c==':'){
+        	   result.append("\\:");
+           }else{
+               result.append(c);
+           }
+       }//for
+       return result.toString();
+   }//addEscapes(String)
+   ********************/
    
  // --- SNIP ---------------------------------------------------
    
+   //Just a thought:
+   //b64=...<b64 encoding of current model..
+   //Might be useful for some...
+   private String getB64(Application app){
+	   StringBuffer b64=null;
+	   try{
+		   b64=new StringBuffer();
+		   java.io.ByteArrayOutputStream baos=new java.io.ByteArrayOutputStream();
+		   app.getXMLio().writeGeoGebraFile(baos,false);
+		   b64.append(geogebra.util.Base64.encode(baos.toByteArray(),0));
+	   }catch(Exception e){}
+	   if(b64!=null){
+		   return b64.toString();
+	   }else{
+		   return null;
+	   }
+   }//getB64()
+   
    
 	// /// ----- Debug ----- /////
+   
+   // For use in debugging plugin scripts:
+   public Properties getProperties(){return properties;}
+   
 	private final static void debug(String s) {
 		if (DEBUG) {
 			Application.debug(s);
@@ -331,19 +380,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 	}//main()
    
 
-   /* getPreferencesfrom system preferences 
-    * 	 // preferences node name for GeoGebra 	 
-	//  Only copied here to 
-	 private  Preferences ggbPrefs;
-	  {
-		  try {
-			  ggbPrefs = Preferences.userRoot().node("/geogebra");
-		  } catch (Exception e) {
-			  // thrown when running unsigned JAR
-			  ggbPrefs = null;
-		  }
-	 }	 
-*/
+ 
    
  // --- SNIP ---------------------------------------------------
 
