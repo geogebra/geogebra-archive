@@ -12,9 +12,14 @@
 
 package geogebra.cas;
 
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoDummyVariable;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.Variable;
 import geogebra.kernel.parser.Parser;
@@ -55,10 +60,27 @@ public class CASparser {
 	 * kept as symbolic variables.
 	 */
 	public synchronized void resolveVariablesForCAS(ExpressionValue ev) {
+		
+		// add local variables to kernel
+		boolean isFunction = ev instanceof Function;
+		String localVar = null;
+		if (isFunction) {
+			Construction cmdCons = kernel.getConstruction();  
+			localVar = ((Function) ev).getFunctionVariable().toString();
+			GeoElement localVarGeo = new GeoDummyVariable(cmdCons, localVar);
+			cmdCons.addLocalVariable(localVar, localVarGeo);
+		}
+		
 		// resolve variables of valid expression
 		kernel.setResolveVariablesForCASactive(true);
 		ev.resolveVariables();
-		kernel.setResolveVariablesForCASactive(false);				
+		kernel.setResolveVariablesForCASactive(false);
+		
+		// remove local variables from kernel
+		if (isFunction) {
+			Construction cmdCons = kernel.getConstruction();    		
+			cmdCons.removeLocalVariable(localVar);
+		}				
 	}
 	
 	

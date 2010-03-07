@@ -303,5 +303,9 @@ implements ExpressionValue {
     final public boolean isVector3DValue() {
     	return false;
     }
+    
+    public boolean isTopLevelCommand() {
+		return true;
+	}
 
 }

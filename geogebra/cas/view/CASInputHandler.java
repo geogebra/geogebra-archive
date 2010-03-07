@@ -3,6 +3,8 @@ package geogebra.cas.view;
 import geogebra.cas.CASparser;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.Command;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
 
@@ -261,7 +263,7 @@ public class CASInputHandler {
 			//currentUpdateVar = cellValue.getAssignmentVariable();
 			result = evaluateGeoGebraCAS(cellValue.getEvalText(), row);
 		} catch (Throwable th) {
-			th.printStackTrace();
+			//th.printStackTrace();
 			System.err.println("GeoGebraCAS.processRow " + row + ": " + th.getMessage());
 		}
 		
@@ -434,14 +436,19 @@ public class CASInputHandler {
 		String CASResult = null;
 		Throwable throwable = null;
 		try {
-			// use Simplify command if we don't have an assignment
-			if (assignment) {
-				// evaluate input in CAS and convert result back to GeoGebra expression
+			if (assignment || inVE.isTopLevelCommand()) {
+				// evaluate inVE in CAS and convert result back to GeoGebra expression
 				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(inVE, casView.getUseGeoGebraVariableValues());
-			} else {
-				// evaluate Simplify[input] in CAS and convert result back to GeoGebra expression
-				String simplifyInputExp = "Simplify[" + inputExp + "]";
-				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(simplifyInputExp, casView.getUseGeoGebraVariableValues());
+			} 
+			else {
+				// build Simplify[inVE]
+				Command simplifyCommand = new Command(kernel, "Simplify", false);
+				ExpressionNode inEN = inVE.isExpressionNode() ? (ExpressionNode) inVE :
+										new ExpressionNode(kernel, inVE);
+				simplifyCommand.addArgument(inEN);
+				simplifyCommand.setLabel(inVE.getLabel());
+				// evaluate Simplify[inVE] in CAS and convert result back to GeoGebra expression
+				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(simplifyCommand, casView.getUseGeoGebraVariableValues());
 			}
 		} catch (Throwable th1) {
 			throwable = th1;
@@ -565,9 +572,6 @@ public class CASInputHandler {
 		 * Evaluates expression with GeoGebra and returns the resulting string.
 		 */
 		private synchronized String evalInGeoGebra(String casInput) throws Throwable {
-			// TODO: remove
-			System.out.println("evalInGeoGebra: " + casInput);
-			
 			GeoElement [] ggbEval = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(casInput, false);
 
 			if (ggbEval.length == 1) {

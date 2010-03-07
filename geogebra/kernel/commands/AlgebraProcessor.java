@@ -171,13 +171,13 @@ public class AlgebraProcessor {
 		try {
 			ve = parser.parseGeoGebraExpression(cmd);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
 		} catch (MyError e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new Exception(e.getLocalizedMessage());
 		} catch (Error e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
 		}
 
@@ -188,13 +188,13 @@ public class AlgebraProcessor {
 			if (storeUndo && geoElements != null)
 				app.storeUndoInfo();
 		} catch (MyError e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new Exception(e.getLocalizedMessage());
 		} catch (CircularDefinitionException e) {
-			Application.debug("CircularDefinition");
+			//Application.debug("CircularDefinition");
 			throw e;
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			throw new Exception("InvalidInput");
 		}
 		return geoElements;

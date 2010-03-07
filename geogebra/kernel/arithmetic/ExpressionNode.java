@@ -2755,5 +2755,9 @@ implements ExpressionValue, ExpressionNodeConstants {
     	}
     	return false;
     }
+    
+    public boolean isTopLevelCommand() {
+		return isLeaf() && left instanceof Command;
+	}
 	
 }

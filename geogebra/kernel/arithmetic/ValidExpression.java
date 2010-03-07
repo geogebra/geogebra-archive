@@ -104,5 +104,8 @@ public abstract class ValidExpression implements ExpressionValue {
 	   return false;
 	}
 	
+	public boolean isTopLevelCommand() {
+		return false;
+	}
 	
 }

@@ -2,6 +2,7 @@ package geogebra.cas.view;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.util.Util;
@@ -167,7 +168,8 @@ public class CASTableCellValue {
 
 			// parse input expression
 			ValidExpression ve = view.getCAS().getCASparser().parseGeoGebraCASInput(input);
-			
+			boolean isFunction = ve instanceof Function;
+				
 			// outvar of assignment b := a + 5 is "b"
 			setAssignmentVar(ve.getLabel());
 
@@ -182,9 +184,19 @@ public class CASTableCellValue {
 				Iterator it = geoVars.iterator();
 				while (it.hasNext()) {
 					GeoElement geo = (GeoElement) it.next();
-					addInVar(geo.getLabel());
+					String var = geo.getLabel();
+					
+					// local function variables are NOT input variables
+					// e.g. f(k) := k^2 + 3 does NOT depend on k
+					if (!(isFunction && ((Function) ve).isFunctionVariable(var))) {
+						addInVar(var);
+					}
 				}
 			}
+			
+
+			
+			
 		} 
 		catch (Throwable th) {
 		}

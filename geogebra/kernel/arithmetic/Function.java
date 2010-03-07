@@ -116,6 +116,13 @@ implements ExpressionValue, RealRootFunction, Functional {
         app = kernel.getApplication();
         this.kernel = kernel;
     }
+    
+    public boolean isFunctionVariable(String var) {
+    	if (fVar == null) 
+    		return false;
+    	else
+    		return fVar.toString().equals(var);
+    }
        
     
     public Kernel getKernel() {
