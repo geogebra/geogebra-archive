@@ -258,7 +258,19 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		} catch (Exception e) {
 			Application.debug(e+"");
 		}	
-				
+		
+
+		// 2010-03-07, Ulven:
+		// Set GeoGebraPreferences mode (system properties or property file)
+		// before it is called for the first time
+		String path="";
+    	for (int i = 0 ; i < args.length ; i++) {								
+    		if(args[i].toLowerCase().startsWith("--settingsfile=")){
+    			path=args[i].substring(15);								
+    			GeoGebraPreferences.setPropertyFileName(path);
+    		}//if settingsFile given
+    	}//for
+    	
 		// load list of previously used files
 		GeoGebraPreferences.getPref().loadFileList();	
     	    			
