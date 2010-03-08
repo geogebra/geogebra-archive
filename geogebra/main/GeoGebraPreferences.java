@@ -87,45 +87,35 @@ public class GeoGebraPreferences {
 		
 	/* Ulven 06.03.10 */
 
-	protected  static	String	PROPERTY_FILEPATH	=	"";		//full path
+	protected  static	String	PROPERTY_FILEPATH	=	null;		//full path, null: no property file set
 	
 	
 	private static GeoGebraPreferences singleton;
 	
 	/* Set in geogebra.gui.app.GeoGebraFrame before first call to getPref()*/
 	public static void setPropertyFileName(String pfname){
-		PROPERTY_FILEPATH=pfname;									Application.debug("pf "+PROPERTY_FILEPATH);
+		PROPERTY_FILEPATH=pfname;									Application.debug("Prferences in: "+PROPERTY_FILEPATH);
 	}//setPropertyFileName(String)
 	
 	public synchronized static GeoGebraPreferences getPref() {
 		/* --- New code 06.03.10 - Ulven
 		 * Singleton getInstance() method
-		 * Checks if PROPERTY_FILENAME is given
+		 * Checks if PROPERTY_FILENAME is given (by commandline)
 		 * and returns subclass GeoGebraPortablePrefrences if it is,
 		 * otherwise as original 
 		 * @author H-P Ulven
 		 * @version 2010-03-07
 		 */ 
 		if (singleton == null){
-			if(!PROPERTY_FILEPATH.equals("")){						//Application.debug(PROPERTY_FILENAME);
-			try{
-				File propertyfile=new File(PROPERTY_FILEPATH);		//geogebra.util.Util.findFile(PROPERTY_FILENAME);
-					if(propertyfile.exists()){		
-						// available in subclass: geogebra.main.GeoGebraPortablePreferences.setPropertyFile(PROPERTY_FILENAME);
-						singleton=geogebra.main.GeoGebraPortablePreferences.getPref();					
-					}else{
-						Application.debug("Could not find settings file...");
-					}//if exists
-				}catch(Exception e){
-					Application.debug("Could not load settings file...");//e.printStackTrace();
-				}//try-catch
-			}//if property file given
-		}//if	
+			if(!(PROPERTY_FILEPATH==null)){						//Application.debug(PROPERTY_FILENAME);
+				singleton=geogebra.main.GeoGebraPortablePreferences.getPref();
+			}//if		(else leave it to original)	
+		}//if 	
 		// --- New code end
 		if (singleton == null)
 			singleton = new GeoGebraPreferences();
 		return singleton;
-	}
+	}//getPref();
 	
 	public  String loadPreference(String key, String defaultValue) {
 		return ggbPrefs.get(key, defaultValue);
