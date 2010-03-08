@@ -169,6 +169,14 @@ public class ManagerGLList extends Manager {
     	return plane.create(color,alpha,size);
     }
     
+	/////////////////////////////////////////////
+	// SPHERE METHODS
+	/////////////////////////////////////////////
+
+    public int newSphere(float x, float y, float z,
+			float radius, Color color, float alpha){
+    	return sphere.create(x,y,z,radius,color,alpha);
+    }
  	
 	
 	

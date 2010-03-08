@@ -257,6 +257,19 @@ public class Renderer implements GLEventListener {
 	}
 	
 	
+	private void drawTransp(){
+		
+		/*
+        gl.glCullFace(GL.GL_BACK); drawList3D.drawTransp(this);//draws inside parts 
+        gl.glCullFace(GL.GL_FRONT); drawList3D.drawTransp(this);//draws outside parts       
+        */
+		
+        
+		gl.glDisable(GL.GL_CULL_FACE);drawList3D.drawTransp(this);
+
+	}
+	
+	
 	/**
 	 * 
 	 * openGL method called when the display is to be computed.
@@ -362,11 +375,12 @@ public class Renderer implements GLEventListener {
         
         
         //drawing transparents parts
-        gl.glDisable(GL.GL_CULL_FACE);
         gl.glDepthMask(false);
-        drawList3D.drawTransp(this);
+        gl.glEnable(GL.GL_CULL_FACE);
+        drawTransp();      
         gl.glDepthMask(true);
 
+        
         
         //drawing labels
         gl.glEnable(GL.GL_CULL_FACE);
@@ -378,6 +392,7 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_ALPHA_TEST);       
 
+        
         
         //drawing hiding parts
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
@@ -395,7 +410,8 @@ public class Renderer implements GLEventListener {
         //TODO improve it !
         gl.glDepthMask(false);
         gl.glEnable(GL.GL_BLEND);
-        drawList3D.drawTransp(this);
+        gl.glEnable(GL.GL_CULL_FACE);
+        drawTransp();             
         gl.glDepthMask(true);
 
         
@@ -415,7 +431,8 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_CULL_FACE);
         gl.glDepthMask(false);
         gl.glEnable(GL.GL_BLEND);
-        drawList3D.drawTransp(this);
+        //gl.glEnable(GL.GL_CULL_FACE);
+        drawTransp();           
         gl.glDepthMask(true);
 
         
@@ -1859,8 +1876,8 @@ public class Renderer implements GLEventListener {
         
         //blending
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        gl.glEnable(GL.GL_BLEND);	
         //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+        gl.glEnable(GL.GL_BLEND);	
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);  
         
         gl.glAlphaFunc(GL.GL_NOTEQUAL, 0);//pixels with alpha=0 are not drawn

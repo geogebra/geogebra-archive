@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import java.awt.Color;
+
 import javax.media.opengl.GL;
 
 
@@ -9,21 +11,16 @@ import javax.media.opengl.GL;
 public class GeometrySphere extends Geometry {
 	
 
+	/** coords of the center */
+	private float x, y, z; 
 	
 
-	public GeometrySphere(Manager manager, boolean hasTexture) {
-		super(manager,NORMAL_ON,hasTexture,COLOR_OFF);
+	public GeometrySphere(Manager manager) {
+		super(manager,NORMAL_ON,TEXTURE_OFF,COLOR_ON);
 	}
 
 	public void init() {
 		
-		manager.preInit(this);
-		
-		manager.startGeometry(this);
-		sphere(2,6,POINT3D_RADIUS);
-		manager.endGeometry(this);
-
-	
 	}
 	
 	public int getType(){
@@ -34,5 +31,58 @@ public class GeometrySphere extends Geometry {
 	public int getNb(){
 		return 1;
 	}
+	
+	
+	/** create a new sphere
+	 * @param x center x-coord
+	 * @param y center y-coord
+	 * @param z center z-coord
+	 * @param radius radius
+	 * @param color color
+	 * @param alpha alpha
+	 * @return index of the new geometry
+	 */
+	public int create(float x, float y, float z,
+			float radius,
+			Color color, float alpha){
+		
+		manager.preInit(this);
+		
+		manager.startGeometry(this);
+
+		
+		float r = color.getRed()/255f;
+		float g = color.getGreen()/255f;
+		float b = color.getBlue()/255f;
+		float a = alpha;
+		
+		
+		// set color
+		color(r,g,b,a);
+		
+		//creates the sphere
+		setCenter(x, y, z);
+		sphere(10,20,radius);
+
+	
+		
+		
+		manager.endGeometry(this);
+		
+		return getIndex();
+	}
+	
+	
+	private void setCenter(float x, float y, float z){
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
+	protected void vertex(float x, float y, float z){
+		//does the translation with center coords
+		super.vertex(this.x + x, this.y + y, this.z + z);
+	}
+
 	
 }

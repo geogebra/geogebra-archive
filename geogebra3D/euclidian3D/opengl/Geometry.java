@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.main.Application;
+
 /**
  * Common class for openGL geometry objects
  * 
@@ -182,8 +184,8 @@ public abstract class Geometry {
     protected void sphere(int latitude, int longitude, float radius){
     	
  
-    	float da = (float) (Math.PI / (2*latitude)) ; 
-    	float db = (float) ( 2*Math.PI / longitude ); 
+    	double da = (Math.PI / (2*latitude)) ; 
+    	double db = ( 2*Math.PI / longitude ); 
     	
     	
     	
@@ -228,6 +230,7 @@ public abstract class Geometry {
     			
     			//bottom face
     			
+    			
     			texture((j+1)/longitude,-i/(2*latitude));
     			normal(x2,y2,-z1); 
     			vertex(x2,y2,-z1); 
@@ -243,6 +246,7 @@ public abstract class Geometry {
     			texture((j+1)/longitude,-(i+1)/(2*latitude));
     			normal(x3,y3,-z4); 
     			vertex(x3,y3,-z4); 
+
 
 
     			

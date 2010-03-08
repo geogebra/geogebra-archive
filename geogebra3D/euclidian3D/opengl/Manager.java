@@ -26,7 +26,7 @@ abstract public class Manager {
 	
 	
 	/** geometry : point */
-	public GeometrySphere point;
+	public GeometryPoint point;
 	/** geometry : cylinder */
 	public GeometryCylinder cylinder;
 	/** geometry : cone */
@@ -35,6 +35,8 @@ abstract public class Manager {
 	public GeometryCursor cursor;
 	/** geometry : plane */
 	public GeometryPlane plane;
+	/** geometry : sphere */
+	public GeometrySphere sphere;
 	
 	
 	/** create a manager for geometries
@@ -48,11 +50,12 @@ abstract public class Manager {
 		
 		
 		// creating geometries
-		point = new GeometrySphere(this,false);
+		point = new GeometryPoint(this,false);
 		cylinder = new GeometryCylinder(this,true);
 		cone = new GeometryCone(this,true);
 		cursor = new GeometryCursor(this);
 		plane = new GeometryPlane(this);
+		sphere = new GeometrySphere(this);
 		
 		
 	}
@@ -174,8 +177,22 @@ abstract public class Manager {
 	
 	abstract public void addVertexToPolygon(double x, double y, double z);
 	
-	abstract public int newPlane(Color color, float alpha, float size);
+	
+	
+	/////////////////////////////////////////////
+	// PLANE METHODS
+	/////////////////////////////////////////////
 
+	
+	abstract public int newPlane(Color color, float alpha, float size);
+	
+
+	/////////////////////////////////////////////
+	// SPHERE METHODS
+	/////////////////////////////////////////////
+
+	abstract public int newSphere(float x, float y, float z,
+			float radius, Color color, float alpha);
 
 	
 	

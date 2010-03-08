@@ -31,6 +31,9 @@ public class GeoQuadric extends GeoElement3D {
 	/** half axes (for ellipsoids, spheres, ...) */
 	private double[] halfAxes = new double[3];
 	
+	/** translation vector (midpoint, vertex)  */
+	private Ggb3DVector translationVector;
+	
 
 	public GeoQuadric(Construction c) {
 		super(c);
@@ -84,6 +87,8 @@ public class GeoQuadric extends GeoElement3D {
 		matrix[8] = -m.getZ();
 		matrix[9] = m.getX()*m.getX() + m.getY()*m.getY() + m.getZ()*m.getZ() - r * r;
 		
+		translationVector = m;
+		
 		
 	}
 	
@@ -91,8 +96,16 @@ public class GeoQuadric extends GeoElement3D {
 	
 	
 	
+	///////////////////////////////
+	// GETTERS
 	
+	public Ggb3DVector getTranslationVector(){
+		return translationVector;
+	}
 	
+	public double getHalfAxis(int i){
+		return halfAxes[i];
+	}
 	
 	
 	
@@ -114,6 +127,14 @@ public class GeoQuadric extends GeoElement3D {
 
         return GEO_CLASS_QUADRIC;
 
+    }
+    
+    
+    /** return type of quadric
+     * @return type of quadric
+     */
+    public int getType(){
+    	return type;
     }
 
     protected String getTypeString() {
