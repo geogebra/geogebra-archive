@@ -126,20 +126,31 @@ public class CASTableCellValue {
 	
 	/**
 	 * Sets the input in parts where prefix + eval + postfix
-	 * are ensured to be structurally equal to the current input.
-	 * If the structure is different, the current input is changed.
-	 * For example "2 + 3/4" is structurally equal to "2 + (3/4)",
-	 * but structurally different from "(2 + 3)/4".
+	 * are assumed to be structurally equal to the current input.
 	 * 
 	 * @param prefix: beginning part that should not be evaluated
 	 * @param eval: selected part of the input that needs to be evaluated
 	 * @param postfix: end part that should not be evaluated
 	 */
-	public boolean setInput(String prefix, String eval, String postfix) {
+	public void setInput(String prefix, String eval, String postfix) {
 		this.prefix = prefix;
 		this.eval = eval;
 		this.postfix = postfix;
-		
+	
+		// extract command from eval
+		int bracketPos = eval.indexOf('[');
+		evalCmd = bracketPos > 0 ? eval.substring(0, bracketPos) : "";
+	}
+	
+	/**
+	 * Checks if prefix + eval + postfix
+	 * is structurally equal to the current input.
+	 * 
+	 * @param prefix: beginning part that should not be evaluated
+	 * @param eval: selected part of the input that needs to be evaluated
+	 * @param postfix: end part that should not be evaluated
+	 */
+	public boolean isStructurallyEqualToInput(String prefix, String eval, String postfix) {
 		// check if the structure of the input and prefix + evalText + postfix is different
 		// this is important to catch wrong selections, e.g.
 		// 2 + 2/3 is not equal to the selection (2+2)/3
@@ -148,11 +159,6 @@ public class CASTableCellValue {
 			setOutput(view.getApp().getError("CAS.SelectionStructureError"), true);
 			return false;
 		}
-		
-		// extract command from eval
-		int bracketPos = eval.indexOf('[');
-		evalCmd = bracketPos > 0 ? eval.substring(0, bracketPos) : "";
-		
 		return true;
 	}
 	
@@ -259,6 +265,10 @@ public class CASTableCellValue {
 	
 	final public String getEvalCommand() {
 		return evalCmd;
+	}
+	
+	final public void setEvalCommand(String cmd) {
+		evalCmd = cmd;
 	}
 
 	public void setOutput(String inValue) {

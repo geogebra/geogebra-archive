@@ -250,32 +250,41 @@ public class CASmathpiper extends CASgeneric {
 		
 		// Rules for equation manipulation
 		// allow certain commands for equations
-		ggbMathPiper.evaluate("Simplify(_x == _y)  <-- Simplify(x) == Simplify(y);");
-		ggbMathPiper.evaluate("Factor(_x == _y)  <-- Factor(x) == Factor(y);");
-		ggbMathPiper.evaluate("Expand(_x == _y)  <-- Expand(x) == Expand(y);");
-		ggbMathPiper.evaluate("ExpandBrackets(_x == _y)  <-- ExpandBrackets(x) == ExpandBrackets(y);");
-		ggbMathPiper.evaluate("Sqrt(_x == _y)  <-- Sqrt(x) == Sqrt(y);");
-		ggbMathPiper.evaluate("Exp(_x == _y)  <-- Exp(x) == Exp(y);");
-		ggbMathPiper.evaluate("Ln(_x == _y)  <-- Ln(x) == Ln(y);");
+		ggbMathPiper.evaluate("NotEqu(exp) := Not( IsEquation(exp));");
+		
+		//ggbMathPiper.evaluate("CheckInput( (x_NotEqu == y_NotEqu) + z_NotEqu ) <-- Subst(a, x) Subst(b, y) Subst(c, z) (Hold(a + c) ==  Hold(b + c)) ;");
+		
+		
+		// standard commands for equations
+		ggbMathPiper.evaluate("Simplify(x_NotEqu == y_NotEqu)  <-- Simplify(x) == Simplify(y);");
+		ggbMathPiper.evaluate("Factor(x_NotEqu == y_NotEqu)  <-- Factor(x) == Factor(y);");
+		ggbMathPiper.evaluate("Expand(x_NotEqu == y_NotEqu)  <-- Expand(x) == Expand(y);");
+		ggbMathPiper.evaluate("ExpandBrackets(x_NotEqu == y_NotEqu)  <-- ExpandBrackets(x) == ExpandBrackets(y);");
+		ggbMathPiper.evaluate("Sqrt(x_NotEqu == y_NotEqu)  <-- Sqrt(x) == Sqrt(y);");
+		ggbMathPiper.evaluate("Exp(x_NotEqu == y_NotEqu)  <-- Exp(x) == Exp(y);");
+		ggbMathPiper.evaluate("Ln(x_NotEqu == y_NotEqu)  <-- Ln(x) == Ln(y);");
 		
 		// arithmetic for equations and scalars
-		ggbMathPiper.evaluate("NotIsEquation(exp) := Not( IsEquation(exp));");
-		ggbMathPiper.evaluate("(_x == _y) + z_NotIsEquation <-- Simplify(x + z == y + z);");
-		ggbMathPiper.evaluate("z_NotIsEquation + (_x == _y) <-- Simplify(z + x == z + y);");
-		ggbMathPiper.evaluate("(_x == _y) - z_NotIsEquation <-- Simplify(x - z == y - z);");
-		ggbMathPiper.evaluate("z_NotIsEquation - (_x == _y) <-- Simplify(z - x == z - y);");
-		ggbMathPiper.evaluate("(_x == _y) * z_NotIsEquation <-- Simplify(x * z == y * z);");
-		ggbMathPiper.evaluate("z_NotIsEquation * (_x == _y) <-- Simplify(z * x == z * y);");
-		ggbMathPiper.evaluate("(_x == _y) / z_NotIsEquation <-- Simplify(x / z == y / z);");
-		ggbMathPiper.evaluate("z_NotIsEquation / (_x == _y) <-- Simplify(z / x == z / y);");
-		ggbMathPiper.evaluate("(_x == _y) ^ z_NotIsEquation <-- Simplify(x ^ z == y ^ z);");
-		ggbMathPiper.evaluate("z_NotIsEquation ^ (_x == _y) <-- Simplify(z ^ x == z ^ y);");
+		ggbMathPiper.evaluate("(x_NotEqu == y_NotEqu) + z_NotEqu <-- x + z == y + z;");
+		ggbMathPiper.evaluate("z_NotEqu + (x_NotEqu == y_NotEqu) <-- z + x == z + y;");
+		ggbMathPiper.evaluate("(x_NotEqu == y_NotEqu) - z_NotEqu <-- x - z == y - z;");
+		ggbMathPiper.evaluate("z_NotEqu - (x_NotEqu == y_NotEqu) <-- z - x == z - y;");
+		ggbMathPiper.evaluate("(x_NotEqu == y_NotEqu) * z_NotEqu <-- x * z == y * z;");
+		ggbMathPiper.evaluate("z_NotEqu * (x_NotEqu == y_NotEqu) <-- z * x == z * y;");
+		ggbMathPiper.evaluate("(x_NotEqu == y_NotEqu) / z_NotEqu <-- x / z == y / z;");
+		ggbMathPiper.evaluate("z_NotEqu / (x_NotEqu == y_NotEqu) <-- z / x == z / y;");
+		ggbMathPiper.evaluate("(x_NotEqu == y_NotEqu) ^ z_NotEqu <-- x ^ z == y ^ z;");
+		ggbMathPiper.evaluate("z_NotEqu ^ (x_NotEqu == y_NotEqu) <-- z ^ x == z ^ y;");
 		
 		// arithmetic for two equations
-		ggbMathPiper.evaluate("(_a == _b) + (_c == _d) <-- Simplify(a + c == b + d);");
-		ggbMathPiper.evaluate("(_a == _b) - (_c == _d) <-- Simplify(a - c == b - d);");
-		ggbMathPiper.evaluate("(_a == _b) * (_c == _d) <-- Simplify(a * c == b * d);");
-		ggbMathPiper.evaluate("(_a == _b) / (_c == _d) <-- Simplify(a / c == b / d);");
+		ggbMathPiper.evaluate("(a_NotEqu == b_NotEqu) + (c_NotEqu == d_NotEqu) <-- a + c == b + d;");
+		ggbMathPiper.evaluate("(a_NotEqu == b_NotEqu) - (c_NotEqu == d_NotEqu) <-- a - c == b - d;");
+		ggbMathPiper.evaluate("(a_NotEqu == b_NotEqu) * (c_NotEqu == d_NotEqu) <-- a * c == b * d;");
+		ggbMathPiper.evaluate("(a_NotEqu == b_NotEqu) / (c_NotEqu == d_NotEqu) <-- a / c == b / d;");
+		
+		
+		//ggbMathPiper.evaluate("CheckInput(x_IsAtom)  <-- Simplify(x) == Simplify(y);");
+		
 		
 		return true;
 	}

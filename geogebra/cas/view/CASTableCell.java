@@ -56,17 +56,18 @@ public abstract class CASTableCell extends JPanel{
 			
 			// show command in output cell
 			String origCmd = cellValue.getEvalCommand();
+			
 			String cmd;
-			if ("Simplify".equals(origCmd)) {
-				// don't show simplify
-				cmd = "";
-			} else {
+//			if ("Simplify".equals(origCmd)) {
+//				// don't show simplify
+//				cmd = "";
+//			} else {
 				cmd = app.getCommand(origCmd);
 				if (cellValue.getInput().startsWith(cmd)) {
 					// don't show command if it is already at beginning of input
 					cmd = "";
 				}
-			}
+//			}
 			
 			outputPanel.setOutput(cellValue.getOutput(), cellValue.getLaTeXOutput(), cmd, cellValue.isOutputError());	
 		}	

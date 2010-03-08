@@ -99,12 +99,17 @@ public class CASInputHandler {
 		postfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_STATIC);
 		
 		// FIX common INPUT ERRORS in evalText
-		if (ggbcmd.equals("Eval") || ggbcmd.equals("Hold"))
-			evalText = fixInputErrors(evalText);
+		if (!hasSelectedText && (ggbcmd.equals("Eval") || ggbcmd.equals("Hold"))) {
+			String fixedInput = fixInputErrors(selRowInput);
+			if (!fixedInput.equals(selRowInput)) {
+				cellValue.setInput(fixedInput);
+				evalText = fixedInput;
+			}
+		}
 		
 		// remember input selection information for future calls of processRow()
 		// check if structure of selection is ok
-		boolean structureOK = cellValue.setInput(prefix, evalText, postfix);
+		boolean structureOK = cellValue.isStructurallyEqualToInput(prefix, evalText, postfix);
 		if (!structureOK) {
 			// show current selection again
 			consoleTable.startEditingRow(selRow);
@@ -118,7 +123,9 @@ public class CASInputHandler {
 		if (ggbcmd.equals("SubstituteDialog")) {
 			// show substitute dialog
 			CASSubDialog d = new CASSubDialog(casView, prefix, evalText, postfix, selRow);
-			d.setVisible(true);
+			cellValue.setEvalCommand("Substitute");
+			d.setVisible(true);	
+			
 			return;
 		}
 		
@@ -136,11 +143,11 @@ public class CASInputHandler {
 				}
 			}
 			sb.append("]");
-			evalText = sb.toString();
-			
-			// update input selection information for future calls of processRow()
-			cellValue.setInput(prefix, evalText, postfix);
+			evalText = sb.toString();	
 		}
+		
+		// remember input selection information for future calls of processRow()
+		cellValue.setInput(prefix, evalText, postfix);
 		
 		// process given row
 		boolean success = processRow(selRow);
@@ -458,6 +465,7 @@ public class CASInputHandler {
 		
 		// GeoGebra Evaluation needed?
 		boolean evalInGeoGebra = false;
+		boolean isDeleteCommand = false;
 		if (casView.getUseGeoGebraVariableValues()) {
 			// check if assignment is allowed
 			if (assignment) {
@@ -469,7 +477,8 @@ public class CASInputHandler {
 				// - or Delete, e.g. Delete[a]
 				// - or CAS was not successful
 				// - or CAS result contains commands
-				evalInGeoGebra = !CASSuccessful || isDeleteCommand(inputExp) || containsCommand(CASResult);
+				isDeleteCommand = isDeleteCommand(inputExp);
+				evalInGeoGebra = !CASSuccessful || isDeleteCommand || containsCommand(CASResult);
 			}
 		}
 
@@ -491,7 +500,7 @@ public class CASInputHandler {
 			
 			// inputExp failed with GeoGebra
 			// try to evaluate result of MathPiper
-			if (ggbResult == null && CASSuccessful) {
+			if (ggbResult == null && CASSuccessful && !isDeleteCommand) {
 				String ggbEval = CASResult;
 				if (assignment) {
 					StringBuilder sb = new StringBuilder();

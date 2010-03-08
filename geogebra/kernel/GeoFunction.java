@@ -760,7 +760,9 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
         sb.append('(');
         sb.append(functionIn);
         sb.append(',');
-        sb.append(x+"");
+        sb.append(fun.getFunctionVariable());
+        sb.append(',');
+        sb.append(Double.toString(x));
         sb.append(')');
 
 

@@ -1355,6 +1355,14 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        		    		break;
 	            			}
 	                	}
+	                	
+	                	if (left instanceof Equation) {
+	                		sb.append("(");
+		                    sb.append(leftStr);
+		                    sb.append(')');
+	                	} else {
+	                		sb.append(leftStr);
+	                	}
 	                	            			
 	                	// we need parantheses around right text
 	                	// if right is not a leaf expression or
@@ -1365,13 +1373,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    			(right.isGeoElement() && !((GeoElement) right).isLabelSet())
 	    					) )
 	    				{
-	                        sb.append(leftStr);
 	                        sb.append(" + (");
 	                        sb.append(rightStr);
 	                        sb.append(')');
 	                    }
-	                    else {
-	                        sb.append(leftStr);                  
+	                    else {                
 	                        if (rightStr.charAt(0) == '-') { // convert + - to -
 	                            sb.append(" - ");
 	                            sb.append(rightStr.substring(1));
@@ -1397,7 +1403,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    break;
 	                    
 	                default:
-		                sb.append(leftStr);   
+	                	if (left instanceof Equation) {
+	                		sb.append("(");
+		                    sb.append(leftStr);
+		                    sb.append(')');
+	                	} else {
+	                		sb.append(leftStr);
+	                	} 
 		                
 		                // check for 0 at right
 	        			if (valueForm && rightStr.equals("0")) {

@@ -139,7 +139,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		addFocusListener(this);		
 		
 		// TODO: remove
-		//attachView();
+		attachView();
 	}		
 	
 	/** 
