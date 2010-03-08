@@ -79,6 +79,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 	private final static boolean 	DEBUG 	= 	true;
 	private final static String		ERROR	=	"Error?";		//For debugging
 	//private final static String		EQUAL	=	"§EQUALS§";		//Substituting for "="
+	private final static String		COMMENT	=	"GeoGebra Portable preferences (GeoGebra settings file)";
 		
 	/// --- Properties --- ///
 	// use parent class PROPERTY_FILEPATH	private		  static String		path=null;
@@ -108,7 +109,8 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 				properties.load(fis);	
 				fis.close();															//debug("loadPreferences():");properties.list(System.out);
 			}else{
-				debug("Found no settings file...");		
+				//debug("Found no settings file...");
+				clearPreferences();						//clean and store a blank one.
 			}//if
 		}catch(Exception e){
 			debug("Problem loading settings file...");
@@ -120,7 +122,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 		if(!get("read_only","false").equals("true")){
 			try {
 				BufferedOutputStream os=new BufferedOutputStream(new FileOutputStream(new File(GeoGebraPreferences.PROPERTY_FILEPATH)));
-				properties.store(os,"Portable Preferences");											//Application.debug("storePreferences(): ");properties.list(System.out);
+				properties.store(os,COMMENT);											//Application.debug("storePreferences(): ");properties.list(System.out);
 				os.close();
 			} catch (Exception e) {
 				Application.debug("Problem with storing of preferences.properties..."+e.toString());
