@@ -180,6 +180,10 @@ public class CASmaxima extends CASgeneric {
 			// MathPiper has problems with indices like a_3, b_{12}
 			exp = casParser.replaceIndices(exp);
 			
+			// Maxima uses [] for lists
+			while (exp.indexOf('{') > -1 ) exp = exp.replace('{', '[');
+			while (exp.indexOf('}') > -1 ) exp = exp.replace('}', ']');
+			
 			final boolean debug = true;
 			if (debug) Application.debug("Expression for Maxima: "+exp);
 			
@@ -286,6 +290,12 @@ public class CASmaxima extends CASgeneric {
 	    
 	    // needed to define lcm()
 	    ggbMaxima.executeRaw("load(functs)$");
+	    // turn {x=3} into {3} etc
+	    ggbMaxima.executeRaw("stripequals(ex):=block(" +
+	    		 "if atom(ex) then return(ex)" +
+	    		 "else if op(ex)=\"=\" then return(stripequals(rhs(ex)))" +
+	    		 "else apply(op(ex),map(stripequals,args(ex)))" +
+	    		")$");
 	    
 	    /* This function takes an expression ex and returns a list of coefficients of v */
 	    ggbMaxima.executeRaw("coefflist(ex,v):= block([deg,kloop,cl]," +
