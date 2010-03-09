@@ -290,6 +290,10 @@ public class CASmaxima extends CASgeneric {
 	    
 	    // needed to define lcm()
 	    ggbMaxima.executeRaw("load(functs)$");
+	    
+	    // needed for degree()
+	    ggbMaxima.executeRaw("load(powers)$");
+	    
 	    // turn {x=3} into {3} etc
 	    ggbMaxima.executeRaw("stripequals(ex):=block(" +
 	    		 "if atom(ex) then return(ex)" +
