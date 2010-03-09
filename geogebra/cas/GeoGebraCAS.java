@@ -304,11 +304,43 @@ public class GeoGebraCAS {
 		// build command key as name + "." + args.size()
 		sbCASCommand.setLength(0);
 		sbCASCommand.append(name);
-		sbCASCommand.append('.');
+		sbCASCommand.append(".N");
+		
+		String translation = cas.getTranslatedCASCommand(sbCASCommand.toString());
+
+		// check for eg Sum.N=sum(%)
+		if (translation != null) {
+			sbCASCommand.setLength(0);
+			for (int i = 0; i < translation.length(); i++) {
+				char ch = translation.charAt(i);
+				if (ch == '%') {
+					for (int j=0; j < args.size(); j++) {
+						ExpressionValue ev = (ExpressionValue) args.get(j);				
+						if (symbolic)
+							sbCASCommand.append(ev.toString());
+						else
+							sbCASCommand.append(ev.toValueString());
+						sbCASCommand.append(',');
+					}
+					// remove last comma
+					sbCASCommand.setLength(sbCASCommand.length() - 1);
+				} else {
+					sbCASCommand.append(ch);
+				}
+					
+			}
+			
+			return sbCASCommand.toString();
+		}
+		
+		// remove 'N'
+		sbCASCommand.setLength(sbCASCommand.length() - 1);
+
+		// add eg '3'
 		sbCASCommand.append(args.size());
 		
 		// get translation ggb -> MathPiper/Maxima
-		String translation = cas.getTranslatedCASCommand(sbCASCommand.toString());
+		translation = cas.getTranslatedCASCommand(sbCASCommand.toString());
 		sbCASCommand.setLength(0);		
 		
 		// no translation found: 
