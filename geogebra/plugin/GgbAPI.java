@@ -40,6 +40,7 @@ import java.util.Locale;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
+import geogebra.cas.GeoGebraCAS;
 
 
 /** 
@@ -256,7 +257,9 @@ public class GgbAPI {
 
 	/**
 	 * Evaluates the given string as if it was entered into Maxima's
-	 * input text field. 	 
+	 * input text field. 
+	 * @author Ulven
+	 * @version 2010-03-10	 
 	 */
 	public synchronized String evalMaxima(String cmdString) {
 		
@@ -275,7 +278,26 @@ public class GgbAPI {
 		return 	(geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();
 	}//getCurrentCas()
 	*/
-	
+	/**
+	 * Evaluates the given string as if it was entered into GeoGebra CAS's
+	 * input text field. 
+	 * @author Ulven
+	 * @version 2010-03-10	 
+	 */
+	public synchronized String evalGeoGebraCAS(String cmdString){
+		String ret="";
+		GeoGebraCAS	ggbcas=(GeoGebraCAS)kernel.getGeoGebraCAS();
+		try{
+			ret= ggbcas.evaluateGeoGebraCAS(cmdString);
+		}catch(Throwable t){
+			Application.debug(t.toString());
+		}//try-catch
+		
+		// useful for debugging JavaScript
+		// do not remove!
+		Application.debug("evalGeoGebraCAS\n input:"+cmdString+"\n"+"output: "+ret);
+		return ret;
+	}//evalGeoGebraCAS(String)
 	
 	
 	/**
