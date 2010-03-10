@@ -49,6 +49,7 @@ public class GeoGebra extends Object {
     	boolean showSplash = true;
     	for (int i = 0 ; i < args.length ; i++) {
     		if (args[i].equals("--showSplash=false")) showSplash = false;
+    		else if (args[i].equals("--help")) showSplash = false;
     	}
     	
     	if (showSplash) {

@@ -862,19 +862,20 @@ public abstract class Application implements KeyEventDispatcher {
 								.println("Usage: java -jar geogebra.jar [OPTION] [FILE]\n"
 										+ "Start GeoGebra with the specified OPTIONs and open the given FILE.\n"
 										+ "  --help\t\tprint this message\n"
-										+ "  --language=LANGUGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n"
+										+ "  --language=LANGUAGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n"
 										+ "  --showAlgebraInput=BOOLEAN\tshow/hide algebra input field\n"
 										+ "  --showAlgebraInputTop=BOOLEAN\tshow algebra input at top/bottom\n"
 										+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
 										+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
 										+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
-										+ "  --showSplash=BOOLEAN\n"
+										+ "  --showSplash=BOOLEAN\tenable/disable the splash screen\n"
 										+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
 										+ "  --fontSize=NUMBER\tset default font size\n"
-										+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes"
-										+ "  --CAS=[MATHPIPER|MAXIMA]\tselect which CAS to use, default MathPiper"
-										+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS"
-										+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off");
+										+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes\n"
+										+ "  --CAS=[MATHPIPER|MAXIMA]\tselect which CAS to use, default MathPiper\n"
+										+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
+										+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
+						System.exit(0);
 					} else if (optionName.equals("language")) {
 						setLocale(getLocale(optionValue));
 
