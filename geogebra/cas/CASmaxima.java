@@ -71,7 +71,8 @@ public class CASmaxima extends CASgeneric {
 		// convert parsed input to Maxima string
 		String MaximaString = toMaximaString(casInput, useGeoGebraVariables);
 		
-		if (!MaximaString.endsWith(";")) MaximaString = MaximaString + ';';
+		// now done in evaluateRaw
+		//if (!MaximaString.endsWith(";")) MaximaString = MaximaString + ';';
 			
 		// EVALUATE input in Maxima 
 		String result = evaluateMaxima(MaximaString);
@@ -188,13 +189,13 @@ public class CASmaxima extends CASgeneric {
 			if (debug) Application.debug("Expression for Maxima: "+exp);
 			
 			// evaluate the MathPiper expression
-			RawMaximaSession maxima = getMaxima();
+			//RawMaximaSession maxima = getMaxima();
 			
 			//result = maxima.executeExpectingSingleOutput(exp);
 			//String results[] = maxima.executeExpectingMultipleLabels(exp);			
 			//result = results[results.length - 1];
 			
-			String results[] = maxima.executeRaw(exp).split("\n");
+			String results[] = executeRaw(exp).split("\n");
 			
 			result = results[results.length - 1];
 			
@@ -315,17 +316,16 @@ public class CASmaxima extends CASgeneric {
 	    
 	    // define Degree
 	    //ggbMaxima.executeRaw("Degree := 180 / %pi;");
-	    
-	    // TODO: define getPolynomialCoeffs(expr,x) for Maxima
-	    // Expand expression and get polynomial coefficients using MathPiper:
-	    //		getPolynomialCoeffs(expr,x) :=
-	    //			       If( CanBeUni(expr),
-	    //			           [
-	    //							Coef(MakeUni(expr,x),x, 0 .. Degree(expr,x));			           ],
-	    //			           {};
-	    //			      );
-	    //	String strGetPolynomialCoeffs = "getPolynomialCoeffs(expr,x) := If( CanBeUni(expr),[ Coef(MakeUni(expr,x),x, 0 .. Degree(expr,x));],{});";
 
 	}
 
+	private String executeRaw(String maximaInput) throws MaximaTimeoutException {
+        char lastChar = maximaInput.charAt(maximaInput.length() - 1);
+        if (lastChar != ';' && lastChar != '$' && !maximaInput.startsWith("lisp:")) {
+        	maximaInput += ";";
+        }
+        
+        return getMaxima().executeRaw(maximaInput);
+
+	}
 }
