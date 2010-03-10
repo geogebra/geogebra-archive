@@ -321,7 +321,7 @@ public class CASmaxima extends CASgeneric {
 
 	private String executeRaw(String maximaInput) throws MaximaTimeoutException {
         char lastChar = maximaInput.charAt(maximaInput.length() - 1);
-        if (lastChar != ';' && lastChar != '$' && !maximaInput.startsWith("lisp:")) {
+        if (lastChar != ';' && lastChar != '$' && !maximaInput.startsWith(":lisp")) {
         	maximaInput += ";";
         }
         
