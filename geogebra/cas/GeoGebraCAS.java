@@ -291,7 +291,13 @@ public class GeoGebraCAS {
 		return sb.toString();
 	}
 	
-	
+	final private String toString(ExpressionValue ev, boolean symbolic) {
+		if (symbolic)
+			return ev.toString();
+		else
+			return ev.toValueString();
+		
+	}
 	
 	/**
 	 * Returns the CAS command for the currently set CAS using the given key and command arguments. 
@@ -314,16 +320,26 @@ public class GeoGebraCAS {
 			for (int i = 0; i < translation.length(); i++) {
 				char ch = translation.charAt(i);
 				if (ch == '%') {
-					for (int j=0; j < args.size(); j++) {
-						ExpressionValue ev = (ExpressionValue) args.get(j);				
-						if (symbolic)
-							sbCASCommand.append(ev.toString());
-						else
-							sbCASCommand.append(ev.toValueString());
-						sbCASCommand.append(',');
+					if (args.size() == 1) { // might be a list as the argument
+						ExpressionValue ev = (ExpressionValue) args.get(0);
+						String str = toString(ev, symbolic);
+						if (ev.isListValue()) {
+							// is a list, remove { and }
+							sbCASCommand.append(str.substring(1, str.length() - 1));
+						} else {
+							// not a list, just append
+							sbCASCommand.append(str);
+						}
 					}
-					// remove last comma
-					sbCASCommand.setLength(sbCASCommand.length() - 1);
+					else {
+						for (int j=0; j < args.size(); j++) {
+						ExpressionValue ev = (ExpressionValue) args.get(j);				
+						sbCASCommand.append(toString(ev, symbolic));
+						sbCASCommand.append(',');
+						}
+						// remove last comma
+						sbCASCommand.setLength(sbCASCommand.length() - 1);
+					}
 				} else {
 					sbCASCommand.append(ch);
 				}
