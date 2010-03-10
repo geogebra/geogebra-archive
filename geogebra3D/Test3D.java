@@ -176,7 +176,7 @@ public class Test3D{
 		//testPlane();
 
 
-		//testQuadric();
+		testQuadric();
     	
 		//testRay3D();
 		//testVector3D();

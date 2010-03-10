@@ -259,13 +259,10 @@ public class Renderer implements GLEventListener {
 	
 	private void drawTransp(){
 		
-		/*
-        gl.glCullFace(GL.GL_BACK); drawList3D.drawTransp(this);//draws inside parts 
-        gl.glCullFace(GL.GL_FRONT); drawList3D.drawTransp(this);//draws outside parts       
-        */
+		//TODO improve this !
+        gl.glCullFace(GL.GL_FRONT); drawList3D.drawTransp(this);//draws inside parts  
+        gl.glCullFace(GL.GL_BACK); drawList3D.drawTransp(this);//draws outside parts 
 		
-        
-		gl.glDisable(GL.GL_CULL_FACE);drawList3D.drawTransp(this);
 
 	}
 	
