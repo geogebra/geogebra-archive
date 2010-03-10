@@ -255,6 +255,30 @@ public class GgbAPI {
 	}
 
 	/**
+	 * Evaluates the given string as if it was entered into Maxima's
+	 * input text field. 	 
+	 */
+	public synchronized String evalMaxima(String cmdString) {
+		
+		String ret = kernel.evaluateMaxima(cmdString);
+		
+		// useful for debugging JavaScript
+		// do not remove!
+		Application.debug("evalMaxima\n input:"+cmdString+"\n"+"output: "+ret);
+		
+		return ret;
+
+	}//evalMaxima(String cmdString)
+	
+	/* Not needed, see next command:
+	public synchronized geogebra.cas.GeoGebraCAS getCurrentCAS(){
+		return 	(geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();
+	}//getCurrentCas()
+	*/
+	
+	
+	
+	/**
 	 * prints a string to the Java Console
 	 */
 	public synchronized void debug(String string) {
