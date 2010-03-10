@@ -369,7 +369,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 	// /// ----- Debug ----- /////
    
    // For use in debugging plugin scripts:
-   public Properties getProperties(){return properties;}
+   public static Properties getProperties(){return properties;}
    
 	private final static void debug(String s) {
 		if (DEBUG) {
