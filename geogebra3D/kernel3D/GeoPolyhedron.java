@@ -583,7 +583,11 @@ public class GeoPolyhedron extends GeoElement3D {
 	
 	
 	
-	
+	/** to be able to fill it with an alpha value */
+	public boolean isFillable() {
+		return true;
+	}
+
 
 	
 	
