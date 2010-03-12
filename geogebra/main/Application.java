@@ -1285,10 +1285,21 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// load resource files
 		setLocale(locale);
+		
+		if (locale.getLanguage().startsWith("ar")) {
+			unicodeZero = '\u0660';
+		} else {
+			unicodeZero = '0';
+		}
 
 		// update right angle style in euclidian view (different for German)
 		if (euclidianView != null)
 			euclidianView.updateRightAngleStyle(locale);
+		
+		// make sure digits are updated in all numbers
+		getKernel().updateConstruction();
+		setUnsaved();
+
 
 		setLabels(); // update display
 				
@@ -1319,6 +1330,9 @@ public abstract class Application implements KeyEventDispatcher {
 	final public boolean isRightToLeftReadingOrder() {
 		return rightToLeftReadingOrder;
 	}
+
+	// For eg Hebrew and Arabic. Guy Hed, 25.8.2008
+	public static char unicodeZero = '0';
 
 	// for basque you have to say "A point" instead of "point A"
 	private boolean reverseNameDescription = false;

@@ -6083,13 +6083,49 @@ public class Kernel {
 			}
 		}
 	}
+	
+	private StringBuilder formatSB;
+	
+	/**
+	 * Formats the value of x using the currently set
+	 * NumberFormat or ScientificFormat. This method also
+	 * takes getCasPrintForm() into account.
+	 * 
+	 * converts to localised characters if appropriate
+	 */
+	final public String format(double x) {	
+		if (Application.unicodeZero != '0') {
+			
+			if (formatSB == null) formatSB = new StringBuilder(17);
+			else formatSB.setLength(0);
+			
+			String num = formatRaw(x);
+			
+			for (int i = 0 ; i < num.length() ; i++) {
+				char c = num.charAt(i);
+				if (c >= '0' && c <= '9') {
+					
+					c += Application.unicodeZero - '0'; // convert to eg Arabic Numeral
+					
+				}
+				formatSB.append(c);
+			}
+			
+			return formatSB.toString();
+			
+			
+		} else return formatRaw(x);
+		
+	}
+
+		
 
 	/**
 	 * Formats the value of x using the currently set
 	 * NumberFormat or ScientificFormat. This method also
 	 * takes getCasPrintForm() into account.
 	 */
-	final public String format(double x) {		
+	final public String formatRaw(double x) {		
 		switch (casPrintForm) {
 			// number formatting for XML string output
 			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
