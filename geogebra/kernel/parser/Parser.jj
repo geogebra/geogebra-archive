@@ -200,7 +200,7 @@ TOKEN :  {
   | < POWER8:   "\u2078" >
   | < POWER9:   "\u2079" >
   | < PI:       ( "pi" | "Pi" | "\u03c0" | "%pi") >
-  | < E:        "\u212f" >  
+  | < E:        ("\u212f" | "%e") >  
   | < DEGREE:   ( "\u00b0" ) >
   | < INFINITY: ("\u221e" | "Infinity" | "inf" | "infinity") >
   | < MINUS_INFINITY: ("minf") >
