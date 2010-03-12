@@ -156,6 +156,7 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("ja")); // Japanese
 		supportedLocales.add(new Locale("ko")); // Korean
 		supportedLocales.add(new Locale("lt")); // Lithuanian
+		supportedLocales.add(new Locale("ml")); // Malayalam (Virtual Keyboard & numerals only)
 		supportedLocales.add(new Locale("mk")); // Macedonian
 		// supportedLocales.add(new Locale("ne")); // Nepalese
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
@@ -1287,7 +1288,9 @@ public abstract class Application implements KeyEventDispatcher {
 		setLocale(locale);
 		
 		if (locale.getLanguage().startsWith("ar")) {
-			unicodeZero = '\u0660';
+			unicodeZero = '\u0660'; // Arabic digit 0
+		} else if (locale.getLanguage().startsWith("ml")) {
+			unicodeZero = '\u0d66'; // Malayalam digit 0
 		} else {
 			unicodeZero = '0';
 		}
