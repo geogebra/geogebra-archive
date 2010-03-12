@@ -299,9 +299,8 @@ implements Traceable {
      * returns all class-specific i2g tags for saveI2G
      * Intergeo File Format (Yves Kreis)
      */
-    protected String getI2Gtags() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.getI2Gtags());
+    protected void getI2Gtags(StringBuilder sb) {
+        super.getI2Gtags(sb);
 
         sb.append("\t\t\t<homogeneous_coordinates>\n");
         		sb.append("\t\t\t\t<double>" + x + "</double>\n");
@@ -309,7 +308,6 @@ implements Traceable {
         		sb.append("\t\t\t\t<double>" + z + "</double>\n");
         sb.append("\t\t\t</homogeneous_coordinates>\n");
         
-        return sb.toString();
     }
     
 	public boolean isNumberValue() {

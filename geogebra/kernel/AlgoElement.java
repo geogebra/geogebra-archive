@@ -672,15 +672,14 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * Returns this algorithm or it's output objects (GeoElement) in I2G format.
      * Intergeo File Format. (Yves Kreis)
      */
-    final public String getI2G(int mode) {
+    public void getI2G(StringBuilder sb, int mode) {
         // this is needed for helper commands like 
         // intersect for single intersection points
-        if (!isPrintedInXML) return ""; 
+        if (!isPrintedInXML) return; 
         
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);             
-        StringBuilder sb = new StringBuilder();
         
         try {
         	if (mode == CONSTRAINTS) {
@@ -695,7 +694,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	            geo = output[i];
     	            // save only GeoElements that have a valid label
     	            if (geo.isLabelSet()) {
-    	                sb.append(geo.getI2G(mode));
+    	                geo.getI2G(sb, mode);
     	            }
     	        }
         	}
@@ -704,7 +703,6 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         }
         
         kernel.setTranslateCommandName(oldValue);        
-        return sb.toString();
     }
 
     // Expressions should be shown as out = expression
@@ -818,11 +816,23 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         
         // add input information
         if (input != null) {
-            for (int i = 0; i < input.length; i++) {
-            	type = getXMLtypeString(input[i]);
-                sb.append("\t\t\t<" + type + ">");
-                sb.append(Util.encodeXML(input[i].getLabel()));                 
-                sb.append("</" + type + ">\n");
+        	if (cmdname.equals("line_parallel_to_line_through_point") ||
+            	cmdname.equals("line_perpendicular_to_line_through_point")) {
+        		type = getXMLtypeString(input[1]);
+        		sb.append("\t\t\t<" + type + ">");
+        		sb.append(Util.encodeXML(input[1].getLabel()));                 
+        		sb.append("</" + type + ">\n");
+        		type = getXMLtypeString(input[0]);
+        		sb.append("\t\t\t<" + type + ">");
+        		sb.append(Util.encodeXML(input[0].getLabel()));                 
+        		sb.append("</" + type + ">\n");
+        	} else {
+        		for (int i = 0; i < input.length; i++) {
+            		type = getXMLtypeString(input[i]);
+            		sb.append("\t\t\t<" + type + ">");
+            		sb.append(Util.encodeXML(input[i].getLabel()));                 
+            		sb.append("</" + type + ">\n");
+            	}
             }
         } 
         

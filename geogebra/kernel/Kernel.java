@@ -6515,17 +6515,6 @@ public class Kernel {
 		sb.append("</kernel>\n");
 	}
 	
-	/**
-	 * Returns current construction in I2G format.
-	 * Intergeo File Format. (Yves Kreis)
-	 */
-	public String getConstructionI2G() {
-		return cons.getI2G(Construction.CONSTRUCTION);
-	}
-	public String getDisplayI2G() {
-		return cons.getI2G(Construction.DISPLAY);
-	}
-	
 	public boolean isTranslateCommandName() {
 		return translateCommandName;
 	}

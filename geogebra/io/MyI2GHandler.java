@@ -53,36 +53,36 @@ public class MyI2GHandler implements DocHandler {
     private static final int MODE_CONSTRAINTS = 2000;
     private static final int MODE_FREE = 2100;
 //	private static final int MODE_FREE_OUTPUT = 2101;
-    private static final int MODE_ANGULAR_BISECTOR_OF_THREE_POINTS = 2200;
-//	private static final int MODE_ANGULAR_BISECTOR_OF_THREE_POINTS_OUTPUT = 2201;
-//	private static final int MODE_ANGULAR_BISECTOR_OF_THREE_POINTS_INPUT = 2202;
-    private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES = 2210;
-//	private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES_OUTPUT = 2211;
-//	private static final int MODE_ANGULAR_BISECTORS_OF_TWO_LINES_INPUT = 2212;
-    private static final int MODE_LINE_PARALLEL_TO_LINE = 2300;
-//	private static final int MODE_LINE_PARALLEL_TO_LINE_OUTPUT = 2301;
-//	private static final int MODE_LINE_PARALLEL_TO_LINE_INPUT = 2302;
-    private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT = 2310;
-//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_OUTPUT = 2311;
-//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_INPUT = 2312;
-    private static final int MODE_LINE_PERPENDICULAR_TO_LINE = 2320;
-//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_OUTPUT = 2321;
-//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_INPUT = 2322;
-    private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT = 2330;
-//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_OUTPUT = 2331;
-//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_INPUT = 2332;
-    private static final int MODE_LINE_THROUGH_POINT = 2340;
-//	private static final int MODE_LINE_THROUGH_POINT_OUTPUT = 2341;
-//	private static final int MODE_LINE_THROUGH_POINT_INPUT = 2342;
-    private static final int MODE_LINE_THROUGH_TWO_POINTS = 2350;
-//	private static final int MODE_LINE_THROUGH_TWO_POINTS_OUTPUT = 2351;
-//	private static final int MODE_LINE_THROUGH_TWO_POINTS_INPUT = 2352;
-    private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES = 2400;
-//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_OUTPUT = 2401;
-//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_INPUT = 2402;
-    private static final int MODE_POINT_ON_LINE = 2410;
-//	private static final int MODE_POINT_ON_LINE_OUTPUT = 2411;
-//	private static final int MODE_POINT_ON_LINE_INPUT = 2412;
+    private static final int MODE_LINE_ANGULAR_BISECTOR_OF_THREE_POINTS = 2200;
+//	private static final int MODE_LINE_ANGULAR_BISECTOR_OF_THREE_POINTS_OUTPUT = 2201;
+//	private static final int MODE_LINE_ANGULAR_BISECTOR_OF_THREE_POINTS_INPUT = 2202;
+    private static final int MODE_LINE_ANGULAR_BISECTORS_OF_TWO_LINES = 2210;
+//	private static final int MODE_LINE_ANGULAR_BISECTORS_OF_TWO_LINES_OUTPUT = 2211;
+//	private static final int MODE_LINE_ANGULAR_BISECTORS_OF_TWO_LINES_INPUT = 2212;
+    private static final int MODE_LINE_PARALLEL_TO_LINE = 2220;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_OUTPUT = 2221;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_INPUT = 2222;
+    private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT = 2230;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_OUTPUT = 2231;
+//	private static final int MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT_INPUT = 2232;
+    private static final int MODE_LINE_PERPENDICULAR_TO_LINE = 2240;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_OUTPUT = 2241;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_INPUT = 2242;
+    private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT = 2250;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_OUTPUT = 2251;
+//	private static final int MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT_INPUT = 2252;
+    private static final int MODE_LINE_THROUGH_POINT = 2260;
+//	private static final int MODE_LINE_THROUGH_POINT_OUTPUT = 2261;
+//	private static final int MODE_LINE_THROUGH_POINT_INPUT = 2262;
+    private static final int MODE_LINE_THROUGH_TWO_POINTS = 2270;
+//	private static final int MODE_LINE_THROUGH_TWO_POINTS_OUTPUT = 2271;
+//	private static final int MODE_LINE_THROUGH_TWO_POINTS_INPUT = 2272;
+    private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES = 2300;
+//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_OUTPUT = 2301;
+//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_INPUT = 2302;
+    private static final int MODE_POINT_ON_LINE = 2310;
+//	private static final int MODE_POINT_ON_LINE_OUTPUT = 2311;
+//	private static final int MODE_POINT_ON_LINE_INPUT = 2312;
     private static final int MODE_DISPLAY = 3000;
     private static final int MODE_LABEL = 3100;
 
@@ -145,8 +145,7 @@ debug("startDocument", "");
     	reset();
     }
 
-    final public void startElement(String eName, LinkedHashMap attrs)
-    		throws SAXException {
+    final public void startElement(String eName, LinkedHashMap attrs) throws SAXException {
 debug("startElement", eName);
         switch (mode) {
         	case MODE_CONSTRUCTION : // top level mode
@@ -195,8 +194,7 @@ debug("startElement", eName);
     }
     
     // set mode back to construction mode
-    final public void endElement(String eName)
-    		throws SAXException {
+    final public void endElement(String eName) throws SAXException {
 debug("endElement", eName);
     	switch (mode) {
         	case MODE_CONSTRUCTION :
@@ -474,12 +472,12 @@ debug("startConstraints", eName);
     			if (eName.startsWith("free_")) {
     				name = "Free";
     				subMode = MODE_FREE;
-    			} else if (eName.equals("angular_bisector_of_three_points")) {
+    			} else if (eName.equals("line_angular_bisector_of_three_points")) {
         			name = "AngularBisector";
-        			subMode = MODE_ANGULAR_BISECTOR_OF_THREE_POINTS;
-    			} else if (eName.equals("angular_bisectors_of_two_lines")) {
+        			subMode = MODE_LINE_ANGULAR_BISECTOR_OF_THREE_POINTS;
+    			} else if (eName.equals("line_angular_bisectors_of_two_lines")) {
         			name = "AngularBisector";
-        			subMode = MODE_ANGULAR_BISECTORS_OF_TWO_LINES;
+        			subMode = MODE_LINE_ANGULAR_BISECTORS_OF_TWO_LINES;
     			} else if (eName.equals("line_parallel_to_line")) {
         			name = "Line";
         			subMode = MODE_LINE_PARALLEL_TO_LINE;
@@ -517,11 +515,11 @@ debug("startConstraints", eName);
 				handleConstraintsStart(eName, attrs, cmdName.substring(5), 1, new String[] {}, new int[] {});
     			break;
     			    			
-    		case MODE_ANGULAR_BISECTOR_OF_THREE_POINTS :
+    		case MODE_LINE_ANGULAR_BISECTOR_OF_THREE_POINTS :
     			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "point" }, new int[] { 3 });
     			break;
     			
-    		case MODE_ANGULAR_BISECTORS_OF_TWO_LINES :
+    		case MODE_LINE_ANGULAR_BISECTORS_OF_TWO_LINES :
     			handleConstraintsStart(eName, attrs, "line", 2, new String[] { "line" }, new int[] { 2 });
     			break;
     			
@@ -611,18 +609,25 @@ debug("endConstraints", eName);
 				} else {
 					Application.debug("could not generate vector for <" + eName + ">");
 				}
+				handleConstraintsEnd(eName, 1, 2);
+				break;
+				
 			case MODE_LINE_PARALLEL_TO_LINE_THROUGH_POINT :
 			case MODE_LINE_PERPENDICULAR_TO_LINE_THROUGH_POINT :
+				// GeoGebra uses inverted arguments here!
+				ExpressionNode en[] = cmd.getArguments();
+				cmd.setArgument(0, en[1]);
+				cmd.setArgument(1, en[0]);
 			case MODE_LINE_THROUGH_TWO_POINTS :
 			case MODE_POINT_INTERSECTION_OF_TWO_LINES :
 				handleConstraintsEnd(eName, 1, 2);
 				break;
 				
-			case MODE_ANGULAR_BISECTOR_OF_THREE_POINTS :
+			case MODE_LINE_ANGULAR_BISECTOR_OF_THREE_POINTS :
 				handleConstraintsEnd(eName, 1, 3);
 				break;
 				
-			case MODE_ANGULAR_BISECTORS_OF_TWO_LINES :
+			case MODE_LINE_ANGULAR_BISECTORS_OF_TWO_LINES :
 				handleConstraintsEnd(eName, 2, 2);
 				break;
 				

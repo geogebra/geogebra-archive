@@ -1431,18 +1431,18 @@ public class Construction {
 //		return sb.toString();
 //	}
 
-	/**
-	 * Returns this construction in I2G format. Intergeo File Format. (Yves
-	 * Kreis)
-	 */
-	public String getI2G(int mode) {
-		StringBuilder sb = new StringBuilder();
-
-		// construction I2G
-		sb.append(getConstructionI2G(mode));
-
-		return sb.toString();
-	}
+//	/**
+//	 * Returns this construction in I2G format. Intergeo File Format.
+//	 * (Yves Kreis)
+//	 */
+//	public String getI2G(int mode) {
+//		StringBuilder sb = new StringBuilder();
+//
+//		// construction I2G
+//		sb.append(getConstructionI2G(mode));
+//
+//		return sb.toString();
+//	}
 
 	/**
 	 * Returns this construction in XML format. GeoGebra File Format.
@@ -1495,12 +1495,11 @@ public class Construction {
 	}
 
 	/**
-	 * Returns this construction in I2G format. Intergeo File Format. (Yves
-	 * Kreis)
+	 * Returns this construction in I2G format. Intergeo File Format.
+	 * (Yves Kreis)
 	 */
-	public String getConstructionI2G(int mode) {
-		StringBuilder sb = new StringBuilder(500);
-
+	public void getConstructionI2G(StringBuilder sb, int mode) {
+		
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
 		int oldPrintForm = kernel.getCASPrintForm();
@@ -1517,32 +1516,30 @@ public class Construction {
 				sb.append("\t<elements>\n");
 				for (int i = 0; i < size; ++i) {
 					ce = (ConstructionElement) ceList.get(i);
-					sb.append(ce.getI2G(ConstructionElement.ELEMENTS));
+					ce.getI2G(sb, ConstructionElement.ELEMENTS);
 				}
 				sb.append("\t</elements>\n");
 
 				sb.append("\t<constraints>\n");
 				for (int i = 0; i < size; ++i) {
 					ce = (ConstructionElement) ceList.get(i);
-					sb.append(ce.getI2G(ConstructionElement.CONSTRAINTS));
+					ce.getI2G(sb, ConstructionElement.CONSTRAINTS);
 				}
 				sb.append("\t</constraints>\n");
 			} else if (mode == DISPLAY) {
 				for (int i = 0; i < size; ++i) {
 					ce = (ConstructionElement) ceList.get(i);
-					sb.append(ce.getI2G(ConstructionElement.DISPLAY));
+					ce.getI2G(sb, ConstructionElement.DISPLAY);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		// restore old kernel settings
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
 		kernel.setTranslateCommandName(oldValue);                          
 		
-		return sb.toString();
 	}
 
 	/**

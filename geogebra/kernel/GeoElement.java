@@ -3202,13 +3202,11 @@ public abstract class GeoElement
 	 * save object in i2g format
 	 * Intergeo File Format (Yves Kreis)
 	 */
-	public String getI2G(int mode) {
+	public void getI2G(StringBuilder sb, int mode) {
 		boolean oldValue = kernel.isTranslateCommandName();
 		kernel.setTranslateCommandName(false);
 		
 		String type = getXMLtypeString();
-		
-		StringBuilder sb = new StringBuilder();
 		
 		if (mode == CONSTRAINTS) {
 			if (isIndependent() || isPointOnPath()) {
@@ -3229,6 +3227,10 @@ public abstract class GeoElement
 				sb.append(">\n");
 			}
 		} else {
+			if (mode == DISPLAY && (caption == null || caption.length() == 0 || caption.equals(label))) {
+				return;
+			}
+			
 			sb.append("\t\t<");
 			sb.append(type);
 			sb.append(" id=\"");
@@ -3236,16 +3238,12 @@ public abstract class GeoElement
 			sb.append("\">\n");
 			
 			if (mode == ELEMENTS) {
-				sb.append(getI2Gtags());
+				getI2Gtags(sb);
 			} else if (mode == DISPLAY) {
 				// caption text
-				if (caption != null && caption.length() > 0 && !caption.equals(label)) {
-					sb.append("\t\t\t<label>");
-					sb.append(Util.encodeXML(caption));
-					sb.append("</label>\n");
-				} else {
-					return "";
-				}
+				sb.append("\t\t\t<label>");
+				sb.append(Util.encodeXML(caption));
+				sb.append("</label>\n");
 			}
 
 			sb.append("\t\t</");
@@ -3254,7 +3252,6 @@ public abstract class GeoElement
 		}
 		
 		kernel.setTranslateCommandName(oldValue);
-		return sb.toString();
 	}
 	
     final String getAuxiliaryXML() {
@@ -3442,8 +3439,7 @@ public abstract class GeoElement
 	 * returns all class-specific i2g tags for getI2G
 	 * Intergeo File Format (Yves Kreis)
 	 */
-	protected String getI2Gtags() {
-		return "";
+	protected void getI2Gtags(StringBuilder sb) {
 	}
 
 	/**

@@ -167,7 +167,7 @@ public class MyXMLio {
 		boolean xmlFound = false;
 		boolean macroXMLfound = false;
 
-		boolean ggbFound = false;
+		boolean ggbHandler = false;
 		
 		// get all entries from the zip archive
 		while (true) {
@@ -180,10 +180,10 @@ public class MyXMLio {
 				// load xml file into memory first
 				xmlFileBuffer = Util.loadIntoMemory(zip);
 				xmlFound = true;
-				ggbFound = true;
+				ggbHandler = true;
 				// Added for Intergeo File Format (Yves Kreis) -->
 				handler = getGGBHandler();
-			} else if (!ggbFound && name.equals(I2G_FILE)) {
+			} else if (!ggbHandler && name.equals(I2G_FILE)) {
 				// load i2g file into memory first
 				xmlFileBuffer = Util.loadIntoMemory(zip);
 				xmlFound = true;
@@ -193,6 +193,7 @@ public class MyXMLio {
 				// load macro xml file into memory first
 				macroXmlFileBuffer = Util.loadIntoMemory(zip);
 				macroXMLfound = true;
+				ggbHandler = true;
 				handler = getGGBHandler();
 			} else if (name.equals(JAVASCRIPT_FILE)) {
 				// load JavaScript
@@ -376,7 +377,7 @@ public class MyXMLio {
 		if (Application.getExtension(file)
 				.equals(Application.FILE_EXT_INTERGEO)) {
 			// File Extension for Intergeo: I2G
-			writeIntergeoFile(b);
+			writeIntergeoFile(b, true);
 		} else {
 			// File Extension for GeoGebra: GGB or GGT
 			writeGeoGebraFile(b, true);
@@ -451,7 +452,7 @@ public class MyXMLio {
 	 * Creates a zipped file containing the construction saved in xml and i2g
 	 * format plus all external images. Intergeo File Format (Yves Kreis)
 	 */
-	public void writeIntergeoFile(OutputStream os) throws IOException {
+	public void writeIntergeoFile(OutputStream os, boolean includeThumbail) throws IOException {
 		boolean isSaving = kernel.isSaving();
 		kernel.setSaving(true);
 		
@@ -467,11 +468,11 @@ public class MyXMLio {
 			zip.closeEntry();
 	
 			// write construction thumbnails
-			writeThumbnail(kernel.getConstruction(), zip, I2G_FILE_THUMBNAIL);
+			if (includeThumbail)
+				writeThumbnail(kernel.getConstruction(), zip, I2G_FILE_THUMBNAIL);
 	
 			// write construction images
-			writeConstructionImages(kernel.getConstruction(), zip,
-					I2G_IMAGES);
+			writeConstructionImages(kernel.getConstruction(), zip, I2G_IMAGES);
 	
 			// save macros
 			if (kernel.hasMacros()) {
@@ -487,6 +488,12 @@ public class MyXMLio {
 				osw.flush();
 				zip.closeEntry();
 			}
+	
+			// write library JavaScript to one special file in zip
+			zip.putNextEntry(new ZipEntry(I2G_PRIVATE + JAVASCRIPT_FILE));
+			osw.write(kernel.getLibraryJavaScript());
+			osw.flush();
+			zip.closeEntry();
 	
 			// write XML file for construction
 			zip.putNextEntry(new ZipEntry(I2G_PRIVATE + XML_FILE));
@@ -702,6 +709,7 @@ public class MyXMLio {
 			sb.append(GeoGebra.GGB_XSD_FILENAME); //eg	ggb.xsd
 		sb.append("\" xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >\n");
 	}
+	
 
 	/**
 	 * Returns XML representation of all settings and construction. GeoGebra
@@ -733,11 +741,12 @@ public class MyXMLio {
 	}
 
 	/**
-	 * Returns I2G representation of construction. Intergeo File Format. (Yves
-	 * Kreis)
+	 * Returns I2G representation of construction. Intergeo File Format.
+	 * (Yves Kreis)
 	 */
 	public String getFullI2G() {
 		StringBuilder sb = new StringBuilder();
+		//addXMLHeader(sb);
 
 		sb.append("<!--\n\tIntergeo File Format Version "
 				+ GeoGebra.I2G_FILE_FORMAT + "\n\twritten by "
@@ -748,10 +757,10 @@ public class MyXMLio {
 		sb.append("<construction>\n");
 
 		// save construction
-		sb.append(kernel.getConstructionI2G());
+		cons.getConstructionI2G(sb, Construction.CONSTRUCTION);
 
 		StringBuilder display = new StringBuilder();
-		display.append(kernel.getDisplayI2G());
+		cons.getConstructionI2G(display, Construction.DISPLAY);
 		if (!display.toString().equals("")) {
 			sb.append("\t<display>\n");
 			sb.append(display.toString());

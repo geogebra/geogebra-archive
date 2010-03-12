@@ -131,7 +131,7 @@ implements Comparable {
 	 * Intergeo File Format. (Yves Kreis)
 	 * @return xml String
 	 */
-    public abstract String getI2G(int mode);
+    public abstract void getI2G(StringBuilder sb, int mode);
         
 	/**
 	  * Removes this object from the current construction.	 
