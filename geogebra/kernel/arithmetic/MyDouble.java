@@ -401,6 +401,13 @@ implements NumberValue {
 		return false;
 	}    	
 	
+	/*
+	 * parse eg 3.45645% -> 3.45645/100
+	 */
+	public static double parsePercentage(String str) {
+		return parseDouble(str.substring(0, str.length() - 1)) / 100;
+	}
+	
 	static StringBuilder sb = new StringBuilder();
 	
 	/*

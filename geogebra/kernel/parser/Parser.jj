@@ -219,6 +219,7 @@ TOKEN : {
         >
   |     < EFLOAT: <FLOAT> "E" (<MINUS>)? <INTEGER> >
   |     < BFLOAT: <FLOAT> "b" (<MINUS>)? <INTEGER> >
+  |     < PERCENTAGE: <FLOAT> "%" >
   |     < #INTEGER: ( <DIGIT> )+ >
   |     < #DIGIT:                                     // unicode digits
        [
@@ -1420,6 +1421,11 @@ ExpressionValue myDouble():
       (c = <BFLOAT>) 
   		{
     		val = MyDouble.parseDouble( c.image.replaceFirst("b", "E" ));
+    	}
+    |
+      (c = <PERCENTAGE>) 
+  		{
+    		val = MyDouble.parsePercentage( c.image );
     	}
    )
   {
