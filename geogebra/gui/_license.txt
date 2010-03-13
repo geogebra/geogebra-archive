@@ -92,8 +92,7 @@ SUPPORT
   
 SOFTWARE
   * MathPiper, https://mathrider.dev.java.net
-  * Jasymca, http://webuser.hs-furtwangen.de/~dersch/
-  * Jama, http://math.nist.gov/javanumerics/jama/
+  * The Apache Commons Mathematics Library, http://commons.apache.org/math/
   * FreeHEP Java Libraries, http://java.freehep.org
   * EPS Graphics, http://epsgraphics.sf.net
   * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
