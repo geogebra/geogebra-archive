@@ -33,7 +33,8 @@ public class GeoGebraCAS {
 		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
 		
-		//setCurrentCAS(CAS_MAXIMA);
+		//app.setDefaultCAS(Application.CAS_MAXIMA);
+		
 		setCurrentCAS(Kernel.DEFAULT_CAS);
 	}
 	

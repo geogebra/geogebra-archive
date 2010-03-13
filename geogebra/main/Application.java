@@ -893,7 +893,8 @@ public abstract class Application implements KeyEventDispatcher {
 					} else if (optionName.equals("showCAS")) {
 						getGuiManager().setShowCASView(!optionValue.equals("false"));
 					} else if (optionName.equals("CAS")) {
-						setDefaultCAS(optionValue);
+						//setDefaultCAS(optionValue);
+						if (optionValue.toLowerCase(Locale.US).equals("maxima")) setDefaultCAS(CAS_MAXIMA);
 					} else if (optionName.equals("maximaPath")) {
 						setMaximaPath(optionValue);
 					} else if (optionName.equals("fontSize")) {
@@ -3853,10 +3854,20 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 	
+	public void setDefaultCAS(int CAS) {
+		boolean success = false;
+		if (CAS == CAS_MAXIMA) {
+			success = setMaximaCAS();
+		}
+		
+		// fallback / default option
+		if (!success) kernel.setDefaultCAS(CAS_MATHPIPER);	
+		
+	}
 	// eg --CAS=maxima
 	//Ulven 27.01.10
-	private void setDefaultCAS(String optionValue){
-		if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
+	private boolean setMaximaCAS(){
+		//if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
 			geogebra.main.FindMaxima fm=new geogebra.main.FindMaxima();
 			fm.search();
 			if(fm.isMaximaFound()){
@@ -3869,10 +3880,11 @@ public abstract class Application implements KeyEventDispatcher {
 					kernel.setDefaultCAS(CAS_MAXIMA);
 				}//if os
 				Application.debug("MAXIMA_PATH was finally set to: "+MAXIMA_PATH);
+				return true;
 			}else{
 				Application.debug("Maxima not found at all...");
 			}//if maxima was found
-		}//if option
+		return false;
 	}//setDefaultCas()
 	
 

@@ -1130,12 +1130,15 @@ implements ExpressionValue, RealRootFunction, Functional {
              fun.initFunction();
              return fun;
          } catch (Error err) {   
+        	 err.printStackTrace();
         	 Application.debug(err+"");
              return null;
          } catch (Exception e) {
+        	 e.printStackTrace();
         	 Application.debug(e+"");
              return null;
          } catch (Throwable e) {
+        	 e.printStackTrace();
            	 Application.debug(e+"");
              return null;
 		}      
