@@ -761,13 +761,15 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private boolean handleEvSize(EuclidianView ev, LinkedHashMap<String, String> attrs) {
-		if (app.isApplet())
-			return true;
+		// removed, needed to resize applet correctly
+		//if (app.isApplet())
+		//	return true;
 
 		try {
 			int width = Integer.parseInt((String) attrs.get("width"));
 			int height = Integer.parseInt((String) attrs.get("height"));
 			ev.setPreferredSize(new Dimension(width, height));
+			Application.debug("ev: "+width+", "+height);
 			return true;
 		} catch (Exception e) {
 			return false;

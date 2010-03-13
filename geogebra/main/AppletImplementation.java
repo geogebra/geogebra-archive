@@ -382,9 +382,19 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		Container cp = applet.getContentPane();
 		
 		Application.debug("Initial size = "+cp.getWidth()+", "+cp.getHeight());
+		Application.debug("EuclidianView size = "+app.getEuclidianView().getPreferredSize().getWidth()+", "+app.getEuclidianView().getPreferredSize().getHeight());
 		
 		width = cp.getWidth();
 		height = cp.getHeight();
+		
+		if (allowRescaling) {			
+			if (!app.runningInFrame && app.onlyGraphicsViewShowing())
+			{
+				// use just horizontal scale factor		
+				double zoomFactor = (double)width / (double)app.getEuclidianView().getPreferredSize().getWidth();
+				app.getEuclidianView().zoomAroundCenter(zoomFactor);
+			}
+		}
 		
 		cp.setBackground(bgColor);
 		cp.removeAll();
