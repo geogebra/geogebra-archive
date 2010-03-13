@@ -312,6 +312,14 @@ public class CASmaxima extends CASgeneric {
 	      "cl" +
 	      ")$");
 	   
+	    /*
+	     * eg integrate(x^n,x) asks if n+1 is zero
+	     * this disables the interactivity
+	     * but we get:
+	     * if equal(n+1,0) then log(abs(x)) else x^(n+1)/(n+1)
+	     * TODO: change to ggb syntax
+	     */
+	    ggbMaxima.executeRaw("load(\"noninteractive\");");
 
 	    
 	    // define Degree
