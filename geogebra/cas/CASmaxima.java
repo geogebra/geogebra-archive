@@ -336,7 +336,7 @@ public class CASmaxima extends CASgeneric {
 
 	    
 	    // define Degree
-	    //ggbMaxima.executeRaw("Degree := 180 / %pi;");
+	    ggbMaxima.executeRaw("Degree:180/%pi;");
 
 	}
 
