@@ -86,7 +86,7 @@ SUPPORT
       2006-2009: support of workshops and presentations throughout the USA
   * Faculty LSHASE, University of Luxembourg
       since 2009: hosting the GeoGebra website
-      since 2005: providing the multi-platform software deployment solutio
+      since 2005: providing the multi-platform software deployment solution
   * Department of Mathematics, University of Salzburg
       2002-2009: hosting the GeoGebra website   
   
