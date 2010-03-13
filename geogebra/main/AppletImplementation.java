@@ -382,7 +382,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		Container cp = applet.getContentPane();
 		
 		Application.debug("Initial size = "+cp.getWidth()+", "+cp.getHeight());
-		Application.debug("EuclidianView size = "+app.getEuclidianView().getPreferredSize().getWidth()+", "+app.getEuclidianView().getPreferredSize().getHeight());
+		//Application.debug("EuclidianView size = "+app.getEuclidianView().getPreferredSize().getWidth()+", "+app.getEuclidianView().getPreferredSize().getHeight());
 		
 		width = cp.getWidth();
 		height = cp.getHeight();
