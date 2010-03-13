@@ -7,12 +7,12 @@ LICENSE
   (see conditions and details below).  
 
 DEVELOPERS
-  * Markus Hohenwarter (Austria & USA): Project Leader, since 2001
-  * Michael Borcherds (UK): Lead Developer, since 2007
-  * Yves Kreis (Luxembourg): Developer, since 2005
-  * Mathieu Blossier (France): Developer, since 2008
-  * Florian Sonner (Germany): Developer, since 2008
-  * George Sturr (USA): Developer, since 2009
+  * Markus Hohenwarter (Austria & USA): Creator of GeoGebra & Project Director since 2001
+  * Michael Borcherds (UK): Lead Developer since 2007
+  * Yves Kreis (Luxembourg): Developer since 2005
+  * Mathieu Blossier (France): Developer since 2008
+  * Florian Sonner (Germany): Developer since 2008
+  * George Sturr (USA): Developer since 2009
 
 Contributions by Loic Le Coq (Paris, France 2006); Joan Carles Naranjo, Victor Franco, 
   Eloi Puertas (Barcelona, Spain 2007); Philipp Weissenbacher (Vienna, Austria 2007); 
