@@ -3857,11 +3857,15 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setDefaultCAS(int CAS) {
 		boolean success = false;
 		if (CAS == CAS_MAXIMA) {
+			Application.debug("Attempting to set CAS=Maxima");
 			success = setMaximaCAS();
 		}
 		
 		// fallback / default option
-		if (!success) kernel.setDefaultCAS(CAS_MATHPIPER);	
+		if (!success) {
+			Application.debug("Attempting to set CAS=MathPiper");
+			kernel.setDefaultCAS(CAS_MATHPIPER);	
+		}
 		
 	}
 	// eg --CAS=maxima
