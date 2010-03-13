@@ -284,6 +284,16 @@ public class CASmaxima extends CASgeneric {
 	    // make sure algsys (solve) doesn't return complex roots
 	    ggbMaxima.executeRaw("realonly:true;");
 	    
+	    // eg x^-1 displayed as 1/x
+	    ggbMaxima.executeRaw("exptdispflag:true;");
+	    
+	    // suppresses the printout of the message informing the user of the conversion of floating point numbers to rational numbers
+	    ggbMaxima.executeRaw("ratprint:false;");
+	    
+	    // When true, r some rational number, and x some expression, %e^(r*log(x)) will be simplified into x^r . It should be noted that the radcan command also does this transformation, and more complicated transformations of this ilk as well. The logcontract command "contracts" expressions containing log. 
+	    ggbMaxima.executeRaw("%e_to_numlog:true;");
+	    
+	    
 	    // define custom functions
 	    ggbMaxima.executeRaw("log10(x) := log(x) / log(10);");
 	    ggbMaxima.executeRaw("log2(x) := log(x) / log(2);");
@@ -294,7 +304,10 @@ public class CASmaxima extends CASgeneric {
 	    
 	    // needed for degree()
 	    ggbMaxima.executeRaw("load(powers)$");
-	    
+	       
+	    // needed for ???
+	    ggbMaxima.executeRaw("load(format)$");
+	       
 	    // turn {x=3} into {3} etc
 	    ggbMaxima.executeRaw("stripequals(ex):=block(" +
 	    		 "if atom(ex) then return(ex)" +
