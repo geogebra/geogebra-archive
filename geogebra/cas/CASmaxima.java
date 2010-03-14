@@ -3,9 +3,9 @@ package geogebra.cas;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.qtitools.mathassess.tools.maximaconnector.MaximaTimeoutException;
-import org.qtitools.mathassess.tools.maximaconnector.RawMaximaSession;
 
+import geogebra.cas.maximaconnector.MaximaTimeoutException;
+import geogebra.cas.maximaconnector.RawMaximaSession;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;

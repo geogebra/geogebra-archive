@@ -3,7 +3,7 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package org.qtitools.mathassess.tools.maximaconnector;
+package geogebra.cas.maximaconnector;
 
 /**
  * Runtime Exception thrown if a logic problem occurs in the Maxima Connector code, indicating

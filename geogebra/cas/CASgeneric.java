@@ -2,8 +2,8 @@ package geogebra.cas;
 
 import java.util.ResourceBundle;
 
-import org.qtitools.mathassess.tools.maximaconnector.RawMaximaSession;
 
+import geogebra.cas.maximaconnector.RawMaximaSession;
 import geogebra.kernel.arithmetic.ValidExpression;
 
 public abstract class CASgeneric {

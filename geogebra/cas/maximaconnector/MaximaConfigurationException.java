@@ -3,7 +3,7 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package org.qtitools.mathassess.tools.maximaconnector;
+package geogebra.cas.maximaconnector;
 
 /**
  * Runtime Exception thrown to indicate a problem with the configuration of
