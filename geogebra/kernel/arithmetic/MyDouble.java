@@ -500,7 +500,15 @@ implements NumberValue {
 			else if (ch <= 0xd6f) ch -= 0xd66; 
 			else if (ch <= 0xe59) ch -= 0xe50; // Thai
 			else if (ch <= 0xed9) ch -= 0xed0; 
-			else if (ch <= 0x1049) ch -= 0x1040; 
+			else if (ch <= 0xf29) ch -= 0xf20; // Tibetan
+			else if (ch <= 0x1049) ch -= 0x1040; // Mayanmar (Burmese)
+			else if (ch <= 0x17e9) ch -= 0x17e0; // Khmer
+			else if (ch <= 0x1819) ch -= 0x1810; // Mongolian
+			else if (ch <= 0x1b59) ch -= 0x1b50; // Balinese
+			else if (ch <= 0x1bb9) ch -= 0x1bb0; // Sudanese
+			else if (ch <= 0x1c49) ch -= 0x1c40; // Lepcha
+			else if (ch <= 0x1c59) ch -= 0x1c50; // Ol Chiki
+			else if (ch <= 0xa8d9) ch -= 0xa8d0; // Saurashtra
 			else {
 				sb.append(str.charAt(i) + ""); // eg -
 				continue;
