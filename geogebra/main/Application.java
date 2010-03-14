@@ -1296,6 +1296,14 @@ public abstract class Application implements KeyEventDispatcher {
 			unicodeZero = '\u0e50'; // Thai digit 0
 		} else if (locale.getLanguage().startsWith("ta")) {
 			unicodeZero = '\u0be6'; // Tamil digit 0
+		} else if (locale.getLanguage().startsWith("sd")) {
+			unicodeZero = '\u1bb0'; // Sudanese digit 0
+		} else if (locale.getLanguage().startsWith("kh")) {
+			unicodeZero = '\u17e0'; // Khmer digit 0
+		} else if (locale.getLanguage().startsWith("mn")) {
+			unicodeZero = '\u1810'; // Mongolian digit 0
+		} else if (locale.getLanguage().startsWith("mm")) {
+			unicodeZero = '\u1040'; // Mayanmar digit 0
 		} else {
 			unicodeZero = '0';
 		}
