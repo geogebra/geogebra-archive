@@ -856,7 +856,9 @@ public abstract class Application implements KeyEventDispatcher {
 					String optionValue = equalsPos < 0
 							|| equalsPos == args[i].length() - 1 ? "" : args[i]
 							.substring(equalsPos + 1);
-
+					
+					Application.debug("option: "+optionName+"="+optionValue);
+					
 					if (optionName.equals("help")) {
 						// help message
 						System.out
@@ -893,8 +895,11 @@ public abstract class Application implements KeyEventDispatcher {
 					} else if (optionName.equals("showCAS")) {
 						getGuiManager().setShowCASView(!optionValue.equals("false"));
 					} else if (optionName.equals("CAS")) {
-						//setDefaultCAS(optionValue);
-						if (optionValue.toLowerCase(Locale.US).equals("maxima")) setDefaultCAS(CAS_MAXIMA);
+						Application.debug("Attempting to set CAS...1");
+						if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
+							Application.debug("Attempting to set CAS...2");
+							setDefaultCAS(CAS_MAXIMA);
+						}
 					} else if (optionName.equals("maximaPath")) {
 						setMaximaPath(optionValue);
 					} else if (optionName.equals("fontSize")) {
