@@ -8,7 +8,7 @@ This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by 
 the Free Software Foundation.
 
-*/
+ */
 
 package geogebra.main;
 
@@ -56,9 +56,9 @@ import netscape.javascript.JSObject;
 public abstract class AppletImplementation implements AppletImplementationInterface {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private JApplet applet;
-	
+
 	protected Application app;
 	protected Kernel kernel;
 	private JButton btOpen;
@@ -85,7 +85,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	private int width, height;
 	//public static URL codeBase=null;
 	//public static URL documentBase=null;
-	
+
 	//private JavaScriptMethodHandler javaScriptMethodHandler;
 	//private boolean javascriptLoadFile=false, javascriptReset=false;
 	//private String javascriptLoadFileName="";
@@ -96,15 +96,15 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	/** Creates a new instance of GeoGebraApplet */	
 	protected AppletImplementation(final JApplet applet) {
 		this.applet = applet;
-		
-		
+
+
 		// Allow rescaling eg ctrl+ ctrl- in Firefox
 		if (allowRescaling)	applet.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent e)
 			{
 				Component c = e.getComponent();
 				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
-				
+
 				if (!app.runningInFrame && app.onlyGraphicsViewShowing())
 				{
 					// use just horizontal scale factors
@@ -113,20 +113,20 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 					app.getEuclidianView().zoomAroundCenter(zoomFactor);
 
 				}
-				
+
 				width = c.getWidth();
 				height = c.getHeight();
-				
+
 			}
-		   }); 
+		}); 
 
 		init();
 	}
-	
+
 	public JApplet getJApplet() {
 		return applet;
 	}
-	
+
 
 	public void dispose() {
 		app = null;		
@@ -150,9 +150,9 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		initJavaScript();
 		Object [] noArgs = { };
 		Object [] arg = { ggbOnInitParam };
-		
+
 		callJavaScript("ggbOnInit", (ggbOnInitParam == null) ? noArgs : arg );
-		
+
 		// give applet time to repaint
 		Thread initingThread = new Thread() {
 			public void run() {				
@@ -172,10 +172,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				else if (showFrame) {
 					wnd = app.getFrame();						
 				}	
-	
+
 				// load all jar files in background
 				GeoGebraAppletPreloader.loadAllJarFiles();
-				
+
 				System.gc();
 			}									
 		};
@@ -185,15 +185,15 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	private void init() {
 		//codeBase=this.getCodeBase();
 		//documentBase=this.getDocumentBase();
-		
+
 		//Application.debug("codeBase="+codeBase);
 		//Application.debug("documentBase="+documentBase);
-	
+
 		// get parameters
 		// filename of construction
 		fileStr = applet.getParameter("filename");
 		if (fileStr != null && 
-			!( fileStr.startsWith("http") || fileStr.startsWith("file") )) 
+				!( fileStr.startsWith("http") || fileStr.startsWith("file") )) 
 		{
 			// add document base to file name 
 			String documentBase = applet.getDocumentBase().toString();
@@ -215,25 +215,25 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 
 		// showToolBar = "true" or parameter is not available
 		showToolBar = "true".equals(applet.getParameter("showToolBar"));
-		
+
 		// showToolBar = "true" or parameter is not available
 		showToolBarHelp = showToolBar && "true".equals(applet.getParameter("showToolBarHelp"));
-		
+
 		// customToolBar = "0 1 2 | 3 4 5 || 7 8 12" to set the visible toolbar modes
 		customToolBar = applet.getParameter("customToolBar");
-				
+
 		// showMenuBar = "true" or parameter is not available
 		showMenuBar = "true".equals(applet.getParameter("showMenuBar"));
-		
+
 		// showSpreadsheet = "true" or parameter is not available
 		//showSpreadsheet = "true".equals(applet.getParameter("showSpreadsheet"));
-		
+
 		// showAlgebraView = "true" or parameter is not available
 		//showAlgebraView = "true".equals(applet.getParameter("showAlgebraView"));
-		
+
 		// showResetIcon = "true" or parameter is not available
 		showResetIcon = "true".equals(applet.getParameter("showResetIcon"));
-		
+
 		// showAlgebraInput = "true" or parameter is not available
 		showAlgebraInput = "true".equals(applet.getParameter("showAlgebraInput"));
 
@@ -241,30 +241,30 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		// to open the application frame by double clicking on the drawing pad
 		// !false is used for downward compatibility	
 		showFrame = !"false".equals(applet.getParameter("framePossible"));
-			
+
 		// rightClickActive, default is "true"
 		enableRightClick = !"false".equals(applet.getParameter("enableRightClick"));
-		
+
 		// enableChooserPopups, default is "true"
 		enableChooserPopups = !"false".equals(applet.getParameter("enableChooserPopups"));
-		
+
 		// errorDialogsActive, default is "true"
 		errorDialogsActive = !"false".equals(applet.getParameter("errorDialogsActive"));
-		
+
 		// enableLabelDrags, default is "true"
 		enableLabelDrags = !"false".equals(applet.getParameter("enableLabelDrags"));
-		
+
 		// paramter for JavaScript ggbOnInit() call
 		ggbOnInitParam = applet.getParameter("ggbOnInitParam");
-		
+
 		// enableShiftDragZoom, default is "true"
 		enableShiftDragZoom = !"false".equals(applet.getParameter("enableShiftDragZoom"));		
-		
+
 		// allowRescaling, default is "false"
 		allowRescaling = "true".equals(applet.getParameter("allowRescaling"));		
-		
+
 		undoActive = (showToolBar || showMenuBar);
-		
+
 		// set language manually by iso language string
 		String language = applet.getParameter("language");
 		String country = applet.getParameter("country");		
@@ -282,7 +282,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		} catch (Exception e) {
 			bgColor = Color.white;
 		}
-		
+
 		// borderColor = "#CCFFFF" specifies the border color to be used for
 		// the applet panel
 		try {
@@ -290,7 +290,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		} catch (Exception e) {
 			borderColor = Color.gray;
 		}
-		
+
 		// maximum icon size to be used in the toolbar
 		try {
 			maxIconSize = Integer.parseInt(applet.getParameter("maxIconSize"));
@@ -306,16 +306,16 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			String[] args = { fileStr };
 			app = new CustomApplication(args, this, undoActive);
 		}
-		*/
-		
-    	try {		
-  			if (Application.MAC_OS || Application.WINDOWS)
-  				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-  			else // Linux or others
-  				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-  		} catch (Exception e) {
-  			Application.debug(e+"");
-  		}
+		 */
+
+		try {		
+			if (Application.MAC_OS || Application.WINDOWS)
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			else // Linux or others
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (Exception e) {
+			Application.debug(e+"");
+		}
 
 		if (fileStr == null) {
 			app = buildApplication(null, undoActive);
@@ -325,36 +325,36 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		}
 
 		kernel = app.getKernel();
-		
+
 		/* Ulven 29.05.08 */
 		ggbApi=app.getGgbApi();
 	}
 
 	protected abstract Application buildApplication(String[] args, boolean undoActive);
-		
+
 	public Application getApplication() {
 		return app;
 	}
-	
+
 	/**
 	 * @return If this applet uses any GUI component (the gui.jar has to be loaded)
 	 */
 	public boolean useGui() {
 		return showMenuBar || showAlgebraInput || showToolBar;
 	}
-	
+
 	public void initGUI() {		
 		JPanel myContenPane;
-		
+
 		// show only button to open application window	
 		if (showOpenButton) {
 			btOpen =
 				new JButton(
-					app.getPlain("Open")
+						app.getPlain("Open")
 						+ " "
 						+ app.getPlain("ApplicationName"));
 			btOpen.addActionListener(new ButtonClickListener());
-			
+
 			// prepare content pane
 			myContenPane = new JPanel();
 			myContenPane.setBackground(bgColor);
@@ -367,7 +367,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			// TODO use Appication methods (F.S.)
 			// create applet panel
 			myContenPane = createGeoGebraAppletPanel();
-		
+
 			// border around applet panel
 			myContenPane.setBorder(BorderFactory.createLineBorder(borderColor));			
 
@@ -377,16 +377,31 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				ev.addMouseListener(dcListener);
 			}									
 		}
-			
+
 		// replace applet's content pane
 		Container cp = applet.getContentPane();
-		
+
 		Application.debug("Initial size = "+cp.getWidth()+", "+cp.getHeight());
 		//Application.debug("EuclidianView size = "+app.getEuclidianView().getPreferredSize().getWidth()+", "+app.getEuclidianView().getPreferredSize().getHeight());
-		
+
 		width = cp.getWidth();
 		height = cp.getHeight();
-		
+
+		setInitialScaling();
+
+		cp.setBackground(bgColor);
+		cp.removeAll();
+		cp.add(myContenPane);
+
+		// set move mode
+		app.setMoveMode();		
+	}
+
+	/*
+	 * rescales if the width is not what's expected
+	 * eg if browser is zoomed
+	 */
+	private void setInitialScaling() {
 		if (allowRescaling) {			
 			if (!app.runningInFrame && app.onlyGraphicsViewShowing())
 			{
@@ -395,53 +410,47 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				app.getEuclidianView().zoomAroundCenter(zoomFactor);
 			}
 		}
-		
-		cp.setBackground(bgColor);
-		cp.removeAll();
-		cp.add(myContenPane);
-		
-		// set move mode
-		app.setMoveMode();		
+
 	}
-	
-//	/**
-//	 * Initializes the user interface to only show the graphics view.
-//	 */
-//	public void initViewerGUI() {
-//		// set application parameters
-//		app.setUndoActive(false);			
-//		app.setShowMenuBar(false);
-//		app.setShowAlgebraInput(false);
-//		app.setShowToolBar(false, false);	
-//		app.setRightClickEnabled(false);
-//		app.setErrorDialogsActive(errorDialogsActive);
-//		app.setLabelDragsEnabled(enableLabelDrags);
-//		app.setShiftDragZoomEnabled(enableShiftDragZoom);
-//		app.setShowResetIcon(false);
-//		app.setMaxIconSize(maxIconSize);
-//						
-//		
-//		// build applet panel with graphics view
-//		JPanel panel = new JPanel(new BorderLayout());
-//		ev = app.getEuclidianView();
-//		panel.add(ev, BorderLayout.CENTER);
-//		// border around graphics panel
-//		panel.setBorder(BorderFactory.createLineBorder(borderColor));		
-//
-//		// replace applet's content pane
-//		Container cp = applet.getContentPane();
-//		cp.setBackground(bgColor);
-//		cp.removeAll();
-//		cp.add(panel);
-//		
-//		// set move mode
-//		app.setMoveMode();
-//	}
-	
+
+	//	/**
+	//	 * Initializes the user interface to only show the graphics view.
+	//	 */
+	//	public void initViewerGUI() {
+	//		// set application parameters
+	//		app.setUndoActive(false);			
+	//		app.setShowMenuBar(false);
+	//		app.setShowAlgebraInput(false);
+	//		app.setShowToolBar(false, false);	
+	//		app.setRightClickEnabled(false);
+	//		app.setErrorDialogsActive(errorDialogsActive);
+	//		app.setLabelDragsEnabled(enableLabelDrags);
+	//		app.setShiftDragZoomEnabled(enableShiftDragZoom);
+	//		app.setShowResetIcon(false);
+	//		app.setMaxIconSize(maxIconSize);
+	//						
+	//		
+	//		// build applet panel with graphics view
+	//		JPanel panel = new JPanel(new BorderLayout());
+	//		ev = app.getEuclidianView();
+	//		panel.add(ev, BorderLayout.CENTER);
+	//		// border around graphics panel
+	//		panel.setBorder(BorderFactory.createLineBorder(borderColor));		
+	//
+	//		// replace applet's content pane
+	//		Container cp = applet.getContentPane();
+	//		cp.setBackground(bgColor);
+	//		cp.removeAll();
+	//		cp.add(panel);
+	//		
+	//		// set move mode
+	//		app.setMoveMode();
+	//	}
+
 	protected JPanel createGeoGebraAppletPanel() {
 		JPanel appletPanel = new JPanel(new BorderLayout());
 		appletPanel.setBackground(bgColor);
-		
+
 		app.setUndoActive(undoActive);			
 		app.setShowMenuBar(showMenuBar);
 		//app.setShowSpreadsheetView(showSpreadsheet);
@@ -457,15 +466,15 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			app.getGuiManager().setToolBarDefinition(customToolBar);
 		app.setShowResetIcon(showResetIcon);
 		app.setMaxIconSize(maxIconSize);
-		
+
 		appletPanel.add(app.buildApplicationPanel(), BorderLayout.CENTER);		
 		ev = app.getEuclidianView();		
 		ev.updateBackground();
-		
+
 		return appletPanel;
 	}
-	
-	
+
+
 
 	private class DoubleClickListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
@@ -484,23 +493,23 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	private void showFrame() {
 		Thread worker = new Thread() {
 			public void run() {	
-				
+
 				app.runningInFrame = true;
-				
+
 				applet.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				
+
 				doShowFrame();	
-				
+
 				applet.setCursor(Cursor.getDefaultCursor());
 			}        	
-        };
-        worker.start();			
+		};
+		worker.start();			
 	}
-	
+
 	private synchronized void doShowFrame() {
 		if (showOpenButton) {
 			btOpen.setEnabled(false);
-			
+
 			if (wnd == null)
 				initGeoGebraFrame();			
 		} else {
@@ -516,22 +525,22 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			label.setFont(app.getPlainFont());
 			p.add(label, BorderLayout.CENTER);
 			cp.add(p);
-						
+
 			// initialize the GeoGebra frame's UIG
 			initGeoGebraFrame();			
 			applet.validate();
 		}				
-		
+
 		// show frame		
 		wnd.setVisible(true);		
 	}
-	
+
 	private synchronized void initGeoGebraFrame() {
 		// build application panel 
 		if (wnd == null) {
 			wnd = app.getFrame();		
 		}
-		
+
 		app.setFrame(wnd);		
 		app.setShowMenuBar(true);
 		app.setShowAlgebraInput(true);		
@@ -540,10 +549,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		app.setRightClickEnabled(true);
 		if (customToolBar != null && customToolBar.length() > 0)
 			app.getGuiManager().setToolBarDefinition(customToolBar);
-			
+
 		if(app.hasGuiManager())
 			app.getGuiManager().updateLayout();
-		
+
 		app.updateContentPane();
 		app.resetFonts();					
 	}
@@ -552,41 +561,41 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		Thread worker = new Thread() {
 			public void run() {	
 				applet.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				
+
 				wnd.setVisible(false); // hide frame
-				
+
 				if (showOpenButton) {
 					btOpen.setEnabled(true);
 				} else {		
 					reinitGUI();
 				}		
-				
+
 				applet.setCursor(Cursor.getDefaultCursor());
 			}        	
-        };
-        worker.start();				
+		};
+		worker.start();				
 	}
-	
+
 	private void reinitGUI() {
-		
+
 		app.runningInFrame = false;
-		
+
 		Container cp = applet.getContentPane();
 		cp.removeAll();
-		
+
 		app.setApplet(this);
 		initGUI();
 
 		if(app.hasGuiManager())
 			app.getGuiManager().updateLayout();
-		
+
 		app.resetFonts();
 		app.refreshViews();
-		
+
 		applet.validate();
 		System.gc();
 	}
-					
+
 
 	/* JAVA SCRIPT INTERFACE */
 	/* Rewritten by Ulven 29.05.08:
@@ -597,7 +606,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 * 
 	 * 
 	 */
-	
+
 	/**
 	 * Returns current construction as a ggb file in form of a byte array.
 	 * @return null if something went wrong 
@@ -612,7 +621,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized String getXML() {
 		return ggbApi.getXML();
 	}
-	
+
 	/**
 	 * Returns the GeoGebra XML string for the given GeoElement object, 
 	 * i.e. only the <element> tag is returned. 
@@ -620,7 +629,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public String getXML(String objName) {
 		return ggbApi.getXML(objName);	
 	}
-	
+
 	/**
 	 * For a dependent GeoElement objName the XML string of 
 	 * the parent algorithm and all its output objects is returned. 
@@ -629,21 +638,21 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public String getAlgorithmXML(String objName) {
 		return ggbApi.getAlgorithmXML(objName);
 	}	
-	
+
 	/**
 	 * Opens construction given in XML format. May be used for loading constructions.
 	 */
 	public synchronized void setXML(String xml) {
 		app.setXML(xml, true);
 	}
-	
+
 	/**
 	 * Evaluates the given XML string and changes the current construction. 
 	 * Note: the construction is NOT cleared before evaluating the XML string. 	 
 	 */
 	public synchronized void evalXML(String xmlString) {		
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 		ev.getXML(sb);
@@ -654,25 +663,25 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		app.setXML(sb.toString(), false);
 	}
 
-	
+
 	/**
 	 * Evaluates the given string as if it was entered into GeoGebra's 
 	 * input text field. 	 
 	 */
 	public synchronized boolean evalCommand(final String cmdString) {		
 		//waitForCAS();
-				
+
 		// avoid security problems calling from JavaScript
 		MyBoolean ret = (MyBoolean)AccessController.doPrivileged(new PrivilegedAction() {
 			public Object run() {
 				// make sure translated command names are loaded
 				app.initTranslatedCommands();
-				
+
 				// perform the security-sensitive operation here
 				return new MyBoolean(app.getGgbApi().evalCommand(cmdString));
 			}
 		});
-		
+
 		//return success
 		return ret.getBoolean();
 	}
@@ -682,9 +691,9 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 */
 	public synchronized String evalMathPiper(String cmdString) {
 		//waitForCAS();
-		
+
 		final String str = cmdString;
-		
+
 		// avoid security problems calling from JavaScript
 		return (String)AccessController.doPrivileged(new PrivilegedAction() {
 			public Object run() {
@@ -694,7 +703,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			}
 		});
 	}
-	
+
 	/**
 	 * Evaluates the given string using the Yacas CAS.
 	 * @deprecated: use evalMathPiper() instead
@@ -702,31 +711,31 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized String evalYacas(String cmdString) {
 		return evalMathPiper(cmdString);
 	}
-	
+
 	/**
 	 * prints a string to the Java Console
 	 */
 	public synchronized void debug(String string) {		
 		Application.debug(string);
 	}
-	
-//	/**
-//	 * Waits until the GeoGebraCAS has been loaded in the background.
-//	 * Note: the GeoGebraCAS is automatically inited in Application.initInBackground();
-//	 */
-//	private synchronized void waitForCAS() {
-//		if (kernel.isGeoGebraCASready()) return;
-//		
-//		// TODO: remove
-//		System.out.println("waiting for CAS to be inited ...");		
-//		
-//		while (!kernel.isGeoGebraCASready()) {
-//			try { Thread.sleep(50); } catch (Exception e) {}			
-//		}		
-//		
-//		// TODO: remove
-//		System.out.println("   CAS loaded!");
-//	}
+
+	//	/**
+	//	 * Waits until the GeoGebraCAS has been loaded in the background.
+	//	 * Note: the GeoGebraCAS is automatically inited in Application.initInBackground();
+	//	 */
+	//	private synchronized void waitForCAS() {
+	//		if (kernel.isGeoGebraCASready()) return;
+	//		
+	//		// TODO: remove
+	//		System.out.println("waiting for CAS to be inited ...");		
+	//		
+	//		while (!kernel.isGeoGebraCASready()) {
+	//			try { Thread.sleep(50); } catch (Exception e) {}			
+	//		}		
+	//		
+	//		// TODO: remove
+	//		System.out.println("   CAS loaded!");
+	//	}
 
 	/**
 	 * Turns on the fly creation of points in graphics view on (true) or off (false). 
@@ -738,7 +747,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setOnTheFlyPointCreationActive(boolean flag) {
 		app.setOnTheFlyPointCreationActive(flag);
 	}
-	
+
 	public synchronized void setUndoPoint() {
 		app.getKernel().getConstruction().storeUndoInfo();
 	}
@@ -750,12 +759,12 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setErrorDialogsActive(boolean flag) {
 		app.setErrorDialogsActive(flag);
 	}
-	
+
 	/**
 	 * Resets the initial construction (given in filename parameter) of this applet.	 
 	 */
 	public synchronized void reset() {	
-		
+
 		if (fileStr.startsWith("base64://")) {
 			byte[] zipFile;
 			try {
@@ -768,7 +777,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			app.loadXML(zipFile);
 			return;
 		}
-		
+
 		// avoid security problems calling from JavaScript
 		AccessController.doPrivileged(new PrivilegedAction() {
 			public Object run() {
@@ -783,14 +792,14 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 					e.printStackTrace();
 				} 		
 				app.setDefaultCursor();	
-				
+
 				return null;
 
 			}
 		});
-
+		setInitialScaling();
 	}
-	
+
 	/**
 	 * Refreshs all views. Note: clears traces in
 	 * geometry window.
@@ -798,7 +807,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void refreshViews() {
 		app.refreshViews();		 				
 	}
-	
+
 	/* returns IP address
 	 * 
 	 */
@@ -815,7 +824,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			}
 		});
 	}
-			
+
 	/* returns hostname
 	 * 
 	 */
@@ -832,7 +841,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			}
 		});
 	}
-			
+
 	/**
 	 * Loads a construction from a  file (given URL).	
 	 */
@@ -861,44 +870,44 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			}
 		});
 	}
-	
+
 	/**
 	 * @return The border color of the applet.
 	 */
 	public Color getBorderColor() {
 		return borderColor;
 	}
-	
+
 	/*
 	public synchronized void setLanguage(String isoLanguageString) {	
 		app.setLanguage(new Locale(isoLanguageString));
 	}
-	
+
 	public synchronized void setLanguage(String isoLanguageString, String isoCountryString) {
 		app.setLanguage(new Locale(isoLanguageString, isoCountryString));
 	}
-	*/
-	
+	 */
+
 	/**
 	 * Shows or hides the object with the given name in the geometry window.
 	 */
 	public synchronized void setVisible(String objName, boolean visible) {
 		ggbApi.setVisible(objName, visible);
 	}
-	
+
 	public synchronized boolean getVisible(String objName) {
 		return ggbApi.getVisible(objName);
 	}	
-	
+
 	/**
 	 * Sets the layer of the object with the given name in the geometry window.
 	 * Michael Borcherds 2008-02-27
 	 */
 	public synchronized void setLayer(String objName, int layer) {
 		ggbApi.setLayer(objName, layer);
-		
+
 	}
-	
+
 	/**
 	 * Returns the layer of the object with the given name in the geometry window.
 	 * returns layer, or -1 if object doesn't exist
@@ -907,7 +916,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized int getLayer(String objName) {
 		return ggbApi.getLayer(objName);
 	}
-	
+
 	/**
 	 * Shows or hides a complete layer
 	 * Michael Borcherds 2008-02-27
@@ -915,8 +924,8 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setLayerVisible(int layer, boolean visible) {
 		ggbApi.setLayerVisible(layer,visible);
 	}
-	
-	
+
+
 
 	/**
 	 * Sets the fixed state of the object with the given name.
@@ -924,21 +933,21 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setFixed(String objName, boolean flag) {
 		ggbApi.setFixed(objName, flag);
 	}
-	
+
 	/**
 	 * Turns the trace of the object with the given name on or off.
 	 */
 	public synchronized void setTrace(String objName, boolean flag) {
 		ggbApi.setTrace(objName, flag);
 	}
-	
+
 	/**
 	 * Shows or hides the label of the object with the given name in the geometry window.
 	 */
 	public synchronized void setLabelVisible(String objName, boolean visible) {
 		ggbApi.setLabelVisible(objName, visible);
 	}
-	
+
 	/**
 	 * Sets the label style of the object with the given name in the geometry window.
 	 * Possible label styles are NAME = 0, NAME_VALUE = 1 and VALUE = 2.
@@ -946,14 +955,14 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setLabelStyle(String objName, int style) {
 		ggbApi.setLabelStyle(objName, style);
 	}
-	
+
 	/**
 	 * Shows or hides the label of the object with the given name in the geometry window.
 	 */
 	public synchronized void setLabelMode(String objName, boolean visible) {
 		ggbApi.setLabelMode(objName, visible);
 	}
-	
+
 	/**
 	 * Sets the color of the object with the given name.
 	 */
@@ -964,23 +973,23 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setLineStyle(String objName, int style) {
 		ggbApi.setLineStyle(objName, style);
 	}	
-	
+
 	public synchronized void setLineThickness(String objName, int thickness) {
 		ggbApi.setLineThickness(objName, thickness);
 	}	
-	
+
 	public synchronized void setPointStyle(String objName, int style) {
 		ggbApi.setPointStyle(objName, style);
 	}	
-	
+
 	public synchronized void setPointSize(String objName, int style) {
 		ggbApi.setPointSize(objName, style);
 	}	
-	
+
 	public synchronized void setFilling(String objName, double filling) {
 		ggbApi.setFilling(objName, filling);
 	}	
-	
+
 	/*
 	 * used by the automatic file tester (from JavaScript)
 	 */
@@ -997,53 +1006,53 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 
 	}
 
-		/**
+	/**
 	 * Returns the color of the object as an hex string. Note that the hex-string 
 	 * starts with # and uses upper case letters, e.g. "#FF0000" for red.
 	 */
 	public synchronized String getColor(String objName) {
 		return ggbApi.getColor(objName);
 	}
-	
+
 	public synchronized double getFilling(String objName) {
 		return ggbApi.getFilling(objName);
 	}	
-	
+
 	public synchronized int getLineStyle(String objName) {
 		return ggbApi.getLineStyle(objName);
 	}	
-	
+
 	public synchronized int getLineThickness(String objName) {
 		return ggbApi.getLineThickness(objName);
 	}	
-	
+
 	public synchronized int getPointStyle(String objName) {
 		return ggbApi.getPointStyle(objName);
 	}	
-	
+
 	public synchronized int getPointSize(String objName) {
 		return ggbApi.getPointSize(objName);
 	}		
-	
+
 	/**
 	 * Deletes the object with the given name.
 	 */
 	public synchronized void deleteObject(String objName) {		
 		ggbApi.deleteObject(objName);
 	}	
-	
+
 	public synchronized void setAnimating(String objName, boolean animate) {
 		ggbApi.setAnimating(objName, animate);
 	}
-	
+
 	public synchronized void setAnimationSpeed(String objName, double speed) {
 		ggbApi.setAnimationSpeed(objName, speed);
 	}
-	
+
 	public synchronized void startAnimation() {
 		kernel.getAnimatonManager().startAnimation();		
 	}
-	
+
 	public synchronized void stopAnimation() {
 		kernel.getAnimatonManager().stopAnimation();		
 	}
@@ -1051,11 +1060,11 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public void hideCursorWhenDragging(boolean hideCursorWhenDragging) {
 		kernel.getApplication().setUseTransparentCursorWhenDragging(hideCursorWhenDragging);
 	}	
-	
+
 	public synchronized boolean isAnimationRunning() {
 		return kernel.getAnimatonManager().isRunning();		
 	}
-	
+
 	/**
 	 * Renames an object from oldName to newName.
 	 * @return whether renaming worked
@@ -1063,14 +1072,14 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized boolean renameObject(String oldName, String newName) {		
 		return ggbApi.renameObject(oldName, newName);
 	}	
-	
+
 	/**
 	 * Returns true if the object with the given name exists.
 	 */
 	public synchronized boolean exists(String objName) {	
 		return ggbApi.exists(objName);
 	}	
-	
+
 	/**
 	 * Returns true if the object with the given name has a vaild
 	 * value at the moment.
@@ -1078,28 +1087,28 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized boolean isDefined(String objName) {			
 		return ggbApi.isDefined(objName);
 	}	
-	
+
 	/**
 	 * Returns the value of the object with the given name as a string.
 	 */
 	public synchronized String getValueString(String objName) {
 		return ggbApi.getValueString(objName);
 	}
-	
+
 	/**
 	 * Returns the definition of the object with the given name as a string.
 	 */
 	public synchronized String getDefinitionString(String objName) {
 		return ggbApi.getDefinitionString(objName);
 	}
-	
+
 	/**
 	 * Returns the command of the object with the given name as a string.
 	 */
 	public synchronized String getCommandString(String objName) {	
 		return ggbApi.getCommandString(objName);
 	}
-	
+
 	/**
 	 * Returns the x-coord of the object with the given name. Note: returns 0 if
 	 * the object is not a point or a vector.
@@ -1107,7 +1116,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized double getXcoord(String objName) {
 		return ggbApi.getXcoord(objName);
 	}
-	
+
 	/**
 	 * Returns the y-coord of the object with the given name. Note: returns 0 if
 	 * the object is not a point or a vector.
@@ -1115,7 +1124,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized double getYcoord(String objName) {
 		return ggbApi.getYcoord(objName);
 	}
-	
+
 	/**
 	 * Sets the coordinates of the object with the given name. Note: if the
 	 * specified object is not a point or a vector, nothing happens.
@@ -1123,7 +1132,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setCoords(String objName, double x, double y) {
 		ggbApi.setCoords(objName,x,y);
 	}
-	
+
 	/**
 	 * Returns the double value of the object with the given name. Note: returns 0 if
 	 * the object does not have a value.
@@ -1131,7 +1140,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized double getValue(String objName) {
 		return ggbApi.getValue(objName);
 	}
-	
+
 	/**
 	 * Sets the double value of the object with the given name. Note: if the
 	 * specified object is not a number, nothing happens.
@@ -1139,7 +1148,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void setValue(String objName, double x) {
 		ggbApi.setValue(objName,x);
 	}
-	
+
 	/**
 	 * Turns the repainting of all views on or off.
 	 */
@@ -1147,83 +1156,83 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		//Application.debug("set repainting: " + flag);
 		ggbApi.setRepaintingActive(flag);
 	}	
-	
+
 
 	/*
 	 * Methods to change the geometry window's properties	 
 	 */
-	
+
 	/**
 	 * Sets the Cartesian coordinate system in the graphics window.
 	 */
 	public synchronized void setCoordSystem(double xmin, double xmax, double ymin, double ymax) {
 		app.getEuclidianView().setRealWorldCoordSystem(xmin, xmax, ymin, ymax);
 	}
-	
+
 	/**
 	 * Shows or hides the x- and y-axis of the coordinate system in the graphics window.
 	 */
 	public synchronized void setAxesVisible(boolean xVisible, boolean yVisible) {		
 		ggbApi.setAxesVisible(xVisible, yVisible);
 	}	
-	
+
 	/**
 	 * Shows or hides the coordinate grid in the graphics window.
 	 */
 	public synchronized void setGridVisible(boolean flag) {		
 		app.getEuclidianView().showGrid(flag);
 	}
-	
 
-	
+
+
 	/**
 	 * Returns an array with all object names.
 	 */
 	public synchronized String [] getAllObjectNames() {			
 		return ggbApi.getObjNames();
 	}	
-	
+
 	/**
 	 * Returns the number of objects in the construction.
 	 */
 	public synchronized int getObjectNumber() {					
 		return ggbApi.getObjNames().length;			
 	}	
-	
+
 	/**
 	 * Returns the name of the n-th object of this construction.
 	 */
 	public synchronized String getObjectName(int i) {	
 		return ggbApi.getObjectName(i);
 	}
-	
+
 	/**
 	 * Returns the type of the object with the given name as a string (e.g. point, line, circle, ...)
 	 */
 	public synchronized String getObjectType(String objName) {
 		return ggbApi.getObjectType(objName);
 	}
-	
+
 	/**
 	 * Sets the mode of the geometry window (EuclidianView). 
 	 */
 	public synchronized void setMode(int mode) {
 		app.setMode(mode);
 	}	
-	
-	
+
+
 	/*
 	 * Change listener implementation
 	 * Java to JavaScript
 	 *
 	 *
 	 *moved to ScriptManager
-	
+
 	// maps between GeoElement and JavaScript function names
 	private HashMap updateListenerMap;
 	private ArrayList addListeners, removeListeners, renameListeners, updateListeners, clearListeners;
 	private JavaToJavaScriptView javaToJavaScriptView;
-	
+
 	/**
 	 * Registers a JavaScript function as an add listener for the applet's construction.
 	 *  Whenever a new object is created in the GeoGebraApplet's construction, the JavaScript 
@@ -1232,10 +1241,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void registerAddListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
-						
+
 		// init view
 		initJavaScriptView();
-		
+
 		// init list
 		if (addListeners == null) {
 			addListeners = new ArrayList();			
@@ -1243,7 +1252,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		addListeners.add(JSFunctionName);				
 		Application.debug("registerAddListener: " + JSFunctionName);
 	}
-	
+
 	/**
 	 * Removes a previously registered add listener 
 	 * @see registerAddListener() 
@@ -1254,7 +1263,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			Application.debug("unregisterAddListener: " + JSFunctionName);
 		}	
 	}	
-	
+
 	/**
 	 * Registers a JavaScript function as a remove listener for the applet's construction.
 	 * Whenever an object is deleted in the GeoGebraApplet's construction, the JavaScript 
@@ -1263,10 +1272,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void registerRemoveListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
-						
+
 		// init view
 		initJavaScriptView();
-		
+
 		// init list
 		if (removeListeners == null) {
 			removeListeners = new ArrayList();			
@@ -1274,7 +1283,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		removeListeners.add(JSFunctionName);				
 		Application.debug("registerRemoveListener: " + JSFunctionName);
 	}
-	
+
 	/**
 	 * Removes a previously registered remove listener 
 	 * @see registerRemoveListener() 
@@ -1285,7 +1294,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			Application.debug("unregisterRemoveListener: " + JSFunctionName);
 		}	
 	}	
-	
+
 	/**
 	 * Registers a JavaScript function as a clear listener for the applet's construction.
 	 * Whenever the construction in the GeoGebraApplet's is cleared (i.e. all objects are removed), the JavaScript 
@@ -1294,10 +1303,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void registerClearListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
-						
+
 		// init view
 		initJavaScriptView();
-		
+
 		// init list
 		if (clearListeners == null) {
 			clearListeners = new ArrayList();			
@@ -1305,7 +1314,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		clearListeners.add(JSFunctionName);				
 		Application.debug("registerClearListener: " + JSFunctionName);
 	}
-	
+
 	/**
 	 * Removes a previously registered clear listener 
 	 * @see registerClearListener() 
@@ -1316,7 +1325,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			Application.debug("unregisterClearListener: " + JSFunctionName);
 		}	
 	}	
-	
+
 	/**
 	 * Registers a JavaScript function as a rename listener for the applet's construction.
 	 * Whenever an object is renamed in the GeoGebraApplet's construction, the JavaScript 
@@ -1325,10 +1334,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void registerRenameListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
-						
+
 		// init view
 		initJavaScriptView();
-		
+
 		// init list
 		if (renameListeners == null) {
 			renameListeners = new ArrayList();			
@@ -1336,7 +1345,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		renameListeners.add(JSFunctionName);				
 		Application.debug("registerRenameListener: " + JSFunctionName);
 	}
-	
+
 	/**
 	 * Removes a previously registered rename listener.
 	 * @see registerRenameListener() 
@@ -1347,7 +1356,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			Application.debug("unregisterRenameListener: " + JSFunctionName);
 		}	
 	}	
-	
+
 	/**
 	 * Registers a JavaScript function as an update listener for the applet's construction.
 	 * Whenever any object is updated in the GeoGebraApplet's construction, the JavaScript 
@@ -1356,10 +1365,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void registerUpdateListener(String JSFunctionName) {
 		if (JSFunctionName == null || JSFunctionName.length() == 0)
 			return;				
-						
+
 		// init view
 		initJavaScriptView();
-		
+
 		// init list
 		if (updateListeners == null) {
 			updateListeners = new ArrayList();			
@@ -1367,7 +1376,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		updateListeners.add(JSFunctionName);				
 		Application.debug("registerUpdateListener: " + JSFunctionName);
 	}
-	
+
 	/**
 	 * Removes a previously registered update listener.
 	 * @see registerRemoveListener() 
@@ -1378,7 +1387,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			Application.debug("unregisterUpdateListener: " + JSFunctionName);
 		}	
 	}	
-	
+
 	/**
 	 * Registers a JavaScript update listener for an object. Whenever the object with 
 	 * the given name changes, a JavaScript function named JSFunctionName 
@@ -1397,20 +1406,20 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			return;		
 		GeoElement geo = kernel.lookupLabel(objName);
 		if (geo == null) return;
-				
+
 		// init view
 		initJavaScriptView();
-		
+
 		// init map and view
 		if (updateListenerMap == null) {
 			updateListenerMap = new HashMap();			
 		}
-		
+
 		// add map entry
 		updateListenerMap.put(geo, JSFunctionName);		
 		Application.debug("registerUpdateListener: object: " + objName + ", function: " + JSFunctionName);
 	}
-	
+
 	/**
 	 * Removes a previously set change listener for the given object.
 	 * @see setChangeListener
@@ -1431,81 +1440,81 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	 * addChangeListener() and removeChangeListener()
 	 *
 	private class JavaToJavaScriptView implements View {
-		
+
 		/**
-		 * Calls all registered add listeners.
-		 * @see registerAddListener()
-		 *
+	 * Calls all registered add listeners.
+	 * @see registerAddListener()
+	 *
 		public void add(GeoElement geo) {
 			if (addListeners != null && geo.isLabelSet()) { 	
 				Object [] args = { geo.getLabel() };
 				notifyListeners(addListeners, args);
 			}
 		}
-		
+
 		/**
-		 * Calls all registered remove listeners.
-		 * @see registerRemoveListener()
-		 *
+	 * Calls all registered remove listeners.
+	 * @see registerRemoveListener()
+	 *
 		public void remove(GeoElement geo) {
 			if (removeListeners != null && geo.isLabelSet()) {  
 				Object [] args = { geo.getLabel() };
 				notifyListeners(removeListeners, args);						
 			}			
 		}
-		
+
 		/**
-		 * Calls all registered clear listeners.
-		 * @see registerClearListener()
-		 *
+	 * Calls all registered clear listeners.
+	 * @see registerClearListener()
+	 *
 		public void clearView() {
 			/* 
-			 * This code would make sense for a "reload" 
-			 * 
+	 * This code would make sense for a "reload" 
+	 * 
 			// try to keep all update listeners
 			if (updateListenerMap != null) {			
 				HashMap newGeoJSfunMap = new HashMap(); 
-				
+
 				// go through all geos and update their maps
 				Iterator it = updateListenerMap.keySet().iterator();
 				while (it.hasNext()) {
 					// try to find new geo with same label
 					GeoElement oldGeo = (GeoElement) it.next();				
 					GeoElement newGeo = kernel.lookupLabel(oldGeo.getLabel());
-					
+
 					if (newGeo != null)
 						// add mapping to new map
 						newGeoJSfunMap.put(newGeo,(String) updateListenerMap.get(oldGeo));				
 				}
-				
+
 				// use new map
 				updateListenerMap.clear();
 				updateListenerMap = newGeoJSfunMap;			
 			}
-			*
-			
+	 *
+
 			ggbApi.lastGeoElementsIteratorSize = 0;	//ulven 29.08.05: should have been a method...
 			updateListenerMap = null;			
 			if (clearListeners != null) {  				
 				notifyListeners(clearListeners, null);						
 			}
 		}
-		
+
 		/**
-		 * Calls all registered rename listeners.
-		 * @see registerRenameListener()
-		 *
+	 * Calls all registered rename listeners.
+	 * @see registerRenameListener()
+	 *
 		public void rename(GeoElement geo) {						
 			if (renameListeners != null && geo.isLabelSet()) {
 				Object [] args = { geo.getOldLabel(), geo.getLabel() };
 				notifyListeners(renameListeners, args);				
 			}			
 		}
-		
+
 		/**
-		 * Calls all JavaScript functions (listeners) using 
-		 * the specified arguments.
-		 *
+	 * Calls all JavaScript functions (listeners) using 
+	 * the specified arguments.
+	 *
 		private synchronized void notifyListeners(ArrayList listeners, Object [] args) {										
 			int size = listeners.size();
 			for (int i=0; i < size; i++) {
@@ -1513,18 +1522,18 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				callJavaScript(jsFunction, args);					
 			}			
 		}	
-																	
+
 		/**
-		 * Calls all registered update and updateObject listeners.
-		 * @see registerUpdateListener()
-		 *
+	 * Calls all registered update and updateObject listeners.
+	 * @see registerUpdateListener()
+	 *
 		public synchronized void update(GeoElement geo) {						
 			// update listeners
 			if (updateListeners != null && geo.isLabelSet()) {
 				Object [] args = { geo.getLabel() };
 				notifyListeners(updateListeners, args);	
 			}
-			
+
 			// updateObject listeners
 			if (updateListenerMap != null) {			
 				String jsFunction = (String) updateListenerMap.get(geo);		
@@ -1534,20 +1543,20 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				}
 			}
 		}
-				
+
 		public void updateAuxiliaryObject(GeoElement geo) {
 			update(geo);
 		}				
-					
+
 		public void reset() {							
 		}
-				
+
     	public void repaintView() {
     		// no repaint should occur here: views that are
     		// part of the applet do this on their own    		
     	}    	    	
 	} */
-		
+
 	/*
 	private synchronized void initJavaScriptView() {
 		if (javaToJavaScriptView == null) {
@@ -1556,7 +1565,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			initJavaScript();
 		}
 	}*/
-	
+
 	public synchronized void initJavaScript() {
 		if (browserWindow == null) {
 			try {							
@@ -1566,11 +1575,11 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			}    			
 		}
 	}
-	
-	
+
+
 	public void callJavaScript(String jsFunction, Object [] args) {		
 		//Application.debug("callJavaScript: " + jsFunction);		
-		
+
 		try {			
 			if (browserWindow != null)
 				browserWindow.call(jsFunction, args);
@@ -1586,15 +1595,15 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void unregisterAddListener(String JSFunctionName) {
 		app.getScriptManager().registerAddListener(JSFunctionName);
 	}
-	
+
 	public synchronized void registerRemoveListener(String JSFunctionName) {
 		app.getScriptManager().registerRemoveListener(JSFunctionName);
 	}
-	
+
 	public synchronized void unregisterRemoveListener(String JSFunctionName) {
 		app.getScriptManager().unregisterRemoveListener(JSFunctionName);
 	}
-	
+
 	public synchronized void registerClearListener(String JSFunctionName) {
 		app.getScriptManager().registerClearListener(JSFunctionName);
 	}
@@ -1606,15 +1615,15 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void registerRenameListener(String JSFunctionName) {
 		app.getScriptManager().registerRenameListener(JSFunctionName);
 	}
-	
+
 	public synchronized void unregisterRenameListener(String JSFunctionName) {
 		app.getScriptManager().unregisterRenameListener(JSFunctionName);
 	}
-	
+
 	public synchronized void registerUpdateListener(String JSFunctionName) {
 		app.getScriptManager().registerUpdateListener(JSFunctionName);
 	}
-	
+
 	public synchronized void unregisterUpdateListener(String JSFunctionName) {
 		app.getScriptManager().unregisterUpdateListener(JSFunctionName);
 	}
@@ -1622,10 +1631,10 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public synchronized void registerObjectUpdateListener(String objName, String JSFunctionName) {
 		app.getScriptManager().registerObjectUpdateListener(objName, JSFunctionName);
 	}
-	
+
 	public synchronized void unregisterObjectUpdateListener(String objName) {
 		app.getScriptManager().unregisterObjectUpdateListener(objName);
 	}
 
-	
+
 }
