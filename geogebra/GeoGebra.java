@@ -32,8 +32,8 @@ public class GeoGebra extends Object {
 	public static final String I2G_FILE_FORMAT = "0.1.20080731";
 	
 	// pre-releases and I2G
-	public static final boolean IS_PRE_RELEASE = !VERSION_STRING.endsWith(".0");
-	public static final boolean DISABLE_I2G = false;	
+	public static final boolean IS_PRE_RELEASE = true; //!VERSION_STRING.endsWith(".0");
+	public static final boolean DISABLE_I2G = !IS_PRE_RELEASE;	
 
 	// URLs
 	public final static String GEOGEBRA_ONLINE_ARCHIVE_BASE = "http://www.geogebra.org/webstart/" + SHORT_VERSION_STRING + "/";
