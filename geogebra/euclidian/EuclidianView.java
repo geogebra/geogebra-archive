@@ -1774,8 +1774,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if (showAxes[0] || showAxes[1])
 			drawAxes(g);
 
-		if (app.showResetIcon()) {
-			g.drawImage(getResetImage(), width - 18, 2, null);
+		if (app.showResetIcon() && app.isApplet()) {
+			g.drawImage(getResetImage(), app.getApplet().width - 18, 2, null);
 		}
 	}		
 	

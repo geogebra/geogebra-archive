@@ -82,7 +82,7 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 	public boolean showFrame = true;
 	private JFrame wnd;
 	private JSObject browserWindow;
-	private int width, height;
+	public int width, height;
 	//public static URL codeBase=null;
 	//public static URL documentBase=null;
 
