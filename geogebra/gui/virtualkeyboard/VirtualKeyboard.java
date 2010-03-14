@@ -91,6 +91,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	private final static char wideCharDefault = '@';
 	//private char wideChar = '@';//'\u21d4'; // wide arrow <=>
 	private char wideChar = wideCharDefault;//'\u0d4c'; // Malayalan char
+	// '\u0636' Arabic
 	//private char wideChar2 = '\u21d4'; // wide arrow <=>
 
 	private int buttonRows = 5;
@@ -1129,7 +1130,9 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		
 		if (kbLocale.getLanguage().equals("ml"))
 			wideChar = '\u0d4c'; // widest Malayalan char
-		else
+		else if (kbLocale.getLanguage().equals("ar"))
+				wideChar = '\u0636'; // widest Arabic char
+			else
 			wideChar = wideCharDefault;
 		
 		if (fontsHash != null)
