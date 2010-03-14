@@ -203,7 +203,36 @@ public abstract class GeoElement
 			'\u03c8',
 			'\u03c9' };
 	
-	/*
+	private static final char[] arabic =
+	{'\u0623',
+		'\u0628',
+		'\u062a',
+		'\u062b',
+		'\u062c',
+		'\u062d',
+		'\u062e',
+		'\u062f',
+		'\u0630',
+		'\u0631',
+		'\u0632',
+		'\u0633',
+		'\u0634',
+		'\u0635',
+		'\u0636',
+		'\u0637',
+		'\u0638',
+		'\u0639',
+		'\u063a',
+		'\u0641',
+		'\u0642',
+		'\u0643',
+		'\u0644',
+		'\u0645',
+		'\u0646',
+		'\u0647', // needs this too '\u0640' (see later on)
+		'\u0648',
+		'\u064a'};
+
 	private static final char[] greekUpperCase =
 	{ // Michael Borcherds 2008-02-23
 	'\u0391',
@@ -230,7 +259,7 @@ public abstract class GeoElement
 	'\u03a7',
 	'\u03a8',
 	'\u03a9'};
-	*/
+	
 	
 	// GeoElement types
 	public static final int GEO_CLASS_ANGLE = 10;
@@ -2022,8 +2051,8 @@ public abstract class GeoElement
 			// Michael Borcherds 2008-02-23
 			// use Greek upper case for labeling points if lenguage is Greek (el)
 			// TODO decide if we want this as an option, or:
-			// if (app.languageIs(app.getLocale(), "el")) chars=greekUpperCase; else
-		    //if (app.languageIs(app.getLocale(), "ar")) chars=arabic; else
+			 if (app.languageIs(app.getLocale(), "el")) chars=greekUpperCase; else
+		    if (app.languageIs(app.getLocale(), "ar")) chars=arabic; else
 			chars = pointLabels;
 		
 			GeoPointInterface point = (GeoPointInterface)this;
