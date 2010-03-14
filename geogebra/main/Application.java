@@ -1292,6 +1292,10 @@ public abstract class Application implements KeyEventDispatcher {
 			unicodeZero = '\u0660'; // Arabic digit 0
 		} else if (locale.getLanguage().startsWith("ml")) {
 			unicodeZero = '\u0d66'; // Malayalam digit 0
+		} else if (locale.getLanguage().startsWith("th")) {
+			unicodeZero = '\u0e50'; // Thai digit 0
+		} else if (locale.getLanguage().startsWith("ta")) {
+			unicodeZero = '\u0be6'; // Tamil digit 0
 		} else {
 			unicodeZero = '0';
 		}
