@@ -1673,7 +1673,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			
 	        		default:
 	        			 if (right.isLeaf() || opID(right) > POWER) { // not +, -, *, /, ^  	                        
-/*
+
 // Michael Borcherds 2008-05-14
 // display powers over 9 as unicode superscript
 	        				 try {
@@ -1709,9 +1709,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        				 {
                                  sb.append('^'); 
                                  sb.append(rightStr);	        					 
-	        				 }*/
+	        				 }
 	        				 
-	        				 
+	        				 /*
 	        				 
 	        				 if (rightStr.length() == 1) {
                                  switch (rightStr.charAt(0)) {
@@ -1733,7 +1733,7 @@ implements ExpressionValue, ExpressionNodeConstants {
                             } else {
                                 sb.append('^'); 
                                 sb.append(rightStr);
-                            }                         
+                            }          */               
 	                     } else { 
 	                         sb.append('^'); 
 	                         sb.append('(');

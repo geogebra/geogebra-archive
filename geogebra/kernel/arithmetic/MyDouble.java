@@ -23,6 +23,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
+import geogebra.util.Unicode;
 
 import java.util.HashSet;
 
@@ -57,6 +58,64 @@ implements NumberValue {
         isAngle = d.isAngle;
     }    
     
+    StringBuilder sbSuper;
+    /*
+     * called from the parser 
+     * power must be a string of unicode superscript digits
+     */
+	public MyDouble(Kernel kernel, String power) {
+    	this.kernel = kernel;
+
+    	int sign = 1;
+    	int start = 0;
+    	if (power.charAt(0) == Unicode.Superscript_Minus) {
+    		start = 1;
+    		sign = -1;
+    	}
+    	
+    	val = 0;
+    	for (int i = 0 ; i < power.length() - start ; i++) {
+    		switch (power.charAt(power.length() - 1 - i)) {
+    		case Unicode.Superscript_0 :
+    			//val+= 0;
+    			break;
+    		case Unicode.Superscript_1 : 
+    			val+= Math.pow(10, i);
+    			break;
+    		case Unicode.Superscript_2 : 
+    			val+= Math.pow(10, i) * 2;
+    			break;
+    		case Unicode.Superscript_3 :
+    			val+= Math.pow(10, i) * 3;
+    			break;
+    		case Unicode.Superscript_4 :
+    			val+= Math.pow(10, i) * 4;
+    			break;
+    		case Unicode.Superscript_5 :
+    			val+= Math.pow(10, i) * 5;
+    			break;
+    		case Unicode.Superscript_6 :
+    			val+= Math.pow(10, i) * 6;
+    			break;
+    		case Unicode.Superscript_7 :
+    			val+= Math.pow(10, i) * 7;
+    			break;
+    		case Unicode.Superscript_8 :
+    			val+= Math.pow(10, i) * 8;
+    			break;
+    		case Unicode.Superscript_9 :
+    			val+= Math.pow(10, i) * 9;
+    			break;
+    		default : // unexpected character
+    			val = Double.NaN;
+    			return;
+    		}
+    	}
+    	
+    	val = val * sign;
+             
+	}
+
 	public ExpressionValue deepCopy(Kernel kernel) {
 		 MyDouble ret = new MyDouble(this);
 		 ret.kernel = kernel;

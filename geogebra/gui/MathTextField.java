@@ -153,7 +153,9 @@ public class MathTextField extends MyTextField implements KeyListener {
 					insertStr = "\u00b1"; // alt-+ -> minusOrPlus
 					break;
 				case '-' :
-					insertStr = "\u2213"; // alt-- -> minusOrPlus
+					//insertStr = "\u2213"; // alt-- -> minusOrPlus
+					// changed for ggb40
+					insertStr = "\u207b"; // alt-- -> superscript -
 					break;
 				case ',' : 
 				case '<' : 

@@ -183,22 +183,26 @@ TOKEN :  {
   | < EQUAL:    "=" >
   | < PLUS:     "+" >
   | < MINUS:    ("-"  | "\u2013" | "\u2212") >
+  | < SUPERSCRIPT_MINUS: "\u207b" >
   | < MULTIPLY: ("*" | "\u22c5") >
   | < VECTORPRODUCT: "\u2297" >
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  
   | < FACTORIAL: "!" >  
   | < UNDEFINED: ( "?" | "\ufffd" | "Undefined" | "NaN" | "und" ) >
-  | < POWER0:   "\u2070" >
-  | < POWER1:   "\u00b9" >
-  | < SQUARED:  "\u00b2" >
-  | < CUBED:    "\u00b3" >
-  | < POWER4:   "\u2074" >
-  | < POWER5:   "\u2075" >
-  | < POWER6:   "\u2076" >
-  | < POWER7:   "\u2077" >
-  | < POWER8:   "\u2078" >
-  | < POWER9:   "\u2079" >
+//  | < POWER0:   "\u2070" >
+//  | < POWER1:   "\u00b9" >
+//  | < SQUARED:  "\u00b2" >
+//  | < CUBED:    "\u00b3" >
+//  | < POWER4:   "\u2074" >
+//  | < POWER5:   "\u2075" >
+//  | < POWER6:   "\u2076" >
+//  | < POWER7:   "\u2077" >
+//  | < POWER8:   "\u2078" >
+//  | < POWER9:   "\u2079" >
+  | < POWERN: (<SUPERSCRIPT_MINUS>)? ( <INDEXDIGIT> )+ >
+  | < #INDEXDIGIT:                                     // unicode digits
+       [ "\u2070","\u2074"-"\u2079","\u00b9","\u00b2","\u00b3"] >
   | < PI:       ( "pi" | "Pi" | "\u03c0" | "%pi") >
   | < E:        ("\u212f" | "%e") >  
   | < DEGREE:   ( "\u00b0" ) >
@@ -239,7 +243,7 @@ TOKEN : {
         "\u0ed0"-"\u0ed9", // Lao
         "\u1040"-"\u1049"  // Myanmar
        ]
->
+> 
 }   
 
 TOKEN : { 
@@ -1112,71 +1116,19 @@ ExpressionValue enunary():
  */
 ExpressionValue enpower():
 {
-    ExpressionValue ret, f;    
+    ExpressionValue ret, f;
+    Token c;
+    
 }
 {	
     ret = enfactorial()         
     (   
-    	<POWER0>
+    	( c = <POWERN> )
         {            
             return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 0));  
+            			 new MyDouble(kernel, c.image));  
 	    } 
     |       
-    	<POWER1>
-        {            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 1));  
-	    } 
-    |       
-    	<SQUARED>
-        {            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 2));  
-	    } 
-    |       
-    	<CUBED>
-       	{            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 3));                  
-	     } 	     
-	|       
-    	<POWER4>
-       	{            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 4));                  
-	     } 	
-	|       
-    	<POWER5>
-       	{            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 5));                  
-	     } 
-	|       
-    	<POWER6>
-       	{            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 6));                  
-	     } 
-    |
-    	<POWER7>
-       	{            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 7));                  
-	     } 
-    |
-    	<POWER8>
-       	{            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 8));                  
-	     } 
-    |
-    	<POWER9>
-       	{            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, 9));                  
-	     } 
-    |
     	(LOOKAHEAD(<POWER>) <POWER> f = enunary()
         {            
         	// check if we have e^
