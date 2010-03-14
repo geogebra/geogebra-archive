@@ -797,7 +797,6 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 
 			}
 		});
-		setInitialScaling();
 	}
 
 	/**
