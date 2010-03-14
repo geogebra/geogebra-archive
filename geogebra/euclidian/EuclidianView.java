@@ -1775,6 +1775,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			drawAxes(g);
 
 		if (app.showResetIcon() && app.isApplet()) {
+			// need to use getApplet().width rather than width so that
+			// it works with applet rescaling
 			g.drawImage(getResetImage(), app.getApplet().width - 18, 2, null);
 		}
 	}		
