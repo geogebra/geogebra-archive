@@ -6596,17 +6596,23 @@ class CmdOsculatingCircle extends CommandProcessor {
 		
 	final public GeoElement[] process(Command c) throws MyError {
 	     int n = c.getArgumentNumber();
-	     boolean[] ok = new boolean[n];
 	     GeoElement[] arg;
 	     arg = resArgs(c);
 	     
 	     switch (n) {
 	         case 1 :             
-	             if (ok[0] = (arg[0] .isGeoFunction())) {
+	        	 if ( (arg[0] .isGeoFunction())) {
 	                 GeoElement[] ret =
 	                     {
 	                          kernel.Coefficients (
 	                             c.getLabel(), (GeoFunction)arg[0])};
+	                 return ret;                
+	             }                        
+	              else if ( (arg[0] .isGeoConic())) {
+	                 GeoElement[] ret =
+	                     {
+	                          kernel.Coefficients (
+	                             c.getLabel(), (GeoConic)arg[0])};
 	                 return ret;                
 	             }                        
 	              else
