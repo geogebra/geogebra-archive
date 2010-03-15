@@ -2196,9 +2196,16 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 	 *  Sets the GeoLine polar to A.P, the polar line of P relativ to this conic.
 	 */
 	final public void polarLine(GeoPoint P, GeoLine polar) {
-		polar.x = matrix[0] * P.x + matrix[3] * P.y + matrix[4] * P.z;
-		polar.y = matrix[3] * P.x + matrix[1] * P.y + matrix[5] * P.z;
-		polar.z = matrix[4] * P.x + matrix[5] * P.y + matrix[2] * P.z;
+		//<Zbynek Konecny, 2010-03-15>
+		if(!isDefined()){
+			polar.setUndefined();
+		}
+		else{
+		//</Zbynek>	
+			polar.x = matrix[0] * P.x + matrix[3] * P.y + matrix[4] * P.z;
+			polar.y = matrix[3] * P.x + matrix[1] * P.y + matrix[5] * P.z;
+			polar.z = matrix[4] * P.x + matrix[5] * P.y + matrix[2] * P.z;
+		}
 	}
 
 	/**
