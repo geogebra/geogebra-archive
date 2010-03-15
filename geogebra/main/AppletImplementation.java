@@ -405,8 +405,9 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		if (allowRescaling) {			
 			if (!app.runningInFrame && app.onlyGraphicsViewShowing())
 			{
-				// use just horizontal scale factor		
-				double zoomFactor = (double)width / (double)app.getEuclidianView().getPreferredSize().getWidth();
+				double zoomFactorX = (double)width / (double)app.getEuclidianView().getPreferredSize().getWidth();
+				double zoomFactorY = (double)height / (double)app.getEuclidianView().getPreferredSize().getHeight();
+				double zoomFactor = Math.min(zoomFactorX, zoomFactorY);
 				app.getEuclidianView().zoomAroundCenter(zoomFactor);
 			}
 		}
