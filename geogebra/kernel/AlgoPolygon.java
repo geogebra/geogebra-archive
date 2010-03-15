@@ -71,8 +71,21 @@ public class AlgoPolygon extends AlgoElement {
         // compute polygon points
         compute();  
         
-        setInputOutput(); // for AlgoElement                          
-        poly.initLabels(labels);
+        setInputOutput(); // for AlgoElement
+        
+        //G.Sturr 2010-3-14: Do not label segments or points for polygons 
+        // formed by a geolist. 
+        //(current code cannot handle sequences of variable length)
+        
+        //poly.initLabels(labels);
+        if(geoList == null){
+        	poly.initLabels(labels);
+        }else{
+        	poly.setLabel(labels[0]);
+        }
+        
+        //END G.Sturr
+        
     }   
     
     

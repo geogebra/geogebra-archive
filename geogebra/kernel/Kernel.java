@@ -3829,6 +3829,18 @@ public class Kernel {
 		return algo.getOutput();
 	}
 	
+	//G.Sturr 2010-3-14
+	/** 
+	 * Polygon with vertices from geolist 
+	 * Only the polygon is labeled, segments are not labeled
+	 */
+	final public GeoElement [] Polygon(String [] labels, GeoList pointList) {
+		AlgoPolygon algo = new AlgoPolygon(cons, labels, pointList);
+		return algo.getOutput();
+	}
+	//END G.Sturr
+	
+	
 	/** 
 	 * Regular polygon with vertices A and B and n total vertices.
 	 * The labels name the polygon itself, its segments and points
@@ -3838,15 +3850,18 @@ public class Kernel {
 		return algo.getOutput();
 	}
 	
+	
+	//G.Sturr 2010-3-14
 	/** 
 	 * Polygon formed by operation on two input polygons.
 	 * Possible operations: addition, subtraction or intersection
+     * The labels name the polygon itself, its segments and points
 	 */	
 	final public GeoElement [] PolygonOperation(String [] labels, GeoPolygon A, GeoPolygon B, NumberValue n) {
 		AlgoPolygonOperation algo = new AlgoPolygonOperation(cons, labels, A, B,n);
 		return algo.getOutput();
 	}
-	
+	//END G.Sturr
 	
 	
 	/** 

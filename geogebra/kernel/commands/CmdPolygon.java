@@ -2,6 +2,7 @@ package geogebra.kernel.commands;
 
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
@@ -26,6 +27,12 @@ public GeoElement[] process(Command c) throws MyError {
 
     arg = resArgs(c);
     switch (n) {
+    	//G.Sturr 2010-3-14
+		case 1:
+		if (arg[0].isGeoList())
+			return kernel.Polygon(c.getLabels(), (GeoList) arg[0]);
+		//END G.Sturr
+		
     	case 3:        
         // regular polygon
         if (arg[0].isGeoPoint() && 
@@ -33,12 +40,13 @@ public GeoElement[] process(Command c) throws MyError {
 	        arg[2].isNumberValue())
 				return kernel.RegularPolygon(c.getLabels(), (GeoPoint) arg[0], (GeoPoint) arg[1], (NumberValue) arg[2]);		
         
+      //G.Sturr 2010-2-19
         // polygon operation
         if (arg[0].isGeoPolygon() && 
 	        arg[1].isGeoPolygon() &&
 	        arg[2].isNumberValue())
 				return kernel.PolygonOperation(c.getLabels(), (GeoPolygon) arg[0], (GeoPolygon) arg[1],(NumberValue) arg[2]);		
-        
+       //END G.Sturr 
         
         
         default:
