@@ -53,6 +53,7 @@ public GeoElement[] process(Command c) throws MyError {
 			// polygon for given points
 	        GeoPoint[] points = new GeoPoint[n];
 	        // check arguments
+	        if(points.length==0) throw argErr(app,c.getName(),"");	//Ulven 16.03.10: To get syntax dialogue
 	        for (int i = 0; i < n; i++) {
 	            if (!(arg[i].isGeoPoint()))
 					throw argErr(app, c.getName(), arg[i]);
