@@ -118,18 +118,18 @@ public class CASmathpiper extends CASgeneric {
 //			if (debug) Application.debug("Expression for mathPiper: "+exp);
 			
 			// evaluate the MathPiper expression
-			Interpreter mathpiper = getMathPiper();
+			final Interpreter mathpiper = getMathPiper();
 			
 			
 			 EvaluationResponse response;
 
-		       final Interpreter interpreter = Interpreters.getSynchronousInterpreter();
 
+			 // timeout needed for eg Limit((Sin(1/x)*x^2-x*Cos(1/x))/x^2,-Infinity)
 		       final Timer timer = new Timer();
 
 		       timer.schedule(new TimerTask() {
 		           public void run() {
-		               interpreter.haltEvaluation();
+		        	   mathpiper.haltEvaluation();
 		               timer.cancel();
 		           }
 
