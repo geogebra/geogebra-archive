@@ -35,6 +35,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.font.FontRenderContext;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -89,18 +90,12 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	// max width character
 	private final static char wideCharDefault = '@';
-	//private char wideChar = '@';//'\u21d4'; // wide arrow <=>
-	private char wideChar = wideCharDefault;//'\u0d4c'; // Malayalan char
-	// '\u0636' Arabic
-	//private char wideChar2 = '\u21d4'; // wide arrow <=>
+	private char wideChar = wideCharDefault;
 
 	private int buttonRows = 5;
 	private int buttonCols = 14;
 	private double buttonSizeX, buttonSizeY;
 
-	// make sure fonts fit in buttons
-	//private double horizontalMultiplier = 0.84;
-	//private double verticalMultiplier = 0.8;
 	private double horizontalMultiplier = 1;
 	private double verticalMultiplier = 1;
 
@@ -111,10 +106,6 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	private Font currentFont;
 
 	private Font [] fonts = new Font[100];
-	//int fontWidths[] = new int[100];
-
-	//WindowUnicodeKeyboard kb;// = new WindowUnicodeKeyboard(robot);
-	//Keyboard kb;// = new Keyboard();
 
 	public static void mainx(String[] args) {    
 
@@ -155,25 +146,9 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 		// TODO: use app.getFontCanDisplay()
 		String fName = app.getPlainFont().getFontName();
-//
-//		if (app != null)
-//			fName = app.getAppFontNameSansSerif();
-//		else
-//			fName = "Arial Unicode MS";
-
-		//if (fName == "SansSerif") {
-		//horizontalMultiplier = 1.0;
-		//verticalMultiplier = 1.0;
-
-		//}
-
 
 		for (int i = 0 ; i < 100 ; i++) {
 			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
-			//FontMetrics fm = getFontMetrics(fonts[i]);
-			//fontWidths[i] = 5 + Math.max(fm.stringWidth("\u21d4"),fm.stringWidth("W")); // wide arrow <=>, W
-			//fontWidths[i] = fm.stringWidth("W"); 
-			//Application.debug(fm.stringWidth("W")+" "+fm.stringWidth("\u21d4"));
 		}
 
 
@@ -233,33 +208,12 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 			{
 				//Application.debug("resize");	
 				windowResized();
-
-
-				/*
-      if (tmp.getWidth()<300)
-      {
-      tmp.setSize(300, getHeight());
-      validate();
-      }
-      else
-      if(tmp.getHeight()<600)
-      {
-      tmp.setSize(getWidth(), 600);
-      validate();
-      }
-      else if (tmp.getWidth()<300 && tmp.getHeight()<600)
-      {
-      tmp.setSize(300,650);
-      validate();
-      }*/
 			}
 		});
 
 
 		// http://java.sun.com/developer/technicalArticles/GUI/translucent_shaped_windows/#Setting-the-Opacity-Level-of-a-Window
 		//AWTUtilities.setWindowOpacity
-
-
 
 		try { // Java 6u10+ only
 			Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
@@ -273,24 +227,11 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		} 
 
 
-
-
-		//windowResized();
-
 		// TODO: fix
 		// force resizing of contentPane
 		SwingUtilities.invokeLater( new Runnable(){ public void
 			run() { windowResized();} });
 
-
-		/*
-      try {
-
-		kb = new WindowUnicodeKeyboard();
-	} catch (AWTException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}//*/
 	}
 
 	final private void windowResized() {
@@ -370,7 +311,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 			DummyButton.setMargin(new Insets(0,0,0,0));
 		}
 		return DummyButton;
-	}
+	}//*/
 
 	private void updateSpaceButton() {
 		SpaceButton.setSize(new Dimension((int)(buttonSizeX * 5d) , (int)buttonSizeY));
@@ -989,13 +930,19 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 			// make sure extra-wide characters fit (eg <=> \u21d4 )
 			Boolean oversize = characterIsTooWide.get(new Character(text.charAt(0)));
 			if (oversize == null) {
+				/* old code
 				getDummyButton().setFont(getCurrentFont());
 				getDummyButton().setText(wideChar+"");
 				Dimension buttonSize = DummyButton.getPreferredSize();
 				getDummyButton().setText(text);
 				Dimension buttonSize2 = DummyButton.getPreferredSize();
 				oversize = new Boolean((buttonSize2.getWidth() > buttonSize.getWidth()));
-				characterIsTooWide.put(new Character(text.charAt(0)), oversize);
+				characterIsTooWide.put(new Character(text.charAt(0)), oversize);//*/
+				
+				FontRenderContext frc = new FontRenderContext(null, true, true);
+				double wideCharWidth = getCurrentFont().getStringBounds(wideChar + "", frc).getWidth();
+				double charWidth = getCurrentFont().getStringBounds(text, frc).getWidth();
+				oversize = new Boolean(charWidth > wideCharWidth);
 			}
 
 			if (oversize.booleanValue()) {
