@@ -1,5 +1,6 @@
 package geogebra.gui.menubar;
 
+import geogebra.export.GeoGebraTubeExport;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.ImageSelection;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
@@ -36,6 +38,7 @@ class FileMenu extends BaseMenu {
 		exportGraphicAction,
 		exportPgfAction,
 		exportPSTricksAction,
+		exportGeoGebraTubeAction,
 		drawingPadToClipboardAction,
 		printEuclidianViewAction,
 		exitAction,
@@ -94,6 +97,8 @@ class FileMenu extends BaseMenu {
 		add(submenu);
 		mi = submenu.add(exportWorksheet);
 		setMenuShortCutShiftAccelerator(mi, 'W');
+		
+		mi = submenu.add(exportGeoGebraTubeAction);
 
 		submenu.addSeparator();
 		// submenu.add(htmlCPAction);
@@ -396,6 +401,54 @@ class FileMenu extends BaseMenu {
 							} catch (Exception e) {
 								Application
 										.debug("WorksheetExportDialog not available");
+								e.printStackTrace();
+							}
+							app.setDefaultCursor();
+						}
+					};
+					runner.start();
+				}
+
+				catch (java.lang.NoClassDefFoundError ee) {
+					app.showErrorDialog(app.getError("ExportJarMissing"));
+					ee.printStackTrace();
+				}
+			}
+		};
+		
+		exportGeoGebraTubeAction = new AbstractAction(
+				app.getPlain("UploadGeoGebraTube") + " ...", 
+				app.getEmptyIcon()
+		) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				try {
+
+					Thread runner = new Thread() {
+						public void run() {
+							app.setWaitCursor();
+							try {
+								app.clearSelectedGeos();
+								
+								// create new exporter
+								geogebra.export.GeoGebraTubeExport exporter
+									= new geogebra.export.GeoGebraTubeExport(app);
+								
+								// .. and export
+								exporter.showProgressBar();
+								
+								try {
+									exporter.uploadWorksheet();
+								} catch(IOException e) {
+									Application.debug("Uploading failed");
+									e.printStackTrace();
+								}
+								exporter.hideProgressBar();
+								
+								// TODO display GUI or something
+							} catch (Exception e) {
+								Application.debug("Uploading failed");
 								e.printStackTrace();
 							}
 							app.setDefaultCursor();
