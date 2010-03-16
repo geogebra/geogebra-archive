@@ -8,6 +8,8 @@ import geogebra.main.MyResourceBundle;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.mathpiper.interpreters.EvaluationResponse;
 import org.mathpiper.interpreters.Interpreter;
@@ -117,7 +119,25 @@ public class CASmathpiper extends CASgeneric {
 			
 			// evaluate the MathPiper expression
 			Interpreter mathpiper = getMathPiper();
-			response = mathpiper.evaluate(exp);
+			
+			
+			 EvaluationResponse response;
+
+		       final Interpreter interpreter = Interpreters.getSynchronousInterpreter();
+
+		       final Timer timer = new Timer();
+
+		       timer.schedule(new TimerTask() {
+		           public void run() {
+		               interpreter.haltEvaluation();
+		               timer.cancel();
+		           }
+
+		       }, 3000); //Time out after three seconds.
+		       
+		       response = mathpiper.evaluate(exp);
+		       timer.cancel();
+		    	          
 			
 			if (response.isExceptionThrown())
 			{
@@ -288,5 +308,4 @@ public class CASmathpiper extends CASgeneric {
 		
 		return true;
 	}
-	
 }
