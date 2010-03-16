@@ -226,13 +226,23 @@ public class AlgoPolygon extends AlgoElement {
         else sb.setLength(0);
   
         sb.append(app.getPlain("Polygon"));
-        sb.append(' ');     
-        int last = points.length - 1;       
-        for (int i = 0; i < last; i++) {
-            sb.append(points[i].getLabel());
-            sb.append(", ");
-        }
-        sb.append(points[last].getLabel());     
+        sb.append(' ');
+        
+        //G.Sturr: get label from geoList  (2010-3-15)
+		if (geoList != null) {
+			sb.append(geoList.getLabel());
+			
+		} else {
+		// use point labels
+			 
+			int last = points.length - 1;
+			for (int i = 0; i < last; i++) {
+				sb.append(points[i].getLabel());
+				sb.append(", ");
+			}
+			sb.append(points[last].getLabel());
+		}
+        
         
         //TODO use app.getPlain()
         if (polyhedron!=null)
