@@ -2360,7 +2360,55 @@ implements ExpressionValue, ExpressionNodeConstants {
             	sb.append(leftStr);
 	            sb.append(')');
                 break;
-                
+            //<Zbynek Konecny, 2010-03-16>
+            /*FIXME: Complex numbers here are sometimes
+             * (a,b) and sometimes (a+bi), Maxima needs a+b*%i,
+             * Mathpiper a+b*I or complex(a,b).
+             */
+            case CONJUGATE:
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\overline{");
+	                     sb.append(leftStr);
+	                     sb.append("}");
+	        			break;
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("Conjugate(");  
+		        		sb.append(leftStr);
+		                sb.append(")");
+		                break;
+	        		 default:
+	        			sb.append("conjugate(");  
+		        		sb.append(leftStr);
+		                sb.append(')');
+	        	}         
+            	break;
+             
+           case ARG:
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\arg\\left(");
+	                     sb.append(leftStr);
+	                     sb.append("\\right)");
+	        			break;
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("Arg(");  
+		        		sb.append(leftStr);
+		                sb.append(")");
+		                break;	
+	        		case STRING_TYPE_MAXIMA:
+	        			sb.append("carg(");  
+		        		sb.append(leftStr);
+		                sb.append(')');
+		                break;
+	        		 default:
+	        			sb.append("arg(");  
+		        		sb.append(leftStr);
+		                sb.append(')');
+	        	}         
+            break;
+            //</Zbynek>
+            
             case FLOOR:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
