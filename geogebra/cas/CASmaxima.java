@@ -281,6 +281,10 @@ public class CASmaxima extends CASgeneric {
 	
 	private void initMyMaximaFunctions() throws MaximaTimeoutException {
 	
+		// set line length of "terminal"
+		// we don't want lines broken
+	    ggbMaxima.executeRaw("linel:1000000;");
+	    
 		// make sure results are returned
 	    ggbMaxima.executeRaw("display2d:false;");
 	    
