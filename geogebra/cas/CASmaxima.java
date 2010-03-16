@@ -195,7 +195,13 @@ public class CASmaxima extends CASgeneric {
 			//String results[] = maxima.executeExpectingMultipleLabels(exp);			
 			//result = results[results.length - 1];
 			
-			String results[] = executeRaw(exp).split("\n");
+			//String results[] = executeRaw(exp).split("\n");
+			
+			String res = executeRaw(exp);
+			
+			while (res.indexOf('\n') > -1 ) res = res.replace('\n', ' ');
+			
+			String results[] = res.split("\\(%o\\d+\\)\\s*");
 			
 			result = results[results.length - 1];
 			
@@ -207,7 +213,7 @@ public class CASmaxima extends CASgeneric {
 			}
 			
 			// remove (%o1) at start
-			result = result.replaceFirst("\\(%o\\d+\\)\\s*", "").trim();
+			//result = result.replaceFirst("\\(%o\\d+\\)\\s*", "").trim();
 			
 			
 			if (debug) {
