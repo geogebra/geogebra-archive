@@ -4,17 +4,26 @@ import geogebra.GeoGebra;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
@@ -40,6 +49,26 @@ public class GeoGebraTubeExport {
 	private JDialog progressDialog;
 	
 	/**
+	 * Progress bar.
+	 */
+	private JProgressBar progressBar;
+	
+	/**
+	 * Status label.
+	 */
+	private JLabel statusLabel;
+	
+	/** 
+	 * Abort button.
+	 */
+	private JButton abortButton;
+	
+	/**
+	 * Button for opening GeoGebraTube in order to fill in material information.
+	 */
+	private JButton openButton;
+	
+	/**
 	 * Constructs a new instance of the GeoGebraTube exporter.
 	 * 
 	 * @param app
@@ -50,18 +79,21 @@ public class GeoGebraTubeExport {
 	
 	/**
 	 * Upload the current worksheet to GeoGebraTube.
-	 * 
-	 * @throws IOException If uploading failed.
 	 */
-	public void uploadWorksheet() throws IOException {
+	public void uploadWorksheet() {
+		showDialog();
+		
 		try {
 			URL url;
-		    URLConnection urlConn;
+		    HttpURLConnection urlConn;
 		    DataOutputStream printout;
 		    BufferedReader input;
+
+		    progressBar.setIndeterminate(true);
 		    
 			url = new URL(uploadURL);
-			urlConn = url.openConnection();
+			
+			urlConn = (HttpURLConnection)url.openConnection();
 			urlConn.setDoInput(true);
 			urlConn.setDoOutput(true);
 			urlConn.setUseCaches(false);
@@ -79,33 +111,109 @@ public class GeoGebraTubeExport {
 				stringBuffer.append(URLEncoder.encode(getBase64String(), "UTF-8"));
 				stringBuffer.append("&version=");
 				stringBuffer.append(URLEncoder.encode(GeoGebra.VERSION_STRING, "UTF-8"));
-				printout.writeBytes(stringBuffer.toString());
+
+				int requestLength = stringBuffer.length();
+				/*urlConn.disconnect();
+				urlConn.setChunkedStreamingMode(1000);
+				urlConn.connect();*/
 				
-				// send data
-				printout.flush();
+				progressBar.setIndeterminate(false);
+				progressBar.setMinimum(0);
+				progressBar.setMaximum(requestLength);
+
+				// send data in chunks
+				int start = 0;
+				int end = 0;
+				
+				// chunking is senseless at the moment as input buffering is activated
+				while(end != requestLength) {
+					start = end;
+					end += 5000;
+					
+					if(end > requestLength) {
+						end = requestLength;
+					}
+					
+					printout.writeBytes(stringBuffer.substring(start, end));
+					printout.flush();
+					
+					// track progress 
+					progressBar.setValue(end);
+					
+					System.out.println(start + "-"+end);
+				}
+				
 				printout.close();
 				
 				stringBuffer = null;
 				
-				// get response and read it into a string buffer 
-				input = new BufferedReader(new InputStreamReader(urlConn
-						.getInputStream()));
+				int responseCode; String responseMessage;
 				
-				StringBuffer output = new StringBuffer();
-				
-				String line;
-				while (null != ((line = input.readLine()))) {
-					output.append(line);
+				try {
+					responseCode = urlConn.getResponseCode();
+					responseMessage = urlConn.getResponseMessage();
+				} catch (IOException e) {
+					// if we can't even get the response code something failed anyway
+					responseCode = -1;
+					responseMessage = e.getMessage();
 				}
 				
-				// TODO parse output
-				
-				input.close();
+				// URL ok
+				if(responseCode == HttpURLConnection.HTTP_OK) {
+					// get response and read it into a string buffer 
+					input = new BufferedReader(new InputStreamReader(urlConn
+							.getInputStream()));
+					
+					StringBuffer output = new StringBuffer();
+					
+					String line;
+					while (null != ((line = input.readLine()))) {
+						output.append(line);
+					}
+					
+					input.close();
+
+					final UploadResults results = new UploadResults(output.toString());
+					
+					if(results.HasError()) {
+						statusLabel.setText(app.getPlain("UploadError"));
+						progressBar.setEnabled(false);
+						
+						Application.debug("Upload failed. Response: " + results.getErrorMessage());
+					} else {
+						statusLabel.setText(app.getPlain("UploadOk"));
+						openButton.setVisible(true);
+						
+						openButton.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+								app.getGuiManager().showURLinBrowser(uploadURL + "/" + results.getUID());
+								hideDialog();
+							} 
+						});
+					}
+					
+					progressDialog.pack();
+				} else {
+					Application.debug("Upload failed. Response: #" + responseCode + " - " + responseMessage);
+					
+					statusLabel.setText(app.getPlain("UploadError"));
+					progressBar.setEnabled(false);
+					progressDialog.pack();
+				}
 			} catch (IOException e) {
-				throw e;
+				// TODO take care that this message is just showed in appropriate cases
+				statusLabel.setText(app.getPlain("UploadErrorConnection"));
+				progressBar.setEnabled(false);
+				progressDialog.pack();
+				
+				Application.debug(e.getMessage());
 			}
 		} catch (IOException e) {
-			throw e;
+			statusLabel.setText(app.getPlain("UploadError"));
+			progressBar.setEnabled(false);
+			progressDialog.pack();
+			
+			Application.debug(e.getMessage());
 		}
 	}
 	
@@ -123,29 +231,88 @@ public class GeoGebraTubeExport {
 	/**
 	 * Shows a small dialog with a progress bar. 
 	 */
-	public void showProgressBar() {
+	private void showDialog() {
+		// initialize components
+		progressBar = new JProgressBar();
+		statusLabel = new JLabel(app.getPlain("UploadPrepare") + " ...");
+		
+		// setup buttons
+		abortButton = new JButton(app.getPlain("Close"));
+		abortButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				hideDialog();
+			}
+		});
+		
+		openButton = new JButton(app.getPlain("UploadOpen"));
+		openButton.setVisible(false);
+		
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+		buttonPanel.add(abortButton);
+		buttonPanel.add(openButton);
+		
+		// main panel
+		JPanel panel = new JPanel(new BorderLayout(10, 10));
+		panel.add(statusLabel, BorderLayout.NORTH);
+		panel.add(progressBar, BorderLayout.CENTER);
+		panel.add(buttonPanel, BorderLayout.SOUTH);
+		panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		
+		// dialog options
 		progressDialog = new JDialog();
 		progressDialog.setTitle(app.getMenu("UploadGeoGebraTube"));
-		
-		JProgressBar progressBar = new JProgressBar();
-		progressBar.setIndeterminate(true);
-		
-		JPanel panel = new JPanel(new BorderLayout(5, 5));
-		panel.add(progressBar);
+		progressDialog.setResizable(false);
 		progressDialog.add(panel);
 		
 		progressDialog.pack();
 		progressDialog.setVisible(true);
-		
-		progressDialog.setLocationRelativeTo(null);
+		progressDialog.setLocationRelativeTo(null); // center
 	}
 	
 	/**
 	 * Hides progress dialog.
 	 */
-	public void hideProgressBar() {
-		if(progressDialog != null) {
-			progressDialog.setVisible(false);
+	public void hideDialog() {
+		progressDialog.setVisible(false);
+	}
+	
+	/**
+	 * Storage container for uploading results.
+	 * 
+	 * @author Florian Sonner
+	 */
+	private class UploadResults {
+		private String status;
+		private String uid;
+		private String errorMessage;
+		
+		/**
+		 * Parse upload result string.
+		 *  
+		 * @param string
+		 */		
+		public UploadResults(String string) {
+			for(String line : string.split(",")) {
+				int delimiterPos = line.indexOf(':');
+				String key = line.substring(0, delimiterPos).toLowerCase();
+				String value = line.substring(delimiterPos+1).toLowerCase();
+				
+				if(key.equals("status")) {
+					status = value;
+				} else if(key.equals("uid")) {
+					uid = value;
+				} else if(key.equals("error")) {
+					errorMessage = value;
+				}
+			}
 		}
+		
+		public boolean HasError() {
+			return !status.equals("ok");
+		}
+		
+		public String getStatus() { return status; }
+		public String getUID() { return uid; }
+		public String getErrorMessage() { return errorMessage; }
 	}
 }

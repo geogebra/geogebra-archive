@@ -435,18 +435,8 @@ class FileMenu extends BaseMenu {
 								geogebra.export.GeoGebraTubeExport exporter
 									= new geogebra.export.GeoGebraTubeExport(app);
 								
-								// .. and export
-								exporter.showProgressBar();
+								exporter.uploadWorksheet();
 								
-								try {
-									exporter.uploadWorksheet();
-								} catch(IOException e) {
-									Application.debug("Uploading failed");
-									e.printStackTrace();
-								}
-								exporter.hideProgressBar();
-								
-								// TODO display GUI or something
 							} catch (Exception e) {
 								Application.debug("Uploading failed");
 								e.printStackTrace();
