@@ -26,29 +26,16 @@ import geogebra.kernel.arithmetic.NumberValue;
  * added TYPE_SEGMENT Michael Borcherds 2008-03-14	
  * @version 
  */
-public class AlgoCirclePointRadius extends AlgoElement {
+public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private GeoPoint M; // input
-    private NumberValue r; // input
-    private GeoElement rgeo;
-    private GeoConic circle; // output    
-    
-    private int type;
-    final static int TYPE_RADIUS  = 0;
-    final static int TYPE_SEGMENT = 1;
 
-    AlgoCirclePointRadius(
+	AlgoCirclePointRadius(
             Construction cons,
             String label,
             GeoPoint M,
             NumberValue r) {
         	
-            this(cons, M, r);
-            circle.setLabel(label);
+            super(cons, label, M, r);
         }
         
     AlgoCirclePointRadius(
@@ -57,84 +44,47 @@ public class AlgoCirclePointRadius extends AlgoElement {
             GeoPoint M,
             GeoSegment segment, boolean dummy) {
         	
-            this(cons, M, segment, dummy);
-            circle.setLabel(label);
+            super(cons, label, M, segment, dummy);
         }
+
         
     public AlgoCirclePointRadius(
             Construction cons,
             GeoPoint M,
             NumberValue r) {
         	
-            super(cons);
-            
-            type=TYPE_RADIUS;
-            
-            this.M = M;
-            this.r = r;
-            rgeo = r.toGeoElement();
-            circle = new GeoConic(cons);
-            
-            setInputOutput(); // for AlgoElement
-
-            compute();            
+    	super(cons, M, r);
+                
         }
+    
     
     AlgoCirclePointRadius(
             Construction cons,
             GeoPoint M,
             GeoSegment rgeo, boolean dummy) {
         	
-            super(cons);
-            
-            type=TYPE_SEGMENT;  
-            
-            this.M = M;
-            this.rgeo=rgeo;
-            
-            circle = new GeoConic(cons);
-            
-            setInputOutput(); // for AlgoElement
-
-            compute();            
+            super(cons,M,rgeo,dummy);
         }
+    
+    protected GeoQuadricND createSphereND(Construction cons){
+    	return new GeoConic(cons);
+    }
+    
 
     protected String getClassName() {
         return "AlgoCirclePointRadius";
     }
 
-    // for AlgoElement
-    protected void setInputOutput() {
-        input = new GeoElement[2];
-        input[0] = M;
-        input[1] = rgeo;
-        output = new GeoElement[1];
-        output[0] = circle;
-        setDependencies(); // done by AlgoElement
-    }
-
     public GeoConic getCircle() {
-        return circle;
+        return (GeoConic) getSphereND();
     }
-    GeoPoint getM() {
-        return M;
-    }
+ 
 
-    // compute circle with midpoint M and radius r
-    protected final void compute() {
-        switch (type) {
-        case TYPE_RADIUS:
-        	circle.setCircle(M, r.getDouble());
-        	break;
-        case TYPE_SEGMENT:
-            circle.setCircle(M, (GeoSegment)rgeo);
-        	break;
-        }
-    }
+
 
     final public String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        return app.getPlain("CircleWithCenterAandRadiusB",M.getLabel(),rgeo.getLabel());
+        return app.getPlain("CircleWithCenterAandRadiusB",getM().getLabel(),getRGeo().getLabel());
     }
 }

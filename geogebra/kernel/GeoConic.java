@@ -25,9 +25,10 @@ import geogebra.util.MyMath;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
-public class GeoConic extends GeoElement
+public class GeoConic extends GeoQuadricND
 implements Path, Traceable, 
-Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
+Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
+{
 	
 	private static final long serialVersionUID = 1L;
 	// avoid very large and small coefficients for numerical stability	
@@ -890,6 +891,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 		matrix[5] = (C[1][2] + C[2][1]) / 2.0;                              		
 		classifyConic();
 	}
+	
+	
+	public void setNSphere(GeoPointInterface M, double radius){
+		setCircle((GeoPoint) M, radius);
+	}
 
 	/**
 	 * makes this conic a circle with midpoint M and radius r
@@ -935,6 +941,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties  {
 			setAffineTransform();
 		} 		
 	}
+	
+	
+	
+	public void setNSphere(GeoPointInterface M, GeoSegmentInterface segment){
+		setCircle((GeoPoint) M, (GeoSegment) segment);
+	}
+	
 
 	/**
 	 * makes this conic a circle with midpoint M and radius geoSegment
