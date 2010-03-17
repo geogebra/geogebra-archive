@@ -6115,30 +6115,38 @@ public class Kernel {
 	 * NumberFormat or ScientificFormat. This method also
 	 * takes getCasPrintForm() into account.
 	 * 
-	 * converts to localised characters if appropriate
+	 * converts to localised digits if appropriate
 	 */
 	final public String format(double x) {	
 		if (Application.unicodeZero != '0') {
 			
-			if (formatSB == null) formatSB = new StringBuilder(17);
-			else formatSB.setLength(0);
-			
 			String num = formatRaw(x);
 			
-			for (int i = 0 ; i < num.length() ; i++) {
-				char c = num.charAt(i);
-				if (c >= '0' && c <= '9') {
-					
-					c += Application.unicodeZero - '0'; // convert to eg Arabic Numeral
-					
-				}
-				formatSB.append(c);
-			}
-			
-			return formatSB.toString();
+			return internationalizeDigits(num);
 			
 			
 		} else return formatRaw(x);
+		
+	}
+	
+	/*
+	 * swaps the digits in num to the current locale's
+	 */
+	private String internationalizeDigits(String num) {
+		if (formatSB == null) formatSB = new StringBuilder(17);
+		else formatSB.setLength(0);
+		
+		for (int i = 0 ; i < num.length() ; i++) {
+			char c = num.charAt(i);
+			if (c >= '0' && c <= '9') {
+				
+				c += Application.unicodeZero - '0'; // convert to eg Arabic Numeral
+				
+			}
+			formatSB.append(c);
+		}
+		
+		return formatSB.toString();
 		
 	}
 
@@ -6279,8 +6287,23 @@ public class Kernel {
 	}
 	private StringBuilder sbFormatSF;
 	
+	/**
+	 * calls formatPiERaw() and converts to localised digits if appropriate
+	 */
+	final public String formatPiE(double x, NumberFormat numF) {	
+		if (Application.unicodeZero != '0') {
+			
+			String num = formatPiERaw(x, numF);
+			
+			return internationalizeDigits(num);
+			
+			
+		} else return formatPiERaw(x, numF);
+		
+	}
 	
-	final public String formatPiE(double x, NumberFormat numF) {		
+
+	final public String formatPiERaw(double x, NumberFormat numF) {		
 		// PI
 		if (x == Math.PI) {
 			return casPrintFormPI;

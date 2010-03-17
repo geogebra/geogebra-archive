@@ -615,6 +615,8 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
 			app.setLanguage(Application.getLocale(e.getActionCommand()));
+			// make sure axes labels are updated eg for Arabic 
+			app.getEuclidianView().updateBackground(); 
 			GeoGebraPreferences.getPref().saveDefaultLocale(app.getLocale());
 		}
 	}
