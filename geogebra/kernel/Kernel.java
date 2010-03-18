@@ -6245,7 +6245,9 @@ public class Kernel {
 	 * Uses current NumberFormat nf to format a number.
 	 */
 	final private String formatNF(double x) {
-		if (-PRINT_PRECISION < x && x < PRINT_PRECISION) {
+		//Zbynek Konecny, 2010-03-18 (next 2 lines) -- ticket #78 
+		if ((-PRINT_PRECISION/2 < x && x < PRINT_PRECISION/2)
+			||(PRINT_PRECISION<1E-14 && -PRINT_PRECISION < x && x < 0)){
 			// avoid output of "-0"
 			return "0";
 		} else {
