@@ -139,8 +139,6 @@ public class GeoGebraTubeExport {
 					
 					// track progress 
 					progressBar.setValue(end);
-					
-					System.out.println(start + "-"+end);
 				}
 				
 				printout.close();
@@ -179,7 +177,7 @@ public class GeoGebraTubeExport {
 						statusLabel.setText(app.getPlain("UploadError"));
 						progressBar.setEnabled(false);
 						
-						Application.debug("Upload failed. Response: " + results.getErrorMessage());
+						Application.debug("Upload failed. Response: " + output.toString());
 					} else {
 						statusLabel.setText(app.getPlain("UploadOk"));
 						openButton.setVisible(true);
@@ -224,7 +222,7 @@ public class GeoGebraTubeExport {
 	 */
 	private String getBase64String() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		app.getXMLio().writeGeoGebraFile(baos, false);
+		app.getXMLio().writeGeoGebraFile(baos, true);
 		return geogebra.util.Base64.encode(baos.toByteArray(), 0);
 	}
 	
@@ -292,6 +290,8 @@ public class GeoGebraTubeExport {
 		 * @param string
 		 */		
 		public UploadResults(String string) {
+			status = uid = errorMessage = "";
+			
 			for(String line : string.split(",")) {
 				int delimiterPos = line.indexOf(':');
 				String key = line.substring(0, delimiterPos).toLowerCase();
