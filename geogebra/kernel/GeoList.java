@@ -1049,5 +1049,20 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	        sb.append(getLineStyleXML());
 
 	    }
+		
+		/*
+		 * for CmdSetLabelMode
+		 */
+		public void setLabelMode(int mode) {
+			super.setLabelMode(mode);
+			
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	geo.setLabelMode(mode);
+			}
+
+		}
+
+
 
 }
