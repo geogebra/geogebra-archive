@@ -117,6 +117,7 @@ public class ManagerGLList extends Manager {
 	    glu.gluTessBeginContour(tesselator);
 	    
 	    glu.gluTessNormal(tesselator,nx,ny,nz);
+		normal(nx, ny, nz);
 		/*
 		newList(ret);
 		

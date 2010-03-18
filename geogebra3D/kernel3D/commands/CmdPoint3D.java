@@ -46,7 +46,8 @@ public class CmdPoint3D extends CmdPoint {
 		case 1 :
 			arg = resArgs(c);
 			if (arg[0].isGeoElement3D() ){
-				GeoElement3D geo0 = (GeoElement3D) arg[0];
+				//GeoElement3D geo0 = (GeoElement3D) arg[0];
+				GeoElement geo0 = arg[0];
 				if (ok[0] = (geo0.isPath())) {
 					GeoElement[] ret =
 					{ kernel3D.Point3D(c.getLabel(), (Path) geo0)};
@@ -58,6 +59,8 @@ public class CmdPoint3D extends CmdPoint {
 					{ kernel3D.Point3DIn(c.getLabel(), (Region) arg[0])};
 					return ret;
 				}
+				
+				throw argErr(app, "Point", arg[0]); 
 			}
 
 
