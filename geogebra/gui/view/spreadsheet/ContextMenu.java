@@ -794,7 +794,7 @@ public class ContextMenu extends JPopupMenu
 	private class ActionListenerShowBrowser implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
-			table.getView().setBrowserPanelVisible(true);
+			table.getView().setShowBrowserPanel(true);
 			
 		}
 	}

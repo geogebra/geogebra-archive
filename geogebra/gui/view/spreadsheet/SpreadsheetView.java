@@ -19,6 +19,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -33,6 +35,7 @@ import java.util.Iterator;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -61,7 +64,8 @@ public class SpreadsheetView extends JSplitPane implements View
 	protected DefaultTableModel tableModel;
 	public JList rowHeader;
 	private RowHeaderRenderer rowHeaderRenderer;
-	private MyListModel listModel;  
+	private MyListModel listModel;
+	
 	
 	// if these are increased above 32000, you need to change traceRow to an int[]
 	public static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
@@ -91,11 +95,18 @@ public class SpreadsheetView extends JSplitPane implements View
 	// G.STURR 2010-2-12: needed for split panel
 	private JScrollPane spreadsheet;
 	private FileBrowserPanel browserPanel;
-	private int dividerLocation = 200;
-	private boolean isBrowserPanelVisible = false;
+	private int defaultDividerLocation = 150;
+	private JButton restoreButton;
 	
 	
 	
+	//Properties
+	private boolean showGrid = true;
+	private boolean showRowHeader = true;
+	private boolean showColumnHeader = true;	
+	private boolean showVScrollBar = true;
+	private boolean showHScrollBar = true;
+	private boolean showBrowserPanel = false;
 	
 	/**
 	 * Construct spreadsheet view as split panel. 
@@ -144,6 +155,7 @@ public class SpreadsheetView extends JSplitPane implements View
 		spreadsheet.setRowHeaderView(rowHeader);
 		spreadsheet.setViewportView(table);
 		
+		
 		// Florian Sonner 2008-10-20
 		setBorder(BorderFactory.createEmptyBorder());
 		
@@ -164,14 +176,9 @@ public class SpreadsheetView extends JSplitPane implements View
 		spreadsheet.setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
 		spreadsheet.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
 		
-		//G.STURR 2010-2-12
-		// Create file browser panel (hidden)
-		browserPanel = new FileBrowserPanel(this);
-		browserPanel.setMinimumSize(new Dimension(150, 150));
-		setBrowserPanelVisible(false);
-		
-		// Add browser panel and spreadsheet to SpreadsheetView
-		setLeftComponent(browserPanel);
+		//G.STURR 2010-2-12			
+		// Add spreadsheet and browser panes to SpreadsheetView
+		setShowBrowserPanel(false);
 		setRightComponent(spreadsheet);
 		
 		updateFonts();
@@ -1055,39 +1062,143 @@ public class SpreadsheetView extends JSplitPane implements View
 	public FileBrowserPanel getBrowserPanel() {		
 		if (browserPanel == null) {
 			browserPanel = new FileBrowserPanel(this);
-			browserPanel.setMinimumSize(new Dimension(150, 150));
-		}
-		// Add browser panel and spreadsheet to SpreadsheetView
-		setLeftComponent(browserPanel);
+			browserPanel.setMinimumSize(new Dimension(50, 0));
+		}	
 		return browserPanel;
 	}
 	
+	public JButton getRestoreButton() {		
+		if (restoreButton == null) {
+			restoreButton = new JButton();
+			
+			restoreButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					restoreBrowserPanel();
+				}
+			});
+			restoreButton.setMinimumSize(new Dimension(10, 0));
+			restoreButton.setFocusPainted(false);
+			//restoreButton.setBorderPainted(false);
+			//restoreButton.setBackground(MyTable.BACKGROUND_COLOR_HEADER);
+			//restoreButton.setContentAreaFilled(false);
+					
+		}	
+		return restoreButton;
+	}
 	
-	public void setBrowserPanelVisible(boolean show) {
+	
+	public void setShowBrowserPanel(boolean showBrowser) {
 		
-		if (show) {
-			this.setDividerLocation(dividerLocation);
-			this.setDividerSize(4);
-			isBrowserPanelVisible = true;
+		if (showBrowser) {
+			setLeftComponent(getBrowserPanel());
+			setDividerLocation(defaultDividerLocation);
+			setDividerSize(4);
 		} else {
-			dividerLocation = this.getDividerLocation();
-			this.setDividerLocation(0);
-			this.setDividerSize(0);
-			isBrowserPanelVisible = false;
+			setLeftComponent(null);
+			setLastDividerLocation(getDividerLocation());
+			setDividerLocation(0);
+			setDividerSize(0);
+		}
+		showBrowserPanel = showBrowser;
+	}
+	
+	public boolean getShowBrowserPanel(){
+		return showBrowserPanel;
+		
+	}
+	
+	public void minimizeBrowserPanel(){
+		setDividerLocation(10);
+		setDividerSize(0);
+		setLeftComponent(getRestoreButton());
+		restoreButton.getModel().setPressed(false);
+		
+	}
+	
+	public void restoreBrowserPanel(){
+		setDividerLocation(getLastDividerLocation());
+		setDividerSize(4);
+		setLeftComponent(getBrowserPanel());
+	}
+	
 
-		}
-	}
 	
-	
-	public void toggleBrowserPanel(){
-		if(isBrowserPanelVisible){
-			setBrowserPanelVisible(false);
-		}else{
-			setBrowserPanelVisible(true);
-		}
-	}
 	
 	//END GSTURR (file browser support)
+	
+	
+	//-------------------------------------------
+	//	Spreadsheet Properties (get/set)
+	//-------------------------------------------
+	
+	public void setShowRowHeader(boolean showRowHeader) {
+		if (showRowHeader) {
+			spreadsheet.setRowHeaderView(rowHeader);
+		} else {
+			spreadsheet.setRowHeaderView(null);
+		}
+		this.showRowHeader = showRowHeader;
+	}
+	
+	public boolean getShowRowHeader(){
+		return showRowHeader;
+	}
+	
+	
+	public void setShowColumnHeader(boolean showColumnHeader) {
+		if (showColumnHeader) {
+			spreadsheet.setColumnHeaderView(table.getTableHeader());
+		} else {
+			spreadsheet.setColumnHeader(null);
+		}
+		this.showColumnHeader = showColumnHeader;
+	}
+	
+	public boolean getShowColumnHeader(){
+		return showColumnHeader;
+	}
+	
+
+	public void setShowVScrollbar(boolean showVScrollBar) {
+		if (showVScrollBar) {
+			spreadsheet
+					.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		} else {
+			spreadsheet
+					.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		}
+		this.showVScrollBar = showVScrollBar;
+	}
+
+	public boolean getShowVScrollbar() {
+		return showVScrollBar;
+	}
+
+	public void setShowHScrollbar(boolean showHScrollBar) {
+		if (showHScrollBar) {
+			spreadsheet
+					.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		} else {
+			spreadsheet
+					.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		}
+		this.showHScrollBar = showHScrollBar;
+	}
+
+	public boolean getShowHScrollbar() {
+		return showHScrollBar;
+	}
+
+	public void setShowGrid(boolean showGrid) {
+		table.setShowGrid(showGrid);
+		this.showGrid = showGrid;
+	}
+
+	public boolean getShowGrid() {
+		return showGrid;
+	}
+	
+	
 	
 }
 	

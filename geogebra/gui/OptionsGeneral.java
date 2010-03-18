@@ -1,5 +1,6 @@
 package geogebra.gui;
 
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -47,7 +48,7 @@ public class OptionsGeneral extends JPanel {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("", new JPanel());
 		tabbedPane.addTab("", new JPanel());
-		tabbedPane.addTab("", new JPanel());
+		tabbedPane.addTab("", new OptionsSpreadsheet(app, (SpreadsheetView)app.getGuiManager().getSpreadsheetView()));
 		tabbedPane.addTab("", new JPanel());
 		
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

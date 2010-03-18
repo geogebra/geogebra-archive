@@ -68,12 +68,12 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	private static  QDParser xmlParser;
 	private static  myFileTreeHandler handler;
 	
-	boolean isXMLTree = false;
+	private boolean isXMLTree = false;
 	
-	private JButton closeButton;
+	private JButton minimizeButton;
 	private JButton menuButton;
 	private JPopupMenu contextMenu;
-	
+
 	
 	
 	/**
@@ -134,12 +134,12 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		closeButton = new JButton(app.getImageIcon("view-close.png"));
-		closeButton.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-		closeButton.addActionListener(this);
-		closeButton.setFocusPainted(false);
-		closeButton.setPreferredSize(new Dimension(16, 16));
-		buttonPanel.add(closeButton);
+		minimizeButton = new JButton(app.getImageIcon("view-close.png"));
+		minimizeButton.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
+		minimizeButton.addActionListener(this);
+		minimizeButton.setFocusPainted(false);
+		minimizeButton.setPreferredSize(new Dimension(16, 16));
+		buttonPanel.add(minimizeButton);
 
 		JPanel header = new JPanel(new BorderLayout());
 		header.add(toolbar, BorderLayout.WEST);
@@ -218,12 +218,11 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 			contextMenu.show(app.getMainComponent(), locButton.x - locApp.x,
 					locButton.y - locApp.y + menuButton.getHeight());
 
-		} else if (e.getSource() == closeButton) {
+		} else if (e.getSource() == minimizeButton) {
 
-			view.setBrowserPanelVisible(false);
+			view.minimizeBrowserPanel();
 		}
 	}
-	
 	
 	
 	
@@ -231,7 +230,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	//=============================================
 	// Set Tree Directory
 	//=============================================
-	
+		
 	public void setDirectory(URL rootURL){
 		setDirectory(rootURL, null, true);
 	}
@@ -314,7 +313,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		
 
 	/**
-	 * When a directory node is expanded get the dir contents
+	 * When a directory node is expanded get the directory contents
 	 * and add them to the node
 	 */
 	public void treeExpanded(TreeExpansionEvent e) {
