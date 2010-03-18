@@ -1,18 +1,18 @@
 package geogebra3D.euclidian3D;
 
-import geogebra3D.Matrix.Ggb3DVector;
+import geogebra.Matrix.GgbVector;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoPolygon3D;
-import geogebra3D.kernel3D.GeoQuadric;
+import geogebra3D.kernel3D.GeoQuadric3D;
 
-public class DrawQuadric extends Drawable3DSurfaces {
+public class DrawQuadric3D extends Drawable3DSurfaces {
 	
 	
 	/** gl index of the quadric */
 	private int quadricIndex = -1;
 
 
-	public DrawQuadric(EuclidianView3D a_view3d, GeoQuadric a_quadric) {
+	public DrawQuadric3D(EuclidianView3D a_view3d, GeoQuadric3D a_quadric) {
 		
 		super(a_view3d, a_quadric);
 		
@@ -45,6 +45,7 @@ public class DrawQuadric extends Drawable3DSurfaces {
 	
 	
 	
+	
 	protected void updateForItSelf(){
 		
 		
@@ -56,9 +57,9 @@ public class DrawQuadric extends Drawable3DSurfaces {
 		renderer.getGeometryManager().remove(quadricIndex);
 		
 		//creates the polygon
-		GeoQuadric quadric = (GeoQuadric) getGeoElement();
+		GeoQuadric3D quadric = (GeoQuadric3D) getGeoElement();
 		
-		Ggb3DVector center = quadric.getTranslationVector();
+		GgbVector center = quadric.getMidpoint();
 		double r = quadric.getHalfAxis(0);
 		
 		
@@ -95,8 +96,8 @@ public class DrawQuadric extends Drawable3DSurfaces {
 	
 
 	public int getType(){
-		switch(((GeoQuadric) getGeoElement()).getType()){
-		case GeoQuadric.QUADRIC_SPHERE:
+		switch(((GeoQuadric3D) getGeoElement()).getType()){
+		case GeoQuadric3D.QUADRIC_SPHERE:
 			return DRAW_TYPE_CLOSED_SURFACES;
 		default:
 			return DRAW_TYPE_SURFACES;

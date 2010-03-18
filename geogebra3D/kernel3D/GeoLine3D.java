@@ -1,11 +1,11 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PathMover;
-import geogebra3D.Matrix.Ggb3DVector;
 
 public class GeoLine3D extends GeoCoordSys1D {
 
@@ -20,7 +20,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 		super(c);
 	}
 
-	protected GeoLine3D(Construction c, Ggb3DVector o, Ggb3DVector v) {
+	protected GeoLine3D(Construction c, GgbVector o, GgbVector v) {
 		super(c,o,v);
 	}
 
@@ -85,8 +85,8 @@ public class GeoLine3D extends GeoCoordSys1D {
 		
 		//TODO undefined...
 		String parameter = "\u03bb";
-		Ggb3DVector O = getMatrix().getColumn(2);//TODO inhom coords
-		Ggb3DVector V = getMatrix().getColumn(1);
+		GgbVector O = getMatrix().getColumn(2);//TODO inhom coords
+		GgbVector V = getMatrix().getColumn(1);
 
 		sbToString.append("X = (");
 		sbToString.append(kernel.format(O.get(1)));

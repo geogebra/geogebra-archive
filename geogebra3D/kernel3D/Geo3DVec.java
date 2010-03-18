@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
@@ -30,7 +31,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic3D.MyVec3DNode;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
-import geogebra3D.Matrix.Ggb3DVector;
 
 import java.util.HashSet;
 
@@ -590,7 +590,7 @@ implements Vector3DValue {
 			return null;
 		}
 
-		public Ggb3DVector get3DVector() {
+		public GgbVector get3DVector() {
 			// TODO Auto-generated method stub
 			return null;
 		}

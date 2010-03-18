@@ -1,12 +1,12 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.ConstructionElementCycle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DVector;
 
 import java.awt.Color;
 import java.util.Iterator;
@@ -399,7 +399,7 @@ public class GeoPolyhedron extends GeoElement3D {
 
 
 	 //TODO remove this and replace with tessellation
-	 public void setInteriorPoint(Ggb3DVector point){
+	 public void setInteriorPoint(GgbVector point){
 		 for (GeoPolygon3D polygon : polygons.values()){
 			 polygon.setInteriorPoint(point);
 		 }

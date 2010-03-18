@@ -81,7 +81,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	/** default alpha for quadrics*/
 	public static final float DEFAULT_QUADRIC_ALPHA = 0.75f;
 	/** default color for quadrics */
-	private static final Color colQuadric = new Color(255, 0, 128);
+	private static final Color colQuadric = new Color(255, 0, 0);
 	
 	
 	// axes TODO use gui
@@ -209,7 +209,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		defaultGeoElements.put(DEFAULT_POLYHEDRON, polyhedron);
 		
 		// quadric
-		GeoQuadric quadric = new GeoQuadric(cons);	
+		GeoQuadric3D quadric = new GeoQuadric3D(cons);	
 		quadric.setLocalVariableLabel("Quadric");
 		quadric.setObjColor(colQuadric);
 		quadric.setAlphaValue(DEFAULT_QUADRIC_ALPHA);

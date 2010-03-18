@@ -10,7 +10,7 @@ the Free Software Foundation.
 
 */
 
-package geogebra3D.Matrix;
+package geogebra.Matrix;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -29,7 +29,7 @@ import geogebra.main.Application;
  * @author  ggb3D
  * 
  */
-public class Ggb3DMatrix
+public class GgbMatrix
 	{
 	
 	/** 
@@ -72,11 +72,11 @@ public class Ggb3DMatrix
 	 * @param a_rows number of rows
 	 * @param a_columns number of columns 
 	 * @return a_rows*a_columns matrix (or vector) */
-	static final public Ggb3DMatrix GgbMatrixOrVector(int a_rows, int a_columns){
+	static final public GgbMatrix GgbMatrixOrVector(int a_rows, int a_columns){
 		if (a_columns==1)
-			return new Ggb3DVector(a_rows);
+			return new GgbVector(a_rows);
 		else
-			return new Ggb3DMatrix(a_rows,a_columns);
+			return new GgbMatrix(a_rows,a_columns);
 	}
 	
 	
@@ -87,7 +87,7 @@ public class Ggb3DMatrix
 	 * @param columns number of columns
 	 * @param val values
 	 */
-	public Ggb3DMatrix(int rows, int columns, double[] val){
+	public GgbMatrix(int rows, int columns, double[] val){
 		this.rows = rows;
 		this.columns = columns;
 		this.val = val;
@@ -98,7 +98,7 @@ public class Ggb3DMatrix
 	 * @param rows number of rows
 	 * @param columns number of values 
 	 */
-	public Ggb3DMatrix(int rows, int columns){
+	public GgbMatrix(int rows, int columns){
 		
 		initialise(rows, columns);
 		
@@ -126,7 +126,7 @@ public class Ggb3DMatrix
 	 * TODO doc
 	 * @param inputList
 	 */
-	public Ggb3DMatrix(GeoList inputList) {
+	public GgbMatrix(GeoList inputList) {
 
     	int cols = inputList.size();
     	if (!inputList.isDefined() || cols == 0) {
@@ -181,9 +181,9 @@ public class Ggb3DMatrix
 	/** returns n*n identity matrix  
 	 * @param n dimension
 	 * @return the identity matrix*/
-	public static final Ggb3DMatrix Identity(int n){
+	public static final GgbMatrix Identity(int n){
 		
-		Ggb3DMatrix m = new Ggb3DMatrix(n,n);
+		GgbMatrix m = new GgbMatrix(n,n);
 		
 		for (int i=1;i<=n;i++){
 			m.set(i,i,1.0);
@@ -196,19 +196,19 @@ public class Ggb3DMatrix
 	/** returns scale homogenic matrix, dim v.length+1  
 	 * @param v scaling vector
 	 * @return scale matrix*/
-	public static final Ggb3DMatrix ScaleMatrix(double[] v){
+	public static final GgbMatrix ScaleMatrix(double[] v){
 		
-		return ScaleMatrix(new Ggb3DVector(v));
+		return ScaleMatrix(new GgbVector(v));
 		
 	}
 	
 	/** returns scale homogenic matrix, dim v.length+1  
 	 * @param v scaling vector
 	 * @return scale matrix*/
-	public static final Ggb3DMatrix ScaleMatrix(Ggb3DVector v){
+	public static final GgbMatrix ScaleMatrix(GgbVector v){
 		
 		int n = v.getLength();
-		Ggb3DMatrix m = new Ggb3DMatrix(n+1,n+1);
+		GgbMatrix m = new GgbMatrix(n+1,n+1);
 		
 		for (int i=1;i<=n;i++){
 			m.set(i,i,v.get(i));
@@ -223,19 +223,19 @@ public class Ggb3DMatrix
 	/** returns translation homogenic matrix, dim v.length+1  
 	 * @param v translation vector
 	 * @return traslation matrix*/
-	public static final Ggb3DMatrix TranslationMatrix(double[] v){
+	public static final GgbMatrix TranslationMatrix(double[] v){
 		
-		return TranslationMatrix(new Ggb3DVector(v));
+		return TranslationMatrix(new GgbVector(v));
 		
 	}
 
 	/** returns translation homogenic matrix, dim v.length+1  
 	 * @param v translation vector
 	 * @return traslation matrix*/
-	public static final Ggb3DMatrix TranslationMatrix(Ggb3DVector v){
+	public static final GgbMatrix TranslationMatrix(GgbVector v){
 		
 		int n = v.getLength();
-		Ggb3DMatrix m = new Ggb3DMatrix(n+1,n+1);
+		GgbMatrix m = new GgbMatrix(n+1,n+1);
 		
 		for (int i=1;i<=n;i++){
 			m.set(i,i,1.0);
@@ -253,9 +253,9 @@ public class Ggb3DMatrix
 	 * @param angle angle of rotation
 	 * @return rotation matrix
 	 */
-	public static final Ggb3DMatrix Rotation3DMatrix(int axe, double angle){
+	public static final GgbMatrix Rotation3DMatrix(int axe, double angle){
 		
-		Ggb3DMatrix m = new Ggb3DMatrix(4,4);
+		GgbMatrix m = new GgbMatrix(4,4);
 		
 		switch(axe){
 		
@@ -311,8 +311,8 @@ public class Ggb3DMatrix
 	 * @param i row to remove
 	 * @param j column to remove
 	 * @return sub-matrix*/
-	public Ggb3DMatrix subMatrix(int i, int j){
-		Ggb3DMatrix ret = new Ggb3DMatrix(getRows()-1, getColumns()-1);
+	public GgbMatrix subMatrix(int i, int j){
+		GgbMatrix ret = new GgbMatrix(getRows()-1, getColumns()-1);
 		
 		for (int i1=1; i1<i; i1++){
 			for (int j1=1; j1<j; j1++){
@@ -338,9 +338,9 @@ public class Ggb3DMatrix
 	/** returns the column number j 
 	 * @param j number of column
 	 * @return the column*/
-	public Ggb3DVector getColumn(int j){
+	public GgbVector getColumn(int j){
 		
-		Ggb3DVector ret = new Ggb3DVector(getRows());
+		GgbVector ret = new GgbVector(getRows());
 		for (int i=1;i<=getRows();i++){
 			ret.set(i,get(i,j));
 		}
@@ -382,7 +382,7 @@ public class Ggb3DMatrix
 	/** sets V to column j of m, rows=V.getLength() 
 	 * @param V the new column
 	 * @param j number of the column*/
-	public void set(Ggb3DVector V, int j){
+	public void set(GgbVector V, int j){
 		int i;
 		for (i=1;i<=V.getLength();i++){
 			set(i,j,V.get(i));
@@ -391,7 +391,7 @@ public class Ggb3DMatrix
 	
 	/** sets m(V[]), all V[j].getLength equal rows and V.Length=columns 
 	 * @param V the vectors*/
-	public void set(Ggb3DVector[] V){
+	public void set(GgbVector[] V){
 		int j;
 		for (j=0;j<V.length;j++){
 			set(V[j],j+1);
@@ -423,7 +423,7 @@ public class Ggb3DMatrix
 
 	/** copies all values of m 
 	 * @param m source matrix*/
-	public void set(Ggb3DMatrix m){
+	public void set(GgbMatrix m){
 
 		for(int i=1;i<=m.getRows();i++){
 			for(int j=1;j<=m.getColumns();j++){
@@ -464,9 +464,9 @@ public class Ggb3DMatrix
 	
 	/** returns a copy of the matrix 
 	 * @return copy of the matrix*/
-	public Ggb3DMatrix copy(){
+	public GgbMatrix copy(){
 		
-		Ggb3DMatrix result = new Ggb3DMatrix(getRows(),getColumns()); 
+		GgbMatrix result = new GgbMatrix(getRows(),getColumns()); 
 
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){
@@ -480,10 +480,10 @@ public class Ggb3DMatrix
 	
 	/** returns a transposed copy of the matrix 
 	 * @return transposed copy of the matrix */
-	public Ggb3DMatrix transposeCopy(){
+	public GgbMatrix transposeCopy(){
 		
 		this.transpose();		
-		Ggb3DMatrix result = this.copy(); 
+		GgbMatrix result = this.copy(); 
 		this.transpose();
 
 		return result;
@@ -542,9 +542,9 @@ public class Ggb3DMatrix
 	/** returns this * val0 
 	 * @param val0 value
 	 * @return this*val0 */
-	public Ggb3DMatrix mul(double val0){
+	public GgbMatrix mul(double val0){
 		
-		Ggb3DMatrix result = GgbMatrixOrVector(getRows(),getColumns()); 
+		GgbMatrix result = GgbMatrixOrVector(getRows(),getColumns()); 
 
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){
@@ -561,9 +561,9 @@ public class Ggb3DMatrix
 	/** returns this + m 
 	 * @param m a matrix
 	 * @return sum matrix (or vector)*/
-	public Ggb3DMatrix add(Ggb3DMatrix m){
+	public GgbMatrix add(GgbMatrix m){
 		
-		Ggb3DMatrix result = GgbMatrixOrVector(getRows(),getColumns());
+		GgbMatrix result = GgbMatrixOrVector(getRows(),getColumns());
 		//resulting matrix has the same dimension than this
 		//and is a GgbVector if this has 1 column
 		
@@ -582,9 +582,9 @@ public class Ggb3DMatrix
 	/** returns this * v 
 	 * @param v vector
 	 * @return resulting vector*/
-	public Ggb3DVector mul(Ggb3DVector v){
+	public GgbVector mul(GgbVector v){
 
-		Ggb3DVector result = new Ggb3DVector(getRows());
+		GgbVector result = new GgbVector(getRows());
 		
 		for(int i=1;i<=result.getRows();i++){
 			
@@ -603,9 +603,9 @@ public class Ggb3DMatrix
 	/** returns this * m 
 	 * @param m matrix
 	 * @return resulting matrix*/
-	public Ggb3DMatrix mul(Ggb3DMatrix m){
+	public GgbMatrix mul(GgbMatrix m){
 		
-		Ggb3DMatrix result = new Ggb3DMatrix(getRows(),m.getColumns()); 
+		GgbMatrix result = new GgbMatrix(getRows(),m.getColumns()); 
 		
 		/*
 		for(int i=1;i<=result.getRows();i++){
@@ -632,7 +632,7 @@ public class Ggb3DMatrix
 	 * @param m matrix
 	 * @param result resulting matrix
 	 */
-	protected void mul(Ggb3DMatrix m, Ggb3DMatrix result){
+	protected void mul(GgbMatrix m, GgbMatrix result){
 		
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){
@@ -679,9 +679,9 @@ public class Ggb3DMatrix
 	 * You must check with isSquare() before calling this
 	 * @return inverse matrix
 	 * */
-	public Ggb3DMatrix inverse(){
+	public GgbMatrix inverse(){
 		
-		Ggb3DMatrix ret = new Ggb3DMatrix(getRows(),getColumns());
+		GgbMatrix ret = new GgbMatrix(getRows(),getColumns());
 
 		double d = this.det();
 		
@@ -710,9 +710,9 @@ public class Ggb3DMatrix
 	/** returns ret that makes this * ret = v 
 	 * @param v vector
 	 * @return solving vector*/
-	public Ggb3DVector solve(Ggb3DVector v){
+	public GgbVector solve(GgbVector v){
 		//GgbVector ret;
-		Ggb3DMatrix mInv = this.inverse(); //TODO: use gauss pivot to optimize
+		GgbMatrix mInv = this.inverse(); //TODO: use gauss pivot to optimize
 		if (mInv==null)
 			return null;
 		return mInv.mul(v);		
@@ -747,7 +747,7 @@ public class Ggb3DMatrix
 	 */
 	public static synchronized void main(String[] args) {		
 		
-		Ggb3DMatrix m1 = Ggb3DMatrix.Identity(3);
+		GgbMatrix m1 = GgbMatrix.Identity(3);
 		m1.set(1, 2, 5.0);
 		m1.set(3, 1, 4.0);
 		m1.set(3, 2, 3.0);
@@ -755,7 +755,7 @@ public class Ggb3DMatrix
 		Application.debug("m1");
 		m1.SystemPrint();
 		
-		Ggb3DMatrix m2 = new Ggb3DMatrix(3,4);
+		GgbMatrix m2 = new GgbMatrix(3,4);
 		m2.set(1, 1, 1.0);
 		m2.set(2, 2, 2.0);
 		m2.set(3, 3, 3.0);
@@ -767,11 +767,11 @@ public class Ggb3DMatrix
 		m2.SystemPrint();
 		
 
-		Ggb3DMatrix m4 = m1.add(m2);
+		GgbMatrix m4 = m1.add(m2);
 		Application.debug("m4");
 		m4.SystemPrint();
 
-		Ggb3DMatrix m5 = m1.mul(m2);
+		GgbMatrix m5 = m1.mul(m2);
 		Application.debug("m5");
 		m5.SystemPrint();
 		
@@ -785,7 +785,7 @@ public class Ggb3DMatrix
 		
 		
 		Application.debug("inverse");
-		Ggb3DMatrix m4inv = m4.inverse();
+		GgbMatrix m4inv = m4.inverse();
 		m4inv.SystemPrint();
 		m4.mul(m4inv).SystemPrint();
 		m4inv.mul(m4).SystemPrint();

@@ -1,10 +1,10 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
-import geogebra3D.Matrix.Ggb3DVector;
 
 /**
  * @author ggb3D
@@ -18,15 +18,15 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	
 	//grid
 	double x0, y0; //origin of the grid in plane coordinates
-	Ggb3DVector gridOrigin = null;
-	Ggb3DVector gridOriginProjected = new Ggb3DVector(4);
+	GgbVector gridOrigin = null;
+	GgbVector gridOriginProjected = new GgbVector(4);
 
 	
 	public GeoCoordSys2D(Construction c){
 		super(c,2);	
 	}
 	
-	public GeoCoordSys2D(Construction c, Ggb3DVector O, Ggb3DVector V1, Ggb3DVector V2){
+	public GeoCoordSys2D(Construction c, GgbVector O, GgbVector V1, GgbVector V2){
 		this(c);
 		setCoord(O,V1,V2);		
 	}
@@ -38,7 +38,7 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	
 	
 	/** set the matrix to [V1 V2 O] */
-	public void setCoord(Ggb3DVector a_O, Ggb3DVector a_V1, Ggb3DVector a_V2){
+	public void setCoord(GgbVector a_O, GgbVector a_V1, GgbVector a_V2){
 		setOrigin(a_O);
 		setVx(a_V1);
 		setVy(a_V2);
@@ -55,9 +55,9 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	/** set coords to origin O and vectors (I-O) and (J-O) */
 	public void setCoord(GeoPoint3D O, GeoPoint3D I, GeoPoint3D J){
 		//Application.debug("setCoord -- Points");
-		Ggb3DVector vO = O.getCoords();
-		Ggb3DVector vI = I.getCoords();
-		Ggb3DVector vJ = J.getCoords();
+		GgbVector vO = O.getCoords();
+		GgbVector vI = I.getCoords();
+		GgbVector vJ = J.getCoords();
 		setCoord(vO,vI.sub(vO),vJ.sub(vO));
 		
 	}
@@ -74,10 +74,10 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	
 	
 	/** returns the point at position l1, l2 on the coord sys */
-	public Ggb3DVector getPoint(double l1, double l2){
-		Ggb3DVector v=new Ggb3DVector(new double[] {l1,l2,1});
+	public GgbVector getPoint(double l1, double l2){
+		GgbVector v=new GgbVector(new double[] {l1,l2,1});
 		//Application.debug("v ="+v.toString());
-		Ggb3DVector r=getMatrix().mul(v);	
+		GgbVector r=getMatrix().mul(v);	
 		//Application.debug("getMatrix() ="+getMatrix().toString());
 		//Application.debug("r ="+ r.toString());
 		return r;
@@ -92,7 +92,7 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	
 	////////////////////////////////////
 	// grid
-	public void setGridOrigin(Ggb3DVector v){
+	public void setGridOrigin(GgbVector v){
 		
 		gridOrigin = v.copyVector();
 		updateGridOriginProjected();
@@ -100,7 +100,7 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	}
 	
 	public void updateGridOriginProjected(){
-		Ggb3DVector c = gridOrigin.projectPlane(getMatrix4x4())[1];
+		GgbVector c = gridOrigin.projectPlane(getMatrix4x4())[1];
 		//c.SystemPrint();
 		x0 = c.get(1); y0 = c.get(2);
 		gridOriginProjected.set(getPoint(x0,y0));
@@ -179,17 +179,17 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	/////////////////////////////////////
 	
 	
-	public Ggb3DVector[] getNormalProjection(Ggb3DVector coords) {
+	public GgbVector[] getNormalProjection(GgbVector coords) {
 		return coords.projectPlane(this.getMatrix4x4());
 	}
 
-	public Ggb3DVector[] getProjection(Ggb3DVector coords,
-			Ggb3DVector willingDirection) {
+	public GgbVector[] getProjection(GgbVector coords,
+			GgbVector willingDirection) {
 		return coords.projectPlaneThruV(this.getMatrix4x4(),willingDirection);
 	}
 
 	public boolean isInRegion(GeoPointInterface P) {
-		Ggb3DVector planeCoords = getNormalProjection(((GeoPoint3D) P).getCoords())[1];
+		GgbVector planeCoords = getNormalProjection(((GeoPoint3D) P).getCoords())[1];
 		return Kernel.isEqual(planeCoords.get(3),0,Kernel.STANDARD_PRECISION);
 	}
 
@@ -210,7 +210,7 @@ public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
 	
 	///////////////////////////////////
 	// GEOELEMENT3DINTERFACE INTERFACE	
-	public Ggb3DVector getNormal(){ 
+	public GgbVector getNormal(){ 
 		return getMatrix4x4().getVz();
 	};
 

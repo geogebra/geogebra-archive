@@ -1,11 +1,11 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
-import geogebra3D.Matrix.Ggb3DVector;
 
 public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 	
@@ -14,7 +14,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 		super(c,1);
 	}
 	
-	public GeoCoordSys1D(Construction c, Ggb3DVector O, Ggb3DVector V){
+	public GeoCoordSys1D(Construction c, GgbVector O, GgbVector V){
 		this(c);
 		setCoord(O,V);
 	}
@@ -26,12 +26,12 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 	}	
 	
 	/** set the matrix to [V O] */
-	public void setCoordFromPoints(Ggb3DVector a_O, Ggb3DVector a_I){
+	public void setCoordFromPoints(GgbVector a_O, GgbVector a_I){
 		 setCoord(a_O,a_I.sub(a_O));
 	}
 	
 	/** set the matrix to [V O] */
-	public void setCoord(Ggb3DVector a_O, Ggb3DVector a_V){
+	public void setCoord(GgbVector a_O, GgbVector a_V){
 		setOrigin(a_O);
 		setVx(a_V);
 		
@@ -78,9 +78,9 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 	
 	//public GeoPoint3D getPoint(double lambda){
 	/** returns the point at position lambda on the coord sys */
-	public Ggb3DVector getPoint(double lambda){
-		Ggb3DVector v=new Ggb3DVector(new double[] {lambda,1});
-		Ggb3DVector r=getMatrix().mul(v);		
+	public GgbVector getPoint(double lambda){
+		GgbVector v=new GgbVector(new double[] {lambda,1});
+		GgbVector r=getMatrix().mul(v);		
 		//r.SystemPrint();
 		return r;
 		//return new GeoPoint3D(getConstruction(), "M", r);
@@ -112,7 +112,7 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 		if (P.getWillingCoords()!=null){
 			if(P.getWillingDirection()!=null){
 				//project willing location using willing direction
-				Ggb3DVector[] project = P.getWillingCoords().projectOnLineWithDirection(
+				GgbVector[] project = P.getWillingCoords().projectOnLineWithDirection(
 						getOrigin(),
 						getVx(),
 						P.getWillingDirection());
@@ -121,10 +121,10 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 			}else{
 				//project current point coordinates
 				//Application.debug("ici\n getWillingCoords=\n"+P.getWillingCoords()+"\n matrix=\n"+getMatrix().toString());
-				Ggb3DVector preDirection = P.getWillingCoords().sub(getOrigin()).crossProduct(getVx());
+				GgbVector preDirection = P.getWillingCoords().sub(getOrigin()).crossProduct(getVx());
 				if(preDirection.equalsForKernel(0, Kernel.STANDARD_PRECISION))
 					preDirection = getMatrix4x4().getVy();
-				Ggb3DVector[] project = P.getWillingCoords().projectOnLineWithDirection(
+				GgbVector[] project = P.getWillingCoords().projectOnLineWithDirection(
 						getOrigin(),
 						getVx(),
 						preDirection.crossProduct(getVx()));			
@@ -133,10 +133,10 @@ public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
 		}else{
 			//project current point coordinates
 			//Application.debug("project current point coordinates");
-			Ggb3DVector preDirection = P.getCoords().sub(getOrigin()).crossProduct(getVx());
+			GgbVector preDirection = P.getCoords().sub(getOrigin()).crossProduct(getVx());
 			if(preDirection.equalsForKernel(0, Kernel.STANDARD_PRECISION))
 				preDirection = getMatrix4x4().getVy();
-			Ggb3DVector[] project = P.getCoords().projectOnLineWithDirection(
+			GgbVector[] project = P.getCoords().projectOnLineWithDirection(
 					getOrigin(),
 					getVx(),
 					preDirection.crossProduct(getVx()));			

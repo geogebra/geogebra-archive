@@ -18,10 +18,10 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbMatrix;
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
-import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 
 /**
  *
@@ -30,7 +30,7 @@ import geogebra3D.Matrix.Ggb3DVector;
  */
 public abstract class GeoVec extends GeoElement3D {
        
-    public Ggb3DVector v;
+    public GgbVector v;
     
     private int m_length;
 	    
@@ -40,9 +40,9 @@ public abstract class GeoVec extends GeoElement3D {
     public GeoVec(Construction c, int n) {
     	this(c);
     	m_length = n;
-    	v = new Ggb3DVector(n);
-    	setDrawingMatrix(Ggb3DMatrix4x4.Identity());
-    	setLabelMatrix(Ggb3DMatrix4x4.Identity());
+    	v = new GgbVector(n);
+    	setDrawingMatrix(GgbMatrix4x4.Identity());
+    	setLabelMatrix(GgbMatrix4x4.Identity());
     }  
 
     /** Creates new GeoVec with coordinates coords[] and label */
@@ -75,7 +75,7 @@ public abstract class GeoVec extends GeoElement3D {
 	
 	
 
-	public void setCoords(Ggb3DMatrix v0){		
+	public void setCoords(GgbMatrix v0){		
 		setCoords(v0.get());		
 	}
 
@@ -85,15 +85,15 @@ public abstract class GeoVec extends GeoElement3D {
 	
 	
 
-	final public Ggb3DVector getCoords() {
+	final public GgbVector getCoords() {
 		return v;
 	}             
 	
 	
 	
-	public void translate(Ggb3DVector v0){
+	public void translate(GgbVector v0){
 		
-		Ggb3DVector v1 = v.add(v0).getColumn(1);
+		GgbVector v1 = v.add(v0).getColumn(1);
 		setCoords(v1);		
 	}
 

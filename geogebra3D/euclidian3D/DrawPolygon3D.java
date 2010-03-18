@@ -3,9 +3,9 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -118,7 +118,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		//creates the polygon
 		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
 		
-		Ggb3DVector v = polygon.getNormal();
+		GgbVector v = polygon.getNormal();
 		//Application.debug("normal\n"+v.toString());
 		
 		int index = renderer.startPolygon((float) v.get(1),(float) v.get(2),(float) v.get(3));

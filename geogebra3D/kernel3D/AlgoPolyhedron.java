@@ -1,10 +1,10 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DVector;
 
 import java.util.ArrayList;
 
@@ -310,17 +310,17 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		switch(type){
 		case GeoPolyhedron.TYPE_PYRAMID:
 			//TODO remove this and replace with tesselation
-			Ggb3DVector interiorPoint = new Ggb3DVector(4);
+			GgbVector interiorPoint = new GgbVector(4);
 			for (int i=0;i<inputPoints.length;i++){
-				interiorPoint = (Ggb3DVector) interiorPoint.add(inputPoints[i].getCoords());
+				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoords());
 			}
-			interiorPoint = (Ggb3DVector) interiorPoint.mul((double) 1/(inputPoints.length));
+			interiorPoint = (GgbVector) interiorPoint.mul((double) 1/(inputPoints.length));
 			polyhedron.setInteriorPoint(interiorPoint);
 			//Application.debug("interior\n"+interiorPoint);
 			break;
 		case GeoPolyhedron.TYPE_PRISM:
 			//translation from bottom to top
-			Ggb3DVector v = inputPoints[inputPoints.length-1].getCoords().sub(inputPoints[0].getCoords());
+			GgbVector v = inputPoints[inputPoints.length-1].getCoords().sub(inputPoints[0].getCoords());
 			//Application.debug("v=\n"+v);
 			//translate all output points
 			for (int i=0;i<outputPoints.length;i++){
@@ -336,12 +336,12 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			//polyhedron.update();			
 			
 			//TODO remove this and replace with tesselation
-			interiorPoint = new Ggb3DVector(4);
+			interiorPoint = new GgbVector(4);
 			for (int i=0;i<inputPoints.length-1;i++){
-				interiorPoint = (Ggb3DVector) interiorPoint.add(inputPoints[i].getCoords());
+				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoords());
 			}
-			interiorPoint = (Ggb3DVector) interiorPoint.mul((double) 1/(inputPoints.length-1));
-			polyhedron.setInteriorPoint((Ggb3DVector) interiorPoint.add(v.mul(0.5)));
+			interiorPoint = (GgbVector) interiorPoint.mul((double) 1/(inputPoints.length-1));
+			polyhedron.setInteriorPoint((GgbVector) interiorPoint.add(v.mul(0.5)));
 			
 			break;
 		case GeoPolyhedron.TYPE_NONE:

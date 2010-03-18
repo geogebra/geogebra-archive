@@ -46,16 +46,16 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	private static boolean KEEP_LEADING_SIGN = false;
 
 	// types    
-	public static final int CONIC_SINGLE_POINT = 1;
-	public static final int CONIC_INTERSECTING_LINES = 2;
-	public static final int CONIC_ELLIPSE = 3;
-	public static final int CONIC_CIRCLE = 4;
-	public static final int CONIC_HYPERBOLA = 5;
-	public static final int CONIC_EMPTY = 6;
-	public static final int CONIC_DOUBLE_LINE = 7;
-	public static final int CONIC_PARALLEL_LINES = 8;
-	public static final int CONIC_PARABOLA = 9;
-	public static final int CONIC_LINE = 10;
+	public static final int CONIC_SINGLE_POINT = QUADRIC_SINGLE_POINT;
+	public static final int CONIC_INTERSECTING_LINES = QUADRIC_INTERSECTING_LINES;
+	public static final int CONIC_ELLIPSE = QUADRIC_ELLIPSOID;
+	public static final int CONIC_CIRCLE = QUADRIC_SPHERE;
+	public static final int CONIC_HYPERBOLA = QUADRIC_HYPERBOLOID;
+	public static final int CONIC_EMPTY = QUADRIC_EMPTY;
+	public static final int CONIC_DOUBLE_LINE = QUADRIC_DOUBLE_LINE;
+	public static final int CONIC_PARALLEL_LINES = QUADRIC_PARALLEL_LINES;
+	public static final int CONIC_PARABOLA = QUADRIC_PARABOLOID;
+	public static final int CONIC_LINE = QUADRIC_LINE;
 
 	/* 
 	 *               ( A[0]  A[3]    A[4] )
@@ -63,8 +63,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	 *               ( A[4]  A[5]    A[2] )
 	 */
 
-	int type = -1; // of conic
-	double[] matrix = new double[6]; // flat matrix A
+	//int type = -1; // of conic
 	private double maxCoeffAbs; // maximum absolute value of coeffs in matrix A[]
 	private AffineTransform transform, oldTransform;
 	public boolean trace;	
@@ -76,12 +75,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	GeoVec2D[] eigenvec = { new GeoVec2D(kernel, 1, 0), new GeoVec2D(kernel, 0, 1)};
 	// translation vector (midpoint, vertex)    
 	GeoVec2D b = new GeoVec2D(kernel);
-	double[] halfAxes = new double[2];
-	public double linearEccentricity, eccentricity, p;
+	//public double linearEccentricity, eccentricity, p;
 	GeoLine[] lines;
 	private GeoPoint singlePoint;
 	private GeoPoint [] startPoints;
-	private boolean defined = true;
+	//private boolean defined = true;
 	private ArrayList pointsOnConic;
 	
 	private EquationSolver eqnSolver;
@@ -99,7 +97,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	}
 	
 	protected GeoConic(Construction c, GeoElement cs) {
-		super(c);
+		super(c,2);
 		setCoordSys(cs);
 		eqnSolver = c.getEquationSolver();
 		toStringMode = EQUATION_IMPLICIT;
@@ -365,9 +363,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		return !kernel.isZero(matrix[5]) && kernel.isZero(matrix[3]) && kernel.isZero(matrix[1]);
 	}
 
-	public boolean isDefined() {
-		return defined;
-	}
+
 
 	public void setUndefined() {
 		defined = false;
@@ -534,6 +530,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	 * in implicit mode: a x\u00b2 + b xy + c y\u00b2 + d x + e y + f = 0. 
 	 * in specific mode: y\u00b2 = ...  , (x - m)\u00b2 + (y - n)\u00b2 = r\u00b2, ...
 	 */
+	/*
 	public String toString() {	
 		StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
@@ -552,7 +549,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	
 	public String toValueString() {
 		return buildValueString().toString();	
-	}			
+	}	
+	
+		*/
 	
 	protected StringBuilder buildValueString() {
 		coeffs[0] = matrix[0]; // x\u00b2
@@ -736,12 +735,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		}
 	}
 	
+	/*
 	private StringBuilder sbToValueString;
 	private StringBuilder sbToValueString() {
 		if (sbToValueString == null)
 			sbToValueString = new StringBuilder();
 		return sbToValueString;
 	}
+	*/
 
 /*
 	public String printMatrix() {
@@ -791,7 +792,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		return transform;
 	}
 
-	final private void setAffineTransform() {	
+	final protected void setAffineTransform() {	
 		AffineTransform transform = getAffineTransform();	
 		
 		/*      ( v1x   v2x     bx )
@@ -893,7 +894,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	}
 	
 	
-	public void setNSphere(GeoPointInterface M, double radius){
+	public void setSphereND(GeoPointInterface M, double radius){
 		setCircle((GeoPoint) M, radius);
 	}
 
@@ -944,7 +945,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	
 	
 	
-	public void setNSphere(GeoPointInterface M, GeoSegmentInterface segment){
+	public void setSphereND(GeoPointInterface M, GeoSegmentInterface segment){
 		setCircle((GeoPoint) M, (GeoSegment) segment);
 	}
 	
@@ -1465,7 +1466,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	}
 	private boolean eigenvectorsSetOnLoad = false;
 	
-	final private void setEigenvectors() {
+	
+	protected void setFirstEigenvector(double[] coords){
+		eigenvecX = coords[0];
+		eigenvecY = coords[1];
+	}
+	
+	final protected void setEigenvectors() {
 		// newly calculated first eigenvector = (eigenvecX, eigenvecY)
 		// old eigenvectors: eigenvec[0], eigenvec[1]        
 		// set direction of eigenvectors with respect to old values:
@@ -1700,7 +1707,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		}
 	}
 
-	final private void singlePoint() {
+	final protected void singlePoint() {
 		type = GeoConic.CONIC_SINGLE_POINT;
 
 		if (singlePoint == null)
@@ -1817,10 +1824,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		 */
 	}
 
+	/*
 	final private void empty() {
 		type = GeoConic.CONIC_EMPTY;
 		// Application.debug("empty conic");
 	}
+	*/
 
 	/*************************************
 	* parabolic conics
@@ -2653,6 +2662,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 
 	public boolean isVector3DValue() {
 		return false;
+	}
+	
+	
+	
+	protected void setMidpoint(double[] coords){
+		b.x = coords[0];
+		b.y = coords[1];
+
 	}
 
 }

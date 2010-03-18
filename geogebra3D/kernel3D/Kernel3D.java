@@ -15,8 +15,10 @@ package geogebra3D.kernel3D;
 
 
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
+import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
@@ -29,11 +31,11 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.io.MyXMLHandler3D;
 import geogebra3D.kernel3D.arithmetic.ExpressionNodeEvaluator3D;
@@ -483,7 +485,7 @@ public class Kernel3D
 	}
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */
-	final public GeoPlane3D Plane3D(String label, Ggb3DVector o, Ggb3DVector v1, Ggb3DVector v2){
+	final public GeoPlane3D Plane3D(String label, GgbVector o, GgbVector v1, GgbVector v2){
 		GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-2.25,2.25,-2.25,2.25);
 		p.setLabel(label);
 		return p;
@@ -500,9 +502,12 @@ public class Kernel3D
 	
 	
 	/** Sphere label linking with center o and radius r   */
-	final public GeoQuadric Sphere(String label, GeoPoint3D center, GeoNumeric radius){
-		AlgoSphere algo = new AlgoSphere(cons,label,center,radius);
-		return algo.getQuadric();
+	final public GeoQuadric3D Sphere(
+			String label, 
+			GeoPoint3D M, 
+			NumberValue r){
+		AlgoSpherePointRadius algo = new AlgoSpherePointRadius(cons, label, M, r);
+		return algo.getSphere();
 	}	
 
 	

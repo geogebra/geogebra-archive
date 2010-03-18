@@ -20,11 +20,11 @@ package geogebra3D.kernel3D;
 
 
 
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra3D.Test3D;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -135,10 +135,10 @@ public abstract class GeoElement3D
 	
 	
 	/** matrix used as orientation by the {@link Drawable3D} */
-	private Ggb3DMatrix4x4 m_drawingMatrix = null;
+	private GgbMatrix4x4 m_drawingMatrix = null;
 	
 	/** matrix used to draw the label by the {@link Drawable3D} */
-	private Ggb3DMatrix4x4 labelMatrix = null;
+	private GgbMatrix4x4 labelMatrix = null;
 	
 	/** for some 3D element (like conics, polygons, etc), a 2D GeoElement is linked to (for calculation) */
 	private GeoElement geo2D = null;
@@ -174,7 +174,7 @@ public abstract class GeoElement3D
 	public static final int GEO_CLASS_POLYGON3D = 3211;
 	/** id for {@link GeoPlane3D} */
 	public static final int GEO_CLASS_PLANE3D = 3220;
-	/** id for {@link GeoQuadric} */
+	/** id for {@link GeoQuadric3D} */
 	public static final int GEO_CLASS_QUADRIC = 3230;
 	
 	/** id for {@link GeoPolyhedron} */
@@ -203,26 +203,26 @@ public abstract class GeoElement3D
 	
 	/** returns a 4x4 matrix for drawing the {@link Drawable3D} 
 	 * @return the drawing matrix*/
-	public Ggb3DMatrix4x4 getDrawingMatrix(){
+	public GgbMatrix4x4 getDrawingMatrix(){
 		return m_drawingMatrix;
 	}
 	
 	
 	/** returns a 4x4 matrix for drawing the label
 	 * @return the label drawing matrix*/
-	public Ggb3DMatrix4x4 getLabelMatrix(){
+	public GgbMatrix4x4 getLabelMatrix(){
 		return labelMatrix;
 	}
 	
 	/** sets the 4x4 matrix for drawing the {@link Drawable3D} and the label
 	 * @param a_drawingMatrix the drawing matrix*/
-	public void setDrawingMatrix(Ggb3DMatrix4x4 a_drawingMatrix){
+	public void setDrawingMatrix(GgbMatrix4x4 a_drawingMatrix){
 		this.m_drawingMatrix = a_drawingMatrix;
 	}	
 	
 	/** sets the 4x4 matrix for drawing the label
 	 * @param a_drawingMatrix the drawing matrix*/
-	public void setLabelMatrix(Ggb3DMatrix4x4 labelMatrix){
+	public void setLabelMatrix(GgbMatrix4x4 labelMatrix){
 		this.labelMatrix = labelMatrix;
 	}
 	
@@ -280,7 +280,7 @@ public abstract class GeoElement3D
 	
 	
 	//TODO remove this
-	public Ggb3DVector getNormal(){ return null;};
+	public GgbVector getNormal(){ return null;};
 
 
 

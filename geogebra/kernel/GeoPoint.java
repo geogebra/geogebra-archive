@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -1108,6 +1109,10 @@ GeoPointInterface {
 		//only used for 3D stuff
 		public void updateCoordsFrom2D(boolean doPathOrRegion){
 			
+		}
+		
+		public GgbVector getInhomCoords(){
+			return new GgbVector(new double[] {inhomX, inhomY});
 		}
 	    
 

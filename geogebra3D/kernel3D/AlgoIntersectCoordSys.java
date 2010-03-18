@@ -18,11 +18,11 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbMatrixUtil;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra3D.Matrix.Ggb3DMatrixUtil;
-import geogebra3D.Matrix.Ggb3DVector;
 
 
 
@@ -148,7 +148,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param plane the plane
      */
     private void computeLinePlane(GeoCoordSys line, GeoCoordSys plane){
-    	Ggb3DVector v = Ggb3DMatrixUtil.intersectLinePlane(line.getMatrix(),plane.getMatrix4x4());
+    	GgbVector v = GgbMatrixUtil.intersectLinePlane(line.getMatrix(),plane.getMatrix4x4());
     	
     	if (v==null)
     		p.setUndefined(); //TODO infinite point
@@ -164,7 +164,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      */
     private void compute1D1D(GeoCoordSys1D line1, GeoCoordSys1D line2){
     	
-    	Ggb3DVector[] project = Ggb3DMatrixUtil.nearestPointsFromTwoLines(line1.getMatrix(), line2.getMatrix());
+    	GgbVector[] project = GgbMatrixUtil.nearestPointsFromTwoLines(line1.getMatrix(), line2.getMatrix());
     	
     	if (project==null)
     		p.setUndefined(); //TODO infinite point
@@ -184,7 +184,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * (see {@link AlgoIntersectCoordSys#compute1D1D(GeoCoordSys, GeoCoordSys)})
      * @param project coordinates of p
      */
-    private void setCoordsLineLine(Ggb3DVector[] project){
+    private void setCoordsLineLine(GgbVector[] project){
     	p.setCoords(project[0]);
     }
     

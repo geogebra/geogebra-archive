@@ -2,10 +2,10 @@ package geogebra3D.euclidian3D;
 
 import java.awt.Color;
 
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -13,8 +13,8 @@ import geogebra3D.kernel3D.GeoPoint3D;
 
 public class DrawPointDecorations extends Drawable3D {
 	
-	private Ggb3DMatrix4x4 segmentMatrix;
-	private Ggb3DMatrix4x4 planeMatrix;
+	private GgbMatrix4x4 segmentMatrix;
+	private GgbMatrix4x4 planeMatrix;
 	
 	/** gl index of the plane */
 	private int planeIndex;
@@ -26,14 +26,14 @@ public class DrawPointDecorations extends Drawable3D {
 	public DrawPointDecorations(EuclidianView3D aView3d) {
 		super(aView3d);
 		
-		segmentMatrix = Ggb3DMatrix4x4.Identity();
+		segmentMatrix = GgbMatrix4x4.Identity();
 		segmentMatrix.setVx(EuclidianView3D.vz);
-		segmentMatrix.setVy((Ggb3DVector) EuclidianView3D.vx.mul(1)); //TODO remove mul
-		segmentMatrix.setVz((Ggb3DVector) EuclidianView3D.vy.mul(1));
+		segmentMatrix.setVy((GgbVector) EuclidianView3D.vx.mul(1)); //TODO remove mul
+		segmentMatrix.setVz((GgbVector) EuclidianView3D.vy.mul(1));
 		
-		planeMatrix = Ggb3DMatrix4x4.Identity();
-		planeMatrix.setVx((Ggb3DVector) EuclidianView3D.vx.mul(0.2)); 
-		planeMatrix.setVy((Ggb3DVector) EuclidianView3D.vy.mul(0.2));
+		planeMatrix = GgbMatrix4x4.Identity();
+		planeMatrix.setVx((GgbVector) EuclidianView3D.vx.mul(0.2)); 
+		planeMatrix.setVy((GgbVector) EuclidianView3D.vy.mul(0.2));
 		
 
 		setWaitForUpdate();
@@ -73,7 +73,7 @@ public class DrawPointDecorations extends Drawable3D {
 		altitude = point.getDrawingMatrix().getOrigin().get(3);
 				
 		//set origin to projection of the point on xOy plane
-		Ggb3DVector origin = new Ggb3DVector(4);
+		GgbVector origin = new GgbVector(4);
 		origin.set(point.getDrawingMatrix().getOrigin());
 		origin.set(3, 0);
 		segmentMatrix.setOrigin(origin);

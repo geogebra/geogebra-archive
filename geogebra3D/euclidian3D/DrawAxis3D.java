@@ -3,9 +3,9 @@ package geogebra3D.euclidian3D;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
@@ -59,7 +59,7 @@ public class DrawAxis3D extends DrawLine3D {
 
     	//gets the direction vector of the axis as it is drawn on screen
     	//TODO do this when updated
-    	Ggb3DVector v = ((GeoCoordSys1D) getGeoElement()).getVx().copyVector();
+    	GgbVector v = ((GeoCoordSys1D) getGeoElement()).getVx().copyVector();
     	getView3D().toScreenCoords3D(v);
     	v.set(3, 0); //set z-coord to 0
     	double vScale = v.norm(); //axis scale, used for ticks distance
@@ -101,21 +101,21 @@ public class DrawAxis3D extends DrawLine3D {
     	
     	
     	//matrix for each number 
-    	Ggb3DMatrix4x4 numbersMatrix = Ggb3DMatrix4x4.Identity();
+    	GgbMatrix4x4 numbersMatrix = GgbMatrix4x4.Identity();
     	
     	//matrix for each ticks
-    	Ggb3DMatrix4x4 ticksMatrix = new Ggb3DMatrix4x4();
-    	Ggb3DMatrix4x4 drawingMatrix = ((GeoElement3D) getGeoElement()).getDrawingMatrix();
+    	GgbMatrix4x4 ticksMatrix = new GgbMatrix4x4();
+    	GgbMatrix4x4 drawingMatrix = ((GeoElement3D) getGeoElement()).getDrawingMatrix();
     	double ticksThickness = 1/getView3D().getScale();
     	ticksMatrix.setVx(drawingMatrix.getVx().normalized());
-    	ticksMatrix.setVy((Ggb3DVector) drawingMatrix.getVy().mul(ticksSize));
-    	ticksMatrix.setVz((Ggb3DVector) drawingMatrix.getVz().mul(ticksSize));
+    	ticksMatrix.setVy((GgbVector) drawingMatrix.getVy().mul(ticksSize));
+    	ticksMatrix.setVz((GgbVector) drawingMatrix.getVz().mul(ticksSize));
   	
     	
     	//for(int i=(int) getDrawMin();i<=getDrawMax();i++){
     	for(int i=(int) (getDrawMin()/distance);i<=getDrawMax()/distance;i++){
     		double val = i*distance;
-    		Ggb3DVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
+    		GgbVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
     		
     		//draw numbers
     		String strNum = getView3D().getKernel().formatPiE(val,numberFormat);

@@ -2,6 +2,9 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbMatrixUtil;
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
@@ -12,9 +15,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DMatrixUtil;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -60,7 +60,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected GeoPoint3D movedGeoPoint3D = null;
 	
 	/** current plane where the movedGeoPoint3D lies */
-	protected Ggb3DMatrix4x4 currentPlane = null;
+	protected GgbMatrix4x4 currentPlane = null;
 	
 	
 	protected EuclidianView3D view3D; //TODO move to EuclidianViewInterface
@@ -72,10 +72,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	private Point mouseLocOld = new Point();
 	
-	protected Ggb3DVector mouseLoc3D, startLoc3D;
+	protected GgbVector mouseLoc3D, startLoc3D;
 	
 	//picking
-	protected Ggb3DVector pickPoint;
+	protected GgbVector pickPoint;
 	
 
 	/** says if a rotation of the view occurred (with right-button) */
@@ -126,7 +126,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		if (!movedGeoPoint3D.hasPath() && !movedGeoPoint3D.hasRegion() ){
 			
-			Ggb3DMatrix4x4 plane = Ggb3DMatrix4x4.Identity(); 
+			GgbMatrix4x4 plane = GgbMatrix4x4.Identity(); 
 			setCurrentPlane(plane);
 			//update the moving plane altitude
 			getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
@@ -149,7 +149,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * return the current plane for moving
 	 * @return the current plane
 	 */
-	private Ggb3DMatrix4x4 getCurrentPlane(){
+	private GgbMatrix4x4 getCurrentPlane(){
 		return currentPlane;
 	}
 
@@ -157,7 +157,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * set the current plane for moving
 	 * @param plane a plane
 	 */
-	private void setCurrentPlane(Ggb3DMatrix4x4 plane){
+	private void setCurrentPlane(GgbMatrix4x4 plane){
 		currentPlane = plane;
 	}
 
@@ -186,7 +186,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (mouseLoc == null) return;
 		
 		//getting current pick point and direction v 
-		Ggb3DVector o;
+		GgbVector o;
 		if (useOldMouse)
 			o = view3D.getPickFromScenePoint(point.getCoords(),mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
 		else
@@ -194,12 +194,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		view3D.toSceneCoords3D(o);
 		
 		
-		Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
+		GgbVector v = new GgbVector(new double[] {0,0,1,0});
 		view3D.toSceneCoords3D(v);
 		
 		
 		//getting new position of the point
-		Ggb3DVector[] project = o.projectPlaneThruVIfPossible(currentPlane, v);
+		GgbVector[] project = o.projectPlaneThruVIfPossible(currentPlane, v);
 		point.setCoords(project[0]);
 	}
 	
@@ -215,12 +215,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		// move mouse fast, sometimes get mouseLoc = null
 		if (mouseLoc == null) return;
 		
-		Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+		GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 		view3D.toSceneCoords3D(o);
 		point.setWillingCoords(o);
 		
 		//TODO do this once
-		Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
+		GgbVector v = new GgbVector(new double[] {0,0,1,0});
 		view3D.toSceneCoords3D(v);			
 		point.setWillingDirection(v);
 	}
@@ -238,7 +238,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if ((isShiftDown)&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
 				//frees the point and moves it along z-axis if it belong to xOy plane
 				movedGeoPoint3D.freeUp();
-				setCurrentPlane(Ggb3DMatrix4x4.Identity());
+				setCurrentPlane(GgbMatrix4x4.Identity());
 			}else{
 				setMouseInformation(movedGeoPoint3D);			
 				movedGeoPoint3D.doRegion();
@@ -251,14 +251,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 
 				//getting current pick point and direction v 
-				Ggb3DVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+				GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 				view3D.toSceneCoords3D(o);
 
-				Ggb3DVector v = new Ggb3DVector(new double[] {0,0,1,0});
+				GgbVector v = new GgbVector(new double[] {0,0,1,0});
 				view3D.toSceneCoords3D(v);
 
 				//getting new position of the point
-				Ggb3DVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
+				GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
 				movedGeoPoint3D.setCoords(project);
 
 				//update the moving plane altitude
@@ -323,7 +323,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;
 
 		case EuclidianView3D.PREVIEW_POINT_PATH:
-			Ggb3DVector coords = point.getCoords();
+			GgbVector coords = point.getCoords();
 			//Application.debug("coords = \n"+coords.toString());
 			ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
 					//,coords.get(1),coords.get(2),coords.get(3));
@@ -403,7 +403,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_FREE);
 		}
 		
-		setCurrentPlane(Ggb3DMatrix4x4.Identity());
+		setCurrentPlane(GgbMatrix4x4.Identity());
 		movePointOnCurrentPlane(point3D, false);	
 		
 		return point3D;
@@ -644,7 +644,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			Hits hits = view.getHits().getTopHits();
 			if(!hits.isEmpty()){
 				GeoElement3DInterface geo = (GeoElement3DInterface) view.getHits().getTopHits().get(0);
-				Ggb3DVector vn = geo.getNormal();
+				GgbVector vn = geo.getNormal();
 				if (vn!=null){
 					/*
 					Ggb3DVector spheric = Ggb3DMatrixUtil.sphericalCoords(vn);
@@ -652,7 +652,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 							+ (((GeoElement) geo).getLabel())
 							+ "\nnormal:\n" + vn
 							+ "\nspheric:\n" + spheric
-							+ "\n(" + (spheric.get(2)*180/Math.PI) +"°,"+ (spheric.get(3)*180/Math.PI)+"°)"
+							+ "\n(" + (spheric.get(2)*180/Math.PI) +"ï¿½,"+ (spheric.get(3)*180/Math.PI)+"ï¿½)"
 					);
 					*/
 					

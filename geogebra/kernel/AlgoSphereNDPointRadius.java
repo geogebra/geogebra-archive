@@ -34,7 +34,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoPoint M; // input
+	private GeoPointInterface M; // input
     private NumberValue r; // input
     private GeoElement rgeo;
     private GeoQuadricND sphereND; // output    
@@ -43,21 +43,21 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     final static int TYPE_RADIUS  = 0;
     final static int TYPE_SEGMENT = 1;
 
-    AlgoSphereNDPointRadius(
+    protected AlgoSphereNDPointRadius(
             Construction cons,
             String label,
-            GeoPoint M,
+            GeoPointInterface M,
             NumberValue r) {
         	
             this(cons, M, r);
             sphereND.setLabel(label);
         }
         
-    AlgoSphereNDPointRadius(
+    protected AlgoSphereNDPointRadius(
             Construction cons,
             String label,
-            GeoPoint M,
-            GeoSegment segment, boolean dummy) {
+            GeoPointInterface M,
+            GeoSegmentInterface segment, boolean dummy) {
         	
             this(cons, M, segment, dummy);
             sphereND.setLabel(label);
@@ -65,7 +65,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
         
     public AlgoSphereNDPointRadius(
             Construction cons,
-            GeoPoint M,
+            GeoPointInterface M,
             NumberValue r) {
         	
             super(cons);
@@ -82,17 +82,17 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
             compute();            
         }
     
-    AlgoSphereNDPointRadius(
+    protected AlgoSphereNDPointRadius(
             Construction cons,
-            GeoPoint M,
-            GeoSegment rgeo, boolean dummy) {
+            GeoPointInterface M,
+            GeoSegmentInterface rgeo, boolean dummy) {
         	
             super(cons);
             
             type=TYPE_SEGMENT;  
             
             this.M = M;
-            this.rgeo=rgeo;
+            this.rgeo= (GeoElement) rgeo;
             
             sphereND = createSphereND(cons);
             
@@ -113,7 +113,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];
-        input[0] = M;
+        input[0] = (GeoElement) M;
         input[1] = rgeo;
         output = new GeoElement[1];
         output[0] = sphereND;
@@ -125,7 +125,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     }
     
     
-    protected GeoPoint getM() {
+    protected GeoPointInterface getM() {
         return M;
     }
     
@@ -137,10 +137,10 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     protected final void compute() {
         switch (type) {
         case TYPE_RADIUS:
-        	sphereND.setNSphere(M, r.getDouble());
+        	sphereND.setSphereND(M, r.getDouble());
         	break;
         case TYPE_SEGMENT:
-        	sphereND.setNSphere(M, (GeoSegment)rgeo);
+        	sphereND.setSphereND(M, (GeoSegment)rgeo);
         	break;
         }
     }

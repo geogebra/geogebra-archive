@@ -2,9 +2,9 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -292,7 +292,7 @@ public abstract class Drawable3D {
 	 * 
 	 * @return the drawing matrix
 	 */
-	public Ggb3DMatrix4x4 getMatrix(){
+	public GgbMatrix4x4 getMatrix(){
 		return ((GeoElement3DInterface) getGeoElement()).getDrawingMatrix();
 	}
 	
@@ -301,7 +301,7 @@ public abstract class Drawable3D {
 	 * 
 	 * @return the label drawing matrix
 	 */
-	public Ggb3DMatrix4x4 getLabelMatrix(){
+	public GgbMatrix4x4 getLabelMatrix(){
 		return ((GeoElement3DInterface) getGeoElement()).getLabelMatrix();
 	}
 	

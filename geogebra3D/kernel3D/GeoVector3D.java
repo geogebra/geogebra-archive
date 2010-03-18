@@ -1,5 +1,7 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbMatrix;
+import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -8,8 +10,6 @@ import geogebra.kernel.GeoVectorInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Locateable;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
 
 
 /**
@@ -23,14 +23,14 @@ implements GeoVectorInterface, Locateable{
 	
 	private GeoPoint3D startPoint;
 	
-	private Ggb3DMatrix matrix;
+	private GgbMatrix matrix;
 
 	/** simple constructor
 	 * @param c
 	 */
 	public GeoVector3D(Construction c) {
 		super(c);
-		matrix = new Ggb3DMatrix(4,2);
+		matrix = new GgbMatrix(4,2);
 	}
 
 	/** simple constructor with (x,y,z) coords
@@ -41,14 +41,14 @@ implements GeoVectorInterface, Locateable{
 	 */
 	public GeoVector3D(Construction c, double x, double y, double z) {
 		super(c,x,y,z,0);
-		matrix = new Ggb3DMatrix(4,2);
+		matrix = new GgbMatrix(4,2);
 	}
 	
 	
 	public void setCoords(double[] vals){
 		super.setCoords(vals);
 		
-		if (matrix == null) matrix = new Ggb3DMatrix(4,2);
+		if (matrix == null) matrix = new GgbMatrix(4,2);
 		
 		//sets the drawing matrix 
 		matrix.set(getCoords(), 1);
@@ -57,7 +57,7 @@ implements GeoVectorInterface, Locateable{
 
 		
 		
-		setDrawingMatrix(new Ggb3DMatrix4x4(matrix));
+		setDrawingMatrix(new GgbMatrix4x4(matrix));
 		
 	}
 	
@@ -75,7 +75,7 @@ implements GeoVectorInterface, Locateable{
 			matrix.set(4, 2, 1.0);
 		}
 		
-		setDrawingMatrix(new Ggb3DMatrix4x4(matrix));
+		setDrawingMatrix(new GgbMatrix4x4(matrix));
 		
 	}
 

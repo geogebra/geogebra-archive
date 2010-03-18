@@ -1,10 +1,10 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbMatrix;
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
-import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 
 /**
  * Class describing 1D, 2D and 3D coordinate systems.
@@ -15,12 +15,12 @@ import geogebra3D.Matrix.Ggb3DVector;
 public abstract class GeoCoordSys extends GeoElement3D{
 
 	//matrix for the coord sys
-	private Ggb3DMatrix m_matrix;
+	private GgbMatrix m_matrix;
 	private int m_dimension;
 	private int m_madeCoordSys;
 	
 	//matrix completed to 4x4 for drawing, etc.
-	private Ggb3DMatrix4x4 m_matrix4x4 = new Ggb3DMatrix4x4();
+	private GgbMatrix4x4 m_matrix4x4 = new GgbMatrix4x4();
 
 	
 	private GeoCoordSys(Construction c) {
@@ -31,7 +31,7 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	/** create a coord sys with a_dimension dimensions, creating m_matrix for this */
 	public GeoCoordSys(Construction c, int a_dimension) {
 		this(c);
-		m_matrix=new Ggb3DMatrix(4,a_dimension+1);
+		m_matrix=new GgbMatrix(4,a_dimension+1);
 		m_dimension = a_dimension;
 		resetCoordSys();
 		
@@ -40,7 +40,7 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	
 
 	
-	public Ggb3DMatrix getMatrix(){
+	public GgbMatrix getMatrix(){
 		return m_matrix;
 	}
 	
@@ -48,43 +48,43 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	////////////////////////////
 	// setters
 	
-	public void setOrigin(Ggb3DVector a_O){
+	public void setOrigin(GgbVector a_O){
 		m_matrix.set(a_O,m_dimension+1);
 	}
 	
-	public void setVx(Ggb3DVector a_V){
+	public void setVx(GgbVector a_V){
 		setV(a_V,1);
 	}
 	
-	public void setVy(Ggb3DVector a_V){
+	public void setVy(GgbVector a_V){
 		setV(a_V,2);
 	}
 	
-	public void setVz(Ggb3DVector a_V){
+	public void setVz(GgbVector a_V){
 		setV(a_V,3);
 	}
 	
-	public void setV(Ggb3DVector a_V, int i){
+	public void setV(GgbVector a_V, int i){
 		m_matrix.set(a_V,i);
 	}
 	
-	public Ggb3DVector getV(int i){
+	public GgbVector getV(int i){
 		return m_matrix.getColumn(i);
 	}
 	
-	public Ggb3DVector getOrigin(){
+	public GgbVector getOrigin(){
 		return getV(m_dimension+1);
 	}
 	
-	public Ggb3DVector getVx(){
+	public GgbVector getVx(){
 		return getV(1);
 	}
 	
-	public Ggb3DVector getVy(){
+	public GgbVector getVy(){
 		return getV(2);
 	}
 	
-	public Ggb3DVector getVz(){
+	public GgbVector getVz(){
 		return getV(3);
 	}
 	
@@ -139,7 +139,7 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	 * @param orthonormal say if the coord sys has to be orthonormal
 	 * 
 	 */
-	public void addPointToCoordSys(Ggb3DVector v, boolean orthonormal){
+	public void addPointToCoordSys(GgbVector v, boolean orthonormal){
 		
 		addPointToCoordSys(v, orthonormal, false);
 	
@@ -156,12 +156,12 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	 * and vector Vx parallel to xOy plane
 	 * 
 	 */
-	public void addPointToCoordSys(Ggb3DVector v, boolean orthonormal, boolean standardCS){
+	public void addPointToCoordSys(GgbVector v, boolean orthonormal, boolean standardCS){
 		
 		if (isMadeCoordSys())
 			return;
 		
-		Ggb3DVector v1;
+		GgbVector v1;
 		
 		//Application.debug("getMadeCoordSys()="+getMadeCoordSys());
 		
@@ -183,7 +183,7 @@ public abstract class GeoCoordSys extends GeoElement3D{
 		case 1: //add second vector
 			v1 = v.sub(getOrigin());
 			//calculate normal vector
-			Ggb3DVector vn = getVx().crossProduct(v1);
+			GgbVector vn = getVx().crossProduct(v1);
 			//check if vn==0
 			if (!Kernel.isEqual(vn.norm(), 0, Kernel.STANDARD_PRECISION)){	
 				if(orthonormal){
@@ -203,22 +203,22 @@ public abstract class GeoCoordSys extends GeoElement3D{
 				updateDrawingMatrix();
 				
 				// (0,0,0) projected for origin
-				Ggb3DVector o = new Ggb3DVector(new double[] {0,0,0,1});
+				GgbVector o = new GgbVector(new double[] {0,0,0,1});
 				setOrigin(o.projectPlane(getMatrix4x4())[0]);
 				
 				// vector Vx parallel to xOy plane
-				Ggb3DVector vn = getVx().crossProduct(getVy());
-				Ggb3DVector vz = new Ggb3DVector(new double[] {0,0,1,0});
-				Ggb3DVector vx = vn.crossProduct(vz);
+				GgbVector vn = getVx().crossProduct(getVy());
+				GgbVector vz = new GgbVector(new double[] {0,0,1,0});
+				GgbVector vx = vn.crossProduct(vz);
 				if (!Kernel.isEqual(vx.norm(), 0, Kernel.STANDARD_PRECISION)){
 					vx.normalize();
 					setVx(vx);
-					Ggb3DVector vy = vn.crossProduct(vx);
+					GgbVector vy = vn.crossProduct(vx);
 					vy.normalize();
 					setVy(vy);
 				} else {
-					setVx(new Ggb3DVector(new double[] {1,0,0,0}));
-					setVy(new Ggb3DVector(new double[] {0,1,0,0}));
+					setVx(new GgbVector(new double[] {1,0,0,0}));
+					setVy(new GgbVector(new double[] {0,1,0,0}));
 				}
 				
 
@@ -247,14 +247,14 @@ public abstract class GeoCoordSys extends GeoElement3D{
 	// drawing matrix
 	
 	public void updateDrawingMatrix(){
-		m_matrix4x4 = new Ggb3DMatrix4x4(m_matrix);
+		m_matrix4x4 = new GgbMatrix4x4(m_matrix);
 		setDrawingMatrix(m_matrix4x4);
 		setLabelMatrix(m_matrix4x4);
 	}
 	
 	
 	/** returns completed matrix for drawing : (V1 V2 V3 O)  */
-	public Ggb3DMatrix4x4 getMatrix4x4(){
+	public GgbMatrix4x4 getMatrix4x4(){
 		return m_matrix4x4;
 	}
 	

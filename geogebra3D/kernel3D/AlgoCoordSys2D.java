@@ -1,11 +1,11 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DVector;
 
 /**
  * Algo creating a 2D coord sys linked to 3D points.
@@ -122,7 +122,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 		
 		for(int i=0;i<points.length;i++){
 			//project the point on the coord sys
-			Ggb3DVector[] project=points[i].getCoords().projectPlane(cs.getMatrix4x4());
+			GgbVector[] project=points[i].getCoords().projectPlane(cs.getMatrix4x4());
 			
 			//check if the vertex lies on the coord sys
 			if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION))

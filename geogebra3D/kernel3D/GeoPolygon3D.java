@@ -1,5 +1,7 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -9,8 +11,6 @@ import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -137,7 +137,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	  * @param i number of point
 	  * @return the i-th point
 	  */	 
-	 public Ggb3DVector getPoint3D(int i){
+	 public GgbVector getPoint3D(int i){
 		 return coordSys.getPoint(getPointX(i), getPointY(i));
 	 }
 	 
@@ -145,18 +145,18 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 /** return the normal of the polygon's plane
 	 * @return the normal of the polygon's plane
 	 */
-	public Ggb3DVector getNormal(){
+	public GgbVector getNormal(){
 		
 		
 		if (interiorPoint==null)
 			return coordSys.getNormal();
 		
-		Ggb3DVector vn = coordSys.getNormal();
+		GgbVector vn = coordSys.getNormal();
 		
 		//Application.debug("polygon("+getLabel()+") : "+vn.dotproduct(interiorPoint.sub(getPoint3D(0))));
 
 		if (vn.dotproduct(interiorPoint.sub(getPoint3D(0)))>0)
-			return (Ggb3DVector) vn.mul(-1); //vn is oriented to interior
+			return (GgbVector) vn.mul(-1); //vn is oriented to interior
 		else
 			return vn; 
 	 }
@@ -164,9 +164,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	
 	/** interior point for oriented surfaces */
 	//TODO remove this and replace with tesselation
-	private Ggb3DVector interiorPoint = null;
+	private GgbVector interiorPoint = null;
 	
-	public void setInteriorPoint(Ggb3DVector point){
+	public void setInteriorPoint(GgbVector point){
 		interiorPoint = point;
 	}
 	 
@@ -298,7 +298,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	
 	
 	
-	public Ggb3DMatrix4x4 getDrawingMatrix() {
+	public GgbMatrix4x4 getDrawingMatrix() {
 		
 		//Application.debug("coordSys="+coordSys);
 		
@@ -308,7 +308,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 			return null;
 	}
 	
-	 public Ggb3DMatrix4x4 getLabelMatrix(){
+	 public GgbMatrix4x4 getLabelMatrix(){
 		 if (coordSys!=null)
 			 return coordSys.getLabelMatrix();
 		 else
@@ -316,7 +316,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 }
 
 	
-	public void setDrawingMatrix(Ggb3DMatrix4x4 matrix) {
+	public void setDrawingMatrix(GgbMatrix4x4 matrix) {
 		coordSys.setDrawingMatrix(matrix);
 
 	}
@@ -419,7 +419,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		//Ggb3DVector coordOld = P.getInhomCoords();
 		
 		double minDist = Double.POSITIVE_INFINITY;
-		Ggb3DVector res = null;
+		GgbVector res = null;
 		double param=0;
 		
 		// find closest point on each segment
@@ -470,7 +470,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 		
 	}
 	
-	public Ggb3DVector getPoint(double x2d, double y2d){
+	public GgbVector getPoint(double x2d, double y2d){
 		return coordSys.getPoint(x2d,y2d);
 	}
 
@@ -479,7 +479,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 * @param coords coords of the point
 	 * @return normal projection
 	 */
-	public Ggb3DVector[] getNormalProjection(Ggb3DVector coords){
+	public GgbVector[] getNormalProjection(GgbVector coords){
 		//return coords.projectPlane(coordSys.getMatrix4x4());
 		return coordSys.getNormalProjection(coords);
 	}
@@ -490,7 +490,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
 	 * @param willingDirection direction of the projection
 	 * @return projection
 	 */
-	public Ggb3DVector[] getProjection(Ggb3DVector coords, Ggb3DVector willingDirection){
+	public GgbVector[] getProjection(GgbVector coords, GgbVector willingDirection){
 		//return coords.projectPlaneThruV(coordSys.getMatrix4x4(),willingDirection);
 		return coordSys.getProjection(coords, willingDirection);
 	}

@@ -62,7 +62,7 @@ public class GeometrySphere extends Geometry {
 		
 		//creates the sphere
 		setCenter(x, y, z);
-		sphere(10,20,radius);
+		sphere(30,60,radius);
 
 	
 		

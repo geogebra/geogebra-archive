@@ -1,6 +1,10 @@
 package geogebra3D.euclidian3D;
 
 
+import geogebra.Matrix.GgbMatrix;
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbMatrixUtil;
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.DrawVector;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianController;
@@ -12,10 +16,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DMatrixUtil;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoConic3D;
@@ -25,7 +25,7 @@ import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPolygon3D;
-import geogebra3D.kernel3D.GeoQuadric;
+import geogebra3D.kernel3D.GeoQuadric3D;
 import geogebra3D.kernel3D.GeoRay3D;
 import geogebra3D.kernel3D.GeoSegment3D;
 import geogebra3D.kernel3D.GeoVector3D;
@@ -78,9 +78,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private DrawList3D drawList3D;// = new DrawList3D();
 	
 	//matrix for changing coordinate system
-	private Ggb3DMatrix4x4 m = Ggb3DMatrix4x4.Identity(); 
-	private Ggb3DMatrix4x4 mInv = Ggb3DMatrix4x4.Identity();
-	private Ggb3DMatrix4x4 undoRotationMatrix = Ggb3DMatrix4x4.Identity();
+	private GgbMatrix4x4 m = GgbMatrix4x4.Identity(); 
+	private GgbMatrix4x4 mInv = GgbMatrix4x4.Identity();
+	private GgbMatrix4x4 undoRotationMatrix = GgbMatrix4x4.Identity();
 	double a = 0;
 	double b = 0;//angles (in degrees)
 	double aOld, bOld;
@@ -94,10 +94,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	Hits3D hits = new Hits3D(); //objects picked from openGL
 	
 	//base vectors for moving a point
-	static public Ggb3DVector o = new Ggb3DVector(new double[] {0.0, 0.0, 0.0,  1.0});
-	static public Ggb3DVector vx = new Ggb3DVector(new double[] {1.0, 0.0, 0.0,  0.0});
-	static public Ggb3DVector vy = new Ggb3DVector(new double[] {0.0, 1.0, 0.0,  0.0});
-	static public Ggb3DVector vz = new Ggb3DVector(new double[] {0.0, 0.0, 1.0,  0.0});
+	static public GgbVector o = new GgbVector(new double[] {0.0, 0.0, 0.0,  1.0});
+	static public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
+	static public GgbVector vy = new GgbVector(new double[] {0.0, 1.0, 0.0,  0.0});
+	static public GgbVector vz = new GgbVector(new double[] {0.0, 0.0, 1.0,  0.0});
 	
 	//axis and xOy plane
 	private GeoPlane3D xOyPlane;
@@ -368,7 +368,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 				case GeoElement3D.GEO_CLASS_QUADRIC:					
-					d = new DrawQuadric(this, (GeoQuadric) geo);					
+					d = new DrawQuadric3D(this, (GeoQuadric3D) geo);
 					break;									
 				}
 				
@@ -398,31 +398,31 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param inOut:
 	 *            input and output array with x, y, z, w coords (
 	 */
-	final public void toScreenCoords3D(Ggb3DVector vInOut) {	
+	final public void toScreenCoords3D(GgbVector vInOut) {	
 		changeCoords(m,vInOut);		
 	}
 	
-	final public void toScreenCoords3D(Ggb3DMatrix mInOut) {		
+	final public void toScreenCoords3D(GgbMatrix mInOut) {		
 		changeCoords(m,mInOut);			
 	}
 	
 	
-	final public void toSceneCoords3D(Ggb3DVector vInOut) {	
+	final public void toSceneCoords3D(GgbVector vInOut) {	
 		changeCoords(mInv,vInOut);		
 	}
 	
-	final public void toSceneCoords3D(Ggb3DMatrix mInOut) {		
+	final public void toSceneCoords3D(GgbMatrix mInOut) {		
 		changeCoords(mInv,mInOut);			
 	}
 	
 	
-	final private void changeCoords(Ggb3DMatrix mat, Ggb3DVector vInOut){
-		Ggb3DVector v1 = vInOut.getCoordsLast1();
+	final private void changeCoords(GgbMatrix mat, GgbVector vInOut){
+		GgbVector v1 = vInOut.getCoordsLast1();
 		vInOut.set(mat.mul(v1));		
 	}
 
-	final private void changeCoords(Ggb3DMatrix mat, Ggb3DMatrix mInOut){	
-		Ggb3DMatrix m1 = mInOut.copy();
+	final private void changeCoords(GgbMatrix mat, GgbMatrix mInOut){	
+		GgbMatrix m1 = mInOut.copy();
 		mInOut.set(mat.mul(m1));		
 	}
 	
@@ -430,7 +430,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/** return the matrix : screen coords -> scene coords.
 	 * @return the matrix : screen coords -> scene coords.
 	 */
-	final public Ggb3DMatrix4x4 getToSceneMatrix(){
+	final public GgbMatrix4x4 getToSceneMatrix(){
 		
 		return mInv;
 	}
@@ -438,7 +438,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/** return the matrix : scene coords -> screen coords.
 	 * @return the matrix : scene coords -> screen coords.
 	 */
-	final public Ggb3DMatrix4x4 getToScreenMatrix(){
+	final public GgbMatrix4x4 getToScreenMatrix(){
 		
 		return m;
 	}	
@@ -446,7 +446,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/** return the matrix undoing the rotation : scene coords -> screen coords.
 	 * @return the matrix undoing the rotation : scene coords -> screen coords.
 	 */
-	final public Ggb3DMatrix4x4 getUndoRotationMatrix(){
+	final public GgbMatrix4x4 getUndoRotationMatrix(){
 		
 		return undoRotationMatrix;
 	}	
@@ -459,18 +459,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//TODO use Ggb3DMatrix4x4
 		
 		//rotations
-		Ggb3DMatrix m1 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.X_AXIS, (this.b-90)*EuclidianController3D.ANGLE_TO_DEGREES);
-		Ggb3DMatrix m2 = Ggb3DMatrix.Rotation3DMatrix(Ggb3DMatrix.Z_AXIS, (-this.a-90)*EuclidianController3D.ANGLE_TO_DEGREES);
-		Ggb3DMatrix m3 = m1.mul(m2);
+		GgbMatrix m1 = GgbMatrix.Rotation3DMatrix(GgbMatrix.X_AXIS, (this.b-90)*EuclidianController3D.ANGLE_TO_DEGREES);
+		GgbMatrix m2 = GgbMatrix.Rotation3DMatrix(GgbMatrix.Z_AXIS, (-this.a-90)*EuclidianController3D.ANGLE_TO_DEGREES);
+		GgbMatrix m3 = m1.mul(m2);
 
 		undoRotationMatrix.set(m3.inverse());
 
 		//scaling
-		Ggb3DMatrix m4 = Ggb3DMatrix.ScaleMatrix(new double[] {getXscale(),getYscale(),getZscale()});		
+		GgbMatrix m4 = GgbMatrix.ScaleMatrix(new double[] {getXscale(),getYscale(),getZscale()});		
 		
 
 		//translation
-		Ggb3DMatrix m5 = Ggb3DMatrix.TranslationMatrix(new double[] {getXZero(),getYZero(),getZZero()});
+		GgbMatrix m5 = GgbMatrix.TranslationMatrix(new double[] {getXZero(),getYZero(),getZZero()});
 		
 		m.set(m5.mul(m3.mul(m4)));	
 		
@@ -645,7 +645,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/** (x,y) 2D screen coords -> 3D physical coords */
-	public Ggb3DVector getPickPoint(int x, int y){			
+	public GgbVector getPickPoint(int x, int y){			
 		
 		
 		Dimension d = new Dimension();
@@ -656,7 +656,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			double w = (double) d.width;
 			double h = (double) d.height;
 			
-			Ggb3DVector ret = new Ggb3DVector(
+			GgbVector ret = new GgbVector(
 					new double[] {
 							(double) x+renderer.getLeft(),
 							(double) -y+renderer.getTop(),
@@ -674,10 +674,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/** p scene coords, (dx,dy) 2D mouse move -> 3D physical coords */
-	public Ggb3DVector getPickFromScenePoint(Ggb3DVector p, int dx, int dy){
-		Ggb3DVector point = p.copyVector();
+	public GgbVector getPickFromScenePoint(GgbVector p, int dx, int dy){
+		GgbVector point = p.copyVector();
 		toScreenCoords3D(point);
-		Ggb3DVector ret = new Ggb3DVector(
+		GgbVector ret = new GgbVector(
 				new double[] {
 						point.get(1)+dx,
 						point.get(2)-dy,
@@ -1200,7 +1200,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	public void setRotAnimation(Ggb3DVector vn){
+	public void setRotAnimation(GgbVector vn){
 
 		animatedRot = true;
 		animatedContinueRot = false;
@@ -1208,14 +1208,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		aOld = this.a % 360;
 		bOld = this.b % 360;
 		
-		Ggb3DVector spheric;
+		GgbVector spheric;
 		//put the eye in front of the visible side
-		Ggb3DVector eye = Ggb3DMatrixUtil.cartesianCoords(1,aOld*Math.PI/180,bOld*Math.PI/180);
+		GgbVector eye = GgbMatrixUtil.cartesianCoords(1,aOld*Math.PI/180,bOld*Math.PI/180);
 		//Application.debug("c="+eye.dotproduct(vn));
 		if(eye.dotproduct(vn)>0)
-			spheric = Ggb3DMatrixUtil.sphericalCoords(vn);
+			spheric = GgbMatrixUtil.sphericalCoords(vn);
 		else
-			spheric = Ggb3DMatrixUtil.sphericalCoords((Ggb3DVector) vn.mul(-1));
+			spheric = GgbMatrixUtil.sphericalCoords((GgbVector) vn.mul(-1));
 		
 		//Application.debug("vn\n"+vn+"\nbis\n"+Ggb3DMatrixUtil.cartesianCoords(spheric));
 		
@@ -1225,16 +1225,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		/*
 		Application.debug(
-				"(a,b)=(" + (this.a) +"°,"+ (this.b)+"°)\n"
+				"(a,b)=(" + (this.a) +"ï¿½,"+ (this.b)+"ï¿½)\n"
 				+
-				"(aOld,bOld)=(" + (this.aOld) +"°,"+ (this.bOld)+"°)\n"
+				"(aOld,bOld)=(" + (this.aOld) +"ï¿½,"+ (this.bOld)+"ï¿½)\n"
 				+
-				"(aNew,bNew)=(" + (this.aNew) +"°,"+ (this.bNew)+"°)"
+				"(aNew,bNew)=(" + (this.aNew) +"ï¿½,"+ (this.bNew)+"ï¿½)"
 		);
 		*/
 		
 		
-		//if (aNew,bNew)=(0°,90°), then change it to (90°,90°) to have correct xOy orientation
+		//if (aNew,bNew)=(0ï¿½,90ï¿½), then change it to (90ï¿½,90ï¿½) to have correct xOy orientation
 		if (Kernel.isEqual(aNew, 0, Kernel.STANDARD_PRECISION) &&
 				Kernel.isEqual(Math.abs(bNew), 90, Kernel.STANDARD_PRECISION))
 			aNew=-90;
@@ -1263,11 +1263,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		/*
 		Application.debug(
-				"bis\n(a,b)=(" + (this.a) +"°,"+ (this.b)+"°)\n"
+				"bis\n(a,b)=(" + (this.a) +"ï¿½,"+ (this.b)+"ï¿½)\n"
 				+
-				"(aOld,bOld)=(" + (this.aOld) +"°,"+ (this.bOld)+"°)\n"
+				"(aOld,bOld)=(" + (this.aOld) +"ï¿½,"+ (this.bOld)+"ï¿½)\n"
 				+
-				"(aNew,bNew)=(" + (this.aNew) +"°,"+ (this.bNew)+"°)"
+				"(aNew,bNew)=(" + (this.aNew) +"ï¿½,"+ (this.bNew)+"ï¿½)"
 		);
 		*/
 		
@@ -1786,30 +1786,30 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			case PREVIEW_POINT_FREE:
 				// use default directions for the cross
 				t = 1/getScale();
-				getCursor3D().getDrawingMatrix().setVx((Ggb3DVector) vx.mul(t));
-				getCursor3D().getDrawingMatrix().setVy((Ggb3DVector) vy.mul(t));
-				getCursor3D().getDrawingMatrix().setVz((Ggb3DVector) vz.mul(t));
+				getCursor3D().getDrawingMatrix().setVx((GgbVector) vx.mul(t));
+				getCursor3D().getDrawingMatrix().setVy((GgbVector) vy.mul(t));
+				getCursor3D().getDrawingMatrix().setVz((GgbVector) vz.mul(t));
 				break;
 			case PREVIEW_POINT_REGION:
 				// use region drawing directions for the cross
 				t = 1/getScale();
 				getCursor3D().getDrawingMatrix().setVx(
-						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx().mul(t));
+						(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx().mul(t));
 				getCursor3D().getDrawingMatrix().setVy(
-						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy().mul(t));
+						(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy().mul(t));
 				getCursor3D().getDrawingMatrix().setVz(
-						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz().mul(t));
+						(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz().mul(t));
 				break;
 			case PREVIEW_POINT_PATH:
 				// use path drawing directions for the cross
 				t = 1/getScale();
 				getCursor3D().getDrawingMatrix().setVx(
-						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVx().normalized().mul(t));
+						(GgbVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVx().normalized().mul(t));
 				t *= (10+((GeoElement) getCursor3D().getPath()).getLineThickness());
 				getCursor3D().getDrawingMatrix().setVy(
-						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVy().mul(t));
+						(GgbVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVy().mul(t));
 				getCursor3D().getDrawingMatrix().setVz(
-						(Ggb3DVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVz().mul(t));
+						(GgbVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVz().mul(t));
 				break;
 			case PREVIEW_POINT_DEPENDENT:
 				//use size of intersection
@@ -1818,9 +1818,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				if (t1>t2)
 					t2=t1;
 				t = (t2+6)/getScale();
-				getCursor3D().getDrawingMatrix().setVx((Ggb3DVector) vx.mul(t));
-				getCursor3D().getDrawingMatrix().setVy((Ggb3DVector) vy.mul(t));
-				getCursor3D().getDrawingMatrix().setVz((Ggb3DVector) vz.mul(t));
+				getCursor3D().getDrawingMatrix().setVx((GgbVector) vx.mul(t));
+				getCursor3D().getDrawingMatrix().setVy((GgbVector) vy.mul(t));
+				getCursor3D().getDrawingMatrix().setVz((GgbVector) vz.mul(t));
 				break;
 			}
 			

@@ -1,8 +1,8 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoElement;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -20,15 +20,15 @@ public interface GeoElement3DInterface {
 	
 	/** returns a 4x4 matrix for drawing the {@link Drawable3D} 
 	 * @return the drawing matrix*/
-	public Ggb3DMatrix4x4 getDrawingMatrix();
+	public GgbMatrix4x4 getDrawingMatrix();
 	
 	/** returns a 4x4 matrix for drawing the label
 	 * @return the label drawing matrix*/
-	public Ggb3DMatrix4x4 getLabelMatrix();
+	public GgbMatrix4x4 getLabelMatrix();
 	
 	/** sets the 4x4 matrix for drawing the {@link Drawable3D} 
 	 * @param a_drawingMatrix the drawing matrix*/
-	public void setDrawingMatrix(Ggb3DMatrix4x4 a_drawingMatrix);
+	public void setDrawingMatrix(GgbMatrix4x4 a_drawingMatrix);
 	
 
 	
@@ -58,7 +58,7 @@ public interface GeoElement3DInterface {
      * (null if none)
      * @return a vector normal to this
      */
-	public Ggb3DVector getNormal();
+	public GgbVector getNormal();
 
 	/////////////////////////////////////////
 	// link with Drawable3D

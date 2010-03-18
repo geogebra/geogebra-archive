@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
@@ -28,7 +29,6 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Region;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.plugin.GgbAPI;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoLine3D;
@@ -36,7 +36,7 @@ import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.GeoPolyhedron;
-import geogebra3D.kernel3D.GeoQuadric;
+import geogebra3D.kernel3D.GeoQuadric3D;
 import geogebra3D.kernel3D.GeoSegment3D;
 import geogebra3D.kernel3D.Kernel3D;
 
@@ -260,9 +260,9 @@ public class Test3D{
 		
 		//xOy plane
 		xOyPlane=kernel3D.Plane3D("xOy",
-				new Ggb3DVector(new double[] {0.0,0.0,0.0,1.0}),
-				new Ggb3DVector(new double[] {1.0,0.0,0.0,0.0}),
-				new Ggb3DVector(new double[] {0.0,1.0,0.0,0.0}));
+				new GgbVector(new double[] {0.0,0.0,0.0,1.0}),
+				new GgbVector(new double[] {1.0,0.0,0.0,0.0}),
+				new GgbVector(new double[] {0.0,1.0,0.0,0.0}));
 		xOyPlane.setObjColor(new Color(0.75f,0.75f,0.75f));
 		xOyPlane.setAlgebraVisible(false); //TODO make it works
 		xOyPlane.setLabelVisible(false);
@@ -359,9 +359,9 @@ public class Test3D{
 		GeoPlane3D p=null;
 		
 		p=kernel3D.Plane3D("plane",
-				new Ggb3DVector(new double[] {x0,y0,z0,1}),
-				new Ggb3DVector(new double[] {x1,y1,z1,0}),
-				new Ggb3DVector(new double[] {x2,y2,z2,0}));
+				new GgbVector(new double[] {x0,y0,z0,1}),
+				new GgbVector(new double[] {x1,y1,z1,0}),
+				new GgbVector(new double[] {x2,y2,z2,0}));
 		p.setObjColor(new Color((float) (x0+(x1+x2)/2), (float) (y0+(y1+y2)/2), (float) (z0+(z1+z2)/2)));
 		cons.addToConstructionList(p, false);
 		
@@ -529,7 +529,7 @@ public class Test3D{
 		
 		GeoPoint3D c = testPoint(-1.1f,-0.8f,0f); c.setLabel("center");
 		GeoNumeric r = new GeoNumeric(cons, "radius", 1);
-		GeoQuadric sphere = kernel3D.Sphere("sphere", c, r);
+		GeoQuadric3D sphere = kernel3D.Sphere("sphere", c, r);
 		sphere.setObjColor(new Color(1f,0f,0f));
 	}
 	

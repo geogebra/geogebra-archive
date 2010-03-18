@@ -4,11 +4,11 @@ package geogebra3D.euclidian3D.opengl;
 
 
 
+import geogebra.Matrix.GgbMatrix;
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
-import geogebra3D.Matrix.Ggb3DMatrix;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.DrawList3D;
 import geogebra3D.euclidian3D.Drawable3D;
 import geogebra3D.euclidian3D.EuclidianController3D;
@@ -87,7 +87,7 @@ public class Renderer implements GLEventListener {
 	private EuclidianView3D view3D;
 	
 	// for drawing
-	private Ggb3DMatrix4x4 m_drawingMatrix; //matrix for drawing
+	private GgbMatrix4x4 m_drawingMatrix; //matrix for drawing
 	
 	
 	///////////////////
@@ -656,7 +656,7 @@ public class Renderer implements GLEventListener {
      * 
      * @param a_matrix the matrix
      */
-    public void setMatrix(Ggb3DMatrix4x4 a_matrix){
+    public void setMatrix(GgbMatrix4x4 a_matrix){
     	m_drawingMatrix=a_matrix;
     }
     
@@ -666,7 +666,7 @@ public class Renderer implements GLEventListener {
      * 
      * @return the matrix
      */
-    public Ggb3DMatrix4x4 getMatrix(){
+    public GgbMatrix4x4 getMatrix(){
     	return m_drawingMatrix;
     }
     
@@ -683,7 +683,7 @@ public class Renderer implements GLEventListener {
      * sets a_drawingMatrix to openGL.
      * @param a_drawingMatrix the matrix
      */
-    private void initMatrix(Ggb3DMatrix a_drawingMatrix){
+    private void initMatrix(GgbMatrix a_drawingMatrix){
     	initMatrix(a_drawingMatrix.get());
     }   
     
@@ -829,7 +829,7 @@ public class Renderer implements GLEventListener {
     		drawSegment(a_x1, a_x2, dash!=DASH_NONE);
     	break;
     	case ARROW_TYPE_SIMPLE:
-    		double x3=a_x2-m_arrowLength/(m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS)*view3D.getScale());
+    		double x3=a_x2-m_arrowLength/(m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS)*view3D.getScale());
     		double thickness = getThickness();
     		setThickness(m_arrowWidth);
     		drawCone(x3,a_x2);
@@ -856,7 +856,7 @@ public class Renderer implements GLEventListener {
 
     		gl.glMatrixMode(GL.GL_TEXTURE);
     		gl.glLoadIdentity();
-    		float b = (float) (dashScale*(a_x2-a_x1)*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS)*view3D.getScale());
+    		float b = (float) (dashScale*(a_x2-a_x1)*m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS)*view3D.getScale());
     		float a = 0.75f/b-0.5f;
     		
     		gl.glScalef(b,1f,1f);
@@ -899,19 +899,19 @@ public class Renderer implements GLEventListener {
      */
     public void drawCoordSegments(Color axisX, Color axisY, Color axisZ){
     	
-    	Ggb3DMatrix4x4 drawingMatrixOld = m_drawingMatrix;
+    	GgbMatrix4x4 drawingMatrixOld = m_drawingMatrix;
     	Color colorOld = getColor();
     	double alphaOld = getAlpha();
  
 
-    	Ggb3DMatrix4x4 matrix = new Ggb3DMatrix4x4();
+    	GgbMatrix4x4 matrix = new GgbMatrix4x4();
     	matrix.setOrigin(m_drawingMatrix.getOrigin());
     	matrix.set(3,4,0); //sets the origin's altitude to 0
     	
     	// z-segment
     	double altitude = m_drawingMatrix.getOrigin().get(3);//altitude du point
  
-    	matrix.setVx((Ggb3DVector) EuclidianView3D.vz.mul(altitude));
+    	matrix.setVx((GgbVector) EuclidianView3D.vz.mul(altitude));
     	
     	if(altitude>0){
     		matrix.setVy(EuclidianView3D.vx);
@@ -932,7 +932,7 @@ public class Renderer implements GLEventListener {
     	// x-segment  	
     	double x = m_drawingMatrix.getOrigin().get(1);//x-coord of the point
     	
-    	matrix.setVx((Ggb3DVector) EuclidianView3D.vx.mul(-x));
+    	matrix.setVx((GgbVector) EuclidianView3D.vx.mul(-x));
     	
     	if(x>0){
     		matrix.setVy(EuclidianView3D.vz);
@@ -951,7 +951,7 @@ public class Renderer implements GLEventListener {
     	// y-segment  	
     	double y = m_drawingMatrix.getOrigin().get(2);//y-coord of the point
     	
-    	matrix.setVx((Ggb3DVector) EuclidianView3D.vy.mul(-y));
+    	matrix.setVx((GgbVector) EuclidianView3D.vy.mul(-y));
     	
     	if(y>0){
     		matrix.setVy(EuclidianView3D.vx);
@@ -1082,7 +1082,7 @@ public class Renderer implements GLEventListener {
     	
     	//Application.debug("n = "+nXmin+","+nXmax+","+nYmin+","+nYmax);
     	
-    	Ggb3DMatrix4x4 matrix = new Ggb3DMatrix4x4();
+    	GgbMatrix4x4 matrix = new GgbMatrix4x4();
      	
     	matrix.set(getMatrix());
     	for (int i=nYmin; i<=nYmax; i++){
@@ -1092,7 +1092,7 @@ public class Renderer implements GLEventListener {
     	setMatrix(matrix);
     	
     	matrix.set(getMatrix());
-    	Ggb3DMatrix4x4 matrix2 = matrix.mirrorXY();
+    	GgbMatrix4x4 matrix2 = matrix.mirrorXY();
     	for (int i=nXmin; i<=nXmax; i++){
     		setMatrix(matrix2.translateY(i*a_dx));
         	drawSegment(ymin, ymax);
@@ -1936,7 +1936,7 @@ public class Renderer implements GLEventListener {
 	 * @param v direction of the line
 	 * @return interval to draw the line
 	 */
-	public double[] getIntervalInFrustum(double[] minmax, Ggb3DVector o, Ggb3DVector v){
+	public double[] getIntervalInFrustum(double[] minmax, GgbVector o, GgbVector v){
 		
 		
 		

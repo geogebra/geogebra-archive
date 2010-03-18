@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
+
 
 
 /**
@@ -52,6 +54,9 @@ public interface GeoPointInterface {
 	 * @param Q ending point
 	 * @return coords of the vector */
 	public double[] vectorTo(GeoPointInterface Q);
+	
+	
+	public GgbVector getInhomCoords();
 	
 
 }

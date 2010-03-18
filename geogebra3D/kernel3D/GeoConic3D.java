@@ -1,10 +1,10 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
-import geogebra3D.Matrix.Ggb3DMatrix4x4;
-import geogebra3D.Matrix.Ggb3DVector;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**
@@ -87,7 +87,7 @@ extends GeoConic implements GeoElement3DInterface{
 
 		
 
-	 public Ggb3DMatrix4x4 getDrawingMatrix() {
+	 public GgbMatrix4x4 getDrawingMatrix() {
 		 if (coordSys!=null)
 			 return coordSys.getDrawingMatrix();
 		 else
@@ -95,13 +95,13 @@ extends GeoConic implements GeoElement3DInterface{
 	 }
 
 
-	 public void setDrawingMatrix(Ggb3DMatrix4x4 matrix) {
+	 public void setDrawingMatrix(GgbMatrix4x4 matrix) {
 		 coordSys.setDrawingMatrix(matrix);
 
 	 }
 	 
 
-	 public Ggb3DMatrix4x4 getLabelMatrix(){
+	 public GgbMatrix4x4 getLabelMatrix(){
 		 return coordSys.getLabelMatrix();
 	 }
 
@@ -137,7 +137,7 @@ extends GeoConic implements GeoElement3DInterface{
 	 
 
 	 //TODO implement this
-	 public Ggb3DVector getNormal(){ return null;};
+	 public GgbVector getNormal(){ return null;};
 
 
 
