@@ -289,7 +289,7 @@ public class GgbVector
 		if  (Kernel.isEqual((m.getVx().crossProduct(m.getVy())).dotproduct(m.getVz()),0,Kernel.STANDARD_PRECISION)){
 			//direction of projection is parallel to the plane : point is infinite
 			//Application.printStacktrace("infinity");
-			inPlaneCoords = new GgbVector(new double[] {0,0,1,0});
+			inPlaneCoords = new GgbVector(new double[] {0,0,-1,0});
 			globalCoords = m.getVz().copyVector();
 		}else{
 			//m*inPlaneCoords=this
