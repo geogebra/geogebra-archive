@@ -575,7 +575,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 					return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN, true);						
 				
 				switch (type) {					
-					case CONIC_CIRCLE :												
+					case CONIC_CIRCLE :		
+						buildSphereNDString();
+						/*
 						if (kernel.isZero(b.x)) {
 							sbToValueString.append("x\u00b2");
 						} else {
@@ -593,6 +595,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 						}
 						sbToValueString.append(" = ");
 						sbToValueString.append(kernel.format(halfAxes[0] * halfAxes[0]));
+						*/
 						return sbToValueString;
 
 					case CONIC_ELLIPSE :					
@@ -893,15 +896,20 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		classifyConic();
 	}
 	
-	
+	/*
 	public void setSphereND(GeoPointInterface M, double radius){
 		setCircle((GeoPoint) M, radius);
 	}
+	*/
 
 	/**
 	 * makes this conic a circle with midpoint M and radius r
 	 */
 	final public void setCircle(GeoPoint M, double r) {
+		
+		setSphereND(M, r);
+		
+		/*
 		defined = M.isDefined() && !M.isInfinite(); // check midpoint
 		
 		// check radius
@@ -915,7 +923,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		if (defined) {
 			setCircleMatrix(M, r);
 			setAffineTransform();
-		} 		
+		} 
+		*/		
 	}
 
 	/**
@@ -1014,6 +1023,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	}
 
 	final private void setCircleMatrix(GeoPoint M, double r) {
+		
+		setSphereNDMatrix(M, r);
+		
+		/*
 		// set midpoint
 		b.x = M.inhomX;
 		b.y = M.inhomY;
@@ -1047,6 +1060,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		} else { // radius < 0 or radius = infinite
 			empty();
 		}
+		*/
 	}
 
 	/**
@@ -2669,6 +2683,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	protected void setMidpoint(double[] coords){
 		b.x = coords[0];
 		b.y = coords[1];
+		
+		//GeoQuadridND compatibility
+		super.setMidpoint(coords);
 
 	}
 
