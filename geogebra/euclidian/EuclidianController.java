@@ -221,7 +221,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected ArrayList selectedPolygons = new ArrayList();
 
 	protected ArrayList selectedGeos = new ArrayList();
-
 	protected ArrayList selectedLists = new ArrayList();
 
 	protected LinkedList highlightedGeos = new LinkedList();
@@ -251,6 +250,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	boolean altDown=false;
 
 	private static String defaultRotateAngle = "45\u00b0"; // 45 degrees
+	
+	// used for gridlock when dragging polygons, segments etc
+	double[] transformCoordsOffset = new double[2];
 
 	/** Creates new EuclidianController */
 	public EuclidianController(Kernel kernel) {
@@ -984,7 +986,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 		}			
 	}
-
+	
 	protected void handleMousePressedForMoveMode(MouseEvent e, boolean drag) {
 
 		//long t0 = System.currentTimeMillis();
@@ -1081,7 +1083,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		doSingleHighlighting(movedGeoElement);	
 		 */	
 
-
+Application.debug(movedGeoElement.getClass()+"");
 
 		// multiple geos selected
 		if (movedGeoElement != null && selGeos.size() > 1) {									
@@ -1120,6 +1122,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// init move dependent mode if we have something to move ;-)
 			if (translateableGeos != null) {
 				moveMode = MOVE_DEPENDENT;
+
+				((GeoPoint)translateableGeos.get(0)).getInhomCoords(transformCoordsOffset);
+				transformCoordsOffset[0]-=xRW;
+				transformCoordsOffset[1]-=yRW;
+				Application.debug(transformCoordsOffset[0]+","+transformCoordsOffset[1]);
+				
 				startPoint.setLocation(xRW, yRW);					
 				view.setDragCursor();
 				if (translationVec == null)
@@ -1702,6 +1710,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	public void mouseReleased(MouseEvent e) {	
+		
+		// reset
+		transformCoordsOffset[0] = 0;
+		transformCoordsOffset[1] = 0;
 
 		if (textfieldHasFocus) return;
 
@@ -2925,15 +2937,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			case EuclidianView.GRID_CARTESIAN:
 
 				// X = (x, y) ... next grid point
-				double x = Kernel.roundToScale(xRW, view.getGridDistances(0));
-				double y = Kernel.roundToScale(yRW, view.getGridDistances(1));
+				double x = Kernel.roundToScale(xRW + transformCoordsOffset[0], view.getGridDistances(0));
+				double y = Kernel.roundToScale(yRW + transformCoordsOffset[1], view.getGridDistances(1));
+				
 				// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
-				double a = Math.abs(x - xRW);
-				double b = Math.abs(y - yRW);
+				double a = Math.abs(x - xRW - transformCoordsOffset[0]);
+				double b = Math.abs(y - yRW - transformCoordsOffset[1]);
+
 				if (a < view.getGridDistances(0) * pointCapturingPercentage
 						&& b < view.getGridDistances(1) *  pointCapturingPercentage) {
-					xRW = x;
-					yRW = y;
+					xRW = x - transformCoordsOffset[0];
+					yRW = y - transformCoordsOffset[1];
 				}
 				break;
 			}
