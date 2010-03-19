@@ -7,13 +7,12 @@ import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdPoint;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 
 
 /*
- * Point[ <Path1D> ] or CmdPoint
+ * Point[ <Path (3D)> ] or Point[ <Region (3D)> ] or CmdPoint
  */
 public class CmdPoint3D extends CmdPoint {
 	
