@@ -1123,10 +1123,11 @@ Application.debug(movedGeoElement.getClass()+"");
 			if (translateableGeos != null) {
 				moveMode = MOVE_DEPENDENT;
 
+				// snap to grid when dragging polygons, segments etc
+				// use first point
 				((GeoPoint)translateableGeos.get(0)).getInhomCoords(transformCoordsOffset);
 				transformCoordsOffset[0]-=xRW;
 				transformCoordsOffset[1]-=yRW;
-				Application.debug(transformCoordsOffset[0]+","+transformCoordsOffset[1]);
 				
 				startPoint.setLocation(xRW, yRW);					
 				view.setDragCursor();
@@ -2887,6 +2888,9 @@ Application.debug(movedGeoElement.getClass()+"");
 			pointCapturingPercentage = 0.125;
 
 		case EuclidianView.POINT_CAPTURING_ON_GRID:
+			
+			xRW += transformCoordsOffset[0];
+			yRW += transformCoordsOffset[1];
 
 			switch (view.getGridType()) {
 			case EuclidianView.GRID_ISOMETRIC:
@@ -2912,8 +2916,11 @@ Application.debug(movedGeoElement.getClass()+"");
 					double b = Math.abs(y - yRW);
 					if (a < isoGrid * pointCapturingPercentage
 							&& b < isoGrid *  pointCapturingPercentage) {
-						xRW = x*root3;
-						yRW = y;
+						xRW = x*root3 - transformCoordsOffset[0];
+						yRW = y - transformCoordsOffset[1];
+					} else {
+						xRW -= transformCoordsOffset[0];
+						yRW -= transformCoordsOffset[1];
 					}
 
 				}
@@ -2927,8 +2934,11 @@ Application.debug(movedGeoElement.getClass()+"");
 					double b = Math.abs(y - (yRW-isoGrid/2));
 					if (a < isoGrid * pointCapturingPercentage
 							&& b < isoGrid *  pointCapturingPercentage) {
-						xRW = (x+ isoGrid/2)*root3;
-						yRW = y+ isoGrid/2;
+						xRW = (x+ isoGrid/2)*root3 - transformCoordsOffset[0];
+						yRW = y+ isoGrid/2 - transformCoordsOffset[1];
+					} else {
+						xRW -= transformCoordsOffset[0];
+						yRW -= transformCoordsOffset[1];
 					}
 
 				}
@@ -2937,17 +2947,20 @@ Application.debug(movedGeoElement.getClass()+"");
 			case EuclidianView.GRID_CARTESIAN:
 
 				// X = (x, y) ... next grid point
-				double x = Kernel.roundToScale(xRW + transformCoordsOffset[0], view.getGridDistances(0));
-				double y = Kernel.roundToScale(yRW + transformCoordsOffset[1], view.getGridDistances(1));
+				double x = Kernel.roundToScale(xRW, view.getGridDistances(0));
+				double y = Kernel.roundToScale(yRW, view.getGridDistances(1));
 				
 				// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
-				double a = Math.abs(x - xRW - transformCoordsOffset[0]);
-				double b = Math.abs(y - yRW - transformCoordsOffset[1]);
+				double a = Math.abs(x - xRW);
+				double b = Math.abs(y - yRW);
 
 				if (a < view.getGridDistances(0) * pointCapturingPercentage
 						&& b < view.getGridDistances(1) *  pointCapturingPercentage) {
 					xRW = x - transformCoordsOffset[0];
 					yRW = y - transformCoordsOffset[1];
+				} else {
+					xRW -= transformCoordsOffset[0];
+					yRW -= transformCoordsOffset[1];
 				}
 				break;
 			}
