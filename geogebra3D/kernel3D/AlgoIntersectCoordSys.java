@@ -23,6 +23,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 
 
@@ -152,8 +153,9 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
     	
     	if (v==null)
     		p.setUndefined(); //TODO infinite point
-    	else
+    	else{
     		p.setCoords(v);
+    	}
 
     }
     

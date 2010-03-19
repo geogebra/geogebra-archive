@@ -351,6 +351,34 @@ public class GgbMatrix
 	
 	
 	
+	/** return first column (vector for x)
+	 * @return first column (vector for x)
+	 */
+	public GgbVector getVx(){
+		return getColumn(1);
+	}
+	
+	/** return second column (vector for y)
+	 * @return second column (vector for y)
+	 */	
+	public GgbVector getVy(){
+		return getColumn(2);
+	}
+	
+	/** return third column (vector for z)
+	 * @return third column (vector for z)
+	 */	
+	public GgbVector getVz(){
+		return getColumn(3);
+	}
+	
+	/** return last column (vector for origin)
+	 * @return last column (vector for origin)
+	 */	
+	public GgbVector getOrigin(){
+		return getColumn(getColumns());
+	}
+	
 	/**
 	 * returns GgbMatrix as a GeoList eg { {1,2}, {3,4} }
 	 * @param outputList 

@@ -137,6 +137,7 @@ public class Test3D{
         view3D.setZZero(-0.0);
         view3D.setYZero(-100);
         view3D.setRotXYinDegrees(-60,22.5,true);
+        //view3D.setRotXYinDegrees(0,0,true);
 
         
         //testList();
@@ -159,7 +160,7 @@ public class Test3D{
         //testNumerous2(400, Math.PI/6, 0.01);
         
         //testLine();
-        
+        //testLineAndPlane();
         
         //testPoint(1,1,1);testSave("point3d");
         //testSegment();
@@ -303,6 +304,21 @@ public class Test3D{
 		
 	}
 	
+	
+	private void testLineAndPlane(){
+
+		
+		
+		
+		GeoLine3D l1 = kernel3D.Line3D("line", testPoint(1f,-1f,2f), testPoint(1f,1f,2f));
+		
+		GeoPlane3D p1 = testPlane(0, 0, 1,  1, 0, 0,  0, 1, 0);
+		
+		GeoPoint3D p = kernel3D.Intersect("C", l1, p1);
+		
+		GeoLine3D l2 = kernel3D.Line3D("line2", p, testPoint(0f,0f,3f));
+	}
+	
 	/** number of points = n+1 */
 	private void test1(int n){
 		/*
@@ -352,7 +368,7 @@ public class Test3D{
 	
 	
 	
-	private void testPlane(double x0, double y0, double z0, 
+	private GeoPlane3D testPlane(double x0, double y0, double z0, 
 			double x1, double y1, double z1, 
 			double x2, double y2, double z2){
 		
@@ -363,7 +379,9 @@ public class Test3D{
 				new GgbVector(new double[] {x1,y1,z1,0}),
 				new GgbVector(new double[] {x2,y2,z2,0}));
 		p.setObjColor(new Color((float) (x0+(x1+x2)/2), (float) (y0+(y1+y2)/2), (float) (z0+(z1+z2)/2)));
-		cons.addToConstructionList(p, false);
+		//cons.addToConstructionList(p, false);
+		
+		return p;
 		
 	}
 	

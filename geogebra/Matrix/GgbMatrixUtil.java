@@ -58,7 +58,8 @@ public final class GgbMatrixUtil {
 	}
 	
 	
-	/** Return the point p intersection of the line and the plane. Return null if the line is parallel to plane.
+	/** Return the point p intersection of the line and the plane. <br>
+	 * Return infinite point (direction of the line) if the line is parallel to plane.
 	 * @param line the line
 	 * @param plane the plane
 	 * @return the point p intersection of the line and the plane. 
@@ -71,8 +72,8 @@ public final class GgbMatrixUtil {
 		GgbVector vn = v1.crossProduct(v2);
 		
 		// if v is orthogonal to vn, v is parallel to the plane and so the line is
-		if (Kernel.isEqual(vn.dotproduct(v),0,Kernel.STANDARD_PRECISION))
-				return null;
+		//if (Kernel.isEqual(vn.dotproduct(v),0,Kernel.STANDARD_PRECISION))
+		//		return null;
 		
 		// project the origin of the line on the plane (along v direction)
 		GgbVector o = line.getColumn(2);
