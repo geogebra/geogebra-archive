@@ -211,8 +211,6 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue {
     }
 
 	public Geo3DVec get3DVec() {
-		// TODO Auto-generated method stub
-		Application.debug("unimplemented");
-		return null;
+		return new Geo3DVec(kernel,((NumberValue)x.evaluate()).getDouble(),((NumberValue)y.evaluate()).getDouble(),((NumberValue)z.evaluate()).getDouble());
 	}
 }
