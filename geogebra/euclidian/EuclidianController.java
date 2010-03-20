@@ -1032,6 +1032,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//Application.debug("end("+(System.currentTimeMillis()-t0)+")");
 
 		ArrayList selGeos = app.getSelectedGeos();
+		
 		// if object was chosen before, take it now!
 		if (selGeos.size() == 1 && 
 				!hits.isEmpty() && hits.contains(selGeos.get(0))) 
@@ -5930,6 +5931,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		GeoElement retFree = null;
 		GeoElement retPath = null;
 		GeoElement retIndex = null;
+		GeoElement retSegment = null;
 
 		switch (geos.size()) {
 		case 0:
@@ -5974,11 +5976,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			int pointCount = 0;
 			int freePointCount = 0;
 			int pointOnPathCount = 0;
+			int segmentCount = 0;
+			int polygonCount = 0;
 			int maxIndex = -1;
 
 			// count no of points in top layer
 			for (int i = 0 ; i < geos.size() ; i++) {
 				GeoElement geo = (GeoElement)(geos.get(i));
+				
 				if (geo.isGeoPoint() && geo.getLayer() == maxLayer
 						&& (includeFixed || !geo.isFixed())) {
 					pointCount ++;
@@ -6058,6 +6063,25 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 				if (geos.size() == 1)
 					return (GeoElement)geos.get(0);
+			}
+			
+			int maxPolygonLayer = 0;
+			// count segments and polygons
+			for (int i = 0 ; i < geos.size() ; i++) {
+				GeoElement geo = (GeoElement)(geos.get(i));
+				
+				if (geo.isGeoSegment()) {
+					segmentCount++;
+					retSegment = geo;
+				} else if (geo.isGeoPolygon()) {
+					polygonCount++;
+					if (geo.getLayer() > maxPolygonLayer) maxPolygonLayer = geo.getLayer();
+				}				
+			}
+			
+			// check for edge of polygon being selected (priority over polygon itself)
+			if (segmentCount == 1 && (segmentCount + polygonCount == geos.size())) {
+				if (retSegment.getLayer() >= maxPolygonLayer) return retSegment;
 			}
 
 			// no points selected, multiple objects selected
