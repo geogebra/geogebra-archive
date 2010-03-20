@@ -11,6 +11,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -19,8 +20,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -39,9 +38,11 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JToolBar;
 import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
@@ -92,12 +93,13 @@ public class SpreadsheetView extends JSplitPane implements View
 	private int maxSelectionRow = -1 ; 
 	
 	
-	// G.STURR 2010-2-12: needed for split panel
+	// G.STURR 2010-2-12: needed for split panel, fileBrowser and toolbar
 	private JScrollPane spreadsheet;
 	private FileBrowserPanel browserPanel;
 	private int defaultDividerLocation = 150;
-	private JButton restoreButton;
-	
+	private JToolBar toolBar;
+	private JPanel spreadsheetPanel;
+	private JPanel restorePanel;
 	
 	
 	//Properties
@@ -107,6 +109,7 @@ public class SpreadsheetView extends JSplitPane implements View
 	private boolean showVScrollBar = true;
 	private boolean showHScrollBar = true;
 	private boolean showBrowserPanel = false;
+	private boolean showToolBar = false;
 	
 	/**
 	 * Construct spreadsheet view as split panel. 
@@ -122,6 +125,7 @@ public class SpreadsheetView extends JSplitPane implements View
 		
 		app = app0;
 		kernel = app.getKernel();
+		
 		
 		// table
 		tableModel = new DefaultTableModel(rows, columns);
@@ -176,14 +180,22 @@ public class SpreadsheetView extends JSplitPane implements View
 		spreadsheet.setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
 		spreadsheet.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
 		
+	
 		//G.STURR 2010-2-12			
 		// Add spreadsheet and browser panes to SpreadsheetView
-		setShowBrowserPanel(false);
-		setRightComponent(spreadsheet);
+			
+		spreadsheetPanel = new JPanel(new BorderLayout());
+		spreadsheetPanel.add(getToolBar(),BorderLayout.NORTH);
+		setShowToolBar(showToolBar);
+		spreadsheetPanel.add(spreadsheet,BorderLayout.CENTER);
+		
+		setRightComponent(spreadsheetPanel);	
+		setShowBrowserPanel(showBrowserPanel);  //adds browser Panel or null panel to left component
+		
 		
 		updateFonts();
 		attachView(); //G.Sturr 2010-1-18
-		
+	
 	}
 	
 	
@@ -1067,24 +1079,6 @@ public class SpreadsheetView extends JSplitPane implements View
 		return browserPanel;
 	}
 	
-	public JButton getRestoreButton() {		
-		if (restoreButton == null) {
-			restoreButton = new JButton();
-			
-			restoreButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					restoreBrowserPanel();
-				}
-			});
-			restoreButton.setMinimumSize(new Dimension(10, 0));
-			restoreButton.setFocusPainted(false);
-			//restoreButton.setBorderPainted(false);
-			//restoreButton.setBackground(MyTable.BACKGROUND_COLOR_HEADER);
-			//restoreButton.setContentAreaFilled(false);
-					
-		}	
-		return restoreButton;
-	}
 	
 	
 	public void setShowBrowserPanel(boolean showBrowser) {
@@ -1110,26 +1104,56 @@ public class SpreadsheetView extends JSplitPane implements View
 	public void minimizeBrowserPanel(){
 		setDividerLocation(10);
 		setDividerSize(0);
-		setLeftComponent(getRestoreButton());
-		restoreButton.getModel().setPressed(false);
-		
+		setLeftComponent(getRestorePanel());
 	}
+	
 	
 	public void restoreBrowserPanel(){
 		setDividerLocation(getLastDividerLocation());
 		setDividerSize(4);
 		setLeftComponent(getBrowserPanel());
+		
 	}
 	
 
-	
+	/**
+	 * Returns restorePanel, if none exists a new one is built.
+	 * RestorePanel is a slim vertical bar that holds the place 
+	 * of the minimized fileBrowser. When clicked it restores the
+	 * file browser to full size. 
+	 * 
+	 */
+	public JPanel getRestorePanel() {
+		if (restorePanel == null) {
+			restorePanel = new JPanel();
+			restorePanel.setMinimumSize(new Dimension(10,0));
+			restorePanel.setBorder(BorderFactory.createEtchedBorder(1));
+			restorePanel.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					restoreBrowserPanel();
+				}
+				public void mouseEntered(MouseEvent e) {
+					restorePanel.setBackground(Color.LIGHT_GRAY);
+				}
+				public void mouseExited(MouseEvent e) {
+					restorePanel.setBackground(null);
+				}
+			});
+				}
+		restorePanel.setBackground(null);
+		return restorePanel;
+	}
 	
 	//END GSTURR (file browser support)
+	
+
+	
 	
 	
 	//-------------------------------------------
 	//	Spreadsheet Properties (get/set)
 	//-------------------------------------------
+	
 	
 	public void setShowRowHeader(boolean showRowHeader) {
 		if (showRowHeader) {
@@ -1197,6 +1221,34 @@ public class SpreadsheetView extends JSplitPane implements View
 	public boolean getShowGrid() {
 		return showGrid;
 	}
+	
+	public void setShowToolBar(boolean showToolBar){
+		toolBar.setVisible(showToolBar);
+		spreadsheetPanel.validate();
+		this.showToolBar = showToolBar;
+	}
+	
+	public boolean getShowToolBar(){
+		return showToolBar;
+	}
+	
+	/**
+	 * 
+	 * Construct spreadsheet toolbar
+	 * (temporary code, this will become its own class) 
+	 * 
+	 */
+	private JToolBar getToolBar(){
+		if(toolBar==null){
+			toolBar = new JToolBar();
+			JButton btn = new JButton("test");
+			toolBar.add(btn);
+			toolBar.setFloatable(false);
+		}
+		
+		return toolBar;
+	}
+	
 	
 	
 	

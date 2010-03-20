@@ -63,7 +63,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	private SpreadsheetView view;
 	
 	private JCheckBox cbShowGrid, cbShowRowHeader, 
-	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, cbShowBrowser;
+	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, cbShowBrowser, cbShowToolBar;
 	
 	private JTextField dirField, urlField;
 	
@@ -131,9 +131,13 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbShowVScrollbar.addActionListener(this);
         layoutOptions.add(cbShowVScrollbar); 
         
-        cbShowBrowser = new JCheckBox(app.getMenu("Show Browser"));  
+        cbShowBrowser = new JCheckBox(app.getMenu("Browser"));  
         cbShowBrowser.addActionListener(this);        
         layoutOptions.add(cbShowBrowser); 
+        
+        cbShowToolBar = new JCheckBox("Toolbar");
+        cbShowToolBar.addActionListener(this);        
+        layoutOptions.add(cbShowToolBar); 
         
         
         return layoutOptions;
@@ -197,8 +201,6 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         dirPanel.add(dirField); 
         
        
-        
-        
         JPanel urlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         urlPanel.setAlignmentX(0.0f);
         urlPanel.add(Box.createHorizontalStrut(tab));
@@ -248,6 +250,11 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbShowBrowser.setSelected(view.getShowBrowserPanel()); 
         cbShowBrowser.addActionListener(this);
      
+        cbShowToolBar.removeActionListener(this);
+        cbShowToolBar.setSelected(view.getShowToolBar()); 
+        cbShowToolBar.addActionListener(this);
+     
+        
        /* 
         dirField.removeActionListener(this);
         dirField.setText(System.getProperty("user.dir"));
@@ -298,6 +305,15 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		else if (source == cbShowBrowser) {
 			view.setShowBrowserPanel(cbShowBrowser.isSelected());
 		}
+		
+		else if (source == cbShowToolBar) {
+			view.setShowToolBar(cbShowToolBar.isSelected());
+		}
+		
+		
+		
+		
+		
 		
 		else if (source == dirRadioButton) {
 			dirField.selectAll();

@@ -70,7 +70,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	
 	private boolean isXMLTree = false;
 	
-	private JButton minimizeButton;
+	public JButton minimizeButton;
 	private JButton menuButton;
 	private JPopupMenu contextMenu;
 
@@ -144,9 +144,8 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		JPanel header = new JPanel(new BorderLayout());
 		header.add(toolbar, BorderLayout.WEST);
 		header.add(buttonPanel, BorderLayout.EAST);
-		header.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-				.createEtchedBorder(), BorderFactory.createEmptyBorder(2, 5, 2,
-				5)));
+	//	header.setBorder(BorderFactory.createCompoundBorder(BorderFactory
+		//		.createEtchedBorder(), BorderFactory.createEmptyBorder(2, 5, 2,5)));
 
 		
 		
@@ -219,8 +218,9 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 					locButton.y - locApp.y + menuButton.getHeight());
 
 		} else if (e.getSource() == minimizeButton) {
-
+		
 			view.minimizeBrowserPanel();
+			minimizeButton.getModel().setRollover(false);
 		}
 	}
 	

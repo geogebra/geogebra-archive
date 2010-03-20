@@ -48,7 +48,12 @@ public class OptionsGeneral extends JPanel {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("", new JPanel());
 		tabbedPane.addTab("", new JPanel());
+		
+		//G.Sturr 2010-3-19
+		//tabbedPane.addTab("", new JPanel());
 		tabbedPane.addTab("", new OptionsSpreadsheet(app, (SpreadsheetView)app.getGuiManager().getSpreadsheetView()));
+		//END G.Sturr
+		
 		tabbedPane.addTab("", new JPanel());
 		
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
