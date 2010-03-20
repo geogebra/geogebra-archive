@@ -6132,7 +6132,7 @@ public class Kernel {
 	/*
 	 * swaps the digits in num to the current locale's
 	 */
-	private String internationalizeDigits(String num) {
+	public String internationalizeDigits(String num) {
 		if (formatSB == null) formatSB = new StringBuilder(17);
 		else formatSB.setLength(0);
 		
