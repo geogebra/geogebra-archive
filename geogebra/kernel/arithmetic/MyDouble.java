@@ -487,7 +487,11 @@ implements NumberValue {
 				sb.append(str.charAt(i) + ""); // eg E
 				continue;
 			}
-			else if (ch <= 0x669) ch -= 0x660; // Arabic
+			else if (ch <= 0x669) ch -= 0x660; // Arabic-Indic
+			else if (ch == 0x66b) { // Arabic decimal point
+				sb.append("."); 
+				continue;
+			}
 			else if (ch <= 0x6f9) ch -= 0x6f0; 
 			else if (ch <= 0x96f) ch -= 0x966; 
 			else if (ch <= 0x9ef) ch -= 0x9e6; 

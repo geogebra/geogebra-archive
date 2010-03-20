@@ -212,14 +212,15 @@ TOKEN :  {
   | < DERIVATIVE: "'" >
   | < TRUE:     ( "true" | "True" ) >
   | < FALSE:    ( "false" | "False" ) >
+  | < DECIMAL_POINT:    ( "." | "\u066b" ) >
 }
 
 TOKEN : {      
   		< VARX: "x" >
   |		< VARY: "y" >
-  |     < FLOAT: <INTEGER> ( "." <INTEGER> )? 
-        | "." <INTEGER> 
-        | <INTEGER> "."
+  |     < FLOAT: <INTEGER> ( <DECIMAL_POINT> <INTEGER> )? 
+        | <DECIMAL_POINT> <INTEGER> 
+        | <INTEGER> <DECIMAL_POINT>
         >
   |     < EFLOAT: <FLOAT> "E" (<MINUS>)? <INTEGER> >
   |     < BFLOAT: <FLOAT> "b" (<MINUS>)? <INTEGER> >

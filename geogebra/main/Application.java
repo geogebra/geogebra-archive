@@ -1296,8 +1296,18 @@ public abstract class Application implements KeyEventDispatcher {
 		// load resource files
 		setLocale(locale);
 		
-		if (locale.getLanguage().startsWith("ar")) {
-			unicodeZero = '\u0660'; // Arabic digit 0
+		// defaults
+		unicodeDecimalPoint = '.';
+		// unicodeThousandsSeparator=',';
+		
+		if (locale.getLanguage().startsWith("ar")) { // Arabic
+			unicodeZero = '\u0660'; // Arabic-Indic digit 0
+			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
+			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separator
+		} else if (locale.getLanguage().startsWith("fa")) { // Persian
+			unicodeZero = '\u06f0'; // Persian digit 0 (Extended Arabic-Indic)
+			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
+			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separators
 		} else if (locale.getLanguage().startsWith("ml")) {
 			unicodeZero = '\u0d66'; // Malayalam digit 0
 		} else if (locale.getLanguage().startsWith("th")) {
@@ -1357,6 +1367,8 @@ public abstract class Application implements KeyEventDispatcher {
 
 	// For eg Hebrew and Arabic. 
 	public static char unicodeZero = '0';
+	public static char unicodeDecimalPoint = '.';
+	//public static char unicodeThousandsSeparator = ','; // \u006c for Arabic
 
 	// for basque you have to say "A point" instead of "point A"
 	private boolean reverseNameDescription = false;

@@ -6138,7 +6138,8 @@ public class Kernel {
 		
 		for (int i = 0 ; i < num.length() ; i++) {
 			char c = num.charAt(i);
-			if (c >= '0' && c <= '9') {
+			if (c == '.') c = Application.unicodeDecimalPoint;
+			else if (c >= '0' && c <= '9') {
 				
 				c += Application.unicodeZero - '0'; // convert to eg Arabic Numeral
 				
