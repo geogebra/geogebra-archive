@@ -1282,12 +1282,9 @@ public abstract class Application implements KeyEventDispatcher {
 	 * set language via iso language string
 	 */
 	public void setLanguage(Locale locale) {
-		// removed as we need to set unicodeZero for applets
-		//if (locale == null
-		//		|| currentLocale.toString().equals(locale.toString()))
-		//	return;
-		
-		if (locale == null) return;
+		if (locale == null
+				|| currentLocale.toString().equals(locale.toString()))
+			return;
 
 		if (!INITING) {
 			setMoveMode();
@@ -1296,36 +1293,6 @@ public abstract class Application implements KeyEventDispatcher {
 		// load resource files
 		setLocale(locale);
 		
-		// defaults
-		unicodeDecimalPoint = '.';
-		// unicodeThousandsSeparator=',';
-		
-		if (locale.getLanguage().startsWith("ar")) { // Arabic
-			unicodeZero = '\u0660'; // Arabic-Indic digit 0
-			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
-			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separator
-		} else if (locale.getLanguage().startsWith("fa")) { // Persian
-			unicodeZero = '\u06f0'; // Persian digit 0 (Extended Arabic-Indic)
-			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
-			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separators
-		} else if (locale.getLanguage().startsWith("ml")) {
-			unicodeZero = '\u0d66'; // Malayalam digit 0
-		} else if (locale.getLanguage().startsWith("th")) {
-			unicodeZero = '\u0e50'; // Thai digit 0
-		} else if (locale.getLanguage().startsWith("ta")) {
-			unicodeZero = '\u0be6'; // Tamil digit 0
-		} else if (locale.getLanguage().startsWith("sd")) {
-			unicodeZero = '\u1bb0'; // Sudanese digit 0
-		} else if (locale.getLanguage().startsWith("kh")) {
-			unicodeZero = '\u17e0'; // Khmer digit 0
-		} else if (locale.getLanguage().startsWith("mn")) {
-			unicodeZero = '\u1810'; // Mongolian digit 0
-		} else if (locale.getLanguage().startsWith("mm")) {
-			unicodeZero = '\u1040'; // Mayanmar digit 0
-		} else {
-			unicodeZero = '0';
-		}
-
 		// update right angle style in euclidian view (different for German)
 		if (euclidianView != null)
 			euclidianView.updateRightAngleStyle(locale);
@@ -1388,6 +1355,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 	
 	private void updateReverseLanguage(Locale locale) {
+		
 		String lang = locale.getLanguage();
 		// reverseLanguage = "zh".equals(lang); removed Michael Borcherds
 		// 2008-03-31
@@ -1403,6 +1371,36 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		// turn off auto-complete for Korean
 		isAutoCompletePossible = !"ko".equals(lang);
+		
+		// defaults
+		unicodeDecimalPoint = '.';
+		// unicodeThousandsSeparator=',';
+		
+		if (lang.startsWith("ar")) { // Arabic
+			unicodeZero = '\u0660'; // Arabic-Indic digit 0
+			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
+			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separator
+		} else if (lang.startsWith("fa")) { // Persian
+			unicodeZero = '\u06f0'; // Persian digit 0 (Extended Arabic-Indic)
+			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
+			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separators
+		} else if (lang.startsWith("ml")) {
+			unicodeZero = '\u0d66'; // Malayalam digit 0
+		} else if (lang.startsWith("th")) {
+			unicodeZero = '\u0e50'; // Thai digit 0
+		} else if (lang.startsWith("ta")) {
+			unicodeZero = '\u0be6'; // Tamil digit 0
+		} else if (lang.startsWith("sd")) {
+			unicodeZero = '\u1bb0'; // Sudanese digit 0
+		} else if (lang.startsWith("kh")) {
+			unicodeZero = '\u17e0'; // Khmer digit 0
+		} else if (lang.startsWith("mn")) {
+			unicodeZero = '\u1810'; // Mongolian digit 0
+		} else if (lang.startsWith("mm")) {
+			unicodeZero = '\u1040'; // Mayanmar digit 0
+		} else {
+			unicodeZero = '0';
+		}
 	}
 	
 	
