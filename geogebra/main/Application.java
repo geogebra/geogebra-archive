@@ -1282,9 +1282,12 @@ public abstract class Application implements KeyEventDispatcher {
 	 * set language via iso language string
 	 */
 	public void setLanguage(Locale locale) {
-		if (locale == null
-				|| currentLocale.toString().equals(locale.toString()))
-			return;
+		// removed as we need to set unicodeZero for applets
+		//if (locale == null
+		//		|| currentLocale.toString().equals(locale.toString()))
+		//	return;
+		
+		if (locale == null) return;
 
 		if (!INITING) {
 			setMoveMode();
@@ -1352,7 +1355,7 @@ public abstract class Application implements KeyEventDispatcher {
 		return rightToLeftReadingOrder;
 	}
 
-	// For eg Hebrew and Arabic. Guy Hed, 25.8.2008
+	// For eg Hebrew and Arabic. 
 	public static char unicodeZero = '0';
 
 	// for basque you have to say "A point" instead of "point A"
