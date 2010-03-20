@@ -1083,7 +1083,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		doSingleHighlighting(movedGeoElement);	
 		 */	
 
-Application.debug(movedGeoElement.getClass()+"");
 
 		// multiple geos selected
 		if (movedGeoElement != null && selGeos.size() > 1) {									
