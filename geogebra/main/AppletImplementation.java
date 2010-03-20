@@ -268,11 +268,13 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		// set language manually by iso language string
 		String language = applet.getParameter("language");
 		String country = applet.getParameter("country");		
+		Locale loc = null;
 		if (language != null) {
-			if (country != null)
-				applet.setLocale(new Locale(language, country));
+			if (country != null) 
+				loc = new Locale(language, country);
 			else
-				applet.setLocale(new Locale(language));
+				loc = new Locale(language);
+			applet.setLocale(loc);
 		}	
 
 		// bgcolor = "#CCFFFF" specifies the background color to be used for
@@ -323,6 +325,9 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 			String[] args = { fileStr };
 			app = buildApplication(args, undoActive);
 		}
+		
+		// needed to make sure unicodeZero works
+		if (loc != null) app.setLanguage(loc);
 
 		kernel = app.getKernel();
 
