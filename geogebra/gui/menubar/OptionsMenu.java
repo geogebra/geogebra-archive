@@ -667,6 +667,11 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 				kernel.setPrintDecimals(decimals);
 				kernel.updateConstruction();
+				app.refreshViews();
+				
+				// see ticket 79
+				kernel.updateConstruction();
+
 				app.setUnsaved();
 			} catch (Exception e) {
 				app.showError(e.toString());
@@ -682,6 +687,11 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 				kernel.setPrintFigures(figures);
 				kernel.updateConstruction();
+				app.refreshViews();
+				
+				// see ticket 79
+				kernel.updateConstruction();
+
 				app.setUnsaved();
 			} catch (Exception e) {
 				app.showError(e.toString());
