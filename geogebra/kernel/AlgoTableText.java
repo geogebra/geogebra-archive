@@ -83,11 +83,33 @@ public class AlgoTableText extends AlgoElement {
     	
     	String justification = "l"; // default (l, c or r)
     	
+    	String openBracket = "";
+    	String closeBracket = "";
+    	
     	if (args != null) {
     		String optionsStr = args.getTextString();
     		if (optionsStr.indexOf("v") > -1) alignment = VERTICAL; // vertical table
     		if (optionsStr.indexOf("c") > -1) justification = "c";
     		else if (optionsStr.indexOf("r") > -1) justification = "r";	
+    		
+    		if (optionsStr.indexOf("||") > -1) {
+    			openBracket = "\\left|";
+    			closeBracket = "\\right|";
+    		} else if (optionsStr.indexOf('(') > -1) {
+    			openBracket = "\\left(";
+    		} else if (optionsStr.indexOf('[') > -1) {
+    			openBracket = "\\left[";
+    		} else if (optionsStr.indexOf('{') > -1) {
+    			openBracket = "\\left\\{";
+    		} 
+    		
+    		if (optionsStr.indexOf(')') > -1) {
+    			closeBracket = "\\right)";
+    		} else if (optionsStr.indexOf(']') > -1) {
+    			closeBracket = "\\right]";
+    		} else if (optionsStr.indexOf('}') > -1) {
+    			closeBracket = "\\right\\}";
+    		} 
     		
     	} else if (geoList.get(columns-1).isGeoText()) {
     		
@@ -136,6 +158,7 @@ public class AlgoTableText extends AlgoElement {
     	text.setTemporaryPrintAccuracy();
     	
     	sb.setLength(0);
+    	sb.append(openBracket);
 		// Added by Loïc 2009/12/15
     	sb.append("\\begin{array}{");
 		// end Loïc
@@ -164,7 +187,7 @@ public class AlgoTableText extends AlgoElement {
 	    		sb.append(justification); // "l", "r" or "c"
 	    	sb.append("}");
 	    	
-	    	// Table[{11.1,322,3.11},{4,55,666,7777,88888},{6.11,7.99,8.01,9.81},{(1,2)},"c"]
+	    	// TableText[{11.1,322,3.11},{4,55,666,7777,88888},{6.11,7.99,8.01,9.81},{(1,2)},"c()"]
 	    	
 			for (int c = 0 ; c < columns ; c++) {
 	    	for (int r=0; r < rows; r++) {
@@ -181,6 +204,7 @@ public class AlgoTableText extends AlgoElement {
     	text.restorePrintAccuracy();
 		// Added by Loïc 2009/12/15
     	sb.append("\\end{array}");
+    	sb.append(closeBracket);
 		// end Loïc 2009/12/15
     	//Application.debug(sb.toString());
     	text.setTextString(sb.toString());
