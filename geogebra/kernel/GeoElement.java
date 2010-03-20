@@ -1346,8 +1346,12 @@ public abstract class GeoElement
 	final public boolean hasOnlyFreeInputPoints() {
 		if (algoParent == null) 
 			return false;
-		else
+		else {
+			// special case for edge of polygon
+			if ( algoParent instanceof AlgoJoinPointsSegment && algoParent.getFreeInputPoints().size() == 2) return true;
+
 			return algoParent.getFreeInputPoints().size() == algoParent.input.length;	
+		}
 	}
 	
 	private static boolean containsOnlyMoveableGeos(ArrayList geos) {
