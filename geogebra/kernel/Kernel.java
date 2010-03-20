@@ -6518,7 +6518,7 @@ public class Kernel {
 	final public double checkDecimalFraction(double x) {
 		double fracVal = x * INV_MIN_PRECISION;
 		double roundVal = Math.round(fracVal);
-		if (isEqual(fracVal, roundVal))
+		if (isEqual(fracVal, roundVal, STANDARD_PRECISION))
 			return roundVal / INV_MIN_PRECISION;
 		else
 			return x;
