@@ -161,6 +161,7 @@ public class Test3D{
         
         //testLine();
         //testLineAndPlane();
+        //testPlaneThrough();
         
         //testPoint(1,1,1);testSave("point3d");
         //testSegment();
@@ -317,6 +318,19 @@ public class Test3D{
 		GeoPoint3D p = kernel3D.Intersect("C", l1, p1);
 		
 		GeoLine3D l2 = kernel3D.Line3D("line2", p, testPoint(0f,0f,3f));
+	}
+	
+	private void testPlaneThrough(){
+
+				
+		GeoPlane3D p1 = kernel3D.Plane3D("plane1", 
+				testPoint(0f,0f,1f),
+				testPoint(1f,0f,1f),
+				testPoint(0f,1f,1f)
+				);
+		
+		
+		kernel3D.Plane3D("plane2", testPoint(0f,0f,2f),p1);
 	}
 	
 	/** number of points = n+1 */

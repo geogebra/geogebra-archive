@@ -490,6 +490,15 @@ public class Kernel3D
 		p.setLabel(label);
 		return p;
 	}	
+	
+	
+	/** 
+	* Plane named label through Point point parallel to plane pIn
+	*/
+	final public GeoPlane3D Plane3D(String label, GeoPoint3D point, GeoPlane3D pIn) {
+		AlgoPlaneThroughPoint algo = new AlgoPlaneThroughPoint(cons, label, point, pIn);
+		return algo.getPlane();
+	}
 
 	/** Axis3D label linking with (o,v) coord sys   */
 	/*
