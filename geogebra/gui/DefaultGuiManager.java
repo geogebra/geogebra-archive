@@ -776,17 +776,17 @@ public class DefaultGuiManager implements GuiManager {
 	
 	/**
 	 * Displays the options dialog.
-	 * 
-	 * @param showEuclidianTab If the tab with euclidian settings should be selected
+	 *
+	 * @param tabIndex Index of the tab. Use OptionsDialog.TAB_* constants for this, or -1 for the default.
 	 */
-	public void showOptionsDialog(boolean showEuclidianTab)	{
+	public void showOptionsDialog(int tabIndex)	{
 		if(optionsDialog == null)
 			optionsDialog = new OptionsDialog(app);
 		else
 			optionsDialog.updateGUI();
 		
-		if(showEuclidianTab)
-			optionsDialog.showEuclidianTab();
+		if(tabIndex != -1)
+			optionsDialog.showTab(tabIndex);
 		
 		optionsDialog.setVisible(true);
 	}

@@ -41,6 +41,22 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * Index of the general tab. 
+	 */
+	public static final int TAB_GENERAL = 0;
+
+	/**
+	 * Index of the defaults tab. 
+	 */
+	public static final int TAB_DEFAULTS = 1;
+	
+	/**
+	 * Index of the euclidian tab.
+	 * TODO: Change back to 3 (F.S.) 
+	 */
+	public static final int TAB_EUCLIDIAN = 2;
+
+	/**
 	 * An instance of the Application object of this window.
 	 */
 	private Application app;
@@ -114,9 +130,11 @@ public class OptionsDialog extends JDialog implements WindowListener {
 
 	/**
 	 * Select the tab which shows the euclidian view settings.
+	 * 
+	 * @param index Index of the tab to hide, use the constants defined in this class for that
 	 */
-	public void showEuclidianTab() {
-		tabbedPane.setSelectedIndex(2); // TODO change back to 3 (F.S.)
+	public void showTab(int index) {
+		tabbedPane.setSelectedIndex(index);
 	}
 
 	/**

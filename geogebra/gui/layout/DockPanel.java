@@ -10,6 +10,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
+import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -201,7 +202,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	public void createFrame() {
 		frame = new JFrame(app.getPlain(viewTitle));
 	   	frame.setIconImage(app.getInternalImage("geogebra.gif"));
-	   	frame.addWindowListener(this);
+	   	frame.addWindowListener(this);	
 	   	
 	   	frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
@@ -212,6 +213,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
             	info.setWindowRect(event.getComponent().getBounds());
             }
         });
+	   	
 	   	frame.getContentPane().add(this);
 	   	
 	   	

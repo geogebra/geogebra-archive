@@ -134,10 +134,7 @@ public interface GuiManager {
 
 	public void setMenubar(JMenuBar newMenuBar);
 	
-	/**
-	 * Shows the options dialog.
-	 */
-	public void showOptionsDialog(boolean showEuclidianTab);
+	public void showOptionsDialog(int tabIndex);
 
 	public void showAboutDialog();
 

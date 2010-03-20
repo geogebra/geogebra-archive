@@ -1,6 +1,7 @@
 package geogebra.gui.menubar;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.OptionsDialog;
 import geogebra.gui.layout.Layout;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -400,7 +401,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			public static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().showOptionsDialog(false);
+				app.getGuiManager().showOptionsDialog(-1);
 			}
 		};
 		
@@ -430,7 +431,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().showOptionsDialog(true);
+				app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_EUCLIDIAN);
 			}
 		};
 

@@ -133,7 +133,7 @@ implements ActionListener {
     		app.setViewShowAllObjects();
     	}
     	else if (cmd.equals("properties")) {
-    		app.getGuiManager().showOptionsDialog(true);
+    		app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_EUCLIDIAN);
     		//app.getGuiManager().showDrawingPadPropertiesDialog();
     	}
     }
