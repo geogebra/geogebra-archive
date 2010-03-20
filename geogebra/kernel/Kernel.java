@@ -6245,10 +6245,11 @@ public class Kernel {
 	 * Uses current NumberFormat nf to format a number.
 	 */
 	final private String formatNF(double x) {
-		//Zbynek Konecny, 2010-03-18 (next 2 lines) -- ticket #78 
-		if ((-PRINT_PRECISION/2 < x && x < PRINT_PRECISION/2)
-			||(PRINT_PRECISION<1E-14 && -PRINT_PRECISION < x && x < 0)){
-			// avoid output of "-0"
+		// "<=" catches -0.0000000000000005
+		// should be rounded to -0.000000000000001 (15 d.p.)
+		// but nf.format(x) returns "-0" 
+		if (-PRINT_PRECISION / 2 <= x && x < PRINT_PRECISION / 2) {
+			// avoid output of "-0" for eg -0.0004
 			return "0";
 		} else {
 			// standard case
