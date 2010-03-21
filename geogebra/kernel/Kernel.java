@@ -6432,7 +6432,7 @@ public class Kernel {
 			case ExpressionNode.STRING_TYPE_JASYMCA:
 				if (angleUnit == ANGLE_DEGREE) {
 					sbFormatAngle.append("(");
-					sbFormatAngle.append(format(Math.toDegrees(phi)));	
+					sbFormatAngle.append(format(checkDecimalFraction(Math.toDegrees(phi))));	
 					sbFormatAngle.append("*");
 					sbFormatAngle.append("\u00b0");
 					sbFormatAngle.append(")");
@@ -6456,7 +6456,7 @@ public class Kernel {
 						phi += 360;	
 					else if (phi > 360)
 						phi = phi % 360;
-					sbFormatAngle.append(format(phi));
+					sbFormatAngle.append(format(checkDecimalFraction(phi)));
 					
 					if (casPrintForm == ExpressionNode.STRING_TYPE_GEOGEBRA_XML) {
 						sbFormatAngle.append("*");
