@@ -86,9 +86,23 @@ public class Relation extends java.lang.Object {
         
 		else if (a instanceof NumberValue && b instanceof NumberValue)
 			return relation((NumberValue) a, (NumberValue) b);
+		else if (a instanceof GeoList && b instanceof GeoList)
+			return relation((GeoList) a, (GeoList) b);
 		else {
            return app.getPlain("AandBcannotBeCompared",a.getNameDescription(),b.getNameDescription());
         }
+    }
+
+    /**
+     * description of the relation between two lists a, b
+     * (equal, unequal)
+     */
+    final private String relation(GeoList a, GeoList b) {
+        kernel.setMinPrecision();
+        String str = equalityString(a.toGeoElement(), b.toGeoElement(), 
+        							a.isEqual(b));
+        kernel.resetPrecision();
+        return str;
     }
 
     /**
