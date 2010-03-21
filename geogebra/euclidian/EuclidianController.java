@@ -2786,6 +2786,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				val = 0;
 			else if (val > Kernel.PI_2)
 				val = Kernel.PI_2;
+			
+			val = kernel.checkDecimalFraction(val * Kernel.CONST_180_PI) / Kernel.CONST_180_PI;
+
 		}
 
 		// do not set value unless it really changed!

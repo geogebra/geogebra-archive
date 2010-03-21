@@ -6432,7 +6432,8 @@ public class Kernel {
 			case ExpressionNode.STRING_TYPE_JASYMCA:
 				if (angleUnit == ANGLE_DEGREE) {
 					sbFormatAngle.append("(");
-					sbFormatAngle.append(format(checkDecimalFraction(Math.toDegrees(phi))));	
+					// STANDARD_PRECISION * 10 as we need a little leeway as we've converted from radians
+					sbFormatAngle.append(format(checkDecimalFraction(Math.toDegrees(phi), STANDARD_PRECISION * 10)));
 					sbFormatAngle.append("*");
 					sbFormatAngle.append("\u00b0");
 					sbFormatAngle.append(")");
@@ -6456,7 +6457,8 @@ public class Kernel {
 						phi += 360;	
 					else if (phi > 360)
 						phi = phi % 360;
-					sbFormatAngle.append(format(checkDecimalFraction(phi)));
+					// STANDARD_PRECISION * 10 as we need a little leeway as we've converted from radians
+					sbFormatAngle.append(format(checkDecimalFraction(phi, STANDARD_PRECISION * 10)));
 					
 					if (casPrintForm == ExpressionNode.STRING_TYPE_GEOGEBRA_XML) {
 						sbFormatAngle.append("*");
@@ -6535,13 +6537,23 @@ public class Kernel {
 	 * eg 2.800000000000001. If it is, the decimal fraction eg 2.8 is returned, 
 	 * otherwise x is returned.
 	 */	
-	final public double checkDecimalFraction(double x) {
+	final public double checkDecimalFraction(double x, double precision) {
 		double fracVal = x * INV_MIN_PRECISION;
 		double roundVal = Math.round(fracVal);
-		if (isEqual(fracVal, roundVal, STANDARD_PRECISION))
+		//Application.debug(x+" "+fracVal+" "+roundVal+" "+isEqual(fracVal, roundVal, STANDARD_PRECISION));
+		if (isEqual(fracVal, roundVal, precision))
 			return roundVal / INV_MIN_PRECISION;
 		else
 			return x;
+	}
+	
+	/**
+	 * Checks if x is close (Kernel.MIN_PRECISION) to a decimal fraction,  
+	 * eg 2.800000000000001. If it is, the decimal fraction eg 2.8 is returned, 
+	 * otherwise x is returned.
+	 */	
+	final public double checkDecimalFraction(double x) {
+		return checkDecimalFraction(x, STANDARD_PRECISION);
 	}
 	
 	/**
