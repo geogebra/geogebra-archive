@@ -501,7 +501,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	       for (int i=0; i < lastIndex; i++) {
 	    	   GeoElement geo = (GeoElement) geoList.get(i);
 	    	   sbBuildValueString.append(geo.toOutputValueString());
-	    	   sbBuildValueString.append(", ");
+	    	   sbBuildValueString.append(Application.unicodeComma);
+	    	   sbBuildValueString.append(" ");
 	       }
 	       
 	       // last element

@@ -212,7 +212,8 @@ TOKEN :  {
   | < DERIVATIVE: "'" >
   | < TRUE:     ( "true" | "True" ) >
   | < FALSE:    ( "false" | "False" ) >
-  | < DECIMAL_POINT:    ( "." | "\u066b" ) >
+  | < DECIMAL_POINT:    ( "." | "\u066b" ) > // Arabic decimal point
+  | < COMMA:    ( "," | "\u060c" ) > // Arabic comma
 }
 
 TOKEN : {      
@@ -538,7 +539,7 @@ ValidExpression MathPiperSolveResult() :
             myList = new MyList(kernel);         
             myList.addListElement(ev);
         }
-       ( "," casLabel() <EQUAL_BOOLEAN> (ev = plusminusnode()) 
+       ( <COMMA> casLabel() <EQUAL_BOOLEAN> (ev = plusminusnode()) 
        	 {
        		myList.addListElement(ev); 
        	 } 
@@ -577,14 +578,14 @@ Command command():
 	    {   c = new Command(kernel, t.image, true );    } 
 	    ("[" 
 	       ( en = cmdexpression()  { c.addArgument( en ); } )?
-	        ( "," en = cmdexpression() { c.addArgument( en ); } )*
+	        ( <COMMA> en = cmdexpression() { c.addArgument( en ); } )*
 	    "]") 
 	    { return c; }	 
     |
      	(t = <FUNCTION_LABEL>) // includes (
 	    {   c = new Command(kernel, t.image.substring(0,t.image.length()-1), true );    } 
 	    (   ( en = cmdexpression()  { c.addArgument( en ); } )?
-	        ( "," en = cmdexpression() { c.addArgument( en ); } )*
+	        ( <COMMA> en = cmdexpression() { c.addArgument( en ); } )*
 	    ")" )
 	    { return c; }
 	)
@@ -604,7 +605,7 @@ Vector labellist():
         {   
             labels = new Vector(); labels.add(t.image);  
         }
-     ( "," (t=<SPREADSHEET_LABEL> | t=<LABEL>)   { labels.add(t.image); } )*
+     ( <COMMA> (t=<SPREADSHEET_LABEL> | t=<LABEL>)   { labels.add(t.image); } )*
     "}" 
 )
     |    
@@ -613,7 +614,7 @@ Vector labellist():
         {   
             labels = new Vector(); labels.add(t.image);  
         }
-     ( "," (t=<SPREADSHEET_LABEL> | t=<LABEL>)   { labels.add(t.image); } )*
+     ( <COMMA> (t=<SPREADSHEET_LABEL> | t=<LABEL>)   { labels.add(t.image); } )*
 ))
      { return labels; }
 }
@@ -1299,7 +1300,7 @@ ExpressionValue list():
             myList = new MyList(kernel);         
             myList.addListElement(ev);
         }
-       ( "," ev = cmdexpression()  
+       ( <COMMA> ev = cmdexpression()  
        	 {
        		myList.addListElement(ev); 
        	 } 
@@ -1634,7 +1635,7 @@ VectorValue cartesianvector():
     // cartesian coordinates
   
     (  LOOKAHEAD(2147483647)
-   ( "(" x = expression() "," y = expression() ")"  ) 	
+   ( "(" x = expression() <COMMA> y = expression() ")"  ) 	
     | 
     (  "(" x = expression() <VERTICAL_BAR> y = expression() ")" )
     )
@@ -1652,7 +1653,7 @@ Vector3DValue cartesianvector3D():
     // cartesian coordinates
   
     (  LOOKAHEAD(2147483647)
-   ( "(" x = expression() "," y = expression() "," z = expression() ")"  ) 	
+   ( "(" x = expression() <COMMA> y = expression() <COMMA> z = expression() ")"  ) 	
     | 
     (  "(" x = expression() <VERTICAL_BAR> y = expression() <VERTICAL_BAR> z = expression() ")" )
     )

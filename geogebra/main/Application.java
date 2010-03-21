@@ -1332,10 +1332,18 @@ public abstract class Application implements KeyEventDispatcher {
 		return rightToLeftReadingOrder;
 	}
 
+	// For Hebrew and Arabic. 
+	private boolean rightToLeftDigits = false;
+
+	final public boolean isRightToLeftDigits() {
+		return true;//rightToLeftDigits;
+	}
+
 	// For eg Hebrew and Arabic. 
 	public static char unicodeZero = '0';
 	public static char unicodeDecimalPoint = '.';
-	//public static char unicodeThousandsSeparator = ','; // \u006c for Arabic
+	public static char unicodeComma = '.'; // \u060c for Arabic comma
+	//public static char unicodeThousandsSeparator = ','; // \u066c for Arabic
 
 	// for basque you have to say "A point" instead of "point A"
 	private boolean reverseNameDescription = false;
@@ -1361,9 +1369,13 @@ public abstract class Application implements KeyEventDispatcher {
 		// 2008-03-31
 		reverseNameDescription = "eu".equals(lang);
 
+		// used for axes labels
+		rightToLeftDigits = ("ar".equals(lang) || "fa".equals(lang));
+
 		// Guy Hed, 25.8.2008
 		// Guy Hed, 26.4.2009 - added Yiddish and Persian as RTL languages
 		rightToLeftReadingOrder = ("iw".equals(lang) || "ar".equals(lang) || "fa".equals(lang) || "ji".equals(lang));
+
 		// Another option:
 		// rightToLeftReadingOrder =
 		// (Character.getDirectionality(getPlain("Algebra").charAt(1)) ==
@@ -1374,15 +1386,18 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		// defaults
 		unicodeDecimalPoint = '.';
+		unicodeComma = ',';
 		// unicodeThousandsSeparator=',';
 		
 		if (lang.startsWith("ar")) { // Arabic
 			unicodeZero = '\u0660'; // Arabic-Indic digit 0
 			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
+			unicodeComma = '\u060c'; // Arabic comma
 			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separator
 		} else if (lang.startsWith("fa")) { // Persian
 			unicodeZero = '\u06f0'; // Persian digit 0 (Extended Arabic-Indic)
-			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
+			unicodeDecimalPoint = '\u066b'; // Arabic comma
+			unicodeComma = '\u060c'; // Arabic-Indic decimal point
 			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separators
 		} else if (lang.startsWith("ml")) {
 			unicodeZero = '\u0d66'; // Malayalam digit 0

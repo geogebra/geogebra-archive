@@ -2079,7 +2079,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = app.getPlain("Name.polygon") + kernel.internationalizeDigits(counter+"");;
+				str = app.getPlain("Name.polygon") + kernel.internationalizeDigits(counter+"", false);;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		}		
@@ -2088,7 +2088,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = app.getPlain("Name.text") + kernel.internationalizeDigits(counter+"");
+				str = app.getPlain("Name.text") + kernel.internationalizeDigits(counter+"", false);
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoImage()) {
@@ -2096,7 +2096,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = app.getPlain("Name.picture") + kernel.internationalizeDigits(counter+"");;
+				str = app.getPlain("Name.picture") + kernel.internationalizeDigits(counter+"", false);;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoLocus()) {
@@ -2104,7 +2104,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = app.getPlain("Name.locus") + kernel.internationalizeDigits(counter+"");;
+				str = app.getPlain("Name.locus") + kernel.internationalizeDigits(counter+"", false);;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (this instanceof GeoTextField) {
@@ -2112,7 +2112,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = app.getPlain("Name.textfield") + kernel.internationalizeDigits(counter+"");;
+				str = app.getPlain("Name.textfield") + kernel.internationalizeDigits(counter+"", false);;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoButton()) {
@@ -2120,7 +2120,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = app.getPlain("Name.button") + kernel.internationalizeDigits(counter+"");;
+				str = app.getPlain("Name.button") + kernel.internationalizeDigits(counter+"", false);;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		} else if (isGeoList()) {
@@ -2129,7 +2129,7 @@ public abstract class GeoElement
 			String str;
 			do {
 				counter++;
-				str = list.isMatrix() ? app.getPlain("Name.matrix") + kernel.internationalizeDigits(counter+"") : app.getPlain("Name.list") + kernel.internationalizeDigits(counter+"");;
+				str = list.isMatrix() ? app.getPlain("Name.matrix") + kernel.internationalizeDigits(counter+"", false) : app.getPlain("Name.list") + kernel.internationalizeDigits(counter+"", false);;
 			} while (!cons.isFreeLabel(str));
 			return str;
 		}

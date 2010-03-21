@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -797,7 +798,8 @@ GeoPointInterface {
 						break;
 					
 					default:
-						sbBuildValueString.append(", ");												
+						sbBuildValueString.append(Application.unicodeComma);												
+						sbBuildValueString.append(" ");												
 				}
 				sbBuildValueString.append(kernel.format(getInhomY()));                                
 				sbBuildValueString.append(')');

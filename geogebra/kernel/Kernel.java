@@ -6122,7 +6122,7 @@ public class Kernel {
 			
 			String num = formatRaw(x);
 			
-			return internationalizeDigits(num);
+			return internationalizeDigits(num, false);
 			
 			
 		} else return formatRaw(x);
@@ -6132,19 +6132,24 @@ public class Kernel {
 	/*
 	 * swaps the digits in num to the current locale's
 	 */
-	public String internationalizeDigits(String num) {
+	public String internationalizeDigits(String num, boolean reverseOrder) {
 		if (formatSB == null) formatSB = new StringBuilder(17);
 		else formatSB.setLength(0);
 		
+		int length = num.length();
+		
 		for (int i = 0 ; i < num.length() ; i++) {
-			char c = num.charAt(i);
+			char c = reverseOrder ? num.charAt(length - 1 - i) : num.charAt(i);
 			if (c == '.') c = Application.unicodeDecimalPoint;
 			else if (c >= '0' && c <= '9') {
 				
 				c += Application.unicodeZero - '0'; // convert to eg Arabic Numeral
 				
 			}
-			formatSB.append(c);
+			//if (reverseOrder)
+			//	formatSB.insert(0,c);
+			//else
+				formatSB.append(c);
 		}
 		
 		return formatSB.toString();
@@ -6299,7 +6304,22 @@ public class Kernel {
 			
 			String num = formatPiERaw(x, numF);
 			
-			return internationalizeDigits(num);
+			return internationalizeDigits(num, false);
+			
+			
+		} else return formatPiERaw(x, numF);
+		
+	}
+	
+	/**
+	 * calls formatPiERaw() and converts to localised digits if appropriate
+	 */
+	final public String formatPiE(double x, NumberFormat numF, boolean reverseDigits) {	
+		if (Application.unicodeZero != '0') {
+			
+			String num = formatPiERaw(x, numF);
+			
+			return internationalizeDigits(num, reverseDigits);
 			
 			
 		} else return formatPiERaw(x, numF);
