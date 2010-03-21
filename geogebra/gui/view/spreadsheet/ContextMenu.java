@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputDialogOpenURL;
+import geogebra.gui.OptionsDialog;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 
@@ -180,14 +181,8 @@ public class ContextMenu extends JPopupMenu
  		}
 	 	
 	 		
-	 	// Object Properties 	
- 		if (app.selectedGeosSize() > 0) {
-		 	addSeparator();
-		 	JMenuItem item8 = new JMenuItem(app.getMenu(app.getPlain("Properties"))+"...");
-	   	 	item8.setIcon(app.getImageIcon("document-properties.png"));
-	   	 	item8.addActionListener(new ActionListenerProperties());
-	   	 	add(item8);
- 		}
+	 
+ 		
  		
  		//G.STURR 2010-1-11
  	    // Import Data	
@@ -221,7 +216,26 @@ public class ContextMenu extends JPopupMenu
 	   	 	
 	   	 //END GSTURR
  		}
+ 	
  		
+
+ 		
+ 		// Spreadsheet Options
+ 			addSeparator();
+   	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("Options..."));
+   	   	 	item7.setIcon(app.getEmptyIcon());
+   	   	 	item7.addActionListener(new ActionListenerSpreadsheetProperties());
+   	   	 	add(item7);
+ 		
+ 		
+ 		// Object Properties 	
+ 		if (app.selectedGeosSize() > 0) {
+		 	addSeparator();
+		 	JMenuItem item8 = new JMenuItem(app.getMenu(app.getPlain("Properties"))+"...");
+	   	 	item8.setIcon(app.getImageIcon("document-properties.png"));
+	   	 	item8.addActionListener(new ActionListenerProperties());
+	   	 	add(item8);
+ 		}
  				
 	}
 	
@@ -799,6 +813,15 @@ public class ContextMenu extends JPopupMenu
 		}
 	}
 
+
+
+	private class ActionListenerSpreadsheetProperties implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+
+		app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_SPREADSHEET);
+		}
+	}
+	
 	
 	
 	//G.STURR 2010-1-29

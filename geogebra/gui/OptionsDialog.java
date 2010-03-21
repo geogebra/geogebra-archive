@@ -1,5 +1,6 @@
 package geogebra.gui;
 
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -56,6 +57,15 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 */
 	public static final int TAB_EUCLIDIAN = 2;
 
+
+	/**
+	 * Index of the spreadsheet tab.
+	 * TODO: Change back to 4 (G.S.) 
+	 */
+	public static final int TAB_SPREADSHEET = 3;
+
+	
+	
 	/**
 	 * An instance of the Application object of this window.
 	 */
@@ -88,6 +98,11 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * is not longer used, all settings are stored here for now.
 	 */
 	private OptionsEuclidian euclidianPanel;
+	
+	/**
+	 * The panel with all settings for the spreadsheet view. 
+	 */
+	private OptionsSpreadsheet spreadsheetPanel;
 
 	/**
 	 * The button to apply settings without closing the window.
@@ -148,7 +163,10 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		defaultsPanel = new OptionsDefaults(app);
 		//fontPanel = new OptionsFont(app);
 		euclidianPanel = new OptionsEuclidian(app, app.getEuclidianView());
-
+		
+		//G.Sturr 2010-3-20: add spreadsheet panel
+		spreadsheetPanel = new OptionsSpreadsheet(app, (SpreadsheetView)app.getGuiManager().getSpreadsheetView());
+		
 		// init scroll panes for tabs (show no extra borders)
 		//JScrollPane fontsAndLangPanelScroll = new JScrollPane(fontPanel);
 		//fontsAndLangPanelScroll.setBorder(BorderFactory.createEmptyBorder());
@@ -173,6 +191,11 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		// euclidian properties
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
 				Color.RED), euclidianPanelScroll);
+		
+		// G.Sturr 2010-3-20
+		// spreadsheet properties
+		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
+				Color.RED), spreadsheetPanel);
 		
 		// disable some tabs for applets
 		if(app.isApplet()) {
@@ -230,10 +253,16 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		//tabbedPane.setTitleAt(2, app.getPlain("FontsAndLanguage"));
 		tabbedPane.setTitleAt(2, app.getPlain("DrawingPad")); // TODO change back to 3 (F.S.)
 		
+		//G.Sturr 2010-3-20
+		tabbedPane.setTitleAt(3, app.getPlain("Spreadsheet")); 
+		
 		generalPanel.setLabels();
 		euclidianPanel.setLabels();
 		//fontPanel.setLabels();
 		defaultsPanel.setLabels();
+		
+		//G.Sturr 2010-3-20
+		spreadsheetPanel.setLabels();
 	}
 
 	/**

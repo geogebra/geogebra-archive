@@ -223,6 +223,24 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	}
 	
 	
+	/**
+	 * Update spreadsheet panel labels. Should be applied if the
+	 * language was changed. Will be called after initialization automatically.
+	 */
+	public void setLabels() {
+		//TODO -- add labels as needed
+	}
+	
+	/**
+	 * Save the settings of this panel.
+	 */
+	public void apply() {
+		//TODO -- add any settings that need changing on Apply button click
+		// or after dialog close 
+	}
+	
+	
+	
 	public void updateGUI() {				
 			
 		cbShowGrid.removeActionListener(this);

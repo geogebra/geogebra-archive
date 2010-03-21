@@ -48,12 +48,6 @@ public class OptionsGeneral extends JPanel {
 		tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("", new JPanel());
 		tabbedPane.addTab("", new JPanel());
-		
-		//G.Sturr 2010-3-19
-		//tabbedPane.addTab("", new JPanel());
-		tabbedPane.addTab("", new OptionsSpreadsheet(app, (SpreadsheetView)app.getGuiManager().getSpreadsheetView()));
-		//END G.Sturr
-		
 		tabbedPane.addTab("", new JPanel());
 		
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -76,8 +70,11 @@ public class OptionsGeneral extends JPanel {
 	public void setLabels() {
 		tabbedPane.setTitleAt(0, app.getMenu("General"));
 		tabbedPane.setTitleAt(1, app.getPlain("Display"));
-		tabbedPane.setTitleAt(2, app.getPlain("Spreadsheet"));
-		tabbedPane.setTitleAt(3, app.getMenu("Export"));
+		
+		//G.Sturr 2010-3-20: removed spreadsheet tab and renumbered
+		//tabbedPane.setTitleAt(2, app.getPlain("Spreadsheet"));
+		tabbedPane.setTitleAt(2, app.getMenu("Export"));
+		
 	}
 	
 	/**
