@@ -21,7 +21,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoPolygon3D 
-extends GeoPolygon implements GeoElement3DInterface, Path, Region3D {
+extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys {
 
 	
 	/** 2D coord sys where the polygon exists */

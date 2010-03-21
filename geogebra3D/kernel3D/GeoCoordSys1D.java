@@ -7,7 +7,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 
-public abstract class GeoCoordSys1D extends GeoCoordSys implements Path {
+public abstract class GeoCoordSys1D extends GeoCoordSysAbstract implements Path {
 	
 
 	public GeoCoordSys1D(Construction c){

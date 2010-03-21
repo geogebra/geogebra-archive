@@ -495,8 +495,8 @@ public class Kernel3D
 	/** 
 	* Plane named label through Point point parallel to plane pIn
 	*/
-	final public GeoPlane3D Plane3D(String label, GeoPoint3D point, GeoPlane3D pIn) {
-		AlgoPlaneThroughPoint algo = new AlgoPlaneThroughPoint(cons, label, point, pIn);
+	final public GeoPlane3D Plane3D(String label, GeoPoint3D point, GeoCoordSys cs) {
+		AlgoPlaneThroughPoint algo = new AlgoPlaneThroughPoint(cons, label, point, cs);
 		return algo.getPlane();
 	}
 
@@ -605,8 +605,8 @@ public class Kernel3D
 	 */
 	final public GeoPoint3D Intersect(
 			String label,
-			GeoCoordSys cs1,
-			GeoCoordSys cs2) {
+			GeoCoordSysAbstract cs1,
+			GeoCoordSysAbstract cs2) {
 		
 		AlgoIntersectCoordSys algo = new AlgoIntersectCoordSys(cons,label,cs1,cs2);
 		GeoPoint3D p = algo.getPoint();

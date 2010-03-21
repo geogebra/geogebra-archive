@@ -32,22 +32,22 @@ public class AlgoPlaneThroughPoint extends AlgoElement3D {
 
  
 	private GeoPoint3D point; // input
-    private GeoPlane3D pIn; // input
-    private GeoPlane3D pOut; // output       
+    private GeoCoordSys cs; // input
+    private GeoPlane3D plane; // output       
 
 
-    AlgoPlaneThroughPoint(Construction cons, String label, GeoPoint3D point, GeoPlane3D pIn) {
+    AlgoPlaneThroughPoint(Construction cons, String label, GeoPoint3D point, GeoCoordSys cs) {
         super(cons);
         this.point = point;
-        this.pIn = pIn;
-        pOut = new GeoPlane3D(cons);
+        this.cs = cs;
+        plane = new GeoPlane3D(cons);
         //g.setStartPoint(P);
         
-        setInputOutput(new GeoElement[] {point,pIn}, new GeoElement[] {pOut});
+        setInputOutput(new GeoElement[] {point, (GeoElement) cs}, new GeoElement[] {plane});
 
         // compute plane 
         compute();
-        pOut.setLabel(label);
+        plane.setLabel(label);
     }
 
     protected String getClassName() {
@@ -56,25 +56,33 @@ public class AlgoPlaneThroughPoint extends AlgoElement3D {
 
 
     GeoPlane3D getPlane() {
-        return pOut;
+        return plane;
     }
 
 
   
     protected final void compute() {
 		//recompute the coord sys
-		pOut.resetCoordSys();
+		plane.resetCoordSys();
 		
-		pOut.addPointToCoordSys(point.getCoords(), true, true);
-		pOut.addPointToCoordSys((GgbVector) point.getCoords().add(pIn.getVx()), true, true);
-		pOut.addPointToCoordSys((GgbVector) point.getCoords().add(pIn.getVy()), true, true);
+		plane.addPointToCoordSys(point.getCoords(), true, true);
+		plane.addPointToCoordSys((GgbVector) point.getCoords().add(cs.getCoordSys().getVx()), true, true);
+		
+		switch (cs.getCoordSys().getDimension()){
+		case 1: //line, segment, ...
+			plane.addPointToCoordSys(cs.getCoordSys().getOrigin(), true, true);
+			break;
+		case 2: //plane, polygon, ...
+			plane.addPointToCoordSys((GgbVector) point.getCoords().add(cs.getCoordSys().getVy()), true, true);
+			break;
+		}
 		
 
         
     }
 
     final public String toString() {
-    	return app.getPlain("PlaneThroughAParallelToB",point.getLabel(),pIn.getLabel());
+    	return app.getPlain("PlaneThroughAParallelToB",point.getLabel(),((GeoElement) cs).getLabel());
 
     }
 }

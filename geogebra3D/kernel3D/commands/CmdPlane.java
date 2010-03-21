@@ -5,6 +5,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.GeoCoordSys;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -37,14 +38,14 @@ public class CmdPlane extends CommandProcessor {
 	    	arg = resArgs(c);
 	    	if (
 	    			(ok[0] = (arg[0] .isGeoPoint() && arg[0].isGeoElement3D()) )
-	    			&& (ok[1] = (arg[1] instanceof GeoPlane3D ))
+	    			&& (ok[1] = (arg[1] instanceof GeoCoordSys ))
 	    	) {
 	    		GeoElement[] ret =
 	    		{
 	    				kernel3D.Plane3D(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
-	    						(GeoPlane3D) arg[1])};
+	    						(GeoCoordSys) arg[1])};
 	    		return ret;
 	    	}else{
 	    		if (!ok[0])

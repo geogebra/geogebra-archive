@@ -41,9 +41,9 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
 	
 	//inputs
 	/** first coord sys */
-	private GeoCoordSys cs1;
+	private GeoCoordSysAbstract cs1;
 	/** second coord sys */
-	private GeoCoordSys cs2;
+	private GeoCoordSysAbstract cs2;
 	
 	//output
 	/** point intersection */
@@ -56,7 +56,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param cs1 first coord sys
      * @param cs2 second coord sys
      */    
-    AlgoIntersectCoordSys(Construction cons, String label, GeoCoordSys cs1, GeoCoordSys cs2) {
+    AlgoIntersectCoordSys(Construction cons, String label, GeoCoordSysAbstract cs1, GeoCoordSysAbstract cs2) {
 
     	this(cons,cs1,cs2);
     	p.setLabel(label);
@@ -71,7 +71,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param cs2 second coord sys
      * */
     AlgoIntersectCoordSys(Construction cons, 
-    		GeoCoordSys cs1, GeoCoordSys cs2) {
+    		GeoCoordSysAbstract cs1, GeoCoordSysAbstract cs2) {
     	super(cons);
 
 
@@ -94,7 +94,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * return the first coord sys
      * @return the first coord sys
      */
-    GeoCoordSys getCS1() {
+    GeoCoordSysAbstract getCS1() {
         return cs1;
     }
     
@@ -102,7 +102,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * return the second coord sys
      * @return the second coord sys
      */   
-    GeoCoordSys getCS2() {
+    GeoCoordSysAbstract getCS2() {
         return cs2;
     }
     
@@ -185,7 +185,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
     
     
     /** set the coords of p regarding project coords.
-     * (see {@link AlgoIntersectCoordSys#compute1D1D(GeoCoordSys, GeoCoordSys)})
+     * (see {@link AlgoIntersectCoordSys#compute1D1D(GeoCoordSysAbstract, GeoCoordSysAbstract)})
      * @param project coordinates of p
      */
     private void setCoordsLineLine(GgbVector[] project){

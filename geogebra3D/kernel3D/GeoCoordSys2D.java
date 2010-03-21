@@ -12,7 +12,7 @@ import geogebra.kernel.Kernel;
  * 2D coordinate system.
  *
  */
-public class GeoCoordSys2D extends GeoCoordSys implements Region3D {
+public class GeoCoordSys2D extends GeoCoordSysAbstract implements Region3D {
 	
 	
 	
