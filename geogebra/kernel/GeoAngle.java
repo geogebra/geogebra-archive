@@ -324,7 +324,7 @@ public final class GeoAngle extends GeoNumeric {
 	// Michael Borcherds 2007-10-21 END	
 
 	final public String toValueString() {
-		return kernel.formatAngle(value).toString();
+		return isEuclidianVisible() ? kernel.formatAngle(value, 1/animationIncrement).toString() : kernel.formatAngle(value).toString();
 	}
 
 	// overwrite

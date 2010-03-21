@@ -427,7 +427,9 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 						double newValue = num.getValue() + changeVal * num.animationIncrement;
 						if (num.animationIncrement > Kernel.MIN_PRECISION) {
 							// round to decimal fraction, e.g. 2.800000000001 to 2.8
-							newValue = app.getKernel().checkDecimalFraction(newValue);
+							newValue = app.getKernel().checkDecimalFraction(newValue, 1 / num.animationIncrement);
+							if (num.isGeoAngle())
+								newValue = Kernel.CONST_180_PI * app.getKernel().checkDecimalFraction(newValue * Kernel.PI_180, 1 / num.animationIncrement);
 						}
 						num.setValue(newValue);					
 					} 

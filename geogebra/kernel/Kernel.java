@@ -6425,7 +6425,12 @@ public class Kernel {
 	}
 	private StringBuilder sbFormatSigned = new StringBuilder(40);
 
-	final public StringBuilder formatAngle(double phi) {		
+	final public StringBuilder formatAngle(double phi) {
+		// STANDARD_PRECISION * 10 as we need a little leeway as we've converted from radians
+		return formatAngle(phi, 10);
+	}
+	
+	final public StringBuilder formatAngle(double phi, double precision) {
 		sbFormatAngle.setLength(0);
 		switch (casPrintForm) {
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
@@ -6433,7 +6438,7 @@ public class Kernel {
 				if (angleUnit == ANGLE_DEGREE) {
 					sbFormatAngle.append("(");
 					// STANDARD_PRECISION * 10 as we need a little leeway as we've converted from radians
-					sbFormatAngle.append(format(checkDecimalFraction(Math.toDegrees(phi), STANDARD_PRECISION * 10)));
+					sbFormatAngle.append(format(checkDecimalFraction(Math.toDegrees(phi), precision)));
 					sbFormatAngle.append("*");
 					sbFormatAngle.append("\u00b0");
 					sbFormatAngle.append(")");
@@ -6458,7 +6463,7 @@ public class Kernel {
 					else if (phi > 360)
 						phi = phi % 360;
 					// STANDARD_PRECISION * 10 as we need a little leeway as we've converted from radians
-					sbFormatAngle.append(format(checkDecimalFraction(phi, STANDARD_PRECISION * 10)));
+					sbFormatAngle.append(format(checkDecimalFraction(phi, precision)));
 					
 					if (casPrintForm == ExpressionNode.STRING_TYPE_GEOGEBRA_XML) {
 						sbFormatAngle.append("*");
@@ -6537,25 +6542,29 @@ public class Kernel {
 	 * eg 2.800000000000001. If it is, the decimal fraction eg 2.8 is returned, 
 	 * otherwise x is returned.
 	 */	
+	/**
+	 * Checks if x is close (Kernel.MIN_PRECISION) to a decimal fraction, eg
+	 * 2.800000000000001. If it is, the decimal fraction eg 2.8 is returned,
+	 * otherwise x is returned.
+	 */
 	final public double checkDecimalFraction(double x, double precision) {
+		
+		//Application.debug(precision+" ");
+		precision = Math.pow(10, Math.floor(Math.log(Math.abs(precision))/Math.log(10)));
+		
 		double fracVal = x * INV_MIN_PRECISION;
 		double roundVal = Math.round(fracVal);
-		//Application.debug(x+" "+fracVal+" "+roundVal+" "+isEqual(fracVal, roundVal, STANDARD_PRECISION));
-		if (isEqual(fracVal, roundVal, precision))
+		//Application.debug(precision+" "+x+" "+fracVal+" "+roundVal+" "+isEqual(fracVal, roundVal, precision)+" "+roundVal / INV_MIN_PRECISION);
+		if (isEqual(fracVal, roundVal, STANDARD_PRECISION * precision))
 			return roundVal / INV_MIN_PRECISION;
 		else
 			return x;
 	}
 	
-	/**
-	 * Checks if x is close (Kernel.MIN_PRECISION) to a decimal fraction,  
-	 * eg 2.800000000000001. If it is, the decimal fraction eg 2.8 is returned, 
-	 * otherwise x is returned.
-	 */	
 	final public double checkDecimalFraction(double x) {
-		return checkDecimalFraction(x, STANDARD_PRECISION);
+		return checkDecimalFraction(x, 1);
 	}
-	
+
 	/**
 	 * Checks if x is very close (1E-8) to an integer. If it is,
 	 * the integer value is returned, otherwise x is returnd.
