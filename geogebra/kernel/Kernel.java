@@ -6550,7 +6550,7 @@ public class Kernel {
 	final public double checkDecimalFraction(double x, double precision) {
 		
 		//Application.debug(precision+" ");
-		precision = Math.pow(10, Math.floor(Math.log(Math.abs(precision))/Math.log(10)));
+		precision = Math.pow(10, Math.ceil(Math.log(Math.abs(precision))/Math.log(10)));
 		
 		double fracVal = x * INV_MIN_PRECISION;
 		double roundVal = Math.round(fracVal);
