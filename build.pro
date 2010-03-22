@@ -17,6 +17,7 @@
 -libraryjars lib_mac_extensions.jar
 -libraryjars 3D/jogl.jar
 -libraryjars 3D/gluegen-rt.jar
+-libraryjars jlatexmath.jar
 
 # Rhino Javascript is not obfuscated
 -libraryjars ../build/geogebra_javascript.jar
@@ -64,6 +65,9 @@
 
 # needed so that hoteqn can find Des12.gif, etc.
 -keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
+
+# 
+-keep class org.scilab.forge.jlatexmath.* { <methods>; }
 
 # Jasymca uses reflection to create functions like LambaSIN
 -keep class jasymca.Lambda* {}

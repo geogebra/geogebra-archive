@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -37,6 +38,12 @@ import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.util.ArrayList;
+
+import javax.swing.JLabel;
+
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
 
 /**
  *
@@ -412,6 +419,7 @@ public abstract class Drawable {
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
 	
+	/*
 	private static geogebra.gui.hoteqn.sHotEqn eqn;
 	
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
@@ -455,7 +463,25 @@ public abstract class Drawable {
 			
 			//Application.debug(size);
 			return dim;
-	}
+	}*/
+	
+
+	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
+	{
+		
+			TeXFormula formula = new TeXFormula(text);
+			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize());
+			icon.setInsets(new Insets(5, 5, 5, 5));
+			
+			//BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+			//Graphics2D g2 = image.createGraphics();
+			JLabel jl = new JLabel();
+			jl.setForeground(fgColor);
+			icon.paintIcon(jl, g2, x, y);
+			return new Dimension(icon.getIconWidth(), icon.getIconHeight());
+		}
+
+
 	
 	final void drawMultilineText(Graphics2D g2) {
 		
