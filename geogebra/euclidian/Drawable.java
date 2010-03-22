@@ -471,7 +471,7 @@ public abstract class Drawable {
 		
 			TeXFormula formula = new TeXFormula(text);
 			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize());
-			icon.setInsets(new Insets(5, 5, 5, 5));
+			icon.setInsets(new Insets(0, 0, 0, 0));
 			
 			//BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 			//Graphics2D g2 = image.createGraphics();
