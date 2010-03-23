@@ -469,6 +469,13 @@ public abstract class Drawable {
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
 		
+		//Application.debug(text);
+		
+		//if (font.isItalic())
+		//	text = "\\mathit{"+text+"}";
+		if (font.isBold()) 
+				text = "\\boldsymbol{"+text+"}";
+		
 			TeXFormula formula = new TeXFormula(text);
 			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize());
 			icon.setInsets(new Insets(0, 0, 0, 0));
