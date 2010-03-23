@@ -1895,7 +1895,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				if (pix <= maxX) {
 					if (showAxesNumbers[0]) {
 						String strNum = kernel.formatPiE(rw,
-								axesNumberFormat[0], app.isRightToLeftDigits());
+								axesNumberFormat[0]);
 						boolean zero = strNum.equals("0");
 
 						sb.setLength(0);
@@ -2026,7 +2026,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				if (pix <= maxY) {
 					if (showAxesNumbers[1]) {
 						String strNum = kernel.formatPiE(rw,
-								axesNumberFormat[1], app.isRightToLeftDigits());
+								axesNumberFormat[1]);
 						boolean zero = strNum.equals("0");
 
 						sb.setLength(0);
@@ -2083,10 +2083,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				// uper left corner								
 				sb.setLength(0);
 				sb.append('(');			
-				sb.append(kernel.formatPiE(xmin, axesNumberFormat[0], app.isRightToLeftDigits()));
+				sb.append(kernel.formatPiE(xmin, axesNumberFormat[0]));
 				sb.append(Application.unicodeComma);
 				sb.append(" ");
-				sb.append(kernel.formatPiE(ymax, axesNumberFormat[1], app.isRightToLeftDigits()));
+				sb.append(kernel.formatPiE(ymax, axesNumberFormat[1]));
 				sb.append(')');
 				
 				int textHeight = 2 + fontAxes.getSize();
@@ -2096,10 +2096,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				// lower right corner
 				sb.setLength(0);
 				sb.append('(');			
-				sb.append(kernel.formatPiE(xmax, axesNumberFormat[0], app.isRightToLeftDigits()));
+				sb.append(kernel.formatPiE(xmax, axesNumberFormat[0]));
 				sb.append(Application.unicodeComma);
 				sb.append(" ");
-				sb.append(kernel.formatPiE(ymin, axesNumberFormat[1], app.isRightToLeftDigits()));
+				sb.append(kernel.formatPiE(ymin, axesNumberFormat[1]));
 				sb.append(')');
 				
 				TextLayout layout = new TextLayout(sb.toString(), fontAxes, frc);	

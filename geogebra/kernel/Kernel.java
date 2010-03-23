@@ -98,6 +98,7 @@ import geogebra.kernel.statistics.RegressionMath;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.ScientificFormat;
+import geogebra.util.Unicode;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -6122,7 +6123,7 @@ public class Kernel {
 			
 			String num = formatRaw(x);
 			
-			return internationalizeDigits(num, false);
+			return internationalizeDigits(num);
 			
 			
 		} else return formatRaw(x);
@@ -6132,23 +6133,31 @@ public class Kernel {
 	/*
 	 * swaps the digits in num to the current locale's
 	 */
-	public String internationalizeDigits(String num, boolean reverseOrder) {
+	public String internationalizeDigits(String num) {
 		if (formatSB == null) formatSB = new StringBuilder(17);
 		else formatSB.setLength(0);
+		
+		boolean reverseOrder = app.isRightToLeftDigits();
 		
 		int length = num.length();
 		
 		for (int i = 0 ; i < num.length() ; i++) {
-			char c = reverseOrder ? num.charAt(length - 1 - i) : num.charAt(i);
+			char c = num.charAt(i);
+			//char c = reverseOrder ? num.charAt(length - 1 - i) : num.charAt(i);
 			if (c == '.') c = Application.unicodeDecimalPoint;
 			else if (c >= '0' && c <= '9') {
 				
 				c += Application.unicodeZero - '0'; // convert to eg Arabic Numeral
 				
 			}
-			//if (reverseOrder)
-			//	formatSB.insert(0,c);
-			//else
+
+			// make sure the minus is treated as part of the number in eg Arabic
+			if ( reverseOrder && c=='-'){
+				formatSB.append(Unicode.RightToLeftMark);
+				formatSB.append(c);
+				formatSB.append(Unicode.RightToLeftMark);				
+			} 
+			else
 				formatSB.append(c);
 		}
 		
@@ -6304,28 +6313,12 @@ public class Kernel {
 			
 			String num = formatPiERaw(x, numF);
 			
-			return internationalizeDigits(num, false);
+			return internationalizeDigits(num);
 			
 			
 		} else return formatPiERaw(x, numF);
 		
 	}
-	
-	/**
-	 * calls formatPiERaw() and converts to localised digits if appropriate
-	 */
-	final public String formatPiE(double x, NumberFormat numF, boolean reverseDigits) {	
-		if (Application.unicodeZero != '0') {
-			
-			String num = formatPiERaw(x, numF);
-			
-			return internationalizeDigits(num, reverseDigits);
-			
-			
-		} else return formatPiERaw(x, numF);
-		
-	}
-	
 
 	final public String formatPiERaw(double x, NumberFormat numF) {		
 		// PI
