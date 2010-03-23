@@ -132,12 +132,14 @@ public interface EuclidianConstants {
 	
 	// ggb3D start
 	/** special mode that allows to create point inside a region (polygon, etc.) */
-	public static final int MODE_POINT_IN_REGION = 101;
+	public static final int MODE_POINT_IN_REGION = 501;
 	
 	/** mode that change the view to be in front of selected plane */
-	public static final int MODE_VIEW_IN_FRONT_OF = 102;
+	public static final int MODE_VIEW_IN_FRONT_OF = 502;
 	
-	
+	/** creates a plane through three points */
+	public static final int MODE_PLANE_THREE_POINTS = 503;
+
 	
 	
 	

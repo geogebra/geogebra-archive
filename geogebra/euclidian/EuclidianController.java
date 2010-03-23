@@ -330,6 +330,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			app.storeUndoInfo();
 	}
 	
+	
+	
+	
 	protected void initNewMode(int mode) {
 		this.mode = mode;
 		initShowMouseCoords();
@@ -835,9 +838,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			TEMPORARY_MODE = true;
 			oldMode = mode; // remember current mode	
 			view.setMode(EuclidianView.MODE_TRANSLATEVIEW);				
-		} 		
+		} 	
+		
+		switchModeForMousePressed(e);
+		
+	}
+	
+	protected void switchModeForMousePressed(MouseEvent e){
 
-
+		Hits hits;
+		
 		switch (mode) {
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
@@ -937,6 +947,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 	}
 
+	
+	
+	
 	protected void handleMousePressedForRotateMode() {	
 		GeoElement geo;
 		Hits hits;
@@ -2261,14 +2274,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			geo.setHighlighted(highlight);
 		}
 	}
-
-	// process mode and return whether kernel was changed
-	final boolean processMode(Hits hits, MouseEvent e) {
+	
+	
+	
+	
+	protected boolean switchModeForProcessMode(Hits hits, MouseEvent e){
+		
 		boolean changedKernel = false;
-
-		if (hits==null)
-			hits = new Hits();
-
+		
 		switch (mode) {
 		case EuclidianView.MODE_VISUAL_STYLE:
 		case EuclidianView.MODE_MOVE:
@@ -2537,6 +2550,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		default:
 			// do nothing
 		}
+		
+		return changedKernel;
+
+	}
+
+	// process mode and return whether kernel was changed
+	final boolean processMode(Hits hits, MouseEvent e) {
+		boolean changedKernel = false;
+
+		if (hits==null)
+			hits = new Hits();
+
+		changedKernel = switchModeForProcessMode(hits, e);
 
 		// update preview
 		if (view.getPreviewDrawable() != null) {
@@ -4021,49 +4047,57 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// get 3 points
 	final protected boolean threePoints(Hits hits, int mode) {
+		
 		if (hits.isEmpty())
 			return false;
 
 		// points needed
 		addSelectedPoint(hits, 3, false);
 		if (selPoints() == 3) {
-			// fetch the three selected points
-			GeoPoint[] points = getSelectedPoints();
-			switch (mode) {
-			case EuclidianView.MODE_CIRCLE_THREE_POINTS:
-				kernel.Circle(null, points[0], points[1], points[2]);
-				break;
-
-			case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
-				kernel.Ellipse(null, points[0], points[1], points[2]);
-				break;
-
-			case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
-				kernel.Hyperbola(null, points[0], points[1], points[2]);
-				break;
-
-			case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
-				kernel.CircumcircleArc(null, points[0], points[1], points[2]);
-				break;
-
-			case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
-				kernel.CircumcircleSector(null, points[0], points[1], points[2]);
-				break;
-
-			case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
-				kernel.CircleArc(null, points[0], points[1], points[2]);
-				break;
-
-			case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
-				kernel.CircleSector(null, points[0], points[1], points[2]);
-				break;												
-
-			default:
-				return false;
-			}
-			return true;
+			return switchModeForThreePoints();
 		}
 		return false;
+	}
+	
+	
+	protected boolean switchModeForThreePoints(){
+		// fetch the three selected points
+		GeoPoint[] points = getSelectedPoints();
+		switch (mode) {
+		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
+			kernel.Circle(null, points[0], points[1], points[2]);
+			break;
+
+		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+			kernel.Ellipse(null, points[0], points[1], points[2]);
+			break;
+
+		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
+			kernel.Hyperbola(null, points[0], points[1], points[2]);
+			break;
+
+		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
+			kernel.CircumcircleArc(null, points[0], points[1], points[2]);
+			break;
+
+		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
+			kernel.CircumcircleSector(null, points[0], points[1], points[2]);
+			break;
+
+		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
+			kernel.CircleArc(null, points[0], points[1], points[2]);
+			break;
+
+		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
+			kernel.CircleSector(null, points[0], points[1], points[2]);
+			break;												
+
+		default:
+			return false;
+		}
+		
+		return true;
+
 	}
 
 	// get 2 lines, 2 vectors or 3 points

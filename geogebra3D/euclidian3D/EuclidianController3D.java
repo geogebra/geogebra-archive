@@ -733,7 +733,63 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
+	///////////////////////////////////////////
+	// PROCESS MODE
 	
+	protected boolean switchModeForProcessMode(Hits hits, MouseEvent e){
+		
+		boolean changedKernel = false;
+		
+		switch (mode) {
+		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
+			changedKernel = threePoints(hits, mode);
+			break;
+		
+		
+		default:
+			changedKernel = super.switchModeForProcessMode(hits, e);
+		}
+		
+		
+		return changedKernel;
+		
+	}
+	
+	
+	
+	protected boolean switchModeForThreePoints(){
+		
+		switch (mode) {
+		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
+			GeoPoint3D[] points = getSelectedPoints3D();
+			((Kernel3D) getKernel()).Plane3D(null, points[0], points[1], points[2]);
+			return true;
+		default:
+			return super.switchModeForThreePoints();
+
+		}
+
+	}
+
+	
+	///////////////////////////////////////////
+	// MOUSE PRESSED
+	
+	protected void switchModeForMousePressed(MouseEvent e){
+
+		Hits hits;
+		
+		switch (mode) {
+		case EuclidianView3D.MODE_PLANE_THREE_POINTS:	
+			//hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+			createNewPoint(hits, true, true, true); 
+			break;
+		default:
+			super.switchModeForMousePressed(e);
+		}
+	}
 	
 	
 	
