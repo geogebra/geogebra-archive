@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -2833,13 +2834,19 @@ public abstract class GeoElement
 				// Guy Hed, 25.8.2008
 				// In order to present the text cottectly in Hebrew and Arabic:
 				boolean rightToLeft = app.isRightToLeftReadingOrder(); 
-				if (rightToLeft)  
-					sbLongDescHTML.append("\u200e\u200f: \u200e"); 
+				if (rightToLeft) {
+					//sbLongDescHTML.append("\u200e\u200f: \u200e"); 
+					sbLongDescHTML.append(Unicode.LeftToRightMark);
+					sbLongDescHTML.append(Unicode.RightToLeftMark);
+					sbLongDescHTML.append(": ");
+					sbLongDescHTML.append(Unicode.LeftToRightMark);
+				}
 				else
 					sbLongDescHTML.append(": ");
 				sbLongDescHTML.append(indicesToHTML(algoParent.toString(), false));
 				if (rightToLeft) 
-					sbLongDescHTML.append("\u200e"); 
+					//sbLongDescHTML.append("\u200e"); 
+					sbLongDescHTML.append(Unicode.LeftToRightMark);
 			}
 			if (addHTMLtag)
 				sbLongDescHTML.append("</html>");

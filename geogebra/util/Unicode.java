@@ -14,5 +14,7 @@ public class Unicode {
 	final public static char Superscript_7 = '\u2077';
 	final public static char Superscript_8 = '\u2078';
 	final public static char Superscript_9 = '\u2079';
+	final public static char RightToLeftMark = '\u200f';
+	final public static char LeftToRightMark = '\u200e';
 	
 }
