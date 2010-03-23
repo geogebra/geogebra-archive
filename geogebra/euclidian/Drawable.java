@@ -106,6 +106,13 @@ public abstract class Drawable {
 		String label = labelDesc;
 		Font oldFont  = null;
 		
+		// allow LaTeX caption surrounded by $ $
+		if (label.startsWith("$") && label.endsWith("$")) {
+			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 2), g2.getFont(), g2.getColor(), g2.getBackground());
+			labelRectangle.setBounds(xLabel, yLabel, (int)dim.getWidth(), (int)dim.getHeight());	
+			return;
+		}
+		
 		// label changed: check for bold or italic tags in caption
 		if (oldLabelDesc != labelDesc || labelDesc.startsWith("<")) {					
 			boolean italic = false;
