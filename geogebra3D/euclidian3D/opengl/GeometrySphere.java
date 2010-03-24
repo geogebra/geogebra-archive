@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.main.Application;
+
 import java.awt.Color;
 
 import javax.media.opengl.GL;
@@ -62,7 +64,10 @@ public class GeometrySphere extends Geometry {
 		
 		//creates the sphere
 		setCenter(x, y, z);
-		sphere(30,60,radius);
+		
+		int nb = (int) (10*radius*manager.getView3D().getScale()/100)+5;
+		sphere(nb,4*nb,radius);
+		//sphere((int) (radius),(int) (4*radius),1);
 
 	
 		

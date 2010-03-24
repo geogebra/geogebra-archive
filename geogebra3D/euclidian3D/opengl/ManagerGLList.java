@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D.opengl;
 import java.awt.Color;
 
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.EuclidianView3D;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
@@ -27,9 +28,11 @@ public class ManagerGLList extends Manager {
 
 	/** common constructor
 	 * @param gl
+	 * @param glu 
+	 * @param view3D 3D view
 	 */
-	public ManagerGLList(GL gl, GLU glu) {
-		super(gl,glu);
+	public ManagerGLList(GL gl, GLU glu, EuclidianView3D view3D) {
+		super(gl,glu,view3D);
 	}
 
 	

@@ -1817,7 +1817,7 @@ public class Renderer implements GLEventListener {
         
         //TODO use gl lists / VBOs
         //geometryManager = new GeometryManager(gl,GeometryManager.TYPE_DIRECT);
-        geometryManager = new ManagerGLList(gl,glu);
+        geometryManager = new ManagerGLList(gl,glu,view3D);
         
         
         

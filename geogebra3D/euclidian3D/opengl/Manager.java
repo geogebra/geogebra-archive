@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra3D.euclidian3D.EuclidianView3D;
+
 import java.awt.Color;
 
 import javax.media.opengl.GL;
@@ -24,7 +26,7 @@ abstract public class Manager {
 
 	
 	
-	
+	// geometries
 	/** geometry : point */
 	public GeometryPoint point;
 	/** geometry : cylinder */
@@ -39,11 +41,16 @@ abstract public class Manager {
 	public GeometrySphere sphere;
 	
 	
+	//geogebra stuff
+	private EuclidianView3D view3D;
+	
+	
 	/** create a manager for geometries
 	 * @param gl 
 	 * @param glu 
+	 * @param view3D 3D view
 	 */
-	public Manager(GL gl, GLU glu){
+	public Manager(GL gl, GLU glu, EuclidianView3D view3D){
 		
 		this.gl = gl;
 		this.glu = glu;
@@ -57,10 +64,22 @@ abstract public class Manager {
 		plane = new GeometryPlane(this);
 		sphere = new GeometrySphere(this);
 		
+		//geogebra
+		this.view3D = view3D;
+		
 		
 	}
 	
+	/////////////////////////////////////////////
+	// GEOGEBRA METHODS
+	/////////////////////////////////////////////
 	
+	/** return the 3D view
+	 * @return the 3D view
+	 */
+	public EuclidianView3D getView3D(){
+		return view3D;
+	}
 	
 	/////////////////////////////////////////////
 	// GEOMETRY METHODS

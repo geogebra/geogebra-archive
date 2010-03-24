@@ -79,7 +79,9 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 	
 	
 	
-	
+	protected void updateForView(){
+		updateForItSelf();
+	}
 	
 	
 	
