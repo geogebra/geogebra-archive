@@ -219,7 +219,7 @@ public class AlgoTableText extends AlgoElement {
 			// replace " " and "" with a hard space (allow blank columns/rows)
 			String text = geo1.toLaTeXString(false);
 			if (" ".equals(text) || "".equals(text))
-				text = "\u00a0";	
+				text = "\\;"; // problem with JLaTeXMath, was "\u00a0";	
 			// Modify by Loïc Le Coq 2009/12/15
 			if (geo1.isTextValue()){
 				sb.append("\\mathrm{");
