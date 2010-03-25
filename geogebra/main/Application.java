@@ -1091,7 +1091,11 @@ public abstract class Application implements KeyEventDispatcher {
 		return euclidianView;
 	}
 	
-	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
+	public BufferedImage getExportImage(double maxX, double maxY) throws OutOfMemoryError {
+		
+		double scale = Math.min(maxX / getEuclidianView().getSelectedWidth(), 
+				maxY / getEuclidianView().getSelectedHeight());
+		
 		return getEuclidianView().getExportImage(scale);
 	}
 	

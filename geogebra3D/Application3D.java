@@ -197,7 +197,8 @@ public abstract class Application3D extends Application{
 	}
 	
 	
-	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
+	public BufferedImage getExportImage(double maxX, double maxY) throws OutOfMemoryError {
+		//TODO use maxX, maxY values
 		return getEuclidianView3D().getRenderer().getExportImage();
 	}
 	

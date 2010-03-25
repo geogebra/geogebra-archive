@@ -596,11 +596,15 @@ public class MyXMLio {
 		EuclidianView ev = app.getEuclidianView();
 
 		// max 128 pixels either way
+		/*
 		double exportScale = Math.min(THUMBNAIL_PIXELS_X
-				/ ev.getSelectedWidth(), THUMBNAIL_PIXELS_Y
+				/ ev.getSelectedWidth(), THUMBNAIL_PIXELS_X
 				/ ev.getSelectedHeight());
+		*/
+				 
 		try {
-			BufferedImage img = app.getExportImage(exportScale);
+			//BufferedImage img = app.getExportImage(exportScale);
+			BufferedImage img = app.getExportImage(THUMBNAIL_PIXELS_X,THUMBNAIL_PIXELS_Y);
 			if (img != null)
 				// Modified for Intergeo File Format (Yves Kreis) -->
 				// writeImageToZip(zip, XML_FILE_THUMBNAIL, img);
