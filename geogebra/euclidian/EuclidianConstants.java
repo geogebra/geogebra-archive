@@ -138,8 +138,10 @@ public interface EuclidianConstants {
 	public static final int MODE_VIEW_IN_FRONT_OF = 502;
 	
 	/** creates a plane through three points */
-	public static final int MODE_PLANE_THREE_POINTS = 503;
+	public static final int MODE_PLANE_THREE_POINTS = 510;
 
+	/** creates a plane through three points */
+	public static final int MODE_SPHERE_POINT_RADIUS = 520;
 	
 	
 	

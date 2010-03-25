@@ -125,8 +125,12 @@ public class Kernel3D
 		switch (mode) {
 		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
 			return "ViewInFrontOf";
+			
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
 			return "PlaneThreePoint";
+			
+		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
+			return "SpherePointRadius";
 						
 		default:
 			return super.getModeText(mode);

@@ -14,6 +14,7 @@ import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
@@ -565,6 +566,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		((Kernel3D) getKernel()).Polygon3D(null, getSelectedPoints3D());
 	}
 	
+	protected void circleOrSphere(NumberValue num){
+		GeoPoint3D[] points = getSelectedPoints3D();	
+
+		((Kernel3D) getKernel()).Sphere(null, points[0], num);
+	}
+	
 	
 	///////////////////////////////////////////
 	// moved GeoElements
@@ -744,6 +751,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
 			changedKernel = threePoints(hits, mode);
 			break;
+			
+		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
+			changedKernel = circleOrSpherePointRadius(hits);
+			break;
 		
 		
 		default:
@@ -781,11 +792,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		switch (mode) {
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:	
+		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:	
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, true, true, true); 
 			break;
+			
+			
+			
 		default:
 			super.switchModeForMousePressed(e);
 		}

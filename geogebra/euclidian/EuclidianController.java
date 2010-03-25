@@ -2495,7 +2495,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
-			changedKernel = circlePointRadius(hits);
+			changedKernel = circleOrSpherePointRadius(hits);
 			break;				
 
 		case EuclidianView.MODE_ANGLE:
@@ -5345,7 +5345,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}	
 
 	// get center point and number
-	final protected boolean circlePointRadius(Hits hits) {
+	final protected boolean circleOrSpherePointRadius(Hits hits) {
 		if (hits.isEmpty())
 			return false;
 
@@ -5361,13 +5361,23 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				return false;
 			}
 
+			/*
 			GeoPoint[] points = getSelectedPoints();	
 
 			kernel.Circle(null, points[0], num);
+			*/
+			
+			circleOrSphere(num);
 			return true;
 		}
 		return false;
 	}	
+	
+	protected void circleOrSphere(NumberValue num){
+		GeoPoint[] points = getSelectedPoints();	
+
+		kernel.Circle(null, points[0], num);
+	}
 
 	// get point and vector
 	final protected boolean vectorFromPoint(Hits hits) {
