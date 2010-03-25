@@ -18,7 +18,11 @@ import geogebra3D.euclidian3D.Hits3D;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
@@ -465,13 +469,69 @@ public class Renderer implements GLEventListener {
     	
         gLDrawable.swapBuffers(); //TODO
         
-
+        /*
+        gl.glReadBuffer(GL.GL_FRONT);
+        FloatBuffer buffer = FloatBuffer.allocate(3);
+        gl.glReadPixels(mouseX, (top-bottom) -mouseY, 1, 1, GL.GL_RGB, GL.GL_FLOAT, buffer);
+        float[] pixels = new float[3];
+        pixels = buffer.array();
+        //System.out.println("mouse ("+mouseX+","+((top-bottom)-mouseY)+"):"+pixels[0]+" "+pixels[1]+" "+pixels[2]);
         //Application.debug("display : "+((int) (System.currentTimeMillis()-displayTime)));
+        */
+        
+        if (needExportImage){
+        	setExportImage();
+        	needExportImage=false;
+        	//notify();
+        }
     }    
     
+    boolean needExportImage=false;
     
+    public void needExportImage(){
+    	needExportImage = true;
+    	display();
+    	
+    	/*
+    	try {
+			wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+    }
     
+    BufferedImage bi;
     
+    private void setExportImage(){
+    	
+        gl.glReadBuffer(GL.GL_FRONT);
+        int width = right-left;
+        int height = top-bottom;
+        FloatBuffer buffer = FloatBuffer.allocate(3*width*height);
+        gl.glReadPixels(0, 0, width, height, GL.GL_RGB, GL.GL_FLOAT, buffer);
+        float[] pixels = buffer.array();
+        
+        bi = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
+   	
+        int i =0;
+        for (int y=height-1; y>=0 ; y--)
+        	for (int x =0 ; x<width ; x++){
+        		int r = (int) (pixels[i]*255);
+        		int g = (int) (pixels[i+1]*255);
+        		int b = (int) (pixels[i+2]*255);
+        		bi.setRGB(x, y, ( (r << 16) | (g << 8) | b));
+        		i+=3;
+        	}
+        bi.flush();
+    }
+
+    public BufferedImage getExportImage(){
+    	
+    	
+    	return bi;
+    }
     
     
     

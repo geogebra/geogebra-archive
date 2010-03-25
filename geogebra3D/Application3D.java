@@ -29,6 +29,7 @@ import geogebra3D.kernel3D.Kernel3D;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -194,6 +195,31 @@ public abstract class Application3D extends Application{
 	public EuclidianView3D getEuclidianView3D(){
 		return euclidianView3D;
 	}
+	
+	
+	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
+		return getEuclidianView3D().getRenderer().getExportImage();
+	}
+	
+	
+	
+	public boolean saveGeoGebraFile(File file) {
+		
+		
+		//TODO generate it before
+		getEuclidianView3D().getRenderer().needExportImage();
+		
+
+
+		
+		return super.saveGeoGebraFile(file);
+	}
+	
+	
+	
+	
+
+	
 	
 	
 	/** return 2D (and 3D) views settings

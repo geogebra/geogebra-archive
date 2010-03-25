@@ -600,7 +600,7 @@ public class MyXMLio {
 				/ ev.getSelectedWidth(), THUMBNAIL_PIXELS_Y
 				/ ev.getSelectedHeight());
 		try {
-			BufferedImage img = app.getEuclidianView().getExportImage(exportScale);
+			BufferedImage img = app.getExportImage(exportScale);
 			if (img != null)
 				// Modified for Intergeo File Format (Yves Kreis) -->
 				// writeImageToZip(zip, XML_FILE_THUMBNAIL, img);

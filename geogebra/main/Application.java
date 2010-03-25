@@ -1091,6 +1091,10 @@ public abstract class Application implements KeyEventDispatcher {
 		return euclidianView;
 	}
 	
+	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
+		return getEuclidianView().getExportImage(scale);
+	}
+	
 
 	public void toggleAxis(){
 		
@@ -2551,7 +2555,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 
 	 * @return true if successful
 	 */
-	final public boolean saveGeoGebraFile(File file) {
+	public boolean saveGeoGebraFile(File file) {
 		try {
 			setWaitCursor();
 			myXMLio.writeGeoGebraFile(file);
