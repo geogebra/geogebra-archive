@@ -38,6 +38,7 @@ import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
 
@@ -472,24 +473,30 @@ public abstract class Drawable {
 			return dim;
 	}*/
 	
-
+	private static HashMap<String,TeXIcon> equations = new HashMap<String,TeXIcon>();
+	private static JLabel jl = new JLabel();
+	private static StringBuilder eqnSB;
+	
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
 		
-		//Application.debug(text);
+		if (eqnSB == null) eqnSB = new StringBuilder(20);
+		else eqnSB.setLength(0);
+		eqnSB.append(text);
+		eqnSB.append(' ');
+		eqnSB.append(font.getSize()+"");
 		
-		//if (font.isItalic())
-		//	text = "\\mathit{"+text+"}";
-		if (font.isBold()) 
-				text = "\\boldsymbol{"+text+"}";
+		TeXIcon icon = equations.get(eqnSB.toString());
+
 		
+		if (icon == null) {
+			//Application.debug("creating new icon for: "+text);
 			TeXFormula formula = new TeXFormula(text);
-			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
+			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
 			icon.setInsets(new Insets(1, 1, 1, 1));
-			
-			//BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-			//Graphics2D g2 = image.createGraphics();
-			JLabel jl = new JLabel();
+			equations.put(eqnSB.toString(), icon);
+		}	//else Application.debug("using buffer for: "+text);
+
 			jl.setForeground(fgColor);
 			icon.paintIcon(jl, g2, x, y);
 			return new Dimension(icon.getIconWidth(), icon.getIconHeight());
