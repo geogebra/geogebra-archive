@@ -1067,9 +1067,9 @@ implements ExpressionValue, ExpressionNodeConstants {
         		if (left.isLeaf()) {
        		 		sb.append(leftStr);
         		} else {
-        			sb.append('(');
+        			sb.append(leftBracket(STRING_TYPE));
         			sb.append(leftStr);
-        			sb.append(')');
+        			sb.append(rightBracket(STRING_TYPE));
         		}
         		break;
         
@@ -1099,9 +1099,9 @@ implements ExpressionValue, ExpressionNodeConstants {
         		if (left.isLeaf() || opID(left) >= AND) {
        		 		sb.append(leftStr);
         		} else {
-        			sb.append('(');
+        			sb.append(leftBracket(STRING_TYPE));
         			sb.append(leftStr);
-        			sb.append(')');
+        			sb.append(rightBracket(STRING_TYPE));
         		}
         		        		
        		 	sb.append(' ');
@@ -1122,9 +1122,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 	       		if (right.isLeaf() || opID(right) >= AND) {
 	   		 		sb.append(rightStr);
 	    		} else {
-	    			sb.append('(');
+	    			sb.append(leftBracket(STRING_TYPE));
 	    			sb.append(rightStr);
-	    			sb.append(')');
+	    			sb.append(rightBracket(STRING_TYPE));
 	    		}               
                 break;
                 
@@ -1338,9 +1338,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 			            		if (right.isLeaf() || opID(right) >= PLUS) {
 		        					sb.append(rightStr);
 		        				} else {
-		        					sb.append('(');
+		        					sb.append(leftBracket(STRING_TYPE));
 		    	                    sb.append(rightStr);
-		    	                    sb.append(')'); 
+		    	                    sb.append(rightBracket(STRING_TYPE)); 
 		        				}
 	        		    		break;
 	            			} 
@@ -1348,18 +1348,18 @@ implements ExpressionValue, ExpressionNodeConstants {
 	            				if (left.isLeaf() || opID(left) >= PLUS) {
 		        					sb.append(leftStr);
 		        				} else {
-		        					sb.append('(');
+		        					sb.append(leftBracket(STRING_TYPE));
 		    	                    sb.append(leftStr);
-		    	                    sb.append(')'); 
+		    	                    sb.append(rightBracket(STRING_TYPE)); 
 		        				}
 	        		    		break;
 	            			}
 	                	}
 	                	
 	                	if (left instanceof Equation) {
-	                		sb.append("(");
+	                		sb.append(leftBracket(STRING_TYPE));
 		                    sb.append(leftStr);
-		                    sb.append(')');
+		                    sb.append(rightBracket(STRING_TYPE));
 	                	} else {
 	                		sb.append(leftStr);
 	                	}
@@ -1373,9 +1373,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    			(right.isGeoElement() && !((GeoElement) right).isLabelSet())
 	    					) )
 	    				{
-	                        sb.append(" + (");
+	                        sb.append(" + ");
+	                        sb.append(leftBracket(STRING_TYPE));
 	                        sb.append(rightStr);
-	                        sb.append(')');
+	                        sb.append(rightBracket(STRING_TYPE));
 	                    }
 	                    else {                
 	                        if (rightStr.charAt(0) == '-') { // convert + - to -
@@ -1404,9 +1405,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    
 	                default:
 	                	if (left instanceof Equation) {
-	                		sb.append("(");
+	                		sb.append(leftBracket(STRING_TYPE));
 		                    sb.append(leftStr);
-		                    sb.append(')');
+		                    sb.append(rightBracket(STRING_TYPE));
 	                	} else {
 	                		sb.append(leftStr);
 	                	} 
@@ -1426,15 +1427,17 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                    }                        
 		                }
 		                else { 
-		                    sb.append(" - (");
+		                    sb.append(" - ");
+		                    sb.append(leftBracket(STRING_TYPE));
 		                    sb.append(rightStr);
-		                    sb.append(')');
+		                    sb.append(rightBracket(STRING_TYPE));
 		                }	   
 		             break;
 	            }
                 break;
                 
             case MULTIPLY: 
+            	Application.debug("jhgjhgjhgjhjhjhg");
             	switch (STRING_TYPE) {
 //        		case STRING_TYPE_JASYMCA:
 //        		case STRING_TYPE_MATH_PIPER:
@@ -1451,9 +1454,9 @@ implements ExpressionValue, ExpressionNodeConstants {
         				if (right.isLeaf() || opID(right) >= MULTIPLY) {
         					sb.append(rightStr);
         				} else {
-        					sb.append('(');
+        					sb.append(leftBracket(STRING_TYPE));
     	                    sb.append(rightStr);
-    	                    sb.append(')'); 
+    	                    sb.append(rightBracket(STRING_TYPE)); 
         				}
     		    		break;
         			} 
@@ -1462,11 +1465,11 @@ implements ExpressionValue, ExpressionNodeConstants {
         				if (left.isLeaf() || opID(left) >= MULTIPLY) {
         					sb.append(leftStr);
         				} else {
-        					sb.append('(');
+        					sb.append(leftBracket(STRING_TYPE));
     	                    sb.append(leftStr);
-    	                    sb.append(')'); 
+    	                    sb.append(rightBracket(STRING_TYPE)); 
         				}
-    		    		break;
+   		    		break;
         			}
         			
 // removed 0 handling due to problems with functions, 
@@ -1504,9 +1507,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                        sb.append(leftStr);                      
 	                    }
 	                } else { 
-	                    sb.append('(');
+	                    sb.append(leftBracket(STRING_TYPE));
 	                    sb.append(leftStr);
-	                    sb.append(')');                 
+	                    sb.append(rightBracket(STRING_TYPE));                 
 	                }               
 	                     
 	                // right wing
@@ -1538,9 +1541,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    if (rightStr.charAt(0) == '-'   // 2 (-5) or -(-5)
 	                    	|| !nounary && !right.isLeaf() && opIDright <= DIVIDE) // -(x * a) or -(x / a)
 	                    {
-	                    	sb.append('(');
+	                    	sb.append(leftBracket(STRING_TYPE));
 	                        sb.append(rightStr);
-	                        sb.append(')');
+	                        sb.append(rightBracket(STRING_TYPE));
 	                    } else {
 	                    	// -1.0 * 5 becomes "-5"
 	                    	sb.append(rightStr);
@@ -1561,9 +1564,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                				sb.append(' '); // space instead of '*'  
 	                    	}
 	                    }                      
-	                    sb.append('(');
+	                    sb.append(leftBracket(STRING_TYPE));
 	                    sb.append(rightStr);
-	                    sb.append(')');
+	                    sb.append(rightBracket(STRING_TYPE));
 	                }       
             	}
                 break;
@@ -1599,9 +1602,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                if (left.isLeaf()|| opID(left) >= DIVIDE) { // not +, -, *
 		                    sb.append(leftStr);                
 		                } else { 
-		                    sb.append('(');
+		                    sb.append(leftBracket(STRING_TYPE));
 		                    sb.append(leftStr);
-		                    sb.append(')');
+		                    sb.append(rightBracket(STRING_TYPE));
 		                }                
 		                sb.append(" / ");
 		                 
@@ -1609,9 +1612,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                if (right.isLeaf() || opID(right) >= POWER) // not +, -, *, /                
 		                    sb.append(rightStr);
 		                else { 
-		                    sb.append('(');
+		                    sb.append(leftBracket(STRING_TYPE));
 		                    sb.append(rightStr);
-		                    sb.append(')');
+		                    sb.append(rightBracket(STRING_TYPE));
 		                }          
 	            	}
 	                break;
@@ -1644,9 +1647,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                	(left.isLeaf() || opID(left) > POWER)) { // not +, -, *, /, ^                     
 		                	sb.append(leftStr);                
 		                } else { 
-		                    sb.append('(');
+		                    sb.append(leftBracket(STRING_TYPE));
 		                    sb.append(leftStr);
-		                    sb.append(')');
+		                    sb.append(rightBracket(STRING_TYPE));
 		                }       
 					break;
             	}
@@ -1736,9 +1739,9 @@ implements ExpressionValue, ExpressionNodeConstants {
                             }          */               
 	                     } else { 
 	                         sb.append('^'); 
-	                         sb.append('(');
+	                         sb.append(leftBracket(STRING_TYPE));
 	                         sb.append(rightStr);
-	                         sb.append(')');
+	                         sb.append(rightBracket(STRING_TYPE));
 	                     }   
                 }      
                 break;
@@ -1748,9 +1751,9 @@ implements ExpressionValue, ExpressionNodeConstants {
                 		left.isLeaf() || opID(left) > POWER) { // not +, -, *, /, ^
                     sb.append(leftStr);             
                 } else {
-                    sb.append('(');
+                    sb.append(leftBracket(STRING_TYPE));
                     sb.append(leftStr);
-                    sb.append(')');
+                    sb.append(rightBracket(STRING_TYPE));
                 }                           
                 sb.append('!');
                 break;    
@@ -1758,7 +1761,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case COS:  
             	switch (STRING_TYPE) {
             		case STRING_TYPE_LATEX:
-            			sb.append("\\cos(");
+            			sb.append("\\cos \\left(");
             			break;
             			
             		case STRING_TYPE_MATH_PIPER:
@@ -1773,13 +1776,13 @@ implements ExpressionValue, ExpressionNodeConstants {
             			sb.append("cos(");         		
             	}    		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
             
             case SIN:            	
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\sin(");
+	        			sb.append("\\sin \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1794,13 +1797,14 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("sin(");         		
 	        	}           		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
+
                 break;
                 
             case TAN:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\tan(");
+	        			sb.append("\\tan \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1815,13 +1819,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("tan(");         		
 	        	}            		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case CSC:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\csc(");
+	        			sb.append("\\csc \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1836,13 +1840,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("csc(");         		
 	        	}            		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case SEC:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\sec(");
+	        			sb.append("\\sec \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1857,13 +1861,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("sec(");         		
 	        	}            		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case COT:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\cot(");
+	        			sb.append("\\cot \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1878,13 +1882,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("cot(");         		
 	        	}            		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case CSCH:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\csch(");
+	        			sb.append("\\csch \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1899,13 +1903,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("csch(");         		
 	        	}            		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case SECH:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\sech(");
+	        			sb.append("\\sech \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1920,13 +1924,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("sech(");         		
 	        	}            		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case COTH:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\coth(");
+	        			sb.append("\\coth \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1941,13 +1945,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("coth(");         		
 	        	}            		
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case ARCCOS:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arccos(");
+	        			sb.append("\\arccos \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1962,13 +1966,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("acos(");         		
 	        	}  	             	
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case ARCSIN:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arcsin(");
+	        			sb.append("\\arcsin \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1983,13 +1987,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("asin(");         		
 	        	}  	   
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
 
             case ARCTAN:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arctan(");
+	        			sb.append("\\arctan \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2004,13 +2008,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("atan(");         		
 	        	}  	        	      
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
 
             case COSH:      
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\cosh(");
+	        			sb.append("\\cosh \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2025,13 +2029,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("cosh(");         		
 	        	}  	         	       		                
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
             
             case SINH:  
               	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\sinh(");
+	        			sb.append("\\sinh \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2046,13 +2050,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("sinh(");         		
 	        	}    		                 
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case TANH:  
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\tanh(");
+	        			sb.append("\\tanh \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2067,13 +2071,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("tanh(");         		
 	        	}    	
             	sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
 
             case ACOSH:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{acosh}(");
+	        			sb.append("\\mathrm{acosh} \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2088,13 +2092,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("acosh(");         		
 	        	}           	        	            	
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
             
             case ASINH:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{asinh}(");
+	        			sb.append("\\mathrm{asinh} \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2109,13 +2113,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("asinh(");         		
 	        	}               	
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case ATANH:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{atanh}(");
+	        			sb.append("\\mathrm{atanh} \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2130,7 +2134,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("atanh(");         		
 	        	}      
             	sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                
             case EXP:
@@ -2178,7 +2182,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case LOG:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log(");
+	        			sb.append("\\log \\left(");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2198,15 +2202,15 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			break;
 	        	}              	      	
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;
                 
             case LOG10:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log_{10}(");
+	        			sb.append("\\log_{10} \\left(");
 	        			sb.append(leftStr);
-	                    sb.append(')');
+	                    sb.append("\\right)");
 	        			break;
 	        			
         			case STRING_TYPE_PSTRICKS:
@@ -2245,9 +2249,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             case LOG2:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log_{2}(");
+	        			sb.append("\\log_{2} \\left(");
 	        			sb.append(leftStr);
-	                    sb.append(')');
+	                    sb.append("\\right)");
 	        			break;
 	        			
         			case STRING_TYPE_MAXIMA:
@@ -2461,7 +2465,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ROUND:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{round}(");            
+	        			sb.append("\\mathrm{round} \\left(");            
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2472,13 +2476,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("round(");      		
 	        	}                 	
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;  
                 
             case GAMMA:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\Gamma(");            
+	        			sb.append("\\Gamma \\left(");            
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2489,7 +2493,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        			sb.append("gamma(");      		
 	        	}                 	         
                 sb.append(leftStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;  
                 
             case RANDOM:   
@@ -2507,9 +2511,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
             			case STRING_TYPE_LATEX:            		
-            				sb.append("\\mathrm{x}(");
+            				sb.append("\\mathrm{x} \\left(");
             				sb.append(leftStr);
-                    		sb.append(')');
+                            sb.append(rightBracket(STRING_TYPE));
             				break;
             				
             			case STRING_TYPE_JASYMCA:
@@ -2541,9 +2545,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
-	        				sb.append("\\mathrm{y}(");
+	        				sb.append("\\mathrm{y} \\left(");
 	        				sb.append(leftStr);
-	                		sb.append(')');
+	                		sb.append("\\right(");
 	        				break;
 	        				
 	        			case STRING_TYPE_JASYMCA:
@@ -2573,9 +2577,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
-	        				sb.append("\\mathrm{z}(");
+	        				sb.append("\\mathrm{z} \\left(");
 	        				sb.append(leftStr);
-	                		sb.append(')');
+	                		sb.append("\\right)");
 	        				break;
 	        				
 	        			//case STRING_TYPE_JASYMCA:
@@ -2607,9 +2611,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             		GeoFunction geo = (GeoFunction)left;
             		if (geo.isLabelSet()) {
             			sb.append(geo.getLabel());    
-            			sb.append('(');
+            			sb.append(leftBracket(STRING_TYPE));
                         sb.append(rightStr);
-                        sb.append(')');
+                        sb.append(rightBracket(STRING_TYPE));
             		} else {    
             			// inline function: replace function var by right side
             			FunctionVariable var = geo.getFunction().getFunctionVariable();
@@ -2633,18 +2637,18 @@ implements ExpressionValue, ExpressionNodeConstants {
             				
             			default:
             				sb.append(leftStr);  
-	    	        		sb.append('(');
+	    	        		sb.append(leftBracket(STRING_TYPE));
 	    	                sb.append(rightStr);
-	    	                sb.append(')');
+	    	                sb.append(rightBracket(STRING_TYPE));
 	    	                break;
             		}
             	} 
             	else  {
 	            	// standard case if we get here
 	            	sb.append(leftStr);  
-	        		sb.append('(');
+	        		sb.append(leftBracket(STRING_TYPE));
 	                sb.append(rightStr);
-	                sb.append(')');
+	                sb.append(rightBracket(STRING_TYPE));
             	}
                 break;
                
@@ -2655,9 +2659,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             		 sb.append(((GeoElement)left).getLabel());
             	} else
             		 sb.append(leftStr);            	 
-                sb.append('(');
+                sb.append(leftBracket(STRING_TYPE));
                 sb.append(rightStr);
-                sb.append(')');
+                sb.append(rightBracket(STRING_TYPE));
                 break;                  
                 
             case DERIVATIVE: // e.g. f''
@@ -2819,5 +2823,13 @@ implements ExpressionValue, ExpressionNodeConstants {
     public boolean isTopLevelCommand() {
 		return isLeaf() && left instanceof Command;
 	}
+    
+    private String leftBracket(int type) {
+    	return (type == STRING_TYPE_LATEX) ? "\\left( " : "(";
+    }
+	
+    private String rightBracket(int type) {
+    	return (type == STRING_TYPE_LATEX) ? "\\right) " : ")";
+    }
 	
 }
