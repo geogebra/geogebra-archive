@@ -1761,7 +1761,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case COS:  
             	switch (STRING_TYPE) {
             		case STRING_TYPE_LATEX:
-            			sb.append("\\cos \\left(");
+            			sb.append("\\cos \\left( ");
             			break;
             			
             		case STRING_TYPE_MATH_PIPER:
@@ -1782,7 +1782,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case SIN:            	
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\sin \\left(");
+	        			sb.append("\\sin \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1804,7 +1804,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case TAN:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\tan \\left(");
+	        			sb.append("\\tan \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1825,7 +1825,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case CSC:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\csc \\left(");
+	        			sb.append("\\csc \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1846,7 +1846,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case SEC:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\sec \\left(");
+	        			sb.append("\\sec \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1867,7 +1867,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case COT:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\cot \\left(");
+	        			sb.append("\\cot \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1888,7 +1888,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case CSCH:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\csch \\left(");
+	        			sb.append("\\csch \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1909,7 +1909,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case SECH:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\sech \\left(");
+	        			sb.append("\\sech \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1930,7 +1930,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case COTH:  
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\coth \\left(");
+	        			sb.append("\\coth \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1951,7 +1951,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ARCCOS:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arccos \\left(");
+	        			sb.append("\\arccos \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1972,7 +1972,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ARCSIN:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arcsin \\left(");
+	        			sb.append("\\arcsin \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -1993,7 +1993,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ARCTAN:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arctan \\left(");
+	        			sb.append("\\arctan \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2014,7 +2014,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case COSH:      
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\cosh \\left(");
+	        			sb.append("\\cosh \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2035,7 +2035,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case SINH:  
               	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\sinh \\left(");
+	        			sb.append("\\sinh \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2056,7 +2056,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case TANH:  
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\tanh \\left(");
+	        			sb.append("\\tanh \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2077,7 +2077,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ACOSH:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{acosh} \\left(");
+	        			sb.append("\\mathrm{acosh} \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2098,7 +2098,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ASINH:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{asinh} \\left(");
+	        			sb.append("\\mathrm{asinh} \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2119,7 +2119,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ATANH:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{atanh} \\left(");
+	        			sb.append("\\mathrm{atanh} \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2182,7 +2182,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case LOG:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log \\left(");
+	        			sb.append("\\log \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2208,9 +2208,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             case LOG10:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log_{10} \\left(");
+	        			sb.append("\\log_{10} \\left( ");
 	        			sb.append(leftStr);
-	                    sb.append("\\right)");
+	                    sb.append("\\right) ");
 	        			break;
 	        			
         			case STRING_TYPE_PSTRICKS:
@@ -2249,9 +2249,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             case LOG2:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log_{2} \\left(");
+	        			sb.append("\\log_{2} \\left( ");
 	        			sb.append(leftStr);
-	                    sb.append("\\right)");
+	                    sb.append("\\right) ");
 	        			break;
 	        			
         			case STRING_TYPE_MAXIMA:
@@ -2391,9 +2391,9 @@ implements ExpressionValue, ExpressionNodeConstants {
            case ARG:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arg\\left(");
+	        			sb.append("\\arg\\left( ");
 	                     sb.append(leftStr);
-	                     sb.append("\\right)");
+	                     sb.append("\\right) ");
 	        			break;
 	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Arg(");  
@@ -2465,7 +2465,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ROUND:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{round} \\left(");            
+	        			sb.append("\\mathrm{round} \\left( ");            
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2482,7 +2482,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case GAMMA:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\Gamma \\left(");            
+	        			sb.append("\\Gamma \\left( ");            
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2511,7 +2511,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
             			case STRING_TYPE_LATEX:            		
-            				sb.append("\\mathrm{x} \\left(");
+            				sb.append("\\mathrm{x} \\left( ");
             				sb.append(leftStr);
                             sb.append(rightBracket(STRING_TYPE));
             				break;
@@ -2545,7 +2545,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
-	        				sb.append("\\mathrm{y} \\left(");
+	        				sb.append("\\mathrm{y} \\left( ");
 	        				sb.append(leftStr);
 	                		sb.append("\\right(");
 	        				break;
@@ -2577,9 +2577,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
-	        				sb.append("\\mathrm{z} \\left(");
+	        				sb.append("\\mathrm{z} \\left( ");
 	        				sb.append(leftStr);
-	                		sb.append("\\right)");
+	                		sb.append("\\right) ");
 	        				break;
 	        				
 	        			//case STRING_TYPE_JASYMCA:
