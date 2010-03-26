@@ -484,8 +484,8 @@ public abstract class Drawable {
 				text = "\\boldsymbol{"+text+"}";
 		
 			TeXFormula formula = new TeXFormula(text);
-			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize());
-			icon.setInsets(new Insets(0, 0, 0, 0));
+			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
+			icon.setInsets(new Insets(1, 1, 1, 1));
 			
 			//BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 			//Graphics2D g2 = image.createGraphics();
