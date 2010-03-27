@@ -30,6 +30,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.ScriptManager;
@@ -3875,8 +3876,8 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	// determines which CAS is being used
-	final public static int CAS_MATHPIPER = 1;
-	final public static int CAS_MAXIMA = 2;
+	final public static int CAS_MATHPIPER = ExpressionNode.STRING_TYPE_MATH_PIPER;
+	final public static int CAS_MAXIMA = ExpressionNode.STRING_TYPE_MAXIMA;
 	
 	private static String MAXIMA_PATH = null;
 

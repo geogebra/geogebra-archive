@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.arithmetic.Equation;
@@ -40,8 +41,8 @@ import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
 import geogebra.kernel.statistics.AlgoExponential;
 import geogebra.kernel.statistics.AlgoFDistribution;
 import geogebra.kernel.statistics.AlgoFit;
-import geogebra.kernel.statistics.AlgoFitGrowth;
 import geogebra.kernel.statistics.AlgoFitExp;
+import geogebra.kernel.statistics.AlgoFitGrowth;
 import geogebra.kernel.statistics.AlgoFitLineX;
 import geogebra.kernel.statistics.AlgoFitLineY;
 import geogebra.kernel.statistics.AlgoFitLog;
@@ -641,6 +642,10 @@ public class Kernel {
 	
 	final public int getCASPrintForm() {
 		return casPrintForm;
+	}
+	
+	final public int getCurrentCAS() {
+		return ((GeoGebraCAS)getGeoGebraCAS()).currentCAS;
 	}
 
 	final public void setPrintDecimals(int decimals) {

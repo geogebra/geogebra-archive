@@ -67,7 +67,7 @@ public class AlgoSimplify extends AlgoElement {
         }    
 
     
-	    String functionIn = f.getFunction().getExpression().getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    String functionIn = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
 
 		String functionOut = null;
 		String CASString = getCASString(functionIn);

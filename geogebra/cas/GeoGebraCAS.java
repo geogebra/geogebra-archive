@@ -28,6 +28,7 @@ public class GeoGebraCAS {
 	private CASgeneric cas;
 	private CASmathpiper mathpiper;
 	private CASmaxima maxima;
+	public int currentCAS = -1;
 
 	public GeoGebraCAS(Kernel kernel) {
 		app = kernel.getApplication();
@@ -55,10 +56,12 @@ public class GeoGebraCAS {
 			switch (CAS) {
 				case Application.CAS_MAXIMA:
 					cas = getMaxima();
+					currentCAS = CAS;
 					break;
 				
 				default:
 					cas = getMathPiper();
+					currentCAS = CAS;
 					break;
 			}
 		} catch (Exception e) {

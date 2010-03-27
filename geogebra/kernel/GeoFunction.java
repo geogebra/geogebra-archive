@@ -749,7 +749,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	}
 	
 	public double getLimit(double x, int direction) {
-   	String functionIn = fun.getExpression().getCASstring(true);
+   	String functionIn = fun.getExpression().getCASstring(kernel.getCurrentCAS(), true);
 	    
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
@@ -818,7 +818,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	private static StringBuilder sb;
 
     protected void getDiagonalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
-    	String functionIn = f.getFunction().getExpression().getCASstring(true);
+    	String functionIn = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
 	    
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
@@ -884,7 +884,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
     }
     
     protected void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
-    	String functionStr = f.getFunction().getExpression().getCASstring(true);
+    	String functionStr = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
         sb.append("Limit(");
@@ -920,7 +920,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
     
     protected void getVerticalAsymptotesStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder verticalSB, boolean reverseCondition) {
     	
-    	String functionStr = f.getFunction().getExpression().getCASstring(true);
+    	String functionStr = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
     	// solve 1/f(x) == 0 to find vertical asymptotes
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);

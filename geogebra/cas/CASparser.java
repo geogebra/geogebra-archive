@@ -15,14 +15,13 @@ package geogebra.cas;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoDummyVariable;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.kernel.arithmetic.Variable;
 import geogebra.kernel.parser.Parser;
+import geogebra.main.Application;
 
 /**
  * Handles parsing and evaluating of input in the CAS view.
@@ -106,6 +105,7 @@ public class CASparser {
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
 	public ValidExpression parseMathPiper(String MathPiperString) throws Throwable {
+		Application.debug(MathPiperString);
 		return ggbParser.parseMathPiper(MathPiperString);		
 	}
 	

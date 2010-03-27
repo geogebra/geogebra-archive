@@ -855,7 +855,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 		sb.setLength(0);
         sb.append("Derivative(");
         // function expression with multiply sign "*"   
-		sb.append(expression.getCASstring(true));		
+		sb.append(expression.getCASstring(kernel.getCurrentCAS(), true));		
 		if (order > 1) {
 	        sb.append(",x,");
 	        sb.append(order);
@@ -1102,11 +1102,12 @@ implements ExpressionValue, RealRootFunction, Functional {
         
         sb.append("Integral[");
         // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(true));  
+        sb.append(expression.getCASstring(kernel.getCurrentCAS(), true));
         sb.append("]");
 
         try {           
             // evaluate expression by MathPiper
+        	Application.debug(sb.toString());
             String result = kernel.evaluateGeoGebraCAS(sb.toString());     
             
             //Application.debug(sb.toString());
@@ -1189,7 +1190,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         sb.setLength(0);
         sb.append("Expand(");
         // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(true));    
+        sb.append(expression.getCASstring(kernel.getCurrentCAS(),true));    
         sb.append(")");
 
         try {           
