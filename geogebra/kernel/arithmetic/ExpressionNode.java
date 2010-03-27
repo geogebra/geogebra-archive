@@ -1437,7 +1437,6 @@ implements ExpressionValue, ExpressionNodeConstants {
                 break;
                 
             case MULTIPLY: 
-            	Application.debug("jhgjhgjhgjhjhjhg");
             	switch (STRING_TYPE) {
 //        		case STRING_TYPE_JASYMCA:
 //        		case STRING_TYPE_MATH_PIPER:
