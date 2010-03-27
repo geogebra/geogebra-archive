@@ -2077,7 +2077,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ACOSH:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{acosh} \\left( ");
+	        			sb.append("\\operatorname{acosh} \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2098,7 +2098,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ASINH:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{asinh} \\left( ");
+	        			sb.append("\\operatorname{asinh} \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2119,7 +2119,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             case ATANH:
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\mathrm{atanh} \\left( ");
+	        			sb.append("\\operatorname{atanh} \\left( ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
