@@ -769,7 +769,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		
 		try {
 			String functionOut = kernel.evaluateGeoGebraCAS(sb.toString());
-			NumberValue nv = kernel.getAlgebraProcessor().evaluateToNumeric(functionOut);
+			NumberValue nv = kernel.getAlgebraProcessor().evaluateToNumeric(functionOut, false);
 			return nv.getDouble();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -969,7 +969,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		    			Application.debug(verticalAsymptotesArray[i]+"");
 		    			if (verticalAsymptotesArray[i].trim().equals("")) isInRange = false; // was complex root
 		    			//isInRange = parentFunction.evaluateCondition(Double.parseDouble(verticalAsymptotesArray[i]));
-		    			else isInRange = parentFunction.evaluateCondition(kernel.getAlgebraProcessor().evaluateToNumeric(verticalAsymptotesArray[i]).getDouble());
+		    			else isInRange = parentFunction.evaluateCondition(kernel.getAlgebraProcessor().evaluateToNumeric(verticalAsymptotesArray[i], true).getDouble());
 		    		} catch (Exception e) {Application.debug("Error parsing: "+verticalAsymptotesArray[i]);}
 		    		if (reverseCondition) isInRange = !isInRange;
 		    		

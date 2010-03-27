@@ -3035,7 +3035,7 @@ public class MyXMLHandler implements DocHandler {
 
 			while (it.hasNext()) {
 				GeoExpPair pair = (GeoExpPair) it.next();
-				NumberValue num = algProc.evaluateToNumeric(pair.exp);
+				NumberValue num = algProc.evaluateToNumeric(pair.exp, false);
 				pair.geo.setAnimationSpeedObject(num);
 			}
 		} catch (Exception e) {

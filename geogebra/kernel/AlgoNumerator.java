@@ -80,11 +80,11 @@ public class AlgoNumerator extends AlgoElement {
         	Function fun = new Function((ExpressionNode)ev, f.getFunction().getFunctionVariable());
         	g.setFunction(fun);
         } else if (ev instanceof FunctionVariable) {
-        	g.set(kernel.getAlgebraProcessor().evaluateToFunction("x"));
+        	g.set(kernel.getAlgebraProcessor().evaluateToFunction("x", false));
         }
         else if (ev.isNumberValue()) {
         	double val = ((NumberValue)ev).getDouble();
-        	g.set(kernel.getAlgebraProcessor().evaluateToFunction(""+val));
+        	g.set(kernel.getAlgebraProcessor().evaluateToFunction(""+val, false));
         }
         else
         {

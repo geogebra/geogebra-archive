@@ -294,7 +294,7 @@ public class AlgebraProcessor {
 	 * Returns null if something went wrong.
 	 * Michael Borcherds 2008-04-04
 	 */
-	public GeoFunction evaluateToFunction(String str) {
+	public GeoFunction evaluateToFunction(String str, boolean suppressErrors) {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 
@@ -308,20 +308,20 @@ public class AlgebraProcessor {
 				func = f.getGeoFunction();
 			}						
 			else 
-				app.showError("InvalidInput");
+				if (!suppressErrors) app.showError("InvalidInput");
 			
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
-			app.showError("CircularDefinition");
+			if (!suppressErrors) app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			if (!suppressErrors) app.showError("InvalidInput");
 		} catch (MyError e) {
 			e.printStackTrace();
-			app.showError(e);
+			if (!suppressErrors) app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			if (!suppressErrors) app.showError("InvalidInput");
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
@@ -333,7 +333,7 @@ public class AlgebraProcessor {
 	 * Returns null if something went wrong.
 	 * Michael Borcherds 2008-08-13
 	 */
-	public NumberValue evaluateToNumeric(String str) {
+	public NumberValue evaluateToNumeric(String str, boolean suppressErrors) {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 
@@ -344,16 +344,16 @@ public class AlgebraProcessor {
 			num = (NumberValue) temp[0];
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
-			app.showError("CircularDefinition");
+			if (!suppressErrors) app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			if (!suppressErrors) app.showError("InvalidInput");
 		} catch (MyError e) {
 			e.printStackTrace();
-			app.showError(e);
+			if (!suppressErrors) app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			if (!suppressErrors) app.showError("InvalidInput");
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);

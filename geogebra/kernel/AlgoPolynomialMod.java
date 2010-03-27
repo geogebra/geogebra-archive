@@ -100,7 +100,7 @@ public class AlgoPolynomialMod extends AlgoElement {
 		}
 		else
 		{
-			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));					
+			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut, false));					
 		}
 		
 		g.setDefined(true);	

@@ -87,7 +87,7 @@ public class AlgoSimplify extends AlgoElement {
 		else
 		{
 			try {
-				g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));
+				g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut, false));
 			} catch (Exception e) {
 				g.set(f); // set to input ie leave unchanged
 				Application.debug(getClassName()+" error processing: "+functionOut);

@@ -102,11 +102,11 @@ public class AlgoPolynomialDiv extends AlgoElement {
 	        sb.append(")/(");
 	        sb.append(functionIn2);
 	        sb.append(")");
-			g.set(kernel.getAlgebraProcessor().evaluateToFunction(sb.toString()));					
+			g.set(kernel.getAlgebraProcessor().evaluateToFunction(sb.toString(), false));					
 		}
 		else
 		{
-			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut));					
+			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut, false));					
 		}
 		
 		g.setDefined(true);	

@@ -4790,7 +4790,7 @@ class AnimationSpeedPanel
 
 	private void doActionPerformed() {
 		NumberValue animSpeed = 
-			kernel.getAlgebraProcessor().evaluateToNumeric(tfAnimSpeed.getText());
+			kernel.getAlgebraProcessor().evaluateToNumeric(tfAnimSpeed.getText(), false);
 		if (animSpeed != null) {
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
