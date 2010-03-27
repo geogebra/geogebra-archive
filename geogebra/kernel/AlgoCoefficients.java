@@ -62,48 +62,21 @@ public class AlgoCoefficients extends AlgoElement {
         }    
                 
         
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    String functionIn = f.getFormulaString(kernel.getCurrentCAS(), true);
 
 	    sb.setLength(0);
-        sb.append("Degree(");
+        sb.append("Coefficients(");
         sb.append(functionIn);
         sb.append(")");
-		String functionOut = kernel.evaluateMathPiper(sb.toString());
-		int order = Integer.parseInt(functionOut);	
-		
-		//Application.debug("order = "+order);
-
-	    sb.setLength(0);
-	    sb.append("Coef(");
-        sb.append(functionIn);
-        sb.append(",x,0 .. ");
-        sb.append(order);
-        sb.append(")");
-		functionOut = kernel.evaluateMathPiper(sb.toString());
-		
-		//Application.debug("Coefficients input:"+sb.toString());
-		//Application.debug("Coefficients output:"+functionOut);
-		
-		boolean yacasError=false;
-		
-		if (functionOut == null || functionOut.length()==0) yacasError=true; // Yacas error
-		
-		else if (functionOut.length()>6)
-			if (functionOut.startsWith("Coef(") || // Yacas error
-			    functionOut.startsWith("FWatom(") )  // Yacas oddity??
-				yacasError=true;
-			
-
-		if (yacasError) // Yacas error
-		{
-			g.setUndefined(); 
+		String functionOut;
+		try {
+			functionOut = kernel.evaluateGeoGebraCAS(sb.toString());
+			g.set(kernel.getAlgebraProcessor().evaluateToList(functionOut));	
+			g.setDefined(true);	
+		} catch (Throwable e) {
+			e.printStackTrace();
+			g.setUndefined();
 		}
-		else
-		{
-			g.set(kernel.getAlgebraProcessor().evaluateToList(functionOut));					
-		}
-		
-		g.setDefined(true);	
 		
     }
     

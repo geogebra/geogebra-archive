@@ -60,38 +60,19 @@ public class AlgoDegree extends AlgoElement {
         	return;
         }    
                 
-        
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+	    String functionIn = f.getFormulaString(kernel.getCurrentCAS(), true);
 
-	    	    
 	    sb.setLength(0);
-        sb.append("Degree((");
+        sb.append("Degree(");
         sb.append(functionIn);
-        sb.append("))");
-		String functionOut = kernel.evaluateMathPiper(sb.toString());
-		
-		//Application.debug("Degree input:"+functionIn);
-		//Application.debug("Degree output:"+functionOut);
-		
-		boolean yacasError=false;
-		
-		if (functionOut == null || functionOut.length()==0) yacasError=true; // Yacas error
-		
-		else if (functionOut.length()>7)
-			if (functionOut.startsWith("Degree(") || // Yacas error
-			    functionOut.startsWith("FWatom(") )  // Yacas oddity??
-				yacasError=true;
-			
-
-		if (yacasError) // Yacas error
-		{
-			num.setUndefined(); 
-		}
-		else
-		{
-			try {
-				num.setValue(Integer.parseInt(functionOut));		
-			} catch (Exception e) { num.setUndefined(); }
+        sb.append(")");
+		String functionOut;
+		try {
+			functionOut = kernel.evaluateGeoGebraCAS(sb.toString());
+			num.setValue(Integer.parseInt(functionOut));	
+		} catch (Throwable e) {
+			e.printStackTrace();
+			num.setUndefined();
 		}
 		
     }
