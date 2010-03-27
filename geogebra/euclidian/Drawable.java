@@ -42,6 +42,7 @@ import java.util.HashMap;
 
 import javax.swing.JLabel;
 
+import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
@@ -476,6 +477,7 @@ public abstract class Drawable {
 	private static HashMap<String,TeXIcon> equations = new HashMap<String,TeXIcon>();
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
+	private static Dimension dim = new Dimension();
 	
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
@@ -491,7 +493,14 @@ public abstract class Drawable {
 		
 		if (icon == null) {
 			//Application.debug("creating new icon for: "+text);
-			TeXFormula formula = new TeXFormula(text);
+			TeXFormula formula;
+			try {
+			formula = new TeXFormula(text);
+			} catch (ParseException e) {
+				Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
+				dim.setSize(0,0);
+				return dim;
+			}
 			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
 			icon.setInsets(new Insets(1, 1, 1, 1));
 			equations.put(eqnSB.toString(), icon);
@@ -499,7 +508,8 @@ public abstract class Drawable {
 
 			jl.setForeground(fgColor);
 			icon.paintIcon(jl, g2, x, y);
-			return new Dimension(icon.getIconWidth(), icon.getIconHeight());
+			dim.setSize(icon.getIconWidth(), icon.getIconHeight());
+			return dim;
 		}
 
 
