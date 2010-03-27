@@ -497,8 +497,9 @@ public abstract class Drawable {
 			try {
 			formula = new TeXFormula(text);
 			} catch (ParseException e) {
-				Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
-				dim.setSize(0,0);
+				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
+				Point p = drawIndexedString(g2, e.getMessage(), x, y);
+				dim.setSize(p.x, p.y - g2.getFont().getSize());
 				return dim;
 			}
 			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
