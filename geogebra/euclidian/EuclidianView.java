@@ -441,8 +441,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// ggb3D 2009-02-05
 		hits=new Hits();
 		
-		// register Greek fonts for JLaTeXMath
-		DefaultTeXFont.registerAlphabet(new LaTeXGreekRegistration(app));
 	}
 	
 	public Application getApplication() {

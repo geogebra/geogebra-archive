@@ -37,6 +37,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -46,6 +47,7 @@ import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
+import org.scilab.forge.jlatexmath.URLAlphabetRegistration;
 
 /**
  *
@@ -478,9 +480,22 @@ public abstract class Drawable {
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
 	private static Dimension dim = new Dimension();
+	private static boolean fontsRegistered = false;
 	
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
+		
+		if (!fontsRegistered) {
+		   try{
+	           URLAlphabetRegistration.register(new URL(app.getCodeBase()+"jlm_greek.jar"), "greek",
+	URLAlphabetRegistration.JLM_GREEK);
+	           URLAlphabetRegistration.register(new URL(app.getCodeBase()+"jlm_cyrillic.jar"), "cyrillic",
+	URLAlphabetRegistration.JLM_CYRILLIC);
+	       } catch (Exception e) {
+	           e.printStackTrace();
+	       }
+	       fontsRegistered = true;
+		}
 		
 		if (eqnSB == null) eqnSB = new StringBuilder(20);
 		else eqnSB.setLength(0);
