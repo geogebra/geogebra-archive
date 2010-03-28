@@ -22,13 +22,13 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
+import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
-import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -83,6 +83,8 @@ import java.util.TreeSet;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import org.scilab.forge.jlatexmath.DefaultTeXFont;
 
 /**
  * 
@@ -438,6 +440,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		// ggb3D 2009-02-05
 		hits=new Hits();
+		
+		// register Greek fonts for JLaTeXMath
+		DefaultTeXFont.registerAlphabet(new LaTeXGreekRegistration(app));
 	}
 	
 	public Application getApplication() {
