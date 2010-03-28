@@ -1038,7 +1038,7 @@ public class WorksheetExportDialog extends JDialog {
 				sb.append(geo.getLabel());
 				sb.append("() {\n");
 				sb.append("var ggbApplet = document.ggbApplet;\n");
-				sb.append(geo.getJavaScript());
+				sb.append(Util.toHTMLString(geo.getJavaScript()));
 				sb.append("\n}\n");
 				
 			}
