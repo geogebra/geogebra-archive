@@ -514,7 +514,7 @@ public abstract class Drawable {
 			} catch (ParseException e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
-				Rectangle rec = drawMultiLineText(e.getMessage(), x, y + g2.getFont().getSize(), g2);
+				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				dim.setSize(rec.width, rec.height);
 				return dim;
 			}
