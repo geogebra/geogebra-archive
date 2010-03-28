@@ -43,11 +43,13 @@ import java.util.HashMap;
 
 import javax.swing.JLabel;
 
+import org.scilab.forge.jlatexmath.AlphabetRegistration;
 import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import org.scilab.forge.jlatexmath.URLAlphabetRegistration;
+import org.scilab.forge.jlatexmath.WebStartAlphabetRegistration;
 
 /**
  *
@@ -487,10 +489,10 @@ public abstract class Drawable {
 		
 		if (!fontsRegistered) {
 		   try{
-	           URLAlphabetRegistration.register(new URL(app.getCodeBase()+"jlm_greek.jar"), "greek",
-	URLAlphabetRegistration.JLM_GREEK);
-	           URLAlphabetRegistration.register(new URL(app.getCodeBase()+"jlm_cyrillic.jar"), "cyrillic",
-	URLAlphabetRegistration.JLM_CYRILLIC);
+			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_GREEK);
+			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_CYRILLIC);
+	           //URLAlphabetRegistration.register(new URL(app.getCodeBase()+"jlm_greek.jar"), "greek",URLAlphabetRegistration.JLM_GREEK);
+	           //URLAlphabetRegistration.register(new URL(app.getCodeBase()+"jlm_cyrillic.jar"), "cyrillic",URLAlphabetRegistration.JLM_CYRILLIC);
 	       } catch (Exception e) {
 	           e.printStackTrace();
 	       }

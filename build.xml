@@ -79,7 +79,7 @@ office@geogebra.org
 	<manifest file="../manifest.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_javascript.jar jlatexmath.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
@@ -202,6 +202,12 @@ office@geogebra.org
 	<target name="ggb-copy-jlatexmath" depends="clean" description="copy jlatexmath jars">		
 		<copy file="${src.dir}/jlatexmath.jar"
 		      tofile="${build.dir}/jlatexmath.jar">
+		</copy>
+		<copy file="${src.dir}/jlm_greek.jar"
+		      tofile="${build.dir}/jlm_greek.jar">
+		</copy>
+		<copy file="${src.dir}/jlm_cyrillic.jar"
+		      tofile="${build.dir}/jlm_cyrillic.jar">
 		</copy>
 	</target>
 	
