@@ -110,7 +110,7 @@ public abstract class Drawable {
 		
 		// allow LaTeX caption surrounded by $ $
 		if (label.startsWith("$") && label.endsWith("$")) {
-			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 2), g2.getFont(), g2.getColor(), g2.getBackground());
+			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont(), g2.getColor(), g2.getBackground());
 			labelRectangle.setBounds(xLabel, yLabel, (int)dim.getWidth(), (int)dim.getHeight());	
 			return;
 		}
