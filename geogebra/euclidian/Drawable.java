@@ -182,7 +182,7 @@ public abstract class Drawable {
 	}
 	
 	// Michael Borcherds 2008-06-10
-	final float textWidth(String str, Font font, FontRenderContext frc)
+	final static float textWidth(String str, Font font, FontRenderContext frc)
 	{
 		if (str.equals("")) return 0f;
 		TextLayout layout = new TextLayout(str , font, frc);
@@ -498,8 +498,9 @@ public abstract class Drawable {
 			formula = new TeXFormula(text);
 			} catch (ParseException e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
-				Point p = drawIndexedString(g2, e.getMessage(), x, y);
-				dim.setSize(p.x, p.y - g2.getFont().getSize());
+				// Write error message to Graphics View
+				Rectangle rec = drawMultiLineText(e.getMessage(), x, y + g2.getFont().getSize(), g2);
+				dim.setSize(rec.width, rec.height);
 				return dim;
 			}
 			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
@@ -514,11 +515,7 @@ public abstract class Drawable {
 		}
 
 
-	
-	final void drawMultilineText(Graphics2D g2) {
-		
-		if (labelDesc == null) return;
-		
+	final static Rectangle drawMultiLineText(String labelDesc, int xLabel, int yLabel, Graphics2D g2) {
 		int lines = 0;				
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.5f;
@@ -527,38 +524,57 @@ public abstract class Drawable {
 		FontRenderContext frc = g2.getFontRenderContext();
 		int xoffset = 0, yoffset = 0;
 
-		// no index in text
-		if (oldLabelDesc == labelDesc && !labelHasIndex) {		
-			// draw text line by line
-			int lineBegin = 0;
-			int length = labelDesc.length();
-			for (int i=0; i < length-1; i++) {
-				if (labelDesc.charAt(i) == '\n') {
-					//end of line reached: draw this line
-					g2.drawString(labelDesc.substring(lineBegin, i), xLabel, yLabel + lines * lineSpread);
+		// draw text line by line
+		int lineBegin = 0;
+		int length = labelDesc.length();
+		for (int i=0; i < length-1; i++) {
+			if (labelDesc.charAt(i) == '\n') {
+				//end of line reached: draw this line
+				g2.drawString(labelDesc.substring(lineBegin, i), xLabel, yLabel + lines * lineSpread);
 
-					int width=(int)textWidth(labelDesc.substring(lineBegin, i), font, frc);
-					if (width > xoffset) xoffset = width;			
-					
-					lines++;
-					lineBegin = i + 1;					
-				}
+				int width=(int)textWidth(labelDesc.substring(lineBegin, i), font, frc);
+				if (width > xoffset) xoffset = width;			
+				
+				lines++;
+				lineBegin = i + 1;					
 			}
-			
-			float ypos = yLabel + lines * lineSpread;
-			g2.drawString(labelDesc.substring(lineBegin), xLabel, ypos);
+		}
+		
+		float ypos = yLabel + lines * lineSpread;
+		g2.drawString(labelDesc.substring(lineBegin), xLabel, ypos);
 
-			int width=(int)textWidth(labelDesc.substring(lineBegin), font, frc);
-			if (width > xoffset) xoffset = width;			
-			
-			// Michael Borcherds 2008-06-10
-			// changed setLocation to setBounds (bugfix)
-			// and added final float textWidth()
-			//labelRectangle.setLocation(xLabel, yLabel - fontSize);
-			int height = (int) ( (lines +1)*lineSpread);
-			labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
+		int width=(int)textWidth(labelDesc.substring(lineBegin), font, frc);
+		if (width > xoffset) xoffset = width;			
+		
+		// Michael Borcherds 2008-06-10
+		// changed setLocation to setBounds (bugfix)
+		// and added final float textWidth()
+		//labelRectangle.setLocation(xLabel, yLabel - fontSize);
+		int height = (int) ( (lines +1)*lineSpread);
+		
+		return new Rectangle(xLabel, yLabel - fontSize, xoffset, height);
+		//labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
+
+	}
+	
+	final void drawMultilineText(Graphics2D g2) {
+		
+		if (labelDesc == null) return;
+		
+
+		// no index in text
+		if (oldLabelDesc == labelDesc && !labelHasIndex) {	
+
+			labelRectangle.setBounds(drawMultiLineText(labelDesc, xLabel, yLabel, g2) );
 		} 
 		else { 			
+			int lines = 0;				
+			int fontSize = g2.getFont().getSize();
+			float lineSpread = fontSize * 1.5f;
+
+			Font font = g2.getFont();
+			FontRenderContext frc = g2.getFontRenderContext();
+			int xoffset = 0, yoffset = 0;
 			// text with indices
 			// label description has changed, search for possible indices
 			oldLabelDesc = labelDesc;
