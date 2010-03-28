@@ -22,7 +22,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 /**
  *
- * @author  Mathieu
+ * @author Markus + Mathieu
  * 
  * @version 
  * 

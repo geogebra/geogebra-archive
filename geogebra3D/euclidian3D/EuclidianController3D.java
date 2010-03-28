@@ -751,7 +751,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
 			changedKernel = threePoints(hits, mode);
 			break;
-			
+		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:	
+			changedKernel = circleOrSphere2(hits, mode);
+			break;
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
 			changedKernel = circleOrSpherePointRadius(hits);
 			break;
@@ -782,6 +784,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	}
 
+	protected void switchModeForCircleOrSphere2(int mode){
+		
+		
+		switch (mode) {
+		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:
+			GeoPoint3D[] points = getSelectedPoints3D();
+			((Kernel3D) getKernel()).Sphere(null, points[0], points[1]);
+			break;
+		default:
+			super.switchModeForCircleOrSphere2(mode);
+			break;
+		}
+	}
+
 	
 	///////////////////////////////////////////
 	// MOUSE PRESSED
@@ -792,6 +808,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		switch (mode) {
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:	
+		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:	
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:	
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);

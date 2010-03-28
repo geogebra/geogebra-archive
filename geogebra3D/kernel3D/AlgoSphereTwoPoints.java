@@ -16,66 +16,56 @@ the Free Software Foundation.
  * Created on 15. November 2001, 21:37
  */
 
-package geogebra.kernel;
+package geogebra3D.kernel3D;
+
+import geogebra.kernel.AlgoSphereNDTwoPoints;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoQuadricND;
 
 
 /**
  *
- * @author  Markus
+ * @author  Matthieu
  * @version 
  */
-public class AlgoCircleTwoPoints extends AlgoSphereNDTwoPoints {
+public class AlgoSphereTwoPoints extends AlgoSphereNDTwoPoints {
 
-     public AlgoCircleTwoPoints(
+     public AlgoSphereTwoPoints(
         Construction cons,
-        GeoPoint M,
-        GeoPoint P) {
+        GeoPoint3D M,
+        GeoPoint3D P) {
         super(cons,M,P);
     }
     
-    AlgoCircleTwoPoints(
+    AlgoSphereTwoPoints(
             Construction cons,
             String label,
-            GeoPoint M,
-            GeoPoint P) {
+            GeoPoint3D M,
+            GeoPoint3D P) {
          super(cons, label,M, P);
     }
     
     protected GeoQuadricND createSphereND(Construction cons){
-    	GeoConic circle = new GeoConic(cons);
-        circle.addPointOnConic((GeoPoint) getP()); //TODO do this in AlgoSphereNDTwoPoints
-        return circle;
+    	GeoQuadric3D sphere = new GeoQuadric3D(cons);
+        //circle.addPointOnConic((GeoPoint) getP()); //TODO do this in AlgoSphereNDTwoPoints
+        return sphere;
     }
 
     protected String getClassName() {
-        return "AlgoCircleTwoPoints";
+        return "AlgoSphereTwoPoints";
     }
 
 
 
-    public GeoConic getCircle() {
-        return (GeoConic) getSphereND();
+    public GeoQuadric3D getSphere() {
+        return (GeoQuadric3D) getSphereND();
     }
-    /*
-    GeoPoint getM() {
-        return M;
-    }
-    GeoPoint getP() {
-        return P;
-    }
-    */
-
-    // compute circle with midpoint M and radius r
-    /*
-    protected final void compute() {
-        circle.setCircle(M, P);
-    }
-    */
 
     final public String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        return app.getPlain("CircleThroughAwithCenterB",
+        return app.getPlain("SphereThroughAwithCenterB",
         		((GeoElement) getM()).getLabel(),
         		((GeoElement) getP()).getLabel());
 

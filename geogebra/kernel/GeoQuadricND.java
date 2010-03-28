@@ -107,6 +107,9 @@ public abstract class GeoQuadricND extends GeoElement {
 	}
 	
 	
+	abstract public void setSphereND(GeoPointInterface M, GeoPointInterface P);
+	
+	
 	protected void setSphereNDMatrix(GeoPointInterface M, double r){
 				
 		

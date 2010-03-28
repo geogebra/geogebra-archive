@@ -2398,7 +2398,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
 			// new semicircle (2 points)
 		case EuclidianView.MODE_SEMICIRCLE:
-			changedKernel = circle2(hits, mode);
+			changedKernel = circleOrSphere2(hits, mode);
 			break;
 
 		case EuclidianView.MODE_LOCUS:
@@ -4198,7 +4198,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// get 2 points
-	final protected boolean circle2(Hits hits, int mode) {
+	final protected boolean circleOrSphere2(Hits hits, int mode) {
 		if (hits.isEmpty())
 			return false;
 
@@ -4206,14 +4206,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		addSelectedPoint(hits, 2, false);
 		if (selPoints() == 2) {
 			// fetch the three selected points
-			GeoPoint[] points = getSelectedPoints();
-			if (mode == EuclidianView.MODE_SEMICIRCLE)
-				kernel.Semicircle(null, points[0], points[1]);
-			else
-				kernel.Circle(null, points[0], points[1]);
+			switchModeForCircleOrSphere2(mode);
 			return true;
 		}
 		return false;
+	}
+	
+	protected void switchModeForCircleOrSphere2(int mode){
+		GeoPoint[] points = getSelectedPoints();
+		if (mode == EuclidianView.MODE_SEMICIRCLE)
+			kernel.Semicircle(null, points[0], points[1]);
+		else
+			kernel.Circle(null, points[0], points[1]);
 	}
 
 	// get 2 points for locus

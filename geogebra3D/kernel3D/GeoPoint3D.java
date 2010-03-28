@@ -32,6 +32,7 @@ import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -136,7 +137,19 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 
     
 
+    ///////////////////////////////////////////////////////////
+    // GEOPOINTINTERFACE (TODO move it to GeoPointND)
     
+    public double distance(GeoPointInterface P){
+    	return distance((GeoPoint3D) P);
+    }
+    
+    // euclidian distance between this GeoPoint3D and P
+    final public double distance(GeoPoint3D P) {       
+        return getInhomCoords().distance(P.getInhomCoords());
+    }            
+
+   
     
     ///////////////////////////////////////////////////////////
     // COORDINATES

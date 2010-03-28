@@ -983,6 +983,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		} 		
 	}
 
+	
+	public void setSphereND(GeoPointInterface M, GeoPointInterface P){
+		setCircle((GeoPoint) M, (GeoPoint) P);
+	}
+	
 	/**
 	 * makes this conic a circle with midpoint M through Point P
 	 */

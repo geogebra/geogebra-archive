@@ -4,6 +4,7 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoQuadricND;
 import geogebra.kernel.GeoSegmentInterface;
@@ -50,43 +51,10 @@ implements GeoElement3DInterface{
 		//TODO
 	}
 	
-
-	/*
-	final private void setSphereMatrix(GeoPoint3D M, double r) {
-		
-		
-		setSphereNDMatrix(M, r);
-		
-		// set halfAxes = radius		
-		//halfAxes[0] = r; halfAxes[1] = r; halfAxes[2] = r;
-		
-		
-		/* 
-		 *               ( 1  0  0  -Mx)
-		 *  flatMatrix = ( .  1  0  -My)
-		 *               ( .  .  1  -Mz)
-		 *               ( .  .  .  Mx²+My²+Mz²-r²)
-		 */
-		
-		/*
-		Ggb3DVector m = M.getInhomCoords();
-		
-		matrix[0] = 1;
-		matrix[1] = 1;
-		matrix[2] = 1;	
-		matrix[3] = 0;
-		matrix[4] = 0;
-		matrix[5] = 0;
-		
-		matrix[6] = -m.getX();
-		matrix[7] = -m.getY();
-		matrix[8] = -m.getZ();
-		matrix[9] = m.getX()*m.getX() + m.getY()*m.getY() + m.getZ()*m.getZ() - r * r;
-		
-		
-		
+	public void setSphereND(GeoPointInterface M, GeoPointInterface P){
+		//TODO do this in GeoQuadricND, implement degenerate cases
+		setSphereNDMatrix(M, M.distance(P));
 	}
-	*/
 	
 	
 	

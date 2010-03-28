@@ -546,7 +546,11 @@ GeoPointInterface {
     			0
     	                  };
     }
-        
+    
+    public double distance(GeoPointInterface P){
+    	return distance((GeoPoint) P);
+    }
+    
     // euclidian distance between this GeoPoint and P
     final public double distance(GeoPoint P) {       
         return GeoVec2D.length(	P.inhomX - inhomX, 

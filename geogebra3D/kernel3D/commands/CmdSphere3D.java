@@ -45,6 +45,15 @@ public class CmdSphere3D extends CommandProcessor {
 	    						(GeoPoint3D) arg[0],
 	    						(NumberValue) arg[1])};
 	    		return ret;
+	    	} else if ((ok[0] = ( arg[0].isGeoElement3D() && arg[0] .isGeoPoint() ))
+	    			&& (ok[1] = ( arg[1].isGeoElement3D() && arg[1] .isGeoPoint() ))) {
+	    		GeoElement[] ret =
+	    		{
+	    				kernel3D.Sphere(
+	    						c.getLabel(),
+	    						(GeoPoint3D) arg[0],
+	    						(GeoPoint3D) arg[1])};
+	    		return ret;	    		
 	    	} else {
 	    		if (!ok[0])
 	    			throw argErr(app, "Sphere", arg[0]);

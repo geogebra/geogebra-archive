@@ -20,8 +20,10 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
+import geogebra.kernel.AlgoCircleTwoPoints;
 import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
@@ -132,6 +134,9 @@ public class Kernel3D
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
 			return "SpherePointRadius";
 						
+		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:
+			return "Sphere2";
+			
 		default:
 			return super.getModeText(mode);
 		}
@@ -524,6 +529,15 @@ public class Kernel3D
 		AlgoSpherePointRadius algo = new AlgoSpherePointRadius(cons, label, M, r);
 		return algo.getSphere();
 	}	
+	
+	/** 
+	 * Sphere with midpoint M through point P
+	 */
+	final public GeoQuadric3D Sphere(String label, GeoPoint3D M, GeoPoint3D P) {
+		AlgoSphereTwoPoints algo = new AlgoSphereTwoPoints(cons, label, M, P);
+		return algo.getSphere();
+	}
+
 
 	
 	
