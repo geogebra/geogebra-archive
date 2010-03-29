@@ -36,8 +36,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -636,7 +638,10 @@ public class WorksheetExportDialog extends JDialog {
 			}
 
 			// write html string to file
-			FileWriter fw = new FileWriter(htmlFile);
+			// UTF8 needed for eg writing out JavaScript
+			FileOutputStream fos = new FileOutputStream(htmlFile);
+			Writer fw = new OutputStreamWriter(fos, "UTF8");
+
 			fw.write(getHTML(ggbFile));
 			fw.close();
 
@@ -1038,7 +1043,7 @@ public class WorksheetExportDialog extends JDialog {
 				sb.append(geo.getLabel());
 				sb.append("() {\n");
 				sb.append("var ggbApplet = document.ggbApplet;\n");
-				sb.append(Util.toHTMLString(geo.getJavaScript()));
+				sb.append(geo.getJavaScript());
 				sb.append("\n}\n");
 				
 			}
