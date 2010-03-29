@@ -114,6 +114,9 @@ public abstract class Application implements KeyEventDispatcher {
 			CAS_JAR_NAME, 
 			"geogebra_export.jar",
 			"geogebra_javascript.jar",
+			"jlatexmath.jar", // LaTeX
+			"jlm_greek.jar", // Greek Unicode codeblock (for LaTeX texts)
+			"jlm_cyrillic.jar",  // Cyrillic Unicode codeblock (for LaTeX texts)
 			"geogebra_properties.jar" };
 	
 	public static final String LOADING_GIF = "http://www.geogebra.org/webstart/loading.gif";
