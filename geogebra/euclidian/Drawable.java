@@ -432,7 +432,7 @@ public abstract class Drawable {
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
 	
-	/*
+	
 	private static geogebra.gui.hoteqn.sHotEqn eqn;
 	
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
@@ -476,8 +476,9 @@ public abstract class Drawable {
 			
 			//Application.debug(size);
 			return dim;
-	}*/
+	}
 	
+	/*
 	private static HashMap<String,TeXIcon> equations = new HashMap<String,TeXIcon>();
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
@@ -529,7 +530,7 @@ public abstract class Drawable {
 			icon.paintIcon(jl, g2, x, y);
 			dim.setSize(icon.getIconWidth(), icon.getIconHeight());
 			return dim;
-		}
+		}*/
 
 
 	final static Rectangle drawMultiLineText(String labelDesc, int xLabel, int yLabel, Graphics2D g2) {
