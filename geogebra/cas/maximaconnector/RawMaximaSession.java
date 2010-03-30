@@ -106,7 +106,7 @@ public final class RawMaximaSession {
 
     public RawMaximaSession() {
         this.executor = Executors.newFixedThreadPool(1);
-        this.timeout = GeoGebraCAS.MAXIMA_TIMEOUT;
+        this.timeout = GeoGebraCAS.CAS_TIMEOUT;
         this.outputBuilder = new StringBuilder();
         this.errorOutputBuilder = new StringBuilder();
     }

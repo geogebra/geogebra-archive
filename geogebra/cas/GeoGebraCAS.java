@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class GeoGebraCAS {
 	
 
-	public static final int MAXIMA_TIMEOUT = 3;
+	public static final int CAS_TIMEOUT = 3; // timeout in seconds
 
 	private StringBuilder sbPolyCoeffs;
 	private Application app;

@@ -133,7 +133,7 @@ public class CASmathpiper extends CASgeneric {
 		               timer.cancel();
 		           }
 
-		       }, 3000); //Time out after three seconds.
+		       }, GeoGebraCAS.CAS_TIMEOUT * 1000); //Time out after three seconds.
 		       
 		       response = mathpiper.evaluate(exp);
 		       timer.cancel();
