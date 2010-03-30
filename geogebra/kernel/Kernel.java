@@ -5466,6 +5466,16 @@ public class Kernel {
 	}		
 	
 	/**
+	 * 
+	 */
+	final public GeoPoint [] PointsFromList(String [] labels, GeoList list) {
+		
+		AlgoPointsFromList algo = new AlgoPointsFromList(cons, labels, true, list);
+		GeoPoint [] g = algo.getPoints();
+		return g;
+	}	
+	
+	/**
 	 * all Roots of polynomial f (works only for polynomials and functions
 	 * that can be simplified to factors of polynomials, e.g. sqrt(x) to x)
 	 */

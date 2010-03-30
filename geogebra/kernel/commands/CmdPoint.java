@@ -2,6 +2,7 @@ package geogebra.kernel.commands;
 
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -31,7 +32,9 @@ public  GeoElement[] process(Command c) throws MyError {
                 GeoElement[] ret =
                     { kernel.Point(c.getLabel(), (Path) arg[0])};
                 return ret;
-            } else
+            } else if (ok[0] = (arg[0].isGeoList())) {
+                return kernel.PointsFromList(c.getLabels(), (GeoList) arg[0]);
+        } else
 				throw argErr(app, "Point", arg[0]);
 
         case 2 :
