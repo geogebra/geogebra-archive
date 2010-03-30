@@ -233,7 +233,7 @@ public class CASmaxima extends CASgeneric {
 		} catch (MaximaTimeoutException e) {
 			Application.debug("Timeout from Maxima, resetting");
 			ggbMaxima = null;
-			return null;
+			return "?";
 		}
 	}
 	
