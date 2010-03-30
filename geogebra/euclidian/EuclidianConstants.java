@@ -139,6 +139,15 @@ public interface EuclidianConstants {
 	
 	/** creates a plane through three points */
 	public static final int MODE_PLANE_THREE_POINTS = 510;
+	
+	/** creates a plane through three points */
+	public static final int MODE_PLANE_POINT_LINE = 511;
+	
+	/** creates a plane orthogonal to a line */
+	public static final int MODE_ORTHOGONAL_PLANE = 512;
+	
+	/** creates a plane parallel to another */
+	public static final int MODE_PARALLEL_PLANE = 513;
 
 	/** creates a sphere with midpoint and radius */
 	public static final int MODE_SPHERE_POINT_RADIUS = 520;

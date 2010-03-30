@@ -21,10 +21,12 @@ import geogebra.io.MyXMLHandler;
 import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoCircleTwoPoints;
+import geogebra.kernel.AlgoOrthoLinePointLine;
 import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -130,6 +132,15 @@ public class Kernel3D
 			
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
 			return "PlaneThreePoint";
+			
+		case EuclidianView3D.MODE_PLANE_POINT_LINE:
+			return "PlanePointLine";
+			
+		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
+			return "OrthogonalPlane";
+			
+		case EuclidianView3D.MODE_PARALLEL_PLANE:
+			return "ParallelPlane";
 			
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
 			return "SpherePointRadius";
@@ -510,6 +521,28 @@ public class Kernel3D
 		AlgoPlaneThroughPoint algo = new AlgoPlaneThroughPoint(cons, label, point, cs);
 		return algo.getPlane();
 	}
+	
+	
+	
+	/** 
+	 * Line named label through Point P orthogonal to line l
+	 */
+	final public GeoPlane3D OrthogonalPlane3D(
+		String label,
+		GeoPoint3D point,
+		GeoCoordSys cs) {
+		
+		return new AlgoOrthoPlanePoint(cons, label, point, cs).getPlane();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/** Axis3D label linking with (o,v) coord sys   */
 	/*

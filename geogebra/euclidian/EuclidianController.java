@@ -35,6 +35,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoLineInterface;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
@@ -3923,7 +3924,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	final protected boolean orthogonal(Hits hits) {
 		if (hits.isEmpty())
 			return false;
-
+		
 		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
 		if (!hitPoint) {
 			if (selLines() == 0) {
@@ -3943,17 +3944,22 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				kernel.OrthogonalLine(null, points[0], vectors[0]);
 				return true;
 			} else if (selLines() == 1) {
-				// fetch selected point and vector
-				GeoPoint[] points = getSelectedPoints();
-				GeoLine[] lines = getSelectedLines();
-				// create new line
-				kernel.OrthogonalLine(null, points[0], lines[0]);
+				orthogonal();
 				return true;
 			}
 		}
 		return false;
 	}
-
+	
+	protected void orthogonal() {
+		// fetch selected point and line
+		GeoPoint[] points = getSelectedPoints();
+		GeoLine[] lines = getSelectedLines();
+		// create new line
+		kernel.OrthogonalLine(null, points[0], lines[0]);
+		
+	}
+	
 	// get two points, line segment or conic
 	// and create midpoint/center for them/it
 	final protected boolean midpoint(Hits hits) {
@@ -5692,18 +5698,27 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return ret;
 	}
 
-	final protected GeoLine[] getSelectedLines() {
-		GeoLine[] lines = new GeoLine[selectedLines.size()];
+	
+
+	
+	final protected void getSelectedLinesInterface(GeoLineInterface[] lines) {
 		int i = 0;
 		Iterator it = selectedLines.iterator();
 		while (it.hasNext()) {
-			lines[i] = (GeoLine) it.next();
+			lines[i] = (GeoLineInterface) it.next();
 			i++;
 		}
 		clearSelection(selectedLines);
+	}
+	
+	
+	final protected GeoLine[] getSelectedLines() {
+		GeoLine[] lines = new GeoLine[selectedLines.size()];
+		getSelectedLinesInterface(lines);
+
 		return lines;
 	}
-
+	
 	final protected GeoSegment[] getSelectedSegments() {
 		GeoSegment[] segments = new GeoSegment[selectedSegments.size()];
 		int i = 0;
@@ -5799,7 +5814,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final protected int addSelectedLine(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLines, GeoLine.class);
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLines, GeoLineInterface.class);
 	}
 
 	final protected int addSelectedSegment(Hits hits, int max,

@@ -22,7 +22,8 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
-Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties {
+Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties,
+GeoLineInterface {
 	
 	private static final long serialVersionUID = 1L;
 	// modes

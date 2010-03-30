@@ -2,12 +2,14 @@ package geogebra3D.kernel3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoLineInterface;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 
-public abstract class GeoCoordSys1D extends GeoCoordSysAbstract implements Path {
+public abstract class GeoCoordSys1D extends GeoCoordSysAbstract implements Path,
+GeoLineInterface{
 	
 
 	public GeoCoordSys1D(Construction c){

@@ -172,7 +172,6 @@ implements GeoCoordSys{
 		
 		GgbVector v1;
 		
-		//Application.debug("getMadeCoordSys()="+getMadeCoordSys());
 		
 		switch(getMadeCoordSys()){
 		case -1: //add the origin

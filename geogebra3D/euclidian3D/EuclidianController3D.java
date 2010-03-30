@@ -9,6 +9,7 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
@@ -535,6 +536,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		return ret;	
 	}
+	
+
+	
+	final protected GeoCoordSys1D[] getSelectedLines3D() {
+		GeoCoordSys1D[] lines = new GeoCoordSys1D[selectedLines.size()];
+		getSelectedLinesInterface(lines);
+
+		return lines;
+	}
 		
 	// fetch the two selected points for line
 	protected void join(){
@@ -571,6 +581,22 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		((Kernel3D) getKernel()).Sphere(null, points[0], num);
 	}
+	
+	
+	
+	
+	
+	
+	protected void orthogonal() {
+		// fetch selected point and line
+		GeoPoint3D[] points = getSelectedPoints3D();
+		GeoCoordSys1D[] lines = getSelectedLines3D();
+		// create new line
+		((Kernel3D) getKernel()).OrthogonalPlane3D(null, points[0], lines[0]);
+		
+	}
+	
+	
 	
 	
 	///////////////////////////////////////////
@@ -757,7 +783,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
 			changedKernel = circleOrSpherePointRadius(hits);
 			break;
-		
+		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
+			changedKernel = orthogonal(hits);
+			break;		
 		
 		default:
 			changedKernel = super.switchModeForProcessMode(hits, e);
@@ -816,7 +844,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			createNewPoint(hits, true, true, true); 
 			break;
 			
-			
+		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
+			//hits = view.getHits(mouseLoc);
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+			createNewPoint(hits, false, true, true);
+			break;	
 			
 		default:
 			super.switchModeForMousePressed(e);

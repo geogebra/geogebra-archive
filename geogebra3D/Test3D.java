@@ -163,6 +163,8 @@ public class Test3D{
         //testLineAndPlane();
         //testPlaneThrough();
         
+        //testPlaneOrtho();
+        
         //testPoint(1,1,1);testSave("point3d");
         //testSegment();
         //testPolygon();testSave("polygon3d");
@@ -331,6 +333,19 @@ public class Test3D{
 		
 		
 		kernel3D.Plane3D("plane2", testPoint(0f,0f,2f),p1);
+	}
+	
+	
+	private void testPlaneOrtho(){
+
+		
+		GeoLine3D l = kernel3D.Line3D("line", 
+				testPoint(0f,0f,1f),
+				testPoint(1f,0f,1f)
+				);
+		
+		
+		kernel3D.OrthogonalPlane3D("plane", testPoint(0f,0f,2f),l);
 	}
 	
 	/** number of points = n+1 */
