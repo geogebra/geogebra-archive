@@ -336,7 +336,9 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     	if (!isDefined) {
 	    	int size = geoList.size();    	
 	    	for (int i=0; i < size; i++) {
-	    		((GeoElement) geoList.get(i)).setUndefined();	
+				GeoElement geo = (GeoElement)geoList.get(i);
+	    		if (!geo.isLabelSet())
+	    			geo.setUndefined();	
 	    	}
     	}
     }
