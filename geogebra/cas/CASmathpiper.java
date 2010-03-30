@@ -142,7 +142,7 @@ public class CASmathpiper extends CASgeneric {
 			if (response.isExceptionThrown())
 			{
 				System.err.println("evaluateMathPiper: "+exp+"\n  Exception: "+response.getExceptionMessage());
-				return null;
+				return "?";
 			}
 			result = response.getResult();
 			
