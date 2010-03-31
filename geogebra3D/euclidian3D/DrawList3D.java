@@ -168,11 +168,16 @@ public class DrawList3D {
 
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
 			d.next().drawTransp(renderer);	
-		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
-			d.next().drawTransp(renderer);	
 		
 		view3D.drawTransp(renderer);
 
+	}
+	
+	public void drawTranspClosed(Renderer renderer){
+
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
+			d.next().drawTransp(renderer);	
+		
 	}
 
 	/** draw the not hidden (solid) parts of curves and points

@@ -263,11 +263,20 @@ public class Renderer implements GLEventListener {
 	
 	private void drawTransp(){
 		
-		//TODO improve this !
-        gl.glCullFace(GL.GL_FRONT); drawList3D.drawTransp(this);//draws inside parts  
-        gl.glCullFace(GL.GL_BACK); drawList3D.drawTransp(this);//draws outside parts 
 		
+		gl.glDisable(GL.GL_CULL_FACE);
+		drawList3D.drawTransp(this);
+		//drawList3D.drawTranspClosed(this);
 
+		
+		//TODO improve this !
+		
+		gl.glEnable(GL.GL_CULL_FACE);
+		gl.glCullFace(GL.GL_FRONT); drawList3D.drawTranspClosed(this);//draws inside parts  
+		gl.glCullFace(GL.GL_BACK); drawList3D.drawTranspClosed(this);//draws outside parts 
+		
+		
+		
 	}
 	
 	
@@ -377,7 +386,6 @@ public class Renderer implements GLEventListener {
         
         //drawing transparents parts
         gl.glDepthMask(false);
-        gl.glEnable(GL.GL_CULL_FACE);
         drawTransp();      
         gl.glDepthMask(true);
 
@@ -411,7 +419,6 @@ public class Renderer implements GLEventListener {
         //TODO improve it !
         gl.glDepthMask(false);
         gl.glEnable(GL.GL_BLEND);
-        gl.glEnable(GL.GL_CULL_FACE);
         drawTransp();             
         gl.glDepthMask(true);
 
@@ -429,10 +436,8 @@ public class Renderer implements GLEventListener {
         
         //re-drawing transparents parts for better transparent effect
         //TODO improve it !
-        gl.glDisable(GL.GL_CULL_FACE);
         gl.glDepthMask(false);
         gl.glEnable(GL.GL_BLEND);
-        //gl.glEnable(GL.GL_CULL_FACE);
         drawTransp();           
         gl.glDepthMask(true);
 
@@ -603,6 +608,7 @@ public class Renderer implements GLEventListener {
      */
     public void setColor(Color c, double alpha){
 
+    	
     	color = c;
     	this.alpha = alpha;
  
@@ -611,14 +617,7 @@ public class Renderer implements GLEventListener {
     							((float) c.getBlue())/256f,
     							(float) alpha);
     	
-    	/*
-    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, 
-    			new float[] {((float) c.getRed())/256f,
-    							((float) c.getGreen())/256f,
-    							((float) c.getBlue())/256f,
-    							(float) alpha},
-    			0);
-    	*/
+    	
     	
     }
     
@@ -1552,11 +1551,7 @@ public class Renderer implements GLEventListener {
     	if (colored)
     		textRenderer.setColor(textColor);
     	
-        /*
-    	Rectangle2D bounds = textRenderer.getBounds(s);
-        float w = (float) bounds.getWidth();
-        float h = (float) bounds.getHeight();
-        */
+     
         float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR/((float) view3D.getScale());
     	
     	
@@ -1572,6 +1567,7 @@ public class Renderer implements GLEventListener {
     	
         resetMatrix(); //initMatrix(m_view3D.getUndoRotationMatrix());
     	resetMatrix(); //initMatrix();
+    	
     }
     
     
