@@ -3071,7 +3071,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	final protected boolean createNewPoint(Hits hits,
 			boolean onPathPossible, boolean intersectPossible, boolean doSingleHighlighting) {
 
-		return createNewPoint(hits,onPathPossible, false, intersectPossible,  doSingleHighlighting);		
+		return createNewPoint(hits,onPathPossible, true, intersectPossible,  doSingleHighlighting);		
 	}
 
 	// create new point at current position if hits is null
@@ -5794,6 +5794,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}		
 
 	protected int handleAddSelected(Hits hits, int max, boolean addMore, ArrayList list, Class geoClass) {		
+		//Application.debug("selectionPreview="+selectionPreview+"\nhits:"+hits.toString());
 		if (selectionPreview)
 			return addToHighlightedList(list, hits.getHits(geoClass, handleAddSelectedArrayList) , max);
 		else
@@ -5856,7 +5857,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return selectedGeos.size();
 	}
 
-	final int selPoints() {
+	protected final int selPoints() {
 		return selectedPoints.size();
 	}
 
@@ -5872,7 +5873,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return selectedPolygons.size();
 	}
 
-	final int selLines() {
+	protected final int selLines() {
 		return selectedLines.size();
 	}
 

@@ -16,7 +16,7 @@ extends GeoConic implements GeoElement3DInterface{
 
 	
 	/** 2D coord sys where the polygon exists */
-	private GeoCoordSys2D coordSys; 
+	private GeoCoordSys2DAbstract coordSys; 
 
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
@@ -61,7 +61,7 @@ extends GeoConic implements GeoElement3DInterface{
 	 */
 	 public void setCoordSys(GeoElement cs){
 		 		 
-		 this.coordSys = (GeoCoordSys2D) cs;
+		 this.coordSys = (GeoCoordSys2DAbstract) cs;
 
 	 }
 

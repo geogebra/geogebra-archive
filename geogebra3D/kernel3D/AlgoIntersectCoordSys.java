@@ -133,10 +133,10 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
     		if (cs2 instanceof GeoCoordSys1D)
     			compute1D1D((GeoCoordSys1D) cs1,(GeoCoordSys1D) cs2);
     		else if (cs2 instanceof GeoPlane3D)
-    			computeLinePlane((GeoCoordSys1D) cs1, (GeoCoordSys2D) cs2);
+    			computeLinePlane((GeoCoordSys1D) cs1, (GeoCoordSys2DAbstract) cs2);
     	}else if (cs1 instanceof GeoPlane3D){
     		if (cs2 instanceof GeoCoordSys1D)
-    			computeLinePlane((GeoCoordSys1D) cs2, (GeoCoordSys2D) cs1);
+    			computeLinePlane((GeoCoordSys1D) cs2, (GeoCoordSys2DAbstract) cs1);
     	}
      	
 
@@ -148,7 +148,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param line the line
      * @param plane the plane
      */
-    private void computeLinePlane(GeoCoordSys1D line, GeoCoordSys2D plane){
+    private void computeLinePlane(GeoCoordSys1D line, GeoCoordSys2DAbstract plane){
     	GgbVector[] project = GgbMatrixUtil.intersectLinePlane(line.getMatrix(),plane.getMatrix4x4());
     	
     	//check if the point is in the line (segment or half-line)

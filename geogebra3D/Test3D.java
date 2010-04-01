@@ -297,13 +297,13 @@ public class Test3D{
 		
 		
 		GeoPoint3D[] points = new GeoPoint3D[2];
-		points[0] = testPoint(1f,-1f,-0.5f);
-		points[1] = testPoint(1f,1f,-0.5f);	
+		points[0] = testPoint(1f,-1f,0.5f);
+		points[1] = testPoint(1f,1f,0.5f);	
 
 		
 		kernel3D.Line3D("line", points[0], points[1]);
 		
-		
+		testPoint(-1f,0f,0.5f);	
 		
 	}
 	

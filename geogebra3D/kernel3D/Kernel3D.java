@@ -581,7 +581,7 @@ public class Kernel3D
 	
 	
 	/** 3D element on coord sys 2D to 2D element    */	
-	final public GeoElement From3Dto2D(String label, GeoElement3D geo3D, GeoCoordSys2D cs){
+	final public GeoElement From3Dto2D(String label, GeoElement3D geo3D, GeoCoordSys2DAbstract cs){
 		Algo3Dto2D algo = new Algo3Dto2D(cons, label, geo3D, cs);
 		return algo.getGeo();
 	}
@@ -604,7 +604,7 @@ public class Kernel3D
 		double d,
 		double e,
 		double f,
-		GeoCoordSys2D cs) {
+		GeoCoordSys2DAbstract cs) {
 		double[] coeffs = { a, b, c, d, e, f };
 		GeoConic3D conic = new GeoConic3D(cons, label, coeffs, cs);
 		return conic;

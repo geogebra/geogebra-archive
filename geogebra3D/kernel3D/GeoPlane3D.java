@@ -4,7 +4,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 
-public class GeoPlane3D extends GeoCoordSys2D {
+public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	
 	double xmin, xmax, ymin, ymax; //for drawing
 	

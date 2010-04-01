@@ -29,7 +29,7 @@ public class AlgoPolygon3D extends AlgoPolygon {
 	 * @param polyhedron polyhedron (when segment is part of)
 	 */    
 	public AlgoPolygon3D(Construction cons, String[] label, 
-			GeoCoordSys2D cs, GeoPoint[] points, GeoElement polyhedron) {
+			GeoCoordSys2DAbstract cs, GeoPoint[] points, GeoElement polyhedron) {
 		super(cons, label, points, null,cs,true, polyhedron);
 
 	}
@@ -68,7 +68,7 @@ public class AlgoPolygon3D extends AlgoPolygon {
      * @param createSegments says if the polygon has to creates its edges (3D only)
      */
     protected void createPolygon(boolean createSegments){
-    	poly = new GeoPolygon3D(cons, points, (GeoCoordSys2D) cs2D, createSegments);
+    	poly = new GeoPolygon3D(cons, points, (GeoCoordSys2DAbstract) cs2D, createSegments);
     	if (polyhedron!=null)
     		((GeoPolygon3D) poly).setIsPartOfClosedSurface(true);
     }

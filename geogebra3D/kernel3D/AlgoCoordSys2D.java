@@ -19,7 +19,7 @@ import geogebra.main.Application;
 public class AlgoCoordSys2D extends AlgoElement3D {
 
 	/** the 2D coord sys created */
-	protected GeoCoordSys2D cs;
+	protected GeoCoordSys2DAbstract cs;
 	
 	
 	/** 3D points */
@@ -107,7 +107,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 * @param c construction
 	 */
 	protected void createCoordSys(Construction c){
-		cs = new GeoCoordSys2D(c);
+		cs = new GeoCoordSys2DAbstract(c);
 		
 	}
 	
@@ -141,7 +141,7 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 * return the cs
 	 * @return the cs
 	 */
-	public GeoCoordSys2D getCoordSys() {		
+	public GeoCoordSys2DAbstract getCoordSys() {		
 		return cs;
 	}
 

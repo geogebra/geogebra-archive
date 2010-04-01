@@ -21,11 +21,11 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoPolygon3D 
-extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys {
+extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys2D {
 
 	
 	/** 2D coord sys where the polygon exists */
-	private GeoCoordSys2D coordSys; 
+	private GeoCoordSys2DAbstract coordSys; 
 	
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
@@ -50,7 +50,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 	 * @param cs2D 2D coord sys where the polygon is drawn
 	 * @param createSegments says if the polygon has to creates its edges
 	 */
-	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GeoCoordSys2D cs2D, boolean createSegments) {
+	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GeoCoordSys2DAbstract cs2D, boolean createSegments) {
 		super(c, points, cs2D, createSegments);
 
 		this.createSegments = createSegments;
@@ -208,7 +208,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 		 
 		 setDefined();
 		 
-		 coordSys = (GeoCoordSys2D) cs;
+		 coordSys = (GeoCoordSys2DAbstract) cs;
 
 		 /*
 		 Application.debug("coordSys ="+coordSys);
@@ -260,7 +260,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 	/** return the 2D coordinate system
 	 * @return the 2D coordinate system
 	 */
-	public GeoCoordSys2D getCoordSys(){
+	public GeoCoordSys2DAbstract getCoordSys(){
 		return coordSys;
 	}
 	

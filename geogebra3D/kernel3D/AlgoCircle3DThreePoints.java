@@ -15,7 +15,7 @@ import geogebra.kernel.GeoPointInterface;
 public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 
 	/** coord sys defined by the three points where the 3D circle lies */
-	private GeoCoordSys2D coordSys;
+	private GeoCoordSys2DAbstract coordSys;
 	
 	/** 2D projection of the 3D points in the coord sys */
 	private GeoPoint[] points2D;
