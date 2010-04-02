@@ -22,10 +22,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * Finds all real roots of a polynomial.
- * TODO: extend for rational functions
+ * Converts a list into a Point (or Points)
+ * adapted from AlgoRootsPolynomial
  * 
- * @author Markus Hohenwarter
+ * @author Michael
  */
 public class AlgoPointsFromList extends AlgoElement {
 
@@ -55,13 +55,13 @@ public class AlgoPointsFromList extends AlgoElement {
 
 
 		this.labels = labels;
-		this.setLabels = setLabels; // should lables be used?
+		this.setLabels = setLabels; // should labels be used?
 
 
 				//  make sure root points is not null
 		int number = labels == null ? 1 : Math.max(1, labels.length);
 		points = new GeoPoint[0];
-		initRootPoints(number);
+		initPoints(number);
 		initLabels = true;  
 
 		setInputOutput(); // for AlgoElement    
@@ -87,7 +87,7 @@ public class AlgoPointsFromList extends AlgoElement {
 		// make sure that there are at least as many
 		// points as labels
 		if (labels != null)
-			initRootPoints(labels.length);
+			initPoints(labels.length);
 
 		update();
 	}
@@ -126,6 +126,7 @@ public class AlgoPointsFromList extends AlgoElement {
 		double[] x = new double[n];
 		double[] y = new double[n];
 		
+		// handle Point[ {1,2} ] case
 		if (list.size() == 2) {
 			GeoElement arg0, arg1;	
 			if ((arg0 = list.get(0)).isGeoNumeric() && (arg1 = list.get(1)).isGeoNumeric()) {
@@ -135,6 +136,7 @@ public class AlgoPointsFromList extends AlgoElement {
 			}
 		} else {
 			
+			// handle Point[ { {1,2}, {3,4} } ] case
 			for (int i = 0 ; i < n ; i ++) {
 				GeoElement geo = list.get(i);
 				if (geo.isGeoList()) {
@@ -158,11 +160,12 @@ public class AlgoPointsFromList extends AlgoElement {
 
 	// roots array and number of roots
 	final void setPoints(double[] x, double[] y, int number) {
-		initRootPoints(number);
+		initPoints(number);
 
 		// now set the new values of the roots
 		for (int i = 0; i < number; i++) {
 			points[i].setCoords(x[i], y[i], 1.0);
+			points[i].updateRepaint();
 		}
 
 		// all other roots are undefined
@@ -214,7 +217,7 @@ public class AlgoPointsFromList extends AlgoElement {
 		super.remove();
 	}
 
-	private void initRootPoints(int number) {
+	private void initPoints(int number) {
 		// make sure that there are enough points   
 		if (points.length < number) {
 			GeoPoint[] temp = new GeoPoint[number];
