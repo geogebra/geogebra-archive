@@ -1861,7 +1861,7 @@ public class DefaultGuiManager implements GuiManager {
 			if (started) {
 				sb.append(thisLine);
 
-				if (thisLine.indexOf("</applet>") > -1) break;
+				if (thisLine.indexOf("</applet>") > -1 || thisLine.indexOf("</APPLET>") > -1) break;
 			}
 
 
@@ -1870,9 +1870,12 @@ public class DefaultGuiManager implements GuiManager {
 
 		String fileArgument = sb.toString();
 
-		String matchString = "name=\"ggbBase64\" value=\"";
+		final String matchString = "name=\"ggbBase64\" value=\"";
+		final String matchString2 = "NAME=\"ggbBase64\" VALUE=\"";
 
 		int start = fileArgument.indexOf(matchString);
+		if (start == -1) start = fileArgument.indexOf(matchString2);
+		
 		// match "/> or " /> or "> etc
 		int end   = fileArgument.indexOf(">");
 		while (end > start && fileArgument.charAt(end) != '\"') end--;

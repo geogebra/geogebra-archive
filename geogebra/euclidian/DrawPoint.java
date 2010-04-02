@@ -312,6 +312,8 @@ public final class DrawPoint extends Drawable {
     }
 
     final public void draw(Graphics2D g2) {   
+    	
+    	Application.printStacktrace("");
         if (isVisible) { 
         	if (geo.doHighlighting()) {           
     		 	g2.setPaint(geo.getSelColor());		
