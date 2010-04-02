@@ -56,6 +56,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -77,6 +79,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.parser.ParserDelegator;
 
 
 /**
@@ -1823,7 +1829,7 @@ public class DefaultGuiManager implements GuiManager {
 				
 				// try base64
 				URL url = new URL(urlString);
-				success = loadBase64fromHTML(url.openStream(), urlString);
+				success = loadBase64fromHTML(url.openStream());
 				
 				// try ggb
 				if (success == false) 
@@ -1842,13 +1848,51 @@ public class DefaultGuiManager implements GuiManager {
 		return success;
 	}
 	
-	public boolean loadBase64fromHTML(InputStream fis, String source) throws IOException {
+	static String base64Str;
+	
+	public boolean loadBase64fromHTML(InputStream fis) throws IOException {
 
-		BufferedReader myInput = new BufferedReader
-		(new InputStreamReader(fis));
+		BufferedReader myInput = new BufferedReader(new InputStreamReader(fis));
 
+		HTMLEditorKit.ParserCallback callback = 
+			new HTMLEditorKit.ParserCallback () {
+			
+			boolean base64Found = false;
+			
+			public void handleSimpleTag(HTML.Tag tag, 
+                    MutableAttributeSet attrSet, int pos) {
+				if (!base64Found && tag == HTML.Tag.PARAM) {
+					if (((String)attrSet.getAttribute(HTML.Attribute.NAME)).toLowerCase(Locale.US).equals("ggbbase64")) {
+						//Application.debug(""+attrSet.getAttribute(HTML.Attribute.VALUE));
+						
+						//Application.debug("base64 found using HTML parser");
+						
+						base64Found = true;
+						base64Str = (String)attrSet.getAttribute(HTML.Attribute.VALUE);
+					}
+				} 
+			}
+		};
+		
+		 Reader reader = new InputStreamReader (fis);
+		new ParserDelegator().parse(reader, callback, true);
+		
+		if (base64Str != null) {
+			// decode Base64
+			byte[] zipFile = geogebra.util.Base64.decode(base64Str);
+			base64Str = null;
+			
+			// load file
+			return app.loadXML(zipFile);   
+		}
+		
+		return false;
+
+		
+/* old code, manual parsing. Not robust
+		
+	
 		StringBuilder sb = new StringBuilder();
-
 		String thisLine;
 
 		boolean started = false;
@@ -1901,7 +1945,7 @@ public class DefaultGuiManager implements GuiManager {
 				.substring(matchString.length() + start, end));
 
 		// load file
-		return app.loadXML(zipFile);   
+		return app.loadXML(zipFile);   */
 
 	}
     
@@ -1999,7 +2043,7 @@ public class DefaultGuiManager implements GuiManager {
 		try {
 			FileInputStream fis = null;
 			fis = new FileInputStream(file);
-			success = loadBase64fromHTML(fis, file.toString());		
+			success = loadBase64fromHTML(fis);		
 			
 		} catch (Exception e) {
 			app.setDefaultCursor();
