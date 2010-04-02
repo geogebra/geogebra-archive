@@ -165,7 +165,6 @@ public class AlgoPointsFromList extends AlgoElement {
 		// now set the new values of the roots
 		for (int i = 0; i < number; i++) {
 			points[i].setCoords(x[i], y[i], 1.0);
-			points[i].updateRepaint();
 		}
 
 		// all other roots are undefined
