@@ -122,21 +122,34 @@ public class AlgoPointsFromList extends AlgoElement {
 			return;
 		}
 		
+		int length = -1;
 		double[] x = new double[n];
 		double[] y = new double[n];
 		
-		for (int i = 0 ; i < n ; i ++) {
-			GeoElement geo = list.get(i);
-			if (geo.isGeoList()) {
-				GeoList geoList = ((GeoList)geo);
-				GeoElement geoX = geoList.get(0);
-				GeoElement geoY = geoList.get(1);
-				x[i] = ((GeoNumeric)geoX).getDouble();
-				y[i] = ((GeoNumeric)geoY).getDouble();
+		if (list.size() == 2) {
+			GeoElement arg0, arg1;	
+			if ((arg0 = list.get(0)).isGeoNumeric() && (arg1 = list.get(1)).isGeoNumeric()) {
+				x[0] = ((GeoNumeric)arg0).getDouble();
+				y[0] = ((GeoNumeric)arg1).getDouble();
+				length = 1;
 			}
+		} else {
+			
+			for (int i = 0 ; i < n ; i ++) {
+				GeoElement geo = list.get(i);
+				if (geo.isGeoList()) {
+					GeoList geoList = ((GeoList)geo);
+					GeoElement geoX = geoList.get(0);
+					GeoElement geoY = geoList.get(1);
+					x[i] = ((GeoNumeric)geoX).getDouble();
+					y[i] = ((GeoNumeric)geoY).getDouble();
+				}
+			}
+			length = x.length;
+			
 		}
 
-		setPoints(x, y, x.length);
+		if (length > 0) setPoints(x, y, length);
 		
 	}
 
