@@ -93,7 +93,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		btSub.addActionListener(this);
 
 		btEval = new JButton("=");
-		btEval.setActionCommand("Eval");
+		btEval.setActionCommand("Evaluate");
 		btEval.addActionListener(this);
 
 		btCancel = new JButton(app.getPlain("Cancel"));
@@ -143,7 +143,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		
 		// substitute command
 		String subCmd = "Substitute[" + evalText + "," + fromExp + ", " +  toExp + "]"; 
-		if (actionCommand.equals("Eval")) {
+		if (actionCommand.equals("Evaluate")) {
 			subCmd = "Simplify[" + subCmd + "]"; 
 		}
 			
@@ -151,6 +151,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 			CASTableCellValue currCell = table.getCASTableCellValue(editRow);
 			String result = casView.getCAS().evaluateGeoGebraCAS(subCmd, casView.isUseGeoGebraVariableValues());
 			currCell.setOutput(result);
+			currCell.setEvalCommand("Substitute");
 			table.startEditingRow(editRow + 1);
 			return true;
 		} catch (Throwable e) {

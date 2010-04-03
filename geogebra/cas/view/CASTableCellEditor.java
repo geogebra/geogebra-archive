@@ -182,7 +182,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 				// insert output of previous row (not in parentheses)
 				if (editingRow > 0 && text.length() == 0) {
 					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
-					inputArea.setText(selCellValue.getOutput() + " ");
+					inputArea.setText(selCellValue.getLocalizedOutput() + " ");
 				}
 				break;
 				
@@ -190,7 +190,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 				// insert output of previous row in parentheses		
 				if (editingRow > 0 && text.length() == 0) {
 					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
-					String prevOutput = selCellValue.getOutput();
+					String prevOutput = selCellValue.getLocalizedOutput();
 					inputArea.setText("(" +  prevOutput);
 				}
 				break;		
@@ -199,7 +199,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 				// insert input of previous row
 				if (editingRow > 0 && text.length() == 0) {
 					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
-					inputArea.setText(selCellValue.getInput());
+					inputArea.setText(selCellValue.getLocalizedInput());
 					e.consume();
 				}
 				break;

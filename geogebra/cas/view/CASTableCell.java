@@ -45,31 +45,27 @@ public abstract class CASTableCell extends JPanel{
 	}
 	
 	public void setValue(CASTableCellValue cellValue) {
-		inputPanel.setInput(cellValue.getInput());
+		// set input panel
+		String input = cellValue.getLocalizedInput();
+		inputPanel.setInput(input);
 		
-		// output panel
-		if (!cellValue.showOutput()) {
-			outputPanel.setVisible(false);
-		}
-		else {
-			outputPanel.setVisible(true);
+		// set output panel
+		boolean showOutput = cellValue.showOutput();
+		outputPanel.setVisible(showOutput);
+		if (showOutput) {
+			// show eval command in output cell
+			String cmd = app.getCommand(cellValue.getEvalCommand());
+			if (input.startsWith(cmd)) {
+				// don't show command if it is already at beginning of input
+				cmd = "";
+			}
 			
-			// show command in output cell
-			String origCmd = cellValue.getEvalCommand();
-			
-			String cmd;
-//			if ("Simplify".equals(origCmd)) {
-//				// don't show simplify
-//				cmd = "";
-//			} else {
-				cmd = app.getCommand(origCmd);
-				if (cellValue.getInput().startsWith(cmd)) {
-					// don't show command if it is already at beginning of input
-					cmd = "";
-				}
-//			}
-			
-			outputPanel.setOutput(cellValue.getOutput(), cellValue.getLaTeXOutput(), cmd, cellValue.isOutputError());	
+			outputPanel.setOutput(
+					cellValue.getLocalizedOutput(), 
+					cellValue.getLaTeXOutput(), 
+					cmd, 
+					cellValue.isError()
+				);
 		}	
 	}
 

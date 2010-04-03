@@ -1529,26 +1529,33 @@ public abstract class Application implements KeyEventDispatcher {
 			return;
 		rbcommandOld = rbcommand;
 
+		// translation table for all command names in command.properties
 		if (translateCommandTable == null) 
 			translateCommandTable = new Hashtable();
+
+		// command dictionary for all public command names available in
+		// GeoGebra's input field
 		if (commandDict == null) 
 			commandDict = new LowerCaseDictionary();		
 		translateCommandTable.clear();
 		commandDict.clear();
 
-		// Enumeration e = rbcommand.getKeys();
-		Iterator it = kernel.getAlgebraProcessor().getCmdNameIterator();
-		while (it.hasNext()) {
-			String internal = (String) it.next();
+		Enumeration e = rbcommand.getKeys();
+		Set publicCommandNames = kernel.getAlgebraProcessor().getPublicCommandSet();
+		while (e.hasMoreElements()) {
+			String internal = (String) e.nextElement();
 			// Application.debug(internal);
-			if (!internal.endsWith("Syntax") && !internal.equals("Command")) {
+			if (!internal.endsWith("Syntax") && !internal.endsWith("SyntaxCAS") && !internal.equals("Command")) {
 				String local = rbcommand.getString((String) internal);
 				if (local != null) {
 					local = local.trim();
 					// case is ignored in translating local command names to
 					// internal names!
 					translateCommandTable.put(local.toLowerCase(), internal);
-					commandDict.addEntry(local);
+					
+					// only add public commands to the command dictionary
+					if (publicCommandNames.contains(internal))
+						commandDict.addEntry(local);
 				}
 			}
 		}

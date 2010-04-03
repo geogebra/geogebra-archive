@@ -7,6 +7,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -34,10 +35,11 @@ import javax.swing.event.ListSelectionListener;
  * 
  * @author Markus Hohenwarter, Quan Yuan
  */
-public class CASView extends JComponent implements CasManager, FocusListener, View {
-	
+public class CASView extends JComponent implements CasManager, FocusListener,
+		View {
+
 	private Kernel kernel;
-	
+
 	private boolean useGeoGebraVariableValues = true;
 
 	private CASTable consoleTable;
@@ -46,25 +48,25 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	private GeoGebraCAS cas;
 	private Application app;
 	private JPanel btPanel;
-	private HashMap<String,CASTableCellValue> assignmentCellMap;
+	private HashMap<String, CASTableCellValue> assignmentCellMap;
 	private HashSet<String> ignoreUpdateVars;
-	
+
 	public CASView(Application app) {
 		kernel = app.getKernel();
 		this.app = app;
-		
+
 		// init CAS
 		getCAS();
 
 		// CAS input/output cells
 		createCASTable();
-		
+
 		// map for assignments to cell
-		assignmentCellMap = new HashMap<String,CASTableCellValue>();
+		assignmentCellMap = new HashMap<String, CASTableCellValue>();
 		ignoreUpdateVars = new HashSet<String>();
-		
+
 		// row header
-		final JList rowHeader = new RowHeader(consoleTable);		
+		final JList rowHeader = new RowHeader(consoleTable);
 
 		// init the scroll panel
 		JScrollPane scrollPane = new JScrollPane(
@@ -74,113 +76,114 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		scrollPane.setViewportView(consoleTable);
 		scrollPane.setBackground(Color.white);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
-						
-		// put the scrollpanel in 
-		setLayout(new BorderLayout());	
+
+		// put the scrollpanel in
+		setLayout(new BorderLayout());
 		add(scrollPane, BorderLayout.CENTER);
 		this.setBackground(Color.white);
-						
+
 		// tell rowheader about selection updates in table
 		consoleTable.getSelectionModel().addListSelectionListener(
 				new ListSelectionListener() {
 					public void valueChanged(ListSelectionEvent e) {
-						if (e.getValueIsAdjusting()) return;
+						if (e.getValueIsAdjusting())
+							return;
 
-						// table slection changed -> rowheader table selection			
-						int [] selRows = consoleTable.getSelectedRows();
+						// table slection changed -> rowheader table selection
+						int[] selRows = consoleTable.getSelectedRows();
 						if (selRows.length > 0)
 							rowHeader.setSelectedIndices(selRows);
-					}					
+					}
 				});
-		
+
 		// listen to clicks below last row in consoleTable: create new row
 		scrollPane.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent e) {
-					int clickedRow = consoleTable.rowAtPoint(e.getPoint());
-					boolean undoNeeded = false;
-					
-					if (clickedRow < 0) {
-						// clicked outside of console table
-						int rows = consoleTable.getRowCount();
-						if (rows == 0) {
-							// insert first row
+			public void mouseClicked(MouseEvent e) {
+				int clickedRow = consoleTable.rowAtPoint(e.getPoint());
+				boolean undoNeeded = false;
+
+				if (clickedRow < 0) {
+					// clicked outside of console table
+					int rows = consoleTable.getRowCount();
+					if (rows == 0) {
+						// insert first row
+						consoleTable.insertRow(null, true);
+						undoNeeded = true;
+					} else {
+						CASTableCellValue cellValue = consoleTable
+								.getCASTableCellValue(rows - 1);
+						if (cellValue.isEmpty()) {
+							consoleTable.startEditingRow(rows - 1);
+						} else {
 							consoleTable.insertRow(null, true);
 							undoNeeded = true;
-						} 
-						else {
-							CASTableCellValue cellValue = consoleTable.getCASTableCellValue(rows-1);
-							if (cellValue.isEmpty()) {
-								consoleTable.startEditingRow(rows-1);
-							} else {
-								consoleTable.insertRow(null, true);
-								undoNeeded = true;
-							}
 						}
 					}
-					
-					if (undoNeeded) {
-						// store undo info
-						getApp().storeUndoInfo();
-					}
 				}
-		
+
+				if (undoNeeded) {
+					// store undo info
+					getApp().storeUndoInfo();
+				}
 			}
-		);
-		
+
+		});
+
 		// input handler
 		casInputHandler = new CASInputHandler(this);
-		
+
 		// Ulven 01.03.09: excange line 90-97 with:
 		// BtnPanel which sets up all the button.
-		//add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
+		// add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
 		createButtonPanel();
-	
-		
-		addFocusListener(this);		
-		
+
+		addFocusListener(this);
+
 		// TODO: remove
 		attachView();
-	}		
-	
-	/** 
-	 * Process currently selected cell using the given command and parameters, e.g.
-	 *  "Integral", [ "x" ]
-	 */	
-	public void processInput(String ggbcmd, String [] params) {
+	}
+
+	/**
+	 * Process currently selected cell using the given command and parameters,
+	 * e.g. "Integral", [ "x" ]
+	 */
+	public void processInput(String ggbcmd, String[] params) {
 		casInputHandler.processCurrentRow(ggbcmd, params);
 	}
-	
+
 	private void createButtonPanel() {
 		if (btPanel != null)
 			remove(btPanel);
-		btPanel = initButtons();		
-		add(btPanel, BorderLayout.NORTH);	
+		btPanel = initButtons();
+		add(btPanel, BorderLayout.NORTH);
 	}
-	
+
 	public void updateFonts() {
-		if (app.getFontSize() == getFont().getSize()) return;
-		
-		setFont(app.getPlainFont());		
-		createButtonPanel();		
+		if (app.getFontSize() == getFont().getSize())
+			return;
+
+		setFont(app.getPlainFont());
+		createButtonPanel();
 		consoleTable.setFont(getFont());
 		validate();
 	}
-	
+
 	public Font getBoldFont() {
 		return app.getBoldFont();
 	}
-	
+
 	private void createCASTable() {
 		consoleTable = new CASTable(this);
-		
+
 		CASTableCellController inputListener = new CASTableCellController(this);
 		consoleTable.getEditor().getInputArea().addKeyListener(inputListener);
-		//consoleTable.addKeyListener(inputListener);
-			
-		//consoleTable.addKeyListener(new ConsoleTableKeyListener());
-		
-		TableCellMouseListener tableCellMouseListener = new TableCellMouseListener(consoleTable);
-		consoleTable.addMouseListener(tableCellMouseListener);		
+		// consoleTable.addKeyListener(inputListener);
+
+		// consoleTable.addKeyListener(new ConsoleTableKeyListener());
+
+		TableCellMouseListener tableCellMouseListener = new TableCellMouseListener(
+				consoleTable);
+		consoleTable.addMouseListener(tableCellMouseListener);
 	}
 
 	public boolean getUseGeoGebraVariableValues() {
@@ -191,7 +194,7 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		if (cas == null) {
 			cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();
 		}
-		
+
 		return cas;
 	}
 
@@ -199,34 +202,41 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		return consoleTable;
 	}
 
-//	/**
-//	 * returns settings in XML format
-//	 */
-//	public String getGUIXML() {
-//		StringBuilder sb = new StringBuilder();
-//		sb.append("<casView>\n");
-//
-//		int width = getWidth(); // getPreferredSize().width;
-//		int height = getHeight(); // getPreferredSize().height;
-//
-//		// if (width > MIN_WIDTH && height > MIN_HEIGHT)
-//		{
-//			sb.append("\t<size ");
-//			sb.append(" width=\"");
-//			sb.append(width);
-//			sb.append("\"");
-//			sb.append(" height=\"");
-//			sb.append(height);
-//			sb.append("\"");
-//			sb.append("/>\n");
-//		}
-//
-//		sb.append("</casView>\n");
-//		return sb.toString();
-//	}
+	// /**
+	// * returns settings in XML format
+	// */
+	// public String getGUIXML() {
+	// StringBuilder sb = new StringBuilder();
+	// sb.append("<casView>\n");
+	//
+	// int width = getWidth(); // getPreferredSize().width;
+	// int height = getHeight(); // getPreferredSize().height;
+	//
+	// // if (width > MIN_WIDTH && height > MIN_HEIGHT)
+	// {
+	// sb.append("\t<size ");
+	// sb.append(" width=\"");
+	// sb.append(width);
+	// sb.append("\"");
+	// sb.append(" height=\"");
+	// sb.append(height);
+	// sb.append("\"");
+	// sb.append("/>\n");
+	// }
+	//
+	// sb.append("</casView>\n");
+	// return sb.toString();
+	// }
 
 	public void getSessionXML(StringBuilder sb) {
-	
+		// change kernel settings temporarily
+		int oldCoordStlye = kernel.getCoordStyle();
+		int oldPrintForm = kernel.getCASPrintForm();
+        boolean oldValue = kernel.isTranslateCommandName();
+		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);	
+		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+        kernel.setTranslateCommandName(false); 
+
 		sb.append("<casSession>\n");
 
 		// get the number of pairs in the view
@@ -240,23 +250,28 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		}
 
 		sb.append("</casSession>\n");
+		
+		// set back kernel
+		kernel.setCoordStyle(oldCoordStlye);
+		kernel.setCASPrintForm(oldPrintForm);
+		kernel.setTranslateCommandName(oldValue);      
 	}
-	
+
 	/**
-	 * Returns the output string in the n-th row of this CAS view. 
+	 * Returns the output string in the n-th row of this CAS view.
 	 */
 	public String getRowOutputValue(int n) {
-		return consoleTable.getCASTableCellValue(n).getOutput();
+		return consoleTable.getCASTableCellValue(n).getLocalizedOutput();
 	}
-	
+
 	/**
-	 * Returns the input string in the n-th row of this CAS view. 
-	 * If the n-th cell has no output string, the input string of this cell is returned.
+	 * Returns the input string in the n-th row of this CAS view. If the n-th
+	 * cell has no output string, the input string of this cell is returned.
 	 */
 	public String getRowInputValue(int n) {
-		return consoleTable.getCASTableCellValue(n).getInput();
+		return consoleTable.getCASTableCellValue(n).getLocalizedInput();
 	}
-	
+
 	/**
 	 * Returns the number of rows of this CAS view.
 	 */
@@ -267,35 +282,31 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	public JComponent getCASViewComponent() {
 		return this;
 	}
-	
 
-	//Ulven 01.03.09: Drop this, do it in components.BtnPanel
-	private JPanel initButtons() {	
+	// Ulven 01.03.09: Drop this, do it in components.BtnPanel
+	private JPanel initButtons() {
 
-		final String [][][] menuStrings = {
-			{  
-				// command for apply, visible text, tooltip text
-				{"Eval", 	"=", 		app.getPlain("Evaluate") }, 
-				{"Numeric", 	"\u2248", 	app.getPlain("Approximate")}, 
-				{"Hold", 		"\u2713", 	app.getPlain("CheckInput")}
-			},		
-			{  
-				{"Expand", 		app.getCommand("Expand")}, 
-				{"Factor", 		app.getCommand("Factor")},
-			//	{"Simplify", 	app.getCommand("Simplify")},
-				{"SubstituteDialog", 	app.getPlain("Substitute")},
-				{"Solve", 		app.getPlain("Solve")}, 
-				{"Derivative", 	"d/dx", 	 app.getCommand("Derivative")}, 
-				{"Integral", 	"\u222b dx", app.getCommand("Integral")}	
-			}
-		};
-		
+		final String[][][] menuStrings = {
+				{
+						// command for apply, visible text, tooltip text
+						{ "Evaluate", "=", app.getCommand("Evaluate") },
+						{ "Numeric", "\u2248", app.getCommand("Numeric") },
+						{ "CheckInput", "\u2713", app.getPlain("CheckInput") } },
+				{
+						{ "Expand", app.getCommand("Expand") },
+						{ "Factor", app.getCommand("Factor") },
+						// {"Simplify", app.getCommand("Simplify")},
+						{ "SubstituteDialog", app.getCommand("Substitute") },
+						{ "Solve", app.getCommand("Solve") },
+						{ "Derivative", "d/dx", app.getCommand("Derivative") },
+						{ "Integral", "\u222b dx", app.getCommand("Integral") } } };
+
 		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		final JComboBox [] menus = new JComboBox[menuStrings.length];
-				
+		final JComboBox[] menus = new JComboBox[menuStrings.length];
+
 		MyComboBoxListener ml = new MyComboBoxListener() {
-			public void doActionPerformed(Object source) {	
-				for (int i=0; i < menus.length; i++) {
+			public void doActionPerformed(Object source) {
+				for (int i = 0; i < menus.length; i++) {
 					if (source == menus[i]) {
 						int pos = menus[i].getSelectedIndex();
 						processInput(menuStrings[i][pos][0], null);
@@ -306,10 +317,10 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 				}
 			}
 		};
-		
-		for (int i=0; i < menus.length; i++) {
-			menus[i] = new JComboBox();			
-			for (int k=0; k < menuStrings[i].length; k++ ) {
+
+		for (int i = 0; i < menus.length; i++) {
+			menus[i] = new JComboBox();
+			for (int k = 0; k < menuStrings[i].length; k++) {
 				// visible text
 				menus[i].addItem("  " + menuStrings[i][k][1]);
 			}
@@ -321,19 +332,20 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 			menus[i].addActionListener(ml);
 			btPanel.add(menus[i]);
 		}
-							
-		return btPanel;	
-	}		
+
+		return btPanel;
+	}
 
 	public Application getApp() {
 		return app;
 	}
-	
+
 	public final boolean isUseGeoGebraVariableValues() {
 		return useGeoGebraVariableValues;
 	}
 
-	public final void setUseGeoGebraVariableValues(boolean useGeoGebraVariableValues) {
+	public final void setUseGeoGebraVariableValues(
+			boolean useGeoGebraVariableValues) {
 		this.useGeoGebraVariableValues = useGeoGebraVariableValues;
 	}
 
@@ -345,11 +357,11 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 	}
 
 	public void focusLost(FocusEvent arg0) {
-		
+
 	}
 
 	/**
-	 * Defines new functions in the CAS 
+	 * Defines new functions in the CAS
 	 */
 	public void add(GeoElement geo) {
 		try {
@@ -358,19 +370,19 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 				getCAS().evaluateGeoGebraCAS(funStr);
 			}
 		} catch (Throwable e) {
-			System.err.println("CASView.add: " + geo + ", " +  e.getMessage());
+			System.err.println("CASView.add: " + geo + ", " + e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Removes function definitions from the CAS 
+	 * Removes function definitions from the CAS
 	 */
 	public void remove(GeoElement geo) {
 		getCAS().unbindVariable(geo.getLabel());
 	}
-	
+
 	/**
-	 * Removes function definitions in the CAS 
+	 * Removes function definitions in the CAS
 	 */
 	public void update(GeoElement geo) {
 		// check if update should be ignored
@@ -379,21 +391,21 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 			System.out.println("IGNORE update: " + geo.getLabel());
 			return;
 		}
-		
+
 		boolean updateHandled = false;
 		int updateStartRow = 0;
-		
+
 		// TODO: remove
 		System.out.println("update: " + geo);
-		
+
 		// TODO: avoid updating loops, e.g.
 		// c := Limit[ (3k+1)/k, k, Infinity ]
-		
+
 		// check if we have a cell with an assignment for geo
 		CASTableCellValue cellValue = assignmentCellMap.get(geo.getLabel());
 		if (cellValue != null && cellValue.isIndependent()) {
 			int row = cellValue.getRow();
-			updateStartRow = row+1;
+			updateStartRow = row + 1;
 
 			// process row if geo is independent
 			// set input of assignment row, e.g. a := 2;
@@ -401,51 +413,49 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 			cellValue.setInput(assignmentStr);
 			casInputHandler.processRow(row);
 			consoleTable.repaint();
-			
+
 			updateHandled = true;
 		}
-		
+
 		// update all dependent rows
 		casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
-		
+
 		if (!updateHandled && geo.isGeoFunction()) {
 			add(geo);
 		}
 	}
-	
+
 	void addToIgnoreUpdates(String var) {
 		ignoreUpdateVars.add(var);
 	}
-	
+
 	void removeFromIgnoreUpdates(String var) {
 		ignoreUpdateVars.remove(var);
 	}
 
 	/**
-	 * Renames function definitions in the CAS 
+	 * Renames function definitions in the CAS
 	 */
 	public void rename(GeoElement geo) {
 		// remove old function name from MathPiper
 		getCAS().unbindVariable(geo.getOldLabel());
-		
+
 		// add new function name to MathPiper
 		add(geo);
 	}
-	
-	
 
 	public void clearView() {
 		// TODO: restart cas
 		// cas.restart();
-		
+
 		// delete all rows
 		consoleTable.deleteAllRows();
-		
+
 		// insert one empty row
 		consoleTable.insertRow(new CASTableCellValue(this), false);
 		repaintView();
 	}
-	
+
 	/**
 	 * Returns an empty row at the bottom of the cas view.
 	 */
@@ -453,7 +463,6 @@ public class CASView extends JComponent implements CasManager, FocusListener, Vi
 		return consoleTable.createRow();
 	}
 
-	
 	public void repaintView() {
 		consoleTable.updateAllRows();
 		validate();

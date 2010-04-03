@@ -2449,6 +2449,13 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			String input = (String) attrs.get("value");
 			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setInput(input);
+			
+			String prefix = (String) attrs.get("prefix");
+			String eval = (String) attrs.get("eval");
+			String postfix = (String) attrs.get("postfix");
+			if (eval != null) {
+				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setInput(prefix, eval, postfix);
+			}
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -2460,7 +2467,11 @@ public class MyXMLHandler implements DocHandler {
 			String output = (String) attrs.get("value");
 			boolean error = parseBoolean((String) attrs.get("error"));
 			
-			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setOutput(output, error);
+			if (error) {
+				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setError(output);
+			} else {
+				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setOutput(output);
+			}
 			return true;
 		} catch (Exception e) {
 			return false;

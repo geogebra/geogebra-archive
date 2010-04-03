@@ -21,7 +21,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Set;
 
 
 public class CommandDispatcher {
@@ -40,12 +40,16 @@ public class CommandDispatcher {
     	app = kernel.getApplication();                    
     }
     
-    public Iterator getCmdNameIterator() {
+    /**
+     * Returns a set with all command names available
+     * in the GeoGebra input field.
+     */
+    public Set getPublicCommandSet() {
     	if (cmdTable == null) {
     		initCmdTable();
     	}  
     	
-    	return cmdTable.keySet().iterator();
+    	return cmdTable.keySet();
     }
     
     /**
@@ -257,11 +261,7 @@ public class CommandDispatcher {
     	cmdTable.put("Column", new CmdColumn(kernel));  
     	
     	cmdTable.put("Text", new CmdText(kernel));    	
-    	cmdTable.put("LaTeX", new CmdLaTeX(kernel));    
-    	//cmdTable.put("ToMathPiperString", new CmdToMathPiperString(kernel));  
-    	
-    	//cmdTable.put("EvalMathPiper", new CmdEvalMathPiper(kernel));    
-    	//cmdTable.put("Eval", new CmdEval(kernel));    
+    	cmdTable.put("LaTeX", new CmdLaTeX(kernel));
     	
     	cmdTable.put("LetterToUnicode", new CmdLetterToUnicode(kernel));    	
     	cmdTable.put("TextToUnicode", new CmdTextToUnicode(kernel));    	

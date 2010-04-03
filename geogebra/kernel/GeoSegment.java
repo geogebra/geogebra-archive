@@ -277,13 +277,26 @@ GeoSegmentInterface {
 	 * Path interface
 	 */	     	
     public void pointChanged(GeoPointInterface PI) {
-		super.pointChanged(PI);
-		
 		GeoPoint P = (GeoPoint) PI;
+			
+		PathParameter pp = P.getPathParameter();
+		
+		// special case: segment of length 0
+		if (length == 0) {
+			P.x = startPoint.inhomX;
+			P.y = startPoint.inhomY;
+			P.z = 1.0;
+			if (!(pp.t >= 0 && pp.t <= 1)) {
+				pp.t = 0.0;
+			}
+			return;
+		}
+		
+		// project point on line
+		super.pointChanged(P);
 			
 		// ensure that the point doesn't get outside the segment
 		// i.e. ensure 0 <= t <= 1 
-		PathParameter pp = P.getPathParameter();
 		if (pp.t < 0.0) {
 			P.x = startPoint.x;
 			P.y = startPoint.y;
@@ -299,9 +312,20 @@ GeoSegmentInterface {
 
 	public void pathChanged(GeoPointInterface PI) {
 		
-		GeoPoint P = (GeoPoint) PI;
-		
+		GeoPoint P = (GeoPoint) PI;	
 		PathParameter pp = P.getPathParameter();
+		
+		// special case: segment of length 0
+		if (length == 0) {
+			P.x = startPoint.inhomX;
+			P.y = startPoint.inhomY;
+			P.z = 1.0;	
+			if (!(pp.t >= 0 && pp.t <= 1)) {
+				pp.t = 0.0;
+			}
+			return;
+		}
+		
 		if (pp.t < 0.0) {
 			pp.t = 0;
 		} 
@@ -312,7 +336,7 @@ GeoSegmentInterface {
 		// calc point for given parameter
 		P.x = startPoint.inhomX + pp.t * y;
 		P.y = startPoint.inhomY - pp.t * x;
-		P.z = 1.0;		
+		P.z = 1.0;	
 	}
 	
 	/**

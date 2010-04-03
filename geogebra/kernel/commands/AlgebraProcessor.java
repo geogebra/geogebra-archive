@@ -39,7 +39,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Set;
 
 public class AlgebraProcessor {
 	
@@ -60,8 +60,8 @@ public class AlgebraProcessor {
 		parser = kernel.getParser();
 	}
 	
-	public Iterator getCmdNameIterator() {
-		return cmdDispatcher.getCmdNameIterator();
+	public Set getPublicCommandSet() {
+		return cmdDispatcher.getPublicCommandSet();
 	}
 	
 	final public GeoElement[] processCommand(Command c, boolean labelOutput) throws MyError {

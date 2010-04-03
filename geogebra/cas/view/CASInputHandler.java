@@ -54,7 +54,7 @@ public class CASInputHandler {
 		int selRow = consoleTable.getSelectedRow();	
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
-		String selRowInput = cellValue.getInput();	
+		String selRowInput = cellValue.getLocalizedInput();	
 		if (selRowInput == null || selRowInput.length() == 0) {
 			consoleTable.startEditingRow(selRow);
 			return;
@@ -99,7 +99,7 @@ public class CASInputHandler {
 		postfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_STATIC);
 		
 		// FIX common INPUT ERRORS in evalText
-		if (!hasSelectedText && (ggbcmd.equals("Eval") || ggbcmd.equals("Hold"))) {
+		if (!hasSelectedText && (ggbcmd.equals("Evaluate") || ggbcmd.equals("CheckInput"))) {
 			String fixedInput = fixInputErrors(selRowInput);
 			if (!fixedInput.equals(selRowInput)) {
 				cellValue.setInput(fixedInput);
@@ -109,7 +109,8 @@ public class CASInputHandler {
 		
 		// remember input selection information for future calls of processRow()
 		// check if structure of selection is ok
-		boolean structureOK = cellValue.isStructurallyEqualToInput(prefix, evalText, postfix);
+		String newText = prefix + evalText + postfix;
+		boolean structureOK = cellValue.isStructurallyEqualToLocalizedInput(newText);
 		if (!structureOK) {
 			// show current selection again
 			consoleTable.startEditingRow(selRow);
@@ -123,14 +124,12 @@ public class CASInputHandler {
 		if (ggbcmd.equals("SubstituteDialog")) {
 			// show substitute dialog
 			CASSubDialog d = new CASSubDialog(casView, prefix, evalText, postfix, selRow);
-			cellValue.setEvalCommand("Substitute");
-			d.setVisible(true);	
-			
+			d.setVisible(true);
 			return;
 		}
 		
 		// standard case: evaluate and update row
-		if (!ggbcmd.equals("Eval")) {
+		if (!ggbcmd.equals("Evaluate")) {
 			// prepare evalText as ggbcmd[ evalText, parameters ... ]
 			StringBuilder sb = new StringBuilder();
 			sb.append(ggbcmd);
@@ -301,8 +300,7 @@ public class CASInputHandler {
 				cellValue.setOutput(prefix + " (" + result + ") " + postfix);
 			}
 		} else {
-			// 	error = app.getError("CAS.GeneralErrorMessage");
-			cellValue.setOutput(casView.getApp().getError("CAS.GeneralErrorMessage"), true);
+			cellValue.setError("CAS.GeneralErrorMessage");
 			System.err.println("GeoGebraCAS.evaluateRow: " + casView.getCAS().getGeoGebraCASError());
 		}
 	}

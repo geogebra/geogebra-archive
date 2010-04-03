@@ -408,10 +408,6 @@ public class GeoGebraCAS {
 		return sbCASCommand.toString();
 	}
 	
-	
-	
-	
-	
 	/**
 	 * Returns true if the two input expressions are structurally equal. 
 	 * For example "2 + 2/3" is structurally equal to "2 + (2/3)"

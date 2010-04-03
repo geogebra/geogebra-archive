@@ -54,7 +54,7 @@ public class TableCellMouseListener extends MouseAdapter {
 		
 		// CLICKED ON OUTPUT PANEL IN TABLE CELL				
 		CASTableCellValue clickedCellValue = table.getCASTableCellValue(clickedRow);
-		String outputStr = clickedCellValue.getOutput();			
+		String outputStr = clickedCellValue.getLocalizedOutput();			
 		if (outputStr == null || outputStr.length() == 0) {
 			table.startEditingRow(clickedRow);
 			return;
