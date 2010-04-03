@@ -646,6 +646,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// get point and plane;
 	// create line through point parallel to plane
 	final protected boolean parallelPlane(Hits hits) {
+		
+		//Application.debug(hits.toString());
+		
 		if (hits.isEmpty())
 			return false;
 
@@ -713,6 +716,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (mouseMoved){
 			mouseMoved = false;
 			((EuclidianView3D) view).updateCursor3D();
+			
+			//Application.debug(view.getHits().toString());
+			
 			super.processMouseMoved(mouseEvent);
 		}
 	}
@@ -880,6 +886,21 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	/**
+	 * for some modes, polygons are not to be removed
+	 * @param hits
+	 */
+	protected void switchModeForRemovePolygons(Hits hits){
+		switch (mode){
+		case EuclidianView3D.MODE_PARALLEL_PLANE:
+			((Hits3D) hits).removePolygonsIfNotOnlyCS2D();
+			break;
+		default:
+			super.switchModeForRemovePolygons(hits);
+		}
+	}
+	
+	
 	protected boolean switchModeForThreePoints(){
 		
 		switch (mode) {
@@ -946,6 +967,19 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	///////////////////////////////////////////
+	// MOUSE RELEASED
+	
+	protected boolean switchModeForMouseReleased(int mode, Hits hits, boolean changedKernel){
+		switch (mode) {
+		case EuclidianView3D.MODE_PARALLEL_PLANE:
+			return changedKernel;
+		default:
+			return super.switchModeForMouseReleased(mode, hits, changedKernel);
+			
+		}
+
+	}
 	
 	
 
@@ -1066,13 +1100,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected GeoElement chooseGeo(ArrayList geos, boolean includeFixed) {
 		
+		//Application.printStacktrace(((Hits) geos).toString());
+		
 		if (!geos.isEmpty()){
 			//if the geo hitted is one of view3D's geos, then chooseGeo return null
 			if (view3D.owns((GeoElement) geos.get(0)))
 				return null;
 			//doesn't use choosing dialog TODO use choosing dialog ?
 			else 
-				return (GeoElement) geos.get(0);
+				//return (GeoElement) geos.get(0);
+				return super.chooseGeo(geos, includeFixed);
 		}
 	
 		return null;

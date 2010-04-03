@@ -2,6 +2,8 @@ package geogebra3D.euclidian3D;
 
 import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
+import geogebra3D.kernel3D.GeoCoordSys2D;
 import geogebra3D.kernel3D.GeoSegment3D;
 
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ public class Hits3D extends Hits {
 	
 	Hits topHits = new Hits();
 
+	/** number of coord sys 2D */
+	private int cs2DCount;
 	
 	public Hits3D(){
 		super();
@@ -28,6 +32,9 @@ public class Hits3D extends Hits {
 		// initing hitSet
 		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
 			hitSet[i] = new TreeSet(new Drawable3D.drawableComparator());
+		
+		// init counters
+		cs2DCount = 0;
 	}
 	
 	
@@ -36,12 +43,24 @@ public class Hits3D extends Hits {
 
 		Hits3D ret = (Hits3D) super.clone();
 		ret.topHits = this.topHits.clone();
+		ret.cs2DCount = cs2DCount;
 		
 		// TreeSets are not cloned because they are only used when the hits are constructed
 
 		return ret;
 	} 
 	
+	
+	
+	public void add(GeoElement geo){
+		
+		if (geo instanceof GeoCoordSys2D) {
+			cs2DCount++;
+			//Application.debug("cs2DCount="+cs2DCount+"/"+(size()+1));
+		}
+		
+		super.add(geo);
+	}
 	
 	
 	public void init(){
@@ -169,5 +188,28 @@ public class Hits3D extends Hits {
 	
 	
 	
+	/**
+	 * remove all polygons, if hits are not all instance of GeoCoordSys2D
+	 */
+	public void removePolygonsIfNotOnlyCS2D(){
+		
+		//String s = "cs2DCount="+cs2DCount+"/"+(size());
+		
+		if (size() - cs2DCount > 0) {
+			removePolygons();
+			//s+="\n"+toString();
+			/*
+			for (int i = 0; i < size(); ) {
+				GeoElement geo = (GeoElement) get(i);
+				
+				if (geo instanceof GeoCoordSys2D)
+					remove(i);
+				else
+					i++;
+			}
+			*/
+			//Application.debug(s+"\n"+toString());
+		}
+	}
 	
 }

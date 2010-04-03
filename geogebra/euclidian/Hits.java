@@ -5,6 +5,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -97,13 +98,24 @@ public class Hits extends ArrayList {
 	*/
 	
 
-	// replaces final public ArrayList getHitsForNewPointMode(ArrayList hits) {	
+	/**
+	 * A polygon is only kept if none of its sides is also in
+	 * hits.
+	 */
+	final public void removePolygonsIfSidePresent(){
+		removePolygonsDependingSidePresent(false);
+	}
+	
 	/**
 	 * Returns hits that are suitable for new point mode.
 	 * A polygon is only kept if one of its sides is also in
 	 * hits.
 	 */
 	final public void keepOnlyHitsForNewPointMode() {	
+		removePolygonsDependingSidePresent(true);
+	}
+	
+	final private void removePolygonsDependingSidePresent(boolean sidePresentWanted){
 	
 		Iterator it = this.iterator();
 		while (it.hasNext()) {
@@ -118,7 +130,7 @@ public class Hits extends ArrayList {
 					}
 				}
 				
-				if (!sidePresent)
+				if (sidePresent!=sidePresentWanted)
 					it.remove();					
 			}				
 		}				
@@ -146,15 +158,30 @@ public class Hits extends ArrayList {
 	 * removes all polygons
 	 */
 	final public void removePolygons(){
+		
+		//Application.printStacktrace("");
+		
 		if (size() - polyCount > 0) {
+			/* mathieu 2010-04-03 : fixing index bug 
 			for (int i = 0; i < size(); ++i) {
 				GeoElement geo = (GeoElement) get(i);
 				if (geo.isGeoPolygon())
 					remove(i);
 			}
+			*/
+			for (int i = 0; i < size(); ) {
+				GeoElement geo = (GeoElement) get(i);
+				if (geo.isGeoPolygon())
+					remove(i);
+				else
+					i++;
+			}
 		}
 	}
 	
+	
+	
+		
 	
 	
 	

@@ -91,6 +91,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.text.JTextComponent;
 
+
 public class EuclidianController implements MouseListener,
 MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniListener {
 
@@ -507,7 +508,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			//hits = view.getTopHits(mouseLoc);
 			view.setHits(mouseLoc);
 			hits = view.getHits().getTopHits();
-			hits.removePolygons();
+			switchModeForRemovePolygons(hits);
 			if (!hits.isEmpty()) {
 				view.setMode(EuclidianView.MODE_MOVE);
 				GeoElement geo0 = (GeoElement)hits.get(0);
@@ -830,7 +831,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
+			hits = view.getHits();switchModeForRemovePolygons(hits);
 			if (!hits.isEmpty()) // bugfix 2008-02-19 removed this:&& ((GeoElement) hits.get(0)).isGeoPoint())
 			{
 				DONT_CLEAR_SELECTION=true;
@@ -1873,47 +1874,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// for the transformation tools
 			// (note: this cannot be done in mousePressed because
 			// we want to be able to select multiple objects using the selection rectangle)
-			switch (mode) {
-			case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
-			case EuclidianView.MODE_DILATE_FROM_POINT:	
-			case EuclidianView.MODE_MIRROR_AT_POINT:
-			case EuclidianView.MODE_MIRROR_AT_LINE:
-			case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
-			case EuclidianView.MODE_ROTATE_BY_ANGLE:
-				view.setHits(mouseLoc);
-				hits = view.getHits();hits.removePolygons();
-				//hits = view.getHits(mouseLoc);
-				if (hits.isEmpty()) { 
-					POINT_CREATED = createNewPoint(hits, false, false, true);					
-				}
-				changedKernel = POINT_CREATED;
-				break;
-
-			case EuclidianView.MODE_BUTTON_ACTION:
-			case EuclidianView.MODE_TEXTFIELD_ACTION:
-				// make sure script not triggered
-				break;
-
-			default:
-
-				// change checkbox (boolean) state on mouse up only if there's been no drag
-				view.setHits(mouseLoc);
-				hits = view.getHits().getTopHits();
-				//hits = view.getTopHits(mouseLoc);
-				if (!hits.isEmpty()) {
-					GeoElement hit = (GeoElement)hits.get(0);
-					if (hit != null && hit.isGeoBoolean()) {
-						GeoBoolean bool = (GeoBoolean)(hits.get(0));
-						bool.setValue(!bool.getBoolean());
-						bool.updateCascade();
-					} else if (hit != null) {
-						GeoElement geo1 = chooseGeo(hits, true);
-						//ggb3D : geo1 may be null if it's axes or xOy plane
-						if (geo1!=null)
-							geo1.runScripts(null);						
-					}
-				}
-			}
+			
+			changedKernel = switchModeForMouseReleased(mode, hits, changedKernel);
 		}
 
 		// remember helper point, see createNewPoint()
@@ -1931,8 +1893,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// now handle current mode
 		view.setHits(mouseLoc);
-		hits = view.getHits();hits.removePolygons();
-		//hits = view.getHits(mouseLoc);
+		hits = view.getHits();
+		switchModeForRemovePolygons(hits);
+		//Application.debug(hits.toString());
+
 
 		// Michael Borcherds 2007-12-08 BEGIN moved up a few lines (bugfix: Tools eg Line Segment weren't working with grid on)
 		// grid capturing on: newly created point should be taken
@@ -1963,7 +1927,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//  also needed for right-drag
 		else
 		{			
-			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) changedKernel = processMode(hits, e);
+			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET){ 
+				changedKernel = processMode(hits, e);
+			}
 			if (changedKernel)
 				app.storeUndoInfo();
 		}
@@ -1994,6 +1960,65 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		view.setShowAxesRatio(false);
 		kernel.notifyRepaint();					
 	}
+	
+	
+	/**
+	 * for some modes, polygons are not to be removed
+	 * @param hits
+	 */
+	protected void switchModeForRemovePolygons(Hits hits){
+		hits.removePolygons();
+	}
+	
+	
+	protected boolean switchModeForMouseReleased(int mode, Hits hits, boolean changedKernel){
+		switch (mode) {
+		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+		case EuclidianView.MODE_DILATE_FROM_POINT:	
+		case EuclidianView.MODE_MIRROR_AT_POINT:
+		case EuclidianView.MODE_MIRROR_AT_LINE:
+		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
+		case EuclidianView.MODE_ROTATE_BY_ANGLE:
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+			//hits = view.getHits(mouseLoc);
+			if (hits.isEmpty()) { 
+				POINT_CREATED = createNewPoint(hits, false, false, true);					
+			}
+			changedKernel = POINT_CREATED;
+			break;
+
+		case EuclidianView.MODE_BUTTON_ACTION:
+		case EuclidianView.MODE_TEXTFIELD_ACTION:
+			// make sure script not triggered
+			break;
+
+		default:
+
+			// change checkbox (boolean) state on mouse up only if there's been no drag
+			view.setHits(mouseLoc);
+			hits = view.getHits().getTopHits();
+			//hits = view.getTopHits(mouseLoc);
+			if (!hits.isEmpty()) {
+				GeoElement hit = (GeoElement)hits.get(0);
+				if (hit != null && hit.isGeoBoolean()) {
+					GeoBoolean bool = (GeoBoolean)(hits.get(0));
+					bool.setValue(!bool.getBoolean());
+					bool.updateCascade();
+				} else if (hit != null) {
+					GeoElement geo1 = chooseGeo(hits, true);
+					//ggb3D : geo1 may be null if it's axes or xOy plane
+					if (geo1!=null)
+						geo1.runScripts(null);						
+				}
+			}
+		}
+
+		return changedKernel;
+	}
+	
+	
+	
 
 	protected boolean hitResetIcon() {
 		return app.showResetIcon() &&
@@ -2180,7 +2205,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (hits.isEmpty()){
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
+			hits = view.getHits();switchModeForRemovePolygons(hits);
 
 		}
 
@@ -5792,9 +5817,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedGeos, GeoElement.class);
 	}		
+	
 
-	protected int handleAddSelected(Hits hits, int max, boolean addMore, ArrayList list, Class geoClass) {		
-		//Application.debug("selectionPreview="+selectionPreview+"\nhits:"+hits.toString());
+	protected int handleAddSelected(Hits hits, int max, boolean addMore, ArrayList list, Class geoClass) {	
+		
+		
 		if (selectionPreview)
 			return addToHighlightedList(list, hits.getHits(geoClass, handleAddSelectedArrayList) , max);
 		else
@@ -5903,6 +5930,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// without choosing
 	final protected int addToSelectionList(ArrayList selectionList,
 			ArrayList geos, int max, boolean addMoreThanOneAllowed) {
+		
 		if (geos == null)
 			return 0;
 		//GeoElement geo;
@@ -5914,8 +5942,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//	SEVERAL ELEMENTS
 		// here nothing should be removed
 		//  too many objects -> choose one
-		if (!addMoreThanOneAllowed || geos.size() + selectionList.size() > max)
+		if (!addMoreThanOneAllowed || geos.size() + selectionList.size() > max){
 			return addToSelectionList(selectionList, chooseGeo(geos, true), max);
+		}
 
 		// already selected objects -> choose one
 		boolean contained = false;
