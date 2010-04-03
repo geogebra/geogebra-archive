@@ -176,7 +176,7 @@ public class WorksheetExportDialog extends JDialog {
 							// index 2 = clipboard + mediawiki
 							// index 3 = clipboard + google gadget
 							try {
-								exportToClipboard(cbFileType.getSelectedIndex());
+								exportToClipboard(type);
 								
 								if (type == TYPE_GOOGLEGADGET) {
 									// open Google Gadgets Editor
@@ -885,34 +885,13 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("\" author_email=\"xxx@google.com\" ");
 		sb.append("description=\"GeoGebra applet as a Google-Site gadget\" thumbnail=\"http://www.geogebra.org/static/images/geogebra_logo67x60.png\">\n");
 		sb.append("</ModulePrefs>\n");
+		
 		sb.append("<Content type=\"html\">\n");
 		sb.append("<![CDATA[\n");
-		sb.append("<script src=\"http://java.com/js/deployJava.js\">\n");
-		sb.append("</script>\n");
 		sb.append("<div id='ggbapplet'>\n");
-		sb.append("<script>\n");
-		sb.append("var jarUrl = \"geogebra.jar\";\n");
-		//sb.append("var cachedJarUrl = _IG_GetCachedUrl(jarUrl);\n");
-
 		
-		sb.append("deployJava.runApplet({archive:jarUrl, name:\"ggbApplet\", code:\"geogebra.GeoGebraApplet\", codebase:\"");
-		sb.append(GeoGebra.GEOGEBRA_ONLINE_ARCHIVE_BASE);
-		sb.append("unsigned/");
-		sb.append("\", width:\"");
-		sb.append(sizePanel.getSelectedWidth());
-		sb.append("\", height:\"");
-		sb.append(sizePanel.getSelectedHeight());
-		sb.append("\",\n");
-		//sb.append("filename:\"xxx.ggb\",");
-		sb.append("ggbBase64:\"");
-		appendBase64(sb);
-		sb.append("\",\n");
-		//sb.append("java_arguments:\"-Xmx256m\", framePossible:\"true\", showResetIcon:\"true\", showAnimationButton:\"true\", enableRightClick:\"false\", enableLabelDrags:\"true\", showMenuBar:\"false\", showToolBar:\"false\", showToolBarHelp:\"false\", showAlgebraInput:\"false\"});\n");
-		appendGgbAppletParameters(sb, TYPE_GOOGLEGADGET);			
-		sb.setLength(sb.lastIndexOf(",")); // remove last comma
-		sb.append("});\n");
+		sb.append(getAppletTag(null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight()));
 
-		sb.append("</script>\n");
 		sb.append("</div>\n");
 		sb.append("]]>\n");
 		sb.append("</Content>\n");
@@ -1111,7 +1090,7 @@ public class WorksheetExportDialog extends JDialog {
 		// add MAYSCRIPT to ensure ggbOnInit() can be called
 		sb.append("\" MAYSCRIPT>\n");
 
-		if (cbOfflineArchiveAndGgbFile.isSelected()) {
+		if (cbOfflineArchiveAndGgbFile.isSelected() && ggbFile != null) {
 			// ggb file
 			sb.append("\t<param name=\"filename\" value=\"");
 			sb.append(ggbFile.getName());
@@ -1145,7 +1124,7 @@ public class WorksheetExportDialog extends JDialog {
 		}
 
 		sb.append("Sorry, the GeoGebra Applet could not be started. Please make sure that ");
-		sb.append("Java 1.4.2 (or later) is installed and active in your browser ");
+		sb.append("Java 1.5 (or later) is installed and active in your browser ");
 		sb.append("(<a href=\"http://java.sun.com/getjava\">Click here to install Java now</a>)\n");
 		sb.append("</applet>");
 		return sb.toString();
