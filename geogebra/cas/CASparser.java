@@ -105,7 +105,6 @@ public class CASparser {
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
 	public ValidExpression parseMathPiper(String MathPiperString) throws Throwable {
-		Application.debug(MathPiperString);
 		return ggbParser.parseMathPiper(MathPiperString);		
 	}
 	

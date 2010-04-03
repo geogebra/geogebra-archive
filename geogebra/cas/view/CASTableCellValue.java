@@ -110,6 +110,10 @@ public class CASTableCellValue {
 			return toInternalString(evalVE);
 	}
 	
+	public ValidExpression getEvalVE() {
+		return evalVE;
+	}
+	
 	public String getPostfix() {
 		return postfix;
 	}

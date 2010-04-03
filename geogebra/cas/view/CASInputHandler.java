@@ -267,7 +267,7 @@ public class CASInputHandler {
 		try {
 			// evaluate using GeoGebraCAS syntax
 			//currentUpdateVar = cellValue.getAssignmentVariable();
-			result = evaluateGeoGebraCAS(cellValue.getEvalText(), row);
+			result = evaluateGeoGebraCAS(cellValue.getEvalVE(), row);
 		} catch (Throwable th) {
 			//th.printStackTrace();
 			System.err.println("GeoGebraCAS.processRow " + row + ": " + th.getMessage());
@@ -306,15 +306,19 @@ public class CASInputHandler {
 	}
 	
 	/**
-	 * Evaluates evalText as GeoGebraCAS input. Dynamic references are
+	 * Evaluates  as GeoGebraCAS input. Dynamic references are
 	 * resolved according to the given row number.
 	 */
-	private String evaluateGeoGebraCAS(String evalText, int row) throws Throwable {
+	private String evaluateGeoGebraCAS(ValidExpression eval, int row) throws Throwable {
 		// resolve dynamic row references
-		evalText = resolveCASrowReferences(evalText, row, ROW_REFERENCE_DYNAMIC);
+		String evalText = eval.toString();
+		String resolvedText = resolveCASrowReferences(evalText, row, ROW_REFERENCE_DYNAMIC);
+		if (!evalText.equals(resolvedText)) {
+			eval = casParser.parseGeoGebraCASInput(resolvedText);
+		}
 		
 		// process this input
-		return processCASviewInput(evalText);
+		return processCASviewInput(eval);
 	}
 	
 	/**
@@ -431,9 +435,8 @@ public class CASInputHandler {
 	 * 
 	 * @return result as String in GeoGebra syntax
 	 */
-	 private synchronized String processCASviewInput(String inputExp) throws Throwable {		 
-		// PARSE input to check if it's a valid expression
-		ValidExpression inVE = casParser.parseGeoGebraCASInput(inputExp);
+	 private synchronized String processCASviewInput(ValidExpression inVE) throws Throwable {		 
+		// check for assignment
 		String assignmentVar = inVE.getLabel();
 		boolean assignment = assignmentVar != null;
 		
@@ -457,7 +460,7 @@ public class CASInputHandler {
 			}
 		} catch (Throwable th1) {
 			throwable = th1;
-			System.err.println("CAS evaluation failed: " + inputExp + "\n error: " + th1.toString());
+			System.err.println("CAS evaluation failed: " + inVE.toString() + "\n error: " + th1.toString());
 		}
 		boolean CASSuccessful = CASResult != null;
 		
@@ -475,7 +478,7 @@ public class CASInputHandler {
 				// - or Delete, e.g. Delete[a]
 				// - or CAS was not successful
 				// - or CAS result contains commands
-				isDeleteCommand = isDeleteCommand(inputExp);
+				isDeleteCommand = isDeleteCommand(inVE.toString());
 				evalInGeoGebra = !CASSuccessful || isDeleteCommand || containsCommand(CASResult);
 			}
 		}
@@ -490,10 +493,10 @@ public class CASInputHandler {
 			try {
 				// process inputExp in GeoGebra
 				if (!assignToFreeGeoOnly)
-					ggbResult = evalInGeoGebra(inputExp);
+					ggbResult = evalInGeoGebra(inVE.toString());
 			} catch (Throwable th2) {
 				if (throwable == null) throwable = th2;
-				System.err.println("GeoGebra evaluation failed: " + inputExp + "\n error: " + th2.toString());
+				System.err.println("GeoGebra evaluation failed: " + inVE.toString() + "\n error: " + th2.toString());
 			}
 			
 			// inputExp failed with GeoGebra
@@ -552,7 +555,7 @@ public class CASInputHandler {
 	}
 	 
 	 private boolean isDeleteCommand(String inputExp) {
-		 return inputExp.startsWith("Delete") || inputExp.startsWith(casView.getApp().getCommand("Delete"));	
+		 return inputExp.startsWith("Delete");	
 	 }
 	 
 	 private boolean containsCommand(String CASResult) {
