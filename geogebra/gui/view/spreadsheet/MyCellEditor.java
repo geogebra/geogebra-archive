@@ -29,8 +29,9 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	public boolean editing = false;
 	private boolean errorOnStopEditing = false;
 	private AutoCompleteTextField textField;
-	public static boolean doRowResize = false;
-
+	
+	
+		
 	public MyCellEditor(Kernel kernel0) {
 		//super(new JTextField());
 		super(new AutoCompleteTextField(0, kernel0.getApplication(), false));
@@ -322,8 +323,7 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		if (text == null)
 			return null;
 
-		//G.STURR 2010-1-17   (testing this flag to control auto row resizing) 
-		doRowResize = true;
+
 		
 		// remove leading equal sign, e.g. "= A1 + A2"
 		if (text.startsWith("=")) {

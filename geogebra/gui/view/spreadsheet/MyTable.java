@@ -111,6 +111,21 @@ public class MyTable extends JTable implements FocusListener
 	
 	private CellRangeProcessor crProcessor;
 	
+	private MyTable table;
+	
+	
+	// G.Sturr 2010-3-29
+	// Cells to be resized on next repaint are put in these HashSets.
+	// A cell is added to a set when editing is done. The cells are removed
+	// after a repaint in MyTable.
+	
+	public static HashSet<Point> cellResizeHeightSet = new HashSet<Point>();
+	public static HashSet<Point> cellResizeWidthSet = new HashSet<Point>();
+	
+	// END G.Sturr
+	
+	
+	
 	//END G.STURR
 	
 	
@@ -122,6 +137,7 @@ public class MyTable extends JTable implements FocusListener
 		this.view = view;
 		app = view.getApplication();
 		kernel = app.getKernel();
+		table = this;
 		
 		//G.Sturr 2009-11-15
 		selectedCellRanges = new ArrayList<CellRange>();
@@ -631,7 +647,18 @@ public class MyTable extends JTable implements FocusListener
 				graphics.fillRect(x1, y2 - LINE_THICKNESS2, x2 - x1, LINE_THICKNESS2);
 			}
 		}
+		
+		
+		//G.Sturr 2010-4-2
+		// After rendering the LaTeX image for a geo, update the row height 
+		// with the preffered size set by the renderer.
+		
+		resizeMarkedCells();
+		
 	}
+	
+	
+	
 	
 	/**
 	 * Starts in-cell editing for cells with short editing strings. For strings longer
@@ -1786,6 +1813,29 @@ public class MyTable extends JTable implements FocusListener
 	{
 
 		public void mouseClicked(MouseEvent e) {
+			
+			// G.Sturr 2010-3-29
+			// Double clicking on a column boundary auto-adjusts the 
+			// width of the column on the left
+						
+			if (isResizing && !Application.isRightClick(e) && e.getClickCount() == 2) {
+							
+				// get column to adjust
+				int x = e.getX();
+				int y = e.getY();
+				Point point = getIndexFromPixel(x, y);
+				Point testPoint = getIndexFromPixel(x-4, y);
+				int col = (int) point.getX();
+				if(point.getX()!= testPoint.getX()){
+					col = col-1;
+				}				
+				
+				// enlarge or shrink to fit the contents 
+				fitColumn(col);
+				
+				e.consume();
+			}	
+			//END G.Sturr
 		}
 
 		public void mouseEntered(MouseEvent e) {
@@ -1899,7 +1949,10 @@ public class MyTable extends JTable implements FocusListener
 				*/
 					
 			}
-			else if (isResizing) {				
+			else if (isResizing) {
+				
+				if (e.getClickCount() == 2 )return;
+				
 				int x = e.getX();
 				int y = e.getY();
 				Point point = getIndexFromPixel(x, y);
@@ -2152,5 +2205,147 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	
+	
+	
+	
+	//==================================================
+	// Table row and column size adjustment methods
+	//==================================================
+	
+	
+	/**
+	 * Enlarge the row and/or column of all marked cells. 
+	 * A cell is marked by placing it in one of two hashSets:
+	 * cellResizeHeightSet or cellResizeWidthSet.
+	 * Currently, this is only done after a geo is added to a cell
+	 * and the row needs to be widened to fit the LaTeX image. 
+	 *  
+	 */
+	public void resizeMarkedCells() {
 
+		if (!cellResizeHeightSet.isEmpty()) {
+			for (Point cellPoint : cellResizeHeightSet) {
+				setPreferredCellSize((int) cellPoint.getY(), (int) cellPoint.getX(), false, true);	
+			}
+			cellResizeHeightSet.clear();
+		}
+
+		if (!cellResizeWidthSet.isEmpty()) {
+			for (Point cellPoint : cellResizeWidthSet) {
+				setPreferredCellSize((int) cellPoint.getY(), (int) cellPoint.getX(), true, false);
+			}
+			cellResizeWidthSet.clear();
+		}
+	}
+	
+		
+	/**
+	 * Enlarge the row and/or column of a cell to fit the cell's preffered size. 
+	 */
+	public void setPreferredCellSize(int row, int col, boolean adjustWidth, boolean adjustHeight) {
+
+		Dimension prefSize = table.getCellRenderer(row, col)
+				.getTableCellRendererComponent(table,
+						table.getValueAt(row, col), false, false, row, col)
+				.getPreferredSize();
+		
+		if (adjustWidth) {
+			
+			TableColumn tableColumn = table.getColumnModel().getColumn(col);
+
+			int resultWidth = Math.max(tableColumn.getWidth(), (int) prefSize
+					.getWidth());
+			tableColumn.setWidth(resultWidth
+					+ table.getIntercellSpacing().width);
+		}
+		
+		if (adjustHeight) {
+
+			int resultHeight = Math.max(getRowHeight(), (int) prefSize
+					.getHeight());
+			setRowHeight(row, resultHeight);
+		}
+
+	}
+	
+	/**
+	 * Adjust the width of a column to fit the maximum prefferred width of 
+	 * its cell contents.
+	 */
+	public void fitColumn(int column){
+		
+		TableColumn tableColumn = table.getColumnModel().getColumn(column); 
+		
+		// iterate through the rows and find the preferred width
+		int currentWidth = tableColumn.getWidth();
+		int prefWidth = 0;
+		int tempWidth = -1;
+		for (int row = 0; row < getRowCount(); row++) {
+			if(table.getValueAt(row, column)!=null){
+			tempWidth = (int) table.getCellRenderer(row, column)
+					.getTableCellRendererComponent(table,
+							table.getValueAt(row, column), false, false,
+							row, column).getPreferredSize().getWidth();
+			prefWidth = Math.max(prefWidth, tempWidth);
+			}
+		}
+		
+		
+		// set the new column width
+		if (tempWidth == -1) {
+			// column is empty
+			prefWidth = TABLE_CELL_WIDTH
+					- getIntercellSpacing().width;
+		} else {
+			prefWidth = Math.max(prefWidth, tableColumn.getMinWidth());
+		}
+		getTableHeader().setResizingColumn(tableColumn);
+		tableColumn.setWidth(prefWidth
+				+ getIntercellSpacing().width);
+
+	}
+
+	/**
+	 * Adjust the height of a row to fit the maximum prefferred height of 
+	 * the its cell contents. 
+	 */
+	public void fitRow(int row){
+		
+		// iterate through the columns and find the preferred height
+		int currentHeight = table.getRowHeight(row);
+		int prefHeight = table.getRowHeight();
+		int tempHeight = 0;
+		for (int column = 0; column < table.getColumnCount(); column++) {
+
+			tempHeight = (int) table.getCellRenderer(row, column)
+					.getTableCellRendererComponent(table,
+							table.getValueAt(row, column), false, false,
+							row, column).getPreferredSize().getHeight();
+			
+			prefHeight = Math.max(prefHeight, tempHeight);
+
+		}
+		
+		// set the new row height
+		table.setRowHeight(row, prefHeight) ;
+	}
+	
+	/**
+	 * Adjust all rows/columns to fit the maximum preffered height/width
+	 * of their cell contents.
+	 * 
+	 */
+	public void fitAll(boolean doRows, boolean doColumns){
+		if (doRows) {
+			for (int row = 0; row < table.getRowCount(); row++) {
+				fitRow(row);
+			}
+		}
+		if (doColumns) {
+			for (int column = 0; column < table.getColumnCount(); column++) {
+				fitRow(column);
+			}
+		}
+	}
+	
 }

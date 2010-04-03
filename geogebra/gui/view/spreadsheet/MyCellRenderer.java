@@ -36,7 +36,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		kernel = app.getKernel();
 		
 		//G.Sturr 2009-10-3:  add horizontal padding
-		setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+		setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
 		
 		//G.Sturr 2010-1-15
 		// The cell renderer is an extension of JLabel and thus supports an icon.
@@ -110,9 +110,9 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		// set LaTeX icons
 		// use LaTeX for any geo other than geoNumeric or non-latex geoText
 		
-		if (kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
+		if (geo.isDefined() && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
-			if (geo.isDefined() && !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
+			if ( !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
 					&& !geo.isGeoNumeric()) {
 				try {
 					latexStr = Util.toLaTeXString(geo.getFormulaString(
@@ -122,30 +122,19 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 							.getAlgebraColor(), bgColor);
 					setIcon(latexIcon);
 					setText("");
-
-					// Auto resize row height
-					// .... not working correctly yet
-					// doRowResize flag is set in MyCellEditor, but this does
-					// not handle rename and repeated copies
-					if (MyCellEditor.doRowResize) {
-						if (latexIcon.getIconHeight() > table.getRowHeight(row)) {
-							table.setRowHeight(row,
-									latexIcon.getIconHeight() + 4);
-							MyCellEditor.doRowResize = false;
-						}
-					}
 					
 				} catch (Exception e) {
 				}
-
 			}
 		}
 		//END GSTURR
 		
-		
 		return this;
 	}
 
+	
+	
+	
 	private void drawLatexImageIcon(ImageIcon latexIcon, String latex, Font font, Color fgColor, Color bgColor) {
 		
 		// Create image with dummy size, then draw into it to get the correct size

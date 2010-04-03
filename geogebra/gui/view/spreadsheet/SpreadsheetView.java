@@ -393,6 +393,9 @@ public class SpreadsheetView extends JSplitPane implements View
 		if (scrollToShow && location != null )
 			table.scrollRectToVisible(table.getCellRect(location.y, location.x, true));
 		
+		//G.Sturr 2010-4-2: mark this geo to adjust row width for tall LaTeX images 
+		//MyCellEditor.cellResizeHeightSet.add(new Point(location.x,location.y));
+		
 		
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 	}
@@ -449,6 +452,7 @@ public class SpreadsheetView extends JSplitPane implements View
 		}
 		
 		add(geo);
+		
 	}
 	
 	public void updateAuxiliaryObject(GeoElement geo) {		
@@ -651,6 +655,18 @@ public class SpreadsheetView extends JSplitPane implements View
 		
 		public void mouseClicked(MouseEvent e) {
 			
+			// G.Sturr 2010-3-29
+			// Double clicking on a row boundary auto-adjusts the 
+			// height of the row above the boundary (the resizingRow)
+			
+			if (resizingRow >= 0 && !Application.isRightClick(e) && e.getClickCount() == 2) {
+				
+				table.fitRow(resizingRow);
+				e.consume();
+			}
+			
+			//END G.Sturr
+			
 		}
 		
 		public void mouseEntered(MouseEvent e) {
@@ -670,7 +686,7 @@ public class SpreadsheetView extends JSplitPane implements View
 			
 			//G.STURR 2010-1-9: 
 			// Update resizingRow. If nonnegative, then mouse is over a boundary
-			// and it gives the row to be resized (this is done in mouseDragged).
+			// and it gives the row to be resized (resizing is done in mouseDragged).
 			Point p = e.getPoint(); 
 	        resizingRow = getResizingRow(p); 
 	        mouseYOffset = p.y - table.getRowHeight(resizingRow); 
@@ -940,6 +956,10 @@ public class SpreadsheetView extends JSplitPane implements View
 				if (cH != null) cH.revalidate();
 			}
 			tableModel.setValueAt(geo, location.y, location.x);
+			
+			//G.Sturr 2010-4-2
+			//Mark this cell to be resized by height
+			table.cellResizeHeightSet.add(new Point(location.x, location.y));
 		}			
 	}	
 
@@ -1000,6 +1020,23 @@ public class SpreadsheetView extends JSplitPane implements View
 		
 		table.columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH * multiplier)
 						, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+		
+		// G.Sturr 2010-4-2
+		// Adjust row heights for tall LaTeX images
+		table.fitAll(true, false); 
+		
+		/*
+		JLabel testLabel = new JLabel();
+		testLabel.setFont(app.getFontCanDisplay("M", Font.BOLD));
+		testLabel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+		
+		testLabel.setText("M");
+		int newHeight = (int) testLabel.getPreferredSize().getHeight();
+		
+		table.setRowHeight(newHeight);
+		table.columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH * multiplier)
+				, newHeight));
+		*/
 		
 	}
 	
