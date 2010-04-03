@@ -46,7 +46,7 @@ implements ExpressionValue, ExpressionNodeConstants {
     public Kernel kernel;
     public ExpressionValue left, right; 
     public int operation = NO_OPERATION;
-    public boolean forceVector = false, forcePoint = false;
+    public boolean forceVector = false, forcePoint = false, forceFunction = false;
     
     public boolean holdsLaTeXtext = false;
     
@@ -166,6 +166,7 @@ implements ExpressionValue, ExpressionNodeConstants {
         // set member vars that are not set by constructors
         newNode.forceVector = forceVector;
         newNode.forcePoint = forcePoint;
+        newNode.forceFunction = forceFunction;
         //Application.debug("getCopy() output: " + newNode);   
         return newNode;
     }        
@@ -816,6 +817,15 @@ implements ExpressionValue, ExpressionNodeConstants {
     
     final public boolean isForcedPoint() {
     	return forcePoint;
+    }
+    
+    public void setForceFunction() {
+        // this expression should be considered as a point, not a vector
+        forceFunction = true;
+    }
+    
+    final public boolean isForcedFunction() {
+    	return forceFunction;
     }
     
     /** 

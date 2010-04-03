@@ -112,6 +112,8 @@ public class AlgebraProcessor {
 					n.setForcePoint();
 				else if (geo.isGeoVector())
 					n.setForceVector();
+				else if (geo.isGeoFunction())
+					n.setForceFunction();
 			}
 
 			if (newLabel.equals(oldLabel)) {
@@ -880,7 +882,11 @@ public class AlgebraProcessor {
 				ret[0] = new GeoNumeric(cons, label, value);
 		} else {
 			ret[0] = kernel.DependentNumber(label, n, isAngle);
-		}		
+		}	
+		
+		if (n.isForcedFunction()) {
+			ret[0] = ((GeoFunctionable)(ret[0])).getGeoFunction();
+		}
 		
 		return ret;
 	}
