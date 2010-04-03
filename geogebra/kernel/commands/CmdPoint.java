@@ -1,6 +1,8 @@
 package geogebra.kernel.commands;
 
 
+import javax.swing.SwingUtilities;
+
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
@@ -33,7 +35,15 @@ public  GeoElement[] process(Command c) throws MyError {
                     { kernel.Point(c.getLabel(), (Path) arg[0])};
                 return ret;
             } else if (ok[0] = (arg[0].isGeoList())) {
-                return kernel.PointsFromList(c.getLabels(), (GeoList) arg[0]);
+                GeoElement[] ret = kernel.PointsFromList(c.getLabels(), (GeoList) arg[0]);
+                
+                
+                // TODO: find a better solution 
+                // problem: points not updated when Point[ {1,2} ] is redefined
+	            SwingUtilities.invokeLater( new Runnable(){ public void
+	            	run() { kernel.updateConstruction();} });
+                
+                return ret;
         } else
 				throw argErr(app, "Point", arg[0]);
 
