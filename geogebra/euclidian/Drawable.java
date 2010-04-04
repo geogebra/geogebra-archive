@@ -432,7 +432,7 @@ public abstract class Drawable {
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
 	
-	
+	/*
 	private static geogebra.gui.hoteqn.sHotEqn eqn;
 	
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
@@ -476,19 +476,20 @@ public abstract class Drawable {
 			
 			//Application.debug(size);
 			return dim;
-	}
+	}*/
 	
-	/*
-	private static HashMap<String,TeXIcon> equations = new HashMap<String,TeXIcon>();
+	
+	private static HashMap equations;
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
-	private static Dimension dim = new Dimension();
-	private static boolean fontsRegistered = false;
 	
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
 		
-		if (!fontsRegistered) {
+		if (equations == null) { // first call
+			
+			equations = new HashMap();
+			
 		   try{
 			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_GREEK);
 			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_CYRILLIC);
@@ -497,7 +498,6 @@ public abstract class Drawable {
 	       } catch (Exception e) {
 	           e.printStackTrace();
 	       }
-	       fontsRegistered = true;
 		}
 		
 		if (eqnSB == null) eqnSB = new StringBuilder(20);
@@ -506,7 +506,7 @@ public abstract class Drawable {
 		eqnSB.append(' ');
 		eqnSB.append(font.getSize()+"");
 		
-		TeXIcon icon = equations.get(eqnSB.toString());
+		TeXIcon icon = (TeXIcon)equations.get(eqnSB.toString());
 
 		
 		if (icon == null) {
@@ -518,8 +518,7 @@ public abstract class Drawable {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
-				dim.setSize(rec.width, rec.height);
-				return dim;
+				return new Dimension(rec.width, rec.height);
 			}
 			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
 			icon.setInsets(new Insets(1, 1, 1, 1));
@@ -528,9 +527,8 @@ public abstract class Drawable {
 
 			jl.setForeground(fgColor);
 			icon.paintIcon(jl, g2, x, y);
-			dim.setSize(icon.getIconWidth(), icon.getIconHeight());
-			return dim;
-		}*/
+			return new Dimension(icon.getIconWidth(), icon.getIconHeight());
+		}
 
 
 	final static Rectangle drawMultiLineText(String labelDesc, int xLabel, int yLabel, Graphics2D g2) {
