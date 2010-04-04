@@ -3375,6 +3375,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * PointList[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList PointList(String label, GeoList list) {
+		AlgoPointList algo = new AlgoPointList(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * First[list,n]
 	 * Michael Borcherds
 	 */

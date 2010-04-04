@@ -373,7 +373,9 @@ public class CommandDispatcher {
     	
     	cmdTable.put("PartialFractions", new CmdPartialFractions(kernel));   
     	cmdTable.put("Numerator", new CmdNumerator(kernel));   
-    	cmdTable.put("Denominator", new CmdDenominator(kernel));   
+    	cmdTable.put("Denominator", new CmdDenominator(kernel)); 
+    	
+    	cmdTable.put("PointList", new CmdPointList(kernel));   
  
      	                  	
     	
