@@ -1012,7 +1012,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 		if (setFont) currentFont = fonts[minSize];
 		fontsHash.put(Size, fonts[minSize]);
-		Application.debug("KB: storing "+size+" "+minSize);
+		//Application.debug("KB: storing "+size+" "+minSize);
 		return fonts[minSize];
 
 	}
