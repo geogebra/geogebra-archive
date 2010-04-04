@@ -14,6 +14,7 @@ package geogebra.gui.app;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -27,7 +28,7 @@ import javax.swing.filechooser.FileFilter;
  * Extensions are of the type ".foo", which is typically found on
  * Windows and Unix boxes, but not on Macinthosh. Case is ignored.
  *
- * Example - create a new filter that filerts out all files
+ * Example - create a new filter that filters out all files
  * but gif and jpg image files:
  *
  *     JFileChooser chooser = new JFileChooser();
@@ -42,7 +43,10 @@ public class MyFileFilter extends FileFilter {
   //  private static String TYPE_UNKNOWN = "Type Unknown";
   //  private static String HIDDEN_FILE = "Hidden File";
 
-    private Hashtable filters = null;
+	// changed to ArrayList as we need an ordered list (want .ggb first)
+	// Michael Borcherds 2010-03-04
+    private ArrayList filters = null; 
+    
     private String description = null;
     private String fullDescription = null;
     private boolean useExtensionsInDescription = true;
@@ -54,7 +58,7 @@ public class MyFileFilter extends FileFilter {
      * @see #addExtension
      */
     public MyFileFilter() {
-	filters = new Hashtable();
+	filters = new ArrayList();
     }
 
     /**
@@ -126,8 +130,8 @@ public class MyFileFilter extends FileFilter {
 	    if(f.isDirectory())
 			return true;
 	    String extension = getExtension(f);
-	    if(extension != null && filters.get(getExtension(f)) != null)
-			return true;;
+	    if(extension != null && filters.contains(getExtension(f)));
+			return true;
 	}
 	return false;
     }
@@ -165,14 +169,14 @@ public class MyFileFilter extends FileFilter {
      */
     public void addExtension(String extension) {
 	if(filters == null) {
-	    filters = new Hashtable(5);
+	    filters = new ArrayList(5);
 	}
    	// Added for Intergeo File Format (Yves Kreis) -->
 	if (extension.indexOf(".") > -1) {
 		extension = extension.substring(0, extension.lastIndexOf("."));
 	}
    	// <-- Added for Intergeo File Format (Yves Kreis)
-	filters.put(extension.toLowerCase(Locale.US), this);
+	filters.add(extension.toLowerCase(Locale.US));
 	fullDescription = null;
     }
 
@@ -194,14 +198,14 @@ public class MyFileFilter extends FileFilter {
 	    if(description == null || isExtensionListInDescription()) {
  		fullDescription = description==null ? "(" : description + " (";
 		// build the description from the extension list
-		Enumeration extensions = filters.keys();
-		if(extensions != null) {
-		    fullDescription += "." + (String) extensions.nextElement();
-		    while (extensions.hasMoreElements()) {
-			fullDescription += ", ." + (String) extensions.nextElement();
-		    }
-		}
-		fullDescription += ")";
+ 		
+ 		if (filters.size() > 0) fullDescription += "." + (String) filters.get(0);
+ 		
+ 		for (int i = 1 ; i < filters.size() ; i++) {
+ 			fullDescription += ", ." + (String) (String) filters.get(i);
+ 		}
+
+ 		fullDescription += ")";
 	    } else {
 		fullDescription = description;
 	    }
@@ -259,12 +263,7 @@ public class MyFileFilter extends FileFilter {
      * Added for Intergeo File Format (Yves Kreis)
      */
     public String getExtension() {
-    	Enumeration keys = filters.keys();
-    	if (keys.hasMoreElements()) {
-    		return (String) keys.nextElement();
-    	} else {
-    		return "";
-    	}
+    	return (String)filters.get(0);
     }
 }
 
