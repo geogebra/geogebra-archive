@@ -5,7 +5,9 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.CommandDispatcher;
 import geogebra.main.Application;
 
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 
@@ -111,14 +113,38 @@ public class CellRangeProcessor {
 
 		String listString = "";
 		ArrayList list = new ArrayList();
-
+		ArrayList<Point> cellList = new ArrayList<Point>();
+		
+		// temporary fix for catching duplicate cells
+		// will not be needed when sorting of cells by row/column is done
+		HashSet<Point> usedCells = new HashSet<Point>();
+		
 		try {
 			// get list string
+			/*
 			CellRange cr = new CellRange(table);
 			for (int i = 0; i < rangeList.size(); i++) {
 				cr = (CellRange) rangeList.get(i);
 				list.addAll(0, cr.toGeoLabelList(scanByColumn, copyByValue));
 			}
+			*/
+			
+			for(CellRange cr:rangeList){
+				cellList.addAll(cr.toCellList(scanByColumn));
+			}
+			for(Point cell: cellList){
+				if(!usedCells.contains(cell)){
+					GeoElement geo = RelativeCopy.getValue(table, cell.x, cell.y);
+					if (geo != null)
+						if (copyByValue)
+							list.add(geo.getValueForInputBar());
+						else
+							list.add(geo.getLabel());
+					usedCells.add(cell);
+				}
+			}
+			
+			
 			listString = list.toString();
 			listString = listString.replace("[", "{");
 			listString = listString.replace("]", "}");
@@ -132,6 +158,9 @@ public class CellRangeProcessor {
 		//	String listName = geos[0].getIndexLabel("L");
 		//	geos[0].setLabel(listName);
 
+			
+			
+			
 		} catch (Exception ex) {
 			Application.debug("Creating list failed with exception " + ex);
 		}

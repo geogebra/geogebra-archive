@@ -316,7 +316,9 @@ public class MyTable extends JTable implements FocusListener
 	 */
 	protected void selectionChanged() {
 		
-		// get the current table selection
+		// create a cell range object to store
+		// the current table selection 
+		
 		CellRange newSelection = new CellRange(this);
 
 		switch (selectionType) {
@@ -342,28 +344,41 @@ public class MyTable extends JTable implements FocusListener
 			break;
 		}
   
-	
+		
+		/*
 		// return if it is not really a new cell 
-		//if(selectedCellRanges.size()>0 && newSelection.equals(selectedCellRanges.get(0))) 
-			//	return;
+		if(selectedCellRanges.size()>0 && newSelection.equals(selectedCellRanges.get(0))) 
+				return;
+		*/
 		
 		
-		// update selection list
+		// update the selection list
 		
 		if (!metaDown) {
 			selectedCellRanges.clear();
 			selectedColumnSet.clear();
 			selectedRowSet.clear();
 			selectedCellRanges.add(0, newSelection);
-		} else {
-			// return if we already ctrl-selected this range
+			
+		} else { //ctrl-select
+			
+			/*
+			// return if we have already ctrl-selected this range
 			for (CellRange cr : selectedCellRanges) {
-				if (cr.equals(newSelection))
+				if (cr.equals(newSelection)){
+					System.out.println("reutrned");
 					return;
+				}
 			}
+			*/
+			
+			
+			// handle dragging  
 			if (selectedCellRanges.get(0).hasSameAnchor(newSelection)) {
 				selectedCellRanges.remove(0);
 			}
+			
+			// add the selection to the list
 			selectedCellRanges.add(0, newSelection);
 		}
 		

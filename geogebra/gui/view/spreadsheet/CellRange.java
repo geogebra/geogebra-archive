@@ -1,5 +1,6 @@
 package geogebra.gui.view.spreadsheet;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 import geogebra.kernel.GeoElement;
@@ -210,6 +211,33 @@ public class CellRange {
 		return list;
 	}
 	
+	/**
+	 * ArrayList of all cells found in the cell range 
+	 */
+	public ArrayList<Point> toCellList(boolean scanByColumn) {
+
+		ArrayList<Point> list = new ArrayList<Point>();
+		if (scanByColumn) {
+			for (int col = minColumn; col <= maxColumn; ++col) {
+				for (int row = minRow; row <= maxRow; ++row) {
+					list.add(new Point(col, row));
+				}
+			}
+		} else {
+			for (int row = minRow; row <= maxRow; ++row) {
+				for (int col = minColumn; col <= maxColumn; ++col) {
+					list.add(new Point(col, row));
+				}
+			}
+		}
+		
+		return list;
+	}
+	
+	
+	
+	
+	
 	boolean hasSameAnchor(CellRange cr){
 		return (cr.anchorRow == anchorRow) && (cr.anchorColumn == anchorColumn);
 	}
@@ -229,6 +257,17 @@ public class CellRange {
 		} else
 			return false;
 	}
+	
+	
+	public boolean contains(Object obj) {
+		CellRange cr;
+		if (obj instanceof CellRange) {
+			cr = (CellRange) obj;
+			return (this.toCellList(true).containsAll(cr.toCellList(true)));
+		} else
+			return false;
+	}
+	
 	
 	public void debug(){
 		System.out.println("anchor cell:  (" + anchorColumn + "," + anchorRow + ")" );
