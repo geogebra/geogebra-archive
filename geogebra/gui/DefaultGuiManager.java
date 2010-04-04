@@ -1618,6 +1618,9 @@ public class DefaultGuiManager implements GuiManager {
 				
 			// GeoGebra File Filter
 			MyFileFilter fileFilter = new MyFileFilter();
+			// This order seems to make sure that .ggb files come first
+			// so that getFileExtension() returns "ggb"
+			// TODO: more robust method
 			fileFilter.addExtension(Application.FILE_EXT_GEOGEBRA);
 			fileFilter.addExtension(Application.FILE_EXT_GEOGEBRA_TOOL);
 			fileFilter.addExtension(Application.FILE_EXT_HTML);
@@ -1708,6 +1711,27 @@ public class DefaultGuiManager implements GuiManager {
 						file = addExtension(removeExtension(file),
 								Application.FILE_EXT_GEOGEBRA_TOOL);
 					}
+					if (extension.equals(Application.FILE_EXT_GEOGEBRA)
+							&& !file.exists()) {
+						file = addExtension(removeExtension(file),
+								Application.FILE_EXT_HTML);
+					}
+					if (extension.equals(Application.FILE_EXT_GEOGEBRA)
+							&& !file.exists()) {
+						file = addExtension(removeExtension(file),
+								Application.FILE_EXT_HTM);
+					}
+					
+					if (!file.exists()) {
+						//Put the correct extension back on for the error message
+						file = addExtension(removeExtension(file), extension);
+						
+						JOptionPane.showConfirmDialog(app.getMainComponent(),
+								app.getError("FileNotFound") + ":\n" + file.getAbsolutePath(),
+								app.getError("Error"), JOptionPane.DEFAULT_OPTION,
+								JOptionPane.WARNING_MESSAGE);
+					
+					}
 					// <-- Modified for Intergeo File Format (Yves Kreis)
 				}
 				
@@ -1747,7 +1771,7 @@ public class DefaultGuiManager implements GuiManager {
 							inst.requestFocus();
 						}
 					}
-				}
+				} 
 			}
 		}
 		
