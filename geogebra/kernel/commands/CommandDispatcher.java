@@ -376,6 +376,7 @@ public class CommandDispatcher {
     	cmdTable.put("Denominator", new CmdDenominator(kernel)); 
     	
     	cmdTable.put("PointList", new CmdPointList(kernel));   
+    	cmdTable.put("RootList", new CmdRootList(kernel));   
  
      	                  	
     	

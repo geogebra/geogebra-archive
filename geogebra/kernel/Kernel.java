@@ -3385,6 +3385,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * RootList[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList RootList(String label, GeoList list) {
+		AlgoRootList algo = new AlgoRootList(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * First[list,n]
 	 * Michael Borcherds
 	 */
