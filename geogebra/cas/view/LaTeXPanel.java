@@ -27,7 +27,7 @@ public class LaTeXPanel extends JPanel {
 	
 	
 	public void setLaTeX(String latex) {
-		if (this.latex == latex) return;
+		if (latex.equals(this.latex)) return;
 		
 		this.latex = latex;
 		
