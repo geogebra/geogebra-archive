@@ -46,7 +46,7 @@ public abstract class CASTableCell extends JPanel{
 	
 	public void setValue(CASTableCellValue cellValue) {
 		// set input panel
-		String input = cellValue.getLocalizedInput();
+		String input = cellValue.getTranslatedInput();
 		inputPanel.setInput(input);
 		
 		// set output panel
@@ -61,7 +61,7 @@ public abstract class CASTableCell extends JPanel{
 			}
 			
 			outputPanel.setOutput(
-					cellValue.getLocalizedOutput(), 
+					cellValue.getOutput(), 
 					cellValue.getLaTeXOutput(), 
 					cmd, 
 					cellValue.isError()

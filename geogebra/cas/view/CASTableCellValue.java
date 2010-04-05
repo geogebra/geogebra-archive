@@ -14,8 +14,9 @@ import java.util.Iterator;
 
 
 public class CASTableCellValue {
+
+	private String input, prefix, postfix, error, latex;
 	private ValidExpression inputVE, evalVE, outputVE;
-	private String prefix, postfix, error, latex, prevInput;
 	private boolean allowLaTeX = true;
 	private boolean suppressOutput = false;
 	
@@ -23,6 +24,9 @@ public class CASTableCellValue {
 	private HashSet <String> invars;
 	private String assignmentVar;
 	private boolean includesRowReferences;
+	
+	// command names used
+	private HashSet <String> cmdNames;
 		
 	private String evalCmd;
 	private CASView view;
@@ -33,6 +37,7 @@ public class CASTableCellValue {
 		this.view = view;
 		this.kernel = view.getApp().getKernel();
 		
+		input = "";
 		inputVE = null;
 		outputVE = null;
 		prefix = "";
@@ -50,49 +55,48 @@ public class CASTableCellValue {
 	}
 
 	/** 
-	 * Returns the input of this row using command names in the application's language.
+	 * Returns the input of this row.
 	 */
-	public String getLocalizedInput() {
-		if (inputVE == null) 
-			return "";
-		else
-			return inputVE.toString();
+	public String getTranslatedInput() {
+		String translatedInput = input;
+		
+		// replace all internal command names in input by local command names
+		if (cmdNames != null) {
+			Iterator<String> it = cmdNames.iterator();
+			while (it.hasNext()) {
+				String cmd = it.next();
+				String localCmd = view.getApp().getCommand(cmd);
+			
+				// replace internal command name by local command name
+				translatedInput = translatedInput.replaceAll(cmd, localCmd);
+			}
+		}
+		
+		return translatedInput;
 	}
 	
 	/** 
-	 * Returns the input of this row using internal command names.
+	 * Returns the input of this row.
 	 */
 	public String getInternalInput() {
-		if (inputVE == null) 
-			return "";
-		else
-			return toInternalString(inputVE);
+		return input;
 	}
 
 	/** 
-	 * Returns the output of this row using command names in the application's language.
+	 * Returns the output of this row.
 	 */
-	public String getLocalizedOutput() {
-		if (error != null)
-			return view.getApp().getError(error);
+	public String getOutput() {
+		if (error != null) {
+			if (kernel.isTranslateCommandName())
+				return view.getApp().getError(error);
+			else 
+				return error;
+		}
 			
 		if (outputVE == null) 
 			return "";
 		else
-			return outputVE.toString();
-	}
-	
-	/** 
-	 * Returns the output of this row using internal command names.
-	 */
-	public String getInternalOutput() {
-		if (error != null)
-			return error;
-		
-		if (outputVE == null) 
-			return "";
-		else
-			return toInternalString(outputVE);
+			return outputVE.toAssignmentString();
 	}
 	
 	public String getPrefix() {
@@ -107,32 +111,19 @@ public class CASTableCellValue {
 		if (evalVE == null) 
 			return "";
 		else
-			return toInternalString(evalVE);
+			return evalVE.toString();
 	}
 	
+	/** 
+	 * Returns the evaluation expression (between prefix and postfix) of this row.
+	 * This method is important to process this row using GeoGebraCAS.
+	 */
 	public ValidExpression getEvalVE() {
 		return evalVE;
 	}
 	
 	public String getPostfix() {
 		return postfix;
-	}
-	
-	/** 
-	 * Returns the given expression using internal command names.
-	 */
-	private String toInternalString(ValidExpression ve) {
-		int oldPrintForm = kernel.getCASPrintForm();
-		boolean oldValue = kernel.isTranslateCommandName();
-		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
-        kernel.setTranslateCommandName(false); 
-       
-        String result = ve.toString();
-		
-        kernel.setCASPrintForm(oldPrintForm);
-		kernel.setTranslateCommandName(oldValue); 
-		
-		return result;
 	}
 	
 	public void setAllowLaTeX(boolean flag) {
@@ -144,9 +135,9 @@ public class CASTableCellValue {
 			return null;
 		else if (latex == null) {
 			try {
-				latex = view.getCAS().convertGeoGebraToLaTeXString(getLocalizedOutput());
+				latex = view.getCAS().convertGeoGebraToLaTeXString(outputVE);
 			} catch (Throwable th) {
-				System.err.println("no latex for: " + getLocalizedOutput());
+				System.err.println("no latex for: " + getOutput());
 				latex = "";
 			}
 		}
@@ -163,7 +154,7 @@ public class CASTableCellValue {
 	}
 	
 	public boolean isOutputEmpty() {
-		return outputVE == null;
+		return outputVE == null && error == null;
 	}
 	
 	public boolean showOutput() {
@@ -175,54 +166,78 @@ public class CASTableCellValue {
 	}
 
 	/**
-	 * Sets the input of this row.
+	 * Sets the input of this row. 
 	 * @param inValue
+	 * @return success
 	 */
 	public void setInput(String inValue) {
-		if (prevInput != null && prevInput.equals(inValue)) return;
-		prevInput = inValue;
+		if (input != null && input.equals(inValue)) return;
 		
-		try {
-			// parse input into valid expression
-			inputVE = view.getCAS().getCASparser().parseGeoGebraCASInput(inValue);
-			suppressOutput = inValue.endsWith(";");
-		} catch (Throwable e) {
-			inputVE = null;
-			suppressOutput = false;
-		}
+		input = inValue;
+		suppressOutput = inValue.endsWith(";");
 
+		// parse input into valid expression
+		inputVE = parseGeoGebraCASInputAndResolveDummyVars(inValue);
+		
 		prefix = "";
 		evalVE = inputVE;
 		postfix = "";
+		evalCmd = "";
 		
 		// update input and output variables
 		updateInOutVars(inputVE);
+		
+		// make sure input uses only internal command names
+		translateInput(inputVE);
+	}
+	
+	private ValidExpression parseGeoGebraCASInputAndResolveDummyVars(String inValue) {
+		try {
+			// parse input into valid expression
+			ValidExpression ve = view.getCAS().getCASparser().parseGeoGebraCASInput(inValue);
+			
+			// resolve Variable objects in ValidExpression as GeoDummy objects
+			Kernel kernel = view.getApp().getKernel();
+			kernel.setResolveVariablesForCASactive(true);
+			ve.resolveVariables();
+			kernel.setResolveVariablesForCASactive(false);
+			return ve;
+		} catch (Throwable e) {
+			return null;
+		}
 	}
 	
 	/**
-	 * Sets the input in parts where prefix + eval + postfix
-	 * are assumed to be structurally equal to the current input.
-	 * Note that setInput() needs to be called separately.
+	 * Sets how this row should be evaluated. Note that the input
+	 * is NOT changed by this method, so you need to call setInput()
+	 * first.
 	 * 
-	 * @param prefix: beginning part that should not be evaluated
-	 * @param eval: selected part of the input that needs to be evaluated
-	 * @param postfix: end part that should not be evaluated
+	 * @param prefix: beginning part that should NOT be evaluated
+	 * @param eval: part of the input that needs to be evaluated
+	 * @param postfix: end part that should NOT be evaluated
 	 */
-	public void setInput(String prefix, String eval, String postfix) {
-		this.prefix = prefix;
-		this.postfix = postfix;
-		
+	public void setProcessingInformation(String prefix, String eval, String postfix) {
 		evalCmd = "";
-		try {
-			// parse eval text into valid expression
-			evalVE = view.getCAS().getCASparser().parseGeoGebraCASInput(eval);
+		
+		// stop if input is assignment
+		if (inputVE != null && inputVE.getLabel() != null) {
+			return;
+		}
+		
+		// parse eval text into valid expression
+		evalVE = parseGeoGebraCASInputAndResolveDummyVars(eval);
+		if (evalVE != null) {
 			if (evalVE.isTopLevelCommand()) {
 				// extract command from eval
-				int bracketPos = getEvalText().indexOf('[');
-				evalCmd = bracketPos > 0 ? eval.substring(0, bracketPos) : "";
+				evalCmd = evalVE.getTopLevelCommand().getName();
 			}
-		} catch (Throwable e) {
-			evalVE = null;
+			this.prefix = prefix;
+			this.postfix = postfix;
+		}
+		else {
+			evalVE = inputVE;
+			this.prefix = "";
+			this.postfix = "";
 		}
 	}
 	
@@ -238,7 +253,7 @@ public class CASTableCellValue {
 		// check if the structure of inputVE and prefix + evalText + postfix is equal
 		// this is important to catch wrong selections, e.g.
 		// 2 + 2/3 is not equal to the selection (2+2)/3
-		if (!view.getCAS().isStructurallyEqual(getLocalizedInput(), newInput)) {			
+		if (!view.getCAS().isStructurallyEqual(input, newInput)) {			
 			setError("CAS.SelectionStructureError");
 			return false;
 		}
@@ -246,27 +261,53 @@ public class CASTableCellValue {
 	}
 	
 	/**
-	 * Parses the input string and updates the sets of
+	 * Sets input to use internal command names and translatedInput 
+	 * to use localized command names. As a side effect, all command
+	 * names are added as input variables as they could be function names.
+	 */
+	private void translateInput(ValidExpression ve) {	
+		if (ve == null) {
+			cmdNames = null;
+			return;
+		}
+		
+		// get all command names
+		cmdNames = new HashSet<String>();
+		ve.addCommandNames(cmdNames);
+		
+		// replace all local command names in input by internal command names
+		Iterator<String> it = cmdNames.iterator();
+		while (it.hasNext()) {
+			String cmd = it.next();
+			String localCmd = view.getApp().getCommand(cmd);
+		
+			// replace local command name by internal command in input
+			input = input.replaceAll(localCmd, cmd);
+		
+			// add command name as invar as it could be a function name
+			addInVar(cmd);
+		}
+	}
+	
+	/**
+	 * Updates the sets of
 	 * input and output variables. For example, the input "b := a + 5"
 	 * has the 
 	 */
 	private void updateInOutVars(ValidExpression ve) {		
+		// clear var sets
+		clearInVars();
+		
+		if (ve == null) return;
+		
 		try {
-			// clear var sets
-			clearInVars();
-			
 			// check for function
 			boolean isFunction = ve instanceof Function;
 				
 			// outvar of assignment b := a + 5 is "b"
 			setAssignmentVar(ve.getLabel());
 
-			// get input vars: 
-			// resolve Variable objects in ValidExpression as GeoDummy objects
-			Kernel kernel = view.getApp().getKernel();
-			kernel.setResolveVariablesForCASactive(true);
-			ve.resolveVariables();
-			kernel.setResolveVariablesForCASactive(false);
+			// get input vars:
 			HashSet geoVars = ve.getVariables();
 			if (geoVars != null) {
 				Iterator it = geoVars.iterator();
@@ -353,13 +394,8 @@ public class CASTableCellValue {
 		error = null;
 		latex = null;
 
-		try {
-			// parse input into valid expression
-			outputVE = view.getCAS().getCASparser().parseGeoGebraCASInput(output);
-		} catch (Throwable e) {
-			outputVE = null;
-			e.printStackTrace();
-		}
+		// parse output into valid expression
+		outputVE = parseGeoGebraCASInputAndResolveDummyVars(output);
 	}
 	
 	public void setError(String error) {
@@ -383,7 +419,7 @@ public class CASTableCellValue {
 			sb.append("\t\t\t");
 			sb.append("<expression");
 			sb.append(" value=\"");
-			sb.append(Util.encodeXML(getInternalInput()));
+			sb.append(Util.encodeXML(input));
 			sb.append("\" ");
 			
 			if (evalVE != inputVE) {
@@ -411,7 +447,7 @@ public class CASTableCellValue {
 			sb.append("<expression");
 			
 			sb.append(" value=\"");
-			sb.append(Util.encodeXML(getInternalOutput()));
+			sb.append(Util.encodeXML(getOutput()));
 			sb.append("\"");
 			if (isError()) {
 				sb.append(" error=\"true\"");

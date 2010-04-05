@@ -13,7 +13,6 @@ import java.util.TimerTask;
 
 import org.mathpiper.interpreters.EvaluationResponse;
 import org.mathpiper.interpreters.Interpreter;
-import org.mathpiper.interpreters.Interpreters;
 
 public class CASmathpiper extends CASgeneric {
 	
@@ -30,12 +29,20 @@ public class CASmathpiper extends CASgeneric {
 	
 	private synchronized Interpreter getMathPiper() {				
 		if (ggbMathPiper == null) {
-			ggbMathPiper = Interpreters.getSynchronousInterpreter();
+			ggbMathPiper = org.mathpiper.interpreters.Interpreters.newSynchronousInterpreter();
 			initMyMathPiperFunctions();
 		}
 		
 		return ggbMathPiper;
 	}	
+	
+	/**
+	 * Resets the cas and unbinds all variable and function definitions.
+	 */
+	public void reset() {
+		ggbMathPiper = null;
+		getMathPiper();
+	}
 	
 	/**
 	 * Returns whether var is a defined variable in MathPiper.

@@ -46,6 +46,10 @@ public class CASInputHandler {
 		String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
 		int selStart = cellEditor.getInputSelectionStart();
 		int selEnd = cellEditor.getInputSelectionEnd();
+		String selRowInput = cellEditor.getInput();
+		if (selRowInput == null || selRowInput.length() == 0) {
+			return;
+		}
 				
 		// save the edited value into the table model
 		consoleTable.stopEditing();
@@ -54,11 +58,6 @@ public class CASInputHandler {
 		int selRow = consoleTable.getSelectedRow();	
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
-		String selRowInput = cellValue.getLocalizedInput();	
-		if (selRowInput == null || selRowInput.length() == 0) {
-			consoleTable.startEditingRow(selRow);
-			return;
-		}
 		
 		// DIRECT MathPiper use: line starts with "MathPiper:"
 		if (selRowInput.startsWith("MathPiper:")) {
@@ -109,8 +108,7 @@ public class CASInputHandler {
 		
 		// remember input selection information for future calls of processRow()
 		// check if structure of selection is ok
-		String newText = prefix + evalText + postfix;
-		boolean structureOK = cellValue.isStructurallyEqualToLocalizedInput(newText);
+		boolean structureOK = cellValue.isStructurallyEqualToLocalizedInput(prefix + evalText + postfix);
 		if (!structureOK) {
 			// show current selection again
 			consoleTable.startEditingRow(selRow);
@@ -145,8 +143,8 @@ public class CASInputHandler {
 			evalText = sb.toString();	
 		}
 		
-		// remember input selection information for future calls of processRow()
-		cellValue.setInput(prefix, evalText, postfix);
+		// remember evalText and selection for future calls of processRow()
+		cellValue.setProcessingInformation(prefix, evalText, postfix);
 		
 		// process given row
 		boolean success = processRow(selRow);
@@ -306,26 +304,40 @@ public class CASInputHandler {
 	}
 	
 	/**
-	 * Evaluates  as GeoGebraCAS input. Dynamic references are
+	 * Evaluates eval as GeoGebraCAS input. Dynamic references are
 	 * resolved according to the given row number.
 	 */
-	private String evaluateGeoGebraCAS(ValidExpression eval, int row) throws Throwable {
-		// resolve dynamic row references
-		String evalText = eval.toString();
-		String resolvedText = resolveCASrowReferences(evalText, row, ROW_REFERENCE_DYNAMIC);
-		if (!evalText.equals(resolvedText)) {
-			eval = casParser.parseGeoGebraCASInput(resolvedText);
-		}
-		
-		// process this input
-		return processCASviewInput(eval);
+	private String evaluateGeoGebraCAS(ValidExpression evalVE, int row) throws Throwable {
+		boolean oldValue = kernel.isTranslateCommandName();
+        kernel.setTranslateCommandName(false);
+       
+        try {
+			// resolve dynamic row references
+			String eval = evalVE.toAssignmentString();
+			String rowRefEval = resolveCASrowReferences(eval, row, ROW_REFERENCE_DYNAMIC);
+			if (rowRefEval != eval) {
+				eval = rowRefEval;
+				evalVE = casParser.parseGeoGebraCASInput(rowRefEval);
+			}
+
+			// process this input
+			return processCASviewInput(evalVE, rowRefEval);
+        }
+        finally {
+        	kernel.setTranslateCommandName(oldValue); 
+        }
 	}
 	
 	/**
 	 * Replaces references to other rows (e.g. #3, %3) in input string by
 	 * the values from those rows.
 	 */
-	public String resolveCASrowReferences(String inputExp, int selectedRow, char delimiter) {		
+	public String resolveCASrowReferences(String inputExp, int selectedRow, char delimiter) {	
+		// check for delimiter first
+		if (inputExp.indexOf(delimiter) < 0) {
+			return inputExp;
+		}
+		
 		StringBuilder sbCASreferences = new StringBuilder();
 		
 		int length = inputExp.length();
@@ -430,37 +442,37 @@ public class CASInputHandler {
 	
 	
 	/**
-	 * Processes the CASview input string and returns an evaluation result. Note that this method
+	 * Processes the CASview input and returns an evaluation result. Note that this method
 	 * can have side-effects on the GeoGebra kernel by creating new objects or deleting an existing object.
 	 * 
 	 * @return result as String in GeoGebra syntax
 	 */
-	 private synchronized String processCASviewInput(ValidExpression inVE) throws Throwable {		 
+	 private synchronized String processCASviewInput(ValidExpression evalVE, String eval) throws Throwable {		 	
 		// check for assignment
-		String assignmentVar = inVE.getLabel();
+		String assignmentVar = evalVE.getLabel();
 		boolean assignment = assignmentVar != null;
 		
 		// EVALUATE input expression with current CAS
 		String CASResult = null;
 		Throwable throwable = null;
 		try {
-			if (assignment || inVE.isTopLevelCommand()) {
+			if (assignment || evalVE.isTopLevelCommand()) {
 				// evaluate inVE in CAS and convert result back to GeoGebra expression
-				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(inVE, casView.getUseGeoGebraVariableValues());
+				CASResult = casView.getCAS().evaluateGeoGebraCAS(evalVE, casView.getUseGeoGebraVariableValues());
 			} 
 			else {
 				// build Simplify[inVE]
 				Command simplifyCommand = new Command(kernel, "Simplify", false);
-				ExpressionNode inEN = inVE.isExpressionNode() ? (ExpressionNode) inVE :
-										new ExpressionNode(kernel, inVE);
+				ExpressionNode inEN = evalVE.isExpressionNode() ? (ExpressionNode) evalVE :
+										new ExpressionNode(kernel, evalVE);
 				simplifyCommand.addArgument(inEN);
-				simplifyCommand.setLabel(inVE.getLabel());
+				simplifyCommand.setLabel(evalVE.getLabel());
 				// evaluate Simplify[inVE] in CAS and convert result back to GeoGebra expression
 				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(simplifyCommand, casView.getUseGeoGebraVariableValues());
 			}
 		} catch (Throwable th1) {
 			throwable = th1;
-			System.err.println("CAS evaluation failed: " + inVE.toString() + "\n error: " + th1.toString());
+			System.err.println("CAS evaluation failed: " + eval + "\n error: " + th1.toString());
 		}
 		boolean CASSuccessful = CASResult != null;
 		
@@ -478,7 +490,7 @@ public class CASInputHandler {
 				// - or Delete, e.g. Delete[a]
 				// - or CAS was not successful
 				// - or CAS result contains commands
-				isDeleteCommand = isDeleteCommand(inVE.toString());
+				isDeleteCommand = isDeleteCommand(eval);
 				evalInGeoGebra = !CASSuccessful || isDeleteCommand || containsCommand(CASResult);
 			}
 		}
@@ -493,19 +505,19 @@ public class CASInputHandler {
 			try {
 				// process inputExp in GeoGebra
 				if (!assignToFreeGeoOnly)
-					ggbResult = evalInGeoGebra(inVE.toString());
+					ggbResult = evalInGeoGebra(eval);
 			} catch (Throwable th2) {
 				if (throwable == null) throwable = th2;
-				System.err.println("GeoGebra evaluation failed: " + inVE.toString() + "\n error: " + th2.toString());
+				System.err.println("GeoGebra evaluation failed: " + eval + "\n error: " + th2.toString());
 			}
 			
 			// inputExp failed with GeoGebra
 			// try to evaluate result of MathPiper
-			if (ggbResult == null && CASSuccessful && !isDeleteCommand) {
+			if (ggbResult == null && !isDeleteCommand && CASSuccessful && !"true".equals(CASResult)) {
 				String ggbEval = CASResult;
 				if (assignment) {
 					StringBuilder sb = new StringBuilder();
-					sb.append(getLabelForAssignment(inVE));
+					sb.append(evalVE.getLabelForAssignment());
 					sb.append(":=");
 					sb.append(CASResult);
 					ggbEval = sb.toString();
@@ -528,17 +540,34 @@ public class CASInputHandler {
 		// return result string:
 		// use MathPiper if that worked, otherwise GeoGebra
 		if (CASSuccessful) {
-			if (assignment && "true".equals(CASResult)) {
-				// return value of assigned variable
-				try {
-					// evaluate assignment variable like f(x) or a 
-					return casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(getLabelForAssignment(inVE), false);
-				} catch (Throwable th1) {
-					return CASResult;
+			
+			// assignment:
+			// return CAS result for commands and simple vars, e.g. f(x) := Derivative[ a x^2 ], b := 5 + 3
+			// return input expression for functions
+			if (assignment) {
+				StringBuilder assignmentResult = new StringBuilder();
+				assignmentResult.append(evalVE.getLabelForAssignment());
+				assignmentResult.append(" := ");
+				
+				// keep structure of simple functions in output, e.g. f(x) := (1/2)*(x+2/x) 
+				boolean keepStructure = evalVE instanceof Function && !((Function)evalVE).getExpression().isTopLevelCommand();
+				if (keepStructure) {
+					assignmentResult.append(evalVE.toString());
+				} else {
+					// return value of assigned variable
+					try {
+						// evaluate assignment variable like a or f(x)
+						assignmentResult.append(casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(evalVE.getLabelForAssignment(), false));
+					} catch (Throwable th1) {
+						assignmentResult.append(CASResult);
+					}
 				}
+				
+				return assignmentResult.toString();
 			} 
+			
+			// no assignment: return CAS result
 			else {
-				// MathPiper evaluation worked
 				return CASResult;
 			}	
 		} 
@@ -560,22 +589,6 @@ public class CASInputHandler {
 	 
 	 private boolean containsCommand(String CASResult) {
 		 return  CASResult != null && CASResult.indexOf('[') > -1;
-	 }
-
-	 private String getLabelForAssignment(ValidExpression ve) {
-			if (ve instanceof Function) {
-				StringBuilder sb = new StringBuilder();
-				// function, e.g. f(x) := 2*x
-				Function fun = (Function) ve;
-				sb.append(ve.getLabel());
-				sb.append("(");
-				sb.append(fun.getFunctionVariable());
-				sb.append(")");	
-				return sb.toString();
-			} 
-			else {
-				return ve.getLabel();
-			}
 	 }
 	 
 		/**

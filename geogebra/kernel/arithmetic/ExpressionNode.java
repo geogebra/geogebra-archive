@@ -29,6 +29,7 @@ import geogebra.main.Application;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 
 /**
@@ -860,7 +861,23 @@ implements ExpressionValue, ExpressionNodeConstants {
         	leftVars.addAll(rightVars);        	
         	return leftVars;
         }        	
-    }               
+    }         
+    
+    public void addCommandNames(Set cmdNames) {
+    	 if (left instanceof Command) {
+    		 ((Command) left).addCommandNames(cmdNames);
+    	 }
+    	 else if (left instanceof ExpressionNode) {
+    		 ((ExpressionNode) left).addCommandNames(cmdNames);
+    	 }
+    	 
+    	 if (right instanceof Command) {
+    		 ((Command) right).addCommandNames(cmdNames);
+    	 }
+    	 else if (right instanceof ExpressionNode) {
+    		 ((ExpressionNode) right).addCommandNames(cmdNames);
+    	 }
+	}
     
     final public GeoElement [] getGeoElementVariables() {
     	HashSet varset = getVariables();
@@ -1529,7 +1546,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                		   if (Character.isDigit(rightStr.charAt(0)) &&
 	                                Character.isDigit(sb.charAt(sb.length() - 1)) )
 	                           {
-	                			   sb.append(" * ");                    			   
+	                			   sb.append(multiplicationSign(STRING_TYPE));                    			   
 	                            }
 	                           else {
 	                        	   switch (STRING_TYPE) {
@@ -1537,11 +1554,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 		                			case STRING_TYPE_JASYMCA:
 		                    		case STRING_TYPE_MATH_PIPER:
 		                    		case STRING_TYPE_MAXIMA:
-		                				sb.append(" * ");  
+		                				sb.append(multiplicationSign(STRING_TYPE));  
 		                				break;
 		                				
 		                			default:                        
-		                				sb.append(' '); // space instead of '*'  
+		                				sb.append(multiplicationSpace(STRING_TYPE)); // space instead of '*'  
 	                        	   }	                        	   
 	                           }	                                             	                          
 	                    } 	    
@@ -1566,11 +1583,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                		case STRING_TYPE_JASYMCA:
 	                    	case STRING_TYPE_MATH_PIPER:
 	                    	case STRING_TYPE_MAXIMA:
-	                				sb.append(" * ");  
+	                				sb.append(multiplicationSign(STRING_TYPE));  
 	                				break;
 	                				
 	                			default:                        
-	                				sb.append(' '); // space instead of '*'  
+	                				sb.append(multiplicationSpace(STRING_TYPE)); // space instead of '*'  
 	                    	}
 	                    }                      
 	                    sb.append(leftBracket(STRING_TYPE));
@@ -2833,12 +2850,27 @@ implements ExpressionValue, ExpressionNodeConstants {
 		return isLeaf() && left instanceof Command;
 	}
     
+    public Command getTopLevelCommand() {
+		if (isTopLevelCommand())
+			return (Command) left;
+		else
+			return null;
+	}
+    
     private String leftBracket(int type) {
     	return (type == STRING_TYPE_LATEX) ? "\\left( " : "(";
     }
 	
     private String rightBracket(int type) {
     	return (type == STRING_TYPE_LATEX) ? "\\right) " : ")";
+    }
+    
+    private String multiplicationSign(int type) {
+    	return (type == STRING_TYPE_LATEX) ? " \\cdot " : " * ";
+    }
+    
+    private String multiplicationSpace(int type) {
+    	return (type == STRING_TYPE_LATEX) ? " \\; " : " ";
     }
 	
 }

@@ -85,8 +85,8 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	public boolean stopCellEditing() {	
 		// update cellValue's input using editor content
 		if (editing) {
-			cellValue.setInput(getInput());	
-			fireEditingStopped();	
+			cellValue.setInput(getInput());
+			fireEditingStopped();
 		}
 					
 		return true;
@@ -182,7 +182,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 				// insert output of previous row (not in parentheses)
 				if (editingRow > 0 && text.length() == 0) {
 					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
-					inputArea.setText(selCellValue.getLocalizedOutput() + " ");
+					inputArea.setText(selCellValue.getOutput() + " ");
 				}
 				break;
 				
@@ -190,7 +190,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 				// insert output of previous row in parentheses		
 				if (editingRow > 0 && text.length() == 0) {
 					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
-					String prevOutput = selCellValue.getLocalizedOutput();
+					String prevOutput = selCellValue.getOutput();
 					inputArea.setText("(" +  prevOutput);
 				}
 				break;		
@@ -199,7 +199,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 				// insert input of previous row
 				if (editingRow > 0 && text.length() == 0) {
 					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
-					inputArea.setText(selCellValue.getLocalizedInput());
+					inputArea.setText(selCellValue.getTranslatedInput());
 					e.consume();
 				}
 				break;

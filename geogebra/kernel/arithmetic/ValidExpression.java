@@ -16,6 +16,7 @@ the Free Software Foundation.
  */ 
 package geogebra.kernel.arithmetic;
 
+import java.util.Set;
 import java.util.Vector;
 
 public abstract class ValidExpression implements ExpressionValue {                
@@ -107,5 +108,47 @@ public abstract class ValidExpression implements ExpressionValue {
 	public boolean isTopLevelCommand() {
 		return false;
 	}
+	
+	public Command getTopLevelCommand() {
+		return null;
+	}
+	
+	 public String getLabelForAssignment() {
+		 return getLabel();
+	 }
+	 
+	 /**
+	  * Includes the label and assignment operator.
+	  * E.g. while toString() would return x^2, this method
+	  * would return f(x) := x^2
+	  * @return
+	  */
+	 public String toAssignmentString() {
+		 if (labels == null) {
+			 return toString();
+		 }
+		 
+		 StringBuilder sb = new StringBuilder();
+		 sb.append(getLabelForAssignment());
+		 sb.append(" := ");
+		 sb.append(toString());
+		 return sb.toString();
+	 }
+	 
+	 public String toAssignmentLaTeXString() {
+		 if (labels == null) {
+			 return toLaTeXString(true);
+		 }
+		 
+		 StringBuilder sb = new StringBuilder();
+		 sb.append(getLabelForAssignment());
+		 sb.append(" \\, : \\! =  \\, ");
+		 sb.append(toLaTeXString(true));
+		 return sb.toString();
+	 }
+	 
+	  public void addCommandNames(Set cmdNames) {
+		// do nothing, see Command, ExpressionNode classes
+	  }
 	
 }

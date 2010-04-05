@@ -279,6 +279,14 @@ public class CASmaxima extends CASgeneric {
 		return ggbMaxima;
 	}
 	
+	/**
+	 * Resets the cas and unbinds all variable and function definitions.
+	 */
+	public void reset() {
+		ggbMaxima = null;
+		getMaxima();
+	}
+	
 	private void initMyMaximaFunctions() throws MaximaTimeoutException {
 	
 		// set line length of "terminal"

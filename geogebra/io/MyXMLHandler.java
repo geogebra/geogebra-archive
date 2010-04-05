@@ -2454,7 +2454,7 @@ public class MyXMLHandler implements DocHandler {
 			String eval = (String) attrs.get("eval");
 			String postfix = (String) attrs.get("postfix");
 			if (eval != null) {
-				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setInput(prefix, eval, postfix);
+				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setProcessingInformation(prefix, eval, postfix);
 			}
 			return true;
 		} catch (Exception e) {

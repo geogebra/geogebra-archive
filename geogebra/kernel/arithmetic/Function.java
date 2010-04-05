@@ -1294,4 +1294,14 @@ implements ExpressionValue, RealRootFunction, Functional {
 	public boolean isVector3DValue() {
 		return false;
 	}
+	
+	 public String getLabelForAssignment() {
+		 StringBuilder sb = new StringBuilder();
+			// function, e.g. f(x) := 2*x
+			sb.append(getLabel());
+			sb.append("(");
+			sb.append(getFunctionVariable());
+			sb.append(")");	
+			return sb.toString();
+	 }
 }

@@ -26,6 +26,7 @@ import geogebra.main.MyError;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 /**
  *
  * @author  Markus
@@ -43,6 +44,7 @@ implements ExpressionValue {
     private Application app;
     private GeoElement[] evalGeos; // evaluated Elements
     private Macro macro; // command may correspond to a macro 
+    private boolean allowEvaluation = true;
     
     /** Creates new Command */
     public Command(Kernel kernel, String name, boolean translateName) {    
@@ -198,6 +200,9 @@ implements ExpressionValue {
 	        for (int i=0; i < args.size(); i++) {        
 	            ((ExpressionValue) args.get(i)).resolveVariables();        
 	        }
+	        
+	        // avoid evaluation of command
+	        allowEvaluation = false;
     	}
     }
     
@@ -224,15 +229,15 @@ implements ExpressionValue {
     }
 
     public boolean isNumberValue() {
-        return evaluate().isNumberValue();
+        return allowEvaluation && evaluate().isNumberValue();
     }
 
     public boolean isVectorValue() {
-        return evaluate().isVectorValue();
+        return allowEvaluation && evaluate().isVectorValue();
     }
     
     final public boolean isBooleanValue() {
-        return evaluate().isBooleanValue();
+        return allowEvaluation && evaluate().isBooleanValue();
     }
 
     public boolean isPolynomialInstance() {
@@ -242,7 +247,7 @@ implements ExpressionValue {
     }
     
     public boolean isTextValue() {
-        return evaluate().isTextValue();
+        return allowEvaluation && evaluate().isTextValue();
     }   
 
     public ExpressionValue deepCopy(Kernel kernel) {
@@ -268,15 +273,22 @@ implements ExpressionValue {
 
     public HashSet getVariables() {             
         HashSet set = new HashSet();
-        int size = args.size();
+       int size = args.size();
         for (int i=0; i < size; i++) {
             HashSet s = ((ExpressionNode)args.get(i)).getVariables();
             if (s != null) set.addAll(s);
-        }
+        } 
         return set;
     }
 
-   
+    public void addCommandNames(Set cmdNames) {
+    	cmdNames.add(name);
+    	
+    	int size = args.size();
+        for (int i=0; i < size; i++) {
+            ((ExpressionNode)args.get(i)).addCommandNames(cmdNames);
+        } 
+	}
 
     final public boolean isExpressionNode() {
         return false;
@@ -306,6 +318,10 @@ implements ExpressionValue {
     
     public boolean isTopLevelCommand() {
 		return true;
+	}
+    
+    public Command getTopLevelCommand() {
+		return this;
 	}
 
 }

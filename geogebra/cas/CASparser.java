@@ -88,6 +88,14 @@ public class CASparser {
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
 	public String toGeoGebraString(ExpressionValue ev) throws Throwable {
+		return toString(ev, ExpressionNode.STRING_TYPE_GEOGEBRA);
+	}
+	
+	/**
+	 * Tries to convert the given MathPiper string to the given syntax.
+	 * @param STRING_TYPE: one of ExpressionNode.STRING_TYPE_GEOGEBRA, STRING_TYPE_GEOGEBRA_XML
+	 */
+	public String toString(ExpressionValue ev, int STRING_TYPE) throws Throwable {
 		String GeoGebraString;
 		
 		if (!ev.isExpressionNode()) {
@@ -95,7 +103,7 @@ public class CASparser {
 		}
 		
 		ExpressionNode en = (ExpressionNode) ev;
-		GeoGebraString = en.getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, true);		
+		GeoGebraString = en.getCASstring(STRING_TYPE, true);		
 		return GeoGebraString;
 	}
 	

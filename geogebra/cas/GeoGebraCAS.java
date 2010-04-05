@@ -3,6 +3,7 @@ package geogebra.cas;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -26,8 +27,6 @@ public class GeoGebraCAS {
 	private Application app;
 	private CASparser casParser;
 	private CASgeneric cas;
-	private CASmathpiper mathpiper;
-	private CASmaxima maxima;
 	public int currentCAS = -1;
 
 	public GeoGebraCAS(Kernel kernel) {
@@ -69,17 +68,32 @@ public class GeoGebraCAS {
 		}
 	}
 	
+	/**
+	 * Resets the cas and unbinds all variable and function definitions.
+	 */
+	public void reset() {
+		setCurrentCAS(currentCAS);
+	}
+	
 	private CASmathpiper getMathPiper() {
-		if (mathpiper == null)
-			mathpiper = new CASmathpiper(casParser);
-		return mathpiper;
+		return new CASmathpiper(casParser);
 	}
 	
 	private CASmaxima getMaxima() {
-		if (maxima == null)
-			maxima = new CASmaxima(casParser);
-		return maxima;
+		return new CASmaxima(casParser);
 	}
+	
+	/**
+	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
+	 * @param casInput: in GeoGebraCAS syntax
+	 * @param useGeoGebraVariables: whether GeoGebra objects should be substituted before evaluation
+	 * @return evaluation result
+	 * @throws Throwable
+	 */
+	public String evaluateGeoGebraCAS(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
+		return cas.evaluateGeoGebraCAS(casInput, useGeoGebraVariables);
+	}
+	
 	
 	/**
 	 * Returns whether var is a defined variable.
@@ -240,26 +254,20 @@ public class GeoGebraCAS {
 	 * @return null if something went wrong or the resulting String doesn't contain
 	 * any LaTeX commands (i.e. no \).
 	 */
-	public synchronized String convertGeoGebraToLaTeXString(String ggbExp) {
+	public synchronized String convertGeoGebraToLaTeXString(ValidExpression ggbExp) {
 		if (ggbExp == null)
 			return null;
 		
-		try {
-			// parse input
-			ValidExpression ve = casParser.parseGeoGebraCASInput(ggbExp);
-			String latex = ve.toLaTeXString(true);
-						
-			for (int i=0; i < latex.length(); i++) {
-				char ch = latex.charAt(i);
-				switch (ch) {
-					case '\\':
-					case '^':
-						return latex;
-				}
+		String latex = ggbExp.toAssignmentLaTeXString();
+					
+		for (int i=0; i < latex.length(); i++) {
+			char ch = latex.charAt(i);
+			switch (ch) {
+				case '\\':
+				case '^':
+					return latex;
 			}
-		} catch (Throwable e) {
-			//e.printStackTrace();			
-		}		
+		}
 		
 		// no real latex string: return null
 		return null;
@@ -414,13 +422,18 @@ public class GeoGebraCAS {
 	 * but unequal to "(2 + 2)/3"
 	 */
 	public boolean isStructurallyEqual(String input1, String input2) {
+		if (input1.equals(input2)) return true;
+	
 		try {
 			// parse both input expressions
 			ValidExpression ve1 = casParser.parseGeoGebraCASInput(input1);
+			String input1normalized = casParser.toString(ve1, ExpressionNode.STRING_TYPE_MATH_PIPER);
+			
 			ValidExpression ve2 = casParser.parseGeoGebraCASInput(input2);
+			String input2normalized = casParser.toString(ve2, ExpressionNode.STRING_TYPE_MATH_PIPER);
 			
 			// compare if the parsed expressions are equal
-			return ve1.toString().equals(ve2.toString());
+			return input1normalized.equals(input2normalized);
 		} catch (Throwable th) {
 		}
 		

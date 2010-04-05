@@ -261,7 +261,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 * Returns the output string in the n-th row of this CAS view.
 	 */
 	public String getRowOutputValue(int n) {
-		return consoleTable.getCASTableCellValue(n).getLocalizedOutput();
+		return consoleTable.getCASTableCellValue(n).getOutput();
 	}
 
 	/**
@@ -269,7 +269,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 * cell has no output string, the input string of this cell is returned.
 	 */
 	public String getRowInputValue(int n) {
-		return consoleTable.getCASTableCellValue(n).getLocalizedInput();
+		return consoleTable.getCASTableCellValue(n).getTranslatedInput();
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 			cellValue.setInput(assignmentStr);
 			casInputHandler.processRow(row);
 			consoleTable.repaint();
-
+			
 			updateHandled = true;
 		}
 
@@ -445,8 +445,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	}
 
 	public void clearView() {
-		// TODO: restart cas
-		// cas.restart();
+		cas.reset();
 
 		// delete all rows
 		consoleTable.deleteAllRows();
