@@ -66,6 +66,7 @@ public class SpreadsheetView extends JSplitPane implements View
 	public JList rowHeader;
 	private RowHeaderRenderer rowHeaderRenderer;
 	private MyListModel listModel;
+	private SpreadsheetView view;
 	
 	
 	// if these are increased above 32000, you need to change traceRow to an int[]
@@ -125,7 +126,7 @@ public class SpreadsheetView extends JSplitPane implements View
 		
 		app = app0;
 		kernel = app.getKernel();
-		
+		view = this;
 		
 		// table
 		tableModel = new DefaultTableModel(rows, columns);
@@ -836,7 +837,12 @@ public class SpreadsheetView extends JSplitPane implements View
 				if (point != null) {
 					int row = (int) point.getY();
 					table.setRowSelectionInterval(row0, row);
-					//table.repaint();
+					
+					//G.Sturr 2010-4-4
+					// keep the row header updated when drag selecting multiple rows 
+					view.updateRowHeader();
+					table.scrollRectToVisible(table.getCellRect(point.y,point.x,true));
+					table.repaint();
 				}
 			}
 			
