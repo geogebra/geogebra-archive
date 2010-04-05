@@ -373,7 +373,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	private boolean firstPaint = true;
 	
 	// temp image
-	protected Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
+	public Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
 	//public Graphics2D lastGraphics2D;
 	
 	protected StringBuilder sb = new StringBuilder();

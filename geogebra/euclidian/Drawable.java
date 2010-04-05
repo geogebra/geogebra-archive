@@ -114,7 +114,10 @@ public abstract class Drawable {
 		
 		// allow LaTeX caption surrounded by $ $
 		if (label.startsWith("$") && label.endsWith("$")) {
-			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont(), g2.getColor(), g2.getBackground());
+			// use FONT.ITALIC to stop \mathrm{} being added
+			// so that raw LaTeX is sent to JLaTeXMath
+			// user can add any formatting themselves
+			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont().deriveFont(Font.ITALIC), g2.getColor(), g2.getBackground());
 			labelRectangle.setBounds(xLabel, yLabel, (int)dim.getWidth(), (int)dim.getHeight());	
 			return;
 		}
@@ -502,7 +505,17 @@ public abstract class Drawable {
 		
 		if (eqnSB == null) eqnSB = new StringBuilder(20);
 		else eqnSB.setLength(0);
+		
+		if (!font.isItalic()) eqnSB.append("\\mathrm{ ");
+		if (font.isBold()) eqnSB.append("\\boldsymbol{ ");
+		
 		eqnSB.append(text);
+		
+		if (font.isBold()) eqnSB.append(" }");
+		if (!font.isItalic()) eqnSB.append(" }");
+		
+		int strLen = eqnSB.length();
+		
 		eqnSB.append(' ');
 		eqnSB.append(font.getSize()+"");
 		
@@ -513,7 +526,7 @@ public abstract class Drawable {
 			//Application.debug("creating new icon for: "+text);
 			TeXFormula formula;
 			try {
-			formula = new TeXFormula(text);
+			formula = new TeXFormula(eqnSB.substring(0, strLen));
 			} catch (ParseException e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
@@ -522,6 +535,11 @@ public abstract class Drawable {
 			}
 			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
 			icon.setInsets(new Insets(1, 1, 1, 1));
+			
+			// Make sure the HashMap doesn't get too big
+			// eg with a dynamic text
+			if (equations.size() > 100) equations.clear();
+			
 			equations.put(eqnSB.toString(), icon);
 		}	//else Application.debug("using buffer for: "+text);
 

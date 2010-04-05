@@ -17,6 +17,7 @@
  */
 package geogebra.gui.app;
 
+import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
@@ -24,7 +25,9 @@ import geogebra.main.DefaultApplication;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -338,6 +341,10 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 					
 					// init CAS
 					app.getKernel().getGeoGebraCAS();
+					
+					// init JLaTeXMath
+					Graphics2D g2d = app.getEuclidianView().g2Dtemp;
+					Drawable.drawEquation(app, app.getEuclidianView().g2Dtemp, 0, 0, "x^{2}", g2d.getFont(), Color.BLACK, Color.WHITE);
 				}
 			};
 			runner.start();
