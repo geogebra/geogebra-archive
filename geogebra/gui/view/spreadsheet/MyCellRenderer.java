@@ -13,6 +13,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
@@ -31,9 +32,21 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private ImageIcon latexIcon, emptyIcon; //G.Sturr 2010-1-15
 	private String latexStr = new String();
 	
-	public MyCellRenderer(Application app) {
+	
+	//G.Sturr 2010-4-4
+	// vars for cell format
+	private CellFormat formatHandler;
+	private Point cellPoint;
+	private Integer alignment = -1;
+	
+	//END G.Sturr
+	
+	
+	public MyCellRenderer(Application app, CellFormat formatHandler) {
+		
 		this.app = app;		
-		kernel = app.getKernel();
+		this.kernel = app.getKernel();
+		this.formatHandler = formatHandler;
 		
 		//G.Sturr 2009-10-3:  add horizontal padding
 		setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
@@ -43,12 +56,15 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		// Here the icon is used to display LaTeX.
 		latexIcon = new ImageIcon();
 		emptyIcon = new ImageIcon();
+		cellPoint = new Point();
 		
 	}
 	
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) 
 	{	
+		
+		cellPoint.setLocation(column, row);
 		setIcon(emptyIcon);
 		setBackground(table.getBackground());
 		
@@ -100,11 +116,17 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		
 		
 		// horizontal alignment
-		if (geo.isGeoText()) {
+		alignment = (Integer) formatHandler.getCellFormat(cellPoint,
+				CellFormat.FORMAT_ALIGN);
+		if (alignment != null) {
+			setHorizontalAlignment(alignment);
+		} else if (geo.isGeoText()) {
 			setHorizontalAlignment(JLabel.LEFT);
 		} else {
 			setHorizontalAlignment(JLabel.RIGHT);
-		}		
+		}	
+		
+	
 		
 		// G.STURR 2010-1-17
 		// set LaTeX icons
@@ -134,7 +156,11 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 
 	
 	
-	
+	/**
+	 * Draw a LaTeX image in the cell icon. Drawing is done twice. First draw gives 
+	 * the needed size of the image. Second draw renders the image with the correct
+	 * dimensions.
+	 */
 	private void drawLatexImageIcon(ImageIcon latexIcon, String latex, Font font, Color fgColor, Color bgColor) {
 		
 		// Create image with dummy size, then draw into it to get the correct size

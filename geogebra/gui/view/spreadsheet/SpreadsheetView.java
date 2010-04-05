@@ -97,7 +97,7 @@ public class SpreadsheetView extends JSplitPane implements View
 	private JScrollPane spreadsheet;
 	private FileBrowserPanel browserPanel;
 	private int defaultDividerLocation = 150;
-	private JToolBar toolBar;
+	private CellFormatToolBar toolBar;
 	private JPanel spreadsheetPanel;
 	private JPanel restorePanel;
 	
@@ -109,10 +109,10 @@ public class SpreadsheetView extends JSplitPane implements View
 	private boolean showVScrollBar = true;
 	private boolean showHScrollBar = true;
 	private boolean showBrowserPanel = false;
-	private boolean showToolBar = false;
+	private boolean showCellFormatToolBar = false;
 	
 	/**
-	 * Construct spreadsheet view as split panel. 
+	 * Construct spreadsheet view is a split panel. 
 	 * Left panel holds file tree browser, right panel holds spreadsheet. 
 	 */
 	public SpreadsheetView(Application app0, int columns, int rows) {
@@ -185,8 +185,8 @@ public class SpreadsheetView extends JSplitPane implements View
 		// Add spreadsheet and browser panes to SpreadsheetView
 			
 		spreadsheetPanel = new JPanel(new BorderLayout());
-		spreadsheetPanel.add(getToolBar(),BorderLayout.NORTH);
-		setShowToolBar(showToolBar);
+		spreadsheetPanel.add(getCellFormatToolBar(),BorderLayout.NORTH);
+		setShowToolBar(showCellFormatToolBar);
 		spreadsheetPanel.add(spreadsheet,BorderLayout.CENTER);
 		
 		setRightComponent(spreadsheetPanel);	
@@ -1262,25 +1262,20 @@ public class SpreadsheetView extends JSplitPane implements View
 	public void setShowToolBar(boolean showToolBar){
 		toolBar.setVisible(showToolBar);
 		spreadsheetPanel.validate();
-		this.showToolBar = showToolBar;
+		this.showCellFormatToolBar = showToolBar;
 	}
 	
 	public boolean getShowToolBar(){
-		return showToolBar;
+		return showCellFormatToolBar;
 	}
 	
 	/**
 	 * 
-	 * Construct spreadsheet toolbar
-	 * (temporary code, this will become its own class) 
-	 * 
+	 * get spreadsheet format toolbar 
 	 */
-	private JToolBar getToolBar(){
+	private CellFormatToolBar getCellFormatToolBar(){
 		if(toolBar==null){
-			toolBar = new JToolBar();
-			JButton btn = new JButton("test");
-			toolBar.add(btn);
-			toolBar.setFloatable(false);
+			toolBar = new CellFormatToolBar(this);
 		}
 		
 		return toolBar;

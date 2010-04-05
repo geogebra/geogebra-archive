@@ -57,7 +57,7 @@ public class CellRange {
 
 	}
 
-	// TODO Constructor with string parameter, e.g. CellRange(A1:B10)
+	// TODO Constructor with string parameter, e.g. CellRange("A1:B10")
 
 	
 	
@@ -95,16 +95,13 @@ public class CellRange {
 	}
 	
 	
-	
-	
 	boolean isColumn() {
-		return (minColumn > -1 && minRow == -1 && maxRow == -1);
+		return (anchorRow == -1);
 	}
 
 	boolean isRow() {
-		return (minRow > -1 && minColumn == -1 && maxColumn == -1);
+		return (anchorColumn == -1);
 	}
-	
 	
 	boolean is2D() {
 		return (maxColumn - minColumn == 1) || (maxRow - minRow == 1);
@@ -272,6 +269,8 @@ public class CellRange {
 	public void debug(){
 		System.out.println("anchor cell:  (" + anchorColumn + "," + anchorRow + ")" );
 		System.out.println("corner cells: (" + minColumn + "," + minRow + ")  (" + maxColumn + "," + maxRow + ")"  );
+		System.out.println("isRow: " + isRow()  );
+		System.out.println("isColumn: " + isColumn()  );
 	}
 	
 	

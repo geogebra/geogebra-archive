@@ -124,9 +124,9 @@ public class MyTable extends JTable implements FocusListener
 	
 	// END G.Sturr
 	
+	//G.Sturr 2010-4-4
+	private CellFormat formatHandler;
 	
-	
-	//END G.STURR
 	
 	
 	
@@ -158,13 +158,18 @@ public class MyTable extends JTable implements FocusListener
 			getColumnModel().getColumn(i).setPreferredWidth(TABLE_CELL_WIDTH);
 		}
 		// add renderer & editor
-		setDefaultRenderer(Object.class, new MyCellRenderer(app));
+		
+		//G.Sturr 2010-4-4: add format handling to cell renderer
+		setDefaultRenderer(Object.class, new MyCellRenderer(app,getCellFormatHandler()));
+		
+		//setDefaultRenderer(Object.class, new MyCellRenderer(app));
 		editor = new MyCellEditor(kernel);
 		setDefaultEditor(Object.class, editor);
 	
 		// set selection colors
 		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
 		setSelectionForeground(Color.BLACK);
+		
 		// setup mouse listeners
 		MouseListener[] mouseListeners = getMouseListeners();
 		addMouseListener(new MouseListener1());
@@ -2212,13 +2217,20 @@ public class MyTable extends JTable implements FocusListener
 		return selectionType;
 	}
 	
+	
+	
+	
 	public CellRangeProcessor getCellRangeProcessor() {
     	if (crProcessor == null)
     		crProcessor = new CellRangeProcessor(this);
     	return crProcessor;
     }
 	
-	
+	public CellFormat getCellFormatHandler(){
+		if(formatHandler == null)
+			formatHandler = new CellFormat(this);
+		return formatHandler;
+	}
 	
 	
 	
