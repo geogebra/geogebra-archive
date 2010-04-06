@@ -634,7 +634,6 @@ public class AlgebraProcessor {
 					return processConic(equ);
 	
 				case 3 :
-					Application.debug("cubic");
 					return processCubic(equ);
 	
 				default :
@@ -753,7 +752,6 @@ public class AlgebraProcessor {
 			n = lhs.getCoeffValue("xx");
 			o = lhs.getCoeffValue("x");
 			p = lhs.getCoeffValue("");
-			Application.debug(a+","+b+","+c+","+d+","+e+","+f+","+g+","+h+","+i+","+j+","+k+","+l+","+m+","+n+","+o+","+p);
 			cubic = kernel.Cubic(label, a, b, c, d, e, f,g,h,i,j,k,l,m,n,o,p);
 		} else
 			cubic = kernel.DependentCubic(label, equ);
