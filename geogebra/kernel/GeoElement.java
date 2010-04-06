@@ -2854,6 +2854,7 @@ public abstract class GeoElement
 		}
 	}
 
+	static StringBuilder sbToolTipDesc = new StringBuilder();
 
 	/**
 	 * Returns long description for all GeoElements in given array.	 	 
@@ -2865,7 +2866,7 @@ public abstract class GeoElement
 		if (geos == null)
 			return null;
 		
-		StringBuilder sbToolTipDesc = new StringBuilder();
+		sbToolTipDesc.setLength(0);
 		
 		if (addHTMLtag)
 			sbToolTipDesc.append("<html>");

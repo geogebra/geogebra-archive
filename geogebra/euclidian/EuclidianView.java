@@ -814,10 +814,19 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	public void setMode(int mode) {
+		if (mode == this.mode) return; 
 		this.mode = mode;
 		initCursor();
 		euclidianController.setMode(mode);
-		setSelectionRectangle(null);
+		if (clearRectangle(mode)) setSelectionRectangle(null);
+	}
+	
+	/*
+	 * whether to clear selection rectangle when mode selected
+	 */
+	final private boolean clearRectangle(int mode) {
+		if (mode == EuclidianConstants.MODE_PEN) return false;
+		return true;
 	}
 
 	final public int getMode() {
@@ -4204,6 +4213,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	public void setSelectionRectangle(Rectangle selectionRectangle) {
+		//Application.printStacktrace("");
 		this.selectionRectangle = selectionRectangle;		
 	}
 

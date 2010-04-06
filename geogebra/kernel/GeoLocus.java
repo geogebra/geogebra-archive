@@ -94,10 +94,6 @@ public class GeoLocus extends GeoElement implements Path {
     	return GEO_CLASS_LOCUS;
     }
 	
-	public boolean showToolTipText() {
-		return true;
-	}
-	
 	/**
 	* returns all class-specific xml tags for getXML
 	*/

@@ -323,6 +323,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				geo.updateRepaint();								
 			}				
 			break;
+			
+		case EuclidianView.MODE_PEN:				
+			penOffsetX = 0;
+			penOffsetY = 0;
+			penUsingOffsets = false;
+			view.setSelectionRectangle(null);
+			break;
 		}
 
 		if (recordObject != null) recordObject.setSelected(false);
@@ -654,12 +661,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	}
 
+	private int penOffsetX = 0;
+	private int penOffsetY = 0;
+	private boolean penUsingOffsets = false;
 	private BufferedImage penImage = null;
 	GeoImage lastPenImage = null;
 
 	ArrayList penPoints = new ArrayList();
 
 	private void handleMousePressedForPenMode(MouseEvent e) {
+//xxx
+Rectangle rect = view.getSelectionRectangle();
 
 
 		if (Application.isRightClick(e)) {
@@ -673,7 +685,28 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		EuclidianView ev = app.getEuclidianView();
 		//Graphics2D g2D = null;
-		if (lastPenImage != null) {
+		if (rect != null && (!penUsingOffsets || penOffsetX != rect.x || 
+				penOffsetY != rect.y) ) {
+			// just draw on a subset of the Graphics View
+			GraphicsEnvironment ge =
+				GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+			GraphicsDevice gs = ge.getDefaultScreenDevice();
+
+			GraphicsConfiguration gc =
+				gs.getDefaultConfiguration();
+			penImage = gc.createCompatibleImage((int)rect.getWidth(),
+					(int)rect.getHeight(), Transparency.BITMASK);
+			
+			lastPenImage = null;
+			
+			penOffsetX = rect.x;
+			penOffsetY = rect.y;
+			penUsingOffsets = true;
+			
+			//view.setSelectionRectangle(null);
+		}
+		else if (lastPenImage != null) {
 
 			penImage = lastPenImage.getImage();
 
@@ -685,7 +718,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			
 			// check if image is still the same size as the current euclidian view window
-			if (x == 0 && y == height && height == ev.getHeight() && width == ev.getWidth())
+			if ((penOffsetX >0 && penOffsetY > 0) || 
+					(x == 0 && y == height && height == ev.getHeight() && width == ev.getWidth()))
 				penImage = lastPenImage.getImage();
 			else {
 				penImage = null;
@@ -711,7 +745,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//if (g2D == null) g2D = penImage.createGraphics();
 
 
-		Point newPoint = new Point(e.getX(), e.getY());
+		Point newPoint = new Point(e.getX() - penOffsetX, e.getY() - penOffsetY);
 		Graphics2D g2D = (Graphics2D) ev.getGraphics();
 		g2D.setColor(penColor);
 		
@@ -736,7 +770,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		app.setDefaultCursor();
 		
-		Point newPoint = new Point(e.getX(), e.getY());
+		Point newPoint = new Point(e.getX() - penOffsetX, e.getY() - penOffsetY);
 		penPoints.add(newPoint);
 
 
@@ -759,7 +793,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		EuclidianView ev = app.getEuclidianView();
 
 		app.refreshViews(); // clear trace
-		ev.getGraphics().drawImage(penImage, 0, 0, null);
+		ev.getGraphics().drawImage(penImage, penOffsetX, penOffsetY, null);
 
 
 		if (lastPenImage == null) {
@@ -768,7 +802,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
 			geoImage.setFileName(fileName);
-			GeoPoint corner = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(0),ev.toRealWorldCoordY(ev.getHeight()),1.0));
+			geoImage.setTooltipMode(GeoElement.TOOLTIP_OFF);
+			GeoPoint corner = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
 			corner.setEuclidianVisible(false);
 			corner.setAuxiliaryObject(true);
 			corner.update();

@@ -136,7 +136,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	}
 	
 	public boolean showToolTipText() {
-		return !inBackground;
+		return !inBackground && super.showToolTipText();
 	}
 	
 	final public boolean isInBackground() {
