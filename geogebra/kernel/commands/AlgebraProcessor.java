@@ -5,6 +5,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
@@ -632,6 +633,10 @@ public class AlgebraProcessor {
 				case 2 :
 					return processConic(equ);
 	
+				case 3 :
+					Application.debug("cubic");
+					return processCubic(equ);
+	
 				default :
 					throw new MyError(app, "InvalidEquation");
 			}
@@ -720,6 +725,39 @@ public class AlgebraProcessor {
 			conic.updateRepaint();
 		}
 		ret[0] = conic;
+		return ret;
+	}
+
+	private GeoElement[] processCubic(Equation equ) {
+		double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, i = 0, j = 0, k = 0 , l = 0, m = 0, n = 0, o = 0, p = 0;
+		GeoElement[] ret = new GeoElement[1];
+		GeoCubic cubic = null;
+		String label = equ.getLabel();
+		Polynomial lhs = equ.getNormalForm();
+		boolean isIndependent = lhs.isConstant();
+
+		if (isIndependent) {
+			a = lhs.getCoeffValue("xxxyyy");
+			b = lhs.getCoeffValue("xxyyy");
+			c = lhs.getCoeffValue("xyyy");
+			d = lhs.getCoeffValue("yyy");
+			e = lhs.getCoeffValue("xxxyy");
+			f = lhs.getCoeffValue("xxyy");
+			g = lhs.getCoeffValue("xyy");
+			h = lhs.getCoeffValue("yy");
+			i = lhs.getCoeffValue("xxxy");
+			j = lhs.getCoeffValue("xxy");
+			k = lhs.getCoeffValue("xy");
+			l = lhs.getCoeffValue("y");
+			m = lhs.getCoeffValue("xxx");
+			n = lhs.getCoeffValue("xx");
+			o = lhs.getCoeffValue("x");
+			p = lhs.getCoeffValue("");
+			Application.debug(a+","+b+","+c+","+d+","+e+","+f+","+g+","+h+","+i+","+j+","+k+","+l+","+m+","+n+","+o+","+p);
+			cubic = kernel.Cubic(label, a, b, c, d, e, f,g,h,i,j,k,l,m,n,o,p);
+		} else
+			cubic = kernel.DependentCubic(label, equ);
+		ret[0] = cubic;
 		return ret;
 	}
 

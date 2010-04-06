@@ -25,6 +25,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
+import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -83,8 +84,6 @@ import java.util.TreeSet;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
-import org.scilab.forge.jlatexmath.DefaultTeXFont;
 
 /**
  * 
@@ -2986,6 +2985,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			d = new DrawConic(this, (GeoConic) geo);
 			break;
 
+		case GeoElement.GEO_CLASS_CUBIC:
+			d = new DrawCubic(this, (GeoCubic) geo);
+			break;
+
 		case GeoElement.GEO_CLASS_FUNCTION:
 		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
 			d = new DrawParametricCurve(this, (ParametricCurve) geo);
@@ -3087,6 +3090,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;
 
 		case GeoElement.GEO_CLASS_CONIC:
+			drawLayers[layer].add(d);
+			break;
+
+		case GeoElement.GEO_CLASS_CUBIC:
 			drawLayers[layer].add(d);
 			break;
 

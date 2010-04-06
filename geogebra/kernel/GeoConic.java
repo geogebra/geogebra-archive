@@ -110,6 +110,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	
 	/** Creates new GeoConic with Coordinate System for 3D */
 	protected GeoConic(Construction c, String label, double[] coeffs, GeoElement cs) {
+
 		this(c,cs);
 		setCoeffs(coeffs);
 		setLabel(label);		

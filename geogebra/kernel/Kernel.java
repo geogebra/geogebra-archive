@@ -794,6 +794,8 @@ public class Kernel {
     				return new GeoConic(cons);   
     			else if (type.equals("conicpart"))    					
     				return new GeoConicPart(cons, 0);
+    			else if (type.equals("cubic"))    					
+    				return new GeoCubic(cons);
     			else if (type.equals("circle")) { // bug in GeoGebra 2.6c
     				return new GeoConic(cons);
     			}
@@ -1754,6 +1756,30 @@ public class Kernel {
 		return conic;
 	}
 
+	/** Implicit Cubic  */
+	final public GeoCubic Cubic(
+		String label,
+		double a,
+		double b,
+		double c,
+		double d,
+		double e,
+		double f,
+		double g,
+		double h,
+		double i,
+		double j,
+		double k,
+		double l,
+		double m,
+		double n,
+		double o,
+		double p) {
+		double[] coeffs = { a, b, c, d, e, f,g,h,i,j,k,l,m,n,o,p };
+		GeoCubic cubic = new GeoCubic(cons, label, coeffs);
+		return cubic;
+	}
+
 	/** Converts number to angle */
 	final public GeoAngle Angle(String label, GeoNumeric num) {
 		AlgoAngleNumeric algo = new AlgoAngleNumeric(cons, label, num);
@@ -1966,6 +1992,14 @@ public class Kernel {
 		AlgoDependentConic algo = new AlgoDependentConic(cons, label, equ);
 		GeoConic conic = algo.getConic();
 		return conic;
+	}
+
+	/** Implicit cubic eg x^3+y^3=1
+	 */
+	final public GeoCubic DependentCubic(String label, Equation equ) {
+		AlgoDependentCubic algo = new AlgoDependentCubic(cons, label, equ);
+		GeoCubic cubic = algo.getCubic();
+		return cubic;
 	}
 
 	/** Function dependent on coefficients of arithmetic expressions with variables,

@@ -31,6 +31,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -654,7 +655,7 @@ final public class DrawConic extends Drawable implements Previewable {
     
 	final public void draw(Graphics2D g2) {
         if (!isVisible) return;                
-        
+        Application.printStacktrace("");
         g2.setColor(conic.getObjectColor());        		
         switch (type) {
             case GeoConic.CONIC_SINGLE_POINT:                         
