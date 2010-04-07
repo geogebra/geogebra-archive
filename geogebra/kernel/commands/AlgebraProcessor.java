@@ -637,7 +637,7 @@ public class AlgebraProcessor {
 				case 4 ://
 				case 5 ://
 				case 6 :// needed for eg x^3 y^3
-					if (equ.singleDegree() == 3)
+					if (equ.singleDegree() <= 3)
 						return processCubic(equ);
 					// else fall through to default:
 	
