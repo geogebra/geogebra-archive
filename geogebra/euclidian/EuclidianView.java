@@ -3033,37 +3033,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		int layer = geo.getLayer();
 
 		switch (geo.getGeoClassType()) {
-		case GeoElement.GEO_CLASS_BOOLEAN:			
-			drawLayers[layer].add(d);
-			break;
-		
-		case GeoElement.GEO_CLASS_BUTTON:			
-			drawLayers[layer].add(d);
-			break;
-		
-		case GeoElement.GEO_CLASS_TEXTFIELD:			
-			drawLayers[layer].add(d);
-			break;
-		
-		case GeoElement.GEO_CLASS_POINT:
-			drawLayers[layer].add(d);
-			break;					
-
-		case GeoElement.GEO_CLASS_SEGMENT:
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_RAY:
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_LINE:
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_POLYGON:
-			drawLayers[layer].add(d);
-			break;
 
 		case GeoElement.GEO_CLASS_ANGLE:
 			if (geo.isIndependent()) {				
@@ -3077,51 +3046,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			}
 			break;
 
-		case GeoElement.GEO_CLASS_NUMERIC:			
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_VECTOR:			
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_CONICPART:
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_CONIC:
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_CUBIC:
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_FUNCTION:
-		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_TEXT:
-			drawLayers[layer].add(d);
-			break;
-
 		case GeoElement.GEO_CLASS_IMAGE:
 			if (!bgImageList.contains(d))
 				drawLayers[layer].add(d);
 			break;
 
-		case GeoElement.GEO_CLASS_LOCUS:
+		default:
 			drawLayers[layer].add(d);
 			break;
 
-		case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
-			drawLayers[layer].add(d);
-			break;
-
-		case GeoElement.GEO_CLASS_LIST:
-			drawLayers[layer].add(d);
-			break;
 		}
 
 		if (d != null) {
@@ -3139,12 +3072,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 		if (d != null) {
 			switch (geo.getGeoClassType()) {
-			case GeoElement.GEO_CLASS_BOOLEAN:
-				drawLayers[layer].remove(d);
+			//case GeoElement.GEO_CLASS_BOOLEAN:
+				//drawLayers[layer].remove(d);
 				// remove checkbox
 				// not needed now it's not drawn by the view
 				//((DrawBoolean) d).remove();
-				break;
+				//break;
 			
 			case GeoElement.GEO_CLASS_BUTTON:
 				drawLayers[layer].remove(d);
@@ -3158,64 +3091,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				((DrawTextField) d).remove();
 				break;
 			
-			case GeoElement.GEO_CLASS_POINT:
+			default:
 				drawLayers[layer].remove(d);
 				break;
 
-			case GeoElement.GEO_CLASS_SEGMENT:
-			case GeoElement.GEO_CLASS_RAY:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_LINE:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_POLYGON:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_ANGLE:
-			case GeoElement.GEO_CLASS_NUMERIC:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_VECTOR:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_CONICPART:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_CONIC:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_FUNCTION:
-			case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_TEXT:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_IMAGE:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_LOCUS:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_CURVE_CARTESIAN:
-				drawLayers[layer].remove(d);
-				break;
-
-			case GeoElement.GEO_CLASS_LIST:
-				drawLayers[layer].remove(d);
-				break;
 			}
 
 			allDrawableList.remove(d);
