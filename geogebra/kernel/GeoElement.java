@@ -2072,7 +2072,7 @@ public abstract class GeoElement
 			chars = functionLabels;
 		} else if (isGeoLine()) {
 			chars = lineLabels;
-		} else if (isGeoConic()) {
+		} else if (isGeoConic() || isGeoCubic()) {
 			chars = conicLabels;
 		} else if (isGeoVector()) {
 			chars = vectorLabels;
