@@ -27,6 +27,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.main.Application;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -108,10 +109,15 @@ final public class DrawCubic extends Drawable implements Previewable {
 	private GeoPoint [] previewTempPoints;  
 	private GeoNumeric previewTempRadius;
 	private int previewMode, neededPrevPoints;
+	
+    EquationSolver eqnSolver;
+
+
     
     /** Creates new DrawVector */
     public DrawCubic(EuclidianView view, GeoCubic c) {
     	this.view = view;
+    	eqnSolver = view.getKernel().getConstruction().getEquationSolver();
         initCubic(c);
         update();
     }
@@ -158,11 +164,20 @@ final public class DrawCubic extends Drawable implements Previewable {
 			addLabelOffset();
         }
     }
-            
+	
+	GeneralPath[] gps = new GeneralPath[3];
+    boolean[] needsMove = new boolean[3];
+           
+
     
 	final public void draw(Graphics2D g2) {
         //if (!isVisible) return;                
         
+		gps[0] = new GeneralPath();
+		gps[1] = new GeneralPath();
+		gps[2] = new GeneralPath();
+
+		
 		g2.setPaint(geo.getObjectColor());	
 		//g2.setStroke(getCrossStroke(1));
 
@@ -171,50 +186,192 @@ final public class DrawCubic extends Drawable implements Previewable {
     	double miny = view.getYmin();
     	double maxy = view.getYmax();
     	
-        EquationSolver eqnSolver = view.getKernel().getConstruction().getEquationSolver();
-
         circle = new Ellipse2D.Double();
         
         double [] eqn = new double[4];
         double [] sol = new double[3];
+        double [] oldSol = new double[3];
+        
+    	boolean usingTop = false;
+    	
+    	int lastN = 0;
+    	
+    	int usingGP = -1;
         
         double[] coeffs = cubic.getCoeffs();
 
-        double step = (maxx - minx) / 500;
+        double step = (maxx - minx) / 300;
         // y^3 + 0y^2 +2xy -x^2 = 0
     	//eqn[0] = -x^2;
     	//eqn[1] = 2x;
     	//eqn[2] = 0;
     	//eqn[3] = 1;
+        
+        needsMove[0] = true;
+        needsMove[1] = true;
+        needsMove[2] = true;
+        
+        int[] order = new int[3];
+        int[] newOrder = new int[3];
+        order[0] = 0;
+        order[1] = 1;
+        order[2] = 2;
        
-        for (double x = minx ; x < maxx ; x+=step ) {
+        for (double x = minx ; x <= maxx + step ; x+=step ) {
         	double x2 = x * x;
         	double x3 = x2 * x;
         	eqn[0] = coeffs[12] * x3 + coeffs[13] * x2 + coeffs[14] * x + coeffs[15];
         	eqn[1] = coeffs[8] * x3 + coeffs[9] * x2 + coeffs[10] * x + coeffs[11];
         	eqn[2] = coeffs[4] * x3 + coeffs[5] * x2 + coeffs[6] * x + coeffs[7];
         	eqn[3] = coeffs[0] * x3 + coeffs[1] * x2 + coeffs[2] * x + coeffs[3];
-        	int n = eqnSolver.solveCubic(eqn, sol);
+        	oldSol[order[0]] = sol[0];
+        	oldSol[order[1]] = sol[1];
+        	oldSol[order[2]] = sol[2];
+        	int n = solveCubic(eqn, sol);
+        	
+        	switch (n) {
+        	default: // 0
+        		needsMove[0] = true;
+        		needsMove[1] = true;
+        		needsMove[2] = true;
+        		lastN = 0;
+        		break;
+        	case 1:
+        		
+        		if (lastN == 3) {
+        			double diff0 = Math.abs(sol[0] - oldSol[order[0]]);
+        			double diff1 = Math.abs(sol[0] - oldSol[order[1]]);
+        			double diff2 = Math.abs(sol[0] - oldSol[order[2]]);
+        			//Application.debug("diffs:"+diff0+" "+diff1+" "+diff2);
+        			if (diff0 < diff1 && diff0 < diff2) {
+        				//Application.debug("A"+x);
+            	        newOrder[0] = order[0];
+            	        newOrder[1] = order[1];
+            	        newOrder[2] = order[2];   
+            	        
+            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[1]);
+            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[2]);
+
+            	        
+        			} else if (diff1 < diff2) {
+           				//Application.debug("B"+x);
+           			    newOrder[0] = order[1];
+        				newOrder[1] = order[0];
+        				newOrder[2] = order[2];
+            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[0]);
+            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[2]);
+        			} else {
+           				//Application.debug("C"+x);
+           				newOrder[0] = order[2];
+        				newOrder[1] = order[1];
+        				newOrder[2] = order[0];
+            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[0]);
+            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[1]);
+         			}
+        			for (int i = 0 ; i < 3 ; i ++) {
+        				order[i] = newOrder[i];
+        			}
+        			
+        			//Application.debug("3 -> 1 x = "+x+": "+order[0]+" "+order[1]+" "+order[2]);
+        		} 
+
+    			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[0]), order[0]);
+        		// offscreen test
+    			// still draw first time otherwise get a gap
+    			if (sol[0] < miny - 5 || sol[0] > maxy + 5)        		
+        			needsMove[order[0]] = true;
+        				
+    			
+    			needsMove[order[1]] = true;
+    			needsMove[order[2]] = true;
+    			lastN = 1;
+        		break;
+        	case 2:
+        		lastN = 2; 
+        		Application.debug("2");
+        		break;
+        	case 3:
+        		
+        		if (lastN == 1) {
+        			double diff0 = Math.abs(oldSol[0] - sol[order[0]]);
+        			double diff1 = Math.abs(oldSol[0] - sol[order[1]]);
+        			double diff2 = Math.abs(oldSol[0] - sol[order[2]]);
+        			//Application.debug("diffs:"+diff0+" "+diff1+" "+diff2);
+        			if (diff0 < diff1 && diff0 < diff2) {
+        				//Application.debug("A"+x);
+            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[1]] + sol[order[2]])/2), order[1]);
+            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[1]] + sol[order[2]])/2), order[2]);
+            	        newOrder[0] = order[0];
+            	        newOrder[1] = order[1];
+            	        newOrder[2] = order[2];        				
+        			} else if (diff1 < diff2) {
+        				//Application.debug("B"+x);
+            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[1]] + sol[order[0]])/2), order[1]);
+            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[1]] + sol[order[0]])/2), order[0]);
+        				newOrder[0] = order[0];
+        				newOrder[1] = order[1];
+        				newOrder[2] = order[2];
+        			} else {
+        				//Application.debug("CC"+x);
+            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[0]] + sol[order[2]])/2), order[0]);
+            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[0]] + sol[order[2]])/2), order[2]);
+        				newOrder[0] = order[2];
+        				newOrder[1] = order[1];
+        				newOrder[2] = order[0];
+        			}
+        			
+        			for (int i = 0 ; i < 3 ; i ++) {
+        				order[i] = newOrder[i];
+        			}
+        			//Application.debug("1 -> 3 x = "+x+": "+order[0]+" "+order[1]+" "+order[2]);
+        			
+       		} else {
+        	        //order[0] = 0;
+        	        //order[1] = 1;
+        	        //order[2] = 2;
+        		}
+
+        		
+            	for (int j = 0 ; j < n ; j++) {
+        			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[j]), order[j]);
+            		// offscreen test
+        			// still draw first time otherwise get a gap
+            		if (sol[j] < miny - 5 || sol[j] > maxy + 5)
+            			needsMove[order[j]] = true;
+
+            	}
+            	
+            	lastN = 3;
+       		
+        		break;
+        	}
+        	
+        	/*
         	for (int j = 0 ; j < n ; j++) {
         		if (sol[j] > miny && sol[j] < maxy) {
         	        circle.setFrame(view.toScreenCoordX(x), view.toScreenCoordY(sol[j]), 1, 1);       			
         			g2.draw(circle);  			
         		}
-        	}
+        	}*/
+        	
         	//System.out.println(""+eqnSolver.solveCubic(eqn, sol));
         }
 
-        
-        
 			                                               
                 if (geo.doHighlighting()) {
                     g2.setStroke(selStroke);
                     g2.setColor(cubic.getSelColor());
-                    //g2.draw(shape);		
+                	Drawable.drawWithValueStrokePure(gps[0], g2);
+                	Drawable.drawWithValueStrokePure(gps[1], g2);
+                	Drawable.drawWithValueStrokePure(gps[2], g2);
                 }                  
                 g2.setStroke(objStroke);
                 g2.setColor(cubic.getObjectColor());				
-                g2.draw(shape);    
+            	Drawable.drawWithValueStrokePure(gps[0], g2);
+            	//g2.setColor(Color.red);
+            	Drawable.drawWithValueStrokePure(gps[1], g2);
+            	//g2.setColor(Color.green);
+            	Drawable.drawWithValueStrokePure(gps[2], g2);
                 if (labelVisible) {
 					g2.setFont(view.fontConic); 
 					g2.setColor(cubic.getLabelColor());                   
@@ -224,6 +381,46 @@ final public class DrawCubic extends Drawable implements Previewable {
           
     }
 	
+    private void lineTo(float x, float y, int i) {
+    	
+    	if (needsMove[i]) {
+    		gps[i].moveTo(x, y);
+    		needsMove[i] = false;
+    	} else
+    		gps[i].lineTo(x, y);
+    	
+    }
+    
+    private int solveCubic(double[] eqn, double[] sol) {
+    	int ret = eqnSolver.solveCubic(eqn, sol);
+    	double temp;
+    	if (ret < 3) return ret;
+    		
+    	if (sol[0] > sol[1]) {
+    		temp = sol[0];
+    		sol[0] = sol[1];
+    		sol[1] = temp;
+    	}
+    	
+    	if (sol[1] > sol[2]) {
+    		temp = sol[2];
+    		sol[2] = sol[1];
+    		sol[1] = temp;
+    	}
+    	
+    	if (sol[0] > sol[1]) {
+    		temp = sol[0];
+    		sol[0] = sol[1];
+    		sol[1] = temp;
+    	}
+   	
+    	if (sol[0] > sol[1]) Application.debug("greatera");
+    	if (sol[1] > sol[2]) Application.debug("greaterb");
+    	
+    	return ret;
+    }
+    
+
 	/**
 	 * Returns the bounding box of this Drawable in screen coordinates. 
 	 * @return null when this Drawable is infinite or undefined	 
