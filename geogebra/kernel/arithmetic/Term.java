@@ -20,6 +20,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.io.Serializable;
 
@@ -88,6 +89,18 @@ public class Term implements Comparable, Serializable {
     
     int degree() {
         return variables.length();
+    }
+    
+    /*
+     * degree of eg x
+     * xxxyy returns 3 for x, 2 for y
+     */
+    int degree(char var) {
+    	int count = 0;
+        for (int i = 0 ; i < variables.length() ; i++) {
+        	if (variables.charAt(i) == var) count++;
+        }
+        return count;
     }
     
     /**

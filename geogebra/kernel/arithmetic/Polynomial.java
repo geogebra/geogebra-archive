@@ -365,6 +365,30 @@ public class Polynomial extends ValidExpression implements Serializable, Express
         return deg;
     }
     
+    /**
+     *  returns 3 for eg x^3 y^2
+     */   
+    public int singleDegree() {
+        // a quadratic Polynomial may only have terms with one or two variables or constant terms
+        int deg = 0;
+        int varLen; 
+        
+        if (terms.size() == 0) return -1;
+        
+        Iterator i = terms.iterator();                              
+        while (i.hasNext()) {
+        	Term t = ((Term)i.next());
+            varLen = t.degree('x');
+            if (varLen > deg) 
+                deg = varLen;
+            
+            varLen = t.degree('y');
+            if (varLen > deg) 
+                deg = varLen;
+        }
+        return deg;
+    }
+    
      public String toString() {        
         int size = terms.size();
         if (size == 0) return null;

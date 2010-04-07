@@ -142,6 +142,13 @@ public class Equation extends ValidExpression {
         return normalForm.degree();
     } 
     
+    /**
+     *  returns the max degree on a single var, eg 3 for x^3 y^2
+     */
+    public int singleDegree() {        
+        return normalForm.singleDegree();
+    } 
+    
     public ExpressionValue getCoefficient(String variables) {         
         return normalForm.getCoefficient(variables);        
     }

@@ -634,7 +634,12 @@ public class AlgebraProcessor {
 					return processConic(equ);
 	
 				case 3 :
-					return processCubic(equ);
+				case 4 ://
+				case 5 ://
+				case 6 :// needed for eg x^3 y^3
+					if (equ.singleDegree() == 3)
+						return processCubic(equ);
+					// else fall through to default:
 	
 				default :
 					throw new MyError(app, "InvalidEquation");
