@@ -154,11 +154,7 @@ implements Path, Traceable, LineProperties
 	public boolean isTextValue() {
 		return false;
 	}
-	
-	final public boolean isGeoConic() {
-		return true;
-	}
-	
+
 	public void setZero() {
 		for (int i = 0 ; i < 16 ; i++) {
 			coeffs[i] = 0;
@@ -171,14 +167,6 @@ implements Path, Traceable, LineProperties
 	public boolean isVector3DValue() {
 		return false;
 	}
-
-
-	@Override
-	protected StringBuilder buildValueString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	@Override
 	public void setSphereND(GeoPointInterface M, GeoSegmentInterface segment) {
@@ -209,11 +197,17 @@ implements Path, Traceable, LineProperties
 
 	@Override
 	public void set(GeoElement geo) {
-		// TODO Auto-generated method stub
-		
+
+		if (geo.isGeoCubic()) {
+			setCoeffs(((GeoCubic)geo).getCoeffs());
+		}
 	}
 
-
+	@Override
+	public boolean isGeoCubic() {
+		return true;
+	}
+	
 	@Override
 	public void setUndefined() {
 		// TODO Auto-generated method stub
@@ -231,7 +225,44 @@ implements Path, Traceable, LineProperties
 	protected boolean showInEuclidianView() {
 		return defined;
 	}
+	
+	protected StringBuilder buildValueString() {
+		
+		sbToValueString().setLength(0);			
+		
+		for (int i = 0 ; i < 16 ; i++) {
+		
+			if (!kernel.isZero(coeffs[i])) {
+				sbToValueString.append(kernel.formatSigned(coeffs[i]));
+				sbToValueString.append(" ");
+				sbToValueString.append(vars[i]);
+				sbToValueString.append(" ");
+			}
+			
+		}
+		
+		sbToValueString.append("= 0");
 
+		return sbToValueString;
+			
+	}
+
+	/**
+	 * returns all class-specific xml tags for saveXML
+	 */
+	protected void getXMLtags(StringBuilder sb) {
+		super.getXMLtags(sb);
+		//	line thickness and type  
+		sb.append(getLineStyleXML());
+
+		sb.append("\t<matrix");
+		for (int i = 0; i < 16; i++)
+			sb.append(" A" + i + "=\"" + coeffs[i] + "\"");
+		sb.append("/>\n");
+
+
+
+	}
 
 	public PathMover createPathMover() {
 		// TODO Auto-generated method stub

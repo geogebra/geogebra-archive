@@ -30,6 +30,7 @@ import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
@@ -3120,12 +3121,13 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private boolean handleMatrix(LinkedHashMap<String, String> attrs) {
-		if (!(geo.isGeoConic())) {
+		if (!(geo.isGeoConic()) && !(geo.isGeoCubic())) {
 			System.err.println("wrong element type for <matrix>: "
 					+ geo.getClass());
 			return false;
 		}
 		try {
+			if (geo.isGeoConic()) {
 			GeoConic conic = (GeoConic) geo;
 			// set matrix and classify conic now
 			// <eigenvectors> should have been set earlier
@@ -3136,6 +3138,26 @@ public class MyXMLHandler implements DocHandler {
 					Double.parseDouble((String) attrs.get("A4")),
 					Double.parseDouble((String) attrs.get("A5")) };
 			conic.setMatrix(matrix);
+			} else {
+				GeoCubic cubic = (GeoCubic) geo;
+				double[] coefficients = { Double.parseDouble((String) attrs.get("A0")),
+						Double.parseDouble((String) attrs.get("A1")),
+						Double.parseDouble((String) attrs.get("A2")),
+						Double.parseDouble((String) attrs.get("A3")),
+						Double.parseDouble((String) attrs.get("A4")),
+						Double.parseDouble((String) attrs.get("A5")),
+						Double.parseDouble((String) attrs.get("A6")),
+						Double.parseDouble((String) attrs.get("A7")),
+						Double.parseDouble((String) attrs.get("A8")),
+						Double.parseDouble((String) attrs.get("A9")),
+						Double.parseDouble((String) attrs.get("A10")),
+						Double.parseDouble((String) attrs.get("A11")),
+						Double.parseDouble((String) attrs.get("A12")),
+						Double.parseDouble((String) attrs.get("A13")),
+						Double.parseDouble((String) attrs.get("A14")),
+						Double.parseDouble((String) attrs.get("A15")) };
+				cubic.setCoeffs(coefficients);				
+			}
 			return true;
 		} catch (Exception e) {
 			return false;

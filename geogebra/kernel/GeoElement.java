@@ -3582,6 +3582,10 @@ public abstract class GeoElement
 		return false;
 	}
 	
+	public boolean isGeoCubic() {
+		return false;
+	}
+	
 	public boolean isGeoConic() {
 		return false;
 	}
