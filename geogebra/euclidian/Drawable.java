@@ -57,6 +57,10 @@ import org.scilab.forge.jlatexmath.WebStartAlphabetRegistration;
  * @version 
  */
 public abstract class Drawable {
+	
+	// use JLaTeXMath or HotEqn
+	final private static boolean useJLaTeXMath = false;
+	
 	BasicStroke objStroke = EuclidianView.getDefaultStroke();
 	BasicStroke selStroke = EuclidianView.getDefaultSelectionStroke();
 	BasicStroke decoStroke = EuclidianView.getDefaultStroke();
@@ -434,11 +438,16 @@ public abstract class Drawable {
 		}
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
+
+	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor) {
 	
-	/*
+		if (useJLaTeXMath) return drawEquationJLaTeXMath(app, g2, x, y, text, font, fgColor, bgColor);
+		else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
+	}
+	
 	private static geogebra.gui.hoteqn.sHotEqn eqn;
 	
-	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
+	final  public static Dimension drawEquationHotEqn(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
 		Dimension dim;
 		if (eqn == null) {
@@ -479,14 +488,14 @@ public abstract class Drawable {
 			
 			//Application.debug(size);
 			return dim;
-	}*/
+	}
 	
 	
 	private static HashMap equations;
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
 	
-	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
+	final  public static Dimension drawEquationJLaTeXMath(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
 	{
 		
 		if (equations == null) { // first call
