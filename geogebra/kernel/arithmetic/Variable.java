@@ -66,7 +66,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
      * according GeoElement object.
      */
     private GeoElement resolve() {
-    	return resolve(!kernel.isResolveVariablesForCASactive());
+    	return resolve(!kernel.isResolveUnkownVarsAsDummyGeos());
     }
     	
 	/**
@@ -75,7 +75,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
      */
     GeoElement resolve(boolean allowAutoCreateGeoElement) {
     	// keep bound CAS variables when resolving a CAS expression
-    	if (kernel.isResolveVariablesForCASactive() &&
+    	if (kernel.isResolveUnkownVarsAsDummyGeos() &&
     		kernel.isCASVariableBound(name)) 
     	{
     		// resolve unknown variable as dummy geo to keep its name and 

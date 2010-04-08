@@ -199,14 +199,14 @@ public class CASTableCellValue {
 			ValidExpression ve = view.getCAS().getCASparser().parseGeoGebraCASInput(inValue);
 			
 			// resolve Variable objects in ValidExpression as GeoDummy objects
-			Kernel kernel = view.getApp().getKernel();
-			kernel.setResolveVariablesForCASactive(true);
-			ve.resolveVariables();
-			kernel.setResolveVariablesForCASactive(false);
+			view.getCAS().getCASparser().resolveVariablesForCAS(ve);
+			
 			return ve;
 		} catch (Throwable e) {
 			return null;
 		}
+		
+		
 	}
 	
 	/**

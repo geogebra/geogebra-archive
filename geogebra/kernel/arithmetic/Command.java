@@ -196,7 +196,7 @@ implements ExpressionValue {
     	// while command processing (see evaluate())
     	
     	// CAS parsing case: we need to resolve arguments also
-    	if (kernel.isResolveVariablesForCASactive()) {
+    	if (kernel.isResolveUnkownVarsAsDummyGeos()) {
 	        for (int i=0; i < args.size(); i++) {        
 	            ((ExpressionValue) args.get(i)).resolveVariables();        
 	        }

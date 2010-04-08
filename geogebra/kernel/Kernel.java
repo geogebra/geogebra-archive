@@ -218,8 +218,8 @@ public class Kernel {
 	private boolean silentMode = false;
 	
 	// setResolveUnkownVarsAsDummyGeos
-	private boolean resolveVariablesForCASactive = false;
-			
+	private boolean resolveUnkownVarsAsDummyGeos = false;
+	
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
 	
 	// Views may register to be informed about 
@@ -320,7 +320,7 @@ public class Kernel {
 	final public GeoElement lookupLabel(String label, boolean autoCreate) {	
 		GeoElement geo = cons.lookupLabel(label, autoCreate);
 				
-		if (geo == null && resolveVariablesForCASactive) {
+		if (geo == null && resolveUnkownVarsAsDummyGeos) {
 			// resolve unknown variable as dummy geo to keep its name and 
 			// avoid an "unknown variable" error message
 			geo = new GeoDummyVariable(cons, label);
@@ -6806,8 +6806,8 @@ public class Kernel {
 	/**
 	 * Sets whether unknown variables should be resolved as GeoDummyVariable objects. 
 	 */
-	public final void setResolveVariablesForCASactive(boolean resolveUnkownVarsAsDummyGeos) {
-		this.resolveVariablesForCASactive = resolveUnkownVarsAsDummyGeos;				
+	public final void setResolveUnkownVarsAsDummyGeos(boolean resolveUnkownVarsAsDummyGeos) {
+		this.resolveUnkownVarsAsDummyGeos = resolveUnkownVarsAsDummyGeos;				
 	}
 	
 
@@ -6815,8 +6815,8 @@ public class Kernel {
 	 * Returns whether unkown variables are resolved as GeoDummyVariable objects.
 	 * @see setSilentMode()
 	 */
-	public final boolean isResolveVariablesForCASactive() {
-		return resolveVariablesForCASactive;
+	public final boolean isResolveUnkownVarsAsDummyGeos() {
+		return resolveUnkownVarsAsDummyGeos;
 	}
 	
 	final public static String defaultLibraryJavaScript = "function ggbOnInit() {}";

@@ -220,12 +220,7 @@ public class CASmathpiper extends CASgeneric {
 				sb.append("(" );
 				sb.append(fun.getFunctionVariable());
 				sb.append(") := ");
-				
-				// evaluate right hand side:
-				// import for e.g. g(x) := Eval(D(x) x^2)
-				sb.append("Eval(");
 				sb.append(MathPiperStr);
-				sb.append(")");
 				MathPiperStr = sb.toString();
 			} else {	
 				// assignment, e.g. a := 5

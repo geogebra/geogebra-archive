@@ -226,7 +226,7 @@ implements ExpressionValue, ExpressionNodeConstants {
      */
     final private void simplifyAndEvalCommands() {   
     	// don't evaluate any commands for the CAS here
-    	if (kernel.isResolveVariablesForCASactive()) return;
+    	if (kernel.isResolveUnkownVarsAsDummyGeos()) return;
     	
         if (left.isExpressionNode()) {
         	((ExpressionNode) left).simplifyAndEvalCommands();                      

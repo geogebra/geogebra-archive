@@ -71,9 +71,9 @@ public class CASparser {
 		}
 		
 		// resolve variables of valid expression
-		kernel.setResolveVariablesForCASactive(true);
+		kernel.setResolveUnkownVarsAsDummyGeos(true);
 		ev.resolveVariables();
-		kernel.setResolveVariablesForCASactive(false);
+		kernel.setResolveUnkownVarsAsDummyGeos(false);
 		
 		// remove local variables from kernel
 		if (isFunction) {
