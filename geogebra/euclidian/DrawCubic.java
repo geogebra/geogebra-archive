@@ -185,8 +185,8 @@ final public class DrawCubic extends Drawable {
             	        newOrder[1] = order[1];
             	        newOrder[2] = order[2];   
             	        
-            			//lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[1]);
-            			//lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[2]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[1]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[2]);
 
             	        
         			} else if (diff1 < diff2) {
@@ -194,15 +194,15 @@ final public class DrawCubic extends Drawable {
            			    newOrder[0] = order[1];
         				newOrder[1] = order[0];
         				newOrder[2] = order[2];
-            			//lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[0]);
-            			//lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[2]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[0]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[2]);
         			} else {
            				//Application.debug("C"+x);
            				newOrder[0] = order[2];
         				newOrder[1] = order[1];
         				newOrder[2] = order[0];
-            			//lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[0]);
-            			//lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[1]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[0]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[1]);
          			}
         			for (int i = 0 ; i < 3 ; i ++) {
         				order[i] = newOrder[i];
