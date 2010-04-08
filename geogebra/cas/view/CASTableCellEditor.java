@@ -1,7 +1,13 @@
 package geogebra.cas.view;
 
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
+import geogebra.main.Application;
+
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -17,9 +23,9 @@ import javax.swing.text.JTextComponent;
 //		TableCellEditor {
 public class CASTableCellEditor extends CASTableCell implements TableCellEditor, KeyListener {
 	
-	private JTable table;
-	
+	private CASTable casTable;
 	private CASTableCellValue cellValue;
+	
 	private boolean editing = false;
 	private int editingRow;
 		
@@ -27,6 +33,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 
 	public CASTableCellEditor(CASView view) {
 		super(view);
+
 		getInputArea().addKeyListener(this);
 	}
 
@@ -34,10 +41,11 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		if (value instanceof CASTableCellValue) {						
 			editing = true;
 			editingRow = row;
+
 			cellValue = (CASTableCellValue) value;
 			cellValue.setRow(row);
-			this.table = table;
-			
+			casTable = (CASTable) table;
+
 			// fill input and output panel
 			setValue(cellValue);					
 		
@@ -79,7 +87,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	
 	public void insertText(String text) {
 		getInputArea().replaceSelection(text);
-		getInputArea().requestFocusInWindow();
+		//getInputArea().requestFocusInWindow();
 	}
 		
 	public boolean stopCellEditing() {	
@@ -95,10 +103,9 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	public void cancelCellEditing() {
 		// update cellValue's input using editor content
 		if (editing) {
-			cellValue.setInput(getInput());				
-		}				
-		
-		fireEditingCanceled();
+			cellValue.setInput(getInput());	
+			fireEditingCanceled();
+		}
 	}
 	
 	public Object getCellEditorValue() {		
@@ -107,7 +114,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 
 
 	protected void fireEditingCanceled() {				
-		if (editing && editingRow < table.getRowCount()) {	
+		if (editing && editingRow < casTable.getRowCount()) {	
 			ChangeEvent ce = new ChangeEvent(this);
 			for (int i=0; i < listeners.size(); i++) {
 				CellEditorListener l = (CellEditorListener) listeners.get(i);
@@ -119,7 +126,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	}
 	
 	protected void fireEditingStopped() {		
-		if (editing && editingRow < table.getRowCount()) {	
+		if (editing && editingRow < casTable.getRowCount()) {	
 			ChangeEvent ce = new ChangeEvent(this);
 			for (int i=0; i < listeners.size(); i++) {
 				CellEditorListener l = (CellEditorListener) listeners.get(i);
@@ -133,7 +140,6 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	public boolean isCellEditable(EventObject anEvent) {	
 		return true;
 	}
-	
 
 	public void removeCellEditorListener(CellEditorListener l) {
 		listeners.remove(l);
@@ -206,4 +212,27 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		}
 	}
 	
+//	public void focusGained(FocusEvent arg0) {
+//		getInputArea().requestFocusInWindow();
+////		getInputArea().setCaretPosition(getInput().length());
+////		getInputArea().setSelectionStart(getInput().length());
+////		getInputArea().setSelectionEnd(getInput().length());
+//		
+//		// TODO: remove
+//		System.out.println("focus gained, editor row " + editingRow);
+//		lastFocusRow = editingRow;
+//	}
+//	
+//	int lastFocusRow;
+//
+//	public void focusLost(FocusEvent arg0) {
+//		//Application.printStacktrace("focus lost " + editingRow);
+//		// TODO: remove
+//		System.out.println("focus lost: lastFocusRow " + lastFocusRow + ", editingRow " + editingRow);
+//	
+//		if (editingRow == lastFocusRow) {
+//			stopCellEditing();
+//			casTable.updateRow(editingRow);
+//		}
+//	}	
 }

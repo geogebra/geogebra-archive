@@ -18,6 +18,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -44,6 +45,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 
 	private CASTable consoleTable;
 	private CASInputHandler casInputHandler;
+	private CASSubDialog subDialog;
 
 	private GeoGebraCAS cas;
 	private Application app;
@@ -142,6 +144,22 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		// TODO: remove
 		attachView();
 	}
+	
+	
+	public void showSubstituteDialog(String prefix, String evalText, String postfix, int selRow) {
+		CASSubDialog d = new CASSubDialog(this, prefix, evalText, postfix, selRow);
+		d.setAlwaysOnTop(true);
+		d.setVisible(true);
+		setSubstituteDialog(d);
+	}
+	
+	public void setSubstituteDialog(CASSubDialog d) {
+		subDialog = d;
+	}
+	
+	public CASSubDialog getSubstituteDialog() {
+		return subDialog;
+	}
 
 	/**
 	 * Process currently selected cell using the given command and parameters,
@@ -149,6 +167,15 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 */
 	public void processInput(String ggbcmd, String[] params) {
 		casInputHandler.processCurrentRow(ggbcmd, params);
+	}
+	
+	public void processRow(int row) {
+		casInputHandler.processRow(row);
+	}
+	
+	public String resolveCASrowReferences(String inputExp, int row) {
+		String result = casInputHandler.resolveCASrowReferences(inputExp, row, CASInputHandler.ROW_REFERENCE_STATIC);
+		return casInputHandler.resolveCASrowReferences(result, row, CASInputHandler.ROW_REFERENCE_DYNAMIC);
 	}
 
 	private void createButtonPanel() {
@@ -181,9 +208,9 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 
 		// consoleTable.addKeyListener(new ConsoleTableKeyListener());
 
-		TableCellMouseListener tableCellMouseListener = new TableCellMouseListener(
-				consoleTable);
+		TableCellMouseListener tableCellMouseListener = new TableCellMouseListener(this);
 		consoleTable.addMouseListener(tableCellMouseListener);
+		
 	}
 
 	public boolean getUseGeoGebraVariableValues() {
@@ -396,7 +423,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		int updateStartRow = 0;
 
 		// TODO: remove
-		System.out.println("update: " + geo);
+		//System.out.println("update: " + geo);
 
 		// TODO: avoid updating loops, e.g.
 		// c := Limit[ (3k+1)/k, k, Infinity ]
@@ -475,7 +502,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	}
 
 	public void attachView() {
-		clearView();
+		//clearView();
 		kernel.notifyAddAll(this);
 		kernel.attach(this);
 	}

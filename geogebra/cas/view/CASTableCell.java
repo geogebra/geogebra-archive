@@ -53,17 +53,25 @@ public abstract class CASTableCell extends JPanel{
 		boolean showOutput = cellValue.showOutput();
 		outputPanel.setVisible(showOutput);
 		if (showOutput) {
-			// show eval command in output cell
-			String cmd = app.getCommand(cellValue.getEvalCommand());
-			if (input.startsWith(cmd)) {
+			// show eval command (e.g. "Substitute") in output cell
+			String outputComment = app.getCommand(cellValue.getEvalCommand());
+			if (input.startsWith(outputComment)) {
 				// don't show command if it is already at beginning of input
-				cmd = "";
+				outputComment = "";
+			}
+			
+			// eval comment (e.g. "x=5, y=8")
+			String evalComment = cellValue.getEvalComment();
+			if ("".equals(outputComment)) {
+				outputComment = evalComment;
+			} else {
+				outputComment = outputComment + " " + evalComment;
 			}
 			
 			outputPanel.setOutput(
 					cellValue.getOutput(), 
 					cellValue.getLaTeXOutput(), 
-					cmd, 
+					outputComment, 
 					cellValue.isError()
 				);
 		}	

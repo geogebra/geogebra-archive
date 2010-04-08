@@ -11,6 +11,8 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -36,6 +38,22 @@ public class CASInputPanel extends JPanel {
 
 		inputArea.setBorder(BorderFactory.createEmptyBorder());						
 		add(inputArea, BorderLayout.CENTER);
+		
+//		inputArea.addFocusListener(new FocusListener() {
+//
+//			public void focusGained(FocusEvent e) {
+//				String text = inputArea.getText();
+//				int pos = text != null ? text.length() : 0;
+//				inputArea.setCaretPosition(pos);
+//				inputArea.setSelectionStart(pos);
+//				inputArea.setSelectionEnd(pos);
+//			}
+//
+//			public void focusLost(FocusEvent e) {
+//				
+//			}
+//			
+//		});
 	}
 
 	public void setInput(String inValue) {
@@ -51,11 +69,7 @@ public class CASInputPanel extends JPanel {
 	}
 
 	public void setInputAreaFocused() {
-		inputArea.requestFocus();
-		String text = inputArea.getText();
-		if (text != null) {
-			inputArea.setCaretPosition(text.length());
-		}
+		inputArea.requestFocusInWindow();
 	}
 
 	final public void setFont(Font ft) {

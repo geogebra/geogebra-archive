@@ -23,7 +23,7 @@ public class CASTableCellRenderer extends CASTableCell implements
 			setValue(tempV);
 							
 			// update row height
-			updateTableRowHeight(table, row);		
+			updateTableRowHeight(table, row);	
 		}
 		return this;
 	}

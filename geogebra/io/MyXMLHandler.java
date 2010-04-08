@@ -2473,6 +2473,18 @@ public class MyXMLHandler implements DocHandler {
 			} else {
 				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setOutput(output);
 			}
+			
+			String evalCommandComment = (String) attrs.get("evalCommand");
+			if (evalCommandComment != null) {
+				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setEvalCommand(evalCommandComment);
+			}
+			
+			String evalComment = (String) attrs.get("evalComment");
+			if (evalComment != null) {
+				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setEvalComment(evalComment);
+			}
+			
+			
 			return true;
 		} catch (Exception e) {
 			return false;

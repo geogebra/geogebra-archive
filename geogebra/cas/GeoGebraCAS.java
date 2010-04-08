@@ -427,10 +427,10 @@ public class GeoGebraCAS {
 		try {
 			// parse both input expressions
 			ValidExpression ve1 = casParser.parseGeoGebraCASInput(input1);
-			String input1normalized = casParser.toString(ve1, ExpressionNode.STRING_TYPE_MATH_PIPER);
+			String input1normalized = casParser.toString(ve1, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 			
 			ValidExpression ve2 = casParser.parseGeoGebraCASInput(input2);
-			String input2normalized = casParser.toString(ve2, ExpressionNode.STRING_TYPE_MATH_PIPER);
+			String input2normalized = casParser.toString(ve2, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 			
 			// compare if the parsed expressions are equal
 			return input1normalized.equals(input2normalized);

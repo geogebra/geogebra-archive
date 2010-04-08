@@ -10,6 +10,10 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseListener;
 
 import javax.swing.CellEditor;
@@ -40,7 +44,7 @@ public class CASTable extends JTable {
 	public CASTable(CASView view) {
 		this.view = view;
 		app = view.getApp();
-		kernel = app.getKernel();					
+		kernel = app.getKernel();			
 
 		setShowGrid(true);
 		setGridColor(MyTable.TABLE_GRID_COLOR);
@@ -64,6 +68,31 @@ public class CASTable extends JTable {
 				removeMouseListener(ml[i]);
 			}
 		}			
+		
+		addComponentListener(new ComponentListener() {
+
+			public void componentHidden(ComponentEvent e) {
+				
+			}
+
+			public void componentMoved(ComponentEvent e) {
+				
+			}
+
+			public void componentResized(ComponentEvent e) {
+				// keep editor value after resizing
+				int row = editor.getEditingRow();
+				if (row >=0 && row < getRowCount()) {
+					editor.stopCellEditing();
+					updateRow(row);
+				}
+			}
+
+			public void componentShown(ComponentEvent e) {
+				
+			}
+			
+		});
 
 		// Set the width of the index column;
 		// this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
@@ -71,20 +100,6 @@ public class CASTable extends JTable {
 
 		// this.sizeColumnsToFit(0);
 		//this.setSurrendersFocusOnKeystroke(true);
-		
-//		addFocusListener(new FocusListener() {
-//			public void focusGained(FocusEvent arg0) {
-//				// TODO: remove
-//				System.out.println("table GAINED focus");
-////				startEditingRow(getSelectedRow());
-//			}
-//
-//			public void focusLost(FocusEvent arg0) {
-//				// TODO: remove
-//				System.out.println("table LOST focus");
-//			}			
-//		});
-	
 	}
 	
 	public CASView getCASView() {
@@ -274,6 +289,8 @@ public class CASTable extends JTable {
 		if (renderer != null)
 			renderer.setFont(getFont());
 	}
+
+
 
 
 }

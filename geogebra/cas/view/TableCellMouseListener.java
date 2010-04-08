@@ -9,10 +9,12 @@ import javax.swing.table.TableCellRenderer;
 
 public class TableCellMouseListener extends MouseAdapter {
 
+	private CASView casView;
 	private CASTable table;
 
-	public TableCellMouseListener(CASTable table) {
-		this.table = table;
+	public TableCellMouseListener(CASView casView) {
+		this.casView = casView;
+		this.table = casView.getConsoleTable();
 	}		
 	
 	public void mouseReleased(MouseEvent e) {
@@ -27,17 +29,21 @@ public class TableCellMouseListener extends MouseAdapter {
 	 * Handles clicks on the output panel of a table cell and inserts
 	 * the clicked output string into the currently active editor.
 	 */
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e) {	
+		boolean substituteDialogActive = casView.getSubstituteDialog() != null;
+		
 		// clicked row in table
 		Point p = e.getPoint();
 		int clickedRow = table.rowAtPoint(p);
 		if (clickedRow < 0) {
 			// start editing last row
-			table.startEditingRow(table.getRowCount()-1);
+			if (!substituteDialogActive)
+				table.startEditingRow(table.getRowCount()-1);
 			return;
 		}
 		
 		// get renderer for this row
+		CASTableCellValue clickedCellValue = table.getCASTableCellValue(clickedRow);
 		TableCellRenderer  renderer =  table.getCellRenderer(clickedRow, CASTable.COL_CAS_CELLS);
 		CASTableCell tableCell = (CASTableCell) table.prepareRenderer(renderer, clickedRow, CASTable.COL_CAS_CELLS);
 		
@@ -47,16 +53,27 @@ public class TableCellMouseListener extends MouseAdapter {
 		 		
 		// check if we clicked on input panel within tableCell
 		if (p.y <= tableCell.getInputPanelHeight() + 10) {
-			table.startEditingRow(clickedRow);
+			if (substituteDialogActive)
+				casView.getSubstituteDialog().insertText(clickedCellValue.getTranslatedInput());
+			else
+				table.startEditingRow(clickedRow);
 			return;
 		}
 			
 		
-		// CLICKED ON OUTPUT PANEL IN TABLE CELL				
-		CASTableCellValue clickedCellValue = table.getCASTableCellValue(clickedRow);
+		// CLICKED ON OUTPUT PANEL IN TABLE CELL
 		String outputStr = clickedCellValue.getOutput();			
 		if (outputStr == null || outputStr.length() == 0) {
-			table.startEditingRow(clickedRow);
+			if (!substituteDialogActive)
+				table.startEditingRow(clickedRow);
+			return;
+		}
+		
+		if (substituteDialogActive) {
+			if (table.isEditing())
+				table.stopEditing();
+			
+			casView.getSubstituteDialog().insertText(outputStr);
 			return;
 		}
 		

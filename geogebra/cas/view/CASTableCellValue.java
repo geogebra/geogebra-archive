@@ -28,7 +28,7 @@ public class CASTableCellValue {
 	// command names used
 	private HashSet <String> cmdNames;
 		
-	private String evalCmd;
+	private String evalCmd, evalComment;
 	private CASView view;
 	private Kernel kernel;
 	private int row;
@@ -44,6 +44,7 @@ public class CASTableCellValue {
 		evalVE = null;
 		postfix = "";
 		evalCmd = "";
+		evalComment = "";
 	}
 	
 	void setRow(int row) {
@@ -183,6 +184,7 @@ public class CASTableCellValue {
 		evalVE = inputVE;
 		postfix = "";
 		evalCmd = "";
+		evalComment = "";
 		
 		// update input and output variables
 		updateInOutVars(inputVE);
@@ -389,6 +391,14 @@ public class CASTableCellValue {
 	final public void setEvalCommand(String cmd) {
 		evalCmd = cmd;
 	}
+	
+	final public void setEvalComment(String comment) {
+		evalComment = comment;
+	}
+	
+	final public String getEvalComment() {
+		return evalComment;
+	}
 
 	public void setOutput(String output) {
 		error = null;
@@ -423,15 +433,21 @@ public class CASTableCellValue {
 			sb.append("\" ");
 			
 			if (evalVE != inputVE) {
-				sb.append(" prefix=\"");
-				sb.append(Util.encodeXML(prefix));
-				sb.append("\" ");
+				if (!"".equals(prefix)) {
+					sb.append(" prefix=\"");
+					sb.append(Util.encodeXML(prefix));
+					sb.append("\" ");
+				}
+				
 				sb.append(" eval=\"");
 				sb.append(Util.encodeXML(getEvalText()));
 				sb.append("\" ");
-				sb.append(" postfix=\"");
-				sb.append(Util.encodeXML(postfix));
-				sb.append("\" ");
+				
+				if (!"".equals(postfix)) {
+					sb.append(" postfix=\"");
+					sb.append(Util.encodeXML(postfix));
+					sb.append("\" ");
+				}
 			}
 			
 			sb.append("/>\n");
@@ -451,6 +467,18 @@ public class CASTableCellValue {
 			sb.append("\"");
 			if (isError()) {
 				sb.append(" error=\"true\"");
+			}
+			
+			if (!"".equals(evalCmd)) {
+				sb.append(" evalCommand=\"");
+				sb.append(Util.encodeXML(evalCmd));
+				sb.append("\" ");
+			}
+			
+			if (!"".equals(evalComment)) {
+				sb.append(" evalComment=\"");
+				sb.append(Util.encodeXML(evalComment));
+				sb.append("\" ");
 			}
 			
 			sb.append("/>\n");

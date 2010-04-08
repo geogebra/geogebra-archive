@@ -93,9 +93,26 @@ public class CASInputHandler {
 		}
 		
 		// resolve static row references and change input field accordingly
-		prefix = resolveCASrowReferences(prefix, selRow, ROW_REFERENCE_STATIC);
-		evalText = resolveCASrowReferences(evalText, selRow, ROW_REFERENCE_STATIC);
-		postfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_STATIC);
+		boolean staticReferenceFound = false;
+		String newPrefix = resolveCASrowReferences(prefix, selRow, ROW_REFERENCE_STATIC);
+		if (!newPrefix.equals(prefix)) {
+			staticReferenceFound = true;
+			prefix = newPrefix;
+		}
+		String newEvalText = resolveCASrowReferences(evalText, selRow, ROW_REFERENCE_STATIC);
+		if (!newEvalText.equals(evalText)) {
+			staticReferenceFound = true;
+			evalText = newEvalText;
+		}
+		String newPostfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_STATIC);
+		if (!newPostfix.equals(postfix)) {
+			staticReferenceFound = true;
+			postfix = newPostfix;
+		}
+		if (staticReferenceFound) {
+			// change input if necessary
+			cellValue.setInput(newPrefix + newEvalText + newPostfix);
+		}
 		
 		// FIX common INPUT ERRORS in evalText
 		if (!hasSelectedText && (ggbcmd.equals("Evaluate") || ggbcmd.equals("CheckInput"))) {
@@ -121,8 +138,7 @@ public class CASInputHandler {
 		// Substitute dialog
 		if (ggbcmd.equals("SubstituteDialog")) {
 			// show substitute dialog
-			CASSubDialog d = new CASSubDialog(casView, prefix, evalText, postfix, selRow);
-			d.setVisible(true);
+			casView.showSubstituteDialog(prefix, evalText, postfix, selRow);
 			return;
 		}
 		
@@ -252,7 +268,7 @@ public class CASInputHandler {
 	 * @param row number
 	 * @return whether processing was successful
 	 */
-	final boolean processRow(int row) {
+	final public boolean processRow(int row) {
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(row);
 		
 		// resolve dynamic references for prefix and postfix
@@ -334,7 +350,7 @@ public class CASInputHandler {
 	 */
 	public String resolveCASrowReferences(String inputExp, int selectedRow, char delimiter) {	
 		// check for delimiter first
-		if (inputExp.indexOf(delimiter) < 0) {
+		if (inputExp.length() == 0 || inputExp.indexOf(delimiter) < 0) {
 			return inputExp;
 		}
 		
@@ -346,7 +362,7 @@ public class CASInputHandler {
 			if (ch == delimiter) {
 				int start = i+1;
 				int end = start;
-				char endCharacter = inputExp.charAt(end);
+				char endCharacter = end < length ? inputExp.charAt(end) : ' ';
 				
 				// get digits after #
 				while (end < length && Character.isDigit(endCharacter = inputExp.charAt(end))) {
@@ -355,7 +371,7 @@ public class CASInputHandler {
 				i = end;
 				
 				int rowRef;
-				if (start == end) {
+				if (start == end || end == ' ') {
 					// # references previous row
 					rowRef = selectedRow - 1;
 				}
@@ -391,8 +407,15 @@ public class CASInputHandler {
 				sbCASreferences.append(ch);
 			}
 		}
-
-		return sbCASreferences.toString();
+		
+		// resulting string
+		String result = sbCASreferences.toString();
+		if (result.indexOf(delimiter) < 0) {
+			return result;
+		} else {
+			// resolve references that are still here
+			return resolveCASrowReferences(result, selectedRow, delimiter);
+		}
 	}
 	
 	/**

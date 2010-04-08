@@ -12,7 +12,7 @@ public class RowHeader extends JList {
 		
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setFixedCellWidth(ROW_HEADER_WIDTH);
-		setFocusable(true);
+		setFocusable(false);
 		
 		// renderer
 		setCellRenderer(new RowHeaderRenderer(table));
