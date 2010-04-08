@@ -12,8 +12,6 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseListener;
 
 import javax.swing.CellEditor;
@@ -80,6 +78,8 @@ public class CASTable extends JTable {
 			}
 
 			public void componentResized(ComponentEvent e) {
+				if (isEditing()) return;
+				
 				// keep editor value after resizing
 				int row = editor.getEditingRow();
 				if (row >=0 && row < getRowCount()) {
