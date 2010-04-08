@@ -21,30 +21,18 @@ package geogebra.euclidian;
 import geogebra.kernel.EquationSolver;
 import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVec2D;
 import geogebra.main.Application;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.QuadCurve2D;
-import java.awt.geom.RectangularShape;
-import java.util.ArrayList;
 
 /**
  *
- * @author  Markus
+ * @author  Michael
  * @version 
  */
-final public class DrawCubic extends Drawable implements Previewable {        
+final public class DrawCubic extends Drawable {        
     
     // plotpoints per quadrant for hyperbola
     private static final int PLOT_POINTS = 32;
@@ -56,68 +44,21 @@ final public class DrawCubic extends Drawable implements Previewable {
     private GeoCubic cubic;
     
     private boolean isVisible, labelVisible;
-    private int type;
-            
-    private double [] labelCoords = new double[2];      
-    
-    // CONIC_SINGLE_POINT
-    boolean firstPoint = true;
-    private GeoPoint  point;
-    private DrawPoint drawPoint;
-    
-    // CONIC_INTERSECTING_LINES
-    boolean firstLines = true;
-    private GeoLine [] lines;
-    private DrawLine [] drawLines;
-    
-    // CONIC_CIRCLE
-    boolean firstCircle = true;
-    private GeoVec2D midpoint;    
-    private Arc2D.Double arc;   
-    private GeneralPathClipped arcFiller, gp;
-    private RectangularShape circle;
-    double  mx, my, radius, yradius, angSt, angEnd;    
-    
-    // for ellipse, hyperbola, parabola
-    private AffineTransform conicTransform, 
-                            transform = new AffineTransform();   
-    private Shape shape;     
-    
-    // CONIC_ELLIPSE    
-    boolean firstEllipse = true;
-    private double [] halfAxes;      
-    private Ellipse2D.Double ellipse;    
-    
-    // CONIC_PARABOLA   
-    boolean firstParabola = true;
-    private double x0, y0;
-    private int i, k2;
-    private GeoVec2D vertex;
-    private QuadCurve2D.Double parabola;    
-    private double [] parpoints = new double[6];        
-    
-    // CONIC_HYPERBOLA   
-    boolean firstHyperbola = true;    
-    private double a,b, tsq, step, t, denom;
-    private double x, y;
-    private int index0, index1, n, points;
-    private GeneralPathClipped hypLeft, hypRight;    
-    private boolean hypLeftOnScreen, hypRightOnScreen;      
-    
-    // preview of circle (two points or three points)
-	private ArrayList prevPoints, prevSegments, prevConics; 
-	private GeoPoint [] previewTempPoints;  
-	private GeoNumeric previewTempRadius;
-	private int previewMode, neededPrevPoints;
+                  
 	
     EquationSolver eqnSolver;
 
-
+	GeneralPath[] gps = new GeneralPath[3];
+    boolean[] needsMove = new boolean[3];
     
     /** Creates new DrawVector */
     public DrawCubic(EuclidianView view, GeoCubic c) {
     	this.view = view;
     	eqnSolver = view.getKernel().getConstruction().getEquationSolver();
+		gps[0] = new GeneralPath();
+		gps[1] = new GeneralPath();
+		gps[2] = new GeneralPath();
+
         initCubic(c);
         update();
     }
@@ -136,16 +77,15 @@ final public class DrawCubic extends Drawable implements Previewable {
        
         updateStrokes(cubic);          
 
-       // updateCubic();
+        updateGP();
         
-        shape = new GeneralPath();
-           
+        
     	// shape on screen?
     	// Michael Borcherds: bugfix getBounds2D() added otherwise rotated parabolas not displayed sometimes
-    	if (arcFiller == null && !shape.getBounds2D().intersects(0,0, view.width, view.height)) {				
-			isVisible = false;
-			return;
-    	}
+    	//if (arcFiller == null && !shape.getBounds2D().intersects(0,0, view.width, view.height)) {				
+		//	isVisible = false;
+		//	return;
+    	//}
         
 		// draw trace
 		if (cubic.trace) {
@@ -165,20 +105,20 @@ final public class DrawCubic extends Drawable implements Previewable {
         }
     }
 	
-	GeneralPath[] gps = new GeneralPath[3];
-    boolean[] needsMove = new boolean[3];
+
            
 
     
-	final public void draw(Graphics2D g2) {
-        //if (!isVisible) return;                
+	final public void updateGP() {
         
-		gps[0] = new GeneralPath();
-		gps[1] = new GeneralPath();
-		gps[2] = new GeneralPath();
+		gps[0].reset();
+		gps[1].reset();
+		gps[2].reset();
+        
+		if (!isVisible) return;                
 
 		
-		g2.setPaint(geo.getObjectColor());	
+		//g2.setPaint(geo.getObjectColor());	
 		//g2.setStroke(getCrossStroke(1));
 
     	double minx = view.getXmin();
@@ -186,21 +126,16 @@ final public class DrawCubic extends Drawable implements Previewable {
     	double miny = view.getYmin();
     	double maxy = view.getYmax();
     	
-        circle = new Ellipse2D.Double();
-        
         double [] eqn = new double[4];
         double [] sol = new double[3];
         double [] oldSol = new double[3];
-        
-    	boolean usingTop = false;
-    	
+
     	int lastN = 0;
-    	
-    	int usingGP = -1;
+
         
         double[] coeffs = cubic.getCoeffs();
 
-        double step = (maxx - minx) / 300;
+        double step = (maxx - minx) / MAX_PLOT_POINTS;
         // y^3 + 0y^2 +2xy -x^2 = 0
     	//eqn[0] = -x^2;
     	//eqn[1] = 2x;
@@ -249,8 +184,8 @@ final public class DrawCubic extends Drawable implements Previewable {
             	        newOrder[1] = order[1];
             	        newOrder[2] = order[2];   
             	        
-            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[1]);
-            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[2]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[1]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[2]] + oldSol[order[1]])/2), order[2]);
 
             	        
         			} else if (diff1 < diff2) {
@@ -258,15 +193,15 @@ final public class DrawCubic extends Drawable implements Previewable {
            			    newOrder[0] = order[1];
         				newOrder[1] = order[0];
         				newOrder[2] = order[2];
-            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[0]);
-            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[2]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[0]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[2]])/2), order[2]);
         			} else {
            				//Application.debug("C"+x);
            				newOrder[0] = order[2];
         				newOrder[1] = order[1];
         				newOrder[2] = order[0];
-            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[0]);
-            			lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[1]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[0]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((oldSol[order[0]] + oldSol[order[1]])/2), order[1]);
          			}
         			for (int i = 0 ; i < 3 ; i ++) {
         				order[i] = newOrder[i];
@@ -356,8 +291,12 @@ final public class DrawCubic extends Drawable implements Previewable {
         	
         	//System.out.println(""+eqnSolver.solveCubic(eqn, sol));
         }
+	}
+	
+	final public void draw(Graphics2D g2) {
 
-			                                               
+		if (!isVisible) return; 
+
                 if (geo.doHighlighting()) {
                     g2.setStroke(selStroke);
                     g2.setColor(cubic.getSelColor());
@@ -426,11 +365,7 @@ final public class DrawCubic extends Drawable implements Previewable {
 	 * @return null when this Drawable is infinite or undefined	 
 	 */
 	final public Rectangle getBounds() {	
-		if (!geo.isDefined() || !geo.isEuclidianVisible())
-			return null;
-		
- 
-	        	return shape.getBounds();
+		return null;
 
 	}
     
@@ -438,25 +373,28 @@ final public class DrawCubic extends Drawable implements Previewable {
 			                                                  
 				g2.setStroke(objStroke);
 				g2.setColor(cubic.getObjectColor());				
-				g2.draw(shape);    				            
+            	Drawable.drawWithValueStrokePure(gps[0], g2);
+            	Drawable.drawWithValueStrokePure(gps[1], g2);
+            	Drawable.drawWithValueStrokePure(gps[2], g2);
          
 
 	}
     
 	final public boolean hit(int x, int y) {             
 
-            	if (strokedShape == null) {
-        			strokedShape = objStroke.createStrokedShape(shape);
-        		}    		
-    			if (cubic.alphaValue > 0.0f) 
-    				return shape.intersects(x-3,y-3,6,6);  
-    			else
-    				return strokedShape.intersects(x-3,y-3,6,6);            	
+            	//if (strokedShape == null) {
+        		//	strokedShape = objStroke.createStrokedShape(shape);
+        		//}    		
+    			//if (cubic.alphaValue > 0.0f) 
+    			//	return shape.intersects(x-3,y-3,6,6);  
+    			//else
+    			//	return .intersects(x-3,y-3,6,6);     
+		return gps[0].intersects(x-3,y-3,6,6) || gps[1].intersects(x-3,y-3,6,6) || gps[2].intersects(x-3,y-3,6,6);
     }
 	
 	final public boolean isInside(Rectangle rect) {				
                      	
-        	   return rect != null && rect.contains(shape.getBounds());
+        	   return rect != null && rect.contains(gps[0].getBounds()) && rect.contains(gps[2].getBounds()) && rect.contains(gps[2].getBounds());
       
 	
 	}
@@ -469,27 +407,5 @@ final public class DrawCubic extends Drawable implements Previewable {
         this.geo = geo;
     }
 	
-	final public void updateMousePos(int x, int y) {		
-		if (isVisible) {
-			double xRW = view.toRealWorldCoordX(x);
-			double yRW = view.toRealWorldCoordY(y);
-			previewTempPoints[previewTempPoints.length-1].setCoords(xRW, yRW, 1.0);
-			previewTempPoints[previewTempPoints.length-1].updateCascade();		
-			update();
-		}
-	}
-    
-	final public void drawPreview(Graphics2D g2) {
-		draw(g2); 
-	}
-	
-	public void disposePreview() {	
-		if (cubic != null)
-			cubic.remove();
-	}
 
-	public void updatePreview() {
-		// TODO Auto-generated method stub
-		
-	}
 }
