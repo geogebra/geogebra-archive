@@ -208,7 +208,7 @@ final public class DrawCubic extends Drawable {
         				order[i] = newOrder[i];
         			}
         			
-        			Application.debug("3 -> 1 x = "+x+": "+order[0]);//
+        			//Application.debug("3 -> 1 x = "+x+": "+order[0]);//
         		} 
 
     			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[0]), order[0]);
@@ -224,7 +224,7 @@ final public class DrawCubic extends Drawable {
         		break;
         	case 2:
         		lastN = 2; 
-        		Application.debug("2");
+        		//Application.debug("2");
         		break;
         	case 3:
         		
@@ -232,25 +232,25 @@ final public class DrawCubic extends Drawable {
         			double diff0 = Math.abs(oldSol[order[0]] - sol[0]);
         			double diff1 = Math.abs(oldSol[order[0]] - sol[1]);
         			double diff2 = Math.abs(oldSol[order[0]] - sol[2]);
-        			Application.debug("diffs:"+diff0+" "+diff1+" "+diff2);
+        			//Application.debug("diffs:"+diff0+" "+diff1+" "+diff2);
         			if (diff0 < diff1 && diff0 < diff2) {
         				//Application.debug("A"+x);
-            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[1]] + sol[order[2]])/2), order[1]);
-            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[1]] + sol[order[2]])/2), order[2]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[1]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[2]);
             	        newOrder[0] = order[0];
             	        newOrder[1] = order[1];
             	        newOrder[2] = order[2];        				
         			} else if (diff1 < diff2) {
         				//Application.debug("B"+x);
-            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[1]] + sol[order[0]])/2), order[1]);
-            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[1]] + sol[order[0]])/2), order[0]);
-        				newOrder[0] = order[0];
-        				newOrder[1] = order[1];
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[1]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[2]);
+        				newOrder[0] = order[1];
+        				newOrder[1] = order[0];
         				newOrder[2] = order[2];
         			} else {
         				//Application.debug("CC"+x);
-            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[0]] + sol[order[2]])/2), order[0]);
-            			//lineTo(view.toScreenCoordX(x - step / 2), view.toScreenCoordY((sol[order[0]] + sol[order[2]])/2), order[2]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[0])/2), order[2]);
+            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[0])/2), order[1]);
         				newOrder[0] = order[2];
         				newOrder[1] = order[1];
         				newOrder[2] = order[0];
@@ -259,7 +259,7 @@ final public class DrawCubic extends Drawable {
         			for (int i = 0 ; i < 3 ; i ++) {
         				order[i] = newOrder[i];
         			}
-        			Application.debug("1 -> 3 x = "+x+": "+order[0]+" "+order[1]+" "+order[2]);
+        			//Application.debug("1 -> 3 x = "+x+": "+order[0]+" "+order[1]+" "+order[2]);
         			
        		} else {
         	        //order[0] = 0;
