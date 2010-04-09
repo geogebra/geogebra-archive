@@ -211,6 +211,7 @@ final public class DrawCubic extends Drawable {
         			//Application.debug("3 -> 1 x = "+x+": "+order[0]);//
         		} 
 
+        		//Application.debug("drawing: "+view.toScreenCoordY(sol[0])+" "+order[0]);
     			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[0]), order[0]);
         		// offscreen test
     			// still draw first time otherwise get a gap
@@ -222,8 +223,11 @@ final public class DrawCubic extends Drawable {
     			needsMove[order[2]] = true;
     			lastN = 1;
         		break;
-        	case 2:
+        	case 2: // should only happen for curves with 2 branches
+        		// eg x^3y^2=3
         		lastN = 2; 
+    			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[0]), 0);
+    			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[1]), 1);
         		//Application.debug("2");
         		break;
         	case 3:
@@ -354,8 +358,8 @@ final public class DrawCubic extends Drawable {
     		sol[1] = temp;
     	}
    	
-    	if (sol[0] > sol[1]) Application.debug("greatera");
-    	if (sol[1] > sol[2]) Application.debug("greaterb");
+    	//if (sol[0] > sol[1]) Application.debug("greatera");
+    	//if (sol[1] > sol[2]) Application.debug("greaterb");
     	
     	return ret;
     }
