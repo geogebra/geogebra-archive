@@ -655,7 +655,6 @@ final public class DrawConic extends Drawable implements Previewable {
     
 	final public void draw(Graphics2D g2) {
         if (!isVisible) return;                
-        Application.printStacktrace("");
         g2.setColor(conic.getObjectColor());        		
         switch (type) {
             case GeoConic.CONIC_SINGLE_POINT:                         
