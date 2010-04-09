@@ -147,7 +147,10 @@ final public class DrawCubic extends Drawable {
         needsMove[1] = true;
         needsMove[2] = true;
         
+        boolean checkAsymptote = true;
+        
         int[] order = new int[3];
+        double[] newSol = new double[3];
         int[] newOrder = new int[3];
         order[0] = 0;
         order[1] = 1;
@@ -163,10 +166,22 @@ final public class DrawCubic extends Drawable {
         	oldSol[order[0]] = sol[0];
         	oldSol[order[1]] = sol[1];
         	oldSol[order[2]] = sol[2];
+        	//Application.debug("eqn: "+eqn[3]+" "+eqn[2]+" "+eqn[1]+" "+eqn[0]);
         	int n = solveCubic(eqn, sol);
+        	
+        	/*
+    		System.out.println(n+" solutions: x = ");       	
+        	for (int i = 0 ; i < n ; i++) {
+        		System.out.println(sol[i]+", ");
+        	}
+    		System.out.println("\n");    */    	
         	
         	switch (n) {
         	default: // 0
+        		if (lastN == 2){
+        			lineTo(view.toScreenCoordX(x - step * 0.2), view.toScreenCoordY((oldSol[0] + oldSol[1])/2), 0);
+        			lineTo(view.toScreenCoordX(x - step * 0.2), view.toScreenCoordY((oldSol[0] + oldSol[1])/2), 1);
+        		}
         		needsMove[0] = true;
         		needsMove[1] = true;
         		needsMove[2] = true;
@@ -225,6 +240,10 @@ final public class DrawCubic extends Drawable {
         		break;
         	case 2: // should only happen for curves with 2 branches
         		// eg x^3y^2=3
+        		if (lastN == 0){
+        			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[0]+sol[1])/2), 0);
+        			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[0]+sol[1])/2), 1);
+        		}
         		lastN = 2; 
     			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[0]), 0);
     			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[1]), 1);
@@ -238,23 +257,29 @@ final public class DrawCubic extends Drawable {
         			double diff2 = Math.abs(oldSol[order[0]] - sol[2]);
         			//Application.debug("diffs:"+diff0+" "+diff1+" "+diff2);
         			if (diff0 < diff1 && diff0 < diff2) {
-        				//Application.debug("A"+x);
-            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[1]);
-            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[2]);
-            	        newOrder[0] = order[0];
+        				//Application.debug("AA"+x);
+        				if (Math.abs(view.toScreenCoordY(sol[1]) - view.toScreenCoordY((sol[2]))) < 20) {
+        					lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[1]);
+        					lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[2]);
+        				}
+            			newOrder[0] = order[0];
             	        newOrder[1] = order[1];
             	        newOrder[2] = order[2];        				
         			} else if (diff1 < diff2) {
-        				//Application.debug("B"+x);
-            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[1]);
-            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[2]);
+        				//Application.debug("BB"+x);
+        				if (Math.abs(view.toScreenCoordY(sol[1]) - view.toScreenCoordY((sol[2]))) < 20) {
+        					lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[1]);
+        					lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[2])/2), order[2]);
+        				}
         				newOrder[0] = order[1];
         				newOrder[1] = order[0];
         				newOrder[2] = order[2];
         			} else {
         				//Application.debug("CC"+x);
-            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[0])/2), order[2]);
-            			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[0])/2), order[1]);
+        				if (Math.abs(view.toScreenCoordY(sol[1]) - view.toScreenCoordY((sol[0]))) < 20) {
+        					lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[0])/2), order[2]);
+        					lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[1]+sol[0])/2), order[1]);
+        				}
         				newOrder[0] = order[2];
         				newOrder[1] = order[1];
         				newOrder[2] = order[0];
@@ -265,11 +290,75 @@ final public class DrawCubic extends Drawable {
         			}
         			//Application.debug("1 -> 3 x = "+x+": "+order[0]+" "+order[1]+" "+order[2]);
         			
-       		} else {
-        	        //order[0] = 0;
-        	        //order[1] = 1;
-        	        //order[2] = 2;
-        		}
+        		} else if (lastN == 3) {
+        			if (checkAsymptote && (Math.abs(oldSol[0] - sol[1]) < Math.abs(oldSol[1] - sol[1])) 
+                     		 && (Math.abs(oldSol[1] - sol[2]) < Math.abs(oldSol[2] - sol[2]))) {
+          				//Application.debug("asymptote at x = "+x+" order[0] = "+order[0]);
+          				// draw asymptote to screen edge
+          				//lineTo(view.toScreenCoordX(x - step), view.toScreenCoordY(100), order[1]);
+               		
+          				// start new path
+          				needsMove[2] = true;			
+          				
+
+          				if (order[0] == 0) {
+	           				newOrder[0] = 2;
+	           				newOrder[1] = 0;
+	           				newOrder[2] = 1;
+          				} else
+          				if (order[0] == 1) {
+          					Application.debug("TODO A");
+	           				//newOrder[0] = order[2];
+	           				//newOrder[1] = order[0];
+	           				//newOrder[2] = order[1];
+          				} else
+          				if (order[0] == 2) {
+          					Application.debug("TODO B");
+	           				//newOrder[0] = order[2];
+	           				//newOrder[1] = order[0];
+	           				//newOrder[2] = order[1];
+          				}
+          				
+           			for (int i = 0 ; i < 3 ; i ++) {
+           				order[i] = newOrder[i];
+           			}
+           			
+           			checkAsymptote = false;
+       			} else
+        			if (checkAsymptote && (Math.abs(oldSol[2] - sol[1]) < Math.abs(oldSol[1] - sol[1])) 
+                     		 && (Math.abs(oldSol[1] - sol[0]) < Math.abs(oldSol[0] - sol[0]))) {
+          				//Application.debug("asymptote2 at x = "+x+" order[0] = "+order[0]);
+          				// draw asymptote to screen edge
+          				//lineTo(view.toScreenCoordX(x - step), view.toScreenCoordY(100), order[1]);
+               		
+          				// start new path
+          				needsMove[0] = true;			
+          				
+
+          				if (order[0] == 0) {
+	           				newOrder[0] = 1;
+	           				newOrder[1] = 2;
+	           				newOrder[2] = 0;
+          				} else
+          				if (order[0] == 1) {
+          					Application.debug("TODO C");
+	           				//newOrder[0] = 2;
+	           				//newOrder[1] = 1;
+	           				//newOrder[2] = 0;
+          				} else
+          				if (order[0] == 2) {
+	           				newOrder[0] = 0;
+	           				newOrder[1] = 2;
+	           				newOrder[2] = 1;
+          				}
+          				
+           			for (int i = 0 ; i < 3 ; i ++) {
+           				order[i] = newOrder[i];
+           			}
+           			
+           			checkAsymptote = false;
+       			}
+           	}
 
         		
             	for (int j = 0 ; j < n ; j++) {
@@ -312,9 +401,9 @@ final public class DrawCubic extends Drawable {
                 g2.setStroke(objStroke);
                 g2.setColor(cubic.getObjectColor());				
             	Drawable.drawWithValueStrokePure(gps[0], g2);
-            	//g2.setColor(Color.red);
+            	g2.setColor(Color.red);
             	Drawable.drawWithValueStrokePure(gps[1], g2);
-            	//g2.setColor(Color.green);
+            	g2.setColor(Color.green);
             	Drawable.drawWithValueStrokePure(gps[2], g2);
                 if (labelVisible) {
 					g2.setFont(view.fontConic); 
@@ -326,6 +415,8 @@ final public class DrawCubic extends Drawable {
     }
 	
     private void lineTo(float x, float y, int i) {
+    	
+    	if (y > 500) y = 500;
     	
     	if (needsMove[i]) {
     		gps[i].moveTo(x, y);
