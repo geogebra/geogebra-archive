@@ -64,7 +64,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	private GeoConic conic;
 	//private GeoNumeric numeric;
 	//private Point location;
-	Application app;
+	protected Application app;
 
 	ContextMenuGeoElement(Application app) {
 		this.app = app;     

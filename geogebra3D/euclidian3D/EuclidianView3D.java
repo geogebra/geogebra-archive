@@ -2073,20 +2073,40 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/**
-	 * toggle the visibility of axis and xOy plane
+	 * toggle the visibility of axes 
 	 */
 	public void toggleAxis(){
 		
-		boolean flag = xOyPlane.isEuclidianVisible();
+		boolean flag = axesAreAllVisible();
 		
-		for(int i=0;i<3;i++)
-			flag = (flag && axis[i].isEuclidianVisible());
-		
-		xOyPlane.setEuclidianVisible(!flag);
 		for(int i=0;i<3;i++)
 			axis[i].setEuclidianVisible(!flag);
 		
 	}
+	
+
+	/** says if all axes are visible
+	 * @return true if all axes are visible
+	 */
+	public boolean axesAreAllVisible(){
+		boolean flag = true;
+
+		for(int i=0;i<3;i++)
+			flag = (flag && axis[i].isEuclidianVisible());
+
+		return flag;
+	}
+	
+	
+	/**
+	 * toggle the visibility of xOy plane
+	 */
+	public void togglePlane(){
+		
+		boolean flag = xOyPlane.isEuclidianVisible();
+		xOyPlane.setEuclidianVisible(!flag);
+		
+	}	
 	
 	
 	public GeoPlane3D getxOyPlane()  {

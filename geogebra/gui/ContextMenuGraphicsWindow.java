@@ -67,18 +67,8 @@ implements ActionListener {
 
         setTitle("<html>" + app.getPlain("DrawingPad") + "</html>");                                              
         
-        // checkboxes for axes and grid
-        EuclidianView ev = app.getEuclidianView();
-        JCheckBoxMenuItem cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());
-        //cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
-        app.setShowAxesSelected(cbShowAxes);
-        cbShowAxes.setBackground(getBackground());
-        add(cbShowAxes);
         
-        JCheckBoxMenuItem cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager().getShowGridAction());
-        cbShowGrid.setSelected(ev.getShowGrid());
-        cbShowGrid.setBackground(getBackground());
-        add(cbShowGrid);
+        addAxesAndGridCheckBoxes();
         
         addSeparator();
         
@@ -121,6 +111,22 @@ implements ActionListener {
         miProperties.addActionListener(this);
         miProperties.setBackground(bgColor);
         add(miProperties);                 
+    }
+    
+    protected void addAxesAndGridCheckBoxes(){
+
+        // checkboxes for axes and grid
+        EuclidianView ev = app.getEuclidianView();
+        JCheckBoxMenuItem cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());
+        //cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
+        app.setShowAxesSelected(cbShowAxes);
+        cbShowAxes.setBackground(getBackground());
+        add(cbShowAxes);
+        
+        JCheckBoxMenuItem cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager().getShowGridAction());
+        cbShowGrid.setSelected(ev.getShowGrid());
+        cbShowGrid.setBackground(getBackground());
+        add(cbShowGrid);
     }
         
     public void actionPerformed(ActionEvent e) {                                            

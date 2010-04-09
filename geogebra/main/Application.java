@@ -547,7 +547,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (appGuiManager == null) {
 			setWaitCursor();
 
-			appGuiManager = new geogebra.gui.DefaultGuiManager(Application.this);
+			appGuiManager = createGuiManager();//new geogebra.gui.DefaultGuiManager(Application.this);
 			setDefaultCursor();
 			// // this code wraps the creation of the DefaultGuiManager and is
 			// // necessary to allow dynamic loading of this class
@@ -562,6 +562,13 @@ public abstract class Application implements KeyEventDispatcher {
 
 		return appGuiManager;
 	}
+	
+	public synchronized GuiManager createGuiManager() {
+		
+		return new geogebra.gui.DefaultGuiManager(Application.this);
+		
+	}
+	
 
 	final public boolean hasGuiManager() {
 		return appGuiManager != null;

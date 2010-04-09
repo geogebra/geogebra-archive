@@ -98,7 +98,7 @@ public class DefaultGuiManager implements GuiManager {
 	// Java user interface properties, for translation of JFileChooser
 	private ResourceBundle rbJavaUI;
 
-	private Application app;
+	protected Application app;
 	private Kernel kernel;
 	
 	private OptionsDialog optionsDialog;
@@ -2322,8 +2322,8 @@ public class DefaultGuiManager implements GuiManager {
 
 	
 
-	private void initActions() {	
-		if (showAxesAction != null) return;
+	protected boolean initActions() {	
+		if (showAxesAction != null) return false;
 		
 		showAxesAction = new AbstractAction(app.getMenu("Axes"),
 				app.getImageIcon("axes.gif")) {
@@ -2382,6 +2382,8 @@ public class DefaultGuiManager implements GuiManager {
 		};
 		
 		updateActions();
+		
+		return true;
 	}
 
 	public void updateActions() {

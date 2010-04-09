@@ -22,6 +22,7 @@ import geogebra.gui.app.GeoGebraFrame;
 import geogebra.kernel.GeoElement;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
+import geogebra.main.GuiManager;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -243,25 +244,48 @@ public abstract class Application3D extends Application{
 	
 	
 	
+	
+	
+	
+	
+	/////////////////////////////////
+	// GUI
+	/////////////////////////////////
+	
 	public void toggleAxis(){
 		
-		// toggle axis and xOy plane
+		// toggle axis
 		getEuclidianView3D().toggleAxis();
 		
-		/*
-		GeoElement p = getEuclidianView3D().getxOyPlane();
-		p.setEuclidianVisible(!p.isEuclidianVisible());
-		*/
+	}
+	
+	public void togglePlane(){
+		
+		// toggle xOy plane
+		getEuclidianView3D().togglePlane();
+		
 	}
 	
 	
 	public void setShowAxesSelected(JCheckBoxMenuItem cb){
+		cb.setSelected(getEuclidianView3D().axesAreAllVisible());
+	}
+	
+	/** set the show plane combo box selected if the plane is visible
+	 * @param cb
+	 */
+	public void setShowPlaneSelected(JCheckBoxMenuItem cb){
 		GeoElement p = getEuclidianView3D().getxOyPlane();
 		cb.setSelected(p.isEuclidianVisible());
 	}
 	
+	
     
-    
+	public synchronized GuiManager createGuiManager() {
+		
+		return new geogebra3D.gui.DefaultGuiManager3D(this);
+		
+	}
     
     
     
