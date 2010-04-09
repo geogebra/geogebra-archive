@@ -128,6 +128,9 @@ public class MyTable extends JTable implements FocusListener
 	private CellFormat formatHandler;
 	
 	
+	private ArrayList<Point> adjustedRowHeights = new ArrayList<Point>();
+	private boolean doRecordRowHeights = true;
+	
 	
 	
 	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
@@ -203,6 +206,7 @@ public class MyTable extends JTable implements FocusListener
 		tableModel.addTableModelListener(new TableModelListener() {
 
 			public void tableChanged(TableModelEvent e) {
+				// force rowHeader redraw when a new row is added (after drag down or arrow down) 
 				if(e.getType()==e.INSERT){
 					updateRowHeader();
 				}
@@ -254,7 +258,9 @@ public class MyTable extends JTable implements FocusListener
 			col.setPreferredWidth(MyTable.TABLE_CELL_WIDTH);
 			addColumn(col);
 		}	
-		tableModel.setColumnCount(newColumnCount);	
+		tableModel.setColumnCount(newColumnCount);
+		//addColumn destroy custom row heights, so we must reset them
+		resetRowHeights();
 	}
 	
 	/* moved these to the declarations section at top 
@@ -2147,18 +2153,32 @@ public class MyTable extends JTable implements FocusListener
 		super.setRowHeight(row, rowHeight);
 		try {
 			view.updateRowHeader();
+			if(doRecordRowHeights)
+				adjustedRowHeights.add(new Point(row, rowHeight));
 		} catch (Exception e) {
 		}
 	}
 	
 	@Override
-	public void setRowHeight(int row) {
-		super.setRowHeight(row);
+	public void setRowHeight(int rowHeight) {
+		super.setRowHeight(rowHeight);
 		try {
 			view.updateRowHeader();
 		} catch (Exception e) {
 		}
 	}
+	
+	// Reset the row heights --- used after addColumn destoys the row heights
+	public void resetRowHeights(){
+		doRecordRowHeights = false;
+		for(Point p: adjustedRowHeights){
+			setRowHeight(p.x,p.y);		
+		}
+		doRecordRowHeights = true;
+	}
+	
+	
+	
 	
 	
 	//G.STURR 2010-1-29
@@ -2288,7 +2308,7 @@ public class MyTable extends JTable implements FocusListener
 		
 		if (adjustHeight) {
 
-			int resultHeight = Math.max(getRowHeight(), (int) prefSize
+			int resultHeight = Math.max(getRowHeight(row), (int) prefSize
 					.getHeight());
 			setRowHeight(row, resultHeight);
 		}
