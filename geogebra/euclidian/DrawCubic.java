@@ -401,9 +401,9 @@ final public class DrawCubic extends Drawable {
                 g2.setStroke(objStroke);
                 g2.setColor(cubic.getObjectColor());				
             	Drawable.drawWithValueStrokePure(gps[0], g2);
-            	g2.setColor(Color.red);
+            	//g2.setColor(Color.red);
             	Drawable.drawWithValueStrokePure(gps[1], g2);
-            	g2.setColor(Color.green);
+            	//g2.setColor(Color.green);
             	Drawable.drawWithValueStrokePure(gps[2], g2);
                 if (labelVisible) {
 					g2.setFont(view.fontConic); 
