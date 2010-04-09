@@ -240,9 +240,26 @@ final public class DrawCubic extends Drawable {
         		break;
         	case 2: // should only happen for curves with 2 branches
         		// eg x^3y^2=3
+        		//Application.debug("N=2");
         		if (lastN == 0){
         			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[0]+sol[1])/2), 0);
         			lineTo(view.toScreenCoordX(x - step * 0.8), view.toScreenCoordY((sol[0]+sol[1])/2), 1);
+        		} else if (lastN == 3) {
+        			// eg y^3 + y^2 - x^2 = 0 at x=0
+        			//Application.debug(oldSol[order[0]]+" "+oldSol[order[1]]+" "+oldSol[order[2]]);
+        			//Application.debug(Math.abs(oldSol[0] - oldSol[1]) +" "+ Math.abs(oldSol[1] - oldSol[2]));
+        			if (Math.abs(oldSol[order[0]] - oldSol[order[1]]) < Math.abs(oldSol[order[1]] - oldSol[order[2]])) {
+        				sol[2] = sol[1];
+        				sol[1] = sol[0];
+            			//Application.debug("fix1 "+sol[0]+" "+sol[1]+" "+sol[2]);
+        			} else {
+        				sol[2] = sol[1];
+            			//Application.debug("fix2 "+sol[0]+" "+sol[1]+" "+sol[2]);
+           		    }
+                	for (int j = 0 ; j < 3 ; j++) 
+            			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[j]), order[j]);
+        			lastN = 3;
+        			break;
         		}
         		lastN = 2; 
     			lineTo(view.toScreenCoordX(x), view.toScreenCoordY(sol[0]), 0);
@@ -429,13 +446,16 @@ final public class DrawCubic extends Drawable {
     private int solveCubic(double[] eqn, double[] sol) {
     	int ret = eqnSolver.solveCubic(eqn, sol);
     	double temp;
-    	if (ret < 3) return ret;
+    	if (ret < 2) return ret;
     		
+    	// sort solutions
     	if (sol[0] > sol[1]) {
     		temp = sol[0];
     		sol[0] = sol[1];
     		sol[1] = temp;
     	}
+    	
+    	if (ret == 2) return ret;
     	
     	if (sol[1] > sol[2]) {
     		temp = sol[2];
