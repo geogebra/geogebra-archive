@@ -82,7 +82,7 @@ public class ImageManager {
 		}
 		else {
 			 // load the icon		
-			 Image im = getImageResource(fileName);			 
+			 Image im = getImageResourceGeoGebra(fileName);			 
 			 if (im != null) {			 	 
 			 	 icon = new ImageIcon(addBorder(im, borderColor));
 			 	 iconTable.put(fileName, icon);				 	 		 	
@@ -116,7 +116,7 @@ public class ImageManager {
 		}
 		else {
 			 // load the image from disk		          
-			 img = getImageResource(fileName);			 	 
+			 img = getImageResourceGeoGebra(fileName);			 	 
 			 if (img != null) {				 
 				 internalImageTable.put(fileName, img);
 			 }    			 
@@ -145,8 +145,15 @@ public class ImageManager {
 		}
 	}*/
 	
+	
+	
+	private Image getImageResourceGeoGebra(String name) {
+		return getImageResource("/geogebra"+name);
+	}
+	
 	private Image getImageResource(String name) {
-		 Image img = null;
+			Image img = null;
+		
 		 try {
 		    java.net.URL url = ImageManager.class.getResource(name);	
 		    if (url != null) {		   

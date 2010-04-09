@@ -1184,12 +1184,12 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public ImageIcon getImageIcon(String filename, Color borderColor) {
-		return imageManager.getImageIcon("/geogebra/gui/images/" + filename,
+		return imageManager.getImageIcon("/gui/images/" + filename,
 				borderColor);
 	}
 	
 	public ImageIcon getToolBarImage(String filename, Color borderColor) {
-		String path = "/geogebra/gui/toolbar/images/" + filename;
+		String path = "/gui/toolbar/images/" + filename;
 		ImageIcon icon = imageManager.getImageIcon(path, borderColor);
 		
 		if (icon == null) {
@@ -1207,27 +1207,27 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public ImageIcon getEmptyIcon() {
-		return imageManager.getImageIcon("/geogebra/gui/images/empty.gif");
+		return imageManager.getImageIcon("/gui/images/empty.gif");
 	}
 
 	public Image getInternalImage(String filename) {
 		return imageManager
-				.getInternalImage("/geogebra/gui/images/" + filename);
+				.getInternalImage("/gui/images/" + filename);
 	}
 	
 	public Image getRefreshViewImage() {		
 		// don't need to load gui jar as reset image is in main jar
-		return imageManager.getInternalImage("/geogebra/main/view-refresh.png");		
+		return imageManager.getInternalImage("/main/view-refresh.png");		
 	}
 	
 	public Image getPlayImage() {		
 		// don't need to load gui jar as reset image is in main jar
-		return imageManager.getInternalImage("/geogebra/main/nav_play.png");		
+		return imageManager.getInternalImage("/main/nav_play.png");		
 	}
 	
 	public Image getPauseImage() {		
 		// don't need to load gui jar as reset image is in main jar
-		return imageManager.getInternalImage("/geogebra/main/nav_pause.png");		
+		return imageManager.getInternalImage("/main/nav_pause.png");		
 	}
 
 	public BufferedImage getExternalImage(String filename) {
