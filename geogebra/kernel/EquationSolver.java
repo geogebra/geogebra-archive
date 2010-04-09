@@ -17,6 +17,7 @@ import geogebra.kernel.arithmetic.PolyFunction;
 import geogebra.kernel.complex.Complex;
 import geogebra.kernel.complex.ComplexPoly;
 import geogebra.kernel.roots.RealRoot;
+import geogebra.main.Application;
 
 import java.util.Arrays;
 
@@ -180,11 +181,13 @@ public class EquationSolver {
     final public int solveCubic(double eqn[], double res[]) {
     // From Numerical Recipes, 5.6, Quadratic and Cubic Equations
     // case discriminant == 0 added by Markus Hohenwarter, 20.1.2002
+    // case a==0, b==0 added Michael Borcherds 2010-05-09
         
         double d = eqn[3];
-        if (Math.abs(d) < epsilon)
+        if (Math.abs(d) < epsilon) {
 			// The cubic has degenerated to quadratic (or line or ...).
             return solveQuadratic(eqn, res);
+        }
         double a = eqn[2] / d;
         double b = eqn[1] / d;
         double c = eqn[0] / d;
@@ -206,7 +209,10 @@ public class EquationSolver {
             } 
             else { // Q is zero            
                 // one real solution
-                res[roots++] = -a;            
+            	if (Math.abs(a) < epsilon && Math.abs(b) < epsilon)
+            		res[roots++] = - Math.cbrt(c);
+            	else
+            		res[roots++] = -a;            
             }            
         } else {
             if (R2 < Q3) { // => Q3 > 0.0                
