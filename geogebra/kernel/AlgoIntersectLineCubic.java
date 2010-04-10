@@ -397,7 +397,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
     	if (c.isDefined() && g.isDefined()) {    	
 	    	double epsilon = Kernel.STANDARD_PRECISION;           
 	        while (epsilon <= Kernel.MIN_PRECISION) {
-	            ret = intersectLineConic(g, c, sol, cons);    	            	            
+	            ret = intersectLineCubic(g, c, sol, cons);    	            	            
 	            
 	            // TODO
 	            //if (ok = testPoints(g, c, sol, Kernel.MIN_PRECISION)) break;
@@ -417,11 +417,11 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
     }
         
     // do the actual computations
-    final static int intersectLineConic(GeoLine g, GeoCubic c, GeoPoint [] sol, Construction cons) { 
+    final static int intersectLineCubic(GeoLine g, GeoCubic c, GeoPoint [] sol, Construction cons) { 
         double [] A = c.getCoeffs();
         
-        double eqn[] = new double[4];
-        double sols[] = new double[3];
+        double eqn[] = new double[5];
+        double sols[] = new double[4];
         
         double r = g.x;
         double s = g.y;
@@ -450,7 +450,43 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         	return N;
         }
         
-        return -1;
+        if (s == 0) { // vertical line
+        	x = -t / r;
+        	x2 = x * x;
+        	x3 = x * x2;
+        	eqn[0] = A[15] + x * A[14] + x2 * A[13] + x3 * A[12]; // coeff of 1
+        	eqn[1] = A[11] + x * A[10] + x2 * A[9] + x3 * A[8]; // coeff of y
+        	eqn[2] = A[7] + x * A[6] + x2 * A[5] + x3 * A[4]; // coeff of y^2
+        	eqn[3] = A[3] + x * A[2] + x2 * A[1] + x3 * A[0]; // coeff of y^3
+        	
+        	int N = eqnSolver.solveCubic(eqn, sols);
+        	
+        	for (int i = 0 ; i < 2 ; i++) {
+        		if (i < N)
+        			sol[i].setCoords(x, sols[i], 1.0); else sol[i].setUndefined();
+        			//Application.debug(N+ ": "+sols[0]);
+        	}
+        	return N;
+        }
+        double rr = r * r;
+        double rrr = rr * r;
+        double ss = s * s;
+        double sss = ss * s;
+        double tt = t*t;
+        double ttt = tt * t;
+        eqn[4] = ss * A[5] / rr - sss * A[8] / rrr - A[2] * s / r;
+        eqn[3] = A[3] + ss * A[9] / rr - 3 * ss * t * A[8] / rrr - sss * A[12] / rrr + 2 * s * t * A[5] / rr -  s * A[6] / r -  A[2] * t / r;
+        eqn[2] = ss * A[13] / rr - 3 * ss * t * A[12] / rrr + 2 * s * t * A[9] / rr - 3 * s * tt * A[8] / rrr - s * A[10] / r + tt * A[5] / rr - t * A[6] / r +  A[7];
+        eqn[1] = 2 * s * t * A[13] / rr - 3 * s * tt * A[12] / rrr - s * A[14] / r + tt * A[9] / rr - ttt * A[8] / rrr - t * A[10] / r +  A[11]; 
+        eqn[0] = tt * A[13] / rr - ttt * A[12] / rrr - t * A[14] / r + A[15];
+    	int N = eqnSolver.solveQuartic(eqn, sols);
+        Application.debug("N = "+N);
+    	for (int i = 0 ; i < 2 ; i++) {
+    		if (i < N)
+    			sol[i].setCoords(-(s * sols[i] + t) / r, sols[i], 1.0); else sol[i].setUndefined();
+    			Application.debug(N+ ": "+sols[0]);
+    	}
+    	return N;
         
      
     }
