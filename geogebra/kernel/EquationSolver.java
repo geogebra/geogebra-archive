@@ -233,7 +233,10 @@ public class EquationSolver {
     	      res[roots++] = norm * Math.cos (theta / 3) - a / 3;
     	      res[roots++] = norm * Math.cos ((theta + 2.0 * Math.PI) / 3) - a / 3;
     	      res[roots++] = norm * Math.cos ((theta - 2.0 * Math.PI) / 3) - a / 3;
-    	        	      
+    	      
+    	      // GeoGebra addition
+    	      fixRoots(res, eqn); 
+    	      
     	      return 3;
     	    }
     	  else
