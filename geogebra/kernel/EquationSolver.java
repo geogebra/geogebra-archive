@@ -165,6 +165,88 @@ public class EquationSolver {
     final public int solveCubic(double eqn[]) {
         return solveCubic(eqn, eqn);
     }
+    
+	/* adapted from gsl/poly/solve_cubic.c
+
+	/* solve_cubic.c - finds the real roots of x^3 + a x^2 + b x + c = 0 */
+    final public int solveCubic(double eqn[], double res[]) {
+
+    	int roots = 0;
+            double d = eqn[3];
+            if (Math.abs(d) < epsilon) {
+    			// The cubic has degenerated to quadratic (or line or ...).
+                return solveQuadratic(eqn, res);
+            }
+            double a = eqn[2] / d;
+            double b = eqn[1] / d;
+            double c = eqn[0] / d;
+    	  double q = (a * a - 3 * b);
+    	  double r = (2 * a * a * a - 9 * a * b + 27 * c);
+
+    	  double Q = q / 9;
+    	  double R = r / 54;
+
+    	  double Q3 = Q * Q * Q;
+    	  double R2 = R * R;
+
+    	  double CR2 = 729 * r * r;
+    	  double CQ3 = 2916 * q * q * q;
+
+    	  if (R == 0 && Q == 0)
+    	    {
+    		  res[roots++] = - a / 3 ;
+    		  res[roots++] = - a / 3 ;
+    		  res[roots++] = - a / 3 ;
+    	      return 3 ;
+    	    }
+    	  else if (CR2 == CQ3) 
+    	    {
+    	      /* this test is actually R2 == Q3, written in a form suitable
+    	         for exact computation with integers */
+
+    	      /* Due to finite precision some double roots may be missed, and
+    	         considered to be a pair of complex roots z = x +/- epsilon i
+    	         close to the real axis. */
+
+    	      double sqrtQ = Math.sqrt (Q);
+
+    	      if (R > 0)
+    	        {
+    	    	  res[roots++] = -2 * sqrtQ  - a / 3;
+    	    	  res[roots++] = sqrtQ - a / 3;
+    	    	  res[roots++] = sqrtQ - a / 3;
+    	        }
+    	      else
+    	        {
+    	    	  res[roots++] = - sqrtQ  - a / 3;
+    	    	  res[roots++] = - sqrtQ - a / 3;
+    	    	  res[roots++] = 2 * sqrtQ - a / 3;
+    	        }
+    	      return 3 ;
+    	    }
+    	  else if (CR2 < CQ3) /* equivalent to R2 < Q3 */
+    	    {
+    	      double sqrtQ = Math.sqrt (Q);
+    	      double sqrtQ3 = sqrtQ * sqrtQ * sqrtQ;
+    	      double theta = Math.acos (R / sqrtQ3);
+    	      double norm = -2 * sqrtQ;
+    	      res[roots++] = norm * Math.cos (theta / 3) - a / 3;
+    	      res[roots++] = norm * Math.cos ((theta + 2.0 * Math.PI) / 3) - a / 3;
+    	      res[roots++] = norm * Math.cos ((theta - 2.0 * Math.PI) / 3) - a / 3;
+    	        	      
+    	      return 3;
+    	    }
+    	  else
+    	    {
+    	      double sgnR = (R >= 0 ? 1 : -1);
+    	      double A = -sgnR * Math.pow (Math.abs (R) + Math.sqrt (R2 - Q3), 1.0/3.0);
+    	      double B = Q / A ;
+    	      res[roots++] = A + B - a / 3;
+    	      return 1;
+    	    }
+    	}
+
+    
 
     /**
      * Solve the cubic whose coefficients are in the <code>eqn</code>
@@ -177,7 +259,7 @@ public class EquationSolver {
      * which may be always 0 or never 0, from an equation which has no
      * zeroes.
      * @return the number of roots, or -1 if the equation is a constant
-     */
+     *
     final public int solveCubic(double eqn[], double res[]) {
     // From Numerical Recipes, 5.6, Quadratic and Cubic Equations
     // case discriminant == 0 added by Markus Hohenwarter, 20.1.2002
@@ -244,7 +326,7 @@ public class EquationSolver {
             }
         }
         return roots;
-    }
+    }*/
 
     /*
      * This pruning step is necessary since solveCubic uses the
