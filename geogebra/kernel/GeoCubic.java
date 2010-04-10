@@ -304,7 +304,24 @@ implements Path, Traceable, LineProperties
 		// TODO Auto-generated method stub
 		
 	}
-	
+
+
+	public boolean isOnFullCubic(GeoPoint geoPoint, double eps) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+
+	public ArrayList getPointsOnConic() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public boolean isIntersectionPointIncident(GeoPoint p, double minPrecision) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 
 
 }
