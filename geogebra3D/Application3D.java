@@ -26,9 +26,11 @@ import geogebra.main.GuiManager;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.Kernel3D;
+import geogebra3D.util.ImageManager3D;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -150,6 +152,11 @@ public abstract class Application3D extends Application{
 	public void initKernel(){
 		kernel3D = new Kernel3D(this);
 		kernel = kernel3D;
+	}
+	
+	
+	protected void initImageManager(Component component){
+		imageManager = new ImageManager3D(component);
 	}
 	
 	

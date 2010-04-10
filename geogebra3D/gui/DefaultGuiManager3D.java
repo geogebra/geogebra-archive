@@ -43,7 +43,7 @@ public class DefaultGuiManager3D extends DefaultGuiManager {
 			return false;
 		
 		showPlaneAction = new AbstractAction(app.getMenu("Plane"),
-				app.getImageIcon("axes.gif")) {
+				app.getImageIcon("plane.gif")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {

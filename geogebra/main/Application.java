@@ -327,7 +327,7 @@ public abstract class Application implements KeyEventDispatcher {
 	// For language specific settings
 	private Locale currentLocale;
 	private ResourceBundle rbmenu, rbcommand, rbcommandOld, rberror, rbcolors, rbplain, rbsettings;
-	private ImageManager imageManager;
+	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
 	// Hashtable for translation of commands from
@@ -439,7 +439,8 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 
 		fontManager = new FontManager();
-		imageManager = new ImageManager(mainComp);
+		initImageManager(mainComp);
+		//imageManager = new ImageManager(mainComp);
 
 		// set locale
 		setLocale(mainComp.getLocale());
@@ -532,6 +533,13 @@ public abstract class Application implements KeyEventDispatcher {
 		euclidianView.setAntialiasing(antialiasing);
 	}
 	
+	/**
+	 * init the ImageManager (and ImageManager3D for 3D)
+	 * @param component
+	 */
+	protected void initImageManager(Component component){
+		imageManager = new ImageManager(component);
+	}
 	
 	
 	/**
@@ -1192,12 +1200,15 @@ public abstract class Application implements KeyEventDispatcher {
 		String path = "/gui/toolbar/images/" + filename;
 		ImageIcon icon = imageManager.getImageIcon(path, borderColor);
 		
+		/* mathieu 2010-04-10
+		 * see ImageManager3D.getImageResourceGeoGebra()
 		if (icon == null) {
 			// load3DJar();
 			// try to find this image in 3D extension
 			path = "/geogebra/geogebra3D/images/" + filename;
 			icon = imageManager.getImageIcon(path, borderColor);
 		}
+		*/
 				 
 		// scale icon if necessary
 		icon = ImageManager.getScaledIcon(icon, Math.min(icon.getIconWidth(), maxIconSize), 

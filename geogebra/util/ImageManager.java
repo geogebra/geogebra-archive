@@ -147,12 +147,28 @@ public class ImageManager {
 	
 	
 	
-	private Image getImageResourceGeoGebra(String name) {
-		return getImageResource("/geogebra"+name);
+	/** get image for icons and other
+	 * automatically add "/geogebra" prefix
+	 * @param name name of the image (without "/geogebra" prefix)
+	 * @return the image
+	 */
+	protected Image getImageResourceGeoGebra(String name) {
+		
+		Image img = getImageResource("/geogebra"+name);
+		
+		if (img == null) {
+			Application.debug("Image " + name + " not found");			
+		}
+		
+		return img;
 	}
 	
-	private Image getImageResource(String name) {
-			Image img = null;
+	/** return image from the full path name
+	 * @param name
+	 * @return image from the full path name
+	 */
+	protected Image getImageResource(String name) {
+		Image img = null;
 		
 		 try {
 		    java.net.URL url = ImageManager.class.getResource(name);	
@@ -169,9 +185,7 @@ public class ImageManager {
 		 } catch (Exception e) {
 		 	Application.debug(e.toString());
 		 }
-		 if (img == null) {
-			 Application.debug("Image " + name + " not found");			
-		 }
+
 		 return img;
 	}	  
 
