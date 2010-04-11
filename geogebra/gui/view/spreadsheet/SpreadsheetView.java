@@ -20,6 +20,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -52,7 +54,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
-public class SpreadsheetView extends JSplitPane implements View
+public class SpreadsheetView extends JSplitPane implements View, ComponentListener
 {
 
 	private static final long serialVersionUID = 1L;
@@ -113,10 +115,10 @@ public class SpreadsheetView extends JSplitPane implements View
 	private boolean showCellFormatToolBar = false;
 	
 	/**
-	 * Construct spreadsheet view is a split panel. 
+	 * Construct spreadsheet view as a split panel. 
 	 * Left panel holds file tree browser, right panel holds spreadsheet. 
 	 */
-	public SpreadsheetView(Application app0, int columns, int rows) {
+	public SpreadsheetView(Application app, int columns, int rows) {
 		/*
 		JList table = new JList();
 		setViewportView(table);
@@ -124,7 +126,7 @@ public class SpreadsheetView extends JSplitPane implements View
 		table.addKeyListener(new KeyListener0());
 		/**/
 		
-		app = app0;
+		this.app = app;
 		kernel = app.getKernel();
 		view = this;
 		
@@ -132,7 +134,7 @@ public class SpreadsheetView extends JSplitPane implements View
 		tableModel = new DefaultTableModel(rows, columns);
 		table = new MyTable(this, tableModel);
 		
-		table.columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH)
+		table.columnHeader.setPreferredSize(new Dimension((int)(table.preferredColumnWidth)
 				, (int)(MyTable.TABLE_CELL_HEIGHT)));
 
 		
@@ -168,7 +170,7 @@ public class SpreadsheetView extends JSplitPane implements View
 		Corner upperLeftCorner = new Corner(); //use FlowLayout
 		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
 		upperLeftCorner.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				//table.setSelectionType(table.CELL_SELECT);
 				table.selectAll();
 				//table.selectionChanged(); //G.Sturr 2010-1-29
@@ -197,6 +199,11 @@ public class SpreadsheetView extends JSplitPane implements View
 		updateFonts();
 		attachView(); //G.Sturr 2010-1-18
 	
+		//G.Sturr 2010-4-10: Add listener for row/column size change.
+		// Needed for auto-enlarging spreadsheet.
+		table.addComponentListener(this);
+		
+		
 	}
 	
 	
@@ -802,9 +809,12 @@ public class SpreadsheetView extends JSplitPane implements View
 			if (doRowResize) {
 				if (minSelectionRow != -1 && maxSelectionRow != -1
 						&& (maxSelectionRow - minSelectionRow > 1)) {
-					for (int row = minSelectionRow; row <= maxSelectionRow; row++) {
-						table.setRowHeight(row, table.getRowHeight(resizingRow));
-					}
+					if (table.isSelectAll())
+						table.setRowHeight(table.getRowHeight(resizingRow));
+					else
+						for (int row = minSelectionRow; row <= maxSelectionRow; row++) {
+							table.setRowHeight(row, table.getRowHeight(resizingRow));
+						}
 				}
 				doRowResize = false;
 			}
@@ -1023,8 +1033,8 @@ public class SpreadsheetView extends JSplitPane implements View
 		rowHeader.setFont(font);
 		table.columnHeader.setFont(font);
 		rowHeaderRenderer.setFont(font);
-		
-		table.columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH * multiplier)
+		table.preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
+		table.columnHeader.setPreferredSize(new Dimension(table.preferredColumnWidth
 						, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
 		
 		// G.Sturr 2010-4-2
@@ -1061,8 +1071,9 @@ public class SpreadsheetView extends JSplitPane implements View
 		int size = font.getSize();
 		if (size < 12) size = 12; // minimum size
 		double multiplier = (double)(size)/12.0;
+		table.preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
 		for (int i = 0; i < table.getColumnCount(); ++ i) {
-			table.getColumnModel().getColumn(i).setPreferredWidth((int)(MyTable.TABLE_CELL_WIDTH * multiplier));
+			table.getColumnModel().getColumn(i).setPreferredWidth(table.preferredColumnWidth);
 		}
 		
 	}
@@ -1288,6 +1299,68 @@ public class SpreadsheetView extends JSplitPane implements View
 	}
 	
 	
+	
+
+
+	// G.Sturr 2010-4-10
+	// ==========================================================
+	// Handle spreadsheet resize.
+	//
+	// Ensures the spreadsheet has enough rows or columns to fill the 
+	// enclosing scrollpane. This can happen when rows or columns are resized
+	// or the application window is enlarged.
+	
+	
+	/**
+	 * Tests if the spreadsheet fits the enclosing scrollpane viewport.
+	 * Adds rows or columns if needed to fill the viewport.
+	 */
+	public void expandSpreadsheetToViewport() {
+
+		if (table.getWidth() < spreadsheet.getWidth()) {
+
+			int newColumns = (spreadsheet.getWidth() - table.getWidth())
+					/ table.preferredColumnWidth;
+			table.removeComponentListener(this);
+			table.setMyColumnCount(table.getColumnCount() + newColumns);
+			table.addComponentListener(this);
+
+		}
+		if (table.getHeight() < spreadsheet.getHeight()) {
+			int newRows = (spreadsheet.getHeight() - table.getHeight())
+					/ table.getRowHeight();
+			table.removeComponentListener(this);
+			tableModel.setRowCount(table.getRowCount() + newRows);
+			table.addComponentListener(this);
+
+		}
+
+		// if table has grown after resizing all rows or columns, then select
+		// all again
+		// TODO --- why doesn't this work:
+		/*
+		 * if(table.isSelectAll()){ table.selectAll(); }
+		 */
+
+	}
+	
+	// Listener for a resized column or row 
+
+	public void componentResized(ComponentEvent e) {		
+		expandSpreadsheetToViewport();
+	}
+	public void componentHidden(ComponentEvent e) {		
+	}
+
+	public void componentMoved(ComponentEvent e) {		
+	}
+
+	public void componentShown(ComponentEvent e) {
+		
+	}
+	
+	//=============================================
+	// END G.Sturr
 	
 	
 }

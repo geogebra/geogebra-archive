@@ -8,6 +8,7 @@ import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -27,10 +28,14 @@ import java.util.regex.Matcher;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -64,10 +69,15 @@ public class MyTable extends JTable implements FocusListener
 	protected MyColumnHeaderRenderer columnHeader;
 	protected SpreadsheetView view;
 	protected DefaultTableModel tableModel;
+	private CellRangeProcessor crProcessor;
+	private MyTable table;
+	private MyTableColumnModelListener columnModelListener;
+	//G.Sturr 2010-4-4
+	private CellFormat formatHandler;
+	
 	
 	
 	//G.STURR: 2010-1-29
-	
 	/**
 	 * All currently selected cell ranges are held in this list.
 	 * Cell ranges are added when selecting with ctrl-down. 
@@ -109,11 +119,6 @@ public class MyTable extends JTable implements FocusListener
 	protected boolean metaDown = false;
 	
 	
-	private CellRangeProcessor crProcessor;
-	
-	private MyTable table;
-	
-	
 	// G.Sturr 2010-3-29
 	// Cells to be resized on next repaint are put in these HashSets.
 	// A cell is added to a set when editing is done. The cells are removed
@@ -124,14 +129,17 @@ public class MyTable extends JTable implements FocusListener
 	
 	// END G.Sturr
 	
-	//G.Sturr 2010-4-4
-	private CellFormat formatHandler;
-	
 	
 	private ArrayList<Point> adjustedRowHeights = new ArrayList<Point>();
 	private boolean doRecordRowHeights = true;
+
+	public int preferredColumnWidth = TABLE_CELL_WIDTH; //G.Sturr 2010-4-10 
+
 	
 	
+	//============================================================
+	// Construct table
+	//
 	
 	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
 		super(tableModel);
@@ -154,11 +162,11 @@ public class MyTable extends JTable implements FocusListener
 		// set cell size and column header
 		setRowHeight(TABLE_CELL_HEIGHT);
 		columnHeader = new MyColumnHeaderRenderer();
-		columnHeader.setPreferredSize(new Dimension(TABLE_CELL_WIDTH, TABLE_CELL_HEIGHT));
+		columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, TABLE_CELL_HEIGHT));
 		
 		for (int i = 0; i < getColumnCount(); ++ i) {
 			getColumnModel().getColumn(i).setHeaderRenderer(columnHeader);
-			getColumnModel().getColumn(i).setPreferredWidth(TABLE_CELL_WIDTH);
+			getColumnModel().getColumn(i).setPreferredWidth(preferredColumnWidth);
 		}
 		// add renderer & editor
 		
@@ -198,17 +206,17 @@ public class MyTable extends JTable implements FocusListener
 		// setup selection listener
 		//TODO 
 		//These listeners are no longer needed.
-		getSelectionModel().addListSelectionListener(new RowSelectionListener());
-		getColumnModel().getSelectionModel().addListSelectionListener(new ColumnSelectionListener());
-		getColumnModel().getSelectionModel().addListSelectionListener(columnHeader);
+		//getSelectionModel().addListSelectionListener(new RowSelectionListener());
+		//getColumnModel().getSelectionModel().addListSelectionListener(new ColumnSelectionListener());
+		//getColumnModel().getSelectionModel().addListSelectionListener(columnHeader);
 		
 		// table model listener
 		tableModel.addTableModelListener(new TableModelListener() {
 
 			public void tableChanged(TableModelEvent e) {
-				// force rowHeader redraw when a new row is added (after drag down or arrow down) 
+				// force rowHeader redraw when a new row is added (after drag down or arrow down)
 				if(e.getType()==e.INSERT){
-					updateRowHeader();
+					getView().updateRowHeader();
 				}
 			}
 
@@ -235,16 +243,50 @@ public class MyTable extends JTable implements FocusListener
 		
 		// editing 	 
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		
+		//G.Sturr 2010-4-10
+		columnModelListener = new MyTableColumnModelListener();
+		getColumnModel().addColumnModelListener( columnModelListener); 
 	
 	}
 	
+	//==============================================================
+	
+	
+	/**
+	 * Return parent SpreasheetView for this table
+	 */
 	public SpreadsheetView getView() {
 		return view;		
 	}
 
+	
 	/**
-	 * 
-	 * @param newColumnCount
+	 * Return CellRangeProcessor for this table.
+	 * If none exist, a new one is created.
+	 */
+	public CellRangeProcessor getCellRangeProcessor() {
+    	if (crProcessor == null)
+    		crProcessor = new CellRangeProcessor(this);
+    	return crProcessor;
+    }
+	
+	
+	/**
+	 * Return CellFormat helper class for this table.
+	 * If none exist, a new one is created.
+	 */
+	public CellFormat getCellFormatHandler(){
+		if(formatHandler == null)
+			formatHandler = new CellFormat(this);
+		return formatHandler;
+	}
+	
+	
+	
+	
+	/**
+	 * Appends columns to the table if newColumnCount is larger than current number of columns. 
 	 */
 	public void setMyColumnCount(int newColumnCount) {	
 		int oldColumnCount = tableModel.getColumnCount();		
@@ -255,39 +297,17 @@ public class MyTable extends JTable implements FocusListener
 		for (int i = oldColumnCount; i < newColumnCount; ++i) {
 			TableColumn col = new TableColumn(i);
 			col.setHeaderRenderer(columnHeader);
-			col.setPreferredWidth(MyTable.TABLE_CELL_WIDTH);
+			col.setPreferredWidth(preferredColumnWidth);
 			addColumn(col);
 		}	
 		tableModel.setColumnCount(newColumnCount);
-		//addColumn destroy custom row heights, so we must reset them
+		
+		//addColumn destroys custom row heights, so we must reset them
 		resetRowHeights();
+		
 	}
 	
-	/* moved these to the declarations section at top 
-	protected int Column = -1;
-	protected int minSelectionRow = -1;
-	protected int maxSelectionRow = -1;
-	protected int minSelectionColumn = -1;
-	protected int maxSelectionColumn = -1;
-	protected boolean isDragingDot = false;
-	protected int dragingToRow = -1;
-	protected int dragingToColumn = -1;
-	public boolean[] selectedColumns;
-	*/
-
 	
-	/* old code ---- not used
-	public void selectNone() {
-		selectionChangedNonResponsive = true;
-		this.clearSelection();
-		selectionChangedNonResponsive = false;
-	}	
-	
-	protected boolean selectionChangedNonResponsive = false;
-	
-	public long selectionTime = 0;
-
-    */
  
 	
 	//G.STURR 2009-11-15
@@ -1988,6 +2008,9 @@ public class MyTable extends JTable implements FocusListener
 				if (x < (int)point2.getX() - 3) {
 					-- column;
 				}
+				
+				if(x<=0) x=0; //G.Sturr 2010-4-10 prevent x=-1 with very small row size
+				
 				int width = getColumnModel().getColumn(column).getWidth();
 				int[] selected = getSelectedColumns();
 				if (selected == null) return;
@@ -2199,10 +2222,7 @@ public class MyTable extends JTable implements FocusListener
 	}
 	//END GSTURR
 	
-	public void updateRowHeader() {
-		view.updateRowHeader();
-		
-	}
+	
 	
 	
 	
@@ -2237,20 +2257,6 @@ public class MyTable extends JTable implements FocusListener
 		return selectionType;
 	}
 	
-	
-	
-	
-	public CellRangeProcessor getCellRangeProcessor() {
-    	if (crProcessor == null)
-    		crProcessor = new CellRangeProcessor(this);
-    	return crProcessor;
-    }
-	
-	public CellFormat getCellFormatHandler(){
-		if(formatHandler == null)
-			formatHandler = new CellFormat(this);
-		return formatHandler;
-	}
 	
 	
 	
@@ -2341,7 +2347,7 @@ public class MyTable extends JTable implements FocusListener
 		// set the new column width
 		if (tempWidth == -1) {
 			// column is empty
-			prefWidth = TABLE_CELL_WIDTH
+			prefWidth = preferredColumnWidth
 					- getIntercellSpacing().width;
 		} else {
 			prefWidth = Math.max(prefWidth, tableColumn.getMinWidth());
@@ -2377,6 +2383,8 @@ public class MyTable extends JTable implements FocusListener
 		table.setRowHeight(row, prefHeight) ;
 	}
 	
+	
+	
 	/**
 	 * Adjust all rows/columns to fit the maximum preffered height/width
 	 * of their cell contents.
@@ -2394,5 +2402,49 @@ public class MyTable extends JTable implements FocusListener
 			}
 		}
 	}
+
+	
+
+	
+	/**
+	 * Column model listener --- used to reset the preferred column width 
+	 * when all columns have been selected.
+	 */
+	public class MyTableColumnModelListener implements TableColumnModelListener { 
+		
+		public void columnMarginChanged(ChangeEvent e) {
+			if(isSelectAll() && minSelectionColumn >= 0){
+				preferredColumnWidth = table.getColumnModel().getColumn(minSelectionColumn).getPreferredWidth();
+			}
+		}
+		
+		public void columnAdded(TableColumnModelEvent arg0) {			
+		}
+
+		public void columnMoved(TableColumnModelEvent arg0) {	
+		}
+
+		public void columnRemoved(TableColumnModelEvent arg0) {	
+		}
+
+		public void columnSelectionChanged(ListSelectionEvent arg0) {	
+		}
+	}
+
+	
+	// When the spreadsheet is smaller than the viewport fill the extra space with 
+	// the same background color as the spreadsheet.
+	// This gives a smoother look when the spreadsheet auto-adjusts to fill the space.	
+
+	@Override
+	protected void configureEnclosingScrollPane() {
+		super.configureEnclosingScrollPane();
+		Container p = getParent();
+		if (p instanceof JViewport) {
+			((JViewport) p).setBackground(getBackground());
+		}
+	}
+	
+	
 	
 }
