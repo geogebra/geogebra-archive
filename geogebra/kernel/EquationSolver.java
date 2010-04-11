@@ -584,10 +584,16 @@ public class EquationSolver {
 	
 	/* solve_quartic.c - finds the real roots of 
 	 *  x^4 + a x^3 + b x^2 + c x + d = 0
+	 *  
+	 *  modified from GSL Quartic extension
+	 *  http://www.network-theory.co.uk/download/gslextras/Quartic/
 	 */
 
 	public int 
 	solveQuartic (double eqn[], double res[]) {
+		
+		if (Math.abs(eqn[4]) < 0) return solveCubic(eqn, res);
+		
 		double a = eqn[3] / eqn[4],  b = eqn[2] / eqn[4],  c = eqn[1] / eqn[4],  d = eqn[0] / eqn[4];
 	
 

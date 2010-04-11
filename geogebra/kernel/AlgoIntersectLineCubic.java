@@ -420,6 +420,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
     final static int intersectLineCubic(GeoLine g, GeoCubic c, GeoPoint [] sol, Construction cons) { 
         double [] A = c.getCoeffs();
         
+        
         double eqn[] = new double[5];
         double sols[] = new double[4];
         
@@ -468,23 +469,46 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         	}
         	return N;
         }
+        
+        // if coefficients of x^3y^3, x^2y^3 or x^3y^2 are non-zero
+        // we get a quintic / sextic
+        // TODO try numerical solve?
+        if (A[0] != 0 || A[1] != 0 || A[4] != 0) {
+        	sol[0].setUndefined();
+        	sol[1].setUndefined();
+        	//sol[2].setUndefined();
+        	//sol[3].setUndefined();
+        	return -1;
+        }
+
         double rr = r * r;
         double rrr = rr * r;
         double ss = s * s;
         double sss = ss * s;
         double tt = t*t;
         double ttt = tt * t;
+        
+        // substitute x = (-sy-t)/r into equation of curve then solve for y
+        //Expand(y^3*(c*((-s*y-t)/r)+d)+y^2*(f*((-s*y-t)/r)^2+g*((-s*y-t)/r)+h)+y*(i*((-s*y-t)/r)^3+j*((-s*y-t)/r)^2+k*((-s*y-t)/r)+l)+m*((-s*y-t)/r)^3+n*((-s*y-t)/r)^2+o*((-s*y-t)/r)+p)
+
+        //((((((((((((((((((((((((((((((y)^(4) * (s)^(2) * (r)^(14) * f) - ((y)^(4) * (s)^(3) * (r)^(13) * i)) - ((y)^(4) * c * s * (r)^(15))) + ((y)^(3) * d * (r)^(16))) + ((y)^(3) * (s)^(2) * (r)^(14) * j)) - (3 * (y)^(3) * (s)^(2) * t * (r)^(13) * i)) - ((y)^(3) * (s)^(3) * (r)^(13) * m)) + (2 * (y)^(3) * s * t * (r)^(14) * f)) - ((y)^(3) * s * (r)^(15) * g)) - ((y)^(3) * c * t * (r)^(15))) + ((y)^(2) * (s)^(2) * (r)^(14) * n)) - (3 * (y)^(2) * (s)^(2) * t * (r)^(13) * m)) + (2 * (y)^(2) * s * t * (r)^(14) * j)) - (3 * (y)^(2) * s * (t)^(2) * (r)^(13) * i)) - ((y)^(2) * s * (r)^(15) * k)) + ((y)^(2) * (t)^(2) * (r)^(14) * f)) - ((y)^(2) * t * (r)^(15) * g)) + ((y)^(2) * (r)^(16) * h)) + (2 * y * s * t * (r)^(14) * n)) - (3 * y * s * (t)^(2) * (r)^(13) * m)) - (y * s * (r)^(15) * o)) + (y * (t)^(2) * (r)^(14) * j)) - (y * (t)^(3) * (r)^(13) * i)) - (y * t * (r)^(15) * k)) + (y * (r)^(16) * l)) + ((t)^(2) * (r)^(14) * n)) - ((t)^(3) * (r)^(13) * m)) - (t * (r)^(15) * o)) + ((r)^(16) * p))/((r)^(16))
+        // coefficient of y^4:
         eqn[4] = ss * A[5] / rr - sss * A[8] / rrr - A[2] * s / r;
+        // coefficient of y^3:
         eqn[3] = A[3] + ss * A[9] / rr - 3 * ss * t * A[8] / rrr - sss * A[12] / rrr + 2 * s * t * A[5] / rr -  s * A[6] / r -  A[2] * t / r;
+        // coefficient of y^2:
         eqn[2] = ss * A[13] / rr - 3 * ss * t * A[12] / rrr + 2 * s * t * A[9] / rr - 3 * s * tt * A[8] / rrr - s * A[10] / r + tt * A[5] / rr - t * A[6] / r +  A[7];
+        // coefficient of y:
         eqn[1] = 2 * s * t * A[13] / rr - 3 * s * tt * A[12] / rrr - s * A[14] / r + tt * A[9] / rr - ttt * A[8] / rrr - t * A[10] / r +  A[11]; 
+        // coefficient of 1:
         eqn[0] = tt * A[13] / rr - ttt * A[12] / rrr - t * A[14] / r + A[15];
+    	
     	int N = eqnSolver.solveQuartic(eqn, sols);
-        Application.debug("N = "+N);
+    	
     	for (int i = 0 ; i < 2 ; i++) {
     		if (i < N)
     			sol[i].setCoords(-(s * sols[i] + t) / r, sols[i], 1.0); else sol[i].setUndefined();
-    			Application.debug(N+ ": "+sols[0]);
+    			//Application.debug(N+ ": "+sols[0]);
     	}
     	return N;
         
