@@ -68,16 +68,16 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         
         isLimitedPathSituation = g.isLimitedPath() || c.isLimitedPath();        
         
-             P  = new GeoPoint[2];
-            D  = new GeoPoint[2];
-            Q  = new GeoPoint[2];
-            distTable = new double[2][2];                       
-            age = new int[2];
-            permutation= new int[2];
-            isQonPath = new boolean[2];
-            isPalive = new boolean[2];
+             P  = new GeoPoint[4];
+            D  = new GeoPoint[4];
+            Q  = new GeoPoint[4];
+            distTable = new double[4][4];                       
+            age = new int[4];
+            permutation= new int[4];
+            isQonPath = new boolean[4];
+            isPalive = new boolean[4];
             
-            for (i=0; i < 2; i++) {
+            for (i=0; i < 4; i++) {
                 Q[i] = new GeoPoint(cons);
                 P[i] = new GeoPoint(cons); 
                 D[i] = new GeoPoint(cons);                     
@@ -212,7 +212,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         
         // the other intersection point should be the second one
         boolean didSetP1 = false;
-        for (int i=0; i < 2; i++) {  
+        for (int i=0; i < 4; i++) {  
 	   		if (!Q[i].isEqual(P[firstIndex])) {
 	   			P[secondIndex].setCoords(Q[i]);
 	   			didSetP1 = true;
@@ -224,7 +224,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
 	   	 
 	   	if (isLimitedPathSituation) {
 	   		// make sure the points are on a limited path
-	   		for (int i=0; i < 2; i++) {  
+	   		for (int i=0; i < 4; i++) {  
 	   			if (!pointLiesOnBothPaths(P[i]))
 	   				P[i].setUndefined();    			          
 	   	    }     	 
@@ -271,7 +271,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         // remember the defined points D, so that Di = Pi if Pi is defined        
         // and set age                
         boolean noSingularity = !P[0].isEqual(P[1]); // singularity check        
-        for (i=0; i < 2; i++) {        	
+        for (i=0; i < 4; i++) {        	
         	boolean finite = P[i].isFinite();
         	
         	// don't do this if P[0] = P[1]        
@@ -411,7 +411,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         // intersection failed
         if (!ok) {     
             //Application.debug("INTERSECT LINE CONIC FAILED: epsilon = " + epsilon);
-            for (int i=0; i < 2; i++) sol[i].setUndefined();                      
+            for (int i=0; i < 4; i++) sol[i].setUndefined();                      
         }    
         return ret;
     }
@@ -443,7 +443,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         	
         	int N = eqnSolver.solveCubic(eqn, sols);
         	
-        	for (int i = 0 ; i < 2 ; i++) {
+        	for (int i = 0 ; i < 4 ; i++) {
         		if (i < N)
         			sol[i].setCoords(sols[i], y, 1.0); else sol[i].setUndefined();
         			//Application.debug(N+ ": "+sols[0]);
@@ -462,7 +462,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         	
         	int N = eqnSolver.solveCubic(eqn, sols);
         	
-        	for (int i = 0 ; i < 2 ; i++) {
+        	for (int i = 0 ; i < 4 ; i++) {
         		if (i < N)
         			sol[i].setCoords(x, sols[i], 1.0); else sol[i].setUndefined();
         			//Application.debug(N+ ": "+sols[0]);
@@ -476,8 +476,8 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
         if (A[0] != 0 || A[1] != 0 || A[4] != 0) {
         	sol[0].setUndefined();
         	sol[1].setUndefined();
-        	//sol[2].setUndefined();
-        	//sol[3].setUndefined();
+        	sol[2].setUndefined();
+        	sol[3].setUndefined();
         	return -1;
         }
 
@@ -505,7 +505,7 @@ public class AlgoIntersectLineCubic extends AlgoIntersect {
     	
     	int N = eqnSolver.solveQuartic(eqn, sols);
     	
-    	for (int i = 0 ; i < 2 ; i++) {
+    	for (int i = 0 ; i < 4 ; i++) {
     		if (i < N)
     			sol[i].setCoords(-(s * sols[i] + t) / r, sols[i], 1.0); else sol[i].setUndefined();
     			//Application.debug(N+ ": "+sols[0]);
