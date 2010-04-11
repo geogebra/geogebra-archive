@@ -54,20 +54,77 @@ public class DrawAxis3D extends DrawLine3D {
   		renderer.setColor(getGeoElement().getObjectColor(), 1);
   		renderer.setDash(Renderer.DASH_NONE);  	
     	
-    	double ticksSize = 5;
+
+
+  		//draw ticks and numbers
+  		GeoAxis3D axis = (GeoAxis3D) getGeoElement();
+  		
+		NumberFormat numberFormat = axis.getNumberFormat();
+		double distance = axis.getNumbersDistance();
+
+    	
+    	//matrix for each number 
+    	GgbMatrix4x4 numbersMatrix = GgbMatrix4x4.Identity();
+    	
+    	//matrix for each ticks
+    	GgbMatrix4x4 ticksMatrix = new GgbMatrix4x4();
+    	GgbMatrix4x4 drawingMatrix = ((GeoElement3D) getGeoElement()).getDrawingMatrix();
+    	double ticksThickness = 1/getView3D().getScale();
+    	ticksMatrix.setVx(drawingMatrix.getVx().normalized());
+    	ticksMatrix.setVy((GgbVector) drawingMatrix.getVy().mul(axis.getTickSize()));
+    	ticksMatrix.setVz((GgbVector) drawingMatrix.getVz().mul(axis.getTickSize()));
+  	
+    	
+    	//for(int i=(int) getDrawMin();i<=getDrawMax();i++){
+    	for(int i=(int) (getDrawMin()/distance);i<=getDrawMax()/distance;i++){
+    		double val = i*distance;
+    		GgbVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
+    		
+    		//draw numbers
+    		String strNum = getView3D().getKernel().formatPiE(val,numberFormat);
+    		numbersMatrix.setOrigin(origin);
+    		renderer.setMatrix(numbersMatrix);
+       		renderer.drawText(axis.getNumbersXOffset()-4,axis.getNumbersYOffset()-6, strNum,true); //TODO values 4 and 6 depend to label size 
+    	
+       		//draw ticks
+       		ticksMatrix.setOrigin(origin);
+       		renderer.setMatrix(ticksMatrix);
+       		renderer.drawSegment(-ticksThickness, ticksThickness);
+       		
+    	}
+    	
+		numbersMatrix.setOrigin(((GeoCoordSys1D) getGeoElement()).getPoint(getDrawMax()));
+		renderer.setMatrix(numbersMatrix);
+   		renderer.drawText(axis.labelOffsetX-4,axis.labelOffsetY-6, ((GeoAxis3D) getGeoElement()).getAxisLabel(),true); //TODO values 4 and 6 depend to label size 
     	
 
+    	
+    }
+    
+    
+    
+    
+    
+    
+	protected void updateForView(){
+		
+		//update line length
+		super.updateForView();
+		
+		
+		//update decorations
+		GeoAxis3D axis = (GeoAxis3D) getGeoElement();
+		
+
     	//gets the direction vector of the axis as it is drawn on screen
-    	//TODO do this when updated
-    	GgbVector v = ((GeoCoordSys1D) getGeoElement()).getVx().copyVector();
+    	GgbVector v = axis.getVx().copyVector();
     	getView3D().toScreenCoords3D(v);
     	v.set(3, 0); //set z-coord to 0
     	double vScale = v.norm(); //axis scale, used for ticks distance
-    	//v.normalize();
     	
     	//calc orthogonal offsets
-    	int vx = (int) (v.get(1)*3*ticksSize/vScale);
-    	int vy = (int) (v.get(2)*3*ticksSize/vScale);
+    	int vx = (int) (v.get(1)*3*axis.getTickSize()/vScale);
+    	int vy = (int) (v.get(2)*3*axis.getTickSize()/vScale);
     	int xOffset = -vy;
     	int yOffset = vx;
     	
@@ -82,61 +139,14 @@ public class DrawAxis3D extends DrawLine3D {
     	//Application.debug("vscale : "+vScale);
     	double maxPix = 100; // only one tick is allowed per maxPix pixels
 		double units = maxPix / vScale;
-		int exp = (int) Math.floor(Math.log(units) / Math.log(10));
-		int maxFractionDigtis = Math.max(-exp, getView3D().getKernel().getPrintDecimals());
-		NumberFormat numberFormat = new DecimalFormat();
-		((DecimalFormat) numberFormat).applyPattern("###0.##");	
-		numberFormat.setMaximumFractionDigits(maxFractionDigtis);
-		double pot = Math.pow(10, exp);
-		double n = units / pot;
-		double distance;
+		
+		DecimalFormat numberFormat = new DecimalFormat();
+		double distance = getView3D().getKernel().axisNumberDistance(units, numberFormat);
 
-		if (n > 5) {
-			distance = 5 * pot;
-		} else if (n > 2) {
-			distance = 2 * pot;
-		} else {
-			distance = pot;
-		}
-    	
-    	
-    	//matrix for each number 
-    	GgbMatrix4x4 numbersMatrix = GgbMatrix4x4.Identity();
-    	
-    	//matrix for each ticks
-    	GgbMatrix4x4 ticksMatrix = new GgbMatrix4x4();
-    	GgbMatrix4x4 drawingMatrix = ((GeoElement3D) getGeoElement()).getDrawingMatrix();
-    	double ticksThickness = 1/getView3D().getScale();
-    	ticksMatrix.setVx(drawingMatrix.getVx().normalized());
-    	ticksMatrix.setVy((GgbVector) drawingMatrix.getVy().mul(ticksSize));
-    	ticksMatrix.setVz((GgbVector) drawingMatrix.getVz().mul(ticksSize));
-  	
-    	
-    	//for(int i=(int) getDrawMin();i<=getDrawMax();i++){
-    	for(int i=(int) (getDrawMin()/distance);i<=getDrawMax()/distance;i++){
-    		double val = i*distance;
-    		GgbVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
-    		
-    		//draw numbers
-    		String strNum = getView3D().getKernel().formatPiE(val,numberFormat);
-    		numbersMatrix.setOrigin(origin);
-    		renderer.setMatrix(numbersMatrix);
-       		renderer.drawText(xOffset-4,yOffset-6, strNum,true); //TODO values 4 and 6 depend to label size 
-    	
-       		//draw ticks
-       		ticksMatrix.setOrigin(origin);
-       		renderer.setMatrix(ticksMatrix);
-       		renderer.drawSegment(-ticksThickness, ticksThickness);
-       		
-    	}
-    	
-		numbersMatrix.setOrigin(((GeoCoordSys1D) getGeoElement()).getPoint(getDrawMax()));
-		renderer.setMatrix(numbersMatrix);
-   		renderer.drawText(-vx-xOffset-4,-vy-yOffset-6, ((GeoAxis3D) getGeoElement()).getAxisLabel(),true); //TODO values 4 and 6 depend to label size 
-    	
-
-    	
-    }
+		axis.updateDecorations(distance, numberFormat, 
+				xOffset, yOffset,
+				-vx-xOffset,-vy-yOffset);
+	}
 	
 
 }

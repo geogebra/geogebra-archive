@@ -4,6 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Color;
+import java.text.NumberFormat;
 
 public class GeoAxis3D extends GeoLine3D {
 	
@@ -11,6 +12,12 @@ public class GeoAxis3D extends GeoLine3D {
 	public static final int Y_AXIS_3D = 2;
 	public static final int Z_AXIS_3D = 3;
 	private String axisLabel;
+	
+	// for numbers and ticks
+	private NumberFormat numberFormat;
+	private double numbersDistance;
+	private int numbersXOffset, numbersYOffset;
+	private int ticksize = 5; //TODO
 
 
 	public GeoAxis3D(Construction cons) {
@@ -115,6 +122,62 @@ public class GeoAxis3D extends GeoLine3D {
 	public boolean getShowNumbers() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+	
+	
+	
+	/** update decorations (ticks, numbers, labels)
+	 * @param distance
+	 * @param numberFormat
+	 * @param xOffset 
+	 * @param yOffset 
+	 * @param labelXOffset 
+	 * @param labelYOffset 
+	 */
+	public void updateDecorations(double distance, NumberFormat numberFormat,
+			int xOffset, int yOffset,
+			int labelXOffset, int labelYOffset){
+		this.numbersDistance = distance;
+		this.numberFormat = numberFormat;
+		this.numbersXOffset = xOffset;
+		this.numbersYOffset = yOffset;
+		setLabelOffset(labelXOffset, labelYOffset);
+	}
+	
+	/**
+	 * @return distance between ticks
+	 */
+	public double getNumbersDistance(){
+		return numbersDistance;
+	}
+	
+	/**
+	 * @return number format
+	 */
+	public NumberFormat getNumberFormat(){
+		return numberFormat;
+	}
+	
+	/**
+	 * @return numbers x offset
+	 */
+	public int getNumbersXOffset(){
+		return numbersXOffset;
+	}
+	
+	/**
+	 * @return numbers y offset
+	 */
+	public int getNumbersYOffset(){
+		return numbersYOffset;
+	}
+	
+	
+	/**
+	 * @return tick size
+	 */
+	public int getTickSize(){
+		return ticksize;
 	}
 
 }

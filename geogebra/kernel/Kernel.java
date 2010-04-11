@@ -101,6 +101,7 @@ import geogebra.main.MyError;
 import geogebra.util.ScientificFormat;
 import geogebra.util.Unicode;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6204,6 +6205,39 @@ public class Kernel {
 			}
 		}
 	}
+	
+	
+	
+	////////////////////////////////////////////////
+	// FORMAT FOR NUMBERS
+	////////////////////////////////////////////////
+	
+	public double axisNumberDistance(double units, DecimalFormat numberFormat){
+
+		// calc number of digits
+		int exp = (int) Math.floor(Math.log(units) / Math.log(10));
+		int maxFractionDigtis = Math.max(-exp, getPrintDecimals());
+		
+		// format the numbers
+		numberFormat.applyPattern("###0.##");	
+		numberFormat.setMaximumFractionDigits(maxFractionDigtis);
+		
+		// calc the distance
+		double pot = Math.pow(10, exp);
+		double n = units / pot;
+		double distance;
+
+		if (n > 5) {
+			distance = 5 * pot;
+		} else if (n > 2) {
+			distance = 2 * pot;
+		} else {
+			distance = pot;
+		}
+		
+		return distance;
+	}
+	
 	
 	private StringBuilder formatSB;
 	
