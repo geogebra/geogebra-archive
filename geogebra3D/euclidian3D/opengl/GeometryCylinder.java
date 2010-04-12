@@ -18,15 +18,15 @@ public class GeometryCylinder extends Geometry {
 		
 		manager.preInit(this);
 		
-		manager.startGeometry(this);
+		manager.startListAndGeometry(this);
 		cylinder(8,LINE3D_THICKNESS);
-		manager.endGeometry(this);
+		manager.endListAndGeometry(this);
 
 	
 	}
 	
 	public int getType(){
-		return GL.GL_QUADS;
+		return GL.GL_QUAD_STRIP;
 	}
 
 	

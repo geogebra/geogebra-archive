@@ -1,12 +1,16 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoCoordSys1D;
+import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
@@ -14,6 +18,10 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 
 	private double drawMin;
 	private double drawMax;
+	
+	/** gl index of the segment */
+	private int segmentIndex = -1;
+
 
 	
 	public DrawCoordSys1D(EuclidianView3D a_view3D, GeoCoordSys1D cs1D){
@@ -50,9 +58,45 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	public void drawGeometry(Renderer renderer) {
 		renderer.setThickness(getGeoElement().getLineThickness());
-		renderer.drawSegment(drawMin,drawMax);
+		//renderer.drawSegment(drawMin,drawMax);
+		
+		//renderer.getTextures().setDashTexture(Textures.DASH_SIMPLE,1f);
+		renderer.getGeometryManager().draw(segmentIndex);
 	}
 	
+	
+	
+	
+	
+	protected void updateForItSelf(){
+
+		
+		
+		
+		
+		
+
+		Renderer renderer = getView3D().getRenderer();
+		GeoCoordSys1D cs = (GeoCoordSys1D) getGeoElement();
+		
+		// grid
+		renderer.getGeometryManager().remove(segmentIndex);
+		segmentIndex = renderer.getGeometryManager().newSegment(
+				getGeoElement().getObjectColor(),
+				cs.getPoint(getDrawMin()).getInhomCoords(),
+				cs.getPoint(getDrawMax()).getInhomCoords(),
+				(float) getGeoElement().getLineThickness(),
+				(float) getView3D().getScale(),
+				(float) ((0.5-getDrawMin())/(getDrawMax()-getDrawMin())));
+		
+		
+		
+		
+	}
+	
+	protected void updateForView(){
+		updateForItSelf();
+	}
 	
 	
 	
@@ -68,11 +112,6 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	}	
 
 	
-	
-	protected void updateForItSelf(){
-		
-		viewChanged();
-	}
 	
 	
 	

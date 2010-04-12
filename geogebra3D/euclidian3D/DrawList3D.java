@@ -117,16 +117,19 @@ public class DrawList3D {
 		
 	}
 	
-	
+	public void drawHiddenNotTextured(Renderer renderer){
+		// points TODO hidden aspect ?
+		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_POINTS].iterator(); d.hasNext();) 
+			d.next().drawHidden(renderer);
+	}
+
 
 	/** draw the hidden (dashed) parts of curves and points
 	 * @param renderer opengl context
 	 */
-	public void drawHidden(Renderer renderer){
+	public void drawHiddenTextured(Renderer renderer){
 
-		// points TODO hidden aspect ?
-		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_POINTS].iterator(); d.hasNext();) 
-			d.next().drawHidden(renderer);
+
 		
 		// curves
 		// TODO if there's no surfaces, no hidden part has to be drawn
@@ -134,6 +137,7 @@ public class DrawList3D {
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
 			d.next().drawHidden(renderer);
 
+		
 
 		view3D.drawHidden(renderer);
 

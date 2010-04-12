@@ -102,6 +102,11 @@ public class Renderer implements GLEventListener {
 	//geometries
 	private Manager geometryManager;
 	
+    ///////////////////
+	// textures
+	protected Textures textures;
+
+	
 	
 	
 	///////////////////
@@ -359,7 +364,10 @@ public class Renderer implements GLEventListener {
         //drawing hidden part
         gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
         //gl.glDisable(GL.GL_BLEND);
-        drawList3D.drawHidden(this);
+        drawList3D.drawHiddenNotTextured(this);
+        gl.glEnable(GL.GL_TEXTURE_2D);
+        drawList3D.drawHiddenTextured(this);
+        gl.glDisable(GL.GL_TEXTURE_2D);
         gl.glDisable(GL.GL_ALPHA_TEST);       
 
 
@@ -774,7 +782,7 @@ public class Renderer implements GLEventListener {
     ////////////////////////////////////////////
     
 
-    
+    /*
     private void initTextures(){
     	
     	gl.glEnable(GL.GL_TEXTURE_2D);
@@ -823,7 +831,7 @@ public class Renderer implements GLEventListener {
         gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  4, sizeX, sizeY, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buf);
         
     }
-    
+    */
 
     
     /**
@@ -873,6 +881,19 @@ public class Renderer implements GLEventListener {
     }
     
     
+	/////////////////////////////////////////////
+	// TEXTURES METHODS
+	/////////////////////////////////////////////
+
+	
+	/**
+	 * @return textures manager
+	 */
+	public Textures getTextures(){
+		return textures;
+	}
+    
+    
     /**
      * draws a segment from x=x1 to x=x2 according to drawing matrix
      * 
@@ -907,9 +928,8 @@ public class Renderer implements GLEventListener {
 
     	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
     	
+    	/*
     	if (dashed){
-    		gl.glEnable(GL.GL_TEXTURE_2D);
-    		//TODO use object properties
     		gl.glBindTexture(GL.GL_TEXTURE_2D, texturesDash[dash]);
 
 
@@ -923,6 +943,7 @@ public class Renderer implements GLEventListener {
     		
     		gl.glMatrixMode(GL.GL_MODELVIEW);
     	}
+    	*/
     	
     	double s = thickness*dilationValues[dilation]/view3D.getScale();
     	gl.glScaled(1,s,s);
@@ -930,8 +951,6 @@ public class Renderer implements GLEventListener {
         //	primitives.segment(gl, (int) thickness);
        	geometryManager.cylinder.draw();
     	
-       	if (dashed)
-       		gl.glDisable(GL.GL_TEXTURE_2D);
     	
     	resetMatrix();
 
@@ -1878,6 +1897,8 @@ public class Renderer implements GLEventListener {
         
         
         
+        
+        
         //light
         /*
         float pos[] = { 1.0f, 1.0f, 1.0f, 0.0f };
@@ -1956,7 +1977,7 @@ public class Renderer implements GLEventListener {
 
         
         //textures
-        initTextures();
+        textures = new Textures(gl);
         
 
     }

@@ -2,6 +2,7 @@ package geogebra3D.euclidian3D.opengl;
 
 import java.awt.Color;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
@@ -67,16 +68,27 @@ public class ManagerGLList extends Manager {
 	}
 	
 	
-	public void startGeometry(Geometry geometry, int index){
-		//gl.glNewList(geometry.getIndex()+index, GL.GL_COMPILE);
+	public void startList(Geometry geometry, int index){
+		
 		newList(geometry.getIndex()+index);
+		
+	}
+	
+	public void endList(Geometry geometry){
+		
+		gl.glEndList();
+	}
+	
+	public void startGeometry(Geometry geometry){
 		gl.glBegin(geometry.getType());
 	}
 	
 	public void endGeometry(Geometry geometry){
 		gl.glEnd();
-		gl.glEndList();
 	}
+
+	
+
 	
 	
 	/////////////////////////////////////////////
@@ -164,13 +176,19 @@ public class ManagerGLList extends Manager {
     }
 
 	
-	
 	/////////////////////////////////////////////
 	// PLANE METHODS
 	/////////////////////////////////////////////
 
     public int newPlane(Color color, float alpha, float size){
     	return plane.create(color,alpha,size);
+    }
+    
+    public int newGrid(Color color, float alpha, 
+    		float xmin, float xmax, float ymin, float ymax, 
+    		float dx, float dy, 
+    		float thickness){
+    	return grid.create(color, alpha, xmin, xmax, ymin, ymax, dx, dy, thickness);
     }
     
 	/////////////////////////////////////////////

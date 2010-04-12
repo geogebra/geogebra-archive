@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Color;
@@ -35,8 +36,12 @@ abstract public class Manager {
 	public GeometryCone cone;
 	/** geometry : cursor */
 	public GeometryCursor cursor;
+	/** geometry : segment */
+	public GeometrySegment segment;
 	/** geometry : plane */
-	public GeometryPlane plane;
+	protected GeometryPlane plane;
+	/** geometry : grid */
+	protected GeometryGrid grid;
 	/** geometry : sphere */
 	public GeometrySphere sphere;
 	
@@ -44,6 +49,14 @@ abstract public class Manager {
 	//geogebra stuff
 	private EuclidianView3D view3D;
 	
+	//coords stuff
+	/** when drawing a cylinder, clock vectors to describe a circle */
+	private GgbVector clockU = null;
+	private GgbVector clockV = null;
+	private GgbVector cylinderStart = null;
+	private GgbVector cylinderEnd = null;
+	private double cylinderThickness;
+	private float textureStart, textureEnd;
 	
 	/** create a manager for geometries
 	 * @param gl 
@@ -56,12 +69,15 @@ abstract public class Manager {
 		this.glu = glu;
 		
 		
+		
 		// creating geometries
 		point = new GeometryPoint(this,false);
 		cylinder = new GeometryCylinder(this,true);
 		cone = new GeometryCone(this,true);
 		cursor = new GeometryCursor(this);
+		segment = new GeometrySegment(this);
 		plane = new GeometryPlane(this);
+		grid = new GeometryGrid(this);
 		sphere = new GeometrySphere(this);
 		
 		//geogebra
@@ -82,6 +98,20 @@ abstract public class Manager {
 	}
 	
 	/////////////////////////////////////////////
+	// GL METHODS
+	/////////////////////////////////////////////
+	
+	/**
+	 * @return gl context
+	 */
+	public GL getGL(){
+		return gl;
+	}
+
+
+
+	
+	/////////////////////////////////////////////
 	// GEOMETRY METHODS
 	/////////////////////////////////////////////
 	
@@ -96,22 +126,38 @@ abstract public class Manager {
 	 * @param geometry 
 	 * @param index index of the new geometry
 	 */
-	abstract public void startGeometry(Geometry geometry, int index);
+	public void startListAndGeometry(Geometry geometry, int index){
+		startList(geometry, index);
+		startGeometry(geometry);
+	}
 	
 	
 	
-	public void startGeometry(Geometry geometry){
-		startGeometry(geometry, 0);
+	public void startListAndGeometry(Geometry geometry){
+		startListAndGeometry(geometry, 0);
 	}
 	
 	
 	/** ending new geometry
 	 * @param geometry 
 	 */
-	abstract public void endGeometry(Geometry geometry);
+	public void endListAndGeometry(Geometry geometry){
+		endGeometry(geometry);
+		endList(geometry);
+	}
 
+	abstract public void startList(Geometry geometry, int index);
+	
+	public void startList(Geometry geometry){
+		startList(geometry, 0);
+	}
+	
+	abstract public void endList(Geometry geometry);
 
 	
+	abstract public void startGeometry(Geometry geometry);
+	
+	abstract public void endGeometry(Geometry geometry);
 	
 	abstract public int startPolygon(float nx, float ny, float nz);
 
@@ -189,6 +235,76 @@ abstract public class Manager {
 	abstract protected void color(float r, float g, float b, float a);
 	
 	
+
+	/////////////////////////////////////////////
+	// COORDS METHODS
+	/////////////////////////////////////////////
+
+	/** set a cylinder coords regarding vector direction
+	 * @param p1
+	 * @param p2
+	 * @param thickness 
+	 * @param textureStart 
+	 * @param textureEnd 
+	 */
+	public void setCylinder(GgbVector p1, GgbVector p2, 
+			double thickness,
+			float textureStart, float textureEnd){
+		cylinderStart = p1;
+		cylinderEnd = p2;
+		cylinderThickness = thickness;
+		this.textureStart = textureStart;
+		this.textureEnd = textureEnd;
+		GgbVector[] vn = p2.sub(p1).completeOrthonormal();
+		clockU = vn[0]; clockV = vn[1];
+	}
+	
+	
+	/** translate the current cylinder
+	 * @param v
+	 */
+	public void translateCylinder(GgbVector v){
+		cylinderStart = (GgbVector) cylinderStart.add(v);
+		cylinderEnd = (GgbVector) cylinderEnd.add(v);
+	}
+	
+	
+	/** create a cylinder rule (for quad strip)
+	 * @param u
+	 * @param v
+	 * @param texturePos 
+	 */
+	public void cylinderRule(double u, double v, double texturePos){
+		
+		//normal vector
+		GgbVector vn = (GgbVector) clockV.mul(v).add(clockU.mul(u));
+		normal((float) vn.getX(), (float) vn.getY(), (float) vn.getZ());
+		
+		//bottom vertex
+		texture(textureStart,(float) texturePos);
+		vertex((float) (cylinderStart.getX()+cylinderThickness*vn.getX()), 
+				(float) (cylinderStart.getY()+cylinderThickness*vn.getY()),  
+				(float) (cylinderStart.getZ()+cylinderThickness*vn.getZ()));
+		//top vertex
+		texture(textureEnd,(float) texturePos);
+		vertex((float) (cylinderEnd.getX()+cylinderThickness*vn.getX()), 
+				(float) (cylinderEnd.getY()+cylinderThickness*vn.getY()),  
+				(float) (cylinderEnd.getZ()+cylinderThickness*vn.getZ()));
+	}
+	
+	
+	/////////////////////////////////////////////
+	// SEGMENT METHODS
+	/////////////////////////////////////////////
+	
+	public int newSegment(Color color, 
+			GgbVector p1, GgbVector p2,
+			float thickness,
+			float scale,
+			float posZero){
+		return segment.create(color, p1, p2, thickness, scale, posZero);
+	}
+	
 	/////////////////////////////////////////////
 	// POLYGONS DRAWING METHODS
 	/////////////////////////////////////////////
@@ -199,11 +315,16 @@ abstract public class Manager {
 	
 	
 	/////////////////////////////////////////////
-	// PLANE METHODS
+	// PLANE AND GRID METHODS
 	/////////////////////////////////////////////
 
 	
 	abstract public int newPlane(Color color, float alpha, float size);
+	
+	abstract public int newGrid(Color color, float alpha, 
+			float xmin, float xmax, float ymin, float ymax, 
+			float dx, float dy, 
+			float thickness);
 	
 
 	/////////////////////////////////////////////

@@ -2174,6 +2174,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		for(int i=0;i<3;i++)
 			axis[i].getDrawable3D().drawHidden(renderer);
 		
+		xOyPlane.getDrawable3D().drawHidden(renderer);
+		
 		if (decorationVisible)
 			pointDecorations.drawHidden(renderer);
 		
@@ -2218,10 +2220,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	public void updateDrawablesNow(){
 		
-		xOyPlane.getDrawable3D().update();
 		for(int i=0;i<3;i++){
 			axis[i].getDrawable3D().update();
 		}
+		xOyPlane.getDrawable3D().update();
+		xOyPlane.setGridDistances(axis[AXIS_X].getNumbersDistance(), axis[AXIS_Y].getNumbersDistance());
+
+		
+		
 		pointDecorations.update();
 	}
 	

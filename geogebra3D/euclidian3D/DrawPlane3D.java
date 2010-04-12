@@ -3,8 +3,15 @@ package geogebra3D.euclidian3D;
 
 
 
+import java.awt.Color;
+
+import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.euclidian3D.opengl.Textures;
+import geogebra3D.kernel3D.GeoCoordSys;
+import geogebra3D.kernel3D.GeoCoordSys1D;
+import geogebra3D.kernel3D.GeoCoordSysAbstract;
 import geogebra3D.kernel3D.GeoPlane3D;
 
 
@@ -15,6 +22,8 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 	/** gl index of the plane */
 	private int planeIndex = -1;
+	/** gl index of the grid */
+	private int gridIndex = -1;
 
 	
 	
@@ -27,12 +36,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	
 
 	public void drawGeometry(Renderer renderer) {
-		//GeoPlane3D p = (GeoPlane3D) getGeoElement();
-		
-		//renderer.setMaterial(getGeoElement().getObjectColor(),1);
-		//renderer.drawQuad(p.getXmin(),p.getYmin(),p.getXmax(),p.getYmax());
-		
-		//renderer.drawPlane();
+
 		renderer.initMatrix();
 		renderer.getGeometryManager().draw(planeIndex);
 		renderer.resetMatrix();
@@ -47,7 +51,21 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	
 	public void drawGeometryPicked(Renderer renderer){}
 	
-	public void drawGeometryHidden(Renderer renderer){};
+
+	public void drawHidden(Renderer renderer){
+		renderer.setMatrix(getMatrix());
+		drawGeometryHidden(renderer);
+	}; 
+
+	public void drawGeometryHidden(Renderer renderer){ 
+		if (((GeoPlane3D)getGeoElement()).isGridVisible()){
+			renderer.initMatrix();
+			//dash
+			renderer.getTextures().setDash(Textures.DASH_SHORT);
+			renderer.getGeometryManager().draw(gridIndex);
+			renderer.resetMatrix();
+		}
+	};
 	
 	
 	public void drawHighlighting(Renderer renderer){
@@ -63,26 +81,49 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		super.updateForItSelf();
 
 		Renderer renderer = getView3D().getRenderer();
-		
-		/*
-		if (renderer.getGeometryManager() == null)
-			return;
-			*/
-		
-		renderer.getGeometryManager().remove(planeIndex);
-		
 		GeoPlane3D geo = (GeoPlane3D) getGeoElement();
 		
-		
+		// plane
+		renderer.getGeometryManager().remove(planeIndex);		
 		planeIndex = renderer.getGeometryManager().newPlane(
 				geo.getObjectColor(),
 				alpha,
 				(float) (200/getView3D().getScale()));
 		
-		//Application.debug("plane : "+geo.getLabel()+", index = "+planeIndex);
+		// grid
+		renderer.getGeometryManager().remove(gridIndex);
+		if (geo.isGridVisible()){
+			gridIndex = renderer.getGeometryManager().newGrid(
+					Color.BLACK, 1f,
+					//(float) (200/getView3D().getScale()),
+					(float) geo.getXmin(), (float) geo.getXmax(),
+					(float) geo.getYmin(), (float) geo.getYmax(),
+					(float) geo.getGridXd(), (float) geo.getGridYd(), 
+					(float) (0.4/getView3D().getScale()));
+		}
+		
 	}
 
 	protected void updateForView(){
+		
+		GeoCoordSysAbstract cs = ((GeoCoordSys) getGeoElement()).getCoordSys();
+		
+		GgbVector o = getView3D().getToScreenMatrix().mul(cs.getOrigin());
+		GgbVector vx = getView3D().getToScreenMatrix().mul(cs.getVx());
+		GgbVector vy = getView3D().getToScreenMatrix().mul(cs.getVy());
+		
+				
+		double[] xMinMax = getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+				o, vx);
+		double[] yMinMax = getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+				o, vy);
+		
+		//Application.debug("corners : "+xMinMax[0]+","+yMinMax[0]+" -- "+xMinMax[1]+","+yMinMax[1]);
+		
+		((GeoPlane3D) getGeoElement()).setGridCorners(xMinMax[0], yMinMax[0], xMinMax[1], yMinMax[1]);
+		
 		updateForItSelf();
 	}
 

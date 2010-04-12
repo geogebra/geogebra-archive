@@ -50,7 +50,7 @@ public class GeometrySphere extends Geometry {
 		
 		manager.preInit(this);
 		
-		manager.startGeometry(this);
+		manager.startListAndGeometry(this);
 
 		
 		float r = color.getRed()/255f;
@@ -72,7 +72,7 @@ public class GeometrySphere extends Geometry {
 	
 		
 		
-		manager.endGeometry(this);
+		manager.endListAndGeometry(this);
 		
 		return getIndex();
 	}

@@ -105,6 +105,34 @@ public class GgbVector
 		return get(4);
 	}
 	
+	/** sets the "x-coord" 
+	 * @param val
+	 */
+	public void setX(double val){
+		set(1,val);
+	}
+	
+	/** sets the "y-coord" 
+	 * @param val
+	 */
+	public void setY(double val){
+		set(2,val);
+	}
+
+	/** sets the "z-coord" 
+	 * @param val
+	 */
+	public void setZ(double val){
+		set(3,val);
+	}
+
+	/** sets the "w-coord" 
+	 * @param val
+	 */
+	public void setW(double val){
+		set(4,val);
+	}
+
 	/** returns number of rows of the vector 
 	 * @return number of rows
 	 */
@@ -491,6 +519,25 @@ public class GgbVector
 		
 		return true;
 		
+	}
+	
+	
+	public GgbVector[] completeOrthonormal(){
+		GgbVector vn1 = new GgbVector(4);
+		GgbVector vn2 = new GgbVector(4);
+		
+		if (getX()!=0){
+			vn1.setX(-getY());
+			vn1.setY(getX());
+			vn1.normalize();
+		}else{
+			vn1.setX(1);
+		}
+		
+		vn2 = this.crossProduct(vn1);
+		vn2.normalize();
+		
+		return new GgbVector[] {vn1, vn2};
 	}
 
 	

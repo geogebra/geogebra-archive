@@ -9,7 +9,7 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	double xmin, xmax, ymin, ymax; //for drawing
 	
 	//grid
-	boolean m_grid = true;
+	boolean gridVisible = false;
 	double dx = 1.0; //distance between two marks on the grid //TODO use object properties
 	double dy = 1.0; 
 	
@@ -26,7 +26,7 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 		
 		//grid
 		setGridOrigin(new GgbVector(new double[] {0,0,0,1}));
-		setGrid(false);
+		setGridVisible(false);
         
 		
 		//alpha
@@ -92,6 +92,15 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	
 	}
 	
+	/** set grid distances (between two ticks)
+	 * @param dx
+	 * @param dy
+	 */
+	public void setGridDistances(double dx, double dy){
+		this.dx = dx;
+		this.dy = dy;
+	}
+	
 	
 	/** returns min/max on x/y */
 	public double getXmin(){
@@ -113,12 +122,12 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	
 	
 	/** returns if there is a grid to plot or not */
-	public boolean hasGrid(){
-		return m_grid;
+	public boolean isGridVisible(){
+		return gridVisible;
 	}
 	
-	public void setGrid(boolean a_grid){
-		m_grid = a_grid;
+	public void setGridVisible(boolean grid){
+		gridVisible = grid;
 	}
 	
 	

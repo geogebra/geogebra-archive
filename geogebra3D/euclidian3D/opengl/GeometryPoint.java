@@ -19,9 +19,9 @@ public class GeometryPoint extends Geometry {
 		
 		manager.preInit(this);
 		
-		manager.startGeometry(this);
+		manager.startListAndGeometry(this);
 		sphere(2,6,POINT3D_RADIUS);
-		manager.endGeometry(this);
+		manager.endListAndGeometry(this);
 
 	
 	}

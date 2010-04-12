@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 
 /**
@@ -264,51 +265,48 @@ public abstract class Geometry {
     
     
     
-    
-    
-    
-    
-    /** create a cylinder geometry ((Ox)-axis with number of latitudes)
-     * @param latitude number of latitudes
-     * @param thickness thickness of the cylinder
-     */
     protected void cylinder(int latitude, float thickness){
 
-    	
+    	cylinder(new GgbVector(new double[] {0,0,0,1}), new GgbVector(new double[] {1,0,0,1}), 
+    			latitude, thickness, 0, 1);
+    }
+    
+    
+    
+    /** create a cylinder geometry 
+     * @param p1 
+     * @param p2 
+     * @param latitude number of latitudes
+     * @param thickness thickness of the cylinder
+     * @param textureStart 
+     * @param textureEnd 
+     */
+    protected void cylinder(GgbVector p1, GgbVector p2, 
+    		int latitude, float thickness, float textureStart, float textureEnd){
+
+    	manager.setCylinder(p1,p2, 2*thickness, textureStart, textureEnd);
+    	cylinder(latitude);
+    }
+    
+    /** create a cylinder geometry 
+     * @param latitude number of latitudes
+     */
+    protected void cylinder(int latitude){
+   	
     	float dt = (float) 1/latitude;
     	float da = (float) (2*Math.PI *dt) ; 
 
-    	float y1 = 0f;
-    	float z1 = 2 * thickness;
-    	float y0,z0;
+    	float u = 0f;
+    	float v = 1f;// 2 * thickness;
     	
-    	for( int i = 0; i < latitude + 1 ; i++ ) { 
-    		y0 = y1; 
-    		z0 = z1; 
-    		y1 = 2 * thickness * (float) Math.sin ( (i+1) * da ); 
-    		z1 = 2 * thickness * (float) Math.cos ( (i+1) * da ); 
+    	for( int i = 0; i <= latitude  ; i++ ) { 
+ 
+    		u = (float) Math.sin ( (i+1) * da ); 
+    		v = (float) Math.cos ( (i+1) * da ); 
 
-    		texture(0,i*dt);
-    		normal(0,y0,z0); 
-    		vertex(0,y0,z0); 
-
-
-    		texture(1,i*dt);
-    		normal(1,y0,z0); 
-    		vertex(1,y0,z0); 
-
-    		texture(1,(i+1)*dt);
-    		normal(1,y1,z1); 
-    		vertex(1,y1,z1); 
-
-    		texture(0,(i+1)*dt);
-    		normal(0,y1,z1); 
-    		vertex(0,y1,z1); 
-
-
+    		manager.cylinderRule(u, v, i*dt);
     	} 
     }
-    
     
     /** create a segment geometry ((Ox)-cylinder with number of latitudes)
      * @param latitude number of latitudes

@@ -19,7 +19,7 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	
 	
 	
-	protected void updateForView(){
+	protected void updateForItSelf(){
 		
 		GgbVector o = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getOrigin());
 		GgbVector v = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getVx());
@@ -36,9 +36,14 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 		setDrawMinMax(minmax[0], minmax[1]);
 		
 		//Application.debug("drawMin = "+minmax[0]+"\ndrawMax = "+minmax[1]);
+		
+		
+		super.updateForItSelf();
 
 	}
 	
+	
+
 	
 	
 	
