@@ -22,9 +22,6 @@ public class DrawSegment3D extends DrawCoordSys1D {
 
 
 	
-	protected void updateForView(){
-		
-	}
 	
 	////////////////////////////////
 	// Previewable interface 

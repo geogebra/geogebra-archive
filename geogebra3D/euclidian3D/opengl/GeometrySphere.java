@@ -72,7 +72,7 @@ public class GeometrySphere extends Geometry {
 	
 		
 		
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 		
 		return getIndex();
 	}

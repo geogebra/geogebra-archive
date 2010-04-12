@@ -72,7 +72,7 @@ public class GeometryPlane extends Geometry {
 	
 		
 		
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 
 	
 	}
@@ -133,7 +133,7 @@ public class GeometryPlane extends Geometry {
 	
 		
 		
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 		
 		return getIndex();
 	}

@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.opengl.Brush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoCoordSys1D;
@@ -79,8 +80,22 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		Renderer renderer = getView3D().getRenderer();
 		GeoCoordSys1D cs = (GeoCoordSys1D) getGeoElement();
 		
-		// grid
+
 		renderer.getGeometryManager().remove(segmentIndex);
+		
+		GgbVector p1 = cs.getPoint(getDrawMin()).getInhomCoords();
+		GgbVector p2 = cs.getPoint(getDrawMax()).getInhomCoords();
+		
+		float thickness = (float) (Brush.LINE3D_THICKNESS*getGeoElement().getLineThickness()/getView3D().getScale());
+		Brush brush = renderer.getGeometryManager().getBrush();
+		brush.setLinearOnceTexture(4, (float) (100/getView3D().getScale()), 
+				(float) p2.distance(p1), 
+				(float) ((0.5-getDrawMin())/(getDrawMax()-getDrawMin())), 0.125f);
+		brush.start(8);
+		brush.down(cs.getPoint(getDrawMin()).getInhomCoords(), thickness);
+		brush.moveTo(cs.getPoint(getDrawMax()).getInhomCoords(), thickness);
+		segmentIndex = brush.end();
+		/*
 		segmentIndex = renderer.getGeometryManager().newSegment(
 				getGeoElement().getObjectColor(),
 				cs.getPoint(getDrawMin()).getInhomCoords(),
@@ -88,7 +103,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 				(float) getGeoElement().getLineThickness(),
 				(float) getView3D().getScale(),
 				(float) ((0.5-getDrawMin())/(getDrawMax()-getDrawMin())));
-		
+		*/
 		
 		
 		

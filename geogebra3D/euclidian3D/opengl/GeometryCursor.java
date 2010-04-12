@@ -49,21 +49,21 @@ public class GeometryCursor extends Geometry {
 		
 		manager.startListAndGeometry(this, TYPE_CROSS2D);
 		cursorCross2D();
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 		
 		manager.startListAndGeometry(this, TYPE_DIAMOND);
 		cursorDiamond();
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 		
 		
 		manager.startListAndGeometry(this, TYPE_CYLINDER);
 		cursorCylinder();
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 
 		
 		manager.startListAndGeometry(this, TYPE_CROSS3D);
 		cursorCross3D();
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 		
 		
 	}

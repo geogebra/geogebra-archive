@@ -63,6 +63,15 @@ public class ManagerGLList extends Manager {
 	/////////////////////////////////////////////
 
 	
+	public int startNewList(){
+		// generates a new list
+		int ret = genLists(1);
+		
+		gl.glNewList(ret, GL.GL_COMPILE);
+		
+		return ret;
+	}
+	
 	private void newList(int index){
 		gl.glNewList(index, GL.GL_COMPILE);
 	}
@@ -74,16 +83,20 @@ public class ManagerGLList extends Manager {
 		
 	}
 	
-	public void endList(Geometry geometry){
+	public void endList(){
 		
 		gl.glEndList();
 	}
 	
-	public void startGeometry(Geometry geometry){
-		gl.glBegin(geometry.getType());
+	public void startGeometry(int type){
+		gl.glBegin(type);
 	}
 	
-	public void endGeometry(Geometry geometry){
+	public void startGeometry(Geometry geometry){
+		startGeometry(geometry.getType());
+	}
+	
+	public void endGeometry(){
 		gl.glEnd();
 	}
 

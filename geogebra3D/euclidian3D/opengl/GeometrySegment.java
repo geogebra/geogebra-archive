@@ -54,13 +54,13 @@ public class GeometrySegment extends Geometry {
 		color(r,g,b,a);
 		cylinder(p1,p2,
 				latitude, thickness/scale*LINE3D_THICKNESS, textureCoords[0], textureCoords[1]);
-		manager.endGeometry(this);
+		manager.endGeometry();
 		
 		
 		
 		
 		
-		manager.endList(this);
+		manager.endList();
 		
 		return getIndex();
 	}

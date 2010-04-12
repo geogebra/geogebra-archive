@@ -19,6 +19,8 @@ abstract public class Manager {
 	/** direct rendering */
 	static final int TYPE_GLLIST = 1;
 	
+	/** geometries types */
+	static final int QUAD_STRIP = GL.GL_QUAD_STRIP;
 	
 	
 	// GL 
@@ -44,6 +46,8 @@ abstract public class Manager {
 	protected GeometryGrid grid;
 	/** geometry : sphere */
 	public GeometrySphere sphere;
+	/** brush */
+	private Brush brush;
 	
 	
 	//geogebra stuff
@@ -80,10 +84,17 @@ abstract public class Manager {
 		grid = new GeometryGrid(this);
 		sphere = new GeometrySphere(this);
 		
+		brush = new Brush(this);
+		
 		//geogebra
 		this.view3D = view3D;
 		
 		
+	}
+	
+	
+	public Brush getBrush(){
+		return brush;
 	}
 	
 	/////////////////////////////////////////////
@@ -122,6 +133,8 @@ abstract public class Manager {
 	abstract public void preInit(Geometry geometry);
 	
 	
+	abstract public int startNewList();
+	
 	/** starting new geometry
 	 * @param geometry 
 	 * @param index index of the new geometry
@@ -141,9 +154,9 @@ abstract public class Manager {
 	/** ending new geometry
 	 * @param geometry 
 	 */
-	public void endListAndGeometry(Geometry geometry){
-		endGeometry(geometry);
-		endList(geometry);
+	public void endListAndGeometry(){
+		endGeometry();
+		endList();
 	}
 
 	abstract public void startList(Geometry geometry, int index);
@@ -152,12 +165,14 @@ abstract public class Manager {
 		startList(geometry, 0);
 	}
 	
-	abstract public void endList(Geometry geometry);
+	abstract public void endList();
 
+	
+	abstract public void startGeometry(int type);
 	
 	abstract public void startGeometry(Geometry geometry);
 	
-	abstract public void endGeometry(Geometry geometry);
+	abstract public void endGeometry();
 	
 	abstract public int startPolygon(float nx, float ny, float nz);
 

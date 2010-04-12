@@ -52,7 +52,7 @@ public class GeometryGrid extends Geometry {
 		cylinder(new GgbVector(new double[] {xmin,dy*i,0,1}), 
 				new GgbVector(new double[] {xmax,dy*i,0,1}),
 				latitude, thickness, textureCoords[0], textureCoords[1]);
-		manager.endGeometry(this);
+		manager.endGeometry();
 		
 		GgbVector v = new GgbVector(new double[] {0,dy,0,0});
 		i++;
@@ -61,7 +61,7 @@ public class GeometryGrid extends Geometry {
 			color(r,g,b,a);
 			manager.translateCylinder(v);
 			cylinder(latitude);
-			manager.endGeometry(this);
+			manager.endGeometry();
 		}
 		
 		
@@ -75,7 +75,7 @@ public class GeometryGrid extends Geometry {
 		cylinder(new GgbVector(new double[] {dx*i,ymin,0,1}), 
 				new GgbVector(new double[] {dx*i,ymax,0,1}),
 				latitude, thickness, textureCoords[0], textureCoords[1]);
-		manager.endGeometry(this);
+		manager.endGeometry();
 		
 		v = new GgbVector(new double[] {dx,0,0,0});
 		i++;
@@ -84,13 +84,13 @@ public class GeometryGrid extends Geometry {
 			color(r,g,b,a);
 			manager.translateCylinder(v);
 			cylinder(latitude);
-			manager.endGeometry(this);
+			manager.endGeometry();
 		}
 
 		
 		
 		
-		manager.endList(this);
+		manager.endList();
 		
 		return getIndex();
 	}

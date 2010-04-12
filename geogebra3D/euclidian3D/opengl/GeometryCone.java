@@ -22,7 +22,7 @@ public class GeometryCone extends Geometry {
 		
 		manager.startListAndGeometry(this);
 		cone(8,LINE3D_THICKNESS);
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 		
 		
 	}

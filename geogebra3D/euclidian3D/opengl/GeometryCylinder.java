@@ -20,7 +20,7 @@ public class GeometryCylinder extends Geometry {
 		
 		manager.startListAndGeometry(this);
 		cylinder(8,LINE3D_THICKNESS);
-		manager.endListAndGeometry(this);
+		manager.endListAndGeometry();
 
 	
 	}
