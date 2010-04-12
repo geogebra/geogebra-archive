@@ -26,6 +26,7 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 
 /**
@@ -45,6 +46,8 @@ final public class DrawCubic extends Drawable {
     private GeoCubic cubic;
     
     private boolean isVisible, labelVisible;
+    
+    Shape strokedShape3;
                   
 	
     EquationSolver eqnSolver;
@@ -432,9 +435,7 @@ final public class DrawCubic extends Drawable {
     }
 	
     private void lineTo(float x, float y, int i) {
-    	
-    	if (y > 500) y = 500;
-    	
+    		
     	if (needsMove[i]) {
     		gps[i].moveTo(x, y);
     		needsMove[i] = false;
@@ -498,19 +499,18 @@ final public class DrawCubic extends Drawable {
     
 	final public boolean hit(int x, int y) {             
 
-            	//if (strokedShape == null) {
-        		//	strokedShape = objStroke.createStrokedShape(shape);
-        		//}    		
-    			//if (cubic.alphaValue > 0.0f) 
-    			//	return shape.intersects(x-3,y-3,6,6);  
-    			//else
-    			//	return .intersects(x-3,y-3,6,6);     
-		return gps[0].intersects(x-3,y-3,6,6) || gps[1].intersects(x-3,y-3,6,6) || gps[2].intersects(x-3,y-3,6,6);
+            	if (strokedShape == null) {
+        			strokedShape = objStroke.createStrokedShape(gps[0]);
+        			strokedShape2 = objStroke.createStrokedShape(gps[1]);
+        			strokedShape3 = objStroke.createStrokedShape(gps[2]);
+        		}    		
+
+		return strokedShape.intersects(x-3,y-3,6,6) || strokedShape.intersects(x-3,y-3,6,6) || strokedShape.intersects(x-3,y-3,6,6);
     }
 	
 	final public boolean isInside(Rectangle rect) {				
                      	
-        	   return rect != null && rect.contains(gps[0].getBounds()) && rect.contains(gps[2].getBounds()) && rect.contains(gps[2].getBounds());
+        	   return rect != null && rect.contains(gps[0].getBounds()) && rect.contains(gps[1].getBounds()) && rect.contains(gps[2].getBounds());
       
 	
 	}
