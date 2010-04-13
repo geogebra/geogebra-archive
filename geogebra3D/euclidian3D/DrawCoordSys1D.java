@@ -71,11 +71,6 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	protected void updateForItSelf(){
 
-		
-		
-		
-		
-		
 
 		Renderer renderer = getView3D().getRenderer();
 		GeoCoordSys1D cs = (GeoCoordSys1D) getGeoElement();
@@ -92,8 +87,8 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 				(float) p2.distance(p1), 
 				(float) ((0.5-getDrawMin())/(getDrawMax()-getDrawMin())), 0.125f);
 		brush.start(8);
-		brush.down(cs.getPoint(getDrawMin()).getInhomCoords(), thickness);
-		brush.moveTo(cs.getPoint(getDrawMax()).getInhomCoords(), thickness);
+		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
+		brush.segment(p1, p2);
 		segmentIndex = brush.end();
 		/*
 		segmentIndex = renderer.getGeometryManager().newSegment(
