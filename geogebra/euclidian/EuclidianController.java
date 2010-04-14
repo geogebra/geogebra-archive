@@ -6300,15 +6300,15 @@ Rectangle rect = view.getSelectionRectangle();
 		double py = mouseLoc.y;
 		double dx = view.getXZero() - px;
 		double dy = view.getYZero() - py;
-
+		
 		double factor = event.getKeyCode() == KeyEvent.VK_MINUS ? 1d / EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR
 				: EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR;
-		// make zooming a little bit smoother by having some steps
 
 		// accelerated zoom
 		if (event.isAltDown())
-			factor *= 1.5;
+			factor *= event.getKeyCode() == KeyEvent.VK_MINUS ? 2d/3d: 1.5;
 
+		// make zooming a little bit smoother by having some steps
 		view.setAnimatedCoordSystem(
 				px + dx * factor,
 				py + dy * factor,
