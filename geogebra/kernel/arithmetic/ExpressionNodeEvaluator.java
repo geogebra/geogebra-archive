@@ -1647,6 +1647,23 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
     			return new MyBoolean(false);
     		
 			return new MyBoolean(strL.equals(strR));      
+		} else if (lt.isListValue() && rt.isListValue()) {
+			
+			MyList list1 = ((ListValue)lt).getMyList();
+			MyList list2 = ((ListValue)rt).getMyList();
+			
+			int size = list1.size();
+			
+			if ( size != list2.size())
+				return new MyBoolean(false );
+			
+			for (int i = 0 ; i < size ; i++) {
+				if (!evalEquals(kernel,list1.getListElement(i).evaluate(), list2.getListElement(i).evaluate()).getBoolean())
+					return new MyBoolean(false);
+			}
+			
+			return new MyBoolean(true);
+			
     	}
     	else if (lt.isGeoElement() && rt.isGeoElement()) {
     		GeoElement geo1 = (GeoElement) lt;
