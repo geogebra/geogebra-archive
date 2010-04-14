@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.opengl.Brush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
@@ -20,6 +21,7 @@ public class DrawAxis3D extends DrawLine3D {
 		
 	}	
 	
+	/*
 	public void drawGeometry(Renderer renderer) {
 		
 		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
@@ -32,7 +34,7 @@ public class DrawAxis3D extends DrawLine3D {
 		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);
 	}
 	
-	
+	*/
 	
 	
 	/**
@@ -103,6 +105,11 @@ public class DrawAxis3D extends DrawLine3D {
     
     
     
+    protected void updateForItSelf(){
+       	getView3D().getRenderer().getGeometryManager().getBrush().setArrowType(Brush.ARROW_TYPE_SIMPLE);
+       	super.updateForItSelf();
+       	getView3D().getRenderer().getGeometryManager().getBrush().setArrowType(Brush.ARROW_TYPE_NONE);
+    }
     
     
     

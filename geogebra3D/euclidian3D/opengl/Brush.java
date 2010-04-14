@@ -111,7 +111,7 @@ public class Brush {
 	
 	
 	/** thickness for drawing 3D lines*/
-	public static final float LINE3D_THICKNESS = 0.5f;
+	public static final float LINE3D_THICKNESS = 0.4f;
 
 	
 	/** manager */
@@ -152,8 +152,8 @@ public class Brush {
 	static final public int ARROW_TYPE_SIMPLE=1;
 	private int arrowType=ARROW_TYPE_NONE;
 	/** length and width of the arrow */
-	static private float ARROW_LENGTH = 30f;
-	static private float ARROW_WIDTH = 8f;
+	static private float ARROW_LENGTH = 3f;
+	static private float ARROW_WIDTH = ARROW_LENGTH/4f;
 	
 	//level of detail
 	/** number of rules */
@@ -280,13 +280,14 @@ public class Brush {
 			moveTo(p2);
 			break;
 		case ARROW_TYPE_SIMPLE:
-			float arrowPos = ARROW_LENGTH/length * thickness;
+			float factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
+			float arrowPos = ARROW_LENGTH/length * factor;
 			GgbVector arrowBase = (GgbVector) start.center.mul(arrowPos).add(p2.mul(1-arrowPos));
 			setTextureX(0, 0.5f);
 			moveTo(arrowBase);
 			textureType = TEXTURE_LINEAR_NO_TRANSF;
 			setTextureX(0, 0);
-			setThickness(thickness*ARROW_WIDTH);
+			setThickness(factor*ARROW_WIDTH);
 			moveTo(arrowBase);
 			setThickness(0);
 			moveTo(p2);
