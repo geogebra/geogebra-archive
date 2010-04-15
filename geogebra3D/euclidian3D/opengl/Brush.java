@@ -136,14 +136,15 @@ public class Brush {
 	
 	//texture
 	/** start and end textures values */
-	private float textureStart, textureEnd;
+	private float texturePosZero, textureValZero;
 	/** textures coords */
 	private float[] textureX = new float[2];
 	private float[] textureY = new float[2];
 	/** type of texture */
 	private int textureType;
-	static final private int TEXTURE_LINEAR_NO_TRANSF = 0; 
-	static final private int TEXTURE_LINEAR_ONCE = 1; 
+	static final private int TEXTURE_ID = 0; 
+	static final private int TEXTURE_AFFINE = 1; 
+	static final private float TEXTURE_AFFINE_FACTOR = 0.05f; 
 	
 	// arrows	
 	/** no arrows */
@@ -283,9 +284,9 @@ public class Brush {
 			float factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
 			float arrowPos = ARROW_LENGTH/length * factor;
 			GgbVector arrowBase = (GgbVector) start.center.mul(arrowPos).add(p2.mul(1-arrowPos));
-			setTextureX(0, 0.5f);
+			setTextureX(0, 1-arrowPos);
 			moveTo(arrowBase);
-			textureType = TEXTURE_LINEAR_NO_TRANSF;
+			textureType = TEXTURE_ID;
 			setTextureX(0, 0);
 			setThickness(factor*ARROW_WIDTH);
 			moveTo(arrowBase);
@@ -322,32 +323,19 @@ public class Brush {
 	// TEXTURE
 	////////////////////////////////////
 	
-	/** sets a "once-part-curve" texture
-	 * @param start
-	 * @param end
-	 */
-	public void setLinearOnceTexture(float start, float end){
-		textureStart = start;
-		textureEnd = end;
-		textureType = TEXTURE_LINEAR_ONCE;
-	}
+
 	
-	/** calculate texture x coords for 0 and 1 positions
-	 * @param n number of repetitions per unit
-	 * @param unit
-	 * @param length of the cylinder
+	/** set affine texture zero position
 	 * @param posZero position of the "center" of the cylinder
 	 * @param valZero texture coord for the "center"
 	 */	
-	public void setLinearOnceTexture(int n, float unit, float length, float posZero, float valZero){
+	public void setAffineTexture(float posZero, float valZero){
 
-		//maxima : f(x):=a*x+b;solve([f(posZero/length)=0.25,f(unit/length)-f(0)=n],[a,b]);
-		float a, b;
-		a=(length*n)/unit;
-		b=(unit*valZero-n*posZero)/unit;
-		float start = b;
-		float end = a+b;
-		setLinearOnceTexture(start, end);
+		//maxima : f(x):=a*x+b;solve([f(posZero)=valZero,f(unit)-f(0)=n],[a,b]);
+
+		texturePosZero = posZero;
+		textureValZero = valZero;
+		textureType = TEXTURE_AFFINE;
 	}
 
 	/** return texture x coord regarding position
@@ -356,11 +344,12 @@ public class Brush {
 	 */
 	private float getTextureX(float pos){
 		switch(textureType){
-		case TEXTURE_LINEAR_NO_TRANSF:
+		case TEXTURE_ID:
 		default:
 			return pos;
-		case TEXTURE_LINEAR_ONCE:
-			return textureStart*(1f-pos)+textureEnd*pos;
+		case TEXTURE_AFFINE:
+			return TEXTURE_AFFINE_FACTOR*length*scale*(pos-texturePosZero)+textureValZero;
+			//return (pos+textureValZero)-texturePosZero;
 
 		}
 	}

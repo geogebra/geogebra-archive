@@ -54,14 +54,12 @@ public class DrawVector3D extends Drawable3DCurves {
 		
 		float thickness = (float) (Brush.LINE3D_THICKNESS*getGeoElement().getLineThickness()/getView3D().getScale());
 		Brush brush = renderer.getGeometryManager().getBrush();
-		brush.setLinearOnceTexture(4, (float) (100/getView3D().getScale()), 
-				(float) p2.distance(p1), 
-				0.5f, 0.125f);
+
 		brush.setArrowType(Brush.ARROW_TYPE_SIMPLE);
 		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
 		
 		brush.start(8);
-		
+		brush.setAffineTexture(0.5f, 0.125f);
 		brush.segment(p1,p2);
 		brush.setArrowType(Brush.ARROW_TYPE_NONE);
 		geometryIndex = brush.end();
