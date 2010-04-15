@@ -12,6 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.MyBoolean;
+
 
 /**
  *
@@ -73,13 +77,27 @@ public class AlgoCountIf extends AlgoElement {
     	try {
 
     		int count = 0;
+    		//<Zbynek Konecny 2010-04-15>
+    		/*
+    		 * If val is not numeric, we use the underlying Expression of the function and 
+    		 * plug the list element as variable.
+    		 * Deep copy is needed so that we can plug the value repeatedly.
+    		 */
+    		FunctionVariable var = boolFun.getFunction().getFunctionVariable();
     		
     		for (int i = 0 ; i < list.size() ; i++)
     		{
     			GeoElement val = list.get(i);
-    			if (val.isGeoNumeric() && boolFun.evaluateBoolean(((GeoNumeric)val).getValue()) ) count++; 
+    			if(val.isGeoNumeric()){
+    				if (boolFun.evaluateBoolean(((GeoNumeric)val).getValue()) ) count++; 
+    			} 
+    			else {
+	    			ExpressionNode ex = (ExpressionNode)boolFun.getFunction().getExpression().deepCopy(kernel);
+	    			ex.replace(var, val.evaluate());
+	    			if (((MyBoolean)ex.evaluate()).getBoolean()) count++;
+    			}
     		}
-
+    		//</Zbynek>
     		result.setValue(count);
     	
     	    	
