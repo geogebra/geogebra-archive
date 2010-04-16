@@ -61,10 +61,16 @@ public class CASOutputPanel extends JPanel {
 		}	
 		
 		// update output sign
-		if (cmd.length() == 0)
+		if (cmd.length() == 0) {
 			outputSign.setText(OUTPUT_PREFIX);
-		else
+		}
+		else if (cmd.equals(app.getCommand("CheckInput"))) {
+			// show check character
+			outputSign.setText("\u2713");
+		} 
+		else {
 			outputSign.setText(cmd + ": ");
+		}
 	}
 
 	public String getOutput() {

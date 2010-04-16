@@ -2234,9 +2234,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             case LOG10:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log_{10} \\left( ");
+	        			sb.append("\\log_{10} \\left(");
 	        			sb.append(leftStr);
-	                    sb.append("\\right) ");
+	                    sb.append("\\right)");
 	        			break;
 	        			
         			case STRING_TYPE_PSTRICKS:
@@ -2275,9 +2275,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             case LOG2:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\log_{2} \\left( ");
+	        			sb.append("\\log_{2} \\left(");
 	        			sb.append(leftStr);
-	                    sb.append("\\right) ");
+	                    sb.append("\\right)");
 	        			break;
 	        			
         			case STRING_TYPE_MAXIMA:
@@ -2417,9 +2417,9 @@ implements ExpressionValue, ExpressionNodeConstants {
            case ARG:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arg\\left( ");
+	        			sb.append("\\arg\\left(");
 	                     sb.append(leftStr);
-	                     sb.append("\\right) ");
+	                     sb.append("\\right)");
 	        			break;
 	        		case STRING_TYPE_MATH_PIPER:
 	        			sb.append("Arg(");  
@@ -2571,9 +2571,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
-	        				sb.append("\\mathrm{y} \\left( ");
+	        				sb.append("\\mathrm{y} \\left(");
 	        				sb.append(leftStr);
-	                		sb.append("\\right(");
+	                		sb.append("\\right)");
 	        				break;
 	        				
 	        			case STRING_TYPE_JASYMCA:
@@ -2603,9 +2603,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
-	        				sb.append("\\mathrm{z} \\left( ");
+	        				sb.append("\\mathrm{z} \\left(");
 	        				sb.append(leftStr);
-	                		sb.append("\\right) ");
+	                		sb.append("\\right)");
 	        				break;
 	        				
 	        			//case STRING_TYPE_JASYMCA:
