@@ -2858,11 +2858,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 	}
     
     private String leftBracket(int type) {
-    	return (type == STRING_TYPE_LATEX) ? "\\left( " : "(";
+    	return (type == STRING_TYPE_LATEX) ? "\\left(" : "(";
     }
 	
     private String rightBracket(int type) {
-    	return (type == STRING_TYPE_LATEX) ? "\\right) " : ")";
+    	return (type == STRING_TYPE_LATEX) ? "\\right)" : ")";
     }
     
     private String multiplicationSign(int type) {
