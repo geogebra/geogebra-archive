@@ -1,5 +1,6 @@
 package geogebra;
 
+import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra.main.DefaultApplication;
 import geogebra.plugin.GgbAPI;
@@ -174,6 +175,20 @@ public class GeoGebraPanel extends JPanel {
 	 */
 	public synchronized void setLanguage(Locale locale) {
 		app.setLanguage(locale);
+	}
+	
+	/**
+	 * Attaches a view to listen to kernel changes.
+	 */
+	public synchronized void attachView(View view) {
+		app.getKernel().attach(view);
+	}
+	
+	/**
+	 * Detaches a view from the kernel.
+	 */
+	public synchronized void detachView(View view) {
+		app.getKernel().detach(view);
 	}
 	
 	/**
