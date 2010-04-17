@@ -246,6 +246,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//plane and axis
 		
 		xOyPlane = kernel3D.getXOYPlane();
+		xOyPlane.setGridVisible(true);
 		add(xOyPlane);
 
 

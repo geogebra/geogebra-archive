@@ -72,6 +72,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	private static final Color colPlane3D = new Color(0, 255, 128);
 	/** default alpha for 3D planes*/
 	public static final float DEFAULT_PLANE3D_ALPHA = 0.5f;
+	/** default grid thickness for 3D planes*/
+	public static final int DEFAULT_PLANE3D_GRID_THICKNESS = 1;
 	
 	// polyhedrons	
 	/** default color for polyhedrons */
@@ -170,7 +172,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		
 		// axis
 		GeoAxis3D axis = new GeoAxis3D(cons);
-		axis.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		axis.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		axis.setLocalVariableLabel("Axis3D");
 		defaultGeoElements.put(DEFAULT_AXIS3D, axis);		
 		
@@ -188,6 +190,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		plane.setLocalVariableLabel("Plane3D");
 		plane.setObjColor(colPlane3D);
 		plane.setAlphaValue(DEFAULT_PLANE3D_ALPHA);
+		plane.setLineThickness(DEFAULT_PLANE3D_GRID_THICKNESS);
+		plane.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		defaultGeoElements.put(DEFAULT_PLANE3D, plane);
 		
 		// polygon

@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import java.awt.Color;
+
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -111,7 +113,7 @@ public class Brush {
 	
 	
 	/** thickness for drawing 3D lines*/
-	public static final float LINE3D_THICKNESS = 0.4f;
+	public static final float LINE3D_THICKNESS = 0.5f;
 
 	
 	/** manager */
@@ -132,6 +134,11 @@ public class Brush {
 	
 	/** global length of the curve */
 	private float length;
+	
+	
+	//color
+	/** color r, g, b, a */
+	private float red, green, blue, alpha;
 	
 	
 	//texture
@@ -221,6 +228,7 @@ public class Brush {
 		
 		// draw curve part
 		manager.startGeometry(Manager.QUAD_STRIP);
+		manager.color(red, green, blue, alpha);
 		//manager.startGeometry(Manager.TRIANGLE_STRIP);
     	float dt = (float) 1/latitude;
     	float da = (float) (2*Math.PI *dt) ; 
@@ -318,6 +326,33 @@ public class Brush {
 		this.thickness = thickness;
 	}
 	
+	
+	////////////////////////////////////
+	// COLOR
+	////////////////////////////////////
+
+	/** sets the current color
+	 * @param color
+	 * @param alpha
+	 */
+	public void setColor(Color color, float alpha){
+		this.red = color.getRed()/255f;
+		this.green = color.getGreen()/255f;
+		this.blue = color.getBlue()/255f;
+		this.alpha = alpha;
+	}
+	
+	/** sets the current color (alpha set to 1)
+	 * @param color
+	 */
+	public void setColor(Color color){
+		this.red = color.getRed()/255f;
+		this.green = color.getGreen()/255f;
+		this.blue = color.getBlue()/255f;
+		this.alpha = 1f;
+	}
+	
+	
 
 	////////////////////////////////////
 	// TEXTURE
@@ -349,7 +384,6 @@ public class Brush {
 			return pos;
 		case TEXTURE_AFFINE:
 			return TEXTURE_AFFINE_FACTOR*length*scale*(pos-texturePosZero)+textureValZero;
-			//return (pos+textureValZero)-texturePosZero;
 
 		}
 	}

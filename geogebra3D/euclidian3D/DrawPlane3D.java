@@ -7,6 +7,7 @@ import java.awt.Color;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.opengl.Brush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoCoordSys;
@@ -92,6 +93,37 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		
 		// grid
 		renderer.getGeometryManager().remove(gridIndex);
+		
+		Brush brush = renderer.getGeometryManager().getBrush();
+		
+		brush.start(8);
+		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
+
+		brush.setColor(Color.GRAY);
+		
+		double l=10*200/getView3D().getScale();
+		geo.setGridCorners(-l, -l, l, l);//TODO
+		//double dx = Math.max(geo.getGridXd(), geo.getGridYd()); //TODO
+		double dx = Math.min(geo.getGridXd(), geo.getGridYd());
+		double dy = dx; //TODO
+		//along x axis
+		brush.setAffineTexture(
+				(float) ((0-geo.getYmin())/(geo.getYmax()-geo.getYmin())),
+				0.25f);
+		for(int i=(int) (geo.getYmin()/dy);i<=geo.getYmax()/dy;i++)
+			brush.segment(geo.getPoint(geo.getXmin(),i*dy), 
+					geo.getPoint(geo.getXmax(),i*dy));	
+		//along y axis
+		brush.setAffineTexture(
+				(float) ((0-geo.getXmin())/(geo.getXmax()-geo.getXmin())),
+				0.25f);
+		for(int i=(int) (geo.getXmin()/dx);i<=geo.getXmax()/dx;i++)
+			brush.segment(geo.getPoint(i*dx, geo.getYmin()), 
+					geo.getPoint(i*dx, geo.getYmax()));
+	
+		gridIndex = brush.end();
+
+		/*
 		if (geo.isGridVisible()){
 			gridIndex = renderer.getGeometryManager().newGrid(
 					Color.BLACK, 1f,
@@ -101,6 +133,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 					(float) geo.getGridXd(), (float) geo.getGridYd(), 
 					(float) (0.4/getView3D().getScale()));
 		}
+		*/
 		
 	}
 

@@ -81,11 +81,11 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		GgbVector p1 = cs.getPoint(getDrawMin()).getInhomCoords();
 		GgbVector p2 = cs.getPoint(getDrawMax()).getInhomCoords();
 		
-		float thickness = (float) (Brush.LINE3D_THICKNESS*getGeoElement().getLineThickness()/getView3D().getScale());
 		Brush brush = renderer.getGeometryManager().getBrush();
 		
 		brush.start(8);
 		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
+		brush.setColor(getGeoElement().getObjectColor());
 		brush.setAffineTexture(
 				(float) ((0.-getDrawMin())/(getDrawMax()-getDrawMin())),  0.25f);
 		brush.segment(p1, p2);
