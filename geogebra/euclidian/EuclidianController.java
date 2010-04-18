@@ -347,7 +347,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		initShowMouseCoords();
 		// Michael Borcherds 2007-10-12
 		//clearSelections();
-		if (!TEMPORARY_MODE) clearSelections();
+		if (!TEMPORARY_MODE && !EuclidianView.usesSelectionRectangleAsInput(mode)) clearSelections();
 		//		 Michael Borcherds 2007-10-12
 		moveMode = MOVE_NONE;
 		
@@ -358,6 +358,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		switch (mode) {
 		
 		case EuclidianView.MODE_PEN:
+			
+			ArrayList selection = app.getSelectedGeos();
+			if (selection.size() == 1) {
+				GeoElement geo = (GeoElement)selection.get(0);
+				// getCorner(1) == null as we can't write to transformed images
+				if (geo.isGeoImage() && ((GeoImage)geo).getCorner(1) == null) penGeo = (GeoImage)geo; else penGeo = null;
+				penWritingToExistingImage = (penGeo != null);
+			}
+			
+			// no break;
+			
 		case EuclidianView.MODE_VISUAL_STYLE:
 			
 			openMiniPropertiesPanel();
@@ -665,12 +676,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	private int penOffsetY = 0;
 	private boolean penUsingOffsets = false;
 	private BufferedImage penImage = null;
+	private GeoImage penGeo = null; // used if drawing to existing GeoImage
 	GeoImage lastPenImage = null;
+	boolean penWritingToExistingImage = false;
 
 	ArrayList penPoints = new ArrayList();
 
 	private void handleMousePressedForPenMode(MouseEvent e) {
-//xxx
+
 Rectangle rect = view.getSelectionRectangle();
 
 
@@ -682,9 +695,36 @@ Rectangle rect = view.getSelectionRectangle();
 		
 		app.getEuclidianView().setCursor(app.getTransparentCursor());
 		
-
 		EuclidianView ev = app.getEuclidianView();
 		//Graphics2D g2D = null;
+		
+		
+		
+		if (penGeo != null) {
+			// image was selected before Pen Tool selected
+			
+			penUsingOffsets = true;
+			penImage = penGeo.getImage();
+			//lastPenImage = penGeo;
+			
+			penWritingToExistingImage = true;
+			
+			if (penGeo.isAbsoluteScreenLocActive()) {
+				penOffsetX = penGeo.getAbsoluteScreenLocX();
+				penOffsetY = penGeo.getAbsoluteScreenLocY();
+			} else {
+				GeoPoint startPoint = penGeo.getStartPoint();
+				penOffsetX = ((EuclidianView)view).toScreenCoordX(startPoint.inhomX);
+				penOffsetY = ((EuclidianView)view).toScreenCoordY(startPoint.inhomY) - penImage.getHeight();
+				
+			}
+			
+			app.addSelectedGeo(penGeo);
+
+			
+			
+			penGeo = null;
+		} else
 		if (rect != null && (!penUsingOffsets || penOffsetX != rect.x || 
 				penOffsetY != rect.y) ) {
 			// just draw on a subset of the Graphics View
@@ -704,9 +744,12 @@ Rectangle rect = view.getSelectionRectangle();
 			penOffsetY = rect.y;
 			penUsingOffsets = true;
 			
+			penWritingToExistingImage = false;
+
+			
 			//view.setSelectionRectangle(null);
 		}
-		else if (lastPenImage != null) {
+		else if (lastPenImage != null && !penWritingToExistingImage) {
 
 			penImage = lastPenImage.getImage();
 
@@ -725,6 +768,8 @@ Rectangle rect = view.getSelectionRectangle();
 				penImage = null;
 				lastPenImage = null;
 			}
+			
+			penWritingToExistingImage = false;
 
 		}
 
@@ -796,7 +841,7 @@ Rectangle rect = view.getSelectionRectangle();
 		ev.getGraphics().drawImage(penImage, penOffsetX, penOffsetY, null);
 
 
-		if (lastPenImage == null) {
+		if (lastPenImage == null && !penWritingToExistingImage) {
 			String fileName = app.createImage(penImage, "penimage.png");
 			//Application.debug(fileName);
 
@@ -821,7 +866,8 @@ Rectangle rect = view.getSelectionRectangle();
 		//app.storeUndoInfo();
 		app.setUnsaved();
 
-		penImage = null;
+		if (!penWritingToExistingImage) penImage = null;
+		//penWritingToExistingImage = false;
 
 	}
 

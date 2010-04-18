@@ -4118,6 +4118,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		{
 		case MODE_VISUAL_STYLE: return true;
 		case MODE_FITLINE: return true;
+		case MODE_PEN: return true;
 		default: return false;
 		}
 	}
