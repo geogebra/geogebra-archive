@@ -160,7 +160,10 @@ public class AlgebraController
 		else if (mode != EuclidianView.MODE_SELECTION_LISTENER) {
 			// let euclidianView know about the click
 			ev.clickedGeo(geo, e);
-		}
+		} else 
+			// tell selection listener about click
+			app.geoElementSelected(geo, false);
+
 		
 		// Alt click: copy definition to input field
 		if (geo != null && e.isAltDown() && app.showAlgebraInput()) {			
