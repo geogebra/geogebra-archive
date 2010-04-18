@@ -317,9 +317,9 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 			{
 				{
 					// command for apply, visible text, tooltip text
-					{ "Evaluate", 	"= " + app.getCommand("Evaluate"), 		app.getCommand("Evaluate")},
-					{ "Numeric", 	"\u2248 " + app.getCommand("Numeric"), 	app.getCommand("Numeric") },
-					{ "CheckInput", "\u2713 " + app.getPlain("CheckInput"), 	app.getPlain("CheckInput")} 
+					{ "Evaluate", 	"=", 		app.getCommand("Evaluate")},
+					{ "Numeric", 	"\u2248", 	app.getCommand("Numeric") },
+					{ "CheckInput", "\u2713", 	app.getPlain("CheckInput")} 
 				},
 				{
 					{ "Expand", 	app.getCommand("Expand")  },
