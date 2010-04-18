@@ -4943,6 +4943,9 @@ class ShowConditionPanel
 				for (int i = 0; i < geos.length; i++) {
 					GeoElement geo = (GeoElement) geos[i];
 					geo.setShowObjectCondition(cond);				
+
+					// make sure object shown when condition removed
+					if (cond == null) geo.updateRepaint(); 
 				}	
 				
 			} catch (CircularDefinitionException e) {
