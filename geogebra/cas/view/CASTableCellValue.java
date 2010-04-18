@@ -10,6 +10,7 @@ import geogebra.util.Util;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 
 
@@ -21,7 +22,7 @@ public class CASTableCellValue {
 	private boolean suppressOutput = false;
 	
 	// input and output variables of this cell expression
-	private HashSet <String> invars;
+	private TreeSet <String> invars;
 	private String assignmentVar;
 	private boolean includesRowReferences;
 	
@@ -31,7 +32,7 @@ public class CASTableCellValue {
 	private String evalCmd, evalComment;
 	private CASView view;
 	private Kernel kernel;
-	private int row;
+	private int row = -1;
 
 	public CASTableCellValue(CASView view) {
 		this.view = view;
@@ -48,7 +49,7 @@ public class CASTableCellValue {
 	}
 	
 	void setRow(int row) {
-		this.row = row;
+		this.row = row;		
 	}
 	
 	int getRow() {
@@ -183,7 +184,7 @@ public class CASTableCellValue {
 		prefix = "";
 		evalVE = inputVE;
 		postfix = "";
-		evalCmd = "";
+		setEvalCommand("");
 		evalComment = "";
 		
 		// update input and output variables
@@ -219,10 +220,14 @@ public class CASTableCellValue {
 	 * @param postfix: end part that should NOT be evaluated
 	 */
 	public void setProcessingInformation(String prefix, String eval, String postfix) {
-		evalCmd = "";
+		setEvalCommand("");
+		evalComment = "";
 		
 		// stop if input is assignment
 		if (inputVE != null && inputVE.getLabel() != null) {
+			if (eval.startsWith("CheckInput")) {
+				setEvalCommand("CheckInput");
+			}
 			return;
 		}
 		
@@ -231,7 +236,7 @@ public class CASTableCellValue {
 		if (evalVE != null) {
 			if (evalVE.isTopLevelCommand()) {
 				// extract command from eval
-				evalCmd = evalVE.getTopLevelCommand().getName();
+				setEvalCommand(evalVE.getTopLevelCommand().getName());
 			}
 			this.prefix = prefix;
 			this.postfix = postfix;
@@ -341,7 +346,7 @@ public class CASTableCellValue {
 	
 	private void addInVar(String var) {
 		if (invars == null)
-			invars = new HashSet<String>();
+			invars = new TreeSet<String>();
 		invars.add(var);
 		
 		includesRowReferences = includesRowReferences || 
@@ -354,11 +359,56 @@ public class CASTableCellValue {
 	}
 	
 	/**
+	 * Returns the n-th input variable (in alphabetical order).
+	 * @param i
+	 * @return
+	 */
+	public String getInVar(int n) {
+		if (invars == null) return null;
+		
+		Iterator<String> it = invars.iterator();
+		int pos=0; 
+		while (it.hasNext()) {
+			String var = it.next();
+			if (pos == n) return var;
+			pos++;
+		}
+		
+		return null;
+	}
+	
+//	/**
+//	 * Replaces all row references from by to in input.
+//	 * @param from
+//	 * @param to
+//	 */
+//	public void replaceRowReferences(String from, String to) {
+//		if (includesRowReferences)
+//			setInput(input.replaceAll(from, to));
+//	}
+	
+	/**
 	 * Returns whether var is an input variable of this cell. For example,
 	 * "b" is an input variable of "c := a + b"
 	 */
 	final public boolean isInputVariable(String var) {
 		return invars != null && invars.contains(var);
+	}
+	
+	/**
+	 * Returns whether var is a function variable of this cell. For example,
+	 * "y" is a function variable of "f(y) := 2y + b"
+	 */
+	final public boolean isFunctionVariable(String var) {
+		return inputVE instanceof Function && ((Function) inputVE).isFunctionVariable(var);
+	}
+	
+	/**
+	 * Returns whether var is a function variable of this cell. For example,
+	 * "y" is a function variable of "f(y) := 2y + b"
+	 */
+	final public String getFunctionVariable() {
+		return (inputVE instanceof Function) ? ((Function) inputVE).getFunctionVariable().getLabel() : null;
 	}
 	
 	/**
@@ -390,10 +440,17 @@ public class CASTableCellValue {
 	
 	final public void setEvalCommand(String cmd) {
 		evalCmd = cmd;
+		
+		boolean checkInputUsed = evalCmd != null && evalCmd.equals("CheckInput"); 
+		if (inputVE != null)
+			inputVE.setCheckInputUsed(checkInputUsed);
+		if (evalVE != null)
+			evalVE.setCheckInputUsed(checkInputUsed);
 	}
 	
 	final public void setEvalComment(String comment) {
-		evalComment = comment;
+		if (comment != null)
+			evalComment = comment;
 	}
 	
 	final public String getEvalComment() {

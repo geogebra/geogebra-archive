@@ -12,7 +12,7 @@ public class RowHeader extends JList {
 		
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setFixedCellWidth(ROW_HEADER_WIDTH);
-		setFocusable(false);
+		setFocusable(true);
 		
 		// renderer
 		setCellRenderer(new RowHeaderRenderer(table));
@@ -20,7 +20,8 @@ public class RowHeader extends JList {
 		// listener 
 		RowHeaderListener rhl = new RowHeaderListener(table, this);						
 		addMouseListener(rhl);
-		addMouseMotionListener(rhl);		
+		addMouseMotionListener(rhl);	
+		addKeyListener(rhl);
 		
 //		table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 //		table.getSelectionModel().addListSelectionListener(this);

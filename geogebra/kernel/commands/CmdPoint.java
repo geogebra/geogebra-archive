@@ -36,13 +36,7 @@ public  GeoElement[] process(Command c) throws MyError {
                 return ret;
             } else if (ok[0] = (arg[0].isGeoList())) {
                 GeoElement[] ret = kernel.PointsFromList(c.getLabels(), (GeoList) arg[0]);
-                
-                
-                // TODO: find a better solution 
-                // problem: points not updated when Point[ {1,2} ] is redefined
-	            SwingUtilities.invokeLater( new Runnable(){ public void
-	            	run() { kernel.updateConstruction();} });
-                
+            
                 return ret;
         } else
 				throw argErr(app, "Point", arg[0]);

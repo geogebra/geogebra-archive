@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.GeoDummyVariable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -211,8 +212,6 @@ public class Equation extends ValidExpression {
     public boolean isImplicit() {
         return !isExplicit("x") && !isExplicit("y");
     }
-    
-    
 
 	public boolean contains(ExpressionValue ev) {
 		return lhs.contains(ev) || rhs.contains(ev);
@@ -227,10 +226,18 @@ public class Equation extends ValidExpression {
 	}
 
 	public HashSet getVariables() {
-		HashSet vars = new HashSet();
-		vars.addAll(lhs.getVariables());
-		vars.addAll(rhs.getVariables());
-		return vars;
+		HashSet leftVars = lhs.getVariables();
+        HashSet rightVars = rhs.getVariables();        
+        if (leftVars == null) {
+        	return rightVars;        		
+        } 
+        else if (rightVars == null) {
+        	return leftVars;
+        }
+        else {        	
+        	leftVars.addAll(rightVars);        	
+        	return leftVars;
+        }     
 	}
 
 	public boolean isBooleanValue() {
@@ -302,7 +309,7 @@ public class Equation extends ValidExpression {
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 		        sb.append(" == ");
 		        break;
-		        
+				
 			default:	       	        
 		        sb.append(" = ");	        
         }
@@ -340,6 +347,14 @@ public class Equation extends ValidExpression {
         
         return sb.toString();
     }
+	
+	 public String getAssignmentOperator() {
+		 return ": ";
+	 }
+	 
+	 public String getAssignmentOperatorLaTeX() {
+		 return ": \\, ";
+	 }
 
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub

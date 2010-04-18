@@ -273,35 +273,7 @@ public class GeoGebraCAS {
 		return null;
 	}
 	
-	/**
-	 * Returns a representation of geo in GeoGebraCAS syntax.
-	 * For example, "f(x) := a x^2" or "a := 20"
-	 */
-	public String toCASString(GeoElement geo) {
-		if (!geo.isDefined()) return null;
-		
-		StringBuilder sb = new StringBuilder();
-
-		// function, e.g. f(x) := 2*x
-		if (geo.isGeoFunction()) {
-			Function fun = ((GeoFunction)geo).getFunction();
-			sb.append(geo.getLabel());
-			sb.append("(" );
-			sb.append(fun.getFunctionVariable());
-			sb.append(") := ");
-			sb.append(fun.getExpression().getCASstring(true));
-		}
-		else {
-			sb.append(geo.getLabel());
-			sb.append(" := ");
-			if (geo.isIndependent())
-				sb.append(geo.toValueString());
-			else 
-				sb.append(geo.getCommandDescription());
-		}
-
-		return sb.toString();
-	}
+	
 	
 	final private String toString(ExpressionValue ev, boolean symbolic) {
 		if (symbolic)

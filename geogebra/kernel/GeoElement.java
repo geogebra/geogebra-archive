@@ -1519,6 +1519,31 @@ public abstract class GeoElement
     	//else
     	//	return toDefinedValueString();	
     }     
+    
+    /**
+	 * Returns a symbolic representation of geo in GeoGebraCAS syntax.
+	 * For example, "f(x) := a x^2", "a := 20" or "g: 3x + 4y = 7"
+	 */
+	public String toGeoGebraCASString() {
+		if (!isDefined()) return null;
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(getLabelForAssignment());
+		sb.append(getAssignmentOperator());
+		if (isIndependent())
+			sb.append(toValueString());
+		else 
+			sb.append(getCommandDescription());
+		return sb.toString();
+	}
+	
+	 public String getLabelForAssignment() {
+		 return getLabel();
+	 }
+	 
+	 public String getAssignmentOperator() {
+		 return " := ";
+	 }
 
 	/* *******************************************************
 	 * GeoElementTable Management
@@ -4073,7 +4098,7 @@ public abstract class GeoElement
 			
 			// get in form If(x<3, etc
 			ret = geoFun.toSymbolicString();
-			Application.debug(ret);
+			//Application.debug(ret);
 			
 		} else if (this.isGeoFunction()) {
 			GeoFunction geoFun = (GeoFunction)this;

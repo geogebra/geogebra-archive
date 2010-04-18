@@ -2694,5 +2694,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		super.setMidpoint(coords);
 
 	}
+	
+	 public String getAssignmentOperator() {
+		 return ": ";
+	 }
 
 }

@@ -68,8 +68,12 @@ public class CASOutputPanel extends JPanel {
 			// show check character
 			outputSign.setText("\u2713");
 		} 
+		else if (cmd.equals(app.getCommand("Numeric"))) {
+			// show approx character
+			outputSign.setText("\u2248");
+		}
 		else {
-			outputSign.setText(cmd + ": ");
+			outputSign.setText(cmd + ":");
 		}
 	}
 

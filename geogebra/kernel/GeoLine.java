@@ -807,5 +807,8 @@ GeoLineInterface {
 		return false;
 	}
     
+	 public String getAssignmentOperator() {
+		 return ": ";
+	 }
 
 }

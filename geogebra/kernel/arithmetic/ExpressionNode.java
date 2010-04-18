@@ -548,7 +548,7 @@ implements ExpressionValue, ExpressionNodeConstants {
         if (left.isExpressionNode()) {             
             isFunction = ((ExpressionNode)left).isFunctionInX();            
         } else if (left.isPolynomialInstance()) {            
-            isFunction = ((Polynomial) left).isX();
+            isFunction = ((Polynomial) left).isVar("x");
         }      
         if (!isFunction) return false;
        
@@ -556,7 +556,7 @@ implements ExpressionValue, ExpressionNodeConstants {
         if (right.isExpressionNode()) {
             isFunction =((ExpressionNode)right).isFunctionInX();            
         }else if (right.isPolynomialInstance()) {            
-            isFunction = ((Polynomial) right).isX();
+            isFunction = ((Polynomial) right).isVar("x");
         }
        }
                  
@@ -1625,7 +1625,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             			}
             			                       
 		                // left wing              	
-		                if (left.isLeaf()|| opID(left) >= MULTIPLY) { // not +, -, *
+		                if (left.isLeaf()|| opID(left) >= DIVIDE) { // not +, -, *
 		                    sb.append(leftStr);                
 		                } else { 
 		                    sb.append(leftBracket(STRING_TYPE));

@@ -442,15 +442,15 @@ ValidExpression buildCASExpression() :
         // f(a) := a^2 + 3a
         LOOKAHEAD(2147483647)   
         ve = casFunction()
+    |	   
+       	// labeled equation, e.g. g: 3x + y = 7
+       	LOOKAHEAD(2147483647)   
+       	l = casLabel() ( ":" | <ASSIGNMENT>) ve = equation()  
     |
         // assignment         
         // b := 27 + c
         LOOKAHEAD(2147483647)
-		l = casLabel() <ASSIGNMENT> ve = expressionnode() 
-	|	   
-       	// labeled equation, e.g. g: 3x + y = 7
-       	LOOKAHEAD(2147483647)   
-       	l = casLabel() ( ":" | <ASSIGNMENT >) ve = equation()   
+		l = casLabel() <ASSIGNMENT> ve = expressionnode()  
  	|	   
        	// equation, e.g. 3x + y = 7
        	LOOKAHEAD(2147483647)   
@@ -799,6 +799,11 @@ ExpressionNode functionExpressionnode():
 	   		    varName =  <SPREADSHEET_LABEL> | varName = <LABEL> ) ")" 
 	   		( <EQUAL > | <ASSIGNMENT> ) rhs = expressionnode()
 	    {
+	      	// allow f(y) in CAS but not in GeoGebra
+		//	if (!ExternalCASParsing && !GeoGebraCASParsing && "y".equals(varName.image)) 
+	    //    	throw new MyError(app, "InvalidInput");
+
+
 			String funLabel = funName.image.substring(0,funName.image.length()-1);
 	      
 			// command: return function expression
@@ -1320,12 +1325,18 @@ ExpressionValue numVecVariable():
 {
     c = <VARX>  
     {
-        return new Polynomial(kernel, c.image);
+        if (GeoGebraCASParsing)
+ 			return new ExpressionNode(kernel, new Variable(kernel, c.image));
+		else
+        	return new Polynomial(kernel, c.image);
     }
 |
     c = <VARY>  
     {
-        return new Polynomial(kernel, c.image);
+        if (GeoGebraCASParsing)
+ 			return new ExpressionNode(kernel, new Variable(kernel, c.image));
+		else
+        	return new Polynomial(kernel, c.image);
     }
 |
 	// spreadsheet range like A1:B2

@@ -1017,7 +1017,28 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		}
 		return false;    	
     }
+	
+    /**
+	 * Returns a symbolic representation of geo in GeoGebraCAS syntax.
+	 * For example, "f(x) := a x^2", "a := 20" or "g: 3x + 4y = 7"
+	 */
+	public String toGeoGebraCASString() {
+		if (!isDefined()) return null;
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(getLabelForAssignment());
+		sb.append(getAssignmentOperator());
+		sb.append(fun.getExpression().getCASstring(true));
+		return sb.toString();
+	}
     
-   
+	 public String getLabelForAssignment() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getLabel());
+		sb.append("(" );
+		sb.append(fun.getFunctionVariable());
+		sb.append(")");
+		return sb.toString();
+	 }	
 
 }

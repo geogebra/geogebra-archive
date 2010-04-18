@@ -308,7 +308,7 @@ implements Path, Traceable, LineProperties
 
 	public boolean isOnFullCubic(GeoPoint geoPoint, double eps) {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 
@@ -320,8 +320,11 @@ implements Path, Traceable, LineProperties
 
 	public boolean isIntersectionPointIncident(GeoPoint p, double minPrecision) {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
+	 public String getAssignmentOperator() {
+		 return ": ";
+	 }
 
 }

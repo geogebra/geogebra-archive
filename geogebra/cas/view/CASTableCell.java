@@ -68,7 +68,7 @@ public abstract class CASTableCell extends JPanel{
 				if (evalCmdLocal.length() == 0) {
 					evalCmdLocal = evalComment;
 				} else {
-					evalCmdLocal = evalCmdLocal + " " + evalComment;
+					evalCmdLocal = evalCmdLocal + ", " + evalComment;
 				}
 			}
 			

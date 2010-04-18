@@ -188,7 +188,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 			subCmd = "Simplify[" + subCmd + "]"; 
 		}
 		else if (actionCommand.equals("Numeric")) {
-			subCmd = "Numeric[" + subCmd + "]"; 
+			subCmd = "Numeric[" + subCmd + "]";
 		}
 			
 		try {

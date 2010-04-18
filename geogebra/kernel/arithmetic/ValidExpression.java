@@ -16,6 +16,7 @@ the Free Software Foundation.
  */ 
 package geogebra.kernel.arithmetic;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
@@ -23,8 +24,9 @@ public abstract class ValidExpression implements ExpressionValue {
         
     private Vector labels;
     private boolean inTree; // used by ExpressionNode
-            
-    public void addLabel(String label) {  
+    private boolean checkInputUsed; // flag used by GeoGebraCAS
+
+	public void addLabel(String label) {  
     	initLabels();
         labels.add(label);
     }   
@@ -130,7 +132,7 @@ public abstract class ValidExpression implements ExpressionValue {
 		 
 		 StringBuilder sb = new StringBuilder();
 		 sb.append(getLabelForAssignment());
-		 sb.append(" := ");
+		 sb.append(getAssignmentOperator());
 		 sb.append(toString());
 		 return sb.toString();
 	 }
@@ -142,13 +144,29 @@ public abstract class ValidExpression implements ExpressionValue {
 		 
 		 StringBuilder sb = new StringBuilder();
 		 sb.append(getLabelForAssignment());
-		 sb.append(" \\, : \\! =  \\, ");
+		 sb.append(getAssignmentOperatorLaTeX());
 		 sb.append(toLaTeXString(true));
 		 return sb.toString();
+	 }
+	 
+	 public String getAssignmentOperator() {
+		 return " := ";
+	 }
+	 
+	 public String getAssignmentOperatorLaTeX() {
+		 return " \\, : \\! =  \\, ";
 	 }
 	 
 	  public void addCommandNames(Set cmdNames) {
 		// do nothing, see Command, ExpressionNode classes
 	  }
+	  
+	   public boolean isCheckInputUsed() {
+			return checkInputUsed;
+		}
+
+		public void setCheckInputUsed(boolean checkInputUsed) {
+			this.checkInputUsed = checkInputUsed;
+		}
 	
 }

@@ -67,13 +67,13 @@ public class Polynomial extends ValidExpression implements Serializable, Express
     }
     
     /** 
-     * Returns true if this polynomial equals "1x" 
+     * Returns true if this polynomial equals "1 var" 
      */
-    boolean isX() {
+    boolean isVar(String var) {
         if (length() != 1) return false;
         try {
             Term t = (Term) terms.get(0);
-            return (t.getVars().equals("x") && 
+            return (t.getVars().equals(var) && 
                         t.getCoefficient().isConstant() &&
                         ((NumberValue) t.getCoefficient().evaluate()).getDouble() == 1.0);
         } catch(Exception e) {

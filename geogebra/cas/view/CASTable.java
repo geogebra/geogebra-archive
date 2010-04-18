@@ -122,7 +122,15 @@ public class CASTable extends JTable {
 	 * the new row.
 	 */
 	public void insertRow(CASTableCellValue newValue, boolean startEditing) {
-		insertRowAfter(tableModel.getRowCount()-1, newValue, startEditing);		
+		int lastRow = tableModel.getRowCount()-1;
+		if (isRowEmpty(lastRow)) {
+			if (newValue == null)
+				newValue = new CASTableCellValue(view);
+			tableModel.setValueAt(newValue, lastRow, COL_CAS_CELLS);
+			startEditingRow(lastRow);
+		} else {
+			insertRowAfter(lastRow, newValue, startEditing);	
+		}	
 	}
 	
 	/**
@@ -227,7 +235,9 @@ public class CASTable extends JTable {
 		return (CASTableCellValue) tableModel.getValueAt(row, COL_CAS_CELLS);
 	}
 	
-	public boolean isRowEmpty(int row) {		
+	public boolean isRowEmpty(int row) {	
+		if (row < 0) return false;
+		
 		CASTableCellValue value = (CASTableCellValue) tableModel.getValueAt(row, 0);
 		return value.isEmpty();
 	}
@@ -237,6 +247,7 @@ public class CASTable extends JTable {
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteAllRows() {
+		stopEditing();
 		int row = tableModel.getRowCount();
 		for (int i = row - 1; i >= 0; i--)
 			tableModel.removeRow(i);
@@ -249,14 +260,33 @@ public class CASTable extends JTable {
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteRow(int row) {
+		stopEditing();
 		tableModel.removeRow(row);
-
+		this.repaint();
+		
 		int rowCount = tableModel.getRowCount();
 		if (rowCount == 0)
-			insertRowAfter(-1, null, true);
+			insertRow(null, true);
 		else 
 			startEditingRow(Math.min(row, rowCount-1));
 	}
+	
+//	/**
+//	 * Changes all dynamic references in rows according to the row number change.
+//	 * @param fromRow
+//	 * @param toRow
+//	 */
+//	private void changeRowNumberChanged(int fromRow, int toRow) {
+//		int rowCount = tableModel.getRowCount();
+//		if (rowCount == 0) return;
+//		
+//		String oldRef = "\\" + CASInputHandler.ROW_REFERENCE_DYNAMIC + Integer.toString(fromRow-1);
+//		String newRef =  "\\" + CASInputHandler.ROW_REFERENCE_DYNAMIC + Integer.toString(toRow-1);
+//		for (int i=0; i < rowCount; i++) {
+//			CASTableCellValue cellValue = getCASTableCellValue(i);
+//			cellValue.replaceRowReferences(oldRef, newRef);
+//		}
+//	}
 
 	/*
 	 * Function: Set the focus on the specified row

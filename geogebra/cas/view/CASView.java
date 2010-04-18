@@ -313,20 +313,23 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	// Ulven 01.03.09: Drop this, do it in components.BtnPanel
 	private JPanel initButtons() {
 
-		final String[][][] menuStrings = {
+		final String[][][] menuStrings = 
+			{
 				{
-						// command for apply, visible text, tooltip text
-						{ "Evaluate", "=", app.getCommand("Evaluate") },
-						{ "Numeric", "\u2248", app.getCommand("Numeric") },
-						{ "CheckInput", "\u2713", app.getPlain("CheckInput") } },
+					// command for apply, visible text, tooltip text
+					{ "Evaluate", 	"= " + app.getCommand("Evaluate"), 		app.getCommand("Evaluate")},
+					{ "Numeric", 	"\u2248 " + app.getCommand("Numeric"), 	app.getCommand("Numeric") },
+					{ "CheckInput", "\u2713 " + app.getPlain("CheckInput"), 	app.getPlain("CheckInput")} 
+				},
 				{
-						{ "Expand", app.getCommand("Expand") },
-						{ "Factor", app.getCommand("Factor") },
-						// {"Simplify", app.getCommand("Simplify")},
-						{ "SubstituteDialog", app.getCommand("Substitute") },
-						{ "Solve", app.getCommand("Solve") },
-						{ "Derivative", "d/dx", app.getCommand("Derivative") },
-						{ "Integral", "\u222b dx", app.getCommand("Integral") } } };
+					{ "Expand", 	app.getCommand("Expand")  },
+					{ "Factor", 	app.getCommand("Factor")},
+					{ "Substitute", app.getCommand("Substitute") },
+					{ "Solve", 		app.getCommand("Solve"), app.getCommand("Solve"), "%0" },
+					{ "Derivative", app.getCommand("Derivative"),  app.getCommand("Derivative"),"%0" },
+					{ "Integral", 	app.getCommand("Integral"),  app.getCommand("Integral"),"%0" }
+				} 
+			};
 
 		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		final JComboBox[] menus = new JComboBox[menuStrings.length];
@@ -336,10 +339,19 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 				for (int i = 0; i < menus.length; i++) {
 					if (source == menus[i]) {
 						int pos = menus[i].getSelectedIndex();
-						processInput(menuStrings[i][pos][0], null);
+						
 						// update tooltip
 						if (menuStrings[i][pos].length >= 3)
 							menus[i].setToolTipText(menuStrings[i][pos][2]);
+						
+						String[] params = null;
+						if (menuStrings[i][pos].length >= 4) {
+							params = new String[menuStrings[i][pos].length - 3];
+							for (int p=0; p<params.length; p++)
+								params[p] = menuStrings[i][pos][3+p];
+						}
+						
+						processInput(menuStrings[i][pos][0], params);
 					}
 				}
 			}
@@ -393,7 +405,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	public void add(GeoElement geo) {
 		try {
 			if (geo.isGeoFunction()) {
-				String funStr = getCAS().toCASString(geo);
+				String funStr = geo.toGeoGebraCASString();
 				getCAS().evaluateGeoGebraCAS(funStr);
 			}
 		} catch (Throwable e) {
@@ -436,7 +448,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 
 			// process row if geo is independent
 			// set input of assignment row, e.g. a := 2;
-			String assignmentStr = getCAS().toCASString(geo);
+			String assignmentStr = geo.toGeoGebraCASString();
 			cellValue.setInput(assignmentStr);
 			casInputHandler.processRow(row);
 			consoleTable.repaint();
@@ -445,7 +457,8 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		}
 
 		// update all dependent rows
-		casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
+		if (geo.isLabelSet())
+			casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
 
 		if (!updateHandled && geo.isGeoFunction()) {
 			add(geo);

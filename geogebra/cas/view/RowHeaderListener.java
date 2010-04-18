@@ -2,13 +2,15 @@ package geogebra.cas.view;
 
 import geogebra.main.Application;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JList;
 
-public class RowHeaderListener extends MouseAdapter implements MouseMotionListener {
+public class RowHeaderListener extends MouseAdapter implements MouseMotionListener, KeyListener {
 
 	private CASTable table;
 	private JList rowHeader;
@@ -27,11 +29,14 @@ public class RowHeaderListener extends MouseAdapter implements MouseMotionListen
 		table.stopEditing();
 				
 		// update selection for mouse pressed
-		mousePressedRow = rowHeader.locationToIndex(e.getPoint());			
+		mousePressedRow = rowHeader.locationToIndex(e.getPoint());		
 		if (!rowHeader.isSelectedIndex(mousePressedRow)) {
 			rowHeader.setSelectedIndex(mousePressedRow);
 		}
+		
 		dragged = false;
+		
+		rowHeader.requestFocusInWindow();
 	}
 	
 	public void mouseDragged(MouseEvent e) {
@@ -55,15 +60,15 @@ public class RowHeaderListener extends MouseAdapter implements MouseMotionListen
 		e.consume();	
 		mousePressedRow = -1;
 				
-		int mouseReleasedRow = rowHeader.locationToIndex(e.getPoint());
+		//int mouseReleasedRow = rowHeader.locationToIndex(e.getPoint());
 		
 		// update selection if:
 		//   mouseReleasedRow is not selected yet
 		// or
 		//   we did a left click without drag
-		if (!rowHeader.isSelectedIndex(mouseReleasedRow) || !rightClick && !dragged) {
-			rowHeader.setSelectedIndex(mouseReleasedRow);
-		}
+//		if (!rowHeader.isSelectedIndex(mouseReleasedRow) || !rightClick && !dragged) {
+//			rowHeader.setSelectedIndex(mouseReleasedRow);
+//		}
 			
 		// handle right click
 		if (rightClick) {
@@ -72,12 +77,44 @@ public class RowHeaderListener extends MouseAdapter implements MouseMotionListen
 		} 
 	}
 	
+	
+	
 	public void mouseClicked(MouseEvent e) {
 
 	}
 	
 	public void mouseMoved(MouseEvent e) {
 		e.consume();
+	}
+
+	public void keyPressed(KeyEvent e) {
+		boolean undoNeeded = false;
+		
+		switch (e.getKeyCode()) {				
+			case KeyEvent.VK_DELETE:
+			case KeyEvent.VK_BACK_SPACE:
+				int [] selRows = rowHeader.getSelectedIndices();
+				if (selRows.length > 0) {
+					for (int i=selRows.length-1; i >= 0; i--) {
+						table.deleteRow(selRows[i]);
+					}
+					undoNeeded = true;
+				}
+				break;
+		}
+		
+		if (undoNeeded) {
+			// store undo info
+			table.app.storeUndoInfo();
+		}
+	}
+
+	public void keyReleased(KeyEvent e) {
+		
+	}
+
+	public void keyTyped(KeyEvent e) {
+		
 	}
 
 //	public void valueChanged(ListSelectionEvent e) {
