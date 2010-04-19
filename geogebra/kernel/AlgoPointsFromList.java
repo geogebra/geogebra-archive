@@ -134,8 +134,9 @@ public class AlgoPointsFromList extends AlgoElement {
 				y[0] = ((GeoNumeric)arg1).getDouble();
 				length = 1;
 			}
-		} else {
-			
+		}
+		
+		if (length == -1) {			
 			// handle Point[ { {1,2}, {3,4} } ] case
 			for (int i = 0 ; i < n ; i ++) {
 				GeoElement geo = list.get(i);
