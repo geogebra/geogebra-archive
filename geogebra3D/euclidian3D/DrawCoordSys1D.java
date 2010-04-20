@@ -58,7 +58,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	
 	public void drawGeometry(Renderer renderer) {
-		renderer.setThickness(getGeoElement().getLineThickness());
+		//renderer.setThickness(getGeoElement().getLineThickness());
 		//renderer.drawSegment(drawMin,drawMax);
 		
 		//renderer.getTextures().setDashTexture(Textures.DASH_SIMPLE,1f);
@@ -70,38 +70,37 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	
 	protected void updateForItSelf(){
+		
+		GeoCoordSys1D cs = (GeoCoordSys1D) getGeoElement();
+		updateForItSelf(cs.getPoint(getDrawMin()).getInhomCoords(), 
+				cs.getPoint(getDrawMax()).getInhomCoords());
+	
+	}
 
+	protected void updateForItSelf(GgbVector p1, GgbVector p2){
 
 		Renderer renderer = getView3D().getRenderer();
-		GeoCoordSys1D cs = (GeoCoordSys1D) getGeoElement();
 		
 
 		renderer.getGeometryManager().remove(segmentIndex);
-		
-		GgbVector p1 = cs.getPoint(getDrawMin()).getInhomCoords();
-		GgbVector p2 = cs.getPoint(getDrawMax()).getInhomCoords();
+
 		
 		Brush brush = renderer.getGeometryManager().getBrush();
 		
 		brush.start(8);
-		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
-		brush.setColor(getGeoElement().getObjectColor());
+		brush.setThickness(getLineThickness(),(float) getView3D().getScale());
+		//brush.setColor(getGeoElement().getObjectColor());
 		brush.setAffineTexture(
 				(float) ((0.-getDrawMin())/(getDrawMax()-getDrawMin())),  0.25f);
 		brush.segment(p1, p2);
 		segmentIndex = brush.end();
-		/*
-		segmentIndex = renderer.getGeometryManager().newSegment(
-				getGeoElement().getObjectColor(),
-				cs.getPoint(getDrawMin()).getInhomCoords(),
-				cs.getPoint(getDrawMax()).getInhomCoords(),
-				(float) getGeoElement().getLineThickness(),
-				(float) getView3D().getScale(),
-				(float) ((0.5-getDrawMin())/(getDrawMax()-getDrawMin())));
-		*/
 		
 		
 		
+	}
+	
+	protected int getLineThickness(){
+		return getGeoElement().getLineThickness();
 	}
 	
 	protected void updateForView(){

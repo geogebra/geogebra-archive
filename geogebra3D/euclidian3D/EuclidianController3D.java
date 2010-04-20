@@ -416,7 +416,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			point3D = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
 		else{
 			//if xOy plane is visible, then the point is on it
-			if (view3D.getxOyPlane().isEuclidianVisible()) 
+			if (view3D.getxOyPlane().isPlateVisible() ||
+					view3D.getxOyPlane().isGridVisible()) 
 				return createNewPoint(true, (Region) view3D.getxOyPlane());
 			
 			point3D = view3D.getCursor3D();

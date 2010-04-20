@@ -293,7 +293,6 @@ public class Renderer implements GLEventListener {
 	 * Then, for each {@link Drawable3D}, it calls:
 	 * <ul>
 	 * <li> {@link Drawable3D#drawHidden(EuclidianRenderer3D)} to draw hidden parts (dashed segments, lines, ...) </li>
-	 * <li> {@link Drawable3D#drawHighlightingPointsAndCurves(EuclidianRenderer3D)} to show objects that are picked (highlighted) </li>
 	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to draw transparent objects (planes, spheres, ...) </li>
 	 * <li> {@link Drawable3D#drawSurfacesForHiding(EuclidianRenderer3D)} to draw in the z-buffer objects that hides others (planes, spheres, ...) </li>
 	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to re-draw transparent objects for a better alpha-blending </li>
@@ -336,6 +335,7 @@ public class Renderer implements GLEventListener {
         ((EuclidianController3D) view3D.getEuclidianController()).processMouseMoved();
         
         // update 3D view
+        geometryManager.update();
         view3D.update();
         view3D.updateDrawablesNow();
 
@@ -371,25 +371,14 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_ALPHA_TEST);       
 
 
-        //drawing highlighted parts -- points and curves     
-        //gl.glDepthMask(false);
-        //setMaterial(new Color(0f,0f,0f),0.75f);
-        dilation = DILATION_HIGHLITED;
-    	gl.glCullFace(GL.GL_FRONT); //draws inside parts
-        //gl.glEnable(GL.GL_BLEND);
-    	drawList3D.drawHighlightingPointsAndCurves(this);
-        dilation = DILATION_NONE;
         
+        
+         
        
 
-        //drawing highlighted parts -- surfaces
-        gl.glDepthMask(false);
+        
         gl.glEnable(GL.GL_BLEND);
         gl.glDisable(GL.GL_CULL_FACE);
-        drawList3D.drawHighlightingSurfaces(this);
-        
-        
-        
         
         
         //drawing transparents parts

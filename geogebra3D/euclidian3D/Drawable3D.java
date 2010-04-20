@@ -388,12 +388,7 @@ public abstract class Drawable3D {
 	 */	
 	abstract public void drawHiding(Renderer renderer); 
 	
-	/**
-	 * sets the matrix, the pencil and draw the geometry to show the object is highlighted
-	 * @param renderer the 3D renderer where to draw
-	 */		
-	abstract public void drawHighlighting(Renderer renderer); 
-
+	
 	/**
 	 * sets the matrix, the pencil and draw the geometry for the {@link Renderer} to process picking
 	 * @param renderer the 3D renderer where to draw

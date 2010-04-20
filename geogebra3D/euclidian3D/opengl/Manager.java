@@ -22,7 +22,9 @@ abstract public class Manager {
 	/** geometries types */
 	static final int TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
 	static final int QUAD_STRIP = GL.GL_QUAD_STRIP;
-	
+
+	/** color factor for highlighting */
+	private float colorFactor;
 	
 	// GL 
 	protected GL gl;
@@ -107,6 +109,14 @@ abstract public class Manager {
 	 */
 	public EuclidianView3D getView3D(){
 		return view3D;
+	}
+	
+	/**
+	 * update manager stuff
+	 */
+	public void update(){
+		//color factor for highlighting
+		colorFactor = (float) ((Math.sin(System.currentTimeMillis()/100.0)+1)/2);
 	}
 	
 	/////////////////////////////////////////////
@@ -351,6 +361,23 @@ abstract public class Manager {
 			float radius, Color color, float alpha);
 
 	
+	
+	/////////////////////////////////////////////
+	// COLOR METHODS
+	/////////////////////////////////////////////
+
+	/** return the color for highlighting object
+	 * @param c
+	 * @return the color for highlighting object
+	 */
+	public Color getHigthlighting(Color c){
+		
+		int r = (int) (c.getRed()*(1-colorFactor)+255*colorFactor);
+		int g = (int) (c.getGreen()*(1-colorFactor)+255*colorFactor);
+		int b = (int) (c.getBlue()*(1-colorFactor)+255*colorFactor);
+		
+		return new Color(r,g,b);
+	}
 	
 
 }

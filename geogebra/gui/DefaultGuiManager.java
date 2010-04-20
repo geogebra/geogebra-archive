@@ -2337,10 +2337,11 @@ public class DefaultGuiManager implements GuiManager {
 				boolean bothAxesShown = app.getEuclidianView().getShowXaxis()
 						&& app.getEuclidianView().getShowYaxis();
 				app.getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
+				*/
 				app.getEuclidianView().repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();
-				*/
+				
 			}
 		};
 
@@ -2350,10 +2351,14 @@ public class DefaultGuiManager implements GuiManager {
 
 			public void actionPerformed(ActionEvent e) {
 				// toggle grid
+				app.toggleGrid();
+				/*
 				app.getEuclidianView().showGrid(!app.getEuclidianView().getShowGrid());
+				*/
 				app.getEuclidianView().repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();
+				
 			}
 		};
 

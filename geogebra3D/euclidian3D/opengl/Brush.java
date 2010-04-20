@@ -1,10 +1,10 @@
 package geogebra3D.euclidian3D.opengl;
 
-import java.awt.Color;
-
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
+
+import java.awt.Color;
 
 /**
  * 3D brush, drawing circular-section curves.
@@ -139,6 +139,8 @@ public class Brush {
 	//color
 	/** color r, g, b, a */
 	private float red, green, blue, alpha;
+	/** says if it's colored */
+	private boolean hasColor;
 	
 	
 	//texture
@@ -186,6 +188,7 @@ public class Brush {
 	 */
 	public void start(int latitude){
 		index = manager.startNewList();
+		hasColor = false;
 		this.latitude = latitude;
 		
 	}
@@ -205,7 +208,6 @@ public class Brush {
 
 	/** start new curve part
 	 * @param point
-	 * @param thickness
 	 */
 	public void down(GgbVector point){
 		
@@ -215,7 +217,6 @@ public class Brush {
 	
 	/** move to point and draw curve part
 	 * @param point
-	 * @param thickness
 	 */
 	public void moveTo(GgbVector point){
 		// update start and end sections
@@ -228,7 +229,8 @@ public class Brush {
 		
 		// draw curve part
 		manager.startGeometry(Manager.QUAD_STRIP);
-		manager.color(red, green, blue, alpha);
+		if(hasColor)
+			manager.color(red, green, blue, alpha);
 		//manager.startGeometry(Manager.TRIANGLE_STRIP);
     	float dt = (float) 1/latitude;
     	float da = (float) (2*Math.PI *dt) ; 
@@ -309,7 +311,7 @@ public class Brush {
 	// THICKNESS
 	////////////////////////////////////
 
-	/** set the current thickness of the brush
+	/** set the current thickness of the brush, using integer for thickness (see {@link GeoElement#getLineThickness()}}
 	 * @param thickness
 	 * @param scale 
 	 */
@@ -322,6 +324,9 @@ public class Brush {
 		
 	}
 	
+	/** set the current thickness of the brush
+	 * @param thickness
+	 */
 	public void setThickness(float thickness){
 		this.thickness = thickness;
 	}
@@ -340,16 +345,14 @@ public class Brush {
 		this.green = color.getGreen()/255f;
 		this.blue = color.getBlue()/255f;
 		this.alpha = alpha;
+		hasColor = true;
 	}
 	
 	/** sets the current color (alpha set to 1)
 	 * @param color
 	 */
 	public void setColor(Color color){
-		this.red = color.getRed()/255f;
-		this.green = color.getGreen()/255f;
-		this.blue = color.getBlue()/255f;
-		this.alpha = 1f;
+		setColor(color,1);
 	}
 	
 	

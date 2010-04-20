@@ -34,10 +34,12 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
 			
-		
-		renderer.setColor(getGeoElement().getObjectColor(),1.0f);//TODO geo.getAlphaValue());
+		if(getGeoElement().doHighlighting())
+			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),1.0f);
+		else
+			renderer.setColor(getGeoElement().getObjectColor(),1.0f);
 		//renderer.setDash(Renderer.DASH_NONE); 
-		renderer.setMatrix(getMatrix());
+		//renderer.setMatrix(getMatrix());
 		
 		drawGeometry(renderer);
 		
@@ -46,21 +48,6 @@ public abstract class Drawable3DCurves extends Drawable3D {
 	}
 
 	
-	public void drawHighlighting(Renderer renderer) {
-				
-
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
-			return;
-		if (!getGeoElement().doHighlighting())
-			return;
-		
-		renderer.setColor(new Color(0f,0f,0f),1f);
-		renderer.setDash(Renderer.DASH_NONE);
-		renderer.setMatrix(getMatrix());
-		drawGeometryPicked(renderer);		
-		
-
-	}
 	
 	
 	public void drawHidden(Renderer renderer){
@@ -68,8 +55,11 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 		
-				
-		renderer.setColor(getGeoElement().getObjectColor(),1.0f);
+		if(getGeoElement().doHighlighting())
+			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),1.0f);
+		else
+			renderer.setColor(getGeoElement().getObjectColor(),1.0f);
+		
 		renderer.setDash(getGeoElement().getLineType()); 
 		renderer.getTextures().setDashFromLineType(getGeoElement().getLineType()); 
 		renderer.setMatrix(getMatrix());		

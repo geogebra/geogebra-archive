@@ -8,8 +8,9 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	
 	double xmin, xmax, ymin, ymax; //for drawing
 	
-	//grid
+	//grid and plate
 	boolean gridVisible = false;
+	boolean plateVisible = true;
 	double dx = 1.0; //distance between two marks on the grid //TODO use object properties
 	double dy = 1.0; 
 	
@@ -71,7 +72,7 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	
 	
 	///////////////////////////////////
-	// grid
+	// GRID AND PLATE
 	
 	/** sets corners of the grid */
 	public void setGridCorners(double x1, double  y1, double  x2, double  y2){
@@ -123,12 +124,22 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	
 	/** returns if there is a grid to plot or not */
 	public boolean isGridVisible(){
-		return gridVisible;
+		return gridVisible && isEuclidianVisible();
 	}
 	
 	public void setGridVisible(boolean grid){
 		gridVisible = grid;
 	}
+	
+	/** returns if there is a plate visible */
+	public boolean isPlateVisible(){
+		return plateVisible && isEuclidianVisible();
+	}
+	
+	public void setPlateVisible(boolean flag){
+		plateVisible = flag;
+	}
+	
 	
 	
 	/** returns x delta for the grid */

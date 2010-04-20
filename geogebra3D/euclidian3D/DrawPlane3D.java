@@ -38,9 +38,12 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 	public void drawGeometry(Renderer renderer) {
 
+		if (!((GeoPlane3D)getGeoElement()).isPlateVisible())
+			return;
 		renderer.initMatrix();
 		renderer.getGeometryManager().draw(planeIndex);
 		renderer.resetMatrix();
+		
 	}
 	
 	
@@ -59,19 +62,17 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	}; 
 
 	public void drawGeometryHidden(Renderer renderer){ 
-		if (((GeoPlane3D)getGeoElement()).isGridVisible()){
-			renderer.initMatrix();
-			//dash
-			renderer.getTextures().setDash(Textures.DASH_SHORT);
-			renderer.getGeometryManager().draw(gridIndex);
-			renderer.resetMatrix();
-		}
+		if (!((GeoPlane3D)getGeoElement()).isGridVisible())
+			return;
+		renderer.initMatrix();
+		//dash
+		renderer.getTextures().setDash(Textures.DASH_SHORT);
+		renderer.getGeometryManager().draw(gridIndex);
+		renderer.resetMatrix();
+		
 	};
 	
 	
-	public void drawHighlighting(Renderer renderer){
-
-	};	
 	
 	
 

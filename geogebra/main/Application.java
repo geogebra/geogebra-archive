@@ -1125,16 +1125,26 @@ public abstract class Application implements KeyEventDispatcher {
 			&& getEuclidianView().getShowYaxis();
 		//getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
 		getEuclidianView().setShowAxes(!bothAxesShown, true);
+		/*
 		getEuclidianView().repaint();
 		storeUndoInfo();
 		updateMenubar();
+		*/
 	}
 	
 	public void setShowAxesSelected(JCheckBoxMenuItem cb){
 		cb.setSelected(getEuclidianView().getShowXaxis() && getEuclidianView().getShowYaxis());
 	}
 	
+	public void toggleGrid(){
+		
+		getEuclidianView().showGrid(getEuclidianView().getShowGrid());
 
+	}
+	
+	public void setShowGridSelected(JCheckBoxMenuItem cb){
+		cb.setSelected(getEuclidianView().getShowGrid());
+	}
 	
 	
 	

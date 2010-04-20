@@ -247,6 +247,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		xOyPlane = kernel3D.getXOYPlane();
 		xOyPlane.setGridVisible(true);
+		xOyPlane.setPlateVisible(false);
 		add(xOyPlane);
 
 
@@ -2104,10 +2105,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void togglePlane(){
 		
-		boolean flag = xOyPlane.isEuclidianVisible();
-		xOyPlane.setEuclidianVisible(!flag);
+		boolean flag = xOyPlane.isPlateVisible();
+		xOyPlane.setPlateVisible(!flag);
 		
 	}	
+	
+	/**
+	 * toggle the visibility of xOy grid
+	 */
+	public void toggleGrid(){
+		
+		boolean flag = xOyPlane.isGridVisible();
+		xOyPlane.setGridVisible(!flag);
+		
+	}
 	
 	
 	public GeoPlane3D getxOyPlane()  {
@@ -2137,7 +2148,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param renderer
 	 */
 	public void drawTransp(Renderer renderer){
-		if (xOyPlane.isEuclidianVisible())
+		if (xOyPlane.isPlateVisible())
 			xOyPlane.getDrawable3D().drawTransp(renderer);
 		else
 			if (decorationVisible)
@@ -2149,7 +2160,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param renderer
 	 */
 	public void drawHiding(Renderer renderer){
-		if (xOyPlane.isEuclidianVisible())
+		if (xOyPlane.isPlateVisible())
 			xOyPlane.getDrawable3D().drawHiding(renderer);
 		else
 			if (decorationVisible)

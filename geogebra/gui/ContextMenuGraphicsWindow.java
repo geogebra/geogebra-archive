@@ -124,7 +124,8 @@ implements ActionListener {
         add(cbShowAxes);
         
         JCheckBoxMenuItem cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager().getShowGridAction());
-        cbShowGrid.setSelected(ev.getShowGrid());
+        //cbShowGrid.setSelected(ev.getShowGrid());
+        app.setShowGridSelected(cbShowGrid);
         cbShowGrid.setBackground(getBackground());
         add(cbShowGrid);
     }

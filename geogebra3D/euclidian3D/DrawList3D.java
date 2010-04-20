@@ -143,27 +143,6 @@ public class DrawList3D {
 
 	}
 
-	/** draw the highlighting of point and curves
-	 * @param renderer opengl context
-	 */
-	public void drawHighlightingPointsAndCurves(Renderer renderer){
-
-		for(int i=0; i<Drawable3D.DRAW_TYPE_SURFACES; i++)
-			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().drawHighlighting(renderer);	
-
-	}
-	
-	/** draw the highlighting of surfaces
-	 * @param renderer opengl context
-	 */
-	public void drawHighlightingSurfaces(Renderer renderer){
-
-		for(int i=Drawable3D.DRAW_TYPE_SURFACES; i<Drawable3D.DRAW_TYPE_MAX; i++)
-			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				d.next().drawHighlighting(renderer);	
-
-	}
 
 	/** draw surfaces as transparent parts
 	 * @param renderer opengl context

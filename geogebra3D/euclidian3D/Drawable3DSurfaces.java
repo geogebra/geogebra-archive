@@ -39,20 +39,6 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	
 	
 
-	//TODO improve specific geometry for picking
-	public void drawHighlighting(Renderer renderer){
-		
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
-			return;	
-		if (!getGeoElement().doHighlighting())
-			return;
-		
-		renderer.setColor(new Color(0f,0f,0f),0.25f);
-		renderer.setMatrix(getMatrix());
-		drawGeometryPicked(renderer);
-		
-		
-	};	
 	
 
 
@@ -66,7 +52,13 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		if (alpha<=0)
 			return;
 		
-		renderer.setColor(getGeoElement().getObjectColor(),alpha);
+		
+		if(getGeoElement().doHighlighting())
+			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),alpha);
+		else
+			renderer.setColor(getGeoElement().getObjectColor(),alpha);
+			
+		
 		renderer.setMatrix(getMatrix());
 		drawGeometry(renderer);
 		
