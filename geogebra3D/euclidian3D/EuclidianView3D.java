@@ -246,6 +246,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//plane and axis
 		
 		xOyPlane = kernel3D.getXOYPlane();
+		xOyPlane.setEuclidianVisible(true);
 		xOyPlane.setGridVisible(true);
 		xOyPlane.setPlateVisible(false);
 		add(xOyPlane);
@@ -1051,9 +1052,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	/** sets the visibility of xOy plane plate
+	 * @param flag
+	 */
+	public void setShowPlate(boolean flag){
+		getxOyPlane().setPlateVisible(flag);
+	}
 
-
-
+	/** sets the visibility of xOy plane grid
+	 * @param flag
+	 */
+	public void setShowGrid(boolean flag){
+		getxOyPlane().setGridVisible(flag);
+	}
+	
+	
 
 
 	public int getViewHeight() {
@@ -2053,10 +2066,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		// xOy plane settings
-		sb.append("\t<plane show=\"");
-		sb.append(getxOyPlane().isEuclidianVisible());		
+		sb.append("\t<plate show=\"");
+		sb.append(getxOyPlane().isPlateVisible());		
 		sb.append("\"/>\n");
 
+		sb.append("\t<grid show=\"");
+		sb.append(getxOyPlane().isGridVisible());		
+		sb.append("\"/>\n");
 		
 		
 		

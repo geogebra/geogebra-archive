@@ -71,30 +71,25 @@ public class MyXMLHandler3D extends MyXMLHandler {
 				break;
 			}
 
-			/*
-		case 'e':
-			if (eName.equals("evSettings")) {
-				ok = handleEvSettings(ev, attrs);
-				break;
-			}
+
 
 		case 'g':
 			if (eName.equals("grid")) {
 				ok = handleGrid(ev, attrs);
 				break;
-			} else if (eName.equals("gridColor")) {
+			} 
+			/*
+			else if (eName.equals("gridColor")) {
 				ok = handleGridColor(ev, attrs);
-				break;
-			}
-		case 'l':
-			if (eName.equals("lineStyle")) {
-				ok = handleLineStyle(ev, attrs);
 				break;
 			}
 			*/
 			
 		case 'p':
-			if (eName.equals("plane")) {
+			if (eName.equals("plate")) {
+				ok = handlePlate(ev, attrs);
+				break;
+			} else if (eName.equals("plane")) {
 				ok = handlePlane(ev, attrs);
 				break;
 			}
@@ -149,8 +144,12 @@ public class MyXMLHandler3D extends MyXMLHandler {
 	 * @param ev
 	 * @param attrs
 	 * @return true if all is done ok
+	 * @deprecated
 	 */
 	protected boolean handlePlane(EuclidianView3D ev, LinkedHashMap<String, String> attrs) {
+		
+		return handlePlate(ev, attrs);
+		/*
 		// <plane show="false"/>
 		try {
 			String strShowPlane = (String) attrs.get("show");
@@ -165,9 +164,52 @@ public class MyXMLHandler3D extends MyXMLHandler {
 			//e.printStackTrace();
 			return false;
 		}
+		*/
 	}
 	
 	
+	/** handles plane attributes (show plate) for EuclidianView3D
+	 * @param ev
+	 * @param attrs
+	 * @return true if all is done ok
+	 */
+	protected boolean handlePlate(EuclidianView3D ev, LinkedHashMap<String, String> attrs) {
+		try {
+			String strShowPlate = (String) attrs.get("show");
+
+			// show the plane
+			if (strShowPlate != null) {
+				boolean showPlate = parseBoolean(strShowPlate);
+				ev.setShowPlate(showPlate);
+			}
+			return true;
+		} catch (Exception e) {
+			//e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
+	/** handles plane attributes (show grid) for EuclidianView3D
+	 * @param ev
+	 * @param attrs
+	 * @return true if all is done ok
+	 */
+	protected boolean handleGrid(EuclidianView3D ev, LinkedHashMap<String, String> attrs) {
+		try {
+			String strShowGrid = (String) attrs.get("show");
+
+			// show the plane
+			if (strShowGrid != null) {
+				boolean showGrid = parseBoolean(strShowGrid);
+				ev.setShowGrid(showGrid);
+			}
+			return true;
+		} catch (Exception e) {
+			//e.printStackTrace();
+			return false;
+		}
+	}
 	
 	/** create absolute start point (coords expected) */
 	protected GeoPointInterface handleAbsoluteStartPoint(LinkedHashMap<String, String> attrs) {
