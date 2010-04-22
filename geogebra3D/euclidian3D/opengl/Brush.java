@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D.opengl;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Color;
 
@@ -48,7 +49,7 @@ public class Brush {
 		 * @param point
 		 * @param thickness
 		 */
-		public Section(Section s, GgbVector point, float thickness){
+		public Section(Section s, GgbVector point, float thickness, boolean updateClock){
 			this(point,thickness);
 			
 			direction = center.sub(s.center);
@@ -82,13 +83,18 @@ public class Brush {
 				s.direction = direction;
 				normal = null;
 				s.normal = null;
-				GgbVector[] vn = direction.completeOrthonormal();
-				//if (s.clockU==null){
+				
+				if (updateClock){
+					GgbVector[] vn = direction.completeOrthonormal();
 					s.clockU = vn[0]; s.clockV = vn[1];
-				//}
+				}
+
 			}
 			clockU = s.clockU; clockV = s.clockV;
+			//Application.debug("clock=\n"+clockU.toString()+",\n"+clockV.toString());
 		}
+		
+		
 		
 		/**
 		 * return the normal vector for parameters u,v
@@ -104,6 +110,7 @@ public class Brush {
 			else
 				if (normalDevD!=0){
 					//Application.debug("normalDev="+normalDevD+","+normalDevN);
+					//return new GgbVector[] {vn,pos};
 					return new GgbVector[] {(GgbVector) vn.mul(normalDevN).add(direction.mul(normalDevD)),pos};
 				}else
 					return new GgbVector[] {vn,pos};
@@ -221,10 +228,10 @@ public class Brush {
 	public void moveTo(GgbVector point){
 		// update start and end sections
 		if (end==null){
-			end = new Section(start, point, thickness);
+			end = new Section(start, point, thickness,true);
 		}else{
 			start = end;
-			end = new Section(start, point, thickness);
+			end = new Section(start, point, thickness,false);
 		}
 		
 		// draw curve part
@@ -239,6 +246,7 @@ public class Brush {
     		u = (float) Math.sin ( i * da ); 
     		v = (float) Math.cos ( i * da ); 
     		setTextureY(i*dt);
+    		//Application.debug("i="+i);
     		draw(start,u, v, 0); //bottom of the tube rule
     		draw(end,u, v, 1); //top of the tube rule
     	} 
@@ -254,6 +262,9 @@ public class Brush {
 	private void draw(Section s, double u, double v, int texture){
 		
 		GgbVector[] vectors = s.getNormalAndPosition(u, v);
+		
+		//Application.debug(vectors[0].toString());
+		
 		manager.normal(
 				(float) vectors[0].getX(), 
 				(float) vectors[0].getY(), 
@@ -306,6 +317,38 @@ public class Brush {
 		}
 		
 	}
+	
+	
+	/** cone curve
+	 * @param direction 
+	 * @param start 
+	 * @param end 
+	 */
+	public void cone(GgbVector origin, GgbVector direction, float start, float end){
+		
+		
+		if (start>end)
+			return;
+		
+		setTextureX(0, 0);
+		textureType = TEXTURE_ID;
+		
+		float radius = thickness;
+		
+		setThickness(radius*start);
+		down((GgbVector) origin.add(direction.mul(start)));
+
+		//middle point
+		if (start*end<0){
+			setThickness(0f);
+			moveTo(origin);
+		}
+		
+		setThickness(radius*end);
+		moveTo((GgbVector) origin.add(direction.mul(end)));
+		
+	}
+
 	
 	////////////////////////////////////
 	// THICKNESS

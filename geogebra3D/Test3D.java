@@ -38,6 +38,7 @@ import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.GeoPolyhedron;
 import geogebra3D.kernel3D.GeoQuadric3D;
 import geogebra3D.kernel3D.GeoSegment3D;
+import geogebra3D.kernel3D.GeoVector3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.Color;
@@ -576,10 +577,14 @@ public class Test3D{
 	
 	private void testQuadric(){
 		
-		GeoPoint3D c = testPoint(-1.1f,-0.8f,0f); c.setLabel("center");
+		GeoPoint3D c = testPoint(0f,0f,0f); c.setLabel("center");
+		GeoPoint3D B = testPoint(0f,0f,1f); B.setLabel("center");
+		GeoVector3D d = kernel3D.Vector3D("v", c, B);
 		GeoNumeric r = new GeoNumeric(cons, "radius", 1);
-		GeoQuadric3D sphere = kernel3D.Sphere("sphere", c, r);
-		sphere.setObjColor(new Color(1f,0f,0f));
+
+		
+		GeoQuadric3D cone = kernel3D.Cone("cone",c,d,r);
+		cone.setObjColor(new Color(0f,0f,1f));
 	}
 	
 	

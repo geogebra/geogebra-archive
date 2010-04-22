@@ -72,8 +72,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	protected void updateForItSelf(){
 		
 		GeoCoordSys1D cs = (GeoCoordSys1D) getGeoElement();
-		updateForItSelf(cs.getPoint(getDrawMin()).getInhomCoords(), 
-				cs.getPoint(getDrawMax()).getInhomCoords());
+		updateForItSelf(cs.getPoint(getDrawMin()).getInhomCoords(),cs.getPoint(getDrawMax()).getInhomCoords());
 	
 	}
 

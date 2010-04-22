@@ -2,7 +2,9 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.opengl.Brush;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoQuadric3D;
 
 public class DrawQuadric3D extends Drawable3DSurfaces {
@@ -56,20 +58,39 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 		
 		renderer.getGeometryManager().remove(quadricIndex);
 		
-		//creates the polygon
+
 		GeoQuadric3D quadric = (GeoQuadric3D) getGeoElement();
 		
-		GgbVector center = quadric.getMidpoint();
-		double r = quadric.getHalfAxis(0);
-		
-		
-		quadricIndex =  renderer.getGeometryManager().newSphere(
-				(float) center.get(1),(float) center.get(2),(float) center.get(3),
-				(float) r,
-				quadric.getObjectColor(),
-				alpha);
-				//(float) (200/getView3D().getScale()));
-		
+		switch(quadric.getType()){
+		case GeoQuadric3D.QUADRIC_SPHERE:
+			GgbVector center = quadric.getMidpoint();
+			double r = quadric.getHalfAxis(0);
+			quadricIndex =  renderer.getGeometryManager().newSphere(
+					(float) center.get(1),(float) center.get(2),(float) center.get(3),
+					(float) r,
+					quadric.getObjectColor(),
+					alpha);
+			//(float) (200/getView3D().getScale()));
+			break;
+		case GeoQuadric3D.QUADRIC_CONE:
+			
+			GgbVector o = getView3D().getToScreenMatrix().mul(quadric.getMidpoint());
+			GgbVector v = getView3D().getToScreenMatrix().mul(quadric.getEigenvec3D(2));
+								
+			double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
+					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+					o, v);
+			
+			
+			Brush brush = renderer.getGeometryManager().getBrush();
+			
+			brush.start(100);
+			//brush.setColor(getGeoElement().getObjectColor());
+			brush.setThickness((float) quadric.getHalfAxis(1));
+			brush.cone(quadric.getMidpoint(),quadric.getEigenvec3D(2), (float) minmax[0], (float) minmax[1]);
+			quadricIndex = brush.end();
+			break;
+		}
 		
 		
 		
@@ -100,6 +121,7 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 	public int getType(){
 		switch(((GeoQuadric3D) getGeoElement()).getType()){
 		case GeoQuadric3D.QUADRIC_SPHERE:
+		case GeoQuadric3D.QUADRIC_CONE:
 			return DRAW_TYPE_CLOSED_SURFACES;
 		default:
 			return DRAW_TYPE_SURFACES;

@@ -5941,7 +5941,7 @@ public class Kernel {
 	}
 	
 	// temp for buildEquation    
-	private double[] temp = new double[6];
+	private double[] temp;// = new double[6];
 
 	// lhs of implicit equation without constant coeff
 	final private StringBuilder buildImplicitVarPart(		
@@ -5949,6 +5949,9 @@ public class Kernel {
 		String[] vars, 
 		boolean KEEP_LEADING_SIGN,
 		boolean CANCEL_DOWN) {
+		
+		temp = new double[numbers.length];
+			
 		int leadingNonZero = -1;
 		sbBuildImplicitVarPart.setLength(0);
 
@@ -6016,7 +6019,7 @@ public class Kernel {
 	}
 	private StringBuilder sbBuildImplicitVarPart = new StringBuilder(80);
 
-	final StringBuilder buildImplicitEquation(
+	public final StringBuilder buildImplicitEquation(
 		double[] numbers,
 		String[] vars,
 		boolean KEEP_LEADING_SIGN,

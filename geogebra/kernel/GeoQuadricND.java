@@ -29,6 +29,8 @@ public abstract class GeoQuadricND extends GeoElement {
 	public static final int QUADRIC_PARABOLOID = 9;
 	public static final int QUADRIC_LINE = 10;
 	
+	public static final int QUADRIC_CONE = 30;
+	
 	protected int type = -1; // of quadric
 
 

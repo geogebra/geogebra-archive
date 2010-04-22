@@ -572,7 +572,13 @@ public class Kernel3D
 	}
 
 
-	
+	/** 
+	 * Cone
+	 */
+	final public GeoQuadric3D Cone(String label, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {
+		AlgoCone algo = new AlgoCone(cons, label, origin, direction, r);
+		return algo.getCone();
+	}
 	
 	
 	

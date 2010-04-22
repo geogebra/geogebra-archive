@@ -41,6 +41,7 @@ public class DrawVector3D extends Drawable3DCurves {
 	
 	protected void updateForItSelf(){
 
+		
 		GeoVector3D geo = ((GeoVector3D) getGeoElement());
 		
 		geo.updateStartPointPosition();
