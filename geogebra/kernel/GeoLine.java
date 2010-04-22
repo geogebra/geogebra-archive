@@ -332,6 +332,7 @@ GeoLineInterface {
 	// Michael Borcherds 2008-04-30
 	public boolean isEqual(GeoElement geo) {
 		// return false if it's a different type, otherwise use equals() method
+		if (geo.isGeoRay() || geo.isGeoSegment()) return false;
 		if (geo.isGeoLine()) return linDep((GeoLine)geo); else return false;
 	}
 
