@@ -181,6 +181,13 @@ GeoLineInterface {
         return kernel.isEqual(g.x * y, g.y * x);        
     }
     
+    /** returns true if this line and g are parallel (signed)*/
+    final public boolean isSameDirection(GeoLine g) {        
+    	// check x and g.x have the same sign
+    	// also y and g.y
+        return (g.x * x >= 0) && (g.y * y >= 0) && isParallel(g);        
+    }
+    
     /** returns true if this line and g are perpendicular */
     final public boolean isPerpendicular(GeoLine g) {        
         return kernel.isEqual(g.x * x, -g.y * y);        

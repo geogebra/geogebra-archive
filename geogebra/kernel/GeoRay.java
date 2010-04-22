@@ -237,10 +237,11 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	}
     // Michael Borcherds 2008-04-30
 	final public boolean isEqual(GeoElement geo) {
-		// return false if it's a different type, otherwise use equals() method
-		return false;
-		// TODO?
-		//if (geo.isGeoLocus()) return xxx else return false;
+		// return false if it's a different type, otherwise check direction and start point
+		if (!geo.isGeoRay()) return false;
+		
+		return isSameDirection((GeoLine)geo) && ((GeoRay)geo).getStartPoint().isEqual(getStartPoint());
+
 	}
 	
 }
