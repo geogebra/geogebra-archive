@@ -205,8 +205,12 @@ public class UndoManager {
 					// load from file
 					File tempFile = (File) info;
 					InputStream is = new FileInputStream(tempFile);	
+					
 					// load undo info
+					app.getScriptManager().disableListeners();
 					xmlio.readZipFromMemory(is);					
+					app.getScriptManager().enableListeners();
+					
 					is.close();
 				} 
 				catch (Exception e) {
