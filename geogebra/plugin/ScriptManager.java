@@ -15,9 +15,11 @@ import org.mozilla.javascript.ScriptableObject;
 public class ScriptManager {
 	
 	private Application app;
+	boolean listenersEnabled = true;
 	
 	// library of functions that is available to all JavaScript calls
 	// init() is called when GeoGebra starts up (eg to start listeners)
+	/*
 	private String libraryScriptxxx ="function ggbOnInit() {}";
 	private String libraryScriptxx ="function ggbOnInit() {"+
 		"ggbApplet.evalCommand('A=(1,2)');" +
@@ -33,7 +35,7 @@ public class ScriptManager {
 			"ggbApplet.unregisterObjectUpdateListener('A');" +
 			"ggbApplet.setCoords('A',x,y);" +
 			"ggbApplet.registerObjectUpdateListener('A','listener');" +
-			"}";
+			"}";*/
 	
 	public ScriptManager(Application app) {
 		this.app = app;
@@ -375,7 +377,8 @@ public class ScriptManager {
 		 * Calls all JavaScript functions (listeners) using 
 		 * the specified arguments.
 		 */
-		private synchronized void notifyListeners(ArrayList listeners, Object [] args) {										
+		private synchronized void notifyListeners(ArrayList listeners, Object [] args) {	
+			if (!listenersEnabled) return;
 			int size = listeners.size();
 			for (int i=0; i < size; i++) {
 				String jsFunction = (String) listeners.get(i);										
@@ -388,6 +391,7 @@ public class ScriptManager {
 		 * @see registerUpdateListener()
 		 */
 		public synchronized void update(GeoElement geo) {						
+			if (!listenersEnabled) return;
 			// update listeners
 			if (updateListeners != null && geo.isLabelSet()) {
 				Object [] args = { geo.getLabel() };
@@ -454,6 +458,14 @@ public class ScriptManager {
 			evalScript(sb.toString(), null);
 
 		}
+	}
+	
+	public void disableListeners() {
+		listenersEnabled = false;
+	}
+
+	public void enableListeners() {
+		listenersEnabled = true;
 	}
 
 
