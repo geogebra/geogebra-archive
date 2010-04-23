@@ -1340,6 +1340,7 @@ public class Construction {
 		if (pos < 0) {
 			restoreCurrentUndoInfo();
 			Application.debug("replace failed: oldXML string not found:\n" + oldXML);
+			//Application.debug("consXML=\n" + consXML);
 			throw new MyError(getApplication(), "ReplaceFailed");
 		}
 		

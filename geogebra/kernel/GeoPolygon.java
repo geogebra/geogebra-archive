@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -67,7 +68,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 * @param cs for 3D stuff : 2D coord sys
 	 * @param createSegments says if the polygon has to creates its edges
 	 */	
-	public GeoPolygon(Construction c, GeoPointInterface[] points, GeoElement cs, boolean createSegments) {
+	public GeoPolygon(Construction c, GeoPointInterface[] points, GgbCoordSys cs, boolean createSegments) {
 		super(c);
 		this.createSegments=createSegments;
 		setPoints(points, cs, createSegments);
@@ -78,7 +79,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	/** for 3D stuff (unused here)
 	 * @param cs GeoCoordSys2D
 	 */
-	public void setCoordSys(GeoElement cs) {
+	public void setCoordSys(GgbCoordSys cs) {
 		
 	}
 	
@@ -133,7 +134,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
      * @param cs used for 3D stuff
      * @param createSegments says if the polygon has to creates its edges
      */
-    public void setPoints(GeoPointInterface [] points, GeoElement cs, boolean createSegments) {
+    public void setPoints(GeoPointInterface [] points, GgbCoordSys cs, boolean createSegments) {
 		this.points = points;
 		setCoordSys(cs);
 		

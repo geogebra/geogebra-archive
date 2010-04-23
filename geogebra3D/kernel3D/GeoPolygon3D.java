@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
@@ -8,9 +9,11 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.main.Application;
+import geogebra.util.Util;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -21,11 +24,11 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoPolygon3D 
-extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys2D {
+extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoordSys2D {
 
 	
 	/** 2D coord sys where the polygon exists */
-	private GeoCoordSys2DAbstract coordSys; 
+	private GgbCoordSys coordSys; 
 	
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
@@ -50,7 +53,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 	 * @param cs2D 2D coord sys where the polygon is drawn
 	 * @param createSegments says if the polygon has to creates its edges
 	 */
-	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GeoCoordSys2DAbstract cs2D, boolean createSegments) {
+	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GgbCoordSys cs2D, boolean createSegments) {
 		super(c, points, cs2D, createSegments);
 
 		this.createSegments = createSegments;
@@ -201,14 +204,14 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 	/** set the 2D coordinate system
 	 * @param cs the 2D coordinate system
 	 */
-	 public void setCoordSys(GeoElement cs){
+	 public void setCoordSys(GgbCoordSys cs){
 		 
 		 if (points==null)
 			 return;
 		 
 		 setDefined();
 		 
-		 coordSys = (GeoCoordSys2DAbstract) cs;
+		 coordSys = cs;
 
 		 /*
 		 Application.debug("coordSys ="+coordSys);
@@ -219,6 +222,20 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 		 Application.debug(s);
 		 */
 		 
+		 points2D = new GeoPoint[points.length];
+		 for(int i=0; i<points.length; i++){
+			 points2D[i]=new GeoPoint(getConstruction()); 
+		 }
+		 
+		// if there's no coord sys, create it with points
+		 if (coordSys==null){
+			 coordSys = new GgbCoordSys(2);
+			 updateCoordSys();
+			
+		 }
+		 
+		 
+		 /*
 		 // turn off the kernel notifications for algos below
 		 this.getKernel().setSilentMode(true);
 		 
@@ -239,14 +256,42 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 		 
 		 // turn on the kernel notifications 
 		 this.getKernel().setSilentMode(false);
-		 
+		 */
 			 
 	}
+	 
+	 
+	 public void updateCoordSys(){
+
+		 coordSys.resetCoordSys();
+		 for(int i=0;(!coordSys.isMadeCoordSys())&&(i<points.length);i++)
+			 coordSys.addPointToCoordSys(((GeoPoint3D) points[i]).getCoords(),true,true);
+
+		 if (coordSys.isDefined()){
+			 for(int i=0;i<points.length;i++){
+				 //project the point on the coord sys
+				 GgbVector[] project=((GeoPoint3D) points[i]).getCoords().projectPlane(coordSys.getMatrix4x4());
+
+				 //check if the vertex lies on the coord sys
+				 if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){
+					 coordSys.setUndefined();
+					 break;
+				 }
+
+				 //Application.debug("i="+i+",project="+project);
+				 
+				 //set the 2D points
+				 points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
+			 }
+		 }
+		 
+	 }
 	 
 	 
 	 /**
 	 * update the coord system and 2D points
 	 */
+	 /*
 	public void updateCoordSysAndPoints2D(){
 		 
 		 getCoordSys().getParentAlgorithm().update();
@@ -254,13 +299,14 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 		 for(int i=0; i<points2D.length; i++)
 			 points2D[i].getParentAlgorithm().update();
 	 }
+	 */
 	
 	
 	
 	/** return the 2D coordinate system
 	 * @return the 2D coordinate system
 	 */
-	public GeoCoordSys2DAbstract getCoordSys(){
+	public GgbCoordSys getCoordSys(){
 		return coordSys;
 	}
 	
@@ -301,23 +347,28 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 	public GgbMatrix4x4 getDrawingMatrix() {
 		
 		//Application.debug("coordSys="+coordSys);
-		
+		/*
 		if (coordSys!=null)
 			return coordSys.getDrawingMatrix();
 		else
 			return null;
+			*/
+		return coordSys.getMatrix4x4();
 	}
 	
 	 public GgbMatrix4x4 getLabelMatrix(){
+		 /*
 		 if (coordSys!=null)
 			 return coordSys.getLabelMatrix();
 		 else
 			 return null;
+			 */
+		 return null;
 	 }
 
 	
 	public void setDrawingMatrix(GgbMatrix4x4 matrix) {
-		coordSys.setDrawingMatrix(matrix);
+		//coordSys.setDrawingMatrix(matrix);
 
 	}
 
@@ -504,6 +555,13 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D, GeoCoordSys
 		isPickable = v;
 	}
 
+
+	/*
+	public void getXML(StringBuilder sb) {
+		super.getXML(sb);
+		Application.debug("label="+label+", XML="+Util.encodeXML(label));
+	}
+	*/
 	
 
 }

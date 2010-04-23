@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbCoordSys;
+
 
 
 
@@ -29,7 +31,7 @@ public class AlgoPolygon extends AlgoElement {
     protected GeoPolygon poly;     // output
     
     /** /2D coord sys used for 3D */
-    protected GeoElement cs2D; 
+    protected GgbCoordSys cs2D; 
     
     /** polyhedron (when segment is part of), used for 3D */
     protected GeoElement polyhedron; 
@@ -57,7 +59,7 @@ public class AlgoPolygon extends AlgoElement {
      * @param polyhedron polyhedron (when segment is part of), used for 3D
      */
     protected AlgoPolygon(Construction cons, String [] labels, 
-    		GeoPointInterface [] points, GeoList geoList, GeoElement cs2D, 
+    		GeoPointInterface [] points, GeoList geoList, GgbCoordSys cs2D, 
     		boolean createSegments, GeoElement polyhedron) {
         super(cons);
         this.points = points;           
@@ -207,7 +209,7 @@ public class AlgoPolygon extends AlgoElement {
     }  
     
         
-    protected final void compute() { 
+    protected void compute() { 
     	if (geoList != null) {
     		updatePointArray(geoList);
     	}

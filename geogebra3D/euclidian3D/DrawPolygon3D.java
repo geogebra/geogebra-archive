@@ -280,7 +280,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 			
 		((GeoPolygon3D) getGeoElement()).setPoints(points,null,false);
 		
-		setWaitForUpdate();
+		//setWaitForUpdate();
 		
 		
 	}

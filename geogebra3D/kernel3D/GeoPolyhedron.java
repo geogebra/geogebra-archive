@@ -501,7 +501,7 @@ public class GeoPolyhedron extends GeoElement3D {
 		public void updatePolygonsAndSegmentsFromParentAlgorithms() {
 
 			for (GeoPolygon3D polygon : polygons.values()){
-				polygon.updateCoordSysAndPoints2D();
+				//polygon.updateCoordSysAndPoints2D();
 				polygon.getParentAlgorithm().update();
 			}
 
