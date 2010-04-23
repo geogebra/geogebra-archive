@@ -73,7 +73,7 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files3D" 
-			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jogl">		
+			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath, ggb-copy-jogl">		
 	</target>
 	
 	<manifest file="../manifest.mf">	    
@@ -86,7 +86,7 @@ office@geogebra.org
 	<manifest file="../manifest3D.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra3D"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_3d.jar geogebra_javascript.jar jogl.jar gluegen-rt.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_3d.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar jogl.jar gluegen-rt.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
@@ -225,6 +225,9 @@ office@geogebra.org
 			<arg value="geogebra_properties.jar"/>
 			<arg value="geogebra_jogl.jar"/>
 			<arg value="geogebra_gluegen-rt.jar"/>
+			<arg value="jlatexmath.jar"/>
+			<arg value="jlm_cyrillic.jar"/>
+			<arg value="jlm_cyrillic.jar"/>
 		 </exec>
 	</target>
 	 
