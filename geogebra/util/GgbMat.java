@@ -93,11 +93,9 @@ public class GgbMat extends Array2DRowRealMatrix {
 			}
 		}
 		data = C;
-		luDecompose();
-		//int temp = n;
-		//n = m;
-		//m = temp;
-		//Application.debug(""+A[0][0]);
+		
+		// removed - doesn't work for non-square matrices
+		//luDecompose();
 	}
 
 	/*
