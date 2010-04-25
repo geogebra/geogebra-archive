@@ -225,7 +225,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected ArrayList selectedGeos = new ArrayList();
 	protected ArrayList selectedLists = new ArrayList();
 
-	protected LinkedList highlightedGeos = new LinkedList();
+	//protected LinkedList highlightedGeos = new LinkedList();
+	protected Hits highlightedGeos = new Hits();
 
 	protected boolean selectionPreview = false;
 
@@ -1536,7 +1537,7 @@ Rectangle rect = view.getSelectionRectangle();
 
 		// update previewable
 		if (view.getPreviewDrawable() != null) {
-			view.getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
+			view.getPreviewDrawable().updateMousePos(view.toRealWorldCoordX(mouseLoc.x), view.toRealWorldCoordY(mouseLoc.y));
 		}		
 
 		/*
@@ -2674,8 +2675,33 @@ Rectangle rect = view.getSelectionRectangle();
 		// update preview
 		if (view.getPreviewDrawable() != null) {
 			view.getPreviewDrawable().updatePreview();
-			if (mouseLoc != null)
-				view.getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);			
+			if (mouseLoc != null) {
+				xRW = view.toRealWorldCoordX(mouseLoc.x);
+				yRW = view.toRealWorldCoordY(mouseLoc.y);
+				
+				// make previewable "lock" onto points & paths
+				// priority for highlighted geos (points)
+				Hits getTopHits = highlightedGeos.getTopHits();
+				// nothing highlighted, look at eg circles, lines
+				if (getTopHits.size() == 0) getTopHits = view.getHits().getTopHits();
+
+				
+				if (getTopHits.size() > 0 ) {
+					GeoElement geo = (GeoElement)getTopHits.get(0);
+					if (geo.isPath()) {
+						Path path = (Path)geo;
+						GeoPoint p = kernel.Point(null, path, xRW, yRW, false);
+						p.update();
+						xRW = p.inhomX;
+						yRW = p.inhomY;
+					} else if (geo.isGeoPoint()) {
+						xRW = ((GeoPoint)geo).inhomX;
+						yRW = ((GeoPoint)geo).inhomY;
+					} else transformCoords(); // grid lock
+				} else transformCoords(); // grid lock
+						
+				view.getPreviewDrawable().updateMousePos(xRW, yRW);			
+			}
 			view.repaintEuclidianView();
 		}
 
@@ -3373,7 +3399,7 @@ Rectangle rect = view.getSelectionRectangle();
 	}
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable, Path path){
-		GeoPointInterface ret = kernel.Point(null, path, xRW, yRW);
+		GeoPointInterface ret = kernel.Point(null, path, xRW, yRW, true);
 		return ret;
 	}
 

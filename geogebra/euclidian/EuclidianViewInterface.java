@@ -84,6 +84,9 @@ public interface EuclidianViewInterface {
 	public double toRealWorldCoordX(double minX);
 	/** convert screen coordinate y to real world coordinate y */	
 	public double toRealWorldCoordY(double maxY);
+
+	public int toScreenCoordX(double minX);
+	public int toScreenCoordY(double maxY);
 	/**
 	 * Sets real world coord system using min and max values for both axes in
 	 * real world values.

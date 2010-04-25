@@ -2275,9 +2275,18 @@ public class Kernel {
 	}
 	
 	/** Point on path with cartesian coordinates (x,y)   */
-	final public GeoPoint Point(String label, Path path, double x, double y) {
+	final public GeoPoint Point(String label, Path path, double x, double y, boolean addToConstruction) {
+		boolean oldMacroMode = false;
+		if (!addToConstruction) {
+			oldMacroMode = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);		
+
+		}
 		AlgoPointOnPath algo = new AlgoPointOnPath(cons, label, path, x, y);
 		GeoPoint p = algo.getP();        
+		if (!addToConstruction) {
+			cons.setSuppressLabelCreation(oldMacroMode);
+		}
 		return p;
 	}
 	

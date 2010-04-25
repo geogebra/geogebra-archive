@@ -102,8 +102,7 @@ public class DrawPoint3D extends Drawable3DCurves implements Previewable{
 	}
 
 
-	public void updateMousePos(int x, int y) {
-
+	public void updateMousePos(double xRW, double yRW) {	
 			
 		
 	}

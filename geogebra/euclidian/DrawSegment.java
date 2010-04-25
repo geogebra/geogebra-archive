@@ -357,10 +357,13 @@ implements Previewable {
 	
 	Point2D.Double endPoint = new Point2D.Double();
 	
-	final public void updateMousePos(int mx, int my) {		
+	final public void updateMousePos(double xRW, double yRW) {		
 		if (isVisible) { 											
-			double xRW = view.toRealWorldCoordX(mx);
-			double yRW = view.toRealWorldCoordY(my);
+			//double xRW = view.toRealWorldCoordX(mx);
+			//double yRW = view.toRealWorldCoordY(my);
+			
+			int mx = view.toScreenCoordX(xRW);
+			int my = view.toScreenCoordY(yRW);
 			
 			// round angle to nearest 15 degrees if alt pressed
 			if (points.size() == 1 && view.getEuclidianController().altDown) {

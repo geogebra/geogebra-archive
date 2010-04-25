@@ -156,7 +156,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 
 
 
-	public void updateMousePos(int x, int y) {
+	public void updateMousePos(double xRW, double yRW) {	
 		
 	}
 

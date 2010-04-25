@@ -2308,4 +2308,22 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 	}
 
+
+
+
+
+	public int toScreenCoordX(double minX) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+
+
+	public int toScreenCoordY(double maxY) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

@@ -335,10 +335,10 @@ implements Previewable {
 		}					
 	}
 	
-	final public void updateMousePos(int x, int y) {			
+	final public void updateMousePos(double xRW, double yRW) {			
 		if (isVisible) {
-			double xRW = view.toRealWorldCoordX(x);
-			double yRW = view.toRealWorldCoordY(y);
+			//double xRW = view.toRealWorldCoordX(x);
+			//double yRW = view.toRealWorldCoordY(y);
 			previewTempPoints[previewTempPoints.length-1].setCoords(xRW, yRW, 1.0);
 			previewTempPoints[previewTempPoints.length-1].updateCascade();		
 			update();

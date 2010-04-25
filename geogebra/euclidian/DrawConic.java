@@ -31,6 +31,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.Path;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
@@ -936,10 +937,10 @@ final public class DrawConic extends Drawable implements Previewable {
 		}
 	}
 	
-	final public void updateMousePos(int x, int y) {		
+	final public void updateMousePos(double xRW, double yRW) {		
 		if (isVisible) {
-			double xRW = view.toRealWorldCoordX(x);
-			double yRW = view.toRealWorldCoordY(y);
+			//double xRW = view.toRealWorldCoordX(x);
+			//double yRW = view.toRealWorldCoordY(y);
 			previewTempPoints[previewTempPoints.length-1].setCoords(xRW, yRW, 1.0);
 			previewTempPoints[previewTempPoints.length-1].updateCascade();		
 			update();

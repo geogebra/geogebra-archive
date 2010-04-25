@@ -148,9 +148,9 @@ implements Previewable {
 		}	
 	}
 	
-	final public void updateMousePos(int x, int y) {
+	final public void updateMousePos(double xRW, double yRW) {	
 		if (isVisible) {
-			gp.lineTo(x, y);
+			gp.lineTo(view.toScreenCoordX(xRW), view.toScreenCoordY(yRW));
 		}
 	}
     

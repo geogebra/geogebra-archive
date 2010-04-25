@@ -195,7 +195,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
 
-	public void updateMousePos(int x, int y) {
+	public void updateMousePos(double xRW, double yRW) {	
 		// TODO Auto-generated method stub
 		
 	}

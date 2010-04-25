@@ -1,5 +1,7 @@
 package geogebra.euclidian;
 
+import geogebra.kernel.GeoElement;
+
 import java.awt.Graphics2D;
 
 /**
@@ -8,7 +10,7 @@ import java.awt.Graphics2D;
 public interface Previewable {
 	
 	public void updatePreview(); 
-	public void updateMousePos(int x, int y);
+	public void updateMousePos(double x, double y);
 	public void drawPreview(Graphics2D g2);
 	public void disposePreview();
 	

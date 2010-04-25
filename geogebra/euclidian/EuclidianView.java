@@ -4218,8 +4218,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}	
 	
 	public void updatePreviewable(){
-		Point mouseLoc = getEuclidianController().mouseLoc;
-		getPreviewDrawable().updateMousePos(mouseLoc.x, mouseLoc.y);
+		//Point mouseLoc = getEuclidianController().mouseLoc;
+		//getPreviewDrawable().updateMousePos(toRealWorldCoordX(mouseLoc.x), toRealWorldCoordY(mouseLoc.y));
 	}
 	
 	

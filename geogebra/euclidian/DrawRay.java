@@ -199,18 +199,18 @@ implements Previewable {
 	
 	Point2D.Double endPoint = new Point2D.Double();
 
-	final public void updateMousePos(int x, int y) {	
+	final public void updateMousePos(double xRW, double yRW) {	
 		
 		if (isVisible) { 				
 
 			// need these as we don't want rounding when Alt pressed (nearest 15 degrees)
-			double xx = (double)x;
-			double yy = (double)y;
+			double xx = view.toScreenCoordX(xRW);
+			double yy = view.toScreenCoordY(yRW);
 			
 			// round angle to nearest 15 degrees if alt pressed
 			if (points.size() == 1 && view.getEuclidianController().altDown) {
-				double xRW = view.toRealWorldCoordX(x);
-				double yRW = view.toRealWorldCoordY(y);
+				//double xRW = view.toRealWorldCoordX(x);
+				//double yRW = view.toRealWorldCoordY(y);
 				GeoPoint p = (GeoPoint)points.get(0);
 				double px = p.inhomX;
 				double py = p.inhomY;

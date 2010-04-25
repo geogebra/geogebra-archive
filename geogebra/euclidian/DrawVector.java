@@ -244,10 +244,10 @@ public class DrawVector extends Drawable implements Previewable {
     
 	Point2D.Double endPoint = new Point2D.Double();
 	
-	final public void updateMousePos(int x, int y) {		
+	final public void updateMousePos(double xRW, double yRW) {		
 		if (isVisible) {
-			double xRW = view.toRealWorldCoordX(x);
-			double yRW = view.toRealWorldCoordY(y);
+			//double xRW = view.toRealWorldCoordX(x);
+			//double yRW = view.toRealWorldCoordY(y);
 			
 			// round angle to nearest 15 degrees if alt pressed
 			if (points.size() == 1 && view.getEuclidianController().altDown) {

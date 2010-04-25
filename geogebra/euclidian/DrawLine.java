@@ -342,10 +342,10 @@ public final class DrawLine extends Drawable implements Previewable {
 	
 	Point2D.Double endPoint = new Point2D.Double();
 
-	public void updateMousePos(int mx, int my) {		
+	public void updateMousePos(double xRW, double yRW) {	
 		if (isVisible) { 			
-			double xRW = view.toRealWorldCoordX(mx);
-			double yRW = view.toRealWorldCoordY(my);
+			//double xRW = view.toRealWorldCoordX(mx);
+			//double yRW = view.toRealWorldCoordY(my);
 			
 
 			// round angle to nearest 15 degrees if alt pressed
