@@ -190,6 +190,9 @@ public abstract class GeoQuadricND extends GeoElement {
 	}
 	
 	
+	final public int getType() {
+		return type;
+	}
 	
 	
 	//////////////////////////////////////:

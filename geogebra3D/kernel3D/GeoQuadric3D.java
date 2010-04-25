@@ -171,12 +171,7 @@ implements GeoElement3DInterface{
     }
     
     
-    /** return type of quadric
-     * @return type of quadric
-     */
-    public int getType(){
-    	return type;
-    }
+
 
     protected String getTypeString() {
 		switch (type) {

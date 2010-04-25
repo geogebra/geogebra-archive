@@ -97,7 +97,7 @@ public class GgbCoordSys {
 	
 	
 	public GgbVector getNormal(){
-		return getVx().crossProduct(getVy()).normalized();
+		return matrix4x4.getVz();//getVx().crossProduct(getVy()).normalized();
 	}
 	
 	/////////////////////////////////////

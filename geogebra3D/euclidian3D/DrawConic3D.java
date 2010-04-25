@@ -87,10 +87,12 @@ public class DrawConic3D extends Drawable3DCurves {
 		
 		switch(conic.getType()){
 		case GeoConic.CONIC_CIRCLE:
+			/*
 			GeoVec2D center = conic.getTranslationVector();
 			xc = center.x;
 			yc = center.y;
 			r = conic.getCircleRadius();
+			*/
 			break;
 		default:
 			break;

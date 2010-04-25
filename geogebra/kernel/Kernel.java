@@ -4216,7 +4216,7 @@ public class Kernel {
 		GeoPoint B,
 		GeoPoint C) {
 		AlgoCircleThreePoints algo = new AlgoCircleThreePoints(cons, label, A, B, C);
-		GeoConic circle = algo.getCircle();
+		GeoConic circle = (GeoConic) algo.getCircle();
 		circle.setToSpecific();
 		circle.update();
 		notifyUpdate(circle);

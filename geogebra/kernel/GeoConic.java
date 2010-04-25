@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
@@ -25,7 +26,7 @@ import geogebra.util.MyMath;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
-public class GeoConic extends GeoQuadricND
+public class GeoConic extends GeoConicND
 implements Path, Traceable, 
 Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 {
@@ -92,37 +93,25 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	private GeoVec2D c = new GeoVec2D(kernel);	
 
 	
-	public GeoConic(Construction c){
-		this(c,null);
-	}
+
 	
-	protected GeoConic(Construction c, GeoElement cs) {
-		super(c,2);
-		setCoordSys(cs);
+	public GeoConic(Construction c) {
+		super(c,2);	
 		eqnSolver = c.getEquationSolver();
 		toStringMode = EQUATION_IMPLICIT;
 	}		
 
-	/** Creates new GeoConic */
-	public GeoConic(Construction c, String label, double[] coeffs) {
-		this(c,label,coeffs,null);
-	}
+
 	
 	/** Creates new GeoConic with Coordinate System for 3D */
-	protected GeoConic(Construction c, String label, double[] coeffs, GeoElement cs) {
+	protected GeoConic(Construction c, String label, double[] coeffs) {
 
-		this(c,cs);
+		this(c);
 		setCoeffs(coeffs);
 		setLabel(label);		
 	}	
 	
 	
-	/** for 3D stuff (unused here)
-	 * @param cs GeoCoordSys2D
-	 */
-	public void setCoordSys(GeoElement cs) {
-		
-	}
 	
 
 	public GeoConic(GeoConic conic) {
@@ -209,7 +198,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	/**
 	 * Adds a point to the list of points that this conic passes through.
 	 */
-	final void addPointOnConic(GeoPoint p) {
+	protected final void addPointOnConic(GeoPointInterface p) {
 		if (pointsOnConic == null)
 			pointsOnConic = new ArrayList();
 		pointsOnConic.add(p);				
@@ -294,9 +283,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	final public int getToStringMode() {
 		return toStringMode;
 	}
-	final public int getType() {
-		return type;
-	}
+
 	
 
 	
@@ -903,9 +890,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	}
 	*/
 
-	/**
+	/*
 	 * makes this conic a circle with midpoint M and radius r
-	 */
+	 *
 	final public void setCircle(GeoPoint M, double r) {
 		
 		setSphereND(M, r);
@@ -925,8 +912,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 			setCircleMatrix(M, r);
 			setAffineTransform();
 		} 
-		*/		
+				
 	}
+	*/
 
 	/**
 	 * makes this conic a circle with midpoint M and radius BC

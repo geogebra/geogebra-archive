@@ -1414,7 +1414,7 @@ public class Renderer implements GLEventListener {
      */
     private void drawTorusArc(float x, float y, float R, float startAngle, float endAngle, int nsides, int rings) {
     	
-    	float r = (float) getThickness();
+    	float r = (float) getThickness()/100;
     	
         float ringDelta = (endAngle-startAngle) / rings;
         float sideDelta = 2.0f * (float) Math.PI / nsides;

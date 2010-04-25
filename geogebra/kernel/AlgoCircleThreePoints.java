@@ -32,7 +32,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
 	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPointInterface A, B, C; // input    
-    protected GeoConic circle; // output     
+    protected GeoConicND circle; // output     
 
     // line bisectors
     private GeoLine s0, s1;
@@ -142,7 +142,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
      }
 
     
-    public GeoConic getCircle() {
+    public GeoConicND getCircle() {
         return circle;
     }
     public GeoPoint getA() {
@@ -164,19 +164,19 @@ public class AlgoCircleThreePoints extends AlgoElement {
         }
 
         // get inhomogenous coords of points
-        ax = getA().inhomX;
-        ay = getA().inhomY;
-        bx = getB().inhomX;
-        by = getB().inhomY;
-        cx = getC().inhomX;
-        cy = getC().inhomY;
+        ax = ((GeoPoint) getA()).inhomX;
+        ay = ((GeoPoint) getA()).inhomY;
+        bx = ((GeoPoint) getB()).inhomX;
+        by = ((GeoPoint) getB()).inhomY;
+        cx = ((GeoPoint) getC()).inhomX;
+        cy = ((GeoPoint) getC()).inhomY;
 
         // A = B = C
         if (kernel.isEqual(ax, bx)
             && kernel.isEqual(ax, cx)
             && kernel.isEqual(ay, by)
             && kernel.isEqual(ay, cy)) {
-            circle.setCircle(getA(), 0.0); // single point
+            circle.setCircle((GeoPoint) getA(), 0.0); // single point
             return;
         }
 
@@ -218,7 +218,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
         // in perpendicular direction of AB
         if (kernel.isZero(maxDet)) {
             center.setCoords(-ABy, ABx, 0.0d);
-            circle.setCircle(center, getA());
+            circle.setCircle(center, (GeoPoint) getA());
         }
         // standard case
         else {

@@ -601,21 +601,6 @@ public class Kernel3D
 	
 	
 	
-	/** Conic label with equation ax² + bxy + cy² + dx + ey + f = 0  */
-	final public GeoConic3D Conic3D(
-		String label,
-		double a,
-		double b,
-		double c,
-		double d,
-		double e,
-		double f,
-		GeoCoordSys2DAbstract cs) {
-		double[] coeffs = { a, b, c, d, e, f };
-		GeoConic3D conic = new GeoConic3D(cons, label, coeffs, cs);
-		return conic;
-	}
-	
 	
 	
 	/** 
@@ -628,7 +613,7 @@ public class Kernel3D
 		GeoPoint3D C) {
 		AlgoCircleThreePoints algo = new AlgoCircle3DThreePoints(cons, label, A, B, C);
 		GeoConic3D circle = (GeoConic3D) algo.getCircle();
-		circle.setToSpecific();
+		//circle.setToSpecific();
 		circle.update();
 		notifyUpdate(circle);
 		return circle;

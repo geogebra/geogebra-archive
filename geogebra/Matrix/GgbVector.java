@@ -220,7 +220,7 @@ public class GgbVector
 	 */
 	public GgbVector crossProduct(GgbVector v){
 		
-		GgbVector ret = new GgbVector(3);
+		GgbVector ret = new GgbVector(3); 
 		
 		ret.set(1, this.get(2)*v.get(3)-this.get(3)*v.get(2));
 		ret.set(2, this.get(3)*v.get(1)-this.get(1)*v.get(3));

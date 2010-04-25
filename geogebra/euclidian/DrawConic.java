@@ -866,7 +866,7 @@ final public class DrawConic extends Drawable implements Previewable {
 						previewTempPoints[1],
 						previewTempPoints[2]);
 				cons.removeFromConstructionList(algo2);				
-				initConic(algo2.getCircle());
+				initConic((GeoConic) algo2.getCircle());
 				break;		
 				
 			case EuclidianView.MODE_ELLIPSE_THREE_POINTS:

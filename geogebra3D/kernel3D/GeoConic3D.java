@@ -1,10 +1,15 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoConicND;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.GeoSegmentInterface;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**
@@ -12,11 +17,11 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoConic3D 
-extends GeoConic implements GeoElement3DInterface{
+extends GeoConicND implements GeoElement3DInterface{
 
 	
 	/** 2D coord sys where the polygon exists */
-	private GeoCoordSys2DAbstract coordSys; 
+	private GgbCoordSys coordSys; 
 
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
@@ -32,21 +37,12 @@ extends GeoConic implements GeoElement3DInterface{
 	 * @param c construction
 	 * @param cs 2D coord sys
 	 */
-	public GeoConic3D(Construction c, GeoElement cs) {
-		super(c,cs);
+	public GeoConic3D(Construction c, GgbCoordSys cs) {
+		super(c,2);
+		setCoordSys(cs);
 	}	
 	
 	
-	
-	/** Creates new GeoConic with Coordinate System for 3D 
-	 * @param c construction
-	 * @param label name
-	 * @param coeffs coeffs of the implicit equation
-	 * @param cs 2D coord sys
-	 * */
-	public GeoConic3D(Construction c, String label, double[] coeffs, GeoElement cs) {
-		super(c,label,coeffs,cs);
-	}	
 	
 	
 	
@@ -59,9 +55,9 @@ extends GeoConic implements GeoElement3DInterface{
 	/** set the 2D coordinate system
 	 * @param cs the 2D coordinate system
 	 */
-	 public void setCoordSys(GeoElement cs){
+	 public void setCoordSys(GgbCoordSys cs){
 		 		 
-		 this.coordSys = (GeoCoordSys2DAbstract) cs;
+		 this.coordSys = cs;
 
 	 }
 
@@ -89,20 +85,20 @@ extends GeoConic implements GeoElement3DInterface{
 
 	 public GgbMatrix4x4 getDrawingMatrix() {
 		 if (coordSys!=null)
-			 return coordSys.getDrawingMatrix();
+			 return coordSys.getMatrix4x4();
 		 else
 			 return null;
 	 }
 
 
 	 public void setDrawingMatrix(GgbMatrix4x4 matrix) {
-		 coordSys.setDrawingMatrix(matrix);
+		 //coordSys.setDrawingMatrix(matrix);
 
 	 }
 	 
 
 	 public GgbMatrix4x4 getLabelMatrix(){
-		 return coordSys.getLabelMatrix();
+		 return null;//coordSys.getLabelMatrix();
 	 }
 
 
@@ -136,8 +132,9 @@ extends GeoConic implements GeoElement3DInterface{
 	 }
 	 
 
-	 //TODO implement this
-	 public GgbVector getNormal(){ return null;};
+	 public GgbVector getNormal(){ 
+		 return coordSys.getNormal();
+	 };
 
 
 
@@ -165,12 +162,13 @@ extends GeoConic implements GeoElement3DInterface{
 			sbToString.append(label);
 			
 
+			/*
 			//TODO says in which 2D coord sys the equation is calculated
 			if (coordSys.getLabel()!=null){
 				sbToString.append("\\");
 				sbToString.append(coordSys.getLabel());
 			}
-
+*/
 			
 			sbToString.append(": ");
 			sbToString.append(buildValueString()); 
@@ -184,6 +182,125 @@ extends GeoConic implements GeoElement3DInterface{
 		 */
 		public void setIsPickable(boolean v){
 			isPickable = v;
+		}
+
+
+
+		@Override
+		protected StringBuilder buildValueString() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+
+		@Override
+		public void setSphereND(GeoPointInterface M, GeoSegmentInterface segment) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+		@Override
+		public void setSphereND(GeoPointInterface M, GeoPointInterface P) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+		@Override
+		public GeoElement copy() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+
+		@Override
+		protected String getTypeString() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+
+		@Override
+		public boolean isEqual(GeoElement Geo) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+
+
+		@Override
+		public void set(GeoElement geo) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+		@Override
+		public void setUndefined() {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+		@Override
+		public boolean showInAlgebraView() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+
+
+		@Override
+		protected boolean showInEuclidianView() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+
+
+		@Override
+		protected String getClassName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+
+		public boolean isVector3DValue() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+
+
+
+
+
+
+		@Override
+		protected void addPointOnConic(GeoPointInterface p) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+
+
+
+
+		@Override
+		public void setCircle(GeoPoint M, GeoPoint P) {
+			// TODO Auto-generated method stub
+			
 		}
 
 	 
