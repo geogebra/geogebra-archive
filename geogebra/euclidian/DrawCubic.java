@@ -505,7 +505,7 @@ final public class DrawCubic extends Drawable {
         			strokedShape3 = objStroke.createStrokedShape(gps[2]);
         		}    		
 
-		return strokedShape.intersects(x-3,y-3,6,6) || strokedShape.intersects(x-3,y-3,6,6) || strokedShape.intersects(x-3,y-3,6,6);
+		return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6) || strokedShape3.intersects(x-3,y-3,6,6);
     }
 	
 	final public boolean isInside(Rectangle rect) {				
