@@ -2318,16 +2318,16 @@ Rectangle rect = view.getSelectionRectangle();
 			repaintNeeded = true;
 		}
 
-		//	manage highlighting
-		//Application.debug("noHighlighting = "+noHighlighting);
-		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
-				|| repaintNeeded;
-
-		// show Mouse coordinates
+		// show Mouse coordinates, manage alt -> multiple of 15 degrees
 		if (view.getShowMouseCoords()) {
 			transformCoords();
 			repaintNeeded = true;
 		}		
+
+		//	manage highlighting & "snap to object"
+		//Application.debug("noHighlighting = "+noHighlighting);
+		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
+				|| repaintNeeded;
 
 		if (repaintNeeded) {
 			kernel.notifyRepaint();
