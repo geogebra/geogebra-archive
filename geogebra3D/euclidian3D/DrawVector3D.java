@@ -50,7 +50,12 @@ public class DrawVector3D extends Drawable3DCurves {
 
 		renderer.getGeometryManager().remove(geometryIndex);
 		
-		GgbVector p1 = geo.getStartPoint().getInhomCoords();
+		GgbVector p1;
+		if (geo.getStartPoint()==null){
+			p1 = new GgbVector(4);
+			p1.setW(1);
+		}else
+			p1 = geo.getStartPoint().getInhomCoords();
 		GgbVector p2 = (GgbVector) p1.add(geo.getCoords());
 		
 		float thickness = (float) (Brush.LINE3D_THICKNESS*getGeoElement().getLineThickness()/getView3D().getScale());
