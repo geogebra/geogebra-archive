@@ -715,8 +715,8 @@ Rectangle rect = view.getSelectionRectangle();
 				penOffsetY = penGeo.getAbsoluteScreenLocY();
 			} else {
 				GeoPoint startPoint = penGeo.getStartPoint();
-				penOffsetX = ((EuclidianView)view).toScreenCoordX(startPoint.inhomX);
-				penOffsetY = ((EuclidianView)view).toScreenCoordY(startPoint.inhomY) - penImage.getHeight();
+				penOffsetX = view.toScreenCoordX(startPoint.inhomX);
+				penOffsetY = view.toScreenCoordY(startPoint.inhomY) - penImage.getHeight();
 				
 			}
 			
@@ -1967,9 +1967,8 @@ Rectangle rect = view.getSelectionRectangle();
 		// make sure that when alt is pressed for creating a segment or line
 		// it works if the endpoint is on a path
 		if (useLineEndPoint && lineEndPoint != null) {
-			EuclidianView ev = (EuclidianView) view;
-			mouseLoc.x = ev.toScreenCoordX(lineEndPoint.x);
-			mouseLoc.y = ev.toScreenCoordY(lineEndPoint.y);
+			mouseLoc.x = view.toScreenCoordX(lineEndPoint.x);
+			mouseLoc.y = view.toScreenCoordY(lineEndPoint.y);
 			useLineEndPoint = false;	
 		}
 
@@ -2298,10 +2297,6 @@ Rectangle rect = view.getSelectionRectangle();
 		else
 			view.setHitCursor();
 
-		//	manage highlighting
-		//Application.debug("noHighlighting = "+noHighlighting);
-		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
-				|| repaintNeeded;
 
 
 		// set tool tip text
@@ -2318,10 +2313,15 @@ Rectangle rect = view.getSelectionRectangle();
 		//}
 
 		// update previewable
-		if (view.getPreviewDrawable() != null) {			
+		if (view.getPreviewDrawable() != null) {	
 			view.updatePreviewable();
 			repaintNeeded = true;
 		}
+
+		//	manage highlighting
+		//Application.debug("noHighlighting = "+noHighlighting);
+		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
+				|| repaintNeeded;
 
 		// show Mouse coordinates
 		if (view.getShowMouseCoords()) {
