@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D.arithmetic;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
@@ -7,7 +8,9 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
+import geogebra.main.Application;
 import geogebra3D.kernel3D.Geo3DVec;
+import geogebra3D.kernel3D.GeoVector3D;
 
 
 /**
@@ -52,20 +55,48 @@ public class ExpressionNodeEvaluator3D extends ExpressionNodeEvaluator {
          */ 
         case PLUS:                             
         	// 3D vector + 3D vector
-        	if (lt.isVector3DValue() && rt.isVector3DValue()) { 
-        		Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
-        		Geo3DVec.add(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);
-        		return vec3D;
-        	}    
+        	if (lt.isVector3DValue()) {
+        		if (rt.isVector3DValue()) { 
+	        		Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+	        		Geo3DVec.add(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);
+	        		return vec3D;
+        		} else if (rt instanceof GeoVector3D) { 
+	        		GeoVector3D rtV = (GeoVector3D)rt;
+	        		GgbVector vec = rtV.getCoords();
+	        		Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+	        		Geo3DVec.add(vec3D, new Geo3DVec(kernel, vec.getX(), vec.getY(), vec.getZ()), vec3D);
+	        		return vec3D;
+        		}
+        	} else if (rt.isVector3DValue() && lt instanceof GeoVector3D) { 
+	    		GeoVector3D ltV = (GeoVector3D)lt;
+	    		GgbVector vec = ltV.getCoords();
+	    		Geo3DVec vec3D = ((Vector3DValue)rt).get3DVec();
+	    		Geo3DVec.add(vec3D, new Geo3DVec(kernel, vec.getX(), vec.getY(), vec.getZ()), vec3D);
+	    		return vec3D;
+	    	}    
         	break;
         	
         case MINUS:
         	// 3D vector - 3D vector
-        	if (lt.isVector3DValue() && rt.isVector3DValue()) { 
-                Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
-                Geo3DVec.sub(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);                                         
-                return vec3D;
-            }    
+        	if (lt.isVector3DValue()) {
+        		if (rt.isVector3DValue()) { 
+	        		Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+	        		Geo3DVec.sub(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);
+	        		return vec3D;
+        		} else if (rt instanceof GeoVector3D) { 
+	        		GeoVector3D rtV = (GeoVector3D)rt;
+	        		GgbVector vec = rtV.getCoords();
+	        		Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+	        		Geo3DVec.sub(vec3D, new Geo3DVec(kernel, vec.getX(), vec.getY(), vec.getZ()), vec3D);
+	        		return vec3D;
+        		}
+        	} else if (rt.isVector3DValue() && lt instanceof GeoVector3D) { 
+	    		GeoVector3D ltV = (GeoVector3D)lt;
+	    		GgbVector vec = ltV.getCoords();
+	    		Geo3DVec vec3D = ((Vector3DValue)rt).get3DVec();
+	    		Geo3DVec.sub(vec3D, new Geo3DVec(kernel, vec.getX(), vec.getY(), vec.getZ()), vec3D);
+	    		return vec3D;
+	    	}    
         	break;
         	
         case MULTIPLY: 
