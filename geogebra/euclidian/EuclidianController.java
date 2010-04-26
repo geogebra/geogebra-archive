@@ -1392,6 +1392,15 @@ Rectangle rect = view.getSelectionRectangle();
 		//  checkbox
 		else if (movedGeoElement.isGeoBoolean()) {
 			movedGeoBoolean = (GeoBoolean) movedGeoElement;
+			
+			// if fixed checkbox dragged, behave as if it's been clicked
+			// important for electronic whiteboards
+			if (movedGeoBoolean.isCheckboxFixed()) {
+				movedGeoBoolean.setValue(!movedGeoBoolean.getBoolean());
+				movedGeoBoolean.updateCascade();
+
+			} 
+			
 			// move checkbox
 			moveMode = MOVE_BOOLEAN;					
 			startLoc = mouseLoc;
@@ -1400,6 +1409,7 @@ Rectangle rect = view.getSelectionRectangle();
 
 			view.setShowMouseCoords(false);
 			view.setDragCursor();			
+
 		}
 
 		//  button
@@ -2084,8 +2094,10 @@ Rectangle rect = view.getSelectionRectangle();
 				GeoElement hit = (GeoElement)hits.get(0);
 				if (hit != null && hit.isGeoBoolean()) {
 					GeoBoolean bool = (GeoBoolean)(hits.get(0));
-					bool.setValue(!bool.getBoolean());
-					bool.updateCascade();
+					if (!bool.isCheckboxFixed()) { // otherwise changed on mouse down
+						bool.setValue(!bool.getBoolean());
+						bool.updateCascade();
+					}
 				} else if (hit != null) {
 					GeoElement geo1 = chooseGeo(hits, true);
 					//ggb3D : geo1 may be null if it's axes or xOy plane
