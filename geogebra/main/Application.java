@@ -1138,7 +1138,7 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	public void toggleGrid(){
 		
-		getEuclidianView().showGrid(getEuclidianView().getShowGrid());
+		getEuclidianView().showGrid(!getEuclidianView().getShowGrid());
 
 	}
 	

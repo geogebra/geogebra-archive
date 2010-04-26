@@ -779,6 +779,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 
+	
+	//TODO
+	public void processModeLock(){}; 
 
 	///////////////////////////////////////////
 	// EMPTY METHODS IN EuclidianController USED FOR EuclidianView3D	

@@ -2679,26 +2679,7 @@ Rectangle rect = view.getSelectionRectangle();
 				xRW = view.toRealWorldCoordX(mouseLoc.x);
 				yRW = view.toRealWorldCoordY(mouseLoc.y);
 				
-				// make previewable "lock" onto points & paths
-				// priority for highlighted geos (points)
-				Hits getTopHits = highlightedGeos.getTopHits();
-				// nothing highlighted, look at eg circles, lines
-				if (getTopHits.size() == 0) getTopHits = view.getHits().getTopHits();
-
-				
-				if (getTopHits.size() > 0 ) {
-					GeoElement geo = (GeoElement)getTopHits.get(0);
-					if (geo.isPath()) {
-						Path path = (Path)geo;
-						GeoPoint p = kernel.Point(null, path, xRW, yRW, false);
-						p.update();
-						xRW = p.inhomX;
-						yRW = p.inhomY;
-					} else if (geo.isGeoPoint()) {
-						xRW = ((GeoPoint)geo).inhomX;
-						yRW = ((GeoPoint)geo).inhomY;
-					} else transformCoords(); // grid lock
-				} else transformCoords(); // grid lock
+				processModeLock();
 						
 				view.getPreviewDrawable().updateMousePos(xRW, yRW);			
 			}
@@ -2707,6 +2688,33 @@ Rectangle rect = view.getSelectionRectangle();
 
 		return changedKernel;
 	}
+	
+	
+	public void processModeLock(){
+		
+		// make previewable "lock" onto points & paths
+		// priority for highlighted geos (points)
+		Hits getTopHits = highlightedGeos.getTopHits();
+		// nothing highlighted, look at eg circles, lines
+		if (getTopHits.size() == 0) getTopHits = view.getHits().getTopHits();
+
+		
+		if (getTopHits.size() > 0 ) {
+			GeoElement geo = (GeoElement)getTopHits.get(0);
+			if (geo.isPath()) {
+				Path path = (Path)geo;
+				GeoPoint p = kernel.Point(null, path, xRW, yRW, false);
+				p.update();
+				xRW = p.inhomX;
+				yRW = p.inhomY;
+			} else if (geo.isGeoPoint()) {
+				xRW = ((GeoPoint)geo).inhomX;
+				yRW = ((GeoPoint)geo).inhomY;
+			} else transformCoords(); // grid lock
+		} else transformCoords(); // grid lock
+	}
+	
+	
 
 	public void mouseEntered(MouseEvent e) {
 
