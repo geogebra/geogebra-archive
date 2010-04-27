@@ -9,6 +9,7 @@ import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVectorInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Locateable;
+import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 
 
@@ -18,7 +19,7 @@ import geogebra.main.Application;
  *
  */
 public class GeoVector3D extends GeoVec4D
-implements GeoVectorInterface, Locateable{
+implements GeoVectorInterface, Locateable, Vector3DValue{
 	
 	
 	private GeoPoint3D startPoint;
@@ -140,8 +141,7 @@ implements GeoVectorInterface, Locateable{
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	
@@ -349,6 +349,15 @@ implements GeoVectorInterface, Locateable{
 		public void setWaitForStartPoint() {
 			// TODO Auto-generated method stub
 			
+		}
+
+		public Geo3DVec get3DVec() {
+			return new Geo3DVec(kernel, v.getX(), v.getY(), v.getZ());
+		}
+
+		public double[] getPointAsDouble() {
+			double[] ret = {v.getX(), v.getY(), v.getZ()};
+			return ret;
 		} 
 
 
