@@ -5,6 +5,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.main.Application;
 import geogebra3D.kernel3D.Kernel3D;
 
 
@@ -34,7 +35,7 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 	protected GeoElement[] processPointVector3D(
 			ExpressionNode n,
 			ExpressionValue evaluate) {
-		String label = n.getLabel();				        
+		String label = n.getLabel();		
 
 		double[] p = ((Vector3DValue) evaluate).getPointAsDouble();
 
