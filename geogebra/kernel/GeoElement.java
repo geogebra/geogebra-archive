@@ -27,6 +27,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
+import geogebra3D.kernel3D.GeoVector3D;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -2099,7 +2100,7 @@ public abstract class GeoElement
 			chars = lineLabels;
 		} else if (isGeoConic() || isGeoCubic()) {
 			chars = conicLabels;
-		} else if (isGeoVector()) {
+		} else if (isGeoVector() || this instanceof GeoVector3D) {
 			chars = vectorLabels;
 		}  else if (isGeoAngle()) {
 			chars = greekLowerCase;
