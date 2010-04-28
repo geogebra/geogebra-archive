@@ -218,6 +218,8 @@ public class CommandDispatcher {
     	cmdTable.put("Mean", new CmdMean(kernel));
     	cmdTable.put("Variance", new CmdVariance(kernel));
     	cmdTable.put("SD", new CmdSD(kernel));
+    	cmdTable.put("SampleVariance", new CmdSampleVariance(kernel));
+    	cmdTable.put("SampleSD", new CmdSampleSD(kernel));
     	cmdTable.put("Median", new CmdMedian(kernel));
     	cmdTable.put("Q1", new CmdQ1(kernel));
     	cmdTable.put("Q3", new CmdQ3(kernel));

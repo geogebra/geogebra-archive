@@ -374,6 +374,23 @@ class CmdSD extends CmdOneListFunction {
 
 
 }
+/*
+ * SampleSD[ list ]
+ * adapted from CmdVariance by Michael Borcherds 2008-02-18
+ */
+class CmdSampleSD extends CmdOneListFunction {
+
+	public CmdSampleSD(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.SampleStandardDeviation(a, b);
+	}
+
+
+}
 
 /*
  * Sort[ <List> ]
@@ -441,25 +458,43 @@ class CmdVariance extends CmdOneListFunction {
 		return kernel.Variance(a, b);
 	}
 	
-	/*
-	 * Product[ list ]
-	 * adapted from CmdSum by Michael Borcherds 2008-02-16
-	 */
-	class CmdProduct extends CmdOneListFunction {
-
-		public CmdProduct(Kernel kernel) {
-			super(kernel);
-		}
-
-		final protected GeoElement doCommand(String a, GeoList b)
-		{
-			return kernel.Product(a, b);
-		}
-
-	}
 
 }
 
+/*
+ * SampleVariance[ list ]
+ * adapted from CmdSum by Michael Borcherds 2008-02-16
+ */
+class CmdSampleVariance extends CmdOneListFunction {
+
+	public CmdSampleVariance(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.SampleVariance(a, b);
+	}
+	
+
+}
+
+/*
+ * Product[ list ]
+ * adapted from CmdSum by Michael Borcherds 2008-02-16
+ */
+class CmdProduct extends CmdOneListFunction {
+
+	public CmdProduct(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Product(a, b);
+	}
+
+}
 
 
 

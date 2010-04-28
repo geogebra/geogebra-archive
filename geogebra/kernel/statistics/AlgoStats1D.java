@@ -45,6 +45,8 @@ public abstract class AlgoStats1D extends AlgoElement {
 	final static int STATS_SD = 4;
 	final static int STATS_PRODUCT = 5;
 	final static int STATS_SXX = 6;
+	final static int STATS_SAMPLE_VARIANCE = 7;
+	final static int STATS_SAMPLE_SD = 8;
 
 	public AlgoStats1D(Construction cons, String label, GeoList geoList, int stat) {
 		this(cons, label, geoList, null, stat);
@@ -66,9 +68,7 @@ public abstract class AlgoStats1D extends AlgoElement {
 		result.setLabel(label);
 	}
 
-	protected String getClassName() {
-		return "AlgoStats1D";
-	}
+	abstract protected String getClassName();
 
 	protected void setInputOutput(){
 		if (Truncate == null) {
@@ -165,8 +165,16 @@ public abstract class AlgoStats1D extends AlgoElement {
 				var=sumSquares/(double)size-mu*mu;
 				result.setValue(Math.sqrt(var));
 				break;
+			case STATS_SAMPLE_SD:
+				var=(sumSquares - sumVal * sumVal / size) / (size -1);
+				result.setValue(Math.sqrt(var));
+				break;
 			case STATS_VARIANCE:
 				var=sumSquares/(double)size-mu*mu;
+				result.setValue(var);
+				break;
+			case STATS_SAMPLE_VARIANCE:
+				var=(sumSquares - sumVal * sumVal / size) / (size -1);
 				result.setValue(var);
 				break;
 			case STATS_SXX:
@@ -186,3 +194,5 @@ public abstract class AlgoStats1D extends AlgoElement {
 		}
 
 	}
+
+

@@ -87,6 +87,8 @@ import geogebra.kernel.statistics.AlgoRandomNormal;
 import geogebra.kernel.statistics.AlgoRandomPoisson;
 import geogebra.kernel.statistics.AlgoRandomUniform;
 import geogebra.kernel.statistics.AlgoSXX;
+import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
+import geogebra.kernel.statistics.AlgoSampleVariance;
 import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
@@ -3749,11 +3751,31 @@ public class Kernel {
 	}
 	
 	/** 
+	 * SampleVariance[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SampleVariance(String label, GeoList list) {
+		AlgoSampleVariance algo = new AlgoSampleVariance(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
 	 * SD[list]
 	 * Michael Borcherds
 	 */
 	final public GeoNumeric StandardDeviation(String label, GeoList list) {
 		AlgoStandardDeviation algo = new AlgoStandardDeviation(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * SampleSD[list]
+	 * Michael Borcherds
+	 */
+	final public GeoNumeric SampleStandardDeviation(String label, GeoList list) {
+		AlgoSampleStandardDeviation algo = new AlgoSampleStandardDeviation(cons, label, list);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
