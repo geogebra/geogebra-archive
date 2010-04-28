@@ -3,6 +3,7 @@ package geogebra.kernel;
 import java.awt.geom.AffineTransform;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoQuadric3D;
 
 
@@ -158,6 +159,7 @@ public abstract class GeoQuadricND extends GeoElement {
 			empty();
 		}
 		
+		
 	}
 	
 	
@@ -170,6 +172,22 @@ public abstract class GeoQuadricND extends GeoElement {
 	}
 	
 	
+	
+
+	
+	public void setUndefined() {
+		defined = false;
+		//type = GeoConic.CONIC_EMPTY;
+		empty();
+	}
+
+	final public void setDefined() {
+		defined = true;
+	}
+	
+	
+	
+	
 	protected void setMidpoint(double[] coords){
 		
 		midpoint.set(coords);
@@ -180,7 +198,12 @@ public abstract class GeoQuadricND extends GeoElement {
 		return midpoint;
 	}
 	
+
+
 	
+	public double getHalfAxis(int i){
+		return halfAxes[i];
+	}
 	
 	
 	

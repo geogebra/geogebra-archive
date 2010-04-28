@@ -61,6 +61,10 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	
 	// DEFAULT COLORs
 	
+	// vector 3D
+	public static final Color colVector = Color.DARK_GRAY;
+	
+	
 	// polygon 3D
 	/** default color for 3D polygons */
 	public static final Color colPolygon3D = colPolygon;
@@ -179,6 +183,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		// vector 3D
 		GeoVector3D vector = new GeoVector3D(cons);
 		vector.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		vector.setObjColor(colVector);
 		vector.setLocalVariableLabel("Vector3D");
 		defaultGeoElements.put(DEFAULT_VECTOR3D, vector);		
 		

@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoVec2D;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -87,12 +88,13 @@ public class DrawConic3D extends Drawable3DCurves {
 		
 		switch(conic.getType()){
 		case GeoConic.CONIC_CIRCLE:
-			/*
-			GeoVec2D center = conic.getTranslationVector();
-			xc = center.x;
-			yc = center.y;
-			r = conic.getCircleRadius();
-			*/
+			
+			//GeoVec2D center = conic.getTranslationVector();
+			GgbVector center = conic.getMidpoint();
+			xc = center.getX();
+			yc = center.getY();
+			r = conic.getHalfAxis(0);
+			
 			break;
 		default:
 			break;

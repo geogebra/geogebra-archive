@@ -139,14 +139,7 @@ implements GeoElement3DInterface{
 	}
 	
 	
-	///////////////////////////////
-	// GETTERS
-	
 
-	
-	public double getHalfAxis(int i){
-		return halfAxes[i];
-	}
 	
 	
 	

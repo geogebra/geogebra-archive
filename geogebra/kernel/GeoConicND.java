@@ -44,4 +44,11 @@ public abstract class GeoConicND extends GeoQuadricND {
 	 * @param P 
 	 */
 	abstract public void setCircle(GeoPoint M, GeoPoint P);
+	
+	
+	
+	
+	
+	
+	
 }

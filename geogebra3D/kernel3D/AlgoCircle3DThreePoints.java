@@ -8,6 +8,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 /**
  * @author ggb3D
@@ -116,7 +117,8 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     	coordSys.resetCoordSys();
     	for(int i=0;i<3;i++)
     		coordSys.addPointToCoordSys(points3D[i].getCoords(),true,true);
-
+    	
+  
     	if (!coordSys.isDefined()){
     		circle.setUndefined();
     		return;
@@ -136,6 +138,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 			 
 			 //set the 2D points
 			 points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
+			 
 		 }
     	
     	super.compute();

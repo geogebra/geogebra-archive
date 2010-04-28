@@ -218,12 +218,17 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 
-		@Override
-		protected String getTypeString() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		//TODO move to GeoConicND
+		   protected String getTypeString() {
+				switch (type) {
+				case GeoConic.CONIC_CIRCLE: 
+					return "Circle";
+		 		default:
+					return "Conic3D";
+				}                       
 
+
+		    }
 
 
 		@Override
@@ -242,34 +247,22 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 
-		@Override
-		public void setUndefined() {
-			// TODO Auto-generated method stub
-			
-		}
 
 
-
-		@Override
 		public boolean showInAlgebraView() {
-			// TODO Auto-generated method stub
-			return false;
+			return true;
 		}
 
 
 
-		@Override
 		protected boolean showInEuclidianView() {
-			// TODO Auto-generated method stub
-			return false;
+			return true;
 		}
 
 
 
-		@Override
 		protected String getClassName() {
-			// TODO Auto-generated method stub
-			return null;
+			 return "GeoConic3D";
 		}
 
 

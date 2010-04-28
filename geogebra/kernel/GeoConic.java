@@ -353,14 +353,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 
 
 
-	public void setUndefined() {
-		defined = false;
-		type = CONIC_EMPTY;		
-	}
 
-	final public void setDefined() {
-		defined = true;
-	}
 
 	/**
 	 * returns false if conic's matrix is the zero matrix
