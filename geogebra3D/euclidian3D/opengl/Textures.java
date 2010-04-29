@@ -23,22 +23,23 @@ public class Textures {
     /** opengl organization of the dash textures */
     private int[] texturesDash;    
     /** number of dash styles */
-    static private int DASH_NUMBER = 4;  
+    static private int DASH_NUMBER = 5;  
 	/** no dash. */
-	static public int DASH_NONE = -1;	
+	static public int DASH_NONE = 0;	
 	/** simple dash: 1-(1), ... */
-	static public int DASH_SHORT = 0;	
+	static public int DASH_SHORT = 1;	
 	/** long dash: 2-(2), ... */
-	static public int DASH_LONG = 1;	
+	static public int DASH_LONG = 2;	
 	/** dotted dash: 1-(3), ... */
-	static public int DASH_DOTTED = 2;		
+	static public int DASH_DOTTED = 3;		
 	/** dotted/dashed dash: 7-(4)-1-(4), ... */
-	static public int DASH_DOTTED_DASHED = 3;	
+	static public int DASH_DOTTED_DASHED = 4;	
 	/** description of the dash styles */
 	static private boolean[][] DASH_DESCRIPTION = {
+		{true}, // DASH_NONE
 		{true, false, true, false}, // DASH_SHORT
 		{true, true, false, false}, // DASH_LONG
-		{true, false, false, false}, // DASH_DOTTED
+		{true, false, true, false, true, false, true, false}, //, false, false}, // DASH_DOTTED
 		{true,true,true,true, true,true,true,false, false,false,false,true, false,false,false,false} // DASH_DOTTED_DASHED
 	};
 
@@ -123,6 +124,10 @@ public class Textures {
 	public void setDashFromLineType(int lineType){
 
     	switch (lineType) {
+		case EuclidianView.LINE_TYPE_FULL:
+			setDash(DASH_NONE);
+			break;
+			
 		case EuclidianView.LINE_TYPE_DOTTED:
 			setDash(DASH_DOTTED);
 			break;

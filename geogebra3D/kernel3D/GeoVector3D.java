@@ -151,6 +151,10 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 		return true;
 	}
 	
+	public boolean isGeoVector(){
+		return true;
+	}
+	
 	
 	
 

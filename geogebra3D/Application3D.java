@@ -97,7 +97,11 @@ public abstract class Application3D extends Application{
         						+EuclidianView3D.MODE_RAY
         						+" , "
         						+EuclidianView3D.MODE_VECTOR
-        						+" | "
+        						+" || "
+        						+EuclidianView3D.MODE_POLYGON
+        						//+" | "
+        						//+EuclidianView3D.MODE_CIRCLE_THREE_POINTS
+        						+" || "
         						+EuclidianView3D.MODE_PLANE_THREE_POINTS
         						+" , "
         						+EuclidianView3D.MODE_PLANE_POINT_LINE
@@ -106,8 +110,6 @@ public abstract class Application3D extends Application{
         						+" , "
         						+EuclidianView3D.MODE_PARALLEL_PLANE
         						+" || "
-        						+EuclidianView3D.MODE_POLYGON
-        						+" | "
         						+EuclidianView3D.MODE_SPHERE_TWO_POINTS
         						+" "
         						+EuclidianView3D.MODE_SPHERE_POINT_RADIUS

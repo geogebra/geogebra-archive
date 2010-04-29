@@ -12,8 +12,6 @@ import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
-import geogebra.main.Application;
-import geogebra.util.Util;
 import geogebra3D.euclidian3D.Drawable3D;
 
 

@@ -89,12 +89,22 @@ public class GgbCoordSys {
 	}
 	
 	
+	public GgbVector getPoint(GgbVector coords2D){
+		return getPoint(coords2D.getX(), coords2D.getY());
+	}
 	
 	public GgbVector getPoint(double x, double y){
 		//return (GgbVector) getOrigin().add(getVx().mul(x).add(getVy().mul(y)));
-		return (GgbVector) matrix4x4.getOrigin().add(matrix4x4.getVx().mul(x).add(matrix4x4.getVy().mul(y)));
+		return (GgbVector) matrix4x4.getOrigin().add(getVector(x, y));
 	}
 	
+	public GgbVector getVector(GgbVector coords2D){
+		return getVector(coords2D.getX(), coords2D.getY());
+	}	
+	
+	public GgbVector getVector(double x, double y){
+		return (GgbVector) matrix4x4.getVx().mul(x).add(matrix4x4.getVy().mul(y));
+	}
 	
 	public GgbVector getNormal(){
 		return matrix4x4.getVz();//getVx().crossProduct(getVy()).normalized();

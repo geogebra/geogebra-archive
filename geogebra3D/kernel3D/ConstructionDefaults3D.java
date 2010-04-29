@@ -39,6 +39,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_AXIS3D = 3103;
 	/** default vector 3D type */	
 	public static final int DEFAULT_VECTOR3D = 3104;
+	/** default conic 3D type */	
+	public static final int DEFAULT_CONIC3D = 3105;
 	
 	
 	
@@ -62,7 +64,12 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	// DEFAULT COLORs
 	
 	// vector 3D
+	/** default color for 3D vectors */
 	public static final Color colVector = Color.DARK_GRAY;
+	
+	// conic 3D
+	/** default color for 3D conics */
+	public static final Color colConic3D = new Color(255, 128, 0);
 	
 	
 	// polygon 3D
@@ -73,7 +80,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 
 	// plane 
 	/** default color for 3D planes */
-	private static final Color colPlane3D = new Color(0, 255, 128);
+	private static final Color colPlane3D = new Color(99, 219, 219);
 	/** default alpha for 3D planes*/
 	public static final float DEFAULT_PLANE3D_ALPHA = 0.5f;
 	/** default grid thickness for 3D planes*/
@@ -190,6 +197,15 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		
 		
 		
+		// conic
+		GeoConic3D conic = new GeoConic3D(cons);	
+		conic.setLocalVariableLabel("Conic3D");
+		conic.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		conic.setObjColor(colConic3D);
+		defaultGeoElements.put(DEFAULT_CONIC3D, conic);
+		
+		
+		
 		// plane
 		GeoPlane3D plane = new GeoPlane3D(cons);	
 		plane.setLocalVariableLabel("Plane3D");
@@ -256,6 +272,11 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 			return DEFAULT_AXIS3D;
 		case GeoElement3D.GEO_CLASS_VECTOR3D: 
 			return DEFAULT_VECTOR3D;
+			
+		case GeoElement3D.GEO_CLASS_CONIC3D: 
+			return DEFAULT_CONIC3D;
+			
+			
 			
 		
 		case GeoElement3D.GEO_CLASS_PLANE3D: 

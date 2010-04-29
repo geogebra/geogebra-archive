@@ -72,8 +72,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	// (eigenvecX, eigenvecY) are coords of currently calculated first eigenvector
 	// (eigenvecX, eigenvecY) is not a unit vector
 	double eigenvecX, eigenvecY;
-	// two Eigenvectors (unit vectors), set by setEigenvectors()
-	GeoVec2D[] eigenvec = { new GeoVec2D(kernel, 1, 0), new GeoVec2D(kernel, 0, 1)};
+
 	// translation vector (midpoint, vertex)    
 	GeoVec2D b = new GeoVec2D(kernel);
 	//public double linearEccentricity, eccentricity, p;

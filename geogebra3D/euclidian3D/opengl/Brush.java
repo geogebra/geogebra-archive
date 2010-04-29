@@ -39,15 +39,29 @@ public class Brush {
 		 * @param thickness
 		 */
 		public Section(GgbVector point, float thickness){
+			this(point, thickness, null, null);
+		}
+		
+		/**
+		 * first section constructor
+		 * @param point
+		 * @param thickness
+		 * @param clockU 
+		 * @param clockV 
+		 */
+		public Section(GgbVector point, float thickness, GgbVector clockU, GgbVector clockV){
 			this.center = point;
 			this.thickness = thickness;
-		}
+			this.clockU = clockU;
+			this.clockV = clockV;
+		}	
 		
 		/**
 		 * second section constructor
 		 * @param s
 		 * @param point
 		 * @param thickness
+		 * @param updateClock 
 		 */
 		public Section(Section s, GgbVector point, float thickness, boolean updateClock){
 			this(point,thickness);
@@ -218,7 +232,15 @@ public class Brush {
 	 */
 	public void down(GgbVector point){
 		
-		start = new Section(point,thickness);
+		down(point,null,null);
+	}
+	
+	/** start new curve part
+	 * @param point
+	 */
+	private void down(GgbVector point, GgbVector clockU, GgbVector clockV){
+		
+		start = new Section(point,thickness, clockU, clockV);
 		end = null;
 	}
 	
@@ -233,6 +255,28 @@ public class Brush {
 			start = end;
 			end = new Section(start, point, thickness,false);
 		}
+		
+		join();
+	}
+	
+	
+	/** move to point and draw curve part
+	 * @param point
+	 */
+	private void moveTo(GgbVector point, GgbVector clockU, GgbVector clockV){
+
+		if (end!=null)
+			start = end;
+		
+		end = new Section(point, thickness, clockU, clockV);
+		
+		join();
+	}	
+	
+	/**
+	 * join start to end
+	 */
+	public void join(){
 		
 		// draw curve part
 		manager.startGeometry(Manager.QUAD_STRIP);
@@ -298,17 +342,17 @@ public class Brush {
 		switch(arrowType){
 		case ARROW_TYPE_NONE:
 		default:
-			setTextureX(0, 1);
+			setTextureX(0,1);
 			moveTo(p2);
 			break;
 		case ARROW_TYPE_SIMPLE:
 			float factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
 			float arrowPos = ARROW_LENGTH/length * factor;
 			GgbVector arrowBase = (GgbVector) start.center.mul(arrowPos).add(p2.mul(1-arrowPos));
-			setTextureX(0, 1-arrowPos);
+			setTextureX(0,1-arrowPos);
 			moveTo(arrowBase);
 			textureType = TEXTURE_ID;
-			setTextureX(0, 0);
+			setTextureX(0,0);
 			setThickness(factor*ARROW_WIDTH);
 			moveTo(arrowBase);
 			setThickness(0);
@@ -318,6 +362,42 @@ public class Brush {
 		
 	}
 	
+	
+	/** draws a circle
+	 * @param center
+	 * @param v1
+	 * @param v2
+	 * @param radius
+	 */
+	public void circle(GgbVector center, GgbVector v1, GgbVector v2, double radius){
+		
+		
+		length=(int) (2*Math.PI*radius); //use integer to avoid bad dash cycle connection
+		
+		int longitude = 100;
+
+		
+		GgbVector vn1;
+		GgbVector vn2 = v1.crossProduct(v2);
+		
+    	float dt = (float) 1/longitude;
+    	float da = (float) (2*Math.PI *dt) ; 
+    	float u=0, v=1;
+    	
+    	setTextureX(0);
+		vn1 = (GgbVector) v1.mul(u).add(v2.mul(v));
+		down((GgbVector) center.add(vn1.mul(radius)),vn1,vn2);  	
+    	
+    	for( int i = 1; i <= longitude  ; i++ ) { 
+    		u = (float) Math.sin ( i * da ); 
+    		v = (float) Math.cos ( i * da ); 
+    		
+    		setTextureX(i*dt);
+    		vn1 = (GgbVector) v1.mul(u).add(v2.mul(v));
+    		moveTo((GgbVector) center.add(vn1.mul(radius)),vn1,vn2);
+    	} 
+    	
+	}
 	
 	/** cone curve
 	 * @param direction 
@@ -330,7 +410,7 @@ public class Brush {
 		if (start>end)
 			return;
 		
-		setTextureX(0, 0);
+		setTextureX(0,0);
 		textureType = TEXTURE_ID;
 		
 		float radius = thickness;
@@ -434,10 +514,15 @@ public class Brush {
 		}
 	}
 	
-	private void setTextureX(float x1, float x2){
-		this.textureX[0] = x1;
-		this.textureX[1] = x2;
+	private void setTextureX(float x0, float x1){
+		this.textureX[0] = x0;
+		this.textureX[1] = x1;
 	}
+	
+	private void setTextureX(float x){
+		setTextureX(textureX[1],x);
+	}
+
 	
 	private void setTextureY(float y1){
 		this.textureY[0] = y1;

@@ -23,7 +23,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		cmdTable.put("Vector", new CmdVector3D(kernel3D));
 		cmdTable.put("Polygon", new CmdPolygon3D(kernel3D));
 		cmdTable.put("Point", new CmdPoint3D(kernel3D));
-		//cmdTable.put("Circle", new CmdCircle3D(kernel3D));
+		cmdTable.put("Circle", new CmdCircle3D(kernel3D));
 		
 		cmdTable.put("Plane", new CmdPlane(kernel3D));
 		cmdTable.put("OrthogonalPlane", new CmdOrthogonalPlane(kernel3D));
@@ -42,6 +42,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
     	
     	
     	cmdTable.put("Sphere", new CmdSphere3D(kernel3D));	
+    	cmdTable.put("Cone", new CmdCone(kernel3D));	
     	    	
 	}
 	

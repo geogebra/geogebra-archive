@@ -27,23 +27,24 @@ extends GeoConicND implements GeoElement3DInterface{
 	private Drawable3D drawable3D = null;
 	
 	
-	private boolean isPickable;
-
-	
-	
-	
 	/**
 	 * Creates an empty 3D conic with 2D coord sys
 	 * @param c construction
 	 * @param cs 2D coord sys
 	 */
 	public GeoConic3D(Construction c, GgbCoordSys cs) {
-		super(c,2);
+		this(c);
 		setCoordSys(cs);
 	}	
 	
 	
-	
+	/**
+	 * Creates an empty 3D conic with 2D coord sys
+	 * @param c construction
+	 */
+	public GeoConic3D(Construction c) {
+		super(c,2);
+	}	
 	
 	
 	
@@ -136,7 +137,27 @@ extends GeoConicND implements GeoElement3DInterface{
 		 return coordSys.getNormal();
 	 };
 
+	 /////////////////////////////////////////
+	 // GeoConicND
+	 
+	 public GgbVector getMidpoint(){
+		 return coordSys.getPoint(super.getMidpoint());
+		 
+	 }
 
+
+	 public GgbVector getEigenvec3D(int i){
+		 return coordSys.getVector(super.getEigenvec(i));
+	 }
+
+	 /////////////////////////////////////////
+	 // PATH
+	 
+	 public boolean isPath(){
+		 return true;
+	 }
+		
+		
 
 
 	 /////////////////////////////////////////
@@ -181,15 +202,12 @@ extends GeoConicND implements GeoElement3DInterface{
 		 * @param v pickability
 		 */
 		public void setIsPickable(boolean v){
-			isPickable = v;
 		}
 
 
 
-		@Override
 		protected StringBuilder buildValueString() {
-			// TODO Auto-generated method stub
-			return null;
+			return new StringBuilder("todo-GeoConic3D");
 		}
 
 
