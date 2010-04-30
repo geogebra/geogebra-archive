@@ -92,12 +92,12 @@ public class Brush {
 					//Application.debug("normalDev="+normalDevD+","+normalDevN);
 				}
 				
-				//calc new clocks				
 				direction.normalize();
 				s.direction = direction;
 				normal = null;
 				s.normal = null;
 				
+				//calc new clocks				
 				if (updateClock){
 					GgbVector[] vn = direction.completeOrthonormal();
 					s.clockU = vn[0]; s.clockV = vn[1];
@@ -105,7 +105,8 @@ public class Brush {
 
 			}
 			clockU = s.clockU; clockV = s.clockV;
-			//Application.debug("clock=\n"+clockU.toString()+",\n"+clockV.toString());
+			
+			//Application.debug("direction=\n"+direction.toString());
 		}
 		
 		
@@ -185,6 +186,24 @@ public class Brush {
 	/** length and width of the arrow */
 	static private float ARROW_LENGTH = 3f;
 	static private float ARROW_WIDTH = ARROW_LENGTH/4f;
+	
+	
+	// ticks	
+	/** no ticks */
+	static final public boolean TICKS_OFF=false;
+	/** with ticks */
+	static final public boolean TICKS_ON=true;
+	/** has ticks ? */
+	private boolean ticks = TICKS_OFF;
+	/** distance between two ticks */
+	private float ticksDistance;
+	/** offset for origin of the ticks (0: start of the curve, 1: end of the curve) */
+	private float ticksOffset;
+	
+	
+	
+	
+	
 	
 	//level of detail
 	/** number of rules */
@@ -349,8 +368,37 @@ public class Brush {
 			float factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
 			float arrowPos = ARROW_LENGTH/length * factor;
 			GgbVector arrowBase = (GgbVector) start.center.mul(arrowPos).add(p2.mul(1-arrowPos));
-			setTextureX(0,1-arrowPos);
+			
+			setTextureX(0);
+			if (hasTicks()){
+				GgbVector d = p2.sub(p1).normalized();
+				float thickness = this.thickness;
+				
+				float i = ticksOffset*length-((int) (ticksOffset*length/ticksDistance))*ticksDistance;
+				float ticksDelta = thickness;
+				float ticksThickness = 4*thickness;
+				if (i<=ticksDelta)
+					i+=ticksDistance;
+				for(;i<=length*(1-arrowPos);i+=ticksDistance){
+					setTextureX(1-arrowPos);
+					
+					GgbVector p1b=(GgbVector) p1.add(d.mul(i-ticksDelta));
+					GgbVector p2b=(GgbVector) p1.add(d.mul(i+ticksDelta));
+					
+					moveTo(p1b);
+					setThickness(ticksThickness);
+					moveTo(p1b);
+					moveTo(p2b);
+					setThickness(thickness);
+					moveTo(p2b);
+					
+				}
+			}
+
+			setTextureX(1-arrowPos);
 			moveTo(arrowBase);
+			
+			
 			textureType = TEXTURE_ID;
 			setTextureX(0,0);
 			setThickness(factor*ARROW_WIDTH);
@@ -544,6 +592,41 @@ public class Brush {
     public void setArrowType(int arrowType){
     	this.arrowType = arrowType;
     } 
+	
+	////////////////////////////////////
+	// TICKS
+	////////////////////////////////////
+	
+    /**
+     * sets the type of arrow used by the pencil.
+     * @param ticks 
+     */
+    public void setTicks(boolean ticks){
+    	this.ticks = ticks;
+    } 
+    
+    /**
+     * sets the distance between two ticks
+     * @param distance
+     */
+    public void setTicksDistance(float distance){
+    	this.ticksDistance = distance;
+    }
+    
+    /**
+     * sets the offset for origin of the ticks (0: start of the curve, 1: end of the curve)
+     * @param offset
+     */
+    public void setTicksOffset(float offset){
+    	this.ticksOffset = offset;
+    }
+    
+    /**
+     * @return true if it draws ticks
+     */
+    public boolean hasTicks(){
+    	return ticks && (ticksDistance>0);
+    }
 	
 
 }

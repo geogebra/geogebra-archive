@@ -89,9 +89,11 @@ public class DrawAxis3D extends DrawLine3D {
        		renderer.drawText(axis.getNumbersXOffset()-4,axis.getNumbersYOffset()-6, strNum,true); //TODO values 4 and 6 depend to label size 
     	
        		//draw ticks
+       		/*
        		ticksMatrix.setOrigin(origin);
        		renderer.setMatrix(ticksMatrix);
        		renderer.drawSegment(-ticksThickness, ticksThickness);
+       		*/
        		
     	}
     	
@@ -106,18 +108,25 @@ public class DrawAxis3D extends DrawLine3D {
     
     
     protected void updateForItSelf(){
-       	getView3D().getRenderer().getGeometryManager().getBrush().setArrowType(Brush.ARROW_TYPE_SIMPLE);
-       	super.updateForItSelf();
-       	getView3D().getRenderer().getGeometryManager().getBrush().setArrowType(Brush.ARROW_TYPE_NONE);
+    	
+    	updateDrawMinMax();
+    	updateDecorations();
+    	
+    	Brush brush = getView3D().getRenderer().getGeometryManager().getBrush();
+       	brush.setArrowType(Brush.ARROW_TYPE_SIMPLE);
+       	brush.setTicks(Brush.TICKS_ON);
+       	brush.setTicksDistance( (float) ((GeoAxis3D) getGeoElement()).getNumbersDistance());
+       	brush.setTicksOffset((float) (-getDrawMin()/(getDrawMax()-getDrawMin())));
+       	super.updateForItSelf(false);
+       	brush.setArrowType(Brush.ARROW_TYPE_NONE);
+       	brush.setTicks(Brush.TICKS_OFF);
     }
     
     
     
-	protected void updateForView(){
-		
-		//update line length
-		super.updateForView();
-		
+    private void updateDecorations(){
+    	
+
 		
 		//update decorations
 		GeoAxis3D axis = (GeoAxis3D) getGeoElement();
@@ -153,6 +162,17 @@ public class DrawAxis3D extends DrawLine3D {
 		axis.updateDecorations(distance, numberFormat, 
 				xOffset, yOffset,
 				-vx-xOffset,-vy-yOffset);
+		
+    	
+    }
+    
+	protected void updateForView(){
+		
+
+		
+		
+		
+		updateForItSelf();
 	}
 	
 

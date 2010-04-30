@@ -257,11 +257,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		axis[1] = kernel3D.getYAxis3D();
 		axis[2] = kernel3D.getZAxis3D();
 		
+		
 		for(int i=0;i<3;i++){
 			axis[i].setLabelVisible(true);
 			add(axis[i]);
 		}
 		
+		
+			//axis[1].setLabelVisible(true);add(axis[1]);
 	}
 	
 	
@@ -2239,11 +2242,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void updateDrawables(){
 		
 		xOyPlane.getDrawable3D().viewChanged();
-		//xOyPlane.getDrawable3D().setWaitForUpdate();
+		
 		for(int i=0;i<3;i++){
 			axis[i].getDrawable3D().viewChanged();
 			//axis[i].getDrawable3D().setWaitForUpdate();
 		}
+		
+		//axis[1].getDrawable3D().viewChanged();
+		
 	}
 	
 	public void updateDrawablesNow(){

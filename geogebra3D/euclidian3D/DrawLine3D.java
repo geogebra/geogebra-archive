@@ -21,59 +21,36 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	
 	protected void updateForItSelf(){
 		
-		GgbVector o = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getOrigin());
-		GgbVector v = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getVx());
-		
-		//Application.debug("matrix =\n"+((GeoCoordSys1D) getGeoElement()).getMatrix());
-		//Application.debug("screen matrix =\n"+getView3D().getToScreenMatrix());
-				
-		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
-				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-				o, v);
+
+		updateForItSelf(true);
+
+	}
+	
+	protected void updateForItSelf(boolean updateDrawMinMax){
 		
 
-		
-		setDrawMinMax(minmax[0], minmax[1]);
-		
-		//Application.debug("drawMin = "+minmax[0]+"\ndrawMax = "+minmax[1]);
-		
+		if (updateDrawMinMax)
+			updateDrawMinMax();
 		
 		super.updateForItSelf();
 
 	}
-	
-	
 
-	
-	
-	
-
-	/*
-	public void drawGeometry(EuclidianRenderer3D renderer) {
+	protected void updateDrawMinMax(){
 		
-		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
-		super.drawGeometry(renderer);
-		renderer.drawLine();
-	}
-	
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){
+		GgbVector o = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getOrigin());
+		GgbVector v = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getVx());
+						
+		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+				o, v);
 		
-		//renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
-		super.drawGeometryPicked(renderer);
-		renderer.drawLine(); 
+		setDrawMinMax(minmax[0], minmax[1]);
 	}
 	
-*/
-
 	
-
-
-	/*
-	public int getPickOrder(){
-		return DRAW_PICK_ORDER_1D;
-	}
-
-	*/
+	
+	
 	
 	
 	
