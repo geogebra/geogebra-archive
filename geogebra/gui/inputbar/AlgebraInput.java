@@ -16,8 +16,10 @@ import geogebra.gui.view.algebra.InputPanel;
 import geogebra.main.Application;
 import geogebra.util.LowerCaseDictionary;
 
+import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,10 +30,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 /**
  * @author Markus Hohenwarter
@@ -54,6 +58,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	public AlgebraInput(Application app) {		
 		this.app = app;		
 		 		
+		app.removeTraversableKeys(this);
+		
 		//initGUI();
 	}
 	
@@ -257,7 +263,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 				 inputField.addToHistory(input);
 				inputField.setText(null);  							  			   
 			  }			  
-		}
+		} else app.getGlobalKeyDispatcher().handleGeneralKeys(e); // handle eg ctrl-tab
 	}
 
 	public void keyReleased(KeyEvent e) {

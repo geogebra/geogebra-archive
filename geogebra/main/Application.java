@@ -38,6 +38,7 @@ import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
 import geogebra.util.Util;
 
+import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -3026,9 +3027,18 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	final public void selectNextGeo() {
-		if (selectedGeos.size() != 1) return;
-		GeoElement selGeo = selectedGeos.get(0);
 		Iterator<GeoElement> it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+
+		// none selected, select first geo
+		if (selectedGeos.size() == 0) {
+			if (it.hasNext()) addSelectedGeo(it.next());
+			return;
+		}
+		
+		if (selectedGeos.size() != 1) return;
+		
+		// one selected, select next one
+		GeoElement selGeo = selectedGeos.get(0);
 		while (it.hasNext()) {
 			GeoElement geo = it.next();
 			if (selGeo == geo) {
@@ -4000,6 +4010,19 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	public boolean onlyGraphicsViewShowing() {
 		return !showSpreadsheetView() && !showAlgebraView();
+	}
+	
+	/*
+	 * stops eg TAB automatically transferring focus between panes
+	 */
+	public void removeTraversableKeys(JPanel p) {
+	    Set<AWTKeyStroke> set = p.getFocusTraversalKeys(KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS);
+	    set.clear();
+	    p.setFocusTraversalKeys(KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, set);
+	    p.setFocusTraversalKeys(KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS, set);
+	    p.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, set);
+	    p.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, set);
+
 	}
 
 		

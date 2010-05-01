@@ -1,6 +1,7 @@
 package geogebra.main;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -153,7 +154,19 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				break;			
 				
 			case KeyEvent.VK_TAB:
-				if (app.getEuclidianView().hasFocus()|| app.getGuiManager().getAlgebraView().hasFocus()) {
+				if (event.isControlDown() && app.hasGuiManager()) {
+					consumed = true;
+					GuiManager gui = app.getGuiManager();
+					
+					// Ctrl-tab to toggle between Graphics and Spreadsheet Views
+					if (!gui.getSpreadsheetView().hasFocus()) {
+						gui.getSpreadsheetView().requestFocus();
+					}
+					else if (gui.getSpreadsheetView().hasFocus()) {
+						app.getEuclidianView().requestFocus();
+					}
+					
+				} else if (app.getEuclidianView().hasFocus()|| app.getGuiManager().getAlgebraView().hasFocus()) {
 					if (event.isShiftDown()) app.selectLastGeo(); else app.selectNextGeo();
 					consumed = true;
 				}
@@ -193,7 +206,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				break;
 				
 			case KeyEvent.VK_C:
-				// Ctrl-shift-c: copy graphcis view to clipboard
+				// Ctrl-shift-c: copy graphics view to clipboard
 				//   should also work in applets with no menubar
 				if (event.isShiftDown()) {
 					app.copyGraphicsViewToClipboard();	
@@ -230,6 +243,15 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				if (!app.isApplet() || app.isRightClickEnabled()) {
 					app.getKernel().updateConstruction();
 					app.setUnsaved();
+					consumed = true;
+				}
+				break;
+				
+				// ctrl-shift-s (toggle spreadsheet)
+			case KeyEvent.VK_S:
+				if (event.isShiftDown() && app.hasGuiManager()) {
+					app.getGuiManager().setShowSpreadsheetView(
+							!app.getGuiManager().showSpreadsheetView());
 					consumed = true;
 				}
 				break;

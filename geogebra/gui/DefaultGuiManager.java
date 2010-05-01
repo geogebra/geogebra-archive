@@ -485,6 +485,7 @@ public class DefaultGuiManager implements GuiManager {
 	
 	public void setShowSpreadsheetView(boolean flag) {
 		setShowView(flag, Application.VIEW_SPREADSHEET);
+		if (flag == true) getSpreadsheetView().requestFocus(); else app.getEuclidianView().requestFocus();
 	}
 	
 	public void setShowCASView(boolean flag) {

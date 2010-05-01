@@ -247,6 +247,10 @@ public class MyTable extends JTable implements FocusListener
 		//G.Sturr 2010-4-10
 		columnModelListener = new MyTableColumnModelListener();
 		getColumnModel().addColumnModelListener( columnModelListener); 
+		
+		// set first cell active 
+		// needed in case spreadsheet selected with ctrl-tab rather than mouse click
+		changeSelection(0, 0, false, false);
 	
 	}
 	
