@@ -2859,7 +2859,7 @@ public abstract class Application implements KeyEventDispatcher {
 		return selectedGeos.size();
 	}
 
-	final public ArrayList getSelectedGeos() {
+	final public ArrayList<GeoElement> getSelectedGeos() {
 		return selectedGeos;
 	}
 

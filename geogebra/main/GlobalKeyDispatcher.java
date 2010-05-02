@@ -108,7 +108,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			GeoElement geo;					
 			if (app.selectedGeosSize() == 1) {
 				// selected geo
-				geo = (GeoElement) app.getSelectedGeos().get(0);										
+				geo = app.getSelectedGeos().get(0);										
 			}				
 			else {
 				// last created geo
@@ -174,7 +174,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				
 				break;
 				
-							
+						
 			// F9 updates construction
 			// cmd-f9 on Mac OS
 			case KeyEvent.VK_F9:
@@ -304,10 +304,28 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		
 		// FUNCTION and DELETE keys
 		switch (keyCode) {
+		
+		case KeyEvent.VK_PAGE_UP:
+			Iterator<GeoElement> it = geos.iterator();
+			while (it.hasNext()) {
+				GeoElement geo = it.next();
+				geo.setLayer(geo.getLayer() + 1);
+			}			
+			break;
+			
+		case KeyEvent.VK_PAGE_DOWN:
+			it = geos.iterator();
+			while (it.hasNext()) {
+				GeoElement geo = it.next();
+				geo.setLayer(geo.getLayer() - 1);
+			}			
+			break;
+			
+						
 			case KeyEvent.VK_F3:
 				// F3 key: copy definition to input field				
 				if (geos.size() == 1)
-					handleFunctionKeyForAlgebraInput(3, (GeoElement) geos.get(0));
+					handleFunctionKeyForAlgebraInput(3, geos.get(0));
 				else {
 					// F3 key: copy definitions to input field as list 			
 					JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
@@ -315,9 +333,9 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					StringBuilder sb = new StringBuilder();
 					sb.append('{');
 					
-					Iterator<GeoElement> it = geos.iterator();
+					it = geos.iterator();
 					while (it.hasNext()) {
-						sb.append(((GeoElement) it.next()).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false));
+						sb.append(it.next().getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false));
 						if (it.hasNext()) sb.append(",");
 					}
 					sb.append('}');
@@ -330,12 +348,12 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				
 			case KeyEvent.VK_F4:
 				// F4 key: copy value to input field				
-				handleFunctionKeyForAlgebraInput(4, (GeoElement) geos.get(0));
+				handleFunctionKeyForAlgebraInput(4, geos.get(0));
 				return true;
 				
 			case KeyEvent.VK_F5:
 				// F5 key: copy label to input field				
-				handleFunctionKeyForAlgebraInput(5, (GeoElement) geos.get(0));
+				handleFunctionKeyForAlgebraInput(5, geos.get(0));
 				return true;
 				
 			case KeyEvent.VK_DELETE:
@@ -420,7 +438,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_F2:
 				// handle F2 key to start editing first selected element
 				if (app.hasGuiManager()) {
-					app.getGuiManager().startEditing((GeoElement) geos.get(0));
+					app.getGuiManager().startEditing(geos.get(0));
 					return true;
 				}			
 				break;
@@ -452,7 +470,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		// change all geoelements
 		if (changeVal != 0) {
 			for (int i=geos.size()-1; i>=0; i--) {
-				GeoElement geo = (GeoElement) geos.get(i);								
+				GeoElement geo = geos.get(i);								
 
 				if (geo.isChangeable()) {
 					// update number
@@ -548,8 +566,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * @param keyCode: VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT
 	 * @return whether any object was moved
 	 */
-	private boolean handleArrowKeyMovement(ArrayList geos, double xdiff, double ydiff, double zdiff) {	
-		GeoElement geo = (GeoElement) geos.get(0);
+	private boolean handleArrowKeyMovement(ArrayList<GeoElement> geos, double xdiff, double ydiff, double zdiff) {	
+		GeoElement geo = geos.get(0);
 		
 		// don't move slider, they will be handled later
 		if (geos.size() == 1 && geo.isGeoNumeric() && geo.isChangeable()) {
@@ -570,7 +588,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		// nothing moved
 		if (!moved) {
 			for (int i=0; i< geos.size(); i++) {
-				 geo = (GeoElement) geos.get(i);
+				 geo = geos.get(i);
 				// toggle boolean value
 				if (geo.isChangeable() && geo.isGeoBoolean()) {
 					GeoBoolean bool = (GeoBoolean) geo;
@@ -622,7 +640,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			app.getGuiManager().updateSpreadsheetColumnWidths();
 		
 		// apply styles to to selected or all geos
-		Iterator it = null;
+		Iterator<GeoElement> it = null;
 		if (app.getSelectedGeos().size() == 0) {
 			// change all geos
 			it = app.getKernel().getConstruction().getGeoSetConstructionOrder().iterator();
@@ -631,7 +649,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			it = app.getSelectedGeos().iterator();
 		}	
 		while (it.hasNext()) {
-			GeoElement geo = (GeoElement) it.next();
+			GeoElement geo = it.next();
 			setGeoProperties(geo, incr, incr, angleSizeIncr, blackWhiteMode);
 		}
 		
