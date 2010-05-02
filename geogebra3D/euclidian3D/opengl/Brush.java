@@ -173,8 +173,10 @@ public class Brush {
 	private float[] textureY = new float[2];
 	/** type of texture */
 	private int textureType;
-	static final private int TEXTURE_ID = 0; 
-	static final private int TEXTURE_AFFINE = 1; 
+	static final private int TEXTURE_CONSTANT_0 = 0; 
+	static final private int TEXTURE_ID = 1;
+	static final private int TEXTURE_AFFINE = 2;
+	
 	static final private float TEXTURE_AFFINE_FACTOR = 0.05f; 
 	
 	// arrows	
@@ -379,14 +381,17 @@ public class Brush {
 				float ticksThickness = 4*thickness;
 				if (i<=ticksDelta)
 					i+=ticksDistance;
+
 				for(;i<=length*(1-arrowPos);i+=ticksDistance){
-					setTextureX(1-arrowPos);
 					
 					GgbVector p1b=(GgbVector) p1.add(d.mul(i-ticksDelta));
 					GgbVector p2b=(GgbVector) p1.add(d.mul(i+ticksDelta));
 					
+					setTextureType(TEXTURE_AFFINE);
+					setTextureX(i/length);
 					moveTo(p1b);
 					setThickness(ticksThickness);
+					setTextureType(TEXTURE_CONSTANT_0);
 					moveTo(p1b);
 					moveTo(p2b);
 					setThickness(thickness);
@@ -420,7 +425,7 @@ public class Brush {
 	public void circle(GgbVector center, GgbVector v1, GgbVector v2, double radius){
 		
 		
-		length=(int) (2*Math.PI*radius); //use integer to avoid bad dash cycle connection
+		length=(float) (2*Math.PI*radius); //TODO use integer to avoid bad dash cycle connection
 		
 		int longitude = 100;
 
@@ -544,7 +549,15 @@ public class Brush {
 
 		texturePosZero = posZero;
 		textureValZero = valZero;
-		textureType = TEXTURE_AFFINE;
+		setTextureType(TEXTURE_AFFINE);
+	}
+	
+	
+	/** sets the type of texture
+	 * @param type
+	 */
+	public void setTextureType(int type){
+		textureType = type;
 	}
 
 	/** return texture x coord regarding position
@@ -556,8 +569,12 @@ public class Brush {
 		case TEXTURE_ID:
 		default:
 			return pos;
+		case TEXTURE_CONSTANT_0:
+			return 0f;
 		case TEXTURE_AFFINE:
-			return TEXTURE_AFFINE_FACTOR*length*scale*(pos-texturePosZero)+textureValZero;
+			//float factor = (int) (TEXTURE_AFFINE_FACTOR*length*scale); //TODO integer for cycles
+			float factor =  (TEXTURE_AFFINE_FACTOR*length*scale);
+			return factor*(pos-texturePosZero)+textureValZero;
 
 		}
 	}

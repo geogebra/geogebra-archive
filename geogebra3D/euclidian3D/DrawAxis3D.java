@@ -71,13 +71,11 @@ public class DrawAxis3D extends DrawLine3D {
     	//matrix for each ticks
     	GgbMatrix4x4 ticksMatrix = new GgbMatrix4x4();
     	GgbMatrix4x4 drawingMatrix = ((GeoElement3D) getGeoElement()).getDrawingMatrix();
-    	double ticksThickness = 1/getView3D().getScale();
     	ticksMatrix.setVx(drawingMatrix.getVx().normalized());
     	ticksMatrix.setVy((GgbVector) drawingMatrix.getVy().mul(axis.getTickSize()));
     	ticksMatrix.setVz((GgbVector) drawingMatrix.getVz().mul(axis.getTickSize()));
   	
     	
-    	//for(int i=(int) getDrawMin();i<=getDrawMax();i++){
     	for(int i=(int) (getDrawMin()/distance);i<=getDrawMax()/distance;i++){
     		double val = i*distance;
     		GgbVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
@@ -86,14 +84,12 @@ public class DrawAxis3D extends DrawLine3D {
     		String strNum = getView3D().getKernel().formatPiE(val,numberFormat);
     		numbersMatrix.setOrigin(origin);
     		renderer.setMatrix(numbersMatrix);
-       		renderer.drawText(axis.getNumbersXOffset()-4,axis.getNumbersYOffset()-6, strNum,true); //TODO values 4 and 6 depend to label size 
-    	
-       		//draw ticks
-       		/*
-       		ticksMatrix.setOrigin(origin);
-       		renderer.setMatrix(ticksMatrix);
-       		renderer.drawSegment(-ticksThickness, ticksThickness);
-       		*/
+    		//int labelSize = strNum.length();
+       		renderer.drawText(axis.getNumbersXOffset()-4,
+       				axis.getNumbersYOffset()-6, 
+       				strNum,true); 
+       		//TODO 4 and 6 depends to police size
+       		//TODO anchor
        		
     	}
     	

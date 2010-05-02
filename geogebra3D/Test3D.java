@@ -172,7 +172,7 @@ public class Test3D{
 	
         //testLoad("polygon3d");
         
-        //testLoad("test");
+        testLoad("test");
         
 		//testRegion();
 		
