@@ -211,7 +211,7 @@ GeoCoordSys2D{
 	
 	///////////////////////////////////
 	// GEOELEMENT3DINTERFACE INTERFACE	
-	public GgbVector getNormal(){ 
+	public GgbVector getViewDirection(){ 
 		return getMatrix4x4().getVz();
 	};
 

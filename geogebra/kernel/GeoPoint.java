@@ -616,8 +616,8 @@ GeoPointInterface {
     /**
      * translate by vector v
      */
-    final public void translate(GeoVector v) { 
-    		setCoords(x + v.x * z, y + v.y * z, z); 
+    final public void translate(GgbVector v) { 
+    		setCoords(x + v.getX() * z, y + v.getY() * z, z); 
     }        
     
 	final public boolean isTranslateable() {

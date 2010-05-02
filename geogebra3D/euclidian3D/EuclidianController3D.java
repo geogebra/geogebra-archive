@@ -758,7 +758,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			Hits hits = view.getHits().getTopHits();
 			if(!hits.isEmpty()){
 				GeoElement3DInterface geo = (GeoElement3DInterface) view.getHits().getTopHits().get(0);
-				GgbVector vn = geo.getNormal();
+				GgbVector vn = geo.getViewDirection();
 				if (vn!=null){
 					view3D.setRotAnimation(vn);
 				}

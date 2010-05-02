@@ -84,10 +84,15 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 			
 			Brush brush = renderer.getGeometryManager().getBrush();
 			
-			brush.start(100);
+
+			brush.start(120);
 			//brush.setColor(getGeoElement().getObjectColor());
 			brush.setThickness((float) quadric.getHalfAxis(1));
-			brush.cone(quadric.getMidpoint(),quadric.getEigenvec3D(2), (float) minmax[0], (float) minmax[1]);
+			
+			float min = (float) (minmax[0]+(minmax[1]-minmax[0])*-3); //TODO change that
+			float max = (float) (minmax[1]+(minmax[1]-minmax[0])*3);
+			
+			brush.cone(quadric.getMidpoint(),quadric.getEigenvec3D(2), min, max);
 			quadricIndex = brush.end();
 			break;
 		}

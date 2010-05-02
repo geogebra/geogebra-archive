@@ -54,11 +54,11 @@ public interface GeoElement3DInterface {
     public void setGeoElement2D(GeoElement geo);
 	
 
-    /** return a vector normal to this
+    /** return a direction for view (orthogonal to plane, through line, etc.)
      * (null if none)
-     * @return a vector normal to this
+     * @return a direction for view 
      */
-	public GgbVector getNormal();
+	public GgbVector getViewDirection();
 
 	/////////////////////////////////////////
 	// link with Drawable3D

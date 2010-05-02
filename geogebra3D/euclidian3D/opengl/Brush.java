@@ -78,7 +78,7 @@ public class Brush {
 				direction = s.direction;
 			}else{
 				//calc normal deviation
-				double dt = thickness-s.thickness;
+				double dt = this.thickness-s.thickness;
 				if (dt!=0){
 					double l = direction.norm();
 					double h = Math.sqrt(l*l+dt*dt);
@@ -89,7 +89,7 @@ public class Brush {
 					
 					s.normalDevD = normalDevD;
 					s.normalDevN = normalDevN;
-					//Application.debug("normalDev="+normalDevD+","+normalDevN);
+					//Application.debug("dt="+dt+",normalDev="+normalDevD+","+normalDevN);
 				}
 				
 				direction.normalize();
@@ -399,7 +399,8 @@ public class Brush {
 					
 				}
 			}
-
+			
+			setTextureType(TEXTURE_AFFINE);
 			setTextureX(1-arrowPos);
 			moveTo(arrowBase);
 			
@@ -427,7 +428,7 @@ public class Brush {
 		
 		length=(float) (2*Math.PI*radius); //TODO use integer to avoid bad dash cycle connection
 		
-		int longitude = 100;
+		int longitude = 60;
 
 		
 		GgbVector vn1;
@@ -463,21 +464,24 @@ public class Brush {
 		if (start>end)
 			return;
 		
-		setTextureX(0,0);
-		textureType = TEXTURE_ID;
+		//setTextureX(0,0);
+		textureType = TEXTURE_CONSTANT_0;
 		
 		float radius = thickness;
 		
-		setThickness(radius*start);
+		//int i=0;Application.debug(""+i);
+		setThickness(radius*Math.abs(start));
 		down((GgbVector) origin.add(direction.mul(start)));
 
 		//middle point
 		if (start*end<0){
+			//i++;Application.debug(""+i);
 			setThickness(0f);
 			moveTo(origin);
 		}
 		
-		setThickness(radius*end);
+		//i++;Application.debug(""+i);
+		setThickness(radius*Math.abs(end));
 		moveTo((GgbVector) origin.add(direction.mul(end)));
 		
 	}

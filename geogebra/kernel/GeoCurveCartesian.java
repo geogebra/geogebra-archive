@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -190,9 +191,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	/**
 	 * translate function by vector v
 	 */
-	final public void translate(GeoVector v) {
-		funX.translateY(v.x);
-		funY.translateY(v.y);
+	final public void translate(GgbVector v) {
+		funX.translateY(v.getX());
+		funY.translateY(v.getY());
 	}
 	
 	final public boolean isTranslateable() {

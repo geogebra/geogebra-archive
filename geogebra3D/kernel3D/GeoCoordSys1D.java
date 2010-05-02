@@ -94,6 +94,10 @@ GeoLineInterface{
 		return getMatrix().getColumn(1).norm();
 	}
 
+	
+	public GgbVector getViewDirection(){ 
+		return getVx();
+	};
 
 	
 	

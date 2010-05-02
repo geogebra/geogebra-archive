@@ -146,7 +146,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoord
 	 /** return the normal of the polygon's plane
 	 * @return the normal of the polygon's plane
 	 */
-	public GgbVector getNormal(){
+	public GgbVector getViewDirection(){
 		
 		
 		if (interiorPoint==null)

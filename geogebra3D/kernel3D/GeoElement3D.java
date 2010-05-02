@@ -280,7 +280,7 @@ public abstract class GeoElement3D
 	
 	
 	//TODO remove this
-	public GgbVector getNormal(){ return null;};
+	public GgbVector getViewDirection(){ return null;};
 
 
 

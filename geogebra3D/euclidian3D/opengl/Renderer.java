@@ -1563,6 +1563,9 @@ public class Renderer implements GLEventListener {
         float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR/((float) view3D.getScale());
     	
     	
+        if (x<0)
+        	x=x-(s.length()-0.5f)*8; //TODO adapt to police size
+        
     	textRenderer.draw3D(s,
                 x*textScaleFactor,//w / -2.0f * textScaleFactor,
                 y*textScaleFactor,//h / -2.0f * textScaleFactor,
@@ -1898,9 +1901,12 @@ public class Renderer implements GLEventListener {
         */
         
         
+        
+        
         float[] lightAmbient0 = {0.1f, 0.1f, 0.1f, 1.0f};
         float[] lightDiffuse0 = {1.0f, 1.0f, 1.0f, 1.0f};
-        float[] lightPosition0 = {1.0f, 1.0f, 1.0f, 0.0f};
+        //float[] lightPosition0 = {1.0f, 1.0f, 1.0f, 0.0f};
+        float[] lightPosition0 = {-1.0f, 0.5f, 1.0f, 0.0f};
         float[] lightSpecular0 = {0f, 0f, 0f, 1f};
        
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient0, 0);
@@ -1923,11 +1929,14 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_LIGHT1);      
         */
         
-        
-        gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE,GL.GL_TRUE);
+  
         gl.glShadeModel(GL.GL_SMOOTH);
-        gl.glEnable(GL.GL_LIGHTING);
+        gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE,GL.GL_TRUE);
+        gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE,GL.GL_TRUE);
+  
         
+        gl.glEnable(GL.GL_LIGHTING);
+   
         //common enabling
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glDepthFunc(GL.GL_LEQUAL);
@@ -1962,6 +1971,7 @@ public class Renderer implements GLEventListener {
         
         //material
         gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
+        //gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
         gl.glEnable(GL.GL_COLOR_MATERIAL);
 
         
@@ -1983,6 +1993,7 @@ public class Renderer implements GLEventListener {
     
 	int left = 0; int right = 640;
 	int bottom = 0; int top = 480;
+	//int front = -1000; int back = 1000;
 	int front = -1000; int back = 1000;
 	
 	

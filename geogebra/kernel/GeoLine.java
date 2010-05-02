@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.NumberValue;
 
 public class GeoLine extends GeoVec3D 
@@ -382,8 +383,8 @@ GeoLineInterface {
     /**
      * translate by vector v
      */
-    final public void translate(GeoVector v) {        
-        z -= x * v.x + y * v.y;
+    final public void translate(GgbVector v) {        
+        z -= x * v.getX() + y * v.getY();
     }  
     
 	final public boolean isTranslateable() {

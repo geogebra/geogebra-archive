@@ -133,7 +133,7 @@ extends GeoConicND implements GeoElement3DInterface{
 	 }
 	 
 
-	 public GgbVector getNormal(){ 
+	 public GgbVector getViewDirection(){ 
 		 return coordSys.getNormal();
 	 };
 

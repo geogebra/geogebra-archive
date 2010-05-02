@@ -309,7 +309,7 @@ implements GeoElement3DInterface{
 
 
 
-	public GgbVector getNormal() {
+	public GgbVector getViewDirection() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
+
 
 
 
@@ -78,7 +80,7 @@ public class AlgoTranslate extends AlgoTransformation {
     // calc translated point
     protected final void compute() {      
         outGeo.set(inGeo);
-        out.translate(v);
+        out.translate(new GgbVector(new double[] {v.x,v.y,v.z}));
     }       
     
     final public boolean wantsEuclidianViewUpdate() {

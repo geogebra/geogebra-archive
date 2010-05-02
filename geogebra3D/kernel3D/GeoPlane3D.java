@@ -15,6 +15,10 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	double dy = 1.0; 
 	
 
+	//string
+	protected static final char[] VAR_STRING = {'x','y','z'};
+	
+
 	/**
 	 * creates an empty plane
 	 * @param c construction
@@ -234,26 +238,58 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	
 	final public String toString() {
 		
-		StringBuilder sbToString = getSbToString();
-		sbToString.setLength(0);
-		sbToString.append(label);
-		sbToString.append(": ");   
+		StringBuilder sbToValueString = getSbToString();
+		sbToValueString.setLength(0);
+		sbToValueString.append(label);
+		sbToValueString.append(": ");   
 		
 		
 		
 		//TODO undefined...
 		//TODO remove x/y/z if not needed
 		//TODO check this
-		GgbVector Vn = getMatrix4x4().getColumn(3);
-		sbToString.append(kernel.format(Vn.get(1)));   
-		sbToString.append("x + "); 
-		sbToString.append(kernel.format(Vn.get(2))); 
-		sbToString.append("y + "); 
-		sbToString.append(kernel.format(Vn.get(3))); 
-		sbToString.append("z = "); 
-		sbToString.append(kernel.format(Vn.dotproduct(getMatrix().getColumn(3)))); 
 		
-		return sbToString.toString();  
+		int dimension = 3;
+		boolean first = true; //says if it's the first coeff
+
+		GgbVector Vn = getMatrix4x4().getColumn(3);
+		
+		for (int i=0; i<dimension; i++){
+			
+			double val = Vn.get(i+1);
+			
+			if (!kernel.isZero(val)) {
+				if (val<0)
+					sbToValueString.append("- ");
+				else
+					if (!first)
+						sbToValueString.append("+ ");
+				
+				val = Math.abs(val);
+				if (!kernel.isZero(val-1)){
+					sbToValueString.append(kernel.format(val));
+					sbToValueString.append(" ");
+				}
+				sbToValueString.append(VAR_STRING[i]);
+				sbToValueString.append(" ");
+				first=false;
+			} 	
+		}
+		
+		sbToValueString.append("= ");
+		sbToValueString.append(kernel.format(Vn.dotproduct(getMatrix().getColumn(3)))); 
+		
+		/*
+		sbToValueString.append(kernel.format(Vn.get(1)));   
+		sbToValueString.append("x + "); 
+		sbToValueString.append(kernel.format(Vn.get(2))); 
+		sbToValueString.append("y + "); 
+		sbToValueString.append(kernel.format(Vn.get(3))); 
+		sbToValueString.append("z = "); 
+		sbToValueString.append(kernel.format(Vn.dotproduct(getMatrix().getColumn(3)))); 
+		*/
+		
+		return sbToValueString.toString();  
 	}
 
 	

@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -1910,7 +1911,7 @@ public abstract class GeoElement
 		String label = cellGeo.getLabel();
 		
 		// need an = for B3=B4
-		// need a : for B2:x² + y² = 2
+		// need a : for B2:xï¿½ + yï¿½ = 2
 		if (label.indexOf('=') == -1) sb.append('=');
 		else sb.append(':');
 
@@ -3835,7 +3836,7 @@ public abstract class GeoElement
 	 * (xPixel, yPixel) in screen coordinates. 
 	 * @param endPosition may be null
 	 */
-	public static boolean moveObjects(ArrayList geos, GeoVector rwTransVec, Point2D.Double endPosition) {	
+	public static boolean moveObjects(ArrayList geos, GgbVector rwTransVec, Point2D.Double endPosition) {	
 		if (moveObjectsUpdateList == null)
 			moveObjectsUpdateList = new ArrayList();
 		
@@ -3879,38 +3880,51 @@ public abstract class GeoElement
 //		return moveObject(rwTransVec, endPosition, null);
 //	}
 
+	
+	protected boolean movePoint(GgbVector rwTransVec, Point2D.Double endPosition) {
+	
+		boolean movedGeo = false;
+		
+		GeoPoint point = (GeoPoint) this;
+		if (endPosition != null) {					
+			point.setCoords(endPosition.x, endPosition.y, 1);
+			movedGeo = true;
+		} 
+		
+		// translate point
+		else {	
+			double x  = point.inhomX + rwTransVec.getX();
+			double y =  point.inhomY + rwTransVec.getY();
+								
+			// round to decimal fraction, e.g. 2.800000000001 to 2.8
+			if (Math.abs(rwTransVec.getX()) > Kernel.MIN_PRECISION)
+				x  = kernel.checkDecimalFraction(x);
+			if (Math.abs(rwTransVec.getY()) > Kernel.MIN_PRECISION) 
+				y = kernel.checkDecimalFraction(y);
+				
+			// set translated point coords
+			point.setCoords(x, y, 1);					
+			movedGeo = true;
+		}
+		
+		return movedGeo;
+	
+	}
+	
 	/**
 	 * Moves geo by a vector in real world coordinates.
 	 * @return whether actual moving occurred 	 
 	 */
-	private boolean moveObject(GeoVector rwTransVec, Point2D.Double endPosition, ArrayList updateGeos) {
+	private boolean moveObject(GgbVector rwTransVec, Point2D.Double endPosition, ArrayList updateGeos) {
 		boolean movedGeo = false;
 		
 		// moveable geo
 		if (isMoveable()) {
 			// point
 			if (isGeoPoint()) {
-				GeoPoint point = (GeoPoint) this;
-				if (endPosition != null) {					
-					point.setCoords(endPosition.x, endPosition.y, 1);
-					movedGeo = true;
-				} 
 				
-				// translate point
-				else {	
-					double x  = point.inhomX + rwTransVec.x;
-					double y =  point.inhomY + rwTransVec.y;
-										
-					// round to decimal fraction, e.g. 2.800000000001 to 2.8
-					if (Math.abs(rwTransVec.x) > Kernel.MIN_PRECISION)
-						x  = kernel.checkDecimalFraction(x);
-					if (Math.abs(rwTransVec.y) > Kernel.MIN_PRECISION) 
-						y = kernel.checkDecimalFraction(y);
-						
-					// set translated point coords
-					point.setCoords(x, y, 1);					
-					movedGeo = true;
-				}
+				movedGeo = movePoint(rwTransVec, endPosition);
+				
 			}
 			
 			// translateable
@@ -3924,8 +3938,8 @@ public abstract class GeoElement
 			else if (isAbsoluteScreenLocateable()) {
 				AbsoluteScreenLocateable screenLoc = (AbsoluteScreenLocateable) this;
 				if (screenLoc.isAbsoluteScreenLocActive()) {					
-					int vxPixel = (int) Math.round(kernel.getXscale() * rwTransVec.x);
-					int vyPixel = -(int) Math.round(kernel.getYscale() * rwTransVec.y);
+					int vxPixel = (int) Math.round(kernel.getXscale() * rwTransVec.getX());
+					int vyPixel = -(int) Math.round(kernel.getYscale() * rwTransVec.getY());
 					int x = screenLoc.getAbsoluteScreenLocX() + vxPixel;
 					int y = screenLoc.getAbsoluteScreenLocY() + vyPixel;
 					screenLoc.setAbsoluteScreenLoc(x, y);

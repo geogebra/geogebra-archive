@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import java.awt.geom.Point2D;
 import java.util.TreeSet;
 
 import geogebra.Matrix.GgbVector;
@@ -314,6 +315,53 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     
     
     
+    
+
+	protected boolean movePoint(GgbVector rwTransVec, Point2D.Double endPosition) {
+	
+		boolean movedGeo = false;
+		
+		if (endPosition != null) {					
+			//setCoords(endPosition.x, endPosition.y, 1);
+			//movedGeo = true;
+		} 
+		
+		// translate point
+		else {	
+			
+								
+			// round to decimal fraction, e.g. 2.800000000001 to 2.8
+			/*
+			if (Math.abs(rwTransVec.getX()) > Kernel.MIN_PRECISION)
+				x  = kernel.checkDecimalFraction(x);
+			if (Math.abs(rwTransVec.getY()) > Kernel.MIN_PRECISION) 
+				y = kernel.checkDecimalFraction(y);
+				*/
+				
+			// set translated point coords
+			if (hasPath()){
+				double t=
+					getPathParameter().getT()
+					+rwTransVec.getX()
+					+rwTransVec.getY()
+					+rwTransVec.getZ()
+					;
+				//TODO use path unit and direction
+				getPathParameter().setT(t);
+				getParentAlgorithm().update();
+			}else{
+				GgbVector coords = (GgbVector) getInhomCoords().add(rwTransVec);
+				setCoords(coords);	
+			}
+			
+			movedGeo = true;
+		}
+		
+		
+		
+		return movedGeo;
+	
+	}
     
     
     

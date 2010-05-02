@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbCoordSys;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
@@ -1129,8 +1130,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	/**
 	 * translate conic by vector v
 	 */
-	final public void translate(GeoVector v) {
-		doTranslate(v.x, v.y);
+	final public void translate(GgbVector v) {
+		doTranslate(v.getX(), v.getY());
 
 		//classifyConic();
 		setAffineTransform();

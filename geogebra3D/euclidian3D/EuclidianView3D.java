@@ -1235,7 +1235,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//put the eye in front of the visible side
 		GgbVector eye = GgbMatrixUtil.cartesianCoords(1,aOld*Math.PI/180,bOld*Math.PI/180);
 		//Application.debug("c="+eye.dotproduct(vn));
-		if(eye.dotproduct(vn)>0)
+		if(eye.dotproduct(vn)>=0)
 			spheric = GgbMatrixUtil.sphericalCoords(vn);
 		else
 			spheric = GgbMatrixUtil.sphericalCoords((GgbVector) vn.mul(-1));

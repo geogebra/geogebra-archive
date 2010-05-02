@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.Util;
 
@@ -703,7 +704,7 @@ implements Locateable, AbsoluteScreenLocateable,
     	}  
 	}
 
-	public void translate(GeoVector v) {
+	public void translate(GgbVector v) {
 		if (!initTransformPoints()) return;
     	
     	// calculate the new corner points

@@ -1,5 +1,6 @@
 package geogebra.main;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.ConstructionDefaults;
@@ -380,23 +381,34 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		switch (keyCode) {
 			case KeyEvent.VK_UP:
 				changeVal = base;			
-				moved = handleArrowKeyMovement(geos, 0, changeVal);
+				moved = handleArrowKeyMovement(geos, 0, changeVal, 0);
 				break;
 	
 			case KeyEvent.VK_DOWN:
 				changeVal = -base;
-				moved = handleArrowKeyMovement(geos, 0, changeVal);
+				moved = handleArrowKeyMovement(geos, 0, changeVal, 0);
 				break;
 	
 			case KeyEvent.VK_RIGHT:
 				changeVal = base;
-				moved = handleArrowKeyMovement(geos, changeVal, 0);
+				moved = handleArrowKeyMovement(geos, changeVal, 0, 0);
 				break;
 	
 			case KeyEvent.VK_LEFT:
 				changeVal = -base;
-				moved = handleArrowKeyMovement(geos, changeVal, 0);
+				moved = handleArrowKeyMovement(geos, changeVal, 0, 0);
 				break;
+				
+			case KeyEvent.VK_PAGE_UP:
+				changeVal = base;			
+				moved = handleArrowKeyMovement(geos, 0, 0, changeVal);
+				break;
+	
+			case KeyEvent.VK_PAGE_DOWN:
+				changeVal = -base;
+				moved = handleArrowKeyMovement(geos, 0, 0, changeVal);
+				break;
+
 		}
 	
 		
@@ -458,7 +470,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					} 
 					
 					// update point on path
-					else if (geo.isGeoPoint()) {
+					else if (geo.isGeoPoint() && !geo.isGeoElement3D()) {
 						GeoPoint p = (GeoPoint) geo;
 						if (p.hasPath()) {
 							p.addToPathParameter(changeVal * p.animationIncrement);
@@ -536,7 +548,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * @param keyCode: VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT
 	 * @return whether any object was moved
 	 */
-	private boolean handleArrowKeyMovement(ArrayList geos, double xdiff, double ydiff) {	
+	private boolean handleArrowKeyMovement(ArrayList geos, double xdiff, double ydiff, double zdiff) {	
 		GeoElement geo = (GeoElement) geos.get(0);
 		
 		// don't move slider, they will be handled later
@@ -546,10 +558,11 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	
 		// set translation vector
 		if (tempVec == null)
-			tempVec = new GeoVector(app.getKernel().getConstruction());
+			tempVec = new GgbVector(4); // 4 coords for 3D
 		double xd = geo.animationIncrement * xdiff;
 		double yd = geo.animationIncrement * ydiff;						
-		tempVec.setCoords(xd, yd, 0);
+		double zd = geo.animationIncrement * zdiff;						
+		tempVec.setX(xd);tempVec.setY(yd);;tempVec.setZ(zd);
 		
 		// move objects
 		boolean moved = GeoElement.moveObjects(geos, tempVec, null);
@@ -574,7 +587,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 
 		return moved;
 	}
-	private GeoVector tempVec;
+	private GgbVector tempVec;
 
 	/**
 	 * Changes the font size of the user interface and construction element styles (thickness,

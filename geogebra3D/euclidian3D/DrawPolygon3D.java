@@ -118,7 +118,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		//creates the polygon
 		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
 		
-		GgbVector v = polygon.getNormal();
+		GgbVector v = polygon.getViewDirection();
 		//Application.debug("normal\n"+v.toString());
 		
 		int index = renderer.startPolygon((float) v.get(1),(float) v.get(2),(float) v.get(3));

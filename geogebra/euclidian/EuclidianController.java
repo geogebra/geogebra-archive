@@ -18,6 +18,7 @@
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.gui.PropertiesPanelMini;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
@@ -200,7 +201,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected MyDouble tempNum;
 	protected double rotStartAngle;
 	protected ArrayList translateableGeos;
-	protected GeoVector translationVec;
+	protected GgbVector translationVec;
 
 	protected Hits tempArrayList = new Hits();
 	protected Hits tempArrayList2 = new Hits();
@@ -1189,7 +1190,7 @@ Rectangle rect = view.getSelectionRectangle();
 			startLoc = mouseLoc;
 			view.setDragCursor();
 			if (translationVec == null)
-				translationVec = new GeoVector(kernel.getConstruction());
+				translationVec = new GgbVector(2);
 		}	
 
 		// DEPENDENT object: changeable parents?
@@ -1229,7 +1230,7 @@ Rectangle rect = view.getSelectionRectangle();
 				startPoint.setLocation(xRW, yRW);					
 				view.setDragCursor();
 				if (translationVec == null)
-					translationVec = new GeoVector(kernel.getConstruction());
+					translationVec = new GgbVector(2);
 			} else {
 				moveMode = MOVE_NONE;
 			}				
@@ -3005,7 +3006,9 @@ Rectangle rect = view.getSelectionRectangle();
 	}
 
 	final protected void moveDependent(boolean repaint) {
-		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);
+		translationVec.setX(xRW - startPoint.x);
+		translationVec.setY(yRW - startPoint.y);
+
 		startPoint.setLocation(xRW, yRW);
 
 		// we don't specify screen coords for translation as all objects are Translateables
@@ -3015,7 +3018,8 @@ Rectangle rect = view.getSelectionRectangle();
 	}
 
 	protected void moveMultipleObjects(boolean repaint) {		
-		translationVec.setCoords(xRW - startPoint.x, yRW - startPoint.y, 0.0);		
+		translationVec.setX(xRW - startPoint.x);
+		translationVec.setY(yRW - startPoint.y);
 		startPoint.setLocation(xRW, yRW);
 		startLoc = mouseLoc;
 

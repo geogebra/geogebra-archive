@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -256,8 +257,8 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	/**
 	 * translate function by vector v
 	 */
-	final public void translate(GeoVector v) {
-		translate(v.x, v.y);
+	final public void translate(GgbVector v) {
+		translate(v.getX(), v.getY());
 	}
 	
 	final public boolean isTranslateable() {
