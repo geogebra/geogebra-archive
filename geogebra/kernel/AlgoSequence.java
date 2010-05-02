@@ -43,7 +43,7 @@ public class AlgoSequence extends AlgoElement {
     /**
      * Creates a new algorithm to create a sequence of objects that form a list.
      * @param cons
-     * @param labels: labels[0] for the list and the rest for the list items
+     * @param label label for the list
      * @param expression
      * @param var
      * @param var_from
@@ -112,11 +112,29 @@ public class AlgoSequence extends AlgoElement {
         	input[4] = var_step_geo;  
           
         output = new GeoElement[1];
-    	output[0] = list;
-           
-        setDependencies(); // done by AlgoElement          
+    	output[0] = list;	   
+        
+    	setDependencies(); // done by AlgoElement
+    }
+    
+    /**
+     *  Returns contents of input array excluding var 
+     *  (var is not input object, but must be in input array
+     *  because of GetCommandDescription method).
+     *  @author Zbynek Konecny
+     *  @version 2010-05-02
+     */
+    GeoElement[] getInputForUpdateSetPropagation() {
+    	GeoElement [] realInput = {expression,var_from_geo,var_to_geo};
+    	if(input.length==5)
+    		realInput [4]= var_step_geo;
+    	return realInput;
     }
 
+    /**
+     * Returns list of all contained elements.
+     * @return list of elements
+     */
     GeoList getList() {
         return list;
     }      
