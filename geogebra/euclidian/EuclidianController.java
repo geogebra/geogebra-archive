@@ -2053,6 +2053,10 @@ Rectangle rect = view.getSelectionRectangle();
 	}
 	
 	
+	
+	
+	
+	
 	/**
 	 * for some modes, polygons are not to be removed
 	 * @param hits

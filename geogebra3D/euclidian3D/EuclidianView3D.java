@@ -1167,10 +1167,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	/** tells if the view is under animation */
 	private boolean isAnimated(){
-		return animatedScale || animatedContinueRot || animatedRot;
+		return animatedScale || isRotAnimated();
 	}
 	
-
+	/** tells if the view is under rot animation 
+	 * @return true if there is a rotation animation*/
+	public boolean isRotAnimated(){
+		return  animatedContinueRot || animatedRot;
+	}
+	
 	public void setAnimatedCoordSystem(double ox, double oy, double newScale,
 			int steps, boolean storeUndo) {
 		

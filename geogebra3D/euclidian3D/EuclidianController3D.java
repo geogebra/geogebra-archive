@@ -38,6 +38,8 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.JPanel;
+
 public class EuclidianController3D extends EuclidianController 
 implements MouseListener, MouseMotionListener, MouseWheelListener{
 
@@ -758,16 +760,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				GeoElement3DInterface geo = (GeoElement3DInterface) view.getHits().getTopHits().get(0);
 				GgbVector vn = geo.getNormal();
 				if (vn!=null){
-					/*
-					Ggb3DVector spheric = Ggb3DMatrixUtil.sphericalCoords(vn);
-					Application.debug("MODE_VIEW_IN_FRONT_OF : "
-							+ (((GeoElement) geo).getLabel())
-							+ "\nnormal:\n" + vn
-							+ "\nspheric:\n" + spheric
-							+ "\n(" + (spheric.get(2)*180/Math.PI) +"�,"+ (spheric.get(3)*180/Math.PI)+"�)"
-					);
-					*/
-					
 					view3D.setRotAnimation(vn);
 				}
 			}
@@ -793,7 +785,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** right-press the mouse makes start 3D rotation */
 	protected void processRightPressFor3D(){
 		
-		view3D.stopRotAnimation();
+		if (view3D.isRotAnimated()){
+			view3D.stopRotAnimation();
+			viewRotationOccured = true;
+		}
 		
 		//remembers mouse location
 		startLoc = mouseLoc;
@@ -802,6 +797,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		timeOld = System.currentTimeMillis();
 		xOld = startLoc.x;
+		animatedRotSpeed = 0;
 
 	}
 	
