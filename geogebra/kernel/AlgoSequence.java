@@ -121,6 +121,7 @@ public class AlgoSequence extends AlgoElement {
      *  Returns contents of input array excluding var 
      *  (var is not input object, but must be in input array
      *  because of GetCommandDescription method).
+     *  see ticket #72
      *  @author Zbynek Konecny
      *  @version 2010-05-02
      */
