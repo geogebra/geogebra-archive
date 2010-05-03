@@ -78,8 +78,9 @@ public class SliderDialog extends JDialog
 		angle.setEuclidianVisible(true);
 		angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
 		angle.setSliderLocation(x, y);
+		angle.setAnimationType(GeoElement.ANIMATION_INCREASING);
 		angle.setAbsoluteScreenLocActive(true);
-		angle.setValue(Math.PI/180);
+		angle.setValue(45 * Math.PI/180);
 		
 		geoResult = null;
 
