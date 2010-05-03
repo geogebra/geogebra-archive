@@ -314,5 +314,22 @@ extends GeoConicND implements GeoElement3DInterface{
 			
 		}
 
+		
+		
+		////////////////////////////////////
+		// XML
+		////////////////////////////////////
+		
+		
+	    /**
+	     * returns all class-specific xml tags for saveXML
+	     */
+		protected void getXMLtags(StringBuilder sb) {
+	        super.getXMLtags(sb);
+			//	curve thickness and type  
+			sb.append(getLineStyleXML());
+			
+		}
+		
 	 
 }
