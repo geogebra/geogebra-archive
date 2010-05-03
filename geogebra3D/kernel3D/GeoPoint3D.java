@@ -349,6 +349,15 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 				//TODO use path unit and direction
 				getPathParameter().setT(t);
 				getParentAlgorithm().update();
+			}else if (hasRegion()){
+				/* TODO make this work :)
+				double x = getRegionParameters().getT1() +rwTransVec.getX();
+				double y = getRegionParameters().getT2() +rwTransVec.getY();
+				getRegionParameters().setT1(x);getRegionParameters().setT2(y);
+				Application.debug("(x,y)="+x+","+y);
+				//TODO use path unit and direction
+				getParentAlgorithm().update();
+				*/
 			}else{
 				GgbVector coords = (GgbVector) getInhomCoords().add(rwTransVec);
 				setCoords(coords);	

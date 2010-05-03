@@ -577,11 +577,18 @@ public class Kernel3D
 	 */
 	final public GeoQuadric3D Cone(String label, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {
 		AlgoCone algo = new AlgoCone(cons, label, origin, direction, r);
-		return algo.getCone();
+		return algo.getQuadric();
 	}
 	
 	
-	
+
+	/** 
+	 * Cylinder
+	 */
+	final public GeoQuadric3D Cylinder(String label, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {
+		AlgoCylinder algo = new AlgoCylinder(cons, label, origin, direction, r);
+		return algo.getQuadric();
+	}
 	
 	
 	

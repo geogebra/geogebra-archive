@@ -454,6 +454,7 @@ public class Brush {
 	}
 	
 	/** cone curve
+	 * @param origin 
 	 * @param direction 
 	 * @param start 
 	 * @param end 
@@ -486,6 +487,24 @@ public class Brush {
 		
 	}
 
+	/** cylinder curve
+	 * @param origin 
+	 * @param direction 
+	 * @param start 
+	 * @param end 
+	 */
+	public void cylinder(GgbVector origin, GgbVector direction, float start, float end){
+		
+		
+		if (start>end)
+			return;
+		
+		textureType = TEXTURE_CONSTANT_0;
+		
+		down((GgbVector) origin.add(direction.mul(start)));
+		moveTo((GgbVector) origin.add(direction.mul(end)));
+		
+	}
 	
 	////////////////////////////////////
 	// THICKNESS

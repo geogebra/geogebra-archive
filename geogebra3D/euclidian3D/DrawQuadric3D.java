@@ -60,6 +60,12 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 		
 
 		GeoQuadric3D quadric = (GeoQuadric3D) getGeoElement();
+		GgbVector o;
+		GgbVector v;
+							
+		double[] minmax;
+		float min, max;
+		Brush brush;
 		
 		switch(quadric.getType()){
 		case GeoQuadric3D.QUADRIC_SPHERE:
@@ -74,27 +80,53 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 			break;
 		case GeoQuadric3D.QUADRIC_CONE:
 			
-			GgbVector o = getView3D().getToScreenMatrix().mul(quadric.getMidpoint());
-			GgbVector v = getView3D().getToScreenMatrix().mul(quadric.getEigenvec3D(2));
+			o = getView3D().getToScreenMatrix().mul(quadric.getMidpoint());
+			v = getView3D().getToScreenMatrix().mul(quadric.getEigenvec3D(2));
 								
-			double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
+			minmax = getView3D().getRenderer().getIntervalInFrustum(
 					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 					o, v);
 			
 			
-			Brush brush = renderer.getGeometryManager().getBrush();
+			brush = renderer.getGeometryManager().getBrush();
 			
 
 			brush.start(120);
 			//brush.setColor(getGeoElement().getObjectColor());
 			brush.setThickness((float) quadric.getHalfAxis(1));
 			
-			float min = (float) (minmax[0]+(minmax[1]-minmax[0])*-3); //TODO change that
-			float max = (float) (minmax[1]+(minmax[1]-minmax[0])*3);
+			min = (float) (minmax[0]+(minmax[1]-minmax[0])*-3); //TODO change that
+			max = (float) (minmax[1]+(minmax[1]-minmax[0])*3);
 			
 			brush.cone(quadric.getMidpoint(),quadric.getEigenvec3D(2), min, max);
 			quadricIndex = brush.end();
 			break;
+			
+			
+		case GeoQuadric3D.QUADRIC_CYLINDER:
+			
+			o = getView3D().getToScreenMatrix().mul(quadric.getMidpoint());
+			v = getView3D().getToScreenMatrix().mul(quadric.getEigenvec3D(2));
+								
+			minmax = getView3D().getRenderer().getIntervalInFrustum(
+					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+					o, v);
+			
+			
+			brush = renderer.getGeometryManager().getBrush();
+			
+
+			brush.start(120);
+			//brush.setColor(getGeoElement().getObjectColor());
+			brush.setThickness((float) quadric.getHalfAxis(1));
+			
+			min = (float) (minmax[0]+(minmax[1]-minmax[0])*-3); //TODO change that
+			max = (float) (minmax[1]+(minmax[1]-minmax[0])*3);
+			
+			brush.cylinder(quadric.getMidpoint(),quadric.getEigenvec3D(2), min, max);
+			quadricIndex = brush.end();
+			break;
+
 		}
 		
 		
@@ -127,6 +159,7 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 		switch(((GeoQuadric3D) getGeoElement()).getType()){
 		case GeoQuadric3D.QUADRIC_SPHERE:
 		case GeoQuadric3D.QUADRIC_CONE:
+		case GeoQuadric3D.QUADRIC_CYLINDER:
 			return DRAW_TYPE_CLOSED_SURFACES;
 		default:
 			return DRAW_TYPE_SURFACES;

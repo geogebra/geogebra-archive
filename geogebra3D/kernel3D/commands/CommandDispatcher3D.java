@@ -43,6 +43,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
     	
     	cmdTable.put("Sphere", new CmdSphere3D(kernel3D));	
     	cmdTable.put("Cone", new CmdCone(kernel3D));	
+       	cmdTable.put("Cylinder", new CmdCylinder(kernel3D));	
     	    	
 	}
 	
