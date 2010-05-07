@@ -4,6 +4,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra3D.kernel3D.GeoCurveCartesian3DInterface;
 
 import java.awt.Color;
 
@@ -130,6 +131,46 @@ public class Brush {
 				}else
 					return new GgbVector[] {vn,pos};
 		}
+		
+		
+		
+		////////////////////////////////////
+		// FOR 3D CURVE
+		////////////////////////////////////
+		
+		
+		/**
+		 * first section constructor
+		 * @param point
+		 * @param thickness
+		 * @param direction
+		 */
+		public Section(GgbVector point, GgbVector direction, float thickness){
+			this.center = point;
+			this.thickness = thickness;
+			this.direction = direction;
+			GgbVector[] vn = direction.completeOrthonormal();
+			clockU = vn[0]; clockV = vn[1];
+			
+		}	
+		
+		/**
+		 * first section constructor
+		 * @param point
+		 * @param thickness
+		 * @param direction
+		 */
+		public Section(Section s, GgbVector point, GgbVector direction, float thickness){
+			
+			this.center = point;
+			this.thickness = thickness;
+			this.direction = direction;
+			
+			clockV = direction.crossProduct(s.clockU);
+			clockU = clockV.crossProduct(direction);
+			
+		}	
+		
 
 	}
 	
@@ -176,6 +217,7 @@ public class Brush {
 	static final private int TEXTURE_CONSTANT_0 = 0; 
 	static final private int TEXTURE_ID = 1;
 	static final private int TEXTURE_AFFINE = 2;
+	static final private int TEXTURE_LINEAR = 3;
 	
 	static final private float TEXTURE_AFFINE_FACTOR = 0.05f; 
 	
@@ -202,6 +244,12 @@ public class Brush {
 	/** offset for origin of the ticks (0: start of the curve, 1: end of the curve) */
 	private float ticksOffset;
 	
+	
+	//for GeoCartesianCurve
+	/** curve */
+	GeoCurveCartesian3DInterface curve;
+	/** parameter min, max and delta */
+	private float tMin, tMax, dt;
 	
 	
 	
@@ -511,6 +559,56 @@ public class Brush {
 		
 	}
 	
+	
+
+	////////////////////////////////////
+	// 3D CURVE DRAWING METHODS
+	////////////////////////////////////
+
+	
+	/** sets min and max values for curve parameter
+	 * @param min
+	 * @param max
+	 */
+	public void setT(float min, float max){
+		this.tMin = min;
+		this.tMax = max;
+	}
+	
+	/** set delta for plotting curve
+	 * @param delta
+	 */
+	public void setDelta(float delta){
+		this.dt = delta;
+	}
+	
+	
+	
+	/** draws the curve
+	 * @param curve
+	 */
+	public void draw(GeoCurveCartesian3DInterface curve){
+		
+		setTextureType(Brush.TEXTURE_LINEAR);
+		
+		float t=tMin;
+		end = new Section(curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);
+		t+=dt;
+		float l = 0;
+		setTextureX(l);
+		
+		for (; t<=tMax; t+=dt){
+			start = end;
+			end = new Section(start,curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);
+			l+=end.center.distance(start.center);
+			setTextureX(l);
+			join();
+		}
+		
+	}
+	
+	
+	
 	////////////////////////////////////
 	// THICKNESS
 	////////////////////////////////////
@@ -603,6 +701,8 @@ public class Brush {
 			//float factor = (int) (TEXTURE_AFFINE_FACTOR*length*scale); //TODO integer for cycles
 			float factor =  (TEXTURE_AFFINE_FACTOR*length*scale);
 			return factor*(pos-texturePosZero)+textureValZero;
+		case TEXTURE_LINEAR:
+			return TEXTURE_AFFINE_FACTOR*scale*pos;
 
 		}
 	}

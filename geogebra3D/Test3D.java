@@ -31,6 +31,7 @@ import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.plugin.GgbAPI;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
+import geogebra3D.kernel3D.GeoCurveCartesian3D;
 import geogebra3D.kernel3D.GeoFunction2Var;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -199,6 +200,8 @@ public class Test3D{
 		//testIntersectParallelLines();
         
         //testFuntion2Var();
+        
+        //testCurve3D();
 	}
 
 	
@@ -207,6 +210,16 @@ public class Test3D{
 	 * TESTS
 	 ***********************************/
 	
+	/*
+	private void testCurve3D(){
+		GeoCurveCartesian3D f = kernel3D.Curve3D("curve");
+		f.setObjColor(Color.RED);
+		f.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		f.setLineThickness(4);
+		
+		testPlaneOrtho();
+	}
+	*/
 	
 	private void testFuntion2Var(){
 		GeoFunction2Var f = kernel3D.Function2Var("function");
@@ -353,12 +366,12 @@ public class Test3D{
 
 		
 		GeoLine3D l = kernel3D.Line3D("line", 
-				testPoint(0f,0f,1f),
-				testPoint(1f,0f,1f)
+				testPoint(0f,0f,0f),
+				testPoint(0f,1f,0f)
 				);
 		
 		
-		kernel3D.OrthogonalPlane3D("plane", testPoint(0f,0f,2f),l);
+		kernel3D.OrthogonalPlane3D("plane", testPoint(0f,-1f,0f),l);
 	}
 	
 	/** number of points = n+1 */

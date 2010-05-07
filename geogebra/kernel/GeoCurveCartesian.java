@@ -23,7 +23,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * 
  * @author Markus Hohenwarter
  */
-public class GeoCurveCartesian extends GeoElement
+public class GeoCurveCartesian extends GeoCurveCartesianND
 implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineProperties {
 
 	private static final long serialVersionUID = 1L;
@@ -32,8 +32,6 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	private static final int CLOSEST_PARAMETER_SAMPLES = 100;
 	
 	private Function funX, funY;
-	private double startParam, endParam;
-	private boolean isDefined = true;
 	private boolean isClosedPath;
 	private boolean trace = false, spreadsheetTrace = false;	
 //	Victor Franco Espino 25-04-2007
@@ -113,10 +111,15 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	 * before this method.
 	 */
 	public void setInterval(double startParam, double endParam) {
+		
+		/*
 		this.startParam = startParam;
 		this.endParam = endParam;
 		
-		isDefined = startParam <= endParam;			
+		isDefined = startParam <= endParam;		
+		*/
+		
+		super.setInterval(startParam, endParam);
 		
 		// update isClosedPath, i.e. startPoint == endPoint
 		isClosedPath =  
@@ -205,17 +208,6 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		funY.translate(0, vy);
 	}	
 
-	final public boolean isDefined() {
-		return isDefined;
-	}
-
-	public void setDefined(boolean defined) {
-		isDefined = defined;
-	}
-
-	public void setUndefined() {
-		isDefined = false;
-	}
 
 	public boolean showInAlgebraView() {
 		return true;
@@ -291,16 +283,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 			return app.getPlain("undefined");		
 	}		
 	
-   /**
-	* returns all class-specific xml tags for getXML
-	*/
-	protected void getXMLtags(StringBuilder sb) {
-	   super.getXMLtags(sb);
-	 
-	   //	line thickness and type  
-	   sb.append(getLineStyleXML());	  
- 
-   }
+
 
 	/* 
 	 * Path interface
@@ -348,9 +331,6 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		P.z = 1.0;		
 	}
 	
-	public boolean isPath() {
-		return true;
-	}
 	
 	/**
 	 * Returns the parameter value t where this curve has minimal distance
@@ -416,23 +396,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	}
 
 	
-	/**
-	 * Returns the start parameter value for this
-	 * path (may be Double.NEGATIVE_INFINITY)
-	 * @return
-	 */
-	public double getMinParameter() {
-		return startParam;
-	}
-	
-	/**
-	 * Returns the largest possible parameter value for this
-	 * path (may be Double.POSITIVE_INFINITY)
-	 * @return
-	 */
-	public double getMaxParameter() {
-		return endParam;
-	}
+
 	
 	public PathMover createPathMover() {
 		return new PathMoverGeneric(this);

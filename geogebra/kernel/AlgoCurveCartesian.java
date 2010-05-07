@@ -31,18 +31,18 @@ import geogebra.kernel.arithmetic.NumberValue;
 public class AlgoCurveCartesian extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private NumberValue xcoord, ycoord, from, to;  // input
+	private NumberValue[] coords; // input
+	private NumberValue from, to;  // input
     private GeoNumeric localVar;     // input
-    private GeoCurveCartesian curve;  // output
+    private GeoCurveCartesianND curve;  // output
         
     /** Creates new AlgoJoinPoints */
     public AlgoCurveCartesian(Construction cons, String label, 
-			NumberValue xcoord, NumberValue ycoord, 
+			NumberValue[] coords,  
 			GeoNumeric localVar, NumberValue from, NumberValue to)  {
     	super(cons);
     	
-    	this.xcoord = xcoord;
-    	this.ycoord = ycoord;
+    	this.coords = coords;
     	this.from = from;
     	this.to = to;
     	this.localVar = localVar;
@@ -52,15 +52,18 @@ public class AlgoCurveCartesian extends AlgoElement {
 		// the localVar by a functionVar		
 		FunctionVariable funVar = new FunctionVariable(kernel);
 		funVar.setVarString(localVar.label);
-		ExpressionNode xExp = kernel.convertNumberValueToExpressionNode(xcoord);
-		ExpressionNode yExp = kernel.convertNumberValueToExpressionNode(ycoord);	
-		xExp.replace(localVar, funVar);
-		yExp.replace(localVar, funVar);		
-		Function funX = new Function(xExp, funVar);
-		Function funY = new Function(yExp, funVar);
+		
+		ExpressionNode[] exp = new ExpressionNode[coords.length];
+		Function[] fun = new Function[coords.length];
+
+		for (int i=0;i<coords.length;i++){
+			exp[i]= kernel.convertNumberValueToExpressionNode(coords[i]);
+			exp[i].replace(localVar, funVar);
+			fun[i] = new Function(exp[i], funVar);
+		}
         
 		// create the curve
-		curve = new GeoCurveCartesian(cons, funX, funY);
+		curve = createCurve(cons, fun);
        
         setInputOutput(); // for AlgoElement
         
@@ -69,25 +72,35 @@ public class AlgoCurveCartesian extends AlgoElement {
         curve.setLabel(label);
     }   
     
+    /** creates a curve
+     * @param cons
+     * @param fun
+     * @return a curve
+     */
+    protected GeoCurveCartesianND createCurve(Construction cons, Function[] fun){
+    	return new GeoCurveCartesian(cons, fun[0], fun[1]);
+    }
+    
 	protected String getClassName() {
 		return "AlgoCurveCartesian";
 	}
     
     // for AlgoElement
 	protected void setInputOutput() {
-        input = new GeoElement[5];
-        input[0] = xcoord.toGeoElement();
-        input[1] = ycoord.toGeoElement();
-    	input[2] = localVar;
-    	input[3] = from.toGeoElement();
-    	input[4] = to.toGeoElement();    	
+        input = new GeoElement[coords.length+3];
+        
+        for (int i=0;i<coords.length;i++)
+        	input[i] = coords[i].toGeoElement();
+    	input[coords.length] = localVar;
+    	input[coords.length+1] = from.toGeoElement();
+    	input[coords.length+2] = to.toGeoElement();    	
         
         output = new GeoElement[1];        
         output[0] = curve;        
         setDependencies(); // done by AlgoElement
     }    
     
-    public GeoCurveCartesian getCurve() { return curve; }        
+    public GeoCurveCartesianND getCurve() { return curve; }        
     
     protected final void compute() {    
     	// the coord-functions don't have to be updated,

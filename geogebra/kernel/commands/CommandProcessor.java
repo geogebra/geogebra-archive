@@ -112,7 +112,7 @@ public abstract class CommandProcessor  {
 	 * at the  position varPos. Initializes the variable with the NumberValue
 	 * at initPos.  
 	 */
-	final GeoElement [] resArgsLocalNumVar(Command c, int varPos, int initPos) {
+	protected final GeoElement [] resArgsLocalNumVar(Command c, int varPos, int initPos) {
 		// check if there is a local variable in arguments    	
 		String localVarName = c.getVariableName(varPos);
 		if (localVarName == null) {        		    

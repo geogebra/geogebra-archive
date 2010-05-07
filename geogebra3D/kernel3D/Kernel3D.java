@@ -677,6 +677,21 @@ public class Kernel3D
 		
 	}
 
+	////////////////////////////////////////////////
+	// 3D CURVE (2 VARS)
+	
+	/** 
+	 * 3D Cartesian curve command:
+ 	 * Curve[ <expression x-coord>, <expression y-coord>,  <expression z-coord>, <number-var>, <from>, <to> ]  
+	 */
+	final public GeoCurveCartesian3D CurveCartesian3D(String label, 
+			NumberValue xcoord, NumberValue ycoord, NumberValue zcoord, 
+			GeoNumeric localVar, NumberValue from, NumberValue to) 
+	{									
+		AlgoCurveCartesian3D algo = new AlgoCurveCartesian3D(cons, label, 
+				new NumberValue[] {xcoord, ycoord, zcoord} , localVar, from, to);
+		return (GeoCurveCartesian3D) algo.getCurve();		
+	}	
 	
 	
 	

@@ -41,6 +41,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_VECTOR3D = 3104;
 	/** default conic 3D type */	
 	public static final int DEFAULT_CONIC3D = 3105;
+	/** default curve 3D type */	
+	public static final int DEFAULT_CURVECARTESIAN3D = 3106;
 	
 	
 	
@@ -71,6 +73,9 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	/** default color for 3D conics */
 	public static final Color colConic3D = new Color(255, 128, 0);
 	
+	// curve 3D
+	/** default color for 3D curve */
+	public static final Color colCurveCartesian3D = new Color(255, 128, 0);
 	
 	// polygon 3D
 	/** default color for 3D polygons */
@@ -204,6 +209,13 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		conic.setObjColor(colConic3D);
 		defaultGeoElements.put(DEFAULT_CONIC3D, conic);
 		
+		// curve
+		GeoCurveCartesian3D curve = new GeoCurveCartesian3D(cons);	
+		curve.setLocalVariableLabel("Curve3D");
+		curve.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		curve.setObjColor(colCurveCartesian3D);
+		defaultGeoElements.put(DEFAULT_CURVECARTESIAN3D, curve);
+		
 		
 		
 		// plane
@@ -275,6 +287,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 			
 		case GeoElement3D.GEO_CLASS_CONIC3D: 
 			return DEFAULT_CONIC3D;
+		case GeoElement3D.GEO_CLASS_CURVECARTESIAN3D: 
+			return DEFAULT_CURVECARTESIAN3D;
 			
 			
 			

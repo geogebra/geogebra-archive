@@ -168,6 +168,9 @@ public abstract class GeoElement3D
 	public static final int GEO_CLASS_CONIC3D = 3122;
 	/** id for {@link GeoAxis3D} */
 	public static final int GEO_CLASS_AXIS3D = 3123;
+	/** id for {@link GeoCurveCartesian3D} */
+	public static final int GEO_CLASS_CURVECARTESIAN3D = 3124;
+
 
 
 	/** id for {@link GeoPolygon3D} */

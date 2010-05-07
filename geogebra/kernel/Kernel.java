@@ -1924,8 +1924,8 @@ public class Kernel {
 			NumberValue xcoord, NumberValue ycoord, 
 			GeoNumeric localVar, NumberValue from, NumberValue to) 
 	{									
-		AlgoCurveCartesian algo = new AlgoCurveCartesian(cons, label, xcoord, ycoord, localVar, from, to);
-		return algo.getCurve();		
+		AlgoCurveCartesian algo = new AlgoCurveCartesian(cons, label, new NumberValue[] {xcoord, ycoord} , localVar, from, to);
+		return (GeoCurveCartesian) algo.getCurve();		
 	}	
 	
 	/**

@@ -19,6 +19,7 @@ import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoConic3D;
+import geogebra3D.kernel3D.GeoCurveCartesian3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoFunction2Var;
@@ -369,6 +370,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					
 				case GeoElement3D.GEO_CLASS_AXIS3D:	
 					d = new DrawAxis3D(this, (GeoAxis3D) geo);	
+					break;	
+					
+				case GeoElement3D.GEO_CLASS_CURVECARTESIAN3D:	
+					d = new DrawCurve3D(this, (GeoCurveCartesian3D) geo);	
 					break;									
 
 					
