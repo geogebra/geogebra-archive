@@ -31,6 +31,7 @@ import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.plugin.GgbAPI;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
+import geogebra3D.kernel3D.GeoFunction2Var;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -196,6 +197,8 @@ public class Test3D{
 		//testIntersectLinePlane();
 		//testIntersectLineLine();
 		//testIntersectParallelLines();
+        
+        //testFuntion2Var();
 	}
 
 	
@@ -203,6 +206,13 @@ public class Test3D{
 	/***********************************
 	 * TESTS
 	 ***********************************/
+	
+	
+	private void testFuntion2Var(){
+		GeoFunction2Var f = kernel3D.Function2Var("function");
+		f.setAlphaValue(0.75f);
+		f.setObjColor(Color.RED);
+	}
 	
 	
 	private void testList(){

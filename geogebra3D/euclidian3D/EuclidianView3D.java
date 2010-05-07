@@ -21,6 +21,7 @@ import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
+import geogebra3D.kernel3D.GeoFunction2Var;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -376,7 +377,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				case GeoElement3D.GEO_CLASS_QUADRIC:					
 					d = new DrawQuadric3D(this, (GeoQuadric3D) geo);
 					break;									
+					
+				case GeoElement3D.GEO_CLASS_FUNCTION2VAR:					
+					d = new DrawFunction2Var(this, (GeoFunction2Var) geo);
+					break;									
+				
 				}
+				
+
 				
 				
 			

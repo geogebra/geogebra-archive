@@ -176,6 +176,10 @@ public abstract class GeoElement3D
 	public static final int GEO_CLASS_PLANE3D = 3220;
 	/** id for {@link GeoQuadric3D} */
 	public static final int GEO_CLASS_QUADRIC = 3230;
+	/** id for {@link GeoFunction2Var} */
+	public static final int GEO_CLASS_FUNCTION2VAR = 3240;
+
+	
 	
 	/** id for {@link GeoPolyhedron} */
 	public static final int GEO_CLASS_POLYHEDRON = 3310;

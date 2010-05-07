@@ -330,15 +330,20 @@ public class Brush {
 		
 		//Application.debug(vectors[0].toString());
 		
+		/*
 		manager.normal(
 				(float) vectors[0].getX(), 
 				(float) vectors[0].getY(), 
-				(float) vectors[0].getZ());		
+				(float) vectors[0].getZ());	*/
+		manager.normal(vectors[0]);
 		manager.texture(getTextureX(textureX[texture]),textureY[texture]);
+		manager.vertex(vectors[1]);
+		/*
 		manager.vertex(
 				(float) vectors[1].getX(), 
 				(float) vectors[1].getY(), 
 				(float) vectors[1].getZ());		
+				*/
 		
 	}
 	

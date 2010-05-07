@@ -22,6 +22,7 @@ abstract public class Manager {
 	/** geometries types */
 	static final int TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
 	static final int QUAD_STRIP = GL.GL_QUAD_STRIP;
+	static final int QUADS = GL.GL_QUADS;
 
 	/** color factor for highlighting */
 	private float colorFactor;
@@ -51,7 +52,8 @@ abstract public class Manager {
 	public GeometrySphere sphere;
 	/** brush */
 	private Brush brush;
-	
+	/** surfaces */
+	private Surface surface;
 	
 	//geogebra stuff
 	private EuclidianView3D view3D;
@@ -88,6 +90,7 @@ abstract public class Manager {
 		sphere = new GeometrySphere(this);
 		
 		brush = new Brush(this);
+		surface = new Surface(this);
 		
 		//geogebra
 		this.view3D = view3D;
@@ -98,6 +101,11 @@ abstract public class Manager {
 	
 	public Brush getBrush(){
 		return brush;
+	}
+	
+	
+	public Surface getSurface(){
+		return surface;
 	}
 	
 	/////////////////////////////////////////////
@@ -228,12 +236,26 @@ abstract public class Manager {
 	abstract protected void vertex(float x, float y, float z);
 	
 	
+	/** creates a vertex at coordinates v
+	 * @param v
+	 */
+	protected void vertex(GgbVector v){
+		vertex((float) v.getX(),(float) v.getY(),(float) v.getZ());
+	}
+	
 	/** creates a normal at coordinates (x,y,z)
 	 * @param x x coord
 	 * @param y y coord
 	 * @param z z coord
 	 */
 	abstract protected void normal(float x, float y, float z);
+	
+	/** creates a normal at coordinates n
+	 * @param n
+	 */
+	protected void normal(GgbVector n){
+		normal((float) n.getX(),(float) n.getY(),(float) n.getZ());
+	}
 	
 	
 	/** creates a texture at coordinates (x,y)

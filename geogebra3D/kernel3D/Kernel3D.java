@@ -665,7 +665,18 @@ public class Kernel3D
 	}
 	
 	
+	////////////////////////////////////////////////
+	// FUNCTIONS (2 VARS)
 	
+	final public GeoFunction2Var Function2Var(String label){
+		
+		GeoFunction2Var f = new GeoFunction2Var(cons);
+		f.setLabel(label);
+		
+		return f;
+		
+	}
+
 	
 	
 	
