@@ -494,8 +494,10 @@ public class AlgebraProcessor {
 		try {
 			ret = doProcessValidExpression(ve);
 			
-			if (ret == null)
-				throw new MyError(app, "Unhandled ValidExpression : " + ve);
+			if (ret == null) { // eg (1,2,3) running in 2D
+				Application.debug("Unhandled ValidExpression : " + ve);
+				throw new MyError(app, app.getError("InvalidInput") + ":\n" + ve);
+			}
 		}
 		finally {
 			cons.setSuppressLabelCreation(oldMacroMode);
