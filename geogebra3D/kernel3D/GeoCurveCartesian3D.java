@@ -6,9 +6,14 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoCurveCartesianND;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
+/**
+ * Class for cartesian curves in 3D
+ * 
+ * @author matthieu
+ *
+ */
 public class GeoCurveCartesian3D extends GeoCurveCartesianND
 implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 
@@ -18,14 +23,25 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
 	
+	/** empty constructor (for ConstructionDefaults3D)
+	 * @param c
+	 */
 	public GeoCurveCartesian3D(Construction c){
 		super(c);
 	}
 	
+	/** common constructor
+	 * @param c
+	 * @param fun
+	 */
 	public GeoCurveCartesian3D(Construction c, Function fun[]) {
 		super(c, fun);
 		
-		//Application.debug(evaluateCurve(2).toString()+"\n"+evaluateTangent(2).toString());
+		/*
+		Application.debug(evaluateCurve(getMinParameter()).toString()+"\n"+evaluateTangent(getMinParameter()).toString());
+		Application.debug(evaluateCurve(0).toString()+"\n"+evaluateTangent(0).toString());
+		Application.debug(evaluateCurve(getMaxParameter()).toString()+"\n"+evaluateTangent(getMaxParameter()).toString());
+		*/
 	}
 
 	

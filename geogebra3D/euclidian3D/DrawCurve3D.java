@@ -71,6 +71,12 @@ public class DrawCurve3D extends Drawable3DCurves {
 		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
 
 		brush.start(8);
+		
+		/*
+		Application.debug(curve.evaluateCurve(curve.getMinParameter()).toString()+"\n"+curve.evaluateTangent(curve.getMinParameter()).toString());
+		Application.debug(curve.evaluateCurve(0).toString()+"\n"+curve.evaluateTangent(0).toString());
+		Application.debug(curve.evaluateCurve(curve.getMaxParameter()).toString()+"\n"+curve.evaluateTangent(curve.getMaxParameter()).toString());
+		 */
 
 
 		brush.setT((float) curve.getMinParameter(), (float) curve.getMaxParameter());

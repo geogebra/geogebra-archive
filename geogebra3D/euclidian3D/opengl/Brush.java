@@ -166,8 +166,10 @@ public class Brush {
 			this.thickness = thickness;
 			this.direction = direction;
 			
-			clockV = direction.crossProduct(s.clockU);
-			clockU = clockV.crossProduct(direction);
+			clockV = direction.crossProduct(s.clockU).normalized(); 
+			//normalize it to avoid little errors propagation
+			// TODO truncate ?
+			clockU = clockV.crossProduct(direction).normalized();
 			
 		}	
 		
