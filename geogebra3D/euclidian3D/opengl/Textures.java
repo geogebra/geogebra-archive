@@ -21,19 +21,19 @@ public class Textures {
 	///////////////////
 	//dash	
     /** opengl organization of the dash textures */
-    private int[] texturesDash;    
-    /** number of dash styles */
-    static private int DASH_NUMBER = 5;  
+    private int[] texturesIndex;    
 	/** no dash. */
 	static public int DASH_NONE = 0;	
 	/** simple dash: 1-(1), ... */
-	static public int DASH_SHORT = 1;	
+	static public int DASH_SHORT = DASH_NONE+1;	
 	/** long dash: 2-(2), ... */
-	static public int DASH_LONG = 2;	
+	static public int DASH_LONG = DASH_SHORT+1;	
 	/** dotted dash: 1-(3), ... */
-	static public int DASH_DOTTED = 3;		
+	static public int DASH_DOTTED = DASH_LONG+1;		
 	/** dotted/dashed dash: 7-(4)-1-(4), ... */
-	static public int DASH_DOTTED_DASHED = 4;	
+	static public int DASH_DOTTED_DASHED = DASH_DOTTED+1;	
+    /** number of dash styles */
+    static private int DASH_NUMBER = DASH_DOTTED_DASHED+1;  
 	/** description of the dash styles */
 	static private boolean[][] DASH_DESCRIPTION = {
 		{true}, // DASH_NONE
@@ -46,8 +46,14 @@ public class Textures {
 	
 	
 	
+	///////////////////
+	//fading
+	/** fading texture for surfaces */
+	static public int FADING = DASH_NUMBER;
 	
 	
+	static private int TEXTURES_NUMBER = FADING+1;
+
 	
 	
 	
@@ -64,13 +70,16 @@ public class Textures {
 
 		gl.glEnable(GL.GL_TEXTURE_2D);
     	
-    	
+		texturesIndex = new int[TEXTURES_NUMBER];
     	
     	// dash textures
-    	texturesDash = new int[DASH_NUMBER];
-    	gl.glGenTextures(DASH_NUMBER, texturesDash, 0);
+    	
+    	gl.glGenTextures(DASH_NUMBER, texturesIndex, 0);
         for(int i=0; i<DASH_NUMBER; i++)
-        	initDashTexture(texturesDash[i],DASH_DESCRIPTION[i]);
+        	initDashTexture(texturesIndex[i],DASH_DESCRIPTION[i]);
+        
+        // fading textures
+        initFadingTexture(texturesIndex[DASH_NUMBER]);
          
         
         
@@ -79,6 +88,15 @@ public class Textures {
 	}
 	
 
+	
+	/** sets the texture index
+	 * @param index
+	 */
+	public void setTexture(int index){
+
+		gl.glBindTexture(GL.GL_TEXTURE_2D, texturesIndex[index]);
+		
+	}
 	
 
 	/////////////////////////////////////////
@@ -112,36 +130,31 @@ public class Textures {
 	}
 	
 	
-	/** sets the dash texture
-	 * @param dash
-	 */
-	public void setDash(int dash){
 
-		gl.glBindTexture(GL.GL_TEXTURE_2D, texturesDash[dash]);
-		
-	}
+	
+	
 	
 	public void setDashFromLineType(int lineType){
 
     	switch (lineType) {
 		case EuclidianView.LINE_TYPE_FULL:
-			setDash(DASH_NONE);
+			setTexture(DASH_NONE);
 			break;
 			
 		case EuclidianView.LINE_TYPE_DOTTED:
-			setDash(DASH_DOTTED);
+			setTexture(DASH_DOTTED);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_SHORT:
-			setDash(DASH_SHORT);
+			setTexture(DASH_SHORT);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_LONG:
-			setDash(DASH_LONG);
+			setTexture(DASH_LONG);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_DOTTED:
-			setDash(DASH_DOTTED_DASHED);
+			setTexture(DASH_DOTTED_DASHED);
 			break;
 
 		default: 
@@ -150,29 +163,67 @@ public class Textures {
 	}
 	
 
-	/////////////////////////////////////////
-	// LINEAR DILATATION
-	/////////////////////////////////////////
-	
-	
-	
-	/** calculate texture x coords for 0 and 1 positions
-	 * @param n number of repetitions per unit
-	 * @param unit
-	 * @param length of the cylinder
-	 * @param posZero position of the "center" of the cylinder
-	 * @param valZero texture coord for the "center"
-	 * @return texture x coords for 0 and 1 positions
-	 */	
-	static final public float[] linear(int n, float unit, float length, float posZero, float valZero){
 
-		//maxima : f(x):=a*x+b;solve([f(posZero/length)=0.25,f(unit/length)-f(0)=n],[a,b]);
-		float a, b;
-		a=(length*n)/unit;
-		b=(unit*valZero-n*posZero)/unit;
-		float start = b;
-		float end = a+b;
-		return new float[] {start,end};
+	/////////////////////////////////////////
+	// DASH TEXTURES
+	/////////////////////////////////////////
+
+	private void initFadingTexture(int index){
+		
+		
+		
+		
+		boolean[] description = {
+				true, false,
+				false,false
+		};
+		
+		
+		
+		int sizeX = 2,  sizeY = 2;
+		
+		
+		/*
+		int n = 3;
+		int sizeX = (int) Math.pow(2, n); int sizeY = sizeX;
+		boolean[] description = new boolean[sizeX*sizeY];
+		for (int i=0; i<sizeX-1; i++)
+			for (int j=0; i<sizeY-1; i++){
+				description[i+j*sizeX] = true;
+			}
+		*/
+		
+		/*
+		boolean[] description = {
+				true, true, true, false,
+				true, true, true, false,
+				true, true, true, false,
+				false,false,false,false
+		};
+		
+		int sizeX = 4,  sizeY = 4;		
+		*/
+
+
+		
+		byte[] bytes = new byte[sizeX*sizeY];
+
+		for (int i=0; i<sizeX*sizeY; i++)
+			if (description[i])      		
+				bytes[i]= (byte) 255;
+
+		ByteBuffer buf = ByteBuffer.wrap(bytes);
+
+		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
+
+
+		//TODO use gl.glTexImage1D ?
+		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  GL.GL_ALPHA, sizeX, sizeY, 0, GL.GL_ALPHA, GL.GL_UNSIGNED_BYTE, buf);
+
 	}
 	
 	

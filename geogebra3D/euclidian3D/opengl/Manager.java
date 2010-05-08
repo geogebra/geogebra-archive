@@ -42,12 +42,8 @@ abstract public class Manager {
 	public GeometryCone cone;
 	/** geometry : cursor */
 	public GeometryCursor cursor;
-	/** geometry : segment */
-	public GeometrySegment segment;
 	/** geometry : plane */
 	protected GeometryPlane plane;
-	/** geometry : grid */
-	protected GeometryGrid grid;
 	/** geometry : sphere */
 	public GeometrySphere sphere;
 	/** brush */
@@ -84,9 +80,7 @@ abstract public class Manager {
 		cylinder = new GeometryCylinder(this,true);
 		cone = new GeometryCone(this,true);
 		cursor = new GeometryCursor(this);
-		segment = new GeometrySegment(this);
 		plane = new GeometryPlane(this);
-		grid = new GeometryGrid(this);
 		sphere = new GeometrySphere(this);
 		
 		brush = new Brush(this);
@@ -341,17 +335,6 @@ abstract public class Manager {
 	}
 	
 	
-	/////////////////////////////////////////////
-	// SEGMENT METHODS
-	/////////////////////////////////////////////
-	
-	public int newSegment(Color color, 
-			GgbVector p1, GgbVector p2,
-			float thickness,
-			float scale,
-			float posZero){
-		return segment.create(color, p1, p2, thickness, scale, posZero);
-	}
 	
 	/////////////////////////////////////////////
 	// POLYGONS DRAWING METHODS
@@ -369,10 +352,6 @@ abstract public class Manager {
 	
 	abstract public int newPlane(Color color, float alpha, float size);
 	
-	abstract public int newGrid(Color color, float alpha, 
-			float xmin, float xmax, float ymin, float ymax, 
-			float dx, float dy, 
-			float thickness);
 	
 
 	/////////////////////////////////////////////

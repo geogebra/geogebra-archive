@@ -1,10 +1,13 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
+import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 
-public class GeoPlane3D extends GeoCoordSys2DAbstract {
+public class GeoPlane3D extends GeoCoordSys2DAbstract
+implements GeoFunction2VarInterface {
 	
 	double xmin, xmax, ymin, ymax; //for drawing
 	
@@ -298,7 +301,22 @@ public class GeoPlane3D extends GeoCoordSys2DAbstract {
 	public boolean isFillable() {
 		return true;
 	}
+	
+	
+	
+	
+	/////////////////////////////////////////////
+	// 2 VAR FUNCTION INTERFACE
+	////////////////////////////////////////////
 
-	
-	
+	public GgbVector evaluateNormal(double u, double v) {
+		
+		return getMatrix4x4().getVz();
+	}
+
+	public GgbVector evaluatePoint(double u, double v) {
+		GgbMatrix4x4 m = getMatrix4x4();
+		return (GgbVector) m.getOrigin().add(m.getVx().mul(u)).add(m.getVy().mul(v));
+	}
+
 }

@@ -5,14 +5,17 @@ package geogebra3D.euclidian3D;
 
 import java.awt.Color;
 
+import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Brush;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.euclidian3D.opengl.Surface;
 import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoCoordSys;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoCoordSysAbstract;
+import geogebra3D.kernel3D.GeoFunction2Var;
 import geogebra3D.kernel3D.GeoPlane3D;
 
 
@@ -66,7 +69,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 			return;
 		renderer.initMatrix();
 		//dash
-		renderer.getTextures().setDash(Textures.DASH_SHORT);
+		renderer.getTextures().setTexture(Textures.DASH_SHORT);
 		renderer.getGeometryManager().draw(gridIndex);
 		renderer.resetMatrix();
 		
@@ -86,11 +89,28 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		GeoPlane3D geo = (GeoPlane3D) getGeoElement();
 		
 		// plane
-		renderer.getGeometryManager().remove(planeIndex);		
+		renderer.getGeometryManager().remove(planeIndex);	
+		
+		
+		Surface surface = renderer.getGeometryManager().getSurface();
+		
+		/*
 		planeIndex = renderer.getGeometryManager().newPlane(
 				geo.getObjectColor(),
 				alpha,
 				(float) (200/getView3D().getScale()));
+		*/
+		surface.start(geo);
+		float dimension = (float) (200/getView3D().getScale()) * 1.5f;
+		surface.setU(-dimension, dimension);surface.setDeltaU(2*dimension);
+		surface.setV(-dimension, dimension);surface.setDeltaV(2*dimension);
+		float fading = dimension * 0.75f;
+		surface.setFading(fading, fading);
+		surface.draw();
+		planeIndex=surface.end();
+		
+		
+		
 		
 		// grid
 		renderer.getGeometryManager().remove(gridIndex);
@@ -167,6 +187,11 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	}		
 	
 	
+	
+	//TODO remove that
+	public GgbMatrix4x4 getMatrix(){
+		return GgbMatrix4x4.Identity();
+	}
 	
 	
 

@@ -268,6 +268,8 @@ public class Renderer implements GLEventListener {
 	
 	private void drawTransp(){
 		
+		gl.glEnable(GL.GL_TEXTURE_2D);
+		getTextures().setTexture(Textures.FADING);
 		
 		gl.glDisable(GL.GL_CULL_FACE);
 		drawList3D.drawTransp(this);
@@ -280,6 +282,10 @@ public class Renderer implements GLEventListener {
 		gl.glCullFace(GL.GL_FRONT); drawList3D.drawTranspClosed(this);//draws inside parts  
 		gl.glCullFace(GL.GL_BACK); drawList3D.drawTranspClosed(this);//draws outside parts 
 		
+		
+		
+		
+		gl.glDisable(GL.GL_TEXTURE_2D);
 		
 		
 	}
@@ -362,6 +368,9 @@ public class Renderer implements GLEventListener {
         //primitives.enableVBO(gl);
         
         //drawing hidden part
+        gl.glDisable(GL.GL_CULL_FACE);
+        drawList3D.drawNotTransparentSurfaces(this);
+        gl.glEnable(GL.GL_CULL_FACE);
         gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
         //gl.glDisable(GL.GL_BLEND);
         drawList3D.drawHiddenNotTextured(this);

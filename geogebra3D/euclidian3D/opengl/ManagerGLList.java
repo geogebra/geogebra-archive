@@ -197,12 +197,6 @@ public class ManagerGLList extends Manager {
     	return plane.create(color,alpha,size);
     }
     
-    public int newGrid(Color color, float alpha, 
-    		float xmin, float xmax, float ymin, float ymax, 
-    		float dx, float dy, 
-    		float thickness){
-    	return grid.create(color, alpha, xmin, xmax, ymin, ymax, dx, dy, thickness);
-    }
     
 	/////////////////////////////////////////////
 	// SPHERE METHODS

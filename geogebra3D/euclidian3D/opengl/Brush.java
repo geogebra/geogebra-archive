@@ -215,11 +215,12 @@ public class Brush {
 	private float[] textureX = new float[2];
 	private float[] textureY = new float[2];
 	/** type of texture */
-	private int textureType;
 	static final private int TEXTURE_CONSTANT_0 = 0; 
 	static final private int TEXTURE_ID = 1;
 	static final private int TEXTURE_AFFINE = 2;
 	static final private int TEXTURE_LINEAR = 3;
+	private int textureTypeX = TEXTURE_ID;
+	private int textureTypeY = TEXTURE_CONSTANT_0;
 	
 	static final private float TEXTURE_AFFINE_FACTOR = 0.05f; 
 	
@@ -386,7 +387,9 @@ public class Brush {
 				(float) vectors[0].getY(), 
 				(float) vectors[0].getZ());	*/
 		manager.normal(vectors[0]);
-		manager.texture(getTextureX(textureX[texture]),textureY[texture]);
+		manager.texture(
+				getTexture(textureX[texture],textureTypeX),
+				getTexture(textureY[texture],textureTypeY));
 		manager.vertex(vectors[1]);
 		/*
 		manager.vertex(
@@ -460,7 +463,7 @@ public class Brush {
 			moveTo(arrowBase);
 			
 			
-			textureType = TEXTURE_ID;
+			textureTypeX = TEXTURE_ID;
 			setTextureX(0,0);
 			setThickness(factor*ARROW_WIDTH);
 			moveTo(arrowBase);
@@ -520,9 +523,10 @@ public class Brush {
 		if (start>end)
 			return;
 		
-		//setTextureX(0,0);
-		textureType = TEXTURE_CONSTANT_0;
-		
+
+		textureTypeX = TEXTURE_CONSTANT_0;
+		//textureType = TEXTURE_ID;
+			
 		float radius = thickness;
 		
 		//int i=0;Application.debug(""+i);
@@ -554,7 +558,7 @@ public class Brush {
 		if (start>end)
 			return;
 		
-		textureType = TEXTURE_CONSTANT_0;
+		textureTypeX = TEXTURE_CONSTANT_0;
 		
 		down((GgbVector) origin.add(direction.mul(start)));
 		moveTo((GgbVector) origin.add(direction.mul(end)));
@@ -685,14 +689,14 @@ public class Brush {
 	 * @param type
 	 */
 	public void setTextureType(int type){
-		textureType = type;
+		textureTypeX = type;
 	}
 
-	/** return texture x coord regarding position
+	/** return texture coord regarding position and type
 	 * @param pos
-	 * @return texture x coord regarding position
+	 * @return texture coord
 	 */
-	private float getTextureX(float pos){
+	private float getTexture(float pos, int textureType){
 		switch(textureType){
 		case TEXTURE_ID:
 		default:
