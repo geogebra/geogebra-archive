@@ -25,6 +25,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -42,7 +43,7 @@ public class DrawAngle extends Drawable {
 
 	private GeoAngle angle;
 
-	private GeoPoint vertex, point;
+	private GeoPoint vertex, point, point2;
 
 	private GeoLine line, line2;
 
@@ -106,6 +107,7 @@ public class DrawAngle extends Drawable {
 			AlgoAnglePoints pa = (AlgoAnglePoints) algo;
 			vertex = pa.getB();
 			point = pa.getA();
+			point2 = pa.getC();
 		}
 		// angle between two vectors
 		else if (algo instanceof AlgoAngleVectors) {
@@ -153,6 +155,8 @@ public class DrawAngle extends Drawable {
 		}
 		labelVisible = geo.isLabelVisible();
 		updateStrokes(angle);
+		
+		double maxRadius = Double.POSITIVE_INFINITY;
 
 		// set vertex and first vector to determine start angle
 		switch (angleDrawMode) {
@@ -163,6 +167,32 @@ public class DrawAngle extends Drawable {
 			// first vec
 			firstVec[0] = point.inhomX - m[0];
 			firstVec[1] = point.inhomY - m[1];
+			
+			double vertexScreen[] = new double[2];
+			vertexScreen[0] = m[0];
+			vertexScreen[1] = m[1];
+			
+			double firstVecScreen[] = new double[2];
+			firstVecScreen[0] = point.inhomX;
+			firstVecScreen[1] = point.inhomY;
+			
+			
+			double secondVecScreen[] = new double[2];
+			secondVecScreen[0] = point2.inhomX;
+			secondVecScreen[1] = point2.inhomY;
+			
+			view.toScreenCoords(vertexScreen);
+			view.toScreenCoords(firstVecScreen);
+			view.toScreenCoords(secondVecScreen);
+			
+			firstVecScreen[0] -= vertexScreen[0];
+			firstVecScreen[1] -= vertexScreen[1];
+			secondVecScreen[0] -= vertexScreen[0];
+			secondVecScreen[1] -= vertexScreen[1];
+			
+			maxRadius = 0.5 * Math.sqrt(Math.min(firstVecScreen[0] * firstVecScreen[0] + firstVecScreen[1] * firstVecScreen[1], secondVecScreen[0] * secondVecScreen[0] + secondVecScreen[1] * secondVecScreen[1]));
+			
+			
 			break;
 
 		case DRAW_MODE_VECTORS: // two vectors
@@ -259,7 +289,10 @@ public class DrawAngle extends Drawable {
 
 		double as = Math.toDegrees(angSt);
 		double ae = Math.toDegrees(angExt);
-		double r = angle.arcSize * view.invXscale;
+		
+		int arcSize = Math.min((int)maxRadius, angle.arcSize);
+		
+		double r = arcSize * view.invXscale;
 
 		// check whether we need to take care for a special 90 degree angle appearance
 		show90degrees = view.rightAngleStyle != EuclidianView.RIGHT_ANGLE_STYLE_NONE &&
@@ -283,10 +316,10 @@ public class DrawAngle extends Drawable {
 					square = new GeneralPath();
 				else					
 					square.reset();
-				double length = angle.arcSize * 0.7071067811865;
+				double length = arcSize * 0.7071067811865;
 	     		square.moveTo((float)coords[0],(float)coords[1]);
 				square.lineTo((float)(coords[0]+length*Math.cos(angSt)),(float)(coords[1]-length*Math.sin(angSt)*view.getScaleRatio()));
-				square.lineTo((float)(coords[0]+angle.arcSize*Math.cos(angSt+Kernel.PI_HALF/2)),(float)(coords[1]-angle.arcSize*Math.sin(angSt+Kernel.PI_HALF/2)*view.getScaleRatio()));
+				square.lineTo((float)(coords[0]+arcSize*Math.cos(angSt+Kernel.PI_HALF/2)),(float)(coords[1]-arcSize*Math.sin(angSt+Kernel.PI_HALF/2)*view.getScaleRatio()));
 				square.lineTo((float)(coords[0]+length*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1]-length*Math.sin(angSt+Kernel.PI_HALF)*view.getScaleRatio()));
 				square.lineTo((float)coords[0],(float)coords[1]);
 				shape = square;
@@ -298,7 +331,7 @@ public class DrawAngle extends Drawable {
 					square = new GeneralPath();
 				else					
 					square.reset();
-				length = angle.arcSize * 0.7071067811865;
+				length = arcSize * 0.7071067811865;
 				double offset = length * 0.4;
 				square.moveTo((float)(coords[0]+length*Math.cos(angSt)+offset*Math.cos(angSt)+offset*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1]-length*Math.sin(angSt)*view.getScaleRatio() - offset*Math.sin(angSt) - offset*Math.sin(angSt+Kernel.PI_HALF)));
 				square.lineTo((float)(coords[0]+offset*Math.cos(angSt)+offset*Math.cos(angSt+Kernel.PI_HALF)),(float)(coords[1] - offset*Math.sin(angSt) - offset*Math.sin(angSt+Kernel.PI_HALF)));
@@ -341,7 +374,7 @@ public class DrawAngle extends Drawable {
 	    	switch(geo.decorationType){	
 		    	case GeoElement.DECORATION_ANGLE_TWO_ARCS:
 		    		rdiff = 4 + geo.lineThickness/2d;
-		    		r=(angle.arcSize-rdiff)*view.invXscale;
+		    		r=(arcSize-rdiff)*view.invXscale;
 					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 					// transform arc to screen coords
 					shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
@@ -349,11 +382,11 @@ public class DrawAngle extends Drawable {
 				
 				case GeoElement.DECORATION_ANGLE_THREE_ARCS:
 					rdiff = 4 + geo.lineThickness/2d;
-					r = (angle.arcSize-rdiff) * view.invXscale;
+					r = (arcSize-rdiff) * view.invXscale;
 					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 					// transform arc to screen coords
 					shapeArc1 = view.coordTransform.createTransformedShape(decoArc);
-					r = (angle.arcSize-2*rdiff) * view.invXscale;
+					r = (arcSize-2*rdiff) * view.invXscale;
 					decoArc.setArcByCenter(m[0], m[1], r, -as, -ae, Arc2D.OPEN);
 					// transform arc to screen coords
 					shapeArc2 = view.coordTransform.createTransformedShape(decoArc);
@@ -361,7 +394,7 @@ public class DrawAngle extends Drawable {
 					
 				case GeoElement.DECORATION_ANGLE_ONE_TICK:
 					angleTick[0]=-angSt-angExt/2;
-					updateTick(angleTick[0],angle.arcSize,0);
+					updateTick(angleTick[0],arcSize,0);
 					break;
 				
 				case GeoElement.DECORATION_ANGLE_TWO_TICKS:
@@ -371,8 +404,8 @@ public class DrawAngle extends Drawable {
 						angleTick[0]=-angSt-angExt/2-MAX_TICK_DISTANCE/2;
 						angleTick[1]=-angSt-angExt/2+MAX_TICK_DISTANCE/2;
 					}
-					updateTick(angleTick[0],angle.arcSize,0);
-					updateTick(angleTick[1],angle.arcSize,1);
+					updateTick(angleTick[0],arcSize,0);
+					updateTick(angleTick[1],arcSize,1);
 					break;
 				
 				case GeoElement.DECORATION_ANGLE_THREE_TICKS:
@@ -382,11 +415,11 @@ public class DrawAngle extends Drawable {
 						angleTick[0]=-angSt-angExt/2-MAX_TICK_DISTANCE;
 						angleTick[1]=-angSt-angExt/2+MAX_TICK_DISTANCE;
 					}
-					updateTick(angleTick[0],angle.arcSize,0);
-					updateTick(angleTick[1],angle.arcSize,1);
+					updateTick(angleTick[0],arcSize,0);
+					updateTick(angleTick[1],arcSize,1);
 					//middle tick
 					angleTick[0]=-angSt-angExt/2;
-					updateTick(angleTick[0],angle.arcSize,2);
+					updateTick(angleTick[0],arcSize,2);
 					break;
 //					 Michael Borcherds 2007-11-19 START
 				case GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE:
@@ -420,7 +453,7 @@ public class DrawAngle extends Drawable {
 					double p2[] = new double[2];
 					double p3[] = new double[2];
 		    		rdiff = 4 + geo.lineThickness/2d;
-		    		r=(angle.arcSize)*view.invXscale;
+		    		r=(arcSize)*view.invXscale;
 					
 					p1[0]=m[0]+r*n2[0];
 					p1[1]=m[1]+r*n2[1]; // arrow tip
