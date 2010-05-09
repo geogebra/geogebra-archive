@@ -182,12 +182,15 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			}
 
 		}
+		//Lines containing  textMode by Zbynek Konecny, 2010-05-09
+		boolean textMode = false;
 		
 		if (searchDirection != 0) {
 			int count = 0;
 			for (int i = caret - 1 ; i != searchEnd ; i += searchDirection) {
-				if (text.charAt(i) == bracketToMatch) count ++;
-				else if (text.charAt(i) == oppositeBracketToMatch) count --;
+				if(text.charAt(i) == '\"') textMode = !textMode;
+				if (!textMode && text.charAt(i) == bracketToMatch) count ++;
+				else if (!textMode && text.charAt(i) == oppositeBracketToMatch) count --;
 				
 				if (count == 0) {
 					bracket2pos = i;
@@ -201,17 +204,19 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		int selEnd = getSelectionEnd();
 
 
-
 		pos = 0;
 		float caretPos = -1;
 
 		if (caret == 0) caretPos = 0;
+		textMode = false;
 		for (int i = 0 ; i < text.length() ; i++) {
+			if(text.charAt(i) == '\"') textMode = !textMode;
 			if (i == bracket1pos || i == bracket2pos) {
 				if (bracket2pos > -1) g2.setColor(Color.RED); // matched
 				else g2.setColor(Color.GREEN); // unmatched
 			}
 			else g2.setColor(Color.BLACK);
+			if(textMode || text.charAt(i) == '\"')g2.setColor(Color.GRAY);
 			drawText(text.charAt(i)+"", i >= selStart && i < selEnd);
 
 			if (i + 1 == caret) caretPos = pos;
@@ -223,7 +228,6 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			g2.setPaintMode();
 
 		}
-
 	}
 
 
