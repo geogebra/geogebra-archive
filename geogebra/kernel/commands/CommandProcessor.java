@@ -5411,7 +5411,11 @@ class CmdOsculatingCircle extends CommandProcessor {
 			 
 			 String label = c.getLabel();
 			 String command = label == null ? "" : label + "=";
-			 command += arg[0].toOutputValueString();
+			 
+			 kernel.setTemporaryPrintFigures(15);
+			 command += arg[0].toOutputValueString(); 
+			 kernel.restorePrintAccuracy();
+			 
 			 try {
 				 
 				 if (arg[0].isGeoImage()) {
