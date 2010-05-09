@@ -1,7 +1,5 @@
 package geogebra3D.euclidian3D.opengl;
 
-import geogebra.Matrix.GgbVector;
-import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoFunction2VarInterface;
 
 /** Class for drawing surfaces.
@@ -31,7 +29,12 @@ public class Surface {
 	private float uFade, vFade;
 	
 	/** texture coords */
-	private int uT0, uT1, vT0, vT1;
+	private float uT0, uT1, vT0, vT1;
+	
+	/** texture coord for out (alpha = 0) */
+	static final private float TEXTURE_FADE_OUT = 0.75f;
+	/** texture coord for in (alpha = 1) */
+	static final private float TEXTURE_FADE_IN = 0f;
 	
 	/** default constructor
 	 * @param manager
@@ -130,13 +133,13 @@ public class Surface {
 
 			if (uFade!=0){
 				if (u==uMin){
-					uT0 = 1; uT1 = 0;
+					uT0 = TEXTURE_FADE_OUT; uT1 = TEXTURE_FADE_IN;
 					this.du = uFade;
 				}else if (u>=uMax-uFade){
-					uT0 = 0; uT1 = 1;
+					uT0 = TEXTURE_FADE_IN; uT1 = TEXTURE_FADE_OUT;
 					this.du = uMax - u;
 				}else{
-					uT0 = 0; uT1 = 0;
+					uT0 = TEXTURE_FADE_IN; uT1 = TEXTURE_FADE_IN;
 					if (u+du>uMax-uFade)
 						this.du = uMax-uFade - u;
 					else
@@ -148,13 +151,13 @@ public class Surface {
 
 				if (vFade!=0){
 					if (v==vMin){
-						vT0 = 1; vT1 = 0;
+						vT0 = TEXTURE_FADE_OUT; vT1 = TEXTURE_FADE_IN;
 						this.dv = vFade;
 					}else if (v>=vMax-vFade){
-						vT0 = 0; vT1 = 1;
+						vT0 = TEXTURE_FADE_IN; vT1 = TEXTURE_FADE_OUT;
 						this.dv = vMax - v;
 					}else{
-						vT0 = 0; vT1 = 0;
+						vT0 = TEXTURE_FADE_IN; vT1 = TEXTURE_FADE_IN;
 						if (v+dv>vMax-vFade)
 							this.dv = vMax-vFade - v;
 						else
