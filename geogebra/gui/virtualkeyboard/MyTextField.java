@@ -37,8 +37,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		this.guiManager = guiManager;
 		addFocusListener(this);
 	}
+	
+	boolean caretUpdated = true;
+	boolean caretShowing = true;
 
 	public void caretUpdate(CaretEvent e) {
+		caretUpdated = true;
 		repaint();
 	}
 
@@ -100,6 +104,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 		// moving caret doesn't work without this... why?
 		super.paintComponent(gr);
+		
+		// flash caret if there's been no caret movement since last repaint
+		if (caretUpdated) caretShowing = false;
+		else caretShowing = !caretShowing;
+		
+		caretUpdated = false;
 
 		g2 = (Graphics2D)gr;
 		
@@ -222,7 +232,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			if (i + 1 == caret) caretPos = pos;
 		}
 
-		if (caretPos > -1 && hasFocus()) {
+		if (caretShowing && caretPos > -1 && hasFocus()) {
 			g2.setColor(Color.black);
 			g2.fillRect((int)caretPos - scrollOffset + insets.left, insets.bottom + 2 , 1, h - insets.bottom - insets.top - 4);
 			g2.setPaintMode();
