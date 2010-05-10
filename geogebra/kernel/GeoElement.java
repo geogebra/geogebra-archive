@@ -2101,7 +2101,7 @@ public abstract class GeoElement
 			chars = lineLabels;
 		} else if (isGeoConic() || isGeoCubic()) {
 			chars = conicLabels;
-		} else if (isGeoVector() || this instanceof GeoVector3D) {
+		} else if (isGeoVector() || isVector3DValue()) {
 			chars = vectorLabels;
 		}  else if (isGeoAngle()) {
 			chars = greekLowerCase;
