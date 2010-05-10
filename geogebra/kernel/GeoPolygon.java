@@ -361,6 +361,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		 // refresh color to ensure segments have same color as polygon:
 		 segment.setObjColor(getObjectColor()); 
          segment.setLineThickness(getLineThickness()); 
+         segment.setEuclidianVisible(isEuclidianVisible());
          //segment.setAuxiliaryObject(true);
 
 		 return segment;
