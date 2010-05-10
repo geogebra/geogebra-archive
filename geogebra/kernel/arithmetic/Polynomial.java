@@ -365,6 +365,22 @@ public class Polynomial extends ValidExpression implements Serializable, Express
         return deg;
     }
     
+    /*
+     * eg isFreeOf('z') to check no terms containing z, z^2 etc
+     */
+    public boolean isFreeOf(char var) {
+        if (terms.size() == 0) return true;
+        
+        Iterator i = terms.iterator();                              
+        while (i.hasNext()) {
+        	Term t = ((Term)i.next());
+            if (t.degree(var) > 0) return false;
+        }
+        
+        return true;
+    	
+    }
+    
     /**
      *  returns 3 for eg x^3 y^2
      */   
@@ -383,6 +399,10 @@ public class Polynomial extends ValidExpression implements Serializable, Express
                 deg = varLen;
             
             varLen = t.degree('y');
+            if (varLen > deg) 
+                deg = varLen;
+            
+            varLen = t.degree('z');
             if (varLen > deg) 
                 deg = varLen;
         }

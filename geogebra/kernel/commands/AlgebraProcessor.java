@@ -599,7 +599,7 @@ public class AlgebraProcessor {
 	}
 	
 
-	private GeoElement[] processFunction(ExpressionNode funNode, Function fun) {		
+	protected GeoElement[] processFunction(ExpressionNode funNode, Function fun) {		
 		fun.initFunction();		
 		
 		String label = fun.getLabel();
@@ -618,14 +618,18 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
-	private GeoElement[] processEquation(Equation equ) throws MyError {		
-//		Application.debug("EQUATION: " + equ);        
-//		Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
+	protected GeoElement[] processEquation(Equation equ) throws MyError {		
+		//Application.debug("EQUATION: " + equ);        
+		//Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
 		
 		try {
 			equ.initEquation();	
 			
-			// consider algebraic degree of equation        
+			// check no terms in z
+			if (!equ.getNormalForm().isFreeOf('z')) throw new MyError(app, "InvalidEquation");
+
+			// consider algebraic degree of equation  
+			 // check not equation of eg plane
 			switch (equ.degree()) {
 				// linear equation -> LINE   
 				case 1 :
@@ -674,9 +678,11 @@ public class AlgebraProcessor {
 				throw new MyError(app, errors);
 			}
         }        
+		
+		
 	}
 
-	private GeoElement[] processLine(Equation equ) {
+	protected GeoElement[] processLine(Equation equ) {
 		double a = 0, b = 0, c = 0;
 		GeoLine line;
 		GeoElement[] ret = new GeoElement[1];
@@ -702,7 +708,7 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
-	private GeoElement[] processConic(Equation equ) {
+	protected GeoElement[] processConic(Equation equ) {
 		double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
 		GeoElement[] ret = new GeoElement[1];
 		GeoConic conic;
@@ -734,7 +740,7 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
-	private GeoElement[] processCubic(Equation equ) {
+	protected GeoElement[] processCubic(Equation equ) {
 		double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, i = 0, j = 0, k = 0 , l = 0, m = 0, n = 0, o = 0, p = 0;
 		GeoElement[] ret = new GeoElement[1];
 		GeoCubic cubic = null;

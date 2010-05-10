@@ -35,7 +35,7 @@ the Free Software Foundation; either version 2 of the License, or
  * <BR><BR>
  * All arithmetic expressions (operators: +, -, *, /, ^) are 
  * valid as long as they obey the following rules:
- * Varibales are x or y. Divisors and Exponents must be constant
+ * Variables are x or y. Divisors and Exponents must be constant
  * numbers. The "*" operator may be omitted.
  *
  * @author Markus Hohenwarter
@@ -219,6 +219,7 @@ TOKEN :  {
 TOKEN : {      
   		< VARX: "x" >
   |		< VARY: "y" >
+  |		< VARZ: "z" >
   |     < FLOAT: <INTEGER> ( <DECIMAL_POINT> <INTEGER> )? 
         | <DECIMAL_POINT> <INTEGER> 
         | <INTEGER> <DECIMAL_POINT>
@@ -1332,6 +1333,14 @@ ExpressionValue numVecVariable():
     }
 |
     c = <VARY>  
+    {
+        if (GeoGebraCASParsing)
+ 			return new ExpressionNode(kernel, new Variable(kernel, c.image));
+		else
+        	return new Polynomial(kernel, c.image);
+    }
+|
+    c = <VARZ>  
     {
         if (GeoGebraCASParsing)
  			return new ExpressionNode(kernel, new Variable(kernel, c.image));

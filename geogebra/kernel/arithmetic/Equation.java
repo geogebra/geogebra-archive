@@ -210,7 +210,7 @@ public class Equation extends ValidExpression {
      * returns true if this Equation is implicit (not explicit)
      */
     public boolean isImplicit() {
-        return !isExplicit("x") && !isExplicit("y");
+        return !isExplicit("x") && !isExplicit("y") && !isExplicit("z");
     }
 
 	public boolean contains(ExpressionValue ev) {
