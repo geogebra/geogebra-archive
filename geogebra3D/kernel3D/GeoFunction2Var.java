@@ -11,12 +11,23 @@ import geogebra.kernel.GeoElement;
  */
 public class GeoFunction2Var extends GeoElement3D
 implements GeoFunction2VarInterface {
+	
+	
+	// to remove
+	private int type;
+	private double coeff;
+	
+	
+	private double[] start, end;
 
 	/** default constructor
 	 * @param c
 	 */
 	public GeoFunction2Var(Construction c) {
 		super(c);
+		
+		start = new double[2];
+		end = new double[2];
 		
 	}
 	
@@ -28,21 +39,103 @@ implements GeoFunction2VarInterface {
 	
 	public GgbVector evaluatePoint(double u, double v){
 		
-		return new GgbVector(new double[] {-u,v,u*u+v*v}); // -u for surface orientation
-		//return new GgbVector(new double[] {u,v,u*v});
+		switch (type){
+		case 1:
+		default:
+			return new GgbVector(new double[] {-u,v,(u*u+v*v)*coeff}); // -u for surface orientation
+		case 2:
+			return new GgbVector(new double[] {u,v,coeff*u*v});
+		}
+
 	}
 	
 
 	public GgbVector evaluateNormal(double u, double v){
 		
-		return (new GgbVector(new double[] {-2*u,2*v,-1})).normalized();
-		//return (new GgbVector(new double[] {v,u,-1})).normalized();
+		
+		switch (type){
+		case 1:
+		default:
+			return (new GgbVector(new double[] {-2*u*coeff,2*v*coeff,-1})).normalized();
+		case 2:
+			return (new GgbVector(new double[] {-coeff*v,-coeff*u,1})).normalized();
+		}
+		
+		
 	}
 	
 	
 	
 	
 	
+	/**
+	 * Returns the start parameter value 
+	 * @return
+	 */
+	public double getMinParameter(int index) {
+		
+		/*
+		switch (type){
+		case 1:
+		default:
+			return -5;
+		case 2:
+			return -2;
+		}
+		*/
+		
+		return start[index];
+		
+	}
+	
+	/**
+	 * Returns the largest possible parameter value 
+	 * @return
+	 */
+	public double getMaxParameter(int index) {
+		
+		/*
+		switch (type){
+		case 1:
+		default:
+			return 5;
+		case 2:
+			return 2;
+		}
+		*/
+		
+		return end[index];
+	}
+	
+	
+	/** 
+	 * Sets the start and end parameter value of this curve.
+	 * @param startParam 
+	 * @param endParam 
+	 */
+	public void setInterval(double startU, double endU, double startV, double endV) {
+		
+		start[0] = startU; end[0] = endU;
+		start[1] = startV; end[1] = endV;
+		
+	}
+	
+	
+	/////////////////////////////////////////
+	// TO REMOVE (TEST)
+	/////////////////////////////////////////
+
+	@Deprecated
+	public void set(int type, double coeff){
+		this.type = type;
+		this.coeff = coeff;
+	}
+	
+	
+	
+	/////////////////////////////////////////
+	// 
+	/////////////////////////////////////////
 	
 	
 

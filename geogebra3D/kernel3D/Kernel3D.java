@@ -668,12 +668,22 @@ public class Kernel3D
 	////////////////////////////////////////////////
 	// FUNCTIONS (2 VARS)
 	
-	final public GeoFunction2Var Function2Var(String label){
+	final public GeoFunction2Var Function2Var(
+			String label, 
+			NumberValue type, NumberValue coeff,
+			NumberValue startU, NumberValue endU,
+			NumberValue startV, NumberValue endV
+			){
 		
+		/*
 		GeoFunction2Var f = new GeoFunction2Var(cons);
 		f.setLabel(label);
+		*/
 		
-		return f;
+		AlgoFunction2Var algo = new AlgoFunction2Var(cons, label, type, coeff, startU, endU, startV, endV);
+		
+		
+		return algo.getFunction();
 		
 	}
 

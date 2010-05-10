@@ -66,8 +66,8 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		Surface surface = renderer.getGeometryManager().getSurface();
 		GeoFunction2Var geo = (GeoFunction2Var) getGeoElement();
 		surface.start(geo);
-		surface.setU(-5, 5);surface.setDeltaU(0.1f);
-		surface.setV(-5, 5);surface.setDeltaV(0.1f);
+		surface.setU((float) geo.getMinParameter(0), (float) geo.getMaxParameter(0));surface.setDeltaU(0.1f);
+		surface.setV((float) geo.getMinParameter(1), (float) geo.getMaxParameter(1));surface.setDeltaV(0.1f);
 		surface.draw();
 		geometryIndex=surface.end();
 		

@@ -221,11 +221,6 @@ public class Test3D{
 	}
 	*/
 	
-	private void testFuntion2Var(){
-		GeoFunction2Var f = kernel3D.Function2Var("function");
-		f.setAlphaValue(0.75f);
-		f.setObjColor(Color.RED);
-	}
 	
 	
 	private void testList(){

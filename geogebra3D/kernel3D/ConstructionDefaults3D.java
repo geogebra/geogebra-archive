@@ -56,6 +56,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_POLYHEDRON = 3300;
 	/** default quadric type */
 	public static final int DEFAULT_QUADRIC = 3301;
+	/** default function 2 var type */
+	public static final int DEFAULT_FUNCTION2VAR = 3302;
 
 	
 	
@@ -71,11 +73,11 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	
 	// conic 3D
 	/** default color for 3D conics */
-	public static final Color colConic3D = new Color(255, 128, 0);
+	public static final Color colConic3D = new Color(0, 128, 128);//new Color(255, 128, 0);
 	
 	// curve 3D
 	/** default color for 3D curve */
-	public static final Color colCurveCartesian3D = new Color(255, 128, 0);
+	public static final Color colCurveCartesian3D = colConic3D;//new Color(255, 128, 0);
 	
 	// polygon 3D
 	/** default color for 3D polygons */
@@ -251,6 +253,14 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		quadric.setObjColor(colQuadric);
 		quadric.setAlphaValue(DEFAULT_QUADRIC_ALPHA);
 		defaultGeoElements.put(DEFAULT_QUADRIC, quadric);
+		
+		// function 2 var
+		GeoFunction2Var function = new GeoFunction2Var(cons);	
+		function.setLocalVariableLabel("function");
+		function.setObjColor(colQuadric);
+		function.setAlphaValue(DEFAULT_QUADRIC_ALPHA);
+		defaultGeoElements.put(DEFAULT_FUNCTION2VAR, function);
+	
 	
 
 
@@ -303,6 +313,9 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 			return DEFAULT_POLYHEDRON;
 		case GeoElement3D.GEO_CLASS_QUADRIC:
 			return DEFAULT_QUADRIC;
+		case GeoElement3D.GEO_CLASS_FUNCTION2VAR:
+			return DEFAULT_FUNCTION2VAR;
+			
 			
 		default:
 			return super.getDefaultType(geo);
