@@ -809,7 +809,9 @@ public class WorksheetExportDialog extends JDialog {
 		
 		return sb.toString();
 		
-	}	private String getJavaScript() throws IOException {
+	}	
+	
+	private String getJavaScript() throws IOException {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n");
