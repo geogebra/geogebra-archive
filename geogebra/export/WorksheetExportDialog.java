@@ -80,6 +80,7 @@ public class WorksheetExportDialog extends JDialog {
 	final private static int TYPE_MEDIAWIKI = 2;
 	final private static int TYPE_GOOGLEGADGET = 3;
 	final private static int TYPE_JSXGRAPH = 4;
+	final private static int TYPE_JAVASCRIPT = 5;
 
 	private Application app;
 	private Kernel kernel;
@@ -485,7 +486,7 @@ public class WorksheetExportDialog extends JDialog {
 		appletPanel.add(cbOfflineArchiveAndGgbFile);
 		
 		// file type (file/clipboard, mediaWiki)
-		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": JSXGraph" };
+		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": JSXGraph",app.getMenu("Clipboard")+": JavaScript" };
 		cbFileType = new JComboBox(fileTypeStrings);
 		cbFileType.setEnabled(true);
 		JPanel secondLine2 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));				
@@ -602,6 +603,10 @@ public class WorksheetExportDialog extends JDialog {
 		
 		case TYPE_JSXGRAPH:
 			stringSelection = new StringSelection(getJSXGraph());
+		break;
+		
+		case TYPE_JAVASCRIPT:
+			stringSelection = new StringSelection(getJavaScript());
 		break;
 		}
 		
@@ -762,6 +767,10 @@ public class WorksheetExportDialog extends JDialog {
 
 	}
 	
+	private void appendBase64Unzipped(StringBuffer sb) throws IOException {
+			sb.append(geogebra.util.Base64.encode(app.getXMLio().getFullXML().getBytes(), 0));
+	}
+	
 	/*
 	 * returns string like this:
 	 * <ggb_applet width="585" height="470" ggbBase64="UEsDBBQACAAIAMWreDsAAAAAAAAAAAAAAAAMAAAAZ2VvZ2VicmEueG1srVM9b9swEJ2bX0FwbyzZFZAAkoMmU4C0Hdx26EaRZ4k1RQr8sOX++h5JyXYzdyLu3eO7d8dj/TQNihzBOml0Q8v7ghLQ3Aipu4YGv//4QJ+2d3UHpoPWMrI3dmC+oZv7NY14kNu7D7XrzYkwlSg/JZwaumfKASVutMCE6wH8PzgLk1SS2fO39jdw766JLPKqx4BVvA2I8UG8SbeEq1hwb7QnxMk/0NB1EbF6lbzUELiSQjId6yVvSCLkJIXvG1o9VJT0ILse5T6Vj1mNG2PF7uw8DGT6BdagaFnFWZxztMmR40xhwapIqdsoycBxB97j5BxhE7jFfmeluPQXg1f3bNQVGo3U/oWNPtg09c0M7fw56mMpG/1+1p2CGStxKD3wQ2umXZpBucnS389jupL8tN2LUcYSi+1U2Hc3n20+EycavbCKxCkSY9aIopd8+bhOjHS2+UwsJXW2NjdeLl2XxVJGOhKBOEVclmU2irWgGkpJ0NK/LYGX/HDtNPK/hqHFJb1dgYtk+Z8k69W73akPYDWovCEaHzaY4MiRqeXpkg8BXA4Y5sQ8EBYf6wcayKiAzsLiO294HlfKFrdb+A6uV4uJ6MGhV+7xq2I/PvYSf5LvDb7NF8l7Boo8G4urYYWjRDAfKVHk9m76K/N/3v4FUEsHCD5fkJDvAQAAAQQAAFBLAQIUABQACAAIAMWreDs+X5CQ7wEAAAEEAAAMAAAAAAAAAAAAAAAAAAAAAABnZW9nZWJyYS54bWxQSwUGAAAAAAEAAQA6AAAAKQIAAAAA" framePossible = "false" showResetIcon = "true" showAnimationButton = "true" enableRightClick = "false" errorDialogsActive = "true" enableLabelDrags = "false" showMenuBar = "false" showToolBar = "true" showToolBarHelp = "true" showAlgebraInput = "false" />
@@ -800,7 +809,33 @@ public class WorksheetExportDialog extends JDialog {
 		
 		return sb.toString();
 		
+	}	private String getJavaScript() throws IOException {
+		StringBuffer sb = new StringBuffer();
+
+		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n");
+		sb.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
+		sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
+		sb.append("<head>\n");
+		sb.append("<title>\n");
+		Construction cons = kernel.getConstruction();
+		String title = cons.getTitle();
+		sb.append(Util.toHTMLString(title));
+		sb.append("</title>\n");
+		sb.append("<body>\n");
+
+		sb.append("<script type=\"text/javascript\">\n");
+		
+		// base64 encoding
+		sb.append("loadBase64Unzipped('");
+		appendBase64Unzipped(sb);	
+		sb.append("');\n");
+	    sb.append("</script>\n");
+	    sb.append("</body>\n");
+	    sb.append("</html>\n");
+		return sb.toString();
+		
 	}
+
 
 	private String getJSXGraph() throws IOException {
 		StringBuffer sb = new StringBuffer();
