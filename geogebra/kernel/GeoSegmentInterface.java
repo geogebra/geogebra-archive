@@ -57,6 +57,9 @@ public interface GeoSegmentInterface {
 	public double getPointY(double parameter);
 
 
+	boolean isEuclidianVisible();
+
+
 
 
 

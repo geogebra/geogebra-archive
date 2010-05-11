@@ -327,7 +327,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
         	GeoPointInterface endPoint = points[(i+1) % points.length];
         	
         	if (segments[i] == null) {
-         		segments[i] = createSegment(startPoint, endPoint);
+         		segments[i] = createSegment(startPoint, endPoint, i == 0 ? isEuclidianVisible() : segments[0].isEuclidianVisible());
         	}     
         }         
         
@@ -351,7 +351,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	  * @param endPoint the end point
 	  * @return the segment
 	  */
-	 public GeoSegmentInterface createSegment(GeoPointInterface startPoint, GeoPointInterface endPoint){
+	 public GeoSegmentInterface createSegment(GeoPointInterface startPoint, GeoPointInterface endPoint, boolean euclidianVisible){
 		 GeoSegmentInterface segment;
 
 		 AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, (GeoPoint) startPoint, (GeoPoint) endPoint, this);            
@@ -361,7 +361,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		 // refresh color to ensure segments have same color as polygon:
 		 segment.setObjColor(getObjectColor()); 
          segment.setLineThickness(getLineThickness()); 
-         segment.setEuclidianVisible(isEuclidianVisible());
+         segment.setEuclidianVisible(euclidianVisible);
          //segment.setAuxiliaryObject(true);
 
 		 return segment;
