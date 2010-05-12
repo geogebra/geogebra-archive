@@ -231,7 +231,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		
 		eigenvec[0].setCoords(co.eigenvec[0]);
 		eigenvec[1].setCoords(co.eigenvec[1]);
-		b.setCoords(co.b);
+		//b.setCoords(co.b);
+		setMidpoint(co.getMidpoint().get());
 		halfAxes[0] = co.halfAxes[0];
 		halfAxes[1] = co.halfAxes[1];
 		linearEccentricity = co.linearEccentricity;
@@ -982,8 +983,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		if (M.isInfinite()) {
 			// midpoint at infinity -> parallelLines
 			// one through P, the other through infinite point M 
+			/*
 			b.x = P.inhomX;
 			b.y = P.inhomY;
+			*/
+			double[] coords = new double[3];
+			P.getCoords(coords);
+			setMidpoint(coords);
 			// M is normalvector of double line            
 			eigenvecX = -M.y;
 			eigenvecY = M.x;
@@ -1161,9 +1167,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		matrix[4] = matrix[4] - matrix[0] * vx - matrix[3] * vy;
 		matrix[5] = matrix[5] - matrix[3] * vx - matrix[1] * vy;
 		
-		// avoid classification and set changes by hand:        
+		// avoid classification and set changes by hand:   
+		setMidpoint(getMidpoint().add(new GgbVector(new double[] {vx,vy})).get());
+		/*
 		b.x += vx;
 		b.y += vy;
+		*/
 	}		
 
 	/**
@@ -1227,7 +1236,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		// avoid classification: make changes by hand
 		eigenvec[0].rotate(phi);
 		eigenvec[1].rotate(phi);
-		b.rotate(phi);		
+		b.rotate(phi);	
+		setMidpoint(new double[] {b.x,b.y});
 	}
 	
 	/**
@@ -1349,7 +1359,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		eigenvec[1].mult(-1.0);
 		
 		// mirror translation vector b
-		b.mirror(Q);
+		b.mirror(Q);	
+		setMidpoint(new double[] {b.x,b.y});
+		
 
 		setAffineTransform();
 		updateDegenerates(); // for degenerate conics
@@ -1415,7 +1427,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		// avoid classification: make changes by hand
 		eigenvec[0].mirror(phi);
 		eigenvec[1].mirror(phi);
-		b.mirror(phi);			
+					
+		b.mirror(phi);	
+		setMidpoint(new double[] {b.x,b.y});
 	}
 
 	// to avoid classification in movements 
@@ -1669,9 +1683,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		}
 
 		// calc translation vector b = midpoint
-		// b = -Inverse[S] . a, where a = (A[4], A[5])      
+		// b = -Inverse[S] . a, where a = (A[4], A[5])    
+		/*
 		b.x = (matrix[3] * matrix[5] - matrix[1] * matrix[4]) / detS;
 		b.y = (matrix[3] * matrix[4] - matrix[0] * matrix[5]) / detS;
+		*/
+		setMidpoint(new double[]{
+				(matrix[3] * matrix[5] - matrix[1] * matrix[4]) / detS,
+				(matrix[3] * matrix[4] - matrix[0] * matrix[5]) / detS
+		});
 
 		// beta = a . b + alpha, where alpha = A[2]
 		double beta = matrix[4] * b.x + matrix[5] * b.y + matrix[2];
@@ -1886,8 +1906,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 			setEigenvectors();
 			// b = T . (0, -c.y/lambda)
 			temp = c.y / lambda;
+			/*
 			b.x = temp * eigenvecY;
 			b.y = -temp * eigenvecX;
+			*/
+			setMidpoint(new double[]{
+					temp * eigenvecY,
+					-temp * eigenvecX
+			});
 			mu[0] = -temp * temp + matrix[2] / lambda;
 			
 			if (kernel.isZero(mu[0])) {			
@@ -1943,13 +1969,25 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	    	
 	    	// A[5] not zero
 	    	// make b a point on the line
+	    	/*
 	    	b.x = 0;
-	    	b.y = -matrix[2] / (2*matrix[5]);	    	
+	    	b.y = -matrix[2] / (2*matrix[5]);
+	    	*/	    	
+	    	setMidpoint(new double[]{
+	    			0,
+	    			-matrix[2] / (2*matrix[5])
+	    	});
 	    } else { 
 	    	// A[4] not zero
 	    	// make b a point on the line
+	    	/*
 	    	b.x = -matrix[2] / (2*matrix[4]);
-	    	b.y = 0;	    	
+	    	b.y = 0;	  
+	    	*/  
+	    	setMidpoint(new double[]{
+	    			-matrix[2] / (2*matrix[4]),
+	    			0
+	    	});
 	    }
 	    
 	    eigenvecX =  matrix[5];
@@ -2015,8 +2053,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		// b = T . ((c.y\u00b2/lambda - A2)/(2 c.x) , -c.y/lambda)
 		temp2 = c.y / lambda;
 		temp1 = (c.y * temp2 - matrix[2]) / (2 * c.x);
+		/*
 		b.x = eigenvecY * temp2 + eigenvecX * temp1;
 		b.y = eigenvecY * temp1 - eigenvecX * temp2;
+		*/
+    	setMidpoint(new double[]{
+    			eigenvecY * temp2 + eigenvecX * temp1,
+    			eigenvecY * temp1 - eigenvecX * temp2
+    	});
 		setParabolicEigenvectors();
 
 		// parameter p of parabola

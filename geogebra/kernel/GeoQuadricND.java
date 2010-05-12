@@ -264,7 +264,7 @@ public abstract class GeoQuadricND extends GeoElement {
 	
 	
 	protected void buildSphereNDString(){
-		
+				
 		for (int i=0; i<dimension; i++){
 			if (kernel.isZero(getMidpoint().get(i+1))) {
 				sbToValueString.append(VAR_STRING[i]);
