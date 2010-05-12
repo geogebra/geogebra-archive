@@ -98,7 +98,7 @@ class FileMenu extends BaseMenu {
 		mi = submenu.add(exportWorksheet);
 		setMenuShortCutShiftAccelerator(mi, 'W');
 		
-		mi = submenu.add(exportGeoGebraTubeAction);
+		//mi = submenu.add(exportGeoGebraTubeAction);
 
 		submenu.addSeparator();
 		// submenu.add(htmlCPAction);
