@@ -12,6 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.MyBoolean;
+
 /**
  * Take objects from the middle of a list
  * @author Michael Borcherds
@@ -69,13 +73,27 @@ public class AlgoKeepIf extends AlgoElement {
     	outputList.clear();
     	
     	if (size == 0) return;
-    	
+    	//<Zbynek Konecny 2010-05-13>
+		/*
+		 * If val is not numeric, we use the underlying Expression of the function and 
+		 * plug the list element as variable.
+		 * Deep copy is needed so that we can plug the value repeatedly.
+		 */
+    	FunctionVariable var = boolFun.getFunction().getFunctionVariable();
     	for (int i=0 ; i<size ; i++)
     	{
-    		GeoElement geo=inputList.get(i);
-			if (geo.isGeoNumeric() && boolFun.evaluateBoolean(((GeoNumeric)geo).getValue()) )
-				outputList.add(geo.copyInternal(cons));
+    		GeoElement geo = inputList.get(i);
+    		if(geo.isGeoNumeric()){
+				if (boolFun.evaluateBoolean(((GeoNumeric)geo).getValue()) ) outputList.add(geo.copyInternal(cons));; 
+			} 
+			else {
+    			ExpressionNode ex = (ExpressionNode)boolFun.getFunction().getExpression().deepCopy(kernel);
+    			ex.replace(var, geo.evaluate());
+    			if (((MyBoolean)ex.evaluate()).getBoolean()) outputList.add(geo.copyInternal(cons));;
+			}
+				
     	}
+    	//</Zbynek>
     } 	
   
 }
