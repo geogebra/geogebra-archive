@@ -382,7 +382,7 @@ public class CASInputHandler {
 	 */
 	private void setCellOutput(CASTableCellValue cellValue, String prefix, String result, String postfix) {
 		// Set the value into the table		
-		if (result != null)	{
+		if (result != null && prefix != null && postfix != null)	{
 			if (prefix.length() == 0 && postfix.length() == 0) {
 				// no prefix, no postfix: just evaluation
 				cellValue.setOutput(result);
@@ -427,7 +427,7 @@ public class CASInputHandler {
 	 */
 	public String resolveCASrowReferences(String inputExp, int selectedRow, char delimiter) {	
 		// check for delimiter first
-		if (inputExp.length() == 0 || inputExp.indexOf(delimiter) < 0) {
+		if (inputExp == null || inputExp.length() == 0 || inputExp.indexOf(delimiter) < 0) {
 			return inputExp;
 		}
 		
