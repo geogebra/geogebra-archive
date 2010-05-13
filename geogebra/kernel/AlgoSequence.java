@@ -122,13 +122,19 @@ public class AlgoSequence extends AlgoElement {
      *  (var is not input object, but must be in input array
      *  because of GetCommandDescription method).
      *  see ticket #72
+     *  2010-05-13 null pointer error fixed
      *  @author Zbynek Konecny
-     *  @version 2010-05-02
+     *  @version 2010-05-13
      */
     GeoElement[] getInputForUpdateSetPropagation() {
-    	GeoElement [] realInput = {expression,var_from_geo,var_to_geo};
-    	if(input.length==5)
-    		realInput [4]= var_step_geo;
+    	GeoElement[] realInput = new GeoElement[input.length-1];
+    	realInput[0] = expression;
+    	realInput[1] = var_from_geo;
+    	realInput[2] = var_to_geo;
+    	if(input.length==5)	{
+    		realInput[3] = var_step_geo;
+    	}
+    	
     	return realInput;
     }
 
