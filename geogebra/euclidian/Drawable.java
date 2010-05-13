@@ -59,7 +59,7 @@ import org.scilab.forge.jlatexmath.WebStartAlphabetRegistration;
 public abstract class Drawable {
 	
 	// use JLaTeXMath or HotEqn
-	final private static boolean useJLaTeXMath = false;
+	final private static boolean useJLaTeXMath = true;
 	
 	BasicStroke objStroke = EuclidianView.getDefaultStroke();
 	BasicStroke selStroke = EuclidianView.getDefaultSelectionStroke();
