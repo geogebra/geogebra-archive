@@ -4,7 +4,10 @@ import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Brush;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.euclidian3D.opengl.Surface;
 import geogebra3D.kernel3D.GeoCoordSys1D;
+import geogebra3D.kernel3D.GeoFunction2Var;
+import geogebra3D.kernel3D.GeoFunction2VarInterface;
 import geogebra3D.kernel3D.GeoQuadric3D;
 
 public class DrawQuadric3D extends Drawable3DSurfaces {
@@ -67,18 +70,20 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 		float min, max;
 		Brush brush;
 		
+		Surface surface;
+		
 		switch(quadric.getType()){
 		case GeoQuadric3D.QUADRIC_SPHERE:
-			GgbVector center = quadric.getMidpoint();
-			double r = quadric.getHalfAxis(0);
-			quadricIndex =  renderer.getGeometryManager().newSphere(
-					(float) center.get(1),(float) center.get(2),(float) center.get(3),
-					(float) r,
-					quadric.getObjectColor(),
-					alpha);
-			//(float) (200/getView3D().getScale()));
+			surface = renderer.getGeometryManager().getSurface();
+			surface.start(quadric);
+			surface.setU((float) quadric.getMinParameter(0), (float) quadric.getMaxParameter(0));surface.setNbU(60); 
+			surface.setV((float) quadric.getMinParameter(1), (float) quadric.getMaxParameter(1));surface.setNbV(60);
+			surface.draw();
+			quadricIndex=surface.end();
+			
 			break;
 		case GeoQuadric3D.QUADRIC_CONE:
+			
 			
 			o = getView3D().getToScreenMatrix().mul(quadric.getMidpoint());
 			v = getView3D().getToScreenMatrix().mul(quadric.getEigenvec3D(2));
@@ -87,7 +92,10 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 					o, v);
 			
+			min = (float) (minmax[0]+(minmax[1]-minmax[0])*-0); //TODO change that
+			max = (float) (minmax[1]+(minmax[1]-minmax[0])*0);
 			
+			/*
 			brush = renderer.getGeometryManager().getBrush();
 			
 
@@ -95,11 +103,26 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 			//brush.setColor(getGeoElement().getObjectColor());
 			brush.setThickness((float) quadric.getHalfAxis(1));
 			
-			min = (float) (minmax[0]+(minmax[1]-minmax[0])*-3); //TODO change that
-			max = (float) (minmax[1]+(minmax[1]-minmax[0])*3);
 			
 			brush.cone(quadric.getMidpoint(),quadric.getEigenvec3D(2), min, max);
 			quadricIndex = brush.end();
+			*/
+			
+
+			surface = renderer.getGeometryManager().getSurface();
+			surface.start(quadric);
+			surface.setU((float) quadric.getMinParameter(0), (float) quadric.getMaxParameter(0));surface.setNbU(60);
+			
+			Application.debug("min, max ="+min+", "+max);
+			if (min*max<0){
+				surface.setV(min,0);surface.setNbV(1);surface.draw();
+				surface.setV(0,max);surface.setNbV(1);surface.draw();
+			}else{
+				surface.setV(min,max);surface.setNbV(1);surface.draw();
+			}
+			quadricIndex=surface.end();
+			
+			
 			break;
 			
 			

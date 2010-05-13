@@ -26,4 +26,20 @@ public interface GeoFunction2VarInterface {
 	public GgbVector evaluateNormal(double u, double v);
 	
 	
+
+	/**
+	 * Returns the start parameter value 
+	 * @param index of the parameter (0 -> u / 1 -> v)
+	 * @return the start parameter value 
+	 */
+	public double getMinParameter(int index);
+	
+	/**
+	 * Returns the largest possible parameter value 
+	 * @param index of the parameter (0 -> u / 1 -> v)
+	 * @return the largest possible parameter value 
+	 */
+	public double getMaxParameter(int index);
+	
+	
 }

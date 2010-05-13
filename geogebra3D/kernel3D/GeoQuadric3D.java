@@ -23,7 +23,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoQuadric3D extends GeoQuadricND
-implements GeoElement3DInterface{
+implements GeoElement3DInterface, GeoFunction2VarInterface{
 	
 	
 
@@ -109,8 +109,13 @@ implements GeoElement3DInterface{
 		// set direction
 		eigenvec3D[2] = direction;
 		
+		// set others eigen vecs
+		GgbVector[] ee = direction.completeOrthonormal();
+		eigenvec3D[0] = ee[0];
+		eigenvec3D[1] = ee[1];
+		
 		// set halfAxes = radius	
-		for (int i=1;i<3;i++)
+		for (int i=0;i<2;i++)
 			halfAxes[i] = r;
 		
 		// set matrix
@@ -176,7 +181,7 @@ implements GeoElement3DInterface{
 		eigenvec3D[2] = direction;
 		
 		// set halfAxes = radius	
-		for (int i=1;i<3;i++)
+		for (int i=0;i<2;i++)
 			halfAxes[i] = r;
 		
 		// TODO set matrix
@@ -325,6 +330,134 @@ implements GeoElement3DInterface{
 	}
 
 
+	
+	
+
+	/////////////////////////////////////////
+	// SURFACE (u,v)->(x,y,z) INTERFACE
+	/////////////////////////////////////////
+	
+	public GgbVector evaluatePoint(double u, double v){
+		
+		switch (type){
+		case QUADRIC_SPHERE :
+			
+			GgbVector n = new GgbVector(new double[] {
+					Math.cos(u)*Math.cos(v)*getHalfAxis(0),
+					Math.sin(u)*Math.cos(v)*getHalfAxis(0),
+					Math.sin(v)*getHalfAxis(0)});
+			
+			return (GgbVector) n.add(getMidpoint());
+			
+		case QUADRIC_CONE :
+
+			double v2 = Math.abs(v);
+			GgbVector p = (GgbVector) 
+			getEigenvec3D(1).mul(Math.sin(u)*getHalfAxis(1)*v2).add(
+					getEigenvec3D(0).mul(Math.cos(u)*getHalfAxis(0)*v2).add(
+							getEigenvec3D(2).mul(v)
+					)
+			);
+			
+			return (GgbVector) p.add(getMidpoint());		
+			default:
+			return null;
+		}
+
+	}
+	
+
+	public GgbVector evaluateNormal(double u, double v){
+				
+		switch (type){
+		case QUADRIC_SPHERE :
+			return new GgbVector(new double[] {
+					Math.cos(u)*Math.cos(v),
+					Math.sin(u)*Math.cos(v),
+					Math.sin(v)});
+			
+		case QUADRIC_CONE :
+
+			double r = getHalfAxis(0);
+			double r2 = Math.sqrt(1+r*r);
+			if (v<0)
+				r=-r;
+			
+			GgbVector n = (GgbVector) 
+			getEigenvec3D(1).mul(Math.sin(u)/r2).add(
+					getEigenvec3D(0).mul(Math.cos(u)/r2).add(
+							getEigenvec3D(2).mul(-r/r2)
+					)
+			);
+			
+			return n;
+		default:
+			return null;
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	public double getMinParameter(int index) {
+		
+		switch (type){
+		case QUADRIC_SPHERE :
+			switch(index){
+			case 0: //u
+			default:
+				return 0;
+			case 1: //v
+				return -Math.PI/2;
+			}
+		case QUADRIC_CONE :
+			switch(index){
+			case 0: //u
+			default:
+				return 0;
+			case 1: //v
+				return Double.NEGATIVE_INFINITY;
+			}
+			
+			
+		default:
+			return 0;
+		}
+
+		
+	}
+	
+
+	public double getMaxParameter(int index) {
+		
+		switch (type){
+		case QUADRIC_SPHERE :
+			switch(index){
+			case 0: //u
+			default:
+				return 2*Math.PI; 
+			case 1: //v
+				return Math.PI/2;
+			}
+			
+		case QUADRIC_CONE :
+			switch(index){
+			case 0: //u
+			default:
+				return 2*Math.PI; 
+			case 1: //v
+				return Double.POSITIVE_INFINITY;
+			}
+		default:
+			return 0;
+		}
+	}
+	
+	
+	
 	
 	
 	///////////////////////////////////////////

@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoFunction2VarInterface;
 
 /** Class for drawing surfaces.
@@ -21,20 +22,20 @@ public class Surface {
 	/** domain for plotting */
 	private float uMin, uMax, vMin, vMax;
 	
+	/** number of plotting */
+	private int uNb, vNb ;
+	
 	/** delta for plotting */
 	private float du, dv;
-	
 	
 	/** fading value */
 	private float uFade, vFade;
 	
-	/** texture coords */
-	private float uT0, uT1, vT0, vT1;
 	
 	/** texture coord for out (alpha = 0) */
 	static final private float TEXTURE_FADE_OUT = 0.75f;
 	/** texture coord for in (alpha = 1) */
-	static final private float TEXTURE_FADE_IN = 0f;
+	static final private float TEXTURE_FADE_IN = -1f;
 	
 	/** default constructor
 	 * @param manager
@@ -56,7 +57,6 @@ public class Surface {
 		index = manager.startNewList();
 		this.function = function;
 		uFade = 0; vFade = 0;
-		uT0 = 0; uT1 = 0; vT0 = 0; vT1 = 0;
 		
 	}
 	
@@ -94,18 +94,18 @@ public class Surface {
 	}	
 	
 	
-	/** set delta plot for u
-	 * @param delta
+	/** set number of plot for u
+	 * @param n
 	 */
-	public void setDeltaU(float delta){
-		this.du = delta;
+	public void setNbU(int n){
+		this.uNb = n;
 	}
 	
-	/** set delta plot for v
-	 * @param delta
+	/** set number of plot for v
+	 * @param n
 	 */
-	public void setDeltaV(float delta){
-		this.dv = delta;
+	public void setNbV(int n){
+		this.vNb = n;
 	}	
 	
 	
@@ -127,75 +127,57 @@ public class Surface {
 		manager.startGeometry(Manager.QUADS);
 		
 		
-		float du = this.du, dv = this.dv;
-			
-		for (float u=uMin; u<uMax; ){
+		du = (uMax-uMin)/uNb;
+		dv = (vMax-vMin)/vNb;
+	
+		//Application.debug("vMin, vMax, dv="+vMin+", "+vMax+", "+dv);
 
-			if (uFade!=0){
-				if (u==uMin){
-					uT0 = TEXTURE_FADE_OUT; uT1 = TEXTURE_FADE_IN;
-					this.du = uFade;
-				}else if (u>=uMax-uFade){
-					uT0 = TEXTURE_FADE_IN; uT1 = TEXTURE_FADE_OUT;
-					this.du = uMax - u;
-				}else{
-					uT0 = TEXTURE_FADE_IN; uT1 = TEXTURE_FADE_IN;
-					if (u+du>uMax-uFade)
-						this.du = uMax-uFade - u;
-					else
-						this.du = du;
-				}
+		for (int ui=0; ui<uNb; ui++){
+			
+			for (int vi=0; vi<uNb; vi++){			
+				
+				drawQuad(ui, vi);
+	
 			}
 			
-			for (float v=vMin; v<vMax; ){			
-
-				if (vFade!=0){
-					if (v==vMin){
-						vT0 = TEXTURE_FADE_OUT; vT1 = TEXTURE_FADE_IN;
-						this.dv = vFade;
-					}else if (v>=vMax-vFade){
-						vT0 = TEXTURE_FADE_IN; vT1 = TEXTURE_FADE_OUT;
-						this.dv = vMax - v;
-					}else{
-						vT0 = TEXTURE_FADE_IN; vT1 = TEXTURE_FADE_IN;
-						if (v+dv>vMax-vFade)
-							this.dv = vMax-vFade - v;
-						else
-							this.dv = dv;
-					}
-				}
-				
-				drawQuad(u, v);
-				
-				
-				
-				v+=this.dv;
-
-				
-			}
-			
-			u+=this.du;
 		}
 		
 		manager.endGeometry();
 	}
 	
-	private void drawQuad(float u, float v){
+	private void drawQuad(int ui, int vi){
+		
+		float u = uMin+ui*du;
+		float v = vMin+vi*dv;
 
-		manager.texture(uT0, vT0);
-		drawNormalAndVertex(u, v);
-		manager.texture(uT1, vT0);
-		drawNormalAndVertex(u+du, v);
-		manager.texture(uT1, vT1);
-		drawNormalAndVertex(u+du, v+dv);
-		manager.texture(uT0, vT1);
-		drawNormalAndVertex(u, v+dv);
+		drawTNV(u, v);
+		drawTNV(u+du, v);
+		drawTNV(u+du, v+dv);
+		drawTNV(u, v+dv);
 		
 	}
 	
-	private void drawNormalAndVertex(float u, float v){
+	private void drawTNV(float u, float v){
+		
+		float uT = getTextureCoord(u, uMin, uMax, uFade);
+		float vT = getTextureCoord(v, vMin, vMax, vFade);				
+			
+		manager.texture(uT, vT);
 		manager.normal(function.evaluateNormal(u, v));
 		manager.vertex(function.evaluatePoint(u, v));
+	}
+	
+	private float getTextureCoord(float x,float xMin,float xMax,float xFade){
+		if (xFade!=0){
+			float t;
+			if (x<(xMax+xMin)/2){
+				t=(x-xMin)/xFade;
+			}else{
+				t=(xMax-x)/xFade;
+			}
+			return TEXTURE_FADE_OUT*(1-t)+TEXTURE_FADE_IN*t;
+		}else
+			return 0;
 	}
 	
 	

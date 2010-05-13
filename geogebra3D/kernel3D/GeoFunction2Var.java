@@ -68,41 +68,14 @@ implements GeoFunction2VarInterface {
 	
 	
 	
-	/**
-	 * Returns the start parameter value 
-	 * @return
-	 */
 	public double getMinParameter(int index) {
-		
-		/*
-		switch (type){
-		case 1:
-		default:
-			return -5;
-		case 2:
-			return -2;
-		}
-		*/
 		
 		return start[index];
 		
 	}
 	
-	/**
-	 * Returns the largest possible parameter value 
-	 * @return
-	 */
+
 	public double getMaxParameter(int index) {
-		
-		/*
-		switch (type){
-		case 1:
-		default:
-			return 5;
-		case 2:
-			return 2;
-		}
-		*/
 		
 		return end[index];
 	}

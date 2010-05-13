@@ -318,5 +318,21 @@ implements GeoFunction2VarInterface {
 		GgbMatrix4x4 m = getMatrix4x4();
 		return (GgbVector) m.getOrigin().add(m.getVx().mul(u)).add(m.getVy().mul(v));
 	}
+	
+
+	public double getMinParameter(int index) {
+
+		return 0; //TODO
+
+
+
+	}
+
+
+	public double getMaxParameter(int index) {
+
+		return 0; //TODO
+
+	}
 
 }

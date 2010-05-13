@@ -146,6 +146,7 @@ public class ManagerGLList extends Manager {
 	    
 	    glu.gluTessNormal(tesselator,nx,ny,nz);
 		normal(nx, ny, nz);
+		texture(0,0);
 		/*
 		newList(ret);
 		
