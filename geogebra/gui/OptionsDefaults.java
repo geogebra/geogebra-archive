@@ -228,8 +228,6 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 	/**
 	 * Update the labels of the current panel. Should be applied if the
 	 * language was changed.
-	 * 
-	 * TODO use phrase for conic sector (F.S.)
 	 */
 	public void setLabels() {
 		// update tree labels
@@ -242,7 +240,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		lineNode.setUserObject(app.getPlain("Line"));
 		vectorNode.setUserObject(app.getPlain("Vector"));
 		conicNode.setUserObject(app.getPlain("Conic"));
-		conicSectorNode.setUserObject("Conic Sector");
+		conicSectorNode.setUserObject(app.getPlain("Sector"));
 		functionNode.setUserObject(app.getPlain("Function"));
 		polygonNode.setUserObject(app.getPlain("Polygon"));
 		locusNode.setUserObject(app.getPlain("Locus"));

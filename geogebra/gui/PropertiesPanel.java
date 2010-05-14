@@ -1230,8 +1230,8 @@ public	class PropertiesPanel extends JPanel {
 			
 			tooltipModeCB.removeAllItems();
 			tooltipModeCB.addItem(app.getMenu("Labeling.automatic")); // index 0
-			tooltipModeCB.addItem(app.getMenu("On")); // index 1
-			tooltipModeCB.addItem(app.getMenu("Off")); // index 2
+			tooltipModeCB.addItem(app.getMenu("on")); // index 1
+			tooltipModeCB.addItem(app.getMenu("off")); // index 2
 			tooltipModeCB.addItem(app.getPlain("Caption")); // index 3
 			tooltipModeCB.addItem(app.getPlain("NextCell")); // index 4 Michael Borcherds
 			
