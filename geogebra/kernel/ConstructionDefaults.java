@@ -416,7 +416,8 @@ public class ConstructionDefaults {
 		Application app = cons.getApplication();
 		
 		if (defaultGeo != null) {
-			geo.setAllVisualProperties(defaultGeo, isReset);		
+			geo.setAllVisualProperties(defaultGeo, isReset);
+			
 			
 			if(!isReset) {
 				// set to highest used layer
