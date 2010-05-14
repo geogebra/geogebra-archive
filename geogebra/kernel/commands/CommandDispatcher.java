@@ -303,6 +303,7 @@ public class CommandDispatcher {
     	
     	cmdTable.put("Invert", new CmdInvert(kernel));   
     	cmdTable.put("Transpose", new CmdTranspose(kernel));   
+    	cmdTable.put("rref", new CmdReducedRowEchelonForm(kernel));   
     	cmdTable.put("Determinant", new CmdDeterminant(kernel));   
     	
     	cmdTable.put("Simplify", new CmdSimplify(kernel));   

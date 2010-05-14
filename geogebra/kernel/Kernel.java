@@ -3604,6 +3604,16 @@ public class Kernel {
 	 * Transpose[matrix]
 	 * Michael Borcherds
 	 */
+	final public GeoList ReducedRowEchelonForm(String label, GeoList list) {
+		AlgoReducedRowEchelonForm algo = new AlgoReducedRowEchelonForm(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Transpose[matrix]
+	 * Michael Borcherds
+	 */
 	final public GeoNumeric Determinant(String label, GeoList list) {
 		AlgoDeterminant algo = new AlgoDeterminant(cons, label, list);
 		GeoNumeric num = algo.getResult();

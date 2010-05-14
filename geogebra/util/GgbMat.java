@@ -79,7 +79,52 @@ public class GgbMat extends Array2DRowRealMatrix {
 
 	}
 
+	/*
+	 * code from http://rosettacode.org/wiki/Reduced_row_echelon_form
+	 */
+public void reducedRowEchelonFormImmediate() {
+    int rowCount = data.length;
+    if (rowCount == 0)
+        return;
 
+    int columnCount = data[0].length;
+
+    int lead = 0;
+    for (int r = 0; r < rowCount; r++) {
+        if (lead >= columnCount)
+            break;
+        {
+            int i = r;
+            while (data[i][lead] == 0) {
+                i++;
+                if (i == rowCount) {
+                    i = r;
+                    lead++;
+                    if (lead == columnCount)
+                        return;
+                }
+            }
+            double[] temp = data[r];
+            data[r] = data[i];
+            data[i] = temp;
+        }
+
+        {
+            double lv = data[r][lead];
+            for (int j = 0; j < columnCount; j++)
+            	data[r][j] /= lv;
+        }
+
+        for (int i = 0; i < rowCount; i++) {
+            if (i != r) {
+                double lv = data[i][lead];
+                for (int j = 0; j < columnCount; j++)
+                	data[i][j] -= lv * data[r][j];
+            }
+        }
+        lead++;
+    }
+}
 
 	public void transposeImmediate() {
 		

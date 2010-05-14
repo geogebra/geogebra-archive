@@ -324,6 +324,23 @@ class CmdInvert extends CmdOneListFunction {
 }
 
 /*
+ * ReducedRowEchelonForm[ <List> ]
+ * Michael Borcherds 
+ */
+class CmdReducedRowEchelonForm extends CmdOneListFunction {
+
+	public CmdReducedRowEchelonForm(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.ReducedRowEchelonForm(a, b);
+	}
+
+}
+
+/*
  * Transpose[ <List> ]
  * Michael Borcherds 
  */
@@ -341,7 +358,7 @@ class CmdTranspose extends CmdOneListFunction {
 }
 
 /*
- * Transpose[ <List> ]
+ * Determinant[ <List> ]
  * Michael Borcherds 
  */
 class CmdDeterminant extends CmdOneListFunction {
