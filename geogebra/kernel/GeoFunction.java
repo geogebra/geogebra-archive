@@ -491,22 +491,33 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	}
 
 	
+	
 	/**
 	 * Returns the smallest possible parameter value for this
 	 * path (may be Double.NEGATIVE_INFINITY)
-	 * @return
+	 * Last change by Zbynek Konecny, see #5
+	 * @version 2010-05-14
+	 * @return smallest possible parameter value (may be Double.NEGATIVE_INFINITY)
 	 */
 	public double getMinParameter() {
-		return kernel.getXmin();
+		if (interval)
+			return Math.max(kernel.getXmin(), intervalMin);
+		else
+			return kernel.getXmin();
 	}
 	
 	/**
 	 * Returns the largest possible parameter value for this
 	 * path (may be Double.POSITIVE_INFINITY)
-	 * @return
+	 * Last change by Zbynek Konecny, see #5
+	 * @version 2010-05-14
+	 * @return largest possible parameter value (may be Double.POSITIVE_INFINITY)
 	 */
 	public double getMaxParameter() {
-		return kernel.getXmax();
+		if (interval)
+			return Math.min(kernel.getXmax(), intervalMax);
+		else
+			return kernel.getXmax();
 	}
 	
 	public PathMover createPathMover() {
