@@ -1223,7 +1223,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		public void setLabels() {
 			
-			label.setText(app.getMenu("Tooltip"+":"));
+			label.setText(app.getMenu("Tooltip")+":");
 
 			int selectedIndex = tooltipModeCB.getSelectedIndex();
 			tooltipModeCB.removeActionListener(this);
