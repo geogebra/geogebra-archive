@@ -321,6 +321,9 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 			}
 		}			
 		
+		// make sure segments created visible if appropriate
+		setDefined();
+		
 		// create missing segments
         for (int i=0; i < segments.length; i++) {
         	GeoPointInterface startPoint = points[i];
