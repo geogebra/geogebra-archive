@@ -37,6 +37,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		super(i);
 		this.guiManager = guiManager;
 		addFocusListener(this);
+		addCaretListener(this);
+
 	}
 	
 	boolean caretUpdated = true;
@@ -138,10 +140,18 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		frc = ((Graphics2D) g2).getFontRenderContext();
 
 		scrollOffset = getScrollOffset();
-
+		
 		font = g2.getFont();
 		int caret = getCaretPosition();
 
+
+		pos = 0;		
+		
+		// adjust if right-aligned
+		if (getHorizontalAlignment() == JTextField.RIGHT) {
+				pos = Math.max(0,getHorizontalVisibility().getExtent() - getLength(text));
+		}
+		
 		int bracket1pos = -1;
 		int bracket2pos = -1;
 		
@@ -224,10 +234,10 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		int selEnd = getSelectionEnd();
 
 
-		pos = 0;
+
 		float caretPos = -1;
 
-		if (caret == 0) caretPos = 0;
+		if (caret == 0) caretPos = pos;
 		textMode = false;
 		for (int i = 0 ; i < text.length() ; i++) {
 			if(text.charAt(i) == '\"') textMode = !textMode;
@@ -250,6 +260,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		}
 	}
 
+	private float getLength(String text) {
+		if (text == null || text.length() == 0) return 0;
+		TextLayout layout = new TextLayout(text, font, frc);
+		return layout.getAdvance();
+
+	}
 
 	private void drawText(String str, boolean selected) {
 		if ("".equals(str)) return;
