@@ -896,7 +896,6 @@ public abstract class GeoElement
 	 * @param geo
 	 */
 	public void setVisualStyle(GeoElement geo) {
-		Application.printStacktrace("");
 		// label style
 		labelVisible = geo.labelVisible;
 		labelMode = geo.labelMode;
