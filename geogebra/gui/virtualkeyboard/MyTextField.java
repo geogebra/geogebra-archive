@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.font.FontRenderContext;
@@ -112,6 +113,11 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		caretUpdated = false;
 
 		g2 = (Graphics2D)gr;
+		
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+				RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		insets = getInsets();
 		
