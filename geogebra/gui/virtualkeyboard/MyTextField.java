@@ -95,7 +95,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	
 	private float pos = 0;
 	private int scrollOffset = 0;
-	private int w = 0, h = 0;
+	private int width = 0, height = 0, textBottom, fontHeight;
 	private FontRenderContext frc;
 	private Font font;
 	private Graphics2D g2;
@@ -123,13 +123,17 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		
 		String text = getText();
 
-		w = getWidth();
-		h = getHeight();
+		width = getWidth();
+		height = getHeight();
 
 		//g2.setClip(0, 0, w, h);
 
+		fontHeight = g2.getFontMetrics().getHeight();
+        textBottom = (height - fontHeight) / 2 + fontHeight - 4;
+        //int x = this.getInsets().left;
+        
 		g2.setColor(Color.white);
-		g2.fillRect(0, 0, w, h);
+		g2.fillRect(0, 0, width, height);
 
 		frc = ((Graphics2D) g2).getFontRenderContext();
 
@@ -240,7 +244,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 		if (caretShowing && caretPos > -1 && hasFocus()) {
 			g2.setColor(Color.black);
-			g2.fillRect((int)caretPos - scrollOffset + insets.left, insets.bottom + 2 , 1, h - insets.bottom - insets.top - 4);
+			g2.fillRect((int)caretPos - scrollOffset + insets.left, textBottom - fontHeight + 4 , 1, fontHeight);
 			g2.setPaintMode();
 
 		}
@@ -255,12 +259,14 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 		if (selected) {
 			g2.setColor(getSelectionColor());
-			g2.fillRect((int)pos - scrollOffset + insets.left, insets.bottom + 2 , (int)advance, h - insets.bottom - insets.top - 4);
+			//g2.fillRect((int)pos - scrollOffset + insets.left, insets.bottom + 2 , (int)advance, height - insets.bottom - insets.top - 4);
+			g2.fillRect((int)pos - scrollOffset + insets.left, textBottom - fontHeight + 4 , (int)advance, fontHeight);
 			g2.setColor(getSelectedTextColor());
 		}
-		g2.setClip(0, 0, w, h);
-		if (pos - scrollOffset + advance + insets.left > 0 && pos - scrollOffset < w)
-			g2.drawString(str, pos - scrollOffset + insets.left, h - insets.bottom - insets.top - 4);
+		g2.setClip(0, 0, width, height);
+		if (pos - scrollOffset + advance + insets.left > 0 && pos - scrollOffset < width)
+			g2.drawString(str, pos - scrollOffset + insets.left, textBottom);
+			//g2.drawString(str, pos - scrollOffset + insets.left, height - insets.bottom - insets.top - 4);
 		pos += layout.getAdvance();
 
 	}
