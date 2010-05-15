@@ -649,6 +649,7 @@ implements LimitedPath, NumberValue, LineProperties {
 			// create a new arc from the transformed circle using startPoint and endPoint
 			AlgoConicPartConicPoints algoResult = new AlgoConicPartConicPoints(cons, label, transformedCircle, points[1], points[2], conic_part_type);			
 			GeoConicPart conicPart = algoResult.getConicPart();
+			conicPart.setVisualStyleForTransformations(this);
 			GeoElement [] geos = {conicPart, points[0], points[2], points[1]};
 						
 			return geos;					
@@ -662,6 +663,7 @@ implements LimitedPath, NumberValue, LineProperties {
 			AlgoConicPartCircumcircle algo = new AlgoConicPartCircumcircle(cons, label, points[0], points[1], points[2], conic_part_type);
 			GeoConicPart res = algo.getConicPart();
 			res.setLabel(label);
+			res.setVisualStyleForTransformations(this);
 			GeoElement [] geos = {res, points[1], points[2], points[0]};
 			return geos;
 		}
@@ -673,7 +675,9 @@ implements LimitedPath, NumberValue, LineProperties {
 			cons.removeFromConstructionList(transformedConic.getParentAlgorithm());			
 										
 			algo = new AlgoConicPartConicParameters(cons, label, transformedConic, algo.startParam, algo.endParam, conic_part_type);			
-			GeoElement [] geos = {algo.getConicPart()};
+			GeoElement ret = algo.getConicPart();
+			ret.setVisualStyleForTransformations(this);
+			GeoElement [] geos = {ret};
 			return geos;
 		}
 		
@@ -688,6 +692,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		
 			algo = new AlgoConicPartConicPoints(cons, label, transformedConic, points[0], points[1], conic_part_type);			
 			GeoConicPart conicPart = algo.getConicPart();
+			conicPart.setVisualStyleForTransformations(this);
 			GeoElement [] geos = {conicPart, points[0], points[1]};
 			return geos;
 		}
@@ -703,6 +708,7 @@ implements LimitedPath, NumberValue, LineProperties {
 			} else {
 				semCirc = kernel.Semicircle(label, points[0], points[1]);
 			}
+			semCirc.setVisualStyleForTransformations(this);
 			
 			GeoElement [] geos = {semCirc, points[0], points[1]};
 			return geos;

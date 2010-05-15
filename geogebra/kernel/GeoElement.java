@@ -888,6 +888,15 @@ public abstract class GeoElement
 		}
 	}
 	
+	/*
+	 * In future, this can be used to turn on/off whether transformed objects 
+	 * have the same style as the original object
+	 */
+	public void setVisualStyleForTransformations(GeoElement geo) {
+		setVisualStyle(geo);
+		update();
+	}
+	
 	/**
 	 * Just changes the basic visual styles. If the style of a geo
 	 * is reset this is required as we don't want to overwrite advanced

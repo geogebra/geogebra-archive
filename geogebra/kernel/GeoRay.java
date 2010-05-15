@@ -199,7 +199,9 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 			AlgoJoinPointsRay algo = (AlgoJoinPointsRay) algoParent;
 			GeoPoint [] points = {algo.getP(), algo.getQ()};
 			points = kernel.transformPoints(type, points, Q, l, vec, n);	
-			GeoElement [] geos = {kernel.Ray(label, points[0], points[1]), points[0], points[1]};
+			GeoElement ray = kernel.Ray(label, points[0], points[1]);
+			ray.setVisualStyleForTransformations(this);
+			GeoElement [] geos = {ray, points[0], points[1]};
 			return geos;
 		}
 		else if (algoParent instanceof AlgoRayPointVector) {			
@@ -220,7 +222,9 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 			cons.setSuppressLabelCreation(oldSuppressLabelCreation);
 			
 			// ray through transformed point with direction of transformed line
-			GeoElement [] geos = {kernel.Ray(label, points[0], direction), points[0], direction};
+			GeoElement ray = kernel.Ray(label, points[0], direction);
+			ray.setVisualStyleForTransformations(this);
+			GeoElement [] geos = {ray, points[0], direction};
 			return geos;					
 			
 		} else {

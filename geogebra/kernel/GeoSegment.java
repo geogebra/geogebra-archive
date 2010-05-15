@@ -390,13 +390,16 @@ GeoSegmentInterface {
 			GeoPoint [] points = {getStartPoint(), getEndPoint()};
 			points = kernel.transformPoints(type, points, Q, l, vec, n);	
 			// create SEGMENT
-			GeoElement [] geos = {kernel.Segment(label, points[0], points[1]), points[0], points[1]};	
+			GeoElement segment = kernel.Segment(label, points[0], points[1]);
+			segment.setVisualStyleForTransformations(this);
+			GeoElement [] geos = {segment, points[0], points[1]};	
 			return geos;	
 		} 
 		else {
 			//	create LINE
 			GeoLine transformedLine = kernel.getTransformedLine(type, this, Q, l, vec, n);
 			transformedLine.setLabel(label);
+			transformedLine.setVisualStyleForTransformations(this);
 			GeoElement [] geos = {transformedLine};
 			return geos;
 		}							

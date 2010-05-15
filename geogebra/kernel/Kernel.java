@@ -5055,9 +5055,11 @@ public class Kernel {
 			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_DILATE, label, S, null, null, r);
 		
 		// standard case
-		AlgoDilate algo = new AlgoDilate(cons, label, geoRot, r, S);			
-		GeoElement [] geos = {algo.getResult()};
-		return geos;	
+		AlgoDilate algo = new AlgoDilate(cons, label, geoRot, r, S);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) geoRot);
+		GeoElement[] geos = { ret };
+		return geos;
 	}
 
 	/**
@@ -5072,9 +5074,11 @@ public class Kernel {
 			return ((LimitedPath) geoMir).createTransformedObject(TRANSFORM_MIRROR_AT_POINT, label, Q, null, null, null);
 		
 		// standard case
-		AlgoMirror algo = new AlgoMirror(cons, label, geoMir, Q);		
-		GeoElement [] geos = {algo.getResult()};
-		return geos;	
+		AlgoMirror algo = new AlgoMirror(cons, label, geoMir, Q);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) geoMir);
+		GeoElement[] geos = { ret };
+		return geos;
 	}
 
 	/**
@@ -5085,9 +5089,11 @@ public class Kernel {
 		if (label == null)
 			label = transformedGeoLabel(Q);
 	
-		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);		
-		GeoElement [] geos = {algo.getResult()};
-		return geos;	
+		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) Q);
+		GeoElement[] geos = { ret };
+		return geos;
 	}
 
 	/**
@@ -5099,7 +5105,9 @@ public class Kernel {
 			label = transformedGeoLabel(conic0);
 	
 		AlgoMirror algo = new AlgoMirror(cons, label, conic0, conic1);		
-		GeoElement [] geos = {algo.getResult()};
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) conic0);
+		GeoElement[] geos = { ret };
 		return geos;	
 	}
 
@@ -5120,10 +5128,11 @@ public class Kernel {
 			return geos;
 		}
 		// standard case
-		AlgoMirror algo = new AlgoMirror(cons, label, geoMir, g);		
-		GeoElement [] geos = {algo.getResult()};
-		
-		return geos;				
+		AlgoMirror algo = new AlgoMirror(cons, label, geoMir, g);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) geoMir);
+		GeoElement[] geos = { ret };
+		return geos;
 	}			
 	
 	/* ******************************
@@ -5142,6 +5151,7 @@ public class Kernel {
 		GeoPoint [] newPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {			
 			newPoints[i] = (GeoPoint) Translate(transformedGeoLabel(points[i]), points[i], v)[0]; 				
+			newPoints[i].setVisualStyleForTransformations(points[i]);
 		}			
 		return newPoints;
 	}
@@ -5177,6 +5187,7 @@ public class Kernel {
 				rotPoints[i] = (GeoPoint) Rotate(pointLabel, points[i], phi)[0]; 	
 			else
 				rotPoints[i] = (GeoPoint) Rotate(pointLabel, points[i], phi, Q)[0];
+			rotPoints[i].setVisualStyleForTransformations(points[i]);
 		}			
 		return rotPoints;
 	}
@@ -5194,6 +5205,7 @@ public class Kernel {
 		for (int i = 0; i < points.length; i++) {
 			String pointLabel = transformedGeoLabel(points[i]);
 			newPoints[i] = (GeoPoint) Dilate(pointLabel, points[i], r, S)[0];			
+			newPoints[i].setVisualStyleForTransformations(points[i]);
 		}			
 		return newPoints;
 	}	
@@ -5221,6 +5233,7 @@ public class Kernel {
 				newPoints[i] = (GeoPoint) Mirror(pointLabel, points[i], g)[0]; 	
 			else
 				newPoints[i] = (GeoPoint) Mirror(pointLabel, points[i], Q)[0];
+			newPoints[i].setVisualStyleForTransformations(points[i]);
 		}			
 		return newPoints;
 	}		
@@ -5242,6 +5255,7 @@ public class Kernel {
 		GeoPoint [] oldPoints = oldPoly.getPoints();
 		for (int i=0; i < oldPoints.length; i++) {
 			transformedPoints[i].setEuclidianVisible(oldPoints[i].isSetEuclidianVisible());			
+			transformedPoints[i].setVisualStyleForTransformations(oldPoints[i]);
 			notifyUpdate(transformedPoints[i]);
 		}
 	
@@ -5301,66 +5315,92 @@ public class Kernel {
 		// use visibility of points for transformed points
 		for (int i=0; i < points.length; i++) {
 			result[i].setEuclidianVisible(points[i].isSetEuclidianVisible());			
+			result[i].setVisualStyleForTransformations(points[i]);
 			notifyUpdate(result[i]);
 		}
 		return result;
 	}	
 	
-	GeoLine getTransformedLine(int type, GeoLine line, GeoPoint Q, GeoLine l, GeoVector vec, NumberValue n) {
+	GeoLine getTransformedLine(int type, GeoLine line, GeoPoint Q, GeoLine l,
+			GeoVector vec, NumberValue n) {
+
+		GeoLine ret = null;
+
 		switch (type) {
-			case Kernel.TRANSFORM_TRANSLATE:
-				AlgoTranslate algoTrans = new AlgoTranslate(cons, line, vec);			
-				return (GeoLine) algoTrans.getResult();							
-				
-			case Kernel.TRANSFORM_MIRROR_AT_POINT:
-			case Kernel.TRANSFORM_MIRROR_AT_LINE:	
-				AlgoMirror algoMirror = new AlgoMirror(cons, line, l, Q, null);			
-				return (GeoLine) algoMirror.getResult();			
-						
-			case Kernel.TRANSFORM_ROTATE:
-				AlgoRotate algoRotate = new AlgoRotate(cons, line, n);			
-				return (GeoLine) algoRotate.getResult();			
-			
-			case Kernel.TRANSFORM_ROTATE_AROUND_POINT:
-				AlgoRotatePoint algoRotatePoint = new AlgoRotatePoint(cons, line, n, Q);			
-				return (GeoLine) algoRotatePoint.getResult();						
-			
-			case Kernel.TRANSFORM_DILATE:
-				AlgoDilate algoDilate = new AlgoDilate(cons, line, n, Q);			
-				return (GeoLine) algoDilate.getResult();						
-			
-			default:
-				return null;
+		case Kernel.TRANSFORM_TRANSLATE:
+			AlgoTranslate algoTrans = new AlgoTranslate(cons, line, vec);
+			ret = (GeoLine) algoTrans.getResult();
+			break;
+
+		case Kernel.TRANSFORM_MIRROR_AT_POINT:
+		case Kernel.TRANSFORM_MIRROR_AT_LINE:
+			AlgoMirror algoMirror = new AlgoMirror(cons, line, l, Q, null);
+			ret = (GeoLine) algoMirror.getResult();
+			break;
+
+		case Kernel.TRANSFORM_ROTATE:
+			AlgoRotate algoRotate = new AlgoRotate(cons, line, n);
+			ret = (GeoLine) algoRotate.getResult();
+			break;
+
+		case Kernel.TRANSFORM_ROTATE_AROUND_POINT:
+			AlgoRotatePoint algoRotatePoint = new AlgoRotatePoint(cons, line,
+					n, Q);
+			ret = (GeoLine) algoRotatePoint.getResult();
+			break;
+
+		case Kernel.TRANSFORM_DILATE:
+			AlgoDilate algoDilate = new AlgoDilate(cons, line, n, Q);
+			ret = (GeoLine) algoDilate.getResult();
+			break;
+
+		default:
+			return null;
 		}
-	}	
-	
-	GeoConic getTransformedConic(int type, GeoConic conic, GeoPoint Q, GeoLine l, GeoVector vec, NumberValue n) {
+		ret.setVisualStyleForTransformations(line);
+		return ret;
+	}
+
+	GeoConic getTransformedConic(int type, GeoConic conic, GeoPoint Q,
+			GeoLine l, GeoVector vec, NumberValue n) {
+
+		GeoConic ret;
+
 		switch (type) {
-			case Kernel.TRANSFORM_TRANSLATE:
-				AlgoTranslate algoTrans = new AlgoTranslate(cons, conic, vec);			
-				return (GeoConic) algoTrans.getResult();							
-				
-			case Kernel.TRANSFORM_MIRROR_AT_POINT:
-			case Kernel.TRANSFORM_MIRROR_AT_LINE:	
-				AlgoMirror algoMirror = new AlgoMirror(cons, conic, l, Q, null);			
-				return (GeoConic) algoMirror.getResult();			
-						
-			case Kernel.TRANSFORM_ROTATE:
-				AlgoRotate algoRotate = new AlgoRotate(cons, conic, n);			
-				return (GeoConic) algoRotate.getResult();			
-			
-			case Kernel.TRANSFORM_ROTATE_AROUND_POINT:
-				AlgoRotatePoint algoRotatePoint = new AlgoRotatePoint(cons, conic, n, Q);			
-				return (GeoConic) algoRotatePoint.getResult();						
-			
-			case Kernel.TRANSFORM_DILATE:
-				AlgoDilate algoDilate = new AlgoDilate(cons, conic, n, Q);			
-				return (GeoConic) algoDilate.getResult();						
-			
-			default:
-				return null;
+		case Kernel.TRANSFORM_TRANSLATE:
+			AlgoTranslate algoTrans = new AlgoTranslate(cons, conic, vec);
+			ret = (GeoConic) algoTrans.getResult();
+			break;
+
+		case Kernel.TRANSFORM_MIRROR_AT_POINT:
+		case Kernel.TRANSFORM_MIRROR_AT_LINE:
+			AlgoMirror algoMirror = new AlgoMirror(cons, conic, l, Q, null);
+			ret = (GeoConic) algoMirror.getResult();
+			break;
+
+		case Kernel.TRANSFORM_ROTATE:
+			AlgoRotate algoRotate = new AlgoRotate(cons, conic, n);
+			ret = (GeoConic) algoRotate.getResult();
+			break;
+
+		case Kernel.TRANSFORM_ROTATE_AROUND_POINT:
+			AlgoRotatePoint algoRotatePoint = new AlgoRotatePoint(cons, conic,
+					n, Q);
+			ret = (GeoConic) algoRotatePoint.getResult();
+			break;
+
+		case Kernel.TRANSFORM_DILATE:
+			AlgoDilate algoDilate = new AlgoDilate(cons, conic, n, Q);
+			ret = (GeoConic) algoDilate.getResult();
+			break;
+
+		default:
+			return null;
 		}
-	}	
+
+		ret.setVisualStyleForTransformations(conic);
+		return ret;
+	}
 
 	/***********************************
 	 * CALCULUS
