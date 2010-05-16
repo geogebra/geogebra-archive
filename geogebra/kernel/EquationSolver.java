@@ -171,9 +171,8 @@ public class EquationSolver {
 	 * added solveQuadratic()
 	 * added fixRoots()
 	 * removed sorting of roots
-	 */
-
-	/* solve_cubic.c - finds the real roots of x^3 + a x^2 + b x + c = 0 */
+	 *
+	 * solve_cubic.c - finds the real roots of x^3 + a x^2 + b x + c = 0 */
     final public int solveCubic(double eqn[], double res[]) {
 
     	int roots = 0;
@@ -196,22 +195,28 @@ public class EquationSolver {
 
     	double CR2 = 729 * r * r;
     	double CQ3 = 2916 * q * q * q;
-
-    	if (R == 0 && Q == 0)
+    	
+    	//Application.debug("Q = "+Q+" R = "+R+" Q3 = "+Q3+" R2 = "+R2+" CR2 = "+CR2+" CQ3 = "+CQ3);
+	
+    	//Application.debug(Math.abs(CR2 - CQ3)+"");
+    	
+    	if (Math.abs(R) < epsilon && Math.abs(Q) < epsilon ) // if (R == 0 && Q == 0)
     	{
     		res[roots++] = - a / 3 ;
     		res[roots++] = - a / 3 ;
     		res[roots++] = - a / 3 ;
     		return 3 ;
     	}
-    	else if (CR2 == CQ3) 
+    	// Michael Borcherds changed to check CR2 equal to CQ3 to first 8 significant digits
+    	// important for eg y=(ax-b)^2(cx-d)
+    	else if (Math.abs(CR2 - CQ3) < Math.max(CR2, CQ3) * epsilon) // else if (CR2 == CQ3) 
     	{
-    		/* this test is actually R2 == Q3, written in a form suitable
-    	         for exact computation with integers */
+    		// this test is actually R2 == Q3, written in a form suitable
+    	    //     for exact computation with integers 
 
-    		/* Due to finite precision some double roots may be missed, and
-    	         considered to be a pair of complex roots z = x +/- epsilon i
-    	         close to the real axis. */
+    		// Due to finite precision some double roots may be missed, and
+    	    //     considered to be a pair of complex roots z = x +/- epsilon i
+    	    //     close to the real axis. 
 
     		double sqrtQ = Math.sqrt (Q);
 
@@ -229,7 +234,7 @@ public class EquationSolver {
     		}
     		return 3 ;
     	}
-    	else if (CR2 < CQ3) /* equivalent to R2 < Q3 */
+    	else if (CR2 < CQ3) // equivalent to R2 < Q3 
     	{
     		double sqrtQ = Math.sqrt (Q);
     		double sqrtQ3 = sqrtQ * sqrtQ * sqrtQ;
@@ -252,7 +257,7 @@ public class EquationSolver {
     		res[roots++] = A + B - a / 3;
     		return 1;
     	}
-    }
+    }//*/
 
     
 
@@ -334,7 +339,7 @@ public class EquationSolver {
             }
         }
         return roots;
-    }*/
+    }//*/
 
     /*
      * This pruning step is necessary since solveCubic uses the
