@@ -678,13 +678,23 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 		//waitForCAS();
 
 		// avoid security problems calling from JavaScript
-		MyBoolean ret = (MyBoolean)AccessController.doPrivileged(new PrivilegedAction() {
-			public Object run() {
+		MyBoolean ret = AccessController.doPrivileged(new PrivilegedAction<MyBoolean>() {
+			public MyBoolean run() {
+				// perform the security-sensitive operation here
+				
 				// make sure translated command names are loaded
 				app.initTranslatedCommands();
-
-				// perform the security-sensitive operation here
-				return new MyBoolean(app.getGgbApi().evalCommand(cmdString));
+				
+				if (cmdString.indexOf('\n') == -1)
+					return new MyBoolean(app.getGgbApi().evalCommand(cmdString));
+				
+				GgbAPI api = app.getGgbApi();
+				boolean ret = true;
+				String[] cmdStrings = cmdString.split("[\\n]+");
+				for (int i = 0 ; i < cmdStrings.length ; i++) 
+					ret = ret & api.evalCommand(cmdStrings[i]);
+				
+				return new MyBoolean(ret);
 			}
 		});
 
