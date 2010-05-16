@@ -685,16 +685,8 @@ public abstract class AppletImplementation implements AppletImplementationInterf
 				// make sure translated command names are loaded
 				app.initTranslatedCommands();
 				
-				if (cmdString.indexOf('\n') == -1)
-					return new MyBoolean(app.getGgbApi().evalCommand(cmdString));
+				return new MyBoolean(app.getGgbApi().evalCommand(cmdString));
 				
-				GgbAPI api = app.getGgbApi();
-				boolean ret = true;
-				String[] cmdStrings = cmdString.split("[\\n]+");
-				for (int i = 0 ; i < cmdStrings.length ; i++) 
-					ret = ret & api.evalCommand(cmdStrings[i]);
-				
-				return new MyBoolean(ret);
 			}
 		});
 

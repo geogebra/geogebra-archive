@@ -232,11 +232,23 @@ public class GgbAPI {
 	public synchronized boolean evalCommand(String cmdString) {
 		
 		//Application.debug("evalCommand called..."+cmdString);
+		GeoElement [] result;
 		
-		GeoElement [] result = kernel.getAlgebraProcessor().
-								processAlgebraCommand(cmdString, false);
-		// return success
-		return result != null;
+		if (cmdString.indexOf('\n') == -1) {
+			result = kernel.getAlgebraProcessor().processAlgebraCommand(cmdString, false);
+			// return success
+			return result != null;
+			
+		}
+
+		boolean ret = true;
+		String[] cmdStrings = cmdString.split("[\\n]+");
+		for (int i = 0 ; i < cmdStrings.length ; i++) {
+			result = kernel.getAlgebraProcessor().processAlgebraCommand(cmdStrings[i], false);
+			ret = ret & (result != null);
+		}
+		
+		return ret;
 	}
 
 	/**
