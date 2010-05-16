@@ -291,6 +291,28 @@ public class Renderer implements GLEventListener {
 	}
 	
 	
+	
+	private void drawNotTransp(){
+		
+		getTextures().setTexture(Textures.FADING);
+
+        gl.glEnable(GL.GL_BLEND);
+		
+		gl.glDisable(GL.GL_CULL_FACE);
+        drawList3D.drawNotTransparentSurfaces(this);
+
+		
+		//TODO improve this !
+		gl.glEnable(GL.GL_CULL_FACE);
+		gl.glCullFace(GL.GL_FRONT); drawList3D.drawNotTransparentSurfacesClosed(this);//draws inside parts  
+		gl.glCullFace(GL.GL_BACK); drawList3D.drawNotTransparentSurfacesClosed(this);//draws outside parts 
+		
+		
+		
+		
+		
+	}
+	
 	/**
 	 * 
 	 * openGL method called when the display is to be computed.
@@ -368,14 +390,20 @@ public class Renderer implements GLEventListener {
         //primitives.enableVBO(gl);
         
         //drawing hidden part
-        gl.glDisable(GL.GL_CULL_FACE);
-        drawList3D.drawNotTransparentSurfaces(this);
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
         //gl.glDisable(GL.GL_BLEND);
         drawList3D.drawHiddenNotTextured(this);
         gl.glEnable(GL.GL_TEXTURE_2D);
         drawList3D.drawHiddenTextured(this);
+        /*
+        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glEnable(GL.GL_BLEND);
+        getTextures().setTexture(Textures.FADING);
+        drawList3D.drawNotTransparentSurfaces(this);
+        */
+        drawNotTransp();
+        //gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_TEXTURE_2D);
         gl.glDisable(GL.GL_ALPHA_TEST);       
 
@@ -386,8 +414,8 @@ public class Renderer implements GLEventListener {
        
 
         
-        gl.glEnable(GL.GL_BLEND);
-        gl.glDisable(GL.GL_CULL_FACE);
+        //gl.glEnable(GL.GL_BLEND);
+        //gl.glDisable(GL.GL_CULL_FACE);
         
         
         //drawing transparents parts

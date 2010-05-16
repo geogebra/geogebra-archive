@@ -78,6 +78,14 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 
 	protected void updateForItSelf(GgbVector p1, GgbVector p2){
 
+		//TODO prevent too large values
+		if (Math.abs(getDrawMin())>1E10)
+			return;
+		
+		if (Math.abs(getDrawMax())>1E10)
+			return;
+		
+		
 		Renderer renderer = getView3D().getRenderer();
 		
 

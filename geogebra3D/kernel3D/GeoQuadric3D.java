@@ -180,6 +180,12 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 		// set direction
 		eigenvec3D[2] = direction;
 		
+
+		// set others eigen vecs
+		GgbVector[] ee = direction.completeOrthonormal();
+		eigenvec3D[0] = ee[0];
+		eigenvec3D[1] = ee[1];
+		
 		// set halfAxes = radius	
 		for (int i=0;i<2;i++)
 			halfAxes[i] = r;
@@ -339,6 +345,8 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 	
 	public GgbVector evaluatePoint(double u, double v){
 		
+		GgbVector p;
+		
 		switch (type){
 		case QUADRIC_SPHERE :
 			
@@ -352,7 +360,7 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 		case QUADRIC_CONE :
 
 			double v2 = Math.abs(v);
-			GgbVector p = (GgbVector) 
+			p = (GgbVector) 
 			getEigenvec3D(1).mul(Math.sin(u)*getHalfAxis(1)*v2).add(
 					getEigenvec3D(0).mul(Math.cos(u)*getHalfAxis(0)*v2).add(
 							getEigenvec3D(2).mul(v)
@@ -360,7 +368,19 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 			);
 			
 			return (GgbVector) p.add(getMidpoint());		
-			default:
+			
+		case QUADRIC_CYLINDER :
+
+			p = (GgbVector) 
+			getEigenvec3D(1).mul(Math.sin(u)*getHalfAxis(1)).add(
+					getEigenvec3D(0).mul(Math.cos(u)*getHalfAxis(0)).add(
+							getEigenvec3D(2).mul(v)
+					)
+			);
+			
+			return (GgbVector) p.add(getMidpoint());					
+			
+		default:
 			return null;
 		}
 
@@ -369,6 +389,8 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 
 	public GgbVector evaluateNormal(double u, double v){
 				
+		GgbVector n;
+		
 		switch (type){
 		case QUADRIC_SPHERE :
 			return new GgbVector(new double[] {
@@ -383,7 +405,7 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 			if (v<0)
 				r=-r;
 			
-			GgbVector n = (GgbVector) 
+			n = (GgbVector) 
 			getEigenvec3D(1).mul(Math.sin(u)/r2).add(
 					getEigenvec3D(0).mul(Math.cos(u)/r2).add(
 							getEigenvec3D(2).mul(-r/r2)
@@ -391,6 +413,17 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 			);
 			
 			return n;
+			
+			
+		case QUADRIC_CYLINDER :
+			
+			n = (GgbVector) 
+			getEigenvec3D(1).mul(Math.sin(u)).add(
+					getEigenvec3D(0).mul(Math.cos(u))
+			);
+			
+			return n;
+			
 		default:
 			return null;
 		}
@@ -414,6 +447,7 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 				return -Math.PI/2;
 			}
 		case QUADRIC_CONE :
+		case QUADRIC_CYLINDER :
 			switch(index){
 			case 0: //u
 			default:
@@ -444,6 +478,7 @@ implements GeoElement3DInterface, GeoFunction2VarInterface{
 			}
 			
 		case QUADRIC_CONE :
+		case QUADRIC_CYLINDER :
 			switch(index){
 			case 0: //u
 			default:

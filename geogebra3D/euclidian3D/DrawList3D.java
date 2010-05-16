@@ -126,9 +126,16 @@ public class DrawList3D {
 	
 	public void drawNotTransparentSurfaces(Renderer renderer){
 		
-		// TODO texture it
+
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
-			d.next().draw(renderer);	
+			d.next().draw(renderer);		
+
+		
+	}
+	
+	public void drawNotTransparentSurfacesClosed(Renderer renderer){
+		
+	
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
 			d.next().draw(renderer);	
 

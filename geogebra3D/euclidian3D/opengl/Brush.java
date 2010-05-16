@@ -510,60 +510,7 @@ public class Brush {
     	} 
     	
 	}
-	
-	/** cone curve
-	 * @param origin 
-	 * @param direction 
-	 * @param start 
-	 * @param end 
-	 */
-	public void cone(GgbVector origin, GgbVector direction, float start, float end){
-		
-		
-		if (start>end)
-			return;
-		
 
-		textureTypeX = TEXTURE_CONSTANT_0;
-		//textureType = TEXTURE_ID;
-			
-		float radius = thickness;
-		
-		//int i=0;Application.debug(""+i);
-		setThickness(radius*Math.abs(start));
-		down((GgbVector) origin.add(direction.mul(start)));
-
-		//middle point
-		if (start*end<0){
-			//i++;Application.debug(""+i);
-			setThickness(0f);
-			moveTo(origin);
-		}
-		
-		//i++;Application.debug(""+i);
-		setThickness(radius*Math.abs(end));
-		moveTo((GgbVector) origin.add(direction.mul(end)));
-		
-	}
-
-	/** cylinder curve
-	 * @param origin 
-	 * @param direction 
-	 * @param start 
-	 * @param end 
-	 */
-	public void cylinder(GgbVector origin, GgbVector direction, float start, float end){
-		
-		
-		if (start>end)
-			return;
-		
-		textureTypeX = TEXTURE_CONSTANT_0;
-		
-		down((GgbVector) origin.add(direction.mul(start)));
-		moveTo((GgbVector) origin.add(direction.mul(end)));
-		
-	}
 	
 	
 

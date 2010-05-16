@@ -68,8 +68,9 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 							
 		double[] minmax;
 		float min, max;
-		Brush brush;
+		float fade;// = (float) (50/getView3D().getScale());
 		
+			
 		Surface surface;
 		
 		switch(quadric.getType()){
@@ -92,33 +93,20 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 					o, v);
 			
-			min = (float) (minmax[0]+(minmax[1]-minmax[0])*-0); //TODO change that
-			max = (float) (minmax[1]+(minmax[1]-minmax[0])*0);
-			
-			/*
-			brush = renderer.getGeometryManager().getBrush();
-			
-
-			brush.start(120);
-			//brush.setColor(getGeoElement().getObjectColor());
-			brush.setThickness((float) quadric.getHalfAxis(1));
-			
-			
-			brush.cone(quadric.getMidpoint(),quadric.getEigenvec3D(2), min, max);
-			quadricIndex = brush.end();
-			*/
-			
+			min = (float) minmax[0]; 
+			max = (float) minmax[1];		
 
 			surface = renderer.getGeometryManager().getSurface();
 			surface.start(quadric);
 			surface.setU((float) quadric.getMinParameter(0), (float) quadric.getMaxParameter(0));surface.setNbU(60);
 			
-			Application.debug("min, max ="+min+", "+max);
+			//Application.debug("min, max ="+min+", "+max);
+			fade = (max-min)/10f;
 			if (min*max<0){
-				surface.setV(min,0);surface.setNbV(1);surface.draw();
-				surface.setV(0,max);surface.setNbV(1);surface.draw();
+				surface.setV(min,0);surface.setNbV(2);surface.setVFading(fade, 0);surface.draw();
+				surface.setV(0,max);surface.setNbV(2);surface.setVFading(0, fade);surface.draw();
 			}else{
-				surface.setV(min,max);surface.setNbV(1);surface.draw();
+				surface.setV(min,max);surface.setNbV(3);surface.setVFading(fade, fade);surface.draw();
 			}
 			quadricIndex=surface.end();
 			
@@ -135,7 +123,7 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 					o, v);
 			
-			
+			/*
 			brush = renderer.getGeometryManager().getBrush();
 			
 
@@ -148,6 +136,24 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 			
 			brush.cylinder(quadric.getMidpoint(),quadric.getEigenvec3D(2), min, max);
 			quadricIndex = brush.end();
+			
+			*/
+			
+			
+			min = (float) minmax[0]; 
+			max = (float) minmax[1];		
+
+			surface = renderer.getGeometryManager().getSurface();
+			surface.start(quadric);
+			surface.setU((float) quadric.getMinParameter(0), (float) quadric.getMaxParameter(0));surface.setNbU(60);
+			
+			//Application.debug("min, max ="+min+", "+max);
+			
+			fade = (max-min)/10f;
+			surface.setV(min,max);surface.setNbV(3);surface.setVFading(fade, fade);surface.draw();
+			
+			quadricIndex=surface.end();
+			
 			break;
 
 		}

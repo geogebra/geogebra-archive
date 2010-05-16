@@ -28,14 +28,15 @@ public class Surface {
 	/** delta for plotting */
 	private float du, dv;
 	
-	/** fading value */
-	private float uFade, vFade;
+	/** fading values */
+	private float uMinFade, uMaxFade, vMinFade, vMaxFade;
+	private float uMinFadeNb, uMaxFadeNb, vMinFadeNb, vMaxFadeNb;
 	
 	
 	/** texture coord for out (alpha = 0) */
 	static final private float TEXTURE_FADE_OUT = 0.75f;
 	/** texture coord for in (alpha = 1) */
-	static final private float TEXTURE_FADE_IN = -1f;
+	static final private float TEXTURE_FADE_IN = 0f;
 	
 	/** default constructor
 	 * @param manager
@@ -56,7 +57,8 @@ public class Surface {
 	public void start(GeoFunction2VarInterface function){
 		index = manager.startNewList();
 		this.function = function;
-		uFade = 0; vFade = 0;
+		uMinFade = 0; vMinFade = 0;
+		uMaxFade = 0; vMaxFade = 0;
 		
 	}
 	
@@ -110,15 +112,23 @@ public class Surface {
 	
 	
 	
-	/** set fading frontiers
-	 * @param u
-	 * @param v
+	/** set fading frontiers for u parameter
+	 * @param min
+	 * @param max
 	 */
-	public void setFading(float u, float v){
-		this.uFade = u;
-		this.vFade = v;
+	public void setUFading(float min, float max){
+		this.uMinFade = min;
+		this.uMaxFade = max;
 	}
 	
+	/** set fading frontiers for v parameter
+	 * @param min
+	 * @param max
+	 */
+	public void setVFading(float min, float max){
+		this.vMinFade = min;
+		this.vMaxFade = max;
+	}
 	
 	/** 
 	 * draw part of the surface
@@ -129,12 +139,23 @@ public class Surface {
 		
 		du = (uMax-uMin)/uNb;
 		dv = (vMax-vMin)/vNb;
+		
+		/*
+		uMinFadeNb = uNb*uMinFade/(uMax-uMin);
+		uMaxFadeNb = uNb*uMaxFade/(uMax-uMin);
+		vMinFadeNb = vNb*vMinFade/(vMax-vMin);
+		vMaxFadeNb = vNb*vMaxFade/(vMax-vMin);
+		*/
+		uMinFadeNb = uMinFade/du;
+		uMaxFadeNb = uMaxFade/du;
+		vMinFadeNb = vMinFade/dv;
+		vMaxFadeNb = vMaxFade/dv;
 	
 		//Application.debug("vMin, vMax, dv="+vMin+", "+vMax+", "+dv);
 
 		for (int ui=0; ui<uNb; ui++){
 			
-			for (int vi=0; vi<uNb; vi++){			
+			for (int vi=0; vi<vNb; vi++){			
 				
 				drawQuad(ui, vi);
 	
@@ -147,37 +168,46 @@ public class Surface {
 	
 	private void drawQuad(int ui, int vi){
 		
-		float u = uMin+ui*du;
-		float v = vMin+vi*dv;
 
-		drawTNV(u, v);
-		drawTNV(u+du, v);
-		drawTNV(u+du, v+dv);
-		drawTNV(u, v+dv);
+		drawTNV(ui, vi);
+		drawTNV(ui+1, vi);
+		drawTNV(ui+1, vi+1);
+		drawTNV(ui, vi+1);
 		
 	}
 	
-	private void drawTNV(float u, float v){
+	private void drawTNV(int ui, int vi){
 		
-		float uT = getTextureCoord(u, uMin, uMax, uFade);
-		float vT = getTextureCoord(v, vMin, vMax, vFade);				
-			
+		float uT = getTextureCoord(ui, uNb, uMinFadeNb, uMaxFadeNb);
+		float vT = getTextureCoord(vi, vNb, vMinFadeNb, vMaxFadeNb);	
 		manager.texture(uT, vT);
+		
+		float u = uMin+ui*du;
+		float v = vMin+vi*dv;			
 		manager.normal(function.evaluateNormal(u, v));
 		manager.vertex(function.evaluatePoint(u, v));
 	}
 	
-	private float getTextureCoord(float x,float xMin,float xMax,float xFade){
-		if (xFade!=0){
-			float t;
-			if (x<(xMax+xMin)/2){
-				t=(x-xMin)/xFade;
-			}else{
-				t=(xMax-x)/xFade;
+	private float getTextureCoord(int i, int n, float fadeMin, float fadeMax){
+		
+		float t;
+	
+		if (fadeMin!=0){
+			if (i<=n/2){
+				t=i/fadeMin;
+				return TEXTURE_FADE_OUT*(1-t)+TEXTURE_FADE_IN*t;
 			}
-			return TEXTURE_FADE_OUT*(1-t)+TEXTURE_FADE_IN*t;
-		}else
-			return 0;
+		}
+			
+
+		if (fadeMax!=0){
+			if (i>=n/2){
+				t=(n-i)/fadeMax;
+				return TEXTURE_FADE_OUT*(1-t)+TEXTURE_FADE_IN*t;
+			}
+		}
+
+		return TEXTURE_FADE_IN;
 	}
 	
 	

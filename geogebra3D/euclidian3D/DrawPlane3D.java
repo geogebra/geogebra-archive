@@ -104,8 +104,9 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		float dimension = (float) (200/getView3D().getScale()) * 2f;
 		surface.setU(-dimension, dimension);surface.setNbU(2);
 		surface.setV(-dimension, dimension);surface.setNbV(2);
-		float fading = dimension ;//* 0.5f;
-		surface.setFading(fading, fading);
+		float fading = dimension * 0.5f;
+		surface.setUFading(fading, fading);
+		surface.setVFading(fading, fading);
 		surface.draw();
 		planeIndex=surface.end();
 		
