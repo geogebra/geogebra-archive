@@ -1790,7 +1790,7 @@ public abstract class GeoElement
 	}	
 	
 	private void updateSpreadsheetCoordinates() {				
-		if(labelSet 
+		if (labelSet && label.length() > 0
 			&& Character.isLetter(label.charAt(0)) // starts with letter
 			&& Character.isDigit(label.charAt(label.length()-1)))  // ends with digit
 		{
