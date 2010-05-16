@@ -278,6 +278,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			//g2.fillRect((int)pos - scrollOffset + insets.left, insets.bottom + 2 , (int)advance, height - insets.bottom - insets.top - 4);
 			g2.fillRect((int)pos - scrollOffset + insets.left, textBottom - fontHeight + 4 , (int)advance, fontHeight);
 			g2.setColor(getSelectedTextColor());
+		} else {
+			// needed to avoid "blurring" when antialiased text drawn multiple times
+			g2.setColor(Color.white);
+			//g2.fillRect((int)pos - scrollOffset + insets.left, insets.bottom + 2 , (int)advance, height - insets.bottom - insets.top - 4);
+			g2.fillRect((int)pos - scrollOffset + insets.left, textBottom - fontHeight + 4 , (int)advance, fontHeight);
+			g2.setColor(Color.black);
 		}
 		g2.setClip(0, 0, width, height);
 		if (pos - scrollOffset + advance + insets.left > 0 && pos - scrollOffset < width)
