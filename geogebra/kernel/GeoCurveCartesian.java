@@ -218,6 +218,8 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	}
 	
 	
+	
+	//TODO remove and use super method (funX and funY should be removed in fun[])
 	public String toString() {
 		if (sbToString == null) {
 			sbToString = new StringBuilder(80);
@@ -232,9 +234,10 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
-	private StringBuilder sbToString;
-	private StringBuilder sbTemp;
+	//private StringBuilder sbToString;
+	//private StringBuilder sbTemp;
 	
+	//TODO remove and use super method (funX and funY should be removed in fun[])
 	public String toValueString() {		
 		if (isDefined) {
 			if (sbTemp == null) {
@@ -251,6 +254,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 			return app.getPlain("undefined");
 	}	
 	
+	//TODO remove and use super method (funX and funY should be removed in fun[])
 	public String toSymbolicString() {	
 		if (isDefined) {
 			if (sbTemp == null) {
@@ -267,6 +271,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 			return app.getPlain("undefined");
 	}
 	
+	//TODO remove and use super method (funX and funY should be removed in fun[])
 	public String toLaTeXString(boolean symbolic) {
 		if (isDefined) {
 			if (sbTemp == null) {

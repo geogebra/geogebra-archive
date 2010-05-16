@@ -108,11 +108,6 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 		return true;
 	}
 
-	@Override
-	public String toValueString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	
 	

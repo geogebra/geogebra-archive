@@ -110,4 +110,85 @@ public abstract class GeoCurveCartesianND extends GeoElement{
 		isDefined = false;
 	}
 
+	
+	
+	public String toString() {
+		if (sbToString == null) {
+			sbToString = new StringBuilder(80);
+		}
+		sbToString.setLength(0);
+		if (isLabelSet()) {
+			sbToString.append(label);
+			sbToString.append('(');
+			sbToString.append(fun[0].getFunctionVariable().toString());
+			sbToString.append(") = ");					
+		}		
+		sbToString.append(toValueString());
+		return sbToString.toString();
+	}
+	protected StringBuilder sbToString;
+	protected StringBuilder sbTemp;
+	
+	
+
+	public String toValueString() {		
+		if (isDefined) {
+			if (sbTemp == null) {
+				sbTemp = new StringBuilder(80);
+			}
+			sbTemp.setLength(0);
+			sbTemp.append('(');
+			
+			for (int i=0; i< fun.length;i++){
+			sbTemp.append(fun[i].toValueString());
+			if (i<fun.length-1)
+				sbTemp.append(", ");
+			}
+			
+			sbTemp.append(')');
+			return sbTemp.toString();
+		} else
+			return app.getPlain("undefined");
+	}	
+	
+	public String toSymbolicString() {	
+		if (isDefined) {
+			if (sbTemp == null) {
+				sbTemp = new StringBuilder(80);
+			}
+			sbTemp.setLength(0);
+			sbTemp.append('(');
+			
+			for (int i=0; i< fun.length;i++){
+			sbTemp.append(fun[i].toString());
+			if (i<fun.length-1)
+				sbTemp.append(", ");
+			}
+			
+			sbTemp.append(')');
+			return sbTemp.toString();
+		} else
+			return app.getPlain("undefined");
+	}
+	
+	public String toLaTeXString(boolean symbolic) {
+		if (isDefined) {
+			if (sbTemp == null) {
+				sbTemp = new StringBuilder(80);
+			}
+			sbTemp.setLength(0);
+			sbTemp.append("\\left(\\begin{array}{c}");
+			
+			for (int i=0; i< fun.length;i++){
+				sbTemp.append(fun[i].toLaTeXString(symbolic));
+				if (i<fun.length-1)
+					sbTemp.append("\\\\");
+				}
+			
+			sbTemp.append("\\end{array}\\right)");
+			return sbTemp.toString();
+		} else
+			return app.getPlain("undefined");		
+	}		
+	
 }
