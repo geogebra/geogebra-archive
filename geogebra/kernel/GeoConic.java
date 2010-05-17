@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
@@ -28,7 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class GeoConic extends GeoConicND
-implements Path, Traceable, 
+implements Path, Region, Traceable, 
 Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 {
 	
@@ -2723,5 +2722,71 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	 public String getAssignmentOperator() {
 		 return ": ";
 	 }
+
+
+		/*
+		 * Region interface implementation
+		 */
+		
+		public boolean isRegion() {
+			return true;
+		}
+		
+
+	public boolean isInRegion(GeoPointInterface PI) {
+		GeoPoint P = (GeoPoint) PI;
+		double x0 = P.inhomX;
+		double y0 = P.inhomY;
+		
+		switch (type) {
+		case CONIC_CIRCLE:
+			return (x0 - b.x) * (x0 - b.x) + (y0 - b.y) * (y0 - b.y) <= halfAxes[0] * halfAxes[0];
+			
+		case CONIC_ELLIPSE:
+			return matrix[0] * x0 * x0 + matrix[1] * y0 * y0 + matrix[2] +
+			2 * (matrix[3] * x0 * y0 + matrix[4] * x0 + matrix[5] * y0) <= 0;
+			default:
+				return false;
+		}
+	}
+
+
+
+	public void pointChangedForRegion(GeoPointInterface PI) {
+
+		RegionParameters rp = PI.getRegionParameters();
+
+		if (!isInRegion(PI)){
+
+			pointChanged(PI);
+			rp.setIsOnPath(true);
+		}else{
+
+			rp.setIsOnPath(false);
+		}
+
+
+	}
+
+
+
+
+	public void regionChanged(GeoPointInterface P) {
+		//GeoPoint P = (GeoPoint) PI;
+		RegionParameters rp = P.getRegionParameters();
+		
+		if (rp.isOnPath())
+			pathChanged(P);
+		else{
+			pointChangedForRegion(P);
+			
+			if (!isInRegion(P)){
+				pointChanged(P);
+				rp.setIsOnPath(true);
+			}	
+			
+		}
+		
+	}
 
 }
