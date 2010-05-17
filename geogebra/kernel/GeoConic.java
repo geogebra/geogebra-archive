@@ -2724,27 +2724,33 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 	 }
 
 
-		/*
-		 * Region interface implementation
-		 */
+	/*
+	* Region interface implementation
+	*/
 		
-		public boolean isRegion() {
-			return true;
-		}
+	public boolean isRegion() {
+		return true;
+	}
 		
 
+	/**
+	 * Returns true if point is in circle/ellipse. Coordinates of PointInterface
+	 * are used directly to avoid rounding errors.
+	 * @author Michael Borcherds
+	 * @version 2010-05-17
+	 * Last change Zbynek Konecny 
+	 */
 	public boolean isInRegion(GeoPointInterface PI) {
-		GeoPoint P = (GeoPoint) PI;
-		double x0 = P.inhomX;
-		double y0 = P.inhomY;
+		double x0 = PI.getX2D();
+		double y0 = PI.getY2D();
 		
 		switch (type) {
 		case CONIC_CIRCLE:
 			return (x0 - b.x) * (x0 - b.x) + (y0 - b.y) * (y0 - b.y) <= halfAxes[0] * halfAxes[0];
 			
-		case CONIC_ELLIPSE:
-			return matrix[0] * x0 * x0 + matrix[1] * y0 * y0 + matrix[2] +
-			2 * (matrix[3] * x0 * y0 + matrix[4] * x0 + matrix[5] * y0) <= 0;
+		case CONIC_ELLIPSE: //multiplication by matrix[0] for c:1-x^2-2y^2=0
+			return matrix[0]*(matrix[0] * x0 * x0 + matrix[1] * y0 * y0 + matrix[2] +
+			2 * (matrix[3] * x0 * y0 + matrix[4] * x0 + matrix[5] * y0)) <= 0;
 			default:
 				return false;
 		}
@@ -2753,6 +2759,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 
 
 	public void pointChangedForRegion(GeoPointInterface PI) {
+		PI.updateCoords2D();
 
 		RegionParameters rp = PI.getRegionParameters();
 
