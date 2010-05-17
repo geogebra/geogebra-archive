@@ -205,7 +205,8 @@ public class AlgoPolygonRegular extends AlgoElement {
     	
     	// compute area of poly
     	poly.calcArea();  
-    	
+    	//update region coordinate system (Zbynek Konecny, 2010-05-17)
+    	poly.updateRegionCS();
     	// update new points and segments 
     	if (n != oldPointNumber) {
     		updateSegmentsAndPointsLabels(oldPointNumber);
