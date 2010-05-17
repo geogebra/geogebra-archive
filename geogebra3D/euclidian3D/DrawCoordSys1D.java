@@ -85,6 +85,9 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		if (Math.abs(getDrawMax())>1E10)
 			return;
 		
+		if (getDrawMin()>getDrawMax())
+			return;
+		
 		
 		Renderer renderer = getView3D().getRenderer();
 		

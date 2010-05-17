@@ -755,6 +755,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		switch (mode) {
 		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
+			//Application.debug("ici");
 			Hits hits = view.getHits().getTopHits();
 			if(!hits.isEmpty()){
 				GeoElement3DInterface geo = (GeoElement3DInterface) view.getHits().getTopHits().get(0);
@@ -974,6 +975,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		switch (mode) {
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
 			return changedKernel;
+		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
+			//Application.debug("hop");
+			//TODO implement choose geo
+			return true;
 		default:
 			return super.switchModeForMouseReleased(mode, hits, changedKernel);
 			

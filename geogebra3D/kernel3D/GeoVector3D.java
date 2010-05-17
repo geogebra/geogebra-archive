@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -77,7 +78,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 		}
 		
 		setDrawingMatrix(new GgbMatrix4x4(matrix));
-		
+		getLabelMatrix().setOrigin((GgbVector) matrix.getOrigin().add(matrix.getVx().mul(0.5)));
 	}
 
 

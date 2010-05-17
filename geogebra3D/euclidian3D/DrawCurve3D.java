@@ -61,10 +61,14 @@ public class DrawCurve3D extends Drawable3DCurves {
 		
 		renderer.getGeometryManager().remove(geometryIndex);
 		
-		
-		
+		if (!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined()){
+			geometryIndex = -1;
+			return;
+		}
+
 
 		GeoCurveCartesian3D curve = (GeoCurveCartesian3D) getGeoElement();
+		
 
 		Brush brush = renderer.getGeometryManager().getBrush();
 

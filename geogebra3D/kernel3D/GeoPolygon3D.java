@@ -106,7 +106,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoord
 	  * @param endPoint the end point
 	  * @return the segment
 	  */
-	 public GeoSegmentInterface createSegment(GeoPointInterface startPoint, GeoPointInterface endPoint){
+	 public GeoSegmentInterface createSegment(GeoPointInterface startPoint, GeoPointInterface endPoint, boolean euclidianVisible){
 		 GeoSegmentInterface segment;
 
 		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, 

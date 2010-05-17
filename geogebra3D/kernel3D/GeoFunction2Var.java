@@ -45,6 +45,10 @@ implements GeoFunction2VarInterface {
 			return new GgbVector(new double[] {-u,v,(u*u+v*v)*coeff}); // -u for surface orientation
 		case 2:
 			return new GgbVector(new double[] {u,v,coeff*u*v});
+		case 3:
+			return new GgbVector(new double[] {u,v,0.1*u*u+v+coeff});
+		case 4:
+			return new GgbVector(new double[] {u,v,coeff*u*u*v*Math.exp(-u)});
 		}
 
 	}
@@ -59,6 +63,13 @@ implements GeoFunction2VarInterface {
 			return (new GgbVector(new double[] {-2*u*coeff,2*v*coeff,-1})).normalized();
 		case 2:
 			return (new GgbVector(new double[] {-coeff*v,-coeff*u,1})).normalized();
+		case 3:
+			return (new GgbVector(new double[] {-0.2*u,-1,1})).normalized();
+		case 4:
+			return (new GgbVector(new double[] {
+					coeff*(u-2)*u*Math.exp(-u)*v,
+					-coeff*u*u*Math.exp(-u),
+					1})).normalized();
 		}
 		
 		
