@@ -4323,6 +4323,10 @@ public abstract class GeoElement
 		return showTrimmedIntersectionLines;
 	}
 
+	public boolean isPointInRegion() {
+		return false;
+	}
+
 
 
 }

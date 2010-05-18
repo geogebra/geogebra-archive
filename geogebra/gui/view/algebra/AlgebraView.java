@@ -270,7 +270,7 @@ public class AlgebraView extends JTree implements View {
 	public void startEditing(GeoElement geo, boolean shiftDown) {
 		if (geo == null) return;
 
-		if (!shiftDown || !geo.isPointOnPath()) {
+		if (!shiftDown || !geo.isPointOnPath() && !geo.isPointInRegion()) {
 			if (!geo.isIndependent()
 			|| !attached )		// needed for F2 when Algebra View closed
 			 {
