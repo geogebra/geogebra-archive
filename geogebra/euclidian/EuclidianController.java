@@ -3288,8 +3288,9 @@ Rectangle rect = view.getSelectionRectangle();
 		Hits regionHits = hits.getHits(Region.class, tempArrayList);
 
 		// only keep polygon in hits if one side of polygon is in hits too
-		if (!hits.isEmpty())
-			hits.keepOnlyHitsForNewPointMode();
+		// removed: Point Tool creates Point on edge of Polygon
+		//if (!hits.isEmpty())
+		//	hits.keepOnlyHitsForNewPointMode();
 
 		Path path = null;	
 		Region region = null;
@@ -3355,7 +3356,7 @@ Rectangle rect = view.getSelectionRectangle();
 					if (chooseGeo)
 						path = (Path) chooseGeo(pathHits, true);
 					else
-						path = (Path) regionHits.get(0);
+						path = (Path) pathHits.get(0);
 					createPoint = path != null;
 				} else {
 					createPoint = false;
