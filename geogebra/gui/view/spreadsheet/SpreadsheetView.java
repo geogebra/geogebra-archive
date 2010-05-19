@@ -1363,10 +1363,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	// END G.Sturr
 	
 	public void requestFocus() {
-		table.requestFocus();
+		if (table != null) table.requestFocus();
 	}
 	
 	public boolean hasFocus() {
+		if (table == null) return false;
 		return table.hasFocus();
 	}
 	
