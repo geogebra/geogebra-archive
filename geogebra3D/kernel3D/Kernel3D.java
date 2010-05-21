@@ -441,7 +441,7 @@ public class Kernel3D
 	
 	/** Ray3D label linking points P1 and P2   */	
 	final public GeoRay3D Ray3D(String label, GeoPoint3D P1, GeoPoint3D P2){
-		Application.debug("Kernel3D : Ray3D");
+		//Application.debug("Kernel3D : Ray3D");
 		//AlgoJoinPointsRay3D algo = new AlgoJoinPointsRay3D(cons, label, P1, P2);
 		//GeoRay3D l = algo.getRay3D();
 		AlgoJoinPoints3D algo = new AlgoJoinPoints3D(cons, label, P1, P2, GeoElement3D.GEO_CLASS_RAY3D);

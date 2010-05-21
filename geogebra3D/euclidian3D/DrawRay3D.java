@@ -16,7 +16,26 @@ public class DrawRay3D extends DrawCoordSys1D {
 	
 	
 	
-	protected void updateForView(){
+	protected void updateForItSelf(){
+		
+
+		updateForItSelf(true);
+
+	}
+	
+	protected void updateForItSelf(boolean updateDrawMinMax){
+		
+
+		if (updateDrawMinMax)
+			updateDrawMinMax();
+		
+		super.updateForItSelf();
+
+	}
+	
+	
+	
+	protected void updateDrawMinMax(){
 		
 		GgbVector o = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getOrigin());
 		GgbVector v = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getVx());
@@ -32,7 +51,6 @@ public class DrawRay3D extends DrawCoordSys1D {
 	}
 	
 	
-
 	/*
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
