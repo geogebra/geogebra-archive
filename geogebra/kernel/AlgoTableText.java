@@ -158,6 +158,12 @@ public class AlgoTableText extends AlgoElement {
     	text.setTemporaryPrintAccuracy();
     	
     	sb.setLength(0);
+    	
+    	
+    	// surround in { } to make eg this work:
+    	// FormulaText["\bgcolor{ff0000}"+TableText[matrix1]]
+    	sb.append('{');
+    	
     	sb.append(openBracket);
 		// Added by Loïc 2009/12/15
     	sb.append("\\begin{array}{");
@@ -206,6 +212,11 @@ public class AlgoTableText extends AlgoElement {
     	sb.append("\\end{array}");
     	sb.append(closeBracket);
 		// end Loïc 2009/12/15
+    	
+    	// surround in { } to make eg this work:
+    	// FormulaText["\bgcolor{ff0000}"+TableText[matrix1]]
+    	sb.append('}');
+    	
     	//Application.debug(sb.toString());
     	text.setTextString(sb.toString());
     	text.setLaTeX(true,false);
