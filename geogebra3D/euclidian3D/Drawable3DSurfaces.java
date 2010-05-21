@@ -31,7 +31,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		if (alpha<=0 || alpha == 1)
 			return;
 		
-		renderer.setMatrix(getMatrix());
+		//renderer.setMatrix(getMatrix());
 		drawGeometryHiding(renderer);
 		
 	}
@@ -59,7 +59,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 			renderer.setColor(getGeoElement().getObjectColor(),alpha);
 			
 		
-		renderer.setMatrix(getMatrix());
+		//renderer.setMatrix(getMatrix());
 		drawGeometry(renderer);
 		
 		
@@ -87,7 +87,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 			renderer.setColor(getGeoElement().getObjectColor(),alpha);
 			
 		
-		renderer.setMatrix(getMatrix());
+		//renderer.setMatrix(getMatrix());
 		drawGeometry(renderer);
 		
 	}

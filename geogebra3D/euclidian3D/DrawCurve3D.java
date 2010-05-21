@@ -4,7 +4,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoVec2D;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.Brush;
+import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
@@ -70,7 +70,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 		GeoCurveCartesian3D curve = (GeoCurveCartesian3D) getGeoElement();
 		
 
-		Brush brush = renderer.getGeometryManager().getBrush();
+		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 
 		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
 

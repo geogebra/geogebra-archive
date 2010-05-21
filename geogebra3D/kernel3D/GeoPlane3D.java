@@ -5,9 +5,10 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.arithmetic.Functional2Var;
 
 public class GeoPlane3D extends GeoCoordSys2DAbstract
-implements GeoFunction2VarInterface {
+implements Functional2Var {
 	
 	double xmin, xmax, ymin, ymax; //for drawing
 	

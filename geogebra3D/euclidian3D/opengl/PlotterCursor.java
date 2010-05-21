@@ -12,7 +12,7 @@ import javax.media.opengl.GL;
  * @author ggb3D
  *
  */
-public class GeometryCursor extends Geometry {
+public class PlotterCursor {
 	
 	
 	static public int TYPE_CROSS2D = 0;
@@ -27,60 +27,67 @@ public class GeometryCursor extends Geometry {
 	static private float thickness2 = 1.25f;
 	static private float depth = 1f;
 	
-
-	/*
-	static private float size = 120f;
-	static private float thickness = 12.5f;
-	static private float thickness2 = 12.5f;
-	static private float depth = 10f;
-	*/
+	private int[] index;
+	
+	private Manager manager;
+	
 
 	/** common constructor
 	 * @param geometryRenderer
 	 */
-	public GeometryCursor(Manager manager) {
-		super(manager,NORMAL_OFF,TEXTURE_OFF,COLOR_ON);
+	public PlotterCursor(Manager manager) {
+		
+		this.manager = manager;
+		
+		index = new int[4];
+		
+		for (int i=0; i<4; i++){
+			index[i] = manager.startNewList();
+			manager.startGeometry(Manager.QUADS);
+			cursor(i);
+			manager.endGeometry();
+			manager.endList();
+		}
+
 	}
 
-	public void init() {
-		
-		manager.preInit(this);
-		
-		
-		manager.startListAndGeometry(this, TYPE_CROSS2D);
-		cursorCross2D();
-		manager.endListAndGeometry();
-		
-		manager.startListAndGeometry(this, TYPE_DIAMOND);
-		cursorDiamond();
-		manager.endListAndGeometry();
-		
-		
-		manager.startListAndGeometry(this, TYPE_CYLINDER);
-		cursorCylinder();
-		manager.endListAndGeometry();
+	
 
-		
-		manager.startListAndGeometry(this, TYPE_CROSS3D);
-		cursorCross3D();
-		manager.endListAndGeometry();
-		
-		
+	//////////////////////////////////
+	// INDEX
+	//////////////////////////////////	
+	
+	/** return geometry index for each type of cursor
+	 * @param i
+	 * @return geometry index for each type of cursor
+	 */
+	public int getIndex(int i){
+		return index[i];
 	}
-	
-	
-	public int getType(){
-		return GL.GL_QUADS;
-	}
-	
-	public int getNb(){
-		return 4;
-	}
-	
 	
 	//////////////////////////////////
 	// GEOMETRIES
 	//////////////////////////////////
+	
+	private void cursor(int i){
+
+		switch(i){
+		case 0:
+			cursorCross2D();
+			break;
+		case 1:
+			cursorDiamond();
+			break;
+		case 2:
+			cursorCylinder();
+			break;
+		case 3:
+			cursorCross3D();
+			break;
+		}
+	}
+	
+	
 	
 	
 	
@@ -92,44 +99,44 @@ public class GeometryCursor extends Geometry {
 
 		
 		//white parts
-		color(1,1,1);
+		manager.color(1,1,1);
 
 		//up
-		vertex(thickness, size, depth);
-		vertex(-thickness, size, depth);
-		vertex(-thickness, -size, depth);
-		vertex(thickness, -size, depth);
+		manager.vertex(thickness, size, depth);
+		manager.vertex(-thickness, size, depth);
+		manager.vertex(-thickness, -size, depth);
+		manager.vertex(thickness, -size, depth);
 				
-		vertex(size, thickness, depth);
-		vertex(thickness, thickness, depth);
-		vertex(thickness, -thickness, depth);
-		vertex(size, -thickness, depth);
+		manager.vertex(size, thickness, depth);
+		manager.vertex(thickness, thickness, depth);
+		manager.vertex(thickness, -thickness, depth);
+		manager.vertex(size, -thickness, depth);
 		
-		vertex(-size, thickness, depth);
-		vertex(-size, -thickness, depth);
-		vertex(-thickness, -thickness, depth);
-		vertex(-thickness, thickness, depth);
+		manager.vertex(-size, thickness, depth);
+		manager.vertex(-size, -thickness, depth);
+		manager.vertex(-thickness, -thickness, depth);
+		manager.vertex(-thickness, thickness, depth);
 		
 		//down
-		vertex(thickness, size, -depth);
-		vertex(thickness, -size, -depth);
-		vertex(-thickness, -size, -depth);
-		vertex(-thickness, size, -depth);
+		manager.vertex(thickness, size, -depth);
+		manager.vertex(thickness, -size, -depth);
+		manager.vertex(-thickness, -size, -depth);
+		manager.vertex(-thickness, size, -depth);
 				
-		vertex(size, thickness, -depth);
-		vertex(size, -thickness, -depth);
-		vertex(thickness, -thickness, -depth);
-		vertex(thickness, thickness, -depth);
+		manager.vertex(size, thickness, -depth);
+		manager.vertex(size, -thickness, -depth);
+		manager.vertex(thickness, -thickness, -depth);
+		manager.vertex(thickness, thickness, -depth);
 		
-		vertex(-size, thickness, -depth);
-		vertex(-thickness, thickness, -depth);
-		vertex(-thickness, -thickness, -depth);
-		vertex(-size, -thickness, -depth);
+		manager.vertex(-size, thickness, -depth);
+		manager.vertex(-thickness, thickness, -depth);
+		manager.vertex(-thickness, -thickness, -depth);
+		manager.vertex(-size, -thickness, -depth);
 		
 		
 		
 		//black parts
-		color(0,0,0);
+		manager.color(0,0,0);
 		
 
 		//up and down
@@ -191,7 +198,7 @@ public class GeometryCursor extends Geometry {
 		float size2 = size+thickness2;
 		
 		//white parts
-		color(1,1,1);
+		manager.color(1,1,1);
 		
 		quadSymxOyRotOz90SymOz(
 				thickness, t, t, 
@@ -238,7 +245,7 @@ public class GeometryCursor extends Geometry {
 		
 		
 		//black parts
-		color(0,0,0);
+		manager.color(0,0,0);
 		
 		quadSymxOyRotOz90SymOz(
 				t, t, t, 
@@ -365,7 +372,7 @@ public class GeometryCursor extends Geometry {
     	float t2 = 1f-2*t1;
     	
     	//black parts
-		color(0,0,0);
+		manager.color(0,0,0);
     	
     	quadSymxOyRotOz90SymOz(1f, 0f, 0f,	        
     			t2, t1, t1,	        
@@ -384,7 +391,7 @@ public class GeometryCursor extends Geometry {
     			1f, 0f, 0f);
     	
 		//white parts
-		color(1,1,1);
+		manager.color(1,1,1);
 		
 		quadSymxOyRotOz90SymOz(
 				t2, t1, t1,
@@ -402,7 +409,7 @@ public class GeometryCursor extends Geometry {
 		
 		int latitude = 8;
 		float x1 = 4f;
-		float r1 = LINE3D_THICKNESS;
+		float r1 = PlotterBrush.LINE3D_THICKNESS/3f;
 		float r2 = (float) (r1*Math.sqrt(2));
 		float x2 = x1/3;
 		
@@ -414,7 +421,7 @@ public class GeometryCursor extends Geometry {
 
     	
     	//white parts
-		color(1,1,1);
+		manager.color(1,1,1);
 		  	
 		//ring
     	y1 = 2 * r2 * (float) Math.sin ( da ); 
@@ -426,10 +433,10 @@ public class GeometryCursor extends Geometry {
     		y1 = 2 * r2 * (float) Math.sin ( (2*i+1) * da ); 
     		z1 = 2 * r2 * (float) Math.cos ( (2*i+1) * da ); 
 
-    		vertex(-x2,y0,z0); 
-    		vertex(x2,y0,z0); 
-    		vertex(x2,y1,z1); 
-    		vertex(-x2,y1,z1); 
+    		manager.vertex(-x2,y0,z0); 
+    		manager.vertex(x2,y0,z0); 
+    		manager.vertex(x2,y1,z1); 
+    		manager.vertex(-x2,y1,z1); 
 
 
     	} 
@@ -454,7 +461,7 @@ public class GeometryCursor extends Geometry {
 
 
     	//black parts
-		color(0,0,0);
+		manager.color(0,0,0);
 		
 		//ring
     	y1 = 2 * (float) Math.sin ( da ); 
@@ -562,21 +569,21 @@ public class GeometryCursor extends Geometry {
 			float x3, float y3, float z3,
 			float x4, float y4, float z4){
 		
-		vertex(x1,y1,z1);
-		vertex(x2,y2,z2);
-		vertex(x3,y3,z3);
-		vertex(x4,y4,z4);
+		manager.vertex(x1,y1,z1);
+		manager.vertex(x2,y2,z2);
+		manager.vertex(x3,y3,z3);
+		manager.vertex(x4,y4,z4);
 		
-		vertex(-x1,-y1,z1);
-		vertex(-x2,-y2,z2);
-		vertex(-x3,-y3,z3);
-		vertex(-x4,-y4,z4);
+		manager.vertex(-x1,-y1,z1);
+		manager.vertex(-x2,-y2,z2);
+		manager.vertex(-x3,-y3,z3);
+		manager.vertex(-x4,-y4,z4);
 		
 		/*
-		vertex(-x1,y1,z1);
-		vertex(-x4,y4,z4);
-		vertex(-x3,y3,z3);
-		vertex(-x2,y2,z2);
+		manager.vertex(-x1,y1,z1);
+		manager.vertex(-x4,y4,z4);
+		manager.vertex(-x3,y3,z3);
+		manager.vertex(-x2,y2,z2);
 		*/
 		
 	}

@@ -14,7 +14,7 @@ import java.awt.Color;
  * @author mathieu
  *
  */
-public class Brush {
+public class PlotterBrush {
 	
 	// private class describing a section
 	private class Section{
@@ -266,7 +266,7 @@ public class Brush {
 	/** default constructor
 	 * @param manager
 	 */
-	public Brush(Manager manager){
+	public PlotterBrush(Manager manager){
 		this.manager = manager;
 	}
 
@@ -542,7 +542,7 @@ public class Brush {
 	 */
 	public void draw(GeoCurveCartesian3DInterface curve){
 		
-		setTextureType(Brush.TEXTURE_LINEAR);
+		setTextureType(PlotterBrush.TEXTURE_LINEAR);
 		
 		float t=tMin;
 		end = new Section(curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);

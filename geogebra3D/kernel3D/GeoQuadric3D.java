@@ -8,6 +8,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoQuadricND;
 import geogebra.kernel.GeoSegmentInterface;
+import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
@@ -23,7 +24,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoQuadric3D extends GeoQuadricND
-implements GeoElement3DInterface, GeoFunction2VarInterface{
+implements GeoElement3DInterface, Functional2Var{
 	
 	
 

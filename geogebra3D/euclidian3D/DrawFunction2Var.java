@@ -2,9 +2,9 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.Brush;
+import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.opengl.Surface;
+import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoFunction2Var;
 import geogebra3D.kernel3D.GeoQuadric3D;
@@ -63,7 +63,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 
 		
 		
-		Surface surface = renderer.getGeometryManager().getSurface();
+		PlotterSurface surface = renderer.getGeometryManager().getSurface();
 		GeoFunction2Var geo = (GeoFunction2Var) getGeoElement();
 		surface.start(geo);
 		surface.setU((float) geo.getMinParameter(0), (float) geo.getMaxParameter(0));

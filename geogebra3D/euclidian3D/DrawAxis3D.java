@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.Brush;
+import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
@@ -54,7 +54,7 @@ public class DrawAxis3D extends DrawLine3D {
     	
     	renderer.setTextColor(getGeoElement().getObjectColor());
   		renderer.setColor(getGeoElement().getObjectColor(), 1);
-  		renderer.setDash(Renderer.DASH_NONE);  	
+  		//renderer.setDash(Renderer.DASH_NONE);  	
     	
 
 
@@ -108,14 +108,14 @@ public class DrawAxis3D extends DrawLine3D {
     	updateDrawMinMax();
     	updateDecorations();
     	
-    	Brush brush = getView3D().getRenderer().getGeometryManager().getBrush();
-       	brush.setArrowType(Brush.ARROW_TYPE_SIMPLE);
-       	brush.setTicks(Brush.TICKS_ON);
+    	PlotterBrush brush = getView3D().getRenderer().getGeometryManager().getBrush();
+       	brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
+       	brush.setTicks(PlotterBrush.TICKS_ON);
        	brush.setTicksDistance( (float) ((GeoAxis3D) getGeoElement()).getNumbersDistance());
        	brush.setTicksOffset((float) (-getDrawMin()/(getDrawMax()-getDrawMin())));
        	super.updateForItSelf(false);
-       	brush.setArrowType(Brush.ARROW_TYPE_NONE);
-       	brush.setTicks(Brush.TICKS_OFF);
+       	brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
+       	brush.setTicks(PlotterBrush.TICKS_OFF);
     }
     
     

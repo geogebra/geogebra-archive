@@ -34,22 +34,12 @@ abstract public class Manager {
 	
 	
 	// geometries
-	/** geometry : point */
-	public GeometryPoint point;
-	/** geometry : cylinder */
-	public GeometryCylinder cylinder;
-	/** geometry : cone */
-	public GeometryCone cone;
 	/** geometry : cursor */
-	public GeometryCursor cursor;
-	/** geometry : plane */
-	protected GeometryPlane plane;
-	/** geometry : sphere */
-	public GeometrySphere sphere;
+	public PlotterCursor cursor;
 	/** brush */
-	private Brush brush;
+	private PlotterBrush brush;
 	/** surfaces */
-	private Surface surface;
+	private PlotterSurface surface;
 	
 	//geogebra stuff
 	private EuclidianView3D view3D;
@@ -76,15 +66,10 @@ abstract public class Manager {
 		
 		
 		// creating geometries
-		point = new GeometryPoint(this,false);
-		cylinder = new GeometryCylinder(this,true);
-		cone = new GeometryCone(this,true);
-		cursor = new GeometryCursor(this);
-		plane = new GeometryPlane(this);
-		sphere = new GeometrySphere(this);
+		cursor = new PlotterCursor(this);
 		
-		brush = new Brush(this);
-		surface = new Surface(this);
+		brush = new PlotterBrush(this);
+		surface = new PlotterSurface(this);
 		
 		//geogebra
 		this.view3D = view3D;
@@ -93,12 +78,12 @@ abstract public class Manager {
 	}
 	
 	
-	public Brush getBrush(){
+	public PlotterBrush getBrush(){
 		return brush;
 	}
 	
 	
-	public Surface getSurface(){
+	public PlotterSurface getSurface(){
 		return surface;
 	}
 	
@@ -136,54 +121,21 @@ abstract public class Manager {
 
 	
 	/////////////////////////////////////////////
-	// GEOMETRY METHODS
+	// LIST METHODS
 	/////////////////////////////////////////////
 	
 	
-	/** method used at start of Geometry.init() method
-	 * @param geometry 
-	 */
-	abstract public void preInit(Geometry geometry);
 	
 	
 	abstract public int startNewList();
 	
-	/** starting new geometry
-	 * @param geometry 
-	 * @param index index of the new geometry
-	 */
-	public void startListAndGeometry(Geometry geometry, int index){
-		startList(geometry, index);
-		startGeometry(geometry);
-	}
-	
-	
-	
-	public void startListAndGeometry(Geometry geometry){
-		startListAndGeometry(geometry, 0);
-	}
-	
-	
-	/** ending new geometry
-	 * @param geometry 
-	 */
-	public void endListAndGeometry(){
-		endGeometry();
-		endList();
-	}
 
-	abstract public void startList(Geometry geometry, int index);
-	
-	public void startList(Geometry geometry){
-		startList(geometry, 0);
-	}
 	
 	abstract public void endList();
 
 	
 	abstract public void startGeometry(int type);
 	
-	abstract public void startGeometry(Geometry geometry);
 	
 	abstract public void endGeometry();
 	
@@ -206,22 +158,6 @@ abstract public class Manager {
 	abstract public void draw(int index);
 	abstract public void remove(int index);
 
-	/** draw the geometry
-	 * @param geometry
-	 */
-	public void draw(Geometry geometry){
-		draw(geometry,0);
-	}
-	
-	
-	/** draw the indexed geometry
-	 * @param geometry
-	 * @param index index of the geometry
-	 */
-	abstract public void draw(Geometry geometry, int index);
-	
-	
-	
 	/** creates a vertex at coordinates (x,y,z)
 	 * @param x x coord
 	 * @param y y coord
@@ -345,21 +281,6 @@ abstract public class Manager {
 	
 	
 	
-	/////////////////////////////////////////////
-	// PLANE AND GRID METHODS
-	/////////////////////////////////////////////
-
-	
-	abstract public int newPlane(Color color, float alpha, float size);
-	
-	
-
-	/////////////////////////////////////////////
-	// SPHERE METHODS
-	/////////////////////////////////////////////
-
-	abstract public int newSphere(float x, float y, float z,
-			float radius, Color color, float alpha);
 
 	
 	

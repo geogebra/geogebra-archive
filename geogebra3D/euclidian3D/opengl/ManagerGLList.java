@@ -1,9 +1,5 @@
 package geogebra3D.euclidian3D.opengl;
 
-import java.awt.Color;
-
-import geogebra.Matrix.GgbVector;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import javax.media.opengl.GL;
@@ -46,14 +42,6 @@ public class ManagerGLList extends Manager {
 		return gl.glGenLists(nb);
 	}
 	
-	public void preInit(Geometry geometry){
-		
-		int index = genLists(geometry.getNb());
-		//Application.debug("index = "+index);
-		geometry.setIndex(index);
-
-	}
-	
 	
 	
 	
@@ -77,11 +65,6 @@ public class ManagerGLList extends Manager {
 	}
 	
 	
-	public void startList(Geometry geometry, int index){
-		
-		newList(geometry.getIndex()+index);
-		
-	}
 	
 	public void endList(){
 		
@@ -90,10 +73,6 @@ public class ManagerGLList extends Manager {
 	
 	public void startGeometry(int type){
 		gl.glBegin(type);
-	}
-	
-	public void startGeometry(Geometry geometry){
-		startGeometry(geometry.getType());
 	}
 	
 	public void endGeometry(){
@@ -190,23 +169,6 @@ public class ManagerGLList extends Manager {
     }
 
 	
-	/////////////////////////////////////////////
-	// PLANE METHODS
-	/////////////////////////////////////////////
-
-    public int newPlane(Color color, float alpha, float size){
-    	return plane.create(color,alpha,size);
-    }
-    
-    
-	/////////////////////////////////////////////
-	// SPHERE METHODS
-	/////////////////////////////////////////////
-
-    public int newSphere(float x, float y, float z,
-			float radius, Color color, float alpha){
-    	return sphere.create(x,y,z,radius,color,alpha);
-    }
  	
 	
 	
@@ -218,11 +180,6 @@ public class ManagerGLList extends Manager {
 		gl.glCallList(index);
 	}
 	
-	public void draw(Geometry geometry, int index){
-
-		gl.glCallList(geometry.getIndex()+index);
-		
-	}
 	
 
 	

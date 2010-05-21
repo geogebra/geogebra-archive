@@ -76,6 +76,7 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 
 
 
+	/*
 	public void drawTransp(Renderer renderer) {
 		
 		renderer.setMatrix(planeMatrix);
@@ -84,7 +85,7 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 		renderer.resetMatrix();
 	}
 
-	
+	*/
 	
 	
 	public void drawHidden(Renderer renderer){
@@ -109,9 +110,9 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 		
 		Renderer renderer = getView3D().getRenderer();
 		
-		renderer.getGeometryManager().remove(planeIndex);
+		//renderer.getGeometryManager().remove(planeIndex);
 		
-		planeIndex = renderer.getGeometryManager().newPlane(Color.GRAY,0.25f,1f);
+		//planeIndex = renderer.getGeometryManager().newPlane(Color.GRAY,0.25f,1f);
 		
 		
 		updateForItSelf(p1, p2);

@@ -1,13 +1,13 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.Brush;
+import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.opengl.Surface;
+import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoFunction2Var;
-import geogebra3D.kernel3D.GeoFunction2VarInterface;
 import geogebra3D.kernel3D.GeoQuadric3D;
 
 public class DrawQuadric3D extends Drawable3DSurfaces {
@@ -71,14 +71,14 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 		float fade;// = (float) (50/getView3D().getScale());
 		
 			
-		Surface surface;
+		PlotterSurface surface;
 		
 		switch(quadric.getType()){
 		case GeoQuadric3D.QUADRIC_SPHERE:
 			surface = renderer.getGeometryManager().getSurface();
 			surface.start(quadric);
 			surface.setU((float) quadric.getMinParameter(0), (float) quadric.getMaxParameter(0));surface.setNbU(60); 
-			surface.setV((float) quadric.getMinParameter(1), (float) quadric.getMaxParameter(1));surface.setNbV(60);
+			surface.setV((float) quadric.getMinParameter(1), (float) quadric.getMaxParameter(1));surface.setNbV(30);
 			surface.draw();
 			quadricIndex=surface.end();
 			

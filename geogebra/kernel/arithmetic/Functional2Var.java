@@ -1,12 +1,15 @@
-package geogebra3D.kernel3D;
+package geogebra.kernel.arithmetic;
 
 import geogebra.Matrix.GgbVector;
 
-/** interface for all GeoElements that can be evaluated as (u,v) -> (x,y,z) surfaces
+/** interface for all classes that can be evaluated as (u,v) -> (x,y,z) surfaces
+ * 
+ * TODO FunctionalNVar ?
+ * 
  * @author matthieu
  *
  */
-public interface GeoFunction2VarInterface {
+public interface Functional2Var {
 
 	
 	/** return point for parameters (u,v)

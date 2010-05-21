@@ -1,13 +1,13 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.main.Application;
-import geogebra3D.kernel3D.GeoFunction2VarInterface;
 
 /** Class for drawing surfaces.
  * @author matthieu
  *
  */
-public class Surface {
+public class PlotterSurface {
 	
 
 	/** manager */
@@ -17,7 +17,7 @@ public class Surface {
 	private int index;
 	
 	/** 2-var function */
-	private GeoFunction2VarInterface function;
+	private Functional2Var function;
 	
 	/** domain for plotting */
 	private float uMin, uMax, vMin, vMax;
@@ -41,7 +41,7 @@ public class Surface {
 	/** default constructor
 	 * @param manager
 	 */
-	public Surface(Manager manager){
+	public PlotterSurface(Manager manager){
 		this.manager = manager;
 	}
 	
@@ -54,7 +54,7 @@ public class Surface {
 	 * start new surface
 	 * @param function 
 	 */
-	public void start(GeoFunction2VarInterface function){
+	public void start(Functional2Var function){
 		index = manager.startNewList();
 		this.function = function;
 		uMinFade = 0; vMinFade = 0;

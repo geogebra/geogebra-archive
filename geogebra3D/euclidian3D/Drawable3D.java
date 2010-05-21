@@ -400,8 +400,8 @@ public abstract class Drawable3D {
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
 		
-		renderer.setMatrix(getMatrix());
-		renderer.setDash(Renderer.DASH_NONE);
+		//renderer.setMatrix(getMatrix());
+		//renderer.setDash(Renderer.DASH_NONE);
 		drawGeometry(renderer);
 	}
 

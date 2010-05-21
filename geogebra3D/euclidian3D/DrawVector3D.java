@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.Brush;
+import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoVector3D;
@@ -58,16 +58,16 @@ public class DrawVector3D extends Drawable3DCurves {
 			p1 = geo.getStartPoint().getInhomCoords();
 		GgbVector p2 = (GgbVector) p1.add(geo.getCoords());
 		
-		float thickness = (float) (Brush.LINE3D_THICKNESS*getGeoElement().getLineThickness()/getView3D().getScale());
-		Brush brush = renderer.getGeometryManager().getBrush();
+		float thickness = (float) (PlotterBrush.LINE3D_THICKNESS*getGeoElement().getLineThickness()/getView3D().getScale());
+		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 
-		brush.setArrowType(Brush.ARROW_TYPE_SIMPLE);
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
 		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
 		
 		brush.start(8);
 		brush.setAffineTexture(0.5f, 0.125f);
 		brush.segment(p1,p2);
-		brush.setArrowType(Brush.ARROW_TYPE_NONE);
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
 		geometryIndex = brush.end();
 		
 		

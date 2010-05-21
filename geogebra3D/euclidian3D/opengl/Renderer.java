@@ -102,51 +102,16 @@ public class Renderer implements GLEventListener {
 	//geometries
 	private Manager geometryManager;
 	
-    ///////////////////
-	// textures
-	protected Textures textures;
+
+	///////////////////
+	//textures
+	private Textures textures;
 
 	
 	
 	
-	///////////////////
-	//dash
-	
-    /** opengl organization of the dash textures */
-    private int[] texturesDash;
-    
-    /** number of dash styles */
-    private int DASH_NUMBER = 3;
-    
-	/** no dash. */
-	static public int DASH_NONE = -1;
-	
-	/** simple dash: 1-(1), ... */
-	static public int DASH_SIMPLE = 0;
-	
-	/** dotted dash: 1-(3), ... */
-	static public int DASH_DOTTED = 1;
-		
-	/** dotted/dashed dash: 7-(4)-1-(4), ... */
-	static public int DASH_DOTTED_DASHED = 2;
-	
-	/** description of the dash styles */
-	static private boolean[][] DASH_DESCRIPTION = {
-		{true, false}, // DASH_SIMPLE
-		{true, false, false, false}, // DASH_DOTTED
-		{true,true,true,true, true,true,true,false, false,false,false,true, false,false,false,false} // DASH_DOTTED_DASHED
-	};
-	
-	
-	/** # of the dash */
-	private int dash = DASH_NONE; 
-	
-	/** scale factor for dash */
-	private float dashScale = 1f;
-	
-	
 	/////////////////////
-	// spencil attributes
+	// pencil attributes
 	
 	/** current drawing color {r,g,b} */
 	private Color color; 
@@ -801,101 +766,6 @@ public class Renderer implements GLEventListener {
     
     
     
-    ////////////////////////////////////////////
-    //
-    // TEXTURES
-    //
-    ////////////////////////////////////////////
-    
-
-    /*
-    private void initTextures(){
-    	
-    	gl.glEnable(GL.GL_TEXTURE_2D);
-    	
-    	
-    	
-    	// dash textures
-    	texturesDash = new int[DASH_NUMBER];
-        gl.glGenTextures(DASH_NUMBER, texturesDash, 0);
-        for(int i=0; i<DASH_NUMBER; i++)
-        	initDashTexture(texturesDash[i],DASH_DESCRIPTION[i]);
-         
-        
-        
-        gl.glDisable(GL.GL_TEXTURE_2D);
-    }
-    
-    
-    // dash
-    
-    private void initDashTexture(int n, boolean[] description){
-    	
-        //int sizeX = 1; 
-        //int sizeY = description.length;
-        int sizeX = description.length; 
-        int sizeY = 1;
-        
-        byte[] bytes = new byte[4*sizeX*sizeY];
-        
-        // if description[i]==true, then texture is white opaque, else is transparent
-        for (int i=0; i<sizeX; i++)
-        	if (description[i])      		
-        		bytes[4*i+0]=
-        			bytes[4*i+1]= 
-        				bytes[4*i+2]= 
-        					bytes[4*i+3]= (byte) 255;
-              
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
-
-        gl.glBindTexture(GL.GL_TEXTURE_2D, n);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_NEAREST);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_NEAREST);
-        
-        
-        //TODO use gl.glTexImage1D
-        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  4, sizeX, sizeY, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buf);
-        
-    }
-    */
-
-    
-    /**
-     * sets the dash used by the pencil.
-     * 
-     * @param dash # of the dash, see EuclidianView, ...
-     */
-    public void setDash(int dash){
-    	
-    	
-    	switch (dash) {
-		case EuclidianView.LINE_TYPE_DOTTED:
-			this.dash=DASH_DOTTED;
-			dashScale = 0.08f;
-			break;
-
-		case EuclidianView.LINE_TYPE_DASHED_SHORT:
-			this.dash=DASH_SIMPLE;
-			dashScale = 0.08f;
-			break;
-
-		case EuclidianView.LINE_TYPE_DASHED_LONG:
-			this.dash=DASH_SIMPLE;
-			dashScale = 0.04f;
-			break;
-
-		case EuclidianView.LINE_TYPE_DASHED_DOTTED:
-			this.dash=DASH_DOTTED_DASHED;
-			dashScale = 0.04f;
-			break;
-
-		default: // EuclidianView.LINE_TYPE_FULL
-			this.dash = DASH_NONE;
-		}
-    	
-    }
-    
-    
     
     
     ///////////////////////////////////////////////////////////
@@ -907,335 +777,29 @@ public class Renderer implements GLEventListener {
     }
     
     
-	/////////////////////////////////////////////
-	// TEXTURES METHODS
-	/////////////////////////////////////////////
-
-	
-	/**
-	 * @return textures manager
-	 */
-	public Textures getTextures(){
-		return textures;
-	}
+    ///////////////////////////////////////////////////////////
+    //textures
     
     
-    /**
-     * draws a segment from x=x1 to x=x2 according to drawing matrix
-     * 
-     * @param a_x1 start of the segment
-     * @param a_x2 end of the segment
-     * 
-     */
-    public void drawSegment(double a_x1, double a_x2){
-
-    	switch(m_arrowType){
-    	case ARROW_TYPE_NONE:
-    	default:
-    		drawSegment(a_x1, a_x2, dash!=DASH_NONE);
-    	break;
-    	case ARROW_TYPE_SIMPLE:
-    		double x3=a_x2-m_arrowLength/(m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS)*view3D.getScale());
-    		double thickness = getThickness();
-    		setThickness(m_arrowWidth);
-    		drawCone(x3,a_x2);
-    		setThickness(thickness);
-    		if (x3>a_x1)
-    			drawSegment(a_x1, x3, dash!=DASH_NONE);
-    		break;
-    	}
-
-    } 
-    
-    
-    
-    private void drawSegment(double a_x1, double a_x2, boolean dashed){
-
-
-    	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
-    	
-    	/*
-    	if (dashed){
-    		gl.glBindTexture(GL.GL_TEXTURE_2D, texturesDash[dash]);
-
-
-    		gl.glMatrixMode(GL.GL_TEXTURE);
-    		gl.glLoadIdentity();
-    		float b = (float) (dashScale*(a_x2-a_x1)*m_drawingMatrix.getUnit(GgbMatrix4x4.X_AXIS)*view3D.getScale());
-    		float a = 0.75f/b-0.5f;
-    		
-    		gl.glScalef(b,1f,1f);
-    		gl.glTranslatef(a,0f,0f);
-    		
-    		gl.glMatrixMode(GL.GL_MODELVIEW);
-    	}
-    	*/
-    	
-    	double s = thickness*dilationValues[dilation]/view3D.getScale();
-    	gl.glScaled(1,s,s);
-    	
-        //	primitives.segment(gl, (int) thickness);
-       	geometryManager.cylinder.draw();
-    	
-    	
-    	resetMatrix();
-
-    }
-   
-    
-    /** 
-     * draws a segment from x=0 to x=1 according to current drawing matrix.
-     */
-    public void drawSegment(){
-    	drawSegment(0,1);
+    public Textures getTextures(){
+    	return textures;
     }
     
     
-    
-    
-    
-    
-    /**
-     * draws "coordinates segments" from the point origin of the drawing matrix to the axes
-     * @param axisX color of the x axis
-     * @param axisY color of the y axis
-     * @param axisZ color of the z axis
-     */
-    public void drawCoordSegments(Color axisX, Color axisY, Color axisZ){
-    	
-    	GgbMatrix4x4 drawingMatrixOld = m_drawingMatrix;
-    	Color colorOld = getColor();
-    	double alphaOld = getAlpha();
- 
-
-    	GgbMatrix4x4 matrix = new GgbMatrix4x4();
-    	matrix.setOrigin(m_drawingMatrix.getOrigin());
-    	matrix.set(3,4,0); //sets the origin's altitude to 0
-    	
-    	// z-segment
-    	double altitude = m_drawingMatrix.getOrigin().get(3);//altitude du point
- 
-    	matrix.setVx((GgbVector) EuclidianView3D.vz.mul(altitude));
-    	
-    	if(altitude>0){
-    		matrix.setVy(EuclidianView3D.vx);
-    		matrix.setVz(EuclidianView3D.vy);
-    	}else{
-    		matrix.setVy(EuclidianView3D.vy);
-    		matrix.setVz(EuclidianView3D.vx);
-    	}
-    	
-    	setColor(axisZ, 1);
-    	setMatrix(matrix);
-    	drawSegment();
-    	resetMatrix();
-    	
-    	
-    	
-    	
-    	// x-segment  	
-    	double x = m_drawingMatrix.getOrigin().get(1);//x-coord of the point
-    	
-    	matrix.setVx((GgbVector) EuclidianView3D.vx.mul(-x));
-    	
-    	if(x>0){
-    		matrix.setVy(EuclidianView3D.vz);
-    		matrix.setVz(EuclidianView3D.vy);
-    	}else{
-    		matrix.setVy(EuclidianView3D.vy);
-    		matrix.setVz(EuclidianView3D.vz);
-    	}
-    	
-    	setColor(axisX, 1);
-    	setMatrix(matrix);
-    	drawSegment();
-    	resetMatrix();
-    	
-    	
-    	// y-segment  	
-    	double y = m_drawingMatrix.getOrigin().get(2);//y-coord of the point
-    	
-    	matrix.setVx((GgbVector) EuclidianView3D.vy.mul(-y));
-    	
-    	if(y>0){
-    		matrix.setVy(EuclidianView3D.vx);
-    		matrix.setVz(EuclidianView3D.vz);
-    	}else{
-    		matrix.setVy(EuclidianView3D.vz);
-    		matrix.setVz(EuclidianView3D.vx);
-    	}
-    	
-    	setColor(axisY, 1);
-    	setMatrix(matrix);
-    	drawSegment();
-    	resetMatrix();
-    	
-    	
-    	
-    	
-    	// reset the drawing matrix and color
-    	setMatrix(drawingMatrixOld);
-    	setColor(colorOld, alphaOld);
-    	
-    }
-    
-    
-    
-    
-    /** 
-     * draws a ray (half-line) according drawing matrix.
-     */
-    /*
-    public void drawRay(){
-    	//TODO use frustum
-    	drawSegment(0,21);
-    }  
-    */
-    
-    
-    
-    
-    
-    
-    
-    /** draws a cone from x=x1 to x=x2 according to current drawing matrix.
-     * @param a_x1 x-coordinate of the basis
-     * @param a_x2 x-coordinate of the top
-     */
-    public void drawCone(double a_x1, double a_x2){
-    	
-    	
-    	initMatrix(m_drawingMatrix.segmentX(a_x1, a_x2));
-		double s = thickness*dilationValues[dilation]/view3D.getScale();
-		gl.glScaled(1,s,s);
-		geometryManager.cone.draw();
-    	resetMatrix();
-
-    	
-    } 
- 
-    
-    
-    
-    
-    
 
     
-    /** draws a quad according to current drawing matrix.  
-     * @param a_x1 x-coordinate of the top-left corner
-     * @param a_y1 y-coordinate of the top-left corner
-     * @param a_x2 x-coordinate of the bottom-right corner
-     * @param a_y2 y-coordinate of the bottom-right corner
-     */
-    public void drawQuad(double a_x1, double a_y1, double a_x2, double a_y2){
-    	initMatrix(m_drawingMatrix.quad(a_x1, a_y1, a_x2, a_y2));
-    	drawQuad();
-    	resetMatrix();
-    }
-    
-    
-    /**
-     * draws a plane
-     */
-    public void drawPlane(){
-    	initMatrix();
-    	geometryManager.plane.draw();
-    	resetMatrix();
-    	
-    }
     
     
     
     
     
-    /** draws a grid according to current drawing matrix.
-     * @param a_x1 x-coordinate of the top-left corner
-     * @param a_y1 y-coordinate of the top-left corner
-     * @param a_x2 x-coordinate of the bottom-right corner
-     * @param a_y2 y-coordinate of the bottom-right corner
-     * @param a_dx distance between two x-lines
-     * @param a_dy distance between two y-lines
-     */
-    public void drawGrid(double a_x1, double a_y1, 
-    		double a_x2, double a_y2, 
-    		double a_dx, double a_dy){
-    	
-    	double xmin, xmax;
-    	if (a_x1<a_x2){
-    		xmin=a_x1;
-    		xmax=a_x2;
-    	}else{
-    		xmin=a_x2;
-    		xmax=a_x1;
-    	}
-    	
-    	double ymin, ymax;
-    	if (a_y1<a_y2){
-    		ymin=a_y1;
-    		ymax=a_y2;
-    	}else{
-    		ymin=a_y2;
-    		ymax=a_y1;
-    	}
-    	
-    	
-    	int nXmin= (int) Math.ceil(xmin/a_dx);
-    	int nXmax= (int) Math.floor(xmax/a_dx);
-    	int nYmin= (int) Math.ceil(ymin/a_dy);
-    	int nYmax= (int) Math.floor(ymax/a_dy);
-    	
-    	//Application.debug("n = "+nXmin+","+nXmax+","+nYmin+","+nYmax);
-    	
-    	GgbMatrix4x4 matrix = new GgbMatrix4x4();
-     	
-    	matrix.set(getMatrix());
-    	for (int i=nYmin; i<=nYmax; i++){
-    		setMatrix(matrix.translateY(i*a_dy));
-        	drawSegment(xmin, xmax);
-    	}
-    	setMatrix(matrix);
-    	
-    	matrix.set(getMatrix());
-    	GgbMatrix4x4 matrix2 = matrix.mirrorXY();
-    	for (int i=nXmin; i<=nXmax; i++){
-    		setMatrix(matrix2.translateY(i*a_dx));
-        	drawSegment(ymin, ymax);
-    	}
-    	setMatrix(matrix);     		
-
-    	 
-    }  
     
     
-    /**
-     * draws a sphere according to current drawing matrix.
-     * 
-     * @param radius radius of the sphere
-     */
-    public void drawSphere(float radius){
-    	initMatrix();
-    	double s = radius/view3D.getScale();
-    	gl.glScaled(s,s,s);
-    	//primitives.point(gl,size);
-    	geometryManager.point.draw();
-    	//primitives.drawSphere(gl,radius/view3D.getScale(),16,16);
-    	resetMatrix();
-    }
     
-    /**
-     * draws a point according to current drawing matrix.
-     * 
-     * @param radius radius of the point
-     */
-    public void drawPoint(int size){
-    	initMatrix();
-    	double s = size*dilationValues[dilation]/view3D.getScale();
-    	gl.glScaled(s,s,s);
-    	geometryManager.point.draw();
-    	resetMatrix();
-    	
-    	
-    }
+    
+    
+    
+    
     
 
  
@@ -1248,7 +812,7 @@ public class Renderer implements GLEventListener {
     	
     	gl.glDisable(GL.GL_LIGHTING);
     	initMatrix();
-    	geometryManager.cursor.draw();
+    	geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.TYPE_CROSS2D));
 		resetMatrix();
     	gl.glEnable(GL.GL_LIGHTING);
    	
@@ -1260,8 +824,7 @@ public class Renderer implements GLEventListener {
     	
     	gl.glDisable(GL.GL_LIGHTING);
     	initMatrix();
-    	//gl.glScalef(10f, 10f, 10f);
-    	geometryManager.cursor.draw(GeometryCursor.TYPE_CROSS3D);
+    	geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.TYPE_CROSS3D));
 		resetMatrix();
     	gl.glEnable(GL.GL_LIGHTING);
    	
@@ -1273,7 +836,7 @@ public class Renderer implements GLEventListener {
  
     	gl.glDisable(GL.GL_LIGHTING);  
      	initMatrix();
-    	geometryManager.cursor.draw(GeometryCursor.TYPE_CYLINDER);
+    	geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.TYPE_CYLINDER));
     	resetMatrix();
     	gl.glEnable(GL.GL_LIGHTING);
 
@@ -1291,7 +854,7 @@ public class Renderer implements GLEventListener {
  
     	gl.glDisable(GL.GL_LIGHTING);  
     	initMatrix();
-    	geometryManager.cursor.draw(GeometryCursor.TYPE_DIAMOND);
+    	geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.TYPE_DIAMOND));
     	resetMatrix();  	
     	gl.glEnable(GL.GL_LIGHTING);
 
@@ -1299,6 +862,11 @@ public class Renderer implements GLEventListener {
     }
     
    
+    
+    
+    
+    
+    
     
    
     
@@ -1357,217 +925,9 @@ public class Renderer implements GLEventListener {
     	geometryManager.draw(index);
     }
     
-    /**
-     * draw a circle with center (x,y) and radius R
-     * @param x x coord of the center
-     * @param y y coord of the center
-     * @param R radius
-     */
-    public void drawCircle(double x, double y, double R){
-
-    	initMatrix();
-    	drawCircleArcDashedOrNot((float) x, (float) y, (float) R, 0, 2f * (float) Math.PI, dash!=0);
-    	resetMatrix();
-    }
+     
     
     
-    
-    /**
-     * draw a circle with center (x,y) and radius R
-     * @param x x coord of the center
-     * @param y y coord of the center
-     * @param R radius
-     * @param startAngle starting angle for the arc
-     * @param endAngle ending angle for the arc
-     * @param dash says if the circle is dashed
-     */
-    private void drawCircleArcDashedOrNot(float x, float y, float R, float startAngle, float endAngle, boolean dash){
-    	
-    	if (!dash)
-    		drawCircleArcNotDashed(x, y, R, startAngle, endAngle);
-    	else
-    		drawCircleArcNotDashed(x,y,R, startAngle, endAngle);
-    }
-    
-    /**
-     * draw a dashed circle with center (x,y) and radius R
-     * @param x x coord of the center
-     * @param y y coord of the center
-     * @param R radius
-     * @param startAngle starting angle for the arc
-     * @param endAngle ending angle for the arc
-     */
-    
-    /*
-    private void drawCircleArcDashed(float x, float y, float R, float startAngle, float endAngle){
-    	
-    	m_dash_factor = 1/(R*m_drawingMatrix.getUnit(Ggb3DMatrix4x4.X_AXIS));
-    	for(double l1=startAngle; l1<endAngle;){
-    		double l2=l1;
-    		for(int i=0; (i<m_dash.length)&&(l1<endAngle); i++){
-    			l2=l1+m_dash_factor*m_dash[i][0];
-    			if (l2>endAngle) l2=endAngle;
-    			//Application.debug("l1,l2="+l1+","+l2);
-    			drawCircleArcNotDashed(x,y,R,(float) l1, (float) l2);
-    			l1=l2+m_dash_factor*m_dash[i][1];
-    		}	
-    	} 	
-    }  
-    */ 
-    
-    /**
-     * draw a dashed circle with center (x,y) and radius R
-     * @param x x coord of the center
-     * @param y y coord of the center
-     * @param R radius
-     * @param startAngle starting angle for the arc
-     * @param endAngle ending angle for the arc
-     */
-    private void drawCircleArcNotDashed(float x, float y, float R, float startAngle, float endAngle){
-    	int nsides = 16; //TODO use thickness
-
-    	int rings = (int) (60*(endAngle-startAngle)) +2;
-    	drawTorusArc(x, y, R, startAngle, endAngle, nsides, rings);
-    }
-
-    
-    
-    
-    
-    
-    
-
-    
-    
-    /**
-     * draw a torus arc (using getThickness() for thickness)
-     * @param x x coord of the center of the torus
-     * @param y y coord of the center of the torus
-     * @param R radius of the torus
-     * @param startAngle starting angle for the arc
-     * @param endAngle ending angle for the arc
-     * @param nsides number of sides in a ring
-     * @param rings number of rings
-     */
-    private void drawTorusArc(float x, float y, float R, float startAngle, float endAngle, int nsides, int rings) {
-    	
-    	float r = (float) getThickness()/100;
-    	
-        float ringDelta = (endAngle-startAngle) / rings;
-        float sideDelta = 2.0f * (float) Math.PI / nsides;
-        float theta = startAngle; 
-        float cosTheta = (float) Math.cos(theta); 
-        float sinTheta = (float) Math.sin(theta);
-        for (int i = rings - 1; i >= 0; i--) {
-          float theta1 = theta + ringDelta;
-          float cosTheta1 = (float) Math.cos(theta1);
-          float sinTheta1 = (float) Math.sin(theta1);
-          gl.glBegin(GL.GL_QUAD_STRIP);
-          float phi = 0.0f;
-          for (int j = nsides; j >= 0; j--) {
-            phi += sideDelta;
-            float cosPhi = (float) Math.cos(phi);
-            float sinPhi = (float) Math.sin(phi);
-            float dist = R + r * cosPhi;
-            gl.glNormal3f(cosTheta1 * cosPhi, sinTheta1 * cosPhi, -sinPhi);
-            gl.glVertex3f(x+cosTheta1 * dist, y+sinTheta1 * dist, r * -sinPhi);
-            gl.glNormal3f(cosTheta * cosPhi, sinTheta * cosPhi, -sinPhi);
-            gl.glVertex3f(x+cosTheta * dist, y+sinTheta * dist, r * -sinPhi);
-          }
-          gl.glEnd();
-          theta = theta1;
-          cosTheta = cosTheta1;
-          sinTheta = sinTheta1;
-        }
-      }
-
-   
-    ///////////////////////////////////////////////////////////
-    //drawing primitives TODO use VBO
-    
-    
-    private void drawCylinder(double radius, int latitude){
-     	
-    	gl.glScaled(1, radius, radius);
-
-    	float dt = (float) 1/latitude;
-    	float da = (float) (2*Math.PI *dt) ; 
-    	gl.glBegin(GL.GL_QUADS); 
-    	
-    	for( int i = 0; i < latitude + 1 ; i++ ) { 
-    		float y0 = (float) Math.sin ( i * da ); 
-    		float z0 = (float) Math.cos ( i * da ); 
-    		float y1 = (float) Math.sin ( (i+1) * da ); 
-    		float z1 = (float) Math.cos ( (i+1) * da ); 
-
-    		gl.glTexCoord2f(0,i*dt);
-    		gl.glNormal3f(0,y0,z0); 
-    		gl.glVertex3f(0,y0,z0); 
-
-
-    		gl.glTexCoord2f(1,i*dt);
-    		gl.glNormal3f(1,y0,z0); 
-    		gl.glVertex3f(1,y0,z0); 
-
-    		gl.glTexCoord2f(1,(i+1)*dt);
-    		gl.glNormal3f(1,y1,z1); 
-    		gl.glVertex3f(1,y1,z1); 
-
-    		gl.glTexCoord2f(0,(i+1)*dt);
-    		gl.glNormal3f(0,y1,z1); 
-    		gl.glVertex3f(0,y1,z1); 
-
-    		
-    	} 
-    	gl.glEnd();  
-    }
-    
-    
-   
-   
-    
-    
-    public void drawTriangle(){    	
-    	initMatrix();
-    	
-        gl.glBegin(GL.GL_TRIANGLES);	
-        
-        gl.glNormal3f(0.0f, 0.0f, 1.0f);
-        gl.glVertex3f(0.0f, 0.0f, 0.0f);	
-        gl.glVertex3f(1.0f, 0.0f, 0.0f);	
-        gl.glVertex3f(0.0f, 1.0f, 0.0f);
-                
-        gl.glNormal3f(0.0f, 0.0f, -1.0f);
-        gl.glVertex3f(0.0f, 0.0f, 0.0f);	
-        gl.glVertex3f(0.0f, 1.0f, 0.0f);	
-        gl.glVertex3f(1.0f, 0.0f, 0.0f);        	
-        
-        gl.glEnd();	
-        
-        resetMatrix();
-    }
-    
-    
-    
-    
-    private void drawQuad(){    	
- 
-       	gl.glDisable(GL.GL_CULL_FACE);
- 	
-    	
-        gl.glBegin(GL.GL_QUADS);	
-        
-        gl.glNormal3f(0.0f, 0.0f, 1.0f);
-        gl.glVertex3f(0.0f, 0.0f, 0.0f);	
-        gl.glVertex3f(1.0f, 0.0f, 0.0f);	
-        gl.glVertex3f(1.0f, 1.0f, 0.0f);	
-        gl.glVertex3f(0.0f, 1.0f, 0.0f);
-              
-        gl.glEnd();		
-        
-	   	gl.glEnable(GL.GL_CULL_FACE);
-       
-    }
     
     
     

@@ -4,13 +4,14 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.arithmetic.Functional2Var;
 
 /** Class describing function of 2 variables
  * @author matthieu
  *
  */
 public class GeoFunction2Var extends GeoElement3D
-implements GeoFunction2VarInterface {
+implements Functional2Var {
 	
 	
 	// to remove

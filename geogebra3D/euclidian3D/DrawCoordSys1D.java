@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.Brush;
+import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoCoordSys1D;
@@ -95,7 +95,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		renderer.getGeometryManager().remove(segmentIndex);
 
 		
-		Brush brush = renderer.getGeometryManager().getBrush();
+		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 		
 		brush.start(8);
 		brush.setThickness(getLineThickness(),(float) getView3D().getScale());

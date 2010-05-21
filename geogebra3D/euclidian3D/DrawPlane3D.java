@@ -8,9 +8,9 @@ import java.awt.Color;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.Brush;
+import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.opengl.Surface;
+import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoCoordSys;
 import geogebra3D.kernel3D.GeoCoordSys1D;
@@ -43,9 +43,9 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 		if (!((GeoPlane3D)getGeoElement()).isPlateVisible())
 			return;
-		renderer.initMatrix();
+		//renderer.initMatrix();
 		renderer.getGeometryManager().draw(planeIndex);
-		renderer.resetMatrix();
+		//renderer.resetMatrix();
 		
 	}
 	
@@ -60,18 +60,18 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	
 
 	public void drawHidden(Renderer renderer){
-		renderer.setMatrix(getMatrix());
+		//renderer.setMatrix(getMatrix());
 		drawGeometryHidden(renderer);
 	}; 
 
 	public void drawGeometryHidden(Renderer renderer){ 
 		if (!((GeoPlane3D)getGeoElement()).isGridVisible())
 			return;
-		renderer.initMatrix();
+		//renderer.initMatrix();
 		//dash
 		renderer.getTextures().setTexture(Textures.DASH_SHORT);
 		renderer.getGeometryManager().draw(gridIndex);
-		renderer.resetMatrix();
+		//renderer.resetMatrix();
 		
 	};
 	
@@ -92,14 +92,8 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		renderer.getGeometryManager().remove(planeIndex);	
 		
 		
-		Surface surface = renderer.getGeometryManager().getSurface();
+		PlotterSurface surface = renderer.getGeometryManager().getSurface();
 		
-		/*
-		planeIndex = renderer.getGeometryManager().newPlane(
-				geo.getObjectColor(),
-				alpha,
-				(float) (200/getView3D().getScale()));
-		*/
 		surface.start(geo);
 		float dimension = (float) (200/getView3D().getScale()) * 2f;
 		surface.setU(-dimension, dimension);surface.setNbU(2);
@@ -116,7 +110,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		// grid
 		renderer.getGeometryManager().remove(gridIndex);
 		
-		Brush brush = renderer.getGeometryManager().getBrush();
+		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 		
 		brush.start(8);
 		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
