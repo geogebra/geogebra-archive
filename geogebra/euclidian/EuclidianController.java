@@ -3289,8 +3289,9 @@ Rectangle rect = view.getSelectionRectangle();
 
 		// only keep polygon in hits if one side of polygon is in hits too
 		// removed: Point Tool creates Point on edge of Polygon
-		//if (!hits.isEmpty())
-		//	hits.keepOnlyHitsForNewPointMode();
+		// mathieu: put it back for Point In Region Tool
+		if (!hits.isEmpty() && mode == EuclidianView.MODE_POINT_IN_REGION)
+			hits.keepOnlyHitsForNewPointMode();
 
 		Path path = null;	
 		Region region = null;
