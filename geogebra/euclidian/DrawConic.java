@@ -210,29 +210,41 @@ final public class DrawConic extends Drawable implements Previewable {
         }
         
         
-        // on screen?
+        // shape on screen?
+        Rectangle viewRect = new Rectangle(0,0,view.width,view.height);
         switch (type) {	                          	            
 	        case GeoConic.CONIC_CIRCLE:                                               
 	        case GeoConic.CONIC_ELLIPSE:   
-	        case GeoConic.CONIC_PARABOLA:	           
-	        	// shape on screen?
-	        	// Michael Borcherds: bugfix getBounds2D() added otherwise rotated parabolas not displayed sometimes
-	        	if (arcFiller == null && !shape.getBounds2D().intersects(0,0, view.width, view.height)) {				
-	    			isVisible = false;
-	    			return;
-	    		}
+	        case GeoConic.CONIC_PARABOLA:
+	        	boolean includesScreenCompletely = shape.contains(viewRect);
+	        	
+	        	// offScreen = includesScreenCompletely or the shape does not intersect the view rectangle
+	        	boolean offScreen =  includesScreenCompletely || !shape.getBounds2D().intersects(viewRect);
+	        	if (geo.alphaValue == 0f) {
+	        		// no filling
+	        		isVisible = !offScreen;
+	        	} else {
+	        		// filling
+	        		if (includesScreenCompletely) {
+	        			isVisible = true;
+	        		} else {
+	        			isVisible = !offScreen;
+	        		}
+	        	}	        	
 	        	break;
 	            
 	        case GeoConic.CONIC_HYPERBOLA:
 	        	// hyperbola wings on screen?
-	        	hypLeftOnScreen = hypLeft.intersects(0,0, view.width, view.height);
-	        	hypRightOnScreen = hypRight.intersects(0,0, view.width, view.height);
+	        	hypLeftOnScreen = hypLeft.intersects(viewRect);
+	        	hypRightOnScreen = hypRight.intersects(viewRect);
 	        	if (!hypLeftOnScreen && !hypRightOnScreen) {
 	        		isVisible = false;
-	    			return;
 	        	}	            
 	            break;            
         }
+        
+        if (!isVisible)
+        	return;
         
 		// draw trace
 		if (conic.trace) {
@@ -374,10 +386,14 @@ final public class DrawConic extends Drawable implements Previewable {
                 angEnd = Math.PI - Math.acos(mx / radius);
 				i = 3;
             }      
-            // on screen (should not be needed)
+            // center on screen 
             else {                
-                angSt = 0.0d;
-                angEnd = 2*Math.PI;                
+            	// huge circle with center on screen: use screen rectangle instead of circle for possible filling
+            	shape = circle = new Rectangle(-1,-1,view.width+2, view.height+2);
+                arcFiller = null; 
+                xLabel = -100;                
+                yLabel = -100;  
+                return;
             }            
             
             if (Double.isNaN(angSt) || Double.isNaN(angEnd)) {                
