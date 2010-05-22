@@ -1648,8 +1648,25 @@ implements ExpressionValue, ExpressionNodeConstants {
                 
             case POWER:
             	
-            	
             	if (STRING_TYPE == STRING_TYPE_GEOGEBRA && leftStr.startsWith("sin(")) {
+            		//&& rightStr.equals("2")) {
+            		int index;
+            		try {
+           			index = Integer.parseInt(rightStr);
+            		} catch (NumberFormatException nfe) {
+            			index = Integer.MAX_VALUE;
+            		}
+           		
+            		if (index > 0 && index != Integer.MAX_VALUE) {
+	            		sb.append("sin");
+	            		sb.append(Unicode.numberToIndex(index));
+	            		sb.append(leftStr.substring(3)); // everying except the "sin"
+	            		break;
+            		}
+            		
+            	}//*/
+            	
+            	if (STRING_TYPE == STRING_TYPE_LATEX && leftStr.startsWith("\\sin ")) {
             		//&& rightStr.equals("2")) {
             		int index;
             		try {
@@ -1657,11 +1674,12 @@ implements ExpressionValue, ExpressionNodeConstants {
             		} catch (NumberFormatException nfe) {
             			index = Integer.MAX_VALUE;
             		}
-            		
+           		
             		if (index > 0 && index != Integer.MAX_VALUE) {
-	            		sb.append("sin");
-	            		sb.append(Unicode.numberToIndex(index));
-	            		sb.append(leftStr.substring(3)); // everying except the "sin("
+	            		sb.append("\\sin ^{");
+	            		sb.append(rightStr);
+	            		sb.append("}");
+	            		sb.append(leftStr.substring(4)); // everying except the "\\sin "
 	            		break;
             		}
             		
