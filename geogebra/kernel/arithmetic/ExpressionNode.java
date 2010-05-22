@@ -1680,13 +1680,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 						
 						/* removed Michael Borcherds 2009-02-08
 						 * doesn't work eg  m=1   g(x) = (x - 1)^m (x - 3)
-						 */
+						 *
 						 
 					    // check for 1 in exponent
             			if (isEqualString(right, 1, !valueForm)) {
             				sb.append(leftStr);
             				break;
-            			}   
+            			}   //*/
             			
             	
 		                // left wing                   	
