@@ -64,11 +64,11 @@ public class AlgoFractionText extends AlgoElement {
 		    	text.setTextString(kernel.format(frac[0]));				
 			} else {
 				sb.setLength(0);
-		    	sb.append("\\frac{");
+		    	sb.append("{\\frac{");
 		    	sb.append(kernel.format(frac[0]));
 		    	sb.append("}{");
 		    	sb.append(kernel.format(frac[1]));
-		    	sb.append("}");
+		    	sb.append("}}");
 		    	
 		    	text.setTextString(sb.toString());
 			}
