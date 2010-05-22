@@ -2256,7 +2256,7 @@ Rectangle rect = view.getSelectionRectangle();
 
 
 	protected void processMouseMoved(MouseEvent e) {	
-
+		
 		boolean repaintNeeded;
 
 		// reset icon
@@ -2343,6 +2343,7 @@ Rectangle rect = view.getSelectionRectangle();
 
 		//	manage highlighting & "snap to object"
 		//Application.debug("noHighlighting = "+noHighlighting);
+		//Application.debug("hits = "+hits.toString());		
 		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
 				|| repaintNeeded;
 
@@ -2368,7 +2369,7 @@ Rectangle rect = view.getSelectionRectangle();
 	// returns wheter repaint is necessary
 	final boolean refreshHighlighting(Hits hits) {
 		boolean repaintNeeded = false;
-
+		
 		//	clear old highlighting
 		if (highlightedGeos.size() > 0) {
 			setHighlightedGeos(false);
@@ -3289,8 +3290,10 @@ Rectangle rect = view.getSelectionRectangle();
 
 		// only keep polygon in hits if one side of polygon is in hits too
 		// removed: Point Tool creates Point on edge of Polygon
-		// mathieu: put it back for Point In Region Tool
-		if (!hits.isEmpty() && mode == EuclidianView.MODE_POINT_IN_REGION)
+		// mathieu: put it back for Point In Region Tool and View Direction Tool
+		if ((mode == EuclidianView.MODE_POINT_IN_REGION 
+				|| mode == EuclidianView.MODE_VIEW_IN_FRONT_OF )
+				&& !hits.isEmpty())
 			hits.keepOnlyHitsForNewPointMode();
 
 		Path path = null;	
@@ -5708,7 +5711,7 @@ Rectangle rect = view.getSelectionRectangle();
 
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview
-	protected boolean move(Hits hits) {		
+	protected boolean move(Hits hits) {	
 		addSelectedGeo(hits.getMoveableHits(), 1, false);	
 		return false;
 	}

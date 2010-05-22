@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.AlgebraView;
+import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
@@ -408,10 +409,10 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	}
 	
 
-    
-    //copied on GeoPoint
+
+	//copied on GeoPoint
 	public boolean isChangeable() {
-		return !isFixed() && (isIndependent() || isPointOnPath() || hasRegion()); 
+		return !isFixed() && (isIndependent() || isPointOnPath() || isPointInRegion()); 
 	}	
 	
     ///////////////////////////////////////////////////////////
@@ -423,6 +424,10 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	final public boolean hasRegion() {
 		return region != null;
 	}	
+	
+	final public boolean isPointInRegion() {
+		return region != null;
+	}
 	
 
 	final public void doRegion(){

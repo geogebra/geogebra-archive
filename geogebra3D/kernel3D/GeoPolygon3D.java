@@ -351,6 +351,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoord
 		else
 			return null;
 			*/
+		//return new GgbMatrix4x4(coordSys.getMatrix());
 		return coordSys.getMatrix4x4();
 	}
 	
