@@ -151,7 +151,7 @@ public abstract class CommandProcessor  {
 			sb.append(((GeoElement) arg).getNameDescription());
 		else if (arg != null)
 			sb.append(arg.toString());
-		sb.append("\n\nSyntax:\n" + app.getCommand(cmd + "Syntax"));
+		sb.append("\n\nSyntax:\n" + app.getCommandSyntax(cmd));
 		return new MyError(app, sb.toString());
 	}
 
@@ -163,7 +163,7 @@ public abstract class CommandProcessor  {
 		sb.append(
 				app.getCommand("Command") + " " + app.getCommand(cmd) + ":\n");
 		sb.append(app.getError("IllegalArgumentNumber") + ": " + argNumber);
-		sb.append("\n\nSyntax:\n" + app.getCommand(cmd + "Syntax"));
+		sb.append("\n\nSyntax:\n" + app.getCommandSyntax(cmd));
 		return new MyError(app, sb.toString());
 	}
 

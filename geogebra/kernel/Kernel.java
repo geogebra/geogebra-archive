@@ -7019,4 +7019,8 @@ public class Kernel {
 		System.out.println("changed " +B);
 		System.out.println(g);
 	}
+	
+	public boolean is3D() {
+		return false;
+	}
 }

@@ -704,6 +704,9 @@ public class Kernel3D
 	}	
 	
 	
+	public boolean is3D() {
+		return true;
+	}
 	
 	
 	

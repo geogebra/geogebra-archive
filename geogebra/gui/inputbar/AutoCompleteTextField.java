@@ -558,11 +558,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// translate command to internal name and get syntax description
 		// note: the translation ignores the case of command
 		String internalCmd = app.translateCommand(command);
-		String key = internalCmd + "Syntax";
-		String syntax = app.getCommand(key);
+		//String key = internalCmd + "Syntax";
+		//String syntax = app.getCommand(key);
+		String syntax = app.getCommandSyntax(internalCmd);
 
 		// check if we really found syntax information
-		if (key.equals(syntax)) return null;
+		//if (key.equals(syntax)) return null;
+		if (syntax.indexOf("Syntax") == -1) return null;
 
 		// build html tooltip
 		syntax = syntax.replaceAll("<", "&lt;");

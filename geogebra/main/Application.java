@@ -1574,7 +1574,7 @@ public abstract class Application implements KeyEventDispatcher {
 		while (e.hasMoreElements()) {
 			String internal = (String) e.nextElement();
 			// Application.debug(internal);
-			if (!internal.endsWith("Syntax") && !internal.endsWith("SyntaxCAS") && !internal.equals("Command")) {
+			if (!internal.endsWith("Syntax") && !internal.endsWith("Syntax3D") && !internal.endsWith("SyntaxCAS") && !internal.equals("Command")) {
 				String local = rbcommand.getString((String) internal);
 				if (local != null) {
 					local = local.trim();
@@ -1816,6 +1816,16 @@ public abstract class Application implements KeyEventDispatcher {
 		} catch (Exception e) {
 			return key;
 		}
+	}
+
+	final public String getCommandSyntax(String key) {
+		
+		if(kernel.is3D()) {
+			String command3D = getCommand(key+"Syntax3D");
+			if (!command3D.equals(key)) return command3D;
+		}
+		
+		return getCommand(key+"Syntax");
 	}
 
 	final public String getSetting(String key) {
