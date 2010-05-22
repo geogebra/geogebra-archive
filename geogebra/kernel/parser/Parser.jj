@@ -299,6 +299,7 @@ TOKEN: {
 |	< Z_FUNC:  "z(" | "zcoord("  > 
 |	< COS_FUNC: ( "cos(" | "Cos(" ) > 
 |	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
+|	< SINN_FUNC: ( "sin" | "Sin" ) (<SUPERSCRIPT_MINUS>)? ( <INDEXDIGIT> )+ "(" > 
 |	< TAN_FUNC: ( "tan(" | "Tan(" ) > 
 |	< CSC_FUNC: ( "csc(" | "Csc(" | "cosec(" | "Cosec(") > 
 |	< SEC_FUNC: ( "sec(" | "Sec(" ) > 
@@ -1485,7 +1486,11 @@ ExpressionNode numberFunction():
       { return new ExpressionNode(kernel, en, ExpressionNode.COS, null); }   
 |
     <SIN_FUNC> en = expressionOrEquation() ")"
-      { return new ExpressionNode(kernel, en, ExpressionNode.SIN, null); }  
+      { return new ExpressionNode(kernel, en, ExpressionNode.SIN, null); }   
+|
+    ( c = <SINN_FUNC> ) en = expressionOrEquation() ")"
+//      { return new ExpressionNode(kernel, new ExpressionNode(kernel, en, ExpressionNode.SIN, null), ExpressionNode.POWER, kernel.convertIndexToNumber(c.image)); }  
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.SIN); }  
 |
     <TAN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.TAN, null); }  

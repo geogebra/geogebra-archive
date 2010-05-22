@@ -26,6 +26,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1646,6 +1647,26 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                break;
                 
             case POWER:
+            	
+            	
+            	if (STRING_TYPE == STRING_TYPE_GEOGEBRA && leftStr.startsWith("sin(")) {
+            		//&& rightStr.equals("2")) {
+            		int index;
+            		try {
+            			index = Integer.parseInt(rightStr);
+            		} catch (NumberFormatException nfe) {
+            			index = Integer.MAX_VALUE;
+            		}
+            		
+            		if (index > 0 && index != Integer.MAX_VALUE) {
+	            		sb.append("sin");
+	            		sb.append(Unicode.numberToIndex(index));
+	            		sb.append(leftStr.substring(3)); // everying except the "sin("
+	            		break;
+            		}
+            		
+            	}//*/
+            	
             	switch (STRING_TYPE) {			
 					case STRING_TYPE_JASYMCA:
 					case STRING_TYPE_MATH_PIPER:

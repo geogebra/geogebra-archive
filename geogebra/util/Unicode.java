@@ -16,5 +16,42 @@ public class Unicode {
 	final public static char Superscript_9 = '\u2079';
 	final public static char RightToLeftMark = '\u200f';
 	final public static char LeftToRightMark = '\u200e';
+	final public static String superscriptMinusOneBracket = "\u207b\u00b9(";
+	
+	/*
+	 * converts an integer to a unicode superscript string (including minus sign)
+	 * eg for use as a power
+	 * @author Michael
+	 */
+	final public static String numberToIndex(int i) {
+
+		StringBuilder sb = new StringBuilder();
+		 if (i < 0)
+		 {
+			 sb.append(Superscript_Minus); // superscript minus sign
+			 i = -i;
+		 }
+		 
+		 if (i == 0) sb.append(Superscript_0); // zero     					 
+		 else while (i>0) {
+			 switch (i%10) {
+	            case 0: sb.insert(0, Superscript_0); break;
+	            case 1: sb.insert(0, Superscript_1); break;
+	            case 2: sb.insert(0, Superscript_2); break;
+	            case 3: sb.insert(0, Superscript_3); break;
+	            case 4: sb.insert(0, Superscript_4); break;
+	            case 5: sb.insert(0, Superscript_5); break;
+	            case 6: sb.insert(0, Superscript_6); break;
+	            case 7: sb.insert(0, Superscript_7); break;
+	            case 8: sb.insert(0, Superscript_8); break;
+	            case 9: sb.insert(0, Superscript_9); break;
+			 
+			 }
+			 i = i / 10;
+		 }
+		 
+		 return sb.toString();
+
+	}
 	
 }

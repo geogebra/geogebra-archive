@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -7022,5 +7023,26 @@ public class Kernel {
 	
 	public boolean is3D() {
 		return false;
+	}
+	
+	final public GeoNumeric convertIndexToNumber(String str) {
+		//Application.debug(str.substring(3, str.length() - 1)); 
+		MyDouble md = new MyDouble(this, str.substring(3, str.length() - 1)); // strip off eg "sin" at start, "(" at end
+		GeoNumeric num = new GeoNumeric(getConstruction(), md.getDouble());
+		return num;
+
+	}
+	
+	final public ExpressionNode handleTrigPower(String image, ExpressionNode en, int type) {
+		
+		// sin^(-1)(x) -> ArcSin(x)
+		if (image.indexOf(Unicode.Superscript_Minus) > -1) {
+			//String check = ""+Unicode.Superscript_Minus + Unicode.Superscript_1 + '(';
+			if (image.substring(3, 6).equals(Unicode.superscriptMinusOneBracket))
+				return new ExpressionNode(this, en, ExpressionNode.ARCSIN, null);
+			else throw new Error("Bad index for trig function"); // eg sin^-2(x)
+		}
+		
+		return new ExpressionNode(this, new ExpressionNode(this, en, type, null), ExpressionNode.POWER, convertIndexToNumber(image));
 	}
 }
