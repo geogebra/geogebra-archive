@@ -7021,9 +7021,6 @@ public class Kernel {
 		System.out.println(g);
 	}
 	
-	public boolean is3D() {
-		return false;
-	}
 	
 	final public GeoNumeric convertIndexToNumber(String str) {
 		//Application.debug(str.substring(3, str.length() - 1)); 

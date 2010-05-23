@@ -1818,12 +1818,7 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 
-	final public String getCommandSyntax(String key) {
-		
-		if(kernel.is3D()) {
-			String command3D = getCommand(key+"Syntax3D");
-			if (!command3D.equals(key)) return command3D;
-		}
+	public String getCommandSyntax(String key) {
 		
 		return getCommand(key+"Syntax");
 	}

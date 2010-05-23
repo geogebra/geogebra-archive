@@ -313,7 +313,23 @@ public abstract class Application3D extends Application{
 		
 	}
     
-    
+	
+	
+	
+	
+	
+	///////////////////////////////////////
+	// COMMANDS
+	///////////////////////////////////////
+	
+	
+	public String getCommandSyntax(String key) {
+		
+		String command3D = getCommand(key+"Syntax3D");
+		if (!command3D.equals(key)) return command3D;
+		
+		return super.getCommandSyntax(key);
+	}
     
     
     
