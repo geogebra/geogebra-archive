@@ -1167,7 +1167,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 		matrix[5] = matrix[5] - matrix[3] * vx - matrix[1] * vy;
 		
 		// avoid classification and set changes by hand:   
-		setMidpoint(getMidpoint().add(new GgbVector(new double[] {vx,vy})).get());
+		setMidpoint(getMidpoint().add(new GgbVector(new double[] {vx,vy,0})).get());
 		/*
 		b.x += vx;
 		b.y += vy;
