@@ -16,166 +16,6 @@ import java.awt.Color;
  */
 public class PlotterBrush {
 	
-	// private class describing a section
-	private class Section{
-		/** center and clock vectors */
-		private GgbVector center, clockU, clockV;
-		
-		/** direction from last point */
-		private GgbVector direction;
-		
-		/** normal (for caps) */
-		private GgbVector normal = null;
-		
-		/** normal deviation along direction */
-		private double normalDevD = 0;
-		private double normalDevN = 1;
-		
-		/** thickness = radius of the section */
-		private float thickness;
-		
-		/**
-		 * first section constructor
-		 * @param point
-		 * @param thickness
-		 */
-		public Section(GgbVector point, float thickness){
-			this(point, thickness, null, null);
-		}
-		
-		/**
-		 * first section constructor
-		 * @param point
-		 * @param thickness
-		 * @param clockU 
-		 * @param clockV 
-		 */
-		public Section(GgbVector point, float thickness, GgbVector clockU, GgbVector clockV){
-			this.center = point;
-			this.thickness = thickness;
-			this.clockU = clockU;
-			this.clockV = clockV;
-		}	
-		
-		/**
-		 * second section constructor
-		 * @param s
-		 * @param point
-		 * @param thickness
-		 * @param updateClock 
-		 */
-		public Section(Section s, GgbVector point, float thickness, boolean updateClock){
-			this(point,thickness);
-			
-			direction = center.sub(s.center);
-
-			if (center.equalsForKernel(s.center, Kernel.STANDARD_PRECISION)){
-				if (this.thickness<s.thickness)
-					normal = s.direction;
-				else 
-					normal = (GgbVector) s.direction.mul(-1);
-				s.normal = normal;
-				//keep last direction
-				direction = s.direction;
-			}else{
-				//calc normal deviation
-				double dt = this.thickness-s.thickness;
-				if (dt!=0){
-					double l = direction.norm();
-					double h = Math.sqrt(l*l+dt*dt);
-					normalDevD = -dt/h;
-					normalDevN = l/h;
-				
-					//normalDevD = 0.0000; normalDevN = 1;
-					
-					s.normalDevD = normalDevD;
-					s.normalDevN = normalDevN;
-					//Application.debug("dt="+dt+",normalDev="+normalDevD+","+normalDevN);
-				}
-				
-				direction.normalize();
-				s.direction = direction;
-				normal = null;
-				s.normal = null;
-				
-				//calc new clocks				
-				if (updateClock){
-					GgbVector[] vn = direction.completeOrthonormal();
-					s.clockU = vn[0]; s.clockV = vn[1];
-				}
-
-			}
-			clockU = s.clockU; clockV = s.clockV;
-			
-			//Application.debug("direction=\n"+direction.toString());
-		}
-		
-		
-		
-		/**
-		 * return the normal vector for parameters u,v
-		 * @param u
-		 * @param v
-		 * @return the normal vector
-		 */
-		public GgbVector[] getNormalAndPosition(double u, double v){
-			GgbVector vn = (GgbVector) clockV.mul(v).add(clockU.mul(u));
-			GgbVector pos = (GgbVector) vn.mul(thickness).add(center);
-			if (normal!=null)
-				return new GgbVector[] {normal,pos};
-			else
-				if (normalDevD!=0){
-					//Application.debug("normalDev="+normalDevD+","+normalDevN);
-					//return new GgbVector[] {vn,pos};
-					return new GgbVector[] {(GgbVector) vn.mul(normalDevN).add(direction.mul(normalDevD)),pos};
-				}else
-					return new GgbVector[] {vn,pos};
-		}
-		
-		
-		
-		////////////////////////////////////
-		// FOR 3D CURVE
-		////////////////////////////////////
-		
-		
-		/**
-		 * first section constructor
-		 * @param point
-		 * @param thickness
-		 * @param direction
-		 */
-		public Section(GgbVector point, GgbVector direction, float thickness){
-			this.center = point;
-			this.thickness = thickness;
-			this.direction = direction;
-			GgbVector[] vn = direction.completeOrthonormal();
-			clockU = vn[0]; clockV = vn[1];
-			
-		}	
-		
-		/**
-		 * first section constructor
-		 * @param point
-		 * @param thickness
-		 * @param direction
-		 */
-		public Section(Section s, GgbVector point, GgbVector direction, float thickness){
-			
-			this.center = point;
-			this.thickness = thickness;
-			this.direction = direction;
-			
-			clockV = direction.crossProduct(s.clockU).normalized(); 
-			//normalize it to avoid little errors propagation
-			// TODO truncate ?
-			clockU = clockV.crossProduct(direction).normalized();
-			
-		}	
-		
-
-	}
-	
 	
 	/** thickness for drawing 3D lines*/
 	public static final float LINE3D_THICKNESS = 0.5f;
@@ -188,7 +28,7 @@ public class PlotterBrush {
 	private int index;
 	
 	/** start and end sections*/
-	private Section start, end;
+	private PlotterBrushSection start, end;
 	
 	/** current thickness */
 	private float thickness;
@@ -312,7 +152,7 @@ public class PlotterBrush {
 	 */
 	private void down(GgbVector point, GgbVector clockU, GgbVector clockV){
 		
-		start = new Section(point,thickness, clockU, clockV);
+		start = new PlotterBrushSection(point,thickness, clockU, clockV);
 		end = null;
 	}
 	
@@ -322,10 +162,10 @@ public class PlotterBrush {
 	public void moveTo(GgbVector point){
 		// update start and end sections
 		if (end==null){
-			end = new Section(start, point, thickness,true);
+			end = new PlotterBrushSection(start, point, thickness,true);
 		}else{
 			start = end;
-			end = new Section(start, point, thickness,false);
+			end = new PlotterBrushSection(start, point, thickness,false);
 		}
 		
 		join();
@@ -340,7 +180,7 @@ public class PlotterBrush {
 		if (end!=null)
 			start = end;
 		
-		end = new Section(point, thickness, clockU, clockV);
+		end = new PlotterBrushSection(point, thickness, clockU, clockV);
 		
 		join();
 	}	
@@ -375,7 +215,7 @@ public class PlotterBrush {
 	/** draws a section point
 	 * 
 	 */
-	private void draw(Section s, double u, double v, int texture){
+	private void draw(PlotterBrushSection s, double u, double v, int texture){
 		
 		GgbVector[] vectors = s.getNormalAndPosition(u, v);
 		
@@ -427,7 +267,7 @@ public class PlotterBrush {
 		case ARROW_TYPE_SIMPLE:
 			float factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
 			float arrowPos = ARROW_LENGTH/length * factor;
-			GgbVector arrowBase = (GgbVector) start.center.mul(arrowPos).add(p2.mul(1-arrowPos));
+			GgbVector arrowBase = (GgbVector) start.getCenter().mul(arrowPos).add(p2.mul(1-arrowPos));
 			
 			setTextureX(0);
 			if (hasTicks()){
@@ -545,15 +385,15 @@ public class PlotterBrush {
 		setTextureType(PlotterBrush.TEXTURE_LINEAR);
 		
 		float t=tMin;
-		end = new Section(curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);
+		end = new PlotterBrushSection(curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);
 		t+=dt;
 		float l = 0;
 		setTextureX(l);
 		
 		for (; t<=tMax; t+=dt){
 			start = end;
-			end = new Section(start,curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);
-			l+=end.center.distance(start.center);
+			end = new PlotterBrushSection(start,curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);
+			l+=end.getCenter().distance(start.getCenter());
 			setTextureX(l);
 			join();
 		}
