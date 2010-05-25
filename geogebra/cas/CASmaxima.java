@@ -1,6 +1,11 @@
 package geogebra.cas;
 
 
+import geogebra.cas.jacomax.JacomaxSimpleConfigurator;
+import geogebra.cas.jacomax.MaximaConfiguration;
+import geogebra.cas.jacomax.MaximaInteractiveProcess;
+import geogebra.cas.jacomax.MaximaProcessLauncher;
+import geogebra.cas.jacomax.MaximaTimeoutException;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -11,11 +16,6 @@ import geogebra.main.MyResourceBundle;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import uk.ac.ed.ph.jacomax.JacomaxSimpleConfigurator;
-import uk.ac.ed.ph.jacomax.MaximaConfiguration;
-import uk.ac.ed.ph.jacomax.MaximaInteractiveProcess;
-import uk.ac.ed.ph.jacomax.MaximaProcessLauncher;
-import uk.ac.ed.ph.jacomax.MaximaTimeoutException;
 
 public class CASmaxima extends CASgeneric {
 	
@@ -294,7 +294,7 @@ public class CASmaxima extends CASgeneric {
 		getMaxima();
 	}
 	
-	private void initMyMaximaFunctions() throws MaximaTimeoutException, uk.ac.ed.ph.jacomax.MaximaTimeoutException {
+	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
 	
 		// set line length of "terminal"
 		// we don't want lines broken
@@ -365,7 +365,7 @@ public class CASmaxima extends CASgeneric {
 
 	}
 
-	private String executeRaw(String maximaInput) throws MaximaTimeoutException, uk.ac.ed.ph.jacomax.MaximaTimeoutException {
+	private String executeRaw(String maximaInput) throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
         char lastChar = maximaInput.charAt(maximaInput.length() - 1);
         if (lastChar != ';' && lastChar != '$' && !maximaInput.startsWith(":lisp")) {
         	maximaInput += ";";
