@@ -1126,6 +1126,14 @@ public class Kernel {
 	public Construction getConstruction() {
 		return cons;
 	}
+	
+	/**
+	 * Changes the construction. Needed for viewing tool construction protocol.
+	 * @param cons Construction
+	 */
+	public void setConstruction(Construction cons){
+		this.cons=cons;	
+	}
 
 	/**
 	 * Returns the ConstructionElement for the given construction index.
