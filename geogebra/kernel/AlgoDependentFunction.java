@@ -107,6 +107,7 @@ public class AlgoDependentFunction extends AlgoElement {
             try { // needed for eg f(x)=floor(x) f'(x)
             	ev = expandFunctionDerivativeNodes(expression.deepCopy(kernel));
             } catch (Exception e) {
+            	e.printStackTrace();
             	Application.debug("derivative failed");
             }
             

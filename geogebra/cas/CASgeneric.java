@@ -3,7 +3,6 @@ package geogebra.cas;
 import java.util.ResourceBundle;
 
 
-import geogebra.cas.maximaconnector.RawMaximaSession;
 import geogebra.kernel.arithmetic.ValidExpression;
 
 public abstract class CASgeneric {

@@ -1,11 +1,6 @@
 package geogebra.cas;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
-
-import geogebra.cas.maximaconnector.MaximaTimeoutException;
-import geogebra.cas.maximaconnector.RawMaximaSession;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -13,11 +8,20 @@ import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import uk.ac.ed.ph.jacomax.JacomaxSimpleConfigurator;
+import uk.ac.ed.ph.jacomax.MaximaConfiguration;
+import uk.ac.ed.ph.jacomax.MaximaInteractiveProcess;
+import uk.ac.ed.ph.jacomax.MaximaProcessLauncher;
+import uk.ac.ed.ph.jacomax.MaximaTimeoutException;
+
 public class CASmaxima extends CASgeneric {
 	
 	final public String RB_GGB_TO_Maxima = "/geogebra/cas/ggb2maxima";
 	
-	private RawMaximaSession ggbMaxima;
+	private MaximaInteractiveProcess ggbMaxima;
 	private ResourceBundle ggb2Maxima;
 	
 	public CASmaxima(CASparser casParser) {
@@ -201,7 +205,7 @@ public class CASmaxima extends CASgeneric {
 			
 			while (res.indexOf('\n') > -1 ) res = res.replace('\n', ' ');
 			
-			String results[] = res.split("\\(%o\\d+\\)\\s*");
+			String results[] = res.split("\\(%[oi]\\d+\\)\\s*");
 			
 			result = results[results.length - 1];
 			
@@ -256,25 +260,28 @@ public class CASmaxima extends CASgeneric {
 	}
 	
 	
-	private synchronized RawMaximaSession getMaxima() {
+	private synchronized MaximaInteractiveProcess getMaxima() {
 		if (ggbMaxima == null) {
-		    //PropertiesMaximaConfiguration configuration = new PropertiesMaximaConfiguration();
-		    ggbMaxima = new RawMaximaSession();
+			MaximaConfiguration configuration = JacomaxSimpleConfigurator.configure();
+			MaximaProcessLauncher launcher = new MaximaProcessLauncher(configuration);
+			ggbMaxima = launcher.launchInteractiveProcess();
+			try {
+				initMyMaximaFunctions();
+				System.out.println(ggbMaxima.executeCall("1+2;"));
+			} catch (MaximaTimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//process.terminate();		
 		}
 		
-		if (!ggbMaxima.isOpen()) {
-		    try {
-				ggbMaxima.open();
+
 				
-				initMyMaximaFunctions();
 				
-			} catch (MaximaTimeoutException e) {
-				Application.debug("Timeout from Maxima");
-				ggbMaxima = null;
-				return null;
-			}
+				
+
 			
-		}
+		
 	
 		return ggbMaxima;
 	}
@@ -287,54 +294,54 @@ public class CASmaxima extends CASgeneric {
 		getMaxima();
 	}
 	
-	private void initMyMaximaFunctions() throws MaximaTimeoutException {
+	private void initMyMaximaFunctions() throws MaximaTimeoutException, uk.ac.ed.ph.jacomax.MaximaTimeoutException {
 	
 		// set line length of "terminal"
 		// we don't want lines broken
-	    ggbMaxima.executeRaw("linel:1000000;");
+	    ggbMaxima.executeCall("linel:1000000;");
 	    
 		// make sure results are returned
-	    ggbMaxima.executeRaw("display2d:false;");
+	    ggbMaxima.executeCall("display2d:false;");
 	    
 	    // make sure integral(1/x) = log(abs(x))
-	    ggbMaxima.executeRaw("logabs:true;");
+	    ggbMaxima.executeCall("logabs:true;");
 	    
 	    // make sure algsys (solve) doesn't return complex roots
-	    ggbMaxima.executeRaw("realonly:true;");
+	    ggbMaxima.executeCall("realonly:true;");
 	    
 	    // eg x^-1 displayed as 1/x
-	    ggbMaxima.executeRaw("exptdispflag:true;");
+	    ggbMaxima.executeCall("exptdispflag:true;");
 	    
 	    // suppresses the printout of the message informing the user of the conversion of floating point numbers to rational numbers
-	    ggbMaxima.executeRaw("ratprint:false;");
+	    ggbMaxima.executeCall("ratprint:false;");
 	    
 	    // When true, r some rational number, and x some expression, %e^(r*log(x)) will be simplified into x^r . It should be noted that the radcan command also does this transformation, and more complicated transformations of this ilk as well. The logcontract command "contracts" expressions containing log. 
-	    ggbMaxima.executeRaw("%e_to_numlog:true;");
+	    ggbMaxima.executeCall("%e_to_numlog:true;");
 	    
 	    
 	    // define custom functions
-	    ggbMaxima.executeRaw("log10(x) := log(x) / log(10);");
-	    ggbMaxima.executeRaw("log2(x) := log(x) / log(2);");
-	    ggbMaxima.executeRaw("cbrt(x) := x^(1/3);");
+	    ggbMaxima.executeCall("log10(x) := log(x) / log(10);");
+	    ggbMaxima.executeCall("log2(x) := log(x) / log(2);");
+	    ggbMaxima.executeCall("cbrt(x) := x^(1/3);");
 	    
 	    // needed to define lcm()
-	    ggbMaxima.executeRaw("load(functs)$");
+	    ggbMaxima.executeCall("load(functs)$");
 	    
 	    // needed for degree()
-	    ggbMaxima.executeRaw("load(powers)$");
+	    ggbMaxima.executeCall("load(powers)$");
 	       
 	    // needed for ???
-	    ggbMaxima.executeRaw("load(format)$");
+	    ggbMaxima.executeCall("load(format)$");
 	       
 	    // turn {x=3} into {3} etc
-	    ggbMaxima.executeRaw("stripequals(ex):=block(" +
+	    ggbMaxima.executeCall("stripequals(ex):=block(" +
 	    		 "if atom(ex) then return(ex)" +
 	    		 "else if op(ex)=\"=\" then return(stripequals(rhs(ex)))" +
 	    		 "else apply(op(ex),map(stripequals,args(ex)))" +
 	    		")$");
 	    
 	    /* This function takes an expression ex and returns a list of coefficients of v */
-	    ggbMaxima.executeRaw("coefflist(ex,v):= block([deg,kloop,cl]," +
+	    ggbMaxima.executeCall("coefflist(ex,v):= block([deg,kloop,cl]," +
 	    		"cl:[]," +
 	      "ex:ev(expand(ex),simp)," +
 	      "deg:degree(ex,v)," +
@@ -350,21 +357,21 @@ public class CASmaxima extends CASgeneric {
 	     * if equal(n+1,0) then log(abs(x)) else x^(n+1)/(n+1)
 	     * TODO: change to ggb syntax
 	     */
-	    ggbMaxima.executeRaw("load(\"noninteractive\");");
+	    ggbMaxima.executeCall("load(\"noninteractive\");");
 
 	    
 	    // define Degree
-	    ggbMaxima.executeRaw("Degree:180/%pi;");
+	    ggbMaxima.executeCall("Degree:180/%pi;");
 
 	}
 
-	private String executeRaw(String maximaInput) throws MaximaTimeoutException {
+	private String executeRaw(String maximaInput) throws MaximaTimeoutException, uk.ac.ed.ph.jacomax.MaximaTimeoutException {
         char lastChar = maximaInput.charAt(maximaInput.length() - 1);
         if (lastChar != ';' && lastChar != '$' && !maximaInput.startsWith(":lisp")) {
         	maximaInput += ";";
-        }
-        
-        return getMaxima().executeRaw(maximaInput);
+        }    
+       
+        return getMaxima().executeCall(maximaInput);
 
 	}
 }
