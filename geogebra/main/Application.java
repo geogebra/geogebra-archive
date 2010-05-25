@@ -920,8 +920,8 @@ public abstract class Application implements KeyEventDispatcher {
 							Application.debug("Attempting to set CAS...2");
 							setDefaultCAS(CAS_MAXIMA);
 						}
-					} else if (optionName.equals("maximaPath")) {
-						setMaximaPath(optionValue);
+					//} else if (optionName.equals("maximaPath")) {
+					//	setMaximaPath(optionValue);
 					} else if (optionName.equals("fontSize")) {
 						setFontSize(Integer.parseInt(optionValue));
 					} else if (optionName.equals("enableUndo")) {
@@ -3932,34 +3932,6 @@ public abstract class Application implements KeyEventDispatcher {
 	final public static int CAS_MATHPIPER = ExpressionNode.STRING_TYPE_MATH_PIPER;
 	final public static int CAS_MAXIMA = ExpressionNode.STRING_TYPE_MAXIMA;
 	
-	private static String MAXIMA_PATH = null;
-
-	
-	// eg --maximaPath="C:\Program Files\Maxima-5.20.1\bin\maxima.bat"
-	// eg --maximaPath="C:\Program Files\Maxima-5.20.1"	
-	private void setMaximaPath(String optionValue) {
-		MAXIMA_PATH = optionValue;
-		
-		if (WINDOWS) {
-			if (!MAXIMA_PATH.endsWith(".bat"))
-				MAXIMA_PATH += "\\bin\\maxima.bat";
-		}
-		else if (MAC_OS) {
-			if (!MAXIMA_PATH.endsWith("/bin/maxima"))
-				MAXIMA_PATH += "/Contents/Resources/bin/maxima";
-		}
-		else {
-			MAXIMA_PATH += ""; // TODO (LINUX)
-		}
-		
-		File file = new File(MAXIMA_PATH);
-		if (file.exists()) {
-			kernel.setDefaultCAS(CAS_MAXIMA);
-			Application.debug("Maxima found at: "+MAXIMA_PATH);
-		} else {
-			System.err.println("Maxima not found at: "+MAXIMA_PATH);
-		}
-	}
 	
 	public void setDefaultCAS(int CAS) {
 		boolean success = false;
@@ -3978,30 +3950,10 @@ public abstract class Application implements KeyEventDispatcher {
 	// eg --CAS=maxima
 	//Ulven 27.01.10
 	private boolean setMaximaCAS(){
-		//if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
-			geogebra.main.FindMaxima fm=new geogebra.main.FindMaxima();
-			fm.search();
-			if(fm.isMaximaFound()){
-				if(WINDOWS){				//some work to do...
-					MAXIMA_PATH = fm.getPath()+"\\\\bin\\\\maxima.bat";	
-					kernel.setDefaultCAS(CAS_MAXIMA);					
-					
-				}else {						//Mac/Linux: Full path to executable
-					MAXIMA_PATH=fm.getPath();
-					kernel.setDefaultCAS(CAS_MAXIMA);
-				}//if os
-				Application.debug("MAXIMA_PATH was finally set to: "+MAXIMA_PATH);
-				return true;
-			}else{
-				Application.debug("Maxima not found at all...");
-			}//if maxima was found
-		return false;
+					kernel.setDefaultCAS(CAS_MAXIMA);		
+					return true;
 	}//setDefaultCas()
 	
-
-	public static String getMaximaPath() {
-		return MAXIMA_PATH;
-	}
 
 	public boolean showAlgebraView() {
 		if (!hasGuiManager()) return false;
