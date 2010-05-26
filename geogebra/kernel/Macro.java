@@ -225,7 +225,8 @@ public class Macro {
     			case GeoElement.GEO_CLASS_SEGMENT:    				
     			case GeoElement.GEO_CLASS_RAY:
     			case GeoElement.GEO_CLASS_POLYGON:
-    			case GeoElement.GEO_CLASS_FUNCTION:    			
+    			case GeoElement.GEO_CLASS_FUNCTION:
+    			case GeoElement.GEO_CLASS_CURVE_CARTESIAN://added by Zbynek Konecny, 2010-05-25 (http://www.geogebra.org/forum/viewtopic.php?t=7275)
     				// add parent algo and its input objects to macroConsOrigElements
     				addSpecialInputElement(input[i], macroConsOrigElements);
     				break;    				    			
