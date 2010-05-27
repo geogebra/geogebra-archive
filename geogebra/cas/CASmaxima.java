@@ -1,6 +1,7 @@
 package geogebra.cas;
 
 
+import geogebra.cas.jacomax.JacomaxAutoConfigurator;
 import geogebra.cas.jacomax.JacomaxSimpleConfigurator;
 import geogebra.cas.jacomax.MaximaConfiguration;
 import geogebra.cas.jacomax.MaximaInteractiveProcess;
@@ -262,7 +263,10 @@ public class CASmaxima extends CASgeneric {
 	
 	private synchronized MaximaInteractiveProcess getMaxima() {
 		if (ggbMaxima == null) {
-			MaximaConfiguration configuration = JacomaxSimpleConfigurator.configure();
+			MaximaConfiguration configuration = casParser.getKernel().getApplication().maximaConfiguration;
+			
+			if (configuration == null) configuration = JacomaxAutoConfigurator.guessMaximaConfiguration();
+			
 			MaximaProcessLauncher launcher = new MaximaProcessLauncher(configuration);
 			ggbMaxima = launcher.launchInteractiveProcess();
 			try {

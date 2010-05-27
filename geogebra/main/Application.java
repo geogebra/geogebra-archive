@@ -18,6 +18,8 @@ the Free Software Foundation.
 package geogebra.main;
 
 import geogebra.GeoGebra;
+import geogebra.cas.jacomax.JacomaxAutoConfigurator;
+import geogebra.cas.jacomax.MaximaConfiguration;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AlgebraInput;
@@ -960,13 +962,11 @@ public abstract class Application implements KeyEventDispatcher {
 					} else if (optionName.equals("showCAS")) {
 						getGuiManager().setShowCASView(!optionValue.equals("false"));
 					} else if (optionName.equals("CAS")) {
-						Application.debug("Attempting to set CAS...1");
 						if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
-							Application.debug("Attempting to set CAS...2");
 							setDefaultCAS(CAS_MAXIMA);
 						}
-					//} else if (optionName.equals("maximaPath")) {
-					//	setMaximaPath(optionValue);
+					} else if (optionName.equals("maximaPath")) {
+						setMaximaPath(optionValue);
 					} else if (optionName.equals("fontSize")) {
 						setFontSize(Integer.parseInt(optionValue));
 					} else if (optionName.equals("enableUndo")) {
@@ -983,7 +983,7 @@ public abstract class Application implements KeyEventDispatcher {
 			}
 		}
 	}
-
+	
 	/**
 	 * Opens a file specified as last command line argument
 	 * 
@@ -3992,11 +3992,30 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 		
 	}
-	// eg --CAS=maxima
-	//Ulven 27.01.10
+	
+	public MaximaConfiguration maximaConfiguration = null;
+
+	/* eg --maximaPath=
+	 */
+	private void setMaximaPath(String optionValue) {
+		maximaConfiguration = new MaximaConfiguration();
+		maximaConfiguration.setMaximaExecutablePath(optionValue);
+		kernel.setDefaultCAS(CAS_MAXIMA);				
+	}
+
+	
+	/* eg --CAS=maxima
+	 */
 	private boolean setMaximaCAS(){
-					kernel.setDefaultCAS(CAS_MAXIMA);		
-					return true;
+		
+		maximaConfiguration = JacomaxAutoConfigurator.guessMaximaConfiguration();
+
+		if (maximaConfiguration != null) {		
+			kernel.setDefaultCAS(CAS_MAXIMA);		
+			return true;
+		}
+		
+		return false;
 	}//setDefaultCas()
 	
 

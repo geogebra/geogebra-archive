@@ -1,113 +1,115 @@
 package geogebra.cas.jacomax.internal;
 
 import geogebra.cas.jacomax.MaximaConfiguration;
+import geogebra.main.Application;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
 
+
 public class DummyLogger {
 
+	final static boolean trace = true;
+	
 	public void trace(String string) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void info(String string, Exception e) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void info(String string) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void debug(String string) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void trace(String string, String string2) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public boolean isTraceEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return trace;
 	}
 
 	public void trace(String string, int bytesReadFromCallInput) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void debug(String string, Integer valueOf) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void trace(String string, boolean maximaStdinFinished, Object object) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void trace(String string, Object[] objects) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void debug(String string, File programFilesFolder) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void info(String string, MaximaConfiguration result) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void debug(String string, String location) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void warn(String string) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void info(String string, String path) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void info(String string, InputStream propertiesStream) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void info(String string, String callInput, int callTimeout) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public void debug(String string, String maximaInput,
 			String callTerminatorOutput) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
 	public boolean isInfoEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return trace;
 	}
 
 	public void info(String string, List<String> maximaCommandArray,
 			String string2) {
-		// TODO Auto-generated method stub
+		if (trace) Application.debug(string);
 		
 	}
 
