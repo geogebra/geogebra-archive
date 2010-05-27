@@ -13,6 +13,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
@@ -61,8 +62,11 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
 
   
     protected final void compute() {
+    	
+    	GgbCoordSys coordsys = plane.getCoordSys();
+    	
 		//recompute the coord sys
-		plane.resetCoordSys();
+    	coordsys.resetCoordSys();
 		
 		//if cs has "no" direction vector, set undefined and return
 		if (cs.getCoordSys().getMatrix().getColumn(1).equalsForKernel(0, Kernel.STANDARD_PRECISION)){
@@ -76,12 +80,12 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
 
 		//Application.debug(m.toString());
 
-		plane.addPointToCoordSys(point.getCoords(), true, true);
+		coordsys.addPoint(point.getCoords());
 		//TODO addVectorToCoordSys
-		plane.addPointToCoordSys((GgbVector) point.getCoords().add(m.getVy()), true, true);
-		plane.addPointToCoordSys((GgbVector) point.getCoords().add(m.getVz()), true, true);
+		coordsys.addPoint((GgbVector) point.getCoords().add(m.getVy()));
+		coordsys.addPoint((GgbVector) point.getCoords().add(m.getVz()));
 		//cs direction for normal vector
-		plane.addPointToCoordSys((GgbVector) point.getCoords().add(m.getVx()), true, true);
+		coordsys.addPoint((GgbVector) point.getCoords().add(m.getVx()));
 		
 
 		

@@ -5,6 +5,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdIntersect;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.GeoCoordSys;
 import geogebra3D.kernel3D.GeoCoordSysAbstract;
 import geogebra3D.kernel3D.Kernel3D;
 
@@ -34,14 +35,14 @@ public  GeoElement[] process(Command c) throws MyError {
         case 2 :
             arg = resArgs(c);
             // GeoCoordSys - GeoCoordSys
-            if ((ok[0] = (arg[0] instanceof GeoCoordSysAbstract))
-                && (ok[1] = (arg[1] instanceof GeoCoordSysAbstract))) {
+            if ((ok[0] = (arg[0] instanceof GeoCoordSys))
+                && (ok[1] = (arg[1] instanceof GeoCoordSys))) {
                 GeoElement[] ret =
                     {
                          kernel3D.Intersect(
                             c.getLabel(),
-                            (GeoCoordSysAbstract) arg[0],
-                            (GeoCoordSysAbstract) arg[1])};
+                            (GeoCoordSys) arg[0],
+                            (GeoCoordSys) arg[1])};
                 return ret;
             }
             

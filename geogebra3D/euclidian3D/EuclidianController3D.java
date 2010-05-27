@@ -3,27 +3,18 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbMatrixUtil;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoLineInterface;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
-import geogebra.kernel.GeoSegment;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
-import geogebra3D.kernel3D.GeoCoordSys;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoCoordSys2D;
-import geogebra3D.kernel3D.GeoCoordSys2DAbstract;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -33,12 +24,9 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.swing.JPanel;
 
 public class EuclidianController3D extends EuclidianController 
 implements MouseListener, MouseMotionListener, MouseWheelListener{

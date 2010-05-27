@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -16,21 +17,16 @@ import geogebra.main.Application;
  * @author ggb3D
  *
  */
-public class AlgoCoordSys2D extends AlgoElement3D {
+public abstract class AlgoCoordSys2D extends AlgoElement3D {
 
 	/** the 2D coord sys created */
-	protected GeoCoordSys2DAbstract cs;
+	protected GeoCoordSys2D cs;
 	
 	
 	/** 3D points */
 	private GeoPoint3D[] points;
 	
 	
-	/** says if 2D points are created */
-	boolean createPoints2D;
-	
-	/** 2D points */
-	private GeoPoint[] points2D;
 	
 	/** says if the vector Vx has to be parallel to xOy plane */
 	private boolean vxParallelToXoy;
@@ -42,9 +38,9 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 * @param points the vertices of the polygon
 	 * @param createPoints2D says if 2D points have to be created
 	 */
-	public AlgoCoordSys2D(Construction c, String label, GeoPoint3D[] points, boolean createPoints2D) {
-		this(c,points,createPoints2D);
-		cs.setLabel(label);
+	public AlgoCoordSys2D(Construction c, String label, GeoPoint3D[] points) {
+		this(c,points);
+		((GeoElement) cs).setLabel(label);
 	}
 	
 	/**
@@ -53,9 +49,8 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 * @param points the vertices of the polygon
 	 * @param createPoints2D says if 2D points have to be created
 	 */
-	public AlgoCoordSys2D(Construction c, GeoPoint3D[] points, 
-			boolean createPoints2D) {		
-		this(c,points,createPoints2D,false,true);
+	public AlgoCoordSys2D(Construction c, GeoPoint3D[] points) {		
+		this(c,points,false,true);
 	}
 	
 	/**
@@ -67,30 +62,16 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 * @param setDependencies says if the dependencies have to be set
 	 */
 	public AlgoCoordSys2D(Construction c, GeoPoint3D[] points, 
-			boolean createPoints2D, boolean vxParallelToXoy, boolean setDependencies) {
+			boolean vxParallelToXoy, boolean setDependencies) {
 		super(c);
 		
 		createCoordSys(c);
 		this.points = points;
-		this.createPoints2D = createPoints2D;
 		this.vxParallelToXoy = vxParallelToXoy;
 
 		
-		GeoElement[] out;
-	
-		if (createPoints2D){
-			points2D = new GeoPoint[points.length];
-			out = new GeoElement[points.length+1];	
-			for(int i=0;i<points.length;i++){
-				points2D[i]=new GeoPoint(c);
-				//points2D[i].setLabel("essaiPoint");
-				out[i+1]=points2D[i];
-			}
-		}else{
-			out = new GeoElement[1];		
-		}
-		
-		out[0]=cs;
+		GeoElement[] out = new GeoElement[1];		
+		out[0]= (GeoElement) cs;
 		
 		
 		//set input and output		
@@ -106,32 +87,30 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 * create the coord sys
 	 * @param c construction
 	 */
-	protected void createCoordSys(Construction c){
-		cs = new GeoCoordSys2DAbstract(c);
-		
-	}
+	abstract protected void createCoordSys(Construction c);
 	
 	protected void compute() {
 				
+		GgbCoordSys coordsys = cs.getCoordSys();
+		
 		//recompute the coord sys
-		cs.resetCoordSys();
-		for(int i=0;(!cs.isMadeCoordSys())&&(i<points.length);i++)
-			cs.addPointToCoordSys(points[i].getCoords(),true,vxParallelToXoy);
+		coordsys.resetCoordSys();
+		int i;
+		for(i=0;(!coordsys.isMadeCoordSys())&&(i<points.length);i++)
+			coordsys.addPoint(points[i].getCoords());
 		
-	
-		
-		for(int i=0;i<points.length;i++){
-			//project the point on the coord sys
-			GgbVector[] project=points[i].getCoords().projectPlane(cs.getMatrix4x4());
-			
-			//check if the vertex lies on the coord sys
-			if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION))
-				cs.setUndefined();
+		if (coordsys.makeOrthoMatrix(true)){
 
-			
-			//set the 2D points
-			if (createPoints2D)
-				points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
+			// check if other points lie on the coord sys
+			for(;(i<points.length)&&(coordsys.isDefined());i++){
+				//project the point on the coord sys
+				GgbVector[] project=points[i].getCoords().projectPlane(coordsys.getMatrixOrthonormal());
+
+				//check if the vertex lies on the coord sys
+				if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION))
+					coordsys.setUndefined();
+
+			}
 		}
 		
 	}
@@ -141,25 +120,12 @@ public class AlgoCoordSys2D extends AlgoElement3D {
 	 * return the cs
 	 * @return the cs
 	 */
-	public GeoCoordSys2DAbstract getCoordSys() {		
+	public GeoCoordSys2D getCoordSys() {		
 		return cs;
 	}
 
 	
 	
-	/** return the 2D points
-	 * @return the 2D points
-	 */
-	public GeoPoint[] getPoints2D(){
-		return points2D;
-	}
 	
 	
-	
-	
-	protected String getClassName() {
-		return "AlgoCoordSys2D";
-	}
-
-
 }

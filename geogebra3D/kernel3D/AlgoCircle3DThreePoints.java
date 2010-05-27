@@ -116,17 +116,17 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 
     	coordSys.resetCoordSys();
     	for(int i=0;i<3;i++)
-    		coordSys.addPointToCoordSys(points3D[i].getCoords(),true,true);
+    		coordSys.addPoint(points3D[i].getCoords());
     	
   
-    	if (!coordSys.isDefined()){
+    	if (!coordSys.makeOrthoMatrix(true)){
     		circle.setUndefined();
     		return;
     	}
     	
     	 for(int i=0;i<3;i++){
 			 //project the point on the coord sys
-			 GgbVector[] project=points3D[i].getCoords().projectPlane(coordSys.getMatrix4x4());
+			 GgbVector[] project=points3D[i].getCoords().projectPlane(coordSys.getMatrixOrthonormal());
 
 			 //check if the vertex lies on the coord sys
 			 if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){

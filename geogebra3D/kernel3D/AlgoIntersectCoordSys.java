@@ -41,9 +41,9 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
 	
 	//inputs
 	/** first coord sys */
-	private GeoCoordSysAbstract cs1;
+	private GeoCoordSys cs1;
 	/** second coord sys */
-	private GeoCoordSysAbstract cs2;
+	private GeoCoordSys cs2;
 	
 	//output
 	/** point intersection */
@@ -56,7 +56,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param cs1 first coord sys
      * @param cs2 second coord sys
      */    
-    AlgoIntersectCoordSys(Construction cons, String label, GeoCoordSysAbstract cs1, GeoCoordSysAbstract cs2) {
+    AlgoIntersectCoordSys(Construction cons, String label, GeoCoordSys cs1, GeoCoordSys cs2) {
 
     	this(cons,cs1,cs2);
     	p.setLabel(label);
@@ -71,7 +71,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param cs2 second coord sys
      * */
     AlgoIntersectCoordSys(Construction cons, 
-    		GeoCoordSysAbstract cs1, GeoCoordSysAbstract cs2) {
+    		GeoCoordSys cs1, GeoCoordSys cs2) {
     	super(cons);
 
 
@@ -80,7 +80,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
     	
     	p = new GeoPoint3D(cons);
   
-    	setInputOutput(new GeoElement[] {cs1,cs2}, new GeoElement[] {p});
+    	setInputOutput(new GeoElement[] {(GeoElement) cs1,(GeoElement) cs2}, new GeoElement[] {p});
  
     }       
 
@@ -94,7 +94,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * return the first coord sys
      * @return the first coord sys
      */
-    GeoCoordSysAbstract getCS1() {
+    GeoCoordSys getCS1() {
         return cs1;
     }
     
@@ -102,7 +102,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * return the second coord sys
      * @return the second coord sys
      */   
-    GeoCoordSysAbstract getCS2() {
+    GeoCoordSys getCS2() {
         return cs2;
     }
     
@@ -123,7 +123,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
 
     protected void compute() {
     	    
-    	if (!cs1.isDefined() || !cs2.isDefined()){
+    	if (!((GeoElement) cs1).isDefined() || !((GeoElement) cs2).isDefined()){
     		p.setUndefined();
     		return;
     	}
@@ -133,10 +133,10 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
     		if (cs2 instanceof GeoCoordSys1D)
     			compute1D1D((GeoCoordSys1D) cs1,(GeoCoordSys1D) cs2);
     		else if (cs2 instanceof GeoPlane3D)
-    			computeLinePlane((GeoCoordSys1D) cs1, (GeoCoordSys2DAbstract) cs2);
+    			computeLinePlane((GeoCoordSys1D) cs1, (GeoCoordSys2D) cs2);
     	}else if (cs1 instanceof GeoPlane3D){
     		if (cs2 instanceof GeoCoordSys1D)
-    			computeLinePlane((GeoCoordSys1D) cs2, (GeoCoordSys2DAbstract) cs1);
+    			computeLinePlane((GeoCoordSys1D) cs2, (GeoCoordSys2D) cs1);
     	}
      	
 
@@ -148,8 +148,9 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param line the line
      * @param plane the plane
      */
-    private void computeLinePlane(GeoCoordSys1D line, GeoCoordSys2DAbstract plane){
-    	GgbVector[] project = GgbMatrixUtil.intersectLinePlane(line.getMatrix(),plane.getMatrix4x4());
+    private void computeLinePlane(GeoCoordSys1D line, GeoCoordSys2D plane){
+    	GgbVector[] project = 
+    		GgbMatrixUtil.intersectLinePlane(line.getMatrix(),plane.getCoordSys().getMatrixOrthonormal());
     	
     	//check if the point is in the line (segment or half-line)
  		if (line.isValidCoord(-project[1].get(3))){
@@ -213,7 +214,7 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
     final public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(app.getPlain("Intersection",cs1.getLabel(),cs2.getLabel()));
+        sb.append(app.getPlain("Intersection",((GeoElement) cs1).getLabel(),((GeoElement) cs2).getLabel()));
         
         return sb.toString();
     }   

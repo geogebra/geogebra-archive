@@ -7,8 +7,8 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Functional2Var;
 
-public class GeoPlane3D extends GeoCoordSys2DAbstract
-implements Functional2Var {
+public class GeoPlane3D extends GeoCoordSys2D//extends GeoCoordSys2DAbstract
+implements Functional2Var{
 	
 	double xmin, xmax, ymin, ymax; //for drawing
 	
@@ -18,6 +18,8 @@ implements Functional2Var {
 	double dx = 1.0; //distance between two marks on the grid //TODO use object properties
 	double dy = 1.0; 
 	
+	/** coord sys */
+	protected GgbCoordSys coordsys;
 
 	//string
 	protected static final char[] VAR_STRING = {'x','y','z'};
@@ -29,12 +31,14 @@ implements Functional2Var {
 	 */
 	public GeoPlane3D(Construction c){
 		super(c);
+		
+		coordsys = new GgbCoordSys(2);
 
 		this.xmin = -2.5; this.xmax = 2.5;
 		this.ymin = -2.5; this.ymax = 2.5;	
 		
 		//grid
-		setGridOrigin(new GgbVector(new double[] {0,0,0,1}));
+		//setGridOrigin(new GgbVector(new double[] {0,0,0,1}));
 		setGridVisible(false);
         
 		
@@ -44,6 +48,7 @@ implements Functional2Var {
 	}
 	
 	/** creates a plane with origin o, vectors v1, v2*/
+	/*
 	public GeoPlane3D(Construction c, 
 			GgbVector o, GgbVector v1, GgbVector v2,
 			double xmin, double xmax, double ymin, double ymax){
@@ -62,6 +67,7 @@ implements Functional2Var {
 
 		
 	}
+	*/
 	
 	
 	
@@ -256,7 +262,7 @@ implements Functional2Var {
 		int dimension = 3;
 		boolean first = true; //says if it's the first coeff
 
-		GgbVector Vn = getMatrix4x4().getColumn(3);
+		GgbVector Vn = coordsys.getNormal();//getMatrix4x4().getColumn(3);
 		
 		for (int i=0; i<dimension; i++){
 			
@@ -281,7 +287,7 @@ implements Functional2Var {
 		}
 		
 		sbToValueString.append("= ");
-		sbToValueString.append(kernel.format(Vn.dotproduct(getMatrix().getColumn(3)))); 
+		sbToValueString.append(kernel.format(Vn.dotproduct(coordsys.getNormal()))); 
 		
 		/*
 		sbToValueString.append(kernel.format(Vn.get(1)));   
@@ -312,12 +318,15 @@ implements Functional2Var {
 
 	public GgbVector evaluateNormal(double u, double v) {
 		
-		return getMatrix4x4().getVz();
+		return coordsys.getNormal();
 	}
 
 	public GgbVector evaluatePoint(double u, double v) {
-		GgbMatrix4x4 m = getMatrix4x4();
+		return coordsys.getPoint(u, v);
+		/*
+		GgbMatrix4x4 m = coordsys.getMatrixOrthonormal();
 		return (GgbVector) m.getOrigin().add(m.getVx().mul(u)).add(m.getVy().mul(v));
+		*/
 	}
 	
 
@@ -334,6 +343,17 @@ implements Functional2Var {
 
 		return 0; //TODO
 
+	}
+
+	
+	
+	
+	public GgbCoordSys getCoordSys() {
+		return coordsys;
+	}
+
+	public boolean isDefined() {
+		return coordsys.isDefined();
 	}
 
 }

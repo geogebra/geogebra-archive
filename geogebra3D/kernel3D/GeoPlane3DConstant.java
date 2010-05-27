@@ -20,7 +20,11 @@ public class GeoPlane3DConstant extends GeoPlane3D {
 		
 		switch (type) {
 		case XOY_PLANE:
-			setCoord(EuclidianView3D.o,EuclidianView3D.vx,EuclidianView3D.vy);
+			coordsys.addPoint(EuclidianView3D.o);
+			coordsys.addVector(EuclidianView3D.vx);
+			coordsys.addVector(EuclidianView3D.vy);
+			coordsys.makeOrthoMatrix(false);
+			//setCoord(EuclidianView3D.o,EuclidianView3D.vx,EuclidianView3D.vy);
 			label = "xOyPlane";
 			setObjColor(new Color(0.5f,0.5f,0.5f));
 			setLabelVisible(false);

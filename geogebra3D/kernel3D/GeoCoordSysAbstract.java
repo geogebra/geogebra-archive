@@ -45,10 +45,11 @@ implements GeoCoordSys{
 		return m_matrix;
 	}
 	
-	
+	/*
 	public GeoCoordSysAbstract getCoordSys(){
 		return this;
 	}
+	*/
 	
 	public int getDimension(){
 		return m_dimension;

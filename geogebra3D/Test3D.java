@@ -256,46 +256,6 @@ public class Test3D{
 		return kernel3D.Point3D(null,x,y,z);
 	}	
 	
-	private void testAxisAndPlane(){
-		
-		
-		double longueur = 2.25;
-		
-		GeoSegment3D s=null;
-		
-		/*
-		s=kernel3D.Segment3D("axeX3D",new Ggb3DVector(new double[] {-longueur,0,0,1}),new Ggb3DVector(new double[]{longueur,0,0,1}));
-		s.setObjColor(new Color(1f,0f,0f));
-		s.setLineThickness(1);
-		s.setAuxiliaryObject(true);
-		cons.addToConstructionList(s, false);
-		
-		s=kernel3D.Segment3D("axeY3D",new Ggb3DVector(new double[] {0,-longueur,0,1}),new Ggb3DVector(new double[]{0,longueur,0,1}));
-		s.setObjColor(new Color(0f,1f,0f));
-		s.setLineThickness(1);
-		s.setAuxiliaryObject(true);
-		cons.addToConstructionList(s, false);
-		
-		s=kernel3D.Segment3D("axeZ3D",new Ggb3DVector(new double[] {0,0,0,1}),new Ggb3DVector(new double[]{0,0,longueur,1}));
-		s.setObjColor(new Color(0f,0f,1f));
-		s.setLineThickness(1);
-		s.setAuxiliaryObject(true);
-		cons.addToConstructionList(s, false);
-		*/
-		
-		//xOy plane
-		xOyPlane=kernel3D.Plane3D("xOy",
-				new GgbVector(new double[] {0.0,0.0,0.0,1.0}),
-				new GgbVector(new double[] {1.0,0.0,0.0,0.0}),
-				new GgbVector(new double[] {0.0,1.0,0.0,0.0}));
-		xOyPlane.setObjColor(new Color(0.75f,0.75f,0.75f));
-		xOyPlane.setAlgebraVisible(false); //TODO make it works
-		xOyPlane.setLabelVisible(false);
-		xOyPlane.setAuxiliaryObject(true);
-		cons.addToConstructionList(xOyPlane, false);
-		
-		
-	}
 	
 	
 	private void testSegment(){
@@ -329,19 +289,6 @@ public class Test3D{
 	}
 	
 	
-	private void testLineAndPlane(){
-
-		
-		
-		
-		GeoLine3D l1 = kernel3D.Line3D("line", testPoint(1f,-1f,2f), testPoint(1f,1f,2f));
-		
-		GeoPlane3D p1 = testPlane(0, 0, 1,  1, 0, 0,  0, 1, 0);
-		
-		GeoPoint3D p = kernel3D.Intersect("C", l1, p1);
-		
-		GeoLine3D l2 = kernel3D.Line3D("line2", p, testPoint(0f,0f,3f));
-	}
 	
 	private void testPlaneThrough(){
 
@@ -418,33 +365,6 @@ public class Test3D{
 	
 	
 	
-	private GeoPlane3D testPlane(double x0, double y0, double z0, 
-			double x1, double y1, double z1, 
-			double x2, double y2, double z2){
-		
-		GeoPlane3D p=null;
-		
-		p=kernel3D.Plane3D("plane",
-				new GgbVector(new double[] {x0,y0,z0,1}),
-				new GgbVector(new double[] {x1,y1,z1,0}),
-				new GgbVector(new double[] {x2,y2,z2,0}));
-		p.setObjColor(new Color((float) (x0+(x1+x2)/2), (float) (y0+(y1+y2)/2), (float) (z0+(z1+z2)/2)));
-		//cons.addToConstructionList(p, false);
-		
-		return p;
-		
-	}
-	
-	
-	private void testPlane(){
-		testPlane(0, 0, 0,  1, 0, 0,  0, 1, 0);
-		testPlane(0, 0, 0,  1, 0, 0,  0, 0, 1);
-		testPlane(0, 0, 0,  0, 1, 0,  0, 0, 1);
-		
-		testPlane(0, 0, 1,  1, 0, 0,  0, 1, 0);
-		testPlane(0, 1, 0,  1, 0, 0,  0, 0, 1);
-		testPlane(1, 0, 0,  0, 1, 0,  0, 0, 1);
-	}
 	
 	private void testAlgoPolyhedron(){
 

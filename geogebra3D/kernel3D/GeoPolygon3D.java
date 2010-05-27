@@ -263,12 +263,12 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoord
 
 		 coordSys.resetCoordSys();
 		 for(int i=0;(!coordSys.isMadeCoordSys())&&(i<points.length);i++)
-			 coordSys.addPointToCoordSys(((GeoPoint3D) points[i]).getCoords(),true,true);
+			 coordSys.addPoint(((GeoPoint3D) points[i]).getCoords());
 
-		 if (coordSys.isDefined()){
+		 if (coordSys.makeOrthoMatrix(true)){
 			 for(int i=0;i<points.length;i++){
 				 //project the point on the coord sys
-				 GgbVector[] project=((GeoPoint3D) points[i]).getCoords().projectPlane(coordSys.getMatrix4x4());
+				 GgbVector[] project=((GeoPoint3D) points[i]).getCoords().projectPlane(coordSys.getMatrixOrthonormal());
 
 				 //check if the vertex lies on the coord sys
 				 if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){
@@ -352,7 +352,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoord
 			return null;
 			*/
 		//return new GgbMatrix4x4(coordSys.getMatrix());
-		return coordSys.getMatrix4x4();
+		return coordSys.getMatrixOrthonormal();
 	}
 	
 	 public GgbMatrix4x4 getLabelMatrix(){

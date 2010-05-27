@@ -13,6 +13,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -62,20 +63,25 @@ public class AlgoPlaneThroughPoint extends AlgoElement3D {
 
   
     protected final void compute() {
+    	
+    	GgbCoordSys coordsys = plane.getCoordSys();
+    	
 		//recompute the coord sys
-		plane.resetCoordSys();
+    	coordsys.resetCoordSys();
 		
-		plane.addPointToCoordSys(point.getCoords(), true, true);
-		plane.addPointToCoordSys((GgbVector) point.getCoords().add(cs.getCoordSys().getVx()), true, true);
+    	coordsys.addPoint(point.getCoords());
+    	coordsys.addPoint((GgbVector) point.getCoords().add(cs.getCoordSys().getVx()));
 		
 		switch (cs.getCoordSys().getDimension()){
 		case 1: //line, segment, ...
-			plane.addPointToCoordSys(cs.getCoordSys().getOrigin(), true, true);
+			coordsys.addPoint(cs.getCoordSys().getOrigin());
 			break;
 		case 2: //plane, polygon, ...
-			plane.addPointToCoordSys((GgbVector) point.getCoords().add(cs.getCoordSys().getVy()), true, true);
+			coordsys.addPoint((GgbVector) point.getCoords().add(cs.getCoordSys().getVy()));
 			break;
 		}
+		
+		coordsys.makeOrthoMatrix(true);
 		
 
         

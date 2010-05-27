@@ -9,18 +9,18 @@ public class Algo3Dto2D extends AlgoElement3D {
 
 	
 	GeoElement3D geo3D; 
-	GeoCoordSys2DAbstract cs;
+	GeoCoordSys2D cs;
 	
 	GeoElement geo;
 	
 	
-	public Algo3Dto2D(Construction c, String label, GeoElement3D geo3D, GeoCoordSys2DAbstract cs) {
+	public Algo3Dto2D(Construction c, String label, GeoElement3D geo3D, GeoCoordSys2D cs) {
 		this(c,geo3D,cs);
 		geo.setLabel(label);
 		
 	}
 	
-	public Algo3Dto2D(Construction c, GeoElement3D geo3D, GeoCoordSys2DAbstract cs) {
+	public Algo3Dto2D(Construction c, GeoElement3D geo3D, GeoCoordSys2D cs) {
 		super(c);
 		
 		this.geo3D = geo3D;
@@ -51,7 +51,7 @@ public class Algo3Dto2D extends AlgoElement3D {
 			}
 			
 			GgbVector p = ((GeoPoint3D) geo3D).getCoords();
-			GgbVector[] project=p.projectPlane(cs.getMatrix4x4());
+			GgbVector[] project=p.projectPlane(cs.getCoordSys().getMatrixOrthonormal());
 			((GeoPoint) geo).setCoords(project[1].get(1), project[1].get(2), 1);
 			break;
 		default:

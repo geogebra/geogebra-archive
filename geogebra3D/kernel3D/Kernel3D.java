@@ -507,12 +507,13 @@ public class Kernel3D
 	}
 	
 	/** Plane3D label linking with (o,v1,v2) coord sys   */
+    /*
 	final public GeoPlane3D Plane3D(String label, GgbVector o, GgbVector v1, GgbVector v2){
 		GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-2.25,2.25,-2.25,2.25);
 		p.setLabel(label);
 		return p;
 	}	
-	
+	*/
 	
 	/** 
 	* Plane named label through Point point parallel to plane pIn
@@ -594,7 +595,7 @@ public class Kernel3D
 	
 	
 	/** 3D element on coord sys 2D to 2D element    */	
-	final public GeoElement From3Dto2D(String label, GeoElement3D geo3D, GeoCoordSys2DAbstract cs){
+	final public GeoElement From3Dto2D(String label, GeoElement3D geo3D, GeoCoordSys2D cs){
 		Algo3Dto2D algo = new Algo3Dto2D(cons, label, geo3D, cs);
 		return algo.getGeo();
 	}
@@ -656,8 +657,8 @@ public class Kernel3D
 	 */
 	final public GeoPoint3D Intersect(
 			String label,
-			GeoCoordSysAbstract cs1,
-			GeoCoordSysAbstract cs2) {
+			GeoCoordSys cs1,
+			GeoCoordSys cs2) {
 		
 		AlgoIntersectCoordSys algo = new AlgoIntersectCoordSys(cons,label,cs1,cs2);
 		GeoPoint3D p = algo.getPoint();

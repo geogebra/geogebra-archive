@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -274,6 +275,20 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 
 	public boolean isValidCoord(double x){
 		return (x>=0) && (x<=1);
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public GgbCoordSys getCoordSys() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

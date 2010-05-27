@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -161,6 +162,19 @@ public class GeoLine3D extends GeoCoordSys1D {
 	
 	public boolean isValidCoord(double x){
 		return true;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	public GgbCoordSys getCoordSys() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

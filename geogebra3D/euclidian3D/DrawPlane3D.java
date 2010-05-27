@@ -3,20 +3,16 @@ package geogebra3D.euclidian3D;
 
 
 
-import java.awt.Color;
-
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
-import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.Textures;
-import geogebra3D.kernel3D.GeoCoordSys;
-import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoCoordSysAbstract;
-import geogebra3D.kernel3D.GeoFunction2Var;
 import geogebra3D.kernel3D.GeoPlane3D;
+
+import java.awt.Color;
 
 
 
@@ -87,6 +83,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 		Renderer renderer = getView3D().getRenderer();
 		GeoPlane3D geo = (GeoPlane3D) getGeoElement();
+		GgbCoordSys coordsys = geo.getCoordSys();
 		
 		// plane
 		renderer.getGeometryManager().remove(planeIndex);	
@@ -127,15 +124,15 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 				(float) ((0-geo.getYmin())/(geo.getYmax()-geo.getYmin())),
 				0.25f);
 		for(int i=(int) (geo.getYmin()/dy);i<=geo.getYmax()/dy;i++)
-			brush.segment(geo.getPoint(geo.getXmin(),i*dy), 
-					geo.getPoint(geo.getXmax(),i*dy));	
+			brush.segment(coordsys.getPoint(geo.getXmin(),i*dy), 
+					coordsys.getPoint(geo.getXmax(),i*dy));	
 		//along y axis
 		brush.setAffineTexture(
 				(float) ((0-geo.getXmin())/(geo.getXmax()-geo.getXmin())),
 				0.25f);
 		for(int i=(int) (geo.getXmin()/dx);i<=geo.getXmax()/dx;i++)
-			brush.segment(geo.getPoint(i*dx, geo.getYmin()), 
-					geo.getPoint(i*dx, geo.getYmax()));
+			brush.segment(coordsys.getPoint(i*dx, geo.getYmin()), 
+					coordsys.getPoint(i*dx, geo.getYmax()));
 	
 		gridIndex = brush.end();
 
@@ -155,7 +152,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 	protected void updateForView(){
 		
-		GeoCoordSysAbstract cs = ((GeoCoordSys) getGeoElement()).getCoordSys();
+		GgbCoordSys cs = ((GeoPlane3D) getGeoElement()).getCoordSys();
 		
 		GgbVector o = getView3D().getToScreenMatrix().mul(cs.getOrigin());
 		GgbVector vx = getView3D().getToScreenMatrix().mul(cs.getVx());

@@ -86,7 +86,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 	 public GgbMatrix4x4 getDrawingMatrix() {
 		 if (coordSys!=null)
-			 return coordSys.getMatrix4x4();
+			 return coordSys.getMatrixOrthonormal();
 		 else
 			 return null;
 	 }
