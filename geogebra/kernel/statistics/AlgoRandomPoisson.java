@@ -36,7 +36,7 @@ public class AlgoRandomPoisson extends AlgoElement {
 	    
 	    // output is random number
 	    num = new GeoNumeric(cons);
-		cons.addRandomNumber(num);
+		cons.addRandomGeo(num);
 	    
 	    setInputOutput(); // for AlgoElement	    					   
 	    compute();	        	    	   

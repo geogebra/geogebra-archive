@@ -2552,7 +2552,7 @@ public abstract class GeoElement
 				GeoElement geo = (GeoElement) it.next();
 				if (geo.isGeoNumeric()) {
 					GeoNumeric num = (GeoNumeric) geo;
-					if (num.isRandomNumber() && !num.isLabelSet()) {
+					if (num.isRandomGeo() && !num.isLabelSet()) {
 						if (randNumbers == null)
 							randNumbers = new ArrayList();
 						randNumbers.add(num);					
@@ -4325,6 +4325,25 @@ public abstract class GeoElement
 
 	public boolean isPointInRegion() {
 		return false;
+	}
+
+	protected void setRandomGeo(boolean flag) {
+		isRandomGeo = flag;
+	}
+	
+	private boolean isRandomGeo = false;
+
+	public boolean isRandomGeo() {
+		return isRandomGeo;
+	}
+	
+	public void updateRandomGeo() {	
+		
+		// update parent algorithm, like AlgoRandom
+		AlgoElement algo = getParentAlgorithm();
+		if (algo != null) {
+			algo.compute(); // eg AlgoRandom etc
+		}				
 	}
 
 

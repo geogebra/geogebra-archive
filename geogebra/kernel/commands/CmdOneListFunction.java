@@ -423,8 +423,8 @@ class CmdSort extends CmdOneListFunction {
 		return kernel.Sort(a, b);
 	}
 
-
 }
+
 /*
  * Rank[ <List> ]
  */
@@ -437,6 +437,23 @@ class CmdRank extends CmdOneListFunction {
 	final protected GeoElement doCommand(String a, GeoList b)
 	{
 		return kernel.Rank(a, b);
+	}
+
+
+}
+
+/*
+ * Shuffle[ <List> ]
+ */
+class CmdShuffle extends CmdOneListFunction {
+
+	public CmdShuffle(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Shuffle(a, b);
 	}
 
 

@@ -53,7 +53,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	protected double value;	
 
 	private boolean isDrawable = false;
-	private boolean isRandomNumber = false;
+	//private boolean isRandomNumber = false;
 	
 	private int slopeTriangleSize = 1;
 
@@ -620,7 +620,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		super.doRemove();
 		
 		// if this was a random number, make sure it's removed
-		cons.removeRandomNumber(this);
+		cons.removeRandomGeo(this);
 	}
 
 	
@@ -765,23 +765,20 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return isGeoAngle() ? DEFAULT_SLIDER_MAX_ANGLE : DEFAULT_SLIDER_MAX;
 	}
 	
-	protected void setRandomNumber(boolean flag) {
-		isRandomNumber = flag;
-	}
+	//protected void setRandomNumber(boolean flag) {
+	//	isRandomNumber = flag;
+	//}
 	
-	public boolean isRandomNumber() {
-		return isRandomNumber;
-	}
+	//public boolean isRandomNumber() {
+	//	return isRandomNumber;
+	//}
 	
-	final public void updateRandomNumber() {	
+	@Override
+	final public void updateRandomGeo() {	
 		// set random value (for numbers used in trees using random())
 		setValue(Math.random());
 		
-		// update parent algorithm, like AlgoRandom
-		AlgoElement algo = getParentAlgorithm();
-		if (algo != null) {
-			algo.compute(); // eg AlgoRandom etc
-		}				
+		super.updateRandomGeo();
 	}
 
 	public boolean isVector3DValue() {

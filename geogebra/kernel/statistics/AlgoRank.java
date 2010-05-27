@@ -25,9 +25,9 @@ import java.util.TreeSet;
 
 
 /**
- * Sort a list. Adapted from AlgoMax and AlgoIterationList
+ * Ranks of a list. Adapted from AlgoSort
  * @author Michael Borcherds
- * @version 04-01-2008
+ * @version 2010-05-27
  */
 
 public class AlgoRank extends AlgoElement {
@@ -49,7 +49,7 @@ public class AlgoRank extends AlgoElement {
     }
 
     protected String getClassName() {
-        return "AlgoSort";
+        return "AlgoRank";
     }
 
     protected void setInputOutput(){

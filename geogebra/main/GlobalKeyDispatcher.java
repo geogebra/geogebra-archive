@@ -501,8 +501,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					// update labeled random number
 					if (geo.isLabelSet() && geo.isGeoNumeric()) {
 						GeoNumeric num = (GeoNumeric) geo;
-						if (num.isRandomNumber()) {
-							num.updateRandomNumber();
+						if (num.isRandomGeo()) {
+							num.updateRandomGeo();
 						}
 					} 
 					

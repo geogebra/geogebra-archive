@@ -91,6 +91,7 @@ import geogebra.kernel.statistics.AlgoRank;
 import geogebra.kernel.statistics.AlgoSXX;
 import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
 import geogebra.kernel.statistics.AlgoSampleVariance;
+import geogebra.kernel.statistics.AlgoShuffle;
 import geogebra.kernel.statistics.AlgoSigmaXX;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
@@ -3429,6 +3430,16 @@ public class Kernel {
 	 */
 	final public GeoList Rank(String label, GeoList list) {
 		AlgoRank algo = new AlgoRank(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Shuffle[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Shuffle(String label, GeoList list) {
+		AlgoShuffle algo = new AlgoShuffle(cons, label, list);
 		GeoList list2 = algo.getResult();
 		return list2;
 	}

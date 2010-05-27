@@ -502,7 +502,7 @@ public class Construction {
 		}
 
 		// update all random numbers()
-		updateAllRandomNumbers();
+		updateAllRandomGeos();
 		
 		// init and update all algorithms
 		// make sure we call algo.initNearToRelationship() fist
@@ -1611,32 +1611,32 @@ public class Construction {
 	/**
 	 * Adds a number to the set of random numbers of this construction.
 	 */
-	public void addRandomNumber(GeoNumeric num) {
+	public void addRandomGeo(GeoElement num) {
 		if (randomNumbers == null) 
 			randomNumbers = new TreeSet();
 		randomNumbers.add(num);
-		num.setRandomNumber(true);
+		num.setRandomGeo(true);
 	}
 	
 	/**
 	 * Removes a number from the set of random numbers of this construction.
 	 */
-	public void removeRandomNumber(GeoNumeric num) {
+	public void removeRandomGeo(GeoNumeric num) {
 		if (randomNumbers != null) 
 			randomNumbers.remove(num);
-		num.setRandomNumber(false);
+		num.setRandomGeo(false);
 	}
 	
 	/**
      * Updates all random numbers of this construction.
      */
-    final public void updateAllRandomNumbers() {    	
+    final public void updateAllRandomGeos() {    	
     	if (randomNumbers == null) return;
     	
     	Iterator it = randomNumbers.iterator();
     	while (it.hasNext()) {
-    		GeoNumeric num = (GeoNumeric) it.next();
-    		num.updateRandomNumber();
+    		GeoElement num = (GeoElement) it.next();
+    		num.updateRandomGeo();
     	}    	     
     }    
     

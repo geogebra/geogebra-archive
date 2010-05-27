@@ -30,7 +30,7 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 		super(cons, label, a, b);
 
 		// output is random number
-		cons.addRandomNumber(num);
+		cons.addRandomGeo(num);
 	}
 
 	protected String getClassName() {
