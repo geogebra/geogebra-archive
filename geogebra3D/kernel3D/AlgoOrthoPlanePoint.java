@@ -69,14 +69,14 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
     	coordsys.resetCoordSys();
 		
 		//if cs has "no" direction vector, set undefined and return
-		if (cs.getCoordSys().getMatrix().getColumn(1).equalsForKernel(0, Kernel.STANDARD_PRECISION)){
+		if (cs.getCoordSys().getVx().equalsForKernel(0, Kernel.STANDARD_PRECISION)){
 			plane.setUndefined();
 			return;
 		}
 			
 		
-		//creates an ortho matrix with coord sys direction vector
-		GgbMatrix4x4 m = new GgbMatrix4x4(cs.getCoordSys().getMatrix());
+		//gets an ortho matrix with coord sys direction vector
+		GgbMatrix4x4 m = cs.getCoordSys().getMatrixOrthonormal();
 
 		//Application.debug(m.toString());
 
@@ -86,6 +86,8 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
 		coordsys.addPoint((GgbVector) point.getCoords().add(m.getVz()));
 		//cs direction for normal vector
 		coordsys.addPoint((GgbVector) point.getCoords().add(m.getVx()));
+		
+		coordsys.makeOrthoMatrix(true);
 		
 
 		

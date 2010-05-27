@@ -27,6 +27,15 @@ public abstract class GeoCoordSys2D extends GeoElement3D implements GeoCoordSys,
 	}
 	
 	
+	 /** return the normal of the polygon's plane
+	 * @return the normal of the polygon's plane
+	 */
+	public GgbVector getViewDirection(){
+		
+		return getCoordSys().getNormal();
+	}
+	
+	
 	/////////////////////////////////////
 	//
 	// REGION3D INTERFACE

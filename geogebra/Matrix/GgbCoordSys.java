@@ -111,9 +111,11 @@ public class GgbCoordSys {
 	}
 	
 	public GgbVector getPoint(double x, double y){
-		//return (GgbVector) getOrigin().add(getVx().mul(x).add(getVy().mul(y)));
-		//Application.printStacktrace("point("+x+","+y+")=\n"+(GgbVector) matrixOrthonormal.getOrigin().add(getVector(x, y)));
-		return (GgbVector) matrixOrthonormal.getOrigin().add(getVector(x, y));
+		return (GgbVector) matrixOrthonormal.getOrigin().add(getVector(x,y));
+	}
+	
+	public GgbVector getPoint(double x){
+		return (GgbVector) getOrigin().add(getVx().mul(x));
 	}
 	
 	public GgbVector getVector(GgbVector coords2D){
@@ -123,6 +125,7 @@ public class GgbCoordSys {
 	public GgbVector getVector(double x, double y){
 		return (GgbVector) matrixOrthonormal.getVx().mul(x).add(matrixOrthonormal.getVy().mul(y));
 	}
+	
 	
 	public GgbVector getNormal(){
 		return matrixOrthonormal.getVz();//getVx().crossProduct(getVy()).normalized();
@@ -205,6 +208,7 @@ public class GgbCoordSys {
 		}else{
 			//point is the end of a vector
 			addVectorWithoutCheckMadeCoordSys(p.sub(getOrigin()));
+			
 		}
 
 		
@@ -234,6 +238,7 @@ public class GgbCoordSys {
 	 */
 	private void addVectorWithoutCheckMadeCoordSys(GgbVector v){
 			
+		
 		switch(getMadeCoordSys()){
 		case 0: //add first vector
 			//check if v==0
@@ -253,6 +258,8 @@ public class GgbCoordSys {
 			}
 			break;						
 		}
+		
+		//Application.printStacktrace("v["+getMadeCoordSys()+"]=\n"+v);
 
 		
 		
@@ -273,22 +280,40 @@ public class GgbCoordSys {
 			return false;
 			
 
-		if (dimension==2){
-
-			GgbVector o;
-			/*
+		if (dimension==1){ 
+			//compute Vy and Vz
+			GgbVector vy = (new GgbVector(new double[] {0,0,1,0})).crossProduct(getVx());
+			// check if vy=0 (if so, vx is parallel to Oz)
+			if (vy.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
+				setVy(new GgbVector(new double[] {1,0,0,0}));
+				setVz(new GgbVector(new double[] {0,1,0,0}));
+			}else{
+				setVy(vy);
+				setVz(getVx().crossProduct(getVy()));
+			}
+			
+			//sets orthonormal matrix
+			matrixOrthonormal.set(new GgbVector[] {
+					getVx().normalized(),
+					getVy().normalized(),
+					getVz().normalized(),
+					getOrigin()});
+			
 			if (projectOrigin)
-				// (0,0,0) projected for origin
-				o = (new GgbVector(new double[] {0,0,0,1})).projectPlane(getMatrixOrthonormal())[0];
-			else*/
-				o = getOrigin();
-				
+				projectOrigin();
+			
+			return true;
+			
+		}
+		
+		if (dimension==2){ //vy and Vz are computed
 
 			// vector Vx parallel to xOy plane
 			GgbVector vz = new GgbVector(new double[] {0,0,1,0});
 			GgbVector vx = getVz().crossProduct(vz);
 			GgbVector vy;
-			if (!Kernel.isEqual(vx.norm(), 0, Kernel.STANDARD_PRECISION)){
+			//if (!Kernel.isEqual(vx.norm(), 0, Kernel.STANDARD_PRECISION)){
+			if (!vx.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
 				vx.normalize();
 				vy = getVz().crossProduct(vx);
 				vy.normalize();
@@ -298,21 +323,30 @@ public class GgbCoordSys {
 				vy = new GgbVector(new double[] {0,1,0,0});
 			}
 
+			
+			GgbVector o = getOrigin();
 			matrixOrthonormal.set(new GgbVector[] {vx,vy,vz,o});
 			
-			if (projectOrigin){
-				// (0,0,0) projected for origin
-				o = (new GgbVector(new double[] {0,0,0,1})).projectPlane(getMatrixOrthonormal())[0];
-				matrixOrthonormal.set(o, 4);
-			}
-			//Application.debug("matrixOrthonormal=\n"+matrixOrthonormal);
-
+			if (projectOrigin)
+				projectOrigin();
+			
+			
+			//Application.debug("matrix ortho=\n"+getMatrixOrthonormal());
 		
 			return true;
 		}
 		
 		return false;
 		
+	}
+	
+	
+	/**
+	 * project 0 for origin
+	 */
+	private void projectOrigin(){
+		GgbVector o = (new GgbVector(new double[] {0,0,0,1})).projectPlane(getMatrixOrthonormal())[0];
+		matrixOrthonormal.set(o, 4);
 	}
 	
 	

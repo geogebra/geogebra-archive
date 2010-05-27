@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrixUtil;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
@@ -149,8 +150,13 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param plane the plane
      */
     private void computeLinePlane(GeoCoordSys1D line, GeoCoordSys2D plane){
+    	/*
     	GgbVector[] project = 
     		GgbMatrixUtil.intersectLinePlane(line.getMatrix(),plane.getCoordSys().getMatrixOrthonormal());
+    	*/
+    	GgbCoordSys cs = line.getCoordSys();
+    	GgbVector[] project = 
+    		cs.getOrigin().projectPlaneThruV(plane.getCoordSys().getMatrixOrthonormal(), cs.getVx());
     	
     	//check if the point is in the line (segment or half-line)
  		if (line.isValidCoord(-project[1].get(3))){
@@ -168,8 +174,13 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param line2 second line
      */
     private void compute1D1D(GeoCoordSys1D line1, GeoCoordSys1D line2){
-    	
-    	GgbVector[] project = GgbMatrixUtil.nearestPointsFromTwoLines(line1.getMatrix(), line2.getMatrix());
+
+    	GgbVector[] project = GgbMatrixUtil.nearestPointsFromTwoLines(
+    			line1.getCoordSys().getOrigin(), 
+    			line1.getCoordSys().getVx(),
+    			line2.getCoordSys().getOrigin(), 
+    			line2.getCoordSys().getVx()
+    	);
     	
     	if (project==null)
     		p.setUndefined(); //TODO infinite point

@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.main.Application;
@@ -39,8 +40,10 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 
 	protected void updateDrawMinMax(){
 		
-		GgbVector o = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getOrigin());
-		GgbVector v = getView3D().getToScreenMatrix().mul(((GeoCoordSys1D) getGeoElement()).getVx());
+		GgbCoordSys cs = ((GeoCoordSys1D) getGeoElement()).getCoordSys();
+		
+		GgbVector o = getView3D().getToScreenMatrix().mul(cs.getOrigin());
+		GgbVector v = getView3D().getToScreenMatrix().mul(cs.getVx());
 						
 		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
 				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},

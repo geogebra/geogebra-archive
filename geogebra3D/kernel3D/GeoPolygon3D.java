@@ -12,6 +12,7 @@ import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -270,13 +271,15 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoord
 				 //project the point on the coord sys
 				 GgbVector[] project=((GeoPoint3D) points[i]).getCoords().projectPlane(coordSys.getMatrixOrthonormal());
 
+				 //Application.debug("project["+i+"]="+project[1]);
+				 
 				 //check if the vertex lies on the coord sys
 				 if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){
 					 coordSys.setUndefined();
 					 break;
 				 }
 
-				 //Application.debug("i="+i+",project="+project);
+				 
 				 
 				 //set the 2D points
 				 points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);

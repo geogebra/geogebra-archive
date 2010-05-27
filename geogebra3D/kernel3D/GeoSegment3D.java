@@ -286,11 +286,8 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	
 	
 	
-	public GgbCoordSys getCoordSys() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
+	
 	
 	
 	

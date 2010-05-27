@@ -6,7 +6,6 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdIntersect;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoCoordSys;
-import geogebra3D.kernel3D.GeoCoordSysAbstract;
 import geogebra3D.kernel3D.Kernel3D;
 
 

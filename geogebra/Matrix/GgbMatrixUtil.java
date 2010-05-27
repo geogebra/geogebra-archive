@@ -12,14 +12,17 @@ public final class GgbMatrixUtil {
 	
 	/** Return points p1 from line1 and p2 from line2 that are the nearest possible.
 	 * Return infinite points if the two lines are parallel.
-	 * @param line1 matrix [v1 o1] describing first line
-	 * @param line2 matrix [v2 o2] describing second line
+	 * @param o1 origin of line1
+	 * @param v1 direction of line1
+	 * @param o2 origin of line2
+	 * @param v2 direction of line2
 	 * @return {p1,p2,{p1 coord on l1,p2 coord on l2}}
 	 */
-	static final public GgbVector[] nearestPointsFromTwoLines(GgbMatrix line1, GgbMatrix line2){
+	static final public GgbVector[] nearestPointsFromTwoLines(
+			GgbVector o1, GgbVector v1, 
+			GgbVector o2, GgbVector v2
+			){
 		
-		GgbVector v1 = line1.getColumn(1);
-		GgbVector v2 = line2.getColumn(1);
 		
 		// if v1 and v2 are parallel, return infinite points v1 and v2
 		GgbVector vn = v1.crossProduct(v2);
@@ -31,8 +34,6 @@ public final class GgbMatrixUtil {
 		
 		//vn.normalize();
 		
-		GgbVector o1 = line1.getColumn(2);
-		GgbVector o2 = line2.getColumn(2);
 		
 		// plane containing o1, v1, vn, with v2 direction
 		GgbMatrix plane = new GgbMatrix(4,4);
@@ -70,9 +71,6 @@ public final class GgbMatrixUtil {
 		
 		
 		GgbVector v = line.getColumn(1);
-		GgbVector v1 = plane.getColumn(1);
-		GgbVector v2 = plane.getColumn(2);
-		GgbVector vn = v1.crossProduct(v2);
 		
 		
 		// if v is orthogonal to vn, v is parallel to the plane and so the line is

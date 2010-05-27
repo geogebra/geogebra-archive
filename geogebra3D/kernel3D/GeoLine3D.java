@@ -46,9 +46,6 @@ public class GeoLine3D extends GeoCoordSys1D {
 	}
 
 
-	public boolean isDefined() {
-		return super.isDefined() && !getMatrix().getColumn(1).equalsForKernel(0, Kernel.STANDARD_PRECISION);
-	}
 
 	public boolean isEqual(GeoElement Geo) {
 		// TODO Raccord de méthode auto-généré
@@ -86,8 +83,8 @@ public class GeoLine3D extends GeoCoordSys1D {
 		
 		//TODO undefined...
 		String parameter = "\u03bb";
-		GgbVector O = getMatrix().getColumn(2);//TODO inhom coords
-		GgbVector V = getMatrix().getColumn(1);
+		GgbVector O = coordsys.getOrigin();//TODO inhom coords
+		GgbVector V = coordsys.getVx();
 
 		sbToString.append("X = (");
 		sbToString.append(kernel.format(O.get(1)));
@@ -171,11 +168,6 @@ public class GeoLine3D extends GeoCoordSys1D {
 	
 	
 	
-	
-	public GgbCoordSys getCoordSys() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	
 	
