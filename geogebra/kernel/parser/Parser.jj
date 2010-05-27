@@ -1586,7 +1586,7 @@ ExpressionNode numberFunction():
       {  
       	 Construction cons = kernel.getConstruction();
       	 GeoNumeric randNum = new GeoNumeric(cons);
-         cons.addRandomNumber(randNum);
+         cons.addRandomGeo(randNum);
          randNum.setValue(Math.random());         
       	 return new ExpressionNode(kernel, randNum, ExpressionNode.RANDOM, null); }               
 |
