@@ -382,6 +382,7 @@ public class CommandDispatcher {
     	cmdTable.put("RootList", new CmdRootList(kernel));   
     	cmdTable.put("Rank", new CmdRank(kernel));
     	cmdTable.put("Shuffle", new CmdShuffle(kernel));
+    	cmdTable.put("ApplyMatrix", new CmdApplyMatrix(kernel));
  
      	                  	
     	

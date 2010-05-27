@@ -5121,6 +5121,21 @@ public class Kernel {
 	}
 
 	/**
+	 * apply matrix 
+	 * Michael Borcherds 2010-05-27
+	 */
+	final public GeoElement [] ApplyMatrix(String label, MatrixTransformable Q, GeoList matrix) {	
+		if (label == null)
+			label = transformedGeoLabel((GeoElement)Q);
+	
+		AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, label, Q, matrix);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) Q);
+		GeoElement[] geos = { ret };
+		return geos;
+	}
+
+	/**
 	 * mirror (invert) circle conic0 in circle conic1 
 	 * Michael Borcherds 2008-02-10
 	 */

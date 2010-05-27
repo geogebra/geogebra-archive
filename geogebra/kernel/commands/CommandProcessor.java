@@ -37,6 +37,7 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.MatrixTransformable;
 import geogebra.kernel.Mirrorable;
 import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Rotateable;
@@ -46,7 +47,6 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra.main.MyParseError;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -2748,6 +2748,44 @@ class CmdDilate extends CommandProcessor {
 				else
 					throw argErr(app, c.getName(), arg[1]);
 			}
+
+		default :
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+}
+
+class CmdApplyMatrix extends CommandProcessor {
+
+	public CmdApplyMatrix(Kernel kernel) {
+		super(kernel);
+	}
+
+	final public GeoElement[] process(Command c) throws MyError {
+		String label = c.getLabel();
+		int n = c.getArgumentNumber();
+		boolean ok;
+		GeoElement[] arg;
+		GeoElement[] ret = new GeoElement[1];
+
+		switch (n) {          
+		case 2 :
+			arg = resArgs(c);
+
+			if ((ok = (arg[1].isMatrixTransformable()))
+					&& ( (arg[0] .isGeoList()))) {
+				MatrixTransformable Q = (MatrixTransformable) arg[1];
+
+
+				ret = kernel.ApplyMatrix(label, Q, (GeoList)arg[0]);
+				return ret;
+			} else {
+				if (!ok)
+					throw argErr(app, c.getName(), arg[1]);
+				else
+					throw argErr(app, c.getName(), arg[0]);
+			}
+
 
 		default :
 			throw argNumErr(app, c.getName(), n);

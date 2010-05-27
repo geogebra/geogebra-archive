@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.image.BufferedImage;
@@ -22,7 +23,7 @@ import java.util.Vector;
 
 public class GeoImage extends GeoElement 
 implements Locateable, AbsoluteScreenLocateable,
-		   PointRotateable, Mirrorable, Translateable, Dilateable {
+		   PointRotateable, Mirrorable, Translateable, Dilateable, MatrixTransformable {
 	 	
 	/**
 	 * 
@@ -694,6 +695,22 @@ implements Locateable, AbsoluteScreenLocateable,
     	}     
 	}
 
+	public void matrixTransform(GeoList matrix) {
+		if (!initTransformPoints()) return;
+    	
+    	// calculate the new corner points
+    	for (int i=0; i < corners.length; i++) {
+    		GeoVec2D vec = tempPoints[i].getVector();
+    		vec.multiplyMatrix(matrix.getMyList());    
+    		if (corners[i] == null) corners[i] = new GeoPoint(cons);
+    		corners[i].setCoords(vec);    			
+    	}     
+	}
+	
+	public boolean isMatrixTransformable() { 
+		return true;
+	}
+
 	public void mirror(GeoLine g) {
 		if (!initTransformPoints()) return;
     	
@@ -752,5 +769,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+
 
 }

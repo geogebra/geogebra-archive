@@ -4346,6 +4346,10 @@ public abstract class GeoElement
 		}				
 	}
 
+	public boolean isMatrixTransformable() { 
+		return false;
+	}
+
 
 
 }
