@@ -585,7 +585,6 @@ public class DefaultGuiManager implements GuiManager {
 		if (constProtocol == null) {		
 			constProtocol = new ConstructionProtocol(app);
 		}
-		else constProtocol.updateMenubar();//to make Show menu correct (Zbynek Konecny,2010-05-25)
 		return constProtocol;
 	}
 	
@@ -1368,6 +1367,7 @@ public class DefaultGuiManager implements GuiManager {
     
 
     public boolean save() {
+    	//app.getFrame().getJMenuBar()
     	app.setWaitCursor();
     	
     	// close properties dialog if open

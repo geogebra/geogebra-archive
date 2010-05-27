@@ -21,6 +21,7 @@ import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.Perspective;
@@ -634,6 +635,19 @@ public abstract class Application implements KeyEventDispatcher {
 		return fontManager.getFontCanDisplay(testString, serif, fontStyle, fontSize);
 	}
 	
+	/**
+	 * Sets state of application to "saved", 
+	 * so that no warning appears on close.
+	 * @author Zbynek Konecny
+	 * @version 2010-05-26
+	 */
+	public void setSaved() {
+		isSaved = true;
+	}
+	/**
+	 * Sets application state to "unsaved"
+	 * so that user is reminded on close.
+	 */
 	public void setUnsaved() {
 		isSaved = false;
 	}
@@ -832,6 +846,37 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 
+	private Macro macro;
+	
+	/**
+	 * Returns macro if in macro editing mode.
+	 * @return macro being edited (in unchanged state)
+	 */
+	public Macro getMacro(){
+		return macro;
+	}
+	
+	
+	
+	/**
+	 * Switches the application to macro editing mode
+	 * @author Zbynek Konecny
+	 * @version 2010-05-26
+	 * @param macro Tool to be edited
+	 */
+	public void openMacro(Macro macro){
+		String allXml=getXML();
+		String header=allXml.substring(0,allXml.indexOf("<construction"));
+		String footer=allXml.substring(allXml.indexOf("</construction>"),allXml.length());
+		StringBuilder sb = new StringBuilder();
+		macro.getXML(sb);
+		String macroXml=sb.toString();
+		String newXml= header+macroXml.substring(macroXml.indexOf("<construction"),macroXml.indexOf("</construction>"))+footer;
+		this.macro= macro;
+		//((GeoGebraMenuBar)getFrame().getJMenuBar()).switchMode(GeoGebraMenuBar.MODE_EDIT_MACRO);
+		setXML(newXml,true);
+	}
+	
 	public void updateCenterPanel(boolean updateUI) {
 		if (centerPanel == null) return;
 		

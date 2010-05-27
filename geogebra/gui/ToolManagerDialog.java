@@ -12,6 +12,9 @@ the Free Software Foundation.
 
 package geogebra.gui;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.menubar.GeoGebraMenuBar;
+import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
@@ -213,6 +216,10 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			final JButton btDelete = new JButton();
 			toolButtonPanel.add(btDelete);
 			btDelete.setText(app.getPlain("Delete"));
+			
+			final JButton btOpen = new JButton();
+			toolButtonPanel.add(btOpen);
+			btOpen.setText(app.getPlain("Open"));
 						
 			final JButton btSave = new JButton();
 			toolButtonPanel.add(btSave);
@@ -250,6 +257,9 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 					else if (src == btDelete) {
 						deleteTools(toolList, toolsModel);
 					}
+					else if (src == btOpen) {
+						openTools(toolList);
+					}
 					else if (src == btSave) {
 						saveTools(toolList);
 					}
@@ -257,6 +267,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			};
 			btSave.addActionListener(ac);
 			btDelete.addActionListener(ac);
+			btOpen.addActionListener(ac);
 			btClose.addActionListener(ac);
 							
 			
@@ -293,7 +304,32 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		}
 	}
 	
-	
+	/**
+	 * Opens tools in different windows
+	 * @author Zbynek Konecny
+	 * @param toolList Tools to be opened
+	 */
+	private void openTools(JList toolList) {		
+		Object [] sel = toolList.getSelectedValues();				
+		if (sel == null || sel.length == 0) return;	
+		
+		for (int i=0; i < sel.length; i++) {
+			final Macro macro = (Macro) sel[i];				
+				Thread runner = new Thread() {
+					public void run() {
+						Application.debug("before"+app.hashCode());
+						app.setWaitCursor();
+						GeoGebraFrame newframe=GeoGebraFrame.createNewWindow(null,macro);
+						newframe.setTitle(macro.getCommandName());
+						app.setDefaultCursor();
+						
+					}
+				};
+				runner.start();
+				
+				this.setVisible(false);
+			} 	
+	}
 	
 	private void insertTools(DefaultListModel listModel) {
 		Kernel kernel = app.getKernel();

@@ -242,15 +242,21 @@ public class ToolNameIconPanel extends JPanel {
 	public String getCommandName() {
 		return tfCmdName.getText();
 	}
-	
+	public void setCommandName(String commandName){
+		tfCmdName.setText(commandName);
+	}
 	public String getToolName() {
 		return tfToolName.getText();
 	}
-	
+	public void setToolName(String toolName){
+		tfToolName.setText(toolName);
+	}
 	public String getToolHelp() {
 		return tfToolHelp.getText();
 	}
-	
+	public void setToolHelp(String toolHelp){
+		tfToolHelp.setText(toolHelp);
+	}
 	public boolean showInToolBar() {
 		return cbShowInToolBar.isSelected();
 	}

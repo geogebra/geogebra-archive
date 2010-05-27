@@ -72,6 +72,10 @@ public class Macro {
 		return macroInput;
 	}
 	
+	public Kernel getKernel(){
+		return kernel;
+	}
+	
 	/**
 	 * Returns all output geos from the macro construction.
 	 */

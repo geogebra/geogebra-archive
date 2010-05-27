@@ -112,11 +112,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
     private ArrayList navigationBars = new ArrayList();
     private ConstructionProtocolNavigation protNavBar; // navigation bar of protocol window
 
-    //<Zbynek Konecny 2010-05-25>
-    private Construction oldCons;
-    private boolean oldUndo;
-    private boolean rightClickEnabled;
-    //</Zbynek>
     
     public ConstructionProtocol(Application app) {
         super(app.getFrame());
@@ -133,13 +128,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         table.setRowSelectionAllowed(true);
         table.setGridColor(Color.lightGray);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        
-        //<Zbynek Konecny 2010-05-25>
-        oldCons=kernel.getConstruction();
-        oldUndo=kernel.isUndoActive();
-        rightClickEnabled=true;
-        //</Zbynek>
-        
+              
         // header
         JTableHeader header = table.getTableHeader();
         //header.setUpdateTableInRealTime(true);
@@ -306,8 +295,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
     }
     
     public void updateMenubar() {
-    	//next line by Zbynek Konecny, 2010-05-25
-        setShowMenu();
     	cbShowOnlyBreakpoints.setSelected(kernel.showOnlyBreakpoints());
     }
     
@@ -399,71 +386,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         updateMenubar();
     }
     
-    /**
-     * Initiates the show menu for switching between construction and tools
-     * @author Zbynek Konecny
-     * @version 2010-05-25
-     */
-    private void setShowMenu()
-    {
-    	if(menuBar.getComponentCount()>3)
-        	menuBar.remove(3);
-    	
-    	int macros=kernel.getMacroNumber();
-        if(macros>0){
-        JMenu mShow = new JMenu(app.getMenu("Show"));
-        JMenuItem selectConstruction = new JMenuItem(app.getPlain("Construction"));
-        ActionListener lstSelectConstruction = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                kernel.setConstruction(oldCons);
-                kernel.setUndoActive(oldUndo);
-                rightClickEnabled=true;
-                data.initView();
-            }
-        };
-        selectConstruction.addActionListener(lstSelectConstruction);
-        WindowListener lstClose = new WindowListener() {
-            public void windowOpened(WindowEvent e) {
-            }
-            public void windowDeactivated(WindowEvent e) {
-            }
-            public void windowClosing(WindowEvent e) {
-            
-            	kernel.setUndoActive(oldUndo);
-            	kernel.setConstruction(oldCons);
-                rightClickEnabled = true;
-            }
-            public void windowClosed(WindowEvent e){     	
-            }
-            public void windowDeiconified(WindowEvent e){     	
-            }
-            public void windowIconified(WindowEvent e){     	
-            }
-            public void windowActivated(WindowEvent e){     	
-            }          
-        };
-        this.thisDialog.addWindowListener(lstClose);
-        mShow.add(selectConstruction);
-        for(int i=0;i<macros;i++){
-        	final int j=i;
-        	ActionListener lstSelectTool = new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    kernel.setConstruction(kernel.getMacro(j).getMacroConstruction());
-                    kernel.setUndoActive(false);
-                    rightClickEnabled=false;
-                    
-                    data.initView();
-                    
-                }
-        	};
-        	JMenuItem selectTool = new JMenuItem(kernel.getMacro(i).getToolName());
-        	selectTool.addActionListener(lstSelectTool);
-        	mShow.add(selectTool);
-        }
-        menuBar.add(mShow);	
-        }
-        
-    }
+    
     private void initActions() {
     	
     	printPreviewAction = new AbstractAction( app.getMenu("PrintPreview") + "...",
@@ -602,7 +525,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
                     return;
 
                 // right click
-                if (Application.isRightClick(e) && rightClickEnabled) {
+                if (Application.isRightClick(e)) {
                     GeoElement geo = data.getGeoElement(row);
                     app.getGuiManager().showPopupMenu(geo, table, origin);
                 } else { // left click     

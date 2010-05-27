@@ -183,7 +183,10 @@ implements GeoElementSelectionListener {
 			return false;
 		}							
 	}
-	
+	/**
+	 * Last change Zbynek Konecny
+	 * @version 2010-05-26
+	 */
 	private void finish() {
 		// check if command name is not used already by another macro
 		String cmdName = namePanel.getCommandName();
@@ -204,18 +207,26 @@ implements GeoElementSelectionListener {
 		setVisible(false);	
 		dispose();
 		
+		Application appToSave=app;
+		if(app.getMacro()!=null)
+		{
+			app.getMacro().getKernel().addMacro(newTool);
+			appToSave=app.getMacro().getKernel().getApplication();
+			app.setSaved();
+		}
 		// make sure new macro command gets into dictionary
 		app.updateCommandDictionary();
 		
 		// set macro mode
 		if (newTool.isShowInToolBar()) {
-			int mode = kernel.getMacroID(newTool) + EuclidianView.MACRO_MODE_ID_OFFSET;
-			app.getGuiManager().addToToolbarDefinition(mode);			
-			app.updateToolBar();			
-			app.setMode(mode);			
+			int mode = appToSave.getKernel().getMacroID(newTool) + EuclidianView.MACRO_MODE_ID_OFFSET;
+			appToSave.getGuiManager().addToToolbarDefinition(mode);			
+			appToSave.updateToolBar();			
+			appToSave.setMode(mode);			
 		}		
-			
-		app.showMessage(app.getMenu("Tool.CreationSuccess"));				
+		app.showMessage(app.getMenu("Tool.CreationSuccess"));	
+		
+		
 	}
 	
 	/**
@@ -347,7 +358,18 @@ implements GeoElementSelectionListener {
 			e.printStackTrace();
 		}
 	}
+	public void addInputs(GeoElement[] input){
+		//TODO:make this operational
+	}
 	
+	public void addOutputs(GeoElement[] output){
+		//TODO:make this operational
+	}
+	public void setNameTab(Macro macro){
+		namePanel.setCommandName(macro.getCommandName());
+		namePanel.setToolHelp(macro.getToolHelp());
+		namePanel.setToolName(macro.getToolName());
+	}
 	private JPanel createNavigationPanel() {		
 		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));		
 		btPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 5));

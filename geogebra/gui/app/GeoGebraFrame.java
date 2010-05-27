@@ -20,6 +20,7 @@ package geogebra.gui.app;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.kernel.Macro;
 import geogebra.main.Application;
 import geogebra.main.DefaultApplication;
 import geogebra.main.GeoGebraPreferences;
@@ -306,9 +307,22 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	}
 	
 	
+	/**
+	 * Creates new GeoGebra window
+	 * @param args Command line arguments
+	 * @return the new window
+	 */
 	//public abstract GeoGebra buildGeoGebra();
-
-	public static synchronized GeoGebraFrame createNewWindow(String[] args) {				
+	public static synchronized GeoGebraFrame createNewWindow(String[] args){
+		return createNewWindow(args,null);
+	}
+	/**
+	 * Creates new GeoGebra window
+	 * @param args Command line arguments
+	 * @param macro Macro to open (or null for file edit mode)
+	 * @return the new window
+	 */
+	public static synchronized GeoGebraFrame createNewWindow(String[] args,Macro macro) {				
 		// set Application's size, position and font size
 		// TODO Add layout glass pane (F.S.)
 		GeoGebraFrame wnd = new GeoGebraFrame();
@@ -316,6 +330,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		//GeoGebra wnd = buildGeoGebra();
 		final DefaultApplication app = new DefaultApplication(args, wnd, true);		
 		
+		if(macro!=null)app.openMacro(macro);
 		//app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
 		app.getGuiManager().initMenubar();
 		
