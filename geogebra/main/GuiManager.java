@@ -46,8 +46,19 @@ public interface GuiManager {
 	public void setColumnWidth(int column, int width);	
 	public void setScrollToShow(boolean scrollToShow);
 	
-	public int getHighestUsedSpreadsheetColumn(); 
-	public int getSpreadsheetTraceRow(int traceColumn);
+	
+	// G.Sturr 2010-5-12: removed old tracing methods and added new ones
+	
+	//public int getHighestUsedSpreadsheetColumn(); 
+	//public int getSpreadsheetTraceRow(int traceColumn);
+	
+	public void addSpreadsheetTrace(GeoElement geo);
+	public void removeSpreadsheetTrace(GeoElement geo);
+	public void resetTraceColumn(GeoElement geo);
+	
+	//END G.Sturr
+	
+	
 	
 	public void attachView(int viewId);
 	public void detachView(int viewId);

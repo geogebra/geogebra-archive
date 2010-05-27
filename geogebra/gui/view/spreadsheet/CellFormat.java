@@ -8,19 +8,18 @@ import java.util.Hashtable;
 import javax.swing.JLabel;
 
 /**
- * Helper class that handles cell formats for the spreadsheet table 
- * cell renderer. 
+ * Helper class that handles cell formats for the spreadsheet table cell
+ * renderer.
  * 
- * Format values are stored in an array of hash tables. Each hash table holds 
- * values for a given format (e.g text alignment, background color). Table 
- * keys are Point objects that locate cells, rows or columns as follows:
- *  
- * cell = (column index, row index) 
- * row = (-1, row index) 
- * column = (column index, -1).
+ * Format values are stored in an array of hash tables. Each hash table holds
+ * values for a given format (e.g text alignment, background color). Table keys
+ * are Point objects that locate cells, rows or columns as follows:
  * 
- * @author George Sturr,  2010-4-4
- *
+ * cell = (column index, row index) row = (-1, row index) column = (column
+ * index, -1).
+ * 
+ * @author George Sturr, 2010-4-4
+ * 
  */
 public class CellFormat {
 
@@ -29,16 +28,25 @@ public class CellFormat {
 	// Array of format tables
 	private Hashtable[]  formatTableArray;
 	
-	// Format table types
+	// Format table indicies
 	public static final int FORMAT_ALIGN = 0;
 	public static final int FORMAT_BORDER = 1;
 	public static final int FORMAT_BGCOLOR = 2;
+	public static final int FORMAT_TRACING = 3;
 	
 	
-	// Alignment format values	
+	// Alignment constants	
 	public static final int ALIGN_LEFT = JLabel.LEFT;
 	public static final int ALIGN_CENTER = JLabel.CENTER;
 	public static final int ALIGN_RIGHT = JLabel.RIGHT;
+	
+	
+	// Border constants	
+	public static final int BORDER_TOP = 0;
+	public static final int BORDER_LEFT = 1;
+	public static final int BORDER_BOTTOM = 2;
+	public static final int BORDER_RIGHT = 3;
+	public static final int BORDER_ALL = 4;
 	
 	
 	
@@ -47,15 +55,30 @@ public class CellFormat {
 		
 		this.table = table;
 
-		formatTableArray = new Hashtable[3];		
+		// Create instances of the format hash tables 
+		formatTableArray = new Hashtable[4];		
 		formatTableArray[FORMAT_ALIGN] = new Hashtable();
 		formatTableArray[FORMAT_BORDER] = new Hashtable();
 		formatTableArray[FORMAT_BGCOLOR] = new Hashtable();
+		formatTableArray[FORMAT_TRACING] = new Hashtable();
 		
 	}
 	
 	
-	public void addFormat(ArrayList<CellRange> crList, int formatKind, int formatValue){
+	/**
+	 * Add a format value to a cell ranges.
+	 */
+	public void setFormat(CellRange cr, int formatKind, int formatValue){
+		ArrayList<CellRange> crList = new ArrayList<CellRange>();
+		crList.add(cr);
+		setFormat(crList, formatKind, formatValue);
+	}
+		
+	
+	/**
+	 * Add a format value to a list of cell ranges.
+	 */
+	public void setFormat(ArrayList<CellRange> crList, int formatKind, int formatValue){
 		
 		Hashtable formatTable = formatTableArray[formatKind];
 		
@@ -111,6 +134,11 @@ public class CellFormat {
 	}
 	
 	
+	
+	
+	/**
+	 * Returns the format object for a given cell and a given format.
+	 */
 	public Object getCellFormat(Point cellKey, int formatKind){
 		
 		Object value = null;
@@ -118,7 +146,9 @@ public class CellFormat {
 		Point rowKey = new Point(-1,cellKey.y);
 		Point columnKey = new Point(cellKey.x,-1);
 		
+		// get the format table
 		Hashtable formatTable = formatTableArray[formatKind];
+		
 		
 		if(formatTable.containsKey(cellKey)){
 			//System.out.println("found" + cell.toString());
@@ -134,27 +164,27 @@ public class CellFormat {
 		
 		if(value != null){
 			//System.out.println(value.toString());
-			return setFormatValue((Integer) value, formatKind);
+			return getFormatObject((Integer) value, formatKind);
 		}
 		
 		return null;
 	
 	}
 	
-	
-	private Object setFormatValue(Integer value, int formatKind){
+	/**
+	 * Return the format object associated with a value for a given format.
+	 */
+	private Object getFormatObject(Integer value, int formatKind){
 		
 		switch (formatKind){
-		case FORMAT_ALIGN:
-			return value;
+		case FORMAT_ALIGN: return value; 
 		
-		case FORMAT_BORDER:
-			return null;
+		case FORMAT_BORDER: return null; 
+		
+		case FORMAT_BGCOLOR: return null; 
 
-			
-		case FORMAT_BGCOLOR:
-			return null;
-
+		case FORMAT_TRACING: return value;
+		
 		}
 		
 		return null;

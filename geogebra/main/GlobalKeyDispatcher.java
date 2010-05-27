@@ -357,6 +357,9 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				return true;
 				
 			case KeyEvent.VK_DELETE:
+				//G.Sturr 2010-5-2: let the spreadsheet handle delete
+				if (app.getGuiManager().getSpreadsheetView().hasFocus()) 			
+					return false;
 				// DELETE selected objects
 				if (!app.isApplet() || app.isRightClickEnabled()) {
 					app.deleteSelectedObjects();
@@ -364,6 +367,9 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				}
 			
 			case KeyEvent.VK_BACK_SPACE:
+				//G.Sturr 2010-5-2: let the spreadsheet handle delete
+				if (app.getGuiManager().getSpreadsheetView().hasFocus()) 			
+					return false;
 				// DELETE selected objects
 				// Note: ctrl-h generates a KeyEvent.VK_BACK_SPACE event, so check for ctrl too
 				if (!event.isControlDown() && (!app.isApplet() || app.isRightClickEnabled())) {

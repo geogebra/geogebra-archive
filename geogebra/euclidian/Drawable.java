@@ -840,6 +840,31 @@ public abstract class Drawable {
 	//private StringBuilder command = new StringBuilder();
 	private double[] coords = new double[2];
 	
+	
+	
+	//=================================================================
+	//G.Sturr 2010-5-14: new recordToSpreadsheet method
+	
+	
+	public void recordToSpreadsheet(GeoElement geo) {
+
+		// stop spurious numbers after undo
+		if (view.getKernel().isViewReiniting())
+			return;
+		Construction cons = view.getKernel().getConstruction();
+		cons.getApplication().getGuiManager().traceToSpreadsheet(geo);
+	}
+
+	
+	/*  
+	* The old recordToSpreadsheet code processed traces by geo type, 
+	* but this is now done in SpreadsheetTraceManager.      
+	*/
+	
+	
+	/*
+	 * ----- OLD CODE
+	 * 
 	public void recordToSpreadsheet(GeoElement geo) {
 		
 		
@@ -860,6 +885,9 @@ public abstract class Drawable {
     			cons.getApplication().getGuiManager().traceToSpreadsheet(geo);
     			
     			break;*/
+	
+	
+			/*
     			
     		case GeoElement.GEO_CLASS_POINT:
     	    	//Application.debug("GEO_CLASS_POINT");   		
@@ -901,8 +929,12 @@ public abstract class Drawable {
 				    	P.setLastTrace1(coords[0]);
 				    	P.setLastTrace2(coords[1]);
 			    	}*/
-			    	
+			
+			/*
+			     	
 		    	}
+
+			
 	    	break;
 	    	
     		case GeoElement.GEO_CLASS_VECTOR:
@@ -933,11 +965,18 @@ public abstract class Drawable {
 				    	vector.setLastTrace2(coords[1]);
 			    	}*/
 			    	
+			/*
 		    	}
     	    	 	    			
     			break;
     		}
-    	}    	
+    	} 
+    	
 	}
+	
+	*/
+	
+	//END G.Sturr 2010-5-14
+	//=================================================================
 
 }

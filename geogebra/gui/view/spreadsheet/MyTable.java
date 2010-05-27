@@ -1,17 +1,20 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.view.spreadsheet.SpreadsheetTraceManager.TraceSettings;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
@@ -26,6 +29,7 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -94,7 +98,7 @@ public class MyTable extends JTable implements FocusListener
 	protected int minSelectionColumn = -1;
 	protected int maxSelectionColumn = -1;
 	public boolean[] selectedColumns;
-	
+	private boolean doShowSelectionRectangle = false; //G.Sturr 2010-5-25
 	
 	// Used for rendering headers with ctrl-select
 	protected HashSet selectedColumnSet = new HashSet();
@@ -171,7 +175,7 @@ public class MyTable extends JTable implements FocusListener
 		// add renderer & editor
 		
 		//G.Sturr 2010-4-4: add format handling to cell renderer
-		setDefaultRenderer(Object.class, new MyCellRenderer(app,getCellFormatHandler()));
+		setDefaultRenderer(Object.class, new MyCellRenderer(app, this.getCellFormatHandler()));
 		
 		//setDefaultRenderer(Object.class, new MyCellRenderer(app));
 		editor = new MyCellEditor(kernel);
@@ -267,7 +271,7 @@ public class MyTable extends JTable implements FocusListener
 	
 	/**
 	 * Return CellRangeProcessor for this table.
-	 * If none exist, a new one is created.
+	 * If none exists, a new one is created.
 	 */
 	public CellRangeProcessor getCellRangeProcessor() {
     	if (crProcessor == null)
@@ -290,7 +294,8 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	/**
-	 * Appends columns to the table if newColumnCount is larger than current number of columns. 
+	 * Append columns to the table if newColumnCount is larger than 
+	 * current number of columns. 
 	 */
 	public void setMyColumnCount(int newColumnCount) {	
 		int oldColumnCount = tableModel.getColumnCount();		
@@ -527,7 +532,7 @@ public class MyTable extends JTable implements FocusListener
 			y += rowHeight;
 		}
 		return new Point(x, y);
-		*/
+		*/ 
 	}
 
 	protected Point getMinSelectionPixel() {
@@ -565,6 +570,9 @@ public class MyTable extends JTable implements FocusListener
 		return new Point(indexX, indexY);
 	}
 
+	
+	private Rectangle cellFrame;
+	
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
 
@@ -574,6 +582,30 @@ public class MyTable extends JTable implements FocusListener
 		}
 		*/
 
+		
+		Graphics2D g2 = (Graphics2D)graphics;
+
+		if(cellFrame != null){
+			g2.setColor(Color.GRAY);
+			g2.setStroke(new BasicStroke(3));
+			g2.draw(cellFrame);
+		}
+		
+		/*
+		for(GeoElement geo: view.getTraceManager().getTraceGeoList()){
+			tSet = view.getTraceManager().getTraceSettings(geo);
+			int row = tSet.tracingRow != -1 ? tSet.tracingRow-1 : tSet.traceRow2;
+			Point point1 = getPixel(tSet.traceColumn1, row, true);
+			Point point2 = getPixel(tSet.traceColumn2, row, false);
+			cellFrame.setFrameFromDiagonal(point1, point2);
+			g2.draw(cellFrame);
+		}
+		*/	
+		
+		//Don't draw anything if the view does not have the focus	
+		if(!view.hasFocus()) {
+			return;
+		}
 		
 		//draw special dragging frame for cell editor
 		if (isDragging2) {
@@ -701,7 +733,7 @@ public class MyTable extends JTable implements FocusListener
 		
 		//G.Sturr 2010-4-2
 		// After rendering the LaTeX image for a geo, update the row height 
-		// with the preffered size set by the renderer.
+		// with the preferred size set by the renderer.
 		
 		resizeMarkedCells();
 		
@@ -1778,12 +1810,15 @@ public class MyTable extends JTable implements FocusListener
 	}
 	/**/
 
-	protected class MyColumnHeaderRenderer extends JLabel implements TableCellRenderer, ListSelectionListener
+	protected class MyColumnHeaderRenderer extends JLabel implements TableCellRenderer, ListSelectionListener, FocusListener
 	{
 		private static final long serialVersionUID = 1L;
 
 		private Color defaultBackground;
 
+		private ImageIcon traceIcon = new ImageIcon();
+		private ImageIcon emptyIcon = new ImageIcon();
+		
 		public MyColumnHeaderRenderer() {    		
 			super("", JLabel.CENTER);
 			setOpaque(true);
@@ -1797,11 +1832,16 @@ public class MyTable extends JTable implements FocusListener
 				}
 			}
 			setFont(font1);
+			
+			traceIcon = app.getImageIcon("spreadsheettrace.gif");
+			emptyIcon = new ImageIcon();
+			
 		}
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
 			
 			setText(value.toString());
+			setIcon(emptyIcon);
 			
 			if (getSelectionType() == ROW_SELECT) {
 				setBackground(defaultBackground);
@@ -1813,7 +1853,9 @@ public class MyTable extends JTable implements FocusListener
 					setBackground(defaultBackground);
 				}
 			}
-			
+			if(view.getTraceManager().isTraceColumn(colIndex)){
+				setIcon(traceIcon);
+			}
 			return this;
 			
 		/* ------------- old code ----------	
@@ -1850,6 +1892,25 @@ public class MyTable extends JTable implements FocusListener
 			//repaint();
 		*/
 		}
+
+		
+		public void focusGained(FocusEvent e) {
+			if (Application.isVirtualKeyboardActive())
+				app.getGuiManager().toggleKeyboard(true);
+			
+		}
+
+
+		public void focusLost(FocusEvent e) {
+			// avoid infinite loop!
+			if (e.getOppositeComponent() instanceof VirtualKeyboard)
+				return;
+			
+			app.getGuiManager().toggleKeyboard(false);
+			
+		}
+		
+		
 	
 	}
 	
@@ -2216,18 +2277,85 @@ public class MyTable extends JTable implements FocusListener
 	public void setRowSelectionInterval(int row0, int row1) {
 		super.setRowSelectionInterval(row0, row1);
 		selectionChanged(); 
+		setSelectionType(ROW_SELECT);
 		
 	}
 	@Override
 	public void setColumnSelectionInterval(int col0, int col1) {
 		super.setColumnSelectionInterval(col0, col1);
 		selectionChanged(); 
-		
+		setSelectionType(COLUMN_SELECT);
 	}
 	//END GSTURR
 	
 	
 	
+	public void setSelectionRectangle(CellRange cr){
+
+		if (cr == null){
+			doShowSelectionRectangle = false;
+			return;
+		}
+		
+		doShowSelectionRectangle = true;
+		this.minSelectionColumn = cr.getMinColumn();
+		this.minSelectionRow = cr.getMinRow();
+		this.maxSelectionColumn = cr.getMaxColumn();
+		this.maxSelectionRow = cr.getMaxRow();
+		this.repaint();
+		
+	}
+	
+	
+	public void setTraceSelectionRectangle(TraceSettings t) {
+
+		if (t == null) {
+			cellFrame = null;
+		} else {
+
+			// int row = t.tracingRow != -1 ? t.tracingRow-1 : t.traceRow2;
+			Point point1 = getPixel(t.traceColumn1, t.traceRow1, true);
+			Point point2 = getPixel(t.traceColumn2, t.traceRow2, false);
+			
+			cellFrame = new Rectangle();
+			cellFrame.setFrameFromDiagonal(point1, point2);
+			
+			// scroll to upper left corner of rectangle
+			scrollRectToVisible(table.getCellRect(t.traceRow1, t.traceColumn1, true));
+			
+		}
+		repaint();
+
+	}
+	
+	
+	
+	
+	
+	
+	public void setSelection(CellRange selection){
+		ArrayList<CellRange> s = new ArrayList<CellRange>();
+		s.add(selection);
+		setSelection(s);
+	}
+	
+	public void setSelection(ArrayList<CellRange> selection){
+		
+		if (selection == null) return;
+		
+		for(CellRange cr:selection){
+			if(cr.isRow()){
+				setRowSelectionInterval(cr.getMinRow(), cr.getMaxRow()); 
+			}
+			else if(cr.isColumn()){
+				setColumnSelectionInterval(cr.getMinColumn(), cr.getMaxColumn()); 
+			}
+			else {
+				changeSelection(cr.getMinRow(), cr.getMinColumn(), false, false);
+				changeSelection(cr.getMaxColumn(), cr.getMaxRow(), false, true);
+			}
+		}
+	}
 	
 	
 	public void setSelectionType(int selType) {

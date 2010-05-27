@@ -238,8 +238,10 @@ public final class DrawPoint extends Drawable {
         circleSel.setFrame(xUL - SELECTION_OFFSET, 
 				yUL - SELECTION_OFFSET, selDiameter, selDiameter);
 		
-        if (P.spreadsheetTrace) recordToSpreadsheet(P); 
         
+        //if (P.spreadsheetTrace) recordToSpreadsheet(P);  
+        
+        if (P.getSpreadsheetTrace()) recordToSpreadsheet(P); 
 		if (P == view.getEuclidianController().recordObject)
 		    recordToSpreadsheet(P);
 

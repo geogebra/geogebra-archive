@@ -438,7 +438,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	final public boolean getTrace() {		
 		return trace;
 	}
-
+	
+	//G.Sturr 2010-5-18  get/set spreadsheet trace not needed here
+	/*
 	public void setSpreadsheetTrace(boolean spreadsheetTrace) {
 		this.spreadsheetTrace = spreadsheetTrace;
 	}
@@ -446,6 +448,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	public boolean getSpreadsheetTrace() {
 		return spreadsheetTrace;
 	}
+	*/
 	
 	public void setTrace(boolean trace) {
 		this.trace = trace;	

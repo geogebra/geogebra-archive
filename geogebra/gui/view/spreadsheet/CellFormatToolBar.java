@@ -58,17 +58,17 @@ public class CellFormatToolBar extends JToolBar implements ActionListener{
 		
 		Object source = e.getSource();
 		if (source == leftJustifyBtn) {
-			formatHandler.addFormat(selectedCells,
+			formatHandler.setFormat(selectedCells,
 					CellFormat.FORMAT_ALIGN, CellFormat.ALIGN_LEFT);
 		}
 
 		else if (source == centerJustifyBtn) {
-			formatHandler.addFormat(selectedCells,
+			formatHandler.setFormat(selectedCells,
 					CellFormat.FORMAT_ALIGN, CellFormat.ALIGN_CENTER);
 		}
 
 		else if (source == rightJustifyBtn) {
-			formatHandler.addFormat(selectedCells,
+			formatHandler.setFormat(selectedCells,
 					CellFormat.FORMAT_ALIGN, CellFormat.ALIGN_RIGHT);
 		}
 		
@@ -77,6 +77,42 @@ public class CellFormatToolBar extends JToolBar implements ActionListener{
 	}
 	
 	
+		
+	
+	
+	/*
+	
+	private void setTraceBorder(){
+		
+		CellRange cr = new CellRange(table);
+		
+		
+		cr.setCellRange(t.traceColumn1, t.traceRow1, t.traceColumn2, t.traceRow2);
+		table.getCellFormatHandler().setFormat(cr, CellFormat.FORMAT_TRACING, CellFormat.BORDER_TOP);
+		
+		if(t.doRowLimit){
+		cr.setCellRange(t.traceColumn1, t.traceRow2, t.traceColumn2, t.traceRow2);
+		table.getCellFormatHandler().setFormat(cr, CellFormat.FORMAT_TRACING, CellFormat.BORDER_BOTTOM);
+		}
+		
+		if(t.doRowLimit){
+			cr.setCellRange(t.traceColumn1, t.traceRow1, t.traceColumn1, t.traceRow2);
+		}else{
+			cr.setCellRange(t.traceColumn1, t.traceRow1, t.traceColumn1, view.MAX_ROWS);
+		}
+		
+		table.getCellFormatHandler().setFormat(cr, CellFormat.FORMAT_TRACING, CellFormat.BORDER_LEFT);
+		
+		if(t.doRowLimit){
+			cr.setCellRange(t.traceColumn2, t.traceRow1, t.traceColumn2, t.traceRow2);
+		}else{
+			cr.setCellRange(t.traceColumn2, t.traceRow1, t.traceColumn2, view.MAX_ROWS);
+		}
+		table.getCellFormatHandler().setFormat(cr, CellFormat.FORMAT_TRACING, CellFormat.BORDER_RIGHT);
+		
+	}
+	
+	*/
 	
 	
 	

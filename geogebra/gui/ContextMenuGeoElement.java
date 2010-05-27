@@ -15,6 +15,7 @@ package geogebra.gui;
 
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.AnimatedGifEncoder;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -390,7 +391,10 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 	private void addForAllItems() {
 		// SHOW, HIDE
-		if (geo.isDrawable()) { 
+		
+		//G.Sturr 2010-5-14: allow menu to show spreadsheet trace for non-drawables
+		// if (geo.isDrawable()) { 	
+		if (geo.isDrawable() || geo.isSpreadsheetTraceable()) { 
 			JCheckBoxMenuItem cbItem;
 
 			// show object
@@ -438,7 +442,25 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				addItem(cbItem);            	
 			}  
 
-			//  trace to spreadsheet
+			//  trace to spreadsheet 
+			
+			// G.Sturr 2010-5-12 
+			// modified to use SpreadsheetTrace Dialog
+			
+			if (geo.isSpreadsheetTraceable() && app.getGuiManager().showSpreadsheetView()) {
+				cbItem = new JCheckBoxMenuItem(app.getPlain("TraceToSpreadsheet"));
+				cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
+				cbItem.setSelected(geo.getSpreadsheetTrace());
+
+				cbItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).showTraceDialog(geo, null);
+					}
+				});
+				addItem(cbItem);
+			}
+			
+			/* ------------ OLD CODE ---------------------
 			if (geo.isGeoPoint() && app.getGuiManager().showSpreadsheetView()) {            	
 				cbItem = new JCheckBoxMenuItem( app.getPlain("TraceToSpreadsheet"));
 				cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
@@ -452,6 +474,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				});
 				addItem(cbItem);            	
 			}    
+			*/
+			//END G.Sturr
+			
 
 			//  animation
 			if (geo.isAnimatable()) {            	

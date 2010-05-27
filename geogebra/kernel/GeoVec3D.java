@@ -114,15 +114,23 @@ implements Traceable {
 		return trace;
 	}
     
+    //G.Sturr 2010-5-14: no longer needed
+	/*
 	public void setSpreadsheetTrace(boolean spreadsheetTrace) {
 		this.spreadsheetTrace = spreadsheetTrace;
 		
 		if (spreadsheetTrace) resetTraceColumns();
 	}
+	 
+	
 
 	public boolean getSpreadsheetTrace() {
 		return spreadsheetTrace;
 	}
+	
+	*/
+	//END G.Sturr
+	
 	
     /** Yields true if this vector and v are linear dependent 
      * This is done by calculating the cross product

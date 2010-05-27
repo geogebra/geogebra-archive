@@ -607,6 +607,13 @@ public class CopyPasteCut {
 				//}
 			}
 		}
+		
+		// Let the trace manager know about the delete 
+		// TODO add SelectAll
+		if(table.getSelectionType()==MyTable.COLUMN_SELECT){
+			view.getTraceManager().handleColumnDelete(column1, column2);
+		}
+		
 		return succ;
 	}
 

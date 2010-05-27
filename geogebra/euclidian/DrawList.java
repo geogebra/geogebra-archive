@@ -83,6 +83,10 @@ public final class DrawList extends Drawable {
     	for (int i=drawables.size()-1; i >= drawablePos; i--) {      		 
     		drawables.remove(i);
     	}
+    	
+    	//G.Sturr 2010-4-22
+		if (geoList.getSpreadsheetTrace())
+		    recordToSpreadsheet(geoList);
     }
     
     private boolean addToDrawableList(GeoElement listElement, int drawablePos, int oldDrawableSize) {

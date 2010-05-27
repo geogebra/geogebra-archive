@@ -255,6 +255,42 @@ public class DefaultGuiManager implements GuiManager {
 		}
 	}
 	
+	//==========================================
+	// G.Sturr 2010-5-12
+	// revised spreadsheet tracing code to work with trace manager
+	//
+	
+	public void addSpreadsheetTrace(GeoElement geo){
+		spreadsheetView.getTraceManager().addSpreadsheetTraceGeo(geo);
+	}
+	
+	public void removeSpreadsheetTrace(GeoElement geo){
+		spreadsheetView.getTraceManager().removeSpreadsheetTraceGeo(geo);
+	}
+	
+	/** Set a trace manager flag to auto-reset the trace column */
+	public void resetTraceColumn(GeoElement geo){
+		spreadsheetView.getTraceManager().setNeedsColumnReset(geo, true);
+	}
+	
+	public void startCollectingSpreadsheetTraces() {
+		if (spreadsheetView != null) 
+			spreadsheetView.getTraceManager().startCollectingSpreadsheetTraces();
+	}
+
+	public void stopCollectingSpreadsheetTraces() {
+		if (spreadsheetView != null) 
+			spreadsheetView.getTraceManager().stopCollectingSpreadsheetTraces();
+	}
+	
+	public void traceToSpreadsheet(GeoElement geo) {
+		if (spreadsheetView != null) 
+			spreadsheetView.getTraceManager().traceToSpreadsheet(geo);		
+	}
+
+	
+	// ************ Old Code *********************
+	/*
 	public int getHighestUsedSpreadsheetColumn() {
 		if (spreadsheetView != null) { 
 			return spreadsheetView.getHighestUsedColumn();
@@ -283,6 +319,11 @@ public class DefaultGuiManager implements GuiManager {
 		if (spreadsheetView != null) 
 			spreadsheetView.traceToSpreadsheet(geo);		
 	}
+
+	*/	
+	//==========================================
+	//END G.Sturr	
+	
 	
 	public void getSpreadsheetViewXML(StringBuilder sb) {
 		if (spreadsheetView != null)

@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -128,6 +129,22 @@ public class ContextMenu extends JPopupMenu
    	 	}
 	 	addSeparator();
 	 	
+	 	// Trace to spreadsheet
+	 	if(selectionType != table.ROW_SELECT){
+	 		JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem(app.getPlain("TraceToSpreadsheet")+"...");
+			cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
+			cbItem.setSelected(view.getTraceManager().isTraceColumn(table.minSelectionColumn));
+			cbItem.addActionListener(new ActionListenerTrace());   
+	 		
+		 	//JMenuItem itemTrace = new JMenuItem(app.getMenu("Trace..."));
+		 	//itemTrace.setIcon(app.getImageIcon("spreadsheettrace.gif"));
+		 	//itemTrace.addActionListener(new ActionListenerTrace());   	 	
+	   	 	//add(itemTrace);
+			add(cbItem);
+			addSeparator();
+	 	}
+	 	
+	 	
 	 	
 	 	// G.Sturr 20009-10-2  
 	 	// Insert (insert new row or new column)
@@ -222,7 +239,7 @@ public class ContextMenu extends JPopupMenu
  		
  		// Spreadsheet Options
  			addSeparator();
-   	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("Options..."));
+   	   	 	JMenuItem item7 = new JMenuItem(app.getMenu("Spreadsheet Options..."));
    	   	 	item7.setIcon(app.getEmptyIcon());
    	   	 	item7.addActionListener(new ActionListenerSpreadsheetProperties());
    	   	 	add(item7);
@@ -821,6 +838,17 @@ public class ContextMenu extends JPopupMenu
 		app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_SPREADSHEET);
 		}
 	}
+	
+	
+
+	private class ActionListenerTrace implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			view.showTraceDialog(null, selectedCellRanges.get(0));
+		}
+	}
+	
+	
+	
 	
 	
 	

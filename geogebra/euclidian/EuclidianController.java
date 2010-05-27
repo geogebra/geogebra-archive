@@ -334,9 +334,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 		}
 
-		if (recordObject != null) recordObject.setSelected(false);
-		recordObject = null;
-
+		if (recordObject != null) {
+			recordObject.setSelected(false);
+			app.getGuiManager().removeSpreadsheetTrace(recordObject);
+			recordObject = null;
+		}
+		
 		if (toggleModeChangedKernel)
 			app.storeUndoInfo();
 	}
@@ -449,8 +452,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			rotationCenter = null; // this will be the active geo template
 			break;
 
-		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:		
-			recordObject = null; 
+		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
+			
+			//G.Sturr 2010-5-14
+			if(recordObject != null)
+				app.getGuiManager().removeSpreadsheetTrace(recordObject);
+			//END G.Sturr
+			
+			recordObject = null;
+	
 			break;
 
 		default:
@@ -3563,6 +3573,7 @@ Rectangle rect = view.getSelectionRectangle();
 			) {
 				//app.removeSelectedGeo(recordObject);
 				recordObject.setSelected(false);
+				app.getGuiManager().removeSpreadsheetTrace(recordObject);
 				recordObject = null;
 				moveMode = MOVE_NONE;
 				return;
@@ -3690,6 +3701,7 @@ Rectangle rect = view.getSelectionRectangle();
 				GeoPoint[] points = getSelectedPoints();
 				if (points[0] == recordObject) {
 					recordObject.setSelected(false);
+				//	app.getGuiManager().removeSpreadsheetTrace(recordObject);
 					recordObject = null;
 					resetSpreadsheetRecording();
 				}
@@ -3698,6 +3710,7 @@ Rectangle rect = view.getSelectionRectangle();
 				GeoNumeric[] nums = getSelectedNumbers();
 				if (recordObject == nums[0]) {
 					recordObject.setSelected(false);
+				//	app.getGuiManager().removeSpreadsheetTrace(recordObject);
 					recordObject = null;
 					resetSpreadsheetRecording();
 				}
@@ -3706,6 +3719,7 @@ Rectangle rect = view.getSelectionRectangle();
 				GeoVector[] vecs = getSelectedVectors();
 				if (recordObject == vecs[0]) {
 					recordObject.setSelected(false);
+				//	app.getGuiManager().removeSpreadsheetTrace(recordObject);
 					recordObject = null;
 					resetSpreadsheetRecording();
 				}
@@ -3725,11 +3739,22 @@ Rectangle rect = view.getSelectionRectangle();
 		moveMode = MOVE_NONE;
 		if (recordObject != null) {
 			recordObject.resetTraceColumns();
+			
+			//G.Sturr 2010-4-22
+			app.getGuiManager().addSpreadsheetTrace(recordObject);
+			
 			recordObject.updateRepaint(); // force repaint to put first point in spreadsheet
 		}
 		movedGeoPoint = null;
 		movedGeoNumeric = null;
-		//view.resetTraceRow();		
+		//view.resetTraceRow();	
+		
+		//G.Sturr 2010-4-22
+		if (recordObject == null) {
+			app.getGuiManager().removeSpreadsheetTrace(recordObject);
+		}
+		
+		
 	}
 
 	//	get two points and create line through them

@@ -556,6 +556,8 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		this.trace = trace;	
 	}   
 
+	//G.Sturr 2010-5-18  get/set spreadsheet trace not needed here
+	/*
 	public void setSpreadsheetTrace(boolean spreadsheetTrace) {
 		this.spreadsheetTrace = spreadsheetTrace;
 	}
@@ -563,7 +565,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	public boolean getSpreadsheetTrace() {
 		return spreadsheetTrace;
 	}
-	
+	*/
 	
 	
 	public GeoFunction getGeoFunction() {

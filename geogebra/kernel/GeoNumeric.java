@@ -626,7 +626,19 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	
 	public void update() {  	
 		super.update();
-				
+		//G.Sturr 2010-5-12
+		EuclidianView view = kernel.getApplication().getEuclidianView();	
+		if (this == view.getEuclidianController().recordObject){	
+    		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
+    	}
+    		
+    	if (isSpreadsheetTraceable() && getSpreadsheetTrace()){ 
+        	cons.getApplication().getGuiManager().traceToSpreadsheet(this);
+    	}		
+		
+		// -------- old code
+		
+		/*
 		// TODO: can we move this to Drawable? (problem: dependant GeoNumeric not drawn!)
 		EuclidianView view = kernel.getApplication().getEuclidianView();	
         // record to spreadsheet tool
@@ -645,7 +657,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	    	traceCell.setAuxiliaryObject(true);
 	    	
 	    	setLastTrace1(value);*/
-    	}
+	    
+    //	}
+    	
+    	//END G.Sturr
+    	
     }	
 	
 	/**

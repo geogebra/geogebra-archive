@@ -22,6 +22,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -54,7 +56,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
-public class SpreadsheetView extends JSplitPane implements View, ComponentListener
+public class SpreadsheetView extends JSplitPane implements View, ComponentListener, FocusListener
 {
 
 	private static final long serialVersionUID = 1L;
@@ -78,8 +80,12 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private static int DEFAULT_COLUMN_WIDTH = 70;
 	public static final int ROW_HEADER_WIDTH = 35; // wide enough for "9999"
 	
-	private int highestUsedColumn = -1; // for trace
-	short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
+	public int highestUsedColumn = -1; // for trace
+	
+	//short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
+	
+	private SpreadsheetTraceManager traceManager;
+	private TraceDialog traceDialog;
 	
 	
 	//G.STURR 2010-1-9: needed for resizing rows
@@ -113,6 +119,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean showHScrollBar = true;
 	private boolean showBrowserPanel = false;
 	private boolean showCellFormatToolBar = false;
+	
+	
 	
 	/**
 	 * Construct spreadsheet view as a split panel. 
@@ -240,16 +248,54 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 
+	//===============================================
+	//         Tracing
+	//===============================================
 	
+	public SpreadsheetTraceManager getTraceManager() {
+		if (traceManager == null)
+			traceManager = new SpreadsheetTraceManager(this);
+		return traceManager;
+	}
+	
+	public void addRemoveSpreadsheetTrace(GeoElement geo, boolean addGeo){
+		if(addGeo)
+			traceManager.addSpreadsheetTraceGeo(geo);
+		else
+			traceManager.removeSpreadsheetTraceGeo(geo);	
+	}
+	
+	public void showTraceDialog(GeoElement geo, CellRange traceCell){
+		if (traceDialog == null){
+			traceDialog = new TraceDialog(app, geo, traceCell);
+		}else{
+			traceDialog.setTraceDialogSelection(geo, traceCell);
+		}
+		traceDialog.setVisible(true);
+		
+	}
+	
+
 	public int getHighestUsedColumn() {
-		resetTraceRow(highestUsedColumn+1);
-		resetTraceRow(highestUsedColumn+2);
+		//traceHandler.resetTraceRow(highestUsedColumn+1);
+		//traceHandler.resetTraceRow(highestUsedColumn+2);
 		return highestUsedColumn;
 	}
-		
+			
+	/*
+	public int getTraceRow(int column) {
+		return traceHandler.getTraceRow(column);
+	}
+	*/
+	
+	
+	
+	/*
 	private void resetTraceRow(int col) {
 		if (col < MAX_COLUMNS) traceRow[col] = 1;
 	}
+	
+	
 	
 	public int getTraceRow(int column) {
 		if (column < 0 || column >= MAX_COLUMNS) return -1;
@@ -257,8 +303,12 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return (int)traceRow[column]++;
 	}
 	
+	
+	
 	boolean collectingTraces = false;
 	HashMap traces = null;
+	
+	
 	
 	public void startCollectingSpreadsheetTraces() {
 		collectingTraces = true;
@@ -266,6 +316,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			traces = new HashMap();
 		traces.clear();
 	}
+	
+	
+	
 	
 	public void stopCollectingSpreadsheetTraces() {
 		collectingTraces = false;
@@ -279,6 +332,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		traces.clear();
 
 	}
+	
+	
+	
 	
 	private double[] coords = new double[2];
 
@@ -371,6 +427,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		}
 	}
+	
+	
+	*/
+	
+	
 	
 //	public void incrementTraceRow(int column) {
 //		if (column < 0 || column >= MAX_COLUMNS) return;
@@ -576,7 +637,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		    //END GSTURR
 			
 			setText((value == null) ? "" : value.toString());
-
+			
 			if (table.getSelectionType() == table.COLUMN_SELECT ) {
 				setBackground(defaultBackground);
 			} else {
@@ -711,6 +772,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 					//G.STURR 2010-1-29
 					if(table.getSelectionType() != table.ROW_SELECT){
 						table.setSelectionType(table.ROW_SELECT);
+						rowHeader.requestFocusInWindow();
 					}
 					/*
 					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
@@ -892,6 +954,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		}
 		
 		public void keyPressed(KeyEvent e) {
+			
 			int keyCode = e.getKeyCode();
 			
 			boolean metaDown = Application.isControlDown(e);				
@@ -1306,8 +1369,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	// ==========================================================
 	// Handle spreadsheet resize.
 	//
-	// Ensures the spreadsheet has enough rows or columns to fill the 
-	// enclosing scrollpane. This can happen when rows or columns are resized
+	// Adds extra rows and columns to fill the enclosing scrollpane. 
+	// This is sometimes needed when rows or columns are resized
 	// or the application window is enlarged.
 	
 	
@@ -1361,18 +1424,30 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	//=============================================
 	// END G.Sturr
-	
+
 	public void requestFocus() {
-		if (table != null) table.requestFocus();
+		if (table != null)
+			table.requestFocus();
 	}
-	
+
 	public boolean hasFocus() {
-		if (table == null) return false;
-		return table.hasFocus();
+		if (table == null)
+			return false;
+		return table.hasFocus()
+				|| rowHeader.hasFocus()
+				|| table.getTableHeader().hasFocus()
+				|| spreadsheet.getCorner(JScrollPane.UPPER_LEFT_CORNER).hasFocus();
 	}
-	
-	
+
+	public void focusGained(FocusEvent arg0) {
+
+	}
+
+	public void focusLost(FocusEvent arg0) {
+		getTable().repaint();
+
+	}
+
 }
-	
 
 

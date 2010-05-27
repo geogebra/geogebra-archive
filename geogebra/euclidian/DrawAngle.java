@@ -512,6 +512,9 @@ public class DrawAngle extends Drawable {
 				xLabel = (int) (coords[0] + 2 * geo.lineThickness);
 		}
 		
+		//G.Sturr 2010-4-22
+		if (angle.getSpreadsheetTrace())
+		    recordToSpreadsheet(angle);
 							
 	}
 

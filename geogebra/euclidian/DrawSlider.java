@@ -120,6 +120,9 @@ public class DrawSlider extends Drawable {
         
 		if (number == view.getEuclidianController().recordObject)
 		    recordToSpreadsheet(number);
+		
+		if (number.getSpreadsheetTrace())
+		    recordToSpreadsheet(number);
 
     }
     

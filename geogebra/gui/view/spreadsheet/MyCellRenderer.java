@@ -21,6 +21,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
 public class MyCellRenderer extends DefaultTableCellRenderer
@@ -38,6 +39,17 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private CellFormat formatHandler;
 	private Point cellPoint;
 	private Integer alignment = -1;
+	private Integer traceBorder = -1;
+	
+	private Border cellPadding = BorderFactory.createEmptyBorder(2, 5, 2, 5);
+	
+	private Border bTop = BorderFactory.createMatteBorder(1, 0, 0, 0, Color.RED);
+	private Border bLeft = BorderFactory.createMatteBorder(0, 1, 0, 0, Color.RED);
+	private Border bBottom = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.RED);
+	private Border bRight = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.RED);
+	private Border bAll = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.RED);
+
+	
 	
 	//END G.Sturr
 	
@@ -96,7 +108,9 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 
 		// make sure that we use a font that can display the cell content
 		setText(text);
-		setFont(app.getFontCanDisplay(text, Font.BOLD));
+		//setFont(app.getFontCanDisplay(text, Font.BOLD));
+		setFont(app.getFontCanDisplay(text, Font.PLAIN));
+		
 		
 		// foreground and background color
 		
@@ -127,6 +141,36 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		}	
 		
 	
+		// trace border
+		traceBorder = (Integer) formatHandler.getCellFormat(cellPoint,
+				CellFormat.FORMAT_TRACING);
+		
+		if (traceBorder != null){
+			
+			switch (traceBorder){
+			case CellFormat.BORDER_ALL:
+				setBorder(BorderFactory.createCompoundBorder(bAll, cellPadding));
+			break;
+			case CellFormat.BORDER_TOP:
+				setBorder(BorderFactory.createCompoundBorder(bTop, cellPadding));
+			break;
+			case CellFormat.BORDER_LEFT:
+				setBorder(BorderFactory.createCompoundBorder(bLeft, cellPadding));
+			break;
+			case CellFormat.BORDER_BOTTOM:
+				setBorder(BorderFactory.createCompoundBorder(bBottom, cellPadding));
+			break;
+			case CellFormat.BORDER_RIGHT:
+				setBorder(BorderFactory.createCompoundBorder(bRight, cellPadding));
+			break;
+			
+			}
+			
+		}else{
+			setBorder(cellPadding);	
+		}
+		
+		
 		
 		// G.STURR 2010-1-17
 		// set LaTeX icons

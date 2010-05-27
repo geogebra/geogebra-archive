@@ -2582,6 +2582,25 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private boolean handleSpreadsheetTrace(LinkedHashMap<String, String> attrs) {
+		
+		//G.Sturr 2010-5-8
+		if (!geo.isSpreadsheetTraceable()) {
+			System.err.println("wrong element type for <trace>: "
+					+ geo.getClass());
+			return false;
+		}
+
+		try {
+			geo.setSpreadsheetTrace(parseBoolean((String) attrs.get("val")));
+			
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	
+	
+		/*  OLD CODE
+		
 		if (!(geo instanceof GeoPoint)) {
 			System.err.println("wrong element type for <trace>: "
 					+ geo.getClass());
@@ -2595,6 +2614,10 @@ public class MyXMLHandler implements DocHandler {
 		} catch (Exception e) {
 			return false;
 		}
+		
+		*/ 
+		// END G.Sturr
+		
 	}
 
 	private boolean handleShowTrimmed(LinkedHashMap<String, String> attrs) {

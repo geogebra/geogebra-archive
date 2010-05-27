@@ -4158,6 +4158,46 @@ public abstract class GeoElement
 		return ret;
 	}
 
+	
+	
+	// ===================================================
+	// G.Sturr 2010-5-14
+	// New code for spreadsheet tracing with trace manager 
+	// ===================================================
+
+	/** Spreadsheet tracing on/off flag */
+	private boolean spreadsheetTrace;
+
+	
+	/** Get tracing flag for this geo */
+	public boolean getSpreadsheetTrace() {
+		return spreadsheetTrace;
+	}
+
+	/** Set tracing flag for this geo */
+	public void setSpreadsheetTrace(boolean traceFlag) {
+		spreadsheetTrace = traceFlag;
+	}
+
+	/**
+	 * Request spreadsheet trace manager to auto-reset the tracing columns.
+	 * Called after mouse_release.
+	 */
+	public void resetTraceColumns() {
+		app.getGuiManager().resetTraceColumn(this);
+	}
+
+	/** Determine if geos of this type can be traced to the spreadsheet */
+	public boolean isSpreadsheetTraceable() {
+		if (isGeoList() || isGeoNumeric() || isGeoVector() || isGeoPoint()) {
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * ----------------- OLD CODE -------------------------
+	 
 	private int traceColumn1 = -1;
 	private double lastTrace1 = Math.random();
 	private double lastTrace2 = Math.random();
@@ -4203,6 +4243,15 @@ public abstract class GeoElement
 	public void setLastTrace2(double val) {
 		lastTrace2 = val;
 	}
+
+
+	 */
+
+	// END G.Sturr
+	// ========================================
+
+
+	
 	
 	/*
 	 * over-ridden in GeoList
