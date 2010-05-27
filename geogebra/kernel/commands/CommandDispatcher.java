@@ -380,6 +380,7 @@ public class CommandDispatcher {
     	
     	cmdTable.put("PointList", new CmdPointList(kernel));   
     	cmdTable.put("RootList", new CmdRootList(kernel));   
+    	cmdTable.put("Rank", new CmdRank(kernel));
  
      	                  	
     	

@@ -425,6 +425,22 @@ class CmdSort extends CmdOneListFunction {
 
 
 }
+/*
+ * Rank[ <List> ]
+ */
+class CmdRank extends CmdOneListFunction {
+
+	public CmdRank(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Rank(a, b);
+	}
+
+
+}
 
 /*
  * PointList[ <List> ]

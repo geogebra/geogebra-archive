@@ -87,6 +87,7 @@ import geogebra.kernel.statistics.AlgoRandomBinomial;
 import geogebra.kernel.statistics.AlgoRandomNormal;
 import geogebra.kernel.statistics.AlgoRandomPoisson;
 import geogebra.kernel.statistics.AlgoRandomUniform;
+import geogebra.kernel.statistics.AlgoRank;
 import geogebra.kernel.statistics.AlgoSXX;
 import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
 import geogebra.kernel.statistics.AlgoSampleVariance;
@@ -3418,6 +3419,16 @@ public class Kernel {
 	 */
 	final public GeoList Sort(String label, GeoList list) {
 		AlgoSort algo = new AlgoSort(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Rank[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList Rank(String label, GeoList list) {
+		AlgoRank algo = new AlgoRank(cons, label, list);
 		GeoList list2 = algo.getResult();
 		return list2;
 	}
