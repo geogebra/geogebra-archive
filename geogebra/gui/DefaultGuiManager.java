@@ -265,16 +265,19 @@ public class DefaultGuiManager implements GuiManager {
 	//
 	
 	public void addSpreadsheetTrace(GeoElement geo){
-		spreadsheetView.getTraceManager().addSpreadsheetTraceGeo(geo);
+		if (spreadsheetView != null) 
+			spreadsheetView.getTraceManager().addSpreadsheetTraceGeo(geo);
 	}
 	
 	public void removeSpreadsheetTrace(GeoElement geo){
-		spreadsheetView.getTraceManager().removeSpreadsheetTraceGeo(geo);
+		if (spreadsheetView != null) 
+			spreadsheetView.getTraceManager().removeSpreadsheetTraceGeo(geo);
 	}
 	
 	/** Set a trace manager flag to auto-reset the trace column */
 	public void resetTraceColumn(GeoElement geo){
-		spreadsheetView.getTraceManager().setNeedsColumnReset(geo, true);
+		if (spreadsheetView != null) 
+			spreadsheetView.getTraceManager().setNeedsColumnReset(geo, true);
 	}
 	
 	public void startCollectingSpreadsheetTraces() {
