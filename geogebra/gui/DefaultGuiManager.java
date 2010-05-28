@@ -139,6 +139,9 @@ public class DefaultGuiManager implements GuiManager {
 		//if (!app.isApplet())
 		
 		initAlgebraController(); // needed for keyboard input in EuclidianView
+		
+		//Zbynek Konecny, 2010-05-28 (see #126)
+		htmlLoaded=false;
 	}
 	
 	public void initialize() {
@@ -1741,6 +1744,8 @@ public class DefaultGuiManager implements GuiManager {
 
 	public synchronized void doOpenFiles(File[] files,
 			boolean allowOpeningInThisInstance, String extension) {
+		//Zbynek Konecny, 2010-05-28 (see #126)
+		htmlLoaded=false;
 		// <-- Added for Intergeo File Format (Yves Kreis)
 		// there are selected files
 		if (files != null) {
