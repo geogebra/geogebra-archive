@@ -489,8 +489,9 @@ public class Construction {
 	 * Updates all objects in this construction.
 	 */
 	final public void updateConstruction() {
-		if (!kernel.isMacroKernel() && kernel.app.hasGuiManager())
-			kernel.app.getGuiManager().startCollectingSpreadsheetTraces();
+	//G.Sturr 2010-5-28: turned this off so that random numbers can be traced
+	//	if (!kernel.isMacroKernel() && kernel.app.hasGuiManager())
+	//		kernel.app.getGuiManager().startCollectingSpreadsheetTraces();
 
 		// update all independent GeoElements
 		int size = ceList.size();
@@ -529,9 +530,10 @@ public class Construction {
 			// update algorithm
 			algo.update();
 		}
-		
-		if (!kernel.isMacroKernel() && kernel.app.hasGuiManager())
-			kernel.app.getGuiManager().stopCollectingSpreadsheetTraces();
+	
+	//G.Sturr 2010-5-28: 	
+	//	if (!kernel.isMacroKernel() && kernel.app.hasGuiManager())
+		//	kernel.app.getGuiManager().stopCollectingSpreadsheetTraces();
 	}
 
 	final void updateAllAlgorithms() {
