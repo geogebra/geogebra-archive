@@ -26,17 +26,150 @@ public class CellRangeProcessor {
 	
 	public boolean isCreatePointListPossible(ArrayList<CellRange> rangeList) {
 
-		if (rangeList.size() == 1
-				&& ((CellRange) rangeList.get(0)).is2D())
+		if (rangeList.size() == 1 && rangeList.get(0).is2D())
 			return true;
-		if (rangeList.size() == 2)
+		if (rangeList.size() == 2 && 
+				rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1 )
 			return true;
 
+		if (rangeList.size() == 2 && 
+				rangeList.get(0).getHeight() == 1 && rangeList.get(1).getHeight() == 1 )
+			return true;
+		
 		return false;
 	}
 
 	
 	
+	public void CreatePointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
+		
+		int c1, c2, r1, r2;
+		StringBuilder text = new StringBuilder();
+		LinkedList<String> list = new LinkedList<String>();
+		boolean doHorizontalPairs = true;
+		boolean isError = false;
+		
+		// assume that range list has been tested 
+		
+		try {			
+			// Determine if pairs are joined vertically or horizontally and get the 
+			// row column indices needed to traverse the cells.
+			
+			// CASE 1: selection is contiguous and 2D
+			if (rangeList.size() == 1) {
+
+				doHorizontalPairs = rangeList.get(0).getWidth() == 2;
+				c1 = rangeList.get(0).getMinColumn();
+				c2 = rangeList.get(0).getMaxColumn();
+				r1 = rangeList.get(0).getMinRow();
+				r2 = rangeList.get(0).getMaxRow();
+
+			
+			// CASE 2: non-contiguous with two ranges (either single row or single column)
+			} else {
+
+				if(rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1){
+					doHorizontalPairs = true;
+					// we are traversing down columns. so get min and max column indices
+					c1 = Math.min(rangeList.get(0).getMinColumn(), rangeList.get(1).getMinColumn());
+					c2 = Math.max(rangeList.get(0).getMaxColumn(), rangeList.get(1).getMaxColumn());
+					// but get the max-min and min-max row indices in case the columns don't line up
+					r1 = Math.max(rangeList.get(0).getMinRow(), rangeList.get(1).getMinRow());
+					r2 = Math.min(rangeList.get(0).getMaxRow(), rangeList.get(1).getMaxRow());
+					
+				}else{
+					doHorizontalPairs = true;
+					// we are traversing across rows. so get min and max row indices
+					r1 = Math.min(rangeList.get(0).getMinRow(), rangeList.get(1).getMinRow());
+					r2 = Math.max(rangeList.get(0).getMaxRow(), rangeList.get(1).getMaxRow());	
+					// but get the max-min and min-max column indices in case the rows don't line up
+					c1 = Math.max(rangeList.get(0).getMinColumn(), rangeList.get(1).getMinColumn());
+					c2 = Math.min(rangeList.get(0).getMaxColumn(), rangeList.get(1).getMaxColumn());
+								
+				}
+			}
+
+			
+			// Create points and store their names in list of strings
+			if (doHorizontalPairs) {
+				for (int i = r1; i <= r2; ++i) {
+					GeoElement xCoord = RelativeCopy.getValue(table, c1, i);
+					GeoElement yCoord = RelativeCopy.getValue(table, c2, i);
+					createListPoint(xCoord, yCoord, list, isError);
+				}
+
+			} else {
+				for (int i = c1; i <= c2; ++i) {
+					GeoElement xCoord = RelativeCopy.getValue(table, i, r1);
+					GeoElement yCoord = RelativeCopy.getValue(table, i, r2);
+					createListPoint(xCoord, yCoord, list, isError);
+				}
+			}
+
+			// Convert the string list to a geoList
+			if (list.size() > 0) {
+				String listString = list.toString();
+				listString = listString.replace("[", "{");
+				listString = listString.replace("]", "}");
+
+				table.kernel.getAlgebraProcessor()
+						.processAlgebraCommandNoExceptionHandling(listString,
+								false);
+				
+				app.storeUndoInfo();
+			}
+
+		}
+
+		catch (Exception ex) {
+			app.showError("NumberExpected");
+		}
+
+	}
+	
+	private void createListPoint(GeoElement xCoord, GeoElement yCoord,
+			LinkedList<String> list, boolean isError) {
+		
+		String pointString = "";
+		String pointName = "";
+
+		try {
+			if (xCoord != null && yCoord != null
+					&& (!xCoord.isGeoNumeric() || !yCoord.isGeoNumeric()))
+				isError = true;
+
+			// if both cells are non-empty and numeric then make a point
+			if (xCoord != null && yCoord != null && xCoord.isGeoNumeric()
+					&& yCoord.isGeoNumeric()) {
+
+				// create a text command to create the point, then
+				// send the text to the algebra processor to create a
+				// new geo
+				pointString = "(" + xCoord.getLabel() + "," + yCoord.getLabel()
+						+ ")";
+
+				GeoElement[] geos = table.kernel.getAlgebraProcessor()
+						.processAlgebraCommandNoExceptionHandling(pointString,
+								false);
+
+				pointName = geos[0].getIndexLabel("P");
+				geos[0].setLabel(pointName);
+				geos[0].setAuxiliaryObject(true);
+
+				// add point name to the list
+				list.addLast(pointName);
+			}
+
+		} catch (Exception ex) {
+			app.showError("NumberExpected");
+		}
+
+	}
+	
+	
+	/* --- old code, to be removed 
+	 
+	 
 	public void CreatePointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
 		
 		int c1, c2, r1, r2;
@@ -47,12 +180,14 @@ public class CellRangeProcessor {
 		String pointName = "";
 
 		try {
+			//selection is contiguous and 2D  
 			if (rangeList.size() == 1 && rangeList.get(0).is2D()) {
 				c1 = rangeList.get(0).getMinColumn();
 				c2 = c1 + 1;
 				r1 = rangeList.get(0).getMinRow();
 				r2 = rangeList.get(0).getMaxRow();
 
+			//non-contiguous, so use the first two ranges	
 			} else {
 				c1 = Math.min(rangeList.get(0).getMinColumn(),rangeList.get(1).getMinColumn());
 				c2 = Math.max(rangeList.get(0).getMinColumn(),rangeList.get(1).getMinColumn());
@@ -106,6 +241,9 @@ public class CellRangeProcessor {
 		}
 
 	}
+	
+	*/
+	
 	
 	
 	

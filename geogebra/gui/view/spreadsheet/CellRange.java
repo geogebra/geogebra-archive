@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import geogebra.kernel.GeoElement;
@@ -117,7 +118,9 @@ public class CellRange {
 		return toGeoList().size() == 0;
 	}
 
-
+	
+	
+	
 	/**
 	 * Returns a cell range that holds the actual cell range 
 	 * of an input row or column.
@@ -159,7 +162,22 @@ public class CellRange {
 
 	}
 	
-		
+	
+	public int getWidth(){
+		return  maxColumn - minColumn + 1;		
+	}
+	
+	public int getHeight(){
+		return maxRow - minRow + 1;		
+	}
+	
+	public Rectangle getRect(){
+		return new Rectangle(minRow,minColumn,getHeight(), getWidth());
+	}
+	
+
+	
+	
 	
 	/**
 	 * ArrayList of all geos found in the cell range 

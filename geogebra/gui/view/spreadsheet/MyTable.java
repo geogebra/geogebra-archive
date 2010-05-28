@@ -601,11 +601,12 @@ public class MyTable extends JTable implements FocusListener
 			g2.draw(cellFrame);
 		}
 		*/	
-		
+		/*
 		//Don't draw anything if the view does not have the focus	
 		if(!view.hasFocus()) {
 			return;
 		}
+		*/
 		
 		//draw special dragging frame for cell editor
 		if (isDragging2) {
