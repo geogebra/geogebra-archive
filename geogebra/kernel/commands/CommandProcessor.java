@@ -2810,6 +2810,35 @@ class CmdApplyMatrix extends CommandProcessor {
 					//return ret2;
 					
 					
+				} else if (arg[1].isGeoSegment()) {
+					
+					GeoSegment seg = (GeoSegment)arg[1];
+					GeoPoint startPoint = seg.getStartPoint();
+					GeoPoint endPoint = seg.getEndPoint();
+					GeoPoint[] newPoints = new GeoPoint[2];
+					
+					String segLabel = null;		
+					if (seg.isLabelSet()) {		
+						segLabel = kernel.transformedGeoLabel(seg);
+					}			
+			
+
+					String pointLabel1 = kernel.transformedGeoLabel(startPoint);
+					AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel1, (MatrixTransformable)startPoint, (GeoList)arg[0]);
+
+					newPoints[0] = (GeoPoint)algo.getResult();
+					newPoints[0].setVisualStyleForTransformations(startPoint);
+				
+					String pointLabel2 = kernel.transformedGeoLabel(endPoint);
+					algo = new AlgoApplyMatrix(cons, pointLabel2, (MatrixTransformable)endPoint, (GeoList)arg[0]);
+
+					newPoints[1] = (GeoPoint)algo.getResult();
+					newPoints[1].setVisualStyleForTransformations(startPoint);
+					
+					GeoElement[] ret2 = {kernel.Segment(segLabel, newPoints[0], newPoints[1])};
+					return ret2;
+					
+					
 				} else 
 					throw argErr(app, c.getName(), arg[1]);
 			} else 	
