@@ -5195,7 +5195,7 @@ public class Kernel {
 		return newPoints;
 	}
 	
-	private static String transformedGeoLabel(GeoElement geo) {
+	public static String transformedGeoLabel(GeoElement geo) {
 		if (geo.isLabelSet() && !geo.hasIndexLabel() && !geo.label.endsWith("'''")) {
 			return geo.label + "'";
 		} else {

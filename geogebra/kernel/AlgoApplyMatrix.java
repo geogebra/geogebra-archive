@@ -37,7 +37,7 @@ public class AlgoApplyMatrix extends AlgoTransformation {
     
   
     
-    AlgoApplyMatrix(Construction cons, String label, MatrixTransformable in, GeoList matrix) {
+    public AlgoApplyMatrix(Construction cons, String label, MatrixTransformable in, GeoList matrix) {
         super(cons);
         //this.in = in;      
         this.matrix = matrix;
@@ -70,7 +70,7 @@ public class AlgoApplyMatrix extends AlgoTransformation {
         setDependencies(); // done by AlgoElement
     }           
         
-    GeoElement getResult() { 
+    public GeoElement getResult() { 
     	return geoOut; 
     }       
 

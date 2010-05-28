@@ -24,6 +24,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -44,7 +45,7 @@ import java.util.TreeSet;
 final public class GeoPoint extends GeoVec3D 
 implements VectorValue, 
 Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties,
-GeoPointInterface {   	
+GeoPointInterface, MatrixTransformable {   	
 	
 	private static final long serialVersionUID = 1L;
 
@@ -1119,6 +1120,30 @@ GeoPointInterface {
 		
 		public GgbVector getInhomCoords(){
 			return new GgbVector(new double[] {inhomX, inhomY});
+		}
+		
+		public boolean isMatrixTransformable() {
+			return true;
+		}
+
+		public void matrixTransform(GeoList matrix) {
+			
+			MyList list = matrix.getMyList();
+			
+			if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) return;
+			 
+			double a,b,c,d,x1,y1;
+			
+			a = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
+			b = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
+			c = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
+			d = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
+	 
+			x1 = a*x + b*y;
+			y1 = c*x + d*y;
+
+			setCoords(x1, y1, z);
+			
 		}
 	    
 

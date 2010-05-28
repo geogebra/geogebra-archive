@@ -15,6 +15,7 @@ package geogebra.kernel.commands;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.kernel.AlgoApplyMatrix;
 import geogebra.kernel.AlgoCellRange;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -2764,7 +2765,7 @@ class CmdApplyMatrix extends CommandProcessor {
 	final public GeoElement[] process(Command c) throws MyError {
 		String label = c.getLabel();
 		int n = c.getArgumentNumber();
-		boolean ok;
+
 		GeoElement[] arg;
 		GeoElement[] ret = new GeoElement[1];
 
@@ -2772,19 +2773,48 @@ class CmdApplyMatrix extends CommandProcessor {
 		case 2 :
 			arg = resArgs(c);
 
-			if ((ok = (arg[1].isMatrixTransformable()))
-					&& ( (arg[0] .isGeoList()))) {
+			if (arg[0] .isGeoList()) {
+				
+				if (arg[1].isMatrixTransformable()) {
 				MatrixTransformable Q = (MatrixTransformable) arg[1];
 
 
 				ret = kernel.ApplyMatrix(label, Q, (GeoList)arg[0]);
 				return ret;
-			} else {
-				if (!ok)
+				} else if (arg[1].isGeoPolygon()) {
+					
+					GeoPolygon poly = (GeoPolygon)arg[1];
+					GeoPoint[] points = poly.getPoints();
+					GeoPoint[] newPoints = new GeoPoint[points.length];
+					
+					String [] polyLabel = null;		
+						if (poly.isLabelSet()) {		
+							polyLabel = new String[1];
+							polyLabel[0] = kernel.transformedGeoLabel(poly);
+						}			
+				
+					for (int i = 0 ; i < points.length ; i++) {
+						//newPoints[i] = new GeoPoint(cons);
+						String pointLabel = kernel.transformedGeoLabel(points[i]);
+						AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel, (MatrixTransformable)points[i], (GeoList)arg[0]);
+						//newPoints[i].setParentAlgorithm(algo);
+						//cons.addToAlgorithmList(algo);
+						newPoints[i] = (GeoPoint)algo.getResult();
+						newPoints[i].setVisualStyleForTransformations(points[i]);
+					}
+					
+					ret = kernel.Polygon(polyLabel, newPoints);
+					return ret;
+					
+					//GeoElement[] ret2 = {newPoints[0]};
+					//return ret2;
+					
+					
+				} else 
 					throw argErr(app, c.getName(), arg[1]);
-				else
-					throw argErr(app, c.getName(), arg[0]);
-			}
+			} else 	
+				throw argErr(app, c.getName(), arg[0]);
+			
 
 
 		default :
