@@ -1,6 +1,7 @@
 
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.gui.view.spreadsheet.SpreadsheetTraceManager.TraceSettings;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
@@ -271,11 +272,34 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		}else{
 			traceDialog.setTraceDialogSelection(geo, traceCell);
 		}
-		traceDialog.setVisible(true);
-		
+		traceDialog.setVisible(true);		
 	}
 	
-
+	public boolean isTraceDialogVisible(){
+		return (traceDialog != null && traceDialog.isVisible());
+	}
+	
+	public CellRange getTraceSelectionRange(int anchorColumn, int anchorRow){
+		if (traceDialog == null){
+			return null;
+		}else{
+			return traceDialog.getTraceSelectionRange(anchorColumn, anchorRow);
+		}
+	}
+	
+	public void setTraceDialogMode(boolean enableMode){
+		if(enableMode){
+			table.setSelectionRectangleColor(Color.GRAY);
+			//table.setFocusable(false);
+		}
+		else{
+			table.setSelectionRectangleColor(table.SELECTED_RECTANGLE_COLOR);
+			//table.setFocusable(true);
+		}
+	}
+	
+	
+	
 	public int getHighestUsedColumn() {
 		//traceHandler.resetTraceRow(highestUsedColumn+1);
 		//traceHandler.resetTraceRow(highestUsedColumn+2);
@@ -478,6 +502,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void remove(GeoElement geo) {
 		//Application.debug(new Date() + " REMOVE: " + geo);
 				
+		if(traceManager.isTraceGeo(geo)){
+			traceManager.removeSpreadsheetTraceGeo(geo);
+		}
+		
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 			doRemove(geo, location.y, location.x);
@@ -485,8 +513,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 	private void doRemove(GeoElement geo, int row, int col) {
+			
 		tableModel.setValueAt(null, row, col);
 		if (col <= highestUsedColumn) checkColumnEmpty(highestUsedColumn);
+		
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 	}
 	

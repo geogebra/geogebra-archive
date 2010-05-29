@@ -62,6 +62,7 @@ public class MyTable extends JTable implements FocusListener
 	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = Color.lightGray;
 	public static final Color BACKGROUND_COLOR_HEADER = new Color(232, 238, 247);
 	public static final Color TABLE_GRID_COLOR = Color.gray;
+	public static final Color SELECTED_RECTANGLE_COLOR = Color.BLUE;
 
 	private static final long serialVersionUID = 1L;
 	
@@ -98,7 +99,7 @@ public class MyTable extends JTable implements FocusListener
 	protected int minSelectionColumn = -1;
 	protected int maxSelectionColumn = -1;
 	public boolean[] selectedColumns;
-	private boolean doShowSelectionRectangle = false; //G.Sturr 2010-5-25
+	
 	
 	// Used for rendering headers with ctrl-select
 	protected HashSet selectedColumnSet = new HashSet();
@@ -110,6 +111,9 @@ public class MyTable extends JTable implements FocusListener
 	public static final int ROW_SELECT = 1;
 	public static final int COLUMN_SELECT = 2;
 	private int selectionType = CELL_SELECT;
+	
+	private boolean doShowDragHandle = true;
+	private Color selectionRectangleColor = SELECTED_RECTANGLE_COLOR ;
 	
 	
 	// Dragging vars
@@ -319,6 +323,16 @@ public class MyTable extends JTable implements FocusListener
 	
  
 	
+	
+	
+	
+	
+	//===============================================================
+	//                   Selection
+	//===============================================================
+	
+	
+	
 	//G.STURR 2009-11-15
 	
 	/**
@@ -339,13 +353,11 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	@Override
-	public void selectAll(){
-		
+	public void selectAll(){		
 		setSelectionType(CELL_SELECT);
 		setRowSelectionInterval(0, getRowCount()-1);
 		getColumnModel().getSelectionModel().setSelectionInterval(0, getColumnCount()-1);
 		selectionChanged();
-
 	}
 	
 	
@@ -354,37 +366,50 @@ public class MyTable extends JTable implements FocusListener
 	/**
 	 * This handles all selection changes for the table.
 	 */
-	protected void selectionChanged() {
+	public void selectionChanged() {
 		
 		// create a cell range object to store
 		// the current table selection 
 		
 		CellRange newSelection = new CellRange(this);
-
-		switch (selectionType) {
+	
+		if(view.isTraceDialogVisible()){
+			newSelection = view.getTraceSelectionRange(
+				getColumnModel().getSelectionModel().getAnchorSelectionIndex(), 
+				getSelectionModel().getAnchorSelectionIndex());
 		
-		case CELL_SELECT:		
-			newSelection.setCellRange(getColumnModel().getSelectionModel()
-					.getAnchorSelectionIndex(), 
+		}else{
+
+			switch (selectionType) {
+			
+				case CELL_SELECT:
+				newSelection.setCellRange(
+					getColumnModel().getSelectionModel().getAnchorSelectionIndex(), 
 					getSelectionModel().getAnchorSelectionIndex(), 
 					getColumnModel().getSelectionModel().getLeadSelectionIndex(),
 					getSelectionModel().getLeadSelectionIndex());
-			break;
-
-		case ROW_SELECT:
-			newSelection.setCellRange(-1, getSelectionModel()
-					.getAnchorSelectionIndex(), -1, getSelectionModel()
-					.getLeadSelectionIndex());
-			break;
-			
-		case COLUMN_SELECT:
-			newSelection.setCellRange(getColumnModel().getSelectionModel()
-					.getAnchorSelectionIndex(), -1, getColumnModel()
-					.getSelectionModel().getLeadSelectionIndex(), -1);
-			break;
+				break;
+				
+				case ROW_SELECT:
+				newSelection.setCellRange(
+					-1, 
+					getSelectionModel().getAnchorSelectionIndex(), 
+					-1, 
+					getSelectionModel().getLeadSelectionIndex());
+				break;
+				
+				case COLUMN_SELECT:
+				newSelection.setCellRange(
+					getColumnModel().getSelectionModel().getAnchorSelectionIndex(), 
+					-1, 
+					getColumnModel().getSelectionModel().getLeadSelectionIndex(), 
+					-1);
+				break;
+			}
+				
 		}
   
-		
+		// newSelection.debug();
 		/*
 		// return if it is not really a new cell 
 		if(selectedCellRanges.size()>0 && newSelection.equals(selectedCellRanges.get(0))) 
@@ -440,6 +465,8 @@ public class MyTable extends JTable implements FocusListener
 		minSelectionRow = newSelection.getMinRow();
 		maxSelectionRow = newSelection.getMaxRow();
 		
+		//newSelection.debug();
+		//printSelectionParameters();
 		
 		// update the geo selection list
 		ArrayList list = new ArrayList();
@@ -501,6 +528,216 @@ public class MyTable extends JTable implements FocusListener
 		
 	}
 
+	
+	
+	
+	private void printSelectionParameters(){
+		System.out.println("----------------------------------");
+		System.out.println("minSelectionColumn = " + minSelectionColumn );
+		System.out.println("maxSelectionColumn = " + maxSelectionColumn );
+		System.out.println("minSelectionRow = " + minSelectionRow );
+		System.out.println("maxSelectionRow = " + maxSelectionRow );
+		System.out.println("----------------------------------");
+	}
+	
+
+	/*
+	public void setSelectionRectangle(CellRange cr){
+
+		if (cr == null){
+			this.minSelectionColumn = -1;
+			this.minSelectionRow = -1;
+			this.maxSelectionColumn = -1;
+			this.maxSelectionRow = -1;
+			return;
+		}
+		
+		this.minSelectionColumn = cr.getMinColumn();
+		this.minSelectionRow = cr.getMinRow();
+		this.maxSelectionColumn = cr.getMaxColumn();
+		this.maxSelectionRow = cr.getMaxRow();
+		this.repaint();
+		
+	}
+	
+	*/
+	
+	/*
+	public void setTraceSelectionRectangle() {
+		
+		if (view.getSelectedTrace() == null) {
+			cellFrame = null;
+		} else {
+		
+		int c1 = view.getSelectedTrace().traceColumn1;
+		int r1 = view.getSelectedTrace().traceRow1;
+		int c2 = view.getSelectedTrace().traceColumn2;
+		int r2 = view.getSelectedTrace().doRowLimit ? view.getSelectedTrace().traceRow2 : getRowCount();
+	
+		Point point1 = getPixel(c1,r1, true);
+		Point point2 = getPixel(c2,r2, false);
+			
+		cellFrame.setFrameFromDiagonal(point1, point2);
+			
+		// scroll to upper left corner of rectangle
+		scrollRectToVisible(table.getCellRect(r1,c1, true));
+			
+		}
+		repaint();
+
+	}
+	
+	*/
+	
+	
+	public void setSelection(int c1, int r1, int c2, int r2){
+		
+		CellRange cr = new CellRange(this,c1,r1,c2,r2);
+		ArrayList<CellRange> list = new ArrayList<CellRange>();
+		list.add(cr);
+		//setSelection(list, color, doShowDragHandle);
+	}
+	
+	public void setSelection(CellRange cr) {
+
+		if (cr == null || cr.isEmptyRange()) {
+			getSelectionModel().clearSelection();
+
+		} else {
+
+			this.setAutoscrolls(false);
+
+			if (cr.isRow()) {
+				setRowSelectionInterval(cr.getMinRow(), cr.getMaxRow());
+				
+			} else if (cr.isColumn()) {
+				setColumnSelectionInterval(cr.getMinColumn(), cr.getMaxColumn());
+				
+			} else {
+				changeSelection(cr.getMinRow(), cr.getMinColumn(), false, false);
+				changeSelection(cr.getMaxRow(), cr.getMaxColumn(), false, true);
+			}
+
+			// scroll to upper left corner of rectangle
+			this.setAutoscrolls(true);
+			scrollRectToVisible(getCellRect(cr.getMinRow(), cr.getMinColumn(),true));
+		}
+
+	}
+	
+	
+	
+	/*
+	public void setSelection(ArrayList<CellRange> selection){
+
+		selectionRectangleColor = (color == null) ? SELECTED_RECTANGLE_COLOR : color;
+		
+		 // rectangle not drawn correctly without handle ... needs fix 
+		this.doShowDragHandle = true;  // doShowDragHandle;
+		
+		if (selection == null) {
+			
+			setSelectionType(COLUMN_SELECT);
+			
+			// clear the selection visuals and the deselect geos from here
+			//TODO: this should be handled by the changeSelection() method
+			selectedColumnSet.clear();
+			selectedRowSet.clear();
+			this.minSelectionColumn = -1;
+			this.minSelectionRow = -1;
+			this.maxSelectionColumn = -1;
+			this.maxSelectionRow = -1;
+			app.setSelectedGeos(null);
+			//setSelectionType(COLUMN_SELECT);
+			view.repaint();
+			setSelectionType(CELL_SELECT);
+			
+		} else {
+
+			for (CellRange cr : selection) {
+				
+				this.setAutoscrolls(false);
+				
+				if (cr.isRow()) {
+					setRowSelectionInterval(cr.getMinRow(), cr.getMaxRow());
+				} else if (cr.isColumn()) {
+					setColumnSelectionInterval(cr.getMinColumn(), cr
+							.getMaxColumn());
+				} else {
+					changeSelection(cr.getMinRow(), cr.getMinColumn(), false,
+							false);
+					changeSelection(cr.getMaxRow(), cr.getMaxColumn(), false,
+							true);
+				}
+				
+				// scroll to upper left corner of rectangle
+				
+				this.setAutoscrolls(true);
+				scrollRectToVisible(getCellRect(cr.getMinRow(), cr.getMinColumn(), true));
+			}
+			
+				
+		}
+
+	}
+	
+	*/
+	
+	
+	public void setSelectionType(int selType) {
+		
+		switch (selType) {
+
+		case CELL_SELECT:
+			setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+			setColumnSelectionAllowed(true);
+			setRowSelectionAllowed(true);
+			break;
+
+		case ROW_SELECT:
+			setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			setColumnSelectionAllowed(false);
+			setRowSelectionAllowed(true);
+			break;
+
+		case COLUMN_SELECT:
+			setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			setColumnSelectionAllowed(true);
+			setRowSelectionAllowed(false); 
+			break;
+			
+		}
+	
+		this.selectionType = selType;
+
+	}
+	
+	public int getSelectionType(){
+		return selectionType;
+	}
+	
+	
+	
+	
+	
+
+	
+	//===============================================================
+	//                   Paint 
+	//===============================================================
+	
+	
+	
+	public Color getSelectionRectangleColor(){	
+		return selectionRectangleColor;	
+	}
+	
+	public void setSelectionRectangleColor(Color color){	
+		selectionRectangleColor = color;	
+	}
+	
+	
+	
 	protected Point getPixel(int column, int row, boolean min) {
 		if (column < 0 || row < 0) {
 			return null;
@@ -686,13 +923,14 @@ public class MyTable extends JTable implements FocusListener
 		
 		// draw dragging dot
 		Point pixel1 = getMaxSelectionPixel();
-		if (pixel1 != null && ! editor.isEditing()) {
+		if (doShowDragHandle && pixel1 != null && ! editor.isEditing()) {
 			
 			//(G.Sturr 20099-12) Highlight the dragging dot if mouseover 
 			if (isOverDot) 
 				{graphics.setColor(Color.gray);}
 			else
-				{graphics.setColor(Color.BLUE);}
+				//{graphics.setColor(Color.BLUE);}
+				{graphics.setColor(selectionRectangleColor);}
 			//(G.Sturr)
 			
 			int x = (int)pixel1.getX() - (DOT_SIZE + 1) / 2;
@@ -708,7 +946,9 @@ public class MyTable extends JTable implements FocusListener
 			int y1 = (int)min.getY();
 			int x2 = (int)max.getX();
 			int y2 = (int)max.getY();
-			graphics.setColor(Color.BLUE);
+			
+			//graphics.setColor(Color.BLUE);
+			graphics.setColor(selectionRectangleColor);
 			
 			// draw frame around current selection
 			// G.Sturr 2009-9-23 adjusted parameters to work with getPixel fix
@@ -2288,109 +2528,6 @@ public class MyTable extends JTable implements FocusListener
 		setSelectionType(COLUMN_SELECT);
 	}
 	//END GSTURR
-	
-	
-	
-	public void setSelectionRectangle(CellRange cr){
-
-		if (cr == null){
-			doShowSelectionRectangle = false;
-			return;
-		}
-		
-		doShowSelectionRectangle = true;
-		this.minSelectionColumn = cr.getMinColumn();
-		this.minSelectionRow = cr.getMinRow();
-		this.maxSelectionColumn = cr.getMaxColumn();
-		this.maxSelectionRow = cr.getMaxRow();
-		this.repaint();
-		
-	}
-	
-	
-	public void setTraceSelectionRectangle(TraceSettings t) {
-
-		if (t == null) {
-			cellFrame = null;
-		} else {
-
-			// int row = t.tracingRow != -1 ? t.tracingRow-1 : t.traceRow2;
-			Point point1 = getPixel(t.traceColumn1, t.traceRow1, true);
-			Point point2 = getPixel(t.traceColumn2, t.traceRow2, false);
-			
-			cellFrame = new Rectangle();
-			cellFrame.setFrameFromDiagonal(point1, point2);
-			
-			// scroll to upper left corner of rectangle
-			scrollRectToVisible(table.getCellRect(t.traceRow1, t.traceColumn1, true));
-			
-		}
-		repaint();
-
-	}
-	
-	
-	
-	
-	
-	
-	public void setSelection(CellRange selection){
-		ArrayList<CellRange> s = new ArrayList<CellRange>();
-		s.add(selection);
-		setSelection(s);
-	}
-	
-	public void setSelection(ArrayList<CellRange> selection){
-		
-		if (selection == null) return;
-		
-		for(CellRange cr:selection){
-			if(cr.isRow()){
-				setRowSelectionInterval(cr.getMinRow(), cr.getMaxRow()); 
-			}
-			else if(cr.isColumn()){
-				setColumnSelectionInterval(cr.getMinColumn(), cr.getMaxColumn()); 
-			}
-			else {
-				changeSelection(cr.getMinRow(), cr.getMinColumn(), false, false);
-				changeSelection(cr.getMaxColumn(), cr.getMaxRow(), false, true);
-			}
-		}
-	}
-	
-	
-	public void setSelectionType(int selType) {
-		
-		switch (selType) {
-
-		case CELL_SELECT:
-			setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-			setColumnSelectionAllowed(true);
-			setRowSelectionAllowed(true);
-			break;
-
-		case ROW_SELECT:
-			setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			setColumnSelectionAllowed(false);
-			setRowSelectionAllowed(true);
-			break;
-
-		case COLUMN_SELECT:
-			setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			setColumnSelectionAllowed(true);
-			setRowSelectionAllowed(false); 
-			break;
-		}
-
-		this.selectionType = selType;
-
-	}
-	
-	public int getSelectionType(){
-		return selectionType;
-	}
-	
-	
 	
 	
 	

@@ -68,10 +68,14 @@ public class CellRange {
 
 	
 	
+	/** Set cell range for a single cell */
+	public void setCellRange(int anchorColumn, int anchorRow) {
+		setCellRange(anchorColumn, anchorRow,anchorColumn, anchorRow);	
+	}
 
 	/**
-	 * Set a cell range with diagonal corner cells colIndex0, rowIndex0 and
-	 * colIndex1, rowIndex1 Can be any two diagonal corners in either order.
+	 * Set a cell range using diagonal corner cells. Can be any two diagonal
+	 * corners in either order.
 	 */
 	public void setCellRange(int anchorColumn, int anchorRow, int col2, int row2) {
 		
@@ -114,11 +118,15 @@ public class CellRange {
 		return (maxColumn - minColumn == 1) || (maxRow - minRow == 1);
 	}
 
+	/** isEmpty = cell range contains no geos   */
 	boolean isEmpty() {
 		return toGeoList().size() == 0;
 	}
 
-	
+	/** isEmptyRange = the range contains no cells   */
+	boolean isEmptyRange(){
+		return (minColumn == -1 && maxColumn == -1 && minRow == -1 && maxRow == -1) ;
+	}
 	
 	
 	/**
@@ -149,6 +157,9 @@ public class CellRange {
 	 * e.g. (-1,1,-1,4) ---> (0,1,100,4)
 	 */
 	public void setActualRange() {
+		
+		if (minRow == -1 && maxRow == -1 && minColumn == -1 && maxColumn == -1 )
+			return;
 		
 		if (minRow == -1 && maxRow == -1 ) {
 			minRow = 0;
@@ -338,6 +349,8 @@ public class CellRange {
 		System.out.println("isRow: " + isRow()  );
 		System.out.println("isColumn: " + isColumn()  );
 	}
+
+	
 	
 	
 	

@@ -95,6 +95,7 @@ implements
 	
 	private boolean isAddingTrace = false;
 	private CellRange newTraceLocation;
+	private TraceSettings newTraceSettings;
 	
 	private static final int MODE_NORMAL = 0;
 	private static final int MODE_ADDTRACE = 1;
@@ -173,8 +174,8 @@ implements
 			//set adding trace flag, this will open the add dialog when 
 			//updateGUI is called
 			newTraceLocation = traceCell;
-			isAddingTrace = true;
 			isStartingUp = true;
+			prepareToAddTrace();
 		}		
 		
 	}
@@ -185,11 +186,17 @@ implements
 	public void setVisible(boolean isVisible) {		
 		super.setVisible(isVisible);
 
-		if (isVisible) {			
+		if (isVisible) {
+			view.setTraceDialogMode(true);
 			updateGUI();
 			
 		} else {
-			view.getTable().setTraceSelectionRectangle(null);
+			//clear the selection rectangle and switch back to normal mode
+			traceGeoList.setSelectedIndex(-1);
+			view.getTable().selectionChanged();
+			view.setTraceDialogMode(false);
+			
+			
 		}		
 	}
 	
@@ -432,7 +439,11 @@ implements
 	
 		//	pack();
 			this.repaint();
-			app.setMoveMode(); app.setSelectionListenerMode(this); 	
+			app.setMoveMode(); app.setSelectionListenerMode(this);			
+			//view.getTable().setSelection(null);	
+			traceGeoList.setSelectedIndex(-1);
+			view.getTable().selectionChanged();
+			
 			return;
 			
 		}else{
@@ -451,17 +462,17 @@ implements
 			
 		//	pack();
 			app.setSelectionListenerMode(null); 
-			 
-			this.repaint();
+			//view.getTable().setSelection(this.getTraceSelectionRange(-1, -1));
+			view.getTable().selectionChanged();
 			
 		}		
 			
 		
 		if (traceGeoListModel.isEmpty()){
-			view.table.setTraceSelectionRectangle(null);
+			//view.table.setTraceSelectionRectangle(null);
 			//optionsPanel.setVisible(false);
 		}else{
-			view.table.setTraceSelectionRectangle(getSettings());
+			//view.table.setTraceSelectionRectangle(getSettings());
 			//optionsPanel.setVisible(true);
 	
 			// update column reset checkbox
@@ -498,6 +509,8 @@ implements
 			cellRangeField.setCaretPosition(0);
 			cellRangeField.addActionListener(this);
 		}
+		
+		view.repaint();
 		
 	}
 	
@@ -548,7 +561,7 @@ implements
 		
 		else if (source == btAdd) {
 			//set flag to open add dialog
-			isAddingTrace = true;
+			prepareToAddTrace();
 		}	
 		
 		else if (source == btRemove) {
@@ -560,12 +573,14 @@ implements
 				isAddingTrace = false;
 			}else{
 				closeDialog();
+				return;
 			}
 			isAddingTrace = false;
 			isStartingUp = false;
 			
 		} else if (source == btClose) {
 			closeDialog();
+			return;
 			
 		} else if (source == btChangeLocation) {
 			if (isAddingTrace) {
@@ -597,19 +612,32 @@ implements
 	}	
 	
 	
+	private void prepareToAddTrace(){
+		newTraceSettings = traceManager.new TraceSettings();
+		if (newTraceLocation != null) {
+			newTraceSettings.traceColumn1 = newTraceLocation.getMinColumn();
+			newTraceSettings.traceRow1 = newTraceLocation.getMinRow();
+		}
+		isAddingTrace = true;
+	}
+	
+	
+	
 	/** Add a geo to the traceGeoCollection and update the dialog.  */
 	private void addTrace(GeoElement geo){
 		
 		// add geo to the trace collection 
 		if (traceManager.isTraceGeo(geo) == false) {
-			
+			/*
 			TraceSettings t = traceManager.new TraceSettings();
 			if (newTraceLocation != null) {
 				t.traceColumn1 = newTraceLocation.getMinColumn();
 				t.traceRow1 = newTraceLocation.getMinRow();
 			}
-
 			traceManager.addSpreadsheetTraceGeo(geo, t);
+			*/
+			
+			traceManager.addSpreadsheetTraceGeo(geo, newTraceSettings);
 			updateTraceGeoList();
 		}
 
@@ -643,14 +671,45 @@ implements
 	}
 
 	private TraceSettings getSettings(){
-		
-		return traceManager.getTraceSettings((GeoElement)traceGeoList.getSelectedValue());
+		if(isAddingTrace)
+			return newTraceSettings;
+		else
+			return traceManager.getTraceSettings((GeoElement)traceGeoList.getSelectedValue());
 	}
 	
-	private void updateSelectedTraceGeo(){
-		
+	private void updateSelectedTraceGeo(){	
 		traceManager.updateTraceSettings(getSelectedGeo(), getSettings());
 	}
+	
+
+	
+
+	public CellRange getTraceSelectionRange(int anchorColumn, int anchorRow){
+		CellRange cr = new CellRange(view.getTable());	
+		
+		
+		if(getSettings() == null){
+			cr.setCellRange(-1,-1,-1,-1);		
+		}else if(isAddingTrace){
+			if(newTraceLocation != null)
+				cr = newTraceLocation;
+			else
+				cr = traceManager.getNextTraceCell();
+		}else{
+			cr.setCellRange(
+					getSettings().traceColumn1,
+					getSettings().traceRow1,
+					getSettings().traceColumn2,
+					(getSettings().doRowLimit) ? getSettings().traceRow2 : view.MAX_ROWS );
+		}
+				
+		return cr;
+	}
+	
+	
+	
+	
+	
 	
 	
 	
@@ -668,7 +727,10 @@ implements
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));				
 		app.storeUndoInfo();
 		setCursor(Cursor.getDefaultCursor());
-		setVisible(false);	
+		setVisible(false);
+		//view.table.setTraceSelectionRectangle(null);
+		//view.getTable().setSelection(null,null,true);
+		view.repaint();
 	}
 	
 
