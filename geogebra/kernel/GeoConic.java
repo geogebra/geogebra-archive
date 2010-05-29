@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 
 public class GeoConic extends GeoConicND
 implements Path, Region, Traceable, 
-Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
+Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTransformable
 {
 	
 	private static final long serialVersionUID = 1L;
@@ -791,6 +792,40 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties
 			b.y);
 	}
 
+	public boolean isMatrixTransformable() {
+		return true;
+	}
+
+	public void matrixTransform(GeoList matrix) {
+		
+		MyList list = matrix.getMyList();
+		
+		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
+			setUndefined();
+			return;
+		}
+		 
+		double p, q, r, s;
+		
+		p = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
+		q = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
+		r = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
+		s = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
+ 
+		AffineTransform transform = getAffineTransform();	
+		
+// TODO works for reflection, rotation, enlargement but not eg stretch			
+		transform.setTransform(
+			eigenvec[0].x * p + eigenvec[0].y * r,
+			eigenvec[0].x * q + eigenvec[0].y * s,
+			eigenvec[1].x * p + eigenvec[1].y * r,
+			eigenvec[1].x * q + eigenvec[1].y * s,
+			b.x * p + b.y * q,
+			b.x * r + b.y * s);
+
+		
+	}
+	
 	final public GeoVec2D getTranslationVector() {
 		return b;
 	}
