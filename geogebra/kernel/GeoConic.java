@@ -814,12 +814,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
  
 		AffineTransform transform = getAffineTransform();	
 		
-// TODO works for reflection, rotation, enlargement but not eg stretch			
+// apply {{p,q},{r,s}} to conic			
 		transform.setTransform(
-			eigenvec[0].x * p + eigenvec[0].y * r,
-			eigenvec[0].x * q + eigenvec[0].y * s,
-			eigenvec[1].x * p + eigenvec[1].y * r,
-			eigenvec[1].x * q + eigenvec[1].y * s,
+			eigenvec[0].x * p + eigenvec[0].y * q,
+			eigenvec[0].x * r + eigenvec[0].y * s,
+			eigenvec[1].x * p + eigenvec[1].y * q,
+			eigenvec[1].x * r + eigenvec[1].y * s,
 			b.x * p + b.y * q,
 			b.x * r + b.y * s);
 
