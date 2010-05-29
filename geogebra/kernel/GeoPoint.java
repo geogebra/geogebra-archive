@@ -1130,7 +1130,10 @@ GeoPointInterface, MatrixTransformable {
 			
 			MyList list = matrix.getMyList();
 			
-			if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) return;
+			if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
+				setUndefined();
+				return;
+			}
 			 
 			double a,b,c,d,x1,y1;
 			
