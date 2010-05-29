@@ -1125,7 +1125,7 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("\" height=\"");
 		sb.append(height);
 		// add MAYSCRIPT to ensure ggbOnInit() can be called
-		sb.append("\" MAYSCRIPT>\n");
+		sb.append("\" mayscript=\"true\">\n");
 
 		if (cbOfflineArchiveAndGgbFile.isSelected() && ggbFile != null) {
 			// ggb file
