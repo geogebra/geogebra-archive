@@ -19,12 +19,14 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
 Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties,
-GeoLineInterface {
+GeoLineInterface, MatrixTransformable {
 	
 	private static final long serialVersionUID = 1L;
 	// modes
@@ -818,6 +820,41 @@ GeoLineInterface {
     
 	 public String getAssignmentOperator() {
 		 return ": ";
+		 
 	 }
+	public void matrixTransform(GeoList matrix) {
+		
+		MyList list = matrix.getMyList();
+		
+		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
+			setUndefined();
+			return;
+		}
+		 
+		double p,q,r,s,x1,y1;
+		
+		p = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
+		q = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
+		r = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
+		s = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
+ 
+		if (kernel.isZero(y)) {
+			x1 = s;
+			y1 = -q;
+			setCoords(x1 * x, y1 * x , -q * r * z + s * p * z );
+		} else {
+			x1 = r * y - s * x;
+			y1 = q * x - p * y;
+			setCoords(x1 * y, y1 * y , q * z * x1 + s * z * y1 );
+			
+		}
+
+
+	}
+	
+	public boolean isMatrixTransformable() { 
+		return true;
+	}
+
 
 }
