@@ -2761,7 +2761,8 @@ public class DefaultGuiManager implements GuiManager {
 	      
 	        
 	        // tell SpreadsheetView  (G.Sturr 2010-5-29)
-	        spreadsheetView.toolBarModeChanged(mode);    
+	        if (spreadsheetView != null)
+	        	spreadsheetView.toolBarModeChanged(mode);    
 	        
 	        // select toolbar button
 	        setToolbarMode(mode);	         
