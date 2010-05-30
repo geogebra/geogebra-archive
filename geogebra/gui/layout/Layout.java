@@ -8,8 +8,10 @@ import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.io.layout.Perspective;
 import geogebra.main.Application;
+import geogebra.main.LayoutBridge;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -27,6 +29,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
 /**
  * Manage layout related stuff.
@@ -34,7 +37,7 @@ import javax.swing.ListSelectionModel;
  * @author Florian Sonner
  * @version 2008-07-18
  */
-public class Layout {	
+public class Layout implements LayoutBridge {	
 	private boolean isInitialized = false;
 	
 	private Application app;
@@ -341,6 +344,26 @@ public class Layout {
 			sb.append("\" />\n");
 		}
 
+	}
+
+	/**
+	 * Checks if the given component is in an external window. Used for key dispatching.
+	 * 
+	 * @param component
+	 * @return
+	 */
+	public boolean inExternalWindow(Component component) {
+		DockPanel[] panels = dockManager.getPanels();
+		
+		for(int i = 0; i < panels.length; ++i) {
+			if(panels[i].getInfo().isOpenInFrame()) {
+				if(component == SwingUtilities.getRootPane(panels[i])) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	/**

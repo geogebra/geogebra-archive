@@ -31,6 +31,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.main.GuiManager;
+import geogebra.main.LayoutBridge;
 import geogebra.main.MyError;
 import geogebra.main.MyResourceBundle;
 import geogebra.util.Util;
@@ -497,8 +498,12 @@ public class DefaultGuiManager implements GuiManager {
 		return layout.getDockManager().getRoot();
 	}
 	
-	public Layout getLayout(){
+	public LayoutBridge getLayout(){
 		return layout;
+	}
+	
+	public boolean isRootPane(Component component) {
+		return true; // TODO implement (F.S.)
 	}
 
 	public JComponent getToolbarPanel() {

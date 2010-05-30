@@ -94,6 +94,8 @@ public interface GuiManager {
 	// Layout methods - Florian Sonner 2008-11-02
 	public void getLayoutXml(StringBuilder sb, boolean isPreference);
 	public JComponent getLayoutRoot(); 
+	public boolean isRootPane(Component component);
+	public LayoutBridge getLayout();
 	
 	public JComponent getToolbarPanel() ;
 	
@@ -373,7 +375,4 @@ public interface GuiManager {
 				GeoPoint geoPoint, GeoPoint geoPoint2);
 
 		public boolean loadURL(String text);
-
-				 
-
 }

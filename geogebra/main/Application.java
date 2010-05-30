@@ -522,7 +522,6 @@ public abstract class Application implements KeyEventDispatcher {
 	 * init the kernel (used for 3D)
 	 */
 	public void initKernel(){
-		
 		kernel = new Kernel(this);
 	}
 	
@@ -3211,7 +3210,7 @@ public abstract class Application implements KeyEventDispatcher {
 		// (needed to take care of multiple application windows or applets)
 		Component eventPane = SwingUtilities.getRootPane(e.getComponent());
 		Component mainPane = SwingUtilities.getRootPane(mainComp);
-		if (eventPane != mainPane) {			
+		if (eventPane != mainPane && !getGuiManager().getLayout().inExternalWindow(eventPane)) {			
 			// ESC from dialog: close it			
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				Component rootComp = SwingUtilities.getRoot(e.getComponent());
