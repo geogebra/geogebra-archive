@@ -51,6 +51,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 /**
  * @author Le Coq loïc
  */
@@ -162,9 +166,43 @@ public class GeoGebraToPstricks extends GeoGebraExport {
  	    	code.append("\\end{frame}\n");
  		}
         code.append("\\end{document}");		
-		frame.write(code);
 		
 		kernel.setCASPrintForm(oldCASPrintform);
+		
+		if (!frame.asymptoteExport()) { 
+			frame.write(code);
+		} else {
+			
+			// load this script: http://userscripts.org/scripts/review/72997
+			String script = app.loadTextFile("/geogebra/export/pstricks/asymptote.js");
+			//Application.debug(script);
+			//Application.debug(code.toString());
+			
+			//Application.debug(script);
+	        Context cx = Context.enter();
+            // Initialize the standard objects (Object, Function, etc.)
+            // This must be done before scripts can be executed. Returns
+            // a scope object that we use in later calls.
+            Scriptable scope = cx.initStandardObjects();
+
+            // initialise the JavaScript variable applet so that we can call
+            // GgbApi functions, eg ggbApplet.evalCommand()
+            Object wrappedOut = Context.javaToJS(app.getGgbApi(), scope);
+            ScriptableObject.putProperty(scope, "ggbApplet", wrappedOut);
+            
+            // set arg = code.toString()
+            Object wrappedArg = Context.javaToJS(code.toString(), scope);
+            ScriptableObject.putProperty(scope, "arg", wrappedArg);            	
+          
+            // Now evaluate the string we've colected.
+            Object result = cx.evaluateString(scope, "asy_basic(arg);"+script, "<cmd>", 1, null);
+
+            //Application.debug("script result: "+(Context.toString(result)));
+            
+            // Convert the result to a string
+            frame.textarea.setText(Context.toString(result));
+		}
+
 
 	}	
 

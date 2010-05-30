@@ -40,7 +40,7 @@ abstract public class ExportFrame extends JFrame{
 	protected JComboBox comboFontSize,comboFormat;
 	protected JPanel panel;
 	protected JButton button,button_copy;
-	protected JCheckBox jcbPointSymbol,jcbGrayscale;
+	protected JCheckBox jcbPointSymbol,jcbGrayscale, jcbAsymptoteExport;
 	protected JScrollPane js;
 	protected JTextArea textarea;
 	protected Application app;
@@ -94,9 +94,11 @@ abstract public class ExportFrame extends JFrame{
  		labelYmax=new JLabel(app.getPlain("ymax"));
 		jcbPointSymbol=new JCheckBox(app.getPlain("DisplayPointSymbol"));
 		jcbGrayscale=new JCheckBox(app.getPlain("PGFExport.Grayscale"));
+		jcbAsymptoteExport=new JCheckBox(app.getPlain("ExporttoAsymptote"));
 		comboFontSize=new JComboBox(msg);
 		jcbPointSymbol.setSelected(true);
 		jcbGrayscale.setSelected(false);
+		jcbAsymptoteExport.setSelected(false);
 		button.addActionListener(ggb);
 		button_copy.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -157,6 +159,9 @@ abstract public class ExportFrame extends JFrame{
 	}
 	public boolean isGrayscale(){
 		return jcbGrayscale.isSelected();
+	}
+	public boolean asymptoteExport(){
+		return jcbAsymptoteExport.isSelected();
 	}
 	public boolean getExportPointSymbol(){
 		return jcbPointSymbol.isSelected();

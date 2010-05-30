@@ -90,16 +90,19 @@ public class PstricksFrame extends ExportFrame{
 		panel.add(jcbGrayscale, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(button, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0,
+		panel.add(jcbAsymptoteExport, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(buttonSave, new GridBagConstraints(2, 6, 1, 1, 1.0, 1.0,
+		panel.add(button, new GridBagConstraints(0, 7, 2, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(button_copy, new GridBagConstraints(3, 6, 1, 1, 1.0, 1.0,
+		panel.add(buttonSave, new GridBagConstraints(2, 7, 1, 1, 1.0, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
 				5, 5, 5, 5), 0, 0));
-		panel.add(js, new GridBagConstraints(0, 7, 4, 5, 1.0, 20.0,
+		panel.add(button_copy, new GridBagConstraints(3, 7, 1, 1, 1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(
+				5, 5, 5, 5), 0, 0));
+		panel.add(js, new GridBagConstraints(0, 8, 4, 5, 1.0, 20.0,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
 				5, 5, 5, 5), 0, 0));
 		textXUnit.setPreferredSize(new Dimension(110,textXUnit.getFont().getSize()+6));

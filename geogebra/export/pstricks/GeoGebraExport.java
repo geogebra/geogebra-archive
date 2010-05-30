@@ -45,6 +45,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
+
 public abstract class GeoGebraExport implements ActionListener{
 	protected int beamerSlideNumber=1;
 	protected final double PRECISION_XRANGE_FUNCTION=0.00001;
@@ -141,6 +145,9 @@ public abstract class GeoGebraExport implements ActionListener{
 	public void actionPerformed(ActionEvent e){
 		isBeamer=frame.isBeamer();
 		generateAllCode();
+		
+
+
 	}
 	/**
 	 * 	This method	converts a double with engineering notation to decimal<br>
