@@ -730,7 +730,7 @@ implements
 	
 	
 	public void toolbarModeChanged(int euclidianMode){
-		System.out.println(euclidianMode);
+		//System.out.println(euclidianMode);
 		if(euclidianMode != EuclidianView.MODE_MOVE 
 				&& euclidianMode != EuclidianView.MODE_SELECTION_LISTENER 
 				&&  (mode == MODE_ADD || mode == MODE_LOCATE)){
@@ -743,8 +743,11 @@ implements
 	
 	/** Handle notification of deleted or modified geo */
 	public void traceGeoChanged(){
+		/* TODO: not working
+		System.out.println("traceGeoChanged");
 		updateTraceGeoList();
 		updateGUI();
+		*/
 	}
 		
 	

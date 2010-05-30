@@ -328,13 +328,73 @@ public class SpreadsheetTraceManager {
 		
 	}
 	
+	public TraceSettings getDefaultTraceSettings(){
+		return new TraceSettings();
+	}
+	
+	
 	public void setNeedsColumnReset(GeoElement geo, boolean flag){
 		if(!traceGeoCollection.containsKey(geo)) return;
 		traceGeoCollection.get(geo).needsColumnReset = flag;
 		
 	}
 	
-	
+	public String getTraceXML(GeoElement geo){
+		TraceSettings t = traceGeoCollection.get(geo);
+		StringBuilder sb = new StringBuilder();
+		
+		
+		sb.append("\t<spreadsheetTrace val=\"true\"");	
+		
+		sb.append(" traceColumn1=\"");
+		sb.append(t.traceColumn1);
+		sb.append("\"");
+		
+		sb.append(" traceColumn2=\"");
+		sb.append(t.traceColumn2);
+		sb.append("\"");
+		
+		sb.append(" traceRow1=\"");
+		sb.append(t.traceRow1);
+		sb.append("\"");
+		
+		sb.append(" traceRow2=\"");
+		sb.append(t.traceRow2);
+		sb.append("\"");
+		
+		sb.append(" tracingRow=\"");
+		sb.append(t.tracingRow);
+		sb.append("\"");
+		
+		sb.append(" numRows=\"");
+		sb.append(t.numRows);
+		sb.append("\"");
+		
+		sb.append(" doColumnReset=\"");
+		sb.append(t.doColumnReset  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" doRowLimit=\"");
+		sb.append(t.doRowLimit  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" showName=\"");
+		sb.append(t.showName  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append("/>\n");
+		
+		/* this param is not included:
+		 * 
+				public ArrayList<Double> lastTrace = new ArrayList<Double>();
+				
+		   do we need it?
+		*/
+			
+				
+				
+		return sb.toString();	
+	}
 	
 	
 	// =============================================	
@@ -613,6 +673,8 @@ public class SpreadsheetTraceManager {
 				GeoElement[] geos = table.kernel.getAlgebraProcessor()
 						.processAlgebraCommandNoExceptionHandling(headerText,
 								false);
+				geos[0].setEuclidianVisible(false);
+				geos[0].update();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}		
@@ -624,6 +686,8 @@ public class SpreadsheetTraceManager {
 				GeoElement[] geos = table.kernel.getAlgebraProcessor()
 						.processAlgebraCommandNoExceptionHandling(headerText,
 								false);
+				geos[0].setEuclidianVisible(false);
+				geos[0].update();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}		
@@ -636,6 +700,8 @@ public class SpreadsheetTraceManager {
 				GeoElement[] geos = table.kernel.getAlgebraProcessor()
 						.processAlgebraCommandNoExceptionHandling(headerText,
 								false);
+				geos[0].setEuclidianVisible(false);
+				geos[0].update();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
