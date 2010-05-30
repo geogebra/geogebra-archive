@@ -606,7 +606,43 @@ public class SpreadsheetTraceManager {
 		GeoText titleCell;
 
 		if (geo.isGeoPoint()) {
-			headerText = "x( " + geo.getLabel() + " )";
+			headerText = GeoElement.getSpreadsheetCellName(columnIndex,rowIndex);
+			headerText += " = \"x(\" + Name[" + geo.getLabel() + "] + \")\" ";
+			
+			try {
+				GeoElement[] geos = table.kernel.getAlgebraProcessor()
+						.processAlgebraCommandNoExceptionHandling(headerText,
+								false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
+					
+			headerText = GeoElement.getSpreadsheetCellName(columnIndex+1,rowIndex);
+			headerText += " = \"y(\" + Name[" + geo.getLabel() + "] + \")\" ";
+			
+			try {
+				GeoElement[] geos = table.kernel.getAlgebraProcessor()
+						.processAlgebraCommandNoExceptionHandling(headerText,
+								false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
+			
+		} else {
+
+			headerText = GeoElement.getSpreadsheetCellName(columnIndex,rowIndex)
+					+ " = Name[" + geo.getLabel() + "]";
+			try {
+				GeoElement[] geos = table.kernel.getAlgebraProcessor()
+						.processAlgebraCommandNoExceptionHandling(headerText,
+								false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		/*
+		headerText = "x( " + geo.getLabel() + " )";
 			titleCell = new GeoText(cons, GeoElement
 					.getSpreadsheetCellName(columnIndex,rowIndex), headerText);
 			titleCell.setEuclidianVisible(false);
@@ -625,6 +661,7 @@ public class SpreadsheetTraceManager {
 			titleCell.setEuclidianVisible(false);
 			titleCell.update();
 		}
+		 */
 
 	}
 

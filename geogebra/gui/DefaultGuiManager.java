@@ -2759,6 +2759,10 @@ public class DefaultGuiManager implements GuiManager {
 	        // tell EuclidianView
 	        app.getEuclidianView().setMode(mode);        
 	      
+	        
+	        // tell SpreadsheetView  (G.Sturr 2010-5-29)
+	        spreadsheetView.toolBarModeChanged(mode);    
+	        
 	        // select toolbar button
 	        setToolbarMode(mode);	         
 	    }

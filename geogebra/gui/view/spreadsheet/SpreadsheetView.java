@@ -248,6 +248,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return table;
 	}
 	
+	/** Respond to changes in Euclidean mode sent by GUI manager */
+	public void toolBarModeChanged(int mode){
+		if(isTraceDialogVisible()){
+			traceDialog.toolbarModeChanged(mode);
+		}
+	}
+	
 
 	//===============================================
 	//         Tracing
@@ -504,6 +511,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				
 		if(traceManager.isTraceGeo(geo)){
 			traceManager.removeSpreadsheetTraceGeo(geo);
+			if(isTraceDialogVisible())
+				traceDialog.traceGeoChanged();
 		}
 		
 		Point location = geo.getSpreadsheetCoords();
@@ -1069,7 +1078,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			//G.Sturr 2010-4-2
 			//Mark this cell to be resized by height
 			table.cellResizeHeightSet.add(new Point(location.x, location.y));
-		}			
+		}
+		
+		if(isTraceDialogVisible())
+			traceDialog.traceGeoChanged();
 	}	
 
 	

@@ -374,9 +374,12 @@ public class MyTable extends JTable implements FocusListener
 		CellRange newSelection = new CellRange(this);
 	
 		if(view.isTraceDialogVisible()){
+			
 			newSelection = view.getTraceSelectionRange(
 				getColumnModel().getSelectionModel().getAnchorSelectionIndex(), 
 				getSelectionModel().getAnchorSelectionIndex());
+			
+			scrollRectToVisible(getCellRect(newSelection.getMinRow(), newSelection.getMaxColumn(),true));
 		
 		}else{
 
