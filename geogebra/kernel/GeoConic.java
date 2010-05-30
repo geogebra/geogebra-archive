@@ -1161,6 +1161,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		eigenvec[1].y = eigenvec[0].x;
 		
 		classifyConic();
+		
+		// check if we got an ellipse or hyperbola
+		if (!(type == CONIC_HYPERBOLA || type == CONIC_ELLIPSE))
+		{
+			defined = false;
+		}
 	}
 
 	/*************************************

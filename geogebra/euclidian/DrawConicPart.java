@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.euclidian.clipping.ClipShape;
 import geogebra.kernel.AlgoConicPartCircle;
 import geogebra.kernel.AlgoConicPartCircumcircle;
 import geogebra.kernel.AlgoSemicircle;
@@ -148,18 +149,32 @@ implements Previewable {
 	private void updateEllipse() {	
 		draw_type = DRAW_TYPE_ELLIPSE;
 		
-		 // set arc
+		// check for huge pixel radius
+		double xradius = halfAxes[0] * view.xscale;
+		double yradius = halfAxes[1] * view.yscale;
+		if (xradius > DrawConic.HUGE_RADIUS || yradius > DrawConic.HUGE_RADIUS) {
+			isVisible = false;
+			return;
+		}
+		
+		// set arc
 		arc.setArc(-halfAxes[0],-halfAxes[1],
 					2*halfAxes[0],2*halfAxes[1],
 					-Math.toDegrees(conicPart.getParameterStart()),
 					-Math.toDegrees(conicPart.getParameterExtent()),
 					closure
 					);
-					
+			
 		// transform to screen coords
 		transform.setTransform(view.coordTransform);
 		transform.concatenate(conicPart.getAffineTransform()); 
-        shape = transform.createTransformedShape(arc);        
+		
+		if (xradius < DrawConic.BIG_RADIUS && yradius < DrawConic.BIG_RADIUS) {
+			shape = transform.createTransformedShape(arc); 
+		} else {
+			// clip big arc at screen
+	        shape = ClipShape.clipToRect(arc, transform, new Rectangle(-1,-1,view.width+2, view.height+2));
+		}  
                 
         // label position
         if (labelVisible) {    
@@ -356,6 +371,8 @@ implements Previewable {
 	}
     
 	final public boolean hit(int x,int y) { 
+		if (!isVisible) return false;
+		
 		switch (draw_type) {
 			case DRAW_TYPE_ELLIPSE:
 				if (strokedShape == null) {

@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.euclidian.clipping.ClipShape;
 import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoCircleTwoPoints;
@@ -57,7 +58,8 @@ final public class DrawConic extends Drawable implements Previewable {
 	static final int MAX_PLOT_POINTS = 300;
     // maximum of pixels for a standard circle radius
     // bigger circles are drawn via Arc2D
-    private static final double BIG_CIRCLE_RADIUS = 600;    
+    public static final double BIG_RADIUS = 600;   
+    public static final double HUGE_RADIUS = 1E12;  
            
     private GeoConic conic;
     
@@ -209,6 +211,8 @@ final public class DrawConic extends Drawable implements Previewable {
                 break;                          
         }
         
+        if (!isVisible)
+        	return;
         
         // shape on screen?
         Rectangle viewRect = new Rectangle(0,0,view.width,view.height);
@@ -303,21 +307,25 @@ final public class DrawConic extends Drawable implements Previewable {
     }
     
     final private void updateCircle() {
+        // calc screen pixel of radius                        
+        radius =  halfAxes[0] * view.xscale;
+        yradius =  halfAxes[1] * view.yscale; // radius scaled in y direction
+		if (radius > DrawConic.HUGE_RADIUS || yradius > DrawConic.HUGE_RADIUS) {
+			isVisible = false;
+			return;
+		}        
+		
         if (firstCircle) {
             firstCircle = false;  
             arc = new Arc2D.Double();     
             if (ellipse == null) ellipse = new Ellipse2D.Double();
-        }
+        }        
         
-        // calc screen pixel of radius                        
-        radius =  halfAxes[0] * view.xscale;
-        yradius =  halfAxes[1] * view.yscale; // radius scaled in y direction
-                
         i = -1; // bugfix
         
         // if circle is very big, draw arc: this is very important
         // for graphical continuity
-        if (radius < BIG_CIRCLE_RADIUS || yradius < BIG_CIRCLE_RADIUS) {              
+        if (radius < BIG_RADIUS && yradius < BIG_RADIUS) {              
             circle = ellipse;
             arcFiller = null;         
             // calc screen coords of midpoint
@@ -483,6 +491,14 @@ final public class DrawConic extends Drawable implements Previewable {
     }        
     
     final private void updateEllipse() {
+		// check for huge pixel radius
+		double xradius = halfAxes[0] * view.xscale;
+		double yradius = halfAxes[1] * view.yscale;
+		if (xradius > DrawConic.HUGE_RADIUS || yradius > DrawConic.HUGE_RADIUS) {
+			isVisible = false;
+			return;
+		}
+		
         if (firstEllipse) {
             firstEllipse = false;
             if (ellipse == null) ellipse = new Ellipse2D.Double();               
@@ -494,7 +510,13 @@ final public class DrawConic extends Drawable implements Previewable {
         
         // set ellipse
         ellipse.setFrameFromCenter(0, 0, halfAxes[0], halfAxes[1]); 
-        shape = transform.createTransformedShape(ellipse);                                     
+       
+		if (xradius < DrawConic.BIG_RADIUS && yradius < DrawConic.BIG_RADIUS) {
+			shape = transform.createTransformedShape(ellipse); 
+		} else {
+			// clip big arc at screen
+	        shape = ClipShape.clipToRect(ellipse, transform, new Rectangle(-1,-1,view.width+2, view.height+2));
+		}
 
         // set label coords
         labelCoords[0] = -halfAxes[0] / 2.0d;
@@ -614,6 +636,11 @@ final public class DrawConic extends Drawable implements Previewable {
     }
     
     final private void updateParabola() {
+		if (conic.p > DrawConic.HUGE_RADIUS) {
+			isVisible = false;
+			return;
+		}
+    	
         if (firstParabola) {                                      
             firstParabola = false;
             parabola = new QuadCurve2D.Double();                    
@@ -796,7 +823,10 @@ final public class DrawConic extends Drawable implements Previewable {
 		}
 	}
     
-	final public boolean hit(int x, int y) {             
+	final public boolean hit(int x, int y) {   
+		if (!isVisible)
+			return false;
+		
         switch (type) {
             case GeoConic.CONIC_SINGLE_POINT:                         
                 return drawPoint.hit(x, y);                                
