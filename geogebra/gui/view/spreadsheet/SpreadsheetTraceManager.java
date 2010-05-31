@@ -143,6 +143,7 @@ public class SpreadsheetTraceManager {
 		t.lastTrace.clear();
 		traceToSpreadsheet(geo);
 		view.repaint();
+		//Application.debug("add trace " + geo.getLabel());
 	}
 		
 	
@@ -190,6 +191,7 @@ public class SpreadsheetTraceManager {
 		geo.setSpreadsheetTrace(false);
 		view.repaint();
 			
+		//Application.debug("remove trace " + geo.getLabel());
 	}
 	
 	
@@ -202,9 +204,24 @@ public class SpreadsheetTraceManager {
 		}
 		traceGeoCollection.clear();	
 		view.repaint();
+		//Application.printStacktrace("remove all trace geos ");
 	}
 	
-	
+	/** Remove all non-tracing geos from the TraceGeoCollection */ 
+	public void updateTraceGeoCollection(){
+		Application.debug("updateTrace");
+		//note: this only clears dead wood, does not add geos
+		// it might be better to remove all and then 
+		// iterate through the geos and add fresh 
+		for(GeoElement geo:traceGeoCollection.keySet()){
+			//Application.debug("updateTrace" + geo.toString());
+			if( geo.getSpreadsheetTrace() == false){
+				//Application.debug("removeTrace" + geo.toString());
+				removeSpreadsheetTraceGeo(geo);	
+			}
+		}
+		
+	}
 
 	
 	
@@ -232,7 +249,6 @@ public class SpreadsheetTraceManager {
 	
 	
 	public CellRange getNextTraceCell(){
-		System.out.println(getNextTraceColumn());
 		return new CellRange(table, getNextTraceColumn(), 0);
 	}
 	
@@ -664,7 +680,8 @@ public class SpreadsheetTraceManager {
 
 		String headerText = "";
 		GeoText titleCell;
-
+		
+		/*
 		if (geo.isGeoPoint()) {
 			headerText = GeoElement.getSpreadsheetCellName(columnIndex,rowIndex);
 			headerText += " = \"x(\" + Name[" + geo.getLabel() + "] + \")\" ";
@@ -707,8 +724,11 @@ public class SpreadsheetTraceManager {
 			}
 			
 		}
-		/*
-		headerText = "x( " + geo.getLabel() + " )";
+		*/
+		
+		
+		if (geo.isGeoPoint()) {
+			headerText = "x( " + geo.getLabel() + " )";
 			titleCell = new GeoText(cons, GeoElement
 					.getSpreadsheetCellName(columnIndex,rowIndex), headerText);
 			titleCell.setEuclidianVisible(false);
@@ -727,7 +747,7 @@ public class SpreadsheetTraceManager {
 			titleCell.setEuclidianVisible(false);
 			titleCell.update();
 		}
-		 */
+		 
 
 	}
 

@@ -417,7 +417,7 @@ implements
 	
 	
 	
-	public void updateGUI() {				
+	private void updateGUI() {				
 	
 		switch (mode){
 		
@@ -498,12 +498,16 @@ implements
 	
 	/** Update the trace geo list with current trace geos */
 	private void updateTraceGeoList(){
-		//update traceGeo list
+		
+		GeoElement selectedGeo = (GeoElement) traceGeoList.getSelectedValue();
+		
 		traceGeoList.removeListSelectionListener(this);
 		traceGeoListModel.clear();		
 		for(GeoElement geo: traceManager.getTraceGeoList()){
 			traceGeoListModel.addElement(geo);
 		}
+		if(selectedGeo != null && traceGeoListModel.contains(selectedGeo))
+			traceGeoList.setSelectedValue(selectedGeo, true);
 		traceGeoList.addListSelectionListener(this);	
 	}
 	
@@ -741,13 +745,10 @@ implements
 	}
 	
 	
-	/** Handle notification of deleted or modified geo */
-	public void traceGeoChanged(){
-		/* TODO: not working
-		System.out.println("traceGeoChanged");
+	/** Handle notification of deleted or renamed geo */
+	public void updateTraceDialog(){
 		updateTraceGeoList();
 		updateGUI();
-		*/
 	}
 		
 	
