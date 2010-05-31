@@ -342,8 +342,7 @@ public class MyTable extends JTable implements FocusListener
 	 */
 	@Override
 	public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
-		
-		if(metaDown) 
+		if(app.getControlDown()) 
 			super.changeSelection(rowIndex, columnIndex, false, false);	
 		else
 			super.changeSelection(rowIndex, columnIndex, toggle, extend);
@@ -422,7 +421,7 @@ public class MyTable extends JTable implements FocusListener
 		
 		// update the selection list
 		
-		if (!metaDown) {
+		if (!app.getControlDown()) {
 			selectedCellRanges.clear();
 			selectedColumnSet.clear();
 			selectedRowSet.clear();

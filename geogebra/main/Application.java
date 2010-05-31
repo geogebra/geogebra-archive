@@ -3206,6 +3206,8 @@ public abstract class Application implements KeyEventDispatcher {
 		if (e.isConsumed())
 			return true;
 		
+		controlDown = isControlDown(e); //G.Sturr 2010-5-30
+		
 		// check if key event came from this main component
 		// (needed to take care of multiple application windows or applets)
 		Component eventPane = SwingUtilities.getRootPane(e.getComponent());
@@ -3423,6 +3425,20 @@ public abstract class Application implements KeyEventDispatcher {
 		return MAC_OS ? e.isControlDown() : e.isAltDown();
 	}
 
+	
+	// G.Sturr 2010-5-30: Added global controlDown flag.
+	// Application.dispatchKeyEvent sets this on every keyEvent.
+	// The flag is needed for ctrl-select in the spreadsheet.
+	
+	private static boolean controlDown = false;
+	
+	public static boolean getControlDown () {
+		return controlDown;
+	}
+
+	//END G.Sturr
+	
+	
 	public static boolean isControlDown(InputEvent e) {
 
 		/*
