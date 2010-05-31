@@ -1,13 +1,7 @@
 
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.gui.view.spreadsheet.SpreadsheetTraceManager.TraceSettings;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
@@ -34,12 +28,9 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -47,7 +38,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JToolBar;
 import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
@@ -68,7 +58,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	// spreadsheet table and row header
 	protected MyTable table;
 	protected DefaultTableModel tableModel;
-	public JList rowHeader;
+	private JList rowHeader;
 	private RowHeaderRenderer rowHeaderRenderer;
 	private MyListModel listModel;
 	private SpreadsheetView view;
@@ -90,7 +80,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	//G.STURR 2010-1-9: needed for resizing rows
-	public static Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+	private static Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
 	private Cursor otherCursor = resizeCursor; 
 	private int mouseYOffset, resizingRow; 
 	private boolean doRowResize = false;
@@ -217,6 +207,16 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	
+	
+
+	public Application getApplication() {
+		return app;
+	}
+	
+	public MyTable getTable() {
+		return table;
+	}
+	
 	private class Corner extends JComponent {
 		private static final long serialVersionUID = -4426785169061557674L;
 
@@ -225,8 +225,24 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	        g.fillRect(0, 0, getWidth(), getHeight());
 	    }
 	}
+	
 
-		/**/
+	public JViewport getRowHeader(){
+		return spreadsheet.getRowHeader();
+	}
+	
+	public JViewport getColumnHeader(){
+		return spreadsheet.getColumnHeader();
+	}
+	
+	
+
+	
+
+	//===============================================================
+	//              VIEW Implementation
+	//===============================================================
+	
 	
 	public void attachView() {
 		clearView();
@@ -240,14 +256,138 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		//kernel.notifyRemoveAll(this);		
 	}
 	
-	public Application getApplication() {
-		return app;
+	
+	public void add(GeoElement geo) {	
+		//Application.debug(new Date() + " ADD: " + geo);				
+
+		update(geo);
+		
+		Point location = geo.getSpreadsheetCoords();
+		
+		// autoscroll to new cell's location
+		if (scrollToShow && location != null )
+			table.scrollRectToVisible(table.getCellRect(location.y, location.x, true));
+		
+		//G.Sturr 2010-4-2: mark this geo to adjust row width for tall LaTeX images 
+		//MyCellEditor.cellResizeHeightSet.add(new Point(location.x,location.y));
+		
+		
+		//Application.debug("highestUsedColumn="+highestUsedColumn);
 	}
 	
-	public MyTable getTable() {
-		return table;
+	private boolean scrollToShow = false;
+	
+	public void setScrollToShow(boolean scrollToShow) {
+		this.scrollToShow = scrollToShow;
 	}
 	
+	public void remove(GeoElement geo) {
+		//Application.debug(new Date() + " REMOVE: " + geo);
+				
+		if(traceManager.isTraceGeo(geo)){
+			traceManager.removeSpreadsheetTraceGeo(geo);
+			if(isTraceDialogVisible())
+				traceDialog.updateTraceDialog();
+		}
+		
+		Point location = geo.getSpreadsheetCoords();
+		if (location != null) {
+			doRemove(geo, location.y, location.x);
+		}
+	}
+	
+	private void doRemove(GeoElement geo, int row, int col) {
+			
+		tableModel.setValueAt(null, row, col);
+		if (col <= highestUsedColumn) checkColumnEmpty(highestUsedColumn);
+		
+		//Application.debug("highestUsedColumn="+highestUsedColumn);
+	}
+	
+	/**
+	 * Updates highestUsedColumn when this is sent as a parameter
+	 */
+	private void checkColumnEmpty(int col) {
+		
+		if (col == -1) return; // end recursion
+		
+		// check if this was the last cell used in this column
+		boolean columnNotEmpty = false;
+		for (int r = 0 ; r < tableModel.getRowCount() ; r++) {
+			if (tableModel.getValueAt(r, col) != null) {
+				// column not empty
+				columnNotEmpty = true;
+				break;
+			}
+		}
+		if (!columnNotEmpty) {
+			highestUsedColumn--;
+			checkColumnEmpty(highestUsedColumn);
+		}
+		
+	}
+	
+	public void rename(GeoElement geo) {
+		//Application.debug(new Date() + " RENAME");
+		Point location = geo.getOldSpreadsheetCoords();
+		if (location != null) {
+			doRemove(geo, location.y, location.x);
+		}
+		
+		add(geo);
+		
+		if(traceManager.isTraceGeo(geo))
+			traceManager.updateTraceSettings(geo, traceManager.getTraceSettings(geo));
+		if(isTraceDialogVisible()){
+			traceDialog.updateTraceDialog();
+		}
+			
+	}
+	
+	
+	public void updateAuxiliaryObject(GeoElement geo) {		
+	}
+	
+// G.STURR -- selectedElems is no longer  used	
+//	public static HashSet selectedElems = new HashSet();
+	
+	public void repaintView() {
+		/*
+		 * Markus Hohenwarter 2008-09-18
+		 *   The following code is extremely slow and a very bad performance bottleneck.
+		 *   If this needs to be done, then definitely NOT in repaintView()
+		 * 
+		ArrayList elems = app.getSelectedGeos();
+		selectedElems.clear();
+		for (int i = 0; i < elems.size(); ++ i) {
+			GeoElement geo = (GeoElement)elems.get(i);
+			selectedElems.add(geo.getLabel());
+		}
+		if (System.currentTimeMillis() - table.selectionTime > 100) {
+			table.selectNone();
+		}
+		*/
+		
+		repaint();		
+	}
+	
+	public void clearView() {
+		
+		//Application.debug(new Date() + " CLEAR VIEW");
+		
+		int rows = tableModel.getRowCount();
+		int columns = tableModel.getColumnCount();
+		for (int c = 0; c < columns; ++c) {
+			for (int r = 0; r < rows; ++r) {
+				tableModel.setValueAt(null, r, c);
+			}
+		}
+		if(traceManager !=null)
+			traceManager.removeAllSpreadsheetTraceGeos();
+	}
+	
+	
+
 	/** Respond to changes in Euclidean mode sent by GUI manager */
 	public void toolBarModeChanged(int mode){
 		if(isTraceDialogVisible()){
@@ -255,10 +395,58 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		}
 	}
 	
+		
+	public void restart() {
+		highestUsedColumn = -1;
+		updateColumnWidths();
+		table.changeSelection(0,0,false,false);
+		traceManager.removeAllSpreadsheetTraceGeos();
+		
+	}	
+	
+	public void reset() {
+	}	
+	
+	
+	public void update(GeoElement geo) {
+		Point location = geo.getSpreadsheetCoords();
+		if (location != null && location.x < MAX_COLUMNS && location.y < MAX_ROWS) {
+			
+			if (location.x > highestUsedColumn) highestUsedColumn = location.x;
+			
+			if (location.y >= tableModel.getRowCount()) {
+				tableModel.setRowCount(location.y + 1);		
+				spreadsheet.getRowHeader().revalidate();
+			}
+			if (location.x >= tableModel.getColumnCount()) {
+				table.setMyColumnCount(location.x + 1);		
+				JViewport cH = spreadsheet.getColumnHeader();
+				
+				// bugfix: double-click to load ggb file gives cH = null
+				if (cH != null) cH.revalidate();
+			}
+			tableModel.setValueAt(geo, location.y, location.x);
+			
+			//G.Sturr 2010-4-2
+			//Mark this cell to be resized by height
+			table.cellResizeHeightSet.add(new Point(location.x, location.y));
+		}
+		
+		
+	}	
 
-	//===============================================
-	//         Tracing
-	//===============================================
+	
+	
+	
+	
+
+	
+
+	//=====================================================
+	//               Tracing
+	//=====================================================
+	
+	
 	
 	public SpreadsheetTraceManager getTraceManager() {
 		if (traceManager == null)
@@ -482,125 +670,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 //	}
 	
 	
-	public void add(GeoElement geo) {	
-		//Application.debug(new Date() + " ADD: " + geo);				
-
-		update(geo);
-		
-		Point location = geo.getSpreadsheetCoords();
-		
-		// autoscroll to new cell's location
-		if (scrollToShow && location != null )
-			table.scrollRectToVisible(table.getCellRect(location.y, location.x, true));
-		
-		//G.Sturr 2010-4-2: mark this geo to adjust row width for tall LaTeX images 
-		//MyCellEditor.cellResizeHeightSet.add(new Point(location.x,location.y));
-		
-		
-		//Application.debug("highestUsedColumn="+highestUsedColumn);
-	}
-	
-	private boolean scrollToShow = false;
-	
-	public void setScrollToShow(boolean scrollToShow) {
-		this.scrollToShow = scrollToShow;
-	}
-	
-	public void remove(GeoElement geo) {
-		//Application.debug(new Date() + " REMOVE: " + geo);
-				
-		if(traceManager.isTraceGeo(geo)){
-			traceManager.removeSpreadsheetTraceGeo(geo);
-			if(isTraceDialogVisible())
-				traceDialog.traceGeoChanged();
-		}
-		
-		Point location = geo.getSpreadsheetCoords();
-		if (location != null) {
-			doRemove(geo, location.y, location.x);
-		}
-	}
-	
-	private void doRemove(GeoElement geo, int row, int col) {
-			
-		tableModel.setValueAt(null, row, col);
-		if (col <= highestUsedColumn) checkColumnEmpty(highestUsedColumn);
-		
-		//Application.debug("highestUsedColumn="+highestUsedColumn);
-	}
-	
-	/**
-	 * Updates highestUsedColumn when this is sent as a parameter
-	 */
-	private void checkColumnEmpty(int col) {
-		
-		if (col == -1) return; // end recursion
-		
-		// check if this was the last cell used in this column
-		boolean columnNotEmpty = false;
-		for (int r = 0 ; r < tableModel.getRowCount() ; r++) {
-			if (tableModel.getValueAt(r, col) != null) {
-				// column not empty
-				columnNotEmpty = true;
-				break;
-			}
-		}
-		if (!columnNotEmpty) {
-			highestUsedColumn--;
-			checkColumnEmpty(highestUsedColumn);
-		}
-		
-	}
-	
-	public void rename(GeoElement geo) {
-		//Application.debug(new Date() + " RENAME");
-		Point location = geo.getOldSpreadsheetCoords();
-		if (location != null) {
-			doRemove(geo, location.y, location.x);
-		}
-		
-		add(geo);
-		
-	}
-	
-	public void updateAuxiliaryObject(GeoElement geo) {		
-	}
-	
-// G.STURR -- selectedElems is no longer  used	
-//	public static HashSet selectedElems = new HashSet();
-	
-	public void repaintView() {
-		/*
-		 * Markus Hohenwarter 2008-09-18
-		 *   The following code is extremely slow and a very bad performance bottleneck.
-		 *   If this needs to be done, then definitely NOT in repaintView()
-		 * 
-		ArrayList elems = app.getSelectedGeos();
-		selectedElems.clear();
-		for (int i = 0; i < elems.size(); ++ i) {
-			GeoElement geo = (GeoElement)elems.get(i);
-			selectedElems.add(geo.getLabel());
-		}
-		if (System.currentTimeMillis() - table.selectionTime > 100) {
-			table.selectNone();
-		}
-		*/
-		
-		repaint();		
-	}
-	
-	public void clearView() {
-		
-		//Application.debug(new Date() + " CLEAR VIEW");
-		
-		int rows = tableModel.getRowCount();
-		int columns = tableModel.getColumnCount();
-		for (int c = 0; c < columns; ++c) {
-			for (int r = 0; r < rows; ++r) {
-				tableModel.setValueAt(null, r, c);
-			}
-		}	
-	}
 	
 
 		
@@ -1045,47 +1114,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 	}
 		
+	
 
-	/**/
-		
-	public void restart() {
-		highestUsedColumn = -1;
-		updateColumnWidths();
-	}	
+	//===============================================================
+	//             XML 
+	//===============================================================
 	
-	public void reset() {
-	}	
-	
-	public void update(GeoElement geo) {
-		Point location = geo.getSpreadsheetCoords();
-		if (location != null && location.x < MAX_COLUMNS && location.y < MAX_ROWS) {
-			
-			if (location.x > highestUsedColumn) highestUsedColumn = location.x;
-			
-			if (location.y >= tableModel.getRowCount()) {
-				tableModel.setRowCount(location.y + 1);		
-				spreadsheet.getRowHeader().revalidate();
-			}
-			if (location.x >= tableModel.getColumnCount()) {
-				table.setMyColumnCount(location.x + 1);		
-				JViewport cH = spreadsheet.getColumnHeader();
-				
-				// bugfix: double-click to load ggb file gives cH = null
-				if (cH != null) cH.revalidate();
-			}
-			tableModel.setValueAt(geo, location.y, location.x);
-			
-			//G.Sturr 2010-4-2
-			//Mark this cell to be resized by height
-			table.cellResizeHeightSet.add(new Point(location.x, location.y));
-		}
-		
-		if(isTraceDialogVisible())
-			traceDialog.traceGeoChanged();
-	}	
 
-	
-	
 	
 	/**
 	 * returns settings in XML format
@@ -1120,6 +1155,15 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 
+	
+	
+	
+
+	//===============================================================
+	//             Update 
+	//===============================================================
+	
+	
 	
 	public void updateFonts() {
 			
@@ -1184,24 +1228,86 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 	
-	
 	//G.STURR 2010-1-9
 	public void updateRowHeader() {
 		listModel.changed();
 	}
 	//END GSTURR
-		
 	
+	
+
+
+	// G.Sturr 2010-4-10
+	// ==========================================================
+	// Handle spreadsheet resize.
+	//
+	// Adds extra rows and columns to fill the enclosing scrollpane. 
+	// This is sometimes needed when rows or columns are resized
+	// or the application window is enlarged.
+	
+	
+	/**
+	 * Tests if the spreadsheet fits the enclosing scrollpane viewport.
+	 * Adds rows or columns if needed to fill the viewport.
+	 */
+	public void expandSpreadsheetToViewport() {
+
+		if (table.getWidth() < spreadsheet.getWidth()) {
+
+			int newColumns = (spreadsheet.getWidth() - table.getWidth())
+					/ table.preferredColumnWidth;
+			table.removeComponentListener(this);
+			table.setMyColumnCount(table.getColumnCount() + newColumns);
+			table.addComponentListener(this);
+
+		}
+		if (table.getHeight() < spreadsheet.getHeight()) {
+			int newRows = (spreadsheet.getHeight() - table.getHeight())
+					/ table.getRowHeight();
+			table.removeComponentListener(this);
+			tableModel.setRowCount(table.getRowCount() + newRows);
+			table.addComponentListener(this);
+
+		}
+
+		// if table has grown after resizing all rows or columns, then select
+		// all again
+		// TODO --- why doesn't this work:
+		/*
+		 * if(table.isSelectAll()){ table.selectAll(); }
+		 */
+
+	}
+
+	// Listener for a resized column or row
+
+	public void componentResized(ComponentEvent e) {
+		expandSpreadsheetToViewport();
+	}
+
+	public void componentHidden(ComponentEvent e) {
+	}
+
+	public void componentMoved(ComponentEvent e) {
+	}
+
+	public void componentShown(ComponentEvent e) {
+
+	}
+
+	
+
+	
+
+
+	//===============================================================
+	//             Data Import & File Browser 
+	//===============================================================
+	
+	
+
 	//G.STURR 2010-2-12: Added methods to support file browser
 	//
-	
-	public JViewport getRowHeader(){
-		return spreadsheet.getRowHeader();
-	}
-	
-	public JViewport getColumnHeader(){
-		return spreadsheet.getColumnHeader();
-	}
 	
 	
 	public boolean loadSpreadsheetFromURL(File f) {
@@ -1229,6 +1335,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		}
 		return succ;
 	}
+	
 	
 	public FileBrowserPanel getBrowserPanel() {		
 		if (browserPanel == null) {
@@ -1309,9 +1416,12 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	
-	//-------------------------------------------
-	//	Spreadsheet Properties (get/set)
-	//-------------------------------------------
+	
+	
+	//================================================
+	//	         Spreadsheet Properties
+	//================================================
+	
 	
 	
 	public void setShowRowHeader(boolean showRowHeader) {
@@ -1405,68 +1515,15 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	
+	
 
-
-	// G.Sturr 2010-4-10
-	// ==========================================================
-	// Handle spreadsheet resize.
-	//
-	// Adds extra rows and columns to fill the enclosing scrollpane. 
-	// This is sometimes needed when rows or columns are resized
-	// or the application window is enlarged.
 	
 	
-	/**
-	 * Tests if the spreadsheet fits the enclosing scrollpane viewport.
-	 * Adds rows or columns if needed to fill the viewport.
-	 */
-	public void expandSpreadsheetToViewport() {
-
-		if (table.getWidth() < spreadsheet.getWidth()) {
-
-			int newColumns = (spreadsheet.getWidth() - table.getWidth())
-					/ table.preferredColumnWidth;
-			table.removeComponentListener(this);
-			table.setMyColumnCount(table.getColumnCount() + newColumns);
-			table.addComponentListener(this);
-
-		}
-		if (table.getHeight() < spreadsheet.getHeight()) {
-			int newRows = (spreadsheet.getHeight() - table.getHeight())
-					/ table.getRowHeight();
-			table.removeComponentListener(this);
-			tableModel.setRowCount(table.getRowCount() + newRows);
-			table.addComponentListener(this);
-
-		}
-
-		// if table has grown after resizing all rows or columns, then select
-		// all again
-		// TODO --- why doesn't this work:
-		/*
-		 * if(table.isSelectAll()){ table.selectAll(); }
-		 */
-
-	}
+	//================================================
+	//	         Focus
+	//================================================
 	
-	// Listener for a resized column or row 
-
-	public void componentResized(ComponentEvent e) {		
-		expandSpreadsheetToViewport();
-	}
-	public void componentHidden(ComponentEvent e) {		
-	}
-
-	public void componentMoved(ComponentEvent e) {		
-	}
-
-	public void componentShown(ComponentEvent e) {
-		
-	}
 	
-	//=============================================
-	// END G.Sturr
-
 	public void requestFocus() {
 		if (table != null)
 			table.requestFocus();
