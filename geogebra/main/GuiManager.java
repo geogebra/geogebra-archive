@@ -90,11 +90,7 @@ public interface GuiManager {
 	public void updateAlgebraInput();
 
 	public void doAfterRedefine(GeoElement geo);
-
-	// Layout methods - Florian Sonner 2008-11-02
-	public void getLayoutXml(StringBuilder sb, boolean isPreference);
-	public JComponent getLayoutRoot(); 
-	public boolean isRootPane(Component component);
+	
 	public LayoutBridge getLayout();
 	
 	public JComponent getToolbarPanel() ;

@@ -24,6 +24,7 @@ import java.util.Comparator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -394,6 +395,10 @@ public class Layout implements LayoutBridge {
 	 */
 	public DockManager getDockManager() {
 		return dockManager;
+	}
+
+	public JComponent getRootComponent() {
+		return dockManager.getRoot();
 	}
 	
 	/**

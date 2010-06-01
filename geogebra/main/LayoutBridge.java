@@ -2,6 +2,8 @@ package geogebra.main;
 
 import java.awt.Component;
 
+import javax.swing.JComponent;
+
 /**
  * API for an easy communication between non-GUI components and the layout manager.
  * 
@@ -16,4 +18,17 @@ public interface LayoutBridge
 	 * @return
 	 */
 	public boolean inExternalWindow(Component component);
+	
+	/**
+	 * @return The root component of the layout manager.
+	 */
+	public JComponent getRootComponent();
+	
+	/**
+	 * Append the layout XML information to the given string builder.
+	 * 
+	 * @param sb The string builder to which the XML is appended
+	 * @param isPreference
+	 */
+	public void getXml(StringBuilder sb, boolean isPreference);
 }

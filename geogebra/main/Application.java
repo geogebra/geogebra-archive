@@ -883,7 +883,7 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		centerPanel.removeAll();
 		if(useLayout) {		
-			centerPanel.add(getGuiManager().getLayoutRoot(), BorderLayout.CENTER);
+			centerPanel.add(getGuiManager().getLayout().getRootComponent(), BorderLayout.CENTER);
 		} else {
 			centerPanel.add(getEuclidianView(), BorderLayout.CENTER);
 		}
@@ -2790,7 +2790,7 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		sb.append("\" />");
 		
-		getGuiManager().getLayoutXml(sb, asPreference);
+		getGuiManager().getLayout().getXml(sb, asPreference);
 
 		// labeling style
 		if (labelingStyle != ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC) {

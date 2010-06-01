@@ -490,20 +490,8 @@ public class DefaultGuiManager implements GuiManager {
 		}
 	}
 	
-	public void getLayoutXml(StringBuilder sb, boolean isPreference) {
-		layout.getXml(sb, isPreference);
-	}
-	
-	public JComponent getLayoutRoot() {
-		return layout.getDockManager().getRoot();
-	}
-	
 	public LayoutBridge getLayout(){
 		return layout;
-	}
-	
-	public boolean isRootPane(Component component) {
-		return true; // TODO implement (F.S.)
 	}
 
 	public JComponent getToolbarPanel() {
