@@ -264,6 +264,10 @@ public interface EuclidianViewInterface {
 	
 	public void mouseEntered();
 	public void mouseExited();
+	public Previewable createPreviewParallelLine(ArrayList selectedPoints,
+			ArrayList selectedLines);
+	public Previewable createPreviewPerpendicularLine(ArrayList selectedPoints,
+			ArrayList selectedLines);
 	
 	
 

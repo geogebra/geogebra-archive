@@ -23,6 +23,8 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
+import geogebra.kernel.GeoVector;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -40,7 +42,12 @@ public final class DrawLine extends Drawable implements Previewable {
     private static final int LEFT = 0;
     private static final int RIGHT = 1;
     private static final int TOP = 2;
-    private static final int BOTTOM = 3;           
+    private static final int BOTTOM = 3;  
+    
+    private static final int PREVIEW_NONE = -1;           
+    private static final int PREVIEW_LINE = 0;           
+    private static final int PREVIEW_PARALLEL = 1;           
+    private static final int PREVIEW_PERPENDICULAR = 2;           
     
     private GeoLine g;    
     //private double [] coeffs = new double[3];
@@ -51,7 +58,7 @@ public final class DrawLine extends Drawable implements Previewable {
     private int x, y;    
     private boolean isVisible, labelVisible;
     
-    private ArrayList points; // for preview
+    private ArrayList points, lines; // for preview
     private GeoPoint startPoint;
    
     // clipping attributes
@@ -69,6 +76,7 @@ public final class DrawLine extends Drawable implements Previewable {
 	 * Creates a new DrawLine for preview.     
 	 */
 	DrawLine(EuclidianView view, ArrayList points) {
+		previewMode = PREVIEW_LINE;
 		this.view = view; 
 		this.points = points;
 		if (points.size() == 2) {
@@ -78,8 +86,24 @@ public final class DrawLine extends Drawable implements Previewable {
 		g = new GeoLine(view.getKernel().getConstruction());
 		updatePreview();
 	} 
+	
+	int previewMode = PREVIEW_NONE;
     
-    final public void update() {  
+	/**
+	 * Creates a new DrawLine for preview of parallel tool  
+	 */
+    public DrawLine(EuclidianView view, ArrayList points,
+			ArrayList lines, boolean parallel) {
+    	if (parallel) previewMode = PREVIEW_PARALLEL;
+    	else previewMode = PREVIEW_PERPENDICULAR;
+		this.view = view; 
+		this.points = points;
+		this.lines = lines;
+		g = new GeoLine(view.getKernel().getConstruction());
+		updatePreview();
+	}
+
+	final public void update() {  
 		//	take line g here, not geo this object may be used for conics too
         isVisible = g.isEuclidianVisible(); 
         if (isVisible) {
@@ -334,44 +358,70 @@ public final class DrawLine extends Drawable implements Previewable {
 	}
     
 	final public void updatePreview() {		
-		isVisible = points.size() == 1;   
-		if (isVisible) {
-			startPoint = (GeoPoint) points.get(0);
-		}		                              			                                           
+		switch (previewMode) {
+		case 0:
+			isVisible = (points.size() == 1); 
+			if (isVisible) {
+				startPoint = (GeoPoint) points.get(0);
+			}		                              			                                           
+			break;
+		case 1:
+		case 2:
+			isVisible = (lines.size() == 1);  
+			break;
+		}
+		 
+	                              			                                           
 	}
 	
 	Point2D.Double endPoint = new Point2D.Double();
 
 	public void updateMousePos(double xRW, double yRW) {	
-		if (isVisible) { 			
-			//double xRW = view.toRealWorldCoordX(mx);
-			//double yRW = view.toRealWorldCoordY(my);
+		if (isVisible) { 	
 			
-
-			// round angle to nearest 15 degrees if alt pressed
-			if (points.size() == 1 && view.getEuclidianController().altDown) {
-				GeoPoint p = (GeoPoint)points.get(0);
-				double px = p.inhomX;
-				double py = p.inhomY;
-				double angle = Math.atan2(yRW - py, xRW - px) * 180 / Math.PI;
-				double radius = Math.sqrt((py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
+			switch (previewMode) {
+			case PREVIEW_LINE:
+	
+				// round angle to nearest 15 degrees if alt pressed
+				if (points.size() == 1 && view.getEuclidianController().altDown) {
+					GeoPoint p = (GeoPoint)points.get(0);
+					double px = p.inhomX;
+					double py = p.inhomY;
+					double angle = Math.atan2(yRW - py, xRW - px) * 180 / Math.PI;
+					double radius = Math.sqrt((py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
+					
+					// round angle to nearest 15 degrees
+					angle = Math.round(angle / 15) * 15; 
+					
+					xRW = px + radius * Math.cos(angle * Math.PI / 180);
+					yRW = py + radius * Math.sin(angle * Math.PI / 180);
+					
+					endPoint.x = xRW;
+					endPoint.y = yRW;
+					view.getEuclidianController().setLineEndPoint(endPoint);
+				}
+				else
+					view.getEuclidianController().setLineEndPoint(null);
 				
-				// round angle to nearest 15 degrees
-				angle = Math.round(angle / 15) * 15; 
+				// line through first point and mouse position			
+				GeoVec3D.cross(startPoint, xRW, yRW, 1.0, g);
+     
+				break;
 				
-				xRW = px + radius * Math.cos(angle * Math.PI / 180);
-				yRW = py + radius * Math.sin(angle * Math.PI / 180);
-				
-				endPoint.x = xRW;
-				endPoint.y = yRW;
-				view.getEuclidianController().setLineEndPoint(endPoint);
+			case PREVIEW_PARALLEL:
+			    // calc the line g through (xRW,yRW) and parallel to l
+				GeoLine l = (GeoLine)lines.get(0);
+			    GeoVec3D.cross(xRW, yRW, 1.0, l.y, -l.x, 0.0, g);
+	
+				break;
+			case PREVIEW_PERPENDICULAR:
+			    // calc the line g through (xRW,yRW) and parallel to l
+				l = (GeoLine)lines.get(0);
+			    GeoVec3D.cross(xRW, yRW, 1.0, l.y, -l.x, 0.0, g);
+	
+			    break;
 			}
-			else
-				view.getEuclidianController().setLineEndPoint(null);
 			
-			
-			// line through first point and mouse position			
-			GeoVec3D.cross(startPoint, xRW, yRW, 1.0, g);
 			if (g.isZero()) {
 				isVisible = false;
 				return;
@@ -379,8 +429,10 @@ public final class DrawLine extends Drawable implements Previewable {
 			gx = g.x;
 			gy = g.y;
 			gz = g.z;
-			setClippedLine();                                   			                                            
+			setClippedLine();      
+
 		}
+		
 	}
     
 	final public void drawPreview(Graphics2D g2) {

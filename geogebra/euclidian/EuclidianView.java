@@ -4232,5 +4232,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void mouseExited(){
 		
 	}
+
+	public Previewable createPreviewParallelLine(ArrayList selectedPoints,
+			ArrayList selectedLines) {
+		return new DrawLine(this, selectedPoints, selectedLines, true);
+	}
+	
+	public Previewable createPreviewPerpendicularLine(ArrayList selectedPoints,
+			ArrayList selectedLines) {
+		return new DrawLine(this, selectedPoints, selectedLines, false);
+	}
 	
 }

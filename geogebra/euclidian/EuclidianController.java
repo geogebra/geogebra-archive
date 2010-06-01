@@ -380,8 +380,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			
 			break;
 
+		case EuclidianView.MODE_PARALLEL:
+			previewDrawable = view.createPreviewParallelLine(selectedPoints, selectedLines);
+			break;
+
+		case EuclidianView.MODE_ORTHOGONAL:
+			previewDrawable = view.createPreviewPerpendicularLine(selectedPoints, selectedLines);
+			break;
+
 		case EuclidianView.MODE_JOIN: // line through two points
-			useLineEndPoint = false;
+					useLineEndPoint = false;
 			previewDrawable = view.createPreviewLine(selectedPoints);
 			break;
 

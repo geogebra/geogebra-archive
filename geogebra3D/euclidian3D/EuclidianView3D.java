@@ -2350,4 +2350,24 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return 0;
 	}
 
+
+
+
+
+	public Previewable createPreviewParallelLine(ArrayList selectedPoints,
+			ArrayList selectedLines) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+
+	public Previewable createPreviewPerpendicularLine(ArrayList selectedPoints,
+			ArrayList selectedLines) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

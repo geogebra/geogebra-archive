@@ -233,6 +233,16 @@ implements Traceable {
 							 u.x * vy - u.y * vx );                                 
     }
     
+    /** Calculates the cross product of vectors u and v.
+     * The result is stored in w.
+     */
+    final public static void cross(double ux, double uy, double uz, 
+                                   double vx, double vy, double vz, GeoVec3D w) {
+		w.setCoords( uy * vz - uz * vy, 
+							 uz * vx - ux * vz,  
+							 ux * vy - uy * vx );                                 
+    }
+    
      /** Calculates the inner product of this vector and vector v.
      */
     final public double inner(GeoVec3D v) {
