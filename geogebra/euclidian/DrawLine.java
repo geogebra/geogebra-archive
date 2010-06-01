@@ -48,6 +48,7 @@ public final class DrawLine extends Drawable implements Previewable {
     private static final int PREVIEW_LINE = 0;           
     private static final int PREVIEW_PARALLEL = 1;           
     private static final int PREVIEW_PERPENDICULAR = 2;           
+    private static final int PREVIEW_PERPENDICULAR_BISECTOR = 3;           
     
     private GeoLine g;    
     //private double [] coeffs = new double[3];
@@ -75,8 +76,9 @@ public final class DrawLine extends Drawable implements Previewable {
 	/**
 	 * Creates a new DrawLine for preview.     
 	 */
-	DrawLine(EuclidianView view, ArrayList points) {
-		previewMode = PREVIEW_LINE;
+	DrawLine(EuclidianView view, ArrayList points, boolean perpendicularBisector) {
+		if (!perpendicularBisector) previewMode = PREVIEW_LINE;
+		else previewMode = PREVIEW_PERPENDICULAR_BISECTOR;
 		this.view = view; 
 		this.points = points;
 		if (points.size() == 2) {
@@ -359,14 +361,15 @@ public final class DrawLine extends Drawable implements Previewable {
     
 	final public void updatePreview() {		
 		switch (previewMode) {
-		case 0:
+		case PREVIEW_LINE:
+		case PREVIEW_PERPENDICULAR_BISECTOR:
 			isVisible = (points.size() == 1); 
 			if (isVisible) {
 				startPoint = (GeoPoint) points.get(0);
 			}		                              			                                           
 			break;
-		case 1:
-		case 2:
+		case PREVIEW_PARALLEL:
+		case PREVIEW_PERPENDICULAR:
 			isVisible = (lines.size() == 1);  
 			break;
 		}
@@ -405,7 +408,7 @@ public final class DrawLine extends Drawable implements Previewable {
 				
 				// line through first point and mouse position			
 				GeoVec3D.cross(startPoint, xRW, yRW, 1.0, g);
-     
+    
 				break;
 				
 			case PREVIEW_PARALLEL:
@@ -418,6 +421,11 @@ public final class DrawLine extends Drawable implements Previewable {
 			    // calc the line g through (xRW,yRW) and parallel to l
 				l = (GeoLine)lines.get(0);
 			    GeoVec3D.cross(xRW, yRW, 1.0, l.y, -l.x, 0.0, g);
+	
+			    break;
+			case PREVIEW_PERPENDICULAR_BISECTOR:
+			    // calc the perpendicular bisector
+			    GeoVec3D.cross((xRW + startPoint.inhomX)/2, (yRW + startPoint.inhomY)/2, 1.0, -yRW + startPoint.inhomY, xRW - startPoint.inhomX,  0.0, g);
 	
 			    break;
 			}

@@ -388,6 +388,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			previewDrawable = view.createPreviewPerpendicularLine(selectedPoints, selectedLines);
 			break;
 
+		case EuclidianView.MODE_LINE_BISECTOR:
+			previewDrawable = view.createPreviewPerpendicularBisector(selectedPoints);
+			break;
+
 		case EuclidianView.MODE_JOIN: // line through two points
 					useLineEndPoint = false;
 			previewDrawable = view.createPreviewLine(selectedPoints);

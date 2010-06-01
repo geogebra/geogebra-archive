@@ -2370,4 +2370,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return null;
 	}
 
+
+
+
+
+	public Previewable createPreviewPerpendicularBisector(
+			ArrayList selectedPoints) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

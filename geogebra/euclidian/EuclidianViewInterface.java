@@ -268,6 +268,7 @@ public interface EuclidianViewInterface {
 			ArrayList selectedLines);
 	public Previewable createPreviewPerpendicularLine(ArrayList selectedPoints,
 			ArrayList selectedLines);
+	public Previewable createPreviewPerpendicularBisector(ArrayList selectedPoints);
 	
 	
 

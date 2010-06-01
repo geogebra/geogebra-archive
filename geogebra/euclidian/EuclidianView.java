@@ -4195,7 +4195,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		//Application.debug("createPreviewLine");
 		
-		return new DrawLine(this, selectedPoints);
+		return new DrawLine(this, selectedPoints, false);
+	}
+	
+	public Previewable createPreviewPerpendicularBisector(ArrayList selectedPoints){
+		
+		//Application.debug("createPreviewLine");
+		
+		return new DrawLine(this, selectedPoints, true);
 	}
 	
 	
@@ -4242,5 +4249,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			ArrayList selectedLines) {
 		return new DrawLine(this, selectedPoints, selectedLines, false);
 	}
+
 	
 }
