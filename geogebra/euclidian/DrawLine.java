@@ -22,6 +22,7 @@ import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.main.Application;
@@ -44,11 +45,12 @@ public final class DrawLine extends Drawable implements Previewable {
     private static final int TOP = 2;
     private static final int BOTTOM = 3;  
     
-    private static final int PREVIEW_NONE = -1;           
-    private static final int PREVIEW_LINE = 0;           
-    private static final int PREVIEW_PARALLEL = 1;           
-    private static final int PREVIEW_PERPENDICULAR = 2;           
-    private static final int PREVIEW_PERPENDICULAR_BISECTOR = 3;           
+    public static final int PREVIEW_NONE = -1;           
+    public static final int PREVIEW_LINE = 0;           
+    public static final int PREVIEW_PARALLEL = 1;           
+    public static final int PREVIEW_PERPENDICULAR = 2;           
+    public static final int PREVIEW_PERPENDICULAR_BISECTOR = 3;           
+    public static final int PREVIEW_ANGLE_BISECTOR = 4;           
     
     private GeoLine g;    
     //private double [] coeffs = new double[3];
@@ -60,7 +62,7 @@ public final class DrawLine extends Drawable implements Previewable {
     private boolean isVisible, labelVisible;
     
     private ArrayList points, lines; // for preview
-    private GeoPoint startPoint;
+    private GeoPoint startPoint, previewPoint2;
    
     // clipping attributes
     private boolean [] attr1 = new boolean[4], attr2 = new boolean[4];
@@ -76,9 +78,8 @@ public final class DrawLine extends Drawable implements Previewable {
 	/**
 	 * Creates a new DrawLine for preview.     
 	 */
-	DrawLine(EuclidianView view, ArrayList points, boolean perpendicularBisector) {
-		if (!perpendicularBisector) previewMode = PREVIEW_LINE;
-		else previewMode = PREVIEW_PERPENDICULAR_BISECTOR;
+	DrawLine(EuclidianView view, ArrayList points, int previewMode) {
+		this.previewMode = previewMode;
 		this.view = view; 
 		this.points = points;
 		if (points.size() == 2) {
@@ -372,6 +373,13 @@ public final class DrawLine extends Drawable implements Previewable {
 		case PREVIEW_PERPENDICULAR:
 			isVisible = (lines.size() == 1);  
 			break;
+		case PREVIEW_ANGLE_BISECTOR:
+			isVisible = (points.size() == 2);  
+			if (isVisible) {
+				startPoint = (GeoPoint) points.get(0);
+				previewPoint2 = (GeoPoint) points.get(1);
+			}		                              			                                           
+			break;
 		}
 		 
 	                              			                                           
@@ -426,6 +434,65 @@ public final class DrawLine extends Drawable implements Previewable {
 			case PREVIEW_PERPENDICULAR_BISECTOR:
 			    // calc the perpendicular bisector
 			    GeoVec3D.cross((xRW + startPoint.inhomX)/2, (yRW + startPoint.inhomY)/2, 1.0, -yRW + startPoint.inhomY, xRW - startPoint.inhomX,  0.0, g);
+	
+			    break;
+			case PREVIEW_ANGLE_BISECTOR:
+		        GeoPoint g1 = new GeoPoint(view.getKernel().getConstruction());                       
+		        GeoPoint h = new GeoPoint(view.getKernel().getConstruction());                       
+		        GeoVec3D.cross(previewPoint2, startPoint, g1);
+		        GeoVec3D.cross(previewPoint2, xRW, yRW, 1.0, h);        
+
+		        // (gx, gy) is direction of g = B v A        
+		        double gx = g1.y;
+		        double gy = -g1.x;
+		        double lenG = GeoVec2D.length(gx, gy);
+		        gx /= lenG;
+		        gy /= lenG;
+
+		        // (hx, hy) is direction of h = B v C
+		        double hx = h.y;
+		        double hy = -h.x;
+		        double lenH = GeoVec2D.length(hx, hy);
+		        hx /= lenH;
+		        hy /= lenH;
+
+		        // set direction vector of bisector: (wx, wy)       
+		        double wx, wy;
+		     
+		            // calc direction vector (wx, wy) of angular bisector
+		            // check if angle between vectors is > 90 degrees
+		            double ip = gx * hx + gy * hy;
+		            if (ip >= 0.0) { // angle < 90 degrees
+		                // standard case
+		                wx = gx + hx;
+		                wy = gy + hy;              
+		            } 
+		            else { // ip <= 0.0, angle > 90 degrees            
+		                // BC - BA is a normalvector of the bisector                        
+		                wx = hy - gy;
+		                wy = gx - hx;
+		                
+		                // if angle > 180 degree change orientation of direction
+		                // det(g,h) < 0
+		                if (gx * hy < gy * hx) {
+		                	wx = -wx;
+		                	wy = -wy;
+		                }                            
+		            }
+
+		            // make (wx, wy) a unit vector
+		            double length = GeoVec2D.length(wx, wy);
+		            wx /= length;
+		            wy /= length;
+		            
+		            	 //wv.x = wx;
+		                 //wv.y = wy;
+           
+
+		            // set bisector
+		            g.x = -wy;
+		            g.y =  wx;
+		            g.z = - (previewPoint2.inhomX * g.x + previewPoint2.inhomY * g.y);
 	
 			    break;
 			}

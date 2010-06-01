@@ -384,6 +384,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			previewDrawable = view.createPreviewParallelLine(selectedPoints, selectedLines);
 			break;
 
+		case EuclidianView.MODE_ANGULAR_BISECTOR:
+			previewDrawable = view.createPreviewAngleBisector(selectedPoints);
+			break;
+
 		case EuclidianView.MODE_ORTHOGONAL:
 			previewDrawable = view.createPreviewPerpendicularLine(selectedPoints, selectedLines);
 			break;

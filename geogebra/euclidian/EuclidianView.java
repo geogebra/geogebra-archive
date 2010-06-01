@@ -4193,16 +4193,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 		
-		//Application.debug("createPreviewLine");
-		
-		return new DrawLine(this, selectedPoints, false);
+		return new DrawLine(this, selectedPoints, DrawLine.PREVIEW_LINE);
 	}
 	
 	public Previewable createPreviewPerpendicularBisector(ArrayList selectedPoints){
 		
-		//Application.debug("createPreviewLine");
+		return new DrawLine(this, selectedPoints, DrawLine.PREVIEW_PERPENDICULAR_BISECTOR);
+	}
+	
+	public Previewable createPreviewAngleBisector(ArrayList selectedPoints){
 		
-		return new DrawLine(this, selectedPoints, true);
+		return new DrawLine(this, selectedPoints, DrawLine.PREVIEW_ANGLE_BISECTOR);
 	}
 	
 	
