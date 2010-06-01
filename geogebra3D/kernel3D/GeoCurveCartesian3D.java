@@ -69,12 +69,24 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 		
 	}
 	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Returns the curvature at the specified point
+	 * @param t
+	 */
+	public double evaluateCurvature(double t){
+		GgbVector D1 = new GgbVector(3);
+		GgbVector D2 = new GgbVector(3);
+
+		for (int i=0;i<3;i++)
+			D1.set(i+1, funD1[i].evaluate(t));
+		
+		for (int i=0;i<3;i++)
+			D2.set(i+1, funD2[i].evaluate(t));
+		
+		//compute curvature using the formula k = |f'' x f'| / |f'|^3
+		GgbVector cross = D1.crossProduct(D2);
+		return cross.norm()/Math.pow(D1.norm(),3);
+	}
 	
 	@Override
 	public GeoElement copy() {

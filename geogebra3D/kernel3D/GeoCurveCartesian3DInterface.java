@@ -23,6 +23,11 @@ public interface GeoCurveCartesian3DInterface {
 	 * @return tangent at parameter t
 	 */
 	public GgbVector evaluateTangent(double t);
-
+	
+	/** return curvature at parameter t
+	 * @param t
+	 * @return curvature at parameter t
+	 */
+	public double evaluateCurvature(double t);
 
 }

@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D;
 
+import java.util.LinkedList;
+
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoVec2D;
@@ -82,18 +84,13 @@ public class DrawCurve3D extends Drawable3DCurves {
 		Application.debug(curve.evaluateCurve(curve.getMaxParameter()).toString()+"\n"+curve.evaluateTangent(curve.getMaxParameter()).toString());
 		 */
 
-
 		brush.setT((float) curve.getMinParameter(), (float) curve.getMaxParameter());
-		brush.setDelta(0.1f);
+		brush.setMaxDelta(0.2f);
+		brush.setMinDelta(0.001f);
+		brush.setAngleThreshold(0.995f);
 		brush.draw(curve);
 
-
-
 		geometryIndex = brush.end();
-
-			
-		
-		
 
 	}
 	

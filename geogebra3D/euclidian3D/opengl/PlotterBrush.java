@@ -7,6 +7,10 @@ import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoCurveCartesian3DInterface;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * 3D brush, drawing circular-section curves.
@@ -91,10 +95,13 @@ public class PlotterBrush {
 	//for GeoCartesianCurve
 	/** curve */
 	GeoCurveCartesian3DInterface curve;
-	/** parameter min, max and delta */
-	private float tMin, tMax, dt;
+	/** parameter min, max and max/min delta */
+	private float tMin, tMax, dtMin, dtMax;
 	
 	
+	/**least acceptable dot product between two consecutive segments 
+	 * (the maximum angle is arccos(angleThreshold) )*/
+	private float angleThreshold = 0.995f;
 	
 	
 	
@@ -368,16 +375,29 @@ public class PlotterBrush {
 		this.tMax = max;
 	}
 	
-	/** set delta for plotting curve
-	 * @param delta
+	/** set maximum delta for plotting curve
+	 * @param deltaMax
 	 */
-	public void setDelta(float delta){
-		this.dt = delta;
+	public void setMaxDelta(float deltaMax){
+		this.dtMax = deltaMax;
 	}
 	
+	/** set minimum delta for plotting curve
+	 * @param deltaMin
+	 */
+	public void setMinDelta(float deltaMin){
+		this.dtMin = deltaMin;
+	}
 	
+	/**
+	 * set minimum cosine angle between two points
+	 * @param min
+	 */
+	public void setAngleThreshold(float min){
+		this.angleThreshold=min;
+	}
 	
-	/** draws the curve
+	/** draws the curve using the curvature method
 	 * @param curve
 	 */
 	public void draw(GeoCurveCartesian3DInterface curve){
@@ -385,19 +405,148 @@ public class PlotterBrush {
 		setTextureType(PlotterBrush.TEXTURE_LINEAR);
 		
 		float t=tMin;
-		end = new PlotterBrushSection(curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);
-		t+=dt;
+		float curvature = 0;
+		float dt = 0;
 		float l = 0;
-		setTextureX(l);
 		
 		for (; t<=tMax; t+=dt){
 			start = end;
 			end = new PlotterBrushSection(start,curve.evaluateCurve(t), curve.evaluateTangent(t), thickness);
+			
+			setTextureX(l);
+			join();
+			curvature = (float) curve.evaluateCurvature(t);
+			dt = getDelta(curvature);
 			l+=end.getCenter().distance(start.getCenter());
+		}
+	}
+	
+	
+	/**
+	 * draws the curve using the segment splitting method
+	 * @param curve
+	 */
+	public void draw2(GeoCurveCartesian3DInterface curve){
+		setTextureType(PlotterBrush.TEXTURE_LINEAR);
+		
+		LinkedList<GgbVector> points = findPoints(curve);
+		float l = 0;
+		
+		for(GgbVector p : points){
+			start = end;
+			end = new PlotterBrushSection(start,p, curve.evaluateTangent(1), thickness);
 			setTextureX(l);
 			join();
 		}
+	}
+
+	/**
+	 * 
+	 * @param curve
+	 * @return
+	 */
+	private LinkedList<GgbVector> findPoints(GeoCurveCartesian3DInterface curve){
+		float t = tMin;
+		float dt = 0.4f;
 		
+		//what is returned
+		LinkedList<GgbVector> points = new LinkedList<GgbVector>();
+		
+		//a temporary list of points
+		ArrayList<GgbVector> tempPoints = new ArrayList<GgbVector>((int)((tMax-tMin)/dt+1));
+		
+		//a temporary list of parameter values for each point
+		ArrayList<Float> paramValues = new ArrayList<Float>((int)((tMax-tMin)/dt+1));
+		
+		//create initial points
+		for(;t<tMax;t+=dt) {
+			tempPoints.add(curve.evaluateCurve(t));
+			paramValues.add(t);
+		}
+		
+		//improve accuracy
+		GgbVector  v1, v2;
+		double cosAng;
+		int len = tempPoints.size();
+		
+		GgbVector prev,curr,next;
+		
+		double prevT, currT, nextT;
+		
+		for(int i = 1; i < len-1; i+=2){ //iterate over our points and see
+										 //which segments need refinement
+			prev = tempPoints.get(i-1);
+			curr = tempPoints.get(i);
+			next = tempPoints.get(i+1);
+			
+			prevT = paramValues.get(i-1);
+			currT = paramValues.get(i);
+			nextT = paramValues.get(i+1);
+			
+			v1 = curr.sub(prev);
+			v2 = next.sub(curr);
+			cosAng = v1.dotproduct(v2)/(v1.norm()*v2.norm());
+			if(cosAng<angleThreshold){
+				//add points on each side of curr
+				points.add(prev);
+				points.addAll(refine(prev,curr,prevT,currT, curve));
+				points.add(curr);
+				points.addAll(refine(curr,next,currT,nextT, curve));
+			} else {
+				//add no new points
+				points.add(prev);
+				points.add(curr);
+			}
+		}
+		return points;
+	}
+	
+	/**
+	 * Recursive helper method for findPoints. Subdivides a segment until smooth.
+	 * @param p1 The first point of the segment
+	 * @param p2 The second point of the segment
+	 * @param t1 Parameter value for the first point
+	 * @param t2 Parameter value for the second point
+	 * @param curve
+	 * @return
+	 */
+	private LinkedList<GgbVector> refine(GgbVector p1, GgbVector p2, double t1, double t2, GeoCurveCartesian3DInterface curve){
+		LinkedList<GgbVector> tempList = new LinkedList<GgbVector>();
+
+		//stop the recursion if the distance is too small
+		if(t2-t1<dtMin)
+			return tempList;
+		
+		//set values for the new point
+		double t3 = (t1+t2)/2;
+		GgbVector p3=curve.evaluateCurve(t3);
+		
+		GgbVector v1 = p3.sub(p1);
+		GgbVector v2 = p2.sub(p3);
+		double cosAng = v1.dotproduct(v2)/(v1.norm()*v2.norm());
+		if( cosAng < angleThreshold ){
+			//recurse if the angle is still too big
+			tempList.addAll(refine(p1,p3,t1,t3, curve));
+			tempList.add(p3);
+			tempList.addAll(refine(p3,p2,t3,t2, curve));
+		} else {
+			tempList.add(p3);
+		}
+		return tempList;
+	}
+
+	/**
+	 * Maps a value for curvature to a step distance
+	 * @param curvature the curvature at a given point
+	 * @return the step distance
+	 */
+	private float getDelta(float curvature){
+		float dt = 1/curvature*0.001f; //high curvature leads to small steps
+		if(dt<dtMin)
+			return dtMin;
+		if(dt>dtMax)
+			return dtMax;
+		return dt;	
 	}
 	
 	

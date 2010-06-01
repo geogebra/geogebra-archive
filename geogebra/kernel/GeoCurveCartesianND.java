@@ -12,7 +12,7 @@ import geogebra.main.Application;
 public abstract class GeoCurveCartesianND extends GeoElement{
 	
 	/** coordinates and derivative functions */
-	protected Function[] fun, funD1;
+	protected Function[] fun, funD1, funD2;
 	
 	protected double startParam, endParam;
 	
@@ -39,6 +39,11 @@ public abstract class GeoCurveCartesianND extends GeoElement{
 		funD1 = new Function[fun.length];
 		for (int i=0;i<fun.length;i++){
 			funD1[i]=fun[i].getDerivative(1);
+		}
+		
+		funD2 = new Function[fun.length];
+		for (int i=0;i<fun.length;i++){
+			funD2[i]=fun[i].getDerivative(2);
 		}
 	}	
 	
