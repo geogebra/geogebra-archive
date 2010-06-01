@@ -412,7 +412,7 @@ public final class DrawLine extends Drawable implements Previewable {
 				break;
 				
 			case PREVIEW_PARALLEL:
-			    // calc the line g through (xRW,yRW) and parallel to l
+			    // calc the line g through (xRW,yRW) and perpendicular to l
 				GeoLine l = (GeoLine)lines.get(0);
 			    GeoVec3D.cross(xRW, yRW, 1.0, l.y, -l.x, 0.0, g);
 	
@@ -420,7 +420,7 @@ public final class DrawLine extends Drawable implements Previewable {
 			case PREVIEW_PERPENDICULAR:
 			    // calc the line g through (xRW,yRW) and parallel to l
 				l = (GeoLine)lines.get(0);
-			    GeoVec3D.cross(xRW, yRW, 1.0, l.y, -l.x, 0.0, g);
+			    GeoVec3D.cross(xRW, yRW, 1.0, l.x, l.y, 0.0, g);
 	
 			    break;
 			case PREVIEW_PERPENDICULAR_BISECTOR:
