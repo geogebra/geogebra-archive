@@ -761,7 +761,7 @@ public class DockManager {
 	 */
 	public void addEuclidian3D(JPanel euclidian3D) {
 		this.euclidian3D = euclidian3D;
-		DockPanel panel = new DockPanel(this, new DockPanelXml(DockManager.VIEW_EUCLIDIAN_3D, false, true, new Rectangle(10, 10, 200, 200), "", 200));
+		DockPanel panel = new DockPanel(this, new DockPanelXml(DockManager.VIEW_EUCLIDIAN_3D, false, true, new Rectangle(10, 10, 400, 400), "", 200));
 		
 		// add this new panel to the dock panel array by constructing a new
 		// array for the dock panels with space for an additional element
