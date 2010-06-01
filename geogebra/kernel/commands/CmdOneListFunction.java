@@ -460,6 +460,23 @@ class CmdShuffle extends CmdOneListFunction {
 }
 
 /*
+ * Shuffle[ <List> ]
+ */
+class CmdRandomElement extends CmdOneListFunction {
+
+	public CmdRandomElement(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.RandomElement(a, b);
+	}
+
+
+}
+
+/*
  * PointList[ <List> ]
  */
 class CmdPointList extends CmdOneListFunction {

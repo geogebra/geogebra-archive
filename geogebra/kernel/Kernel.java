@@ -3884,6 +3884,15 @@ public class Kernel {
 	}
 	
 	/** 
+	 * RandomElement[list]
+	 */
+	final public GeoElement RandomElement(String label, GeoList list) {
+		AlgoRandomElement algo = new AlgoRandomElement(cons, label, list);
+		GeoElement geo = algo.getElement();
+		return geo;
+	}		
+	
+	/** 
 	 * Element[list, number]
 	 */
 	final public GeoElement Element(String label, GeoList list, NumberValue n) {
