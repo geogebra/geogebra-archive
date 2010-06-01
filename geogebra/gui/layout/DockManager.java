@@ -8,6 +8,8 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 
+import javax.swing.JPanel;
+
 /**
  * Class responsible to manage the whole docking area of the window.
  * 
@@ -193,7 +195,7 @@ public class DockManager {
 	}
 	
 	/**
-	 * Update the glass pane (i.e. activate / deactive it the current application runs in frame / applet mode).
+	 * Update the glass pane
 	 */
 	public void updateGlassPane() {
 		if(!app.isApplet() && glassPane.getParent() != null) {
@@ -696,8 +698,7 @@ public class DockManager {
 	 * @param pane
 	 * @return
 	 */
-	private String getDebugTree(int depth, DockSplitPane pane)
-	{
+	private String getDebugTree(int depth, DockSplitPane pane) {
 		StringBuilder strBuffer = new StringBuilder();
 		
 		Component leftComponent = pane.getLeftComponent();
@@ -724,11 +725,53 @@ public class DockManager {
 		return strBuffer.toString();
 	}
 	
-	private String strRepeat(String str, int times)
-	{
+	private String strRepeat(String str, int times)	{
 		StringBuilder strBuffer = new StringBuilder();
 		for(int i = 0; i < times; ++i)
 			strBuffer.append(str);
 		return strBuffer.toString();
+	}
+	
+	/**
+	 * This is a messy implementation for 3D-view support in the layout
+	 * manager. It has to be refactored, but in general this awkward
+	 * solution is required as no real connection to the
+	 * geogebra3d.* packages should be established.
+	 * 
+	 * @todo refactor
+	 */
+	
+	/**
+	 * The ID of the euclidian view 3D.
+	 */
+	public static final int VIEW_EUCLIDIAN_3D = 512;
+	
+	private JPanel euclidian3D;
+	
+	/**
+	 * @return The panel for the euclidian view 3D if one was added
+	 * 		by using addEuclidian3D
+	 */
+	public JPanel getEuclidian3D() {
+		return euclidian3D;
+	}
+	
+	/**
+	 * Add dock panel for GeoGebra 3D
+	 */
+	public void addEuclidian3D(JPanel euclidian3D) {
+		this.euclidian3D = euclidian3D;
+		DockPanel panel = new DockPanel(this, new DockPanelXml(DockManager.VIEW_EUCLIDIAN_3D, false, true, new Rectangle(10, 10, 200, 200), "", 200));
+		
+		// add this new panel to the dock panel array by constructing a new
+		// array for the dock panels with space for an additional element
+		DockPanel[] panels = new DockPanel[dockPanels.length+1];
+		for(int i = 0; i < dockPanels.length; ++i) 
+			panels[i] = dockPanels[i];
+		panels[dockPanels.length] = panel;
+		
+		dockPanels = panels;
+		
+		show(panel);
 	}
 }

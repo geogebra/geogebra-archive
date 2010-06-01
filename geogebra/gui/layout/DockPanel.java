@@ -127,6 +127,9 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 			case Application.VIEW_CAS:
 				viewTitle = "CAS";
 				break;
+			case DockManager.VIEW_EUCLIDIAN_3D:
+				viewTitle ="DrawingPad3D";
+				break;
 			default:
 				throw new IllegalArgumentException("view ID can not be identified (#"+info.getViewId()+")");
 		}
@@ -361,6 +364,9 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 				break;
 			case Application.VIEW_CAS:
 				view = app.getGuiManager().getCasView().getCASViewComponent();
+				break;
+			case DockManager.VIEW_EUCLIDIAN_3D:
+				view = dockManager.getEuclidian3D();
 				break;
 			default:
 				throw new IllegalArgumentException("view ID can not be identified (#"+info.getViewId()+")");

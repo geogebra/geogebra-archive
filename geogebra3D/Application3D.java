@@ -19,6 +19,7 @@ package geogebra3D;
 
 import geogebra.gui.DefaultGuiManager;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.layout.Layout;
 import geogebra.kernel.GeoElement;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
@@ -46,14 +47,10 @@ import javax.swing.JSplitPane;
 
 
 public abstract class Application3D extends Application{
-
-
+	
     private EuclidianView3D euclidianView3D;
     private EuclidianController3D euclidianController3D;      
     protected Kernel3D kernel3D;
-    
-	JFrame f2d = new JFrame("2d view");
-    JFrame fspr = new JFrame("spreadsheet view");
 
 
 
@@ -69,8 +66,10 @@ public abstract class Application3D extends Application{
     private Application3D(String[] args, GeoGebraFrame frame, AppletImplementation applet, boolean undoActive) { 
     	
     	super(args, frame, applet, null, undoActive);
-
-
+    	
+    	Layout layout = (Layout)getGuiManager().getLayout();
+    	layout.getDockManager().addEuclidian3D(euclidianView3D);
+    	
     	//euclidianView3D.initAxisAndPlane();
     	
         
@@ -135,33 +134,16 @@ public abstract class Application3D extends Application{
     //TODO remove this - keep until perspective manager process toolbar
     public void updateToolBar() {
     	
-    }
-
-    
-  
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    }    
     
 	public void initKernel(){
 		kernel3D = new Kernel3D(this);
 		kernel = kernel3D;
 	}
 	
-	
 	protected void initImageManager(Component component){
 		imageManager = new ImageManager3D(component);
 	}
-	
 	
 	/**
 	 * init the EuclidianView (and EuclidianView3D for 3D)
@@ -173,14 +155,9 @@ public abstract class Application3D extends Application{
 		
 		//init the 3D euclidian view
 		euclidianController3D = new EuclidianController3D(kernel3D);
-        euclidianView3D = new EuclidianView3D(euclidianController3D);  
-        
-        
+        euclidianView3D = new EuclidianView3D(euclidianController3D); 
 	}
-    
-
-    
-    
+	
 	public void setMode(int mode) {
 		super.setMode(mode);
 		
@@ -188,12 +165,7 @@ public abstract class Application3D extends Application{
 			euclidianView3D.setMode(mode);
 		
 	}
-	
-    
-	
-	
-	
-	
+
 	public String getCompleteUserInterfaceXML(boolean asPreference) {
 		StringBuilder sb = new StringBuilder();
 
@@ -208,8 +180,6 @@ public abstract class Application3D extends Application{
 		return sb.toString();
 	}
 	
-	
-	
 	/** return the 3D euclidian view
 	 * @return the 3D euclidian view
 	 */
@@ -223,72 +193,43 @@ public abstract class Application3D extends Application{
 		return getEuclidianView3D().getRenderer().getExportImage();
 	}
 	
-	
-	
-	public boolean saveGeoGebraFile(File file) {
-		
-		
+	public boolean saveGeoGebraFile(File file) {		
 		//TODO generate it before
 		getEuclidianView3D().getRenderer().needExportImage();
 		
-
-
-		
 		return super.saveGeoGebraFile(file);
 	}
-	
-	
-	
-	
-
-	
-	
 	
 	/** return 2D (and 3D) views settings
 	 * @return 2D (and 3D) views settings
 	 */
 	public String getEuclidianViewsXML() {
 		return getEuclidianView().getXML()+""+getEuclidianView3D().getXML();
-	}	
-	
-	
-	
-	
-	
-	
-	
+	}
 	
 	/////////////////////////////////
 	// GUI
 	/////////////////////////////////
 	
 	public void toggleAxis(){
-		
 		// toggle axis
 		getEuclidianView3D().toggleAxis();
-		
 	}
 	
 	public void togglePlane(){
-		
 		// toggle xOy plane
 		getEuclidianView3D().togglePlane();
-		
 	}
 	
 	public void toggleGrid(){
-		
 		// toggle xOy grid
 		getEuclidianView3D().toggleGrid();
-		
 	}
 	
 	
 	public void setShowAxesSelected(JCheckBoxMenuItem cb){
 		cb.setSelected(getEuclidianView3D().axesAreAllVisible());
 	}
-	
-	
 	
 	/** set the show plane combo box selected if the plane is visible
 	 * @param cb
@@ -308,169 +249,17 @@ public abstract class Application3D extends Application{
 	
     
 	public synchronized GuiManager createGuiManager() {
-		
 		return new geogebra3D.gui.DefaultGuiManager3D(this);
-		
 	}
     
-	
-	
-	
-	
-	
 	///////////////////////////////////////
 	// COMMANDS
 	///////////////////////////////////////
 	
-	
 	public String getCommandSyntax(String key) {
-		
 		String command3D = getCommand(key+"Syntax3D");
 		if (!command3D.equals(key)) return command3D;
 		
 		return super.getCommandSyntax(key);
 	}
-    
-    
-    
-    
-    /*
-
-    public void updateCenterPanel(boolean updateUI) {
-    	centerPanel.removeAll();
-    	
-    	
-        JDesktopPane dtp = new JDesktopPane();
-        dtp.setPreferredSize(new Dimension(800,500));
-        centerPanel.add(dtp);
-        
-        //algebra internal frame
-        JInternalFrame frameAlgebra = new JInternalFrame("Algebra view", true,true, true, true);
-        JScrollPane scrollPane = new JScrollPane(getGuiManager().getAlgebraView());
-        frameAlgebra.setContentPane(scrollPane);
-        //frameAlgebra.setContentPane(getGuiManager().getAlgebraView());
-        frameAlgebra.setSize(200, 480);
-        frameAlgebra.setLocation(0, 0);
-        frameAlgebra.setVisible(true);
-        dtp.add(frameAlgebra);
-        
-        
-        //2D internal frame
-        
-        JInternalFrame frame2D = new JInternalFrame("2D view", true,true, true, true);
-        frame2D.setContentPane(euclidianView);
-        frame2D.setSize(200, 480);
-        frame2D.setLocation(840, 0);
-        frame2D.setVisible(true);
-        dtp.add(frame2D);
-        
-        
-        //3D internal frame
-        JInternalFrame frame3D = new JInternalFrame("3D view - very early version", true,true, true, true);
-        frame3D.setContentPane(euclidianView3D);
-        frame3D.setSize(640, 480);
-        //frame3D.setLocation(400, 0);        
-        frame3D.setLocation(200, 0);        
-        frame3D.setVisible(true);        
-        dtp.add(frame3D);
-        frame3D.moveToFront();
-
-
-    	centerPanel.add(euclidianView3D);
- 
-    } 
-    
-    */
-    
-	
-	/*
-    public void updateCenterPanel(boolean updateUI) {
-    	centerPanel.removeAll();
-    	centerPanel.add(euclidianView3D);
-    	
-    	
-    }
-    */
-    
-	////////////////////////////////////////////////
-	//
-	// Neutralizing center panel stuff to prevent opengl crash
-	// TODO remove this
-	//
-	////////////////////////////////////////////////
-	
-	private boolean init3D = true;
-	
-	public void updateContentPane(){}
-	
-	public void updateContentPaneAndSize() {}
-	
-	
-    public void updateCenterPanel(boolean updateUI) {
-    
-    	if (init3D)
-    		createCenterPanel();
-    	
-    	init3D = false;
-    }
-    
-
-    
-    
-    
-    public void createCenterPanel() {
-            
-   	
-   	
-		centerPanel.removeAll();
-
-		JPanel euclidianPanel = new JPanel(new BorderLayout());
-		euclidianPanel.setBackground(Color.white);
-		euclidianPanel.add(euclidianView3D, BorderLayout.CENTER);
-	
-		if (showConsProtNavigation) {
-			JComponent consProtNav = getGuiManager()
-					.getConstructionProtocolNavigation();
-			euclidianPanel.add(consProtNav, BorderLayout.SOUTH);
-			consProtNav.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,
-					Color.gray));			
-		}
-
-		JComponent cp2 = null;
-
-		JSplitPane sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				new JScrollPane(getGuiManager().getAlgebraView()), euclidianPanel);
-		sp2.setDividerLocation(250);
-
-
-		cp2 = sp2;
-
-		JComponent cp1 = null;
-
-		cp1 = cp2;
-		centerPanel.add(cp1, BorderLayout.CENTER);
-
-		
-
-		f2d.getContentPane().add(euclidianView);
-		f2d.setPreferredSize(new Dimension(400,400));
-		f2d.setSize(new Dimension(400,400));
-		f2d.setVisible(true);
-		
-
-		getGuiManager().attachSpreadsheetView();
-		fspr.getContentPane().add(getGuiManager().getSpreadsheetView());
-		fspr.setLocation(400, 0);
-		fspr.setPreferredSize(new Dimension(600,400));
-		fspr.setSize(new Dimension(600,400));
-		fspr.setVisible(true);	
-
-
-	}
-    
-    
-    
-
- 
-    	
 }
