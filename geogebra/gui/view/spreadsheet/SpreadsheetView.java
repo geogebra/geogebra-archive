@@ -273,7 +273,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
+		
 	}
+	
 	
 	private boolean scrollToShow = false;
 	
@@ -337,7 +339,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		add(geo);
 		
 		if(traceManager.isTraceGeo(geo))
-			traceManager.updateTraceSettings(geo, traceManager.getTraceSettings(geo));
+			traceManager.updateTraceSettings(geo, geo.getTraceSettings());
 		if(isTraceDialogVisible()){
 			traceDialog.updateTraceDialog();
 		}
@@ -382,8 +384,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				tableModel.setValueAt(null, r, c);
 			}
 		}
-		if(traceManager !=null)
-			traceManager.removeAllSpreadsheetTraceGeos();
 	}
 	
 	
@@ -400,11 +400,12 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		highestUsedColumn = -1;
 		updateColumnWidths();
 		table.changeSelection(0,0,false,false);
-		traceManager.removeAllSpreadsheetTraceGeos();
+		traceManager.loadTraceGeoCollection();
 		
 	}	
 	
 	public void reset() {
+		traceManager.loadTraceGeoCollection();
 	}	
 	
 	

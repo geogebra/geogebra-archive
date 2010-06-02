@@ -1,7 +1,6 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.view.spreadsheet.SpreadsheetTraceManager.TraceSettings;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;

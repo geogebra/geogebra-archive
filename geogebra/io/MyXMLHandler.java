@@ -21,6 +21,7 @@ package geogebra.io;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.io.layout.Perspective;
@@ -2583,7 +2584,8 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleSpreadsheetTrace(LinkedHashMap<String, String> attrs) {
 		
-		//G.Sturr 2010-5-8
+		// G.Sturr 2010-5-30
+		// XML handling for new tracing code  
 		if (!geo.isSpreadsheetTraceable()) {
 			System.err.println("wrong element type for <trace>: "
 					+ geo.getClass());
@@ -2592,6 +2594,17 @@ public class MyXMLHandler implements DocHandler {
 
 		try {
 			geo.setSpreadsheetTrace(parseBoolean((String) attrs.get("val")));
+			
+			TraceSettings t = geo.getTraceSettings();
+			t.traceColumn1 = Integer.parseInt((String) attrs.get("traceColumn1"));
+			t.traceColumn2 = Integer.parseInt((String) attrs.get("traceColumn2"));
+			t.traceRow1 = Integer.parseInt((String) attrs.get("traceRow1"));
+			t.traceRow2 = Integer.parseInt((String) attrs.get("traceRow2"));
+			t.tracingRow = Integer.parseInt((String) attrs.get("tracingRow"));
+			t.numRows = Integer.parseInt((String) attrs.get("numRows"));		
+			t.doColumnReset = (parseBoolean((String) attrs.get("doColumnReset")));
+			t.doRowLimit = (parseBoolean((String) attrs.get("doRowLimit")));
+			t.showName = (parseBoolean((String) attrs.get("showName")));				
 			
 			return true;
 		} catch (Exception e) {

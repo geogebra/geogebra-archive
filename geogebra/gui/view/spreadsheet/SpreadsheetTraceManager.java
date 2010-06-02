@@ -3,6 +3,8 @@ package geogebra.gui.view.spreadsheet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeSet;
+
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
@@ -43,25 +45,6 @@ public class SpreadsheetTraceManager {
 	private Kernel kernel;
 	private MyTable table; 
 	
-	
-	
-	public class TraceSettings {
-		
-		public int traceColumn1 = -1;
-		public int traceColumn2 = -1;
-		public int traceRow1 = -1;
-		public int traceRow2 = -1;
-		public int tracingRow = 0;
-		public int numRows = 10;
-		public ArrayList<Double> lastTrace = new ArrayList<Double>();
-		
-		public boolean doColumnReset = false ;
-		public boolean needsColumnReset = false;
-		public boolean doRowLimit = false;
-		public boolean showName = true;	
-		
-		
-	}
 	
 	
 	// collection of all geos currently traced
@@ -189,6 +172,7 @@ public class SpreadsheetTraceManager {
 			
 		traceGeoCollection.remove(geo);
 		geo.setSpreadsheetTrace(false);
+		geo.setTraceSettings(null);
 		view.repaint();
 			
 		//Application.debug("remove trace " + geo.getLabel());
@@ -200,29 +184,34 @@ public class SpreadsheetTraceManager {
 	public void removeAllSpreadsheetTraceGeos(){
 		
 		for(GeoElement geo:traceGeoCollection.keySet()){
-			geo.setSpreadsheetTrace(false);
+			//geo.setSpreadsheetTrace(false);
 		}
 		traceGeoCollection.clear();	
 		view.repaint();
-		//Application.printStacktrace("remove all trace geos ");
+		//Application.printStacktrace("remove all traces ");
 	}
 	
-	/** Remove all non-tracing geos from the TraceGeoCollection */ 
-	public void updateTraceGeoCollection(){
-		Application.debug("updateTrace");
-		//note: this only clears dead wood, does not add geos
-		// it might be better to remove all and then 
-		// iterate through the geos and add fresh 
-		for(GeoElement geo:traceGeoCollection.keySet()){
-			//Application.debug("updateTrace" + geo.toString());
-			if( geo.getSpreadsheetTrace() == false){
-				//Application.debug("removeTrace" + geo.toString());
-				removeSpreadsheetTraceGeo(geo);	
-			}
+	
+	/** Load all tracing geos into the TraceGeoCollection */ 
+	public void loadTraceGeoCollection(){
+		//Application.debug("loading trace geos");
+		traceGeoCollection.clear();	
+		TreeSet<GeoElement> ts = app.getKernel().getConstruction().getGeoSetConstructionOrder();
+			for(GeoElement geo: ts){
+				if( geo.getSpreadsheetTrace()){
+					traceGeoCollection.put(geo,geo.getTraceSettings());
+					//System.out.println("load this geo: " + geo.toString());
+				}
 		}
-		
+		view.repaint();
 	}
 
+	public void loadTraceGeo(GeoElement geo){
+		//Application.debug("loading trace geo" + geo.toString());
+		traceGeoCollection.put(geo,geo.getTraceSettings());				
+	}
+	
+	
 	
 	
 	// =============================================	
@@ -237,12 +226,11 @@ public class SpreadsheetTraceManager {
 	
 	
 	private int getHighestTraceColumn() {
-		TraceSettings t = new TraceSettings();
+		
 		int max = -1;	
 		for ( GeoElement geo : traceGeoCollection.keySet()) {
-			t = traceGeoCollection.get(geo);
-			if ( t.traceColumn2 > max)
-				max = t.traceColumn2;
+			if ( geo.getTraceSettings().traceColumn2 > max)
+				max = geo.getTraceSettings().traceColumn2;
 		}	
 		return max;
 	}
@@ -315,9 +303,11 @@ public class SpreadsheetTraceManager {
 	/**
 	 * Delete the elements in the trace columns of a single geo.
 	 */
-	private void clearGeoTraceColumns(GeoElement geo){
+	public void clearGeoTraceColumns(GeoElement geo){
 		
-		TraceSettings t = traceGeoCollection.get(geo);
+		TraceSettings t = geo.getTraceSettings();
+		if (t==null) return;
+		 
 		table.copyPasteCut.delete(t.traceColumn1, t.traceRow1, t.traceColumn2, SpreadsheetView.MAX_ROWS);
 		t.tracingRow = t.traceRow1;	
 	}
@@ -333,10 +323,10 @@ public class SpreadsheetTraceManager {
 		for ( GeoElement geo : traceGeoCollection.keySet()) {
 			t = traceGeoCollection.get(geo);
 			if ( column2 >= t.traceColumn1 && column1 <= t.traceColumn2 ){
-				//removeSpreadsheetTraceGeo(geo);
-				Construction cons = app.getKernel().getConstruction();
-				setHeader(geo,cons);
-				t.tracingRow = 1;	
+				removeSpreadsheetTraceGeo(geo);
+				//Construction cons = app.getKernel().getConstruction();
+				//setHeader(geo,cons);
+				//t.tracingRow = 1;	
 			}
 		}
 		
@@ -354,9 +344,19 @@ public class SpreadsheetTraceManager {
 		traceGeoCollection.get(geo).needsColumnReset = flag;
 		
 	}
+
+	
+	
+	
+
+	// =============================================	
+	//                XML 
+ 	// =============================================
+	
+	
 	
 	public String getTraceXML(GeoElement geo){
-		TraceSettings t = traceGeoCollection.get(geo);
+		TraceSettings t = geo.getTraceSettings();
 		StringBuilder sb = new StringBuilder();
 		
 		
@@ -406,9 +406,7 @@ public class SpreadsheetTraceManager {
 				
 		   do we need it?
 		*/
-			
-				
-				
+					
 		return sb.toString();	
 	}
 	

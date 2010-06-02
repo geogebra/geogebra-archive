@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.view.spreadsheet.SpreadsheetTraceManager.TraceSettings;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -33,6 +32,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -82,6 +82,7 @@ implements
 	private JPanel promptPanel;
 	private JPanel buttonPanel;
 	private JPanel locationPanel;
+	private JPanel leftButtonPanel;
 	
 	private JTextField cellRangeField;
 	private JTextField numRowsField;
@@ -91,6 +92,7 @@ implements
 	private JButton btClose;
 	private JButton btCancel;
 	private JButton btChangeLocation;
+	private JButton btErase;
 	
 	
 	// modes
@@ -144,9 +146,7 @@ implements
 	 * 
 	 */
 	public void setTraceDialogSelection(GeoElement selectedGeo, CellRange traceCell){
-		
-		setMode(MODE_NORMAL);
-		
+	
 		// if the traceCell column is tracing a geo then set selectedGeo to this geo 
 		if(traceCell != null && traceManager.isTraceColumn(traceCell.getMinColumn())){
 			selectedGeo = traceManager.getTraceGeo(traceCell.getMinColumn());
@@ -154,11 +154,13 @@ implements
 		
 		//selectedGeo exists
 		if(selectedGeo != null){
-		
+			
+			setMode(MODE_NORMAL);
 			// if selectedGeo is not a trace geo then add it to the trace collection
 			if(!traceManager.isTraceGeo(selectedGeo)){
 				// create default trace settings
-				TraceSettings t = traceManager.new TraceSettings();
+				//TraceSettings t = new TraceSettings();
+				TraceSettings t = selectedGeo.getTraceSettings(); 
 				if (traceCell != null) {
 					t.traceColumn1 = traceCell.getMinColumn();
 					t.traceRow1 = traceCell.getMinRow();
@@ -175,8 +177,7 @@ implements
 		//selectedGeo does not exist, user must select a geo	 	
 		}else{	
 			
-			//set adding trace flag, this will open the add dialog when 
-			//updateGUI is called
+			//switch to Add mode
 			newTraceLocation = traceCell;
 			isIniting = true;
 			setMode(MODE_ADD);
@@ -235,7 +236,9 @@ implements
 			splitPane.setLeftComponent(buildListPanel());
 			splitPane.setRightComponent(tabbedPane);
 						
-			// put components together
+
+			
+			// put it all together
 			getContentPane().add(splitPane,BorderLayout.CENTER);
 			getContentPane().add(buildButtonPanel(), BorderLayout.SOUTH);
 					
@@ -367,20 +370,23 @@ implements
 		//buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlDkShadow));	
 		
 		btRemove = new JButton("\u2718");
-		//btRemove = new JButton(app.getPlain("Remove"));
-		//btRemove = new JButton(app.getImageIcon("delete_small.gif"));
-		btRemove.setToolTipText(app.getPlain("Remove"));
 		btRemove.addActionListener(this);
 		
 		
 		btAdd = new JButton("\u271A");
 		//btAdd = new JButton(app.getPlain("Add"));
-		btAdd.setToolTipText(app.getPlain("Add"));
 		btAdd.addActionListener(this);
 		
-		JPanel addRemovePanel = new JPanel();
-		addRemovePanel.add(btRemove);
-		addRemovePanel.add(btAdd);
+		btErase = new JButton(app.getImageIcon("delete_small.gif"));
+		btErase.addActionListener(this);
+		btErase.setPreferredSize(btRemove.getPreferredSize());
+		
+		leftButtonPanel = new JPanel();
+		leftButtonPanel.add(btRemove);
+		leftButtonPanel.add(btAdd);
+		leftButtonPanel.add(Box.createRigidArea(new Dimension(10,0)));
+		leftButtonPanel.add(btErase);
+		
 		
 		btClose = new JButton(app.getPlain("Close"));
 		btClose.addActionListener(this);
@@ -394,12 +400,15 @@ implements
 		
 		promptPanel = new JPanel(new BorderLayout());			
 		JLabel prompt = new JLabel("Select an Object to Trace");
+		prompt.setHorizontalAlignment(JLabel.CENTER);
+		prompt.setVerticalAlignment(JLabel.CENTER);
 		promptPanel.add(prompt, BorderLayout.CENTER);
-		promptPanel.setVisible(false);
+		promptPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		//promptPanel.setVisible(false);
 		
 		buttonPanel.add(closeCancelPanel, BorderLayout.EAST);
 		buttonPanel.add(promptPanel, BorderLayout.CENTER);	
-		buttonPanel.add(addRemovePanel, BorderLayout.WEST);
+		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		//buttonPanel.setPreferredSize(new Dimension(400,50));
 		
@@ -417,37 +426,55 @@ implements
 	
 	
 	
-	private void updateGUI() {				
-	
+	private void updateGUI() {
+		
+		updateTraceGeoList();
 		switch (mode){
 		
 		case MODE_ADD:
 			
-			promptPanel.setVisible(true);		
+			//promptPanel.setVisible(true);		
 			btCancel.setVisible(true);
 			btClose.setVisible(false);		
-			btAdd.setVisible(false);
-			btRemove.setVisible(false);		
+			leftButtonPanel.setVisible(false);
+			//splitPane.setVisible(false);
 			
-			traceGeoList.clearSelection();
-			traceGeoList.setEnabled(false);
-			tabbedPane.setEnabled(false);
+			//traceGeoList.clearSelection();
+			//traceGeoList.setEnabled(false);
+			
+			//tabbedPane.setEnabled(false);
 			view.getTable().selectionChanged();
+			
+			getContentPane().remove(splitPane);
+			getContentPane().add(promptPanel,BorderLayout.CENTER);
+			
+			Dimension size = splitPane.getPreferredSize();
+			size.height = promptPanel.getPreferredSize().height;
+			promptPanel.setPreferredSize(size);
+			
+			pack();
+			repaint();
 			
 		break;
 		
 		case MODE_NORMAL:
 
-			promptPanel.setVisible(false);
-			btAdd.setVisible(true);
-			btRemove.setVisible(true);
+			//splitPane.setVisible(true);
+			//promptPanel.setVisible(false);
+			leftButtonPanel.setVisible(true);
 			btCancel.setVisible(false);
 			btClose.setVisible(true);
 
-			traceGeoList.setEnabled(true);
-			tabbedPane.setEnabled(true);
+			//traceGeoList.setEnabled(true);
+			//tabbedPane.setEnabled(true);
 			
 			view.getTable().selectionChanged();
+			
+			getContentPane().remove(promptPanel);
+			getContentPane().add(splitPane,BorderLayout.CENTER);
+			pack();
+			repaint();
+			
 			
 			if (!traceGeoList.isSelectionEmpty()) {
 
@@ -549,6 +576,10 @@ implements
 			setMode(MODE_ADD);
 		}	
 		
+		else if (source == btErase) {
+			traceManager.clearGeoTraceColumns(getSelectedGeo());
+		}	
+		
 		else if (source == btRemove) {
 			removeTrace();
 		}	
@@ -575,7 +606,7 @@ implements
 
 	/**  Listener for selection changes in the traceGeoList */
 	public void valueChanged(ListSelectionEvent e) {
-
+		//if(getSettings() != null) getSettings().debug(getSelectedGeo());
 		if (e.getValueIsAdjusting() == false) {
 			updateGUI();
 		}	
@@ -606,7 +637,7 @@ implements
 		
 		// add geo to the trace collection 
 		if (traceManager.isTraceGeo(geo) == false) {		
-			TraceSettings t = traceManager.new TraceSettings();
+			TraceSettings t = geo.getTraceSettings();
 			if (newTraceLocation != null) {
 				t.traceColumn1 = newTraceLocation.getMinColumn();
 				t.traceRow1 = newTraceLocation.getMinRow();
@@ -633,6 +664,7 @@ implements
 		if (!traceGeoListModel.isEmpty()){
 			traceGeoList.setSelectedIndex(0);
 		}
+		updateGUI();
 	}
 	
 	
@@ -642,8 +674,11 @@ implements
 	}
 
 	
-	private TraceSettings getSettings(){	
-		return traceManager.getTraceSettings((GeoElement)traceGeoList.getSelectedValue());
+	private TraceSettings getSettings(){
+		if(traceGeoList.isSelectionEmpty())
+			return null;
+		else
+			return ((GeoElement)traceGeoList.getSelectedValue()).getTraceSettings();
 	}
 	
 	
@@ -704,8 +739,7 @@ implements
 		
 		this.mode = mode;
 		
-		switch (mode){	
-		
+		switch (mode){		
 		case MODE_NORMAL:
 			isIniting = false;
 			//app.setSelectionListenerMode(null);		
@@ -714,13 +748,6 @@ implements
 		case MODE_ADD:			
 			app.setMoveMode(); 
 			app.setSelectionListenerMode(this);		
-			/*
-			newTraceSettings = traceManager.new TraceSettings();
-			if (newTraceLocation != null) {
-				newTraceSettings.traceColumn1 = newTraceLocation.getMinColumn();
-				newTraceSettings.traceRow1 = newTraceLocation.getMinRow();
-			}
-			*/
 			view.getTable().selectionChanged();
 			break;
 			
@@ -747,7 +774,6 @@ implements
 	
 	/** Handle notification of deleted or renamed geo */
 	public void updateTraceDialog(){
-		updateTraceGeoList();
 		updateGUI();
 	}
 		

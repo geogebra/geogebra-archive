@@ -20,6 +20,8 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -3454,6 +3456,17 @@ public abstract class GeoElement
 			}
 		}
 		
+		
+		// G.Sturr 2010-5-29
+		// Get spreadsheet trace XML from the trace manager
+		
+		// trace to spreadsheet
+		if (isSpreadsheetTraceable() && getSpreadsheetTrace()) {
+		sb.append( ((SpreadsheetView) app.getGuiManager().getSpreadsheetView())
+					.getTraceManager().getTraceXML(this));
+		}
+			
+		/* --- old version
 		// trace to spreadsheet on or off
 		if (isGeoPoint()) {
 			GeoPointInterface p = (GeoPointInterface) this;
@@ -3461,6 +3474,11 @@ public abstract class GeoElement
 				sb.append("\t<spreadsheetTrace val=\"true\"/>\n");
 			}
 		}
+		*/
+		//END G.Sturr
+		
+		
+		
 		
 		// decoration type
 		if (decorationType != DECORATION_NONE) {
@@ -4176,6 +4194,9 @@ public abstract class GeoElement
 
 	/** Set tracing flag for this geo */
 	public void setSpreadsheetTrace(boolean traceFlag) {
+		
+		if(traceFlag != true)
+			traceSettings =null;
 		spreadsheetTrace = traceFlag;
 	}
 
@@ -4195,6 +4216,23 @@ public abstract class GeoElement
 		return false;
 	}
 
+	private geogebra.gui.view.spreadsheet.TraceSettings traceSettings;
+	
+	public TraceSettings getTraceSettings(){
+		
+		if (traceSettings == null)
+			traceSettings = new TraceSettings();
+		
+		return traceSettings;
+		
+	}
+	
+	public void setTraceSettings(TraceSettings t){	
+			traceSettings = t;
+	}
+	
+	
+	
 	/*
 	 * ----------------- OLD CODE -------------------------
 	 
