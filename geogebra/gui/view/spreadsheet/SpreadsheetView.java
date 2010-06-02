@@ -202,6 +202,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		// Needed for auto-enlarging spreadsheet.
 		table.addComponentListener(this);
 		
+		traceManager = new SpreadsheetTraceManager(this);
+		
 		
 	}
 	
@@ -405,7 +407,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}	
 	
 	public void reset() {
-		traceManager.loadTraceGeoCollection();
+		if(traceManager != null)
+			traceManager.loadTraceGeoCollection();
 	}	
 	
 	
@@ -1152,6 +1155,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				sb.append("\t<spreadsheetColumn id=\""+col+"\" width=\""+colWidth+"\"/>\n");
 		}
 
+		// row heights 
+		for (int row = 0 ; row < table.getRowCount() ; row++) {
+			int rowHeight = table.getRowHeight(row);
+			if (rowHeight != table.getRowHeight())
+				sb.append("\t<spreadsheetRow id=\""+row+"\" height=\""+rowHeight+"\"/>\n");
+		}
+		
+		
 		sb.append("</spreadsheetView>\n");
 	}
 	
@@ -1212,6 +1223,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		TableColumn column = table.getColumnModel().getColumn(col); 
 		column.setPreferredWidth(width);
 		//column.
+	}
+	
+	public void setRowHeight(int row, int height) {
+		table.setRowHeight(row, height);
 	}
 	
 	

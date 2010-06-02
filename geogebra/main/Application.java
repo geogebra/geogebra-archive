@@ -2825,7 +2825,10 @@ public abstract class Application implements KeyEventDispatcher {
 		getEuclidianView().getXML(sb);
 
 		// save spreadsheetView settings
-		if (showSpreadsheet) {
+		
+		// G.Sturr 2010-6-2: (showSpreadsheet flag is now dead)
+		//if (showSpreadsheet) {
+		if (getGuiManager().hasSpreadsheetView()){
 			getGuiManager().getSpreadsheetViewXML(sb);
 		}
 		

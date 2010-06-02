@@ -45,7 +45,7 @@ public interface GuiManager {
 	
 	public void setColumnWidth(int column, int width);	
 	public void setScrollToShow(boolean scrollToShow);
-	
+	public void setRowHeight(int row, int height);	//G.Sturr 2010-6-2
 	
 	// G.Sturr 2010-5-12: removed old tracing methods and added new ones
 	

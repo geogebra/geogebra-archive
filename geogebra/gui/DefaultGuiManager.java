@@ -2870,6 +2870,12 @@ public class DefaultGuiManager implements GuiManager {
 			((SpreadsheetView)getSpreadsheetView()).setColumnWidth(column, width);
 		}
 		
+		//G.Sturr 2010-6-2
+		public void setRowHeight(int row, int height) {
+			((SpreadsheetView)getSpreadsheetView()).setRowHeight(row, height);
+		}
+		//END G.Sturr
+		
 		VirtualKeyboardListener currentKeyboardListener = null;
 
 		private boolean ignoreNext = false;

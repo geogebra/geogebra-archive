@@ -633,6 +633,11 @@ public class MyXMLHandler implements DocHandler {
 						.getSpreadsheetView(), attrs);
 				break;
 			}
+			if (eName.equals("spreadsheetRow")) {
+				ok = handleSpreadsheetRow(app.getGuiManager()
+						.getSpreadsheetView(), attrs);
+				break;
+			}
 
 		default:
 			System.err.println("unknown tag in <spreadsheetView>: " + eName);
@@ -807,6 +812,21 @@ public class MyXMLHandler implements DocHandler {
 			return false;
 		}
 	}
+	
+	private boolean handleSpreadsheetRow(Object spreadsheetView,
+			LinkedHashMap<String, String> attrs) {
+
+		try {
+			int row = Integer.parseInt((String) attrs.get("id"));
+			int height = Integer.parseInt((String) attrs.get("height"));
+			app.getGuiManager().setRowHeight(row, height);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	
 
 //	private boolean handleCASSize(CasManager casView, LinkedHashMap<String, String> attrs) {
 //		if (app.isApplet())
