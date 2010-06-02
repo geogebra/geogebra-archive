@@ -490,24 +490,30 @@ public class Renderer implements GLEventListener {
         }
     }    
     
-    boolean needExportImage=false;
     
+    
+    //////////////////////////////////////
+    // EXPORT IMAGE
+    //////////////////////////////////////
+      
+    
+    private boolean needExportImage=false;
+    
+    
+    /**
+     * says that an export image is needed, and call immediate display
+     */
     public void needExportImage(){
     	needExportImage = true;
     	display();
     	
-    	/*
-    	try {
-			wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
     }
     
-    BufferedImage bi;
+    private BufferedImage bi;
     
+    /**
+     * creates an export image (and store it in BufferedImage bi)
+     */
     private void setExportImage(){
     	
         gl.glReadBuffer(GL.GL_FRONT);
@@ -531,11 +537,28 @@ public class Renderer implements GLEventListener {
         bi.flush();
     }
 
+    /**
+     * @return a BufferedImage containing last export image created
+     */
     public BufferedImage getExportImage(){
-    	
-    	
+    	    	
     	return bi;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
