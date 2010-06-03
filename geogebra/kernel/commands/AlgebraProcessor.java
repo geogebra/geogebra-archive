@@ -648,7 +648,7 @@ public class AlgebraProcessor {
 					// else fall through to default:
 	
 				default :
-					throw new MyError(app, "InvalidEquation");
+					return processImplicitPoly(equ);
 			}
 		} 
 		catch (MyError eqnError) {
@@ -769,6 +769,20 @@ public class AlgebraProcessor {
 		} else
 			cubic = kernel.DependentCubic(label, equ);
 		ret[0] = cubic;
+		return ret;
+	}
+	
+	protected GeoElement[] processImplicitPoly(Equation equ){
+		GeoElement[] ret = new GeoElement[1];
+		String label = equ.getLabel();
+		Polynomial lhs = equ.getNormalForm();
+		boolean isIndependent = lhs.isConstant();
+		if (isIndependent){
+			ret[0]=kernel.ImplicitPoly(label, lhs);
+		}else{
+			//TODO dependent ImplicitPoly
+			throw new MyError(app, "InvalidEquation");
+		}
 		return ret;
 	}
 

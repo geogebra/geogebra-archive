@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
@@ -1785,6 +1786,12 @@ public class Kernel {
 		double[] coeffs = { a, b, c, d, e, f,g,h,i,j,k,l,m,n,o,p };
 		GeoCubic cubic = new GeoCubic(cons, label, coeffs);
 		return cubic;
+	}
+	
+	/** Implicit Cubic  */
+	final public GeoImplicitPoly ImplicitPoly(String label,Polynomial poly) {
+		GeoImplicitPoly implicitPoly = new GeoImplicitPoly(cons, label, poly);
+		return implicitPoly;
 	}
 
 	/** Converts number to angle */
