@@ -52,62 +52,11 @@ import java.io.IOException;
  */
 public class Test3D{
 	
-	///////////////////////////////////////////////
-	// DEMOS
-	///////////////////////////////////////////////
-	
-	private void demos(){				
-		
-		/* Demo with a cube 
-		 * Remove A to remove anything
-		 * Use it to create new points, segments, lines, etc. */
-		
-		//testAxisAndPlane();testCube(true);
-		
-		
-		
-		/* Demo with a spring and spreadsheet 
-		 * Expand-down the second line to create more points and segments 
-		 * Animate slider k */
-		
-		//testAxisAndPlane();testSpring(2,true);
-		
-		
-		
-		/* Demo with a cube and spring */
-		
-		//testCube(true);testSpring(50,false);
-		
-		
-		
-		/* Demo with a colored cube and more...
-		 * Animate slider k 
-		 * You can also create points, segments... */
-		
-		//testColoredCube(0.75);
-		
-		
-		
-		/* Demo with morphing polyhedra 
-		 * Michael's demo*/
-		
-		testMorphingPolyhedra();
-		
-		/* Michael's slices through cube */
-		//testSlicesThroughCube();
-		
-		
-		
+	private void test(){
+
+		//testLoad("test");
 		
 	}
-	
-	
-	///////////////////////////////////////////////
-	// 
-	///////////////////////////////////////////////
-	
-	
-	
 	
 	
 	
@@ -142,6 +91,7 @@ public class Test3D{
         view3D.setRotXYinDegrees(-60,22.5,true);
         //view3D.setRotXYinDegrees(0,0,true);
 
+        test();
         
         //testList();
         //testLoad("plane");
