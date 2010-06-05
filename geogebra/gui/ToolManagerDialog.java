@@ -165,18 +165,18 @@ public class ToolManagerDialog extends javax.swing.JDialog {
         
         // we need to save all selected tools and all tools
         // that are used by the selected tools
-        LinkedHashSet tools = new LinkedHashSet();
+        LinkedHashSet<Macro> tools = new LinkedHashSet<Macro>();
         for (int i=0; i < sel.length; i++) {
-        	Macro macro = (Macro) sel[i];
-        	ArrayList macros = macro.getUsedMacros();
+        	Macro macro =  (Macro)sel[i];
+        	ArrayList<Macro> macros = macro.getUsedMacros();
         	if (macros != null)
         		tools.addAll(macros);
         	tools.add(macro);        	
         }
                 
         // create Macro array list from tools set
-        ArrayList macros = new ArrayList(tools.size());
-        Iterator it = tools.iterator();
+        ArrayList<Macro> macros = new ArrayList<Macro>(tools.size());
+        Iterator<Macro> it = tools.iterator();
         while (it.hasNext()) {
         	 macros.add(it.next());
         }
@@ -321,6 +321,8 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 						app.setWaitCursor();
 						GeoGebraFrame newframe=GeoGebraFrame.createNewWindow(null,macro);
 						newframe.setTitle(macro.getCommandName());
+						byte[] byteArray =app.getMacroFileAsByteArray();
+						newframe.getApplication().loadMacroFileFromByteArray(byteArray, false);
 						app.setDefaultCursor();
 						
 					}
@@ -328,6 +330,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 				runner.start();
 				
 				this.setVisible(false);
+				this.dispose();
 			} 	
 	}
 	

@@ -26,21 +26,17 @@ import javax.swing.KeyStroke;
 public class GeoGebraMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1736020764918189176L;
 
-	private BaseMenu fileMenu,macroMenu, editMenu, viewMenu, optionsMenu, toolsMenu, windowMenu, helpMenu;
+	private BaseMenu fileMenu, editMenu, viewMenu, optionsMenu, toolsMenu, windowMenu, helpMenu;
 
 	private Application app;
-	
-	/**
-	 * Editing file, default
-	 */
-	public static final int MODE_EDIT_FILE=1;
 	private Layout layout;
-	/**
-	 * Editing macro
-	 */
-	public static final int MODE_EDIT_MACRO=2;
-	private int currentMode = MODE_EDIT_FILE;
+	
 
+	/**
+	 * Creates new menubar
+	 * @param app Application
+	 * @param layout Layout
+	 */
 	public GeoGebraMenuBar(Application app, Layout layout) {
 		this.layout = layout;
 
@@ -59,47 +55,17 @@ public class GeoGebraMenuBar extends JMenuBar {
 		this.app = app;
 	}
 
-	/**
-	 * Switches between file editing and macro editing mode
-	 * @author Zbynek Konecny
-	 * @version 2010-05_26
-	 * @param mode MODE_EDIT_MACRO for Macro menu, MODE_EDIT_FILE for File menu
-	 */
-	public void switchMode(int mode){
-		if(mode!=currentMode){
-			if(mode==MODE_EDIT_MACRO){
-				this.remove(fileMenu);
-				this.add(macroMenu,0);
-				
-			}
-			else{
-				
-				this.remove(macroMenu);
-				this.add(fileMenu,0);
-			}
-		}
-		currentMode=mode;
-	}
+
 	/**
 	 * Initialize the menubar. No update is required after initialization.
 	 */
 	public void initMenubar() {
 		removeAll();
 	
-		if(app.getMacro()==null)
-		{// "File"
+		// "File"
 			fileMenu = new FileMenu(app);
 			add(fileMenu);
-			
-		}
-		else{
-		//"Macro"
-		macroMenu = new MacroMenu(app);
-		add(macroMenu);
-		
-		}
-		
-		
+				
 		// "Edit"
 		editMenu = new EditMenu(app);
 		add(editMenu);
@@ -141,8 +107,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 	 */
 	public void updateMenubar() {
 		Application.debug("update menu");
-		if(macroMenu==null)	fileMenu.update();
-			else macroMenu.update();
+		fileMenu.update();
 		editMenu.update();
 		viewMenu.update();
 		optionsMenu.update();

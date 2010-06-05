@@ -41,6 +41,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -68,12 +69,19 @@ implements GeoElementSelectionListener {
 	
 	private Macro newTool;
 	
+
+	/**
+	 * Creates new tool creation dialog, if in macro-editing mode,
+	 * @param app Aplication to which this dialog belongs
+	 */
 	public ToolCreationDialog(Application app) {
 		super(app.getFrame());
 		this.app = app;		
 		
 		initLists();						
 		initGUI();
+		Macro appMacro = app.getMacro();
+		if(appMacro!=null)this.setNameTab(appMacro);
 	}
 	
 	public void setVisible(boolean flag) {		
@@ -162,6 +170,8 @@ implements GeoElementSelectionListener {
 	}
 	
 	
+	
+	
 	private boolean createTool() {		
 		// get input and output objects		
 		GeoElement [] input = toGeoElements(inputList);
@@ -188,47 +198,81 @@ implements GeoElementSelectionListener {
 	 * @version 2010-05-26
 	 */
 	private void finish() {
-		// check if command name is not used already by another macro
-		String cmdName = namePanel.getCommandName();
-		Kernel kernel = app.getKernel();
-		if (kernel.getMacro(cmdName) != null) {
-			app.showError("Tool.CommandNameTaken");
-			return;
-		}
 		
 		newTool.setCommandName(namePanel.getCommandName());
 		newTool.setToolName(namePanel.getToolName());
 		newTool.setToolHelp(namePanel.getToolHelp());			
 		newTool.setShowInToolBar(namePanel.showInToolBar());
-		newTool.setIconFileName(namePanel.getIconFileName());	
+		newTool.setIconFileName(namePanel.getIconFileName());
+		
+		
+		Application appToSave=app;
+		if(app.getMacro()!=null)
+			appToSave=app.getMacro().getKernel().getApplication();
+			
+		
+		Kernel kernel = appToSave.getKernel();
+		String cmdName = namePanel.getCommandName();
+		// check if command name is not used already by another macro
+		if (kernel.getMacro(cmdName) != null) {
+			overwriteMacro(kernel.getMacro(cmdName));
+			return;
+		}
+		
 		kernel.addMacro(newTool);
+		// make sure new macro command gets into dictionary
+		appToSave.updateCommandDictionary();
+		
+		// set macro mode
+		if (newTool.isShowInToolBar()) {
+			int mode = kernel.getMacroID(newTool) + EuclidianView.MACRO_MODE_ID_OFFSET;
+			appToSave.getGuiManager().addToToolbarDefinition(mode);			
+			appToSave.updateToolBar();			
+			appToSave.setMode(mode);			
+		}
+		if(app.getMacro()!=null)app.getFrame().setVisible(false);
+		app.showMessage(app.getMenu("Tool.CreationSuccess"));
 		
 		// hide and dispose dialog
 		setVisible(false);	
 		dispose();
-		
-		Application appToSave=app;
-		if(app.getMacro()!=null)
-		{
-			app.getMacro().getKernel().addMacro(newTool);
-			appToSave=app.getMacro().getKernel().getApplication();
-			app.setSaved();
-		}
-		// make sure new macro command gets into dictionary
-		app.updateCommandDictionary();
-		
-		// set macro mode
-		if (newTool.isShowInToolBar()) {
-			int mode = appToSave.getKernel().getMacroID(newTool) + EuclidianView.MACRO_MODE_ID_OFFSET;
-			appToSave.getGuiManager().addToToolbarDefinition(mode);			
-			appToSave.updateToolBar();			
-			appToSave.setMode(mode);			
-		}		
-		app.showMessage(app.getMenu("Tool.CreationSuccess"));	
-		
-		
 	}
 	
+	/**
+	 * Overwrites a macro with current value of newTool
+	 * @param macro macro to overwrite
+	 * @author Zbynek Konecny
+	 * @version 2010-06-04
+	 */
+	private void overwriteMacro(Macro macro)
+	{
+		Object[] options = { app.getMenu("DeleteTool"), app.getMenu("DontDeleteTool") };
+		int	returnVal=    
+			JOptionPane.showOptionDialog(this, app.getMenu("Tool.DeleteQuestion"), app.getPlain("Question"),
+	         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+	         null, options, options[1]);     
+	    	if (returnVal == 1 ) return;
+		Kernel kernel = macro.getKernel();
+		Application appToSave = kernel.getApplication();
+		boolean compatible = newTool.getNeededTypesString().equals(macro.getNeededTypesString());
+		for(int i=0;compatible && i<macro.getMacroOutput().length;i++)
+			compatible = compatible &&  macro.getMacroOutput()[i].getClass().equals(newTool.getMacroOutput()[i].getClass());
+		if(compatible){
+		StringBuilder sb=new StringBuilder();
+		newTool.getXML(sb);
+		kernel.removeMacro(app.getMacro());
+		if(appToSave.addMacroXML(sb.toString())){
+			//successfully saved, quitting
+			appToSave.setXML(appToSave.getXML(), true);
+		if(app.getMacro() != null) app.setSaved();
+		app.exit();
+		}
+		
+		}else{
+			Application.debug("not compatible");
+			JOptionPane.showMessageDialog(this,app.getError("InvalidInput") + ":\n"+macro.toString());
+		}
+	}
 	/**
 	 * Updates the list of input objects by using the specified
 	 * output objects.
