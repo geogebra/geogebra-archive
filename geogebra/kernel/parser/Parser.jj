@@ -307,13 +307,13 @@ TOKEN: {
 |	< CSCH_FUNC: ( "csch(" | "Csch(" | "cosech(" | "Cosech(") > 
 |	< SECH_FUNC: ( "sech(" | "Sech(" ) > 
 |	< COTH_FUNC: ( "coth(" | "Coth(" ) > 
-|	< ACOS_FUNC: ( "acos(" | "arccos(" | "ArcCos(" )> 
+|	< ACOS_FUNC: ( "acos(" | "arccos("| "arcos(" | "ArcCos(" )> 
 |	< ASIN_FUNC: ( "asin(" | "arcsin(" | "ArcSin(" ) > 
 |	< ATAN_FUNC: ( "atan(" | "arctan(" | "ArcTan(" )> 
 |	< COSH_FUNC: ( "cosh(" | "Cosh(" ) > 
 |	< SINH_FUNC: ( "sinh(" | "Sinh(" ) > 
 |	< TANH_FUNC: ( "tanh(" | "Tanh(" ) > 
-|	< ACOSH_FUNC: ( "acosh(" | "arccosh(" | "ArcCosh(" ) > 
+|	< ACOSH_FUNC: ( "acosh(" | "arccosh(" | "arcosh(" | "ArcCosh(" ) > 
 |	< ASINH_FUNC: ( "asinh(" | "arcsinh(" | "ArcSinh(" ) > 
 |	< ATANH_FUNC: ( "atanh(" | "arctanh(" | "ArcTanh(" ) > 
 |	< EXP_FUNC: ( "exp(" | "Exp(" ) > 
