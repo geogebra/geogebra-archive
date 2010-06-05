@@ -1,6 +1,6 @@
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -42,6 +43,7 @@ import javax.swing.event.TableColumnModelListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -68,6 +70,9 @@ public class MyTable extends JTable implements FocusListener
 	protected Kernel kernel;
 	protected Application app;
 	protected MyCellEditor editor;
+	protected MyCellEditorBoolean editorBoolean;
+	
+	
 	protected RelativeCopy relativeCopy;
 	protected CopyPasteCut copyPasteCut;
 	protected MyColumnHeaderRenderer columnHeader;
@@ -141,6 +146,11 @@ public class MyTable extends JTable implements FocusListener
 	private boolean doRecordRowHeights = true;
 
 	public int preferredColumnWidth = TABLE_CELL_WIDTH; //G.Sturr 2010-4-10 
+	
+	// G.Sturr 2010-6-4
+	// Collection of cells that contain geos that can be edited with one click,
+	// e.g. booleans, buttons, lists
+	protected HashSet<Point> oneClickEditableSet = new HashSet<Point>();
 
 	
 	
@@ -181,9 +191,10 @@ public class MyTable extends JTable implements FocusListener
 		setDefaultRenderer(Object.class, new MyCellRenderer(app, this.getCellFormatHandler()));
 		
 		//setDefaultRenderer(Object.class, new MyCellRenderer(app));
+		editorBoolean = new MyCellEditorBoolean(kernel);
 		editor = new MyCellEditor(kernel);
 		setDefaultEditor(Object.class, editor);
-	
+
 		// set selection colors
 		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
 		setSelectionForeground(Color.BLACK);
@@ -222,7 +233,7 @@ public class MyTable extends JTable implements FocusListener
 
 			public void tableChanged(TableModelEvent e) {
 				// force rowHeader redraw when a new row is added (after drag down or arrow down)
-				if(e.getType()==e.INSERT){
+				if(e.getType()==TableModelEvent.INSERT){
 					getView().updateRowHeader();
 				}
 			}
@@ -233,6 +244,7 @@ public class MyTable extends JTable implements FocusListener
 		// relative copy
 		relativeCopy = new RelativeCopy(this, kernel);
 		copyPasteCut = new CopyPasteCut(this, kernel);
+		
 		// column header
 		this.getTableHeader().setFocusable(true);
 		this.getTableHeader().addMouseListener(new MouseListener2());
@@ -318,9 +330,18 @@ public class MyTable extends JTable implements FocusListener
 		resetRowHeights();
 		
 	}
+
+
+	@Override
+	public TableCellEditor getCellEditor(int row, int column){
+		/*
+		if (oneClickEditableSet.contains(new Point(column, row)))
+			return editorBoolean;
+		*/
+		return editor;
+	}
 	
 	
- 
 	
 	
 	
@@ -341,7 +362,7 @@ public class MyTable extends JTable implements FocusListener
 	 */
 	@Override
 	public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
-		if(app.getControlDown()) 
+		if(Application.getControlDown()) 
 			super.changeSelection(rowIndex, columnIndex, false, false);	
 		else
 			super.changeSelection(rowIndex, columnIndex, toggle, extend);
@@ -353,11 +374,19 @@ public class MyTable extends JTable implements FocusListener
 	@Override
 	public void selectAll(){		
 		setSelectionType(CELL_SELECT);
-		setRowSelectionInterval(0, getRowCount()-1);
-		getColumnModel().getSelectionModel().setSelectionInterval(0, getColumnCount()-1);
-		selectionChanged();
+		this.setAutoscrolls(false);
+		changeSelection(0,0,false,false);
+		changeSelection(getRowCount()-1,getColumnCount()-1, false, true);
+		setSelectAll(true);
+	//	this.scrollRectToVisible(getCellRect(0,0,true));
+		this.setAutoscrolls(true);
+		//setRowSelectionInterval(0, getRowCount()-1);
+		//getColumnModel().getSelectionModel().setSelectionInterval(0, getColumnCount()-1);
+		//selectionChanged();
+		//this.getSelectAll();
+		
+		
 	}
-	
 	
    
    //G.STURR 2010-1-29
@@ -420,7 +449,7 @@ public class MyTable extends JTable implements FocusListener
 		
 		// update the selection list
 		
-		if (!app.getControlDown()) {
+		if (!Application.getControlDown()) {
 			selectedCellRanges.clear();
 			selectedColumnSet.clear();
 			selectedRowSet.clear();
@@ -472,7 +501,7 @@ public class MyTable extends JTable implements FocusListener
 		// update the geo selection list
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < selectedCellRanges.size(); i++) {
-			list.addAll(0,((CellRange) selectedCellRanges.get(i)).toGeoList());
+			list.addAll(0,(selectedCellRanges.get(i)).toGeoList());
 		}
 		app.setSelectedGeos(list);
 		
@@ -811,6 +840,7 @@ public class MyTable extends JTable implements FocusListener
 	
 	private Rectangle cellFrame;
 	
+	@Override
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
 
@@ -988,6 +1018,7 @@ public class MyTable extends JTable implements FocusListener
 	 * Starts in-cell editing for cells with short editing strings. For strings longer
 	 * than MAX_CELL_EDIT_STRING_LENGTH, the redefine dialog is shown.
 	 */
+	@Override
 	public boolean editCellAt(int row, int col) {
 		Object ob = getValueAt(row, col);
 		
@@ -1070,7 +1101,7 @@ public class MyTable extends JTable implements FocusListener
 				isDragging2 = false;
 				repaint();
 			}
-			else if (app.getMode() != EuclidianView.MODE_SELECTION_LISTENER) {
+			else if (app.getMode() != EuclidianConstants.MODE_SELECTION_LISTENER) {
 				int row = rowAtPoint(e.getPoint());
 				int col = columnAtPoint(e.getPoint());
 				GeoElement geo = (GeoElement) getModel().getValueAt(row, col);	
@@ -1126,7 +1157,7 @@ public class MyTable extends JTable implements FocusListener
 			boolean rightClick = Application.isRightClick(e); 
 			
 			// tell selection listener about click on GeoElement
-			if (!rightClick && app.getMode() == EuclidianView.MODE_SELECTION_LISTENER) {
+			if (!rightClick && app.getMode() == EuclidianConstants.MODE_SELECTION_LISTENER) {
 				int row = rowAtPoint(e.getPoint());
 				int col = columnAtPoint(e.getPoint());
 				GeoElement geo = (GeoElement) getModel().getValueAt(row, col);
@@ -2062,7 +2093,7 @@ public class MyTable extends JTable implements FocusListener
 		private ImageIcon emptyIcon = new ImageIcon();
 		
 		public MyColumnHeaderRenderer() {    		
-			super("", JLabel.CENTER);
+			super("", SwingConstants.CENTER);
 			setOpaque(true);
 			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
 			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
@@ -2425,6 +2456,7 @@ public class MyTable extends JTable implements FocusListener
 
 	}
 
+	@Override
 	public int convertColumnIndexToModel(int viewColumnIndex) {
 		return viewColumnIndex;    	
 	}
@@ -2435,9 +2467,10 @@ public class MyTable extends JTable implements FocusListener
 	 * we need to return false for this normally, otherwise we can't detect double-clicks
 	 * 
 	 */
+	@Override
 	public boolean isCellEditable(int row, int column)
 	{
-		if (!allowEditing) return false; // to avoid getValueAt() unless necessary
+		if (!allowEditing && !oneClickEditableSet.contains(new Point(column,row))) return false; // to avoid getValueAt() unless necessary
 		
 		GeoElement geo = (GeoElement) getModel().getValueAt(row, column);
 		
@@ -2464,14 +2497,22 @@ public class MyTable extends JTable implements FocusListener
 	}
 	 
 	//G.STURR 2010-1-9
-	public boolean isSelectAll() 
-	{		
+	private boolean isSelectAll = false;
+	public boolean getSelectAll() {	
+		return isSelectAll;
+		/*
 		if (minSelectionColumn == 0 && maxSelectionColumn == getColumnCount()-1 && minSelectionRow == 0 
 				&& maxSelectionRow == getRowCount()-1)
 			return true;
 		
 		return false;
+		*/
 	}
+	public void setSelectAll(boolean isSelectAll) {	
+		this.isSelectAll = isSelectAll;
+	}
+	
+	
 	//END GSTURR
 	
 	
@@ -2684,7 +2725,7 @@ public class MyTable extends JTable implements FocusListener
 	public class MyTableColumnModelListener implements TableColumnModelListener { 
 		
 		public void columnMarginChanged(ChangeEvent e) {
-			if(isSelectAll() && minSelectionColumn >= 0){
+			if(getSelectAll() && minSelectionColumn >= 0){
 				preferredColumnWidth = table.getColumnModel().getColumn(minSelectionColumn).getPreferredWidth();
 			}
 		}

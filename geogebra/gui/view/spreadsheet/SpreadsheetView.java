@@ -276,6 +276,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 		
+		if(geo.isGeoBoolean()){
+			table.oneClickEditableSet.add(location);
+		}
+		
 	}
 	
 	
@@ -297,6 +301,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		Point location = geo.getSpreadsheetCoords();
 		if (location != null) {
 			doRemove(geo, location.y, location.x);
+		}
+		
+		
+		if(geo.isGeoBoolean()){
+			table.oneClickEditableSet.remove(location);
 		}
 	}
 	
@@ -386,6 +395,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				tableModel.setValueAt(null, r, c);
 			}
 		}
+		
+		table.oneClickEditableSet.clear();
 	}
 	
 	
@@ -401,8 +412,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void restart() {
 		highestUsedColumn = -1;
 		updateColumnWidths();
+		updateFonts(); //G.Sturr 2010-6-4
 		table.changeSelection(0,0,false,false);
 		traceManager.loadTraceGeoCollection();
+		
+		table.oneClickEditableSet.clear();
 		
 	}	
 	
@@ -983,7 +997,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			if (doRowResize) {
 				if (minSelectionRow != -1 && maxSelectionRow != -1
 						&& (maxSelectionRow - minSelectionRow > 1)) {
-					if (table.isSelectAll())
+					if (table.getSelectAll())
 						table.setRowHeight(table.getRowHeight(resizingRow));
 					else
 						for (int row = minSelectionRow; row <= maxSelectionRow; row++) {
@@ -1559,6 +1573,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 	public void focusLost(FocusEvent arg0) {
+		//System.out.println("focus lost");
 		getTable().repaint();
 
 	}

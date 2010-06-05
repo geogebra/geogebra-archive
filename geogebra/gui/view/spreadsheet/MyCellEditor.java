@@ -16,6 +16,11 @@ import java.awt.event.KeyListener;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 
+
+/**
+ * Default cell editor for the spreadsheet, extends DefaultCellEditor(JTextField)
+ *
+ */
 public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 
 	private static final long serialVersionUID = 1L;
@@ -24,11 +29,12 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	protected Application app;
 	protected GeoElement value;
 	protected MyTable table;
+	private AutoCompleteTextField textField;
+	
 	protected int column;
 	protected int row;
-	public boolean editing = false;
+	private boolean editing = false;
 	private boolean errorOnStopEditing = false;
-	private AutoCompleteTextField textField;
 	
 	
 		
@@ -44,18 +50,20 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	}
 
 
+	
+	
+	@Override
 	public Component getTableCellEditorComponent(JTable table0, Object value0,
 			boolean isSelected, int row0, int column0) {
-		table = (MyTable) table0;
 		
+		table = (MyTable) table0;
+
 		if (value0 instanceof String) { // clicked to type
 			value = null;
-		}
-		else
-		{
+		} else {
 			value = (GeoElement) value0;
 		}
-		
+
 		column = column0;
 		row = row0;
 		String text = "";
@@ -89,6 +97,14 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		return component;
 	}
 	
+	
+	
+
+	//=======================================================
+	//             In-cell Editing Methods
+	//=======================================================
+
+	
 	/**
 	 * Returns the definition of geo used to init the editor
 	 * when editing is started.
@@ -99,10 +115,143 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		return geo.getRedefineString(true, true);
 	}
 	
-	boolean escape = false;
+	
+	public boolean isEditing() {
+		return editing;
+	}
 
+	
+	
+	// Never used .... do we still need this?
+	/*
+	public void addLabel(int column, int row) {
+		column = table.convertColumnIndexToModel(column);
+		String name = table.getModel().getColumnName(column) + (row + 1);
+		addLabel(name);
+	}
+	*/
+	
+	
+	
+	public int getCaretPosition() {
+		return textField.getCaretPosition();
+	}
+
+	
+	/** Insert a geo label into current editor string. */
+	public void addLabel(String label) {
+		if (!editing)
+			return;
+		//String text = (String) delegate.getCellEditorValue();			
+		//delegate.setValue(text + label);
+		textField.replaceSelection(" " + label + " ");
+	}
+
+	
+	public void setLabel(String text) {
+		if (!editing)
+			return;
+		delegate.setValue(text);
+	}
+
+	public String getEditingValue() {
+		return (String) delegate.getCellEditorValue();
+	}
+
+	@Override
+	public Object getCellEditorValue() {
+		return value;
+	}
+	
+	
+	
+	
+	
+
+	//=======================================================
+	//             Stop/Cancel Editing
+	//=======================================================
+	
+	
+	@Override
+	public void cancelCellEditing() {
+		editing = false;
+		errorOnStopEditing = false;
+		
+		super.cancelCellEditing();				
+	}
+	
+	
+	@Override
+	public boolean stopCellEditing() {
+		String text = (String) delegate.getCellEditorValue();	
+		
+		errorOnStopEditing = true;
+		
+		try {
+			// get GeoElement of current cell
+			value = kernel.lookupLabel(  GeoElement.getSpreadsheetCellName(column, row), false);
+
+			if (text.equals("")) {
+				if (value != null)
+					value.removeOrSetUndefinedIfHasFixedDescendent();
+			} else {
+				GeoElement newVal = RelativeCopy.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);
+				if (newVal == null) {
+					return false;
+				}
+				
+				value = newVal;
+			}
+			
+			if (value != null)
+				app.storeUndoInfo();
+
+		} catch (Exception ex) {
+			// show GeoGebra error dialog
+			// kernel.getApplication().showError(ex.getMessage());
+			ex.printStackTrace();
+			super.stopCellEditing();
+			editing = false;
+			// Util.handleException(table, ex);
+			return false;
+		}
+		
+		errorOnStopEditing = false;
+		editing = false;
+		
+		boolean success = super.stopCellEditing();
+		moveSelectedCell(0, 1);
+		return success;
+	}
+
+	private boolean stopCellEditing(int colOff, int rowOff) {		
+		boolean success = stopCellEditing();
+		moveSelectedCell(colOff, rowOff);		
+		return success;
+	}
+	
+	
+	private void moveSelectedCell(int colOff, int rowOff) {
+		int nextRow = Math.min(row + rowOff, table.getRowCount()-1);
+		int nextColumn = Math.min(column + colOff, table.getColumnCount()-1);
+		table.changeSelection(nextRow, nextColumn, false, false);
+		//table.selectionChanged();  //G.Sturr 2010-6-4
+	}
+
+	
+	
+	
+	
+	//=======================================================
+	//             Key and Focus Listeners
+	//=======================================================
+
+	
 	public class KeyListener4 implements KeyListener {
-
+		
+		boolean escape = false;
+		
 		public void keyTyped(KeyEvent e) {	
 		}
 
@@ -200,106 +349,43 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 
 	}
 
-	public boolean isEditing() {
-		return editing;
-	}
-
-	public void addLabel(int column, int row) {
-		column = table.convertColumnIndexToModel(column);
-		String name = table.getModel().getColumnName(column) + (row + 1);
-		addLabel(name);
-	}
 	
-	public int getCaretPosition() {
-		return textField.getCaretPosition();
+	
+	public void focusGained(FocusEvent arg0) {
+		
 	}
 
-	public void addLabel(String label) {
-		if (!editing)
+	public void focusLost(FocusEvent arg0) {	
+		
+		// VirtualKeyboard gets the focus very briefly when opened
+		// so ignore this!
+		if (arg0.getOppositeComponent() instanceof VirtualKeyboard)
 			return;
-		//String text = (String) delegate.getCellEditorValue();			
-		//delegate.setValue(text + label);
-		textField.replaceSelection(" " + label + " ");
-	}
-
-	public void setLabel(String text) {
-		if (!editing)
-			return;
-		delegate.setValue(text);
-	}
-
-	public String getEditingValue() {
-		return (String) delegate.getCellEditorValue();
-	}
-
-	public Object getCellEditorValue() {
-		return value;
-	}
-	
-	public void cancelCellEditing() {
-		editing = false;
-		errorOnStopEditing = false;
 		
-		super.cancelCellEditing();				
-	}
-	
-	
-	public boolean stopCellEditing() {
-		String text = (String) delegate.getCellEditorValue();	
-		
-		errorOnStopEditing = true;
-		
-		try {
-			// get GeoElement of current cell
-			value = kernel.lookupLabel(  GeoElement.getSpreadsheetCellName(column, row), false);
-
-			if (text.equals("")) {
-				if (value != null)
-					value.removeOrSetUndefinedIfHasFixedDescendent();
-			} else {
-				GeoElement newVal = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);
-				if (newVal == null) {
-					return false;
-				}
-				
-				value = newVal;
+		// only needed if eg columns resized
+		if (editing == true) {
+			if (!errorOnStopEditing) {
+				stopCellEditing();				
+			} else if (!app.isErrorDialogShowing()) {
+				cancelCellEditing();
 			}
-			
-			if (value != null)
-				app.storeUndoInfo();
-
-		} catch (Exception ex) {
-			// show GeoGebra error dialog
-			// kernel.getApplication().showError(ex.getMessage());
-			ex.printStackTrace();
-			super.stopCellEditing();
-			editing = false;
-			// Util.handleException(table, ex);
-			return false;
 		}
-		
-		errorOnStopEditing = false;
-		editing = false;
-		
-		boolean success = super.stopCellEditing();
-		moveSelectedCell(0, 1);
-		return success;
-	}
-
-	public boolean stopCellEditing(int colOff, int rowOff) {		
-		boolean success = stopCellEditing();
-		moveSelectedCell(colOff, rowOff);		
-		return success;
 	}
 	
-	private void moveSelectedCell(int colOff, int rowOff) {
-		int nextRow = Math.min(row + rowOff, table.getRowCount()-1);
-		int nextColumn = Math.min(column + colOff, table.getColumnCount()-1);
-		table.changeSelection(nextRow, nextColumn, false, false);
-		table.selectionChanged();
-	}
-
-	public void undoEdit() {
+	
+	
+	
+	
+	
+	
+	
+	//*********************************************************************
+	//     old code, has been moved to RelativeCopy   (except UndoEdit)
+	//*********************************************************************
+	
+	
+	// This method is never called, do we still need it? G.Sturr 2010-6-4
+	private void undoEdit() {
 		String text = "";
 		
 		if (value != null) {
@@ -318,6 +404,8 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		super.stopCellEditing();
 	}
 
+	
+	/*
 	private static GeoElement prepareNewValue(Kernel kernel, String name,
 			String text) throws Exception {
 		if (text == null)
@@ -498,25 +586,11 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		}
 	}
 
-	public void focusGained(FocusEvent arg0) {
-		
-	}
+	*/
+	
+	
+	
 
-	public void focusLost(FocusEvent arg0) {	
-		
-		// VirtualKeyboard gets the focus very briefly when opened
-		// so ignore this!
-		if (arg0.getOppositeComponent() instanceof VirtualKeyboard)
-			return;
-		
-		// only needed if eg columns resized
-		if (editing == true) {
-			if (!errorOnStopEditing) {
-				stopCellEditing();				
-			} else if (!app.isErrorDialogShowing()) {
-				cancelCellEditing();
-			}
-		}
-	}
-
+	
+	
 }

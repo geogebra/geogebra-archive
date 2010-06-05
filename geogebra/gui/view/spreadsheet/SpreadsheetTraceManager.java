@@ -319,14 +319,14 @@ public class SpreadsheetTraceManager {
 	 *   2) reset the trace row to the top of the column
 	 */
 	public void handleColumnDelete(int column1, int column2){
-		TraceSettings t = new TraceSettings();
+		TraceSettings t;
 		for ( GeoElement geo : traceGeoCollection.keySet()) {
-			t = traceGeoCollection.get(geo);
+			t = geo.getTraceSettings();
 			if ( column2 >= t.traceColumn1 && column1 <= t.traceColumn2 ){
-				removeSpreadsheetTraceGeo(geo);
-				//Construction cons = app.getKernel().getConstruction();
-				//setHeader(geo,cons);
-				//t.tracingRow = 1;	
+				//removeSpreadsheetTraceGeo(geo);
+				Construction cons = app.getKernel().getConstruction();
+				setHeader(geo,cons);
+				t.tracingRow = 1;	
 			}
 		}
 		

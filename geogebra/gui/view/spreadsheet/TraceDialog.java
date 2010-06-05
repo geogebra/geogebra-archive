@@ -407,7 +407,7 @@ implements
 		//promptPanel.setVisible(false);
 		
 		buttonPanel.add(closeCancelPanel, BorderLayout.EAST);
-		buttonPanel.add(promptPanel, BorderLayout.CENTER);	
+		//buttonPanel.add(promptPanel, BorderLayout.CENTER);	
 		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		//buttonPanel.setPreferredSize(new Dimension(400,50));

@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.Drawable;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
@@ -19,6 +20,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.Border;
@@ -50,6 +52,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private Border bAll = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.RED);
 
 	
+	private JCheckBox checkBox;
 	
 	//END G.Sturr
 	
@@ -69,13 +72,14 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		latexIcon = new ImageIcon();
 		emptyIcon = new ImageIcon();
 		cellPoint = new Point();
+		checkBox = new JCheckBox();
 		
 	}
 	
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) 
 	{	
-		
+		//this.setVerticalAlignment(JLabel.CENTER);
 		cellPoint.setLocation(column, row);
 		setIcon(emptyIcon);
 		setBackground(table.getBackground());
@@ -87,6 +91,19 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 				
 		// set cell content
 		GeoElement geo = (GeoElement)value;
+		
+		
+		/*
+		if(geo.isGeoBoolean()){
+			checkBox.setBackground(table.getBackground());
+			checkBox.setAlignmentX(CENTER_ALIGNMENT);
+			//checkBox.setText(geo.getCaption());
+			checkBox.setSelected(((GeoBoolean)geo).getBoolean());
+			return checkBox;
+		}
+		*/
+		
+		
 		String text = null;
 		if (geo.isIndependent()) {
 			text = geo.toValueString();

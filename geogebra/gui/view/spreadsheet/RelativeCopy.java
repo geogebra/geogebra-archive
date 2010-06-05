@@ -1,6 +1,7 @@
 
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -262,7 +263,7 @@ public class RelativeCopy {
 				int column = GeoElement.getSpreadsheetColumn(matcher);
 				int row = GeoElement.getSpreadsheetRow(matcher);
 				
-				MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
+				prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
 			}
 			return null;
 		}
@@ -326,7 +327,7 @@ public class RelativeCopy {
 		Matcher matcher = GeoElement.spreadsheetPattern.matcher(value.getLabel());			
 		int column0 = GeoElement.getSpreadsheetColumn(matcher);
 		int row0 = GeoElement.getSpreadsheetRow(matcher);
-		GeoElement value2 = MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column0 + dx, row0 + dy);
+		GeoElement value2 = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column0 + dx, row0 + dy);
 		
 		value2.setAllVisualProperties(value, false);
 		
@@ -423,11 +424,11 @@ public class RelativeCopy {
 		GeoElement oldValue = getValue(table, column, row);
 		if (text == null) {
 			if (oldValue != null) {
-				MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
+				prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
 			}
 			return;
 		}
-		GeoElement value2 = MyCellEditor.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column, row);
+		GeoElement value2 = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column, row);
 
 		if (geoForStyle != null)
 			value2.setVisualStyle(geoForStyle);
@@ -520,5 +521,207 @@ public class RelativeCopy {
 		if (column < 0 || column >= tableModel.getColumnCount()) return null;
 		return (GeoElement)tableModel.getValueAt(row, column);
 	}	
+	
+	
+	//=========================================================================
+	//              Cell Editing Methods    
+	//=========================================================================
+	
+	// G.Sturr 2010-6-4
+	// Some methods used by cell editors to add/edit cell values. 
+	// TODO ... is this the correct place to for these?
+	
+	
+	
+	private static GeoElement prepareNewValue(Kernel kernel, String name,
+			String text) throws Exception {
+		if (text == null)
+			return null;
+	
+		// remove leading equal sign, e.g. "= A1 + A2"
+		if (text.startsWith("=")) {
+			text = text.substring(1);
+		}
+		text = text.trim();
+
+		// no equal sign in input
+		GeoElement[] newValues = null;
+		try {
+			// check if input is same as name: circular definition
+			if (text.equals(name)) {
+				// circular definition
+				throw new CircularDefinitionException();
+			}
+						
+			// evaluate input text
+			newValues = kernel.getAlgebraProcessor()
+					.processAlgebraCommandNoExceptionHandling(text, false);
+			
+			// check if text was the label of an existing geo 
+			if (text.equals(newValues[0].getLabel())) {
+				// make sure we create a copy of this existing or auto-created geo 
+				// by providing the new cell name in the beginning
+				text = name + " = " + text;		
+				newValues = kernel.getAlgebraProcessor()
+					.processAlgebraCommandNoExceptionHandling(text, false);
+			}
+			
+			// check if name was auto-created: if yes we could have a circular definition
+			GeoElement autoCreateGeo = kernel.lookupLabel(name);		
+			if (autoCreateGeo != null) {				
+				// check for circular definition: if newValue depends on autoCreateGeo
+				boolean circularDefinition = false;
+				for (int i=0; i < newValues.length; i++) {
+					if (newValues[i].isChildOf(autoCreateGeo)) {
+						circularDefinition = true;
+						break;
+					}
+				}
+				
+				if (circularDefinition) {
+					// remove the auto-created object and the result
+					autoCreateGeo.remove();
+					newValues[0].remove();
+					
+					// circular definition
+					throw new CircularDefinitionException();
+				}
+			}
+			
+			for (int i=0; i < newValues.length; i++) {
+				newValues[i].setAuxiliaryObject(true);
+				if (newValues[i].isGeoText())
+					newValues[i].setEuclidianVisible(false);
+			}
+			
+			GeoElement.setLabels(name, newValues); // set names to be D1, E1,
+													// F1, etc for multiple
+													// objects			
+		} 
+		catch (CircularDefinitionException ce) {
+			// circular definition
+			kernel.getApplication().showError("CircularDefinition");
+			return null;
+		}
+		catch (Exception e) {
+			// create text if something went wrong
+			text = "\"" + text + "\"";
+			newValues = kernel.getAlgebraProcessor()
+					.processAlgebraCommandNoExceptionHandling(text, false);
+			newValues[0].setLabel(name);
+			newValues[0].setEuclidianVisible(false);
+			newValues[0].update();
+		}
+		return newValues[0];
+	}
+
+	
+	
+	private static GeoElement updateOldValue(Kernel kernel,
+			GeoElement oldValue, String name, String text) throws Exception {
+		String text0 = text;
+		if (text.startsWith("=")) {
+			text = text.substring(1);
+		}
+		GeoElement newValue = null;
+		try {
+			// always redefine objects in spreadsheet, don't store undo info
+			// here
+			newValue = kernel.getAlgebraProcessor()
+					.changeGeoElementNoExceptionHandling(oldValue, text, true,
+							false);
+
+			// newValue.setConstructionDefaults();
+			newValue.setAllVisualProperties(oldValue, true);
+			if (oldValue.isAuxiliaryObject())
+				newValue.setAuxiliaryObject(true);
+
+			// Application.debug("GeoClassType = " +
+			// newValue.getGeoClassType()+" " + newValue.getGeoClassType());
+			if (newValue.getGeoClassType() == oldValue.getGeoClassType()) {
+				// newValue.setVisualStyle(oldValue);
+			} else {
+				kernel.getApplication().refreshViews();
+			}
+		} 
+		catch (CircularDefinitionException cde) {			
+			kernel.getApplication().showError("CircularDefinition");
+			return null;
+		}
+		catch (Throwable e) {
+			 //Application.debug("SPREADSHEET: input error: " + e.getMessage());
+			 //Application.debug("text0 = " + text0);
+			
+			
+			//if (text0.startsWith("=") || text0.startsWith("\"")) {
+				//throw new Exception(e);				
+			//} else
+			{
+				if (!oldValue.hasChildren()) {
+					oldValue.remove();
+					
+					// add input as text
+					try {
+						newValue = prepareNewValue(kernel, name, "\"" + text0 + "\"");
+					}
+					catch (Throwable t) {
+						newValue = prepareNewValue(kernel, name, "");
+					}
+					newValue.setEuclidianVisible(false);
+					newValue.update();
+				} else {
+					throw new Exception(e);
+				}
+			}
+		}
+		return newValue;
+	}
+
+	
+	// 
+	public static GeoElement prepareAddingValueToTableNoStoringUndoInfo(
+			Kernel kernel, MyTable table, String text, GeoElement oldValue,
+			int column, int row) throws Exception {
+		// column = table.convertColumnIndexToModel(column);
+		String name = table.getModel().getColumnName(column) + (row + 1);
+		if (text != null) {
+			text = text.trim();
+			if (text.length() == 0) {
+				text = null;
+			}
+		}
+		
+		// make sure that text can be changed to something else
+		// eg (2,3 can be overwritten as (2,3)
+		if (oldValue != null && oldValue.isGeoText() && !oldValue.hasChildren()) {
+			oldValue.remove();
+			oldValue = null;
+		}
+
+		if (text == null) {
+			if (oldValue != null) {
+				oldValue.remove();
+			}
+			return null;
+		} else if (oldValue == null) {
+			try {
+				return prepareNewValue(kernel, name, text);
+			} catch (Throwable t) {
+				return prepareNewValue(kernel, name, "");
+			}
+		} else { // value != null;
+			return updateOldValue(kernel, oldValue, name, text);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }
