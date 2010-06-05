@@ -18,15 +18,10 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
  *
  */
 public class DrawCurve3D extends Drawable3DCurves {
-	
+	private CurveTree tree;
 	
 	/** gl index of the quadric */
 	private int geometryIndex = -1;
-	
-	
-	
-	
-	
 	
 	
 	/**
@@ -35,26 +30,18 @@ public class DrawCurve3D extends Drawable3DCurves {
 	 */
 	public DrawCurve3D(EuclidianView3D a_view3d, GeoCurveCartesian3D curve) {
 		super(a_view3d,curve);
+		tree = new CurveTree(curve,4);
 	}
-
-	
-	
-	
 	
 
 	public void drawGeometry(Renderer renderer) {
 		
-		renderer.setThickness(getGeoElement().getLineThickness());			
-				
+		renderer.setThickness(getGeoElement().getLineThickness());
 
 		renderer.getGeometryManager().draw(geometryIndex);
 		
 	}
 
-
-
-
-	
 	
 	protected void updateForItSelf(){
 		
@@ -88,7 +75,10 @@ public class DrawCurve3D extends Drawable3DCurves {
 		brush.setMaxDelta(0.2f);
 		brush.setMinDelta(0.001f);
 		brush.setAngleThreshold(0.995f);
-		brush.draw(curve);
+		double[] min = {-1.0,-1.0,-1.0};
+		double[] max = {1.0,1.0,1.0};
+		LinkedList<GgbVector> temp = tree.getPoints(new GgbVector(min), new GgbVector(max), new GgbVector(min));
+		brush.draw(temp, curve);
 
 		geometryIndex = brush.end();
 

@@ -421,6 +421,18 @@ public class PlotterBrush {
 		}
 	}
 	
+public void draw(LinkedList<GgbVector> list, GeoCurveCartesian3DInterface curve){	
+		setTextureType(PlotterBrush.TEXTURE_LINEAR);
+		end = new PlotterBrushSection(list.getFirst(), curve.evaluateTangent(1), thickness);
+		
+		for (GgbVector p: list){
+			start = end;
+			end = new PlotterBrushSection(start,p, curve.evaluateTangent(1), thickness);
+
+			setTextureX(1);
+			join();
+		}
+	}
 	
 	/**
 	 * draws the curve using the segment splitting method
