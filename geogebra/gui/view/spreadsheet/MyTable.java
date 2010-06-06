@@ -258,7 +258,8 @@ public class MyTable extends JTable implements FocusListener
 		setShowGrid(true); 	 
 		setGridColor(TABLE_GRID_COLOR); 	 
 
-		addFocusListener(this);
+		// disabled - see ticket #135
+		// addFocusListener(this);
 		
 		// editing 	 
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
