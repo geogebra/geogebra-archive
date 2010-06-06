@@ -16,8 +16,10 @@ public class RenameInputHandler implements InputHandler {
 	private Application app;
 
 	private static String[] invalidFunctionNames = { "gamma", "x", "y", "abs",
-			"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan", "acos",
-			"asin", "atan", "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
+			"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan",
+			"acos", "arcos", "arccos", "asin", "arcsin", "atan", "arctan", 
+			"cosh", "sinh", "tanh", "acosh", "arcosh", "arccosh", "asinh",
+			"arcsinh", "atanh", "arctanh",
 			"floor", "ceil", "round", "random", "conjugate", "arg",
 			"sec", "csc", "cosec", "cot", "sech", "csch", "coth" };
 
