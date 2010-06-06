@@ -576,26 +576,16 @@ GeoPointInterface, MatrixTransformable {
 		// calculate the determinante of ABC
 		// det(ABC) = sum1 - sum2		
 		
-		double Ax = A.x / A.z;
-		double Ay = A.y / A.z;
-		double Bx = B.x / B.z;
-		double By = B.y / B.z;
-		double Cx = C.x / C.z;
-		double Cy = C.y / C.z;
-		
-		double sum1 = Ax * By + Bx * Cy + Cx * Ay ;
-		double sum2 = By * Cx + Cy * Ax + Ay * Bx;
-		/* doesn't work if A.z, B.z, C.z too large
 		double sum1 = A.x * B.y * C.z + 
 		B.x * C.y * A.z +
 		C.x * A.y * B.z;
 		double sum2 = A.z * B.y * C.x +
 		B.z * C.y * A.x +
-		C.z * A.y * B.x;*/
+		C.z * A.y * B.x;
 				
 		// det(ABC) == 0  <=>  sum1 == sum2		
 
-		return Kernel.isEqual(sum1, sum2, Kernel.MIN_PRECISION );
+		return Kernel.isEqual(sum1, sum2, Kernel.MIN_PRECISION * A.z * B.z * C.z );
 	}
     
     /**
