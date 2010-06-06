@@ -583,9 +583,13 @@ GeoPointInterface, MatrixTransformable {
 		B.z * C.y * A.x +
 		C.z * A.y * B.x;
 				
-		// det(ABC) == 0  <=>  sum1 == sum2		
-
-		return Kernel.isEqual(sum1, sum2, Kernel.MIN_PRECISION * A.z * B.z * C.z );
+		// det(ABC) == 0  <=>  sum1 == sum2	
+		
+		// A.z, B.z, C.z could be zero
+		double eps = Math.max(Kernel.MIN_PRECISION, Kernel.MIN_PRECISION * A.z
+				* B.z * C.z);
+		
+		return Kernel.isEqual(sum1, sum2, eps );
 	}
     
     /**
