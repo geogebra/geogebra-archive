@@ -150,6 +150,7 @@ public abstract class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("fi")); // Finnish
 		supportedLocales.add(new Locale("fr")); // French
 		supportedLocales.add(new Locale("gl")); // Galician
+		supportedLocales.add(new Locale("hi")); // Hindi
 		supportedLocales.add(new Locale("ka")); // Georgian
 		supportedLocales.add(new Locale("de")); // German
 		supportedLocales.add(new Locale("de", "AT")); // German (Austria)
