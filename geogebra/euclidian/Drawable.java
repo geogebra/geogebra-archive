@@ -60,6 +60,7 @@ public abstract class Drawable {
 	
 	// use JLaTeXMath or HotEqn
 	final private static boolean useJLaTeXMath = true;
+	static TeXFormula initJLaTeXMath; 
 	
 	BasicStroke objStroke = EuclidianView.getDefaultStroke();
 	BasicStroke selStroke = EuclidianView.getDefaultSelectionStroke();
@@ -500,6 +501,9 @@ public abstract class Drawable {
 		
 		if (equations == null) { // first call
 			
+			// initialise definitions 
+			if (initJLaTeXMath == null) initJLaTeXMath = new TeXFormula("\\DeclareMathOperator{\\sech}{sech} \\DeclareMathOperator{\\csch}{csch}");
+			
 			equations = new HashMap();
 			
 		   try{
@@ -534,8 +538,8 @@ public abstract class Drawable {
 		if (icon == null) {
 			//Application.debug("creating new icon for: "+text);
 			TeXFormula formula;
-			try {
-			formula = new TeXFormula(eqnSB.substring(0, strLen));
+			try {			
+				formula = new TeXFormula(eqnSB.substring(0, strLen));
 			} catch (ParseException e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
