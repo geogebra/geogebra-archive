@@ -1648,6 +1648,7 @@ implements ExpressionValue, ExpressionNodeConstants {
                 
             case POWER:
             	
+            	/* support for sin²(x) for display, too slow and hacky
             	if (STRING_TYPE == STRING_TYPE_GEOGEBRA && leftStr.startsWith("sin(")) {
             		//&& rightStr.equals("2")) {
             		int index;
@@ -1666,7 +1667,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             		
             	}//*/
             	
-            	if (STRING_TYPE == STRING_TYPE_LATEX && leftStr.startsWith("\\sin ")) {
+            	// support for sin²(x) for LaTeX, eg FormulaText[]
+            	if (STRING_TYPE == STRING_TYPE_LATEX &&
+            			(leftStr.startsWith("\\sin ") || leftStr.startsWith("\\cos ")) || leftStr.startsWith("\\tan ") || leftStr.startsWith("\\csc ") || leftStr.startsWith("\\sec ") || leftStr.startsWith("\\cot ") || leftStr.startsWith("\\sinh ") || leftStr.startsWith("\\cosh ") || leftStr.startsWith("\\tanh ") || leftStr.startsWith("\\coth ") || leftStr.startsWith("\\sech ") || leftStr.startsWith("\\csch ")) {
             		//&& rightStr.equals("2")) {
             		int index;
             		try {
@@ -1676,10 +1679,12 @@ implements ExpressionValue, ExpressionNodeConstants {
             		}
            		
             		if (index > 0 && index != Integer.MAX_VALUE) {
-	            		sb.append("\\sin ^{");
+            			int spaceIndex = leftStr.indexOf(' ');
+	            		sb.append(leftStr.substring(0, spaceIndex));
+	            		sb.append(" ^{");
 	            		sb.append(rightStr);
 	            		sb.append("}");
-	            		sb.append(leftStr.substring(4)); // everying except the "\\sin "
+	            		sb.append(leftStr.substring(spaceIndex + 1)); // everying except the "\\sin "
 	            		break;
             		}
             		
