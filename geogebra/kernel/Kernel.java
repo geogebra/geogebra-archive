@@ -7077,8 +7077,14 @@ public class Kernel {
 	
 	
 	final public GeoNumeric convertIndexToNumber(String str) {
-		//Application.debug(str.substring(3, str.length() - 1)); 
-		MyDouble md = new MyDouble(this, str.substring(3, str.length() - 1)); // strip off eg "sin" at start, "(" at end
+		
+		int i = 0;
+		char c;
+		while (i < str.length() && !Unicode.isSuperscriptDigit(str.charAt(i)))
+			i++;
+		
+		//Application.debug(str.substring(i, str.length() - 1)); 
+		MyDouble md = new MyDouble(this, str.substring(i, str.length() - 1)); // strip off eg "sin" at start, "(" at end
 		GeoNumeric num = new GeoNumeric(getConstruction(), md.getDouble());
 		return num;
 
@@ -7089,8 +7095,18 @@ public class Kernel {
 		// sin^(-1)(x) -> ArcSin(x)
 		if (image.indexOf(Unicode.Superscript_Minus) > -1) {
 			//String check = ""+Unicode.Superscript_Minus + Unicode.Superscript_1 + '(';
-			if (image.substring(3, 6).equals(Unicode.superscriptMinusOneBracket))
-				return new ExpressionNode(this, en, ExpressionNode.ARCSIN, null);
+			if (image.substring(3, 6).equals(Unicode.superscriptMinusOneBracket)) {
+				switch (type) {
+				case ExpressionNode.SIN:
+					return new ExpressionNode(this, en, ExpressionNode.ARCSIN, null);
+				case ExpressionNode.COS:
+					return new ExpressionNode(this, en, ExpressionNode.ARCCOS, null);
+				case ExpressionNode.TAN:
+					return new ExpressionNode(this, en, ExpressionNode.ARCTAN, null);
+				default:
+						throw new Error("Inverse not supported for trig function"); // eg csc^-1(x)
+				}
+			}
 			else throw new Error("Bad index for trig function"); // eg sin^-2(x)
 		}
 		

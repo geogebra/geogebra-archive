@@ -53,5 +53,9 @@ public class Unicode {
 		 return sb.toString();
 
 	}
+
+	final public static boolean isSuperscriptDigit(char c) {
+		return (c >= Superscript_0 && c <= Superscript_9) || c == Superscript_1 || c == Superscript_2 || c == Superscript_3;
+	}
 	
 }

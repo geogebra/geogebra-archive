@@ -298,21 +298,32 @@ TOKEN: {
 |	< Y_FUNC:  "y(" | "ycoord("  > 
 |	< Z_FUNC:  "z(" | "zcoord("  > 
 |	< COS_FUNC: ( "cos(" | "Cos(" ) > 
+|	< COSN_FUNC: ( "cos" | "Cos" ) ( < POWERN > ) + "(" > 
 |	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
-|	< SINN_FUNC: ( "sin" | "Sin" ) (<SUPERSCRIPT_MINUS>)? ( <INDEXDIGIT> )+ "(" > 
+|	< SINN_FUNC: ( "sin" | "Sin" ) ( < POWERN > ) + "(" > 
 |	< TAN_FUNC: ( "tan(" | "Tan(" ) > 
+|	< TANN_FUNC: ( "tan" | "Tan" ) (< POWERN > ) + "(" > 
 |	< CSC_FUNC: ( "csc(" | "Csc(" | "cosec(" | "Cosec(") > 
+|	< CSCN_FUNC: ( "csc" | "Csc" | "cosec" | "Cosec") (< POWERN > ) + "("> 
 |	< SEC_FUNC: ( "sec(" | "Sec(" ) > 
+|	< SECN_FUNC: ( "sec" | "Sec" ) (< POWERN > ) + "(" >  
 |	< COT_FUNC: ( "cot(" | "Cot(" ) > 
+|	< COTN_FUNC: ( "cot" | "Cot" ) (< POWERN > ) + "(" >  
 |	< CSCH_FUNC: ( "csch(" | "Csch(" | "cosech(" | "Cosech(") > 
+|	< CSCHN_FUNC: ( "csch" | "Csch" | "cosech" | "Cosech") (< POWERN > ) + "(" > 
 |	< SECH_FUNC: ( "sech(" | "Sech(" ) > 
+|	< SECHN_FUNC: ( "sech" | "Sech" ) (< POWERN > ) + "(" > 
 |	< COTH_FUNC: ( "coth(" | "Coth(" ) > 
+|	< COTHN_FUNC: ( "coth" | "Coth" ) (< POWERN > ) + "(" > 
 |	< ACOS_FUNC: ( "acos(" | "arccos("| "arcos(" | "ArcCos(" )> 
 |	< ASIN_FUNC: ( "asin(" | "arcsin(" | "ArcSin(" ) > 
 |	< ATAN_FUNC: ( "atan(" | "arctan(" | "ArcTan(" )> 
 |	< COSH_FUNC: ( "cosh(" | "Cosh(" ) > 
+|	< COSHN_FUNC: ( "cosh" | "Cosh" ) (< POWERN > ) + "(" > 
 |	< SINH_FUNC: ( "sinh(" | "Sinh(" ) > 
+|	< SINHN_FUNC: ( "sinh" | "Sinh" ) (< POWERN > ) + "(" > 
 |	< TANH_FUNC: ( "tanh(" | "Tanh(" ) > 
+|	< TANHN_FUNC: ( "tanh" | "Tanh" ) (< POWERN > ) + "(" > 
 |	< ACOSH_FUNC: ( "acosh(" | "arccosh(" | "arcosh(" | "ArcCosh(" ) > 
 |	< ASINH_FUNC: ( "asinh(" | "arcsinh(" | "ArcSinh(" ) > 
 |	< ATANH_FUNC: ( "atanh(" | "arctanh(" | "ArcTanh(" ) > 
@@ -562,7 +573,8 @@ Token casLabel():
 {
 	(l = <VARX> | l = <VARY> | l = <LABEL> | l = <SPREADSHEET_LABEL>)
 	{
-	  return l;	}
+	  return l;
+	}
 }
 
 /**
@@ -1396,7 +1408,8 @@ ExpressionValue myDouble():
     double val;
 }
 {       
-   (     (c = <FLOAT> | c = <EFLOAT>)
+   (
+     (c = <FLOAT> | c = <EFLOAT>)
     	{
     		val = MyDouble.parseDouble( c.image );
     	}
@@ -1485,33 +1498,56 @@ ExpressionNode numberFunction():
      <COS_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COS, null); }   
 |
+    ( c = <COSN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.COS); }  
+|
     <SIN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SIN, null); }   
 |
     ( c = <SINN_FUNC> ) en = expressionOrEquation() ")"
-//      { return new ExpressionNode(kernel, new ExpressionNode(kernel, en, ExpressionNode.SIN, null), ExpressionNode.POWER, kernel.convertIndexToNumber(c.image)); }  
       { return kernel.handleTrigPower(c.image, en, ExpressionNode.SIN); }  
 |
     <TAN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.TAN, null); }  
 |
+    ( c = <TANN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.TAN); }  
+|
     <CSC_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.CSC, null); }   
+|
+    ( c = <CSCN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.CSC); }  
 |
     <SEC_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SEC, null); }  
 |
+    ( c = <SECN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.SEC); }  
+|
     <COT_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COT, null); }  
+|
+    ( c = <COTN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.COT); }  
 |
     <CSCH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.CSCH, null); }   
 |
+    ( c = <CSCHN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.CSCH); }  
+|
     <SECH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SECH, null); }  
 |
+    ( c = <SECHN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.SECH); }  
+|
     <COTH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COTH, null); }  
+|
+    ( c = <COTHN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.COTH); }  
 |
     <ACOS_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ARCCOS, null); }   
@@ -1525,11 +1561,20 @@ ExpressionNode numberFunction():
     <COSH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COSH, null); }   
 |
+    ( c = <COSHN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.COSH); }  
+|
     <SINH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SINH, null); }  
 |
+    ( c = <SINHN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.SINH); }  
+|
     <TANH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.TANH, null); }  
+|
+    ( c = <TANHN_FUNC> ) en = expressionOrEquation() ")"
+      { return kernel.handleTrigPower(c.image, en, ExpressionNode.TANH); }  
 |
     <ACOSH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ACOSH, null); }   
