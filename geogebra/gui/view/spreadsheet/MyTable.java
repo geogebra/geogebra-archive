@@ -258,8 +258,8 @@ public class MyTable extends JTable implements FocusListener
 		setShowGrid(true); 	 
 		setGridColor(TABLE_GRID_COLOR); 	 
 
-		// disabled - see ticket #135
-		// addFocusListener(this);
+		// - see ticket #135
+		 addFocusListener(this);
 		
 		// editing 	 
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -2084,7 +2084,7 @@ public class MyTable extends JTable implements FocusListener
 	}
 	/**/
 
-	protected class MyColumnHeaderRenderer extends JLabel implements TableCellRenderer, ListSelectionListener, FocusListener
+	protected class MyColumnHeaderRenderer extends JLabel implements TableCellRenderer, ListSelectionListener  //, FocusListener
 	{
 		private static final long serialVersionUID = 1L;
 
@@ -2167,7 +2167,7 @@ public class MyTable extends JTable implements FocusListener
 		*/
 		}
 
-		
+		/*   (focus listener not needed yet)
 		public void focusGained(FocusEvent e) {
 			if (Application.isVirtualKeyboardActive())
 				app.getGuiManager().toggleKeyboard(true);
@@ -2179,11 +2179,11 @@ public class MyTable extends JTable implements FocusListener
 			// avoid infinite loop!
 			if (e.getOppositeComponent() instanceof VirtualKeyboard)
 				return;
-			
+			if (Application.isVirtualKeyboardActive()
 			app.getGuiManager().toggleKeyboard(false);
 			
 		}
-		
+		*/
 		
 	
 	}
@@ -2492,8 +2492,8 @@ public class MyTable extends JTable implements FocusListener
 		// avoid infinite loop!
 		if (e.getOppositeComponent() instanceof VirtualKeyboard)
 			return;
-		
-		app.getGuiManager().toggleKeyboard(false);
+		if (Application.isVirtualKeyboardActive())
+			app.getGuiManager().toggleKeyboard(false);
 		
 	}
 	 
