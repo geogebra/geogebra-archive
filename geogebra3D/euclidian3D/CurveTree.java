@@ -79,6 +79,7 @@ public class CurveTree {
 		v[6] = new GgbVector(x2,y1,z2,1);
 		v[7] = new GgbVector(x2,y2,z2,1);
 		
+		radius=0;
 		for(int i = 0; i < 8; i++){
 			view.toSceneCoords3D(v[i]);
 			if(v[i].norm()>radius)
@@ -154,7 +155,7 @@ public class CurveTree {
 		GgbVector v1 = p3.sub(p1);
 		GgbVector v2 = p2.sub(p3);
 		double cosAng = v1.dotproduct(v2)/(v1.norm()*v2.norm());
-		if( cosAng < cosThreshold )
+		if( cosAng < cosThreshold || Double.isNaN(cosAng) )
 			return true;
 		return false;
 	}
