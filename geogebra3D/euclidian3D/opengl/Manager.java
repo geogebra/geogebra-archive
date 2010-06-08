@@ -117,7 +117,12 @@ abstract public class Manager {
 		return gl;
 	}
 
-
+	/**
+	 * @return glu context
+	 */
+	public GLU getGLU(){
+		return glu;
+	}
 
 	
 	/////////////////////////////////////////////

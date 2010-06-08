@@ -52,6 +52,19 @@ public class GgbVector
 		
 	}
 	
+	/** creates a 3D vector/point with the specified values
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param w
+	 */
+	public GgbVector(double x, double y, double z, double w){
+		super(4,1);
+		set(1,x);
+		set(2,y);
+		set(3,z);
+		set(4,w);
+	}
 	
 	///////////////////////////////////////////////////:
 	//setters and getters

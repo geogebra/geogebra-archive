@@ -423,11 +423,13 @@ public class PlotterBrush {
 	
 public void draw(LinkedList<GgbVector> list, GeoCurveCartesian3DInterface curve){	
 		setTextureType(PlotterBrush.TEXTURE_LINEAR);
-		end = new PlotterBrushSection(list.getFirst(), curve.evaluateTangent(1), thickness);
+		double[] t = {1,0,0};
+		GgbVector tangent = new GgbVector(t);
+		end = new PlotterBrushSection(list.getFirst(), tangent, thickness);
 		
 		for (GgbVector p: list){
 			start = end;
-			end = new PlotterBrushSection(start,p, curve.evaluateTangent(1), thickness);
+			end = new PlotterBrushSection(start,p, tangent, thickness);
 
 			setTextureX(1);
 			join();
