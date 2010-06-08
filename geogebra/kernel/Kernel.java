@@ -5989,7 +5989,10 @@ public class Kernel {
 			return x - EPSILON <= y && y <= x + EPSILON;
 	}
 	
-	public static boolean isEqual(double x, double y, double eps) {		
+	final public static boolean isEqual(double x, double y, double eps) {		
+		if (x == y) // handles infinity and NaN cases
+			return true;
+		else
 		return x - eps < y && y < x + eps;
 	}
 	
