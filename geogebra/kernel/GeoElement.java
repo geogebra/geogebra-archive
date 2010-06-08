@@ -63,7 +63,7 @@ public abstract class GeoElement
 	// private static int geoElementID = Integer.MIN_VALUE;
 
 	private static final char[] complexLabels =
-	{ 'z' };
+	{ 'w' }; // z reserved for complex
 		
 	private static final char[] pointLabels =
 		{
@@ -131,7 +131,7 @@ public abstract class GeoElement
 			'u',
 			'v',
 			'w',
-			'z',
+			//'z', reserved for 3D now
 			'a',
 			'b',
 			'c',
@@ -179,8 +179,9 @@ public abstract class GeoElement
 			't',
 			'u',
 			'v',
-			'w',
-			'z' };
+			'w'
+			// ,'z' reserved for 3D now
+			};
 
 	private static final char[] greekLowerCase =
 		{
