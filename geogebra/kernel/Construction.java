@@ -876,6 +876,7 @@ public class Construction {
 	private GeoElement autoCreateGeoElement(String label) {		
 		GeoElement createdGeo = null;
 		boolean fix = true;
+		boolean auxilliary = true;
 		
 		// if referring to variable "i" (complex) that is undefined, create it
 		if (label.equals("i")) {
@@ -913,7 +914,156 @@ public class Construction {
 				}
 			}
 
+		} else if (label.length() == 3) {
+			if (label.equals("lnx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("ln(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} 
+		} else if (label.length() == 4) {
+			if (label.equals("sinx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("sin(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("cosx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("cos(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("tanx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("tan(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("secx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("sec(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("cscx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("csc(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("cotx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("cot(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("logx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("log(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			}
+		} else if (label.length() == 5) {
+			if (label.equals("sinhx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("sinh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("coshx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("cosh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("tanhx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("tanh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("sechx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("sech(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("cothx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("coth(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("acosx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("acos(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("asinx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("asin(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("atanx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("atan(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			}
+		} else if (label.length() == 6) {
+			if (label.equals("cosecx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("cosec(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("arcosx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("acos(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("asinhx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("asinh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("acoshx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("acosh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("atanhx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("atanh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			}
+		} else if (label.length() == 7) {
+			if (label.equals("arccosx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("acos(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("arcsinx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("asin(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("arctanx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("atan(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} 
+		} else if (label.length() == 8) {
+			if (label.equals("arccoshx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("acosh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("arcsinhx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("asinh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} else if (label.equals("arctanhx")) {
+				createdGeo = kernel.getAlgebraProcessor().evaluateToFunction("atanh(x)",true); 
+				label=createdGeo.getDefaultLabel();
+				auxilliary = false;
+				fix = false;
+			} 
 		}
+		
+
 		
 		// handle i or e case
 		if (createdGeo != null) {
@@ -921,9 +1071,9 @@ public class Construction {
 			boolean oldSuppressLabelsActive = isSuppressLabelsActive();
 			setSuppressLabelCreation(false);
 			
-			createdGeo.setAuxiliaryObject(true);
+			createdGeo.setAuxiliaryObject(auxilliary);
 			createdGeo.setLabel(label);
-			createdGeo.setFixed(false);
+			createdGeo.setFixed(fix);
 			
 			// revert to previous label creation state
 			setSuppressLabelCreation(oldSuppressLabelsActive);	
