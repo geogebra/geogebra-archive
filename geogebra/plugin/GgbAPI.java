@@ -359,7 +359,7 @@ public class GgbAPI {
 	public synchronized void openFile(String strURL) {
 		try {
 			String lowerCase = strURL.toLowerCase(Locale.US);
-			URL url = new URL(lowerCase);
+			URL url = new URL(strURL);
 			app.loadXML(url, lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL));
 		} catch (Exception e) {
 			e.printStackTrace();
