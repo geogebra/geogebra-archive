@@ -231,13 +231,20 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				consumed = true;								
 				break;
 				
-			// needed on MacOS
+			// needed for detached views and MacOS
 			// Cmd + Y: Redo
 			case KeyEvent.VK_Y:
 				app.getGuiManager().redo();
 				consumed = true;
 				break;
-				
+					
+			// needed for detached views and MacOS
+			// Ctrl + Z: Undo
+			case KeyEvent.VK_Z:
+				app.getGuiManager().undo();
+				consumed = true;
+				break;
+						
 			// ctrl-R updates construction
 			// make sure it works in applets without a menubar
 			case KeyEvent.VK_R:
