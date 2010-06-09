@@ -109,7 +109,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean showVScrollBar = true;
 	private boolean showHScrollBar = true;
 	private boolean showBrowserPanel = false;
-	private boolean showCellFormatToolBar = false;
+	private boolean showToolBar = false;
 	
 	
 	
@@ -188,7 +188,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			
 		spreadsheetPanel = new JPanel(new BorderLayout());
 		spreadsheetPanel.add(getCellFormatToolBar(),BorderLayout.NORTH);
-		setShowToolBar(showCellFormatToolBar);
+		setShowToolBar(showToolBar);
 		spreadsheetPanel.add(spreadsheet,BorderLayout.CENTER);
 		
 		setRightComponent(spreadsheetPanel);	
@@ -207,7 +207,16 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 	}
 	
-	
+	public void setDefaultLayout() {
+		
+		setShowGrid(true);
+		setShowRowHeader(true);
+		setShowColumnHeader(true);
+		setShowVScrollBar(true);
+		setShowHScrollBar(true);
+		setShowBrowserPanel(false);
+		setShowToolBar(false);
+	}
 	
 	
 
@@ -388,6 +397,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		//Application.debug(new Date() + " CLEAR VIEW");
 		
+		//clear the table model
 		int rows = tableModel.getRowCount();
 		int columns = tableModel.getColumnCount();
 		for (int c = 0; c < columns; ++c) {
@@ -396,6 +406,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			}
 		}
 		
+		setDefaultLayout();
 		table.oneClickEditableSet.clear();
 	}
 	
@@ -407,9 +418,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			traceDialog.toolbarModeChanged(mode);
 		}
 	}
-	
-		
+
+	/**
+	 * Clear table and set to default layout. 
+	 * This method is called on startup or when new window is called
+	 */
 	public void restart() {
+		setDefaultLayout();
 		highestUsedColumn = -1;
 		updateColumnWidths();
 		updateFonts(); //G.Sturr 2010-6-4
@@ -420,6 +435,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 	}	
 	
+	/** Resets spreadsheet after undo/redo call. */
 	public void reset() {
 		if(traceManager != null)
 			traceManager.loadTraceGeoCollection();
@@ -1145,10 +1161,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	 */
 	public void getXML(StringBuilder sb) {
 		sb.append("<spreadsheetView>\n");
-		
+
 		int width = getWidth();//getPreferredSize().width;
 		int height = getHeight();//getPreferredSize().height;
-		
+
 		//if (width > MIN_WIDTH && height > MIN_HEIGHT) 
 		{
 			sb.append("\t<size ");
@@ -1160,7 +1176,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			sb.append("\"");
 			sb.append("/>\n");
 		}
-		
+
 		// column widths 
 		for (int col = 0 ; col < table.getColumnCount() ; col++) {
 			TableColumn column = table.getColumnModel().getColumn(col); 
@@ -1175,13 +1191,46 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			if (rowHeight != table.getRowHeight())
 				sb.append("\t<spreadsheetRow id=\""+row+"\" height=\""+rowHeight+"\"/>\n");
 		}
+
+		// layout
+		sb.append("\t<layout ");
 		
+		sb.append(" showGrid=\"");
+		sb.append(showGrid  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" showHScrollBar=\"");
+		sb.append(showHScrollBar  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" showVScrollBar=\"");
+		sb.append(showVScrollBar  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" showBrowserPanel=\"");
+		sb.append(showBrowserPanel  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" showColumnHeader=\"");
+		sb.append(showColumnHeader  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" showRowHeader =\"");
+		sb.append(showRowHeader  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" showToolBar=\"");
+		sb.append(showToolBar  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append("/>\n");
+		//---- end layout
 		
 		sb.append("</spreadsheetView>\n");
 	}
-	
 
-	
+
+
 	
 	
 
@@ -1482,7 +1531,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 
-	public void setShowVScrollbar(boolean showVScrollBar) {
+	public void setShowVScrollBar(boolean showVScrollBar) {
 		if (showVScrollBar) {
 			spreadsheet
 					.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -1493,11 +1542,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		this.showVScrollBar = showVScrollBar;
 	}
 
-	public boolean getShowVScrollbar() {
+	public boolean getShowVScrollBar() {
 		return showVScrollBar;
 	}
 
-	public void setShowHScrollbar(boolean showHScrollBar) {
+	public void setShowHScrollBar(boolean showHScrollBar) {
 		if (showHScrollBar) {
 			spreadsheet
 					.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -1508,7 +1557,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		this.showHScrollBar = showHScrollBar;
 	}
 
-	public boolean getShowHScrollbar() {
+	public boolean getShowHScrollBar() {
 		return showHScrollBar;
 	}
 
@@ -1524,11 +1573,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void setShowToolBar(boolean showToolBar){
 		toolBar.setVisible(showToolBar);
 		spreadsheetPanel.validate();
-		this.showCellFormatToolBar = showToolBar;
+		this.showToolBar = showToolBar;
 	}
 	
 	public boolean getShowToolBar(){
-		return showCellFormatToolBar;
+		return showToolBar;
 	}
 	
 	/**
@@ -1553,12 +1602,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	//	         Focus
 	//================================================
 	
-	
+	// transfer focus to the table
 	public void requestFocus() {
 		if (table != null)
 			table.requestFocus();
 	}
 
+	
+	// test all components of SpreadsheetView for hasFocus 
 	public boolean hasFocus() {
 		if (table == null)
 			return false;
@@ -1572,6 +1623,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	}
 
+	
 	public void focusLost(FocusEvent arg0) {
 		//System.out.println("focus lost");
 		getTable().repaint();

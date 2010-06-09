@@ -21,6 +21,7 @@ package geogebra.io;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
@@ -622,6 +623,14 @@ public class MyXMLHandler implements DocHandler {
 		boolean ok = true;
 
 		switch (eName.charAt(0)) {
+		
+		case 'l':
+		if (eName.equals("layout")) {
+			ok = handleSpreadsheetLayout(app.getGuiManager()
+					.getSpreadsheetView(), attrs);
+			break;
+		}
+		
 		case 's':
 			if (eName.equals("size")) {
 				ok = handleSpreadsheetSize(app.getGuiManager()
@@ -826,6 +835,24 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 	
+	private boolean handleSpreadsheetLayout(Object spreadsheetView,
+			LinkedHashMap<String, String> attrs) {
+
+		SpreadsheetView sv = (SpreadsheetView)app.getGuiManager().getSpreadsheetView();
+		try {
+			sv.setShowGrid(parseBoolean((String) attrs.get("showGrid")));	
+			sv.setShowBrowserPanel(parseBoolean((String) attrs.get("showBrowserPanel")));	
+			sv.setShowColumnHeader(parseBoolean((String) attrs.get("showColumnHeader")));	
+			sv.setShowRowHeader(parseBoolean((String) attrs.get("showRowHeader")));	
+			sv.setShowHScrollBar(parseBoolean((String) attrs.get("showHScrollBar")));	
+			sv.setShowVScrollBar(parseBoolean((String) attrs.get("showVScrollBar")));	
+			sv.setShowToolBar(parseBoolean((String) attrs.get("showToolBar")));		
+			return true;
+			
+		} catch (Exception e) {
+			return false;
+		}
+	}
 	
 
 //	private boolean handleCASSize(CasManager casView, LinkedHashMap<String, String> attrs) {

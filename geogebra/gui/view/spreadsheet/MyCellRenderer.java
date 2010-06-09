@@ -96,13 +96,14 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		/*
 		if(geo.isGeoBoolean()){
 			checkBox.setBackground(table.getBackground());
-			checkBox.setAlignmentX(CENTER_ALIGNMENT);
-			//checkBox.setText(geo.getCaption());
+			checkBox.setHorizontalAlignment(CENTER);
+			if(geo.isLabelVisible())
+				checkBox.setText(geo.getCaption());
 			checkBox.setSelected(((GeoBoolean)geo).getBoolean());
+	
 			return checkBox;
 		}
 		*/
-		
 		
 		String text = null;
 		if (geo.isIndependent()) {

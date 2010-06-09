@@ -838,6 +838,10 @@ public class MyXMLio {
 		if (app.hasGuiManager() && app.getGuiManager().hasCasView()) {
 			app.getGuiManager().getCasView().getSessionXML(sb);
 		}
+		
+		// save spreadsheetView settings
+		app.getGuiManager().getSpreadsheetViewXML(sb);
+		
 
 		sb.append("</geogebra>");
 

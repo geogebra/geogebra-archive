@@ -256,12 +256,12 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbShowColumnHeader.addActionListener(this);
         
         cbShowHScrollbar.removeActionListener(this);
-        cbShowHScrollbar.setSelected(view.getShowHScrollbar()); 
+        cbShowHScrollbar.setSelected(view.getShowHScrollBar()); 
         cbShowHScrollbar.addActionListener(this);
         
         
         cbShowVScrollbar.removeActionListener(this);
-        cbShowVScrollbar.setSelected(view.getShowVScrollbar()); 
+        cbShowVScrollbar.setSelected(view.getShowVScrollBar()); 
         cbShowVScrollbar.addActionListener(this);
         
         cbShowBrowser.removeActionListener(this);
@@ -313,11 +313,11 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		}
 		
 		else if (source == cbShowHScrollbar) {
-			view.setShowHScrollbar(cbShowHScrollbar.isSelected());
+			view.setShowHScrollBar(cbShowHScrollbar.isSelected());
 		}
 		
 		else if (source == cbShowVScrollbar) {
-			view.setShowVScrollbar(cbShowVScrollbar.isSelected());
+			view.setShowVScrollBar(cbShowVScrollbar.isSelected());
 		}
 		
 		else if (source == cbShowBrowser) {
@@ -350,7 +350,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		}
 		
 		else if (source == browseButton) {
-			System.out.println("browse button");
+			//System.out.println("browse button");
 			JFileChooser fc = new JFileChooser();
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnVal = fc.showOpenDialog(this);
