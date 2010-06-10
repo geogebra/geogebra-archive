@@ -1,6 +1,7 @@
 package geogebra.gui;
 
 import geogebra.GeoGebra;
+import geogebra.OCR.OCRFrame;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
@@ -2918,6 +2919,7 @@ public class DefaultGuiManager implements GuiManager {
 								
 			}
 		}
+		
 		VirtualKeyboard virtualKeyboard = null;
 		
 		public void toggleKeyboard(boolean show) {
@@ -2927,6 +2929,16 @@ public class DefaultGuiManager implements GuiManager {
 			}
 			virtualKeyboard.setVisible(show);
 
+		}
+		
+		OCRFrame frameOCR = null;
+		
+		public void toggleOCR(boolean show) {
+			
+			if (frameOCR == null) {
+				frameOCR = new OCRFrame(app);
+				}
+			frameOCR.setVisible(show);
 		}
 		
 		PropertiesPanelMini ppm;
@@ -2965,5 +2977,12 @@ public class DefaultGuiManager implements GuiManager {
 			
 			return virtualKeyboard.isVisible();
 		}
-		
+
+		public boolean showOCR() {
+			if (frameOCR == null) 
+				return false;
+			
+			return frameOCR.isVisible();
+		}
+
 }

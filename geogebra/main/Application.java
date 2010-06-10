@@ -4001,6 +4001,16 @@ public abstract class Application implements KeyEventDispatcher {
 		//Application.debug("VK active:"+virtualKeyboardActive);
 	}
 	
+	private static boolean OCRActive = false;
+	
+	public static boolean isOCRActive() {
+		return OCRActive;
+	}
+	
+	public static void setOCRActive(boolean active) {
+		OCRActive = active;
+	}
+	
 	private static boolean miniPropertiesActive = true;
 	
 	public static boolean isMiniPropertiesActive() {
