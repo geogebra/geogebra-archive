@@ -21,7 +21,7 @@ public class Keyboard {
         keyboard.type("Hello there, how are you?");
     }
 
-    public Keyboard() throws AWTException {
+    public Keyboard() throws  AWTException {
         this.robot = new Robot();
     }
 

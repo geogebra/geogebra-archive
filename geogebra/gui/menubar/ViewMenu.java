@@ -34,6 +34,7 @@ class ViewMenu extends BaseMenu {
 		showAuxiliaryObjectsAction,
 		showAlgebraInputAction,
 		showKeyboardAction,
+		showOCRAction,
 		showCmdListAction,
 		showInputTopAction,
 		showToolBarAction,
@@ -65,6 +66,7 @@ class ViewMenu extends BaseMenu {
 		cbShowConsProtNavigationOpenProt,
 		cbShowAlgebraInput,
 		cbShowKeyboard,
+		cbShowOCR,
 		cbShowCmdList;
 	
 	private JMenu
@@ -155,8 +157,12 @@ class ViewMenu extends BaseMenu {
 		// show/hide keyboard
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
 		add(cbShowKeyboard);
-
+     
 		addSeparator();
+        // Anjneya Varshney 2010-06-10
+
+		cbShowOCR = new JCheckBoxMenuItem(showOCRAction);
+		add(cbShowOCR);
 
 		// show/hide cmdlist, algebra input
 		cbShowAlgebraInput = new JCheckBoxMenuItem(showAlgebraInputAction);
@@ -287,6 +293,27 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
+		showOCRAction = new AbstractAction(app.getPlain("OCR"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				
+				if (Application.isOCRActive() && !app.getGuiManager().showOCR()) {
+					
+					// if keyboard is active but hidden, just show it
+					app.getGuiManager().toggleOCR(true);
+					update();
+					
+				} else {
+				
+					Application.setOCRActive(!Application.isOCRActive());				
+					app.getGuiManager().toggleOCR(Application.isOCRActive());
+					update();
+				}
+
+			}
+		};
 		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;

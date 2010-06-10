@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project default="frame">
+	<manifest file="./manifest.mf">	    
+		<attribute name="Main-Class" value="OCRFrame"/>
+	</manifest>	
+	<target name="frame">
+		<jar jarfile="./OCRFrame.jar" manifest="./manifest.mf">
+			<fileset dir="./" includes="*.class" excludes="*.java"/>
+		</jar>
+	</target>
+</project>
