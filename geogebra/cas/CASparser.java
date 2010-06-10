@@ -181,19 +181,22 @@ public class CASparser {
 	 * @see ExpressionNode.operationToString() for XCOORD, YCOORD
 	 */
 	public String insertSpecialChars(String str) {
+		int prefixLen = ExpressionNode.UNICODE_PREFIX.length();
+		
+		if (str.length() < prefixLen) return str;
+		
 		int len = str.length();
 		sbInsertSpecial.setLength(0);
 
 		// convert every single character and append it to sb
 		char prefixStart = ExpressionNode.UNICODE_PREFIX.charAt(0);
-		int prefixLen = ExpressionNode.UNICODE_PREFIX.length();
 		boolean prefixFound;
 		for (int i = 0; i < len; i++) {
 			char c = str.charAt(i);
 			prefixFound = false;
 
 			// first character of prefix found
-			if (c == prefixStart) {
+			if (c == prefixStart && i + prefixLen < str.length()) {
 				prefixFound = true;
 				// check prefix
 				int j = i;
