@@ -1,5 +1,0 @@
-// Modified by Anjneya Varshney
-// Start -->
-and an ending comment
-// <-- End
-// Modified by Anjneya Varshney
