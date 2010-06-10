@@ -1,7 +1,6 @@
 package geogebra.gui;
 
 import geogebra.GeoGebra;
-import geogebra.OCR.OCRFrame;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
@@ -85,6 +84,8 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
+
+import com.heatonresearch.OCR.OCRFrame;
 
 
 /**

@@ -158,11 +158,11 @@ class ViewMenu extends BaseMenu {
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
 		add(cbShowKeyboard);
      
-		addSeparator();
         // Anjneya Varshney 2010-06-10
-
 		cbShowOCR = new JCheckBoxMenuItem(showOCRAction);
 		add(cbShowOCR);
+		
+		addSeparator();
 
 		// show/hide cmdlist, algebra input
 		cbShowAlgebraInput = new JCheckBoxMenuItem(showAlgebraInputAction);
@@ -293,7 +293,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showOCRAction = new AbstractAction(app.getPlain("OCR"),
+		showOCRAction = new AbstractAction(app.getPlain("ShowOCR"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
