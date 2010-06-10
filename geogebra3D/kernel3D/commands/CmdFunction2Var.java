@@ -2,6 +2,7 @@ package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionable;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -37,19 +38,22 @@ public class CmdFunction2Var extends CmdFunction {
 
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
-		GeoElement[] arg = resArgs(c);
 
 
 
 		switch (n) {
-		case 6 :            	                
+		case 7 :   
+			// create local variable at position 3 and resolve arguments
+	    	GeoElement[] arg = resArgsLocalNumVar(c, new int[] {1,4}, new int[] {2,5});    
+	    	
 			if (
-					(ok[0] = (arg[0] .isNumberValue()))
-					&& (ok[1] = (arg[1] .isNumberValue()))
-					&& (ok[2] = (arg[2] .isNumberValue()))
-					&& (ok[3] = (arg[3] .isNumberValue()))
-					&& (ok[4] = (arg[4] .isNumberValue()))
-					&& (ok[5] = (arg[5] .isNumberValue()))
+					(ok[0] = arg[0] .isNumberValue()) //function
+	    			&& (ok[1] = arg[1].isGeoNumeric()) //first var
+	    			&& (ok[2] = arg[2].isNumberValue()) //from
+	    			&& (ok[3] = arg[3].isNumberValue()) //to
+	    			&& (ok[4] = arg[4].isGeoNumeric()) //second var
+	    			&& (ok[5] = arg[5].isNumberValue()) //from
+	    			&& (ok[6] = arg[6].isNumberValue()) //to
 					
 			) {
 				GeoElement[] ret =
@@ -57,11 +61,12 @@ public class CmdFunction2Var extends CmdFunction {
 						kernel3D.Function2Var(
 								c.getLabel(),
 								(NumberValue) arg[0],
-								(NumberValue) arg[1],
+								(GeoNumeric) arg[1],
 								(NumberValue) arg[2],
 								(NumberValue) arg[3],
-								(NumberValue) arg[4],
-								(NumberValue) arg[5]							
+								(GeoNumeric) arg[4],
+								(NumberValue) arg[5],							
+								(NumberValue) arg[6]							
 						)
 				};
 				return ret;

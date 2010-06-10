@@ -4,7 +4,10 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.Functional2Var;
+import geogebra.main.Application;
 
 /** Class describing function of 2 variables
  * @author matthieu
@@ -13,22 +16,32 @@ import geogebra.kernel.arithmetic.Functional2Var;
 public class GeoFunction2Var extends GeoElement3D
 implements Functional2Var {
 	
-	
-	// to remove
-	private int type;
-	private double coeff;
+	protected FunctionNVar[] fun;
+	protected FunctionNVar[] funD1;
 	
 	
-	private double[] start, end;
+	private double[] from, to;
 
 	/** default constructor
 	 * @param c
 	 */
 	public GeoFunction2Var(Construction c) {
 		super(c);
+	}
+	
+	public GeoFunction2Var(Construction c, FunctionNVar[] fun) {
+		this(c);
 		
-		start = new double[2];
-		end = new double[2];
+		this.fun = fun;
+		
+		funD1 = new FunctionNVar[2];
+		for (int i=0;i<2;i++){
+			funD1[i] = fun[0].derivative(i, 1);
+			//Application.debug("funD1["+i+"]:"+funD1[i].toString());
+		}
+		
+		from = new double[2];
+		to = new double[2];
 		
 	}
 	
@@ -40,41 +53,32 @@ implements Functional2Var {
 	
 	public GgbVector evaluatePoint(double u, double v){
 		
-		switch (type){
-		case 1:
-		default:
-			return new GgbVector(new double[] {-u,v,(u*u+v*v)*coeff}); // -u for surface orientation
-		case 2:
-			return new GgbVector(new double[] {u,v,coeff*u*v});
-		case 3:
-			return new GgbVector(new double[] {u,v,0.1*u*u+v+coeff});
-		case 4:
-			return new GgbVector(new double[] {u,v,coeff*u*u*v*Math.exp(-u)});
-		}
+		GgbVector p = new GgbVector(3);
+		p.set(1, u);
+		p.set(2, v);
+		p.set(3, fun[0].evaluate(new double[] {u,v}));
+		
+		return p;
 
 	}
-	
+
 
 	public GgbVector evaluateNormal(double u, double v){
+
+
+		/*
+		return new GgbVector(
+				-funD1[0].evaluate(new double[] {u,v}),
+				-funD1[1].evaluate(new double[] {u,v}),
+				1,
+				0);
+				*/
 		
-		
-		switch (type){
-		case 1:
-		default:
-			return (new GgbVector(new double[] {-2*u*coeff,2*v*coeff,-1})).normalized();
-		case 2:
-			return (new GgbVector(new double[] {-coeff*v,-coeff*u,1})).normalized();
-		case 3:
-			return (new GgbVector(new double[] {-0.2*u,-1,1})).normalized();
-		case 4:
-			return (new GgbVector(new double[] {
-					coeff*(u-2)*u*Math.exp(-u)*v,
-					-coeff*u*u*Math.exp(-u),
-					1})).normalized();
-		}
-		
-		
+		return new GgbVector(0,0,1,0);
 	}
+
+
+	
 	
 	
 	
@@ -82,14 +86,14 @@ implements Functional2Var {
 	
 	public double getMinParameter(int index) {
 		
-		return start[index];
+		return from[index];
 		
 	}
 	
 
 	public double getMaxParameter(int index) {
 		
-		return end[index];
+		return to[index];
 	}
 	
 	
@@ -100,21 +104,12 @@ implements Functional2Var {
 	 */
 	public void setInterval(double startU, double endU, double startV, double endV) {
 		
-		start[0] = startU; end[0] = endU;
-		start[1] = startV; end[1] = endV;
+		from[0] = startU; to[0] = endU;
+		from[1] = startV; to[1] = endV;
 		
 	}
 	
 	
-	/////////////////////////////////////////
-	// TO REMOVE (TEST)
-	/////////////////////////////////////////
-
-	@Deprecated
-	public void set(int type, double coeff){
-		this.type = type;
-		this.coeff = coeff;
-	}
 	
 	
 	

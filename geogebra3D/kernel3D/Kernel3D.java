@@ -671,9 +671,9 @@ public class Kernel3D
 	
 	final public GeoFunction2Var Function2Var(
 			String label, 
-			NumberValue type, NumberValue coeff,
-			NumberValue startU, NumberValue endU,
-			NumberValue startV, NumberValue endV
+			NumberValue zcoord, 
+			GeoNumeric localVarU, NumberValue Ufrom, NumberValue Uto, 
+			GeoNumeric localVarV, NumberValue Vfrom, NumberValue Vto 
 			){
 		
 		/*
@@ -681,7 +681,10 @@ public class Kernel3D
 		f.setLabel(label);
 		*/
 		
-		AlgoFunction2Var algo = new AlgoFunction2Var(cons, label, type, coeff, startU, endU, startV, endV);
+		AlgoFunction2Var algo = new AlgoFunction2Var(cons, label, 
+				zcoord, 
+				localVarU, Ufrom, Uto, 
+				localVarV, Vfrom, Vto);
 		
 		
 		return algo.getFunction();

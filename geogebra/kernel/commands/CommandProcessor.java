@@ -142,6 +142,59 @@ public abstract class CommandProcessor  {
 		cmdCons.removeLocalVariable(localVarName);     	    
 		return arg;
 	}
+	
+	
+	
+	/**
+	 * Resolve arguments of a command that has a several local numeric variable
+	 * at the  position varPos. Initializes the variable with the NumberValue
+	 * at initPos.  
+	 */
+	protected final GeoElement [] resArgsLocalNumVar(Command c, int varPos[], int initPos[]) {
+		
+		String[] localVarName = new String[varPos.length];
+
+		for(int i=0;i<varPos.length;i++){
+			// check if there is a local variable in arguments    	
+			localVarName[i] = c.getVariableName(varPos[i]);
+			if (localVarName[i] == null) {        		    
+				throw argErr(app, c.getName(), c.getArgument(varPos[i]));
+			}    		    	
+		}
+
+		// add local variable name to construction 
+		Construction cmdCons = c.getKernel().getConstruction();    		
+		GeoNumeric[] num = new GeoNumeric[varPos.length];
+		for(int i=0;i<varPos.length;i++){
+			num[i] = new GeoNumeric(cmdCons);
+			cmdCons.addLocalVariable(localVarName[i], num[i]); 
+		}
+
+		// initialize first value of local numeric variable from initPos
+		boolean oldval = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+		NumberValue[] initValue = new NumberValue[varPos.length];
+		for(int i=0;i<varPos.length;i++)
+			initValue[i] = (NumberValue) resArg(c.getArgument(initPos[i]))[0];
+		cons.setSuppressLabelCreation(oldval);
+		for(int i=0;i<varPos.length;i++)
+			num[i].setValue(initValue[i].getDouble());
+
+		// set local variable as our varPos argument
+		for(int i=0;i<varPos.length;i++)
+			c.setArgument(varPos[i], new ExpressionNode(c.getKernel(), num[i]));
+
+		// resolve all command arguments including the local variable just created
+		GeoElement [] arg = resArgs(c);    	        	  
+
+		// remove local variable name from kernel again
+		for(int i=0;i<varPos.length;i++)
+			cmdCons.removeLocalVariable(localVarName[i]);     	    
+		return arg;
+	}
+
+	
+	
 
 	protected final MyError argErr(Application app, String cmd, Object arg) {
 		String localName = app.getCommand(cmd);

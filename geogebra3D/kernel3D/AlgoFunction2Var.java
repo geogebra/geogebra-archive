@@ -2,50 +2,43 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
  * @author ggb3D
  *
  */
-public class AlgoFunction2Var extends AlgoElement3D {
+public class AlgoFunction2Var extends AlgoFunctionNVarND {
 	
-	
-	private GeoFunction2Var function;
-	private NumberValue type;
-	private NumberValue coeff;
-	private NumberValue startU, endU, startV, endV;
-	
+		
 	/**
-	 * create a cone, with label.
-	 * @param c construction
-	 * @param label 
+	 * 
 	 */
-	public AlgoFunction2Var(Construction c, String label, 
-			NumberValue type, NumberValue coeff,
-			NumberValue startU, NumberValue endU,
-			NumberValue startV, NumberValue endV	) {
+	public AlgoFunction2Var(Construction cons, String label, 
+			NumberValue zcoord, 
+			GeoNumeric localVarU, NumberValue Ufrom, NumberValue Uto, 
+			GeoNumeric localVarV, NumberValue Vfrom, NumberValue Vto 		
+	)  {
 
 
-		super(c);
+		super(cons, label,
+				new NumberValue[] {zcoord}, 
+				new GeoNumeric[] {localVarU, localVarV}, 
+				new NumberValue[] {Ufrom, Vfrom}, new NumberValue[] {Uto, Vto}		
+		);
 		
-		function = new GeoFunction2Var(c);
-		this.type = type;
-		this.coeff = coeff;
-		this.startU = startU;
-		this.endU = endU;
-		this.startV = startV;
-		this.endV = endV;
+	}
+	
+	
+	
+	protected GeoElement createFunction(Construction cons, FunctionNVar[] fun){
 		
-		
-		setInputOutput(
-				new GeoElement[] {(GeoElement) type, (GeoElement) coeff, 
-						(GeoElement) startU, (GeoElement) endU,
-						(GeoElement) startV, (GeoElement) endV}, 
-				new GeoElement[] {function});
-		compute();
-		
-		function.setLabel(label);
+		return new GeoFunction2Var(cons,fun);
 	}
 	
 	
@@ -56,9 +49,7 @@ public class AlgoFunction2Var extends AlgoElement3D {
 
 	protected void compute() {
 
-		function.set((int) type.getDouble(),coeff.getDouble());
-		
-		function.setInterval(startU.getDouble(), endU.getDouble(), startV.getDouble(), endV.getDouble());
+		((GeoFunction2Var) function).setInterval(from[0].getDouble(), to[0].getDouble(), from[1].getDouble(), to[1].getDouble());
 		
 	}
 	
@@ -67,7 +58,7 @@ public class AlgoFunction2Var extends AlgoElement3D {
 	 * @return the function
 	 */
 	public GeoFunction2Var getFunction(){
-		return function;
+		return (GeoFunction2Var) function;
 	}
 
 }
