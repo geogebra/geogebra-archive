@@ -73,7 +73,7 @@ public class CmdFunction2Var extends CmdFunction {
 			}                                
 			else {
 				int i=0;
-				while (i<6 && ok[i])
+				while (i<7 && ok[i])
 					i++;
 				throw argErr(app, "Function", arg[i]);
 			}

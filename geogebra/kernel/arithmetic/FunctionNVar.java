@@ -12,7 +12,9 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -237,8 +239,10 @@ implements ExpressionValue, FunctionalNVar {
     	}
     	else {
     		// NumberValue
-    		for (int i=0;i<fVars.length; i++)
+    		for (int i=0;i<fVars.length; i++){
+    			//Application.debug(fVars[i].toString()+" <= "+vals[i]);
     			fVars[i].set(vals[i]);
+    		}
     		return ((NumberValue) expression.evaluate()).getDouble();
     	}     
     }
@@ -379,10 +383,60 @@ implements ExpressionValue, FunctionalNVar {
             sb.append(result);
             */
     
-             // parse result
-             FunctionNVar fun = new FunctionNVar(kernel.getParser().parseExpression(result),fVars);
-             fun.initFunction();
-             Application.debug("fun:"+fun.toString());
+            // parse result
+            
+            //TODO merge method below with CommandProcessor.resArgsLocalNumVar
+    		Construction cons = kernel.getConstruction();   
+    		String[] localVarName = new String[fVars.length];
+    		for(int i=0;i<fVars.length;i++){
+    			// check if there is a local variable in arguments    	
+    			localVarName[i] = fVars[i].toString();
+    		}
+    		
+    		// add local variable name to construction 
+    		GeoNumeric[] num = new GeoNumeric[fVars.length];
+    		for(int i=0;i<fVars.length;i++){
+    			num[i] = new GeoNumeric(cons);
+    			cons.addLocalVariable(localVarName[i], num[i]); 
+    		}
+
+    		// initialize first value of local numeric variable from initPos
+    		/*
+    		for(int i=0;i<fVars.length;i++)
+    			num[i].setValue(0);
+    			*/
+
+    		// creates the expression
+    		ExpressionNode exp = kernel.getParser().parseExpression(result);
+    		//FunctionNVar fun = new FunctionNVar(kernel.getParser().parseExpression(result),fVars);
+            //fun.initFunction();
+    		
+    		/*
+    		Application.debug("exp:"+exp.toString());
+    		for (int i=0;i<fVars.length; i++)
+				exp.replace(num[i], fVars[i]);
+				*/
+
+       	 	FunctionNVar fun = new FunctionNVar(exp,fVars);
+            fun.initFunction();
+            
+            
+            //Application.debug("fun:"+fun.toString());
+
+    		// remove local variable name from kernel again
+    		for(int i=0;i<fVars.length;i++)
+    			cons.removeLocalVariable(localVarName[i]);     	  
+    		
+    		
+
+            
+       	 	/*
+    		Application.debug("exp:"+exp.toString());
+    		Application.debug("exp="+exp.evaluate());
+       		fVars[0].set(1);fVars[1].set(1);Application.debug("exp(1,1)="+ ((NumberValue) exp.evaluate()).getDouble());
+			*/
+
+          
              //fun.getFunctionVariable().setVarString(oldVar);                       
              return fun;
          } catch (Error err) {       

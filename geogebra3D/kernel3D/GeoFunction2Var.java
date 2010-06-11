@@ -37,7 +37,14 @@ implements Functional2Var {
 		funD1 = new FunctionNVar[2];
 		for (int i=0;i<2;i++){
 			funD1[i] = fun[0].derivative(i, 1);
-			//Application.debug("funD1["+i+"]:"+funD1[i].toString());
+			Application.debug("funD1["+i+"]:"+funD1[i].toString()
+					+"\nvar[0]="+funD1[i].getVarString(0)
+					+"\nvar[1]="+funD1[i].getVarString(1)
+					+"\nat(0,0):"+funD1[i].evaluate(new double[] {0,0})
+					+"\nat(1,0):"+funD1[i].evaluate(new double[] {1,0})
+					+"\nat(0,1):"+funD1[i].evaluate(new double[] {0,1})
+					
+			);
 		}
 		
 		from = new double[2];
@@ -67,13 +74,16 @@ implements Functional2Var {
 
 
 		/*
-		return new GgbVector(
+		GgbVector vec = new GgbVector(
 				-funD1[0].evaluate(new double[] {u,v}),
 				-funD1[1].evaluate(new double[] {u,v}),
 				1,
-				0);
-				*/
-		
+				0).normalized();
+	
+		//Application.debug("vec=\n"+vec.toString());
+	
+		return vec;
+		*/
 		return new GgbVector(0,0,1,0);
 	}
 
