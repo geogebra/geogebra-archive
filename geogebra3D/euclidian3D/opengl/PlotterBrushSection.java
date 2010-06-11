@@ -154,7 +154,24 @@ public class PlotterBrushSection {
 		GgbVector[] vn = direction.completeOrthonormal();
 		clockU = vn[0]; clockV = vn[1];
 		
-	}	
+	}
+	
+	/**
+	 * first section constructor
+	 * @param s 
+	 * @param point
+	 * @param thickness
+	 */
+	public PlotterBrushSection(PlotterBrushSection s, GgbVector point, float thickness){
+		this.center = point;
+		this.thickness = thickness;
+		this.direction=this.center.sub(s.getCenter()).normalized();
+		
+		clockV = direction.crossProduct(s.clockU).normalized(); 
+		//normalize it to avoid little errors propagation
+		// TODO truncate ?
+		clockU = clockV.crossProduct(direction).normalized();
+	}
 	
 	/**
 	 * first section constructor

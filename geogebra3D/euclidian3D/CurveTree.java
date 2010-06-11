@@ -3,7 +3,6 @@ package geogebra3D.euclidian3D;
 import java.util.LinkedList;
 
 import geogebra.Matrix.GgbVector;
-import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
 
 /**
@@ -16,8 +15,14 @@ public class CurveTree {
 	private GeoCurveCartesian3D curve;
 	private EuclidianView3D view;
 	private double radius =0;
+	
+	/** amount of levels intially calculated*/
+	private final int initialLevels = 10;
+	/**minimum amount of levels that is drawn*/
+	private final int forcedLevels = 5;
 
-	static final private double cosThreshold = 0.99995;
+	static final private double pCosThreshold = 0.9995;
+	static final private double tCosThreshold = 0.9995;
 	static final private double distanceFactor = 10.0;
 	
 	
@@ -39,66 +44,38 @@ public class CurveTree {
 		//create root
 		this.curve = curve;
 		double t = (minParam+maxParam)/2;
-		root = new CurveTreeNode(curve.evaluateCurve(t), t, diff, 1, curve);
+		root = new CurveTreeNode(curve.evaluateCurve(t), t, diff, 1, curve, null);
 		
 		//create start and end points
-		start = new CurveTreeNode(curve.evaluateCurve(minParam), minParam, diff, 0, curve);
-		end	  = new CurveTreeNode(curve.evaluateCurve(maxParam), maxParam, diff, 0, curve);
+		start = new CurveTreeNode(curve.evaluateCurve(minParam), minParam, diff, 0, curve, null);
+		end	  = new CurveTreeNode(curve.evaluateCurve(maxParam), maxParam, diff, 0, curve, null);
 		
-		addPoints(minParam,t,5-1);
-		addPoints(t,maxParam,5-1);
-		updateRadius();
+		addPoints(minParam,t,initialLevels-1);
+		addPoints(t,maxParam,initialLevels-1);
 	}
 	
 	private void addPoints(double min, double max, int lev) {
 		double t = (max+min)*0.5;
 		if(lev==0)
 			return;
-		root.insert(curve.evaluateCurve(t), t);
+		insert(curve.evaluateCurve(t), t);
 		addPoints(min,t,lev-1);
 		addPoints(t,max,lev-1);
 	}
-	
-	/** updates the viewing radius based on the viewing frustum 
-	 */
-	private void updateRadius() {
-		Renderer temp = view.getRenderer();
-		double x1 = temp.getLeft();
-		double x2 = temp.getRight();
-		double y1 = temp.getTop();
-		double y2 = temp.getBottom();
-		double z1 = temp.getFront();
-		double z2 = temp.getBack();
-		GgbVector [] v = new GgbVector[8];
-		v[0] = new GgbVector(x1,y1,z1,1);
-		v[1] = new GgbVector(x1,y2,z1,1);
-		v[2] = new GgbVector(x1,y1,z2,1);
-		v[3] = new GgbVector(x1,y2,z2,1);
-		v[4] = new GgbVector(x2,y1,z1,1);
-		v[5] = new GgbVector(x2,y2,z1,1);
-		v[6] = new GgbVector(x2,y1,z2,1);
-		v[7] = new GgbVector(x2,y2,z2,1);
-		
-		radius=0;
-		for(int i = 0; i < 8; i++){
-			view.toSceneCoords3D(v[i]);
-			if(v[i].norm()>radius)
-				radius=v[i].norm();
-		}
-	}
 
 	/**
+	 * @param radius the radius of a sphere bounding the viewing volume
 	 * @return a linked list of points to be rendered
 	 */
-	public LinkedList<GgbVector> getPoints(){
+	public LinkedList<GgbVector> getPoints(double radius){
+		this.radius=radius;
 		LinkedList<GgbVector> temp = new LinkedList<GgbVector>();
-		updateRadius();
 		
 		
 		if(subtreeVisible(start))
 			temp.add(start.getPos());
 		
-		refine(start,root,end,temp);
+		refine(start,root,end,temp,1);
 		
 		if(subtreeVisible(end))
 			temp.add(end.getPos());
@@ -128,14 +105,15 @@ public class CurveTree {
 	}
 	
 	private void refine(CurveTreeNode n1, CurveTreeNode n2, 
-										 CurveTreeNode n3, LinkedList<GgbVector> points){
+						 CurveTreeNode n3, LinkedList<GgbVector> points, int level){
+		
 		if(!subtreeVisible(n2))
 			return;
-		if(angleTest(n1,n2,n3)){	//only refine if we have to
+		if(angleTest(n1,n2,n3) || level<= forcedLevels){ //only refine if we have to
 			
 			//if the left subtree is big enough (in screen coordinates), refine it
 			if(distanceTest(n1,n2))
-				refine(n1,n2.getLeftChild(),n2, points);
+				refine(n1,n2.getLeftChild(),n2, points,level+1);
 			
 			//add middle point
 			if(pointVisible(n2))
@@ -143,19 +121,35 @@ public class CurveTree {
 			
 			//refine right subtree
 			if(distanceTest(n2,n3))
-				refine(n2,n2.getRightChild(),n3, points);
+				refine(n2,n2.getRightChild(),n3, points, level+1);
 		}
 	}
 	
+	/** Tests if the segments defined by n1,n2,n3 are nearly in C1.
+	 * @param n1 "leftmost" node
+	 * @param n2 "middle" node
+	 * @param n3 "rightmost" node
+	 * @return false if the values are nearly continuous, otherwise true
+	 */
 	private boolean angleTest(CurveTreeNode n1, CurveTreeNode n2, CurveTreeNode n3){
 		GgbVector p1 = n1.getPos();
 		GgbVector p2 = n2.getPos();
 		GgbVector p3 = n3.getPos();
+		GgbVector t1 = n1.getTangent();
+		GgbVector t2 = n2.getTangent();
+		GgbVector t3 = n3.getTangent();
 		
-		GgbVector v1 = p3.sub(p1);
-		GgbVector v2 = p2.sub(p3);
-		double cosAng = v1.dotproduct(v2)/(v1.norm()*v2.norm());
-		if( cosAng < cosThreshold || Double.isNaN(cosAng) )
+		GgbVector dp1 = p2.sub(p1);
+		GgbVector dp2 = p3.sub(p2);
+		
+		GgbVector dt1 = t2.sub(t1);
+		GgbVector dt2 = t3.sub(t2);
+		
+		double pCosAng = dp1.normalized().dotproduct(dp2.normalized());
+		double tCosAng = dt1.normalized().dotproduct(dt2.normalized());
+		
+		if( pCosAng < pCosThreshold || tCosAng < tCosThreshold || 
+				Double.isNaN(pCosAng) || Double.isNaN(tCosAng) )
 			return true;
 		return false;
 	}
@@ -176,27 +170,35 @@ public class CurveTree {
 	public void insert(GgbVector pos, double param) {root.insert(pos,param);}
 }
 
-/** An abstract class representing a node in CurveTree
- * 
+/**a node in CurveTree
  * @author André Eriksson
  * @see CurveTree
  */
 class CurveTreeNode{
 	private GgbVector pos;
+	private GgbVector tangent;
 	private double param;
 	
 	private final int level;
 	private final double diff;
 	
+	private final double deltaParam = 1e-10;
+	
 	private GgbVector boundingBoxMin, boundingBoxMax;
 	private double boundingRadius;
 	private CurveTreeNode[] children;
+	private CurveTreeNode parent;
 	private GeoCurveCartesian3D curve;
 	
 	/**
 	 * @return the spatial position of the node
 	 */
 	public GgbVector getPos(){return pos;}
+	
+	/**
+	 * @return the node tangent
+	 */
+	public GgbVector getTangent(){return tangent;}
 	
 	@Override
 	public String toString() {
@@ -209,8 +211,10 @@ class CurveTreeNode{
 	 * @param diff  the difference between the minimum and maximum parameter values
 	 * @param level	the level of the tree
 	 * @param curve a reference to the curve
+	 * @param parent 
 	 */
-	CurveTreeNode(GgbVector pos, double param, double diff, int level, GeoCurveCartesian3D curve){
+	CurveTreeNode(GgbVector pos, double param, double diff, int level, 
+					GeoCurveCartesian3D curve, CurveTreeNode parent){
 		this.pos = pos.copyVector();
 		boundingBoxMax = pos.copyVector();
 		boundingBoxMin = pos.copyVector();
@@ -219,6 +223,9 @@ class CurveTreeNode{
 		this.level = level;
 		this.diff = diff;
 		this.curve=curve;
+		this.parent=parent;
+		
+		approxTangent();
 	}
 
 	/**
@@ -227,7 +234,9 @@ class CurveTreeNode{
 	public CurveTreeNode getLeftChild(){
 		if(children[0]==null){
 			double childParam = param-diff/Math.pow(2,level+1);
-			children[0] = new CurveTreeNode(curve.evaluateCurve(childParam),childParam, diff, level+1, curve);
+			GgbVector childPos = curve.evaluateCurve(childParam);
+			children[0] = new CurveTreeNode(childPos,childParam, diff, level+1, curve, this);
+			updateBoundingBoxesUpwards(childPos);
 		}
 		return children[0];
 	}
@@ -238,9 +247,17 @@ class CurveTreeNode{
 	public CurveTreeNode getRightChild(){
 		if(children[1]==null){
 			double childParam = param+diff/Math.pow(2,level+1);
-			children[1] = new CurveTreeNode(curve.evaluateCurve(childParam),childParam, diff, level+1, curve);
+			GgbVector childPos = curve.evaluateCurve(childParam);
+			children[1] = new CurveTreeNode(childPos,childParam, diff, level+1, curve, this);
+			updateBoundingBoxesUpwards(childPos);
 		}
 		return children[1];
+	}
+	
+	private void updateBoundingBoxesUpwards(GgbVector pos){
+		updateBoundingRadius(pos);
+		if(parent!=null)
+			parent.updateBoundingBoxesUpwards(pos);
 	}
 	
 	/** Checks if the bounding box of this leaf intersects with the one defined by bbMin and bbMax
@@ -287,7 +304,7 @@ class CurveTreeNode{
 		if(x2*x2+y2*y2+z2*z2 < rSq) return true;
 		return false;*/
 		
-		return pos.norm()-boundingRadius < radius;
+		return (pos.norm()-boundingRadius < radius || Double.isInfinite(pos.norm()));
 	}
 	
 	/** Recursive function that inserts a node into the tree
@@ -295,17 +312,15 @@ class CurveTreeNode{
 	 * @param param the node parameter value
 	 */
 	public void insert(GgbVector pos, double param){
-		
 		int i = 0;
 		
 		if(param>this.param)
 			i=1;
 		
 		if(children[i]==null)
-			children[i] = new CurveTreeNode(pos, param, diff, this.level+1, curve);
+			children[i] = new CurveTreeNode(pos, param, diff, this.level+1, curve, this);
 		else 
 			children[i].insert(pos,param);
-		
 		updateBoundingRadius(pos);
 		//updateBoundingBox(pos);
 	}
@@ -315,27 +330,35 @@ class CurveTreeNode{
 		if(radius>boundingRadius)
 			boundingRadius=radius;
 	}
-
-	/** Updates the bounding box to contain the given point
-	 * @param point
+	
+	/** Approximates the tangent by a simple forward difference quotient.
+	 * 	Should only be called in the constructor.
 	 */
-	private void updateBoundingBox(GgbVector point){
-		double x = point.getX();
-		double y = point.getY();
-		double z = point.getZ();
-		
-		if(boundingBoxMin.getX() > x)
-			boundingBoxMin.setX(x);	
-		if(boundingBoxMin.getY() > y)
-			boundingBoxMin.setY(y);
-		if(boundingBoxMin.getZ() > z)
-			boundingBoxMin.setZ(z);
-
-		if(boundingBoxMax.getX() < x)
-			boundingBoxMax.setX(x);	
-		if(boundingBoxMax.getY() < y)
-			boundingBoxMax.setY(y);
-		if(boundingBoxMax.getZ() < z)
-			boundingBoxMax.setZ(z);
+	private void approxTangent(){
+		GgbVector d = curve.evaluateCurve(param+deltaParam);
+		tangent = d.sub(pos).normalized();
 	}
+
+//	/** Updates the bounding box to contain the given point
+//	 * @param point
+//	 */
+//	private void updateBoundingBox(GgbVector point){
+//		double x = point.getX();
+//		double y = point.getY();
+//		double z = point.getZ();
+//		
+//		if(boundingBoxMin.getX() > x)
+//			boundingBoxMin.setX(x);	
+//		if(boundingBoxMin.getY() > y)
+//			boundingBoxMin.setY(y);
+//		if(boundingBoxMin.getZ() > z)
+//			boundingBoxMin.setZ(z);
+//
+//		if(boundingBoxMax.getX() < x)
+//			boundingBoxMax.setX(x);	
+//		if(boundingBoxMax.getY() < y)
+//			boundingBoxMax.setY(y);
+//		if(boundingBoxMax.getZ() < z)
+//			boundingBoxMax.setZ(z);
+//	}
 }
