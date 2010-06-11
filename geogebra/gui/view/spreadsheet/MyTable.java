@@ -270,8 +270,10 @@ public class MyTable extends JTable implements FocusListener
 		
 		// set first cell active 
 		// needed in case spreadsheet selected with ctrl-tab rather than mouse click
-		changeSelection(0, 0, false, false);
-	
+		//changeSelection(0, 0, false, false);
+		
+		
+		
 	}
 	
 	//==============================================================
@@ -363,9 +365,9 @@ public class MyTable extends JTable implements FocusListener
 	 */
 	@Override
 	public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
-		if(Application.getControlDown()) 
-			super.changeSelection(rowIndex, columnIndex, false, false);	
-		else
+		//if(Application.getControlDown()) 
+			//super.changeSelection(rowIndex, columnIndex, false, false);	
+		//else
 			super.changeSelection(rowIndex, columnIndex, toggle, extend);
 		// let selectionChanged know about a change in single cell selection
 		selectionChanged();
@@ -571,7 +573,29 @@ public class MyTable extends JTable implements FocusListener
 		System.out.println("----------------------------------");
 	}
 	
+	/**
+	 * Sets the initial selection parameters to a single cell. Does this without
+	 * calling changeSelection, so it should only be used at startup.
+	 */
+	public void setInitialCellSelection(int row, int column) {
+		
+		setSelectionType(CELL_SELECT);
+		
+		if (column == -1) column = 0;
+		if (row == -1) row = 0;
+		minSelectionColumn = column;
+		maxSelectionColumn = column;
+		minSelectionRow = row;
+		maxSelectionRow = row;
+		
+		getColumnModel().getSelectionModel().setSelectionInterval(column, column);
+		getSelectionModel().setSelectionInterval(row, row);
+	}
 
+
+	
+	
+	
 	/*
 	public void setSelectionRectangle(CellRange cr){
 
@@ -747,9 +771,42 @@ public class MyTable extends JTable implements FocusListener
 		return selectionType;
 	}
 	
+
+	//G.STURR 2010-1-29
+	// By adding a call to selectionChanged in JTable's setRowSelectionInterval 
+	// and setColumnSelectionInterval methods, selectionChanged becomes 
+	// the sole handler for selection events.
+	@Override
+	public void setRowSelectionInterval(int row0, int row1) {
+		super.setRowSelectionInterval(row0, row1);
+		selectionChanged(); 
+		setSelectionType(ROW_SELECT);
+		
+	}
+	@Override
+	public void setColumnSelectionInterval(int col0, int col1) {
+		super.setColumnSelectionInterval(col0, col1);
+		selectionChanged(); 
+		setSelectionType(COLUMN_SELECT);
+	}
+	//END GSTURR
 	
-	
-	
+	 
+	//G.STURR 2010-1-9
+	private boolean isSelectAll = false;
+	public boolean getSelectAll() {	
+		return isSelectAll;
+		/*
+		if (minSelectionColumn == 0 && maxSelectionColumn == getColumnCount()-1 && minSelectionRow == 0 
+				&& maxSelectionRow == getRowCount()-1)
+			return true;
+		
+		return false;
+		*/
+	}
+	public void setSelectAll(boolean isSelectAll) {	
+		this.isSelectAll = isSelectAll;
+	}
 	
 
 	
@@ -1533,11 +1590,11 @@ public class MyTable extends JTable implements FocusListener
 				}
 				repaint();
 			}
-			
+
 			//G.STURR 2010-1-29: handle ctrl-select dragging of cell blocks
 			else{
 				if(e.isControlDown()){
-			handleSelectionBlockChange(e);}
+					handleControlDragSelect(e);}
 			}
 		}
 
@@ -1584,46 +1641,43 @@ public class MyTable extends JTable implements FocusListener
 	// TODO: JTable is still making selections that are not overridden,
 	// so sometimes you can still get unwanted extended selection.
 	//
-	void handleSelectionBlockChange(MouseEvent e) {
+	private void handleControlDragSelect(MouseEvent e) {
 
 		Point p = e.getPoint();
 		int row = this.rowAtPoint(p);
 		int column = this.columnAtPoint(p);
+		ListSelectionModel cm = getColumnModel().getSelectionModel();
+		ListSelectionModel rm = getSelectionModel();
 		
-		//fix empty selection at startup
-		if ((column == -1) && (row == -1)){
-			ListSelectionModel cm = getColumnModel().getSelectionModel();
-			ListSelectionModel rm = getSelectionModel();
-			
+		/*
+		//handle startup case of empty selection
+		if ((column == -1) && (row == -1)){		
 			cm.setSelectionInterval(0, 0);
-			rm.setSelectionInterval(0, 0);
-			
+			rm.setSelectionInterval(0, 0);			
 		}
+		*/
 		
 		if ((column == -1) || (row == -1)) {
 			return;
 		}
 
+		// adjust the selection if mouse has left the old selected cell
 		if (row != this.getSelectedRow() || column != this.getSelectedColumn()) {
-
-			ListSelectionModel cm = getColumnModel().getSelectionModel();
-			ListSelectionModel rm = getSelectionModel();
+			//boolean selected = true;
 			int colAnchor = cm.getAnchorSelectionIndex();
 			int rowAnchor = rm.getAnchorSelectionIndex();
-
-			boolean selected = true;
-
+			
 			if (rowAnchor == -1 || rowAnchor >= getRowCount()) {
 				rowAnchor = 0;
-				selected = false;
+				//selected = false;
 			}
 
 			if (colAnchor == -1 || colAnchor >= getColumnCount()) {
 				colAnchor = 0;
-				selected = false;
+				//selected = false;
 			}
 
-			selected = selected && isCellSelected(rowAnchor, colAnchor);
+			//selected = selected && isCellSelected(rowAnchor, colAnchor);
 
 			cm.setSelectionInterval(colAnchor, column);
 			rm.setSelectionInterval(rowAnchor, row);
@@ -2496,25 +2550,8 @@ public class MyTable extends JTable implements FocusListener
 			app.getGuiManager().toggleKeyboard(false);
 		
 	}
-	 
-	//G.STURR 2010-1-9
-	private boolean isSelectAll = false;
-	public boolean getSelectAll() {	
-		return isSelectAll;
-		/*
-		if (minSelectionColumn == 0 && maxSelectionColumn == getColumnCount()-1 && minSelectionRow == 0 
-				&& maxSelectionRow == getRowCount()-1)
-			return true;
-		
-		return false;
-		*/
-	}
-	public void setSelectAll(boolean isSelectAll) {	
-		this.isSelectAll = isSelectAll;
-	}
 	
 	
-	//END GSTURR
 	
 	
 	
@@ -2553,24 +2590,6 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	
-	//G.STURR 2010-1-29
-	// By adding a call to selectionChanged in JTable's setRowSelectionInterval 
-	// and setColumnSelectionInterval methods, selectionChanged becomes 
-	// the sole handler for selection events.
-	@Override
-	public void setRowSelectionInterval(int row0, int row1) {
-		super.setRowSelectionInterval(row0, row1);
-		selectionChanged(); 
-		setSelectionType(ROW_SELECT);
-		
-	}
-	@Override
-	public void setColumnSelectionInterval(int col0, int col1) {
-		super.setColumnSelectionInterval(col0, col1);
-		selectionChanged(); 
-		setSelectionType(COLUMN_SELECT);
-	}
-	//END GSTURR
 	
 	
 	

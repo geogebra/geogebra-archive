@@ -208,7 +208,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 	public void setDefaultLayout() {
-		
 		setShowGrid(true);
 		setShowRowHeader(true);
 		setShowColumnHeader(true);
@@ -217,8 +216,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		setShowBrowserPanel(false);
 		setShowToolBar(false);
 	}
-	
-	
+
+	public void setDefaultSelection() {
+		setSpreadsheetScrollPosition(0,0);
+		table.setInitialCellSelection(0,0);
+	}
 
 	public Application getApplication() {
 		return app;
@@ -256,14 +258,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	public void attachView() {
-		clearView();
+		//clearView();
 		kernel.notifyAddAll(this);
 		kernel.attach(this);		
 	}
 
 	public void detachView() {
 		kernel.detach(this);
-		clearView();
+		//clearView();
 		//kernel.notifyRemoveAll(this);		
 	}
 	
@@ -407,6 +409,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		}
 		
 		setDefaultLayout();
+		setDefaultSelection();
 		table.oneClickEditableSet.clear();
 	}
 	
@@ -424,11 +427,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	 * This method is called on startup or when new window is called
 	 */
 	public void restart() {
-		setDefaultLayout();
+		clearView();
+		//setDefaultLayout();
+		//setDefaultSelection();
 		highestUsedColumn = -1;
 		updateColumnWidths();
 		updateFonts(); //G.Sturr 2010-6-4
-		table.changeSelection(0,0,false,false);
+		//table.changeSelection(0,0,false,false);
 		traceManager.loadTraceGeoCollection();
 		
 		table.oneClickEditableSet.clear();
@@ -1192,6 +1197,28 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				sb.append("\t<spreadsheetRow id=\""+row+"\" height=\""+rowHeight+"\"/>\n");
 		}
 
+		// initial selection
+		sb.append("\t<selection ");
+		
+		sb.append(" hScroll=\"");
+		sb.append(spreadsheet.getHorizontalScrollBar().getValue());
+		sb.append("\"");
+		
+		sb.append(" vScroll=\"");
+		sb.append(spreadsheet.getVerticalScrollBar().getValue());
+		sb.append("\"");
+		
+		sb.append(" column=\"");
+		sb.append(table.getColumnModel().getSelectionModel().getAnchorSelectionIndex());
+		sb.append("\"");
+		
+		sb.append(" row=\"");
+		sb.append(table.getSelectionModel().getAnchorSelectionIndex());
+		sb.append("\"");
+				
+		sb.append("/>\n");
+		
+		
 		// layout
 		sb.append("\t<layout ");
 		
@@ -1312,6 +1339,15 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		listModel.changed();
 	}
 	//END GSTURR
+	
+	public void setSpreadsheetScrollPosition(int hScroll, int vScroll){
+		spreadsheet.getHorizontalScrollBar().setValue(hScroll);
+		spreadsheet.getVerticalScrollBar().setValue(vScroll);
+	}
+	
+	
+	
+	
 	
 	
 

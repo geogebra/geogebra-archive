@@ -647,6 +647,11 @@ public class MyXMLHandler implements DocHandler {
 						.getSpreadsheetView(), attrs);
 				break;
 			}
+			if (eName.equals("selection")) {
+				ok = handleSpreadsheetInitalSelection(app.getGuiManager()
+						.getSpreadsheetView(), attrs);
+				break;
+			}
 
 		default:
 			System.err.println("unknown tag in <spreadsheetView>: " + eName);
@@ -838,7 +843,7 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleSpreadsheetLayout(Object spreadsheetView,
 			LinkedHashMap<String, String> attrs) {
 
-		SpreadsheetView sv = (SpreadsheetView)app.getGuiManager().getSpreadsheetView();
+		SpreadsheetView sv = (SpreadsheetView)spreadsheetView;
 		try {
 			sv.setShowGrid(parseBoolean((String) attrs.get("showGrid")));	
 			sv.setShowBrowserPanel(parseBoolean((String) attrs.get("showBrowserPanel")));	
@@ -846,7 +851,27 @@ public class MyXMLHandler implements DocHandler {
 			sv.setShowRowHeader(parseBoolean((String) attrs.get("showRowHeader")));	
 			sv.setShowHScrollBar(parseBoolean((String) attrs.get("showHScrollBar")));	
 			sv.setShowVScrollBar(parseBoolean((String) attrs.get("showVScrollBar")));	
-			sv.setShowToolBar(parseBoolean((String) attrs.get("showToolBar")));		
+			sv.setShowToolBar(parseBoolean((String) attrs.get("showToolBar")));	
+			return true;
+			
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private boolean handleSpreadsheetInitalSelection(Object spreadsheetView,
+			LinkedHashMap<String, String> attrs) {
+
+		SpreadsheetView sv = (SpreadsheetView)spreadsheetView;
+		try {
+			
+			int hScroll = Integer.parseInt((String) attrs.get("hScroll"));
+			int vScroll = Integer.parseInt((String) attrs.get("vScroll"));
+			sv.setSpreadsheetScrollPosition(hScroll, vScroll);
+			
+			int row = Integer.parseInt((String) attrs.get("row"));
+			int column = Integer.parseInt((String) attrs.get("column"));
+			sv.getTable().setInitialCellSelection(row, column);
 			return true;
 			
 		} catch (Exception e) {
