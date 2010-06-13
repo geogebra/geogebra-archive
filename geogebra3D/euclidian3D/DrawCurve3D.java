@@ -103,9 +103,8 @@ public class DrawCurve3D extends Drawable3DCurves {
 			brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
 
 			brush.start(8);
-
-			LinkedList<GgbVector> temp = tree.getPoints(savedRadius);
-			brush.draw(temp,curve);
+			
+			brush.draw(tree,savedRadius);
 
 			geometryIndex = brush.end();
 		}

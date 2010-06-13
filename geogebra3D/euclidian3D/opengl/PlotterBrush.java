@@ -4,6 +4,8 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.CurveTree;
+import geogebra3D.euclidian3D.CurveTreeNode;
 import geogebra3D.kernel3D.GeoCurveCartesian3DInterface;
 
 import java.awt.Color;
@@ -203,8 +205,8 @@ public class PlotterBrush {
     		//Application.debug("i="+i);
     		draw(start,u, v, 0); //bottom of the tube rule
     		draw(end,u, v, 1); //top of the tube rule
-    	} 
-
+    	}
+    	
 		manager.endGeometry();
 	}
 	
@@ -354,7 +356,67 @@ public class PlotterBrush {
 	////////////////////////////////////
 	// 3D CURVE DRAWING METHODS
 	////////////////////////////////////
+	
+	private boolean firstCurvePoint = false;
+	private void startDrawingCurve(){
+		firstCurvePoint = true;
+		setTextureType(PlotterBrush.TEXTURE_LINEAR);
+	}
+	
+	private void addPointToCurve(CurveTreeNode n){
+		if(firstCurvePoint){
+			end = new PlotterBrushSection(n.getPos(), n.getTangent(), thickness);
+			firstCurvePoint=false;
+		}
+		else {
+			start = end;
+			end = new PlotterBrushSection(start,n.getPos(),thickness);
 
+			setTextureX(1);
+			join();
+		}
+	}
+	
+	
+	/**
+	 * @param tree
+	 * @param radius the radius of a sphere bounding the viewing volume
+	 */
+	public void draw(CurveTree tree, double radius){
+		tree.radius=radius;
+		
+		startDrawingCurve();
+		
+		if(tree.subtreeVisible(tree.start))
+			addPointToCurve(tree.start);
+		
+		refine(tree, tree.start,tree.root,tree.end,1);
+		
+		if(tree.subtreeVisible(tree.end))
+			addPointToCurve(tree.end);
+	}
+	
+	private void refine(CurveTree tree, CurveTreeNode n1, CurveTreeNode n2, 
+						 CurveTreeNode n3, int level){
+		
+		if(!tree.subtreeVisible(n2))
+			return;
+		if(tree.angleTest(n1,n2,n3) || level<= tree.forcedLevels){ //only refine if we have to
+			
+			//if the left subtree is big enough (in screen coordinates), refine it
+			if(tree.distanceTest(n1,n2))
+				refine(tree,n1,n2.getLeftChild(),n2,level+1);
+			
+			//add middle point
+			//if(tree.pointVisible(n2))
+			if(n2.getPos().isDefined())
+				addPointToCurve(n2);
+			
+			//refine right subtree
+			if(tree.distanceTest(n2,n3))
+				refine(tree,n2,n2.getRightChild(),n3, level+1);
+		}
+	}
 	
 	/** draws the curve using the curvature method
 	 * @param list 
