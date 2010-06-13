@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.euclidian.Drawable;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -19,9 +20,14 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -53,6 +59,9 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 
 	
 	private JCheckBox checkBox;
+	private JButton button;
+	private JComboBox comboBox;
+	private DefaultComboBoxModel cbModel;
 	
 	//END G.Sturr
 	
@@ -73,7 +82,11 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		emptyIcon = new ImageIcon();
 		cellPoint = new Point();
 		checkBox = new JCheckBox();
-		
+		button = new JButton();
+		comboBox = new JComboBox();
+		comboBox.setRenderer(new MyListCellRenderer());
+		cbModel = new DefaultComboBoxModel();
+		comboBox.setModel(cbModel);
 	}
 	
 	public Component getTableCellRendererComponent(JTable table, Object value,
@@ -93,17 +106,41 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		GeoElement geo = (GeoElement)value;
 		
 		
-		/*
-		if(geo.isGeoBoolean()){
-			checkBox.setBackground(table.getBackground());
-			checkBox.setHorizontalAlignment(CENTER);
-			if(geo.isLabelVisible())
-				checkBox.setText(geo.getCaption());
-			checkBox.setSelected(((GeoBoolean)geo).getBoolean());
-	
-			return checkBox;
+		// use special rendering for buttons, booleans and lists
+		if(((MyTable)table).testFlag && kernel.getAlgebraStyle()==Kernel.ALGEBRA_STYLE_VALUE){
+
+			if(geo.isGeoBoolean()){
+				checkBox.setBackground(table.getBackground());
+				checkBox.setHorizontalAlignment(CENTER);
+				if(geo.isLabelVisible())
+					checkBox.setText(geo.getCaption());
+				checkBox.setSelected(((GeoBoolean)geo).getBoolean());
+
+				return checkBox;
+			}
+
+
+			if(geo.isGeoButton()){
+				//button.setBackground(table.getBackground());
+				button.setHorizontalAlignment(CENTER);
+				button.setText(geo.getCaption());
+				button.setForeground(geo.getObjectColor());
+				return button;
+			}
+
+			if(geo.isGeoList()){
+				GeoList list = (GeoList)geo;
+				comboBox.setBackground(table.getBackground());
+				cbModel.removeAllElements();
+				if(list.size()>0)
+					cbModel.addElement(list.get(list.getSelectedIndex()));
+				//comboBox.setSelected(((GeoBoolean)geo).getBoolean());
+
+				return comboBox;
+			}
 		}
-		*/
+
+
 		
 		String text = null;
 		if (geo.isIndependent()) {
@@ -255,6 +292,35 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		
 	}
 	
+
+	//======================================================
+	//         ComboBox Cell Renderer 
+	//======================================================
 	
+	/**
+	 * Custom cell renderer that displays GeoElement descriptions.
+	 */
+	private class MyListCellRenderer extends DefaultListCellRenderer {
+		
+		@Override
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean hasFocus) {
+
+			//super.getListCellRendererComponent(list, value, index, isSelected,hasFocus);
+			JLabel lbl = (JLabel)super.getListCellRendererComponent(
+	                list, value, index, isSelected, hasFocus);
+	        lbl.setHorizontalAlignment(LEFT);
+
+			if (value != null) {
+				GeoElement geo = (GeoElement) value;
+				setText(geo.getLabel());
+			} else
+				setText(" ");
+			
+			return lbl;
+		}
+
+	}
+
 
 }

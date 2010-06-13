@@ -9,6 +9,7 @@ import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 
 /**
  * Cell editor for GeoBoolean.
@@ -41,6 +42,9 @@ public class MyCellEditorBoolean extends DefaultCellEditor {
 		delegate.setValue(editGeo.getBoolean());
 		editing = true;
 		checkBox.setBackground(table.getBackground());
+		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+		if(editGeo.isLabelVisible())
+			checkBox.setText(editGeo.getCaption());
 		return editorComponent;
 	}
 
@@ -71,7 +75,9 @@ public class MyCellEditorBoolean extends DefaultCellEditor {
 		return super.stopCellEditing();
 	}
 	
-	
+	public boolean isEditing(){
+		return false;
+	}
 	
 
 }

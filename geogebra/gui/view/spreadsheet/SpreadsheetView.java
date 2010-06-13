@@ -287,8 +287,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 		
-		if(geo.isGeoBoolean()){
-			table.oneClickEditableSet.add(location);
+		if(geo.isGeoBoolean() || geo.isGeoButton() || geo.isGeoList()){
+			table.oneClickEditMap.put(location, geo);
 		}
 		
 	}
@@ -316,7 +316,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		
 		if(geo.isGeoBoolean()){
-			table.oneClickEditableSet.remove(location);
+			table.oneClickEditMap.remove(location);
 		}
 	}
 	
@@ -410,7 +410,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		setDefaultLayout();
 		setDefaultSelection();
-		table.oneClickEditableSet.clear();
+		table.oneClickEditMap.clear();
 	}
 	
 	
@@ -436,7 +436,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		//table.changeSelection(0,0,false,false);
 		traceManager.loadTraceGeoCollection();
 		
-		table.oneClickEditableSet.clear();
+		table.oneClickEditMap.clear();
 		
 	}	
 	

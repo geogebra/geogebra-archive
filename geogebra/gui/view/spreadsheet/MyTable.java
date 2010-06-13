@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 
@@ -51,6 +52,7 @@ import javax.swing.text.JTextComponent;
 
 public class MyTable extends JTable implements FocusListener 
 {
+	public boolean testFlag = false;
 	
 	public static final int MAX_CELL_EDIT_STRING_LENGTH = 10;
 
@@ -71,6 +73,8 @@ public class MyTable extends JTable implements FocusListener
 	protected Application app;
 	protected MyCellEditor editor;
 	protected MyCellEditorBoolean editorBoolean;
+	protected MyCellEditorButton editorButton;
+	protected MyCellEditorList editorList;
 	
 	
 	protected RelativeCopy relativeCopy;
@@ -150,7 +154,7 @@ public class MyTable extends JTable implements FocusListener
 	// G.Sturr 2010-6-4
 	// Collection of cells that contain geos that can be edited with one click,
 	// e.g. booleans, buttons, lists
-	protected HashSet<Point> oneClickEditableSet = new HashSet<Point>();
+	protected HashMap<Point,GeoElement> oneClickEditMap = new HashMap<Point,GeoElement>();
 
 	
 	
@@ -191,7 +195,9 @@ public class MyTable extends JTable implements FocusListener
 		setDefaultRenderer(Object.class, new MyCellRenderer(app, this.getCellFormatHandler()));
 		
 		//setDefaultRenderer(Object.class, new MyCellRenderer(app));
+		editorButton = new MyCellEditorButton();
 		editorBoolean = new MyCellEditorBoolean(kernel);
+		editorList = new MyCellEditorList();
 		editor = new MyCellEditor(kernel);
 		setDefaultEditor(Object.class, editor);
 
@@ -337,10 +343,20 @@ public class MyTable extends JTable implements FocusListener
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int column){
-		/*
-		if (oneClickEditableSet.contains(new Point(column, row)))
-			return editorBoolean;
-		*/
+		
+		Point p = new Point(column, row);
+		if (testFlag && oneClickEditMap.containsKey(p) 
+				&& kernel.getAlgebraStyle()==Kernel.ALGEBRA_STYLE_VALUE){
+			
+			switch (oneClickEditMap.get(p).getGeoClassType()){
+			case GeoElement.GEO_CLASS_BOOLEAN:
+				return editorBoolean;
+			case GeoElement.GEO_CLASS_BUTTON:
+				return editorButton;
+			case GeoElement.GEO_CLASS_LIST:
+				return editorList;					
+			}
+		}
 		return editor;
 	}
 	
@@ -1126,18 +1142,20 @@ public class MyTable extends JTable implements FocusListener
 					// 
 					//otherwise, doubleClick edits cell
 					
-					allowEditing = true;
-					editCellAt(getSelectedRow(), getSelectedColumn()); 
-		            
-					// workaround, see
-					// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4192625
-					final JTextComponent f = (JTextComponent)getEditorComponent();
-					if (f != null) {
-			            f.requestFocus();
-			            f.getCaret().setVisible(true);
-					}
+					if(!oneClickEditMap.containsKey(point)){
+						allowEditing = true;
+						editCellAt(getSelectedRow(), getSelectedColumn()); 
 
-					allowEditing = false;
+						// workaround, see
+						// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4192625
+						final JTextComponent f = (JTextComponent)getEditorComponent();
+						if (f != null) {
+							f.requestFocus();
+							f.getCaret().setVisible(true);
+						}
+
+						allowEditing = false;
+					}
 				}
 			}
 
@@ -2525,7 +2543,9 @@ public class MyTable extends JTable implements FocusListener
 	@Override
 	public boolean isCellEditable(int row, int column)
 	{
-		if (!allowEditing && !oneClickEditableSet.contains(new Point(column,row))) return false; // to avoid getValueAt() unless necessary
+		// to avoid getValueAt() unless necessary
+		
+		if (!allowEditing && !oneClickEditMap.containsKey(new Point(column,row))) return false; 
 		
 		GeoElement geo = (GeoElement) getModel().getValueAt(row, column);
 		

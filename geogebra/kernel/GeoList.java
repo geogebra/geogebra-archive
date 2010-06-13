@@ -1066,6 +1066,20 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 
 		}
 
+		// G.Sturr 2010-6-12
+		// Selection index for lists used in comboBoxes
+		private int selectedIndex = 0;
+		
+		public int getSelectedIndex() {
+			return selectedIndex;
+		}
 
+		public void setSelectedIndex(int selectedIndex0) {	
+			selectedIndex = selectedIndex0;
+		}
+		//END G.Sturr
+		
+		
+		
 
 }
