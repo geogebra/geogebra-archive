@@ -30,6 +30,11 @@ public class CurveTreeNode{
 	public GgbVector getPos(){return pos;}
 	
 	/**
+	 * @return the parameter value at the point
+	 */
+	public double getParam(){return param;}
+	
+	/**
 	 * @return the node tangent
 	 */
 	public GgbVector getTangent(){return tangent;}
@@ -67,6 +72,8 @@ public class CurveTreeNode{
 	 */
 	public CurveTreeNode getLeftChild(){
 		if(children[0]==null){
+			if(this.level>40)
+				System.out.print("");
 			double childParam = param-diff/Math.pow(2,level+1);
 			GgbVector childPos = curve.evaluateCurve(childParam);
 			children[0] = new CurveTreeNode(childPos,childParam, diff, level+1, curve, this);

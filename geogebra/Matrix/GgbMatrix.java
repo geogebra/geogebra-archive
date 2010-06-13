@@ -562,6 +562,18 @@ public class GgbMatrix
 		return result;
 	}
 
+	/** @return false if at least one value is infinite */
+	public boolean isFinite(){
+		
+		boolean result = true;
+		
+		for(int i=0;(i<columns*rows)&&(result);i++){
+			result = result && (!Double.isInfinite(val[i]));
+		}
+		
+		return result;
+	}
+
 	
 	///////////////////////////////////////////////////:
 	//basic operations 

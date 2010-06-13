@@ -39,9 +39,9 @@ public abstract class GeoCurveCartesianND extends GeoElement{
 		/*funD1 = new Function[fun.length];
 		for (int i=0;i<fun.length;i++){
 			funD1[i]=fun[i].getDerivative(1);
-		}
+		}*/
 		
-		funD2 = new Function[fun.length];
+		/*funD2 = new Function[fun.length];
 		for (int i=0;i<fun.length;i++){
 			funD2[i]=fun[i].getDerivative(2);
 		}*/

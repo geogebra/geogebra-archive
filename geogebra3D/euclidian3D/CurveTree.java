@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D;
 
+import java.awt.Point;
+
 import geogebra.Matrix.GgbVector;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
 
@@ -17,10 +19,11 @@ public class CurveTree {
 	/** amount of levels intially calculated*/
 	private final int initialLevels = 8;
 	/**minimum amount of levels that is drawn*/
-	public final int forcedLevels = 8;
+	public final int forcedLevels = 3;
 
-	static final private double pCosThreshold = 0.9995;
-	static final private double tCosThreshold = 0.9995;
+	static final private double pCosThreshold = 0.995;
+	static final private double tCosThreshold = 0.95;
+	static final private double minParamDist = 1e-5;
 	static final private double distanceFactor = 10.0;
 	
 	
@@ -66,6 +69,30 @@ public class CurveTree {
 		//return n.boundingBoxIntersect(bbMin,bbMax);
 	}
 	
+	public boolean segmentVisible(GgbVector n1, GgbVector n2) {
+		if(n1.norm() < radius)
+			return true;
+		if(n2.norm() < radius)
+			return true;
+		if(!n2.isDefined() || !n2.isDefined())
+			return true;
+		double x1,x2,y1,y2,z1,z2,dx,dy,dz,u;
+		
+		x1=n1.getX();
+		x2=n2.getX();
+		y1=n1.getY();
+		y2=n2.getY();
+		z1=n1.getZ();
+		z2=n2.getZ();
+		dx=x2-x1;
+		dy=y2-y1;
+		dz=z2-z1;
+		u=-(x1*dx+y1*dy+z1*dz)/(dx*dx+dy*dy+dz*dz);
+		if((x1+u*dx)*(x1+u*dx)+(y1+u*dy)*(y1+u*dy)+(z1+u*dz)*(z1+u*dz)<radius*radius)
+			return true;
+		return false;
+	}
+	
 	public boolean pointVisible(CurveTreeNode n){
 		/*GgbVector temp = n.getPos();
 		double x = temp.getX();
@@ -94,26 +121,29 @@ public class CurveTree {
 		GgbVector p1 = n1.getPos();
 		GgbVector p2 = n2.getPos();
 		GgbVector p3 = n3.getPos();
-		GgbVector t1 = n1.getTangent();
-		GgbVector t2 = n2.getTangent();
-		GgbVector t3 = n3.getTangent();
 		
 		GgbVector dp1 = p2.sub(p1);
 		GgbVector dp2 = p3.sub(p2);
 		
-		GgbVector dt1 = t2.sub(t1);
-		GgbVector dt2 = t3.sub(t2);
-		
 		double pCosAng = dp1.normalized().dotproduct(dp2.normalized());
-		double tCosAng = dt1.normalized().dotproduct(dt2.normalized());
 		
-		if( pCosAng < pCosThreshold || tCosAng < tCosThreshold || 
-				Double.isNaN(pCosAng) || Double.isNaN(tCosAng) )
+		if( pCosAng < pCosThreshold || Double.isNaN(pCosAng))
+			return true;
+		return false;
+	}
+	
+	public boolean tangentTest(CurveTreeNode n1, CurveTreeNode n2) {
+		double tCosAng = n2.getTangent().dotproduct(n1.getTangent());
+		if(tCosAng < tCosThreshold)
 			return true;
 		return false;
 	}
 	
 	public boolean distanceTest(CurveTreeNode n1, CurveTreeNode n2){
+		//test parameter distance
+		if(Math.abs(n1.getParam()-n2.getParam())<minParamDist)
+			return false;
+		
 		GgbVector p1 = n1.getPos();
 		GgbVector p2 = n2.getPos();
 		double scale = view.getScale();

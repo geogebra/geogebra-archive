@@ -21,8 +21,7 @@ import java.util.ListIterator;
  *
  */
 public class PlotterBrush {
-	
-	
+
 	/** thickness for drawing 3D lines*/
 	public static final float LINE3D_THICKNESS = 0.5f;
 
@@ -370,13 +369,12 @@ public class PlotterBrush {
 		}
 		else {
 			start = end;
-			end = new PlotterBrushSection(start,n.getPos(),thickness);
+			end = new PlotterBrushSection(start,n.getPos(),n.getTangent(),thickness);
 
 			setTextureX(1);
 			join();
 		}
 	}
-	
 	
 	/**
 	 * @param tree
@@ -387,55 +385,55 @@ public class PlotterBrush {
 		
 		startDrawingCurve();
 		
-		if(tree.subtreeVisible(tree.start))
+		//draw the start point if visible and defined
+		if(tree.start.getPos().isDefined() && tree.start.getPos().isFinite() 
+				&& tree.pointVisible(tree.start))
 			addPointToCurve(tree.start);
 		
 		refine(tree, tree.start,tree.root,tree.end,1);
 		
-		if(tree.subtreeVisible(tree.end))
+		//draw the end point if visible and defined
+		if(tree.end.getPos().isDefined() && tree.end.getPos().isFinite() 
+				&& tree.pointVisible(tree.end))
 			addPointToCurve(tree.end);
 	}
 	
 	private void refine(CurveTree tree, CurveTreeNode n1, CurveTreeNode n2, 
 						 CurveTreeNode n3, int level){
-		
-		if(!tree.subtreeVisible(n2))
-			return;
-		if(tree.angleTest(n1,n2,n3) || level<= tree.forcedLevels){ //only refine if we have to
+
+		if(level <= tree.forcedLevels || tree.angleTest(n1, n2, n3)){
+			//if the left segment is visible and passes the distance test, refine it
+			if(tree.segmentVisible(n1.getPos(),n2.getPos()))
+				if(tree.distanceTest(n1, n2))
+					refine(tree,n1,n2.getLeftChild(),n2,level+1);
 			
-			//if the left subtree is big enough (in screen coordinates), refine it
-			if(tree.distanceTest(n1,n2))
-				refine(tree,n1,n2.getLeftChild(),n2,level+1);
-			
-			//add middle point
-			//if(tree.pointVisible(n2))
-			if(n2.getPos().isDefined())
+			//draw the center point if it is defined
+			if(n2.getPos().isDefined() && n2.getPos().isFinite())
 				addPointToCurve(n2);
 			
-			//refine right subtree
-			if(tree.distanceTest(n2,n3))
-				refine(tree,n2,n2.getRightChild(),n3, level+1);
-		}
-	}
-	
-	/** draws the curve using the curvature method
-	 * @param list 
-	 * @param curve
-	 */
-	public void draw(LinkedList<GgbVector> list, GeoCurveCartesian3DInterface curve){	
-		setTextureType(PlotterBrush.TEXTURE_LINEAR);
-		ListIterator<GgbVector> it = list.listIterator();
-		double[] t = {1,0,0};
-		GgbVector tangent = new GgbVector(t);
-		if(it.hasNext())
-			end = new PlotterBrushSection(it.next(), tangent, thickness);
-		
-		while (it.hasNext()){
-			start = end;
-			end = new PlotterBrushSection(start,it.next(), thickness);
-
-			setTextureX(1);
-			join();
+			//if the right segment is visible and passes the distance test, refine it
+			if(tree.segmentVisible(n2.getPos(),n3.getPos()))
+				if(tree.distanceTest(n2, n3))
+					refine(tree,n2,n2.getRightChild(),n3,level+1);
+			
+		} else {
+			//if the left segment is visible, and the tangent and distance tests are passed
+			//for the same segment, refine it 
+			if(tree.segmentVisible(n1.getPos(),n2.getPos()))
+				if(tree.tangentTest(n1,n2))
+					if(tree.distanceTest(n1, n2))
+						refine(tree,n1,n2.getLeftChild(),n2,level+1);
+			
+			//draw the center point if it is defined
+			if(n2.getPos().isDefined() && n2.getPos().isFinite())
+				addPointToCurve(n2);
+			
+			//if the right segment is visible, and the tangent and distance tests are passed
+			//for the same segment, refine it 
+			if(tree.segmentVisible(n2.getPos(),n3.getPos()))
+				if(tree.tangentTest(n2,n3))
+					if(tree.distanceTest(n2, n3))
+						refine(tree,n2,n2.getRightChild(),n3,level+1);
 		}
 	}
 	
