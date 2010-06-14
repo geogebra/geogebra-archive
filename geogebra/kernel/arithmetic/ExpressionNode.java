@@ -983,6 +983,46 @@ implements ExpressionValue, ExpressionNodeConstants {
         return ret;     
     }
     
+    
+    
+    /**
+     * @return a representation of all classes present in the tree
+     */
+    final public String getTreeClass(){
+    	return getTreeClass("");
+    }
+    
+    /**
+     * @param prefix
+     * @return a representation of all classes present in the tree
+     */
+    final private String getTreeClass(String prefix){
+    	
+    	String ret="";
+    	
+    	ret+="-\n";
+    	
+    	if (left!=null){
+    		ret+=prefix+"  \\l:";
+    		if (left instanceof ExpressionNode)
+    			ret+=((ExpressionNode) left).getTreeClass(prefix+"   ");
+    		else
+    			ret+=left.getClass();
+    		ret+="\n";
+    	}
+    	
+    	if (right!=null){
+    		ret+=prefix+"  \\r:";
+    		if (right instanceof ExpressionNode)
+    			ret+=((ExpressionNode) right).getTreeClass(prefix+"   ");
+    		else
+    			ret+=right.getClass();
+    		ret+="\n";
+    	}
+   	
+    	return ret;
+    	
+    }
  
     
     /**
@@ -1648,7 +1688,7 @@ implements ExpressionValue, ExpressionNodeConstants {
                 
             case POWER:
             	
-            	/* support for sin²(x) for display, too slow and hacky
+            	/* support for sinï¿½(x) for display, too slow and hacky
             	if (STRING_TYPE == STRING_TYPE_GEOGEBRA && leftStr.startsWith("sin(")) {
             		//&& rightStr.equals("2")) {
             		int index;
@@ -1667,7 +1707,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             		
             	}//*/
             	
-            	// support for sin²(x) for LaTeX, eg FormulaText[]
+            	// support for sinï¿½(x) for LaTeX, eg FormulaText[]
             	if (STRING_TYPE == STRING_TYPE_LATEX &&
             			(leftStr.startsWith("\\sin ") || leftStr.startsWith("\\cos ")) || leftStr.startsWith("\\tan ") || leftStr.startsWith("\\csc ") || leftStr.startsWith("\\sec ") || leftStr.startsWith("\\cot ") || leftStr.startsWith("\\sinh ") || leftStr.startsWith("\\cosh ") || leftStr.startsWith("\\tanh ") || leftStr.startsWith("\\coth ") || leftStr.startsWith("\\sech ") || leftStr.startsWith("\\csch ")) {
             		//&& rightStr.equals("2")) {

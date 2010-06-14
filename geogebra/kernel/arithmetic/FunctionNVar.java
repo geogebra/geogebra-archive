@@ -333,9 +333,6 @@ implements ExpressionValue, FunctionalNVar {
     //TODO use map as in Function.java
     final public FunctionNVar derivative(int var, int order) {     	 
 		// use CAS to get derivative
-        // temporarily replace the variable by "x"
-        //String oldVar = fVar.toString();
-        //fVar.setVarString("x");
                 
         // build expression string for CAS             
 		sb.setLength(0);
@@ -357,31 +354,8 @@ implements ExpressionValue, FunctionalNVar {
             // evaluate expression by CAS 
             String result = kernel.evaluateGeoGebraCAS(sb.toString());  
             
-            
-           
-            /*
-            // fast fail for e.g. "Differentiate(x)Floor(x)"
-            if (result.startsWith("Differentiate(") || result.startsWith("'diff("))
-            	return null;
-            
-    		// look for "Deriv(x)f(x)" strings and
-    		// replace them with "f'(x)"
-    		String [] derivs = result.split("Deriv\\(x\\)");
-    		sb.setLength(0);
-    		sb.append(derivs[0]); // part before first "Deriv(x)"
-    		for (int i=1; i < derivs.length; i++) {
-    			// replace "(x)" by "'(x)"
-    			sb.append(derivs[i].replaceFirst("\\(x\\)", "'(x)"));
-    		}
-    		result = sb.toString();
-    		*/
-                		
-            // it doesn't matter what label we use here as it is never used   
-            /*
-    		sb.setLength(0);
-    		sb.append("f(x) = ");			
-            sb.append(result);
-            */
+ 
+            //TODO make some tests like in Function
     
             // parse result
             
@@ -400,44 +374,29 @@ implements ExpressionValue, FunctionalNVar {
     			cons.addLocalVariable(localVarName[i], num[i]); 
     		}
 
-    		// initialize first value of local numeric variable from initPos
-    		/*
-    		for(int i=0;i<fVars.length;i++)
-    			num[i].setValue(0);
-    			*/
+
 
     		// creates the expression
     		ExpressionNode exp = kernel.getParser().parseExpression(result);
-    		//FunctionNVar fun = new FunctionNVar(kernel.getParser().parseExpression(result),fVars);
-            //fun.initFunction();
-    		
-    		/*
-    		Application.debug("exp:"+exp.toString());
-    		for (int i=0;i<fVars.length; i++)
-				exp.replace(num[i], fVars[i]);
-				*/
+    		//Application.debug("exp:"+exp.toString());
+     		//Application.debug(exp.getTreeClass());
+				
 
        	 	FunctionNVar fun = new FunctionNVar(exp,fVars);
             fun.initFunction();
             
             
-            //Application.debug("fun:"+fun.toString());
 
     		// remove local variable name from kernel again
     		for(int i=0;i<fVars.length;i++)
     			cons.removeLocalVariable(localVarName[i]);     	  
     		
-    		
+    		//change GeoNumeric to FunctionVariable
+    		for (int i=0;i<fVars.length; i++)
+				exp.replace(num[i], fVars[i]);
 
-            
-       	 	/*
-    		Application.debug("exp:"+exp.toString());
-    		Application.debug("exp="+exp.evaluate());
-       		fVars[0].set(1);fVars[1].set(1);Application.debug("exp(1,1)="+ ((NumberValue) exp.evaluate()).getDouble());
-			*/
-
-          
-             //fun.getFunctionVariable().setVarString(oldVar);                       
+    		Application.debug(exp.getTreeClass());
+                               
              return fun;
          } catch (Error err) {       
              err.printStackTrace();
