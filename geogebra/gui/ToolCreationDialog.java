@@ -55,6 +55,8 @@ import javax.swing.event.ListDataListener;
  * Dialog to create a new user defined tool
  * 
  * @author Markus Hohenwarter
+ * @version 2010-06-14
+ * Last change: Zbynek Konecny 
  */
 public class ToolCreationDialog extends javax.swing.JDialog
 implements GeoElementSelectionListener {
@@ -81,7 +83,7 @@ implements GeoElementSelectionListener {
 		initLists();						
 		initGUI();
 		Macro appMacro = app.getMacro();
-		if(appMacro!=null)this.setNameTab(appMacro);
+		if(appMacro!=null)this.setFromMacro(appMacro);
 	}
 	
 	public void setVisible(boolean flag) {		
@@ -89,7 +91,7 @@ implements GeoElementSelectionListener {
 		
 		if (flag) {
 			// add all currently selected geos to output list
-			ArrayList selGeos = app.getSelectedGeos();
+			ArrayList<GeoElement> selGeos = app.getSelectedGeos();
 			for (int i=0; i < selGeos.size(); i++) {
 				GeoElement geo = (GeoElement) selGeos.get(i);
 				outputList.addElement(geo);
@@ -285,13 +287,13 @@ implements GeoElementSelectionListener {
 		GeoElement [] output = toGeoElements(outputList);
 		
 		// determine all free parents of output
-		TreeSet freeParents = new TreeSet();
+		TreeSet<GeoElement> freeParents = new TreeSet<GeoElement>();
 		for (int i=0; i < output.length; i++) {
 			output[i].addPredecessorsToSet(freeParents, true);
 		}
 		
 		// fill input list with labeled free parents
-		Iterator it = freeParents.iterator();		
+		Iterator<GeoElement> it = freeParents.iterator();		
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();
 			if (geo.isLabelSet()) {
@@ -340,13 +342,13 @@ implements GeoElementSelectionListener {
 		inputList = new InputListModel(cbInputAddList);
 		outputList = new OutputListModel(cbOutputAddList);
 		
-		TreeSet sortedSet = app.getKernel().getConstruction().getGeoSetNameDescriptionOrder();			
+		TreeSet<GeoElement> sortedSet = app.getKernel().getConstruction().getGeoSetNameDescriptionOrder();			
 		
 		// lists for combo boxes to select input and output objects
 		// fill combobox models
 		cbInputAddList.addElement(null);
 		cbOutputAddList.addElement(null);		
-		Iterator it = sortedSet.iterator();
+		Iterator<GeoElement> it = sortedSet.iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();				
 			if (possibleInput(geo)) {
@@ -402,18 +404,29 @@ implements GeoElementSelectionListener {
 			e.printStackTrace();
 		}
 	}
-	public void addInputs(GeoElement[] input){
-		//TODO:make this operational
-	}
 	
-	public void addOutputs(GeoElement[] output){
-		//TODO:make this operational
-	}
-	public void setNameTab(Macro macro){
-		namePanel.setCommandName(macro.getCommandName());
+	
+	/**
+	 * Sets the tabs according to a macro. 
+	 * @param macro whose parameters should be copied to the inputs.
+	 * @author Zbynek Konecny
+	 * @version 2010-06-14
+	 */
+	public void setFromMacro(Macro macro){
+		namePanel.setFromMacro(macro);
 		namePanel.setToolHelp(macro.getToolHelp());
 		namePanel.setToolName(macro.getToolName());
+		namePanel.setIconFileName(macro.getIconFileName());
+		for(int i=0;i<macro.getMacroInput().length;i++){
+			GeoElement el=app.getKernel().lookupLabel(macro.getMacroInput()[i].getLabel());
+			if(el!=null)this.inputList.add(0,el);
+		}
+		for(int i=0;i<macro.getMacroOutput().length;i++){
+			GeoElement el=app.getKernel().lookupLabel(macro.getMacroOutput()[i].getLabel());
+			if(el!=null)this.outputList.add(0,el);
+		}
 	}
+	
 	private JPanel createNavigationPanel() {		
 		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));		
 		btPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 5));
@@ -485,6 +498,11 @@ implements GeoElementSelectionListener {
 	
 	/** 
 	 * Creates a panel with a list to choose input/output objects of the new tool.
+	 * @param showUpDownButtons true if up and down butons should appear on the right
+	 * @param cbModel Combobox model with items than can be added to list (not displayed if null)
+	 * @param app Application this dialog belongs to
+	 * @param listModel list model containing the input/output GeoElements
+	 * @return Panel with the list, buttons and comboBox
 	 */
 	public static JPanel createInputOutputPanel(Application app, 
 			final DefaultListModel listModel, final DefaultComboBoxModel cbModel,
@@ -536,8 +554,12 @@ implements GeoElementSelectionListener {
 	/**
 	 * Creates a panel with a list on the left and buttons (up, down, remove) on the right.
 	 * If the combobox is not null it is added on top of the list.
-	 * @param listPanel
+	 * @param app Application this dialog belongs to
 	 * @param list
+	 * @param showRemoveButton true if remove buton should appear on the right
+	 * @param showUpDownButtons true if up and down butons should appear on the right
+	 * @param cbAdd Combobox with items than can be added to list (not displayed if null)
+	 * @return Panel with the list, buttons and comboBox
 	 */
 	public static JPanel createListUpDownRemovePanel(Application app, final JList list, final JComboBox cbAdd, 
 			boolean showRemoveButton, boolean showUpDownButtons) {

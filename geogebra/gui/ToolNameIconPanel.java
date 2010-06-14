@@ -35,8 +35,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * Panel of Tool Creation Dialog. Contains tool name, command name,
+ * help and icon for the tool. It also allows user to add/remove
+ * the tool from toolbar.
+ *
+ * @version 2010-06-14
+ */
 public class ToolNameIconPanel extends JPanel {	
+	
+	/** With of tool icon in pixels **/
 	public static final int ICON_WIDTH = 32;
+	/** Height of tool icon in pixels **/
 	public static final int ICON_HEIGHT = 32;
 	
 	private JTextField tfCmdName;
@@ -53,6 +63,10 @@ public class ToolNameIconPanel extends JPanel {
 	private ToolManagerDialog managerDialog;
 	private Macro macro;
 	
+	/**
+	 * Creates new ToolNameIconPanel in a Tool Creation Dialog
+	 * @param app Application to which the Tool Creation Dialog belongs
+	 */
 	public ToolNameIconPanel(final Application app) {
 		this.app = app;
 		
@@ -132,17 +146,10 @@ public class ToolNameIconPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				String fileName = app.getGuiManager().getImageFromFile(); // Michael Borcherds 2008-05-10
 				if (fileName != null) {
-					BufferedImage image = app.getExternalImage(fileName);
-					if (image.getWidth() != ICON_WIDTH || image.getHeight() != ICON_HEIGHT) {
-						image = ImageResizer.resizeImage(image, ICON_WIDTH, ICON_HEIGHT);
-						app.addExternalImage(fileName, image);
-					}
-					iconFileName = fileName;					
-					labelIcon.setIcon(new ImageIcon(image));	
-					updateMacro();
-				}
+					setIconFileName(fileName);}
 			}				
 		};
+		
 		btIconFile.addActionListener(ac);
 						
 	
@@ -163,7 +170,8 @@ public class ToolNameIconPanel extends JPanel {
 	
 	/**
 	 * Uses the textfields in this dialog to set the currently shown macro.
-	 * @see init()	
+	 * @see #init()
+	 * 
 	 */
 	private void updateMacro() {
 		if (macro == null) return;
@@ -190,10 +198,23 @@ public class ToolNameIconPanel extends JPanel {
 	}
 	
 	/**
+	 * Sets all fields using properties of a macro
+	 * @param macro macro whose parameters are used
+	 */
+	public void setFromMacro(Macro macro){
+		tfToolName.setText(macro.getToolName());		
+		tfCmdName.setText(macro.getCommandName());				
+		tfToolHelp.setText(macro.getToolHelp());	
+		cbShowInToolBar.setSelected(macro.isShowInToolBar());
+		setIconFileName(macro.getIconFileName());
+	}
+	
+	/**
 	 * Inits the textfields in this dialog using the properties of
 	 * the given macro. The ToolManagerDialog is registered as a listener
 	 * to be updated whenever the macro properties are changed.
-	 * @param macro
+	 * @param macro Macro into which new name, help, etc. are stored
+	 * @param managerDialog Manager dialog this tab belongs to
 	 */
 	public void init(ToolManagerDialog managerDialog, Macro macro) {			
 		updateMacro(); // update last macro if we already had one
@@ -210,17 +231,7 @@ public class ToolNameIconPanel extends JPanel {
 			iconFileName = "";
 			labelIcon.setIcon(null);			
 		} else {			
-			tfToolName.setText(macro.getToolName());		
-			tfCmdName.setText(macro.getCommandName());				
-			tfToolHelp.setText(macro.getToolHelp());	
-			cbShowInToolBar.setSelected(macro.isShowInToolBar());
-			iconFileName = macro.getIconFileName();
-			
-			BufferedImage img = app.getExternalImage(iconFileName);
-			if (img != null)
-				labelIcon.setIcon(new ImageIcon(img));
-			else
-				labelIcon.setIcon(app.getToolBarImage("mode_tool_32.png", null));
+			setFromMacro(macro);
 		}
 		
 		tfToolName.setEnabled(enabled);
@@ -238,29 +249,83 @@ public class ToolNameIconPanel extends JPanel {
 		tfToolName.setSelectionStart(0);
 		tfToolName.setSelectionEnd(tfToolName.getText().length());	
 	}
-	
+	/**
+	 * Returns command name
+	 * @return command name
+	 */
 	public String getCommandName() {
 		return tfCmdName.getText();
 	}
+	/**
+	 * Sets command name
+	 * @param commandName command name
+	 */
 	public void setCommandName(String commandName){
 		tfCmdName.setText(commandName);
 	}
+	/**
+	 * Gets tool name
+	 * @return tool name
+	 */
 	public String getToolName() {
 		return tfToolName.getText();
 	}
+	/**
+	 * Sets tool name
+	 * @param toolName
+	 */
 	public void setToolName(String toolName){
 		tfToolName.setText(toolName);
 	}
+	/**
+	 * Gets tool help
+	 * @return tool help
+	 */
 	public String getToolHelp() {
 		return tfToolHelp.getText();
 	}
+	/**
+	 *  Sets tool help (e.g. for tooltip)
+	 *  @param toolHelp tool help
+	 */
 	public void setToolHelp(String toolHelp){
 		tfToolHelp.setText(toolHelp);
 	}
+	
+	/**
+	 * Returns true if the macro shoud be dispalayed in toolbar 
+	 * @return true if "Show in toolbar" checkbox is selected
+	 */
 	public boolean showInToolBar() {
 		return cbShowInToolBar.isSelected();
 	}
 	
+	/**
+	 * Sets icon filename and updates thumbnail.
+	 * @param fileName Path to new icon file.
+	 * @version 2010-06-14
+	 * Last change: separated from #actionPerformed (Zbynek Konecny) 
+	 */
+	public void setIconFileName(String fileName) {
+		BufferedImage image = app.getExternalImage(fileName);
+		if(image!=null){
+			if (image.getWidth() != ICON_WIDTH || image.getHeight() != ICON_HEIGHT) {
+				image = ImageResizer.resizeImage(image, ICON_WIDTH, ICON_HEIGHT);
+				app.addExternalImage(fileName, image);
+			}
+			iconFileName = fileName;					
+			labelIcon.setIcon(new ImageIcon(image));
+		}	
+		else{
+			labelIcon.setIcon(app.getToolBarImage("mode_tool_32.png", null));
+			iconFileName = null;
+		}
+		updateMacro();
+	}
+	/**
+	 * Returns filename of icon.
+	 * @return filename of icon
+	 */
 	public String getIconFileName() {
 		return iconFileName;
 	}

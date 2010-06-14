@@ -63,7 +63,7 @@ public class Construction {
 	protected HashMap geoTable, localVariableTable;
 
 	// set with all labeled GeoElements in ceList order
-	private TreeSet geoSet;
+	private TreeSet<GeoElement> geoSet; //generic Object replaced by GeoElement (Zbynek Konecny, 2010-06-14)
 
 	// set with all labeled GeoElements in alphabetical order
 	private TreeSet<GeoElement> geoSetLabelOrder;
@@ -295,13 +295,14 @@ public class Construction {
 	 * order of their type strings and labels (e.g. Line g, Line h, Point A,
 	 * Point B, ...). Note: the returned TreeSet is a copy of the current
 	 * situation and is not updated by the construction later on.
+	 * @return Set of all labeld GeoElements orted by name and description
 	 */
-	final public TreeSet getGeoSetNameDescriptionOrder() {
+	final public TreeSet<GeoElement> getGeoSetNameDescriptionOrder() {
 		// sorted set of geos
-		TreeSet sortedSet = new TreeSet(new NameDescriptionComparator());
+		TreeSet<GeoElement> sortedSet = new TreeSet<GeoElement>(new NameDescriptionComparator());
 
 		// get all GeoElements from construction and sort them
-		Iterator it = geoSet.iterator();
+		Iterator<GeoElement> it = geoSet.iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();
 			// sorted inserting using name description of geo

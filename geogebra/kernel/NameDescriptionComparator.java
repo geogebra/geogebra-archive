@@ -2,10 +2,13 @@ package geogebra.kernel;
 
 import java.util.Comparator;
 
-public class NameDescriptionComparator implements Comparator {				    	
-	public int compare(Object ob1, Object ob2) {
-		GeoElement geo1 = (GeoElement) ob1;
-		GeoElement geo2 = (GeoElement) ob2;
+/**
+ * Compares GeoElements by name and description alphabetically
+ * @version 2010-06-14
+ * Last change: generic Object replaced by GeoElement (Zbynek Konecny) 
+ */
+public class NameDescriptionComparator implements Comparator<GeoElement> {				    	
+	public int compare(GeoElement geo1, GeoElement geo2) {
 		if (geo1 == null)
 			return -1;
 		else if (geo2 == null)
