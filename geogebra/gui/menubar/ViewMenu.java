@@ -34,7 +34,7 @@ class ViewMenu extends BaseMenu {
 		showAuxiliaryObjectsAction,
 		showAlgebraInputAction,
 		showKeyboardAction,
-		showOCRAction,
+		showHandwritingAction,
 		showCmdListAction,
 		showInputTopAction,
 		showToolBarAction,
@@ -66,7 +66,7 @@ class ViewMenu extends BaseMenu {
 		cbShowConsProtNavigationOpenProt,
 		cbShowAlgebraInput,
 		cbShowKeyboard,
-		cbShowOCR,
+		cbShowHandwriting,
 		cbShowCmdList;
 	
 	private JMenu
@@ -159,8 +159,8 @@ class ViewMenu extends BaseMenu {
 		add(cbShowKeyboard);
      
         // Anjneya Varshney 2010-06-10
-		cbShowOCR = new JCheckBoxMenuItem(showOCRAction);
-		add(cbShowOCR);
+		cbShowHandwriting = new JCheckBoxMenuItem(showHandwritingAction);
+		add(cbShowHandwriting);
 		
 		addSeparator();
 
@@ -293,22 +293,22 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showOCRAction = new AbstractAction(app.getPlain("ShowOCR"),
+		showHandwritingAction = new AbstractAction(app.getPlain("ShowHandwriting"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				
-				if (Application.isOCRActive() && !app.getGuiManager().showOCR()) {
+				if (Application.isHandwritingRecognitionActive() && !app.getGuiManager().showHandwritingRecognition()) {
 					
 					// if keyboard is active but hidden, just show it
-					app.getGuiManager().toggleOCR(true);
+					app.getGuiManager().toggleHandwriting(true);
 					update();
 					
 				} else {
 				
-					Application.setOCRActive(!Application.isOCRActive());				
-					app.getGuiManager().toggleOCR(Application.isOCRActive());
+					Application.setHandwritingRecognitionActive(!Application.isHandwritingRecognitionActive());				
+					app.getGuiManager().toggleHandwriting(Application.isHandwritingRecognitionActive());
 					update();
 				}
 

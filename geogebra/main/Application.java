@@ -4001,14 +4001,14 @@ public abstract class Application implements KeyEventDispatcher {
 		//Application.debug("VK active:"+virtualKeyboardActive);
 	}
 	
-	private static boolean OCRActive = false;
+	private static boolean handwritingRecognitionActive = false;
 	
-	public static boolean isOCRActive() {
-		return OCRActive;
+	public static boolean isHandwritingRecognitionActive() {
+		return handwritingRecognitionActive;
 	}
 	
-	public static void setOCRActive(boolean active) {
-		OCRActive = active;
+	public static void setHandwritingRecognitionActive(boolean active) {
+		handwritingRecognitionActive = active;
 	}
 	
 	private static boolean miniPropertiesActive = true;

@@ -85,7 +85,7 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 
-import com.heatonresearch.OCR.OCRFrame;
+import org.neuroph.contrib.jHRT.gui.HandwritingRecognitionTool;
 
 
 /**
@@ -2932,14 +2932,14 @@ public class DefaultGuiManager implements GuiManager {
 
 		}
 		
-		OCRFrame frameOCR = null;
+		HandwritingRecognitionTool handwritingRecognition = null;
 		
-		public void toggleOCR(boolean show) {
+		public void toggleHandwriting(boolean show) {
 			
-			if (frameOCR == null) {
-				frameOCR = new OCRFrame(app);
+			if (handwritingRecognition == null) {
+				handwritingRecognition = new HandwritingRecognitionTool(app);
 				}
-			frameOCR.setVisible(show);
+			handwritingRecognition.setVisible(show);
 		}
 		
 		PropertiesPanelMini ppm;
@@ -2979,11 +2979,11 @@ public class DefaultGuiManager implements GuiManager {
 			return virtualKeyboard.isVisible();
 		}
 
-		public boolean showOCR() {
-			if (frameOCR == null) 
+		public boolean showHandwritingRecognition() {
+			if (handwritingRecognition == null) 
 				return false;
 			
-			return frameOCR.isVisible();
+			return handwritingRecognition.isVisible();
 		}
 
 }
