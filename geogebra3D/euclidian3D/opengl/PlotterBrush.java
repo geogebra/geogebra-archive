@@ -344,14 +344,11 @@ public class PlotterBrush {
 	}
 
 	
-	
-
 	////////////////////////////////////
 	// 3D CURVE DRAWING METHODS
 	////////////////////////////////////
 	
 	private boolean firstCurvePoint = false;
-	private static final double discontinuityThreshold = 0.30;
 	private GgbVector previousPosition;
 	private GgbVector previousTangent;
 	
@@ -389,15 +386,21 @@ public class PlotterBrush {
 		previousTangent  = tangent;
 	}
 	
+	/** A test used to judge if the curve has passed over a discontinuity since
+	 *  the last point was added.
+	 * @param position the position of the new point (pos2)
+	 * @return true iff (pos2-pos1)/||pos2-pos1|| . tangent1 < CurveTree.discontinuityThreshold
+	 */
 	private boolean discontinuityPassed(GgbVector position) {
 		GgbVector dir = position.sub(previousPosition).normalized();
 		
-		if(dir.dotproduct(previousTangent)<discontinuityThreshold)
+		if(dir.dotproduct(previousTangent)<CurveTree.discontinuityThreshold)
 			return true;
 		return false;
 	}
 	
-	/**
+	/** draws the curve defined by tree, in the viewing volume of a sphere
+	 *  with radius r centered at the origin
 	 * @param tree
 	 * @param radius the radius of a sphere bounding the viewing volume
 	 */

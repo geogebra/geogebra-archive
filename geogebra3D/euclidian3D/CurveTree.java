@@ -15,16 +15,33 @@ public class CurveTree {
 	private EuclidianView3D view;
 	private double radius =0;
 	
-	/** amount of levels intially calculated*/
-	private final int initialLevels = 8;
-	/**minimum amount of levels that is drawn*/
-	public final int forcedLevels = 3;
-
-	static final private double pCosThreshold = 0.995;
-	static final private double tCosThreshold = 0.95;
-	static final private double minParamDist = 1e-5;
-	static final private double distanceFactor = 10.0;
+	////////////////////////////////////
+	// LEVEL OF DETAIL PARAMETERS
+	////////////////////////////////////
 	
+	/**a threshold for judging when a singularity has been passed.
+	 * the cosine of the minimum angle for a singularity.
+	 * used in {@link PlotterBrush} */
+	public static final double discontinuityThreshold = -0.95;
+	/** the difference in the paramater value used for tangent estimations
+	 *  used in {@link CurveTreeNode} */
+	public static final double deltaParam = 1e-8;
+	/** amount of levels intially calculated*/
+	public static final int initialLevels = 8;
+	/**minimum amount of levels that is drawn*/
+	public static final int forcedLevels = 6;
+	/** threshold used for testing if two segments form a
+	 *  large enough angle. the cosine of the minimum angle allowed */
+	public static final double pCosThreshold = 0.995;
+	/** threshold used for testing if the tangents of two consecutive pointss
+	 *  are close enough. the cosine of the maximum angle allowed */
+	public static final double tCosThreshold = 0.995;
+	/** the minimum paramater distance allowed between two consecutive points */
+	public static final double minParamDist = 1e-5;
+	/** a factor for determining the level of detail depending on the camera zoom */
+	public static final double distanceFactor = 10.0;
+	
+	////////////////////////////////////
 	
 	/**
 	 * @return the curve object for the tree
@@ -274,9 +291,6 @@ class CurveTreeNode{
 	private final int level;
 	private final double diff;
 	
-	/** the difference in the paramater value used for tangent estimations*/
-	private final double deltaParam = 1e-8;
-	
 	private CurveTreeNode[] children;
 	private GeoCurveCartesian3D curve;
 	
@@ -364,7 +378,7 @@ class CurveTreeNode{
 	 * 	Should only be called in the constructor.
 	 */
 	private void approxTangent(){
-		GgbVector d = curve.evaluateCurve(param+deltaParam);
+		GgbVector d = curve.evaluateCurve(param+CurveTree.deltaParam);
 		tangent = d.sub(pos).normalized();
 	}
 }
