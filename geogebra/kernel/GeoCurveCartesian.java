@@ -13,10 +13,15 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.MyList;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
+
 
 /**
  * Cartesian parametric curve, e.g. (cos(t), sin(t)) for t from 0 to 2pi.
@@ -24,7 +29,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * @author Markus Hohenwarter
  */
 public class GeoCurveCartesian extends GeoCurveCartesianND
-implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineProperties {
+implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable,Traceable, GeoDeriveable, ParametricCurve, LineProperties {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -33,9 +38,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	
 	private Function funX, funY;
 	private boolean isClosedPath;
-	private boolean trace = false, spreadsheetTrace = false;	
+	private boolean trace = false;//, spreadsheetTrace = false; -- not used, commented out (Zbynek Konecny, 2010-06-16)	
 //	Victor Franco Espino 25-04-2007
-	/*
+	/**
 	 * Parameter in dialog box for adjust color of curvature
 	 */
 	double CURVATURE_COLOR = 15;//optimal value 
@@ -44,6 +49,12 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 
 	private ParametricCurveDistanceFunction distFun;
 	
+	/**
+	 * Creates new curve
+	 * @param c construction
+	 * @param fx x-coord function
+	 * @param fy y-coord function
+	 */
 	public GeoCurveCartesian(Construction c, 
 			Function fx, Function fy) 
 	{
@@ -68,7 +79,8 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
     	return GEO_CLASS_CURVE_CARTESIAN;
     }
 
-	/** copy constructor */
+	/** copy constructor 
+	 * @param f Curve to copy*/
 	public GeoCurveCartesian(GeoCurveCartesian f) {
 		super(f.cons);
 		set(f);
@@ -80,13 +92,15 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	
 	/** 
 	 * Sets the function of the x coordinate of this curve.
+	 * @param funX new x-coord function
 	 */
 	final public void setFunctionX(Function funX) {
 		this.funX = funX;			
 	}		
 	
 	/** 
-	 * Sets the function of the x coordinate of this curve.
+	 * Sets the function of the y coordinate of this curve.
+	 * @param funY new y-coord function
 	 */
 	final public void setFunctionY(Function funY) {
 		this.funY = funY;			
@@ -95,6 +109,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	/**
      * Replaces geo and all its dependent geos in this function's
      * expression by copies of their values.
+     * @param geo Element to be replaced
      */
     public void replaceChildrenByValues(GeoElement geo) {     	
     	if (funX != null) {
@@ -139,7 +154,6 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		// macro OUTPUT
 		if (geo.cons != cons && isAlgoMacroOutput()) {	
 			if (!geo.isIndependent()) {
-//				// TODO: remove
 //				System.out.println("set " + this.label);
 //				System.out.println("   funX before: " + funX.toLaTeXString(true));
 				
@@ -148,7 +162,6 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
 				algoMacro.initFunction(funX);
 				algoMacro.initFunction(funY);
-//				// TODO: remove
 //				System.out.println("   funX after: " + funX.toLaTeXString(true));
 			}
 		}
@@ -171,9 +184,15 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		}	
 	}		
 	// added by Loïc Le Coq 2009/08/12
+	/**
+	 * @return value string x-coord function
+	 */
 	final public String getFunX(){
 		return funX.toValueString();
 	}
+	/**
+	 * @return value string y-coord function
+	 */
 	final public String getFunY(){
 		return funY.toValueString();
 	}
@@ -203,12 +222,132 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 		return true;
 	}
 	
+	final public boolean isMatrixTransformable() {
+		return true;
+	}
+	
+	/**
+	 * Translates the curve by vector given by coordinates
+	 * @param vx x-coord of the translation vector
+	 * @param vy y-coord of the translation vector
+	 */
 	final public void translate(double vx, double vy) {
-		funX.translate(vx, 0);
-		funY.translate(0, vy);
+		funX.translateY(vx);
+		funY.translateY(vy);
 	}	
-
-
+    //<Zbynek Konecny, 2010-06-16>
+	final public void rotate(NumberValue phi,GeoPoint P){
+		translate(-P.getX(),-P.getY());
+		rotate(phi);
+		translate(P.getX(),P.getY());
+	}
+	final public void mirror(GeoPoint P){
+		dilate(new MyDouble(kernel,-1.0),P);
+	}
+	
+	final public void mirror(GeoLine g) {
+	        // Y = S(phi).(X - Q) + Q
+	        // where Q is a point on g, S(phi) is the mirrorTransform(phi)
+	        // and phi/2 is the line's slope angle
+	        
+	        // get arbitrary point of line
+	        double qx, qy; 
+	        if (Math.abs(g.x) > Math.abs(g.y)) {
+	            qx = g.z / g.x;
+	            qy = 0.0d;
+	        } else {
+	            qx = 0.0d;
+	            qy = g.z / g.y;
+	        }
+	        
+	        // translate -Q
+	        translate(qx, qy);     
+	        
+	        // S(phi)        
+	        mirror(new MyDouble(kernel,2.0 * Math.atan2(-g.x, g.y)));
+	        
+	        // translate back +Q
+	        translate(-qx, -qy);
+	        
+	         // update inhom coords
+	         
+	    }
+		
+	
+	final public void rotate(NumberValue phi){
+		ExpressionNode cosPhi = new ExpressionNode(kernel,phi,ExpressionNode.COS,null);
+		ExpressionNode sinPhi = new ExpressionNode(kernel,phi,ExpressionNode.SIN,null);
+		ExpressionNode minSinPhi = new ExpressionNode(kernel,new MyDouble(kernel,0.0),ExpressionNode.MINUS,sinPhi);
+		matrixTransform(cosPhi,minSinPhi,sinPhi,cosPhi);
+	}
+	
+	public void dilate(NumberValue ratio,GeoPoint P){
+		translate(-P.getX(),-P.getY());
+		ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
+		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
+		funX.setExpression(new ExpressionNode(kernel,ratio,ExpressionNode.MULTIPLY,exprX));
+		funY.setExpression(new ExpressionNode(kernel,ratio,ExpressionNode.MULTIPLY,exprY));
+		translate(P.getX(),P.getY());
+	}
+	
+	/**
+     * mirror transform with angle phi
+     *  [ cos(phi)       sin(phi)   ]
+     *  [ sin(phi)      -cos(phi)   ]  
+     */
+	private void mirror(NumberValue phi){				
+		ExpressionNode cosPhi = new ExpressionNode(kernel,phi,ExpressionNode.COS,null);
+		ExpressionNode sinPhi = new ExpressionNode(kernel,phi,ExpressionNode.SIN,null);
+		ExpressionNode minCosPhi = new ExpressionNode(kernel,new MyDouble(kernel,0.0),ExpressionNode.MINUS,cosPhi);
+		matrixTransform(cosPhi,sinPhi,sinPhi,minCosPhi);				
+	}
+	
+	
+	public void matrixTransform(GeoList matrix) {
+		
+		MyList list = matrix.getMyList();
+		
+		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
+			setUndefined();
+			return;
+		}
+		 
+		ExpressionValue a,b,c,d;
+		
+		a = ((NumberValue)(MyList.getCell(list,0,0).evaluate()));
+		b = ((NumberValue)(MyList.getCell(list,1,0).evaluate()));
+		c = ((NumberValue)(MyList.getCell(list,0,1).evaluate()));
+		d = ((NumberValue)(MyList.getCell(list,1,1).evaluate()));
+ 
+		matrixTransform(a,b,c,d);
+		
+	}
+	
+	/**
+	 * Transforms curve using matrix
+	 * [a b]
+	 * [c d]
+	 * @param a top left matrix element
+	 * @param b top right matrix element
+	 * @param c bottom left matrix element
+	 * @param d bottom right matrix element
+	 */
+	public void matrixTransform(ExpressionValue a,ExpressionValue b, ExpressionValue c, ExpressionValue d){
+		ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
+		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
+		ExpressionNode transX = new ExpressionNode(kernel,
+				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,a),
+				ExpressionNode.PLUS,
+				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,b));
+		ExpressionNode transY = new ExpressionNode(kernel,
+				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,c),
+				ExpressionNode.PLUS,
+				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,d));
+		funX.setExpression(transX);
+		funY.setExpression(transY);
+	}
+	//</Zbynek>
+	
 	public boolean showInAlgebraView() {
 		return true;
 	}
@@ -239,6 +378,7 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	
 	//TODO remove and use super method (funX and funY should be removed in fun[])
 	public String toValueString() {		
+		
 		if (isDefined) {
 			if (sbTemp == null) {
 				sbTemp = new StringBuilder(80);
@@ -340,7 +480,9 @@ implements Path, Translateable, Traceable, GeoDeriveable, ParametricCurve, LineP
 	/**
 	 * Returns the parameter value t where this curve has minimal distance
 	 * to point P.
-	 * @param startValue: an intervall around startValue is specially investigated				
+	 * @param startValue an interval around startValue is specially investigated
+	 * @param P point to which the distance is minimized
+	 * @return optimal parameter value t				
 	 */
 	public double getClosestParameter(GeoPoint P, double startValue) {		
 		if (distFun == null)
