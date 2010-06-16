@@ -111,6 +111,9 @@ public abstract class AlgoCoordSys2D extends AlgoElement3D {
 					coordsys.setUndefined();
 
 			}
+			
+			if (coordsys.isDefined())
+				coordsys.makeEquationVector();
 		}
 		
 	}

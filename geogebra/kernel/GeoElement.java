@@ -2092,94 +2092,99 @@ public abstract class GeoElement
 		// standard case: get default label
 		return getDefaultLabel(); 
 	}
+	
+	public String getDefaultLabel() {	
+		return getDefaultLabel(null);
+	}
 		
-	public String getDefaultLabel() {			
-		char[] chars;
+	protected String getDefaultLabel(char[] chars) {	
 
-		if (isGeoPoint()) {
-			// Michael Borcherds 2008-02-23
-			// use Greek upper case for labeling points if lenguage is Greek (el)
-			// TODO decide if we want this as an option, or:
-			 if (app.languageIs(app.getLocale(), "el")) chars=greekUpperCase; else
-		    if (app.languageIs(app.getLocale(), "ar")) chars=arabic; else
-			chars = pointLabels;
-		
-			GeoPointInterface point = (GeoPointInterface)this;
-			if (point.getMode() == Kernel.COORD_COMPLEX)
-				chars = complexLabels;
-				
-		} else if (isGeoFunction()) {
-			chars = functionLabels;
-		} else if (isGeoLine()) {
-			chars = lineLabels;
-		} else if (isGeoConic() || isGeoCubic()) {
-			chars = conicLabels;
-		} else if (isGeoVector() || isVector3DValue()) {
-			chars = vectorLabels;
-		}  else if (isGeoAngle()) {
-			chars = greekLowerCase;
-		} 
-		else if (isGeoPolygon()) {
-			int counter = 0;
-			String str;
-			do {
-				counter++;
-				str = app.getPlain("Name.polygon") + kernel.internationalizeDigits(counter+"");;
-			} while (!cons.isFreeLabel(str));
-			return str;
-		}		
-		else if (isGeoText()) {
-			int counter = 0;
-			String str;
-			do {
-				counter++;
-				str = app.getPlain("Name.text") + kernel.internationalizeDigits(counter+"");
-			} while (!cons.isFreeLabel(str));
-			return str;
-		} else if (isGeoImage()) {
-			int counter = 0;			
-			String str;
-			do {
-				counter++;
-				str = app.getPlain("Name.picture") + kernel.internationalizeDigits(counter+"");;
-			} while (!cons.isFreeLabel(str));
-			return str;
-		} else if (isGeoLocus()) {
-			int counter = 0;			
-			String str;
-			do {
-				counter++;
-				str = app.getPlain("Name.locus") + kernel.internationalizeDigits(counter+"");;
-			} while (!cons.isFreeLabel(str));
-			return str;
-		} else if (this instanceof GeoTextField) {
-			int counter = 0;			
-			String str;
-			do {
-				counter++;
-				str = app.getPlain("Name.textfield") + kernel.internationalizeDigits(counter+"");;
-			} while (!cons.isFreeLabel(str));
-			return str;
-		} else if (isGeoButton()) {
-			int counter = 0;			
-			String str;
-			do {
-				counter++;
-				str = app.getPlain("Name.button") + kernel.internationalizeDigits(counter+"");;
-			} while (!cons.isFreeLabel(str));
-			return str;
-		} else if (isGeoList()) {
-			GeoList list = (GeoList) this;
-			int counter = 0;			
-			String str;
-			do {
-				counter++;
-				str = list.isMatrix() ? app.getPlain("Name.matrix") + kernel.internationalizeDigits(counter+"") : app.getPlain("Name.list") + kernel.internationalizeDigits(counter+"");;
-			} while (!cons.isFreeLabel(str));
-			return str;
-		}
-		else {
-			chars = lowerCaseLabels;
+		if(chars==null){
+			if (isGeoPoint()) {
+				// Michael Borcherds 2008-02-23
+				// use Greek upper case for labeling points if lenguage is Greek (el)
+				// TODO decide if we want this as an option, or:
+				if (app.languageIs(app.getLocale(), "el")) chars=greekUpperCase; else
+					if (app.languageIs(app.getLocale(), "ar")) chars=arabic; else
+						chars = pointLabels;
+
+				GeoPointInterface point = (GeoPointInterface)this;
+				if (point.getMode() == Kernel.COORD_COMPLEX)
+					chars = complexLabels;
+
+			} else if (isGeoFunction()) {
+				chars = functionLabels;
+			} else if (isGeoLine()) {
+				chars = lineLabels;
+			} else if (isGeoConic() || isGeoCubic()) {
+				chars = conicLabels;
+			} else if (isGeoVector() || isVector3DValue()) {
+				chars = vectorLabels;
+			}  else if (isGeoAngle()) {
+				chars = greekLowerCase;
+			} 
+			else if (isGeoPolygon()) {
+				int counter = 0;
+				String str;
+				do {
+					counter++;
+					str = app.getPlain("Name.polygon") + kernel.internationalizeDigits(counter+"");;
+				} while (!cons.isFreeLabel(str));
+				return str;
+			}		
+			else if (isGeoText()) {
+				int counter = 0;
+				String str;
+				do {
+					counter++;
+					str = app.getPlain("Name.text") + kernel.internationalizeDigits(counter+"");
+				} while (!cons.isFreeLabel(str));
+				return str;
+			} else if (isGeoImage()) {
+				int counter = 0;			
+				String str;
+				do {
+					counter++;
+					str = app.getPlain("Name.picture") + kernel.internationalizeDigits(counter+"");;
+				} while (!cons.isFreeLabel(str));
+				return str;
+			} else if (isGeoLocus()) {
+				int counter = 0;			
+				String str;
+				do {
+					counter++;
+					str = app.getPlain("Name.locus") + kernel.internationalizeDigits(counter+"");;
+				} while (!cons.isFreeLabel(str));
+				return str;
+			} else if (this instanceof GeoTextField) {
+				int counter = 0;			
+				String str;
+				do {
+					counter++;
+					str = app.getPlain("Name.textfield") + kernel.internationalizeDigits(counter+"");;
+				} while (!cons.isFreeLabel(str));
+				return str;
+			} else if (isGeoButton()) {
+				int counter = 0;			
+				String str;
+				do {
+					counter++;
+					str = app.getPlain("Name.button") + kernel.internationalizeDigits(counter+"");;
+				} while (!cons.isFreeLabel(str));
+				return str;
+			} else if (isGeoList()) {
+				GeoList list = (GeoList) this;
+				int counter = 0;			
+				String str;
+				do {
+					counter++;
+					str = list.isMatrix() ? app.getPlain("Name.matrix") + kernel.internationalizeDigits(counter+"") : app.getPlain("Name.list") + kernel.internationalizeDigits(counter+"");;
+				} while (!cons.isFreeLabel(str));
+				return str;
+			}
+			else {
+				chars = lowerCaseLabels;
+			}
 		}
 
 		int counter = 0, q, r;

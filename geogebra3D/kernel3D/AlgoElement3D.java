@@ -84,9 +84,19 @@ abstract public class AlgoElement3D extends AlgoElement{
 	 * @param c construction
 	 */
 	public AlgoElement3D(Construction c) {
-		super(c);
+		this(c,true);
 	}
 	
+	/**
+	 * constructor.
+	 * 
+	 * @param c construction
+	 * @param addToConstructionList says if it has to be added to the construction list
+	 */
+	public AlgoElement3D(Construction c, boolean addToConstructionList) {
+		super(c,false);
+	}
+
 	
 	/**
 	 * set the {@link GeoElement} in input and in output.

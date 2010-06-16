@@ -6,9 +6,18 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Functional2Var;
+import geogebra.main.Application;
 
 public class GeoPlane3D extends GeoCoordSys2D//extends GeoCoordSys2DAbstract
 implements Functional2Var{
+	
+	
+	
+	/** default labels */
+	private static final char[] Labels = {'p', 'q', 'r'};	
+	
+	private static boolean KEEP_LEADING_SIGN = true;
+	
 	
 	double xmin, xmax, ymin, ymax; //for drawing
 	
@@ -22,7 +31,7 @@ implements Functional2Var{
 	protected GgbCoordSys coordsys;
 
 	//string
-	protected static final char[] VAR_STRING = {'x','y','z'};
+	protected static final String[] VAR_STRING = {"x","y","z"};
 	
 
 	/**
@@ -38,37 +47,28 @@ implements Functional2Var{
 		this.ymin = -2.5; this.ymax = 2.5;	
 		
 		//grid
-		//setGridOrigin(new GgbVector(new double[] {0,0,0,1}));
 		setGridVisible(false);
-        
+        		
+	}
+	
+	
+	public GeoPlane3D(Construction cons, String label, double a, double b, double c, double d){
+		this(cons);
 		
-		//alpha
-		//setAlphaValue(ConstructionDefaults3D.DEFAULT_PLANE_ALPHA);
+		setEquation(a, b, c, d);
+		
+		setLabel(label);
+		
+		//Application.debug(getCoordSys().getMatrixOrthonormal().toString());
+		
 		
 	}
 	
-	/** creates a plane with origin o, vectors v1, v2*/
-	/*
-	public GeoPlane3D(Construction c, 
-			GgbVector o, GgbVector v1, GgbVector v2,
-			double xmin, double xmax, double ymin, double ymax){
+	public void setEquation(double a, double b, double c, double d){
 		
-		
-		super(c,o,v1,v2);
-		this.xmin = xmin; this.xmax = xmax;
-		this.ymin = ymin; this.ymax = ymax;
-
-		//grid
-		setGridOrigin(new GgbVector(new double[] {0,0,0,1}));
-        
-		
-		//alpha
-		//setAlphaValue(ConstructionDefaults3D.DEFAULT_PLANE_ALPHA);
-
-		
+		getCoordSys().makeCoordSys(new double[] {a,b,c,d});
+		getCoordSys().makeOrthoMatrix(true);
 	}
-	*/
-	
 	
 	
 
@@ -254,11 +254,16 @@ implements Functional2Var{
 		sbToValueString.append(": ");   
 		
 		
+		sbToValueString.append(kernel.buildImplicitEquation(
+				getCoordSys().getEquationVector().get(), VAR_STRING, KEEP_LEADING_SIGN, false
+				));   
+		
 		
 		//TODO undefined...
 		//TODO remove x/y/z if not needed
 		//TODO check this
 		
+		/*
 		int dimension = 3;
 		boolean first = true; //says if it's the first coeff
 
@@ -288,6 +293,7 @@ implements Functional2Var{
 		
 		sbToValueString.append("= ");
 		sbToValueString.append(kernel.format(Vn.dotproduct(coordsys.getNormal()))); 
+		*/
 		
 		/*
 		sbToValueString.append(kernel.format(Vn.get(1)));   
@@ -354,6 +360,17 @@ implements Functional2Var{
 
 	public boolean isDefined() {
 		return coordsys.isDefined();
+	}
+	
+	public boolean isMoveable(){
+		return false;
+	}
+	
+	
+	
+	
+	public String getDefaultLabel() {	
+		return getDefaultLabel(Labels);
 	}
 
 }

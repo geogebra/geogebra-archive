@@ -626,14 +626,14 @@ public class AlgebraProcessor {
 			equ.initEquation();	
 			
 			// check no terms in z
-			if (!equ.getNormalForm().isFreeOf('z')) throw new MyError(app, "InvalidEquation");
+			checkNoTermsInZ(equ);
 
 			// consider algebraic degree of equation  
 			 // check not equation of eg plane
 			switch (equ.degree()) {
 				// linear equation -> LINE   
 				case 1 :
-					return processLine(equ);
+					return processLinear(equ);
 	
 				// quadratic equation -> CONIC                                  
 				case 2 :
@@ -681,7 +681,16 @@ public class AlgebraProcessor {
 		
 		
 	}
+	
+	protected void checkNoTermsInZ(Equation equ){
+		if (!equ.getNormalForm().isFreeOf('z')) 
+			throw new MyError(app, "InvalidEquation");
+	}
 
+	protected GeoElement[] processLinear(Equation equ) {
+		return processLine(equ);
+	}
+	
 	protected GeoElement[] processLine(Equation equ) {
 		double a = 0, b = 0, c = 0;
 		GeoLine line;

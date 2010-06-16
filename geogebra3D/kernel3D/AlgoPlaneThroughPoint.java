@@ -83,6 +83,8 @@ public class AlgoPlaneThroughPoint extends AlgoElement3D {
 		
 		coordsys.makeOrthoMatrix(true);
 		
+		coordsys.makeEquationVector();
+		
 
         
     }

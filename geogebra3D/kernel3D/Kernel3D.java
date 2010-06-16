@@ -21,6 +21,7 @@ import geogebra.io.MyXMLHandler;
 import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoCircleTwoPoints;
+import geogebra.kernel.AlgoDependentLine;
 import geogebra.kernel.AlgoOrthoLinePointLine;
 import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
@@ -34,6 +35,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
+import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
@@ -506,14 +508,27 @@ public class Kernel3D
 		
 	}
 	
-	/** Plane3D label linking with (o,v1,v2) coord sys   */
-    /*
-	final public GeoPlane3D Plane3D(String label, GgbVector o, GgbVector v1, GgbVector v2){
-		GeoPlane3D p=new GeoPlane3D(cons,o,v1,v2,-2.25,2.25,-2.25,2.25);
-		p.setLabel(label);
-		return p;
-	}	
-	*/
+
+    
+	/** Line a x + b y + c z + d = 0 named label */
+	final public GeoPlane3D Plane3D(
+		String label,
+		double a,
+		double b,
+		double c,
+		double d) {
+		GeoPlane3D plane = new GeoPlane3D(cons, label, a, b, c, d);
+		return plane;
+	}
+	
+	
+	/** Line dependent on coefficients of arithmetic expressions with variables,
+	 * represented by trees.
+	 */
+	final public GeoPlane3D DependentPlane3D(String label, Equation equ) {
+		AlgoDependentPlane3D algo = new AlgoDependentPlane3D(cons, label, equ);
+		return algo.getPlane();
+	}
 	
 	/** 
 	* Plane named label through Point point parallel to plane pIn

@@ -20,6 +20,9 @@ public class GgbCoordSys {
 	private int madeCoordSys;
 	private GgbMatrix4x4 matrixOrthonormal;
 	
+	/** vector used for equation of hyperplanes, like ax+by+cz+d=0 for planes */
+	private GgbVector equationVector;
+	
 	private GgbVector origin;
 	private GgbVector[] vectors;
 	
@@ -43,8 +46,8 @@ public class GgbCoordSys {
 			vectors[i] = new GgbVector(spaceDimension+1); 
 		}
 		
-		
-		
+		equationVector = new GgbVector(spaceDimension+1);
+	
 		resetCoordSys();
 		
 	}	
@@ -266,7 +269,69 @@ public class GgbCoordSys {
 	}
 	
 
+	/**
+	 * creates the equation vector
+	 */
+	public void makeEquationVector(){
+		equationVector.set(getVx().crossProduct(getVy()), 1);
+		equationVector.set(4, 0);
+		double d = equationVector.dotproduct(getOrigin());
+		equationVector.set(4, -d);
+		//Application.debug("equationVector:\n"+equationVector);
+	}
 	
+	
+	/**
+	 * @return the equation vector
+	 */
+	public GgbVector getEquationVector(){
+		return equationVector;
+	}
+	
+
+	/*
+	 * set the equation vector
+	 * @param vals 
+	 *
+	public void setEquationVector(double[] vals){
+		equationVector.set(vals);
+	}
+	*/
+	
+	
+	/** creates the coord sys from the equation, e.g. ax+by+cz+d=0 for planes
+	 * @param vals
+	 */
+	public void makeCoordSys(double[] vals){
+		
+		resetCoordSys();
+		
+		equationVector.set(vals);
+		
+		//sets the origin : first non-zero value sets the coord ( - const value / coeff value)
+		GgbVector o = new GgbVector(4);
+		boolean originSet = false;
+		for (int i=0;i<vals.length-1;i++){
+			if (!originSet)
+				if (vals[i]!=0){
+					o.set(i+1, -vals[vals.length-1]/vals[i]);
+					originSet=true;
+				}
+		}
+		//check if at least one coeff is non-zero
+		if (!originSet)
+			return;
+		
+		o.set(vals.length,1);
+		addPoint(o);
+		
+		//creates the coordsys vectors
+		GgbVector[] v = equationVector.completeOrthonormal();
+		addVectorWithoutCheckMadeCoordSys(v[1]);
+		addVectorWithoutCheckMadeCoordSys(v[0]);
+		
+		//Application.debug("O=\n"+getOrigin().toString()+"\nVx=\n"+getVx().toString()+"\nVy=\n"+getVy().toString());
+	}
 	
 	/** makes an orthonormal matrix describing this coord sys
 	 * @param projectOrigin if true, origin of the coord sys is the projection of 0

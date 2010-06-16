@@ -51,7 +51,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         this(c, true);               
     }
     
-    AlgoElement(Construction c, boolean addToConstructionList) {
+    protected AlgoElement(Construction c, boolean addToConstructionList) {
         super(c);     
         
         if (addToConstructionList)
