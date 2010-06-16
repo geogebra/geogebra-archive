@@ -186,7 +186,7 @@ public class LocalRing<C extends GcdRingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    @Override
+    //@Override
     public String toScript() {
         // Python case
         return "LC(" + ideal.list.toScript() + ")";

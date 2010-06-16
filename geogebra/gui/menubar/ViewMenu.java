@@ -301,7 +301,7 @@ class ViewMenu extends BaseMenu {
 				
 				if (Application.isHandwritingRecognitionActive() && !app.getGuiManager().showHandwritingRecognition()) {
 					
-					// if keyboard is active but hidden, just show it
+					// if handwriting is active but hidden, just show it
 					app.getGuiManager().toggleHandwriting(true);
 					update();
 					
@@ -314,6 +314,7 @@ class ViewMenu extends BaseMenu {
 
 			}
 		};
+		
 		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
@@ -533,6 +534,7 @@ class ViewMenu extends BaseMenu {
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowKeyboard.setSelected(Application.isVirtualKeyboardActive());
+		cbShowHandwriting.setSelected(Application.isHandwritingRecognitionActive());
 		cbShowCmdList.setSelected(app.showCmdList());
 		cbShowInputTop.setSelected(app.showInputTop());
 		cbShowToolBar.setSelected(app.showToolBar());

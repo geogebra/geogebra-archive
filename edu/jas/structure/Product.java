@@ -194,7 +194,7 @@ public class Product<C extends RingElem<C> >
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    @Override
+    //@Override
     public String toScript() {
         // Python case
         StringBuffer s = new StringBuffer("( ");
@@ -225,7 +225,7 @@ public class Product<C extends RingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    @Override
+    //@Override
     public String toScriptFactory() {
         // Python case
         return factory().toScript();

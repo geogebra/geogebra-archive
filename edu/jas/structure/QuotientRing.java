@@ -149,7 +149,7 @@ public class QuotientRing<C extends RingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    @Override
+    //@Override
     public String toScript() {
         // Python case
         return "QuotientRing(" + ring.toScript() + ")";

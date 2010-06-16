@@ -265,7 +265,7 @@ public final class ModIntegerRing implements ModularRingFactory<ModInteger> {
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    @Override
+    //@Override
     public String toScript() {
         // Python case
         return "ZM(" + modul.toString() + ")";

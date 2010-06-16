@@ -187,7 +187,7 @@ public final class ModInteger implements GcdRingElem<ModInteger>, Modular {
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    @Override
+    //@Override
     public String toScript() {
         // Python case
         return toString();
@@ -198,7 +198,7 @@ public final class ModInteger implements GcdRingElem<ModInteger>, Modular {
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    @Override
+    //@Override
     public String toScriptFactory() {
         // Python case
         return factory().toScript();

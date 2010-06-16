@@ -151,7 +151,7 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational>
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    @Override
+    //@Override
     public String toScript() {
         // Python case
         return number.toScript();
@@ -163,7 +163,7 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational>
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    @Override
+    //@Override
     public String toScriptFactory() {
         // Python case
         return factory().toScript();
