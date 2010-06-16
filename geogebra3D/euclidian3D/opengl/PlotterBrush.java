@@ -3,16 +3,10 @@ package geogebra3D.euclidian3D.opengl;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.CurveTree;
-import geogebra3D.euclidian3D.CurveTreeNode;
 import geogebra3D.kernel3D.GeoCurveCartesian3DInterface;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 /**
  * 3D brush, drawing circular-section curves.
@@ -357,23 +351,50 @@ public class PlotterBrush {
 	////////////////////////////////////
 	
 	private boolean firstCurvePoint = false;
+	private static final double discontinuityThreshold = 0.30;
+	private GgbVector previousPosition;
+	private GgbVector previousTangent;
+	
+	/**
+	 * Starts drawing a curve
+	 */
 	private void startDrawingCurve(){
 		firstCurvePoint = true;
 		setTextureType(PlotterBrush.TEXTURE_LINEAR);
 	}
 	
-	private void addPointToCurve(CurveTreeNode n){
+	/** adds the point with the specified position and tangent to the curve currently being drawn.
+	 * @param position
+	 * @param tangent
+	 */
+	public void addPointToCurve(GgbVector position, GgbVector tangent){
 		if(firstCurvePoint){
-			end = new PlotterBrushSection(n.getPos(), n.getTangent(), thickness);
+			end = new PlotterBrushSection(position, tangent, thickness);
 			firstCurvePoint=false;
 		}
 		else {
-			start = end;
-			end = new PlotterBrushSection(start,n.getPos(),n.getTangent(),thickness);
-
-			setTextureX(1);
-			join();
+			if(discontinuityPassed(position)) {
+				startDrawingCurve();				//start drawing a new segment
+				addPointToCurve(position,tangent);
+				return;
+			} else {
+				start = end;
+				end = new PlotterBrushSection(start,position,tangent,thickness);
+	
+				setTextureX(1);
+				join();
+			}
 		}
+		previousPosition = position;
+		previousTangent  = tangent;
+	}
+	
+	private boolean discontinuityPassed(GgbVector position) {
+		GgbVector dir = position.sub(previousPosition).normalized();
+		
+		if(dir.dotproduct(previousTangent)<discontinuityThreshold)
+			return true;
+		return false;
 	}
 	
 	/**
@@ -381,60 +402,18 @@ public class PlotterBrush {
 	 * @param radius the radius of a sphere bounding the viewing volume
 	 */
 	public void draw(CurveTree tree, double radius){
-		tree.radius=radius;
+		
+		tree.setRadius(radius);
 		
 		startDrawingCurve();
 		
 		//draw the start point if visible and defined
-		if(tree.start.getPos().isDefined() && tree.start.getPos().isFinite() 
-				&& tree.pointVisible(tree.start))
-			addPointToCurve(tree.start);
+		tree.drawStartPointIfVisible(this);
 		
-		refine(tree, tree.start,tree.root,tree.end,1);
+		tree.beginRefine(this);
 		
 		//draw the end point if visible and defined
-		if(tree.end.getPos().isDefined() && tree.end.getPos().isFinite() 
-				&& tree.pointVisible(tree.end))
-			addPointToCurve(tree.end);
-	}
-	
-	private void refine(CurveTree tree, CurveTreeNode n1, CurveTreeNode n2, 
-						 CurveTreeNode n3, int level){
-
-		if(level <= tree.forcedLevels || tree.angleTest(n1, n2, n3)){
-			//if the left segment is visible and passes the distance test, refine it
-			if(tree.segmentVisible(n1.getPos(),n2.getPos()))
-				if(tree.distanceTest(n1, n2))
-					refine(tree,n1,n2.getLeftChild(),n2,level+1);
-			
-			//draw the center point if it is defined
-			if(n2.getPos().isDefined() && n2.getPos().isFinite())
-				addPointToCurve(n2);
-			
-			//if the right segment is visible and passes the distance test, refine it
-			if(tree.segmentVisible(n2.getPos(),n3.getPos()))
-				if(tree.distanceTest(n2, n3))
-					refine(tree,n2,n2.getRightChild(),n3,level+1);
-			
-		} else {
-			//if the left segment is visible, and the tangent and distance tests are passed
-			//for the same segment, refine it 
-			if(tree.segmentVisible(n1.getPos(),n2.getPos()))
-				if(tree.tangentTest(n1,n2))
-					if(tree.distanceTest(n1, n2))
-						refine(tree,n1,n2.getLeftChild(),n2,level+1);
-			
-			//draw the center point if it is defined
-			if(n2.getPos().isDefined() && n2.getPos().isFinite())
-				addPointToCurve(n2);
-			
-			//if the right segment is visible, and the tangent and distance tests are passed
-			//for the same segment, refine it 
-			if(tree.segmentVisible(n2.getPos(),n3.getPos()))
-				if(tree.tangentTest(n2,n3))
-					if(tree.distanceTest(n2, n3))
-						refine(tree,n2,n2.getRightChild(),n3,level+1);
-		}
+		tree.drawEndPointIfVisible(this);
 	}
 	
 	////////////////////////////////////
