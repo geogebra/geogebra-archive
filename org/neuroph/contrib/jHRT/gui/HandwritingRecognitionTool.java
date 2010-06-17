@@ -62,7 +62,14 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 	
 	private Application app;
 	private WindowsUnicodeKeyboard kb = null;
-    private int i;
+	
+	private int width       = 600;
+	private int height      = 353;
+	private int widthSmall  = 312;
+	private int widthSplit  = 289;
+	
+	private int timer = 2;
+	
 	public WindowsUnicodeKeyboard getKeyboard() {
 		try {
 			kb = new WindowsUnicodeKeyboard();
@@ -71,17 +78,22 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 	}
 	
     /** Creates new form GUI */
-    public HandwritingRecognitionTool(final Application app, int i) {
+    public HandwritingRecognitionTool(final Application app) {
 
         super();
         
         this.app = app;
-        this.i = i;
 		this.setFocusableWindowState(false);
 		this.setAlwaysOnTop(true);
+		this.setResizable(false);
 		
-		setSize(600, 353);
-		setPreferredSize(new Dimension(600, 353));
+        if (Application.isHandwritingRecognitionAutoAdd()) {
+        	setSize(widthSmall, height);
+        	setPreferredSize(new Dimension(widthSmall, height));
+        } else {
+        	setSize(width, height);
+        	setPreferredSize(new Dimension(width, height));
+        }
         
         initComponents();
         centerTabbedPane.remove(networkPanel);
@@ -180,7 +192,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        //jCheckBox1 = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         probabilitiesList = new javax.swing.JList();
@@ -549,10 +561,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 
         recognitionPanel.setLayout(new java.awt.BorderLayout());
 
-        if(i==2)
-        	jSplitPane1.setDividerLocation(10000);
-        else
-        	jSplitPane1.setDividerLocation(1.00);
+        //jSplitPane1.setDividerLocation(250);
 
         leftPanel.setLayout(new java.awt.BorderLayout());
 
@@ -581,6 +590,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         });
         jPanel1.add(jButton7);
 
+        /*
         jCheckBox1.setText("auto add");
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -588,6 +598,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
             }
         });
         jPanel1.add(jCheckBox1);
+        */
 
         upperPanel.add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
@@ -698,7 +709,14 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         rightPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
         */
 
-        jSplitPane1.setRightComponent(upperPanel);
+        if (Application.isHandwritingRecognitionAutoAdd()) {
+        	jSplitPane1.setRightComponent(null);
+        	jSplitPane1.setDividerSize(0);
+        } else {
+        	jSplitPane1.setRightComponent(upperPanel);
+        	jSplitPane1.setDividerSize(9);
+        	jSplitPane1.setDividerLocation(widthSplit);
+        }
         
         jSplitPane1.setResizeWeight(0.75);
 
@@ -739,6 +757,23 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    public void repaint() {
+        if (Application.isHandwritingRecognitionAutoAdd()) {
+        	System.out.println(jSplitPane1.getDividerLocation());
+        	setSize(widthSmall, height);
+        	setPreferredSize(new Dimension(widthSmall, height));
+        	jSplitPane1.setRightComponent(null);
+        	jSplitPane1.setDividerSize(0);
+        } else {
+        	setSize(width, height);
+        	setPreferredSize(new Dimension(width, height));
+        	jSplitPane1.setRightComponent(upperPanel);
+        	jSplitPane1.setDividerSize(9);
+        	jSplitPane1.setDividerLocation(widthSplit);
+        }
+        super.repaint();
+    }
 
     /*
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
@@ -767,7 +802,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         drawingPanelRecognition.getDrawnLetter();
         recognition.recognize((DefaultListModel) probabilitiesList.getModel());
         probabilitiesList.setSelectedIndex(0);
-        if (jCheckBox1.isSelected()) {
+        if (Application.isHandwritingRecognitionAutoAdd()) {
             DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
             String letter = model.getElementAt(0).toString().substring(0, 1);
             model.clear();
@@ -776,6 +811,8 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
    	        else
                getKeyboard().doType(false, false, false,letter);
             drawingPanelRecognition.clearDrawingArea();
+        } else if (Application.isHandwritingRecognitionAutoAdd()) {
+        	// TBD by Anjneya
         }
         new File("letter.png").delete();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -967,7 +1004,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JCheckBox jCheckBox1;
+    //private javax.swing.JCheckBox jCheckBox1;
     private org.neuroph.contrib.jHRT.gui.JImagePanel jImagePanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

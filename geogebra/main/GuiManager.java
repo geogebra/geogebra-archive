@@ -24,7 +24,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.text.JTextComponent;
 
-
 /**
  * Handles all geogebra.gui package related objects and methods for Application.
  * This is done to be able to put class files of geogebra.gui.* packages into a
@@ -362,9 +361,8 @@ public interface GuiManager {
 		public void setCurrentTextfield(VirtualKeyboardListener textfield, boolean b);
 		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed);
 		public void toggleKeyboard(boolean show);
-		public void toggleHandwritingAutoAdd(boolean show,int i);
-		public void toggleHandwritingTAutoAdd(boolean show, int i);
-		public void toggleHandwritingTAutoRecog(boolean show, int i);
+		public Component getHandwriting();
+		public void toggleHandwriting(boolean show);
 		public boolean showVirtualKeyboard();
 		public boolean showHandwritingRecognition();
 		public void toggleMiniProperties(boolean show);

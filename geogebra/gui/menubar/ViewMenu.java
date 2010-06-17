@@ -34,9 +34,10 @@ class ViewMenu extends BaseMenu {
 		showAuxiliaryObjectsAction,
 		showAlgebraInputAction,
 		showKeyboardAction,
-		showHandwritingAutoAdd,
-		showHandwritingTAutoAdd,
-		showHandwritingTAutoRecog,
+		showHandwritingAction,
+		showHandwritingAutoAddAction,
+		showHandwritingTimedAddAction,
+		showHandwritingTimedRecogniseAction,
 		showCmdListAction,
 		showInputTopAction,
 		showToolBarAction,
@@ -62,15 +63,16 @@ class ViewMenu extends BaseMenu {
 		cbShowInputTop, 					// Florian Sonner 2008-09-12
 		cbShowToolBar, 						// Florian Sonner 2009-01-10
 		cbShowToolBarTop, 					// Florian Sonner 2009-01-10
-		cbshowHandwritingAutoAdd,
-		cbshowHandwritingTAutoAdd,
-		cbshowHandwritingTAutoRecog,
 		cbShowAuxiliaryObjects,
 		cbShowConsProtNavigation,
 		cbShowConsProtNavigationPlay,
 		cbShowConsProtNavigationOpenProt,
 		cbShowAlgebraInput,
 		cbShowKeyboard,
+		cbShowHandwriting,
+		cbShowHandwritingAutoAdd,
+		cbShowHandwritingTimedAdd,
+		cbShowHandwritingTimedRecognise,
 		cbShowCmdList;
 	
 	private JMenu
@@ -163,16 +165,19 @@ class ViewMenu extends BaseMenu {
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
 		add(cbShowKeyboard);
 		
+		cbShowHandwriting = new JCheckBoxMenuItem(showHandwritingAction);
+		add(cbShowHandwriting);
+		
 		menuHandwriting = new JMenu(app.getMenu("Handwriting"));
 		menuHandwriting.setIcon(app.getEmptyIcon());
-		cbshowHandwritingAutoAdd = new JCheckBoxMenuItem("Auto Add");
-		menuHandwriting.add(showHandwritingAutoAdd);
-		cbshowHandwritingTAutoAdd = new JCheckBoxMenuItem("Timed Auto Add");
-		menuHandwriting.add(showHandwritingTAutoAdd);
-		cbshowHandwritingTAutoRecog = new JCheckBoxMenuItem("Timed Auto Recognise");
-		menuHandwriting.add(showHandwritingTAutoRecog);
+		cbShowHandwritingAutoAdd = new JCheckBoxMenuItem(showHandwritingAutoAddAction);
+		menuHandwriting.add(cbShowHandwritingAutoAdd);
+		cbShowHandwritingTimedAdd = new JCheckBoxMenuItem(showHandwritingTimedAddAction);
+		menuHandwriting.add(cbShowHandwritingTimedAdd);
+		cbShowHandwritingTimedRecognise = new JCheckBoxMenuItem(showHandwritingTimedRecogniseAction);
+		menuHandwriting.add(cbShowHandwritingTimedRecognise);
+		
 		add(menuHandwriting);
-     
 		
 		addSeparator();
 
@@ -305,7 +310,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 		
-		showHandwritingAutoAdd = new AbstractAction(app.getPlain("Auto Add"),
+		showHandwritingAction = new AbstractAction(app.getPlain("ShowHandwriting"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
@@ -314,63 +319,63 @@ class ViewMenu extends BaseMenu {
 				if (Application.isHandwritingRecognitionActive() && !app.getGuiManager().showHandwritingRecognition()) {
 					
 					// if handwriting is active but hidden, just show it
-					app.getGuiManager().toggleHandwritingAutoAdd(true,1);
+					app.getGuiManager().toggleHandwriting(true);
 					update();
 					
 				} else {
 				
 					Application.setHandwritingRecognitionActive(!Application.isHandwritingRecognitionActive());				
-					app.getGuiManager().toggleHandwritingAutoAdd(Application.isHandwritingRecognitionActive(),1);
+					app.getGuiManager().toggleHandwriting(Application.isHandwritingRecognitionActive());
 					update();
 				}
 
 			}
 		};
 
-		showHandwritingTAutoAdd = new AbstractAction(app.getPlain("Timed Add"),
+		showHandwritingAutoAddAction = new AbstractAction(app.getPlain("AutoAdd"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				
-				if (Application.isHandwritingRecognitionActive() && !app.getGuiManager().showHandwritingRecognition()) {
-					
-					// if handwriting is active but hidden, just show it
-					app.getGuiManager().toggleHandwritingTAutoAdd(true,2);
-					update();
-					
-				} else {
-				
-					Application.setHandwritingRecognitionActive(!Application.isHandwritingRecognitionActive());				
-					app.getGuiManager().toggleHandwritingTAutoAdd(Application.isHandwritingRecognitionActive(),2);
-					update();
+				Application.setHandwritingRecognitionAutoAdd(!Application.isHandwritingRecognitionAutoAdd());
+				if (Application.isHandwritingRecognitionAutoAdd() && Application.isHandwritingRecognitionTimedAdd()) {
+					Application.setHandwritingRecognitionTimedAdd(!Application.isHandwritingRecognitionTimedAdd());
+					app.getGuiManager().updateMenubar();
 				}
-
+				if (app.getGuiManager().showHandwritingRecognition()) {
+					app.getGuiManager().getHandwriting().repaint();
+				}
 			}
 		};
-		
-		showHandwritingTAutoRecog = new AbstractAction(app.getPlain("Auto Recognise"),
+
+		showHandwritingTimedAddAction = new AbstractAction(app.getPlain("TimedAdd"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				
-				if (Application.isHandwritingRecognitionActive() && !app.getGuiManager().showHandwritingRecognition()) {
-					
-					// if handwriting is active but hidden, just show it
-					app.getGuiManager().toggleHandwritingTAutoRecog(true,3);
-					update();
-					
-				} else {
-				
-					Application.setHandwritingRecognitionActive(!Application.isHandwritingRecognitionActive());				
-					app.getGuiManager().toggleHandwritingTAutoRecog(Application.isHandwritingRecognitionActive(),3);
-					update();
+				Application.setHandwritingRecognitionTimedAdd(!Application.isHandwritingRecognitionTimedAdd());
+				if (Application.isHandwritingRecognitionTimedAdd() && Application.isHandwritingRecognitionAutoAdd()) {
+					Application.setHandwritingRecognitionAutoAdd(!Application.isHandwritingRecognitionAutoAdd());
+					app.getGuiManager().updateMenubar();
 				}
-
+				if (app.getGuiManager().showHandwritingRecognition()) {
+					app.getGuiManager().getHandwriting().repaint();
+				}
 			}
 		};
-		
+
+		showHandwritingTimedRecogniseAction = new AbstractAction(app.getPlain("TimedRecognise"),
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Application.setHandwritingRecognitionTimedRecognise(!Application.isHandwritingRecognitionTimedRecognise());
+				if (app.getGuiManager().showHandwritingRecognition()) {
+					app.getGuiManager().getHandwriting().repaint();
+				}
+			}
+		};
+
 		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
@@ -590,7 +595,10 @@ class ViewMenu extends BaseMenu {
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowKeyboard.setSelected(Application.isVirtualKeyboardActive());
-		cbshowHandwritingTAutoAdd.setSelected(Application.isHandwritingRecognitionActive());
+		cbShowHandwriting.setSelected(Application.isHandwritingRecognitionActive());
+		cbShowHandwritingAutoAdd.setSelected(Application.isHandwritingRecognitionAutoAdd());
+		cbShowHandwritingTimedAdd.setSelected(Application.isHandwritingRecognitionTimedAdd());
+		cbShowHandwritingTimedRecognise.setSelected(Application.isHandwritingRecognitionTimedRecognise());
 		cbShowCmdList.setSelected(app.showCmdList());
 		cbShowInputTop.setSelected(app.showInputTop());
 		cbShowToolBar.setSelected(app.showToolBar());

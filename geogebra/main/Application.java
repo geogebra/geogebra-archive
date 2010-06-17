@@ -4011,6 +4011,36 @@ public abstract class Application implements KeyEventDispatcher {
 		handwritingRecognitionActive = active;
 	}
 	
+	private static boolean handwritingRecognitionAutoAdd = true;
+	
+	public static boolean isHandwritingRecognitionAutoAdd() {
+		return handwritingRecognitionAutoAdd;
+	}
+		
+	public static void setHandwritingRecognitionAutoAdd(boolean show) {
+		handwritingRecognitionAutoAdd = show;
+	}
+	
+	private static boolean handwritingRecognitionTimedAdd = false;
+	
+	public static boolean isHandwritingRecognitionTimedAdd() {
+		return handwritingRecognitionTimedAdd;
+	}
+		
+	public static void setHandwritingRecognitionTimedAdd(boolean show) {
+		handwritingRecognitionTimedAdd = show;
+	}
+	
+	private static boolean handwritingRecognitionTimedRecognise = false;
+	
+	public static boolean isHandwritingRecognitionTimedRecognise() {
+		return handwritingRecognitionTimedRecognise;
+	}
+		
+	public static void setHandwritingRecognitionTimedRecognise(boolean show) {
+		handwritingRecognitionTimedRecognise = show;
+	}
+	
 	private static boolean miniPropertiesActive = true;
 	
 	public static boolean isMiniPropertiesActive() {
