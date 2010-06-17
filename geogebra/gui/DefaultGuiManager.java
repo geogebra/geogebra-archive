@@ -2934,14 +2934,30 @@ public class DefaultGuiManager implements GuiManager {
 		
 		HandwritingRecognitionTool handwritingRecognition = null;
 		
-		public void toggleHandwriting(boolean show) {
+		public void toggleHandwritingAutoAdd(boolean show, int i) {
 			
 			if (handwritingRecognition == null) {
-				handwritingRecognition = new HandwritingRecognitionTool(app);
+				handwritingRecognition = new HandwritingRecognitionTool(app,1);
 				}
 			handwritingRecognition.setVisible(show);
 		}
 		
+		public void toggleHandwritingTAutoAdd(boolean show, int i)	{
+			
+			if (handwritingRecognition == null) {
+				handwritingRecognition = new HandwritingRecognitionTool(app,2);
+				}
+			handwritingRecognition.setVisible(show);
+			
+		}
+		
+		public void toggleHandwritingTAutoRecog(boolean show, int i) {
+			if (handwritingRecognition == null) {
+				handwritingRecognition = new HandwritingRecognitionTool(app,3);
+				}
+			handwritingRecognition.setVisible(show);
+			
+		}
 		PropertiesPanelMini ppm;
 
 		public boolean miniPropertiesOpen() {
@@ -2985,5 +3001,6 @@ public class DefaultGuiManager implements GuiManager {
 			
 			return handwritingRecognition.isVisible();
 		}
+		
 
 }

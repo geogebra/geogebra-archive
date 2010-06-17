@@ -1,5 +1,5 @@
 /***
- * Neuroph  http://neuroph.sourceforge.net
+  * Neuroph  http://neuroph.sourceforge.net
  * Copyright by Neuroph Project (C) 2008
  *
  * This file is part of Neuroph framework.
@@ -18,7 +18,6 @@
  * along with Neuroph. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.neuroph.contrib.jHRT.gui;
-
 import geogebra.main.Application;
 import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
 
@@ -63,7 +62,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 	
 	private Application app;
 	private WindowsUnicodeKeyboard kb = null;
-
+    private int i;
 	public WindowsUnicodeKeyboard getKeyboard() {
 		try {
 			kb = new WindowsUnicodeKeyboard();
@@ -72,11 +71,12 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 	}
 	
     /** Creates new form GUI */
-    public HandwritingRecognitionTool(final Application app) {
+    public HandwritingRecognitionTool(final Application app, int i) {
 
         super();
         
         this.app = app;
+        this.i = i;
 		this.setFocusableWindowState(false);
 		this.setAlwaysOnTop(true);
 		
@@ -549,7 +549,10 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 
         recognitionPanel.setLayout(new java.awt.BorderLayout());
 
-        //jSplitPane1.setDividerLocation(250);
+        if(i==2)
+        	jSplitPane1.setDividerLocation(10000);
+        else
+        	jSplitPane1.setDividerLocation(1.00);
 
         leftPanel.setLayout(new java.awt.BorderLayout());
 

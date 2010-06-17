@@ -362,7 +362,9 @@ public interface GuiManager {
 		public void setCurrentTextfield(VirtualKeyboardListener textfield, boolean b);
 		public void insertStringIntoTextfield(String text, boolean altPressed, boolean ctrlPressed, boolean shiftPressed);
 		public void toggleKeyboard(boolean show);
-		public void toggleHandwriting(boolean show);
+		public void toggleHandwritingAutoAdd(boolean show,int i);
+		public void toggleHandwritingTAutoAdd(boolean show, int i);
+		public void toggleHandwritingTAutoRecog(boolean show, int i);
 		public boolean showVirtualKeyboard();
 		public boolean showHandwritingRecognition();
 		public void toggleMiniProperties(boolean show);
