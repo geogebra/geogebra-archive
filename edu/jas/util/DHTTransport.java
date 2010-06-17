@@ -117,7 +117,7 @@ class DHTTransportMarshal<K, V> extends DHTTransport<K, V> {
      */
     public K key() throws IOException, ClassNotFoundException {
         long t = System.currentTimeMillis();
-        K k = (K) this.key.get();
+        K k = (K)this.key.get();
         t = System.currentTimeMillis() - t;
         synchronized( DHTTransport.class ) {
             dtime += t;
@@ -131,7 +131,7 @@ class DHTTransportMarshal<K, V> extends DHTTransport<K, V> {
      */
     public V value() throws IOException, ClassNotFoundException {
         long t = System.currentTimeMillis();
-        V v = (V) this.value.get();
+        V v = (V)this.value.get();
         t = System.currentTimeMillis() - t;
         synchronized( DHTTransport.class ) {
             dtime += t;
