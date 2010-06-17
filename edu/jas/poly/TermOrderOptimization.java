@@ -4,23 +4,18 @@
 
 package edu.jas.poly;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.structure.RingElem;
-
 import edu.jas.arith.BigInteger;
-
-import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
-
+import edu.jas.structure.RingElem;
+import edu.jas.util.ArrayCopy;
 import edu.jas.vector.BasicLinAlg;
 
 
@@ -237,7 +232,7 @@ public class TermOrderOptimization {
            return a;
         }
         //T[] b = (T[]) new Object[a.length];    // jdk 1.5, does not work
-        T[] b = Arrays.<T>copyOf( a, a.length ); // jdk 1.6, works
+        T[] b = ArrayCopy.copyOf( a, a.length ); // jdk 1.6, works
         int j = 0;
         for ( Integer i : P ) {
             b[j] = a[ (int)i ];
@@ -245,6 +240,7 @@ public class TermOrderOptimization {
         }
         return b;
     }
+
 
 
     /**
