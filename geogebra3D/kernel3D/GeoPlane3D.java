@@ -372,5 +372,31 @@ implements Functional2Var{
 	public String getDefaultLabel() {	
 		return getDefaultLabel(Labels);
 	}
+	
+	
+	
+
+	///////////////////////////////////////////
+	// CHANGING TYPE OF A GEO (mathieu)
+	///////////////////////////////////////////
+	
+	/**
+	 * @return possible alternatives for this geo (e.g. number -> complex)
+	 */
+	public GeoElement[] getAlternatives(){
+		
+		if ((!isIndependent()) || (isFixed()))
+			return null;
+		
+		if (getCoordSys().getEquationVector().getZ()!=0)
+			return null;
+		
+		GgbVector equation = getCoordSys().getEquationVector();
+		GeoElement[] ret = new GeoElement[1];		
+		ret[0] = getKernel().Line(null, equation.getX(),equation.getY(),equation.getW());
+		ret[0].remove();
+		return ret;
+		
+	}
 
 }

@@ -463,7 +463,7 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
 
-    	drawFPS();
+    	//drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
 
@@ -486,7 +486,13 @@ public class Renderer implements GLEventListener {
         	needExportImage=false;
         	//notify();
         }
+        
+        	
     }    
+    
+    
+    
+
     
     
     
@@ -962,6 +968,9 @@ public class Renderer implements GLEventListener {
      */
     public void drawText(float x, float y, String s, boolean colored){
     	
+    	
+    	//if (true)    		return;
+    	
         gl.glMatrixMode(GL.GL_TEXTURE);
         gl.glLoadIdentity();
         
@@ -1288,6 +1297,8 @@ public class Renderer implements GLEventListener {
      */
     public void init(GLAutoDrawable drawable) {
     	
+    	
+    	//Application.printStacktrace("");
         
         gl = drawable.getGL();
         

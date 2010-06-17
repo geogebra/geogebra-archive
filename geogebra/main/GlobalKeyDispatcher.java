@@ -69,6 +69,15 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * The "key pressed" event is generated when a key is pushed down. 
 	 */
 	private boolean handleKeyPressed(KeyEvent event) {	
+		
+		//mathieu test key
+		if (event.getKeyCode()== KeyEvent.VK_T){
+			Application.debug("test");
+			app.test();			
+		}
+		
+		
+		
 		// GENERAL KEYS: 
 		// handle ESC, function keys, zooming with Ctrl +, Ctlr -, etc.
 		if (handleGeneralKeys(event)) {
@@ -439,6 +448,9 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				changeVal = -base;
 				moved = handleArrowKeyMovement(geos, 0, 0, changeVal);
 				break;
+				
+				
+			
 
 		}
 	

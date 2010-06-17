@@ -262,4 +262,19 @@ public abstract class Application3D extends Application{
 		
 		return super.getCommandSyntax(key);
 	}
+	
+	
+	
+	
+	///////////////////////////////////////
+	// TEST
+	///////////////////////////////////////
+
+	private boolean testSw = false;
+	
+	public void test(){
+		Application.debug("test3D");
+		euclidianView3D.freeze(testSw);
+		testSw=!testSw;
+	}
 }

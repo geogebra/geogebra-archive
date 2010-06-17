@@ -7115,4 +7115,19 @@ public class Kernel {
 		
 		return new ExpressionNode(this, new ExpressionNode(this, en, type, null), ExpressionNode.POWER, convertIndexToNumber(image));
 	}
+	
+	
+	///////////////////////////////////////////
+	// CHANGING TYPE OF A GEO (mathieu)
+	///////////////////////////////////////////
+	
+	/**
+	 * @return possible alternatives for a given geo (e.g. number -> complex)
+	 */
+	public GeoElement[] getAlternatives(GeoElement geo){
+		
+		return geo.getAlternatives();
+	}
+
+	
 }

@@ -55,6 +55,7 @@ public class Test3D{
 	private void test(){
 
 		//testLoad("test");
+		//kernel3D.Plane3D("p", 1, 0, 0, -1);
 		
 	}
 	

@@ -3429,6 +3429,14 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 
 	}
+	
+	/**
+	 * mathieu : 
+	 * simple test method used by GlobalKeyDispatcher
+	 */
+	public void test(){
+		
+	}
 
 	// check if we are on a mac
 	public static boolean MAC_OS = System.getProperty("os.name").toLowerCase(

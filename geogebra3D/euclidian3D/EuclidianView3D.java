@@ -17,6 +17,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
@@ -34,11 +35,21 @@ import geogebra3D.kernel3D.GeoVector3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ColorModel;
+import java.awt.image.ImageObserver;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -64,6 +75,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private Kernel3D kernel3D;
 	private EuclidianController3D euclidianController3D;
 	private Renderer renderer;
+	private RendererFreezingPanel freezingPanel;
 	
 	//viewing values
 	private double XZero = 0;
@@ -192,17 +204,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 
- 
-        GLCanvas canvas = renderer.canvas;
+		freezingPanel = new RendererFreezingPanel(renderer);
+		//add(BorderLayout.CENTER, freezingPanel);
+		freezingPanel.setVisible(true);
+		
+        Canvas canvas = renderer.canvas;
 		
 
         
 
 		setLayout(new BorderLayout());
-		add(BorderLayout.CENTER, canvas);
+		//add(BorderLayout.CENTER, canvas);
+		addRendererCanvas();
 
-
-
+		
 		
 		attachView();
 		
@@ -235,6 +250,57 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	private void addRendererCanvas(){
+		Canvas canvas = renderer.canvas;
+
+		//setLayout(new BorderLayout());
+		add(BorderLayout.CENTER, canvas);
+
+		/*
+		attachView();
+
+		// register Listener
+		canvas.addMouseMotionListener(euclidianController3D);
+		canvas.addMouseListener(euclidianController3D);
+		canvas.addMouseWheelListener(euclidianController3D);
+		canvas.setFocusable(true);
+		*/
+	}
+	
+	
+	/**
+	 * causes the 3D view to freeze rendering, and replace the
+	 * heavy-weight 3D canvas by a low-weight image
+	 * @param sw if false, calls back the 3D rendering
+	 */
+	public void freeze(boolean sw){
+
+		if (sw){
+			//switch off the frozen image
+			remove(freezingPanel);
+			freezingPanel.setVisible(false);
+			
+			//switch on the renderer canvas
+			addRendererCanvas();
+			renderer.canvas.setVisible(true);
+			renderer.canvas.setSize(getSize());
+			
+		}else{			
+			//ask for an image
+			renderer.needExportImage();
+			
+			//switch off the renderer canvas
+			remove(renderer.canvas);
+			renderer.canvas.setVisible(false);
+			
+			//switch on the frozen image
+			add(BorderLayout.CENTER, freezingPanel);
+			freezingPanel.setVisible(true);
+			freezingPanel.setSize(getSize());
+			
+		}
+		
+	}
 	
 	
 	
@@ -638,7 +704,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	public void paint(Graphics g){
 		update();
-		//setWaitForUpdate(true);
+		super.paint(g);
 	}
 	
 	

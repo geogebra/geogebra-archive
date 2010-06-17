@@ -617,6 +617,8 @@ public class AlgebraProcessor {
 		ret[0] = f;		
 		return ret;
 	}
+	
+	
 
 	protected GeoElement[] processEquation(Equation equ) throws MyError {		
 		//Application.debug("EQUATION: " + equ);        
