@@ -820,6 +820,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         drawingPanelRecognition.getDrawnLetter();
         recognition.recognize((DefaultListModel) probabilitiesList.getModel());
         probabilitiesList.setSelectedIndex(0);
+     
         if (Application.isHandwritingRecognitionAutoAdd()) {
             DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
             String letter = model.getElementAt(0).toString().substring(0, 1);
@@ -829,8 +830,26 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
    	        else
                getKeyboard().doType(false, false, false,letter);
             drawingPanelRecognition.clearDrawingArea();
-        } else if (Application.isHandwritingRecognitionAutoAdd()) {
-        	// TBD by Anjneya
+        } else if (Application.isHandwritingRecognitionTimedAdd()) {
+                Thread delay = new Thread() {
+                public void run() {
+                 try {
+                	 sleep(5000);
+                	 if (probabilitiesList.getSelectedIndex() > -1) {
+                		 DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
+                		 String letter = model.getElementAt(probabilitiesList.getSelectedIndex()).toString().substring(0, 1);
+                		 model.clear();
+                     if (app != null)
+                    	 app.getGuiManager().insertStringIntoTextfield(letter + "", false, false, false);
+                     else
+                    	 getKeyboard().doType(false, false, false,letter);
+                     drawingPanelRecognition.clearDrawingArea();    } 
+                 } catch (InterruptedException e) {
+                 }
+                }
+               };
+               delay.start();
+        	
         }
         new File("letter.png").delete();
     }//GEN-LAST:event_jButton4ActionPerformed
