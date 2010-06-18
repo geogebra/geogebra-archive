@@ -63,10 +63,11 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 	private Application app;
 	private WindowsUnicodeKeyboard kb = null;
 	
-	private int width       = 600;
-	private int height      = 353;
-	private int widthSmall  = 312;
-	private int widthSplit  = 500;
+	private int widthNormal  = 600;
+	private int heightNormal = 353;
+	private int widthSmall   = 312;
+	private int heightSmall  = 314;
+	private int widthSplit   = 289;
 	
 	private int timer = 2;
 	
@@ -87,13 +88,16 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 		this.setAlwaysOnTop(true);
 		this.setResizable(false);
 		
+		int width  = widthNormal;
+		int height = heightNormal;
         if (Application.isHandwritingRecognitionAutoAdd()) {
-        	setSize(widthSmall, height);
-        	setPreferredSize(new Dimension(widthSmall, height));
-        } else {
-        	setSize(width, height);
-        	setPreferredSize(new Dimension(width, height));
+        	width = widthSmall;
         }
+        if (Application.isHandwritingRecognitionTimedRecognise()) {
+        	height = heightSmall;
+        }
+       	setSize(width, height);
+       	setPreferredSize(new Dimension(width, height));
         
         initComponents();
         centerTabbedPane.remove(networkPanel);
@@ -634,6 +638,10 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         });
         bottomPanelII.add(jButton5);
 
+        if (!Application.isHandwritingRecognitionTimedRecognise()) {
+        	botomPanel.add(bottomPanelII, java.awt.BorderLayout.PAGE_END);
+        }
+        
         //jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Drawing area"));
         jPanel3.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -710,22 +718,10 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         if (Application.isHandwritingRecognitionAutoAdd()) {
         	jSplitPane1.setRightComponent(null);
         	jSplitPane1.setDividerSize(0);
-        	botomPanel.add(bottomPanelII,java.awt.BorderLayout.PAGE_END);
-        } else if (Application.isHandwritingRecognitionTimedRecognise()) {
-        	setSize(width, height);
-        	setPreferredSize(new Dimension(width, height));
+        } else {
         	jSplitPane1.setRightComponent(upperPanel);
         	jSplitPane1.setDividerSize(9);
         	jSplitPane1.setDividerLocation(widthSplit);
-        	botomPanel.remove(bottomPanelII);
-        }
-        else	{
-        	setSize(width, height);
-        	setPreferredSize(new Dimension(width, height));
-        	jSplitPane1.setRightComponent(upperPanel);
-        	jSplitPane1.setDividerSize(9);
-        	jSplitPane1.setDividerLocation(widthSplit);
-        	botomPanel.add(bottomPanelII,java.awt.BorderLayout.PAGE_END);
         }
         
         jSplitPane1.setResizeWeight(1.00);
@@ -769,29 +765,31 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     public void repaint() {
+    	int width  = widthNormal;
+    	int height = heightNormal;
         if (Application.isHandwritingRecognitionAutoAdd()) {
-        	System.out.println(jSplitPane1.getDividerLocation());
-        	setSize(widthSmall, height);
-        	setPreferredSize(new Dimension(widthSmall, height));
+        	width = widthSmall;
+        }
+        if (Application.isHandwritingRecognitionTimedRecognise()) {
+        	height = heightSmall;
+        }
+       	setSize(width, height);
+       	setPreferredSize(new Dimension(width, height));
+       	
+        if (Application.isHandwritingRecognitionAutoAdd()) {
         	jSplitPane1.setRightComponent(null);
         	jSplitPane1.setDividerSize(0);
-        	botomPanel.add(bottomPanelII,java.awt.BorderLayout.PAGE_END);
-        } else if (Application.isHandwritingRecognitionTimedRecognise()) {
-        	setSize(width, height);
-        	setPreferredSize(new Dimension(width, height));
+        } else {
         	jSplitPane1.setRightComponent(upperPanel);
         	jSplitPane1.setDividerSize(9);
         	jSplitPane1.setDividerLocation(widthSplit);
+        }
+        if (Application.isHandwritingRecognitionTimedRecognise()) {
         	botomPanel.remove(bottomPanelII);
-        }
-        else	{
-        	setSize(width, height);
-        	setPreferredSize(new Dimension(width, height));
-        	jSplitPane1.setRightComponent(upperPanel);
-        	jSplitPane1.setDividerSize(9);
-        	jSplitPane1.setDividerLocation(widthSplit);
-        	botomPanel.add(bottomPanelII,java.awt.BorderLayout.PAGE_END);    
-        }
+        } else {
+        	botomPanel.add(bottomPanelII,java.awt.BorderLayout.PAGE_END);
+        }        
+       	
         super.repaint();
     }
 
