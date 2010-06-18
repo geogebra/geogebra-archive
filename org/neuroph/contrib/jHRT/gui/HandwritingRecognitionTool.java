@@ -69,7 +69,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 	private int heightSmall  = 314;
 	private int widthSplit   = 289;
 	
-	private int timer = 2;
+	private int timer = 5;
 	
 	public WindowsUnicodeKeyboard getKeyboard() {
 		try {
@@ -820,7 +820,6 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         drawingPanelRecognition.getDrawnLetter();
         recognition.recognize((DefaultListModel) probabilitiesList.getModel());
         probabilitiesList.setSelectedIndex(0);
-     
         if (Application.isHandwritingRecognitionAutoAdd()) {
             DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
             String letter = model.getElementAt(0).toString().substring(0, 1);
@@ -828,28 +827,28 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
             if (app != null)
                 app.getGuiManager().insertStringIntoTextfield(letter + "", false, false, false);
    	        else
-               getKeyboard().doType(false, false, false,letter);
+               getKeyboard().doType(false, false, false, letter);
             drawingPanelRecognition.clearDrawingArea();
         } else if (Application.isHandwritingRecognitionTimedAdd()) {
-                Thread delay = new Thread() {
+            Thread delay = new Thread() {
                 public void run() {
-                 try {
-                	 sleep(5000);
-                	 if (probabilitiesList.getSelectedIndex() > -1) {
-                		 DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
-                		 String letter = model.getElementAt(probabilitiesList.getSelectedIndex()).toString().substring(0, 1);
-                		 model.clear();
-                     if (app != null)
-                    	 app.getGuiManager().insertStringIntoTextfield(letter + "", false, false, false);
-                     else
-                    	 getKeyboard().doType(false, false, false,letter);
-                     drawingPanelRecognition.clearDrawingArea();    } 
-                 } catch (InterruptedException e) {
-                 }
+                    try {
+                	    sleep(timer * 1000);
+                	    if (probabilitiesList.getSelectedIndex() > -1) {
+                		    DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
+                		    String letter = model.getElementAt(probabilitiesList.getSelectedIndex()).toString().substring(0, 1);
+                		    model.clear();
+                            if (app != null)
+                    	        app.getGuiManager().insertStringIntoTextfield(letter + "", false, false, false);
+                            else
+                                getKeyboard().doType(false, false, false, letter);
+                            drawingPanelRecognition.clearDrawingArea();
+                        } 
+                    } catch (InterruptedException e) {
+                    }
                 }
-               };
-               delay.start();
-        	
+            };
+            delay.start();
         }
         new File("letter.png").delete();
     }//GEN-LAST:event_jButton4ActionPerformed

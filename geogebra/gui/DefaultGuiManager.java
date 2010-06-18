@@ -2937,12 +2937,7 @@ public class DefaultGuiManager implements GuiManager {
 		public Component getHandwriting() {
 			
 			if (handwritingRecognition == null) {
-				try {
-					handwritingRecognition = new HandwritingRecognitionTool(app);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				handwritingRecognition = new HandwritingRecognitionTool(app);
 			}
 			return handwritingRecognition;
 			
@@ -2951,12 +2946,7 @@ public class DefaultGuiManager implements GuiManager {
 		public void toggleHandwriting(boolean show) {
 			
 			if (handwritingRecognition == null) {
-				try {
-					handwritingRecognition = new HandwritingRecognitionTool(app);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				handwritingRecognition = new HandwritingRecognitionTool(app);
 			}
 			handwritingRecognition.setVisible(show);
 			handwritingRecognition.repaint();
