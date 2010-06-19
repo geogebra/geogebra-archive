@@ -214,6 +214,19 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		}
 	}
 	
+	public final void removeColorFunction() {
+		super.removeColorFunction();
+		
+    	if (geoList == null || geoList.size() == 0) return;    
+    	
+    	int size = geoList.size();	        
+        for (int i=0; i < size; i++) {
+			GeoElement geo = (GeoElement)geoList.get(i);
+			if (!geo.isLabelSet())
+        		geo.removeColorFunction();
+        }
+	}
+	
 	public final void setColorFunction(GeoList col) {
 		super.setColorFunction(col);
 		

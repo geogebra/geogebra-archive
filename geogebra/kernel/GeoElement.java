@@ -3854,7 +3854,7 @@ public abstract class GeoElement
 		}		
 	}
 	
-	public final void removeColorFunction() {
+	public void removeColorFunction() {
 		// unregister old condition
 		if (colFunction != null) {
 			colFunction.unregisterColorFunctionListener(this);
