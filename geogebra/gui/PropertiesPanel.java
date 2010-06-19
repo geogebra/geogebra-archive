@@ -5027,6 +5027,7 @@ class ColorFunctionPanel
 				for (int i=0; i < geos.length; i++) {
 					GeoElement geo = (GeoElement) geos[i];	
 					geo.removeColorFunction();
+					geo.setObjColor(geo.getObjectColor());
 					geo.updateRepaint();
 				}
 				tfRed.setText("");

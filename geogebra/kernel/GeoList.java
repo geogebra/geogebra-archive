@@ -181,6 +181,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			// copy color function
 			if (this.getColorFunction() != null) {
 				geo.setColorFunction(this.getColorFunction());
+			} else {
+				geo.removeColorFunction();
 			}
 			
 			geo.setLineThickness(this.getLineThickness());
