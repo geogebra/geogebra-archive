@@ -251,7 +251,8 @@ office@geogebra.org
 					3D/**,			
 					org/mathpiper/**,
 					org/mozilla/**,
-					org/freehep/**, 					  
+					org/freehep/**, 
+					edu/**,
 				    tutor/**,
 					meta-inf/**"		
 		/>
@@ -280,6 +281,7 @@ office@geogebra.org
 			basedir="${src.dir}"
 			includes="geogebra/cas/**,
 					jasymca/**,	
+					edu/**,
 					org/mathpiper/**"
 			excludes="**/*.java" 
 		/>

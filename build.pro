@@ -31,7 +31,7 @@
 # see http://proguard.sourceforge.net/manual/troubleshooting.html
 -dontskipnonpubliclibraryclasses
 
-#-printmapping geogebra3-2-0-0.map 	 
+#-printmapping geogebra.map 	 
 #-applymapping geogebra3-2-0-0.map	 
 
 # Keep GeoGebra application
@@ -66,8 +66,14 @@
 # needed so that hoteqn can find Des12.gif, etc.
 -keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
 
-# 
+# JLaTeXMath uses reflection
 -keep class org.scilab.forge.jlatexmath.* { <methods>; }
+
+# MathPiper / JAS interaction
+-keep class org.mathpiper.builtin.library.jas.* { <methods>; }
+-keep class org.mathpiper.builtin.javareflection.* { <methods>; }
+-keep class edu.jas.poly.* { <methods>; }
+
 
 # Jasymca uses reflection to create functions like LambaSIN
 -keep class jasymca.Lambda* {}
