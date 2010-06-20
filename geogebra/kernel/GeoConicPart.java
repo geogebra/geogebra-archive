@@ -16,6 +16,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.EllipticArcLength;
 
@@ -725,5 +726,15 @@ implements LimitedPath, NumberValue, LineProperties {
 	final public GeoElement copy() {
 		return new GeoConicPart(this);
 	}
+	
+	/*
+	 * not supported for Arcs etc
+	 */
+	public void matrixTransform(GeoList geoMatrix) {
+		
+		setUndefined();
+		
+	}
+
 	
 }
