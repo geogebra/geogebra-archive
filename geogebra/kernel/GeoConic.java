@@ -792,39 +792,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			b.y);
 	}
 
-	public boolean isMatrixTransformable() {
-		return true;
-	}
-
-	public void matrixTransform(GeoList matrix) {
-		
-		MyList list = matrix.getMyList();
-		
-		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
-			setUndefined();
-			return;
-		}
-		 
-		double p, q, r, s;
-		
-		p = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
-		q = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
-		r = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
-		s = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
- 
-		AffineTransform transform = getAffineTransform();	
-		
-// apply {{p,q},{r,s}} to conic			
-		transform.setTransform(
-			eigenvec[0].x * p + eigenvec[0].y * q,
-			eigenvec[0].x * r + eigenvec[0].y * s,
-			eigenvec[1].x * p + eigenvec[1].y * q,
-			eigenvec[1].x * r + eigenvec[1].y * s,
-			b.x * p + b.y * q,
-			b.x * r + b.y * s);
-
-		
-	}
 	
 	final public GeoVec2D getTranslationVector() {
 		return b;
@@ -1245,6 +1212,50 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		updateDegenerates(); // for degenerate conics
 	}
 
+	public boolean isMatrixTransformable() {
+		return true;
+	}
+
+	/**
+	 * rotate this conic by angle phi around (0,0)
+	 * [ a    b    0 ]
+	 * [ c    d     0 ]
+	 * [ 0      0       1 ]
+	 */
+	public void matrixTransform(GeoList geoMatrix) {
+		
+		MyList list = geoMatrix.getMyList();
+		
+		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
+			setUndefined();
+			return;
+		}
+		 
+		double a,b,c,d;
+		
+		a = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
+		b = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
+		c = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
+		d = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
+ 
+		double det = a * d - b * c;
+		double det2 = det * det;
+		
+		double A0 = d * (d * matrix[0] - c * matrix[3]) - c * ( d * matrix[3] - c * matrix[1]);
+		double A3 = a * (d * matrix[3] - c * matrix[1]) - b * ( d * matrix[0] - c * matrix[3]);
+		double A1 = a * (a * matrix[1] - b * matrix[3]) - b * ( a * matrix[3] - b * matrix[0]);
+		double A4 = d * matrix[4] - c * matrix[5];
+		matrix[5] = (a * matrix[5] - b * matrix[4]) / det;
+		matrix[0] = A0 / det2;
+		matrix[1] = A1 / det2;
+		matrix[3] = A3 / det2;
+		matrix[4] = A4 / det;
+		
+		classifyConic();
+
+		
+	}
+	
 	/**
 	 * rotate this conic by angle phi around (0,0)
 	 * [ cos    -sin    0 ]
