@@ -20,9 +20,7 @@ package geogebra.euclidian;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVector;
-import geogebra.kernel.Kernel;
+import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 
 import java.awt.BasicStroke;
@@ -37,7 +35,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -48,7 +45,6 @@ import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
-import org.scilab.forge.jlatexmath.URLAlphabetRegistration;
 import org.scilab.forge.jlatexmath.WebStartAlphabetRegistration;
 
 /**
@@ -122,7 +118,7 @@ public abstract class Drawable {
 			// use FONT.ITALIC to stop \mathrm{} being added
 			// so that raw LaTeX is sent to JLaTeXMath
 			// user can add any formatting themselves
-			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont().deriveFont(Font.ITALIC), g2.getColor(), g2.getBackground());
+			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont().deriveFont(Font.ITALIC), ((GeoText)geo).isSerifFont(), g2.getColor(), g2.getBackground());
 			labelRectangle.setBounds(xLabel, yLabel, (int)dim.getWidth(), (int)dim.getHeight());	
 			return;
 		}
@@ -351,7 +347,7 @@ public abstract class Drawable {
 		for(int i = 0, currentLine = 0, currentElement = 0; i < elements.length; ++i) {			
 			if(isLaTeX) {
 				// save the height of this element by drawing it to a temporary buffer
-				int height = drawEquation(view.app, view.getTempGraphics2D(font), 0, 0, elements[i], font, fgColor, bgColor).height;
+				int height = drawEquation(view.app, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).height;
 				elementHeights.add(new Integer(height));
 				
 				// check if this element is taller than every else in the line
@@ -396,7 +392,7 @@ public abstract class Drawable {
 				yOffset = (((Integer)(lineHeights.get(currentLine))).intValue() - ((Integer)(elementHeights.get(currentElement))).intValue()) / 2;
 				
 				// draw the equation and save the x offset
-				xOffset += drawEquation(view.app, g2, xLabel + xOffset, (int)(yLabel + height) + yOffset, elements[i], font, fgColor, bgColor).width;
+				xOffset += drawEquation(view.app, g2, xLabel + xOffset, (int)(yLabel + height) + yOffset, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).width;
 				
 				++currentElement;
 			} else {
@@ -440,9 +436,9 @@ public abstract class Drawable {
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
 
-	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor) {
+	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
 	
-		if (useJLaTeXMath) return drawEquationJLaTeXMath(app, g2, x, y, text, font, fgColor, bgColor);
+		if (useJLaTeXMath) return drawEquationJLaTeXMath(app, g2, x, y, text, font, serif, fgColor, bgColor);
 		else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
 	}
 	
@@ -496,7 +492,7 @@ public abstract class Drawable {
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
 	
-	final  public static Dimension drawEquationJLaTeXMath(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
+	final  public static Dimension drawEquationJLaTeXMath(Application app, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
 	{
 		
 		if (equations == null) { // first call
@@ -519,13 +515,17 @@ public abstract class Drawable {
 		if (eqnSB == null) eqnSB = new StringBuilder(20);
 		else eqnSB.setLength(0);
 		
-		if (!font.isItalic()) eqnSB.append("\\mathrm{ ");
-		if (font.isBold()) eqnSB.append("\\boldsymbol{ ");
+		if (font.isItalic()) eqnSB.append("\\mathit{ "); else eqnSB.append("\\mathrm{ ");
+		if (serif) eqnSB.append("\\mathsf{ ");
+		if (font.isBold()) eqnSB.append("\\mathbf{ ");
 		
 		eqnSB.append(text);
 		
 		if (font.isBold()) eqnSB.append(" }");
-		if (!font.isItalic()) eqnSB.append(" }");
+		
+		if (serif) eqnSB.append(" }");
+		eqnSB.append(" }"); // it/rm
+
 		
 		int strLen = eqnSB.length();
 		

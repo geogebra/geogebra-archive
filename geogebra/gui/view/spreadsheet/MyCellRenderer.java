@@ -239,7 +239,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 					latexStr = Util.toLaTeXString(geo.getFormulaString(
 							ExpressionNode.STRING_TYPE_LATEX, true), false);
 
-					drawLatexImageIcon(latexIcon, latexStr, getFont(), geo
+					drawLatexImageIcon(latexIcon, latexStr, getFont(), ((GeoText)geo).isSerifFont(), geo
 							.getAlgebraColor(), bgColor);
 					setIcon(latexIcon);
 					setText("");
@@ -260,7 +260,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	 * the needed size of the image. Second draw renders the image with the correct
 	 * dimensions.
 	 */
-	private void drawLatexImageIcon(ImageIcon latexIcon, String latex, Font font, Color fgColor, Color bgColor) {
+	private void drawLatexImageIcon(ImageIcon latexIcon, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
 		
 		// Create image with dummy size, then draw into it to get the correct size
 		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -273,7 +273,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		Dimension d = new Dimension();
-		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, fgColor,
+		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, serif, fgColor,
 				bgColor);
 
 		// Now use this size and draw again to get the final image
@@ -285,7 +285,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, fgColor,
+		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, serif, fgColor,
 				bgColor);
 
 		latexIcon.setImage(image);
