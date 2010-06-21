@@ -94,7 +94,7 @@ abstract public class AlgoElement3D extends AlgoElement{
 	 * @param addToConstructionList says if it has to be added to the construction list
 	 */
 	public AlgoElement3D(Construction c, boolean addToConstructionList) {
-		super(c,false);
+		super(c,addToConstructionList);
 	}
 
 	

@@ -15,6 +15,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Region;
+import geogebra.main.Application;
 
 
 public class AlgoPoint3DInRegion extends AlgoElement3D {
