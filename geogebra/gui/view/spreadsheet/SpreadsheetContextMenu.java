@@ -324,12 +324,10 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 		
 		
-		
 		// ===============================================
 		//     Data analysis
 		// ===============================================
 		
-		/*
 		if(!isEmptySelection() && isShiftDown){
 			item = new JMenuItem(app.getMenu(app.getPlain("Data Analysis")),app.getEmptyIcon());
 			item.addActionListener(new ActionListener() {
@@ -341,10 +339,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			});	 
 			add(item);
 		}
-		*/
-		
-		
-		
+
 		
 
 		// ===============================================
