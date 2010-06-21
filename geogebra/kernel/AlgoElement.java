@@ -208,12 +208,12 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         for (int i = 0; i < input.length; i++) {
             input[i].addAlgorithm(this);            
         }    
-        
+         
         doSetDependencies();   
     }
     
     protected void doSetDependencies() {
-    	setRandomUnlabeledInput();
+     	setRandomUnlabeledInput();
         setOutputDependencies();           
         cons.addToAlgorithmList(this);  
     }
@@ -263,6 +263,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }  
     
     private void setOutputDependencies() {
+    	
+    	
    	 // parent algorithm of output
        for (int i = 0; i < output.length; i++) {
            output[i].setParentAlgorithm(this);

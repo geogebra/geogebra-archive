@@ -22,12 +22,14 @@ import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Region;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.main.Application;
 import geogebra.plugin.GgbAPI;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
@@ -55,7 +57,9 @@ public class Test3D{
 	private void test(){
 
 		//testLoad("test");
-		//kernel3D.Plane3D("p", 1, 0, 0, -1);
+		//kernel3D.setResolveUnkownVarsAsDummyGeos(true);
+		//testQuadric();
+		
 		
 	}
 	
@@ -1120,6 +1124,26 @@ public class Test3D{
 		
 		kernel3D.Point3D("A", kernel3D.getXAxis3D());
 		
+	}
+
+	private void testBug(){
+		try {
+			kernel3D.getAlgebraProcessor()
+			.processAlgebraCommandNoExceptionHandling("A=(1,1,0)",false);
+			//kernel3D.lookupLabel("A");
+
+			
+			kernel3D.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					"B=PointIn[xOyPlane]"
+					,false);
+			GeoElement B = kernel3D.lookupLabel("B");
+			Application.debug("B:"+B);
+			
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
 	}
 
 	

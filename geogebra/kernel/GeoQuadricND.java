@@ -2,6 +2,7 @@ package geogebra.kernel;
 
 import java.awt.geom.AffineTransform;
 
+import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoQuadric3D;
@@ -60,6 +61,11 @@ public abstract class GeoQuadricND extends GeoElement {
 	
 	
 	protected GgbVector midpoint;
+	//TODO merge with 2D eigenvec
+	protected GgbVector[] eigenvecND;
+
+
+	protected double[] diagonal;
 	
 	
 	//string
@@ -79,7 +85,54 @@ public abstract class GeoQuadricND extends GeoElement {
 		midpoint = new GgbVector(dimension+1);
 		midpoint.set(dimension+1, 1);
 	}
+	
+	
+	
+	/////////////////////////////////
+	// MATRIX REPRESENTATION
+	/////////////////////////////////
+	
+	/**
+	 * @return the matrix representation of the quadric in its dimension
+	 * regarding vals
+	 */
+	abstract protected GgbMatrix getGgbMatrix(double[] vals);
+		
+	/**
+	 * @return the matrix representation of the quadric in its dimension
+	 */
+	protected GgbMatrix getGgbMatrix(){
+		return getGgbMatrix(matrix);
+	}
+	
+	
+	/**
+	 * sets the matrix values from eigenvectors, midpoint and "diagonal" values
+	 */
+	protected void setMatrixFromEigen(){
+		
+		GgbMatrix diagonalizedMatrix = GgbMatrix.DiagonalMatrix(diagonal);
+		
+		GgbMatrix eigenMatrix = new GgbMatrix(4, 4);
+		eigenMatrix.set(eigenvecND);
+		eigenMatrix.set(getMidpoint(),4);
+		
+		GgbMatrix eigenMatrixInv = eigenMatrix.inverse();
+		
+		GgbMatrix finalMatrix = eigenMatrixInv.transposeCopy().mul(diagonalizedMatrix).mul(eigenMatrixInv);
+		
+		setMatrix(finalMatrix);
+	}
 
+	/**
+	 * sets the matrix values from the symmetric matrix m
+	 * @param m
+	 */
+	abstract protected void setMatrix(GgbMatrix m);
+	
+	/////////////////////////////////
+	// SPECIAL CASES SETTERS
+	/////////////////////////////////
 
 	
 	/** set the center and radius (as segment) of the N-sphere

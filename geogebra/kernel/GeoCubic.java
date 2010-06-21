@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbMatrix;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
@@ -325,6 +326,23 @@ implements Path, Traceable, LineProperties
 
 	 public String getAssignmentOperator() {
 		 return ": ";
+	 }
+	 
+
+	 /**
+	  * @return the matrix representation of the conic in its 2D sub space
+	  */
+	 protected GgbMatrix getGgbMatrix(double[] vals){
+		 //TODO
+		 return null;
+	 }
+
+	 /**
+	  * sets the matrix values from the symmetric matrix m
+	  * @param m
+	  */
+	 protected void setMatrix(GgbMatrix m){
+		 //TODO
 	 }
 
 }

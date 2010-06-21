@@ -1,5 +1,6 @@
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbVector;
 
 
@@ -28,6 +29,27 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 		super(c, dimension);
 	}
 
+	
+	
+	
+	/**
+	 * @return the matrix representation of the conic in its 2D sub space
+	 */
+	protected GgbMatrix getGgbMatrix(double[] vals){
+		//TODO
+		return null;
+	}
+	
+	
+	/**
+	 * sets the matrix values from the symmetric matrix m
+	 * @param m
+	 */
+	protected void setMatrix(GgbMatrix m){
+		//TODO
+	}
+	
+	
 	
 
 	/**
