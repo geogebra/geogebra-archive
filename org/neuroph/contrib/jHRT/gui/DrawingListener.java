@@ -20,9 +20,17 @@
 
 package org.neuroph.contrib.jHRT.gui;
 
+import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
+import geogebra.main.Application;
+
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.event.MouseInputAdapter;
+
+import org.neuroph.contrib.jHRT.LetterRecognition;
 
 /**
  * This class represents the listener for the drawing events
@@ -33,9 +41,24 @@ class DrawingListener extends MouseInputAdapter {
 
     private DrawingPanel dp;
     private Point start;
+    private int timer = 5;
+    private WindowsUnicodeKeyboard kb = null;
+    private HandwritingRecognitionTool hrt;
+    
+    public WindowsUnicodeKeyboard getKeyboard() {
+		try {
+			kb = new WindowsUnicodeKeyboard();
+		} catch (Exception e) {}
+		return kb;
+	}
 
     public DrawingListener(DrawingPanel dp) {
         this.dp = dp;
+    }
+    
+    public DrawingListener(DrawingPanel dp, HandwritingRecognitionTool hrt) {
+    	this(dp);
+    	this.hrt = hrt;
     }
 
     @Override
@@ -49,4 +72,41 @@ class DrawingListener extends MouseInputAdapter {
         dp.draw(start, p);
         start = p;
     }
+
+	@Override
+    public void mouseReleased(MouseEvent e)	{
+		/*
+		 * Can be removed in final application
+		 * Start -->
+		 */
+		if (hrt.app != null) {
+		/*
+		 * <-- Stop
+		 */
+		if (Application.isHandwritingRecognitionTimedRecognise()) {
+System.out.println("yupyup");
+			Thread delay = new Thread() {
+				public void run() {
+					try {
+						sleep(timer * 1000);
+						((DefaultListModel) hrt.probabilitiesList.getModel()).clear();
+						hrt.drawingPanelRecognition.getDrawnLetter();
+						hrt.recognition.recognize((DefaultListModel) hrt.probabilitiesList.getModel());
+						hrt.probabilitiesList.setSelectedIndex(0);
+						hrt.doAutoTimedAdd();
+					} catch (InterruptedException e) {
+					}
+				}
+			};
+			delay.start();
+		}
+		/*
+		 * Can be removed in final application
+		 * Start -->
+		 */
+		}
+		/*
+		 * <-- Stop
+		 */
+	}
 }

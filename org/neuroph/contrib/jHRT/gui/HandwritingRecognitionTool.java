@@ -1,5 +1,5 @@
-/***
-  * Neuroph  http://neuroph.sourceforge.net
+/*
+ * Neuroph  http://neuroph.sourceforge.net
  * Copyright by Neuroph Project (C) 2008
  *
  * This file is part of Neuroph framework.
@@ -60,7 +60,7 @@ import org.neuroph.util.VectorParser;
  */
 public class HandwritingRecognitionTool extends javax.swing.JFrame {
 	
-	private Application app;
+	public Application app;
 	private WindowsUnicodeKeyboard kb = null;
 	
 	private int widthNormal  = 600;
@@ -348,7 +348,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         jPanel6.setPreferredSize(new java.awt.Dimension(200, 250));
         jPanel6.setLayout(new java.awt.GridBagLayout());
 
-        DrawingListener dl1 = new DrawingListener(drawingPanelTrening);
+        DrawingListener dl1 = new DrawingListener(drawingPanelTrening, this);
         drawingPanelTrening.addMouseMotionListener(dl1);
         drawingPanelTrening.addMouseListener(dl1);
         drawingPanelTrening.setPreferredSize(new java.awt.Dimension(200, 250));
@@ -650,7 +650,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         });
         jPanel3.setLayout(new java.awt.BorderLayout());
 
-        DrawingListener dl = new DrawingListener(drawingPanelRecognition);
+        DrawingListener dl = new DrawingListener(drawingPanelRecognition, this);
         drawingPanelRecognition.addMouseListener(dl);
         drawingPanelRecognition.addMouseMotionListener(dl);
         jPanel3.add(drawingPanelRecognition, java.awt.BorderLayout.CENTER);
@@ -820,6 +820,11 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         drawingPanelRecognition.getDrawnLetter();
         recognition.recognize((DefaultListModel) probabilitiesList.getModel());
         probabilitiesList.setSelectedIndex(0);
+        doAutoTimedAdd();
+        //new File("letter.png").delete();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    protected void doAutoTimedAdd() {
         if (Application.isHandwritingRecognitionAutoAdd()) {
             DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
             String letter = model.getElementAt(0).toString().substring(0, 1);
@@ -851,7 +856,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
             delay.start();
         }
         new File("letter.png").delete();
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         drawingPanelTrening.clearDrawingArea();
@@ -1028,7 +1033,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
     private javax.swing.JTabbedPane centerTabbedPane;
     private javax.swing.JButton closeAboutButton;
     private javax.swing.JButton createNetworkButton;
-    private org.neuroph.contrib.jHRT.gui.DrawingPanel drawingPanelRecognition;
+    protected org.neuroph.contrib.jHRT.gui.DrawingPanel drawingPanelRecognition;
     private org.neuroph.contrib.jHRT.gui.DrawingPanel drawingPanelTrening;
     //private javax.swing.JMenuItem exitMenuItem;
     //private javax.swing.JMenu fileMenu;
@@ -1079,7 +1084,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
     private javax.swing.JTextField neuralNetworkNameTextField;
     private javax.swing.JButton nextButton;
     private javax.swing.JPanel northAboutPanel;
-    private javax.swing.JList probabilitiesList;
+    protected javax.swing.JList probabilitiesList;
     private javax.swing.JPanel recognitionPanel;
     //private javax.swing.JPanel rightBotomPanel;
     //private javax.swing.JPanel rightPanel;
@@ -1090,7 +1095,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
     private javax.swing.JPanel upperPanel;
     private javax.swing.JPanel westAboutPanel;
     // End of variables declaration//GEN-END:variables
-    private LetterRecognition recognition;
+    protected LetterRecognition recognition;
     private Map<TextAttribute, Object> styles = new Hashtable<TextAttribute, Object>();
     private Font font = new Font("Serif", Font.PLAIN, 20);
     TrainingSet activeTrainingSet;
