@@ -1006,8 +1006,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				//ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, new boolean[0]);
 			    //   popupMenu.show(e.getComponent(), e.getX(), e.getY());
 				
-				ContextMenu popupMenu = new ContextMenu(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, 
-						maxSelectionRow, new boolean[0],1);
+			//	ContextMenu popupMenu = new SpreadsheetContextMenu(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, 
+			//			maxSelectionRow, new boolean[0],1);
+				
+				SpreadsheetContextMenu popupMenu = new SpreadsheetContextMenu(table, e.isShiftDown());
 		        popupMenu.show(e.getComponent(), e.getX(), e.getY());
 		        // END GSTURR
 			} 

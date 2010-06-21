@@ -1,14 +1,13 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
-import geogebra.kernel.commands.CommandDispatcher;
 import geogebra.main.Application;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
 
 
 public class CellRangeProcessor {
@@ -41,7 +40,9 @@ public class CellRangeProcessor {
 
 	
 	
-	public void CreatePointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
+	public GeoElement CreatePointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
+		
+		GeoElement[] geos = null;
 		
 		int c1, c2, r1, r2;
 		StringBuilder text = new StringBuilder();
@@ -112,10 +113,9 @@ public class CellRangeProcessor {
 				listString = listString.replace("[", "{");
 				listString = listString.replace("]", "}");
 
-				table.kernel.getAlgebraProcessor()
+				geos = table.kernel.getAlgebraProcessor()
 						.processAlgebraCommandNoExceptionHandling(listString,
 								false);
-				
 				app.storeUndoInfo();
 			}
 
@@ -125,6 +125,12 @@ public class CellRangeProcessor {
 			app.showError("NumberExpected");
 		}
 
+		
+		if(geos != null)
+			return geos[0];
+		else 
+			return null;
+		
 	}
 	
 	private void createListPoint(GeoElement xCoord, GeoElement yCoord,
@@ -247,10 +253,11 @@ public class CellRangeProcessor {
 	
 	
 	
-	public void CreateList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
-
+	public GeoElement CreateList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
+		
+		GeoElement[] geos = null;
 		String listString = "";
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		ArrayList<Point> cellList = new ArrayList<Point>();
 		
 		// temporary fix for catching duplicate cells
@@ -288,27 +295,340 @@ public class CellRangeProcessor {
 			listString = listString.replace("]", "}");
 
 			// convert list string to geo
-			GeoElement[] geos = table.kernel
-					.getAlgebraProcessor()
+			geos = table.kernel.getAlgebraProcessor()
 					.processAlgebraCommandNoExceptionHandling(listString, false);
 
 			// get geo name and set label
 		//	String listName = geos[0].getIndexLabel("L");
 		//	geos[0].setLabel(listName);
-
-			
-			
+					
 			
 		} catch (Exception ex) {
 			Application.debug("Creating list failed with exception " + ex);
 		}
 
 		app.storeUndoInfo();
+		
+		if(geos != null)
+			return geos[0];
+		else 
+			return null;
 
 	}
 			
+	
+	public boolean isCreateMatrixPossible(ArrayList<CellRange> rangeList){
+		
+		if(rangeList.size() == 1 && !rangeList.get(0).hasEmptyCells()) 
+			return true;	
+		else
+			return false;
+		
+		/*
+		// ctrl-selection block 
+		if (rangeList.size() > 1){							 
+				//rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1 )
+			return true;
+		}
+
+		if (rangeList.size() == 2 && 
+				rangeList.get(0).getHeight() == 1 && rangeList.get(1).getHeight() == 1 )
+			return true;
+		
+		return false;
+		
+		*/
+		
+	}
+
+	public GeoElement CreateMatrix(int column1, int column2, int row1, int row2){
+		
+		GeoElement[] geos = null;
+		
+		String text="";
+		try {
+			text="{";
+			for (int j = row1; j <= row2; ++ j) {
+				//if (selected.length > j && ! selected[j])  continue; 	
+				String row = "{";
+				for (int i = column1; i <= column2; ++ i) {
+					GeoElement v2 = RelativeCopy.getValue(table, i, j);
+					if (v2 != null) {
+						row += v2.getLabel() + ",";
+					}
+					else {
+						app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
+						return null;
+					}
+				}
+				row = removeComma(row);
+				text += row +"}" + ",";
+			}
+
+			text = removeComma(text)+ "}";
+
+			//Application.debug(text);
+			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+			// set matrix label
+			// no longer needed
+			//String matrixName = geos[0].getIndexLabel("matrix");
+			//geos[0].setLabel(matrixName);
+
+			app.storeUndoInfo();
+		} 
+		catch (Exception ex) {
+			Application.debug("creating matrix failed "+text);
+			ex.printStackTrace();
+		} 
+
+		if(geos != null)
+			return geos[0];
+		else 
+			return null;
+	}
+
+public GeoElement CreateTableText(int column1, int column2, int row1, int row2){
+		
+		GeoElement[] geos = null;
+		
+		String text="";
+		try {
+			text="TableText[{";
+			for (int j = row1; j <= row2; ++ j) {
+				//if (selected.length > j && ! selected[j])  continue; 	
+				String row = "{";
+				for (int i = column1; i <= column2; ++ i) {
+					GeoElement v2 = RelativeCopy.getValue(table, i, j);
+					if (v2 != null) {
+						row += v2.getLabel() + ",";
+					}
+					else {
+						app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
+						return null;
+					}
+				}
+				row = removeComma(row);
+				text += row +"}" + ",";
+			}
+
+			text = removeComma(text)+ "}]";
+
+			//Application.debug(text);
+			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+
+			app.storeUndoInfo();
+		} 
+		catch (Exception ex) {
+			Application.debug("creating TableText failed " + text);
+			ex.printStackTrace();
+		} 
+
+		if(geos != null)
+			return geos[0];
+		else 
+			return null;
+	}
+
+
+	private static String removeComma(String s)
+	{
+		if (s.endsWith(",")) s = s.substring(0,s.length()-1); 	
+		return s;
+	}
+
+
+
+
 
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	//=================================================================
+	//                   Insert Rows/Columns
+	//=================================================================
+
+
+	public void InsertLeft(int column1, int column2){ 
+
+		int columns = table.getModel().getColumnCount();
+		if (columns == column1 + 1){
+			// last column: need to insert one more
+			table.setMyColumnCount(table.getColumnCount() +1);		
+			table.getView().getColumnHeader().revalidate();
+			columns++;
+		}
+		int rows = table.getModel().getRowCount();
+		boolean succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
+		for (int x = columns - 2; x >= column1; -- x) {
+			for (int y = 0; y < rows; ++ y) {
+				GeoElement geo = RelativeCopy.getValue(table, x, y);
+				if (geo == null) continue;
+
+				Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+				int column = GeoElement.getSpreadsheetColumn(matcher);
+				int row = GeoElement.getSpreadsheetRow(matcher);
+				column += 1;
+				String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+				geo.setLabel(newLabel);
+				succ = true;
+			}
+		}
+
+		if (succ)
+			app.storeUndoInfo();
+	}
+	
+
+	public void InsertRight(int column1, int column2){
+
+		int columns = table.getModel().getColumnCount();
+		int rows = table.getModel().getRowCount();
+		boolean succ = false;
+		if (columns == column1 + 1){
+			// last column: insert another on right
+			table.setMyColumnCount(table.getColumnCount() +1);		
+			table.getView().getColumnHeader().revalidate();
+			// can't be undone
+		}
+		else
+		{
+			succ = table.copyPasteCut.delete(columns - 1, 0, columns - 1, rows - 1);
+			for (int x = columns - 2; x >= column2 + 1; -- x) {
+				for (int y = 0; y < rows; ++ y) {
+					GeoElement geo = RelativeCopy.getValue(table, x, y);
+					if (geo == null) continue;
+
+					Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+					int column = GeoElement.getSpreadsheetColumn(matcher);
+					int row = GeoElement.getSpreadsheetRow(matcher);
+					column += 1;
+					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+					geo.setLabel(newLabel);
+					succ = true;
+				}
+			}
+		}
+
+		if (succ)
+			app.storeUndoInfo();
+	}
+
+	
+		
+	public void InsertAbove(int row1, int row2){
+		int columns = table.getModel().getColumnCount();
+		int rows = table.getModel().getRowCount();
+		if (rows == row2 + 1){
+			// last row: need to insert one more
+			table.tableModel.setRowCount(table.getRowCount() +1);		
+			table.getView().getRowHeader().revalidate();
+			rows++;
+		}
+		boolean succ = table.copyPasteCut.delete(0, rows - 1, columns - 1, rows - 1);
+		for (int y = rows - 2; y >= row1; -- y) {
+			for (int x = 0; x < columns; ++ x) {
+				GeoElement geo = RelativeCopy.getValue(table, x, y);
+				if (geo == null) continue;
+
+				Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+				int column = GeoElement.getSpreadsheetColumn(matcher);
+				int row = GeoElement.getSpreadsheetRow(matcher);
+				row += 1;
+				String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+				geo.setLabel(newLabel);
+				succ = true;
+			}
+		}
+
+		if (succ)
+			app.storeUndoInfo();
+	}
+	
+	
+	public void InsertBelow(int row1, int row2){	
+		int columns = table.getModel().getColumnCount();
+		int rows = table.getModel().getRowCount();
+		boolean succ = false;
+		if (rows == row2 + 1){
+			// last row: need to insert one more
+			table.tableModel.setRowCount(table.getRowCount() +1);		
+			table.getView().getRowHeader().revalidate();
+			// can't be undone
+		}
+		else
+		{
+			succ = table.copyPasteCut.delete(0, rows - 1, columns - 1, rows - 1);
+			for (int y = rows - 2; y >= row2 + 1; -- y) {
+				for (int x = 0; x < columns; ++ x) {
+					GeoElement geo = RelativeCopy.getValue(table, x, y);
+					if (geo == null) continue;
+					Matcher matcher = GeoElement.spreadsheetPattern.matcher(geo.getLabel());
+					int column = GeoElement.getSpreadsheetColumn(matcher);
+					int row = GeoElement.getSpreadsheetRow(matcher);
+					row += 1;
+					String newLabel = GeoElement.getSpreadsheetCellName(column, row);
+					geo.setLabel(newLabel);
+					succ = true;
+				}
+			}
+		}
+
+		if (succ)
+			app.storeUndoInfo();
+	}
+
+	private void consolidateRangeList(ArrayList<CellRange> rangeList){
+		
+		ArrayList<Point> columnList = new ArrayList<Point>();
+		ArrayList<ArrayList<Point>> matrix = new ArrayList<ArrayList<Point>>();
+		int minRow = rangeList.get(0).getMinRow();
+		int maxRow = rangeList.get(0).getMaxRow();
+		int minColumn = rangeList.get(0).getMinColumn();
+		int maxColumn = rangeList.get(0).getMaxColumn();
+		
+		
+		for(CellRange cr:rangeList){
+			
+			minColumn = Math.min(cr.getMinColumn(), minColumn);
+			maxColumn = Math.max(cr.getMaxColumn(), maxColumn);
+			minRow = Math.min(cr.getMinRow(), minRow);
+			maxRow = Math.max(cr.getMaxRow(), maxRow);
+			
+			// create matrix of cells from all ranges in the list
+			for(int col = cr.getMinColumn(); col <= cr.getMaxColumn(); col++){
+				
+				// add columns from this cell range to the matrix
+				if(matrix.get(col) == null){
+					matrix.add(col, new ArrayList<Point>());
+					matrix.get(col).add(new Point(cr.getMinColumn(),cr.getMaxColumn()));
+				} else {
+					Point p = matrix.get(col).get(1);
+				//	if(cr.getMinColumn()>)
+				//	insertPoint(matrix, new Point(new Point(cr.getMinColumn(),cr.getMaxColumn())));
+				}
+
+			}
+		
+		
+			// convert our matrix to a CellRange list
+			for(int col = minColumn; col <= maxColumn; col++){
+				if(matrix.contains(col)){
+					
+				}
+			}
+		
+		}
+		
+	}
 	
 	
 	

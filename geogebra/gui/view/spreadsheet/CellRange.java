@@ -193,9 +193,9 @@ public class CellRange {
 	/**
 	 * ArrayList of all geos found in the cell range 
 	 */
-	public ArrayList toGeoList() {
+	public ArrayList<GeoElement> toGeoList() {
 
-		ArrayList list = new ArrayList();
+		ArrayList<GeoElement> list = new ArrayList();
 		
 		for (int col = minColumn; col <= maxColumn; ++col) {
 			for (int row = minRow; row <= maxRow; ++row) {
@@ -270,9 +270,26 @@ public class CellRange {
 	
 	
 	
-	boolean hasSameAnchor(CellRange cr){
+	public boolean hasSameAnchor(CellRange cr){
 		return (cr.anchorRow == anchorRow) && (cr.anchorColumn == anchorColumn);
 	}
+	
+	/** Returns true if at least one cell is empty (has no geo)  */
+	public boolean hasEmptyCells(){
+		boolean hasEmptyCells = false;
+		for (int col = minColumn; col <= maxColumn; ++col) {
+			for (int row = minRow; row <= maxRow; ++row) {
+				GeoElement geo = RelativeCopy.getValue(table, col, row);
+				if (geo == null){
+					return true;
+				}
+			}
+		}
+		
+		return hasEmptyCells;
+	}
+	
+	
 	
 	
 	public String getName(){

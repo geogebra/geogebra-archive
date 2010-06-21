@@ -1443,8 +1443,11 @@ public class MyTable extends JTable implements FocusListener
 				//ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, 
 				//		maxSelectionColumn, maxSelectionRow, selectedColumns);
 				
-				ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, 
-						maxSelectionColumn, maxSelectionRow, selectedColumns,1);
+			//	ContextMenu popupMenu = new SpreadsheetContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, 
+			//			maxSelectionColumn, maxSelectionRow, selectedColumns,1);
+				
+				SpreadsheetContextMenu popupMenu = new SpreadsheetContextMenu(MyTable.this, e.isShiftDown());
+				
 				//END GSTURR
 				
 				popupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -2392,8 +2395,11 @@ public class MyTable extends JTable implements FocusListener
 				//
 				//ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
 				//		selectedColumns);
-				ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
-						selectedColumns,1);
+			//	ContextMenu popupMenu = new SpreadsheetContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
+			//			selectedColumns,1);
+				
+				SpreadsheetContextMenu popupMenu = new SpreadsheetContextMenu(MyTable.this, e.isShiftDown());
+				
 				//END GSTURR
 		        popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			
