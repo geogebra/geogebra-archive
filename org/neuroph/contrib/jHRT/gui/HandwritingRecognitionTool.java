@@ -24,6 +24,9 @@ import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.font.TextAttribute;
@@ -70,6 +73,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
 	private int widthSplit   = 289;
 	
 	private int timer = 5;
+	Thread delay = null;
 	
 	public WindowsUnicodeKeyboard getKeyboard() {
 		try {
@@ -353,7 +357,29 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         drawingPanelTrening.addMouseListener(dl1);
         drawingPanelTrening.setPreferredSize(new java.awt.Dimension(200, 250));
         jPanel6.add(drawingPanelTrening, new java.awt.GridBagConstraints());
-
+     
+        MouseListener mouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() < 2) {
+                	return;
+                }
+                if (Application.isHandwritingRecognitionTimedAdd()) {
+                	Thread temp = delay;
+                	delay = null;
+                	temp.interrupt();
+                }
+                DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
+                String letter = model.getElementAt(probabilitiesList.getSelectedIndex()).toString().substring(0, 1);
+   		        model.clear();
+                if (app != null)
+       	            app.getGuiManager().insertStringIntoTextfield(letter + "", false, false, false);
+                else
+                    getKeyboard().doType(false, false, false, letter);
+                drawingPanelRecognition.clearDrawingArea();
+            }
+        };
+        probabilitiesList.addMouseListener(mouseListener);
+       
         org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -823,7 +849,7 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
         doAutoTimedAdd();
         //new File("letter.png").delete();
     }//GEN-LAST:event_jButton4ActionPerformed
-
+    
     protected void doAutoTimedAdd() {
         if (Application.isHandwritingRecognitionAutoAdd()) {
             DefaultListModel model = (DefaultListModel) probabilitiesList.getModel();
@@ -834,8 +860,8 @@ public class HandwritingRecognitionTool extends javax.swing.JFrame {
    	        else
                getKeyboard().doType(false, false, false, letter);
             drawingPanelRecognition.clearDrawingArea();
-        } else if (Application.isHandwritingRecognitionTimedAdd()) {
-            Thread delay = new Thread() {
+        } else if (Application.isHandwritingRecognitionTimedAdd() && null == delay) {
+        	delay = new Thread() {
                 public void run() {
                     try {
                 	    sleep(timer * 1000);

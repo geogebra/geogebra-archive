@@ -41,9 +41,12 @@ class DrawingListener extends MouseInputAdapter {
 
     private DrawingPanel dp;
     private Point start;
-    private int timer = 5;
-    private WindowsUnicodeKeyboard kb = null;
+    
     private HandwritingRecognitionTool hrt;
+    private WindowsUnicodeKeyboard kb = null;
+    
+    private int timer = 5;
+    Thread delay = null;
     
     public WindowsUnicodeKeyboard getKeyboard() {
 		try {
@@ -64,6 +67,11 @@ class DrawingListener extends MouseInputAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
         start = e.getPoint();
+        if(Application.isHandwritingRecognitionTimedRecognise() && null != delay) {
+        	Thread temp = delay;
+        	delay = null;
+        	temp.interrupt();
+        }
     }
 
     @Override
@@ -83,9 +91,8 @@ class DrawingListener extends MouseInputAdapter {
 		/*
 		 * <-- Stop
 		 */
-		if (Application.isHandwritingRecognitionTimedRecognise()) {
-System.out.println("yupyup");
-			Thread delay = new Thread() {
+		if (Application.isHandwritingRecognitionTimedRecognise() && delay == null) {
+			delay = new Thread() {
 				public void run() {
 					try {
 						sleep(timer * 1000);
