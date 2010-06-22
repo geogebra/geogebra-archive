@@ -16,6 +16,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.AppletImplementation;
 
 import javax.swing.JPanel;
 
@@ -92,8 +93,14 @@ implements EuclidianViewAlgo {
 			break;
 		case 6: // return size of Window in pixels
 			// (to help with sizing for export to applet)
-			JPanel appCP = app.getCenterPanel();
-			corner.setCoords(appCP.getWidth(), appCP.getHeight(), 1.0);
+			// doesn't work very well as it receives updates only when EuclidianView is changed
+			if (app.isApplet()) {
+				AppletImplementation applet = app.getApplet();
+				corner.setCoords(applet.width, applet.height, 1.0);
+			} else {
+				JPanel appCP = app.getCenterPanel();
+				corner.setCoords(appCP.getWidth(), appCP.getHeight(), 1.0);
+			}
 			break;
 		default:
 			corner.setUndefined();
