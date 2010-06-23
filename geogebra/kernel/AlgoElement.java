@@ -500,18 +500,18 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     /**
 	 * Returns all input points of this algorithm.	 
 	 */
-    public ArrayList getInputPoints() {	
+    public ArrayList<GeoPoint> getInputPoints() {	
     	if (inputPoints == null) {
-			inputPoints = new ArrayList(input.length);
+			inputPoints = new ArrayList<GeoPoint>(input.length);
 			for (int i=0; i < input.length; i++) {			
 				if (input[i].isGeoPoint() )
-					inputPoints.add(input[i]);			
+					inputPoints.add((GeoPoint) input[i]);			
 			}	
     	}
 		
 		return inputPoints;
     }
-    private ArrayList inputPoints;
+    private ArrayList<GeoPoint> inputPoints;
 
     final public boolean isIndependent() {
         return false;
