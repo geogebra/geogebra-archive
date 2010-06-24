@@ -71,6 +71,15 @@ office@geogebra.org
 			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath">		
 	</target>
 	
+	<!-- compiles grammar -->
+	<target name="compile-grammar">
+		<javacc
+		   target="./geogebra/kernel/parser/Parser.jj"
+		   javacchome="./javacc"
+		   static="false"
+		/>
+	</target>
+	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files3D" 
 			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath, ggb-copy-jogl">		
