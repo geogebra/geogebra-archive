@@ -54,6 +54,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 
 public abstract class CommandProcessor  {
@@ -5633,6 +5634,95 @@ class CmdOsculatingCircle extends CommandProcessor {
 		 }
 	 }    
  }
+ class CmdUpdateConstruction extends CommandProcessor {
+
+	 public CmdUpdateConstruction (Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 final public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+
+		 switch (n) {
+		 case 0:
+				app.getKernel().updateConstruction();
+				app.setUnsaved();
+				GeoElement[] ret = {};
+				return ret;
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }    
+ }
+ 
+ class CmdSetValue extends CommandProcessor {
+
+	 public CmdSetValue (Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 final public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+		 boolean ok;
+
+		 switch (n) {
+		 case 2:
+			 	if (arg[0].isGeoNumeric() && arg[1].isNumberValue()) {
+					NumberValue num = (NumberValue)arg[1];
+					((GeoNumeric)arg[0]).setValue(num.getDouble());
+				} else {
+					arg[0].set(arg[1]);
+				}
+				arg[0].updateRepaint();
+				GeoElement[] ret = {};
+				return ret;
+		 case 3:
+			 	if (ok = arg[0].isGeoList() && arg[1].isNumberValue()) {
+			 		GeoList list = (GeoList)arg[0];
+			 		int nn = (int)((NumberValue)arg[1]).getDouble();
+			 		
+			 		if (nn < 1 || nn > list.size()) throw argErr(app, c.getName(), arg[1]);
+			 		
+			 		GeoElement geo = list.get( nn - 1);
+				 	if (geo.isGeoNumeric() && arg[2].isNumberValue()) {
+						NumberValue num = (NumberValue)arg[2];
+						((GeoNumeric)geo).setValue(num.getDouble());
+					} else {
+						geo.set(arg[1]);
+					}
+				 	
+				 	geo.updateRepaint();
+				 	
+				 	// update the list too if necessary
+				 	if (!geo.isLabelSet()) { // eg like first element of {1,2,a}
+						Iterator it = kernel.getConstruction().getGeoSetConstructionOrder().iterator();
+						while (it.hasNext()) {
+							GeoElement geo2 = (GeoElement)it.next();
+							if (geo2.isGeoList()) {
+								GeoList gl = (GeoList)geo2;
+								for (int i = 0; i < gl.size() ; i++) {
+									if (gl.get(i) == geo) gl.updateRepaint();
+								}
+							}
+						}
+				 	}
+
+			 		
+			 	} else throw argErr(app, c.getName(), ok ? arg[1] : arg[0]);
+			 		
+			 	GeoElement[] ret2 = {};
+				return ret2;
+			 
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }    
+ }
+ 
  class CmdSetDynamicColor extends CommandProcessor {
 
 		public CmdSetDynamicColor (Kernel kernel) {
