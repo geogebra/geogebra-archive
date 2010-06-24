@@ -1,6 +1,7 @@
 package geogebra.main;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.ConstructionDefaults;
@@ -313,11 +314,67 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * @return if key was consumed
 	 */
 	private boolean handleSelectedGeosKeys(KeyEvent event, ArrayList<GeoElement> geos) {
-		if (geos == null || geos.size() == 0)
-			return false;
 		
 		int keyCode = event.getKeyCode();
 		
+		// SPECIAL KEYS
+		double changeVal = 0; // later: changeVal = base or -base
+		// Shift : base = 0.1
+		// Default : base = 1
+		// Ctrl : base = 10
+		// Alt : base = 100
+		double base = 1;
+		if (event.isShiftDown())
+			base = 0.1;
+		if (Application.isControlDown(event))
+			base = 10;
+		if (event.isAltDown())
+			base = 100;
+
+		if (geos == null || geos.size() == 0) {
+			EuclidianView ev = app.getEuclidianView();
+			int width = ev.getWidth();
+			int height = ev.getHeight();
+			if (ev.hasFocus())
+			switch (keyCode) {
+			
+			case KeyEvent.VK_PAGE_UP:
+				ev.rememberOrigins();
+				ev.setCoordSystemFromMouseMove(0, (int)(height * base), EuclidianController.MOVE_VIEW);
+				return true;
+			case KeyEvent.VK_PAGE_DOWN:
+				ev.rememberOrigins();
+				ev.setCoordSystemFromMouseMove(0, -(int)(height * base), EuclidianController.MOVE_VIEW);
+				return true;
+			case KeyEvent.VK_INSERT:
+				ev.rememberOrigins();
+				ev.setCoordSystemFromMouseMove((int)(height * base), 0, EuclidianController.MOVE_VIEW);
+				return true;
+			case KeyEvent.VK_HOME:
+				ev.rememberOrigins();
+				ev.setCoordSystemFromMouseMove(-(int)(height * base), 0, EuclidianController.MOVE_VIEW);
+				return true;
+			case KeyEvent.VK_DOWN:
+				ev.rememberOrigins();
+				ev.setCoordSystemFromMouseMove(0, (int)(height / 100.0 * base), EuclidianController.MOVE_VIEW);
+				return true;
+			case KeyEvent.VK_UP:
+				ev.rememberOrigins();
+				ev.setCoordSystemFromMouseMove(0, -(int)(height / 100.0 * base), EuclidianController.MOVE_VIEW);
+				return true;
+			case KeyEvent.VK_LEFT:
+				ev.rememberOrigins();
+				ev.setCoordSystemFromMouseMove(-(int)(width / 100.0 * base), 0, EuclidianController.MOVE_VIEW);
+				return true;
+			case KeyEvent.VK_RIGHT:
+				ev.rememberOrigins();
+				ev.setCoordSystemFromMouseMove((int)(width / 100.0 * base), 0, EuclidianController.MOVE_VIEW);
+				return true;
+			}
+			
+			return false;
+		}
+
 		// FUNCTION and DELETE keys
 		switch (keyCode) {
 		
@@ -401,19 +458,6 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			return false;
 		} 	
 		
-		// SPECIAL KEYS
-		double changeVal = 0; // later: changeVal = base or -base
-		// Shift : base = 0.1
-		// Default : base = 1
-		// Ctrl : base = 10
-		// Alt : base = 100
-		double base = 1;
-		if (event.isShiftDown())
-			base = 0.1;
-		if (Application.isControlDown(event))
-			base = 10;
-		if (event.isAltDown())
-			base = 100;
 
 		// check for arrow keys: try to move objects accordingly
 		boolean moved = false;
