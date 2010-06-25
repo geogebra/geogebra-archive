@@ -204,13 +204,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			app.getGlobalKeyDispatcher().handleGeneralKeys(e);
 			break;
 
+			/*
 		case KeyEvent.VK_F1:            	
 			updateCurrentWord();
 			showCommandHelp(false);
-			break;          
+			break;          */
 			/* experimental - jump striaght to manual page for current command
-			 * could replace F1 if it works - problems with accents/asian languages */
-            case KeyEvent.VK_F4:
+			 * could replace F1 if it works - check with accents/asian languages */
+            case KeyEvent.VK_F1:
                 updateCurrentWord();
                 showCommandHelp(true);
                 break;          
