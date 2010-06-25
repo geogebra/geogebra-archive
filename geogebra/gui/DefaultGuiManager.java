@@ -2647,33 +2647,32 @@ public class DefaultGuiManager implements GuiManager {
 
 	    private URL getHelpURL(Locale locale, String command, String intCommand) throws Exception {
 	    	 // try to get help for current locale (language + country + variant)
-	        URL helpURL = getHelpURL(locale.toString(), command);
+	        URL helpURL = getHelpURL(locale.toString(), command, app.getCommand("Command"));
 
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
 	    	       
-	        /* Michael Borcherds 2008-03-26
-	         * removed and replaced with dummy help files which redirect*/
 	        // try to get help for current language
 	        String  language = locale.getLanguage();     
-	        helpURL = getHelpURL(language, intCommand);
+	        helpURL = getHelpURL(language, command, app.getCommand("Command"));
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
 	                
 	        // for Catalan and Basque we take the 
 	        // Spanish help instead of the English one
+	        // won't work unless they share command name
 	        if (language.equals("eu") || language.equals("ca")) {        	
-	        	helpURL = getHelpURL("es", intCommand); // Spanish
+	        	helpURL = getHelpURL("es", command, "Comando"); // Spanish
 	        	if (helpURL != null) {            	
 	            	return helpURL;
 	            }
-	        }
+	        } //*/
 	        
 	                
 	        // last attempt: try to get English help 
-	        helpURL = getHelpURL("en", intCommand);
+	        helpURL = getHelpURL("en", intCommand, "Command");
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
@@ -2682,19 +2681,19 @@ public class DefaultGuiManager implements GuiManager {
 	        throw new Exception("HelpNotFound");
 	    }
 	    
-	    private URL getHelpURL(String languageISOcode, String command)  {
+	    private URL getHelpURL(String languageISOcode, String ggbCommand, String Command )  {
 	    	// try to get help for given language
 	    	// eg http://www.geogebra.org/wiki_new/en/FitLogistic_Command
 	    	
 	    	String strFile;
-	    	if (command == null)
+	    	if (ggbCommand == null)
 	    	{ // ORIGINAL CODE
 	    		strFile =  languageISOcode + "/Manual:Main_Page";
 	    	}
 	    	else
 	    	{ // TEST CODE
 	    		// URL like http://www.geogebra.org/wiki_new/en/FitLogistic_Command
-	    		strFile =  languageISOcode + "/" + command + "_Command";
+	    		strFile =  languageISOcode + "/" + ggbCommand + "_" + Command;
 	    	}
 			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "wiki_new/" + strFile;  
 			
