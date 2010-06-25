@@ -271,11 +271,11 @@ public abstract class Application3D extends Application{
 	// TEST
 	///////////////////////////////////////
 
-	private boolean testSw = false;
+	private boolean testSw = true;
 	
 	public void test(){
 		Application.debug("test3D");
-		euclidianView3D.freeze(testSw);
+		euclidianView3D.setToFrozen(testSw);
 		testSw=!testSw;
 	}
 }

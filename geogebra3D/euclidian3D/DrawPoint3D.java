@@ -9,6 +9,7 @@ import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoPoint3D;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 
@@ -58,6 +59,17 @@ implements Previewable, Functional2Var{
 
 		drawGeometry(renderer);
 	}	
+	
+	
+	protected void updateLabel(){
+		//if (getGeoElement()!=null)
+			label.update(getGeoElement().getLabelDescription(), 10, 
+					getGeoElement().getObjectColor(),
+					getLabelMatrix().getOrigin().copyVector(),
+					getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY);
+
+	}
+	
 	
 
 	protected void updateForItSelf(){

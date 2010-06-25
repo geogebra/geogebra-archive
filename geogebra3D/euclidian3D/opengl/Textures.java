@@ -89,15 +89,24 @@ public class Textures {
 	
 
 	
-	/** sets the texture index
+	/** load a template texture
+	 * @param index
+	 */
+	public void loadTexture(int index){
+
+		//gl.glBindTexture(GL.GL_TEXTURE_2D, texturesIndex[index]);
+		setTexture(texturesIndex[index]);
+	}
+	
+	
+	/** sets a computed texture
 	 * @param index
 	 */
 	public void setTexture(int index){
 
-		gl.glBindTexture(GL.GL_TEXTURE_2D, texturesIndex[index]);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
 		
 	}
-	
 
 	/////////////////////////////////////////
 	// DASH TEXTURES
@@ -138,23 +147,23 @@ public class Textures {
 
     	switch (lineType) {
 		case EuclidianView.LINE_TYPE_FULL:
-			setTexture(DASH_NONE);
+			loadTexture(DASH_NONE);
 			break;
 			
 		case EuclidianView.LINE_TYPE_DOTTED:
-			setTexture(DASH_DOTTED);
+			loadTexture(DASH_DOTTED);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_SHORT:
-			setTexture(DASH_SHORT);
+			loadTexture(DASH_SHORT);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_LONG:
-			setTexture(DASH_LONG);
+			loadTexture(DASH_LONG);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_DOTTED:
-			setTexture(DASH_DOTTED_DASHED);
+			loadTexture(DASH_DOTTED_DASHED);
 			break;
 
 		default: 
@@ -226,6 +235,52 @@ public class Textures {
 
 	}
 	
+	
+
+	/////////////////////////////////////////
+	// IMAGE TEXTURES
+	/////////////////////////////////////////
+	
+	
+	
+	
+	/**
+	 * removes the texture
+	 * @param index
+	 */
+	public void removeTexture(int index){
+		//size, array, offset
+		gl.glDeleteTextures(1, new int[] {index}, 0);
+	}
+
+	/** 
+	 * @param sizeX
+	 * @param sizeY
+	 * @param buf
+	 * @return a texture for alpha channel
+	 */
+	public int createAlphaTexture(int sizeX, int sizeY, ByteBuffer buf){
+		
+		gl.glEnable(GL.GL_TEXTURE_2D);  
+		
+		int[] index = new int[1];
+     	gl.glGenTextures(1, index, 0);
+
+
+		
+		gl.glBindTexture(GL.GL_TEXTURE_2D, index[0]);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
+
+		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  GL.GL_ALPHA, sizeX, sizeY, 0, GL.GL_ALPHA, GL.GL_UNSIGNED_BYTE, buf);
+      
+        
+        gl.glDisable(GL.GL_TEXTURE_2D);
+        
+        return index[0];
+	}
 	
 
 }

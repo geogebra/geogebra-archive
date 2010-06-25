@@ -179,6 +179,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	private boolean storeUndo;
 	
+	/** says if the view is frozen (see freeze()) */
+	private boolean isFrozen = false;
+	
 	
 	
 	//stuff TODO
@@ -194,6 +197,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		this.euclidianController3D = ec;
 		this.kernel3D = (Kernel3D) ec.getKernel();
 		euclidianController3D.setView(this);
+		
+		start();
+	}
+	
+	private void start(){
 		
 		drawList3D = new DrawList3D(this);
 		
@@ -273,9 +281,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * heavy-weight 3D canvas by a low-weight image
 	 * @param sw if false, calls back the 3D rendering
 	 */
-	public void freeze(boolean sw){
+	public void setToFrozen(boolean sw){
+		
+		isFrozen = sw;
 
-		if (sw){
+		if (!sw){
 			//switch off the frozen image
 			remove(freezingPanel);
 			freezingPanel.setVisible(false);
@@ -702,9 +712,25 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	private boolean isStarted = false;
+	
+	public boolean isStarted(){
+		return isStarted;
+	}
+	
 	public void paint(Graphics g){
-		update();
-		super.paint(g);
+		
+		
+		if (!isStarted){
+			Application.debug("ici");
+			isStarted = true;
+		}
+		
+		
+		//update();
+		setWaitForUpdate();
+		if (isFrozen)
+			super.paint(g);
 	}
 	
 	
@@ -2091,6 +2117,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @return the XML description of 3D view settings
 	 */
 	public String getXML() {
+		
+		//if (true)	return "";
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<euclidianView3D>\n");
 		

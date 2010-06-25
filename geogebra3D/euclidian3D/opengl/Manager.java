@@ -40,6 +40,8 @@ abstract public class Manager {
 	private PlotterBrush brush;
 	/** surfaces */
 	private PlotterSurface surface;
+	/** text */
+	private PlotterText text;
 	
 	//geogebra stuff
 	private EuclidianView3D view3D;
@@ -71,6 +73,8 @@ abstract public class Manager {
 		brush = new PlotterBrush(this);
 		surface = new PlotterSurface(this);
 		
+		text = new PlotterText(this);
+		
 		//geogebra
 		this.view3D = view3D;
 		
@@ -86,6 +90,11 @@ abstract public class Manager {
 	public PlotterSurface getSurface(){
 		return surface;
 	}
+	
+	public PlotterText getText(){
+		return text;
+	}	
+	
 	
 	/////////////////////////////////////////////
 	// GEOGEBRA METHODS

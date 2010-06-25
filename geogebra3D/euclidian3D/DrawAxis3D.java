@@ -1,24 +1,31 @@
 package geogebra3D.euclidian3D;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.TreeMap;
 
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
+import geogebra3D.euclidian3D.opengl.PlotterTextLabel;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
+import geogebra3D.kernel3D.GeoSegment3D;
 
 public class DrawAxis3D extends DrawLine3D {
+	
+	private TreeMap<String, PlotterTextLabel>  labels;
 	
 	public DrawAxis3D(EuclidianView3D a_view3D, GeoAxis3D axis3D){
 		
 		super(a_view3D, axis3D);
 		
+		labels = new TreeMap<String, PlotterTextLabel>();
 	}	
 	
 	/*
@@ -43,21 +50,34 @@ public class DrawAxis3D extends DrawLine3D {
     public void drawLabel(Renderer renderer){
 
 
-    	
+    	//if (!getView3D().isStarted()) return;
     	
 		if(!getGeoElement().isEuclidianVisible())
 			return;
 		
     	if (!getGeoElement().isLabelVisible())
     		return;
-    	
-    	
-    	renderer.setTextColor(getGeoElement().getObjectColor());
-  		renderer.setColor(getGeoElement().getObjectColor(), 1);
-  		//renderer.setDash(Renderer.DASH_NONE);  	
-    	
 
+    	
+   
 
+    	for(PlotterTextLabel label : labels.values())
+    		renderer.drawText(label);
+    	
+    	super.drawLabel(renderer);
+    	
+    	
+    }
+    	
+    
+	
+
+    	
+    protected void updateLabel(){
+    	
+    	//if (!getView3D().isStarted()) return;
+
+ 
   		//draw ticks and numbers
   		GeoAxis3D axis = (GeoAxis3D) getGeoElement();
   		
@@ -76,37 +96,75 @@ public class DrawAxis3D extends DrawLine3D {
     	ticksMatrix.setVz((GgbVector) drawingMatrix.getVz().mul(axis.getTickSize()));
   	
     	
-    	for(int i=(int) (getDrawMin()/distance);i<=getDrawMax()/distance;i++){
+    	
+    	
+    	int iMin = (int) (getDrawMin()/distance);
+    	int iMax = (int) (getDrawMax()/distance);
+    	int nb = iMax-iMin+1;
+    	
+    	
+    	if (nb<1){
+    		Application.debug("nb="+nb);
+    		//labels = null;
+    		return;
+    	}
+    	
+    	
+    	//sets all already existing labels not visible
+    	for(PlotterTextLabel label : labels.values())
+    		label.setIsVisible(false);
+    	
+    	
+    	for(int i=iMin;i<=iMax;i++){
     		double val = i*distance;
     		GgbVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
     		
     		//draw numbers
     		String strNum = getView3D().getKernel().formatPiE(val,numberFormat);
-    		numbersMatrix.setOrigin(origin);
-    		renderer.setMatrix(numbersMatrix);
-    		//int labelSize = strNum.length();
-       		renderer.drawText(axis.getNumbersXOffset()-4,
-       				axis.getNumbersYOffset()-6, 
-       				strNum,true); 
-       		//TODO 4 and 6 depends to police size
-       		//TODO anchor
+
+    		//check if the label already exists
+    		PlotterTextLabel label = labels.get(strNum);
+    		if (label!=null){
+    			//sets the label visible
+    			label.setIsVisible(true);
+    			label.updateTexture(); //TODO remove this
+    		}else{
+    			//creates new label
+    			label = new PlotterTextLabel(getView3D());
+    			label.update(strNum, 10, 
+    					getGeoElement().getObjectColor(),
+    					origin.copyVector(),
+    					axis.getNumbersXOffset()-4,axis.getNumbersYOffset()-6);
+    			labels.put(strNum, label);
+    		}
+    		//TODO 4 and 6 depends to police size
+    		//TODO anchor
        		
     	}
     	
-		numbersMatrix.setOrigin(((GeoCoordSys1D) getGeoElement()).getPoint(getDrawMax()));
-		renderer.setMatrix(numbersMatrix);
-   		renderer.drawText(axis.labelOffsetX-4,axis.labelOffsetY-6, ((GeoAxis3D) getGeoElement()).getAxisLabel(),true); //TODO values 4 and 6 depend to label size 
+    	
     	
 
+		
+		
+		label.update(((GeoAxis3D) getGeoElement()).getAxisLabel(), 10, 
+				getGeoElement().getObjectColor(),
+				((GeoCoordSys1D) getGeoElement()).getPoint(getDrawMax()),
+				axis.labelOffsetX-4,axis.labelOffsetY-6
+		);
+
+		
     	
     }
     
-    
+
+
     
     protected void updateForItSelf(){
     	
     	updateDrawMinMax();
     	updateDecorations();
+    	updateLabel();
     	
     	PlotterBrush brush = getView3D().getRenderer().getGeometryManager().getBrush();
        	brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
@@ -167,8 +225,8 @@ public class DrawAxis3D extends DrawLine3D {
 
 		
 		
-		
 		updateForItSelf();
+		
 	}
 	
 

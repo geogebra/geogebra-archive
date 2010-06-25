@@ -96,15 +96,28 @@ public class DrawList3D {
 	}
 	
 	
+	//private boolean isUpdatingAll = false;
+	
 	/** update all 3D objects */
 	public void updateAll(){
+		
+		/*
+		if (isUpdatingAll){
+			Application.printStacktrace("is already updating");
+			return;
+		}
+		
+		isUpdatingAll = true;
+		*/
 		
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();){
 				Drawable3D d3d = d.next();
 				//Application.debug("updating :"+d3d.getGeoElement());
 				d3d.update();	
-			}		
+			}	
+		
+		//isUpdatingAll = false;
 		
 	}
 	

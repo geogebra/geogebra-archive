@@ -65,7 +65,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 			return;
 		//renderer.initMatrix();
 		//dash
-		renderer.getTextures().setTexture(Textures.DASH_SHORT);
+		renderer.getTextures().loadTexture(Textures.DASH_SHORT);
 		renderer.getGeometryManager().draw(gridIndex);
 		//renderer.resetMatrix();
 		

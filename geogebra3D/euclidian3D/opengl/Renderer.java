@@ -234,7 +234,7 @@ public class Renderer implements GLEventListener {
 	private void drawTransp(){
 		
 		gl.glEnable(GL.GL_TEXTURE_2D);
-		getTextures().setTexture(Textures.FADING);
+		getTextures().loadTexture(Textures.FADING);
 		
 		gl.glDisable(GL.GL_CULL_FACE);
 		drawList3D.drawTransp(this);
@@ -259,7 +259,7 @@ public class Renderer implements GLEventListener {
 	
 	private void drawNotTransp(){
 		
-		getTextures().setTexture(Textures.FADING);
+		getTextures().loadTexture(Textures.FADING);
 
         gl.glEnable(GL.GL_BLEND);
 		
@@ -293,6 +293,8 @@ public class Renderer implements GLEventListener {
 	 * </ul>
 	 */
     public void display(GLAutoDrawable gLDrawable) {
+    	
+    	if (!view3D.isStarted()) return;
     	
     	//Application.debug("display");
 
@@ -336,9 +338,28 @@ public class Renderer implements GLEventListener {
         drawList3D.updateAll();
 
     	
+        
+        
+        
+        //draw face-to screen parts (labels, ...)
+        //drawing labels
+        //gl.glEnable(GL.GL_CULL_FACE);
+        //gl.glCullFace(GL.GL_BACK);
+        gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
+        gl.glDisable(GL.GL_LIGHTING);
+        gl.glEnable(GL.GL_BLEND);
+        gl.glEnable(GL.GL_TEXTURE_2D);
+        //gl.glDisable(GL.GL_BLEND);
+        drawList3D.drawLabel(this);
+        //gl.glEnable(GL.GL_LIGHTING);
+        //gl.glDisable(GL.GL_ALPHA_TEST);     
+        gl.glDisable(GL.GL_TEXTURE_2D);
     	
         
+        
+        
         //init drawing matrix to view3D toScreen matrix
+        gl.glPushMatrix();
         gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         
         
@@ -346,6 +367,11 @@ public class Renderer implements GLEventListener {
 
 
         //drawing the cursor
+        //gl.glEnable(GL.GL_BLEND);
+        gl.glEnable(GL.GL_LIGHTING);
+        gl.glDisable(GL.GL_ALPHA_TEST);       
+        gl.glEnable(GL.GL_CULL_FACE);
+        //gl.glCullFace(GL.GL_FRONT);
         view3D.drawCursor(this);
         
          
@@ -355,20 +381,14 @@ public class Renderer implements GLEventListener {
         //primitives.enableVBO(gl);
         
         //drawing hidden part
-        gl.glEnable(GL.GL_CULL_FACE);
+        //gl.glEnable(GL.GL_CULL_FACE);
         gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
         //gl.glDisable(GL.GL_BLEND);
         drawList3D.drawHiddenNotTextured(this);
         gl.glEnable(GL.GL_TEXTURE_2D);
         drawList3D.drawHiddenTextured(this);
-        /*
-        gl.glDisable(GL.GL_CULL_FACE);
-        gl.glEnable(GL.GL_BLEND);
-        getTextures().setTexture(Textures.FADING);
-        drawList3D.drawNotTransparentSurfaces(this);
-        */
         drawNotTransp();
-        //gl.glEnable(GL.GL_CULL_FACE);
+        gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_TEXTURE_2D);
         gl.glDisable(GL.GL_ALPHA_TEST);       
 
@@ -392,13 +412,13 @@ public class Renderer implements GLEventListener {
         
         //drawing labels
         gl.glEnable(GL.GL_CULL_FACE);
-        gl.glCullFace(GL.GL_BACK);
-        gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
-        gl.glDisable(GL.GL_LIGHTING);
+        //gl.glCullFace(GL.GL_BACK);
+        //gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
+        //gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_BLEND);
-        drawList3D.drawLabel(this);
-        gl.glEnable(GL.GL_LIGHTING);
-        gl.glDisable(GL.GL_ALPHA_TEST);       
+        //drawList3D.drawLabel(this);
+        //gl.glEnable(GL.GL_LIGHTING);
+        //gl.glDisable(GL.GL_ALPHA_TEST);       
 
         
         
@@ -463,6 +483,18 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
 
+        
+        
+        gl.glPopMatrix();
+    	
+    	/*
+        setColor(color.BLACK, 1);
+        GgbVector v = new GgbVector(1, 0, 0, 1);
+        view3D.toScreenCoords3D(v);
+    	geometryManager.getText().draw3D(gl, (float) v.getX(), (float) v.getY(), (float) v.getZ());
+    	
+    	*/
+    	
     	//drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
@@ -953,19 +985,99 @@ public class Renderer implements GLEventListener {
     }
     
      
+    /*
+    public void drawText(GgbVector v, 
+    		float xOffset, float yOffset,
+    		PlotterTextLabel label){
+    	
+    	view3D.toScreenCoords3D(v);
+    	
+    	drawText(
+    			(float) v.getX() + xOffset,
+    			(float) v.getY() + yOffset,
+    			(float) v.getZ(), 
+    			label);
+    	
+    	
+    }
+    */
     
+    public void drawText(//float x, float y, float z,
+    		PlotterTextLabel label){
     
+    	
+    	label.draw3D(gl, view3D.getToScreenMatrix());
     
+    }
     
+    private void drawText(float x, float y, float z,
+    		String s, boolean colored){
     
+    	geometryManager.getText().create(s, 14);
+    	geometryManager.getText().draw3D(gl, x,y,z);
     
+    }
     
-    /** draws the text s
+   
+    
+    private void drawText0(float x, float y, float z,
+    		String s, boolean colored){
+    
+
+    	gl.glMatrixMode(GL.GL_TEXTURE);
+    	gl.glLoadIdentity();
+
+    	
+    	gl.glMatrixMode(GL.GL_MODELVIEW);
+
+
+    	//initMatrix();
+    	/*
+    	initMatrix(view3D.getUndoRotationMatrix());
+    	*/
+
+
+    	textRenderer.begin3DRendering();
+
+    	if (colored)
+    		textRenderer.setColor(textColor);
+
+
+    	
+    	//float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR/((float) view3D.getScale());
+
+/*
+    	if (x<0)
+    		x=x-(s.length()-0.5f)*8; //TODO adapt to police size
+
+    	textRenderer.draw3D(s,
+    			x*textScaleFactor,//w / -2.0f * textScaleFactor,
+    			y*textScaleFactor,//h / -2.0f * textScaleFactor,
+    			0,
+    			textScaleFactor);
+    			*/
+    	
+    	textRenderer.draw3D(s,
+    			x,y,z,
+    			1f);
+
+    	textRenderer.end3DRendering();
+
+
+/*
+    	resetMatrix(); //initMatrix(m_view3D.getUndoRotationMatrix());
+    	*/
+    	//resetMatrix(); //initMatrix();
+    	
+    
+    }
+    
+    /* draws the text s
      * @param x x-coord
      * @param y y-coord
      * @param s text
      * @param colored says if the text has to be colored
-     */
+     *
     public void drawText(float x, float y, String s, boolean colored){
     	
     	
@@ -1010,7 +1122,7 @@ public class Renderer implements GLEventListener {
     
     
     
-    
+    */
     
     
     
@@ -1183,12 +1295,25 @@ public class Renderer implements GLEventListener {
     	
         // picking objects
         pickingLoop = 0;
+    	gl.glPushMatrix();
+        gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         drawList3D.drawForPicking(this);
+        gl.glPopMatrix();
+
         int labelLoop = pickingLoop;
         
         if (pickingMode == PICKING_MODE_LABELS){
         	// picking labels
+        	gl.glEnable(GL.GL_ALPHA_TEST);
+        	gl.glEnable(GL.GL_BLEND);
+           	gl.glEnable(GL.GL_TEXTURE_2D);
+           	
         	drawList3D.drawLabelForPicking(this);
+        	
+           	gl.glDisable(GL.GL_TEXTURE_2D);
+           	gl.glDisable(GL.GL_BLEND);
+           	gl.glDisable(GL.GL_ALPHA_TEST);
+            
         }
 
         //primitives.disableVBO(gl);
@@ -1302,12 +1427,18 @@ public class Renderer implements GLEventListener {
         
         gl = drawable.getGL();
         
+        
+        // check openGL version
+        Application.debug("openGL version : "+ gl.glGetString(GL.GL_VERSION));
+        
         // Check For VBO support
         final boolean VBOsupported = gl.isFunctionAvailable("glGenBuffersARB") &&
                 gl.isFunctionAvailable("glBindBufferARB") &&
                 gl.isFunctionAvailable("glBufferDataARB") &&
                 gl.isFunctionAvailable("glDeleteBuffersARB");
         Application.debug("vbo supported : "+VBOsupported);
+        
+       
         
 
         
@@ -1407,6 +1538,8 @@ public class Renderer implements GLEventListener {
         //textures
         textures = new Textures(gl);
         
+        
+        //gl.glPolygonMode(GL.GL_FRONT, GL.GL_LINE);gl.glPolygonMode(GL.GL_BACK, GL.GL_LINE);
 
     }
 

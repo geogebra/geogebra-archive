@@ -5,11 +5,13 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.opengl.PlotterTextLabel;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 import java.util.Comparator;
@@ -133,6 +135,7 @@ public abstract class Drawable3D {
 	/** view3D */
 	private EuclidianView3D m_view3D; 
 	
+	
 	/** says if it has to be updated */
 	private boolean waitForUpdate;
 	
@@ -146,7 +149,10 @@ public abstract class Drawable3D {
 	//private Ggb3DMatrix4x4 labelMatrix = Ggb3DMatrix4x4.Identity();;
 	
 	//links to the GeoElement
-	private GeoElement m_geo; 	
+	private GeoElement m_geo; 
+	
+	/** openGL label */
+	protected PlotterTextLabel label;
 
 	//picking
 	//private boolean m_isPicked = false;	
@@ -189,10 +195,12 @@ public abstract class Drawable3D {
 	
 	/**
 	 * construct the Drawable3D with a link to a_view3D
-	 * @param a_view3D the view linked to this
+	 * @param view3D the view linked to this
 	 */
-	public Drawable3D(EuclidianView3D a_view3D){
-		setView3D(a_view3D);
+	public Drawable3D(EuclidianView3D view3D){
+		setView3D(view3D);
+		
+		label = new PlotterTextLabel(view3D);
 	}
 	
 		
@@ -233,6 +241,7 @@ public abstract class Drawable3D {
 			*/
 
 		if (waitForUpdate){
+			updateLabel();
 			updateForItSelf();
 			waitForUpdate = false;
 		}
@@ -242,6 +251,12 @@ public abstract class Drawable3D {
 			viewChanged = false;
 		}
 		
+	}
+	
+	
+	
+	protected void updateLabel(){
+
 	}
 	
 	abstract protected void updateForView();
@@ -440,10 +455,14 @@ public abstract class Drawable3D {
     	if (colored)
     		renderer.setTextColor(getGeoElement().getObjectColor());
     	
-		renderer.setMatrix(getLabelMatrix());
+		//renderer.setMatrix(getLabelMatrix());
 		
-		renderer.drawText(getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY,
-				getGeoElement().getLabelDescription(),colored); 
+    	
+		renderer.drawText(
+				//getLabelMatrix().getOrigin().copyVector(),
+				//getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY,
+				label);
+				//getGeoElement().getLabelDescription(),colored); 
 				
     }
 	
