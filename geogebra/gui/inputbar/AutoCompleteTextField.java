@@ -209,12 +209,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			showCommandHelp(false);
 			break;          
 			/* experimental - jump striaght to manual page for current command
-			 * could replace F1 if it works - problems with accents/asian languages
+			 * could replace F1 if it works - problems with accents/asian languages */
             case KeyEvent.VK_F4:
                 updateCurrentWord();
                 showCommandHelp(true);
                 break;          
-			 */
+			 
 		default:                                
 		}                                   
 	}
@@ -532,11 +532,15 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				help = getCmdSyntax(cmd);             
 			}
 		}
+		
+		if (goToWebManual) {
+			app.getGuiManager().openHelp(cmd); // TEST CODE
+			return;
+		}
 
 		// show help if available
 		if (help != null) {
-			if (goToWebManual) app.getGuiManager().openHelp(cmd); // TEST CODE
-			else app.showHelp(help); // ORIGINAL CODE
+			app.showHelp(help); // ORIGINAL CODE
 		} else {
 			app.getGuiManager().openHelp(null);
 		}

@@ -3367,6 +3367,7 @@ public abstract class Application implements KeyEventDispatcher {
 	
 	// Michael Borcherds 2008-06-22
 	private static void doDebug(String s, boolean showTime, boolean showMemory) {
+		if (s == null) s = "<null>";
 		Throwable t = new Throwable();
 		StackTraceElement[] elements = t.getStackTrace();
 

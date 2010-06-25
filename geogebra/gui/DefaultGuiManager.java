@@ -2613,7 +2613,6 @@ public class DefaultGuiManager implements GuiManager {
 
 	    public void openHelp(String command) {
 	    	String internalCmd = null;
-	    	
 	    	if (command != null)
 	        try { // convert eg uppersum to UpperSum
 	         	internalCmd = app.translateCommand(command);
@@ -2655,10 +2654,10 @@ public class DefaultGuiManager implements GuiManager {
 	        }
 	    	       
 	        /* Michael Borcherds 2008-03-26
-	         * removed and replaced with dummy help files which redirect
+	         * removed and replaced with dummy help files which redirect*/
 	        // try to get help for current language
 	        String  language = locale.getLanguage();     
-	        helpURL = getHelpURL(language);
+	        helpURL = getHelpURL(language, intCommand);
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
@@ -2666,12 +2665,12 @@ public class DefaultGuiManager implements GuiManager {
 	        // for Catalan and Basque we take the 
 	        // Spanish help instead of the English one
 	        if (language.equals("eu") || language.equals("ca")) {        	
-	        	helpURL = getHelpURL("es"); // Spanish
+	        	helpURL = getHelpURL("es", intCommand); // Spanish
 	        	if (helpURL != null) {            	
 	            	return helpURL;
 	            }
 	        }
-	        */
+	        
 	                
 	        // last attempt: try to get English help 
 	        helpURL = getHelpURL("en", intCommand);
@@ -2685,17 +2684,21 @@ public class DefaultGuiManager implements GuiManager {
 	    
 	    private URL getHelpURL(String languageISOcode, String command)  {
 	    	// try to get help for given language
+	    	// eg http://www.geogebra.org/wiki_new/en/FitLogistic_Command
+	    	
 	    	String strFile;
 	    	if (command == null)
 	    	{ // ORIGINAL CODE
-	    		strFile = "docu" + languageISOcode + "/index.html";
+	    		strFile =  languageISOcode + "/Manual:Main_Page";
 	    	}
 	    	else
 	    	{ // TEST CODE
-	    		// URL like http://www.geogebra.org/help/docuen/topics/UpperSum.html
-	    		strFile = "docu" + languageISOcode + "/topics/" + command + ".html";
+	    		// URL like http://www.geogebra.org/wiki_new/en/FitLogistic_Command
+	    		strFile =  languageISOcode + "/" + command + "_Command";
 	    	}
-			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "help/" + strFile;  
+			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "wiki_new/" + strFile;  
+			
+			Application.debug(strURL);
 			
 			if (Application.MAC_OS) {
 				String path = app.getCodeBase().getPath();
