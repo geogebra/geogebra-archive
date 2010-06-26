@@ -97,6 +97,7 @@ implements ActionListener {
         add(miShowAllObjectsView);                
 
         JMenuItem miStandardView = new JMenuItem(app.getPlain("StandardView"));
+        setMenuShortCutAccelerator(miStandardView, 'M');
         miStandardView.setIcon(app.getEmptyIcon());
         miStandardView.setActionCommand("standardView");
         miStandardView.addActionListener(this);
