@@ -366,6 +366,8 @@ public class Renderer implements GLEventListener {
  
 
 
+       
+
         //drawing the cursor
         //gl.glEnable(GL.GL_BLEND);
         gl.glEnable(GL.GL_LIGHTING);
@@ -375,7 +377,7 @@ public class Renderer implements GLEventListener {
         view3D.drawCursor(this);
         
          
-        
+        drawWireFrame();
         
         
         //primitives.enableVBO(gl);
@@ -470,6 +472,7 @@ public class Renderer implements GLEventListener {
   
         
         
+        
         //primitives.disableVBO(gl);
      
      
@@ -523,6 +526,38 @@ public class Renderer implements GLEventListener {
     }    
     
     
+    
+    private void drawWireFrame(){
+    	
+    	
+    	if (true) return;
+    	
+    	gl.glPushAttrib(GL.GL_ALL_ATTRIB_BITS);
+    	
+    	gl.glDepthMask(false);
+    	gl.glPolygonMode(GL.GL_FRONT, GL.GL_LINE);gl.glPolygonMode(GL.GL_BACK, GL.GL_LINE);
+        gl.glEnable(GL.GL_LIGHTING);
+        gl.glDisable(GL.GL_LIGHT0);
+        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glDisable(GL.GL_BLEND);
+        gl.glEnable(GL.GL_ALPHA_TEST);
+        
+    	drawList3D.drawTransp(this);
+    	drawList3D.drawTranspClosed(this);   
+    	
+    	gl.glPopAttrib();
+    	
+    	/*
+    	gl.glDisable(GL.GL_ALPHA_TEST);
+    	gl.glEnable(GL.GL_BLEND);
+    	gl.glEnable(GL.GL_CULL_FACE);
+    	gl.glEnable(GL.GL_LIGHT0); 	
+        //gl.glEnable(GL.GL_LIGHTING);
+       	gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);gl.glPolygonMode(GL.GL_BACK, GL.GL_FILL);
+       	gl.glDepthMask(true);
+       	*/
+    	
+    }
     
 
     
