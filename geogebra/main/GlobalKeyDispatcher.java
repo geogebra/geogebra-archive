@@ -241,6 +241,11 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				consumed = true;								
 				break;
 				
+			case KeyEvent.VK_M:
+				app.setStandardView();
+				consumed = true;
+				break;
+				
 			// needed for detached views and MacOS
 			// Cmd + Y: Redo
 			case KeyEvent.VK_Y:
