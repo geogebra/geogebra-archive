@@ -2659,6 +2659,15 @@ public class DefaultGuiManager implements GuiManager {
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
+	        
+	        // try secondary language eg Spanish for Catalan & Basque
+	        locale = app.getSecondaryLocale();   
+	        if (locale != null) {
+		        helpURL = getHelpURL(locale.toString(), command, app.getSecondaryCommand("Command"));
+		        if (helpURL != null) {        	
+		        	return helpURL;
+		        }
+	        }
 	                
 	        // for Catalan and Basque we take the 
 	        // Spanish help instead of the English one

@@ -330,8 +330,8 @@ public abstract class Application implements KeyEventDispatcher {
 	private GlobalKeyDispatcher globalKeyDispatcher;
 
 	// For language specific settings
-	private Locale currentLocale;
-	private ResourceBundle rbmenu, rbcommand, rbcommandOld, rberror, rbcolors, rbplain, rbsettings;
+	private Locale currentLocale, secondaryLocale = null;
+	private ResourceBundle rbmenu, rbcommand, rbcommandSecondary, rbcommandOld, rberror, rbcolors, rbplain, rbsettings;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -449,7 +449,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		// set locale
 		setLocale(mainComp.getLocale());
-		
+				
 		// init kernel
 		initKernel();
 		//kernel = new Kernel(this); //ggb3D 2008-10-26 : in Application3D, changed for Kernel3D
@@ -1388,6 +1388,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 * set language via iso language string
 	 */
 	public void setLanguage(Locale locale) {
+		
 		if (locale == null
 				|| currentLocale.toString().equals(locale.toString()))
 			return;
@@ -1556,6 +1557,26 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 
 		updateReverseLanguage(locale);
+		
+		String  language = getLocale().getLanguage();
+
+        // for Catalan and Basque we take the 
+        // Spanish as the secondary language, not English
+		if (language.equals("eu") || language.equals("ca")) {
+			setSecondaryLocale(new Locale("es"));
+		}
+
+	}
+
+	public void setSecondaryLocale(Locale locale) {
+		if (locale == secondaryLocale) return;
+		Locale oldLocale = secondaryLocale;
+
+		// only allow special locales due to some weird server
+		// problems with the naming of the property files
+		secondaryLocale = getClosestSupportedLocale(locale);
+		//updateSecondaryResourceBundles();
+
 	}
 
 	/**
@@ -1617,6 +1638,20 @@ public abstract class Application implements KeyEventDispatcher {
 		if (rbcolors != null)
 			rbcolors = MyResourceBundle.createBundle(RB_COLORS, currentLocale);
 	}
+	
+	/*
+	private void updateSecondaryResourceBundles() {
+		//if (rbmenuSecondary != null)
+		//	rbmenuSecondary = MyResourceBundle.createBundle(RB_MENU, currentLocale);
+		//if (rberrorSecondary != null)
+		//	rberrorSecondary = MyResourceBundle.createBundle(RB_ERROR, currentLocale);
+		//if (rbplainSecondary != null)
+		//	rbplainSecondary = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
+		if (rbcommandSecondary != null)
+			rbcommandSecondary = MyResourceBundle.createBundle(RB_COMMAND, secondaryLocale);
+		//if (rbcolorsSecondary != null)
+		//	rbcolorsSecondary = MyResourceBundle.createBundle(RB_COLORS, currentLocale);
+	} //*/
 	
 	private void fillCommandDict() {
 		if (rbcommand == rbcommandOld)
@@ -1873,6 +1908,17 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 
+	/**
+	 * Initializes the secondary translated command names for this application. Note: this will 
+	 * load the properties files first.
+	 */
+	final public void initTranslatedSecondaryCommands() {
+		if (rbcommandSecondary == null) {
+			rbcommandSecondary = MyResourceBundle
+					.createBundle(RB_COMMAND, secondaryLocale);
+		}
+	}
+
 	final public String getCommand(String key) {
 		initTranslatedCommands();		
 
@@ -1881,6 +1927,23 @@ public abstract class Application implements KeyEventDispatcher {
 		} catch (Exception e) {
 			return key;
 		}
+	}
+
+	final public String getSecondaryCommand(String key) {
+		
+		if (secondaryLocale == null) return key;
+		
+		initTranslatedSecondaryCommands();		
+
+		try {
+			return rbcommandSecondary.getString(key);
+		} catch (Exception e) {
+			return key;
+		}
+	}
+	
+	final public Locale getSecondaryLocale() {
+		return secondaryLocale;
 	}
 
 	public String getCommandSyntax(String key) {
