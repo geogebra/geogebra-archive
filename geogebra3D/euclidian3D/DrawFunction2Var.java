@@ -12,14 +12,15 @@ import geogebra3D.kernel3D.GeoQuadric3D;
 public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	
+	private SurfaceTree tree;
+	
 	/** gl index of the geometry */
 	private int geometryIndex = -1;
 
 
 	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunction2Var function) {
-		
 		super(a_view3d, function);
-		
+		tree = new SurfaceTree(function, a_view3d);
 	}
 	
 	public void drawGeometry(Renderer renderer) {
@@ -41,40 +42,72 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	}
 	
 	
+	/** gets the viewing radius based on the viewing frustum 
+	 */
+	private double currentRadius() {
+		EuclidianView3D view = getView3D();
+		Renderer temp = view.getRenderer();
+		double x1 = temp.getLeft();
+		double x2 = temp.getRight();
+		double y1 = temp.getTop();
+		double y2 = temp.getBottom();
+		double z1 = temp.getFront();
+		double z2 = temp.getBack();
+		GgbVector [] v = new GgbVector[8];
+		v[0] = new GgbVector(x1,y1,z1,1);
+		v[1] = new GgbVector(x1,y2,z1,1);
+		v[2] = new GgbVector(x1,y1,z2,1);
+		v[3] = new GgbVector(x1,y2,z2,1);
+		v[4] = new GgbVector(x2,y1,z1,1);
+		v[5] = new GgbVector(x2,y2,z1,1);
+		v[6] = new GgbVector(x2,y1,z2,1);
+		v[7] = new GgbVector(x2,y2,z2,1);
+		
+		double radius=0;
+		for(int i = 0; i < 8; i++){
+			view.toSceneCoords3D(v[i]);
+			if(v[i].norm()>radius)
+				radius=v[i].norm();
+		}
+		return radius;
+	}
 	
+	private double savedRadius;
 	
+	public final double radiusMaxFactor = 4.0;
+	private final double radiusMinFactor = 0.25;
 	
-	
-	
-	
-	
-	
+	/** decides if the curve should be redrawn depending on how the view changes
+	 * @return
+	 */
+	private boolean needRedraw(){
+		double currRad = currentRadius();
+		if(currRad>savedRadius*radiusMaxFactor || currRad< savedRadius*radiusMinFactor){
+			savedRadius=currRad;
+			return true;
+		}
+		return false;
+	}
 	
 	protected void updateForItSelf(){
-		
-		
 		super.updateForItSelf();
-		
 		
 		Renderer renderer = getView3D().getRenderer();
 		
-		renderer.getGeometryManager().remove(geometryIndex);
-		
-
-		
-		
-		PlotterSurface surface = renderer.getGeometryManager().getSurface();
-		GeoFunction2Var geo = (GeoFunction2Var) getGeoElement();
-		surface.start(geo);
-		surface.setU((float) geo.getMinParameter(0), (float) geo.getMaxParameter(0));
-		surface.setNbU((int) ((geo.getMaxParameter(0)-geo.getMinParameter(0))*10));
-		surface.setV((float) geo.getMinParameter(1), (float) geo.getMaxParameter(1));
-		surface.setNbV((int) ((geo.getMaxParameter(1)-geo.getMinParameter(1))*10));
-		surface.draw();
-		geometryIndex=surface.end();
-		
-		
-		
+		if(needRedraw()){
+			renderer.getGeometryManager().remove(geometryIndex);
+			tree.setRadius(savedRadius);
+			
+			PlotterSurface surface = renderer.getGeometryManager().getSurface();
+			GeoFunction2Var geo = (GeoFunction2Var) getGeoElement();
+			surface.start(geo);
+			surface.setU((float) geo.getMinParameter(0), (float) geo.getMaxParameter(0));
+			surface.setNbU((int) ((geo.getMaxParameter(0)-geo.getMinParameter(0))*10));
+			surface.setV((float) geo.getMinParameter(1), (float) geo.getMaxParameter(1));
+			surface.setNbV((int) ((geo.getMaxParameter(1)-geo.getMinParameter(1))*10));
+			surface.draw(tree);
+			geometryIndex=surface.end();
+		}
 		
 		
 	}
@@ -84,7 +117,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	
 	protected void updateForView(){
-		
+		updateForItSelf();
 	}
 	
 	

@@ -1,7 +1,8 @@
 package geogebra3D.euclidian3D.opengl;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.Functional2Var;
-import geogebra.main.Application;
+import geogebra3D.euclidian3D.SurfaceTree;
 
 /** Class for drawing surfaces.
  * @author matthieu
@@ -130,6 +131,19 @@ public class PlotterSurface {
 		this.vMaxFade = max;
 	}
 	
+	public void drawTriangle(GgbVector p1, GgbVector p2, GgbVector p3){
+		manager.startGeometry(Manager.TRIANGLE_STRIP);
+		
+		float uT = getTextureCoord(1, uNb, uMinFadeNb, uMaxFadeNb);
+		float vT = getTextureCoord(1, vNb, vMinFadeNb, vMaxFadeNb);	
+		manager.texture(uT, vT);
+		
+		manager.vertex(p1);
+		manager.vertex(p3);
+		manager.vertex(p2);
+		manager.endGeometry();
+	}
+	
 	/** 
 	 * draw part of the surface
 	 */
@@ -164,6 +178,13 @@ public class PlotterSurface {
 		}
 		
 		manager.endGeometry();
+	}
+	
+	/** 
+	 * draw part of the surface
+	 */
+	public void draw(SurfaceTree tree){
+		tree.beginRefine(this);
 	}
 	
 	private void drawQuad(int ui, int vi){
