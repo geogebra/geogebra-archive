@@ -330,8 +330,8 @@ public abstract class Application implements KeyEventDispatcher {
 	private GlobalKeyDispatcher globalKeyDispatcher;
 
 	// For language specific settings
-	private Locale currentLocale, secondaryLocale = null;
-	private ResourceBundle rbmenu, rbcommand, rbcommandSecondary, rbcommandOld, rberror, rbcolors, rbplain, rbsettings;
+	private Locale currentLocale, englishLocale = null;
+	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld, rberror, rbcolors, rbplain, rbsettings;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -1560,23 +1560,6 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		String  language = getLocale().getLanguage();
 
-        // for Catalan and Basque we take the 
-        // Spanish as the secondary language, not English
-		if (language.equals("eu") || language.equals("ca")) {
-			setSecondaryLocale(new Locale("es"));
-		}
-
-	}
-
-	public void setSecondaryLocale(Locale locale) {
-		if (locale == secondaryLocale) return;
-		Locale oldLocale = secondaryLocale;
-
-		// only allow special locales due to some weird server
-		// problems with the naming of the property files
-		secondaryLocale = getClosestSupportedLocale(locale);
-		//updateSecondaryResourceBundles();
-
 	}
 
 	/**
@@ -1908,17 +1891,6 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 
-	/**
-	 * Initializes the secondary translated command names for this application. Note: this will 
-	 * load the properties files first.
-	 */
-	final public void initTranslatedSecondaryCommands() {
-		if (rbcommandSecondary == null) {
-			rbcommandSecondary = MyResourceBundle
-					.createBundle(RB_COMMAND, secondaryLocale);
-		}
-	}
-
 	final public String getCommand(String key) {
 		initTranslatedCommands();		
 
@@ -1929,23 +1901,22 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 	}
 
-	final public String getSecondaryCommand(String key) {
+	final public String getEnglishCommand(String key) {
 		
-		if (secondaryLocale == null) return key;
+		if (englishLocale == null) englishLocale = new Locale("en");
 		
-		initTranslatedSecondaryCommands();		
+		if (rbcommandEnglish == null) 
+			rbcommandEnglish = MyResourceBundle
+					.createBundle(RB_COMMAND, englishLocale);
+
 
 		try {
-			return rbcommandSecondary.getString(key);
+			return rbcommandEnglish.getString(key);
 		} catch (Exception e) {
 			return key;
 		}
 	}
 	
-	final public Locale getSecondaryLocale() {
-		return secondaryLocale;
-	}
-
 	public String getCommandSyntax(String key) {
 		
 		return getCommand(key+"Syntax");

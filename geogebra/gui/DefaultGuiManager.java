@@ -2623,7 +2623,7 @@ public class DefaultGuiManager implements GuiManager {
 	        catch (Exception e) {}
 	        
 	        try{   	
-	        	URL helpURL = getHelpURL(app.getLocale(), command, internalCmd);
+	        	URL helpURL = getHelpURL(app.getLocale(), internalCmd);
 	            showURLinBrowser(helpURL);
 	        } catch (MyError e) {           
 	            app.showError(e);
@@ -2645,9 +2645,14 @@ public class DefaultGuiManager implements GuiManager {
 	    
 	   
 
-	    private URL getHelpURL(Locale locale, String command, String intCommand) throws Exception {
+	    private URL getHelpURL(Locale locale, String intCommand) throws Exception {
+	    	
+	    	// needed to turn internal command into English command
+	    	// eg CurveCartesian -> Curve
+	    	intCommand = app.getEnglishCommand(intCommand);
+	    	
 	    	 // try to get help for current locale (language + country + variant)
-	        URL helpURL = getHelpURL(locale.toString(), command, app.getCommand("Command"));
+	        URL helpURL = getHelpURL(locale.toString(), intCommand);
 
 	        if (helpURL != null) {        	
 	        	return helpURL;
@@ -2655,25 +2660,16 @@ public class DefaultGuiManager implements GuiManager {
 	    	       
 	        // try to get help for current language
 	        String  language = locale.getLanguage();     
-	        helpURL = getHelpURL(language, command, app.getCommand("Command"));
+	        helpURL = getHelpURL(language, intCommand);
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
-	        
-	        // try secondary language eg Spanish for Catalan & Basque
-	        locale = app.getSecondaryLocale();   
-	        if (locale != null) {
-		        helpURL = getHelpURL(locale.toString(), command, app.getSecondaryCommand("Command"));
-		        if (helpURL != null) {        	
-		        	return helpURL;
-		        }
-	        }
-	                
+	                       
 	        // for Catalan and Basque we take the 
 	        // Spanish help instead of the English one
 	        // won't work unless they share command name
 	        if (language.equals("eu") || language.equals("ca")) {        	
-	        	helpURL = getHelpURL("es", command, "Comando"); // Spanish
+	        	helpURL = getHelpURL("es", intCommand); // Spanish
 	        	if (helpURL != null) {            	
 	            	return helpURL;
 	            }
@@ -2681,7 +2677,7 @@ public class DefaultGuiManager implements GuiManager {
 	        
 	                
 	        // last attempt: try to get English help 
-	        helpURL = getHelpURL("en", intCommand, "Command");
+	        helpURL = getHelpURL("en", intCommand);
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
@@ -2690,38 +2686,21 @@ public class DefaultGuiManager implements GuiManager {
 	        throw new Exception("HelpNotFound");
 	    }
 	    
-	    private URL getHelpURL(String languageISOcode, String ggbCommand, String Command )  {
+	    private URL getHelpURL(String languageISOcode, String ggbCommand)  {
 	    	// try to get help for given language
-	    	// eg http://www.geogebra.org/wiki_new/en/FitLogistic_Command
+	    	// eg http://www.geogebra.org/help/en/FitLogistic
 	    	
-	    	String strFile;
-	    	if (ggbCommand == null)
-	    	{ // ORIGINAL CODE
-	    		strFile =  languageISOcode + "/Manual:Main_Page";
-	    	}
-	    	else
-	    	{ // TEST CODE
-	    		// URL like http://www.geogebra.org/wiki_new/en/FitLogistic_Command
-	    		strFile =  languageISOcode + "/" + ggbCommand + "_" + Command;
-	    	}
-			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "wiki_new/" + strFile;  
+			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "help/" + languageISOcode + "/" + ggbCommand;
 			
 			Application.debug(strURL);
 			
-			if (Application.MAC_OS) {
-				String path = app.getCodeBase().getPath();
-	        	int i = path.lastIndexOf("/Java/");
-	        	if (i > -1) strFile = path.substring(0, i) + "/Help/" + strFile;
-	        }
 	        
 	        try {
-	            File f = new File(strFile);
-	            if (f.exists())
-					return f.toURL();
-				else { // web url 
+	            
 	                URL url =   new URL(strURL);
-	                if (Util.existsHttpURL(url)) return url;
-	            }
+	                //if (Util.existsHttpURL(url))
+	                	return url;
+
 	        } catch (Exception e) {        	
 	        }
 	        return null;
