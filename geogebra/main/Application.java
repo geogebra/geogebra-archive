@@ -1985,7 +1985,7 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 		
 		Object[] options = {getPlain("OK"), getPlain("ShowOnlineHelp")};
-		int n = JOptionPane.showOptionDialog(null,
+		int n = JOptionPane.showOptionDialog(mainComp,
 				e.getLocalizedMessage(),
 				getPlain("ApplicationName") + " - " + getError("Error"),
 				JOptionPane.YES_NO_OPTION,
