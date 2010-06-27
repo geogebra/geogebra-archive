@@ -195,17 +195,9 @@ public class AlgebraProcessor {
 		} catch (MyError e) {
 			//e.printStackTrace();
 			//throw new Exception(e.getLocalizedMessage());
-			Object[] options = {app.getPlain("OK"), app.getPlain("ShowOnlineHelp")};
-			int n = JOptionPane.showOptionDialog(null,
-					e.getLocalizedMessage(),
-					app.getPlain("ApplicationName") + " - " + app.getError("Error"),
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE,
-					null,     //do not use a custom Icon
-					options,  //the titles of buttons
-					options[0]); //default button title
-
-			if (n == 1) app.getGuiManager().openHelp(e.getcommandName());
+			
+			// show error with nice "Show Online Help" box
+			app.showError(e);
 
 			return null;
 		} catch (CircularDefinitionException e) {

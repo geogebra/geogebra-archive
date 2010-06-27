@@ -1977,7 +1977,25 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void showError(MyError e) {
-		showErrorDialog(e.getLocalizedMessage());
+		String command = e.getcommandName();
+		
+		if (command == null) {
+			showErrorDialog(e.getLocalizedMessage());
+			return;
+		}
+		
+		Object[] options = {getPlain("OK"), getPlain("ShowOnlineHelp")};
+		int n = JOptionPane.showOptionDialog(null,
+				e.getLocalizedMessage(),
+				getPlain("ApplicationName") + " - " + getError("Error"),
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+				null,     //do not use a custom Icon
+				options,  //the titles of buttons
+				options[0]); //default button title
+
+		if (n == 1) getGuiManager().openHelp(command);
+
 	}
 
 	public void showErrorDialog(String msg) {
