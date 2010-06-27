@@ -33,6 +33,7 @@ public class MyError extends java.lang.Error {
 	private static final long serialVersionUID = 1L;
 	protected Application app;
     private String [] strs;
+    private String commandName = null;
     
     /** Creates new MyError */
     public MyError(Application app, String errorName) {
@@ -41,10 +42,21 @@ public class MyError extends java.lang.Error {
         this.app = app;
     }
     
+    public MyError(Application app, String errorName, String commandName) {
+        // set localized message
+        super(errorName);
+        this.app = app;
+        this.commandName = commandName;
+    }
+    
     public MyError(Application app, String [] strs) {
         this.app = app;
         // set localized message        
         this.strs = strs;
+    }
+    
+    public String getcommandName() {
+    	return commandName;
     }
         
     public String getLocalizedMessage() {              

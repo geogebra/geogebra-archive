@@ -219,7 +219,7 @@ public abstract class CommandProcessor  {
 				app.getCommand("Command") + " " + app.getCommand(cmd) + ":\n");
 		sb.append(app.getError("IllegalArgumentNumber") + ": " + argNumber);
 		sb.append("\n\nSyntax:\n" + app.getCommandSyntax(cmd));
-		return new MyError(app, sb.toString());
+		return new MyError(app, sb.toString(), cmd);
 	}
 
 	final MyError chDepErr(Application app, GeoElement geo) {
