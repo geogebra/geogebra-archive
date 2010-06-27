@@ -628,8 +628,8 @@ public class AlgebraProcessor {
 	
 
 	protected GeoElement[] processEquation(Equation equ) throws MyError {		
-		//Application.debug("EQUATION: " + equ);        
-		//Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
+		Application.debug("EQUATION: " + equ);        
+		Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
 		
 		try {
 			equ.initEquation();	
@@ -798,9 +798,9 @@ public class AlgebraProcessor {
 		if (isIndependent){
 			ret[0]=kernel.ImplicitPoly(label, lhs);
 		}else{
-			//TODO dependent ImplicitPoly
-			throw new MyError(app, "InvalidEquation");
+			ret[0]=kernel.DependentImplicitPoly(label, equ);
 		}
+		ret[0].updateRepaint();
 		return ret;
 	}
 

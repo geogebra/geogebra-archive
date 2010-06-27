@@ -2015,6 +2015,12 @@ public class Kernel {
 		GeoCubic cubic = algo.getCubic();
 		return cubic;
 	}
+	
+	final public GeoImplicitPoly  DependentImplicitPoly(String label, Equation equ) {
+		AlgoDependentImplicitPoly algo = new AlgoDependentImplicitPoly(cons, label, equ);
+		GeoImplicitPoly  implicitPoly = algo.getImplicitPoly();
+		return implicitPoly;
+	}
 
 	/** Function dependent on coefficients of arithmetic expressions with variables,
 	 * represented by trees. e.g. f(x) = a x� + b x�

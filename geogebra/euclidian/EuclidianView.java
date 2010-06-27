@@ -30,6 +30,7 @@ import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -2988,6 +2989,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 		case GeoElement.GEO_CLASS_CUBIC:
 			d = new DrawCubic(this, (GeoCubic) geo);
+			break;
+			
+		case GeoElement.GEO_CLASS_IMPLICIT_POLY:
+			d = new DrawImplicitPoly(this, (GeoImplicitPoly) geo);
 			break;
 
 		case GeoElement.GEO_CLASS_FUNCTION:

@@ -446,6 +446,30 @@ public class Polynomial extends ValidExpression implements Serializable, Express
 	final public String toLaTeXString(boolean symbolic) {
 		return toString();
 	}
+	
+	/**
+	 * 
+	 * @return Coefficient matrix of this polynomial (in x and y)
+	 */
+	public ExpressionValue[][] getCoeff(){
+		simplify(); 
+		Iterator it=terms.iterator();
+		//TODO implement support for z as var
+		int degX=0;
+		int degY=0;
+		while(it.hasNext()){
+			Term t=(Term)it.next();
+			degX=Math.max(degX,t.degree('x'));
+			degY=Math.max(degY,t.degree('y'));
+		}
+		ExpressionValue[][] coeff=new ExpressionValue[degX+1][degY+1];
+		it=terms.iterator();		
+		while(it.hasNext()){
+			Term t=(Term)it.next();
+			coeff[t.degree('x')][t.degree('y')]=t.getCoefficient();
+		}
+		return coeff;
+	}
  
            
     public HashSet getVariables() {
