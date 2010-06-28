@@ -204,7 +204,9 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 */
 	public void createFrame() {
 		frame = new JFrame(app.getPlain(viewTitle));
-	   	frame.setIconImage(app.getInternalImage("geogebra.gif"));
+		
+		// needs the higher res as used by Windows 7 for the Toolbar
+	   	frame.setIconImage(app.getInternalImage("geogebra32.gif"));  
 	   	frame.addWindowListener(this);	
 	   	
 	   	frame.addComponentListener(new ComponentAdapter() {
