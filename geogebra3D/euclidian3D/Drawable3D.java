@@ -5,13 +5,11 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.PlotterTextLabel;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 import java.util.Comparator;
@@ -151,8 +149,8 @@ public abstract class Drawable3D {
 	//links to the GeoElement
 	private GeoElement m_geo; 
 	
-	/** openGL label */
-	protected PlotterTextLabel label;
+	/** label */
+	protected DrawLabel3D label;
 
 	//picking
 	//private boolean m_isPicked = false;	
@@ -200,7 +198,7 @@ public abstract class Drawable3D {
 	public Drawable3D(EuclidianView3D view3D){
 		setView3D(view3D);
 		
-		label = new PlotterTextLabel(view3D);
+		label = new DrawLabel3D(view3D);
 	}
 	
 		
@@ -458,11 +456,15 @@ public abstract class Drawable3D {
 		//renderer.setMatrix(getLabelMatrix());
 		
     	
+    	/*
 		renderer.drawText(
 				//getLabelMatrix().getOrigin().copyVector(),
 				//getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY,
 				label);
 				//getGeoElement().getLabelDescription(),colored); 
+				 * 
+				 */
+    	label.draw(renderer);
 				
     }
 	

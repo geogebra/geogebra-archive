@@ -530,7 +530,7 @@ public class Renderer implements GLEventListener {
     private void drawWireFrame(){
     	
     	
-    	if (true) return;
+    	//if (true) return;
     	
     	gl.glPushAttrib(GL.GL_ALL_ATTRIB_BITS);
     	
@@ -1036,6 +1036,7 @@ public class Renderer implements GLEventListener {
     	
     }
     */
+    /*
     
     public void drawText(//float x, float y, float z,
     		PlotterTextLabel label){
@@ -1044,7 +1045,9 @@ public class Renderer implements GLEventListener {
     	label.draw3D(gl, view3D.getToScreenMatrix());
     
     }
+    */
     
+    /*
     private void drawText(float x, float y, float z,
     		String s, boolean colored){
     
@@ -1052,7 +1055,7 @@ public class Renderer implements GLEventListener {
     	geometryManager.getText().draw3D(gl, x,y,z);
     
     }
-    
+    */
    
     
     private void drawText0(float x, float y, float z,

@@ -1,47 +1,28 @@
 package geogebra3D.euclidian3D;
 
-import java.awt.Color;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.TreeMap;
-
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
-import geogebra3D.euclidian3D.opengl.PlotterTextLabel;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoElement3DInterface;
-import geogebra3D.kernel3D.GeoSegment3D;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.TreeMap;
 
 public class DrawAxis3D extends DrawLine3D {
 	
-	private TreeMap<String, PlotterTextLabel>  labels;
+	private TreeMap<String, DrawLabel3D>  labels;
 	
 	public DrawAxis3D(EuclidianView3D a_view3D, GeoAxis3D axis3D){
 		
 		super(a_view3D, axis3D);
 		
-		labels = new TreeMap<String, PlotterTextLabel>();
+		labels = new TreeMap<String, DrawLabel3D>();
 	}	
-	
-	/*
-	public void drawGeometry(Renderer renderer) {
-		
-		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
-		renderer.setArrowLength(20);
-		renderer.setArrowWidth(10);
-		
-
-		super.drawGeometry(renderer);
-		
-		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);
-	}
-	
-	*/
 	
 	
 	/**
@@ -61,8 +42,10 @@ public class DrawAxis3D extends DrawLine3D {
     	
    
 
-    	for(PlotterTextLabel label : labels.values())
-    		renderer.drawText(label);
+    	
+    	for(DrawLabel3D label : labels.values())
+    		label.draw(renderer);
+    		
     	
     	super.drawLabel(renderer);
     	
@@ -74,29 +57,12 @@ public class DrawAxis3D extends DrawLine3D {
 
     	
     protected void updateLabel(){
-    	
-    	//if (!getView3D().isStarted()) return;
-
- 
-  		//draw ticks and numbers
+  
+  		//draw numbers
   		GeoAxis3D axis = (GeoAxis3D) getGeoElement();
   		
 		NumberFormat numberFormat = axis.getNumberFormat();
 		double distance = axis.getNumbersDistance();
-
-    	
-    	//matrix for each number 
-    	GgbMatrix4x4 numbersMatrix = GgbMatrix4x4.Identity();
-    	
-    	//matrix for each ticks
-    	GgbMatrix4x4 ticksMatrix = new GgbMatrix4x4();
-    	GgbMatrix4x4 drawingMatrix = ((GeoElement3D) getGeoElement()).getDrawingMatrix();
-    	ticksMatrix.setVx(drawingMatrix.getVx().normalized());
-    	ticksMatrix.setVy((GgbVector) drawingMatrix.getVy().mul(axis.getTickSize()));
-    	ticksMatrix.setVz((GgbVector) drawingMatrix.getVz().mul(axis.getTickSize()));
-  	
-    	
-    	
     	
     	int iMin = (int) (getDrawMin()/distance);
     	int iMax = (int) (getDrawMax()/distance);
@@ -111,7 +77,7 @@ public class DrawAxis3D extends DrawLine3D {
     	
     	
     	//sets all already existing labels not visible
-    	for(PlotterTextLabel label : labels.values())
+    	for(DrawLabel3D label : labels.values())
     		label.setIsVisible(false);
     	
     	
@@ -123,30 +89,26 @@ public class DrawAxis3D extends DrawLine3D {
     		String strNum = getView3D().getKernel().formatPiE(val,numberFormat);
 
     		//check if the label already exists
-    		PlotterTextLabel label = labels.get(strNum);
+    		DrawLabel3D label = labels.get(strNum);
     		if (label!=null){
     			//sets the label visible
     			label.setIsVisible(true);
     			label.updateTexture(); //TODO remove this
     		}else{
     			//creates new label
-    			label = new PlotterTextLabel(getView3D());
+    			label = new DrawLabel3D(getView3D());
     			label.update(strNum, 10, 
     					getGeoElement().getObjectColor(),
     					origin.copyVector(),
     					axis.getNumbersXOffset()-4,axis.getNumbersYOffset()-6);
     			labels.put(strNum, label);
     		}
-    		//TODO 4 and 6 depends to police size
-    		//TODO anchor
+    		//TODO 4 and 6 depends to police size -> anchor
        		
     	}
     	
-    	
-    	
-
 		
-		
+		// update end of axis label
 		label.update(((GeoAxis3D) getGeoElement()).getAxisLabel(), 10, 
 				getGeoElement().getObjectColor(),
 				((GeoCoordSys1D) getGeoElement()).getPoint(getDrawMax()),
