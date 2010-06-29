@@ -38,7 +38,7 @@ office@geogebra.org
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>
 	<property name="propertiestemp.dir" location="../build/tempproperties"/>
-	<property name="build.dir" location="../build"/>
+	<property name="build.dir" location="build"/>
 	<property name="temp.dir" location="../build/temp"/>
 	<property name="workspace.dir" location="../"/>
 	
@@ -79,6 +79,20 @@ office@geogebra.org
 		   static="false"
 		/>
 	</target>
+
+        <target name="compile-oe">
+                <mkdir dir="${build.dir}/classes"/>
+                <path id="build.class.path">
+                        <fileset dir="${src.dir}">
+                                <include name="*.jar"/>
+                                <include name="3D/jogl.jar"/>
+                        </fileset>
+                </path>
+                <javac srcdir="${src.dir}"
+                       destdir="${build.dir}/classes">
+                        <classpath refid="build.class.path"/>
+                </javac>
+        </target>
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files3D" 
