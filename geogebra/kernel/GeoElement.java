@@ -2446,8 +2446,10 @@ public abstract class GeoElement
 		}
 		
 		//G.Sturr 2010-6-26
-		if(getSpreadsheetTrace())
+		if(getSpreadsheetTrace()){
 			app.getGuiManager().traceToSpreadsheet(this);
+			
+		}
 		//END G.Sturr
 		
 		// texts need updates
@@ -4237,7 +4239,9 @@ public abstract class GeoElement
 		if (isGeoList() || isGeoNumeric() || isGeoVector() || isGeoPoint()) {
 			return true;
 		}
-		return false;
+		//TODO should all geos be traceable?
+		// temporary allow all 
+		return true;
 	}
 
 	private geogebra.gui.view.spreadsheet.TraceSettings traceSettings;

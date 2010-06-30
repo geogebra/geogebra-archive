@@ -41,6 +41,7 @@ public class SpreadsheetTraceManager {
 	
 	// external components
 	private Application app;
+	private Kernel kernel;
 	private SpreadsheetView view;
 	private MyTable table; 
 	
@@ -65,6 +66,7 @@ public class SpreadsheetTraceManager {
 		
 		this.view = view;
 		app = view.getApplication();
+		kernel = app.getKernel();
 		table = view.getTable();
 		
 		traceGeoCollection = new HashMap<GeoElement, TraceSettings >();		
@@ -90,21 +92,26 @@ public class SpreadsheetTraceManager {
 			t.traceColumn1 = getNextTraceColumn(); 
 		}
 		
-		if(geo.isGeoNumeric()){
+		if(t.doTraceGeoCopy){
 			t.traceColumn2 = t.traceColumn1;
-		}
-		else if(geo.isGeoPoint() || geo.isGeoVector()){
-			t.traceColumn2 = t.traceColumn1 + 1;
-		}
-		else if(geo.isGeoList()){
-			t.traceColumn2 = t.traceColumn1 + ((GeoList)geo).size() - 1;
-			for(int index = 0; index < ((GeoList)geo).size(); index++ ){
-				if(((GeoList)geo).get(index).isGeoPoint())
-					t.traceColumn2 ++;
+		}else{
+			// set number of columns by geotype
+			if(geo.isGeoNumeric()){
+				t.traceColumn2 = t.traceColumn1;
 			}
-		}		
-		
-			
+			else if(geo.isGeoPoint() || geo.isGeoVector()){
+				t.traceColumn2 = t.traceColumn1 + 1;
+			}
+			else if(geo.isGeoList()){
+				t.traceColumn2 = t.traceColumn1 + ((GeoList)geo).size() - 1;
+				for(int index = 0; index < ((GeoList)geo).size(); index++ ){
+					if(((GeoList)geo).get(index).isGeoPoint())
+						t.traceColumn2 ++;
+				}
+			}		
+		}
+
+
 		//Set trace rows
 		if(t.traceRow1 == -1){
 			t.traceRow1 = 0; //default to first row
@@ -141,7 +148,8 @@ public class SpreadsheetTraceManager {
 			}
 		}
 		
-		traceToSpreadsheet(geo);
+		//traceToSpreadsheet(geo);
+		setHeader(geo,cons);
 		view.repaint();
 		
 	}
@@ -395,6 +403,10 @@ public class SpreadsheetTraceManager {
 		sb.append(t.showTraceList  ? "true" : "false" );
 		sb.append("\"");
 		
+		sb.append(" doTraceGeoCopy=\"");
+		sb.append(t.doTraceGeoCopy  ? "true" : "false" );
+		sb.append("\"");
+		
 		sb.append("/>\n");
 		
 		
@@ -470,7 +482,7 @@ public class SpreadsheetTraceManager {
 		// get the current trace for this geo and compare with last trace
 		// exit if no change in trace
 		getCurrentTrace(geo);	
-		if(!geo.isRandomGeo() && currentTrace.equals(t.lastTrace)) return;	
+		if(!t.doTraceGeoCopy && !geo.isRandomGeo() && currentTrace.equals(t.lastTrace)) return;	
 		t.lastTrace = (ArrayList<Double>) currentTrace.clone();
 
 
@@ -530,15 +542,26 @@ public class SpreadsheetTraceManager {
 					// copy the value from the source cell into the target cell below
 					// (don't do this if there is only one row)
 					if(t.numRows > 1){
-						if(sourceCell == null)
-							setTraceCell(cons,c,r-1,null,GeoElement.GEO_CLASS_NUMERIC);
-						else
-							setTraceCell(cons,c,r-1,((GeoNumeric)sourceCell).getValue(),GeoElement.GEO_CLASS_NUMERIC);
+						if(sourceCell != null){
+
+							if(t.doTraceGeoCopy){
+								setTraceCellAsGeoCopy(cons, sourceCell,c,r-1);
+
+							}else{
+
+								setTraceCell(cons,c,r-1,((GeoNumeric)sourceCell).getValue(),GeoElement.GEO_CLASS_NUMERIC);
+							}
+						}
 					}
 
 					// if the source cell is in the last row, update it with a new trace 
 					if(r == t.traceRow2){
-						setTraceCell(cons,c,r,t.lastTrace.get(c - t.traceColumn1),GeoElement.GEO_CLASS_NUMERIC);
+
+						if(t.doTraceGeoCopy){
+							setTraceCellAsGeoCopy(cons,geo,c,r);
+						}else{	
+							setTraceCell(cons,c,r,t.lastTrace.get(c - t.traceColumn1),GeoElement.GEO_CLASS_NUMERIC);
+						}
 					}	
 				}
 			}	   		
@@ -555,7 +578,7 @@ public class SpreadsheetTraceManager {
 		if(t.showTraceList){
 			int traceIndex = 0;
 			for(int column = t.traceColumn1; column <= t.traceColumn2; column++){
-				updateTraceListCell(cons,column, t.traceRow1,t.lastTrace.get(traceIndex));
+				updateTraceListCell(cons,geo,column, t.traceRow1,t.lastTrace.get(traceIndex));
 				++traceIndex;
 			}
 		}
@@ -589,6 +612,11 @@ public class SpreadsheetTraceManager {
 		int column = t.traceColumn1;
 		int traceIndex = 0;
 		GeoElement[] geos = getElementList(geo);
+		
+		if(t.doTraceGeoCopy){
+			setTraceCellAsGeoCopy(cons,geo,t.traceColumn1,row);
+			return;
+		}
 		
 		// handle null trace (when shifting cells a null trace is sometimes needed)	
 		if(traceArray == null){
@@ -650,6 +678,39 @@ public class SpreadsheetTraceManager {
 	}
 
 
+	
+	private void setTraceCellAsGeoCopy(Construction cons, GeoElement geo, int column, int row){
+		
+		GeoElement cell = RelativeCopy.getValue(table, column, row);
+		String text = "";
+		try {
+			//GeoElement newCell = RelativeCopy.prepareAddingValueToTableNoStoringUndoInfo(kernel,table,text,cell,column,row);
+			//if(newCell != null)
+			//	newCell.setLabelVisible(false);
+					
+			if(cell != null){
+				cell.remove();
+			}
+			
+			cell = geo.copyInternal(cons);
+			cell.setLabel(GeoElement.getSpreadsheetCellName(column,row));
+			
+			/*
+			}else{
+				text = geo.toValueString();
+				cell = kernel.getAlgebraProcessor().changeGeoElementNoExceptionHandling(cell, text, true, false);		
+			}
+			*/
+			
+			cell.setAllVisualProperties(geo, true);
+			cell.setAuxiliaryObject(true);
+			cell.setLabelVisible(false);
+			cell.updateCascade();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	private void setTraceCell(Construction cons, int column, int row, Object value, int geoClassType){
 
@@ -720,14 +781,19 @@ public class SpreadsheetTraceManager {
 	}
 	
 	
-	private void updateTraceListCell(Construction cons,int column, int row, Object value){
+	private void updateTraceListCell(Construction cons, GeoElement geo, int column, int row, Object value){
 
 		GeoElement cell = RelativeCopy.getValue(table, column, row);
 		if(cell == null || !cell.isGeoList()) return;
-		
-		((GeoList) cell).add(new GeoNumeric(cons, (Double)value));
+
+		if(geo.getTraceSettings().doTraceGeoCopy){
+			((GeoList) cell).add(geo.copyInternal(cons));
+		}else{
+			((GeoList) cell).add(new GeoNumeric(cons, (Double)value));		
+		}
 		cell.updateCascade();
 	}
+	
 	
 	
 	
@@ -784,7 +850,12 @@ public class SpreadsheetTraceManager {
 			GeoAngle angle = (GeoAngle) geo;			
 			currentTrace.add(angle.getValue());
 			break;
+			
+		// all other geos ... these should be traced as geo copies 	
+		default:
+			currentTrace.add(0.0);
 		}
+			
 	}
 	
 	
@@ -801,7 +872,7 @@ public class SpreadsheetTraceManager {
 			row = t.traceRow1 + t.headerOffset - 1;
 			column = t.traceColumn1;
 			for (int i = 0; i < geos.length; i++) {		
-				if (geos[i].isGeoPoint() || geos[i].isGeoVector() ) {				
+				if (!t.doTraceGeoCopy && (geos[i].isGeoPoint() || geos[i].isGeoVector()) ) {				
 					headerText = "x( " + geos[i].getLabel() + " )";
 					setTraceCell(cons, column, row, headerText, GeoElement.GEO_CLASS_TEXT);			
 					headerText = "y( " + geos[i].getLabel() + " )";

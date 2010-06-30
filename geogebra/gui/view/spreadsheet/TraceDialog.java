@@ -86,7 +86,7 @@ implements
 	
 	private JTextField firstRowField, numRowsField;
 	private JCheckBox cbResetColumns, cbRowLimit, 
-		cbShowLabel, cbTraceList, cbShowCount, cbShowMin, cbShowMax, cbShowMean;
+		cbShowLabel, cbTraceList, cbTraceGeoCopy;
 	private JButton btRemove;
 	private JButton btAdd;
 	private JButton btClose;
@@ -342,6 +342,11 @@ implements
         cbTraceList.addActionListener(this);        
         optionsPanel.add(cbTraceList);
         
+        cbTraceGeoCopy = new JCheckBox(app.getMenu("Trace Copy"));  
+        cbTraceGeoCopy.addActionListener(this);        
+        optionsPanel.add(cbTraceGeoCopy);
+        
+     
 		cbResetColumns = new JCheckBox(app.getMenu("Column Reset"));  
 		cbResetColumns.addActionListener(this);   
 		optionsPanel.add(cbResetColumns);
@@ -480,6 +485,11 @@ implements
 				cbTraceList.removeActionListener(this);
 				cbTraceList.setSelected(getSettings().showTraceList);
 				cbTraceList.addActionListener(this);
+				
+				cbTraceGeoCopy.removeActionListener(this);
+				cbTraceGeoCopy.setSelected(getSettings().doTraceGeoCopy);
+				cbTraceGeoCopy.addActionListener(this);
+				
 								
 				// update row limit textfield
 				numRowsField.setEnabled(getSettings().doRowLimit);
@@ -553,6 +563,11 @@ implements
 		
 		else if (source == cbTraceList) {
 			getSettings().showTraceList = cbTraceList.isSelected();
+			updateSelectedTraceGeo();
+		}
+		
+		else if (source == cbTraceGeoCopy) {
+			getSettings().doTraceGeoCopy = cbTraceGeoCopy.isSelected();
 			updateSelectedTraceGeo();
 		}
 		

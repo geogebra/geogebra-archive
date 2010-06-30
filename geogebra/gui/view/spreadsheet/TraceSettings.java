@@ -27,7 +27,7 @@ public class TraceSettings {
 	public boolean showLabel = true;
 	public boolean showTraceList = false;
 	
-	
+	public boolean doTraceGeoCopy = true;
 	
 	public void debug(GeoElement geo){
 		System.out.println("=====================================");

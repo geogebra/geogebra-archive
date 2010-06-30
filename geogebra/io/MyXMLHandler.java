@@ -2680,6 +2680,7 @@ public class MyXMLHandler implements DocHandler {
 			t.doRowLimit = (parseBoolean((String) attrs.get("doRowLimit")));
 			t.showLabel = (parseBoolean((String) attrs.get("showLabel")));
 			t.showTraceList = (parseBoolean((String) attrs.get("showTraceList")));
+			t.doTraceGeoCopy = (parseBoolean((String) attrs.get("doTraceGeoCopy")));
 					
 			return true;
 			
