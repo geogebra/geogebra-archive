@@ -2673,12 +2673,16 @@ public class MyXMLHandler implements DocHandler {
 			t.traceRow1 = Integer.parseInt((String) attrs.get("traceRow1"));
 			t.traceRow2 = Integer.parseInt((String) attrs.get("traceRow2"));
 			t.tracingRow = Integer.parseInt((String) attrs.get("tracingRow"));
-			t.numRows = Integer.parseInt((String) attrs.get("numRows"));		
+			t.numRows = Integer.parseInt((String) attrs.get("numRows"));	
+			t.headerOffset = Integer.parseInt((String) attrs.get("headerOffset"));
+				
 			t.doColumnReset = (parseBoolean((String) attrs.get("doColumnReset")));
 			t.doRowLimit = (parseBoolean((String) attrs.get("doRowLimit")));
-			t.showName = (parseBoolean((String) attrs.get("showName")));				
-			
+			t.showLabel = (parseBoolean((String) attrs.get("showLabel")));
+			t.showTraceList = (parseBoolean((String) attrs.get("showTraceList")));
+					
 			return true;
+			
 		} catch (Exception e) {
 			return false;
 		}

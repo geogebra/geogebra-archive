@@ -632,9 +632,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
     		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
     	}
     		
+    	/* spreadsheet trace now handled in GeoElement.update()	
     	if (isSpreadsheetTraceable() && getSpreadsheetTrace()){ 
         	cons.getApplication().getGuiManager().traceToSpreadsheet(this);
     	}		
+		*/
 		
 		// -------- old code
 		

@@ -890,6 +890,14 @@ public abstract class GeoElement
 			try { setShowObjectCondition(geo.getShowObjectCondition());}
 			catch (Exception e) {}
 		}
+		
+		//G.Sturr 2010-6-26
+		if (isSpreadsheetTraceable() && geo.getSpreadsheetTrace()) {
+			setSpreadsheetTrace(true);
+			traceSettings = geo.traceSettings;
+		}
+		//END G.Sturr
+		
 	}
 	
 	/*
@@ -2436,7 +2444,12 @@ public abstract class GeoElement
 			if (isVisible())
 				setLabel(label);			
 		}
-
+		
+		//G.Sturr 2010-6-26
+		if(getSpreadsheetTrace())
+			app.getGuiManager().traceToSpreadsheet(this);
+		//END G.Sturr
+		
 		// texts need updates
 		algebraStringsNeedUpdate();					    			
 		
@@ -4198,7 +4211,7 @@ public abstract class GeoElement
 	private boolean spreadsheetTrace;
 
 	
-	/** Get tracing flag for this geo */
+	/** Returns true if this geo is tracing to the spreadsheet */
 	public boolean getSpreadsheetTrace() {
 		return spreadsheetTrace;
 	}
@@ -4207,7 +4220,7 @@ public abstract class GeoElement
 	public void setSpreadsheetTrace(boolean traceFlag) {
 		
 		if(traceFlag != true)
-			traceSettings =null;
+			traceSettings = null;
 		spreadsheetTrace = traceFlag;
 	}
 

@@ -120,9 +120,10 @@ public class DrawSlider extends Drawable {
         
 		if (number == view.getEuclidianController().recordObject)
 		    recordToSpreadsheet(number);
-		
-		if (number.getSpreadsheetTrace())
-		    recordToSpreadsheet(number);
+		    
+		//G.Sturr 2010-6-28 spreadsheet trace is now handled in GeoElement.update()
+		//if (number.getSpreadsheetTrace())
+		   // recordToSpreadsheet(number);
 
     }
     

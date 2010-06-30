@@ -239,9 +239,9 @@ public final class DrawPoint extends Drawable {
 				yUL - SELECTION_OFFSET, selDiameter, selDiameter);
 		
         
-        //if (P.spreadsheetTrace) recordToSpreadsheet(P);  
-        
-        if (P.getSpreadsheetTrace()) recordToSpreadsheet(P); 
+      
+       //G.Sturr 2010-6-28 spreadsheet trace is now handled in GeoElement.update() 
+      //  if (P.getSpreadsheetTrace()) recordToSpreadsheet(P); 
 		if (P == view.getEuclidianController().recordObject)
 		    recordToSpreadsheet(P);
 

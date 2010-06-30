@@ -287,6 +287,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 		
+		// put geos with special editors in the oneClickEditMap 
 		if(geo.isGeoBoolean() || geo.isGeoButton() || geo.isGeoList()){
 			table.oneClickEditMap.put(location, geo);
 		}
@@ -361,7 +362,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		add(geo);
 		
 		if(traceManager.isTraceGeo(geo))
-			traceManager.updateTraceSettings(geo, geo.getTraceSettings());
+			traceManager.updateTraceSettings(geo);
 		if(isTraceDialogVisible()){
 			traceDialog.updateTraceDialog();
 		}
@@ -493,12 +494,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return traceManager;
 	}
 	
-	public void addRemoveSpreadsheetTrace(GeoElement geo, boolean addGeo){
-		if(addGeo)
-			traceManager.addSpreadsheetTraceGeo(geo);
-		else
-			traceManager.removeSpreadsheetTraceGeo(geo);	
-	}
 	
 	public void showTraceDialog(GeoElement geo, CellRange traceCell){
 		if (traceDialog == null){

@@ -15,7 +15,6 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
@@ -83,10 +82,11 @@ implements
 	private JPanel buttonPanel;
 	private JPanel locationPanel;
 	private JPanel leftButtonPanel;
+	private JPanel statPanel;
 	
-	private JTextField cellRangeField;
-	private JTextField numRowsField;
-	private JCheckBox cbResetColumns, cbRowLimit, cbShowHeader;
+	private JTextField firstRowField, numRowsField;
+	private JCheckBox cbResetColumns, cbRowLimit, 
+		cbShowLabel, cbTraceList, cbShowCount, cbShowMin, cbShowMax, cbShowMean;
 	private JButton btRemove;
 	private JButton btAdd;
 	private JButton btClose;
@@ -165,7 +165,7 @@ implements
 					t.traceColumn1 = traceCell.getMinColumn();
 					t.traceRow1 = traceCell.getMinRow();
 				}			
-				traceManager.addSpreadsheetTraceGeo(selectedGeo, t);
+				traceManager.addSpreadsheetTraceGeo(selectedGeo);
 			}
 			// update the trace geo list and select our geo 
 			updateTraceGeoList();
@@ -228,7 +228,7 @@ implements
 			// tabbed panel
 			tabbedPane = new JTabbedPane();	
 			tabbedPane.addTab(app.getMenu("Location"), null, buildLocationPanel());
-			tabbedPane.addTab(app.getMenu("Options"), null, buildTraceOptionsPanel());															
+			tabbedPane.addTab(app.getMenu("Options"), null, buildOptionsPanel());															
 			tabbedPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 			
 			// split pane: trace list on left, tabbed options on left
@@ -282,83 +282,70 @@ implements
 	
 	private JPanel buildLocationPanel() {
 		
-		// init 
+		// start row panel
+		JLabel lblStartRow = new JLabel("Start Row: ");
+		firstRowField = new MyTextField(app.getGuiManager());
+		firstRowField.setColumns(3);
+		firstRowField.addActionListener(this);
+		firstRowField.addFocusListener(this);
+		
+		JPanel startRowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		startRowPanel.setAlignmentX(0.0f);
+		startRowPanel.add(lblStartRow);
+		startRowPanel.add(firstRowField);	
+		
+		
+        // row limit panel
+		cbRowLimit = new JCheckBox(app.getMenu("Row Limit:"));  
+		cbRowLimit.addActionListener(this);
+
+		numRowsField = new MyTextField(app.getGuiManager());
+		numRowsField.setAlignmentX(0.0f);
+        numRowsField.setColumns(3);
+        numRowsField.addActionListener(this);
+        numRowsField.addFocusListener(this);    
+
+        JPanel rowLimitPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        rowLimitPanel.setAlignmentX(0.0f); 
+        rowLimitPanel.add(cbRowLimit); 
+        rowLimitPanel.add(numRowsField); 
+
+
+        // locationPanel 
 		locationPanel = new JPanel();
 		locationPanel.setLayout(new BoxLayout(locationPanel, BoxLayout.Y_AXIS));
 		locationPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));			
 		locationPanel.setMinimumSize(new Dimension(200, 30));
-	
 		
-		// cellRange panel
-		JPanel cellRangePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		cellRangePanel.setAlignmentX(0.0f);
-		JLabel cellLabel = new JLabel("First row: ");
-		cellRangeField = new MyTextField(app.getGuiManager());
-		cellRangeField.setColumns(4);
-		cellRangeField.addActionListener(this);
-		cellRangeField.addFocusListener(this);	
-		
-	    btChangeLocation = new JButton("change...");
-	    btChangeLocation.addActionListener(this);
-		
-		cellRangePanel.add(cellLabel); 
-		cellRangePanel.add(cellRangeField);	
-		cellRangePanel.add(btChangeLocation);	
-		
-		
-        // row limit panel
-        JPanel traceRowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        traceRowPanel.setAlignmentX(0.0f);    
-        cbRowLimit = new JCheckBox(app.getMenu("Row Limit:"));  
-        cbRowLimit.addActionListener(this);
-        traceRowPanel.add(cbRowLimit); 
-               
-        numRowsField = new MyTextField(app.getGuiManager());
-        numRowsField.setAlignmentX(0.0f);
-        numRowsField.setColumns(3);
-        numRowsField.addActionListener(this);
-        numRowsField.addFocusListener(this);         
-        //traceRowPanel.add(Box.createHorizontalStrut(tab));
-        traceRowPanel.add(numRowsField); 
-        
-      
-        // put it together
-      //  locationPanel.add(cellRangePanel); 
-        locationPanel.add(traceRowPanel);
-      
+        locationPanel.add(Box.createVerticalGlue());
+        locationPanel.add(startRowPanel);
+        locationPanel.add(rowLimitPanel);
+        locationPanel.add(Box.createVerticalGlue());
         
         return locationPanel;
 	}
 	
 	
-	private JPanel buildTraceOptionsPanel() {
+	private JPanel buildOptionsPanel() {
 		
-		// init the trace options panel
+		  // options panel
 		optionsPanel = new JPanel();
 		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
 		optionsPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		optionsPanel.setMinimumSize(new Dimension(100, 30));
-		
-		
-		// reset columns panel
-		JPanel resetPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		resetPanel.setAlignmentX(0.0f);
+					
+        cbShowLabel = new JCheckBox(app.getMenu("ShowLabel"));  
+        cbShowLabel.addActionListener(this);        
+        optionsPanel.add(cbShowLabel);
+             
+        cbTraceList = new JCheckBox(app.getMenu("Trace To List"));  
+        cbTraceList.addActionListener(this);        
+        optionsPanel.add(cbTraceList);
+        
 		cbResetColumns = new JCheckBox(app.getMenu("Column Reset"));  
 		cbResetColumns.addActionListener(this);   
-		resetPanel.add(cbResetColumns);
-		
-		// show header panel
-		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		headerPanel.setAlignmentX(0.0f);
-        cbShowHeader = new JCheckBox(app.getMenu("Header"));  
-        cbShowHeader.addActionListener(this);        
-        headerPanel.add(cbShowHeader);
-        
-      
-        // put it together
-        optionsPanel.add(headerPanel);
-        optionsPanel.add(resetPanel); 
-        
+		optionsPanel.add(cbResetColumns);
+    
         return optionsPanel;
 	}
 	
@@ -367,7 +354,6 @@ implements
 		
 		// init button panel
 		buttonPanel = new JPanel(new BorderLayout());
-		//buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlDkShadow));	
 		
 		btRemove = new JButton("\u2718");
 		btRemove.addActionListener(this);
@@ -478,39 +464,36 @@ implements
 			
 			if (!traceGeoList.isSelectionEmpty()) {
 
-				// update column reset checkbox
+				// update checkboxes
 				cbResetColumns.removeActionListener(this);
 				cbResetColumns.setSelected(getSettings().doColumnReset);
 				cbResetColumns.addActionListener(this);
-
-				// update row limit checkbox
+				
 				cbRowLimit.removeActionListener(this);
 				cbRowLimit.setSelected(getSettings().doRowLimit);
 				cbRowLimit.addActionListener(this);
 
-				// update show header checkbox
-				cbShowHeader.removeActionListener(this);
-				cbShowHeader.setSelected(getSettings().showName);
-				cbShowHeader.addActionListener(this);
-
-				// update max row textfield
+				cbShowLabel.removeActionListener(this);
+				cbShowLabel.setSelected(getSettings().showLabel);
+				cbShowLabel.addActionListener(this);
+				
+				cbTraceList.removeActionListener(this);
+				cbTraceList.setSelected(getSettings().showTraceList);
+				cbTraceList.addActionListener(this);
+								
+				// update row limit textfield
 				numRowsField.setEnabled(getSettings().doRowLimit);
 				numRowsField.removeActionListener(this);
 				numRowsField.setText("" + getSettings().numRows);
 				numRowsField.setCaretPosition(0);
 				numRowsField.addActionListener(this);
 
-				// update target cell textfield
-				CellRange traceCell = new CellRange(view.table,
-						getSettings().traceColumn1, getSettings().traceRow1);
-				cellRangeField.removeActionListener(this);
-				if (traceCell != null) {
-					cellRangeField.setText(traceCell.getName());
-				} else {
-					cellRangeField.setText("");
-				}
-				cellRangeField.setCaretPosition(0);
-				cellRangeField.addActionListener(this);
+				// update first row textfield
+				firstRowField.removeActionListener(this);
+				firstRowField.setText("" + (getSettings().traceRow1 + 1));
+				firstRowField.setCaretPosition(0);
+				firstRowField.addActionListener(this);
+				
 			}
 
 			view.repaint();
@@ -552,6 +535,7 @@ implements
 	
 	public void doActionPerformed(Object source) {		
 		
+			
 		if (source == cbResetColumns) {
 			getSettings().doColumnReset = cbResetColumns.isSelected();
 			updateSelectedTraceGeo(); 
@@ -562,22 +546,28 @@ implements
 			updateSelectedTraceGeo();
 		}
 		
-		else if (source == cbShowHeader) {
-			getSettings().showName = cbShowHeader.isSelected();
+		else if (source == cbShowLabel) {
+			getSettings().showLabel = cbShowLabel.isSelected();
 			updateSelectedTraceGeo();
 		}
 		
-		else if (source == numRowsField) {
-			getSettings().numRows =  Integer.parseInt(numRowsField.getText());
+		else if (source == cbTraceList) {
+			getSettings().showTraceList = cbTraceList.isSelected();
 			updateSelectedTraceGeo();
+		}
+		
+		else if (source instanceof JTextField) {
+			doTextFieldActionPerformed((JTextField)source);
 		}	
+		
 		
 		else if (source == btAdd) {
 			setMode(MODE_ADD);
 		}	
 		
 		else if (source == btErase) {
-			traceManager.clearGeoTraceColumns(getSelectedGeo());
+			updateSelectedTraceGeo();
+			//traceManager.clearGeoTraceColumns(getSelectedGeo());
 		}	
 		
 		else if (source == btRemove) {
@@ -600,6 +590,32 @@ implements
 		}
 				
 		updateGUI();	
+	}
+	
+	
+	private void doTextFieldActionPerformed(JTextField source) {
+		
+		try {
+			String inputText = source.getText().trim();
+			Integer value = Integer.parseInt(source.getText());
+			
+			if (value !=null && value > 0 && value < SpreadsheetView.MAX_ROWS) {
+
+				if (source == firstRowField) {
+					traceManager.clearGeoTraceColumns(getSelectedGeo());
+					getSettings().traceRow1 =  value - 1;
+					updateSelectedTraceGeo();
+				}	
+
+				else if (source == numRowsField) {
+					getSettings().numRows = value;
+					updateSelectedTraceGeo();
+				}	
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	
@@ -643,7 +659,7 @@ implements
 				t.traceRow1 = newTraceLocation.getMinRow();
 			}
 			
-			traceManager.addSpreadsheetTraceGeo(geo, t);				
+			traceManager.addSpreadsheetTraceGeo(geo);				
 			updateTraceGeoList();
 		}
 		
@@ -658,8 +674,11 @@ implements
 	
 	/** Remove a geo from the traceGeoCollection and update the dialog.  */
 	private void removeTrace(){
-		GeoElement traceGeo = (GeoElement) traceGeoList.getSelectedValue();
-		traceManager.removeSpreadsheetTraceGeo(traceGeo);		
+		GeoElement geo = (GeoElement) traceGeoList.getSelectedValue();
+		traceManager.removeSpreadsheetTraceGeo(geo);
+		geo.setSpreadsheetTrace(false);
+		geo.setTraceSettings(null);
+		
 		updateTraceGeoList();
 		if (!traceGeoListModel.isEmpty()){
 			traceGeoList.setSelectedIndex(0);
@@ -683,7 +702,7 @@ implements
 	
 	
 	private void updateSelectedTraceGeo(){	
-		traceManager.updateTraceSettings(getSelectedGeo(), getSettings());
+		traceManager.updateTraceSettings(getSelectedGeo());
 	}
 	
 	
@@ -731,6 +750,8 @@ implements
 
 	public void focusLost(FocusEvent e) {
 		//doActionPerformed(e.getSource());
+		doTextFieldActionPerformed((JTextField)(e.getSource()));
+		updateGUI();
 	}
 
 

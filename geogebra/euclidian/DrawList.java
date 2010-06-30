@@ -84,9 +84,9 @@ public final class DrawList extends Drawable {
     		drawables.remove(i);
     	}
     	
-    	//G.Sturr 2010-4-22
-		if (geoList.getSpreadsheetTrace())
-		    recordToSpreadsheet(geoList);
+    	//G.Sturr 2010-6-28 spreadsheet trace is now handled in GeoElement.update()
+		//if (geoList.getSpreadsheetTrace())
+		   // recordToSpreadsheet(geoList);
     }
     
     private boolean addToDrawableList(GeoElement listElement, int drawablePos, int oldDrawableSize) {

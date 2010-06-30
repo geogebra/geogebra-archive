@@ -17,13 +17,16 @@ public class TraceSettings {
 	public int traceRow2 = -1;
 	public int tracingRow = 0;
 	public int numRows = 10;
+	public int headerOffset = 1;  // show label is default
 	
 	public ArrayList<Double> lastTrace = new ArrayList<Double>();
-	
+		
 	public boolean doColumnReset = false ;
 	public boolean needsColumnReset = false;
-	public boolean doRowLimit = false;
-	public boolean showName = true;	
+	public boolean doRowLimit = false;	
+	public boolean showLabel = true;
+	public boolean showTraceList = false;
+	
 	
 	
 	public void debug(GeoElement geo){
@@ -39,5 +42,10 @@ public class TraceSettings {
 			}
 		System.out.println("=====================================");	
 	}
+	
+	public TraceSettings clone(TraceSettings t){
+		return this;
+	}
+	
 	
 }
