@@ -81,6 +81,9 @@ public class AlgoTableText extends AlgoElement {
     	
     	int alignment = HORIZONTAL;
     	
+    	boolean verticalLines = false;
+    	boolean horizontalLines = false;
+    	
     	String justification = "l"; // default (l, c or r)
     	
     	String openBracket = "";
@@ -89,6 +92,8 @@ public class AlgoTableText extends AlgoElement {
     	if (args != null) {
     		String optionsStr = args.getTextString();
     		if (optionsStr.indexOf("v") > -1) alignment = VERTICAL; // vertical table
+    		if (optionsStr.indexOf("|") > -1) verticalLines = true; 
+    		if (optionsStr.indexOf("_") > -1) horizontalLines = true; // vertical table
     		if (optionsStr.indexOf("c") > -1) justification = "c";
     		else if (optionsStr.indexOf("r") > -1) justification = "r";	
     		
@@ -171,10 +176,15 @@ public class AlgoTableText extends AlgoElement {
     	
     	if (alignment == VERTICAL) {
     	
-	    	for (int c = 0 ; c < columns ; c++)
+	    	for (int c = 0 ; c < columns ; c++) {
+	    		if (verticalLines) sb.append("|");
 	    		sb.append(justification); // "l", "r" or "c"
+	    	}
+    		if (verticalLines) sb.append("|");
 	    	sb.append("}");
-	    	
+
+	    	if (horizontalLines) sb.append("\\hline");
+
 	    	for (int r=0; r < rows; r++) {
 	    		for (int c = 0 ; c < columns ; c++) {
 	    			// Added by Loïc 2009/12/15
@@ -183,15 +193,21 @@ public class AlgoTableText extends AlgoElement {
 	    			// end Loïc
 	   		}
 	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
+		    	if (horizontalLines) sb.append("\\hline");
 	    	}   
     	
     	}
     	else
     	{ // alignment == HORIZONTAL
     	
-	    	for (int c = 0 ; c < rows ; c++)
+	    	for (int c = 0 ; c < rows ; c++) {
+	    		if (verticalLines) sb.append("|");
 	    		sb.append(justification); // "l", "r" or "c"
+	    	}
+	    	if (verticalLines) sb.append("|");
 	    	sb.append("}");
+	    	
+	    	if (horizontalLines) sb.append("\\hline");
 	    	
 	    	// TableText[{11.1,322,3.11},{4,55,666,7777,88888},{6.11,7.99,8.01,9.81},{(1,2)},"c()"]
 	    	
@@ -203,6 +219,7 @@ public class AlgoTableText extends AlgoElement {
     			// end Loïc
 	    		}
 	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
+		    	if (horizontalLines) sb.append("\\hline");
 	    	}   
 		
     	}
