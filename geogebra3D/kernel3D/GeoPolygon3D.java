@@ -23,7 +23,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoPolygon3D 
-extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoordSys2D {
+extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 	
 	/** 2D coord sys where the polygon exists */
@@ -519,7 +519,12 @@ extends GeoPolygon implements GeoElement3DInterface, Path, Region3D{//, GeoCoord
 	
 	public boolean isInRegion(GeoPointInterface PI){
 		
-		return isInRegion(PI.getX2D(), PI.getY2D());
+		GeoPoint3D P = (GeoPoint3D) PI;
+		
+		//udpate region coords
+		P.updateCoords2D(this);
+		
+		return isInRegion(P.getX2D(), P.getY2D());
 		
 	}
 	

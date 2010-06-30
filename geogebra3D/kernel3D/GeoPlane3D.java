@@ -5,11 +5,13 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.main.Application;
 
-public class GeoPlane3D extends GeoCoordSys2D//extends GeoCoordSys2DAbstract
-implements Functional2Var{
+public class GeoPlane3D extends GeoElement3D
+implements Functional2Var, GeoCoordSys2D{
 	
 	
 	
@@ -71,6 +73,8 @@ implements Functional2Var{
 	}
 	
 	
+	
+	
 
 	///////////////////////////////////
 	// REGION INTERFACE
@@ -79,6 +83,49 @@ implements Functional2Var{
 	public boolean isRegion(){
 		return true;
 	}
+	
+	
+	
+	public GgbVector[] getNormalProjection(GgbVector coords) {
+		return coords.projectPlane(getCoordSys().getMatrixOrthonormal());
+	}
+
+	public GgbVector[] getProjection(GgbVector coords,
+			GgbVector willingDirection) {
+		return coords.projectPlaneThruV(getCoordSys().getMatrixOrthonormal(),willingDirection);
+	}
+
+	public boolean isInRegion(GeoPointInterface PI) {
+		GgbVector planeCoords = getNormalProjection(PI.getInhomCoords())[1];
+		return Kernel.isEqual(planeCoords.get(3),0,Kernel.STANDARD_PRECISION);
+	}
+	
+	public boolean isInRegion(double x0, double y0){
+		return true;
+	}
+
+	public void pointChangedForRegion(GeoPointInterface P) {
+		
+		P.updateCoords2D();
+		P.updateCoordsFrom2D(false);
+		
+		
+	}
+
+	public void regionChanged(GeoPointInterface P) {
+		pointChangedForRegion(P);
+		
+	}
+	
+	public GgbVector getPoint(double x2d, double y2d){
+		return getCoordSys().getPoint(x2d,y2d);
+	}
+	
+	
+	
+	
+	
+	
 	
 
 	
@@ -175,10 +222,19 @@ implements Functional2Var{
 	
 	
 	
+    ///////////////////////////////////
+	// GEOELEMENT3D
 	
 	
 	
+	public GgbMatrix4x4 getDrawingMatrix(){
+		return getCoordSys().getMatrixOrthonormal();
+	}
 	
+	public GgbVector getViewDirection(){
+		
+		return getCoordSys().getNormal();
+	}
 	
 	
 	

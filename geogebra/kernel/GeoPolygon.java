@@ -889,8 +889,6 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	
 	public void pointChangedForRegion(GeoPointInterface P){
 		
-		P.updateCoords2D();
-		
 		RegionParameters rp = P.getRegionParameters();
 		
 		//Application.debug("isInRegion : "+isInRegion(P));

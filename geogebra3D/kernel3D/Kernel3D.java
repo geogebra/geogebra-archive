@@ -609,12 +609,6 @@ public class Kernel3D
 	
 	
 	
-	/** 3D element on coord sys 2D to 2D element    */	
-	final public GeoElement From3Dto2D(String label, GeoElement3D geo3D, GeoCoordSys2D cs){
-		Algo3Dto2D algo = new Algo3Dto2D(cons, label, geo3D, cs);
-		return algo.getGeo();
-	}
-	
 	
 	
 	
@@ -675,7 +669,21 @@ public class Kernel3D
 			GeoCoordSys cs1,
 			GeoCoordSys cs2) {
 		
-		AlgoIntersectCoordSys algo = new AlgoIntersectCoordSys(cons,label,cs1,cs2);
+		AlgoIntersectCoordSys algo = null;
+		
+		if (cs1 instanceof GeoCoordSys1D){
+    		if (cs2 instanceof GeoCoordSys1D)
+    			algo = new AlgoIntersectCS1D1D(cons,label,
+    					(GeoCoordSys1D) cs1,(GeoCoordSys1D) cs2);
+    		else if (cs2 instanceof GeoCoordSys2D)
+    			algo = new AlgoIntersectCS1D2D(cons,label, 
+    					(GeoCoordSys1D) cs1, (GeoCoordSys2D) cs2);
+    	}else if (cs1 instanceof GeoCoordSys2D){
+    		if (cs2 instanceof GeoCoordSys1D)
+    			algo = new AlgoIntersectCS1D2D(cons,label, 
+    					(GeoCoordSys2D) cs1, (GeoCoordSys1D) cs2);
+    	}
+		
 		GeoPoint3D p = algo.getPoint();
 		return p;
 	}

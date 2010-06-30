@@ -10,13 +10,11 @@ import geogebra.kernel.Kernel;
  * @author matthieu
  *
  */
-public abstract class GeoCoordSys2D extends GeoElement3D implements GeoCoordSys, Region3D {
+public interface GeoCoordSys2D extends GeoCoordSys, Region3D {
 	
 	
+	/*
 	
-	/** common constructor
-	 * @param c
-	 */
 	public GeoCoordSys2D(Construction c) {
 		super(c);
 	}
@@ -26,10 +24,6 @@ public abstract class GeoCoordSys2D extends GeoElement3D implements GeoCoordSys,
 		return getCoordSys().getMatrixOrthonormal();
 	}
 	
-	
-	 /** return the normal of the polygon's plane
-	 * @return the normal of the polygon's plane
-	 */
 	public GgbVector getViewDirection(){
 		
 		return getCoordSys().getNormal();
@@ -77,6 +71,6 @@ public abstract class GeoCoordSys2D extends GeoElement3D implements GeoCoordSys,
 	}
 	
 	
-	
+	*/
 
 }

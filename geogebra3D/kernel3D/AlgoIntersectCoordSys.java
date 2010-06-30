@@ -18,13 +18,8 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrixUtil;
-import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 
 
@@ -37,7 +32,7 @@ import geogebra.main.Application;
  * Calculate the GeoPoint3D intersection of two coord sys (eg line and plane).
  * 
  */
-public class AlgoIntersectCoordSys extends AlgoElement3D {
+public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
 
 	
 	//inputs
@@ -59,31 +54,33 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
      */    
     AlgoIntersectCoordSys(Construction cons, String label, GeoCoordSys cs1, GeoCoordSys cs2) {
 
-    	this(cons,cs1,cs2);
+    	super(cons);
+
+
+    	setCoordSys(cs1, cs2);
+    	
+    	p = new GeoPoint3D(cons);
+  
+    	setInputOutput(new GeoElement[] {(GeoElement) cs1,(GeoElement) cs2}, new GeoElement[] {p});
+
     	p.setLabel(label);
  
     }
     
  
-
-    /** Creates new AlgoJoinPoints3D 
-     * @param cons the construction
-     * @param cs1 first coord sys
-     * @param cs2 second coord sys
-     * */
-    AlgoIntersectCoordSys(Construction cons, 
-    		GeoCoordSys cs1, GeoCoordSys cs2) {
-    	super(cons);
-
-
+    
+    /**
+     * set cs1 and cs2 as the 2 coord sys on inputs
+     * if one is 1D and the second 2D, 1D must be taken for cs1
+     * @param cs1
+     * @param cs2
+     */
+    protected void setCoordSys(GeoCoordSys cs1, GeoCoordSys cs2){
+    	
     	this.cs1 = cs1;
     	this.cs2 = cs2;
-    	
-    	p = new GeoPoint3D(cons);
-  
-    	setInputOutput(new GeoElement[] {(GeoElement) cs1,(GeoElement) cs2}, new GeoElement[] {p});
- 
-    }       
+    }
+
 
 
 
@@ -119,98 +116,25 @@ public class AlgoIntersectCoordSys extends AlgoElement3D {
     
     
     
+
     ///////////////////////////////////////////////
     // COMPUTE
-
-    protected void compute() {
-    	    
+    
+    
+    /**
+     * sets the output to "undefined" if inputs are not defined
+     * @return if the output is defined
+     */
+    protected boolean outputIsDefined() {
+	    
     	if (!((GeoElement) cs1).isDefined() || !((GeoElement) cs2).isDefined()){
     		p.setUndefined();
-    		return;
+    		return false;
     	}
-    		
-
-    	if (cs1 instanceof GeoCoordSys1D){
-    		if (cs2 instanceof GeoCoordSys1D)
-    			compute1D1D((GeoCoordSys1D) cs1,(GeoCoordSys1D) cs2);
-    		else if (cs2 instanceof GeoPlane3D)
-    			computeLinePlane((GeoCoordSys1D) cs1, (GeoCoordSys2D) cs2);
-    	}else if (cs1 instanceof GeoPlane3D){
-    		if (cs2 instanceof GeoCoordSys1D)
-    			computeLinePlane((GeoCoordSys1D) cs2, (GeoCoordSys2D) cs1);
-    	}
-     	
-
-
-    }
-    
-    
-    /** compute the intersection of the line on the plane
-     * @param line the line
-     * @param plane the plane
-     */
-    private void computeLinePlane(GeoCoordSys1D line, GeoCoordSys2D plane){
-    	/*
-    	GgbVector[] project = 
-    		GgbMatrixUtil.intersectLinePlane(line.getMatrix(),plane.getCoordSys().getMatrixOrthonormal());
-    	*/
-    	GgbCoordSys cs = line.getCoordSys();
-    	GgbVector[] project = 
-    		cs.getOrigin().projectPlaneThruV(plane.getCoordSys().getMatrixOrthonormal(), cs.getVx());
     	
-    	//check if the point is in the line (segment or half-line)
- 		if (line.isValidCoord(-project[1].get(3))){
-			p.setCoords(project[0]);
-		}else
-			p.setUndefined();
-    	
-
-
+    	return true;
     }
-    
-    
-    /** compute the intersection of the two lines
-     * @param line1 first line
-     * @param line2 second line
-     */
-    private void compute1D1D(GeoCoordSys1D line1, GeoCoordSys1D line2){
 
-    	GgbVector[] project = GgbMatrixUtil.nearestPointsFromTwoLines(
-    			line1.getCoordSys().getOrigin(), 
-    			line1.getCoordSys().getVx(),
-    			line2.getCoordSys().getOrigin(), 
-    			line2.getCoordSys().getVx()
-    	);
-    	
-    	if (project==null)
-    		p.setUndefined(); //TODO infinite point
-    	else if (project[0].equalsForKernel(project[1], Kernel.STANDARD_PRECISION)){
-    		if (line1.isValidCoord(project[2].get(1)) && line2.isValidCoord(project[2].get(2)))
-    			p.setCoords(project[0]);
-    		else
-    			p.setUndefined();
-    	}
-    	else
-    		p.setUndefined();
-    	
-    }
-    
-    
-    /** set the coords of p regarding project coords.
-     * (see {@link AlgoIntersectCoordSys#compute1D1D(GeoCoordSysAbstract, GeoCoordSysAbstract)})
-     * @param project coordinates of p
-     */
-    private void setCoordsLineLine(GgbVector[] project){
-    	p.setCoords(project[0]);
-    }
-    
-    
-    
-    
-    
- 
-    
-    
     
     
 

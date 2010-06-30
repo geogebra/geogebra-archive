@@ -40,6 +40,12 @@ public interface Region {
 	 */	
 	public boolean isInRegion(GeoPointInterface P);
 	
+	/** says if the point (x0,y0) is in the region
+	 * @param x0 x-coord of the point
+	 * @param y0 y-coord of the point
+	 * @return true if the point (x0,y0) is in the region
+	 */
+	public boolean isInRegion(double x0, double y0);
 	
 	
 	/**

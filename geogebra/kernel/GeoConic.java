@@ -2785,6 +2785,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
 		
 
+	
+	public boolean isInRegion(GeoPointInterface PI) {
+		double x0 = PI.getX2D();
+		double y0 = PI.getY2D();
+		
+		return isInRegion(x0,y0);
+		
+	}
+	
 	/**
 	 * Returns true if point is in circle/ellipse. Coordinates of PointInterface
 	 * are used directly to avoid rounding errors.
@@ -2792,9 +2801,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * @version 2010-05-17
 	 * Last change Zbynek Konecny 
 	 */
-	public boolean isInRegion(GeoPointInterface PI) {
-		double x0 = PI.getX2D();
-		double y0 = PI.getY2D();
+	public boolean isInRegion(double x0, double y0) {
 		
 		switch (type) {
 		case CONIC_CIRCLE:
@@ -2807,6 +2814,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				return false;
 		}
 	}
+	
+	
 
 
 
