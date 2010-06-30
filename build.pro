@@ -58,7 +58,7 @@
 # Keep GeoGebraPanel
 -keep class geogebra.GeoGebraPanel {
     public <methods>;
-aaaaaaaaaaaaaaaazs}
+}
 
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
