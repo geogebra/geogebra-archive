@@ -9,7 +9,7 @@
 -injars build/geogebra_cas.jar
 -injars build/geogebra_3d.jar
 
--outjars ../build/temp
+-outjars build/temp
 
 # libraries
 -libraryjars ../java150-rt.jar
