@@ -18,10 +18,9 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbMatrixUtil;
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
-import geogebra.kernel.Kernel;
 
 
 
@@ -34,9 +33,7 @@ import geogebra.kernel.Kernel;
  * Calculate the GeoPoint3D intersection of two coord sys (eg line and plane).
  * 
  */
-public class AlgoIntersectCS1D1D extends AlgoIntersectCoordSys {
-
-	
+public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
 
 
     /** Creates new AlgoIntersectLinePlane 
@@ -45,51 +42,52 @@ public class AlgoIntersectCS1D1D extends AlgoIntersectCoordSys {
      * @param cs1 first coord sys
      * @param cs2 second coord sys
      */    
-    AlgoIntersectCS1D1D(Construction cons, String label, GeoCoordSys cs1, GeoCoordSys cs2) {
+    AlgoIntersectCS2D2D(Construction cons, String label, GeoCoordSys cs1, GeoCoordSys cs2) {
 
     	super(cons,label,cs1,cs2);
  
     }
-    
- 
 
     
-    
-    
-    
+    protected GeoElement3D createIntersection(Construction cons){
+    	
+    	return new GeoLine3D(cons);
+    	
+    }
+
     ///////////////////////////////////////////////
     // COMPUTE
     
+    
+
+    
 
     protected void compute(){
+
+    	GeoCoordSys2D cs1 = (GeoCoordSys2D) getCS1();
+    	GeoCoordSys2D cs2 = (GeoCoordSys2D) getCS2();
     	
-    	if (!outputIsDefined())
-    		return;
+    	// compute direction vector
+    	GgbVector vn1 = cs1.getCoordSys().getNormal();
+    	GgbVector vn2 = cs2.getCoordSys().getNormal();
+    	GgbVector v = vn1.crossProduct(vn2);
     	
-    	GeoCoordSys1D line1 = (GeoCoordSys1D) getCS1();
-    	GeoCoordSys1D line2 = (GeoCoordSys1D) getCS2();
+    	// compute origin:
+    	// projection of first plane origin on second plane
+    	// direction orthogonal to v and colinear to first plane
+    	GgbVector[] project = 
+    		cs1.getCoordSys().getOrigin().projectPlaneThruV(
+    				cs2.getCoordSys().getMatrixOrthonormal(), 
+    			vn1.crossProduct(v));
+    	
+    	// update line
+    	GeoLine3D l = (GeoLine3D) getIntersection();
+    	
+    	l.setCoord(project[0], v);
+ 
     	
 
-    	GgbVector[] project = GgbMatrixUtil.nearestPointsFromTwoLines(
-    			line1.getCoordSys().getOrigin(), 
-    			line1.getCoordSys().getVx(),
-    			line2.getCoordSys().getOrigin(), 
-    			line2.getCoordSys().getVx()
-    	);
-    	
-    	GeoPoint3D p = (GeoPoint3D) getIntersection();
-    	
-    	if (project==null)
-    		p.setUndefined(); //TODO infinite point
-    	else if (project[0].equalsForKernel(project[1], Kernel.STANDARD_PRECISION)){
-    		if (line1.isValidCoord(project[2].get(1)) && line2.isValidCoord(project[2].get(2)))
-    			p.setCoords(project[0]);
-    		else
-    			p.setUndefined();
-    	}
-    	else
-    		p.setUndefined();
-    	
+
     }
     
     

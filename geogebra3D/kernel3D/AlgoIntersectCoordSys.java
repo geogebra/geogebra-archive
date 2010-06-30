@@ -42,8 +42,8 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
 	private GeoCoordSys cs2;
 	
 	//output
-	/** point intersection */
-	private GeoPoint3D p;
+	/** intersection */
+	private GeoElement3D intersection;
 
 
     /** Creates new AlgoIntersectLinePlane 
@@ -59,11 +59,11 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
 
     	setCoordSys(cs1, cs2);
     	
-    	p = new GeoPoint3D(cons);
+    	intersection = createIntersection(cons);//new GeoPoint3D(cons);
   
-    	setInputOutput(new GeoElement[] {(GeoElement) cs1,(GeoElement) cs2}, new GeoElement[] {p});
+    	setInputOutput(new GeoElement[] {(GeoElement) cs1,(GeoElement) cs2}, new GeoElement[] {intersection});
 
-    	p.setLabel(label);
+    	intersection.setLabel(label);
  
     }
     
@@ -84,6 +84,16 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
 
 
 
+    /**
+     * return new intersection (default is 3D point)
+     * @param cons 
+     * @return new intersection
+     */
+    protected GeoElement3D createIntersection(Construction cons){
+    	
+    	return new GeoPoint3D(cons);
+    	
+    }
     
     
     
@@ -106,11 +116,11 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
     
     
     /**
-     * return the point
-     * @return the point
+     * return the intersection
+     * @return the intersection
      */   
-    GeoPoint3D getPoint() {
-        return p;
+    GeoElement3D getIntersection() {
+        return intersection;
     }
    
     
@@ -128,7 +138,7 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
     protected boolean outputIsDefined() {
 	    
     	if (!((GeoElement) cs1).isDefined() || !((GeoElement) cs2).isDefined()){
-    		p.setUndefined();
+    		intersection.setUndefined();
     		return false;
     	}
     	

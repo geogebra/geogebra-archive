@@ -684,8 +684,25 @@ public class Kernel3D
     					(GeoCoordSys2D) cs1, (GeoCoordSys1D) cs2);
     	}
 		
-		GeoPoint3D p = algo.getPoint();
+		GeoPoint3D p = (GeoPoint3D) algo.getIntersection();
 		return p;
+	}
+	
+	/** Calculate the intersection of two 2D coord sys (eg two planes).
+	 * @param label name of the point
+	 * @param cs1 first coord sys
+	 * @param cs2 second coord sys
+	 * @return intersection
+	 */
+	final public GeoLine3D Intersect(
+			String label,
+			GeoCoordSys2D cs1,
+			GeoCoordSys2D cs2) {
+		
+		AlgoIntersectCoordSys algo = new AlgoIntersectCS2D2D(cons,label, cs1, cs2);
+		
+		GeoLine3D l = (GeoLine3D) algo.getIntersection();
+		return l;
 	}
 	
 	

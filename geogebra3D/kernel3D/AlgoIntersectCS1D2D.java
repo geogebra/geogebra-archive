@@ -77,7 +77,7 @@ public class AlgoIntersectCS1D2D extends AlgoIntersectCoordSys {
     	GgbVector[] project = 
     		cs.getOrigin().projectPlaneThruV(cs2D.getCoordSys().getMatrixOrthonormal(), cs.getVx());
     	
-    	GeoPoint3D p = (GeoPoint3D) getPoint();
+    	GeoPoint3D p = (GeoPoint3D) getIntersection();
     	
     	//check if the point is in the line (segment or half-line)
     	// and if the point is in the region (polygon, ...)
