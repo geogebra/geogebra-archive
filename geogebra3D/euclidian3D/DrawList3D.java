@@ -1,6 +1,5 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
 import java.util.Iterator;
@@ -19,8 +18,13 @@ import java.util.LinkedList;
 public class DrawList3D {
 	
 	
-	@SuppressWarnings("serial")
-	private class Drawable3DList extends LinkedList<Drawable3D>{}
+	private class Drawable3DList extends LinkedList<Drawable3D>{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+	}
 	
 	/** lists of Drawable3D */
 	private Drawable3DList[] lists;
@@ -31,6 +35,7 @@ public class DrawList3D {
 	
 	/**
 	 * default constructor
+	 * @param view3D 
 	 */
 	public DrawList3D(EuclidianView3D view3D){
 		
@@ -130,6 +135,10 @@ public class DrawList3D {
 		
 	}
 	
+	/**
+	 * draw hidden parts not dashed
+	 * @param renderer
+	 */
 	public void drawHiddenNotTextured(Renderer renderer){
 		// points TODO hidden aspect ?
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_POINTS].iterator(); d.hasNext();) 
@@ -137,6 +146,10 @@ public class DrawList3D {
 	}
 	
 	
+	/**
+	 * draw surfaces that are not transparent
+	 * @param renderer
+	 */
 	public void drawNotTransparentSurfaces(Renderer renderer){
 		
 
@@ -146,6 +159,10 @@ public class DrawList3D {
 		
 	}
 	
+	/**
+	 * draw closed surfaces that are not transparent
+	 * @param renderer
+	 */
 	public void drawNotTransparentSurfacesClosed(Renderer renderer){
 		
 	
@@ -188,6 +205,10 @@ public class DrawList3D {
 
 	}
 	
+	/**
+	 * draw transparent closed surfaces
+	 * @param renderer
+	 */
 	public void drawTranspClosed(Renderer renderer){
 
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
@@ -251,9 +272,6 @@ public class DrawList3D {
 	
 	/** draw objects to pick them
 	 * @param renderer opengl context
-	 * @param drawHits recording the its
-	 * @param loop counter
-	 * @return return the final counter
 	 */
 	public void drawForPicking(Renderer renderer){
 
@@ -280,9 +298,6 @@ public class DrawList3D {
 	
 	/** draw objects labels to pick them
 	 * @param renderer opengl context
-	 * @param drawHits recording the its
-	 * @param loop counter
-	 * @return return the final counter
 	 */
 	public void drawLabelForPicking(Renderer renderer){
 

@@ -1,14 +1,15 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
-import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.PlotterBrush;
-import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
-import geogebra3D.kernel3D.GeoCoordSys1D;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoFunction2Var;
-import geogebra3D.kernel3D.GeoQuadric3D;
 
+/**
+ * Class for drawing a 2-var function
+ * @author matthieu
+ *
+ */
 public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	
@@ -18,6 +19,11 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	private int geometryIndex = -1;
 
 
+	/**
+	 * common constructor
+	 * @param a_view3d
+	 * @param function
+	 */
 	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunction2Var function) {
 		super(a_view3d, function);
 		tree = new SurfaceTree(function, a_view3d);

@@ -5,7 +5,6 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -13,7 +12,6 @@ import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.Kernel3D;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -22,6 +20,11 @@ import java.util.Iterator;
 
 
 
+/**
+ * Class for drawing 3D polygons.
+ * @author matthieu
+ *
+ */
 public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
@@ -30,6 +33,11 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 	
 	
+	/**
+	 * Common constructor
+	 * @param a_view3D
+	 * @param a_polygon3D
+	 */
 	public DrawPolygon3D(EuclidianView3D a_view3D, GeoPolygon3D a_polygon3D){
 		
 		super(a_view3D, a_polygon3D);
@@ -155,14 +163,22 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	// Previewable interface 
 
 	
+	@SuppressWarnings("unchecked")
 	private ArrayList selectedPoints;
 	
 	/** segments of the polygon preview */
 	private ArrayList<DrawSegment3D> segments;
 	
+	@SuppressWarnings("unchecked")
 	private ArrayList<ArrayList> segmentsPoints;
 	
 
+	/**
+	 * Constructor for previewable
+	 * @param a_view3D
+	 * @param selectedPoints
+	 */
+	@SuppressWarnings("unchecked")
 	public DrawPolygon3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
 		
 		super(a_view3D);
@@ -202,6 +218,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
 
+	@SuppressWarnings("unchecked")
 	public void updatePreview() {
 		
 		

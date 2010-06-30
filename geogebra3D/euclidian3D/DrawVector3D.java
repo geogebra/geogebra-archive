@@ -2,17 +2,25 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.GgbVector;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoVector3D;
 
+/**
+ * Class for drawing vectors
+ * @author matthieu
+ *
+ */
 public class DrawVector3D extends Drawable3DCurves {
 
 	/** gl index of the geometry */
 	private int geometryIndex = -1;
 	
+	/**
+	 * Common constructor
+	 * @param a_view3D
+	 * @param a_vector3D
+	 */
 	public DrawVector3D(EuclidianView3D a_view3D, GeoVector3D a_vector3D)
 	{
 		
@@ -58,7 +66,6 @@ public class DrawVector3D extends Drawable3DCurves {
 			p1 = geo.getStartPoint().getInhomCoords();
 		GgbVector p2 = (GgbVector) p1.add(geo.getCoords());
 		
-		float thickness = (float) (PlotterBrush.LINE3D_THICKNESS*getGeoElement().getLineThickness()/getView3D().getScale());
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 
 		brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);

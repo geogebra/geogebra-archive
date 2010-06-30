@@ -7,9 +7,19 @@ import geogebra3D.kernel3D.GeoRay3D;
 
 import java.util.ArrayList;
 
+/**
+ * Class for drawing a 3D ray.
+ * @author matthieu
+ *
+ */
 public class DrawRay3D extends DrawCoordSys1D {
 
 	
+	/**
+	 * common constructor
+	 * @param a_view
+	 * @param a_ray
+	 */
 	public DrawRay3D(EuclidianView3D a_view, GeoRay3D a_ray)
 	{
  		super(a_view, a_ray);
@@ -24,6 +34,10 @@ public class DrawRay3D extends DrawCoordSys1D {
 
 	}
 	
+	/**
+	 * update when the element is modified
+	 * @param updateDrawMinMax update min and max values
+	 */
 	protected void updateForItSelf(boolean updateDrawMinMax){
 		
 
@@ -36,6 +50,9 @@ public class DrawRay3D extends DrawCoordSys1D {
 	
 	
 	
+	/**
+	 * update min and max values
+	 */
 	protected void updateDrawMinMax(){
 		
 		GgbCoordSys cs = ((GeoCoordSys1D) getGeoElement()).getCoordSys();
@@ -100,6 +117,12 @@ public class DrawRay3D extends DrawCoordSys1D {
 	// Previewable interface 
 	
 	
+	/**
+	 * Constructor for previable
+	 * @param a_view3D
+	 * @param selectedPoints
+	 */
+	@SuppressWarnings("unchecked")
 	public DrawRay3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
 		
 		super(a_view3D,selectedPoints, new GeoRay3D(a_view3D.getKernel().getConstruction()));

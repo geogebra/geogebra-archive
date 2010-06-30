@@ -3,8 +3,6 @@ package geogebra3D.euclidian3D;
 import geogebra.kernel.GeoElement;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
-import java.awt.Color;
-
 
 /**
  * 
@@ -21,10 +19,20 @@ public abstract class Drawable3DCurves extends Drawable3D {
 
 	
 	
+	/**
+	 * common constructor
+	 * @param a_view3d
+	 * @param a_geo
+	 */
 	public Drawable3DCurves(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);
 	}
 
+	
+	/**
+	 * constructor for previewables
+	 * @param a_view3d
+	 */
 	public Drawable3DCurves(EuclidianView3D a_view3d) {
 		super(a_view3d);
 	}

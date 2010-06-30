@@ -5,10 +5,9 @@ import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbMatrixUtil;
 import geogebra.Matrix.GgbVector;
-import geogebra.euclidian.DrawVector;
 import geogebra.euclidian.Drawable;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
-import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
@@ -38,38 +37,29 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ColorModel;
-import java.awt.image.ImageObserver;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import javax.media.opengl.GLCanvas;
 import javax.swing.JPanel;
-import javax.swing.text.Segment;
 
 
-public class EuclidianView3D extends JPanel implements View, Printable, EuclidianConstants3D, EuclidianViewInterface {
+/**
+ * Class for 3D view
+ * @author matthieu
+ *
+ */
+public class EuclidianView3D extends JPanel implements View, Printable, EuclidianConstants, EuclidianViewInterface {
 
 	
 
 	private static final long serialVersionUID = -8414195993686838278L;
 	
 	
-	static final boolean DEBUG = false; //conditionnal compilation
-
 	
 	//private Kernel kernel;
 	private Kernel3D kernel3D;
@@ -88,34 +78,39 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//list of 3D objects
 	private boolean waitForUpdate = true; //says if it waits for update...
 	//public boolean waitForPick = false; //says if it waits for update...
-	private boolean removeHighlighting = false; //for removing highlighting when mouse is clicked
 	private DrawList3D drawList3D;// = new DrawList3D();
 	
 	//matrix for changing coordinate system
 	private GgbMatrix4x4 m = GgbMatrix4x4.Identity(); 
 	private GgbMatrix4x4 mInv = GgbMatrix4x4.Identity();
 	private GgbMatrix4x4 undoRotationMatrix = GgbMatrix4x4.Identity();
-	double a = 0;
-	double b = 0;//angles (in degrees)
-	double aOld, bOld;
-	double aNew, bNew;
+	private double a = 0;
+	private double b = 0;//angles (in degrees)
+	private double aOld, bOld;
+	private double aNew, bNew;
 	
 	
 
 	
 
 	//picking and hits
-	Hits3D hits = new Hits3D(); //objects picked from openGL
+	private Hits3D hits = new Hits3D(); //objects picked from openGL
 	
 	//base vectors for moving a point
+	/** origin */
 	static public GgbVector o = new GgbVector(new double[] {0.0, 0.0, 0.0,  1.0});
+	/** vx vector */
 	static public GgbVector vx = new GgbVector(new double[] {1.0, 0.0, 0.0,  0.0});
+	/** vy vector */
 	static public GgbVector vy = new GgbVector(new double[] {0.0, 1.0, 0.0,  0.0});
+	/** vz vector */
 	static public GgbVector vz = new GgbVector(new double[] {0.0, 0.0, 1.0,  0.0});
 	
 	//axis and xOy plane
 	private GeoPlane3D xOyPlane;
 	private GeoAxis3D[] axis;
+	
+	/** number of drawables linked to this view (xOy plane, Ox, Oy, Oz axis) */
 	static final public int DRAWABLES_NB = 4;
 	/** id of z-axis */
 	static final int AXIS_Z = 2; //AXIS_X and AXIS_Y already defined in EuclidianViewInterface
@@ -130,10 +125,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private GeoElement[] cursor3DIntersectionOf = new GeoElement[2]; 
 	
 	//cursor
+	/** no point under the cursor */
 	public static final int PREVIEW_POINT_NONE = 0;
+	/** free point under the cursor */
 	public static final int PREVIEW_POINT_FREE = 1;
+	/** path point under the cursor */
 	public static final int PREVIEW_POINT_PATH = 2;
+	/** region point under the cursor */
 	public static final int PREVIEW_POINT_REGION = 3;
+	/** dependent point under the cursor */
 	public static final int PREVIEW_POINT_DEPENDENT = 4;
 	private int cursor3DType = PREVIEW_POINT_NONE;
 
@@ -177,18 +177,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
-	private boolean storeUndo;
 	
 	/** says if the view is frozen (see freeze()) */
 	private boolean isFrozen = false;
 	
 	
 	
-	//stuff TODO
+	/**  selection rectangle  TODO */
 	protected Rectangle selectionRectangle = new Rectangle();
 
 
 	
+	/**
+	 * common constructor
+	 * @param ec controller on this
+	 */
 	public EuclidianView3D(EuclidianController3D ec){
 
 		
@@ -358,11 +361,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
+	/**
+	 * @return controller
+	 */
 	public EuclidianController getEuclidianController(){
 		return euclidianController3D;
 	}
 	
 	
+	/**
+	 * @return gl renderer
+	 */
 	public Renderer getRenderer(){
 		return renderer;
 	}
@@ -490,22 +499,34 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * Converts real world coordinates to screen coordinates.
 	 * 
-	 * @param inOut:
+	 * @param vInOut
 	 *            input and output array with x, y, z, w coords (
 	 */
 	final public void toScreenCoords3D(GgbVector vInOut) {	
 		changeCoords(m,vInOut);		
 	}
 	
+	/**
+	 * converts the matrix to screen coords
+	 * @param mInOut
+	 */
 	final public void toScreenCoords3D(GgbMatrix mInOut) {		
 		changeCoords(m,mInOut);			
 	}
 	
 	
+	/**
+	 * converts the vector to scene coords
+	 * @param vInOut
+	 */
 	final public void toSceneCoords3D(GgbVector vInOut) {	
 		changeCoords(mInv,vInOut);		
 	}
 	
+	/**
+	 * converts the matrix to scene coords
+	 * @param mInOut
+	 */
 	final public void toSceneCoords3D(GgbMatrix mInOut) {		
 		changeCoords(mInv,mInOut);			
 	}
@@ -578,6 +599,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	
+	/**
+	 * sets the rotation matrix
+	 * @param a
+	 * @param b
+	 * @param repaint
+	 */
 	public void setRotXYinDegrees(double a, double b, boolean repaint){
 		
 		//Application.debug("setRotXY");
@@ -615,11 +642,23 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 	}
 
+	/**
+	 * add to the rotation matrix
+	 * @param da
+	 * @param db
+	 * @param repaint
+	 */
 	public void addRotXY(int da, int db, boolean repaint){
 		
 		setRotXYinDegrees(a+da,b+db,repaint);
 	}	
 
+	/**
+	 * set the rotation matrix in radians
+	 * @param a
+	 * @param b
+	 * @param repaint
+	 */
 	public void setRotXY(double a, double b, boolean repaint){
 		
 		setRotXYinDegrees(a/EuclidianController3D.ANGLE_TO_DEGREES,b/EuclidianController3D.ANGLE_TO_DEGREES,repaint);
@@ -632,10 +671,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * to re-center the scene */
 	public double getXZero() { return XZero; }
 	public double getYZero() { return YZero; }
+	/** @return the z-coord of the origin */
 	public double getZZero() { return ZZero; }
 
+	/** set the x-coord of the origin 
+	 * @param val */
 	public void setXZero(double val) { XZero=val; }
+	/** set the y-coord of the origin 
+	 * @param val */
 	public void setYZero(double val) { YZero=val; }
+	/** set the z-coord of the origin 
+	 * @param val */
 	public void setZZero(double val) { ZZero=val; }
 	
 	
@@ -645,12 +691,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public double getXscale() { return scale; }
 	public double getYscale() { return scale; }
+	
+	/** @return the z-scale */
 	public double getZscale() { return scale; }
 	
+	/**
+	 * set the all-axis scale
+	 * @param val
+	 */
 	public void setScale(double val){
 		scale = val;
 	}
 	
+	/**
+	 * @return the all-axis scale
+	 */
 	public double getScale(){
 		return scale;
 	}
@@ -707,13 +762,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
-	public void setRemoveHighlighting(boolean flag){
-		removeHighlighting = flag;
-	}
 	
 	
 	private boolean isStarted = false;
 	
+	/**
+	 * @return if the view has been painted at least once
+	 */
 	public boolean isStarted(){
 		return isStarted;
 	}
@@ -755,7 +810,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	// picking
 	
 	
-	/** (x,y) 2D screen coords -> 3D physical coords */
+	/** (x,y) 2D screen coords -> 3D physical coords 
+	 * @param x 
+	 * @param y 
+	 * @return 3D physical coords of the picking point */
 	public GgbVector getPickPoint(int x, int y){			
 		
 		
@@ -763,19 +821,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		this.getSize(d);
 		
 		if (d!=null){
-			//Application.debug("Dimension = "+d.width+" x "+d.height);
-			double w = (double) d.width;
-			double h = (double) d.height;
 			
 			GgbVector ret = new GgbVector(
 					new double[] {
 							(double) x+renderer.getLeft(),
 							(double) -y+renderer.getTop(),
-							//((double) (x-w)/w),
-							//((double) (-y+h)/w),
 							0, 1.0});
 			
-			//ret.SystemPrint();
 			return ret;
 		}else
 			return null;
@@ -784,7 +836,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	/** p scene coords, (dx,dy) 2D mouse move -> 3D physical coords */
+	/** p scene coords, (dx,dy) 2D mouse move -> 3D physical coords 
+	 * @param p 
+	 * @param dx 
+	 * @param dy 
+	 * @return 3D physical coords  */
 	public GgbVector getPickFromScenePoint(GgbVector p, int dx, int dy){
 		GgbVector point = p.copyVector();
 		toScreenCoords3D(point);
@@ -818,6 +874,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
+	/**
+	 * attach the view to the kernel
+	 */
 	public void attachView() {
 		kernel3D.notifyAddAll(this);
 		kernel3D.attach(this);
@@ -872,6 +931,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 	}
 	
+	/**
+	 * says this drawable to be updated
+	 * @param d
+	 */
 	public void update(Drawable3D d){
 		d.setWaitForUpdate();
 	}
@@ -1292,11 +1355,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		animatedScaleTimeFactor = 0.005; //it will take about 1/2s to achieve it
 		
-		this.storeUndo = storeUndo;
+		//this.storeUndo = storeUndo;
 
-		//setHits(new Point(ox,oy));
-		//updateCursor3D();
-		//setHitCursor();
 		
 	}
 	
@@ -1328,6 +1388,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	/**
+	 * start a rotation animation to be in the vector direction
+	 * @param vn
+	 */
 	public void setRotAnimation(GgbVector vn){
 
 		animatedRot = true;
@@ -1402,6 +1466,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	/**
+	 * stops the rotation animation
+	 */
 	public void stopRotAnimation(){
 		animatedContinueRot = false;
 		animatedRot = false;
@@ -1824,11 +1891,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	
 	
+	/**
+	 * sets the type of the cursor
+	 * @param v
+	 */
 	public void setCursor3DType(int v){
 		cursor3DType = v;
 	}
 	
 
+	/**
+	 * @return the type of the cursor
+	 */
 	public int getCursor3DType(){
 		return cursor3DType;
 	}
@@ -1854,30 +1928,38 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
+	/**
+	 * @return the list of 3D drawables
+	 */
 	public DrawList3D getDrawList3D(){
 		return drawList3D;
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 
 		return new DrawLine3D(this, selectedPoints);
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewSegment(ArrayList selectedPoints){
 		return new DrawSegment3D(this, selectedPoints);
 	}	
 	
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewRay(ArrayList selectedPoints){
 		return new DrawRay3D(this, selectedPoints);
 	}	
 	
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewVector(ArrayList selectedPoints){
 		//return new DrawVector3D(this, selectedPoints);
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
 		return new DrawPolygon3D(this, selectedPoints);
 	}	
@@ -2027,13 +2109,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
-	
+
 	/////////////////////////////////////////////////////
 	// 
 	// CURSOR
 	//
 	/////////////////////////////////////////////////////
 	
+	
+	
+	/** 
+	 * draws the cursor
+	 * @param renderer
+	 */
 	public void drawCursor(Renderer renderer){
 
 		if (hasMouse && cursor3DVisible){
@@ -2253,6 +2341,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	/**
+	 * @return the xOy plane
+	 */
 	public GeoPlane3D getxOyPlane()  {
 
 		return xOyPlane;
@@ -2260,6 +2351,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	/**
+	 * says if this geo is owned by the view (xOy plane, ...)
+	 * @param geo
+	 * @return if this geo is owned by the view (xOy plane, ...)
+	 */
 	public boolean owns(GeoElement geo){
 		
 		boolean ret = (geo == xOyPlane);
@@ -2352,6 +2448,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
+	/**
+	 * says all drawables that the view has changed
+	 */
 	public void updateDrawables(){
 		
 		xOyPlane.getDrawable3D().viewChanged();
@@ -2365,6 +2464,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 	}
 	
+	/**
+	 * update all drawables now
+	 */
 	public void updateDrawablesNow(){
 		
 		for(int i=0;i<3;i++){
@@ -2449,6 +2551,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewParallelLine(ArrayList selectedPoints,
 			ArrayList selectedLines) {
 		// TODO Auto-generated method stub
@@ -2459,6 +2562,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewPerpendicularLine(ArrayList selectedPoints,
 			ArrayList selectedLines) {
 		// TODO Auto-generated method stub
@@ -2469,6 +2573,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewPerpendicularBisector(
 			ArrayList selectedPoints) {
 		// TODO Auto-generated method stub
@@ -2479,6 +2584,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	@SuppressWarnings("unchecked")
 	public Previewable createPreviewAngleBisector(ArrayList selectedPoints) {
 		// TODO Auto-generated method stub
 		return null;

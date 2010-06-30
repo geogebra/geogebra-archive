@@ -1,7 +1,6 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
 import java.awt.Color;
@@ -13,10 +12,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
-
-import javax.media.opengl.GL;
 
 
 /**

@@ -1,17 +1,18 @@
 package geogebra3D.euclidian3D;
 
-import java.awt.Color;
-
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.GeoSegment3D;
 
+import java.awt.Color;
+
+/**
+ * Class for drawing decorations of points (altitude segment from the point to xOy plane, ...)
+ * @author matthieu
+ *
+ */
 public class DrawPointDecorations extends DrawCoordSys1D {
 	
 	//private GgbMatrix4x4 segmentMatrix;
@@ -19,13 +20,13 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 	
 	private GgbVector p1, p2;
 	
-	/** gl index of the plane */
-	private int planeIndex;
 	
-	// altitude of the point
-	//private double altitude;
 	
 
+	/**
+	 * common constructor
+	 * @param aView3d
+	 */
 	public DrawPointDecorations(EuclidianView3D aView3d) {
 		super(aView3d);
 		
@@ -107,13 +108,6 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 
 	
 	protected void updateForItSelf() {
-		
-		Renderer renderer = getView3D().getRenderer();
-		
-		//renderer.getGeometryManager().remove(planeIndex);
-		
-		//planeIndex = renderer.getGeometryManager().newPlane(Color.GRAY,0.25f,1f);
-		
 		
 		updateForItSelf(p1, p2);
 	}

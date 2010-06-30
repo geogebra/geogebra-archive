@@ -17,6 +17,11 @@ import java.awt.Color;
 
 
 
+/**
+ * Class for drawing 3D planes.
+ * @author matthieu
+ *
+ */
 public class DrawPlane3D extends Drawable3DSurfaces {
 
 
@@ -27,6 +32,11 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 	
 	
+	/**
+	 * Common constructor
+	 * @param a_view3D
+	 * @param a_plane3D
+	 */
 	public DrawPlane3D(EuclidianView3D a_view3D, GeoPlane3D a_plane3D){
 		
 		super(a_view3D, a_plane3D);

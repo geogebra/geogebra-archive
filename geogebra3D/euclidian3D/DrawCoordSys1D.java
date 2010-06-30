@@ -2,19 +2,18 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+/**
+ * Class for drawing 1D coord sys (lines, segments, ...)
+ * @author matthieu
+ *
+ */
 public abstract class DrawCoordSys1D extends Drawable3DCurves implements Previewable {
 
 	private double drawMin;
@@ -25,6 +24,11 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 
 
 	
+	/**
+	 * common constructor
+	 * @param a_view3D
+	 * @param cs1D
+	 */
 	public DrawCoordSys1D(EuclidianView3D a_view3D, GeoCoordSys1D cs1D){
 		
 		super(a_view3D, cs1D);
@@ -32,6 +36,10 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	
 	
+	/**
+	 * common constructor for previewable
+	 * @param a_view3d
+	 */
 	public DrawCoordSys1D(EuclidianView3D a_view3d) {
 		super(a_view3d);
 		
@@ -39,16 +47,27 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 
 	
 	
+	/**
+	 * sets the values of drawable extremities
+	 * @param drawMin
+	 * @param drawMax
+	 */
 	protected void setDrawMinMax(double drawMin, double drawMax){
 		this.drawMin = drawMin;
 		this.drawMax = drawMax;
 	}
 	
 	
+	/**
+	 * @return the minimum extremity
+	 */
 	protected double getDrawMin(){
 		return drawMin;
 	}
 	
+	/**
+	 * @return the maximum extremity
+	 */
 	protected double getDrawMax(){
 		return drawMax;
 	}
@@ -76,6 +95,11 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	}
 
+	/**
+	 * update the drawable as a segment from p1 to p2
+	 * @param p1
+	 * @param p2
+	 */
 	protected void updateForItSelf(GgbVector p1, GgbVector p2){
 
 		//TODO prevent too large values
@@ -109,6 +133,9 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		
 	}
 	
+	/**
+	 * @return the line thickness
+	 */
 	protected int getLineThickness(){
 		return getGeoElement().getLineThickness();
 	}
@@ -142,22 +169,26 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	// Previewable interface 
 	
 	
+	@SuppressWarnings("unchecked")
 	private ArrayList selectedPoints;
 
+	/**
+	 * constructor for previewable
+	 * @param a_view3D
+	 * @param selectedPoints
+	 * @param cs1D
+	 */
+	@SuppressWarnings("unchecked")
 	public DrawCoordSys1D(EuclidianView3D a_view3D, ArrayList selectedPoints, GeoCoordSys1D cs1D){
 		
 		super(a_view3D);
 		
-		Kernel3D kernel = (Kernel3D) getView3D().getKernel();
-
 		
 		cs1D.setIsPickable(false);
 		setGeoElement(cs1D);
 		
 		this.selectedPoints = selectedPoints;
 		
-		//viewChanged();
-
 		updatePreview();
 		
 	}	

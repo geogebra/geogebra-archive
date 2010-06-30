@@ -1,25 +1,34 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoElement3D;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.TreeMap;
 
+/**
+ * Class for drawing axis (Ox), (Oy), ...
+ * 
+ * @author matthieu
+ *
+ */
 public class DrawAxis3D extends DrawLine3D {
 	
 	private TreeMap<String, DrawLabel3D>  labels;
 	
-	public DrawAxis3D(EuclidianView3D a_view3D, GeoAxis3D axis3D){
+	/**
+	 * common constructor
+	 * @param view3D
+	 * @param axis3D
+	 */
+	public DrawAxis3D(EuclidianView3D view3D, GeoAxis3D axis3D){
 		
-		super(a_view3D, axis3D);
+		super(view3D, axis3D);
 		
 		labels = new TreeMap<String, DrawLabel3D>();
 	}	

@@ -3,16 +3,25 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
-import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 
 import java.util.ArrayList;
 
+/**
+ * Class for drawing lines
+ * @author matthieu
+ *
+ */
 public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 
 	
 	
+	/**
+	 * common constructor
+	 * @param a_view3D
+	 * @param a_line3D
+	 */
 	public DrawLine3D(EuclidianView3D a_view3D, GeoLine3D a_line3D){
 		
 		super(a_view3D, a_line3D);
@@ -28,6 +37,10 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 
 	}
 	
+	/**
+	 * update the drawable when the element changes
+	 * @param updateDrawMinMax update min and max values
+	 */
 	protected void updateForItSelf(boolean updateDrawMinMax){
 		
 
@@ -38,6 +51,9 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 
 	}
 
+	/**
+	 *  update min and max values
+	 */
 	protected void updateDrawMinMax(){
 		
 		GgbCoordSys cs = ((GeoCoordSys1D) getGeoElement()).getCoordSys();
@@ -65,8 +81,13 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	// Previewable interface 
 	
 	
-	//private ArrayList selectedPoints;
 
+	/**
+	 * constructor for previewable
+	 * @param a_view3D
+	 * @param selectedPoints
+	 */
+	@SuppressWarnings("unchecked")
 	public DrawLine3D(EuclidianView3D a_view3D, ArrayList selectedPoints){
 		
 		super(a_view3D,selectedPoints, new GeoLine3D(a_view3D.getKernel().getConstruction()));

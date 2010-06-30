@@ -15,7 +15,6 @@ import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoCoordSys2D;
-import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -28,24 +27,23 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Controller for the 3D view
+ * @author matthieu
+ *
+ */
 public class EuclidianController3D extends EuclidianController 
 implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 
 
 
-	static final boolean DEBUG = false; //conditionnal compilation
-	
-	
-	
-	//TODO link it to toolbar values
-	protected static final int MOVE_POINT_WHEEL = 3102;
 	
 	
 	
 	
 	
-	//protected boolean isCtrlDown = false;
+	/** says if the shift-key is down */
 	protected boolean isShiftDown = false;
 	
 	
@@ -54,25 +52,28 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
-	protected GeoElement3D objSelected = null;
+	
+	/** 3D point that is currently moved */
 	protected GeoPoint3D movedGeoPoint3D = null;
 	
 	/** current plane where the movedGeoPoint3D lies */
 	protected GgbMatrix4x4 currentPlane = null;
 	
 	
+	/** 3D view controlled by this */
 	protected EuclidianView3D view3D; //TODO move to EuclidianViewInterface
-	//protected Kernel3D kernel3D;
-	//protected Application3D app3D;
 	
 	
 	
 	
 	private Point mouseLocOld = new Point();
 	
-	protected GgbVector mouseLoc3D, startLoc3D;
+	/** 3D location of the mouse */
+	protected GgbVector mouseLoc3D;	
+	/** starting 3D location of the mouse */
+	protected GgbVector startLoc3D;
 	
-	//picking
+	/** picking point */
 	protected GgbVector pickPoint;
 	
 
@@ -80,10 +81,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	private boolean viewRotationOccured = false;
 	
 	
-	//scale factor for changing angle of view : 2Pi <-> 360 pixels (so 1 pixel = 1° )
+	/** scale factor for changing angle of view : 2Pi <-> 360 pixels (so 1 pixel = 1° ) */
 	static final public double ANGLE_TO_DEGREES = 2*Math.PI/360;
-	static final public int ANGLE_MAX = 90;//(int) ((Math.PI/2)/ANGLE_TO_DEGREES); //maximum vertical angle
-
+	/** maximum vertical angle */
+	static final public int ANGLE_MAX = 90;
 
 	
 	/** for animated rotation */
@@ -101,12 +102,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	/**
+	 * common constructor
+	 * @param kernel
+	 */
 	public EuclidianController3D(Kernel kernel) {
 		super(kernel);
 	}
 	
 	
-	void setView(EuclidianView3D view) {
+	/**
+	 * sets the view controlled by this
+	 * @param view
+	 */
+	public void setView(EuclidianView3D view) {
 		this.view3D = view;
 		super.setView(view);
 	
@@ -550,6 +559,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 
 	
+	/**
+	 * @return selected 3D lines
+	 */
 	final protected GeoCoordSys1D[] getSelectedLines3D() {
 		GeoCoordSys1D[] lines = new GeoCoordSys1D[selectedLines.size()];
 		getSelectedLinesInterface(lines);
@@ -609,8 +621,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
-	// get point and line;
-	// create plane through point and line
+	/** get point and line;
+	 * create plane through point and line
+	 * 
+	 * @param hits
+	 * @return true if a plane has been created
+	 */
 	final protected boolean pointLine(Hits hits) {
 		if (hits.isEmpty())
 			return false;
@@ -634,8 +650,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 	
-	// get point and plane;
-	// create line through point parallel to plane
+	/** get point and plane;
+	 * create line through point parallel to plane
+	 * 
+	 * @param hits
+	 * @return true if a plane has been created
+	 */
 	final protected boolean parallelPlane(Hits hits) {
 		
 		//Application.debug(hits.toString());
@@ -689,8 +709,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// mouse moved
 	
 	
-	boolean mouseMoved = false;
-	MouseEvent mouseEvent = null;
+	private boolean mouseMoved = false;
+	private MouseEvent mouseEvent = null;
 	
 	protected void processMouseMoved(MouseEvent e) {	
 		((EuclidianView3D) view).setHits3D(mouseLoc);		
@@ -980,7 +1000,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	///////////////////////////////////////////
 	// INTERSECTIONS
 	
-	/** get two objects (lines or conics) and create intersection point */
+	/**
+	 *  get two objects (lines or conics) and create intersection point 
+	 *
+	 */
+	@SuppressWarnings("unchecked")
 	protected boolean intersect(Hits hits) {
 		if (hits.isEmpty())
 			return false;		
@@ -1048,6 +1072,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// SELECTIONS
 	
 	/** selected 1D coord sys */
+	@SuppressWarnings("unchecked")
 	protected ArrayList selectedCS1D = new ArrayList();
 	
 	/** add hits to selectedCS1D
@@ -1075,6 +1100,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** return selected 1D coord sys
 	 * @return selected 1D coord sys
 	 */
+	@SuppressWarnings("unchecked")
 	final protected GeoCoordSys1D[] getSelectedCS1D() {
 		GeoCoordSys1D[] lines = new GeoCoordSys1D[selectedCS1D.size()];
 		int i = 0;
@@ -1091,6 +1117,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	protected GeoElement chooseGeo(ArrayList geos, boolean includeFixed) {
 		
 		//Application.printStacktrace(((Hits) geos).toString());
@@ -1191,15 +1218,29 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// SELECTED GEOS
 	//////////////////////////////////////
 	
+	/**
+	 * add selected 2D coord sys
+	 * @param hits
+	 * @param max
+	 * @param addMoreThanOneAllowed
+	 * @return if one has been added
+	 */
 	final protected int addSelectedCoordSys2D(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCoordSys2D, GeoCoordSys2D.class);
 	}
 	
+	/**
+	 * @return number of selected 2D coord sys
+	 */
 	protected final int selCoordSys2D() {
 		return selectedCoordSys2D.size();
 	}
 	
+	/**
+	 * @return selected 2D coord sys
+	 */
+	@SuppressWarnings("unchecked")
 	final protected GeoCoordSys2D[] getSelectedCoordSys2D() {
 		GeoCoordSys2D[] cs = new GeoCoordSys2D[selectedCoordSys2D.size()];
 		int i = 0;

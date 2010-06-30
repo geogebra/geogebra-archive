@@ -253,12 +253,23 @@ public abstract class Drawable3D {
 	
 	
 	
+	/**
+	 * update the label
+	 */
 	protected void updateLabel(){
 
+		//TODO create common code
 	}
 	
+	/**
+	 * update the drawable when view has changed
+	 * TODO separate translation/rotation/zoom of the view
+	 */
 	abstract protected void updateForView();
 	
+	/**
+	 * update the drawable when element has changed
+	 */
 	abstract protected void updateForItSelf();
 	
 	
@@ -553,10 +564,12 @@ public abstract class Drawable3D {
 	
 	
 	/** Comparator for Drawable3Ds */
-	static final public class drawableComparator implements Comparator{
-		public int compare(Object arg1, Object arg2) {
+	static final public class drawableComparator implements Comparator<Drawable3D>{
+		public int compare(Drawable3D d1, Drawable3D d2) {
+			/*
 			Drawable3D d1 = (Drawable3D) arg1;
 			Drawable3D d2 = (Drawable3D) arg2;
+			*/
 			
 						
 			return d1.comparePickingTo(d2,false);
@@ -566,11 +579,13 @@ public abstract class Drawable3D {
 	}
 	
 	/** Comparator for sets of Drawable3Ds */
-	static final public class setComparator implements Comparator{
-		public int compare(Object arg1, Object arg2) {
+	static final public class setComparator implements Comparator<TreeSet<Drawable3D>>{
+		public int compare(TreeSet<Drawable3D> set1, TreeSet<Drawable3D> set2) {
 
+			/*
 			TreeSet set1 = (TreeSet) arg1;
 			TreeSet set2 = (TreeSet) arg2;
+			*/
 			
 			//check if one set is empty
 			if (set1.isEmpty())

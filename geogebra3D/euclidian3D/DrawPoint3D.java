@@ -9,13 +9,20 @@ import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoPoint3D;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
 
 
 //TODO does not extend Drawable3DCurves
 
+
+/**
+ * Class for drawing 3D points.
+ * 
+ * @author matthieu
+ * 
+ *
+ */
 public class DrawPoint3D extends Drawable3DCurves 
 implements Previewable, Functional2Var{
 	
@@ -27,9 +34,14 @@ implements Previewable, Functional2Var{
 	
 		
 	
-	public DrawPoint3D(EuclidianView3D a_view3D, GeoPoint3D a_point3D) {     
+	/**
+	 * common constructor
+	 * @param view3D
+	 * @param point3D
+	 */
+	public DrawPoint3D(EuclidianView3D view3D, GeoPoint3D point3D) {     
 		
-		super(a_view3D, a_point3D);
+		super(view3D, point3D);
 		
 	}
 	

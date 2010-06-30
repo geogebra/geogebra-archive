@@ -1,7 +1,5 @@
 package geogebra3D.euclidian3D;
 
-import java.util.LinkedList;
-
 import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;

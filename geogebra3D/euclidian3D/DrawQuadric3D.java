@@ -1,15 +1,15 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
-import geogebra.kernel.arithmetic.Functional2Var;
-import geogebra.main.Application;
-import geogebra3D.euclidian3D.opengl.PlotterBrush;
-import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
-import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoFunction2Var;
+import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoQuadric3D;
 
+/**
+ * Class for drawing quadrics.
+ * @author matthieu
+ *
+ */
 public class DrawQuadric3D extends Drawable3DSurfaces {
 	
 	
@@ -17,6 +17,11 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 	private int quadricIndex = -1;
 
 
+	/**
+	 * common constructor
+	 * @param a_view3d
+	 * @param a_quadric
+	 */
 	public DrawQuadric3D(EuclidianView3D a_view3d, GeoQuadric3D a_quadric) {
 		
 		super(a_view3d, a_quadric);

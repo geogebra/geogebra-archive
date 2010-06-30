@@ -3,17 +3,29 @@ package geogebra3D.euclidian3D;
 import geogebra.kernel.GeoElement;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
-import java.awt.Color;
-
+/**
+ * Class for drawing surfaces
+ * @author matthieu
+ *
+ */
 public abstract class Drawable3DSurfaces extends Drawable3D {
 	
 	/** alpha value for rendering transparency */
 	protected float alpha;
 
+	/**
+	 * common constructor
+	 * @param a_view3d
+	 * @param a_geo
+	 */
 	public Drawable3DSurfaces(EuclidianView3D a_view3d, GeoElement a_geo) {
 		super(a_view3d, a_geo);
 	}
 
+	/**
+	 * common constructor for previewable
+	 * @param a_view3d
+	 */
 	public Drawable3DSurfaces(EuclidianView3D a_view3d) {
 		super(a_view3d);
 	}
@@ -21,6 +33,10 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	
 	
 	
+	/**
+	 * draws the geometry that hides other drawables (for dashed curves)
+	 * @param renderer
+	 */
 	abstract void drawGeometryHiding(Renderer renderer);
 
 

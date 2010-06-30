@@ -2,7 +2,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
+import geogebra3D.euclidian3D.Drawable3D.drawableComparator;
 import geogebra3D.kernel3D.GeoCoordSys2D;
 import geogebra3D.kernel3D.GeoSegment3D;
 
@@ -10,28 +10,51 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+/**
+ * 3D hits (for picking, selection, ...)
+ * @author matthieu
+ *
+ */
 public class Hits3D extends Hits {
 	
-	/** set of hits by picking order */
-	private TreeSet[] hitSet = new TreeSet[Drawable3D.DRAW_PICK_ORDER_MAX];
-	/** other hits */
-	private TreeSet hitsOthers = new TreeSet(new Drawable3D.drawableComparator()); 
-	/** label hits */
-	private TreeSet hitsLabels = new TreeSet(new Drawable3D.drawableComparator()); 
-	/** set of all the sets */
-	private TreeSet hitSetSet = new TreeSet(new Drawable3D.setComparator()); 
+
+	private static final long serialVersionUID = 1L;
 	
-	Hits topHits = new Hits();
+	/**
+	 * class for tree set of drawable 3D
+	 * @author matthieu
+	 */
+	private class TreeSetOfDrawable3D extends TreeSet<Drawable3D>{
+
+		private static final long serialVersionUID = 1L;
+
+		public TreeSetOfDrawable3D(drawableComparator drawableComparator) {
+			super(drawableComparator);
+		}
+	}
+	
+	/** set of hits by picking order */
+	private TreeSetOfDrawable3D[] hitSet = new TreeSetOfDrawable3D[Drawable3D.DRAW_PICK_ORDER_MAX];
+	/** other hits */
+	private TreeSetOfDrawable3D hitsOthers = new TreeSetOfDrawable3D(new Drawable3D.drawableComparator()); 
+	/** label hits */
+	private TreeSetOfDrawable3D hitsLabels = new TreeSetOfDrawable3D(new Drawable3D.drawableComparator()); 
+	/** set of all the sets */
+	private TreeSet<TreeSetOfDrawable3D> hitSetSet = new TreeSet<TreeSetOfDrawable3D>(new Drawable3D.setComparator()); 
+	
+	private Hits topHits = new Hits();
 
 	/** number of coord sys 2D */
 	private int cs2DCount;
 	
+	/**
+	 * common constructor
+	 */
 	public Hits3D(){
 		super();
 		
-		// initing hitSet
 		for (int i=0;i<Drawable3D.DRAW_PICK_ORDER_MAX;i++)
-			hitSet[i] = new TreeSet(new Drawable3D.drawableComparator());
+			hitSet[i] = new TreeSetOfDrawable3D(new Drawable3D.drawableComparator());
 		
 		// init counters
 		cs2DCount = 0;
@@ -110,18 +133,18 @@ public class Hits3D extends Hits {
 			hitSetSet.add(hitSet[i]);		
 
 		
-		for (Iterator iter = ((TreeSet) hitSetSet.first()).iterator(); iter.hasNext();) {
+		for (Iterator<Drawable3D> iter = hitSetSet.first().iterator(); iter.hasNext();) {
 			Drawable3D d = (Drawable3D) iter.next();
 			topHits.add(d.getGeoElement());
 		}
 		
 		
 		// sets the hits to this
-		ArrayList segmentList = new ArrayList();
+		ArrayList<GeoElement> segmentList = new ArrayList<GeoElement>();
 		
-		for (Iterator iterSet = hitSetSet.iterator(); iterSet.hasNext();) {
-			TreeSet set = (TreeSet) iterSet.next();
-			for (Iterator iter = set.iterator(); iter.hasNext();) {
+		for (Iterator<TreeSetOfDrawable3D> iterSet = hitSetSet.iterator(); iterSet.hasNext();) {
+			TreeSetOfDrawable3D set = iterSet.next();
+			for (Iterator<Drawable3D> iter = set.iterator(); iter.hasNext();) {
 				Drawable3D d = (Drawable3D) iter.next();
 				GeoElement geo = d.getGeoElement();
 				this.add(geo);
@@ -133,7 +156,7 @@ public class Hits3D extends Hits {
 		}
 		
 		// add the parent of this if it's a segment from a GeoPolygon3D or GeoPolyhedron
-		for (Iterator iter = segmentList.iterator(); iter.hasNext();) {
+		for (Iterator<GeoElement> iter = segmentList.iterator(); iter.hasNext();) {
 			GeoSegment3D seg = (GeoSegment3D) iter.next();
 			GeoElement parent = seg.getGeoParent();
 			if (parent!=null)
@@ -178,7 +201,7 @@ public class Hits3D extends Hits {
 		if (hitsLabels.isEmpty())
 			return null;
 		else{
-			GeoElement labelGeo = ((Drawable3D) hitsLabels.first()).getGeoElement();
+			GeoElement labelGeo = hitsLabels.first().getGeoElement();
 			
 			return labelGeo;
 			
