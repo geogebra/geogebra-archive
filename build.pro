@@ -20,7 +20,7 @@
 -libraryjars jlatexmath.jar
 
 # Rhino Javascript is not obfuscated
--libraryjars ../build/geogebra_javascript.jar
+-libraryjars build/geogebra_javascript.jar
 
 
 -dontoptimize
