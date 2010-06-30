@@ -2,12 +2,12 @@
 # Proguard config file for GeoGebra
 #
 #
--injars ../build/geogebra.jar
--injars ../build/geogebra_main.jar
--injars ../build/geogebra_gui.jar
--injars ../build/geogebra_export.jar
--injars ../build/geogebra_cas.jar
--injars ../build/geogebra_3d.jar
+-injars build/geogebra.jar
+-injars build/geogebra_main.jar
+-injars build/geogebra_gui.jar
+-injars build/geogebra_export.jar
+-injars build/geogebra_cas.jar
+-injars build/geogebra_3d.jar
 
 -outjars ../build/temp
 
@@ -58,7 +58,7 @@
 # Keep GeoGebraPanel
 -keep class geogebra.GeoGebraPanel {
     public <methods>;
-}
+aaaaaaaaaaaaaaaazs}
 
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
