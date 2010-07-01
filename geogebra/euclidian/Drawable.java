@@ -46,6 +46,8 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import org.scilab.forge.jlatexmath.WebStartAlphabetRegistration;
+import org.scilab.forge.jlatexmath.dynamic.DynamicAtom;
+import org.scilab.forge.jlatexmath.dynamic.ExternalConverterFactory;
 
 /**
  *
@@ -510,6 +512,9 @@ public abstract class Drawable {
 	       } catch (Exception e) {
 	           e.printStackTrace();
 	       }
+	       LatexConvertorFactory factory = new LatexConvertorFactory(app.getKernel());
+	       DynamicAtom.setExternalConverterFactory(factory);
+	       
 		}
 		
 		if (eqnSB == null) eqnSB = new StringBuilder(20);
@@ -553,7 +558,10 @@ public abstract class Drawable {
 			// eg with a dynamic text
 			if (equations.size() > 100) equations.clear();
 			
-			equations.put(eqnSB.toString(), icon);
+			// cache equation only if it's not dynamic
+			if (eqnSB.indexOf("\\jlmDynamic") == -1)
+				equations.put(eqnSB.toString(), icon);
+			
 		}	//else Application.debug("using buffer for: "+text);
 
 			jl.setForeground(fgColor);
