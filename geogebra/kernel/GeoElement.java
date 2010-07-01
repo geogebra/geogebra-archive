@@ -4203,7 +4203,7 @@ public abstract class GeoElement
 		
 		kernel.setCASPrintForm(tempCASPrintForm);
 		
-		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && ret.equals("?")) ret = "undefined";
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && ret.equals("?")) ret = app.getPlain("undefined");
 		
 		return ret;
 	}
