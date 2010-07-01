@@ -521,6 +521,9 @@ public abstract class GeoElement
 	public void resolveVariables() {     
     }
 	
+	public boolean isInfinite() {
+		return false;
+	}
 
 	/** every subclass implements it's own set method */
 	public abstract void set(GeoElement geo);
@@ -3056,10 +3059,10 @@ public abstract class GeoElement
 	
 	final public String getLaTeXdescription() {
 		if (strLaTeXneedsUpdate) {			
-			if (isDefined()) {
+			if (isDefined() && !isInfinite()) {
 				strLaTeX = toLaTeXString(false);
 			} else {				
-				strLaTeX = getAlgebraDescription();
+				strLaTeX = app.getPlain("undefined");
 			}								
 		}
 		
@@ -4199,6 +4202,9 @@ public abstract class GeoElement
 		}
 		
 		kernel.setCASPrintForm(tempCASPrintForm);
+		
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && ret.equals("?")) ret = "undefined";
+		
 		return ret;
 	}
 

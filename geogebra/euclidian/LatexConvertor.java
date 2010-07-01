@@ -18,7 +18,14 @@ public class LatexConvertor implements ExternalConverter {
 
 	   public String getLaTeXString(String externalCode) {
 		   cons.setSuppressLabelCreation(true);
-		   GeoElement[] geos = env.processAlgebraCommand(externalCode, false);
+		   GeoElement[] geos;
+		   try {
+			   geos = env.processAlgebraCommandNoExceptionHandling(externalCode, false);
+		   }
+		   catch (Exception e) {
+			   e.printStackTrace();
+			   geos = null;
+		   }
 		   cons.setSuppressLabelCreation(false);
 		   if (geos != null) {
 			   GeoElement geo = geos[0];
