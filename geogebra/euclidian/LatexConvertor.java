@@ -32,7 +32,7 @@ public class LatexConvertor implements ExternalConverter {
 			   GeoElement geo = geos[0];
 		       return geo.getLaTeXdescription();
 		   }
-		   return null;
+		   return "";
 	   }
 	}
 
