@@ -4479,4 +4479,33 @@ public abstract class GeoElement
 
 
 
+	//=============================================
+	// Control which views are allowed to add a geo.
+	// G.Sturr, 2010-6-30 
+	//=============================================
+	
+	HashSet viewSet = new HashSet<Object>();
+	
+	public void addView(Object view){
+		viewSet.add(view);
+	}
+	public void removeView(Object view){
+		viewSet.add(view);
+	}
+	
+	public boolean isVisibleInView(Object view){
+		// if no views are set, add geo to drawingPad by default
+		if(viewSet.isEmpty()){
+			viewSet.add(app.getEuclidianView());
+		}
+		return viewSet.contains(view);
+	}
+	
+	// End G.Sturr
+	//===========================================
+	
+	
+	
+	
+
 }

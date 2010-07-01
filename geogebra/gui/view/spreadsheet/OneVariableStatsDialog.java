@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.GeoGebraPanel;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
@@ -199,13 +200,22 @@ public class OneVariableStatsDialog extends JDialog   {
 		
 		 */	
 		
-		
+
+		Construction cons = app.getKernel().getConstruction();
 		// Create histogram	
 		geoText = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
 		try {
+			boolean oldMacroMode = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			
 			GeoElement[] geos = table.kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptionHandling(geoText, false);
 			histogram = geos[0];
+			histogram.addView(ev);
+			histogram.setAlgebraVisible(false);
+			cons.setSuppressLabelCreation(oldMacroMode);
+			histogram.setLabel(null);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

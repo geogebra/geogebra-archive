@@ -2872,6 +2872,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * adds a GeoElement to this view
 	 */
 	public void add(GeoElement geo) {
+		
+		
+		//G.Sturr 2010-6-30
+		// filter out any geo not marked for this view
+		if(!geo.isVisibleInView(this)) return;
+		// END G.Sturr
+		
+		
 		// check if there is already a drawable for geo
 		Drawable d = getDrawable(geo);
 		if (d != null)
