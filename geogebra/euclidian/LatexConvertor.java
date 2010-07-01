@@ -3,6 +3,7 @@ package geogebra.euclidian;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.main.Application;
 
 import org.scilab.forge.jlatexmath.dynamic.ExternalConverter;
 
@@ -23,8 +24,8 @@ public class LatexConvertor implements ExternalConverter {
 			   geos = env.processAlgebraCommandNoExceptionHandling(externalCode, false);
 		   }
 		   catch (Exception e) {
-			   e.printStackTrace();
-			   geos = null;
+			   Application.debug(e.getLocalizedMessage());
+			   return e.getLocalizedMessage();
 		   }
 		   cons.setSuppressLabelCreation(false);
 		   if (geos != null) {
