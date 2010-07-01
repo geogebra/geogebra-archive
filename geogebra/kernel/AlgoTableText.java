@@ -92,7 +92,7 @@ public class AlgoTableText extends AlgoElement {
     	if (args != null) {
     		String optionsStr = args.getTextString();
     		if (optionsStr.indexOf("v") > -1) alignment = VERTICAL; // vertical table
-    		if (optionsStr.indexOf("|") > -1) verticalLines = true; 
+    		if (optionsStr.indexOf("|") > -1 && optionsStr.indexOf("||") == -1) verticalLines = true; 
     		if (optionsStr.indexOf("_") > -1) horizontalLines = true; // vertical table
     		if (optionsStr.indexOf("c") > -1) justification = "c";
     		else if (optionsStr.indexOf("r") > -1) justification = "r";	
