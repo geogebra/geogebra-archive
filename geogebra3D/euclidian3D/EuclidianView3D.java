@@ -78,7 +78,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//list of 3D objects
 	private boolean waitForUpdate = true; //says if it waits for update...
 	//public boolean waitForPick = false; //says if it waits for update...
-	private DrawList3D drawList3D;// = new DrawList3D();
+	private Drawable3DLists drawable3DLists;// = new DrawList3D();
 	
 	//matrix for changing coordinate system
 	private GgbMatrix4x4 m = GgbMatrix4x4.Identity(); 
@@ -206,12 +206,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	private void start(){
 		
-		drawList3D = new DrawList3D(this);
+		drawable3DLists = new Drawable3DLists(this);
 		
 		
 		//TODO replace canvas3D with GLDisplay
 		renderer = new Renderer(this);
-		renderer.setDrawList3D(drawList3D);
+		renderer.setDrawable3DLists(drawable3DLists);
 		
 		
 
@@ -387,7 +387,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			Drawable3D d = null;
 			d = createDrawable(geo);
 			if (d != null) {
-				drawList3D.add(d);
+				drawable3DLists.add(d);
 				//repaint();			
 			}
 		}
@@ -742,7 +742,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		if (waitForUpdate){
 			//drawList3D.updateAll();
-			drawList3D.viewChanged();
+			drawable3DLists.viewChanged();
 			updateDrawables();
 			waitForUpdate = false;
 		}
@@ -884,7 +884,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	public void clearView() {
-		drawList3D.clear();
+		drawable3DLists.clear();
 		
 	}
 
@@ -895,7 +895,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		if (geo.isGeoElement3D()){
 			Drawable3D d = ((GeoElement3DInterface) geo).getDrawable3D();
-			drawList3D.remove(d);
+			drawable3DLists.remove(d);
 		}
 	}
 
@@ -1931,8 +1931,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * @return the list of 3D drawables
 	 */
-	public DrawList3D getDrawList3D(){
-		return drawList3D;
+	public Drawable3DLists getDrawList3D(){
+		return drawable3DLists;
 	}
 	
 	
@@ -2052,7 +2052,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			this.previewDrawable.disposePreview();
 		
 		if (previewDrawable!=null){
-			drawList3D.add((Drawable3D) previewDrawable);
+			drawable3DLists.add((Drawable3D) previewDrawable);
 		}
 		
 		//Application.debug("drawList3D :\n"+drawList3D);

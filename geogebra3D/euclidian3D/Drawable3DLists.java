@@ -15,7 +15,7 @@ import java.util.LinkedList;
  * 
  *
  */
-public class DrawList3D {
+public class Drawable3DLists {
 	
 	
 	private class Drawable3DList extends LinkedList<Drawable3D>{
@@ -37,7 +37,7 @@ public class DrawList3D {
 	 * default constructor
 	 * @param view3D 
 	 */
-	public DrawList3D(EuclidianView3D view3D){
+	public Drawable3DLists(EuclidianView3D view3D){
 		
 		this.view3D = view3D;
 		lists = new Drawable3DList[Drawable3D.DRAW_TYPE_MAX];

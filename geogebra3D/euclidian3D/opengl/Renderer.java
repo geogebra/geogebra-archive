@@ -9,7 +9,7 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.DrawList3D;
+import geogebra3D.euclidian3D.Drawable3DLists;
 import geogebra3D.euclidian3D.Drawable3D;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
@@ -86,7 +86,7 @@ public class Renderer implements GLEventListener {
 	int pickingLoop;
 	
 	// other
-	private DrawList3D drawList3D;
+	private Drawable3DLists drawable3DLists;
 	
 	private EuclidianView3D view3D;
 	
@@ -204,8 +204,8 @@ public class Renderer implements GLEventListener {
 	 * set the list of {@link Drawable3D} to be drawn
 	 * @param dl list of {@link Drawable3D}
 	 */
-	public void setDrawList3D(DrawList3D dl){
-		drawList3D = dl;
+	public void setDrawable3DLists(Drawable3DLists dl){
+		drawable3DLists = dl;
 	}
 	
 	
@@ -237,15 +237,15 @@ public class Renderer implements GLEventListener {
 		getTextures().loadTexture(Textures.FADING);
 		
 		gl.glDisable(GL.GL_CULL_FACE);
-		drawList3D.drawTransp(this);
+		drawable3DLists.drawTransp(this);
 		//drawList3D.drawTranspClosed(this);
 
 		
 		//TODO improve this !
 		
 		gl.glEnable(GL.GL_CULL_FACE);
-		gl.glCullFace(GL.GL_FRONT); drawList3D.drawTranspClosed(this);//draws inside parts  
-		gl.glCullFace(GL.GL_BACK); drawList3D.drawTranspClosed(this);//draws outside parts 
+		gl.glCullFace(GL.GL_FRONT); drawable3DLists.drawTranspClosed(this);//draws inside parts  
+		gl.glCullFace(GL.GL_BACK); drawable3DLists.drawTranspClosed(this);//draws outside parts 
 		
 		
 		
@@ -264,13 +264,13 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_BLEND);
 		
 		gl.glDisable(GL.GL_CULL_FACE);
-        drawList3D.drawNotTransparentSurfaces(this);
+        drawable3DLists.drawNotTransparentSurfaces(this);
 
 		
 		//TODO improve this !
 		gl.glEnable(GL.GL_CULL_FACE);
-		gl.glCullFace(GL.GL_FRONT); drawList3D.drawNotTransparentSurfacesClosed(this);//draws inside parts  
-		gl.glCullFace(GL.GL_BACK); drawList3D.drawNotTransparentSurfacesClosed(this);//draws outside parts 
+		gl.glCullFace(GL.GL_FRONT); drawable3DLists.drawNotTransparentSurfacesClosed(this);//draws inside parts  
+		gl.glCullFace(GL.GL_BACK); drawable3DLists.drawNotTransparentSurfacesClosed(this);//draws outside parts 
 		
 		
 		
@@ -335,7 +335,7 @@ public class Renderer implements GLEventListener {
         view3D.updateDrawablesNow();
 
         // update 3D drawables
-        drawList3D.updateAll();
+        drawable3DLists.updateAll();
 
     	
         
@@ -350,7 +350,7 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_BLEND);
         gl.glEnable(GL.GL_TEXTURE_2D);
         //gl.glDisable(GL.GL_BLEND);
-        drawList3D.drawLabel(this);
+        drawable3DLists.drawLabel(this);
         //gl.glEnable(GL.GL_LIGHTING);
         //gl.glDisable(GL.GL_ALPHA_TEST);     
         gl.glDisable(GL.GL_TEXTURE_2D);
@@ -377,7 +377,7 @@ public class Renderer implements GLEventListener {
         view3D.drawCursor(this);
         
          
-        drawWireFrame();
+        //drawWireFrame();
         
         
         //primitives.enableVBO(gl);
@@ -386,9 +386,9 @@ public class Renderer implements GLEventListener {
         //gl.glEnable(GL.GL_CULL_FACE);
         gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
         //gl.glDisable(GL.GL_BLEND);
-        drawList3D.drawHiddenNotTextured(this);
+        drawable3DLists.drawHiddenNotTextured(this);
         gl.glEnable(GL.GL_TEXTURE_2D);
-        drawList3D.drawHiddenTextured(this);
+        drawable3DLists.drawHiddenTextured(this);
         drawNotTransp();
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_TEXTURE_2D);
@@ -427,9 +427,9 @@ public class Renderer implements GLEventListener {
         //drawing hiding parts
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
         gl.glCullFace(GL.GL_FRONT); //draws inside parts    
-        drawList3D.drawClosedSurfacesForHiding(this); //closed surfaces back-faces
+        drawable3DLists.drawClosedSurfacesForHiding(this); //closed surfaces back-faces
         gl.glDisable(GL.GL_CULL_FACE);
-        drawList3D.drawSurfacesForHiding(this); //non closed surfaces
+        drawable3DLists.drawSurfacesForHiding(this); //non closed surfaces
         gl.glColorMask(true,true,true,true);
 
 
@@ -449,7 +449,7 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_BLEND);
         gl.glCullFace(GL.GL_BACK); //draws inside parts
         gl.glEnable(GL.GL_CULL_FACE);
-        drawList3D.drawClosedSurfacesForHiding(this); //closed surfaces front-faces
+        drawable3DLists.drawClosedSurfacesForHiding(this); //closed surfaces front-faces
         gl.glColorMask(true,true,true,true);
         
         
@@ -468,7 +468,7 @@ public class Renderer implements GLEventListener {
         //drawing not hidden parts
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_BLEND);
-        drawList3D.draw(this);
+        drawable3DLists.draw(this);
   
         
         
@@ -542,20 +542,11 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_BLEND);
         gl.glEnable(GL.GL_ALPHA_TEST);
         
-    	drawList3D.drawTransp(this);
-    	drawList3D.drawTranspClosed(this);   
+    	drawable3DLists.drawTransp(this);
+    	drawable3DLists.drawTranspClosed(this);   
     	
     	gl.glPopAttrib();
     	
-    	/*
-    	gl.glDisable(GL.GL_ALPHA_TEST);
-    	gl.glEnable(GL.GL_BLEND);
-    	gl.glEnable(GL.GL_CULL_FACE);
-    	gl.glEnable(GL.GL_LIGHT0); 	
-        //gl.glEnable(GL.GL_LIGHTING);
-       	gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);gl.glPolygonMode(GL.GL_BACK, GL.GL_FILL);
-       	gl.glDepthMask(true);
-       	*/
     	
     }
     
@@ -1277,7 +1268,7 @@ public class Renderer implements GLEventListener {
     	
     	//double pickTime = System.currentTimeMillis();
 
-    	BUFSIZE = (drawList3D.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
+    	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
@@ -1335,7 +1326,7 @@ public class Renderer implements GLEventListener {
         pickingLoop = 0;
     	gl.glPushMatrix();
         gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
-        drawList3D.drawForPicking(this);
+        drawable3DLists.drawForPicking(this);
         gl.glPopMatrix();
 
         int labelLoop = pickingLoop;
@@ -1346,7 +1337,7 @@ public class Renderer implements GLEventListener {
         	gl.glEnable(GL.GL_BLEND);
            	gl.glEnable(GL.GL_TEXTURE_2D);
            	
-        	drawList3D.drawLabelForPicking(this);
+        	drawable3DLists.drawLabelForPicking(this);
         	
            	gl.glDisable(GL.GL_TEXTURE_2D);
            	gl.glDisable(GL.GL_BLEND);
