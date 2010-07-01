@@ -244,6 +244,19 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return Double.isInfinite(value);
 	}
 
+	public String getLaTeXdescription() {
+		if (strLaTeXneedsUpdate) {			
+			if (!isDefined()) {
+				strLaTeX = app.getPlain("undefined");
+			} else if (isInfinite()) {
+				if (value >= 0) strLaTeX = "\\infty"; else strLaTeX = "-\\infty";
+			} else {				
+				strLaTeX = toLaTeXString(false);
+			}
+		}
+		return strLaTeX;		
+	}
+
 	// Michael Borcherds 2008-04-30
 	final public boolean isEqual(GeoElement geo) {
 		// return false if it's a different type, otherwise use equals() method

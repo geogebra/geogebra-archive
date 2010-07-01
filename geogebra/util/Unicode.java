@@ -3,6 +3,7 @@ package geogebra.util;
 public class Unicode {
 
 	final public static char Infinity = '\u221e';
+	final public static String MinusInfinity = "-\u221e";
 	final public static char Superscript_Minus = '\u207b';
 	final public static char Superscript_0 = '\u2070';
 	final public static char Superscript_1 = '\u00b9';

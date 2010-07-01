@@ -355,12 +355,14 @@ public abstract class GeoElement
 	protected boolean highlighted = false;
 	private boolean selected = false;		
 	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML,
-		strLabelTextOrHTML, strLaTeX;
+		strLabelTextOrHTML;
+
+	protected String strLaTeX;
 	private boolean strAlgebraDescriptionNeedsUpdate = true;
 	private boolean strAlgebraDescTextOrHTMLneedsUpdate = true;
 	private boolean strAlgebraDescriptionHTMLneedsUpdate = true;
 	private boolean strLabelTextOrHTMLUpdate = true;
-	private boolean strLaTeXneedsUpdate = true;	
+	protected boolean strLaTeXneedsUpdate = true;	
 	
 	// line thickness and line type: s	
 	// note: line thickness in Drawable is calculated as lineThickness / 2.0f
@@ -3057,7 +3059,7 @@ public abstract class GeoElement
 		return strAlgebraDescription;
 	}	
 	
-	final public String getLaTeXdescription() {
+	public String getLaTeXdescription() {
 		if (strLaTeXneedsUpdate) {			
 			if (isDefined() && !isInfinite()) {
 				strLaTeX = toLaTeXString(false);
@@ -4203,7 +4205,11 @@ public abstract class GeoElement
 		
 		kernel.setCASPrintForm(tempCASPrintForm);
 		
-		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && ret.equals("?")) ret = app.getPlain("undefined");
+		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
+			if (ret.equals("?")) ret = app.getPlain("undefined");
+			else if (ret.equals(Unicode.Infinity)) ret = app.getPlain("\\infty");
+			else if (ret.equals(Unicode.MinusInfinity)) ret = app.getPlain("-\\infty");
+		}
 		
 		return ret;
 	}

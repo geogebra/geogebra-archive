@@ -550,7 +550,7 @@ public abstract class Drawable {
 				// Write error message to Graphics View
 				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				return new Dimension(rec.width, rec.height);
-			}
+			} 
 			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
 			icon.setInsets(new Insets(1, 1, 1, 1));
 			
