@@ -119,7 +119,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		set(conic);
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoConic";
 	}
 	

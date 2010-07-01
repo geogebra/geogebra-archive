@@ -71,7 +71,7 @@ public class AlgoTo2D extends AlgoElement3D {
     	}
     }   
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoTo2D";
     }
 

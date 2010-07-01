@@ -50,7 +50,7 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
         plane.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoOrthoPlanePoint";
     }
 

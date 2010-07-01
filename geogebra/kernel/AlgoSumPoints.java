@@ -50,7 +50,7 @@ public class AlgoSumPoints extends AlgoElement {
         result.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSumPoints";
     }
 

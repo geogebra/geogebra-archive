@@ -57,7 +57,7 @@ public class AlgoUnitVectorLine extends AlgoElement {
         u.setLabel(label);
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoUnitVectorLine";
     }
     

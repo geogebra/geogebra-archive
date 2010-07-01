@@ -52,7 +52,7 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
     
     
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoPoint3DInRegion";
     }
 

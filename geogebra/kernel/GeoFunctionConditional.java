@@ -102,7 +102,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	}	
 	
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoFunctionConditional";
 	}
 	

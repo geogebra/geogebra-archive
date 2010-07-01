@@ -50,7 +50,7 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
     
     
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoPoint3DOnPath";
     }
 

@@ -103,7 +103,7 @@ public class AlgoIntersectCS1D1D extends AlgoIntersectCoordSys {
     
     
 
-	protected String getClassName() {
+	public String getClassName() {
     	
     	return "AlgoIntersectCoordSys";
 	}

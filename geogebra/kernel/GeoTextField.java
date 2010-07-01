@@ -11,7 +11,7 @@ public class GeoTextField extends GeoButton {
 		
 		super(c);
 	}
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoTextField";
 	}
 	

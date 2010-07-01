@@ -32,7 +32,7 @@ public class AlgoBoxPlot extends AlgoFunctionAreaSums {
 		super(cons, label, rawData, a, b);		
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoBoxPlot";
 	}
 	

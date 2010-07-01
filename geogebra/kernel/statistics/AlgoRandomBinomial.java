@@ -33,7 +33,7 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 		cons.addRandomGeo(num);
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoRandomBinomial";
 	}
 
@@ -134,14 +134,14 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 //		int ret[] = {0,0};
 //		if (Decimal < 0.0) DecimalSign = -1.0; else DecimalSign = 1.0;
 //		Decimal = Math.abs(Decimal);
-//		if (Decimal == Math.floor(Decimal)) { // handles exact integers including 0 ×
+//		if (Decimal == Math.floor(Decimal)) { // handles exact integers including 0 ï¿½
 //			FractionNumerator = Decimal * DecimalSign;
 //			FractionDenominator = 1.0;
 //			ret[0] = (int)FractionNumerator;
 //			ret[1] = (int)FractionDenominator;
 //			return ret;
 //		}
-//		if (Decimal < 1.0E-19) { // X = 0 already taken care of ×
+//		if (Decimal < 1.0E-19) { // X = 0 already taken care of ï¿½
 //			FractionNumerator = DecimalSign;
 //			FractionDenominator = 9999999999999999999.0;
 //			ret[0] = (int)FractionNumerator;

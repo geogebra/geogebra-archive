@@ -74,7 +74,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		setLabel(label);		
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoFunction";
 	}
 	

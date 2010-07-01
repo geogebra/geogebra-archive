@@ -58,7 +58,7 @@ public class AlgoDirection extends AlgoElement {
         v.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDirection";
     }
 

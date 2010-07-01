@@ -52,7 +52,7 @@ public class AlgoTangentLine extends AlgoElement {
         GeoElement.setLabels(labels, tangents);            
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoTangentLine";
     }        
     

@@ -79,7 +79,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		animationIncrement = DEFAULT_SLIDER_INCREMENT;					
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoNumeric";
 	}
 	

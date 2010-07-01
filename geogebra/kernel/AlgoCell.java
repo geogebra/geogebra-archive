@@ -49,7 +49,7 @@ public class AlgoCell extends AlgoElement {
         geo.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoCell";
 	}
     

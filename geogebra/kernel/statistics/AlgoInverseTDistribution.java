@@ -30,7 +30,7 @@ public class AlgoInverseTDistribution extends AlgoDistribution {
         super(cons, label, a, b, null, null);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoInverseTDistribution";
     }
 

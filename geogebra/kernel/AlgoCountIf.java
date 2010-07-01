@@ -56,7 +56,7 @@ public class AlgoCountIf extends AlgoElement {
         result.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoCountIf";
 	}
     

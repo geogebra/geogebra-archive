@@ -26,7 +26,7 @@ public class AlgoCrossRatio extends AlgoElement {
         M.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoCrossRatio";
     }
 

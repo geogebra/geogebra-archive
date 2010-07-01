@@ -37,7 +37,7 @@ public class AlgoTranspose extends AlgoElement {
         outputList.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoTranspose";
     }
 

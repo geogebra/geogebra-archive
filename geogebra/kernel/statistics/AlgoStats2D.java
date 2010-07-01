@@ -89,7 +89,7 @@ public abstract class AlgoStats2D extends AlgoElement {
         result.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoStats2D";
     }
 

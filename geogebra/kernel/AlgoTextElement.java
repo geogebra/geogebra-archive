@@ -50,7 +50,7 @@ public class AlgoTextElement extends AlgoElement {
     }
 
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoTextElement";
     }
 

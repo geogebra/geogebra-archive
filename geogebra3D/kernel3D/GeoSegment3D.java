@@ -65,7 +65,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	 * return "GeoSegment3D"
 	 * @return "GeoSegment3D"
 	 */
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoSegment3D";
 	}        
 	

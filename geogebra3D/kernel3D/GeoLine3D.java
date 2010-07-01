@@ -108,7 +108,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 	
 	
 
-	protected String getClassName() {
+	public String getClassName() {
 		// TODO Raccord de méthode auto-généré
 		return "GeoLine3D";
 	}

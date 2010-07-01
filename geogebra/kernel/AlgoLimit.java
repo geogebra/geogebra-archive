@@ -48,7 +48,7 @@ public class AlgoLimit extends AlgoElement {
     	
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoLimit";
     }
     

@@ -73,7 +73,7 @@ GeoSegmentInterface {
 		setEndPoint(B);
 	}
 	
-	protected String getClassName() {	
+	public String getClassName() {	
 		return "GeoSegment";
  	}
 	

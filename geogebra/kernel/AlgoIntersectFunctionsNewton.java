@@ -48,7 +48,7 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
         rootPoint.setLabel(label);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoIntersectFunctionsNewton";
     }
     

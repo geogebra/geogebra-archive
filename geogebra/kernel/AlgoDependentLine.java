@@ -117,7 +117,7 @@ public class AlgoDependentLine extends AlgoElement {
         g.setLabel(root.getLabel());        
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentLine";
 	}
     

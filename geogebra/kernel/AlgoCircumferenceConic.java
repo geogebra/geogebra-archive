@@ -46,7 +46,7 @@ public class AlgoCircumferenceConic extends AlgoElement {
 		compute();
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoCircumferenceConic";
 	}
 

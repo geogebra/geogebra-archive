@@ -42,7 +42,7 @@ public class AlgoListMax extends AlgoElement {
         compute();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoListMax";
     }
 

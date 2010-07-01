@@ -46,7 +46,7 @@ public class AlgoRandomElement extends AlgoElement {
     }
 
  
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoRandomElement";
     }
 

@@ -35,7 +35,7 @@ public class AlgoExpand extends AlgoElement {
         g.setLabel(label);
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoExpand";
     }
     

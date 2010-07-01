@@ -45,7 +45,7 @@ public class AlgoConstructionStep extends AlgoElement {
         num.setLabel(label);
    }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoConstructionStep";
 	}
     

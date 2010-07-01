@@ -80,7 +80,7 @@ public class AlgoText extends AlgoElement {
 		text.setLabel(label);		
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoText";
 	}
 

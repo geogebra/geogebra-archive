@@ -575,7 +575,7 @@ public class GeoPolyhedron extends GeoElement3D {
 
 
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoPolyhedron";
 	}
 	

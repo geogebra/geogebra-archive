@@ -65,7 +65,7 @@ public class AlgoDilate extends AlgoTransformation {
              
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDilate";
     }
 

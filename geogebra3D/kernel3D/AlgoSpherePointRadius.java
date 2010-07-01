@@ -74,7 +74,7 @@ public class AlgoSpherePointRadius extends AlgoSphereNDPointRadius {
     }
     
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSpherePointRadius";
     }
 

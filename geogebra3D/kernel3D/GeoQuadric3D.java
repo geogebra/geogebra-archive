@@ -380,7 +380,7 @@ implements GeoElement3DInterface, Functional2Var{
     	return sbToValueString;
     }
 
-    protected String getClassName() {
+    public String getClassName() {
 
         return "GeoQuadric";
 

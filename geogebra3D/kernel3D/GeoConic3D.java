@@ -279,7 +279,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 
-		protected String getClassName() {
+		public String getClassName() {
 			 return "GeoConic3D";
 		}
 

@@ -99,7 +99,7 @@ public class AlgoPolygon extends AlgoElement {
     	poly = new GeoPolygon(this.cons, this.points);
     }
         
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoPolygon";
     }
     

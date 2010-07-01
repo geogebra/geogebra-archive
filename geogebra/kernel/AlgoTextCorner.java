@@ -45,7 +45,7 @@ implements EuclidianViewAlgo {
         cons.registerEuclidianViewAlgo(this);
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoTextCorner";
     }
     

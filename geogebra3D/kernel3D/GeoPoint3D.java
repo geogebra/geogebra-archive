@@ -623,7 +623,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     // COMMON STUFF
    
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoPoint3D";
 	}        
 	

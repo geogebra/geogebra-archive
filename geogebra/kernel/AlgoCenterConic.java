@@ -41,7 +41,7 @@ public class AlgoCenterConic extends AlgoElement {
         midpoint.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoCenterConic";
     }
 

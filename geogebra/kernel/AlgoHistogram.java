@@ -24,7 +24,7 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 		super(cons, label, list1, list2);		
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoHistogram";
 	}
 	

@@ -50,7 +50,7 @@ public class AlgoDiameterLine extends AlgoElement {
         diameter.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDiameterLine";
     }
 

@@ -188,7 +188,7 @@ public class GeoImplicitPoly extends GeoElement {
 	}
 
 	@Override
-	protected String getClassName() {
+    public String getClassName() {
 		return "GeoImplicitPoly";
 	}
 

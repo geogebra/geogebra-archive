@@ -272,7 +272,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		return isDefined();
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoText";
 	}
 	

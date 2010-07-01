@@ -58,7 +58,7 @@ public abstract class AlgoSphereNDTwoPoints extends AlgoElement {
          sphereND.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoCircleTwoPoints";
     }
 

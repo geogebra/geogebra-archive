@@ -48,7 +48,7 @@ public class AlgoFitPow extends AlgoElement{
         geofunction.setLabel(label);
     }//Constructor
     
-    protected String getClassName() {return "AlgoFitPow";}
+    public String getClassName() {return "AlgoFitPow";}
         
     protected void setInputOutput(){
         input=new GeoElement[1];

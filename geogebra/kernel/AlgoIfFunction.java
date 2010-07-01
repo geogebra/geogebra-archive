@@ -53,7 +53,7 @@ public class AlgoIfFunction extends AlgoElement {
         compute();        
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoIfFunction";
 	}
     

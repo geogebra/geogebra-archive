@@ -125,7 +125,7 @@ public class AlgoFitSin extends AlgoElement{
     }//Constructor
 
     /** Implements AlgoElement */    
-    protected String getClassName() {return "AlgoFitSin";}
+    public String getClassName() {return "AlgoFitSin";}
     
     /** Implements AlgoElement */        
     protected void setInputOutput(){

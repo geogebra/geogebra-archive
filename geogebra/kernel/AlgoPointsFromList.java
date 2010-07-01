@@ -92,7 +92,7 @@ public class AlgoPointsFromList extends AlgoElement {
 		update();
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoPointsFromList";
 	}
 

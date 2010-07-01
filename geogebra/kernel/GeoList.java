@@ -76,7 +76,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
         set(list);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
     	return "GeoList";
     }
     

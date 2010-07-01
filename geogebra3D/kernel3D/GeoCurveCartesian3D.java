@@ -124,7 +124,7 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 	
 	
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoCurveCartesian3D";
 	}        
 	

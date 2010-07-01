@@ -48,7 +48,7 @@ public class AlgoSumText extends AlgoElement {
         result.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSumText";
     }
 

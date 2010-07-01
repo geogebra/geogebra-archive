@@ -45,7 +45,7 @@ public class AlgoIterationList extends AlgoElement {
         list.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoIterationList";
     }
 

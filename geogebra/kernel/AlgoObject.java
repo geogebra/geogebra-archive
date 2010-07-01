@@ -51,7 +51,7 @@ public class AlgoObject extends AlgoElement {
         geo.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoObject";
 	}
     

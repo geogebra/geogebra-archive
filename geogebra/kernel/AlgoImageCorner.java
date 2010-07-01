@@ -36,7 +36,7 @@ implements EuclidianViewAlgo {
         corner.setLabel(label);           
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoImageCorner";
     }
     

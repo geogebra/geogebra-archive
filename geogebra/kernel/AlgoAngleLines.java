@@ -45,7 +45,7 @@ public class AlgoAngleLines extends AlgoElement {
         angle.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAngleLines";
     }
 

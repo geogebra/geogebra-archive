@@ -36,7 +36,7 @@ public class AlgoIsInteger extends AlgoElement {
         outputBoolean.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoIsInteger";
     }
 

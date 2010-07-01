@@ -84,7 +84,7 @@ public class AlgoVector extends AlgoElement {
     
     
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoVector";
     }
     

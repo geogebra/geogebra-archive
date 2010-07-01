@@ -30,7 +30,7 @@ public class AlgoHyperGeometric extends AlgoDistribution {
         super(cons, label, a, b, c, d);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoHyperGeometric";
     }
 

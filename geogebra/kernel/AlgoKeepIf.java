@@ -42,7 +42,7 @@ public class AlgoKeepIf extends AlgoElement {
         outputList.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoKeepIf";
     }
 

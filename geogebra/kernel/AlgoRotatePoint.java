@@ -63,7 +63,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
       
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoRotatePoint";
     }
 

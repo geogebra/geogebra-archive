@@ -59,7 +59,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		set(conic);
 	}
 	
-	protected String getClassName() {	
+	public String getClassName() {	
 		return "GeoConicPart";
  	}
 	

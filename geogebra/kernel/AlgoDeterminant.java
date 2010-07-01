@@ -37,7 +37,7 @@ public class AlgoDeterminant extends AlgoElement {
         num.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDeterminant";
     }
 

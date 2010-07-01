@@ -50,7 +50,7 @@ public class AlgoMedian extends AlgoElement {
         compute();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoMedian";
     }
 

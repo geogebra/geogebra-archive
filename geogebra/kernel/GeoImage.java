@@ -341,7 +341,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		return image != null && isDefined();
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoImage";
 	}
 	

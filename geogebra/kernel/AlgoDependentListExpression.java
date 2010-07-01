@@ -50,7 +50,7 @@ public class AlgoDependentListExpression extends AlgoElement {
         list.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentListExpression";
 	}
     

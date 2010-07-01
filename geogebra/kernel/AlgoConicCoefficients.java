@@ -40,7 +40,7 @@ public class AlgoConicCoefficients extends AlgoElement {
         g.setLabel(label);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoConicCoefficients";
     }
     

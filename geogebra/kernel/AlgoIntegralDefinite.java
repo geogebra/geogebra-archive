@@ -75,7 +75,7 @@ public class AlgoIntegralDefinite extends AlgoElement {
         n.setDrawable(true);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoIntegralDefinite";
     }
 

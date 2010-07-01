@@ -38,7 +38,7 @@ public class AlgoRow extends AlgoElement {
         num.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoRow";
 	}
     

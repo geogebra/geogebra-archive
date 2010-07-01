@@ -83,7 +83,7 @@ public class AlgoDependentCubic extends AlgoElement {
         cubic.setLabel(label);                
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentCubic";
 	}
     

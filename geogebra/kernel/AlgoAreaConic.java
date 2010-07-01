@@ -43,7 +43,7 @@ public class AlgoAreaConic extends AlgoElement {
       area.setLabel(label);
     }   
   
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAreaConic";
     }
     

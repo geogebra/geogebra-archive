@@ -46,7 +46,7 @@ AbsoluteScreenLocateable {
 		setEuclidianVisible(false);
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoBoolean";
 	}
 	

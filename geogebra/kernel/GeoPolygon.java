@@ -86,7 +86,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	
 	
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoPolygon";
 	}
 	

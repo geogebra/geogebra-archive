@@ -191,7 +191,7 @@ implements Comparable {
 	/**
 	 * Returns name of class. This is needed to allow code obfuscation.	
 	 */
-	abstract protected String getClassName();
+	public abstract String getClassName();
 	
 	
 /* Comparable interface */

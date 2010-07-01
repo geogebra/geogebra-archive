@@ -62,7 +62,7 @@ public class AlgoAngularBisectorPoints extends AlgoElement {
         bisector.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAngularBisectorPoints";
     }
 

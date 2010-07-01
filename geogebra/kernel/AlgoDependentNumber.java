@@ -55,7 +55,7 @@ public class AlgoDependentNumber extends AlgoElement {
         number.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentNumber";
 	}
     

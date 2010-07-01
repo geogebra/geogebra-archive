@@ -55,7 +55,7 @@ public class AlgoRootInterval extends AlgoElement {
         rootPoint.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoRootInterval";
     }
 

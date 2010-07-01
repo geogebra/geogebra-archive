@@ -35,7 +35,7 @@ public class AlgoAngleVector extends AlgoElement {
         angle.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAngleVector";
     }
 

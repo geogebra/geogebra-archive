@@ -84,7 +84,7 @@ public class AlgoFit extends AlgoElement {
 		fitfunction.setLabel(label);
 	}// Constructor
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoFit";
 	}
 

@@ -54,7 +54,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     private boolean possibleSpecialCase = false;
     private int specialCasePointOnCircleIndex = 0; // index of point on line and conic
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoIntersectLineConic";
     }
 

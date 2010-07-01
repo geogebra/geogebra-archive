@@ -60,7 +60,7 @@ public class AlgoTranslate extends AlgoTransformation {
         compute();               
     }           
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoTranslate";
     }
     

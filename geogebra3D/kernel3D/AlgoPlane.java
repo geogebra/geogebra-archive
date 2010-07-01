@@ -39,7 +39,7 @@ public class AlgoPlane extends AlgoCoordSys2D {
 	
 	
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoPlane";
 	}
 

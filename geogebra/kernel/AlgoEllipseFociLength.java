@@ -36,7 +36,7 @@ public class AlgoEllipseFociLength extends AlgoConicFociLength {
 		        super(cons, label, A, B, a);		       
 		    }
 
-	protected String getClassName() {
+	public String getClassName() {
         return "AlgoEllipseFociLength";
     }
 	

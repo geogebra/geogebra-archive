@@ -34,7 +34,7 @@ public class AlgoCurvatureCurve extends AlgoElement {
         compute();
     }
  
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoCurvatureCurve";
     }
 

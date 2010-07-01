@@ -82,7 +82,7 @@ implements EuclidianViewAlgo {
     	super.remove();    	
     }           
     
-    protected String getClassName() {
+    public String getClassName() {
 		return "AlgoMacro";
 	}
 	

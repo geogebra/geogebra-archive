@@ -32,7 +32,7 @@ public class AlgoRandomNormal extends AlgoTwoNumFunction {
 		cons.addRandomGeo(num);
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoRandomNormal";
 	}
 

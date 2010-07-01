@@ -37,7 +37,7 @@ public class AlgoDefined extends AlgoElement {
         outputBoolean.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDefined";
     }
 

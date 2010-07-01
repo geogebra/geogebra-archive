@@ -109,7 +109,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 //		}
 //    }
  
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoLocus";
     }
     

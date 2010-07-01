@@ -60,7 +60,7 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
         rootFinder = new RealRoot();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoRootNewton";
     }
 

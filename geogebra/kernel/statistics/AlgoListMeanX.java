@@ -29,7 +29,7 @@ public class AlgoListMeanX extends AlgoStats2D {
         super(cons,label,geoListx,AlgoStats2D.STATS_MEANX);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoListMeanX";
     }
 }

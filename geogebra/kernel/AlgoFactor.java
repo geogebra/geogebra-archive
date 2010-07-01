@@ -23,7 +23,7 @@ public class AlgoFactor extends AlgoSimplify {
     	super(cons, label, f);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoFactor";
     }
      

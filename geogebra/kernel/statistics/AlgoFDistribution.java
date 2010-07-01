@@ -30,7 +30,7 @@ public class AlgoFDistribution extends AlgoDistribution {
         super(cons, label, a, b, c, null);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoFDistribution";
     }
 

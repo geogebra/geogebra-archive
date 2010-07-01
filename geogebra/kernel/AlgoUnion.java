@@ -36,7 +36,7 @@ public class AlgoUnion extends AlgoElement {
     }
 
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoUnion";
     }
 

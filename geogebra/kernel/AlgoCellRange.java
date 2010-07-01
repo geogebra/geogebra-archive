@@ -45,7 +45,7 @@ public class AlgoCellRange extends AlgoElement {
         geoList.setLabel(label);    	
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "Expression";
 	}
 	

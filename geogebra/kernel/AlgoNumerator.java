@@ -42,7 +42,7 @@ public class AlgoNumerator extends AlgoElement {
         g.setLabel(label);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoNumerator";
     }
     

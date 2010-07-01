@@ -63,7 +63,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		setFunctionY(fy);					
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoCurveCartesian";
 	}
 	

@@ -46,7 +46,7 @@ public class AlgoParabolaPointLine extends AlgoElement {
         parabola.setLabel(label);
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoParabolaPointLine";
     }
     

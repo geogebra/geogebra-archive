@@ -38,7 +38,7 @@ public class AlgoAxisStepY extends AlgoElement {
         cons.registerEuclidianViewAlgo(this);
    }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoAxisStepY";
 	}
     

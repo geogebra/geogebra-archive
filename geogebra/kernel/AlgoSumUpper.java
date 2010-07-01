@@ -31,7 +31,7 @@ public class AlgoSumUpper extends AlgoFunctionAreaSums {
 		super(cons, label, f, a, b, n, AlgoFunctionAreaSums.TYPE_UPPERSUM);		
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoSumUpper";
 	}
 	

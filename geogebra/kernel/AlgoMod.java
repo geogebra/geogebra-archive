@@ -35,7 +35,7 @@ public class AlgoMod extends AlgoTwoNumFunction {
 	  super(cons, label, a, b);     
     }   
   
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoMod";
     }       
     

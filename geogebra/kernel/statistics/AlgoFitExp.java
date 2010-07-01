@@ -49,7 +49,7 @@ public class AlgoFitExp extends AlgoElement {
 		geofunction.setLabel(label);
 	}// Constructor
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoFitExp";
 	}
 

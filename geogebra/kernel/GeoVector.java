@@ -55,7 +55,7 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
     	//setEuclidianVisible(false);
     }
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoVector";
 	}
 	

@@ -50,7 +50,7 @@ public class AlgoDistancePointLine extends AlgoElement {
         dist.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDistancePointLine";
     }
 

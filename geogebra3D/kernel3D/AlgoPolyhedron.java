@@ -357,7 +357,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 
 
 
-	protected String getClassName() {
+	public String getClassName() {
 		switch(type){
 		case GeoPolyhedron.TYPE_PYRAMID:
 			return "AlgoPyramid";

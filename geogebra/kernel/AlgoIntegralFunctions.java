@@ -60,7 +60,7 @@ public class AlgoIntegralFunctions extends AlgoElement {
 		n.setLabel(label);
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoIntegralFunctions";
 	}
 

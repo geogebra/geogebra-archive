@@ -38,7 +38,7 @@ public class AlgoPolynomialMod extends AlgoElement {
         g.setLabel(label);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoPolynomialMod";
     }
     

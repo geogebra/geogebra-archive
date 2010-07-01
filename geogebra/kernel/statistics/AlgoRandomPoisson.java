@@ -57,7 +57,7 @@ public class AlgoRandomPoisson extends AlgoElement {
   
   public GeoNumeric getResult() { return num; }  
   
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoRandomPoisson";
 	}
 
@@ -90,7 +90,7 @@ public class AlgoRandomPoisson extends AlgoElement {
 
 	/*
 	 * 
-	 * Hörmann, Wolfgang:
+	 * Hï¿½rmann, Wolfgang:
 	 * The transformed rejection method for generating Poisson random variables 
 	 * Algorithm PTRS
 	 * http://statmath.wu-wien.ac.at/papers/92-04-13.wh.ps.gz

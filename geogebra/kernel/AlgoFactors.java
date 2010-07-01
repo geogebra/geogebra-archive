@@ -36,7 +36,7 @@ public class AlgoFactors extends AlgoElement {
         g.setLabel(label);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoFactors";
     }
     
@@ -65,7 +65,7 @@ public class AlgoFactors extends AlgoElement {
 
 	    	    
 	    sb.setLength(0);
-	    // added Rationalize to cope with eg Factors[9.1 x^7 - 32 x^6 + 48 x^5 - 40 x^4 + 20 x³ - 6 x² + x ]
+	    // added Rationalize to cope with eg Factors[9.1 x^7 - 32 x^6 + 48 x^5 - 40 x^4 + 20 xï¿½ - 6 xï¿½ + x ]
         sb.append("Factors((");
         sb.append(functionIn);
         sb.append("))");

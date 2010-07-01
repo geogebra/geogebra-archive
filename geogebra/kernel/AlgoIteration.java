@@ -45,7 +45,7 @@ public class AlgoIteration extends AlgoElement {
         result.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoIteration";
     }
 

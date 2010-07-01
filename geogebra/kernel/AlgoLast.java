@@ -39,7 +39,7 @@ public class AlgoLast extends AlgoElement {
         outputList.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoLast";
     }
 

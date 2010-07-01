@@ -56,7 +56,7 @@ public class AlgoDependentPoint3D extends AlgoElement3D {
     	P.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentPoint3D";
 	}
 	

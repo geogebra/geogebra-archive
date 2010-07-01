@@ -64,7 +64,7 @@ GeoLineInterface, MatrixTransformable {
         set(line);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
     	return "GeoLine";
     }
     

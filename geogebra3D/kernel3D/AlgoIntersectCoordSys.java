@@ -148,7 +148,7 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
     
     
 
-	protected String getClassName() {
+	public String getClassName() {
     	
     	return "AlgoIntersectCoordSys";
 	}

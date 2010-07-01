@@ -50,7 +50,7 @@ public class AlgoQ1 extends AlgoElement {
         compute();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoQ1";
     }
 

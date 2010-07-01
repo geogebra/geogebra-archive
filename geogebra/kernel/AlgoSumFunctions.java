@@ -22,7 +22,7 @@ public class AlgoSumFunctions  extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSumFunctions";
     }
 

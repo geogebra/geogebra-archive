@@ -30,7 +30,7 @@ public class AlgoVariance extends AlgoStats1D {
         super(cons,label,geoList,AlgoStats1D.STATS_VARIANCE);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoVariance";
     }
 }

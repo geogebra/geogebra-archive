@@ -29,7 +29,7 @@ public class AlgoMean extends AlgoStats1D {
         super(cons,label,geoList,AlgoStats1D.STATS_MEAN);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoMean";
     }
 }

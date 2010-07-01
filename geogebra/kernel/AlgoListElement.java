@@ -104,7 +104,7 @@ public class AlgoListElement extends AlgoElement {
         element.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoListElement";
     }
 

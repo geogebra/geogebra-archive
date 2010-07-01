@@ -181,7 +181,7 @@ implements Functional2Var {
 
 	
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoFunction2Var";
 	}        
 	

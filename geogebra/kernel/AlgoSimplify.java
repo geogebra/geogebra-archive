@@ -42,7 +42,7 @@ public class AlgoSimplify extends AlgoElement {
         compute();
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSimplify";
     }
     

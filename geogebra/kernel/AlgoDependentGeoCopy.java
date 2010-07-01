@@ -36,7 +36,7 @@ public class AlgoDependentGeoCopy extends AlgoElement {
         copyGeo.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "Expression";
 	}
     

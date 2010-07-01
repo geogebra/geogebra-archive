@@ -55,7 +55,7 @@ public class AlgoApplyMatrix extends AlgoTransformation {
         geoOut.setLabel(label);
     }           
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoApplyMatrix";
     }
     

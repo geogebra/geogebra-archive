@@ -43,7 +43,7 @@ public class AlgoListMin extends AlgoElement {
         compute();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoListMin";
     }
 

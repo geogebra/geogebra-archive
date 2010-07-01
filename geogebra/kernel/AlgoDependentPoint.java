@@ -57,7 +57,7 @@ public class AlgoDependentPoint extends AlgoElement {
     	P.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentPoint";
 	}
 	

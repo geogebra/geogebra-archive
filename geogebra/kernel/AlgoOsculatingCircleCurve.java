@@ -40,7 +40,7 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
         circle.setLabel(label);
     }
  
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoOsculatingCircleCurve";
     }
 

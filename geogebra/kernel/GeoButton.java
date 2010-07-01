@@ -33,7 +33,7 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 		setEuclidianVisible(true);
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoButton";
 	}
 	

@@ -46,7 +46,7 @@ public class AlgoLengthVector extends AlgoElement {
         num.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoLengthVector";
     }
 

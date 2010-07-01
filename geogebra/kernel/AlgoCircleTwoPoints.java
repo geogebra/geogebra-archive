@@ -47,7 +47,7 @@ public class AlgoCircleTwoPoints extends AlgoSphereNDTwoPoints {
         return circle;
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoCircleTwoPoints";
     }
 

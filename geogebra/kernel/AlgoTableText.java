@@ -48,7 +48,7 @@ public class AlgoTableText extends AlgoElement {
         compute();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoTableText";
     }
 

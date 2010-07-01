@@ -66,7 +66,7 @@ public class AlgoUnitVectorVector extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }    
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoUnitVectorVector";
     }
     

@@ -42,7 +42,7 @@ public class AlgoAngleConic extends AlgoElement {
         angle.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAngleConic";
     }
 

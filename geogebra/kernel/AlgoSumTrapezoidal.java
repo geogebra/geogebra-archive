@@ -31,7 +31,7 @@ public class AlgoSumTrapezoidal extends AlgoFunctionAreaSums {
 		super(cons, label, f, a, b, n, AlgoFunctionAreaSums.TYPE_TRAPEZOIDALSUM);		
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoSumTrapezoidal";
 	}
 	

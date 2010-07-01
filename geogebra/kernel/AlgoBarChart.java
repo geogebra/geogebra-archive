@@ -41,7 +41,7 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 		super(cons, label, list1, list2, a);
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoBarChart";
 	}
 	

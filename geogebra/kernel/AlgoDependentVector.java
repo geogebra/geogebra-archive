@@ -51,7 +51,7 @@ public class AlgoDependentVector extends AlgoElement {
         v.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentVector";
 	}
 	

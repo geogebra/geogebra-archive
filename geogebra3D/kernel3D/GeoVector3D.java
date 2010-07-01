@@ -137,7 +137,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 
 
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoVector3D";
 	}
 

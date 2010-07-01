@@ -191,7 +191,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	 }  
 	 
 
-	 protected String getClassName() {
+	 public String getClassName() {
 		 return "GeoPolygon3D";
 	 }
 

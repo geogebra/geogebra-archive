@@ -36,7 +36,7 @@ public class AlgoListLength extends AlgoElement {
         length.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoListLength";
     }
 

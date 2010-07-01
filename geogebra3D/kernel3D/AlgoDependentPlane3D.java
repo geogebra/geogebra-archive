@@ -77,7 +77,7 @@ public class AlgoDependentPlane3D extends AlgoElement3D {
     }   
     
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentPlane";
 	}
     

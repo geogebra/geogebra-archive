@@ -82,7 +82,7 @@ public class GeoLocus extends GeoElement implements Path {
 		return false;
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoLocus";
 	}
 	

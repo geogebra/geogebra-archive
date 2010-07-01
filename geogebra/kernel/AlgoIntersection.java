@@ -36,7 +36,7 @@ public class AlgoIntersection extends AlgoIntersectAbstract {
     }
 
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoIntersection";
     }
 

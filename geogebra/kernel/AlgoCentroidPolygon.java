@@ -32,7 +32,7 @@ public class AlgoCentroidPolygon extends AlgoElement {
         centroid.setLabel(label);         
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoCentroidPolygon";
     }
     

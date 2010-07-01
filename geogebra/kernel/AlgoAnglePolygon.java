@@ -38,7 +38,7 @@ public class AlgoAnglePolygon extends AlgoElement {
         GeoElement.setLabels(labels, angles);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAnglePolygon";
     }
 

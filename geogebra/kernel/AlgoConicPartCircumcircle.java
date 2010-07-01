@@ -56,7 +56,7 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
         compute();               
     }    	        
     
-	protected String getClassName() {
+	public String getClassName() {
 		switch (type) {
 			case GeoConicPart.CONIC_PART_ARC:
 				return "AlgoCircumcircleArc";

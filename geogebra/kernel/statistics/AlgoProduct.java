@@ -34,7 +34,7 @@ public class AlgoProduct extends AlgoStats1D {
         super(cons,label,geoList,n,AlgoStats1D.STATS_PRODUCT);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoProduct";
     }
 }

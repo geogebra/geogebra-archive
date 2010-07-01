@@ -35,7 +35,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		setStartPoint(A);
 	}
 	
-	protected String getClassName() {	
+	public String getClassName() {	
 		return "GeoRay";
  	}
 	

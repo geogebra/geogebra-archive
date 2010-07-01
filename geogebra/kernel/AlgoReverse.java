@@ -36,7 +36,7 @@ public class AlgoReverse extends AlgoElement {
         outputList.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoReverse";
     }
 

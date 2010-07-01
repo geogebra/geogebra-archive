@@ -36,7 +36,7 @@ public class AlgoLengthCurve extends AlgoElement {
         length.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoLengthCurve";
     }
 

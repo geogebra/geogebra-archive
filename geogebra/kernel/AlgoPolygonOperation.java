@@ -85,7 +85,7 @@ public class AlgoPolygonOperation extends AlgoIntersectAbstract {
 	}
 
 	
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoPolygonOperation";
     }
 

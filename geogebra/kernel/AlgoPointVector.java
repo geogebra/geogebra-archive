@@ -36,7 +36,7 @@ public class AlgoPointVector extends AlgoElement {
         Q.setLabel(label);
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoPointVector";
     }
     

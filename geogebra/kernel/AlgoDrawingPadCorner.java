@@ -46,7 +46,7 @@ implements EuclidianViewAlgo {
     
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDrawingPadCorner";
     }
     

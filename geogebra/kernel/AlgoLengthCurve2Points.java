@@ -36,7 +36,7 @@ public class AlgoLengthCurve2Points extends AlgoElement {
         length.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoLengthCurve2Points";
     }
 

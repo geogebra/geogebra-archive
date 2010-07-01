@@ -62,7 +62,7 @@ public final class GeoAngle extends GeoNumeric {
 
 	private int angleStyle = ANGLE_ISANTICLOCKWISE;
 
-	// added by Loïc
+	// added by Loï¿½c
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(GeoElement.DECORATION_NONE),
 				new Integer(GeoElement.DECORATION_ANGLE_TWO_ARCS),
@@ -104,7 +104,7 @@ public final class GeoAngle extends GeoNumeric {
 		setLabel(label);
 	}
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoAngle";
 	}
 

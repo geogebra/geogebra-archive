@@ -39,7 +39,7 @@ public class AlgoFractionText extends AlgoElement {
         compute();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoFractionText";
     }
 
@@ -113,7 +113,7 @@ public class AlgoFractionText extends AlgoElement {
 	
 	Decimal = Math.abs(Decimal);
 	
-	if (Math.abs(Decimal - Math.floor(Decimal)) < AccuracyFactor) { // handles exact integers including 0 ×
+	if (Math.abs(Decimal - Math.floor(Decimal)) < AccuracyFactor) { // handles exact integers including 0 ï¿½
 		FractionNumerator = Decimal * DecimalSign;
 		FractionDenominator = 1.0;
 		
@@ -121,7 +121,7 @@ public class AlgoFractionText extends AlgoElement {
 		ret[1] = FractionDenominator;
 		return ret;
 	}
-	if (Decimal < 1.0E-19) { // X = 0 already taken care of ×
+	if (Decimal < 1.0E-19) { // X = 0 already taken care of ï¿½
 		FractionNumerator = DecimalSign;
 		FractionDenominator = 9999999999999999999.0;
 		

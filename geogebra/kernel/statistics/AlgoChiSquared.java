@@ -30,7 +30,7 @@ public class AlgoChiSquared extends AlgoDistribution {
         super(cons, label, a, b, null, null);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoChiSquared";
     }
 

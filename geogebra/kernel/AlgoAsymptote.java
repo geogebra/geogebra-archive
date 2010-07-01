@@ -49,7 +49,7 @@ public class AlgoAsymptote extends AlgoElement {
         GeoElement.setLabels(labels, asymptotes);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAsymptote";
     }
 

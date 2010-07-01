@@ -29,7 +29,7 @@ public class AlgoListMeanY extends AlgoStats2D {
         super(cons,label,geoListx,AlgoStats2D.STATS_MEANY);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoListMeanY";
     }
 }

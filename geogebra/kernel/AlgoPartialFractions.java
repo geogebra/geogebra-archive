@@ -29,7 +29,7 @@ public class AlgoPartialFractions extends AlgoSimplify {
     	super(cons, label, f);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoPartialFractions";
     }
      

@@ -87,7 +87,7 @@ public class AlgoPolygonRegular extends AlgoElement {
         updateSegmentsAndPointsLabels(points.length);
     }   
         
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoPolygonRegular";
     }        
     

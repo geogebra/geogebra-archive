@@ -71,7 +71,7 @@ public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius {
     }
     
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoCirclePointRadius";
     }
 

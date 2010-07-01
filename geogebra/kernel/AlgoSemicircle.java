@@ -59,7 +59,7 @@ public class AlgoSemicircle extends AlgoElement {
         compute();               
     }    	
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoSemicircle";
 	}
 

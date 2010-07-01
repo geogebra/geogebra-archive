@@ -55,7 +55,7 @@ public class AlgoDependentVector3D extends AlgoElement3D {
         vec.setLabel(label);
     }   
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoDependentVector3D";
 	}
 	

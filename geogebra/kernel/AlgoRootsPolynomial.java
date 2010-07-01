@@ -141,7 +141,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         update();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoRootsPolynomial";
     }
 

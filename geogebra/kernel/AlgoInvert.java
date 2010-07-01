@@ -37,7 +37,7 @@ public class AlgoInvert extends AlgoElement {
         outputList.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoInvert";
     }
 

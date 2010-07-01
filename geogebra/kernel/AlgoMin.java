@@ -32,7 +32,7 @@ public class AlgoMin extends AlgoTwoNumFunction {
 	  super(cons, label, a, b); 
     }   
   
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoMin";
     }
     

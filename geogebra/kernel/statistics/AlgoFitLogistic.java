@@ -52,7 +52,7 @@ import geogebra.kernel.arithmetic.MyDouble;
  * The problem is to find the best initial values for the parameters,
  * little information available on this problem...
  *  
- *		Bjørn Ove Thue, the norwegian translator and programmer of the norwegian version of WxMaxima, was kind enough to give me
+ *		Bjï¿½rn Ove Thue, the norwegian translator and programmer of the norwegian version of WxMaxima, was kind enough to give me
  *		his idea:
  *		Make the assumption that the first and last point are close to the solution curve.
  *		Calculate c and a from those points, with b as parameter, iterate to a good value for b,
@@ -115,7 +115,7 @@ public final class AlgoFitLogistic extends AlgoElement{
         geofunction.setLabel(label);
     }//Constructor
     
-    protected String getClassName() {return "AlgoFitLogistic";}
+    public String getClassName() {return "AlgoFitLogistic";}
         
     protected void setInputOutput(){
         input=new GeoElement[1];
@@ -409,7 +409,7 @@ public final class AlgoFitLogistic extends AlgoElement{
     	return sum;
     }//beta2(x,y,k)    
     
-    /// --- Bjørn Ove Thue's trick --- ///
+    /// --- Bjï¿½rn Ove Thue's trick --- ///
     // c as function of first and last point
     private final static double c(double x1,double y1, double x2,double y2,double b){
         return y1*y2*(Math.exp(b*x1)-Math.exp(b*x2))/(y2*Math.exp(b*x1)-y1*Math.exp(b*x2));

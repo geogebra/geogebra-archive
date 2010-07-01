@@ -42,7 +42,7 @@ public class AlgoCylinder extends AlgoElement3D {
 	
 	
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoCylinder";
 	}
 

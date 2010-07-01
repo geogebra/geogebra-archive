@@ -52,7 +52,7 @@ public class AlgoSumSquaredErrors extends AlgoElement {
         compute();
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSumSquaredErrors";
     }
 

@@ -49,7 +49,7 @@ public class AlgoJoinPoints extends AlgoElement {
         g.setLabel(label);
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoJoinPoints";
     }
     

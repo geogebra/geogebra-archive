@@ -57,7 +57,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     
     private EquationSolver eqnSolver;
         
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoIntersectConics";
 	}
     

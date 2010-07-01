@@ -34,7 +34,7 @@ public class AlgoSum extends AlgoStats1D {
         super(cons,label,geoList,n,AlgoStats1D.STATS_SIGMAX);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSum";
     }
 }

@@ -239,7 +239,7 @@ implements Functional2Var, GeoCoordSys2D{
 	
 	
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoPlane3D";
 	}        
 	

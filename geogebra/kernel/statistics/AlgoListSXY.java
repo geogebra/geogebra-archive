@@ -29,7 +29,7 @@ public class AlgoListSXY extends AlgoStats2D {
         super(cons,label,geoListx,AlgoStats2D.STATS_SXY);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoListSXY";
     }
 }

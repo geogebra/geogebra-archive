@@ -68,7 +68,7 @@ public abstract class AlgoStats1D extends AlgoElement {
 		result.setLabel(label);
 	}
 
-	abstract protected String getClassName();
+	public abstract String getClassName();
 
 	protected void setInputOutput(){
 		if (Truncate == null) {

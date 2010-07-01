@@ -33,7 +33,7 @@ public class AlgoJoin extends AlgoElement {
 	}
 
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoJoin";
 	}
 

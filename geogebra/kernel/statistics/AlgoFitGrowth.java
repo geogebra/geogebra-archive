@@ -51,7 +51,7 @@ public class AlgoFitGrowth extends AlgoElement {
 		geofunction.setLabel(label);
 	}// Constructor
 
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoFitGrowth";
 	}
 

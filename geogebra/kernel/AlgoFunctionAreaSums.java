@@ -256,7 +256,7 @@ implements EuclidianViewAlgo {
     	return true;
     }
 	
-	abstract protected String getClassName();
+	public abstract String getClassName();
 
 	// for AlgoElement
 	protected void setInputOutput() {

@@ -43,7 +43,7 @@ public class AlgoFunction2Var extends AlgoFunctionNVarND {
 	
 	
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoFunction2Var";
 	}
 

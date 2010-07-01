@@ -29,7 +29,7 @@ public class AlgoStandardDeviation extends AlgoStats1D {
         super(cons,label,geoList,AlgoStats1D.STATS_SD);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoStandardDeviation";
     }
 }

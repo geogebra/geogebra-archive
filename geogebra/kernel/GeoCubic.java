@@ -76,7 +76,7 @@ implements Path, Traceable, LineProperties
 		set(conic);
 	}
 	
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoCubic";
 	}
 	

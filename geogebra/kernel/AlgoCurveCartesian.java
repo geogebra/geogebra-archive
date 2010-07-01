@@ -81,7 +81,7 @@ public class AlgoCurveCartesian extends AlgoElement {
     	return new GeoCurveCartesian(cons, fun[0], fun[1]);
     }
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "AlgoCurveCartesian";
 	}
     

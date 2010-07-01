@@ -70,7 +70,7 @@ public class AlgoDependentFunction extends AlgoElement {
         compute();
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDependentFunction";
     }
     

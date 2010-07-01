@@ -118,7 +118,7 @@ GeoPointInterface, MatrixTransformable {
     	return regionParameters;
     }
     
-	protected String getClassName() {
+	public String getClassName() {
 		return "GeoPoint";
 	}        
 	

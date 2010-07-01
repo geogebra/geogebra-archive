@@ -55,7 +55,7 @@ public class AlgoOrthoVectorVector extends AlgoElement {
         n.setLabel(label);
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoOrthoVectorVector";
     }
     

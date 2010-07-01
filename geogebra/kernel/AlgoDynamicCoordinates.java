@@ -44,7 +44,7 @@ public class AlgoDynamicCoordinates extends AlgoElement {
         M.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDynamicCoordinates";
     }
 

@@ -56,7 +56,7 @@ public class AlgoDependentImplicitPoly extends AlgoElement {
 	}
 
 	@Override
-	protected String getClassName() {
+    public String getClassName() {
 		return "AlgoDependentImplicitPoly";
 	}
 	

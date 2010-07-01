@@ -31,7 +31,7 @@ public class AlgoTextToUnicode extends AlgoElement {
       list.setLabel(label);
     }   
   
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoTextToUnicode";
     }
     

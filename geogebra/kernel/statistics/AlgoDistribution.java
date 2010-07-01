@@ -78,7 +78,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 		num.setLabel(label);
 	}
 
-	abstract protected String getClassName();
+	public abstract String getClassName();
 
 	protected void setInputOutput(){
 		

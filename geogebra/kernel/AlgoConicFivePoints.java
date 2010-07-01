@@ -60,7 +60,7 @@ public class AlgoConicFivePoints extends AlgoElement {
         conic.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoConicFivePoints";
     }
 

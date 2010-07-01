@@ -30,7 +30,7 @@ public class AlgoInverseGamma extends AlgoDistribution {
         super(cons, label, a, b, c, null);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoInverseGamma";
     }
 

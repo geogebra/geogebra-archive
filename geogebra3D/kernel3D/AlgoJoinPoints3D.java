@@ -184,7 +184,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     
     
 
-	protected String getClassName() {
+	public String getClassName() {
 		String s = 	"AlgoJoinPoints3D";
     	switch(geoClassType){
     	case GeoElement3D.GEO_CLASS_SEGMENT3D:

@@ -57,7 +57,7 @@ public class AlgoAnglePoints extends AlgoElement {
         this.algoAnglePoly = algoAnglePoly;
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAnglePoints";
     }
 

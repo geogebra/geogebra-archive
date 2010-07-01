@@ -52,7 +52,7 @@ public class AlgoSphereTwoPoints extends AlgoSphereNDTwoPoints {
         return sphere;
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSphereTwoPoints";
     }
 

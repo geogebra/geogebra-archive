@@ -38,7 +38,7 @@ public class AlgoAreaPoints extends AlgoElement {
         compute();      
     }   
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoAreaPoints";
     }
     

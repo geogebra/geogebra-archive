@@ -29,7 +29,7 @@ public class AlgoLimitAbove extends AlgoLimit {
     	super(cons, label, f, num);
     }
     
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoLimitAbove";
     }
      

@@ -52,7 +52,7 @@ public class AlgoFunctionInterval extends AlgoElement {
     }
     
   
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoFunctionInterval";
     }   
 

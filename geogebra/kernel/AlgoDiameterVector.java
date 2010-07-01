@@ -51,7 +51,7 @@ public class AlgoDiameterVector extends AlgoElement {
         diameter.setLabel(label);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoDiameterVector";
     }
 

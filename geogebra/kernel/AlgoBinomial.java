@@ -152,7 +152,7 @@ public class AlgoBinomial extends AlgoTwoNumFunction {
 	  super(cons, label, a, b); 
     }   
   
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoBinomial";
     }
     

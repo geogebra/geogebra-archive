@@ -10,7 +10,7 @@ public class AlgoSampleStandardDeviation extends AlgoStats1D {
         super(cons,label,geoList,AlgoStats1D.STATS_SAMPLE_SD);
     }
 
-    protected String getClassName() {
+    public String getClassName() {
         return "AlgoSampleStandardDeviation";
     }
 }
