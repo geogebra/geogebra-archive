@@ -250,6 +250,7 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	
 	public class KeyListener4 implements KeyListener {
 		
+
 		boolean escape = false;
 		
 		public void keyTyped(KeyEvent e) {	
@@ -280,38 +281,33 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		public void keyReleased(KeyEvent e) {
 		}
 		
-		public void checkCursorKeys(KeyEvent e) {			
+		public void checkCursorKeys(KeyEvent e) {
+			
+			String text = (String) delegate.getCellEditorValue();
 			
 			int keyCode = e.getKeyCode();
 			//Application.debug(e+"");
-			//int row = table.minSelectionRow;
-			//int col = table.minSelectionColumn;
+	
 			switch (keyCode) {
 			case KeyEvent.VK_UP:
 				//Application.debug("UP");
 				stopCellEditing(0,-1);		
 				editing = false;
-				//table.setRowSelectionInterval(table.minSelectionRow - 1,table.minSelectionRow - 1);
-				//table.changeSelection(row - 1, column, false, false);
-				//table.selectionChanged();
 				e.consume();
 				break;
-			//case KeyEvent.VK_RIGHT:
+				
+				
 			case KeyEvent.VK_TAB:
 				//Application.debug("RIGHT");
 				// shift-tab moves left
 				// tab moves right
 				stopCellEditing(e.isShiftDown() ? -1 : 1,0);		
 				editing = false;
-				//table.setColumnSelectionInterval(table.minSelectionColumn + 1,table.minSelectionColumn + 1);
-				//table.setColumnSelectionInterval(col + 1, col + 1);
-				//table.setRowSelectionInterval(row, row);
-			
+				
 				break;
 				
 			case KeyEvent.VK_ENTER:				
 				// if incomplete command entered, want to move the cursor to between []
-				String text = (String) delegate.getCellEditorValue();
 				int bracketsIndex = text.indexOf("[]");
 				if (bracketsIndex == -1) {
 					//stopCellEditing(0,1);		
@@ -326,24 +322,35 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 				//Application.debug("DOWN");
 				stopCellEditing(0,1);		
 				editing = false;
-				//table.setRowSelectionInterval(table.minSelectionRow + 1,table.minSelectionRow + 1);
-				//table.setColumnSelectionInterval(col, col);
-				//table.setRowSelectionInterval(row + 1, row + 1);
 				break;
-				/*
+				
 			case KeyEvent.VK_LEFT:
 				//Application.debug("LEFT");
-				stopCellEditing(-1,0);		
+				if(!text.startsWith("=")){
+					stopCellEditing(-1,0);	
+				}
 				editing = false;
-				//table.setColumnSelectionInterval(table.minSelectionColumn - 1,table.minSelectionColumn - 1);
-				table.setColumnSelectionInterval(col - 1, col - 1);
-				table.setRowSelectionInterval(row, row);
-				break;*/
+				break;
+				
+			// Allow left/right keys to exit when the editor is 
+			// not entering a command (i.e. text starts with '='). 
+			// Data entry is much easier this way.
+			case KeyEvent.VK_RIGHT:
+				//Application.debug("RIGHT");	
+				if(!text.startsWith("=")){
+					stopCellEditing(1,0);	
+				}
+				editing = false;	
+				break;
+				
 			case KeyEvent.VK_PAGE_DOWN:
 			case KeyEvent.VK_PAGE_UP:
 				e.consume();
 				break;
-				
+			
+			// An F1 keypress causes the focus to be lost, so we
+			// need to set 'editing' to false to prevent the focusLost() 
+			// method from calling stopCellEditing()
 			case KeyEvent.VK_F1:
 				editing = false;	
 				break;

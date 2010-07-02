@@ -1269,6 +1269,10 @@ public class MyTable extends JTable implements FocusListener
 				int x2 = (int)point1.getX();
 				int y2 = (int)point1.getY();
 				int range = DOT_SIZE / 2;
+				
+				// Handle click in another cell while editing a cell:
+				// if the edit string begins with "=" then the clicked cell name
+				// is inserted into the edit text
 				if (editor.isEditing()) {
 					String text = editor.getEditingValue();
 					if (text.startsWith("=")) {
