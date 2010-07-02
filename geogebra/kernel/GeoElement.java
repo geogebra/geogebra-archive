@@ -3657,7 +3657,14 @@ public abstract class GeoElement
   	public boolean isGeoElement3D() {
 		return false;
 	}
-	
+  	
+  	/**
+  	 * 
+  	 * @return true if the geo is drawable in 3D view
+  	 */
+  	public boolean hasDrawable3D() {
+		return isGeoElement3D();
+	}	
 	
 	public boolean isGeoAngle() {
 		return false;

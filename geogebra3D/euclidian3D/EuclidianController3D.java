@@ -375,7 +375,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		ret.update();
 		//point.setEuclidianVisible(false);
 		
-		view3D.addToHits3D(ret.getDrawable3D());
+		view3D.addToHits3D(ret);
 
 		return ret;
 	

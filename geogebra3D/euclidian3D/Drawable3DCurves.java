@@ -42,7 +42,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;	
 			
-		if(getGeoElement().doHighlighting())
+		if(doHighlighting())
 			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),1.0f);
 		else
 			renderer.setColor(getGeoElement().getObjectColor(),1.0f);
@@ -63,7 +63,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
 			return;
 		
-		if(getGeoElement().doHighlighting())
+		if(doHighlighting())
 			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),1.0f);
 		else
 			renderer.setColor(getGeoElement().getObjectColor(),1.0f);

@@ -41,6 +41,8 @@ public interface EuclidianViewInterface {
 	boolean hitAnimationButton(MouseEvent e);
 	void setPreview(Previewable previewDrawable);
 	public Drawable getDrawableFor(GeoElement geo);
+	public DrawableND getDrawableND(GeoElement geo);
+	public DrawableND createDrawableND(GeoElement geo);
 	void setToolTipText(String plain);
 
 	/**

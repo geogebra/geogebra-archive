@@ -291,23 +291,6 @@ public abstract class GeoElement3D
 
 
 
-	/////////////////////////////////////////
-	// link with Drawable3D
-	
-	/**
-	 * set the 3D drawable linked to
-	 * @param d the 3D drawable 
-	 */
-	public void setDrawable3D(Drawable3D d){
-		drawable3D = d;
-	}
-	
-	/** return the 3D drawable linked to
-	 * @return the 3D drawable linked to
-	 */
-	public Drawable3D getDrawable3D(){
-		return drawable3D;
-	}
 	
 	
 	////////////////////////////

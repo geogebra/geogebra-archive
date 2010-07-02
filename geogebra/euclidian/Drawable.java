@@ -54,7 +54,7 @@ import org.scilab.forge.jlatexmath.dynamic.ExternalConverterFactory;
  * @author  Markus
  * @version 
  */
-public abstract class Drawable {
+public abstract class Drawable extends DrawableND {
 	
 	// use JLaTeXMath or HotEqn
 	final private static boolean useJLaTeXMath = true;
@@ -82,7 +82,7 @@ public abstract class Drawable {
 	// tracing	
 	protected boolean isTracing = false;
 	
-	boolean createdByDrawList = false;	
+	//boolean createdByDrawList = false;	
 
 	public abstract void update();
 	public abstract void draw(Graphics2D g2);

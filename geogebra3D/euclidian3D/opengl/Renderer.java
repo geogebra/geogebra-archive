@@ -1406,8 +1406,8 @@ public class Renderer implements GLEventListener {
     public void pick(Drawable3D d){
     	pickingLoop++;
     	gl.glLoadName(pickingLoop);
-    	d.drawForPicking(this);	
-    	drawHits[pickingLoop] = d;
+    	Drawable3D ret = d.drawForPicking(this);	
+    	drawHits[pickingLoop] = ret;
     }
     
     public void pickLabel(Drawable3D d){

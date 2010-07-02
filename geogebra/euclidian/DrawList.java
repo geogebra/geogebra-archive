@@ -34,16 +34,20 @@ import java.util.ArrayList;
 public final class DrawList extends Drawable {
 	 	
 	private GeoList geoList;	
-	private ArrayList drawables = new ArrayList();
+	//private ArrayList drawables = new ArrayList();
+	private DrawListArray drawables;
 	private boolean isVisible;
 	
     public DrawList(EuclidianView view, GeoList geoList) {      
     	this.view = view;          
         this.geoList = geoList;
-        geo = geoList;         
+        geo = geoList;    
+        
+        drawables = new DrawListArray(view);
 
         update();
     }
+    
     
     final public void update() {    
     	isVisible = geoList.isEuclidianVisible();
@@ -65,7 +69,8 @@ public final class DrawList extends Drawable {
     			continue;
     		
     		// add drawable for listElement
-    		if (addToDrawableList(listElement, drawablePos, oldDrawableSize))
+    		//if (addToDrawableList(listElement, drawablePos, oldDrawableSize))
+    		if (drawables.addToDrawableList(listElement, drawablePos, oldDrawableSize, this))
     			drawablePos++;
     		
 //    		// for polygons, we also need to add drawables for the segments
@@ -89,6 +94,11 @@ public final class DrawList extends Drawable {
 		   // recordToSpreadsheet(geoList);
     }
     
+    /*
+     * matthieu 2010-07-01
+     * code moved to DrawListArray.java
+     * 
+     * 
     private boolean addToDrawableList(GeoElement listElement, int drawablePos, int oldDrawableSize) {
     	Drawable d = null;
 		boolean inOldDrawableRange = drawablePos < oldDrawableSize;
@@ -122,10 +132,11 @@ public final class DrawList extends Drawable {
 		if (d == null) {    			
 			// create a new drawable for geo
 			d = view.createDrawable(listElement);   
-			d.createdByDrawList = true;
+			setCreatedByDrawList(true);//d.createdByDrawList = true;
 		} 
 		return d;
     }
+    */
 
     final public void draw(Graphics2D g2) {   
     	if (isVisible) {
@@ -136,7 +147,7 @@ public final class DrawList extends Drawable {
     			Drawable d = (Drawable) drawables.get(i);
     			// draw only those drawables that have been created by this list;
     			// if d belongs to another object, we don't want to mess with it here
-    			if (createdByDrawList || !d.geo.isLabelSet()) {
+    			if (createdByDrawList() || !d.geo.isLabelSet()) {
     				d.geo.setHighlighted(doHighlight);    				
     				d.draw(g2);
     			}

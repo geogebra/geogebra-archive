@@ -647,6 +647,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		 * 	// Michael Borcherds 2008-04-02
 		 */
 		protected void doRemove() {
+			
 			if (colorFunctionListener != null) {
 				// copy conditionListeners into array
 				Object [] geos = colorFunctionListener.toArray();	
@@ -1093,6 +1094,14 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			selectedIndex = selectedIndex0;
 		}
 		//END G.Sturr
+		
+		
+		/*
+		 * mathieu : for drawing 3D elements of the list
+		 */
+	  	public boolean hasDrawable3D() {
+			return true;
+		}
 		
 		
 		

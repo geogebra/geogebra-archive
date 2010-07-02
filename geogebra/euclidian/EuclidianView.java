@@ -2863,6 +2863,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	final Drawable getDrawable(GeoElement geo) {
 		return (Drawable) DrawableMap.get(geo);
 	}
+	
+	final public DrawableND getDrawableND(GeoElement geo) {
+		return getDrawable(geo);
+	}
 
 	/*
 	 * interface View implementation
@@ -2892,6 +2896,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		}
 	}
 
+	
+	public DrawableND createDrawableND(GeoElement geo) {
+		return createDrawable(geo);
+	}
+	
 	/**
 	 * adds a GeoElement to this view
 	 */

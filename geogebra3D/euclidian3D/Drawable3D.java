@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.euclidian.DrawableND;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -110,7 +111,7 @@ import java.util.TreeSet;
  * 
  *
  */
-public abstract class Drawable3D {
+public abstract class Drawable3D extends DrawableND {
 
 	
 	private static final boolean DEBUG = false;
@@ -174,16 +175,18 @@ public abstract class Drawable3D {
 	
 
 	//type constants
+	/** type for drawing default (GeoList, ...) */
+	public static final int DRAW_TYPE_DEFAULT = 0;
 	/** type for drawing points */
-	public static final int DRAW_TYPE_POINTS = 0;
+	public static final int DRAW_TYPE_POINTS = DRAW_TYPE_DEFAULT+1;
 	/** type for drawing lines, circles, etc. */
-	public static final int DRAW_TYPE_CURVES = 1;
+	public static final int DRAW_TYPE_CURVES = DRAW_TYPE_POINTS+1;
 	/** type for drawing planes, polygons, etc. */
-	public static final int DRAW_TYPE_SURFACES = 2;
+	public static final int DRAW_TYPE_SURFACES = DRAW_TYPE_CURVES+1;
 	/** type for drawing polyhedrons, quadrics, etc. */
-	public static final int DRAW_TYPE_CLOSED_SURFACES = 3;
+	public static final int DRAW_TYPE_CLOSED_SURFACES = DRAW_TYPE_SURFACES+1;
 	/** number max of drawing types */
-	public static final int DRAW_TYPE_MAX = 4;
+	public static final int DRAW_TYPE_MAX = DRAW_TYPE_CLOSED_SURFACES+1;
 	
 	
 	
@@ -417,16 +420,25 @@ public abstract class Drawable3D {
 	 * sets the matrix, the pencil and draw the geometry for the {@link Renderer} to process picking
 	 * @param renderer the 3D renderer where to draw
 	 */			
-	public void drawForPicking(Renderer renderer) {
+	public Drawable3D drawForPicking(Renderer renderer) {
 		if (!((GeoElement3DInterface) getGeoElement()).isPickable()){
-			return;
+			return this;
 		}
 		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
-			return;	
+			return this;	
+		
+		/*
+		if (createdByDrawList())//no picking if part of a DrawList3D
+			return this;
+			*/
 		
 		//renderer.setMatrix(getMatrix());
 		//renderer.setDash(Renderer.DASH_NONE);
 		drawGeometry(renderer);
+		if (createdByDrawList())//if it is part of a DrawList3D, the list is picked
+			return (Drawable3D) getDrawListCreator();
+		else
+			return this;
 	}
 
 	
@@ -603,6 +615,18 @@ public abstract class Drawable3D {
 		}
 	}		
 	
+	
+	/**
+	 * @return true if geo is highlighted, or if it is part of a list highlighted
+	 */
+	public boolean doHighlighting(){
+		if (getGeoElement().doHighlighting())
+			return true;
+		if (createdByDrawList())
+			return ((Drawable3D) getDrawListCreator()).doHighlighting();
+		return false;
+	}
+	
 
 	
 	/////////////////////////////////////////////////////////////////////////////
@@ -625,7 +649,7 @@ public abstract class Drawable3D {
      */
     public void setGeoElement(GeoElement a_geo) {
         this.m_geo = a_geo;
-        ((GeoElement3DInterface) a_geo).setDrawable3D(this);
+        //((GeoElement3DInterface) a_geo).setDrawable3D(this);
     } 
     
     
@@ -650,7 +674,7 @@ public abstract class Drawable3D {
      * remove this from the draw list 3D
      */
 	public void disposePreview() {
-		getView3D().getDrawList3D().remove(this);		
+		getView3D().remove(this);		
 		
 	}
 

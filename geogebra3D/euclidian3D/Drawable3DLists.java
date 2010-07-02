@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
 import java.util.Iterator;
@@ -50,24 +51,47 @@ public class Drawable3DLists {
 	/** add the drawable to the correct list
 	 * @param drawable drawable to add
 	 */
-	public void add(Drawable3D drawable){
+	private void add(Drawable3D drawable){
 		
 		lists[drawable.getType()].add(drawable);
+		
+		//Application.debug("drawables :\n"+toString());
+		
+	}
+	
+	/**
+	 * add a list of drawables
+	 * @param list
+	 */
+	public void add(LinkedList<Drawable3D> list){
+		
+		for (Drawable3D d : list)
+			add(d);
+		
 		
 	}
 	
 	/** remove the drawable from the correct list
 	 * @param drawable drawable to remove
 	 */
-	public void remove(Drawable3D drawable){
-		
-		//Application.printStacktrace("");
-
+	private void remove(Drawable3D drawable){
+	
 		//TODO fix it
-		if (drawable!=null)
+		//if (drawable!=null)
 			lists[drawable.getType()].remove(drawable);
 		
 	}
+	
+	
+	/** remove all drawables contained in the list
+	 * @param list
+	 */
+	public void remove(LinkedList<Drawable3D> list){
+		for (Drawable3D d : list)
+			remove(d);
+			
+	}
+	
 	
 	/**
 	 *  return the size of the cummulated lists

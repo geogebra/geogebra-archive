@@ -259,7 +259,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 			DrawSegment3D s = new DrawSegment3D(getView3D(),sp);
 			s.getGeoElement().setObjColor(ConstructionDefaults3D.colPolygon3D);
 			segments.add(s);
-			getView3D().getDrawList3D().add(s);
+			getView3D().addToDrawable3DLists(s);
 		}
 		
 		// update segments

@@ -6,12 +6,14 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbMatrixUtil;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Drawable;
+import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
@@ -44,6 +46,8 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
@@ -79,6 +83,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private boolean waitForUpdate = true; //says if it waits for update...
 	//public boolean waitForPick = false; //says if it waits for update...
 	private Drawable3DLists drawable3DLists;// = new DrawList3D();
+	/** list for drawables that will be added on next frame */
+	private LinkedList<Drawable3D> drawable3DListToBeAdded;// = new DrawList3D();
+	/** list for drawables that will be removed on next frame */
+	private LinkedList<Drawable3D> drawable3DListToBeRemoved;// = new DrawList3D();
+	
+	// Map (geo, drawable) for GeoElements and Drawables
+	private TreeMap<GeoElement,Drawable3D> drawable3DMap = new TreeMap<GeoElement,Drawable3D>();
 	
 	//matrix for changing coordinate system
 	private GgbMatrix4x4 m = GgbMatrix4x4.Identity(); 
@@ -109,6 +120,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//axis and xOy plane
 	private GeoPlane3D xOyPlane;
 	private GeoAxis3D[] axis;
+	
+	private DrawPlane3D xOyPlaneDrawable;
+	private DrawAxis3D[] axisDrawable;
 	
 	/** number of drawables linked to this view (xOy plane, Ox, Oy, Oz axis) */
 	static final public int DRAWABLES_NB = 4;
@@ -207,6 +221,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private void start(){
 		
 		drawable3DLists = new Drawable3DLists(this);
+		drawable3DListToBeAdded = new LinkedList<Drawable3D>();
+		drawable3DListToBeRemoved = new LinkedList<Drawable3D>();
 		
 		
 		//TODO replace canvas3D with GLDisplay
@@ -330,10 +346,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		xOyPlane.setEuclidianVisible(true);
 		xOyPlane.setGridVisible(true);
 		xOyPlane.setPlateVisible(false);
-		add(xOyPlane);
-
+		//add(xOyPlane);xOyPlaneDrawable = (DrawPlane3D) getDrawableND(xOyPlane);
+		xOyPlaneDrawable = (DrawPlane3D) createDrawable(xOyPlane);
 
 		axis = new GeoAxis3D[3];
+		axisDrawable = new DrawAxis3D[3];
 		axis[0] = kernel3D.getXAxis3D();
 		axis[1] = kernel3D.getYAxis3D();
 		axis[2] = kernel3D.getZAxis3D();
@@ -341,7 +358,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		for(int i=0;i<3;i++){
 			axis[i].setLabelVisible(true);
-			add(axis[i]);
+			//add(axis[i]); axisDrawable[i] = (DrawAxis3D) getDrawableND(axis[i]);
+			axisDrawable[i] = (DrawAxis3D) createDrawable(axis[i]);
 		}
 		
 		
@@ -383,14 +401,25 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */	
 	public void add(GeoElement geo) {
 		
-		if (geo.isGeoElement3D()){
+		if (geo.hasDrawable3D()){
 			Drawable3D d = null;
 			d = createDrawable(geo);
 			if (d != null) {
-				drawable3DLists.add(d);
+				addToDrawable3DLists(d);//drawable3DLists.add(d);
 				//repaint();			
 			}
 		}
+	}
+	
+	
+	/**
+	 * add the drawable to the lists of drawables
+	 * @param d
+	 */
+	public void addToDrawable3DLists(Drawable3D d){
+		setWaitForUpdate();
+		//drawable3DLists.add(d);
+		drawable3DListToBeAdded.add(d);
 	}
 
 	/**
@@ -413,73 +442,78 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	protected Drawable3D createDrawable(GeoElement geo) {
 		Drawable3D d=null;
-		if (geo.isGeoElement3D()){
-			if (d == null){
-	
-				switch (geo.getGeoClassType()) {
-				
-				case GeoElement3D.GEO_CLASS_POINT3D:
-					d = new DrawPoint3D(this, (GeoPoint3D) geo);
-					break;									
-								
-				case GeoElement3D.GEO_CLASS_VECTOR3D:
-					d = new DrawVector3D(this, (GeoVector3D) geo);
-					break;									
-								
-				case GeoElement3D.GEO_CLASS_SEGMENT3D:
-					d = new DrawSegment3D(this, (GeoSegment3D) geo);
-					break;									
-				
+		if (geo.hasDrawable3D()){
 
-				case GeoElement3D.GEO_CLASS_PLANE3D:
-					d = new DrawPlane3D(this, (GeoPlane3D) geo);
-					break;									
-				
+			switch (geo.getGeoClassType()) {
 
-				case GeoElement3D.GEO_CLASS_POLYGON3D:
-					d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
-					break;									
-				
+			// 2D also shown in 3D
+			case GeoElement3D.GEO_CLASS_LIST:
+				d = new DrawList3D(this, (GeoList) geo);
+				break;				
 
-				case GeoElement3D.GEO_CLASS_LINE3D:	
-					d = new DrawLine3D(this, (GeoLine3D) geo);	
-					break;									
+				// 3D stuff
 
-				case GeoElement3D.GEO_CLASS_RAY3D:					
-					d = new DrawRay3D(this, (GeoRay3D) geo);					
-					break;	
-					
-				case GeoElement3D.GEO_CLASS_CONIC3D:					
-					d = new DrawConic3D(this, (GeoConic3D) geo);
-					break;	
-					
-				case GeoElement3D.GEO_CLASS_AXIS3D:	
-					d = new DrawAxis3D(this, (GeoAxis3D) geo);	
-					break;	
-					
-				case GeoElement3D.GEO_CLASS_CURVECARTESIAN3D:	
-					d = new DrawCurve3D(this, (GeoCurveCartesian3D) geo);	
-					break;									
+			case GeoElement3D.GEO_CLASS_POINT3D:
+				d = new DrawPoint3D(this, (GeoPoint3D) geo);
+				break;									
 
-					
+			case GeoElement3D.GEO_CLASS_VECTOR3D:
+				d = new DrawVector3D(this, (GeoVector3D) geo);
+				break;									
+
+			case GeoElement3D.GEO_CLASS_SEGMENT3D:
+				d = new DrawSegment3D(this, (GeoSegment3D) geo);
+				break;									
 
 
-				case GeoElement3D.GEO_CLASS_QUADRIC:					
-					d = new DrawQuadric3D(this, (GeoQuadric3D) geo);
-					break;									
-					
-				case GeoElement3D.GEO_CLASS_FUNCTION2VAR:					
-					d = new DrawFunction2Var(this, (GeoFunction2Var) geo);
-					break;									
-				
-				}
-				
+			case GeoElement3D.GEO_CLASS_PLANE3D:
+				d = new DrawPlane3D(this, (GeoPlane3D) geo);
+				break;									
 
-				
-				
-			
+
+			case GeoElement3D.GEO_CLASS_POLYGON3D:
+				d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
+				break;									
+
+
+			case GeoElement3D.GEO_CLASS_LINE3D:	
+				d = new DrawLine3D(this, (GeoLine3D) geo);	
+				break;									
+
+			case GeoElement3D.GEO_CLASS_RAY3D:					
+				d = new DrawRay3D(this, (GeoRay3D) geo);					
+				break;	
+
+			case GeoElement3D.GEO_CLASS_CONIC3D:					
+				d = new DrawConic3D(this, (GeoConic3D) geo);
+				break;	
+
+			case GeoElement3D.GEO_CLASS_AXIS3D:	
+				d = new DrawAxis3D(this, (GeoAxis3D) geo);	
+				break;	
+
+			case GeoElement3D.GEO_CLASS_CURVECARTESIAN3D:	
+				d = new DrawCurve3D(this, (GeoCurveCartesian3D) geo);	
+				break;									
+
+
+
+
+			case GeoElement3D.GEO_CLASS_QUADRIC:					
+				d = new DrawQuadric3D(this, (GeoQuadric3D) geo);
+				break;									
+
+			case GeoElement3D.GEO_CLASS_FUNCTION2VAR:					
+				d = new DrawFunction2Var(this, (GeoFunction2Var) geo);
+				break;									
+
 			}
+
 		}
+
+		
+		if (d != null) 			
+			drawable3DMap.put(geo, d);
 		
 		
 		return d;
@@ -489,7 +523,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
-	
+	public DrawableND createDrawableND(GeoElement geo) {
+		return createDrawable(geo);
+	}
 	
 	
 	
@@ -742,6 +778,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		if (waitForUpdate){
 			//drawList3D.updateAll();
+			drawable3DLists.remove(drawable3DListToBeRemoved);
+			drawable3DLists.add(drawable3DListToBeAdded);
+			drawable3DListToBeAdded.clear();
 			drawable3DLists.viewChanged();
 			updateDrawables();
 			waitForUpdate = false;
@@ -893,10 +932,32 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */	
 	public void remove(GeoElement geo) {
 
-		if (geo.isGeoElement3D()){
-			Drawable3D d = ((GeoElement3DInterface) geo).getDrawable3D();
-			drawable3DLists.remove(d);
+		if (geo.hasDrawable3D()){
+			//Drawable3D d = ((GeoElement3DInterface) geo).getDrawable3D();
+			Drawable3D d = drawable3DMap.get(geo);
+			//drawable3DLists.remove(d);
+			remove(d);
+			
+			//for GeoList : remove all 3D drawables linked to it
+			if (geo.isGeoList()){
+				for (DrawableND d1 : ((DrawList3D) d).getDrawables3D()){
+					if (d1.createdByDrawList())
+						remove((Drawable3D) d1);
+				}
+			}
 		}
+		
+		drawable3DMap.remove(geo);
+	}
+	
+	/**
+	 * remove the drawable d
+	 * @param d
+	 */
+	public void remove(Drawable3D d) {
+		setWaitForUpdate();
+		drawable3DListToBeRemoved.add(d);
+		
 	}
 
 
@@ -921,12 +982,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public void update(GeoElement geo) {
-		if (geo.isGeoElement3D()){
-			Drawable3D d = ((GeoElement3DInterface) geo).getDrawable3D();
+		if (geo.hasDrawable3D()){
+			Drawable3D d = drawable3DMap.get(geo);
+				//((GeoElement3DInterface) geo).getDrawable3D();
 			if (d!=null){
-				update(((GeoElement3DInterface) geo).getDrawable3D());
-				//((GeoElement3DInterface) geo).getDrawable3D().update();
-				//repaintView();
+				update(d);
+				//update(((GeoElement3DInterface) geo).getDrawable3D());
 			}
 		}
 	}
@@ -973,9 +1034,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return null;
 	}
 
+	public DrawableND getDrawableND(GeoElement geo) {
+		if (geo.hasDrawable3D()){
 
-
-
+			return drawable3DMap.get(geo);
+			//return ((GeoElement3DInterface) geo).getDrawable3D();
+		}
+		
+		return null;
+	}
 
 
 
@@ -1670,6 +1737,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		hits.addDrawable3D(d, false);
 		hits.sort();
 	}
+	
+	/** add the drawable of the geo to the current hits
+	 * (used when a new object is created)
+	 * @param geo
+	 */
+	public void addToHits3D(GeoElement geo){
+
+		DrawableND d = getDrawableND(geo);
+		if (d!=null)
+			addToHits3D((Drawable3D) d);
+		
+	}	
 
 	
 	/** init the hits for this view
@@ -2052,7 +2131,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			this.previewDrawable.disposePreview();
 		
 		if (previewDrawable!=null){
-			drawable3DLists.add((Drawable3D) previewDrawable);
+			addToDrawable3DLists((Drawable3D) previewDrawable);
+			//drawable3DLists.add((Drawable3D) previewDrawable);
 		}
 		
 		//Application.debug("drawList3D :\n"+drawList3D);
@@ -2377,7 +2457,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void drawTransp(Renderer renderer){
 		if (xOyPlane.isPlateVisible())
-			xOyPlane.getDrawable3D().drawTransp(renderer);
+			xOyPlaneDrawable.drawTransp(renderer);
 		else
 			if (decorationVisible)
 				pointDecorations.drawTransp(renderer);
@@ -2389,7 +2469,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void drawHiding(Renderer renderer){
 		if (xOyPlane.isPlateVisible())
-			xOyPlane.getDrawable3D().drawHiding(renderer);
+			xOyPlaneDrawable.drawHiding(renderer);
 		else
 			if (decorationVisible)
 				pointDecorations.drawHiding(renderer);
@@ -2401,7 +2481,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void draw(Renderer renderer){
 		for(int i=0;i<3;i++)
-			axis[i].getDrawable3D().draw(renderer);
+			axisDrawable[i].draw(renderer);
 		
 		if (decorationVisible)
 			pointDecorations.draw(renderer);
@@ -2412,9 +2492,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void drawHidden(Renderer renderer){
 		for(int i=0;i<3;i++)
-			axis[i].getDrawable3D().drawHidden(renderer);
+			axisDrawable[i].drawHidden(renderer);
 		
-		xOyPlane.getDrawable3D().drawHidden(renderer);
+		xOyPlaneDrawable.drawHidden(renderer);
 		
 		if (decorationVisible)
 			pointDecorations.drawHidden(renderer);
@@ -2426,9 +2506,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param renderer
 	 */
 	public void drawForPicking(Renderer renderer){
-		renderer.pick(xOyPlane.getDrawable3D());
+		renderer.pick(xOyPlaneDrawable);
 		for(int i=0;i<3;i++)
-			renderer.pick(axis[i].getDrawable3D());
+			renderer.pick(axisDrawable[i]);
 	}
 	
 	
@@ -2439,7 +2519,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void drawLabel(Renderer renderer){
 		
 		for(int i=0;i<3;i++)
-			axis[i].getDrawable3D().drawLabel(renderer);
+			axisDrawable[i].drawLabel(renderer);
 		
 
 	}
@@ -2453,10 +2533,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void updateDrawables(){
 		
-		xOyPlane.getDrawable3D().viewChanged();
+		xOyPlaneDrawable.viewChanged();
 		
 		for(int i=0;i<3;i++){
-			axis[i].getDrawable3D().viewChanged();
+			axisDrawable[i].viewChanged();
 			//axis[i].getDrawable3D().setWaitForUpdate();
 		}
 		
@@ -2470,9 +2550,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void updateDrawablesNow(){
 		
 		for(int i=0;i<3;i++){
-			axis[i].getDrawable3D().update();
+			axisDrawable[i].update();
 		}
-		xOyPlane.getDrawable3D().update();
+		xOyPlaneDrawable.update();
 		xOyPlane.setGridDistances(axis[AXIS_X].getNumbersDistance(), axis[AXIS_Y].getNumbersDistance());
 
 		
