@@ -343,6 +343,11 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 			case KeyEvent.VK_PAGE_UP:
 				e.consume();
 				break;
+				
+			case KeyEvent.VK_F1:
+				editing = false;	
+				break;
+			
 			}
 			
 		}
@@ -352,7 +357,7 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	
 	
 	public void focusGained(FocusEvent arg0) {
-		
+		editing = true;
 	}
 
 	public void focusLost(FocusEvent arg0) {	
