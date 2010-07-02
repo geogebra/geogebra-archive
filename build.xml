@@ -263,7 +263,7 @@ office@geogebra.org
 			includes="**/*.class, 				
 					  geogebra/main/*.png,
 					  **/algo2command.properties,	
-					  **/algo2command4i2g.properties"			
+					  **/algo2intergeo.properties"			
 			excludes="geogebra/*,
 					geogebra/gui/**,
 					geogebra/export/**, 

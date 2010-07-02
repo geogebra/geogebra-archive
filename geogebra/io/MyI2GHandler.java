@@ -77,12 +77,15 @@ public class MyI2GHandler implements DocHandler {
     private static final int MODE_LINE_THROUGH_TWO_POINTS = 2270;
 //	private static final int MODE_LINE_THROUGH_TWO_POINTS_OUTPUT = 2271;
 //	private static final int MODE_LINE_THROUGH_TWO_POINTS_INPUT = 2272;
-    private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES = 2300;
-//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_OUTPUT = 2301;
-//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_INPUT = 2302;
-    private static final int MODE_POINT_ON_LINE = 2310;
-//	private static final int MODE_POINT_ON_LINE_OUTPUT = 2311;
-//	private static final int MODE_POINT_ON_LINE_INPUT = 2312;
+    private static final int MODE_LINE_SEGMENT_BY_POINTS = 2300;
+//  private static final int MODE_LINE_SEGMENT_BY_POINTS_OUTPUT = 2301;
+//  private static final int MODE_LINE_SEGMENT_BY_POINTS_INPUT = 2302;
+    private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES = 2400;
+//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_OUTPUT = 2401;
+//	private static final int MODE_POINT_INTERSECTION_OF_TWO_LINES_INPUT = 2402;
+    private static final int MODE_POINT_ON_LINE = 2410;
+//	private static final int MODE_POINT_ON_LINE_OUTPUT = 2411;
+//	private static final int MODE_POINT_ON_LINE_INPUT = 2412;
     private static final int MODE_DISPLAY = 3000;
     private static final int MODE_LABEL = 3100;
 
@@ -106,6 +109,12 @@ public class MyI2GHandler implements DocHandler {
     private String label;
     // to store the last type while processing constraints
     private String lastType;
+
+    // ignore coordinates for segment, import as line
+    private boolean  segment;
+    private GeoPoint segmentStart;
+    private GeoPoint segmentEnd;
+	private GeoPoint segmentVia;
     
     /** Creates a new instance of MyI2GHandler */
     public MyI2GHandler(Kernel kernel, Construction cons) {             
@@ -257,7 +266,7 @@ debug("startElements", eName);
     	switch (subMode) {
     		case MODE_INVALID :
     			// TODO -> extend to further objects
-    			if (!eName.equals("point") && !eName.equals("line")) {
+    			if (!eName.equals("line") && !eName.equals("line_segment") && !eName.equals("point")) {
             		Application.debug("unknown tag in <elements>: " + eName);
             		break;
     			}
@@ -274,6 +283,16 @@ debug("startElements", eName);
     	        	geo = null;
     	        	Application.debug("an element with id \"" + label + "\" already exists");
     	        	break;
+    	        }
+    	        
+    	        if (eName.equals("line_segment")) {
+    	        	eName = "segment";
+    	        	segment = true;
+    	        	segmentStart = new GeoPoint(cons);
+    	        	segmentEnd = new GeoPoint(cons);
+    	        	segmentVia = new GeoPoint(cons);
+    	        } else {
+        	        segment = false;
     	        }
 
 	        	geo = kernel.createGeoElement(cons, eName);        	
@@ -296,10 +315,10 @@ debug("startElements", eName);
     				}
     			}
     			if (i >= tags.length) {
-            		Application.debug("unknown tag in <" + geo.getXMLtypeString() + ">: " + eName);
+            		Application.debug("unknown tag in <" + geo.getI2GtypeString() + ">: " + eName);
             		break;
     			} else if (!(geo instanceof GeoVec3D)) {
-		            Application.debug("wrong element type for coordinates: " + geo.getXMLtypeString());
+		            Application.debug("wrong element type for coordinates: " + geo.getI2GtypeString());
 		            break;
 		        }
     			
@@ -391,8 +410,11 @@ debug("endElements", eName);
     			break;
 
     		case MODE_ELEMENTS :
-    			if (!eName.equals(geo.getXMLtypeString())) {
-    				Application.debug("invalid closing tag </" + eName + "> instead of </" + geo.getXMLtypeString() + ">");
+    			if (eName.equals("line_segment")) {
+    				GeoVec3D.lineThroughPoints(segmentStart, segmentEnd, (GeoLine) geo);
+    			}
+    			if (!eName.equals(geo.getI2GtypeString())) {
+    				Application.debug("invalid closing tag </" + eName + "> instead of </" + geo.getI2GtypeString() + ">");
     			}
 				subMode = MODE_INVALID;
     			break;
@@ -405,7 +427,18 @@ debug("endElements", eName);
         			}
 					Application.debug("only " + (coords.length - 1) + " " + tag + " specified for <" + eName + ">");
 				} else {
-			        GeoVec3D v = (GeoVec3D) geo;
+					GeoVec3D v;
+					if (segment) {
+						if (!segmentStart.isDefined()) {
+							v = (GeoVec3D) segmentStart;
+						} else if (!segmentEnd.isDefined()) {
+							v = (GeoVec3D) segmentEnd;
+						} else {
+							v = (GeoVec3D) segmentVia;
+						}
+					} else {
+						v = (GeoVec3D) geo;
+					}
 					if (coords.length == 3) {
 						if (!kernel.isReal(coords[2])) {
 							coords[0] = coords[0].divide(coords[2]);
@@ -496,6 +529,9 @@ debug("startConstraints", eName);
     			} else if (eName.equals("line_through_two_points")) {
         			name = "Line";
         			subMode = MODE_LINE_THROUGH_TWO_POINTS;
+    			} else if (eName.equals("line_segment_by_points")) {
+    				name = "Segment";
+    				subMode = MODE_LINE_SEGMENT_BY_POINTS;
     			} else if (eName.equals("point_intersection_of_two_lines")) {
     				name = "Intersect";
     				subMode = MODE_POINT_INTERSECTION_OF_TWO_LINES;
@@ -545,6 +581,10 @@ debug("startConstraints", eName);
     			
     		case MODE_LINE_THROUGH_TWO_POINTS :
     			handleConstraintsStart(eName, attrs, "line", 1, new String[] { "point" }, new int[] { 2 });
+    			break;
+    			
+    		case MODE_LINE_SEGMENT_BY_POINTS :
+    			handleConstraintsStart(eName, attrs, "line_segment", 1, new String[] { "point" }, new int[] { 2 });
     			break;
     			
     		case MODE_POINT_INTERSECTION_OF_TWO_LINES :
@@ -619,6 +659,7 @@ debug("endConstraints", eName);
 				cmd.setArgument(0, en[1]);
 				cmd.setArgument(1, en[0]);
 			case MODE_LINE_THROUGH_TWO_POINTS :
+			case MODE_LINE_SEGMENT_BY_POINTS :
 			case MODE_POINT_INTERSECTION_OF_TWO_LINES :
 				handleConstraintsEnd(eName, 1, 2);
 				break;
@@ -706,7 +747,7 @@ debug("endConstraints", eName);
 		for (int i = 0; i < en.length; i++) {
 			if (en[i].getLeft().isGeoElement()) {
 				geo = (GeoElement) en[i].getLeft();
-				if (geo.getXMLtypeString().equals(inputType)) {
+				if (geo.getI2GtypeString().equals(inputType)) {
 					count++;
 				}
 			}
@@ -758,11 +799,13 @@ debug("endConstraints", eName);
 			for (int i = 0; i < labels.length; i++) {
 				loadedGeo[i] = kernel.lookupLabel(labels[i]);
 				loadedGeo[i].remove();
+System.out.println(loadedGeo[i]);
 			}
 			GeoElement [] outputGeo = kernel.getAlgebraProcessor().processCommand(cmd, true);
 			if (outputGeo == null) {
 				throw new MyError(app, "processing of command " + cmdName + " failed");                	            
 			}
+System.out.println(eName);
 			for (int i = 0; i < labels.length; i++) {
 				outputGeo[i].setLoadedLabel(labels[i]);
 				outputGeo[i].set(loadedGeo[i]);
@@ -798,7 +841,7 @@ debug("endConstraints", eName);
             if (geo == null) {
             	ok = false;
             	Application.debug("an element with id \"" + label + "\" does not exist");
-            } else if (!geo.getXMLtypeString().equals(lastType)) {
+            } else if (!geo.getI2GtypeString().equals(lastType)) {
             	ok = false;
             	Application.debug("the element with id \"" + label + "\" is not a " + lastType);
             }
@@ -885,13 +928,13 @@ debug("endDisplay", eName);
 				
 			case MODE_LABEL :
 				if (label == null) {
-		    		Application.debug("no label specified for " + geo.getXMLtypeString());
+		    		Application.debug("no label specified for " + geo.getI2GtypeString());
 				} else {
     		    	try {        	
     		        	geo.setCaption(label);
     		        	geo.setLabelMode(GeoElement.LABEL_CAPTION);
     		        } catch (Exception e) {
-    		        	Application.debug("could not set label " + label + " for " + geo.getXMLtypeString());
+    		        	Application.debug("could not set label " + label + " for " + geo.getI2GtypeString());
     		        }	
 				}
     			if (!eName.equals("label")) {
@@ -906,7 +949,7 @@ debug("endDisplay", eName);
     // debugging    
     //====================================
     private void debug(String tag, String eName) {
-    	if (false) {
+    	if (true) {
     		int length = 17;
         	if (tag.length() < length) {
             	System.out.print(tag);

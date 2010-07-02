@@ -378,6 +378,24 @@ GeoSegmentInterface {
         sb.append("\"/>\n");
   
     }
+	
+    /**
+     * returns all class-specific i2g tags for saveI2G
+     * Intergeo File Format (Yves Kreis)
+     */
+    protected void getI2Gtags(StringBuilder sb) {
+    	GeoPoint point;
+    	
+    	point = getStartPoint();
+    	point.getI2Gtags(sb);
+    	
+    	point = getEndPoint();
+    	point.getI2Gtags(sb);
+    }
+    
+	public String getI2GtypeString() {
+		return "line_segment";
+	}
 
 	/**
 	 * creates new transformed segment

@@ -3252,6 +3252,10 @@ public abstract class GeoElement
 		return getClassName().substring(3).toLowerCase(Locale.US);
 	}
 	
+	public String getI2GtypeString() {
+		return getXMLtypeString();
+	}
+	
 	public String getXML() {
 		StringBuilder sb = new StringBuilder();
     	getXML(sb);
@@ -3316,7 +3320,7 @@ public abstract class GeoElement
 		boolean oldValue = kernel.isTranslateCommandName();
 		kernel.setTranslateCommandName(false);
 		
-		String type = getXMLtypeString();
+		String type = getI2GtypeString();
 		
 		if (mode == CONSTRAINTS) {
 			if (isIndependent() || isPointOnPath()) {
