@@ -703,6 +703,8 @@ public class SpreadsheetTraceManager {
 			*/
 			
 			cell.setAllVisualProperties(geo, true);
+			cell.setSpreadsheetTrace(false);
+			cell.setTraceSettings(null);
 			cell.setAuxiliaryObject(true);
 			cell.setLabelVisible(false);
 			cell.updateCascade();
