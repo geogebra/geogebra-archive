@@ -33,14 +33,23 @@ abstract public class ExportFrame extends JFrame{
 	private final String TEXT_YMAX="textymax";
 	private final String TEXT_YMIN="textymin";
 	protected TextValue textXUnit,textYUnit,textwidth,textheight;
-	protected JLabel labelwidth,labelheight,labelXUnit,labelYUnit,labelFontSize,labelFormat;;
+	protected JLabel labelwidth,labelheight,labelXUnit,labelYUnit,labelFontSize,labelFormat; 
 	protected TextValue textXmin,textXmax, textYmin,textYmax;
 	protected JLabel labelXmin,labelXmax,labelYmin,labelYmax;
 	final String[] msg={"10 pt","11 pt","12 pt"};
-	protected JComboBox comboFontSize,comboFormat;
+	protected JComboBox comboFontSize,comboFormat
+	 // Andy Zhu TODO
+	 ,comboFill;
+	protected JLabel labelFill;
+	final String[] comboFillText={"None","Only opaque fills","With opacity pen","By layering"};
+	static final int FILL_NONE = 0, FILL_OPAQUE = 1, FILL_OPACITY_PEN = 2, FILL_LAYER = 3;
+	 // end changes
 	protected JPanel panel;
 	protected JButton button,button_copy;
-	protected JCheckBox jcbPointSymbol,jcbGrayscale, jcbAsymptoteExport;
+	protected JCheckBox jcbPointSymbol,jcbGrayscale, jcbAsymptoteExport, 
+	 // Andy Zhu - for use in Asymptote Frame
+	                    jcbShowAxes,jcbAsyCompact,jcbAsyCse5,jcbDotColors;
+	 // end changes
 	protected JScrollPane js;
 	protected JTextArea textarea;
 	protected Application app;
@@ -95,6 +104,29 @@ abstract public class ExportFrame extends JFrame{
 		jcbPointSymbol=new JCheckBox(app.getPlain("DisplayPointSymbol"));
 		jcbGrayscale=new JCheckBox(app.getPlain("PGFExport.Grayscale"));
 		jcbAsymptoteExport=new JCheckBox(app.getPlain("ExporttoAsymptote"));
+		 // Andy Zhu: for use in Asymptote frame
+		jcbShowAxes   = new JCheckBox(app.getPlain("Show Axes/Grid"));
+		jcbAsyCompact = new JCheckBox(app.getPlain("Concise code"));
+		jcbAsyCse5    = new JCheckBox(app.getPlain("Concise using cse5"));
+		jcbDotColors  = new JCheckBox(app.getPlain("Keep dot colors"));
+	    jcbShowAxes.setSelected(true);
+	    jcbAsyCompact.setSelected(false);
+	    jcbAsyCse5.setSelected(false);
+	    jcbAsyCse5.setEnabled(false);
+	    jcbDotColors.setSelected(false);
+	    jcbAsyCompact.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if(jcbAsyCompact.isSelected())
+					jcbAsyCse5.setEnabled(true);
+				else {
+					jcbAsyCse5.setSelected(false);
+					jcbAsyCse5.setEnabled(false);
+				}
+			}
+		});
+	    comboFill = new JComboBox(comboFillText);
+	    labelFill = new JLabel(app.getPlain("Fill type:"));
+		 // end changes
 		comboFontSize=new JComboBox(msg);
 		jcbPointSymbol.setSelected(true);
 		jcbGrayscale.setSelected(false);
@@ -185,6 +217,9 @@ abstract public class ExportFrame extends JFrame{
 	public double getLatexHeight(){
 		return textheight.getValue();
 	}
+	public double getLatexWidth(){
+		return textwidth.getValue();
+	}
 	public void write(StringBuilder sb){
 		textarea.setText(new String(sb));
 		textarea.selectAll();
@@ -203,6 +238,24 @@ abstract public class ExportFrame extends JFrame{
 	protected int getFormat(){
 		return comboFormat.getSelectedIndex();
 	}
+	 // Andy Zhu - for use in Asymptote frame
+    protected boolean getShowAxes(){
+    	return jcbShowAxes.isSelected();
+    }
+    protected boolean getAsyCompact(){
+    	return jcbAsyCompact.isSelected();
+    }
+    protected boolean getAsyCompactCse5(){
+    	return jcbAsyCse5.isSelected();
+    }
+    protected boolean getKeepDotColors(){
+    	return jcbDotColors.isSelected();
+    }
+    protected int getFillType(){
+    	return comboFill.getSelectedIndex();
+    }
+	 // end changes
+
 	protected abstract boolean isLaTeX();
 	protected abstract boolean isConTeXt();
 	protected abstract boolean isPlainTeX();
