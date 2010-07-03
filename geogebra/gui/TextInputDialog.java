@@ -171,11 +171,11 @@ public class TextInputDialog extends InputDialog {
 						break;
 						
 					case 8: // 2x2 matrix
-						insertString("\\left(\\begin{array} a & b \\\\ c & d \\\\ \\end{array}\\right)");						
+						insertString("\\left(\\begin{array}{} a & b \\\\ c & d \\\\ \\end{array}\\right)");						
 						break;
 						
 					case 9: // 3x3 matrix
-						insertString("\\left(\\begin{array} a & b & c \\\\ d & e & f \\\\ g & h & i \\\\ \\end{array}\\right)");						
+						insertString("\\left(\\begin{array}{} a & b & c \\\\ d & e & f \\\\ g & h & i \\\\ \\end{array}\\right)");						
 						break;
 						
 					default:
