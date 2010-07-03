@@ -520,16 +520,16 @@ public abstract class Drawable extends DrawableND {
 		if (eqnSB == null) eqnSB = new StringBuilder(20);
 		else eqnSB.setLength(0);
 		
-		if (font.isItalic()) eqnSB.append("\\mathit{ "); else eqnSB.append("\\mathrm{ ");
-		if (serif) eqnSB.append("\\mathsf{ ");
-		if (font.isBold()) eqnSB.append("\\mathbf{ ");
+		if (font.isItalic()) eqnSB.append("\\textit{ "); //else eqnSB.append("\\mathrm{ ");
+		if (serif) eqnSB.append("\\textsf{ ");
+		if (font.isBold()) eqnSB.append("\\textbf{ ");
 		
 		eqnSB.append(text);
 		
 		if (font.isBold()) eqnSB.append(" }");
 		
 		if (serif) eqnSB.append(" }");
-		eqnSB.append(" }"); // it/rm
+		if (font.isItalic()) eqnSB.append(" }"); 
 
 		
 		int strLen = eqnSB.length();
