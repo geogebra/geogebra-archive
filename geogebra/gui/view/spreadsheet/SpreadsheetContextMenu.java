@@ -193,8 +193,9 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		}
 
 
-
-		// Create (Lists, Matrix, etc.) 	
+		// ===============================================
+		//       Create (Lists, Matrix, etc.) 	
+		// ===============================================
 
 		if (!isEmptySelection()) {
 			subMenu = new JMenu(app.getMenu("Create") + " ...");
@@ -204,7 +205,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			item = new JMenuItem(app.getMenu("List"));
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					cp.CreateList(selectedCellRanges, true, false);
+					cp.createList(selectedCellRanges, true, false);
 				}
 			});	 
 			subMenu.add(item);

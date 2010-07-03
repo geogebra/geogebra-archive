@@ -721,7 +721,7 @@ public class ContextMenu extends JPopupMenu
 	private class ActionListenerCreateList implements ActionListener
 	{
  		public void actionPerformed(ActionEvent e) {
- 			table.getCellRangeProcessor().CreateList(selectedCellRanges, true, false);
+ 			table.getCellRangeProcessor().createList(selectedCellRanges, true, false);
  		}
 	}
 	

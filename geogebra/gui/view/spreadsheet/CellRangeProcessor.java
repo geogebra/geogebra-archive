@@ -1,6 +1,8 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.main.Application;
 
 import java.awt.Point;
@@ -253,7 +255,7 @@ public class CellRangeProcessor {
 	
 	
 	
-	public GeoElement CreateList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
+	public GeoElement createList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
 		
 		GeoElement[] geos = null;
 		String listString = "";
@@ -315,7 +317,24 @@ public class CellRangeProcessor {
 			return null;
 
 	}
-			
+		
+	public GeoElement createListNumeric(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
+		
+		Construction cons = app.getKernel().getConstruction();  
+		GeoList fullList = (GeoList) createList(rangeList, scanByColumn, copyByValue);
+		GeoList numericList = new GeoList(cons);
+		
+		for(int i = 0; i < fullList.size(); ++i){
+			 if(fullList.get(i).isGeoNumeric())
+				 numericList.add(fullList.get(i));
+		}
+
+		return numericList;
+	}
+	
+	
+	
+	
 	
 	public boolean isCreateMatrixPossible(ArrayList<CellRange> rangeList){
 		

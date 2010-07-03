@@ -6,13 +6,17 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.DefaultApplication;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,9 +28,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -35,33 +43,56 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
-public class OneVariableStatsDialog extends JDialog   {
+public class OneVariableStatsDialog extends JDialog implements ActionListener   {
 	
+	// ggb 
 	private Application app;
 	private Kernel kernel;
 	private MyTable table; 
-	private JPanel statPanel;
-	private JPanel euclidianPanel;
+	private Construction cons;
+	
+	private static final int PLOT_HISTOGRAM = 0;
+	private static final int PLOT_BOXPLOT = 1;
+	private static final int PLOT_DOTPLOT = 2;
+	private static final int PLOT_NORMALQUANTILE = 3;
+	private int numPlots = 4;
+	private int selectedPlot = PLOT_HISTOGRAM;
+	
+	// gui
+	private JPanel statPanel, plotPanel, dataPanel;
+	private JTable statTable;
+	private DefaultTableModel statModel;
+	private JScrollPane statScroller;
+	
+	// new EuclidianView for the dialog plots
 	private EuclidianView ev;
 	private EuclidianController ec;
 	private boolean[] showAxes = { true, true };
 	private boolean showGrid = false;
 	private boolean antialiasing = true;
 	
-	private GeoElement dataList;
-	private GeoList statList;
-	private GeoElement boxPlot;
-	private GeoElement histogram;
+	
+	private GeoElement boxPlot, histogram;
+	private GeoList dataList, statList;
+	private int numClasses = 6;
+	
+	private JComboBox cbNumClasses, cbPlotTypes;
 	
 	
-	
+	/**
+	 * Construct the dialog
+	 */
 	public OneVariableStatsDialog(MyTable table, Application app){
 		super(app.getFrame(),true);
 		this.app = app;	
 		kernel = app.getKernel();
 		this.table = table;
-		
+		cons = kernel.getConstruction();
+				
 		// create an instance of EuclideanView
 		ec = new EuclidianController(kernel);
 		ev = new EuclidianView(ec, showAxes, showGrid);
@@ -70,7 +101,11 @@ public class OneVariableStatsDialog extends JDialog   {
 		ev.setPreferredSize(new Dimension(300,200));
 		ev.setSize(new Dimension(300,200));
 		ev.updateSize();
-			
+		
+		// create temporary geoLists
+		dataList = (GeoList) table.getCellRangeProcessor().createListNumeric(table.selectedCellRanges, true, true);	
+		createStatList(dataList);
+		
 		initGUI();
 	}
 	
@@ -82,18 +117,15 @@ public class OneVariableStatsDialog extends JDialog   {
 			JPanel mainPanel = new JPanel(new BorderLayout());
 			mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 			
-			buildStatPanel();
-			
-			euclidianPanel = new JPanel(new BorderLayout());
-			euclidianPanel.add(ev,BorderLayout.CENTER);
-			euclidianPanel.setBorder(BorderFactory.createEtchedBorder());
-			
-			mainPanel.add(euclidianPanel, BorderLayout.CENTER);	
-			mainPanel.add(statPanel, BorderLayout.SOUTH);		
+			mainPanel.add(buildPlotPanel(), BorderLayout.CENTER);	
+			mainPanel.add(buildStatPanel(), BorderLayout.SOUTH);
+			//mainPanel.add(buildDataPanel(), BorderLayout.WEST);
 			//this.setPreferredSize(new Dimension(400,300));
 			
 			
-			this.getContentPane().add(mainPanel);
+			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, buildDataPanel(), mainPanel);
+			
+			this.getContentPane().add(splitPane);
 			//setResizable(false);
 			pack();
 			setLocationRelativeTo(app.getFrame());
@@ -104,85 +136,237 @@ public class OneVariableStatsDialog extends JDialog   {
 	}
 	
 	
+	public void setVisible(boolean isVisible){
+		super.setVisible(isVisible);
+
+		if(!isVisible){
+			if(statList != null) statList.remove();
+			if(dataList != null) dataList.remove();
+			if(boxPlot != null) boxPlot.remove();
+			if(histogram != null) histogram.remove();
+		}
+	}
+
 	
 	
+	
+	
+	private JPanel buildPlotPanel(){
+		
+		JLabel lblNumClasses = new JLabel(app.getPlain("classes")); 
+		
+		Integer[] classArray = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};		
+		cbNumClasses = new JComboBox(classArray);
+		cbNumClasses.setSelectedItem(numClasses);
+		cbNumClasses.addActionListener(this);
+		
+		JPanel numClassesPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		numClassesPanel.add(lblNumClasses);
+		numClassesPanel.add(cbNumClasses);
+		
+		String[] plotNames = new String[numPlots]; 
+		plotNames[PLOT_HISTOGRAM] = app.getCommand("Histogram");
+		plotNames[PLOT_BOXPLOT] = app.getCommand("Boxplot");
+		plotNames[PLOT_DOTPLOT] = app.getCommand("DotPlot");
+		plotNames[PLOT_NORMALQUANTILE] = app.getCommand("NormalQuantile");
+		
+		cbPlotTypes = new JComboBox(plotNames);
+		cbPlotTypes.setSelectedIndex(selectedPlot);
+		cbPlotTypes.addActionListener(this);
+		JPanel plotTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		plotTypePanel.add(cbPlotTypes);
+		
+		JPanel controlPanel = new JPanel(new BorderLayout());
+		controlPanel.add(plotTypePanel,BorderLayout.WEST);
+		controlPanel.add(numClassesPanel,BorderLayout.EAST);
+		
+		plotPanel = new JPanel(new BorderLayout());
+		plotPanel.add(ev,BorderLayout.CENTER);
+		plotPanel.add(controlPanel,BorderLayout.SOUTH);
+		plotPanel.setBorder(BorderFactory.createEtchedBorder());
+			
+		updatePlot();
+		
+		return plotPanel;
+	}
+	
+	private void updatePlot(){
+		switch(selectedPlot){
+		case PLOT_HISTOGRAM:
+			createHistogram( dataList, numClasses);
+			break;
+			
+		default:
+			createHistogram( dataList, numClasses);
+			break;
+		}
+	}
 	
 	private JPanel buildStatPanel(){
-	
-		// create temporary geoLists
-		dataList = table.getCellRangeProcessor().CreateList(table.selectedCellRanges, true, true);	
-		createStatList((GeoList)dataList);
-		createChart( (GeoList)dataList);
 		
 		// build the stat table
-		String[] columnNames = {" ", " "};	
-		Object[][] data = {
-			    {"Count",  statList.get(0).toDefinedValueString()},
-			    {"Mean",  statList.get(1).toDefinedValueString()},
-			    {"Standard Deviation",  statList.get(2).toDefinedValueString()},
-			    {"Variance",  statList.get(3).toDefinedValueString()},
-			    {" ",  " "},
-			    {"Min",  statList.get(4).toDefinedValueString()},
-			    {"Q1",  statList.get(5).toDefinedValueString()},
-			    {"Median",  statList.get(6).toDefinedValueString()},
-			    {"Q3",  statList.get(7).toDefinedValueString()},
-			    {"Max",  statList.get(8).toDefinedValueString()}
-			};	
-		JTable statTable = new JTable(data,columnNames);
-		//statTable.setPreferredSize(new Dimension(250,250));
+		String[] columnNames = {app.getPlain(" "), "Data"};	
 		
-		// add table to panel
+		Object[][] data = new Object[statList.size()][2];
+		GeoList list;
+		for (int elem = 0; elem < statList.size(); ++elem){
+			list = (GeoList)statList.get(elem);
+			data[elem][0] = list.get(0).toDefinedValueString();
+			data[elem][1] = list.get(1).toDefinedValueString();
+		}
+		
+		statModel = new DefaultTableModel(data,columnNames);
+		statTable = new JTable(statModel){
+		      public boolean isCellEditable(int rowIndex, int colIndex) {
+		        return false;   
+		      }
+		    };
+		 // Enable cell selection 
+		statTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
+		statTable.setColumnSelectionAllowed(true); 
+		statTable.setRowSelectionAllowed(true);
+		
+		statTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		statTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
+		statTable.setMinimumSize(new Dimension(50,50));
+		
+		
+		
+		statScroller = new JScrollPane(statTable);
+		statScroller.setBorder(BorderFactory.createEmptyBorder());
+		
+		// hide the table header
+		statTable.setTableHeader(null);
+		statScroller.setColumnHeaderView(null);
+		
+	
 		statPanel = new JPanel(new BorderLayout());
-		statPanel.add(new JScrollPane().add(statTable));
-		statPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		statPanel.add(statScroller, BorderLayout.CENTER);
+		
+		// statPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		statPanel.setBorder(BorderFactory.createEmptyBorder());
 		
 		return statPanel;
 		
 	}
 
+	private JPanel buildDataPanel(){
+		
+				
+		// build the data table
+		String[] columnNames = {" ", " "};	
+		
+		Object[][] data = new Object[dataList.size()][2];
+		for (int i = 0; i < dataList.size(); ++i){
+			data[i][0] = new Boolean(true);
+			data[i][1] = dataList.get(i).toDefinedValueString();
+		}
+		
+		TableModel dataModel = new DefaultTableModel(data,columnNames);
+		JTable dataTable = new JTable(dataModel);
+		
+		 // Enable cell selection 
+		dataTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
+		dataTable.setColumnSelectionAllowed(true); 
+		dataTable.setRowSelectionAllowed(true);
+		
+		dataTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		dataTable.setPreferredScrollableViewportSize(dataTable.getPreferredSize());
+		//dataTable.setMinimumSize(new Dimension(50,50));
+		
+		
+		
+		JScrollPane dataScroller = new JScrollPane(dataTable);
+		dataScroller.setBorder(BorderFactory.createEmptyBorder());
+		
+		// hide the table header
+		dataTable.setTableHeader(null);
+		dataScroller.setColumnHeaderView(null);
+		
+		
+		dataPanel = new JPanel(new BorderLayout());
+		dataPanel.add(dataScroller, BorderLayout.CENTER);
+			
+		return dataPanel;
+	}
+	
+	
+	
 	private void  createStatList(GeoList dataList){
 		
 		String label = dataList.getLabel();	
-		String geoText = "";
+		String text = "";
 		ArrayList<String> list = new ArrayList<String>();
 		
 		try {		
-			geoText += "{Length[" + label + "],";
-			geoText += "Mean[" + label + "],";
-			geoText += "SD[" + label + "],";
-			geoText += "Variance[" + label + "],";	
+			text += "{";
+			text += statListCmdString("Length", label);
+			text += ",";
+			text += statListCmdString("Mean", label);
+			text += ",";
+			text += statListCmdString("SD", label);
+			text += ",";
+			text += statListCmdString("SampleSD", label);
+			text += ",";
+			text += statListCmdString("Min", label);
+			text += ",";
+			text += statListCmdString("Q1", label);
+			text += ",";
+			text += statListCmdString("Median", label);
+			text += ",";
+			text += statListCmdString("Q3", label);
+			text += ",";
+			text += statListCmdString("Max", label);
 			
-			geoText += "Min[" + label + "],";		
-			geoText += "Q1[" + label + "],";	
-			geoText += "Median[" + label + "],";	
-			geoText += "Q3[" + label + "],";
-			geoText += "Max[" + label + "]}";	
-
-			Application.debug(geoText);
+			text += "}";
+			
+			
 			// convert list string to geo
 			GeoElement[] geos = table.kernel
 					.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptionHandling(geoText, false);
+					.processAlgebraCommandNoExceptionHandling(text, false);
 	
 			statList = (GeoList) geos[0];
 					
 		} catch (Exception ex) {
 			Application.debug("Creating list failed with exception " + ex);
+			setVisible(false);
 		}	
 		
 	}
 	
+	private String statListCmdString(String cmdStr, String geoLabel){
+		
+		String text = "{";
+		text += "\"" + app.getCommand(cmdStr)+ "\",";
+		text += cmdStr + "[" + geoLabel + "]";
+		text += "}";
+		
+		return text; 
+	}
 	
 	
-	private void createChart(GeoList dataList){
+	
+	private void createHistogram(GeoList dataList, int numClasses){
 		
 		String label = dataList.getLabel();	
 		String geoText = "";
 		
-		double xMin = Double.parseDouble(statList.get(4).toValueString());
-		double xMax = Double.parseDouble(statList.get(8).toValueString());
+		
+		NumberValue nv;
+		nv = kernel.getAlgebraProcessor().evaluateToNumeric("Min[" + label + "]", false);		
+		double xMin = nv.getDouble();
+		
+		nv = kernel.getAlgebraProcessor().evaluateToNumeric("Max[" + label + "]", false);		
+		double xMax = nv.getDouble();
+		
+		
 		double buffer = .1*(xMax - xMin);
-		double barWidth = (xMax - xMin)/5;
+		double barWidth = (xMax - xMin)/(numClasses - 1);  
 	
 		
 		/*
@@ -201,8 +385,10 @@ public class OneVariableStatsDialog extends JDialog   {
 		 */	
 		
 
-		Construction cons = app.getKernel().getConstruction();
 		// Create histogram	
+		if(histogram != null){
+			histogram.remove();
+		}
 		geoText = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
 		try {
 			boolean oldMacroMode = cons.isSuppressLabelsActive();
@@ -219,31 +405,177 @@ public class OneVariableStatsDialog extends JDialog   {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-			
+		
+		
+		double freqMax = getFrequencyTableMax(dataList, barWidth);
+		
 		// Set view parameters		
-		ev.setRealWorldCoordSystem(xMin - barWidth, xMax + barWidth, -1.0, 6.0);
+		ev.setRealWorldCoordSystem(xMin - barWidth, xMax + barWidth, -1.0, 1.1 * freqMax);
 		ev.setShowAxis(EuclidianView.AXIS_Y, false, true);
+		
+		
 		
 	}
 	
 	
 	
-	public void setVisible(boolean isVisible){
-		super.setVisible(isVisible);
+	
+	
+	
+	// create frequency table
+	private double getFrequencyTableMax(GeoList list1, double n){
 
-		if(!isVisible){
-			if(statList != null) 
-				statList.remove();
-			if(dataList != null) 
-				dataList.remove();
-			if(boxPlot != null)
-				boxPlot.remove();
-			if(histogram != null)
-				histogram.remove();
-			
+		
+		double [] yval; // y value (= min) in interval 0 <= i < N
+		double [] leftBorder; // leftBorder (x val) of interval 0 <= i < N
+		GeoElement geo;	
+
+		double mini = Double.MAX_VALUE;
+		double maxi = Double.MIN_VALUE;
+		int minIndex = -1;
+		int maxIndex = -1;
+
+		double step = n ;   //n.getDouble();
+		int rawDataSize = list1.size();
+
+		if (step < 0 || kernel.isZero(step) || rawDataSize < 2)
+		{
+			return 0;
 		}
+
+
+		// find max and min
+		for (int i = 0; i < rawDataSize; i++) {
+			geo = list1.get(i);
+			if (!geo.isGeoNumeric()) {
+				return 0;
+			}
+			double val = ((GeoNumeric)geo).getDouble();
+
+			if (val > maxi) {
+				maxi = val;
+				maxIndex = i;
+			}
+			if (val < mini) {
+				mini = val;
+				minIndex = i;
+			}
+		}
+
+		if (maxi == mini || maxIndex == -1 || minIndex == -1) {
+			return 0;
+		}
+
+		double totalWidth = maxi - mini;
+		double noOfBars = totalWidth / n;    //n.getDouble();
+		double gap = 0;
+
+		int N = (int)noOfBars + 2;
+		gap = ((N-1) * step - totalWidth) / 2.0;
+		
+		NumberValue a = (NumberValue)(new GeoNumeric(cons,mini - gap));
+		NumberValue b = (NumberValue)(new GeoNumeric(cons,maxi + gap));
+
+		yval = new double[N];
+		leftBorder = new double[N];
+
+
+		// fill in class boundaries
+		//double width = (maxi-mini)/(double)(N-2);
+		for (int i=0; i < N; i++) {
+			leftBorder[i] = mini - gap + step * i;
+		}
+
+
+		// zero frequencies
+		for (int i=0; i < N; i++) yval[i] = 0; 	
+
+		// work out frequencies in each class
+		double datum;
+
+		for (int i=0; i < list1.size() ; i++) {
+			geo = list1.get(i);
+			if (geo.isGeoNumeric())	datum = ((GeoNumeric)geo).getDouble(); 
+			else {  return 0; }
+
+			// fudge to make the last boundary eg 10 <= x <= 20
+			// all others are 10 <= x < 20
+			double oldMaxBorder = leftBorder[N-1];
+			leftBorder[N-1] += Math.abs(leftBorder[N-1] / 100000000);
+
+			// check which class this datum is in
+			for (int j=1; j < N; j++) {
+				//System.out.println("checking "+leftBorder[j]);
+				if (datum < leftBorder[j]) 
+				{
+					//System.out.println(datum+" "+j);
+					yval[j-1]++;
+					break;
+				}
+			}
+
+			leftBorder[N-1] = oldMaxBorder;
+		}
+
+		double freqMax = 0.0;
+		for(int k = 0; k < yval.length; ++k){
+			if(yval[k] > freqMax)
+				freqMax = yval[k];
+		}
+		return freqMax;
+		
 	}
 
+	public void actionPerformed(ActionEvent e) {	
+		doActionPerformed(e.getSource());
+	}	
+	
+	public void doActionPerformed(Object source) {		
+				
+		if (source == cbNumClasses) {
+			numClasses = (Integer) cbNumClasses.getSelectedItem();
+			createHistogram( dataList, numClasses);
+		}
+		
+		if (source == cbPlotTypes) {
+			selectedPlot = cbNumClasses.getSelectedIndex();
+			updatePlot();
+		}
+		statPanel.requestFocus(); 
+	}
+
+
+
+	//======================================================
+	//         Cell Renderer 
+	//======================================================
+	
+	class MyCellRenderer extends DefaultTableCellRenderer {
+		
+		public MyCellRenderer(){
+			
+		setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+		
+		}
+		
+		
+		public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column) 
+		{	
+			
+			if(value instanceof Boolean){
+				setText("B");
+			}else{
+			setText(value.toString());
+			}
+			return this;
+		}
+
+	}
+
+
+	
+	
 	
 	
 }
