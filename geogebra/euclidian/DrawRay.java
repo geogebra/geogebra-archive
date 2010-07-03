@@ -153,7 +153,7 @@ implements Previewable {
 			return;
 		}
 
-		line.setLine( a[0], a[1],  a[0] + 100*lambda * v[0], a[1] + 100*lambda * v[1]);		  
+		line.setLine( a[0], a[1],  a[0] + lambda * v[0], a[1] + lambda * v[1]);		  
     }
     
     final public void draw(Graphics2D g2) {
