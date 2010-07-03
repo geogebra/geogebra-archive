@@ -86,8 +86,9 @@ public class AlgoTableText extends AlgoElement {
     	
     	String justification = "l"; // default (l, c or r)
     	
-    	String openBracket = "";
-    	String closeBracket = "";
+    	// need an open & close together, so can't use ""
+    	String openBracket = "\\left.";
+    	String closeBracket = "\\right.";
     	
     	if (args != null) {
     		String optionsStr = args.getTextString();
