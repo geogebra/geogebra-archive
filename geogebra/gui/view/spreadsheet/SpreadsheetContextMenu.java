@@ -229,7 +229,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				});	 
 				subMenu.add(item);
 
-				item = new JMenuItem(app.getMenu("TableText"));
+				item = new JMenuItem(app.getMenu("Table"));
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						cp.CreateTableText(column1, column2, row1, row2);

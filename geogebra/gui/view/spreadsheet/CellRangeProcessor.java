@@ -391,30 +391,33 @@ public GeoElement CreateTableText(int column1, int column2, int row1, int row2){
 		
 		GeoElement[] geos = null;
 		
-		String text="";
+		StringBuilder text= new StringBuilder();
 		try {
-			text="TableText[{";
+			text.append("TableText[{");
 			for (int j = row1; j <= row2; ++ j) {
 				//if (selected.length > j && ! selected[j])  continue; 	
-				String row = "{";
+				text.append('{');
 				for (int i = column1; i <= column2; ++ i) {
 					GeoElement v2 = RelativeCopy.getValue(table, i, j);
 					if (v2 != null) {
-						row += v2.getLabel() + ",";
+						text.append(v2.getLabel());
+						if (i < column2) text.append(',');
 					}
 					else {
 						app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
 						return null;
 					}
 				}
-				row = removeComma(row);
-				text += row +"}" + ",";
+				text.append('}');
+				if (j < row2) text.append(',');
 			}
 
-			text = removeComma(text)+ "}]";
+			//text = removeComma(text)+ "}]";
 
+			text.append("},\"|_\"]");
+			
 			//Application.debug(text);
-			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
 
 			app.storeUndoInfo();
 		} 
