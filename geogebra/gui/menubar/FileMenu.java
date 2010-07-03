@@ -38,6 +38,7 @@ class FileMenu extends BaseMenu {
 		exportGraphicAction,
 		exportPgfAction,
 		exportPSTricksAction,
+		exportAsymptoteAction,
 		exportGeoGebraTubeAction,
 		drawingPadToClipboardAction,
 		printEuclidianViewAction,
@@ -114,6 +115,10 @@ class FileMenu extends BaseMenu {
 
 		// Added by Loïc Le Coq
 		mi = submenu.add(exportPgfAction);
+
+		// Added by Andy Zhu
+		mi = submenu.add(exportAsymptoteAction);
+		
 		// End
 
 		// DONE HERE WHEN APPLET
@@ -371,6 +376,23 @@ class FileMenu extends BaseMenu {
 					new geogebra.export.pstricks.GeoGebraToPgf(app);
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPGF not available");
+				} catch (java.lang.NoClassDefFoundError ee) {
+					app.showErrorDialog(app.getError("ExportJarMissing"));
+					ee.printStackTrace();
+				}
+			}
+		};
+
+		// Added by Andy Zhu; Asymptote export
+		exportAsymptoteAction = new AbstractAction(app.getPlain("Graphics View as Asymptote")
+				+ " ...", app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				try {
+					new geogebra.export.pstricks.GeoGebraToAsymptote(app);
+				} catch (Exception ex) {
+					Application.debug("GeoGebraToAsymptote not available");
 				} catch (java.lang.NoClassDefFoundError ee) {
 					app.showErrorDialog(app.getError("ExportJarMissing"));
 					ee.printStackTrace();
