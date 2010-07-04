@@ -794,6 +794,8 @@ public class DefaultGuiManager implements GuiManager {
 	public void showPrintPreview() {
 		GeoGebraMenuBar.showPrintPreview(app);
 	}
+	
+	ContextMenuGraphicsWindow drawingPadpopupMenu;
 
 	/**
 	 * Displays the zoom menu at the position p in the coordinate space of
@@ -804,11 +806,13 @@ public class DefaultGuiManager implements GuiManager {
 		app.getEuclidianView().resetMode();
 
 		// menu for drawing pane context menu
-		ContextMenuGraphicsWindow popupMenu = new ContextMenuGraphicsWindow(
+		drawingPadpopupMenu = new ContextMenuGraphicsWindow(
 				app, p.x, p.y);
-		popupMenu.show(invoker, p.x, p.y);
+		drawingPadpopupMenu.show(invoker, p.x, p.y);
 	}
 
+	
+	ContextMenuGeoElement popupMenu;
 	/**
 	 * Displays the popup menu for geo at the position p in the coordinate space
 	 * of the component invoker
@@ -822,10 +826,11 @@ public class DefaultGuiManager implements GuiManager {
 		} else {
 			// clear highlighting and selections in views
 			app.getEuclidianView().resetMode();
-			Point screenPos = invoker.getLocationOnScreen();
+			
+			Point screenPos = (invoker == null) ? new Point(0,0) : invoker.getLocationOnScreen();
 			screenPos.translate(p.x, p.y);
 	
-			ContextMenuGeoElement popupMenu = new ContextMenuGeoElement(app, geo,
+			popupMenu = new ContextMenuGeoElement(app, geo,
 					screenPos);
 			popupMenu.show(invoker, p.x, p.y);
 		}
@@ -2993,6 +2998,20 @@ public class DefaultGuiManager implements GuiManager {
 				return false;
 			
 			return handwritingRecognition.isVisible();
+		}
+
+		public boolean noMenusOpen() {
+			if (popupMenu != null && popupMenu.isVisible()) {
+				//Application.debug("menus open");
+				return false;
+			}
+			if (drawingPadpopupMenu != null && drawingPadpopupMenu.isVisible()) {
+				//Application.debug("menus open");
+				return false;
+			}
+			
+			//Application.debug("no menus open");
+			return true;
 		}
 
 }

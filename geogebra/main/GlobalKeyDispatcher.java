@@ -3,20 +3,21 @@ package geogebra.main;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.arithmetic.ExpressionNode;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.KeyEventDispatcher;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,9 +77,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			Application.debug("test");
 			app.test();			
 		}
-		
-		
-		
+				
 		// GENERAL KEYS: 
 		// handle ESC, function keys, zooming with Ctrl +, Ctlr -, etc.
 		if (handleGeneralKeys(event)) {
@@ -155,6 +154,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				if (!(event.getSource() instanceof JTable)) {			
 
 					// ENTER: set focus to input field
+					if (app.hasGuiManager() && app.getGuiManager().noMenusOpen())
 					if (app.showAlgebraInput() && 
 						!app.getGuiManager().getAlgebraInput().hasFocus()) 
 					{
@@ -343,6 +343,12 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			if (ev.hasFocus())
 			switch (keyCode) {
 			
+			case KeyEvent.VK_CONTEXT_MENU:
+				Component comp = event.getComponent();
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				p.translate(-comp.getLocationOnScreen().x, -comp.getLocationOnScreen().y);
+				app.getGuiManager().showDrawingPadPopup(comp, p);
+				return true;
 			case KeyEvent.VK_PAGE_UP:
 				ev.rememberOrigins();
 				ev.setCoordSystemFromMouseMove(0, (int)(height * base), EuclidianController.MOVE_VIEW);
@@ -360,13 +366,17 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				ev.setCoordSystemFromMouseMove(-(int)(height * base), 0, EuclidianController.MOVE_VIEW);
 				return true;
 			case KeyEvent.VK_DOWN:
-				ev.rememberOrigins();
-				ev.setCoordSystemFromMouseMove(0, (int)(height / 100.0 * base), EuclidianController.MOVE_VIEW);
-				return true;
+				if (app.hasGuiManager() && app.getGuiManager().noMenusOpen()) {
+					ev.rememberOrigins();
+					ev.setCoordSystemFromMouseMove(0, (int)(height / 100.0 * base), EuclidianController.MOVE_VIEW);
+					return true;
+				}
 			case KeyEvent.VK_UP:
-				ev.rememberOrigins();
-				ev.setCoordSystemFromMouseMove(0, -(int)(height / 100.0 * base), EuclidianController.MOVE_VIEW);
-				return true;
+				if (app.hasGuiManager() && app.getGuiManager().noMenusOpen()) {
+					ev.rememberOrigins();
+					ev.setCoordSystemFromMouseMove(0, -(int)(height / 100.0 * base), EuclidianController.MOVE_VIEW);
+					return true;
+				}
 			case KeyEvent.VK_LEFT:
 				ev.rememberOrigins();
 				ev.setCoordSystemFromMouseMove(-(int)(width / 100.0 * base), 0, EuclidianController.MOVE_VIEW);
@@ -383,6 +393,16 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		// FUNCTION and DELETE keys
 		switch (keyCode) {
 		
+		case KeyEvent.VK_CONTEXT_MENU:
+			if (geos.size() == 1) {
+				Component comp = event.getComponent();
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				p.translate(-comp.getLocationOnScreen().x, -comp.getLocationOnScreen().y);
+				app.getGuiManager().showPopupMenu(geos.get(0), comp, p);
+			} else {
+				app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
+			}
+			break;
 		case KeyEvent.VK_PAGE_UP:
 			Iterator<GeoElement> it = geos.iterator();
 			while (it.hasNext()) {
@@ -469,21 +489,37 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		
 		switch (keyCode) {
 			case KeyEvent.VK_UP:
+				
+				// make sure arrow keys work in menus
+				if (app.hasGuiManager() && !app.getGuiManager().noMenusOpen()) return false;
+				
 				changeVal = base;			
 				moved = handleArrowKeyMovement(geos, 0, changeVal, 0);
 				break;
 	
 			case KeyEvent.VK_DOWN:
+				
+				// make sure arrow keys work in menus
+				if (app.hasGuiManager() && !app.getGuiManager().noMenusOpen()) return false;
+				
 				changeVal = -base;
 				moved = handleArrowKeyMovement(geos, 0, changeVal, 0);
 				break;
 	
 			case KeyEvent.VK_RIGHT:
+
+				// make sure arrow keys work in menus
+				if (app.hasGuiManager() && !app.getGuiManager().noMenusOpen()) return false;
+
 				changeVal = base;
 				moved = handleArrowKeyMovement(geos, changeVal, 0, 0);
 				break;
 	
 			case KeyEvent.VK_LEFT:
+
+				// make sure arrow keys work in menus
+				if (app.hasGuiManager() && !app.getGuiManager().noMenusOpen()) return false;
+
 				changeVal = -base;
 				moved = handleArrowKeyMovement(geos, changeVal, 0, 0);
 				break;

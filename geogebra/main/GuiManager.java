@@ -373,4 +373,6 @@ public interface GuiManager {
 				GeoPoint geoPoint, GeoPoint geoPoint2);
 
 		public boolean loadURL(String text);
+
+		public boolean noMenusOpen();
 }
