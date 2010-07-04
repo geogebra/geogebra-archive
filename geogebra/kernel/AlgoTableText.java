@@ -98,7 +98,10 @@ public class AlgoTableText extends AlgoElement {
     		if (optionsStr.indexOf("c") > -1) justification = "c";
     		else if (optionsStr.indexOf("r") > -1) justification = "r";	
     		
-    		if (optionsStr.indexOf("||") > -1) {
+    		if (optionsStr.indexOf("||||") > -1) {
+    			openBracket = "\\left| \\left|";
+    			closeBracket = "\\right| \\right|";
+    		} else if (optionsStr.indexOf("||") > -1) {
     			openBracket = "\\left|";
     			closeBracket = "\\right|";
     		} else if (optionsStr.indexOf('(') > -1) {
