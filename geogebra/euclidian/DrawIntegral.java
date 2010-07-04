@@ -114,7 +114,7 @@ public class DrawIntegral extends Drawable {
     }
     
 	final public boolean hit(int x,int y) {  
-    	return false;   
+	       return gp != null && (gp.contains(x, y) || gp.intersects(x-3, y-3, 6, 6));        
     }
 	
 	final public boolean isInside(Rectangle rect) {  
