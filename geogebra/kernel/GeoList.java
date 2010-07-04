@@ -744,6 +744,20 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			return super.getLineThickness();
 		}
 
+		/**
+		 * @return minimum line thickness (normally 1, but 0 for polygons, integrals etc)
+		 */
+		public int getMinimumLineThickness() {
+			if (geoList == null || geoList.size() == 0) return 1;
+			
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+				 if (!geo.isLabelSet())
+					 if (geo.getMinimumLineThickness() == 1) return 1;
+			}
+			
+			return 0;
+		}
 
 		public void setLineType(int type) {
 			

@@ -1000,6 +1000,12 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		return false;
 	}
 
+	/**
+	 * @return minimum line thickness (normally 1, but 0 for polygons, integrals etc)
+	 */
+	public int getMinimumLineThickness() {		
+		return 0;
+	}
 
 	
 	

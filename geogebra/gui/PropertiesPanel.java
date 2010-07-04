@@ -3870,17 +3870,16 @@ public	class PropertiesPanel extends JPanel {
 			dashLabel.setText(app.getPlain("LineStyle") + ":");
 		}
 		
-		private boolean allPolygons(Object[] geos) {
+		private int maxMinimumThickness(Object[] geos) {
 			
-			if (geos == null || geos.length == 0) return false;
+			if (geos == null || geos.length == 0) return 1;
 			
 			for (int i = 0  ; i < geos.length ; i++) {
 				GeoElement testGeo = ((GeoElement)geos[i]).getGeoElementForPropertiesDialog();
-				if (!testGeo.isGeoPolygon() && !testGeo.isGeoList())
-					return false;
+				if (testGeo.getMinimumLineThickness() == 1) return 1;
 			}
 			
-			return true;
+			return 0;
 			
 		}
 
@@ -3898,7 +3897,7 @@ public	class PropertiesPanel extends JPanel {
 			slider.setValue(geo0.getLineThickness());
 			
 			// allow polygons to have thickness 0
-			slider.setMinimum(allPolygons(geos) ? 0 : 1);
+			slider.setMinimum(maxMinimumThickness(geos));
 
 			//	check if geos have same line style
 			boolean equalStyle = true;

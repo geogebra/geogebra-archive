@@ -815,5 +815,13 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public boolean isVector3DValue() {
 		return false;
 	}
+	
+	/**
+	 * @return minimum line thickness (normally 1, but 0 for polygons, integrals etc)
+	 */
+	public int getMinimumLineThickness() {
+		return (isSlider() ? 1 : 0);
+	}
+
 
 }

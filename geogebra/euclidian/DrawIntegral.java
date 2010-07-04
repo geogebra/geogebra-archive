@@ -101,9 +101,11 @@ public class DrawIntegral extends Drawable {
         	}
 			
 			
-			g2.setPaint(n.getObjectColor());
-			g2.setStroke(objStroke);                                   
-			Drawable.drawWithValueStrokePure(gp, g2);   			 
+			if (geo.lineThickness > 0) {
+				g2.setPaint(n.getObjectColor());
+				g2.setStroke(objStroke);                                   
+				Drawable.drawWithValueStrokePure(gp, g2);   	
+			}
 			
             if (labelVisible) {
 				g2.setFont(view.fontConic);

@@ -149,9 +149,11 @@ public class DrawSlope extends Drawable {
                 g2.draw(gp);       
             }    
             
-            g2.setPaint(slope.getObjectColor());             
-            g2.setStroke(objStroke);            
-            g2.draw(gp);      
+			if (geo.lineThickness > 0) {
+	            g2.setPaint(slope.getObjectColor());             
+	            g2.setStroke(objStroke);            
+	            g2.draw(gp);   
+			}
                         
             if (labelVisible) {
                 g2.setPaint(slope.getLabelColor());

@@ -531,9 +531,11 @@ public class DrawAngle extends Drawable {
 				g2.draw(shape);
 			}
 
-			g2.setPaint(angle.getObjectColor());
-			g2.setStroke(objStroke);
-			g2.draw(shape);
+			if (geo.lineThickness > 0) {
+				g2.setPaint(angle.getObjectColor());
+				g2.setStroke(objStroke);
+				g2.draw(shape);
+			}
 			
 			// special handling of 90 degree dot
 			if (show90degrees) {

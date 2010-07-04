@@ -312,9 +312,11 @@ public class DrawUpperLowerSum extends Drawable {
         	}
 			
 			try {
-				g2.setPaint(sum.getObjectColor());
-				g2.setStroke(objStroke);                                   
-				g2.draw(gp);   
+				if (geo.lineThickness > 0) {
+					g2.setPaint(sum.getObjectColor());
+					g2.setStroke(objStroke);                                   
+					g2.draw(gp);   
+				}
 			} catch (Exception e) {
 				Application.debug(e.getMessage());
 			}    
