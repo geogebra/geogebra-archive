@@ -798,7 +798,7 @@ public class DefaultGuiManager implements GuiManager {
 	ContextMenuGraphicsWindow drawingPadpopupMenu;
 
 	/**
-	 * Displays the zoom menu at the position p in the coordinate space of
+	 * Displays the Graphics View menu at the position p in the coordinate space of
 	 * euclidianView
 	 */
 	public void showDrawingPadPopup(Component invoker, Point p) {
@@ -811,8 +811,22 @@ public class DefaultGuiManager implements GuiManager {
 		drawingPadpopupMenu.show(invoker, p.x, p.y);
 	}
 
+	/**
+	 * Toggles the Graphics View menu at the position p in the coordinate space of
+	 * euclidianView
+	 */
+	public void toggleDrawingPadPopup(Component invoker, Point p) {
+		if (drawingPadpopupMenu == null || !drawingPadpopupMenu.isVisible()) {
+			showDrawingPadPopup(invoker, p);
+			return;
+		}
+		
+		drawingPadpopupMenu.setVisible(false);
+	}
+
 	
 	ContextMenuGeoElement popupMenu;
+
 	/**
 	 * Displays the popup menu for geo at the position p in the coordinate space
 	 * of the component invoker
@@ -834,6 +848,20 @@ public class DefaultGuiManager implements GuiManager {
 					screenPos);
 			popupMenu.show(invoker, p.x, p.y);
 		}
+	
+	}
+	
+	/**
+	 * Toggles the popup menu for geo at the position p in the coordinate space
+	 * of the component invoker
+	 */
+	public void togglePopupMenu(GeoElement geo, Component invoker, Point p) {
+		if (popupMenu == null || !popupMenu.isVisible()) {
+			showPopupMenu(geo, invoker, p);
+			return;
+		}
+		
+		popupMenu.setVisible(false);
 	
 	}
 	

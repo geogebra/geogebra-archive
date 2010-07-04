@@ -375,4 +375,9 @@ public interface GuiManager {
 		public boolean loadURL(String text);
 
 		public boolean noMenusOpen();
+
+		public void togglePopupMenu(GeoElement geoElement, Component comp,
+				Point p);
+
+		public void toggleDrawingPadPopup(Component comp, Point p);
 }

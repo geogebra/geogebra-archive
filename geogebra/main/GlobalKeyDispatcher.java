@@ -336,19 +336,25 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		if (event.isAltDown())
 			base = 100;
 
+
+		
 		if (geos == null || geos.size() == 0) {
+
+			// needs to work even if ev doesn't have focus
+			if (keyCode == KeyEvent.VK_CONTEXT_MENU) {
+				Component comp = event.getComponent();
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				p.translate(-comp.getLocationOnScreen().x, -comp.getLocationOnScreen().y);
+				app.getGuiManager().toggleDrawingPadPopup(comp, p);
+				return true;
+			}
+			
 			EuclidianView ev = app.getEuclidianView();
 			int width = ev.getWidth();
 			int height = ev.getHeight();
 			if (ev.hasFocus())
 			switch (keyCode) {
 			
-			case KeyEvent.VK_CONTEXT_MENU:
-				Component comp = event.getComponent();
-				Point p = MouseInfo.getPointerInfo().getLocation();
-				p.translate(-comp.getLocationOnScreen().x, -comp.getLocationOnScreen().y);
-				app.getGuiManager().showDrawingPadPopup(comp, p);
-				return true;
 			case KeyEvent.VK_PAGE_UP:
 				ev.rememberOrigins();
 				ev.setCoordSystemFromMouseMove(0, (int)(height * base), EuclidianController.MOVE_VIEW);
@@ -398,7 +404,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				Component comp = event.getComponent();
 				Point p = MouseInfo.getPointerInfo().getLocation();
 				p.translate(-comp.getLocationOnScreen().x, -comp.getLocationOnScreen().y);
-				app.getGuiManager().showPopupMenu(geos.get(0), comp, p);
+				app.getGuiManager().togglePopupMenu(geos.get(0), comp, p);
 			} else {
 				app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
 			}
