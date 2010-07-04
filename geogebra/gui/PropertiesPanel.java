@@ -4172,6 +4172,22 @@ public	class PropertiesPanel extends JPanel {
 		
 	}
 
+	/*
+	 * allows using a single = in condition to show object and dynamic color
+	 */
+	public static String replaceEqualsSigns(String strCond) {
+		// needed to make next replace easier
+		strCond = strCond.replaceAll(">=", ExpressionNode.strGREATER_EQUAL);
+		strCond = strCond.replaceAll("<=", ExpressionNode.strLESS_EQUAL);
+		strCond = strCond.replaceAll("==", ExpressionNode.strEQUAL_BOOLEAN);
+		strCond = strCond.replaceAll("!=", ExpressionNode.strNOT_EQUAL);
+		
+		// allow A=B as well as A==B
+		// also stops A=B doing an assignment of B to A :)
+		return strCond.replaceAll("=", ExpressionNode.strEQUAL_BOOLEAN);
+
+	}
+
 } // PropertiesPanel
 	
 	
@@ -4923,15 +4939,8 @@ class ShowConditionPanel
 		if (strCond == null || strCond.trim().length() == 0) {
 			cond = null;
 		} else {
-			// needed to make next replace easier
-			strCond = strCond.replaceAll(">=", ExpressionNode.strGREATER_EQUAL);
-			strCond = strCond.replaceAll("<=", ExpressionNode.strLESS_EQUAL);
-			strCond = strCond.replaceAll("==", ExpressionNode.strEQUAL_BOOLEAN);
-			strCond = strCond.replaceAll("!=", ExpressionNode.strNOT_EQUAL);
 			
-			// allow A=B as well as A==B
-			// also stops A=B doing an assignment of B to A :)
-			strCond = strCond.replaceAll("=", ExpressionNode.strEQUAL_BOOLEAN);
+			strCond = PropertiesPanel.replaceEqualsSigns(strCond);
 			
 			cond = kernel.getAlgebraProcessor().evaluateToBoolean(strCond);
 		}
@@ -5128,6 +5137,11 @@ class ColorFunctionPanel
 		String strRed = tfRed.getText();
 		String strGreen = tfGreen.getText();
 		String strBlue = tfBlue.getText();
+		
+		strRed = PropertiesPanel.replaceEqualsSigns(strRed);
+		strGreen = PropertiesPanel.replaceEqualsSigns(strGreen);
+		strBlue = PropertiesPanel.replaceEqualsSigns(strBlue);
+		
 		if ((strRed == null || strRed.trim().length() == 0) &&
 			(strGreen == null || strGreen.trim().length() == 0) &&
 			(strBlue == null || strBlue.trim().length() == 0)) {
@@ -5406,6 +5420,7 @@ class NamePanel
 		else
 			return strCap;
 	}
+	
 	
 }
 
