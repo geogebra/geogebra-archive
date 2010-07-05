@@ -437,8 +437,8 @@ public final class DrawLine extends Drawable implements Previewable {
 	
 			    break;
 			case PREVIEW_ANGLE_BISECTOR:
-		        GeoPoint g1 = new GeoPoint(view.getKernel().getConstruction());                       
-		        GeoPoint h = new GeoPoint(view.getKernel().getConstruction());                       
+				GeoLine g1 = new GeoLine(view.getKernel().getConstruction());                       
+		        GeoLine h = new GeoLine(view.getKernel().getConstruction());                       
 		        GeoVec3D.cross(previewPoint2, startPoint, g1);
 		        GeoVec3D.cross(previewPoint2, xRW, yRW, 1.0, h);        
 
