@@ -102,7 +102,11 @@ public class DrawAxis3D extends DrawLine3D {
     		if (label!=null){
     			//sets the label visible
     			label.setIsVisible(true);
-    			label.updateTexture(); //TODO remove this
+    			label.update(strNum, 10, 
+    					getGeoElement().getObjectColor(),
+    					origin.copyVector(),
+    					axis.getNumbersXOffset()-4,axis.getNumbersYOffset()-6);
+    			//TODO optimize this
     		}else{
     			//creates new label
     			label = new DrawLabel3D(getView3D());
