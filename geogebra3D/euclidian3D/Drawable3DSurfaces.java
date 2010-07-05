@@ -41,7 +41,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 
 
 	public void drawHiding(Renderer renderer){
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
+		if(!isVisible())
 			return;
 
 		if (alpha<=0 || alpha == 1)
@@ -59,7 +59,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 
 
 	public void drawTransp(Renderer renderer){
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined()){
+		if(!isVisible()){
 			//Application.debug("not visible "+getGeoElement().isEuclidianVisible()+",");
 			return;
 		}
@@ -69,7 +69,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 			return;
 		
 		
-		if(getGeoElement().doHighlighting())
+		if(doHighlighting())
 			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),alpha);
 		else
 			renderer.setColor(getGeoElement().getObjectColor(),alpha);
@@ -87,7 +87,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	// method not used for transparent drawables
 	public void draw(Renderer renderer){
 		
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined()){
+		if(!isVisible()){
 			//Application.debug("not visible "+getGeoElement().isEuclidianVisible()+",");
 			return;
 		}
@@ -97,7 +97,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 			return;
 		
 		
-		if(getGeoElement().doHighlighting())
+		if(doHighlighting())
 			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),alpha);
 		else
 			renderer.setColor(getGeoElement().getObjectColor(),alpha);

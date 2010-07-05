@@ -85,14 +85,9 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
     	return GEO_CLASS_SEGMENT3D; 
     }
 
-   /**
-    * TODO return copy of this
-    * @return copy of this
-    */
-	public GeoElement copy() {
-		return null;
+	protected GeoCoordSys1D create(Construction cons){
+		return new GeoSegment3D(cons);
 	}
-
 
 
 	

@@ -60,7 +60,9 @@ public class DrawListArray extends ArrayList<DrawableND> {
 		}
 		
 		if (d != null) {
-			d.setWaitForUpdate();
+			
+			update(d);
+			
 			if (inOldDrawableRange) {    				
 				set(drawablePos, d);
 			} else {
@@ -72,6 +74,14 @@ public class DrawListArray extends ArrayList<DrawableND> {
 		return false;
     }
 
+    
+    /**
+     * update the drawable
+     * @param d
+     */
+    protected void update(DrawableND d){
+    	d.update();
+    }
 	
 	
     private DrawableND getDrawable(GeoElement listElement, DrawableND drawList) {

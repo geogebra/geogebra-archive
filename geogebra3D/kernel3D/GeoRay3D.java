@@ -26,7 +26,10 @@ public class GeoRay3D extends GeoLine3D {
 	
 	
 	
-	
+
+	protected GeoCoordSys1D create(Construction cons){
+		return new GeoRay3D(cons);
+	}
 	
 	//Path3D interface
 	public double getMinParameter() {

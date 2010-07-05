@@ -12,6 +12,8 @@ public abstract class DrawableND {
 	
 	
 	private boolean createdByDrawList = false;	
+	/** says if this drawable is visible when draw list is visible */
+	private boolean createdByDrawListVisible = false;
 	/** drawList that has created this */
 	private DrawableND drawList;
 	
@@ -23,7 +25,17 @@ public abstract class DrawableND {
 	 */
 	public void setCreatedByDrawList(DrawableND drawList) {
 		createdByDrawList = true;
+		setCreatedByDrawListVisible(true);
 		this.drawList = drawList;
+		
+	}
+	
+	/**
+	 * sets if this is visible when the DrawList is visible
+	 * @param flag 
+	 */
+	public void setCreatedByDrawListVisible(boolean flag) {
+		createdByDrawListVisible = flag;
 		
 	}
 	
@@ -35,6 +47,13 @@ public abstract class DrawableND {
 		
 	}
 	
+	/**
+	 * @return if this is visible when the DrawList is visible
+	 */
+	public boolean isCreatedByDrawListVisible() {
+		return createdByDrawListVisible;
+		
+	}
 	/**
 	 * @return the drawList that has created this (if one)
 	 */

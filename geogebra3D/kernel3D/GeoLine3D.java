@@ -30,10 +30,10 @@ public class GeoLine3D extends GeoCoordSys1D {
     }
     
 	
-	public GeoElement copy() {
-		// TODO Raccord de méthode auto-généré
-		return null;
+	protected GeoCoordSys1D create(Construction cons){
+		return new GeoLine3D(cons);
 	}
+	
 
 	public int getGeoClassType() {
 		
@@ -67,25 +67,31 @@ public class GeoLine3D extends GeoCoordSys1D {
 		return true;
 	}
 
+
 	public String toValueString() {
-		return toString();
+		return buildValueString().toString();
 	}
 	
-	
+
 	
 	final public String toString() {
-		
-		StringBuilder sbToString = getSbToString();
+
+    	StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(": ");  //TODO use kernel property
-		
-		
-		//TODO undefined...
+		sbToString.append(buildValueString());
+		return sbToString.toString();   
+	}
+
+
+	private StringBuilder buildValueString() {	
 		String parameter = "\u03bb";
 		GgbVector O = coordsys.getOrigin();//TODO inhom coords
 		GgbVector V = coordsys.getVx();
 
+		StringBuilder sbToString = getSbBuildValueString();
+		sbToString.setLength(0);
 		sbToString.append("X = (");
 		sbToString.append(kernel.format(O.get(1)));
 		sbToString.append(", ");
@@ -102,7 +108,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 		sbToString.append(kernel.format(V.get(3)));
 		sbToString.append(")");
 		
-		return sbToString.toString();  
+		return sbToString;  
 	}
 	
 	

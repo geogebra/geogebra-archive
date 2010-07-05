@@ -4,6 +4,7 @@ import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLineInterface;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
@@ -33,8 +34,6 @@ GeoLineInterface, GeoCoordSys{
 	
 	
 	
-	
-	
 	public boolean isDefined() {
 		return coordsys.isDefined();
 	}
@@ -42,6 +41,7 @@ GeoLineInterface, GeoCoordSys{
 	
 
 	public void setUndefined() {
+		coordsys.setUndefined();
 	}
 
 	
@@ -81,7 +81,24 @@ GeoLineInterface, GeoCoordSys{
 	}
 	
 	
+	public void setCoord(GeoCoordSys1D geo){
+		setCoord(geo.getCoordSys().getOrigin(),geo.getCoordSys().getVx());
+	}
 	
+	
+	/**
+	 * @param cons 
+	 * @return a new instance of the proper GeoCoordSys1D (GeoLine3D, GeoSegment3D, ...)
+	 */
+	abstract protected GeoCoordSys1D create(Construction cons);
+	
+	
+
+	final public GeoElement copy() {
+		GeoCoordSys1D geo = create(cons);
+		geo.setCoord(this);
+		return geo;
+	}
 	
 
 	

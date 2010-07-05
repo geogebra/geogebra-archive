@@ -39,7 +39,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 
 	public void draw(Renderer renderer) {
 		
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
+		if(!isVisible())
 			return;	
 			
 		if(doHighlighting())
@@ -60,7 +60,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 	
 	public void drawHidden(Renderer renderer){
 		
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
+		if(!isVisible())
 			return;
 		
 		if(doHighlighting())

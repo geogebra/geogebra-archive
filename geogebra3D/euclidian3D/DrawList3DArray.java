@@ -23,6 +23,14 @@ public class DrawList3DArray extends DrawListArray {
 		super(view);
 	}
 	
+
+    protected void update(DrawableND d){
+		d.setWaitForUpdate();
+		if (d.createdByDrawList())
+			d.setCreatedByDrawListVisible(true);
+    }
+	
+	
     protected DrawableND createDrawableND(GeoElement listElement){
     	//Application.debug(listElement.toString());
     	DrawableND d = super.createDrawableND(listElement);

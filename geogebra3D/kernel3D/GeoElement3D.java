@@ -303,7 +303,13 @@ public abstract class GeoElement3D
 		return sbToString;
 	}
 	
-	
+
+	private StringBuilder sbBuildValueString = new StringBuilder(50);
+	protected StringBuilder getSbBuildValueString() {
+		if (sbBuildValueString == null)
+			sbBuildValueString = new StringBuilder(50);
+		return sbBuildValueString;
+	}
 	
 	/////////////////////////////////////////
 	// ExpressionValue implementation

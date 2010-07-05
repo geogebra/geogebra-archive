@@ -356,6 +356,9 @@ public abstract class Drawable3D extends DrawableND {
 	 * @return the visibility
 	 */
 	protected boolean isVisible(){
+		if (createdByDrawList())
+			return isCreatedByDrawListVisible() && ((Drawable3D) getDrawListCreator()).isVisible();
+		
 		return (getGeoElement().isEuclidianVisible() && getGeoElement().isDefined());  
 	}
 	
@@ -419,26 +422,26 @@ public abstract class Drawable3D extends DrawableND {
 	/**
 	 * sets the matrix, the pencil and draw the geometry for the {@link Renderer} to process picking
 	 * @param renderer the 3D renderer where to draw
+	 * @return this, or the DrawList that created it
 	 */			
 	public Drawable3D drawForPicking(Renderer renderer) {
-		if (!((GeoElement3DInterface) getGeoElement()).isPickable()){
-			return this;
-		}
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
-			return this;	
 		
-		/*
-		if (createdByDrawList())//no picking if part of a DrawList3D
-			return this;
-			*/
-		
-		//renderer.setMatrix(getMatrix());
-		//renderer.setDash(Renderer.DASH_NONE);
-		drawGeometry(renderer);
+		Drawable3D ret;
 		if (createdByDrawList())//if it is part of a DrawList3D, the list is picked
-			return (Drawable3D) getDrawListCreator();
+			ret = (Drawable3D) getDrawListCreator();
 		else
-			return this;
+			ret = this;
+		
+		
+		if (!((GeoElement3DInterface) getGeoElement()).isPickable()){
+			return ret;
+		}
+		if(!getGeoElement().isEuclidianVisible() || !isVisible())
+			return ret;	
+		
+		drawGeometry(renderer);
+
+		return ret;
 	}
 
 	
@@ -466,7 +469,7 @@ public abstract class Drawable3D extends DrawableND {
     	if (forPicking && !((GeoElement3DInterface) getGeoElement()).isPickable())
 			return;
     	
-		if(!getGeoElement().isEuclidianVisible() || !getGeoElement().isDefined())
+		if(!isVisible())
 			return;
 		
     	if (!getGeoElement().isLabelVisible())

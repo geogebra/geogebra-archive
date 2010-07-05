@@ -155,7 +155,9 @@ public class DrawList3D extends Drawable3D {
     	
     	// remove end of list
     	for (int i=drawables.size()-1; i >= drawablePos; i--) {      		 
-    		drawables.remove(i);
+    		DrawableND d = drawables.remove(i);
+    		if (d.createdByDrawList()) //sets the drawable to not visible
+    			d.setCreatedByDrawListVisible(false);
     	}
     	
     	//Application.debug("drawables : "+drawables.size());
