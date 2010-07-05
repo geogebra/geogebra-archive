@@ -280,7 +280,8 @@ public abstract class GeoElement3D
      * @param alpha alpha value
      */
 	public void setAlphaValue(float alpha) {
-
+		if ( alpha < 0.0f || alpha > 1.0f)
+			return;
 		alphaValue = alpha;
 
 	}

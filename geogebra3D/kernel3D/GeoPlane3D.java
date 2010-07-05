@@ -257,8 +257,18 @@ implements Functional2Var, GeoCoordSys2D{
     
     
 	public GeoElement copy() {
-		// TODO Raccord de méthode auto-généré
-		return null;
+		GeoPlane3D p = new GeoPlane3D(cons);
+		
+		//TODO move this elsewhere
+		GgbCoordSys cs = p.getCoordSys();
+		cs.addPoint(getCoordSys().getOrigin());
+		cs.addVector(getCoordSys().getVx());
+	    cs.addVector(getCoordSys().getVy());
+	    cs.makeOrthoMatrix(true);
+	    cs.makeEquationVector();
+	    
+	    
+		return p;
 	}
 
 
@@ -294,74 +304,28 @@ implements Functional2Var, GeoCoordSys2D{
 
 
 	public String toValueString() {
-		// TODO Raccord de méthode auto-généré
-		return toString();
+		return buildValueString().toString();
+	}
+	
+
+	final public String toString() {
+
+    	StringBuilder sbToString = getSbToString();
+		sbToString.setLength(0);
+		sbToString.append(label);
+		sbToString.append(": ");  //TODO use kernel property
+		sbToString.append(buildValueString());
+		return sbToString.toString();   
 	}
 	
 	
-
-	
-	
-	final public String toString() {
-		
-		StringBuilder sbToValueString = getSbToString();
-		sbToValueString.setLength(0);
-		sbToValueString.append(label);
-		sbToValueString.append(": ");   
+	private StringBuilder buildValueString() {	
 		
 		
-		sbToValueString.append(kernel.buildImplicitEquation(
+		return kernel.buildImplicitEquation(
 				getCoordSys().getEquationVector().get(), VAR_STRING, KEEP_LEADING_SIGN, false
-				));   
+				);   
 		
-		
-		//TODO undefined...
-		//TODO remove x/y/z if not needed
-		//TODO check this
-		
-		/*
-		int dimension = 3;
-		boolean first = true; //says if it's the first coeff
-
-		GgbVector Vn = coordsys.getNormal();//getMatrix4x4().getColumn(3);
-		
-		for (int i=0; i<dimension; i++){
-			
-			double val = Vn.get(i+1);
-			
-			if (!kernel.isZero(val)) {
-				if (val<0)
-					sbToValueString.append("- ");
-				else
-					if (!first)
-						sbToValueString.append("+ ");
-				
-				val = Math.abs(val);
-				if (!kernel.isZero(val-1)){
-					sbToValueString.append(kernel.format(val));
-					sbToValueString.append(" ");
-				}
-				sbToValueString.append(VAR_STRING[i]);
-				sbToValueString.append(" ");
-				first=false;
-			} 	
-		}
-		
-		sbToValueString.append("= ");
-		sbToValueString.append(kernel.format(Vn.dotproduct(coordsys.getNormal()))); 
-		*/
-		
-		/*
-		sbToValueString.append(kernel.format(Vn.get(1)));   
-		sbToValueString.append("x + "); 
-		sbToValueString.append(kernel.format(Vn.get(2))); 
-		sbToValueString.append("y + "); 
-		sbToValueString.append(kernel.format(Vn.get(3))); 
-		sbToValueString.append("z = "); 
-		sbToValueString.append(kernel.format(Vn.dotproduct(getMatrix().getColumn(3)))); 
-		*/
-		
-		return sbToValueString.toString();  
 	}
 
 	
