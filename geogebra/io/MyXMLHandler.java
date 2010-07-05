@@ -2665,6 +2665,13 @@ public class MyXMLHandler implements DocHandler {
 		}
 
 		try {
+			
+			// Make sure thatSpreadsheetView is attached. If a file 
+			// was saved with the spreadsheet closed, it opens without
+			// attaching the view and trace geos will not be activated.
+			//app.getGuiManager().attachSpreadsheetView();
+			
+			// set geo for tracing
 			geo.setSpreadsheetTrace(parseBoolean((String) attrs.get("val")));
 			
 			TraceSettings t = geo.getTraceSettings();

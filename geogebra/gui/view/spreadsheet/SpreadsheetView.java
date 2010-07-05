@@ -287,10 +287,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 		
-		// put geos with special editors in the oneClickEditMap 
-		if(geo.isGeoBoolean() || geo.isGeoButton() || geo.isGeoList()){
-			table.oneClickEditMap.put(location, geo);
-		}
+		
 		
 	}
 	
@@ -470,6 +467,19 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			//G.Sturr 2010-4-2
 			//Mark this cell to be resized by height
 			table.cellResizeHeightSet.add(new Point(location.x, location.y));
+			
+			// add tracing geos to the trace collection
+			if(geo.getSpreadsheetTrace()){
+				traceManager.addSpreadsheetTraceGeo(geo);
+			}
+			
+			// put geos with special editors in the oneClickEditMap 
+			if(geo.isGeoBoolean() || geo.isGeoButton() || geo.isGeoList()){
+				table.oneClickEditMap.put(location, geo);
+			}
+			
+			
+			
 		}
 		
 		
