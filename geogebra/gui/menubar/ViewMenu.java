@@ -114,7 +114,7 @@ class ViewMenu extends BaseMenu {
 
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 				showAuxiliaryObjectsAction);
-		setEmptyIcon(cbShowAuxiliaryObjects);
+		app.setEmptyIcon(cbShowAuxiliaryObjects);
 		//cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
 		cbShowAuxiliaryObjects
 				.setSelected(app.getGuiManager().getAlgebraView() == null
@@ -141,14 +141,14 @@ class ViewMenu extends BaseMenu {
 		add(cbShowEuclidianView);
 
 		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);
-		setEmptyIcon(cbShowAlgebraView);
+		app.setEmptyIcon(cbShowAlgebraView);
 		cbShowAlgebraView.setSelected(app.getGuiManager().showAlgebraView());
 		setMenuShortCutShiftAccelerator(cbShowAlgebraView, 'A');
 		add(cbShowAlgebraView);
 
 		// Michael Borcherds 2008-01-14
 		cbShowSpreadsheetView = new JCheckBoxMenuItem(showSpreadsheetAction);
-		setEmptyIcon(cbShowSpreadsheetView);
+		app.setEmptyIcon(cbShowSpreadsheetView);
 		cbShowSpreadsheetView.setSelected(app.getGuiManager()
 				.showSpreadsheetView());
 		setMenuShortCutShiftAccelerator(cbShowSpreadsheetView, 'S');
@@ -156,7 +156,7 @@ class ViewMenu extends BaseMenu {
 		
 		// Florian Sonner 2009-03-29
 		cbShowCASView = new JCheckBoxMenuItem(showCASViewAction);
-		setEmptyIcon(cbShowCASView);
+		app.setEmptyIcon(cbShowCASView);
 		cbShowCASView.setSelected(app.getGuiManager().showCASView());
 		add(cbShowCASView);
 
@@ -164,23 +164,23 @@ class ViewMenu extends BaseMenu {
 		
 		// show/hide keyboard
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
-		setEmptyIcon(cbShowKeyboard);
+		app.setEmptyIcon(cbShowKeyboard);
 		add(cbShowKeyboard);
 		
 		cbShowHandwriting = new JCheckBoxMenuItem(showHandwritingAction);
-		setEmptyIcon(cbShowHandwriting);
+		app.setEmptyIcon(cbShowHandwriting);
 		add(cbShowHandwriting);
 		
 		menuHandwriting = new JMenu(app.getMenu("Handwriting"));
 		menuHandwriting.setIcon(app.getEmptyIcon());
 		cbShowHandwritingAutoAdd = new JCheckBoxMenuItem(showHandwritingAutoAddAction);
-		setEmptyIcon(cbShowHandwritingAutoAdd);
+		app.setEmptyIcon(cbShowHandwritingAutoAdd);
 		menuHandwriting.add(cbShowHandwritingAutoAdd);
 		cbShowHandwritingTimedAdd = new JCheckBoxMenuItem(showHandwritingTimedAddAction);
-		setEmptyIcon(cbShowHandwritingTimedAdd);
+		app.setEmptyIcon(cbShowHandwritingTimedAdd);
 		menuHandwriting.add(cbShowHandwritingTimedAdd);
 		cbShowHandwritingTimedRecognise = new JCheckBoxMenuItem(showHandwritingTimedRecogniseAction);
-		setEmptyIcon(cbShowHandwritingTimedRecognise);
+		app.setEmptyIcon(cbShowHandwritingTimedRecognise);
 		menuHandwriting.add(cbShowHandwritingTimedRecognise);
 		
 		add(menuHandwriting);
@@ -194,22 +194,22 @@ class ViewMenu extends BaseMenu {
 		menuInput = new JMenu(app.getMenu("InputField") + " ...");
 		menuInput.setIcon(app.getEmptyIcon());
 		cbShowCmdList = new JCheckBoxMenuItem(showCmdListAction);
-		setEmptyIcon(cbShowCmdList);
+		app.setEmptyIcon(cbShowCmdList);
 		menuInput.add(cbShowCmdList);
 		cbShowInputTop = new JCheckBoxMenuItem(showInputTopAction);
-		setEmptyIcon(cbShowInputTop);
+		app.setEmptyIcon(cbShowInputTop);
 		menuInput.add(cbShowInputTop);
 
 		add(menuInput);
 
 		cbShowToolBar = new JCheckBoxMenuItem(showToolBarAction);
-		setEmptyIcon(cbShowToolBar);
+		app.setEmptyIcon(cbShowToolBar);
 		add(cbShowToolBar);
 
 		menuToolBar = new JMenu(app.getMenu("Toolbar"));
 		menuToolBar.setIcon(app.getEmptyIcon());
 		cbShowToolBarTop = new JCheckBoxMenuItem(showToolBarTopAction);
-		setEmptyIcon(cbShowToolBarTop);
+		app.setEmptyIcon(cbShowToolBarTop);
 		menuToolBar.add(cbShowToolBarTop);
 
 		add(menuToolBar);
@@ -217,13 +217,13 @@ class ViewMenu extends BaseMenu {
 	    // Construction Protocol
 		cbShowConsProtNavigation = new JCheckBoxMenuItem(
 				showConsProtNavigationAction);
-		setEmptyIcon(cbShowConsProtNavigation);
+		app.setEmptyIcon(cbShowConsProtNavigation);
 		cbShowConsProtNavigationPlay = new JCheckBoxMenuItem(
 				showConsProtNavigationPlayAction);
-		setEmptyIcon(cbShowConsProtNavigationPlay);
+		app.setEmptyIcon(cbShowConsProtNavigationPlay);
 		cbShowConsProtNavigationOpenProt = new JCheckBoxMenuItem(
 				showConsProtNavigationOpenProtAction);
-		setEmptyIcon(cbShowConsProtNavigationOpenProt);
+		app.setEmptyIcon(cbShowConsProtNavigationOpenProt);
 
 		add(constProtocolAction);
 

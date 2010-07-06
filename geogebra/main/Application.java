@@ -3497,26 +3497,26 @@ public abstract class Application implements KeyEventDispatcher {
 	public static boolean MAC_OS = OS.startsWith("mac");
 	public static boolean WINDOWS = OS.startsWith("windows"); // Michael Borcherds 2008-03-21
 	
-	/* current possible values http://mindprod.com/jgloss/properties.html
-	 * AIX
-Digital Unix
-FreeBSD
-HP UX
-Irix
-Linux
-Mac OS
-Mac OS X
-MPE/iX
-Netware 4.11
-OS/2
-Solaris
-Windows 2000
-Windows 7
-Windows 95
-Windows 98
-Windows NT
-Windows Vista
-Windows XP */
+			/* current possible values http://mindprod.com/jgloss/properties.html
+			 * AIX
+		Digital Unix
+		FreeBSD
+		HP UX
+		Irix
+		Linux
+		Mac OS
+		Mac OS X
+		MPE/iX
+		Netware 4.11
+		OS/2
+		Solaris
+		Windows 2000
+		Windows 7
+		Windows 95
+		Windows 98
+		Windows NT
+		Windows Vista
+		Windows XP */
 	
 	// make sure still works in the future on eg Windows 9 
 	public static boolean WINDOWS_VISTA_OR_LATER = WINDOWS && !OS.startsWith("windows 2000")
@@ -3524,6 +3524,15 @@ Windows XP */
 														   && !OS.startsWith("windows 98")
 														   && !OS.startsWith("windows nt")
 														   && !OS.startsWith("windows xp");
+	/*
+	 * needed for padding in Windows XP or earlier
+	 * without check, checkbox isn't shown in Vista, Win 7
+	 */
+    public void setEmptyIcon(JCheckBoxMenuItem cb) {
+        if (!WINDOWS_VISTA_OR_LATER)
+                cb.setIcon(getEmptyIcon());
+    }
+
 
 	
 	/*

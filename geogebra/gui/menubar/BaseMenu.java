@@ -67,8 +67,4 @@ abstract class BaseMenu extends JMenu {
 		mi.setAccelerator(ks);
 	}
 	
-	public void setEmptyIcon(JCheckBoxMenuItem cb) {
-		if (!Application.WINDOWS_VISTA_OR_LATER)
-			cb.setIcon(app.getEmptyIcon());
-	}
 }

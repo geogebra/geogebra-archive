@@ -290,12 +290,12 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			submenu.setIcon(app.getImageIcon("perspective.gif"));
 
 			cbShowViewTitlebar = new JCheckBoxMenuItem(showViewTitlebarAction);
-			setEmptyIcon(cbShowViewTitlebar);
+			app.setEmptyIcon(cbShowViewTitlebar);
 			cbShowViewTitlebar.setSelected(layout.isTitleBarVisible());
 
 			cbIgnoreDocumentPerspective = new JCheckBoxMenuItem(
 					ignoreDocumentPerspectiveAction);
-			setEmptyIcon(cbIgnoreDocumentPerspective);
+			app.setEmptyIcon(cbIgnoreDocumentPerspective);
 			cbIgnoreDocumentPerspective.setSelected(app
 					.isIgnoringDocumentPerspective());
 

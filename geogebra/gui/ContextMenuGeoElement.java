@@ -373,7 +373,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			final GeoText geoText = (GeoText) geo;
 			// show object
 			JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem(app.getPlain("AbsoluteScreenLocation"));
-			cbItem.setIcon(app.getEmptyIcon());
+			app.setEmptyIcon(cbItem);
 			cbItem.setSelected(geoText.isAbsoluteScreenLocActive());
 			cbItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -537,7 +537,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			//  animation
 			if (geo.isAnimatable()) {            	
 				cbItem = new JCheckBoxMenuItem( app.getPlain("Animating"));
-				cbItem.setIcon(app.getEmptyIcon());
+				app.setEmptyIcon(cbItem);
                 cbItem.setSelected(((GeoNumeric) geo).isAnimating() && app.getKernel().getAnimatonManager().isRunning());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -578,7 +578,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			if (geo.isFixable() && (geo.isGeoText() || geo.isGeoImage())) {   
 
 				cbItem = new JCheckBoxMenuItem( app.getPlain("FixObject"));
-				cbItem.setIcon(app.getEmptyIcon());
+				app.setEmptyIcon(cbItem);
 				cbItem.setSelected(geo.isFixed());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
