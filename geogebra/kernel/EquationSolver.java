@@ -14,12 +14,13 @@ package geogebra.kernel;
 
 
 import geogebra.kernel.arithmetic.PolyFunction;
-import geogebra.kernel.complex.Complex;
-import geogebra.kernel.complex.ComplexPoly;
 import geogebra.kernel.roots.RealRoot;
 import geogebra.main.Application;
 
 import java.util.Arrays;
+
+import org.apache.commons.math.analysis.solvers.LaguerreSolver;
+import org.apache.commons.math.complex.Complex;
 
 public class EquationSolver { 
 		
@@ -492,8 +493,18 @@ public class EquationSolver {
 		*/			
 	
 		// calc roots with Laguerre method
-		ComplexPoly poly = new ComplexPoly(eqn);	
-		Complex [] complexRoots = poly.roots(false, new Complex(LAGUERRE_START, 0)); // don't polish here 
+
+		/* old code using Flanagan library
+		//ComplexPoly poly = new ComplexPoly(eqn);	
+		//Complex [] complexRoots = poly.roots(false, new Complex(LAGUERRE_START, 0)); // don't polish here 
+		*/
+		
+		Complex[] complexRoots = null;
+		try {
+			complexRoots = new LaguerreSolver().solveAll(eqn, LAGUERRE_START);
+		} catch (Exception e) {
+			Application.debug("Problem solving with LaguerreSolver"+e.getLocalizedMessage());
+		}
 	
 		// sort complexRoots by real part into laguerreRoots
 		double [] laguerreRoots = new double[complexRoots.length];
@@ -539,7 +550,7 @@ public class EquationSolver {
 					root = rootPolisher.bisectNewtonRaphson(derivFunc, left, right);	
 					//System.out.println("    find extremum successfull: " + root);
 				} catch (Exception ex) {
-					System.err.println(ex.getMessage());
+					Application.debug(ex.getMessage());
 				}
 			}
 
