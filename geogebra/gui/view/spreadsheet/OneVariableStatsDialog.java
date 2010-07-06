@@ -1,8 +1,8 @@
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.GeoGebraPanel;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
@@ -10,8 +10,6 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
-import geogebra.main.DefaultApplication;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -19,40 +17,26 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
-
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.Border;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -70,6 +54,7 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener, T
 	private Kernel kernel; 
 	private Construction cons;
 	
+	// plot types
 	private static final int PLOT_HISTOGRAM = 0;
 	private static final int PLOT_BOXPLOT = 1;
 	private static final int PLOT_DOTPLOT = 2;
@@ -77,30 +62,28 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener, T
 	private int numPlots = 4;
 	private int selectedPlot = PLOT_HISTOGRAM;
 	
-	// gui
+	// GUI
 	private JPanel statPanel, plotPanel, dataPanel;
 	private JTable statTable, dataTable;
-	private DefaultTableModel statModel;
+	//private DefaultTableModel statModel;
 	private JScrollPane statScroller;
+	private JComboBox cbNumClasses, cbPlotTypes;
+	private JToggleButton btnSort;
+	private JCheckBox enableAllData;
 	
-	// new EuclidianView for the dialog plots
-	private EuclidianView ev;
-	private EuclidianController ec;
-	private boolean[] showAxes = { true, true };
-	private boolean showGrid = false;
-	private boolean antialiasing = true;
-	
-	
+	// geos
 	private GeoElement boxPlot, histogram;
 	private GeoList rawDataList, dataList, statList;
 	private int numClasses = 6;
 	
-	private JComboBox cbNumClasses, cbPlotTypes;
+	// new EuclidianView instance for the dialog plots
+	private EuclidianView ev;
+	private EuclidianController ec;
 	
-	private JToggleButton btnSort;
-	private JCheckBox enableAllData;
 	
+	// layout
 	private static final Color TABLE_GRID_COLOR = Color.gray;
+	
 	
 	
 	/*************************************************
@@ -108,31 +91,40 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener, T
 	 */
 	public OneVariableStatsDialog(MyTable table, Application app){
 		super(app.getFrame(),true);
+		
 		this.app = app;	
 		kernel = app.getKernel();
-	
 		cons = kernel.getConstruction();
 				
 		// create an instance of EuclideanView
 		ec = new EuclidianController(kernel);
+		boolean[] showAxes = { true, true };
+		boolean showGrid = false;
 		ev = new EuclidianView(ec, showAxes, showGrid);
-		ev.setAntialiasing(antialiasing);
+		ev.setAntialiasing(true);
 		ev.updateFonts();
 		ev.setPreferredSize(new Dimension(300,200));
 		ev.setSize(new Dimension(300,200));
 		ev.updateSize();
 		
-		// create temporary geoLists
-		rawDataList = (GeoList) table.getCellRangeProcessor().createListNumeric(table.selectedCellRanges, true, true, true);
-		
+		// create data and stat geoLists
+		rawDataList = (GeoList) table.getCellRangeProcessor().createListNumeric(table.selectedCellRanges, true, true, true);	
 		dataList = (GeoList)rawDataList.copyInternal(cons);
 		dataList.setLabel(null);
 		createStatList(dataList);
 		
-		
+		// start it up!
 		initGUI();
 		updateFonts();
 	}
+	
+	
+	
+	
+	//=================================================
+	//       Create GUI
+	//=================================================
+	
 	
 	private void initGUI() {
 
@@ -160,23 +152,7 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener, T
 		}
 	}
 	
-	
-	public void setVisible(boolean isVisible){
-		super.setVisible(isVisible);
 
-		if(!isVisible){
-			if(statList != null) statList.remove();
-			if(dataList != null) dataList.remove();
-			if(rawDataList != null) rawDataList.remove();
-			if(boxPlot != null) boxPlot.remove();
-			if(histogram != null) histogram.remove();
-		}
-	}
-
-	
-	
-	
-	
 	private JPanel buildPlotPanel(){
 		
 		JLabel lblNumClasses = new JLabel(app.getPlain("classes")); 
@@ -218,60 +194,33 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener, T
 	
 	
 	
-	// update GUI 
-	private void updatePlot(){
-		switch(selectedPlot){
-		case PLOT_HISTOGRAM:
-			createHistogram( dataList, numClasses);
-			break;
-			
-		default:
-			createHistogram( dataList, numClasses);
-			break;
-		}
-	}
+	
 	
 	private JPanel buildStatPanel(){
 		
-		// build the stat table
-		
-		/*
-		String[] columnNames = {app.getPlain(" "), "Data"};	
-		
-		Object[][] data = new Object[statList.size()][2];
-		GeoList list;
-		for (int elem = 0; elem < statList.size(); ++elem){
-			list = (GeoList)statList.get(elem);
-			data[elem][0] = list.get(0).toDefinedValueString();
-			data[elem][1] = list.get(1).toDefinedValueString();
-		}
-		statModel = new DefaultTableModel(data,columnNames);
-		*/
-		
-		statModel = new DefaultTableModel(statList.size(), 2);
-		updateStatModel();
-		statTable = new JTable(statModel){
-		      public boolean isCellEditable(int rowIndex, int colIndex) {
+		// build the stat table	
+		statTable = new JTable(){
+			// disable cell editing
+		      @Override
+			public boolean isCellEditable(int rowIndex, int colIndex) {
 		        return false;   
 		      }
 		    };
-		    
-		 // Enable cell selection 
+		 updateStatTable(); 
+		 
 		statTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
 		statTable.setColumnSelectionAllowed(true); 
 		statTable.setRowSelectionAllowed(true);
-		
 		statTable.setShowGrid(true); 	 
-		statTable.setGridColor(TABLE_GRID_COLOR); 	 
-		
-		statTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
+		statTable.setGridColor(TABLE_GRID_COLOR); 	 	
 		statTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
+		
+		statTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		statTable.setMinimumSize(new Dimension(50,50));
 		
-		
-		
+	
+		// enclose the table in a scroller
 		statScroller = new JScrollPane(statTable);
 		statScroller.setBorder(BorderFactory.createEmptyBorder());
 		
@@ -279,42 +228,25 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener, T
 		statTable.setTableHeader(null);
 		statScroller.setColumnHeaderView(null);
 		
-	
+		// put it all into the stat panel
 		statPanel = new JPanel(new BorderLayout());
 		statPanel.add(statScroller, BorderLayout.CENTER);
 		
 		// statPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		statPanel.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		return statPanel;
-		
+
 	}
 
-	
-private void updateStatModel(){
-		GeoList list;
-		for (int elem = 0; elem < statList.size(); ++elem){
-			list = (GeoList)statList.get(elem);
-			statModel.setValueAt(list.get(0).toDefinedValueString(), elem, 0);
-			statModel.setValueAt(list.get(1).toDefinedValueString(), elem, 1);
-		}
-}
+
+
 	
 	private JPanel buildDataPanel(){
-		
-				
+
 		// build the data table
-		String[] columnNames = {" ", " "};	
 		
-		Object[][] data = new Object[dataList.size()][2];
-		for (int i = 0; i < dataList.size(); ++i){
-			data[i][0] = new Boolean(true);
-			data[i][1] = dataList.get(i).toDefinedValueString();
-		}
-		
-		TableModel dataModel = new DefaultTableModel(data,columnNames);
-		dataModel.addTableModelListener(this);
-		dataTable = new JTable(dataModel){
+		dataTable = new JTable(){
 		      
 		      @Override
 		  	protected void configureEnclosingScrollPane() {
@@ -323,12 +255,12 @@ private void updateStatModel(){
 		  		if (p instanceof JViewport) {
 		  			((JViewport) p).setBackground(getBackground());
 		  		}
-		  	}
-		    };
-		
-		
-		
-		 // Enable cell selection 
+		      }
+		};
+		updateDataTable();
+
+
+		// Enable cell selection 
 		dataTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
 		dataTable.setColumnSelectionAllowed(true); 
 		dataTable.setRowSelectionAllowed(true);
@@ -376,57 +308,7 @@ private void updateStatModel(){
 		return dataPanel;
 	}
 	
-	
-	
-	public void tableChanged(TableModelEvent e) {
 
-		if(e.getColumn()==0){
-			int row = e.getFirstRow();
-			int column = e.getColumn();
-			TableModel model = (TableModel)e.getSource();
-			System.out.println("row="+row+", Column="+column+" "+model.getValueAt(row,column));
-			this.updateDataList();
-		}
-	}
-	
-	
-	class MyItemListener implements ItemListener  
-	{  
-		public void itemStateChanged(ItemEvent e) {  
-			Object source = e.getSource();  
-			if (source instanceof AbstractButton == false) return;  
-			boolean checked = e.getStateChange() == ItemEvent.SELECTED;  
-			for(int x = 0, y = dataTable.getRowCount(); x < y; x++)  
-			{  
-				dataTable.setValueAt(new Boolean(checked),x,0);  
-			}  
-		}  
-	}  
-	
-	
-
-	public void actionPerformed(ActionEvent e) {	
-		doActionPerformed(e.getSource());
-	}	
-	
-	public void doActionPerformed(Object source) {		
-				
-		if (source == cbNumClasses) {
-			numClasses = (Integer) cbNumClasses.getSelectedItem();
-			createHistogram( dataList, numClasses);
-		}
-		
-		if (source == cbPlotTypes) {
-			selectedPlot = cbNumClasses.getSelectedIndex();
-			updatePlot();
-		}
-		statPanel.requestFocus(); 
-	}
-
-
-
-	
-	
 	private void  createStatList(GeoList dataList){
 		
 		String label = dataList.getLabel();	
@@ -455,14 +337,13 @@ private void updateStatModel(){
 			
 			text += "}";
 			
-			System.out.println(label);	
-			System.out.println(text);	
+			
 			// convert list string to geo
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 					.processAlgebraCommandNoExceptionHandling(text, false);
 	
 			statList = (GeoList) geos[0];
-			System.out.println(text);		
+			//System.out.println(text);		
 		} catch (Exception ex) {
 			Application.debug("Creating list failed with exception " + ex);
 			setVisible(false);
@@ -481,6 +362,117 @@ private void updateStatModel(){
 	}
 	
 	
+	
+
+	
+	//=================================================
+	//       Listeners & Event Handlers
+	//=================================================
+	
+	
+	public void tableChanged(TableModelEvent e) {
+
+		if(e.getColumn()==0){
+			int row = e.getFirstRow();
+			int column = e.getColumn();
+			TableModel model = (TableModel)e.getSource();
+			//System.out.println("row="+row+", Column="+column+" "+model.getValueAt(row,column));
+			this.updateDataList();
+		}
+	}
+	
+	
+	class MyItemListener implements ItemListener  
+	{  
+		public void itemStateChanged(ItemEvent e) {  
+			Object source = e.getSource();  
+			if (source instanceof AbstractButton == false) return;  
+			boolean checked = e.getStateChange() == ItemEvent.SELECTED;  
+			for(int x = 0, y = dataTable.getRowCount(); x < y; x++)  
+			{  
+				dataTable.setValueAt(new Boolean(checked),x,0);  
+			}  
+		}  
+	}  
+	
+	
+	public void actionPerformed(ActionEvent e) {	
+		doActionPerformed(e.getSource());
+	}	
+	public void doActionPerformed(Object source) {		
+				
+		if (source == cbNumClasses) {
+			numClasses = (Integer) cbNumClasses.getSelectedItem();
+			createHistogram( dataList, numClasses);
+		}
+		
+		if (source == cbPlotTypes) {
+			selectedPlot = cbNumClasses.getSelectedIndex();
+			updatePlot();
+		}
+		statPanel.requestFocus(); 
+	}
+
+	
+	
+	@Override
+	public void setVisible(boolean isVisible){
+		super.setVisible(isVisible);
+
+		if(!isVisible){
+			if(statList != null) statList.remove();
+			if(dataList != null) dataList.remove();
+			if(rawDataList != null) rawDataList.remove();
+			if(boxPlot != null) boxPlot.remove();
+			if(histogram != null) histogram.remove();
+		}
+	}
+	
+
+	
+	
+	
+
+	
+	//=================================================
+	//      Update
+	//=================================================
+	
+	 
+	private void updatePlot(){
+		switch(selectedPlot){
+		case PLOT_HISTOGRAM:
+			createHistogram( dataList, numClasses);
+			break;		
+		default:
+			createHistogram( dataList, numClasses);
+			break;
+		}
+		ev.repaint();
+	}
+
+	private void updateStatTable(){
+		TableModel statModel = new DefaultTableModel(statList.size(), 2);
+		GeoList list;
+		for (int elem = 0; elem < statList.size(); ++elem){
+			list = (GeoList)statList.get(elem);
+			statModel.setValueAt(list.get(0).toDefinedValueString(), elem, 0);
+			statModel.setValueAt(list.get(1).toDefinedValueString(), elem, 1);
+		}
+		statTable.setModel(statModel);
+	}
+	
+	private void updateDataTable(){
+		TableModel dataModel = new DefaultTableModel(rawDataList.size(),2);
+		for (int row = 0; row < rawDataList.size(); ++row){
+			dataModel.setValueAt(new Boolean(true),row,0);
+			dataModel.setValueAt(rawDataList.get(row).toDefinedValueString(),row,1);
+		}
+		dataTable.setModel(dataModel);
+		dataModel.addTableModelListener(this);
+	}
+	
+	
 	private void updateDataList(){
 		dataList.clear();
 		for(int i=0; i < rawDataList.size(); ++i){
@@ -489,9 +481,30 @@ private void updateStatModel(){
 			}
 		}
 		dataList.updateCascade();
-		statList.updateCascade();
-		updateStatModel();
-		ev.repaint();
+		updateStatTable();
+		updatePlot();
+	}
+	
+	
+	public void updateFonts() {
+		
+		Font font = app.getPlainFont();
+		
+		int size = font.getSize();
+		if (size < 12) size = 12; // minimum size
+		double multiplier = (size)/12.0;
+		
+		setFont(font);
+		statTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
+		statTable.setFont(font);  
+		dataTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
+		dataTable.setFont(font);  
+		
+		
+		//statTable.columnHeader.setFont(font);
+		//table.preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
+		//table.columnHeader.setPreferredSize(new Dimension(table.preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+		
 	}
 	
 	
@@ -499,8 +512,9 @@ private void updateStatModel(){
 	
 	
 	
-	
-	
+	//=================================================
+	//       Plots
+	//=================================================
 	
 	private void createHistogram(GeoList dataList, int numClasses){
 		
@@ -562,7 +576,7 @@ private void updateStatModel(){
 		
 		// Set view parameters		
 		ev.setRealWorldCoordSystem(xMin - barWidth, xMax + barWidth, -1.0, 1.1 * freqMax);
-		ev.setShowAxis(EuclidianView.AXIS_Y, false, true);
+		ev.setShowAxis(EuclidianViewInterface.AXIS_Y, false, true);
 		
 		
 		
@@ -571,7 +585,9 @@ private void updateStatModel(){
 	
 	
 	
-	
+	//=================================================
+	//       Frequency Table
+	//=================================================
 	
 	// create frequency table
 	private double getFrequencyTableMax(GeoList list1, double n){
@@ -624,8 +640,8 @@ private void updateStatModel(){
 		int N = (int)noOfBars + 2;
 		gap = ((N-1) * step - totalWidth) / 2.0;
 		
-		NumberValue a = (NumberValue)(new GeoNumeric(cons,mini - gap));
-		NumberValue b = (NumberValue)(new GeoNumeric(cons,maxi + gap));
+		NumberValue a = (new GeoNumeric(cons,mini - gap));
+		NumberValue b = (new GeoNumeric(cons,maxi + gap));
 
 		yval = new double[N];
 		leftBorder = new double[N];
@@ -677,31 +693,7 @@ private void updateStatModel(){
 		
 	}
 
-	
-	public void updateFonts() {
-		
-		Font font = app.getPlainFont();
-		
-		int size = font.getSize();
-		if (size < 12) size = 12; // minimum size
-		double multiplier = (double)(size)/12.0;
-		
-		setFont(font);
-		statTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
-		statTable.setFont(font);  
-		dataTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
-		dataTable.setFont(font);  
-		
-		
-		//statTable.columnHeader.setFont(font);
-		//table.preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
-		//table.columnHeader.setPreferredSize(new Dimension(table.preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
-		
-	}
-	
-	
-	
-	
+
 	
 	
 	
@@ -722,6 +714,7 @@ private void updateStatModel(){
 		}
 		
 		
+		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value,
 				boolean isSelected, boolean hasFocus, int row, int column) 
 		{	
