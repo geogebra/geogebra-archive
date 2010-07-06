@@ -15,11 +15,17 @@ import geogebra.main.DefaultApplication;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.net.MalformedURLException;
@@ -27,9 +33,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -40,19 +48,26 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JToggleButton;
+import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-public class OneVariableStatsDialog extends JDialog implements ActionListener   {
+public class OneVariableStatsDialog extends JDialog implements ActionListener, TableModelListener  {
 	
 	// ggb 
 	private Application app;
-	private Kernel kernel;
-	private MyTable table; 
+	private Kernel kernel; 
 	private Construction cons;
 	
 	private static final int PLOT_HISTOGRAM = 0;
@@ -64,7 +79,7 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 	
 	// gui
 	private JPanel statPanel, plotPanel, dataPanel;
-	private JTable statTable;
+	private JTable statTable, dataTable;
 	private DefaultTableModel statModel;
 	private JScrollPane statScroller;
 	
@@ -77,20 +92,25 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 	
 	
 	private GeoElement boxPlot, histogram;
-	private GeoList dataList, statList;
+	private GeoList rawDataList, dataList, statList;
 	private int numClasses = 6;
 	
 	private JComboBox cbNumClasses, cbPlotTypes;
 	
+	private JToggleButton btnSort;
+	private JCheckBox enableAllData;
 	
-	/**
+	private static final Color TABLE_GRID_COLOR = Color.gray;
+	
+	
+	/*************************************************
 	 * Construct the dialog
 	 */
 	public OneVariableStatsDialog(MyTable table, Application app){
 		super(app.getFrame(),true);
 		this.app = app;	
 		kernel = app.getKernel();
-		this.table = table;
+	
 		cons = kernel.getConstruction();
 				
 		// create an instance of EuclideanView
@@ -103,10 +123,15 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		ev.updateSize();
 		
 		// create temporary geoLists
-		dataList = (GeoList) table.getCellRangeProcessor().createListNumeric(table.selectedCellRanges, true, true);	
+		rawDataList = (GeoList) table.getCellRangeProcessor().createListNumeric(table.selectedCellRanges, true, true, true);
+		
+		dataList = (GeoList)rawDataList.copyInternal(cons);
+		dataList.setLabel(null);
 		createStatList(dataList);
 		
+		
 		initGUI();
+		updateFonts();
 	}
 	
 	private void initGUI() {
@@ -117,15 +142,15 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 			JPanel mainPanel = new JPanel(new BorderLayout());
 			mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 			
-			mainPanel.add(buildPlotPanel(), BorderLayout.CENTER);	
-			mainPanel.add(buildStatPanel(), BorderLayout.SOUTH);
+			mainPanel.add(buildPlotPanel(), BorderLayout.NORTH);	
+			mainPanel.add(buildStatPanel(), BorderLayout.CENTER);
 			//mainPanel.add(buildDataPanel(), BorderLayout.WEST);
 			//this.setPreferredSize(new Dimension(400,300));
-			
-			
+						
 			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, buildDataPanel(), mainPanel);
 			
 			this.getContentPane().add(splitPane);
+			this.getContentPane().setPreferredSize(new Dimension(500,500));
 			//setResizable(false);
 			pack();
 			setLocationRelativeTo(app.getFrame());
@@ -142,6 +167,7 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		if(!isVisible){
 			if(statList != null) statList.remove();
 			if(dataList != null) dataList.remove();
+			if(rawDataList != null) rawDataList.remove();
 			if(boxPlot != null) boxPlot.remove();
 			if(histogram != null) histogram.remove();
 		}
@@ -190,6 +216,9 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		return plotPanel;
 	}
 	
+	
+	
+	// update GUI 
 	private void updatePlot(){
 		switch(selectedPlot){
 		case PLOT_HISTOGRAM:
@@ -205,6 +234,8 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 	private JPanel buildStatPanel(){
 		
 		// build the stat table
+		
+		/*
 		String[] columnNames = {app.getPlain(" "), "Data"};	
 		
 		Object[][] data = new Object[statList.size()][2];
@@ -214,21 +245,28 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 			data[elem][0] = list.get(0).toDefinedValueString();
 			data[elem][1] = list.get(1).toDefinedValueString();
 		}
-		
 		statModel = new DefaultTableModel(data,columnNames);
+		*/
+		
+		statModel = new DefaultTableModel(statList.size(), 2);
+		updateStatModel();
 		statTable = new JTable(statModel){
 		      public boolean isCellEditable(int rowIndex, int colIndex) {
 		        return false;   
 		      }
 		    };
+		    
 		 // Enable cell selection 
 		statTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
 		statTable.setColumnSelectionAllowed(true); 
 		statTable.setRowSelectionAllowed(true);
 		
+		statTable.setShowGrid(true); 	 
+		statTable.setGridColor(TABLE_GRID_COLOR); 	 
+		
 		statTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
-		statTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		statTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
 		statTable.setMinimumSize(new Dimension(50,50));
 		
@@ -252,6 +290,16 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		
 	}
 
+	
+private void updateStatModel(){
+		GeoList list;
+		for (int elem = 0; elem < statList.size(); ++elem){
+			list = (GeoList)statList.get(elem);
+			statModel.setValueAt(list.get(0).toDefinedValueString(), elem, 0);
+			statModel.setValueAt(list.get(1).toDefinedValueString(), elem, 1);
+		}
+}
+	
 	private JPanel buildDataPanel(){
 		
 				
@@ -265,7 +313,20 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		}
 		
 		TableModel dataModel = new DefaultTableModel(data,columnNames);
-		JTable dataTable = new JTable(dataModel);
+		dataModel.addTableModelListener(this);
+		dataTable = new JTable(dataModel){
+		      
+		      @Override
+		  	protected void configureEnclosingScrollPane() {
+		  		super.configureEnclosingScrollPane();
+		  		Container p = getParent();
+		  		if (p instanceof JViewport) {
+		  			((JViewport) p).setBackground(getBackground());
+		  		}
+		  	}
+		    };
+		
+		
 		
 		 // Enable cell selection 
 		dataTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
@@ -274,26 +335,96 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		
 		dataTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
-		dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		//dataTable.setAutoResizeMode(JTable.);
 		dataTable.setPreferredScrollableViewportSize(dataTable.getPreferredSize());
 		//dataTable.setMinimumSize(new Dimension(50,50));
-		
-		
-		
+
+		TableColumn tc = dataTable.getColumnModel().getColumn(0);  
+		tc.setCellEditor(dataTable.getDefaultEditor(Boolean.class));  
+		tc.setCellRenderer(dataTable.getDefaultRenderer(Boolean.class));  
+		tc.setHeaderRenderer(new CheckBoxHeader(new MyItemListener()));
+		tc.setPreferredWidth(40);
+
 		JScrollPane dataScroller = new JScrollPane(dataTable);
 		dataScroller.setBorder(BorderFactory.createEmptyBorder());
 		
+		dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		dataTable.doLayout();
+		dataTable.setAutoCreateColumnsFromModel(false);
+		
+
 		// hide the table header
-		dataTable.setTableHeader(null);
-		dataScroller.setColumnHeaderView(null);
+		//dataTable.setTableHeader(null);
+		//dataScroller.setColumnHeaderView(null);
+		
+		
+		btnSort = new JToggleButton(app.getCommand("sort"));
+		enableAllData = new JCheckBox(" ");
+		
+		
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		//headerPanel.add(enableAllData);
+		//headerPanel.add(btnSort);
+		
 		
 		
 		dataPanel = new JPanel(new BorderLayout());
+		dataPanel.add(headerPanel, BorderLayout.NORTH);
 		dataPanel.add(dataScroller, BorderLayout.CENTER);
+		
 			
 		return dataPanel;
 	}
 	
+	
+	
+	public void tableChanged(TableModelEvent e) {
+
+		if(e.getColumn()==0){
+			int row = e.getFirstRow();
+			int column = e.getColumn();
+			TableModel model = (TableModel)e.getSource();
+			System.out.println("row="+row+", Column="+column+" "+model.getValueAt(row,column));
+			this.updateDataList();
+		}
+	}
+	
+	
+	class MyItemListener implements ItemListener  
+	{  
+		public void itemStateChanged(ItemEvent e) {  
+			Object source = e.getSource();  
+			if (source instanceof AbstractButton == false) return;  
+			boolean checked = e.getStateChange() == ItemEvent.SELECTED;  
+			for(int x = 0, y = dataTable.getRowCount(); x < y; x++)  
+			{  
+				dataTable.setValueAt(new Boolean(checked),x,0);  
+			}  
+		}  
+	}  
+	
+	
+
+	public void actionPerformed(ActionEvent e) {	
+		doActionPerformed(e.getSource());
+	}	
+	
+	public void doActionPerformed(Object source) {		
+				
+		if (source == cbNumClasses) {
+			numClasses = (Integer) cbNumClasses.getSelectedItem();
+			createHistogram( dataList, numClasses);
+		}
+		
+		if (source == cbPlotTypes) {
+			selectedPlot = cbNumClasses.getSelectedIndex();
+			updatePlot();
+		}
+		statPanel.requestFocus(); 
+	}
+
+
+
 	
 	
 	private void  createStatList(GeoList dataList){
@@ -324,14 +455,14 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 			
 			text += "}";
 			
-			
+			System.out.println(label);	
+			System.out.println(text);	
 			// convert list string to geo
-			GeoElement[] geos = table.kernel
-					.getAlgebraProcessor()
+			GeoElement[] geos = kernel.getAlgebraProcessor()
 					.processAlgebraCommandNoExceptionHandling(text, false);
 	
 			statList = (GeoList) geos[0];
-					
+			System.out.println(text);		
 		} catch (Exception ex) {
 			Application.debug("Creating list failed with exception " + ex);
 			setVisible(false);
@@ -348,6 +479,26 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		
 		return text; 
 	}
+	
+	
+	private void updateDataList(){
+		dataList.clear();
+		for(int i=0; i < rawDataList.size(); ++i){
+			if(((Boolean)dataTable.getValueAt(i, 0))== true){
+				dataList.add(rawDataList.get(i).copyInternal(cons));
+			}
+		}
+		dataList.updateCascade();
+		statList.updateCascade();
+		updateStatModel();
+		ev.repaint();
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -394,7 +545,7 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 			boolean oldMacroMode = cons.isSuppressLabelsActive();
 			cons.setSuppressLabelCreation(true);
 			
-			GeoElement[] geos = table.kernel.getAlgebraProcessor()
+			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptionHandling(geoText, false);
 			histogram = geos[0];
 			histogram.addView(ev);
@@ -526,25 +677,37 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		
 	}
 
-	public void actionPerformed(ActionEvent e) {	
-		doActionPerformed(e.getSource());
-	}	
 	
-	public void doActionPerformed(Object source) {		
-				
-		if (source == cbNumClasses) {
-			numClasses = (Integer) cbNumClasses.getSelectedItem();
-			createHistogram( dataList, numClasses);
-		}
+	public void updateFonts() {
 		
-		if (source == cbPlotTypes) {
-			selectedPlot = cbNumClasses.getSelectedIndex();
-			updatePlot();
-		}
-		statPanel.requestFocus(); 
+		Font font = app.getPlainFont();
+		
+		int size = font.getSize();
+		if (size < 12) size = 12; // minimum size
+		double multiplier = (double)(size)/12.0;
+		
+		setFont(font);
+		statTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
+		statTable.setFont(font);  
+		dataTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
+		dataTable.setFont(font);  
+		
+		
+		//statTable.columnHeader.setFont(font);
+		//table.preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
+		//table.columnHeader.setPreferredSize(new Dimension(table.preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+		
 	}
-
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	//======================================================
 	//         Cell Renderer 
@@ -562,20 +725,94 @@ public class OneVariableStatsDialog extends JDialog implements ActionListener   
 		public Component getTableCellRendererComponent(JTable table, Object value,
 				boolean isSelected, boolean hasFocus, int row, int column) 
 		{	
+			String text = value.toString();
 			
 			if(value instanceof Boolean){
-				setText("B");
+				setText(text);
 			}else{
-			setText(value.toString());
+				setText(text);
 			}
+			
+			//setFont(app.getFontCanDisplay(text, Font.PLAIN));
+			
 			return this;
 		}
 
 	}
 
+	
+	//======================================================
+	//         CheckBoxHeader  
+	//======================================================
+	
 
-	
-	
+	class CheckBoxHeader extends JCheckBox  implements TableCellRenderer, MouseListener { 
+
+		protected CheckBoxHeader rendererComponent;  
+		protected int column;  
+		protected boolean mousePressed = false;  
+
+		public CheckBoxHeader(ItemListener itemListener) {  
+			rendererComponent = this;  
+			rendererComponent.addItemListener(itemListener);  
+		}  
+
+		public Component getTableCellRendererComponent( JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column) {
+			
+			if (table != null) {  
+				JTableHeader header = table.getTableHeader();  
+				if (header != null) {  
+					rendererComponent.setForeground(header.getForeground());  
+					rendererComponent.setBackground(header.getBackground());  
+					rendererComponent.setFont(header.getFont());  
+					header.addMouseListener(rendererComponent);  
+				}  
+			}  
+			setColumn(column);  
+			rendererComponent.setText(null);  
+			setBorder(UIManager.getBorder("TableHeader.cellBorder")); 
+			setHorizontalAlignment(CENTER);
+			
+			return rendererComponent;  
+		}  
+		protected void setColumn(int column) {  
+			this.column = column;  
+		}  
+		public int getColumn() {  
+			return column;  
+		}  
+		protected void handleClickEvent(MouseEvent e) {  
+			if (mousePressed) {  
+				mousePressed=false;  
+				JTableHeader header = (JTableHeader)(e.getSource());  
+				JTable tableView = header.getTable();  
+				TableColumnModel columnModel = tableView.getColumnModel();  
+				int viewColumn = columnModel.getColumnIndexAtX(e.getX());  
+				int column = tableView.convertColumnIndexToModel(viewColumn);  
+
+				if (viewColumn == this.column && e.getClickCount() == 1 && column != -1) {  
+					doClick();  
+				}  
+			}  
+		}  
+		public void mouseClicked(MouseEvent e) {  
+			handleClickEvent(e);  
+			((JTableHeader)e.getSource()).repaint();  
+		}  
+		public void mousePressed(MouseEvent e) {  
+			mousePressed = true;  
+		}  
+		public void mouseReleased(MouseEvent e) {  
+		}  
+		public void mouseEntered(MouseEvent e) {  
+		}  
+		public void mouseExited(MouseEvent e) {  
+		}  
+	}  
+
+
+
 	
 	
 }

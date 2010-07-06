@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.main.Application;
 
 import java.awt.Point;
@@ -318,18 +319,34 @@ public class CellRangeProcessor {
 
 	}
 		
-	public GeoElement createListNumeric(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
+	public GeoElement createListNumeric(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue, boolean isSorted) {
 		
 		Construction cons = app.getKernel().getConstruction();  
 		GeoList fullList = (GeoList) createList(rangeList, scanByColumn, copyByValue);
 		GeoList numericList = new GeoList(cons);
 		
+		
+		ArrayList<String> list = new ArrayList<String>();
+		
 		for(int i = 0; i < fullList.size(); ++i){
-			 if(fullList.get(i).isGeoNumeric())
-				 numericList.add(fullList.get(i));
+			 if(fullList.get(i).isGeoNumeric()){
+				// numericList.add(fullList.get(i));
+				 list.add(((GeoNumeric)fullList.get(i)).toOutputValueString());
+			 }
 		}
-
-		return numericList;
+		
+		String listString = list.toString();
+		listString = listString.replace("[", "{");
+		listString = listString.replace("]", "}");
+		
+		listString = "Sort[" + listString + "]";
+		
+		GeoElement[] geos = table.kernel.getAlgebraProcessor()
+		.processAlgebraCommandNoExceptionHandling(listString, false);
+		
+		
+		
+		return (GeoList)geos[0];
 	}
 	
 	
