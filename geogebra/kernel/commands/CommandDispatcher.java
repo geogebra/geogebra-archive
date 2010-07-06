@@ -386,7 +386,8 @@ public class CommandDispatcher {
     	cmdTable.put("Shuffle", new CmdShuffle(kernel));
     	cmdTable.put("RandomElement", new CmdRandomElement(kernel));
     	cmdTable.put("ApplyMatrix", new CmdApplyMatrix(kernel));
- 
+    	cmdTable.put("ComplexRoot", new CmdComplexRoot(kernel));	   
+
      	                  	
     	
     	//Mathieu Blossier

@@ -76,6 +76,38 @@ public class EquationSolver {
 		return Math.max(0, realRoots);
 	}
        
+	/**
+	 * Computes all roots of a polynomial using Laguerre's method for
+	 * degrees > 3.
+	 * The roots are polished and only distinct roots are returned.
+	 * @param roots: array with the coefficients of the polynomial 
+	 * @return number of realRoots found
+	 */
+	final public int polynomialComplexRoots(double [] real, double complex[]) {			
+		int ret = -1;						
+		switch (real.length - 1) { // degree of polynomial
+			case 0:
+				ret = 0;
+				break;
+				
+			case 1:
+				real[0] = -real[0] / real[1];
+				complex[0] = 0;
+				ret = 1;
+				break;
+			
+			case 2:
+				ret = solveQuadraticComplex(real, complex);
+				break;
+					
+			default:
+				Application.debug("TODO");
+			//	realRoots = laguerreAll(roots);		
+		}
+		 				
+		return ret;
+	}
+       
      /**
      * Solves the quadratic whose coefficients are in the <code>eqn</code> 
      * array and places the non-complex roots back into the same array,
@@ -144,6 +176,58 @@ public class EquationSolver {
                 // We already tested a for being 0 above
                 res[roots++] = q / a;            
                 res[roots++] = c / q;            
+            }
+        }
+        return roots;
+    }
+      
+    final public int solveQuadraticComplex(double real[], double complex[]) {
+        double a = real[2];
+        double b = real[1];
+        double c = real[0];
+        int roots = 0;
+        
+        
+        if (Math.abs(a) < epsilon) {
+            // The quadratic parabola has degenerated to a line.
+            if (Math.abs(b) < epsilon)
+				// The line has degenerated to a constant.
+				return -1; 
+            complex[roots] = 0;
+            real[roots++] = -c / b;
+        } else {
+            // From Numerical Recipes, 5.6, Quadratic and Cubic Equations
+            double d = b * b - 4.0 * a * c;
+            if (Math.abs(d) < epsilon) {
+                complex[roots] = 0;
+                real[roots++] = - b /(2.0 * a);
+            }
+            else {
+                if (d < 0.0) {
+					// If d < 0.0, then there are 2 complex roots
+	                d = Math.sqrt(-d);
+                    complex[0] = d / (2.0 * a);
+                    real[0] = - b /(2.0 * a);
+                    complex[1] = -complex[0];
+                    real[1] = real[0];
+                    roots = 2;
+                } else {
+	                d = Math.sqrt(d);
+	                // For accuracy, calculate one root using:
+	                //     (-b +/- d) / 2a
+	                // and the other using:
+	                //     2c / (-b +/- d)
+	                // Choose the sign of the +/- so that b+d gets larger in magnitude
+	                if (b < 0.0) {
+	                    d = -d;
+	                }
+	                double q = (b + d) / -2.0;
+	                // We already tested a for being 0 above
+	                complex[roots] = 0;
+	                real[roots++] = q / a;            
+	                complex[roots] = 0;
+	                real[roots++] = c / q;
+                }
             }
         }
         return roots;

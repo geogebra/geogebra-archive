@@ -5713,6 +5713,18 @@ public class Kernel {
 	}	
 	
 	/**
+	 * all Complex Roots of polynomial f (works only for polynomials)
+	 */
+	final public GeoPoint [] ComplexRoot(String [] labels, GeoFunction f) {
+		// allow functions that can be simplified to factors of polynomials
+		if (!f.isPolynomialFunction(true)) return null;
+		
+		AlgoComplexRootsPolynomial algo = new AlgoComplexRootsPolynomial(cons, labels, f);
+		GeoPoint [] g = algo.getRootPoints();
+		return g;
+	}	
+	
+	/**
 	 * Root of a function f to given start value a (works only if first derivative of f exists)
 	 */
 	final public GeoPoint Root(String label, GeoFunction f, NumberValue a) {			 

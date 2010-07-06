@@ -39,12 +39,13 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
 
     GeoFunction f, g; // input  (g for intersection of polynomials)   
     private GeoLine line; // input (for intersection of polynomial with line)
-    private GeoPoint[] rootPoints; // output, inherited from AlgoIntersect 
+    protected GeoPoint[] rootPoints; // output, inherited from AlgoIntersect 
     //private int rootPointsLength;
 
     private String[] labels;
-    private boolean initLabels, setLabels;
-    private EquationSolver eqnSolver;
+    private boolean initLabels;
+	protected boolean setLabels;
+    protected EquationSolver eqnSolver;
     double[] curRoots = new double[30]; // current roots
     int curRealRoots;
 
@@ -410,7 +411,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         curRealRoots += number;
     }
 
-    final void removeRoot(int pos) {    
+    final private void removeRoot(int pos) {    
     	for (int i = pos+1; i < curRealRoots; i++) {
     		curRoots[i-1] = curRoots[i];
     	}    
@@ -418,7 +419,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
     }
 
     // roots array and number of roots
-    final void setRootPoints(double[] roots, int number) {
+    protected final void setRootPoints(double[] roots, int number) {
         initRootPoints(number);
 
         // now set the new values of the roots
@@ -450,7 +451,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
     }
 
     // number is the number of current roots
-    private void updateLabels(int number) {  
+    protected void updateLabels(int number) {  
     	if (initLabels) {
     		GeoElement.setLabels(labels, rootPoints);
     		initLabels = false;
@@ -489,7 +490,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         super.remove();
     }
 
-    private void initRootPoints(int number) {
+    protected void initRootPoints(int number) {
         // make sure that there are enough points   
         if (rootPoints.length < number) {
             GeoPoint[] temp = new GeoPoint[number];
