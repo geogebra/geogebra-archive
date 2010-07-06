@@ -14,12 +14,13 @@ package geogebra.kernel;
 
 
 import geogebra.kernel.arithmetic.PolyFunction;
-import geogebra.kernel.roots.RealRoot;
+import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.main.Application;
 
 import java.util.Arrays;
 
 import org.apache.commons.math.analysis.solvers.LaguerreSolver;
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
 import org.apache.commons.math.complex.Complex;
 
 public class EquationSolver { 
@@ -27,12 +28,12 @@ public class EquationSolver {
 	private static final double LAGUERRE_EPS = 1E-5;
 	private double epsilon = Kernel.STANDARD_PRECISION;
 	
-	private RealRoot rootPolisher;
+	//private RealRoot rootPolisher;
 	//private ExtremumFinder extrFinder;
 	
     public EquationSolver(Kernel kernel) {		
 		// we need someone to polish our roots
-		rootPolisher = new RealRoot();
+		//rootPolisher = new RealRoot();
 		//extrFinder = kernel.getExtremumFinder();
     }
     
@@ -530,15 +531,16 @@ public class EquationSolver {
 			double f_right = polyFunc.evaluate(right);
 			boolean bounded = f_left * f_right < 0.0; 
 			
+			UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
 			try {					
 				if (bounded) {						
 					//	small f'(root): don't go too fare from our laguerre root !	
-					root = rootPolisher.bisectNewtonRaphson(polyFunc, left, right);
+					root = fact.newBrentSolver().solve(new RealRootAdapter(polyFunc), left, right);
 					//System.out.println("Polish bisectNewtonRaphson: " + root);
 				} 
 				else {
 					// the root is not bounded: give Mr. Newton a chance
-					root = rootPolisher.newtonRaphson(polyFunc, root);
+					root = fact.newNewtonSolver().solve(new RealRootAdapter(polyFunc), left, right, root);
 					//System.out.println("Polish newtonRaphson: " + root);
 				}				
 			} 
@@ -547,7 +549,7 @@ public class EquationSolver {
 				// polishing failed: maybe we have an extremum here
 				// try to find a local extremum
 				try {		
-					root = rootPolisher.bisectNewtonRaphson(derivFunc, left, right);	
+					root = fact.newBrentSolver().solve(new RealRootAdapter(derivFunc), left, right);
 					//System.out.println("    find extremum successfull: " + root);
 				} catch (Exception ex) {
 					Application.debug(ex.getMessage());

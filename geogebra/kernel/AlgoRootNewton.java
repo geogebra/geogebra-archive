@@ -12,9 +12,14 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import org.apache.commons.math.ConvergenceException;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
+
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.roots.RealRoot;
+import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootDerivFunction;
 import geogebra.kernel.roots.RealRootUtil;
 
@@ -33,7 +38,6 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
     private GeoPoint rootPoint; // output 
 
     private GeoElement startGeo;
-    private RealRoot rootFinder;
 
     public AlgoRootNewton(
         Construction cons,
@@ -45,8 +49,6 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
         this.start = start;
         startGeo = start.toGeoElement();
 
-        rootFinder = new RealRoot();
-
         // output
         rootPoint = new GeoPoint(cons);
         setInputOutput(); // for AlgoElement    
@@ -57,7 +59,6 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 
     AlgoRootNewton(Construction cons) {
         super(cons);
-        rootFinder = new RealRoot();
     }
 
     public String getClassName() {
@@ -93,7 +94,18 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 
     final double calcRoot(Function fun, double start) {
     	double root = Double.NaN;
+   
+    	UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
+    	UnivariateRealSolver rootFinder = fact.newBrentSolver();
+    	double [] borders = getDomain(fun, start);
+    	try {
+			root = rootFinder.solve(new RealRootAdapter(fun), borders[0], borders[1], start);
+		} catch (Exception e) {
+			root = Double.NaN;
+		}
     	
+		// Debian comment: the algorithm of the original code is not clear -- Giovanni Mascellani
+    	/*
     	// for Newton's method we need the derivative of our function fun
         RealRootDerivFunction derivFun = fun.getRealRootDerivFunction();        
         
@@ -121,7 +133,7 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
                 } catch (Exception ex) {
                 }                      	        	        	
             }
-        }
+        }*/
               
         // check what we got
         if (Math.abs(fun.evaluate(root)) < Kernel.MIN_PRECISION )
