@@ -114,7 +114,8 @@ class ViewMenu extends BaseMenu {
 
 		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
 				showAuxiliaryObjectsAction);
-		cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
+		setEmptyIcon(cbShowAuxiliaryObjects);
+		//cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
 		cbShowAuxiliaryObjects
 				.setSelected(app.getGuiManager().getAlgebraView() == null
 						|| app.showAuxiliaryObjects());
@@ -140,14 +141,14 @@ class ViewMenu extends BaseMenu {
 		add(cbShowEuclidianView);
 
 		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);
-		cbShowAlgebraView.setIcon(app.getEmptyIcon());
+		setEmptyIcon(cbShowAlgebraView);
 		cbShowAlgebraView.setSelected(app.getGuiManager().showAlgebraView());
 		setMenuShortCutShiftAccelerator(cbShowAlgebraView, 'A');
 		add(cbShowAlgebraView);
 
 		// Michael Borcherds 2008-01-14
 		cbShowSpreadsheetView = new JCheckBoxMenuItem(showSpreadsheetAction);
-		cbShowSpreadsheetView.setIcon(app.getEmptyIcon());
+		setEmptyIcon(cbShowSpreadsheetView);
 		cbShowSpreadsheetView.setSelected(app.getGuiManager()
 				.showSpreadsheetView());
 		setMenuShortCutShiftAccelerator(cbShowSpreadsheetView, 'S');
@@ -155,7 +156,7 @@ class ViewMenu extends BaseMenu {
 		
 		// Florian Sonner 2009-03-29
 		cbShowCASView = new JCheckBoxMenuItem(showCASViewAction);
-		cbShowCASView.setIcon(app.getEmptyIcon());
+		setEmptyIcon(cbShowCASView);
 		cbShowCASView.setSelected(app.getGuiManager().showCASView());
 		add(cbShowCASView);
 
@@ -163,18 +164,23 @@ class ViewMenu extends BaseMenu {
 		
 		// show/hide keyboard
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
+		setEmptyIcon(cbShowKeyboard);
 		add(cbShowKeyboard);
 		
 		cbShowHandwriting = new JCheckBoxMenuItem(showHandwritingAction);
+		setEmptyIcon(cbShowHandwriting);
 		add(cbShowHandwriting);
 		
 		menuHandwriting = new JMenu(app.getMenu("Handwriting"));
 		menuHandwriting.setIcon(app.getEmptyIcon());
 		cbShowHandwritingAutoAdd = new JCheckBoxMenuItem(showHandwritingAutoAddAction);
+		setEmptyIcon(cbShowHandwritingAutoAdd);
 		menuHandwriting.add(cbShowHandwritingAutoAdd);
 		cbShowHandwritingTimedAdd = new JCheckBoxMenuItem(showHandwritingTimedAddAction);
+		setEmptyIcon(cbShowHandwritingTimedAdd);
 		menuHandwriting.add(cbShowHandwritingTimedAdd);
 		cbShowHandwritingTimedRecognise = new JCheckBoxMenuItem(showHandwritingTimedRecogniseAction);
+		setEmptyIcon(cbShowHandwritingTimedRecognise);
 		menuHandwriting.add(cbShowHandwritingTimedRecognise);
 		
 		add(menuHandwriting);
@@ -188,18 +194,22 @@ class ViewMenu extends BaseMenu {
 		menuInput = new JMenu(app.getMenu("InputField") + " ...");
 		menuInput.setIcon(app.getEmptyIcon());
 		cbShowCmdList = new JCheckBoxMenuItem(showCmdListAction);
+		setEmptyIcon(cbShowCmdList);
 		menuInput.add(cbShowCmdList);
 		cbShowInputTop = new JCheckBoxMenuItem(showInputTopAction);
+		setEmptyIcon(cbShowInputTop);
 		menuInput.add(cbShowInputTop);
 
 		add(menuInput);
 
 		cbShowToolBar = new JCheckBoxMenuItem(showToolBarAction);
+		setEmptyIcon(cbShowToolBar);
 		add(cbShowToolBar);
 
 		menuToolBar = new JMenu(app.getMenu("Toolbar"));
 		menuToolBar.setIcon(app.getEmptyIcon());
 		cbShowToolBarTop = new JCheckBoxMenuItem(showToolBarTopAction);
+		setEmptyIcon(cbShowToolBarTop);
 		menuToolBar.add(cbShowToolBarTop);
 
 		add(menuToolBar);
@@ -207,10 +217,13 @@ class ViewMenu extends BaseMenu {
 	    // Construction Protocol
 		cbShowConsProtNavigation = new JCheckBoxMenuItem(
 				showConsProtNavigationAction);
+		setEmptyIcon(cbShowConsProtNavigation);
 		cbShowConsProtNavigationPlay = new JCheckBoxMenuItem(
 				showConsProtNavigationPlayAction);
+		setEmptyIcon(cbShowConsProtNavigationPlay);
 		cbShowConsProtNavigationOpenProt = new JCheckBoxMenuItem(
 				showConsProtNavigationOpenProtAction);
+		setEmptyIcon(cbShowConsProtNavigationOpenProt);
 
 		add(constProtocolAction);
 
@@ -288,8 +301,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showKeyboardAction = new AbstractAction(app.getPlain("ShowKeyboard"),
-				app.getEmptyIcon()) {
+		showKeyboardAction = new AbstractAction(app.getPlain("ShowKeyboard")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -310,8 +322,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 		
-		showHandwritingAction = new AbstractAction(app.getPlain("ShowHandwriting"),
-				app.getEmptyIcon()) {
+		showHandwritingAction = new AbstractAction(app.getPlain("ShowHandwriting")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -332,8 +343,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showHandwritingAutoAddAction = new AbstractAction(app.getPlain("AutoAdd"),
-				app.getEmptyIcon()) {
+		showHandwritingAutoAddAction = new AbstractAction(app.getPlain("AutoAdd")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -348,8 +358,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showHandwritingTimedAddAction = new AbstractAction(app.getPlain("TimedAdd"),
-				app.getEmptyIcon()) {
+		showHandwritingTimedAddAction = new AbstractAction(app.getPlain("TimedAdd")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -364,8 +373,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showHandwritingTimedRecogniseAction = new AbstractAction(app.getPlain("TimedRecognise"),
-				app.getEmptyIcon()) {
+		showHandwritingTimedRecogniseAction = new AbstractAction(app.getPlain("TimedRecognise")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -376,8 +384,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField"),
-				app.getEmptyIcon()) {
+		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -386,8 +393,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showCmdListAction = new AbstractAction(app.getMenu("CmdList"), app
-				.getEmptyIcon()) {
+		showCmdListAction = new AbstractAction(app.getMenu("CmdList")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -410,8 +416,7 @@ class ViewMenu extends BaseMenu {
 		};
 
 		// Florian Sonner 2009-01-10
-		showToolBarAction = new AbstractAction(app.getMenu("Toolbar"), app
-				.getEmptyIcon()) {
+		showToolBarAction = new AbstractAction(app.getMenu("Toolbar")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -421,8 +426,7 @@ class ViewMenu extends BaseMenu {
 		};
 
 		// Florian Sonner 2009-01-10
-		showToolBarTopAction = new AbstractAction(app.getMenu("ToolBarOnTop"),
-				app.getEmptyIcon()) {
+		showToolBarTopAction = new AbstractAction(app.getMenu("ToolBarOnTop")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -479,7 +483,7 @@ class ViewMenu extends BaseMenu {
 		};
 
 		showConsProtNavigationAction = new AbstractAction(app
-				.getPlain("ConstructionProtocolNavigation"), app.getEmptyIcon()) {
+				.getPlain("ConstructionProtocolNavigation")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -492,7 +496,7 @@ class ViewMenu extends BaseMenu {
 		};
 
 		showConsProtNavigationPlayAction = new AbstractAction(app
-				.getPlain("PlayButton"), app.getEmptyIcon()) {
+				.getPlain("PlayButton")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -506,7 +510,7 @@ class ViewMenu extends BaseMenu {
 		};
 
 		showConsProtNavigationOpenProtAction = new AbstractAction(app
-				.getPlain("ConstructionProtocolButton"), app.getEmptyIcon()) {
+				.getPlain("ConstructionProtocolButton")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {

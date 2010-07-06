@@ -5,6 +5,7 @@ import geogebra.main.Application;
 import java.awt.Event;
 import java.awt.Toolkit;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
@@ -64,5 +65,10 @@ abstract class BaseMenu extends JMenu {
 				.getMenuShortcutKeyMask()
 				+ Event.SHIFT_MASK);
 		mi.setAccelerator(ks);
+	}
+	
+	public void setEmptyIcon(JCheckBoxMenuItem cb) {
+		if (!Application.WINDOWS_VISTA_OR_LATER)
+			cb.setIcon(app.getEmptyIcon());
 	}
 }

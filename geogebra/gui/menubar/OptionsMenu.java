@@ -290,10 +290,12 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			submenu.setIcon(app.getImageIcon("perspective.gif"));
 
 			cbShowViewTitlebar = new JCheckBoxMenuItem(showViewTitlebarAction);
+			setEmptyIcon(cbShowViewTitlebar);
 			cbShowViewTitlebar.setSelected(layout.isTitleBarVisible());
 
 			cbIgnoreDocumentPerspective = new JCheckBoxMenuItem(
 					ignoreDocumentPerspectiveAction);
+			setEmptyIcon(cbIgnoreDocumentPerspective);
 			cbIgnoreDocumentPerspective.setSelected(app
 					.isIgnoringDocumentPerspective());
 
@@ -407,7 +409,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		
 		// Florian Sonner 2008-10-22
 		showViewTitlebarAction = new AbstractAction(app
-				.getMenu("ShowViewTitlebar"), app.getEmptyIcon()) {
+				.getMenu("ShowViewTitlebar")) {
 			public static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -417,7 +419,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 		// Florian Sonner 2008-09-14
 		ignoreDocumentPerspectiveAction = new AbstractAction(app
-				.getMenu("IgnoreDocumentPerspective"), app.getEmptyIcon()) {
+				.getMenu("IgnoreDocumentPerspective")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
