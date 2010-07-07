@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import java.nio.FloatBuffer;
+
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import javax.media.opengl.GL;
@@ -203,7 +205,13 @@ public class ManagerGLList extends Manager {
 		
 	}
 	
-	
+	protected void vertices(FloatBuffer v, int count){
+		v.rewind();
+		gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		gl.glVertexPointer(3, GL.GL_FLOAT, 0, v);
+		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
+		gl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+	}
 	
 	
 	protected void color(float r, float g, float b){

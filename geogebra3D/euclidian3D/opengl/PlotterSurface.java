@@ -1,5 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
+import java.nio.FloatBuffer;
+
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra3D.euclidian3D.SurfaceTree;
@@ -143,7 +145,6 @@ public class PlotterSurface {
 		manager.vertex(p2);
 		manager.endGeometry();
 	}
-	
 	/** 
 	 * draw part of the surface
 	 */
@@ -183,8 +184,47 @@ public class PlotterSurface {
 	/** 
 	 * draw part of the surface
 	 */
-	public void draw(SurfaceTree tree){
-		tree.beginRefine(this);
+	public void draw(SurfaceTree2 tree){
+		/*FloatBuffer d = tree.getFirstTriangle();
+		drawTriangle(d);
+		while(tree.hasMoreTriangles()){
+			d = tree.getNextTriangle();
+			drawTriangle(d);
+		}*/
+		
+		FloatBuffer b = tree.getTriangles();
+		int cnt = tree.getTriangleCount();
+		manager.startGeometry(Manager.TRIANGLES);
+		
+		float uT = getTextureCoord(1, uNb, uMinFadeNb, uMaxFadeNb);
+		float vT = getTextureCoord(1, vNb, vMinFadeNb, vMaxFadeNb);	
+		manager.texture(uT, vT);
+		float[] f = new float[9];
+		b.rewind();
+		for(int i = 0; i < cnt; i++) {
+			b.get(f);
+			manager.vertex(f[0],f[1],f[2]);
+			manager.vertex(f[3],f[4],f[5]);
+			manager.vertex(f[6],f[7],f[8]);
+		}
+		manager.endGeometry();
+	}
+	
+	public void drawTriangle(FloatBuffer d){
+		manager.startGeometry(Manager.TRIANGLE_STRIP);
+		
+		float uT = getTextureCoord(1, uNb, uMinFadeNb, uMaxFadeNb);
+		float vT = getTextureCoord(1, vNb, vMinFadeNb, vMaxFadeNb);	
+		manager.texture(uT, vT);
+		float[] f = new float[9];
+		
+		d.get(f);
+		manager.vertex(f[0],f[1],f[2]);
+		manager.vertex(f[3],f[4],f[5]);
+		manager.vertex(f[6],f[7],f[8]);
+		manager.endGeometry();
+		d.flip();
+		manager.endGeometry();
 	}
 	
 	private void drawQuad(int ui, int vi){

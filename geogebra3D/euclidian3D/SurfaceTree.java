@@ -246,12 +246,12 @@ class SurfaceTreeNode {
 		if(childrenDefined)
 			return;
 		
-		double x1 = (p2.getX()-p1.getX())*0.5+p1.getX();
-		double y1 = (p2.getY()-p1.getY())*0.5+p1.getY();
-		double x2 = (p3.getX()-p2.getX())*0.5+p2.getX();
-		double y2 = (p3.getY()-p2.getY())*0.5+p2.getY();
-		double x3 = (p1.getX()-p3.getX())*0.5+p3.getX();
-		double y3 = (p1.getY()-p3.getY())*0.5+p3.getY();
+		double x1 = (p2.getX()+p1.getX())*0.5;
+		double y1 = (p2.getY()+p1.getY())*0.5;
+		double x2 = (p3.getX()+p2.getX())*0.5;
+		double y2 = (p3.getY()+p2.getY())*0.5;
+		double x3 = (p1.getX()+p3.getX())*0.5;
+		double y3 = (p1.getY()+p3.getY())*0.5;
 		
 		GgbVector m1 = func.evaluatePoint(x1,y1);
 		GgbVector m2 = func.evaluatePoint(x2,y2);

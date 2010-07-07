@@ -4,6 +4,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoFunction2Var;
+import geogebra3D.euclidian3D.opengl.SurfaceTree2;
 
 /**
  * Class for drawing a 2-var function
@@ -13,7 +14,7 @@ import geogebra3D.kernel3D.GeoFunction2Var;
 public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	
-	private SurfaceTree tree;
+	private SurfaceTree2 tree;
 	
 	/** gl index of the geometry */
 	private int geometryIndex = -1;
@@ -26,7 +27,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	 */
 	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunction2Var function) {
 		super(a_view3d, function);
-		tree = new SurfaceTree(function, a_view3d);
+		tree = new SurfaceTree2(function, a_view3d);
 	}
 	
 	public void drawGeometry(Renderer renderer) {
@@ -111,6 +112,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 			surface.setNbU((int) ((geo.getMaxParameter(0)-geo.getMinParameter(0))*10));
 			surface.setV((float) geo.getMinParameter(1), (float) geo.getMaxParameter(1));
 			surface.setNbV((int) ((geo.getMaxParameter(1)-geo.getMinParameter(1))*10));
+			
+			tree.optimize();
+			
 			surface.draw(tree);
 			geometryIndex=surface.end();
 		}

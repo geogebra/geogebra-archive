@@ -4,6 +4,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Color;
+import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
@@ -23,6 +24,7 @@ abstract public class Manager {
 	static final int TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
 	static final int QUAD_STRIP = GL.GL_QUAD_STRIP;
 	static final int QUADS = GL.GL_QUADS;
+	static final int TRIANGLES = GL.GL_TRIANGLES;
 
 	/** color factor for highlighting */
 	private float colorFactor;
@@ -179,13 +181,18 @@ abstract public class Manager {
 	 */
 	abstract protected void vertex(float x, float y, float z);
 	
-	
 	/** creates a vertex at coordinates v
 	 * @param v
 	 */
 	protected void vertex(GgbVector v){
 		vertex((float) v.getX(),(float) v.getY(),(float) v.getZ());
 	}
+
+	
+	/** creates a vetices at the specified coordinates
+	 * @param v an array of x,y and z values of vertices
+	 */
+	abstract protected void vertices(FloatBuffer v, int count);
 	
 	/** creates a normal at coordinates (x,y,z)
 	 * @param x x coord
