@@ -19,11 +19,11 @@ package org.apache.commons.math.random;
 import java.util.Random;
 
 /**
- * Extension of <code>java.util.Random</code> to implement 
+ * Extension of <code>java.util.Random</code> to implement
  * {@link RandomGenerator}.
  *
  * @since 1.1
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  */
 public class JDKRandomGenerator extends Random implements RandomGenerator {
 

@@ -20,14 +20,14 @@ package org.apache.commons.math.optimization;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 
-/** 
+/**
  * This interface represents an optimization algorithm for {@link DifferentiableMultivariateVectorialFunction
  * vectorial differentiable objective functions}.
  * <p>Optimization algorithms find the input point set that either {@link GoalType
  * maximize or minimize} an objective function.</p>
  * @see MultivariateRealOptimizer
  * @see DifferentiableMultivariateRealOptimizer
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public interface DifferentiableMultivariateVectorialOptimizer {

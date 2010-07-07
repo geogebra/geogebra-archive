@@ -22,8 +22,8 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
 
 /**
  * Provide a default implementation for several generic functions.
- *  
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 1.2
  */
 public abstract class UnivariateRealIntegratorImpl
@@ -52,7 +52,7 @@ public abstract class UnivariateRealIntegratorImpl
 
     /**
      * Construct an integrator with given iteration count and accuracy.
-     * 
+     *
      * @param f the integrand function
      * @param defaultMaximalIterationCount maximum number of iterations
      * @throws IllegalArgumentException if f is null or the iteration
@@ -75,13 +75,13 @@ public abstract class UnivariateRealIntegratorImpl
         setRelativeAccuracy(1.0e-6);
         this.defaultMinimalIterationCount = 3;
         this.minimalIterationCount = defaultMinimalIterationCount;
-        
+
         verifyIterationCount();
     }
 
     /**
      * Construct an integrator with given iteration count and accuracy.
-     * 
+     *
      * @param defaultMaximalIterationCount maximum number of iterations
      * @throws IllegalArgumentException if f is null or the iteration
      * limits are not valid
@@ -94,13 +94,13 @@ public abstract class UnivariateRealIntegratorImpl
         setRelativeAccuracy(1.0e-6);
         this.defaultMinimalIterationCount = 3;
         this.minimalIterationCount = defaultMinimalIterationCount;
-        
+
         verifyIterationCount();
     }
 
     /**
      * Access the last computed integral.
-     * 
+     *
      * @return the last computed integral
      * @throws IllegalStateException if no integral has been computed
      */
@@ -114,12 +114,12 @@ public abstract class UnivariateRealIntegratorImpl
 
     /**
      * Convenience function for implementations.
-     * 
-     * @param result the result to set
+     *
+     * @param newResult the result to set
      * @param iterationCount the iteration count to set
      */
-    protected final void setResult(double result, int iterationCount) {
-        this.result = result;
+    protected final void setResult(double newResult, int iterationCount) {
+        this.result         = newResult;
         this.iterationCount = iterationCount;
         this.resultComputed = true;
     }
@@ -149,7 +149,7 @@ public abstract class UnivariateRealIntegratorImpl
 
     /**
      * Verifies that the endpoints specify an interval.
-     * 
+     *
      * @param lower lower endpoint
      * @param upper upper endpoint
      * @throws IllegalArgumentException if not interval
@@ -160,12 +160,12 @@ public abstract class UnivariateRealIntegratorImpl
             throw MathRuntimeException.createIllegalArgumentException(
                     "endpoints do not specify an interval: [{0}, {1}]",
                     lower, upper);
-        }       
+        }
     }
 
     /**
      * Verifies that the upper and lower limits of iterations are valid.
-     * 
+     *
      * @throws IllegalArgumentException if not valid
      */
     protected void verifyIterationCount() throws IllegalArgumentException {
@@ -173,6 +173,6 @@ public abstract class UnivariateRealIntegratorImpl
             throw MathRuntimeException.createIllegalArgumentException(
                     "invalid iteration limits: min={0}, max={1}",
                     minimalIterationCount, maximalIterationCount);
-        }       
+        }
     }
 }

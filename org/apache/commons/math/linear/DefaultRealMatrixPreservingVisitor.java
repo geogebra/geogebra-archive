@@ -23,8 +23,8 @@ package org.apache.commons.math.linear;
  * This class is a convenience to create custom visitors without defining all
  * methods. This class provides default implementations that do nothing.
  * </p>
- * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public class DefaultRealMatrixPreservingVisitor implements RealMatrixPreservingVisitor {

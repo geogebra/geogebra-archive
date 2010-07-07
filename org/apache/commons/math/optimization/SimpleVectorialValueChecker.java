@@ -19,7 +19,7 @@ package org.apache.commons.math.optimization;
 
 import org.apache.commons.math.util.MathUtils;
 
-/** 
+/**
  * Simple implementation of the {@link VectorialConvergenceChecker} interface using
  * only objective function values.
  * <p>
@@ -28,7 +28,7 @@ import org.apache.commons.math.util.MathUtils;
  * threshold or if either the absolute difference between the objective
  * function values is smaller than another threshold for all vectors elements.
  * </p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public class SimpleVectorialValueChecker implements VectorialConvergenceChecker {

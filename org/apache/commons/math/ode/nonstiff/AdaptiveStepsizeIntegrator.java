@@ -46,7 +46,7 @@ import org.apache.commons.math.ode.IntegratorException;
  * otherwise the step is rejected and a new attempt is made with a new
  * stepsize.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  *
  */
@@ -54,7 +54,27 @@ import org.apache.commons.math.ode.IntegratorException;
 public abstract class AdaptiveStepsizeIntegrator
   extends AbstractIntegrator {
 
-  
+    /** Allowed absolute scalar error. */
+    protected final double scalAbsoluteTolerance;
+
+    /** Allowed relative scalar error. */
+    protected final double scalRelativeTolerance;
+
+    /** Allowed absolute vectorial error. */
+    protected final double[] vecAbsoluteTolerance;
+
+    /** Allowed relative vectorial error. */
+    protected final double[] vecRelativeTolerance;
+
+    /** User supplied initial step. */
+    private double initialStep;
+
+    /** Minimal step. */
+    private final double minStep;
+
+    /** Maximal step. */
+    private final double maxStep;
+
   /** Build an integrator with the given stepsize bounds.
    * The default step handler does nothing.
    * @param name name of the method
@@ -263,7 +283,7 @@ public abstract class AdaptiveStepsizeIntegrator
               filteredH = forward ? minStep : -minStep;
           } else {
               throw new IntegratorException(
-                      "minimal step size ({0}) reached, integration needs {1}",
+                      "minimal step size ({0,number,0.00E00}) reached, integration needs {1,number,0.00E00}",
                       minStep, Math.abs(h));
           }
       }
@@ -309,26 +329,5 @@ public abstract class AdaptiveStepsizeIntegrator
   public double getMaxStep() {
     return maxStep;
   }
-
-  /** Minimal step. */
-  private double minStep;
-
-  /** Maximal step. */
-  private double maxStep;
-
-  /** User supplied initial step. */
-  private double initialStep;
-
-  /** Allowed absolute scalar error. */
-  protected double scalAbsoluteTolerance;
-
-  /** Allowed relative scalar error. */
-  protected double scalRelativeTolerance;
-
-  /** Allowed absolute vectorial error. */
-  protected double[] vecAbsoluteTolerance;
-
-  /** Allowed relative vectorial error. */
-  protected double[] vecRelativeTolerance;
 
 }

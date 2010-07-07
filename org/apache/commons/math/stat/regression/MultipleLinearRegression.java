@@ -24,45 +24,45 @@ package org.apache.commons.math.stat.regression;
  * where y is an <code>n-vector</code> <b>regressand</b>, X is a <code>[n,k]</code> matrix whose <code>k</code> columns are called
  * <b>regressors</b>, b is <code>k-vector</code> of <b>regression parameters</b> and <code>u</code> is an <code>n-vector</code>
  * of <b>error terms</b> or <b>residuals</b>.
- * 
- * The notation is quite standard in literature, 
+ *
+ * The notation is quite standard in literature,
  * cf eg <a href="http://www.econ.queensu.ca/ETM">Davidson and MacKinnon, Econometrics Theory and Methods, 2004</a>.
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public interface MultipleLinearRegression {
 
     /**
      * Estimates the regression parameters b.
-     * 
+     *
      * @return The [k,1] array representing b
      */
     double[] estimateRegressionParameters();
 
     /**
      * Estimates the variance of the regression parameters, ie Var(b).
-     * 
+     *
      * @return The [k,k] array representing the variance of b
      */
     double[][] estimateRegressionParametersVariance();
-    
+
     /**
      * Estimates the residuals, ie u = y - X*b.
-     * 
+     *
      * @return The [n,1] array representing the residuals
      */
     double[] estimateResiduals();
 
     /**
      * Returns the variance of the regressand, ie Var(y).
-     * 
+     *
      * @return The double representing the variance of y
      */
     double estimateRegressandVariance();
-    
+
     /**
      * Returns the standard errors of the regression parameters.
-     * 
+     *
      * @return standard errors of estimated regression parameters
      */
      double[] estimateRegressionParametersStandardErrors();

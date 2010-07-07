@@ -27,7 +27,7 @@ import org.apache.commons.math.Field;
  * This class is a singleton.
  * </p>
  * @see BigReal
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 2.0
  */
 public class BigRealField implements Field<BigReal>, Serializable  {
@@ -57,6 +57,7 @@ public class BigRealField implements Field<BigReal>, Serializable  {
         return BigReal.ZERO;
     }
 
+    // CHECKSTYLE: stop HideUtilityClassConstructor
     /** Holder for the instance.
      * <p>We use here the Initialization On Demand Holder Idiom.</p>
      */
@@ -64,13 +65,14 @@ public class BigRealField implements Field<BigReal>, Serializable  {
         /** Cached field instance. */
         private static final BigRealField INSTANCE = new BigRealField();
     }
+    // CHECKSTYLE: resume HideUtilityClassConstructor
 
     /** Handle deserialization of the singleton.
      * @return the singleton instance
      */
     private Object readResolve() {
         // return the singleton instance
-        return LazyHolder.INSTANCE; 
+        return LazyHolder.INSTANCE;
     }
 
 }

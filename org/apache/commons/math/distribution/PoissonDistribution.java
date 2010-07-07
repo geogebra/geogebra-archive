@@ -20,7 +20,7 @@ import org.apache.commons.math.MathException;
 
 /**
  * Interface representing the Poisson Distribution.
- * 
+ *
  * <p>
  * References:
  * <ul>
@@ -28,34 +28,37 @@ import org.apache.commons.math.MathException;
  * Poisson distribution</a></li>
  * </ul>
  * </p>
- * 
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ *
+ * @version $Revision: 920852 $ $Date: 2010-03-09 07:53:44 -0500 (Tue, 09 Mar 2010) $
  */
 public interface PoissonDistribution extends IntegerDistribution {
 
     /**
      * Get the mean for the distribution.
-     * 
+     *
      * @return the mean for the distribution.
      */
-    public double getMean();
+    double getMean();
 
     /**
      * Set the mean for the distribution.
-     * The parameter value must be positive; otherwise an 
+     * The parameter value must be positive; otherwise an
      * <code>IllegalArgument</code> is thrown.
-     * 
+     *
      * @param p the mean
      * @throws IllegalArgumentException if p &le; 0
+     * @deprecated as of v2.1
      */
-    public void setMean(double p);
+    @Deprecated
+    void setMean(double p);
 
     /**
      * Calculates the Poisson distribution function using a normal approximation.
-     * 
+     *
      * @param x the upper bound, inclusive
      * @return the distribution function value calculated using a normal approximation
      * @throws MathException if an error occurs computing the normal approximation
      */
-    public double normalApproximateProbability(int x) throws MathException;
+    double normalApproximateProbability(int x) throws MathException;
+
 }

@@ -26,17 +26,17 @@ import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.SimpleVectorialValueChecker;
 import org.apache.commons.math.optimization.VectorialConvergenceChecker;
+import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 
 /**
  * Base class for implementing least squares optimizers.
  * <p>This base class handles the boilerplate methods associated to thresholds
  * settings, jacobian and error estimation.</p>
- * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:23 $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
  * @since 1.2
  *
  */
@@ -44,6 +44,48 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
 
     /** Default maximal number of iterations allowed. */
     public static final int DEFAULT_MAX_ITERATIONS = 100;
+
+    /** Convergence checker. */
+    protected VectorialConvergenceChecker checker;
+
+    /**
+     * Jacobian matrix.
+     * <p>This matrix is in canonical form just after the calls to
+     * {@link #updateJacobian()}, but may be modified by the solver
+     * in the derived class (the {@link LevenbergMarquardtOptimizer
+     * Levenberg-Marquardt optimizer} does this).</p>
+     */
+    protected double[][] jacobian;
+
+    /** Number of columns of the jacobian matrix. */
+    protected int cols;
+
+    /** Number of rows of the jacobian matrix. */
+    protected int rows;
+
+    /**
+     * Target value for the objective functions at optimum.
+     * @since 2.1
+     */
+    protected double[] targetValues;
+
+    /**
+     * Weight for the least squares cost computation.
+     * @since 2.1
+     */
+    protected double[] residualsWeights;
+
+    /** Current point. */
+    protected double[] point;
+
+    /** Current objective function value. */
+    protected double[] objective;
+
+    /** Current residuals. */
+    protected double[] residuals;
+
+    /** Cost value (square root of the sum of the residuals). */
+    protected double cost;
 
     /** Maximal number of iterations allowed. */
     private int maxIterations;
@@ -60,47 +102,11 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
     /** Number of jacobian evaluations. */
     private int jacobianEvaluations;
 
-    /** Convergence checker. */
-    protected VectorialConvergenceChecker checker;
-
-    /** 
-     * Jacobian matrix.
-     * <p>This matrix is in canonical form just after the calls to
-     * {@link #updateJacobian()}, but may be modified by the solver
-     * in the derived class (the {@link LevenbergMarquardtOptimizer
-     * Levenberg-Marquardt optimizer} does this).</p>
-     */
-    protected double[][] jacobian;
-
-    /** Number of columns of the jacobian matrix. */
-    protected int cols;
-
-    /** Number of rows of the jacobian matrix. */
-    protected int rows;
-
     /** Objective function. */
-    private DifferentiableMultivariateVectorialFunction f;
+    private DifferentiableMultivariateVectorialFunction function;
 
     /** Objective function derivatives. */
     private MultivariateMatrixFunction jF;
-
-    /** Target value for the objective functions at optimum. */
-    protected double[] target;
-
-    /** Weight for the least squares cost computation. */
-    protected double[] weights;
-
-    /** Current point. */
-    protected double[] point;
-
-    /** Current objective function value. */
-    protected double[] objective;
-
-    /** Current residuals. */
-    protected double[] residuals;
-
-    /** Cost value (square root of the sum of the residuals). */
-    protected double cost;
 
     /** Simple constructor with default settings.
      * <p>The convergence check is set to a {@link SimpleVectorialValueChecker}
@@ -148,8 +154,8 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
     }
 
     /** {@inheritDoc} */
-    public void setConvergenceChecker(VectorialConvergenceChecker checker) {
-        this.checker = checker;
+    public void setConvergenceChecker(VectorialConvergenceChecker convergenceChecker) {
+        this.checker = convergenceChecker;
     }
 
     /** {@inheritDoc} */
@@ -168,7 +174,7 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         }
     }
 
-    /** 
+    /**
      * Update the jacobian matrix.
      * @exception FunctionEvaluationException if the function jacobian
      * cannot be evaluated or its dimension doesn't match problem dimension
@@ -182,14 +188,14 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         }
         for (int i = 0; i < rows; i++) {
             final double[] ji = jacobian[i];
-            final double factor = -Math.sqrt(weights[i]);
+            final double factor = -Math.sqrt(residualsWeights[i]);
             for (int j = 0; j < cols; ++j) {
                 ji[j] *= factor;
             }
         }
     }
 
-    /** 
+    /**
      * Update the residuals array and cost function value.
      * @exception FunctionEvaluationException if the function cannot be evaluated
      * or its dimension doesn't match problem dimension or maximal number of
@@ -202,36 +208,38 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
             throw new FunctionEvaluationException(new MaxEvaluationsExceededException(maxEvaluations),
                                                   point);
         }
-        objective = f.value(point);
+        objective = function.value(point);
         if (objective.length != rows) {
             throw new FunctionEvaluationException(point, "dimension mismatch {0} != {1}",
                                                   objective.length, rows);
         }
         cost = 0;
-        for (int i = 0, index = 0; i < rows; i++, index += cols) {
-            final double residual = target[i] - objective[i];
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
+            final double residual = targetValues[i] - objective[i];
             residuals[i] = residual;
-            cost += weights[i] * residual * residual;
+            cost += residualsWeights[i] * residual * residual;
+            index += cols;
         }
         cost = Math.sqrt(cost);
 
     }
 
-    /** 
+    /**
      * Get the Root Mean Square value.
      * Get the Root Mean Square value, i.e. the root of the arithmetic
      * mean of the square of all weighted residuals. This is related to the
      * criterion that is minimized by the optimizer as follows: if
      * <em>c</em> if the criterion, and <em>n</em> is the number of
      * measurements, then the RMS is <em>sqrt (c/n)</em>.
-     * 
+     *
      * @return RMS value
      */
     public double getRMS() {
         double criterion = 0;
         for (int i = 0; i < rows; ++i) {
             final double residual = residuals[i];
-            criterion += weights[i] * residual * residual;
+            criterion += residualsWeights[i] * residual * residual;
         }
         return Math.sqrt(criterion / rows);
     }
@@ -244,7 +252,7 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         double chiSquare = 0;
         for (int i = 0; i < rows; ++i) {
             final double residual = residuals[i];
-            chiSquare += residual * residual / weights[i];
+            chiSquare += residual * residual / residualsWeights[i];
         }
         return chiSquare;
     }
@@ -329,12 +337,12 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         jacobianEvaluations  = 0;
 
         // store least squares problem characteristics
-        this.f         = f;
-        jF             = f.jacobian();
-        this.target    = target.clone();
-        this.weights   = weights.clone();
-        this.point     = startPoint.clone();
-        this.residuals = new double[target.length];
+        function         = f;
+        jF               = f.jacobian();
+        targetValues     = target.clone();
+        residualsWeights = weights.clone();
+        this.point       = startPoint.clone();
+        this.residuals   = new double[target.length];
 
         // arrays shared with the other private methods
         rows      = target.length;
@@ -354,7 +362,7 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
      * @exception OptimizationException if the algorithm failed to converge
      * @exception IllegalArgumentException if the start point dimension is wrong
      */
-    abstract protected VectorialPointValuePair doOptimize()
+    protected abstract VectorialPointValuePair doOptimize()
         throws FunctionEvaluationException, OptimizationException, IllegalArgumentException;
 
 }

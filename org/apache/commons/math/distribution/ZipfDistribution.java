@@ -22,45 +22,50 @@ package org.apache.commons.math.distribution;
  * <p>
  * References:
  * <ul>
- * <li><a href="http://mathworld.wolfram.com/ZipfDistribution.html">Zipf 
+ * <li><a href="http://mathworld.wolfram.com/ZipfDistribution.html">Zipf
  * Distribution</a></li>
  * </ul>
  * </p>
- * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:12 $
+ *
+ * @version $Revision: 920852 $ $Date: 2010-03-09 07:53:44 -0500 (Tue, 09 Mar 2010) $
  */
 public interface ZipfDistribution extends IntegerDistribution {
+
     /**
      * Get the number of elements (e.g. corpus size) for the distribution.
-     * 
+     *
      * @return the number of elements
      */
-    public int getNumberOfElements();
+    int getNumberOfElements();
 
     /**
      * Set the number of elements (e.g. corpus size) for the distribution.
-     * The parameter value must be positive; otherwise an 
+     * The parameter value must be positive; otherwise an
      * <code>IllegalArgumentException</code> is thrown.
-     * 
+     *
      * @param n the number of elements
      * @throws IllegalArgumentException if n &le; 0
+     * @deprecated as of v2.1
      */
-    public void setNumberOfElements(int n);
+    @Deprecated
+    void setNumberOfElements(int n);
 
     /**
      * Get the exponent characterising the distribution.
-     * 
+     *
      * @return the exponent
      */
-    public double getExponent();
+    double getExponent();
 
     /**
      * Set the exponent characterising the distribution.
-     * The parameter value must be positive; otherwise an 
+     * The parameter value must be positive; otherwise an
      * <code>IllegalArgumentException</code> is thrown.
-     * 
+     *
      * @param s the exponent
      * @throws IllegalArgumentException if s &le; 0.0
+     * @deprecated as of v2.1
      */
-    public void setExponent(double s);
+    @Deprecated
+    void setExponent(double s);
 }

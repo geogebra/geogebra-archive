@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
@@ -32,12 +33,9 @@ import org.apache.commons.math.FieldElement;
  * in order to implement the {@link FieldElement} interface.
  * </p>
  * @since 2.0
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
  */
 public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Serializable {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 7887631840434052850L;
 
     /** A big real representing 0. */
     public static final BigReal ZERO = new BigReal(BigDecimal.ZERO);
@@ -45,8 +43,17 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
     /** A big real representing 1. */
     public static final BigReal ONE = new BigReal(BigDecimal.ONE);
 
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 4984534880991310382L;
+
     /** Underlying BigDecimal. */
     private final BigDecimal d;
+
+    /** Rounding mode for divisions. **/
+    private RoundingMode roundingMode = RoundingMode.HALF_UP;
+
+    /*** BigDecimal scale ***/
+    private int scale = 64;
 
     /** Build an instance from a BigDecimal.
      * @param val value of the instance
@@ -181,6 +188,44 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
         d = new BigDecimal(val, mc);
     }
 
+    /***
+     * Gets the rounding mode for division operations
+     * The default is {@code RoundingMode.HALF_UP}
+     * @return the rounding mode.
+     * @since 2.1
+     */
+    public RoundingMode getRoundingMode() {
+        return roundingMode;
+    }
+
+    /***
+     * Sets the rounding mode for decimal divisions.
+     * @param roundingMode rounding mode for decimal divisions
+     * @since 2.1
+     */
+    public void setRoundingMode(RoundingMode roundingMode) {
+        this.roundingMode = roundingMode;
+    }
+
+    /***
+     * Sets the scale for division operations.
+     * The default is 64
+     * @return the scale
+     * @since 2.1
+     */
+    public int getScale() {
+        return scale;
+    }
+
+    /***
+     * Sets the scale for division operations.
+     * @param scale scale for division operations
+     * @since 2.1
+     */
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
+
     /** {@inheritDoc} */
     public BigReal add(BigReal a) {
         return new BigReal(d.add(a.d));
@@ -193,7 +238,7 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
 
     /** {@inheritDoc} */
     public BigReal divide(BigReal a) throws ArithmeticException {
-        return new BigReal(d.divide(a.d));
+        return new BigReal(d.divide(a.d, scale, roundingMode));
     }
 
     /** {@inheritDoc} */
@@ -223,14 +268,14 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object other) {
-        try {
-            if (other == null) {
-                return false;
-            }
-            return d.equals(((BigReal) other).d);
-        } catch (ClassCastException cce) {
-            return false;
+        if (this == other){
+            return true;
         }
+
+        if (other instanceof BigReal){
+            return d.equals(((BigReal) other).d);
+        }
+        return false;
     }
 
     /** {@inheritDoc} */

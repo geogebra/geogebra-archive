@@ -28,42 +28,49 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 07:53:44 -0500 (Tue, 09 Mar 2010) $
  */
 public interface HypergeometricDistribution extends IntegerDistribution {
+
     /**
      * Access the number of successes.
      * @return the number of successes.
      */
-    public abstract int getNumberOfSuccesses();
-    
+    int getNumberOfSuccesses();
+
     /**
      * Access the population size.
      * @return the population size.
      */
-    public abstract int getPopulationSize();
-    
+    int getPopulationSize();
+
     /**
      * Access the sample size.
      * @return the sample size.
      */
-    public abstract int getSampleSize();
-    
+    int getSampleSize();
+
     /**
      * Modify the number of successes.
      * @param num the new number of successes.
+     * @deprecated as of v2.1
      */
-    public abstract void setNumberOfSuccesses(int num);
-    
+    @Deprecated
+    void setNumberOfSuccesses(int num);
+
     /**
      * Modify the population size.
      * @param size the new population size.
+     * @deprecated as of v2.1
      */
-    public abstract void setPopulationSize(int size);
-    
+    @Deprecated
+    void setPopulationSize(int size);
+
     /**
      * Modify the sample size.
      * @param size the new sample size.
+     * @deprecated as of v2.1
      */
-    public abstract void setSampleSize(int size);
+    @Deprecated
+    void setSampleSize(int size);
 }

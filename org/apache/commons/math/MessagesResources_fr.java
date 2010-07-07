@@ -19,31 +19,16 @@ package org.apache.commons.math;
 
 import java.util.ListResourceBundle;
 
-/** 
+/**
  * French localization message resources for the commons-math library.
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 927009 $ $Date: 2010-03-24 07:14:07 -0400 (Wed, 24 Mar 2010) $
  * @since 1.2
  */
 public class MessagesResources_fr
   extends ListResourceBundle {
 
-  /** 
-   * Simple constructor.
-   */
-  public MessagesResources_fr() {
-  }
-
-  /** 
-   * Get the non-translated/translated messages arrays from this resource bundle.
-   * @return non-translated/translated messages arrays
-   */
-  @Override
-  public Object[][] getContents() {
-    return contents.clone();
-  }
-
   /** Non-translated/translated messages arrays. */
-  private static final Object[][] contents = {
+  private static final Object[][] CONTENTS = {
 
     // org.apache.commons.math.util.MathUtils
     { "must have n >= k for binomial coefficient (n,k), got n = {0}, k = {1}",
@@ -55,13 +40,23 @@ public class MessagesResources_fr
       "n doit \u00eatre positif pour le calcul de n!, or n = {0}" },
     { "overflow: gcd({0}, {1}) is 2^31",
       "d\u00e9passement de capacit\u00e9 : le PGCD de {0} et {1} vaut 2^31" },
+    { "overflow: gcd({0}, {1}) is 2^63",
+      "d\u00e9passement de capacit\u00e9 : le PGCD de {0} et {1} vaut 2^63" },
+    { "overflow: lcm({0}, {1}) is 2^31",
+      "d\u00e9passement de capacit\u00e9 : le MCM de {0} et {1} vaut 2^31" },
+    { "overflow: lcm({0}, {1}) is 2^63",
+      "d\u00e9passement de capacit\u00e9 : le MCM de {0} et {1} vaut 2^63" },
     { "cannot raise an integral value to a negative power ({0}^{1})",
       "impossible d''\u00e9lever une valeur enti\u00e8re " +
       "\u00e0 une puissance n\u00e9gative ({0}^{1})" },
-    { "invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4})," +
-       " {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})",
-      "m\u00e9thode d''arondi {0} invalide, m\u00e9thodes valides : {1} ({2}), {3} ({4})," +
-       " {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})" },
+    { "invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4}), {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})",
+      "m\u00e9thode d''arondi {0} invalide, m\u00e9thodes valides : {1} ({2}), {3} ({4}), {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})" },
+    { "Cannot normalize to an infinite value",
+      "impossible de normaliser vers une valeur infinie" },
+    { "Cannot normalize to NaN",
+      "impossible de normaliser vers NaN" },
+    { "Array contains an infinite element, {0} at index {1}",
+      "le tableau contient l''\u00e9l\u00e9ment infini {0} \u00e0 l''index {1}" },
 
     // org.apache.commons.math.FunctionEvaluationException
     { "evaluation failed for argument = {0}",
@@ -97,10 +92,21 @@ public class MessagesResources_fr
     // org.apache.commons.math.random.UncorrelatedRandomVectorGenerator
     // org.apache.commons.math.stat.regression.AbstractMultipleLinearRegression
     // org.apache.commons.math.stat.inference.ChiSquareTestImpl
+    // org.apache.commons.math.analysis.interpolation.MicrosphereInterpolatingFunction
     { "dimension mismatch {0} != {1}",
       "dimensions incompatibles {0} != {1}" },
 
-    // org.apache.commons.math.linear.decomposition.NotPositiveDefiniteMatrixException
+    // org.apache.commons.math.analysis.interpolation.MicrosphereInterpolatingFunction
+    { "no data",
+      "aucune donn\u00e9e" },
+
+    // org.apache.commons.math.analysis.interpolation.MicrosphereInterpolator
+    { "brightness exponent should be positive or null, but got {0}",
+      "l''exposant de brillance devrait \u00eatre positif ou null, or e = {0}" },
+    { "number of microsphere elements must be positive, but got {0}",
+      "le nombre d''\u00e9l\u00e9ments de la microsph\u00e8re devrait \u00eatre positif, or n = {0}" },
+
+   // org.apache.commons.math.linear.decomposition.NotPositiveDefiniteMatrixException
     { "not positive definite matrix",
       "matrice non d\u00e9finie positive" },
 
@@ -176,7 +182,13 @@ public class MessagesResources_fr
 
     // org.apache.commons.math.analysis.interpolation.SplineInterpolator
     { "points {0} and {1} are not strictly increasing ({2} >= {3})",
-      "les points {0} et {1} ne sont pas strictements croissants ({2} >= {3})" },
+      "les points {0} et {1} ne sont pas strictement croissants ({2} >= {3})" },
+    { "points {0} and {1} are not strictly decreasing ({2} <= {3})",
+      "les points {0} et {1} ne sont pas strictement d\u00e9croissants ({2} <= {3})" },
+    { "points {0} and {1} are not increasing ({2} > {3})",
+      "les points {0} et {1} ne sont pas croissants ({2} > {3})" },
+    { "points {0} and {1} are not decreasing ({2} < {3})",
+      "les points {0} et {1} ne sont pas d\u00e9croissants ({2} < {3})" },
 
     // org.apache.commons.math.analysis.interpolation.LoessInterpolator
     { "bandwidth must be in the interval [0,1], but got {0}",
@@ -184,7 +196,7 @@ public class MessagesResources_fr
     { "the number of robustness iterations must be non-negative, but got {0}",
       "le nombre d''it\u00e9rations robuste ne peut \u00eatre n\u00e9gatif, alors qu''il est de {0}" },
     { "Loess expects the abscissa and ordinate arrays to be of the same size, " +
-      "but got {0} abscisssae and {1} ordinatae",
+      "but got {0} abscissae and {1} ordinatae",
       "la r\u00e9gression Loess n\u00e9cessite autant d''abscisses que d''ordonn\u00e9es, " +
       "mais {0} abscisses et {1} ordonn\u00e9es ont \u00e9t\u00e9 fournies" },
     { "Loess expects at least 1 point",
@@ -197,6 +209,8 @@ public class MessagesResources_fr
       "toutes les abscisses doivent \u00eatre des nombres r\u00e9els finis, mais l''abscisse {0} vaut {1}" },
     { "all ordinatae must be finite real numbers, but {0}-th is {1}",
       "toutes les ordonn\u00e9es doivent \u00eatre des nombres r\u00e9els finis, mais l''ordonn\u00e9e {0} vaut {1}" },
+    { "all weights must be finite real numbers, but {0}-th is {1}",
+      "tous les poids doivent \u00eatre des nombres r\u00e9els finis, mais le poids {0} vaut {1}" },
     { "the abscissae array must be sorted in a strictly increasing order, " +
       "but the {0}-th element is {1} whereas {2}-th is {3}",
       "les abscisses doivent \u00eatre en ordre strictement croissant, " +
@@ -207,6 +221,8 @@ public class MessagesResources_fr
       "Divergence de fraction continue \u00e0 l''infini pour la valeur {0}" },
     { "Continued fraction convergents failed to converge for value {0}",
       "\u00c9chec de convergence de fraction continue pour la valeur {0}" },
+    { "Continued fraction diverged to NaN for value {0}",
+      "Divergence de fraction continue \u00e0 NaN pour la valeur {0}"},
 
     // org.apache.commons.math.util.DefaultTransformer
     { "Conversion Exception in Transformation, Object is null",
@@ -221,7 +237,7 @@ public class MessagesResources_fr
     // org.apache.commons.math.optimization.direct.DirectSearchOptimizer
     { "simplex must contain at least one point",
       "le simplex doit contenir au moins un point" },
-    { "equals vertices {0} and {1} in simplex configuration",
+    { "equal vertices {0} and {1} in simplex configuration",
       "sommets {0} et {1} \u00e9gaux dans la configuration du simplex" },
 
     // org.apache.commons.math.estimation.AbstractEstimation
@@ -283,27 +299,19 @@ public class MessagesResources_fr
       "impossible de rendre la matrice orthogonale en {0} it\u00e9rations" },
 
     // org.apache.commons.math.ode.nonstiff.AdaptiveStepsizeIntegrator
-    { "minimal step size ({0}) reached, integration needs {1}",
-      "pas minimal ({0}) atteint, l''int\u00e9gration n\u00e9cessite {1}" },
-    { "dimensions mismatch: state vector has dimension {0}," +
-      " absolute tolerance vector has dimension {1}",
-      "incompatibilit\u00e9 de dimensions entre le vecteur d''\u00e9tat ({0})," +
-      " et le vecteur de tol\u00e9rance absolue ({1})" },
-    { "dimensions mismatch: state vector has dimension {0}," +
-      " relative tolerance vector has dimension {1}",
-      "incompatibilit\u00e9 de dimensions entre le vecteur d''\u00e9tat ({0})," +
-      " et le vecteur de tol\u00e9rance relative ({1})" },
+    { "minimal step size ({0,number,0.00E00}) reached, integration needs {1,number,0.00E00}",
+      "pas minimal ({0,number,0.00E00}) atteint, l''int\u00e9gration n\u00e9cessite {1,number,0.00E00}" },
+    { "dimensions mismatch: state vector has dimension {0}, absolute tolerance vector has dimension {1}",
+      "incompatibilit\u00e9 de dimensions entre le vecteur d''\u00e9tat ({0}), et le vecteur de tol\u00e9rance absolue ({1})" },
+    { "dimensions mismatch: state vector has dimension {0}, relative tolerance vector has dimension {1}",
+      "incompatibilit\u00e9 de dimensions entre le vecteur d''\u00e9tat ({0}), et le vecteur de tol\u00e9rance relative ({1})" },
 
     // org.apache.commons.math.ode.nonstiff.AdaptiveStepsizeIntegrator,
     // org.apache.commons.math.ode.nonstiff.RungeKuttaIntegrator
-    { "dimensions mismatch: ODE problem has dimension {0}," +
-      " initial state vector has dimension {1}",
-      "incompatibilit\u00e9 de dimensions entre le probl\u00e8me ODE ({0})," +
-      " et le vecteur d''\u00e9tat initial ({1})" },
-    { "dimensions mismatch: ODE problem has dimension {0}," +
-      " final state vector has dimension {1}",
-      "incompatibilit\u00e9 de dimensions entre le probl\u00e8me ODE ({0})," +
-      " et le vecteur d''\u00e9tat final ({1})" },
+    { "dimensions mismatch: ODE problem has dimension {0}, initial state vector has dimension {1}",
+      "incompatibilit\u00e9 de dimensions entre le probl\u00e8me ODE ({0}), et le vecteur d''\u00e9tat initial ({1})" },
+    { "dimensions mismatch: ODE problem has dimension {0}, final state vector has dimension {1}",
+      "incompatibilit\u00e9 de dimensions entre le probl\u00e8me ODE ({0}), et le vecteur d''\u00e9tat final ({1})" },
     { "too small integration interval: length = {0}",
       "intervalle d''int\u00e9gration trop petit : {0}" },
 
@@ -388,7 +396,7 @@ public class MessagesResources_fr
     // org.apache.commons.math.linear.decomposition.QRDecompositionImpl
     // org.apache.commons.math.linear.decomposition.SingularValueDecompositionImpl
     { "dimensions mismatch: got {0}x{1} but expected {2}x{3}",
-      "dimensions erronn\u00e9es : {0}x{1} \u00e0 la place de {2}x{3}" },
+      "dimensions incoh\u00e9rentes : {0}x{1} \u00e0 la place de {2}x{3}" },
 
     // org.apache.commons.math.linear.decomposition.CholeskyDecompositionImpl
     // org.apache.commons.math.linear.decomposition.EigenDecompositionImpl
@@ -398,8 +406,8 @@ public class MessagesResources_fr
     // org.apache.commons.math.linear.ArrayRealVector
     // org.apache.commons.math.linear.SparseRealVector
     { "vector length mismatch: got {0} but expected {1}",
-      "dimension de vecteur erronn\u00e9e : {0} \u00e0 la place de {1}" },
-      
+      "taille de vecteur invalide : {0} au lieu de {1} attendue" },
+
     // org.apache.commons.math.linear.ArrayRealVector
     // org.apache.commons.math.linear.ArrayFieldVector
     // org.apache.commons.math.linear.SparseRealVector
@@ -416,10 +424,6 @@ public class MessagesResources_fr
       "nombre de lignes invalide : {0} (doit \u00eatre positif)" },
     { "invalid column dimension: {0} (must be positive)",
       "nombre de colonnes invalide : {0} (doit \u00eatre positif)" },
-    { "vector length mismatch: got {0} but expected {1}",
-      "taille de vecteur invalide : {0} au lieu de {1} attendue" },
-    { "dimensions mismatch: got {0}x{1} but expected {2}x{3}",
-      "dimensions incoh\u00e9rentes : {0}x{1} \u00e0 la place de {2}x{3}" },
     { "matrix must have at least one row",
       "une matrice doit comporter au moins une ligne" },
     { "matrix must have at least one column",
@@ -427,7 +431,7 @@ public class MessagesResources_fr
 
     // org.apache.commons.math.linear.AbstractRealMatrix
     // org.apache.commons.math.linear.AbstractFieldMatrix
-    // org.apache.commons.math.stat.inference.ChiSquareTestImpl      
+    // org.apache.commons.math.stat.inference.ChiSquareTestImpl
     { "some rows have length {0} while others have length {1}",
       "certaines lignes ont une longueur de {0} alors que d''autres ont une longueur de {1}" },
 
@@ -644,15 +648,16 @@ public class MessagesResources_fr
    // org.apache.commons.math.stat.descriptive.DescriptiveStatistics
    { "window size must be positive ({0})",
      "la taille de la fen\u00eatre doit \u00eatre positive ({0})" },
-   { "percentile implementation {0} does not support setQuantile",
-     "l''implantation de pourcentage {0} ne dispose pas de la m\u00e9thode setQuantile" },
-   { "cannot access setQuantile method in percentile implementation {0}",
-     "acc\u00e8s impossible \u00e0 la m\u00e9thode setQuantile" +
-     " dans l''implantation de pourcentage {0}" },
+   { "percentile implementation {0} does not support {1}",
+     "l''implantation de pourcentage {0} ne dispose pas de la m\u00e9thode {1}" },
+   { "cannot access {0} method in percentile implementation {1}",
+     "acc\u00e8s impossible \u00e0 la m\u00e9thode {0}" +
+     " dans l''implantation de pourcentage {1}" },
    { "out of bounds quantile value: {0}, must be in (0, 100]",
      "valeur de quantile {0} hors bornes, doit \u00eatre dans l''intervalle ]0, 100]" },
 
    // org.apache.commons.math.stat.descriptive.moment.Variance
+   // org.apache.commons.math.stat.descriptive.moment.SemiVariance
    // org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic
    // org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic
    { "input values array is null",
@@ -675,11 +680,9 @@ public class MessagesResources_fr
 
    // org.apache.commons.math.stat.descriptive.moment.Kurtosis
    { "statistics constructed from external moments cannot be incremented",
-     "les statistiques bas\u00e9es sur des moments externes " +
-     "ne peuvent pas \u00eatre incr\u00e9ment\u00e9es" },
+     "les statistiques bas\u00e9es sur des moments externes ne peuvent pas \u00eatre incr\u00e9ment\u00e9es" },
    { "statistics constructed from external moments cannot be cleared",
-     "les statistiques bas\u00e9es sur des moments externes " +
-     "ne peuvent pas \u00eatre remises \u00e0 z\u00e9ro" },
+     "les statistiques bas\u00e9es sur des moments externes ne peuvent pas \u00eatre remises \u00e0 z\u00e9ro" },
 
    // org.apache.commons.math.stat.inference.ChiSquareTestImpl
    { "expected array length = {0}, must be at least 2",
@@ -720,10 +723,6 @@ public class MessagesResources_fr
    { "out of bounds significance level {0}, must be between {1} and {2}",
      "niveau de signification {0} hors domaine, doit \u00eatre entre {1} et {2}" },
 
-   // org.apache.commons.math.stat.regression.OLSMultipleLinearRegression
-   { "matrix is not upper-triangular, entry ({0}, {1}) = {2} is too large",
-     "matrice non triangulaire sup\u00e9rieure, l''\u00e9l\u00e9ment ({0}, {1}) = {2} est trop grand" },
-
    // org.apache.commons.math.stat.regression.AbstractMultipleLinearRegression
    { "not enough data ({0} rows) for this many predictors ({1} predictors)",
      "pas assez de donn\u00e9es ({0} lignes) pour {1} pr\u00e9dicteurs" },
@@ -743,6 +742,17 @@ public class MessagesResources_fr
    { "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})",
      "la borne inf\u00e9rieure ({0}) devrait \u00eatre inf\u00e9rieure " +
      "ou \u00e9gale \u00e0 la borne sup\u00e9rieure ({1})" },
+
+   // org.apache.commons.math.distribution.AbstractContinuousDistribution
+   { "Cumulative probability function returned NaN for argument {0} p = {1}",
+     "Fonction de probabilit\u00e9 cumulative retourn\u00e9 NaN \u00e0 l''argument de {0} p = {1}" },
+   { "This distribution does not have a density function implemented",
+     "La fonction de densit\u00e9 pour cette distribution n'a pas \u00e9t\u00e9 mis en oeuvre" },
+
+   // org.apache.commons.math.distribution.AbstractIntegerDistribution
+   { "Discrete cumulative probability function returned NaN for argument {0}",
+     "Discr\u00e8tes fonction de probabilit\u00e9 cumulative retourn\u00e9 NaN \u00e0 l''argument de {0}" },
+
 
    // org.apache.commons.math.distribution.BinomialDistributionImpl
    { "number of trials must be non-negative ({0})",
@@ -847,5 +857,20 @@ public class MessagesResources_fr
      "erreur interne, veuillez signaler l''erreur \u00e0 {0}" }
 
   };
+
+  /**
+   * Simple constructor.
+   */
+  public MessagesResources_fr() {
+  }
+
+  /**
+   * Get the non-translated/translated messages arrays from this resource bundle.
+   * @return non-translated/translated messages arrays
+   */
+  @Override
+  public Object[][] getContents() {
+    return CONTENTS.clone();
+  }
 
 }

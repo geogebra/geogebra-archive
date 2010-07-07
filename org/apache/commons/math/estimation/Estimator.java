@@ -30,7 +30,7 @@ package org.apache.commons.math.estimation;
  *
  * @see EstimationProblem
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -39,7 +39,7 @@ package org.apache.commons.math.estimation;
 @Deprecated
 public interface Estimator {
 
-  /** 
+  /**
    * Solve an estimation problem.
    *
    * <p>The method should set the parameters of the problem to several
@@ -53,10 +53,9 @@ public interface Estimator {
    * @exception EstimationException if the problem cannot be solved
    *
    */
-  public void estimate(EstimationProblem problem)
-    throws EstimationException;
+  void estimate(EstimationProblem problem) throws EstimationException;
 
-  /** 
+  /**
    * Get the Root Mean Square value.
    * Get the Root Mean Square value, i.e. the root of the arithmetic
    * mean of the square of all weighted residuals. This is related to the
@@ -64,11 +63,11 @@ public interface Estimator {
    * <em>c</em> is the criterion, and <em>n</em> is the number of
    * measurements, then the RMS is <em>sqrt (c/n)</em>.
    * @see #guessParametersErrors(EstimationProblem)
-   * 
+   *
    * @param problem estimation problem
    * @return RMS value
    */
-  public double getRMS(EstimationProblem problem);
+  double getRMS(EstimationProblem problem);
 
   /**
    * Get the covariance matrix of estimated parameters.
@@ -77,8 +76,7 @@ public interface Estimator {
    * @exception EstimationException if the covariance matrix
    * cannot be computed (singular problem)
    */
-  public double[][] getCovariances(EstimationProblem problem)
-    throws EstimationException;
+  double[][] getCovariances(EstimationProblem problem) throws EstimationException;
 
   /**
    * Guess the errors in estimated parameters.
@@ -87,7 +85,6 @@ public interface Estimator {
    * @return errors in estimated parameters
      * @exception EstimationException if the error cannot be guessed
    */
-  public double[] guessParametersErrors(EstimationProblem problem)
-    throws EstimationException;
+  double[] guessParametersErrors(EstimationProblem problem) throws EstimationException;
 
 }

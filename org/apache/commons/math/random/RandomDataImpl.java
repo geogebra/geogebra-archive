@@ -19,9 +19,9 @@ package org.apache.commons.math.random;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.util.Collection;
 
 import org.apache.commons.math.MathRuntimeException;
@@ -81,8 +81,8 @@ import org.apache.commons.math.util.MathUtils;
  * This implementation is not synchronized.
  * </ul>
  * </p>
- * 
- * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:22 $
+ *
+ * @version $Revision: 831510 $ $Date: 2009-10-30 22:30:18 -0400 (Fri, 30 Oct 2009) $
  */
 public class RandomDataImpl implements RandomData, Serializable {
 
@@ -104,7 +104,7 @@ public class RandomDataImpl implements RandomData, Serializable {
     /**
      * Construct a RandomDataImpl using the supplied {@link RandomGenerator} as
      * the source of (non-secure) random data.
-     * 
+     *
      * @param rand
      *            the source of (non-secure) random data
      * @since 1.1
@@ -126,7 +126,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Each binary byte is translated into 2 hex digits</li>
      * </ol>
      * </p>
-     * 
+     *
      * @param len
      *            the desired string length.
      * @return the random string.
@@ -170,7 +170,7 @@ public class RandomDataImpl implements RandomData, Serializable {
     /**
      * Generate a random int value uniformly distributed between
      * <code>lower</code> and <code>upper</code>, inclusive.
-     * 
+     *
      * @param lower
      *            the lower bound.
      * @param upper
@@ -183,15 +183,14 @@ public class RandomDataImpl implements RandomData, Serializable {
                     "upper bound ({0}) must be greater than lower bound ({1})",
                     upper, lower);
         }
-        RandomGenerator rand = getRan();
-        double r = rand.nextDouble();
+        double r = getRan().nextDouble();
         return (int) ((r * upper) + ((1.0 - r) * lower) + r);
     }
 
     /**
      * Generate a random long value uniformly distributed between
      * <code>lower</code> and <code>upper</code>, inclusive.
-     * 
+     *
      * @param lower
      *            the lower bound.
      * @param upper
@@ -204,8 +203,7 @@ public class RandomDataImpl implements RandomData, Serializable {
                   "upper bound ({0}) must be greater than lower bound ({1})",
                   upper, lower);
         }
-        RandomGenerator rand = getRan();
-        double r = rand.nextDouble();
+        double r = getRan().nextDouble();
         return (long) ((r * upper) + ((1.0 - r) * lower) + r);
     }
 
@@ -224,7 +222,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Each byte of the binary digest is converted to 2 hex digits.</li>
      * </ol>
      * </p>
-     * 
+     *
      * @param len
      *            the length of the generated string
      * @return the random string
@@ -241,7 +239,8 @@ public class RandomDataImpl implements RandomData, Serializable {
         try {
             alg = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException ex) {
-            return null; // gulp FIXME? -- this *should* never fail.
+            // this should never happen
+            throw MathRuntimeException.createInternalError(ex);
         }
         alg.reset();
 
@@ -282,7 +281,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Generate a random int value uniformly distributed between
      * <code>lower</code> and <code>upper</code>, inclusive. This algorithm uses
      * a secure random number generator.
-     * 
+     *
      * @param lower
      *            the lower bound.
      * @param upper
@@ -303,7 +302,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Generate a random long value uniformly distributed between
      * <code>lower</code> and <code>upper</code>, inclusive. This algorithm uses
      * a secure random number generator.
-     * 
+     *
      * @param lower
      *            the lower bound.
      * @param upper
@@ -323,30 +322,17 @@ public class RandomDataImpl implements RandomData, Serializable {
     /**
      * {@inheritDoc}
      * <p>
-     * <strong>Algorithm Description</strong>: For small means, uses simulation
-     * of a Poisson process using Uniform deviates, as described <a
-     * href="http://irmi.epfl.ch/cmos/Pmmi/interactive/rng7.htm"> here.</a>
-     * </p>
-     * <p>
-     * The Poisson process (and hence value returned) is bounded by 1000 * mean.
-     * </p>
-     * 
-     * <p>
-     * For large means, uses a reject method as described in <a
-     * href="http://cg.scs.carleton.ca/~luc/rnbookindex.html">Non-Uniform Random
-     * Variate Generation</a>
-     * </p>
-     * 
-     * <p>
-     * References:
-     * <ul>
-     * <li>Devroye, Luc. (1986). <i>Non-Uniform Random Variate Generation</i>.
-     * New York, NY. Springer-Verlag</li>
-     * </ul>
-     * </p>
-     * 
-     * @param mean
-     *            mean of the Poisson distribution.
+     * <strong>Algorithm Description</strong>:
+     * <ul><li> For small means, uses simulation of a Poisson process
+     * using Uniform deviates, as described
+     * <a href="http://irmi.epfl.ch/cmos/Pmmi/interactive/rng7.htm"> here.</a>
+     * The Poisson process (and hence value returned) is bounded by 1000 * mean.</li>
+     *
+     * <li> For large means, uses the rejection algorithm described in <br/>
+     * Devroye, Luc. (1981).<i>The Computer Generation of Poisson Random Variables</i>
+     * <strong>Computing</strong> vol. 26 pp. 197-207.</li></ul></p>
+     *
+     * @param mean mean of the Poisson distribution.
      * @return the random Poisson value.
      */
     public long nextPoisson(double mean) {
@@ -355,9 +341,9 @@ public class RandomDataImpl implements RandomData, Serializable {
                   "the Poisson mean must be positive ({0})", mean);
         }
 
-        RandomGenerator rand = getRan();
+        final RandomGenerator generator = getRan();
 
-        double pivot = 6.0;
+        final double pivot = 40.0d;
         if (mean < pivot) {
             double p = Math.exp(-mean);
             long n = 0;
@@ -365,7 +351,7 @@ public class RandomDataImpl implements RandomData, Serializable {
             double rnd = 1.0d;
 
             while (n < 1000 * mean) {
-                rnd = rand.nextDouble();
+                rnd = generator.nextDouble();
                 r = r * rnd;
                 if (r >= p) {
                     n++;
@@ -375,69 +361,70 @@ public class RandomDataImpl implements RandomData, Serializable {
             }
             return n;
         } else {
-            double mu = Math.floor(mean);
-            double delta = Math.floor(pivot + (mu - pivot) / 2.0); // integer
-            // between 6
-            // and mean
-            double mu2delta = 2.0 * mu + delta;
-            double muDeltaHalf = mu + delta / 2.0;
-            double logMeanMu = Math.log(mean / mu);
+            final double lambda = Math.floor(mean);
+            final double lambdaFractional = mean - lambda;
+            final double logLambda = Math.log(lambda);
+            final double logLambdaFactorial = MathUtils.factorialLog((int) lambda);
+            final long y2 = lambdaFractional < Double.MIN_VALUE ? 0 : nextPoisson(lambdaFractional);
+            final double delta = Math.sqrt(lambda * Math.log(32 * lambda / Math.PI + 1));
+            final double halfDelta = delta / 2;
+            final double twolpd = 2 * lambda + delta;
+            final double a1 = Math.sqrt(Math.PI * twolpd) * Math.exp(1 / 8 * lambda);
+            final double a2 = (twolpd / delta) * Math.exp(-delta * (1 + delta) / twolpd);
+            final double aSum = a1 + a2 + 1;
+            final double p1 = a1 / aSum;
+            final double p2 = a2 / aSum;
+            final double c1 = 1 / (8 * lambda);
 
-            double muFactorialLog = MathUtils.factorialLog((int) mu);
-
-            double c1 = Math.sqrt(Math.PI * mu / 2.0);
-            double c2 = c1 +
-                        Math.sqrt(Math.PI * muDeltaHalf /
-                                  (2.0 * Math.exp(1.0 / mu2delta)));
-            double c3 = c2 + 2.0;
-            double c4 = c3 + Math.exp(1.0 / 78.0);
-            double c = c4 + 2.0 / delta * mu2delta *
-                       Math.exp(-delta / mu2delta * (1.0 + delta / 2.0));
-
-            double y = 0.0;
-            double x = 0.0;
-            double w = Double.POSITIVE_INFINITY;
-
-            boolean accept = false;
-            while (!accept) {
-                double u = nextUniform(0.0, c);
-                double e = nextExponential(mean);
-
-                if (u <= c1) {
-                    double z = nextGaussian(0.0, 1.0);
-                    y = -Math.abs(z) * Math.sqrt(mu) - 1.0;
-                    x = Math.floor(y);
-                    w = -z * z / 2.0 - e - x * logMeanMu;
-                    if (x < -mu) {
-                        w = Double.POSITIVE_INFINITY;
+            double x = 0;
+            double y = 0;
+            double v = 0;
+            int a = 0;
+            double t = 0;
+            double qr = 0;
+            double qa = 0;
+            for (;;) {
+                final double u = nextUniform(0.0, 1);
+                if (u <= p1) {
+                    final double n = nextGaussian(0d, 1d);
+                    x = n * Math.sqrt(lambda + halfDelta) - 0.5d;
+                    if (x > delta || x < -lambda) {
+                        continue;
                     }
-                } else if (c1 < u && u <= c2) {
-                    double z = nextGaussian(0.0, 1.0);
-                    y = 1.0 + Math.abs(z) * Math.sqrt(muDeltaHalf);
-                    x = Math.ceil(y);
-                    w = (-y * y + 2.0 * y) / mu2delta - e - x * logMeanMu;
-                    if (x > delta) {
-                        w = Double.POSITIVE_INFINITY;
+                    y = x < 0 ? Math.floor(x) : Math.ceil(x);
+                    final double e = nextExponential(1d);
+                    v = -e - (n * n / 2) + c1;
+                } else {
+                    if (u > p1 + p2) {
+                        y = lambda;
+                        break;
+                    } else {
+                        x = delta + (twolpd / delta) * nextExponential(1d);
+                        y = Math.ceil(x);
+                        v = -nextExponential(1d) - delta * (x + 1) / twolpd;
                     }
-                } else if (c2 < u && u <= c3) {
-                    x = 0.0;
-                    w = -e;
-                } else if (c3 < u && u <= c4) {
-                    x = 1.0;
-                    w = -e - logMeanMu;
-                } else if (c4 < u) {
-                    double v = nextExponential(mean);
-                    y = delta + v * 2.0 / delta * mu2delta;
-                    x = Math.ceil(y);
-                    w = -delta / mu2delta * (1.0 + y / 2.0) - e - x * logMeanMu;
                 }
-                accept = (w <= x * Math.log(mu) -
-                         MathUtils.factorialLog((int) (mu + x)) /
-                         muFactorialLog);
+                a = x < 0 ? 1 : 0;
+                t = y * (y + 1) / (2 * lambda);
+                if (v < -t && a == 0) {
+                    y = lambda + y;
+                    break;
+                }
+                qr = t * ((2 * y + 1) / (6 * lambda) - 1);
+                qa = qr - (t * t) / (3 * (lambda + a * (y + 1)));
+                if (v < qa) {
+                    y = lambda + y;
+                    break;
+                }
+                if (v > qr) {
+                    continue;
+                }
+                if (v < y * logLambda - MathUtils.factorialLog((int) (y + lambda)) + logLambdaFactorial) {
+                    y = lambda + y;
+                    break;
+                }
             }
-            // cast to long is acceptable because both x and mu are whole
-            // numbers.
-            return (long) (x + mu);
+            return y2 + (long) y;
         }
     }
 
@@ -445,7 +432,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Generate a random value from a Normal (a.k.a. Gaussian) distribution with
      * the given mean, <code>mu</code> and the given standard deviation,
      * <code>sigma</code>.
-     * 
+     *
      * @param mu
      *            the mean of the distribution
      * @param sigma
@@ -457,8 +444,7 @@ public class RandomDataImpl implements RandomData, Serializable {
             throw MathRuntimeException.createIllegalArgumentException(
                   "standard deviation must be positive ({0})", sigma);
         }
-        RandomGenerator rand = getRan();
-        return sigma * rand.nextGaussian() + mu;
+        return sigma * getRan().nextGaussian() + mu;
     }
 
     /**
@@ -470,20 +456,19 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Method</a> to generate exponentially distributed random values from
      * uniform deviates.
      * </p>
-     * 
-     * @param mean
-     *            the mean of the distribution
+     *
+     * @param mean the mean of the distribution
      * @return the random Exponential value
      */
     public double nextExponential(double mean) {
-        if (mean < 0.0) {
+        if (mean <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "mean must be positive ({0})", mean);
         }
-        RandomGenerator rand = getRan();
-        double unif = rand.nextDouble();
+        final RandomGenerator generator = getRan();
+        double unif = generator.nextDouble();
         while (unif == 0.0d) {
-            unif = rand.nextDouble();
+            unif = generator.nextDouble();
         }
         return -mean * Math.log(unif);
     }
@@ -496,7 +481,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * random double if Random.nextDouble() returns 0). This is necessary to
      * provide a symmetric output interval (both endpoints excluded).
      * </p>
-     * 
+     *
      * @param lower
      *            the lower bound.
      * @param upper
@@ -510,12 +495,12 @@ public class RandomDataImpl implements RandomData, Serializable {
                   "upper bound ({0}) must be greater than lower bound ({1})",
                   upper, lower);
         }
-        RandomGenerator rand = getRan();
+        final RandomGenerator generator = getRan();
 
         // ensure nextDouble() isn't 0.0
-        double u = rand.nextDouble();
+        double u = generator.nextDouble();
         while (u <= 0.0) {
-            u = rand.nextDouble();
+            u = generator.nextDouble();
         }
 
         return lower + u * (upper - lower);
@@ -526,7 +511,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * <p>
      * Creates and initializes a default generator if null.
      * </p>
-     * 
+     *
      * @return the Random used to generate random data
      * @since 1.1
      */
@@ -543,7 +528,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * <p>
      * Creates and initializes if null.
      * </p>
-     * 
+     *
      * @return the SecureRandom used to generate secure random data
      */
     private SecureRandom getSecRan() {
@@ -559,7 +544,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * <p>
      * Will create and initialize if null.
      * </p>
-     * 
+     *
      * @param seed
      *            the seed value to use
      */
@@ -589,7 +574,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * <p>
      * Will create and initialize if null.
      * </p>
-     * 
+     *
      * @param seed
      *            the seed value to use
      */
@@ -621,7 +606,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * <strong>USAGE NOTE:</strong> This method carries <i>significant</i>
      * overhead and may take several seconds to execute.
      * </p>
-     * 
+     *
      * @param algorithm
      *            the name of the PRNG algorithm
      * @param provider
@@ -657,7 +642,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * href="http://www.maths.abdn.ac.uk/~igc/tch/mx4002/notes/node83.html">
      * here</a>.
      * </p>
-     * 
+     *
      * @param n
      *            domain of the permutation (must be positive)
      * @param k
@@ -693,7 +678,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * generate random samples, <a
      * href="http://www.maths.abdn.ac.uk/~igc/tch/mx4002/notes/node83.html">
      * here</a>
-     * 
+     *
      * @param c
      *            Collection to sample from.
      * @param k
@@ -725,7 +710,7 @@ public class RandomDataImpl implements RandomData, Serializable {
     /**
      * Uses a 2-cycle permutation shuffle to randomly re-order the last elements
      * of list.
-     * 
+     *
      * @param list
      *            list to be shuffled
      * @param end
@@ -747,7 +732,7 @@ public class RandomDataImpl implements RandomData, Serializable {
 
     /**
      * Returns an array representing n.
-     * 
+     *
      * @param n
      *            the natural number to represent
      * @return array with entries = elements of n

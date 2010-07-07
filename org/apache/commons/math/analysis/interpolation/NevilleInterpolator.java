@@ -30,7 +30,7 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunctionLagrangeFo
  * The actual code of Neville's evalution is in PolynomialFunctionLagrangeForm,
  * this class provides an easy-to-use interface to it.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:18 $
+ * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
  * @since 1.2
  */
 public class NevilleInterpolator implements UnivariateRealInterpolator,

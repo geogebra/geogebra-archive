@@ -53,16 +53,10 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator
  * @see org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 2.0
  */
 public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
-
-    /** Starter integrator. */
-    private FirstOrderIntegrator starter;
-
-    /** Number of steps of the multistep method (excluding the one being computed). */
-    private final int nSteps;
 
     /** First scaled derivative (h y'). */
     protected double[] scaled;
@@ -71,6 +65,12 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
      * <p>(h<sup>2</sup>/2 y'', h<sup>3</sup>/6 y''' ..., h<sup>k</sup>/k! y(k))</p>
      */
     protected Array2DRowRealMatrix nordsieck;
+
+    /** Starter integrator. */
+    private FirstOrderIntegrator starter;
+
+    /** Number of steps of the multistep method (excluding the one being computed). */
+    private final int nSteps;
 
     /** Stepsize control exponent. */
     private double exp;
@@ -183,10 +183,10 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
      * <p>The various step and event handlers for this starter integrator
      * will be managed automatically by the multi-step integrator. Any
      * user configuration for these elements will be cleared before use.</p>
-     * @param starter starter integrator
+     * @param starterIntegrator starter integrator
      */
-    public void setStarterIntegrator(FirstOrderIntegrator starter) {
-        this.starter = starter;
+    public void setStarterIntegrator(FirstOrderIntegrator starterIntegrator) {
+        this.starter = starterIntegrator;
     }
 
     /** Start the integration.

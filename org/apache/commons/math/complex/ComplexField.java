@@ -27,7 +27,7 @@ import org.apache.commons.math.Field;
  * This class is a singleton.
  * </p>
  * @see Complex
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 2.0
  */
 public class ComplexField implements Field<Complex>, Serializable  {
@@ -57,6 +57,7 @@ public class ComplexField implements Field<Complex>, Serializable  {
         return Complex.ZERO;
     }
 
+    // CHECKSTYLE: stop HideUtilityClassConstructor
     /** Holder for the instance.
      * <p>We use here the Initialization On Demand Holder Idiom.</p>
      */
@@ -64,13 +65,14 @@ public class ComplexField implements Field<Complex>, Serializable  {
         /** Cached field instance. */
         private static final ComplexField INSTANCE = new ComplexField();
     }
+    // CHECKSTYLE: resume HideUtilityClassConstructor
 
     /** Handle deserialization of the singleton.
      * @return the singleton instance
      */
     private Object readResolve() {
         // return the singleton instance
-        return LazyHolder.INSTANCE; 
+        return LazyHolder.INSTANCE;
     }
 
 }

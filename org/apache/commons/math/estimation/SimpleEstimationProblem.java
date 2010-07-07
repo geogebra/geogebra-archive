@@ -35,7 +35,7 @@ import java.util.List;
  * type. The instances of the internal classes would have access to the
  * various parameters and their current estimate.</p>
 
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -43,6 +43,12 @@ import java.util.List;
  */
 @Deprecated
 public class SimpleEstimationProblem implements EstimationProblem {
+
+    /** Estimated parameters. */
+    private final List<EstimatedParameter> parameters;
+
+    /** Measurements. */
+    private final List<WeightedMeasurement> measurements;
 
     /**
      * Build an empty instance without parameters nor measurements.
@@ -52,7 +58,7 @@ public class SimpleEstimationProblem implements EstimationProblem {
         measurements = new ArrayList<WeightedMeasurement>();
     }
 
-    /** 
+    /**
      * Get all the parameters of the problem.
      * @return parameters
      */
@@ -60,7 +66,7 @@ public class SimpleEstimationProblem implements EstimationProblem {
         return parameters.toArray(new EstimatedParameter[parameters.size()]);
     }
 
-    /** 
+    /**
      * Get the unbound parameters of the problem.
      * @return unbound parameters
      */
@@ -76,10 +82,10 @@ public class SimpleEstimationProblem implements EstimationProblem {
 
         // convert to an array
         return unbound.toArray(new EstimatedParameter[unbound.size()]);
-        
+
     }
 
-    /** 
+    /**
      * Get the measurements of an estimation problem.
      * @return measurements
      */
@@ -101,11 +107,5 @@ public class SimpleEstimationProblem implements EstimationProblem {
     protected void addMeasurement(WeightedMeasurement m) {
         measurements.add(m);
     }
-
-    /** Estimated parameters. */
-    private final List<EstimatedParameter> parameters;
-
-    /** Measurements. */
-    private final List<WeightedMeasurement> measurements;
 
 }

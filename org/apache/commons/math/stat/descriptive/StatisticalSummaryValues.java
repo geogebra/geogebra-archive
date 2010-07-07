@@ -17,44 +17,43 @@
 package org.apache.commons.math.stat.descriptive;
 
 import java.io.Serializable;
-
 import org.apache.commons.math.util.MathUtils;
 
 /**
  *  Value object representing the results of a univariate statistical summary.
  *
- * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:25 $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
  */
-public class StatisticalSummaryValues implements Serializable, 
+public class StatisticalSummaryValues implements Serializable,
     StatisticalSummary {
-   
+
     /** Serialization id */
     private static final long serialVersionUID = -5108854841843722536L;
 
     /** The sample mean */
     private final double mean;
-    
+
     /** The sample variance */
     private final double variance;
-    
+
     /** The number of observations in the sample */
     private final long n;
-    
+
     /** The maximum value */
     private final double max;
-    
+
     /** The minimum value */
     private final double min;
-    
+
     /** The sum of the sample values */
     private final double sum;
-    
+
     /**
       * Constructor
-      * 
+      *
       * @param mean  the sample mean
       * @param variance  the sample variance
-      * @param n  the number of observations in the sample 
+      * @param n  the number of observations in the sample
       * @param max  the maximum value
       * @param min  the minimum value
       * @param sum  the sum of the values
@@ -104,7 +103,7 @@ public class StatisticalSummaryValues implements Serializable,
     public double getSum() {
         return sum;
     }
-    
+
     /**
      * @return Returns the standard deviation
      */
@@ -118,12 +117,12 @@ public class StatisticalSummaryValues implements Serializable,
     public double getVariance() {
         return variance;
     }
-    
+
     /**
-     * Returns true iff <code>object</code> is a 
+     * Returns true iff <code>object</code> is a
      * <code>StatisticalSummaryValues</code> instance and all statistics have
      *  the same values as this.
-     * 
+     *
      * @param object the object to test equality against.
      * @return true if object equals this
      */
@@ -136,17 +135,17 @@ public class StatisticalSummaryValues implements Serializable,
             return false;
         }
         StatisticalSummaryValues stat = (StatisticalSummaryValues) object;
-        return (MathUtils.equals(stat.getMax(), this.getMax()) && 
-                MathUtils.equals(stat.getMean(),this.getMean()) &&
-                MathUtils.equals(stat.getMin(),this.getMin()) &&
-                MathUtils.equals(stat.getN(), this.getN()) &&
-                MathUtils.equals(stat.getSum(), this.getSum()) &&
-                MathUtils.equals(stat.getVariance(),this.getVariance()));
+        return MathUtils.equals(stat.getMax(),      getMax())  &&
+               MathUtils.equals(stat.getMean(),     getMean()) &&
+               MathUtils.equals(stat.getMin(),      getMin())  &&
+               MathUtils.equals(stat.getN(),        getN())    &&
+               MathUtils.equals(stat.getSum(),      getSum())  &&
+               MathUtils.equals(stat.getVariance(), getVariance());
     }
-    
+
     /**
      * Returns hash code based on values of statistics
-     * 
+     *
      * @return hash code
      */
     @Override

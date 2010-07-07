@@ -28,7 +28,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * Base class for implementing estimators.
  * <p>This base class handles the boilerplates methods associated to thresholds
  * settings, jacobian and error estimation.</p>
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -39,6 +39,47 @@ public abstract class AbstractEstimator implements Estimator {
 
     /** Default maximal number of cost evaluations allowed. */
     public static final int DEFAULT_MAX_COST_EVALUATIONS = 100;
+
+    /** Array of measurements. */
+    protected WeightedMeasurement[] measurements;
+
+    /** Array of parameters. */
+    protected EstimatedParameter[] parameters;
+
+    /**
+     * Jacobian matrix.
+     * <p>This matrix is in canonical form just after the calls to
+     * {@link #updateJacobian()}, but may be modified by the solver
+     * in the derived class (the {@link LevenbergMarquardtEstimator
+     * Levenberg-Marquardt estimator} does this).</p>
+     */
+    protected double[] jacobian;
+
+    /** Number of columns of the jacobian matrix. */
+    protected int cols;
+
+    /** Number of rows of the jacobian matrix. */
+    protected int rows;
+
+    /** Residuals array.
+     * <p>This array is in canonical form just after the calls to
+     * {@link #updateJacobian()}, but may be modified by the solver
+     * in the derived class (the {@link LevenbergMarquardtEstimator
+     * Levenberg-Marquardt estimator} does this).</p>
+     */
+    protected double[] residuals;
+
+    /** Cost value (square root of the sum of the residuals). */
+    protected double cost;
+
+    /** Maximal allowed number of cost evaluations. */
+    private int maxCostEval;
+
+    /** Number of cost evaluations. */
+    private int costEvaluations;
+
+    /** Number of jacobian evaluations. */
+    private int jacobianEvaluations;
 
     /**
      * Build an abstract estimator for least squares problems.
@@ -51,7 +92,7 @@ public abstract class AbstractEstimator implements Estimator {
 
     /**
      * Set the maximal number of cost evaluations allowed.
-     * 
+     *
      * @param maxCostEval maximal number of cost evaluations allowed
      * @see #estimate
      */
@@ -61,29 +102,30 @@ public abstract class AbstractEstimator implements Estimator {
 
     /**
      * Get the number of cost evaluations.
-     * 
+     *
      * @return number of cost evaluations
      * */
     public final int getCostEvaluations() {
         return costEvaluations;
     }
 
-    /** 
+    /**
      * Get the number of jacobian evaluations.
-     * 
+     *
      * @return number of jacobian evaluations
      * */
     public final int getJacobianEvaluations() {
         return jacobianEvaluations;
     }
 
-    /** 
+    /**
      * Update the jacobian matrix.
      */
     protected void updateJacobian() {
         incrementJacobianEvaluationsCounter();
         Arrays.fill(jacobian, 0);
-        for (int i = 0, index = 0; i < rows; i++) {
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
             WeightedMeasurement wm = measurements[i];
             double factor = -Math.sqrt(wm.getWeight());
             for (int j = 0; j < cols; ++j) {
@@ -99,7 +141,7 @@ public abstract class AbstractEstimator implements Estimator {
       ++jacobianEvaluations;
     }
 
-    /** 
+    /**
      * Update the residuals array and cost function value.
      * @exception EstimationException if the number of cost evaluations
      * exceeds the maximum allowed
@@ -113,7 +155,8 @@ public abstract class AbstractEstimator implements Estimator {
         }
 
         cost = 0;
-        for (int i = 0, index = 0; i < rows; i++, index += cols) {
+        int index = 0;
+        for (int i = 0; i < rows; i++, index += cols) {
             WeightedMeasurement wm = measurements[i];
             double residual = wm.getResidual();
             residuals[i] = Math.sqrt(wm.getWeight()) * residual;
@@ -123,14 +166,14 @@ public abstract class AbstractEstimator implements Estimator {
 
     }
 
-    /** 
+    /**
      * Get the Root Mean Square value.
      * Get the Root Mean Square value, i.e. the root of the arithmetic
      * mean of the square of all weighted residuals. This is related to the
      * criterion that is minimized by the estimator as follows: if
      * <em>c</em> if the criterion, and <em>n</em> is the number of
      * measurements, then the RMS is <em>sqrt (c/n)</em>.
-     * 
+     *
      * @param problem estimation problem
      * @return RMS value
      */
@@ -168,19 +211,19 @@ public abstract class AbstractEstimator implements Estimator {
      */
     public double[][] getCovariances(EstimationProblem problem)
       throws EstimationException {
- 
+
         // set up the jacobian
         updateJacobian();
 
         // compute transpose(J).J, avoiding building big intermediate matrices
-        final int rows = problem.getMeasurements().length;
-        final int cols = problem.getUnboundParameters().length;
-        final int max  = cols * rows;
-        double[][] jTj = new double[cols][cols];
-        for (int i = 0; i < cols; ++i) {
-            for (int j = i; j < cols; ++j) {
+        final int n = problem.getMeasurements().length;
+        final int m = problem.getUnboundParameters().length;
+        final int max  = m * n;
+        double[][] jTj = new double[m][m];
+        for (int i = 0; i < m; ++i) {
+            for (int j = i; j < m; ++j) {
                 double sum = 0;
-                for (int k = 0; k < max; k += cols) {
+                for (int k = 0; k < max; k += m) {
                     sum += jacobian[k + i] * jacobian[k + j];
                 }
                 jTj[i][j] = sum;
@@ -253,7 +296,7 @@ public abstract class AbstractEstimator implements Estimator {
 
     }
 
-    /** 
+    /**
      * Solve an estimation problem.
      *
      * <p>The method should set the parameters of the problem to several
@@ -269,46 +312,5 @@ public abstract class AbstractEstimator implements Estimator {
      */
     public abstract void estimate(EstimationProblem problem)
     throws EstimationException;
-
-    /** Array of measurements. */
-    protected WeightedMeasurement[] measurements;
-
-    /** Array of parameters. */
-    protected EstimatedParameter[] parameters;
-
-    /** 
-     * Jacobian matrix.
-     * <p>This matrix is in canonical form just after the calls to
-     * {@link #updateJacobian()}, but may be modified by the solver
-     * in the derived class (the {@link LevenbergMarquardtEstimator
-     * Levenberg-Marquardt estimator} does this).</p>
-     */
-    protected double[] jacobian;
-
-    /** Number of columns of the jacobian matrix. */
-    protected int cols;
-
-    /** Number of rows of the jacobian matrix. */
-    protected int rows;
-
-    /** Residuals array.
-     * <p>This array is in canonical form just after the calls to
-     * {@link #updateJacobian()}, but may be modified by the solver
-     * in the derived class (the {@link LevenbergMarquardtEstimator
-     * Levenberg-Marquardt estimator} does this).</p>
-     */
-    protected double[] residuals;
-
-    /** Cost value (square root of the sum of the residuals). */
-    protected double cost;
-
-    /** Maximal allowed number of cost evaluations. */
-    private int maxCostEval;
-
-    /** Number of cost evaluations. */
-    private int costEvaluations;
-
-    /** Number of jacobian evaluations. */
-    private int jacobianEvaluations;
 
 }

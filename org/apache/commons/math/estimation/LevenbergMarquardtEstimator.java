@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 
-/** 
+/**
  * This class solves a least squares problem.
  *
  * <p>This implementation <em>should</em> work even for over-determined systems
@@ -34,8 +34,15 @@ import java.util.Arrays;
  * changes. The changes include the over-determined resolution and the Q.R.
  * decomposition which has been rewritten following the algorithm described in the
  * P. Lascaux and R. Theodor book <i>Analyse num&eacute;rique matricielle
- * appliqu&eacute;e &agrave; l'art de l'ing&eacute;nieur</i>, Masson 1986. The
- * redistribution policy for MINPACK is available <a
+ * appliqu&eacute;e &agrave; l'art de l'ing&eacute;nieur</i>, Masson 1986.</p>
+ * <p>The authors of the original fortran version are:
+ * <ul>
+ * <li>Argonne National Laboratory. MINPACK project. March 1980</li>
+ * <li>Burton S. Garbow</li>
+ * <li>Kenneth E. Hillstrom</li>
+ * <li>Jorge J. More</li>
+ * </ul>
+ * The redistribution policy for MINPACK is available <a
  * href="http://www.netlib.org/minpack/disclaimer">here</a>, for convenience, it
  * is reproduced below.</p>
  *
@@ -87,12 +94,7 @@ import java.util.Arrays;
  * <ol></td></tr>
  * </table>
 
- * @author Argonne National Laboratory. MINPACK project. March 1980 (original fortran)
- * @author Burton S. Garbow (original fortran)
- * @author Kenneth E. Hillstrom (original fortran)
- * @author Jorge J. More (original fortran)
-
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -101,7 +103,47 @@ import java.util.Arrays;
 @Deprecated
 public class LevenbergMarquardtEstimator extends AbstractEstimator implements Serializable {
 
-  /** 
+    /** Serializable version identifier */
+    private static final long serialVersionUID = -5705952631533171019L;
+
+    /** Number of solved variables. */
+    private int solvedCols;
+
+    /** Diagonal elements of the R matrix in the Q.R. decomposition. */
+    private double[] diagR;
+
+    /** Norms of the columns of the jacobian matrix. */
+    private double[] jacNorm;
+
+    /** Coefficients of the Householder transforms vectors. */
+    private double[] beta;
+
+    /** Columns permutation array. */
+    private int[] permutation;
+
+    /** Rank of the jacobian matrix. */
+    private int rank;
+
+    /** Levenberg-Marquardt parameter. */
+    private double lmPar;
+
+    /** Parameters evolution direction associated with lmPar. */
+    private double[] lmDir;
+
+    /** Positive input variable used in determining the initial step bound. */
+    private double initialStepBoundFactor;
+
+    /** Desired relative error in the sum of squares. */
+    private double costRelativeTolerance;
+
+    /**  Desired relative error in the approximate solution parameters. */
+    private double parRelativeTolerance;
+
+    /** Desired max cosine on the orthogonality between the function vector
+     * and the columns of the jacobian. */
+    private double orthoTolerance;
+
+  /**
    * Build an estimator for least squares problems.
    * <p>The default values for the algorithm settings are:
    *   <ul>
@@ -126,12 +168,12 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
   }
 
-  /** 
+  /**
    * Set the positive input variable used in determining the initial step bound.
    * This bound is set to the product of initialStepBoundFactor and the euclidean norm of diag*x if nonzero,
    * or else to initialStepBoundFactor itself. In most cases factor should lie
    * in the interval (0.1, 100.0). 100.0 is a generally recommended value
-   * 
+   *
    * @param initialStepBoundFactor initial step bound factor
    * @see #estimate
    */
@@ -139,9 +181,9 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     this.initialStepBoundFactor = initialStepBoundFactor;
   }
 
-  /** 
+  /**
    * Set the desired relative error in the sum of squares.
-   * 
+   *
    * @param costRelativeTolerance desired relative error in the sum of squares
    * @see #estimate
    */
@@ -149,9 +191,9 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     this.costRelativeTolerance = costRelativeTolerance;
   }
 
-  /** 
+  /**
    * Set the desired relative error in the approximate solution parameters.
-   * 
+   *
    * @param parRelativeTolerance desired relative error
    * in the approximate solution parameters
    * @see #estimate
@@ -160,9 +202,9 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     this.parRelativeTolerance = parRelativeTolerance;
   }
 
-  /** 
+  /**
    * Set the desired max cosine on the orthogonality.
-   * 
+   *
    * @param orthoTolerance desired max cosine on the orthogonality
    * between the function vector and the columns of the jacobian
    * @see #estimate
@@ -171,7 +213,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     this.orthoTolerance = orthoTolerance;
   }
 
-  /** 
+  /**
    * Solve an estimation problem using the Levenberg-Marquardt algorithm.
    * <p>The algorithm used is a modified Levenberg-Marquardt one, based
    * on the MINPACK <a href="http://www.netlib.org/minpack/lmder.f">lmder</a>
@@ -189,7 +231,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
    *   <li>Jorge   J. More</li>
    *   </ul>
    * <p>Luc Maisonobe did the Java translation.</p>
-   * 
+   *
    * @param problem estimation problem to solve
    * @exception EstimationException if convergence cannot be
    * reached with the specified algorithm settings or if there are more variables
@@ -214,7 +256,8 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     lmDir       = new double[cols];
 
     // local variables
-    double   delta   = 0, xNorm = 0;
+    double   delta   = 0;
+    double   xNorm = 0;
     double[] diag    = new double[cols];
     double[] oldX    = new double[cols];
     double[] oldRes  = new double[rows];
@@ -224,7 +267,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
     // evaluate the function at the starting point and calculate its norm
     updateResidualsAndCost();
-    
+
     // outer loop
     lmPar = 0;
     boolean firstIteration = true;
@@ -259,10 +302,10 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           diag[k] = dk;
         }
         xNorm = Math.sqrt(xNorm);
-        
+
         // initialize the step bound delta
         delta = (xNorm == 0) ? initialStepBoundFactor : (initialStepBoundFactor * xNorm);
- 
+
       }
 
       // check orthogonality between function vector and jacobian columns
@@ -273,8 +316,10 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           double s  = jacNorm[pj];
           if (s != 0) {
             double sum = 0;
-            for (int i = 0, index = pj; i <= j; ++i, index += cols) {
+            int index = pj;
+            for (int i = 0; i <= j; ++i) {
               sum += jacobian[index] * residuals[i];
+              index += cols;
             }
             maxCosine = Math.max(maxCosine, Math.abs(sum) / (s * cost));
           }
@@ -301,7 +346,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
         double[] tmpVec = residuals;
         residuals = oldRes;
         oldRes    = tmpVec;
-        
+
         // determine the Levenberg-Marquardt parameter
         determineLMParameter(oldRes, delta, diag, work1, work2, work3);
 
@@ -337,8 +382,10 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           int pj = permutation[j];
           double dirJ = lmDir[pj];
           work1[j] = 0;
-          for (int i = 0, index = pj; i <= j; ++i, index += cols) {
+          int index = pj;
+          for (int i = 0; i <= j; ++i) {
             work1[i] += jacobian[index] * dirJ;
+            index += cols;
           }
         }
         double coeff1 = 0;
@@ -389,7 +436,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           residuals = oldRes;
           oldRes    = tmpVec;
         }
-   
+
         // tests for convergence.
         if (((Math.abs(actRed) <= costRelativeTolerance) &&
              (preRed <= costRelativeTolerance) &&
@@ -422,7 +469,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
   }
 
-  /** 
+  /**
    * Determine the Levenberg-Marquardt parameter.
    * <p>This implementation is a translation in Java of the MINPACK
    * <a href="http://www.netlib.org/minpack/lmpar.f">lmpar</a>
@@ -436,7 +483,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
    *   <li>Jorge   J. More</li>
    * </ul>
    * <p>Luc Maisonobe did the Java translation.</p>
-   * 
+   *
    * @param qy array containing qTy
    * @param delta upper bound on the euclidean norm of diagR * lmDir
    * @param diag diagonal matrix
@@ -458,8 +505,10 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     for (int k = rank - 1; k >= 0; --k) {
       int pk = permutation[k];
       double ypk = lmDir[pk] / diagR[pk];
-      for (int i = 0, index = pk; i < k; ++i, index += cols) {
+      int index = pk;
+      for (int i = 0; i < k; ++i) {
         lmDir[permutation[i]] -= ypk * jacobian[index];
+        index += cols;
       }
       lmDir[pk] = ypk;
     }
@@ -483,18 +532,21 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     // if the jacobian is not rank deficient, the Newton step provides
     // a lower bound, parl, for the zero of the function,
     // otherwise set this bound to zero
-    double sum2, parl = 0;
+    double sum2;
+    double parl = 0;
     if (rank == solvedCols) {
       for (int j = 0; j < solvedCols; ++j) {
         int pj = permutation[j];
-        work1[pj] *= diag[pj] / dxNorm; 
+        work1[pj] *= diag[pj] / dxNorm;
       }
       sum2 = 0;
       for (int j = 0; j < solvedCols; ++j) {
         int pj = permutation[j];
         double sum = 0;
-        for (int i = 0, index = pj; i < j; ++i, index += cols) {
+        int index = pj;
+        for (int i = 0; i < j; ++i) {
           sum += jacobian[index] * work1[permutation[i]];
+          index += cols;
         }
         double s = (work1[pj] - sum) / diagR[pj];
         work1[pj] = s;
@@ -508,8 +560,10 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     for (int j = 0; j < solvedCols; ++j) {
       int pj = permutation[j];
       double sum = 0;
-      for (int i = 0, index = pj; i <= j; ++i, index += cols) {
+      int index = pj;
+      for (int i = 0; i <= j; ++i) {
         sum += jacobian[index] * qy[i];
+        index += cols;
       }
       sum /= diag[pj];
       sum2 += sum * sum;
@@ -558,11 +612,11 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           ((parl == 0) && (fp <= previousFP) && (previousFP < 0))) {
         return;
       }
- 
+
       // compute the Newton correction
       for (int j = 0; j < solvedCols; ++j) {
        int pj = permutation[j];
-        work1[pj] = work3[pj] * diag[pj] / dxNorm; 
+        work1[pj] = work3[pj] * diag[pj] / dxNorm;
       }
       for (int j = 0; j < solvedCols; ++j) {
         int pj = permutation[j];
@@ -592,7 +646,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     }
   }
 
-  /** 
+  /**
    * Solve a*x = b and d*x = 0 in the least squares sense.
    * <p>This implementation is a translation in Java of the MINPACK
    * <a href="http://www.netlib.org/minpack/qrsolv.f">qrsolv</a>
@@ -606,7 +660,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
    *   <li>Jorge   J. More</li>
    * </ul>
    * <p>Luc Maisonobe did the Java translation.</p>
-   * 
+   *
    * @param qy array containing qTy
    * @param diag diagonal matrix
    * @param lmDiag diagonal elements associated with lmDir
@@ -649,14 +703,15 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
         // appropriate element in the current row of d
         if (lmDiag[k] != 0) {
 
-          double sin, cos;
+          final double sin;
+          final double cos;
           double rkk = jacobian[k * cols + pk];
           if (Math.abs(rkk) < Math.abs(lmDiag[k])) {
-            double cotan = rkk / lmDiag[k];
+            final double cotan = rkk / lmDiag[k];
             sin   = 1.0 / Math.sqrt(1.0 + cotan * cotan);
             cos   = sin * cotan;
           } else {
-            double tan = lmDiag[k] / rkk;
+            final double tan = lmDiag[k] / rkk;
             cos = 1.0 / Math.sqrt(1.0 + tan * tan);
             sin = cos * tan;
           }
@@ -664,16 +719,16 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           // compute the modified diagonal element of R and
           // the modified element of (Qty,0)
           jacobian[k * cols + pk] = cos * rkk + sin * lmDiag[k];
-          double temp = cos * work[k] + sin * qtbpj;
+          final double temp = cos * work[k] + sin * qtbpj;
           qtbpj = -sin * work[k] + cos * qtbpj;
           work[k] = temp;
 
           // accumulate the tranformation in the row of s
           for (int i = k + 1; i < solvedCols; ++i) {
             double rik = jacobian[i * cols + pk];
-            temp = cos * rik + sin * lmDiag[i];
+            final double temp2 = cos * rik + sin * lmDiag[i];
             lmDiag[i] = -sin * rik + cos * lmDiag[i];
-            jacobian[i * cols + pk] = temp;
+            jacobian[i * cols + pk] = temp2;
           }
 
         }
@@ -716,7 +771,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
   }
 
-  /** 
+  /**
    * Decompose a matrix A as A.P = Q.R using Householder transforms.
    * <p>As suggested in the P. Lascaux and R. Theodor book
    * <i>Analyse num&eacute;rique matricielle appliqu&eacute;e &agrave;
@@ -812,9 +867,9 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
   }
 
-  /** 
+  /**
    * Compute the product Qt.y for some Q.R. decomposition.
-   * 
+   *
    * @param y vector to multiply (will be overwritten with the result)
    */
   private void qTy(double[] y) {
@@ -822,54 +877,18 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
       int pk = permutation[k];
       int kDiag = k * cols + pk;
       double gamma = 0;
-      for (int i = k, index = kDiag; i < rows; ++i, index += cols) {
+      int index = kDiag;
+      for (int i = k; i < rows; ++i) {
         gamma += jacobian[index] * y[i];
+        index += cols;
       }
       gamma *= beta[pk];
-      for (int i = k, index = kDiag; i < rows; ++i, index += cols) {
+      index = kDiag;
+      for (int i = k; i < rows; ++i) {
         y[i] -= gamma * jacobian[index];
+        index += cols;
       }
     }
   }
-
-  /** Number of solved variables. */
-  private int solvedCols;
-
-  /** Diagonal elements of the R matrix in the Q.R. decomposition. */
-  private double[] diagR;
-
-  /** Norms of the columns of the jacobian matrix. */
-  private double[] jacNorm;
-
-  /** Coefficients of the Householder transforms vectors. */
-  private double[] beta;
-
-  /** Columns permutation array. */
-  private int[] permutation;
-
-  /** Rank of the jacobian matrix. */
-  private int rank;
-
-  /** Levenberg-Marquardt parameter. */
-  private double lmPar;
-
-  /** Parameters evolution direction associated with lmPar. */
-  private double[] lmDir;
-
-  /** Positive input variable used in determining the initial step bound. */
-  private double initialStepBoundFactor;
-
-  /** Desired relative error in the sum of squares. */
-  private double costRelativeTolerance;
-
-  /**  Desired relative error in the approximate solution parameters. */
-  private double parRelativeTolerance;
-
-  /** Desired max cosine on the orthogonality between the function vector
-   * and the columns of the jacobian. */
-  private double orthoTolerance;
-
-  /** Serializable version identifier */
-  private static final long serialVersionUID = -5705952631533171019L;
 
 }

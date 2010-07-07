@@ -22,14 +22,14 @@ import java.util.Collection;
 /**
  * Interface for points that can be clustered together.
  * @param <T> the type of point that can be clustered
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:22 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public interface Clusterable<T> {
 
     /**
      * Returns the distance from the given point.
-     * 
+     *
      * @param p the point to compute the distance from
      * @return the distance from the given point
      */
@@ -37,7 +37,7 @@ public interface Clusterable<T> {
 
     /**
      * Returns the centroid of the given Collection of points.
-     * 
+     *
      * @param p the Collection of points to compute the centroid of
      * @return the centroid of the given Collection of Points
      */

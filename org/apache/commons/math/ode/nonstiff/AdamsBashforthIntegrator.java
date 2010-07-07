@@ -105,7 +105,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  *        [  -8  48 -256 1280  ... ]
  *        [          ...           ]
  * </pre></p>
- * 
+ *
  * <p>Using the Nordsieck vector has several advantages:
  * <ul>
  *   <li>it greatly simplifies step interpolation as the interpolator mainly applies
@@ -114,7 +114,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  *   the step are triggered,</li>
  *   <li>it allows to extend the methods in order to support adaptive stepsize.</li>
  * </ul></p>
- * 
+ *
  * <p>The Nordsieck vector at step n+1 is computed from the Nordsieck vector at step n as follows:
  * <ul>
  *   <li>y<sub>n+1</sub> = y<sub>n</sub> + s<sub>1</sub>(n) + u<sup>T</sup> r<sub>n</sub></li>
@@ -135,7 +135,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 927202 $ $Date: 2010-03-24 18:11:51 -0400 (Wed, 24 Mar 2010) $
  * @since 2.0
  */
 public class AdamsBashforthIntegrator extends AdamsIntegrator {
@@ -191,7 +191,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
         sanityChecks(equations, t0, y0, t, y);
         setEquations(equations);
         resetEvaluations();
-        final boolean forward = (t > t0);
+        final boolean forward = t > t0;
 
         // initialize working arrays
         if (y != y0) {
@@ -221,7 +221,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
         // reuse the step that was chosen by the starter integrator
         double hNew = stepSize;
         interpolator.rescale(hNew);
-        
+
         boolean lastStep = false;
         while (!lastStep) {
 
@@ -271,8 +271,16 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
                     if (manager.evaluateStep(interpolatorTmp)) {
                         final double dt = manager.getEventTime() - stepStart;
                         if (Math.abs(dt) <= Math.ulp(stepStart)) {
-                            // rejecting the step would lead to a too small next step, we accept it
-                            loop = false;
+                            // we cannot simply truncate the step, reject the current computation
+                            // and let the loop compute another state with the truncated step.
+                            // it is so small (much probably exactly 0 due to limited accuracy)
+                            // that the code above would fail handling it.
+                            // So we set up an artificial 0 size step by copying states
+                            interpolator.storeTime(stepStart);
+                            System.arraycopy(y, 0, yTmp, 0, y0.length);
+                            hNew     = 0;
+                            stepSize = 0;
+                            loop     = false;
                         } else {
                             // reject the step to match exactly the next switch time
                             hNew = dt;

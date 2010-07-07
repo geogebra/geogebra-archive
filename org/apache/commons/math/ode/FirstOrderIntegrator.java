@@ -17,9 +17,6 @@
 
 package org.apache.commons.math.ode;
 
-import org.apache.commons.math.ode.events.EventHandler;
-import org.apache.commons.math.ode.sampling.StepHandler;
-
 /** This interface represents a first order integrator for
  * differential equations.
 
@@ -29,9 +26,9 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * FirstOrderDifferentialEquations} interface.</p>
  *
  * @see FirstOrderDifferentialEquations
- * @see StepHandler
- * @see EventHandler
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @see org.apache.commons.math.ode.sampling.StepHandler
+ * @see org.apache.commons.math.ode.events.EventHandler
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
@@ -50,14 +47,14 @@ public interface FirstOrderIntegrator extends ODEIntegrator {
    * @param y placeholder where to put the state vector at each successful
    *  step (and hence at the end of integration), can be the same object as y0
    * @return stop time, will be the same as target time if integration reached its
-   * target, but may be different if some {@link EventHandler} stops it at some point.
+   * target, but may be different if some {@link
+   * org.apache.commons.math.ode.events.EventHandler} stops it at some point.
    * @throws IntegratorException if the integrator cannot perform integration
    * @throws DerivativeException this exception is propagated to the caller if
    * the underlying user function triggers one
    */
-  public double integrate (FirstOrderDifferentialEquations equations,
-                           double t0, double[] y0,
-                           double t, double[] y)
-    throws DerivativeException, IntegratorException;
+  double integrate (FirstOrderDifferentialEquations equations,
+                    double t0, double[] y0,
+                    double t, double[] y) throws DerivativeException, IntegratorException;
 
 }

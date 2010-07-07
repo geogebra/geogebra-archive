@@ -34,8 +34,8 @@ import org.apache.commons.math.complex.Complex;
  * In addition, the first element must be 0 and it's enforced in function
  * transformation after sampling.</p>
  * <p>As of version 2.0 this no longer implements Serializable</p>
- * 
- * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:22 $
+ *
+ * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
  * @since 1.2
  */
 public class FastSineTransformer implements RealTransformer {
@@ -52,7 +52,7 @@ public class FastSineTransformer implements RealTransformer {
      * <p>
      * The formula is F<sub>n</sub> = &sum;<sub>k=0</sub><sup>N-1</sup> f<sub>k</sub> sin(&pi; nk/N)
      * </p>
-     * 
+     *
      * @param f the real data array to be transformed
      * @return the real transformed array
      * @throws IllegalArgumentException if any parameters are invalid
@@ -67,7 +67,7 @@ public class FastSineTransformer implements RealTransformer {
      * <p>
      * The formula is F<sub>n</sub> = &sum;<sub>k=0</sub><sup>N-1</sup> f<sub>k</sub> sin(&pi; nk/N)
      * </p>
-     * 
+     *
      * @param f the function to be sampled and transformed
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
@@ -91,7 +91,7 @@ public class FastSineTransformer implements RealTransformer {
      * <p>
      * The formula is F<sub>n</sub> = &radic;(2/N) &sum;<sub>k=0</sub><sup>N-1</sup> f<sub>k</sub> sin(&pi; nk/N)
      * </p>
-     * 
+     *
      * @param f the real data array to be transformed
      * @return the real transformed array
      * @throws IllegalArgumentException if any parameters are invalid
@@ -107,7 +107,7 @@ public class FastSineTransformer implements RealTransformer {
      * <p>
      * The formula is F<sub>n</sub> = &radic;(2/N) &sum;<sub>k=0</sub><sup>N-1</sup> f<sub>k</sub> sin(&pi; nk/N)
      * </p>
-     * 
+     *
      * @param f the function to be sampled and transformed
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
@@ -132,7 +132,7 @@ public class FastSineTransformer implements RealTransformer {
      * <p>
      * The formula is f<sub>k</sub> = (2/N) &sum;<sub>n=0</sub><sup>N-1</sup> F<sub>n</sub> sin(&pi; nk/N)
      * </p>
-     * 
+     *
      * @param f the real data array to be inversely transformed
      * @return the real inversely transformed array
      * @throws IllegalArgumentException if any parameters are invalid
@@ -148,7 +148,7 @@ public class FastSineTransformer implements RealTransformer {
      * <p>
      * The formula is f<sub>k</sub> = (2/N) &sum;<sub>n=0</sub><sup>N-1</sup> F<sub>n</sub> sin(&pi; nk/N)
      * </p>
-     * 
+     *
      * @param f the function to be sampled and inversely transformed
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
@@ -172,7 +172,7 @@ public class FastSineTransformer implements RealTransformer {
      * <p>
      * The formula is f<sub>k</sub> = &radic;(2/N) &sum;<sub>n=0</sub><sup>N-1</sup> F<sub>n</sub> sin(&pi; nk/N)
      * </p>
-     * 
+     *
      * @param f the real data array to be inversely transformed
      * @return the real inversely transformed array
      * @throws IllegalArgumentException if any parameters are invalid
@@ -187,7 +187,7 @@ public class FastSineTransformer implements RealTransformer {
      * <p>
      * The formula is f<sub>k</sub> = &radic;(2/N) &sum;<sub>n=0</sub><sup>N-1</sup> F<sub>n</sub> sin(&pi; nk/N)
      * </p>
-     * 
+     *
      * @param f the function to be sampled and inversely transformed
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
@@ -212,7 +212,7 @@ public class FastSineTransformer implements RealTransformer {
      */
     protected double[] fst(double f[]) throws IllegalArgumentException {
 
-        double A, B, x[], F[] = new double[f.length];
+        final double transformed[] = new double[f.length];
 
         FastFourierTransformer.verifyDataSet(f);
         if (f[0] != 0.0) {
@@ -220,33 +220,33 @@ public class FastSineTransformer implements RealTransformer {
                     "first element is not 0: {0}",
                     f[0]);
         }
-        int N = f.length;
-        if (N == 1) {       // trivial case
-            F[0] = 0.0;
-            return F;
+        final int n = f.length;
+        if (n == 1) {       // trivial case
+            transformed[0] = 0.0;
+            return transformed;
         }
 
         // construct a new array and perform FFT on it
-        x = new double[N];
+        final double[] x = new double[n];
         x[0] = 0.0;
-        x[N >> 1] = 2.0 * f[N >> 1];
-        for (int i = 1; i < (N >> 1); i++) {
-            A = Math.sin(i * Math.PI / N) * (f[i] + f[N-i]);
-            B = 0.5 * (f[i] - f[N-i]);
-            x[i] = A + B;
-            x[N-i] = A - B;
+        x[n >> 1] = 2.0 * f[n >> 1];
+        for (int i = 1; i < (n >> 1); i++) {
+            final double a = Math.sin(i * Math.PI / n) * (f[i] + f[n-i]);
+            final double b = 0.5 * (f[i] - f[n-i]);
+            x[i]     = a + b;
+            x[n - i] = a - b;
         }
         FastFourierTransformer transformer = new FastFourierTransformer();
         Complex y[] = transformer.transform(x);
 
         // reconstruct the FST result for the original array
-        F[0] = 0.0;
-        F[1] = 0.5 * y[0].getReal();
-        for (int i = 1; i < (N >> 1); i++) {
-            F[2*i] = -y[i].getImaginary();
-            F[2*i+1] = y[i].getReal() + F[2*i-1];
+        transformed[0] = 0.0;
+        transformed[1] = 0.5 * y[0].getReal();
+        for (int i = 1; i < (n >> 1); i++) {
+            transformed[2 * i]     = -y[i].getImaginary();
+            transformed[2 * i + 1] = y[i].getReal() + transformed[2 * i - 1];
         }
 
-        return F;
+        return transformed;
     }
 }

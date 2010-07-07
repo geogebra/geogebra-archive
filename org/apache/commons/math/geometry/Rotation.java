@@ -82,7 +82,7 @@ import org.apache.commons.math.MathRuntimeException;
  *
  * <p>Rotations are guaranteed to be immutable objects.</p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
+ * @version $Revision: 772119 $ $Date: 2009-05-06 05:43:28 -0400 (Wed, 06 May 2009) $
  * @see Vector3D
  * @see RotationOrder
  * @since 1.2

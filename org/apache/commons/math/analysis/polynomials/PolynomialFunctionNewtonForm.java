@@ -19,7 +19,6 @@ package org.apache.commons.math.analysis.polynomials;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.analysis.interpolation.DividedDifferenceInterpolator;
 
 /**
  * Implements the representation of a real polynomial function in
@@ -31,24 +30,28 @@ import org.apache.commons.math.analysis.interpolation.DividedDifferenceInterpola
  *            a[n](x-c[0])(x-c[1])...(x-c[n-1])
  * Note that the length of a[] is one more than the length of c[]</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 922708 $ $Date: 2010-03-13 20:15:47 -0500 (Sat, 13 Mar 2010) $
  * @since 1.2
  */
 public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
 
     /**
      * The coefficients of the polynomial, ordered by degree -- i.e.
-     * coefficients[0] is the constant term and coefficients[n] is the 
+     * coefficients[0] is the constant term and coefficients[n] is the
      * coefficient of x^n where n is the degree of the polynomial.
      */
     private double coefficients[];
 
     /**
-     * Members of c[] are called centers of the Newton polynomial.
+     * Centers of the Newton polynomial.
+     */
+    private final double c[];
+
+    /**
      * When all c[i] = 0, a[] becomes normal polynomial coefficients,
      * i.e. a[i] = coefficients[i].
      */
-    private double a[], c[];
+    private final double a[];
 
     /**
      * Whether the polynomial coefficients are available.
@@ -61,7 +64,7 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
      * completely change, not just a permutation of old a[].
      * <p>
      * The constructor makes copy of the input arrays and assigns them.</p>
-     * 
+     *
      * @param a the coefficients in Newton form formula
      * @param c the centers
      * @throws IllegalArgumentException if input arrays are not valid
@@ -91,7 +94,7 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
 
     /**
      * Returns the degree of the polynomial.
-     * 
+     *
      * @return the degree of the polynomial
      */
     public int degree() {
@@ -102,7 +105,7 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
      * Returns a copy of coefficients in Newton form formula.
      * <p>
      * Changes made to the returned copy will not affect the polynomial.</p>
-     * 
+     *
      * @return a fresh copy of coefficients in Newton form formula
      */
     public double[] getNewtonCoefficients() {
@@ -115,7 +118,7 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
      * Returns a copy of the centers array.
      * <p>
      * Changes made to the returned copy will not affect the polynomial.</p>
-     * 
+     *
      * @return a fresh copy of the centers array
      */
     public double[] getCenters() {
@@ -128,7 +131,7 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
      * Returns a copy of the coefficients array.
      * <p>
      * Changes made to the returned copy will not affect the polynomial.</p>
-     * 
+     *
      * @return a fresh copy of the coefficients array
      */
     public double[] getCoefficients() {
@@ -171,16 +174,16 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
      * It also uses nested multiplication but takes O(N^2) time.
      */
     protected void computeCoefficients() {
-        int i, j, n = degree();
+        final int n = degree();
 
         coefficients = new double[n+1];
-        for (i = 0; i <= n; i++) {
+        for (int i = 0; i <= n; i++) {
             coefficients[i] = 0.0;
         }
 
         coefficients[0] = a[n];
-        for (i = n-1; i >= 0; i--) {
-            for (j = n-i; j > 0; j--) {
+        for (int i = n-1; i >= 0; i--) {
+            for (int j = n-i; j > 0; j--) {
                 coefficients[j] = coefficients[j-1] - c[i] * coefficients[j];
             }
             coefficients[0] = a[i] - c[i] * coefficients[0];
@@ -194,11 +197,11 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
      * <p>
      * The centers must be distinct for interpolation purposes, but not
      * for general use. Thus it is not verified here.</p>
-     * 
+     *
      * @param a the coefficients in Newton form formula
      * @param c the centers
      * @throws IllegalArgumentException if not valid
-     * @see DividedDifferenceInterpolator#computeDividedDifference(double[],
+     * @see org.apache.commons.math.analysis.interpolation.DividedDifferenceInterpolator#computeDividedDifference(double[],
      * double[])
      */
     protected static void verifyInputArray(double a[], double c[]) throws

@@ -18,7 +18,6 @@ package org.apache.commons.math.transform;
 
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.complex.Complex;
 
 /**
  * Interface for one-dimensional data sets transformations producing real results.
@@ -26,10 +25,10 @@ import org.apache.commons.math.complex.Complex;
  * {@link FastCosineTransformer cosine transform} or {@link
  * FastHadamardTransformer Hadamard transform}. {@link FastFourierTransformer
  * Fourier transform} is of a different kind and does not implement this
- * interface since it produces {@link Complex complex} results instead of real
- * ones.
+ * interface since it produces {@link org.apache.commons.math.complex.Complex complex}
+ * results instead of real ones.
  * </p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:22 $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 2.0
  */
 public interface RealTransformer  {
@@ -63,7 +62,7 @@ public interface RealTransformer  {
      * @return the real inversely transformed array (signal)
      * @throws IllegalArgumentException if any parameters are invalid
      */
-    public abstract double[] inversetransform(double f[])
+    double[] inversetransform(double f[])
         throws IllegalArgumentException;
 
     /**

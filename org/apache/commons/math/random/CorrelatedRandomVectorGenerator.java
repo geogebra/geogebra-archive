@@ -22,8 +22,8 @@ import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.NotPositiveDefiniteMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
 
-/** 
- * A {@link RandomVectorGenerator} that generates vectors with with 
+/**
+ * A {@link RandomVectorGenerator} that generates vectors with with
  * correlated components.
  * <p>Random vectors with correlated components are built by combining
  * the uncorrelated components of another random vector in such a way that
@@ -55,12 +55,27 @@ import org.apache.commons.math.linear.RealMatrix;
  * of the correlated vector. This class handles this situation
  * automatically.</p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
 public class CorrelatedRandomVectorGenerator
     implements RandomVectorGenerator {
+
+    /** Mean vector. */
+    private final double[] mean;
+
+    /** Underlying generator. */
+    private final NormalizedRandomGenerator generator;
+
+    /** Storage for the normalized vector. */
+    private final double[] normalized;
+
+    /** Permutated Cholesky root of the covariance matrix. */
+    private RealMatrix root;
+
+    /** Rank of the covariance matrix. */
+    private int rank;
 
     /** Simple constructor.
      * <p>Build a correlated random vector generator from its mean
@@ -284,20 +299,5 @@ public class CorrelatedRandomVectorGenerator
         return correlated;
 
     }
-
-    /** Mean vector. */
-    private double[] mean;
-
-    /** Permutated Cholesky root of the covariance matrix. */
-    private RealMatrix root;
-
-    /** Rank of the covariance matrix. */
-    private int rank;
-
-    /** Underlying generator. */
-    private NormalizedRandomGenerator generator;
-
-    /** Storage for the normalized vector. */
-    private double[] normalized;
 
 }

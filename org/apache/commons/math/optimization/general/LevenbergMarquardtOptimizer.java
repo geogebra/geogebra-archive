@@ -23,7 +23,7 @@ import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 
 
-/** 
+/**
  * This class solves a least squares problem using the Levenberg-Marquardt algorithm.
  *
  * <p>This implementation <em>should</em> work even for over-determined systems
@@ -37,8 +37,15 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * changes. The changes include the over-determined resolution and the Q.R.
  * decomposition which has been rewritten following the algorithm described in the
  * P. Lascaux and R. Theodor book <i>Analyse num&eacute;rique matricielle
- * appliqu&eacute;e &agrave; l'art de l'ing&eacute;nieur</i>, Masson 1986. The
- * redistribution policy for MINPACK is available <a
+ * appliqu&eacute;e &agrave; l'art de l'ing&eacute;nieur</i>, Masson 1986.</p>
+ * <p>The authors of the original fortran version are:
+ * <ul>
+ * <li>Argonne National Laboratory. MINPACK project. March 1980</li>
+ * <li>Burton S. Garbow</li>
+ * <li>Kenneth E. Hillstrom</li>
+ * <li>Jorge J. More</li>
+ * </ul>
+ * The redistribution policy for MINPACK is available <a
  * href="http://www.netlib.org/minpack/disclaimer">here</a>, for convenience, it
  * is reproduced below.</p>
  *
@@ -89,13 +96,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  *     POSSIBILITY OF SUCH LOSS OR DAMAGES.</strong></li>
  * <ol></td></tr>
  * </table>
-
- * @author Argonne National Laboratory. MINPACK project. March 1980 (original fortran)
- * @author Burton S. Garbow (original fortran)
- * @author Kenneth E. Hillstrom (original fortran)
- * @author Jorge J. More (original fortran)
-
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
  * @since 2.0
  *
  */
@@ -138,7 +139,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
      * and the columns of the jacobian. */
     private double orthoTolerance;
 
-    /** 
+    /**
      * Build an optimizer for least squares problems.
      * <p>The default values for the algorithm settings are:
      *   <ul>
@@ -163,7 +164,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
     }
 
-    /** 
+    /**
      * Set the positive input variable used in determining the initial step bound.
      * This bound is set to the product of initialStepBoundFactor and the euclidean
      * norm of diag*x if nonzero, or else to initialStepBoundFactor itself. In most
@@ -176,18 +177,18 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
         this.initialStepBoundFactor = initialStepBoundFactor;
     }
 
-    /** 
+    /**
      * Set the desired relative error in the sum of squares.
-     * 
+     *
      * @param costRelativeTolerance desired relative error in the sum of squares
      */
     public void setCostRelativeTolerance(double costRelativeTolerance) {
         this.costRelativeTolerance = costRelativeTolerance;
     }
 
-    /** 
+    /**
      * Set the desired relative error in the approximate solution parameters.
-     * 
+     *
      * @param parRelativeTolerance desired relative error
      * in the approximate solution parameters
      */
@@ -195,9 +196,9 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
         this.parRelativeTolerance = parRelativeTolerance;
     }
 
-    /** 
+    /**
      * Set the desired max cosine on the orthogonality.
-     * 
+     *
      * @param orthoTolerance desired max cosine on the orthogonality
      * between the function vector and the columns of the jacobian
      */
@@ -219,7 +220,8 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
         lmDir       = new double[cols];
 
         // local point
-        double   delta   = 0, xNorm = 0;
+        double   delta   = 0;
+        double   xNorm   = 0;
         double[] diag    = new double[cols];
         double[] oldX    = new double[cols];
         double[] oldRes  = new double[rows];
@@ -430,7 +432,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
     }
 
-    /** 
+    /**
      * Determine the Levenberg-Marquardt parameter.
      * <p>This implementation is a translation in Java of the MINPACK
      * <a href="http://www.netlib.org/minpack/lmpar.f">lmpar</a>
@@ -444,7 +446,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
      *   <li>Jorge   J. More</li>
      * </ul>
      * <p>Luc Maisonobe did the Java translation.</p>
-     * 
+     *
      * @param qy array containing qTy
      * @param delta upper bound on the euclidean norm of diagR * lmDir
      * @param diag diagonal matrix
@@ -491,11 +493,12 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
         // if the jacobian is not rank deficient, the Newton step provides
         // a lower bound, parl, for the zero of the function,
         // otherwise set this bound to zero
-        double sum2, parl = 0;
+        double sum2;
+        double parl = 0;
         if (rank == solvedCols) {
             for (int j = 0; j < solvedCols; ++j) {
                 int pj = permutation[j];
-                work1[pj] *= diag[pj] / dxNorm; 
+                work1[pj] *= diag[pj] / dxNorm;
             }
             sum2 = 0;
             for (int j = 0; j < solvedCols; ++j) {
@@ -570,7 +573,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
             // compute the Newton correction
             for (int j = 0; j < solvedCols; ++j) {
                 int pj = permutation[j];
-                work1[pj] = work3[pj] * diag[pj] / dxNorm; 
+                work1[pj] = work3[pj] * diag[pj] / dxNorm;
             }
             for (int j = 0; j < solvedCols; ++j) {
                 int pj = permutation[j];
@@ -600,7 +603,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
         }
     }
 
-    /** 
+    /**
      * Solve a*x = b and d*x = 0 in the least squares sense.
      * <p>This implementation is a translation in Java of the MINPACK
      * <a href="http://www.netlib.org/minpack/qrsolv.f">qrsolv</a>
@@ -614,7 +617,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
      *   <li>Jorge   J. More</li>
      * </ul>
      * <p>Luc Maisonobe did the Java translation.</p>
-     * 
+     *
      * @param qy array containing qTy
      * @param diag diagonal matrix
      * @param lmDiag diagonal elements associated with lmDir
@@ -657,14 +660,15 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                 // appropriate element in the current row of d
                 if (lmDiag[k] != 0) {
 
-                    double sin, cos;
+                    final double sin;
+                    final double cos;
                     double rkk = jacobian[k][pk];
                     if (Math.abs(rkk) < Math.abs(lmDiag[k])) {
-                        double cotan = rkk / lmDiag[k];
+                        final double cotan = rkk / lmDiag[k];
                         sin   = 1.0 / Math.sqrt(1.0 + cotan * cotan);
                         cos   = sin * cotan;
                     } else {
-                        double tan = lmDiag[k] / rkk;
+                        final double tan = lmDiag[k] / rkk;
                         cos = 1.0 / Math.sqrt(1.0 + tan * tan);
                         sin = cos * tan;
                     }
@@ -672,16 +676,16 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                     // compute the modified diagonal element of R and
                     // the modified element of (Qty,0)
                     jacobian[k][pk] = cos * rkk + sin * lmDiag[k];
-                    double temp = cos * work[k] + sin * qtbpj;
+                    final double temp = cos * work[k] + sin * qtbpj;
                     qtbpj = -sin * work[k] + cos * qtbpj;
                     work[k] = temp;
 
                     // accumulate the tranformation in the row of s
                     for (int i = k + 1; i < solvedCols; ++i) {
                         double rik = jacobian[i][pk];
-                        temp = cos * rik + sin * lmDiag[i];
+                        final double temp2 = cos * rik + sin * lmDiag[i];
                         lmDiag[i] = -sin * rik + cos * lmDiag[i];
-                        jacobian[i][pk] = temp;
+                        jacobian[i][pk] = temp2;
                     }
 
                 }
@@ -723,7 +727,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
     }
 
-    /** 
+    /**
      * Decompose a matrix A as A.P = Q.R using Householder transforms.
      * <p>As suggested in the P. Lascaux and R. Theodor book
      * <i>Analyse num&eacute;rique matricielle appliqu&eacute;e &agrave;
@@ -816,9 +820,9 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
     }
 
-    /** 
+    /**
      * Compute the product Qt.y for some Q.R. decomposition.
-     * 
+     *
      * @param y vector to multiply (will be overwritten with the result)
      */
     private void qTy(double[] y) {

@@ -23,7 +23,7 @@ import org.apache.commons.math.MathRuntimeException;
  * Thrown when a system attempts an operation on a matrix, and
  * that matrix does not satisfy the preconditions for the
  * aforementioned operation.
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
  */
 public class InvalidMatrixException extends MathRuntimeException {
 

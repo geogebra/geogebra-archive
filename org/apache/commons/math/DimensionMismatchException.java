@@ -18,21 +18,27 @@ package org.apache.commons.math;
 
 /**
  * Error thrown when two dimensions differ.
- * 
+ *
  * @since 1.2
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  */
 public class DimensionMismatchException extends MathException {
-    
+
     /** Serializable version identifier */
     private static final long serialVersionUID = -1316089546353786411L;
+
+    /** First dimension. */
+    private final int dimension1;
+
+    /** Second dimension. */
+    private final int dimension2;
 
     /**
      * Construct an exception from the mismatched dimensions
      * @param dimension1 first dimension
      * @param dimension2 second dimension
      */
-    public DimensionMismatchException(int dimension1, int dimension2) {
+    public DimensionMismatchException(final int dimension1, final int dimension2) {
         super("dimension mismatch {0} != {1}", dimension1, dimension2);
         this.dimension1 = dimension1;
         this.dimension2 = dimension2;
@@ -45,7 +51,7 @@ public class DimensionMismatchException extends MathException {
     public int getDimension1() {
         return dimension1;
     }
-    
+
     /**
      * Get the second dimension
      * @return second dimension
@@ -54,10 +60,4 @@ public class DimensionMismatchException extends MathException {
         return dimension2;
     }
 
-    /** First dimension. */
-    private int dimension1;
-    
-    /** Second dimension. */
-    private int dimension2;
-    
 }

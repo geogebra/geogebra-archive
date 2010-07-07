@@ -23,13 +23,13 @@ import org.apache.commons.math.MathException;
  * <p>Two samples tests are used when the distribution is unknown <i>a priori</i>
  * but provided by one sample. We compare the second sample against the first.</p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:18 $
- * @since 1.2 
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @since 1.2
  */
 public interface UnknownDistributionChiSquareTest extends ChiSquareTest {
-     
+
     /**
-     * <p>Computes a 
+     * <p>Computes a
      * <a href="http://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/chi2samp.htm">
      * Chi-Square two sample test statistic</a> comparing bin frequency counts
      * in <code>observed1</code> and <code>observed2</code>.  The
@@ -37,7 +37,7 @@ public interface UnknownDistributionChiSquareTest extends ChiSquareTest {
      * same.  The formula used to compute the test statistic is</p>
      * <code>
      * &sum;[(K * observed1[i] - observed2[i]/K)<sup>2</sup> / (observed1[i] + observed2[i])]
-     * </code> where 
+     * </code> where
      * <br/><code>K = &sqrt;[&sum(observed2 / &sum;(observed1)]</code>
      * </p>
      * <p>This statistic can be used to perform a Chi-Square test evaluating the null hypothesis that
@@ -68,7 +68,7 @@ public interface UnknownDistributionChiSquareTest extends ChiSquareTest {
      * <p>Returns the <i>observed significance level</i>, or <a href=
      * "http://www.cas.lancs.ac.uk/glossary_v1.1/hyptest.html#pvalue">
      * p-value</a>, associated with a Chi-Square two sample test comparing
-     * bin frequency counts in <code>observed1</code> and 
+     * bin frequency counts in <code>observed1</code> and
      * <code>observed2</code>.
      * </p>
      * <p>The number returned is the smallest significance level at which one
@@ -110,7 +110,7 @@ public interface UnknownDistributionChiSquareTest extends ChiSquareTest {
      * significance level <code>alpha</code>.  Returns true iff the null
      * hypothesis can be rejected with 100 * (1 - alpha) percent confidence.
      * </p>
-     * <p>See {@link #chiSquareDataSetsComparison(long[], long[])} for 
+     * <p>See {@link #chiSquareDataSetsComparison(long[], long[])} for
      * details on the formula used to compute the Chisquare statistic used
      * in the test. The degrees of of freedom used to perform the test is
      * one less than the common length of the input observed count arrays.

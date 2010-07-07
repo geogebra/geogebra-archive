@@ -21,7 +21,7 @@ package org.apache.commons.math;
  * Error thrown when a method is called with an out of bounds argument.
  *
  * @since 1.2
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  */
 public class ArgumentOutsideDomainException extends FunctionEvaluationException {
 
@@ -31,7 +31,7 @@ public class ArgumentOutsideDomainException extends FunctionEvaluationException 
     /**
      * Constructs an exception with specified formatted detail message.
      * Message formatting is delegated to {@link java.text.MessageFormat}.
-     * @param argument  the failing function argument 
+     * @param argument  the failing function argument
      * @param lower lower bound of the domain
      * @param upper upper bound of the domain
      */

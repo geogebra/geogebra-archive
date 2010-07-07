@@ -16,6 +16,12 @@
  */
 package org.apache.commons.math.linear;
 
+import java.util.Iterator;
+
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+
+
 /**
  * Interface defining a real-valued vector with basic algebraic operations.
  * <p>
@@ -35,11 +41,79 @@ package org.apache.commons.math.linear;
  * <pre>
  *   RealVector result = v.mapAddToSelf(3.0).mapTanToSelf().mapSquareToSelf();
  * </pre>
- * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ *
+ * @version $Revision: 902214 $ $Date: 2010-01-22 13:40:28 -0500 (Fri, 22 Jan 2010) $
  * @since 2.0
  */
 public interface RealVector {
+
+    /**
+     * Acts as if it is implemented as:
+     * Entry e = null;
+     * for(Iterator<Entry> it = iterator(); it.hasNext(); e = it.next()) {
+     *   e.setValue(function.value(e.getValue()));
+     * }
+     * @param function to apply to each successive entry
+     * @return this vector
+     * @throws FunctionEvaluationException if function throws it on application to any entry
+     */
+    RealVector mapToSelf(UnivariateRealFunction function) throws FunctionEvaluationException;
+
+    /**
+     * Acts as if implemented as:
+     * return copy().map(function);
+     * @param function to apply to each successive entry
+     * @return a new vector
+     * @throws FunctionEvaluationException if function throws it on application to any entry
+     */
+    RealVector map(UnivariateRealFunction function) throws FunctionEvaluationException;
+
+    /** Class representing a modifiable entry in the vector. */
+    public abstract class Entry {
+
+        /** Index of the entry. */
+        private int index;
+
+        /** Get the value of the entry.
+         * @return value of the entry
+         */
+        public abstract double getValue();
+
+        /** Set the value of the entry.
+         * @param value new value for the entry
+         */
+        public abstract void setValue(double value);
+
+        /** Get the index of the entry.
+         * @return index of the entry
+         */
+        public int getIndex() {
+            return index;
+        }
+
+        /** Set the index of the entry.
+         * @param index new index for the entry
+         */
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+    }
+
+    /**
+     * Generic dense iterator - starts with index == zero, and hasNext() == true until index == getDimension();
+     * @return a dense iterator
+     */
+    Iterator<Entry> iterator();
+
+    /**
+     * Specialized implementations may choose to not iterate over all dimensions, either because those values are
+     * unset, or are equal to defaultValue(), or are small enough to be ignored for the purposes of iteration.
+     * No guarantees are made about order of iteration.
+     * In dense implementations, this method will often delegate to {@link #iterator()}
+     * @return a sparse iterator
+     */
+    Iterator<Entry> sparseIterator();
 
     /**
      * Returns a (deep) copy of this.
@@ -463,8 +537,7 @@ public interface RealVector {
      * @return a vector containing this[i] * v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public RealVector ebeMultiply(RealVector v)
-        throws IllegalArgumentException;
+    RealVector ebeMultiply(RealVector v) throws IllegalArgumentException;
 
     /**
      * Element-by-element multiplication.
@@ -472,8 +545,7 @@ public interface RealVector {
      * @return a vector containing this[i] * v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public RealVector ebeMultiply(double[] v)
-        throws IllegalArgumentException;
+    RealVector ebeMultiply(double[] v) throws IllegalArgumentException;
 
     /**
      * Element-by-element division.
@@ -481,8 +553,7 @@ public interface RealVector {
      * @return a vector containing this[i] / v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public RealVector ebeDivide(RealVector v)
-        throws IllegalArgumentException;
+    RealVector ebeDivide(RealVector v) throws IllegalArgumentException;
 
     /**
      * Element-by-element division.
@@ -490,8 +561,7 @@ public interface RealVector {
      * @return a vector containing this[i] / v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public RealVector ebeDivide(double[] v)
-        throws IllegalArgumentException;
+    RealVector ebeDivide(double[] v) throws IllegalArgumentException;
 
     /**
      * Returns vector entries as a double array.
@@ -790,14 +860,14 @@ public interface RealVector {
      * Returns true if any coordinate of this vector is NaN; false otherwise
      * @return  true if any coordinate of this vector is NaN; false otherwise
      */
-    public boolean isNaN();
-    
+    boolean isNaN();
+
     /**
      * Returns true if any coordinate of this vector is infinite and none are NaN;
      * false otherwise
      * @return  true if any coordinate of this vector is infinite and none are NaN;
      * false otherwise
      */
-    public boolean isInfinite();
-    
+    boolean isInfinite();
+
 }

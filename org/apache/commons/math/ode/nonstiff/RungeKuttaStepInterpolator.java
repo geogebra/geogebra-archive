@@ -30,12 +30,18 @@ import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
  * @see RungeKuttaIntegrator
  * @see EmbeddedRungeKuttaIntegrator
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
 abstract class RungeKuttaStepInterpolator
   extends AbstractStepInterpolator {
+
+    /** Slopes at the intermediate points */
+    protected double[][] yDotK;
+
+    /** Reference to the integrator. */
+    protected AbstractIntegrator integrator;
 
   /** Simple constructor.
    * This constructor builds an instance that is not usable yet, the
@@ -108,18 +114,18 @@ abstract class RungeKuttaStepInterpolator
    * {@link AbstractStepInterpolator#getInterpolatedState
    * getInterpolatedState} method (for an interpolator which needs a
    * finalization) or if it clones the step interpolator.</p>
-   * @param integrator integrator being used
+   * @param rkIntegrator integrator being used
    * @param y reference to the integrator array holding the state at
    * the end of the step
-   * @param yDotK reference to the integrator array holding all the
+   * @param yDotArray reference to the integrator array holding all the
    * intermediate slopes
    * @param forward integration direction indicator
    */
-  public void reinitialize(final AbstractIntegrator integrator,
-                           final double[] y, final double[][] yDotK, final boolean forward) {
+  public void reinitialize(final AbstractIntegrator rkIntegrator,
+                           final double[] y, final double[][] yDotArray, final boolean forward) {
     reinitialize(y, forward);
-    this.yDotK = yDotK;
-    this.integrator = integrator;
+    this.yDotK = yDotArray;
+    this.integrator = rkIntegrator;
   }
 
   /** {@inheritDoc} */
@@ -149,7 +155,7 @@ abstract class RungeKuttaStepInterpolator
   public void readExternal(final ObjectInput in)
     throws IOException {
 
-    // read the base class 
+    // read the base class
     final double t = readBaseExternal(in);
 
     // read the local attributes
@@ -173,11 +179,5 @@ abstract class RungeKuttaStepInterpolator
     }
 
   }
-
-  /** Slopes at the intermediate points */
-  protected double[][] yDotK;
-
-  /** Reference to the integrator. */
-  protected AbstractIntegrator integrator;
 
 }

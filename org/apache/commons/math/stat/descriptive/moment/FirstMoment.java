@@ -17,7 +17,6 @@
 package org.apache.commons.math.stat.descriptive.moment;
 
 import java.io.Serializable;
-
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 
 /**
@@ -38,32 +37,32 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * <p>
  *  Returns <code>Double.NaN</code> if the dataset is empty.</p>
  * <p>
- * <strong>Note that this implementation is not synchronized.</strong> If 
+ * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least
- * one of the threads invokes the <code>increment()</code> or 
+ * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:25 $
+ * @version $Revision: 902934 $ $Date: 2010-01-25 14:09:17 -0500 (Mon, 25 Jan 2010) $
  */
-public class FirstMoment extends AbstractStorelessUnivariateStatistic 
+public class FirstMoment extends AbstractStorelessUnivariateStatistic
     implements Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 6112755307178490473L;
 
-    
+
     /** Count of values that have been added */
     protected long n;
 
     /** First moment of values that have been added */
     protected double m1;
-    
-    /** 
+
+    /**
      * Deviation of most recently added value from previous first moment.
      * Retained to prevent repeated computation in higher order moments.
      */
     protected double dev;
-    
+
     /**
      * Deviation of most recently added value from previous first moment,
      * normalized by previous sample size.  Retained to prevent repeated
@@ -80,18 +79,18 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
         dev = Double.NaN;
         nDev = Double.NaN;
     }
-    
+
     /**
      * Copy constructor, creates a new {@code FirstMoment} identical
      * to the {@code original}
-     * 
+     *
      * @param original the {@code FirstMoment} instance to copy
      */
      public FirstMoment(FirstMoment original) {
          super();
          copy(original, this);
      }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -132,7 +131,7 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
     public long getN() {
         return n;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -140,13 +139,13 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
     public FirstMoment copy() {
         FirstMoment result = new FirstMoment();
         copy(this, result);
-        return result; 
+        return result;
     }
-     
+
     /**
      * Copies source to dest.
      * <p>Neither source nor dest can be null.</p>
-     * 
+     *
      * @param source FirstMoment to copy
      * @param dest FirstMoment to copy to
      * @throws NullPointerException if either source or dest is null
@@ -155,6 +154,6 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
         dest.n = source.n;
         dest.m1 = source.m1;
         dest.dev = source.dev;
-        dest.nDev = dest.nDev;
+        dest.nDev = source.nDev;
     }
 }

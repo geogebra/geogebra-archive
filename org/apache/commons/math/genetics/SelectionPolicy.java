@@ -18,9 +18,9 @@ package org.apache.commons.math.genetics;
 
 /**
  * Algorithm used to select a chromosome pair from a population.
- * 
+ *
  * @since 2.0
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  */
 public interface SelectionPolicy {
     /**

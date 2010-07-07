@@ -24,7 +24,7 @@ package org.apache.commons.math;
  * execution of the algorithms per se.
  * </p>
  * @see ConvergenceException
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 2.0
  */
 public interface ConvergingAlgorithm {
@@ -38,26 +38,26 @@ public interface ConvergingAlgorithm {
      * <p>
      * A {@link ConvergenceException} will be thrown if this number
      * is exceeded.</p>
-     *  
+     *
      * @param count maximum number of iterations
      */
-    public abstract void setMaximalIterationCount(int count);
+    void setMaximalIterationCount(int count);
 
     /**
      * Get the upper limit for the number of iterations.
-     * 
+     *
      * @return the actual upper limit
      */
-    public abstract int getMaximalIterationCount();
+    int getMaximalIterationCount();
 
     /**
      * Reset the upper limit for the number of iterations to the default.
      * <p>
      * The default value is supplied by the algorithm implementation.</p>
-     * 
+     *
      * @see #setMaximalIterationCount(int)
      */
-    public abstract void resetMaximalIterationCount();
+    void resetMaximalIterationCount();
 
     /**
      * Set the absolute accuracy.
@@ -69,26 +69,26 @@ public interface ConvergingAlgorithm {
      * <p>
      * Algorithms are advised to do a plausibility check with the relative
      * accuracy, but clients should not rely on this.</p>
-     *  
+     *
      * @param accuracy the accuracy.
      * @throws IllegalArgumentException if the accuracy can't be achieved by
-     * the solver or is otherwise deemed unreasonable. 
+     * the solver or is otherwise deemed unreasonable.
      */
-    public abstract void setAbsoluteAccuracy(double accuracy);
+    void setAbsoluteAccuracy(double accuracy);
 
     /**
      * Get the actual absolute accuracy.
-     * 
+     *
      * @return the accuracy
      */
-    public abstract double getAbsoluteAccuracy();
+    double getAbsoluteAccuracy();
 
     /**
      * Reset the absolute accuracy to the default.
      * <p>
      * The default value is provided by the algorithm implementation.</p>
      */
-    public abstract void resetAbsoluteAccuracy();
+    void resetAbsoluteAccuracy();
 
     /**
      * Set the relative accuracy.
@@ -99,24 +99,24 @@ public interface ConvergingAlgorithm {
      * If this should be the primary criterion for convergence rather then a
      * safety measure, set the absolute accuracy to a ridiculously small value,
      * like {@link org.apache.commons.math.util.MathUtils#SAFE_MIN MathUtils.SAFE_MIN}.</p>
-     * 
+     *
      * @param accuracy the relative accuracy.
      * @throws IllegalArgumentException if the accuracy can't be achieved by
-     *  the algorithm or is otherwise deemed unreasonable. 
+     *  the algorithm or is otherwise deemed unreasonable.
      */
-    public abstract void setRelativeAccuracy(double accuracy);
+    void setRelativeAccuracy(double accuracy);
 
     /**
      * Get the actual relative accuracy.
      * @return the accuracy
      */
-    public abstract double getRelativeAccuracy();
+    double getRelativeAccuracy();
 
     /**
      * Reset the relative accuracy to the default.
      * The default value is provided by the algorithm implementation.
      */
-    public abstract void resetRelativeAccuracy();
+    void resetRelativeAccuracy();
 
     /**
      * Get the number of iterations in the last run of the algorithm.
@@ -126,11 +126,11 @@ public interface ConvergingAlgorithm {
      * is notoriously high, check whether the problem is evaluated
      * properly, and whether another algorithm is more amenable to the
      * problem.</p>
-     * 
+     *
      * @return the last iteration count.
      * @throws IllegalStateException if there is no result available, either
      * because no result was yet computed or the last attempt failed.
      */
-    public abstract int getIterationCount();
+    int getIterationCount();
 
 }

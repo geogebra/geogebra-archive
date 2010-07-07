@@ -22,9 +22,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.apache.commons.math.linear.ArrayRealVector;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealVector;
+import org.apache.commons.math.linear.ArrayRealVector;
 
 
 /**
@@ -45,7 +45,7 @@ import org.apache.commons.math.linear.RealVector;
  * The c<sub>i</sub>, l<sub>i</sub> or r<sub>i</sub> are the coefficients of the constraints, the x<sub>i</sub>
  * are the coordinates of the current point and v is the value of the constraint.
  * </p>
- * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:25 $
+ * @version $Revision: 922713 $ $Date: 2010-03-13 20:26:13 -0500 (Sat, 13 Mar 2010) $
  * @since 2.0
  */
 public class LinearConstraint implements Serializable {
@@ -188,28 +188,19 @@ public class LinearConstraint implements Serializable {
     @Override
     public boolean equals(Object other) {
 
-      if (this == other) { 
+      if (this == other) {
         return true;
       }
 
-      if (other == null) {
-        return false;
-      }
-
-      try {
-
+      if (other instanceof LinearConstraint) {
           LinearConstraint rhs = (LinearConstraint) other;
           return (relationship == rhs.relationship) &&
                  (value        == rhs.value) &&
                  coefficients.equals(rhs.coefficients);
-
-      } catch (ClassCastException ex) {
-          // ignore exception
-          return false;
       }
-
+      return false;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int hashCode() {

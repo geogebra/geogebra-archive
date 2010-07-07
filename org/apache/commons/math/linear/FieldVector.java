@@ -38,9 +38,9 @@ import org.apache.commons.math.FieldElement;
  * <pre>
  *   RealVector result = v.mapAddToSelf(3.0).mapTanToSelf().mapSquareToSelf();
  * </pre>
- * 
+ *
  * @param <T> the type of the field elements
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 2.0
  */
 public interface FieldVector<T extends FieldElement<T>>  {
@@ -172,8 +172,7 @@ public interface FieldVector<T extends FieldElement<T>>  {
      * @return a vector containing this[i] * v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public FieldVector<T> ebeMultiply(FieldVector<T> v)
-        throws IllegalArgumentException;
+    FieldVector<T> ebeMultiply(FieldVector<T> v) throws IllegalArgumentException;
 
     /**
      * Element-by-element multiplication.
@@ -181,8 +180,7 @@ public interface FieldVector<T extends FieldElement<T>>  {
      * @return a vector containing this[i] * v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public FieldVector<T> ebeMultiply(T[] v)
-        throws IllegalArgumentException;
+    FieldVector<T> ebeMultiply(T[] v) throws IllegalArgumentException;
 
     /**
      * Element-by-element division.
@@ -190,8 +188,7 @@ public interface FieldVector<T extends FieldElement<T>>  {
      * @return a vector containing this[i] / v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public FieldVector<T> ebeDivide(FieldVector<T> v)
-        throws IllegalArgumentException;
+    FieldVector<T> ebeDivide(FieldVector<T> v) throws IllegalArgumentException;
 
     /**
      * Element-by-element division.
@@ -199,8 +196,7 @@ public interface FieldVector<T extends FieldElement<T>>  {
      * @return a vector containing this[i] / v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public FieldVector<T> ebeDivide(T[] v)
-        throws IllegalArgumentException;
+    FieldVector<T> ebeDivide(T[] v) throws IllegalArgumentException;
 
     /**
      * Returns vector entries as a T array.

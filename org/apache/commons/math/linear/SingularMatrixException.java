@@ -20,7 +20,7 @@ package org.apache.commons.math.linear;
 
 /**
  * Thrown when a matrix is singular.
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
  * @since 2.0
  */
 public class SingularMatrixException extends InvalidMatrixException {

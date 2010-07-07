@@ -20,14 +20,17 @@ package org.apache.commons.math.linear;
 
 
 /**
- * An interface to classes that implement an algorithm to calculate the 
+ * An interface to classes that implement an algorithm to calculate the
  * Singular Value Decomposition of a real matrix.
- * <p>The Singular Value Decomposition of matrix A is a set of three matrices:
- * U, &Sigma; and V such that A = U &times; &Sigma; &times; V<sup>T</sup>.
- * Let A be an m &times; n matrix, then U is an m &times; m orthogonal matrix,
- * &Sigma; is a m &times; n diagonal matrix with positive diagonal elements,
- * and V is an n &times; n orthogonal matrix.</p>
- * <p>This interface is similar to the class with similar name from the now defunct
+ * <p>
+ * The Singular Value Decomposition of matrix A is a set of three matrices: U,
+ * &Sigma; and V such that A = U &times; &Sigma; &times; V<sup>T</sup>. Let A be
+ * a m &times; n matrix, then U is a m &times; p orthogonal matrix, &Sigma; is a
+ * p &times; p diagonal matrix with positive or null elements, V is a p &times;
+ * n orthogonal matrix (hence V<sup>T</sup> is also orthogonal) where
+ * p=min(m,n).
+ * </p>
+ * <p>This interface is similar to the class with similar name from the
  * <a href="http://math.nist.gov/javanumerics/jama/">JAMA</a> library, with the
  * following changes:</p>
  * <ul>
@@ -44,13 +47,13 @@ package org.apache.commons.math.linear;
  * </ul>
  * @see <a href="http://mathworld.wolfram.com/SingularValueDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Singular_value_decomposition">Wikipedia</a>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 928081 $ $Date: 2010-03-26 18:36:38 -0400 (Fri, 26 Mar 2010) $
  * @since 2.0
  */
 public interface SingularValueDecomposition {
 
     /**
-     * Returns the matrix U of the decomposition. 
+     * Returns the matrix U of the decomposition.
      * <p>U is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * @return the U matrix
      * @see #getUT()
@@ -58,7 +61,7 @@ public interface SingularValueDecomposition {
     RealMatrix getU();
 
     /**
-     * Returns the transpose of the matrix U of the decomposition. 
+     * Returns the transpose of the matrix U of the decomposition.
      * <p>U is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * @return the U matrix (or null if decomposed matrix is singular)
      * @see #getU()
@@ -66,7 +69,7 @@ public interface SingularValueDecomposition {
     RealMatrix getUT();
 
     /**
-     * Returns the diagonal matrix &Sigma; of the decomposition. 
+     * Returns the diagonal matrix &Sigma; of the decomposition.
      * <p>&Sigma; is a diagonal matrix. The singular values are provided in
      * non-increasing order, for compatibility with Jama.</p>
      * @return the &Sigma; matrix
@@ -82,7 +85,7 @@ public interface SingularValueDecomposition {
     double[] getSingularValues();
 
     /**
-     * Returns the matrix V of the decomposition. 
+     * Returns the matrix V of the decomposition.
      * <p>V is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * @return the V matrix (or null if decomposed matrix is singular)
      * @see #getVT()
@@ -90,7 +93,7 @@ public interface SingularValueDecomposition {
     RealMatrix getV();
 
     /**
-     * Returns the transpose of the matrix V of the decomposition. 
+     * Returns the transpose of the matrix V of the decomposition.
      * <p>V is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * @return the V matrix (or null if decomposed matrix is singular)
      * @see #getV()

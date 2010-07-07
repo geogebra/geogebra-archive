@@ -16,12 +16,11 @@
  */
 package org.apache.commons.math.stat.inference;
 
+import org.apache.commons.math.MathException;
 import java.util.Collection;
 
-import org.apache.commons.math.MathException;
-
 /**
- * An interface for one-way ANOVA (analysis of variance). 
+ * An interface for one-way ANOVA (analysis of variance).
  *
  * <p> Tests for differences between two or more categories of univariate data
  * (for example, the body mass index of accountants, lawyers, doctors and
@@ -30,13 +29,14 @@ import org.apache.commons.math.MathException;
  * </p>
  *
  * @since 1.2
- * @version $Revision: 1.3 $ $Date: 2009-11-11 17:05:21 $ 
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  */
 public interface OneWayAnova {
+
     /**
      * Computes the ANOVA F-value for a collection of <code>double[]</code>
      * arrays.
-     * 
+     *
      * <p><strong>Preconditions</strong>: <ul>
      * <li>The categoryData <code>Collection</code> must contain
      * <code>double[]</code> arrays.</li>
@@ -51,7 +51,7 @@ public interface OneWayAnova {
      * @throws MathException if the statistic can not be computed do to a
      *         convergence or other numerical error.
      */
-    public double anovaFValue(Collection<double[]> categoryData)
+    double anovaFValue(Collection<double[]> categoryData)
         throws IllegalArgumentException, MathException;
 
     /**
@@ -72,13 +72,13 @@ public interface OneWayAnova {
      * @throws MathException if the statistic can not be computed do to a
      *         convergence or other numerical error.
      */
-    public double anovaPValue(Collection<double[]> categoryData)
+    double anovaPValue(Collection<double[]> categoryData)
         throws IllegalArgumentException, MathException;
 
     /**
      * Performs an ANOVA test, evaluating the null hypothesis that there
      * is no difference among the means of the data categories.
-     * 
+     *
      * <p><strong>Preconditions</strong>: <ul>
      * <li>The categoryData <code>Collection</code> must contain
      * <code>double[]</code> arrays.</li>
@@ -91,13 +91,13 @@ public interface OneWayAnova {
      * @param categoryData <code>Collection</code> of <code>double[]</code>
      * arrays each containing data for one category
      * @param alpha significance level of the test
-     * @return true if the null hypothesis can be rejected with 
+     * @return true if the null hypothesis can be rejected with
      * confidence 1 - alpha
      * @throws IllegalArgumentException if the preconditions are not met
      * @throws MathException if the statistic can not be computed do to a
      *         convergence or other numerical error.
-    */
-    public boolean anovaTest(Collection<double[]> categoryData, double alpha)
+     */
+    boolean anovaTest(Collection<double[]> categoryData, double alpha)
         throws IllegalArgumentException, MathException;
 
 }

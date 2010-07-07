@@ -20,14 +20,14 @@ package org.apache.commons.math.distribution;
 /**
  * Base interface for discrete distributions.
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  */
 public interface DiscreteDistribution extends Distribution {
     /**
      * For a random variable X whose values are distributed according
      * to this distribution, this method returns P(X = x). In other words, this
      * method represents the probability mass function, or PMF for the distribution.
-     * 
+     *
      * @param x the value at which the probability mass function is evaluated.
      * @return the value of the probability mass function at x
      */

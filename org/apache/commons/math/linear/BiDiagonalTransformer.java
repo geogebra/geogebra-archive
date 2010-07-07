@@ -30,7 +30,7 @@ package org.apache.commons.math.linear;
  * intended for internal use by the library and is not public. As a consequence of
  * this explicitly limited scope, many methods directly returns references to
  * internal arrays, not copies.</p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 class BiDiagonalTransformer {
@@ -54,7 +54,7 @@ class BiDiagonalTransformer {
     private RealMatrix cachedV;
 
     /**
-     * Build the transformation to bi-diagonal shape of a matrix. 
+     * Build the transformation to bi-diagonal shape of a matrix.
      * @param matrix the matrix to transform.
      */
     public BiDiagonalTransformer(RealMatrix matrix) {
@@ -79,7 +79,7 @@ class BiDiagonalTransformer {
     }
 
     /**
-     * Returns the matrix U of the transform. 
+     * Returns the matrix U of the transform.
      * <p>U is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * @return the U matrix
      */
@@ -129,7 +129,7 @@ class BiDiagonalTransformer {
     }
 
     /**
-     * Returns the bi-diagonal matrix B of the transform. 
+     * Returns the bi-diagonal matrix B of the transform.
      * @return the B matrix
      */
     public RealMatrix getB() {
@@ -160,7 +160,7 @@ class BiDiagonalTransformer {
     }
 
     /**
-     * Returns the matrix V of the transform. 
+     * Returns the matrix V of the transform.
      * <p>V is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * @return the V matrix
      */

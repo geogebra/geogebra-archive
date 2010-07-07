@@ -25,15 +25,15 @@ import org.apache.commons.math.distribution.ChiSquaredDistributionImpl;
  * Implements Chi-Square test statistics defined in the
  * {@link UnknownDistributionChiSquareTest} interface.
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:18 $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
  */
 public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
 
     /** Distribution used to compute inference statistics. */
     private ChiSquaredDistribution distribution;
-  
+
     /**
-     * Construct a ChiSquareTestImpl 
+     * Construct a ChiSquareTestImpl
      */
     public ChiSquareTestImpl() {
         this(new ChiSquaredDistributionImpl(1.0));
@@ -51,10 +51,10 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
     }
      /**
      * {@inheritDoc}
-     * <p><strong>Note: </strong>This implementation rescales the 
+     * <p><strong>Note: </strong>This implementation rescales the
      * <code>expected</code> array if necessary to ensure that the sum of the
      * expected and observed counts are equal.</p>
-     * 
+     *
      * @param observed array of observed frequency counts
      * @param expected array of expected frequency counts
      * @return chi-square test statistic
@@ -87,13 +87,12 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
             rescale = true;
         }
         double sumSq = 0.0d;
-        double dev = 0.0d;
         for (int i = 0; i < observed.length; i++) {
             if (rescale) {
-                dev = (observed[i] - ratio * expected[i]);
+                final double dev = observed[i] - ratio * expected[i];
                 sumSq += dev * dev / (ratio * expected[i]);
             } else {
-                dev = (observed[i] - expected[i]);
+                final double dev = observed[i] - expected[i];
                 sumSq += dev * dev / expected[i];
             }
         }
@@ -102,10 +101,10 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
 
     /**
      * {@inheritDoc}
-     * <p><strong>Note: </strong>This implementation rescales the 
+     * <p><strong>Note: </strong>This implementation rescales the
      * <code>expected</code> array if necessary to ensure that the sum of the
      * expected and observed counts are equal.</p>
-     * 
+     *
      * @param observed array of observed frequency counts
      * @param expected array of expected frequency counts
      * @return p-value
@@ -121,10 +120,10 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
 
     /**
      * {@inheritDoc}
-     * <p><strong>Note: </strong>This implementation rescales the 
+     * <p><strong>Note: </strong>This implementation rescales the
      * <code>expected</code> array if necessary to ensure that the sum of the
      * expected and observed counts are equal.</p>
-     * 
+     *
      * @param observed array of observed frequency counts
      * @param expected array of expected frequency counts
      * @param alpha significance level of the test
@@ -133,27 +132,27 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
      * @throws IllegalArgumentException if preconditions are not met
      * @throws MathException if an error occurs performing the test
      */
-    public boolean chiSquareTest(double[] expected, long[] observed, 
+    public boolean chiSquareTest(double[] expected, long[] observed,
             double alpha) throws IllegalArgumentException, MathException {
         if ((alpha <= 0) || (alpha > 0.5)) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "out of bounds significance level {0}, must be between {1} and {2}",
                   alpha, 0, 0.5);
         }
-        return (chiSquareTest(expected, observed) < alpha);
+        return chiSquareTest(expected, observed) < alpha;
     }
-    
+
     /**
      * @param counts array representation of 2-way table
      * @return chi-square test statistic
      * @throws IllegalArgumentException if preconditions are not met
      */
     public double chiSquare(long[][] counts) throws IllegalArgumentException {
-        
+
         checkArray(counts);
         int nRows = counts.length;
         int nCols = counts[0].length;
-        
+
         // compute row, column and total sums
         double[] rowSum = new double[nRows];
         double[] colSum = new double[nCols];
@@ -165,17 +164,17 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
                 total += counts[row][col];
             }
         }
-        
+
         // compute expected counts and chi-square
         double sumSq = 0.0d;
         double expected = 0.0d;
         for (int row = 0; row < nRows; row++) {
             for (int col = 0; col < nCols; col++) {
                 expected = (rowSum[row] * colSum[col]) / total;
-                sumSq += ((counts[row][col] - expected) * 
-                        (counts[row][col] - expected)) / expected; 
+                sumSq += ((counts[row][col] - expected) *
+                        (counts[row][col] - expected)) / expected;
             }
-        } 
+        }
         return sumSq;
     }
 
@@ -208,9 +207,9 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
                   "out of bounds significance level {0}, must be between {1} and {2}",
                   alpha, 0.0, 0.5);
         }
-        return (chiSquareTest(counts) < alpha);
+        return chiSquareTest(counts) < alpha;
     }
-    
+
     /**
      * @param observed1 array of observed frequency counts of the first data set
      * @param observed2 array of observed frequency counts of the second data set
@@ -220,7 +219,7 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
      */
     public double chiSquareDataSetsComparison(long[] observed1, long[] observed2)
         throws IllegalArgumentException {
-        
+
         // Make sure lengths are same
         if (observed1.length < 2) {
             throw MathRuntimeException.createIllegalArgumentException(
@@ -244,19 +243,19 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
         double weight = 0.0;
         for (int i = 0; i < observed1.length; i++) {
             countSum1 += observed1[i];
-            countSum2 += observed2[i];   
+            countSum2 += observed2[i];
         }
         // Ensure neither sample is uniformly 0
         if (countSum1 == 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "observed counts are all 0 in first observed array"); 
+                  "observed counts are all 0 in first observed array");
         }
         if (countSum2 == 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "observed counts are all 0 in second observed array"); 
+                  "observed counts are all 0 in second observed array");
         }
         // Compare and compute weight only if different
-        unequalCounts = (countSum1 != countSum2);
+        unequalCounts = countSum1 != countSum2;
         if (unequalCounts) {
             weight = Math.sqrt((double) countSum1 / (double) countSum2);
         }
@@ -315,41 +314,41 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
                   "out of bounds significance level {0}, must be between {1} and {2}",
                   alpha, 0.0, 0.5);
         }
-        return (chiSquareTestDataSetsComparison(observed1, observed2) < alpha);
+        return chiSquareTestDataSetsComparison(observed1, observed2) < alpha;
     }
 
     /**
      * Checks to make sure that the input long[][] array is rectangular,
      * has at least 2 rows and 2 columns, and has all non-negative entries,
      * throwing IllegalArgumentException if any of these checks fail.
-     * 
+     *
      * @param in input 2-way table to check
      * @throws IllegalArgumentException if the array is not valid
      */
     private void checkArray(long[][] in) throws IllegalArgumentException {
-        
+
         if (in.length < 2) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "invalid row dimension: {0} (must be at least 2)",
                   in.length);
         }
-        
+
         if (in[0].length < 2) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "invalid column dimension: {0} (must be at least 2)",
                   in[0].length);
-        }    
-        
+        }
+
         checkRectangular(in);
         checkNonNegative(in);
-        
+
     }
-    
+
     //---------------------  Private array methods -- should find a utility home for these
-    
+
     /**
      * Throws IllegalArgumentException if the input array is not rectangular.
-     * 
+     *
      * @param in array to be tested
      * @throws NullPointerException if input array is null
      * @throws IllegalArgumentException if input array is not rectangular
@@ -361,12 +360,12 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
                       "some rows have length {0} while others have length {1}",
                       in[i].length, in[0].length);
             }
-        }  
+        }
     }
-    
+
     /**
      * Check all entries of the input array are > 0.
-     * 
+     *
      * @param in array to be tested
      * @exception IllegalArgumentException if one entry is not positive
      */
@@ -379,10 +378,10 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
             }
         }
     }
-    
+
     /**
      * Check all entries of the input array are >= 0.
-     * 
+     *
      * @param in array to be tested
      * @exception IllegalArgumentException if one entry is negative
      */
@@ -395,10 +394,10 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
             }
         }
     }
-    
+
     /**
      * Check all entries of the input array are >= 0.
-     * 
+     *
      * @param in array to be tested
      * @exception IllegalArgumentException if one entry is negative
      */
@@ -413,10 +412,10 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
             }
         }
     }
- 
+
     /**
      * Modify the distribution used to compute inference statistics.
-     * 
+     *
      * @param value
      *            the new distribution
      * @since 1.2

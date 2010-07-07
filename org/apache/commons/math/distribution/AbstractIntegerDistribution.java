@@ -18,6 +18,7 @@ package org.apache.commons.math.distribution;
 
 import java.io.Serializable;
 
+import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
 
@@ -26,31 +27,39 @@ import org.apache.commons.math.MathRuntimeException;
  * Base class for integer-valued discrete distributions.  Default
  * implementations are provided for some of the methods that do not vary
  * from distribution to distribution.
- *  
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ *
+ * @version $Revision: 920558 $ $Date: 2010-03-08 17:57:32 -0500 (Mon, 08 Mar 2010) $
  */
 public abstract class AbstractIntegerDistribution extends AbstractDistribution
     implements IntegerDistribution, Serializable {
-        
+
+    /** Message for endpoints in wrong order. */
+    private static final String WRONG_ORDER_ENDPOINTS_MESSAGE =
+        "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})";
+
+    /** Message for out of range point. */
+    private static final String OUT_OF_RANGE_POINT =
+        "{0} out of [{1}, {2}] range";
+
     /** Serializable version identifier */
     private static final long serialVersionUID = -1146319659338487221L;
-    
+
     /**
      * Default constructor.
      */
     protected AbstractIntegerDistribution() {
         super();
     }
-    
+
     /**
      * For a random variable X whose values are distributed according
      * to this distribution, this method returns P(X &le; x).  In other words,
      * this method represents the  (cumulative) distribution function, or
      * CDF, for this distribution.
      * <p>
-     * If <code>x</code> does not represent an integer value, the CDF is 
+     * If <code>x</code> does not represent an integer value, the CDF is
      * evaluated at the greatest integer less than x.
-     * 
+     *
      * @param x the value at which the distribution function is evaluated.
      * @return cumulative probability that a random variable with this
      * distribution takes a value less than or equal to <code>x</code>
@@ -58,13 +67,13 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
      * computed due to convergence or other numerical errors.
      */
     public double cumulativeProbability(double x) throws MathException {
-        return cumulativeProbability((int) Math.floor(x));  
+        return cumulativeProbability((int) Math.floor(x));
     }
-    
+
     /**
      * For a random variable X whose values are distributed according
      * to this distribution, this method returns P(x0 &le; X &le; x1).
-     * 
+     *
      * @param x0 the (inclusive) lower bound
      * @param x1 the (inclusive) upper bound
      * @return the probability that a random variable with this distribution
@@ -79,38 +88,37 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
         throws MathException {
         if (x0 > x1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})",
-                  x0, x1);
+                  WRONG_ORDER_ENDPOINTS_MESSAGE, x0, x1);
         }
         if (Math.floor(x0) < x0) {
             return cumulativeProbability(((int) Math.floor(x0)) + 1,
                (int) Math.floor(x1)); // don't want to count mass below x0
         } else { // x0 is mathematical integer, so use as is
             return cumulativeProbability((int) Math.floor(x0),
-                (int) Math.floor(x1)); 
+                (int) Math.floor(x1));
         }
     }
-    
+
     /**
      * For a random variable X whose values are distributed according
      * to this distribution, this method returns P(X &le; x).  In other words,
      * this method represents the probability distribution function, or PDF,
      * for this distribution.
-     * 
+     *
      * @param x the value at which the PDF is evaluated.
-     * @return PDF for this distribution. 
+     * @return PDF for this distribution.
      * @throws MathException if the cumulative probability can not be
      *            computed due to convergence or other numerical errors.
      */
-    abstract public double cumulativeProbability(int x) throws MathException;
-    
+    public abstract double cumulativeProbability(int x) throws MathException;
+
     /**
      * For a random variable X whose values are distributed according
      * to this distribution, this method returns P(X = x). In other words, this
      * method represents the probability mass function,  or PMF, for the distribution.
      * <p>
      * If <code>x</code> does not represent an integer value, 0 is returned.
-     * 
+     *
      * @param x the value at which the probability density function is evaluated
      * @return the value of the probability density function at x
      */
@@ -122,14 +130,14 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
             return 0;
         }
     }
-    
+
     /**
     * For a random variable X whose values are distributed according
      * to this distribution, this method returns P(x0 &le; X &le; x1).
-     * 
+     *
      * @param x0 the inclusive, lower bound
      * @param x1 the inclusive, upper bound
-     * @return the cumulative probability. 
+     * @return the cumulative probability.
      * @throws MathException if the cumulative probability can not be
      *            computed due to convergence or other numerical errors.
      * @throws IllegalArgumentException if x0 > x1
@@ -137,12 +145,11 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
     public double cumulativeProbability(int x0, int x1) throws MathException {
         if (x0 > x1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})",
-                  x0, x1);
+                  WRONG_ORDER_ENDPOINTS_MESSAGE, x0, x1);
         }
         return cumulativeProbability(x1) - cumulativeProbability(x0 - 1);
     }
-    
+
     /**
      * For a random variable X whose values are distributed according
      * to this distribution, this method returns the largest x, such
@@ -157,9 +164,9 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
     public int inverseCumulativeProbability(final double p) throws MathException{
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
+                  OUT_OF_RANGE_POINT, p, 0.0, 1.0);
         }
-        
+
         // by default, do simple bisection.
         // subclasses can override if there is a better method.
         int x0 = getDomainLowerBound(p);
@@ -167,7 +174,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
         double pm;
         while (x0 < x1) {
             int xm = x0 + (x1 - x0) / 2;
-            pm = cumulativeProbability(xm);
+            pm = checkedCumulativeProbability(xm);
             if (pm > p) {
                 // update x1
                 if (xm == x1) {
@@ -190,36 +197,60 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
                 }
             }
         }
-        
+
         // insure x0 is the correct critical point
-        pm = cumulativeProbability(x0);
+        pm = checkedCumulativeProbability(x0);
         while (pm > p) {
             --x0;
-            pm = cumulativeProbability(x0);
+            pm = checkedCumulativeProbability(x0);
         }
-    
-        return x0;        
+
+        return x0;
     }
-    
+
+    /**
+     * Computes the cumulative probablity function and checks for NaN values returned.
+     * Throws MathException if the value is NaN. Wraps and rethrows any MathException encountered
+     * evaluating the cumulative probability function in a FunctionEvaluationException. Throws
+     * FunctionEvaluationException of the cumulative probability function returns NaN.
+     *
+     * @param argument input value
+     * @return cumulative probability
+     * @throws FunctionEvaluationException if a MathException occurs computing the cumulative probability
+     */
+    private double checkedCumulativeProbability(int argument) throws FunctionEvaluationException {
+        double result = Double.NaN;
+        try {
+            result = cumulativeProbability(argument);
+        } catch (MathException ex) {
+            throw new FunctionEvaluationException(ex, argument, ex.getPattern(), ex.getArguments());
+        }
+        if (Double.isNaN(result)) {
+            throw new FunctionEvaluationException(argument,
+                "Discrete cumulative probability function returned NaN for argument {0}", argument);
+        }
+        return result;
+    }
+
     /**
      * Access the domain value lower bound, based on <code>p</code>, used to
      * bracket a PDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
-     * 
+     *
      * @param p the desired probability for the critical value
      * @return domain value lower bound, i.e.
-     *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
+     *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code>
      */
     protected abstract int getDomainLowerBound(double p);
-    
+
     /**
      * Access the domain value upper bound, based on <code>p</code>, used to
      * bracket a PDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
-     * 
+     *
      * @param p the desired probability for the critical value
      * @return domain value upper bound, i.e.
-     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
+     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code>
      */
     protected abstract int getDomainUpperBound(double p);
 }

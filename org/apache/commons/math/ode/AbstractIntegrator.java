@@ -29,23 +29,10 @@ import org.apache.commons.math.ode.sampling.StepHandler;
 
 /**
  * Base class managing common boilerplate for all integrators.
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 2.0
  */
 public abstract class AbstractIntegrator implements FirstOrderIntegrator {
-
-    
-    /** Name of the method. */
-    private final String name;
-
-    /** Maximal number of evaluations allowed. */
-    private int maxEvaluations;
-
-    /** Number of evaluations already performed. */
-    private int evaluations;
-
-    /** Differential equations to integrate. */
-    private transient FirstOrderDifferentialEquations equations;
 
     /** Step handler. */
     protected Collection<StepHandler> stepHandlers;
@@ -58,6 +45,18 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
     /** Events handlers manager. */
     protected CombinedEventsManager eventsHandlersManager;
+
+    /** Name of the method. */
+    private final String name;
+
+    /** Maximal number of evaluations allowed. */
+    private int maxEvaluations;
+
+    /** Number of evaluations already performed. */
+    private int evaluations;
+
+    /** Differential equations to integrate. */
+    private transient FirstOrderDifferentialEquations equations;
 
     /** Build an instance.
      * @param name name of the method
@@ -77,7 +76,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     protected AbstractIntegrator() {
         this(null);
     }
-    
+
     /** {@inheritDoc} */
     public String getName() {
         return name;
@@ -184,30 +183,30 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     }
 
     /** Perform some sanity checks on the integration parameters.
-     * @param equations differential equations set
+     * @param ode differential equations set
      * @param t0 start time
      * @param y0 state vector at t0
      * @param t target time for the integration
      * @param y placeholder where to put the state vector
      * @exception IntegratorException if some inconsistency is detected
      */
-    protected void sanityChecks(final FirstOrderDifferentialEquations equations,
+    protected void sanityChecks(final FirstOrderDifferentialEquations ode,
                                 final double t0, final double[] y0,
                                 final double t, final double[] y)
         throws IntegratorException {
 
-        if (equations.getDimension() != y0.length) {
+        if (ode.getDimension() != y0.length) {
             throw new IntegratorException(
                     "dimensions mismatch: ODE problem has dimension {0}," +
                     " initial state vector has dimension {1}",
-                    equations.getDimension(), y0.length);
+                    ode.getDimension(), y0.length);
         }
 
-        if (equations.getDimension() != y.length) {
+        if (ode.getDimension() != y.length) {
             throw new IntegratorException(
                     "dimensions mismatch: ODE problem has dimension {0}," +
                     " final state vector has dimension {1}",
-                    equations.getDimension(), y.length);
+                    ode.getDimension(), y.length);
         }
 
         if (Math.abs(t - t0) <= 1.0e-12 * Math.max(Math.abs(t0), Math.abs(t))) {
@@ -271,7 +270,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
         /** {@inheritDoc} */
         public void resetState(double t, double[] y) {
         }
-        
+
     }
 
 }

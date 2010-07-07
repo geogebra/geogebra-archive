@@ -20,13 +20,12 @@ package org.apache.commons.math.optimization;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.random.RandomVectorGenerator;
 
-/** 
+/**
  * Special implementation of the {@link DifferentiableMultivariateVectorialOptimizer} interface adding
  * multi-start features to an existing optimizer.
  * <p>
@@ -34,7 +33,7 @@ import org.apache.commons.math.random.RandomVectorGenerator;
  * turn with different starting points in order to avoid being trapped
  * into a local extremum when looking for a global one.
  * </p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public class MultiStartDifferentiableMultivariateVectorialOptimizer
@@ -113,9 +112,9 @@ public class MultiStartDifferentiableMultivariateVectorialOptimizer
      * corresponding to the runs that did not converge. This means all
      * elements will be null if the {@link #optimize(DifferentiableMultivariateVectorialFunction,
      * double[], double[], double[]) optimize} method did throw a {@link
-     * ConvergenceException ConvergenceException}). This also means that
-     * if the first element is non null, it is the best point found across
-     * all starts.</p>
+     * org.apache.commons.math.ConvergenceException ConvergenceException}).
+     * This also means that if the first element is non null, it is the best
+     * point found across all starts.</p>
      * @return array containing the optima
      * @exception IllegalStateException if {@link #optimize(DifferentiableMultivariateVectorialFunction,
      * double[], double[], double[]) optimize} has not been called

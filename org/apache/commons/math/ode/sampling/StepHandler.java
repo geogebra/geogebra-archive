@@ -17,10 +17,7 @@
 
 package org.apache.commons.math.ode.sampling;
 
-import org.apache.commons.math.ode.ContinuousOutputModel;
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.commons.math.ode.FirstOrderIntegrator;
-import org.apache.commons.math.ode.SecondOrderIntegrator;
 
 /**
  * This interface represents a handler that should be called after
@@ -35,10 +32,10 @@ import org.apache.commons.math.ode.SecondOrderIntegrator;
  * last one, store the points in an ephemeris, or forward them to
  * specialized processing or output methods.</p>
  *
- * @see FirstOrderIntegrator
- * @see SecondOrderIntegrator
+ * @see org.apache.commons.math.ode.FirstOrderIntegrator
+ * @see org.apache.commons.math.ode.SecondOrderIntegrator
  * @see StepInterpolator
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
@@ -52,13 +49,13 @@ public interface StepHandler {
    * than a custom interpolator.</p>
    * @return true if the handler needs dense output
    */
-  public boolean requiresDenseOutput();
+  boolean requiresDenseOutput();
 
   /** Reset the step handler.
    * Initialize the internal data as required before the first step is
    * handled.
    */
-  public void reset();
+  void reset();
 
   /**
    * Handle the last accepted step
@@ -67,16 +64,15 @@ public interface StepHandler {
    * object on each call, so if the instance wants to keep it across
    * all calls (for example to provide at the end of the integration a
    * continuous model valid throughout the integration range, as the
-   * {@link ContinuousOutputModel ContinuousOutputModel} class does),
-   * it should build a local copy using the clone method of the
-   * interpolator and store this copy. Keeping only a reference to the
-   * interpolator and reusing it will result in unpredictable
-   * behaviour (potentially crashing the application).
+   * {@link org.apache.commons.math.ode.ContinuousOutputModel
+   * ContinuousOutputModel} class does), it should build a local copy
+   * using the clone method of the interpolator and store this copy.
+   * Keeping only a reference to the interpolator and reusing it will
+   * result in unpredictable behavior (potentially crashing the application).
    * @param isLast true if the step is the last one
    * @throws DerivativeException this exception is propagated to the
    * caller if the underlying user function triggers one
    */
-  public void handleStep(StepInterpolator interpolator, boolean isLast)
-    throws DerivativeException;
-    
+  void handleStep(StepInterpolator interpolator, boolean isLast) throws DerivativeException;
+
 }

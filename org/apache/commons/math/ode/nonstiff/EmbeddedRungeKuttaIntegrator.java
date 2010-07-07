@@ -17,8 +17,6 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
-import java.util.Arrays;
-
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.IntegratorException;
@@ -60,12 +58,39 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * evaluation is saved. For an <i>fsal</i> method, we have cs = 1 and
  * asi = bi for all i.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 927202 $ $Date: 2010-03-24 18:11:51 -0400 (Wed, 24 Mar 2010) $
  * @since 1.2
  */
 
 public abstract class EmbeddedRungeKuttaIntegrator
   extends AdaptiveStepsizeIntegrator {
+
+    /** Indicator for <i>fsal</i> methods. */
+    private final boolean fsal;
+
+    /** Time steps from Butcher array (without the first zero). */
+    private final double[] c;
+
+    /** Internal weights from Butcher array (without the first empty row). */
+    private final double[][] a;
+
+    /** External weights for the high order method from Butcher array. */
+    private final double[] b;
+
+    /** Prototype of the step interpolator. */
+    private final RungeKuttaStepInterpolator prototype;
+
+    /** Stepsize control exponent. */
+    private final double exp;
+
+    /** Safety factor for stepsize control. */
+    private double safety;
+
+    /** Minimal reduction factor for stepsize control. */
+    private double minReduction;
+
+    /** Maximal growth factor for stepsize control. */
+    private double maxGrowth;
 
   /** Build a Runge-Kutta integrator with the given Butcher array.
    * @param name name of the method
@@ -172,7 +197,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
     sanityChecks(equations, t0, y0, t, y);
     setEquations(equations);
     resetEvaluations();
-    final boolean forward = (t > t0);
+    final boolean forward = t > t0;
 
     // create some internal working arrays
     final int stages = c.length + 1;
@@ -189,7 +214,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
       rki.reinitialize(this, yTmp, yDotK, forward);
       interpolator = rki;
     } else {
-      interpolator = new DummyStepInterpolator(yTmp, forward);
+      interpolator = new DummyStepInterpolator(yTmp, yDotK[stages - 1], forward);
     }
     interpolator.storeTime(t0);
 
@@ -217,13 +242,16 @@ public abstract class EmbeddedRungeKuttaIntegrator
         }
 
         if (firstTime) {
-          final double[] scale;
-          if (vecAbsoluteTolerance != null) {
-            scale = vecAbsoluteTolerance;
-          } else {
-            scale = new double[y0.length];
-            Arrays.fill(scale, scalAbsoluteTolerance);
-          }
+          final double[] scale = new double[y0.length];
+          if (vecAbsoluteTolerance == null) {
+              for (int i = 0; i < scale.length; ++i) {
+                scale[i] = scalAbsoluteTolerance + scalRelativeTolerance * Math.abs(y[i]);
+              }
+            } else {
+              for (int i = 0; i < scale.length; ++i) {
+                scale[i] = vecAbsoluteTolerance[i] + vecRelativeTolerance[i] * Math.abs(y[i]);
+              }
+            }
           hNew = initializeStep(equations, forward, getOrder(), scale,
                                 stepStart, y, yDotK[0], yTmp, yDotK[1]);
           firstTime = false;
@@ -264,8 +292,16 @@ public abstract class EmbeddedRungeKuttaIntegrator
           if (manager.evaluateStep(interpolator)) {
               final double dt = manager.getEventTime() - stepStart;
               if (Math.abs(dt) <= Math.ulp(stepStart)) {
-                  // rejecting the step would lead to a too small next step, we accept it
-                  loop = false;
+                  // we cannot simply truncate the step, reject the current computation
+                  // and let the loop compute another state with the truncated step.
+                  // it is so small (much probably exactly 0 due to limited accuracy)
+                  // that the code above would fail handling it.
+                  // So we set up an artificial 0 size step by copying states
+                  interpolator.storeTime(stepStart);
+                  System.arraycopy(y, 0, yTmp, 0, y0.length);
+                  hNew     = 0;
+                  stepSize = 0;
+                  loop     = false;
               } else {
                   // reject the step to match exactly the next switch time
                   hNew = dt;
@@ -371,32 +407,5 @@ public abstract class EmbeddedRungeKuttaIntegrator
   protected abstract double estimateError(double[][] yDotK,
                                           double[] y0, double[] y1,
                                           double h);
-
-  /** Indicator for <i>fsal</i> methods. */
-  private boolean fsal;
-
-  /** Time steps from Butcher array (without the first zero). */
-  private double[] c;
-
-  /** Internal weights from Butcher array (without the first empty row). */
-  private double[][] a;
-
-  /** External weights for the high order method from Butcher array. */
-  private double[] b;
-
-  /** Prototype of the step interpolator. */
-  private RungeKuttaStepInterpolator prototype;
-                                         
-  /** Stepsize control exponent. */
-  private double exp;
-
-  /** Safety factor for stepsize control. */
-  private double safety;
-
-  /** Minimal reduction factor for stepsize control. */
-  private double minReduction;
-
-  /** Maximal growth factor for stepsize control. */
-  private double maxGrowth;
 
 }

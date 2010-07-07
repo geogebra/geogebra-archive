@@ -27,9 +27,9 @@ import org.apache.commons.math.util.MathUtils;
  * Representation of a rational number.
  *
  * implements Serializable since 2.0
- * 
+ *
  * @since 1.1
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 922715 $ $Date: 2010-03-13 20:38:14 -0500 (Sat, 13 Mar 2010) $
  */
 public class Fraction
     extends Number
@@ -77,12 +77,24 @@ public class Fraction
     /** A fraction representing "-1 / 1". */
     public static final Fraction MINUS_ONE = new Fraction(-1, 1);
 
+    /** Message for zero denominator. */
+    private static final String ZERO_DENOMINATOR_MESSAGE =
+        "zero denominator in fraction {0}/{1}";
+
+    /** Message for overflow. */
+    private static final String OVERFLOW_MESSAGE =
+        "overflow in fraction {0}/{1}, cannot negate";
+
+    /** Message for null fraction. */
+    private static final String NULL_FRACTION =
+        "null fraction";
+
     /** Serializable version identifier */
     private static final long serialVersionUID = 3698073679419233275L;
 
     /** The denominator. */
     private final int denominator;
-    
+
     /** The numerator. */
     private final int numerator;
 
@@ -206,7 +218,7 @@ public class Fraction
             if ((p2 > overflow) || (q2 > overflow)) {
                 throw new FractionConversionException(value, p2, q2);
             }
-            
+
             double convergent = (double)p2 / (double)q2;
             if (n < maxIterations && Math.abs(convergent - value) > epsilon && q2 < maxDenominator) {
                 p0 = p1;
@@ -223,7 +235,7 @@ public class Fraction
         if (n >= maxIterations) {
             throw new FractionConversionException(value, maxIterations);
         }
-        
+
         if (q2 < maxDenominator) {
             this.numerator = (int) p2;
             this.denominator = (int) q2;
@@ -233,16 +245,16 @@ public class Fraction
         }
 
     }
-    
+
     /**
-     * Create a fraction from an int. 
+     * Create a fraction from an int.
      * The fraction is num / 1.
      * @param num the numerator.
      */
     public Fraction(int num) {
         this(num, 1);
     }
-    
+
     /**
      * Create a fraction given the numerator and denominator.  The fraction is
      * reduced to lowest terms.
@@ -252,13 +264,13 @@ public class Fraction
      */
     public Fraction(int num, int den) {
         if (den == 0) {
-            throw MathRuntimeException.createArithmeticException("zero denominator in fraction {0}/{1}",
-                                                                 num, den);
+            throw MathRuntimeException.createArithmeticException(
+                  ZERO_DENOMINATOR_MESSAGE, num, den);
         }
         if (den < 0) {
             if (num == Integer.MIN_VALUE || den == Integer.MIN_VALUE) {
-                throw MathRuntimeException.createArithmeticException("overflow in fraction {0}/{1}, cannot negate",
-                                                                     num, den);
+                throw MathRuntimeException.createArithmeticException(
+                      OVERFLOW_MESSAGE, num, den);
             }
             num = -num;
             den = -den;
@@ -269,7 +281,7 @@ public class Fraction
             num /= d;
             den /= d;
         }
-        
+
         // move sign to numerator.
         if (den < 0) {
             num = -num;
@@ -278,7 +290,7 @@ public class Fraction
         this.numerator   = num;
         this.denominator = den;
     }
-    
+
     /**
      * Returns the absolute value of this fraction.
      * @return the absolute value.
@@ -290,9 +302,9 @@ public class Fraction
         } else {
             ret = negate();
         }
-        return ret;        
+        return ret;
     }
-    
+
     /**
      * Compares this object to another based on size.
      * @param object the object to compare to
@@ -314,7 +326,7 @@ public class Fraction
     public double doubleValue() {
         return (double)numerator / (double)denominator;
     }
-    
+
     /**
      * Test for the equality of two fractions.  If the lowest term
      * numerator and denominators are the same for both fractions, the two
@@ -326,28 +338,19 @@ public class Fraction
      */
     @Override
     public boolean equals(Object other) {
-        boolean ret;
-        
-        if (this == other) { 
-            ret = true;
-        } else if (other == null) {
-            ret = false;
-        } else {
-            try {
-                // since fractions are always in lowest terms, numerators and
-                // denominators can be compared directly for equality.
-                Fraction rhs = (Fraction)other;
-                ret = (numerator == rhs.numerator) &&
-                    (denominator == rhs.denominator);
-            } catch (ClassCastException ex) {
-                // ignore exception
-                ret = false;
-            }
+        if (this == other) {
+            return true;
         }
-        
-        return ret;
+        if (other instanceof Fraction) {
+            // since fractions are always in lowest terms, numerators and
+            // denominators can be compared directly for equality.
+            Fraction rhs = (Fraction)other;
+            return (numerator == rhs.numerator) &&
+                (denominator == rhs.denominator);
+        }
+        return false;
     }
-    
+
     /**
      * Gets the fraction as a <tt>float</tt>. This calculates the fraction as
      * the numerator divided by denominator.
@@ -357,7 +360,7 @@ public class Fraction
     public float floatValue() {
         return (float)doubleValue();
     }
-    
+
     /**
      * Access the denominator.
      * @return the denominator.
@@ -365,7 +368,7 @@ public class Fraction
     public int getDenominator() {
         return denominator;
     }
-    
+
     /**
      * Access the numerator.
      * @return the numerator.
@@ -373,16 +376,16 @@ public class Fraction
     public int getNumerator() {
         return numerator;
     }
-    
+
     /**
      * Gets a hashCode for the fraction.
      * @return a hash code value for this object
      */
     @Override
     public int hashCode() {
-        return 37 * (37 * 17 + getNumerator()) + getDenominator();
+        return 37 * (37 * 17 + numerator) + denominator;
     }
-    
+
     /**
      * Gets the fraction as an <tt>int</tt>. This returns the whole number part
      * of the fraction.
@@ -392,7 +395,7 @@ public class Fraction
     public int intValue() {
         return (int)doubleValue();
     }
-    
+
     /**
      * Gets the fraction as a <tt>long</tt>. This returns the whole number part
      * of the fraction.
@@ -402,15 +405,15 @@ public class Fraction
     public long longValue() {
         return (long)doubleValue();
     }
-    
+
     /**
      * Return the additive inverse of this fraction.
      * @return the negation of this fraction.
      */
     public Fraction negate() {
         if (numerator==Integer.MIN_VALUE) {
-            throw MathRuntimeException.createArithmeticException("overflow in fraction {0}/{1}, cannot negate",
-                                                                 numerator, denominator);
+            throw MathRuntimeException.createArithmeticException(
+                  OVERFLOW_MESSAGE, numerator, denominator);
         }
         return new Fraction(-numerator, denominator);
     }
@@ -422,7 +425,7 @@ public class Fraction
     public Fraction reciprocal() {
         return new Fraction(denominator, numerator);
     }
-    
+
     /**
      * <p>Adds the value of this fraction to another, returning the result in reduced form.
      * The algorithm follows Knuth, 4.5.1.</p>
@@ -447,7 +450,7 @@ public class Fraction
     }
 
     /**
-     * <p>Subtracts the value of another fraction from the value of this one, 
+     * <p>Subtracts the value of another fraction from the value of this one,
      * returning the result in reduced form.</p>
      *
      * @param fraction  the fraction to subtract, must not be <code>null</code>
@@ -469,9 +472,9 @@ public class Fraction
         return new Fraction(numerator - i * denominator, denominator);
     }
 
-    /** 
+    /**
      * Implement add and subtract using algorithm described in Knuth 4.5.1.
-     * 
+     *
      * @param fraction the fraction to subtract, must not be <code>null</code>
      * @param isAdd true to add, false to subtract
      * @return a <code>Fraction</code> instance with the resulting values
@@ -481,7 +484,7 @@ public class Fraction
      */
     private Fraction addSub(Fraction fraction, boolean isAdd) {
         if (fraction == null) {
-            throw MathRuntimeException.createIllegalArgumentException("null fraction");
+            throw MathRuntimeException.createIllegalArgumentException(NULL_FRACTION);
         }
         // zero is identity for addition.
         if (numerator == 0) {
@@ -489,7 +492,7 @@ public class Fraction
         }
         if (fraction.numerator == 0) {
             return this;
-        }     
+        }
         // if denominators are randomly distributed, d1 will be 1 about 61%
         // of the time.
         int d1 = MathUtils.gcd(denominator, fraction.denominator);
@@ -498,7 +501,7 @@ public class Fraction
             int uvp = MathUtils.mulAndCheck(numerator, fraction.denominator);
             int upv = MathUtils.mulAndCheck(fraction.numerator, denominator);
             return new Fraction
-                (isAdd ? MathUtils.addAndCheck(uvp, upv) : 
+                (isAdd ? MathUtils.addAndCheck(uvp, upv) :
                  MathUtils.subAndCheck(uvp, upv),
                  MathUtils.mulAndCheck(denominator, fraction.denominator));
         }
@@ -521,13 +524,13 @@ public class Fraction
             throw MathRuntimeException.createArithmeticException("overflow, numerator too large after multiply: {0}",
                                                                  w);
         }
-        return new Fraction (w.intValue(), 
-                MathUtils.mulAndCheck(denominator/d1, 
+        return new Fraction (w.intValue(),
+                MathUtils.mulAndCheck(denominator/d1,
                         fraction.denominator/d2));
     }
 
     /**
-     * <p>Multiplies the value of this fraction by another, returning the 
+     * <p>Multiplies the value of this fraction by another, returning the
      * result in reduced form.</p>
      *
      * @param fraction  the fraction to multiply by, must not be <code>null</code>
@@ -538,7 +541,7 @@ public class Fraction
      */
     public Fraction multiply(Fraction fraction) {
         if (fraction == null) {
-            throw MathRuntimeException.createIllegalArgumentException("null fraction");
+            throw MathRuntimeException.createIllegalArgumentException(NULL_FRACTION);
         }
         if (numerator == 0 || fraction.numerator == 0) {
             return ZERO;
@@ -573,7 +576,7 @@ public class Fraction
      */
     public Fraction divide(Fraction fraction) {
         if (fraction == null) {
-            throw MathRuntimeException.createIllegalArgumentException("null fraction");
+            throw MathRuntimeException.createIllegalArgumentException(NULL_FRACTION);
         }
         if (fraction.numerator == 0) {
             throw MathRuntimeException.createArithmeticException(
@@ -606,8 +609,7 @@ public class Fraction
     public static Fraction getReducedFraction(int numerator, int denominator) {
         if (denominator == 0) {
             throw MathRuntimeException.createArithmeticException(
-                    "zero denominator in fraction {0}/{1}",
-                    numerator, denominator);
+                  ZERO_DENOMINATOR_MESSAGE, numerator, denominator);
         }
         if (numerator==0) {
             return ZERO; // normalize zero.
@@ -620,8 +622,7 @@ public class Fraction
             if (numerator==Integer.MIN_VALUE ||
                     denominator==Integer.MIN_VALUE) {
                 throw MathRuntimeException.createArithmeticException(
-                        "overflow in fraction {0}/{1}, cannot negate",
-                        numerator, denominator);
+                      OVERFLOW_MESSAGE, numerator, denominator);
             }
             numerator = -numerator;
             denominator = -denominator;
@@ -638,7 +639,7 @@ public class Fraction
      * Returns the <code>String</code> representing this fraction, ie
      * "num / dem" or just "num" if the denominator is one.
      * </p>
-     * 
+     *
      * @return a string representation of the fraction.
      * @see java.lang.Object#toString()
      */

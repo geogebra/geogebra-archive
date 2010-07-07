@@ -20,8 +20,6 @@ package org.apache.commons.math.ode.sampling;
 import java.io.Externalizable;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.commons.math.ode.FirstOrderIntegrator;
-import org.apache.commons.math.ode.SecondOrderIntegrator;
 
 /** This interface represents an interpolator over the last step
  * during an ODE integration.
@@ -41,36 +39,35 @@ import org.apache.commons.math.ode.SecondOrderIntegrator;
  * {@link #copy()} method.
  * </p>
  *
- * @see FirstOrderIntegrator
- * @see SecondOrderIntegrator
+ * @see org.apache.commons.math.ode.FirstOrderIntegrator
+ * @see org.apache.commons.math.ode.SecondOrderIntegrator
  * @see StepHandler
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
-public interface StepInterpolator
-  extends Externalizable {
+public interface StepInterpolator extends Externalizable {
 
   /**
    * Get the previous grid point time.
    * @return previous grid point time
    */
-  public double getPreviousTime();
-    
+  double getPreviousTime();
+
   /**
    * Get the current grid point time.
    * @return current grid point time
    */
-  public double getCurrentTime();
-    
+  double getCurrentTime();
+
   /**
    * Get the time of the interpolated point.
    * If {@link #setInterpolatedTime} has not been called, it returns
    * the current grid point time.
    * @return interpolation point time
    */
-  public double getInterpolatedTime();
-    
+  double getInterpolatedTime();
+
   /**
    * Set the time of the interpolated point.
    * <p>Setting the time outside of the current step is now allowed, but
@@ -83,7 +80,7 @@ public interface StepInterpolator
    * created using {@link #copy()}.</p>
    * @param time time of the interpolated point
    */
-  public void setInterpolatedTime(double time);
+  void setInterpolatedTime(double time);
 
   /**
    * Get the state vector of the interpolated point.
@@ -95,8 +92,7 @@ public interface StepInterpolator
    * @throws DerivativeException if this call induces an automatic
    * step finalization that throws one
    */
-  public double[] getInterpolatedState()
-      throws DerivativeException;
+  double[] getInterpolatedState() throws DerivativeException;
 
   /**
    * Get the derivatives of the state vector of the interpolated point.
@@ -109,8 +105,7 @@ public interface StepInterpolator
    * step finalization that throws one
    * @since 2.0
    */
-  public double[] getInterpolatedDerivatives()
-      throws DerivativeException;
+  double[] getInterpolatedDerivatives() throws DerivativeException;
 
   /** Check if the natural integration direction is forward.
    * <p>This method provides the integration direction as specified by
@@ -121,7 +116,7 @@ public interface StepInterpolator
    * @return true if the integration variable (time) increases during
    * integration
    */
-  public boolean isForward();
+  boolean isForward();
 
   /** Copy the instance.
    * <p>The copied instance is guaranteed to be independent from the
@@ -132,6 +127,6 @@ public interface StepInterpolator
    * step finalization that throws one
    * @see #setInterpolatedTime(double)
    */
-   public StepInterpolator copy() throws DerivativeException;
+   StepInterpolator copy() throws DerivativeException;
 
 }

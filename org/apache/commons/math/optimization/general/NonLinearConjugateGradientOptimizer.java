@@ -22,13 +22,12 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
-import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
+import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.RealPointValuePair;
-import org.apache.commons.math.optimization.SimpleVectorialValueChecker;
 
-/** 
+/**
  * Non-linear conjugate gradient optimizer.
  * <p>
  * This class supports both the Fletcher-Reeves and the Polak-Ribi&egrave;re
@@ -36,7 +35,7 @@ import org.apache.commons.math.optimization.SimpleVectorialValueChecker;
  * optional preconditioning.
  * </p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:23 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  *
  */
@@ -58,7 +57,8 @@ public class NonLinearConjugateGradientOptimizer
     private double initialStep;
 
     /** Simple constructor with default settings.
-     * <p>The convergence check is set to a {@link SimpleVectorialValueChecker}
+     * <p>The convergence check is set to a {@link
+     * org.apache.commons.math.optimization.SimpleVectorialValueChecker}
      * and the maximal number of iterations is set to
      * {@link AbstractScalarDifferentiableOptimizer#DEFAULT_MAX_ITERATIONS}.
      * @param updateFormula formula to use for updating the &beta; parameter,
@@ -83,12 +83,12 @@ public class NonLinearConjugateGradientOptimizer
 
     /**
      * Set the solver to use during line search.
-     * @param solver solver to use during line search, may be null
+     * @param lineSearchSolver solver to use during line search, may be null
      * to remove an already registered solver and fall back to the
      * default {@link BrentSolver Brent solver}.
      */
-    public void setLineSearchSolver(final UnivariateRealSolver solver) {
-        this.solver = solver;
+    public void setLineSearchSolver(final UnivariateRealSolver lineSearchSolver) {
+        this.solver = lineSearchSolver;
     }
 
     /**
@@ -124,7 +124,7 @@ public class NonLinearConjugateGradientOptimizer
             }
             final int n = point.length;
             double[] r = computeObjectiveGradient(point);
-            if (goalType == GoalType.MINIMIZE) {
+            if (goal == GoalType.MINIMIZE) {
                 for (int i = 0; i < n; ++i) {
                     r[i] = -r[i];
                 }
@@ -168,7 +168,7 @@ public class NonLinearConjugateGradientOptimizer
                     point[i] += step * searchDirection[i];
                 }
                 r = computeObjectiveGradient(point);
-                if (goalType == GoalType.MINIMIZE) {
+                if (goal == GoalType.MINIMIZE) {
                     for (int i = 0; i < n; ++i) {
                         r[i] = -r[i];
                     }
@@ -189,7 +189,7 @@ public class NonLinearConjugateGradientOptimizer
                     double deltaMid = 0;
                     for (int i = 0; i < r.length; ++i) {
                         deltaMid += r[i] * steepestDescent[i];
-                    }                    
+                    }
                     beta = (delta - deltaMid) / deltaOld;
                 }
                 steepestDescent = newSteepestDescent;

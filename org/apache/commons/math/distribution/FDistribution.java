@@ -27,27 +27,31 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 07:53:44 -0500 (Tue, 09 Mar 2010) $
  */
 public interface FDistribution extends ContinuousDistribution {
     /**
      * Modify the numerator degrees of freedom.
      * @param degreesOfFreedom the new numerator degrees of freedom.
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setNumeratorDegreesOfFreedom(double degreesOfFreedom);
-    
+
     /**
      * Access the numerator degrees of freedom.
      * @return the numerator degrees of freedom.
      */
     double getNumeratorDegreesOfFreedom();
-    
+
     /**
      * Modify the denominator degrees of freedom.
      * @param degreesOfFreedom the new denominator degrees of freedom.
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setDenominatorDegreesOfFreedom(double degreesOfFreedom);
-    
+
     /**
      * Access the denominator degrees of freedom.
      * @return the denominator degrees of freedom.

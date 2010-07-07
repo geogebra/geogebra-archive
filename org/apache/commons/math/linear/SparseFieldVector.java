@@ -27,11 +27,11 @@ import org.apache.commons.math.util.OpenIntToFieldHashMap;
 /**
  * This class implements the {@link FieldVector} interface with a {@link OpenIntToFieldHashMap} backing store.
  * @param <T> the type of the field elements
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 922714 $ $Date: 2010-03-13 20:35:14 -0500 (Sat, 13 Mar 2010) $
  * @since 2.0
  */
 public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
-    
+
     /**
      *  Serial version id
      */
@@ -57,7 +57,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         this(field, 0);
     }
 
-    
+
     /**
      * Construct a (dimension)-length vector of zeros.
      * @param field field to which the elements belong
@@ -80,7 +80,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         entries = new OpenIntToFieldHashMap<T>(v.entries);
     }
 
-    
+
     /**
      * Build a vector with known the sparseness (for advanced use only).
      * @param field field to which the elements belong
@@ -109,7 +109,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         }
     }
 
-     
+
 
     /**
      * Copy constructor.
@@ -128,7 +128,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     private OpenIntToFieldHashMap<T> getEntries() {
         return entries;
     }
-    
+
     /**
      * Optimized method to add sparse vectors.
      * @param v vector to add
@@ -153,7 +153,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
 
     }
 
-    
+
     /** {@inheritDoc} */
     public FieldVector<T> add(T[] v) throws IllegalArgumentException {
         checkVectorDimensions(v.length);
@@ -185,7 +185,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
             return append((SparseFieldVector<T>) v);
         } else {
             return append(v.toArray());
-        }   
+        }
     }
 
     /** {@inheritDoc} */
@@ -390,7 +390,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      /** {@inheritDoc} */
      public FieldVector<T> mapSubtract(T d) {
         return copy().mapSubtractToSelf(d);
-    }    
+    }
 
      /** {@inheritDoc} */
      public FieldVector<T> mapSubtractToSelf(T d) {
@@ -485,7 +485,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         for (int i = 0; i < v.length; i++) {
             setEntry(i + index, v[i]);
         }
-        
+
     }
 
     /**
@@ -537,7 +537,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     public T[] toArray() {
         return getData();
     }
-    
+
     /**
      * Check if an index is valid.
      *
@@ -584,7 +584,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      * @param length size of the array to build
      * @return a new array
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // field is type T
     private T[] buildArray(final int length) {
         return (T[]) Array.newInstance(field.getZero().getClass(), length);
     }
@@ -608,7 +608,6 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
 
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
 
@@ -616,14 +615,12 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
             return true;
         }
 
-        if (obj == null) {
+        if (!(obj instanceof SparseFieldVector<?>)) {
             return false;
         }
 
-        if (!(obj instanceof SparseFieldVector)) {
-            return false;
-        }
-
+        @SuppressWarnings("unchecked") // OK, because "else if" check below ensures that
+                                       // other must be the same type as this
         SparseFieldVector<T> other = (SparseFieldVector<T>) obj;
         if (field == null) {
             if (other.field != null) {
@@ -656,5 +653,5 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
 
-    
+
 }

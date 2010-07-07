@@ -29,15 +29,15 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * <p>
  * This implementation employs basic trapezoid rule as building blocks to
  * calculate the Simpson's rule of alternating 2/3 and 4/3.</p>
- *  
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ *
+ * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
  * @since 1.2
  */
 public class SimpsonIntegrator extends UnivariateRealIntegratorImpl {
 
     /**
      * Construct an integrator for the given function.
-     * 
+     *
      * @param f function to integrate
      * @deprecated as of 2.0 the integrand function is passed as an argument
      * to the {@link #integrate(UnivariateRealFunction, double, double)}method.
@@ -65,30 +65,27 @@ public class SimpsonIntegrator extends UnivariateRealIntegratorImpl {
     public double integrate(final UnivariateRealFunction f,
                             final double min, final double max)
         throws MaxIterationsExceededException, FunctionEvaluationException, IllegalArgumentException {
-        
-        int i = 1;
-        double s, olds, t, oldt;
-        
+
         clearResult();
         verifyInterval(min, max);
         verifyIterationCount();
 
         TrapezoidIntegrator qtrap = new TrapezoidIntegrator();
         if (minimalIterationCount == 1) {
-            s = (4 * qtrap.stage(f, min, max, 1) - qtrap.stage(f, min, max, 0)) / 3.0;
+            final double s = (4 * qtrap.stage(f, min, max, 1) - qtrap.stage(f, min, max, 0)) / 3.0;
             setResult(s, 1);
             return result;
         }
         // Simpson's rule requires at least two trapezoid stages.
-        olds = 0;
-        oldt = qtrap.stage(f, min, max, 0);
-        while (i <= maximalIterationCount) {
-            t = qtrap.stage(f, min, max, i);
-            s = (4 * t - oldt) / 3.0;
+        double olds = 0;
+        double oldt = qtrap.stage(f, min, max, 0);
+        for (int i = 1; i <= maximalIterationCount; ++i) {
+            final double t = qtrap.stage(f, min, max, i);
+            final double s = (4 * t - oldt) / 3.0;
             if (i >= minimalIterationCount) {
                 final double delta = Math.abs(s - olds);
                 final double rLimit =
-                    relativeAccuracy * (Math.abs(olds) + Math.abs(s)) * 0.5; 
+                    relativeAccuracy * (Math.abs(olds) + Math.abs(s)) * 0.5;
                 if ((delta <= rLimit) || (delta <= absoluteAccuracy)) {
                     setResult(s, i);
                     return result;
@@ -96,7 +93,6 @@ public class SimpsonIntegrator extends UnivariateRealIntegratorImpl {
             }
             olds = s;
             oldt = t;
-            i++;
         }
         throw new MaxIterationsExceededException(maximalIterationCount);
     }

@@ -27,7 +27,7 @@ import org.apache.commons.math.MathRuntimeException;
 /**
  * This class implements the {@link FieldVector} interface with a {@link FieldElement} array.
  * @param <T> the type of the field elements
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 903046 $ $Date: 2010-01-25 21:07:26 -0500 (Mon, 25 Jan 2010) $
  * @since 2.0
  */
 public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
@@ -35,20 +35,11 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     /** Serializable version identifier. */
     private static final long serialVersionUID = 7648186910365927050L;
 
-    /** Field to which the elements belong. */
-    private final Field<T> field;
-
     /** Entries of the vector. */
     protected T[] data;
 
-    /** Build an array of elements.
-     * @param length size of the array to build
-     * @return a new array
-     */
-    @SuppressWarnings("unchecked")
-    private T[] buildArray(final int length) {
-        return (T[]) Array.newInstance(field.getZero().getClass(), length);
-    }
+    /** Field to which the elements belong. */
+    private final Field<T> field;
 
     /**
      * Build a 0-length vector.
@@ -97,7 +88,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             data = d.clone();
         } catch (ArrayIndexOutOfBoundsException e) {
             throw MathRuntimeException.createIllegalArgumentException(
-                      "vector must have at least one element"); 
+                      "vector must have at least one element");
         }
     }
 
@@ -226,6 +217,15 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             throw MathRuntimeException.createIllegalArgumentException(
                       "vector must have at least one element");
         }
+    }
+
+    /** Build an array of elements.
+     * @param length size of the array to build
+     * @return a new array
+     */
+    @SuppressWarnings("unchecked") // field is of type T
+    private T[] buildArray(final int length) {
+        return (T[]) Array.newInstance(field.getZero().getClass(), length);
     }
 
     /** {@inheritDoc} */
@@ -672,7 +672,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
 
     /**
      * Set a set of consecutive elements.
-     * 
+     *
      * @param index index of first element to be set.
      * @param v vector containing the values to set.
      * @exception MatrixIndexException if the index is
@@ -706,7 +706,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
 
     /**
      * Check if instance dimension is equal to some expected value.
-     * 
+     *
      * @param n expected dimension.
      * @exception IllegalArgumentException if the dimension is
      * inconsistent with vector size
@@ -737,13 +737,12 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
      * @return true if two 3D vector objects are equal, false if
      *         object is null, not an instance of Vector3D, or
      *         not equal to this Vector3D instance
-     * 
+     *
      */
-    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object other) {
 
-      if (this == other) { 
+      if (this == other) {
         return true;
       }
 
@@ -752,7 +751,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
       }
 
       try {
-
+          @SuppressWarnings("unchecked") // May fail, but we ignore ClassCastException
           FieldVector<T> rhs = (FieldVector<T>) other;
           if (data.length != rhs.getDimension()) {
               return false;
@@ -771,7 +770,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
       }
 
     }
-    
+
     /**
      * Get a hashCode for the real vector.
      * <p>All NaN values have the same hash code.</p>

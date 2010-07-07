@@ -16,45 +16,27 @@
  */
 package org.apache.commons.math.genetics;
 
-import org.apache.commons.math.random.JDKRandomGenerator;
 import org.apache.commons.math.random.RandomGenerator;
+import org.apache.commons.math.random.JDKRandomGenerator;
 
 /**
  * Implementation of a genetic algorithm. All factors that govern the operation
  * of the algorithm can be configured for a specific problem.
  *
  * @since 2.0
- * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:24 $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
  */
 public class GeneticAlgorithm {
 
     /**
      * Static random number generator shared by GA implementation classes.
-     * Set the randomGenerator seed to get reproducible results.  
+     * Set the randomGenerator seed to get reproducible results.
      * Use {@link #setRandomGenerator(RandomGenerator)} to supply an alternative
      * to the default JDK-provided PRNG.
      */
     //@GuardedBy("this")
     private static RandomGenerator randomGenerator = new JDKRandomGenerator();
-    
-    /**
-     * Set the (static) random generator.
-     * 
-     * @param random random generator
-     */
-    public synchronized static void setRandomGenerator(RandomGenerator random) {
-        randomGenerator = random;
-    }
-    
-    /**
-     * Returns the (static) random generator.
-     * 
-     * @return the static random generator shared by GA implementation classes
-     */
-    public synchronized static RandomGenerator getRandomGenerator() {
-        return randomGenerator;
-    }
-      
+
     /** the crossover policy used by the algorithm. */
     private final CrossoverPolicy crossoverPolicy;
 
@@ -69,7 +51,10 @@ public class GeneticAlgorithm {
 
     /** the selection policy used by the algorithm. */
     private final SelectionPolicy selectionPolicy;
-    
+
+    /** the number of generations evolved to reach {@link StoppingCondition} in the last run. */
+    private int generationsEvolved = 0;
+
     /**
      * @param crossoverPolicy The {@link CrossoverPolicy}
      * @param crossoverRate The crossover rate as a percentage (0-1 inclusive)
@@ -93,19 +78,41 @@ public class GeneticAlgorithm {
         this.mutationRate = mutationRate;
         this.selectionPolicy = selectionPolicy;
     }
-    
+
+    /**
+     * Set the (static) random generator.
+     *
+     * @param random random generator
+     */
+    public static synchronized void setRandomGenerator(RandomGenerator random) {
+        randomGenerator = random;
+    }
+
+    /**
+     * Returns the (static) random generator.
+     *
+     * @return the static random generator shared by GA implementation classes
+     */
+    public static synchronized RandomGenerator getRandomGenerator() {
+        return randomGenerator;
+    }
+
     /**
      * Evolve the given population. Evolution stops when the stopping condition
+     * is satisfied. Updates the {@link #getGenerationsEvolved() generationsEvolved}
+     * property with the number of generations evolved before the StoppingCondition
      * is satisfied.
-     * 
+     *
      * @param initial the initial, seed population.
      * @param condition the stopping condition used to stop evolution.
      * @return the population that satisfies the stopping condition.
      */
     public Population evolve(Population initial, StoppingCondition condition) {
         Population current = initial;
+        generationsEvolved = 0;
         while (!condition.isSatisfied(current)) {
             current = nextGeneration(current);
+            generationsEvolved++;
         }
         return current;
     }
@@ -128,7 +135,7 @@ public class GeneticAlgorithm {
      *    <li>Return nextGeneration</li>
      *    </ol>
      * </p>
-     * 
+     *
      * @param current the current population.
      * @return the population for the next generation.
      */
@@ -136,7 +143,7 @@ public class GeneticAlgorithm {
         Population nextGeneration = current.nextGeneration();
 
         RandomGenerator randGen = getRandomGenerator();
-        
+
         while (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit()) {
             // select parent chromosomes
             ChromosomePair pair = getSelectionPolicy().select(current);
@@ -165,8 +172,8 @@ public class GeneticAlgorithm {
         }
 
         return nextGeneration;
-    }    
-    
+    }
+
     /**
      * Returns the crossover policy.
      * @return crossover policy
@@ -206,5 +213,16 @@ public class GeneticAlgorithm {
     public SelectionPolicy getSelectionPolicy() {
         return selectionPolicy;
     }
-        
+
+    /**
+     * Returns the number of generations evolved to
+     * reach {@link StoppingCondition} in the last run.
+     *
+     * @return number of generations evolved
+     * @since 2.1
+     */
+    public int getGenerationsEvolved() {
+        return generationsEvolved;
+    }
+
 }

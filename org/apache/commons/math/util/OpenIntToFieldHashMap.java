@@ -36,13 +36,30 @@ import org.apache.commons.math.MathRuntimeException;
  * <code>ConcurrentModificationException</code> when they detect the map has been
  * modified during iteration.</p>
  * @param <T> the type of the field elements
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 903047 $ $Date: 2010-01-25 21:07:42 -0500 (Mon, 25 Jan 2010) $
  * @since 2.0
  */
 public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Serializable {
-    
+
+    /** Status indicator for free table entries. */
+    protected static final byte FREE    = 0;
+
+    /** Status indicator for full table entries. */
+    protected static final byte FULL    = 1;
+
+    /** Status indicator for removed table entries. */
+    protected static final byte REMOVED = 2;
+
     /** Serializable version identifier. */
     private static final long serialVersionUID = -9179080286849120720L;
+
+    /** Message for map modification during iteration. */
+    private static final String CONCURRENT_MODIFICATION_MESSAGE =
+        "map has been modified while iterating";
+
+    /** Message for exhausted iterator. */
+    private static final String EXHAUSTED_ITERATOR_MESSAGE =
+        "iterator exhausted";
 
     /** Load factor for the map. */
     private static final float LOAD_FACTOR = 0.5f;
@@ -60,18 +77,9 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
     /** Number of bits to perturb the index when probing for collision resolution. */
     private static final int PERTURB_SHIFT = 5;
 
-    /** Status indicator for free table entries. */
-    protected static final byte FREE    = 0;
-
-    /** Status indicator for full table entries. */
-    protected static final byte FULL    = 1;
-
-    /** Status indicator for removed table entries. */
-    protected static final byte REMOVED = 2;
-
     /** Field to which the elements belong. */
     private final Field<T> field;
-    
+
     /** Keys table. */
     private int[] keys;
 
@@ -198,7 +206,8 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             return missingEntries;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -227,7 +236,8 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             return false;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -293,7 +303,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
                 j = probe(perturb, j);
                 index = j & mask;
                 perturb >>= PERTURB_SHIFT;
-                
+
                 if (states[index] != FULL || keys[index] == key) {
                     break;
                 }
@@ -352,7 +362,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         return size;
     }
 
-    
+
     /**
      * Remove the value associated with a key.
      * @param key key to which the value is associated
@@ -370,7 +380,8 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             return missingEntries;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -487,7 +498,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
 
-    
+
     /** Iterator class for the map. */
     public class Iterator {
 
@@ -535,10 +546,11 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         public int key()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException("map has been modified while iterating");
+                throw MathRuntimeException.createConcurrentModificationException(
+                      CONCURRENT_MODIFICATION_MESSAGE);
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException("iterator exhausted");
+                throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
             }
             return keys[current];
         }
@@ -552,10 +564,11 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         public T value()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException("map has been modified while iterating");
+                throw MathRuntimeException.createConcurrentModificationException(
+                      CONCURRENT_MODIFICATION_MESSAGE);
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException("iterator exhausted");
+                throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
             }
             return values[current];
         }
@@ -569,7 +582,8 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             throws ConcurrentModificationException, NoSuchElementException {
 
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException("map has been modified while iterating");
+                throw MathRuntimeException.createConcurrentModificationException(
+                      CONCURRENT_MODIFICATION_MESSAGE);
             }
 
             // advance on step
@@ -583,7 +597,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             } catch (ArrayIndexOutOfBoundsException e) {
                 next = -2;
                 if (current < 0) {
-                    throw MathRuntimeException.createNoSuchElementException("iterator exhausted");
+                    throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
                 }
             }
 
@@ -608,7 +622,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
      * @param length size of the array to build
      * @return a new array
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // field is of type T
     private T[] buildArray(final int length) {
         return (T[]) Array.newInstance(field.getZero().getClass(), length);
     }

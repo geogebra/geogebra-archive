@@ -34,7 +34,7 @@ import org.apache.commons.math.ode.DerivativeException;
  *
  * @see StepHandler
  * @see StepNormalizer
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
@@ -57,7 +57,6 @@ public interface FixedStepHandler  {
    * @param isLast true if the step is the last one
    * @throws DerivativeException if some error condition is encountered
    */
-  public void handleStep(double t, double[] y, double[] yDot, boolean isLast)
-      throws DerivativeException;
+  void handleStep(double t, double[] y, double[] yDot, boolean isLast) throws DerivativeException;
 
 }

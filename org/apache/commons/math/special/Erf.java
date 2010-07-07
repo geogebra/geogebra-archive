@@ -22,7 +22,7 @@ import org.apache.commons.math.MathException;
  * This is a utility class that provides computation methods related to the
  * error functions.
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  */
 public class Erf {
 
@@ -35,14 +35,14 @@ public class Erf {
 
     /**
      * Returns the error function erf(x).
-     * 
+     *
      * The implementation of this method is based on:
      * <ul>
      * <li>
      * <a href="http://mathworld.wolfram.com/Erf.html">
      * Erf</a>, equation (3).</li>
      * </ul>
-     * 
+     *
      * @param x the value.
      * @return the error function erf(x)
      * @throws MathException if the algorithm fails to converge.

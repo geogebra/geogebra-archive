@@ -29,8 +29,8 @@ package org.apache.commons.math.linear;
  * ||A &times; X - B|| is exactly 0. Other solvers can also find solutions
  * with non-square matrix A and with non-null minimal norm. If an exact linear
  * solution exists it is also the minimal norm solution.</p>
- *   
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public interface DecompositionSolver {

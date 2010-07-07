@@ -41,7 +41,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * step.</p>
  *
  * @see ClassicalRungeKuttaIntegrator
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 782432 $ $Date: 2009-06-07 15:08:26 -0400 (Sun, 07 Jun 2009) $
  * @since 1.2
  */
 

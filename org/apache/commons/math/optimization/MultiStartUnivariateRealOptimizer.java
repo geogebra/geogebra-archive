@@ -23,7 +23,7 @@ import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.random.RandomGenerator;
 
-/** 
+/**
  * Special implementation of the {@link UnivariateRealOptimizer} interface adding
  * multi-start features to an existing optimizer.
  * <p>
@@ -31,7 +31,7 @@ import org.apache.commons.math.random.RandomGenerator;
  * turn with different starting points in order to avoid being trapped
  * into a local extremum when looking for a global one.
  * </p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimizer {

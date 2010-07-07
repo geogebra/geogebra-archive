@@ -22,8 +22,8 @@ import org.apache.commons.math.FunctionEvaluationException;
 /**
  * An interface representing a real function that depends on one independent
  * variable plus some extra parameters.
- *  
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ *
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  */
 public interface ParametricRealFunction {
 
@@ -34,7 +34,7 @@ public interface ParametricRealFunction {
      * @return the value
      * @throws FunctionEvaluationException if the function evaluation fails
      */
-    public double value(double x, double[] parameters)
+    double value(double x, double[] parameters)
         throws FunctionEvaluationException;
 
     /**
@@ -44,7 +44,7 @@ public interface ParametricRealFunction {
      * @return the value
      * @throws FunctionEvaluationException if the function evaluation fails
      */
-    public double[] gradient(double x, double[] parameters)
+    double[] gradient(double x, double[] parameters)
         throws FunctionEvaluationException;
 
 }

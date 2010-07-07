@@ -22,10 +22,10 @@ import org.apache.commons.math.MaxEvaluationsExceededException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
 import org.apache.commons.math.analysis.MultivariateVectorialFunction;
-import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealConvergenceChecker;
+import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.SimpleScalarValueChecker;
 
@@ -33,7 +33,7 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
  * Base class for implementing optimizers for multivariate scalar functions.
  * <p>This base class handles the boilerplate methods associated to thresholds
  * settings, iterations and evaluations counting.</p>
- * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:23 $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
  * @since 2.0
  */
 public abstract class AbstractScalarDifferentiableOptimizer
@@ -41,6 +41,18 @@ public abstract class AbstractScalarDifferentiableOptimizer
 
     /** Default maximal number of iterations allowed. */
     public static final int DEFAULT_MAX_ITERATIONS = 100;
+
+    /** Convergence checker. */
+    protected RealConvergenceChecker checker;
+
+    /**
+     * Type of optimization.
+     * @since 2.1
+     */
+    protected GoalType goal;
+
+    /** Current point set. */
+    protected double[] point;
 
     /** Maximal number of iterations allowed. */
     private int maxIterations;
@@ -57,20 +69,11 @@ public abstract class AbstractScalarDifferentiableOptimizer
     /** Number of gradient evaluations. */
     private int gradientEvaluations;
 
-    /** Convergence checker. */
-    protected RealConvergenceChecker checker;
-
     /** Objective function. */
-    private DifferentiableMultivariateRealFunction f;
+    private DifferentiableMultivariateRealFunction function;
 
     /** Objective function gradient. */
     private MultivariateVectorialFunction gradient;
-
-    /** Type of optimization. */
-    protected GoalType goalType;
-
-    /** Current point set. */
-    protected double[] point;
 
     /** Simple constructor with default settings.
      * <p>The convergence check is set to a {@link SimpleScalarValueChecker}
@@ -118,8 +121,8 @@ public abstract class AbstractScalarDifferentiableOptimizer
     }
 
     /** {@inheritDoc} */
-    public void setConvergenceChecker(RealConvergenceChecker checker) {
-        this.checker = checker;
+    public void setConvergenceChecker(RealConvergenceChecker convergenceChecker) {
+        this.checker = convergenceChecker;
     }
 
     /** {@inheritDoc} */
@@ -138,33 +141,33 @@ public abstract class AbstractScalarDifferentiableOptimizer
         }
     }
 
-    /** 
+    /**
      * Compute the gradient vector.
-     * @param point point at which the gradient must be evaluated
+     * @param evaluationPoint point at which the gradient must be evaluated
      * @return gradient at the specified point
      * @exception FunctionEvaluationException if the function gradient
      */
-    protected double[] computeObjectiveGradient(final double[] point)
+    protected double[] computeObjectiveGradient(final double[] evaluationPoint)
         throws FunctionEvaluationException {
         ++gradientEvaluations;
-        return gradient.value(point);
+        return gradient.value(evaluationPoint);
     }
 
-    /** 
+    /**
      * Compute the objective function value.
-     * @param point point at which the objective function must be evaluated
+     * @param evaluationPoint point at which the objective function must be evaluated
      * @return objective function value at specified point
      * @exception FunctionEvaluationException if the function cannot be evaluated
      * or its dimension doesn't match problem dimension or the maximal number
      * of iterations is exceeded
      */
-    protected double computeObjectiveValue(final double[] point)
+    protected double computeObjectiveValue(final double[] evaluationPoint)
         throws FunctionEvaluationException {
         if (++evaluations > maxEvaluations) {
             throw new FunctionEvaluationException(new MaxEvaluationsExceededException(maxEvaluations),
-                                                  point);
+                                                  evaluationPoint);
         }
-        return f.value(point);
+        return function.value(evaluationPoint);
     }
 
     /** {@inheritDoc} */
@@ -179,10 +182,10 @@ public abstract class AbstractScalarDifferentiableOptimizer
         gradientEvaluations = 0;
 
         // store optimization problem characteristics
-        this.f        = f;
-        gradient      = f.gradient();
-        this.goalType = goalType;
-        point         = startPoint.clone();
+        function = f;
+        gradient = f.gradient();
+        goal     = goalType;
+        point    = startPoint.clone();
 
         return doOptimize();
 
@@ -195,7 +198,7 @@ public abstract class AbstractScalarDifferentiableOptimizer
      * @exception OptimizationException if the algorithm failed to converge
      * @exception IllegalArgumentException if the start point dimension is wrong
      */
-    abstract protected RealPointValuePair doOptimize()
+    protected abstract RealPointValuePair doOptimize()
         throws FunctionEvaluationException, OptimizationException, IllegalArgumentException;
 
 }

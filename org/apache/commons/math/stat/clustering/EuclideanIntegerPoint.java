@@ -24,7 +24,7 @@ import org.apache.commons.math.util.MathUtils;
 
 /**
  * A simple implementation of {@link Clusterable} for points with integer coordinates.
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:22 $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
  * @since 2.0
  */
 public class EuclideanIntegerPoint implements Clusterable<EuclideanIntegerPoint>, Serializable {
@@ -97,6 +97,24 @@ public class EuclideanIntegerPoint implements Clusterable<EuclideanIntegerPoint>
             hashCode += i.hashCode() * 13 + 7;
         }
         return hashCode;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @since 2.1
+     */
+    @Override
+    public String toString() {
+        final StringBuffer buff = new StringBuffer("(");
+        final int[] coordinates = getPoint();
+        for (int i = 0; i < coordinates.length; i++) {
+            buff.append(coordinates[i]);
+            if (i < coordinates.length - 1) {
+                buff.append(",");
+            }
+        }
+        buff.append(")");
+        return buff.toString();
     }
 
 }

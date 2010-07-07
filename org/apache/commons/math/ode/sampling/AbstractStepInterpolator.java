@@ -23,9 +23,6 @@ import java.io.ObjectOutput;
 
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.commons.math.ode.FirstOrderIntegrator;
-import org.apache.commons.math.ode.SecondOrderIntegrator;
-import org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator;
 
 /** This abstract class represents an interpolator over the last step
  * during an ODE integration.
@@ -35,11 +32,11 @@ import org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator;
  * retrieve the state vector at intermediate times between the
  * previous and the current grid points (dense output).</p>
  *
- * @see FirstOrderIntegrator
- * @see SecondOrderIntegrator
+ * @see org.apache.commons.math.ode.FirstOrderIntegrator
+ * @see org.apache.commons.math.ode.SecondOrderIntegrator
  * @see StepHandler
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 1.2
  *
  */
@@ -84,9 +81,10 @@ public abstract class AbstractStepInterpolator
    * instance in order to initialize the internal arrays. This
    * constructor is used only in order to delay the initialization in
    * some cases. As an example, the {@link
-   * EmbeddedRungeKuttaIntegrator} uses the prototyping design pattern
-   * to create the step interpolators by cloning an uninitialized
-   * model and latter initializing the copy.
+   * org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator}
+   * class uses the prototyping design pattern to create the step
+   * interpolators by cloning an uninitialized model and latter
+   * initializing the copy.
    */
   protected AbstractStepInterpolator() {
     previousTime            = Double.NaN;
@@ -166,9 +164,9 @@ public abstract class AbstractStepInterpolator
   /** Reinitialize the instance
    * @param y reference to the integrator array holding the state at
    * the end of the step
-   * @param forward integration direction indicator
+   * @param isForward integration direction indicator
    */
-  protected void reinitialize(final double[] y, final boolean forward) {
+  protected void reinitialize(final double[] y, final boolean isForward) {
 
     previousTime      = Double.NaN;
     currentTime       = Double.NaN;
@@ -180,7 +178,7 @@ public abstract class AbstractStepInterpolator
     interpolatedDerivatives = new double[y.length];
 
     finalized         = false;
-    this.forward      = forward;
+    this.forward      = isForward;
     this.dirtyState   = true;
 
   }
@@ -231,17 +229,17 @@ public abstract class AbstractStepInterpolator
   public double getPreviousTime() {
     return previousTime;
   }
-    
+
   /** {@inheritDoc} */
   public double getCurrentTime() {
     return currentTime;
   }
-    
+
   /** {@inheritDoc} */
   public double getInterpolatedTime() {
     return interpolatedTime;
   }
-    
+
   /** {@inheritDoc} */
   public void setInterpolatedTime(final double time) {
       interpolatedTime = time;
@@ -266,7 +264,7 @@ public abstract class AbstractStepInterpolator
   protected abstract void computeInterpolatedStateAndDerivatives(double theta,
                                                                  double oneMinusThetaH)
     throws DerivativeException;
-    
+
   /** {@inheritDoc} */
   public double[] getInterpolatedState() throws DerivativeException {
 

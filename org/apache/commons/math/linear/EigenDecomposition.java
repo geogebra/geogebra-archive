@@ -19,13 +19,13 @@ package org.apache.commons.math.linear;
 
 
 /**
- * An interface to classes that implement an algorithm to calculate the 
+ * An interface to classes that implement an algorithm to calculate the
  * eigen decomposition of a real matrix.
  * <p>The eigen decomposition of matrix A is a set of two matrices:
  * V and D such that A = V &times; D &times; V<sup>T</sup>.
  * A, V and D are all m &times; m matrices.</p>
  * <p>This interface is similar in spirit to the <code>EigenvalueDecomposition</code>
- * class from the now defunct <a href="http://math.nist.gov/javanumerics/jama/">JAMA</a>
+ * class from the <a href="http://math.nist.gov/javanumerics/jama/">JAMA</a>
  * library, with the following changes:</p>
  * <ul>
  *   <li>a {@link #getVT() getVt} method has been added,</li>
@@ -38,13 +38,13 @@ package org.apache.commons.math.linear;
  * </ul>
  * @see <a href="http://mathworld.wolfram.com/EigenDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">Wikipedia</a>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 826627 $ $Date: 2009-10-19 06:27:47 -0400 (Mon, 19 Oct 2009) $
  * @since 2.0
  */
 public interface EigenDecomposition {
 
     /**
-     * Returns the matrix V of the decomposition. 
+     * Returns the matrix V of the decomposition.
      * <p>V is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * <p>The columns of V are the eigenvectors of the original matrix.</p>
      * @return the V matrix
@@ -52,7 +52,7 @@ public interface EigenDecomposition {
     RealMatrix getV();
 
     /**
-     * Returns the block diagonal matrix D of the decomposition. 
+     * Returns the block diagonal matrix D of the decomposition.
      * <p>D is a block diagonal matrix.</p>
      * <p>Real eigenvalues are on the diagonal while complex values are on
      * 2x2 blocks { {real +imaginary}, {-imaginary, real} }.</p>
@@ -63,7 +63,7 @@ public interface EigenDecomposition {
     RealMatrix getD();
 
     /**
-     * Returns the transpose of the matrix V of the decomposition. 
+     * Returns the transpose of the matrix V of the decomposition.
      * <p>V is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * <p>The columns of V are the eigenvectors of the original matrix.</p>
      * @return the transpose of the V matrix

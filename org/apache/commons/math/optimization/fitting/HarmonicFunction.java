@@ -20,7 +20,7 @@ package org.apache.commons.math.optimization.fitting;
 import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
 
 /** Harmonic function of the form <code>f (t) = a cos (&omega; t + &phi;)</code>.
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 786479 $ $Date: 2009-06-19 08:36:16 -0400 (Fri, 19 Jun 2009) $
  * @since 2.0
  */
 public class HarmonicFunction implements DifferentiableUnivariateRealFunction {

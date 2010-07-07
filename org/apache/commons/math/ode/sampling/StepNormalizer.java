@@ -43,7 +43,7 @@ import org.apache.commons.math.ode.DerivativeException;
  *
  * @see StepHandler
  * @see FixedStepHandler
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
@@ -122,7 +122,7 @@ public class StepNormalizer implements StepHandler {
             lastDerivatives = interpolator.getInterpolatedDerivatives().clone();
 
             // take the integration direction into account
-            forward = (interpolator.getCurrentTime() >= lastTime);
+            forward = interpolator.getCurrentTime() >= lastTime;
             if (! forward) {
                 h = -h;
             }

@@ -19,12 +19,12 @@ package org.apache.commons.math.linear;
 
 import org.apache.commons.math.MathException;
 
-/** 
+/**
  * This class represents exceptions thrown when a matrix expected to
  * be symmetric is not
- * 
+ *
  * @since 2.0
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  */
 
 public class NotSymmetricMatrixException extends MathException {

@@ -20,17 +20,18 @@ import org.apache.commons.math.FunctionEvaluationException;
 
 /**
  * An interface representing a univariate matrix function.
- *  
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:18 $
+ *
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 2.0
  */
 public interface UnivariateMatrixFunction {
+
     /**
      * Compute the value for the function.
      * @param x the point for which the function value should be computed
      * @return the value
      * @throws FunctionEvaluationException if the function evaluation fails
      */
-    public double[][] value(double x) throws FunctionEvaluationException;
+    double[][] value(double x) throws FunctionEvaluationException;
 
 }

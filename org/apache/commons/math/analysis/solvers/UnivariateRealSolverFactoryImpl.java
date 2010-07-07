@@ -22,10 +22,10 @@ package org.apache.commons.math.analysis.solvers;
  * <p>
  * The default solver returned by this factory is a {@link BrentSolver}.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  */
 public class UnivariateRealSolverFactoryImpl extends UnivariateRealSolverFactory {
-        
+
     /**
      * Default constructor.
      */
@@ -37,7 +37,7 @@ public class UnivariateRealSolverFactoryImpl extends UnivariateRealSolverFactory
     public UnivariateRealSolver newDefaultSolver() {
         return newBrentSolver();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public UnivariateRealSolver newBisectionSolver() {
@@ -49,13 +49,13 @@ public class UnivariateRealSolverFactoryImpl extends UnivariateRealSolverFactory
     public UnivariateRealSolver newBrentSolver() {
         return new BrentSolver();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public UnivariateRealSolver newNewtonSolver() {
         return new NewtonSolver();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public UnivariateRealSolver newSecantSolver() {

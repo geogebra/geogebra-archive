@@ -25,10 +25,9 @@ import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.QRDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.optimization.OptimizationException;
-import org.apache.commons.math.optimization.SimpleVectorialValueChecker;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 
-/** 
+/**
  * Gauss-Newton least-squares solver.
  * <p>
  * This class solve a least-square problem by solving the normal equations
@@ -37,7 +36,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is faster but QR decomposition is more robust for difficult problems.
  * </p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  *
  */
@@ -48,7 +47,8 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
     private final boolean useLU;
 
     /** Simple constructor with default settings.
-     * <p>The convergence check is set to a {@link SimpleVectorialValueChecker}
+     * <p>The convergence check is set to a {@link
+     * org.apache.commons.math.optimization.SimpleVectorialValueChecker}
      * and the maximal number of evaluation is set to
      * {@link AbstractLeastSquaresOptimizer#DEFAULT_MAX_ITERATIONS}.
      * @param useLU if true, the normal equations will be solved using LU
@@ -81,8 +81,8 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
             for (int i = 0; i < rows; ++i) {
 
                 final double[] grad   = jacobian[i];
-                final double weight   = weights[i];
-                final double residual = objective[i] - target[i];
+                final double weight   = residualsWeights[i];
+                final double residual = objective[i] - targetValues[i];
 
                 // compute the normal equation
                 final double wr = weight * residual;

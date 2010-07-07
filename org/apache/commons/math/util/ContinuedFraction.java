@@ -32,10 +32,10 @@ import org.apache.commons.math.MaxIterationsExceededException;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 920558 $ $Date: 2010-03-08 17:57:32 -0500 (Mon, 08 Mar 2010) $
  */
 public abstract class ContinuedFraction {
-    
+
     /** Maximum allowed numerical error. */
     private static final double DEFAULT_EPSILON = 10e-9;
 
@@ -67,7 +67,7 @@ public abstract class ContinuedFraction {
     /**
      * Evaluates the continued fraction at the value x.
      * @param x the evaluation point.
-     * @return the value of the continued fraction evaluated at x. 
+     * @return the value of the continued fraction evaluated at x.
      * @throws MathException if the algorithm fails to converge.
      */
     public double evaluate(double x) throws MathException {
@@ -78,7 +78,7 @@ public abstract class ContinuedFraction {
      * Evaluates the continued fraction at the value x.
      * @param x the evaluation point.
      * @param epsilon maximum error allowed.
-     * @return the value of the continued fraction evaluated at x. 
+     * @return the value of the continued fraction evaluated at x.
      * @throws MathException if the algorithm fails to converge.
      */
     public double evaluate(double x, double epsilon) throws MathException {
@@ -89,7 +89,7 @@ public abstract class ContinuedFraction {
      * Evaluates the continued fraction at the value x.
      * @param x the evaluation point.
      * @param maxIterations maximum number of convergents
-     * @return the value of the continued fraction evaluated at x. 
+     * @return the value of the continued fraction evaluated at x.
      * @throws MathException if the algorithm fails to converge.
      */
     public double evaluate(double x, int maxIterations) throws MathException {
@@ -100,7 +100,7 @@ public abstract class ContinuedFraction {
      * <p>
      * Evaluates the continued fraction at the value x.
      * </p>
-     * 
+     *
      * <p>
      * The implementation of this method is based on equations 14-17 of:
      * <ul>
@@ -115,11 +115,11 @@ public abstract class ContinuedFraction {
      * very large intermediate results which can result in numerical overflow.
      * As a means to combat these overflow conditions, the intermediate results
      * are scaled whenever they threaten to become numerically unstable.</p>
-     *   
+     *
      * @param x the evaluation point.
      * @param epsilon maximum error allowed.
      * @param maxIterations maximum number of convergents
-     * @return the value of the continued fraction evaluated at x. 
+     * @return the value of the continued fraction evaluated at x.
      * @throws MathException if the algorithm fails to converge.
      */
     public double evaluate(double x, double epsilon, int maxIterations)
@@ -138,24 +138,56 @@ public abstract class ContinuedFraction {
             double b = getB(n, x);
             double p2 = a * p1 + b * p0;
             double q2 = a * q1 + b * q0;
+            boolean infinite = false;
             if (Double.isInfinite(p2) || Double.isInfinite(q2)) {
-                // need to scale
-                if (a != 0.0) {
-                    p2 = p1 + (b / a * p0);
-                    q2 = q1 + (b / a * q0);
-                } else if (b != 0) {
-                    p2 = (a / b * p1) + p0;
-                    q2 = (a / b * q1) + q0;
-                } else {
-                    // can not scale an convergent is unbounded.
+                /*
+                 * Need to scale. Try successive powers of the larger of a or b
+                 * up to 5th power. Throw ConvergenceException if one or both
+                 * of p2, q2 still overflow.
+                 */
+                double scaleFactor = 1d;
+                double lastScaleFactor = 1d;
+                final int maxPower = 5;
+                final double scale = Math.max(a,b);
+                if (scale <= 0) {  // Can't scale
                     throw new ConvergenceException(
-                        "Continued fraction convergents diverged to +/- infinity for value {0}",
-                        x);
+                            "Continued fraction convergents diverged to +/- infinity for value {0}",
+                             x);
+                }
+                infinite = true;
+                for (int i = 0; i < maxPower; i++) {
+                    lastScaleFactor = scaleFactor;
+                    scaleFactor *= scale;
+                    if (a != 0.0 && a > b) {
+                        p2 = p1 / lastScaleFactor + (b / scaleFactor * p0);
+                        q2 = q1 / lastScaleFactor + (b / scaleFactor * q0);
+                    } else if (b != 0) {
+                        p2 = (a / scaleFactor * p1) + p0 / lastScaleFactor;
+                        q2 = (a / scaleFactor * q1) + q0 / lastScaleFactor;
+                    }
+                    infinite = Double.isInfinite(p2) || Double.isInfinite(q2);
+                    if (!infinite) {
+                        break;
+                    }
                 }
             }
+
+            if (infinite) {
+               // Scaling failed
+               throw new ConvergenceException(
+                 "Continued fraction convergents diverged to +/- infinity for value {0}",
+                  x);
+            }
+
             double r = p2 / q2;
+
+            if (Double.isNaN(r)) {
+                throw new ConvergenceException(
+                  "Continued fraction diverged to NaN for value {0}",
+                  x);
+            }
             relativeError = Math.abs(r / c - 1.0);
-                
+
             // prepare for next iteration
             c = p2 / q2;
             p0 = p1;

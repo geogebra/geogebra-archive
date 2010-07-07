@@ -28,8 +28,8 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * chapter 3.
  * <p>
  * The function should be integrable.</p>
- *  
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ *
+ * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
  * @since 1.2
  */
 public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
@@ -39,7 +39,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
 
     /**
      * Construct an integrator for the given function.
-     * 
+     *
      * @param f function to integrate
      * @deprecated as of 2.0 the integrand function is passed as an argument
      * to the {@link #integrate(UnivariateRealFunction, double, double)}method.
@@ -76,18 +76,16 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
     double stage(final UnivariateRealFunction f,
                  final double min, final double max, final int n)
         throws FunctionEvaluationException {
-        
-        long i, np;
-        double x, spacing, sum = 0;
-        
+
         if (n == 0) {
             s = 0.5 * (max - min) * (f.value(min) + f.value(max));
             return s;
         } else {
-            np = 1L << (n-1);           // number of new points in this stage
-            spacing = (max - min) / np; // spacing between adjacent new points
-            x = min + 0.5 * spacing;    // the first new point
-            for (i = 0; i < np; i++) {
+            final long np = 1L << (n-1);           // number of new points in this stage
+            double sum = 0;
+            final double spacing = (max - min) / np; // spacing between adjacent new points
+            double x = min + 0.5 * spacing;    // the first new point
+            for (long i = 0; i < np; i++) {
                 sum += f.value(x);
                 x += spacing;
             }
@@ -108,28 +106,24 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
     public double integrate(final UnivariateRealFunction f,
                             final double min, final double max)
         throws MaxIterationsExceededException, FunctionEvaluationException, IllegalArgumentException {
-        
-        int i = 1;
-        double t, oldt;
-        
+
         clearResult();
         verifyInterval(min, max);
         verifyIterationCount();
 
-        oldt = stage(f, min, max, 0);
-        while (i <= maximalIterationCount) {
-            t = stage(f, min, max, i);
+        double oldt = stage(f, min, max, 0);
+        for (int i = 1; i <= maximalIterationCount; ++i) {
+            final double t = stage(f, min, max, i);
             if (i >= minimalIterationCount) {
                 final double delta = Math.abs(t - oldt);
                 final double rLimit =
-                    relativeAccuracy * (Math.abs(oldt) + Math.abs(t)) * 0.5; 
+                    relativeAccuracy * (Math.abs(oldt) + Math.abs(t)) * 0.5;
                 if ((delta <= rLimit) || (delta <= absoluteAccuracy)) {
                     setResult(t, i);
                     return result;
                 }
             }
             oldt = t;
-            i++;
         }
         throw new MaxIterationsExceededException(maximalIterationCount);
     }

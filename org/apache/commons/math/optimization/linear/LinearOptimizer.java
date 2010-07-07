@@ -23,7 +23,7 @@ import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealPointValuePair;
 
-/** 
+/**
  * This interface represents an optimization algorithm for linear problems.
  * <p>Optimization algorithms find the input point set that either {@link GoalType
  * maximize or minimize} an objective function. In the linear case the form of
@@ -47,7 +47,7 @@ import org.apache.commons.math.optimization.RealPointValuePair;
  * the constraints, the x<sub>i</sub> are the coordinates of the current point and
  * v is the value of the constraint.
  * </p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public interface LinearOptimizer {

@@ -21,7 +21,7 @@ import org.apache.commons.math.MathRuntimeException;
 
 /**
  * Thrown when a visitor encounters an error while processing a matrix entry.
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 729673 $ $Date: 2008-12-27 15:55:12 -0500 (Sat, 27 Dec 2008) $
  */
 public class MatrixVisitorException extends MathRuntimeException {
 

@@ -17,20 +17,23 @@
 
 package org.apache.commons.math.random;
 
-/** 
+/**
  * This class is a gaussian normalized random generator for scalars.
  * <p>This class is a simple wrapper around the {@link
  * RandomGenerator#nextGaussian} method.</p>
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
 public class GaussianRandomGenerator implements NormalizedRandomGenerator {
 
+    /** Underlying generator. */
+    private final RandomGenerator generator;
+
     /** Create a new generator.
      * @param generator underlying random generator to use
      */
-    public GaussianRandomGenerator(RandomGenerator generator) {
+    public GaussianRandomGenerator(final RandomGenerator generator) {
         this.generator = generator;
     }
 
@@ -40,8 +43,5 @@ public class GaussianRandomGenerator implements NormalizedRandomGenerator {
     public double nextNormalizedDouble() {
         return generator.nextGaussian();
     }
-
-    /** Underlying generator. */
-    private RandomGenerator generator;
 
 }

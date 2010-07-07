@@ -30,90 +30,13 @@ import org.apache.commons.math.MathRuntimeException;
  * matrix elements. Derived class can provide faster implementations. </p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 903046 $ $Date: 2010-01-25 21:07:26 -0500 (Mon, 25 Jan 2010) $
  * @since 2.0
  */
 public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements FieldMatrix<T> {
-    
+
     /** Field to which the elements belong. */
     private final Field<T> field;
-
-    /**
-     * Get the elements type from an array.
-     * @param <T> the type of the field elements
-     * @param d data array
-     * @return field to which array elements belong
-     * @exception IllegalArgumentException if array is empty
-     */
-    protected static <T extends FieldElement<T>> Field<T> extractField(final T[][] d)
-        throws IllegalArgumentException {
-        if (d.length == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row"); 
-        }
-        if (d[0].length == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column"); 
-        }
-        return d[0][0].getField();
-    }
-
-    /**
-     * Get the elements type from an array.
-     * @param <T> the type of the field elements
-     * @param d data array
-     * @return field to which array elements belong
-     * @exception IllegalArgumentException if array is empty
-     */
-    protected static <T extends FieldElement<T>> Field<T> extractField(final T[] d)
-        throws IllegalArgumentException {
-        if (d.length == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row"); 
-        }
-        return d[0].getField();
-    }
-
-    /** Build an array of elements.
-     * <p>
-     * Complete arrays are filled with field.getZero()
-     * </p>
-     * @param <T> the type of the field elements
-     * @param field field to which array elements belong
-     * @param rows number of rows
-     * @param columns number of columns (may be negative to build partial
-     * arrays in the same way <code>new Field[rows][]</code> works)
-     * @return a new array
-     */
-    @SuppressWarnings("unchecked")
-    protected static <T extends FieldElement<T>> T[][] buildArray(final Field<T> field,
-                                                                  final int rows,
-                                                                  final int columns) {
-        if (columns < 0) {
-            T[] dummyRow = (T[]) Array.newInstance(field.getZero().getClass(), 0); 
-            return (T[][]) Array.newInstance(dummyRow.getClass(), rows);            
-        }
-        T[][] array =
-            (T[][]) Array.newInstance(field.getZero().getClass(), new int[] { rows, columns });
-        for (int i = 0; i < array.length; ++i) {
-            Arrays.fill(array[i], field.getZero());
-        }
-        return array;
-    }
-
-    /** Build an array of elements.
-     * <p>
-     * Arrays are filled with field.getZero()
-     * </p>
-     * @param <T> the type of the field elements
-     * @param field field to which array elements belong
-     * @param length of the array
-     * @return a new array
-     */
-    @SuppressWarnings("unchecked")
-    protected static <T extends FieldElement<T>> T[] buildArray(final Field<T> field,
-                                                                final int length) {
-        T[] array = (T[]) Array.newInstance(field.getZero().getClass(), length);
-        Arrays.fill(array, field.getZero());
-        return array;
-    }
 
     /**
      * Constructor for use with Serializable
@@ -121,7 +44,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
     protected AbstractFieldMatrix() {
         field = null;
     }
-    
+
     /**
      * Creates a matrix with no data
      * @param field field to which the elements belong
@@ -154,6 +77,83 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         this.field = field;
     }
 
+    /**
+     * Get the elements type from an array.
+     * @param <T> the type of the field elements
+     * @param d data array
+     * @return field to which array elements belong
+     * @exception IllegalArgumentException if array is empty
+     */
+    protected static <T extends FieldElement<T>> Field<T> extractField(final T[][] d)
+        throws IllegalArgumentException {
+        if (d.length == 0) {
+            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row");
+        }
+        if (d[0].length == 0) {
+            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column");
+        }
+        return d[0][0].getField();
+    }
+
+    /**
+     * Get the elements type from an array.
+     * @param <T> the type of the field elements
+     * @param d data array
+     * @return field to which array elements belong
+     * @exception IllegalArgumentException if array is empty
+     */
+    protected static <T extends FieldElement<T>> Field<T> extractField(final T[] d)
+        throws IllegalArgumentException {
+        if (d.length == 0) {
+            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row");
+        }
+        return d[0].getField();
+    }
+
+    /** Build an array of elements.
+     * <p>
+     * Complete arrays are filled with field.getZero()
+     * </p>
+     * @param <T> the type of the field elements
+     * @param field field to which array elements belong
+     * @param rows number of rows
+     * @param columns number of columns (may be negative to build partial
+     * arrays in the same way <code>new Field[rows][]</code> works)
+     * @return a new array
+     */
+    @SuppressWarnings("unchecked")
+    protected static <T extends FieldElement<T>> T[][] buildArray(final Field<T> field,
+                                                                  final int rows,
+                                                                  final int columns) {
+        if (columns < 0) {
+            T[] dummyRow = (T[]) Array.newInstance(field.getZero().getClass(), 0);
+            return (T[][]) Array.newInstance(dummyRow.getClass(), rows);
+        }
+        T[][] array =
+            (T[][]) Array.newInstance(field.getZero().getClass(), new int[] { rows, columns });
+        for (int i = 0; i < array.length; ++i) {
+            Arrays.fill(array[i], field.getZero());
+        }
+        return array;
+    }
+
+    /** Build an array of elements.
+     * <p>
+     * Arrays are filled with field.getZero()
+     * </p>
+     * @param <T> the type of the field elements
+     * @param field field to which array elements belong
+     * @param length of the array
+     * @return a new array
+     */
+    protected static <T extends FieldElement<T>> T[] buildArray(final Field<T> field,
+                                                                final int length) {
+        @SuppressWarnings("unchecked") // OK because field must be correct class
+        T[] array = (T[]) Array.newInstance(field.getZero().getClass(), length);
+        Arrays.fill(array, field.getZero());
+        return array;
+    }
+
     /** {@inheritDoc} */
     public Field<T> getField() {
         return field;
@@ -178,7 +178,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         for (int row = 0; row < rowCount; ++row) {
             for (int col = 0; col < columnCount; ++col) {
                 out.setEntry(row, col, getEntry(row, col).add(m.getEntry(row, col)));
-            }  
+            }
         }
 
         return out;
@@ -197,7 +197,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         for (int row = 0; row < rowCount; ++row) {
             for (int col = 0; col < columnCount; ++col) {
                 out.setEntry(row, col, getEntry(row, col).subtract(m.getEntry(row, col)));
-            }  
+            }
         }
 
         return out;
@@ -324,7 +324,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
 
         return subMatrix;
 
-    } 
+    }
 
     /** {@inheritDoc} */
     public void copySubMatrix(final int startRow, final int endRow,
@@ -396,24 +396,24 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
     }
 
     /** {@inheritDoc} */
-    public void setSubMatrix(final T[][] subMatrix, final int row, final int column) 
+    public void setSubMatrix(final T[][] subMatrix, final int row, final int column)
         throws MatrixIndexException {
 
         final int nRows = subMatrix.length;
         if (nRows == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row"); 
+            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row");
         }
 
         final int nCols = subMatrix[0].length;
         if (nCols == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column"); 
+            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column");
         }
 
         for (int r = 1; r < nRows; ++r) {
             if (subMatrix[r].length != nCols) {
                 throw MathRuntimeException.createIllegalArgumentException(
                         "some rows have length {0} while others have length {1}",
-                        nCols, subMatrix[r].length); 
+                        nCols, subMatrix[r].length);
             }
         }
 
@@ -426,7 +426,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
             for (int j = 0; j < nCols; ++j) {
                 setEntry(row + i, column + j, subMatrix[i][j]);
             }
-        } 
+        }
 
     }
 
@@ -444,7 +444,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         return out;
 
     }
-    
+
     /** {@inheritDoc} */
     public void setRowMatrix(final int row, final FieldMatrix<T> matrix)
         throws MatrixIndexException, InvalidMatrixException {
@@ -462,7 +462,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         }
 
     }
-    
+
     /** {@inheritDoc} */
     public FieldMatrix<T> getColumnMatrix(final int column)
         throws MatrixIndexException {
@@ -495,7 +495,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         }
 
     }
-    
+
     /** {@inheritDoc} */
     public FieldVector<T> getRowVector(final int row)
         throws MatrixIndexException {
@@ -518,7 +518,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         }
 
     }
-    
+
     /** {@inheritDoc} */
     public FieldVector<T> getColumnVector(final int column)
         throws MatrixIndexException {
@@ -541,7 +541,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         }
 
     }
-    
+
     /** {@inheritDoc} */
     public T[] getRow(final int row)
         throws MatrixIndexException {
@@ -573,7 +573,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         }
 
     }
-    
+
     /** {@inheritDoc} */
     public T[] getColumn(final int column)
         throws MatrixIndexException {
@@ -605,7 +605,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         }
 
     }
-    
+
     /** {@inheritDoc} */
     public abstract T getEntry(int row, int column)
         throws MatrixIndexException;
@@ -644,7 +644,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
 
     /** {@inheritDoc} */
     public boolean isSquare() {
-        return (getColumnDimension() == getRowDimension());
+        return getColumnDimension() == getRowDimension();
     }
 
     /** {@inheritDoc} */
@@ -953,33 +953,32 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
                     res.append(",");
                 }
                 res.append(getEntry(i, j));
-            } 
+            }
             res.append("}");
-        } 
+        }
 
         res.append("}");
         return res.toString();
 
-    } 
-    
+    }
+
     /**
      * Returns true iff <code>object</code> is a
      * <code>FieldMatrix</code> instance with the same dimensions as this
      * and all corresponding matrix entries are equal.
-     * 
+     *
      * @param object the object to test equality against.
      * @return true if object equals this
      */
-    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(final Object object) {
         if (object == this ) {
             return true;
         }
-        if (object instanceof FieldMatrix == false) {
+        if (object instanceof FieldMatrix<?> == false) {
             return false;
         }
-        FieldMatrix<T> m = (FieldMatrix<T>) object;
+        FieldMatrix<?> m = (FieldMatrix<?>) object;
         final int nRows = getRowDimension();
         final int nCols = getColumnDimension();
         if (m.getColumnDimension() != nCols || m.getRowDimension() != nRows) {
@@ -994,10 +993,10 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
         }
         return true;
     }
-    
+
     /**
      * Computes a hashcode for the matrix.
-     * 
+     *
      * @return hashcode for matrix
      */
     @Override
@@ -1066,7 +1065,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>> implements 
                                            startColumn, endColumn);
         }
 
-    
+
     }
 
     /**

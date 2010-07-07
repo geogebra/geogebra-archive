@@ -39,43 +39,43 @@ import java.util.Iterator;
  * aggregate statistics directly from a Collection of SummaryStatistics instances.
  * </p><p>
  * When {@link #createContributingStatistics()} is used to create SummaryStatistics
- * instances to be aggregated concurrently, the created instances' 
+ * instances to be aggregated concurrently, the created instances'
  * {@link SummaryStatistics#addValue(double)} methods must synchronize on the aggregating
  * instance maintained by this class.  In multithreaded environments, if the functionality
  * provided by {@link #aggregate(Collection)} is adequate, that method should be used
  * to avoid unecessary computation and synchronization delays.</p>
  *
  * @since 2.0
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
- * 
+ * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
+ *
  */
 public class AggregateSummaryStatistics implements StatisticalSummary,
         Serializable {
 
- 
+
     /** Serializable version identifier */
     private static final long serialVersionUID = -8207112444016386906L;
 
     /**
      * A SummaryStatistics serving as a prototype for creating SummaryStatistics
-     * contributing to this aggregate 
+     * contributing to this aggregate
      */
     private final SummaryStatistics statisticsPrototype;
-    
+
     /**
      * The SummaryStatistics in which aggregate statistics are accumulated.
      */
     private final SummaryStatistics statistics;
-    
+
     /**
      * Initializes a new AggregateSummaryStatistics with default statistics
      * implementations.
-     * 
+     *
      */
     public AggregateSummaryStatistics() {
         this(new SummaryStatistics());
     }
-    
+
     /**
      * Initializes a new AggregateSummaryStatistics with the specified statistics
      * object as a prototype for contributing statistics and for the internal
@@ -86,17 +86,17 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
      *      prototype both for the internal aggregate statistics and for
      *      contributing statistics obtained via the
      *      {@code createContributingStatistics()} method.  Being a prototype
-     *      means that other objects are initialized by copying this object's state. 
+     *      means that other objects are initialized by copying this object's state.
      *      If {@code null}, a new, default statistics object is used.  Any statistic
      *      values in the prototype are propagated to contributing statistics
      *      objects and (once) into these aggregate statistics.
      * @see #createContributingStatistics()
      */
     public AggregateSummaryStatistics(SummaryStatistics prototypeStatistics) {
-        this(prototypeStatistics, (prototypeStatistics == null ? null :
-                new SummaryStatistics(prototypeStatistics)));
+        this(prototypeStatistics,
+             prototypeStatistics == null ? null : new SummaryStatistics(prototypeStatistics));
     }
-    
+
     /**
      * Initializes a new AggregateSummaryStatistics with the specified statistics
      * object as a prototype for contributing statistics and for the internal
@@ -108,7 +108,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
      *      prototype both for the internal aggregate statistics and for
      *      contributing statistics obtained via the
      *      {@code createContributingStatistics()} method.  Being a prototype
-     *      means that other objects are initialized by copying this object's state. 
+     *      means that other objects are initialized by copying this object's state.
      *      If {@code null}, a new, default statistics object is used.  Any statistic
      *      values in the prototype are propagated to contributing statistics
      *      objects, but not into these aggregate statistics.
@@ -118,13 +118,13 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
      * @see #createContributingStatistics()
      */
     public AggregateSummaryStatistics(SummaryStatistics prototypeStatistics,
-            SummaryStatistics initialStatistics) {
-        this.statisticsPrototype = ((prototypeStatistics == null) ?
-                new SummaryStatistics() : prototypeStatistics);
-        this.statistics = ((initialStatistics == null) ?
-                new SummaryStatistics() : initialStatistics);
+                                      SummaryStatistics initialStatistics) {
+        this.statisticsPrototype =
+            (prototypeStatistics == null) ? new SummaryStatistics() : prototypeStatistics;
+        this.statistics =
+            (initialStatistics == null) ? new SummaryStatistics() : initialStatistics;
     }
-    
+
     /**
      * {@inheritDoc}.  This version returns the maximum over all the aggregated
      * data.
@@ -205,10 +205,10 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
             return statistics.getVariance();
         }
     }
-    
+
     /**
      * Returns the sum of the logs of all the aggregated data.
-     * 
+     *
      * @return the sum of logs
      * @see SummaryStatistics#getSumOfLogs()
      */
@@ -217,10 +217,10 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
             return statistics.getSumOfLogs();
         }
     }
-    
+
     /**
      * Returns the geometric mean of all the aggregated data.
-     * 
+     *
      * @return the geometric mean
      * @see SummaryStatistics#getGeometricMean()
      */
@@ -229,10 +229,10 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
             return statistics.getGeometricMean();
         }
     }
-    
+
     /**
      * Returns the sum of the squares of all the aggregated data.
-     * 
+     *
      * @return The sum of squares
      * @see SummaryStatistics#getSumsq()
      */
@@ -241,12 +241,12 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
             return statistics.getSumsq();
         }
     }
-    
+
     /**
      * Returns a statistic related to the Second Central Moment.  Specifically,
      * what is returned is the sum of squared deviations from the sample mean
      * among the all of the aggregated data.
-     * 
+     *
      * @return second central moment statistic
      * @see SummaryStatistics#getSecondMoment()
      */
@@ -255,23 +255,23 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
             return statistics.getSecondMoment();
         }
     }
-    
+
     /**
      * Return a {@link StatisticalSummaryValues} instance reporting current
      * aggregate statistics.
-     * 
+     *
      * @return Current values of aggregate statistics
      */
     public StatisticalSummary getSummary() {
         synchronized (statistics) {
-            return new StatisticalSummaryValues(getMean(), getVariance(), getN(), 
+            return new StatisticalSummaryValues(getMean(), getVariance(), getN(),
                     getMax(), getMin(), getSum());
         }
     }
 
     /**
      * Creates and returns a {@code SummaryStatistics} whose data will be
-     * aggregated with those of this {@code AggregateSummaryStatistics}. 
+     * aggregated with those of this {@code AggregateSummaryStatistics}.
      *
      * @return a {@code SummaryStatistics} whose data will be aggregated with
      *      those of this {@code AggregateSummaryStatistics}.  The initial state
@@ -280,12 +280,12 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     public SummaryStatistics createContributingStatistics() {
         SummaryStatistics contributingStatistics
                 = new AggregatingSummaryStatistics(statistics);
-        
+
         SummaryStatistics.copy(statisticsPrototype, contributingStatistics);
-        
+
         return contributingStatistics;
     }
-    
+
     /**
      * Computes aggregate summary statistics. This method can be used to combine statistics
      * computed over partitions or subsamples - i.e., the StatisticalSummaryValues returned
@@ -294,7 +294,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
      * <p>
      * Returns null if the collection is empty or null.
      * </p>
-     * 
+     *
      * @param statistics collection of SummaryStatistics to aggregate
      * @return summary statistics for the combined dataset
      */
@@ -327,7 +327,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
             n += curN;
             final double meanDiff = current.getMean() - mean;
             mean = sum / n;
-            m2 = m2 + current.getSecondMoment() + meanDiff * meanDiff * oldN * curN / n; 
+            m2 = m2 + current.getSecondMoment() + meanDiff * meanDiff * oldN * curN / n;
         }
         final double variance;
         if (n == 0) {
@@ -339,7 +339,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
         }
         return new StatisticalSummaryValues(mean, variance, n, max, min, sum);
     }
-    
+
     /**
      * A SummaryStatistics that also forwards all values added to it to a second
      * {@code SummaryStatistics} for aggregation.
@@ -347,18 +347,18 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
      * @since 2.0
      */
     private static class AggregatingSummaryStatistics extends SummaryStatistics {
-        
+
         /**
          * The serialization version of this class
          */
         private static final long serialVersionUID = 1L;
-        
+
         /**
          * An additional SummaryStatistics into which values added to these
          * statistics (and possibly others) are aggregated
          */
         private final SummaryStatistics aggregateStatistics;
-        
+
         /**
          * Initializes a new AggregatingSummaryStatistics with the specified
          * aggregate statistics object
@@ -400,8 +400,8 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
                 return false;
             }
             AggregatingSummaryStatistics stat = (AggregatingSummaryStatistics)object;
-            return (super.equals(stat) &&
-                    aggregateStatistics.equals(stat.aggregateStatistics));
+            return super.equals(stat) &&
+                   aggregateStatistics.equals(stat.aggregateStatistics);
         }
 
         /**

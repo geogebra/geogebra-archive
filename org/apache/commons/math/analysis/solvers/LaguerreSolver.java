@@ -33,15 +33,24 @@ import org.apache.commons.math.complex.Complex;
  * Laguerre's method is global in the sense that it can start with any initial
  * approximation and be able to solve all roots from that point.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 922708 $ $Date: 2010-03-13 20:15:47 -0500 (Sat, 13 Mar 2010) $
  * @since 1.2
  */
 public class LaguerreSolver extends UnivariateRealSolverImpl {
+
+    /** Message for non-polynomial function. */
+    private static final String NON_POLYNOMIAL_FUNCTION_MESSAGE =
+        "function is not polynomial";
+
+    /** Message for non-positive degree. */
+    private static final String NON_POSITIVE_DEGREE_MESSAGE =
+        "polynomial degree must be positive: degree={0}";
+
     /** polynomial function to solve.
      * @deprecated as of 2.0 the function is not stored anymore in the instance
      */
     @Deprecated
-    private PolynomialFunction p;
+    private final PolynomialFunction p;
 
     /**
      * Construct a solver for the given function.
@@ -60,7 +69,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
         if (f instanceof PolynomialFunction) {
             p = (PolynomialFunction) f;
         } else {
-            throw MathRuntimeException.createIllegalArgumentException("function is not polynomial");
+            throw MathRuntimeException.createIllegalArgumentException(NON_POLYNOMIAL_FUNCTION_MESSAGE);
         }
     }
 
@@ -69,11 +78,12 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
      */
     public LaguerreSolver() {
         super(100, 1E-6);
+        p = null;
     }
 
     /**
      * Returns a copy of the polynomial function.
-     * 
+     *
      * @return a fresh copy of the polynomial function
      * @deprecated as of 2.0 the function is not stored anymore within the instance.
      */
@@ -100,7 +110,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
      * Find a real root in the given interval with initial value.
      * <p>
      * Requires bracketing condition.</p>
-     * 
+     *
      * @param f function to solve (must be polynomial)
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
@@ -117,9 +127,15 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
         throws ConvergenceException, FunctionEvaluationException {
 
         // check for zeros before verifying bracketing
-        if (f.value(min) == 0.0) { return min; }
-        if (f.value(max) == 0.0) { return max; }
-        if (f.value(initial) == 0.0) { return initial; }
+        if (f.value(min) == 0.0) {
+            return min;
+        }
+        if (f.value(max) == 0.0) {
+            return max;
+        }
+        if (f.value(initial) == 0.0) {
+            return initial;
+        }
 
         verifyBracketing(min, max, f);
         verifySequence(min, initial, max);
@@ -147,7 +163,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
      * @throws ConvergenceException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
      * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function 
+     * function
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double solve(final UnivariateRealFunction f,
@@ -156,7 +172,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
 
         // check function type
         if (!(f instanceof PolynomialFunction)) {
-            throw MathRuntimeException.createIllegalArgumentException("function is not polynomial");
+            throw MathRuntimeException.createIllegalArgumentException(NON_POLYNOMIAL_FUNCTION_MESSAGE);
         }
 
         // check for zeros before verifying bracketing
@@ -192,7 +208,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
     /**
      * Returns true iff the given complex root is actually a real zero
      * in the given interval, within the solver tolerance level.
-     * 
+     *
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
      * @param z the complex root
@@ -208,14 +224,14 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
     /**
      * Find all complex roots for the polynomial with the given coefficients,
      * starting from the given initial value.
-     * 
+     *
      * @param coefficients the polynomial coefficients array
      * @param initial the start value to use
      * @return the point at which the function value is zero
      * @throws ConvergenceException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
      * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function 
+     * function
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public Complex[] solveAll(double coefficients[], double initial) throws
@@ -232,14 +248,14 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
     /**
      * Find all complex roots for the polynomial with the given coefficients,
      * starting from the given initial value.
-     * 
+     *
      * @param coefficients the polynomial coefficients array
      * @param initial the start value to use
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
      * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function 
+     * function
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public Complex[] solveAll(Complex coefficients[], Complex initial) throws
@@ -249,7 +265,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
         int iterationCount = 0;
         if (n < 1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "polynomial degree must be positive: degree={0}", n);
+                  NON_POSITIVE_DEGREE_MESSAGE, n);
         }
         Complex c[] = new Complex[n+1];    // coefficients for deflated polynomial
         for (int i = 0; i <= n; i++) {
@@ -281,14 +297,14 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
     /**
      * Find a complex root for the polynomial with the given coefficients,
      * starting from the given initial value.
-     * 
+     *
      * @param coefficients the polynomial coefficients array
      * @param initial the start value to use
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
      * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function 
+     * function
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public Complex solve(Complex coefficients[], Complex initial) throws
@@ -297,10 +313,10 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
         int n = coefficients.length - 1;
         if (n < 1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "polynomial degree must be positive: degree={0}", n);
+                  NON_POSITIVE_DEGREE_MESSAGE, n);
         }
-        Complex N = new Complex(n, 0.0);
-        Complex N1 = new Complex((n-1), 0.0);
+        Complex N  = new Complex(n,     0.0);
+        Complex N1 = new Complex(n - 1, 0.0);
 
         int i = 1;
         Complex pv = null;

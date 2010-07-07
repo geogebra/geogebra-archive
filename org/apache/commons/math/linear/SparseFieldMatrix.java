@@ -22,9 +22,9 @@ import org.apache.commons.math.util.OpenIntToFieldHashMap;
 
 /**
  * Sparse matrix implementation based on an open addressed map.
- * 
+ *
  * @param <T> the type of the field elements
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMatrix<T> {
@@ -37,12 +37,12 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
     /**
      * row dimension
      */
-    private final int rowDimension;
+    private final int rows;
     /**
      * column dimension
      */
-    private final int columnDimension;
-    
+    private final int columns;
+
 
     /**
      * Creates a matrix with no data.
@@ -50,8 +50,8 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
      */
     public SparseFieldMatrix(final Field<T> field) {
         super(field);
-        rowDimension = 0;
-        columnDimension= 0;
+        rows = 0;
+        columns= 0;
         entries = new OpenIntToFieldHashMap<T>(field);
     }
 
@@ -67,19 +67,19 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
                              final int rowDimension, final int columnDimension)
         throws IllegalArgumentException {
         super(field, rowDimension, columnDimension);
-        this.rowDimension = rowDimension;
-        this.columnDimension = columnDimension;
+        this.rows = rowDimension;
+        this.columns = columnDimension;
         entries = new OpenIntToFieldHashMap<T>(field);
     }
-    
+
     /**
      * Copy constructor.
      * @param other The instance to copy
      */
     public SparseFieldMatrix(SparseFieldMatrix<T> other) {
         super(other.getField(), other.getRowDimension(), other.getColumnDimension());
-        rowDimension = other.getRowDimension();
-        columnDimension = other.getColumnDimension();
+        rows = other.getRowDimension();
+        columns = other.getColumnDimension();
         entries = new OpenIntToFieldHashMap<T>(other.entries);
     }
 
@@ -89,11 +89,11 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
      */
     public SparseFieldMatrix(FieldMatrix<T> other){
         super(other.getField(), other.getRowDimension(), other.getColumnDimension());
-        rowDimension = other.getRowDimension();
-        columnDimension = other.getColumnDimension();
+        rows = other.getRowDimension();
+        columns = other.getColumnDimension();
         entries = new OpenIntToFieldHashMap<T>(getField());
-        for (int i = 0; i < rowDimension; i++) {
-            for (int j = 0; j < columnDimension; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
                 setEntry(i, j, other.getEntry(i, j));
             }
         }
@@ -112,7 +112,7 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
         } else {
             entries.put(key, value);
         }
-       
+
     }
 
     /** {@inheritDoc} */
@@ -131,7 +131,7 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
     /** {@inheritDoc} */
     @Override
     public int getColumnDimension() {
-        return columnDimension;
+        return columns;
     }
 
     /** {@inheritDoc} */
@@ -145,7 +145,7 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
     /** {@inheritDoc} */
     @Override
     public int getRowDimension() {
-        return rowDimension;
+        return rows;
     }
 
     /** {@inheritDoc} */
@@ -161,7 +161,7 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
         } else {
             entries.put(key, value);
         }
-        
+
     }
 
     /** {@inheritDoc} */
@@ -175,7 +175,7 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
         } else {
             entries.put(computeKey(row, column), value);
         }
-        
+
     }
     /**
      * Compute the key to access a matrix element
@@ -184,7 +184,7 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
      * @return key within the map to access the matrix element
      */
     private int computeKey(int row, int column) {
-        return row * columnDimension + column;
+        return row * columns + column;
     }
 
 }

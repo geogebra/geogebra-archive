@@ -26,10 +26,10 @@ import org.apache.commons.math.MathException;
 
 /**
  * This TansformerMap automates the transformation of mixed object types.
- * It provides a means to set NumberTransformers that will be selected 
+ * It provides a means to set NumberTransformers that will be selected
  * based on the Class of the object handed to the Maps
  * <code>double transform(Object o)</code> method.
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 922713 $ $Date: 2010-03-13 20:26:13 -0500 (Sat, 13 Mar 2010) $
  */
 public class TransformerMap implements NumberTransformer, Serializable {
 
@@ -120,7 +120,7 @@ public class TransformerMap implements NumberTransformer, Serializable {
     }
 
     /**
-     * Returns the Set of NumberTransformers used as values 
+     * Returns the Set of NumberTransformers used as values
      * in the map.
      * @return Set of NumberTransformers
      */
@@ -131,10 +131,10 @@ public class TransformerMap implements NumberTransformer, Serializable {
     /**
      * Attempts to transform the Object against the map of
      * NumberTransformers. Otherwise it returns Double.NaN.
-     * 
+     *
      * @param o the Object to be transformed.
      * @return the double value of the Object.
-     * @throws MathException if the Object can not be transformed into a Double. 
+     * @throws MathException if the Object can not be transformed into a Double.
      * @see org.apache.commons.math.util.NumberTransformer#transform(java.lang.Object)
      */
     public double transform(Object o) throws MathException {
@@ -155,13 +155,10 @@ public class TransformerMap implements NumberTransformer, Serializable {
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object other) {
-        if (this == other) { 
+        if (this == other) {
             return true;
         }
-        if (other == null) {
-            return false;
-        }
-        try {
+        if (other instanceof TransformerMap) {
             TransformerMap rhs = (TransformerMap) other;
             if (! defaultTransformer.equals(rhs.defaultTransformer)) {
                 return false;
@@ -175,11 +172,10 @@ public class TransformerMap implements NumberTransformer, Serializable {
                 }
             }
             return true;
-        } catch (ClassCastException cce) {
-            return false;
         }
+        return false;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int hashCode() {

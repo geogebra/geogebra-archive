@@ -32,7 +32,7 @@ import java.util.Arrays;
  * EigenDecomposition eigen decomposition}. This class is therefore intended for internal
  * use by the library and is not public. As a consequence of this explicitly limited scope,
  * many methods directly returns references to internal arrays, not copies.</p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 class TriDiagonalTransformer {
@@ -82,7 +82,7 @@ class TriDiagonalTransformer {
     }
 
     /**
-     * Returns the matrix Q of the transform. 
+     * Returns the matrix Q of the transform.
      * <p>Q is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * @return the Q matrix
      */
@@ -94,7 +94,7 @@ class TriDiagonalTransformer {
     }
 
     /**
-     * Returns the transpose of the matrix Q of the transform. 
+     * Returns the transpose of the matrix Q of the transform.
      * <p>Q is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * @return the Q matrix
      */
@@ -139,7 +139,7 @@ class TriDiagonalTransformer {
     }
 
     /**
-     * Returns the tridiagonal matrix T of the transform. 
+     * Returns the tridiagonal matrix T of the transform.
      * @return the T matrix
      */
     public RealMatrix getT() {

@@ -21,8 +21,8 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
 
 /**
  * Interface representing a univariate real interpolating function.
- *  
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:18 $
+ *
+ * @version $Revision: 821626 $ $Date: 2009-10-04 17:57:30 -0400 (Sun, 04 Oct 2009) $
  */
 public interface UnivariateRealInterpolator {
 
@@ -32,8 +32,8 @@ public interface UnivariateRealInterpolator {
      * @param yval the values for the interpolation points
      * @return a function which interpolates the data set
      * @throws MathException if arguments violate assumptions made by the
-     *         interpolationg algorithm
+     *         interpolation algorithm
      */
-    public UnivariateRealFunction interpolate(double xval[], double yval[])
+    UnivariateRealFunction interpolate(double xval[], double yval[])
         throws MathException;
 }

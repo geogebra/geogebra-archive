@@ -19,8 +19,8 @@ package org.apache.commons.math.genetics;
 /**
  * A pair of {@link Chromosome} objects.
  * @since 2.0
- * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  */
 public class ChromosomePair {
     /** the first chromosome in the pair. */
@@ -31,7 +31,7 @@ public class ChromosomePair {
 
     /**
      * Create a chromosome pair.
-     * 
+     *
      * @param c1 the first chromosome.
      * @param c2 the second chromosome.
      */
@@ -43,7 +43,7 @@ public class ChromosomePair {
 
     /**
      * Access the first chromosome.
-     * 
+     *
      * @return the first chromosome.
      */
     public Chromosome getFirst() {
@@ -52,18 +52,18 @@ public class ChromosomePair {
 
     /**
      * Access the second chromosome.
-     * 
+     *
      * @return the second chromosome.
      */
     public Chromosome getSecond() {
         return second;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString() {        
+    public String toString() {
         return String.format("(%s,%s)", getFirst(), getSecond());
     }
 }

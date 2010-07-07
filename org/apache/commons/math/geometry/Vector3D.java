@@ -22,10 +22,10 @@ import java.io.Serializable;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.util.MathUtils;
 
-/** 
+/**
  * This class implements vectors in a three-dimensional space.
  * <p>Instance of this class are guaranteed to be immutable.</p>
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:21 $
+ * @version $Revision: 922713 $ $Date: 2010-03-13 20:26:13 -0500 (Sat, 13 Mar 2010) $
  * @since 1.2
  */
 
@@ -53,8 +53,10 @@ public class Vector3D
   /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
   public static final Vector3D MINUS_K = new Vector3D(0, 0, -1);
 
+  // CHECKSTYLE: stop ConstantName
   /** A vector with all coordinates set to NaN. */
   public static final Vector3D NaN = new Vector3D(Double.NaN, Double.NaN, Double.NaN);
+  // CHECKSTYLE: resume ConstantName
 
   /** A vector with all coordinates set to positive infinity. */
   public static final Vector3D POSITIVE_INFINITY =
@@ -111,7 +113,7 @@ public class Vector3D
   }
 
   /** Multiplicative constructor
-   * Build a vector from another one and a scale factor. 
+   * Build a vector from another one and a scale factor.
    * The vector built will be a * u
    * @param a scale factor
    * @param u base (unscaled) vector
@@ -348,7 +350,7 @@ public class Vector3D
       }
       return Math.PI - Math.asin(v3.getNorm() / normProduct);
     }
-    
+
     // the vectors are sufficiently separated to use the cosine
     return Math.acos(dot / normProduct);
 
@@ -374,9 +376,9 @@ public class Vector3D
    * @return  true if any coordinate of this vector is NaN; false otherwise
    */
   public boolean isNaN() {
-      return Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z);        
+      return Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z);
   }
-  
+
   /**
    * Returns true if any coordinate of this vector is infinite and none are NaN;
    * false otherwise
@@ -384,9 +386,9 @@ public class Vector3D
    * false otherwise
    */
   public boolean isInfinite() {
-      return !isNaN() && (Double.isInfinite(x) || Double.isInfinite(y) || Double.isInfinite(z));        
+      return !isNaN() && (Double.isInfinite(x) || Double.isInfinite(y) || Double.isInfinite(z));
   }
-  
+
   /**
    * Test for the equality of two 3D vectors.
    * <p>
@@ -404,40 +406,31 @@ public class Vector3D
    * @return true if two 3D vector objects are equal, false if
    *         object is null, not an instance of Vector3D, or
    *         not equal to this Vector3D instance
-   * 
+   *
    */
   @Override
   public boolean equals(Object other) {
 
-    if (this == other) { 
+    if (this == other) {
       return true;
     }
 
-    if (other == null) {
-      return false;
-    }
-
-    try {
-
+    if (other instanceof Vector3D) {
       final Vector3D rhs = (Vector3D)other;
       if (rhs.isNaN()) {
           return this.isNaN();
       }
 
-      return (x == rhs.x) && (y == rhs.y) && (z == rhs.z); 
-
-    } catch (ClassCastException ex) {
-        // ignore exception
-        return false;
+      return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
     }
-
+    return false;
   }
-  
+
   /**
    * Get a hashCode for the 3D vector.
    * <p>
    * All NaN values have the same hash code.</p>
-   * 
+   *
    * @return a hash code value for this object
    */
   @Override

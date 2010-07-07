@@ -28,10 +28,17 @@ import org.apache.commons.math.MathRuntimeException;
  * <p>As shown by the presence of the P matrix, this decomposition is
  * implemented using partial pivoting.</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 885278 $ $Date: 2009-11-29 16:47:51 -0500 (Sun, 29 Nov 2009) $
  * @since 2.0
  */
 public class LUDecompositionImpl implements LUDecomposition {
+
+    /** Default bound to determine effective singularity in LU decomposition */
+    private static final double DEFAULT_TOO_SMALL = 10E-12;
+
+    /** Message for vector length mismatch. */
+    private static final String VECTOR_LENGTH_MISMATCH_MESSAGE =
+        "vector length mismatch: got {0} but expected {1}";
 
     /** Entries of LU decomposition. */
     private double lu[][];
@@ -54,11 +61,8 @@ public class LUDecompositionImpl implements LUDecomposition {
     /** Cached value of P. */
     private RealMatrix cachedP;
 
-    /** Default bound to determine effective singularity in LU decomposition */
-    private static final double DEFAULT_TOO_SMALL = 10E-12;
-
     /**
-     * Calculates the LU-decomposition of the given matrix. 
+     * Calculates the LU-decomposition of the given matrix.
      * @param matrix The matrix to decompose.
      * @exception InvalidMatrixException if matrix is not square
      */
@@ -68,7 +72,7 @@ public class LUDecompositionImpl implements LUDecomposition {
     }
 
     /**
-     * Calculates the LU-decomposition of the given matrix. 
+     * Calculates the LU-decomposition of the given matrix.
      * @param matrix The matrix to decompose.
      * @param singularityThreshold threshold (based on partial row norm)
      * under which a matrix is considered singular
@@ -228,7 +232,7 @@ public class LUDecompositionImpl implements LUDecomposition {
 
     /** Specialized solver. */
     private static class Solver implements DecompositionSolver {
-    
+
         /** Entries of LU decomposition. */
         private final double lu[][];
 
@@ -262,8 +266,7 @@ public class LUDecompositionImpl implements LUDecomposition {
             final int m = pivot.length;
             if (b.length != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "vector length mismatch: got {0} but expected {1}",
-                        b.length, m);
+                        VECTOR_LENGTH_MISMATCH_MESSAGE, b.length, m);
             }
             if (singular) {
                 throw new SingularMatrixException();
@@ -307,8 +310,7 @@ public class LUDecompositionImpl implements LUDecomposition {
                 final int m = pivot.length;
                 if (b.getDimension() != m) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                            "vector length mismatch: got {0} but expected {1}",
-                            b.getDimension(), m);
+                            VECTOR_LENGTH_MISMATCH_MESSAGE, b.getDimension(), m);
                 }
                 if (singular) {
                     throw new SingularMatrixException();

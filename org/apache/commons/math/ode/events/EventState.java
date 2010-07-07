@@ -19,6 +19,7 @@ package org.apache.commons.math.ode.events;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math.ode.DerivativeException;
@@ -35,7 +36,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * proposed step (and hence the step should be reduced to ensure the
  * event occurs at a bound rather than inside the step).</p>
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:21 $
+ * @version $Revision: 889006 $ $Date: 2009-12-09 17:46:36 -0500 (Wed, 09 Dec 2009) $
  * @since 1.2
  */
 public class EventState {
@@ -138,18 +139,18 @@ public class EventState {
     }
 
     /** Reinitialize the beginning of the step.
-     * @param t0 value of the independent <i>time</i> variable at the
+     * @param tStart value of the independent <i>time</i> variable at the
      * beginning of the step
-     * @param y0 array containing the current value of the state vector
+     * @param yStart array containing the current value of the state vector
      * at the beginning of the step
      * @exception EventException if the event handler
      * value cannot be evaluated at the beginning of the step
      */
-    public void reinitializeBegin(final double t0, final double[] y0)
+    public void reinitializeBegin(final double tStart, final double[] yStart)
         throws EventException {
-        this.t0 = t0;
-        g0 = handler.g(t0, y0);
-        g0Positive = (g0 >= 0);
+        t0 = tStart;
+        g0 = handler.g(tStart, yStart);
+        g0Positive = g0 >= 0;
     }
 
     /** Evaluate the impact of the proposed step on the event handler.
@@ -187,8 +188,28 @@ public class EventState {
                 if (g0Positive ^ (gb >= 0)) {
                     // there is a sign change: an event is expected during this step
 
+                    if (ga * gb > 0) {
+                        // this is a corner case:
+                        // - there was an event near ta,
+                        // - there is another event between ta and tb
+                        // - when ta was computed, convergence was reached on the "wrong side" of the interval
+                        // this implies that the real sign of ga is the same as gb, so we need to slightly
+                        // shift ta to make sure ga and gb get opposite signs and the solver won't complain
+                        // about bracketing
+                        final double epsilon = (forward ? 0.25 : -0.25) * convergence;
+                        for (int k = 0; (k < 4) && (ga * gb > 0); ++k) {
+                            ta += epsilon;
+                            interpolator.setInterpolatedTime(ta);
+                            ga = handler.g(ta, interpolator.getInterpolatedState());
+                        }
+                        if (ga * gb > 0) {
+                            // this should never happen
+                            throw MathRuntimeException.createInternalError(null);
+                        }
+                    }
+
                     // variation direction, with respect to the integration direction
-                    increasing = (gb >= ga);
+                    increasing = gb >= ga;
 
                     final UnivariateRealFunction f = new UnivariateRealFunction() {
                         public double value(final double t) throws FunctionEvaluationException {
@@ -205,16 +226,9 @@ public class EventState {
                     final BrentSolver solver = new BrentSolver();
                     solver.setAbsoluteAccuracy(convergence);
                     solver.setMaximalIterationCount(maxIterationCount);
-                    double root;
-                    try {
-                        root = (ta <= tb) ? solver.solve(f, ta, tb) : solver.solve(f, tb, ta);
-                    } catch (IllegalArgumentException iae) {
-                        // the interval did not really bracket a root
-                        root = Double.NaN;
-                    }
-                    if (Double.isNaN(root) ||
-                        ((Math.abs(root - ta) <= convergence) &&
-                         (Math.abs(root - previousEventTime) <= convergence))) {
+                    final double root = (ta <= tb) ? solver.solve(f, ta, tb) : solver.solve(f, tb, ta);
+                    if ((Math.abs(root - ta) <= convergence) &&
+                         (Math.abs(root - previousEventTime) <= convergence)) {
                         // we have either found nothing or found (again ?) a past event, we simply ignore it
                         ta = tb;
                         ga = gb;
@@ -288,7 +302,7 @@ public class EventState {
             g0Positive        = increasing;
             nextAction        = handler.eventOccurred(t, y, !(increasing ^ forward));
         } else {
-            g0Positive = (g0 >= 0);
+            g0Positive = g0 >= 0;
             nextAction = EventHandler.CONTINUE;
         }
     }

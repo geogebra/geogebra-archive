@@ -35,7 +35,7 @@ import org.apache.commons.math.MathRuntimeException;
  * @see <a href="http://mathworld.wolfram.com/QRDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/QR_decomposition">Wikipedia</a>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
  * @since 1.2
  */
 public class QRDecompositionImpl implements QRDecomposition {
@@ -64,7 +64,7 @@ public class QRDecompositionImpl implements QRDecomposition {
     private RealMatrix cachedH;
 
     /**
-     * Calculates the QR-decomposition of the given matrix. 
+     * Calculates the QR-decomposition of the given matrix.
      * @param matrix The matrix to decompose.
      */
     public QRDecompositionImpl(RealMatrix matrix) {
@@ -186,11 +186,11 @@ public class QRDecompositionImpl implements QRDecomposition {
             final int m = qrt[0].length;
             cachedQT = MatrixUtils.createRealMatrix(m, m);
 
-            /* 
-             * Q = Q1 Q2 ... Q_m, so Q is formed by first constructing Q_m and then 
-             * applying the Householder transformations Q_(m-1),Q_(m-2),...,Q1 in 
-             * succession to the result 
-             */ 
+            /*
+             * Q = Q1 Q2 ... Q_m, so Q is formed by first constructing Q_m and then
+             * applying the Householder transformations Q_(m-1),Q_(m-2),...,Q1 in
+             * succession to the result
+             */
             for (int minor = m - 1; minor >= Math.min(m, n); minor--) {
                 cachedQT.setEntry(minor, minor, 1.0);
             }
@@ -248,7 +248,7 @@ public class QRDecompositionImpl implements QRDecomposition {
 
     /** Specialized solver. */
     private static class Solver implements DecompositionSolver {
-    
+
         /**
          * A packed TRANSPOSED representation of the QR decomposition.
          * <p>The elements BELOW the diagonal are the elements of the UPPER triangular
@@ -386,7 +386,7 @@ public class QRDecompositionImpl implements QRDecomposition {
                 // apply Householder transforms to solve Q.y = b
                 for (int minor = 0; minor < Math.min(m, n); minor++) {
                     final double[] qrtMinor = qrt[minor];
-                    final double factor     = 1.0 / (rDiag[minor] * qrtMinor[minor]); 
+                    final double factor     = 1.0 / (rDiag[minor] * qrtMinor[minor]);
 
                     Arrays.fill(alpha, 0, kWidth, 0.0);
                     for (int row = minor; row < m; ++row) {
@@ -417,9 +417,10 @@ public class QRDecompositionImpl implements QRDecomposition {
                     final double   factor = 1.0 / rDiag[j];
                     final double[] yJ     = y[j];
                     final double[] xBlock = xBlocks[jBlock * cBlocks + kBlock];
-                    for (int k = 0, index = (j - jStart) * kWidth; k < kWidth; ++k, ++index) {
-                        yJ[k]        *= factor;
-                        xBlock[index] = yJ[k];
+                    int index = (j - jStart) * kWidth;
+                    for (int k = 0; k < kWidth; ++k) {
+                        yJ[k]          *= factor;
+                        xBlock[index++] = yJ[k];
                     }
 
                     final double[] qrtJ = qrt[j];

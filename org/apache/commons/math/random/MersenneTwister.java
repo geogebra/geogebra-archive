@@ -53,8 +53,8 @@ import java.io.Serializable;
  *   <li>Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.</li>
- *   <li>The names of its contributors may not be used to endorse or promote 
- *       products derived from this software without specific prior written 
+ *   <li>The names of its contributors may not be used to endorse or promote
+ *       products derived from this software without specific prior written
  *       permission.</li>
  * </ol></td></tr>
 
@@ -73,7 +73,7 @@ import java.io.Serializable;
  * DAMAGE.</strong></td></tr>
  * </table>
 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 902203 $ $Date: 2010-01-22 13:27:41 -0500 (Fri, 22 Jan 2010) $
  * @since 2.0
 
  */
@@ -136,6 +136,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
      * generator built with the same seed.</p>
      * @param seed the initial seed (32 bits integer)
      */
+    @Override
     public void setSeed(int seed) {
         // we use a long masked by 0xffffffffL as a poor man unsigned int
         long longMT = seed;
@@ -143,7 +144,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
         for (mti = 1; mti < N; ++mti) {
             // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
             // initializer from the 2002-01-09 C version by Makoto Matsumoto
-            longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL; 
+            longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
             mt[mti]= (int) longMT;
         }
     }
@@ -154,6 +155,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
      * @param seed the initial seed (32 bits integers array), if null
      * the seed of the generator will be related to the current time
      */
+    @Override
     public void setSeed(int[] seed) {
 
         if (seed == null) {
@@ -201,6 +203,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
      * generator built with the same seed.</p>
      * @param seed the initial seed (64 bits integer)
      */
+    @Override
     public void setSeed(long seed) {
         setSeed(new int[] { (int) (seed >>> 32), (int) (seed & 0xffffffffl) });
     }
@@ -214,6 +217,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
      * @param bits number of random bits to produce
      * @return random bits generated
      */
+    @Override
     protected int next(int bits) {
 
         int y;
@@ -241,10 +245,10 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
         y = mt[mti++];
 
         // tempering
-        y ^= (y >>> 11);
+        y ^=  y >>> 11;
         y ^= (y <<   7) & 0x9d2c5680;
         y ^= (y <<  15) & 0xefc60000;
-        y ^= (y >>> 18);
+        y ^=  y >>> 18;
 
         return y >>> (32 - bits);
 

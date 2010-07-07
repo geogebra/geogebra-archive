@@ -17,7 +17,6 @@
 
 package org.apache.commons.math.ode.sampling;
 
-
 /**
  * This class is a step handler that does nothing.
 
@@ -31,57 +30,72 @@ package org.apache.commons.math.ode.sampling;
  * method. This explains why there is no public constructor.</p>
  *
  * @see StepHandler
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 
 public class DummyStepHandler implements StepHandler {
 
-  /** Private constructor.
-   * The constructor is private to prevent users from creating
-   * instances (Singleton design-pattern).
-   */
-  private DummyStepHandler() {
-  }
+    /** Private constructor.
+     * The constructor is private to prevent users from creating
+     * instances (Singleton design-pattern).
+     */
+    private DummyStepHandler() {
+    }
 
-  /** Get the only instance.
-   * @return the only instance
-   */
-  public static DummyStepHandler getInstance() {
-    return instance;
-  }
+    /** Get the only instance.
+     * @return the only instance
+     */
+    public static DummyStepHandler getInstance() {
+        return LazyHolder.INSTANCE;
+    }
 
-  /** Determines whether this handler needs dense output.
-   * Since this handler does nothing, it does not require dense output.
-   * @return always false
-   */
-  public boolean requiresDenseOutput() {
-    return false;
-  }
+    /** Determines whether this handler needs dense output.
+     * Since this handler does nothing, it does not require dense output.
+     * @return always false
+     */
+    public boolean requiresDenseOutput() {
+        return false;
+    }
 
-  /** Reset the step handler.
-   * Initialize the internal data as required before the first step is
-   * handled.
-   */
-  public void reset() {
-  }
+    /** Reset the step handler.
+     * Initialize the internal data as required before the first step is
+     * handled.
+     */
+    public void reset() {
+    }
 
-  /**
-   * Handle the last accepted step.
-   * This method does nothing in this class.
-   * @param interpolator interpolator for the last accepted step. For
-   * efficiency purposes, the various integrators reuse the same
-   * object on each call, so if the instance wants to keep it across
-   * all calls (for example to provide at the end of the integration a
-   * continuous model valid throughout the integration range), it
-   * should build a local copy using the clone method and store this
-   * copy.
-   * @param isLast true if the step is the last one
-   */
-  public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
-  }
+    /**
+     * Handle the last accepted step.
+     * This method does nothing in this class.
+     * @param interpolator interpolator for the last accepted step. For
+     * efficiency purposes, the various integrators reuse the same
+     * object on each call, so if the instance wants to keep it across
+     * all calls (for example to provide at the end of the integration a
+     * continuous model valid throughout the integration range), it
+     * should build a local copy using the clone method and store this
+     * copy.
+     * @param isLast true if the step is the last one
+     */
+    public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
+    }
 
-  /** The only instance. */
-  private static final DummyStepHandler instance = new DummyStepHandler();
+    // CHECKSTYLE: stop HideUtilityClassConstructor
+    /** Holder for the instance.
+     * <p>We use here the Initialization On Demand Holder Idiom.</p>
+     */
+    private static class LazyHolder {
+        /** Cached field instance. */
+        private static final DummyStepHandler INSTANCE = new DummyStepHandler();
+    }
+    // CHECKSTYLE: resume HideUtilityClassConstructor
+
+    /** Handle deserialization of the singleton.
+     * @return the singleton instance
+     */
+    private Object readResolve() {
+        // return the singleton instance
+        return LazyHolder.INSTANCE;
+    }
 
 }

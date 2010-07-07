@@ -27,15 +27,17 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 07:53:44 -0500 (Tue, 09 Mar 2010) $
  */
 public interface ExponentialDistribution extends ContinuousDistribution, HasDensity<Double> {
     /**
      * Modify the mean.
      * @param mean the new mean.
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setMean(double mean);
-    
+
     /**
      * Access the mean.
      * @return the mean.

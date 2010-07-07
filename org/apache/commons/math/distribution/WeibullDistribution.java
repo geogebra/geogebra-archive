@@ -32,7 +32,7 @@ package org.apache.commons.math.distribution;
  * </p>
  *
  * @since 1.1
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 07:53:44 -0500 (Tue, 09 Mar 2010) $
  */
 public interface WeibullDistribution extends ContinuousDistribution {
 
@@ -41,22 +41,26 @@ public interface WeibullDistribution extends ContinuousDistribution {
      * @return the shape parameter.
      */
     double getShape();
-    
+
     /**
      * Access the scale parameter.
      * @return the scale parameter.
      */
     double getScale();
-    
+
     /**
      * Modify the shape parameter.
      * @param alpha The new shape parameter value.
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setShape(double alpha);
-    
+
     /**
      * Modify the scale parameter.
      * @param beta The new scale parameter value.
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setScale(double beta);
 }

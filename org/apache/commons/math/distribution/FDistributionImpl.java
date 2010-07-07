@@ -26,11 +26,21 @@ import org.apache.commons.math.special.Beta;
  * Default implementation of
  * {@link org.apache.commons.math.distribution.FDistribution}.
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 925897 $ $Date: 2010-03-21 17:06:46 -0400 (Sun, 21 Mar 2010) $
  */
 public class FDistributionImpl
     extends AbstractContinuousDistribution
     implements FDistribution, Serializable  {
+
+    /**
+     * Default inverse cumulative probability accuracy
+     * @since 2.1
+     */
+    public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
+
+    /** Message for non positive degrees of freddom. */
+    private static final String NON_POSITIVE_DEGREES_OF_FREEDOM_MESSAGE =
+        "degrees of freedom must be positive ({0})";
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -8516354193418641566L;
@@ -40,31 +50,67 @@ public class FDistributionImpl
 
     /** The numerator degrees of freedom*/
     private double denominatorDegreesOfFreedom;
-    
+
+    /** Inverse cumulative probability accuracy */
+    private final double solverAbsoluteAccuracy;
+
     /**
      * Create a F distribution using the given degrees of freedom.
      * @param numeratorDegreesOfFreedom the numerator degrees of freedom.
      * @param denominatorDegreesOfFreedom the denominator degrees of freedom.
      */
     public FDistributionImpl(double numeratorDegreesOfFreedom,
-            double denominatorDegreesOfFreedom) {
-        super();
-        setNumeratorDegreesOfFreedom(numeratorDegreesOfFreedom);
-        setDenominatorDegreesOfFreedom(denominatorDegreesOfFreedom);
+                             double denominatorDegreesOfFreedom) {
+        this(numeratorDegreesOfFreedom, denominatorDegreesOfFreedom, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
-    
+
+    /**
+     * Create a F distribution using the given degrees of freedom and inverse cumulative probability accuracy.
+     * @param numeratorDegreesOfFreedom the numerator degrees of freedom.
+     * @param denominatorDegreesOfFreedom the denominator degrees of freedom.
+     * @param inverseCumAccuracy the maximum absolute error in inverse cumulative probability estimates
+     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY})
+     * @since 2.1
+     */
+    public FDistributionImpl(double numeratorDegreesOfFreedom, double denominatorDegreesOfFreedom,
+            double inverseCumAccuracy) {
+        super();
+        setNumeratorDegreesOfFreedomInternal(numeratorDegreesOfFreedom);
+        setDenominatorDegreesOfFreedomInternal(denominatorDegreesOfFreedom);
+        solverAbsoluteAccuracy = inverseCumAccuracy;
+    }
+
+    /**
+     * Returns the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     * @since 2.1
+     */
+    @Override
+    public double density(double x) {
+        final double nhalf = numeratorDegreesOfFreedom / 2;
+        final double mhalf = denominatorDegreesOfFreedom / 2;
+        final double logx = Math.log(x);
+        final double logn = Math.log(numeratorDegreesOfFreedom);
+        final double logm = Math.log(denominatorDegreesOfFreedom);
+        final double lognxm = Math.log(numeratorDegreesOfFreedom * x + denominatorDegreesOfFreedom);
+        return Math.exp(nhalf*logn + nhalf*logx - logx + mhalf*logm - nhalf*lognxm -
+               mhalf*lognxm - Beta.logBeta(nhalf, mhalf));
+    }
+
     /**
      * For this distribution, X, this method returns P(X &lt; x).
-     * 
+     *
      * The implementation of this method is based on:
      * <ul>
      * <li>
      * <a href="http://mathworld.wolfram.com/F-Distribution.html">
      * F-Distribution</a>, equation (4).</li>
      * </ul>
-     * 
+     *
      * @param x the value at which the CDF is evaluated.
-     * @return CDF for this distribution. 
+     * @return CDF for this distribution.
      * @throws MathException if the cumulative probability can not be
      *            computed due to convergence or other numerical errors.
      */
@@ -73,16 +119,16 @@ public class FDistributionImpl
         if (x <= 0.0) {
             ret = 0.0;
         } else {
-            double n = getNumeratorDegreesOfFreedom();
-            double m = getDenominatorDegreesOfFreedom();
-            
+            double n = numeratorDegreesOfFreedom;
+            double m = denominatorDegreesOfFreedom;
+
             ret = Beta.regularizedBeta((n * x) / (m + n * x),
                 0.5 * n,
                 0.5 * m);
         }
         return ret;
     }
-    
+
     /**
      * For this distribution, X, this method returns the critical point x, such
      * that P(X &lt; x) = <code>p</code>.
@@ -97,7 +143,7 @@ public class FDistributionImpl
      *         probability.
      */
     @Override
-    public double inverseCumulativeProbability(final double p) 
+    public double inverseCumulativeProbability(final double p)
         throws MathException {
         if (p == 0) {
             return 0d;
@@ -107,15 +153,15 @@ public class FDistributionImpl
         }
         return super.inverseCumulativeProbability(p);
     }
-        
+
     /**
      * Access the domain value lower bound, based on <code>p</code>, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
-     * 
+     *
      * @param p the desired probability for the critical value
      * @return domain value lower bound, i.e.
-     *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
+     *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code>
      */
     @Override
     protected double getDomainLowerBound(double p) {
@@ -126,10 +172,10 @@ public class FDistributionImpl
      * Access the domain value upper bound, based on <code>p</code>, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
-     * 
+     *
      * @param p the desired probability for the critical value
      * @return domain value upper bound, i.e.
-     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
+     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code>
      */
     @Override
     protected double getDomainUpperBound(double p) {
@@ -140,36 +186,47 @@ public class FDistributionImpl
      * Access the initial domain value, based on <code>p</code>, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
-     * 
+     *
      * @param p the desired probability for the critical value
      * @return initial domain value
      */
     @Override
     protected double getInitialDomain(double p) {
         double ret = 1.0;
-        double d = getDenominatorDegreesOfFreedom();
+        double d = denominatorDegreesOfFreedom;
         if (d > 2.0) {
             // use mean
             ret = d / (d - 2.0);
         }
         return ret;
     }
-    
+
+    /**
+     * Modify the numerator degrees of freedom.
+     * @param degreesOfFreedom the new numerator degrees of freedom.
+     * @throws IllegalArgumentException if <code>degreesOfFreedom</code> is not
+     *         positive.
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
+     */
+    @Deprecated
+    public void setNumeratorDegreesOfFreedom(double degreesOfFreedom) {
+        setNumeratorDegreesOfFreedomInternal(degreesOfFreedom);
+    }
+
     /**
      * Modify the numerator degrees of freedom.
      * @param degreesOfFreedom the new numerator degrees of freedom.
      * @throws IllegalArgumentException if <code>degreesOfFreedom</code> is not
      *         positive.
      */
-    public void setNumeratorDegreesOfFreedom(double degreesOfFreedom) {
+    private void setNumeratorDegreesOfFreedomInternal(double degreesOfFreedom) {
         if (degreesOfFreedom <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "degrees of freedom must be positive ({0})",
-                  degreesOfFreedom);
+                  NON_POSITIVE_DEGREES_OF_FREEDOM_MESSAGE, degreesOfFreedom);
         }
         this.numeratorDegreesOfFreedom = degreesOfFreedom;
     }
-    
+
     /**
      * Access the numerator degrees of freedom.
      * @return the numerator degrees of freedom.
@@ -177,27 +234,50 @@ public class FDistributionImpl
     public double getNumeratorDegreesOfFreedom() {
         return numeratorDegreesOfFreedom;
     }
-    
+
+    /**
+     * Modify the denominator degrees of freedom.
+     * @param degreesOfFreedom the new denominator degrees of freedom.
+     * @throws IllegalArgumentException if <code>degreesOfFreedom</code> is not
+     *         positive.
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
+     */
+    @Deprecated
+    public void setDenominatorDegreesOfFreedom(double degreesOfFreedom) {
+        setDenominatorDegreesOfFreedomInternal(degreesOfFreedom);
+    }
+
     /**
      * Modify the denominator degrees of freedom.
      * @param degreesOfFreedom the new denominator degrees of freedom.
      * @throws IllegalArgumentException if <code>degreesOfFreedom</code> is not
      *         positive.
      */
-    public void setDenominatorDegreesOfFreedom(double degreesOfFreedom) {
+    private void setDenominatorDegreesOfFreedomInternal(double degreesOfFreedom) {
         if (degreesOfFreedom <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "degrees of freedom must be positive ({0})",
-                  degreesOfFreedom);
+                  NON_POSITIVE_DEGREES_OF_FREEDOM_MESSAGE, degreesOfFreedom);
         }
         this.denominatorDegreesOfFreedom = degreesOfFreedom;
     }
-    
+
     /**
      * Access the denominator degrees of freedom.
      * @return the denominator degrees of freedom.
      */
     public double getDenominatorDegreesOfFreedom() {
         return denominatorDegreesOfFreedom;
+    }
+
+    /**
+     * Return the absolute accuracy setting of the solver used to estimate
+     * inverse cumulative probabilities.
+     *
+     * @return the solver absolute accuracy
+     * @since 2.1
+     */
+    @Override
+    protected double getSolverAbsoluteAccuracy() {
+        return solverAbsoluteAccuracy;
     }
 }

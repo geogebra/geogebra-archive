@@ -23,7 +23,7 @@ import org.apache.commons.math.ConvergenceException;
  * Error thrown when a double value cannot be converted to a fraction
  * in the allowed number of iterations.
  *
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 1.2
  */
 public class FractionConversionException extends ConvergenceException {
@@ -45,7 +45,7 @@ public class FractionConversionException extends ConvergenceException {
      * Constructs an exception with specified formatted detail message.
      * Message formatting is delegated to {@link java.text.MessageFormat}.
      * @param value double value to convert
-     * @param p current numerator 
+     * @param p current numerator
      * @param q current denominator
      */
     public FractionConversionException(double value, long p, long q) {

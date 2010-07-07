@@ -22,7 +22,7 @@ import org.apache.commons.math.MathException;
 /**
  * This exception is made available to users to report
  * the error conditions that are triggered by {@link EventHandler}
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:21 $
+ * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
  * @since 2.0
  */
 public class EventException extends MathException {

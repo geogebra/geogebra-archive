@@ -19,11 +19,11 @@ package org.apache.commons.math.linear;
 
 /**
  * Marker interface for {@link RealMatrix} implementations that require sparse backing storage
- * 
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  *
  */
 public interface SparseRealMatrix extends RealMatrix {
-    
+
 }

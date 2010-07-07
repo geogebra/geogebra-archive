@@ -32,7 +32,7 @@ import org.apache.commons.math.optimization.RealConvergenceChecker;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.SimpleScalarValueChecker;
 
-/** 
+/**
  * This class implements simplex-based direct search optimization
  * algorithms.
  *
@@ -78,14 +78,22 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
  * algorithms.</p>
  *
  * implements MultivariateRealOptimizer since 2.0
- * 
+ *
  * @see MultivariateRealFunction
  * @see NelderMead
  * @see MultiDirectional
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:21 $
+ * @version $Revision: 885278 $ $Date: 2009-11-29 16:47:51 -0500 (Sun, 29 Nov 2009) $
  * @since 1.2
  */
 public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer {
+
+    /** Message for equal vertices. */
+    private static final String EQUAL_VERTICES_MESSAGE =
+        "equal vertices {0} and {1} in simplex configuration";
+
+    /** Message for dimension mismatch. */
+    private static final String DIMENSION_MISMATCH_MESSAGE =
+        "dimension mismatch {0} != {1}";
 
     /** Simplex. */
     protected RealPointValuePair[] simplex;
@@ -146,8 +154,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
             for (int j = 0; j < i + 1; ++j) {
                 if (steps[j] == 0.0) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                            "equals vertices {0} and {1} in simplex configuration",
-                            j, j + 1);
+                          EQUAL_VERTICES_MESSAGE, j, j + 1);
                 }
                 System.arraycopy(steps, 0, vertexI, 0, j + 1);
             }
@@ -184,8 +191,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
             // safety checks
             if (refI.length != n) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "dimension mismatch {0} != {1}",
-                        refI.length, n);
+                      DIMENSION_MISMATCH_MESSAGE, refI.length, n);
             }
             for (int j = 0; j < i; ++j) {
                 final double[] refJ = referenceSimplex[j];
@@ -198,8 +204,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
                 }
                 if (allEquals) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                            "equals vertices {0} and {1} in simplex configuration",
-                            i, j);
+                          EQUAL_VERTICES_MESSAGE, i, j);
                 }
             }
 
@@ -246,8 +251,8 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
     }
 
     /** {@inheritDoc} */
-    public void setConvergenceChecker(RealConvergenceChecker checker) {
-        this.checker = checker;
+    public void setConvergenceChecker(RealConvergenceChecker convergenceChecker) {
+        this.checker = convergenceChecker;
     }
 
     /** {@inheritDoc} */
@@ -256,9 +261,9 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
     }
 
     /** {@inheritDoc} */
-    public RealPointValuePair optimize(final MultivariateRealFunction f,
-                                         final GoalType goalType,
-                                         final double[] startPoint)
+    public RealPointValuePair optimize(final MultivariateRealFunction function,
+                                       final GoalType goalType,
+                                       final double[] startPoint)
         throws FunctionEvaluationException, OptimizationException,
         IllegalArgumentException {
 
@@ -270,7 +275,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
             setStartConfiguration(unit);
         }
 
-        this.f = f;
+        this.f = function;
         final Comparator<RealPointValuePair> comparator =
             new Comparator<RealPointValuePair>() {
                 public int compare(final RealPointValuePair o1,
@@ -360,8 +365,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
         final int n = startPoint.length;
         if (n != startConfiguration.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "dimension mismatch {0} != {1}",
-                    n, startConfiguration.length);
+                  DIMENSION_MISMATCH_MESSAGE, n, startConfiguration.length);
         }
 
         // set first vertex

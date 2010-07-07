@@ -22,7 +22,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator;
 
 /** This class is a step interpolator that does nothing.
  *
@@ -34,12 +33,18 @@ import org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator;
  *
  * @see StepHandler
  *
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:19 $
+ * @version $Revision: 919479 $ $Date: 2010-03-05 11:35:56 -0500 (Fri, 05 Mar 2010) $
  * @since 1.2
  */
 
 public class DummyStepInterpolator
   extends AbstractStepInterpolator {
+
+  /** Serializable version identifier. */
+  private static final long serialVersionUID = 1708010296707839488L;
+
+  /** Current derivative. */
+  private double[] currentDerivative;
 
   /** Simple constructor.
    * This constructor builds an instance that is not usable yet, the
@@ -47,21 +52,25 @@ public class DummyStepInterpolator
    * should be called before using the instance in order to initialize
    * the internal arrays. This constructor is used only in order to delay
    * the initialization in some cases. As an example, the {@link
-   * EmbeddedRungeKuttaIntegrator} uses the prototyping design pattern
-   * to create the step interpolators by cloning an uninitialized
-   * model and latter initializing the copy.
+   * org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator} uses
+   * the prototyping design pattern to create the step interpolators by
+   * cloning an uninitialized model and latter initializing the copy.
    */
   public DummyStepInterpolator() {
     super();
+    currentDerivative = null;
   }
 
   /** Simple constructor.
    * @param y reference to the integrator array holding the state at
    * the end of the step
+   * @param yDot reference to the integrator array holding the state
+   * derivative at some arbitrary point within the step
    * @param forward integration direction indicator
    */
-  public DummyStepInterpolator(final double[] y, final boolean forward) {
+  public DummyStepInterpolator(final double[] y, final double[] yDot, final boolean forward) {
     super(y, forward);
+    currentDerivative = yDot;
   }
 
   /** Copy constructor.
@@ -71,6 +80,7 @@ public class DummyStepInterpolator
    */
   public DummyStepInterpolator(final DummyStepInterpolator interpolator) {
     super(interpolator);
+    currentDerivative = interpolator.currentDerivative.clone();
   }
 
   /** Really copy the finalized instance.
@@ -94,9 +104,10 @@ public class DummyStepInterpolator
   @Override
   protected void computeInterpolatedStateAndDerivatives(final double theta, final double oneMinusThetaH)
     throws DerivativeException {
-      System.arraycopy(currentState, 0, interpolatedState, 0, currentState.length);
+      System.arraycopy(currentState,      0, interpolatedState,       0, currentState.length);
+      System.arraycopy(currentDerivative, 0, interpolatedDerivatives, 0, currentDerivative.length);
   }
-    
+
   /** Write the instance to an output channel.
    * @param out output channel
    * @exception IOException if the instance cannot be written
@@ -104,8 +115,16 @@ public class DummyStepInterpolator
   @Override
   public void writeExternal(final ObjectOutput out)
     throws IOException {
-    // save the state of the base class
+
+      // save the state of the base class
     writeBaseExternal(out);
+
+    if (currentDerivative != null) {
+        for (int i = 0; i < currentDerivative.length; ++i) {
+            out.writeDouble(currentDerivative[i]);
+        }
+    }
+
   }
 
   /** Read the instance from an input channel.
@@ -116,15 +135,21 @@ public class DummyStepInterpolator
   public void readExternal(final ObjectInput in)
     throws IOException {
 
-    // read the base class 
+    // read the base class
     final double t = readBaseExternal(in);
+
+    if (currentState == null) {
+        currentDerivative = null;
+    } else {
+        currentDerivative  = new double[currentState.length];
+        for (int i = 0; i < currentDerivative.length; ++i) {
+            currentDerivative[i] = in.readDouble();
+        }
+    }
 
     // we can now set the interpolated time and state
     setInterpolatedTime(t);
 
   }
-
-  /** Serializable version identifier */
-  private static final long serialVersionUID = 1708010296707839488L;
 
 }

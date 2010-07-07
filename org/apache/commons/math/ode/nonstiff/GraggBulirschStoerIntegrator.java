@@ -87,15 +87,71 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</strong></td></tr>
  * </table>
  *
- * @author E. Hairer and G. Wanner (fortran version)
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:17 $
+ * @version $Revision: 919479 $ $Date: 2010-03-05 11:35:56 -0500 (Fri, 05 Mar 2010) $
  * @since 1.2
  */
 
 public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
 
-  /** Integrator method name. */
-  private static final String METHOD_NAME = "Gragg-Bulirsch-Stoer";
+    /** Integrator method name. */
+    private static final String METHOD_NAME = "Gragg-Bulirsch-Stoer";
+
+    /** maximal order. */
+    private int maxOrder;
+
+    /** step size sequence. */
+    private int[] sequence;
+
+    /** overall cost of applying step reduction up to iteration k+1, in number of calls. */
+    private int[] costPerStep;
+
+    /** cost per unit step. */
+    private double[] costPerTimeUnit;
+
+    /** optimal steps for each order. */
+    private double[] optimalStep;
+
+    /** extrapolation coefficients. */
+    private double[][] coeff;
+
+    /** stability check enabling parameter. */
+    private boolean performTest;
+
+    /** maximal number of checks for each iteration. */
+    private int maxChecks;
+
+    /** maximal number of iterations for which checks are performed. */
+    private int maxIter;
+
+    /** stepsize reduction factor in case of stability check failure. */
+    private double stabilityReduction;
+
+    /** first stepsize control factor. */
+    private double stepControl1;
+
+    /** second stepsize control factor. */
+    private double stepControl2;
+
+    /** third stepsize control factor. */
+    private double stepControl3;
+
+    /** fourth stepsize control factor. */
+    private double stepControl4;
+
+    /** first order control factor. */
+    private double orderControl1;
+
+    /** second order control factor. */
+    private double orderControl2;
+
+    /** dense outpute required. */
+    private boolean denseOutput;
+
+    /** use interpolation error in stepsize control. */
+    private boolean useInterpolationError;
+
+    /** interpolation order control parameter. */
+    private int mudif;
 
   /** Simple constructor.
    * Build a Gragg-Bulirsch-Stoer integrator with the given step
@@ -150,29 +206,29 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
    * <p>By default, the test is performed, at most during two
    * iterations at each step, and at most once for each of these
    * iterations. The default stepsize reduction factor is 0.5.</p>
-   * @param performTest if true, stability check will be performed,
+   * @param performStabilityCheck if true, stability check will be performed,
      if false, the check will be skipped
-   * @param maxIter maximal number of iterations for which checks are
+   * @param maxNumIter maximal number of iterations for which checks are
    * performed (the number of iterations is reset to default if negative
    * or null)
-   * @param maxChecks maximal number of checks for each iteration
+   * @param maxNumChecks maximal number of checks for each iteration
    * (the number of checks is reset to default if negative or null)
-   * @param stabilityReduction stepsize reduction factor in case of
+   * @param stepsizeReductionFactor stepsize reduction factor in case of
    * failure (the factor is reset to default if lower than 0.0001 or
    * greater than 0.9999)
    */
-  public void setStabilityCheck(final boolean performTest,
-                                final int maxIter, final int maxChecks,
-                                final double stabilityReduction) {
+  public void setStabilityCheck(final boolean performStabilityCheck,
+                                final int maxNumIter, final int maxNumChecks,
+                                final double stepsizeReductionFactor) {
 
-    this.performTest = performTest;
-    this.maxIter     = (maxIter   <= 0) ? 2 : maxIter;
-    this.maxChecks   = (maxChecks <= 0) ? 1 : maxChecks;
+    this.performTest = performStabilityCheck;
+    this.maxIter     = (maxNumIter   <= 0) ? 2 : maxNumIter;
+    this.maxChecks   = (maxNumChecks <= 0) ? 1 : maxNumChecks;
 
-    if ((stabilityReduction < 0.0001) || (stabilityReduction > 0.9999)) {
+    if ((stepsizeReductionFactor < 0.0001) || (stepsizeReductionFactor > 0.9999)) {
       this.stabilityReduction = 0.5;
     } else {
-      this.stabilityReduction = stabilityReduction;
+      this.stabilityReduction = stepsizeReductionFactor;
     }
 
   }
@@ -192,40 +248,40 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
    * </pre>
    * The default values are 0.02 for stepControl3 and 4.0 for
    * stepControl4.</p>
-   * @param stepControl1 first stepsize control factor (the factor is
+   * @param control1 first stepsize control factor (the factor is
    * reset to default if lower than 0.0001 or greater than 0.9999)
-   * @param stepControl2 second stepsize control factor (the factor
+   * @param control2 second stepsize control factor (the factor
    * is reset to default if lower than 0.0001 or greater than 0.9999)
-   * @param stepControl3 third stepsize control factor (the factor is
+   * @param control3 third stepsize control factor (the factor is
    * reset to default if lower than 0.0001 or greater than 0.9999)
-   * @param stepControl4 fourth stepsize control factor (the factor
+   * @param control4 fourth stepsize control factor (the factor
    * is reset to default if lower than 1.0001 or greater than 999.9)
    */
-  public void setStepsizeControl(final double stepControl1, final double stepControl2,
-                                 final double stepControl3, final double stepControl4) {
+  public void setStepsizeControl(final double control1, final double control2,
+                                 final double control3, final double control4) {
 
-    if ((stepControl1 < 0.0001) || (stepControl1 > 0.9999)) {
+    if ((control1 < 0.0001) || (control1 > 0.9999)) {
       this.stepControl1 = 0.65;
     } else {
-      this.stepControl1 = stepControl1;
+      this.stepControl1 = control1;
     }
 
-    if ((stepControl2 < 0.0001) || (stepControl2 > 0.9999)) {
+    if ((control2 < 0.0001) || (control2 > 0.9999)) {
       this.stepControl2 = 0.94;
     } else {
-      this.stepControl2 = stepControl2;
+      this.stepControl2 = control2;
     }
 
-    if ((stepControl3 < 0.0001) || (stepControl3 > 0.9999)) {
+    if ((control3 < 0.0001) || (control3 > 0.9999)) {
       this.stepControl3 = 0.02;
     } else {
-      this.stepControl3 = stepControl3;
+      this.stepControl3 = control3;
     }
 
-    if ((stepControl4 < 1.0001) || (stepControl4 > 999.9)) {
+    if ((control4 < 1.0001) || (control4 > 999.9)) {
       this.stepControl4 = 4.0;
     } else {
-      this.stepControl4 = stepControl4;
+      this.stepControl4 = control4;
     }
 
   }
@@ -246,30 +302,30 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
    * <p>The default maximal order after construction is 18 (i.e. the
    * maximal number of columns is 9). The default values are 0.8 for
    * orderControl1 and 0.9 for orderControl2.</p>
-   * @param maxOrder maximal order in the extrapolation table (the
+   * @param maximalOrder maximal order in the extrapolation table (the
    * maximal order is reset to default if order <= 6 or odd)
-   * @param orderControl1 first order control factor (the factor is
+   * @param control1 first order control factor (the factor is
    * reset to default if lower than 0.0001 or greater than 0.9999)
-   * @param orderControl2 second order control factor (the factor
+   * @param control2 second order control factor (the factor
    * is reset to default if lower than 0.0001 or greater than 0.9999)
    */
-  public void setOrderControl(final int maxOrder,
-                              final double orderControl1, final double orderControl2) {
+  public void setOrderControl(final int maximalOrder,
+                              final double control1, final double control2) {
 
-    if ((maxOrder <= 6) || (maxOrder % 2 != 0)) {
+    if ((maximalOrder <= 6) || (maximalOrder % 2 != 0)) {
       this.maxOrder = 18;
     }
 
-    if ((orderControl1 < 0.0001) || (orderControl1 > 0.9999)) {
+    if ((control1 < 0.0001) || (control1 > 0.9999)) {
       this.orderControl1 = 0.8;
     } else {
-      this.orderControl1 = orderControl1;
+      this.orderControl1 = control1;
     }
 
-    if ((orderControl2 < 0.0001) || (orderControl2 > 0.9999)) {
+    if ((control2 < 0.0001) || (control2 > 0.9999)) {
       this.orderControl2 = 0.9;
     } else {
-      this.orderControl2 = orderControl2;
+      this.orderControl2 = control2;
     }
 
     // reinitialize the arrays
@@ -325,7 +381,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
     } else {
       // step size sequence: 2, 4, 6, 8, ...
       for (int k = 0; k < size; ++k) {
-        sequence[k] = 2 * (k + 1); 
+        sequence[k] = 2 * (k + 1);
       }
     }
 
@@ -352,20 +408,20 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
    * default value for mudif is 4 and the interpolation error is used
    * in stepsize control by default.
 
-   * @param useInterpolationError if true, interpolation error is used
+   * @param useInterpolationErrorForControl if true, interpolation error is used
    * for stepsize control
-   * @param mudif interpolation order control parameter (the parameter
+   * @param mudifControlParameter interpolation order control parameter (the parameter
    * is reset to default if <= 0 or >= 7)
    */
-  public void setInterpolationControl(final boolean useInterpolationError,
-                                      final int mudif) {
+  public void setInterpolationControl(final boolean useInterpolationErrorForControl,
+                                      final int mudifControlParameter) {
 
-    this.useInterpolationError = useInterpolationError;
+    this.useInterpolationError = useInterpolationErrorForControl;
 
-    if ((mudif <= 0) || (mudif >= 7)) {
+    if ((mudifControlParameter <= 0) || (mudifControlParameter >= 7)) {
       this.mudif = 4;
     } else {
-      this.mudif = mudif;
+      this.mudif = mudifControlParameter;
     }
 
   }
@@ -504,7 +560,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
     sanityChecks(equations, t0, y0, t, y);
     setEquations(equations);
     resetEvaluations();
-    final boolean forward = (t > t0);
+    final boolean forward = t > t0;
 
     // create some internal working arrays
     final double[] yDot0   = new double[y0.length];
@@ -568,7 +624,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
                                                             y1, yDot1,
                                                             yMidDots, forward);
     } else {
-      interpolator = new DummyStepInterpolator(y, forward);
+      interpolator = new DummyStepInterpolator(y, yDot1, forward);
     }
     interpolator.storeTime(t0);
 
@@ -690,7 +746,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
                     // estimate if there is a chance convergence will
                     // be reached on next iteration, using the
                     // asymptotic evolution of error
-                    final double ratio = ((double) sequence [k] * sequence[k+1]) /
+                    final double ratio = ((double) sequence [targetIter] * sequence[targetIter + 1]) /
                                          (sequence[0] * sequence[0]);
                     if (error > ratio * ratio) {
                       // we don't expect to converge on next iteration
@@ -941,64 +997,5 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
     return stepStart;
 
   }
-
-  /** maximal order. */
-  private int maxOrder;
-
-  /** step size sequence. */
-  private int[] sequence;
-
-  /** overall cost of applying step reduction up to iteration k+1,
-   *  in number of calls.
-   */
-  private int[] costPerStep;
-
-  /** cost per unit step. */
-  private double[] costPerTimeUnit;
-
-  /** optimal steps for each order. */
-  private double[] optimalStep;
-
-  /** extrapolation coefficients. */
-  private double[][] coeff;
-
-  /** stability check enabling parameter. */
-  private boolean performTest;
-
-  /** maximal number of checks for each iteration. */
-  private int maxChecks;
-
-  /** maximal number of iterations for which checks are performed. */
-  private int maxIter;
-
-  /** stepsize reduction factor in case of stability check failure. */
-  private double stabilityReduction;
-
-  /** first stepsize control factor. */
-  private double stepControl1;
-
-  /** second stepsize control factor. */
-  private double stepControl2;
-
-  /** third stepsize control factor. */
-  private double stepControl3;
-
-  /** fourth stepsize control factor. */
-  private double stepControl4;
-
-  /** first order control factor. */
-  private double orderControl1;
-
-  /** second order control factor. */
-  private double orderControl2;
-
-  /** dense outpute required. */
-  private boolean denseOutput;
-
-  /** use interpolation error in stepsize control. */
-  private boolean useInterpolationError;
-
-  /** interpolation order control parameter. */
-  private int mudif;
 
 }

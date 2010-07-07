@@ -30,15 +30,15 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * Romberg integration employs k successive refinements of the trapezoid
  * rule to remove error terms less than order O(N^(-2k)). Simpson's rule
  * is a special case of k = 2.</p>
- *  
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ *
+ * @version $Revision: 824822 $ $Date: 2009-10-13 11:56:51 -0400 (Tue, 13 Oct 2009) $
  * @since 1.2
  */
 public class RombergIntegrator extends UnivariateRealIntegratorImpl {
 
     /**
      * Construct an integrator for the given function.
-     * 
+     *
      * @param f function to integrate
      * @deprecated as of 2.0 the integrand function is passed as an argument
      * to the {@link #integrate(UnivariateRealFunction, double, double)}method.
@@ -66,38 +66,42 @@ public class RombergIntegrator extends UnivariateRealIntegratorImpl {
     public double integrate(final UnivariateRealFunction f,
                             final double min, final double max)
         throws MaxIterationsExceededException, FunctionEvaluationException, IllegalArgumentException {
-        
-        int i = 1, j, m = maximalIterationCount + 1;
-        // Array structure here can be improved for better space
-        // efficiency because only the lower triangle is used.
-        double r, t[][] = new double[m][m], s, olds;
+
+        final int m = maximalIterationCount + 1;
+        double previousRow[] = new double[m];
+        double currentRow[]  = new double[m];
 
         clearResult();
         verifyInterval(min, max);
         verifyIterationCount();
 
         TrapezoidIntegrator qtrap = new TrapezoidIntegrator();
-        t[0][0] = qtrap.stage(f, min, max, 0);
-        olds = t[0][0];
-        while (i <= maximalIterationCount) {
-            t[i][0] = qtrap.stage(f, min, max, i);
-            for (j = 1; j <= i; j++) {
+        currentRow[0] = qtrap.stage(f, min, max, 0);
+        double olds = currentRow[0];
+        for (int i = 1; i <= maximalIterationCount; ++i) {
+
+            // switch rows
+            final double[] tmpRow = previousRow;
+            previousRow = currentRow;
+            currentRow = tmpRow;
+
+            currentRow[0] = qtrap.stage(f, min, max, i);
+            for (int j = 1; j <= i; j++) {
                 // Richardson extrapolation coefficient
-                r = (1L << (2 * j)) -1;
-                t[i][j] = t[i][j-1] + (t[i][j-1] - t[i-1][j-1]) / r;
+                final double r = (1L << (2 * j)) - 1;
+                final double tIJm1 = currentRow[j - 1];
+                currentRow[j] = tIJm1 + (tIJm1 - previousRow[j - 1]) / r;
             }
-            s = t[i][i];
+            final double s = currentRow[i];
             if (i >= minimalIterationCount) {
-                final double delta = Math.abs(s - olds);
-                final double rLimit =
-                    relativeAccuracy * (Math.abs(olds) + Math.abs(s)) * 0.5; 
+                final double delta  = Math.abs(s - olds);
+                final double rLimit = relativeAccuracy * (Math.abs(olds) + Math.abs(s)) * 0.5;
                 if ((delta <= rLimit) || (delta <= absoluteAccuracy)) {
                     setResult(s, i);
                     return result;
                 }
             }
             olds = s;
-            i++;
         }
         throw new MaxIterationsExceededException(maximalIterationCount);
     }

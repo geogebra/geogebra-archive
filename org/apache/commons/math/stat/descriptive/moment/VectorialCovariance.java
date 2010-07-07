@@ -26,7 +26,7 @@ import org.apache.commons.math.linear.RealMatrix;
 /**
  * Returns the covariance matrix of the available vectors.
  * @since 1.2
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 922714 $ $Date: 2010-03-13 20:35:14 -0500 (Sat, 13 Mar 2010) $
  */
 public class VectorialCovariance implements Serializable {
 
@@ -34,13 +34,13 @@ public class VectorialCovariance implements Serializable {
     private static final long serialVersionUID = 4118372414238930270L;
 
     /** Sums for each component. */
-    private double[] sums;
+    private final double[] sums;
 
     /** Sums of products for each component. */
-    private double[] productsSums;
+    private final double[] productsSums;
 
     /** Indicator for bias correction. */
-    private boolean isBiasCorrected;
+    private final boolean isBiasCorrected;
 
     /** Number of vectors in the sample. */
     private long n;
@@ -135,8 +135,6 @@ public class VectorialCovariance implements Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
         if (!(obj instanceof VectorialCovariance))
             return false;
         VectorialCovariance other = (VectorialCovariance) obj;

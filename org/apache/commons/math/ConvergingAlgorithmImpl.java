@@ -21,8 +21,8 @@ package org.apache.commons.math;
 /**
  * Provide a default implementation for several functions useful to generic
  * converging algorithms.
- *  
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public abstract class ConvergingAlgorithmImpl implements ConvergingAlgorithm{
@@ -51,10 +51,10 @@ public abstract class ConvergingAlgorithmImpl implements ConvergingAlgorithm{
 
     /**
      * Construct an algorithm with given iteration count and accuracy.
-     * 
+     *
      * @param defaultAbsoluteAccuracy maximum absolute error
      * @param defaultMaximalIterationCount maximum number of iterations
-     * @throws IllegalArgumentException if f is null or the 
+     * @throws IllegalArgumentException if f is null or the
      * defaultAbsoluteAccuracy is not valid
      */
     protected ConvergingAlgorithmImpl(final int defaultMaximalIterationCount,

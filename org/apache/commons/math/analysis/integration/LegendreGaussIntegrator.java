@@ -45,7 +45,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * &prod; (x-x<sub>k</sub>)/(x<sub>i</sub>-x<sub>k</sub>) for k != i.
  * </p>
  * <p>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 1.2
  */
 
@@ -163,7 +163,7 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
     public double integrate(final UnivariateRealFunction f,
             final double min, final double max)
         throws ConvergenceException,  FunctionEvaluationException, IllegalArgumentException {
-        
+
         clearResult();
         verifyInterval(min, max);
         verifyIterationCount();

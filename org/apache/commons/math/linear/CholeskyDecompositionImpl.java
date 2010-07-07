@@ -28,7 +28,7 @@ import org.apache.commons.math.MathRuntimeException;
  *
  * @see <a href="http://mathworld.wolfram.com/CholeskyDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Cholesky_decomposition">Wikipedia</a>
- * @version $Revision: 1.1 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
  * @since 2.0
  */
 public class CholeskyDecompositionImpl implements CholeskyDecomposition {
@@ -187,7 +187,7 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
 
     /** Specialized solver. */
     private static class Solver implements DecompositionSolver {
-    
+
         /** Row-oriented storage for L<sup>T</sup> matrix data. */
         private final double[][] lTData;
 

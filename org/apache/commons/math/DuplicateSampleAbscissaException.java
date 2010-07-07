@@ -17,13 +17,13 @@
 package org.apache.commons.math;
 
 /**
- * Exeption thrown when a sample contains several entries at the same abscissa.
- * 
+ * Exception thrown when a sample contains several entries at the same abscissa.
+ *
  * @since 1.2
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:13 $
+ * @version $Revision: 822454 $ $Date: 2009-10-06 15:29:52 -0400 (Tue, 06 Oct 2009) $
  */
 public class DuplicateSampleAbscissaException extends MathException  {
-    
+
     /** Serializable version identifier */
     private static final long serialVersionUID = -2271007547170169872L;
 
@@ -45,5 +45,5 @@ public class DuplicateSampleAbscissaException extends MathException  {
     public double getDuplicateAbscissa() {
         return ((Double) getArguments()[0]).doubleValue();
     }
-    
+
 }

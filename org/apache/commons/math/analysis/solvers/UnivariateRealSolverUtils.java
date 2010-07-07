@@ -16,28 +16,33 @@
  */
 package org.apache.commons.math.analysis.solvers;
 
-import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 
 /**
  * Utility routines for {@link UnivariateRealSolver} objects.
- * 
- * @version $Revision: 1.2 $ $Date: 2009-11-11 17:05:25 $
+ *
+ * @version $Revision: 885278 $ $Date: 2009-11-29 16:47:51 -0500 (Sun, 29 Nov 2009) $
  */
 public class UnivariateRealSolverUtils {
+
+    /** Message for null function.*/
+    private static final String NULL_FUNCTION_MESSAGE =
+        "function is null";
+
     /**
      * Default constructor.
      */
     private UnivariateRealSolverUtils() {
         super();
     }
-    
+
     /**
      * Convenience method to find a zero of a univariate real function.  A default
-     * solver is used. 
-     * 
+     * solver is used.
+     *
      * @param f the function.
      * @param x0 the lower bound for the interval.
      * @param x1 the upper bound for the interval.
@@ -56,8 +61,8 @@ public class UnivariateRealSolverUtils {
 
     /**
      * Convenience method to find a zero of a univariate real function.  A default
-     * solver is used. 
-     * 
+     * solver is used.
+     *
      * @param f the function
      * @param x0 the lower bound for the interval
      * @param x1 the upper bound for the interval
@@ -66,14 +71,14 @@ public class UnivariateRealSolverUtils {
      * @throws ConvergenceException if the iteration count is exceeded
      * @throws FunctionEvaluationException if an error occurs evaluating the
      * function
-     * @throws IllegalArgumentException if f is null, the endpoints do not 
+     * @throws IllegalArgumentException if f is null, the endpoints do not
      * specify a valid interval, or the absoluteAccuracy is not valid for the
      * default solver
      */
     public static double solve(UnivariateRealFunction f, double x0, double x1,
-            double absoluteAccuracy) throws ConvergenceException, 
-            FunctionEvaluationException {    
-       
+            double absoluteAccuracy) throws ConvergenceException,
+            FunctionEvaluationException {
+
         setup(f);
         UnivariateRealSolver solver = LazyHolder.FACTORY.newDefaultSolver();
         solver.setAbsoluteAccuracy(absoluteAccuracy);
@@ -88,24 +93,24 @@ public class UnivariateRealSolverUtils {
      * If f is continuous on <code>[a,b],</code> this means that <code>a</code>
      * and <code>b</code> bracket a root of f.
      * <p>
-     * The algorithm starts by setting 
+     * The algorithm starts by setting
      * <code>a := initial -1; b := initial +1,</code> examines the value of the
      * function at <code>a</code> and <code>b</code> and keeps moving
-     * the endpoints out by one unit each time through a loop that terminates 
+     * the endpoints out by one unit each time through a loop that terminates
      * when one of the following happens: <ul>
      * <li> <code> f(a) * f(b) < 0 </code> --  success!</li>
-     * <li> <code> a = lower </code> and <code> b = upper</code> 
+     * <li> <code> a = lower </code> and <code> b = upper</code>
      * -- ConvergenceException </li>
-     * <li> <code> Integer.MAX_VALUE</code> iterations elapse 
+     * <li> <code> Integer.MAX_VALUE</code> iterations elapse
      * -- ConvergenceException </li>
      * </ul></p>
      * <p>
-     * <strong>Note: </strong> this method can take 
-     * <code>Integer.MAX_VALUE</code> iterations to throw a 
+     * <strong>Note: </strong> this method can take
+     * <code>Integer.MAX_VALUE</code> iterations to throw a
      * <code>ConvergenceException.</code>  Unless you are confident that there
      * is a root between <code>lowerBound</code> and <code>upperBound</code>
-     * near <code>initial,</code> it is better to use 
-     * {@link #bracket(UnivariateRealFunction, double, double, double, int)}, 
+     * near <code>initial,</code> it is better to use
+     * {@link #bracket(UnivariateRealFunction, double, double, double, int)},
      * explicitly specifying the maximum number of iterations.</p>
      *
      * @param function the function
@@ -121,8 +126,8 @@ public class UnivariateRealSolverUtils {
      * @throws IllegalArgumentException if function is null, maximumIterations
      * is not positive, or initial is not between lowerBound and upperBound
      */
-    public static double[] bracket(UnivariateRealFunction function, 
-            double initial, double lowerBound, double upperBound) 
+    public static double[] bracket(UnivariateRealFunction function,
+            double initial, double lowerBound, double upperBound)
     throws ConvergenceException, FunctionEvaluationException {
         return bracket( function, initial, lowerBound, upperBound,
             Integer.MAX_VALUE ) ;
@@ -136,17 +141,17 @@ public class UnivariateRealSolverUtils {
      * If f is continuous on <code>[a,b],</code> this means that <code>a</code>
      * and <code>b</code> bracket a root of f.
      * <p>
-     * The algorithm starts by setting 
+     * The algorithm starts by setting
      * <code>a := initial -1; b := initial +1,</code> examines the value of the
      * function at <code>a</code> and <code>b</code> and keeps moving
-     * the endpoints out by one unit each time through a loop that terminates 
+     * the endpoints out by one unit each time through a loop that terminates
      * when one of the following happens: <ul>
      * <li> <code> f(a) * f(b) <= 0 </code> --  success!</li>
-     * <li> <code> a = lower </code> and <code> b = upper</code> 
+     * <li> <code> a = lower </code> and <code> b = upper</code>
      * -- ConvergenceException </li>
-     * <li> <code> maximumIterations</code> iterations elapse 
+     * <li> <code> maximumIterations</code> iterations elapse
      * -- ConvergenceException </li></ul></p>
-     * 
+     *
      * @param function the function
      * @param initial initial midpoint of interval being expanded to
      * bracket a root
@@ -157,18 +162,18 @@ public class UnivariateRealSolverUtils {
      * @return a two element array holding {a, b}.
      * @throws ConvergenceException if the algorithm fails to find a and b
      * satisfying the desired conditions
-     * @throws FunctionEvaluationException if an error occurs evaluating the 
+     * @throws FunctionEvaluationException if an error occurs evaluating the
      * function
      * @throws IllegalArgumentException if function is null, maximumIterations
      * is not positive, or initial is not between lowerBound and upperBound
      */
     public static double[] bracket(UnivariateRealFunction function,
-            double initial, double lowerBound, double upperBound, 
-            int maximumIterations) throws ConvergenceException, 
+            double initial, double lowerBound, double upperBound,
+            int maximumIterations) throws ConvergenceException,
             FunctionEvaluationException {
-        
+
         if (function == null) {
-            throw MathRuntimeException.createIllegalArgumentException("function is null");
+            throw MathRuntimeException.createIllegalArgumentException(NULL_FUNCTION_MESSAGE);
         }
         if (maximumIterations <= 0)  {
             throw MathRuntimeException.createIllegalArgumentException(
@@ -184,17 +189,17 @@ public class UnivariateRealSolverUtils {
         double fa;
         double fb;
         int numIterations = 0 ;
-    
+
         do {
             a = Math.max(a - 1.0, lowerBound);
             b = Math.min(b + 1.0, upperBound);
             fa = function.value(a);
-            
+
             fb = function.value(b);
             numIterations++ ;
-        } while ((fa * fb > 0.0) && (numIterations < maximumIterations) && 
+        } while ((fa * fb > 0.0) && (numIterations < maximumIterations) &&
                 ((a > lowerBound) || (b < upperBound)));
-   
+
         if (fa * fb > 0.0 ) {
             throw new ConvergenceException(
                       "number of iterations={0}, maximum iterations={1}, " +
@@ -203,21 +208,21 @@ public class UnivariateRealSolverUtils {
                       numIterations, maximumIterations, initial,
                       lowerBound, upperBound, a, b, fa, fb);
         }
-        
+
         return new double[]{a, b};
     }
 
     /**
      * Compute the midpoint of two values.
-     * 
+     *
      * @param a first value.
      * @param b second value.
-     * @return the midpoint. 
+     * @return the midpoint.
      */
     public static double midpoint(double a, double b) {
         return (a + b) * .5;
     }
-    
+
     /**
      * Checks to see if f is null, throwing IllegalArgumentException if so.
      * @param f  input function
@@ -225,17 +230,18 @@ public class UnivariateRealSolverUtils {
      */
     private static void setup(UnivariateRealFunction f) {
         if (f == null) {
-            throw MathRuntimeException.createIllegalArgumentException("function is null");
+            throw MathRuntimeException.createIllegalArgumentException(NULL_FUNCTION_MESSAGE);
         }
     }
 
+    // CHECKSTYLE: stop HideUtilityClassConstructor
     /** Holder for the factory.
      * <p>We use here the Initialization On Demand Holder Idiom.</p>
      */
     private static class LazyHolder {
         /** Cached solver factory */
-        private static final UnivariateRealSolverFactory FACTORY =
-            UnivariateRealSolverFactory.newInstance();
+        private static final UnivariateRealSolverFactory FACTORY = UnivariateRealSolverFactory.newInstance();
     }
+    // CHECKSTYLE: resume HideUtilityClassConstructor
 
 }

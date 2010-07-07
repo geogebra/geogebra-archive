@@ -17,11 +17,11 @@
 
 package org.apache.commons.math.random;
 
-/** 
+/**
  * This interface represent a normalized random generator for
  * scalars.
  * Normalized generator provide null mean and unit standard deviation scalars.
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:12 $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
  * @since 1.2
  */
 public interface NormalizedRandomGenerator {
@@ -33,6 +33,6 @@ public interface NormalizedRandomGenerator {
    * standard deviation.</p>
    * @return a random scalar with null mean and unit standard deviation
    */
-  public double nextNormalizedDouble();
+  double nextNormalizedDouble();
 
 }

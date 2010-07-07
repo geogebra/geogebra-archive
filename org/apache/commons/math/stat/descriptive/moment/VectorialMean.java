@@ -24,7 +24,7 @@ import org.apache.commons.math.DimensionMismatchException;
 /**
  * Returns the arithmetic mean of the available vectors.
  * @since 1.2
- * @version $Revision: 1.2 $ $Date: 2009-08-09 07:40:20 $
+ * @version $Revision: 922714 $ $Date: 2010-03-13 20:35:14 -0500 (Sat, 13 Mar 2010) $
  */
 public class VectorialMean implements Serializable {
 
@@ -32,7 +32,7 @@ public class VectorialMean implements Serializable {
     private static final long serialVersionUID = 8223009086481006892L;
 
     /** Means for each component. */
-    private Mean[] means;
+    private final Mean[] means;
 
     /** Constructs a VectorialMean.
      * @param dimension vectors dimension
@@ -92,8 +92,6 @@ public class VectorialMean implements Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
         if (!(obj instanceof VectorialMean))
             return false;
         VectorialMean other = (VectorialMean) obj;
