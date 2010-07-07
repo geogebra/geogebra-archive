@@ -24,12 +24,10 @@ public class EllipticArcLength {
 
 	private double [] halfAxes;
 	private RealRootFunction arcLengthFunction;
-	private GaussQuadIntegration gauss;
 	
 	public EllipticArcLength(GeoConic ellipse) {
 		halfAxes = ellipse.getHalfAxes();
 		arcLengthFunction = new EllipticArcLengthFunction();
-		gauss = new GaussQuadIntegration(5);
 	}
 	
 	/**

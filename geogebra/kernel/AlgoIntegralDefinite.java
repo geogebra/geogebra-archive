@@ -12,8 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
+
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.integration.GaussQuadIntegration;
+import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootFunction;
 
 /**
@@ -33,9 +35,9 @@ public class AlgoIntegralDefinite extends AlgoElement {
     private GeoFunction symbIntegral;
     
     // for numerical adaptive GaussQuad integration  
-    private static final int FIRST_ORDER = 5;
-    private static final int SECOND_ORDER = 7;   
-    private static GaussQuadIntegration firstGauss, secondGauss;
+    private static final int ORDER = 5;
+    private static final int MAX_ITER = 10;
+    private static LegendreGaussIntegrator gauss;
     private static int adaptiveGaussQuadCounter = 0;
     private static final int MAX_GAUSS_QUAD_CALLS = 500;     
 
@@ -180,31 +182,20 @@ public class AlgoIntegralDefinite extends AlgoElement {
     	}
     	
     	// init GaussQuad classes for numerical integration
-        if (firstGauss == null) {
-            firstGauss = new GaussQuadIntegration(FIRST_ORDER);
-            secondGauss = new GaussQuadIntegration(SECOND_ORDER);
+        if (gauss == null) {
+            gauss = new LegendreGaussIntegrator(ORDER, MAX_ITER);
         }
     	
         // integrate using gauss quadrature
-        double firstSum = firstGauss.integrate(fun, a, b);
-        if (Double.isNaN(firstSum)) return Double.NaN;        
-        double secondSum = secondGauss.integrate(fun, a, b);
-        if (Double.isNaN(secondSum)) return Double.NaN;
+        double sum;
+		try {
+			sum = gauss.integrate(new RealRootAdapter(fun), a, b);
+		} catch (Exception e) {
+			sum = Double.NaN;
+		}
+        if (Double.isNaN(sum)) return Double.NaN;
         
-        // check if both results are equal
-        boolean equal = Kernel.isEqual(firstSum, secondSum, Kernel.STANDARD_PRECISION);
-       
-        if (equal) { 
-        	// success              
-            return secondSum;
-        } else {           
-            double mid = (a + b) / 2;                             
-            double left = doAdaptiveGaussQuad(fun, a, mid);
-            if (Double.isNaN(left))
-                return Double.NaN;
-            else
-                return left + doAdaptiveGaussQuad(fun, mid, b);           
-        }
+        return sum;
     }
 
     final public String toString() {
