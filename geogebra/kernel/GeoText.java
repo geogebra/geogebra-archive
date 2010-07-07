@@ -701,12 +701,11 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	 * Returns a comparator for GeoText objects.
 	 * If equal, doesn't return zero (otherwise TreeSet deletes duplicates)
 	 */
-	public static Comparator getComparator() {
+	public static Comparator<GeoText> getComparator() {
 		if (comparator == null) {
-			comparator = new Comparator() {
-			      public int compare(Object a, Object b) {
-				        GeoText itemA = (GeoText) a;
-				        GeoText itemB = (GeoText) b;
+			comparator = new Comparator<GeoText>() {
+			      public int compare(GeoText itemA, GeoText itemB) {
+
 				        int comp = itemA.getTextString().compareTo(itemB.getTextString());
 				        
 				        
@@ -722,7 +721,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		return comparator;
 	}
 	
-	private static Comparator comparator;
+	private static Comparator<GeoText> comparator;
 	
 		public void setTemporaryPrintAccuracy() {
 		if (useSignificantFigures()) {

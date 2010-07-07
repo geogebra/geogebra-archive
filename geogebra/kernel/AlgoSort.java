@@ -104,7 +104,7 @@ public class AlgoSort extends AlgoElement {
         outputList.setDefined(true);
         outputList.clear();
         
-        Iterator iterator = sortedSet.iterator();
+        Iterator<GeoElement> iterator = sortedSet.iterator();
         while (iterator.hasNext()) {
      	   outputList.add((GeoElement)(iterator.next()));
         }      

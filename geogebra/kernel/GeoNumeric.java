@@ -765,17 +765,13 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * Returns a comparator for GeoNumeric objects.
 	 * If equal, doesn't return zero (otherwise TreeSet deletes duplicates)
 	 */
-	public static Comparator getComparator() {
+	public static Comparator<GeoNumeric> getComparator() {
 		if (comparator == null) {
-			comparator = new Comparator() {
-		      public int compare(Object a, Object b) {
-		    	  //if (a == b) return 0;
-		    	  
-		        GeoNumeric itemA = (GeoNumeric) a;
-		        GeoNumeric itemB = (GeoNumeric) b;
+			comparator = new Comparator<GeoNumeric>() {
+		      public int compare(GeoNumeric itemA, GeoNumeric itemB) {
 		        
 		        double comp = itemA.getValue() - itemB.getValue();
-		        if (itemA.getKernel().isZero(comp))
+		        if (Kernel.isZero(comp))
 		        // don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
 		        	return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
 		        else
@@ -786,7 +782,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		
 		return comparator;
 	}
-	private static Comparator comparator;
+	private static Comparator<GeoNumeric> comparator;
 
 	public double getDefaultSliderMin() {
 		return isGeoAngle() ? DEFAULT_SLIDER_MIN_ANGLE : DEFAULT_SLIDER_MIN;

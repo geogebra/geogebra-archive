@@ -1048,20 +1048,18 @@ GeoPointInterface, MatrixTransformable {
 	 * (sorts on X coordinate)
 	 * If equal, doesn't return zero (otherwise TreeSet deletes duplicates)
 	 */
-	public static Comparator getComparatorX() {
+	public static Comparator<GeoPoint> getComparatorX() {
 		if (comparatorX == null) {
-			comparatorX = new Comparator() {
-				public int compare(Object a, Object b) {
-						GeoPoint itemA = (GeoPoint) a;
-						GeoPoint itemB = (GeoPoint) b;
+			comparatorX = new Comparator<GeoPoint>() {
+				public int compare(GeoPoint itemA, GeoPoint itemB) {
 		        
 						double compX = itemA.inhomX - itemB.inhomX;
 	
-						if (itemA.getKernel().isZero(compX)) {
+						if (Kernel.isZero(compX)) {
 							double compY = itemA.inhomY - itemB.inhomY;
 							
 							// if x-coords equal, sort on y-coords
-							if (!itemA.getKernel().isZero(compY))
+							if (!Kernel.isZero(compY))
 								return compY < 0 ? -1 : +1;
 							
 							// don't return 0 for equal objects, otherwise the TreeSet deletes duplicates
@@ -1078,7 +1076,7 @@ GeoPointInterface, MatrixTransformable {
 		
 			return comparatorX;
 		}
-	  private static Comparator comparatorX;
+	  private static Comparator<GeoPoint> comparatorX;
     
 	    
 	    /////////////////////////////////////////////
