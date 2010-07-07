@@ -18,6 +18,9 @@ import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.main.Application;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import org.apache.commons.math.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
@@ -101,8 +104,7 @@ public class EquationSolver {
 				break;
 					
 			default:
-				Application.debug("TODO");
-			//	realRoots = laguerreAll(roots);		
+				ret = laguerreAllComplex(real, complex);		
 		}
 		 				
 		return ret;
@@ -618,7 +620,7 @@ public class EquationSolver {
 			UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
 			try {					
 				if (bounded) {						
-					//	small f'(root): don't go too fare from our laguerre root !	
+					//	small f'(root): don't go too far from our laguerre root !	
 					root = fact.newBrentSolver().solve(new RealRootAdapter(polyFunc), left, right);
 					//System.out.println("Polish bisectNewtonRaphson: " + root);
 				} 
@@ -660,6 +662,42 @@ public class EquationSolver {
 			}
 		}			
 		return realRoots;
+	}
+
+	/**
+	 * Calculates all roots of a polynomial given by eqn using Laguerres method.
+	 * Polishes roots found. The roots are stored in eqn again.
+	 * @param eqn: coefficients of polynomial	 
+	 */	
+	private int laguerreAllComplex(double [] real, double[] complex) {
+	
+		Complex[] complexRoots = null;
+		try {
+			complexRoots = new LaguerreSolver().solveAll(real, LAGUERRE_START);
+		} catch (Exception e) {
+			Application.debug("Problem solving with LaguerreSolver"+e.getLocalizedMessage());
+		}
+	
+		// sort by real part & remove duplicates
+		
+    	TreeSet<Complex> sortedSet = new TreeSet<Complex>(getComparatorReal());
+    	
+		for (int i=0; i < complexRoots.length; i++) {
+			sortedSet.add(complexRoots[i]);
+		}
+
+		int roots = 0;
+		Complex temp;
+        Iterator<Complex> iterator = sortedSet.iterator();
+        while (iterator.hasNext()) {
+     	   temp = iterator.next();
+     	   real[roots] = temp.getReal();
+     	   complex[roots] = temp.getImaginary();
+     	   roots++;
+        }      
+
+			
+		return roots;
 	}
 
 	
@@ -1016,7 +1054,44 @@ public class EquationSolver {
 
 	  return 2;
 	}
+	
+	/**
+	 * Returns a comparator for Complex objects.
+	 * (sorts on real part coordinate)
+	 * If equal does return zero (deletes duplicates!)
+	 */
+	public static Comparator<Complex> getComparatorReal() {
+		if (comparatorReal == null) {
+			comparatorReal = new Comparator<Complex>() {
+				public int compare(Complex itemA, Complex itemB) {
+		        
+						double compReal = itemA.getReal() - itemB.getReal();
+	
+						if (Kernel.isZero(compReal)) {
+							double compImaginary = itemA.getImaginary() - itemB.getImaginary();
+							
+							// if real parts equal, sort on imaginary
+							if (!Kernel.isZero(compImaginary))
+								return compImaginary < 0 ? -1 : +1;
+							
+							// return 0 -> remove duplicates!
+							return 0;
+						}
+						else
+						{
+							return compReal < 0 ? -1 : +1;
+						}
+					}
+				};
+			
+			}
+		
+			return comparatorReal;
+		}
+	  private static Comparator<Complex> comparatorReal;
 }
+
+
 
     
 

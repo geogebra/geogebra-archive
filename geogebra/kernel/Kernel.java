@@ -5974,7 +5974,7 @@ public class Kernel {
 	}
 
 	/** is abs(x) < epsilon ? */
-	final public boolean isZero(double x) {
+	final public static boolean isZero(double x) {
 		return -EPSILON < x && x < EPSILON;
 	}
 
