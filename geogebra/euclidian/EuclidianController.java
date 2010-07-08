@@ -3304,6 +3304,7 @@ Rectangle rect = view.getSelectionRectangle();
 				doSingleHighlighting, true);
 	}
 
+		
 	// update the new point (used for preview in 3D)
 	public GeoPointInterface updateNewPoint(
 			boolean forPreviewable,
@@ -3316,9 +3317,7 @@ Rectangle rect = view.getSelectionRectangle();
 
 		// only keep polygon in hits if one side of polygon is in hits too
 		// removed: Point Tool creates Point on edge of Polygon
-		// mathieu: put it back for Point In Region Tool and View Direction Tool
-		if ((mode == EuclidianView.MODE_POINT_IN_REGION 
-				|| mode == EuclidianView.MODE_VIEW_IN_FRONT_OF )
+		if (mode != EuclidianView.MODE_POINT
 				&& !hits.isEmpty())
 			hits.keepOnlyHitsForNewPointMode();
 

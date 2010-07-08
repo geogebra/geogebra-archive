@@ -211,6 +211,12 @@ public abstract class Application3D extends Application{
 	// GUI
 	/////////////////////////////////
 	
+
+	public void refreshViews() {
+		getEuclidianView3D().updateAllDrawables();
+		super.refreshViews();
+	}
+	
 	public void toggleAxis(){
 		// toggle axis
 		getEuclidianView3D().toggleAxis();

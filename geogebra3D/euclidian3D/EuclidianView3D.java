@@ -782,7 +782,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			drawable3DLists.add(drawable3DListToBeAdded);
 			drawable3DListToBeAdded.clear();
 			drawable3DLists.viewChanged();
-			updateDrawables();
+			updateOwnDrawables();
 			waitForUpdate = false;
 		}
 
@@ -2529,9 +2529,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/**
-	 * says all drawables that the view has changed
+	 * says all drawables owned by the view that the view has changed
 	 */
-	public void updateDrawables(){
+	public void updateOwnDrawables(){
 		
 		xOyPlaneDrawable.viewChanged();
 		
@@ -2541,6 +2541,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		}
 		
 		//axis[1].getDrawable3D().viewChanged();
+		
+	}
+	
+	/**
+	 * says all drawables that the view has changed
+	 */
+	public void updateAllDrawables(){
+		
+		updateOwnDrawables();
+		drawable3DLists.viewChanged();
 		
 	}
 	

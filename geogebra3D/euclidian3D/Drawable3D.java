@@ -141,6 +141,9 @@ public abstract class Drawable3D extends DrawableND {
 	/** says if it has to be updated caused by the 3D view*/
 	private boolean viewChanged;
 	
+	/** says if the label has to be updated */
+	private boolean labelWaitForUpdate;
+	
 	/** matrix for openGL display */
 	//private Ggb3DMatrix4x4 m_matrix = new Ggb3DMatrix4x4();
 	
@@ -242,14 +245,20 @@ public abstract class Drawable3D extends DrawableND {
 			*/
 
 		if (waitForUpdate){
-			updateLabel();
 			updateForItSelf();
 			waitForUpdate = false;
+			setLabelWaitForUpdate();//TODO remove that
 		}
 		
 		if (viewChanged){
 			updateForView();
 			viewChanged = false;
+			setLabelWaitForUpdate();//TODO remove that
+		}
+		
+		if (labelWaitForUpdate){
+			updateLabel();
+			labelWaitForUpdate = false;
 		}
 		
 	}
@@ -294,7 +303,13 @@ public abstract class Drawable3D extends DrawableND {
 	}
 	
 	
-	
+	/**
+	 * says that the label has to be updated
+	 */
+	public void setLabelWaitForUpdate(){
+		
+		labelWaitForUpdate = true;
+	}
 	
 	
 	
