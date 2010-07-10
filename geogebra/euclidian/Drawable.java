@@ -544,7 +544,7 @@ public abstract class Drawable extends DrawableND {
 			TeXFormula formula;
 			try {			
 				formula = new TeXFormula(eqnSB.substring(0, strLen));
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
