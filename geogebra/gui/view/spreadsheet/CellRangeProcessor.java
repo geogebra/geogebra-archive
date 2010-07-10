@@ -323,8 +323,6 @@ public class CellRangeProcessor {
 		
 		Construction cons = app.getKernel().getConstruction();  
 		GeoList fullList = (GeoList) createList(rangeList, scanByColumn, copyByValue);
-		GeoList numericList = new GeoList(cons);
-		
 		
 		ArrayList<String> list = new ArrayList<String>();
 		
@@ -341,6 +339,7 @@ public class CellRangeProcessor {
 		
 		listString = "Sort[" + listString + "]";
 		
+		fullList.remove();
 		GeoElement[] geos = table.kernel.getAlgebraProcessor()
 		.processAlgebraCommandNoExceptionHandling(listString, false);
 		

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="build/|javax/|mathpiper/scripts/" kind="src" path=""/>
+	<classpathentry excluding="build/|javax/|mathpiper/scripts/" kind="src" path="">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra4/3D"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="3D/jogl.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra/3D"/>
