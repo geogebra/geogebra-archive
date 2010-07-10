@@ -61,28 +61,30 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		double z1 = temp.getFront();
 		double z2 = temp.getBack();
 		GgbVector [] v = new GgbVector[8];
-		v[0] = new GgbVector(x1,y1,z1,1);
-		v[1] = new GgbVector(x1,y2,z1,1);
-		v[2] = new GgbVector(x1,y1,z2,1);
-		v[3] = new GgbVector(x1,y2,z2,1);
-		v[4] = new GgbVector(x2,y1,z1,1);
-		v[5] = new GgbVector(x2,y2,z1,1);
-		v[6] = new GgbVector(x2,y1,z2,1);
-		v[7] = new GgbVector(x2,y2,z2,1);
+		v[0] = new GgbVector(x1,y1,z1,0);
+		v[1] = new GgbVector(x1,y2,z1,0);
+		v[2] = new GgbVector(x1,y1,z2,0);
+		v[3] = new GgbVector(x1,y2,z2,0);
+		v[4] = new GgbVector(x2,y1,z1,0);
+		v[5] = new GgbVector(x2,y2,z1,0);
+		v[6] = new GgbVector(x2,y1,z2,0);
+		v[7] = new GgbVector(x2,y2,z2,0);
 		
 		double radius=0;
+		double norm;
 		for(int i = 0; i < 8; i++){
 			view.toSceneCoords3D(v[i]);
-			if(v[i].norm()>radius)
-				radius=v[i].norm();
+			norm = v[i].norm();
+			if(norm>radius)
+				radius=norm;
 		}
 		return radius;
 	}
 	
 	private double savedRadius;
 	
-	public final double radiusMaxFactor = 4.0;
-	private final double radiusMinFactor = 0.25;
+	public final double radiusMaxFactor = 1.1;
+	private final double radiusMinFactor = 0.9;
 	
 	/** decides if the curve should be redrawn depending on how the view changes
 	 * @return
@@ -101,9 +103,10 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		
 		Renderer renderer = getView3D().getRenderer();
 		
-		if(needRedraw()){
+		//if(needRedraw()){
 			renderer.getGeometryManager().remove(geometryIndex);
 			tree.setRadius(savedRadius);
+			tree.setRadius(0.05);
 			
 			PlotterSurface surface = renderer.getGeometryManager().getSurface();
 			GeoFunction2Var geo = (GeoFunction2Var) getGeoElement();
@@ -117,7 +120,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 			
 			surface.draw(tree);
 			geometryIndex=surface.end();
-		}
+		//}
 		
 		
 	}

@@ -12,7 +12,6 @@ import geogebra3D.euclidian3D.SurfaceTree;
  */
 public class PlotterSurface {
 	
-
 	/** manager */
 	private Manager manager;
 
@@ -192,22 +191,37 @@ public class PlotterSurface {
 			drawTriangle(d);
 		}*/
 		
-		FloatBuffer b = tree.getTriangles();
+		FloatBuffer b1 = tree.getVertices();
+		FloatBuffer b2 = tree.getNormals();
 		int cnt = tree.getTriangleCount();
 		manager.startGeometry(Manager.TRIANGLES);
 		
 		float uT = getTextureCoord(1, uNb, uMinFadeNb, uMaxFadeNb);
 		float vT = getTextureCoord(1, vNb, vMinFadeNb, vMaxFadeNb);	
 		manager.texture(uT, vT);
-		float[] f = new float[9];
-		b.rewind();
+		float[] f = new float[9]; float[] n = new float[9];
+		GgbVector no;
+		b1.rewind(); b2.rewind();
 		for(int i = 0; i < cnt; i++) {
-			b.get(f);
+			b1.get(f);b2.get(n);
+			//no=calcNormal(f[0],f[1],f[2]);
+			manager.normal(n[0],n[1],n[2]);
 			manager.vertex(f[0],f[1],f[2]);
+			manager.normal(n[3],n[4],n[5]);
 			manager.vertex(f[3],f[4],f[5]);
+			manager.normal(n[6],n[7],n[8]);
 			manager.vertex(f[6],f[7],f[8]);
 		}
 		manager.endGeometry();
+	}
+	
+	private GgbVector calcNormal(float x, float y, float z){
+		double[] n = new double[3];
+		GgbVector v0 = new GgbVector(x,y,z,0);
+		GgbVector v1 = function.evaluatePoint(x+1e-9,y);
+		GgbVector v2 = function.evaluatePoint(x,y+1e-9);
+		
+		return v1.sub(v0).crossProduct(v2.sub(v0)).normalized();
 	}
 	
 	public void drawTriangle(FloatBuffer d){
