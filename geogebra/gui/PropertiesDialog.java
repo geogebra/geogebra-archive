@@ -943,4 +943,8 @@ public class PropertiesDialog
 	public void keyTyped(KeyEvent e) {	
 	}
 
+	// ignore if the view is dragged around (can't be dragged at all)
+    public void beginDrag() {}
+    public void endDrag() {}
+
 } // PropertiesDialog

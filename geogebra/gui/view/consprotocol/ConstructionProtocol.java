@@ -1556,9 +1556,4 @@ public class ConstructionProtocol extends JDialog implements Printable {
     	
     	return sb.toString();
     }
-     
-   
-    
-
-
 }

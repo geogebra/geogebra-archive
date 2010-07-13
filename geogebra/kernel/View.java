@@ -12,14 +12,16 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-
+/**
+ * Interface for views. A view registered to the kernel gets informed if elements were added, removed or changed.
+ */
 public interface View {
 	public void add(GeoElement geo);
 	public void remove(GeoElement geo);
 	public void rename(GeoElement geo);
 	public void update(GeoElement geo);	 
 	public void updateAuxiliaryObject(GeoElement geo);
-	public void repaintView();   
+	public void repaintView();
 	public void reset(); 
 	public void clearView();
 }

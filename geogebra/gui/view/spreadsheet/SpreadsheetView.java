@@ -1672,7 +1672,4 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		getTable().repaint();
 
 	}
-
 }
-
-

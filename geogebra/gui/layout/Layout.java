@@ -327,6 +327,11 @@ public class Layout implements LayoutBridge {
 		
 		// save all custom perspectives as well
 		for(Perspective perspective : perspectives) {
+			// skip old temporary perspectives
+			if(perspective.getId().equals("tmp")) {
+				continue;
+			}
+			
 			sb.append(perspective.getXml());
 		}
 		

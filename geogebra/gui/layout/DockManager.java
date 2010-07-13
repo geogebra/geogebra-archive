@@ -2,9 +2,11 @@ package geogebra.gui.layout;
 
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
+import geogebra.kernel.View;
 import geogebra.main.Application;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 
@@ -238,6 +240,10 @@ public class DockManager {
 			}
 		}
 		
+		if(panel.getView() instanceof DockPanelView) {
+			((DockPanelView)panel.getView()).beginDrag();
+		}
+		
 		glassPane.activate(new DnDState(panel));
 	}
 	
@@ -371,6 +377,10 @@ public class DockManager {
 		app.getEuclidianView().dispatchEvent(
 			new ComponentEvent(rootPane, ComponentEvent.COMPONENT_RESIZED)
 		);
+		
+		if(target.getView() instanceof DockPanelView) {
+			((DockPanelView)target.getView()).endDrag();
+		}
 		
 		Application.debug(getDebugTree(0, rootPane));
 	}
@@ -761,7 +771,9 @@ public class DockManager {
 	 */
 	public void addEuclidian3D(JPanel euclidian3D) {
 		this.euclidian3D = euclidian3D;
-		DockPanel panel = new DockPanel(this, new DockPanelXml(DockManager.VIEW_EUCLIDIAN_3D, false, true, new Rectangle(10, 10, 400, 400), "", 200));
+		DockPanel panel = new DockPanel(this, new DockPanelXml(DockManager.VIEW_EUCLIDIAN_3D, false, true, new Rectangle(10, 10, 400, 400), "", 200));		
+		panel.setMaximumSize(new Dimension(0,0));
+		panel.setMinimumSize(new Dimension(0,0));
 		
 		// add this new panel to the dock panel array by constructing a new
 		// array for the dock panels with space for an additional element

@@ -7,12 +7,16 @@ import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -189,14 +193,17 @@ public class GeoGebraMenuBar extends JMenuBar {
 	 * @param app
 	 */
 	public static void showAboutDialog(final Application app) {
+		final StringBuilder vsb = new StringBuilder();
+		vsb.append(app.getPlain("ApplicationName"));
+		vsb.append(" ");
+		vsb.append(GeoGebra.VERSION_STRING);
+		vsb.append((Kernel.DEFAULT_CAS == Application.CAS_MAXIMA) ? 'm' : "" );
+		if (app.getApplet() != null) vsb.append(" Applet");
+		else if (app.webstart()) vsb.append(" Webstart");
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html><b>");
-		sb.append(app.getPlain("ApplicationName"));
-		sb.append(" ");
-		sb.append(GeoGebra.VERSION_STRING);
-		sb.append((Kernel.DEFAULT_CAS == Application.CAS_MAXIMA) ? 'm' : "" );
-		if (app.getApplet() != null) sb.append(" Applet");
-		else if (app.webstart()) sb.append(" Webstart");
+		sb.append(vsb);
 		sb.append("</b>  (");
 		sb.append("Java "+ System.getProperty("java.version") + ", " +(app.getHeapSize()/1024/1024)+"MB"); 
 		sb.append(")<br>");	
@@ -212,8 +219,28 @@ public class GeoGebraMenuBar extends JMenuBar {
 		textArea.setText(text);
 		textArea.setCaretPosition(0);
 
+		JPanel systemInfoPanel = new JPanel(new BorderLayout(5, 5));
+		systemInfoPanel.add(new JLabel(sb.toString()), BorderLayout.CENTER);
+		
+		// copy system information to clipboard
+		systemInfoPanel.add(new JButton(new AbstractAction(app.getPlain("CopyToClipboard")) {
+			public void actionPerformed(ActionEvent arg0) {
+				StringBuilder systemInfo = new StringBuilder();
+				systemInfo.append(vsb);
+				systemInfo.append(" (");
+				systemInfo.append(GeoGebra.BUILD_DATE);
+				systemInfo.append(")\nJava: "+ System.getProperty("java.version") + ", " +(app.getHeapSize()/1024/1024)+"MB");
+				systemInfo.append("\nOS: ");
+				systemInfo.append(System.getProperty("os.name"));
+				
+				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+					new StringSelection(systemInfo.toString()), null
+				);
+			}
+		}), BorderLayout.EAST);
+		
 		JPanel panel = new JPanel(new BorderLayout(5, 5));
-		panel.add(new JLabel(sb.toString()), BorderLayout.NORTH);
+		panel.add(systemInfoPanel, BorderLayout.NORTH);
 		panel.add(scrollPane, BorderLayout.SOUTH);
 
 		JOptionPane infoPane = new JOptionPane(panel,

@@ -528,5 +528,4 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	public void setAssignment(String varLabel, CASTableCellValue cellValue) {
 		assignmentCellMap.put(varLabel, cellValue);
 	}
-
 }

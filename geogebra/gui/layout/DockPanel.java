@@ -506,6 +506,13 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	}
 	
 	/**
+	 * @return The view 
+	 */
+	public Component getView() {
+		return view;
+	}
+	
+	/**
 	 * Dock panel information as string for debugging.
 	 */
 	public String toString() {

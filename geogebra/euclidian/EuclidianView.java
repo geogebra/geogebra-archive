@@ -4272,6 +4272,4 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			ArrayList selectedLines) {
 		return new DrawLine(this, selectedPoints, selectedLines, false);
 	}
-
-	
 }

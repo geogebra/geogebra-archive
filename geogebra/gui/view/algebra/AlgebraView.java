@@ -615,8 +615,5 @@ public class AlgebraView extends JTree implements View {
 	public String getGuiXML() {		
 		return "";
 	}
-	
-	
-	
 
 } // AlgebraView
