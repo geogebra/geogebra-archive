@@ -214,7 +214,7 @@ public class CopyPasteCut {
 			if (sbHTML.length() != 0) {
 				// found HTML table to paste (as CSV)
 				buf = sbHTML.toString();
-				Application.debug("pasting from HTML <table>: "+buf);
+			//	Application.debug("pasting from HTML <table>: "+buf);
 			}
 
 		}
@@ -228,7 +228,7 @@ public class CopyPasteCut {
 		if ( buf == null && (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
-				Application.debug("pasting from String: "+buf);
+				//Application.debug("pasting from String: "+buf);
 			} catch (Exception ex) {
 				Application.debug("clipboard: no String");
 				//ex.printStackTrace();
