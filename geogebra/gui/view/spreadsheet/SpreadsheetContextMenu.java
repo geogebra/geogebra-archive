@@ -83,7 +83,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		//    Cut-Copy-Paste-Delete 
 		// ===============================================
 
-		if(!isEmptySelection()){
+
 			addSeparator();   
 			item = new JMenuItem(app.getMenu("Copy"), app.getImageIcon("edit-copy.png"));
 			item.addActionListener(new ActionListener() {
@@ -92,6 +92,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				}        	
 			});
 			add(item);
+			item.setEnabled(!isEmptySelection());
 
 			item = new JMenuItem(app.getMenu("Paste"),app.getImageIcon("edit-paste.png"));
 			item.addActionListener(new ActionListener() {
@@ -111,7 +112,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				}
 			});	 	
 			add(item);
-
+			item.setEnabled(!isEmptySelection());
 
 			item = new JMenuItem(app.getMenu("Delete"), app.getImageIcon("delete_small.gif"));
 			item.addActionListener(new ActionListener() {
@@ -122,7 +123,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			});	 	
 			add(item);
 			item.setEnabled(!allFixed());
-		}
+		
 
 		addSeparator();   
 
