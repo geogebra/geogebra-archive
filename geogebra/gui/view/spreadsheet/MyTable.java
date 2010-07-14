@@ -384,6 +384,14 @@ public class MyTable extends JTable implements FocusListener
 		//if(Application.getControlDown()) 
 			//super.changeSelection(rowIndex, columnIndex, false, false);	
 		//else
+		
+		//G.Sturr 2010-7-10: force column selection
+		if(view.isColumnSelect()){
+			setColumnSelectionInterval(columnIndex, columnIndex);
+		}
+		// END G.Sturr 
+
+		
 			super.changeSelection(rowIndex, columnIndex, toggle, extend);
 		// let selectionChanged know about a change in single cell selection
 		selectionChanged();
@@ -413,6 +421,8 @@ public class MyTable extends JTable implements FocusListener
 	 * This handles all selection changes for the table.
 	 */
 	public void selectionChanged() {
+		
+	
 		
 		// create a cell range object to store
 		// the current table selection 
@@ -527,9 +537,9 @@ public class MyTable extends JTable implements FocusListener
 		//System.out.println("------------------");
 		//for (CellRange cr: selectedCellRanges)cr.debug();
 		 
-        
+		view.notifySpreadsheetSelectionChange();
 		
-		
+		repaint();
 		
 		
 		/*  ------------  old code
@@ -666,6 +676,7 @@ public class MyTable extends JTable implements FocusListener
 		CellRange cr = new CellRange(this,c1,r1,c2,r2);
 		ArrayList<CellRange> list = new ArrayList<CellRange>();
 		list.add(cr);
+		setSelection(cr);
 		//setSelection(list, color, doShowDragHandle);
 	}
 	
@@ -757,6 +768,10 @@ public class MyTable extends JTable implements FocusListener
 	
 	public void setSelectionType(int selType) {
 		
+		if(view.isColumnSelect()){
+			selType = COLUMN_SELECT;
+		}
+		
 		switch (selType) {
 
 		case CELL_SELECT:
@@ -780,6 +795,7 @@ public class MyTable extends JTable implements FocusListener
 		}
 	
 		this.selectionType = selType;
+		
 
 	}
 	
@@ -802,8 +818,9 @@ public class MyTable extends JTable implements FocusListener
 	@Override
 	public void setColumnSelectionInterval(int col0, int col1) {
 		super.setColumnSelectionInterval(col0, col1);
-		selectionChanged(); 
 		setSelectionType(COLUMN_SELECT);
+		selectionChanged(); 
+		
 	}
 	//END GSTURR
 	
@@ -824,7 +841,31 @@ public class MyTable extends JTable implements FocusListener
 		this.isSelectAll = isSelectAll;
 	}
 	
+	
+	public ArrayList<Integer> getSelectedColumnsList(){
+		
+		ArrayList<Integer> columns = new ArrayList<Integer>();
 
+		for(CellRange cr:this.selectedCellRanges){
+			for(int c = cr.getMinColumn(); c <= cr.getMaxColumn(); ++c ){
+				if(!columns.contains(c)) columns.add(c);
+			}
+		}	
+		return columns;
+	}
+	
+	
+	@Override
+	public int[] getSelectedColumns(){
+		
+		ArrayList<Integer> columns = getSelectedColumnsList();
+		int[] ret = new int[columns.size()];
+		for (int c = 0; c < columns.size(); c++)
+			ret[c] = columns.get(c);
+		
+		return ret;
+	}
+	
 	
 	//===============================================================
 	//                   Paint 
@@ -1255,6 +1296,18 @@ public class MyTable extends JTable implements FocusListener
 				if(getSelectionType() != CELL_SELECT){
 					setSelectionType(CELL_SELECT);
 				}
+				
+				//G.Sturr 2010-7-10: force column selection
+				if(view.isColumnSelect()){
+					Point point = getIndexFromPixel(e.getX(), e.getY());
+					if (point != null) {
+						int column = (int)point.getX();
+						setColumnSelectionInterval(column, column);
+					}
+				}
+				// END G.Sturr 
+				
+				
 				/*
 				if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 					setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -2382,12 +2435,17 @@ public class MyTable extends JTable implements FocusListener
 						|| p.getX() < minSelectionColumn || p.getX() > maxSelectionColumn)
 				{
 					// switch to column selection mode and select column
+					if(table.getSelectionType() != MyTable.COLUMN_SELECT)
+						setSelectionType(MyTable.COLUMN_SELECT);
+					/*
 					if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
 						getColumnSelectionAllowed() == true) {
 						setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						setColumnSelectionAllowed(true);
 						setRowSelectionAllowed(false);
 					}
+					*/
+					
 					//selectNone();
 					setColumnSelectionInterval((int)p.getX(), (int)p.getX());
 					
@@ -2553,6 +2611,8 @@ public class MyTable extends JTable implements FocusListener
 	@Override
 	public boolean isCellEditable(int row, int column)
 	{
+		if(view.isColumnSelect()) return false;
+		
 		// to avoid getValueAt() unless necessary
 		
 		if (!allowEditing && !oneClickEditMap.containsKey(new Point(column,row))) return false; 

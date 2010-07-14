@@ -41,7 +41,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 	private ArrayList<GeoElement> geos; 
 	private CellRangeProcessor cp;
 
-	OneVariableStatsDialog oneVarStatDialog;
+	
 	
 	
 	// for testing
@@ -329,13 +329,11 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		//     Data analysis
 		// ===============================================
 		
-		if(!isEmptySelection()){ // && isShiftDown){
+		if(!isEmptySelection() && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
 			item = new JMenuItem(app.getMenu(app.getPlain("Data Analysis")),app.getEmptyIcon());
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(oneVarStatDialog == null)
-						oneVarStatDialog = new OneVariableStatsDialog(table,app);
-					oneVarStatDialog.setVisible(true);
+					view.showStatDialog();
 				}
 			});	 
 			add(item);

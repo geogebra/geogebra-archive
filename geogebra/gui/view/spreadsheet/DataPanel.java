@@ -1,7 +1,6 @@
 package geogebra.gui.view.spreadsheet;
 
 
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -13,11 +12,13 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -30,7 +31,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -50,23 +50,41 @@ public class DataPanel extends JPanel implements ActionListener  {
 	private JButton btnEnableAll;
 	private MyRowHeader rowHeader;
 	private MyColumnHeaderRenderer columnHeader;
+	private JScrollPane scrollPane;
+	private GeoList dataListAll; 
 	
-	private GeoList dataListAll, dataListSelected; 
+	private Boolean[] selectionList;
+	
 	OneVariableStatsDialog statDialog;
+	
+	
 	public int preferredColumnWidth = MyTable.TABLE_CELL_WIDTH; 
+	
+	private static final Color DISABLED_BACKGROUND_COLOR = Color.LIGHT_GRAY;
+	
+	private static final Color SELECTED_BACKGROUND_COLOR_HEADER = MyTable.SELECTED_BACKGROUND_COLOR_HEADER;
+
+	private static final Color TABLE_GRID_COLOR = OneVariableStatsDialog.TABLE_GRID_COLOR ;
+	private static final Color TABLE_HEADER_COLOR = OneVariableStatsDialog.TABLE_HEADER_COLOR;   
 	
 	
 	
 	/*************************************************
 	 * Construct a DataPanel
 	 */
-	public DataPanel(Application app, OneVariableStatsDialog statDialog, GeoList dataAll, GeoList dataSelected){
+	public DataPanel(Application app, OneVariableStatsDialog statDialog, GeoList dataAll){
 
 		this.app = app;	
 		kernel = app.getKernel();
-		this.dataListAll = dataAll;
-		this.dataListSelected = dataSelected;
 		this.statDialog = statDialog;
+		
+		
+		this.dataListAll = dataAll;
+		
+		selectionList = new Boolean[dataListAll.size()];
+		for(int i=0; i<dataListAll.size(); ++i){
+			selectionList[i] = true;
+		}
 		
 		// build the data table	
 		dataTable = new JTable(){
@@ -85,6 +103,7 @@ public class DataPanel extends JPanel implements ActionListener  {
 		  		}
 		      }
 		};
+		
 		populateDataTable(dataAll);
 	
 		
@@ -99,9 +118,9 @@ public class DataPanel extends JPanel implements ActionListener  {
 		}
 		
 		
-		// enable row selection 
+		// disable row selection (for now) 
 		dataTable.setColumnSelectionAllowed(false); 
-		dataTable.setRowSelectionAllowed(true);
+		dataTable.setRowSelectionAllowed(false);
 		
 	
 		//dataTable.setAutoResizeMode(JTable.);
@@ -109,42 +128,54 @@ public class DataPanel extends JPanel implements ActionListener  {
 		dataTable.setMinimumSize(new Dimension(100,50));
 		//dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		dataTable.setAutoCreateColumnsFromModel(false);
-		dataTable.setGridColor(MyTable.TABLE_GRID_COLOR);
+		dataTable.setGridColor(TABLE_GRID_COLOR);
 		
 		
 		// create a scrollPane for the table
-		JScrollPane dataScroller = new JScrollPane(dataTable);
-		dataScroller.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane = new JScrollPane(dataTable);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		
 		
 		// create row header
 		rowHeader = new MyRowHeader(this,dataTable);	
 		
-		dataScroller.setRowHeaderView(rowHeader);
+		scrollPane.setRowHeaderView(rowHeader);
 		
 		
 		// create enableAll button and put it in the upper left corner
-		btnEnableAll = new JButton(app.getImageIcon("shown.gif"));
-		btnEnableAll.addActionListener(this);
+		CheckBoxIcon cbIcon = new CheckBoxIcon(13);
+		ImageIcon iconUnChecked = cbIcon.createCheckBoxImageIcon(false, false);
+		ImageIcon iconChecked = cbIcon.createCheckBoxImageIcon(true, false);
+		
+		btnEnableAll = new JButton(iconUnChecked);
+		btnEnableAll.setBorderPainted(false);
 		btnEnableAll.setBackground(MyTable.BACKGROUND_COLOR_HEADER);	
+		btnEnableAll.setContentAreaFilled(false);
+		btnEnableAll.setHorizontalAlignment(SwingConstants.RIGHT);
+		btnEnableAll.addActionListener(this);
+		
 		Corner upperLeftCorner = new Corner(); 
 		upperLeftCorner.setLayout(new BorderLayout());
 		upperLeftCorner.add(btnEnableAll, BorderLayout.CENTER);
-		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
+			
+		upperLeftCorner.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(0, 0, 1, 1, TABLE_GRID_COLOR), 
+				BorderFactory.createEmptyBorder(0, 5, 0, 2)));
 	
 		
 		// set the other corners
-		dataScroller.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, upperLeftCorner);
-		dataScroller.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, new Corner());
-		dataScroller.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner());
+		scrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, upperLeftCorner);
+		scrollPane.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, new Corner());
+		scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner());
 			
 			
 		
 		// finally, load up our JPanel
 		this.setLayout(new BorderLayout());
-		this.add(dataScroller, BorderLayout.CENTER);
+		this.add(scrollPane, BorderLayout.CENTER);
 		
-	
+		this.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		
 	}  // END constructor 
 
 	
@@ -162,6 +193,26 @@ public class DataPanel extends JPanel implements ActionListener  {
 	}
 
 
+	public void loadDataTable(GeoList dataAll){
+		
+		this.dataListAll = dataAll;
+		populateDataTable(dataAll);
+		
+		selectionList = new Boolean[dataListAll.size()];
+		for(int i=0; i<dataListAll.size(); ++i){
+			selectionList[i] = true;
+		}	
+		
+		rowHeader = new MyRowHeader(this,dataTable);
+		scrollPane.setRowHeaderView(rowHeader);
+		this.updateFonts(this.getFont());
+		
+		dataTable.repaint();
+		rowHeader.repaint();
+		
+	}
+	
+	
 	public void ensureTableFill(){
 		Container p = getParent();
 		DefaultTableModel dataModel = (DefaultTableModel) dataTable.getModel();
@@ -177,19 +228,8 @@ public class DataPanel extends JPanel implements ActionListener  {
 	}
 
 
-	public void updateDataSelection() {
-		
-		Construction cons = kernel.getConstruction();
-	
-		dataListSelected.clear();
-		DefaultListModel model = (DefaultListModel) rowHeader.getModel();
-		for(int i=0; i < dataListAll.size(); ++i){
-			if(((Boolean)model.getElementAt(i))== true){
-				dataListSelected.add(dataListAll.get(i).copyInternal(cons));
-			}
-		}
-		
-		statDialog.updateDataList();	
+	private void notifySelectionChange(int index, boolean isSelected){
+		statDialog.handleDataPanelSelectionChange(selectionList);
 	}
 	
 	
@@ -198,7 +238,7 @@ public class DataPanel extends JPanel implements ActionListener  {
 
 		@Override
 		protected void paintComponent(Graphics g) {
-			g.setColor(MyTable.BACKGROUND_COLOR_HEADER);
+			g.setColor(TABLE_HEADER_COLOR);
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 	}
@@ -212,7 +252,9 @@ public class DataPanel extends JPanel implements ActionListener  {
 		double multiplier = (size)/12.0;
 
 		setFont(font);
-		dataTable.setFont(font);  
+		dataTable.setFont(font);
+		columnHeader.setFont(font);
+		
 		
 		dataTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
 		rowHeader.setFixedCellHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
@@ -230,7 +272,8 @@ public class DataPanel extends JPanel implements ActionListener  {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnEnableAll){
 			rowHeader.enableAll(); 
-			updateDataSelection();
+			statDialog.handleDataPanelSelectionChange(selectionList);
+			rowHeader.repaint();
 		}
 	}
 
@@ -245,34 +288,24 @@ public class DataPanel extends JPanel implements ActionListener  {
 	
 	protected class MyColumnHeaderRenderer extends JLabel implements TableCellRenderer  
 	{
-		private Color defaultBackground;
-
 		public MyColumnHeaderRenderer() {    		
 			super("", SwingConstants.CENTER);
 			setOpaque(true);
-			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
-			setBackground(defaultBackground);
-			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
-			Font font1 = getFont(); 
-			if (font1 == null || font1.getSize() == 0) {
-				kernel.getApplication().getPlainFont();
-				if (font1 == null || font1.getSize() == 0) {
-					font1 = new Font("dialog", 0, 12);
-				}
-			}
-			setFont(font1);		
+			setBackground(TABLE_HEADER_COLOR);
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1,TABLE_GRID_COLOR));
+			setFont(app.getPlainFont());		
 		}
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
-			
+
 			setText(value.toString());
 
 			return this;        			
 		}
 
 	}
-	
-	
+
+
 
 	//======================================================
 	//         Table Cell Renderer 
@@ -296,11 +329,17 @@ public class DataPanel extends JPanel implements ActionListener  {
 			
 			String text = value.toString();
 			
-			if (isSelected) 
-				setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
-			else 								
+			//if (isSelected) 
+				//setBackground(SELECTED_BACKGROUND_COLOR_HEADER);
+				//setBackground(table.getBackground());
+
+			
+			if (!selectionList[row]) 								
+				setBackground(DISABLED_BACKGROUND_COLOR);
+			else
 				setBackground(table.getBackground());
 
+			
 			setText(text);
 
 
@@ -318,23 +357,29 @@ public class DataPanel extends JPanel implements ActionListener  {
 
 	public class MyRowHeader extends JList implements MouseListener{
 		
-		DefaultListModel model;
+		//DefaultListModel model;
 		JTable table;
 		DataPanel dataPanel;
 
 		public MyRowHeader(DataPanel dataPanel, JTable table){
-			super();
+			super(selectionList);
 			this.table = table;
 			this.dataPanel = dataPanel;
+			
+			
+			/*
 			model = new DefaultListModel();
 			for(int i=0; i< table.getRowCount(); ++i){
 				model.addElement(new Boolean(true));
 			}
 			setModel(model);
-
+			 */
+			
+			//model = (DefaultListModel) this.getModel();
+			
 			setCellRenderer(new RowHeaderRenderer(table));
-			addListSelectionListener(new MySelectionListener());
-			setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			//addListSelectionListener(new MySelectionListener());
+			//setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			setSelectionModel( table.getSelectionModel());
 			this.addMouseListener(this);
 			
@@ -343,19 +388,25 @@ public class DataPanel extends JPanel implements ActionListener  {
 
 		class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 
-			private ImageIcon iconShown, iconHidden;
+			private ImageIcon iconChecked, iconUnChecked;
 
-			RowHeaderRenderer(JTable table) {    
+			RowHeaderRenderer(JTable table) {
+				
+				CheckBoxIcon cbIcon = new CheckBoxIcon(13);
+				iconUnChecked = cbIcon.createCheckBoxImageIcon(false, false);
+				iconChecked = cbIcon.createCheckBoxImageIcon(true, false);
+						
 				setOpaque(true);
-				setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
-				setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR), 
-						BorderFactory.createEmptyBorder(0, 0, 0, 5)));
+				
+				setBorder(BorderFactory.createCompoundBorder(
+						BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR), 
+						BorderFactory.createEmptyBorder(0, 5, 0, 2)));
 
 				setHorizontalAlignment(LEFT);
 				setFont(table.getTableHeader().getFont());
 				
-				iconShown = app.getImageIcon("shown.gif");
-				iconHidden = app.getImageIcon("hidden.gif");
+				//iconShown = app.getImageIcon("shown.gif");
+				//iconUnChecked = app.getImageIcon("hidden.gif");
 			}
 
 			public Component getListCellRendererComponent( JList list, 
@@ -365,17 +416,27 @@ public class DataPanel extends JPanel implements ActionListener  {
 				
 				// add/remove icons
 				if((Boolean) value){
-					setIcon(iconShown);
+					setIcon(iconChecked);
 				} else {
-					setIcon(iconHidden);
+					setIcon(iconUnChecked);
 				}
 
-				// selection 
-				if (isSelected){ 
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
-				}else {								
-					setBackground(MyTable.BACKGROUND_COLOR_HEADER);
-				}
+				// selection
+				
+				//if (isSelected) 
+					//setBackground(SELECTED_BACKGROUND_COLOR_HEADER);
+					//setBackground(MyTable.BACKGROUND_COLOR_HEADER);
+				
+				
+				if(!(Boolean) value)								
+					setBackground(DISABLED_BACKGROUND_COLOR);
+				else		
+					setBackground(TABLE_HEADER_COLOR);
+	
+				
+				
+				
+				
 				
 				return this;
 			}
@@ -393,16 +454,7 @@ public class DataPanel extends JPanel implements ActionListener  {
 		}
 
 		public void mouseClicked(MouseEvent e) {
-			// check if we clicked on the 16x16 show/hide icon		
-			int index = this.locationToIndex(e.getPoint());
-			Rectangle rect = getCellBounds(index, index);		
-			boolean iconClicked = rect != null && e.getX() - rect.x < 16; // distance from left border				
-				if (iconClicked) {
-					// icon clicked: toggle show/hide
-					model.setElementAt(!((Boolean)getSelectedValue()), getSelectedIndex());
-					dataPanel.updateDataSelection();
-					return;
-				}		
+		
 		}
 
 		public void mouseEntered(MouseEvent arg0) {	
@@ -411,7 +463,27 @@ public class DataPanel extends JPanel implements ActionListener  {
 		public void mouseExited(MouseEvent arg0) {		
 		}
 
-		public void mousePressed(MouseEvent arg0) {	
+		public void mousePressed(MouseEvent e) {	
+			// check if we clicked in checkbox icon area 		
+			int index = this.locationToIndex(e.getPoint());
+			Rectangle rect = getCellBounds(index, index);		
+			boolean iconClicked = rect != null && e.getX() - rect.x < 16; // distance from left border				
+				if (iconClicked) {
+					// icon clicked: toggle enable/disable data
+					selectionList[this.getSelectedIndex()] = !selectionList[this.getSelectedIndex()]; 
+					statDialog.handleDataPanelSelectionChange(selectionList);
+					
+					/*
+					boolean bool = !((Boolean)getSelectedValue());
+					for(int row = 0; row < table.getSelectedRows().length; ++row){			
+						model.setElementAt(bool,table.getSelectedRows()[row]);
+						
+					}
+					*/
+					table.repaint();
+					repaint();
+					return;
+				}		
 		}
 
 		public void mouseReleased(MouseEvent arg0) {	
@@ -419,9 +491,8 @@ public class DataPanel extends JPanel implements ActionListener  {
 
 
 		public void enableAll(){
-			model.clear();
 			for(int i=0; i< table.getRowCount(); ++i){
-				model.addElement(new Boolean(true));
+				selectionList[i] = true;
 			}
 		}
 
@@ -429,7 +500,150 @@ public class DataPanel extends JPanel implements ActionListener  {
 
 
 
-	
+public static class CheckBoxIcon {
+		
+		// Michael Borcherds 2008-05-11
+		// adapted from http://www.java2s.com/Open-Source/Java-Document/6.0-JDK-Modules-com.sun.java/swing/com/sun/java/swing/plaf/windows/WindowsIconFactory.java.htm
+		// references to XPStyle removed
+		// option for double-size added
+		// replaced UIManager.getColor() with numbers from:
+		// http://www.java2s.com/Tutorial/Java/0240__Swing/ListingUIDefaultProperties.htm
+		
+		/*
+         * Copyright 1998-2006 Sun Microsystems, Inc.  All Rights Reserved.
+         * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+         *
+         * This code is free software; you can redistribute it and/or modify it
+         * under the terms of the GNU General Public License version 2 only, as
+         * published by the Free Software Foundation.  Sun designates this
+         * particular file as subject to the "Classpath" exception as provided
+         * by Sun in the LICENSE file that accompanied this code.
+         *
+         * This code is distributed in the hope that it will be useful, but WITHOUT
+         * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+         * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+         * version 2 for more details (a copy is included in the LICENSE file that
+         * accompanied this code).
+         *
+         * You should have received a copy of the GNU General Public License version
+         * 2 along with this work; if not, write to the Free Software Foundation,
+         * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+         *
+         * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
+         * CA 95054 USA or visit www.sun.com if you need additional information or
+         * have any questions.
+         */
+		//int csize = 13;
+		
+		//EuclidianView ev;
+		
+		public static Color highlightBackground = new Color(230, 230, 230);
+		public int csize;
+		public CheckBoxIcon(int csize)
+		{
+			this.csize = csize;
+		}
+		
+        public void paintIcon(boolean checked, boolean highlighted, Graphics g, int x, int y) {
+     
+            {
+                // outer bevel
+                if (true) {
+                    // Outer top/left
+                    //g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    g.setColor(new Color(128,128,128));
+                    g.drawLine(x, y, x + (csize-2), y);
+                    g.drawLine(x, y + 1, x, y + (csize-2));
 
+                    // Outer bottom/right
+                    //g.setColor(UIManager.getColor("CheckBox.highlight"));
+                    g.setColor(Color.white);
+                    g.drawLine(x + (csize-1), y, x + (csize-1), y + (csize-1));
+                    g.drawLine(x, y + (csize-1), x + (csize-2), y + (csize-1));
+
+                    // Inner top.left
+                    //g.setColor(UIManager.getColor("CheckBox.darkShadow"));
+                    g.setColor(new Color(64,64,64));
+                    g.drawLine(x + 1, y + 1, x + (csize-3), y + 1);
+                    g.drawLine(x + 1, y + 2, x + 1, y + (csize-3));
+
+                    // Inner bottom/right
+                    //g.setColor(UIManager.getColor("CheckBox.light"));
+                    g.setColor(new Color(212,208,200));
+                    g.drawLine(x + 1, y + (csize-2), x + (csize-2), y + (csize-2));
+                    g.drawLine(x + (csize-2), y + 1, x + (csize-2), y + (csize-3));
+
+                    // inside box 
+                    if (highlighted) {
+                        //g.setColor(UIManager.getColor("CheckBox.background"));
+                        g.setColor(highlightBackground);
+                    } else {
+                        //g.setColor(UIManager.getColor("CheckBox.interiorBackground"));
+                        g.setColor(Color.white);
+                    }
+                    g.fillRect(x + 2, y + 2, csize - 4, csize - 4);
+                } else {
+                    //g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    g.setColor(new Color(128,128,128));
+                    g.drawRect(x + 1, y + 1, csize - 3, csize - 3);
+
+                    if (true) {
+                        //g.setColor(UIManager.getColor("CheckBox.background"));
+                        g.setColor(highlightBackground);
+                    } else {
+                        //g.setColor(UIManager.getColor("CheckBox.interiorBackground"));
+                        g.setColor(Color.white);
+                    }
+                    g.fillRect(x + 2, y + 2, csize - 4, csize - 4);
+                }
+
+                if (true) {
+                    //g.setColor(UIManager.getColor("CheckBox.foreground"));
+                    g.setColor(new Color(0,0,0));
+                } else {
+                    //g.setColor(UIManager.getColor("CheckBox.shadow"));
+                    g.setColor(new Color(128,128,128));
+                }
+
+                // paint check
+                
+                if (checked) {
+                  if (csize == 13)
+                  {
+                	
+                	  for (int i=5 ; i<=9 ; i++)
+                          g.drawLine(x+i, y+12-i, x+i, y+14-i);
+                	  
+                	  for (int i=3 ; i<=4 ; i++)
+                          g.drawLine(x+i, y+i+2, x+i, y+i+4);
+                	
+                  }
+                  else
+                  { // csize == 26
+                	  
+                	  for (int i=10 ; i<=18 ; i++)
+                          g.drawLine(x+i, y+24-i, x+i, y+29-i);
+                	  
+                	  for (int i=5 ; i<=9 ; i++)
+                          g.drawLine(x+i, y+i+4, x+i, y+i+9);	  
+                	
+                  }
+                }
+            }
+        }
+
+        public ImageIcon createCheckBoxImageIcon(boolean checked, boolean highlighted){
+
+        	CheckBoxIcon cbIcon = new CheckBoxIcon(13);
+        	BufferedImage image = new BufferedImage (13, 13, (BufferedImage.TYPE_INT_ARGB));
+        	ImageIcon icon  = new ImageIcon(image);
+        	Graphics2D g2d = image.createGraphics();
+
+        	cbIcon.paintIcon(checked, highlighted, g2d, 0, 0); 
+        	
+        	return icon;
+        }
+
+}
 
 }

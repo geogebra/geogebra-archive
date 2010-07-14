@@ -110,8 +110,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean showHScrollBar = true;
 	private boolean showBrowserPanel = false;
 	private boolean showToolBar = false;
+	private boolean isColumnSelect = false;
 	
 	
+	private OneVariableStatsDialog oneVarStatDialog;
 	
 	/**
 	 * Construct spreadsheet view as a split panel. 
@@ -248,9 +250,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return spreadsheet.getColumnHeader();
 	}
 	
-	
 
-	
 
 	//===============================================================
 	//              VIEW Implementation
@@ -419,6 +419,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			traceDialog.toolbarModeChanged(mode);
 		}
 	}
+	
+	
 
 	/**
 	 * Clear table and set to default layout. 
@@ -487,9 +489,36 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	
 	
+
+	//=====================================================
+	//               Stat Dialogs
+	//=====================================================
 	
+	
+	
+	public void showStatDialog(){
+		
+		if(oneVarStatDialog == null){
+			oneVarStatDialog = new OneVariableStatsDialog(view, app);
+		}else{
+			oneVarStatDialog.updateDataList();
+		}
+		
+		oneVarStatDialog.setVisible(true);			
+		
+	}
 	
 
+	public boolean isOneVarStatDialogVisible(){
+		return (oneVarStatDialog != null && oneVarStatDialog.isVisible());
+	}
+	
+
+	public void notifySpreadsheetSelectionChange(){
+		if(isOneVarStatDialogVisible()){
+			oneVarStatDialog.handleSpreadsheetSelectionChange();
+		}
+	}
 	
 
 	//=====================================================
@@ -1635,6 +1664,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return toolBar;
 	}
 	
+	
+	public void setColumnSelect(boolean isColumnSelect){
+		this.isColumnSelect = isColumnSelect;
+	}
+	
+	public boolean isColumnSelect(){
+		return isColumnSelect;
+	}
 	
 	
 	
