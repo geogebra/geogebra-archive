@@ -4,6 +4,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.Point;
@@ -43,18 +44,30 @@ public class CellRangeProcessor {
 
 	
 	
+	
+	
 	public GeoElement CreatePointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
+		
+		return  CreatePointList(rangeList, byValue, leftToRight, false, true);
+		
+	}
+	
+	
+	public GeoElement CreatePointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight,
+			boolean isSorted, boolean doStoreUndo) {
+		
 		
 		GeoElement[] geos = null;
 		
 		int c1, c2, r1, r2;
-		StringBuilder text = new StringBuilder();
-		LinkedList<String> list = new LinkedList<String>();
+		StringBuilder list = new StringBuilder();
+		//LinkedList<String> list = new LinkedList<String>();
 		boolean doHorizontalPairs = true;
 		boolean isError = false;
 		
-		// assume that range list has been tested 
+		// note: we assume that rangeList has passed the isCreatePointListPossible() test 
 		
+		list.append("{");
 		try {			
 			// Determine if pairs are joined vertically or horizontally and get the 
 			// row column indices needed to traverse the cells.
@@ -99,33 +112,38 @@ public class CellRangeProcessor {
 				for (int i = r1; i <= r2; ++i) {
 					GeoElement xCoord = RelativeCopy.getValue(table, c1, i);
 					GeoElement yCoord = RelativeCopy.getValue(table, c2, i);
-					createListPoint(xCoord, yCoord, list, isError);
+					createListPoint(xCoord, yCoord, list, isError, byValue);
 				}
 
 			} else {
 				for (int i = c1; i <= c2; ++i) {
 					GeoElement xCoord = RelativeCopy.getValue(table, i, r1);
 					GeoElement yCoord = RelativeCopy.getValue(table, i, r2);
-					createListPoint(xCoord, yCoord, list, isError);
+					createListPoint(xCoord, yCoord, list, isError, byValue);
 				}
 			}
 
-			// Convert the string list to a geoList
-			if (list.size() > 0) {
-				String listString = list.toString();
-				listString = listString.replace("[", "{");
-				listString = listString.replace("]", "}");
+			// finish processing the text
+			list.deleteCharAt(list.length()-1);
+			list.append("}");
 
-				geos = table.kernel.getAlgebraProcessor()
-						.processAlgebraCommandNoExceptionHandling(listString,
-								false);
-				app.storeUndoInfo();
+			if(isSorted){
+				list.insert(0, "Sort[" );
+				list.append("]");
 			}
-
+			//System.out.println(list.toString());
+			
+			// convert the text to a GeoList
+			geos = table.kernel.getAlgebraProcessor()
+			.processAlgebraCommandNoExceptionHandling(list.toString(), false);
+			
+			if(doStoreUndo)
+				app.storeUndoInfo();
 		}
 
 		catch (Exception ex) {
-			app.showError("NumberExpected");
+			//app.showError("NumberExpected");
+			Application.debug("Creating list of points failed with exception " + ex);
 		}
 
 		
@@ -137,7 +155,7 @@ public class CellRangeProcessor {
 	}
 	
 	private void createListPoint(GeoElement xCoord, GeoElement yCoord,
-			LinkedList<String> list, boolean isError) {
+			StringBuilder sb, boolean isError, boolean byValue) {
 		
 		String pointString = "";
 		String pointName = "";
@@ -151,22 +169,25 @@ public class CellRangeProcessor {
 			if (xCoord != null && yCoord != null && xCoord.isGeoNumeric()
 					&& yCoord.isGeoNumeric()) {
 
-				// create a text command to create the point, then
-				// send the text to the algebra processor to create a
-				// new geo
-				pointString = "(" + xCoord.getLabel() + "," + yCoord.getLabel()
-						+ ")";
+				pointString = "(" + xCoord.getLabel() + "," + yCoord.getLabel() + ")";
 
-				GeoElement[] geos = table.kernel.getAlgebraProcessor()
-						.processAlgebraCommandNoExceptionHandling(pointString,
-								false);
+				// create a GeoPoint from text	
+				if(!byValue){
+					GeoElement[] geos = table.kernel.getAlgebraProcessor()
+					.processAlgebraCommandNoExceptionHandling(pointString,false);
 
-				pointName = geos[0].getIndexLabel("P");
-				geos[0].setLabel(pointName);
-				geos[0].setAuxiliaryObject(true);
-
-				// add point name to the list
-				list.addLast(pointName);
+					pointName = geos[0].getIndexLabel("P");
+					geos[0].setLabel(pointName);
+					geos[0].setAuxiliaryObject(true);
+				}
+				
+				// add point to the list string
+				if(byValue){
+					sb.append(pointString);
+				}else{
+					sb.append(pointName);
+				}
+				sb.append(",");
 			}
 
 		} catch (Exception ex) {
@@ -255,11 +276,18 @@ public class CellRangeProcessor {
 	
 	
 	
-	
+	/** Creates a GeoList from the cells in an array of cellranges. Empty cells are ignored.
+	 * Uses these defaults: create undo point, do not sort, do not filter by geo type. */
 	public GeoElement createList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
+		return  createList(rangeList,  scanByColumn, copyByValue, false, true, null) ;
+	}
+	
+	/** Creates a GeoList from the cells in an array of cellranges. Empty cells are ignored */
+	public GeoElement createList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue, 
+			boolean isSorted, boolean doStoreUndo, Integer geoTypeFilter) {
 		
 		GeoElement[] geos = null;
-		String listString = "";
+		StringBuilder listString = new StringBuilder();
 		ArrayList<String> list = new ArrayList<String>();
 		ArrayList<Point> cellList = new ArrayList<Point>();
 		
@@ -277,29 +305,43 @@ public class CellRangeProcessor {
 			}
 			*/
 			
+			listString.append("{");
 			for(CellRange cr:rangeList){
 				cellList.addAll(cr.toCellList(scanByColumn));
 			}
 			for(Point cell: cellList){
 				if(!usedCells.contains(cell)){
 					GeoElement geo = RelativeCopy.getValue(table, cell.x, cell.y);
-					if (geo != null)
+					if (geo != null && (geoTypeFilter == null || geo.getGeoClassType() == geoTypeFilter)){
+						listString.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
+						listString.append(",");
+					}
+						//list.add(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
+						/*
 						if (copyByValue)
-							list.add(geo.getValueForInputBar());
+							//list.add(geo.getValueForInputBar());
+							list.add(arg0)
 						else
 							list.add(geo.getLabel());
+						*/
+						
 					usedCells.add(cell);
 				}
 			}
 			
+			listString.deleteCharAt(listString.length()-1);
+			listString.append("}");
+					
+			if(isSorted){
+				listString.insert(0, "Sort[" );
+				listString.append("]");
+			}
 			
-			listString = list.toString();
-			listString = listString.replace("[", "{");
-			listString = listString.replace("]", "}");
-
+			
+			//System.out.println(listString);
 			// convert list string to geo
 			geos = table.kernel.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptionHandling(listString, false);
+					.processAlgebraCommandNoExceptionHandling(listString.toString(), false);
 
 			// get geo name and set label
 		//	String listName = geos[0].getIndexLabel("L");
@@ -310,7 +352,8 @@ public class CellRangeProcessor {
 			Application.debug("Creating list failed with exception " + ex);
 		}
 
-		app.storeUndoInfo();
+		if(doStoreUndo)
+			app.storeUndoInfo();
 		
 		if(geos != null)
 			return geos[0];
@@ -319,37 +362,17 @@ public class CellRangeProcessor {
 
 	}
 		
-	public GeoElement createListNumeric(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue, boolean isSorted) {
+	/** Create a list from the cells in a spreadsheet column */
+	public GeoElement createListFromColumn(int column,  boolean scanByColumn, boolean copyByValue, boolean isSorted,
+			boolean storeUndoInfo, Integer geoTypeFilter) {
 		
-		Construction cons = app.getKernel().getConstruction();  
-		GeoList fullList = (GeoList) createList(rangeList, scanByColumn, copyByValue);
-		
-		ArrayList<String> list = new ArrayList<String>();
-		
-		for(int i = 0; i < fullList.size(); ++i){
-			 if(fullList.get(i).isGeoNumeric()){
-				// numericList.add(fullList.get(i));
-				 list.add(((GeoNumeric)fullList.get(i)).toOutputValueString());
-			 }
-		}
-		
-		String listString = list.toString();
-		listString = listString.replace("[", "{");
-		listString = listString.replace("]", "}");
-		
-		listString = "Sort[" + listString + "]";
-		
-		fullList.remove();
-		GeoElement[] geos = table.kernel.getAlgebraProcessor()
-		.processAlgebraCommandNoExceptionHandling(listString, false);
-		
-		
-		
-		return (GeoList)geos[0];
+		ArrayList<CellRange> rangeList = new ArrayList<CellRange>();
+		CellRange cr = new CellRange(table,column,-1);
+		cr.setActualRange();
+		rangeList.add(cr);
+
+		return  createList(rangeList,  scanByColumn, copyByValue, isSorted, storeUndoInfo, geoTypeFilter) ;
 	}
-	
-	
-	
 	
 	
 	public boolean isCreateMatrixPossible(ArrayList<CellRange> rangeList){
@@ -422,10 +445,10 @@ public class CellRangeProcessor {
 			return null;
 	}
 
-public GeoElement CreateTableText(int column1, int column2, int row1, int row2){
-		
+	public GeoElement CreateTableText(int column1, int column2, int row1, int row2){
+
 		GeoElement[] geos = null;
-		
+
 		StringBuilder text= new StringBuilder();
 		try {
 			text.append("TableText[{");
@@ -450,7 +473,7 @@ public GeoElement CreateTableText(int column1, int column2, int row1, int row2){
 			//text = removeComma(text)+ "}]";
 
 			text.append("},\"|_\"]");
-			
+
 			//Application.debug(text);
 			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
 
