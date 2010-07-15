@@ -110,6 +110,7 @@ public class PlotPanel extends JPanel implements ComponentListener {
 			super(ec, showAxes, showGrid);
 			this.removeMouseListener(ec);
 			this.removeMouseMotionListener(ec);
+			this.removeMouseWheelListener(ec);
 			this.setAxesCornerCoordsVisible(false);
 		}
 		
@@ -149,6 +150,33 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		nv = kernel.getAlgebraProcessor().evaluateToNumeric("Max[" + label + "]", false);		
 		xMaxData = nv.getDouble();
 	}
+	
+	
+	public void plotPDF(String expr, double xMin, double xMax, double yMin, double yMax){
+		
+		// set view parameters	
+		xMinEV = xMin;
+		xMaxEV = xMax;
+		yMinEV = yMin;
+		yMaxEV = yMax;
+		showYAxis = false;
+		forceXAxisBuffer = true;
+		setEVParams();
+		ev.addMouseListener(ec);
+		ev.addMouseMotionListener(ec);
+		ev.addMouseWheelListener(ec);
+		
+		// create function
+		if(plotGeo != null)
+			plotGeo.remove();
+		
+		String text = expr;
+		plotGeo = createGeoFromString(text);
+		
+		
+	}
+	
+	
 	
 	
 	public void updateHistogram(GeoList dataList, int numClasses){
