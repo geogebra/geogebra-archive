@@ -165,15 +165,20 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				}
 				break;			
 				
-				// activate button if selected
+				// toggle boolean or run script when Spacebar pressed
 			case KeyEvent.VK_SPACE:	
 				// check not spreadsheet
 				if (!(event.getSource() instanceof JTable)) {			
 					
 					ArrayList<GeoElement> selGeos = app.getSelectedGeos();
-					if (selGeos.size() == 1 && selGeos.get(0).isGeoButton()) {
-						GeoButton button = (GeoButton)selGeos.get(0);
-						button.runScripts(null);
+					if (selGeos.size() == 1) {
+						if (selGeos.get(0).isGeoBoolean()) {
+							GeoBoolean geoBool = (GeoBoolean)selGeos.get(0);
+							geoBool.setValue(!geoBool.getBoolean());
+							geoBool.updateRepaint();
+						} else {
+							selGeos.get(0).runScripts(null);
+						}  
 						
 					}
 
