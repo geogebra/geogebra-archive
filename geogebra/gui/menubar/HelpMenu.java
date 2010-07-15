@@ -61,7 +61,7 @@ class HelpMenu extends BaseMenu {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.getGuiManager().openHelp(null);
+						app.getGuiManager().openHelp();
 					}
 				};
 				runner.start();

@@ -59,6 +59,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -2652,6 +2653,15 @@ public class DefaultGuiManager implements GuiManager {
 	    }
 	    
 
+	    public void openHelp() {
+	    	try {
+				showURLinBrowser(new URL(GeoGebra.HELP_URL));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+	    	
+	    }
+		
 	    public void openHelp(String command) {
 	    	String internalCmd = null;
 	    	if (command != null)
@@ -2687,7 +2697,7 @@ public class DefaultGuiManager implements GuiManager {
 	   
 
 	    private URL getHelpURL(Locale locale, String intCommand) throws Exception {
-	    	
+	    	Application.printStacktrace("");
 	    	// needed to turn internal command into English command
 	    	// eg CurveCartesian -> Curve
 	    	intCommand = app.getEnglishCommand(intCommand);

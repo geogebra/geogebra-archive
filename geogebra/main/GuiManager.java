@@ -380,4 +380,6 @@ public interface GuiManager {
 				Point p);
 
 		public void toggleDrawingPadPopup(Component comp, Point p);
+
+		public void openHelp();
 }
