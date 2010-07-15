@@ -41,6 +41,7 @@ import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
@@ -2919,7 +2920,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		case GeoElement.GEO_CLASS_TEXTFIELD:
 
-			d = new DrawTextField(this, (GeoButton) geo);	
+			d = new DrawTextField(this, (GeoTextField) geo);	
 			break;
 		
 		case GeoElement.GEO_CLASS_POINT:

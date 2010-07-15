@@ -59,14 +59,14 @@ public final class DrawTextField extends Drawable {
     Container box = Box.createHorizontalBox();
 
 
-	public DrawTextField(EuclidianView view, GeoButton geoButton) {
+	public DrawTextField(EuclidianView view, GeoTextField geoButton) {
 		this.view = view;
 		this.geoButton = geoButton;
 		geo = geoButton;
 
 		// action listener for checkBox
 		bl = new ButtonListener();
-		textField = new JTextField(20);	
+		textField = geoButton.getTextField();//new JTextField(20);	
 		label = new JLabel("Label");
 		label.setLabelFor(textField);
 		textField.setVisible(true);

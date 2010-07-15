@@ -1,11 +1,15 @@
 package geogebra.kernel;
 
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
 import geogebra.util.Util;
 
 public class GeoTextField extends GeoButton {
 
 	private GeoElement linkedGeo = null;
 	
+	JTextField textField = new JTextField(20);
 	
 	public GeoTextField(Construction c) {
 		
@@ -47,6 +51,18 @@ public class GeoTextField extends GeoButton {
 			sb.append("/>\n");
 		}
 
+	}
+	public JTextField getTextField() {
+		return textField;
+	}
+	
+	public void setFocus(final String str) {
+		textField.requestFocus();
+		if (str != null) {
+            SwingUtilities.invokeLater( new Runnable(){ public void
+            	run() { textField.setText(str);} });
+			
+		}
 	}
 	
 

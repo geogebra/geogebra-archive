@@ -6,10 +6,10 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
-import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoTextField;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -126,8 +126,12 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			}	
 			
 			// open rename dialog
-			if (geo != null) {							
-				app.getGuiManager().showRenameDialog(geo, true, Character.toString(ch), false);
+			if (geo != null) {	
+				
+				if (geo instanceof GeoTextField) {
+					GeoTextField tf = (GeoTextField)geo;
+					tf.setFocus(ch+"");
+				} else app.getGuiManager().showRenameDialog(geo, true, Character.toString(ch), false);
 				return true;
 			}
 		}		
@@ -179,6 +183,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 						} else {
 							selGeos.get(0).runScripts(null);
 						}  
+						
+						consumed = true;
 						
 					}
 
