@@ -90,6 +90,13 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		if (animationRunningAtLastStop) {
 			appletImplementation.startAnimation();
 		}
+		
+		// request focus
+		// important for accessibility (ie where the mouse can't be used)
+		// as the browser may not provide a keyboard shortcut
+		requestFocus();
+		requestFocusInWindow();
+		requestFocus();
 
 		repaint();
 		System.gc();
