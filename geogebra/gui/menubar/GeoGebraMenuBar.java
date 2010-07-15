@@ -249,19 +249,6 @@ public class GeoGebraMenuBar extends JMenuBar {
 		final JDialog dialog = infoPane.createDialog(app.getMainComponent(),
 				app.getMenu("About") + " / " + app.getMenu("License"));
 
-		final ActionListener listener = new ActionListener() {
-			public final void actionPerformed(final ActionEvent e) {
-				JOptionPane.showMessageDialog(dialog, null, "GeoZebra forever",
-						JOptionPane.DEFAULT_OPTION, app
-								.getImageIcon("zebra.gif"));
-			}
-		};
-
-		final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0,
-				true);
-		dialog.getRootPane().registerKeyboardAction(listener, keyStroke,
-				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
 		dialog.setVisible(true);
 	}
 }
