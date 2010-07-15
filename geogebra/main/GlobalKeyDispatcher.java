@@ -6,6 +6,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
+import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -161,6 +162,21 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 						app.getGuiManager().getAlgebraInput().requestFocus(); 
 						consumed = true;
 					}
+				}
+				break;			
+				
+				// activate button if selected
+			case KeyEvent.VK_SPACE:	
+				// check not spreadsheet
+				if (!(event.getSource() instanceof JTable)) {			
+					
+					ArrayList<GeoElement> selGeos = app.getSelectedGeos();
+					if (selGeos.size() == 1 && selGeos.get(0).isGeoButton()) {
+						GeoButton button = (GeoButton)selGeos.get(0);
+						button.runScripts(null);
+						
+					}
+
 				}
 				break;			
 				
