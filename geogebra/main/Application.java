@@ -3152,7 +3152,17 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	final public void selectNextGeo() {
-		Iterator<GeoElement> it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+		
+		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetLabelOrder();
+		Iterator<GeoElement> it = tree.iterator();
+		
+		// remove fixed geos
+		while (it.hasNext()) {
+			GeoElement geo = it.next();
+			if (geo.isFixed()) tree.remove(geo);
+		}
+		
+		it = tree.iterator();
 
 		// none selected, select first geo
 		if (selectedGeos.size() == 0) {
@@ -3179,7 +3189,16 @@ public abstract class Application implements KeyEventDispatcher {
 		if (selectedGeos.size() != 1) return;
 		GeoElement selGeo = selectedGeos.get(0);
 		GeoElement lastGeo = null;
-		Iterator<GeoElement> it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetLabelOrder();
+		Iterator<GeoElement> it = tree.iterator();
+		
+		// remove fixed geos
+		while (it.hasNext()) {
+			GeoElement geo = it.next();
+			if (geo.isFixed()) tree.remove(geo);
+		}
+		
+		it = tree.iterator();
 		while (it.hasNext()) { lastGeo = it.next(); }
 			
 		it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
