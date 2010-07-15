@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
@@ -29,10 +28,15 @@ public class GeoImplicitPoly extends GeoElement {
 //	private Polynomial poly;
 	private double[][] coeff;
 	
+	private String userInput; //TODO Stores the Polynomial in the exact way the user entered it
+	private boolean showUserInput;
+	
 	private boolean defined = true;
 	
 	protected GeoImplicitPoly(Construction c) {
 		super(c);
+		userInput="";
+		showUserInput=false;
 	}
 	
 	protected GeoImplicitPoly(Construction c, String label,double[][] coeff){
@@ -51,12 +55,15 @@ public class GeoImplicitPoly extends GeoElement {
 		this(c);
 		setLabel(label);
 		setCoeff(poly.getCoeff());
-//		Application.debug("toStr->"+toString());
-		//forceEuclidianVisible(true);
 	}
 	
 	public GeoImplicitPoly(GeoImplicitPoly g){
 		this(g.cons,g.label,g.coeff);
+	}
+	
+	public void setuserInput(String s){
+		userInput=s;
+		showUserInput=true;
 	}
 
 	@Override
@@ -150,6 +157,8 @@ public class GeoImplicitPoly extends GeoElement {
 	
 	@Override
 	public String toValueString() {
+		if (showUserInput&&userInput.length()>0)
+			return userInput;
 		StringBuilder sb=new StringBuilder();
 		if (coeff==null)
 			return "";
