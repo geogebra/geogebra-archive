@@ -92,7 +92,7 @@ public abstract class GeoCurveCartesianND extends GeoElement{
 	   super.getXMLtags(sb);
 	 
 	   //	line thickness and type  
-	   sb.append(getLineStyleXML());	  
+		getLineStyleXML(sb);
  
    }
 	

@@ -362,16 +362,16 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		sb.append("\"/>\n");
 		
 		//	colors
-		sb.append(getXMLvisualTags());
+		getXMLvisualTags(sb);
 
 		//	if number is drawable then we need to save visual options too
 		if (isDrawable || isSliderable()) {
 			// save slider info before show to have min and max set
 			// before setEuclidianVisible(true) is called
-			sb.append(getXMLsliderTag());						
+			getXMLsliderTag(sb);						
 			
 			//	line thickness and type
-			sb.append(getLineStyleXML());
+			getLineStyleXML(sb);
 
 			// for slope triangle
 			if (slopeTriangleSize > 1) {
@@ -380,10 +380,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				sb.append("\"/>\n");
 			}						
 		}
-		sb.append(getXMLanimationTags());
-		sb.append(getXMLfixedTag());
-		sb.append(getAuxiliaryXML());
-		sb.append(getBreakpointXML());
+		getXMLanimationTags(sb);
+		getXMLfixedTag(sb);
+		getAuxiliaryXML(sb);
+		getBreakpointXML(sb);
 	}
 	
 	protected boolean isSliderable() {
@@ -395,11 +395,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return !isSetEuclidianVisible();
 	}
 	
-	String getXMLsliderTag() {
+	void getXMLsliderTag(StringBuilder sb) {
 		if (!isSliderable())
-			return "";
+			return;
 		
-		StringBuilder sb = new StringBuilder();		
+
 		sb.append("\t<slider");
 		if (intervalMinActive) {
 			sb.append(" min=\"");
@@ -427,7 +427,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		sb.append("\" horizontal=\"");
 		sb.append(sliderHorizontal);
 		sb.append("\"/>\n");		
-		return sb.toString();
 	}
 
 	public boolean isNumberValue() {

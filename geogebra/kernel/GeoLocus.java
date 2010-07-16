@@ -98,8 +98,8 @@ public class GeoLocus extends GeoElement implements Path {
 	* returns all class-specific xml tags for getXML
 	*/
 	protected void getXMLtags(StringBuilder sb) {
-	   	sb.append(getXMLvisualTags());		
-	   	sb.append(getLineStyleXML());
+	   	getXMLvisualTags(sb);		
+	   	getLineStyleXML(sb);
  
    	}
 

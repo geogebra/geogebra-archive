@@ -3156,10 +3156,10 @@ public abstract class Application implements KeyEventDispatcher {
 		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetLabelOrder();
 		Iterator<GeoElement> it = tree.iterator();
 		
-		// remove fixed geos
+		// remove geos that don't have isSelectionAllowed()==true
 		while (it.hasNext()) {
 			GeoElement geo = it.next();
-			if (geo.isFixed()) tree.remove(geo);
+			if (!geo.isSelectionAllowed()) tree.remove(geo);
 		}
 		
 		it = tree.iterator();
@@ -3178,7 +3178,7 @@ public abstract class Application implements KeyEventDispatcher {
 			GeoElement geo = it.next();
 			if (selGeo == geo) {
 				removeSelectedGeo(selGeo);
-				if (!it.hasNext()) it = kernel.getConstruction().getGeoSetLabelOrder().iterator();					
+				if (!it.hasNext()) it = tree.iterator();					
 				addSelectedGeo(it.next());
 				break;
 			}
@@ -3192,16 +3192,16 @@ public abstract class Application implements KeyEventDispatcher {
 		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetLabelOrder();
 		Iterator<GeoElement> it = tree.iterator();
 		
-		// remove fixed geos
+		// remove geos that don't have isSelectionAllowed()==true
 		while (it.hasNext()) {
 			GeoElement geo = it.next();
-			if (geo.isFixed()) tree.remove(geo);
+			if (!geo.isSelectionAllowed()) tree.remove(geo);
 		}
 		
 		it = tree.iterator();
 		while (it.hasNext()) { lastGeo = it.next(); }
 			
-		it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+		it = tree.iterator();
 		while (it.hasNext()) {
 			GeoElement geo = it.next();
 			if (selGeo == geo) {

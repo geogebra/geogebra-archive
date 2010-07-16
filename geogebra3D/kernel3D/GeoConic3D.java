@@ -327,7 +327,7 @@ extends GeoConicND implements GeoElement3DInterface{
 		protected void getXMLtags(StringBuilder sb) {
 	        super.getXMLtags(sb);
 			//	curve thickness and type  
-			sb.append(getLineStyleXML());
+			getLineStyleXML(sb);
 			
 		}
 		

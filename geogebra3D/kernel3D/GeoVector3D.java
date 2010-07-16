@@ -265,7 +265,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 		protected void getXMLtags(StringBuilder sb) {
 	        super.getXMLtags(sb);
 			//	line thickness and type  
-			sb.append(getLineStyleXML());
+			getLineStyleXML(sb);
 			
 			//	startPoint of vector
 			if (startPoint != null) {

@@ -110,6 +110,7 @@ public	class PropertiesPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private NamePanel namePanel;
 		private ShowObjectPanel showObjectPanel;		
+		private SelectionAllowedPanel selectionAllowed;		
 		private ShowTrimmedIntersectionLines showTrimmedIntersectionLines;		
 		private ColorPanel colorPanel;
 		private LabelPanel labelPanel;
@@ -196,6 +197,7 @@ public	class PropertiesPanel extends JPanel {
 			}
 			
 			showObjectPanel = new ShowObjectPanel();
+			selectionAllowed = new SelectionAllowedPanel();
 			showTrimmedIntersectionLines = new ShowTrimmedIntersectionLines();
 			colorPanel = new ColorPanel(colChooser);
 			coordPanel = new CoordPanel();
@@ -268,6 +270,8 @@ public	class PropertiesPanel extends JPanel {
 			
 			basicTabList.add(showObjectPanel);	
 			
+			basicTabList.add(selectionAllowed);	
+						
 			if(!isDefaults)
 				basicTabList.add(labelPanel);
 			
@@ -412,7 +416,8 @@ public	class PropertiesPanel extends JPanel {
 			}
 			
 			// update the labels of the panels
-			showObjectPanel.setLabels();	
+			showObjectPanel.setLabels();
+			selectionAllowed.setLabels();
 			showTrimmedIntersectionLines.setLabels();
 			colorPanel.setLabels();
 			coordPanel.setLabels();
@@ -670,6 +675,85 @@ public	class PropertiesPanel extends JPanel {
 			}
 
 		} // ShowObjectPanel
+
+		/**
+		 * panel with show/hide object checkbox
+		 */
+		private class SelectionAllowedPanel extends JPanel implements ItemListener, UpdateablePanel {
+		
+			private static final long serialVersionUID = 1L;
+			private Object[] geos; // currently selected geos
+			private JCheckBox selectionAllowedCB;
+
+			public SelectionAllowedPanel() {
+				// check box for show object
+				selectionAllowedCB = new JCheckBox();
+				selectionAllowedCB.addItemListener(this);			
+				add(selectionAllowedCB);			
+			}
+			
+			public void setLabels() {
+				selectionAllowedCB.setText(app.getPlain("SelectionAllowed"));
+			}			
+
+			public JPanel update(Object[] geos) {
+				this.geos = geos;
+				if (!checkGeos(geos))
+					return null;
+
+				selectionAllowedCB.removeItemListener(this);
+
+				// check if properties have same values
+				GeoElement temp, geo0 = (GeoElement) geos[0];
+				boolean equalObjectVal = true;
+
+				for (int i = 1; i < geos.length; i++) {
+					temp = (GeoElement) geos[i];
+					// same object visible value
+					if (geo0.isSelectionAllowed()
+						!= temp.isSelectionAllowed()) {
+						equalObjectVal = false;
+						break;
+					}
+					
+				}
+
+				// set object visible checkbox
+				if (equalObjectVal)
+					selectionAllowedCB.setSelected(geo0.isSelectionAllowed());
+				else
+					selectionAllowedCB.setSelected(false);
+
+				selectionAllowedCB.setEnabled(true);
+				
+				selectionAllowedCB.addItemListener(this);
+				return this;
+			}
+
+			// show everything 
+			private boolean checkGeos(Object[] geos) {
+				return true;
+			}
+
+			/**
+			 * listens to checkboxes and sets object and label visible state
+			 */
+			public void itemStateChanged(ItemEvent e) {
+				GeoElement geo;
+				Object source = e.getItemSelectable();
+
+				// show object value changed
+				if (source == selectionAllowedCB) {
+					for (int i = 0; i < geos.length; i++) {
+						geo = (GeoElement) geos[i];
+						geo.setSelectionAllowed(selectionAllowedCB.isSelected());
+						geo.updateRepaint();
+					}
+				}
+				updateSelection(geos);
+			}
+
+		} // SelectionAllowedPanel
 
 		/**
 		 * panel with show/hide trimmed intersection lines

@@ -432,7 +432,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	   super.getXMLtags(sb);
 	 
 	   //	line thickness and type  
-	   sb.append(getLineStyleXML());	  
+		getLineStyleXML(sb);
 
    }
 

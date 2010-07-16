@@ -254,7 +254,7 @@ implements Path, Traceable, LineProperties
 	protected void getXMLtags(StringBuilder sb) {
 		super.getXMLtags(sb);
 		//	line thickness and type  
-		sb.append(getLineStyleXML());
+		getLineStyleXML(sb);
 
 		sb.append("\t<matrix");
 		for (int i = 0; i < 16; i++)

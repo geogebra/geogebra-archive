@@ -338,6 +338,7 @@ public abstract class GeoElement
 	public float alphaValue = 0.0f;
 	public int labelOffsetX = 0, labelOffsetY = 0;
 	private boolean auxiliaryObject = false;	
+	private boolean selectionAllowed = true;
 	// on change: see setVisualValues()
 
 	// spreadsheet specific properties
@@ -3368,26 +3369,22 @@ public abstract class GeoElement
 		kernel.setTranslateCommandName(oldValue);
 	}
 	
-    final String getAuxiliaryXML() {
+    final void getAuxiliaryXML(StringBuilder sb) {
 		if (auxiliaryObject) {
-			StringBuilder sb = new StringBuilder();
 			sb.append("\t<auxiliary val=\"");
 			sb.append(auxiliaryObject);
 			sb.append("\"/>\n");
-			return sb.toString();
-		} else 
-			return "";		
+		} 	
 	}
 
 	/**
 	 * returns all visual xml tags (like show, objColor, labelOffset, ...)
 	 */
-	String getXMLvisualTags() {
-		return getXMLvisualTags(true);
+	void getXMLvisualTags(StringBuilder sb) {
+		getXMLvisualTags(sb, true);
 	}
 		
-	String getXMLvisualTags(boolean withLabelOffset) {
-		StringBuilder sb = new StringBuilder();
+	void getXMLvisualTags(StringBuilder sb, boolean withLabelOffset) {
 		boolean isDrawable = isDrawable();
 		
 		// show object and/or label in EuclidianView
@@ -3519,13 +3516,11 @@ public abstract class GeoElement
 			sb.append("\"/>\n");
 		}
 		
-		return sb.toString();	
 	}
 
-	String getXMLanimationTags() {
+	void getXMLanimationTags(StringBuilder sb) {
 		// animation step width
 		if (isChangeable()) {
-			StringBuilder sb = new StringBuilder();
 			sb.append("\t<animation");
 			sb.append(" step=\""+animationIncrement+"\"");
 			String animSpeed = animationSpeedObj == null ? "1" : animationSpeedObj.toGeoElement().getLabel();
@@ -3535,21 +3530,23 @@ public abstract class GeoElement
 			sb.append((isAnimating() ? "true" : "false"));
 			sb.append("\"");
 			sb.append("/>\n");
-			return sb.toString();
 		}
-		return "";
+		
 	}
 
-	String getXMLfixedTag() {
+	void getXMLfixedTag(StringBuilder sb) {
 		//		is object fixed
 		if (fixed && isFixable()) {
-			StringBuilder sb = new StringBuilder();
 			sb.append("\t<fixed val=\"");
 			sb.append(fixed);
 			sb.append("\"/>\n");
-			return sb.toString();
 		}
-		return "";
+		// is selection allowed
+		if (!selectionAllowed) {
+			sb.append("\t<selectionAllowed val=\"");
+			sb.append(selectionAllowed);
+			sb.append("\"/>\n");
+		}
 	}
 
 	/**
@@ -3558,11 +3555,11 @@ public abstract class GeoElement
 	 */
 	protected void getXMLtags(StringBuilder sb) {
 		//sb.append(getLineStyleXML());
-		sb.append(getXMLvisualTags());
-		sb.append(getXMLanimationTags());
-		sb.append(getXMLfixedTag());
-		sb.append(getAuxiliaryXML());
-		sb.append(getBreakpointXML());		
+		getXMLvisualTags(sb);
+		getXMLanimationTags(sb);
+		getXMLfixedTag(sb);
+		getAuxiliaryXML(sb);
+		getBreakpointXML(sb);		
 	}
 
 	/**
@@ -3576,10 +3573,9 @@ public abstract class GeoElement
 	 * Returns line type and line thickness as xml string.
 	 * @see getXMLtags() of GeoConic, GeoLine and GeoVector      
 	 */
-	protected String getLineStyleXML() {
-		if (isGeoPoint()) return "";
+	protected void getLineStyleXML(StringBuilder sb) {
+		if (isGeoPoint()) return;
 		
-		StringBuilder sb = new StringBuilder();
 		sb.append("\t<lineStyle");
 		sb.append(" thickness=\"");
 		sb.append(lineThickness);
@@ -3588,22 +3584,19 @@ public abstract class GeoElement
 		sb.append(lineType);
 		sb.append("\"");
 		sb.append("/>\n");
-		return sb.toString();
 	}	
 
 	/**
 	 * Returns line type and line thickness as xml string.
 	 * @see getXMLtags() of GeoConic, GeoLine and GeoVector      
 	 */
-	String getBreakpointXML() {		
+	void getBreakpointXML(StringBuilder sb) {		
 		if (isConsProtBreakpoint) {
-			StringBuilder sb = new StringBuilder();		
 			sb.append("\t<breakpoint val=\"");		
 			sb.append(isConsProtBreakpoint);
 			sb.append("\"/>\n");
-			return sb.toString();		
-		} else
-			return "";			
+
+		} 			
 	}
 	
 	private String getShowObjectConditionXML() {
@@ -4530,10 +4523,18 @@ public abstract class GeoElement
 		}
 		return viewSet.contains(view);
 	}
+
 	
 	// End G.Sturr
 	//===========================================
 	
+	public void setSelectionAllowed(boolean selected2) {
+		selectionAllowed = selected2;
+	}
+	
+	public boolean isSelectionAllowed() {
+		return selectionAllowed;
+	}
 	
 	
 	

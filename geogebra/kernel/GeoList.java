@@ -1079,7 +1079,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		protected void getXMLtags(StringBuilder sb) {
 	        super.getXMLtags(sb);
 	        
-	        sb.append(getLineStyleXML());
+			getLineStyleXML(sb);
 
 	    }
 		

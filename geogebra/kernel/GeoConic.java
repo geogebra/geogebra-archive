@@ -2342,7 +2342,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	protected void getXMLtags(StringBuilder sb) {
 		super.getXMLtags(sb);
 		//	line thickness and type  
-		sb.append(getLineStyleXML());
+		getLineStyleXML(sb);
 
 		sb.append("\t<eigenvectors ");
 		sb.append(" x0=\"" + eigenvec[0].x + "\"");

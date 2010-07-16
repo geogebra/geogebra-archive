@@ -617,7 +617,7 @@ GeoLineInterface, MatrixTransformable {
 	protected void getXMLtags(StringBuilder sb) {
         super.getXMLtags(sb);
 		//	line thickness and type  
-		sb.append(getLineStyleXML());	  
+		getLineStyleXML(sb);
         
         // prametric, explicit or implicit mode
         switch(toStringMode) {

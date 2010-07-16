@@ -355,29 +355,28 @@ public final class GeoAngle extends GeoNumeric {
 		if (isDrawable() || isSliderable()) {
 			// save slider info before show to have min and max set
 			// before setEuclidianVisible(true) is called
-			sb.append(getXMLsliderTag());
+			getXMLsliderTag(sb);
 
-			sb.append(getXMLvisualTags());
-			sb.append(getLineStyleXML());
+			getXMLvisualTags(sb);
+			getLineStyleXML(sb);
 
 			// arc size
 			sb.append("\t<arcSize val=\"");
 			sb.append(arcSize);
 			sb.append("\"/>\n");
 		}
-		sb.append(getXMLAllowReflexAngleTag());
-		sb.append(getXMLEmphasizeRightAngleTag());		
-		sb.append(getXMLanimationTags());
-		sb.append(getXMLfixedTag());
-		sb.append(getAuxiliaryXML());
-		sb.append(getBreakpointXML());
+		getXMLAllowReflexAngleTag(sb);
+		getXMLEmphasizeRightAngleTag(sb);		
+		getXMLanimationTags(sb);
+		getXMLfixedTag(sb);
+		getAuxiliaryXML(sb);
+		getBreakpointXML(sb);
 	}
 
-	private String getXMLAllowReflexAngleTag() {
+	private void getXMLAllowReflexAngleTag(StringBuilder sb) {
 		if (isIndependent())
-			return "";
+			return;
 
-		StringBuilder sb = new StringBuilder();
 		// Michael Borcherds 2007-10-21
 		sb.append("\t<allowReflexAngle val=\"");
 		sb.append(angleStyle != ANGLE_ISNOTREFLEX);
@@ -392,19 +391,16 @@ public final class GeoAngle extends GeoNumeric {
 		// sb.append(angleStyle);
 		// sb.append("\"/>\n");
 		// Michael Borcherds 2007-10-21
-		return sb.toString();
 	}
 	
-	private String getXMLEmphasizeRightAngleTag() {
+	private void getXMLEmphasizeRightAngleTag(StringBuilder sb) {
 		if (emphasizeRightAngle) 
-			return "";
+			return;
 		
 		// only store emphasizeRightAngle if "false"
-		StringBuilder sb = new StringBuilder();		
 		sb.append("\t<emphasizeRightAngle val=\"");
 		sb.append(emphasizeRightAngle);
 		sb.append("\"/>\n");		
-		return sb.toString();
 	}
 
 	// Michael Borcherds 2007-11-20

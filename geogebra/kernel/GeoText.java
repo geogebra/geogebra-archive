@@ -383,7 +383,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	* returns all class-specific xml tags for getXML
 	*/
 		protected void getXMLtags(StringBuilder sb) {
-	   	sb.append(getXMLvisualTags(false));			
+	   	getXMLvisualTags(sb, false);			
 		
 		if (isFixed()) {
 			sb.append("\t<fixed val=\"true\"/>\n");	
@@ -418,7 +418,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 			sb.append("\"/>\n");
 		}
 						
-		sb.append(getBreakpointXML());
+		getBreakpointXML(sb);
 
 		// store location of text (and possible labelOffset)
 		sb.append(getXMLlocation());			

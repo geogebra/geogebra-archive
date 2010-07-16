@@ -401,7 +401,7 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 	protected void getXMLtags(StringBuilder sb) {
         super.getXMLtags(sb);
 		//	line thickness and type  
-		sb.append(getLineStyleXML());	  
+		getLineStyleXML(sb);
         
         // polar or cartesian coords
 		switch(toStringMode) {

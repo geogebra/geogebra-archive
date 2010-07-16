@@ -2125,8 +2125,11 @@ public class MyXMLHandler implements DocHandler {
 				ok = handleSpreadsheetTrace(attrs);
 				break;
 			} else if (eName.equals("showTrimmed")) {
-			ok = handleShowTrimmed(attrs);
-			break;
+				ok = handleShowTrimmed(attrs);
+				break;
+			} else if (eName.equals("selectionAllowed")) {
+				ok = handleSelectionAllowed(attrs);
+				break;
 		}
 
 		case 't':
@@ -2720,6 +2723,15 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleShowTrimmed(LinkedHashMap<String, String> attrs) {
 		try {
 			geo.setShowTrimmedIntersectionLines(parseBoolean((String) attrs.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleSelectionAllowed(LinkedHashMap<String, String> attrs) {
+		try {
+			geo.setSelectionAllowed(parseBoolean((String) attrs.get("val")));
 			return true;
 		} catch (Exception e) {
 			return false;
