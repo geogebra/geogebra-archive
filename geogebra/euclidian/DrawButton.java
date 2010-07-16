@@ -194,18 +194,11 @@ public final class DrawButton extends Drawable {
 	}
 
 	final public void draw(Graphics2D g2) {
-/*
+
 		if (isVisible) {		
-
-			g2.setFont(view.fontPoint);
-			g2.setStroke(objStroke); 
-
-			g2.setPaint(geo.getObjectColor());
-			textSize = Drawable.drawIndexedString(g2, labelDesc, button.labelOffsetX, button.labelOffsetY + (13 + 9) / 2 + 5);
-
-			updateLabel();
+			button.setSelected(geo.doHighlighting());
 		}
-*/
+
 	}
 
 	/**
