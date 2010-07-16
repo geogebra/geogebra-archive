@@ -21,7 +21,7 @@ import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
 
 /**
- * Finds one real root of a function in the given interval. 
+ * Finds one real root of a function in the given interval using Brent's method. 
  */
 public class AlgoRootInterval extends AlgoElement {
 
@@ -34,6 +34,7 @@ public class AlgoRootInterval extends AlgoElement {
     private GeoPoint rootPoint; // output 
 
     private GeoElement aGeo, bGeo;
+    private UnivariateRealSolver rootFinder;
 
     public AlgoRootInterval(
         Construction cons,
@@ -86,16 +87,17 @@ public class AlgoRootInterval extends AlgoElement {
         double root = Double.NaN;
         Function fun = f.getFunction();
         
-        UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
-        UnivariateRealSolver rootFinder = fact.newBrentSolver();
+        if (rootFinder == null) {
+        	UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
+        	rootFinder = fact.newBrentSolver();
+        }
+        
         try {
         	// Brent's method
-            root = rootFinder.solve(new RealRootAdapter(fun), a.getDouble(), b.getDouble());            
-            //root = rootFinder.falsePosition(fun, a.getDouble(), b.getDouble());            
+            root = rootFinder.solve(new RealRootAdapter(fun), a.getDouble(), b.getDouble());          
         } catch (Exception e) {        	
             try {                               	        	
-            	// Brent's failed because we left our function's domain
-            	// Let's search for a valid domain and try again
+            	// Let's try again by searchin for a valid domain first
             	double [] borders = RealRootUtil.getDefinedInterval(fun, a.getDouble(), b.getDouble());            	
             	root = rootFinder.solve(new RealRootAdapter(fun), borders[0], borders[1]);                
             } catch (Exception ex) {   
@@ -103,21 +105,11 @@ public class AlgoRootInterval extends AlgoElement {
             } 
         }
         
+        // check result
         if (Math.abs(fun.evaluate(root)) < Kernel.MIN_PRECISION)
             return root;
-        
-        /*
-        // Brent's failed, try false position (regula falsi) method
-        double aVal = fun.evaluate(a.getDouble());
-        double bVal = fun.evaluate(b.getDouble());
-        // regula falsi guarantees an answer if there's a sign change
-        if (aVal * bVal < 0) {
-	        root = rootFinder.falsePosition(fun, a.getDouble(), b.getDouble());            
-	        if (Math.abs(fun.evaluate(root)) < Kernel.MIN_PRECISION)
-	            return root;
-        }*/
-
-        return Double.NaN;
+        else
+        	return Double.NaN;
     }
 
     final public String toString() {

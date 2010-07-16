@@ -13,8 +13,10 @@ public class RealRootAdapter implements UnivariateRealFunction {
 
 	public double value(double x) throws FunctionEvaluationException {
 		double res = this.fun.evaluate(x);
-		if (res == Double.NaN) throw new FunctionEvaluationException(res);
-		return res;
+		if (Double.isInfinite(res) || Double.isNaN(res))
+			throw new FunctionEvaluationException(x);
+		else
+			return res;
 	}
 
 }

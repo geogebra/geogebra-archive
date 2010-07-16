@@ -12,16 +12,15 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
-import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
-
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootAdapter;
+import geogebra.kernel.roots.RealRootDerivAdapter;
 import geogebra.kernel.roots.RealRootDerivFunction;
 import geogebra.kernel.roots.RealRootUtil;
+
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
 
 /**
  * Finds one real root of a function with newtons method.
@@ -38,6 +37,7 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
     private GeoPoint rootPoint; // output 
 
     private GeoElement startGeo;
+    private UnivariateRealSolver rootFinderBrent, rootFinderNewton; 
 
     public AlgoRootNewton(
         Construction cons,
@@ -94,46 +94,40 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
 
     final double calcRoot(Function fun, double start) {
     	double root = Double.NaN;
-   
-    	UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
-    	UnivariateRealSolver rootFinder = fact.newBrentSolver();
     	double [] borders = getDomain(fun, start);
-    	try {
-			root = rootFinder.solve(new RealRootAdapter(fun), borders[0], borders[1], start);
-		} catch (Exception e) {
-			root = Double.NaN;
-		}
     	
-		// Debian comment: the algorithm of the original code is not clear -- Giovanni Mascellani
-    	/*
     	// for Newton's method we need the derivative of our function fun
         RealRootDerivFunction derivFun = fun.getRealRootDerivFunction();        
         
-        // no derivative found: let's use REGULA FALSI
-        if (derivFun == null) {
-        	double [] borders = getDomain(fun, start);
-        	try {
-        		root = rootFinder.brent(fun, borders[0], borders[1]);
+        // derivative found: let's use Newton's method
+        if (derivFun != null) {
+        	if (rootFinderNewton == null) {
+        		UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
+        		rootFinderNewton = fact.newNewtonSolver();
+        	}
+        	
+            try {        	                  	
+            	root = rootFinderNewton.solve(new RealRootDerivAdapter(derivFun), borders[0], borders[1], start);                      
+            } 
+            catch (Exception e) {  
+            	e.printStackTrace();
+            	root = Double.NaN;
+            }
+        }
+        
+        // if Newton didn't know the answer, let's ask Brent
+        if (Double.isNaN(root)) {
+        	if (rootFinderBrent == null) {
+        		UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
+        		rootFinderBrent = fact.newBrentSolver();
+        	}
+        	
+        	try {		
+        		root = rootFinderBrent.solve(new RealRootAdapter(fun), borders[0], borders[1]);
         	} catch (Exception e) {
         		root = Double.NaN;
         	}
         }
-        else {
-        	// NEWTON's METHOD
-            try {        	                  	
-            	root = rootFinder.newtonRaphson(derivFun, start);                      
-            } 
-            catch (IllegalArgumentException e) {   
-            	// BISECTION with NEWTON's METHOD
-                try {                               	        	
-                	// Newton's method failed because we left our function's domain
-                	// Let's search for a valid domain and try again using a restricted method
-                	double [] borders = getDomain(fun, start);
-                	root = rootFinder.bisectNewtonRaphson(derivFun, borders[0], borders[1]);                                
-                } catch (Exception ex) {
-                }                      	        	        	
-            }
-        }*/
               
         // check what we got
         if (Math.abs(fun.evaluate(root)) < Kernel.MIN_PRECISION )

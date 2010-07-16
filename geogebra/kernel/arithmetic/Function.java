@@ -1282,6 +1282,10 @@ implements ExpressionValue, RealRootFunction, Functional {
 		public double evaluate(double x) { 
 			return fun.evaluate(x);
 		}
+
+		public double evaluateDerivative(double x) {
+			return derivative.evaluate(x);
+		}
     }
 	
 	public final boolean includesDivisionByVariable() {

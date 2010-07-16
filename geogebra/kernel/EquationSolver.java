@@ -15,6 +15,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.PolyFunction;
 import geogebra.kernel.roots.RealRootAdapter;
+import geogebra.kernel.roots.RealRootDerivAdapter;
 import geogebra.main.Application;
 
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.apache.commons.math.analysis.solvers.LaguerreSolver;
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
 import org.apache.commons.math.complex.Complex;
 
@@ -31,8 +33,8 @@ public class EquationSolver {
 	private static final double LAGUERRE_EPS = 1E-5;
 	private double epsilon = Kernel.STANDARD_PRECISION;
 	
-	//private RealRoot rootPolisher;
-	//private ExtremumFinder extrFinder;
+	private LaguerreSolver laguerreSolver;
+	private UnivariateRealSolver rootFinderBrent, rootFinderNewton; 
 	
     public EquationSolver(Kernel kernel) {		
 		// we need someone to polish our roots
@@ -588,9 +590,13 @@ public class EquationSolver {
 		
 		Complex[] complexRoots = null;
 		try {
-			complexRoots = new LaguerreSolver().solveAll(eqn, LAGUERRE_START);
-		} catch (Exception e) {
-			Application.debug("Problem solving with LaguerreSolver"+e.getLocalizedMessage());
+			if (laguerreSolver == null) {
+				laguerreSolver = new LaguerreSolver();
+			}		
+			complexRoots = laguerreSolver.solveAll(eqn, LAGUERRE_START);
+		} 
+		catch (Exception e) {
+			System.err.println("EquationSolver.LaguerreSolver: "+e.getLocalizedMessage());
 		}
 	
 		// sort complexRoots by real part into laguerreRoots
@@ -616,17 +622,26 @@ public class EquationSolver {
 			double f_left = polyFunc.evaluate(left);
 			double f_right = polyFunc.evaluate(right);
 			boolean bounded = f_left * f_right < 0.0; 
-			
-			UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
+		
 			try {					
-				if (bounded) {						
+				if (bounded) {				
+					if (rootFinderBrent == null) {
+						UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
+						rootFinderBrent = fact.newBrentSolver();
+					}
+					
 					//	small f'(root): don't go too far from our laguerre root !	
-					root = fact.newBrentSolver().solve(new RealRootAdapter(polyFunc), left, right);
+					root = rootFinderBrent.solve(new RealRootAdapter(polyFunc), left, right);
 					//System.out.println("Polish bisectNewtonRaphson: " + root);
 				} 
 				else {
+					if (rootFinderNewton == null) {
+						UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
+						rootFinderNewton = fact.newNewtonSolver();
+					}
+					
 					// the root is not bounded: give Mr. Newton a chance
-					root = fact.newNewtonSolver().solve(new RealRootAdapter(polyFunc), left, right, root);
+					root = rootFinderNewton.solve(new RealRootDerivAdapter(polyFunc), left, right, root);
 					//System.out.println("Polish newtonRaphson: " + root);
 				}				
 			} 
@@ -635,7 +650,12 @@ public class EquationSolver {
 				// polishing failed: maybe we have an extremum here
 				// try to find a local extremum
 				try {		
-					root = fact.newBrentSolver().solve(new RealRootAdapter(derivFunc), left, right);
+					if (rootFinderBrent == null) {
+						UnivariateRealSolverFactory fact = UnivariateRealSolverFactory.newInstance();
+						rootFinderBrent = fact.newBrentSolver();
+					}
+					
+					root = rootFinderBrent.solve(new RealRootAdapter(derivFunc), left, right);
 					//System.out.println("    find extremum successfull: " + root);
 				} catch (Exception ex) {
 					Application.debug(ex.getMessage());
@@ -673,7 +693,10 @@ public class EquationSolver {
 	
 		Complex[] complexRoots = null;
 		try {
-			complexRoots = new LaguerreSolver().solveAll(real, LAGUERRE_START);
+			if (laguerreSolver == null) {
+				laguerreSolver = new LaguerreSolver();
+			}		
+			complexRoots = laguerreSolver.solveAll(real, LAGUERRE_START);
 		} catch (Exception e) {
 			Application.debug("Problem solving with LaguerreSolver"+e.getLocalizedMessage());
 		}

@@ -36,10 +36,8 @@ public class AlgoIntegralDefinite extends AlgoElement {
     
     // for numerical adaptive GaussQuad integration  
     private static final int ORDER = 5;
-    private static final int MAX_ITER = 10;
-    private static LegendreGaussIntegrator gauss;
-    private static int adaptiveGaussQuadCounter = 0;
-    private static final int MAX_GAUSS_QUAD_CALLS = 500;     
+    private static final int MAX_ITER = 100;
+    private static LegendreGaussIntegrator gauss;   
 
     public AlgoIntegralDefinite(
         Construction cons,
@@ -169,33 +167,17 @@ public class AlgoIntegralDefinite extends AlgoElement {
      * quadrature approach.
      */
     public static double adaptiveGaussQuad(RealRootFunction fun, double a, double b) {
-    	adaptiveGaussQuadCounter = 0;
-    	double result = doAdaptiveGaussQuad(fun, a, b);
-    	
-    	//System.out.println("calls: " + adaptiveGaussQuadCounter);  
-    	return result;
-    }
-    
-    private static double doAdaptiveGaussQuad(RealRootFunction fun, double a, double b) {    		   	
-    	if (++adaptiveGaussQuadCounter > MAX_GAUSS_QUAD_CALLS) {
-    		return Double.NaN;
-    	}
-    	
     	// init GaussQuad classes for numerical integration
         if (gauss == null) {
             gauss = new LegendreGaussIntegrator(ORDER, MAX_ITER);
         }
     	
-        // integrate using gauss quadrature
-        double sum;
+        // integrate using adaptive gauss quadrature
 		try {
-			sum = gauss.integrate(new RealRootAdapter(fun), a, b);
+			return gauss.integrate(new RealRootAdapter(fun), a, b);
 		} catch (Exception e) {
-			sum = Double.NaN;
+			return Double.NaN;
 		}
-        if (Double.isNaN(sum)) return Double.NaN;
-        
-        return sum;
     }
 
     final public String toString() {

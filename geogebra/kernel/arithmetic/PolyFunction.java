@@ -100,6 +100,10 @@ public class PolyFunction implements RealRootFunction, RealRootDerivFunction {
 		return ret;
 	}	
 	
+	final public double evaluateDerivative(double x) {
+		return evaluateDerivFunc(x)[1];
+	}
+	
 	/**
 	 * Evaluates polynomial
 	 */		 
