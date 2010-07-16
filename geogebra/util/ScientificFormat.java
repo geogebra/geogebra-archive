@@ -7,7 +7,6 @@ import java.text.Format;
 import java.text.ParsePosition;
 import java.util.Locale;
 
-import org.freehep.util.DoubleWithError;
 
 
 /**

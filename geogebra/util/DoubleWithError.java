@@ -1,6 +1,5 @@
-package org.freehep.util;
+package geogebra.util;
 
-import geogebra.util.ScientificFormat;
 
 /**
  * A class that encapsulates a value and its error.
