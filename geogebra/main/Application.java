@@ -3153,8 +3153,11 @@ public abstract class Application implements KeyEventDispatcher {
 
 	final public void selectNextGeo() {
 		
-		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetLabelOrder();
-		Iterator<GeoElement> it = tree.iterator();
+		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetNameDescriptionOrder();//.getGeoSetLabelOrder();
+		
+		TreeSet<GeoElement> copy = new TreeSet(tree);
+		
+		Iterator<GeoElement> it = copy.iterator();
 		
 		// remove geos that don't have isSelectionAllowed()==true
 		while (it.hasNext()) {
@@ -3190,7 +3193,8 @@ public abstract class Application implements KeyEventDispatcher {
 		GeoElement selGeo = selectedGeos.get(0);
 		GeoElement lastGeo = null;
 		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetLabelOrder();
-		Iterator<GeoElement> it = tree.iterator();
+		TreeSet<GeoElement> copy = new TreeSet(tree);
+		Iterator<GeoElement> it = copy.iterator();
 		
 		// remove geos that don't have isSelectionAllowed()==true
 		while (it.hasNext()) {
