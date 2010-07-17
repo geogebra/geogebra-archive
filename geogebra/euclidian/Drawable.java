@@ -544,13 +544,13 @@ public abstract class Drawable extends DrawableND {
 			TeXFormula formula;
 			try {			
 				formula = new TeXFormula(eqnSB.substring(0, strLen));
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
 			} catch (Exception e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				return new Dimension(rec.width, rec.height);
 			} 
-			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
 			icon.setInsets(new Insets(1, 1, 1, 1));
 			
 			// Make sure the HashMap doesn't get too big
