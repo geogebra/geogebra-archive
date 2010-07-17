@@ -174,7 +174,7 @@ public class AlgebraProcessor {
 
 		try {
 			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo,
-					true);
+					true, false);
 		} catch (Exception e) {
 			return null;
 		}
@@ -184,7 +184,7 @@ public class AlgebraProcessor {
 	// added 'allowErrorDialog' flag to handle the case of unquoted text 
 	// entries in the spreadsheet
 	public GeoElement[] processAlgebraCommandNoExceptionHandling(
-			String cmd, boolean storeUndo, boolean allowErrorDialog) 
+			String cmd, boolean storeUndo, boolean allowErrorDialog, boolean throwMyError) 
 	throws Exception {
 		ValidExpression ve;					
 		
@@ -214,13 +214,15 @@ public class AlgebraProcessor {
 			// show error with nice "Show Online Help" box
 			if(allowErrorDialog) // G.Sturr 2010-7-5
 				app.showError(e);
+			else if (throwMyError) throw new MyError(app, e.getLocalizedMessage());
 
 			return null;
 		} catch (CircularDefinitionException e) {
-			//Application.debug("CircularDefinition");
+			Application.debug("CircularDefinition");
 			throw e;
 		} catch (Exception ex) {
-			//ex.printStackTrace();
+			Application.debug("Exception");
+			ex.printStackTrace();
 			throw new Exception("InvalidInput");
 		}
 		return geoElements;

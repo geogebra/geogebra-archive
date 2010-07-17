@@ -18,16 +18,19 @@ public class LatexConvertor implements ExternalConverter {
 	   }
 
 	   public String getLaTeXString(String externalCode) {
+		   boolean oldLabelMode = cons.isSuppressLabelsActive();
 		   cons.setSuppressLabelCreation(true);
 		   GeoElement[] geos;
 		   try {
-			   geos = env.processAlgebraCommandNoExceptionHandling(externalCode, false, false);
+			   geos = env.processAlgebraCommandNoExceptionHandling(externalCode, false, false, true);
 		   }
 		   catch (Exception e) {
-			   Application.debug(e.getLocalizedMessage());
+			   cons.setSuppressLabelCreation(oldLabelMode);
+			   //Application.debug(e.getLocalizedMessage());
 			   return e.getLocalizedMessage();
+		   } finally {
+			   cons.setSuppressLabelCreation(oldLabelMode);			   
 		   }
-		   cons.setSuppressLabelCreation(false);
 		   if (geos != null) {
 			   GeoElement geo = geos[0];
 		       return geo.getLaTeXdescription();

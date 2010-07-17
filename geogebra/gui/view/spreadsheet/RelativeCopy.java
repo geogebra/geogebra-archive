@@ -557,7 +557,7 @@ public class RelativeCopy {
 			newValues = kernel.getAlgebraProcessor()
 					// G.Sturr 2010-7-5
 					// make sure that an error dialog is not displayed for unquoted text
-					.processAlgebraCommandNoExceptionHandling(text, false, false);
+					.processAlgebraCommandNoExceptionHandling(text, false, false, false);
 					//.processAlgebraCommandNoExceptionHandling(text, false);
 			
 			// check if text was the label of an existing geo 

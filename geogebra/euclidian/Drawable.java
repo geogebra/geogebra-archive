@@ -22,6 +22,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -41,13 +42,11 @@ import java.util.HashMap;
 import javax.swing.JLabel;
 
 import org.scilab.forge.jlatexmath.AlphabetRegistration;
-import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import org.scilab.forge.jlatexmath.WebStartAlphabetRegistration;
 import org.scilab.forge.jlatexmath.dynamic.DynamicAtom;
-import org.scilab.forge.jlatexmath.dynamic.ExternalConverterFactory;
 
 /**
  *
@@ -545,7 +544,14 @@ public abstract class Drawable extends DrawableND {
 			try {			
 				formula = new TeXFormula(eqnSB.substring(0, strLen));
 				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
-			} catch (Exception e) {
+			} catch (MyError e) {
+				//e.printStackTrace();
+				//Application.debug("MyError LaTeX parse exception: "+e.getMessage()+"\n"+text);
+				// Write error message to Graphics View
+				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
+				return new Dimension(rec.width, rec.height);
+			}  catch (Exception e) {
+				//e.printStackTrace();
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
