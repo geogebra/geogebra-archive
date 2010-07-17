@@ -46,6 +46,9 @@ public class AlgoTableText extends AlgoElement {
 		
         setInputOutput();
         compute();
+        
+        // make sure for new LaTeX texts we get nice "x"s
+        text.setSerifFont(true);
     }
 
     public String getClassName() {
@@ -187,7 +190,7 @@ public class AlgoTableText extends AlgoElement {
     		if (verticalLines) sb.append("|");
 	    	sb.append("}");
 
-	    	if (horizontalLines) sb.append("\\hline");
+	    	if (horizontalLines) sb.append("\\hline ");
 
 	    	for (int r=0; r < rows; r++) {
 	    		for (int c = 0 ; c < columns ; c++) {
@@ -197,7 +200,7 @@ public class AlgoTableText extends AlgoElement {
 	    			// end Loïc
 	   		}
 	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
-		    	if (horizontalLines) sb.append("\\hline");
+		    	if (horizontalLines) sb.append("\\hline ");
 	    	}   
     	
     	}
@@ -211,7 +214,7 @@ public class AlgoTableText extends AlgoElement {
 	    	if (verticalLines) sb.append("|");
 	    	sb.append("}");
 	    	
-	    	if (horizontalLines) sb.append("\\hline");
+	    	if (horizontalLines) sb.append("\\hline ");
 	    	
 	    	// TableText[{11.1,322,3.11},{4,55,666,7777,88888},{6.11,7.99,8.01,9.81},{(1,2)},"c()"]
 	    	
@@ -223,7 +226,7 @@ public class AlgoTableText extends AlgoElement {
     			// end Loïc
 	    		}
 	    		sb.append(" \\\\ "); // newline in LaTeX ie \\
-		    	if (horizontalLines) sb.append("\\hline");
+		    	if (horizontalLines) sb.append("\\hline ");
 	    	}   
 		
     	}
