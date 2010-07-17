@@ -243,6 +243,42 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 		}
 
+		
+	
+		
+		// ===============================================
+		//     Data analysis
+		// ===============================================
+		
+		if(!isEmptySelection()){   // && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
+			item = new JMenuItem(app.getMenu(app.getPlain("Data Analysis")),app.getEmptyIcon());
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					view.showStatDialog();
+				}
+			});	 
+			add(item);
+		}
+		
+		
+
+		
+		// ===============================================
+		//     Probability Calculator
+		// ===============================================
+		
+		if( isShiftDown){
+			item = new JMenuItem(app.getMenu(app.getPlain("Probability Calculator")),app.getEmptyIcon());
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					view.showProbabilityCalculator();
+				}
+			});	 
+			add(item);
+		}
+		
+		
+		
 
 		// ===============================================
 		//             Import Data	
@@ -324,21 +360,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		}
 		*/
 
-		
-		
-		// ===============================================
-		//     Data analysis
-		// ===============================================
-		
-		if(!isEmptySelection() && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
-			item = new JMenuItem(app.getMenu(app.getPlain("Data Analysis")),app.getEmptyIcon());
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					view.showStatDialog();
-				}
-			});	 
-			add(item);
-		}
+	
 
 		
 

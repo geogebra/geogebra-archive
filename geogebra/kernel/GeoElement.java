@@ -4513,7 +4513,7 @@ public abstract class GeoElement
 		viewSet.add(view);
 	}
 	public void removeView(Object view){
-		viewSet.add(view);
+		viewSet.remove(view);
 	}
 	
 	public boolean isVisibleInView(Object view){

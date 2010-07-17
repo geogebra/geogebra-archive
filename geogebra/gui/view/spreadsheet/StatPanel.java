@@ -257,8 +257,11 @@ public class StatPanel extends JPanel {
 	
 	
 	public void updateTable(){
-		createStatList();
-		populateStatTable();
+		
+		statTable.repaint();
+		
+		//createStatList();
+		//populateStatTable();
 	}
 	
 	
@@ -386,6 +389,10 @@ public class StatPanel extends JPanel {
 			GeoElement geo = (GeoElement)value;
 			setText(geo.toDefinedValueString());
 			setFont(app.getPlainFont());
+			
+			if(row ==1 && column == 1){
+				Application.debug(this.getText());
+			}
 			return this;
 		}
 

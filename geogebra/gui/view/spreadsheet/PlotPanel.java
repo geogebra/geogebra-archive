@@ -15,9 +15,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.swing.JPanel;
 
+/**
+ * 
+ * Creates a JPanel with an enclosed instance of EuclidianView and methods for 
+ * creating geos in the panel.
+ * 
+ * @author gsturr 2010-6-30
+ *
+ */
 public class PlotPanel extends JPanel implements ComponentListener {
 	
 	// ggb 
@@ -25,15 +36,18 @@ public class PlotPanel extends JPanel implements ComponentListener {
 	private Kernel kernel; 
 	private Construction cons;
 	
+	private ArrayList<GeoElement> plotGeoCollection;
 	private GeoElement plotGeo;
 	//private GeoList boundList, freqList;
 	
+	private boolean isAutoRemoveGeos = true;
 	
 	private double xMinData, xMaxData;
 	private double xMinEV, xMaxEV, yMinEV, yMaxEV;
 	private boolean showYAxis = false;
 	private boolean showArrows = false;
 	private boolean forceXAxisBuffer = false;
+	
 	
 	// new EuclidianView instance 
 	private myEV ev;
@@ -49,6 +63,8 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		this.app = app;	
 		kernel = app.getKernel();
 		cons = kernel.getConstruction();
+		
+		plotGeoCollection = new ArrayList<GeoElement>();
 		
 		// create an instance of EuclideanView
 		ec = new EuclidianController(kernel);
@@ -71,12 +87,65 @@ public class PlotPanel extends JPanel implements ComponentListener {
 
 	
 	public void removeGeos(){
+	//	Application.debug("=========== remove plot geos");
+		
 		if(plotGeo != null){
 			plotGeo.remove();
 			plotGeo = null;
 		}
+		
+		for(GeoElement geo : plotGeoCollection){
+			if(geo != null)
+				geo.remove();
+		}
+		plotGeoCollection.clear();
+		
 	}
 	
+	public void setAutoRemoveGeos(boolean isAutoRemoveGeos){
+		this.isAutoRemoveGeos = isAutoRemoveGeos;
+	}
+	
+	
+	//=================================================
+	//      Euclidian View
+	//=================================================
+	
+
+	private class myEV extends EuclidianView {
+
+		public myEV(EuclidianController ec, boolean[] showAxes, boolean showGrid) {
+			super(ec, showAxes, showGrid);
+			this.removeMouseListener(ec);
+			this.removeMouseMotionListener(ec);
+			this.removeMouseWheelListener(ec);
+			this.setAxesCornerCoordsVisible(false);
+		}
+		
+		// restore the old coord system after a resize
+		// this will keep our plots centered and scaled to the new window 
+		
+		public void updateSize(){
+			
+			double xminTemp = getXmin();
+			double xmaxTemp = getXmax();
+			double yminTemp = getYmin();
+			double ymaxTemp = getYmax();				
+			super.updateSize();		
+			setRealWorldCoordSystem(xminTemp, xmaxTemp, yminTemp, ymaxTemp);
+		}	
+		
+		
+	}
+	
+	public EuclidianView getMyEuclidianView(){
+		return ev;
+	}
+	
+	public void attachView(){
+		ev.attachView();
+	}
+
 	
 	public void setEVParams(){
 		
@@ -103,35 +172,78 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		
 	}
 	
-	
-	private class myEV extends EuclidianView {
-
-		public myEV(EuclidianController ec, boolean[] showAxes, boolean showGrid) {
-			super(ec, showAxes, showGrid);
-			this.removeMouseListener(ec);
-			this.removeMouseMotionListener(ec);
-			this.removeMouseWheelListener(ec);
-			this.setAxesCornerCoordsVisible(false);
-		}
-		
-		// restore the old coord system after a resize
-		// this will keep our plots centered and scaled to the new window 
-		
-		public void updateSize(){
-			
-			double xminTemp = getXmin();
-			double xmaxTemp = getXmax();
-			double yminTemp = getYmin();
-			double ymaxTemp = getYmax();				
-			super.updateSize();		
-			setRealWorldCoordSystem(xminTemp, xmaxTemp, yminTemp, ymaxTemp);
-		}	
+	public void setCoordSystem(double xMin, double xMax, double yMin, double yMax){
+		xMinEV = xMin;
+		xMaxEV = xMax;
+		yMinEV = yMin;
+		yMaxEV = yMax;
 	}
-	
+
 	
 	public void detachView(){
 		kernel.detach(ev);
 	}
+	
+	
+	
+
+
+	
+	//=================================================
+	//       Create GeoElement
+	//=================================================
+
+	/* 
+	public void createGeoFromString(String text ){
+		GeoElement tempGeo = null;
+		createGeoFromString(tempGeo, text);
+	}
+	*/
+	
+	public GeoElement createGeoFromString(String text ){
+		
+		//Application.debug("geo creation text: " + text);
+		
+		if(isAutoRemoveGeos){
+			removeGeos();
+		}
+			
+		try {
+				
+			//boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();			
+			//cons.setSuppressLabelCreation(true);
+			
+			GeoElement[] geos = kernel.getAlgebraProcessor()
+				.processAlgebraCommandNoExceptionHandling(text, false);
+			
+			
+			//geos[0].setAlgebraVisible(false);		
+			//cons.setSuppressLabelCreation(oldSuppressLabelMode);
+			
+			geos[0].setLabel("plotGeo");
+			
+			// add the geo to our view and remove it from EV		
+			geos[0].addView(ev);
+			ev.add(geos[0]);
+			geos[0].removeView(app.getEuclidianView());
+			app.getEuclidianView().remove(geos[0]);
+				
+			// set visibility
+			geos[0].setEuclidianVisible(true);
+			geos[0].setAuxiliaryObject(true);
+		
+			plotGeoCollection.add(geos[0]);
+			return geos[0];
+				
+				
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	
 	
 	
 
@@ -142,6 +254,22 @@ public class PlotPanel extends JPanel implements ComponentListener {
 	
 	
 	private void setXMinMax(GeoList dataList){
+	
+		double x;
+		GeoNumeric geo;	
+		xMinData = Double.MAX_VALUE;
+		xMaxData = Double.MIN_VALUE;
+		
+		for (int i = 0; i < dataList.size(); ++i){
+			geo = (GeoNumeric) ((GeoList)dataList).get(i);
+			x = geo.getDouble();
+			if(xMinData > x) xMinData = x;
+			if(xMaxData < x) xMaxData = x;
+		}	
+		
+		// Application.debug(xMinData + "  " + xMaxData);	
+		
+		/*
 		String label = dataList.getLabel();	
 		NumberValue nv;
 		nv = kernel.getAlgebraProcessor().evaluateToNumeric("Min[" + label + "]", false);		
@@ -149,10 +277,13 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		
 		nv = kernel.getAlgebraProcessor().evaluateToNumeric("Max[" + label + "]", false);		
 		xMaxData = nv.getDouble();
+		*/
+		
 	}
 	
 	
-	public void plotPDF(String expr, double xMin, double xMax, double yMin, double yMax){
+	
+	public GeoElement createPDF(String expr, double xMin, double xMax, double yMin, double yMax){
 		
 		// set view parameters	
 		xMinEV = xMin;
@@ -161,120 +292,57 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		yMaxEV = yMax;
 		showYAxis = false;
 		forceXAxisBuffer = true;
+		
 		setEVParams();
 		ev.addMouseListener(ec);
 		ev.addMouseMotionListener(ec);
 		ev.addMouseWheelListener(ec);
 		
 		// create function
-		if(plotGeo != null)
-			plotGeo.remove();
-		
 		String text = expr;
-		plotGeo = createGeoFromString(text);
-		
-		
+		return createGeoFromString(text);
+	
 	}
 	
 	
 	
 	
-	public void updateHistogram(GeoList dataList, int numClasses){
+	public void updateHistogram(GeoList dataList, int numClasses, boolean doCreate){
 		
 		setXMinMax(dataList);
+		
+		//Application.debug(xMinData + "  " + xMaxData);	
+		//Application.debug(dataList.toDefinedValueString());	
+		
 		String label = dataList.getLabel();	
 		String text = "";
-		//Application.debug(dataList.toDefinedValueString());	
-		double barWidth = (xMaxData - xMinData)/(numClasses - 1);  
-		double freqMax = getFrequencyTableMax(dataList, barWidth);
+		
 		
 		// Set view parameters
-		
-		//xMinEV = xMinData - barWidth;
-		//xMaxEV = xMaxData + barWidth;
-		
+		double barWidth = (xMaxData - xMinData)/(numClasses - 1);  
+		double freqMax = getFrequencyTableMax(dataList, barWidth);
 		double buffer = .25*(xMaxData - xMinData);
 		xMinEV = xMinData - buffer;  
 		xMaxEV = xMaxData + buffer;
-		
 		yMinEV = -1.0;
 		yMaxEV = 1.1 * freqMax;
 		showYAxis = false;
 		forceXAxisBuffer = true;
 		setEVParams();
+		
 		//System.out.println(yMaxEV + "," + freqMax + ", "  + barWidth + "," + xMinData);
 		
 		// Create histogram	
-		if(plotGeo != null)
-			plotGeo.remove();
-
-		text = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
-		plotGeo = createGeoFromString(text);
-		Color col = new Color(0, 153, 153);		
-		plotGeo.setObjColor(col);
-		
-		
-		
-		
-	/*
-		EmpiricalDistributionImpl dist  = new EmpiricalDistributionImpl(numClasses);
-		
-		double[] dataArray = new double[dataList.size()];
-		for (int i=0; i<dataList.size();++i){
-			dataArray[i] = ((GeoNumeric)dataList.get(i)).getDouble();
-		}
-		
-		dist.load(dataArray);
-		List<SummaryStatistics> s = dist.getBinStats();
-		double[] bounds = dist.getUpperBounds();
-
-		if(boundList == null){
-			boundList = new GeoList(cons);
-			boundList.setLabel("bounds");
-		}
-
-		if(freqList == null){
-			freqList = new GeoList(cons);
-			freqList.setLabel("freq");
-		}
-		
-		//freqList.clear();
-		//boundList.clear();
-		
-
-		String boundStr = "{" +  dist.getSampleStats().getN() + ",";
-		String freqStr = "{";
-		for(int i=0; i < s.size(); ++i){
-			freqStr += s.get(i).getN();
-			boundStr += bounds[i];
-			if(i < s.size()-1){
-				freqStr += ",";
-				boundStr += ",";
-			}
-		}
-		freqStr += "}";
-		boundStr += "}";
-
-		
-		System.out.println(boundStr);
-		//System.out.println(freqStr);
-		
-		
-		text = "Histogram[" + boundStr + "," + freqStr + "]";
-		
-		if(plotGeo != null)
-			plotGeo.remove();
-		
-		plotGeo = createGeoFromString(text);
-		Color col = new Color(0, 153, 153);		
-		plotGeo.setObjColor(col);
-		
-		*/
-			
+	//	if(doCreate){
+			text = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
+			plotGeo = createGeoFromString(text);
+	//	}
+				
+		//System.out.println(text);
 	}
 	
 
-	public void updateBoxPlot(GeoList dataList){
+	public void updateBoxPlot(GeoList dataList, boolean doCreate){
 
 		setXMinMax(dataList);
 		String label = dataList.getLabel();	
@@ -291,17 +359,15 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		setEVParams();
 		
 		// create boxplot
-		if(plotGeo != null)
-			plotGeo.remove();
-		
-		text = "BoxPlot[1,0.5," + label + "]";
-		plotGeo = createGeoFromString(text);
-		
+		if(doCreate){
+			text = "BoxPlot[1,0.5," + label + "]";
+			createGeoFromString(text);
+		}
 				
 	}
 	
 	
-	public void updateDotPlot(GeoList dataList){
+	public void updateDotPlot(GeoList dataList, boolean doCreate){
 
 		setXMinMax(dataList);
 		String label = dataList.getLabel();	
@@ -310,13 +376,15 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		double buffer = .25*(xMaxData - xMinData);	
 		
 		
-		// create dotplot
+		// create dotplot text
+		// note: the data list must be sorted low to high
 		int maxCount = 1;
 		text = "{";
 		if(dataList.size()>0){
 			text += "(" + ((GeoNumeric)dataList.get(0)).getDouble() + ", 1)";
 			int k = 1;
 			for (int i = 1; i < dataList.size(); ++i){
+				System.out.println(((GeoNumeric)dataList.get(i)).getDouble()); 
 				if(((GeoNumeric)dataList.get(i-1)).getDouble() == ((GeoNumeric)dataList.get(i)).getDouble() ) 
 					++k;
 				else
@@ -328,12 +396,36 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		}
 		text += "}";	
 		
-		if(plotGeo != null)  
-			plotGeo.remove();		
-		plotGeo = createGeoFromString(text);
 		
+/*
+		// create dotplot text
+		HashMap<Double,Integer> map = new HashMap<Double,Integer>();
 		
-		// Set view parameters		
+		int maxCount = 1;
+		double d;
+		StringBuilder sb = new StringBuilder("{");
+		if(dataList.size()>0){
+			int k = 1;
+			for (int i = 1; i < dataList.size(); ++i){
+				d = ((GeoNumeric)dataList.get(i)).getDouble();
+				if( map.containsKey(d)){
+					map.put(d, map.get(d)+1);
+				}else{
+					map.put(d, 1);
+				}
+				sb.append( "(" + d + "," + map.get(d) + "),");
+				maxCount = maxCount < map.get(d) ? map.get(d) : maxCount;
+			}
+		}
+		sb.deleteCharAt(sb.length()-1);
+		sb.append("}");	
+		map.clear();	
+
+		//System.out.println(sb.toString());
+*/
+		 
+		 
+		// set view parameters		
 		xMinEV = xMinData - buffer;
 		xMaxEV = xMaxData + buffer;
 		yMinEV = -1.0;
@@ -342,34 +434,14 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		forceXAxisBuffer = true;
 		setEVParams();	
 		
+		// create geo
+		//if(doCreate){
+			plotGeo = createGeoFromString(text);
+	//	}
+			plotGeo.update();
+	
+		
 	}
-	
-	
-	
-	private GeoElement createGeoFromString(String text){
-		try {
-			boolean oldMacroMode = cons.isSuppressLabelsActive();
-			cons.setSuppressLabelCreation(true);
-			
-			GeoElement[] geos = kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptionHandling(text, false);
-			geos[0].addView(ev);
-			//geos[0].setAlgebraVisible(false);
-			cons.setSuppressLabelCreation(oldMacroMode);
-			geos[0].setLabel(null);
-			geos[0].setEuclidianVisible(true);
-			geos[0].setAuxiliaryObject(true);
-			geos[0].update();
-			return geos[0];
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	
-	
 	
 	
 	
@@ -378,12 +450,14 @@ public class PlotPanel extends JPanel implements ComponentListener {
 	//       Frequency Table 
 	//=================================================
 	
-	// create frequency table
+	// get frequency table max
+	// edited version of code in BarChart algo
+	// TODO -- maybe we need a FrequencyTable[] command? ... then this is not needed
+	
 	private double getFrequencyTableMax(GeoList list1, double n){
 
 		//Application.debug(list1.toDefinedValueString());
-		
-		
+			
 		double [] yval; // y value (= min) in interval 0 <= i < N
 		double [] leftBorder; // leftBorder (x val) of interval 0 <= i < N
 		GeoElement geo;	
@@ -431,6 +505,15 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		int N = (int)noOfBars + 2;
 		gap = ((N-1) * step - totalWidth) / 2.0;
 		
+		/*
+		System.out.println("==========================");
+		System.out.println("N " + N);
+		System.out.println("n " + n);
+		System.out.println("step " + step);
+		System.out.println("gap " + gap);
+		*/
+		
+		
 		NumberValue a = (new GeoNumeric(cons,mini - gap));
 		NumberValue b = (new GeoNumeric(cons,maxi + gap));
 
@@ -443,8 +526,8 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		for (int i=0; i < N; i++) {
 			leftBorder[i] = mini - gap + step * i;
 		}
-
-
+		
+		
 		// zero frequencies
 		for (int i=0; i < N; i++) yval[i] = 0; 	
 
@@ -463,10 +546,10 @@ public class PlotPanel extends JPanel implements ComponentListener {
 
 			// check which class this datum is in
 			for (int j=1; j < N; j++) {
-				//System.out.println("checking "+leftBorder[j]);
+				//System.out.println("left border " +leftBorder[j]);
 				if (datum < leftBorder[j]) 
 				{
-					//System.out.println(datum+" "+j);
+					//System.out.println(datum + " " + j);
 					yval[j-1]++;
 					break;
 				}
@@ -477,9 +560,14 @@ public class PlotPanel extends JPanel implements ComponentListener {
 
 		double freqMax = 0.0;
 		for(int k = 0; k < yval.length; ++k){
+			//System.out.println(leftBorder[k] + "  : " + yval[k]);
+				
 			if(yval[k] > freqMax)
 				freqMax = yval[k];
 		}
+		
+		//System.out.println(freqMax);
+		
 		return freqMax;
 		
 	}

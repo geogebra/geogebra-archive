@@ -114,6 +114,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	private OneVariableStatsDialog oneVarStatDialog;
+	private ProbabilityCalculator probCalculator;
+	
+	
+	
 	
 	/**
 	 * Construct spreadsheet view as a split panel. 
@@ -205,9 +209,15 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		table.addComponentListener(this);
 		
 		traceManager = new SpreadsheetTraceManager(this);
-		
+	
+	//	this.showProbabilityCalculator();
+	
 		
 	}
+	
+	
+	
+	
 	
 	public void setDefaultLayout() {
 		setShowGrid(true);
@@ -409,6 +419,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		setDefaultLayout();
 		setDefaultSelection();
 		table.oneClickEditMap.clear();
+		
 	}
 	
 	
@@ -437,6 +448,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		traceManager.loadTraceGeoCollection();
 		
 		table.oneClickEditMap.clear();
+		
+		if(isOneVarStatDialogVisible()){
+			oneVarStatDialog.setVisible(false);
+		}
 		
 	}	
 	
@@ -479,12 +494,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			if(geo.isGeoBoolean() || geo.isGeoButton() || geo.isGeoList()){
 				table.oneClickEditMap.put(location, geo);
 			}
-			
-			
-			
 		}
-		
-		
 	}	
 
 	
@@ -501,7 +511,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		if(oneVarStatDialog == null){
 			oneVarStatDialog = new OneVariableStatsDialog(view, app);
 		}else{
-			oneVarStatDialog.updateDataList();
+			oneVarStatDialog.updateDialog();
 		}
 		
 		oneVarStatDialog.setVisible(true);			
@@ -519,6 +529,15 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			oneVarStatDialog.handleSpreadsheetSelectionChange();
 		}
 	}
+	
+	public void showProbabilityCalculator(){
+		probCalculator = new ProbabilityCalculator(view, app);
+		probCalculator.setVisible(true);	
+	}
+		
+	
+	
+	
 	
 
 	//=====================================================

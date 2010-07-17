@@ -44,7 +44,7 @@ implements ActionListener, View   {
 	private OneVariableStatsDialog statDialog;
 	
 	private GeoList dataListAll, dataListSelected;
-	private ArrayList<Integer> selectedColumns;
+	//private ArrayList<Integer> selectedColumns;
 	ArrayList<String> dataTitles ;
 	
 	
@@ -60,6 +60,8 @@ implements ActionListener, View   {
 	
 	public static final Color TABLE_GRID_COLOR = Color.GRAY;
 	public static final Color TABLE_HEADER_COLOR = new Color(240,240,240);   
+	
+	private Object dataSource;
 	
 	
 	
@@ -77,9 +79,10 @@ implements ActionListener, View   {
 		this.spreadsheetTable = spView.getTable();
 		statDialog = this;
 		
-		
-		//load data from currently selected columns
-		selectedColumns = spreadsheetTable.getSelectedColumnsList();		
+		dataSource = new ArrayList<CellRange>();
+		//load data from current selection
+	//	selectedColumns = spreadsheetTable.getSelectedColumnsList();
+		setDataSource();
 		loadDataLists();
 		
 		
@@ -105,10 +108,13 @@ implements ActionListener, View   {
 	} //END  constructor
 	
 	public void removeGeos(){
-		dataListAll.remove();
+		if(dataListAll != null)
+			dataListAll.remove();
 		dataListAll = null;
-		dataListSelected.remove();
+		if(dataListSelected != null)
+			dataListSelected.remove();
 		dataListSelected = null;
+		dataPanel.removeGeos();
 		comboStatPanel.removeGeos();
 		comboStatPanel2.removeGeos();
 	}
@@ -119,15 +125,51 @@ implements ActionListener, View   {
 	//       Load Data
 	//=================================================
 	
+	private void setDataSource(){
+		
+		GeoElement geo = app.getSelectedGeos().get(0);
+		if(geo.isGeoList()){
+			dataSource = geo;
+		} else {
+			ArrayList<CellRange> cr = spreadsheetTable.selectedCellRanges;
+			dataSource = (ArrayList<CellRange>) cr.clone();
+			
+		}
+		
+	}
 	
+
 	private void loadDataLists(){
-				
+
+		String text = "";
+		
+		boolean isSorted = true;
+		boolean copyByValue = false;
+		
+		if(dataSource instanceof GeoList){
+			//dataListAll = dataSource;
+			text = ((GeoList)dataSource).getLabel();
+			if(isSorted)
+				text = "Sort[" + text + "]";
+			//text = ((GeoList)dataSource).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
+		}else{
+			GeoList tempGeo = (GeoList) spreadsheetTable.getCellRangeProcessor()
+			.createList((ArrayList<CellRange>) dataSource, true, copyByValue, isSorted, false, GeoElement.GEO_CLASS_NUMERIC);
+			//text = tempGeo.toDefinedValueString();
+			text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
+			tempGeo.remove();
+		}
+
+	
+		//System.out.println(text);
+		
+		/*			
 		GeoList tempGeo = (GeoList) spreadsheetTable.getCellRangeProcessor()
 				.createListFromColumn(selectedColumns.get(0), true, false, true, false, GeoElement.GEO_CLASS_NUMERIC);
 		String text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 		tempGeo.remove();
+		*/
 		
-
 		if(dataListAll == null){
 			dataListAll = new GeoList(cons);
 			dataListAll.setAuxiliaryObject(true);
@@ -142,26 +184,60 @@ implements ActionListener, View   {
 			dataListSelected.setLabel(null);
 		}
 
+				
 		try {
+			
+			//dataListAll.setFixed(false);
+			//dataListSelected.setFixed(false);
+			
 			dataListAll = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)dataListAll, text, true, false);
 
 			dataListSelected = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)dataListSelected, text, true,false);		
+			
+			
+			//dataListAll.setFixed(true);
+			//dataListSelected.setFixed(true);
+			
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
 		}
 
+		if(!isIniting){
+			dataPanel.loadDataTable(this.dataListAll);
+		}
+		
+		
+		
 		
 		// selection has changed, so the spreadsheet columns need to be re-selected
-		resetSpreadsheetSelection();
+		//resetSpreadsheetSelection();
 
 	}
 
-	public void updateDataSelection(Boolean[] selectionList) {
+	
+	public void updateSelectedDataList2(int index, boolean doAdd) {
+		
+		GeoElement geo = dataListAll.get(index);
+		if(doAdd)
+			dataListSelected.add(geo);
+		else
+			dataListSelected.remove(geo);
+	dataListSelected.updateCascade();
+	updateAllComboPanels(false);
+	
+	
+	}
+	
+	
+	
+	
+	public void updateSelectedDataList(Boolean[] selectionList) {
 
+		// create a string for the selected data
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sort[{");
 		for(int i=0; i < dataListAll.size(); ++i){
@@ -170,9 +246,20 @@ implements ActionListener, View   {
 				sb.append(",");
 			}
 		}
-		sb.deleteCharAt(sb.length()-1);
+		
+		// remove last comma
+		if(dataListAll.size() > 0) {
+			sb.deleteCharAt(sb.length()-1);
+		}
+		
 		sb.append("}]");
 
+	
+		
+		comboStatPanel.removeGeos();
+		comboStatPanel2.removeGeos();
+		
+		
 		try {
 			dataListSelected = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)dataListSelected, sb.toString(), true,false);
@@ -180,8 +267,8 @@ implements ActionListener, View   {
 			e.printStackTrace();
 		}	
 
-		//Application.debug(dataListSelected.toDefinedValueString());
-		updatePlots();
+		Application.debug(dataListSelected.toDefinedValueString());
+		updateAllComboPanels(false);
 		
 	}
 
@@ -189,6 +276,7 @@ implements ActionListener, View   {
 	public String getDataTitle(int index){
 		
 		String title = "";
+		/*
 		int column = this.selectedColumns.get(index);
 		
 		GeoElement geo = RelativeCopy.getValue(spreadsheetTable, column, 0);
@@ -196,6 +284,7 @@ implements ActionListener, View   {
 			title = geo.toDefinedValueString();
 		else
 			title = app.getCommand("Column") + " " + GeoElement.getSpreadsheetColumnName(column);
+		*/
 		
 		return title;
 
@@ -203,7 +292,7 @@ implements ActionListener, View   {
 	
 	
 	public void resetSpreadsheetSelection(){
-		spreadsheetTable.setSelection(selectedColumns.get(0), 0, selectedColumns.get(0), 0);
+		//spreadsheetTable.setSelection(selectedColumns.get(0), 0, selectedColumns.get(0), 0);
 		
 	}
 	
@@ -287,11 +376,11 @@ implements ActionListener, View   {
 			
 			
 			this.getContentPane().add(mainPanel);
-			this.getContentPane().setPreferredSize(new Dimension(500,500));
+			this.getContentPane().setPreferredSize(new Dimension(450,500));
 			//setResizable(false);
 			pack();
 			
-			comboPanelSplit.setDividerLocation(0.65);
+			comboPanelSplit.setDividerLocation(0.5);
 			setShowDataPanel(showDataPanel);
 			
 			setLocationRelativeTo(app.getFrame());
@@ -360,21 +449,26 @@ implements ActionListener, View   {
 		super.setVisible(isVisible);
 
 		if(isVisible){
-			spView.setColumnSelect(true);
+			//spView.setColumnSelect(true);
 			if(!isIniting)
-				this.handleSpreadsheetSelectionChange();	
+				//this.handleSpreadsheetSelectionChange();
+				updateDialog();
+			
 
 		}else{
-			spView.setColumnSelect(false);
+			//Application.printStacktrace("hide statDialog");
+			//spView.setColumnSelect(false);
 			removeGeos();
-
+			
+			//this.detachView();
+			
 		}
 	}
 
 
 
 	public void handleDataPanelSelectionChange(Boolean[] selectionList){
-		updateDataSelection(selectionList);
+		updateSelectedDataList(selectionList);
 
 		// TODO why does this mess up the dataPanel when clicking a checkbox?
 		//resetSpreadsheetSelection();
@@ -382,40 +476,60 @@ implements ActionListener, View   {
 
 	
 	public void handleSpreadsheetSelectionChange(){
-		if( !spreadsheetTable.getSelectedColumnsList().equals(selectedColumns)){
-			updateDataList();
-		}
-		dataPanel.loadDataTable(this.dataListAll);
+	//	if( !spreadsheetTable.getSelectedColumnsList().equals(selectedColumns)){
+	//		updateDataList();
+	//	}
+	//	dataPanel.loadDataTable(this.dataListAll);
 	}
 
-	public void updateDataList(){
+	
+	public void updateDialog(){
 
-		selectedColumns = spreadsheetTable.getSelectedColumnsList();	
+		//selectedColumns = spreadsheetTable.getSelectedColumnsList();
+		removeGeos();
+		setDataSource();
 		loadDataLists();
-		updatePlots();
+		updateAllComboPanels(true);
 
 	}
 
-	public void updatePlots(){	
-		comboStatPanel.updatePlot();
-		comboStatPanel2.updatePlot();
+	public void updateAllComboPanels(boolean doCreateGeo){	
+		comboStatPanel.updatePlot(doCreateGeo);
+		comboStatPanel2.updatePlot(doCreateGeo);
 	}
 
 
 	public boolean isInDataColumn(GeoElement geo){
 
-		Point location = geo.getSpreadsheetCoords();
-		return location != null && selectedColumns.contains(location.x); 
-
+	//	Point location = geo.getSpreadsheetCoords();
+	//	return location != null && selectedColumns.contains(location.x); 
+		return false;
 	}
 
+	public boolean isInDataSource(GeoElement geo){
+		// TODO handle case of GeoList data source
+			if(dataSource instanceof GeoList){
+				return geo.equals(((GeoList)dataSource));
+			}else{
+		
+			Point location = geo.getSpreadsheetCoords();
+			boolean isCell = (location != null && location.x < SpreadsheetView.MAX_COLUMNS && location.y < SpreadsheetView.MAX_ROWS);
+			
+			if(isCell){	
+				//Application.debug("---------> is cell:" + geo.toString());
+				for(CellRange cr: (ArrayList<CellRange>)dataSource)
+					if(cr.contains(geo)) return true;		
+		
+				//Application.debug("---------> is not in data source:" + geo.toString());
+			}
+			}
+			
+			return false;
+		}
 	
-
-
 	
 	
 	
-
 	public void updateFonts() {
 
 		Font font = app.getPlainFont();
@@ -491,8 +605,8 @@ implements ActionListener, View   {
 					JSlider slider = (JSlider) evt.getSource();
 					numClasses = slider.getValue();
 					lblNumClasses.setText(("" + numClasses));
-					updatePlot();
-					btnClose.requestFocus();
+					updatePlot(true);
+					//btnClose.requestFocus();
 				}
 			});
 
@@ -517,8 +631,8 @@ implements ActionListener, View   {
 				public void actionPerformed(ActionEvent e)
 				{
 					plotIndex = cbPlotTypes.getSelectedIndex();
-					updatePlot();
-					btnClose.requestFocus();
+					updatePlot(true);
+					//btnClose.requestFocus();
 
 				}
 			});      
@@ -559,7 +673,7 @@ implements ActionListener, View   {
 			this.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
 
-			updatePlot();
+			updatePlot(true);
 
 		}
 
@@ -568,22 +682,28 @@ implements ActionListener, View   {
 			plotPanel.removeGeos();
 		}
 		
-		
+		public void detachView(){
+			plotPanel.detachView();
+			
+		}
 
-		public void updatePlot(){
+		
+		
+		
+		public void updatePlot(boolean doCreate){
 			numClassesPanel.setVisible(false);
 			switch(plotIndex){
 			case PLOT_HISTOGRAM:
-				plotPanel.updateHistogram( dataListSelected, numClasses);
+				plotPanel.updateHistogram( dataListSelected, numClasses, doCreate);
 				numClassesPanel.setVisible(true);
 				((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 				break;	
 			case PLOT_BOXPLOT:
-				plotPanel.updateBoxPlot( dataListSelected);
+				plotPanel.updateBoxPlot( dataListSelected, doCreate);
 				((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 				break;
 			case PLOT_DOTPLOT:
-				plotPanel.updateDotPlot( dataListSelected);
+				plotPanel.updateDotPlot( dataListSelected, doCreate);
 				((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 				break;
 			case PLOT_STATISTICS:
@@ -599,7 +719,12 @@ implements ActionListener, View   {
 			statPanel.updateFonts(font);
 		}
 
+		public void attachView() {
+			plotPanel.attachView();
+			
+		}
 
+		
 
 		// END class ComboStatPanel 
 	}	//========================================================
@@ -614,11 +739,11 @@ implements ActionListener, View   {
 	
 	public void add(GeoElement geo) {
 		//System.out.println("add: " + geo.toString());
-		if (!isIniting && isInDataColumn(geo)) {	
+	//	if (!isIniting && isInDataColumn(geo)) {	
 			//loadDataLists();
 			//comboStatPanel.updatePlot();
 			//comboStatPanel2.updatePlot();
-		}
+	//	}
 	}
 
 	public void clearView() {
@@ -626,11 +751,11 @@ implements ActionListener, View   {
 
 	public void remove(GeoElement geo) {
 		//System.out.println("removed: " + geo.toString());
-		if (!isIniting && isInDataColumn(geo)) {	
+	//	if (!isIniting && isInDataColumn(geo)) {	
 			//loadDataLists();
 			//comboStatPanel.updatePlot();
 			//comboStatPanel2.updatePlot();
-		}
+	//	}
 	}
 
 	public void rename(GeoElement geo) {
@@ -639,15 +764,25 @@ implements ActionListener, View   {
 	public void repaintView() {
 	}
 
-	public void reset() {	
+	public void reset() {
+		//removeGeos();
 	}
 
 	public void update(GeoElement geo) {
 
-		if (!isIniting && isInDataColumn(geo)) {
+	//	if (!isIniting && isInDataColumn(geo)) {
 			//comboStatPanel.updatePlot();
 			//comboStatPanel2.updatePlot();
+	//	}
+		//Application.debug("------> update:" + geo.toString());
+		if (isInDataSource(geo)) {
+			//Application.debug("---------> is in data source:" + geo.toString());
+			//removeGeos();
+			//this.loadDataLists();
+			updateAllComboPanels(false);
+			
 		}
+			
 	}
 
 	public void updateAuxiliaryObject(GeoElement geo) {
@@ -656,11 +791,15 @@ implements ActionListener, View   {
 	public void attachView() {
 		//clearView();
 		//kernel.notifyAddAll(this);
-		kernel.attach(this);		
+		kernel.attach(this);
+		comboStatPanel.attachView();
+		comboStatPanel2.attachView();
 	}
 
 	public void detachView() {
 		kernel.detach(this);
+		comboStatPanel.detachView();
+		comboStatPanel2.detachView();
 		//clearView();
 		//kernel.notifyRemoveAll(this);		
 	}

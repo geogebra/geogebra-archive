@@ -313,7 +313,12 @@ public class CellRangeProcessor {
 				if(!usedCells.contains(cell)){
 					GeoElement geo = RelativeCopy.getValue(table, cell.x, cell.y);
 					if (geo != null && (geoTypeFilter == null || geo.getGeoClassType() == geoTypeFilter)){
-						listString.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
+						if(copyByValue)
+							listString.append(geo.toDefinedValueString());
+						else
+							listString.append(geo.getLabel());
+						
+						//listString.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
 						listString.append(",");
 					}
 						//list.add(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));

@@ -51,19 +51,17 @@ public class DataPanel extends JPanel implements ActionListener  {
 	private MyRowHeader rowHeader;
 	private MyColumnHeaderRenderer columnHeader;
 	private JScrollPane scrollPane;
-	private GeoList dataListAll; 
+	
+	//private GeoList dataListAll; 
 	
 	private Boolean[] selectionList;
-	
 	OneVariableStatsDialog statDialog;
 	
 	
 	public int preferredColumnWidth = MyTable.TABLE_CELL_WIDTH; 
 	
-	private static final Color DISABLED_BACKGROUND_COLOR = Color.LIGHT_GRAY;
-	
+	private static final Color DISABLED_BACKGROUND_COLOR = Color.LIGHT_GRAY;	
 	private static final Color SELECTED_BACKGROUND_COLOR_HEADER = MyTable.SELECTED_BACKGROUND_COLOR_HEADER;
-
 	private static final Color TABLE_GRID_COLOR = OneVariableStatsDialog.TABLE_GRID_COLOR ;
 	private static final Color TABLE_HEADER_COLOR = OneVariableStatsDialog.TABLE_HEADER_COLOR;   
 	
@@ -72,14 +70,14 @@ public class DataPanel extends JPanel implements ActionListener  {
 	/*************************************************
 	 * Construct a DataPanel
 	 */
-	public DataPanel(Application app, OneVariableStatsDialog statDialog, GeoList dataAll){
+	public DataPanel(Application app, OneVariableStatsDialog statDialog, GeoList dataListAll){
 
 		this.app = app;	
 		kernel = app.getKernel();
 		this.statDialog = statDialog;
 		
 		
-		this.dataListAll = dataAll;
+	//	this.dataListAll = dataAll;
 		
 		selectionList = new Boolean[dataListAll.size()];
 		for(int i=0; i<dataListAll.size(); ++i){
@@ -104,7 +102,7 @@ public class DataPanel extends JPanel implements ActionListener  {
 		      }
 		};
 		
-		populateDataTable(dataAll);
+		populateDataTable(dataListAll);
 	
 		
 				
@@ -168,7 +166,6 @@ public class DataPanel extends JPanel implements ActionListener  {
 		scrollPane.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, new Corner());
 		scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner());
 			
-			
 		
 		// finally, load up our JPanel
 		this.setLayout(new BorderLayout());
@@ -178,6 +175,18 @@ public class DataPanel extends JPanel implements ActionListener  {
 		
 	}  // END constructor 
 
+	
+	public void removeGeos(){
+		
+	//	if(dataListAll != null){
+		//	dataListAll.remove();
+	//	}
+	//	dataListAll = null;
+	}
+	
+	
+	
+	
 	
 	private void populateDataTable(GeoList dataList){
 		TableModel dataModel = new DefaultTableModel(dataList.size(),1);
@@ -195,11 +204,11 @@ public class DataPanel extends JPanel implements ActionListener  {
 
 	public void loadDataTable(GeoList dataAll){
 		
-		this.dataListAll = dataAll;
+		//this.dataListAll = dataAll;
 		populateDataTable(dataAll);
 		
-		selectionList = new Boolean[dataListAll.size()];
-		for(int i=0; i<dataListAll.size(); ++i){
+		selectionList = new Boolean[dataAll.size()];
+		for(int i=0; i<dataAll.size(); ++i){
 			selectionList[i] = true;
 		}	
 		
@@ -229,7 +238,7 @@ public class DataPanel extends JPanel implements ActionListener  {
 
 
 	private void notifySelectionChange(int index, boolean isSelected){
-		statDialog.handleDataPanelSelectionChange(selectionList);
+		//statDialog.handleDataPanelSelectionChange(selectionList);
 	}
 	
 	
@@ -272,7 +281,7 @@ public class DataPanel extends JPanel implements ActionListener  {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnEnableAll){
 			rowHeader.enableAll(); 
-			statDialog.handleDataPanelSelectionChange(selectionList);
+			//statDialog.handleDataPanelSelectionChange(selectionList);
 			rowHeader.repaint();
 		}
 	}
@@ -470,8 +479,9 @@ public class DataPanel extends JPanel implements ActionListener  {
 			boolean iconClicked = rect != null && e.getX() - rect.x < 16; // distance from left border				
 				if (iconClicked) {
 					// icon clicked: toggle enable/disable data
-					selectionList[this.getSelectedIndex()] = !selectionList[this.getSelectedIndex()]; 
-					statDialog.handleDataPanelSelectionChange(selectionList);
+					selectionList[this.getSelectedIndex()] = !selectionList[this.getSelectedIndex()];
+					statDialog.updateSelectedDataList2(this.getSelectedIndex(), selectionList[this.getSelectedIndex()] );
+				//	statDialog.handleDataPanelSelectionChange(selectionList);
 					
 					/*
 					boolean bool = !((Boolean)getSelectedValue());

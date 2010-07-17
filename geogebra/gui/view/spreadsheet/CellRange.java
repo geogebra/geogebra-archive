@@ -351,14 +351,25 @@ public class CellRange {
 	
 	
 	public boolean contains(Object obj) {
+		
 		CellRange cr;
 		if (obj instanceof CellRange) {
 			cr = (CellRange) obj;
 			return (this.toCellList(true).containsAll(cr.toCellList(true)));
-		} else
-			return false;
+
+		} else if (obj instanceof GeoElement){	
+			Point location = ((GeoElement) obj).getSpreadsheetCoords();
+			// if the geo is a cell then test if inside the cell range
+			if(location != null && location.x < SpreadsheetView.MAX_COLUMNS && location.y < SpreadsheetView.MAX_ROWS){
+				setActualRange();
+				return (location.y >= minRow && location.y <= maxRow 
+						&& location.x >= minColumn && location.x <= maxColumn);
+			}
+		}
+		
+		return false;
 	}
-	
+
 	
 	public void debug(){
 		System.out.println("anchor cell:  (" + anchorColumn + "," + anchorRow + ")" );
