@@ -520,7 +520,7 @@ public abstract class Drawable extends DrawableND {
 		if (eqnSB == null) eqnSB = new StringBuilder(20);
 		else eqnSB.setLength(0);
 		
-		if (serif) eqnSB.append("\\mathsf{ ");
+		if (!serif) eqnSB.append("\\mathsf{ ");
 		if (font.isItalic()) eqnSB.append("\\mathit{ "); //else eqnSB.append("\\mathrm{ ");
 		if (font.isBold()) eqnSB.append("\\boldsymbol{ ");
 		
@@ -528,7 +528,7 @@ public abstract class Drawable extends DrawableND {
 		
 		if (font.isBold()) eqnSB.append(" }");		
 		if (font.isItalic()) eqnSB.append(" }"); 
-		if (serif) eqnSB.append(" }");
+		if (!serif) eqnSB.append(" }");
 
 		
 		int strLen = eqnSB.length();

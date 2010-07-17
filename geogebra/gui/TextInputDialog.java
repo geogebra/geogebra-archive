@@ -410,7 +410,10 @@ public class TextInputDialog extends InputDialog {
                 	kernel.getAlgebraProcessor().processAlgebraCommand(inputValue, false);
                 if (ret != null && ret[0].isTextValue()) {
                     GeoText t = (GeoText) ret[0];
-                    t.setLaTeX(isLaTeX, true);                 
+                    t.setLaTeX(isLaTeX, true);  
+                    
+                    // make sure for new LaTeX texts we get nice "x"s
+                    if (isLaTeX) t.setSerifFont(true);
                     
                     if (startPoint.isLabelSet()) {
                     	  try { t.setStartPoint(startPoint); }catch(Exception e){};                          

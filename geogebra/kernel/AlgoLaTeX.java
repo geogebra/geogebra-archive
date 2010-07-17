@@ -52,12 +52,16 @@ public class AlgoLaTeX extends AlgoElement {
         this.substituteVars = null;
 
        text = new GeoText(cons);
+
 		text.setIsCommand(true); // stop editing as text
 		setInputOutput(); // for AlgoElement
         
         // compute value of dependent number
         compute();      
         text.setLabel(label);
+        
+        // make sure for new LaTeX texts we get nice "x"s
+        text.setSerifFont(true);
     }   
     
 	public String getClassName() {

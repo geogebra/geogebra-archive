@@ -392,7 +392,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		}
 		
 		// font settings
-		if (serifFont || fontSize != 0 || fontStyle != 0) {
+		if (serifFont || fontSize != 0 || fontStyle != 0 || isLaTeX) {
 			sb.append("\t<font serif=\"");
 			sb.append(serifFont);
 			sb.append("\" size=\"");
