@@ -1904,6 +1904,24 @@ public abstract class GeoElement
 		sb.append(rowName);			
 		return sb.toString();
 	}
+	
+	/*
+	 * compares labels alphabetically, but spreadsheet labels are sorted nicely
+	 * eg A1, A2, A10 not A1, A10, A2
+	 */
+	final public static int compareLabels(String label1, String label2) {
+		
+		if (GeoElement.isSpreadsheetLabel(label1) && GeoElement.isSpreadsheetLabel(label2)) {
+			Point p1 = GeoElement.getSpreadsheetCoordsForLabel(label1);
+			Point p2 = GeoElement.getSpreadsheetCoordsForLabel(label2);
+			//Application.debug(label1+" "+p1.x+" "+p1.y+" "+label2+" "+p2.x+" "+p2.y);
+			if (p1.x != p2.x) return p1.x - p2.x;
+			return p1.y - p2.y;
+		}
+		
+		return label1.compareTo(label2);
+
+	}
 	 	
 	// Michael Borcherds
 	public static boolean isSpreadsheetLabel(String str) {

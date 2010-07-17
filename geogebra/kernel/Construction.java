@@ -1749,18 +1749,7 @@ public class Construction {
 			GeoElement geo1 = (GeoElement) ob1;
 			GeoElement geo2 = (GeoElement) ob2;
 			
-			String label1 = geo1.label;
-			String label2 = geo2.label;
-			
-			if (GeoElement.isSpreadsheetLabel(label1) && GeoElement.isSpreadsheetLabel(label2)) {
-				Point p1 = GeoElement.getSpreadsheetCoordsForLabel(label1);
-				Point p2 = GeoElement.getSpreadsheetCoordsForLabel(label2);
-				//Application.debug(label1+" "+p1.x+" "+p1.y+" "+label2+" "+p2.x+" "+p2.y);
-				if (p1.x != p2.x) return p1.x - p2.x;
-				return p1.y - p2.y;
-			}
-			
-			return label1.compareTo(label2);
+			return GeoElement.compareLabels(geo1.label, geo2.label);
 		}
 	}
 

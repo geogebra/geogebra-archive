@@ -25,6 +25,7 @@ import geogebra.kernel.View;
 import geogebra.main.Application;
 
 import java.awt.Font;
+import java.awt.Point;
 import java.util.EventObject;
 import java.util.HashMap;
 
@@ -386,7 +387,7 @@ public class AlgebraView extends JTree implements View {
 		// bigger then last?
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent.getLastChild();	
 		String nodeLabel = ((GeoElement) node.getUserObject()).getLabel();	
-		if (newLabel.compareTo(nodeLabel) > 0) 
+		if (GeoElement.compareLabels(newLabel, nodeLabel) > 0) 
 			return right;				
 		
 		// binary search
@@ -395,7 +396,7 @@ public class AlgebraView extends JTree implements View {
 			node = (DefaultMutableTreeNode) parent.getChildAt(middle);
 			nodeLabel = ((GeoElement) node.getUserObject()).getLabel();
 			
-			if (newLabel.compareTo(nodeLabel) < 0) {
+			if (GeoElement.compareLabels(newLabel, nodeLabel) < 0) {
 				right = middle;
 			} else {
 				left = middle + 1;
@@ -422,7 +423,7 @@ public class AlgebraView extends JTree implements View {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent.getChildAt(middle);
 			String nodeLabel = ((GeoElement) node.getUserObject()).getLabel();
 			
-			int compare = geoLabel.compareTo(nodeLabel);
+			int compare = GeoElement.compareLabels(geoLabel, nodeLabel);
 			if (compare < 0)
 				right = middle -1;
 		    else if (compare > 0)
