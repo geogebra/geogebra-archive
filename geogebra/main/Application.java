@@ -3153,7 +3153,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 	final public void selectNextGeo() {
 		
-		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetNameDescriptionOrder();//.getGeoSetLabelOrder();
+		TreeSet<GeoElement> tree = kernel.getConstruction().getGeoSetLabelOrder();
 		
 		TreeSet<GeoElement> copy = new TreeSet(tree);
 		

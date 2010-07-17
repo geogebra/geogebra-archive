@@ -22,6 +22,7 @@ import geogebra.main.MyError;
 import geogebra.util.Util;
 import geogebra3D.kernel3D.GeoPoint3D;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1747,7 +1748,19 @@ public class Construction {
 		public int compare(Object ob1, Object ob2) {
 			GeoElement geo1 = (GeoElement) ob1;
 			GeoElement geo2 = (GeoElement) ob2;
-			return geo1.label.compareTo(geo2.label);
+			
+			String label1 = geo1.label;
+			String label2 = geo2.label;
+			
+			if (GeoElement.isSpreadsheetLabel(label1) && GeoElement.isSpreadsheetLabel(label2)) {
+				Point p1 = GeoElement.getSpreadsheetCoordsForLabel(label1);
+				Point p2 = GeoElement.getSpreadsheetCoordsForLabel(label2);
+				//Application.debug(label1+" "+p1.x+" "+p1.y+" "+label2+" "+p2.x+" "+p2.y);
+				if (p1.x != p2.x) return p1.x - p2.x;
+				return p1.y - p2.y;
+			}
+			
+			return label1.compareTo(label2);
 		}
 	}
 
