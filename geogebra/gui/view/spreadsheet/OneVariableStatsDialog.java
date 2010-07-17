@@ -779,7 +779,7 @@ implements ActionListener, View   {
 			//Application.debug("---------> is in data source:" + geo.toString());
 			//removeGeos();
 			//this.loadDataLists();
-			updateAllComboPanels(false);
+			updateAllComboPanels(true);
 			
 		}
 			

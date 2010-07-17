@@ -193,16 +193,16 @@ public class PlotPanel extends JPanel implements ComponentListener {
 	//       Create GeoElement
 	//=================================================
 
-	/* 
-	public void createGeoFromString(String text ){
-		GeoElement tempGeo = null;
-		createGeoFromString(tempGeo, text);
-	}
-	*/
 	
 	public GeoElement createGeoFromString(String text ){
+		return createGeoFromString(text, null);
+	}
+	
+	
+	public GeoElement createGeoFromString(String text, String label ){
 		
-		//Application.debug("geo creation text: " + text);
+		
+		Application.debug("geo creation text: " + text);
 		
 		if(isAutoRemoveGeos){
 			removeGeos();
@@ -210,17 +210,16 @@ public class PlotPanel extends JPanel implements ComponentListener {
 			
 		try {
 				
-			//boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();			
-			//cons.setSuppressLabelCreation(true);
+			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
+			
+			if(label == null)
+				cons.setSuppressLabelCreation(true);
 			
 			GeoElement[] geos = kernel.getAlgebraProcessor()
-				.processAlgebraCommandNoExceptionHandling(text, false);
+				.processAlgebraCommandNoExceptionHandling(text, false);	
 			
-			
-			//geos[0].setAlgebraVisible(false);		
-			//cons.setSuppressLabelCreation(oldSuppressLabelMode);
-			
-			geos[0].setLabel("plotGeo");
+			if(label != null)
+				geos[0].setLabel(label);
 			
 			// add the geo to our view and remove it from EV		
 			geos[0].addView(ev);
@@ -230,11 +229,15 @@ public class PlotPanel extends JPanel implements ComponentListener {
 				
 			// set visibility
 			geos[0].setEuclidianVisible(true);
+			//geos[0].setAlgebraVisible(false);		
 			geos[0].setAuxiliaryObject(true);
-		
+			
 			plotGeoCollection.add(geos[0]);
+			
+			if(label == null)
+				cons.setSuppressLabelCreation(oldSuppressLabelMode);
+		
 			return geos[0];
-				
 				
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -300,7 +303,7 @@ public class PlotPanel extends JPanel implements ComponentListener {
 		
 		// create function
 		String text = expr;
-		return createGeoFromString(text);
+		return createGeoFromString(text,"pdf");
 	
 	}
 	

@@ -364,11 +364,11 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private void createXAxisPoints(){
 		
 		String text = "Point[xAxis]";
-		lowPoint = (GeoPoint) plotPanel.createGeoFromString(text);
+		lowPoint = (GeoPoint) plotPanel.createGeoFromString(text,"A");
 		lowPoint.setObjColor(COLOR_PDF);
 		
 		text = "Point[xAxis]";
-		highPoint = (GeoPoint) plotPanel.createGeoFromString(text);
+		highPoint = (GeoPoint) plotPanel.createGeoFromString(text,"B");
 		highPoint.setObjColor(COLOR_PDF);
 	
 		setXAxisPoints();	
@@ -380,7 +380,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		String text = "Integral[" + pdf.getLabel() + ", x(" + lowPoint.getLabel() 
 						+ "), x(" + highPoint.getLabel() + ")]";
 		//System.out.println(text);
-		integral  = plotPanel.createGeoFromString(text);
+		integral  = plotPanel.createGeoFromString(text,"integral");
 		integral.setObjColor(COLOR_PDF);
 		integral.setAlphaValue(0.25f);
 		
@@ -637,6 +637,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		Object source = e.getSource();	
 		if(source == btnClose){
 			setVisible(false);
+			
 		}
 		else if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
@@ -747,6 +748,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	public void detachView() {
 		kernel.detach(this);
+		plotPanel.detachView();
 		//clearView();
 		//kernel.notifyRemoveAll(this);		
 	}
