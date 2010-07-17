@@ -385,9 +385,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		protected void getXMLtags(StringBuilder sb) {
 	   	getXMLvisualTags(sb, false);			
 		
-		if (isFixed()) {
-			sb.append("\t<fixed val=\"true\"/>\n");	
-		}
+	   	getXMLfixedTag(sb);
 		
 		if (isLaTeX) {
 			sb.append("\t<isLaTeX val=\"true\"/>\n");	
