@@ -210,7 +210,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		traceManager = new SpreadsheetTraceManager(this);
 	
-	//	this.showProbabilityCalculator();
+		//this.showProbabilityCalculator();
 	
 		
 	}
@@ -509,7 +509,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void showStatDialog(){
 		
 		if(oneVarStatDialog == null){
-			oneVarStatDialog = new OneVariableStatsDialog(view, app);
+			oneVarStatDialog = new OneVariableStatsDialog(view, app, OneVariableStatsDialog.MODE_TWOVAR);
 		}else{
 			oneVarStatDialog.updateDialog();
 		}

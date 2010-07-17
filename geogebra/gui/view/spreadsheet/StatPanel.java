@@ -55,7 +55,7 @@ public class StatPanel extends JPanel {
 	/*************************************************
 	 * Construct the panel
 	 */
-	public StatPanel(Application app, OneVariableStatsDialog statDialog, GeoList dataList){
+	public StatPanel(Application app, GeoList dataList){
 	
 		
 		this.app = app;	
@@ -248,7 +248,11 @@ public class StatPanel extends JPanel {
 		
 		statTable.setModel(statModel);	
 		
-		statTable.getColumnModel().getColumn(0).setHeaderValue(statDialog.getDataTitle(0));
+		//statTable.getColumnModel().getColumn(0).setHeaderValue(statDialog.getDataTitle(0));
+		
+		//TODO: handle data titles
+		statTable.getColumnModel().getColumn(0).setHeaderValue("");
+		
 		statTable.getTableHeader().resizeAndRepaint();
 		
 		statTable.repaint();
@@ -260,9 +264,16 @@ public class StatPanel extends JPanel {
 		
 		statTable.repaint();
 		
-		//createStatList();
-		//populateStatTable();
+		
 	}
+	
+	public void updateData(GeoList dataList){
+		this.dataList = dataList;
+		createStatList();
+		populateStatTable();
+		
+	}
+	
 	
 	
 	public void updateFonts(Font font) {

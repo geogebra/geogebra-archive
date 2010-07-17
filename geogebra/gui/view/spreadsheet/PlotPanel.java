@@ -202,7 +202,7 @@ public class PlotPanel extends JPanel implements ComponentListener {
 	public GeoElement createGeoFromString(String text, String label ){
 		
 		
-		Application.debug("geo creation text: " + text);
+		//Application.debug("geo creation text: " + text);
 		
 		if(isAutoRemoveGeos){
 			removeGeos();
@@ -387,7 +387,7 @@ public class PlotPanel extends JPanel implements ComponentListener {
 			text += "(" + ((GeoNumeric)dataList.get(0)).getDouble() + ", 1)";
 			int k = 1;
 			for (int i = 1; i < dataList.size(); ++i){
-				System.out.println(((GeoNumeric)dataList.get(i)).getDouble()); 
+				//System.out.println(((GeoNumeric)dataList.get(i)).getDouble()); 
 				if(((GeoNumeric)dataList.get(i-1)).getDouble() == ((GeoNumeric)dataList.get(i)).getDouble() ) 
 					++k;
 				else
