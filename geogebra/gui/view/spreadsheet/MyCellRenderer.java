@@ -230,21 +230,24 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		// G.STURR 2010-1-17
 		// set LaTeX icons
 		// use LaTeX for any geo other than geoNumeric or non-latex geoText
-		
+
+		boolean isSerif = false;
 		if (geo.isDefined() && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
 			if ( !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
 					&& !geo.isGeoNumeric()) {
 				try {
-					latexStr = Util.toLaTeXString(geo.getFormulaString(
-							ExpressionNode.STRING_TYPE_LATEX, true), false);
-
-					drawLatexImageIcon(latexIcon, latexStr, getFont(), ((GeoText)geo).isSerifFont(), geo
+					latexStr = geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
+					if(geo.isGeoText())
+						isSerif = ((GeoText)geo).isSerifFont();
+					//System.out.println(latexStr);
+					drawLatexImageIcon(latexIcon, latexStr, getFont(), isSerif, geo
 							.getAlgebraColor(), bgColor);
 					setIcon(latexIcon);
 					setText("");
-					
+
 				} catch (Exception e) {
+					Application.debug("error in drawing latex" + e);
 				}
 			}
 		}
