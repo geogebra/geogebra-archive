@@ -1,14 +1,19 @@
 package geogebra.gui.view.spreadsheet;
 
 
+
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -29,65 +34,64 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
-public class ProbabilityCalculator extends JDialog implements ActionListener, FocusListener   {
+public class ProbabilityCalculator extends JDialog implements View, ActionListener, FocusListener   {
 	 
 	private Application app;
 	private Kernel kernel; 
-	private Construction cons;
-	private SpreadsheetView spView;
+	private ProbabilityCalculator probDialog;
 	
-	private ProbabilityCalculator statDialog;
-	
-	private JButton btnClose, btnOptions, btnExport, btnDisplay;
-	private JCheckBox cbShowData;
-	private JComboBox comboDistribution;
-	
-	private JSplitPane displayPanel;
-	
-	
-	private JTextField[] fldParm;
-	private JTextField fldLow,fldHigh,fldResult;
-	private JLabel[] lblParm;
-	private int numParms = 3;
-	
-	private boolean isIniting;
-	
-	
-	
-	
+	// supported distributions
 	private static final int DIST_NORMAL = 0;
 	private static final int DIST_STUDENT = 1;
 	private static final int DIST_CHISQUARE = 2;
 	private static final int DIST_BINOMIAL = 3;
 	
+	// parms
 	private int numDist = 4;
-	
-	private int selectedDist = DIST_NORMAL;
+	private int selectedDist = DIST_STUDENT;
 	private String[] distLabels; 
 	private String[][] parmLabels;
-	
-	private PlotPanel plotPanel;
+	private int numParms = 3;
 	private double[] selectedParms ;
 	private double xMin, xMax, yMin, yMax;
+	private double low = -1, high = 1, prob = 0;
 	
-	private double low = 0, high = 0, prob = 0;
+	
+	// gui
+	private JButton btnClose, btnOptions, btnExport, btnDisplay;
+	private JComboBox comboDistribution;
+	private JTextField[] fldParmArray;
+	private JTextField fldLow,fldHigh,fldResult;
+	private JLabel[] lblParmArray;
+	private PlotPanel plotPanel;
+	
+	
+	// GeoElements
+	private GeoPoint lowPoint,highPoint;
+	private GeoFunction pdf;
+	private GeoElement integral;
+	
+	
+	// flags
+	private boolean isIniting;
+	private boolean isSettingAxisPoints = false;
+	
+	private static final Color COLOR_PDF = new Color(0, 153, 153);
+	
 	
 	
 	/*************************************************
 	 * Construct the dialog
 	 */
-	public ProbabilityCalculator(SpreadsheetView spView, Application app){
+	public ProbabilityCalculator(SpreadsheetView spView, Application app) {
 		super(app.getFrame(),false);
 		
 		isIniting = true;
 		this.app = app;	
 		kernel = app.getKernel();
-		cons = kernel.getConstruction();
-		this.spView = spView;
-		//this.spreadsheetTable = spView.getTable();
-		statDialog = this;
+		probDialog = this;
 		
-		updateFonts();
+		// init variables
 		selectedParms = new double[4];
 		setLabels();
 		
@@ -95,22 +99,18 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 		initGUI();
 		updateFonts();
 		updateGUI();
+		
+		attachView();
 		btnClose.requestFocus();
+		isIniting = false;
 			
-	} //END  constructor
+	} //============= END  constructor
 	
 	
 	
 	
 	public void removeGeos(){
-		/*
-		dataListAll.remove();
-		dataListAll = null;
-		dataListSelected.remove();
-		dataListSelected = null;
-		comboStatPanel.removeGeos();
-		comboStatPanel2.removeGeos();
-		*/
+		plotPanel.removeGeos();
 	}
 	
 	
@@ -166,10 +166,7 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 			controlPanel.add(buttonPanel);
 			controlPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 			
-		//	controlPanel.setBorder(BorderFactory.createCompoundBorder(
-		//			BorderFactory.createLineBorder(Color.GRAY), 
-		//			BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-			
+		
 			//===========================================
 			// plot panel
 	
@@ -182,7 +179,6 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 			
 			setDefaultParms(selectedDist);
 			plotPDF(selectedDist);
-			
 			plotPanel.setPreferredSize(new Dimension(350,300));
 			
 			
@@ -218,7 +214,7 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 			{
 				selectedDist = comboDistribution.getSelectedIndex();
 				setDefaultParms(selectedDist);
-				statDialog.plotPDF(selectedDist);
+				probDialog.plotPDF(selectedDist);
 				updateGUI();
 				btnClose.requestFocus();
 			}
@@ -226,31 +222,27 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 		
 		
 		// parm panel
-		
+		//=======================================
 		JPanel parmPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		parmPanel.setAlignmentX(0.0f);
 		
 		parmPanel.add(comboDistribution);
 		
-		lblParm = new JLabel[4];
-		fldParm = new JTextField[4];
-		
+		lblParmArray = new JLabel[4];
+		fldParmArray = new JTextField[4];
 		
 		for(int i = 0; i < numParms; ++i){
-
-			lblParm[i] = new JLabel();
-			fldParm[i] = new MyTextField(app.getGuiManager());
-			fldParm[i].setColumns(6);
-			fldParm[i].addActionListener(this);
-			fldParm[i].addFocusListener(this);
+			lblParmArray[i] = new JLabel();
+			fldParmArray[i] = new MyTextField(app.getGuiManager());
+			fldParmArray[i].setColumns(6);
+			fldParmArray[i].addActionListener(this);
+			fldParmArray[i].addFocusListener(this);
 			
-			parmPanel.add(lblParm[i]);
-			parmPanel.add(fldParm[i]);
+			parmPanel.add(lblParmArray[i]);
+			parmPanel.add(fldParmArray[i]);
 
 		}
 		
-		
-		//dp.add(comboDistribution, BorderLayout.WEST);
 		dp.add(parmPanel, BorderLayout.WEST);
 		
 		return dp;
@@ -298,8 +290,6 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 	}
 	
 	
-	
-	
 	private void setLabels(){
 
 		parmLabels = new String[numDist][numDist];
@@ -319,30 +309,94 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 		parmLabels[DIST_BINOMIAL][0] = app.getPlain("n");
 		parmLabels[DIST_BINOMIAL][1] = app.getPlain("p");
 
-	
 
 	}
 
 	
-
+	
+	//=================================================
+	//       Plotting
+	//=================================================
 	
 	private void plotPDF(int distType){
-		plotPDF(distType, selectedParms, xMin, xMax, yMin,yMax);
+		plotPDF(distType, selectedParms, xMin, xMax, yMin,yMax);	
 	}
-
+	
 	private void plotPDF(int distType, double[]parms, double xMin, double xMax, double yMin, double yMax){
-		
+			
 		double[] d = getPlotDimensions(distType, parms);
+		
+		if(lowPoint != null)
+			lowPoint.remove();
+		lowPoint = null;
+		if(highPoint != null)
+			highPoint.remove();
+		highPoint = null;
+		
+		if(integral != null)
+			integral.remove();
+		integral = null;
+		
+			if(pdf != null)
+			pdf.remove();
+		pdf = null;
+		
+		
+		plotPanel.removeGeos();
+		plotPanel.setAutoRemoveGeos(false);
 		
 		xMin = d[0];
 		xMax = d[1];
 		yMin = d[2];
 		yMax = d[3];
+	
+		pdf = (GeoFunction) plotPanel.createPDF(buildExpressionPDF(distType,parms), xMin, xMax, yMin, yMax);	
+		pdf.setObjColor(COLOR_PDF);
+		pdf.setLineThickness(3);
 		
-		plotPanel.plotPDF(buildExpressionPDF(distType,parms), xMin, xMax, yMin, yMax);
+		createXAxisPoints();
+		createIntegral();
+		
+		plotPanel.setAutoRemoveGeos(true);
 	
 	}
 	
+	private void createXAxisPoints(){
+		
+		String text = "Point[xAxis]";
+		lowPoint = (GeoPoint) plotPanel.createGeoFromString(text);
+		lowPoint.setObjColor(COLOR_PDF);
+		
+		text = "Point[xAxis]";
+		highPoint = (GeoPoint) plotPanel.createGeoFromString(text);
+		highPoint.setObjColor(COLOR_PDF);
+	
+		setXAxisPoints();	
+	}
+	
+	
+	private void createIntegral(){
+		
+		String text = "Integral[" + pdf.getLabel() + ", x(" + lowPoint.getLabel() 
+						+ "), x(" + highPoint.getLabel() + ")]";
+		//System.out.println(text);
+		integral  = plotPanel.createGeoFromString(text);
+		integral.setObjColor(COLOR_PDF);
+		integral.setAlphaValue(0.25f);
+		
+	}
+	
+	
+	public void setXAxisPoints(){
+		System.out.println(low);
+		isSettingAxisPoints = true;
+		lowPoint.setCoords(low, 0.0, 1.0);
+		lowPoint.updateCascade();
+		highPoint.setCoords(high, 0.0, 1.0);
+		highPoint.updateCascade();
+		plotPanel.getMyEuclidianView().repaint();
+		isSettingAxisPoints = false;
+	}
 	
 	private String buildExpressionPDF(int type, double[]parms){
 		String expr = "";
@@ -350,7 +404,6 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 		switch(type){
 
 		case DIST_NORMAL:
-
 			double mean = parms[0];
 			double sigma = parms[1];
 			expr = "Normal[" + mean + "," + sigma + ", x]";
@@ -358,16 +411,12 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 			//expr =  "1 / sqrt(2 Pi " + sigma + "^2) exp(-((x - " + mu + ")^2 / 2 " + sigma + "^2))";
 			break;
 
-
 		case DIST_STUDENT:
-
 			double v = parms[0];
 			expr =  "gamma((" + v + " + 1) / 2) / (sqrt(" + v + " Pi) gamma(" + v + " / 2)) (1 + x^2 / " + v + ")^(-((" + v + " + 1) / 2))";
-
 			break;
 
 		case DIST_CHISQUARE:
-
 			double k = parms[0];		
 			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
 			break;
@@ -516,20 +565,22 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 
 	private void updateGUI() {
 		
+		kernel.setTemporaryPrintDecimals(6);
+				
 		for(int i = 0; i < numParms; ++i ){
 			
 			if(parmLabels[selectedDist][i] == null){
-				lblParm[i].setVisible(false);
-				fldParm[i].setVisible(false);
+				lblParmArray[i].setVisible(false);
+				fldParmArray[i].setVisible(false);
 
 			}else{
-				lblParm[i].setVisible(true);
-				fldParm[i].setVisible(true);
-				lblParm[i].setText(parmLabels[selectedDist][i]);
-				fldParm[i].removeActionListener(this);
-				fldParm[i].setText("" + kernel.format(selectedParms[i]));
-				fldParm[i].setCaretPosition(0);
-				fldParm[i].addActionListener(this);
+				lblParmArray[i].setVisible(true);
+				fldParmArray[i].setVisible(true);
+				lblParmArray[i].setText(parmLabels[selectedDist][i]);
+				fldParmArray[i].removeActionListener(this);
+				fldParmArray[i].setText("" + kernel.format(selectedParms[i]));
+				fldParmArray[i].setCaretPosition(0);
+				fldParmArray[i].addActionListener(this);
 			}
 		}
 		
@@ -537,7 +588,8 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 		this.fldHigh.setText("" + kernel.format(high));
 		this.fldResult.setText("" + kernel.format(prob));
 		
-		
+		//setXAxisPoints();
+		kernel.restorePrintAccuracy();
 	}
 	
 	
@@ -550,7 +602,7 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 		
 		}else{
 			removeGeos();
-
+			detachView();
 		}
 	}
 
@@ -605,21 +657,22 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 			double value = nv.getDouble();
 
 			for(int i=0; i< numParms; ++i)
-				if (source == fldParm[i]) {
+				if (source == fldParmArray[i]) {
 					selectedParms[i] = value;
 					//validateParms(selectedParms);
+					updatePlot();
 				}
 			
 			if(source == fldLow){
 				low = value;
+				this.setXAxisPoints();
 				
 			}
 			if(source == fldHigh){
 				high = value;
+				this.setXAxisPoints();
 			}
-			
-			
-			updatePlot();
+					
 			updateProb();
 			updateGUI();
 
@@ -642,10 +695,61 @@ public class ProbabilityCalculator extends JDialog implements ActionListener, Fo
 
 
 
-
-
-
-
+	//=================================================
+	//      View Implementation
+	//=================================================
 	
+	public void add(GeoElement geo) {
+		
+	}
+
+	public void clearView() {
+	}
+
+	public void remove(GeoElement geo) {
+		
+	}
+
+	public void rename(GeoElement geo) {
+	}
+
+	public void repaintView() {
+	}
+
+	public void reset() {	
+	}
+
+	public void update(GeoElement geo) {
+		double[] coords = new double[2];;
+		if(!isSettingAxisPoints){
+			if(geo.equals(lowPoint)){	
+				low = lowPoint.getInhomX();
+				updateProb();
+				updateGUI();
+			}
+			if(geo.equals(highPoint)){	
+				high = highPoint.getInhomX();
+				updateProb();
+				updateGUI();
+			}
+		}
+	}
+	
+	
+	public void updateAuxiliaryObject(GeoElement geo) {
+	}
+
+	public void attachView() {
+		//clearView();
+		//kernel.notifyAddAll(this);
+		kernel.attach(this);		
+	}
+
+	public void detachView() {
+		kernel.detach(this);
+		//clearView();
+		//kernel.notifyRemoveAll(this);		
+	}
+
 	
 }
