@@ -67,20 +67,36 @@ public class AlgoSimplifyText extends AlgoElement {
     // calc the current value of the arithmetic tree
     protected final void compute() {    
     	
+    	// eg Simplify["+1x++x--x+-1x-+1x++x"]
+    	
 
     	String ret = textIn.getTextString();
-    	
+    	// ++ -> +
     	ret = ret.replaceAll("\\+\\+", "+");
+    	// -- -> +
     	ret = ret.replaceAll("--", "+");
+    	// +- -> -
     	ret = ret.replaceAll("\\+-", "-");
+    	// -+ -> -
     	ret = ret.replaceAll("-\\+", "-");
+    	// +1x -> +x
     	ret = ret.replaceAll("\\+1x", "+x");
+    	// -1x -> -x
     	ret = ret.replaceAll("-1x", "-x");
     	
+    	// replace "+" with " + "
+    	// needs to be called twice for eg x+x+x+x
+     	ret = ret.replaceAll("([^ ])\\+([^ ])","$1 + $2");
+     	ret = ret.replaceAll("([^ ])\\+([^ ])","$1 + $2");
+     	
+    	// replace "-" with " - "
+    	// needs to be called twice for eg x-x-x-x
+     	ret = ret.replaceAll("([^ ])\\-([^ ])","$1 - $2");
+     	ret = ret.replaceAll("([^ ])\\-([^ ])","$1 - $2");
+   	
+     	// remove + and 1 at the start
     	if (ret.startsWith("+")) ret = ret.substring(1);
     	if (ret.startsWith("1x")) ret = ret.substring(1);
-    	
-    	Application.debug(ret);
     	
     	text.setTextString(ret);
     	
