@@ -29,7 +29,7 @@ public class AlgoDependentInterval extends AlgoDependentFunction {
     }
     
     final public String toString() {
-    	return "AlgoDependentIntervalTODO";
+    	return f.toSymbolicString();
     }
 
 }

@@ -680,9 +680,9 @@ public class AlgebraProcessor {
 					
 				}
 				
-				Application.debug(leftDir+" "+rightDir);
-				Application.debug(leftLeft.getClass()+" "+leftRight.getClass());
-				Application.debug(rightLeft.getClass()+" "+rightRight.getClass());
+				//Application.debug(leftDir+" "+rightDir);
+				//Application.debug(leftLeft.getClass()+" "+leftRight.getClass());
+				//Application.debug(rightLeft.getClass()+" "+rightRight.getClass());
 				
 				// opposite directions -> OK
 				if (leftDir * rightDir < 0) {
