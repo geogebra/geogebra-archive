@@ -1,0 +1,195 @@
+package geogebra.kernel;
+
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
+import geogebra.util.Unicode;
+
+public class GeoInterval extends GeoFunction {
+
+	public GeoInterval(Construction c, String label, Function f) {
+		super(c, label, f);
+	}
+	
+	public GeoInterval(GeoInterval geoInterval) {
+		super(geoInterval.cons);
+		set(geoInterval);
+	}
+
+	public GeoInterval(Construction cons) {
+		super(cons);
+	}
+
+	public GeoElement copy() {
+		return new GeoInterval(this);
+	}
+
+	public void set(GeoElement geo) {
+		GeoInterval geoFun = (GeoInterval) geo;				
+						
+		if (geo == null || geoFun.fun == null) {
+			fun = null;
+			isDefined = false;
+			return;
+		} else {
+			isDefined = geoFun.isDefined;
+			fun = new Function(geoFun.fun, kernel);
+		}			
+	
+		// macro OUTPUT
+		if (geo.cons != cons && isAlgoMacroOutput()) {								
+			// this object is an output object of AlgoMacro
+			// we need to check the references to all geos in its function's expression
+			if (!geoFun.isIndependent()) {
+				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
+				algoMacro.initFunction(this.fun);	
+			}			
+		}
+	}
+	
+	public String getClassName() {
+		return "GeoInterval";
+	}
+	
+	protected String getTypeString() {
+		return "Interval";
+	}
+	
+    public int getGeoClassType() {
+    	return GEO_CLASS_INTERVAL;
+    }
+    
+	public String toString() {
+		return toValueString();
+	}
+	
+	public String toValueString() {		
+		if (!isDefined()) return app.getPlain("undefined");
+		
+		//return "3 < x < 5";//fun.toValueString();
+		
+		ExpressionNode en = fun.getExpression();
+		if (en.operation == en.AND) {
+			ExpressionValue left = en.left;
+			ExpressionValue right = en.right;
+			
+			if (left.isExpressionNode() && right.isExpressionNode()) {
+				ExpressionNode enLeft = (ExpressionNode)left;
+				ExpressionNode enRight = (ExpressionNode)right;
+				
+				int opLeft = enLeft.operation;
+				int opRight = enRight.operation;
+				
+				ExpressionValue leftLeft = enLeft.left;
+				ExpressionValue leftRight = enLeft.right;
+				ExpressionValue rightLeft = enRight.left;
+				ExpressionValue rightRight = enRight.right;
+				
+				double rightBound = Double.NaN;
+				double leftBound = Double.NaN;
+				// directions of inequalities, need one + and one - for an interval
+				int leftDir = 0;
+				int rightDir = 0;
+				char rightInequality = ' ';
+				char leftInequality = ' ';
+				
+	
+				if ((opLeft == en.LESS || opLeft == en.LESS_EQUAL)) {
+					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
+						leftDir = -1;
+						rightInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
+						rightBound = ((NumberValue)leftRight).getDouble();
+					}
+					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
+						leftDir = +1;
+						leftInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
+						leftBound = ((NumberValue)leftLeft).getDouble();
+					}
+					
+				} else
+				if ((opLeft == en.GREATER || opLeft == en.GREATER_EQUAL)) {
+					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
+						leftDir = +1;
+						leftInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+						leftBound = ((NumberValue)leftRight).getDouble();
+					}
+					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
+						leftDir = -1;
+						rightInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+						rightBound = ((NumberValue)leftLeft).getDouble();
+					}
+					
+				}
+				
+				if ((opRight == en.LESS || opRight == en.LESS_EQUAL)) {
+					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
+						rightDir = -1;
+						rightInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
+						rightBound = ((NumberValue)rightRight).getDouble();
+					}
+					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
+						rightDir = +1;
+						leftInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
+						leftBound = ((NumberValue)rightLeft).getDouble();
+					}
+					
+				} else
+				if ((opRight == en.GREATER || opRight == en.GREATER_EQUAL)) {
+					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
+						rightDir = +1;
+						leftInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+						leftBound = ((NumberValue)rightRight).getDouble();
+					}
+					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
+						rightDir = -1;
+						rightInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+						rightBound = ((NumberValue)rightLeft).getDouble();
+					}
+					
+				}
+				
+				if (!Double.isNaN(rightBound) && !Double.isNaN(leftBound) && leftBound <= rightBound) {
+					sbToString.setLength(0);
+					sbToString.append(kernel.format(leftBound));
+					sbToString.append(' ');
+					sbToString.append(leftInequality);
+					sbToString.append(" x ");
+					sbToString.append(rightInequality);
+					sbToString.append(' ');
+					sbToString.append(kernel.format(rightBound));
+					return sbToString.toString();
+					//return kernel.format(leftBound) +leftInequality+" x "+rightInequality+kernel.format(rightBound);
+				}
+			}
+		}
+		
+		// eg x<3 && x>10
+		//Application.debug("fall through");
+		return super.toValueString();		
+			
+	}	
+	
+	public String toSymbolicString() {	
+		Application.debug("1");
+		if (isDefined())
+			return fun.toString();
+		else
+			return app.getPlain("undefined");
+	}
+	
+	public String toLaTeXString(boolean symbolic) {
+		if (isDefined())
+			return fun.toLaTeXString(symbolic);
+		else
+			return app.getPlain("undefined");
+	}
+
+	public boolean isEqual(GeoElement geo) {
+		return false;
+	}
+
+
+}

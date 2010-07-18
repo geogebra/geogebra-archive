@@ -25,6 +25,8 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.MyBoolean;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyStringBuffer;
@@ -41,8 +43,6 @@ import geogebra.main.MyError;
 
 import java.util.ArrayList;
 import java.util.Set;
-
-import javax.swing.JOptionPane;
 
 public class AlgebraProcessor {
 	
@@ -633,6 +633,81 @@ public class AlgebraProcessor {
 
 		GeoElement[] vars = fun.getGeoElementVariables();				
 		boolean isIndependent = (vars == null || vars.length == 0);
+		
+		// check for interval
+		
+		ExpressionNode en = fun.getExpression();
+		if (en.operation == en.AND) {
+			ExpressionValue left = en.left;
+			ExpressionValue right = en.right;
+			
+			if (left.isExpressionNode() && right.isExpressionNode()) {
+				ExpressionNode enLeft = (ExpressionNode)left;
+				ExpressionNode enRight = (ExpressionNode)right;
+				
+				int opLeft = enLeft.operation;
+				int opRight = enRight.operation;
+				
+				ExpressionValue leftLeft = enLeft.left;
+				ExpressionValue leftRight = enLeft.right;
+				ExpressionValue rightLeft = enRight.left;
+				ExpressionValue rightRight = enRight.right;
+				
+				// directions of inequalities, need one + and one - for an interval
+				int leftDir = 0;
+				int rightDir = 0;
+				
+	
+				if ((opLeft == en.LESS || opLeft == en.LESS_EQUAL)) {
+					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) leftDir = -1;
+					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) leftDir = +1;
+					
+				} else
+				if ((opLeft == en.GREATER || opLeft == en.GREATER_EQUAL)) {
+					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) leftDir = +1;
+					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) leftDir = -1;
+					
+				}
+				
+				if ((opRight == en.LESS || opRight == en.LESS_EQUAL)) {
+					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) rightDir = -1;
+					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) rightDir = +1;
+					
+				} else
+				if ((opRight == en.GREATER || opRight == en.GREATER_EQUAL)) {
+					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) rightDir = +1;
+					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) rightDir = -1;
+					
+				}
+				
+				Application.debug(leftDir+" "+rightDir);
+				Application.debug(leftLeft.getClass()+" "+leftRight.getClass());
+				Application.debug(rightLeft.getClass()+" "+rightRight.getClass());
+				
+				// opposite directions -> OK
+				if (leftDir * rightDir < 0) {
+					if (isIndependent) {
+						f = kernel.Interval(label, fun);			
+					} else {			
+						f = kernel.DependentInterval(label, fun);
+					}
+					ret[0] = f;		
+					return ret;
+
+				}
+				
+				
+				//Application.debug(enLeft.operation+"");
+				//Application.debug(enLeft.left.getClass()+"");
+				//Application.debug(enLeft.right.getClass()+"");
+				
+
+			}
+			//Application.debug(left.getClass()+"");
+			//Application.debug(right.getClass()+"");
+			//Application.debug("");
+		}
+		
 		
 		if (isIndependent) {
 			f = kernel.Function(label, fun);			

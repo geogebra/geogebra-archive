@@ -41,7 +41,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Function fun;		
+	protected Function fun;		
 	protected boolean isDefined = true;
 	public boolean trace, spreadsheetTrace;	
 	
@@ -350,9 +350,10 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
-	private StringBuilder sbToString = new StringBuilder(80);
+	protected StringBuilder sbToString = new StringBuilder(80);
 	
-	public String toValueString() {		
+	public String toValueString() {	
+
 		if (isDefined())
 			return fun.toValueString();
 		else
@@ -655,6 +656,9 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	
     // Michael Borcherds 2009-02-15
 	public boolean isEqual(GeoElement geo) {
+		
+		if (!geo.isGeoFunction() || geo.getGeoClassType() == GeoElement.GEO_CLASS_INTERVAL)
+			return false;
 		
 		
 		// return return geo.isEqual(this); rather than false

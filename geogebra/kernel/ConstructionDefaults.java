@@ -356,6 +356,7 @@ public class ConstructionDefaults {
 			break;
 
 		case GeoElement.GEO_CLASS_FUNCTION:
+		case GeoElement.GEO_CLASS_INTERVAL:
 		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
 			type = DEFAULT_FUNCTION;
 			break;

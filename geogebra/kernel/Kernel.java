@@ -1808,6 +1808,13 @@ public class Kernel {
 		return f;
 	}
 	
+	/** Interval in x,  e.g. x > 3 && x < 6
+	 */
+	final public GeoInterval Interval(String label, Function fun) {
+		GeoInterval f = new GeoInterval(cons, label, fun);
+		return f;
+	}
+	
 	final public GeoText Text(String label, String text) {
 		GeoText t = new GeoText(cons);
 		t.setTextString(text);
@@ -2029,6 +2036,17 @@ public class Kernel {
 		String label,
 		Function fun) {
 		AlgoDependentFunction algo = new AlgoDependentFunction(cons, label, fun);
+		GeoFunction f = algo.getFunction();
+		return f;
+	}
+	
+	/** Interval dependent on coefficients of arithmetic expressions with variables,
+	 * represented by trees. e.g. x > a && x < b
+	 */
+	final public GeoFunction DependentInterval(
+		String label,
+		Function fun) {
+		AlgoDependentInterval algo = new AlgoDependentInterval(cons, label, fun);
 		GeoFunction f = algo.getFunction();
 		return f;
 	}

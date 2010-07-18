@@ -31,8 +31,8 @@ public class AlgoDependentFunction extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Function fun;
-    private GeoFunction f; // output         
+	protected Function fun;
+    protected GeoFunction f; // output         
     
     private Function expandedFun;    
     private ExpressionNode expression;
@@ -70,7 +70,11 @@ public class AlgoDependentFunction extends AlgoElement {
         compute();
     }
     
-    public String getClassName() {
+    public AlgoDependentFunction(Construction cons) {
+		super(cons);
+	}
+
+	public String getClassName() {
         return "AlgoDependentFunction";
     }
     
@@ -196,7 +200,7 @@ public class AlgoDependentFunction extends AlgoElement {
     }
     
     StringBuilder sb;
-    final public String toString() {
+    public String toString() {
         if (sb == null) sb = new StringBuilder();
         else sb.setLength(0);
         if (f.isLabelSet()) {

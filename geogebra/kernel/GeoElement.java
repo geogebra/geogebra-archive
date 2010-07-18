@@ -268,30 +268,31 @@ public abstract class GeoElement
 	
 	
 	// GeoElement types
-	public static final int GEO_CLASS_ANGLE = 10;
-	public static final int GEO_CLASS_AXIS = 20;
-	public static final int GEO_CLASS_BOOLEAN = 30;
-	public static final int GEO_CLASS_BUTTON = 31;
-	public static final int GEO_CLASS_TEXTFIELD = 32;
-	public static final int GEO_CLASS_CONIC = 40;
-	public static final int GEO_CLASS_CONICPART = 50;
-	public static final int GEO_CLASS_FUNCTION = 60;
-	public static final int GEO_CLASS_FUNCTIONCONDITIONAL = 70;
-	public static final int GEO_CLASS_IMAGE = 80;
-	public static final int GEO_CLASS_LINE = 90;
-	public static final int GEO_CLASS_LIST = 100;
-	public static final int GEO_CLASS_LOCUS = 110;
-	public static final int GEO_CLASS_NUMERIC = 120;
-	public static final int GEO_CLASS_POINT = 130;
-	public static final int GEO_CLASS_POLYGON = 140;
-	public static final int GEO_CLASS_RAY = 150;
-	public static final int GEO_CLASS_SEGMENT = 160;
-	public static final int GEO_CLASS_TEXT = 170;
-	public static final int GEO_CLASS_VECTOR = 180;
-	public static final int GEO_CLASS_CURVE_CARTESIAN = 190;
-	public static final int GEO_CLASS_CURVE_POLAR = 191;
-	public static final int GEO_CLASS_CUBIC = 192;
-	public static final int GEO_CLASS_IMPLICIT_POLY = 193;
+	public static final int GEO_CLASS_ANGLE = 1;
+	public static final int GEO_CLASS_AXIS = 2;
+	public static final int GEO_CLASS_BOOLEAN = 3;
+	public static final int GEO_CLASS_BUTTON = 4;
+	public static final int GEO_CLASS_TEXTFIELD = 5;
+	public static final int GEO_CLASS_CONIC = 6;
+	public static final int GEO_CLASS_CONICPART = 7;
+	public static final int GEO_CLASS_FUNCTION = 8;
+	public static final int GEO_CLASS_INTERVAL = 9;
+	public static final int GEO_CLASS_FUNCTIONCONDITIONAL = 10;
+	public static final int GEO_CLASS_IMAGE = 11;
+	public static final int GEO_CLASS_LINE = 12;
+	public static final int GEO_CLASS_LIST = 13;
+	public static final int GEO_CLASS_LOCUS = 14;
+	public static final int GEO_CLASS_NUMERIC = 15;
+	public static final int GEO_CLASS_POINT = 16;
+	public static final int GEO_CLASS_POLYGON = 17;
+	public static final int GEO_CLASS_RAY = 18;
+	public static final int GEO_CLASS_SEGMENT = 19;
+	public static final int GEO_CLASS_TEXT = 20;
+	public static final int GEO_CLASS_VECTOR = 21;
+	public static final int GEO_CLASS_CURVE_CARTESIAN = 22;
+	public static final int GEO_CLASS_CURVE_POLAR = 23;
+	public static final int GEO_CLASS_CUBIC = 24;
+	public static final int GEO_CLASS_IMPLICIT_POLY = 25;
 	
 	
 	public static final int LABEL_NAME = 0;
@@ -801,6 +802,7 @@ public abstract class GeoElement
 		case  GEO_CLASS_ANGLE :
 		case  GEO_CLASS_NUMERIC:
 			typePriority = 80; break;
+		case  GEO_CLASS_INTERVAL: // not drawable
 		case  GEO_CLASS_FUNCTION:
 		case  GEO_CLASS_FUNCTIONCONDITIONAL:
 		case  GEO_CLASS_CURVE_CARTESIAN :

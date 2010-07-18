@@ -275,7 +275,8 @@ implements EuclidianViewAlgo {
 	private void initSpecialReferences(GeoElement macroGeo, GeoElement algoGeo) {
 		
 		switch (macroGeo.getGeoClassType()) {				
-			case GeoElement.GEO_CLASS_FUNCTION:
+		case GeoElement.GEO_CLASS_INTERVAL:
+		case GeoElement.GEO_CLASS_FUNCTION:
 				initFunction(((GeoFunction) algoGeo).getFunction());
 				break;
 				
