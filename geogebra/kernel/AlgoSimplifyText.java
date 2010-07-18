@@ -94,6 +94,11 @@ public class AlgoSimplifyText extends AlgoElement {
      	ret = ret.replaceAll("([^ ])\\-([^ ])","$1 - $2");
      	ret = ret.replaceAll("([^ ])\\-([^ ])","$1 - $2");
    	
+    	// replace "=" with " = "
+    	// needs to be called twice for eg x=x=x=x
+     	ret = ret.replaceAll("([^ ])\\=([^ ])","$1 = $2");
+     	ret = ret.replaceAll("([^ ])\\=([^ ])","$1 = $2");
+   	
      	// remove + and 1 at the start
     	if (ret.startsWith("+")) ret = ret.substring(1);
     	if (ret.startsWith("1x")) ret = ret.substring(1);
