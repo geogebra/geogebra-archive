@@ -54,8 +54,9 @@ public class CellFormatToolBar extends JToolBar implements ActionListener{
 		this.formatHandler = table.getCellFormatHandler();
 		this.selectedCells = table.selectedCellRanges;
 
-		//	setFloatable(true);
+		setFloatable(false);
 
+		this.addSeparator();
 		leftJustifyBtn = new JButton(app.getImageIcon("format-justify-left.png"));
 		leftJustifyBtn.addActionListener(this);
 		add(leftJustifyBtn);
@@ -68,7 +69,8 @@ public class CellFormatToolBar extends JToolBar implements ActionListener{
 		rightJustifyBtn.addActionListener(this);
 		add(rightJustifyBtn);
 
-
+		this.addSeparator();
+		
 		btnBgColor = new ColorChooserButton();
 		btnBgColor.addActionListener(this);
 		add(btnBgColor);

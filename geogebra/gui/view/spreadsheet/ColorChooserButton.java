@@ -18,6 +18,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -65,13 +66,15 @@ class ColorChooserButton extends JButton{
 		return selectedColor;
 	}
 	
-	public void setButtonColor(){
+	public void handlePopupEvent(){
 		setIcon(drawColorFillIcon(selectedColor));
 		repaint();
 		this.fireActionPerformed(new ActionEvent(this,
 				ActionEvent.ACTION_PERFORMED,getActionCommand())); 
 	}
 
+	
+	
 	private ImageIcon drawColorFillIcon( Color selectedColor) {
 
 		// Create image with dummy size, then draw into it to get the correct size
@@ -133,7 +136,7 @@ class ColorChooserButton extends JButton{
 			swatchPanel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					selectedColor = swatchPanel.getSelectedColor(); 
-					setButtonColor();
+					handlePopupEvent();
 
 				}
 			});
@@ -173,6 +176,7 @@ class ColorChooserButton extends JButton{
 				setRequestFocusEnabled(false);
 				//setInheritsPopupMenu(true);
 				addMouseMotionListener(this);
+				
 
 			}
 
@@ -265,6 +269,7 @@ class ColorChooserButton extends JButton{
 			public void paintComponent(Graphics g) {
 				g.setColor(getBackground());
 				g.fillRect(0,0,getWidth(), getHeight());
+			
 
 				int x,y;
 
@@ -298,10 +303,19 @@ class ColorChooserButton extends JButton{
 				g.drawLine( x, y+swatchSize.height-1, x+swatchSize.width-1, y+swatchSize.height-1);
 				g.drawLine( x, y, x, y+swatchSize.height-1);
 				g.drawLine( x, y, x+swatchSize.width-1, y);
+				
+				
+				g.setColor(Color.BLACK);
+				g.drawLine(0,0, 0, getHeight());
+				g.drawLine(0,0, getWidth(), 0);
+				
+				g.drawLine(getWidth(),getHeight(), 0, getHeight());
+				g.drawLine(getWidth(),getHeight(), getWidth(), 0);
+				
 			}
 
 			
-			// our 5x6 color swatch
+			// our 4x6 color swatch
 			// taken from http://www.rapidtables.com/prog/rgb_color.htm	
 			private int[] initRawValues3() {
 
@@ -330,22 +344,22 @@ class ColorChooserButton extends JButton{
 						
 						// row 3
 						128,128,128,	//Gray / Grey
-						255,0,0,		//Red	
-						255,153,0,		//Light Orange
+						204,153,255,	//Lavender
+						255,0,0,		//Red
 						
 						255,215,0,		//Gold
 						0,0,255,		//Blue
-						51,153,102,		//Sea Green
+						153,204,0,		//Yellow Green
 						
 						
 						// row 4
 						0,0,0,			//Black			
 						153,51,102,		//Plum
-						153,204,0,		//Yellow Green
-					
-						204,153,255,	//Lavender
 						153,51,0,		//Brown
+						
+						255,153,0,		//Light Orange
 						0,128,128,		//Teal
+						51,153,102,		//Sea Green
 						
 						//=================================
 						
