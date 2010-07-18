@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet;
 import java.awt.Point;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
@@ -26,7 +27,7 @@ public class CellFormat {
 	MyTable table;
 	
 	// Array of format tables
-	private Hashtable[]  formatTableArray;
+	private HashMap[]  formatTableArray;
 	
 	// Format table indicies
 	public static final int FORMAT_ALIGN = 0;
@@ -55,20 +56,20 @@ public class CellFormat {
 		
 		this.table = table;
 
-		// Create instances of the format hash tables 
-		formatTableArray = new Hashtable[4];		
-		formatTableArray[FORMAT_ALIGN] = new Hashtable();
-		formatTableArray[FORMAT_BORDER] = new Hashtable();
-		formatTableArray[FORMAT_BGCOLOR] = new Hashtable();
-		formatTableArray[FORMAT_TRACING] = new Hashtable();
+		// Create instances of the format hash maps 
+		formatTableArray = new HashMap[4];		
+		formatTableArray[FORMAT_ALIGN] = new HashMap();
+		formatTableArray[FORMAT_BORDER] = new HashMap();
+		formatTableArray[FORMAT_BGCOLOR] = new HashMap();
+		formatTableArray[FORMAT_TRACING] = new HashMap();
 		
 	}
 	
 	
 	/**
-	 * Add a format value to a cell ranges.
+	 * Add a format value to a cell range.
 	 */
-	public void setFormat(CellRange cr, int formatKind, int formatValue){
+	public void setFormat(CellRange cr, int formatKind, Object formatValue){
 		ArrayList<CellRange> crList = new ArrayList<CellRange>();
 		crList.add(cr);
 		setFormat(crList, formatKind, formatValue);
@@ -78,11 +79,11 @@ public class CellFormat {
 	/**
 	 * Add a format value to a list of cell ranges.
 	 */
-	public void setFormat(ArrayList<CellRange> crList, int formatKind, int formatValue){
+	public void setFormat(ArrayList<CellRange> crList, int formatKind, Object value){
 		
-		Hashtable formatTable = formatTableArray[formatKind];
+		HashMap formatTable = formatTableArray[formatKind];
 		
-		Integer value = new Integer(formatValue);
+		//Integer value = new Integer(formatValue);
 		
 		Point testCell = new Point();
 		Point testRow = new Point();
@@ -98,7 +99,7 @@ public class CellFormat {
 					testCell.setLocation(col, cr.getMinRow());
 					testColumn.setLocation(col,-1);
 					formatTable.remove(testCell);
-					if (formatTable.contains(testColumn)) {
+					if (formatTable.containsKey(testColumn)) {
 						formatTable.put(testCell, value);
 					}
 				}
@@ -112,7 +113,7 @@ public class CellFormat {
 					testCell.setLocation(cr.getMinColumn(), row);
 					testRow.setLocation(-1,row);
 					formatTable.remove(testCell);
-					if (formatTable.contains(testRow)) {
+					if (formatTable.containsKey(testRow)) {
 						formatTable.put(testCell, value);
 					}
 				}
@@ -126,7 +127,7 @@ public class CellFormat {
 					formatTable.put(cellPoint, value);
 			}
 		}
-				
+		table.repaint();		
 		
 		//System.out.println(formatTable.toString());
 			
@@ -135,11 +136,42 @@ public class CellFormat {
 	
 	
 	
-	
 	/**
 	 * Returns the format object for a given cell and a given format.
 	 */
 	public Object getCellFormat(Point cellKey, int formatKind){
+		
+		Object formatObject = null;
+		
+		Point rowKey = new Point(-1,cellKey.y);
+		Point columnKey = new Point(cellKey.x,-1);
+		
+		// get the format table
+		HashMap formatTable = formatTableArray[formatKind];
+		
+		
+		if(formatTable.containsKey(cellKey)){
+			//System.out.println("found" + cellKey.toString());
+			formatObject = formatTable.get(cellKey);
+		}
+		
+		else if (formatTable.containsKey(rowKey)) {
+			formatObject = formatTable.get(rowKey);
+		}
+		else if (formatTable.containsKey(columnKey)) {
+			formatObject = formatTable.get(columnKey);
+		}
+				
+		return formatObject;
+	
+	}
+	
+	
+	
+	/*
+	
+
+	public Object getCellFormatOLD(Point cellKey, int formatKind){
 		
 		Object value = null;
 		
@@ -147,7 +179,7 @@ public class CellFormat {
 		Point columnKey = new Point(cellKey.x,-1);
 		
 		// get the format table
-		Hashtable formatTable = formatTableArray[formatKind];
+		HashMap formatTable = formatTableArray[formatKind];
 		
 		
 		if(formatTable.containsKey(cellKey)){
@@ -171,9 +203,16 @@ public class CellFormat {
 	
 	}
 	
-	/**
-	 * Return the format object associated with a value for a given format.
-	 */
+	
+	*/
+	
+	
+	
+	
+/*	
+	//
+	// Return the format object associated with a value for a given format.
+	 //
 	private Object getFormatObject(Integer value, int formatKind){
 		
 		switch (formatKind){
@@ -189,5 +228,7 @@ public class CellFormat {
 		
 		return null;
 	}
+	
+	*/
 	
 }

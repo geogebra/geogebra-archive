@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.euclidian.Drawable;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
@@ -62,6 +63,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private JButton button;
 	private JComboBox comboBox;
 	private DefaultComboBoxModel cbModel;
+	private Color bgColor;
 	
 	//END G.Sturr
 	
@@ -95,7 +97,14 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		//this.setVerticalAlignment(JLabel.CENTER);
 		cellPoint.setLocation(column, row);
 		setIcon(emptyIcon);
-		setBackground(table.getBackground());
+		
+		
+		bgColor = (Color) formatHandler.getCellFormat(cellPoint, 
+				CellFormat.FORMAT_BGCOLOR);	
+		if(bgColor == null) 
+			bgColor = table.getBackground();
+		setBackground(bgColor);
+		
 		
 		if (value == null) {		
 			setText("");
@@ -176,7 +185,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		}		
 		*/
 		
-		Color bgColor = table.getBackground();
+		
 		if (geo.doHighlighting()) {
 			bgColor = MyTable.SELECTED_BACKGROUND_COLOR;
 		}
@@ -231,27 +240,40 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		// set LaTeX icons
 		// use LaTeX for any geo other than geoNumeric or non-latex geoText
 
-		boolean isSerif = false;
-		if (geo.isDefined() && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
+		if(geo.isGeoImage()){		
+			latexIcon.setImage(((GeoImage) geo).getImage());
+			setIcon(latexIcon);
+			setText("");
+			
+		}else{
 
-			if ( !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
-					&& !geo.isGeoNumeric()) {
-				try {
-					latexStr = geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
-					if(geo.isGeoText())
-						isSerif = ((GeoText)geo).isSerifFont();
-					//System.out.println(latexStr);
-					drawLatexImageIcon(latexIcon, latexStr, getFont(), isSerif, geo
-							.getAlgebraColor(), bgColor);
-					setIcon(latexIcon);
-					setText("");
+			boolean isSerif = false;
+			if (geo.isDefined() && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
-				} catch (Exception e) {
-					Application.debug("error in drawing latex" + e);
+				if ( !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
+						&& !geo.isGeoNumeric()) {
+					try {
+						latexStr = geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
+						if(geo.isGeoText())
+							isSerif = ((GeoText)geo).isSerifFont();
+						//System.out.println(latexStr);
+						drawLatexImageIcon(latexIcon, latexStr, getFont(), isSerif, geo
+								.getAlgebraColor(), bgColor);
+						setIcon(latexIcon);
+						setText("");
+
+					} catch (Exception e) {
+						Application.debug("error in drawing latex" + e);
+					}
 				}
 			}
+
 		}
 		//END GSTURR
+		
+		
+		
+		
 		
 		return this;
 	}
