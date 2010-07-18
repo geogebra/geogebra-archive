@@ -84,23 +84,22 @@ public class CellFormatToolBar extends JToolBar implements ActionListener{
 
 		Object source = e.getSource();
 		if (source == leftJustifyBtn) {
-			formatHandler.setFormat(selectedCells,
+			formatHandler.setFormat(selectedCells,table.getSelectionType(),
 					CellFormat.FORMAT_ALIGN, CellFormat.ALIGN_LEFT);
 		}
 
 		else if (source == centerJustifyBtn) {
-			formatHandler.setFormat(selectedCells,
+			formatHandler.setFormat(selectedCells,table.getSelectionType(),
 					CellFormat.FORMAT_ALIGN, CellFormat.ALIGN_CENTER);
 		}
 
 		else if (source == rightJustifyBtn) {
-			formatHandler.setFormat(selectedCells,
+			formatHandler.setFormat(selectedCells,table.getSelectionType(),
 					CellFormat.FORMAT_ALIGN, CellFormat.ALIGN_RIGHT);
 		}
 
 		else if (source == btnBgColor) {
-			System.out.println("btn action");
-			formatHandler.setFormat(selectedCells,
+			formatHandler.setFormat(selectedCells,table.getSelectionType(),
 					CellFormat.FORMAT_BGCOLOR, btnBgColor.getSelectedColor());
 
 		}

@@ -83,24 +83,27 @@ class ColorChooserButton extends JButton{
 
 		// right hand side: a grid filled with our selected color
 		// (a click here just sends back the selected color): 
-		int s = 6;
-		int d = 2;
+		int s = 7;
+		int d = 1;
 		g2.setColor(selectedColor);
 		g2.fillRect(d, d, s, s);
 		g2.setColor(Color.BLACK);
 		g2.drawRect(d, d, s, s);
 
+		
 		g2.setColor(selectedColor);
 		g2.fillRect(d+s, d, s, s);
 		g2.setColor(Color.BLACK);
 		g2.drawRect(d+s, d, s, s);
 
-		g2.setColor(selectedColor);
+		//g2.setColor(selectedColor);
+		g2.setColor(this.getBackground());
 		g2.fillRect(d, d+s, s, s);
 		g2.setColor(Color.BLACK);
 		g2.drawRect(d, d+s, s, s);
 
-		g2.setColor(selectedColor);
+		//g2.setColor(selectedColor);
+		g2.setColor(this.getBackground());
 		g2.fillRect(d+s, d+s, s, s);
 		g2.setColor(Color.BLACK);
 		g2.drawRect(d+s, d+s, s, s);
@@ -132,25 +135,23 @@ class ColorChooserButton extends JButton{
 			super();
 
 			swatchPanel = new SwatchPanel();
-
 			swatchPanel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					selectedColor = swatchPanel.getSelectedColor(); 
 					handlePopupEvent();
-
 				}
 			});
 
-
-
 			this.add(swatchPanel);
-
 		}
 
 		public Color getSelectedColor(){
 			return swatchPanel.getSelectedColor();
 		}
 
+		
+		
+		
 		//=======================================================
 		//              SwatchPanel Class
 		//=======================================================
@@ -177,7 +178,6 @@ class ColorChooserButton extends JButton{
 				//setInheritsPopupMenu(true);
 				addMouseMotionListener(this);
 				
-
 			}
 
 			protected void initValues() {
@@ -243,11 +243,9 @@ class ColorChooserButton extends JButton{
 
 
 
-
 			//=======================================================
 			//              Mouse Listeners
-			//=======================================================
-
+			
 			public void mouseDragged(MouseEvent e) {	
 			}
 
@@ -264,15 +262,14 @@ class ColorChooserButton extends JButton{
 
 			//=======================================================
 			//              Paint
-			//=======================================================
-
+	
 			public void paintComponent(Graphics g) {
 				g.setColor(getBackground());
 				g.fillRect(0,0,getWidth(), getHeight());
 			
-
 				int x,y;
 
+				// draw swatches
 				for (int row = 0; row < numSwatches.height; row++) {
 					y = row * (swatchSize.height + gap.height);
 					for (int column = 0; column < numSwatches.width; column++) {
@@ -305,6 +302,7 @@ class ColorChooserButton extends JButton{
 				g.drawLine( x, y, x+swatchSize.width-1, y);
 				
 				
+				// panel border
 				g.setColor(Color.BLACK);
 				g.drawLine(0,0, 0, getHeight());
 				g.drawLine(0,0, getWidth(), 0);

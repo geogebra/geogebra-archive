@@ -69,17 +69,18 @@ public class CellFormat {
 	/**
 	 * Add a format value to a cell range.
 	 */
-	public void setFormat(CellRange cr, int formatKind, Object formatValue){
+	public void setFormat(CellRange cr, int selectionType, int formatKind, Object formatValue){
 		ArrayList<CellRange> crList = new ArrayList<CellRange>();
 		crList.add(cr);
-		setFormat(crList, formatKind, formatValue);
+		setFormat(crList, selectionType, formatKind, formatValue);
 	}
 		
 	
 	/**
 	 * Add a format value to a list of cell ranges.
 	 */
-	public void setFormat(ArrayList<CellRange> crList, int formatKind, Object value){
+	public void setFormat(ArrayList<CellRange> crList, int selectionType, int formatKind, 
+			Object value){
 		
 		HashMap formatTable = formatTableArray[formatKind];
 		
@@ -92,33 +93,45 @@ public class CellFormat {
 		for (CellRange cr : crList) {
 			//cr.debug();
 			if (cr.isRow()) {
-				//System.out.println("row");
-				formatTable.put(new Point(-1,cr.getMinRow()), value);
 				
-				for (int col = 0; col < table.getColumnCount(); col++) {
-					testCell.setLocation(col, cr.getMinRow());
-					testColumn.setLocation(col,-1);
-					formatTable.remove(testCell);
-					if (formatTable.containsKey(testColumn)) {
-						formatTable.put(testCell, value);
+				// iterate through each row in the selection
+				for(int r = cr.getMinRow(); r <= cr.getMaxRow(); ++r){
+					
+					// format the row
+					formatTable.put(new Point(-1,r), value);
+					
+					// handle cells in the row with prior formatting 
+					for (int col = 0; col < table.getColumnCount(); col++) {
+						testCell.setLocation(col, r);
+						testColumn.setLocation(col,-1);
+						formatTable.remove(testCell);
+						if (formatTable.containsKey(testColumn)) {
+							formatTable.put(testCell, value);
+						}
 					}
 				}
 			}
 
 			else if (cr.isColumn()) {
-				//System.out.println("column");
-				formatTable.put(new Point(cr.getMinColumn(),-1), value);
-				
-				for (int row = 0; row < table.getRowCount(); row++) {
-					testCell.setLocation(cr.getMinColumn(), row);
-					testRow.setLocation(-1,row);
-					formatTable.remove(testCell);
-					if (formatTable.containsKey(testRow)) {
-						formatTable.put(testCell, value);
+				// iterate through each column in the selection
+				for(int c = cr.getMinColumn(); c <= cr.getMaxColumn(); ++c){
+					
+					// format the column
+					formatTable.put(new Point(c,-1), value);
+					
+					// handle cells in the column with prior formatting 
+					for (int row = 0; row < table.getRowCount(); row++) {
+						
+						testCell.setLocation(c, row);
+						testRow.setLocation(-1,row);
+						formatTable.remove(testCell);
+						if (formatTable.containsKey(testRow)) {
+						//	System.out.println(row);
+							formatTable.put(testCell, value);
+						}
 					}
 				}
-				
-				
+
 			}
 
 			else {
@@ -158,6 +171,7 @@ public class CellFormat {
 		else if (formatTable.containsKey(rowKey)) {
 			formatObject = formatTable.get(rowKey);
 		}
+		
 		else if (formatTable.containsKey(columnKey)) {
 			formatObject = formatTable.get(columnKey);
 		}
