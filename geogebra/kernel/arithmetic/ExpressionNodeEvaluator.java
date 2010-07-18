@@ -516,8 +516,37 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             }
         
         case MULTIPLY:            
-            // number * ...
-            if (lt.isNumberValue()) {
+            // text concatenation (left)
+            if (lt.isTextValue()) { 
+                msb = ((TextValue)lt).getText();
+                if (holdsLaTeXtext) {
+                	msb.append(rt.toLaTeXString(false));  
+                } else {
+	                if (rt.isGeoElement()) {	                	
+	                    GeoElement geo = (GeoElement) rt;                   
+	                    msb.append(geo.toDefinedValueString());	                    
+	                } else {      
+	            		msb.append(rt.toValueString());
+	                }         
+                }
+                return msb;
+            } // text concatenation (right)
+            else if (rt.isTextValue()) { 
+                msb = ((TextValue)rt).getText();
+                if (holdsLaTeXtext) {
+            		msb.insert(0, lt.toLaTeXString(false));                		
+            	} else {
+	                if (lt.isGeoElement()) {
+	                    GeoElement geo = (GeoElement) lt;                   
+	                    msb.insert(0, geo.toDefinedValueString());  
+	                } else {                	
+	                	msb.insert(0, lt.toValueString());                		                	                                      
+	                }   
+            	}                
+                return msb;
+            } else
+                // number * ...
+           if (lt.isNumberValue()) {
                 // number * number
                 if (rt.isNumberValue()) {
                     num = ((NumberValue)lt).getNumber();                               
@@ -592,6 +621,34 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 poly.multiply((Polynomial)rt);                
                 return poly;
             }   
+            else if (lt.isTextValue()) { 
+                msb = ((TextValue)lt).getText();
+                if (holdsLaTeXtext) {
+                	msb.append(rt.toLaTeXString(false));  
+                } else {
+	                if (rt.isGeoElement()) {	                	
+	                    GeoElement geo = (GeoElement) rt;                   
+	                    msb.append(geo.toDefinedValueString());	                    
+	                } else {      
+	            		msb.append(rt.toValueString());
+	                }         
+                }
+                return msb;
+            } // text concatenation (right)
+            else if (rt.isTextValue()) { 
+                msb = ((TextValue)rt).getText();
+                if (holdsLaTeXtext) {
+            		msb.insert(0, lt.toLaTeXString(false));                		
+            	} else {
+	                if (lt.isGeoElement()) {
+	                    GeoElement geo = (GeoElement) lt;                   
+	                    msb.insert(0, geo.toDefinedValueString());  
+	                } else {                	
+	                	msb.insert(0, lt.toValueString());                		                	                                      
+	                }   
+            	}                
+                return msb;
+            } 
             else {    
                 String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                 throw new MyError(app, str);    
