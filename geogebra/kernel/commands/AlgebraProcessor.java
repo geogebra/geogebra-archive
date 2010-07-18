@@ -192,12 +192,16 @@ public class AlgebraProcessor {
 			ve = parser.parseGeoGebraExpression(cmd);
 		} catch (ParseException e) {
 			//e.printStackTrace();
+			if (allowErrorDialog) app.showError(app.getError("InvalidInput") + ":\n" + cmd);
+
 			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
 		} catch (MyError e) {
 			//e.printStackTrace();
+			if (allowErrorDialog) app.showError(e.getLocalizedMessage());
 			throw new Exception(e.getLocalizedMessage());
 		} catch (Error e) {
 			//e.printStackTrace();
+			if (allowErrorDialog) app.showError(app.getError("InvalidInput") + ":\n" + cmd);
 			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
 		}
 
