@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 
 /**
@@ -102,6 +102,9 @@ public class AlgoSimplifyText extends AlgoElement {
      	// remove + and 1 at the start
     	if (ret.startsWith("+")) ret = ret.substring(1);
     	if (ret.startsWith("1x")) ret = ret.substring(1);
+    	
+    	// replace "-" with unicode minus
+    	ret = ret.replaceAll(" -", " "+Unicode.minus);
     	
     	text.setTextString(ret);
     	

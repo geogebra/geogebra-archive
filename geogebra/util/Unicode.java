@@ -2,6 +2,7 @@ package geogebra.util;
 
 public class Unicode {
 
+	final public static char minus = '\u2212';
 	final public static char LESS_EQUAL = '\u2264';
 	final public static char GREATER_EQUAL = '\u2265';
 	final public static char Infinity = '\u221e';
