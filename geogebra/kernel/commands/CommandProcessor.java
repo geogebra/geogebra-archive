@@ -4759,7 +4759,11 @@ class CmdOsculatingCircle extends CommandProcessor {
 				 GeoElement[] ret =
 				 { kernel.Simplify(c.getLabel(), (GeoFunction) arg[0] )};
 				 return ret;                
-			 }                        
+			 } else if ((arg[0].isGeoText())) {
+				 GeoElement[] ret =
+				 { kernel.Simplify(c.getLabel(), (GeoText) arg[0] )};
+				 return ret;                
+			 }                         
 			 else
 				 throw argErr(app, c.getName(), arg[0]);         
 

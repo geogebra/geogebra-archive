@@ -5552,6 +5552,15 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
+	/**
+	 * Simplify text, eg "+-x" to "-x"
+	 * @author Michael Borcherds 
+	 */
+	final public GeoElement Simplify(String label, GeoText text) {		
+		AlgoSimplifyText algo = new AlgoSimplifyText(cons, label, text);
+		return algo.getGeoText();		
+	}
+	
 	final public GeoElement DynamicCoordinates(String label, GeoPoint geoPoint,
 			NumberValue num1, NumberValue num2) {
 		AlgoDynamicCoordinates algo = new AlgoDynamicCoordinates(cons, label, geoPoint, num1, num2);
