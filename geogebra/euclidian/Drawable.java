@@ -56,7 +56,7 @@ import org.scilab.forge.jlatexmath.dynamic.DynamicAtom;
 public abstract class Drawable extends DrawableND {
 	
 	// use JLaTeXMath or HotEqn
-	final private static boolean useJLaTeXMath = true;
+	//final private static boolean useJLaTeXMath = true;
 	static TeXFormula initJLaTeXMath; 
 	
 	BasicStroke objStroke = EuclidianView.getDefaultStroke();
@@ -439,10 +439,12 @@ public abstract class Drawable extends DrawableND {
 
 	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
 	
-		if (useJLaTeXMath) return drawEquationJLaTeXMath(app, g2, x, y, text, font, serif, fgColor, bgColor);
-		else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
+		//if (useJLaTeXMath) 
+			return drawEquationJLaTeXMath(app, g2, x, y, text, font, serif, fgColor, bgColor);
+		//else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
 	}
 	
+	/*
 	private static geogebra.gui.hoteqn.sHotEqn eqn;
 	
 	final  public static Dimension drawEquationHotEqn(Application app, Graphics2D g2, int x, int y, String text, Font font, Color fgColor, Color bgColor)
@@ -486,7 +488,7 @@ public abstract class Drawable extends DrawableND {
 			
 			//Application.debug(size);
 			return dim;
-	}
+	}//*/
 	
 	
 	private static HashMap equations;
