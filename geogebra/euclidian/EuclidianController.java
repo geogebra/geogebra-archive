@@ -1424,6 +1424,7 @@ Rectangle rect = view.getSelectionRectangle();
 			// important for electronic whiteboards
 			if (movedGeoBoolean.isCheckboxFixed()) {
 				movedGeoBoolean.setValue(!movedGeoBoolean.getBoolean());
+				app.removeSelectedGeo(movedGeoBoolean); // make sure doesn't get selected
 				movedGeoBoolean.updateCascade();
 
 			} 
@@ -2127,6 +2128,7 @@ Rectangle rect = view.getSelectionRectangle();
 					GeoBoolean bool = (GeoBoolean)(hits.get(0));
 					if (!bool.isCheckboxFixed()) { // otherwise changed on mouse down
 						bool.setValue(!bool.getBoolean());
+						app.removeSelectedGeo(bool); // make sure doesn't get selected
 						bool.updateCascade();
 					}
 				} else if (hit != null) {
