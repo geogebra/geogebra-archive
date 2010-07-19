@@ -396,7 +396,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		subMenu.setIcon(app.getEmptyIcon());
 		add(subMenu);
 		
-		cbItem = new JCheckBoxMenuItem(app.getPlain("ToolBar"));
+		cbItem = new JCheckBoxMenuItem(app.getMenu("Toolbar"));
 		//cbItem.setIcon(app.getEmptyIcon());
 		cbItem.setSelected(view.getShowToolBar());
 		cbItem.addActionListener(new ActionListener() {
@@ -406,7 +406,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		});	 
 		subMenu.add(cbItem);
 
-		cbItem = new JCheckBoxMenuItem(app.getPlain("Browser"));
+		cbItem = new JCheckBoxMenuItem(app.getMenu("Browser"));
 		//cbItem.setIcon(app.getEmptyIcon());
 		cbItem.setSelected(view.getShowBrowserPanel());
 		cbItem.addActionListener(new ActionListener() {
