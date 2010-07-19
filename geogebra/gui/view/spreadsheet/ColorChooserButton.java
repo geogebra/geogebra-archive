@@ -181,7 +181,7 @@ class ColorChooserButton extends JButton{
 			}
 
 			protected void initValues() {
-				swatchSize = new Dimension(16,16);
+				swatchSize = new Dimension(20,20);
 				//swatchSize = UIManager.getDimension("ColorChooser.swatchesSwatchSize");
 				numSwatches = new Dimension( 6, 4 );
 				gap = new Dimension(1, 1);
