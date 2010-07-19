@@ -266,7 +266,7 @@ implements ActionListener, View   {
 		}
 
 		if(!isIniting){
-			dataPanel.loadDataTable(this.dataListAll);
+			dataPanel.updateDataTable(this.dataListAll);
 		}
 	
 	}
@@ -419,6 +419,7 @@ implements ActionListener, View   {
 	}
 
 	
+
 	private void setShowDataPanel(boolean showDataPanel){
 		
 		this.showDataPanel = showDataPanel;
@@ -440,6 +441,12 @@ implements ActionListener, View   {
 	}
 
 
+
+	public int getMode(){
+		return mode;
+	}
+
+	
 	//=================================================
 	//      Event Handlers and Updates
 	//=================================================

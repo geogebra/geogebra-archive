@@ -220,21 +220,28 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 
 	}
 
-
-	public void loadDataTable(GeoList dataAll){
+	
+	
+	/** Updates the data table. 
+	 * Called on data set changes. */
+	public void updateDataTable(GeoList dataAll){
 		
-		//this.dataListAll = dataAll;
+		
+		// load the data model
 		populateDataTable(dataAll);
 		
+		// prepare boolean selection list for the checkboxes
 		selectionList = new Boolean[dataAll.size()];
 		for(int i=0; i<dataAll.size(); ++i){
 			selectionList[i] = true;
 		}	
 		
+		// create a new header
 		rowHeader = new MyRowHeader(this,dataTable);
 		scrollPane.setRowHeaderView(rowHeader);
 		this.updateFonts(this.getFont());
 		
+		// repaint
 		dataTable.repaint();
 		rowHeader.repaint();
 		

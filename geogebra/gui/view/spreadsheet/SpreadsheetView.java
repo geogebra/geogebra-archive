@@ -114,6 +114,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	private StatDialog oneVarStatDialog;
+	private StatDialog twoVarStatDialog;
 	private ProbabilityCalculator probCalculator;
 	
 	
@@ -448,10 +449,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		traceManager.loadTraceGeoCollection();
 		
 		table.oneClickEditMap.clear();
-		
-		if(isOneVarStatDialogVisible()){
+
+
+		if(oneVarStatDialog != null)
 			oneVarStatDialog.setVisible(false);
-		}
+		if(twoVarStatDialog != null)
+			twoVarStatDialog.setVisible(false);
+
 		
 	}	
 	
@@ -507,25 +511,38 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	public void showStatDialog(int mode){
-		
-		if(oneVarStatDialog == null){
-			oneVarStatDialog = new StatDialog(view, app, mode);
-		}else{
-			oneVarStatDialog.updateDialog();
+		switch(mode){
+		case StatDialog.MODE_ONEVAR:
+			if(oneVarStatDialog == null){
+				oneVarStatDialog = new StatDialog(view, app, mode);
+			}else{
+				oneVarStatDialog.updateDialog();
+			}
+			oneVarStatDialog.setVisible(true);	
+			break;
+
+		case StatDialog.MODE_TWOVAR:
+			if(twoVarStatDialog == null){
+				twoVarStatDialog = new StatDialog(view, app, mode);
+			}else{
+				twoVarStatDialog.updateDialog();
+			}
+			twoVarStatDialog.setVisible(true);	
+			break;
 		}
-		
-		oneVarStatDialog.setVisible(true);			
-		
+
 	}
 	
 
-	public boolean isOneVarStatDialogVisible(){
-		return (oneVarStatDialog != null && oneVarStatDialog.isVisible());
+	public boolean isStatDialogVisible(){
+		boolean oneVarVisible = oneVarStatDialog != null && oneVarStatDialog.isVisible();
+		boolean twoVarVisible = oneVarStatDialog != null && oneVarStatDialog.isVisible();
+		return oneVarVisible || twoVarVisible;
 	}
 	
 
 	public void notifySpreadsheetSelectionChange(){
-		if(isOneVarStatDialogVisible()){
+		if(isStatDialogVisible()){
 			oneVarStatDialog.handleSpreadsheetSelectionChange();
 		}
 	}
