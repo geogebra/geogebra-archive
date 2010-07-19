@@ -109,12 +109,12 @@ abstract public class ExportFrame extends JFrame{
 		jcbAsyCompact = new JCheckBox(app.getPlain("Concise code"));
 		jcbAsyCse5    = new JCheckBox(app.getPlain("Concise using cse5"));
 		jcbDotColors  = new JCheckBox(app.getPlain("Keep dot colors"));
-	    jcbShowAxes.setSelected(true);
-	    jcbAsyCompact.setSelected(false);
-	    jcbAsyCse5.setSelected(false);
-	    jcbAsyCse5.setEnabled(false);
-	    jcbDotColors.setSelected(false);
-	    jcbAsyCompact.addActionListener(new ActionListener(){
+		jcbShowAxes.setSelected(true);
+		jcbAsyCompact.setSelected(false);
+		jcbAsyCse5.setSelected(false);
+		jcbAsyCse5.setEnabled(false);
+		jcbDotColors.setSelected(false);
+		jcbAsyCompact.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				if(jcbAsyCompact.isSelected())
 					jcbAsyCse5.setEnabled(true);
@@ -124,8 +124,8 @@ abstract public class ExportFrame extends JFrame{
 				}
 			}
 		});
-	    comboFill = new JComboBox(comboFillText);
-	    labelFill = new JLabel(app.getPlain("Fill type:"));
+		comboFill = new JComboBox(comboFillText);
+		labelFill = new JLabel(app.getPlain("Fill type:"));
 		 // end changes
 		comboFontSize=new JComboBox(msg);
 		jcbPointSymbol.setSelected(true);
@@ -239,21 +239,21 @@ abstract public class ExportFrame extends JFrame{
 		return comboFormat.getSelectedIndex();
 	}
 	 // Andy Zhu - for use in Asymptote frame
-    protected boolean getShowAxes(){
-    	return jcbShowAxes.isSelected();
-    }
-    protected boolean getAsyCompact(){
-    	return jcbAsyCompact.isSelected();
-    }
-    protected boolean getAsyCompactCse5(){
-    	return jcbAsyCse5.isSelected();
-    }
-    protected boolean getKeepDotColors(){
-    	return jcbDotColors.isSelected();
-    }
-    protected int getFillType(){
-    	return comboFill.getSelectedIndex();
-    }
+	protected boolean getShowAxes(){
+		return jcbShowAxes.isSelected();
+	}
+	protected boolean getAsyCompact(){
+		return jcbAsyCompact.isSelected();
+	}
+	protected boolean getAsyCompactCse5(){
+		return jcbAsyCse5.isSelected();
+	}
+	protected boolean getKeepDotColors(){
+		return jcbDotColors.isSelected();
+	}
+	protected int getFillType(){
+		return comboFill.getSelectedIndex();
+	}
 	 // end changes
 
 	protected abstract boolean isLaTeX();
