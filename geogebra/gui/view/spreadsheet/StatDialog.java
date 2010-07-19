@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -62,16 +63,22 @@ implements ActionListener, View   {
 	
 	// GUI objects
 	private JButton btnClose, btnOptions, btnExport, btnDisplay;
-	private JCheckBox cbShowData;
+	private JCheckBox cbShowData, cbShowCombo2;
 	private StatComboPanel comboStatPanel, comboStatPanel2;;
 	private StatDataPanel dataPanel;
+	private StatTablePanel statPanel;
+	private JSplitPane statDataPanel; 
 	private JSplitPane displayPanel;
+	
+	JSplitPane comboPanelSplit;
 	private JPanel cardPanel;
 	
 	
 	// flags
 	private boolean showDataPanel = false;
+	private boolean showComboPanel2 = false;
 	private boolean isIniting;
+	private Dimension defaultDialogDimension;
 	
 	
 	// colors
@@ -96,6 +103,8 @@ implements ActionListener, View   {
 		this.spreadsheetTable = spView.getTable();
 		statDialog = this;
 		this.mode = mode;
+		
+		defaultDialogDimension = new Dimension(600,500);
 	
 		//	selectedColumns = spreadsheetTable.getSelectedColumnsList();
 		
@@ -109,12 +118,12 @@ implements ActionListener, View   {
 
 		case MODE_ONEVAR:
 			comboStatPanel = new StatComboPanel(app, StatComboPanel.PLOT_HISTOGRAM, dataListSelected, mode);
-			comboStatPanel2 = new StatComboPanel(app, StatComboPanel.PLOT_STATISTICS_ONEVAR, dataListSelected, mode);
+			comboStatPanel2 = new StatComboPanel(app, StatComboPanel.PLOT_BOXPLOT, dataListSelected, mode);
 			break;
 
 		case MODE_TWOVAR:
 			comboStatPanel = new StatComboPanel(app, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode);
-			comboStatPanel2 = new StatComboPanel(app, StatComboPanel.PLOT_STATISTICS_TWOVAR, dataListSelected, mode);
+			comboStatPanel2 = new StatComboPanel(app, StatComboPanel.PLOT_RESIDUAL, dataListSelected, mode);
 			break;		
 		}
 
@@ -123,6 +132,11 @@ implements ActionListener, View   {
 		dataPanel = new StatDataPanel(app, this, dataListAll, mode);
 		dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
+		
+		// create a table panel for the statistics
+		statPanel = new StatTablePanel(app, dataListSelected, mode);
+		statPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		//statPanel.updateData(dataListSelected);
 
 		// init the GUI
 		initGUI();
@@ -271,6 +285,8 @@ implements ActionListener, View   {
 	
 	}
 
+	
+	
 	/**
 	 * Add/remove elements from the selected data list. 
 	 * Called by the data panel on checkbox click.
@@ -362,8 +378,16 @@ implements ActionListener, View   {
 			cbShowData = new JCheckBox(app.getPlain("Show Data"));
 			cbShowData.setSelected(showDataPanel);
 			cbShowData.addActionListener(this);
+			
+			cbShowCombo2 = new JCheckBox(app.getPlain("Show Plot2"));
+			cbShowCombo2.setSelected(showComboPanel2);
+			cbShowCombo2.addActionListener(this);
+			
+			
 			JPanel leftButtonPanel = new JPanel(new FlowLayout());
 			leftButtonPanel.add(cbShowData);
+			leftButtonPanel.add(cbShowCombo2);
+			
 			
 			JPanel buttonPanel = new JPanel(new BorderLayout());
 			buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
@@ -372,14 +396,33 @@ implements ActionListener, View   {
 			// END button panel
 			
 			
-			//===========================================
-			// card panels: options, export and display
 			
-			final JSplitPane comboPanelSplit = new JSplitPane(
+
+			//===========================================
+			// statData panel
+			
+			
+			statPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+			dataPanel.setBorder(statPanel.getBorder());
+			
+			statDataPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, statPanel, dataPanel);
+			
+			//statDataPanel.setLayout(new BoxLayout(statDataPanel, BoxLayout.Y_AXIS));
+			//statDataPanel.add(new JLabel(""), BorderLayout.NORTH);
+			//statDataPanel.add(statPanel, BorderLayout.NORTH);
+			//statDataPanel.add(dataPanel, BorderLayout.SOUTH);
+			
+			
+			//===========================================
+			// display panels: options, export and display  (options/export not used yet)
+			
+			
+				
+			comboPanelSplit = new JSplitPane(
 					JSplitPane.VERTICAL_SPLIT, comboStatPanel, comboStatPanel2);
-			// this.setPreferredSize(new Dimension(400,300));
 			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					dataPanel, comboPanelSplit);
+					statDataPanel, comboPanelSplit);
+			displayPanel.setDividerLocation(150);
 			
 			JPanel exportPanel = new JPanel();
 			exportPanel.add(new JLabel("export panel"));
@@ -394,6 +437,7 @@ implements ActionListener, View   {
 			cardPanel.add("exportPanel", exportPanel);
 			
 			
+			
 			//============================================
 			// main panel
 			
@@ -403,12 +447,13 @@ implements ActionListener, View   {
 			((CardLayout)cardPanel.getLayout()).show(cardPanel, "displayPanel");
 			
 			
-			this.getContentPane().add(mainPanel);
-			this.getContentPane().setPreferredSize(new Dimension(450,500));
-			//setResizable(false);
+			getContentPane().add(mainPanel);
+			getContentPane().setPreferredSize(defaultDialogDimension);
+			setResizable(true);
 			pack();
 			
 			comboPanelSplit.setDividerLocation(0.5);
+			setShowComboPanel2(showComboPanel2);
 			setShowDataPanel(showDataPanel);
 			
 			setLocationRelativeTo(app.getFrame());
@@ -420,26 +465,50 @@ implements ActionListener, View   {
 
 	
 
+	private void setShowComboPanel2(boolean showComboPanel2){
+		
+		this.showComboPanel2 = showComboPanel2;
+		
+		if (showComboPanel2) {
+			if(comboPanelSplit == null){
+				Application.debug("splitpane null");
+			}
+			comboPanelSplit.setBottomComponent(comboStatPanel2);
+			comboPanelSplit.setDividerLocation(200);
+			comboPanelSplit.setDividerSize(4);
+		} else {
+			comboPanelSplit.setBottomComponent(null);
+			comboPanelSplit.setLastDividerLocation(comboPanelSplit.getDividerLocation());
+			comboPanelSplit.setDividerLocation(0);
+			comboPanelSplit.setDividerSize(0);
+		}
+
+	}
+
+	
 	private void setShowDataPanel(boolean showDataPanel){
 		
 		this.showDataPanel = showDataPanel;
 		
 		if (showDataPanel) {
-			if(displayPanel == null){
+			if(statDataPanel == null){
 				Application.debug("splitpane null");
 			}
-			displayPanel.setLeftComponent(dataPanel);
-			displayPanel.setDividerLocation(200);
-			displayPanel.setDividerSize(4);
+			statDataPanel.setBottomComponent(dataPanel);
+			statDataPanel.setDividerLocation(200);
+			statDataPanel.setDividerSize(4);
 		} else {
-			displayPanel.setLeftComponent(null);
-			displayPanel.setLastDividerLocation(displayPanel.getDividerLocation());
-			displayPanel.setDividerLocation(0);
-			displayPanel.setDividerSize(0);
+			statDataPanel.setBottomComponent(null);
+			statDataPanel.setLastDividerLocation(statDataPanel.getDividerLocation());
+			statDataPanel.setDividerLocation(0);
+			statDataPanel.setDividerSize(0);
 		}
 
 	}
-
+	
+	
+	
+	
 
 
 	public int getMode(){
@@ -454,9 +523,16 @@ implements ActionListener, View   {
 	public void actionPerformed(ActionEvent e) {
 
 		Object source = e.getSource();
+		
 		if(source == cbShowData){
 			setShowDataPanel(cbShowData.isSelected());
 		}
+		
+		if(source == cbShowCombo2){
+			setShowComboPanel2(cbShowCombo2.isSelected());
+		}
+		
+		
 		if(source == btnClose){
 			setVisible(false);
 		}
@@ -564,6 +640,7 @@ implements ActionListener, View   {
 		comboStatPanel.updateStatTableFonts(font);
 		comboStatPanel2.updateStatTableFonts(font);
 		dataPanel.updateFonts(font);
+		statPanel.updateFonts(font);
 	}
 
 

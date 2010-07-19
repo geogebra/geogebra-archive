@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -30,6 +31,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JToggleButton;
 import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
@@ -136,8 +138,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		
 		
 		// create row header
-		rowHeader = new MyRowHeader(this,dataTable);	
-		
+		rowHeader = new MyRowHeader(this,dataTable);		
 		scrollPane.setRowHeaderView(rowHeader);
 		
 		
@@ -146,11 +147,14 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		ImageIcon iconUnChecked = cbIcon.createCheckBoxImageIcon(false, false);
 		ImageIcon iconChecked = cbIcon.createCheckBoxImageIcon(true, false);
 		
-		btnEnableAll = new JButton(iconUnChecked);
+		btnEnableAll = new JButton();
+		btnEnableAll.setIcon(iconUnChecked);
+		btnEnableAll.setDisabledIcon(iconChecked);
+		btnEnableAll.setEnabled(false);
 		btnEnableAll.setBorderPainted(false);
 		btnEnableAll.setBackground(MyTable.BACKGROUND_COLOR_HEADER);	
 		btnEnableAll.setContentAreaFilled(false);
-		btnEnableAll.setHorizontalAlignment(SwingConstants.RIGHT);
+		btnEnableAll.setHorizontalAlignment(SwingConstants.CENTER);
 		btnEnableAll.addActionListener(this);
 		
 		Corner upperLeftCorner = new Corner(); 
@@ -168,11 +172,36 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner());
 			
 		
+		
+		// hide the table header
+		//dataTable.setTableHeader(null);
+		//scrollPane.setColumnHeaderView(null);
+		
+		
 		// finally, load up our JPanel
 		this.setLayout(new BorderLayout());
+		
+		//JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JLabel header = new JLabel(app.getPlain("Data"));
+		//header.add(btnEnableAll);
+		//header.add(lblData);
+		
+		
+		header.setHorizontalAlignment(JLabel.LEFT);
+		header.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createEtchedBorder(),	
+				BorderFactory.createEmptyBorder(2,5,2,2)));
+		
+		
+		
+		
+		this.add(header, BorderLayout.NORTH);	
 		this.add(scrollPane, BorderLayout.CENTER);
 		
 		this.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		
+		
+		
 		
 	}  // END constructor 
 
@@ -239,7 +268,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		// create a new header
 		rowHeader = new MyRowHeader(this,dataTable);
 		scrollPane.setRowHeaderView(rowHeader);
-		this.updateFonts(this.getFont());
+		updateFonts(getFont());
 		
 		// repaint
 		dataTable.repaint();
@@ -288,14 +317,14 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 
 		setFont(font);
 		dataTable.setFont(font);
-		columnHeader.setFont(font);
+		//columnHeader.setFont(font);
 		
 		
 		dataTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
 		rowHeader.setFixedCellHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
 		
 		preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
-		columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+		//columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
 		
 	}
 	
@@ -307,6 +336,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnEnableAll){
 			rowHeader.enableAll(); 
+			btnEnableAll.setEnabled(false);
 			
 		}
 	}
@@ -433,7 +463,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 						BorderFactory.createEmptyBorder(0, 5, 0, 2)));
 
 				setHorizontalAlignment(LEFT);
-				setFont(table.getTableHeader().getFont());
+				setFont(table.getFont());
 				
 				//iconShown = app.getImageIcon("shown.gif");
 				//iconUnChecked = app.getImageIcon("hidden.gif");
@@ -498,6 +528,9 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 					// icon clicked: toggle enable/disable data
 					selectionList[this.getSelectedIndex()] = !selectionList[this.getSelectedIndex()];
 					statDialog.updateSelectedDataList(this.getSelectedIndex(), selectionList[this.getSelectedIndex()] );
+					
+					btnEnableAll.setEnabled(!isAllEnabled());
+					
 				//	statDialog.handleDataPanelSelectionChange(selectionList);
 					
 					/*
@@ -528,6 +561,18 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 			rowHeader.repaint();
 			table.repaint();
 		}
+		
+		public boolean isAllEnabled(){
+			for(int i=0; i< selectionList.length; ++i){
+				if(selectionList[i] == false) 
+					return false;
+			}
+			return true;
+			
+		}
+		
+		
+		
 	}
 
 

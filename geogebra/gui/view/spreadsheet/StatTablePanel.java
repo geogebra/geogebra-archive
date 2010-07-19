@@ -96,13 +96,19 @@ public class StatTablePanel extends JPanel {
 
 		
 		// column headers
+		
+		/*
 		columnHeader = new MyColumnHeaderRenderer();
+		
 		columnHeader.setPreferredSize(new Dimension(30, MyTable.TABLE_CELL_HEIGHT));
 		for (int i = 0; i < statTable.getColumnCount(); ++ i) {
 			statTable.getColumnModel().getColumn(i).setHeaderRenderer(columnHeader);
 			statTable.getColumnModel().getColumn(i).setPreferredWidth(30);
 		}
 		statTable.getTableHeader().setReorderingAllowed(false);
+		
+		*/
+		
 		
 		// table settings
 		statTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
@@ -133,6 +139,9 @@ public class StatTablePanel extends JPanel {
 		statScroller.setRowHeaderView(rowHeader);
 		
 		
+		
+		
+		
 		// set the  corners
 		statScroller.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner());
 		statScroller.setCorner(ScrollPaneConstants.LOWER_RIGHT_CORNER, new Corner());
@@ -145,11 +154,21 @@ public class StatTablePanel extends JPanel {
 			
 		
 		// hide the table header
-		//statTable.setTableHeader(null);
-		//statScroller.setColumnHeaderView(null);
+		statTable.setTableHeader(null);
+		statScroller.setColumnHeaderView(null);
+		
+		JLabel header = new JLabel(app.getPlain("Statistics"));
+		header.setHorizontalAlignment(JLabel.LEFT);
+		
+		header.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createEtchedBorder(),	
+				BorderFactory.createEmptyBorder(2,5,2,2)));
+		
+		
 		
 		// put it all into the stat panel
 		this.setLayout(new BorderLayout());
+		this.add(header, BorderLayout.NORTH);
 		this.add(statScroller, BorderLayout.CENTER);
 		this.setBorder(BorderFactory.createEmptyBorder());
 
@@ -291,9 +310,9 @@ public class StatTablePanel extends JPanel {
 		//statTable.getColumnModel().getColumn(0).setHeaderValue(statDialog.getDataTitle(0));
 		
 		//TODO: handle data titles
-		statTable.getColumnModel().getColumn(0).setHeaderValue("");
+	//	statTable.getColumnModel().getColumn(0).setHeaderValue("");
 		
-		statTable.getTableHeader().resizeAndRepaint();
+	//	statTable.getTableHeader().resizeAndRepaint();
 		
 		statTable.repaint();
 	}
@@ -312,6 +331,12 @@ public class StatTablePanel extends JPanel {
 		createStatList();
 		populateStatTable();
 		
+		updateFonts(getFont());
+		
+		// repaint
+		statTable.repaint();
+		rowHeader.repaint();
+		
 	}
 	
 	
@@ -323,12 +348,12 @@ public class StatTablePanel extends JPanel {
 		double multiplier = (size)/12.0;
 
 		setFont(font);
-		statTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
+		
 		statTable.setFont(font);  
-		columnHeader.setFont(font);
-		
-		
+			
+		statTable.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
 		rowHeader.setFixedCellHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
+		
 		
 		//preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
 		//columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));

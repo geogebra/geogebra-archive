@@ -146,13 +146,13 @@ public class StatComboPanel extends JPanel{
 			cbPlotTypes.addItem(plotMap.get(PLOT_HISTOGRAM));
 			cbPlotTypes.addItem(plotMap.get(PLOT_BOXPLOT));
 			cbPlotTypes.addItem(plotMap.get(PLOT_DOTPLOT));
-			cbPlotTypes.addItem(plotMap.get(PLOT_STATISTICS_ONEVAR));
+		//	cbPlotTypes.addItem(plotMap.get(PLOT_STATISTICS_ONEVAR));
 			break;
 
 		case StatDialog.MODE_TWOVAR:
 			cbPlotTypes.addItem(plotMap.get(PLOT_SCATTERPLOT));
 			cbPlotTypes.addItem(plotMap.get(PLOT_RESIDUAL));
-			cbPlotTypes.addItem(plotMap.get(PLOT_STATISTICS_TWOVAR));
+		//	cbPlotTypes.addItem(plotMap.get(PLOT_STATISTICS_TWOVAR));
 			break;
 
 		}
