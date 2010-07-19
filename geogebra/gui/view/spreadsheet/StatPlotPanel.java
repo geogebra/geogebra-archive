@@ -29,7 +29,7 @@ import javax.swing.JPanel;
  * @author gsturr 2010-6-30
  *
  */
-public class PlotPanel extends JPanel implements ComponentListener {
+public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	// ggb 
 	private Application app;
@@ -58,7 +58,7 @@ public class PlotPanel extends JPanel implements ComponentListener {
 	/*************************************************
 	 * Construct the panel
 	 */
-	public PlotPanel(Application app){
+	public StatPlotPanel(Application app){
 		
 		this.app = app;	
 		kernel = app.getKernel();

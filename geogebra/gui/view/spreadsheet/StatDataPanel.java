@@ -2,6 +2,7 @@ package geogebra.gui.view.spreadsheet;
 
 
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -40,7 +41,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-public class DataPanel extends JPanel implements ActionListener  {
+public class StatDataPanel extends JPanel implements ActionListener  {
 	
 
 	private Application app;
@@ -55,27 +56,27 @@ public class DataPanel extends JPanel implements ActionListener  {
 	//private GeoList dataListAll; 
 	
 	private Boolean[] selectionList;
-	OneVariableStatsDialog statDialog;
-	
+	private StatDialog statDialog;
+	private int mode;
 	
 	public int preferredColumnWidth = MyTable.TABLE_CELL_WIDTH; 
 	
 	private static final Color DISABLED_BACKGROUND_COLOR = Color.LIGHT_GRAY;	
 	private static final Color SELECTED_BACKGROUND_COLOR_HEADER = MyTable.SELECTED_BACKGROUND_COLOR_HEADER;
-	private static final Color TABLE_GRID_COLOR = OneVariableStatsDialog.TABLE_GRID_COLOR ;
-	private static final Color TABLE_HEADER_COLOR = OneVariableStatsDialog.TABLE_HEADER_COLOR;   
+	private static final Color TABLE_GRID_COLOR = StatDialog.TABLE_GRID_COLOR ;
+	private static final Color TABLE_HEADER_COLOR = StatDialog.TABLE_HEADER_COLOR;   
 	
 	
 	
 	/*************************************************
 	 * Construct a DataPanel
 	 */
-	public DataPanel(Application app, OneVariableStatsDialog statDialog, GeoList dataListAll){
+	public StatDataPanel(Application app, StatDialog statDialog, GeoList dataListAll, int mode){
 
 		this.app = app;	
 		kernel = app.getKernel();
 		this.statDialog = statDialog;
-		
+		this.mode = mode;
 		
 	//	this.dataListAll = dataAll;
 		
@@ -189,14 +190,31 @@ public class DataPanel extends JPanel implements ActionListener  {
 	
 	
 	private void populateDataTable(GeoList dataList){
-		TableModel dataModel = new DefaultTableModel(dataList.size(),1);
-		for (int row = 0; row < dataList.size(); ++row){
-			//dataModel.setValueAt(new Boolean(true),row,0);
-			dataModel.setValueAt(dataList.get(row).toDefinedValueString(),row,0);
-		}
-		dataTable.setModel(dataModel);
-		//dataModel.addTableModelListener(this);
+		
+		TableModel dataModel = null;
+		GeoPoint geo = null;
+		
+		switch(mode){
 
+		case StatDialog.MODE_ONEVAR:
+
+			dataModel = new DefaultTableModel(dataList.size(),1);
+			for (int row = 0; row < dataList.size(); ++row){
+				dataModel.setValueAt(dataList.get(row).toDefinedValueString(),row,0);
+			}
+			break;
+
+		case StatDialog.MODE_TWOVAR:
+
+			dataModel = new DefaultTableModel(dataList.size(),2);
+			for (int row = 0; row < dataList.size(); ++row){
+				dataModel.setValueAt(((GeoPoint)(dataList.get(row))).getInhomX(),row,0);
+				dataModel.setValueAt(((GeoPoint)(dataList.get(row))).getInhomY(),row,1);
+			}
+			break;
+		}
+
+		dataTable.setModel(dataModel);
 		dataTable.getColumnModel().getColumn(0).setHeaderValue("data");
 		
 	}
@@ -350,10 +368,6 @@ public class DataPanel extends JPanel implements ActionListener  {
 
 			
 			setText(text);
-
-
-			//setFont(app.getFontCanDisplay(text, Font.PLAIN));
-
 			return this;
 		}
 
@@ -368,9 +382,9 @@ public class DataPanel extends JPanel implements ActionListener  {
 		
 		//DefaultListModel model;
 		JTable table;
-		DataPanel dataPanel;
+		StatDataPanel dataPanel;
 
-		public MyRowHeader(DataPanel dataPanel, JTable table){
+		public MyRowHeader(StatDataPanel dataPanel, JTable table){
 			super(selectionList);
 			this.table = table;
 			this.dataPanel = dataPanel;
@@ -442,10 +456,6 @@ public class DataPanel extends JPanel implements ActionListener  {
 				else		
 					setBackground(TABLE_HEADER_COLOR);
 	
-				
-				
-				
-				
 				
 				return this;
 			}

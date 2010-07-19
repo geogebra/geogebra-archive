@@ -42,18 +42,60 @@ public class CellRangeProcessor {
 		return false;
 	}
 
-	
-	
-	
-	
-	public GeoElement CreatePointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
+
+	public boolean isCreateMatrixPossible(ArrayList<CellRange> rangeList){
 		
-		return  CreatePointList(rangeList, byValue, leftToRight, false, true);
+		if(rangeList.size() == 1 && !rangeList.get(0).hasEmptyCells()) 
+			return true;	
+		else
+			return false;
+		
+		/*
+		// ctrl-selection block 
+		if (rangeList.size() > 1){							 
+				//rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1 )
+			return true;
+		}
+
+		if (rangeList.size() == 2 && 
+				rangeList.get(0).getHeight() == 1 && rangeList.get(1).getHeight() == 1 )
+			return true;
+		
+		return false;
+		
+		*/
 		
 	}
 	
 	
-	public GeoElement CreatePointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight,
+	/** Returns true if at least three cells in rangeList are nonempty  */
+	public boolean isOneVarStatsPossible(ArrayList<CellRange> rangeList){
+
+		if(rangeList == null || rangeList.size() == 0) return false; 
+	
+		int count = 0;
+	    for(CellRange cr:rangeList)
+			for (int col = cr.getMinColumn(); col <= cr.getMaxColumn(); ++col) {
+				for (int row = cr.getMinRow(); row <= cr.getMaxRow(); ++row) {
+					GeoElement geo = RelativeCopy.getValue(table, col, row);
+					if (geo != null) ++count;
+					if(count > 2) return true;
+					}
+				}
+			
+		return false;
+			
+	}
+	
+	
+	public GeoElement createPointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
+		
+		return  createPointList(rangeList, byValue, leftToRight, false, true);
+		
+	}
+	
+	
+	public GeoElement createPointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight,
 			boolean isSorted, boolean doStoreUndo) {
 		
 		
@@ -380,29 +422,6 @@ public class CellRangeProcessor {
 	}
 	
 	
-	public boolean isCreateMatrixPossible(ArrayList<CellRange> rangeList){
-		
-		if(rangeList.size() == 1 && !rangeList.get(0).hasEmptyCells()) 
-			return true;	
-		else
-			return false;
-		
-		/*
-		// ctrl-selection block 
-		if (rangeList.size() > 1){							 
-				//rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1 )
-			return true;
-		}
-
-		if (rangeList.size() == 2 && 
-				rangeList.get(0).getHeight() == 1 && rangeList.get(1).getHeight() == 1 )
-			return true;
-		
-		return false;
-		
-		*/
-		
-	}
 
 	public GeoElement CreateMatrix(int column1, int column2, int row1, int row2){
 		

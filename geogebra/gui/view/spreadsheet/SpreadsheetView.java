@@ -113,7 +113,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean isColumnSelect = false;
 	
 	
-	private OneVariableStatsDialog oneVarStatDialog;
+	private StatDialog oneVarStatDialog;
 	private ProbabilityCalculator probCalculator;
 	
 	
@@ -506,10 +506,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	
-	public void showStatDialog(){
+	public void showStatDialog(int mode){
 		
 		if(oneVarStatDialog == null){
-			oneVarStatDialog = new OneVariableStatsDialog(view, app, OneVariableStatsDialog.MODE_TWOVAR);
+			oneVarStatDialog = new StatDialog(view, app, mode);
 		}else{
 			oneVarStatDialog.updateDialog();
 		}

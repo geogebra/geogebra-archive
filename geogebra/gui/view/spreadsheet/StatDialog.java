@@ -33,49 +33,60 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class OneVariableStatsDialog extends JDialog 
+public class StatDialog extends JDialog 
 implements ActionListener, View   {
-	 
+	
+	// ggb components
 	private Application app;
 	private Kernel kernel; 
 	private Construction cons;
 	private SpreadsheetView spView;
 	private MyTable spreadsheetTable;
-	private OneVariableStatsDialog statDialog;
+	private StatDialog statDialog;
 	
+	
+	// modes
 	public static final int MODE_ONEVAR =  0;
 	public static final int MODE_TWOVAR =  1;
+	private int mode;
 	
 	
-	
+	// data collections
 	private GeoList dataListAll, dataListSelected;
 	//private ArrayList<Integer> selectedColumns;
 	ArrayList<String> dataTitles ;
+	private Object dataSource;
 	
+
 	
+	// GUI objects
 	private JButton btnClose, btnOptions, btnExport, btnDisplay;
 	private JCheckBox cbShowData;
-	private ComboStatPanel comboStatPanel, comboStatPanel2;;
-	private DataPanel dataPanel;
+	private StatComboPanel comboStatPanel, comboStatPanel2;;
+	private StatDataPanel dataPanel;
 	private JSplitPane displayPanel;
 	private JPanel cardPanel;
 	
+	
+	// flags
 	private boolean showDataPanel = false;
 	private boolean isIniting;
 	
+	
+	// colors
 	public static final Color TABLE_GRID_COLOR = Color.GRAY;
 	public static final Color TABLE_HEADER_COLOR = new Color(240,240,240);   
 	
-	private Object dataSource;
 	
 	
-	
+
+
 	/*************************************************
 	 * Construct the dialog
 	 */
-	public OneVariableStatsDialog(SpreadsheetView spView, Application app, int mode){
+	public StatDialog(SpreadsheetView spView, Application app, int mode){
 		super(app.getFrame(),false);
-		
+
 		isIniting = true;
 		this.app = app;	
 		kernel = app.getKernel();
@@ -83,35 +94,51 @@ implements ActionListener, View   {
 		this.spView = spView;
 		this.spreadsheetTable = spView.getTable();
 		statDialog = this;
+		this.mode = mode;
+	
+		//	selectedColumns = spreadsheetTable.getSelectedColumnsList();
 		
-		dataSource = new ArrayList<CellRange>();
 		//load data from current selection
-	//	selectedColumns = spreadsheetTable.getSelectedColumnsList();
 		setDataSource();
 		loadDataLists();
-		
-		
-		// create panels with the default plots
-		comboStatPanel = new ComboStatPanel(app, ComboStatPanel.PLOT_HISTOGRAM, dataListSelected);
-		comboStatPanel2 = new ComboStatPanel(app, ComboStatPanel.PLOT_STATISTICS, dataListSelected);
-		
-		dataPanel = new DataPanel(app, this, dataListAll);
+
+
+		// create two StatCombo panels with default plots
+		switch(mode){
+
+		case MODE_ONEVAR:
+			comboStatPanel = new StatComboPanel(app, StatComboPanel.PLOT_HISTOGRAM, dataListSelected, mode);
+			comboStatPanel2 = new StatComboPanel(app, StatComboPanel.PLOT_STATISTICS_ONEVAR, dataListSelected, mode);
+			break;
+
+		case MODE_TWOVAR:
+			comboStatPanel = new StatComboPanel(app, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode);
+			comboStatPanel2 = new StatComboPanel(app, StatComboPanel.PLOT_STATISTICS_TWOVAR, dataListSelected, mode);
+			break;		
+		}
+
+
+		// create a data panel
+		dataPanel = new StatDataPanel(app, this, dataListAll, mode);
 		dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-		
-		// dataPanel.ensureTableFill();
-		
+
+
 		// init the GUI
 		initGUI();
 		updateFonts();
 		btnClose.requestFocus();
-		
-		
+
+
 		// attach this view to the kernel
 		attachView();
 		isIniting = false;
-		
-	} //END  constructor
-	
+
+	} //END  StatDialog constructor
+
+
+
+
+
 	public void removeGeos(){
 		if(dataListAll != null)
 			dataListAll.remove();
@@ -137,10 +164,8 @@ implements ActionListener, View   {
 			dataSource = geo;
 		} else {
 			ArrayList<CellRange> cr = spreadsheetTable.selectedCellRanges;
-			dataSource = (ArrayList<CellRange>) cr.clone();
-			
+			dataSource = (ArrayList<CellRange>) cr.clone();		
 		}
-		
 	}
 	
 
@@ -150,6 +175,8 @@ implements ActionListener, View   {
 		
 		boolean isSorted = true;
 		boolean copyByValue = false;
+		boolean scanByColumn = true;
+		boolean doStoreUndo = false;
 		
 		if(dataSource instanceof GeoList){
 			//dataListAll = dataSource;
@@ -157,9 +184,29 @@ implements ActionListener, View   {
 			if(isSorted)
 				text = "Sort[" + text + "]";
 			//text = ((GeoList)dataSource).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
+
 		}else{
-			GeoList tempGeo = (GeoList) spreadsheetTable.getCellRangeProcessor()
-			.createList((ArrayList<CellRange>) dataSource, true, copyByValue, isSorted, false, GeoElement.GEO_CLASS_NUMERIC);
+			GeoList tempGeo = null; 
+			switch (mode){
+
+			case MODE_ONEVAR:
+
+				tempGeo = (GeoList) spreadsheetTable
+				.getCellRangeProcessor().createList(
+						(ArrayList<CellRange>) dataSource, scanByColumn,
+						copyByValue, isSorted, doStoreUndo, GeoElement.GEO_CLASS_NUMERIC);
+				break;
+
+			case MODE_TWOVAR:
+				
+				tempGeo = (GeoList) spreadsheetTable
+				.getCellRangeProcessor().createPointList(
+						(ArrayList<CellRange>) dataSource, scanByColumn,
+						copyByValue, isSorted, doStoreUndo);
+				break;
+
+
+			}
 			//text = tempGeo.toDefinedValueString();
 			text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 			tempGeo.remove();
@@ -215,29 +262,25 @@ implements ActionListener, View   {
 			dataPanel.loadDataTable(this.dataListAll);
 		}
 		
-		
-		
-		
 		// selection has changed, so the spreadsheet columns need to be re-selected
 		//resetSpreadsheetSelection();
-
 	}
 
-	
+
+
 	public void updateSelectedDataList2(int index, boolean doAdd) {
-		
+
 		GeoElement geo = dataListAll.get(index);
 		if(doAdd)
 			dataListSelected.add(geo);
 		else
 			dataListSelected.remove(geo);
-	dataListSelected.updateCascade();
-	updateAllComboPanels(false);
-	
-	
+		dataListSelected.updateCascade();
+		updateAllComboPanels(false);
+
 	}
-	
-	
+
+
 	
 	
 	public void updateSelectedDataList(Boolean[] selectionList) {
@@ -310,7 +353,15 @@ implements ActionListener, View   {
 	private void initGUI() {
 
 		try {
-			setTitle(app.getPlain("One Variable Statistics"));	
+			switch(mode){
+			case MODE_ONEVAR:
+				setTitle(app.getPlain("One Variable Statistics"));	
+				break;
+			case MODE_TWOVAR:
+				setTitle(app.getPlain("Two Variable Statistics"));	
+				break;
+
+			}
 			
 			//===========================================
 			// button panel
@@ -456,17 +507,13 @@ implements ActionListener, View   {
 		if(isVisible){
 			//spView.setColumnSelect(true);
 			if(!isIniting)
-				//this.handleSpreadsheetSelectionChange();
 				updateDialog();
 			
-
 		}else{
 			//Application.printStacktrace("hide statDialog");
 			//spView.setColumnSelect(false);
-			removeGeos();
-			
-			//this.detachView();
-			
+			removeGeos();		
+			//this.detachView();		
 		}
 	}
 

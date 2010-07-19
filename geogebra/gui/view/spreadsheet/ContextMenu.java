@@ -468,7 +468,7 @@ public class ContextMenu extends JPopupMenu
 
 			if (table.getCellRangeProcessor().isCreatePointListPossible(selectedCellRanges)) {
 
-				table.getCellRangeProcessor().CreatePointList(selectedCellRanges, true, true);
+				table.getCellRangeProcessor().createPointList(selectedCellRanges, true, true);
 			}
 		}
 	}

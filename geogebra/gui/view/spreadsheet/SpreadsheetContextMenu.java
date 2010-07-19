@@ -198,85 +198,57 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		//       Create (Lists, Matrix, etc.) 	
 		// ===============================================
 
-		if (!isEmptySelection()) {
-			subMenu = new JMenu(app.getMenu("Create") + " ...");
-			subMenu.setIcon(app.getEmptyIcon()); 	 	
-			add(subMenu);   	 	
+		if(!isEmptySelection()){
+			
+		
+		subMenu = new JMenu(app.getMenu("Create") + " ...");
+		subMenu.setIcon(app.getEmptyIcon()); 	 	
+		add(subMenu);   	 	
 
-			item = new JMenuItem(app.getMenu("List"));
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					cp.createList(selectedCellRanges, true, false);
-				}
-			});	 
-			subMenu.add(item);
-
-			if (cp.isCreatePointListPossible(selectedCellRanges))  {
-				item = new JMenuItem(app.getMenu("ListOfPoints"));
-				item.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						cp.CreatePointList(selectedCellRanges, true, true);
-					}
-				});	 
-				subMenu.add(item);
-			}   	 
-
-
-			if (cp.isCreateMatrixPossible(selectedCellRanges)) {	
-				item = new JMenuItem(app.getMenu("Matrix"));
-				item.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						cp.CreateMatrix(column1, column2, row1, row2);
-					}
-				});	 
-				subMenu.add(item);
-
-				item = new JMenuItem(app.getMenu("Table"));
-				item.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						cp.CreateTableText(column1, column2, row1, row2);
-					}
-				});	 
-				subMenu.add(item);
-
+		item = new JMenuItem(app.getMenu("List"));
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cp.createList(selectedCellRanges, true, false);
 			}
+		});	 
+		subMenu.add(item);
+		
+
+
+		item = new JMenuItem(app.getMenu("ListOfPoints"));
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cp.createPointList(selectedCellRanges, true, true);
+			}
+		});	 
+		subMenu.add(item);
+		item.setEnabled((cp.isCreatePointListPossible(selectedCellRanges)));
+
+		
+		item = new JMenuItem(app.getCommand("Matrix"));
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cp.CreateMatrix(column1, column2, row1, row2);
+			}
+		});	 
+		subMenu.add(item);
+		item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
+
+
+		item = new JMenuItem(app.getCommand("TableText"));
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cp.CreateTableText(column1, column2, row1, row2);
+			}
+		});	 
+		subMenu.add(item);
+		item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
 
 		}
 
-		
 	
 		
-		// ===============================================
-		//     Data analysis
-		// ===============================================
-		
-		if(!isEmptySelection()){   // && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
-			item = new JMenuItem(app.getMenu(app.getPlain("Data Analysis")),app.getEmptyIcon());
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					view.showStatDialog();
-				}
-			});	 
-			add(item);
-		}
-		
-		
-
-		
-		// ===============================================
-		//     Probability Calculator
-		// ===============================================
-		
-		if( isShiftDown){
-			item = new JMenuItem(app.getMenu(app.getPlain("Probability Calculator")),app.getEmptyIcon());
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					view.showProbabilityCalculator();
-				}
-			});	 
-			add(item);
-		}
-		
+	
 		
 		
 
@@ -360,7 +332,57 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		}
 		*/
 
-	
+
+		// ===============================================
+		//     Data analysis
+		// ===============================================
+		
+		this.addSeparator();
+		
+		if(!isEmptySelection()){   // && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
+			subMenu = new JMenu(app.getMenu("Data Analysis") + " ...");
+			subMenu.setIcon(app.getEmptyIcon()); 	 	
+			add(subMenu);   	 	
+						
+			item = new JMenuItem(app.getMenu(app.getPlain("One Variable")),app.getEmptyIcon());		
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					view.showStatDialog(StatDialog.MODE_ONEVAR);
+				}
+			});	 
+			subMenu.add(item);
+			item.setEnabled((cp.isOneVarStatsPossible(selectedCellRanges)));
+			
+			item = new JMenuItem(app.getMenu(app.getPlain("Two Variable")),app.getEmptyIcon());		
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					view.showStatDialog(StatDialog.MODE_TWOVAR);
+				}
+			});	 
+			subMenu.add(item);
+			item.setEnabled((cp.isCreatePointListPossible(selectedCellRanges)));
+			item.setEnabled(false);	
+			
+		}
+		
+		
+
+		
+		// ===============================================
+		//     Probability Calculator
+		// ===============================================
+		
+		if( isShiftDown){
+			item = new JMenuItem(app.getMenu(app.getPlain("Probability Calculator")),app.getEmptyIcon());
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					view.showProbabilityCalculator();
+				}
+			});	 
+			add(item);
+		}
+		
+		
 
 		
 
@@ -394,8 +416,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		});	 
 		subMenu.add(cbItem);
 		
-		
-		
+			
 		item = new JMenuItem(app.getMenu("Spreadsheet Options") + "...",app.getEmptyIcon());
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

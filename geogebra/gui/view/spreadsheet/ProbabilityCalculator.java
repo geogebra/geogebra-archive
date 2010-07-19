@@ -63,7 +63,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private JTextField[] fldParmArray;
 	private JTextField fldLow,fldHigh,fldResult;
 	private JLabel[] lblParmArray;
-	private PlotPanel plotPanel;
+	private StatPlotPanel plotPanel;
 	
 	
 	// GeoElements
@@ -170,7 +170,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			//===========================================
 			// plot panel
 	
-			plotPanel = new PlotPanel(app);
+			plotPanel = new StatPlotPanel(app);
 			
 			plotPanel.setBorder(BorderFactory.createCompoundBorder(
 					BorderFactory.createEmptyBorder(2, 2, 2, 2),

@@ -29,13 +29,14 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
-public class StatPanel extends JPanel {
+public class StatTablePanel extends JPanel {
 	
 	// ggb 
 	private Application app;
 	private Kernel kernel; 
-	private OneVariableStatsDialog statDialog;
-
+	private StatDialog statDialog;
+	private int mode;
+	
 	private JTable statTable;
 	private MyColumnHeaderRenderer columnHeader;
 	private MyRowHeader rowHeader;
@@ -46,8 +47,8 @@ public class StatPanel extends JPanel {
 	private GeoList dataList, statList;
 	
 	// layout
-	private static final Color TABLE_GRID_COLOR = OneVariableStatsDialog.TABLE_GRID_COLOR ;
-	private static final Color TABLE_HEADER_COLOR = OneVariableStatsDialog.TABLE_HEADER_COLOR;  
+	private static final Color TABLE_GRID_COLOR = StatDialog.TABLE_GRID_COLOR ;
+	private static final Color TABLE_HEADER_COLOR = StatDialog.TABLE_HEADER_COLOR;  
 	
 	
 	
@@ -55,14 +56,14 @@ public class StatPanel extends JPanel {
 	/*************************************************
 	 * Construct the panel
 	 */
-	public StatPanel(Application app, GeoList dataList){
-	
+	public StatTablePanel(Application app, GeoList dataList, int mode){
 		
 		this.app = app;	
 		kernel = app.getKernel();				
 		
 		this.dataList = dataList;
 		this.statDialog = statDialog;
+		this.mode = mode;
 		
 		// construct the stat table	
 		statTable = new JTable(){
@@ -172,9 +173,11 @@ public class StatPanel extends JPanel {
 		String label = dataList.getLabel();	
 		
 		String text = "";
-		ArrayList<String> list = new ArrayList<String>();
-		
-		try {		
+		ArrayList<String> list = new ArrayList<String>();	
+
+		switch(mode){
+		case StatDialog.MODE_ONEVAR:
+
 			text += "{";
 			text += statListCmdString("Length", label);
 			text += ",";
@@ -195,18 +198,40 @@ public class StatPanel extends JPanel {
 			text += statListCmdString("Q3", label);
 			text += ",";
 			text += statListCmdString("Max", label);
-			
+
 			text += "}";
-			//System.out.println(text);	
 			
+			break;
+
+
+		case StatDialog.MODE_TWOVAR:
+			
+			text += "{";
+			text += statListCmdString("MeanX", label);
+			text += ",";
+			text += statListCmdString("MeanY", label);
+			text += ",";
+			text += statListCmdString("SigmaXX", label);
+			text += ",";
+			text += statListCmdString("SigmaYY", label);
+			
+
+			text += "}";
+
+			break;
+			
+		}
+		
+		//System.out.println(text);	
+			
+			try {
 			
 			if(statList == null){
 				statList = new GeoList(kernel.getConstruction());
 				//statList.setLabel("statList");
 				statList.setLabel(null);
 				statList.setAuxiliaryObject(true);
-				
-				
+							
 			}
 			statList = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)statList, text, true, false);
