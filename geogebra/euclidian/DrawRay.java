@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.euclidian.clipping.ClipLine;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -79,17 +80,6 @@ implements Previewable {
 			labelVisible = showLabel && geo.isLabelVisible();       
 			updateStrokes(ray);
 			
-			A = ray.getStartPoint();			
-			
-			// calc start point of ray in screen coords
-			a[0] = A.inhomX;
-			a[1] = A.inhomY;
-			view.toScreenCoords(a);
-
-			// calc direction vector of ray in screen coords
-			v[0] = ray.y * view.xscale;
-			v[1] = ray.x * view.yscale;
-			
 			setClippedLine();
 			
 			 // line on screen?		
@@ -133,28 +123,51 @@ implements Previewable {
         }
     }
     
-    private void setClippedLine() {
-		// calc clip point C = a + lambda * v
-		double lambda;
-		if (Math.abs(v[0]) > Math.abs(v[1])) {
-			if (v[0] > 0) // RIGHT
-				lambda = (view.width - a[0]) / v[0];
-			else // LEFT
-				lambda = - a[0] / v[0];
-		} else {
-			if (v[1] > 0) // BOTTOM
-				lambda = (view.height - a[1]) / v[1];
-			else 
-				lambda = -a[1] / v[1];
-		}
+	  private void setClippedLine() {
+	    	A = ray.getStartPoint();			
+			
+			// calc start point of ray in screen coords
+			A.getInhomCoords(a);
+			boolean onscreenA = view.toScreenCoords(a);
 
-		if (lambda < 0) { // ray is completely out of screen
-			isVisible = false;
-			return;
-		}
+			// calc direction vector of ray in screen coords
+			v[0] = ray.y * view.xscale;
+			v[1] = ray.x * view.yscale;
+			    	    	
+			// calc clip point C = a + lambda * v
+			double lambda;
+			if (Math.abs(v[0]) > Math.abs(v[1])) {
+				if (v[0] > 0) // RIGHT
+					lambda = (view.width - a[0]) / v[0];
+				else // LEFT
+					lambda = - a[0] / v[0];
+			} else {
+				if (v[1] > 0) // BOTTOM
+					lambda = (view.height - a[1]) / v[1];
+				else 
+					lambda = -a[1] / v[1];
+			}
 
-		line.setLine( a[0], a[1],  a[0] + lambda * v[0], a[1] + lambda * v[1]);		  
-    }
+			if (lambda < 0) { // ray is completely out of screen
+				isVisible = false;
+				return;
+			}
+
+			if (onscreenA ) {
+				// A on screen
+				line.setLine(a[0], a[1],  a[0] + lambda * v[0], a[1] + lambda * v[1]);
+			} else {
+				// A off screen
+				// clip ray at screen, that's important for huge coordinates of A
+				Point2D.Double [] clippedPoints = 
+					ClipLine.getClipped(a[0], a[1],  a[0] + lambda * v[0], a[1] + lambda * v[1], -EuclidianView.CLIP_DISTANCE, view.width + EuclidianView.CLIP_DISTANCE, -EuclidianView.CLIP_DISTANCE, view.height + EuclidianView.CLIP_DISTANCE);
+				if (clippedPoints == null) {
+					isVisible = false;	
+				} else {
+					line.setLine(clippedPoints[0].x, clippedPoints[0].y, clippedPoints[1].x, clippedPoints[1].y);
+				}
+			}
+	    }
     
     final public void draw(Graphics2D g2) {
         if (isVisible) {			
