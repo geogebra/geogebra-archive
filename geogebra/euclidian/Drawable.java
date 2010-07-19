@@ -116,10 +116,9 @@ public abstract class Drawable extends DrawableND {
 		
 		// allow LaTeX caption surrounded by $ $
 		if (label.startsWith("$") && label.endsWith("$")) {
-			// use FONT.ITALIC to stop \mathrm{} being added
-			// so that raw LaTeX is sent to JLaTeXMath
-			// user can add any formatting themselves
-			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont().deriveFont(Font.ITALIC), ((GeoText)geo).isSerifFont(), g2.getColor(), g2.getBackground());
+			boolean serif = true; // nice "x"s
+			if (geo.isGeoText()) serif = ((GeoText)geo).isSerifFont();
+			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont().deriveFont(Font.ITALIC), serif, g2.getColor(), g2.getBackground());
 			labelRectangle.setBounds(xLabel, yLabel, (int)dim.getWidth(), (int)dim.getHeight());	
 			return;
 		}
