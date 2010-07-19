@@ -25,26 +25,39 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 
-
+/**
+ * Button with popup component for choosing colors. A mouse click on the left
+ * side of the button sets the selected color. A mouse click on the
+ * right side triggers a popup with a swatch panel to choose a color. When the
+ * popup is done the newly selected color is set. An actionPerformed() method
+ * can retrieve the color by calling getSelectedColor().
+ * 
+ * @author G. Sturr 2010-7-10
+ * 
+ */
 class ColorChooserButton extends JButton{
 
 	ColorChooserButton btn;
 	ColorChooserPopup myPopup;
-	Application app;
 	Color selectedColor;
 	
+	
+	/** Button constructor */
 	public ColorChooserButton(){
-		super(); 
-		this.app = app;
 		
+		super(); 
 		btn = this;
 		myPopup = new ColorChooserPopup();
 		this.addMouseListener( new MyMouseListener());
 		if(selectedColor == null)
 			selectedColor = myPopup.getSelectedColor();
 		setIcon(drawColorFillIcon(selectedColor));
+		
 	}
 
+	
+	
+	/** Listener to trigger the popup */
 	class MyMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
 			Point locButton = btn.getLocation();
@@ -73,11 +86,12 @@ class ColorChooserButton extends JButton{
 				ActionEvent.ACTION_PERFORMED,getActionCommand())); 
 	}
 
-	
-	
+
+	/** Draw an icon for the button. Left side is a grid that shows the selected color.
+	 * Right side is a downward triangle for the drop down popup. */
 	private ImageIcon drawColorFillIcon( Color selectedColor) {
 
-		// Create image with dummy size, then draw into it to get the correct size
+		// Create image 
 		BufferedImage image = new BufferedImage(32, 18, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = image.createGraphics();
 
@@ -108,6 +122,7 @@ class ColorChooserButton extends JButton{
 		g2.setColor(Color.BLACK);
 		g2.drawRect(d+s, d+s, s, s);
 
+		
 		// use a divider line ??
 		//g2.setColor(Color.DARK_GRAY);
 		//g2.drawLine(18, 0, 18, getHeight());
@@ -121,12 +136,19 @@ class ColorChooserButton extends JButton{
 		g2.drawLine(x+1, y+1, x+3, y+1);
 		g2.drawLine(x+2, y+2, x+2, y+2);
 
-
 		return new ImageIcon(image);	
 
 	}
 
-
+	
+	
+	
+	
+	
+	/************************************************************* 
+	 *             Swatch Panel Popup
+	 ************************************************************/
+	
 	public class ColorChooserPopup extends JPopupMenu {
 
 		SwatchPanel swatchPanel;
@@ -152,11 +174,11 @@ class ColorChooserButton extends JButton{
 		
 		
 		
-		//=======================================================
-		//              SwatchPanel Class
-		//=======================================================
+	
 
-
+		/** 
+		 * Draw a swatch panel and handle mouse events in the panel. 
+		*/
 		class SwatchPanel extends JMenuItem implements MouseMotionListener{
 
 			protected Color[] colors;
@@ -180,17 +202,23 @@ class ColorChooserButton extends JButton{
 				
 			}
 
+			//=======================================================
+			//        Init
+			
 			protected void initValues() {
-				swatchSize = new Dimension(20,20);
+				
 				//swatchSize = UIManager.getDimension("ColorChooser.swatchesSwatchSize");
-				numSwatches = new Dimension( 6, 4 );
+				
+				swatchSize = new Dimension(20,20);  // <------- set swatch pixel domensions
+				numSwatches = new Dimension( 6, 4 ); // <------ set grid dimensions (row x column)
+				
 				gap = new Dimension(1, 1);
 			}
 
 			protected void initColors() {
-				int[] rawValues = initRawValues3();
+				int[] rawValues = initRawValues3(); // <------ set color table 
+				
 				int numColors = rawValues.length / 3;
-
 				colors = new Color[numColors];
 				for (int i = 0; i < numColors ; i++) {
 					colors[i] = new Color( rawValues[(i*3)], rawValues[(i*3)+1], rawValues[(i*3)+2] );
@@ -210,6 +238,12 @@ class ColorChooserButton extends JButton{
 				return color.getRed()+", "+ color.getGreen() + ", " + color.getBlue();
 			}
 
+			
+			
+			
+			//=======================================================
+			//           Get Properties
+			
 			public Color getColorForLocation( int x, int y ) {
 				int column;
 				if ((!this.getComponentOrientation().isLeftToRight())) {
@@ -315,6 +349,7 @@ class ColorChooserButton extends JButton{
 			
 			// our 4x6 color swatch
 			// taken from http://www.rapidtables.com/prog/rgb_color.htm	
+			
 			private int[] initRawValues3() {
 
 				int[] rawValues3 = {

@@ -490,7 +490,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 				if (iconClicked) {
 					// icon clicked: toggle enable/disable data
 					selectionList[this.getSelectedIndex()] = !selectionList[this.getSelectedIndex()];
-					statDialog.updateSelectedDataList2(this.getSelectedIndex(), selectionList[this.getSelectedIndex()] );
+					statDialog.updateSelectedDataList(this.getSelectedIndex(), selectionList[this.getSelectedIndex()] );
 				//	statDialog.handleDataPanelSelectionChange(selectionList);
 					
 					/*
@@ -514,7 +514,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 
 			for(int i=0; i< selectionList.length; ++i){
 				if(selectionList[i] == false){
-					statDialog.updateSelectedDataList2(i,true);
+					statDialog.updateSelectedDataList(i,true);
 					selectionList[i] = true;
 				}
 			}	

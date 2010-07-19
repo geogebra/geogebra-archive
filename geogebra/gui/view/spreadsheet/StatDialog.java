@@ -268,14 +268,14 @@ implements ActionListener, View   {
 		if(!isIniting){
 			dataPanel.loadDataTable(this.dataListAll);
 		}
-		
-		// selection has changed, so the spreadsheet columns need to be re-selected
-		//resetSpreadsheetSelection();
+	
 	}
 
-
-
-	public void updateSelectedDataList2(int index, boolean doAdd) {
+	/**
+	 * Add/remove elements from the selected data list. 
+	 * Called by the data panel on checkbox click.
+	 */
+	public void updateSelectedDataList(int index, boolean doAdd) {
 
 		GeoElement geo = dataListAll.get(index);
 		
@@ -291,45 +291,6 @@ implements ActionListener, View   {
 		
 	}
 
-
-	
-	
-	public void updateSelectedDataList(Boolean[] selectionList) {
-
-		// create a string for the selected data
-		StringBuilder sb = new StringBuilder();
-		sb.append("Sort[{");
-		for(int i=0; i < dataListAll.size(); ++i){
-			if(selectionList[i] == true){
-				sb.append(dataListAll.get(i).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false));
-				sb.append(",");
-			}
-		}
-		
-		// remove last comma
-		if(dataListAll.size() > 0) {
-			sb.deleteCharAt(sb.length()-1);
-		}
-		
-		sb.append("}]");
-
-	
-		
-		comboStatPanel.removeGeos();
-		comboStatPanel2.removeGeos();
-		
-		
-		try {
-			dataListSelected = (GeoList) kernel.getAlgebraProcessor()
-			.changeGeoElementNoExceptionHandling((GeoElement)dataListSelected, sb.toString(), true,false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-
-		Application.debug(dataListSelected.toDefinedValueString());
-		updateAllComboPanels(false);
-		
-	}
 
 
 	public String getDataTitle(int index){
@@ -530,13 +491,6 @@ implements ActionListener, View   {
 
 
 
-	public void handleDataPanelSelectionChange(Boolean[] selectionList){
-		updateSelectedDataList(selectionList);
-
-		// TODO why does this mess up the dataPanel when clicking a checkbox?
-		//resetSpreadsheetSelection();
-	}
-
 	
 	public void handleSpreadsheetSelectionChange(){
 	//	if( !spreadsheetTable.getSelectedColumnsList().equals(selectedColumns)){
@@ -564,12 +518,7 @@ implements ActionListener, View   {
 	}
 
 
-	public boolean isInDataColumn(GeoElement geo){
-
-	//	Point location = geo.getSpreadsheetCoords();
-	//	return location != null && selectedColumns.contains(location.x); 
-		return false;
-	}
+	
 
 	public boolean isInDataSource(GeoElement geo){
 		// TODO handle case of GeoList data source
@@ -652,17 +601,12 @@ implements ActionListener, View   {
 
 	public void update(GeoElement geo) {
 
-	//	if (!isIniting && isInDataColumn(geo)) {
-			//comboStatPanel.updatePlot();
-			//comboStatPanel2.updatePlot();
-	//	}
 		//Application.debug("------> update:" + geo.toString());
-		if (isInDataSource(geo)) {
+		if (!isIniting && isInDataSource(geo)) {
 			//Application.debug("---------> is in data source:" + geo.toString());
 			//removeGeos();
 			//this.loadDataLists();
-			updateAllComboPanels(true);
-			
+			updateAllComboPanels(true);		
 		}
 			
 	}
