@@ -274,6 +274,17 @@ public class StatComboPanel extends JPanel{
 			statPanel.updateData(dataListSelected);
 			break;
 			
+		case PLOT_SCATTERPLOT:
+			plotPanel.updateScatterPlot( dataListSelected, doCreate);
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			break;
+			
+		case PLOT_STATISTICS_TWOVAR:
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "statPanel");
+			//statPanel.updateTable();
+			statPanel.updateData(dataListSelected);
+			break;
+			
 			default:
 				System.out.println(plotMap.get(plotIndex));
 		}

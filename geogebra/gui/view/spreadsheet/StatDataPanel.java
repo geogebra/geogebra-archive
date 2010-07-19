@@ -215,8 +215,9 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		}
 
 		dataTable.setModel(dataModel);
-		dataTable.getColumnModel().getColumn(0).setHeaderValue("data");
-		
+		for(int i = 0; i < dataTable.getColumnCount(); ++i)
+			dataTable.getColumnModel().getColumn(0).setHeaderValue("");
+
 	}
 
 
@@ -299,8 +300,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnEnableAll){
 			rowHeader.enableAll(); 
-			//statDialog.handleDataPanelSelectionChange(selectionList);
-			rowHeader.repaint();
+			
 		}
 	}
 
@@ -511,11 +511,16 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 
 
 		public void enableAll(){
-			for(int i=0; i< table.getRowCount(); ++i){
-				selectionList[i] = true;
-			}
-		}
 
+			for(int i=0; i< selectionList.length; ++i){
+				if(selectionList[i] == false){
+					statDialog.updateSelectedDataList2(i,true);
+					selectionList[i] = true;
+				}
+			}	
+			rowHeader.repaint();
+			table.repaint();
+		}
 	}
 
 

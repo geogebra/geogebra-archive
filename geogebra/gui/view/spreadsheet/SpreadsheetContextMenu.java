@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.OptionsDialog;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -360,8 +361,8 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				}
 			});	 
 			subMenu.add(item);
-			item.setEnabled((cp.isCreatePointListPossible(selectedCellRanges)));
-			item.setEnabled(false);	
+			item.setEnabled((cp.isCreatePointListPossible(selectedCellRanges)) );  //&& isShiftDown );
+			
 			
 		}
 		

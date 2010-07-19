@@ -8,6 +8,7 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -20,6 +21,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -72,8 +74,19 @@ public class StatTablePanel extends JPanel {
 		      public boolean isCellEditable(int rowIndex, int colIndex) {
 		    	  return false;   
 		      }
+		      
+		      // fill empty scroll pane space with table background color
+		      @Override
+			  	protected void configureEnclosingScrollPane() {
+			  		super.configureEnclosingScrollPane();
+			  		Container p = getParent();
+			  		if (p instanceof JViewport) {
+			  			((JViewport) p).setBackground(getBackground());
+			  		}
+			      }
 		};
 
+		
 		// create GeoList statList 
 		// --- this holds our stats as a list of geos  
 		createStatList();
@@ -207,15 +220,17 @@ public class StatTablePanel extends JPanel {
 		case StatDialog.MODE_TWOVAR:
 			
 			text += "{";
+			
+			text += statListCmdString("CorrelationCoefficient", label);
+			text += ",";
 			text += statListCmdString("MeanX", label);
 			text += ",";
-			text += statListCmdString("MeanY", label);
+			text += statListCmdString("Sxx", label);
 			text += ",";
-			text += statListCmdString("SigmaXX", label);
+			text += statListCmdString("Syy", label);
 			text += ",";
-			text += statListCmdString("SigmaYY", label);
+			text += statListCmdString("Sxy", label);
 			
-
 			text += "}";
 
 			break;

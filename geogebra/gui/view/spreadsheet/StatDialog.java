@@ -36,6 +36,7 @@ import javax.swing.event.ChangeListener;
 public class StatDialog extends JDialog 
 implements ActionListener, View   {
 	
+	
 	// ggb components
 	private Application app;
 	private Kernel kernel; 
@@ -76,9 +77,9 @@ implements ActionListener, View   {
 	// colors
 	public static final Color TABLE_GRID_COLOR = Color.GRAY;
 	public static final Color TABLE_HEADER_COLOR = new Color(240,240,240);   
-	
-	
-	
+	public static final Color HISTOGRAM_COLOR = new Color(0,0,255); // blue with alpha 0.25   
+	public static final Color BOXPLOT_COLOR = new Color(204,0,0);  // rose with alpha 0.25 
+	public static final Color DOTPLOT_COLOR = new Color(0,204,204); // blue-green   
 
 
 	/*************************************************
@@ -131,6 +132,8 @@ implements ActionListener, View   {
 
 		// attach this view to the kernel
 		attachView();
+		
+		
 		isIniting = false;
 
 	} //END  StatDialog constructor
@@ -198,7 +201,7 @@ implements ActionListener, View   {
 				break;
 
 			case MODE_TWOVAR:
-				
+				//copyByValue = true;	
 				tempGeo = (GeoList) spreadsheetTable
 				.getCellRangeProcessor().createPointList(
 						(ArrayList<CellRange>) dataSource, scanByColumn,
@@ -226,7 +229,7 @@ implements ActionListener, View   {
 			dataListAll = new GeoList(cons);
 			dataListAll.setAuxiliaryObject(true);
 			//dataListAll.setLabel("dataListAll");
-			dataListAll.setLabel(null);
+			dataListAll.setLabel(null);	
 		}
 		
 		if(dataListSelected == null){
@@ -245,8 +248,12 @@ implements ActionListener, View   {
 			dataListAll = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)dataListAll, text, true, false);
 
-			dataListSelected = (GeoList) kernel.getAlgebraProcessor()
-			.changeGeoElementNoExceptionHandling((GeoElement)dataListSelected, text, true,false);		
+		//	dataListSelected = (GeoList) kernel.getAlgebraProcessor()
+		//	.changeGeoElementNoExceptionHandling((GeoElement)dataListSelected, text, true,false);		
+			
+			
+			for(int i=0; i<dataListAll.size(); ++i)
+				dataListSelected.add(dataListAll.get(i));
 			
 			
 			//dataListAll.setFixed(true);
@@ -271,13 +278,17 @@ implements ActionListener, View   {
 	public void updateSelectedDataList2(int index, boolean doAdd) {
 
 		GeoElement geo = dataListAll.get(index);
-		if(doAdd)
+		
+		if(doAdd){
 			dataListSelected.add(geo);
-		else
+		}else{
 			dataListSelected.remove(geo);
+		}
+		
 		dataListSelected.updateCascade();
 		updateAllComboPanels(false);
-
+		Application.debug("updateSelectedList: " + index + doAdd);
+		
 	}
 
 
@@ -456,7 +467,7 @@ implements ActionListener, View   {
 				Application.debug("splitpane null");
 			}
 			displayPanel.setLeftComponent(dataPanel);
-			displayPanel.setDividerLocation(100);
+			displayPanel.setDividerLocation(200);
 			displayPanel.setDividerSize(4);
 		} else {
 			displayPanel.setLeftComponent(null);

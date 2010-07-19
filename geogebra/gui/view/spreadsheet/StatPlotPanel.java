@@ -6,6 +6,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
@@ -42,7 +43,9 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	private boolean isAutoRemoveGeos = true;
 	
-	private double xMinData, xMaxData;
+	private double xMinData, xMaxData, yMinData, yMaxData;
+	
+	
 	private double xMinEV, xMaxEV, yMinEV, yMaxEV;
 	private boolean showYAxis = false;
 	private boolean showArrows = false;
@@ -169,7 +172,8 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 
 		ev.setRealWorldCoordSystem(xMinEV, xMaxEV, yMinEV, yMaxEV);
 	
-		
+		//Application.debug("setEVParms");
+		ev.repaint();
 	}
 	
 	public void setCoordSystem(double xMin, double xMax, double yMin, double yMax){
@@ -255,22 +259,40 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	//       Plots
 	//=================================================
 	
+	private void setDataMinMax(GeoList dataList){
+		  setDataMinMax( dataList, false);
+	}
+	private void setDataMinMax(GeoList dataList, boolean isPointList){
 	
-	private void setXMinMax(GeoList dataList){
-	
-		double x;
+		double x, y; // temp vars
+		
 		GeoNumeric geo;	
 		xMinData = Double.MAX_VALUE;
 		xMaxData = Double.MIN_VALUE;
+
+		if(!isPointList){
+			for (int i = 0; i < dataList.size(); ++i){
+				x = ((GeoNumeric) ((GeoList)dataList).get(i)).getDouble();
+				if(xMinData > x) xMinData = x;
+				if(xMaxData < x) xMaxData = x;
+			}
+		}else{
+
+			yMinData = Double.MAX_VALUE;
+			yMaxData = Double.MIN_VALUE;
+
+			for (int i = 0; i < dataList.size(); ++i){
+				x = ((GeoPoint)(dataList.get(i))).getInhomX();
+				y = ((GeoPoint)(dataList.get(i))).getInhomY();
+				if(xMinData > x) xMinData = x;
+				if(xMaxData < x) xMaxData = x;
+				if(yMinData > y) yMinData = y;
+				if(yMaxData < y) yMaxData = y;
+			}	
+		}
+
 		
-		for (int i = 0; i < dataList.size(); ++i){
-			geo = (GeoNumeric) ((GeoList)dataList).get(i);
-			x = geo.getDouble();
-			if(xMinData > x) xMinData = x;
-			if(xMaxData < x) xMaxData = x;
-		}	
-		
-		// Application.debug(xMinData + "  " + xMaxData);	
+		 Application.debug(yMinData + "  " + yMaxData);	
 		
 		/*
 		String label = dataList.getLabel();	
@@ -312,7 +334,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	public void updateHistogram(GeoList dataList, int numClasses, boolean doCreate){
 		
-		setXMinMax(dataList);
+		setDataMinMax(dataList);
 		
 		//Application.debug(xMinData + "  " + xMaxData);	
 		//Application.debug(dataList.toDefinedValueString());	
@@ -339,6 +361,8 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	//	if(doCreate){
 			text = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
 			plotGeo = createGeoFromString(text);
+			plotGeo.setObjColor(StatDialog.HISTOGRAM_COLOR);
+			plotGeo.setAlphaValue(0.25f);
 	//	}
 				
 		//System.out.println(text);
@@ -347,7 +371,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 
 	public void updateBoxPlot(GeoList dataList, boolean doCreate){
 
-		setXMinMax(dataList);
+		setDataMinMax(dataList);
 		String label = dataList.getLabel();	
 		String text = "";
 		
@@ -362,9 +386,12 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		setEVParams();
 		
 		// create boxplot
+		GeoElement tempGeo;
 		if(doCreate){
 			text = "BoxPlot[1,0.5," + label + "]";
-			createGeoFromString(text);
+			tempGeo  = createGeoFromString(text);
+			tempGeo.setObjColor(StatDialog.BOXPLOT_COLOR);
+			tempGeo.setAlphaValue(0.25f);
 		}
 				
 	}
@@ -372,7 +399,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	public void updateDotPlot(GeoList dataList, boolean doCreate){
 
-		setXMinMax(dataList);
+		setDataMinMax(dataList);
 		String label = dataList.getLabel();	
 		String text = "";
 	
@@ -441,10 +468,51 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		//if(doCreate){
 			plotGeo = createGeoFromString(text);
 	//	}
-			plotGeo.update();
+			plotGeo.setObjColor(StatDialog.DOTPLOT_COLOR);
+			plotGeo.setAlphaValue(0.25f);
 	
 		
 	}
+	
+	
+	
+	public void updateScatterPlot(GeoList dataList, boolean doCreate){
+
+		setDataMinMax(dataList, true);
+		String label = dataList.getLabel();	
+		String text = "";
+		
+		// Set view parameters	
+		double xBuffer = .25*(xMaxData - xMinData);
+		xMinEV = xMinData - xBuffer;
+		xMaxEV = xMaxData + xBuffer;
+		
+		double yBuffer = .25*(yMaxData - yMinData);
+		yMinEV = yMinData - yBuffer;
+		yMaxEV = yMaxData + yBuffer;
+		
+		showYAxis = true;
+		forceXAxisBuffer = false;
+		setEVParams();
+			
+
+		// add the geo to our view and remove it from EV		
+		dataList.addView(ev);
+		ev.add(dataList);
+		dataList.removeView(app.getEuclidianView());
+		app.getEuclidianView().remove(dataList);
+		
+		// make it visible
+		dataList.setObjColor(StatDialog.DOTPLOT_COLOR);
+		dataList.setAlphaValue(0.25f);
+		
+		dataList.setEuclidianVisible(true);
+		dataList.update();
+		Application.debug("scatterplot");		
+	}
+	
+	
+	
 	
 	
 	
