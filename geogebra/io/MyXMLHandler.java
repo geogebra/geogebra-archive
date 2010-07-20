@@ -852,6 +852,7 @@ public class MyXMLHandler implements DocHandler {
 			sv.setShowHScrollBar(parseBoolean((String) attrs.get("showHScrollBar")));	
 			sv.setShowVScrollBar(parseBoolean((String) attrs.get("showVScrollBar")));	
 			sv.setShowToolBar(parseBoolean((String) attrs.get("showToolBar")));	
+			//sv.setAllowSpecialEditor(parseBoolean((String) attrs.get("allowSpecialEditor")));	
 			return true;
 			
 		} catch (Exception e) {

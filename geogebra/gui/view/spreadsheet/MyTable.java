@@ -52,8 +52,8 @@ import javax.swing.text.JTextComponent;
 
 public class MyTable extends JTable implements FocusListener 
 {
-	public boolean testFlag = false;
 	
+
 	public static final int MAX_CELL_EDIT_STRING_LENGTH = 10;
 
 	public static final int TABLE_CELL_WIDTH = 70;
@@ -192,7 +192,7 @@ public class MyTable extends JTable implements FocusListener
 		// add renderer & editor
 		
 		//G.Sturr 2010-4-4: add format handling to cell renderer
-		setDefaultRenderer(Object.class, new MyCellRenderer(app, this.getCellFormatHandler()));
+		setDefaultRenderer(Object.class, new MyCellRenderer(app, view, this.getCellFormatHandler()));
 		
 		//setDefaultRenderer(Object.class, new MyCellRenderer(app));
 		editorButton = new MyCellEditorButton();
@@ -345,7 +345,7 @@ public class MyTable extends JTable implements FocusListener
 	public TableCellEditor getCellEditor(int row, int column){
 		
 		Point p = new Point(column, row);
-		if (testFlag && oneClickEditMap.containsKey(p) 
+		if (view.allowSpecialEditor() && oneClickEditMap.containsKey(p) 
 				&& kernel.getAlgebraStyle()==Kernel.ALGEBRA_STYLE_VALUE){
 			
 			switch (oneClickEditMap.get(p).getGeoClassType()){

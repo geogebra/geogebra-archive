@@ -110,7 +110,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean showHScrollBar = true;
 	private boolean showBrowserPanel = false;
 	private boolean showToolBar = false;
-	private boolean isColumnSelect = false;
+	private boolean isColumnSelect = false; //TODO: do we need forced column select?
+	private boolean allowSpecialEditor = false;
 	
 	
 	private StatDialog oneVarStatDialog;
@@ -228,6 +229,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		setShowHScrollBar(true);
 		setShowBrowserPanel(false);
 		setShowToolBar(false);
+		setAllowSpecialEditor(false);
 	}
 
 	public void setDefaultSelection() {
@@ -1710,6 +1712,15 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 	
+
+	public void setAllowSpecialEditor(boolean allowSpecialEditor){
+		this.allowSpecialEditor = allowSpecialEditor;
+		repaint();
+	}
+	
+	public boolean allowSpecialEditor(){
+		return allowSpecialEditor;
+	}
 	
 
 	

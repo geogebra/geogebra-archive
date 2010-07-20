@@ -38,6 +38,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private static final long serialVersionUID = 1L;
 	private Application app;
 	private Kernel kernel;
+	private SpreadsheetView view;
 	
 	private ImageIcon latexIcon, emptyIcon; //G.Sturr 2010-1-15
 	private String latexStr = new String();
@@ -68,11 +69,12 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	//END G.Sturr
 	
 	
-	public MyCellRenderer(Application app, CellFormat formatHandler) {
+	public MyCellRenderer(Application app, SpreadsheetView view, CellFormat formatHandler) {
 		
 		this.app = app;		
 		this.kernel = app.getKernel();
-		this.formatHandler = formatHandler;
+		this.formatHandler =  formatHandler;
+		this.view = view;
 		
 		//G.Sturr 2009-10-3:  add horizontal padding
 		setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
@@ -116,7 +118,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		
 		
 		// use special rendering for buttons, booleans and lists
-		if(((MyTable)table).testFlag && kernel.getAlgebraStyle()==Kernel.ALGEBRA_STYLE_VALUE){
+		if(view.allowSpecialEditor() && kernel.getAlgebraStyle()==Kernel.ALGEBRA_STYLE_VALUE){
 
 			if(geo.isGeoBoolean()){
 				checkBox.setBackground(table.getBackground());

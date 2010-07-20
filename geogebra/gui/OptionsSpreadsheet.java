@@ -63,12 +63,15 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	private SpreadsheetView view;
 	
 	private JCheckBox cbShowGrid, cbShowRowHeader, 
-	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, cbShowBrowser, cbShowToolBar;
+	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, 
+	cbShowBrowser, cbShowToolBar, cbAllowSpecialEditor;
 	
 	private JTextField dirField, urlField;
 	
 	private JButton browseButton;
 	private JRadioButton dirRadioButton, urlRadioButton;
+
+	
 	
 	/**
 	 * Creates a new dialog for the properties of the spreadsheet view.
@@ -111,33 +114,38 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		layoutOptions.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		
 
-        cbShowGrid = new JCheckBox(app.getMenu("Gridlines"));  
+        cbShowGrid = new JCheckBox(app.getMenu("Show Gridlines"));  
         cbShowGrid.addActionListener(this);        
         layoutOptions.add(cbShowGrid); 
         
-        cbShowColumnHeader = new JCheckBox(app.getMenu("ColumnHeader"));  
+        cbShowColumnHeader = new JCheckBox(app.getMenu("Show Column Header"));  
         cbShowColumnHeader.addActionListener(this);
         layoutOptions.add(cbShowColumnHeader); 
         
-        cbShowRowHeader = new JCheckBox(app.getMenu("RowHeader"));  
+        cbShowRowHeader = new JCheckBox(app.getMenu("Show Row Header"));  
         cbShowRowHeader.addActionListener(this);
         layoutOptions.add(cbShowRowHeader); 
         
-        cbShowHScrollbar = new JCheckBox(app.getMenu("HorizontalScrollbars"));  
+        cbShowHScrollbar = new JCheckBox(app.getMenu("Show Horizontal Scrollbars"));  
         cbShowHScrollbar.addActionListener(this);
         layoutOptions.add(cbShowHScrollbar); 
         
-        cbShowVScrollbar = new JCheckBox(app.getMenu("VerticalScrollbars"));  
+        cbShowVScrollbar = new JCheckBox(app.getMenu("Show Vertical Scrollbars"));  
         cbShowVScrollbar.addActionListener(this);
         layoutOptions.add(cbShowVScrollbar); 
         
-        cbShowBrowser = new JCheckBox(app.getMenu("Browser"));  
+        cbShowBrowser = new JCheckBox(app.getMenu("Show File Browser"));  
         cbShowBrowser.addActionListener(this);        
         layoutOptions.add(cbShowBrowser); 
         
-        cbShowToolBar = new JCheckBox(app.getMenu("Toolbar"));
+        cbShowToolBar = new JCheckBox(app.getMenu("Show Toolbar"));
         cbShowToolBar.addActionListener(this);        
-        layoutOptions.add(cbShowToolBar); 
+        layoutOptions.add(cbShowToolBar);
+        
+        cbAllowSpecialEditor = new JCheckBox(app.getMenu("Use Buttons and Checkboxes "));
+        cbAllowSpecialEditor.addActionListener(this);        
+        layoutOptions.add(cbAllowSpecialEditor);
+        
         
         
         return layoutOptions;
@@ -271,6 +279,11 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbShowToolBar.removeActionListener(this);
         cbShowToolBar.setSelected(view.getShowToolBar()); 
         cbShowToolBar.addActionListener(this);
+        
+        cbAllowSpecialEditor.removeActionListener(this);
+        cbAllowSpecialEditor.setSelected(view.allowSpecialEditor()); 
+        cbAllowSpecialEditor.addActionListener(this);
+        
      
         
        /* 
@@ -328,6 +341,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 			view.setShowToolBar(cbShowToolBar.isSelected());
 		}
 		
+		else if (source == cbAllowSpecialEditor) {
+			view.setAllowSpecialEditor(cbAllowSpecialEditor.isSelected());
+		}
 		
 		
 		
