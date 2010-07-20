@@ -815,8 +815,8 @@ public class ContextMenu extends JPopupMenu
 	private class ActionListenerImportDataURL implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 	
-			InputDialog id = new InputDialogOpenDataURL(app,view);
-			id.setVisible(true);
+		//	InputDialog id = new InputDialogOpenDataFolderURL(app,view);
+		//	id.setVisible(true);
 			
 		}
 	}

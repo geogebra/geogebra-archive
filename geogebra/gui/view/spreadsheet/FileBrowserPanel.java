@@ -1,5 +1,6 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.gui.InputDialog;
 import geogebra.io.DocHandler;
 import geogebra.io.QDParser;
 import geogebra.main.Application;
@@ -127,7 +128,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 		JToolBar toolbar = new JToolBar();
 		toolbar.setFloatable(false);
-		menuButton = new JButton(app.getImageIcon("aux_folder.gif"));
+		menuButton = new JButton("...", app.getImageIcon("aux_folder.gif"));
 		menuButton.addActionListener(this);
 		toolbar.add(menuButton);
 		makeContextMenu();
@@ -153,7 +154,13 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 		this.add(header, BorderLayout.NORTH);
 		this.add(treePane, BorderLayout.CENTER);
-
+		
+		// Load the local file system root as directory default
+		// TODO: add a default directory option to preferences
+		String curDir = System.getProperty("user.dir"); 
+		String homeDir = System.getProperty("user.home"); 
+		this.setDirectory(new File(homeDir));
+		
 	}
  
 	
@@ -184,8 +191,15 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 				try {
 				//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/Text.xml");
-					URL url = new URL("http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml");
-					setDirectory(url);
+				//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml");
+					
+					String initString = "http://";				
+					initString  = "http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml";
+					
+					InputDialog id = new InputDialogOpenDataFolderURL(app,view, initString);
+					id.setVisible(true);
+					
+					// setDirectory(url);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -231,16 +245,18 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	// Set Tree Directory
 	//=============================================
 		
-	public void setDirectory(URL rootURL){
-		setDirectory(rootURL, null, true);
+	public boolean setDirectory(URL rootURL){
+		return setDirectory(rootURL, null, true);
 	}
 	
-	public void setDirectory(File rootFile){
-		setDirectory(null, rootFile, false);
+	public boolean setDirectory(File rootFile){
+		return setDirectory(null, rootFile, false);
 	}
 	
-	private void setDirectory(URL rootURL, File rootFile, boolean isXMLTree){
+	private boolean setDirectory(URL rootURL, File rootFile, boolean isXMLTree){
 
+		boolean succ = true;
+		
 		this.isXMLTree = isXMLTree;
 
 		if (isXMLTree) {
@@ -260,19 +276,31 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				succ = false;
 			}
 
 			
 		} else {
 
-			this.rootFile = rootFile;
-			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
-					rootFile.getName());
-			addFileTree(newNode, rootFile);
-			treeModel.setRoot(newNode);
-			treeModel.reload();
+			try {
+				this.rootFile = rootFile;
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
+						rootFile.getName());
+				addFileTree(newNode, rootFile);
+				treeModel.setRoot(newNode);
+				treeModel.reload();
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				succ = false;
+			}
 
-		}		
+		}	
+		
+		
+		return succ;
+		
 	}
 	
 	

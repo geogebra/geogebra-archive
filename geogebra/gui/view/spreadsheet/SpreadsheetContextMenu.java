@@ -338,7 +338,8 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		//     Data analysis
 		// ===============================================
 		
-		this.addSeparator();
+		if(!isEmptySelection())
+			this.addSeparator();
 		
 		if(!isEmptySelection()){   // && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
 			subMenu = new JMenu(app.getMenu("Data Analysis") + " ...");

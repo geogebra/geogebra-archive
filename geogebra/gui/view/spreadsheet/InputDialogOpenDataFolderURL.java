@@ -15,17 +15,21 @@ import java.net.URL;
  *  G.Sturr 2010-2-12
  *
  */
-public class InputDialogOpenDataURL extends InputDialog{
+public class InputDialogOpenDataFolderURL extends InputDialog{
 	
 	private SpreadsheetView view;
 	
-	public InputDialogOpenDataURL(Application app, SpreadsheetView view) {
+	public InputDialogOpenDataFolderURL(Application app, SpreadsheetView view, String initString) {
 		super(app.getFrame(), false);
 		this.app = app;	
 		this.view = view;
-		initString = "http://";
-
-		createGUI(app.getMenu("LoadURL"), app.getPlain("EnterURL"), false, DEFAULT_COLUMNS, 1, false, false, true, false, false, false);
+		//initString = "http://";
+		this.initString = initString;
+		
+		String title = app.getMenu("LoadURL");
+		String message =  app.getPlain("EnterURL"); 
+		boolean showApply = false;
+		createGUI(title, message, false, DEFAULT_COLUMNS, 1, false, false, true, false, false, showApply);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
 		centerOnScreen();
 		
@@ -37,6 +41,7 @@ public class InputDialogOpenDataURL extends InputDialog{
 		setTitle(title);
 		
 		btOK.setText(app.getPlain("Open"));
+	//	btApply.setText(app.getPlain("Apply"));
 		btCancel.setText(app.getPlain("Cancel"));
 
 	}
@@ -67,7 +72,11 @@ public class InputDialogOpenDataURL extends InputDialog{
 		URL url;
 		try {
 			url = new URL(inputPanel.getText());
-			succ = view.loadSpreadsheetFromURL(url);
+			
+		//	succ = view.loadSpreadsheetFromURL(url);
+	
+			succ = view.getBrowserPanel().setDirectory(url);
+			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
