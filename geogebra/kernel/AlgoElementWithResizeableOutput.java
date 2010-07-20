@@ -14,6 +14,6 @@ public interface AlgoElementWithResizeableOutput {
 	 * @param geo
 	 * @return geo, possibly already computed by the algo
 	 */
-	public GeoElement addToOutput(GeoElement geo, boolean computedGeo);
+	public GeoElement addCreatedElementToOutput(GeoElement geo);
 
 }

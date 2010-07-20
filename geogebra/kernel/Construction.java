@@ -1204,7 +1204,7 @@ public class Construction {
     	
     	GeoElement ret;
     	if (algo!=null){
-    		ret=algo.addToOutput(geo,false);
+    		ret=algo.addCreatedElementToOutput(geo);
     		labelDependsOn.remove(label);
     	}else
     		ret=geo;

@@ -148,7 +148,7 @@ implements AlgoElementWithResizeableOutput{
     			pointsList.get(index).set(point);
     		else{//add new point to the list and to the output
     			//setOutputDependencies((GeoElement) point);
-    			addToOutput((GeoElement) point);
+    			addPointToOutput((GeoElement) point);
     			setLabel((GeoElement) point);
     			//pointsList.add((GeoPoint) point);
     		}
@@ -210,16 +210,18 @@ implements AlgoElementWithResizeableOutput{
     private int nbLabelSetPoints = 0;
     //private int nbLabelSetSegment = 0;
     
-    private void addToOutput(GeoElement geo){
-    	addToOutput(geo, true);
+    private void addPointToOutput(GeoElement geo){
+    	pointsList.add((GeoPoint) geo);
+		setOutputDependencies(geo);
+    	
     }
     
-    public GeoElement addToOutput(GeoElement geo, boolean computedGeo){
+    public GeoElement addCreatedElementToOutput(GeoElement geo){
     	
 
     	switch (geo.getGeoClassType()){
     	case GeoElement.GEO_CLASS_POINT:
-    		if (nbLabelSetPoints<pointsList.size() && !computedGeo){
+    		if (nbLabelSetPoints<pointsList.size()){
     			GeoElement geo2 = pointsList.get(nbLabelSetPoints);
     			//geo2.setLabel(geo.getLabel());
     			geo=geo2;
@@ -227,8 +229,7 @@ implements AlgoElementWithResizeableOutput{
     		}else{
     			pointsList.add((GeoPoint) geo);
     			setOutputDependencies(geo);
-    			if (!computedGeo)
-    				nbLabelSetPoints++;
+    			nbLabelSetPoints++;
     		}
     		break;
     		/*
