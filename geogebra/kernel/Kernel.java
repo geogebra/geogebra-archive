@@ -110,10 +110,12 @@ import geogebra.util.Unicode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.math.complex.Complex;
@@ -837,7 +839,7 @@ public class Kernel {
     			return new GeoNumeric(cons);
     			
     		case 'p': // point, polygon
-    			if (type.equals("point")) 
+    			if (type.equals("point"))
     				return new GeoPoint(cons);
     			else if (type.equals("polygon"))
     				return new GeoPolygon(cons, null);
@@ -866,7 +868,7 @@ public class Kernel {
     }  
     
     
-    
+  
     
     
     
@@ -4175,6 +4177,19 @@ public class Kernel {
 		GeoPoint S = algo.getPoint();
 		return S;
 	}
+	
+	
+	/** 
+	 * yields intersection point named label of line g and polygon p
+	 */
+	final public GeoElement[] IntersectLinePolygon(
+		String[] labels,
+		GeoLine g,
+		GeoPolygon p) {
+		AlgoIntersectLinePolygon algo = new AlgoIntersectLinePolygon(cons, labels, g, p);
+		return algo.getOutput();
+	}
+
 	
 	/** 
 	 * Intersects f and g using starting point A (with Newton's root finding)

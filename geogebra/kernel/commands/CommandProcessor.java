@@ -4515,6 +4515,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 
  }
 
+ /*
  class CmdIntersection extends CmdIntersect {
 
 	 public CmdIntersection(Kernel kernel) {
@@ -4522,6 +4523,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 	 }
 
  }
+ */
 
  class CmdInsert extends CommandProcessor {
 

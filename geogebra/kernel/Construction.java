@@ -27,8 +27,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
+
+import org.mathpiper.builtin.functions.core.IsDecimal;
 
 /**
  * A Construction consists of a construction list with objects of type
@@ -1161,8 +1164,66 @@ public class Construction {
 		if (label == null)
 			return false;
 		else
-			return !geoTable.containsKey(label);
+			return !geoTable.containsKey(label) && !isDependentLabel(label);
 	}
+	
+	
+	
+	///////////////////////////////////////////////
+	// LABELS DEPENDING ON ALGOS
+	///////////////////////////////////////////////
+	
+
+	/** tree for dependecies label--algo */
+    private TreeMap<String, AlgoElementWithResizeableOutput> labelDependsOn = new TreeMap<String, AlgoElementWithResizeableOutput>();
+    
+    /**
+     * set that the label depends on the algo.
+     * Used when loading file, algos implementing AlgoElementWithResizeableOutput
+     * tell that output labels depend on it (used with resolveLabelDependency when element
+     * is handled) 
+     * @param label
+     * @param algo
+     */
+    public void setLabelDependsOn(String label, AlgoElementWithResizeableOutput algo){
+    	if (label!=null)
+    		labelDependsOn.put(label, algo);
+    }
+    
+    
+    /**
+     * when a new element is handled (on file loading), if the label
+     * depend on an AlgoElementWithResizeableOutput, the label will be set 
+     * on its output or the GeoElement will be added to the algo's output
+     * @param label
+     * @param geo
+     * @return
+     */
+    public GeoElement resolveLabelDependency(String label, GeoElement geo){
+    	AlgoElementWithResizeableOutput algo = labelDependsOn.get(label);
+    	
+    	GeoElement ret;
+    	if (algo!=null){
+    		ret=algo.addToOutput(geo,false);
+    		labelDependsOn.remove(label);
+    	}else
+    		ret=geo;
+    	
+    	return ret;
+    }
+    
+    /**
+     * says if the label depends on any algo
+     * @param label
+     * @return if the label depends on any algo
+     */
+    public boolean isDependentLabel(String label){
+    	return labelDependsOn.containsKey(label);
+    }
+	
+	
+	
+	
 
 	/*
 	 * redo / undo
@@ -1327,8 +1388,8 @@ public class Construction {
 		// make sure all output objects of newGeoAlgo are labeled, otherwise
 		// we may end up with several objects that have the same label
 		if (newGeoAlgo != null) {
-			for (int i=0; i < newGeoAlgo.output.length; i++) {
-				GeoElement geo = newGeoAlgo.output[i];
+			for (int i=0; i < newGeoAlgo.getNbOutput(); i++) {
+				GeoElement geo = newGeoAlgo.getOutput(i);
 				if (geo != newGeo && geo.isDefined() && !geo.isLabelSet()) {
 					geo.setLabel(null); // get free label
 				}				

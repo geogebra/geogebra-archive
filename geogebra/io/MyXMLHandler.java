@@ -1909,6 +1909,7 @@ public class MyXMLHandler implements DocHandler {
 		
 		if (geo == null) {
 			geo = kernel.createGeoElement(cons, type);
+			geo = cons.resolveLabelDependency(label, geo);
 			geo.setLoadedLabel(label);
 
 			// independent GeoElements should be hidden by default
@@ -3447,6 +3448,7 @@ public class MyXMLHandler implements DocHandler {
 				throw new MyError(app, "processing of command " + cmd
 						+ " failed");
 			cmd = null;
+			
 
 			// ensure that labels are set for invisible objects too
 			if (attrs.size() != cmdOutput.length) {
@@ -3463,6 +3465,14 @@ public class MyXMLHandler implements DocHandler {
 			int i = 0;
 			while (it.hasNext()) {
 				label = (String) it.next();
+				
+				//if the first label is a dependant label, then labels will be set by
+				//Construction.resolveLabelDependency
+				if (cons.isDependentLabel(label)){
+					//Application.debug("dependent label : "+label);
+					break;
+				}
+				
 				if ("".equals(label))
 					label = null;
 

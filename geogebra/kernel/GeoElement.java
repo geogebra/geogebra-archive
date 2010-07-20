@@ -2656,8 +2656,8 @@ public abstract class GeoElement
 			Iterator it = algoUpdateSet.getIterator();
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
-				for (int i = 0; i < algo.output.length; i++) {
-					if (geo == algo.output[i]) // child found
+				for (int i = 0; i < algo.getNbOutput(); i++) {
+					if (geo == algo.getOutput(i)) // child found
 						return true;
 				}			
 			}
@@ -2702,8 +2702,8 @@ public abstract class GeoElement
 			Iterator it = algoUpdateSet.getIterator();
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
-				for (int i = 0; i < algo.output.length; i++) {
-					set.add(algo.output[i]);					
+				for (int i = 0; i < algo.getNbOutput(); i++) {
+					set.add(algo.getOutput(i));					
 				}			
 			}
 		}

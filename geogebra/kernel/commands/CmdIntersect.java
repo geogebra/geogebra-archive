@@ -7,14 +7,17 @@ import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 
 /*
- * Intersect[ <GeoLine>, <GeoLine> ] Intersect[ <GeoLine>, <GeoConic> ]
+ * Intersect[ <GeoLine>, <GeoLine> ] Intersect[ <GeoLine>, <GeoPolygon> ] 
+ * Intersect[ <GeoLine>, <GeoConic> ]
  * Intersect[ <GeoConic>, <GeoLine> ] Intersect[ <GeoConic>, <GeoConic> ]
  * Intersect[ <GeoFunction>, <GeoFunction> ] Intersect[ <GeoFunction>, <GeoLine> ]
  */
@@ -41,6 +44,16 @@ public  GeoElement[] process(Command c) throws MyError {
                             c.getLabel(),
                             (GeoLine) arg[0],
                             (GeoLine) arg[1])};
+                return ret;
+            }
+            // Line - Polygon
+            else if ((ok[0] = (arg[0] .isGeoLine()))
+                && (ok[1] = (arg[1] .isGeoPolygon()))) {
+                GeoElement[] ret =
+                         kernel.IntersectLinePolygon(
+                            c.getLabels(),
+                            (GeoLine) arg[0],
+                            (GeoPolygon) arg[1]);
                 return ret;
             }
             // Line - Conic

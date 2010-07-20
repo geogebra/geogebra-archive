@@ -56,18 +56,24 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoCoordSys) arg[1])};
                 return ret;
             }
-            
-			else {
+
+            else {
+
+            	return super.process(c);
+
+            	/*
                 if (!ok[0])
                     throw argErr(app, "Intersect", arg[0]);
                 else
                     throw argErr(app, "Intersect", arg[1]);
+            	 */
             }
 
 
 
         default :
-            throw argNumErr(app, "Intersect", n);
+            return super.process(c);
+        	//throw argNumErr(app, "Intersect", n);
     }
 }
 }

@@ -286,7 +286,8 @@ public class CommandDispatcher {
     	cmdTable.put("Join", new CmdJoin(kernel));   
     	cmdTable.put("Insert", new CmdInsert(kernel));   
     	cmdTable.put("Union", new CmdUnion(kernel));   
-    	cmdTable.put("Intersection", new CmdIntersection(kernel)); 
+       	//cmdTable.put("Intersection", new CmdIntersection(kernel)); 
+       	cmdTable.put("Intersection", new CmdIntersect(kernel)); 
     	
     	cmdTable.put("IsInteger", new CmdIsInteger(kernel));
     	

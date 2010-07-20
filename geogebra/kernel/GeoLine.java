@@ -84,12 +84,18 @@ GeoLineInterface, MatrixTransformable {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		
+		//Application.debug("x="+x+", y="+y+", z="+z);
 	}     
     
 	final public void setCoords(GeoVec3D v) {
+		
+		setCoords(v.x, v.y, v.z);
+		/*
 		 x = v.x;
 		 y = v.y;
 		 z = v.z;
+		 */
 	 } 
     
     /** returns true if P lies on this line */
@@ -169,6 +175,35 @@ GeoLineInterface, MatrixTransformable {
 		pp.set(tempPP);
 		
 		return result;
+    }
+    
+    
+    /**
+     * return a possible parameter for the point P
+     * (return the parameter for the projection of P on the path)
+     * @param P
+     * @return a possible parameter for the point P
+     */
+    public double getPossibleParameter(GeoPoint P){
+    	
+    	// remember the old point coordinates
+		double px = P.x, py = P.y, pz = P.z;
+		PathParameter tempPP = getTempPathParameter();
+		PathParameter pp = P.getPathParameter();
+		tempPP.set(pp);
+		
+		// make sure we use point changed for a line to get parameters on 
+		// the entire line when this is a segment or ray
+		doPointChanged(P);		
+		
+		double result = pp.t;
+	
+		// restore old values
+		P.x = px; P.y = py; P.z = pz;
+		pp.set(tempPP);
+		
+		return result;
+		
     }
     
     private PathParameter tempPP;
@@ -653,6 +688,8 @@ GeoLineInterface, MatrixTransformable {
 		doPointChanged((GeoPoint) P);
 	}
 		
+	
+	
 	private void doPointChanged(GeoPoint P) {
 		// project P on line
 		double px = P.x/P.z;

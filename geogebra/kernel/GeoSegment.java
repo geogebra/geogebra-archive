@@ -68,10 +68,33 @@ GeoSegmentInterface {
 //	 Michael Borcherds 2007-11-20
 
 	public GeoSegment(Construction c, GeoPoint A, GeoPoint B) {
+		/*
 		super(c);		
 		setStartPoint(A);
 		setEndPoint(B);
+		*/
+		this(c);
+		setPoints(A, B);
 	}
+	
+	/**
+	 * common constructor
+	 * @param c
+	 */
+	public GeoSegment(Construction c){
+		super(c);
+	}
+	
+	/**
+	 * sets start and end points
+	 * @param A
+	 * @param B
+	 */
+	public void setPoints(GeoPoint A, GeoPoint B){
+		setStartPoint(A);
+		setEndPoint(B);
+	}
+	
 	
 	public String getClassName() {	
 		return "GeoSegment";
