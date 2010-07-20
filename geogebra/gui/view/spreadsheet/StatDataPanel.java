@@ -154,12 +154,12 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		btnEnableAll.setBorderPainted(false);
 		btnEnableAll.setBackground(MyTable.BACKGROUND_COLOR_HEADER);	
 		btnEnableAll.setContentAreaFilled(false);
-		btnEnableAll.setHorizontalAlignment(SwingConstants.CENTER);
+		btnEnableAll.setHorizontalAlignment(SwingConstants.LEFT);
 		btnEnableAll.addActionListener(this);
 		
 		Corner upperLeftCorner = new Corner(); 
 		upperLeftCorner.setLayout(new BorderLayout());
-		upperLeftCorner.add(btnEnableAll, BorderLayout.CENTER);
+		upperLeftCorner.add(btnEnableAll, BorderLayout.WEST);
 			
 		upperLeftCorner.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createMatteBorder(0, 0, 1, 1, TABLE_GRID_COLOR), 
@@ -244,8 +244,11 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		}
 
 		dataTable.setModel(dataModel);
-		for(int i = 0; i < dataTable.getColumnCount(); ++i)
-			dataTable.getColumnModel().getColumn(0).setHeaderValue("");
+		
+		String[] titles = statDialog.getDataTitles();
+		for(int i = 0; i < titles.length; ++i)
+			dataTable.getColumnModel().getColumn(i).setHeaderValue(titles[i]);
+		
 
 	}
 

@@ -157,12 +157,16 @@ implements ActionListener, View   {
 
 
 	public void removeGeos(){
+		
 		if(dataListAll != null)
 			dataListAll.remove();
 		dataListAll = null;
+		
 		if(dataListSelected != null)
 			dataListSelected.remove();
 		dataListSelected = null;
+		
+		statPanel.removeGeos();
 		dataPanel.removeGeos();
 		comboStatPanel.removeGeos();
 		comboStatPanel2.removeGeos();
@@ -303,30 +307,57 @@ implements ActionListener, View   {
 		
 		dataListSelected.updateCascade();
 		updateAllComboPanels(false);
-		Application.debug("updateSelectedList: " + index + doAdd);
+		//Application.debug("updateSelectedList: " + index + doAdd);
 		
 	}
 
 
 
-	public String getDataTitle(int index){
+	public String[] getDataTitles(){
 		
-		String title = "";
-		/*
-		int column = this.selectedColumns.get(index);
-		
-		GeoElement geo = RelativeCopy.getValue(spreadsheetTable, column, 0);
-		if(geo != null && geo.isGeoText())
-			title = geo.toDefinedValueString();
-		else
-			title = app.getCommand("Column") + " " + GeoElement.getSpreadsheetColumnName(column);
-		*/
-		
+		String[] title = null;
+
+		switch(mode){
+
+		case MODE_ONEVAR:
+
+			title = new String[1];		
+
+			if(dataSource instanceof GeoList){
+				title[0] = app.getPlain("untitled");
+
+			}else{
+
+				CellRange cr = ((ArrayList<CellRange>)dataSource).get(0);
+				if(cr.isColumn()) {
+					GeoElement geo = RelativeCopy.getValue(spreadsheetTable, cr.getMinColumn(), cr.getMinRow());
+					if(geo != null && geo.isGeoText())
+						title[0] = geo.toDefinedValueString();
+					else
+						title[0]= app.getCommand("Column") + " " + 
+						GeoElement.getSpreadsheetColumnName(cr.getMinColumn());		
+
+				}else{
+					title[0] = app.getPlain("untitled");
+				}
+			}
+			
+			break;
+
+		case MODE_TWOVAR:
+			//TODO -- get actual titles, handling ctrl-select
+			title = new String[2];	
+			title[0] = "X";
+			title[1] = "Y";
+			break;
+
+		}
+
 		return title;
 
 	}
-	
-	
+
+
 	public void resetSpreadsheetSelection(){
 		//spreadsheetTable.setSelection(selectedColumns.get(0), 0, selectedColumns.get(0), 0);
 		
@@ -560,15 +591,17 @@ implements ActionListener, View   {
 		super.setVisible(isVisible);
 
 		if(isVisible){
+			//Application.debug("statDialog visible");
 			//spView.setColumnSelect(true);
+			this.attachView();
 			if(!isIniting)
 				updateDialog();
 			
 		}else{
-			//Application.printStacktrace("hide statDialog");
+			//Application.debug("statDialog not visible");
 			//spView.setColumnSelect(false);
 			removeGeos();		
-			//this.detachView();		
+			this.detachView();		
 		}
 	}
 
@@ -594,10 +627,13 @@ implements ActionListener, View   {
 	}
 
 	public void updateAllComboPanels(boolean doCreateGeo){
+		//loadDataLists();	
 		comboStatPanel.updateData(dataListSelected);
 		comboStatPanel2.updateData(dataListSelected);
 		comboStatPanel.updatePlot(doCreateGeo);
 		comboStatPanel2.updatePlot(doCreateGeo);
+		statPanel.updateData(dataListSelected);
+		
 	}
 
 
@@ -687,10 +723,11 @@ implements ActionListener, View   {
 
 		//Application.debug("------> update:" + geo.toString());
 		if (!isIniting && isInDataSource(geo)) {
-			//Application.debug("---------> is in data source:" + geo.toString());
+			Application.debug("---------> is in data source:" + geo.toString());
 			//removeGeos();
 			//this.loadDataLists();
-			updateAllComboPanels(true);		
+			updateAllComboPanels(true);	
+			
 		}
 			
 	}

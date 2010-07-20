@@ -1,5 +1,6 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
@@ -13,6 +14,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -183,6 +185,11 @@ public class StatTablePanel extends JPanel {
 			statList.remove();
 			statList = null;
 		}
+		
+		if(dataList != null){
+			dataList.remove();
+			dataList = null;
+		}
 	}
 	
 	
@@ -207,91 +214,127 @@ public class StatTablePanel extends JPanel {
 		String text = "";
 		ArrayList<String> list = new ArrayList<String>();	
 
+			
 		switch(mode){
 		case StatDialog.MODE_ONEVAR:
+			
+			String[][]statMap1 = { 
+					{app.getPlain("N") ,"Length"},
+					{app.getPlain("Mean") ,"Mean"},
+					{app.getPlain("Sigma") ,"SD"},
+					{app.getPlain("s") ,"SampleSD"},
+					{null , null},
+					{app.getPlain("Min") ,"Min"},
+					{app.getPlain("Q1") ,"Q1"},
+					{app.getPlain("Median") ,"Median"},
+					{app.getPlain("Q3") ,"Q3"},
+					{app.getPlain("Max") ,"Max"}
+			};
 
-			text += "{";
-			text += statListCmdString("Length", label);
-			text += ",";
-			text += statListCmdString("Mean", label);
-			text += ",";
-			text += statListCmdString("SD", label);
-			text += ",";
-			text += statListCmdString("SampleSD", label);
-			text += ",";
-			text += statListCmdString(null, label);
-			text += ",";
-			text += statListCmdString("Min", label);
-			text += ",";
-			text += statListCmdString("Q1", label);
-			text += ",";
-			text += statListCmdString("Median", label);
-			text += ",";
-			text += statListCmdString("Q3", label);
-			text += ",";
-			text += statListCmdString("Max", label);
-
-			text += "}";
+			text = createStatListString(statMap1, label);
 			
 			break;
 
 
 		case StatDialog.MODE_TWOVAR:
 			
-			text += "{";
+			String[][]statMap2 = {
+					{app.getPlain("MeanX") ,"MeanX"},
+					{app.getPlain("MeanY") ,"MeanY"},
+					{app.getPlain("r") ,"CorrelationCoefficient"},
+					
+					{app.getPlain("Sxx") ,"Sxx"},
+					{app.getPlain("Syy") ,"Syy"},
+					{app.getPlain("Sxy") ,"Sxy"},
+			};
 			
-			text += statListCmdString("CorrelationCoefficient", label);
-			text += ",";
-			text += statListCmdString("MeanX", label);
-			text += ",";
-			text += statListCmdString("Sxx", label);
-			text += ",";
-			text += statListCmdString("Syy", label);
-			text += ",";
-			text += statListCmdString("Sxy", label);
+			text = createStatListString(statMap2, label);
 			
-			text += "}";
-
 			break;
 			
 		}
-		
+
 		//System.out.println(text);	
+		
+		Construction cons = kernel.getConstruction();
+		try {
 			
-			try {
+			/*
+			if(statList != null) 
+				statList.remove();
 			
+			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();	
+			cons.setSuppressLabelCreation(true);
+			
+			GeoElement[] geos = kernel.getAlgebraProcessor()
+				.processAlgebraCommandNoExceptionHandling(text, false);	
+			
+
+
+			geos[0].setLabel("statList");
+			geos[0].setAuxiliaryObject(true);
+			statList = (GeoList) geos[0];
+
+			cons.setSuppressLabelCreation(oldSuppressLabelMode);
+
+			 */
+
+
 			if(statList == null){
 				statList = new GeoList(kernel.getConstruction());
-				//statList.setLabel("statList");
-				statList.setLabel(null);
+				statList.setLabel("statList");
+				//statList.setLabel(null);
 				statList.setAuxiliaryObject(true);
-							
+				statList.updateCascade();
 			}
+
 			statList = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)statList, text, true, false);
-			
-			
-			
+
+
 		} catch (Exception ex) {
-			Application.debug("Creating list failed with exception " + ex);
-			setVisible(false);
+			Application.debug("Creating list failed with exception: " + ex);
 		}	
-		
+
 	}
 	
-	private String statListCmdString(String cmdStr, String geoLabel){
+	private String createStatListString(String[][] statMap, String geoLabel){
+		
 		String text = "";
-		if(cmdStr == null){
-			text = "{\"\",\"\"}";
-		}else{
-			text = "{";
-			text += "\"" + app.getCommand(cmdStr)+ "\",";
-			text += cmdStr + "[" + geoLabel + "]";
-			text += "}";
+		String nameStr = "";
+		String cmdStr = "";
+				
+		// generate a list of lists
+		// e.g. { {name, cmd[]}, {name, cmd[]} }
+		text += "{";
+		for(int i = 0 ; i < statMap.length; ++ i){
+			
+			nameStr = statMap[i][0];
+			cmdStr = statMap[i][1];
+			
+			// create an interior list 
+			// e.g. { "N" , Length[geoLabel] }
+			if(cmdStr == null){
+				text += "{ \"\", \"\"}";
+				
+			}else{
+				text += "{";
+				text += "\"" + nameStr + "\",";
+				text += cmdStr + "[" + geoLabel + "]";
+				text += "}";
+			}
+			//==============================
+			
+			// add comma delimiter
+			if(i<statMap.length - 1)
+				text += ",";
 		}
-
+		text += "}";
+		
 		return text; 
 	}
+	
+	
 	
 	
 	private void populateStatTable(){
@@ -307,23 +350,30 @@ public class StatTablePanel extends JPanel {
 		
 		statTable.setModel(statModel);	
 		
-		//statTable.getColumnModel().getColumn(0).setHeaderValue(statDialog.getDataTitle(0));
-		
-		//TODO: handle data titles
-	//	statTable.getColumnModel().getColumn(0).setHeaderValue("");
-		
+	/*	
+		String[] titles = statDialog.getDataTitles();
+		for(int i = 0; i < titles.length; ++i)
+			statTable.getColumnModel().getColumn(i).setHeaderValue(titles[i]);
+	*/
+	
 	//	statTable.getTableHeader().resizeAndRepaint();
-		
 		statTable.repaint();
 	}
 
 	
 	
 	public void updateTable(){
+		//populateStatTable();
+		if(statList != null){
+			statList.updateCascade();
+			Application.debug("=======> con index " + statList.getConstructionIndex());
+		}else{
+			Application.debug("statList is null");
+		}
 		
 		statTable.repaint();
 		
-		
+	
 	}
 	
 	public void updateData(GeoList dataList){
@@ -464,6 +514,7 @@ public class StatTablePanel extends JPanel {
 			
 			GeoElement geo = (GeoElement)value;
 			setText(geo.toDefinedValueString());
+			//setText(geo.toDefinedValueString() + ":" + geo.getCommandDescription());
 			setFont(app.getPlainFont());
 			
 			if(row ==1 && column == 1){
@@ -521,7 +572,7 @@ public class StatTablePanel extends JPanel {
 
 				setBorder(BorderFactory.createCompoundBorder(
 						BorderFactory.createMatteBorder(0, 0, 1, 1, TABLE_GRID_COLOR), 
-						BorderFactory.createEmptyBorder(0, 5, 0, 2)));
+						BorderFactory.createEmptyBorder(2, 5, 2, 5)));
 				
 				setHorizontalAlignment(RIGHT);
 				setFont(table.getTableHeader().getFont());

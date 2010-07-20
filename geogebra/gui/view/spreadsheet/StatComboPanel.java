@@ -111,12 +111,12 @@ public class StatComboPanel extends JPanel{
 		plotPanel = new StatPlotPanel(app);
 		plotPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-		statPanel = new StatTablePanel(app, dataListSelected, mode);
-		statPanel.setBorder(plotPanel.getBorder());
+		//statPanel = new StatTablePanel(app, dataListSelected, mode);
+		//statPanel.setBorder(plotPanel.getBorder());
 
 		statDisplayPanel = new JPanel(new CardLayout());
 		statDisplayPanel.add("plotPanel", plotPanel);
-		statDisplayPanel.add("statPanel", statPanel);
+		//statDisplayPanel.add("statPanel", statPanel);
 		statDisplayPanel.setBackground(plotPanel.getBackground());
 
 		
@@ -238,7 +238,11 @@ public class StatComboPanel extends JPanel{
 	
 
 	public void removeGeos(){
-		statPanel.removeGeos();
+		//statPanel.removeGeos();
+		
+		if(dataListSelected != null)
+			dataListSelected.remove();
+
 		plotPanel.removeGeos();
 	}
 	
@@ -286,14 +290,14 @@ public class StatComboPanel extends JPanel{
 			break;
 			
 			default:
-				System.out.println(plotMap.get(plotIndex));
+				//System.out.println(plotMap.get(plotIndex));
 		}
 
 	}
 
 
 	public void updateStatTableFonts(Font font){
-		statPanel.updateFonts(font);
+		//statPanel.updateFonts(font);
 	}
 
 	public void attachView() {

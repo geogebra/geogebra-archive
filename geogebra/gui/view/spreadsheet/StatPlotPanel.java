@@ -90,7 +90,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 
 	
 	public void removeGeos(){
-	//	Application.debug("=========== remove plot geos");
+		//Application.debug("=========== remove plot geos");
 		
 		if(plotGeo != null){
 			plotGeo.remove();
@@ -292,7 +292,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		}
 
 		
-		 Application.debug(yMinData + "  " + yMaxData);	
+		// Application.debug(yMinData + "  " + yMaxData);	
 		
 		/*
 		String label = dataList.getLabel();	
@@ -478,8 +478,9 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	public void updateScatterPlot(GeoList dataList, boolean doCreate){
 
-		setDataMinMax(dataList, true);
-		String label = dataList.getLabel();	
+		plotGeo = dataList;
+		setDataMinMax((GeoList) plotGeo, true);
+		String label = plotGeo.getLabel();	
 		String text = "";
 		
 		// Set view parameters	
@@ -497,18 +498,18 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 			
 
 		// add the geo to our view and remove it from EV		
-		dataList.addView(ev);
-		ev.add(dataList);
-		dataList.removeView(app.getEuclidianView());
-		app.getEuclidianView().remove(dataList);
+		plotGeo.addView(ev);
+		ev.add(plotGeo);
+		plotGeo.removeView(app.getEuclidianView());
+		app.getEuclidianView().remove(plotGeo);
 		
 		// make it visible
-		dataList.setObjColor(StatDialog.DOTPLOT_COLOR);
-		dataList.setAlphaValue(0.25f);
+		plotGeo.setObjColor(StatDialog.DOTPLOT_COLOR);
+		plotGeo.setAlphaValue(0.25f);
 		
-		dataList.setEuclidianVisible(true);
-		dataList.update();
-		Application.debug("scatterplot");		
+		plotGeo.setEuclidianVisible(true);
+		plotGeo.update();
+		//Application.debug("scatterplot");		
 	}
 	
 	
