@@ -2311,9 +2311,22 @@ public abstract class GeoElement
 		if (isIndependent()) 
 			cons.removeFromConstructionList(this);
 
+		// remove Listeners
+		AlgoElement algo = getParentAlgorithm();
+		if (algo instanceof EuclidianViewAlgo) {
+			cons.unregisterEuclidianViewAlgo((EuclidianViewAlgo)algo);
+		}
+
+		if (condShowObject != null) {
+			condShowObject.unregisterConditionListener(this);
+		}
+				
+		if (colFunction != null) {
+			colFunction.unregisterColorFunctionListener(this);
+		}
+
 		// remove all dependent algorithms		
 		if (algorithmList != null) {
-			AlgoElement algo;
 			Object[] algos = algorithmList.toArray();
 			for (int i = 0; i < algos.length; i++) {
 				algo = (AlgoElement) algos[i];
