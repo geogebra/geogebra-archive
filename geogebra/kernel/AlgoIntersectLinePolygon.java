@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -40,10 +41,9 @@ implements AlgoElementWithResizeableOutput{
 	
 	private GeoLine g; // input
 	private GeoPolygon p; //input
-    private ArrayList<GeoPoint> pointsList; // output   
+    private OutputList pointsList, segmentsList; // output   
     //private ArrayList<GeoSegment> segmentsList; // output   
     
-    private int nbPoints = 0;
     
     private TreeMap<Double, GeoPoint> pointsTree;
     
@@ -101,8 +101,8 @@ implements AlgoElementWithResizeableOutput{
 
         
 
-        nbPoints = 0;
-        pointsList = new ArrayList<GeoPoint>();
+        pointsList = new OutputList();
+        segmentsList = new OutputList();
         //segmentsList = new ArrayList<GeoSegment>();
         
         
@@ -144,57 +144,49 @@ implements AlgoElementWithResizeableOutput{
     	//update and/or create points
     	int index = 0;
     	for (GeoPointInterface point : pointsTree.values()){
-    		if (index<nbPoints)//re-affect old point
-    			pointsList.get(index).set(point);
+    		if (index<pointsList.getNumber())//re-affect old point
+    			pointsList.get(index).set((GeoElement) point);
     		else{//add new point to the list and to the output
-    			//setOutputDependencies((GeoElement) point);
-    			addPointToOutput((GeoElement) point);
+    			addComputedElementToOutput((GeoElement) point);
     			setLabel((GeoElement) point);
-    			//pointsList.add((GeoPoint) point);
     		}
-    		
-    		//segment
-    		/*
-    		if (startPoint!=null){
-    			GeoSegment segment;
-    			if (indexSegment < nbSegments){
-    				segment = segmentsList.get(indexSegment);
-    				segment.setPoints((GeoPoint) startPoint, (GeoPoint) point);
-    				segment.calcLength();
-    			}else{
-    				segment = new GeoSegment(getConstruction(),(GeoPoint) startPoint, (GeoPoint) point);
-    				segment.calcLength();
-    				addToOutput(segment);
-    				setLabel(segment);
-    				//segmentsList.add(segment);
-    			}  			
-    			indexSegment++;
-    		}
-    		*/
-    		
     		index++;
     	}
-    	
-    	
-
+ 
     	// set other points to undefined
-    	for (int i=index; i<nbPoints; i++)
-    		pointsList.get(i).setUndefined();
+    	pointsList.setLastUndefined(index);
     	
-    	// set other segments to undefined
-    	/*
-    	for (int i=indexSegment; i<nbSegments; i++)
-    		segmentsList.get(i).setUndefined();
-    	*/
-   	
     	
-    	// update number of points
-    	nbPoints = pointsList.size();
+    	//update and/or create segments
+    	index = 0;
+    	GeoPointInterface startPoint = null;
+    	for (GeoPointInterface point : pointsTree.values()){
+    		if (startPoint!=null){
+    			
+    			GgbVector middle = (GgbVector) startPoint.getInhomCoords().add(point.getInhomCoords()).mul(0.5);
+    			if (p.isInRegion(middle.getX(),middle.getY())){
+
+    				GeoSegment segment;
+    				if (index < segmentsList.getNumber()){
+    					segment = (GeoSegment) segmentsList.get(index);
+    					segment.setPoints((GeoPoint) startPoint, (GeoPoint) point);
+    					segment.calcLength();
+    				}else{    				
+    					segment = new GeoSegment(getConstruction(),(GeoPoint) startPoint, (GeoPoint) point);
+    					segment.calcLength();
+    					addComputedElementToOutput(segment);
+    					setLabel(segment);
+    				}  			
+    				index++;
+
+    			}
+    		}
+    		startPoint = point;    		
+    	}
+ 
+    	// set other points to undefined
+    	segmentsList.setLastUndefined(index);
     	
-    	// update number of segments
-    	//nbSegments = segmentsList.size();
-    	
-    	//Application.debug("nbDefinedPoints = "+nbDefinedPoints+", nbDefinedSegments = "+nbDefinedSegments);
     }
 
     final public String toString() {
@@ -207,20 +199,44 @@ implements AlgoElementWithResizeableOutput{
     // OUTPUT
     ///////////////////////////////////////////////////
     
-    private int nbLabelSetPoints = 0;
-    //private int nbLabelSetSegment = 0;
+
+    private OutputList getOutputList(int geoClassType){
+    	switch (geoClassType){
+    	case GeoElement.GEO_CLASS_POINT:
+    		return pointsList;
+    	case GeoElement.GEO_CLASS_SEGMENT:
+    		return segmentsList;
+    	default:
+    		return null;
+    	}
+    }
     
-    private void addPointToOutput(GeoElement geo){
-    	pointsList.add((GeoPoint) geo);
+    private void addComputedElementToOutput(GeoElement geo){
+
+    	/*
+    	switch (geo.getGeoClassType()){
+    	case GeoElement.GEO_CLASS_POINT:
+    		pointsList.add((GeoPoint) geo);
+    		break;
+    	}
+    	*/
+    	
+    	getOutputList(geo.getGeoClassType()).add(geo);
+    	
 		setOutputDependencies(geo);
     	
     }
     
     public GeoElement addCreatedElementToOutput(GeoElement geo){
     	
-
+    	GeoElement ret;
+    	ret = getOutputList(geo.getGeoClassType()).addCreatedElement(geo);
+    	
+    	/*
     	switch (geo.getGeoClassType()){
     	case GeoElement.GEO_CLASS_POINT:
+    		ret = pointsList.addCreatedElement(geo);
+    		
     		if (nbLabelSetPoints<pointsList.size()){
     			GeoElement geo2 = pointsList.get(nbLabelSetPoints);
     			//geo2.setLabel(geo.getLabel());
@@ -231,6 +247,7 @@ implements AlgoElementWithResizeableOutput{
     			setOutputDependencies(geo);
     			nbLabelSetPoints++;
     		}
+    		
     		break;
     		/*
     	case GeoElement.GEO_CLASS_SEGMENT:
@@ -246,29 +263,31 @@ implements AlgoElementWithResizeableOutput{
     				nbLabelSetSegment++;
     		}
     		break;
-    		*/
+    		
     	default:
     		Application.printStacktrace("wrong geo class type");
+    		ret = null;
     		break;
     	}
+    	*/
     	
-    	return geo;
+    	return ret;
     }
        
     protected GeoElement getOutput(int i){
     	
-    	return pointsList.get(i);
+    	//return pointsList.get(i);
     	
-    	/*
+    	
     	if (i<pointsList.size())
     		return pointsList.get(i);
     	else
     		return segmentsList.get(i-pointsList.size());
-    		*/
+    		
     }
     
     protected int getNbOutput(){
-    	return pointsList.size();//+segmentsList.size();
+    	return pointsList.size()+segmentsList.size();
     }
     
     public GeoElement[] getOutput(){
@@ -281,15 +300,62 @@ implements AlgoElementWithResizeableOutput{
     		i++;
     	}
     	
-    	/*
+    	
     	for (GeoElement geo : segmentsList){
     		output[i] = geo;
     		i++;
     	}
-    	*/
+    	
     	
     	return output;
     	
     }
+    
+    
+    ///////////////////////////////////////////////////
+    // OUTPUT LIST
+    ///////////////////////////////////////////////////
+    
+    /**
+     * Class managing output lists
+     */
+    private class OutputList extends ArrayList<GeoElement>{
+    	
+    	private int number = 0;
+    	
+    	private int nbLabelSet = 0;
+    	
+    	public int getNumber(){
+    		return number;
+    	}
+    	
+    	/**
+    	 * set geos from index to number to undefined
+    	 * @param index
+    	 */
+    	public void setLastUndefined(int index){
+        	for (int i=index; i<number; i++)
+        		get(i).setUndefined();
+        	
+        	// update number of points
+        	number = size();
+    	}
+    	
+    	
+    	public GeoElement addCreatedElement(GeoElement geo){
+    		GeoElement ret;
+    		if (nbLabelSet<size()){ //set geo equal to element of the list
+    			ret=get(nbLabelSet);
+    			nbLabelSet++;
+    		}else{ // add this geo at the end of the list
+    			add(geo);
+    			ret=geo;
+    			setOutputDependencies(geo);
+    			nbLabelSet++;
+    		}
+    		return ret;
+    	}
+    }
+
     
 }
