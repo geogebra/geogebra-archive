@@ -128,7 +128,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 		JToolBar toolbar = new JToolBar();
 		toolbar.setFloatable(false);
-		menuButton = new JButton("...", app.getImageIcon("aux_folder.gif"));
+		menuButton = new JButton(app.getPlain("New Folder") + "...", app.getImageIcon("aux_folder.gif"));
 		menuButton.addActionListener(this);
 		toolbar.add(menuButton);
 		makeContextMenu();
@@ -171,7 +171,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		contextMenu = new JPopupMenu();
 		JMenuItem menuItem;
 
-		menuItem = new JMenuItem("Set File Folder");
+		menuItem = new JMenuItem("New File Folder", app.getImageIcon("document-open.png"));
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
@@ -185,7 +185,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		});
 		contextMenu.add(menuItem);
 
-		menuItem = new JMenuItem("Set URL Folder");
+		menuItem = new JMenuItem("New URL Folder", app.getImageIcon("wiki.png"));
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -206,6 +206,8 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 			}
 		});
 		contextMenu.add(menuItem);
+		
+		contextMenu.addSeparator();
 
 		menuItem = new JMenuItem("Save XML Tree");
 		menuItem.addActionListener(new ActionListener() {
