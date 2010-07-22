@@ -123,8 +123,11 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			if(geo.isGeoBoolean()){
 				checkBox.setBackground(table.getBackground());
 				checkBox.setHorizontalAlignment(CENTER);
-				if(geo.isLabelVisible())
-					checkBox.setText(geo.getCaption());
+				
+				if(geo.isLabelVisible()){
+					
+					//checkBox.setText(geo.getCaption());
+				}
 				checkBox.setSelected(((GeoBoolean)geo).getBoolean());
 
 				return checkBox;
@@ -245,6 +248,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		if(geo.isGeoImage()){		
 			latexIcon.setImage(((GeoImage) geo).getImage());
 			setIcon(latexIcon);
+			setHorizontalAlignment(this.CENTER);
 			setText("");
 			
 		}else{

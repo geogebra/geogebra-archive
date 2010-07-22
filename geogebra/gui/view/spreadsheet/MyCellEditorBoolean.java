@@ -43,8 +43,9 @@ public class MyCellEditorBoolean extends DefaultCellEditor {
 		editing = true;
 		checkBox.setBackground(table.getBackground());
 		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
-		if(editGeo.isLabelVisible())
-			checkBox.setText(editGeo.getCaption());
+		if(editGeo.isLabelVisible()){
+			//checkBox.setText(editGeo.getCaption());
+		}
 		return editorComponent;
 	}
 
