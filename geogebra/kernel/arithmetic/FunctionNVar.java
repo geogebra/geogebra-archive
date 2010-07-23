@@ -161,8 +161,27 @@ implements ExpressionValue, FunctionalNVar {
      * Call this function to resolve variables and init the function.
      * May throw MyError (InvalidFunction).
      */
-    public void initFunction() {              	
-        
+    public void initFunction() {
+    	// replace function variables in tree
+    	for (int i=0; i < fVars.length; i++) {
+    		FunctionVariable fVar = fVars[i];
+		    if (fVar != null && !fVar.toString().equals("x")) {
+	        	// look for Variable objects with name of function variable and replace them
+	        	int replacements = expression.replaceVariables(fVar.toString(), fVar);
+	        	isConstantFunction = isConstantFunction && replacements == 0;
+	        } 
+	        else {
+	        	// check if this is really a function in x
+	            if (!expression.isFunctionInX())
+	                throw new MyError(app, "InvalidFunction");
+	        	
+	        	fVar = new FunctionVariable(kernel);        
+	        	int replacements = expression.replacePolynomials(fVar);
+	        	isConstantFunction = isConstantFunction && replacements == 0;
+	        }
+    	}
+     
+    	
         // replace variable names by objects
         expression.resolveVariables();
         
@@ -354,7 +373,6 @@ implements ExpressionValue, FunctionalNVar {
             // evaluate expression by CAS 
             String result = kernel.evaluateGeoGebraCAS(sb.toString());  
             
- 
             //TODO make some tests like in Function
     
             // parse result
@@ -374,18 +392,13 @@ implements ExpressionValue, FunctionalNVar {
     			cons.addLocalVariable(localVarName[i], num[i]); 
     		}
 
-
-
     		// creates the expression
     		ExpressionNode exp = kernel.getParser().parseExpression(result);
     		//Application.debug("exp:"+exp.toString());
      		//Application.debug(exp.getTreeClass());
 				
-
        	 	FunctionNVar fun = new FunctionNVar(exp,fVars);
-            fun.initFunction();
-            
-            
+            fun.initFunction();  
 
     		// remove local variable name from kernel again
     		for(int i=0;i<fVars.length;i++)

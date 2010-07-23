@@ -62,13 +62,6 @@ public abstract class AlgoFunctionNVarND extends AlgoElement3D {
 		// create the function
 		function = createFunction(cons, fun);
        
-
-
-    	
-
-
-		
-
 		GeoElement[] input = new GeoElement[coords.length+localVar.length+from.length+to.length];
 		int index = 0;
 		for (int i=0;i<coords.length;i++){

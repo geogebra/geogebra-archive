@@ -803,38 +803,56 @@ ExpressionNode functionExpressionnode():
     ExpressionNode rhs;
     Token funName = null;
     Token varName = null;
+    ArrayList<String> localVars;
     Token var;
 }
 {          
 (
-	   // f(a) =  a^2 + 3	
-	   funName = <FUNCTION_LABEL> // includes "(" at end
-	   		  ( varName =  <VARX> |
-	   		    varName =  <SPREADSHEET_LABEL> | varName = <LABEL> ) ")" 
-	   		( <EQUAL > | <ASSIGNMENT> ) rhs = expressionnode()
+  		// single or multi-variable function definition
+	   // f(a) =  a^2 + 3
+	   // g(x,y) := x * y
+	   funName = <FUNCTION_LABEL> // includes "(" at end	   
+	   		// local variables	   		(( varName =  <VARX> | varName =  <SPREADSHEET_LABEL> | varName = <LABEL> )
+	   		  { localVars = new ArrayList<String>(); localVars.add(varName.image); } )
+			// optional second variable						 (<COMMA> ( varName =  <VARX> |  varName =  <VARY> | varName =  <SPREADSHEET_LABEL> | varName = <LABEL> )
+			 { localVars.add(varName.image); } )* 
+			// closing ) and assignment with expressionnode
+	   		 ")" ( <EQUAL > | <ASSIGNMENT> ) rhs = expressionnode()
 	    {
 	      	// allow f(y) in CAS but not in GeoGebra
 		//	if (!ExternalCASParsing && !GeoGebraCASParsing && "y".equals(varName.image)) 
 	    //    	throw new MyError(app, "InvalidInput");
+	    
+		  	String funLabel = funName.image.substring(0,funName.image.length()-1);	 
 
-
-			String funLabel = funName.image.substring(0,funName.image.length()-1);
-	      
 			// command: return function expression
 			// function: wrap function in ExpressionNode
 	    	if (!(rhs.getLeft() instanceof Command)) {
-	    		// wrap function in ExpressionNode if it's not a command
-	    		FunctionVariable fVar = new FunctionVariable(kernel);
-	   			fVar.setVarString(varName.image);
-	   			Function fun = new Function(rhs, fVar);
-	    		fun.setLabel(funLabel);
-       			rhs = new ExpressionNode(kernel, fun);       			   
+				// number of vars
+				int n = localVars.size();
+				
+				FunctionVariable[] funVar = new FunctionVariable[n];
+		    	for (int i=0;i<n; i++){
+		    		funVar[i] = new FunctionVariable(kernel);
+		    		funVar[i].setVarString(localVars.get(i));
+		    	}
+
+	    	    switch (n) {
+	    	      case 1: // single variable function					
+					Function fun = new Function(rhs, funVar[0]);
+					fun.setLabel(funLabel);
+					rhs = new ExpressionNode(kernel, fun);
+					break;
+
+	       		  default: // multi variable function
+	       			FunctionNVar funn = new FunctionNVar(rhs, funVar);					funn.setLabel(funLabel);					rhs = new ExpressionNode(kernel, funn);
+	       			break;	    	    }    			   
        		}
 
        		rhs.setLabel(funLabel);
        		return rhs;
 	    }   
-)	
+)
 }
 
 /**

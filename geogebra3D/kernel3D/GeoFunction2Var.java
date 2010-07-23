@@ -17,7 +17,7 @@ public class GeoFunction2Var extends GeoElement3D
 implements Functional2Var {
 	
 	protected FunctionNVar[] fun;
-	protected FunctionNVar[] funD1;
+	private FunctionNVar[] funD1;
 	
 	
 	private double[] from, to;
@@ -32,22 +32,7 @@ implements Functional2Var {
 	public GeoFunction2Var(Construction c, FunctionNVar[] fun) {
 		this(c);
 		
-		this.fun = fun;
-		
-		funD1 = new FunctionNVar[2];
-		for (int i=0;i<2;i++){
-			funD1[i] = fun[0].derivative(i, 1);
-			/*
-			Application.debug("funD1["+i+"]:"+funD1[i].toString()
-					+"\nvar[0]="+funD1[i].getVarString(0)
-					+"\nvar[1]="+funD1[i].getVarString(1)
-					+"\nat(0,0):"+funD1[i].evaluate(new double[] {0,0})
-					+"\nat(1,0):"+funD1[i].evaluate(new double[] {1,0})
-					+"\nat(0,1):"+funD1[i].evaluate(new double[] {0,1})
-					
-			);
-			*/
-		}
+		this.fun = fun;				
 		
 		from = new double[2];
 		to = new double[2];
@@ -73,7 +58,22 @@ implements Functional2Var {
 
 
 	public GgbVector evaluateNormal(double u, double v){
-
+		if (funD1 == null) {
+			funD1 = new FunctionNVar[2];
+			for (int i=0;i<2;i++){
+				funD1[i] = fun[0].derivative(i, 1);
+				/*
+				Application.debug("funD1["+i+"]:"+funD1[i].toString()
+						+"\nvar[0]="+funD1[i].getVarString(0)
+						+"\nvar[1]="+funD1[i].getVarString(1)
+						+"\nat(0,0):"+funD1[i].evaluate(new double[] {0,0})
+						+"\nat(1,0):"+funD1[i].evaluate(new double[] {1,0})
+						+"\nat(0,1):"+funD1[i].evaluate(new double[] {0,1})
+						
+				);
+				*/
+			}
+		}
 
 		
 		GgbVector vec = new GgbVector(

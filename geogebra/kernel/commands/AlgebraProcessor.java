@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyBoolean;
 import geogebra.kernel.arithmetic.MyDouble;
@@ -40,6 +41,7 @@ import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.GeoFunction2Var;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -608,10 +610,15 @@ public class AlgebraProcessor {
 				ret = processEquation((Equation) ve);
 			}
 	
-			// explicit Function in x
+			// explicit Function in one variable
 			else if (ve instanceof Function) {
 				ret = processFunction(null, (Function) ve);
-			}						
+			}	
+			
+			// explicit Function in multiple variables
+			else if (ve instanceof FunctionNVar) {
+				ret = processFunctionNVar(null, (FunctionNVar) ve);
+			}	
 	
 			// Parametric Line        
 			else if (ve instanceof Parametric) {
@@ -722,7 +729,26 @@ public class AlgebraProcessor {
 		return ret;
 	}
 	
-	
+	protected GeoElement[] processFunctionNVar(ExpressionNode funNode, FunctionNVar fun) {		
+		fun.initFunction();		
+		
+		String label = fun.getLabel();
+		GeoElement[] ret = new GeoElement[1];
+
+		GeoElement[] vars = fun.getGeoElementVariables();				
+		boolean isIndependent = (vars == null || vars.length == 0);		
+		
+		if (isIndependent) {
+			// TODO: add f = kernel.FunctionNVar(label, fun);	
+			FunctionNVar [] funVar = { fun };			
+			ret[0] = new GeoFunction2Var(cons, funVar );			
+		} else {
+			// TODO: remove
+			System.err.println("dependent function not support yet");
+			//f = kernel.DependentFunction(label, fun);
+		}
+		return ret;
+	}
 
 	protected GeoElement[] processEquation(Equation equ) throws MyError {		
 		Application.debug("EQUATION: " + equ);        
@@ -974,6 +1000,9 @@ public class AlgebraProcessor {
 			 else if (leaf instanceof Function) {
 				return processFunction(n, (Function) leaf);			
 			} 
+			 else if (leaf instanceof FunctionNVar) {
+					return processFunctionNVar(n, (FunctionNVar) leaf);			
+				} 
 		}											
 		
 		// ELSE:  resolve variables and evaluate expressionnode		
