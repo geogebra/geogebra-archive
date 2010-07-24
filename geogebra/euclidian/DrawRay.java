@@ -80,6 +80,16 @@ implements Previewable {
 			labelVisible = showLabel && geo.isLabelVisible();       
 			updateStrokes(ray);
 			
+	    	A = ray.getStartPoint();			
+			
+			// calc start point of ray in screen coords
+			A.getInhomCoords(a);
+			view.toScreenCoords(a);
+
+			// calc direction vector of ray in screen coords
+			v[0] = ray.y * view.xscale;
+			v[1] = ray.x * view.yscale;
+			
 			setClippedLine();
 			
 			 // line on screen?		
@@ -124,16 +134,8 @@ implements Previewable {
     }
     
 	  private void setClippedLine() {
-	    	A = ray.getStartPoint();			
-			
-			// calc start point of ray in screen coords
-			A.getInhomCoords(a);
-			boolean onscreenA = view.toScreenCoords(a);
-
-			// calc direction vector of ray in screen coords
-			v[0] = ray.y * view.xscale;
-			v[1] = ray.x * view.yscale;
-			    	    	
+			boolean onscreenA = view.isOnScreen(a);
+  	    	
 			// calc clip point C = a + lambda * v
 			double lambda;
 			if (Math.abs(v[0]) > Math.abs(v[1])) {
