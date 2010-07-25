@@ -1,5 +1,5 @@
 /*
- * $Id: DHTTransport.java 3076 2010-04-15 21:00:37Z kredel $
+ * $Id: DHTTransport.java 3210 2010-07-05 12:25:27Z kredel $
  */
 
 package edu.jas.util;
@@ -89,10 +89,10 @@ public abstract class DHTTransport<K, V> implements Serializable {
 class DHTTransportMarshal<K, V> extends DHTTransport<K, V> {
 
 
-    protected final MarshalledObject key;
+    protected final MarshalledObject/*<K>*/ key;
 
 
-    protected final MarshalledObject value;
+    protected final MarshalledObject/*<V>*/ value;
 
 
     /**
@@ -102,8 +102,8 @@ class DHTTransportMarshal<K, V> extends DHTTransport<K, V> {
      */
     public DHTTransportMarshal(K key, V value) throws IOException {
         long t = System.currentTimeMillis();
-        this.key = new MarshalledObject(key);
-        this.value = new MarshalledObject(value);
+        this.key = new MarshalledObject/*<K>*/(key);
+        this.value = new MarshalledObject/*<V>*/(value);
         t = System.currentTimeMillis() - t;
         synchronized( DHTTransport.class ) {
             etime += t;
@@ -117,7 +117,7 @@ class DHTTransportMarshal<K, V> extends DHTTransport<K, V> {
      */
     public K key() throws IOException, ClassNotFoundException {
         long t = System.currentTimeMillis();
-        K k = (K)this.key.get();
+        K k = (K) this.key.get();
         t = System.currentTimeMillis() - t;
         synchronized( DHTTransport.class ) {
             dtime += t;
@@ -131,7 +131,7 @@ class DHTTransportMarshal<K, V> extends DHTTransport<K, V> {
      */
     public V value() throws IOException, ClassNotFoundException {
         long t = System.currentTimeMillis();
-        V v = (V)this.value.get();
+        V v = (V) this.value.get();
         t = System.currentTimeMillis() - t;
         synchronized( DHTTransport.class ) {
             dtime += t;

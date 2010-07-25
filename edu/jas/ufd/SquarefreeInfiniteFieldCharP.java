@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeInfiniteFieldCharP.java 3154 2010-05-24 19:56:13Z kredel $
+ * $Id: SquarefreeInfiniteFieldCharP.java 3208 2010-07-04 19:08:44Z kredel $
  */
 
 package edu.jas.ufd;
@@ -39,10 +39,8 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
     /**
      * GCD engine for infinite ring of characteristic p base coefficients.
      */
-    protected final SquarefreeFiniteFieldCharP<C> rengine;
+    protected final SquarefreeAbstract<C> rengine;
 
-
-    //protected final SquarefreeInfiniteRingCharP<C> rengine;
 
 
     /**
@@ -50,13 +48,14 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
      */
     public SquarefreeInfiniteFieldCharP(RingFactory<Quotient<C>> fac) {
         super(fac);
-        //         isFinite() predicate not yet present
-        //         if ( fac.isFinite() ) {
-        //             throw new IllegalArgumentException("fac must be in-finite"); 
-        //         }
+        // isFinite() predicate now present
+        if ( fac.isFinite() ) {
+            throw new IllegalArgumentException("fac must be in-finite"); 
+        }
         QuotientRing<C> qfac = (QuotientRing<C>) fac;
         GenPolynomialRing<C> rfac = qfac.ring;
-        rengine = new SquarefreeFiniteFieldCharP<C>(rfac.coFac);
+        rengine = SquarefreeFactory.<C>getImplementation(rfac);
+        //rengine = new SquarefreeFiniteFieldCharP<C>(rfac.coFac);
         //rengine = new SquarefreeInfiniteRingCharP<C>( rfac.coFac );
     }
 
@@ -245,11 +244,10 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
 
 
     /**
-     * GenPolynomial char-th root main variable.
+     * GenPolynomial char-th root univariate polynomial. 
      * @param P GenPolynomial.
      * @return char-th_rootOf(P).
      */
-    // param <C> base coefficient type must be ModInteger.
     @Override
     public GenPolynomial<Quotient<C>> baseRootCharacteristic(GenPolynomial<Quotient<C>> P) {
         if (P == null || P.isZERO()) {
@@ -263,11 +261,12 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
         RingFactory<Quotient<C>> rf = pfac.coFac;
         if (rf.characteristic().signum() != 1) {
             // basePthRoot not possible
-            throw new RuntimeException(P.getClass().getName() + " only for ModInteger polynomials " + rf);
+            throw new RuntimeException(P.getClass().getName() + " only for char p > 0 " + rf);
         }
         long mp = rf.characteristic().longValue();
         GenPolynomial<Quotient<C>> d = pfac.getZERO().clone();
         for (Monomial<Quotient<C>> m : P) {
+            //System.out.println("m = " + m);
             ExpVector f = m.e;
             long fl = f.getVal(0);
             if (fl % mp != 0) {
@@ -304,11 +303,10 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
 
 
     /**
-     * GenPolynomial char-th root main variable.
+     * GenPolynomial char-th root univariate polynomial with polynomial coefficients.
      * @param P recursive univariate GenPolynomial.
      * @return char-th_rootOf(P), or null if P is no char-th root.
      */
-    // param <C> base coefficient type must be ModInteger.
     @Override
     public GenPolynomial<GenPolynomial<Quotient<C>>> recursiveUnivariateRootCharacteristic(
             GenPolynomial<GenPolynomial<Quotient<C>>> P) {
@@ -318,12 +316,12 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
         GenPolynomialRing<GenPolynomial<Quotient<C>>> pfac = P.ring;
         if (pfac.nvar > 1) {
             // basePthRoot not possible by return type
-            throw new RuntimeException(P.getClass().getName() + " only for univariate polynomials");
+            throw new RuntimeException(P.getClass().getName() + " only for univariate recursive polynomials");
         }
         RingFactory<GenPolynomial<Quotient<C>>> rf = pfac.coFac;
         if (rf.characteristic().signum() != 1) {
             // basePthRoot not possible
-            throw new RuntimeException(P.getClass().getName() + " only for ModInteger polynomials " + rf);
+            throw new RuntimeException(P.getClass().getName() + " only for char p > 0 " + rf);
         }
         long mp = rf.characteristic().longValue();
         GenPolynomial<GenPolynomial<Quotient<C>>> d = pfac.getZERO().clone();

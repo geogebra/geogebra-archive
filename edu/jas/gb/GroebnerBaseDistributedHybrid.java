@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributedHybrid.java 3111 2010-05-05 21:05:56Z kredel $
+ * $Id: GroebnerBaseDistributedHybrid.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.gb;
@@ -161,6 +161,7 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
      * @param port server port to use.
      */
     public GroebnerBaseDistributedHybrid(int threads, int threadsPerNode, ThreadPool pool, int port) {
+        super( new ReductionPar<C>() );
         if (threads < 1) {
             threads = 1;
         }
@@ -168,7 +169,6 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
         this.threadsPerNode = threadsPerNode;
         this.pool = pool;
         this.port = port;
-        red = new ReductionPar<C>();
         //logger.info("generated pool: " + pool);
     }
 
@@ -501,7 +501,7 @@ class HybridReducerServer<C extends RingElem<C>> implements Runnable {
      * Work loop.
      * @see java.lang.Runnable#run()
      */
-    //@Override
+    //JAVA6only: @Override
     public void run() {
         logger.info("reducer server running with " + cf);
         SocketChannel channel = null;
@@ -903,7 +903,7 @@ class HybridReducerClient<C extends RingElem<C>> implements Runnable {
      * Work loop.
      * @see java.lang.Runnable#run()
      */
-    //@Override
+    //JAVA6only: @Override
     public void run() {
         if (debug) {
             logger.info("pairChannel   = " + pairChannel + " reducer client running");

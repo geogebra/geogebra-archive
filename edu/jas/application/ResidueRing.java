@@ -1,5 +1,5 @@
 /*
- * $Id: ResidueRing.java 2596 2009-04-25 18:38:53Z kredel $
+ * $Id: ResidueRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.application;
@@ -80,6 +80,16 @@ public class ResidueRing<C extends GcdRingElem<C> >
         //System.out.println("rr engine = " + engine.getClass().getName());
         //System.out.println("rr ring   = " + ring.getClass().getName());
         //System.out.println("rr cofac  = " + ring.coFac.getClass().getName());
+    }
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return ideal.commonZeroTest() <= 0 && ring.coFac.isFinite();
     }
 
 
@@ -209,7 +219,7 @@ public class ResidueRing<C extends GcdRingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "RC(" + ideal.list.toScript() + ")";

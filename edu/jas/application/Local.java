@@ -1,5 +1,5 @@
 /*
- * $Id: Local.java 2748 2009-07-15 19:47:15Z kredel $
+ * $Id: Local.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.application;
@@ -271,7 +271,7 @@ public class Local<C extends GcdRingElem<C> >
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         if ( den.isONE() ) {
@@ -286,7 +286,7 @@ public class Local<C extends GcdRingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScriptFactory() {
         // Python case
         return factory().toScript();
@@ -297,6 +297,7 @@ public class Local<C extends GcdRingElem<C> >
      * @param b Local.
      * @return sign(this-b).
      */
+    //JAVA6only: @Override
     public int compareTo(Local<C> b) {
         if ( b == null || b.isZERO() ) {
             return this.signum();

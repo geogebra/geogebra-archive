@@ -1,5 +1,5 @@
 /*
- * $Id: Quotient.java 3031 2010-03-08 23:18:01Z kredel $
+ * $Id: Quotient.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.application;
@@ -206,7 +206,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         if ( den.isONE() ) {
@@ -221,7 +221,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScriptFactory() {
         // Python case
         return factory().toScript();
@@ -233,6 +233,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @param b Quotient.
      * @return sign(this-b).
      */
+    //JAVA6only: @Override
     public int compareTo(Quotient<C> b) {
         if (b == null || b.isZERO()) {
             return this.signum();

@@ -1,5 +1,5 @@
 /*
- * $Id: ProductRing.java 2600 2009-04-26 11:17:46Z kredel $
+ * $Id: ProductRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.structure;
@@ -119,6 +119,26 @@ public class ProductRing<C extends RingElem<C> >
            return false; // misleading
         } else {
            return ringList.contains(rf);
+        }
+    }
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        if ( nCopies != 0 ) {
+           return ring.isFinite();
+        } else {
+           for ( RingFactory<C> f : ringList ) {
+               boolean b = f.isFinite();
+               if ( !b ) {
+                   return false;
+               }
+           }
+           return true;
         }
     }
 
@@ -272,6 +292,24 @@ public class ProductRing<C extends RingElem<C> >
 
 
     /**
+     * Query if this ring consists only of fields.
+     * @return true or false.
+     */
+    public boolean onlyFields() {
+        if ( nCopies != 0 ) {
+            return ring.isField();
+        } else {
+           for ( RingFactory<C> f : ringList ) {
+               if ( ! f.isField() ) {
+                  return false;
+               }
+           }
+        }
+        return true;
+    }
+
+
+    /**
      * Characteristic of this ring.
      * @return minimal characteristic of ring component.
      */
@@ -363,7 +401,7 @@ public class ProductRing<C extends RingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         StringBuffer s = new StringBuffer("RR( [ ");

@@ -1,5 +1,5 @@
 /*
- * $Id: ReductionAbstract.java 3116 2010-05-06 21:50:03Z kredel $
+ * $Id: ReductionAbstract.java 3187 2010-06-16 22:07:38Z kredel $
  */
 
 package edu.jas.gb;
@@ -374,7 +374,7 @@ public abstract class ReductionAbstract<C extends RingElem<C>>
     /**
      * Irreducible set.
      * @param Pp polynomial list.
-     * @return a list P of monic polynomials which are in normalform wrt. P.
+     * @return a list P of monic polynomials which are in normalform wrt. P and with ideal(Pp) = ideal(P).
      */
     public List<GenPolynomial<C>> irreducibleSet(List<GenPolynomial<C>> Pp) {  
         ArrayList<GenPolynomial<C>> P = new ArrayList<GenPolynomial<C>>();

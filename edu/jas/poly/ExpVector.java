@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVector.java 3088 2010-04-26 19:59:45Z kredel $
+ * $Id: ExpVector.java 3212 2010-07-05 12:54:49Z kredel $
  */
 
 package edu.jas.poly;
@@ -143,6 +143,17 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
     public AbelianGroupFactory<ExpVector> factory() {
         //return null;
         throw new RuntimeException("no factory implemented for ExpVector");
+    }
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     * <b>Note: </b> returns true because of finite set of values in each index.
+     */
+    public boolean isFinite() {
+        return true;
     }
 
 
@@ -304,7 +315,7 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         return toScript( stdVars()  );
     }
@@ -357,7 +368,7 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScriptFactory() {
         // Python case
         return "ExpVector()";
@@ -794,7 +805,7 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
      * @param V
      * @return 0 if U == V, -1 if U &lt; V, 1 if U &gt; V.
      */
-    //@Override
+    //JAVA6only: @Override
     public int compareTo( ExpVector V ) {
         return this.invLexCompareTo(V);
     }

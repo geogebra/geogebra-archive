@@ -1,5 +1,5 @@
 /*
- * $Id: Local.java 2563 2009-04-18 16:47:10Z kredel $
+ * $Id: Local.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.structure;
@@ -209,7 +209,7 @@ public class Local<C extends RingElem<C> >
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "Local( " + num.toScript() 
@@ -221,7 +221,7 @@ public class Local<C extends RingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScriptFactory() {
         // Python case
         return factory().toScript();
@@ -232,6 +232,7 @@ public class Local<C extends RingElem<C> >
      * @param b Local.
      * @return sign(this-b).
      */
+    //JAVA6only: @Override
     public int compareTo(Local<C> b) {
         if ( b == null || b.isZERO() ) {
             return this.signum();

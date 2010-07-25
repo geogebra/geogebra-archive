@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicRing.java 3101 2010-05-02 17:18:53Z kredel $
+ * $Id: RealAlgebraicRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.root;
@@ -126,6 +126,16 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational>
 
 
     /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return algebraic.isFinite();
+    }
+
+
+    /**
      * Copy RealAlgebraicNumber element c.
      * @param c
      * @return a copy of c.
@@ -247,7 +257,7 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational>
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "RealN( " + algebraic.modul.toScript() + ", " + root.toScript()

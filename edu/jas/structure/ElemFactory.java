@@ -1,5 +1,5 @@
 /*
- * $Id: ElemFactory.java 2561 2009-04-18 12:10:18Z kredel $
+ * $Id: ElemFactory.java 3193 2010-06-26 20:10:37Z kredel $
  */
 
 package edu.jas.structure;
@@ -24,6 +24,13 @@ public interface ElemFactory<C extends Element<C>> extends Serializable {
      * @return list of generators for the algebraic structure.
      */
     public List<C> generators();
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     */
+    public boolean isFinite();
 
 
     /**

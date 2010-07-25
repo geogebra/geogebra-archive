@@ -1,5 +1,5 @@
 /*
- * $Id: AlgebraicNumberRing.java 3074 2010-04-14 21:49:20Z kredel $
+ * $Id: AlgebraicNumberRing.java 3212 2010-07-05 12:54:49Z kredel $
  */
 
 package edu.jas.poly;
@@ -127,6 +127,16 @@ public class AlgebraicNumberRing<C extends GcdRingElem<C> >
 
     
     /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return ring.coFac.isFinite();
+    }
+
+
+    /**
      * Query if this ring is commutative.
      * @return true if this ring is commutative, else false.
      */
@@ -185,6 +195,15 @@ public class AlgebraicNumberRing<C extends GcdRingElem<C> >
 
 
     /**
+     * Get the internal field indicator.
+     * @return internal field indicator.
+     */
+    public int getField() {
+        return isField;
+    }
+
+
+    /**
      * Characteristic of this ring.
      * @return characteristic of this ring.
      */
@@ -227,7 +246,7 @@ public class AlgebraicNumberRing<C extends GcdRingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "AN(" + modul.toScript() + ")";

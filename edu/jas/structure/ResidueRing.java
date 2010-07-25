@@ -1,5 +1,5 @@
 /*
- * $Id: ResidueRing.java 2563 2009-04-18 16:47:10Z kredel $
+ * $Id: ResidueRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.structure;
@@ -27,7 +27,7 @@ public class ResidueRing<C extends RingElem<C> >
     //private boolean debug = logger.isDebugEnabled();
 
 
-    /** Ring elemsnt for reduction. 
+    /** Ring element for reduction. 
      */
     protected final C modul;
 
@@ -59,6 +59,17 @@ public class ResidueRing<C extends RingElem<C> >
            m = m.negate();
         }
         modul = m; 
+    }
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        throw new RuntimeException("not implemented");
+        //return ring.isFinite();
     }
 
 
@@ -180,7 +191,7 @@ public class ResidueRing<C extends RingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "ResidueRing(" + modul.toScript() + ")";

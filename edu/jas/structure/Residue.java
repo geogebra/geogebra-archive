@@ -1,5 +1,5 @@
 /*
- * $Id: Residue.java 2563 2009-04-18 16:47:10Z kredel $
+ * $Id: Residue.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.structure;
@@ -170,7 +170,7 @@ public class Residue<C extends RingElem<C> >
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "Residue( " + val.toScript() 
@@ -182,7 +182,7 @@ public class Residue<C extends RingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScriptFactory() {
         // Python case
         return factory().toScript();
@@ -191,8 +191,9 @@ public class Residue<C extends RingElem<C> >
 
     /** Residue comparison.  
      * @param b Residue.
-     * @return sign(this-b).
+     * @return sign(this-b), 0 means that this and b are equivalent in this residue class ring.
      */
+    //JAVA6only: @Override
     public int compareTo(Residue<C> b) {
         C v = b.val;
         if ( ! ring.equals( b.ring ) ) {
@@ -204,6 +205,7 @@ public class Residue<C extends RingElem<C> >
 
     /** Comparison with any other object.
      * @see java.lang.Object#equals(java.lang.Object)
+     * @return true means that this and b are equivalent in this residue class ring.
      */
     @SuppressWarnings("unchecked") // not jet working
     @Override

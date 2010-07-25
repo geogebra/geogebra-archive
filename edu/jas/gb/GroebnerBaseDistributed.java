@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributed.java 3066 2010-04-10 11:07:19Z kredel $
+ * $Id: GroebnerBaseDistributed.java 3192 2010-06-26 20:10:35Z kredel $
  */
 
 package edu.jas.gb;
@@ -106,13 +106,13 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
      * @param port server port to use.
      */
     public GroebnerBaseDistributed(int threads, ThreadPool pool, int port) {
+        super( new ReductionPar<C>() );
         if (threads < 1) {
             threads = 1;
         }
         this.threads = threads;
         this.pool = pool;
         this.port = port;
-        red = new ReductionPar<C>();
     }
 
 

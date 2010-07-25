@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeFieldChar0.java 2783 2009-08-22 20:38:01Z kredel $
+ * $Id: SquarefreeFieldChar0.java 3209 2010-07-04 19:14:31Z kredel $
  */
 
 package edu.jas.ufd;
@@ -25,7 +25,7 @@ import edu.jas.structure.RingFactory;
  * @author Heinz Kredel
  */
 
-public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAbstract<C> /*implements Squarefree<C>*/{
+public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAbstract<C> {
 
 
     private static final Logger logger = Logger.getLogger(SquarefreeFieldChar0.class);
@@ -40,12 +40,6 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
     protected final RingFactory<C> coFac;
 
 
-    /*
-     * GCD engine for field of characteristic 0 base coefficients.
-     */
-    //protected final GreatestCommonDivisorAbstract<C> engine;
-
-
     /**
      * Constructor.
      */
@@ -58,8 +52,6 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
             throw new IllegalArgumentException("characterisic(fac) must be zero");
         }
         coFac = fac;
-        //engine = GCDFactory.<C>getImplementation( fac );
-        //engine = GCDFactory.<C> getProxy(fac);
     }
 
 
@@ -395,6 +387,17 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
             sfactors.put(D, i);
         }
         return sfactors;
+    }
+
+
+    /**
+     * Coefficients squarefree factorization.
+     * @param P coefficient.
+     * @return [p_1 -> e_1, ..., p_k -> e_k] with P = prod_{i=1,...,k} p_i^{e_i}
+     *         and p_i squarefree.
+     */
+    public SortedMap<C, Long> squarefreeFactors(C P) {
+	throw new RuntimeException("method not implemented");
     }
 
 }

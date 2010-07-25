@@ -1,5 +1,5 @@
 /*
- * $Id: LocalRing.java 2598 2009-04-25 21:31:56Z kredel $
+ * $Id: LocalRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.application;
@@ -68,6 +68,16 @@ public class LocalRing<C extends GcdRingElem<C> >
         ring = ideal.list.ring;
         //engine = GCDFactory.<C>getImplementation( ring.coFac );
         engine = GCDFactory.<C>getProxy( ring.coFac );
+    }
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return false;
     }
 
 
@@ -186,7 +196,7 @@ public class LocalRing<C extends GcdRingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "LC(" + ideal.list.toScript() + ")";

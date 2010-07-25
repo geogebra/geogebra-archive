@@ -1,5 +1,5 @@
 /*
- * $Id: Reduction.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: Reduction.java 3187 2010-06-16 22:07:38Z kredel $
  */
 
 package edu.jas.gb;
@@ -173,7 +173,7 @@ public interface Reduction<C extends RingElem<C>>
     /**
      * Irreducible set.
      * @param Pp polynomial list.
-     * @return a list P of polynomials which are in normalform wrt. P.
+     * @return a list P of polynomials which are in normalform wrt. P and with ideal(Pp) = ideal(P).
      */
     public List<GenPolynomial<C>> irreducibleSet(List<GenPolynomial<C>> Pp);
 

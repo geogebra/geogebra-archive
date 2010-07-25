@@ -1,5 +1,5 @@
 /*
- * $Id: BigDecimal.java 2561 2009-04-18 12:10:18Z kredel $
+ * $Id: BigDecimal.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.arith;
@@ -208,6 +208,17 @@ public final class BigDecimal implements GcdRingElem<BigDecimal>,
     }
 
 
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     * <b>Note: </b> is actually finite but returns false.
+     */
+    public boolean isFinite() {
+        return false;
+    }
+
+
     /** Clone this.
      * @see java.lang.Object#clone()
      */
@@ -354,7 +365,7 @@ public final class BigDecimal implements GcdRingElem<BigDecimal>,
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return toString();
@@ -365,7 +376,7 @@ public final class BigDecimal implements GcdRingElem<BigDecimal>,
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScriptFactory() {
         // Python case
         return "DD()";
@@ -379,6 +390,7 @@ public final class BigDecimal implements GcdRingElem<BigDecimal>,
                1 if this > b,
               -1 if this < b.
     */
+    //JAVA6only: @Override
     public int compareTo(BigDecimal b) {
         //return val.compareTo( b.val );
         java.math.BigDecimal s = val.subtract( b.val, context );

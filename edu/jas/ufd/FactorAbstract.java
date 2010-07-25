@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbstract.java 3127 2010-05-10 21:50:05Z kredel $
+ * $Id: FactorAbstract.java 3214 2010-07-06 10:28:30Z kredel $
  */
 
 package edu.jas.ufd;
@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
+import edu.jas.kern.TimeStatus;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
@@ -160,6 +161,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
         }
         if (kr.degree(0) > 100) {
             logger.warn("Kronecker substitution has to high degree");
+            TimeStatus.checkTime("degree > 100");
         }
 
         // factor Kronecker polynomial
@@ -211,6 +213,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
                 ti++;
                 if (ti % 1000 == 0) {
                     System.out.print("ti(" + ti + ") ");
+                    TimeStatus.checkTime(ti + " % 1000 == 0");
                     if (ti % 10000 == 0) {
                         System.out.println("\ndl   = " + dl + ", deg(u) = " + deg);
                         System.out.println("ulist = " + ulist);
@@ -312,10 +315,10 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
             P = P.divide(c); // make primitive or monic
         }
         if (logger.isInfoEnabled()) {
-            logger.info("squarefree facs P = " + P);
+            logger.info("base facs for P = " + P);
         }
         SortedMap<GenPolynomial<C>, Long> facs = sengine.baseSquarefreeFactors(P);
-        if (logger.isInfoEnabled() && facs.size() > 1) {
+        if (logger.isInfoEnabled() && ( facs.size() > 1 || ( facs.size() == 1 && facs.get(facs.firstKey()) > 1 ) ) ) {
             logger.info("squarefree facs   = " + facs);
             //System.out.println("sfacs   = " + facs);
             //boolean tt = isFactorization(P,facs);
@@ -421,9 +424,14 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
             logger.info("squarefree mfacs P = " + P);
         }
         SortedMap<GenPolynomial<C>, Long> facs = sengine.squarefreeFactors(P);
-        if (logger.isInfoEnabled() && facs.size() > 1) {
-            logger.info("squarefree mfacs   = " + facs);
-            //System.out.println("facs   = " + facs);
+        if (logger.isInfoEnabled() ) {
+            if ( facs.size() > 1 ) {
+                logger.info("squarefree mfacs   = " + facs);
+	    } else if ( facs.size() == 1 && facs.get(facs.firstKey()) > 1L ) {
+                logger.info("squarefree mfacs   = " + facs);
+	    } else {
+                logger.warn("squarefree mfacs empty = " + facs);
+	    }
         }
         for (GenPolynomial<C> g : facs.keySet()) {
             Long d = facs.get(g);

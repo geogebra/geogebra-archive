@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtilApp.java 3111 2010-05-05 21:05:56Z kredel $
+ * $Id: PolyUtilApp.java 3176 2010-06-07 20:25:03Z kredel $
  */
 
 package edu.jas.application;
@@ -25,6 +25,7 @@ import edu.jas.structure.Product;
 import edu.jas.structure.ProductRing;
 import edu.jas.structure.Complex;
 import edu.jas.structure.ComplexRing;
+import edu.jas.structure.UnaryFunctor;
 
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
@@ -42,6 +43,7 @@ import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
 import edu.jas.poly.PolynomialList;
 import edu.jas.poly.PolyUtil;
+import edu.jas.poly.TermOrder;
 
 import edu.jas.root.ComplexRootsSturm;
 import edu.jas.root.ComplexRootsAbstract;
@@ -1081,4 +1083,251 @@ public class PolyUtilApp<C extends RingElem<C> > {
         return roots;
     }
 
+
+    /**
+     * Construct primitive element for double field extension.
+     * @param a algebraic number ring with squarefree monic minimal polynomial
+     * @param b algebraic number ring with squarefree monic minimal polynomial
+     * @return primitive element container with algebraic number ring c, with Q(c) = Q(a,b)
+     */
+    public static <C extends GcdRingElem<C>> 
+      PrimitiveElement<C> primitiveElement(AlgebraicNumberRing<C> a, AlgebraicNumberRing<C> b) {
+        GenPolynomial<C> ap = a.modul;
+        GenPolynomial<C> bp = b.modul;
+
+        // setup bivariate polynomial ring
+        String[] cv = new String[2];
+        cv[0] = ap.ring.getVars()[0];
+        cv[1] = bp.ring.getVars()[0];
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        GenPolynomialRing<C> cfac = new GenPolynomialRing<C>(ap.ring.coFac,2,to,cv);
+        GenPolynomial<C> as = ap.extendUnivariate(cfac,0);
+        GenPolynomial<C> bs = bp.extendUnivariate(cfac,1);
+        List<GenPolynomial<C>> L = new ArrayList<GenPolynomial<C>>(2);
+        L.add(as);
+        L.add(bs);
+        List<GenPolynomial<C>> Op = new ArrayList<GenPolynomial<C>>();
+
+        Ideal<C> id = new Ideal<C>(cfac,L);
+        //System.out.println("id = " + id);
+        IdealWithUniv<C> iu = id.normalPositionFor(0,1,Op);
+        //System.out.println("iu = " + iu);
+
+        // extract result polynomials
+        List<GenPolynomial<C>> Np = iu.ideal.getList();
+        as = Np.get(1); // take care
+        bs = Np.get(0); // take care
+        GenPolynomial<C> cs = Np.get(2);
+        //System.out.println("as = " + as);
+        //System.out.println("bs = " + bs);
+        //System.out.println("cs = " + cs);
+        String[] ev = new String[] { cs.ring.getVars()[0] };
+        GenPolynomialRing<C> efac = new GenPolynomialRing<C>(ap.ring.coFac,1,to,ev);
+        //System.out.println("efac = " + efac);
+        cs = cs.contractCoeff(efac);
+        //System.out.println("cs = " + cs);
+        as = as.reductum().contractCoeff(efac);
+	as = as.negate();
+        //System.out.println("as = " + as);
+        bs = bs.reductum().contractCoeff(efac);
+	bs = bs.negate();
+        //System.out.println("bs = " + bs);
+        AlgebraicNumberRing<C> c = new AlgebraicNumberRing<C>(cs);
+        AlgebraicNumber<C> ab = new AlgebraicNumber<C>(c,as);  
+        AlgebraicNumber<C> bb = new AlgebraicNumber<C>(c,bs);  
+        PrimitiveElement<C> pe = new PrimitiveElement<C>(c,ab,bb,a,b);
+        if ( logger.isInfoEnabled() ) {
+            logger.info("primitive element = " + c);
+        }
+        return pe;
+    }
+
+
+    /**
+     * Convert to primitive element ring.
+     * @param cfac primitive element ring.
+     * @param A algebraic number representing the generating element of a in the new ring.
+     * @param a algebraic number to convert.
+     * @return a converted to the primitive element ring
+     */
+    public static <C extends GcdRingElem<C>> 
+      AlgebraicNumber<C> convertToPrimitiveElem(AlgebraicNumberRing<C> cfac, 
+                                                AlgebraicNumber<C> A, AlgebraicNumber<C> a) {
+        GenPolynomialRing<C> aufac = a.ring.ring;
+        GenPolynomialRing<AlgebraicNumber<C>> ar = new GenPolynomialRing<AlgebraicNumber<C>>(cfac,aufac);
+        GenPolynomial<AlgebraicNumber<C>> aps = PolyUtil.<C> convertToAlgebraicCoefficients(ar,a.val);
+        AlgebraicNumber<C> ac = PolyUtil.<AlgebraicNumber<C>> evaluateMain(cfac,aps,A);
+	return ac;
+    }
+
+
+    /**
+     * Convert coefficients to primitive element ring.
+     * @param cfac primitive element ring.
+     * @param A algebraic number representing the generating element of a in the new ring.
+     * @param a polynomial with coefficients algebraic number to convert.
+     * @return a with coefficients converted to the primitive element ring
+     */
+    public static <C extends GcdRingElem<C>> 
+      GenPolynomial<AlgebraicNumber<C>> convertToPrimitiveElem(AlgebraicNumberRing<C> cfac, 
+                                        AlgebraicNumber<C> A, GenPolynomial<AlgebraicNumber<C>> a) {
+        GenPolynomialRing<AlgebraicNumber<C>> cr = new GenPolynomialRing<AlgebraicNumber<C>>(cfac,a.ring);
+        return PolyUtil.<AlgebraicNumber<C>,AlgebraicNumber<C>> map(cr,a,new CoeffConvertAlg<C>(cfac,A) );
+    }
+
+
+    /**
+     * Convert to primitive element ring.
+     * @param cfac primitive element ring.
+     * @param A algebraic number representing the generating element of a in the new ring.
+     * @param a recursive algebraic number to convert.
+     * @return a converted to the primitive element ring
+     */
+    public static <C extends GcdRingElem<C>> 
+      AlgebraicNumber<C> convertToPrimitiveElem(AlgebraicNumberRing<C> cfac, 
+                         AlgebraicNumber<C> A, AlgebraicNumber<C> B, AlgebraicNumber<AlgebraicNumber<C>> a) {
+        GenPolynomial<AlgebraicNumber<C>> aps = PolyUtilApp.<C> convertToPrimitiveElem(cfac,A,a.val);
+        AlgebraicNumber<C> ac = PolyUtil.<AlgebraicNumber<C>> evaluateMain(cfac,aps,B);
+	return ac;
+    }
+
+
+    /**
+     * Construct primitive element for double field extension.
+     * @param b algebraic number ring with squarefree monic minimal polynomial over Q(a)
+     * @return primitive element container with algebraic number ring c, with Q(c) = Q(a)(b)
+     */
+    public static <C extends GcdRingElem<C>> 
+      PrimitiveElement<C> primitiveElement(AlgebraicNumberRing<AlgebraicNumber<C>> b) {
+        GenPolynomial<AlgebraicNumber<C>> bp = b.modul;
+        AlgebraicNumberRing<C> a = (AlgebraicNumberRing<C>) b.ring.coFac;
+        GenPolynomial<C> ap = a.modul;
+        //System.out.println("ap = " + ap);
+        //System.out.println("bp = " + bp);
+
+        // setup bivariate polynomial ring
+        String[] cv = new String[2];
+        cv[0] = ap.ring.getVars()[0];
+        cv[1] = bp.ring.getVars()[0];
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        GenPolynomialRing<C> cfac = new GenPolynomialRing<C>(ap.ring.coFac,2,to,cv);
+        GenPolynomialRing<GenPolynomial<C>> rfac 
+           = new GenPolynomialRing<GenPolynomial<C>>(a.ring,1,bp.ring.getVars());
+        GenPolynomial<C> as = ap.extendUnivariate(cfac,0);
+        GenPolynomial<GenPolynomial<C>> bss = PolyUtil.<C> fromAlgebraicCoefficients(rfac,bp);
+        GenPolynomial<C> bs = PolyUtil.<C> distribute(cfac,bss);
+        //System.out.println("as = " + as);
+        //System.out.println("bs = " + bs);
+        List<GenPolynomial<C>> L = new ArrayList<GenPolynomial<C>>(2);
+        L.add(as);
+        L.add(bs);
+        List<GenPolynomial<C>> Op = new ArrayList<GenPolynomial<C>>();
+
+        Ideal<C> id = new Ideal<C>(cfac,L);
+        //System.out.println("id = " + id);
+        IdealWithUniv<C> iu = id.normalPositionFor(0,1,Op);
+        //System.out.println("iu = " + iu);
+
+        // extract result polynomials
+        List<GenPolynomial<C>> Np = iu.ideal.getList();
+        as = Np.get(1);
+        bs = Np.get(0);
+        GenPolynomial<C> cs = Np.get(2);
+        //System.out.println("as = " + as);
+        //System.out.println("bs = " + bs);
+        //System.out.println("cs = " + cs);
+        String[] ev = new String[] { cs.ring.getVars()[0] };
+        GenPolynomialRing<C> efac = new GenPolynomialRing<C>(ap.ring.coFac,1,to,ev);
+        // System.out.println("efac = " + efac);
+        cs = cs.contractCoeff(efac);
+        // System.out.println("cs = " + cs);
+        as = as.reductum().contractCoeff(efac);
+	as = as.negate();
+        // System.out.println("as = " + as);
+        bs = bs.reductum().contractCoeff(efac);
+	bs = bs.negate();
+        //System.out.println("bs = " + bs);
+        AlgebraicNumberRing<C> c = new AlgebraicNumberRing<C>(cs);
+        AlgebraicNumber<C> ab = new AlgebraicNumber<C>(c,as);  
+        AlgebraicNumber<C> bb = new AlgebraicNumber<C>(c,bs);  
+        PrimitiveElement<C> pe = new PrimitiveElement<C>(c,ab,bb); // missing ,a,b);
+        if ( logger.isInfoEnabled() ) {
+            logger.info("primitive element = " + pe);
+        }
+        return pe;
+    }
+
+
+    /**
+     * Convert to primitive element ring.
+     * @param cfac primitive element ring.
+     * @param A algebraic number representing the generating element of a in the new ring.
+     * @param a polynomial with recursive algebraic number coefficients to convert.
+     * @return a converted to the primitive element ring
+     */
+    public static <C extends GcdRingElem<C>> 
+      GenPolynomial<AlgebraicNumber<C>> convertToPrimitiveElem(AlgebraicNumberRing<C> cfac, 
+                                                 AlgebraicNumber<C> A, AlgebraicNumber<C> B, 
+                                                 GenPolynomial<AlgebraicNumber<AlgebraicNumber<C>>> a) {
+        GenPolynomialRing<AlgebraicNumber<C>> cr = new GenPolynomialRing<AlgebraicNumber<C>>(cfac,a.ring);
+        return PolyUtil.<AlgebraicNumber<AlgebraicNumber<C>>,AlgebraicNumber<C>> 
+                         map(cr,a, new CoeffRecConvertAlg<C>(cfac,A,B) );
+    }
+
+}
+
+
+/**
+ * Coefficient to convert algebriac functor.
+ */
+class CoeffConvertAlg<C extends GcdRingElem<C>> 
+                     implements UnaryFunctor<AlgebraicNumber<C>,AlgebraicNumber<C>> {
+
+    final protected AlgebraicNumberRing<C> afac;
+    final protected AlgebraicNumber<C> A;
+
+    public CoeffConvertAlg(AlgebraicNumberRing<C> fac, AlgebraicNumber<C> a) {
+        if ( fac == null || a == null) {
+            throw new IllegalArgumentException("fac and a must not be null");
+        }
+        afac = fac;
+        A = a;
+    }
+
+    public AlgebraicNumber<C> eval(AlgebraicNumber<C> c) {
+        if ( c == null ) {
+            return afac.getZERO();
+        } else {
+            return PolyUtilApp.<C> convertToPrimitiveElem(afac,A,c);
+        }
+    }
+}
+
+
+/**
+ * Coefficient recursive to convert algebriac functor.
+ */
+class CoeffRecConvertAlg<C extends GcdRingElem<C>> 
+                     implements UnaryFunctor<AlgebraicNumber<AlgebraicNumber<C>>,AlgebraicNumber<C>> {
+
+    final protected AlgebraicNumberRing<C> afac;
+    final protected AlgebraicNumber<C> A;
+    final protected AlgebraicNumber<C> B;
+
+    public CoeffRecConvertAlg(AlgebraicNumberRing<C> fac, AlgebraicNumber<C> a, AlgebraicNumber<C> b) {
+        if ( fac == null || a == null || b == null) {
+            throw new IllegalArgumentException("fac, a and b must not be null");
+        }
+        afac = fac;
+        A = a;
+        B = b;
+    }
+
+    public AlgebraicNumber<C> eval(AlgebraicNumber<AlgebraicNumber<C>> c) {
+        if ( c == null ) {
+            return afac.getZERO();
+        } else {
+            return PolyUtilApp.<C> convertToPrimitiveElem(afac,A,B,c);
+        }
+    }
 }

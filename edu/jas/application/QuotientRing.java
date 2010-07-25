@@ -1,5 +1,5 @@
 /*
- * $Id: QuotientRing.java 2989 2010-01-31 11:06:39Z kredel $
+ * $Id: QuotientRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.application;
@@ -150,6 +150,16 @@ public class QuotientRing<C extends GcdRingElem<C> >
     }
 
 
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return false;
+    }
+
+
     /** Copy Quotient element c.
      * @param c
      * @return a copy of c.
@@ -258,7 +268,7 @@ public class QuotientRing<C extends GcdRingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "RF(" + ring.toScript() + ")";

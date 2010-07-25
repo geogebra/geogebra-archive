@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeFactory.java 3072 2010-04-11 21:39:11Z kredel $
+ * $Id: SquarefreeFactory.java 3200 2010-06-26 20:10:42Z kredel $
  */
 
 package edu.jas.ufd;
@@ -121,32 +121,23 @@ public class SquarefreeFactory {
      * @return squarefree factorization algorithm implementation.
      */
     public static <C extends GcdRingElem<C>> 
-        SquarefreeAbstract<AlgebraicNumber<C>> getImplementation(AlgebraicNumberRing<C> fac) {
+      SquarefreeAbstract<AlgebraicNumber<C>> getImplementation(AlgebraicNumberRing<C> fac) {
+        PolyUfdUtil.<C> ensureFieldProperty(fac);
         if ( fac.isField() ) {
             if (fac.characteristic().signum() == 0) {
                 return new SquarefreeFieldChar0<AlgebraicNumber<C>>(fac);
             } else {
-                return new SquarefreeFiniteFieldCharP<AlgebraicNumber<C>>(fac);
+                if ( fac.isFinite() ) {
+                    return new SquarefreeFiniteFieldCharP<AlgebraicNumber<C>>(fac);
+                } else {
+                    return new SquarefreeInfiniteAlgebraicFieldCharP<C>(fac);
+                    //throw new RuntimeException("algebraic extension of infinite not implemented" 
+                    //                          + fac.getClass().getName());
+                }
             }
         } else {
-            //logger.warn("not checked if " + fac.toScript() + " is an integral domain");
-            if ( !fac.ring.coFac.isField() ) {
-                fac.setField(false);
-                throw new RuntimeException("no integral domain " + fac.ring.coFac.getClass().getName());
-            }
-            Factorization<C> mf = FactorFactory.<C>getImplementation(fac.ring);
-            if ( mf.isIrreducible(fac.modul) ) {
-                if (fac.characteristic().signum() == 0) {
-                    fac.setField(true);
-                    return new SquarefreeRingChar0<AlgebraicNumber<C>>(fac);
-                } else {
-                    fac.setField(true);
-                    return new SquarefreeFiniteFieldCharP<AlgebraicNumber<C>>(fac);
-                }
-            } else {
-                fac.setField(false);
-                throw new RuntimeException("no integral domain " + fac.getClass().getName());
-            }
+            throw new RuntimeException("eventually no integral domain " 
+                                      + fac.getClass().getName());
         }
     }
 
@@ -197,11 +188,23 @@ public class SquarefreeFactory {
                 return new SquarefreeRingChar0<C>(fac.coFac);
             }
         } else {
-            if ( isFinite(fac.coFac) ) { 
+            if ( fac.coFac.isFinite() ) { 
                 return new SquarefreeFiniteFieldCharP<C>(fac.coFac);
             } else {
-                throw new RuntimeException("no squarefree factorization " + fac.coFac);
-                //return new SquarefreeInfiniteFieldCharP<C>(fac.coFac);
+                Object ocfac = fac.coFac;
+                SquarefreeAbstract saq = null;
+                if ( ocfac instanceof QuotientRing ) {
+                    QuotientRing<C> qf = (QuotientRing<C>) ocfac;
+                    saq = new SquarefreeInfiniteFieldCharP<C>(qf);
+                } else if ( ocfac instanceof AlgebraicNumberRing ) {
+                    AlgebraicNumberRing<C> af = (AlgebraicNumberRing<C>) ocfac;
+                    saq = new SquarefreeInfiniteAlgebraicFieldCharP<C>(af);
+                }
+                if ( saq == null ) {
+                   throw new RuntimeException("no squarefree factorization " + fac.coFac);
+                }
+                SquarefreeAbstract<C> sa = (SquarefreeAbstract<C>) saq;
+                return sa;
             }
         }
     }
@@ -216,7 +219,7 @@ public class SquarefreeFactory {
      */
     @SuppressWarnings("unchecked")
     public static <C extends GcdRingElem<C>> 
-        SquarefreeAbstract<C> getImplementation(RingFactory<C> fac) {
+      SquarefreeAbstract<C> getImplementation(RingFactory<C> fac) {
         //logger.info("fac = " + fac.getClass().getName());
         //System.out.println("fac_o = " + fac.getClass().getName());
         int t = 0;
@@ -266,8 +269,11 @@ public class SquarefreeFactory {
                 //System.out.println("fac_field = " + fac);
                 t = 9;
                 break;
+            } else {
+                t = 11;
+                break;
             }
-            break;
+            //break;
         }
         //System.out.println("ft = " + t);
         if (t == 1) { // BigInteger
@@ -295,12 +301,18 @@ public class SquarefreeFactory {
             if (fac.characteristic().signum() == 0) {
                 ufd = new SquarefreeFieldChar0/*raw*/(fac);
             } else {
-                if ( isFinite(fac) ) { 
+                if ( fac.isFinite() ) { 
                    ufd = new SquarefreeFiniteFieldCharP/*raw*/(fac);
                 } else {
                    ufd = new SquarefreeInfiniteFieldCharP/*raw*/(fac);
                 }
             }
+        }
+        if (t == 11) { // other rings 
+            if (fac.characteristic().signum() == 0) {
+                ufd = new SquarefreeRingChar0/*raw*/(fac);
+            }
+            // else fail
         }
         if (ufd == null) {
             throw new RuntimeException("no squarefree factorization implementation for "
@@ -309,26 +321,6 @@ public class SquarefreeFactory {
         logger.debug("ufd = " + ufd);
         //System.out.println("ufd = " + ufd);
         return (SquarefreeAbstract<C>) ufd;
-    }
-
-
-    /**
-     * Test if the ring is finite.
-     * @param <C> coefficient type
-     * @param fac RingFactory&lt;C&gt;.
-     * @return true, if the ring is finite, else false.
-     */
-    protected static <C extends RingElem<C>> boolean isFinite(RingFactory<C> fac) {
-        if ( fac.characteristic().signum() == 0 ) {
-            return false;
-        }
-        // char p case
-        List<C> gens = fac.generators();
-        System.out.println("isFinite gens = " + gens);
-        if ( gens.size() == 1 ) { // ??
-            return true;
-        }
-        return false;
     }
 
 }

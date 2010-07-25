@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeFiniteFieldCharP.java 2752 2009-07-15 21:49:01Z kredel $
+ * $Id: SquarefreeFiniteFieldCharP.java 3198 2010-06-26 20:10:41Z kredel $
  */
 
 package edu.jas.ufd;
@@ -39,13 +39,10 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
      */
     public SquarefreeFiniteFieldCharP(RingFactory<C> fac) {
         super(fac);
-        //         isFinite() predicate not yet present
-        //         if ( !fac.isFinite() ) {
-        //             throw new IllegalArgumentException("fac must be finite"); 
-        //         }
-        //         if ( !fac.isField() ) {
-        //             throw new IllegalArgumentException("fac must be a field"); 
-        //         }
+        // isFinite() predicate now present
+        if ( !fac.isFinite() ) {
+            throw new IllegalArgumentException("fac must be finite"); 
+        }
     }
 
 
@@ -193,7 +190,8 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
 
 
     /**
-     * GenPolynomial char-th root main variable. Base coefficient type must be
+     * GenPolynomial char-th root univariate polynomial. 
+     * Base coefficient type must be
      * finite field, that is ModInteger or AlgebraicNumber&lt;ModInteger&gt;
      * etc.
      * @param P GenPolynomial.
@@ -212,7 +210,7 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
         RingFactory<C> rf = pfac.coFac;
         if (rf.characteristic().signum() != 1) {
             // basePthRoot not possible
-            throw new RuntimeException(P.getClass().getName() + " only for ModInteger polynomials " + rf);
+            throw new RuntimeException(P.getClass().getName() + " only for char p > 0 " + rf);
         }
         long mp = rf.characteristic().longValue();
         GenPolynomial<C> d = pfac.getZERO().clone();
@@ -221,8 +219,6 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
             long fl = f.getVal(0);
             if (fl % mp != 0) {
                 return null;
-                //              throw new RuntimeException(P.getClass().getName()
-                //                        + " exponent not divisible by m " + fl);
             }
             fl = fl / mp;
             ExpVector e = ExpVector.create(1, 0, fl);
@@ -235,11 +231,10 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
 
 
     /**
-     * GenPolynomial char-th root main variable.
+     * GenPolynomial char-th root univariate polynomial with polynomial coefficients.
      * @param P recursive univariate GenPolynomial.
      * @return char-th_rootOf(P), or null if P is no char-th root.
      */
-    // param <C> base coefficient type must be ModInteger.
     @Override
     public GenPolynomial<GenPolynomial<C>> recursiveUnivariateRootCharacteristic(
             GenPolynomial<GenPolynomial<C>> P) {
@@ -254,7 +249,7 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
         RingFactory<GenPolynomial<C>> rf = pfac.coFac;
         if (rf.characteristic().signum() != 1) {
             // basePthRoot not possible
-            throw new RuntimeException(P.getClass().getName() + " only for ModInteger polynomials " + rf);
+            throw new RuntimeException(P.getClass().getName() + " only for char p > 0 " + rf);
         }
         long mp = rf.characteristic().longValue();
         GenPolynomial<GenPolynomial<C>> d = pfac.getZERO().clone();

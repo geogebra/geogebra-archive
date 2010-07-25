@@ -1,5 +1,5 @@
 /*
- * $Id: ModLongRing.java 2961 2010-01-02 12:09:19Z kredel $
+ * $Id: ModLongRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.arith;
@@ -244,6 +244,16 @@ public final class ModLongRing implements ModularRingFactory<ModLong> {
 
 
     /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return true;
+    }
+
+
+    /**
      * Query if this ring is commutative.
      * @return true.
      */
@@ -327,7 +337,7 @@ public final class ModLongRing implements ModularRingFactory<ModLong> {
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "ZL(" + modul + ")";

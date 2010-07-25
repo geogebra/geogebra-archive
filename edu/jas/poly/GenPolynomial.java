@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenPolynomial.java 3088 2010-04-26 19:59:45Z kredel $
+ * $Id: GenPolynomial.java 3214 2010-07-06 10:28:30Z kredel $
  */
 
 package edu.jas.poly;
@@ -299,7 +299,7 @@ public class GenPolynomial<C extends RingElem<C> >
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         if ( isZERO() ) {
@@ -359,7 +359,7 @@ public class GenPolynomial<C extends RingElem<C> >
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScriptFactory() {
         // Python case
         return factory().toScript();
@@ -579,6 +579,20 @@ public class GenPolynomial<C extends RingElem<C> >
            return ring.coFac.getZERO();
         }
         return c;
+    }
+
+
+    /**
+     * Coefficient.
+     * @param e exponent.
+     * @return coefficient for given exponent.
+     */
+    public C coefficient(ExpVector e) {
+        C c = val.get(e);
+        if ( c == null ) {
+            c = ring.coFac.getZERO();
+        }
+        return c; 
     }
 
 
@@ -1082,7 +1096,8 @@ public class GenPolynomial<C extends RingElem<C> >
      * Meaningful only for univariate polynomials over fields, but works 
      * in any case.
      * @param S nonzero GenPolynomial with invertible leading coefficient.
-     * @return [ quotient , remainder ] with this = quotient * S + remainder.
+     * @return [ quotient , remainder ] with this = quotient * S + remainder 
+     * and deg(remainder) &lt; deg(S) or remiander = 0.
      * @see edu.jas.poly.PolyUtil#basePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial).
      */
     @SuppressWarnings("unchecked")
@@ -1414,7 +1429,7 @@ public class GenPolynomial<C extends RingElem<C> >
 
     /**
      * Contract variables. Used e.g. in module embedding.
-     * remove i elements of each ExpVector.
+     * Remove i elements of each ExpVector.
      * @param pfac contracted polynomial ring factory (by i variables).
      * @return Map of exponents and contracted polynomials.
      * <b>Note:</b> could return SortedMap
@@ -1442,6 +1457,26 @@ public class GenPolynomial<C extends RingElem<C> >
             B.put( f, p );
         }
         return B;
+    }
+
+
+    /**
+     * Contract variables to coefficient polynomial. 
+     * Remove i elements of each ExpVector, removed elements must be zero.
+     * @param pfac contracted polynomial ring factory (by i variables).
+     * @return contracted coefficient polynomial.
+     */
+    public GenPolynomial<C> contractCoeff(GenPolynomialRing<C> pfac) {
+        Map<ExpVector,GenPolynomial<C>> ms = contract(pfac);
+        GenPolynomial<C> c = pfac.getZERO();
+        for ( Map.Entry<ExpVector,GenPolynomial<C>> m : ms.entrySet() ) {
+            if ( m.getKey().isZERO() ) { 
+                c = m.getValue();
+            } else {
+                throw new RuntimeException("wrong coefficient contraction " + m + ", pol =  " + c);
+            }
+        }
+        return c;
     }
 
 

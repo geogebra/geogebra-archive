@@ -1,5 +1,5 @@
 /*
- * $Id: ComputerThreads.java 3145 2010-05-23 09:35:27Z kredel $
+ * $Id: ComputerThreads.java 3159 2010-05-29 18:42:56Z kredel $
  */
 
 package edu.jas.kern;
@@ -42,7 +42,7 @@ public class ComputerThreads {
       * Flag for thread usage.  
       * <b>Note:</b> Only introduced because
       * Google app engine does not support threads.
-      * @see edu.jas.ufd.GCDFactory#getProxy
+      * @see edu.jas.ufd.GCDFactory#getProxy(edu.jas.structure.RingFactory)
       */
     public static boolean NO_THREADS = false;
 

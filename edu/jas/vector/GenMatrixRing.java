@@ -1,5 +1,5 @@
 /*
- * $Id: GenMatrixRing.java 2996 2010-02-07 13:32:42Z kredel $
+ * $Id: GenMatrixRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.vector;
@@ -139,7 +139,7 @@ public class GenMatrixRing<C extends RingElem<C>> implements AlgebraFactory<GenM
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         StringBuffer s = new StringBuffer("Mat(");
@@ -189,6 +189,16 @@ public class GenMatrixRing<C extends RingElem<C>> implements AlgebraFactory<GenM
             }
         }
         return gens;
+    }
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return coFac.isFinite();
     }
 
 

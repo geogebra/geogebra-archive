@@ -1,5 +1,5 @@
 /*
- * $Id: IdealWithUniv.java 3157 2010-05-27 19:46:36Z kredel $
+ * $Id: IdealWithUniv.java 3167 2010-06-04 21:43:23Z kredel $
  */
 
 package edu.jas.application;
@@ -81,7 +81,9 @@ public class IdealWithUniv<C extends GcdRingElem<C>> implements Serializable {
      */
     @Override
     public String toString() {
-        String s = ideal.toString() + "\nunivariate polynomials:\n" + upolys.toString();
+        String s = ideal.toString();
+	if ( upolys != null ) 
+             s += "\nunivariate polynomials:\n" + upolys.toString();
         if (others == null) {
             return s;
         } else {

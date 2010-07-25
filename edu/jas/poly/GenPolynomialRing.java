@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenPolynomialRing.java 3088 2010-04-26 19:59:45Z kredel $
+ * $Id: GenPolynomialRing.java 3212 2010-07-05 12:54:49Z kredel $
  */
 
 package edu.jas.poly;
@@ -349,7 +349,7 @@ public class GenPolynomialRing<C extends RingElem<C> >
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         String cf = "";
@@ -731,6 +731,16 @@ public class GenPolynomialRing<C extends RingElem<C> >
         }
         gens.addAll( univs );
         return gens;
+    }
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return (nvar == 0) && coFac.isFinite();
     }
 
 

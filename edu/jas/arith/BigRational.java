@@ -1,5 +1,5 @@
 /*
- * $Id: BigRational.java 2939 2009-12-30 08:56:43Z kredel $
+ * $Id: BigRational.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.arith;
@@ -191,6 +191,16 @@ public final class BigRational implements GcdRingElem<BigRational>,
     }
 
 
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return false;
+    }
+
+
     /** Clone this.
      * @see java.lang.Object#clone()
      */
@@ -264,7 +274,7 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case: (num,den) or num 
         // was (num,) 
@@ -286,7 +296,7 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScriptFactory() {
         // Python case
         return "QQ()";
@@ -480,6 +490,7 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @param S BigRational.
      * @return SIGN(this-S).
      */
+    //JAVA6only: @Override
     public int compareTo(BigRational S) {
         BigInteger J2Y;
         BigInteger J3Y;

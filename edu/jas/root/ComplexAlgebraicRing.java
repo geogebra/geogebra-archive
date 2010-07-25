@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexAlgebraicRing.java 3031 2010-03-08 23:18:01Z kredel $
+ * $Id: ComplexAlgebraicRing.java 3211 2010-07-05 12:54:22Z kredel $
  */
 
 package edu.jas.root;
@@ -113,6 +113,16 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
     public synchronized void setRoot(Rectangle<C> v) {
         // assert v is contained in root
         this.root = v;
+    }
+
+
+    /**
+     * Is this structure finite or infinite.
+     * @return true if this structure is finite, else false.
+     * @see edu.jas.structure.ElemFactory#isFinite()
+     */
+    public boolean isFinite() {
+        return algebraic.isFinite();
     }
 
 
@@ -238,7 +248,7 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.ElemFactory#toScript()
      */
-    //@Override
+    //JAVA6only: @Override
     public String toScript() {
         // Python case
         return "ComplexN( " + algebraic.modul.toScript() + ", " + root.toScript()

@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBase.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: GroebnerBase.java 3187 2010-06-16 22:07:38Z kredel $
  */
 
 package edu.jas.gb;
@@ -64,7 +64,7 @@ public interface GroebnerBase<C extends RingElem<C>>
     /** 
      * Extended Groebner base using critical pair class.
      * @param F polynomial list.
-     * @return a container for an extended Groebner base of F.
+     * @return a container for a Groebner base G of F together with back-and-forth transformations.
      */
     public ExtendedGB<C>  
            extGB( List<GenPolynomial<C>> F );
@@ -74,7 +74,7 @@ public interface GroebnerBase<C extends RingElem<C>>
      * Extended Groebner base using critical pair class.
      * @param modv module variable number.
      * @param F polynomial list.
-     * @return a container for an extended Groebner base of F.
+     * @return a container for a Groebner base G of F together with back-and-forth transformations.
      */
     public ExtendedGB<C> 
            extGB( int modv, 

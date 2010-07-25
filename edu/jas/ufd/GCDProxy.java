@@ -1,5 +1,5 @@
 /*
- * $Id: GCDProxy.java 2960 2010-01-01 19:24:50Z kredel $
+ * $Id: GCDProxy.java 3179 2010-06-09 22:55:48Z kredel $
  */
 
 package edu.jas.ufd;
@@ -48,18 +48,6 @@ public class GCDProxy<C extends GcdRingElem<C>> extends GreatestCommonDivisorAbs
      * Thread pool.
      */
     protected ExecutorService pool;
-
-
-    /**
-     * Thread pool size.
-     */
-    protected static final int anzahl = 3;
-
-
-    /*
-      * Thread poll intervall.
-      */
-    protected static final int dauer = 5;
 
 
     /**
