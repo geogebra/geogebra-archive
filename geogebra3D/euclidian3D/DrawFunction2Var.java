@@ -3,8 +3,8 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoFunction2Var;
 import geogebra3D.euclidian3D.opengl.SurfaceTree2;
+import geogebra3D.kernel3D.GeoFunction2Var;
 
 /**
  * Class for drawing a 2-var function

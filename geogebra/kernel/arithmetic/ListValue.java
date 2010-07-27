@@ -30,6 +30,14 @@ public interface ListValue extends ExpressionValue {
 	 * Returns a MyList object. 
 	 */
 	public MyList getMyList();
+	
+	/**
+	 * Tries to return this list as an array of double values
+	 * @return array of double values from this list
+	 */
+	public double[] toDouble();
+	
+	public int size();
 		
 }
 

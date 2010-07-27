@@ -156,6 +156,24 @@ implements ExpressionValue, FunctionalNVar {
     final public String getVarString(int i) {
     	return fVars[i].toString();
     }
+    
+    /**
+     * Number of arguments of this function, e.g. 2 for f(x,y)
+     * @return
+     */
+    final public int getVarNumber() {
+    	return fVars.length;
+    }
+    
+    final public String getVarString() {
+    	StringBuilder sb = new StringBuilder();
+    	for (int i=0; i < fVars.length-1; i++) {
+    		sb.append(fVars[i].toString());
+    		sb.append(", ");
+    	}
+    	sb.append(fVars[fVars.length-1].toString());
+    	return sb.toString();
+    }
 
     /**
      * Call this function to resolve variables and init the function.
@@ -165,20 +183,16 @@ implements ExpressionValue, FunctionalNVar {
     	// replace function variables in tree
     	for (int i=0; i < fVars.length; i++) {
     		FunctionVariable fVar = fVars[i];
-		    if (fVar != null && !fVar.toString().equals("x")) {
-	        	// look for Variable objects with name of function variable and replace them
-	        	int replacements = expression.replaceVariables(fVar.toString(), fVar);
+	   
+        	// look for Variable objects with name of function variable and replace them
+        	int replacements = expression.replaceVariables(fVar.toString(), fVar);
+        	isConstantFunction = isConstantFunction && replacements == 0;
+        
+        	if (replacements == 0) {
+	        	// x, y got polynomials while parsing 
+	        	replacements = expression.replacePolynomials(fVar);
 	        	isConstantFunction = isConstantFunction && replacements == 0;
-	        } 
-	        else {
-	        	// check if this is really a function in x
-	            if (!expression.isFunctionInX())
-	                throw new MyError(app, "InvalidFunction");
-	        	
-	        	fVar = new FunctionVariable(kernel);        
-	        	int replacements = expression.replacePolynomials(fVar);
-	        	isConstantFunction = isConstantFunction && replacements == 0;
-	        }
+        	}
     	}
      
     	

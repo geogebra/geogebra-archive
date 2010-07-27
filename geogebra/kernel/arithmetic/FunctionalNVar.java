@@ -12,11 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.GeoFunction;
 
 
 public interface FunctionalNVar {
 	public double evaluate(double[] vals);
 	public FunctionNVar getFunction();
-	//public GeoFunction getGeoDerivative(int order, int nvar);
+	//public GeoFunctionNVar getGeoDerivative(int order, int nvar);
 }

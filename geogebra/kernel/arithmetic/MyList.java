@@ -43,7 +43,7 @@ public class MyList extends ValidExpression implements ListValue {
 	
 
 	// list for list elements
-	private ArrayList listElements;
+	private ArrayList<ExpressionValue> listElements;
 
 	public MyList(Kernel kernel) {
 		this(kernel, 20);
@@ -58,6 +58,23 @@ public class MyList extends ValidExpression implements ListValue {
 		listElements.add(arg);
 		matrixRows=-1; // reset
 		matrixCols=-1;
+	}
+	
+	
+	/**
+	 * Tries to return this list as an array of double values
+	 * @return array of double values from this list
+	 */
+	public double[] toDouble() {
+		try {
+			double [] valueArray = new double[listElements.size()];
+			for (int i=0; i<valueArray.length; i++) {
+				valueArray[i] = ((NumberValue) listElements.get(i).evaluate()).getDouble();
+			}
+			return valueArray;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 		
 	/**
@@ -680,5 +697,6 @@ public class MyList extends ValidExpression implements ListValue {
 		return ret;
 		
 	}
+
 
 }

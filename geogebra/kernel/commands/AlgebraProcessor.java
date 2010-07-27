@@ -738,10 +738,8 @@ public class AlgebraProcessor {
 		GeoElement[] vars = fun.getGeoElementVariables();				
 		boolean isIndependent = (vars == null || vars.length == 0);		
 		
-		if (isIndependent) {
-			// TODO: add f = kernel.FunctionNVar(label, fun);	
-			FunctionNVar [] funVar = { fun };			
-			ret[0] = new GeoFunction2Var(cons, funVar );			
+		if (isIndependent) {				
+			ret[0] = kernel.FunctionNVar(label, fun );			
 		} else {
 			// TODO: remove
 			System.err.println("dependent function not support yet");

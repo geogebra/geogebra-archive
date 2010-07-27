@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -417,6 +418,16 @@ implements EuclidianViewAlgo {
 	 * in this algorithm's construction.
 	 */			
 	final public void initFunction(Function fun) {								
+		// geoFun was created as a copy of macroFun, 
+		// make sure all referenced GeoElements are from the algo-construction
+		replaceReferencedMacroObjects(fun.getExpression());
+	} 
+	
+	/**
+	 * Makes sure that all referenced GeoElements of fun are
+	 * in this algorithm's construction.
+	 */			
+	final public void initFunction(FunctionNVar fun) {								
 		// geoFun was created as a copy of macroFun, 
 		// make sure all referenced GeoElements are from the algo-construction
 		replaceReferencedMacroObjects(fun.getExpression());

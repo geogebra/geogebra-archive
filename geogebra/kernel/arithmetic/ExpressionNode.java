@@ -635,7 +635,7 @@ implements ExpressionValue, ExpressionNodeConstants {
         if (left.isExpressionNode()) {
         	replacements += ((ExpressionNode) left).replacePolynomials( x);
         }
-        else if (left.isPolynomialInstance()) {
+        else if (left.isPolynomialInstance() && x.toString().equals(left.toString())) {
             left = x;
             replacements++;
         }
@@ -645,7 +645,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             if (right.isExpressionNode()) {
             	replacements += ((ExpressionNode) right).replacePolynomials(x);
             }
-            else if (right.isPolynomialInstance()) {
+            else if (right.isPolynomialInstance() && x.toString().equals(right.toString())) {
                 right = x;
                 replacements++;
             }
@@ -2761,6 +2761,19 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                sb.append(rightBracket(STRING_TYPE));
             	}
                 break;
+                
+            case FUNCTION_NVAR:
+            	// multivariate functions
+            	if (left.isGeoElement()) {
+            		 sb.append(((GeoElement)left).getLabel());
+            	} else
+            		 sb.append(leftStr);            	 
+                sb.append(leftBracket(STRING_TYPE));
+                // rightStr is a list of arguments, e.g. {2, 3}
+                // drop the curly braces { and }
+                sb.append(rightStr.substring(1, rightStr.length()-1));
+                sb.append(rightBracket(STRING_TYPE));
+            	break;
                
             case VEC_FUNCTION:
             	// GeoCurveables should not be expanded

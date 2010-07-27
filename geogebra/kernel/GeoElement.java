@@ -293,6 +293,7 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_CURVE_POLAR = 23;
 	public static final int GEO_CLASS_CUBIC = 24;
 	public static final int GEO_CLASS_IMPLICIT_POLY = 25;
+	public static final int GEO_CLASS_FUNCTION_NVAR = 26;
 	
 	
 	public static final int LABEL_NAME = 0;

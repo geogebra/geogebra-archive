@@ -93,6 +93,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         }
         else if (rt.isListValue() && operation != EQUAL_BOOLEAN // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
             	&& operation != NOT_EQUAL // ditto	
+            	&& operation != FUNCTION_NVAR // ditto	
             && !lt.isVectorValue() // eg {1,2} + (1,2)
         	&& !lt.isTextValue() // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	&& operation != IS_ELEMENT_OF) {
@@ -1616,6 +1617,21 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 String [] str = { "IllegalArgument", rt.toString() };
                 throw new MyError(app, str);
             }
+            
+        case FUNCTION_NVAR:      
+            // function(list of numbers)
+            if (rt.isListValue() && lt instanceof FunctionalNVar) {    
+            	FunctionNVar funN = ((FunctionalNVar) lt).getFunction();
+            	ListValue list = (ListValue) rt;
+            	if (funN.getVarNumber() == list.size()) {
+            		double [] args = list.toDouble(); 
+            		if (args != null)
+            			return new MyDouble(kernel, funN.evaluate(args));
+            	}
+            } 
+        	//Application.debug("FUNCTION lt: " + lt + ", " + lt.getClass() + " rt: " + rt + ", " + rt.getClass());
+            String [] str3 = { "IllegalArgument", rt.toString() };
+            throw new MyError(app, str3);
             
         case VEC_FUNCTION:      
             // vecfunction(number)

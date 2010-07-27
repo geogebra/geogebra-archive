@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
@@ -110,12 +111,10 @@ import geogebra.util.Unicode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Stack;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.math.complex.Complex;
@@ -1807,6 +1806,13 @@ public class Kernel {
 	 */
 	final public GeoFunction Function(String label, Function fun) {
 		GeoFunction f = new GeoFunction(cons, label, fun);
+		return f;
+	}
+	
+	/** Function in multiple variables,  e.g. f(x,y) = 4 x^2 + 3 y^2
+	 */
+	final public GeoFunctionNVar FunctionNVar(String label, FunctionNVar fun) {
+		GeoFunctionNVar f = new GeoFunctionNVar(cons, label, fun);
 		return f;
 	}
 	

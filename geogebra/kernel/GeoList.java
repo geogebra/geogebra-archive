@@ -16,6 +16,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
@@ -467,6 +468,22 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
     final public GeoElement get(int index, int index2) {
     	return ((GeoList) geoList.get(index)).get(index2);
     }    
+    
+	/**
+	 * Tries to return this list as an array of double values
+	 * @return array of double values from this list
+	 */
+	public double[] toDouble() {
+		try {
+			double [] valueArray = new double[geoList.size()];
+			for (int i=0; i<valueArray.length; i++) {
+				valueArray[i] = ((NumberValue) geoList.get(i)).getDouble();
+			}
+			return valueArray;
+		} catch (Exception e) {
+			return null;
+		}
+	}
     
    
     final public void ensureCapacity(int size) {

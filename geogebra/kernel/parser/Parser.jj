@@ -1501,6 +1501,7 @@ ExpressionValue myDouble():
 ExpressionNode numberFunction():
 {
     ExpressionNode en;
+    MyList myList;
     Token c;
 }
 {           
@@ -1653,7 +1654,18 @@ ExpressionNode numberFunction():
          randNum.setValue(Math.random());         
       	 return new ExpressionNode(kernel, randNum, ExpressionNode.RANDOM, null); }               
 |
-	c = <FUNCTION_LABEL> en = expressionnode() ")"
+	(	  c = <FUNCTION_LABEL> en = expressionnode()
+		{   
+            myList = new MyList(kernel);         
+            myList.addListElement(en);
+        }
+       ( <COMMA> en = expressionnode()  
+       	 {
+       		myList.addListElement(en); 
+       	 } 
+        )*
+    )
+	")"
 	// note: the last character of FUNCTION_LABEL is a "("
       { 
       		// remove the opening parenthesis
@@ -1672,9 +1684,10 @@ ExpressionNode numberFunction():
       			} else break;
       		}      		      	
       		if (geo == null) {
-      				// return command
+      				// function name does not exist: return command
       				Command cmd = new Command(kernel, funcName, true );
-      				cmd.addArgument( en );
+      				for (int i=0; i < myList.size(); i++)      				{
+      				  cmd.addArgument( (ExpressionNode) myList.getListElement(i) );      				}
       				return new ExpressionNode(kernel, cmd);      						
       			
 //      		  	String [] str = { "UndefinedVariable", funcName };
@@ -1685,13 +1698,16 @@ ExpressionNode numberFunction():
 			// to handle lables like $A$1 correctly and keep the expression
 			Variable geoVar = new Variable(kernel, label);
 			ExpressionValue geoExp = geoVar.resolveAsExpressionValue();
+
+			// numer of arguments
+			int argNumber = myList.size();
       		
       		if (order > 0) { // derivative
       			if (geo.isGeoFunction()) {// function 
       				// n-th derivative of geo
 	      			ExpressionNode derivative =  new ExpressionNode(kernel, geoExp, ExpressionNode.DERIVATIVE, 
 	      																new MyDouble(kernel, order));
-	      			return new ExpressionNode(kernel, derivative, ExpressionNode.FUNCTION, en); 
+	      			return new ExpressionNode(kernel, derivative, ExpressionNode.FUNCTION, myList.getListElement(0)); 
 	      		} 	      		
 	      		else {
 	                String [] str = { "FunctionExpected", funcName };
@@ -1700,9 +1716,11 @@ ExpressionNode numberFunction():
       		}
       		else { // no derivative
 	      		if (geo.isGeoFunction()) // function 
-	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.FUNCTION, en); 
+	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.FUNCTION, myList.getListElement(0)); 
+				else if (geo instanceof GeoFunctionNVar) {
+				  return new ExpressionNode(kernel, geoExp, ExpressionNode.FUNCTION_NVAR, myList);				}
 	      		else if (geo.isGeoCurveCartesian()) // vector function 
-	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.VEC_FUNCTION, en); 
+	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.VEC_FUNCTION, myList.getListElement(0)); 
 	      		else {// error: no function
 	      			String [] str = { "FunctionExpected", funcName };
 	                throw new MyParseError(app, str);
