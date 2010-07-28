@@ -136,53 +136,7 @@ public class DrawImplicitPoly extends Drawable {
         }
 	}
 	
-	protected double evalPolyAt(double x,double y){
-		double sum=0;
-		double zs=0;
-		//Evaluating Poly via the Horner-scheme
-		double[][] coeff=implicitPoly.getCoeff();
-		if (implicitPoly!=null&&coeff!=null)
-			for (int i=coeff.length-1;i>=0;i--){
-				zs=0;
-				for (int j=coeff[i].length-1;j>=0;j--){
-					zs=y*zs+coeff[i][j];
-				}
-				sum=sum*x+zs;
-			}
-		return sum;
-	}
-	
-	protected double evalDiffXPolyAt(double x,double y){
-		double sum=0;
-		double zs=0;
-		//Evaluating Poly via the Horner-scheme
-		double[][] coeff=implicitPoly.getCoeff();
-		if (implicitPoly!=null&&coeff!=null)
-			for (int i=coeff.length-1;i>=1;i--){
-				zs=0;
-				for (int j=coeff[i].length-1;j>=0;j--){
-					zs=y*zs+coeff[i][j];
-				}
-				sum=sum*x+i*zs;
-			}
-		return sum;
-	}
-	
-	protected double evalDiffYPolyAt(double x,double y){
-		double sum=0;
-		double zs=0;
-		//Evaluating Poly via the Horner-scheme
-		double[][] coeff=implicitPoly.getCoeff();
-		if (implicitPoly!=null&&coeff!=null)
-			for (int i=coeff.length-1;i>=0;i--){
-				zs=0;
-				for (int j=coeff[i].length-1;j>=1;j--){
-					zs=y*zs+j*coeff[i][j];
-				}
-				sum=sum*x+zs;
-			}
-		return sum;
-	}
+
 	
 	List<GridRectangle> actList;
 	List<GridRectangle> nextList;
@@ -255,17 +209,17 @@ public class DrawImplicitPoly extends Drawable {
 				ev[1]=nb[Dir.EAST.ordinal()].getEval();
 				southEast=nb[Dir.EAST.ordinal()].nb[Dir.SOUTH.ordinal()];
 			}else
-				ev[1]=evalPolyAt(x+width,y);
+				ev[1]=implicitPoly.evalPolyAt(x+width,y);
 			if (nb[Dir.SOUTH.ordinal()]!=null){
 				ev[2]=nb[Dir.SOUTH.ordinal()].getEval();
 				if (southEast==null)
 					southEast=nb[Dir.SOUTH.ordinal()].nb[Dir.EAST.ordinal()];
 			}else
-				ev[2]=evalPolyAt(x,y-height);
+				ev[2]=implicitPoly.evalPolyAt(x,y-height);
 			if (southEast!=null)
 				ev[3]=southEast.getEval();
 			else
-				ev[3]=evalPolyAt(x+width,y-height);
+				ev[3]=implicitPoly.evalPolyAt(x+width,y-height);
 			if (width<epsX&&height<epsY){
 				int pc=0;
 				int pe=-1;
@@ -361,7 +315,7 @@ public class DrawImplicitPoly extends Drawable {
 
 		public double getEval(){
 			if (eval==Double.POSITIVE_INFINITY)
-				eval=evalPolyAt(x,y);
+				eval=implicitPoly.evalPolyAt(x,y);
 			return eval;
 		}
 		
@@ -728,7 +682,7 @@ public class DrawImplicitPoly extends Drawable {
 		for (int w=0;w<gridWidth;w++){
 			double y=view.ymax;
 			for (int h=0;h<gridHeight;h++){
-				e=epsSignum(evalPolyAt(x,y));
+				e=epsSignum(implicitPoly.evalPolyAt(x,y));
 				grid[w][h]=new GridRect(x,y,grw,grh);
 				grid[w][h].eval[0]=e;
 				if (w>0){
@@ -742,7 +696,7 @@ public class DrawImplicitPoly extends Drawable {
 					grid[w][h-1].eval[2]=e;
 				y-=grh;
 			}
-			e=epsSignum(evalPolyAt(x,y));
+			e=epsSignum(implicitPoly.evalPolyAt(x,y));
 			grid[w][gridHeight-1].eval[2]=e;
 			if (w>0)
 				grid[w-1][gridHeight-1].eval[3]=e;
@@ -750,13 +704,13 @@ public class DrawImplicitPoly extends Drawable {
 		}
 		double y=view.ymax;
 		for (int h=0;h<gridHeight;h++){
-			e=epsSignum(evalPolyAt(x,y));
+			e=epsSignum(implicitPoly.evalPolyAt(x,y));
 			grid[gridWidth-1][h].eval[1]=e;
 			if (h>0)
 				grid[gridWidth-1][h-1].eval[3]=e;
 			y-=grh;
 		}
-		grid[gridWidth-1][gridHeight-1].eval[3]=epsSignum(evalPolyAt(x,y));
+		grid[gridWidth-1][gridHeight-1].eval[3]=epsSignum(implicitPoly.evalPolyAt(x,y));
 		for (int w=0;w<gridWidth;w++){
 			for (int h=0;h<gridHeight;h++){
 				remember[w][h]=false;
@@ -905,8 +859,8 @@ public class DrawImplicitPoly extends Drawable {
 			double gradX=0;
 			double gradY=0;
 			if (!reachedEnd){
-				gradX=evalDiffXPolyAt(sx, sy);
-				gradY=evalDiffYPolyAt(sx, sy);
+				gradX=implicitPoly.evalDiffXPolyAt(sx, sy);
+				gradY=implicitPoly.evalDiffYPolyAt(sx, sy);
 				if (Math.abs(gradX)<MIN_GRAD&&Math.abs(gradY)<MIN_GRAD){ //singularity
 					Application.debug("Sing-a");
 					reachedEnd=true;
@@ -942,15 +896,15 @@ public class DrawImplicitPoly extends Drawable {
 //				Application.debug("stepSize="+stepSize);
 				sx=lx+nX*stepSize; //go in "best" direction
 				sy=ly+nY*stepSize;
-				int e=epsSignum(evalPolyAt(sx,sy));
+				int e=epsSignum(implicitPoly.evalPolyAt(sx,sy));
 //				Application.debug("s: "+sx+"/"+sy+";l: "+lx+"/"+ly+"; e="+e);
 				if (e==0){
 					if (stepSize*2<=MAX_STEP_SIZE*Math.max(scaleX, scaleY))
 						stepSize*=2;
 					break;
 				}else{
-					gradX=evalDiffXPolyAt(sx, sy);
-					gradY=evalDiffYPolyAt(sx, sy);
+					gradX=implicitPoly.evalDiffXPolyAt(sx, sy);
+					gradY=implicitPoly.evalDiffYPolyAt(sx, sy);
 //					Application.debug("gradient in "+sx+"/"+sy+"="+gradX+"/"+gradY);
 					if (Math.abs(gradX)<MIN_GRAD&&Math.abs(gradY)<MIN_GRAD){ //singularity
 						stepSize/=2;
@@ -969,7 +923,7 @@ public class DrawImplicitPoly extends Drawable {
 						gradX=-gradX;
 						gradY=-gradY;
 					}
-					int e1=epsSignum(evalPolyAt(sx+gradX,sy+gradY));
+					int e1=epsSignum(implicitPoly.evalPolyAt(sx+gradX,sy+gradY));
 					if (e1==0){
 						sx=sx+gradX;
 						sy=sy+gradY;
@@ -1062,8 +1016,8 @@ public class DrawImplicitPoly extends Drawable {
 	 * @return a such that |f(x1+(x2-x1)*a,y1+(y2-y1)*a)|<eps
 	 */
 	public double bisec(double x1,double y1,double x2,double y2){
-		int e1=epsSignum(evalPolyAt(x1,y1));
-		int e2=epsSignum(evalPolyAt(x2,y2));
+		int e1=epsSignum(implicitPoly.evalPolyAt(x1,y1));
+		int e2=epsSignum(implicitPoly.evalPolyAt(x2,y2));
 		if (e1==0)
 			return 0.;
 		if (e2==0)
@@ -1073,7 +1027,7 @@ public class DrawImplicitPoly extends Drawable {
 		int e;
 		if (e1!=e2){
 			while(a2-a1>Double.MIN_VALUE){
-				e=epsSignum(evalPolyAt(x1+(x2-x1)*(a2+a1)/2,y1+(y2-y1)*(a2+a1)/2));
+				e=epsSignum(implicitPoly.evalPolyAt(x1+(x2-x1)*(a2+a1)/2,y1+(y2-y1)*(a2+a1)/2));
 				if (e==0)
 					return (a2+a1)/2;
 				if (e==e1){

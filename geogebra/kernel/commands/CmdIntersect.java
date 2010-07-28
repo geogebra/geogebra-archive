@@ -3,7 +3,9 @@ package geogebra.kernel.commands;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
@@ -71,6 +73,21 @@ public  GeoElement[] process(Command c) throws MyError {
                     c.getLabels(),
                     (GeoLine) arg[1],
                     (GeoConic) arg[0]);
+         // Polynomial - Conic
+            else if (
+                (ok[0] = (arg[0] .isGeoFunction()))
+                    && (ok[1] = (arg[1] .isGeoConic())))
+				return kernel.IntersectPolynomialConic(
+                    c.getLabels(),
+                    (GeoFunction) arg[0],
+                    (GeoConic) arg[1]);
+			else if (
+                (ok[0] = (arg[0] .isGeoConic()))
+                    && (ok[1] = (arg[1] .isGeoFunction())))
+				return kernel.IntersectPolynomialConic(
+                    c.getLabels(),
+                    (GeoFunction) arg[1],
+                    (GeoConic) arg[0]);
             // Line - Cubic
             else if (
                 (ok[0] = (arg[0] .isGeoLine()))
@@ -114,7 +131,35 @@ public  GeoElement[] process(Command c) throws MyError {
                     c.getLabels(),
                     ((GeoFunctionable) arg[1]).getGeoFunction(),
                     (GeoLine) arg[0]);
-			
+            //implicit Poly - Polynomial
+			else if (
+	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
+	                    && (ok[1] = (arg[1] .isGeoFunctionable())
+	                    && (ok[1]=((GeoFunctionable) arg[1]).getGeoFunction().isPolynomialFunction(false))))
+					return kernel.IntersectImplicitpolyPolynomial(
+	                    c.getLabels(), (GeoImplicitPoly) arg[0],
+	                    ((GeoFunctionable) arg[1]).getGeoFunction()
+	                   );
+			else if (ok[0] = (arg[0] .isGeoFunctionable())
+	                    && (ok[0]=((GeoFunctionable) arg[0]).getGeoFunction().isPolynomialFunction(false))
+	                    && (ok[1] = (arg[1] .isGeoImplicitPoly())))
+					return kernel.IntersectImplicitpolyPolynomial(
+	                    c.getLabels(), (GeoImplicitPoly) arg[1],
+	                    ((GeoFunctionable) arg[0]).getGeoFunction()
+	                   );
+            //implicitPoly - Line
+			else if (
+	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
+	                    && (ok[1] = (arg[1].isGeoLine())))
+					return kernel.IntersectImplicitpolyLine(
+	                    c.getLabels(), (GeoImplicitPoly) arg[0],
+	                    (GeoLine) arg[1] );
+			else if (
+	                (ok[1] = (arg[1] .isGeoImplicitPoly()))
+	                    && (ok[0] = (arg[0].isGeoLine())))
+					return kernel.IntersectImplicitpolyLine(
+	                    c.getLabels(), (GeoImplicitPoly) arg[1],
+	                    (GeoLine) arg[0] );
 			// intersection of two lists
 			else if (arg[0].isGeoList() && arg[1].isGeoList() ) {
 				GeoElement[] ret = { 
@@ -216,6 +261,56 @@ public  GeoElement[] process(Command c) throws MyError {
                             (NumberValue) arg[2])};
                 return ret;
             }
+            //Polynomial - Conic with index of point
+            else if (
+                    (ok[0] = (arg[0] .isGeoFunction()))
+                        && (ok[1] = (arg[1] .isGeoConic()))
+                        && (ok[2] = (arg[2] .isNumberValue())) )
+    				return new GeoElement[]{kernel.IntersectPolynomialConicSingle(
+                        c.getLabel(),
+                        (GeoFunction) arg[0],
+                        (GeoConic) arg[1],(NumberValue)arg[2])};
+    		else if (
+                    (ok[0] = (arg[0] .isGeoConic()))
+                        && (ok[1] = (arg[1] .isGeoFunction()))
+                        && (ok[2] = (arg[2] .isNumberValue())))
+    				return new GeoElement[]{kernel.IntersectPolynomialConicSingle(
+                        c.getLabel(),
+                        (GeoFunction) arg[1],
+                        (GeoConic) arg[0],(NumberValue)arg[2])};
+            //ImplicitPoly - Functionable
+    		else if (
+	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
+	                    && (ok[1] = (arg[1] .isGeoFunctionable())
+	                    && (ok[1]=((GeoFunctionable) arg[1]).getGeoFunction().isPolynomialFunction(false)))
+	                    && (ok[2] = (arg[2] .isNumberValue())))
+					return new GeoElement[]{kernel.IntersectImplicitpolyPolynomialSingle(
+	                    c.getLabel(), (GeoImplicitPoly) arg[0],
+	                    ((GeoFunctionable) arg[1]).getGeoFunction(),(NumberValue)arg[2]
+	                   )};
+			else if (ok[0] = (arg[0] .isGeoFunctionable())
+	                    && (ok[0]=((GeoFunctionable) arg[0]).getGeoFunction().isPolynomialFunction(false))
+	                    && (ok[1] = (arg[1] .isGeoImplicitPoly()))
+	                    && (ok[2] = (arg[2] .isNumberValue())))
+						return new GeoElement[]{kernel.IntersectImplicitpolyPolynomialSingle(
+			                    c.getLabel(), (GeoImplicitPoly) arg[0],
+			                    ((GeoFunctionable) arg[1]).getGeoFunction(),(NumberValue)arg[2]
+			                   )};
+          //implicitPoly - Line
+			else if (
+	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
+	                    && (ok[1] = (arg[1].isGeoLine()))
+	                    && (ok[2] = (arg[2] .isNumberValue())) )
+					return new GeoElement[]{kernel.IntersectImplicitpolyLineSingle(
+	                    c.getLabel(), (GeoImplicitPoly) arg[0],
+	                    (GeoLine) arg[1] ,(NumberValue)arg[2])};
+			else if (
+	                (ok[1] = (arg[1] .isGeoImplicitPoly()))
+	                    && (ok[0] = (arg[0].isGeoLine()))
+	                    && (ok[2] = (arg[2] .isNumberValue())))
+				return new GeoElement[]{kernel.IntersectImplicitpolyLineSingle(
+	                    c.getLabel(), (GeoImplicitPoly) arg[1],
+	                    (GeoLine) arg[0] ,(NumberValue)arg[2])};
             // Function - Function with startPoint
             else if (
                 (ok[0] = (arg[0] .isGeoFunctionable()))

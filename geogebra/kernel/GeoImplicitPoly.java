@@ -18,14 +18,22 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.mathpiper.builtin.library.jas.JasPolynomial;
+
+import edu.jas.poly.GenPolynomial;
+
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.main.Application;
 
-public class GeoImplicitPoly extends GeoElement {
+public class GeoImplicitPoly extends GeoElement implements Path{
 
-//	private Polynomial poly;
 	private double[][] coeff;
 	
 	private String userInput; //TODO Stores the Polynomial in the exact way the user entered it
@@ -42,12 +50,13 @@ public class GeoImplicitPoly extends GeoElement {
 	protected GeoImplicitPoly(Construction c, String label,double[][] coeff){
 		this(c);
 		setLabel(label);
-		this.coeff=new double[coeff.length][];
-		for (int i=0;i<coeff.length;i++){
-			this.coeff[i]=new double[coeff[i].length];
-			for (int j=0;j<coeff[i].length;j++)
-				this.coeff[i][j]=coeff[i][j];
-		}
+		setCoeff(coeff);
+//		this.coeff=new double[coeff.length][];
+//		for (int i=0;i<coeff.length;i++){
+//			this.coeff[i]=new double[coeff[i].length];
+//			for (int j=0;j<coeff[i].length;j++)
+//				this.coeff[i][j]=coeff[i][j];
+//		}
 	}
 		
 	
@@ -79,6 +88,30 @@ public class GeoImplicitPoly extends GeoElement {
 	@Override
 	protected String getTypeString() {
 		return "ImplicitPoly";
+	}
+	
+	/**
+	 * returns all class-specific xml tags for saveXML
+	 */
+	protected void getXMLtags(StringBuilder sb) {
+		super.getXMLtags(sb);
+		getLineStyleXML(sb);
+		
+		sb.append("\t<coefficients rep=\"array\" data=\"");
+		sb.append("[");
+		for (int i=0;i<coeff.length;i++){
+			if (i>0)
+				sb.append(',');
+			sb.append("[");
+			for (int j=0;j<coeff[i].length;j++){
+				if (j>0)
+					sb.append(',');
+				sb.append(coeff[i][j]);
+			}
+			sb.append("]");
+		}
+		sb.append("]");
+		sb.append("\" />\n");
 	}
 
 	@Override
@@ -133,7 +166,10 @@ public class GeoImplicitPoly extends GeoElement {
 
 	@Override
 	public void set(GeoElement geo) {
-		
+		if (!(geo instanceof GeoImplicitPoly))
+			return;
+		setCoeff(((GeoImplicitPoly)geo).getCoeff());
+		this.defined=defined;
 	}
 
 	@Override
@@ -155,10 +191,7 @@ public class GeoImplicitPoly extends GeoElement {
 		return "^"+p;
 	}
 	
-	@Override
-	public String toValueString() {
-		if (showUserInput&&userInput.length()>0)
-			return userInput;
+	public String toMathPipeString(){ 
 		StringBuilder sb=new StringBuilder();
 		if (coeff==null)
 			return "";
@@ -166,28 +199,79 @@ public class GeoImplicitPoly extends GeoElement {
 			for (int j=0;j<coeff[i].length;j++){
 				if (coeff[i][j]!=0){
 					sb.append((coeff[i][j]>0?"+":""));
-					if (coeff[i][j]!=1||(i==0&&j==0)){
-						if (coeff[i][j]==-1&&(i!=0&&j!=0)){
-							sb.append("-");
-						}else{
-							sb.append(coeff[i][j]);
-						}
-					}
+					sb.append(coeff[i][j]);
 					if (i>0){
-						sb.append('x');
+						sb.append("*x");
 						if (i>1)
 							sb.append(makePot(i));
-						sb.append(' ');
 					}
 					if (j>0){
-						sb.append('y');
+						sb.append("*y");
 						if (j>1)
 							sb.append(makePot(j));
 					}
 				}
 			}
 		}
-		sb.append("=0");
+		return sb.toString();
+	}
+	
+	@Override
+	public String toValueString() {
+		if (showUserInput&&userInput.length()>0)
+			return userInput;
+		if (coeff==null)
+			return "";		
+		StringBuilder sb=new StringBuilder();
+		boolean first=true;
+		for (int i=coeff.length-1;i>=0;i--){
+			for (int j=coeff[i].length-1;j>=0;j--){
+				if (i==0&&j==0){
+					if (first)
+						sb.append("0");
+//					if (kernel.casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
+//						sb.append(" == ");
+//					else
+						sb.append(" = ");
+					sb.append(-coeff[0][0]);
+				}else{
+					if (coeff[i][j]!=0){
+						if (!first)
+							sb.append((coeff[i][j]>0?"+":""));
+						if (coeff[i][j]!=1){
+							if (coeff[i][j]==-1){
+								sb.append("-");
+							}else{
+								sb.append(coeff[i][j]);
+							}
+							first=false;
+						}
+						if (i>0){
+							if (!first)
+								sb.append(' ');
+							else
+								first=false;
+							sb.append('x');
+						}
+						if (i>1){
+							sb.append('^');
+							sb.append(i);
+						}
+						if (j>0){
+							if (!first)
+								sb.append(' ');
+							else
+								first=false;
+							sb.append('y');
+						}
+						if (j>1){
+							sb.append('^');
+							sb.append(j);
+						}
+					}
+				}
+			}
+		}
 		return sb.toString();
 	}
 	
@@ -202,8 +286,21 @@ public class GeoImplicitPoly extends GeoElement {
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public void setCoeff(double[][] c){
+		try {
+			coeff = new double[c.length][];
+			for (int i = 0; i < c.length; i++) {
+				coeff[i] = new double[c[i].length];
+				for (int j = 0; j < c[i].length; j++)
+					coeff[i][j]=c[i][j];
+			}
+		} catch (Exception e) {
+			setUndefined();
+			e.printStackTrace();
+		}
 	}
 	
 	public void setCoeff(ExpressionValue[][] ev){
@@ -218,6 +315,7 @@ public class GeoImplicitPoly extends GeoElement {
 						coeff[i][j] = ((NumberValue) ev[i][j].evaluate())
 							.getDouble();
 			}
+			getFactors();
 		} catch (Exception e) {
 			setUndefined();
 			e.printStackTrace();
@@ -226,6 +324,110 @@ public class GeoImplicitPoly extends GeoElement {
 	
 	public double[][] getCoeff(){
 		return coeff;
+	}
+	
+	public double evalPolyAt(double x,double y){
+		double sum=0;
+		double zs=0;
+		//Evaluating Poly via the Horner-scheme
+		if (coeff!=null)
+			for (int i=coeff.length-1;i>=0;i--){
+				zs=0;
+				for (int j=coeff[i].length-1;j>=0;j--){
+					zs=y*zs+coeff[i][j];
+				}
+				sum=sum*x+zs;
+			}
+		return sum;
+	}
+	
+	public double evalDiffXPolyAt(double x,double y){
+		double sum=0;
+		double zs=0;
+		//Evaluating Poly via the Horner-scheme
+		if (coeff!=null)
+			for (int i=coeff.length-1;i>=1;i--){
+				zs=0;
+				for (int j=coeff[i].length-1;j>=0;j--){
+					zs=y*zs+coeff[i][j];
+				}
+				sum=sum*x+i*zs;
+			}
+		return sum;
+	}
+	
+	public double evalDiffYPolyAt(double x,double y){
+		double sum=0;
+		double zs=0;
+		//Evaluating Poly via the Horner-scheme
+		if (coeff!=null)
+			for (int i=coeff.length-1;i>=0;i--){
+				zs=0;
+				for (int j=coeff[i].length-1;j>=1;j--){
+					zs=y*zs+j*coeff[i][j];
+				}
+				sum=sum*x+zs;
+			}
+		return sum;
+	}
+	
+	private void getFactors(){
+//		String functionIn = toMathPipeString();
+//		
+//		Application.debug("...");
+//		
+//		JasPolynomial jp=new JasPolynomial("Integer", "x,y", functionIn);
+////		Map<GenPolynomial,Long> fact=
+//		List<GenPolynomial>	fact=jp.getFactorizationEngine().factorsRadical(jp.getPolynomial());
+//		
+//		Application.debug(fact.size()+"");
+//		
+//		//for (Entry<GenPolynomial,Long> e:fact.entrySet()){
+//		for (GenPolynomial gp:fact){
+//			Application.debug("Factor: "+gp);
+//		}
+// 	    StringBuilder sb=new StringBuilder();
+//		sb.setLength(0);
+//	    sb.append("Factors((");
+//	    sb.append(functionIn);
+//	    sb.append("))");
+//		String functionOut = kernel.evaluateMathPiper(sb.toString());
+//		Application.debug(functionOut);
+	}
+
+	public void pointChanged(GeoPointInterface PI) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void pathChanged(GeoPointInterface PI) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isOnPath(GeoPointInterface PI, double eps) {
+		
+		return false;
+	}
+
+	public double getMinParameter() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getMaxParameter() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public boolean isClosedPath() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public PathMover createPathMover() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -35,6 +35,7 @@ import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -1987,6 +1988,9 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("checkbox")) {
 				ok = handleCheckbox(attrs);
 				break;
+			} else if (eName.equals("coefficients")){
+				ok = handleCoefficients(attrs);
+				break;
 			}
 
 		case 'd':
@@ -2132,7 +2136,7 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("selectionAllowed")) {
 				ok = handleSelectionAllowed(attrs);
 				break;
-		}
+			}
 
 		case 't':
 			if (eName.equals("trace")) {
@@ -2156,6 +2160,7 @@ public class MyXMLHandler implements DocHandler {
 		if (!ok)
 			System.err.println("error in <element>: " + eName);
 	}
+
 
 	private boolean handleShow(LinkedHashMap<String, String> attrs) {
 		try {
@@ -3339,6 +3344,60 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
+	private boolean handleCoefficients(LinkedHashMap<String, String> attrs) {
+		Application.debug(attrs.toString());
+		if (!(geo.isGeoImplicitPoly())) {
+			System.err.println("wrong element type for <coefficients>: "
+					+ geo.getClass());
+			return false;
+		}
+		try {
+			String rep=attrs.get("rep");
+			if (rep==null)
+				return false;
+			if (attrs.get("rep").equals("array")){
+				String data=attrs.get("data");
+				if (data==null)
+					return false;
+				ArrayList<ArrayList<Double>> collect=new ArrayList<ArrayList<Double>>();
+				ArrayList<Double> newRow=new ArrayList<Double>();
+				int start=0;
+				for(int c=1;c<data.length();c++){
+					switch (data.charAt(c)){
+					case '[':
+						if (newRow.size()>0)
+							return false;
+						start=c+1;
+						break;
+					case ']': 
+						newRow.add(Double.parseDouble(data.substring(start, c)));
+						start=c+1;
+						collect.add(newRow);
+						newRow=new ArrayList<Double>();
+						c++; //jump over ','
+						break;
+					case ',':
+						newRow.add(Double.parseDouble(data.substring(start, c)));
+						start=c+1;
+					}
+				}
+				double[][] coeff=new double[collect.size()][];
+				for (int i=0;i<collect.size();i++){
+					ArrayList<Double> row=collect.get(i);
+					coeff[i]=new double[row.size()];
+					for (int j=0;j<row.size();j++){
+						coeff[i][j]=row.get(j);
+					}
+				}
+				((GeoImplicitPoly)geo).setCoeff(coeff);
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
+	
 	// ====================================
 	// <command>
 	// ====================================

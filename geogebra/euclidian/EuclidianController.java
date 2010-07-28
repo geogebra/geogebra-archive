@@ -35,6 +35,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLineInterface;
 import geogebra.kernel.GeoList;
@@ -215,6 +216,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected ArrayList selectedSegments = new ArrayList();
 
 	protected ArrayList selectedConics = new ArrayList();
+	protected ArrayList selectedImplicitpoly = new ArrayList();
 
 	protected ArrayList selectedFunctions = new ArrayList();
 	protected ArrayList selectedCurves = new ArrayList();
@@ -3916,7 +3918,8 @@ Rectangle rect = view.getSelectionRectangle();
 		// get lines, conics and functions
 		addSelectedLine(hits, 2, true);
 		addSelectedConic(hits, 2, true);
-		addSelectedFunction(hits, 2, true);				
+		addSelectedFunction(hits, 2, true);	
+		addSelectedImplicitpoly(hits, 1, true);
 
 		singlePointWanted = singlePointWanted && selGeos() == 2;
 
@@ -3984,6 +3987,39 @@ Rectangle rect = view.getSelectionRectangle();
 				kernel.IntersectFunctionLine(null, fun[0], line[0], startPoint);
 			}
 			return true;
+		// function and conic
+		}else if (selFunctions()==1&&selConics()==1){
+			GeoConic[] conic = getSelectedConics();
+			GeoFunction[] fun = getSelectedFunctions();
+			if (fun[0].isPolynomialFunction(false)){
+				if (singlePointWanted)
+					kernel.IntersectPolynomialConicSingle(null, fun[0], conic[0],
+							xRW, yRW);
+				else
+					kernel.IntersectPolynomialConic(null, fun[0], conic[0]);
+			}else{
+				return false;
+			}
+		}else if (selImplicitpoly()==1){
+			if (selFunctions()==1){
+				GeoImplicitPoly p=getSelectedImplicitpoly()[0];
+				GeoFunction fun=getSelectedFunctions()[0];
+				if (fun.isPolynomialFunction(false)){
+					if (singlePointWanted){
+						kernel.IntersectImplicitpolyPolynomialSingle(null, p, fun, xRW, yRW);
+					}else
+						kernel.IntersectImplicitpolyPolynomial(null, p, fun);
+				}else
+					return false;
+			}else if (selLines()==1){
+				GeoImplicitPoly p=getSelectedImplicitpoly()[0];
+				GeoLine l=getSelectedLines()[0];
+				if (singlePointWanted){
+					kernel.IntersectImplicitpolyLineSingle(null, p, l, xRW, yRW);
+				}else
+					kernel.IntersectImplicitpolyLine(null, p, l);
+			}else
+				return false;
 		}
 		return false;
 	}
@@ -5973,6 +6009,18 @@ Rectangle rect = view.getSelectionRectangle();
 		clearSelection(selectedConics);
 		return conics;
 	}
+	
+	final protected GeoImplicitPoly[] getSelectedImplicitpoly() {
+		GeoImplicitPoly[] implicitPoly = new GeoImplicitPoly[selectedImplicitpoly.size()];
+		int i = 0;
+		Iterator it = selectedImplicitpoly.iterator();
+		while (it.hasNext()) {
+			implicitPoly[i] = (GeoImplicitPoly) it.next();
+			i++;
+		}
+		clearSelection(selectedImplicitpoly);
+		return implicitPoly;
+	}
 
 	final protected GeoFunction[] getSelectedFunctions() {
 		GeoFunction[] functions = new GeoFunction[selectedFunctions.size()];
@@ -6053,6 +6101,11 @@ Rectangle rect = view.getSelectionRectangle();
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedConics, GeoConic.class);
 	}
+	
+	final protected int addSelectedImplicitpoly(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedImplicitpoly, GeoImplicitPoly.class);
+	}
 
 	final protected int addSelectedFunction(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
@@ -6108,6 +6161,10 @@ Rectangle rect = view.getSelectionRectangle();
 
 	final int selConics() {
 		return selectedConics.size();
+	}
+	
+	final int selImplicitpoly() {
+		return selectedImplicitpoly.size();
 	}
 
 	final int selFunctions() {
