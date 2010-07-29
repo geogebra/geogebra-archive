@@ -3404,18 +3404,16 @@ Rectangle rect = view.getSelectionRectangle();
 
 		if (createPoint) {
 			transformCoords(); // use point capturing if on
-			if (path == null) {
-				if (region == null){
-					//point = kernel.Point(null, xRW, yRW);
+			//branches reordered to prefer region if possible (Z.Konecny, 2010-07-30)
+			if (region == null || !inRegionPossible) {
+				if (path == null){
 					point = createNewPoint(forPreviewable);
 					view.setShowMouseCoords(true);
 				} else {
-					//Application.debug("in Region : "+region);
-					point = createNewPoint(forPreviewable, region);
+					point = createNewPoint(forPreviewable, path);
 				}
 			} else {
-				//point = kernel.Point(null, path, xRW, yRW);
-				point = createNewPoint(forPreviewable, path);
+				point = createNewPoint(forPreviewable, region);
 			}
 		}
 
