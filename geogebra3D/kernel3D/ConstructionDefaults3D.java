@@ -4,6 +4,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 
 import java.awt.Color;
 
@@ -57,7 +58,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	/** default quadric type */
 	public static final int DEFAULT_QUADRIC = 3301;
 	/** default function 2 var type */
-	public static final int DEFAULT_FUNCTION2VAR = 3302;
+	public static final int DEFAULT_FUNCTION_NVAR = 3302;
 
 	
 	
@@ -254,12 +255,12 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		quadric.setAlphaValue(DEFAULT_QUADRIC_ALPHA);
 		defaultGeoElements.put(DEFAULT_QUADRIC, quadric);
 		
-		// function 2 var
-		GeoFunction2Var function = new GeoFunction2Var(cons);	
+		// function n var
+		GeoFunctionNVar function = new GeoFunctionNVar(cons);	
 		function.setLocalVariableLabel("function");
 		function.setObjColor(colQuadric);
 		function.setAlphaValue(DEFAULT_QUADRIC_ALPHA);
-		defaultGeoElements.put(DEFAULT_FUNCTION2VAR, function);
+		defaultGeoElements.put(DEFAULT_FUNCTION_NVAR, function);
 	
 	
 
@@ -313,8 +314,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 			return DEFAULT_POLYHEDRON;
 		case GeoElement3D.GEO_CLASS_QUADRIC:
 			return DEFAULT_QUADRIC;
-		case GeoElement3D.GEO_CLASS_FUNCTION2VAR:
-			return DEFAULT_FUNCTION2VAR;
+		case GeoElement.GEO_CLASS_FUNCTION_NVAR:
+			return DEFAULT_FUNCTION_NVAR;
 			
 			
 		default:

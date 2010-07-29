@@ -2,11 +2,9 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
-import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
@@ -38,7 +36,7 @@ public class AlgoFunction2Var extends AlgoFunctionNVarND {
 	
 	protected GeoElement createFunction(Construction cons, FunctionNVar[] fun){
 		
-		return new GeoFunction2Var(cons,fun);
+		return new GeoFunctionNVar(cons,fun[0]);
 	}
 	
 	
@@ -49,7 +47,10 @@ public class AlgoFunction2Var extends AlgoFunctionNVarND {
 
 	protected void compute() {
 
-		((GeoFunction2Var) function).setInterval(from[0].getDouble(), to[0].getDouble(), from[1].getDouble(), to[1].getDouble());
+		((GeoFunctionNVar) function).setInterval(
+				new double[] {from[0].getDouble(), from[1].getDouble()}, 
+				new double[] {to[0].getDouble(), to[1].getDouble()}				
+		);
 		
 	}
 	
@@ -57,8 +58,8 @@ public class AlgoFunction2Var extends AlgoFunctionNVarND {
 	/**
 	 * @return the function
 	 */
-	public GeoFunction2Var getFunction(){
-		return (GeoFunction2Var) function;
+	public GeoFunctionNVar getFunction(){
+		return (GeoFunctionNVar) function;
 	}
 
 }

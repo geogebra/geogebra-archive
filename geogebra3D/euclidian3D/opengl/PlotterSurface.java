@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D.opengl;
 import java.nio.FloatBuffer;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra3D.euclidian3D.SurfaceTree;
 
@@ -19,7 +20,9 @@ public class PlotterSurface {
 	private int index;
 	
 	/** 2-var function */
-	private Functional2Var function;
+	private Functional2Var functional2Var;
+	
+	private GeoFunctionNVar function;
 	
 	/** domain for plotting */
 	private float uMin, uMax, vMin, vMax;
@@ -58,11 +61,24 @@ public class PlotterSurface {
 	 */
 	public void start(Functional2Var function){
 		index = manager.startNewList();
+		this.functional2Var = function;
+		uMinFade = 0; vMinFade = 0;
+		uMaxFade = 0; vMaxFade = 0;
+		
+	}
+	
+	/**
+	 * start new surface
+	 * @param function 
+	 */
+	public void start(GeoFunctionNVar function){
+		index = manager.startNewList();
 		this.function = function;
 		uMinFade = 0; vMinFade = 0;
 		uMaxFade = 0; vMaxFade = 0;
 		
 	}
+
 	
 	
 	/** end surface
@@ -259,8 +275,8 @@ public class PlotterSurface {
 		
 		float u = uMin+ui*du;
 		float v = vMin+vi*dv;			
-		manager.normal(function.evaluateNormal(u, v));
-		manager.vertex(function.evaluatePoint(u, v));
+		manager.normal(functional2Var.evaluateNormal(u, v));
+		manager.vertex(functional2Var.evaluatePoint(u, v));
 	}
 	
 	private float getTextureCoord(int i, int n, float fadeMin, float fadeMax){

@@ -1814,6 +1814,7 @@ public class Kernel {
 	/** Function in multiple variables,  e.g. f(x,y) = 4 x^2 + 3 y^2
 	 */
 	final public GeoFunctionNVar FunctionNVar(String label, FunctionNVar fun) {
+		Application.debug("nb var: "+fun.getVarNumber());
 		GeoFunctionNVar f = new GeoFunctionNVar(cons, label, fun);
 		return f;
 	}

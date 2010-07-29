@@ -40,14 +40,22 @@ implements FunctionalNVar {
 
 	protected FunctionNVar fun;		
 	protected boolean isDefined = true;
+	
+	/** intervals for plotting, may be null (then interval is R) */
+	private double[] from, to;
 
 	public GeoFunctionNVar(Construction c) {
 		super(c);
 	}
+	
+	public GeoFunctionNVar(Construction c, FunctionNVar f) {
+		this(c);
+		fun = f;	
+	}
+
 
 	public GeoFunctionNVar(Construction c, String label, FunctionNVar f) {
-		super(c);
-		fun = f;		
+		this(c,f);	
 		setLabel(label);		
 	}
 	
@@ -382,6 +390,122 @@ implements FunctionalNVar {
 		return sb.toString();
 	 }
 
+	 
+	 
 
+	 
+	 
+	 
+	 
+
+	 
+		/////////////////////////////////////////
+		// INTERVALS
+		/////////////////////////////////////////
+
+		public double getMinParameter(int index) {
+			
+			if (from==null) 
+				return -1; //TODO change for Double.NEGATIVE_INFINITY
+			
+			return from[index];
+			
+		}
+		
+
+		public double getMaxParameter(int index) {
+			
+			if (to==null)
+				return 1; //TODO change for Double.POSITIVE_INFINITY
+			
+			return to[index];
+		}
+
+		
+
+		/** 
+		 * Sets the start and end parameters values of this function.
+		 * @param from
+		 * @param to
+		 */
+		public void setInterval(double[] from, double[] to) {
+			
+			this.from = from;
+			this.to =to;
+			
+			/*
+			for (int i=0; i<start.length; i++)
+				from[i]=start[i];
+			
+			for (int i=0; i<end.length; i++)
+				to[i]=end[i];
+				
+				*/
+			
+			
+		}
+	 
+		/////////////////////////////////////////
+		// For 3D
+		/////////////////////////////////////////
+		
+	 /** used if 2-var function, for plotting 
+	 * @param u 
+	 * @param v 
+	 * @return coords of the point (u,v,f(u,v)) */
+	 public GgbVector evaluatePoint(double u, double v){
+
+		 GgbVector p = new GgbVector(3);
+		 p.set(1, u);
+		 p.set(2, v);
+		 p.set(3, fun.evaluate(new double[] {u,v}));
+
+		 return p;
+
+	 }
+	 
+
+
+	 //will be drawn as a surface if can be interpreted as (x,y)->z function
+	  	public boolean hasDrawable3D() {
+			return fun.getVarNumber()==2;
+		}
+	  	
+	  	
+
+	    
+		/** to be able to fill it with an alpha value */
+		public boolean isFillable() {
+			return hasDrawable3D();
+		}
+		
+	 
+	 
+/*
+		public GgbVector evaluateNormal(double u, double v){
+			if (funD1 == null) {
+				funD1 = new FunctionNVar[2];
+				for (int i=0;i<2;i++){
+					funD1[i] = fun.derivative(i, 1);
+				}
+			}
+
+			
+			GgbVector vec = new GgbVector(
+					-funD1[0].evaluate(new double[] {u,v}),
+					-funD1[1].evaluate(new double[] {u,v}),
+					1,
+					0).normalized();
+		
+			//Application.debug("vec=\n"+vec.toString());
+		
+			return vec;
+			
+			//return new GgbVector(0,0,1,0);
+		}
+
+*/
+		
+	 
 
 }

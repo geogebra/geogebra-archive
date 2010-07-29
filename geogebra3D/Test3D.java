@@ -34,7 +34,6 @@ import geogebra.plugin.GgbAPI;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
-import geogebra3D.kernel3D.GeoFunction2Var;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;

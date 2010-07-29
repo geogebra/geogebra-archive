@@ -27,6 +27,7 @@ import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
@@ -709,7 +710,7 @@ public class Kernel3D
 	////////////////////////////////////////////////
 	// FUNCTIONS (2 VARS)
 	
-	final public GeoFunction2Var Function2Var(
+	final public GeoFunctionNVar Function2Var(
 			String label, 
 			NumberValue zcoord, 
 			GeoNumeric localVarU, NumberValue Ufrom, NumberValue Uto, 

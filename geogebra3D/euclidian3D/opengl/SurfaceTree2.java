@@ -2,8 +2,8 @@ package geogebra3D.euclidian3D.opengl;
 
 import java.nio.FloatBuffer;
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra3D.euclidian3D.EuclidianView3D;
-import geogebra3D.kernel3D.GeoFunction2Var;
 
 //TODO: there's something wrong with the culling. fix it.
 //TODO: use bucket queues for merges - make sure everything works.
@@ -15,7 +15,7 @@ import geogebra3D.kernel3D.GeoFunction2Var;
  * @author André Eriksson
  */
 public class SurfaceTree2 {
-	private GeoFunction2Var function;
+	private GeoFunctionNVar function;
 	@SuppressWarnings("unused")
 	private final EuclidianView3D view;
 	private double radSq;
@@ -47,7 +47,7 @@ public class SurfaceTree2 {
 	 * @param function
 	 * @param view
 	 */
-	public SurfaceTree2(GeoFunction2Var function, EuclidianView3D view) {
+	public SurfaceTree2(GeoFunctionNVar function, EuclidianView3D view) {
 		this.function = function;
 		this.view = view;
 		drawList = new DrawList();
@@ -766,7 +766,7 @@ class SurfaceDiamond {
 	/** level of resolution */
 	final int level;
 	/** a reference to the function used */
-	GeoFunction2Var func;
+	GeoFunctionNVar func;
 	/** flag indicating if the diamond has been split */
 	private boolean split = false;
 	/** flag indicating if the diamond is in the merge queue */
@@ -831,7 +831,7 @@ class SurfaceDiamond {
 	 * @param y
 	 * @param level
 	 */
-	SurfaceDiamond(GeoFunction2Var func, double x, double y, int level) {
+	SurfaceDiamond(GeoFunctionNVar func, double x, double y, int level) {
 		this.level = level;
 		this.func = func;
 		v = func.evaluatePoint(x, y);
@@ -848,7 +848,7 @@ class SurfaceDiamond {
 	 * @param a1
 	 * @param level
 	 */
-	SurfaceDiamond(GeoFunction2Var func, SurfaceDiamond parent0, int index0,
+	SurfaceDiamond(GeoFunctionNVar func, SurfaceDiamond parent0, int index0,
 			SurfaceDiamond parent1, int index1, SurfaceDiamond a0,
 			SurfaceDiamond a1, int level) {
 		this.level = level;
@@ -870,7 +870,7 @@ class SurfaceDiamond {
 			isClipped=true;
 	}
 	
-	private void estimateNormal(GeoFunction2Var func){
+	private void estimateNormal(GeoFunctionNVar func){
 		double x = v.getX(); double y = v.getY();
 		GgbVector dx = func.evaluatePoint(x+normalDelta, y);
 		GgbVector dy = func.evaluatePoint(x, y+normalDelta);

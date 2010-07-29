@@ -41,7 +41,6 @@ import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoFunction2Var;
 
 import java.util.ArrayList;
 import java.util.Set;
