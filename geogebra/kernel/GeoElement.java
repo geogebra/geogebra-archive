@@ -2842,12 +2842,20 @@ public abstract class GeoElement
 	
 	public String addLabelTextOrHTML(String desc) {
 		String ret; 
-		if (desc.startsWith(label+" ")) {
+		
+		boolean includesEqual = desc.indexOf('=') >= 0;
+		
+		// check for function in desc like "f(x) = x^2" 
+		if (includesEqual && desc.startsWith(label + '(')) {
 			ret = desc;
-		} else {
-			StringBuilder sb = new StringBuilder();
+		} 
+		else {
+			StringBuffer sb = new StringBuffer();
 			sb.append(label);
-			sb.append(" = ");
+			if (includesEqual)
+				sb.append(": ");
+			else
+				sb.append(" = ");
 			sb.append(desc);
 			ret = sb.toString();
 		}

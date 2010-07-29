@@ -205,7 +205,9 @@ public class AlgoDependentFunction extends AlgoElement {
         else sb.setLength(0);
         if (f.isLabelSet()) {
             sb.append(f.label);
-            sb.append("(x) = ");
+            sb.append("(");
+			sb.append(f.getVarString());
+			sb.append(") = ");
         }  
         sb.append(fun.toString());
         return sb.toString();

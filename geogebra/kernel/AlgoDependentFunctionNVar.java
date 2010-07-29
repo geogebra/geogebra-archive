@@ -1,0 +1,101 @@
+/* 
+GeoGebra - Dynamic Mathematics for Everyone
+http://www.geogebra.org
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation.
+
+*/
+
+package geogebra.kernel;
+
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.Functional;
+import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
+
+/**
+ * This class is needed to handle dependent multivariate functions like
+ * e.g. f(x,y) = a x^2 + b y that depends on a and b.
+ * 
+ * @author Markus Hohenwarter
+ */
+public class AlgoDependentFunctionNVar extends AlgoElement {
+
+	private static final long serialVersionUID = 1L;
+	protected FunctionNVar fun;
+    protected GeoFunctionNVar f; // output         
+
+    public AlgoDependentFunctionNVar(Construction cons, String label, FunctionNVar fun) {
+        this(cons, fun);
+       	f.setLabel(label);
+    }
+    
+    AlgoDependentFunctionNVar(Construction cons, FunctionNVar fun) {
+        super(cons);
+        this.fun = fun;
+        f = new GeoFunctionNVar(cons);
+        f.setFunction(fun);
+        
+        setInputOutput(); // for AlgoElement
+        
+        compute();
+    }
+    
+    public AlgoDependentFunctionNVar(Construction cons) {
+		super(cons);
+	}
+
+	public String getClassName() {
+        return "AlgoDependentFunctionNVar";
+    }
+    
+    // for AlgoElement
+    protected void setInputOutput() {
+        input = fun.getGeoElementVariables();
+
+        output = new GeoElement[1];
+        output[0] = f;
+        setDependencies(); // done by AlgoElement
+    }
+
+    public GeoFunctionNVar getFunction() {
+        return f;
+    }
+
+    protected final void compute() {
+        // evaluation of function will be done in view (see geogebra.euclidian.DrawFunction)
+        
+        // check if function is defined
+        boolean isDefined = true;
+        for (int i=0; i < input.length; i++) {
+            if (!input[i].isDefined()) {
+                isDefined = false;
+                break;
+            }
+        }
+        f.setDefined(isDefined);
+    }
+    
+    StringBuilder sb;
+    public String toString() {
+        if (sb == null) sb = new StringBuilder();
+        else sb.setLength(0);
+        if (f.isLabelSet()) {
+            sb.append(f.label);
+            sb.append("(");
+			sb.append(f.getVarString());
+			sb.append(") = ");
+        }  
+        sb.append(fun.toString());
+        return sb.toString();
+    }
+    
+}

@@ -2051,6 +2051,17 @@ public class Kernel {
 		return f;
 	}
 	
+	/** Multivariate Function depending on coefficients of arithmetic expressions with variables,
+	 *  e.g. f(x,y) = a x^2 + b y^2
+	 */
+	final public GeoFunctionNVar DependentFunctionNVar(
+		String label,
+		FunctionNVar fun) {
+		AlgoDependentFunctionNVar algo = new AlgoDependentFunctionNVar(cons, label, fun);
+		GeoFunctionNVar f = algo.getFunction();
+		return f;
+	}
+	
 	/** Interval dependent on coefficients of arithmetic expressions with variables,
 	 * represented by trees. e.g. x > a && x < b
 	 */

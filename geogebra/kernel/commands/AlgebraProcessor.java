@@ -740,9 +740,7 @@ public class AlgebraProcessor {
 		if (isIndependent) {				
 			ret[0] = kernel.FunctionNVar(label, fun );			
 		} else {
-			// TODO: remove
-			System.err.println("dependent function not support yet");
-			//f = kernel.DependentFunction(label, fun);
+			ret[0] = kernel.DependentFunctionNVar(label, fun);
 		}
 		return ret;
 	}
@@ -1046,7 +1044,7 @@ public class AlgebraProcessor {
 		
 		// REMOVED due to issue 131: http://code.google.com/p/geogebra/issues/detail?id=131
 //		// expressions like 2 a (where a:x + y = 1)
-//		//TODO A1=b doesn't work for these objects
+//		// A1=b doesn't work for these objects
 //		else if (eval instanceof GeoLine) {
 //			if (((GeoLine)eval).getParentAlgorithm() instanceof AlgoDependentLine) {
 //				GeoElement[] ret = {(GeoElement) eval };
