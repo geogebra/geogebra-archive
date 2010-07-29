@@ -71,13 +71,14 @@ implements AlgoElementWithResizeableOutput{
 
         
         //if only one label (e.g. "A"), new labels will be A_1, A_2, ...
-        if (labels.length==1)
-        	if (labels[0]!=null)
-        		if (!labels[0].equals(""))
-        			singleLabel = labels[0];
+        if (labels!=null)
+        	if (labels.length==1)
+        		if (labels[0]!=null)
+        			if (!labels[0].equals(""))
+        				singleLabel = labels[0];
 
         //set labels dependencies: will be used with Construction.resolveLabelDependency()
-        if (singleLabel==null)
+        if (singleLabel==null && labels!=null)
         	for (int i=0; i<labels.length; i++){
         		cons.setLabelDependsOn(labels[i], this);
         	}
