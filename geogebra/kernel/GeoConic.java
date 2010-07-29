@@ -2818,7 +2818,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	
 
 
-
+	/**
+	 * Point's parameters are set to its EV coordinates
+	 * @version 2010-07-30
+	 * Last change: Zbynek Konecny
+	 */
+	
 	public void pointChangedForRegion(GeoPointInterface PI) {
 		PI.updateCoords2D();
 
@@ -2829,30 +2834,40 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			pointChanged(PI);
 			rp.setIsOnPath(true);
 		}else{
-
+			GeoPoint P=(GeoPoint)PI;
 			rp.setIsOnPath(false);
+				
+			coordsRWtoEV(P);
+			rp.setT1(P.x/this.halfAxes[0]);
+			rp.setT2(P.y/this.halfAxes[1]);
+			coordsEVtoRW(P);
 		}
 
 
 	}
 
 
-
-
-	public void regionChanged(GeoPointInterface P) {
+	/**
+	 * When elipse is moved, the points moves as well
+	 * and its EV coordinates remain the same
+	 * @version 2010-07-30
+	 * Last change: Zbynek Konecny
+	 */
+	
+	public void regionChanged(GeoPointInterface PI) {
 		//GeoPoint P = (GeoPoint) PI;
-		RegionParameters rp = P.getRegionParameters();
+		RegionParameters rp = PI.getRegionParameters();
 		
 		if (rp.isOnPath())
-			pathChanged(P);
+			pathChanged(PI);
 		else{
-			pointChangedForRegion(P);
-			
-			if (!isInRegion(P)){
-				pointChanged(P);
-				rp.setIsOnPath(true);
-			}	
-			
+			//pointChangedForRegion(P);
+			GeoPoint P=(GeoPoint)PI;
+			P.isDefined();
+			P.x=rp.getT1()*halfAxes[0];
+			P.y=rp.getT2()*halfAxes[1];
+			P.z = 1.0;
+			coordsEVtoRW(P);
 		}
 		
 	}
