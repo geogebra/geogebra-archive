@@ -235,6 +235,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 			geos[0].setEuclidianVisible(true);
 			//geos[0].setAlgebraVisible(false);		
 			geos[0].setAuxiliaryObject(true);
+			geos[0].setLabelVisible(false);
 			
 			plotGeoCollection.add(geos[0]);
 			

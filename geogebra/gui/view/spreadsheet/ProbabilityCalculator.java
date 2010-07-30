@@ -177,7 +177,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 					BorderFactory.createBevelBorder(BevelBorder.LOWERED))); 
 					
 			
-			setDefaultParms(selectedDist);
+			setDefaults(selectedDist);
 			plotPDF(selectedDist);
 			plotPanel.setPreferredSize(new Dimension(350,300));
 			
@@ -213,7 +213,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			public void actionPerformed(ActionEvent e)
 			{
 				selectedDist = comboDistribution.getSelectedIndex();
-				setDefaultParms(selectedDist);
+				setDefaults(selectedDist);
 				probDialog.plotPDF(selectedDist);
 				updateGUI();
 				btnClose.requestFocus();
@@ -498,22 +498,31 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	}
 
 	
-	private void setDefaultParms(int distType ){
+	private void setDefaults(int distType ){
 		
 		switch(distType){
 
 		case DIST_NORMAL:
 			selectedParms[0] = 0; // mean
 			selectedParms[1]= 1;  // sigma
+			low = -1;
+			high = 1;
 			break;
 
 		case DIST_STUDENT:
 			selectedParms[0] = 10; // df
+			low = -1;
+			high = 1;
 			break;
 						
 		case DIST_CHISQUARE:
 			selectedParms[0] = 6; // df
+			low = 0;
+			high = 6;
 			break;
+			
+			
+			
 
 		}
 	
@@ -555,6 +564,21 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	}
 	
 	
+	
+	private boolean validateProbFields(){
+		
+		boolean succ = true;
+		succ = low <= high;
+		if( selectedDist == DIST_BINOMIAL){
+			low = Math.round(low);
+			high = Math.round(high);
+			succ = low >= 0;
+			succ = high <= selectedParms[0];
+			
+		}
+		return succ;	
+			
+	}
 	
 
 	//=================================================

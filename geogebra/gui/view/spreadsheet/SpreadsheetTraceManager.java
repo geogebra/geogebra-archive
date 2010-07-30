@@ -764,6 +764,10 @@ public class SpreadsheetTraceManager {
 	}
 	
 	
+	
+	//======================================
+	// List Tracing
+	
 	private void createTraceListCell(Construction cons, int column, int row){
 
 		GeoElement cell = RelativeCopy.getValue(table, column, row);
@@ -789,12 +793,21 @@ public class SpreadsheetTraceManager {
 		if(cell == null || !cell.isGeoList()) return;
 
 		if(geo.getTraceSettings().doTraceGeoCopy){
-			((GeoList) cell).add(geo.copyInternal(cons));
+			
+			// add a copy of the trace
+			((GeoList) cell).add(geo.copyInternal(cons));     
+				
+			
 		}else{
-			((GeoList) cell).add(new GeoNumeric(cons, (Double)value));		
+			// add the numeric value of the trace 
+			((GeoList) cell).add(new GeoNumeric(cons, (Double)value));  
 		}
-		cell.updateCascade();
+		
+		cell.update();
 	}
+	
+	//    End List Tracing
+	//======================================
 	
 	
 	
