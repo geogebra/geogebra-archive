@@ -43,6 +43,10 @@ public class MyCellEditorBoolean extends DefaultCellEditor {
 		editing = true;
 		checkBox.setBackground(table.getBackground());
 		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		//enabled == isIndependent
+		checkBox.setEnabled(editGeo.isIndependent());
+		
 		if(editGeo.isLabelVisible()){
 			//checkBox.setText(editGeo.getCaption());
 		}
@@ -61,8 +65,10 @@ public class MyCellEditorBoolean extends DefaultCellEditor {
 	public boolean stopCellEditing() {
 
 		try {
-			editGeo.setValue(checkBox.isSelected());
-			editGeo.updateCascade();
+			if(editGeo.isIndependent()){
+				editGeo.setValue(checkBox.isSelected());
+				editGeo.updateCascade();
+			}
 			//app.storeUndoInfo();
 
 		} catch (Exception ex) {

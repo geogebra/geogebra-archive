@@ -123,6 +123,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			if(geo.isGeoBoolean()){
 				checkBox.setBackground(table.getBackground());
 				checkBox.setHorizontalAlignment(CENTER);
+				checkBox.setEnabled(geo.isIndependent());
 				
 				if(geo.isLabelVisible()){
 					
