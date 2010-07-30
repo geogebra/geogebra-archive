@@ -187,20 +187,15 @@ implements ExpressionValue, RealRootFunction, Functional {
     public void initFunction() {              	
         
     	// replace function variables in tree
-        if (fVar != null && !fVar.toString().equals("x")) {
-        	// look for Variable objects with name of function variable and replace them
-        	int replacements = expression.replaceVariables(fVar.toString(), fVar);
-        	isConstantFunction = replacements == 0;
-        } 
-        else {
-        	// check if this is really a function in x
-            if (!expression.isFunctionInX())
-                throw new MyError(app, "InvalidFunction");
-        	
-        	fVar = new FunctionVariable(kernel);        
-        	int replacements = expression.replacePolynomials(fVar);
-        	isConstantFunction = replacements == 0;
+        if (fVar == null) {
+        	// try function variable x
+        	fVar = new FunctionVariable(kernel);   
         }
+        
+    	// look for Variable and Polynomial objects with name of function variable and replace them
+    	int replacements = expression.replaceVariables(fVar.toString(), fVar);
+    	replacements += expression.replacePolynomials(fVar);
+    	isConstantFunction = replacements == 0;
         
         // replace variable names by objects
         expression.resolveVariables();
@@ -861,10 +856,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 	        sb.append(order);
 		}
         sb.append(") ");
-		
-		
-						
-
+					
         try {                   	            
             // evaluate expression by CAS 
             String result = kernel.evaluateGeoGebraCAS(sb.toString());  

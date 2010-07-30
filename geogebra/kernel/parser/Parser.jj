@@ -118,6 +118,15 @@ public class Parser {
         myReInit( parseString );                           
         return function();      
     }
+
+    /**
+     * Parses a String and returns a Function Object     
+     */
+    public FunctionNVar parseFunctionNVar(String parseString) 
+    throws ParseException {    
+        myReInit( parseString );                           
+        return functionNVar();      
+    }
     
     /**
      * Parses a String and returns an ExpressionNode Object     
@@ -787,6 +796,32 @@ Function  function():
 	    	}
 	    	else {
 		        f = new Function(rhs);		        
+		    }
+		    f.setLabel(rhs.getLabel());	       
+		    return f;
+	    }   
+)	   
+}
+
+/**
+ * functionNVar = functionExpressionnode 
+ */
+FunctionNVar  functionNVar():
+{
+    ExpressionNode rhs;
+    Token l = null;
+    FunctionNVar f;
+}
+{          
+(
+	   // f(x) =  x^2 + 3	
+	 	 rhs = functionExpressionnode()
+	    {
+	    	if (rhs.getLeft() instanceof FunctionNVar) {
+	    		f = (FunctionNVar) rhs.getLeft();
+	    	}
+	    	else {
+		        f = new FunctionNVar(rhs);		        
 		    }
 		    f.setLabel(rhs.getLabel());	       
 		    return f;

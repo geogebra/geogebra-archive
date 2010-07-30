@@ -41,9 +41,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	// <-- Added for Intergeo File Format (Yves Kreis)
     
     protected GeoElement[] input;
-    /** list of output
-     * @deprecated (matthieu) use setNbOutput(), setOutput(), getNbOutput(), getOutput() instead
-     */
+//    /** list of output
+//     * @deprecated (matthieu) use setNbOutput(), setOutput(), getNbOutput(), getOutput() instead
+//     */
     protected GeoElement[] output;
     private GeoElement [] efficientInput;
     private GeoNumeric [] randomUnlabeledInput;

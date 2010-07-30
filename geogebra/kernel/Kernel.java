@@ -1814,7 +1814,6 @@ public class Kernel {
 	/** Function in multiple variables,  e.g. f(x,y) = 4 x^2 + 3 y^2
 	 */
 	final public GeoFunctionNVar FunctionNVar(String label, FunctionNVar fun) {
-		Application.debug("nb var: "+fun.getVarNumber());
 		GeoFunctionNVar f = new GeoFunctionNVar(cons, label, fun);
 		return f;
 	}
@@ -5708,7 +5707,30 @@ public class Kernel {
 		
 		AlgoDerivative algo = new AlgoDerivative(cons, label, f, n);
 		return algo.getDerivative();	
-	}			
+	}
+	
+	/**
+	 * first derivative of multivariate function f
+	 */
+	final public GeoFunctionNVar Derivative(
+		String label,
+		GeoFunctionNVar f, GeoNumeric var) {
+		
+		AlgoDerivativePartial algo = new AlgoDerivativePartial(cons, label, f, var, null);
+		return algo.getDerivative();				
+	}	
+	
+	/**
+	 * n-th derivative of multivariate function f
+	 */
+	final public GeoFunctionNVar Derivative(
+		String label,
+		GeoFunctionNVar f, GeoNumeric var,
+		NumberValue n) {
+		
+		AlgoDerivativePartial algo = new AlgoDerivativePartial(cons, label, f, var, n);
+		return algo.getDerivative();	
+	}
 	
 	/**
 	 * Tries to expand a function f to a polynomial.

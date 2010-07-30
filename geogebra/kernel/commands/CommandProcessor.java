@@ -26,6 +26,7 @@ import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoDeriveable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
@@ -3110,6 +3111,7 @@ class CmdDelete extends CommandProcessor {
 
 /*
  * Derivative[ <GeoFunction> ]
+ * Derivative[ <GeoFunctionNVar>, <var> ]
  * Derivative[ <GeoCurveCartesian> ]
  */
 class CmdDerivative extends CommandProcessor {
@@ -3121,11 +3123,12 @@ class CmdDerivative extends CommandProcessor {
 	final public   GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
 		String label = c.getLabel();
-		GeoElement[] arg = resArgs(c);
+		GeoElement[] arg;
 
 
 		switch (n) {
 		case 1 :           
+			arg = resArgs(c);
 			if (arg[0].isGeoDeriveable()) {
 				GeoDeriveable f = (GeoDeriveable) arg[0];
 				if (label == null)
@@ -3136,9 +3139,37 @@ class CmdDerivative extends CommandProcessor {
 			else
 				throw argErr(app, "Derivative", arg[0]);
 
-		case 2 :                
-			if (arg[0].isGeoDeriveable()
-					&& arg[1] .isNumberValue()) {
+		case 2 :        
+			// Derivative[ f(a,b), a ]
+			try {
+				arg = resArgsLocalNumVar(c, 1,1); 
+				if (arg[0] instanceof GeoFunctionNVar && arg[1].isGeoNumeric()) {			              	
+					GeoElement[] ret =
+					{
+							kernel.Derivative(
+									label,
+									(GeoFunctionNVar) arg[0], // function
+									(GeoNumeric) arg[1])}; // var
+					return ret;
+				} 
+			} catch (Throwable t) {
+			}
+			
+			arg = resArgs(c);
+			// Derivative[ f(x, y), x]
+			if (arg[0] instanceof GeoFunctionNVar && arg[1].isGeoFunction()) {
+				GeoNumeric var = new GeoNumeric(cons);
+				var.setLocalVariableLabel(arg[1].toString());
+				GeoElement[] ret =
+				{
+						kernel.Derivative(
+								label,
+								(GeoFunctionNVar) arg[0], // function
+								(GeoNumeric) var)}; // var
+				return ret;
+			}
+			// Derivative[ f(x), 2]
+			else if (arg[0].isGeoDeriveable() && arg[1] .isNumberValue()) {
 				double order = ((NumberValue) arg[1]).getDouble();
 				if (order >= 0) {                    
 					GeoDeriveable f = (GeoDeriveable) arg[0];
@@ -3155,11 +3186,45 @@ class CmdDerivative extends CommandProcessor {
 					return ret;
 				} else
 					throw argErr(app, "Derivative", arg[1]);
-			}            
-			else {
-				argErr(app, "Derivative", arg[0]);
 			}
+			
+			// if we get here, the first argument must have been wrong
+			throw argErr(app, "Derivative", arg[0]);
 
+		case 3:
+			// Derivative[ f(a,b), a, 2 ]
+			try {
+				arg = resArgsLocalNumVar(c, 1,1); 
+				if (arg[0] instanceof GeoFunctionNVar && arg[1].isGeoNumeric() && arg[2].isNumberValue()) {			              	
+					GeoElement[] ret =
+					{
+							kernel.Derivative(
+									label,
+									(GeoFunctionNVar) arg[0], // function
+									(GeoNumeric) arg[1],
+									(NumberValue) arg[2])}; // var
+					return ret;
+				} 
+			} catch (Throwable t) {
+			}
+			
+			arg = resArgs(c);
+			// Derivative[ f(x, y), x, 2]
+			if (arg[0] instanceof GeoFunctionNVar && arg[1].isGeoFunction() && arg[2].isNumberValue()) {
+				GeoNumeric var = new GeoNumeric(cons);
+				var.setLocalVariableLabel(arg[1].toString());
+				GeoElement[] ret =
+				{
+						kernel.Derivative(
+								label,
+								(GeoFunctionNVar) arg[0], // function
+								(GeoNumeric) var,
+								(NumberValue) arg[2])}; // var
+				return ret;
+			}
+			// if we get here, the first argument must have been wrong
+			throw argErr(app, "Derivative", arg[0]);
+			
 		default :
 			throw argNumErr(app, "Derivative", n);
 		}

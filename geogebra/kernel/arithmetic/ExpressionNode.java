@@ -601,6 +601,9 @@ implements ExpressionValue, ExpressionNodeConstants {
        if (left.isExpressionNode()) {
        		replacements += ((ExpressionNode) left).replaceVariables(varName, fVar);
        }
+       else if (left instanceof MyList) {
+    	   replacements += ((MyList) left).replaceVariables(varName, fVar);
+       }
        else if (left instanceof Variable) {
     	   if (varName.equals(((Variable) left).getName())) {
     		   left = fVar;
@@ -612,6 +615,9 @@ implements ExpressionValue, ExpressionNodeConstants {
        if (right != null) {
            if (right.isExpressionNode()) {
         	   replacements += ((ExpressionNode) right).replaceVariables(varName, fVar);
+           }
+           else if (right instanceof MyList) {
+        	   replacements += ((MyList) right).replaceVariables(varName, fVar);
            }
            else if (right instanceof Variable) {
         	   if (varName.equals(((Variable) right).getName())) {
@@ -635,6 +641,9 @@ implements ExpressionValue, ExpressionNodeConstants {
         if (left.isExpressionNode()) {
         	replacements += ((ExpressionNode) left).replacePolynomials( x);
         }
+        else if (left instanceof MyList) {
+      	   replacements += ((MyList) left).replacePolynomials(x);
+         }
         else if (left.isPolynomialInstance() && x.toString().equals(left.toString())) {
             left = x;
             replacements++;
@@ -644,6 +653,9 @@ implements ExpressionValue, ExpressionNodeConstants {
         if (right != null) {
             if (right.isExpressionNode()) {
             	replacements += ((ExpressionNode) right).replacePolynomials(x);
+            }
+            else if (right instanceof MyList) {
+         	   replacements += ((MyList) right).replacePolynomials(x);
             }
             else if (right.isPolynomialInstance() && x.toString().equals(right.toString())) {
                 right = x;

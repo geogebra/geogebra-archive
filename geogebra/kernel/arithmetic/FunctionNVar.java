@@ -19,6 +19,7 @@ import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -354,7 +355,41 @@ implements ExpressionValue, FunctionalNVar {
     }
     
 
-
+    /**
+     * Returns n-th derivative of this function for the given variable
+     */
+    final public FunctionNVar getDerivative(String var, int n) {
+       if (n < 0) return null;
+       else if (n == 0) return this; 
+       
+       String key = var + "#" + n;
+       
+       //  do calculus only if parent expression changed
+       if (diffParentExp != expression) {  
+           diffParentExp = expression; 
+           getDerivativeMap().clear();
+       } 
+       else if (derivativeMap != null) {
+           // do we have the desired result?
+    	   FunctionNVar ob = getDerivativeMap().get(key);
+           if (ob != null) {            	
+           		return ob;
+           }
+       }
+       
+       // ok, we really have to do it...
+		FunctionNVar result = derivative(var, n);
+		getDerivativeMap().put(key, result); // remember the hard work
+       return result;
+    }
+    private ExpressionNode diffParentExp;
+    
+    private HashMap<String, FunctionNVar> getDerivativeMap() {
+   	 if (derivativeMap == null)
+			derivativeMap = new HashMap<String, FunctionNVar>();
+   	 return derivativeMap;
+    }
+    private HashMap derivativeMap;
     
     
     
@@ -363,8 +398,7 @@ implements ExpressionValue, FunctionalNVar {
      * @param order of derivative
      * @return result as function
      */
-    //TODO use map as in Function.java
-    final public FunctionNVar derivative(int var, int order) {     	 
+     private FunctionNVar derivative(String var, int order) {     	 
 		// use CAS to get derivative
                 
         // build expression string for CAS             
@@ -374,58 +408,29 @@ implements ExpressionValue, FunctionalNVar {
 		sb.append(expression.getCASstring(kernel.getCurrentCAS(), true));		
 		//if (order > 1) {
 	        sb.append(",");
-	        sb.append(fVars[var].toString());
+	        sb.append(var);
 	        sb.append(",");
 	        sb.append(order);
 		//}
         sb.append(") ");
 		
-        //Application.debug("command:"+sb.toString());
-						
-
         try {                   	            
             // evaluate expression by CAS 
             String result = kernel.evaluateGeoGebraCAS(sb.toString());  
-            
-            //TODO make some tests like in Function
+          
+            // it doesn't matter what label we use here as it is never used            			
+    		sb.setLength(0);
+    		sb.append("f(");
+    		sb.append(getVarString());
+    		sb.append(") = ");
+            sb.append(result);
     
-            // parse result
-            
-            //TODO merge method below with CommandProcessor.resArgsLocalNumVar
-    		Construction cons = kernel.getConstruction();   
-    		String[] localVarName = new String[fVars.length];
-    		for(int i=0;i<fVars.length;i++){
-    			// check if there is a local variable in arguments    	
-    			localVarName[i] = fVars[i].toString();
-    		}
-    		
-    		// add local variable name to construction 
-    		GeoNumeric[] num = new GeoNumeric[fVars.length];
-    		for(int i=0;i<fVars.length;i++){
-    			num[i] = new GeoNumeric(cons);
-    			cons.addLocalVariable(localVarName[i], num[i]); 
-    		}
-
-    		// creates the expression
-    		ExpressionNode exp = kernel.getParser().parseExpression(result);
-    		//Application.debug("exp:"+exp.toString());
-     		//Application.debug(exp.getTreeClass());
-				
-       	 	FunctionNVar fun = new FunctionNVar(exp,fVars);
-            fun.initFunction();  
-
-    		// remove local variable name from kernel again
-    		for(int i=0;i<fVars.length;i++)
-    			cons.removeLocalVariable(localVarName[i]);     	  
-    		
-    		//change GeoNumeric to FunctionVariable
-    		for (int i=0;i<fVars.length; i++)
-				exp.replace(num[i], fVars[i]);
-
-    		Application.debug(exp.getTreeClass());
-                               
-             return fun;
-         } catch (Error err) {       
+             // parse result
+            FunctionNVar fun = kernel.getParser().parseFunctionNVar(sb.toString());
+            fun.initFunction();
+            return fun;
+         } 
+        catch (Error err) {       
              err.printStackTrace();
         	 return null;
          } catch (Exception e) {
@@ -434,12 +439,7 @@ implements ExpressionValue, FunctionalNVar {
          } catch (Throwable e) {
 			 return null;
 		}     
-         /*
-         finally {
-        	 fVar.setVarString(oldVar);
-         }
-         */
-     
+        
          
     }	    
 
@@ -498,7 +498,7 @@ implements ExpressionValue, FunctionalNVar {
 			// function, e.g. f(x) := 2*x
 			sb.append(getLabel());
 			sb.append("(");
-			sb.append(getFunctionVariable());
+			sb.append(getVarString());
 			sb.append(")");	
 			return sb.toString();
 	 }

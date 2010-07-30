@@ -53,7 +53,6 @@ implements FunctionalNVar {
 		fun = f;	
 	}
 
-
 	public GeoFunctionNVar(Construction c, String label, FunctionNVar f) {
 		this(c,f);	
 		setLabel(label);		
@@ -143,20 +142,18 @@ implements FunctionalNVar {
 	}	
 	
 	/**
-	 * Set this function to the n-th derivative of f
+	 * Set this function to the n-th partial derivative of f for var.
 	 * @param f
 	 * @param order
 	 */
-//	public void setDerivative(GeoDeriveable fd, int n) {
-//		GeoFunctionNVar f = (GeoFunctionNVar) fd;
-//		
-//		if (f.isDefined()) {
-//			fun = f.fun.getDerivative(n);
-//			isDefined = fun != null;
-//		} else {
-//			isDefined = false;
-//		}		
-//	}
+	public void setDerivative(GeoFunctionNVar f, String var, int n) {		
+		if (f.isDefined()) {
+			fun = f.fun.getDerivative(var, n);
+			isDefined = fun != null;
+		} else {
+			isDefined = false;
+		}		
+	}
 	
 	/**
 	 * Set this function to the integral of f

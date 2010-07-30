@@ -76,6 +76,54 @@ public class MyList extends ValidExpression implements ListValue {
 			return null;
 		}
 	}
+	
+   /**
+    * Replaces all Variable objects with the given varName in this list by
+    * the given FunctionVariable object.
+    * @return number of replacements done
+    */
+    public int replaceVariables(String varName, FunctionVariable fVar) {
+    	int replacements = 0;
+    
+    	for (int i=0; i<listElements.size(); i++) {
+    		ExpressionValue element = listElements.get(i);
+    		if (element instanceof ExpressionNode) {
+    			replacements += ((ExpressionNode) element).replaceVariables(varName, fVar);
+    		}
+    		else if (element instanceof Variable) {
+	    	   if (varName.equals(((Variable) element).getName())) {
+	    		   listElements.set(i, fVar);
+	    		   replacements++;
+	    	   }
+    		}
+		}
+    	
+    	return replacements;
+    }
+    
+    /**
+     * Replaces all Polynomial objects with the name fVar.toString() in this list by
+     * the given FunctionVariable object.
+     * @return number of replacements done
+     */
+     public int replacePolynomials(FunctionVariable fVar) {
+     	int replacements = 0;
+     
+     	for (int i=0; i<listElements.size(); i++) {
+     		ExpressionValue element = listElements.get(i);
+       		if (element instanceof ExpressionNode) {
+    			replacements += ((ExpressionNode) element).replacePolynomials(fVar);
+    		}
+     		if (element instanceof Polynomial) {
+     	    	   if (isPolynomialInstance() && fVar.toString().equals(element.toString())) {
+     	    		   listElements.set(i, fVar);
+     	    		   replacements++;
+     	    	   }
+     		}
+ 		}
+     	
+     	return replacements;
+     }
 		
 	/**
 	 * Applies an operation to this list using the given value:
